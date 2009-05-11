@@ -177,17 +177,6 @@
          <target id="org.eventb.ui.editors.context"/>
       </page>
       <page
-            class="org.eventb.internal.ui.eventbeditor.TheoremPage"
-            id="org.eventb.ui.theorems"
-            isDefault="false"
-            name="%editorPage.theorems"
-            priority="7">
-         <target
-               id="org.eventb.ui.editors.machine"/>
-         <target
-               id="org.eventb.ui.editors.context"/>
-      </page>
-      <page
             class="org.eventb.internal.ui.eventbeditor.EventPage"
             id="org.eventb.ui.events"
             isDefault="false"
@@ -244,16 +233,6 @@
                toolbarPath="org.eventb.ui.eventBEditor"
                tooltip="%editorAction.newevent.tooltip"/>
          <action
-               actionID="org.eventb.ui.actions.newTheorems"
-               class="org.eventb.internal.ui.eventbeditor.actions.NewTheorems"
-               icon="icons/full/ctool16/newthm_edit.gif"
-               id="org.eventb.ui.actions.newtheorems"
-               label="%editorAction.newtheorems.label"
-               menubarPath="org.eventb.ui.eventBMenu/New"
-               style="push"
-               toolbarPath="org.eventb.ui.eventBEditor"
-               tooltip="%editorAction.newtheorems.tooltip"/>
-         <action
                actionID="org.eventb.ui.actions.newVariable"
                class="org.eventb.internal.ui.eventbeditor.actions.NewVariable"
                icon="icons/full/ctool16/newvar_edit.gif"
@@ -303,12 +282,6 @@
                menubarPath="org.eventb.ui.refactoring/Naming"
                style="push"/>
          <action
-               class="org.eventb.internal.ui.eventbeditor.actions.AutoThmNaming"
-               id="org.eventb.ui.actions.autoThmNaming"
-               label="%editorAction.autoThmLabel.label"
-               menubarPath="org.eventb.ui.refactoring/Naming"
-               style="push"/>
-         <action
                class="org.eventb.internal.ui.eventbeditor.actions.AutoInvNaming"
                id="org.eventb.ui.actions.autoInvNaming"
                label="%editorAction.autoInvLabel.label"
@@ -318,12 +291,6 @@
                class="org.eventb.internal.ui.eventbeditor.actions.PrefixVarName"
                id="org.eventb.ui.actions.setVarIdPrefix"
                label="%editorAction.setVarIdPrefix.label"
-               menubarPath="org.eventb.ui.refactoring/Prefix"
-               style="push"/>
-         <action
-               class="org.eventb.internal.ui.eventbeditor.actions.PrefixThmName"
-               id="org.eventb.ui.actions.setThmLabelPrefix"
-               label="%editorAction.setThmLabelPrefix.label"
                menubarPath="org.eventb.ui.refactoring/Prefix"
                style="push"/>
          <action
@@ -399,16 +366,6 @@
                style="push"
                toolbarPath="org.eventb.ui.eventBEditor"
                tooltip="%editorAction.newaxioms.tooltip"/>
-         <action
-               actionID="org.eventb.ui.actions.newTheorems"
-               class="org.eventb.internal.ui.eventbeditor.actions.NewTheorems"
-               icon="icons/full/ctool16/newthm_edit.gif"
-               id="org.eventb.ui.actions.newtheorems"
-               label="%editorAction.newtheorems.label"
-               menubarPath="org.eventb.ui.eventBMenu/New"
-               style="push"
-               toolbarPath="org.eventb.ui.eventBEditor"
-               tooltip="%editorAction.newtheorems.tooltip"/>
          <menu
                id="org.eventb.ui.refactoring"
                label="%editorAction.menu.refactoring">
@@ -416,12 +373,6 @@
             <separator name="naming-prefix"/>
             <groupMarker name="Prefix"/>
          </menu>
-         <action
-               class="org.eventb.internal.ui.eventbeditor.actions.AutoThmNaming"
-               id="org.eventb.ui.actions.autoThmLabel"
-               label="%editorAction.autoThmLabel.label"
-               menubarPath="org.eventb.ui.refactoring/Naming"
-               style="push"/>
          <action
                class="org.eventb.internal.ui.eventbeditor.actions.AutoAxmNaming"
                id="org.eventb.ui.actions.autoAxmLabel"
@@ -438,12 +389,6 @@
                class="org.eventb.internal.ui.eventbeditor.actions.PrefixSetName"
                id="org.eventb.ui.actions.setSetIdPrefix"
                label="%editorAction.setSetIdPrefix.label"
-               menubarPath="org.eventb.ui.refactoring/Prefix"
-               style="push"/>
-         <action
-               class="org.eventb.internal.ui.eventbeditor.actions.PrefixThmName"
-               id="org.eventb.ui.actions.setThmLabelPrefix"
-               label="%editorAction.setThmLabelPrefix.label"
                menubarPath="org.eventb.ui.refactoring/Prefix"
                style="push"/>
          <action
@@ -919,6 +864,15 @@
          </propertySection>
          <propertySection
                afterSection="org.eventb.ui.labelSection"
+               class="org.eventb.internal.ui.propertiesView.TheoremSection"
+               enablesFor="1"
+               id="org.eventb.ui.theoremSection"
+               tab="org.eventb.ui.basicTab"
+               filter="org.eventb.internal.ui.propertiesView.DerivedPredicateNoGuardFilter">
+<!--            <input type="org.eventb.core.IDerivedPredicateElement"/>-->
+         </propertySection>
+         <propertySection
+               afterSection="org.eventb.ui.theoremSection"
                class="org.eventb.internal.ui.propertiesView.PredicateSection"
                enablesFor="1"
                id="org.eventb.ui.predicateSection"
@@ -977,6 +931,14 @@
          </propertySection>
          <propertySection
                afterSection="org.eventb.ui.labelSection"
+               class="org.eventb.internal.ui.propertiesView.TheoremSection"
+               enablesFor="1"
+               id="org.eventb.ui.theoremSection"
+               tab="org.eventb.ui.basicTab">
+            <input type="org.eventb.core.IDerivedPredicateElement"/>
+         </propertySection>
+         <propertySection
+               afterSection="org.eventb.ui.theoremSection"
                class="org.eventb.internal.ui.propertiesView.PredicateSection"
                enablesFor="1"
                id="org.eventb.ui.predicateSection"
@@ -2135,12 +2097,6 @@
             typeId="org.eventb.core.invariant">
       </element>
       <element
-            defaultColumn="1"
-            imagePath="icons/full/obj16/thm_obj.gif"
-            prefix="THEOREMS"
-            typeId="org.eventb.core.theorem">
-      </element>
-      <element
             defaultColumn="0"
             imagePath="icons/sample.gif"
             prefix="VARIANT"
@@ -2246,6 +2202,11 @@
             required="true"
             typeId="org.eventb.core.extended">
       </choiceAttribute>
+      <toggleAttribute
+            id="org.eventb.ui.isTheorem"
+            class="org.eventb.internal.ui.eventbeditor.manipulation.TheoremAttributeManipulation"
+            typeId="org.eventb.core.theorem">
+      </toggleAttribute>
       <textAttribute
             class="org.eventb.internal.ui.eventbeditor.manipulation.IdentifierAttributeManipulation"
             expandsHorizontally="false"
@@ -2319,10 +2280,6 @@
                priority="40">
          </childType>
          <childType
-               typeId="org.eventb.core.theorem"
-               priority="50">
-         </childType>
-         <childType
                typeId="org.eventb.core.variant"
                priority="60">
          </childType>
@@ -2348,10 +2305,6 @@
          <childType
                typeId="org.eventb.core.axiom"
                priority="40">
-         </childType>
-         <childType
-               typeId="org.eventb.core.theorem"
-               priority="50">
          </childType>
       </childRelation>
       <childRelation
@@ -2424,18 +2377,7 @@
                descriptionId="org.eventb.ui.predicate">
          </attributeReference>
          <attributeReference
-               descriptionId="org.eventb.ui.comment">
-         </attributeReference>
-      </attributeRelation>
-      <attributeRelation
-            elementTypeId="org.eventb.core.theorem">
-         <attributeReference
-               column="0"
-               descriptionId="org.eventb.ui.label">
-         </attributeReference>
-         <attributeReference
-               column="1"
-               descriptionId="org.eventb.ui.predicate">
+               descriptionId="org.eventb.ui.isTheorem">
          </attributeReference>
          <attributeReference
                descriptionId="org.eventb.ui.comment">
@@ -2561,6 +2503,9 @@
                descriptionId="org.eventb.ui.predicate">
          </attributeReference>
          <attributeReference
+               descriptionId="org.eventb.ui.isTheorem">
+         </attributeReference>
+         <attributeReference
                descriptionId="org.eventb.ui.comment">
          </attributeReference>
       </attributeRelation>
@@ -2573,11 +2518,6 @@
             elementTypeId="org.eventb.core.invariant"
             attributeDescriptionId="org.eventb.ui.label"
             namePrefix="inv">
-      </autoNaming>
-      <autoNaming
-            elementTypeId="org.eventb.core.theorem"
-            attributeDescriptionId="org.eventb.ui.label"
-            namePrefix="thm">
       </autoNaming>
       <autoNaming
             elementTypeId="org.eventb.core.event"

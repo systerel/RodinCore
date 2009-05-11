@@ -24,6 +24,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.TextDesc.Style;
+import org.eventb.internal.ui.eventbeditor.manipulation.AbstractBooleanManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.ui.EventBUIPlugin;
@@ -195,7 +196,8 @@ public class ElementDescRegistry implements IElementDescRegistry {
 			if (name.equals("element")) {
 				elementFromExt.add(element);
 			} else if (name.equals("textAttribute")
-					|| name.equals("choiceAttribute")) {
+					|| name.equals("choiceAttribute")
+					|| name.equals("toggleAttribute")) {
 				attributeDescs.put(element);
 			} else if (name.equals("childRelation")) {
 				childRelation.put(element);
@@ -405,11 +407,17 @@ public class ElementDescRegistry implements IElementDescRegistry {
 					final String preference = getForegroundColor(element);
 					desc = new TextDesc(manipulation, prefix, suffix,
 							isHorizontalExpand, isMath, style, attrType, preference);
-				} else {
+				} else if (name.equals("choiceAttribute")) {
 					final boolean required = getBoolean(element,
 							ATTR_ATTRIBUTE_REQUIRED);
 					desc = new ComboDesc(manipulation, prefix, suffix,
 							isHorizontalExpand, attrType, required);
+				} else if (name.equals("toggleAttribute")) {
+					desc = new ToggleDesc(
+							(AbstractBooleanManipulation) manipulation,
+							attrType);
+				} else {
+					throw new IllegalStateException("Unknown attribute kind: " + name);
 				}
 				map.put(id, desc);
 			} catch (Exception e) {

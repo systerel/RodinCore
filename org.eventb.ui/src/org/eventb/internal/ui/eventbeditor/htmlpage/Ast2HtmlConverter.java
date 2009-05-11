@@ -10,6 +10,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - replaced inherited by extended
  *     Systerel - added implicit children for events
+ *     Systerel - added theorem attribute of IDerivedPredicateElement
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.htmlpage;
 
@@ -66,8 +67,6 @@ public class Ast2HtmlConverter extends AstConverter {
 		END_INVARIANT_PREDICATE = "</td>";
 		BEGIN_THEOREM_LABEL = "<td class=\"theoremLabel\" align=\"left\" valign=\"center\">";
 		END_THEOREM_LABEL = "</td>";
-		BEGIN_THEOREM_PREDICATE = "<td class=\"theoremPredicate\" align=\"left\" valign=\"center\">";
-		END_THEOREM_PREDICATE = "</td>";
 		BEGIN_EVENT_LABEL = "<td class=\"eventLabel\" align=\"left\" valign=\"center\">";
 		END_EVENT_LABEL = "</td>";
 		BEGIN_EXTENDED = "<td class=\"extended\" align=\"left\" valign=\"center\">";

@@ -19,7 +19,6 @@ import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
-import org.eventb.core.ITheorem;
 import org.rodinp.core.IInternalElementType;
 
 import fr.systerel.explorer.IElementNode;
@@ -29,7 +28,6 @@ import fr.systerel.internal.explorer.model.ModelEvent;
 import fr.systerel.internal.explorer.model.ModelInvariant;
 import fr.systerel.internal.explorer.model.ModelPOContainer;
 import fr.systerel.internal.explorer.model.ModelProofObligation;
-import fr.systerel.internal.explorer.model.ModelTheorem;
 
 /**
  * This is a statistics that is composed of several <code>IStatistics</code>.
@@ -94,10 +92,6 @@ public class AggregateStatistics implements IStatistics {
 				if (cont != null) {
 					addPOs(cont.getProofObligations(), node.getChildrenType());
 				}
-			}
-			if (stat.getParent() instanceof ModelTheorem) {
-				ModelTheorem theorem = (ModelTheorem) stat.getParent();
-				addPOs((theorem.getProofObligations()));
 			}
 			if (stat.getParent() instanceof ModelAxiom) {
 				ModelAxiom axiom = (ModelAxiom) stat.getParent();
@@ -257,11 +251,6 @@ public class AggregateStatistics implements IStatistics {
 				}
 				if (type == IEvent.ELEMENT_TYPE) {
 					if (po.getEvents().length > 0) {
-						pos.add(po);
-					}
-				}
-				if (type == ITheorem.ELEMENT_TYPE) {
-					if (po.getTheorems().length > 0) {
 						pos.add(po);
 					}
 				}

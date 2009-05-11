@@ -26,7 +26,6 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ITheorem;
 import org.eventb.core.seqprover.IConfidence;
 import org.junit.After;
 import org.junit.Before;
@@ -55,16 +54,14 @@ public class AggregateStatisticsTest extends ExplorerTest {
 	protected static IElementNode axiom_node;
 	protected static IElementNode inv_node;
 	protected static IElementNode event_node;
-	protected static IElementNode thm_node_mach;
 	protected static IElementNode po_node_ctx;
-	protected static IElementNode thm_node_ctx;
 	protected static IInvariant inv1;
 	protected static IInvariant inv2;
 	protected static IEvent event1;
 	protected static IEvent event2;
 	protected static IAxiom axiom1;
-	protected static ITheorem thm1;
-	protected static ITheorem thm2;
+	protected static IAxiom thm1;
+	protected static IInvariant thm2;
 	protected static IPORoot m0IPO;
 	protected static IPSRoot m0IPS;
 	protected static IPORoot c0IPO;
@@ -188,21 +185,8 @@ public class AggregateStatisticsTest extends ExplorerTest {
 		Statistics[] st = {stats1, stats2};
 		AggregateStatistics stats = new AggregateStatistics(st);
 		
-		assertEquals(7, stats.getTotal());
+		assertEquals(stats1.getTotal() + stats2.getTotal(), stats.getTotal());
 	}
-
-
-	@Test
-	public void getTotalTheoremNodes() {
-		Statistics stats1 = new Statistics(thm_node_ctx);
-		Statistics stats2 = new Statistics(thm_node_mach);
-
-		Statistics[] st = {stats1, stats2};
-		AggregateStatistics stats = new AggregateStatistics(st);
-		
-		assertEquals(2, stats.getTotal());
-	}
-
 
 	@Test
 	public void getTotalInvariantEventNode() {
@@ -221,7 +205,7 @@ public class AggregateStatisticsTest extends ExplorerTest {
 		Statistics stats1 = new Statistics(ModelController.getInvariant(inv1));
 		Statistics stats2 = new Statistics(ModelController.getEvent(event1));
 		Statistics stats3 = new Statistics(ModelController.getAxiom(axiom1));
-		Statistics stats4 = new Statistics(ModelController.getTheorem(thm1));
+		Statistics stats4 = new Statistics(ModelController.getAxiom(thm1));
 		Statistics stats5 = new Statistics(ModelController.getInvariant(inv3));
 		Statistics[] st = {stats1, stats2, stats3, stats4, stats5};
 		AggregateStatistics stats = new AggregateStatistics(st);
@@ -273,19 +257,6 @@ public class AggregateStatisticsTest extends ExplorerTest {
 		assertEquals(2, stats.getManual());
 	}
 
-
-	@Test
-	public void getManualTheoremNodes() {
-		Statistics stats1 = new Statistics(thm_node_ctx);
-		Statistics stats2 = new Statistics(thm_node_mach);
-
-		Statistics[] st = {stats1, stats2};
-		AggregateStatistics stats = new AggregateStatistics(st);
-		
-		assertEquals(1, stats.getManual());
-	}
-
-
 	@Test
 	public void getManualInvariantEventNode() {
 		Statistics stats1 = new Statistics(inv_node);
@@ -303,7 +274,7 @@ public class AggregateStatisticsTest extends ExplorerTest {
 		Statistics stats1 = new Statistics(ModelController.getInvariant(inv1));
 		Statistics stats2 = new Statistics(ModelController.getEvent(event1));
 		Statistics stats3 = new Statistics(ModelController.getAxiom(axiom1));
-		Statistics stats4 = new Statistics(ModelController.getTheorem(thm1));
+		Statistics stats4 = new Statistics(ModelController.getAxiom(thm1));
 		Statistics stats5 = new Statistics(ModelController.getInvariant(inv3));
 
 		Statistics[] st = {stats1, stats2, stats3, stats4, stats5};
@@ -355,19 +326,6 @@ public class AggregateStatisticsTest extends ExplorerTest {
 		assertEquals(1, stats.getAuto());
 	}
 
-
-	@Test
-	public void getAutoTheoremNodes() {
-		Statistics stats1 = new Statistics(thm_node_ctx);
-		Statistics stats2 = new Statistics(thm_node_mach);
-
-		Statistics[] st = {stats1, stats2};
-		AggregateStatistics stats = new AggregateStatistics(st);
-		
-		assertEquals(1, stats.getAuto());
-	}
-
-
 	@Test
 	public void getAutoInvariantEventNode() {
 		Statistics stats1 = new Statistics(inv_node);
@@ -385,7 +343,7 @@ public class AggregateStatisticsTest extends ExplorerTest {
 		Statistics stats1 = new Statistics(ModelController.getInvariant(inv1));
 		Statistics stats2 = new Statistics(ModelController.getEvent(event1));
 		Statistics stats3 = new Statistics(ModelController.getAxiom(axiom1));
-		Statistics stats4 = new Statistics(ModelController.getTheorem(thm1));
+		Statistics stats4 = new Statistics(ModelController.getAxiom(thm1));
 		Statistics stats5 = new Statistics(ModelController.getInvariant(inv3));
 
 		Statistics[] st = {stats1, stats2, stats3, stats4, stats5};
@@ -437,19 +395,6 @@ public class AggregateStatisticsTest extends ExplorerTest {
 		assertEquals(2, stats.getReviewed());
 	}
 
-
-	@Test
-	public void getReviewedTheoremNodes() {
-		Statistics stats1 = new Statistics(thm_node_ctx);
-		Statistics stats2 = new Statistics(thm_node_mach);
-
-		Statistics[] st = {stats1, stats2};
-		AggregateStatistics stats = new AggregateStatistics(st);
-		
-		assertEquals(0, stats.getReviewed());
-	}
-
-
 	@Test
 	public void getReviewedInvariantEventNode() {
 		Statistics stats1 = new Statistics(inv_node);
@@ -467,7 +412,7 @@ public class AggregateStatisticsTest extends ExplorerTest {
 		Statistics stats1 = new Statistics(ModelController.getInvariant(inv1));
 		Statistics stats2 = new Statistics(ModelController.getEvent(event1));
 		Statistics stats3 = new Statistics(ModelController.getAxiom(axiom1));
-		Statistics stats4 = new Statistics(ModelController.getTheorem(thm1));
+		Statistics stats4 = new Statistics(ModelController.getAxiom(thm1));
 		Statistics stats5 = new Statistics(ModelController.getInvariant(inv3));
 
 		Statistics[] st = {stats1, stats2, stats3, stats4, stats5};
@@ -519,19 +464,6 @@ public class AggregateStatisticsTest extends ExplorerTest {
 		assertEquals(2, stats.getUndischargedRest());
 	}
 
-
-	@Test
-	public void getUndischargedRestTheoremNodes() {
-		Statistics stats1 = new Statistics(thm_node_ctx);
-		Statistics stats2 = new Statistics(thm_node_mach);
-
-		Statistics[] st = {stats1, stats2};
-		AggregateStatistics stats = new AggregateStatistics(st);
-		
-		assertEquals(0, stats.getUndischargedRest());
-	}
-
-
 	@Test
 	public void getUndischargedRestInvariantEventNode() {
 		Statistics stats1 = new Statistics(inv_node);
@@ -549,7 +481,7 @@ public class AggregateStatisticsTest extends ExplorerTest {
 		Statistics stats1 = new Statistics(ModelController.getInvariant(inv1));
 		Statistics stats2 = new Statistics(ModelController.getEvent(event1));
 		Statistics stats3 = new Statistics(ModelController.getAxiom(axiom1));
-		Statistics stats4 = new Statistics(ModelController.getTheorem(thm1));
+		Statistics stats4 = new Statistics(ModelController.getAxiom(thm1));
 		Statistics stats5 = new Statistics(ModelController.getInvariant(inv3));
 		Statistics[] st = {stats1, stats2, stats3, stats4, stats5};
 		AggregateStatistics stats = new AggregateStatistics(st);
@@ -603,7 +535,7 @@ public class AggregateStatisticsTest extends ExplorerTest {
 
 		// create some elements in the context
 		axiom1 = createAxiom(c0, "axiom1");
-		thm1 =  createTheorem(c0, "thm1");
+		thm1 =  createAxiomTheorem(c0, "thm1");
 	}
 
 
@@ -617,7 +549,7 @@ public class AggregateStatisticsTest extends ExplorerTest {
 		inv2 = createInvariant(m0, "inv2");
 		event1 = createEvent(m0, "event1");
 		event2 = createEvent(m0, "event2");
-		thm2 =  createTheorem(m0, "thm2");
+		thm2 =  createInvariantTheorem(m0, "thm2");
 	}
 
 
@@ -705,10 +637,8 @@ public class AggregateStatisticsTest extends ExplorerTest {
 		po_node_mach = mach.po_node;
 		inv_node = mach.invariant_node;
 		event_node = mach.event_node;
-		thm_node_mach = mach.theorem_node;
 		
 		axiom_node = ctx.axiom_node;
-		thm_node_ctx = ctx.theorem_node;
 		po_node_ctx = ctx.po_node;
 	}
 

@@ -20,7 +20,6 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinProject;
@@ -91,7 +90,7 @@ public class StatisticsUtil {
 					new_level = NODES;
 				}
 			} else if (el instanceof IInvariant || el instanceof IEvent
-					|| el instanceof ITheorem || el instanceof IAxiom) {
+					|| el instanceof IAxiom) {
 				new_level = ELEMS;
 			} else
 				return "No statistics for this selection."; //$NON-NLS-1$

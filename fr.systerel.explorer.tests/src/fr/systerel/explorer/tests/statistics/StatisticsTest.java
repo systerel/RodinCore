@@ -25,7 +25,6 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ITheorem;
 import org.eventb.core.seqprover.IConfidence;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +39,6 @@ import fr.systerel.internal.explorer.model.ModelEvent;
 import fr.systerel.internal.explorer.model.ModelInvariant;
 import fr.systerel.internal.explorer.model.ModelMachine;
 import fr.systerel.internal.explorer.model.ModelProject;
-import fr.systerel.internal.explorer.model.ModelTheorem;
 import fr.systerel.internal.explorer.statistics.Statistics;
 
 /**
@@ -55,16 +53,14 @@ public class StatisticsTest extends ExplorerTest {
 	protected static IElementNode axiom_node;
 	protected static IElementNode inv_node;
 	protected static IElementNode event_node;
-	protected static IElementNode thm_node_mach;
 	protected static IElementNode po_node_ctx;
-	protected static IElementNode thm_node_ctx;
 	protected static IInvariant inv1;
 	protected static IInvariant inv2;
 	protected static IEvent event1;
 	protected static IEvent event2;
 	protected static IAxiom axiom1;
-	protected static ITheorem thm1;
-	protected static ITheorem thm2;
+	protected static IAxiom thm1;
+	protected static IInvariant thm2;
 	protected static IPORoot m0IPO;
 	protected static IPSRoot m0IPS;
 	protected static IPORoot c0IPO;
@@ -196,19 +192,6 @@ public class StatisticsTest extends ExplorerTest {
 		assertEquals(2, stats.getTotal());
 	}
 
-	@Test
-	public void getTotalTheoremNodeMachine() {
-		Statistics stats = new Statistics(thm_node_mach);
-		
-		assertEquals(1, stats.getTotal());
-	}
-
-	@Test
-	public void getTotalTheoremNodeContext() {
-		Statistics stats = new Statistics(thm_node_ctx);
-		
-		assertEquals(1, stats.getTotal());
-	}
 
 	@Test
 	public void getTotalInvariantNode() {
@@ -228,12 +211,12 @@ public class StatisticsTest extends ExplorerTest {
 	public void getTotalAxiomNode() {
 		Statistics stats = new Statistics(axiom_node);
 		
-		assertEquals(1, stats.getTotal());
+		assertEquals(2, stats.getTotal());
 	}
 
 	@Test
 	public void getTotalTheoremMachine() {
-		ModelTheorem thm = ModelController.getTheorem(thm2);
+		ModelInvariant thm = ModelController.getInvariant(thm2);
 		Statistics stats = new Statistics(thm);
 		
 		assertEquals(1, stats.getTotal());
@@ -241,7 +224,7 @@ public class StatisticsTest extends ExplorerTest {
 
 	@Test
 	public void getTotalTheoremContext() {
-		ModelTheorem thm = ModelController.getTheorem(thm1);
+		ModelAxiom thm = ModelController.getAxiom(thm1);
 		Statistics stats = new Statistics(thm);
 		
 		assertEquals(1, stats.getTotal());
@@ -307,20 +290,6 @@ public class StatisticsTest extends ExplorerTest {
 	}
 
 	@Test
-	public void getManualTheoremNodeMachine() {
-		Statistics stats = new Statistics(thm_node_mach);
-		
-		assertEquals(0, stats.getManual());
-	}
-
-	@Test
-	public void getManualTheoremNodeContext() {
-		Statistics stats = new Statistics(thm_node_ctx);
-		
-		assertEquals(1, stats.getManual());
-	}
-
-	@Test
 	public void getManualInvariantNode() {
 		Statistics stats = new Statistics(inv_node);
 		
@@ -338,12 +307,12 @@ public class StatisticsTest extends ExplorerTest {
 	public void getManualAxiomNode() {
 		Statistics stats = new Statistics(axiom_node);
 		
-		assertEquals(0, stats.getManual());
+		assertEquals(1, stats.getManual());
 	}
 
 	@Test
 	public void getManualTheoremMachine() {
-		ModelTheorem thm = ModelController.getTheorem(thm2);
+		ModelInvariant thm = ModelController.getInvariant(thm2);
 		Statistics stats = new Statistics(thm);
 		
 		assertEquals(0, stats.getManual());
@@ -351,7 +320,7 @@ public class StatisticsTest extends ExplorerTest {
 
 	@Test
 	public void getManualTheoremContext() {
-		ModelTheorem thm = ModelController.getTheorem(thm1);
+		ModelAxiom thm = ModelController.getAxiom(thm1);
 		Statistics stats = new Statistics(thm);
 		
 		assertEquals(1, stats.getManual());
@@ -417,20 +386,6 @@ public class StatisticsTest extends ExplorerTest {
 	}
 
 	@Test
-	public void getAutoTheoremNodeMachine() {
-		Statistics stats = new Statistics(thm_node_mach);
-		
-		assertEquals(1, stats.getAuto());
-	}
-
-	@Test
-	public void getAutoTheoremNodeContext() {
-		Statistics stats = new Statistics(thm_node_ctx);
-		
-		assertEquals(0, stats.getAuto());
-	}
-
-	@Test
 	public void getAutoInvariantNode() {
 		Statistics stats = new Statistics(inv_node);
 		
@@ -453,7 +408,7 @@ public class StatisticsTest extends ExplorerTest {
 
 	@Test
 	public void getAutoTheoremMachine() {
-		ModelTheorem thm = ModelController.getTheorem(thm2);
+		ModelInvariant thm = ModelController.getInvariant(thm2);
 		Statistics stats = new Statistics(thm);
 		
 		assertEquals(1, stats.getAuto());
@@ -461,7 +416,7 @@ public class StatisticsTest extends ExplorerTest {
 
 	@Test
 	public void getAutoTheoremContext() {
-		ModelTheorem thm = ModelController.getTheorem(thm1);
+		ModelAxiom thm = ModelController.getAxiom(thm1);
 		Statistics stats = new Statistics(thm);
 		
 		assertEquals(0, stats.getAuto());
@@ -527,20 +482,6 @@ public class StatisticsTest extends ExplorerTest {
 	}
 
 	@Test
-	public void getReviewedTheoremNodeMachine() {
-		Statistics stats = new Statistics(thm_node_mach);
-		
-		assertEquals(0, stats.getReviewed());
-	}
-
-	@Test
-	public void getReviewedTheoremNodeContext() {
-		Statistics stats = new Statistics(thm_node_ctx);
-		
-		assertEquals(0, stats.getReviewed());
-	}
-
-	@Test
 	public void getReviewedInvariantNode() {
 		Statistics stats = new Statistics(inv_node);
 		
@@ -563,7 +504,7 @@ public class StatisticsTest extends ExplorerTest {
 
 	@Test
 	public void getReviewedTheoremMachine() {
-		ModelTheorem thm = ModelController.getTheorem(thm2);
+		ModelInvariant thm = ModelController.getInvariant(thm2);
 		Statistics stats = new Statistics(thm);
 		
 		assertEquals(0, stats.getReviewed());
@@ -571,7 +512,7 @@ public class StatisticsTest extends ExplorerTest {
 
 	@Test
 	public void getReviewedTheoremContext() {
-		ModelTheorem thm = ModelController.getTheorem(thm1);
+		ModelAxiom thm = ModelController.getAxiom(thm1);
 		Statistics stats = new Statistics(thm);
 		
 		assertEquals(0, stats.getReviewed());
@@ -637,20 +578,6 @@ public class StatisticsTest extends ExplorerTest {
 	}
 
 	@Test
-	public void getUndischargedTheoremNodeMachine() {
-		Statistics stats = new Statistics(thm_node_mach);
-		
-		assertEquals(0, stats.getUndischargedRest());
-	}
-
-	@Test
-	public void getUndischargedTheoremNodeContext() {
-		Statistics stats = new Statistics(thm_node_ctx);
-		
-		assertEquals(0, stats.getUndischargedRest());
-	}
-
-	@Test
 	public void getUndischargedInvariantNode() {
 		Statistics stats = new Statistics(inv_node);
 		
@@ -673,7 +600,7 @@ public class StatisticsTest extends ExplorerTest {
 
 	@Test
 	public void getUndischargedTheoremMachine() {
-		ModelTheorem thm = ModelController.getTheorem(thm2);
+		ModelInvariant thm = ModelController.getInvariant(thm2);
 		Statistics stats = new Statistics(thm);
 		
 		assertEquals(0, stats.getUndischargedRest());
@@ -681,7 +608,7 @@ public class StatisticsTest extends ExplorerTest {
 
 	@Test
 	public void getUndischargedTheoremContext() {
-		ModelTheorem thm = ModelController.getTheorem(thm1);
+		ModelAxiom thm = ModelController.getAxiom(thm1);
 		Statistics stats = new Statistics(thm);
 		
 		assertEquals(0, stats.getUndischargedRest());
@@ -715,10 +642,8 @@ public class StatisticsTest extends ExplorerTest {
 		po_node_mach = mach.po_node;
 		inv_node = mach.invariant_node;
 		event_node = mach.event_node;
-		thm_node_mach = mach.theorem_node;
 		
 		axiom_node = ctx.axiom_node;
-		thm_node_ctx = ctx.theorem_node;
 		po_node_ctx = ctx.po_node;
 	}
 
@@ -768,7 +693,7 @@ public class StatisticsTest extends ExplorerTest {
 
 		// create some elements in the context
 		axiom1 = createAxiom(c0, "axiom1");
-		thm1 =  createTheorem(c0, "thm1");
+		thm1 =  createAxiomTheorem(c0, "thm1");
 	}
 
 
@@ -837,7 +762,7 @@ public class StatisticsTest extends ExplorerTest {
 		inv2 = createInvariant(m0, "inv2");
 		event1 = createEvent(m0, "event1");
 		event2 = createEvent(m0, "event2");
-		thm2 =  createTheorem(m0, "thm2");
+		thm2 =  createInvariantTheorem(m0, "thm2");
 	}
 	
 	

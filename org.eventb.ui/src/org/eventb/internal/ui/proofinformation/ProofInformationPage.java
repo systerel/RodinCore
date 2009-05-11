@@ -43,7 +43,6 @@ import org.eventb.core.IPOSource;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
-import org.eventb.core.ITheorem;
 import org.eventb.core.IWitness;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
@@ -154,18 +153,6 @@ public class ProofInformationPage extends Page implements
 				if (ProofInformationUtils.DEBUG) {
 					ProofInformationUtils.debug("id: " + id);
 					ProofInformationUtils.debug("Find: " + element);
-				}
-				if (element instanceof ITheorem) {
-					final ITheorem thm = (ITheorem) element;
-					formBuilder.append("<li style=\"bullet\">Theorem in ");
-					formBuilder.append(((IEventBRoot) thm.getParent()).getComponentName());
-					formBuilder.append("</li><li style=\"text\" value=\"\">");
-					formBuilder.append(UIUtils
-							.makeHyperlink(id, thm.getLabel()));
-					formBuilder.append(": ");
-					formBuilder.append(UIUtils.XMLWrapUp(thm
-							.getPredicateString()));
-					formBuilder.append("</li>");
 				}
 				if (element instanceof IAxiom) {
 					IAxiom axm = (IAxiom) element;

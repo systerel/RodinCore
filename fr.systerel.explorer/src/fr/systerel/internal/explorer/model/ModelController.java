@@ -28,7 +28,6 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ITheorem;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -163,22 +162,6 @@ public class ModelController implements IElementChangedListener {
 		return null;
 	}
 
-	/**
-	 * Gets the ModelTheorem for a given Theorem
-	 * 
-	 * @param theorem
-	 *            The Theorem to look for
-	 * @return The corresponding ModelTheorem, if there exists one,
-	 *         <code>null</code> otherwise
-	 */
-	public static ModelTheorem getTheorem(ITheorem theorem){
-		ModelProject project = projects.get(theorem.getRodinProject());
-		if (project != null) {
-			return project.getTheorem(theorem);
-		}
-		return null;
-	}
-	
 	/**
 	 * Gets the ModelMachine for a given MachineRoot
 	 * 

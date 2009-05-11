@@ -180,8 +180,6 @@ public class TextEditComposite extends AbstractEditComposite {
 		text.setStyleRange(null);
 
 		try {
-			Color RED = EventBSharedColor.getSystemColor(SWT.COLOR_RED);
-			Color YELLOW = EventBSharedColor.getSystemColor(SWT.COLOR_YELLOW);
 			IMarker[] markers = MarkerUIRegistry.getDefault()
 					.getAttributeMarkers(element, attrDesc.getAttributeType());
 			for (IMarker marker : markers) {

@@ -20,14 +20,12 @@ import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
-import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.internal.ui.EventBUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 public class CopyElement extends OperationLeaf {
 
@@ -53,40 +51,30 @@ public class CopyElement extends OperationLeaf {
 		final OperationBuilder builder;
 		final IInternalElement element;
 		final String copyId;
-		final IInternalElementType<?> copyType;
 
 		try {
 			copyParent = defaultParent.getRoot();
 			if (source instanceof IEvent) {
 				copyId = "evt";
-				copyType = IEvent.ELEMENT_TYPE;
 			} else if (source instanceof IInvariant) {
 				copyId = "inv";
-				copyType = IInvariant.ELEMENT_TYPE;
-			} else if (source instanceof ITheorem) {
-				copyId = "thm";
-				copyType = ITheorem.ELEMENT_TYPE;
 			} else if (source instanceof IVariant) {
 				copyId = "variant";
-				copyType = IVariant.ELEMENT_TYPE;
 			} else if (source instanceof IAxiom) {
 				copyId = "axm";
-				copyType = IAxiom.ELEMENT_TYPE;
 			} else if (source instanceof IConstant) {
 				copyId = "cst";
-				copyType = IConstant.ELEMENT_TYPE;
 			} else if (source instanceof ICarrierSet) {
 				copyId = "set";
-				copyType = ICarrierSet.ELEMENT_TYPE;
 
 			} else if (source instanceof IVariable) {
 				copyId = "set";
-				copyType = IVariable.ELEMENT_TYPE;
 			} else {
 				copyId = "element";
-				copyType = ((InternalElement) source).getElementType();
 				copyParent = defaultParent;
 			}
+
+			final IInternalElementType<?> copyType = source.getElementType();
 
 			nameCopy = copyId
 					+ EventBUtils.getFreeChildNameIndex(copyParent, copyType,

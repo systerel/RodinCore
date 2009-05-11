@@ -19,7 +19,6 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElementType;
@@ -62,9 +61,6 @@ public class ModelElementNode implements IModelElement, IElementNode{
 		if (type.equals(IInvariant.ELEMENT_TYPE)) {
 			return INVARIANT_TYPE;
 		}
-		if (type.equals(ITheorem.ELEMENT_TYPE)) {
-			return THEOREM_TYPE;
-		}
 		if (type.equals(IEvent.ELEMENT_TYPE)) {
 			return EVENT_TYPE;
 		}
@@ -92,7 +88,6 @@ public class ModelElementNode implements IModelElement, IElementNode{
 	private static String AXIOM_TYPE = "Axioms";
 	private static String EVENT_TYPE = "Events";
 	private static String CONSTANT_TYPE = "Constants";
-	private static String THEOREM_TYPE = "Theorems";
 	private static String CARRIER_TYPE = "Carrier Sets";
 	private static String VARIABLE_TYPE = "Variables";
 	private static String PO_TYPE = "Proof Obligations";

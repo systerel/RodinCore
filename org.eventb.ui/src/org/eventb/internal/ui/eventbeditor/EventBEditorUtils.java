@@ -12,6 +12,7 @@
  *     Systerel - added history support
  *     Systerel - separation of file and root element
  *     Systerel - added getChildTowards
+ *     Systerel - theorems almost everywhere
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -40,7 +41,6 @@ import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
-import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
@@ -48,11 +48,11 @@ import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewCarrierSetDialog;
-import org.eventb.internal.ui.eventbeditor.dialogs.NewElementNameContentDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewConstantDialog;
-import org.eventb.internal.ui.eventbeditor.dialogs.NewVariableDialog;
+import org.eventb.internal.ui.eventbeditor.dialogs.NewDerivedPredicateDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewEnumeratedSetDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewEventDialog;
+import org.eventb.internal.ui.eventbeditor.dialogs.NewVariableDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewVariantDialog;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
@@ -92,8 +92,6 @@ public class EventBEditorUtils {
 	static IInvariant newInv;
 
 	static IVariant newVariant;
-
-	static ITheorem newThm;
 
 	static IEvent newEvt;
 
@@ -435,23 +433,7 @@ public class EventBEditorUtils {
 	public static void addInvariant(final IEventBEditor<IMachineRoot> editor,
 			final TreeViewer viewer) {
 		AtomicOperation op = OperationFactory.createInvariantWizard(editor
-				.getRodinInput(), null, EventBUIPlugin.INV_DEFAULT);
-		addOperationToHistory(op, editor, viewer);
-	}
-
-	/**
-	 * Add a new theorem.
-	 * <p>
-	 * 
-	 * @param editor
-	 *            The current Event-B Editor
-	 * @param viewer
-	 *            The current Tree Viewer in the Event-B Editor
-	 */
-	public static void addTheorem(final IEventBEditor<?> editor,
-			final TreeViewer viewer) {
-		AtomicOperation op = OperationFactory.createTheoremWizard(editor
-				.getRodinInput(), null, EventBUIPlugin.THM_DEFAULT);
+				.getRodinInput(), null, EventBUIPlugin.INV_DEFAULT, false);
 		addOperationToHistory(op, editor, viewer);
 	}
 
@@ -517,7 +499,7 @@ public class EventBEditorUtils {
 	public static void addAxiom(final IEventBEditor<IContextRoot> editor,
 			final TreeViewer viewer) {
 		AtomicOperation op = OperationFactory.createAxiomWizard(editor
-				.getRodinInput(), null, EventBUIPlugin.AXM_DEFAULT);
+				.getRodinInput(), null, EventBUIPlugin.AXM_DEFAULT, false);
 		addOperationToHistory(op, editor, viewer);
 	}
 
@@ -678,7 +660,7 @@ public class EventBEditorUtils {
 	 */
 	public static void newInvariants(final IEventBEditor<IMachineRoot> editor) {
 		final IMachineRoot root = editor.getRodinInput();
-		final NewElementNameContentDialog<IInvariant> dialog = new NewElementNameContentDialog<IInvariant>(
+		final NewDerivedPredicateDialog<IInvariant> dialog = new NewDerivedPredicateDialog<IInvariant>(
 				Display.getCurrent().getActiveShell(), "New Invariants", root,
 				IInvariant.ELEMENT_TYPE);
 
@@ -689,8 +671,9 @@ public class EventBEditorUtils {
 
 		final String[] names = dialog.getNewNames();
 		final String[] contents = dialog.getNewContents();
+		final boolean[] isTheorem = dialog.getIsTheorem();
 		final AtomicOperation operation = OperationFactory
-				.createInvariantWizard(root, names, contents);
+				.createInvariantWizard(root, names, contents, isTheorem);
 		addOperationToHistory(operation, editor);
 	}
 
@@ -711,29 +694,6 @@ public class EventBEditorUtils {
 		final String expression = dialog.getExpression();
 		final AtomicOperation operation = OperationFactory.createVariantWizard(
 				editor.getRodinInput(), expression);
-		addOperationToHistory(operation, editor);
-	}
-
-	/**
-	 * Utility method to create new theorems using a modal dialog.
-	 * <p>
-	 * 
-	 * @param editor
-	 *            the editor that made the call to this method.
-	 */
-	public static void newTheorems(final IEventBEditor<?> editor) {
-		final IInternalElement root = editor.getRodinInput();
-		final NewElementNameContentDialog<ITheorem> dialog = new NewElementNameContentDialog<ITheorem>(
-				Display.getCurrent().getActiveShell(), "New Theorems", root,
-				ITheorem.ELEMENT_TYPE);
-		dialog.open();
-		if (dialog.getReturnCode() == InputDialog.CANCEL)
-			return; // Cancel
-
-		final String[] names = dialog.getNewNames();
-		final String[] contents = dialog.getNewContents();
-		final AtomicOperation operation = OperationFactory.createTheoremWizard(root,
-				names, contents);
 		addOperationToHistory(operation, editor);
 	}
 
@@ -845,17 +805,18 @@ public class EventBEditorUtils {
 	 */
 	public static void newAxioms(final IEventBEditor<IContextRoot> editor) {
 		final IContextRoot root = editor.getRodinInput();
-		final NewElementNameContentDialog<IAxiom> dialog = new NewElementNameContentDialog<IAxiom>(
+		final NewDerivedPredicateDialog<IAxiom> dialog = new NewDerivedPredicateDialog<IAxiom>(
 				Display.getCurrent().getActiveShell(), "New Axioms", root,
 				IAxiom.ELEMENT_TYPE);
 		dialog.open();
 		if (dialog.getReturnCode() == InputDialog.CANCEL)
 			return; // Cancel
 
-		String[] names = dialog.getNewNames();
-		String[] contents = dialog.getNewContents();
+		final String[] names = dialog.getNewNames();
+		final String[] contents = dialog.getNewContents();
+		final boolean[] isTheorem = dialog.getIsTheorem();
 		final AtomicOperation operation = OperationFactory.createAxiomWizard(
-				root, names, contents);
+				root, names, contents, isTheorem);
 		addOperationToHistory(operation, editor);
 	}
 

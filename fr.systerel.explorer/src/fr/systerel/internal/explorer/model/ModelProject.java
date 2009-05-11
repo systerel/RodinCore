@@ -28,7 +28,6 @@ import org.eventb.core.IPSStatus;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISeesContext;
-import org.eventb.core.ITheorem;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -345,23 +344,6 @@ public class ModelProject implements IModelElement {
 		return null;
 	}
 
-	public ModelTheorem getTheorem(ITheorem theorem){
-		IEventBRoot root = (IEventBRoot) theorem.getRoot();
-		if (root instanceof IMachineRoot) {
-			ModelMachine machine = machines.get(root);
-			if (machine != null) {
-				return machine.getTheorem(theorem);
-			}
-		}
-		if (root instanceof IContextRoot) {
-			ModelContext context = contexts.get(root);
-			if (context != null) {
-				return context.getTheorem(theorem);
-			}
-		}
-		return null;
-	}
-	
 	public ModelAxiom getAxiom(IAxiom axiom){
 		IEventBRoot root = (IEventBRoot) axiom.getRoot();
 		if (root instanceof IContextRoot) {

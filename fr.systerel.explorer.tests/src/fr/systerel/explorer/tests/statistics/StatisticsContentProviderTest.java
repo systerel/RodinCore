@@ -24,7 +24,6 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ITheorem;
 import org.eventb.core.seqprover.IConfidence;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +38,6 @@ import fr.systerel.internal.explorer.model.ModelEvent;
 import fr.systerel.internal.explorer.model.ModelInvariant;
 import fr.systerel.internal.explorer.model.ModelMachine;
 import fr.systerel.internal.explorer.model.ModelProject;
-import fr.systerel.internal.explorer.model.ModelTheorem;
 import fr.systerel.internal.explorer.statistics.AggregateStatistics;
 import fr.systerel.internal.explorer.statistics.IStatistics;
 import fr.systerel.internal.explorer.statistics.Statistics;
@@ -58,16 +56,14 @@ public class StatisticsContentProviderTest extends ExplorerTest {
 	protected static IElementNode axiom_node;
 	protected static IElementNode inv_node;
 	protected static IElementNode event_node;
-	protected static IElementNode thm_node_mach;
 	protected static IElementNode po_node_ctx;
-	protected static IElementNode thm_node_ctx;
 	protected static IInvariant inv1;
 	protected static IInvariant inv2;
 	protected static IEvent event1;
 	protected static IEvent event2;
 	protected static IAxiom axiom1;
-	protected static ITheorem thm1;
-	protected static ITheorem thm2;
+	protected static IAxiom thm1;
+	protected static IInvariant thm2;
 	protected static IPORoot m0IPO;
 	protected static IPSRoot m0IPS;
 	protected static IPORoot c0IPO;
@@ -265,77 +261,6 @@ public class StatisticsContentProviderTest extends ExplorerTest {
 	}
 
 	@Test
-	public void getElementsTheoremNodeMachine() {
-		ModelController.getMachine(m0).processPORoot();
-		ModelController.getMachine(m0).processPSRoot();
-		Object[] input = { thm_node_mach };
-		Object[] output = contentProvider.getElements(input);
-		assertArray(output, new Statistics(thm_node_mach));
-		
-		IStatistics stats = (IStatistics) output[0];
-		assertEquals(1, stats.getAuto());
-		assertEquals(0, stats.getManual());
-		assertEquals(0, stats.getReviewed());
-		assertEquals(0, stats.getUndischargedRest());
-		assertEquals(1, stats.getTotal());
-		
-	}
-
-	@Test
-	public void getElementsTheoremMachine() {
-		ModelController.getMachine(m0).processPORoot();
-		ModelController.getMachine(m0).processPSRoot();
-		Object[] input = { thm2 };
-		Object[] output = contentProvider.getElements(input);
-		ModelTheorem thm= ModelController.getTheorem(thm2);
-		assertArray(output, new Statistics(thm));
-		IStatistics stats = (IStatistics) output[0];
-
-		assertEquals(1, stats.getAuto());
-		assertEquals(0, stats.getManual());
-		assertEquals(0, stats.getReviewed());
-		assertEquals(0, stats.getUndischargedRest());
-		assertEquals(1, stats.getTotal());
-		
-	}
-
-	@Test
-	public void getElementsTheoremNodeContext() {
-		ModelController.getContext(c0).processPORoot();
-		ModelController.getContext(c0).processPSRoot();
-		Object[] input = { thm_node_ctx };
-		Object[] output = contentProvider.getElements(input);
-		assertArray(output, new Statistics(thm_node_ctx));
-		
-		IStatistics stats = (IStatistics) output[0];
-		assertEquals(0, stats.getAuto());
-		assertEquals(1, stats.getManual());
-		assertEquals(0, stats.getReviewed());
-		assertEquals(0, stats.getUndischargedRest());
-		assertEquals(1, stats.getTotal());
-		
-	}
-
-	@Test
-	public void getElementsTheoremContext() {
-		ModelController.getContext(c0).processPORoot();
-		ModelController.getContext(c0).processPSRoot();
-		Object[] input = { thm1 };
-		Object[] output = contentProvider.getElements(input);
-		ModelTheorem thm= ModelController.getTheorem(thm1);
-		assertArray(output, new Statistics(thm));
-		IStatistics stats = (IStatistics) output[0];
-
-		assertEquals(0, stats.getAuto());
-		assertEquals(1, stats.getManual());
-		assertEquals(0, stats.getReviewed());
-		assertEquals(0, stats.getUndischargedRest());
-		assertEquals(1, stats.getTotal());
-		
-	}
-
-	
-	@Test
 	public void getElementsAxiomNode() {
 		//get statistics for an axiom node
 		ModelController.getContext(c0).processPORoot();
@@ -346,10 +271,10 @@ public class StatisticsContentProviderTest extends ExplorerTest {
 		
 		IStatistics stats = (IStatistics) output[0];
 		assertEquals(0, stats.getAuto());
-		assertEquals(0, stats.getManual());
+		assertEquals(1, stats.getManual());
 		assertEquals(0, stats.getReviewed());
 		assertEquals(1, stats.getUndischargedRest());
-		assertEquals(1, stats.getTotal());
+		assertEquals(2, stats.getTotal());
 		
 	}
 
@@ -377,10 +302,10 @@ public class StatisticsContentProviderTest extends ExplorerTest {
 		//get statistics for two nodes
 		ModelController.getMachine(m0).processPORoot();
 		ModelController.getMachine(m0).processPSRoot();
-		Object[] input = { thm_node_mach, event_node };
+		Object[] input = { inv_node, event_node };
 		Object[] output = contentProvider.getElements(input);
 		IStatistics[] agg = new IStatistics[2];
-		agg[0] = new Statistics(thm_node_mach);
+		agg[0] = new Statistics(inv_node);
 		agg[1] = new Statistics(event_node);
 		AggregateStatistics aggregate = new AggregateStatistics(agg);
 		assertArray(output, aggregate);
@@ -388,12 +313,14 @@ public class StatisticsContentProviderTest extends ExplorerTest {
 
 		assertEquals(1, stats.getAuto());
 		assertEquals(1, stats.getManual());
-		assertEquals(0, stats.getReviewed());
+		assertEquals(2, stats.getReviewed());
 		assertEquals(1, stats.getUndischargedRest());
-		assertEquals(3, stats.getTotal());
+		assertEquals(5, stats.getTotal());
 		
 	}
 
+	
+	
 	@Test
 	public void getElementsComboInvariantEvent() {
 		//get statistics for an invariant and an event
@@ -441,10 +368,8 @@ public class StatisticsContentProviderTest extends ExplorerTest {
 		assertNotNull("the node should be created successfully ", po_node_mach);
 		inv_node = ModelController.getMachine(m0).invariant_node;
 		event_node = ModelController.getMachine(m0).event_node;
-		thm_node_mach = ModelController.getMachine(m0).theorem_node;
 		
 		axiom_node = ModelController.getContext(c0).axiom_node;
-		thm_node_ctx = ModelController.getContext(c0).theorem_node;
 		po_node_ctx = ModelController.getContext(c0).po_node;
 	}
 
@@ -482,7 +407,7 @@ public class StatisticsContentProviderTest extends ExplorerTest {
 
 		// create some elements in the context
 		axiom1 = createAxiom(c0, "axiom1");
-		thm1 =  createTheorem(c0, "thm1");
+		thm1 =  createAxiomTheorem(c0, "thm1");
 	}
 
 
@@ -528,8 +453,6 @@ public class StatisticsContentProviderTest extends ExplorerTest {
 
 		source7 =  createPOSource(sequent5, "source7");
 		source7.setSource(inv1, null);
-		source8 =  createPOSource(sequent5, "source8");
-		source8.setSource(thm2, null);
 
 		//create a reviewed po
 		sequent8 = createSequent(m0IPO, "sequent8");
@@ -551,7 +474,7 @@ public class StatisticsContentProviderTest extends ExplorerTest {
 		inv2 = createInvariant(m0, "inv2");
 		event1 = createEvent(m0, "event1");
 		event2 = createEvent(m0, "event2");
-		thm2 =  createTheorem(m0, "thm2");
+		thm2 =  createInvariantTheorem(m0, "thm2");
 	}
 	
 	

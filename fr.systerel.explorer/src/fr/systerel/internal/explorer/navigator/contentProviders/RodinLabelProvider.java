@@ -25,7 +25,6 @@ import org.eventb.core.IIdentifierElement;
 import org.eventb.core.IInvariant;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.internal.ui.EventBImage;
@@ -57,9 +56,6 @@ public class RodinLabelProvider implements ILabelProvider {
 
 			if (node.getChildrenType().equals(IInvariant.ELEMENT_TYPE)) {
 				return EventBImage.getImage(IEventBSharedImages.IMG_INVARIANT);
-			}
-			if (node.getChildrenType().equals(ITheorem.ELEMENT_TYPE)) {
-				return EventBImage.getImage(IEventBSharedImages.IMG_THEOREM);
 			}
 			if (node.getChildrenType().equals(IEvent.ELEMENT_TYPE)) {
 				return EventBImage.getImage(IEventBSharedImages.IMG_EVENT);

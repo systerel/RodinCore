@@ -21,7 +21,6 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ITheorem;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElementType;
@@ -144,13 +143,6 @@ public abstract class ModelPOContainer implements IModelElement {
 				}
 			}
 		}
-		if (aType == ITheorem.ELEMENT_TYPE) {
-			for (ModelProofObligation po : proofObligations.values()) {
-				if (po.getTheorems().length > 0) {
-					result++;
-				}
-			}
-		}
 		if (aType == IAxiom.ELEMENT_TYPE) {
 			for (ModelProofObligation po : proofObligations.values()) {
 				if (po.getAxioms().length > 0) {
@@ -187,13 +179,6 @@ public abstract class ModelPOContainer implements IModelElement {
 		if (aType == IInvariant.ELEMENT_TYPE) {
 			for (ModelProofObligation po : proofObligations.values()) {
 				if (!po.isDischarged() && po.getInvariants().length > 0) {
-					result++;
-				}
-			}
-		}
-		if (aType == ITheorem.ELEMENT_TYPE) {
-			for (ModelProofObligation po : proofObligations.values()) {
-				if (!po.isDischarged() && po.getTheorems().length > 0) {
 					result++;
 				}
 			}
@@ -283,14 +268,6 @@ public abstract class ModelPOContainer implements IModelElement {
 				}
 			}
 		}
-		if (aType == ITheorem.ELEMENT_TYPE) {
-			for (ModelProofObligation po : proofObligations.values()) {
-				if (po.isManual() && po.isDischarged()
-						&& po.getTheorems().length > 0) {
-					result++;
-				}
-			}
-		}
 		if (aType == IAxiom.ELEMENT_TYPE) {
 			for (ModelProofObligation po : proofObligations.values()) {
 				if (po.isManual() && po.isDischarged()
@@ -342,13 +319,6 @@ public abstract class ModelPOContainer implements IModelElement {
 		if (aType == IInvariant.ELEMENT_TYPE) {
 			for (ModelProofObligation po : proofObligations.values()) {
 				if (po.isReviewed() && po.getInvariants().length > 0) {
-					result++;
-				}
-			}
-		}
-		if (aType == ITheorem.ELEMENT_TYPE) {
-			for (ModelProofObligation po : proofObligations.values()) {
-				if (po.isReviewed() && po.getTheorems().length > 0) {
 					result++;
 				}
 			}

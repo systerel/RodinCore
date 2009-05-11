@@ -31,9 +31,6 @@ import org.eventb.ui.IEventBSharedImages;
 public class SyntheticContextMasterSectionActionGroup extends
 		MasterSectionActionGroup<EventBContextEditor> {
 
-	// Some actions
-	protected Action addTheorem;
-
 	protected Action addSet;
 
 	protected Action addConstant;
@@ -59,18 +56,6 @@ public class SyntheticContextMasterSectionActionGroup extends
 			TreeViewer treeViewer) {
 		super(eventBEditor, treeViewer);
 		
-		// Add a theorem.
-		addTheorem = new Action() {
-			@Override
-			public void run() {
-				EventBEditorUtils.addTheorem(editor, viewer);
-			}
-		};
-		addTheorem.setText("New &Theorem");
-		addTheorem.setToolTipText("Create a new theorem");
-		addTheorem.setImageDescriptor(EventBImage
-				.getImageDescriptor(IEventBSharedImages.IMG_NEW_THEOREMS_PATH));
-
 		// Add a carrier set.
 		addSet = new Action() {
 			@Override
@@ -159,7 +144,6 @@ public class SyntheticContextMasterSectionActionGroup extends
 		menu.add(addSet);
 		menu.add(addConstant);
 		menu.add(addAxiom);
-		menu.add(addTheorem);
 		if (!sel.isEmpty()) {
 			menu.add(new Separator());
 			menu.add(delete);

@@ -33,8 +33,6 @@ public final class Messages {
 	public static String editorPage_constantPage_tabTitle;
 	public static String editorPage_variablePage_title;
 	public static String editorPage_variablePage_tabTitle;
-	public static String editorPage_theoremPage_title;
-	public static String editorPage_theoremPage_tabTitle;
 	public static String editorPage_carrierSetPage_title;
 	public static String editorPage_carrierSetPage_tabTitle;
 	public static String editorPage_dependencyPage_title;
@@ -108,6 +106,8 @@ public final class Messages {
 	// Attribute Manipulation
 	public static String attributeManipulation_extended_true;
 	public static String attributeManipulation_extended_false;
+	public static String attributeManipulation_theorem_true;
+	public static String attributeManipulation_theorem_false;
 
 	// UIUtils
 	public static String uiUtils_errorOpeningProvingEditor;

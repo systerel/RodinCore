@@ -132,7 +132,7 @@ public abstract class OperationTest extends EventBUITest {
 	protected Element addInvariant(Element parent, String label,
 			String predicate) {
 		return addElementWithLabelPredicate(parent, IInvariant.ELEMENT_TYPE,
-				label, predicate);
+				label, predicate, false);
 	}
 
 	protected Element addVariant(Element parent, String expression) {
@@ -205,15 +205,22 @@ public abstract class OperationTest extends EventBUITest {
 	 *            A string. Value of
 	 *            <code>EventBAttributes.PREDICATE_ATTRIBUTE</code>. Must not
 	 *            be <code>null</code>.
+	 * @param isTheorem
+	 *            A boolean. Value of
+	 *            <code>EventBAttributes.THEOREM_ATTRIBUTE</code>. Must not
+	 *            be <code>null</code>.
 	 * @return the created Element
 	 */
 	protected Element addElementWithLabelPredicate(Element parent,
-			IInternalElementType<?> type, String label, String predicate) {
-		Element result = new Element(type);
+			IInternalElementType<?> type, String label, String predicate,
+			boolean isTheorem) {
+		final Element result = new Element(type);
 		result.addAttribute(getStringAttribute(
 				EventBAttributes.LABEL_ATTRIBUTE, label));
 		result.addAttribute(getStringAttribute(
 				EventBAttributes.PREDICATE_ATTRIBUTE, predicate));
+		result.addAttribute(getBooleanAttribute(
+				EventBAttributes.THEOREM_ATTRIBUTE, isTheorem));
 		parent.addChild(result, null);
 		return result;
 	}
@@ -309,12 +316,19 @@ public abstract class OperationTest extends EventBUITest {
 	 *            <code>EventBAttributes.PREDICATE_ATTRIBUTE</code>. Must
 	 *            have the same length as labels and must not be
 	 *            <code>null</code>
+	 * @param isTheorem
+	 *            An array of booleans. Value of
+	 *            <code>EventBAttributes.THEOREM_ATTRIBUTE</code>. Must
+	 *            have the same length as labels and must not be
+	 *            <code>null</code>
 	 */
 	protected void addElementWithLabelPredicate(Element parent,
-			IInternalElementType<?> type, String[] labels, String[] predicates) {
+			IInternalElementType<?> type, String[] labels, String[] predicates,
+			boolean[] isTheorem) {
 		assert labels.length == predicates.length;
 		for (int i = 0; i < labels.length; i++) {
-			addElementWithLabelPredicate(parent, type, labels[i], predicates[i]);
+			addElementWithLabelPredicate(parent, type, labels[i],
+					predicates[i], isTheorem[i]);
 		}
 	}
 

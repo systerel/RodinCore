@@ -26,7 +26,6 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
 import org.eventb.internal.ui.UIUtils;
@@ -45,11 +44,10 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	
 	/**
 	 * The nodes are used by the ContentProviders to present a node in the tree
-	 * above elements such as Invariants or Theorems.
+	 * above elements such as Invariants or Variables
 	 */
 	public final ModelElementNode variable_node;
 	public final ModelElementNode invariant_node;
-	public final ModelElementNode theorem_node;
 	public final ModelElementNode event_node;
 	public final ModelElementNode po_node;
 	
@@ -67,7 +65,6 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 
 	private HashMap<IInvariant, ModelInvariant> invariants = new HashMap<IInvariant, ModelInvariant>();
 	private HashMap<IEvent, ModelEvent> events = new HashMap<IEvent, ModelEvent>();
-	private HashMap<ITheorem, ModelTheorem> theorems = new HashMap<ITheorem, ModelTheorem>();
 	//Variables are not taken into the model, because they don't have any proof obligations
 	
 	/**
@@ -97,7 +94,6 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 		machineRoot = root;
 		variable_node = new ModelElementNode(IVariable.ELEMENT_TYPE, this);
 		invariant_node = new ModelElementNode(IInvariant.ELEMENT_TYPE, this);
-		theorem_node = new ModelElementNode(ITheorem.ELEMENT_TYPE, this);
 		event_node = new ModelElementNode(IEvent.ELEMENT_TYPE, this);
 		po_node = new ModelElementNode(IPSStatus.ELEMENT_TYPE, this);
 	}
@@ -149,7 +145,6 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 		//clear existing children
 		invariants.clear();
 		events.clear();
-		theorems.clear();
 		try {
 			IInvariant[] invs = machineRoot.getChildrenOfType(IInvariant.ELEMENT_TYPE);
 			for (int i = 0; i < invs.length; i++) {
@@ -158,10 +153,6 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 			IEvent[] evts = machineRoot.getChildrenOfType(IEvent.ELEMENT_TYPE);
 			for (IEvent evt :  evts) {
 				addEvent(evt);
-			}
-			ITheorem[] thms = machineRoot.getChildrenOfType(ITheorem.ELEMENT_TYPE);
-			for (ITheorem thm : thms) {
-				addTheorem(thm);
 			}
 		} catch (RodinDBException e) {
 			UIUtils.log(e, "when accessing events, invariants and theorems of "+machineRoot);
@@ -254,16 +245,6 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 		events.put(event, new ModelEvent(event, this));
 	}
 	
-	/**
-	 * Adds a new ModelTheorem to this Machine.
-	 * 
-	 * @param theorem
-	 *            The Theorem to add.
-	 */
-	public void addTheorem(ITheorem theorem) {
-		theorems.put(theorem, new ModelTheorem(theorem, this));
-	}
-
 	/**
 	 * 
 	 * @return is this Machine a root of a tree of Machines? (= refines no other
@@ -361,11 +342,6 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 		return events.get(event);
 	}
 	
-
-	public ModelTheorem getTheorem(ITheorem theorem){
-		return theorems.get(theorem);
-	}
-
 	@Override
 	public String toString(){
 		return ("ModelMachine: "+machineRoot.getComponentName());
@@ -428,13 +404,6 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 				inv.addProofObligation(po);
 			}
 		}
-		if (source instanceof ITheorem) {
-			if (theorems.containsKey(source)) {
-				ModelTheorem thm = theorems.get(source);
-				po.addTheorem(thm);
-				thm.addProofObligation(po);
-			}
-		}
 		if (source instanceof IEvent) {
 			if (events.containsKey(source) ){
 				ModelEvent evt = events.get(source);
@@ -450,9 +419,6 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 		}
 		if (element instanceof IEvent ) {
 			return events.get(element);
-		}
-		if (element instanceof ITheorem ) {
-			return theorems.get(element);
 		}
 		return null;
 	}
@@ -495,9 +461,6 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 		}
 		if (type == IVariable.ELEMENT_TYPE) {
 			return new Object[]{variable_node};
-		}
-		if (type == ITheorem.ELEMENT_TYPE) {
-			return new Object[]{theorem_node};
 		}
 		if (type == IEvent.ELEMENT_TYPE) {
 			return new Object[]{event_node};

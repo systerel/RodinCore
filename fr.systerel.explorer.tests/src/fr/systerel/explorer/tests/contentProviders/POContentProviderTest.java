@@ -24,7 +24,6 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ITheorem;
 import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.RodinDBException;
@@ -77,9 +76,8 @@ public class POContentProviderTest extends ExplorerTest {
 	protected static IInvariant inv1;
 	protected static IEvent event1;
 	protected static IEvent event2;
-	protected static ITheorem thm1;
-	protected static ITheorem thm2;
-	protected static ITheorem thm3;
+	protected static IAxiom thm1;
+	protected static IInvariant thm2;
 	
 	
 
@@ -109,7 +107,7 @@ public class POContentProviderTest extends ExplorerTest {
 
 		//create some elements in the context
 		axiom1 = createAxiom(c0, "axiom1");
-		thm1 = createTheorem(c0, "thm1");
+		thm1 = createAxiomTheorem(c0, "thm1");
 	}
 
 	private void setUpMachine() throws RodinDBException {
@@ -120,7 +118,7 @@ public class POContentProviderTest extends ExplorerTest {
 		// create some elements in the machine
 		inv1 = createInvariant(m0, "inv1");
 		event1 = createEvent(m0, "event1");
-		thm2 =  createTheorem(m0, "thm2");
+		thm2 =  createInvariantTheorem(m0, "thm2");
 	}
 
 	private void createNodes() {

@@ -24,7 +24,6 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ITheorem;
 import org.eventb.core.seqprover.IConfidence;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,8 +51,8 @@ public class StatisticsCopyActionTest extends ExplorerTest {
 	protected static IEvent event1;
 	protected static IEvent event2;
 	protected static IAxiom axiom1;
-	protected static ITheorem thm1;
-	protected static ITheorem thm2;
+	protected static IAxiom thm1;
+	protected static IInvariant thm2;
 	protected static IPORoot m0IPO;
 	protected static IPSRoot m0IPS;
 	protected static IPORoot c0IPO;
@@ -224,7 +223,7 @@ public class StatisticsCopyActionTest extends ExplorerTest {
 
 		// create some elements in the context
 		axiom1 = createAxiom(c0, "axiom1");
-		thm1 =  createTheorem(c0, "thm1");
+		thm1 =  createAxiomTheorem(c0, "thm1");
 	}
 
 
@@ -293,7 +292,7 @@ public class StatisticsCopyActionTest extends ExplorerTest {
 		inv2 = createInvariant(m0, "inv2");
 		event1 = createEvent(m0, "event1");
 		event2 = createEvent(m0, "event2");
-		thm2 =  createTheorem(m0, "thm2");
+		thm2 =  createInvariantTheorem(m0, "thm2");
 	}
 	
 	

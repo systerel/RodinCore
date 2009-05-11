@@ -16,8 +16,10 @@ import static org.eventb.core.EventBAttributes.EXPRESSION_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.THEOREM_ATTRIBUTE;
 import static org.eventb.core.IConvergenceElement.Convergence.ORDINARY;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.eventb.core.EventBAttributes;
@@ -30,7 +32,6 @@ import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
-import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.internal.ui.Pair;
@@ -43,6 +44,12 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 class OperationBuilder {
+
+	private boolean[] makeFilledArray(int length, boolean value) {
+		final boolean[] result = new boolean[length];
+		Arrays.fill(result, value);
+		return result;
+	}
 
 	private static final String KEYWORD_PARTITION = "partition";
 	
@@ -61,17 +68,18 @@ class OperationBuilder {
 	}
 
 	public OperationTree createAxiom(IInternalElement root, String[] labels,
-			String[] predicates) {
+			String[] predicates, boolean[] isTheorem) {
 		assertLengthEquals(labels, predicates);
 		return createElementLabelPredicate(root, IAxiom.ELEMENT_TYPE, labels,
-				predicates);
+				predicates, isTheorem);
 	}
 
 	public OperationTree createConstant(IInternalElement root,
 			String identifier, String[] labels, String[] predicates) {
 		final OperationNode cmd = new OperationNode();
 		cmd.addCommande(createConstant(root, identifier));
-		cmd.addCommande(createAxiom(root, labels, predicates));
+		final boolean[] isTheorem = makeFilledArray(labels.length, false);
+		cmd.addCommande(createAxiom(root, labels, predicates, isTheorem));
 		return cmd;
 	}
 
@@ -81,9 +89,9 @@ class OperationBuilder {
 	 * @param predicate
 	 */
 	public OperationTree createAxiom(IInternalElement root, String label,
-			String predicate) {
+			String predicate, boolean isTheorem) {
 		return createElementLabelPredicate(root, IAxiom.ELEMENT_TYPE, label,
-				predicate);
+				predicate, isTheorem);
 	}
 
 	public OperationTree createConstant(IInternalElement root, String identifier) {
@@ -139,7 +147,7 @@ class OperationBuilder {
 			axmPred.append('}');
 		}
 		axmPred.append(")");
-		return createAxiom(root, null, axmPred.toString());
+		return createAxiom(root, null, axmPred.toString(), false);
 	}
 
 	/**
@@ -170,6 +178,12 @@ class OperationBuilder {
 		return new CreateInitialisation(root, actName, actSub);
 	}
 
+	/**
+	 * Return an Operation to create a list of invariants.
+	 * <p>
+	 * The theorem attribute is implicitly <code>false</code>.
+	 * </p>
+	 */
 	private OperationNode createInvariantList(IMachineRoot root,
 			Collection<Pair<String, String>> invariants) {
 		OperationNode cmd = new OperationNode();
@@ -177,7 +191,7 @@ class OperationBuilder {
 		if (invariants != null) {
 			for (Pair<String, String> pair : invariants) {
 				cmd.addCommande(createInvariant(root, pair.getFirst(), pair
-						.getSecond()));
+						.getSecond(), false));
 			}
 		}
 		return cmd;
@@ -187,19 +201,6 @@ class OperationBuilder {
 			String identifier) {
 		return createElementOneStringAttribute(root, IVariable.ELEMENT_TYPE,
 				null, IDENTIFIER_ATTRIBUTE, identifier);
-	}
-
-	public OperationTree createTheorem(IInternalElement root, String label,
-			String predicate) {
-		return createElementLabelPredicate(root, ITheorem.ELEMENT_TYPE, label,
-				predicate);
-	}
-
-	public OperationTree createTheorem(IInternalElement root, String[] labels,
-			String[] predicates) {
-		assertLengthEquals(labels, predicates);
-		return createElementLabelPredicate(root, ITheorem.ELEMENT_TYPE, labels,
-				predicates);
 	}
 
 	private <T extends IInternalElement> OperationCreateElement getCreateElement(
@@ -212,16 +213,16 @@ class OperationBuilder {
 	}
 
 	public OperationTree createInvariant(IMachineRoot root, String label,
-			String predicate) {
+			String predicate, boolean isTheorem) {
 		return createElementLabelPredicate(root, IInvariant.ELEMENT_TYPE,
-				label, predicate);
+				label, predicate, isTheorem);
 	}
 
 	public OperationNode createInvariant(IMachineRoot root, String[] labels,
-			String[] predicates) {
+			String[] predicates, boolean[] isTheorem) {
 		assertLengthEquals(labels, predicates);
 		return createElementLabelPredicate(root, IInvariant.ELEMENT_TYPE,
-				labels, predicates);
+				labels, predicates, isTheorem);
 	}
 
 	private OperationCreateElement createEvent(IMachineRoot root, String label) {
@@ -243,8 +244,9 @@ class OperationBuilder {
 			String[] actSubstitutions) {
 		OperationCreateElement op = createEvent(root, name);
 		op.addSubCommande(createParameter(root, varIdentifiers));
+		final boolean[] isTheorem = makeFilledArray(grdLabels.length, false);
 		op.addSubCommande(createElementLabelPredicate(root,
-				IGuard.ELEMENT_TYPE, grdLabels, grdPredicates));
+				IGuard.ELEMENT_TYPE, grdLabels, grdPredicates, isTheorem));
 		op.addSubCommande(createElementTwoStringAttribute(root,
 				IAction.ELEMENT_TYPE, LABEL_ATTRIBUTE, ASSIGNMENT_ATTRIBUTE,
 				actLabels, actSubstitutions));
@@ -305,7 +307,6 @@ class OperationBuilder {
 			IInternalElement parent, IInternalElementType<T> typeElement,
 			IAttributeType.String type1, IAttributeType.String type2,
 			String[] string1, String[] string2) {
-		assertLengthEquals(string1, string2);
 		OperationNode op = new OperationNode();
 		for (int i = 0; i < string1.length; i++) {
 			op.addCommande(createElementTwoStringAttribute(parent, typeElement,
@@ -320,21 +321,32 @@ class OperationBuilder {
 	 */
 	private <T extends IInternalElement> OperationCreateElement createElementLabelPredicate(
 			IInternalElement parent, IInternalElementType<T> type,
-			String label, String predicate) {
+			String label, String predicate, boolean isTheorem) {
+		final IAttributeValue[] values;
 		if (label == null) {
-			return createElementOneStringAttribute(parent, type, null,
-					PREDICATE_ATTRIBUTE, predicate);
+			values = new IAttributeValue[] {
+					PREDICATE_ATTRIBUTE.makeValue(predicate), //
+					THEOREM_ATTRIBUTE.makeValue(isTheorem), //
+			};
+		} else {
+			values = new IAttributeValue[] {
+					LABEL_ATTRIBUTE.makeValue(label), //
+					PREDICATE_ATTRIBUTE.makeValue(predicate), //
+					THEOREM_ATTRIBUTE.makeValue(isTheorem), //
+			};
 		}
-		return createElementTwoStringAttribute(parent, type, LABEL_ATTRIBUTE,
-				PREDICATE_ATTRIBUTE, label, predicate);
-
+		return getCreateElement(parent, type, null, values);
 	}
 
 	private <T extends IInternalElement> OperationNode createElementLabelPredicate(
 			IInternalElement parent, IInternalElementType<T> type,
-			String[] labels, String[] predicates) {
-		return createElementTwoStringAttribute(parent, type, LABEL_ATTRIBUTE,
-				PREDICATE_ATTRIBUTE, labels, predicates);
+			String[] labels, String[] predicates, boolean[] isTheorem) {
+		final OperationNode op = new OperationNode();
+		for (int i = 0; i < labels.length; i++) {
+			op.addCommande(createElementLabelPredicate(parent, type, labels[i],
+					predicates[i], isTheorem[i]));
+		}
+		return op;
 	}
 
 	private OperationCreateElement createParameter(IMachineRoot root,
@@ -417,7 +429,7 @@ class OperationBuilder {
 	public OperationTree createGuard(IInternalElement event, String label,
 			String predicate, IInternalElement sibling) {
 		return createElementLabelPredicate(event, IGuard.ELEMENT_TYPE, label,
-				predicate);
+				predicate, false);
 	}
 
 	public OperationTree createAction(IInternalElement event, String label,

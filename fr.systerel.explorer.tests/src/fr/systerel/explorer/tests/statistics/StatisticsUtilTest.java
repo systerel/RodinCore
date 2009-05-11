@@ -20,7 +20,6 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.junit.After;
 import org.junit.Before;
@@ -146,7 +145,7 @@ public class StatisticsUtilTest extends ExplorerTest {
 		IInvariant inv = createInvariant(m0, "inv");
 		IInvariant inv2 = createInvariant(m0, "inv2");
 		IEvent evt = createEvent(m0, "evt");
-		ITheorem thm = createTheorem(m0, "thm");
+		IInvariant thm = createInvariantTheorem(m0, "thm");
 		Object[] input = {inv, inv2, evt, thm};
 		assertNull(StatisticsUtil.isValidSelection(input));
 	}

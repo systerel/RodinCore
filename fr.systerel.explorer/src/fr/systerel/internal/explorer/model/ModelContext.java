@@ -26,7 +26,6 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ITheorem;
 import org.eventb.core.IWitness;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElementType;
@@ -48,7 +47,6 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	public final ModelElementNode carrierset_node;
 	public final ModelElementNode constant_node;
 	public final ModelElementNode axiom_node;
-	public final ModelElementNode theorem_node;
 	public final ModelElementNode po_node;
 
 	/**
@@ -67,7 +65,6 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	private IContextRoot contextRoot;
 
 	private HashMap<IAxiom, ModelAxiom> axioms = new HashMap<IAxiom, ModelAxiom>();
-	private HashMap<ITheorem, ModelTheorem> theorems = new HashMap<ITheorem, ModelTheorem>();
 	// CarrierSets and Constants are not taken into the model
 	// because the don't have any proof obligations.
 	
@@ -98,7 +95,6 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 		carrierset_node = new ModelElementNode(ICarrierSet.ELEMENT_TYPE, this);
 		constant_node = new ModelElementNode(IConstant.ELEMENT_TYPE, this);
 		axiom_node = new ModelElementNode(IAxiom.ELEMENT_TYPE, this);
-		theorem_node = new ModelElementNode(ITheorem.ELEMENT_TYPE, this);
 		po_node = new ModelElementNode(IPSStatus.ELEMENT_TYPE, this);
 	}
 	
@@ -152,13 +148,9 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	 */
 	public void processChildren(){
 		axioms.clear();
-		theorems.clear();
 		try {
 			for (IAxiom axm : contextRoot.getAxioms()) {
 				addAxiom(axm);
-			}
-			for (ITheorem thm :  contextRoot.getTheorems()) {
-				addTheorem(thm);
 			}
 		} catch (RodinDBException e) {
 			UIUtils.log(e, "when accessing axioms and theorems of "+contextRoot);
@@ -235,14 +227,6 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	 */
 	public void addAxiom(IAxiom axiom) {
 		axioms.put(axiom, new ModelAxiom(axiom, this));
-	}
-	
-	/**
-	 * Adds a new ModelTheorem to this Context
-	 * @param theorem The Theorem to add.
-	 */
-	public void addTheorem(ITheorem theorem) {
-		theorems.put(theorem, new ModelTheorem(theorem, this));
 	}
 	
 	/**
@@ -362,10 +346,6 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 		return contextRoot;
 	}
 
-	public ModelTheorem getTheorem(ITheorem theorem){
-		return theorems.get(theorem);
-	}
-
 	public ModelAxiom getAxiom(IAxiom axiom){
 		return axioms.get(axiom);
 	}
@@ -431,13 +411,6 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 		if (source instanceof IWitness ) {
 			source = source.getParent();
 		}
-		if (source instanceof ITheorem) {
-			if (theorems.containsKey(source)) {
-				ModelTheorem thm = theorems.get(source);
-				po.addTheorem(thm);
-				thm.addProofObligation(po);
-			}
-		}
 		if (source instanceof IAxiom) {
 			if (axioms.containsKey(source)) {
 				ModelAxiom axm = axioms.get(source);
@@ -451,9 +424,6 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	public IModelElement getModelElement(IRodinElement element) {
 		if (element instanceof IAxiom ) {
 			return axioms.get(element);
-		}
-		if (element instanceof ITheorem ) {
-			return theorems.get(element);
 		}
 		return null;
 	}
@@ -495,9 +465,6 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 		}
 		if (type == IConstant.ELEMENT_TYPE) {
 			return new Object[]{constant_node};
-		}
-		if (type == ITheorem.ELEMENT_TYPE) {
-			return new Object[]{theorem_node};
 		}
 		if (type == ICarrierSet.ELEMENT_TYPE) {
 			return new Object[]{carrierset_node};

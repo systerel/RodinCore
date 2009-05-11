@@ -19,6 +19,7 @@ import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.THEOREM_ATTRIBUTE;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,12 +41,12 @@ import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
-import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.eventbeditor.elementdesc.AttributeDesc;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ToggleDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ComboDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
@@ -65,6 +66,7 @@ import org.eventb.internal.ui.eventbeditor.manipulation.PredicateAttributeManipu
 import org.eventb.internal.ui.eventbeditor.manipulation.RefinesEventAbstractEventLabelAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.RefinesMachineAbstractMachineNameAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.SeesContextNameAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.manipulation.TheoremAttributeManipulation;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElementType;
 
@@ -95,8 +97,7 @@ public class TestElementDescRegistry extends TestCase {
 		assertChildrens("Test children", desc.getChildTypes(),
 				IRefinesMachine.ELEMENT_TYPE, ISeesContext.ELEMENT_TYPE,
 				IVariable.ELEMENT_TYPE, IInvariant.ELEMENT_TYPE,
-				ITheorem.ELEMENT_TYPE, IVariant.ELEMENT_TYPE,
-				IEvent.ELEMENT_TYPE);
+				IVariant.ELEMENT_TYPE, IEvent.ELEMENT_TYPE);
 
 	}
 
@@ -112,8 +113,7 @@ public class TestElementDescRegistry extends TestCase {
 
 		assertChildrens("Test children", desc.getChildTypes(),
 				IExtendsContext.ELEMENT_TYPE, ICarrierSet.ELEMENT_TYPE,
-				IConstant.ELEMENT_TYPE, IAxiom.ELEMENT_TYPE,
-				ITheorem.ELEMENT_TYPE);
+				IConstant.ELEMENT_TYPE, IAxiom.ELEMENT_TYPE);
 
 	}
 
@@ -176,31 +176,15 @@ public class TestElementDescRegistry extends TestCase {
 
 		final AttributeDesc expectedLabel = getLabelDesc();
 		final AttributeDesc expectedPredicate = getPredicateDesc();
+		final AttributeDesc expectedTheorem = getTheoremDesc();
 		final AttributeDesc expectedComment = getCommentedDesc();
 
 		assertElementDesc(desc, "INVARIANTS", "",
 				"icons/full/obj16/inv_obj.gif", "inv", expectedLabel, 1);
 
 		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
-				expectedLabel, expectedPredicate, expectedComment);
-
-		assertChildrens("Test children", desc.getChildTypes(), noChildren);
-
-	}
-
-	public void testGetTheoremDesc() {
-		final IElementDesc desc = registry
-				.getElementDesc(ITheorem.ELEMENT_TYPE);
-
-		final AttributeDesc expectedLabel = getLabelDesc();
-		final AttributeDesc expectedPredicate = getPredicateDesc();
-		final AttributeDesc expectedComment = getCommentedDesc();
-
-		assertElementDesc(desc, "THEOREMS", "", "icons/full/obj16/thm_obj.gif",
-				"thm", expectedLabel, 1);
-
-		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
-				expectedLabel, expectedPredicate, expectedComment);
+				expectedLabel, expectedPredicate, expectedTheorem,
+				expectedComment);
 
 		assertChildrens("Test children", desc.getChildTypes(), noChildren);
 
@@ -390,13 +374,15 @@ public class TestElementDescRegistry extends TestCase {
 
 		final AttributeDesc expectedLabel = getLabelDesc();
 		final AttributeDesc expectedPredicate = getPredicateDesc();
+		final AttributeDesc expectedTheorem = getTheoremDesc();
 		final AttributeDesc expectedComment = getCommentedDesc();
 
 		assertElementDesc(desc, "AXIOMS", "", "icons/full/obj16/axm_obj.gif",
 				"axm", expectedLabel, 1);
 
 		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
-				expectedLabel, expectedPredicate, expectedComment);
+				expectedLabel, expectedPredicate, expectedTheorem,
+				expectedComment);
 
 		assertChildrens("Test children", desc.getChildTypes(), noChildren);
 
@@ -516,4 +502,8 @@ public class TestElementDescRegistry extends TestCase {
 				"Text foreground");
 	}
 
+	private ToggleDesc getTheoremDesc() {
+		return new ToggleDesc(new TheoremAttributeManipulation(),
+				THEOREM_ATTRIBUTE);
+	}
 }

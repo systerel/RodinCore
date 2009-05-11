@@ -17,6 +17,7 @@ package org.eventb.internal.ui.eventbeditor.elementdesc;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
@@ -42,6 +43,15 @@ import org.rodinp.core.IInternalElement;
  *         </p>
  */
 public abstract class AbstractEditComposite implements IEditComposite {
+
+	protected static final Color WHITE = EventBSharedColor
+			.getSystemColor(SWT.COLOR_WHITE);
+	protected static final Color BLACK = EventBSharedColor
+			.getSystemColor(SWT.COLOR_BLACK);
+	protected static final Color RED = EventBSharedColor
+			.getSystemColor(SWT.COLOR_RED);
+	protected static final Color YELLOW = EventBSharedColor
+			.getSystemColor(SWT.COLOR_YELLOW);
 
 	// The Event-B Editor.
 	IEventBEditor<?> fEditor;

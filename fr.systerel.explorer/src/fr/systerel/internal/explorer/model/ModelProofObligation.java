@@ -35,7 +35,6 @@ public class ModelProofObligation implements Comparable<ModelProofObligation> {
 
 	private List<ModelInvariant> invariants = new LinkedList<ModelInvariant>();
 	private List<ModelEvent> events = new LinkedList<ModelEvent>();
-	private List<ModelTheorem> theorems = new LinkedList<ModelTheorem>();
 	private List<ModelAxiom> axioms = new LinkedList<ModelAxiom>();
 	private ModelMachine machine; // A proof obligation can either belong to a
 									// context or a machine
@@ -118,14 +117,6 @@ public class ModelProofObligation implements Comparable<ModelProofObligation> {
 
 	public String getName() {
 		return internal_sequent.getElementName();
-	}
-
-	public void addTheorem(ModelTheorem th) {
-		theorems.add(th);
-	}
-
-	public ModelTheorem[] getTheorems() {
-		return theorems.toArray(new ModelTheorem[theorems.size()]);
 	}
 
 	public void addAxiom(ModelAxiom ax) {

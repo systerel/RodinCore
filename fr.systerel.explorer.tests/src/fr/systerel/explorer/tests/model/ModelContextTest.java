@@ -23,7 +23,6 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ITheorem;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +40,7 @@ public class ModelContextTest extends ExplorerTest {
 
 	protected static IContextRoot contextRoot;
 	protected static ModelContext context;
-	protected static ITheorem thm1;
+	protected static IAxiom thm1;
 	protected static IAxiom axm1;
 	protected static IPORoot ipo;
 	protected static IPSRoot ips;
@@ -73,7 +72,7 @@ public class ModelContextTest extends ExplorerTest {
 		context =  new ModelContext(contextRoot);
 
 		//add some elements to the context
-		thm1 = createTheorem(contextRoot, "thm1");
+		thm1 = createAxiomTheorem(contextRoot, "thm1");
 		axm1 = createAxiom(contextRoot, "axm1");
 		
 		setUpProofObligations();
@@ -102,7 +101,7 @@ public class ModelContextTest extends ExplorerTest {
 		context.processChildren();
 		//check that the children have been transformed into ModelElements
 		assertModel(axm1, context.getAxiom(axm1));
-		assertModel(thm1, context.getTheorem(thm1));
+		assertModel(thm1, context.getAxiom(thm1));
 	}
 
 	@Test
@@ -113,7 +112,7 @@ public class ModelContextTest extends ExplorerTest {
 		assertModelPOSequent(context.getProofObligations(), sequent1, sequent2);
 
 		//check that the proof obligations have been added to the appropriate children
-		assertModelPOSequent(context.getTheorem(thm1).getProofObligations(), sequent1);
+		assertModelPOSequent(context.getAxiom(thm1).getProofObligations(), sequent1);
 		assertModelPOSequent(context.getAxiom(axm1).getProofObligations(), sequent1, sequent2);
 	}
 

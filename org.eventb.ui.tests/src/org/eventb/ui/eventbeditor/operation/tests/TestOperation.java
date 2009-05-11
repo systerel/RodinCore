@@ -23,7 +23,6 @@ import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
-import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
@@ -48,8 +47,8 @@ public class TestOperation extends OperationTest {
 	public void testChangeAttribute() throws Exception {
 		final IAttributeManipulation factory = new PredicateAttributeManipulation();
 
-		IInvariant invariant = createInvariant(mch, "myInvariant", "predicate");
-
+		final IInvariant invariant = createInvariant(mch, "myInvariant",
+				"predicate", false);
 		// after execute and redo, only event are renamed
 		addInvariant(mchElement, "myInvariant", "predicateIsRenamed");
 
@@ -76,11 +75,11 @@ public class TestOperation extends OperationTest {
 
 		final IInternalElement[] elements = new IInternalElement[] {
 				createEvent(mchSource, "event"),
-				createInvariant(mchSource, "inv2", "predicate"),
+				createInvariant(mchSource, "inv2", "predicate", false),
 				createRefinesMachineClause(mchSource, "mch2") };
 
 		// at beginning and after undo
-		createInvariant(mch, "myInvariant", "predicate");
+		createInvariant(mch, "myInvariant", "predicate", false);
 		createVariant(mch, "expression");
 
 		// after execute and redo
@@ -131,9 +130,9 @@ public class TestOperation extends OperationTest {
 	@Test
 	public void testCreateAxiomWizard() throws Exception {
 		addElementWithLabelPredicate(ctxElement, IAxiom.ELEMENT_TYPE, "axiom",
-				"predicate");
+				"predicate", false);
 		final AtomicOperation op = OperationFactory.createAxiomWizard(ctx,
-				"axiom", "predicate");
+				"axiom", "predicate", false);
 
 		verifyOperation(op, ctx, ctxElement);
 	}
@@ -142,11 +141,13 @@ public class TestOperation extends OperationTest {
 	public void testCreateAxiomWizardMultiple() throws Exception {
 		final String[] labels = new String[] { "label1", "label2", "label3" };
 		final String[] predicates = new String[] { "pred1", "pred2", "pred3" };
+		final boolean[] isTheorem = new boolean[] { true, false, true };
+		
 		addElementWithLabelPredicate(ctxElement, IAxiom.ELEMENT_TYPE, labels,
-				predicates);
+				predicates, isTheorem);
 
 		final AtomicOperation op = OperationFactory.createAxiomWizard(ctx,
-				labels, predicates);
+				labels, predicates, isTheorem);
 
 		verifyOperation(op, ctx, ctxElement);
 	}
@@ -176,10 +177,11 @@ public class TestOperation extends OperationTest {
 	public void testCreateConstantWizard() throws Exception {
 		final String[] labels = new String[] { "axm1", "axm2", "axm3" };
 		final String[] predicates = new String[] { "prd1", "prd2", "prd3" };
+		final boolean[] isTheorem = new boolean[] { false, false, false};
 		addElementWithIdentifier(ctxElement, IConstant.ELEMENT_TYPE,
 				"myConstant");
 		addElementWithLabelPredicate(ctxElement, IAxiom.ELEMENT_TYPE, labels,
-				predicates);
+				predicates, isTheorem);
 
 		final AtomicOperation op = OperationFactory.createConstantWizard(ctx,
 				"myConstant", labels, predicates);
@@ -214,8 +216,8 @@ public class TestOperation extends OperationTest {
 		addElementWithIdentifier(ctxElement, ICarrierSet.ELEMENT_TYPE, "mySet");
 		addElementWithIdentifier(ctxElement, IConstant.ELEMENT_TYPE, elements);
 		addElementWithLabelPredicate(ctxElement, IAxiom.ELEMENT_TYPE, "axm1",
-				"partition(mySet, {e1}, {e2}, {e3})");
-		
+				"partition(mySet, {e1}, {e2}, {e3})", false);
+
 		final AtomicOperation op = OperationFactory.createEnumeratedSetWizard(
 				ctx, "mySet", elements);
 
@@ -229,6 +231,7 @@ public class TestOperation extends OperationTest {
 		final String[] grdNames = new String[] { "grd1", "grd2" };
 		final String[] grdPredicates = new String[] { "var1 : NAT",
 				"var2 : NAT" };
+		final boolean[] isTheorem = new boolean[] { false, false, false};
 		final String[] actNames = new String[] { "act1", "act2" };
 		final String[] actSubstitutions = new String[] { "a := var1",
 				"b := var2" };
@@ -237,7 +240,7 @@ public class TestOperation extends OperationTest {
 		addElementWithIdentifier(eventElement, IParameter.ELEMENT_TYPE,
 				varNames);
 		addElementWithLabelPredicate(eventElement, IGuard.ELEMENT_TYPE,
-				grdNames, grdPredicates);
+				grdNames, grdPredicates, isTheorem);
 		addAction(eventElement, actNames, actSubstitutions);
 
 		final AtomicOperation op = OperationFactory.createEvent(mch, "evt",
@@ -258,7 +261,7 @@ public class TestOperation extends OperationTest {
 
 		final Element eventElement = addEventElement(mchElement, "event");
 		addElementWithLabelPredicate(eventElement, IGuard.ELEMENT_TYPE,
-				"myGuard", "a : NAT");
+				"myGuard", "a : NAT", false);
 
 		final AtomicOperation op = OperationFactory.createGuard(event,
 				"myGuard", "a : NAT", null);
@@ -269,9 +272,9 @@ public class TestOperation extends OperationTest {
 	@Test
 	public void testCreateInvariantWizard() throws Exception {
 		addElementWithLabelPredicate(mchElement, IInvariant.ELEMENT_TYPE,
-				"myInvariant", "myPredicate");
+				"myInvariant", "myPredicate", false);
 		final AtomicOperation op = OperationFactory.createInvariantWizard(mch,
-				"myInvariant", "myPredicate");
+				"myInvariant", "myPredicate", false);
 
 		verifyOperation(op, mch, mchElement);
 	}
@@ -280,34 +283,12 @@ public class TestOperation extends OperationTest {
 	public void testCreateInvariantWizardMultiple() throws Exception {
 		final String[] labels = new String[] { "inv1", "inv2", "inv3" };
 		final String[] predicates = new String[] { "pred1", "pred2", "pred3" };
+		final boolean[] isTheorem = new boolean[] { true, false, true };
 		addElementWithLabelPredicate(mchElement, IInvariant.ELEMENT_TYPE,
-				labels, predicates);
+				labels, predicates, isTheorem);
 
 		final AtomicOperation op = OperationFactory.createInvariantWizard(mch,
-				labels, predicates);
-
-		verifyOperation(op, mch, mchElement);
-	}
-
-	@Test
-	public void testCreateTheoremWizard() throws Exception {
-		addElementWithLabelPredicate(mchElement, ITheorem.ELEMENT_TYPE,
-				"myTheorem", "myPredicate");
-		final AtomicOperation op = OperationFactory.createTheoremWizard(mch,
-				"myTheorem", "myPredicate");
-
-		verifyOperation(op, mch, mchElement);
-	}
-
-	@Test
-	public void testCreateTheoremWizardMultiple() throws Exception {
-		final String[] labels = new String[] { "thm1", "thm2", "thm3" };
-		final String[] predicates = new String[] { "pred1", "pred2", "pred3" };
-		addElementWithLabelPredicate(mchElement, ITheorem.ELEMENT_TYPE, labels,
-				predicates);
-
-		final AtomicOperation op = OperationFactory.createTheoremWizard(mch,
-				labels, predicates);
+				labels, predicates, isTheorem);
 
 		verifyOperation(op, mch, mchElement);
 	}
@@ -360,8 +341,8 @@ public class TestOperation extends OperationTest {
 		// after execute and redo, there is one invariant
 		addInvariant(mchElement, "inv2", "predicate2");
 
-		IInvariant inv = createInvariant(mch, "inv1", "predicate1");
-		createInvariant(mch, "inv2", "predicate2");
+		IInvariant inv = createInvariant(mch, "inv1", "predicate1", false);
+		createInvariant(mch, "inv2", "predicate2", false);
 
 		final AtomicOperation op = OperationFactory.deleteElement(inv);
 
@@ -378,9 +359,11 @@ public class TestOperation extends OperationTest {
 		// after execute and redo, there is one invariant
 		addInvariant(mchElement, "inv2", "predicate2");
 
-		final IInvariant inv1 = createInvariant(mch, "inv1", "predicate1");
-		createInvariant(mch, "inv2", "predicate2");
-		final IInvariant inv3 = createInvariant(mch, "inv3", "predicate3");
+		final IInvariant inv1 = createInvariant(mch, "inv1", "predicate1",
+				false);
+		createInvariant(mch, "inv2", "predicate2", false);
+		final IInvariant inv3 = createInvariant(mch, "inv3", "predicate3",
+				false);
 
 		final AtomicOperation op = OperationFactory.deleteElement(
 				new IInternalElement[] { inv1, inv3 }, true);
@@ -400,10 +383,12 @@ public class TestOperation extends OperationTest {
 		addInvariant(mchElement, "inv3", "predicate");
 		addInvariant(mchElement, "inv4", "predicate");
 
-		final IInvariant moved = createInvariant(mch, "inv1", "predicate");
-		createInvariant(mch, "inv2", "predicate");
-		final IInvariant nextSibling = createInvariant(mch, "inv3", "predicate");
-		createInvariant(mch, "inv4", "predicate");
+		final IInvariant moved = createInvariant(mch, "inv1", "predicate",
+				false);
+		createInvariant(mch, "inv2", "predicate", false);
+		final IInvariant nextSibling = createInvariant(mch, "inv3",
+				"predicate", false);
+		createInvariant(mch, "inv4", "predicate", false);
 
 		final AtomicOperation op = OperationFactory.move(mch, moved, mch,
 				nextSibling);
@@ -424,10 +409,10 @@ public class TestOperation extends OperationTest {
 		addInvariant(mchElement, "inv2", "predicate");
 		addInvariant(mchElement, "inv3", "predicate");
 
-		final IInvariant nextSibling = createInvariant(mch, "inv1", "predicate");
-		createInvariant(mch, "inv2", "predicate");
-		createInvariant(mch, "inv3", "predicate");
-		final IInvariant moved = createInvariant(mch, "inv4", "predicate");
+		final IInvariant nextSibling = createInvariant(mch, "inv1", "predicate", false);
+		createInvariant(mch, "inv2", "predicate", false);
+		createInvariant(mch, "inv3", "predicate", false);
+		final IInvariant moved = createInvariant(mch, "inv4", "predicate", false);
 
 		final AtomicOperation op = OperationFactory.move(mch, moved, mch,
 				nextSibling);
@@ -450,7 +435,7 @@ public class TestOperation extends OperationTest {
 		createEvent(mch, "myEvent3");
 		createEvent(mch, "myEvent4");
 		createGuard(event, "myGuard", "predicate"); // ILabeledElement
-		createInvariant(mch, "myInvariant", "predicate"); // ILabeledElement
+		createInvariant(mch, "myInvariant", "predicate", false); // ILabeledElement
 
 		// after execute and redo, only event are renamed
 		final Element eventElement = addEventElement(mchElement, "evt1");
@@ -458,7 +443,7 @@ public class TestOperation extends OperationTest {
 		addEventElement(mchElement, "evt3");
 		addEventElement(mchElement, "evt4");
 		addElementWithLabelPredicate(eventElement, IGuard.ELEMENT_TYPE,
-				"myGuard", "predicate");
+				"myGuard", "predicate", false);
 		addInvariant(mchElement, "myInvariant", "predicate");
 
 		final AtomicOperation op = OperationFactory.renameElements(mch,

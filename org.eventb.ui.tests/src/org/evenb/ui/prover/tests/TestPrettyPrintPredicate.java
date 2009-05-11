@@ -1,5 +1,6 @@
 package org.evenb.ui.prover.tests;
 
+import static org.eventb.core.ast.LanguageVersion.V2;
 import junit.framework.TestCase;
 
 import org.eventb.core.ast.IParseResult;
@@ -11,7 +12,7 @@ public class TestPrettyPrintPredicate extends TestCase {
 
 	private void predTest(String msg, String predString,
 			String expectedPrettyPrint) {
-		IParseResult parseResult = Lib.ff.parsePredicate(predString);
+		IParseResult parseResult = Lib.ff.parsePredicate(predString, V2, null);
 		assertFalse("Parse Successful", parseResult.hasProblem());
 		Predicate parsedPred = parseResult.getParsedPredicate();
 

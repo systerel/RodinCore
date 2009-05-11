@@ -26,7 +26,6 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ITheorem;
 import org.eventb.core.IWitness;
 import org.junit.After;
 import org.junit.Before;
@@ -46,7 +45,7 @@ public class ModelMachineTest extends ExplorerTest {
 	protected static IMachineRoot machineRoot;
 	protected static ModelMachine machine;
 	protected static IInvariant inv1;
-	protected static ITheorem thm1;
+	protected static IInvariant thm1;
 	protected static IEvent evt1;
 	protected static IEvent evt2;
 	protected static IPORoot ipo;
@@ -112,7 +111,7 @@ public class ModelMachineTest extends ExplorerTest {
 		//check that the children have been transformed into ModelElements
 		assertModel(evt1, machine.getEvent(evt1));
 		assertModel(inv1, machine.getInvariant(inv1));
-		assertModel(thm1, machine.getTheorem(thm1));
+		assertModel(thm1, machine.getInvariant(thm1));
 	}
 
 	@Test
@@ -125,7 +124,7 @@ public class ModelMachineTest extends ExplorerTest {
 		//check that the proof obligations have been added to the appropriate children
 		assertModelPOSequent(machine.getInvariant(inv1).getProofObligations(), sequent1);
 		assertModelPOSequent(machine.getEvent(evt1).getProofObligations(), sequent1);
-		assertModelPOSequent(machine.getTheorem(thm1).getProofObligations(), sequent5);
+		assertModelPOSequent(machine.getInvariant(thm1).getProofObligations(), sequent5);
 		assertModelPOSequent(machine.getEvent(evt2).getProofObligations(), sequent3, sequent4, sequent2);
 	}
 
@@ -175,7 +174,7 @@ public class ModelMachineTest extends ExplorerTest {
 	private void addElementsToMachine() throws RodinDBException {
 		//add some elements to the machine
 		inv1 = createInvariant(machineRoot, "inv1");
-		thm1 = createTheorem(machineRoot, "thm1");
+		thm1 = createInvariantTheorem(machineRoot, "thm1");
 		evt1 = createEvent(machineRoot, "evt1");
 		
 		//create an event with guards, witness and action

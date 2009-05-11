@@ -12,8 +12,8 @@
 package fr.systerel.explorer.tests.statistics;
 
 import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.swt.widgets.TableColumn;
 import org.eventb.core.IAxiom;
@@ -26,7 +26,6 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ITheorem;
 import org.eventb.core.seqprover.IConfidence;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,8 +60,6 @@ public class StatisticsDetailsComparatorTest extends ExplorerTest {
 	protected static IEvent event1;
 	protected static IEvent event2;
 	protected static IAxiom axiom1;
-	protected static ITheorem thm1;
-	protected static ITheorem thm2;
 	protected static IPORoot m0IPO;
 	protected static IPSRoot m0IPS;
 	protected static IPORoot c0IPO;

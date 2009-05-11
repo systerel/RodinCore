@@ -25,6 +25,7 @@
                <element ref="childRelation"/>
                <element ref="attributeRelation"/>
                <element ref="autoNaming"/>
+               <element ref="toggleAttribute"/>
             </choice>
          </sequence>
          <attribute name="point" type="string" use="required">
@@ -339,6 +340,40 @@
                <documentation>
                   Element type of the element, must be the unique ID of a Rodin internal element type (see extension point org.rodinp.core.internalElementTypes).
                </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="toggleAttribute">
+      <annotation>
+         <documentation>
+            Describes how to graphically display a Rodin attribute of type boolean.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Unique identifier for this attribute description.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="typeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Id of the Rodin attribute type to which this description applies (see extension point org.rodinp.core.attributeTypes).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of a class which will be used for creating/editing the attribute. The class must extends &lt;samp&gt;org.eventb.internal.ui.eventbeditor.manipulation.AbstractBooleanManipulation&lt;/samp&gt; and also must have a default contructor.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="org.eventb.internal.ui.eventbeditor.manipulation.AbstractBooleanManipulation:org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>

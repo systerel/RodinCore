@@ -29,45 +29,44 @@ public class OperationFactory {
 		// non instanciable class
 	}
 
-	public static AtomicOperation createTheoremWizard(IInternalElement parent,
-			String label, String content) {
+	/**
+	 * return an Operation to create an axiom
+	 * 
+	 * @param root
+	 *            root element in which the new element is inserted
+	 * @param label
+	 *            if null the label of created element is the next free label.
+	 * @param predicate
+	 *            the predicate
+	 * @param isTheorem
+	 *            true if the axiom is a theorem
+	 */
+	public static AtomicOperation createAxiomWizard(IContextRoot root,
+			String label, String predicate, boolean isTheorem) {
 		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(
-				getRodinFileUndoContext(parent), builder.createTheorem(parent,
-						label, content));
-		op.setLabel("Create Theorem");
-		return op;
-	}
-
-	public static AtomicOperation createTheoremWizard(IInternalElement root,
-			String[] labels, String[] contents) {
-		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(
-				getRodinFileUndoContext(root), builder.createTheorem(root,
-						labels, contents));
-		op.setLabel("Create Theorem");
+		AtomicOperation op = new AtomicOperation(getRodinFileUndoContext(root),
+				builder.createAxiom(root, label, predicate, isTheorem));
+		op.setLabel("Create Axiom");
 		return op;
 	}
 
 	/**
-	 * @param label
-	 *            null to set a default label
-	 * @param predicate
+	 * return an Operation to create a list of axioms
+	 * 
+	 * @param root
+	 *            root element in which the new element is inserted
+	 * @param labels
+	 *            the labels.
+	 * @param predicates
+	 *            the predicates
+	 * @param isTheorem
+	 *            true if the axioms is a theorem
 	 */
 	public static AtomicOperation createAxiomWizard(IContextRoot root,
-			String label, String predicate) {
+			String[] labels, String[] predicates, boolean[] isTheorem) {
 		final OperationBuilder builder = new OperationBuilder();
 		AtomicOperation op = new AtomicOperation(getRodinFileUndoContext(root),
-				builder.createAxiom(root, label, predicate));
-		op.setLabel("Create Theorem");
-		return op;
-	}
-
-	public static AtomicOperation createAxiomWizard(IContextRoot root,
-			String[] labels, String[] predicates) {
-		final OperationBuilder builder = new OperationBuilder();
-		AtomicOperation op = new AtomicOperation(getRodinFileUndoContext(root),
-				builder.createAxiom(root, labels, predicates));
+				builder.createAxiom(root, labels, predicates, isTheorem));
 		op.setLabel("Create Axiom");
 		return op;
 	}
@@ -120,31 +119,45 @@ public class OperationFactory {
 	}
 
 	/**
-	 * return an Operation to create an Element with default name and label
+	 * return an Operation to create an invariant
 	 * 
 	 * @param root
-	 *            root element the new element is inserted
+	 *            root element in which the new element is inserted
 	 * @param label
 	 *            if null the label of created element is the next free label.
 	 * @param content
 	 *            the predicate
+	 * @param isTheorem
+	 *            true if the invariant is a theorem
 	 */
 	public static AtomicOperation createInvariantWizard(IMachineRoot root,
-			String label, String content) {
+			String label, String content, boolean isTheorem) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation op = new AtomicOperation(
 				getRodinFileUndoContext(root), builder.createInvariant(root,
-						label, content));
+						label, content, isTheorem));
 		op.setLabel("Create Invariant");
 		return op;
 	}
 
+	/**
+	 * return an Operation to create a list of invariants
+	 * 
+	 * @param root
+	 *            root element in which the new element is inserted
+	 * @param labels
+	 *            the labels.
+	 * @param contents
+	 *            the predicates
+	 * @param isTheorem
+	 *            true if the invariant is a theorem
+	 */
 	public static AtomicOperation createInvariantWizard(IMachineRoot root,
-			String[] labels, String[] contents) {
+			String[] labels, String[] contents, boolean[] isTheorem) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation op = new AtomicOperation(
 				getRodinFileUndoContext(root), builder.createInvariant(root,
-						labels, contents));
+						labels, contents, isTheorem));
 		op.setLabel("Create Invariant");
 		return op;
 	}

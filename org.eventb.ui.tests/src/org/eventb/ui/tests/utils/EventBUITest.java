@@ -309,6 +309,7 @@ public abstract class EventBUITest extends TestCase {
 		guard.create(null, null);
 		guard.setLabel(label, null);
 		guard.setPredicateString(pred, null);
+		guard.setTheorem(false, null);
 		return guard;
 	}
 
@@ -390,18 +391,21 @@ public abstract class EventBUITest extends TestCase {
 	 *            the label of the invariant
 	 * @param predicate
 	 *            the predicate of the invariant
+	 * @param theorem
+	 *            true if the invariant is a theorem
 	 * @return the newly created invariant
 	 * @throws RodinDBException
 	 *             if some problems occurs
 	 */
 	protected IInvariant createInvariant(IMachineRoot mch, String label,
-			String predicate) throws RodinDBException {
+			String predicate, boolean theorem) throws RodinDBException {
 		String childName = EventBUtils.getFreeChildName(mch,
 				IInvariant.ELEMENT_TYPE, "i_variant"); //$NON-NLS-1$
 		IInvariant invariant = mch.getInvariant(childName);
 		invariant.create(null, null);
 		invariant.setLabel(label, null);
 		invariant.setPredicateString(predicate, null);
+		invariant.setTheorem(theorem, null);
 		return invariant;
 	}
 	

@@ -32,7 +32,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
-import org.eventb.core.ITheorem;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.ElementChangedEvent;
@@ -130,17 +129,6 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons {
 		};
 		filterAxmAtion.setChecked(false);
 		filterAxmAtion.setToolTipText("Filter axiom elements");
-		
-		final Action filterThmAtion = new Action("thm", Action.AS_CHECK_BOX) {
-			@Override
-			public void run() {
-				TreeViewer viewer = ((TreeViewer) SyntheticContextViewSection.this
-						.getViewer());
-				viewer.refresh();
-			}
-		};
-		filterThmAtion.setChecked(false);
-		filterThmAtion.setToolTipText("Filter theorem elements");
 
 		ViewerFilter elementFilter = new ViewerFilter() {
 
@@ -165,10 +153,6 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons {
 					if (filterAxmAtion.isChecked()) return false;
 					else return true;
 				}
-				else if (element instanceof ITheorem) {
-					if (filterThmAtion.isChecked()) return false;
-					else return true;
-				}
 				return true;
 			}
 
@@ -177,7 +161,6 @@ public class SyntheticContextViewSection extends EventBTreePartWithButtons {
 		form.getToolBarManager().add(filterSetAtion);
 		form.getToolBarManager().add(filterCstAction);
 		form.getToolBarManager().add(filterAxmAtion);
-		form.getToolBarManager().add(filterThmAtion);
 		form.updateToolBar();
 
 		final SyntheticContextMasterSectionActionGroup actionSet = (SyntheticContextMasterSectionActionGroup) this

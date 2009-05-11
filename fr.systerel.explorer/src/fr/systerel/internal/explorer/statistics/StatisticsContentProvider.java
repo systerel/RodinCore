@@ -21,7 +21,6 @@ import org.eventb.core.IAxiom;
 import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ITheorem;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -84,9 +83,6 @@ public class StatisticsContentProvider implements IStructuredContentProvider {
 			return true;
 		}
 		if (type == IEvent.ELEMENT_TYPE) {
-			return true;
-		}
-		if (type == ITheorem.ELEMENT_TYPE) {
 			return true;
 		}
 		if (type == IPSStatus.ELEMENT_TYPE) {

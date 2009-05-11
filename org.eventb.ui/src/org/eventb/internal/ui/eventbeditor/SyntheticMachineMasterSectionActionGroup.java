@@ -51,8 +51,6 @@ public class SyntheticMachineMasterSectionActionGroup extends
 
 	protected Action addInvariant;
 
-	protected Action addTheorem;
-
 	protected Action addEvent;
 
 	protected Action addParameter;
@@ -107,18 +105,6 @@ public class SyntheticMachineMasterSectionActionGroup extends
 		addInvariant
 				.setImageDescriptor(EventBImage
 						.getImageDescriptor(IEventBSharedImages.IMG_NEW_INVARIANTS_PATH));
-
-		// Add a theorem.
-		addTheorem = new Action() {
-			@Override
-			public void run() {
-				EventBEditorUtils.addTheorem(editor, viewer);
-			}
-		};
-		addTheorem.setText("New &Theorem");
-		addTheorem.setToolTipText("Create a new theorem");
-		addTheorem.setImageDescriptor(EventBImage
-				.getImageDescriptor(IEventBSharedImages.IMG_NEW_THEOREMS_PATH));
 
 		// Add an event.
 		addEvent = new Action() {
@@ -316,7 +302,6 @@ public class SyntheticMachineMasterSectionActionGroup extends
 			menu.add(new Separator());
 			menu.add(addVariable);
 			menu.add(addInvariant);
-			menu.add(addTheorem);
 			menu.add(addEvent);
 			if (ssel.size() == 1) {
 				Object obj = ssel.getFirstElement();

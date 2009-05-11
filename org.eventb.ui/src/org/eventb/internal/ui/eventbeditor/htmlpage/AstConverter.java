@@ -11,6 +11,7 @@
  *     Systerel - replaced inherited by extended, event variable by parameter
  *     Systerel - separation of file and root element
  *     Systerel - added implicit children for events
+ *     Systerel - added theorem attribute of IDerivedPredicateElement
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.htmlpage;
 
@@ -25,6 +26,7 @@ import org.eventb.core.ICarrierSet;
 import org.eventb.core.ICommentedElement;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextRoot;
+import org.eventb.core.IDerivedPredicateElement;
 import org.eventb.core.IEvent;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.IGuard;
@@ -34,7 +36,6 @@ import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
-import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
@@ -89,20 +90,14 @@ public abstract class AstConverter {
 	protected String END_VARIABLE_IDENTIFIER_SEPARATOR = null;
 	protected String BEGIN_INVARIANT_LABEL = "";
 	protected String END_INVARIANT_LABEL = "";
+	protected String BEGIN_THEOREM_LABEL = "";
+	protected String END_THEOREM_LABEL = "";
 	protected String BEGIN_INVARIANT_LABEL_SEPARATOR = null;
 	protected String END_INVARIANT_LABEL_SEPARATOR = ":";
 	protected String BEGIN_INVARIANT_PREDICATE = "";
 	protected String END_INVARIANT_PREDICATE = "";
 	protected String BEGIN_INVARIANT_PREDICATE_SEPARATOR = null;
 	protected String END_INVARIANT_PREDICATE_SEPARATOR = null;
-	protected String BEGIN_THEOREM_LABEL = "";
-	protected String END_THEOREM_LABEL = "";
-	protected String BEGIN_THEOREM_LABEL_SEPARATOR = null;
-	protected String END_THEOREM_LABEL_SEPARATOR = ":";
-	protected String BEGIN_THEOREM_PREDICATE = "";
-	protected String END_THEOREM_PREDICATE = "";
-	protected String BEGIN_THEOREM_PREDICATE_SEPARATOR = null;
-	protected String END_THEOREM_PREDICATE_SEPARATOR = null;
 	protected String BEGIN_EVENT_LABEL = "";
 	protected String END_EVENT_LABEL = "";
 	protected String BEGIN_EVENT_LABEL_SEPARATOR = null;
@@ -195,7 +190,6 @@ public abstract class AstConverter {
 			IMachineRoot mch = (IMachineRoot) root ;
 			addVariables(mch, monitor);
 			addInvariants(mch, monitor);
-			addTheorems(mch, monitor);
 			addEvents(mch, monitor);
 			addVariant(mch, monitor);
 		} else if (root instanceof IContextRoot) {
@@ -203,7 +197,6 @@ public abstract class AstConverter {
 			addCarrierSets(ctx, monitor);
 			addConstants(ctx, monitor);
 			addAxioms(ctx, monitor);
-			addTheorems(ctx, monitor);
 		}
 		masterKeyword("END");
 		htmlString.append(FOOTER);
@@ -388,8 +381,11 @@ public abstract class AstConverter {
 			for (IInvariant inv: invs) {
 				beginLevel1();
 				try {
-					appendInvariantLabel(makeHyperlink(inv.getHandleIdentifier(), wrapString(inv
-							.getLabel())));
+					final String handle = inv.getHandleIdentifier();
+					final String label = wrapString(inv.getLabel());
+					final String hyperlink = makeHyperlink(handle, label);
+					final boolean isTheorem = isTheorem(inv);
+					appendInvariantLabel(hyperlink, isTheorem);
 					appendInvariantPredicate(wrapString(inv.getPredicateString()));
 				} catch (RodinDBException e) {
 					EventBEditorUtils.debugAndLogError(e,
@@ -504,8 +500,10 @@ public abstract class AstConverter {
 			for (IAxiom axm: axms) {
 				beginLevel1();
 				try {
-					appendAxiomLabel(makeHyperlink(axm.getHandleIdentifier(), wrapString(axm
-							.getLabel())));
+					final String handle = axm.getHandleIdentifier();
+					final String label = wrapString(axm.getLabel());
+					final boolean isTheorem = isTheorem(axm);
+					appendAxiomLabel(makeHyperlink(handle, label), isTheorem);
 					appendAxiomPredicate(wrapString(axm.getPredicateString()));
 				} catch (RodinDBException e) {
 					EventBEditorUtils.debugAndLogError(e,
@@ -518,43 +516,9 @@ public abstract class AstConverter {
 		}
 	}
 
-
-	/**
-	 * This private helper method adds component's information about theorems to
-	 * the content string
-	 * <p>
-	 * 
-	 * @param root
-	 *            the root of rodin input file
-	 * @param monitor
-	 *            a progress monitor
-	 */
-	private void addTheorems(IInternalElement root, IProgressMonitor monitor) {
-		ITheorem[] thms;
-		try {
-			thms = root.getChildrenOfType(ITheorem.ELEMENT_TYPE);
-		} catch (RodinDBException e) {
-			EventBEditorUtils.debugAndLogError(e, "Cannot get theorems for "
-					+ root.getRodinFile().getElementName());
-			return;
-		}
-		if (thms.length != 0) {
-			masterKeyword("THEOREMS");
-			for (ITheorem thm: thms) {
-				beginLevel1();
-				try {
-					appendTheoremLabel(makeHyperlink(thm.getHandleIdentifier(),
-							wrapString(thm.getLabel())));
-					appendTheoremPredicate(wrapString(thm.getPredicateString()));
-				} catch (RodinDBException e) {
-					EventBEditorUtils.debugAndLogError(e,
-							"Cannot get details for theorem "
-									+ thm.getElementName());
-				}
-				addComment(thm);
-				endLevel1();
-			}
-		}
+	private boolean isTheorem(IDerivedPredicateElement elem)
+			throws RodinDBException {
+		return elem.hasTheorem() && elem.isTheorem();
 	}
 
 	/**
@@ -906,14 +870,17 @@ public abstract class AstConverter {
 				END_CONSTANT_IDENTIFIER_SEPARATOR); 
 	}
 
-	private void appendInvariantLabel(String label) {
-		append(label, BEGIN_INVARIANT_LABEL, END_INVARIANT_LABEL,
-				BEGIN_INVARIANT_LABEL_SEPARATOR, END_INVARIANT_LABEL_SEPARATOR);
-	}
-
-	private void appendTheoremLabel(String label) {
-		append(label, BEGIN_THEOREM_LABEL, END_THEOREM_LABEL,
-				BEGIN_THEOREM_LABEL_SEPARATOR, END_THEOREM_LABEL_SEPARATOR);
+	private void appendInvariantLabel(String label, boolean isTheorem) {
+		final String begin, end;
+		if (isTheorem) {
+			begin = BEGIN_THEOREM_LABEL;
+			end = END_THEOREM_LABEL;
+		} else {
+			begin = BEGIN_INVARIANT_LABEL;
+			end = END_INVARIANT_LABEL;
+		}
+		append(label, begin, end, BEGIN_INVARIANT_LABEL_SEPARATOR,
+				END_INVARIANT_LABEL_SEPARATOR);
 	}
 
 	private void appendEventLabel(String label) {
@@ -960,9 +927,17 @@ public abstract class AstConverter {
 				BEGIN_WITNESS_LABEL_SEPARATOR, END_WITNESS_LABEL_SEPARATOR);
 	}
 
-	private void appendAxiomLabel(String label) {
-		append(label, BEGIN_AXIOM_LABEL, END_AXIOM_LABEL,
-				BEGIN_AXIOM_LABEL_SEPARATOR, END_AXIOM_LABEL_SEPARATOR);
+	private void appendAxiomLabel(String label, boolean isTheorem) {
+		final String begin, end;
+		if (isTheorem) {
+			begin = BEGIN_THEOREM_LABEL;
+			end = END_THEOREM_LABEL;
+		} else {
+			begin = BEGIN_AXIOM_LABEL;
+			end = END_AXIOM_LABEL;
+		}
+		append(label, begin, end, BEGIN_AXIOM_LABEL_SEPARATOR,
+				END_AXIOM_LABEL_SEPARATOR);
 	}
 
 	private void appendAbstractEventLabel(String label) {
@@ -1011,12 +986,6 @@ public abstract class AstConverter {
 		append(predicate, BEGIN_INVARIANT_PREDICATE, END_INVARIANT_PREDICATE,
 				BEGIN_INVARIANT_PREDICATE_SEPARATOR,
 				END_INVARIANT_PREDICATE_SEPARATOR);
-	}
-
-	private void appendTheoremPredicate(String predicate) {
-		append(predicate, BEGIN_THEOREM_PREDICATE, END_THEOREM_PREDICATE,
-				BEGIN_THEOREM_PREDICATE_SEPARATOR,
-				END_THEOREM_PREDICATE_SEPARATOR);
 	}
 
 	private void appendWitnessPredicate(String predicate) {

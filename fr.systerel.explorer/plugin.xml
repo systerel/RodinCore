@@ -49,9 +49,6 @@
                   pattern="fr.systerel.explorer.navigator.content.variable">
             </contentExtension>
             <contentExtension
-                  pattern="fr.systerel.explorer.navigator.content.theorem">
-            </contentExtension>
-            <contentExtension
                   pattern="fr.systerel.explorer.navigator.content.axiom">
             </contentExtension>
             <contentExtension
@@ -214,39 +211,6 @@
          </commonSorter>
       </navigatorContent>
       <navigatorContent
-            contentProvider="fr.systerel.internal.explorer.navigator.contentProviders.TheoremContentProvider"
-            id="fr.systerel.explorer.navigator.content.theorem"
-            labelProvider="fr.systerel.internal.explorer.navigator.contentProviders.RodinLabelProvider"
-            name="%navigatorContent.theorems"
-            priority="normal">
-         <triggerPoints>
-            <or>
-               <instanceof
-                     value="org.eventb.core.IMachineRoot">
-               </instanceof>
-               <instanceof
-                     value="org.eventb.core.IContextRoot">
-               </instanceof>
-               <instanceof
-                     value="fr.systerel.explorer.IElementNode">
-               </instanceof>
-            </or>
-         </triggerPoints>
-         <possibleChildren>
-            <or>
-               <instanceof
-                     value="org.eventb.core.ITheorem">
-               </instanceof>
-               <instanceof
-                     value="fr.systerel.explorer.IElementNode">
-               </instanceof>
-            </or>
-         </possibleChildren>
-         <commonSorter
-               class="fr.systerel.internal.explorer.navigator.sorters.AntiSorter">
-         </commonSorter>
-      </navigatorContent>
-      <navigatorContent
             contentProvider="fr.systerel.internal.explorer.navigator.contentProviders.AxiomContentProvider"
             id="fr.systerel.explorer.navigator.content.axiom"
             labelProvider="fr.systerel.internal.explorer.navigator.contentProviders.RodinLabelProvider"
@@ -350,9 +314,6 @@
                      value="org.eventb.core.IAxiom">
                </instanceof>
                <instanceof
-                     value="org.eventb.core.ITheorem">
-               </instanceof>
-               <instanceof
                      value="org.eventb.core.IEvent">
                </instanceof>
                <instanceof
@@ -413,9 +374,6 @@
                      value="org.eventb.core.IConstant">
                </instanceof>
                <instanceof
-                     value="org.eventb.core.ITheorem">
-               </instanceof>
-               <instanceof
                      value="org.eventb.core.IVariable">
                </instanceof>
             </or>
@@ -443,9 +401,6 @@
                </instanceof>
                <instanceof
                      value="org.eventb.core.IAxiom">
-               </instanceof>
-               <instanceof
-                     value="org.eventb.core.ITheorem">
                </instanceof>
             </or>
          </enablement>

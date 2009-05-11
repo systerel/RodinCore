@@ -12,6 +12,11 @@ public abstract class AbstractAttributeManipulation implements
 						+ attribute);
 	}
 
+	protected void logNotPossibleValues(IAttributeType attribute, String value) {
+		UIUtils.log(null, value + " is not a possible value for attribute "
+				+ attribute);
+	}
+
 	protected void logCantRemove(IAttributeType attribute) {
 		UIUtils.log(null, "Attribute " + attribute + " cannot be removed");
 	}

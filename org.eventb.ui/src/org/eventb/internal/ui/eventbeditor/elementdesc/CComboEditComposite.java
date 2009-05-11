@@ -29,7 +29,6 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
@@ -73,10 +72,6 @@ public class CComboEditComposite extends AbstractEditComposite {
 	}
 
 	private void displayMarkers() {
-		Color WHITE = EventBSharedColor.getSystemColor(SWT.COLOR_WHITE);
-		Color BLACK = EventBSharedColor.getSystemColor(SWT.COLOR_BLACK);
-		Color RED = EventBSharedColor.getSystemColor(SWT.COLOR_RED);
-		Color YELLOW = EventBSharedColor.getSystemColor(SWT.COLOR_YELLOW);
 		try {
 			int maxSeverity = MarkerUIRegistry.getDefault()
 				.getMaxMarkerSeverity(element, attrDesc.getAttributeType());

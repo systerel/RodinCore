@@ -20,12 +20,11 @@
 .masterKeyword	{font-size:18px; color:red; margin-left:10px; font-weight:bold; margin-bottom:5px; margin-top:15px;font-family:"Brave Sans Mono";}
 .secondaryKeyword {font-size:16px; color:blue; margin-left:30px; font-weight:bold; margin-bottom:2px; margin-top:5px;font-family:"Brave Sans Mono";}
 .componentName {font-size:16px; color:black; font-weight:bold;font-family:"Brave Sans Mono";}
-.comment	{font-size:16px; color:green; padding-left:25px; font-weight:italic;font-family:"Brave Sans Mono";}
+.comment	{font-size:16px; color:green; padding-left:25px; font-style:italic;font-family:"Brave Sans Mono";}
 .variableIdentifier {font-size:16px; color:black;font-family:"Brave Sans Mono";}
 .invariantLabel {font-size:16px; color:green;font-family:"Brave Sans Mono";}
 .invariantPredicate {font-size:16px; color:black;font-family:"Brave Sans Mono";}
-.theoremLabel {font-size:16px; color:green;font-family:"Brave Sans Mono";}
-.theoremPredicate {font-size:16px; color:black;font-family:"Brave Sans Mono";}
+.theoremLabel {font-size:16px; color:green;font-style:italic;font-family:"Brave Sans Mono";}
 .eventLabel {font-size:16px; color:green; font-weight:bold;font-family:"Brave Sans Mono";}
 .extended  {font-size:16px; color:black; font-weight:bold;font-family:"Brave Sans Mono";}
 .convergence  {font-size:16px; color:black; font-weight:bold;font-family:"Brave Sans Mono";}

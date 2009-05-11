@@ -43,7 +43,6 @@ import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
-import org.eventb.core.ITheorem;
 import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
 import org.junit.After;
@@ -181,22 +180,33 @@ public class ExplorerTest {
 		return element;
 	}
 
-	protected IAxiom createAxiom(IInternalElement parent,
-			String name) throws RodinDBException {
-			IAxiom axiom =  createInternalElement(parent,
-					IAxiom.ELEMENT_TYPE, name);
-			axiom.setLabel(name, null);
-			return axiom;
-		}
+	protected IAxiom createAxiom(IInternalElement parent, String name)
+			throws RodinDBException {
+		final IAxiom axiom = createInternalElement(parent, IAxiom.ELEMENT_TYPE,
+				name);
+		axiom.setLabel(name, null);
+		axiom.setTheorem(false, null);
+		return axiom;
+	}
 
-	protected ITheorem createTheorem(IInternalElement parent,
+	protected IAxiom createAxiomTheorem(IInternalElement parent, String name)
+			throws RodinDBException {
+		final IAxiom theorem = createInternalElement(parent,
+				IAxiom.ELEMENT_TYPE, name);
+		theorem.setLabel(name, null);
+		theorem.setTheorem(true, null);
+		return theorem;
+	}
+
+	protected IInvariant createInvariantTheorem(IInternalElement parent,
 			String name) throws RodinDBException {
-			ITheorem theorem =  createInternalElement(parent,
-					ITheorem.ELEMENT_TYPE, name);
-			theorem.setLabel(name, null);
-			return theorem;
-		}
-	
+		final IInvariant theorem = createInternalElement(parent,
+				IInvariant.ELEMENT_TYPE, name);
+		theorem.setLabel(name, null);
+		theorem.setTheorem(true, null);
+		return theorem;
+	}
+
 	protected IVariable createVariable(IInternalElement parent,
 		String name) throws RodinDBException {
 		IVariable variable =  createInternalElement(parent,
@@ -213,12 +223,13 @@ public class ExplorerTest {
 			return event;
 	}
 	
-	protected IInvariant createInvariant(IInternalElement parent,
-			String name) throws RodinDBException {
-			IInvariant invariant =  createInternalElement(parent,
-					IInvariant.ELEMENT_TYPE, name);
-			invariant.setLabel(name, null);
-			return invariant;
+	protected IInvariant createInvariant(IInternalElement parent, String name)
+			throws RodinDBException {
+		final IInvariant invariant = createInternalElement(parent,
+				IInvariant.ELEMENT_TYPE, name);
+		invariant.setLabel(name, null);
+		invariant.setTheorem(false, null);
+		return invariant;
 	}
 	
 
