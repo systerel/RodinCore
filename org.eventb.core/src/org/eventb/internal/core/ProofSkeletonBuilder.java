@@ -29,7 +29,6 @@ import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
-import org.eventb.internal.core.seqprover.TypeChecker;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -38,7 +37,6 @@ import org.rodinp.core.RodinDBException;
  * @author Nicolas Beauger
  *
  */
-@SuppressWarnings("restriction")
 public class ProofSkeletonBuilder {
 
 	private static final FormulaFactory ff = FormulaFactory.getDefault();
@@ -80,12 +78,13 @@ public class ProofSkeletonBuilder {
 		return ProverFactory.makeSequent(env, hyps, goal);
 	}
 
-	private static boolean check(final ITypeEnvironment env,
-			final Collection<Predicate> hyps, final Predicate goal) {
-		final TypeChecker checker = new TypeChecker(env);
-		checker.checkFormula(goal);
-		checker.checkFormulas(hyps);
-		return !checker.hasTypeCheckError();
+	private static boolean check(ITypeEnvironment env,
+			Collection<Predicate> hyps, Predicate goal) {
+		boolean hasProblem = goal.typeCheck(env).hasProblem();
+		for (Predicate hyp : hyps) {
+			hasProblem |= hyp.typeCheck(env).hasProblem();
+		}
+		return !hasProblem;
 	}
 	
 	/**
