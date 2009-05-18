@@ -62,7 +62,7 @@ class OperationBuilder {
 			boolean force) {
 		OperationNode op = new OperationNode();
 		for (IInternalElement element : elements) {
-			op.addCommande(deleteElement(element, force));
+			op.addCommand(deleteElement(element, force));
 		}
 		return op;
 	}
@@ -77,9 +77,9 @@ class OperationBuilder {
 	public OperationTree createConstant(IInternalElement root,
 			String identifier, String[] labels, String[] predicates) {
 		final OperationNode cmd = new OperationNode();
-		cmd.addCommande(createConstant(root, identifier));
+		cmd.addCommand(createConstant(root, identifier));
 		final boolean[] isTheorem = makeFilledArray(labels.length, false);
-		cmd.addCommande(createAxiom(root, labels, predicates, isTheorem));
+		cmd.addCommand(createAxiom(root, labels, predicates, isTheorem));
 		return cmd;
 	}
 
@@ -114,10 +114,10 @@ class OperationBuilder {
 	public OperationTree createEnumeratedSet(IInternalElement root,
 			String identifier, String[] elements) {
 		OperationNode cmd = new OperationNode();
-		cmd.addCommande(createCarrierSet(root, identifier));
+		cmd.addCommand(createCarrierSet(root, identifier));
 		if (elements.length > 0) {
-			cmd.addCommande(createElementsOfEnumeratedSet(root, elements));
-			cmd.addCommande(createPartition(root, identifier, elements));
+			cmd.addCommand(createElementsOfEnumeratedSet(root, elements));
+			cmd.addCommand(createPartition(root, identifier, elements));
 		}
 		return cmd;
 	}
@@ -157,7 +157,7 @@ class OperationBuilder {
 			String[] elements) {
 		final OperationNode cmd = new OperationNode();
 		for (String element : elements) {
-			cmd.addCommande(createConstant(root, element));
+			cmd.addCommand(createConstant(root, element));
 		}
 		return cmd;
 	}
@@ -166,9 +166,9 @@ class OperationBuilder {
 			Collection<Pair<String, String>> invariant, String actName,
 			String actSub) {
 		OperationNode cmd = new OperationNode();
-		cmd.addCommande(createVariable(root, varName));
-		cmd.addCommande(createInvariantList(root, invariant));
-		cmd.addCommande(createInitialisation(root, actName, actSub));
+		cmd.addCommand(createVariable(root, varName));
+		cmd.addCommand(createInvariantList(root, invariant));
+		cmd.addCommand(createInitialisation(root, actName, actSub));
 		return cmd;
 	}
 
@@ -190,7 +190,7 @@ class OperationBuilder {
 
 		if (invariants != null) {
 			for (Pair<String, String> pair : invariants) {
-				cmd.addCommande(createInvariant(root, pair.getFirst(), pair
+				cmd.addCommand(createInvariant(root, pair.getFirst(), pair
 						.getSecond(), false));
 			}
 		}
@@ -276,7 +276,7 @@ class OperationBuilder {
 		assert string != null;
 		OperationNode op = new OperationNode();
 		for (int i = 0; i < string.length; i++) {
-			op.addCommande(createElementOneStringAttribute(root, typeElement,
+			op.addCommand(createElementOneStringAttribute(root, typeElement,
 					null, type, string[i]));
 		}
 		return op;
@@ -309,7 +309,7 @@ class OperationBuilder {
 			String[] string1, String[] string2) {
 		OperationNode op = new OperationNode();
 		for (int i = 0; i < string1.length; i++) {
-			op.addCommande(createElementTwoStringAttribute(parent, typeElement,
+			op.addCommand(createElementTwoStringAttribute(parent, typeElement,
 					type1, type2, string1[i], string2[i]));
 		}
 		return op;
@@ -343,7 +343,7 @@ class OperationBuilder {
 			String[] labels, String[] predicates, boolean[] isTheorem) {
 		final OperationNode op = new OperationNode();
 		for (int i = 0; i < labels.length; i++) {
-			op.addCommande(createElementLabelPredicate(parent, type, labels[i],
+			op.addCommand(createElementLabelPredicate(parent, type, labels[i],
 					predicates[i], isTheorem[i]));
 		}
 		return op;
@@ -359,7 +359,7 @@ class OperationBuilder {
 			String[] varIdentifiers) {
 		OperationNode op = new OperationNode();
 		for (String identifier : varIdentifiers) {
-			op.addCommande(createParameter(root, identifier));
+			op.addCommand(createParameter(root, identifier));
 		}
 		return op;
 	}
@@ -393,11 +393,11 @@ class OperationBuilder {
 	 */
 	private OperationTree getCommandCreateElement(IInternalElement element) {
 		final OperationNode cmd = new OperationNode();
-		cmd.addCommande(new CreateIdenticalElement(element));
+		cmd.addCommand(new CreateIdenticalElement(element));
 		try {
 			if (element.hasChildren()) {
 				cmd
-						.addCommande(getCommandCreateChildren(element
+						.addCommand(getCommandCreateChildren(element
 								.getChildren()));
 			}
 		} catch (RodinDBException e) {
@@ -414,7 +414,7 @@ class OperationBuilder {
 		final OperationNode cmd = new OperationNode();
 		for (IRodinElement rodinElement : children) {
 			element = (IInternalElement) rodinElement;
-			cmd.addCommande(getCommandCreateElement(element));
+			cmd.addCommand(getCommandCreateElement(element));
 		}
 		return cmd;
 	}
@@ -455,7 +455,7 @@ class OperationBuilder {
 			IRodinElement[] elements) {
 		OperationNode op = new OperationNode();
 		for (IRodinElement element : elements) {
-			op.addCommande(copyElement(parent, (IInternalElement) element));
+			op.addCommand(copyElement(parent, (IInternalElement) element));
 		}
 		return op;
 	}
@@ -472,13 +472,13 @@ class OperationBuilder {
 		int counter = 1;
 		try {
 			for (IInternalElement element : root.getChildrenOfType(type)) {
-				op.addCommande(changeAttribute(factory, element, prefix
+				op.addCommand(changeAttribute(factory, element, prefix
 						+ counter));
 				counter++;
 			}
 			for (IRodinElement element : root.getChildren()) {
 				final IInternalElement ie = (IInternalElement) element;
-				op.addCommande(renameElement(ie, type, factory, prefix));
+				op.addCommand(renameElement(ie, type, factory, prefix));
 			}
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block

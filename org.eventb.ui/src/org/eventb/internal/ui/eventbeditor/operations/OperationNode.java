@@ -69,7 +69,7 @@ class OperationNode extends AbstractOperation implements OperationTree,
 		return status;
 	}
 
-	public void addCommande(OperationTree cmd) {
+	public void addCommand(OperationTree cmd) {
 		if (cmd != this) {
 			childrens.add(cmd);
 		}

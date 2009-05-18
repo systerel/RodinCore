@@ -92,7 +92,7 @@ public class OperationCreateElement extends AbstractOperation implements
 	
 	public void addSubCommande(OperationTree cmd) {
 		if (cmd != this) {
-			operationChildren.addCommande(cmd);
+			operationChildren.addCommand(cmd);
 		}
 	}
 }
