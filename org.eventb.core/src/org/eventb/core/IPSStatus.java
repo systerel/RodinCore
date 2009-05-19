@@ -25,10 +25,10 @@ import org.rodinp.core.RodinDBException;
  * </p>
  * 
  * <p>
- * Some attributes in this internal element (i.e. confidence and hasManualProof) 
- * are cached versions of the corresponding proof in case it exists. Clients writing
- * into the PSFile must make sure that they are identical to the attributes stored in 
- * the corresponding proof. 
+ * Some attributes in this internal element (i.e. confidence and hasManualProof)
+ * are cached versions of the corresponding proof in case it exists. Clients
+ * writing into the PSFile must make sure that they are identical to the
+ * attributes stored in the corresponding proof.
  * </p>
  * 
  * <p>
@@ -93,8 +93,8 @@ public interface IPSStatus extends IInternalElement, IPRProofInfoElement,
 	 * @param value
 	 *            The value to set to
 	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
 	 * 
 	 * @throws RodinDBException
 	 * @see #isBroken()
@@ -112,6 +112,8 @@ public interface IPSStatus extends IInternalElement, IPRProofInfoElement,
 	 * <p>
 	 * This is a cached attribute in case there is an associated proof.
 	 * </p>
+	 * Note: If you want to know if the associated PO has been successfully
+	 * discharged you also need to check isBroken()
 	 * 
 	 * @return the confidence associated to this proof obligation
 	 * 
@@ -140,19 +142,20 @@ public interface IPSStatus extends IInternalElement, IPRProofInfoElement,
 	 * @throws RodinDBException
 	 */
 	boolean getHasManualProof() throws RodinDBException;
-	
+
 	/**
-	 * Copies the cached proof information attributes described in {@link IPRProofInfoElement}
-	 * from the associated proof in case it exists.
-	 *
- 	 * <p>
-	 * In case the associated proof does not exist, all proof information attributes are removed.
+	 * Copies the cached proof information attributes described in
+	 * {@link IPRProofInfoElement} from the associated proof in case it exists.
+	 * 
+	 * <p>
+	 * In case the associated proof does not exist, all proof information
+	 * attributes are removed.
 	 * </p>
-	 *
+	 * 
 	 * 
 	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
 	 * 
 	 * @throws RodinDBException
 	 * @see IPRProofInfoElement
@@ -183,7 +186,6 @@ public interface IPSStatus extends IInternalElement, IPRProofInfoElement,
 	@Deprecated
 	boolean hasManualProof() throws RodinDBException;
 
-	
 	/**
 	 * Sets the confidence associated to this proof obligation.
 	 * <p>
@@ -195,8 +197,8 @@ public interface IPSStatus extends IInternalElement, IPRProofInfoElement,
 	 * </p>
 	 * 
 	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
 	 * 
 	 * @throws RodinDBException
 	 * @see #getProof()
@@ -206,29 +208,31 @@ public interface IPSStatus extends IInternalElement, IPRProofInfoElement,
 	 */
 	@Deprecated
 	void setProofConfidence(IProgressMonitor monitor) throws RodinDBException;
-	
+
 	/**
 	 * Sets whether this proof obligation has been discharged manually.
 	 * 
 	 * @param value
 	 *            The value to set to
 	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
 	 * 
-	 * <p>
-	 * This is a cached attribute in case there is an associated proof.
-	 * </p>
+	 *            <p>
+	 *            This is a cached attribute in case there is an associated
+	 *            proof.
+	 *            </p>
 	 * 
 	 * @throws RodinDBException
 	 * @see #hasManualProof()
 	 * 
-	 * @deprecated set the manual proof in {@link IPRProof} and then use {@link #copyProofInfo(IProgressMonitor)}
+	 * @deprecated set the manual proof in {@link IPRProof} and then use
+	 *             {@link #copyProofInfo(IProgressMonitor)}
 	 */
 	@Deprecated
 	void setManualProof(boolean value, IProgressMonitor monitor)
 			throws RodinDBException;
-	
+
 	/**
 	 * Returns the confidence associated to this proof obligation. The
 	 * confidence is stored in an attribute which contains a local copy of the
