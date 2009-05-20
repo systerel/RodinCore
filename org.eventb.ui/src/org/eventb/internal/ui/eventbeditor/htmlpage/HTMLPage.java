@@ -165,7 +165,7 @@ public class HTMLPage extends EventBEditorPage implements
 		}
 		if (formText != null)
 			formText.dispose();
-		getEventBEditor().removeElementChangedListener(this);
+		RodinCore.removeElementChangedListener(this);
 		super.dispose();
 	}
 
