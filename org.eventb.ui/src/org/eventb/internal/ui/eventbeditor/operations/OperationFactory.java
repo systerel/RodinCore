@@ -292,11 +292,11 @@ public class OperationFactory {
 	}
 
 	public static <T extends IInternalElement> AtomicOperation renameElements(
-			IInternalElement parent, IInternalElementType<T> type,
+			IInternalElement root, IInternalElementType<T> type,
 			IAttributeManipulation factory, String prefix) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation op = new AtomicOperation(
-				getRodinFileUndoContext(parent), builder.renameElement(parent,
+				getRodinFileUndoContext(root), builder.renameElement(root,
 						type, factory, prefix));
 		op.setLabel("Rename Element");
 		return op;
