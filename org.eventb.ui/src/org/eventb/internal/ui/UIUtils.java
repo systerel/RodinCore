@@ -144,8 +144,9 @@ public class UIUtils {
 	 * @param type
 	 *            the type of the element to be looked for
 	 * @param attributeType
-	 *            the type of the attribute to be looked for set it to null if
-	 *            the index is intended to the name of the element
+	 *            the type of the attribute to be looked for. Set to
+	 *            <code>null</code> if the element name should be considered
+	 *            rather than, an attribute value
 	 * @param prefix
 	 *            the prefix of the element to be looked for
 	 * @return a non already used integer index intended to be concatenated to
@@ -155,12 +156,38 @@ public class UIUtils {
 	 */
 	public static String getFreePrefixIndex(IInternalElement parent,
 			IInternalElementType<?> type, IAttributeType.String attributeType,
-			String prefix) throws RodinDBException, IllegalStateException {
+			String prefix) throws RodinDBException {
+
+		return getFreePrefixIndex(getVisibleChildrenOfType(parent, type),
+				attributeType, prefix);
+	}
+
+	/**
+	 * Returns a non already used String index intended to be concatenated to
+	 * the name or the attribute of an element.
+	 * 
+	 * @param elements
+	 *            the elements to be looked for
+	 * @param attributeType
+	 *            the type of the attribute to be looked for. Set to
+	 *            <code>null</code> if the element name should be considered
+	 *            rather than, an attribute value
+	 * @param prefix
+	 *            the prefix of the element to be looked for
+	 * @return a non already used integer index intended to be concatenated to
+	 *         the name or the attribute of an element (if no element of that
+	 *         type already exists, returns beginIndex)
+	 * @throws RodinDBException
+	 */
+	public static String getFreePrefixIndex(
+			List<? extends IInternalElement> elements,
+			IAttributeType.String attributeType, String prefix)
+			throws RodinDBException {
 
 		final String regex = Pattern.quote(prefix) + "(\\d+)"; //$NON-NLS-1$
 		final Pattern prefixDigits = Pattern.compile(regex);
 		final MaxFinder maxFinder = new BigMaxFinder();
-		for (IInternalElement element : getVisibleChildrenOfType(parent, type)) {
+		for (IInternalElement element : elements) {
 			final String elementString;
 			if (attributeType == null) {
 				// name research
@@ -191,7 +218,7 @@ public class UIUtils {
 		return result;
 	}
 
-	private static <T extends IInternalElement>void addImplicitChildrenOfType(
+	public static <T extends IInternalElement> void addImplicitChildrenOfType(
 			List<T> result, IInternalElement parent,
 			IInternalElementType<T> type) throws RodinDBException {
 		if (parent instanceof IEvent) {
@@ -575,6 +602,29 @@ public class UIUtils {
 			IInternalElementType<?> type, String prefix) {
 		try {
 			return getFreePrefixIndex(parent, type,
+					EventBAttributes.LABEL_ATTRIBUTE, prefix);
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+			return "1";
+		}
+	}
+
+	/**
+	 * Returns an integer that can be used as a label index for a newly created
+	 * element.
+	 * 
+	 * @param elements
+	 *            the elements to be looked for
+	 * @param prefix
+	 *            the prefix of the element to be looked for
+	 * @return a non already used integer identifier intended for a new element
+	 *         of that type (if no element of that type already exists, returns
+	 *         beginIndex)
+	 */
+	public static String getFreeElementLabelIndex(
+			List<? extends IInternalElement> elements, String prefix) {
+		try {
+			return getFreePrefixIndex(elements,
 					EventBAttributes.LABEL_ATTRIBUTE, prefix);
 		} catch (RodinDBException e) {
 			e.printStackTrace();

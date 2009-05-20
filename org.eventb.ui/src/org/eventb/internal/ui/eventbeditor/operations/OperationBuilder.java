@@ -19,8 +19,11 @@ import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.THEOREM_ATTRIBUTE;
 import static org.eventb.core.IConvergenceElement.Convergence.ORDINARY;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAction;
@@ -35,6 +38,7 @@ import org.eventb.core.IParameter;
 import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.internal.ui.Pair;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributeValue;
@@ -466,17 +470,21 @@ class OperationBuilder {
 	}
 
 	public <T extends IInternalElement> OperationTree renameElement(
-			IInternalElement root, IInternalElementType<T> type,
+			IInternalElement parent, IInternalElementType<T> type,
 			IAttributeManipulation factory, String prefix) {
 		final OperationNode op = new OperationNode();
-		int counter = 1;
 		try {
-			for (IInternalElement element : root.getChildrenOfType(type)) {
+			final List<T> elements = new ArrayList<T>();
+			UIUtils.addImplicitChildrenOfType(elements, parent, type);
+			
+			BigInteger counter = new BigInteger(UIUtils
+					.getFreeElementLabelIndex(elements, prefix));
+			for (IInternalElement element : parent.getChildrenOfType(type)) {
 				op.addCommand(changeAttribute(factory, element, prefix
 						+ counter));
-				counter++;
+				counter = counter.add(BigInteger.ONE);
 			}
-			for (IRodinElement element : root.getChildren()) {
+			for (IRodinElement element : parent.getChildren()) {
 				final IInternalElement ie = (IInternalElement) element;
 				op.addCommand(renameElement(ie, type, factory, prefix));
 			}

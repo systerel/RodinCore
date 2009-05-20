@@ -19,6 +19,7 @@ Require-Bundle: org.eclipse.ui;visibility:=reexport,
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eventb.internal.ui;x-friends:="org.eventb.ui.tests,fr.systerel.explorer",
  org.eventb.internal.ui.eventbeditor;x-friends:="org.eventb.ui.tests",
+ org.eventb.internal.ui.eventbeditor.actions,
  org.eventb.internal.ui.eventbeditor.editpage;x-friends:="org.eventb.ui.tests",
  org.eventb.internal.ui.eventbeditor.elementdesc;x-friends:="org.eventb.ui.tests",
  org.eventb.internal.ui.eventbeditor.htmlpage;x-friends:="org.eventb.ui.tests",
