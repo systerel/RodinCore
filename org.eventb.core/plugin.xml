@@ -1338,10 +1338,6 @@
             version="3">
          <element
                elementPath="/org.eventb.core.contextFile/org.eventb.core.axiom">
-            <addAttribute
-                  newId="org.eventb.core.theorem"
-                  newValue="false">
-            </addAttribute>
             <changeName newValue="@A"/>
          </element>
          <element
@@ -1362,10 +1358,6 @@
             version="5">
          <element
                elementPath="/org.eventb.core.machineFile/org.eventb.core.invariant">
-            <addAttribute
-                  newId="org.eventb.core.theorem"
-                  newValue="false">
-            </addAttribute>
             <changeName newValue="@I"/>
          </element>
          <element
@@ -1378,13 +1370,6 @@
                   newValue="true">
             </addAttribute>
             <changeName newValue="@T"/>
-         </element>
-         <element
-               elementPath="/org.eventb.core.machineFile/org.eventb.core.event/org.eventb.core.guard">
-            <addAttribute
-                  newId="org.eventb.core.theorem"
-                  newValue="false">
-            </addAttribute>
          </element>
       </sorted>
    </extension>
