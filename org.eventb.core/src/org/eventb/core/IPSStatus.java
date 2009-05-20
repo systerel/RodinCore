@@ -9,6 +9,7 @@
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.pm.IProofManager;
 import org.eventb.core.seqprover.IConfidence;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -32,10 +33,17 @@ import org.rodinp.core.RodinDBException;
  * </p>
  * 
  * <p>
+ * Clients shall not modify directly proof statuses through this interface, but
+ * rather use the higher level Proof Manager API (see {@link IProofManager})
+ * which ensures that proof obligations, proofs and proof statuses are kept in
+ * synch.
+ * </p>
+ * 
+ * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see #getElementName() , IPOSequent, IPRProof
+ * @see #getElementName() , IPOSequent, IPRProof, IProofManager
  * 
  * @author Farhad Mehta
  * 
@@ -103,22 +111,26 @@ public interface IPSStatus extends IInternalElement, IPRProofInfoElement,
 			throws RodinDBException;
 
 	/**
-	 * Returns the confidence associated to this proof obligation. The
+	 * Returns the confidence associated with this proof obligation. The
 	 * confidence is stored in an attribute which contains a local copy of the
 	 * confidence attribute of the associated proof. If there is no associated
 	 * proof yet, then the confidence attribute is not set and this method
 	 * returns {@link IConfidence#UNATTEMPTED}.
-	 * 
+	 * <p>
+	 * <em>Important Note:</em> The returned value is meaningless if the broken
+	 * attribute (as returned by method {@link #isBroken()}) is
+	 * <code>true</code>. In that case, clients should consider that the
+	 * confidence is unknown.
+	 * </p>
 	 * <p>
 	 * This is a cached attribute in case there is an associated proof.
 	 * </p>
-	 * Note: If you want to know if the associated PO has been successfully
-	 * discharged you also need to check isBroken()
 	 * 
 	 * @return the confidence associated to this proof obligation
 	 * 
 	 * @throws RodinDBException
 	 * @see #getProof()
+	 * @see #isBroken()
 	 * @see #setProofConfidence(IProgressMonitor)
 	 */
 	int getConfidence() throws RodinDBException;
