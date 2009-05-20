@@ -113,7 +113,7 @@ public abstract class EventBUITest extends TestCase {
 		result.setConfiguration(DEFAULT_CONFIGURATION, null);
 		return result;
 	}
-
+	
 	/**
 	 * Utility method to create a machine with the given bare name. The machine
 	 * is created as a child of the test Rodin project ({@link #rodinProject}).
@@ -409,6 +409,34 @@ public abstract class EventBUITest extends TestCase {
 		return invariant;
 	}
 	
+	/**
+	 * Utility method to create an axiom of a context.
+	 * 
+	 * @param ctx
+	 *            a context root
+	 * @param label
+	 *            the label of the axiom
+	 * @param predicate
+	 *            the predicate of the axiom
+	 * @param theorem
+	 *            true iff the axiom is a theorem
+	 * @return the newly created axiom
+	 * @throws RodinDBException
+	 *             if some problems occur
+	 */
+	protected IAxiom createAxiom(IContextRoot ctx, String label,
+			String predicate, boolean theorem) throws RodinDBException {
+		String childName = EventBUtils.getFreeChildName(ctx,
+				IAxiom.ELEMENT_TYPE, "i_axiom");
+		IAxiom axiom = ctx.getAxiom(childName);
+		axiom.create(null, null);
+		axiom.setLabel(label, null);
+		axiom.setPredicateString(predicate, null);
+		axiom.setTheorem(theorem, null);
+
+		return axiom;
+	}
+
 	@Before
 	@Override
 	protected void setUp() throws Exception {
