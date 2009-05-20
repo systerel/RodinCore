@@ -50,7 +50,7 @@ public class FormulaFactory {
 		return DEFAULT_INSTANCE;
 	}
 
-	private FormulaFactory() {
+	protected FormulaFactory() {
 		// Nothing to do
 	}
 
