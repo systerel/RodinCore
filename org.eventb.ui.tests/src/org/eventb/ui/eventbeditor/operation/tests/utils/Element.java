@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -25,7 +25,7 @@ public class Element {
 
 	private final List<Element> children;
 
-	private final Set<Attribute> attributes;
+	private final Set<IAttributeValue> attributes;
 
 	private IInternalElementType<?> type;
 
@@ -35,7 +35,7 @@ public class Element {
 	public Element(IInternalElementType<?> type) {
 		this.type = type;
 		children = new ArrayList<Element>();
-		attributes = new HashSet<Attribute>();
+		attributes = new HashSet<IAttributeValue>();
 	}
 
 	public IInternalElementType<?> getType() {
@@ -58,12 +58,12 @@ public class Element {
 		return new ArrayList<Element>(children);
 	}
 
-	public void addAttribute(Attribute attribute) {
+	public void addAttribute(IAttributeValue attribute) {
 		attributes.add(attribute);
 	}
 
-	public Set<Attribute> getAttributes() {
-		return new HashSet<Attribute>(attributes);
+	public Set<IAttributeValue> getAttributes() {
+		return new HashSet<IAttributeValue>(attributes);
 	}
 
 	@Override
@@ -114,8 +114,9 @@ public class Element {
 
 	private static void addAttributes(IInternalElement ie, Element element)
 			throws RodinDBException {
-		for (IAttributeType type : ie.getAttributeTypes())
-			element.addAttribute(Attribute.valueOf(ie, type));
+		for (IAttributeValue value: ie.getAttributeValues()) {
+			element.addAttribute(value);
+		}
 	}
 
 	private static void addChildren(IInternalElement element, Element result)

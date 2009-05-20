@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eventb.ui.eventbeditor.operation.tests.utils;
 
+import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.CONFIGURATION_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.CONVERGENCE_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.EXTENDED_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.THEOREM_ATTRIBUTE;
 import static org.eventb.core.IConfigurationElement.DEFAULT_CONFIGURATION;
 import static org.eventb.core.IConvergenceElement.Convergence.ORDINARY;
 
@@ -73,8 +77,8 @@ public abstract class OperationTest extends EventBUITest {
 	 */
 	protected Element getMachineElement(String bareName) {
 		final Element result = new Element(IMachineRoot.ELEMENT_TYPE);
-		result.addAttribute(getStringAttribute(CONFIGURATION_ATTRIBUTE,
-				DEFAULT_CONFIGURATION));
+		result.addAttribute(CONFIGURATION_ATTRIBUTE
+				.makeValue(DEFAULT_CONFIGURATION));
 		return result;
 	}
 
@@ -88,23 +92,9 @@ public abstract class OperationTest extends EventBUITest {
 	 */
 	protected Element getContextElement(String bareName) {
 		final Element result = new Element(IContextRoot.ELEMENT_TYPE);
-		result.addAttribute(getStringAttribute(CONFIGURATION_ATTRIBUTE,
-				DEFAULT_CONFIGURATION));
+		result.addAttribute(CONFIGURATION_ATTRIBUTE
+				.makeValue(DEFAULT_CONFIGURATION));
 		return result;
-	}
-
-	private Attribute getStringAttribute(IAttributeType.String type,
-			String value) {
-		return new Attribute(type, value);
-	}
-
-	private Attribute getBooleanAttribute(IAttributeType.Boolean type,
-			boolean value) {
-		return new Attribute(type, value);
-	}
-
-	private Attribute getIntAttribute(IAttributeType.Integer type, int value) {
-		return new Attribute(type, value);
 	}
 
 	/**
@@ -121,10 +111,10 @@ public abstract class OperationTest extends EventBUITest {
 	protected Element addEventElement(Element parent, String eventLabel) {
 		assert parent.getType() == IMachineRoot.ELEMENT_TYPE;
 		final Element result = new Element(IEvent.ELEMENT_TYPE);
-		result.addAttribute(getStringAttribute(LABEL_ATTRIBUTE, eventLabel));
-		result.addAttribute(getBooleanAttribute(EXTENDED_ATTRIBUTE, false));
-		result.addAttribute(getIntAttribute(CONVERGENCE_ATTRIBUTE, ORDINARY
-				.getCode()));
+		result.addAttribute(LABEL_ATTRIBUTE.makeValue(eventLabel));
+		result.addAttribute(EXTENDED_ATTRIBUTE.makeValue(false));
+		final int ordinary = ORDINARY.getCode();
+		result.addAttribute(CONVERGENCE_ATTRIBUTE.makeValue(ordinary));
 		parent.addChild(result, null);
 		return result;
 	}
@@ -168,10 +158,8 @@ public abstract class OperationTest extends EventBUITest {
 	protected Element addAction(Element parent, String label, String assignment) {
 		assert parent.getType() == IEvent.ELEMENT_TYPE;
 		Element result = new Element(IAction.ELEMENT_TYPE);
-		result.addAttribute(getStringAttribute(
-				EventBAttributes.LABEL_ATTRIBUTE, label));
-		result.addAttribute(getStringAttribute(
-				EventBAttributes.ASSIGNMENT_ATTRIBUTE, assignment));
+		result.addAttribute(LABEL_ATTRIBUTE.makeValue(label));
+		result.addAttribute(ASSIGNMENT_ATTRIBUTE.makeValue(assignment));
 		parent.addChild(result, null);
 		return result;
 	}
@@ -215,13 +203,10 @@ public abstract class OperationTest extends EventBUITest {
 			IInternalElementType<?> type, String label, String predicate,
 			boolean isTheorem) {
 		final Element result = new Element(type);
-		result.addAttribute(getStringAttribute(
-				EventBAttributes.LABEL_ATTRIBUTE, label));
-		result.addAttribute(getStringAttribute(
-				EventBAttributes.PREDICATE_ATTRIBUTE, predicate));
+		result.addAttribute(LABEL_ATTRIBUTE.makeValue(label));
+		result.addAttribute(PREDICATE_ATTRIBUTE.makeValue(predicate));
 		if (isTheorem) {
-			result.addAttribute(getBooleanAttribute(
-					EventBAttributes.THEOREM_ATTRIBUTE, isTheorem));
+			result.addAttribute(THEOREM_ATTRIBUTE.makeValue(isTheorem));
 		}
 		parent.addChild(result, null);
 		return result;
@@ -245,8 +230,7 @@ public abstract class OperationTest extends EventBUITest {
 	protected Element addElementWithIdentifier(Element parent,
 			IInternalElementType<?> type, String identifier) {
 		Element result = new Element(type);
-		result.addAttribute(getStringAttribute(
-				EventBAttributes.IDENTIFIER_ATTRIBUTE, identifier));
+		result.addAttribute(IDENTIFIER_ATTRIBUTE.makeValue(identifier));
 		parent.addChild(result, null);
 		return result;
 	}
@@ -272,7 +256,7 @@ public abstract class OperationTest extends EventBUITest {
 			IInternalElementType<?> type, IAttributeType.String attribute,
 			String value) {
 		Element result = new Element(type);
-		result.addAttribute(getStringAttribute(attribute, value));
+		result.addAttribute(attribute.makeValue(value));
 		parent.addChild(result, null);
 		return result;
 	}

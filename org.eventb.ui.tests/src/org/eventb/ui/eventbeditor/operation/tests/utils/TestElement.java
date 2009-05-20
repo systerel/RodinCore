@@ -26,6 +26,7 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISeesContext;
 import org.junit.Test;
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IAttributeValue;
 
 public class TestElement extends TestCase {
 
@@ -34,8 +35,8 @@ public class TestElement extends TestCase {
 	}
 
 	protected static void assertAttributes(Element element,
-			Attribute... expected) {
-		HashSet<Attribute> expSet = new HashSet<Attribute>(Arrays
+			IAttributeValue... expected) {
+		HashSet<IAttributeValue> expSet = new HashSet<IAttributeValue>(Arrays
 				.asList(expected));
 		assertEquals(expSet, element.getAttributes());
 	}
@@ -59,7 +60,7 @@ public class TestElement extends TestCase {
 
 	private void addStringAttribute(Element element,
 			IAttributeType.String attribute, String value) {
-		element.addAttribute(new Attribute(attribute, value));
+		element.addAttribute(attribute.makeValue(value));
 	}
 
 	private Element addEvent(Element parent, String label) {
@@ -127,15 +128,9 @@ public class TestElement extends TestCase {
 	}
 
 	@Test
-	public void testEqualsAttribute() throws Exception {
-		Attribute att1 = new Attribute(LABEL_ATTRIBUTE, "myLabel");
-		assertTrue(att1.equals(att1));
-	}
-
-	@Test
 	public void testAddAttribute() throws Exception {
 		Element e1 = new Element(IAxiom.ELEMENT_TYPE);
-		Attribute att1 = new Attribute(LABEL_ATTRIBUTE, "myLabel");
+		IAttributeValue att1 = LABEL_ATTRIBUTE.makeValue("myLabel");
 		e1.addAttribute(att1);
 		assertAttributes(e1, att1);
 	}
