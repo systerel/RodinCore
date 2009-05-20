@@ -23,6 +23,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eventb.core.EventBAttributes;
@@ -326,20 +327,16 @@ class OperationBuilder {
 	private <T extends IInternalElement> OperationCreateElement createElementLabelPredicate(
 			IInternalElement parent, IInternalElementType<T> type,
 			String label, String predicate, boolean isTheorem) {
-		final IAttributeValue[] values;
-		if (label == null) {
-			values = new IAttributeValue[] {
-					PREDICATE_ATTRIBUTE.makeValue(predicate), //
-					THEOREM_ATTRIBUTE.makeValue(isTheorem), //
-			};
-		} else {
-			values = new IAttributeValue[] {
-					LABEL_ATTRIBUTE.makeValue(label), //
-					PREDICATE_ATTRIBUTE.makeValue(predicate), //
-					THEOREM_ATTRIBUTE.makeValue(isTheorem), //
-			};
+		final List<IAttributeValue>values = new LinkedList<IAttributeValue>();
+		if (label != null) {
+			values.add(LABEL_ATTRIBUTE.makeValue(label));
 		}
-		return getCreateElement(parent, type, null, values);
+		values.add(PREDICATE_ATTRIBUTE.makeValue(predicate));
+		if (isTheorem) {
+			values.add(THEOREM_ATTRIBUTE.makeValue(isTheorem));
+		}
+		final IAttributeValue[] array = values.toArray(new IAttributeValue[values.size()]);
+		return getCreateElement(parent, type, null, array);
 	}
 
 	private <T extends IInternalElement> OperationNode createElementLabelPredicate(

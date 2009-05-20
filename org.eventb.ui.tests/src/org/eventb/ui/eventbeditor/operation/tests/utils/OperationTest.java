@@ -219,8 +219,10 @@ public abstract class OperationTest extends EventBUITest {
 				EventBAttributes.LABEL_ATTRIBUTE, label));
 		result.addAttribute(getStringAttribute(
 				EventBAttributes.PREDICATE_ATTRIBUTE, predicate));
-		result.addAttribute(getBooleanAttribute(
-				EventBAttributes.THEOREM_ATTRIBUTE, isTheorem));
+		if (isTheorem) {
+			result.addAttribute(getBooleanAttribute(
+					EventBAttributes.THEOREM_ATTRIBUTE, isTheorem));
+		}
 		parent.addChild(result, null);
 		return result;
 	}
