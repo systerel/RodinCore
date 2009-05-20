@@ -1370,4 +1370,111 @@ public class TestMachineRefines extends EventBPOTest {
 		);
 		sequentHasGoal(sim, typenv, lhs + " ∈ ga");
 	}
+
+	/*
+	 * PO filter: the POG should not generate guard strengthening POs if
+	 * abstract guard is a theorem
+	 */
+	public void testRefines_24() throws Exception {
+		IMachineRoot abs = createMachine("abs");
+		addEvent(abs, "evt", 
+				makeSList("x"), 
+				makeSList("GA1", "GA2"), makeSList("x > x", "1 > 2"),
+				makeBList(false, true),
+				makeSList(), makeSList());
+		saveRodinFileOf(abs);
+		
+		IMachineRoot ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		IEvent event = addEvent(ref, "evt", 
+				makeSList("x"), 
+				makeSList("G1"), makeSList("x = 1"), makeBList(false),
+				makeSList(), makeSList());
+		addEventRefines(event, "evt");
+		saveRodinFileOf(ref);
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("x", intType);
+		
+		IPORoot po = ref.getPORoot();
+		containsIdentifiers(po);
+		
+		IPOSequent sequent;
+		
+		sequent = getSequent(po, "evt/GA1/GRD");
+		sequentHasGoal(sequent, environment, "x > x");
+		
+		noSequent(po, "evt/GA2/GRD");
+	}
+
+	/*
+	 * Guard strengthening in event merge PO with abstract theorems
+	 */
+	public void testRefines_25() throws Exception {
+		IMachineRoot abs = createMachine("abs");
+		addEvent(abs, "evt", 
+				makeSList(), 
+				makeSList("GA", "TA"), makeSList("1<2", "2<3"), makeBList(false, true),
+				makeSList(), makeSList());
+		addEvent(abs, "fvt", 
+				makeSList(), 
+				makeSList("HA", "UA"), makeSList("3<4", "4<5"), makeBList(false, true),
+				makeSList(), makeSList());
+		saveRodinFileOf(abs);
+		
+		IMachineRoot ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		IEvent event = addEvent(ref, "evt", 
+				makeSList(), 
+				makeSList("GC", "TC"), makeSList("5<6", "6<7"), makeBList(false, true), 
+				makeSList(), makeSList());
+		addEventRefines(event, "evt");
+		addEventRefines(event, "fvt");
+		saveRodinFileOf(ref);
+		runBuilder();
+		
+		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		
+		IPORoot po = ref.getPORoot();
+		containsIdentifiers(po);
+		
+		IPOSequent sequent;
+		
+		sequent= getSequent(po, "evt/MRG");
+		sequentHasHypotheses(sequent, environment, "5<6", "6<7");
+		sequentHasGoal(sequent, environment, "1<2 ∨ 3<4");
+	}
+
+	/*
+	 * Guard strengthening in event merge PO with all abstract guards being
+	 * theorems
+	 */
+	public void testRefines_26() throws Exception {
+		IMachineRoot abs = createMachine("abs");
+		addEvent(abs, "evt", 
+				makeSList(), 
+				makeSList("TA"), makeSList("1<2"), makeBList(true), 
+				makeSList(), makeSList());
+		addEvent(abs, "fvt", 
+				makeSList(), 
+				makeSList("HA", "UA"), makeSList("3<4", "4<5"), makeBList(false, true),
+				makeSList(), makeSList());
+		saveRodinFileOf(abs);
+		
+		IMachineRoot ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		IEvent event = addEvent(ref, "evt", 
+				makeSList(), 
+				makeSList("GC", "TC"), makeSList("5<6", "6<7"), makeBList(false, true), 
+				makeSList(), makeSList());
+		addEventRefines(event, "evt");
+		addEventRefines(event, "fvt");
+		saveRodinFileOf(ref);
+		runBuilder();
+		
+		IPORoot po = ref.getPORoot();
+		noSequent(po, "evt/MRG");
+	}
+
 }

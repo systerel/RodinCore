@@ -27,9 +27,9 @@ public class GenericMachinePOTest extends GenericMachineTest<EventBPOTest>
 		super(test);
 	}
 
-	public void addSuper(IMachineRoot root, String name)
+	public void addSuper(IMachineRoot root, IMachineRoot abstraction)
 			throws RodinDBException {
-		test.addMachineRefines(root, name);
+		test.addMachineRefines(root, abstraction.getElementName());
 	}
 
 	public IPORoot getPOFile(IMachineRoot root) throws RodinDBException {

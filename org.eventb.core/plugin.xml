@@ -717,6 +717,7 @@
          <scModule id="org.eventb.core.machineEventCommitIdentsModule"/>
          <scModule id="org.eventb.core.machineEventGuardModule"/>
          <scModule id="org.eventb.core.machineEventGuardFreeIdentsModule"/>
+         <scModule id="org.eventb.core.machineEventGuardTheoremModule"/>
          <scModule id="org.eventb.core.machineEventActionModule"/>
          <scModule id="org.eventb.core.machineEventActionFreeIdentsModule"/>
          <scModule
@@ -927,6 +928,12 @@
          <prereq
                id="org.eventb.core.machineEventRefinesModule">
          </prereq>
+      </filterType>
+      <filterType
+            class="org.eventb.internal.core.sc.modules.MachineEventGuardTheoremModule"
+            id="machineEventGuardTheoremModule"
+            name="%scMachineEventGuardTheoremModule"
+            parent="org.eventb.core.machineEventGuardModule">
       </filterType>
    </extension>
    <extension

@@ -8,17 +8,19 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.ui.propertiesView;
+package org.eventb.core.tests.sc;
 
-import org.eclipse.jface.viewers.IFilter;
-import org.eventb.core.IDerivedPredicateElement;
-import org.eventb.core.IGuard;
+import org.eventb.core.IEvent;
+import org.eventb.core.ISCEvent;
 
-// TODO Remove when theorem in Guard is available.
-public class DerivedPredicateNoGuardFilter implements IFilter {
+/**
+ * @author Laurent Voisin
+ */
+public class TestEventGuardsAndTheorems extends GenericPredicateTest<IEvent, ISCEvent> {
 
-	public boolean select(Object toTest) {
-		return (toTest instanceof IDerivedPredicateElement)
-				&& !(toTest instanceof IGuard);
+	@Override
+	protected IGenericSCTest<IEvent, ISCEvent> newGeneric() {
+		return new GenericEventSCTest(this);
 	}
+
 }

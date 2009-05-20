@@ -13,13 +13,11 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.sc.GraphProblem;
 
 /**
  * @author Stefan Hallerstede
@@ -811,9 +809,9 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	}
 
 	/**
-	 * Guards should not be derived (yet)
+	 * Guards can also be theorems
 	 */
-	public void testEvents_27_derivedGuardWarning() throws Exception {
+	public void testEvents_27_theoremGuard() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
 		IEvent e = addEvent(mac, "evt1", makeSList(), makeSList("G1", "G2"),
@@ -829,11 +827,9 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		ISCEvent[] scEvents = getSCEvents(file, "evt1");
 
 		containsGuards(scEvents[0], emptyEnv, makeSList("G1", "G2"), makeSList(
-				"⊤", "⊤"), false, false);
+				"⊤", "⊤"), false, true);
 
 		hasNotMarker(e.getGuards()[0]);
-		hasMarker(e.getGuards()[1], EventBAttributes.THEOREM_ATTRIBUTE,
-				GraphProblem.DerivedPredIgnoredWarning);
-
+		hasNotMarker(e.getGuards()[1]);
 	}
 }

@@ -867,9 +867,8 @@
                class="org.eventb.internal.ui.propertiesView.TheoremSection"
                enablesFor="1"
                id="org.eventb.ui.theoremSection"
-               tab="org.eventb.ui.basicTab"
-               filter="org.eventb.internal.ui.propertiesView.DerivedPredicateNoGuardFilter">
-<!--            <input type="org.eventb.core.IDerivedPredicateElement"/>-->
+               tab="org.eventb.ui.basicTab">
+            <input type="org.eventb.core.IDerivedPredicateElement"/>
          </propertySection>
          <propertySection
                afterSection="org.eventb.ui.theoremSection"
@@ -2432,6 +2431,9 @@
          <attributeReference
                column="1"
                descriptionId="org.eventb.ui.predicate">
+         </attributeReference>
+         <attributeReference
+               descriptionId="org.eventb.ui.isTheorem">
          </attributeReference>
          <attributeReference
                descriptionId="org.eventb.ui.comment">

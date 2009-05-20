@@ -21,6 +21,7 @@ import org.eventb.core.pog.state.IHypothesisManager;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.state.IPredicateTable;
 import org.eventb.core.tool.IModuleType;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -65,17 +66,15 @@ public class ContextAxiomModule extends PredicateModule<ISCAxiom> {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.internal.core.pog.modules.PredicateModule#getWDProofObligationName(java.lang.String)
-	 */
-	@Override
-	protected String getWDProofObligationName(String elementLabel, boolean isTheorem) {
-		return elementLabel + "/WD";
-	}
-
 	@Override
 	protected boolean isAccurate() {
 		return ((IContextHypothesisManager) hypothesisManager).contextIsAccurate();
+	}
+
+	@Override
+	protected String getProofObligationPrefix(ISCAxiom predicateElement)
+			throws RodinDBException {
+		return predicateElement.getLabel();
 	}
 
 }

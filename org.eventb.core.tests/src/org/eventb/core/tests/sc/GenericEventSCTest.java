@@ -44,7 +44,7 @@ public class GenericEventSCTest extends GenericEventTest<BasicSCTest> implements
 	}
 
 	public void containsPredicates(ISCEvent element, ITypeEnvironment environment, String[] labels, String[] strings, boolean... derived) throws RodinDBException {
-		test.containsGuards(element, environment, labels, strings);
+		test.containsGuards(element, environment, labels, strings, derived);
 	}
 
 	public ISCEvent getSCElement(IEvent element) throws RodinDBException {

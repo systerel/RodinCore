@@ -18,6 +18,7 @@ import org.eventb.core.IConvergenceElement;
 import org.eventb.internal.core.EventBProject;
 import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -272,15 +273,22 @@ public abstract class EventBElement extends InternalElement {
 	}
 
 	public boolean hasTheorem() throws RodinDBException {
-		return hasAttribute(EventBAttributes.THEOREM_ATTRIBUTE);
+		return true;
 	}
 
 	public boolean isTheorem() throws RodinDBException {
-		return getAttributeValue(EventBAttributes.THEOREM_ATTRIBUTE);
+		final IAttributeType.Boolean aType = EventBAttributes.THEOREM_ATTRIBUTE;
+		return hasAttribute(aType) && getAttributeValue(aType);
 	}
 
-	public void setTheorem(boolean thm, IProgressMonitor monitor) throws RodinDBException {
-		setAttributeValue(EventBAttributes.THEOREM_ATTRIBUTE, thm, monitor);
+	public void setTheorem(boolean newValue, IProgressMonitor monitor)
+			throws RodinDBException {
+		final IAttributeType.Boolean aType = EventBAttributes.THEOREM_ATTRIBUTE;
+		if (newValue) {
+			setAttributeValue(aType, newValue, monitor);
+		} else {
+			removeAttribute(aType, monitor);
+		}
 	}
 
 	public final EventBProject getEventBProject() {

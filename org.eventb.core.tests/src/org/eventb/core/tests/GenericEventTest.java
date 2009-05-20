@@ -44,11 +44,14 @@ extends GenericTest<T>  {
 			guard.create(null, null);
 			guard.setLabel(names[i], null);
 			guard.setPredicateString(nonTheorems[i], null);
+			guard.setTheorem(derived[i], null);
 		}
 	}
 
+	private static int count = 0;
+	
 	public IEvent createElement(String bareName) throws RodinDBException {
-		IMachineRoot root = test.createMachine("mch");
+		IMachineRoot root = test.createMachine("mch" + count++);
 		test.addInitialisation(root);
 		IEvent event = test.addEvent(root, bareName);
 		return event;

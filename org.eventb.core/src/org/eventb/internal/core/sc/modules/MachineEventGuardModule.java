@@ -68,8 +68,6 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 		if (!checkInitialisation(element, monitor))
 			return;
 		
-		checkDerived(element);
-		
 		checkAndType(element.getElementName(), repository, monitor);
 
 		if (target != null) {
@@ -89,15 +87,6 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 				return false;
 			}
 		return true;
-	}
-
-	private void checkDerived(IRodinElement element) throws RodinDBException {
-		for (IGuard guard : formulaElements) {
-			if (guard.hasTheorem() && guard.isTheorem()) {
-				createProblemMarker(guard, EventBAttributes.THEOREM_ATTRIBUTE,
-						GraphProblem.DerivedPredIgnoredWarning);
-			}
-		}	
 	}
 
 	protected IConcreteEventInfo refinedEventTable;

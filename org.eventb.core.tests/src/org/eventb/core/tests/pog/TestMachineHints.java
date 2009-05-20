@@ -397,6 +397,38 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		sequentHasNotSelectionHints(sequent, typeEnvironment, "x∈0‥4");
 	}
 
+	/**
+	 * guard theorem hints
+	 */
+	public void testMachineHints_08() throws Exception {
+		IMachineRoot mac = createMachine("mac");
+
+		addVariables(mac, "x");
+		addInvariants(mac, makeSList("I"), makeSList("x∈0‥4"), false);
+		addEvent(mac, "evt", 
+				makeSList("y"), 
+				makeSList("G", "H"), makeSList("y>x÷x", "x÷x=0"), makeBList(false, true), 
+				makeSList(), makeSList());
+		
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("x", intType);
+		typeEnvironment.addName("y", intType);
+		
+		saveRodinFileOf(mac);
+		
+		runBuilder();
+		
+		IPORoot po = mac.getPORoot();
+		
+		containsIdentifiers(po, "x");
+		
+		IPOSequent sequent = getSequent(po, "evt/H/THM");
+		
+		sequentHasIdentifiers(sequent, "y");
+		sequentHasSelectionHints(sequent, typeEnvironment, "y>x÷x");
+		sequentHasNotSelectionHints(sequent, typeEnvironment, "x∈0‥4");
+	}
+
 	@Override
 	protected IGenericPOTest<IMachineRoot> newGeneric() {
 		return new GenericMachinePOTest(this);

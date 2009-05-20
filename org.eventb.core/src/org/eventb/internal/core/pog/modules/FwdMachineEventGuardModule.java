@@ -33,6 +33,7 @@ import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.state.IPredicateTable;
 import org.eventb.core.tool.IModuleType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -109,7 +110,7 @@ public class FwdMachineEventGuardModule extends PredicateModule<ISCGuard> {
 	@Override
 	protected void createWDProofObligation(
 			IPORoot target, 
-			String elementLabel, 
+			String poPrefix, 
 			ISCGuard predicateElement, 
 			Predicate predicate, 
 			int index,
@@ -119,7 +120,7 @@ public class FwdMachineEventGuardModule extends PredicateModule<ISCGuard> {
 		if (isRedundantWDProofObligation(predicate, index))
 			return;
 		
-		super.createWDProofObligation(target, elementLabel, predicateElement,
+		super.createWDProofObligation(target, poPrefix, predicateElement,
 				predicate, index, isTheorem, monitor);
 	}
 	
@@ -166,14 +167,15 @@ public class FwdMachineEventGuardModule extends PredicateModule<ISCGuard> {
 	}
 
 	@Override
-	protected String getWDProofObligationName(String elementLabel, boolean isTheorem) {
-		return eventLabel + "/" + elementLabel + "/WD";
-	}
-
-	@Override
 	protected boolean isAccurate() {
 		return ((IEventHypothesisManager) hypothesisManager).eventIsAccurate()
 			&& machineHypothesisManager.machineIsAccurate();
+	}
+
+	@Override
+	protected String getProofObligationPrefix(ISCGuard predicateElement)
+			throws RodinDBException {
+		return eventLabel + "/" + predicateElement.getLabel();
 	}
 
 }

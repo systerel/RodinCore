@@ -16,11 +16,15 @@ import org.rodinp.core.RodinDBException;
 /**
  * Common protocol for predicate elements that can be theorems.
  * <p>
+ * The theorem indication is stored in the database as an optional attribute. If
+ * the attribute is absent, it is deemed to be <code>false</code>. The query
+ * methods in this interface implement directly this protocol.
+ * </p>
+ * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
  * @author Stefan Hallerstede
- * 
  */
 public interface IDerivedPredicateElement extends IPredicateElement {
 
@@ -34,7 +38,7 @@ public interface IDerivedPredicateElement extends IPredicateElement {
 	boolean isTheorem() throws RodinDBException;
 
 	/**
-	 * Sets the theorem attribute of this element.
+	 * Sets whether this element is a theorem.
 	 * 
 	 * @param thm
 	 *            the new value of the theorem attribute
@@ -48,9 +52,11 @@ public interface IDerivedPredicateElement extends IPredicateElement {
 			throws RodinDBException;
 
 	/**
-	 * Tests whether the theorem attribute is defined or not.
+	 * Returns <code>true</code>. As the theorem attribute is always considered
+	 * present, this method always returns <code>true</code>, whether the
+	 * attribute actually exists or not.
 	 * 
-	 * @return <code>true</code> iff the theorem attribute is defined
+	 * @return <code>true</code>
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */

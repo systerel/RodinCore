@@ -97,6 +97,7 @@ public class FwdMachineEventStrengthenGuardModule extends MachineEventRefinement
 		
 		for (IAbstractEventGuardTable absGuardTable : absGuardTables) {
 			
+			List<ISCGuard> absGuardsElems = absGuardTable.getElements();
 			List<Predicate> absGuards = absGuardTable.getPredicates();
 			
 			if (absGuards.size() == 0) {
@@ -108,6 +109,10 @@ public class FwdMachineEventStrengthenGuardModule extends MachineEventRefinement
 			List<Predicate> conjPredList = new ArrayList<Predicate>(absGuards.size());
 			
 			for (int i=0; i<absGuards.size(); i++) {
+				final ISCGuard elem = absGuardsElems.get(i);
+				if (elem.isTheorem()) {
+					continue;
+				}
 				Predicate absGuard = absGuards.get(i);
 				boolean absGuardIsNew = 
 					absGuardTable.getIndexOfCorrespondingConcrete(i) == -1;
@@ -130,7 +135,7 @@ public class FwdMachineEventStrengthenGuardModule extends MachineEventRefinement
 		}
 		
 		// disjPredList must have at least two elements
-		// if the size was reduced the preceding loop waould have returned from this method
+		// if the size was reduced the preceding loop would have returned from this method
 		
 		Predicate disjPredicate = 
 			factory.makeAssociativePredicate(
@@ -182,6 +187,9 @@ public class FwdMachineEventStrengthenGuardModule extends MachineEventRefinement
 		
 		for (int i=0; i<absGuardElements.size(); i++) {
 			ISCGuard absGuardElement = absGuardElements.get(i);
+			if (absGuardElement.isTheorem()) {
+				continue;
+			}
 			String guardLabel = absGuardElement.getLabel();
 			Predicate absGuard = absGuardPredicates.get(i);
 			String sequentName = concreteEventLabel + "/" + guardLabel + "/GRD";

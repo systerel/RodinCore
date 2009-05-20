@@ -24,4 +24,19 @@ public class TestContextAxiomsAndTheorems extends GenericPredicateTest<IContextR
 		return new GenericContextPOTest(this);
 	}
 
+	@Override
+	public String getTHMPOName(IContextRoot elem, String predName) {
+		return predName + "/THM";
+	}
+
+	@Override
+	public String getWDPOName(IContextRoot elem, String predName) {
+		return predName + "/WD";
+	}
+
+	@Override
+	public boolean isCumulative() {
+		return true;
+	}
+
 }

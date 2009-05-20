@@ -21,6 +21,7 @@ import org.eventb.core.pog.state.IMachineInvariantTable;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.state.IPredicateTable;
 import org.eventb.core.tool.IModuleType;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -57,13 +58,14 @@ public class FwdMachineInvariantModule extends PredicateModule<ISCInvariant> {
 	}
 
 	@Override
-	protected String getWDProofObligationName(String elementLabel, boolean isTheorem) {
-		return elementLabel + "/WD";
+	protected boolean isAccurate() {
+		return ((IMachineHypothesisManager) hypothesisManager).machineIsAccurate();
 	}
 
 	@Override
-	protected boolean isAccurate() {
-		return ((IMachineHypothesisManager) hypothesisManager).machineIsAccurate();
+	protected String getProofObligationPrefix(ISCInvariant predicateElement)
+			throws RodinDBException {
+		return predicateElement.getLabel();
 	}
 
 }

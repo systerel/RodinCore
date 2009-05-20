@@ -46,7 +46,6 @@ import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.eventbeditor.elementdesc.AttributeDesc;
-import org.eventb.internal.ui.eventbeditor.elementdesc.ToggleDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ComboDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
@@ -54,6 +53,7 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.NullAttributeDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.TextDesc;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ToggleDesc;
 import org.eventb.internal.ui.eventbeditor.manipulation.AssignmentAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.CommentAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.ConvergenceAttributeManipulation;
@@ -271,13 +271,15 @@ public class TestElementDescRegistry extends TestCase {
 
 		final AttributeDesc expectedLabel = getLabelDesc();
 		final AttributeDesc expectedPredicate = getPredicateDesc();
+		final AttributeDesc expectedTheorem = getTheoremDesc();
 		final AttributeDesc expectedComment = getCommentedDesc();
 
 		assertElementDesc(desc, "WHERE", "", "icons/full/obj16/grd_obj.gif",
 				"grd", expectedLabel, 1);
 
 		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
-				expectedLabel, expectedPredicate, expectedComment);
+				expectedLabel, expectedPredicate, expectedTheorem,
+				expectedComment);
 
 		assertChildrens("Test children", desc.getChildTypes(), noChildren);
 

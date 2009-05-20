@@ -125,4 +125,19 @@ public class TestMachineInvariantsAndTheorems extends GenericPredicateTest<IMach
 		return new GenericMachinePOTest(this);
 	}
 
+	@Override
+	public String getTHMPOName(IMachineRoot elem, String predName) {
+		return predName + "/THM";
+	}
+
+	@Override
+	public String getWDPOName(IMachineRoot elem, String predName) {
+		return predName + "/WD";
+	}
+
+	@Override
+	public boolean isCumulative() {
+		return true;
+	}
+
 }

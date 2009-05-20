@@ -27,8 +27,8 @@ public class GenericContextPOTest extends GenericContextTest<EventBPOTest>
 		super(test);
 	}
 
-	public void addSuper(IContextRoot root, String name) throws RodinDBException {
-		test.addContextExtends(root, name);
+	public void addSuper(IContextRoot root, IContextRoot abstraction) throws RodinDBException {
+		test.addContextExtends(root, abstraction.getElementName());
 	}
 
 	public IPORoot getPOFile(IContextRoot root) throws RodinDBException {

@@ -17,7 +17,6 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IDerivedPredicateElement;
-import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSource;
@@ -30,6 +29,7 @@ import org.eventb.core.pog.state.IHypothesisManager;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.core.pog.state.IPredicateTable;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -85,16 +85,16 @@ public abstract class PredicateModule<PE extends ISCPredicateElement> extends Ut
 		
 		for (int i=0; i<elements.size(); i++) {
 			PE predicateElement = elements.get(i);
-			String elementLabel = ((ILabeledElement) predicateElement).getLabel();
+			String poPrefix = getProofObligationPrefix(predicateElement);
 			boolean isTheorem = ((IDerivedPredicateElement) predicateElement).isTheorem();
 
 			Predicate predicate = predicates.get(i);
 
-			createWDProofObligation(targetRoot, elementLabel, predicateElement,
+			createWDProofObligation(targetRoot, poPrefix, predicateElement,
 					predicate, i, isTheorem, monitor);
 
 			if (isTheorem) {
-				createProofObligation(targetRoot, elementLabel,
+				createProofObligation(targetRoot, poPrefix,
 						predicateElement, predicate, monitor);
 			}
 
@@ -102,12 +102,13 @@ public abstract class PredicateModule<PE extends ISCPredicateElement> extends Ut
 
 	}
 
-	protected void createProofObligation(IPORoot target, String elementLabel,
+	protected void createProofObligation(IPORoot target, String poPrefix,
 			PE predicateElement, Predicate predicate, IProgressMonitor monitor)
 			throws CoreException {
+		final String poName = poPrefix + "/THM";
 		if (goalIsTrivial(predicate)) {
 			if (DEBUG_TRIVIAL)
-				debugTraceTrivial(elementLabel + "/THM");
+				debugTraceTrivial(poName);
 			return;
 		}
 		IPOPredicateSet hypothesis = hypothesisManager
@@ -116,7 +117,7 @@ public abstract class PredicateModule<PE extends ISCPredicateElement> extends Ut
 				.getSource();
 		createPO(
 				target,
-				elementLabel + "/THM",
+				poName,
 				"Theorem",
 				hypothesis,
 				emptyPredicates,
@@ -130,23 +131,25 @@ public abstract class PredicateModule<PE extends ISCPredicateElement> extends Ut
 
 	protected void createWDProofObligation(
 			IPORoot target, 
-			String elementLabel, 
+			String poPrefix, 
 			PE predicateElement, 
 			Predicate predicate, 
 			int index,
 			boolean isTheorem,
 			IProgressMonitor monitor) throws CoreException {
 		Predicate wdPredicate = predicate.getWDPredicate(factory);
+		final String poName = getWDProofObligationName(poPrefix);
 		if (goalIsTrivial(wdPredicate)) {
-			if (DEBUG_TRIVIAL)
-				debugTraceTrivial(getWDProofObligationName(elementLabel, isTheorem));
+			if (DEBUG_TRIVIAL) {
+				debugTraceTrivial(poName);
+			}
 			return;
 		}
 		IPOPredicateSet hypothesis = hypothesisManager.makeHypothesis(predicateElement);
 		IRodinElement predicateSource = ((ITraceableElement) predicateElement).getSource();
 		createPO(
 				target,
-				getWDProofObligationName(elementLabel, isTheorem),
+				poName,
 				getWDProofObligationDescription(isTheorem),
 				hypothesis,
 				emptyPredicates,
@@ -165,6 +168,11 @@ public abstract class PredicateModule<PE extends ISCPredicateElement> extends Ut
 
 	protected abstract String getWDProofObligationDescription(boolean isTheorem);
 
-	protected abstract String getWDProofObligationName(String elementLabel, boolean isTheorem);
+	private String getWDProofObligationName(String poPrefix) {
+		return poPrefix + "/WD";
+	}
+
+	protected abstract String getProofObligationPrefix(PE predicateElement)
+			throws RodinDBException;
 
 }

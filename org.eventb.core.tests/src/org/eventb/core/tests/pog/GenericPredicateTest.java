@@ -16,6 +16,7 @@ import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Stefan Hallerstede
@@ -23,6 +24,10 @@ import org.rodinp.core.IInternalElement;
  */
 public abstract class GenericPredicateTest <F extends IInternalElement> 
 extends GenericEventBPOTest<F> {
+
+	public abstract String getTHMPOName(F elem, String predName) throws RodinDBException;
+	public abstract String getWDPOName(F elem, String predName) throws RodinDBException;
+	public abstract boolean isCumulative();
 
 	/*
 	 * proper creation of theorem PO
@@ -38,11 +43,11 @@ extends GenericEventBPOTest<F> {
 		
 		IPORoot po = getGeneric().getPOFile(cmp);
 		
-		IPOSequent sequent = getSequent(po, "T1/THM");
+		IPOSequent sequent = getSequent(po, getTHMPOName(cmp, "T1"));
 		
 		sequentHasGoal(sequent, emptyEnv, "∀x·x>1");
 		
-		noSequent(po, "T1/WD");
+		noSequent(po, getWDPOName(cmp, "T1"));
 		
 	}
 	
@@ -60,11 +65,11 @@ extends GenericEventBPOTest<F> {
 		
 		IPORoot po = getGeneric().getPOFile(cmp);
 		
-		IPOSequent sequent = getSequent(po, "T1/THM");
+		IPOSequent sequent = getSequent(po, getTHMPOName(cmp, "T1"));
 		
 		sequentHasGoal(sequent, emptyEnv, "1÷0=0");
 
-		sequent = getSequent(po, "T1/WD");
+		sequent = getSequent(po, getWDPOName(cmp, "T1"));
 		
 		sequentHasGoal(sequent, emptyEnv, "0≠0");
 	
@@ -84,12 +89,12 @@ extends GenericEventBPOTest<F> {
 		
 		IPORoot po = getGeneric().getPOFile(cmp);
 		
-		IPOSequent sequent = getSequent(po, "T1/THM");
+		IPOSequent sequent = getSequent(po, getTHMPOName(cmp, "T1"));
 		
 		sequentHasHypotheses(sequent, emptyEnv);
 		sequentHasGoal(sequent, emptyEnv, "∀x·x>1");
 
-		sequent = getSequent(po, "T2/THM");
+		sequent = getSequent(po, getTHMPOName(cmp, "T2"));
 		
 		sequentHasHypotheses(sequent, emptyEnv, "∀x·x>1");
 		sequentHasGoal(sequent, emptyEnv, "∀x·x>2");
@@ -112,13 +117,13 @@ extends GenericEventBPOTest<F> {
 		
 		IPORoot po = getGeneric().getPOFile(cmp);
 		
-		noSequent(po, "T1/THM");
+		noSequent(po, getTHMPOName(cmp, "T1"));
 		
-		IPOSequent sequent = getSequent(po, "T2/THM");
+		IPOSequent sequent = getSequent(po, getTHMPOName(cmp, "T2"));
 		
 		sequentHasGoal(sequent, emptyEnv, "x>1");
 		
-		noSequent(po, "T3/THM");
+		noSequent(po, getTHMPOName(cmp, "T3"));
 	}
 
 	/*
@@ -135,7 +140,7 @@ extends GenericEventBPOTest<F> {
 		
 		IPORoot po = getGeneric().getPOFile(cmp);
 		
-		noSequent(po, "N1/WD");
+		noSequent(po, getWDPOName(cmp, "N1"));
 		
 	}
 
@@ -153,7 +158,7 @@ extends GenericEventBPOTest<F> {
 		
 		IPORoot po = getGeneric().getPOFile(cmp);
 		
-		IPOSequent sequent = getSequent(po, "N1/WD");
+		IPOSequent sequent = getSequent(po, getWDPOName(cmp, "N1"));
 		
 		sequentHasGoal(sequent, emptyEnv, "0≠0");
 	
@@ -173,7 +178,7 @@ extends GenericEventBPOTest<F> {
 		
 		IPORoot po = getGeneric().getPOFile(cmp);
 		
-		IPOSequent sequent = getSequent(po, "N1/WD");
+		IPOSequent sequent = getSequent(po, getWDPOName(cmp, "N1"));
 		
 		sequentHasHypotheses(sequent, emptyEnv, "1<0");
 		sequentHasGoal(sequent, emptyEnv, "0≠0");
@@ -195,7 +200,7 @@ extends GenericEventBPOTest<F> {
 		
 		IPORoot po = getGeneric().getPOFile(cmp);
 		
-		IPOSequent sequent = getSequent(po, "T1/THM");
+		IPOSequent sequent = getSequent(po, getTHMPOName(cmp, "T1"));
 		
 		sequentHasHypotheses(sequent, emptyEnv, "1=0");
 		sequentHasGoal(sequent, emptyEnv, "1<0");
@@ -214,7 +219,7 @@ extends GenericEventBPOTest<F> {
 		
 		F cmp = getGeneric().createElement("cmp");
 
-		getGeneric().addSuper(cmp, "abs");
+		getGeneric().addSuper(cmp, abs);
 		getGeneric().addPredicates(cmp, makeSList("N1"), makeSList("7<1"), false);
 		getGeneric().addPredicates(cmp, makeSList("T1"), makeSList("1<0"), true);
 		
@@ -224,9 +229,13 @@ extends GenericEventBPOTest<F> {
 		
 		IPORoot po = getGeneric().getPOFile(cmp);
 		
-		IPOSequent sequent = getSequent(po, "T1/THM");
+		IPOSequent sequent = getSequent(po, getTHMPOName(cmp, "T1"));
 		
-		sequentHasHypotheses(sequent, emptyEnv, "2>9", "7<1");
+		if (isCumulative()) {
+			sequentHasHypotheses(sequent, emptyEnv, "2>9", "7<1");
+		} else {
+			sequentHasHypotheses(sequent, emptyEnv, "7<1");
+		}
 		sequentHasGoal(sequent, emptyEnv, "1<0");
 	
 	}
@@ -244,14 +253,14 @@ extends GenericEventBPOTest<F> {
 
 		F f1 = getGeneric().createElement("f1");
 		
-		getGeneric().addSuper(f1, "f0");
+		getGeneric().addSuper(f1, f0);
 		getGeneric().addPredicates(f1, makeSList("N0"), makeSList("2>9"), true);
 		
 		saveRodinFileOf(f1);
 		
 		F f2 = getGeneric().createElement("f2");
 
-		getGeneric().addSuper(f2, "f1");
+		getGeneric().addSuper(f2, f1);
 		getGeneric().addPredicates(f2, makeSList("N1"), makeSList("7<1"), false);
 		getGeneric().addPredicates(f2, makeSList("T1"), makeSList("1<0"), true);
 		
@@ -261,9 +270,13 @@ extends GenericEventBPOTest<F> {
 		
 		IPORoot po = getGeneric().getPOFile(f2);
 		
-		IPOSequent sequent = getSequent(po, "T1/THM");
+		IPOSequent sequent = getSequent(po, getTHMPOName(f2, "T1"));
 		
-		sequentHasHypotheses(sequent, emptyEnv, "5>9", "2>9", "7<1");
+		if (isCumulative()) {
+			sequentHasHypotheses(sequent, emptyEnv, "5>9", "2>9", "7<1");
+		} else {
+			sequentHasHypotheses(sequent, emptyEnv, "7<1");
+		}
 		sequentHasGoal(sequent, emptyEnv, "1<0");
 	
 	}
@@ -286,7 +299,7 @@ extends GenericEventBPOTest<F> {
 		
 		IPORoot po = getGeneric().getPOFile(cmp);
 		
-		IPOSequent sequent = getSequent(po, "N1/WD");
+		IPOSequent sequent = getSequent(po, getWDPOName(cmp, "N1"));
 		
 		sequentHasIdentifiers(sequent, "x");
 		sequentHasGoal(sequent, emptyEnv, "x≠0");
@@ -298,6 +311,11 @@ extends GenericEventBPOTest<F> {
 	 * proper creation of identifiers and hypotheses of theorem well-definedness PO
 	 */
 	public void testTheorems_11_identAndHyp() throws Exception {
+		if (!isCumulative()) {
+			// This test is meaningless
+			return;
+		}
+		
 		F abs = getGeneric().createElement("abs");
 
 		getGeneric().addIdents(abs, "x");
@@ -306,7 +324,7 @@ extends GenericEventBPOTest<F> {
 		saveRodinFileOf(abs);
 		
 		F cmp = getGeneric().createElement("cmp");
-		getGeneric().addSuper(cmp, "abs");
+		getGeneric().addSuper(cmp, abs);
 		getGeneric().addPredicates(cmp, makeSList("N2"), makeSList("x÷x ∈ ℕ"), true);
 		
 		saveRodinFileOf(cmp);
@@ -317,12 +335,36 @@ extends GenericEventBPOTest<F> {
 		
 		IPORoot po = getGeneric().getPOFile(cmp);
 		
-		IPOSequent sequent = getSequent(po, "N2/WD");
+		IPOSequent sequent = getSequent(po, getWDPOName(cmp, "N2"));
 		
 		sequentHasIdentifiers(sequent, "x");
 		sequentHasGoal(sequent, emptyEnv, "x≠0");
 	
 	}
 
+	/*
+	 * proof obligations for mixed list of predicates and theorems
+	 */
+	public void testTheorems_12_mixedTheorems() throws Exception {
+		F cmp = getGeneric().createElement("abs");
+		getGeneric().addPredicates(
+				cmp,
+				makeSList("N1", "T1", "N2", "T2"),
+				makeSList("7<max({1})", "1<max({1})", "8<max({1})",
+						"9<max({1})"), makeBList(false, true, false, true));
+		saveRodinFileOf(cmp);
+		runBuilder();
+
+		IPORoot po = getGeneric().getPOFile(cmp);
+		
+		noSequent(po, getTHMPOName(cmp, "N1"));
+		getSequent(po, getWDPOName(cmp, "N1"));
+		getSequent(po, getTHMPOName(cmp, "T1"));
+		getSequent(po, getWDPOName(cmp, "T1"));
+		noSequent(po, getTHMPOName(cmp, "N2"));
+		getSequent(po, getWDPOName(cmp, "N2"));
+		getSequent(po, getTHMPOName(cmp, "T2"));
+		getSequent(po, getWDPOName(cmp, "T2"));
+	}
 
 }

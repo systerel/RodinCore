@@ -22,7 +22,7 @@ import org.rodinp.core.RodinDBException;
  */
 public interface IGenericPOTest <E extends IInternalElement> extends IGenericElementTest <E> {
 	
-	public void addSuper(E file, String name) throws RodinDBException;
+	public void addSuper(E file, E abstraction) throws RodinDBException;
 	
 	public IPORoot getPOFile(E file) throws RodinDBException;
 
