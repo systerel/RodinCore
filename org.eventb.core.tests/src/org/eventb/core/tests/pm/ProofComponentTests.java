@@ -27,7 +27,6 @@ import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IProofComponent;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -43,13 +42,13 @@ public class ProofComponentTests extends AbstractProofTests {
 
 	protected static final String NO_PO = "NO_PO"; //$NON-NLS-1$
 
-	private IRodinFile mchFile;
-	private IProofComponent pc;
+	private IMachineRoot mchroot;
+	private ISCMachineRoot scRoot;
 	private IPORoot poRoot;
 	private IPRRoot prRoot;
 	private IPSRoot psRoot;
 
-	private ISCMachineRoot scFile;
+	private IProofComponent pc;
 
 	private void assertEquals(Set<IProofAttempt> expSet, IProofAttempt[] actual) {
 		assertEquals(expSet, mSet(actual));
@@ -86,13 +85,12 @@ public class ProofComponentTests extends AbstractProofTests {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		mchFile = rodinProject.getRodinFile("m.bum");
-		IMachineRoot root = (IMachineRoot) mchFile.getRoot();
-		scFile = root.getSCMachineRoot();
-		poRoot = root.getPORoot();
-		prRoot = root.getPRRoot();
-		psRoot = root.getPSRoot();
-		pc = pm.getProofComponent(root);
+		mchroot = eventBProject.getMachineRoot("m");
+		scRoot = mchroot.getSCMachineRoot();
+		poRoot = mchroot.getPORoot();
+		prRoot = mchroot.getPRRoot();
+		psRoot = mchroot.getPSRoot();
+		pc = pm.getProofComponent(mchroot);
 	}
 
 	@Override
@@ -254,8 +252,8 @@ public class ProofComponentTests extends AbstractProofTests {
 	 */
 	public void testSchedulingRule() throws Exception {
 		final ISchedulingRule rule = pc.getSchedulingRule();
-		assertFalse(rule.contains(mchFile.getSchedulingRule()));
-		assertFalse(rule.contains(scFile.getSchedulingRule()));
+		assertFalse(rule.contains(mchroot.getSchedulingRule()));
+		assertFalse(rule.contains(scRoot.getSchedulingRule()));
 		assertTrue(rule.contains(poRoot.getSchedulingRule()));
 		assertTrue(rule.contains(prRoot.getSchedulingRule()));
 		assertTrue(rule.contains(psRoot.getSchedulingRule()));

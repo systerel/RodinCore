@@ -27,6 +27,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextRoot;
+import org.eventb.core.IEventBProject;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
 import org.eventb.core.ISCContextRoot;
@@ -38,7 +39,6 @@ import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDB;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -55,6 +55,7 @@ public abstract class BuilderTest extends TestCase {
 	protected static FormulaFactory factory = FormulaFactory.getDefault();
 
 	protected IRodinProject rodinProject;
+	protected IEventBProject eventBProject;
 
 	protected IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
@@ -67,38 +68,38 @@ public abstract class BuilderTest extends TestCase {
 	}
 	
 	protected IContextRoot createContext(String bareName) throws RodinDBException {
-		final String fileName = EventBPlugin.getContextFileName(bareName);
-		IRodinFile result = rodinProject.getRodinFile(fileName);
-		result.create(true, null);
-		return (IContextRoot) result.getRoot();
+		final IContextRoot result = eventBProject.getContextRoot(bareName);
+		createRodinFileOf(result);
+		return result;
 	}
 
 	protected IMachineRoot createMachine(String bareName) throws RodinDBException {
-		final String fileName = EventBPlugin.getMachineFileName(bareName);
-		IRodinFile result = rodinProject.getRodinFile(fileName);
-		result.create(true, null);
-		return (IMachineRoot) result.getRoot();
+		final IMachineRoot result = eventBProject.getMachineRoot(bareName);
+		createRodinFileOf(result);
+		return result;
 	}
 
 	protected IPORoot createPOFile(String bareName) throws RodinDBException {
-		final String fileName = EventBPlugin.getPOFileName(bareName);
-		IRodinFile result = rodinProject.getRodinFile(fileName);
-		result.create(true, null);
-		return (IPORoot) result.getRoot();
+		final IPORoot result = eventBProject.getPORoot(bareName);
+		createRodinFileOf(result);
+		return result;
 	}
 
 	protected ISCContextRoot createSCContext(String bareName) throws RodinDBException {
-		final String fileName = EventBPlugin.getSCContextFileName(bareName);
-		IRodinFile result = rodinProject.getRodinFile(fileName);
-		result.create(true, null);
-		return (ISCContextRoot) result.getRoot();
+		final ISCContextRoot result = eventBProject.getSCContextRoot(bareName);
+		createRodinFileOf(result);
+		return result;
 	}
 
 	protected ISCMachineRoot createSCMachine(String bareName) throws RodinDBException {
-		final String fileName = EventBPlugin.getSCMachineFileName(bareName);
-		IRodinFile result = rodinProject.getRodinFile(fileName);
-		result.create(true, null);
-		return (ISCMachineRoot) result.getRoot();
+		final ISCMachineRoot result = eventBProject.getSCMachineRoot(bareName);
+		createRodinFileOf(result);
+		return result;
+	}
+	
+	private void createRodinFileOf(IInternalElement result)
+			throws RodinDBException {
+		result.getRodinFile().create(true, null);
 	}
 	
 	public static void saveRodinFileOf(IInternalElement elem) throws RodinDBException {
@@ -169,6 +170,7 @@ public abstract class BuilderTest extends TestCase {
 		}
 		
 		rodinProject = createRodinProject("P");
+		eventBProject = (IEventBProject) rodinProject.getAdapter(IEventBProject.class);
 		
 		disableAutoProver();
 		

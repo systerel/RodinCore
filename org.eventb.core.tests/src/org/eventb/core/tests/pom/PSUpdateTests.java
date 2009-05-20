@@ -37,26 +37,16 @@ public class PSUpdateTests extends BuilderTest {
 	private static FormulaFactory ff = FormulaFactory.getDefault();
 	private static Predicate BTRUE = ff.makeLiteralPredicate(Formula.BTRUE, null);
 
-	private IPORoot getPORoot() {
-		return (IPORoot) getPOFile().getRoot();
-	}
-	
-
-	private IRodinFile getPOFile() {
-		return rodinProject.getRodinFile("x.bpo");
-	}
-	
+	private IPORoot poRoot;
+	private IPSRoot psRoot;
 	
 	private IPOSequent getPOSequent(String name) {
-		return getPORoot().getSequent(name);
-	}
-	
-	private IRodinFile getPSFile() {
-		return rodinProject.getRodinFile("x.bps");
+		return poRoot.getSequent(name);
 	}
 	
 	private void createPOFile() throws RodinDBException {
-		getPOFile().create(true, null);
+		poRoot = createPOFile("x");
+		psRoot = poRoot.getPSRoot();
 	}
 	
 	private void assertPOFile(String nameList) throws RodinDBException {
@@ -66,7 +56,7 @@ public class PSUpdateTests extends BuilderTest {
 		} else {
 			names = nameList.split(",");
 		}
-		final IPOSequent[] poSequents = getPORoot().getSequents();
+		final IPOSequent[] poSequents = poRoot.getSequents();
 		final int length = names.length;
 		assertEquals(length, poSequents.length);
 		for (int i = 0; i < length; ++ i) {
@@ -77,8 +67,7 @@ public class PSUpdateTests extends BuilderTest {
 
 	private void addPO(String name, IPOSequent nextSibling)
 			throws RodinDBException {
-		final IPORoot poFile = getPORoot();
-		final IPOSequent poSequent = poFile.getSequent(name);
+		final IPOSequent poSequent = poRoot.getSequent(name);
 		poSequent.create(nextSibling, null);
 		poSequent.setAccuracy(true, null);
 		poSequent.setPOStamp(123, null);
@@ -88,21 +77,19 @@ public class PSUpdateTests extends BuilderTest {
 	}
 
 	private void deletePO(String name) throws RodinDBException {
-		final IPORoot poFile = getPORoot();
-		final IPOSequent poSequent = poFile.getSequent(name);
+		final IPOSequent poSequent = poRoot.getSequent(name);
 		poSequent.delete(false, null);
 	}
 
 	private void movePO(String name, String nextName) throws RodinDBException {
-		final IPORoot poFile = getPORoot();
-		final IPOSequent poSequent = poFile.getSequent(name);
+		final IPOSequent poSequent = poRoot.getSequent(name);
 		final IPOSequent nextSibling;
 		if (nextName == null) {
 			nextSibling = null;
 		} else {
 			nextSibling = getPOSequent(nextName);
 		}
-		poSequent.move(poFile, nextSibling, null, false, null);
+		poSequent.move(poRoot, nextSibling, null, false, null);
 	}
 
 	/**
@@ -111,12 +98,9 @@ public class PSUpdateTests extends BuilderTest {
 	 * order as POs.
 	 */
 	private void checkPSFile() throws RodinDBException {
-		final IPORoot poFile = getPORoot();
-		final IRodinFile psFile = getPSFile();
-		final IPSRoot psRoot = (IPSRoot) psFile.getRoot();
-		assertTrue(poFile.exists());
-		assertTrue(psFile.exists());
-		final IPOSequent[] poSequents = poFile.getSequents();
+		assertTrue(poRoot.exists());
+		assertTrue(psRoot.exists());
+		final IPOSequent[] poSequents = poRoot.getSequents();
 		final IPSStatus[] psStatuses = psRoot.getStatuses();
 		final int length = poSequents.length;
 		assertEquals(length, psStatuses.length);
@@ -138,7 +122,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * the generated / modified PS file.
 	 */
 	protected void runBuilder(String poNameList) throws CoreException {
-		final IRodinFile poFile = getPOFile();
+		final IRodinFile poFile = poRoot.getRodinFile();
 		if (poFile.hasUnsavedChanges()) {
 			poFile.save(null, false, false);
 		}

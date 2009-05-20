@@ -35,7 +35,6 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.eventb.core.tests.DeltaListener;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -256,15 +255,13 @@ public class ProofAttemptTests extends AbstractProofTests {
 	}
 
 	private void createPOFile() throws RodinDBException {
-		IRodinFile file = rodinProject.getRodinFile("m.bpo");
-		file.create(true, null);
-		poRoot = (IPORoot) file.getRoot();
+		poRoot = createPOFile("m");
 		final ITypeEnvironment typenv = mTypeEnvironment();
 		final IPOPredicateSet hyp = addPredicateSet(poRoot, "hyp", null,
 				typenv, GHYP.toString());
 		addSequent(poRoot, PO1, GOAL.toString(), hyp, typenv, LHYP.toString());
 		addSequent(poRoot, PO2, GOAL.toString(), hyp, typenv, LHYP.toString());
-		file.save(null, true);
+		saveRodinFileOf(poRoot);
 	}
 
 	private void dischargeTrueGoal(final IProofAttempt pa) {

@@ -69,22 +69,16 @@ public class AutoProverDeltaTests extends BuilderTest {
 	/* A goal where the auto-prover will start a proof, but will not finish it. */
 	private static final Predicate ATTEMPTABLE = ff.makeAssociativePredicate(
 			LAND, new Predicate[] { PROVABLE, UNPROVABLE }, null);
-
-	private IRodinFile getPOFile() {
-		return rodinProject.getRodinFile("x.bpo");
-	}
-
-	private IRodinFile getPSFile() {
-		return rodinProject.getRodinFile("x.bps");
-	}
+	
+	private IPORoot poRoot;
+	private IPSRoot psRoot;
 
 	private void createPOFile() throws RodinDBException {
-		getPOFile().create(true, null);
+		poRoot = createPOFile("x");
+		psRoot = poRoot.getPSRoot();
 	}
 
 	private void setPO(Predicate goal, int stamp) throws RodinDBException {
-		final IRodinFile poFile = getPOFile();
-		final IPORoot poRoot = (IPORoot) poFile.getRoot();
 		final IPOSequent poSequent = poRoot.getSequent(PO_NAME);
 		if (!poSequent.exists()) {
 			poSequent.create(null, null);
@@ -107,9 +101,8 @@ public class AutoProverDeltaTests extends BuilderTest {
 	 * Creates a proof of the PO making it reviewed.
 	 */
 	private void setReviewed() throws RodinDBException {
-		final IRodinFile psFile = getPSFile();
 		final IProofManager pm = EventBPlugin.getProofManager();
-		final IProofComponent pc = pm.getProofComponent((IPSRoot) psFile.getRoot());
+		final IProofComponent pc = pm.getProofComponent(poRoot);
 		final IProofAttempt pa = pc.createProofAttempt(PO_NAME, "test", null);
 		final IProofTree proofTree = pa.getProofTree();
 		final IProofTreeNode root = proofTree.getRoot();
@@ -125,10 +118,8 @@ public class AutoProverDeltaTests extends BuilderTest {
 	 */
 	private void checkPSFile(int confidence, boolean manualProof, boolean broken)
 			throws RodinDBException {
-		final IRodinFile psFile = getPSFile();
-		final IPSRoot root = (IPSRoot) psFile.getRoot();
-		assertTrue(psFile.exists());
-		final IPSStatus[] psStatuses = root.getStatuses();
+		assertTrue(psRoot.exists());
+		final IPSStatus[] psStatuses = psRoot.getStatuses();
 		assertEquals(1, psStatuses.length);
 		final IPSStatus psStatus = psStatuses[0];
 		assertEquals(confidence, psStatus.getConfidence());
@@ -142,7 +133,7 @@ public class AutoProverDeltaTests extends BuilderTest {
 	 */
 	protected void runBuilder(boolean attempted, int confidence,
 			boolean manualProof, boolean broken) throws CoreException {
-		final IRodinFile poFile = getPOFile();
+		final IRodinFile poFile = poRoot.getRodinFile();
 		if (poFile.hasUnsavedChanges()) {
 			poFile.save(null, false, false);
 		}

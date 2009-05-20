@@ -15,7 +15,6 @@ import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofManager;
-import org.rodinp.core.IRodinFile;
 
 /**
  * Unit tests for the Proof Manager.
@@ -44,10 +43,8 @@ public class ProofManagerTests extends AbstractProofTests {
 	 * context.
 	 */
 	public void testContextProofComponent() throws Exception {
-		final IRodinFile ctx = rodinProject.getRodinFile("c.buc");
-		IContextRoot root = (IContextRoot) ctx.getRoot();
-		final IProofComponent pc = pm.getProofComponent((IContextRoot) ctx
-				.getRoot());
+		final IContextRoot root = eventBProject.getContextRoot("c");
+		final IProofComponent pc = pm.getProofComponent(root);
 		assertNotNull(pc);
 		assertEquals(pc, pm.getProofComponent(root.getSCContextRoot()));
 		assertEquals(pc, pm.getProofComponent(root.getPORoot()));
@@ -60,10 +57,8 @@ public class ProofManagerTests extends AbstractProofTests {
 	 * machine.
 	 */
 	public void testMachineProofComponent() throws Exception {
-		final IRodinFile mch = rodinProject
-				.getRodinFile("m.bum");
-		final IMachineRoot root = (IMachineRoot)mch.getRoot();
-		final IProofComponent pc = pm.getProofComponent((IMachineRoot) mch.getRoot());
+		final IMachineRoot root = eventBProject.getMachineRoot("m");
+		final IProofComponent pc = pm.getProofComponent(root);
 		assertNotNull(pc);
 		assertEquals(pc, pm.getProofComponent(root.getSCMachineRoot()));
 		assertEquals(pc, pm.getProofComponent(root.getPORoot()));

@@ -24,7 +24,6 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.tests.BuilderTest;
 import org.eventb.internal.core.pom.POLoader;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -69,11 +68,11 @@ public class POLoaderTest extends BuilderTest {
 		}
 		return result;
 	}
+	
+	private IPORoot poRoot;
 
-	private IPORoot createPOFile() throws RodinDBException {
-		IRodinFile poFile = rodinProject.getRodinFile("x.bpo");
-		IPORoot poRoot = (IPORoot) poFile.getRoot();
-		poFile.create(true, null);
+	private void createPOFile() throws RodinDBException {
+		poRoot = createPOFile("x");
 		IPOPredicateSet hyp0 = POUtil.addPredicateSet(poRoot, "hyp0", null,
 				mTypeEnvironment("x", "ℤ"),
 				"1=1", "2=2", "x∈ℕ"
@@ -109,17 +108,16 @@ public class POLoaderTest extends BuilderTest {
 				mTypeEnvironment(),
 				"y÷y = 1"
 		);
-		poFile.save(null, true);
-		return poRoot;
+		saveRodinFileOf(poRoot);
 	}
 
 	
 	
 	public final void testReadPO() throws CoreException {
 		
-		IPORoot poFile = createPOFile();
+		createPOFile();
 		
-		final IPOSequent[] poSequents = poFile.getSequents();
+		final IPOSequent[] poSequents = poRoot.getSequents();
 				
 		String[] expectedSequents = {
 			"{x=ℤ}[][1=1, 2=2, x∈ℕ][] |- x≠0",

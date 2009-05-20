@@ -35,7 +35,6 @@ import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.BuilderTest;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 public class AutoPOMTest extends BuilderTest {
@@ -64,44 +63,44 @@ public class AutoPOMTest extends BuilderTest {
 		return result;
 	}
 
-	private IPORoot createPOFile() throws RodinDBException {
-		IRodinFile poFile = rodinProject.getRodinFile("x.bpo");
-		IPORoot root = (IPORoot) poFile.getRoot();
-		poFile.create(true, null);
-		IPOPredicateSet hyp0 = POUtil.addPredicateSet(root, "hyp0", null,
+	private IPORoot poRoot;
+	
+	private void createPOFile() throws RodinDBException {
+		poRoot = createPOFile("x");
+		final IPOPredicateSet hyp0 = POUtil.addPredicateSet(poRoot, "hyp0", null,
 				mTypeEnvironment("x", "ℤ"),
 				"1=1", "2=2", "x∈ℕ"
 		);
-		POUtil.addSequent(root, "PO1", 
+		POUtil.addSequent(poRoot, "PO1", 
 				"1=1 ∧2=2 ∧x ∈ℕ",
 				hyp0, 
 				mTypeEnvironment()
 		);
-		POUtil.addSequent(root, "PO2", 
+		POUtil.addSequent(poRoot, "PO2", 
 				"1=1 ∧2=2 ∧x ∈ℕ∧y ∈ℕ",
 				hyp0, 
 				mTypeEnvironment("y", "ℤ"), 
 				"y∈ℕ" 
 		);
-		POUtil.addSequent(root, "PO3", 
+		POUtil.addSequent(poRoot, "PO3", 
 				"3=3", 
 				hyp0, 
 				mTypeEnvironment(),
 				"3=3"
 		);
-		POUtil.addSequent(root, "PO4", 
+		POUtil.addSequent(poRoot, "PO4", 
 				"1=1 ∧2=2 ∧x ∈ℕ", 
 				hyp0, 
 				mTypeEnvironment(),
 				"3=3"
 		);
-		POUtil.addSequent(root, "PO5", 
+		POUtil.addSequent(poRoot, "PO5", 
 				"1=1 ∧2=2 ∧y ∈ℕ∧y ∈ℕ", 
 				hyp0, 
 				mTypeEnvironment("y", "ℤ"), 
 				"y∈ℕ"
 		);
-		POUtil.addSequent(root, "PO6", 
+		POUtil.addSequent(poRoot, "PO6", 
 				"1=1 ∧2=2 ∧x ∈ℕ∧y ∈ℕ", 
 				hyp0, 
 				mTypeEnvironment(
@@ -110,14 +109,13 @@ public class AutoPOMTest extends BuilderTest {
 				), 
 				"y∈ℕ"
 		);
-		POUtil.addSequent(root, "PO7", 
+		POUtil.addSequent(poRoot, "PO7", 
 				"y∈ℕ", 
 				hyp0, 
 				mTypeEnvironment("y", "ℤ"), 
 				"x=x"
 		);
-		poFile.save(null, true);
-		return root;
+		saveRodinFileOf(poRoot);
 	}
 
 	/*
@@ -125,20 +123,20 @@ public class AutoPOMTest extends BuilderTest {
 	 */
 	public final void testAutoPOM() throws CoreException {
 		
-		IPORoot poFile = createPOFile();
-		IPSRoot psFile = poFile.getPSRoot();
-		IPRRoot prFile = poFile.getPRRoot();
+		createPOFile();
+		IPSRoot psRoot = poRoot.getPSRoot();
+		IPRRoot prRoot = poRoot.getPRRoot();
 		
 		enableAutoProver();
 		runBuilder();
 		
 		// Checks that status in PS file corresponds POs in PO file.
-		checkPOsConsistent(poFile, psFile);		
+		checkPOsConsistent(poRoot, psRoot);		
 		// Checks that status in PS file corresponds Proofs in PR file.
-		checkProofsConsistent(prFile, psFile);
+		checkProofsConsistent(prRoot, psRoot);
 		
 		// Checks that all POs are discharged except the last one.
-		IPSStatus[] prs = (IPSStatus[]) psFile.getStatuses();
+		IPSStatus[] prs = (IPSStatus[]) psRoot.getStatuses();
 		for (int i = 0; i < prs.length - 1; i++) {
 			IPSStatus prSequent = prs[i];
 			assertDischarged(prSequent);
@@ -147,7 +145,7 @@ public class AutoPOMTest extends BuilderTest {
 		
 		// Try an interactive proof on the last one via the PSWrapper
 		final IProofManager pm = EventBPlugin.getProofManager();
-		final IProofComponent pc = pm.getProofComponent(psFile);
+		final IProofComponent pc = pm.getProofComponent(psRoot);
 		final String poName = prs[prs.length-1].getElementName();
 		final IProofAttempt pa = pc.createProofAttempt(poName, "test", null);
 		final IProofTree proofTree = pa.getProofTree();
@@ -158,9 +156,9 @@ public class AutoPOMTest extends BuilderTest {
 		// Checks that proof is marked as manual
 		assertManualProof(prs[prs.length-1]);
 		// Checks that status in PS file corresponds POs in PO file.
-		checkPOsConsistent(poFile, psFile);		
+		checkPOsConsistent(poRoot, psRoot);		
 		// Checks that status in PS file corresponds Proofs in PR file.
-		checkProofsConsistent(prFile, psFile);
+		checkProofsConsistent(prRoot, psRoot);
 	}
 	
 
