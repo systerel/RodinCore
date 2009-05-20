@@ -203,20 +203,6 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 
 				@Override
 				public void checkAttr() throws Exception {
-					hasMarker(f.getInvariants()[0], EventBAttributes.THEOREM_ATTRIBUTE);
-				}
-
-				@Override
-				public void removeAttr() throws Exception {
-					assertTrue(f.getInvariants()[0].hasAttribute(EventBAttributes.THEOREM_ATTRIBUTE));
-					f.getInvariants()[0].removeAttribute(EventBAttributes.THEOREM_ATTRIBUTE, null);
-				}
-				
-			},
-			new MachineOptAttrTest() {
-
-				@Override
-				public void checkAttr() throws Exception {
 					hasMarker(f.getVariants()[0], EventBAttributes.EXPRESSION_ATTRIBUTE);
 				}
 
@@ -465,20 +451,6 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 				}
 				
 			},
-			new ContextOptAttrTest() {
-
-				@Override
-				public void checkAttr() throws Exception {
-					hasMarker(f.getAxioms()[0], EventBAttributes.THEOREM_ATTRIBUTE);
-				}
-
-				@Override
-				public void removeAttr() throws Exception {
-					assertTrue(f.getAxioms()[0].hasAttribute(EventBAttributes.THEOREM_ATTRIBUTE));
-					f.getAxioms()[0].removeAttribute(EventBAttributes.THEOREM_ATTRIBUTE, null);
-				}
-				
-			}
 	};
 	
 	public void test() throws Exception {
