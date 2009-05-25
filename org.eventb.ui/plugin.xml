@@ -505,6 +505,7 @@
                tooltip="%popupMenu.copy.tooltip"/>
       </objectContribution>
       <objectContribution
+            adaptable="true"
             id="org.eventb.ui.ProofPurger"
             objectClass="org.rodinp.core.IRodinElement">
          <action
@@ -514,6 +515,15 @@
                menubarPath="proving"
                tooltip="%popupMenu.purge.tooltip">
          </action>
+         <visibility>
+            <or>
+               <objectClass
+                     name="org.rodinp.core.IRodinProject">
+               </objectClass>
+               <objectClass
+                     name="org.eventb.core.IEventBRoot">
+               </objectClass>
+            </or></visibility>
       </objectContribution>
    </extension>
    <extension
