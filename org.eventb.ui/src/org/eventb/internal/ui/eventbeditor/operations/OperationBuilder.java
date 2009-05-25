@@ -231,11 +231,13 @@ class OperationBuilder {
 	}
 
 	private OperationCreateElement createEvent(IMachineRoot root, String label) {
-		final IAttributeValue[] values = new IAttributeValue[] {
-				LABEL_ATTRIBUTE.makeValue(label),
-				CONVERGENCE_ATTRIBUTE.makeValue(ORDINARY.getCode()), //
-		};
-		return getCreateElement(root, IEvent.ELEMENT_TYPE, null, values);
+		final List<IAttributeValue>values = new LinkedList<IAttributeValue>();
+		if (label != null) {
+			values.add(LABEL_ATTRIBUTE.makeValue(label));
+		}
+		values.add(CONVERGENCE_ATTRIBUTE.makeValue(ORDINARY.getCode()));
+		final IAttributeValue[] array = values.toArray(new IAttributeValue[values.size()]);
+		return getCreateElement(root, IEvent.ELEMENT_TYPE, null, array);
 	}
 
 	private void assertLengthEquals(Object[] tab1, Object[] tab2) {
@@ -264,10 +266,12 @@ class OperationBuilder {
 	public <T extends IInternalElement> OperationCreateElement createElementOneStringAttribute(
 			IInternalElement parent, IInternalElementType<T> typeElement,
 			IInternalElement sibling, IAttributeType.String type, String string) {
-		final IAttributeValue[] values = new IAttributeValue[] { type
-				.makeValue(string), //
-		};
-		return getCreateElement(parent, typeElement, sibling, values);
+		final List<IAttributeValue>values = new LinkedList<IAttributeValue>();
+		if (string != null) {
+			values.add(type.makeValue(string));
+		}
+		final IAttributeValue[] array = values.toArray(new IAttributeValue[values.size()]);
+		return getCreateElement(parent, typeElement, sibling, array);
 	}
 
 	/**
@@ -296,11 +300,15 @@ class OperationBuilder {
 			IInternalElement parent, IInternalElementType<T> typeElement,
 			IAttributeType.String type1, IAttributeType.String type2,
 			String string1, String string2) {
-		final IAttributeValue[] values = new IAttributeValue[] {
-				type1.makeValue(string1), //
-				type2.makeValue(string2), //
-		};
-		return getCreateElement(parent, typeElement, null, values);
+		final List<IAttributeValue>values = new LinkedList<IAttributeValue>();
+		if (string1 != null) {
+			values.add(type1.makeValue(string1));
+		}
+		if (string2 != null) {
+			values.add(type2.makeValue(string2));
+		}
+		final IAttributeValue[] array = values.toArray(new IAttributeValue[values.size()]);
+		return getCreateElement(parent, typeElement, null, array);
 	}
 
 	/**
