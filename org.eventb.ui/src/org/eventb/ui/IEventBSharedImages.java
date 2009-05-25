@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007 ETH Zurich.
+ * Copyright (c) 2006-2009 ETH Zurich.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -125,6 +125,8 @@ public interface IEventBSharedImages {
 	public static final String IMG_NEW_THEOREMS_PATH = "icons/full/ctool16/newthm_edit.gif";
 
 	public static final String IMG_NEW_EVENT_PATH = "icons/full/ctool16/newevt_edit.gif";
+	
+	public static final String IMG_NEW_VARIANT_PATH = "icons/full/ctool16/newvariant_edit.gif";
 
 	public static final String IMG_NEW_CARRIER_SETS_PATH = "icons/full/ctool16/newset_edit.gif";
 

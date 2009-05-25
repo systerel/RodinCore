@@ -36,11 +36,14 @@ import org.eventb.core.ICommentedElement;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
+import org.eventb.core.IExtendsContext;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
+import org.eventb.core.IRefinesMachine;
+import org.eventb.core.ISeesContext;
 import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
@@ -80,30 +83,37 @@ public class EventBEditorUtils {
 	public static boolean DEBUG = false;
 
 	public final static String DEBUG_PREFIX = "*** EventBEditor *** ";
-
-	static IAction newAct;
-
-	static IGuard newGrd;
+	
+	static IRefinesEvent newRefEvt;
 
 	static IParameter newParam;
+	
+	static IGuard newGrd;
+	
+	static IWitness newWit;
+	
+	static IAction newAct;
+	
+	static IRefinesMachine newRefMch;
+	
+	static ISeesContext newSeeCtx;
 
 	static IVariable newVar;
 
 	static IInvariant newInv;
+	
+	static IEvent newEvt;
 
 	static IVariant newVariant;
 
-	static IEvent newEvt;
-
-	static IAxiom newAxm;
+	static IExtendsContext newExtCtx;
 
 	static ICarrierSet newSet;
 
 	static IConstant newCst;
+	
+	static IAxiom newAxm;
 
-	static IRefinesEvent newRefEvt;
-
-	static IWitness newWit;
 
 	/**
 	 * Delete selected elements in a tree viewer.
@@ -289,7 +299,7 @@ public class EventBEditorUtils {
 	}
 
 	/**
-	 * Add a refines event element.
+	 * Add a refines event clause.
 	 * <p>
 	 * 
 	 * @param editor
@@ -308,11 +318,11 @@ public class EventBEditorUtils {
 					try {
 						abs_name = ((IEvent) event).getLabel();
 						AtomicOperation op = OperationFactory.createElement(
-								editor.getRodinInput(),
-								IRefinesEvent.ELEMENT_TYPE,
+								event, IRefinesEvent.ELEMENT_TYPE,
 								EventBAttributes.TARGET_ATTRIBUTE, abs_name);
 						History.getInstance().addOperation(op);
-						displayInSynthesis(viewer, event, op.getCreatedElement());
+						displayInSynthesis(viewer, event, op
+								.getCreatedElement());
 					} catch (RodinDBException e) {
 						e.printStackTrace();
 					}
@@ -322,7 +332,7 @@ public class EventBEditorUtils {
 	}
 
 	/**
-	 * Add a new action.
+	 * Add a new witness.
 	 * <p>
 	 * 
 	 * @param editor
@@ -337,7 +347,7 @@ public class EventBEditorUtils {
 			public void run() {
 				final IInternalElement event = getEvent(viewer);
 				if (event != null) {
-					AtomicOperation op = OperationFactory.createElement(editor.getRodinInput(),
+					AtomicOperation op = OperationFactory.createElement(event,
 							IWitness.ELEMENT_TYPE,
 							EventBAttributes.PREDICATE_ATTRIBUTE,
 							EventBUIPlugin.PRD_DEFAULT);
@@ -467,6 +477,70 @@ public class EventBEditorUtils {
 		editElement(viewer, op);
 	}
 
+	/**
+	 * Add a new variant.
+	 * <p>
+	 * 
+	 * @param editor
+	 *            The current Event-B Editor
+	 * @param viewer
+	 *            The current Tree Viewer in the Event-B Editor
+	 */
+	public static void addVariant(final IEventBEditor<IMachineRoot> editor,
+			final TreeViewer viewer) {
+		AtomicOperation op = OperationFactory.createVariantWizard(editor
+				.getRodinInput(), "");
+		addOperationToHistory(op, editor, viewer);
+	}
+
+	/**
+	 * Add a refines machine clause.
+	 * <p>
+	 * 
+	 * @param editor
+	 *            The current Event-B Editor
+	 * @param viewer
+	 *            The current Tree Viewer in the Event-B Editor
+	 */
+	public static void addRefinesMachine(
+			final IEventBEditor<IMachineRoot> editor, final TreeViewer viewer) {
+		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
+			@SuppressWarnings("synthetic-access")
+			public void run() {
+				AtomicOperation op = OperationFactory.createElementGeneric(
+						editor.getRodinInput(), IRefinesMachine.ELEMENT_TYPE,
+						null);
+				History.getInstance().addOperation(op);
+				IInternalElement ref = op.getCreatedElement();
+				displayInSynthesis(viewer, ref, ref);
+			}
+		});
+	}
+
+	/**
+	 * Add a sees context clause.
+	 * <p>
+	 * 
+	 * @param editor
+	 *            The current Event-B Editor
+	 * @param viewer
+	 *            The current Tree Viewer in the Event-B Editor
+	 */
+	public static void addSeesContext(final IEventBEditor<IMachineRoot> editor,
+			final TreeViewer viewer) {
+		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
+			@SuppressWarnings("synthetic-access")
+			public void run() {
+				AtomicOperation op = OperationFactory
+						.createElementGeneric(editor.getRodinInput(),
+								ISeesContext.ELEMENT_TYPE, null);
+				History.getInstance().addOperation(op);
+				IInternalElement ref = op.getCreatedElement();
+				displayInSynthesis(viewer, ref, ref);
+			}
+		});
+	}
+
 	private static void displayInSynthesis(final TreeViewer viewer,
 			IInternalElement expanded, IInternalElement selected) {
 		viewer.setExpandedState(TreeSupports.findItem(viewer.getTree(),
@@ -533,6 +607,30 @@ public class EventBEditorUtils {
 		AtomicOperation op = OperationFactory.createElementGeneric(editor
 				.getRodinInput(), ICarrierSet.ELEMENT_TYPE, null);
 		addOperationToHistory(op, editor, viewer);
+	}
+	
+	/**
+	 * Add an extends context clause.
+	 * <p>
+	 * 
+	 * @param editor
+	 *            The current Event-B Editor
+	 * @param viewer
+	 *            The current Tree Viewer in the Event-B Editor
+	 */
+	public static void addExtendsContext(final IEventBEditor<IContextRoot> editor,
+			final TreeViewer viewer) {
+		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
+			@SuppressWarnings("synthetic-access")
+			public void run() {
+				AtomicOperation op = OperationFactory
+						.createElementGeneric(editor.getRodinInput(),
+								IExtendsContext.ELEMENT_TYPE, null);
+				History.getInstance().addOperation(op);
+				IInternalElement ref = op.getCreatedElement();
+				displayInSynthesis(viewer, ref, ref);
+			}
+		});
 	}
 
 	/**

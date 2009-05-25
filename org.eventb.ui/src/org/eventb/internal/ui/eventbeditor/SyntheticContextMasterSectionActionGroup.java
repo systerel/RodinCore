@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,8 @@ import org.eventb.ui.IEventBSharedImages;
  */
 public class SyntheticContextMasterSectionActionGroup extends
 		MasterSectionActionGroup<EventBContextEditor> {
+	
+	protected Action addExtendsContext;
 
 	protected Action addSet;
 
@@ -55,6 +57,16 @@ public class SyntheticContextMasterSectionActionGroup extends
 	public SyntheticContextMasterSectionActionGroup(EventBContextEditor eventBEditor,
 			TreeViewer treeViewer) {
 		super(eventBEditor, treeViewer);
+		
+		// Add a extends context clause.
+		addExtendsContext = new Action() {
+			@Override
+			public void run() {
+				EventBEditorUtils.addExtendsContext(editor, viewer);
+			}
+		};
+		addExtendsContext.setText("New &Extends Context");
+		addExtendsContext.setToolTipText("Create a new extends context");
 		
 		// Add a carrier set.
 		addSet = new Action() {
@@ -141,13 +153,15 @@ public class SyntheticContextMasterSectionActionGroup extends
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
 		ISelection sel = getContext().getSelection();
+		if (!sel.isEmpty()) {
+			menu.add(delete);
+		}
+		menu.add(new Separator());
+		menu.add(addExtendsContext);
 		menu.add(addSet);
 		menu.add(addConstant);
 		menu.add(addAxiom);
-		if (!sel.isEmpty()) {
-			menu.add(new Separator());
-			menu.add(delete);
-		}
+		
 		// Other plug-ins can contribute there actions here
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}

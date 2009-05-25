@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,15 +47,25 @@ public class SyntheticMachineMasterSectionActionGroup extends
 		MasterSectionActionGroup<EventBMachineEditor> {
 
 	// Some actions
+	protected Action addRefinesMachine;
+	
+	protected Action addSeesContext;
+	
 	protected Action addVariable;
 
 	protected Action addInvariant;
 
 	protected Action addEvent;
+	
+	protected Action addVariant;
+	
+	protected Action addRefinesEvent;
 
 	protected Action addParameter;
 
 	protected Action addGuard;
+	
+	protected Action addWitness;
 
 	protected Action addAction;
 
@@ -79,7 +89,27 @@ public class SyntheticMachineMasterSectionActionGroup extends
 	public SyntheticMachineMasterSectionActionGroup(EventBMachineEditor eventBEditor,
 			TreeViewer treeViewer) {
 		super(eventBEditor, treeViewer);
-
+		
+		// Add a refines machine clause.
+		addRefinesMachine = new Action() {
+			@Override
+			public void run() {
+				 EventBEditorUtils.addRefinesMachine(editor, viewer);
+			}
+		};
+		addRefinesMachine.setText("New &Refines Machine");
+		addRefinesMachine.setToolTipText("Create a new refines machine");
+		
+		// Add a sees context clause.
+		addSeesContext = new Action() {
+			@Override
+			public void run() {
+				 EventBEditorUtils.addSeesContext(editor, viewer);
+			}
+		};
+		addSeesContext.setText("New &Sees Context");
+		addSeesContext.setToolTipText("Create a new sees context");
+		
 		// Add a variable.
 		addVariable = new Action() {
 			@Override
@@ -117,7 +147,32 @@ public class SyntheticMachineMasterSectionActionGroup extends
 		addEvent.setToolTipText("Create a new event");
 		addEvent.setImageDescriptor(EventBImage
 				.getImageDescriptor(IEventBSharedImages.IMG_NEW_EVENT_PATH));
-
+		
+		// Add a variant.
+		addVariant = new Action() {
+			@Override
+			public void run() {
+				EventBEditorUtils.addVariant(editor, viewer);
+			}
+		};
+		addVariant.setText("New &Variant");
+		addVariant.setToolTipText("Create a new variant");
+		addVariant
+				.setImageDescriptor(EventBImage
+						.getImageDescriptor(IEventBSharedImages.IMG_NEW_VARIANT_PATH));
+		
+		// Add a refines event clause.
+		addRefinesEvent = new Action() {
+			@Override
+			public void run() {
+				EventBEditorUtils.addRefinesEvent(editor, viewer);
+			}
+		};
+		addRefinesEvent.setText("New &Refines Event");
+		addRefinesEvent.setToolTipText("Create a new refines event");
+		addRefinesEvent.setImageDescriptor(EventBImage
+				.getImageDescriptor(IEventBSharedImages.IMG_NEW_EVENT_PATH));
+		
 		// Add a local variable.
 		addParameter = new Action() {
 			@Override
@@ -142,6 +197,18 @@ public class SyntheticMachineMasterSectionActionGroup extends
 		addGuard.setToolTipText("Create a new guard");
 		addGuard.setImageDescriptor(EventBImage
 				.getImageDescriptor(IEventBSharedImages.IMG_NEW_GUARD_PATH));
+		
+		// Add a witness.
+		addWitness = new Action() {
+			@Override
+			public void run() {
+				EventBEditorUtils.addWitness(editor, viewer);
+			}
+		};
+		addWitness.setText("New &Witness");
+		addWitness.setToolTipText("Create a new witness");
+		addWitness.setImageDescriptor(EventBImage
+				.getImageDescriptor(IEventBSharedImages.IMG_NEW_EVENT_PATH));
 
 		// Add an action.
 		addAction = new Action() {
@@ -271,7 +338,7 @@ public class SyntheticMachineMasterSectionActionGroup extends
 				}
 			}
 		};
-		showAbstraction.setText("Abstraction");
+		showAbstraction.setText("&Open Abstraction");
 		showAbstraction.setToolTipText("Show the corresponding abstract event");
 		showAbstraction.setImageDescriptor(EventBImage
 				.getImageDescriptor(IEventBSharedImages.IMG_REFINES_PATH));
@@ -286,23 +353,35 @@ public class SyntheticMachineMasterSectionActionGroup extends
 	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
+		IMachineRoot root = editor.getRodinInput();
 		ISelection sel = getContext().getSelection();
 		if (sel instanceof IStructuredSelection) {
+			if (!sel.isEmpty()) {
+				menu.add(delete);
+			}
+			
 			IStructuredSelection ssel = (IStructuredSelection) sel;
 			if (ssel.size() == 1) {
 				Object obj = ssel.getFirstElement();
 
 				if (obj instanceof IEvent) {
+					menu.add(new Separator());
+					menu.add(addRefinesEvent);
 					menu.add(addParameter);
 					menu.add(addGuard);
+					menu.add(addWitness);
 					menu.add(addAction);
 				}
 			}
 
 			menu.add(new Separator());
+			menu.add(addRefinesMachine);
+			menu.add(addSeesContext);
 			menu.add(addVariable);
 			menu.add(addInvariant);
 			menu.add(addEvent);
+			menu.add(addVariant);
+			
 			if (ssel.size() == 1) {
 				Object obj = ssel.getFirstElement();
 				if ((obj instanceof IEvent) || (obj instanceof IGuard)
@@ -310,21 +389,18 @@ public class SyntheticMachineMasterSectionActionGroup extends
 						|| (obj instanceof IParameter)) {
 
 					IRodinElement[] refines;
-					IMachineRoot root = editor.getRodinInput();
 					try {
 						refines = root
 								.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
-						if (refines.length == 1)
+						if (refines.length == 1) {
+							menu.add(new Separator());
 							menu.add(showAbstraction);
+						}
 					} catch (RodinDBException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
-			}
-			if (!sel.isEmpty()) {
-				menu.add(new Separator());
-				menu.add(delete);
 			}
 		}
 

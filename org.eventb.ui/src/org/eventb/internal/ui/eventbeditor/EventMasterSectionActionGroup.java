@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,7 +91,7 @@ public class EventMasterSectionActionGroup extends
 				EventBEditorUtils.addRefinesEvent(editor, viewer);
 			}
 		};
-		addRefinesEvent.setText("New &Refine Event");
+		addRefinesEvent.setText("New &Refines Event");
 		addRefinesEvent.setToolTipText("Create a new refines event");
 		addRefinesEvent.setImageDescriptor(EventBImage
 				.getImageDescriptor(IEventBSharedImages.IMG_NEW_EVENT_PATH));
@@ -190,17 +190,23 @@ public class EventMasterSectionActionGroup extends
 	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
-		menu.add(addEvent);
 		IMachineRoot root = editor.getRodinInput();
 
 		ISelection sel = getContext().getSelection();
 		if (sel instanceof IStructuredSelection) {
+			if (!sel.isEmpty()) {
+				menu.add(delete);
+			}
+			
+			menu.add(new Separator());
+			menu.add(addEvent);
+			
 			IStructuredSelection ssel = (IStructuredSelection) sel;
-
 			if (ssel.size() == 1) {
 				Object obj = ssel.getFirstElement();
 
 				if (obj instanceof IEvent) {
+					menu.add(new Separator());
 					menu.add(addRefinesEvent);
 					menu.add(addParameter);
 					menu.add(addGuard);
@@ -230,11 +236,6 @@ public class EventMasterSectionActionGroup extends
 			submenu = new MenuManager("Abstract Invariant");
 			menu.add(submenu);
 			submenu.add(new ShowAbstractInvariantContribution(root));
-
-			if (!sel.isEmpty()) {
-				menu.add(new Separator());
-				menu.add(delete);
-			}
 		}
 		// menu.add(deleteAction);
 		// menu.add(new Separator());
