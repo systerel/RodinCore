@@ -1,12 +1,27 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - fixed bugs, added deepEquals(IHypAction, IHypAction)
+ *******************************************************************************/
 package org.eventb.core.seqprover;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
+import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 
 /**
@@ -75,7 +90,7 @@ public class ProverLib {
 		if (r1 == r2) return true;
 		if (! r1.generatedBy().getReasonerID().
 				equals(r2.generatedBy().getReasonerID())) return false;
-		if (! r1.getDisplayName().equals(r1.getDisplayName())) return false;
+		if (! r1.getDisplayName().equals(r2.getDisplayName())) return false;
 		if (r1.getConfidence() != r2.getConfidence()) return false;
 		if (r1.getGoal() == null && r2.getGoal() != null) return false;
 		if (r1.getGoal() != null && r2.getGoal() == null) return false;
@@ -85,20 +100,61 @@ public class ProverLib {
 		if (! deepEquals(r1.generatedUsing(),r2.generatedUsing())) return false;
 		if (r1.getAntecedents().length != r2.getAntecedents().length) return false;
 		for (int i = 0; i < r1.getAntecedents().length; i++) {
-			if (! deepEquals(r1.getAntecedents()[i],r1.getAntecedents()[i])) return false;
+			if (! deepEquals(r1.getAntecedents()[i], r2.getAntecedents()[i])) return false;
 		}
 		return true;
 	}
 
 	private static boolean deepEquals(IAntecedent a1, IAntecedent a2) {
 		if (a1 == a2) return true;
-		if (! a1.getGoal().equals(a2.getGoal())) return false;
+		if (! deepEquals(a1.getGoal(), a2.getGoal())) return false;
 		if (! a1.getAddedHyps().equals(a2.getAddedHyps())) return false;
 		if (! Arrays.deepEquals(a1.getAddedFreeIdents(),a2.getAddedFreeIdents())) return false;
-		if (! a1.getHypActions().equals(a2.getHypActions())) return false;
+		if (a1.getHypActions().size() != a2.getHypActions().size()) return false;
+		for(int i = 0; i < a1.getHypActions().size(); i++) {
+			if (! deepEquals(a1.getHypActions().get(i), a2.getHypActions().get(i))) return false;
+		}
 		return true;
 	}
 
+	private static boolean deepEquals(Predicate p1, Predicate p2) {
+		if (p1 == p2) return true;
+		if (p1 == null || p2 == null) return false;
+		return p1.equals(p2);
+	}
+
+	private static boolean deepEquals(IHypAction ha1, IHypAction ha2) {
+		if (ha1 == ha2) return true;
+		if (! ha1.getActionType().equals(ha2.getActionType())) return false;
+		if (ha1 instanceof IForwardInfHypAction) {
+			if (! (ha2 instanceof IForwardInfHypAction)) return false;
+			final IForwardInfHypAction fiha1 = (IForwardInfHypAction) ha1;
+			final IForwardInfHypAction fiha2 = (IForwardInfHypAction) ha2;
+			if (! deepEquals(fiha1.getHyps(), fiha2.getHyps())) return false;
+			if (! deepEquals(fiha1.getInferredHyps(), fiha2.getInferredHyps())) return false;
+			if (! Arrays.deepEquals(fiha1.getAddedFreeIdents(), fiha2.getAddedFreeIdents())) return false;
+		} else if (ha1 instanceof ISelectionHypAction) {
+			if (! (ha2 instanceof ISelectionHypAction)) return false;
+			ISelectionHypAction sha1 = (ISelectionHypAction) ha1;
+			ISelectionHypAction sha2 = (ISelectionHypAction) ha2;
+			if (! deepEquals(sha1.getHyps(), sha2.getHyps())) return false;
+		} else { // unknown hyp action type
+			return false;
+		}
+		return true;
+	}
+	
+	// T must implement equals()
+	private static <T> boolean deepEquals(Collection<T> col1, Collection<T> col2) {
+		if (col1.size() != col2.size()) return false;
+		final Iterator<T> it1 = col1.iterator();
+		final Iterator<T> it2 = col2.iterator();
+		while(it1.hasNext() && it2.hasNext()) {
+			if (! it1.next().equals(it2.next())) return false;
+		}
+		return true;
+	}
+	
 	// ignore reasoner input for the moment
 	private static boolean deepEquals(IReasonerInput input, IReasonerInput input2) {
 		// TODO Auto-generated method stub
