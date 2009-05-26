@@ -22,6 +22,11 @@ import java.util.Iterator;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -42,6 +47,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -81,9 +87,9 @@ import org.rodinp.core.RodinMarkerUtil;
  *         <p>
  *         Abstract Event-B specific form editor for machines, contexts.
  */
-public abstract class EventBEditor<R extends IInternalElement> extends FormEditor
-		implements IElementChangedListener, IEventBEditor<R>,
-		ITabbedPropertySheetPageContributor {
+public abstract class EventBEditor<R extends IInternalElement> extends
+		FormEditor implements IElementChangedListener, IEventBEditor<R>,
+		ITabbedPropertySheetPageContributor, IResourceChangeListener {
 
 	// The last active page id before closing.
 	private String lastActivePageID = null;
@@ -260,6 +266,10 @@ public abstract class EventBEditor<R extends IInternalElement> extends FormEdito
 		listeners = new ArrayList<IElementChangedListener>();
 		newElements = new HashSet<IRodinElement>();
 		statusListeners = new HashSet<IStatusChangedListener>();
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(
+				this,
+				IResourceChangeEvent.PRE_DELETE
+						| IResourceChangeEvent.PRE_CLOSE);
 	}
 
 	/*
@@ -277,7 +287,8 @@ public abstract class EventBEditor<R extends IInternalElement> extends FormEdito
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#removeElementChangedListener(org.rodinp.core.IElementChangedListener)
+	 * @seeorg.eventb.internal.ui.eventbeditor.IEventBEditor#
+	 * removeElementChangedListener(org.rodinp.core.IElementChangedListener)
 	 */
 	public void removeElementChangedListener(IElementChangedListener listener) {
 		synchronized (listeners) {
@@ -731,6 +742,28 @@ public abstract class EventBEditor<R extends IInternalElement> extends FormEdito
 		FormEditorSelectionProvider selectionProvider = (FormEditorSelectionProvider) this
 				.getEditorSite().getSelectionProvider();
 		selectionProvider.fireSelectionChanged(event);
+	}
+
+	public void resourceChanged(IResourceChangeEvent event) {
+		IResource resource = event.getResource();
+		if (resource.getType() != IResource.PROJECT)
+			return;
+		final IProject myProject = getRodinInput().getRodinProject()
+				.getProject();
+		if (!resource.equals(myProject))
+			return;
+		final EventBEditor<R> editor = this;
+		final Display display = PlatformUI.getWorkbench().getDisplay();
+		final IWorkbenchPage page = editor.getSite().getWorkbenchWindow()
+				.getActivePage();
+		if (page != null) {
+			display.syncExec(new Runnable() {
+				public void run() {
+					page.closeEditor(editor, true);
+				}
+			});
+		}
+		return;
 	}
 
 }
