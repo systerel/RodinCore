@@ -11,6 +11,7 @@
 package org.eventb.internal.core;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEventBRoot;
@@ -58,9 +59,9 @@ public class ProofSkeletonBuilder {
 		final Predicate goal;
 		final IProofDependencies deps = pr.getProofDependencies(ff, null);
 
-		if (deps == null) {
-			env = null;
-			hyps = null;
+		if (!deps.hasDeps()) {
+			env = ff.makeTypeEnvironment();
+			hyps = Collections.emptyList();
 			goal = bfalseGoal;
 		} else {
 			env = deps.getUsedFreeIdents();
@@ -102,7 +103,7 @@ public class ProofSkeletonBuilder {
 	public static IProofTree buildProofTree(IPRProof pr, IProofMonitor monitor)
 			throws RodinDBException {
 
-		IProverSequent rootSequent = buildRootSequent(pr);
+		final IProverSequent rootSequent = buildRootSequent(pr);
 		if (rootSequent == null) {
 			logIllFormedProof(pr);
 			return null;
@@ -113,10 +114,9 @@ public class ProofSkeletonBuilder {
 		}
 		
 		final IProofComponent pc = getProofComponent(pr);
-		IProofSkeleton skel =
-			pc.getProofSkeleton(pr.getElementName(), FormulaFactory
-					.getDefault(), null);
-		IProofTree prTree = ProverFactory.makeProofTree(rootSequent, null);
+		final IProofSkeleton skel = pc.getProofSkeleton(pr.getElementName(),
+				ff, null);
+		final IProofTree prTree = ProverFactory.makeProofTree(rootSequent, null);
 		if (ProofBuilder.reuse(prTree.getRoot(), skel, monitor)) {
 			return prTree;
 		} else {
