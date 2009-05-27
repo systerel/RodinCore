@@ -31,6 +31,8 @@ import org.rodinp.internal.core.util.Util;
  */
 public class VersionManager {
 	
+	public static final long UNKNOWN_VERSION = -1L;
+
 	public static boolean VERBOSE = false;
 	public static boolean DEBUG = false;
 	

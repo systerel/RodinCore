@@ -12,15 +12,18 @@
  *     Systerel - separation of file and root element
  *     Systerel - generic attribute manipulation
  *     Systerel - made NAME_ATTRIBUTE and VERSION_ATTRIBUTE public
+ *     Systerel - refactored automatic file conversion
  *******************************************************************************/
 package org.rodinp.internal.core;
 
+import static org.eclipse.core.runtime.IStatus.OK;
 import static org.rodinp.core.IRodinDBStatusConstants.FUTURE_VERSION;
 import static org.rodinp.core.IRodinDBStatusConstants.INVALID_VERSION_NUMBER;
 import static org.rodinp.core.IRodinDBStatusConstants.IO_EXCEPTION;
 import static org.rodinp.core.IRodinDBStatusConstants.PAST_VERSION;
 import static org.rodinp.core.IRodinDBStatusConstants.XML_PARSE_ERROR;
 import static org.rodinp.core.IRodinDBStatusConstants.XML_SAVE_ERROR;
+import static org.rodinp.internal.core.version.VersionManager.UNKNOWN_VERSION;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -28,6 +31,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.ErrorListener;
@@ -42,6 +46,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -49,6 +54,7 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 import org.rodinp.internal.core.util.Util;
+import org.rodinp.internal.core.version.ConversionEntry;
 import org.rodinp.internal.core.version.VersionManager;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -116,40 +122,60 @@ public class Buffer {
 	 * The file for which this buffer was created.
 	 */
 	private final RodinFile owner;
+
+	@SuppressWarnings("unused")
 	private long stamp;
 	private long version;
+	
+	// Whether this buffer has been fully loaded.
+	private AtomicBoolean loaded = new AtomicBoolean();
 
 	private volatile boolean changed;
 
 	public Buffer(RodinFile owner) {
 		this.owner = owner;
 		this.stamp = IResource.NULL_STAMP;
-		this.version = -1;
+		this.version = UNKNOWN_VERSION;
+	}
+	
+	public boolean hasBeenLoaded() {
+		return loaded.get();
 	}
 	
 	/*
 	 * Loads this buffer from the corresponding resource.
 	 */
-	// TODO check for use of progress monitor.
 	public synchronized void load(IProgressMonitor pm) throws RodinDBException {
-
-		// Buffer has already been loaded (maybe concurrently by another
-		// thread).
-		if (domDocument != null) {
+		if (hasBeenLoaded()) {
+			// Buffer has already been loaded (maybe concurrently by another
+			// thread).
 			return;
 		}
-
+		final SubMonitor sm = SubMonitor.convert(pm, 2);
+		attemptLoad(sm.newChild(1));
+		int status = checkVersion();
+		if (status == PAST_VERSION && attemptUpgrade()) {
+			attemptLoad(sm.newChild(1));
+			status = checkVersion();
+		}
+		if (status != OK) {
+			throw versionProblem(status, Long.toString(version));
+		}
+		
+		normalize(domDocument.getDocumentElement());
+		changed = false;
+		loaded.set(true);
+	}
+	
+	public void attemptLoad(IProgressMonitor pm) throws RodinDBException {
 		final RodinDBManager manager = RodinDBManager.getRodinDBManager();
 		final DocumentBuilder builder = manager.getDocumentBuilder();
 		builder.setErrorHandler(errorHandler);
 
-		long st = stamp;
-		Document doc = domDocument;
-
 		try {
 			final IFile file = owner.getResource();
-			st = file.getModificationStamp();
-			doc = builder.parse(file.getContents());
+			stamp = file.getModificationStamp();
+			domDocument = builder.parse(file.getContents());
 		} catch (SAXException e) {
 			throw new RodinDBException(e, XML_PARSE_ERROR);
 		} catch (IOException e) {
@@ -162,22 +188,32 @@ public class Buffer {
 
 		// the version is always fetched from the file;
 		// if it cannot be verified, then the document is not fetched (although it was parsed successfully)
-		version = fetchVersion(doc);
-		Element root = doc.getDocumentElement();
+		version = fetchVersion(domDocument);
+	}
+
+	private int checkVersion() throws RodinDBException {
+		Element root = domDocument.getDocumentElement();
 		IInternalElementType<?> rootType = getElementType(root);
 		long reqVersion = VersionManager.getInstance().getVersion(rootType);
 
 		if (version > reqVersion) {
-			throw versionProblem(FUTURE_VERSION, "" + version);
+			return FUTURE_VERSION;
 		} else if (version < reqVersion) {
-			throw versionProblem(PAST_VERSION, "" + version);
+			return PAST_VERSION;
+		} else {
+			return OK;
 		}
+	}
 
-		stamp = st;
-		domDocument = doc;
-		
-		normalize(domDocument.getDocumentElement());
-		this.changed = false;
+	private boolean attemptUpgrade() throws RodinDBException {
+		final ConversionEntry cv = new ConversionEntry(owner, version);
+		final VersionManager vManager = VersionManager.getInstance();
+		cv.upgrade(vManager, false, null);
+		final boolean success = cv.success();
+		if (success) {
+			cv.accept(false, true, null);
+		}
+		return success;
 	}
 
 	private RodinDBException versionProblem(int code, String versionStr) {

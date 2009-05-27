@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import static org.rodinp.internal.core.util.Messages.converter_failedConversion;
 import static org.rodinp.internal.core.util.Messages.converter_fileUnchanged;
 import static org.rodinp.internal.core.util.Messages.converter_successfulConversion;
 import static org.rodinp.internal.core.util.Messages.status_upgradedFile;
+import static org.rodinp.internal.core.version.VersionManager.UNKNOWN_VERSION;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -53,6 +54,13 @@ public class ConversionEntry implements IEntry {
 	public ConversionEntry(IRodinFile file) {
 		this.file = (RodinFile) file;
 		this.status = VERIFIED_OK;
+		this.version = UNKNOWN_VERSION;
+	}
+
+	public ConversionEntry(IRodinFile file, long version) {
+		this.file = (RodinFile) file;
+		this.status = VERIFIED_OK;
+		this.version = version;
 	}
 
 	public void accept(boolean force, boolean keepHistory,
@@ -78,19 +86,10 @@ public class ConversionEntry implements IEntry {
 		return file;
 	}
 
-	private long getFileVersion(IProgressMonitor pm) throws RodinDBException {
+	private long computeFileVersion(IProgressMonitor pm) throws RodinDBException {
 		final Buffer fileBuffer = new Buffer(file);
-		try {
-			fileBuffer.load(pm);
-			return fileBuffer.getVersion();
-		} catch (RodinDBException e) {
-			final long v = fileBuffer.getVersion();
-			if (v != -1) {
-				return v;
-			} else {
-				throw e;
-			}
-		}
+		fileBuffer.attemptLoad(pm);
+		return fileBuffer.getVersion();
 	}
 
 	public String getMessage() {
@@ -119,7 +118,9 @@ public class ConversionEntry implements IEntry {
 		final IInternalElementType<?> type = file.getRoot().getElementType();
 		final SubMonitor sm = SubMonitor.convert(pm, 100);
 		try {
-			version = getFileVersion(sm.newChild(10));
+			if (version == UNKNOWN_VERSION) {
+				version = computeFileVersion(sm.newChild(10));
+			}
 			reqVersion = vManager.getVersion(type);
 			if (version == reqVersion) {
 				message = converter_fileUnchanged;

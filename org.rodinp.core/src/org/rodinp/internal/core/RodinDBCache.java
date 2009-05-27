@@ -1,12 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * Strongly inspired by org.eclipse.jdt.internal.core.JavaModelCache.java which is
- * 
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation as
+ *     		org.eclipse.jdt.internal.core.JavaModelCache
+ *     ETH Zurich - adaptation from JDT to Rodin
+ *     Systerel - added clear() method
+ *     Systerel - removed deprecated methods and occurrence count
+ *     Systerel - separation of file and root element
+ *     Systerel - fixed invalid buffer removal during file conversion
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -142,13 +148,11 @@ public class RodinDBCache {
 	 * otherwise remove the buffer only if it has not been modified yet.
 	 */
 	public void removeBuffer(IRodinFile rodinFile, boolean force) {
-		if (force) {
+		final Buffer buffer = this.bufferCache.peek(rodinFile);
+		if (buffer == null)
+			return;
+		if ((force || !buffer.hasUnsavedChanges()) && buffer.hasBeenLoaded()) {
 			this.bufferCache.remove(rodinFile);
-		} else {
-			Buffer buffer = this.bufferCache.peek(rodinFile);
-			if (buffer != null && ! buffer.hasUnsavedChanges()) {
-				this.bufferCache.remove(rodinFile);
-			}
 		}
 	}
 
