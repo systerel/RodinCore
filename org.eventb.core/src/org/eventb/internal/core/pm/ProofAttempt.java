@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -109,10 +109,16 @@ public class ProofAttempt implements IProofAttempt, IElementChangedListener {
 
 	public void commit(boolean manual, IProgressMonitor monitor)
 			throws RodinDBException {
+		commit(manual, false, monitor);
+	}
+
+	public void commit(boolean manual, boolean simplify,
+			IProgressMonitor monitor) throws RodinDBException {
 		if (isDisposed()) {
 			throw new IllegalStateException(this + " has been disposed");
 		}
-		final CommitProofOperation op = new CommitProofOperation(this, manual);
+		final CommitProofOperation op = new CommitProofOperation(this, manual,
+				simplify);
 		RodinCore.run(op, component.getSchedulingRule(), monitor);
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,13 +9,16 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added as***File()
  *     Systerel - separation of file and root element
+ *     Systerel - added simplifyProof()
  *******************************************************************************/
 package org.eventb.core;
 
 import static org.rodinp.core.RodinCore.getOccurrenceKind;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pm.IProofManager;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pog.POGModule;
@@ -25,6 +28,7 @@ import org.eventb.internal.core.indexers.EventPropagator;
 import org.eventb.internal.core.indexers.IdentifierPropagator;
 import org.eventb.internal.core.pm.PostTacticPreference;
 import org.eventb.internal.core.pm.ProofManager;
+import org.eventb.internal.core.pm.ProofSimplifier;
 import org.eventb.internal.core.pm.UserSupportManager;
 import org.eventb.internal.core.pm.UserSupportUtils;
 import org.eventb.internal.core.pog.POGUtil;
@@ -37,6 +41,7 @@ import org.osgi.framework.BundleContext;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 import org.rodinp.core.indexer.IOccurrenceKind;
 import org.rodinp.core.indexer.IPropagator;
 
@@ -589,6 +594,11 @@ public class EventBPlugin extends Plugin {
 
 	public static IPropagator getIdentifierPropagator() {
 		return IdentifierPropagator.getDefault();
+	}
+
+	public static boolean simplifyProof(IPRProof proof, FormulaFactory factory,
+			IProgressMonitor monitor) throws RodinDBException {
+		return new ProofSimplifier(proof, factory).simplify(monitor);
 	}
 
 }

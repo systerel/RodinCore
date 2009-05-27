@@ -10,18 +10,19 @@
  *******************************************************************************/
 package org.eventb.core.tests.indexers;
 
+import static org.eventb.core.tests.ResourceUtils.CTX_BARE_NAME;
+import static org.eventb.core.tests.ResourceUtils.INTERNAL_ELEMENT1;
+import static org.eventb.core.tests.ResourceUtils.MCH_BARE_NAME;
 import static org.eventb.core.tests.indexers.OccUtils.makeDecl;
 import static org.eventb.core.tests.indexers.OccUtils.makeRefPred;
 import static org.eventb.core.tests.indexers.OccUtils.newDecl;
-import static org.eventb.core.tests.indexers.ResourceUtils.CTX_BARE_NAME;
-import static org.eventb.core.tests.indexers.ResourceUtils.INTERNAL_ELEMENT1;
-import static org.eventb.core.tests.indexers.ResourceUtils.MCH_BARE_NAME;
 
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
+import org.eventb.core.tests.ResourceUtils;
 import org.eventb.internal.core.indexers.ContextIndexer;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.indexer.IDeclaration;

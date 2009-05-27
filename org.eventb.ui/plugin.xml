@@ -525,6 +525,31 @@
                </objectClass>
             </or></visibility>
       </objectContribution>
+      <objectContribution
+            adaptable="true"
+            id="org.eventb.ui.ProofSimplifier"
+            objectClass="org.rodinp.core.IRodinElement">
+         <action
+               class="org.eventb.internal.ui.proofsimplifier.ProofSimplifyAction"
+               id="org.eventb.ui.simplify"
+               label="%popupMenu.simplify.label"
+               menubarPath="proving"
+               tooltip="%popupMenu.simplify.tooltip">
+         </action>
+         <visibility>
+            <or>
+               <objectClass
+                     name="org.rodinp.core.IRodinProject">
+               </objectClass>
+               <objectClass
+                     name="org.eventb.core.IEventBRoot">
+               </objectClass>
+               <objectClass
+                     name="org.eventb.core.IPSStatus">
+               </objectClass>
+            </or>
+         </visibility>
+      </objectContribution>
    </extension>
    <extension
          point="org.eventb.ui.proofTactics">

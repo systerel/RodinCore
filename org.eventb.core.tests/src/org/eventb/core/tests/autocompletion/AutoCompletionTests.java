@@ -27,7 +27,7 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
 import org.eventb.core.tests.BuilderTest;
-import org.eventb.core.tests.indexers.ResourceUtils;
+import org.eventb.core.tests.ResourceUtils;
 import org.eventb.internal.core.autocompletion.AutoCompletion;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.location.IAttributeLocation;

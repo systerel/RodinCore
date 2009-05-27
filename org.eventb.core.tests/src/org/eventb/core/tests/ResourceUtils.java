@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.core.tests.indexers;
+package org.eventb.core.tests;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -20,6 +20,8 @@ import org.eclipse.core.resources.IResource;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
+import org.eventb.core.IPRRoot;
+import org.eventb.core.IPSRoot;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
@@ -66,6 +68,22 @@ public class ResourceUtils {
 		final IRodinFile rFile = createRodinFile(project, machineName);
 		initFile(rFile, contents);
 		return (IMachineRoot) rFile.getRoot();
+	}
+	
+	public static IPRRoot createPRFile(IRodinProject project, String bareName, String contents) throws Exception {
+		final String prFileName = EventBPlugin.getPRFileName(bareName);
+		final IRodinFile rFile = createRodinFile(project, prFileName);
+		initFile(rFile, contents);
+		return (IPRRoot) rFile.getRoot();
+
+	}
+	
+	public static IPSRoot createPSFile(IRodinProject project, String bareName, String contents) throws Exception {
+		final String psFileName = EventBPlugin.getPSFileName(bareName);
+		final IRodinFile rFile = createRodinFile(project, psFileName);
+		initFile(rFile, contents);
+		return (IPSRoot) rFile.getRoot();
+
 	}
 	
 	public static final String MCH_BARE_NAME = "machine";

@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - fixed bugs, added deepEquals(IHypAction, IHypAction)
+ *     Systerel - added simplify(IProofTree, IProofMonitor)
  *******************************************************************************/
 package org.eventb.core.seqprover;
 
@@ -23,6 +24,8 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.internal.core.seqprover.proofSimplifier.ProofTreeSimplifier;
+import org.eventb.internal.core.seqprover.proofSimplifier.Simplifier.CancelException;
 
 /**
  * This is a collection of static constants and methods that are used often in relation
@@ -234,4 +237,27 @@ public class ProverLib {
 		}
 		return preds;
 	}
+	
+	/**
+	 * Returns a closed simplified version of the given closed proof tree.
+	 * <p>
+	 * A simplified proof tree contains less unused data. Callers of that method
+	 * must firstly check that the tree is closed.
+	 * </p>
+	 * 
+	 * @param prTree
+	 *            the tree to simplify
+	 * @param monitor
+	 *            a monitor to manage cancellation, or <code>null</code>
+	 * @return a closed simplified proof tree, or <code>null</code> if unable to
+	 *         simplify
+	 */
+	public static IProofTree simplify(IProofTree prTree, IProofMonitor monitor) {
+		try {
+			return new ProofTreeSimplifier().simplify(prTree, monitor);
+		} catch (CancelException e) {
+			return null;
+		}
+	}
+	
 }

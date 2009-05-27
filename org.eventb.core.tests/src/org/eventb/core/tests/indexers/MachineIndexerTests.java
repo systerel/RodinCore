@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eventb.core.tests.indexers;
 
+import static org.eventb.core.tests.ResourceUtils.CTX_BARE_NAME;
+import static org.eventb.core.tests.ResourceUtils.INTERNAL_ELEMENT1;
+import static org.eventb.core.tests.ResourceUtils.INTERNAL_ELEMENT2;
+import static org.eventb.core.tests.ResourceUtils.MCH_BARE_NAME;
 import static org.eventb.core.tests.indexers.OccUtils.makeDecl;
 import static org.eventb.core.tests.indexers.OccUtils.makeModifAssign;
 import static org.eventb.core.tests.indexers.OccUtils.makeRedeclIdent;
@@ -20,10 +24,6 @@ import static org.eventb.core.tests.indexers.OccUtils.makeRefExpr;
 import static org.eventb.core.tests.indexers.OccUtils.makeRefLabel;
 import static org.eventb.core.tests.indexers.OccUtils.makeRefPred;
 import static org.eventb.core.tests.indexers.OccUtils.newDecl;
-import static org.eventb.core.tests.indexers.ResourceUtils.CTX_BARE_NAME;
-import static org.eventb.core.tests.indexers.ResourceUtils.INTERNAL_ELEMENT1;
-import static org.eventb.core.tests.indexers.ResourceUtils.INTERNAL_ELEMENT2;
-import static org.eventb.core.tests.indexers.ResourceUtils.MCH_BARE_NAME;
 
 import org.eventb.core.IAction;
 import org.eventb.core.ICarrierSet;
@@ -38,6 +38,7 @@ import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
+import org.eventb.core.tests.ResourceUtils;
 import org.eventb.internal.core.indexers.MachineIndexer;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.indexer.IDeclaration;

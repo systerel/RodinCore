@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - refactored for using the Proof Manager API
+ *     Systerel - added proof simplification on commit
  ******************************************************************************/
 package org.eventb.internal.core.pm;
 
@@ -397,7 +398,7 @@ public class ProofState implements IProofState {
 	public void setProofTree(IProgressMonitor monitor) throws RodinDBException {
 		if (UserSupportUtils.DEBUG)
 			UserSupportUtils.debug("Saving: " + pa.getName());
-		pa.commit(true, monitor);
+		pa.commit(true, true, monitor);
 		setDirty(false);
 	}
 

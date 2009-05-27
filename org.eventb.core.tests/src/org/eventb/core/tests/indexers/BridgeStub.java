@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,10 @@
 package org.eventb.core.tests.indexers;
 
 import static org.eventb.core.EventBPlugin.DECLARATION;
+import static org.eventb.core.tests.ResourceUtils.EMPTY_DECL;
 import static org.eventb.core.tests.indexers.ListAssert.assertSameElements;
 import static org.eventb.core.tests.indexers.OccUtils.newDecl;
 import static org.eventb.core.tests.indexers.OccUtils.newOcc;
-import static org.eventb.core.tests.indexers.ResourceUtils.EMPTY_DECL;
 
 import java.util.ArrayList;
 import java.util.Arrays;

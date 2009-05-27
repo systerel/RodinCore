@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich.
+ * Copyright (c) 2005, 2009 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - refactored for using the Proof Manager API
  *     Systerel - refactored code to improve maintainability
+ *     Systerel - added proof simplification on commit
  *******************************************************************************/
 package org.eventb.internal.core.pom;
 
@@ -109,7 +110,7 @@ public final class AutoProver {
 			throws RodinDBException {
 		pm.subTask("committing");
 		if (shouldCommit(pa)) {
-			pa.commit(false, new SubProgressMonitor(pm, 1));
+			pa.commit(false, true, new SubProgressMonitor(pm, 1));
 			return true;
 		}
 		pm.worked(1);

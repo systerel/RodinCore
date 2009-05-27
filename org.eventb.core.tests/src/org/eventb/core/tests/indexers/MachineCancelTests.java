@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eventb.core.tests.indexers;
 
+import static org.eventb.core.tests.ResourceUtils.*;
 import static org.eventb.core.tests.indexers.CancelBridgeStub.*;
-import static org.eventb.core.tests.indexers.ResourceUtils.*;
 
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
+import org.eventb.core.tests.ResourceUtils;
 import org.eventb.internal.core.indexers.MachineIndexer;
 import org.rodinp.core.indexer.IDeclaration;
 

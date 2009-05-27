@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
+import org.eventb.core.tests.ResourceUtils;
 import org.eventb.internal.core.indexers.ContextIndexer;
 import org.rodinp.core.IRodinFile;
 

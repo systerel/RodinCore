@@ -11,6 +11,8 @@
 package org.eventb.core.tests.indexers;
 
 import static java.util.Arrays.asList;
+import static org.eventb.core.tests.ResourceUtils.INTERNAL_ELEMENT1;
+import static org.eventb.core.tests.ResourceUtils.INTERNAL_ELEMENT2;
 import static org.eventb.core.tests.indexers.ListAssert.assertSameElements;
 import static org.eventb.core.tests.indexers.OccUtils.makeDecl;
 import static org.eventb.core.tests.indexers.OccUtils.makeOccList;
@@ -19,8 +21,6 @@ import static org.eventb.core.tests.indexers.OccUtils.makeRedeclTarget;
 import static org.eventb.core.tests.indexers.OccUtils.makeRefLabel;
 import static org.eventb.core.tests.indexers.OccUtils.makeRefPred;
 import static org.eventb.core.tests.indexers.OccUtils.newDecl;
-import static org.eventb.core.tests.indexers.ResourceUtils.INTERNAL_ELEMENT1;
-import static org.eventb.core.tests.indexers.ResourceUtils.INTERNAL_ELEMENT2;
 
 import java.util.List;
 import java.util.Set;
@@ -39,6 +39,7 @@ import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
+import org.eventb.core.tests.ResourceUtils;
 import org.eventb.internal.core.indexers.EventPropagator;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;

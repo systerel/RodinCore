@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added genPred() and genPreds() with a type environment
+ ******************************************************************************/
 package org.eventb.core.seqprover.tests;
 
 import java.util.Arrays;
@@ -258,9 +269,23 @@ public class TestLib {
 	 * 		of type checking error. 
 	 */
 	public static Predicate genPred(String str){
+		return genPred(ff.makeTypeEnvironment(), str);
+	}
+	
+	/**
+	 * Generates a type checked predicate from a string and a type environment.
+	 * 
+	 * @param str
+	 *            The string version of the predicate
+	 * @param typeEnv
+	 *            The type environment to check the predicate with
+	 * @return The type checked predicate, or <code>null</code> if there was a
+	 *         parsing of type checking error.
+	 */
+	public static Predicate genPred(ITypeEnvironment typeEnv, String str){
 		Predicate result = Lib.parsePredicate(str);
 		if (result == null) return null;
-		ITypeCheckResult tcResult =  result.typeCheck(ff.makeTypeEnvironment());
+		ITypeCheckResult tcResult = result.typeCheck(typeEnv);
 		if (! tcResult.isSuccess()) return null;
 		return result;
 	}
@@ -272,12 +297,22 @@ public class TestLib {
 	 * @return
 	 */
 	public static Set<Predicate> genPreds(String... strs){
-		Set<Predicate> hyps = new HashSet<Predicate>(strs.length);
-		for (String s : strs) 
-			hyps.add(genPred(s));
-		return hyps;
+		return genPreds(ff.makeTypeEnvironment(), strs);
 	}
 
+	
+	/**
+	 * A Set version of {@link #genPred(ITypeEnvironment, String)}
+	 * 
+	 * @param strs
+	 * @return
+	 */
+	public static Set<Predicate> genPreds(ITypeEnvironment typeEnv, String... strs){
+		Set<Predicate> hyps = new HashSet<Predicate>(strs.length);
+		for (String s : strs) 
+			hyps.add(genPred(typeEnv, s));
+		return hyps;
+	}
 	
 	/**
 	 * Searches the set of hypotheses in the given sequent for the given

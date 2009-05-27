@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,12 +84,17 @@ public interface IProofAttempt {
 	 * This is a long running operation which is scheduled using the rule of the
 	 * proof component of this proof attempt.
 	 * </p>
+	 * <p>
+	 * This is equivalent to calling
+	 * {@link #commit(boolean, boolean, IProgressMonitor)} with a simplify
+	 * argument set to <code>false</code>.
+	 * </p>
 	 * 
 	 * @param manual
 	 *            <code>true</code> iff this proof attempt is manual
 	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
 	 * 
 	 * @throws IllegalStateException
 	 *             if this proof attempt has been disposed prior to this call
@@ -103,6 +108,47 @@ public interface IProofAttempt {
 	 * @see IPSStatus#isBroken()
 	 */
 	void commit(boolean manual, IProgressMonitor monitor)
+			throws RodinDBException;
+
+	/**
+	 * Commits this proof attempts to the proof and proof status files of this
+	 * proof component. If this proof attempt is broken, then proof status after
+	 * commit will also be marked as broken.
+	 * <p>
+	 * Note that committing a proof attempt only modifies the in-memory copy of
+	 * the corresponding files. These files will then be considered as
+	 * containing pending changes by the Rodin database and will need to be
+	 * saved to make the change persistent. They can be saved using the
+	 * <code>save</code> method of the proof component.
+	 * </p>
+	 * <p>
+	 * This proof attempt must not have been disposed yet.
+	 * </p>
+	 * <p>
+	 * This is a long running operation which is scheduled using the rule of the
+	 * proof component of this proof attempt.
+	 * </p>
+	 * 
+	 * @param manual
+	 *            <code>true</code> iff this proof attempt is manual
+	 * @param simplify
+	 *            whether to simplify the proof tree before saving it
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
+	 * 
+	 * @throws IllegalStateException
+	 *             if this proof attempt has been disposed prior to this call
+	 * @throws RodinDBException
+	 *             if there is some problem committing this proof attempt to the
+	 *             Rodin database
+	 * 
+	 * @see IProofComponent#getSchedulingRule()
+	 * @see IProofComponent#save(IProgressMonitor, boolean)
+	 * @see IPRProof#getHasManualProof()
+	 * @see IPSStatus#isBroken()
+	 */
+	void commit(boolean manual, boolean simplify, IProgressMonitor monitor)
 			throws RodinDBException;
 
 	/**

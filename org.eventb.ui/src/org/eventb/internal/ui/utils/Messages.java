@@ -11,6 +11,7 @@
  *     Systerel - added new options
  *     Systerel - added messages for UIUtils
  *     Systerel - replaced inherited by extended
+ *     Systerel - added messages for Proof Simplification
  *******************************************************************************/
 package org.eventb.internal.ui.utils;
 
@@ -139,7 +140,12 @@ public final class Messages {
 	public static String proofskeleton_copy_title;
 	public static String proofskeleton_copy_toolTip;
 
-
+	// Proof Simplification
+	public static String proofSimplification_fetchingProofs;
+	public static String proofSimplification_invalidSelection;
+	public static String proofSimplification_noProofsToSimplify;
+	public static String proofSimplification_symplifyingProofs;
+	
 	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
