@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eventb.core; singleton:=true
-Bundle-Version: 0.9.2.1
+Bundle-Version: 1.0.0
 Bundle-Activator: org.eventb.core.EventBPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin

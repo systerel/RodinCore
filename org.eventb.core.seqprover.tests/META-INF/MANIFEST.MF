@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Event-B Sequent Prover Tests
 Bundle-SymbolicName: org.eventb.core.seqprover.tests; singleton:=true
-Bundle-Version: 0.9.2.1
+Bundle-Version: 1.0.0
 Bundle-Vendor: ETH Zurich
 Require-Bundle: org.junit4;visibility:=reexport,
  org.eclipse.jdt.junit4.runtime;visibility:=reexport,

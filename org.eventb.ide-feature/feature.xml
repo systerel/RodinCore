@@ -29,7 +29,7 @@
    </url>
 
    <requires>
-      <import feature="org.rodinp.platform" version="0.9.2.1" match="compatible"/>
+      <import feature="org.rodinp.platform" version="1.0.0" match="compatible"/>
    </requires>
 
    <plugin
