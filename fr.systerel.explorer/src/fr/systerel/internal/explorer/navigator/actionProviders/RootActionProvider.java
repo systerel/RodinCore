@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008-2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.navigator.ICommonActionConstants;
+import org.eclipse.ui.navigator.ICommonMenuConstants;
 
 /**
  * The Action Provider for <code>IMachineRoot</code>s and <code>IContextRoot</code>s 
@@ -38,12 +39,18 @@ public class RootActionProvider extends NavigatorActionProvider {
     
     @Override
 	public void fillContextMenu(IMenuManager menu) {
+		super.fillContextMenu(menu);
+		menu.appendToGroup(ICommonMenuConstants.GROUP_OPEN, ActionCollection
+				.getOpenAction(site));
+		menu.appendToGroup(ICommonMenuConstants.GROUP_OPEN_WITH,
+				buildOpenWithMenu());
 		menu.add(new Separator(GROUP_MODELLING));
-    	menu.appendToGroup(GROUP_MODELLING, ActionCollection.getDeleteAction(site));
-    	menu.appendToGroup(GROUP_MODELLING, ActionCollection.getRetryAutoProversAction(site));
-    	menu.appendToGroup(GROUP_MODELLING, ActionCollection.getRecalculateAutoStatusAction(site));
-   	
-    }	
-    
-	
+		menu.appendToGroup(GROUP_MODELLING, ActionCollection
+				.getDeleteAction(site));
+		menu.appendToGroup(GROUP_MODELLING, ActionCollection
+				.getRetryAutoProversAction(site));
+		menu.appendToGroup(GROUP_MODELLING, ActionCollection
+				.getRecalculateAutoStatusAction(site));
+	}
+
 }

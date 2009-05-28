@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008-2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,16 @@
 
 package fr.systerel.internal.explorer.navigator.actionProviders;
 
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.ui.actions.OpenWithMenu;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
+import org.eclipse.ui.navigator.ICommonMenuConstants;
+import org.eventb.ui.EventBUIPlugin;
+import org.rodinp.core.IInternalElement;
 
 /**
  * An abstract Action Provider. 
@@ -35,8 +42,21 @@ public abstract class NavigatorActionProvider extends CommonActionProvider {
         super.init(aSite);
         site = aSite;
 		viewer = aSite.getStructuredViewer();
-  }
+	}
 
-	
-	
+    /**
+     * Builds an Open With menu.
+     * 
+     * @return the built menu
+     */
+	MenuManager buildOpenWithMenu() {
+		MenuManager menu = new MenuManager("Open With",
+				ICommonMenuConstants.GROUP_OPEN_WITH);
+		ISelection selection = site.getStructuredViewer().getSelection();
+		Object obj = ((IStructuredSelection) selection).getFirstElement();
+		menu.add(new OpenWithMenu(EventBUIPlugin.getActivePage(),
+				((IInternalElement) obj).getRodinFile().getResource()));
+		return menu;
+	}
+
 }

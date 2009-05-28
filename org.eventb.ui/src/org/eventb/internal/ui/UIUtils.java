@@ -55,6 +55,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEvent;
@@ -350,30 +351,56 @@ public class UIUtils {
 	 *            the object (e.g. an internal element or a Rodin file)
 	 */
 	public static void linkToEventBEditor(Object obj) {
-		IRodinFile component;
-
-		if (!(obj instanceof IRodinProject)) {
-			component = (IRodinFile) UIUtils.getOpenable(obj);
-			if (component == null)
-				return;
-			try {
-				IEditorDescriptor desc = PlatformUI.getWorkbench()
-						.getEditorRegistry().getDefaultEditor(
-								component.getCorrespondingResource().getName());
-
-				IEditorPart editor = EventBUIPlugin.getActivePage().openEditor(
-						new FileEditorInput(component.getResource()),
-						desc.getId());
-				editor.getSite().getSelectionProvider().setSelection(
-						new StructuredSelection(obj));
-
-			} catch (PartInitException e) {
-				String errorMsg = "Error open Editor";
-				MessageDialog.openError(null, null, errorMsg);
-				EventBUIPlugin.getDefault().getLog().log(
-						new Status(IStatus.ERROR, EventBUIPlugin.PLUGIN_ID,
-								errorMsg, e));
-			}
+		final IRodinFile component = asRodinFile(obj);
+		if (component == null)
+			return;
+		IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry()
+				.getDefaultEditor(component.getCorrespondingResource().getName());
+		linkToEditor(component, obj, desc);
+	}
+	
+	/**
+	 * Link the current object to the preferred editor.
+	 * <p>
+	 * 
+	 * @param obj
+	 *            the object (e.g. an internal element or a Rodin file)
+	 */
+	public static void linkToPreferredEditor(Object obj) {
+		final IRodinFile component = asRodinFile(obj);
+		if (component == null)
+			return;
+		IEditorDescriptor desc = IDE.getDefaultEditor(component.getResource());
+		linkToEditor(component, obj, desc);
+	}
+	
+	private static IRodinFile asRodinFile(Object obj) {
+		if (obj instanceof IRodinProject)
+			return null;
+		return (IRodinFile) UIUtils.getOpenable(obj);
+	}
+	
+	/**
+	 * Link the current object to the specified editor.
+	 * <p>
+	 * 
+	 * @param obj
+	 *            the object (e.g. an internal element or a Rodin file)
+	 * @param desc
+	 *            the editor descriptor
+	 */
+	private static void linkToEditor(IRodinFile component, Object obj, IEditorDescriptor desc) {
+		try {
+			IEditorPart editor = EventBUIPlugin.getActivePage().openEditor(
+					new FileEditorInput(component.getResource()), desc.getId());
+			editor.getSite().getSelectionProvider().setSelection(
+					new StructuredSelection(obj));
+		} catch (PartInitException e) {
+			String errorMsg = "Error opening Editor";
+			MessageDialog.openError(null, null, errorMsg);
+			EventBUIPlugin.getDefault().getLog().log(
+					new Status(IStatus.ERROR, EventBUIPlugin.PLUGIN_ID,
+							errorMsg, e));
 		}
 	}
 

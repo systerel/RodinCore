@@ -33,15 +33,18 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import org.eventb.core.IPSStatus;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.YesToAllMessageDialog;
+import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.wizards.NewComponentWizard;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
@@ -77,11 +80,12 @@ public class ActionCollection {
 					if (obj instanceof IPSStatus) {
 						selectPO((IPSStatus) obj);
 					} else {
-						UIUtils.linkToEventBEditor(obj);				
+						UIUtils.linkToPreferredEditor(obj);				
 					}
 				}
 			}
 		};
+
 		return doubleClickAction;
 		
 	}
@@ -372,7 +376,13 @@ public class ActionCollection {
 	
 	
 	static void selectPO(IPSStatus ps) {
-		UIUtils.linkToProverUI(ps);
+		final IRodinFile component = (IRodinFile) UIUtils.getOpenable(ps);
+		final IEditorDescriptor desc = IDE.getDefaultEditor(component
+				.getResource());
+		if (desc.getId().equals(ProverUI.EDITOR_ID))
+			UIUtils.linkToProverUI(ps);
+		else
+			UIUtils.linkToPreferredEditor(ps);
 		UIUtils.activateView(PROOF_CONTROL_VIEW_ID);
 		UIUtils.activateView(PROOF_TREE_VIEW_ID);
 	}
