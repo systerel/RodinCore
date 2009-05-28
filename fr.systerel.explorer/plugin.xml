@@ -376,6 +376,9 @@
                <instanceof
                      value="org.eventb.core.IVariable">
                </instanceof>
+               <instanceof
+                     value="org.eventb.core.IPSStatus">
+               </instanceof>
             </or>
          </enablement>
       </actionProvider>
