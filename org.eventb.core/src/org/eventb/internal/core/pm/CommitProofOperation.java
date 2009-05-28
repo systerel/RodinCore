@@ -37,45 +37,57 @@ class CommitProofOperation implements IWorkspaceRunnable {
 
 	public void run(IProgressMonitor pm) throws CoreException {
 		try {
-			pm.beginTask("Committing proof", 4 + 3);
-			commitProof(pm);
+			pm.beginTask("Committing proof", 1 + 3 + 3);
+			final IProofTree proofTree = getProofTree(pm);
+			if (pm.isCanceled())
+				return;
+			commitProof(proofTree, pm);
 			commitStatus(pm);
 		} finally {
 			pm.done();
 		}
 	}
 
-	// Consumes four ticks of the given progress monitor
-	private void commitProof(IProgressMonitor pm) throws RodinDBException {
+	// Consumes one tick of the given progress monitor
+	private IProofTree getProofTree(IProgressMonitor pm)
+			throws RodinDBException {
+		final IProofTree proofTree = pa.getProofTree();
+		if (simplify) {
+			final IProgressMonitor spm = new SubProgressMonitor(pm, 1);
+			return simplifyIfClosed(proofTree, spm);
+		} else {
+			pm.worked(1);
+			return proofTree;
+		}
+	}
+	
+	private static IProofTree simplifyIfClosed(IProofTree proofTree,
+			IProgressMonitor pm) {
+		try {
+			if (proofTree.isClosed()) {
+				final IProofMonitor monitor = new ProofMonitor(pm);
+				final IProofTree simplified = simplify(proofTree, monitor);
+				if (simplified != null) {
+					return simplified;
+				}
+			}
+			return proofTree;
+		} finally {
+			pm.done();
+		}
+	}
+
+	// Consumes three ticks of the given progress monitor
+	private void commitProof(IProofTree proofTree, IProgressMonitor pm)
+			throws RodinDBException {
 		final IPRProof proof = pa.getProof();
 		if (!proof.exists()) {
 			proof.create(null, new SubProgressMonitor(pm, 1));
 		} else {
 			pm.worked(1);
 		}
-		final IProofTree proofTree;
-		if (simplify) {
-			proofTree = simplifyIfClosed(pa.getProofTree(),
-					new SubProgressMonitor(pm, 1));
-		} else {
-			proofTree = pa.getProofTree();
-			pm.worked(1);
-		}
 		proof.setProofTree(proofTree, new SubProgressMonitor(pm, 1));
 		proof.setHasManualProof(manual, new SubProgressMonitor(pm, 1));
-	}
-
-	private static IProofTree simplifyIfClosed(IProofTree proofTree,
-			final IProgressMonitor pm) {
-		if (proofTree.isClosed()) {
-			final IProofMonitor monitor = new ProofMonitor(pm);
-			final IProofTree simplified = simplify(proofTree, monitor);
-			if (simplified != null) {
-				proofTree = simplified;
-			}
-		}
-		pm.done();
-		return proofTree;
 	}
 
 	// Consumes three ticks of the given progress monitor
