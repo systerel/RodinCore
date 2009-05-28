@@ -11,6 +11,8 @@
 
 package org.rodinp.internal.core.indexer.persistence;
 
+import java.util.List;
+
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.internal.core.indexer.Descriptor;
@@ -26,13 +28,16 @@ public class PersistentPIM {
 	private final Descriptor[] descriptors;
 	private final IExportTable exportTable;
 	private final PersistentTotalOrder<IRodinFile> order;
+	private final List<IRodinFile> unprocessedFiles;
 
-	public PersistentPIM(IRodinProject project, Descriptor[] descriptors, IExportTable exportTable,
-			PersistentTotalOrder<IRodinFile> order) {
+	public PersistentPIM(IRodinProject project, Descriptor[] descriptors,
+			IExportTable exportTable, PersistentTotalOrder<IRodinFile> order,
+			List<IRodinFile> unprocessedFiles) {
 		this.project = project;
 		this.descriptors = descriptors;
 		this.exportTable = exportTable;
 		this.order = order;
+		this.unprocessedFiles = unprocessedFiles;
 	}
 	
 	public IRodinProject getProject() {
@@ -51,5 +56,7 @@ public class PersistentPIM {
 		return order;
 	}
 	
-	
+	public List<IRodinFile> getUnprocessedFiles() {
+		return unprocessedFiles;
+	}
 }

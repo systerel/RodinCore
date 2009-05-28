@@ -109,9 +109,20 @@ public class DeltaQueuer implements IElementChangedListener,
 	}
 
 	public void resourceChanged(IResourceChangeEvent event) {
-		if (event.getType() == IResourceChangeEvent.POST_BUILD
-				&& event.getBuildKind() == IncrementalProjectBuilder.CLEAN_BUILD) {
-			enqueueCleanedProjects(event.getDelta());
+		switch(event.getType()) {
+		case IResourceChangeEvent.POST_BUILD:
+			if (event.getBuildKind() == IncrementalProjectBuilder.CLEAN_BUILD) {
+				enqueueCleanedProjects(event.getDelta());
+			}
+			break;
+		case IResourceChangeEvent.PRE_CLOSE:
+		case IResourceChangeEvent.PRE_DELETE:
+			// prevent from further indexing of the vanishing project
+			final IRodinProject project = getRodinProject(event.getResource());
+			if (project != null) {
+				IndexManager.getDefault().projectVanishing(project);
+			}
+			break;
 		}
 	}
 
@@ -131,7 +142,7 @@ public class DeltaQueuer implements IElementChangedListener,
 		enqueueDelta(delta, true);
 	}
 
-	private void enqueueDelta(IIndexDelta delta, boolean allowDuplicate) {
+	public void enqueueDelta(IIndexDelta delta, boolean allowDuplicate) {
 		interrupted.set(false);
 		try {
 			while (true) {

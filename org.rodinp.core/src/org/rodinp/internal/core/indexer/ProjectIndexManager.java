@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.indexer;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import java.util.Set;
 import java.util.concurrent.CancellationException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
@@ -59,6 +61,12 @@ public class ProjectIndexManager {
 
 	private final TotalOrder<IRodinFile> order;
 
+	private volatile boolean isProjectVanishing = false;
+	
+	// FIXME protect from concurrent access
+	private final Set<IRodinFile> unprocessedFiles = Collections
+			.synchronizedSet(new LinkedHashSet<IRodinFile>());  
+	
 	public ProjectIndexManager(IRodinProject project) {
 		this.project = project;
 		this.index = new RodinIndex();
@@ -70,14 +78,17 @@ public class ProjectIndexManager {
 	
 	// for persistence purposes
 	public ProjectIndexManager(IRodinProject project, RodinIndex index,
-			ExportTable exportTable, TotalOrder<IRodinFile> order) {
+			ExportTable exportTable, TotalOrder<IRodinFile> order,
+			List<IRodinFile> unprocessedFiles) {
 		this.project = project;
 		this.index = index;
 		this.fileTable = new FileTable();
 		this.nameTable = new NameTable();
 		this.exportTable = exportTable;
 		this.order = order;
+		this.unprocessedFiles.addAll(unprocessedFiles);
 		restoreNonPersistentData();
+		fireUnprocessedFiles();
 	}
 	
 	// for testing purposes
@@ -92,6 +103,12 @@ public class ProjectIndexManager {
 		this.order = order;
 	}
 	
+	public void fireUnprocessedFiles() {
+		for(IRodinFile file: unprocessedFiles) {
+			IndexManager.getDefault().enqueueUnprocessedFile(file);
+		}
+	}
+
 	public synchronized void doIndexing(IProgressMonitor monitor) {
 		if (monitor != null) {
 			monitor.beginTask("indexing project " + project,
@@ -106,23 +123,35 @@ public class ProjectIndexManager {
 	}
 
 	private void doIndexing(final IRodinFile file, IProgressMonitor monitor) {
+		if (isProjectVanishing) {
+			unprocessedFiles.add(file);
+			printDebugVanish(file);
+			return;
+		}
+
 		final Map<IInternalElement, IDeclaration> fileImports =
-				computeImports(file);
+			computeImports(file);
 
 		final FileIndexingManager fim = FileIndexingManager.getDefault();
-		final IIndexingResult result = fim.doIndexing(file, fileImports, monitor);
+		try {
+			final IIndexingResult result = fim.doIndexing(file, fileImports, monitor);
 
-		checkCancel(monitor);
-		if (result.isSuccess()) {
-			if (mustReindexDependents(result)) {
+			checkCancel(monitor);
+			if (result.isSuccess()) {
+				if (mustReindexDependents(result)) {
+					order.setToIterSuccessors();
+				}
+
+				updateTables(result);
+			} else {
 				order.setToIterSuccessors();
+				order.remove();
+				clean(file);
 			}
-
-			updateTables(result);
-		} else {
-			order.setToIterSuccessors();
-			order.remove();
-			clean(file);
+		} catch (OperationCanceledException e) {
+			// remember the file 
+			unprocessedFiles.add(file);
+			throw e;
 		}
 	}
 
@@ -243,7 +272,12 @@ public class ProjectIndexManager {
 					+ " should be indexed in project "
 					+ project);
 		}
-
+		if (isProjectVanishing) {
+			unprocessedFiles.add(file);
+			printDebugVanish(file);
+			return;
+		}
+		
 		if (!IndexerRegistry.getDefault().isIndexable(file)) {
 			return;
 		}
@@ -253,15 +287,28 @@ public class ProjectIndexManager {
 			final Set<IRodinFile> dependFiles = fim.getDependencies(file, monitor);
 			order.setPredecessors(file, dependFiles);
 			order.setToIter(file);
+			unprocessedFiles.remove(file);
+		} catch (OperationCanceledException e) {
+			// remember the file 
+			unprocessedFiles.add(file);
+			throw e;
 		} catch (IndexingException e) {
 			// forget this file
 		}
 
 	}
 
+	private void printDebugVanish(IRodinFile file) {
+		if (IndexManager.DEBUG) {
+			System.out.println("PIM: RENOUNCES processing of " + file
+					+ " because project " + project + " is VANISHING");
+		}
+	}
+
 	private Map<IInternalElement, IDeclaration> computeImports(IRodinFile file) {
 		final Map<IInternalElement, IDeclaration> result =
 				new HashMap<IInternalElement, IDeclaration>();
+		// FIXME: throws IllegalArgumentException if file is unknown
 		final List<IRodinFile> fileDeps = order.getPredecessors(file);
 
 		for (IRodinFile f : fileDeps) {
@@ -317,6 +364,10 @@ public class ProjectIndexManager {
 		}
 	}
 
+	public void setProjectVanishing() {
+		this.isProjectVanishing = true;
+	}
+	
 	public synchronized IDeclaration getDeclaration(IInternalElement element) {
 		final Descriptor descriptor = index.getDescriptor(element);
 		if (descriptor == null) {
@@ -375,7 +426,12 @@ public class ProjectIndexManager {
 		final PersistentTotalOrder<IRodinFile> persistOrder = order
 				.getPersistentData();
 		final ExportTable exportClone = exportTable.clone();
+		final List<IRodinFile> unprocessed = new ArrayList<IRodinFile>();
+		synchronized (unprocessedFiles) {
+			unprocessed.addAll(unprocessedFiles);
+		}
+		// FIXME some other files in this project may still be unprocessed
 		return new PersistentPIM(project, descriptors, exportClone,
-				persistOrder);
+				persistOrder, unprocessed);
 	}
 }

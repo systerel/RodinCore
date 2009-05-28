@@ -17,6 +17,7 @@ import java.io.File;
 
 import org.rodinp.internal.core.indexer.IndexManager;
 import org.rodinp.internal.core.indexer.PerProjectPIM;
+import org.rodinp.internal.core.indexer.ProjectIndexManager;
 import org.rodinp.internal.core.indexer.persistence.IPersistor;
 import org.rodinp.internal.core.indexer.persistence.PersistentIndexManager;
 import org.rodinp.internal.core.indexer.persistence.PersistentPIM;
@@ -105,7 +106,9 @@ public class XMLPersistor implements IPersistor {
 				return false;
 			}
 			final PIMPersistor persistor = new PIMPersistor();
-			pppim.put(persistor.restore(pimNode));
+			final ProjectIndexManager pim = persistor.restore(pimNode);
+			pppim.put(pim);
+			pim.fireUnprocessedFiles();
 			return true;
 		} catch (Exception e) {
 			if (IndexManager.DEBUG) {

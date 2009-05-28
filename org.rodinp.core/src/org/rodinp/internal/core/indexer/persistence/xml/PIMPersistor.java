@@ -13,6 +13,8 @@ package org.rodinp.internal.core.indexer.persistence.xml;
 import static org.rodinp.internal.core.indexer.persistence.xml.XMLAttributeTypes.*;
 import static org.rodinp.internal.core.indexer.persistence.xml.XMLElementTypes.*;
 
+import java.util.List;
+
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -57,7 +59,12 @@ public class PIMPersistor {
 		final TotalOrder<IRodinFile> order = new TotalOrder<IRodinFile>();
 		TotalOrderPersistor.restore(orderNode, order);
 
-		return new ProjectIndexManager(project, index, exportTable, order);
+		final NodeList unprocessedNodes = getElementsByTagName(pimNode, UNPROCESSED);
+		final List<IRodinFile> unprocessedFiles =
+				FileNodeListPersistor.restore(unprocessedNodes, FILE);
+
+		return new ProjectIndexManager(project, index, exportTable, order,
+				unprocessedFiles);
 	}
 
 	public void save(PersistentPIM pim, Document doc, Element pimNode) {
@@ -75,6 +82,9 @@ public class PIMPersistor {
 		final Element orderNode = createElement(doc, GRAPH);
 		TotalOrderPersistor.save(pim.getOrder(), doc, orderNode);
 		pimNode.appendChild(orderNode);
+		
+		FileNodeListPersistor.saveFiles(pim.getUnprocessedFiles(), doc,
+				pimNode, UNPROCESSED, FILE);
 	}
 
 }

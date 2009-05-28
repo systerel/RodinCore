@@ -145,7 +145,7 @@ public final class IndexManager {
 		}
 	}
 
-	private void checkCancel(IProgressMonitor monitor) {
+	void checkCancel(IProgressMonitor monitor) {
 		if (monitor != null && monitor.isCanceled()) {
 			throw new CancellationException();
 		}
@@ -154,30 +154,55 @@ public final class IndexManager {
 	ProjectIndexManager fetchPIM(IRodinProject project) {
 		return pppim.getOrCreate(project);
 	}
+	
+	private final FileIndexing indexing = new FileIndexing("indexing");
+	
+	private class FileIndexing extends Job {
+		
+		private IRodinFile file = null;
+		
+		public FileIndexing(String name) {
+			super(name);
+		}
 
-	private final Job indexing = new Job("indexing") {
+		public IRodinFile getFile() {
+			return file;
+		}
+		
+		public void setFile(IRodinFile file) {
+			this.file = file;
+		}
+		
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
-			printVerbose("indexing...");
-
+			// avoid file modification during indexing
+			final IRodinFile fileToIndex = file;
 			try {
-				doIndexing(monitor);
+				if (fileToIndex == null) {
+					doIndexing(monitor);
+				} else {
+					final IRodinProject project = fileToIndex.getRodinProject();
+					final ProjectIndexManager pim = fetchPIM(project);
+					pim.fileChanged(fileToIndex, monitor);
+					checkCancel(monitor);
+					pim.doIndexing(monitor);
+					checkCancel(monitor);
+				}
+				file = null;
+				return Status.OK_STATUS;
 			} catch (CancellationException e) {
-				printVerbose("indexing Cancelled");
-
+				printVerbose("indexing cancelled for file: " + fileToIndex);
 				return Status.CANCEL_STATUS;
-			}
-			printVerbose("...end indexing");
-
-			if (monitor != null) {
-				monitor.done();
-				if (monitor.isCanceled()) {
-					return Status.CANCEL_STATUS;
+			} finally {
+				if (monitor != null) {
+					monitor.done();
+					if (monitor.isCanceled()) {
+						return Status.CANCEL_STATUS;
+					}
 				}
 			}
-			return Status.OK_STATUS;
 		}
-	};
+	}
 
 	/**
 	 * Starts the indexing system. It will run until the given progress monitor
@@ -217,7 +242,8 @@ public final class IndexManager {
 	public void addListeners() {
 		RodinCore.addElementChangedListener(listener, eventMask);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener,
-				IResourceChangeEvent.POST_BUILD);
+				IResourceChangeEvent.POST_BUILD | IResourceChangeEvent.PRE_CLOSE
+				| IResourceChangeEvent.PRE_DELETE);
 	}
 
 	private void processCurrentDeltas(IProgressMonitor monitor)
@@ -288,10 +314,7 @@ public final class IndexManager {
 
 	private void processFileChanged(final IRodinFile file, IProgressMonitor monitor)
 			throws InterruptedException {
-		final IRodinProject project = file.getRodinProject();
-		final ProjectIndexManager pim = fetchPIM(project);
-
-		pim.fileChanged(file, monitor);
+		indexing.setFile(file);
 		indexing.schedule();
 		indexing.join();
 		if (Status.CANCEL_STATUS.equals(indexing.getResult())) {
@@ -329,7 +352,9 @@ public final class IndexManager {
 	}
 
 	/*
-	 * Blocks until the indexing system becomes up to date.
+	 * Blocks until the indexing system becomes up to date. If the call is
+	 * interrupted while waiting, the interrupted state of the calling Thread is
+	 * restored.
 	 */
 	public void waitUpToDate() throws InterruptedException {
 		queue.awaitEmptyQueue();
@@ -395,6 +420,27 @@ public final class IndexManager {
 		}
 	}
 
+	public void projectVanishing(IRodinProject project) {
+		printVerbose("INDEXER: Project " + project + " vanishes");
+		final ProjectIndexManager pim = this.pppim.get(project);
+		if (pim == null) {
+			return;
+		}
+		pim.setProjectVanishing();
+		final IRodinFile file = indexing.getFile();
+		if (file == null) {
+			return;
+		}
+		if (project.isAncestorOf(file)) {
+			indexing.cancel();
+		}
+	}
+	
+	// needed when a project is open with unprocessed files
+	public void enqueueUnprocessedFile(IRodinFile file) {
+		listener.enqueueDelta(new IndexDelta(file, Kind.FILE_CHANGED), false);
+	}
+	
 	public synchronized IDeclaration getDeclaration(IInternalElement element) {
 		final ProjectIndexManager pim = pppim.get(element.getRodinProject());
 		if (pim == null) {
