@@ -52,11 +52,11 @@ public class ProofSimplifier {
 
 			final IProofComponent pc = getProofComponent();
 			final IProofAttempt pa = createPrAttempt(pc, subMonitor.newChild(1));
-			final IProofSkeleton skel = getPrSkel(pc, subMonitor.newChild(2));
-			if (subMonitor.isCanceled()) {
-				return false;
-			}
 			try {
+				final IProofSkeleton skel = getPrSkel(pc, subMonitor.newChild(2));
+				if (subMonitor.isCanceled()) {
+					return false;
+				}
 				final boolean success = reuse(pa, skel, subMonitor.newChild(2));
 				if (!success || subMonitor.isCanceled()) {
 					return false;
