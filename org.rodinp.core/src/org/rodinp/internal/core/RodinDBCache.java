@@ -90,6 +90,10 @@ public class RodinDBCache {
 		return this.bufferCache.get(rodinFile);
 	}
 
+	public Buffer peekAtBuffer(RodinFile rodinFile) {
+		return this.bufferCache.peek(rodinFile);
+	}
+
 	/**
 	 * Returns the info for this element without disturbing the cache ordering.
 	 */

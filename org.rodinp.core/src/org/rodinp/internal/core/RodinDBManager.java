@@ -513,6 +513,14 @@ public class RodinDBManager implements ISaveParticipant {
 //	}
 
 	/**
+	 *  Returns the buffer for the given Rodin file without
+	 *  disturbing the cache ordering, nor creating the buffer if absent.
+	 */
+	public synchronized Buffer peekAtBuffer(RodinFile rodinFile) {
+		return this.cache.peekAtBuffer(rodinFile);
+	}
+
+	/**
 	 *  Returns the info for this element without
 	 *  disturbing the cache ordering.
 	 */

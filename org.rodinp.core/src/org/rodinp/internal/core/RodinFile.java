@@ -218,7 +218,7 @@ public final class RodinFile extends Openable implements IRodinFile {
 			return false;
 		}
 		RodinDBManager manager = RodinDBManager.getRodinDBManager();
-		Buffer buffer = manager.getBuffer(this);
+		Buffer buffer = manager.peekAtBuffer(this);
 		return buffer != null && buffer.hasUnsavedChanges();
 	}
 
