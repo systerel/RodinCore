@@ -224,7 +224,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 							if (ProofControlUtils.DEBUG)
 								ProofControlUtils.debug("File "
 										+ ProofControlPage.this.editor
-												.getRodinInput()
+												.getRodinInputFile()
 												.getElementName());
 							Text textWidget = textInput.getTextWidget();
 							final IUserSupport userSupport = editor
@@ -297,7 +297,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				public void widgetSelected(SelectionEvent e) {
 					if (ProofControlUtils.DEBUG)
 						ProofControlUtils.debug("File "
-								+ ProofControlPage.this.editor.getRodinInput()
+								+ ProofControlPage.this.editor.getRodinInputFile()
 										.getElementName());
 					Text textWidget = textInput.getTextWidget();
 					try {
@@ -638,7 +638,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			public void modifyText(ModifyEvent e) {
 				if (ProofControlUtils.DEBUG)
 					ProofControlUtils.debug("File: "
-							+ ProofControlPage.this.editor.getRodinInput()
+							+ ProofControlPage.this.editor.getRodinInputFile()
 									.getElementName());
 			}
 

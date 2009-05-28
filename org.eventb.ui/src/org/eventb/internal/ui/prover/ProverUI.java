@@ -31,10 +31,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
-import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPSStatus;
@@ -49,6 +49,7 @@ import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.cachehypothesis.CacheHypothesisPage;
 import org.eventb.internal.ui.cachehypothesis.ICacheHypothesisPage;
+import org.eventb.internal.ui.eventbeditor.EventBFormEditor;
 import org.eventb.internal.ui.goal.GoalPage;
 import org.eventb.internal.ui.goal.IGoalPage;
 import org.eventb.internal.ui.proofcontrol.IProofControlPage;
@@ -69,7 +70,7 @@ import org.rodinp.core.RodinDBException;
  *         <p>
  *         This implements the Prover UI Editor by extending the FormEditor
  */
-public class ProverUI extends FormEditor implements
+public class ProverUI extends EventBFormEditor implements
 		IUserSupportManagerChangedListener {
 
 	private static final IUserSupportManager USM = EventBPlugin
@@ -118,6 +119,13 @@ public class ProverUI extends FormEditor implements
 		saving = false;
 		this.userSupport = USM.newUserSupport();
 		USM.addChangeListener(this);
+	}
+	
+	@Override
+	public void init(IEditorSite site, IEditorInput input)
+			throws PartInitException {
+		super.init(site, input);
+		
 	}
 
 	/*
@@ -404,13 +412,8 @@ public class ProverUI extends FormEditor implements
 		super.setFocus();
 	}
 
-	/**
-	 * Getting the RodinFile associated with this editor
-	 * <p>
-	 * 
-	 * @return a handle to a Rodin file
-	 */
-	public IRodinFile getRodinInput() {
+	@Override
+	public IRodinFile getRodinInputFile() {
 		if (psFile == null) {
 			FileEditorInput editorInput = (FileEditorInput) this
 					.getEditorInput();
