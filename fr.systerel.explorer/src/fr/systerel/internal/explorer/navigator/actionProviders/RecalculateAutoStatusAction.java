@@ -88,17 +88,17 @@ public class RecalculateAutoStatusAction extends Action {
 							rodinPrj = (IRodinProject) obj;
 						}
 						if (rodinPrj.exists()) {
-							IPSRoot[] psRoot;
+							final IPSRoot[] psRoots;
 							try {
-								psRoot = rodinPrj
-										.getChildrenOfType(IPSRoot.ELEMENT_TYPE);
+								psRoots = rodinPrj
+										.getRootElementsOfType(IPSRoot.ELEMENT_TYPE);
 							} catch (RodinDBException e) {
 								EventBUIExceptionHandler
 										.handleGetChildrenException(e,
 												UserAwareness.IGNORE);
 								continue;
 							}
-							for (IPSRoot root : psRoot) {
+							for (IPSRoot root : psRoots) {
 								treatRoot(root, monitor);
 							}
 						}
