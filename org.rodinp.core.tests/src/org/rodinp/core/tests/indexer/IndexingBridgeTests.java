@@ -163,6 +163,17 @@ public class IndexingBridgeTests extends IndexTests {
 		}
 	}
 
+	public void testDeclareEmptyName() throws Exception {
+		IndexingBridge bridge = new IndexingBridge(file1, emptyImports, null);
+
+		try {
+			bridge.declare(elt1, "");
+			fail("IllegalArgumentException expected");
+		} catch (IllegalArgumentException e) {
+			// OK
+		}
+	}
+	
 	public void testAddLocalOccurrence() {
 		IndexingBridge bridge =
 				new IndexingBridge(file1, emptyImports, null);

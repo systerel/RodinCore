@@ -76,7 +76,12 @@ public class IndexingBridge implements IIndexingBridge {
 		if (name == null) {
 			throw new NullPointerException("null name");
 		}
-
+		
+		if (name.length() == 0) {
+			throw new IllegalArgumentException(
+					"Declared name must not be empty");
+		}
+		
 		if (!isLocal(element)) {
 			throw new IllegalArgumentException(
 					"Element must be in indexed file: "
