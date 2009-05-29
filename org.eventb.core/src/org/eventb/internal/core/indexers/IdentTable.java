@@ -49,6 +49,7 @@ public class IdentTable {
 		table.put(ident, declaration);
 	}
 
+	// the name argument must not be empty
 	public static String getUnprimedName(String name) {
 		final FreeIdentifier ident = ff.makeFreeIdentifier(name, null);
 		return getUnprimed(ident).getName();

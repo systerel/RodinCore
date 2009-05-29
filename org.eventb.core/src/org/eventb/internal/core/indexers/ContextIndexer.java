@@ -67,7 +67,11 @@ public class ContextIndexer extends EventBIndexer {
 			SymbolTable symbolTable) throws RodinDBException {
 		for (IIdentifierElement ident : elems) {
 			if (ident.hasIdentifierString()) {
-				final IDeclaration declaration = indexDeclaration(ident);
+				final String name = ident.getIdentifierString();
+				if (name.length() == 0) {
+					continue;
+				}
+				final IDeclaration declaration = indexDeclaration(ident, name);
 				export(declaration);
 				symbolTable.put(declaration);
 			}

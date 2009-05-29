@@ -152,6 +152,9 @@ public class EventIndexer extends Cancellable {
 	private void processEventLabel(SymbolTable absParamDeclImportST) throws RodinDBException {
 		if (event.hasLabel()) {
 			final String eventLabel = event.getLabel();
+			if (eventLabel.length() == 0) {
+				return;
+			}
 			final IDeclaration declaration = bridge.declare(event, eventLabel);
 			addLabelOcc(declaration, DECLARATION, event);
 			bridge.export(declaration);
@@ -180,6 +183,9 @@ public class EventIndexer extends Cancellable {
 		for (IWitness witness : witnesses) {
 			if (witness.hasLabel()) {
 				final String label = witness.getLabel();
+				if (label.length() == 0) {
+					continue;
+				}
 				final String name = getUnprimedName(label);
 				final IDeclaration declAbs = totalST.lookUpper(name);
 
@@ -201,7 +207,9 @@ public class EventIndexer extends Cancellable {
 		for (IParameter parameter : parameters) {
 			if (parameter.hasIdentifierString()) {
 				final String ident = parameter.getIdentifierString();
-
+				if (ident.length() == 0) {
+					continue;
+				}
 				IDeclaration declaration = bridge.declare(parameter, ident);
 				addIdentOcc(declaration, DECLARATION, parameter);
 				totalST.put(declaration);

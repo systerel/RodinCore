@@ -71,11 +71,11 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 	protected abstract IRodinFile[] getDeps(IInternalElement root)
 			throws RodinDBException;
 
-	protected IDeclaration indexDeclaration(IIdentifierElement ident)
-			throws RodinDBException {
+	// the identifier must be checked non empty before calling this method
+	protected IDeclaration indexDeclaration(IIdentifierElement ident,
+			String identifier) {
 
-		final IDeclaration declaration = currentBridge.declare(ident, ident
-				.getIdentifierString());
+		final IDeclaration declaration = currentBridge.declare(ident, identifier);
 		final IInternalLocation loc = getInternalLocation(ident,
 				IDENTIFIER_ATTRIBUTE);
 

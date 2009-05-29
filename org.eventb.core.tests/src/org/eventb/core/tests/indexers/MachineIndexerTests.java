@@ -81,6 +81,40 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertDeclarations(declVar1);
 	}
 
+	public void testNoDeclarationEmptyName() throws Exception {
+		final String VAR_EVT_PRM_WIT_EMPTY_NAMES =
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+					+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
+					+ "<org.eventb.core.variable"
+					+ "		name=\"internal_element1\""
+					+ "		org.eventb.core.identifier=\"\"/>"
+					+ "<org.eventb.core.event"
+					+ "		name=\"internal_element1\""
+					+ "		org.eventb.core.convergence=\"0\""
+					+ "		org.eventb.core.extended=\"false\""
+					+ "		org.eventb.core.label=\"\">"
+					+ "		<org.eventb.core.parameter"
+					+ "				name=\"internal_element1\""
+					+ "				org.eventb.core.identifier=\"\"/>"
+					+ "		<org.eventb.core.witness"
+					+ "				name=\"internal_element1\""
+					+ "				org.eventb.core.label=\"\""
+					+ "				org.eventb.core.predicate=\"var1' = 1\"/>"
+					+ "	</org.eventb.core.event>"
+					+ "</org.eventb.core.machineFile>";
+
+		final IMachineRoot machine = ResourceUtils.createMachine(rodinProject,
+				MCH_BARE_NAME, VAR_EVT_PRM_WIT_EMPTY_NAMES);
+
+		final BridgeStub tk = new BridgeStub(machine);
+
+		final MachineIndexer indexer = new MachineIndexer();
+
+		assertTrue(indexer.index(tk));
+
+		tk.assertDeclarations();
+	}
+	
 	/**
 	 * @throws Exception
 	 */

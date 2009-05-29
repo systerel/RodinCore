@@ -75,6 +75,27 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		tk.assertDeclarations(declCst1);
 	}
 
+	public void testNoDeclarationEmptyName() throws Exception {
+		final String CST_1DECL_EMPTY_NAME =
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+					+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+					+ "<org.eventb.core.constant"
+					+ "		name=\"internal_element1\""
+					+ "		org.eventb.core.identifier=\"\"/>"
+					+ "</org.eventb.core.contextFile>";
+		
+		final IContextRoot context = ResourceUtils.createContext(rodinProject,
+				CTX_BARE_NAME, CST_1DECL_EMPTY_NAME);
+
+		final BridgeStub tk = new BridgeStub(context);
+
+		final ContextIndexer indexer = new ContextIndexer();
+
+		assertTrue(indexer.index(tk));
+
+		tk.assertDeclarations();
+	}
+
 	/**
 	 * @throws Exception
 	 */
