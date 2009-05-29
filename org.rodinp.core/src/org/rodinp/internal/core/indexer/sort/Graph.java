@@ -120,4 +120,7 @@ public class Graph<T> {
 		}
 	}
 
+	public boolean contains(T label) {
+		return nodes.containsKey(label);
+	}
 }

@@ -305,10 +305,10 @@ public class ProjectIndexManager {
 		}
 	}
 
+	// the file argument must be known (order.contains(file) is true)
 	private Map<IInternalElement, IDeclaration> computeImports(IRodinFile file) {
 		final Map<IInternalElement, IDeclaration> result =
 				new HashMap<IInternalElement, IDeclaration>();
-		// FIXME: throws IllegalArgumentException if file is unknown
 		final List<IRodinFile> fileDeps = order.getPredecessors(file);
 
 		for (IRodinFile f : fileDeps) {
@@ -383,6 +383,10 @@ public class ProjectIndexManager {
 	}
 
 	public synchronized Set<IDeclaration> getVisibleDeclarations(IRodinFile file) {
+		if (!order.contains(file)) {
+			// unknown file
+			return Collections.emptySet();
+		}
 		final Set<IDeclaration> decls = new LinkedHashSet<IDeclaration>(
 				fileTable.get(file));
 		final Collection<IDeclaration> imports = computeImports(file).values();

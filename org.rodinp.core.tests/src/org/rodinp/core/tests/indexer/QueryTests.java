@@ -317,4 +317,14 @@ public class QueryTests extends IndexTests {
 		assertSameElements(expected, actual, "declarations");
 	
 	}
+	
+	public void testGetVisibleDeclsFileUnknown() throws Exception {
+		// no indexer is registered for this file type
+		final IRodinFile unknown = createRodinFile(project, "unknown.test2");
+		
+		final IIndexQuery query = RodinCore.makeIndexQuery();
+		query.waitUpToDate();
+
+		query.getVisibleDeclarations(unknown);
+	}
 }

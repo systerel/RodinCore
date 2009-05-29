@@ -154,4 +154,8 @@ public class TotalOrder<T> implements Iterator<T> {
 		}
 		isSorted = pto.isSorted();
 	}
+
+	public boolean contains(T label) {
+		return graph.contains(label);
+	}
 }
