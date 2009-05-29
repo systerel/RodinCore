@@ -108,9 +108,28 @@ public class AutoCompletionTests extends BuilderTest {
 			+ "			org.eventb.core.theorem=\"false\"/>"
 			+ "		<org.eventb.core.action"
 			+ " 		name=\"internal_act1\""
+			+ " 		org.eventb.core.assignment=\"varM1 :∣ ⊤\""
+			+ " 		org.eventb.core.label=\"act1\"/>"
+			+ "</org.eventb.core.event>" 
+			+ "<org.eventb.core.event"
+			+ " 	name=\"internal_evt2\""
+			+ " 	org.eventb.core.convergence=\"0\""
+			+ " 	org.eventb.core.extended=\"false\""
+			+ " 	org.eventb.core.label=\"evtM1_2\">"
+			+ "		<org.eventb.core.parameter"
+			+ " 		name=\"internal_prm2\""
+			+ " 		org.eventb.core.identifier=\"prmM1\"/>"
+			+ "		<org.eventb.core.guard"
+			+ " 		name=\"internal_grd2\""
+			+ " 		org.eventb.core.label=\"grd1\""
+			+ " 		org.eventb.core.predicate=\"prmM1 ∈ set1\""
+			+ "			org.eventb.core.theorem=\"false\"/>"
+			+ "		<org.eventb.core.action"
+			+ " 		name=\"internal_act2\""
 			+ " 		org.eventb.core.assignment=\"varM1 ≔ prmM1\""
 			+ " 		org.eventb.core.label=\"act1\"/>"
-			+ "</org.eventb.core.event>" + "</org.eventb.core.machineFile>";
+			+ "</org.eventb.core.event>" 
+			+ "</org.eventb.core.machineFile>";
 
 	private static final String M2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 			+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
@@ -161,7 +180,21 @@ public class AutoCompletionTests extends BuilderTest {
 			+ "		<org.eventb.core.parameter"
 			+ " 		name=\"internal_prm1\""
 			+ " 		org.eventb.core.identifier=\"prmM2_2\"/>"
-			+ "</org.eventb.core.event>" + "</org.eventb.core.machineFile>";
+			+ "</org.eventb.core.event>"
+			+ "<org.eventb.core.event"
+			+ " 	name=\"internal_evt3\""
+			+ " 	org.eventb.core.convergence=\"0\""
+			+ " 	org.eventb.core.extended=\"false\""
+			+ " 	org.eventb.core.label=\"evtM2_3\">"
+			+ "		<org.eventb.core.refinesEvent"
+			+ " 		name=\"internal_3\""
+			+ " 		org.eventb.core.target=\"evtM1_2\"/>"
+			+ "		<org.eventb.core.witness"
+			+ " 		name=\"internal_wit3\""
+			+ " 		org.eventb.core.label=\"\""
+			+ " 		org.eventb.core.predicate=\"\"/>"
+			+ "</org.eventb.core.event>"
+			+ "</org.eventb.core.machineFile>";
 
 	@Override
 	public void setUp() throws Exception {
@@ -292,5 +325,25 @@ public class AutoCompletionTests extends BuilderTest {
 
 		assertEquals("bad completions", asList("cst1", "prmM1", "prmM2",
 				"set1", "varM1", "varM1'", "varM2"), completions);
+	}
+	
+	public void testRemoveNonDeterministicallyAssignedVars() throws Exception {
+		ResourceUtils.createContext(rodinProject, "C1", C1);
+		ResourceUtils.createContext(rodinProject, "C2", C2);
+		ResourceUtils.createMachine(rodinProject, "M1", M1);
+		final IMachineRoot m2 = ResourceUtils.createMachine(rodinProject, "M2",
+				M2);
+
+		final IEvent evt3 = m2.getEvent("internal_evt3");
+
+		final IWitness witness = evt3.getWitness("internal_wit3");
+		final IAttributeLocation witLabel = RodinCore.getInternalLocation(
+				witness, LABEL_ATTRIBUTE);
+		final List<String> completions = AutoCompletion
+				.getCompletions(witLabel);
+
+		// varM1 is deterministically assigned in abstract event
+		// so varM1' must not appear in the completions
+		assertEquals("bad completions", asList("prmM1"), completions);
 	}
 }

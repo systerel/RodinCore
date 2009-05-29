@@ -11,6 +11,7 @@
 package org.eventb.internal.core.autocompletion;
 
 import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
+import static org.eventb.internal.core.autocompletion.CompletionUtil.getDeterministicallyAssignedVars;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -145,8 +146,17 @@ public class AutoCompletion {
 	private static Set<String> getPrimedDisapVarNames(IEvent event) {
 		final Set<IDeclaration> vars = CompletionUtil.getDisappearingVars(event
 				.getRodinFile());
+		removeDeterministicallyAssigned(vars, CompletionUtil
+				.getAbstractEvents(event));
 		final Set<String> disapNames = getNames(vars);
 		return getPrimedNames(disapNames);
+	}
+
+	private static void removeDeterministicallyAssigned(Set<IDeclaration> vars,
+			Set<IEvent> abstractEvents) {
+		for (IEvent event : abstractEvents) {
+			vars.removeAll(getDeterministicallyAssignedVars(event));
+		}
 	}
 
 	private static IEvent getRelativeEvent(IInternalElement element) {

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.autocompletion;
 
+import static org.eventb.core.EventBPlugin.MODIFICATION;
 import static org.eventb.core.EventBPlugin.REDECLARATION;
 
 import java.util.Iterator;
@@ -17,12 +18,19 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IParameter;
 import org.eventb.core.IVariable;
+import org.eventb.core.ast.Assignment;
+import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.LanguageVersion;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IIndexQuery;
 import org.rodinp.core.indexer.IOccurrence;
@@ -72,7 +80,7 @@ public class CompletionUtil {
 		return query.getDeclarations(occurrences);
 	}
 	
-	private static Set<IEvent> getAbstractEvents(IEvent event) {
+	public static Set<IEvent> getAbstractEvents(IEvent event) {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		final Set<IDeclaration> declsFile = query.getDeclarations(event
 				.getRodinFile());
@@ -108,7 +116,6 @@ public class CompletionUtil {
 				iter.remove();
 			}
 		}
-		// FIXME return non-deterministically assigned in abstract event 
 		return vars;
 	}
 
@@ -122,5 +129,48 @@ public class CompletionUtil {
 
 	private static boolean isInFile(final IDeclaration var, IRodinFile file) {
 		return var.getElement().getRodinFile().equals(file);
+	}
+	
+	public static Set<IDeclaration> getDeterministicallyAssignedVars(IEvent event) {
+		final IIndexQuery query = RodinCore.makeIndexQuery();
+		final Set<IDeclaration> vars = query.getVisibleDeclarations(event
+				.getRodinFile());
+		query.filterType(vars, IVariable.ELEMENT_TYPE);
+		final Set<IOccurrence> occs = query.getOccurrences(vars);
+		query.filterKind(occs, MODIFICATION);
+		query.filterLocation(occs, RodinCore.getInternalLocation(event));
+		
+		removeNonDeterministicallyAssigned(occs);
+		final Set<IDeclaration> result = query.getDeclarations(occs);
+		return result;
+	}
+
+	private static void removeNonDeterministicallyAssigned(
+			Set<IOccurrence> occs) {
+		final Iterator<IOccurrence> iter = occs.iterator();
+		while(iter.hasNext()) {
+			final IOccurrence occ = iter.next();
+			final IInternalElement locElem = occ.getLocation().getElement();
+			if (! (locElem instanceof IAction)) {
+				continue;
+			}
+			try {
+				final String assign = ((IAction) locElem).getAssignmentString();
+				final IParseResult result = FormulaFactory.getDefault()
+						.parseAssignment(assign, LanguageVersion.LATEST, assign);
+				if (result.hasProblem()) {
+					continue;
+				}
+				if (!isDeterministic(result.getParsedAssignment())) {
+					iter.remove();
+				}
+			} catch (RodinDBException e) {
+				// ignore this element
+			}
+		}
+	}
+
+	private static boolean isDeterministic(Assignment assignment) {
+		return assignment.getTag() == Formula.BECOMES_EQUAL_TO;
 	}
 }
