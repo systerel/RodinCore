@@ -251,7 +251,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	}
 
 	/*
-	 * global witness refering to post value of global variable of concrete
+	 * global witness referring to post value of global variable of concrete
 	 * machine
 	 */
 	public void testEvents_06_globalWitness() throws Exception {
@@ -542,7 +542,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	}
 
 	/*
-	 * interit / refines / merge used together correctly
+	 * inherit / refines / merge used together correctly
 	 */
 	public void testEvents_14_extendedRefinesMergeOK() throws Exception {
 		IMachineRoot abs = createMachine("abs");
@@ -610,6 +610,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		IEvent hvt = addExtendedEvent(mac, "hvt");
 		addEventRefines(hvt, "hvt");
 		IEvent ivt = addEvent(mac, "ivt");
+		IEvent jvt = addEvent(mac, "jvt");
+		addEventRefines(jvt, "hvt");
 
 		saveRodinFileOf(mac);
 
@@ -617,16 +619,17 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		getSCEvents(file, "evt", "fvt", "hvt", "ivt");
+		getSCEvents(file, "evt", "fvt", "hvt", "ivt", "jvt");
 
-		hasNotMarker(evt);
+		hasMarker(evt, null, GraphProblem.InconsistentEventLabelWarning, "evt");
 		hasNotMarker(fvt);
 		hasNotMarker(hvt);
 		hasNotMarker(ivt);
+		hasNotMarker(jvt);
 	}
 
 	/*
-	 * initialisation implicitly refined
+	 * initialization implicitly refined
 	 */
 	public void testEvents_16_initialisationDefaultRefines() throws Exception {
 		IMachineRoot abs = createMachine("abs");
@@ -655,7 +658,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	}
 
 	/*
-	 * initialisation cannot be explicitly refined
+	 * initialization cannot be explicitly refined
 	 */
 	public void testEvents_17_initialisationRefines() throws Exception {
 		IMachineRoot abs = createMachine("abs");
@@ -684,7 +687,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	}
 
 	/*
-	 * initialisation can be extended
+	 * initialization can be extended
 	 */
 	public void testEvents_18_initialisationExtended() throws Exception {
 		IMachineRoot abs = createMachine("abs");
@@ -712,7 +715,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	}
 
 	/*
-	 * no other event can refine the initialisation
+	 * no other event can refine the initialization
 	 */
 	public void testEvents_19_initialisationNotRefined() throws Exception {
 		IMachineRoot abs = createMachine("abs");
@@ -742,7 +745,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	}
 
 	/*
-	 * several refinement problems occuring together
+	 * several refinement problems occurring together
 	 */
 	public void testEvents_20_multipleRefineProblems() throws Exception {
 		IMachineRoot abs = createMachine("abs");
@@ -1499,7 +1502,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(ref);
 
-		IMachineRoot con = createMachine("con");
+		IMachineRoot con = createMachine("cnc");
 		addMachineRefines(con, "ref");
 		addVariables(con, "y");
 
@@ -1800,7 +1803,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		saveRodinFileOf(ref);
 
-		IMachineRoot con = createMachine("con");
+		IMachineRoot con = createMachine("cnc");
 		addMachineRefines(con, "ref");
 
 		addVariables(con, "x", "y", "z");
@@ -1839,7 +1842,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	}
 
 	/*
-	 * extended initialisation implicitly refined
+	 * extended initialization implicitly refined
 	 */
 	public void testEvents_46_initialisationExtendedRefines() throws Exception {
 		IMachineRoot abs = createMachine("abs");
@@ -1868,7 +1871,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	}
 
 	/*
-	 * extended initialisation action label conflict and checked actions copied
+	 * extended initialization action label conflict and checked actions copied
 	 */
 	public void testEvents_47_initialisationExtendedActions() throws Exception {
 		IMachineRoot abs = createMachine("abs");
@@ -1906,6 +1909,32 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		containsMarkers(abs, false);
 
 		hasMarker(ini, EventBAttributes.EXTENDED_ATTRIBUTE);
+	}
+
+	/*
+	 * There exists an abstract event with the same name but no refines clause
+	 * pointing to it.
+	 */
+	public void testEvents_48_sameNameNoRefines() throws Exception {
+		IMachineRoot abs = createMachine("abs");
+
+		addInitialisation(abs);
+		addEvent(abs, "evt");
+
+		saveRodinFileOf(abs);
+
+		runBuilder();
+
+		IMachineRoot mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
+		IEvent evt = addEvent(mac, "evt");
+		saveRodinFileOf(mac);
+
+		runBuilder();
+
+		hasMarker(evt, null, GraphProblem.InconsistentEventLabelWarning,
+				"evt");
 	}
 
 }

@@ -92,9 +92,8 @@ public class MachineEventRefinesModule extends SCFilterModule {
 			IAbstractEventInfo info = abstractEventTable
 					.getAbstractEventInfo(symbolInfo.getSymbol());
 			if (info != null)
-				createProblemMarker(machineFile,
-						GraphProblem.InconsistentEventLabelWarning, symbolInfo
-								.getSymbol());
+				createProblemMarker(event,
+						GraphProblem.InconsistentEventLabelWarning, symbolInfo.getSymbol());
 		}
 
 		return true;
