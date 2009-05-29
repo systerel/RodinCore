@@ -24,7 +24,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 public class TestMachineSeesContext extends EventBPOTest {
 	
 	public void testSees_00() throws Exception {
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 
 		addCarrierSets(con, makeSList("S1"));
 		addConstants(con, "C1");
@@ -36,7 +36,7 @@ public class TestMachineSeesContext extends EventBPOTest {
 		
 		IMachineRoot mac = createMachine("mac");
 		
-		addMachineSees(mac, "con");
+		addMachineSees(mac, "ctx");
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), false);
 		

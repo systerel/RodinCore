@@ -25,7 +25,7 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 	 * creation of carrier sets
 	 */
 	public void testCarrierSets_00_createCarrierSet() throws Exception {
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 
 		addCarrierSets(con, makeSList("S1"));
 		
@@ -44,7 +44,7 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 	 * creation of two carrier sets
 	 */
 	public void testCarrierSets_01_twoCarrierSets() throws Exception {
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 
 		addCarrierSets(con, makeSList("S1", "S2"));
 		
@@ -63,7 +63,7 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 	 * name conflict between two carrier sets
 	 */
 	public void testCarrierSets_02_twoCarrierSetsNameConflict() throws Exception {
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 
 		addCarrierSets(con, makeSList("S1", "S1"));
 		
@@ -83,7 +83,7 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 	 * faulty names for carrier sets
 	 */
 	public void testCarrierSets_03_carrierSetFaultyName() throws Exception {
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 
 		addCarrierSets(con, makeSList("S>", "k-1", "#"));
 		
@@ -113,7 +113,7 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 		
 		runBuilder();
 		
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 		addContextExtends(con, "abs");
 		
 		addCarrierSets(con, makeSList("S2"));
@@ -144,7 +144,7 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 		
 		runBuilder();
 		
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 		addContextExtends(con, "abs");
 		
 		addCarrierSets(con, makeSList("S1"));

@@ -34,7 +34,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		
 		runBuilder();
 		
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 		addContextExtends(con, "abs");
 		
 		saveRodinFileOf(con);
@@ -62,7 +62,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		
 		runBuilder();
 		
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 		addContextExtends(con, "abs");
 		
 		saveRodinFileOf(con);
@@ -96,7 +96,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		
 		runBuilder();
 		
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 		addContextExtends(con, "abs1");
 		addContextExtends(con, "abs2");
 		
@@ -132,7 +132,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		
 		runBuilder();
 		
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 		addContextExtends(con, "abs1");
 		addContextExtends(con, "abs2");
 		
@@ -179,7 +179,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		
 		runBuilder();
 		
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 		addContextExtends(con, "abs1");
 		addContextExtends(con, "abs2");
 		addContextExtends(con, "abs3");
@@ -215,7 +215,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		addCarrierSets(abs2, makeSList("S2"));
 		saveRodinFileOf(abs2);
 		
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 		addContextExtends(con, "abs2");
 		saveRodinFileOf(con);
 
@@ -241,7 +241,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		
 		IContextRoot cco = createContext("cco");
 		addContextExtends(cco, "cab");
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 		addContextExtends(con, "cco");
 		addContextExtends(con, "cab");
 
@@ -259,7 +259,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 	 */
 	public void testExtendsContext_08_redundant() throws Exception {
 		IContextRoot cco = createContext("cco");
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 		addContextExtends(con, "cco");
 		addContextExtends(con, "cco");
 
@@ -278,7 +278,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 		IContextRoot abs = createContext("abs");
 		addCarrierSets(abs, makeSList("S"));
 		
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 		addContextExtends(con, "abs");
 		addCarrierSets(con, makeSList("T"));
 		

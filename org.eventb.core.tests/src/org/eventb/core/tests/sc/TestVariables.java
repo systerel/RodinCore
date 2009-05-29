@@ -32,7 +32,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 	 * check type propagation of carrier sets in seeing machine
 	 */
 	public void testVariables_01() throws Exception {
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 
 		addCarrierSets(con, makeSList("S1"));
 		
@@ -42,7 +42,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		
 		IMachineRoot mac = createMachine("mac");
 		
-		addMachineSees(mac, "con");
+		addMachineSees(mac, "ctx");
 
 		addVariables(mac, makeSList("V1"));
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈S1"), false);
@@ -73,7 +73,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 	 * name conflict of variable and seen constant: variable removed!
 	 */
 	public void testVariables_02() throws Exception {
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 
 		addConstants(con, makeSList("C1"));
 		addAxioms(con, makeSList("A1"), makeSList("C1∈BOOL"), false);
@@ -84,7 +84,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 
 		IMachineRoot mac = createMachine("mac");
 		
-		addMachineSees(mac, "con");
+		addMachineSees(mac, "ctx");
 
 		addVariables(mac, makeSList("C1"));
 		addInvariants(mac, makeSList("I1", "I2"), makeSList("C1∈ℕ", "C1=TRUE"), false, false);

@@ -25,7 +25,7 @@ public class TestDependency extends BasicSCTestWithFwdConfig {
 	 * markers in dependent files should be deleted
 	 */
 	public void testDep_01_checkMarkersDeleted() throws Exception {
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 
 		saveRodinFileOf(con);
 		
@@ -33,7 +33,7 @@ public class TestDependency extends BasicSCTestWithFwdConfig {
 		
 		IMachineRoot mac = (IMachineRoot) createMachine("mac");
 		
-		addMachineSees(mac, "con");
+		addMachineSees(mac, "ctx");
 
 		addVariables(mac, makeSList("V1"));
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈S1"), true);
@@ -56,7 +56,7 @@ public class TestDependency extends BasicSCTestWithFwdConfig {
 	}
 	
 	public void testDep_02_nonexistentAbstractContext() throws Exception {
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 		
 		addContextExtends(con, "abs");
 
@@ -76,7 +76,7 @@ public class TestDependency extends BasicSCTestWithFwdConfig {
 	}
 	
 	public void testDep_03_nonexistentAbstractMachine() throws Exception {
-		IMachineRoot con = createMachine("con");
+		IMachineRoot con = createMachine("ctx");
 		addMachineRefines(con, "abs");
 
 		saveRodinFileOf(con);
@@ -95,7 +95,7 @@ public class TestDependency extends BasicSCTestWithFwdConfig {
 	}
 	
 	public void testDep_03_nonexistentSeenContext() throws Exception {
-		IMachineRoot con = createMachine("con");
+		IMachineRoot con = createMachine("ctx");
 		addMachineSees(con, "abs");
 
 		saveRodinFileOf(con);

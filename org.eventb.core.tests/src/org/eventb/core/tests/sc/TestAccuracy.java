@@ -26,7 +26,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * erroneous axioms should make an sc context inaccurate
 	 */
 	public void testAcc_01() throws Exception {
-		IContextRoot root = createContext("con");
+		IContextRoot root = createContext("ctx");
 
 		addAxioms(root, makeSList("A"), makeSList("x∈ℕ"), false);
 		
@@ -41,7 +41,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * erroneous theorems should make an sc context inaccurate
 	 */
 	public void testAcc_02() throws Exception {
-		IContextRoot root = createContext("con");
+		IContextRoot root = createContext("ctx");
 
 		addAxioms(root, makeSList("T"), makeSList("x∈ℕ"), true);
 		
@@ -62,7 +62,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(abs);
 		
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 		addContextExtends(con, "abs");
 		
 		addAxioms(con, makeSList("X"), makeSList("1<0"), true);
@@ -79,7 +79,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * erroneous invariants should make an sc machine inaccurate
 	 */
 	public void testAcc_04() throws Exception {
-		IMachineRoot con = createMachine("con");
+		IMachineRoot con = createMachine("cnc");
 
 		addInvariants(con, makeSList("I"), makeSList("x∈ℕ"), false);
 		
@@ -94,7 +94,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * erroneous theorems should make an sc machine inaccurate
 	 */
 	public void testAcc_05() throws Exception {
-		IMachineRoot con = createMachine("con");
+		IMachineRoot con = createMachine("cnc");
 
 		addInvariants(con, makeSList("T"), makeSList("x∈ℕ"), true);
 		
@@ -115,7 +115,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(abs);
 		
-		IMachineRoot con = createMachine("con");
+		IMachineRoot con = createMachine("cnc");
 		addMachineSees(con, "abs");
 		addInitialisation(con);
 		
@@ -140,7 +140,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(abs);
 		
-		IMachineRoot con = createMachine("con");
+		IMachineRoot con = createMachine("cnc");
 		addMachineRefines(con, "abs");
 		addInitialisation(con);
 		
@@ -159,7 +159,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * but not the sc machine
 	 */
 	public void testAcc_08() throws Exception {
-		IMachineRoot con = createMachine("con");
+		IMachineRoot con = createMachine("cnc");
 
 		addInitialisation(con, makeSList());
 		addEvent(con, "evt", makeSList(), 
@@ -196,7 +196,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(abs);
 		
-		IMachineRoot con = createMachine("con");
+		IMachineRoot con = createMachine("cnc");
 		addMachineRefines(con, "abs");
 
 		addInitialisation(con, makeSList());
@@ -228,7 +228,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(abs);
 		
-		IMachineRoot con = createMachine("con");
+		IMachineRoot con = createMachine("cnc");
 		addMachineRefines(con, "abs");
 
 		addInitialisation(con, makeSList());
@@ -250,7 +250,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * but not the sc machine
 	 */
 	public void testAcc_12() throws Exception {
-		IMachineRoot con = createMachine("con");
+		IMachineRoot con = createMachine("cnc");
 
 		addInitialisation(con, makeSList());
 		addEvent(con, "evt", makeSList(), 
@@ -270,7 +270,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * but not the sc machine
 	 */
 	public void testAcc_13() throws Exception {
-		IMachineRoot con = createMachine("con");
+		IMachineRoot con = createMachine("cnc");
 
 		addVariables(con, "v");
 		addInvariants(con, makeSList("I"), makeSList("v∈ℕ"), true);
@@ -300,7 +300,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(abs);
 		
-		IMachineRoot con = createMachine("con");
+		IMachineRoot con = createMachine("cnc");
 		addMachineRefines(con, "abs");
 
 		addInitialisation(con, makeSList());
@@ -336,7 +336,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(bbs);
 		
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 		addContextExtends(con, "abs");
 		addContextExtends(con, "bbs");
 		
@@ -369,7 +369,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(bbs);
 		
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 		addContextExtends(con, "bbs");
 		
 		addAxioms(con, makeSList("X"), makeSList("1<0"), true);
@@ -387,7 +387,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * but not the sc machine
 	 */
 	public void testAcc_17() throws Exception {
-		IMachineRoot con = createMachine("con");
+		IMachineRoot con = createMachine("cnc");
 
 		addVariables(con, "v");
 		addInvariants(con, makeSList("I"), makeSList("v∈ℕ"), true);
@@ -416,7 +416,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * but not the sc machine
 	 */
 	public void testAcc_18() throws Exception {
-		IMachineRoot con = createMachine("con");
+		IMachineRoot con = createMachine("cnc");
 
 		addVariables(con, "v");
 		addInvariants(con, makeSList("I"), makeSList("v∈ℕ"), true);
@@ -455,7 +455,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(abs);
 		
-		IMachineRoot con = createMachine("con");
+		IMachineRoot con = createMachine("cnc");
 		addMachineRefines(con, "abs");
 
 		addInitialisation(con);
@@ -488,7 +488,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 		
 		saveRodinFileOf(abs);
 		
-		IMachineRoot con = createMachine("con");
+		IMachineRoot con = createMachine("cnc");
 		addMachineRefines(con, "abs");
 
 		addInitialisation(con);
@@ -509,7 +509,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * an inaccurate sc machine does not automatically make contained sc events inaccurate
 	 */
 	public void testAcc_21() throws Exception {
-		IMachineRoot con = createMachine("con");
+		IMachineRoot con = createMachine("cnc");
 
 		addInvariants(con, makeSList("I"), makeSList("p>0"), true);
 		addInitialisation(con);

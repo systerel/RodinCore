@@ -64,10 +64,10 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 				makeSList("a"), 
 				makeSList("G"), makeSList("a∈ℤ"), 
 				makeSList(), makeSList());
-		IContextRoot c = createContext("con");
+		IContextRoot c = createContext("ctx");
 		IMachineRoot m = createMachine("mch");
 		addMachineRefines(m, "abs");
-		addMachineSees(m, "con");
+		addMachineSees(m, "ctx");
 		addVariables(m, "v");
 		addInvariants(m, makeSList("I"), makeSList("v∈ℤ"), false);
 		addInvariants(m, makeSList("T"), makeSList("⊤"), true);
@@ -91,7 +91,7 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 	
 	private IContextRoot createContext() throws Exception {
 		IContextRoot a = createContext("abs");
-		IContextRoot c = createContext("con");
+		IContextRoot c = createContext("ctx");
 		addContextExtends(c, "abs");
 		addCarrierSets(c, "S");
 		addConstants(c, "C");

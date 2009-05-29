@@ -31,7 +31,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 	 * seen context identifiers
 	 */
 	public void testMachineRefines_0() throws Exception {
-		IContextRoot con =  createContext("con");
+		IContextRoot con =  createContext("ctx");
 		addCarrierSets(con, "V1");
 	
 		saveRodinFileOf(con);
@@ -49,7 +49,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 
 		IMachineRoot mac = createMachine("mac");
 		
-		addMachineSees(mac, "con");
+		addMachineSees(mac, "ctx");
 		addMachineRefines(mac, "abs");
 
 		addVariables(mac, makeSList("V2"));
@@ -82,7 +82,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 	 * their abstract machine; carrier sets are propagated
 	 */
 	public void testMachineRefines_1() throws Exception {
-		IContextRoot con =  createContext("con");
+		IContextRoot con =  createContext("ctx");
 		addCarrierSets(con, "S1");
 	
 		saveRodinFileOf(con);
@@ -92,7 +92,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot abs = createMachine("abs");
 		addInitialisation(abs);
 		
-		addMachineSees(abs, "con");
+		addMachineSees(abs, "ctx");
 
 		saveRodinFileOf(abs);
 		
@@ -101,7 +101,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		IMachineRoot mac = createMachine("mac");
 		addInitialisation(mac);
 	
-		addMachineSees(mac, "con");
+		addMachineSees(mac, "ctx");
 		addMachineRefines(mac, "abs");
 
 		saveRodinFileOf(mac);
@@ -122,7 +122,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 	 * their abstract machine; constants are propagated
 	 */
 	public void testMachineRefines_2() throws Exception {
-		IContextRoot con =  createContext("con");
+		IContextRoot con =  createContext("ctx");
 		addConstants(con, "C1");
 		addAxioms(con, makeSList("A1"), makeSList("C1∈ℕ"), true);
 	
@@ -132,7 +132,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 
 		IMachineRoot abs = createMachine("abs");
 		
-		addMachineSees(abs, "con");
+		addMachineSees(abs, "ctx");
 		
 		addInitialisation(abs);
 
@@ -142,7 +142,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 
 		IMachineRoot mac = createMachine("mac");
 		
-		addMachineSees(mac, "con");
+		addMachineSees(mac, "ctx");
 		addMachineRefines(mac, "abs");
 		addInitialisation(mac);
 
@@ -165,7 +165,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 	 * when also variables are declared
 	 */
 	public void testMachineRefines_3() throws Exception {
-		IContextRoot con =  createContext("con");
+		IContextRoot con =  createContext("ctx");
 		addConstants(con, "C1");
 		addAxioms(con, makeSList("A1"), makeSList("C1∈ℕ"), true);
 	
@@ -175,7 +175,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 
 		IMachineRoot abs = createMachine("abs");
 		
-		addMachineSees(abs, "con");
+		addMachineSees(abs, "ctx");
 		addVariables(abs, "V1");
 		addInvariants(abs, makeSList("I1"), makeSList("V1∈ℕ"), true);
 		addInitialisation(abs, "V1");
@@ -186,7 +186,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 
 		IMachineRoot mac = createMachine("mac");
 		
-		addMachineSees(mac, "con");
+		addMachineSees(mac, "ctx");
 		addMachineRefines(mac, "abs");
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), true);

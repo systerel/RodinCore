@@ -119,7 +119,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 	 * create an integer variant containing a variable and a constant
 	 */
 	public void testVariant_04() throws Exception {
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 		addConstants(con, "C1");
 		addAxioms(con, makeSList("A1"), makeSList("C1∈ℕ"), false);
 
@@ -128,7 +128,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		runBuilder();
 
 		IMachineRoot mac = createMachine("mac");
-		addMachineSees(mac, "con");
+		addMachineSees(mac, "ctx");
 		addVariables(mac, "V1");
 		setConvergent(addEvent(mac, "evt"));
 		addInitialisation(mac, "V1");

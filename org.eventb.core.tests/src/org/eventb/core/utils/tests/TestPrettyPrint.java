@@ -106,6 +106,7 @@ public class TestPrettyPrint extends TestCase {
 		String result = expectedString.toString();
 		result = result.replace(" ", "");
 		result = result.replace("\n", "");
+		result = result.replace("\r", "");
 		result = result.replace("\t", "");
 		return result;
 	}

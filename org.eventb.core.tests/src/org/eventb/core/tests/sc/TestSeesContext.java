@@ -29,7 +29,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 	 * Seen contexts are copied into internal contexts
 	 */
 	public void testSeesContext_00() throws Exception {
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addGivenSet("S1");
@@ -44,7 +44,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		
 		IMachineRoot mac = createMachine("mac");
 		
-		addMachineSees(mac, "con");
+		addMachineSees(mac, "ctx");
 
 		addVariables(mac, makeSList("V1"));
 		addInvariants(mac, makeSList("I1"), makeSList("V1=C1"), false);
@@ -56,7 +56,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		
 		ISCMachineRoot file = mac.getSCMachineRoot();
 		
-		seesContexts(file, "con");
+		seesContexts(file, "ctx");
 		
 		ISCInternalContext[] contexts = getInternalContexts(file, 1);
 		
@@ -105,11 +105,11 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 	 * occurs both as an internal context and in a sees clause.
 	 */
 	public void testSeesContext_02() throws Exception {
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 		saveRodinFileOf(con);
 		
 		IMachineRoot abs = createMachine("abs");
-		addMachineSees(abs, "con");
+		addMachineSees(abs, "ctx");
 		saveRodinFileOf(abs);
 		
 		IMachineRoot mac = createMachine("mac");
@@ -119,8 +119,8 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		runBuilder();
 		
 		ISCMachineRoot file = mac.getSCMachineRoot();
-		seesContexts(file, "con");
-		containsContexts(file, "con");
+		seesContexts(file, "ctx");
+		containsContexts(file, "ctx");
 		
 		hasMarker(mac.getRefinesClauses()[0]);
 	}
@@ -194,7 +194,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		
 		IContextRoot cco = createContext("cco");
 		addContextExtends(cco, "cab");
-		IMachineRoot con = createMachine("con");
+		IMachineRoot con = createMachine("cnc");
 		addMachineSees(con, "cco");
 		addMachineSees(con, "cab");
 
@@ -212,7 +212,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 	 */
 	public void testSeesContext_06() throws Exception {
 		IContextRoot cco = createContext("cco");
-		IMachineRoot con = createMachine("con");
+		IMachineRoot con = createMachine("cnc");
 		addMachineSees(con, "cco");
 		addMachineSees(con, "cco");
 
@@ -238,7 +238,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		
 		IContextRoot cco = createContext("cco");
 		addContextExtends(cco, "cab");
-		IMachineRoot con = createMachine("con");
+		IMachineRoot con = createMachine("cnc");
 		addMachineSees(con, "cab");
 		addMachineSees(con, "cco");
 		addMachineSees(con, "cab");
@@ -259,7 +259,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 	 * Seen context not saved!
 	 */
 	public void testSeesContext_08() throws Exception {
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 
 		addCarrierSets(con, makeSList("S1"));
 		addConstants(con, "C1");
@@ -267,7 +267,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 				
 		IMachineRoot mac = createMachine("mac");
 		
-		addMachineSees(mac, "con");
+		addMachineSees(mac, "ctx");
 
 		addVariables(mac, makeSList("V1"));
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), false);

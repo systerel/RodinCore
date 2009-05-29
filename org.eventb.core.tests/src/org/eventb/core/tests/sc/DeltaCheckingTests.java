@@ -30,7 +30,7 @@ public class DeltaCheckingTests extends BasicSCTestWithFwdConfig {
 	 * when needed.
 	 */
 	public void testDeltaContext() throws Exception {
-		final IContextRoot root = createContext("con");
+		final IContextRoot root = createContext("ctx");
 		final ISCContextRoot sc = root.getSCContextRoot();
 		final IPORoot po = root.getPORoot();
 		
@@ -57,7 +57,7 @@ public class DeltaCheckingTests extends BasicSCTestWithFwdConfig {
 		addCarrierSets(rootAbs, makeSList("S1"));
 		saveRodinFileOf(rootAbs);
 
-		final IContextRoot rootCon = createContext("con");
+		final IContextRoot rootCon = createContext("ctx");
 		final ISCContextRoot scCon = rootCon.getSCContextRoot();
 		final IPORoot poCon = rootCon.getPORoot();
 		addContextExtends(rootCon, "abs");
@@ -77,7 +77,7 @@ public class DeltaCheckingTests extends BasicSCTestWithFwdConfig {
 	 * when needed.
 	 */
 	public void testDeltaMachine() throws Exception {
-		final IMachineRoot mac = createMachine("con");
+		final IMachineRoot mac = createMachine("cnc");
 		final ISCMachineRoot sc = mac.getSCMachineRoot();
 		final IPORoot po = mac.getPORoot();
 
@@ -105,7 +105,7 @@ public class DeltaCheckingTests extends BasicSCTestWithFwdConfig {
 		addInvariants(abs, makeSList("I1"), makeSList("V1∈BOOL"), true);
 		saveRodinFileOf(abs);
 
-		final IMachineRoot con = createMachine("con");
+		final IMachineRoot con = createMachine("cnc");
 		final ISCMachineRoot scCon = con.getSCMachineRoot();
 		final IPORoot poCon = con.getPORoot();
 		addMachineRefines(con, "abs");

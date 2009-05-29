@@ -28,7 +28,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 	 * create constant with carrier set type
 	 */
 	public void testConstants_03_constantWithCarrierSetType() throws Exception {
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 
 		addConstants(con, makeSList("C1"));
 		addCarrierSets(con, makeSList("S1"));
@@ -65,7 +65,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		
 		runBuilder();
 		
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 		addContextExtends(con, "abs1");
 
 		addConstants(con, makeSList("C2"));
@@ -98,7 +98,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		
 		runBuilder();
 		
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 
 		addContextExtends(con, "abs1");
 
@@ -125,7 +125,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 	 * constant type across axioms
 	 */
 	public void testConstants_06_constantTypingOK() throws Exception {
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 
 		addConstants(con, makeSList("d"));
 		addAxioms(con, makeSList("A1", "A2"), makeSList("d∈ℕ", "d>0"), false, false);

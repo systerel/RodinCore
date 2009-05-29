@@ -345,7 +345,7 @@ public class TestMachineEvents extends EventBPOTest {
 	 * invariant preservation: context in hypothesis
 	 */
 	public void testEvents_09_invPresContextInHyp() throws Exception {
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 
 		addCarrierSets(con, makeSList("S1"));
 		addConstants(con, "C1");
@@ -357,7 +357,7 @@ public class TestMachineEvents extends EventBPOTest {
 		
 		IMachineRoot mac = createMachine("mac");
 
-		addMachineSees(mac, "con");
+		addMachineSees(mac, "ctx");
 		
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈0‥4"), false);

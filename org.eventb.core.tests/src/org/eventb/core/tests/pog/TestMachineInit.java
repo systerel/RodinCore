@@ -115,7 +115,7 @@ public class TestMachineInit extends EventBPOTest {
 		saveRodinFileOf(abs);
 		runBuilder();
 		
-		IMachineRoot con = createMachine("con");
+		IMachineRoot con = createMachine("cnc");
 		addMachineRefines(con, "abs");
 		addVariables(con, "y");
 		addInvariants(con, makeSList("I1"), makeSList("y = x + 1"), false);

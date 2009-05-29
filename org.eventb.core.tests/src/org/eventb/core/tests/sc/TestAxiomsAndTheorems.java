@@ -28,7 +28,7 @@ public class TestAxiomsAndTheorems extends GenericPredicateTest<IContextRoot, IS
 	 * check partial typing
 	 */
 	public void testAxiomsAndTheorems_05_axiomPartialTyping() throws Exception {
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addGivenSet("S1");
@@ -52,7 +52,7 @@ public class TestAxiomsAndTheorems extends GenericPredicateTest<IContextRoot, IS
 	 * more on partial typing (more complex)
 	 */
 	public void testAxiomsAndTheorems_06_axiomPartialTyping() throws Exception {
-		IContextRoot con = createContext("con");
+		IContextRoot con = createContext("ctx");
 		
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addGivenSet("S1");

@@ -27,7 +27,7 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineRoot
 	 * propagation of carrier set types, partial typing
 	 */
 	public void testInvariantsAndTheorems_05_carrierSetType() throws Exception {
-		IContextRoot con =  createContext("con");
+		IContextRoot con =  createContext("ctx");
 		addCarrierSets(con, "S1");
 	
 		saveRodinFileOf(con);
@@ -39,7 +39,7 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineRoot
 		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addGivenSet("S1");
 
-		addMachineSees(mac, "con");
+		addMachineSees(mac, "ctx");
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1", "I2"), makeSList("V1∈ℕ∪S1", "V1∈S1"), false, false);
 	
@@ -59,7 +59,7 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineRoot
 	 * more on partial typing (more complex set up)
 	 */
 	public void testInvariantsAndTheorems_06_partialTyping() throws Exception {
-		IContextRoot con =  createContext("con");
+		IContextRoot con =  createContext("ctx");
 		addCarrierSets(con, "S1");
 	
 		saveRodinFileOf(con);
@@ -71,7 +71,7 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineRoot
 		typeEnvironment.addName("V1", factory.makeGivenType("S1"));
 		
 		IMachineRoot mac = createMachine("mac");
-		addMachineSees(mac, "con");
+		addMachineSees(mac, "ctx");
 		addVariables(mac, "V1");
 		addInvariants(mac, 
 				makeSList("I1", "I2", "I3", "I4"), 

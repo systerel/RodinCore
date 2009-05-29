@@ -1149,7 +1149,7 @@ public class TestMachineRefines extends EventBPOTest {
 
 		saveRodinFileOf(ref);
 		
-		IMachineRoot con = createMachine("con");
+		IMachineRoot con = createMachine("cnc");
 		addMachineRefines(con, "ref");
 		addVariables(con, "y");
 	
@@ -1223,7 +1223,7 @@ public class TestMachineRefines extends EventBPOTest {
 	public void testRefines_23() throws Exception {
 		
 		// Context
-		final IContextRoot ctx = createContext("con");
+		final IContextRoot ctx = createContext("ctx");
 		addConstants(ctx, "gp", "fvdd", "fvdn", "fvd", "ga",
 				"glue", "ip", "fpwd", "gpwn", "fvnwd", "gvnwn",
 				"hvdd", "hvnd", "hvrd", "ia");

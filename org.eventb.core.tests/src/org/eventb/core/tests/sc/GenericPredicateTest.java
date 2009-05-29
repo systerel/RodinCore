@@ -27,7 +27,7 @@ extends GenericEventBSCTest<E, SCE> {
 	 * creation of axiom or invariant
 	 */
 	public void test_00() throws Exception {
-		E con = getGeneric().createElement("con");
+		E con = getGeneric().createElement("elt");
 
 		getGeneric().addPredicates(con, makeSList("P"), makeSList("ℕ≠∅"), false);
 		
@@ -46,7 +46,7 @@ extends GenericEventBSCTest<E, SCE> {
 	 * name conflict
 	 */
 	public void test_01() throws Exception {
-		E con = getGeneric().createElement("con");
+		E con = getGeneric().createElement("elt");
 
 		getGeneric().addPredicates(con, makeSList("P"), makeSList("ℕ≠∅"), false);
 		getGeneric().addPredicates(con, makeSList("P"), makeSList("ℕ=∅"), false);
@@ -66,7 +66,7 @@ extends GenericEventBSCTest<E, SCE> {
 	 * type conflict in one axiom or invariant
 	 */
 	public void test_02() throws Exception {
-		E con = getGeneric().createElement("con");
+		E con = getGeneric().createElement("elt");
 
 		getGeneric().addPredicates(con, makeSList("A1"), makeSList("ℕ≠BOOL"), false);
 	
@@ -85,7 +85,7 @@ extends GenericEventBSCTest<E, SCE> {
 	 * use of declared constant or variable
 	 */
 	public void test_03() throws Exception {
-		E con = getGeneric().createElement("con");
+		E con = getGeneric().createElement("elt");
 
 		getGeneric().addIdents(con, "x");
 		getGeneric().addPredicates(con, makeSList("P"), makeSList("x∈1‥0"), false);
@@ -105,7 +105,7 @@ extends GenericEventBSCTest<E, SCE> {
 	 * use of undeclared constants or variables
 	 */
 	public void test_04() throws Exception {
-		E con = getGeneric().createElement("con");
+		E con = getGeneric().createElement("elt");
 
 		getGeneric().addPredicates(con, makeSList("A1"), makeSList("C1∈ℕ"), false);
 	
@@ -124,7 +124,7 @@ extends GenericEventBSCTest<E, SCE> {
 	 * create theorem
 	 */
 	public void test_05() throws Exception {
-		E con = getGeneric().createElement("con");
+		E con = getGeneric().createElement("elt");
 
 		getGeneric().addPredicates(con, makeSList("T1"), makeSList("ℕ≠∅"), true);
 		
@@ -143,7 +143,7 @@ extends GenericEventBSCTest<E, SCE> {
 	 * create two theorems
 	 */
 	public void test_06() throws Exception {
-		E con = getGeneric().createElement("con");
+		E con = getGeneric().createElement("elt");
 
 		getGeneric().addPredicates(con, makeSList("T1", "T2"), makeSList("ℕ≠∅", "ℕ=∅"), true, true);
 		
@@ -162,7 +162,7 @@ extends GenericEventBSCTest<E, SCE> {
 	 * create two theorems with name conflict
 	 */
 	public void test_07() throws Exception {
-		E con = getGeneric().createElement("con");
+		E con = getGeneric().createElement("elt");
 
 		getGeneric().addPredicates(con, makeSList("T1"), makeSList("ℕ≠∅"), true);
 		getGeneric().addPredicates(con, makeSList("T1"), makeSList("ℕ=∅"), true);
@@ -182,7 +182,7 @@ extends GenericEventBSCTest<E, SCE> {
 	 * name conflict of axiom (resp. invariant) and theorem
 	 */
 	public void test_08() throws Exception {
-		E con = getGeneric().createElement("con");
+		E con = getGeneric().createElement("elt");
 
 		getGeneric().addPredicates(con, makeSList("T1"), makeSList("ℕ≠∅"), false);
 		getGeneric().addPredicates(con, makeSList("T1"), makeSList("ℕ=∅"), true);
@@ -204,7 +204,7 @@ extends GenericEventBSCTest<E, SCE> {
 	 * (do not create too many error messages)
 	 */
 	public void test_09() throws Exception {
-		E con = getGeneric().createElement("con");
+		E con = getGeneric().createElement("elt");
 
 		getGeneric().addIdents(con, "C1", "C1");
 		getGeneric().addPredicates(con, makeSList("A1"), makeSList("C1=∅"), false);
@@ -229,7 +229,7 @@ extends GenericEventBSCTest<E, SCE> {
 	 * An invalid character in a predicate is ignored, but reported as a warning
 	 */
 	public void test_10_bug2689872() throws Exception {
-		E con = getGeneric().createElement("con");
+		E con = getGeneric().createElement("elt");
 
 		getGeneric().addPredicates(con, makeSList("A1"), makeSList("0/=1"), false);
 	
@@ -252,7 +252,7 @@ extends GenericEventBSCTest<E, SCE> {
 	 * A piece of data can now be typed by a theorem.
 	 */
 	public void test_11() throws Exception {
-		E con = getGeneric().createElement("con");
+		E con = getGeneric().createElement("elt");
 
 		getGeneric().addIdents(con, "C1");
 		getGeneric().addPredicates(con, makeSList("T1"), makeSList("C1 ∈ ℤ"), true);
