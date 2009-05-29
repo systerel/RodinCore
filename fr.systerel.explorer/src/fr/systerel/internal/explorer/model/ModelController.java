@@ -17,9 +17,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.navigator.CommonViewer;
+import org.eclipse.core.runtime.ListenerList;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
@@ -50,32 +48,19 @@ public class ModelController implements IElementChangedListener {
 	
 	
 	private static HashMap<IRodinProject, ModelProject> projects = new HashMap<IRodinProject, ModelProject>();
-	CommonViewer viewer;
-	private static ModelController instance;
+	private static ModelController INSTANCE = new ModelController();
 
-	/**
-	 * Create this controller and register it in the DataBase for changes.
-	 * 
-	 * @param viewer
-	 */
-	public ModelController(CommonViewer viewer){
+	private final ListenerList listeners = new ListenerList();
+
+	private ModelController() {
 		RodinCore.addElementChangedListener(this);
-		this.viewer = viewer;
 	}
 
-	public static void createInstance(CommonViewer viewer) {
-		if (instance == null) {
-			instance = new ModelController(viewer);
-		} else {
-			instance.viewer = viewer;
-		}
-	}
-	
 	/**
-	 * No arguments constructor for testing purpose
+	 * Returns the unique instance of the model controller.
 	 */
-	public ModelController() {
-		// do nothing
+	public static ModelController getInstance() {
+		return INSTANCE;
 	}
 
 	/**
@@ -351,16 +336,12 @@ public class ModelController implements IElementChangedListener {
 		final ArrayList<IRodinElement> toRefresh = processor.getToRefresh();
 		final ArrayList<IRodinElement> toRemove = processor.getToRemove();
 		
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable(){
-			public void run() {
-				cleanUpModel(toRemove);
-				//refresh the model
-				for (IRodinElement elem : toRefresh) {
-					refreshModel(elem);
-					
-				}
-				refreshViewer(toRefresh);
-		}});
+		cleanUpModel(toRemove);
+		//refresh the model
+		for (IRodinElement elem : toRefresh) {
+			refreshModel(elem);
+		}
+		notifyListeners(toRefresh);
 	}
 
 	
@@ -424,25 +405,6 @@ public class ModelController implements IElementChangedListener {
 		}
 	}
 	
-	public void refreshViewer(ArrayList<IRodinElement> toRefresh) {
-		Control ctrl = viewer.getControl();
-		if (ctrl != null && !ctrl.isDisposed()) {
-			// refresh everything
-			if (toRefresh.contains(RodinCore.getRodinDB())) {
-				viewer.refresh();
-			} else {
-				for (Object elem : toRefresh) {
-					if (elem instanceof IRodinProject) {
-						viewer.refresh(((IRodinProject)elem).getProject());
-					} else {
-						viewer.refresh(elem);
-					}
-				}
-			}
-		}
-		
-	}
-
 	/**
 	 * Removes the corresponding elements from the model
 	 * @param toRemove
@@ -458,6 +420,30 @@ public class ModelController implements IElementChangedListener {
 			if (element instanceof IRodinProject) {
 				removeProject((IRodinProject) element);
 			}
+		}
+	}
+	
+	public void addListener(IModelListener listener) {
+		listeners.add(listener);
+	}
+
+	public void removeListener(IModelListener listener) {
+		listeners.remove(listener);
+	}
+
+	private void notifyListeners(List<IRodinElement> toRefresh) {
+		for (Object listener : listeners.getListeners()) {
+			safeNotify((IModelListener) listener, toRefresh);
+		}
+	}
+
+	private void safeNotify(IModelListener listener,
+			List<IRodinElement> toRefresh) {
+		try {
+			listener.refresh(toRefresh);
+		} catch (Throwable e) {
+			// TODO log properly exception in listener
+			e.printStackTrace();
 		}
 	}
 }

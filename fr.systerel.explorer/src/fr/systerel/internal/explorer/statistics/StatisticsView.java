@@ -15,7 +15,9 @@ package fr.systerel.internal.explorer.statistics;
 import static fr.systerel.explorer.ExplorerPlugin.NAVIGATOR_ID;
 
 import java.util.HashMap;
+import java.util.List;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -47,16 +49,21 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.part.ViewPart;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinCore;
 
 import fr.systerel.explorer.IElementNode;
 import fr.systerel.internal.explorer.model.IModelElement;
+import fr.systerel.internal.explorer.model.IModelListener;
+import fr.systerel.internal.explorer.model.ModelController;
 
 /**
  * This class implements a view that shows statistics according to the selection in the
  * navigator.
  *
  */
-public class StatisticsView extends ViewPart implements ISelectionListener {
+public class StatisticsView extends ViewPart implements ISelectionListener,
+		IModelListener {
 	private Label label;
 	private TableViewer viewer;
 	TableViewer detailsViewer;
@@ -69,6 +76,9 @@ public class StatisticsView extends ViewPart implements ISelectionListener {
 	private IStructuredContentProvider statisticsDetailsContentProvider =
 		new StatisticsDetailsContentProvider();
 
+	private static final Object[] EMPTY_SELECTION = new Object[0];
+	protected Object[] currentSelection = EMPTY_SELECTION;
+	
 	/**
 	 * 
 	 */
@@ -90,6 +100,7 @@ public class StatisticsView extends ViewPart implements ISelectionListener {
 	public void createPartControl(Composite parent) {
 		ISelectionService selectionService = getSite().getWorkbenchWindow().getSelectionService();
 		selectionService.addSelectionListener(NAVIGATOR_ID, this);
+		ModelController.getInstance().addListener(this);
 
 		container = new Composite(parent, SWT.NONE);
 		FormLayout layout = new FormLayout();
@@ -110,6 +121,7 @@ public class StatisticsView extends ViewPart implements ISelectionListener {
 	@Override
 	public void dispose(){
 		super.dispose();
+		ModelController.getInstance().removeListener(this);
 		ISelectionService selectionService = getSite().getWorkbenchWindow().getSelectionService();
 		selectionService.removeSelectionListener(NAVIGATOR_ID, this);
 		
@@ -300,29 +312,78 @@ public class StatisticsView extends ViewPart implements ISelectionListener {
 			return;
 
 		if (selection instanceof ITreeSelection) {
-			String valid = StatisticsUtil.isValidSelection(((ITreeSelection) selection).toArray());
-			if ( valid == null) {
-				viewer.setInput(((ITreeSelection) selection).toArray());
-				viewer.getTable().setVisible(true);
-				label.setVisible(false);
-				detailsViewer.setInput(((ITreeSelection) selection).toArray());
-				detailsViewer.getTable().setVisible( StatisticsUtil.detailsRequired(((ITreeSelection) selection).toArray()));
-				
-				colorEvery2ndLine();
-
+			final Object[] input = ((ITreeSelection) selection).toArray();
+			final String message = StatisticsUtil.isValidSelection(input);
+			if (message == null) {
+				currentSelection = input;
+				refreshValid(input);
 			} else {
-				// if the viewer is not visible, show the "no statistics" label
-				viewer.getTable().setVisible(false);
-				label.setText("No statistics available: " +valid);
-				label.setVisible(true);
-				detailsViewer.getTable().setVisible(false);
+				currentSelection = EMPTY_SELECTION;
+				refreshEmpty(message);
 			}
-			Point size = container.getSize();
-			container.pack();
-			container.setSize(size);
-		
 		}
 	}
 
+	private void resize() {
+		Point size = container.getSize();
+		container.pack();
+		container.setSize(size);
+	}
+	
+	protected void refreshValid(Object[] input) {
+		viewer.setInput(input);
+		viewer.getTable().setVisible(true);
+		label.setVisible(false);
+		detailsViewer.setInput(input);
+		detailsViewer.getTable().setVisible(
+				StatisticsUtil.detailsRequired((input)));
+
+		colorEvery2ndLine();
+		resize();
+	}
+	
+	private void refreshEmpty(String message) {
+		// if the viewer is not visible, show the "no statistics" label
+		viewer.getTable().setVisible(false);
+		label.setText("No statistics available: " + message);
+		label.setVisible(true);
+		detailsViewer.getTable().setVisible(false);
+		resize();
+	}
+
+	public void refresh(final List<IRodinElement> elements) {
+		if (currentSelection == null)
+			return;
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				doRefresh(elements);
+			}
+		});
+	}
+
+	void doRefresh(List<IRodinElement> elements) {
+		for (IRodinElement toRefresh : elements) {
+			for (Object o : currentSelection) {
+				final IRodinElement selected = getRodinElement(o);
+				if (toRefresh.equals(selected)
+						|| toRefresh.isAncestorOf(selected)) {
+					refreshValid(currentSelection);
+					return;
+				}
+			}
+		}
+	}
+
+	private IRodinElement getRodinElement(Object el) {
+		if (el instanceof IProject) {
+			return RodinCore.valueOf((IProject) el);
+		} else if (el instanceof IElementNode) {
+			return ((IElementNode) el).getParent();
+		} else if (el instanceof IRodinElement) {
+			return (IRodinElement) el;
+		} else {
+			return null;
+		}
+	}
 
 }

@@ -13,7 +13,6 @@ package fr.systerel.explorer.tests.model;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -115,11 +114,6 @@ public class ModelControllerTest extends ExplorerTest {
 	public void refreshModelAddMachine() throws RodinDBException {
 		setUpSubscription();
 		IMachineRoot m5 =  createMachine("m5");
-
-		assertNull(ModelController.getMachine(m5));
-		
-		//refresh the model
-		controller.refreshModel(rodinProject);
 		//make sure that a ModelMachine has been created for the added machine.
 		assertNotNull(ModelController.getMachine(m5));
 	}
@@ -128,11 +122,6 @@ public class ModelControllerTest extends ExplorerTest {
 	public void refreshModelAddContext() throws RodinDBException {
 		setUpSubscription();
 		IContextRoot c5 =  createContext("c5");
-
-		assertNull(ModelController.getContext(c5));
-		
-		//refresh the model
-		controller.refreshModel(rodinProject);
 		//make sure that a ModelContext has been created for the added context.
 		assertNotNull(ModelController.getContext(c5));
 	}
@@ -141,11 +130,6 @@ public class ModelControllerTest extends ExplorerTest {
 	public void refreshModelAddInvariant() throws RodinDBException {
 		setUpSubscription();
 		IInvariant inv =  createInvariant(m0, "inv");
-		
-		assertNull(ModelController.getInvariant(inv));
-		
-		//refresh the model
-		controller.refreshModel(m0);
 		//make sure that a ModelInvariant has been created for the added invariant.
 		assertNotNull(ModelController.getInvariant(inv));
 	}
@@ -157,12 +141,6 @@ public class ModelControllerTest extends ExplorerTest {
 
 		//remove the invariant
 		inv.delete(true, null);
-		
-		//it should still be in the model
-		assertNotNull(ModelController.getInvariant(inv));
-		
-		//refresh the model
-		controller.refreshModel(m0);
 		//make sure that the invariant has been removed from the model
 		assertNull(ModelController.getInvariant(inv));
 	}
@@ -178,12 +156,6 @@ public class ModelControllerTest extends ExplorerTest {
 			 
 		//add a sequent
 		createSequent(ipo, "sequent");
-		
-		//make sure there's no proof obligation there yet
-		assertEquals(0, ModelController.getMachine(m0).getProofObligations().length);
-
-		//refresh the parent ipo
-		controller.refreshModel(ipo);
 		
 		//make sure that a ModelProofObligation has been created for the added sequent.
 		assertEquals(1, ModelController.getMachine(m0).getProofObligations().length);
@@ -205,13 +177,6 @@ public class ModelControllerTest extends ExplorerTest {
 			 
 		//add a status
 		IPSStatus status = createPSStatus(ips, "sequent");
-		
-		//make sure there's no status there yet
-		assertNull(ModelController.getModelPO(status).getIPSStatus());
-
-		//refresh the parent ipo
-		controller.refreshModel(ips);
-		
 		//make sure that a ModelProofObligation has been created for the added status.
 		assertNotNull(ModelController.getModelPO(status).getIPSStatus());
 	}
@@ -234,12 +199,6 @@ public class ModelControllerTest extends ExplorerTest {
 		ModelController.getMachine(m0).processPSRoot();
 			 
 		status.setConfidence(IConfidence.DISCHARGED_MAX, null);
-		
-		//make sure the PO is not discharged yet
-		assertFalse(ModelController.getModelPO(status).isDischarged());
-
-		//refresh the parent ipo
-		controller.refreshModel(ips);
 		
 		//make sure the PO is discharged now
 		assertTrue(ModelController.getModelPO(status).isDischarged());
@@ -310,7 +269,7 @@ public class ModelControllerTest extends ExplorerTest {
 		ModelController.processProject(rodinProject);
 		project = ModelController.getProject(rodinProject);
 
-		controller = new ModelController();
+		controller = ModelController.getInstance();
 		
 		//subscribe for changes
 		RodinCore.addElementChangedListener(listener);

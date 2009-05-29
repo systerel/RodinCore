@@ -12,6 +12,7 @@
 package fr.systerel.internal.explorer.navigator;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -25,16 +26,22 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorFilterService;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 
+import fr.systerel.internal.explorer.model.IModelListener;
 import fr.systerel.internal.explorer.model.ModelController;
 import fr.systerel.internal.explorer.navigator.filters.DischargedFilter;
 import fr.systerel.internal.explorer.navigator.filters.ObligationTextFilter;
@@ -48,13 +55,49 @@ public class NavigatorController {
 	
 	private static ArrayList<CommonViewer> registeredViewers = new ArrayList<CommonViewer>();
 
+	private static class ViewerRefresher implements IModelListener {
+
+		private final CommonViewer viewer;
+
+		public ViewerRefresher(CommonViewer viewer) {
+			this.viewer = viewer;
+		}
+
+		public void refresh(final List<IRodinElement> toRefresh) {
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					refreshViewer(toRefresh);
+				}
+			});
+		}
+
+		void refreshViewer(List<IRodinElement> toRefresh) {
+			final Control ctrl = viewer.getControl();
+			if (ctrl != null && !ctrl.isDisposed()) {
+				// refresh everything
+				if (toRefresh.contains(RodinCore.getRodinDB())) {
+					viewer.refresh();
+				} else {
+					for (Object elem : toRefresh) {
+						if (elem instanceof IRodinProject) {
+							viewer.refresh(((IRodinProject) elem).getProject());
+						} else {
+							viewer.refresh(elem);
+						}
+					}
+				}
+			}
+		}
+
+	}
+
 	public static void setUpNavigator(CommonViewer viewer) {
 		//only treat viewers that have not been set up yet.
 		if (!registeredViewers.contains(viewer)) {
-			ModelController.createInstance(viewer);
+			final ViewerRefresher listener = new ViewerRefresher(viewer);
+			ModelController.getInstance().addListener(listener);
 			setUpFiltersToolBar(viewer);
 			registeredViewers.add(viewer);
-			
 		}
 	}
 	
