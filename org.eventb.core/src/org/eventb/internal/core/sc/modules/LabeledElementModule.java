@@ -65,6 +65,13 @@ public abstract class LabeledElementModule extends SCProcessorModule {
 					GraphProblem.LabelUndefError);
 			return null;
 		}
+		
+		if (labeledElement.getLabel().trim().equals("")) {
+			createProblemMarker(labeledElement,
+					EventBAttributes.LABEL_ATTRIBUTE,
+					GraphProblem.EmptyLabelError);
+			return null;
+		}
 
 		String label = labeledElement.getLabel();
 

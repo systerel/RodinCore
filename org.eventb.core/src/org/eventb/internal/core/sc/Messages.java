@@ -57,6 +57,7 @@ public final class Messages {
 	public static String scuser_InvalidIdentifierName;
 	public static String scuser_InvalidIdentifierContainsSpaces;
 	public static String scuser_LabelUndef;
+	public static String scuser_EmptyLabel;
 	public static String scuser_AbstractContextNameUndef;
     public static String scuser_AbstractContextNotFound;
     public static String scuser_AbstractContextRedundant;

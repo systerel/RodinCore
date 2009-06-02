@@ -315,5 +315,20 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		hasMarker(mac.getVariants()[0], EventBAttributes.EXPRESSION_ATTRIBUTE,
 				ParseProblem.LexerError, "/");
 	}
+	
+	/**
+	 * Create an variant with an empty label.
+	 */
+	public void testVariant_10() throws Exception {
+		IMachineRoot mac = createMachine("mac");
+		addVariant(mac, "");
+
+		saveRodinFileOf(mac);
+		
+		runBuilder();
+
+		hasMarker(mac.getVariants()[0], EventBAttributes.EXPRESSION_ATTRIBUTE,
+				ParseProblem.SyntaxError, "invalid Expression");
+	}
 
 }

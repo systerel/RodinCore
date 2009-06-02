@@ -13,6 +13,7 @@
 package org.eventb.core.tests.sc;
 
 import org.eventb.core.EventBAttributes;
+import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.ParseProblem;
 import org.rodinp.core.IRodinElement;
 
@@ -262,6 +263,21 @@ extends GenericEventBSCTest<E, SCE> {
 		runBuilder();
 
 		getGeneric().containsMarkers(con, false);
+	}
+	
+	/**
+	 * Creation of an axiom or an invariant with an empty label.
+	 */
+	public void test_12() throws Exception {
+		E con = getGeneric().createElement("elt");
+        
+		getGeneric().addPredicates(con, makeSList(""), makeSList("ℕ≠∅"), false);
+		
+		getGeneric().save(con);
+		
+		runBuilder();
+		
+		hasMarker(getGeneric().getPredicates(con)[0], null, GraphProblem.EmptyLabelError);
 	}
 
 }

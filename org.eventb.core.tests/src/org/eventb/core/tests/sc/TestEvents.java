@@ -17,7 +17,9 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineRoot;
+import org.eventb.core.IWitness;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.sc.GraphProblem;
 
 /**
  * @author Stefan Hallerstede
@@ -831,5 +833,66 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 
 		hasNotMarker(e.getGuards()[0]);
 		hasNotMarker(e.getGuards()[1]);
+	}
+	
+	/**
+	 * Create an event with an empty label.
+	 */
+	public void testEvents_28_createEventWithEmptyLabel() throws Exception {
+		IMachineRoot mac = createMachine("mac");
+		IEvent evt = addEvent(mac, "");
+
+		saveRodinFileOf(mac);
+
+		runBuilder();
+
+		hasMarker(evt, null, GraphProblem.EmptyLabelError);
+	}
+
+	/**
+	 * Create a guard with an empty label.
+	 */
+	public void testEvents_29_createGuardWithEmptyLabel() throws Exception {
+		IMachineRoot mac = createMachine("mac");
+		IEvent evt = addEvent(mac, "evt", makeSList(), makeSList(""),
+				makeSList("1∈ℕ"), makeSList(), makeSList());
+
+		saveRodinFileOf(mac);
+
+		runBuilder();
+
+		hasMarker(evt.getGuards()[0], null, GraphProblem.EmptyLabelError);
+	}
+
+	/**
+	 * Create an action an empty label.
+	 */
+	public void testEvents_30_createActionWithEmptyLabel() throws Exception {
+		IMachineRoot mac = createMachine("mac");
+		IEvent evt = addEvent(mac, "evt", makeSList(), makeSList(),
+				makeSList(), makeSList(""), makeSList("L1≔1"));
+
+		saveRodinFileOf(mac);
+
+		runBuilder();
+
+		hasMarker(evt.getActions()[0], null, GraphProblem.EmptyLabelError);
+	}
+	
+	/**
+	 * Create a witness with an empty label.
+	 */
+	public void testEvents_31_createWitnessWithEmptyLabel() throws Exception {
+		IMachineRoot mac = createMachine("mac");
+		IEvent evt = addEvent(mac, "evt");
+		IWitness witness = evt.getWitness(getUniqueName());
+		witness.create(null, null);
+		witness.setLabel("", null);
+
+		saveRodinFileOf(mac);
+
+		runBuilder();
+
+		hasMarker(witness, null, GraphProblem.EmptyLabelError);
 	}
 }
