@@ -109,6 +109,12 @@ public interface IEventBSharedImages {
 	
 	public static final String IMG_CARRIER_SET = "Carrier Set";
 	
+	public static final String IMG_GUARD = "Guard";
+	
+	public static final String IMG_PARAMETER = "Parameter";
+	
+	public static final String IMG_ACTION = "Action";
+	
 	/**
 	 * Paths to the icons for buttons, menus, etc.
 	 */
@@ -207,4 +213,10 @@ public interface IEventBSharedImages {
 	public static final String IMG_CONSTANT_PATH = "icons/full/obj16/cst_obj.gif";
 	
 	public static final String IMG_CARRIER_SET_PATH = "icons/full/obj16/set_obj.gif";
+	
+	public static final String IMG_GUARD_PATH = "icons/full/obj16/grd_obj.gif";
+	
+	public static final String IMG_PARAMETER_PATH = "icons/full/obj16/var_obj.gif";
+	
+	public static final String IMG_ACTION_PATH = "icons/full/obj16/act_obj.gif";
 }

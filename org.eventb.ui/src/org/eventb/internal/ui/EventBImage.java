@@ -108,6 +108,7 @@ public class EventBImage {
 		registerImage(registry, IEventBSharedImages.IMG_INVARIANTS, "icons/full/obj16/invs_obj.gif");
 		registerImage(registry, IEventBSharedImages.IMG_THEOREMS, "icons/full/obj16/thms_obj.gif");
 		registerImage(registry, IEventBSharedImages.IMG_EVENTS, "icons/full/obj16/evts_obj.gif");
+				
 		registerImage(registry, IEventBSharedImages.IMG_CARRIER_SETS,
 				"icons/full/obj16/sets_obj.gif");
 		registerImage(registry, IEventBSharedImages.IMG_CONSTANTS,
@@ -205,6 +206,13 @@ public class EventBImage {
 				IEventBSharedImages.IMG_CONSTANT_PATH);
 		registerImage(registry, IEventBSharedImages.IMG_EVENT,
 				IEventBSharedImages.IMG_EVENT_PATH);
+		
+		registerImage(registry, IEventBSharedImages.IMG_GUARD,
+				IEventBSharedImages.IMG_GUARD_PATH);
+		registerImage(registry, IEventBSharedImages.IMG_PARAMETER,
+				IEventBSharedImages.IMG_PARAMETER_PATH);
+		registerImage(registry, IEventBSharedImages.IMG_ACTION,
+				IEventBSharedImages.IMG_ACTION_PATH);
 
 	}
 
