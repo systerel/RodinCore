@@ -15,6 +15,8 @@ package org.eventb.core;
 
 import static org.rodinp.core.RodinCore.getOccurrenceKind;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
@@ -24,6 +26,7 @@ import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pog.POGModule;
 import org.eventb.core.sc.SCModule;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
+import org.eventb.internal.core.autocompletion.AutoCompletion;
 import org.eventb.internal.core.indexers.EventPropagator;
 import org.eventb.internal.core.indexers.IdentifierPropagator;
 import org.eventb.internal.core.pm.PostTacticPreference;
@@ -44,6 +47,7 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.indexer.IOccurrenceKind;
 import org.rodinp.core.indexer.IPropagator;
+import org.rodinp.core.location.IAttributeLocation;
 
 /**
  * The Event-B core plugin class.
@@ -601,4 +605,8 @@ public class EventBPlugin extends Plugin {
 		return new ProofSimplifier(proof, factory).simplify(monitor);
 	}
 
-}
+	public static List<String> getCompletions(IAttributeLocation location,
+			String prefix) {
+		return AutoCompletion.getCompletions(location, prefix);
+	}
+ }

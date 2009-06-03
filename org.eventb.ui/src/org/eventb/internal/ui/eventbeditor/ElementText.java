@@ -28,7 +28,15 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.TimerText;
+import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
+import org.eventb.internal.ui.autocompletion.EventBContentProposalAdapter;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
+import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
+import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinCore;
+import org.rodinp.core.location.IAttributeLocation;
 
 /**
  * @author htson
@@ -54,6 +62,8 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 
 	String original;
 
+	final EventBContentProposalAdapter adapter ;
+	
 	/**
 	 * @author htson
 	 *         <p>
@@ -70,6 +80,8 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 			final String contents = textWidget.getText();
 			switch (event.type) {
 			case SWT.FocusOut:
+				if(!adapter.IsProposalClosed())
+					break;
 				commit(element, column, Text2EventBMathTranslator
 						.translate(contents));
 				textWidget.getParent().dispose();
@@ -109,6 +121,8 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 			case SWT.Traverse:
 				switch (event.detail) {
 				case SWT.TRAVERSE_RETURN:
+					if(!adapter.IsProposalClosed())
+						break;
 					commit(element, column, Text2EventBMathTranslator
 							.translate(contents));
 					textWidget.getParent().dispose();
@@ -190,6 +204,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 	public ElementText(IEventBInputText text, TreeEditor editor, Tree tree,
 			TreeItem item, IRodinElement element, int column, int delay) {
 		super(text.getTextWidget(), delay);
+		this.adapter = getProposalAdapter(element, column, text.getTextWidget());
 		this.text = text;
 		this.element = element;
 		this.editor = editor;
@@ -205,6 +220,17 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 		textWidget.addListener(SWT.Traverse, textListener);
 		textWidget.addListener(SWT.Verify, textListener);
 		textWidget.addModifyListener(this);
+	}
+
+	private static EventBContentProposalAdapter getProposalAdapter(
+			IRodinElement elem, int col, Text txt) {
+		final ElementDescRegistry registry = ElementDescRegistry.getInstance();
+		final IAttributeDesc attrDesc = registry.getElementDesc(elem).atColumn(
+				col);
+		final IAttributeType attrType = attrDesc.getAttributeType();
+		final IAttributeLocation location = RodinCore.getInternalLocation(
+				(IInternalElement) elem, attrType);
+		return ContentProposalFactory.getContentProposal(location, txt);
 	}
 
 	/*

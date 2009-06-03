@@ -23,12 +23,14 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
@@ -42,12 +44,17 @@ import org.eventb.internal.ui.EventBStyledText;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.TimerStyledText;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
+import org.eventb.internal.ui.autocompletion.EventBContentProposalAdapter;
 import org.eventb.internal.ui.markers.MarkerUIRegistry;
 import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.ui.EventBUIPlugin;
+import org.rodinp.core.IAttributeType;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.RodinMarkerUtil;
+import org.rodinp.core.location.IAttributeLocation;
 
 public class TextEditComposite extends AbstractEditComposite {
 
@@ -87,6 +94,8 @@ public class TextEditComposite extends AbstractEditComposite {
 	private final boolean isMath;
 	private final String foregroundColor;
 
+	EventBContentProposalAdapter adapter;
+	
 	public TextEditComposite(TextDesc attrDesc) {
 		super(attrDesc);
 		this.isMath = attrDesc.isMath();
@@ -127,6 +136,17 @@ public class TextEditComposite extends AbstractEditComposite {
 				undefinedButton = null;
 			}
 			text = new StyledText(composite, style);
+
+			text.addVerifyKeyListener(new VerifyKeyListener() {
+				public void verifyKey(VerifyEvent event) {
+					if (!adapter.IsProposalClosed()
+							&& event.character == SWT.CR)
+						event.doit = false;
+				}
+			});
+			final IAttributeType attType = attrDesc.getAttributeType();
+			final IAttributeLocation location = RodinCore.getInternalLocation(element, attType);
+			adapter = ContentProposalFactory.getContentProposal(location, text);
 
 			setText(value);
 			
