@@ -45,6 +45,13 @@ public class IdentTable {
 		return ident;
 	}
 
+	private static FreeIdentifier getPrimed(FreeIdentifier ident) {
+		if (!ident.isPrimed()) {
+			return ident.withPrime(ff);
+		}
+		return ident;
+	}
+
 	private void put(FreeIdentifier ident, IDeclaration declaration) {
 		table.put(ident, declaration);
 	}
@@ -53,6 +60,11 @@ public class IdentTable {
 	public static String getUnprimedName(String name) {
 		final FreeIdentifier ident = ff.makeFreeIdentifier(name, null);
 		return getUnprimed(ident).getName();
+	}
+	
+	public static String getPrimedName(String name) {
+		final FreeIdentifier ident = ff.makeFreeIdentifier(name, null);
+		return getPrimed(ident).getName();
 	}
 	
 	public IDeclaration get(FreeIdentifier ident) {

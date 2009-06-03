@@ -12,6 +12,7 @@ package org.eventb.internal.core.autocompletion;
 
 import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 import static org.eventb.internal.core.autocompletion.CompletionUtil.getDeterministicallyAssignedVars;
+import static org.eventb.internal.core.indexers.IdentTable.getPrimedName;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -112,11 +113,24 @@ public class AutoCompletion {
 
 	private static Set<String> getEventCompletions(IAttributeLocation location,
 			IEvent event) {
-		if (isWitness(location)) { // witness
+		if (isEventLabel(location)) {
+			return getAbstractEventNames(event);
+		} else if (isWitness(location)) { // witness
 			return getWitnessCompletions(location, event);
 		} else { // guard, action
 			return getGrdActCompletions(event);
 		}
+	}
+
+	private static boolean isEventLabel(IAttributeLocation location) {
+		return location.getElement().getElementType() == IEvent.ELEMENT_TYPE
+				&& location.getAttributeType() == LABEL_ATTRIBUTE;
+	}
+
+	private static Set<String> getAbstractEventNames(IEvent event) {
+		final Set<IDeclaration> seenEvents = CompletionUtil
+				.getSeenEvents(event.getRodinFile());
+		return getNames(seenEvents);
 	}
 
 	private static Set<String> getGrdActCompletions(IEvent event) {
@@ -211,7 +225,7 @@ public class AutoCompletion {
 	private static Set<String> getPrimedNames(Set<String> names) {
 		final Set<String> primed = new LinkedHashSet<String>();
 		for (String name : names) {
-			primed.add(name.concat("\'"));
+			primed.add(getPrimedName(name));
 		}
 		return primed;
 	}

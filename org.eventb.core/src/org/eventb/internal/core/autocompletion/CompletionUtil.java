@@ -88,8 +88,9 @@ public class CompletionUtil {
 		final Set<IOccurrence> occsEvents = query.getOccurrences(declsFile);
 		query.filterKind(occsEvents, EventBPlugin.REDECLARATION);
 		query.filterLocation(occsEvents, RodinCore.getInternalLocation(event));
-		final Set<IDeclaration> declsAbsEvts = query
+		final Set<IDeclaration> declsAbsEvts1 = query
 				.getDeclarations(occsEvents);
+		final Set<IDeclaration> declsAbsEvts = declsAbsEvts1;
 		
 		return getEvents(declsAbsEvts);
 	}
@@ -172,5 +173,19 @@ public class CompletionUtil {
 
 	private static boolean isDeterministic(Assignment assignment) {
 		return assignment.getTag() == Formula.BECOMES_EQUAL_TO;
+	}
+
+	public static Set<IDeclaration> getSeenEvents(IRodinFile file) {
+		final IIndexQuery query = RodinCore.makeIndexQuery();
+		final Set<IDeclaration> events = query.getVisibleDeclarations(file);
+		query.filterType(events, IEvent.ELEMENT_TYPE);
+		final Iterator<IDeclaration> iter = events.iterator();
+		while(iter.hasNext()) {
+			final IDeclaration event = iter.next();
+			if (isInFile(event, file)) {
+				iter.remove();
+			}
+		}
+		return events;
 	}
 }

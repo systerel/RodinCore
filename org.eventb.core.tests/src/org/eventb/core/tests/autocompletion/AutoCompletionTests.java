@@ -344,4 +344,19 @@ public class AutoCompletionTests extends BuilderTest {
 				theorem, PREDICATE_ATTRIBUTE);
 		doTest("cs", axiomPred, "cst1");
 	}
+	
+	public void testEventLabel() throws Exception {
+		ResourceUtils.createContext(rodinProject, "C1", C1);
+		ResourceUtils.createContext(rodinProject, "C2", C2);
+		ResourceUtils.createMachine(rodinProject, "M1", M1);
+		final IMachineRoot m2 = ResourceUtils.createMachine(rodinProject, "M2",
+				M2);
+
+		final IEvent evt3 = m2.getEvent("internal_evt3");
+
+		final IAttributeLocation evtLabel = RodinCore.getInternalLocation(
+				evt3, LABEL_ATTRIBUTE);
+
+		doTest(evtLabel, "evtM1", "evtM1_2");
+	}
 }
