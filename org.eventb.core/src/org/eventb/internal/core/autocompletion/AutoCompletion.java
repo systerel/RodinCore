@@ -16,6 +16,7 @@ import static org.eventb.internal.core.autocompletion.CompletionUtil.getDetermin
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,6 +24,7 @@ import java.util.Set;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IEvent;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
 import org.eventb.internal.core.Util;
@@ -47,22 +49,39 @@ public class AutoCompletion {
 
 	/**
 	 * Returns a list of completions for the given location. The list is sorted
-	 * alphabetically
+	 * alphabetically.
 	 * 
 	 * @param location
 	 *            the location where completion is desired
+	 * @param prefix
+	 *            the common prefix of all proposed completions
 	 * @return a sorted list of possible completions
 	 */
-	public static List<String> getCompletions(IAttributeLocation location) {
+	public static List<String> getCompletions(IAttributeLocation location,
+			String prefix) {
 		try {
 			RodinCore.makeIndexQuery().waitUpToDate();
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}
 		final Set<String> completionNames = getCompletionNames(location);
+		if (prefix.length() != 0) {
+			filterPrefix(completionNames, prefix);
+		}
 		final List<String> sortedNames = new ArrayList<String>(completionNames);
 		Collections.sort(sortedNames);
 		return sortedNames;
+	}
+
+	private static void filterPrefix(Set<String> names, String prefix) {
+		final Iterator<String> iter = names.iterator();
+		while(iter.hasNext()) {
+			final String name = iter.next();
+			if (name.length() < prefix.length()
+					|| !name.substring(0, prefix.length()).equals(prefix)) {
+				iter.remove();
+			}
+		}
 	}
 
 	private static Set<String> getCompletionNames(IAttributeLocation location) {
@@ -79,6 +98,9 @@ public class AutoCompletion {
 	private static Set<String> getVisibleSetCstVar(IRodinFile file) {
 		final Set<IDeclaration> decls = getVisibleDecls(file);
 		SET_CST_VAR_FILTER.apply(decls);
+		if (file.getRootElementType() == IMachineRoot.ELEMENT_TYPE) {
+			removeDisappearingVars(decls, file);
+		}
 		return getNames(decls);
 	}
 
@@ -101,7 +123,15 @@ public class AutoCompletion {
 		final Set<IDeclaration> decls = getVisibleDecls(event.getRodinFile());
 		final AbstractFilter concreteParams = new ParameterFilter(event);
 		new CombinedFilter(SET_CST_VAR_FILTER, concreteParams).apply(decls);
+		removeDisappearingVars(decls, event.getRodinFile());
 		return getNames(decls);
+	}
+
+	private static void removeDisappearingVars(final Set<IDeclaration> decls,
+			IRodinFile file) {
+		final Set<IDeclaration> disapVars = CompletionUtil
+				.getDisappearingVars(file);
+		decls.removeAll(disapVars);
 	}
 
 	private static Set<String> getWitnessCompletions(
@@ -118,6 +148,7 @@ public class AutoCompletion {
 	private static Set<String> getWitnessPredicateCompletions(IEvent event,
 			final AbstractFilter abstractParams) {
 		final Set<String> compls = getGrdActCompletions(event);
+		compls.addAll(getDisapVarNames(event));
 		compls.addAll(getWitnessLabelCompletions(event));
 		return compls;
 	}
@@ -143,12 +174,16 @@ public class AutoCompletion {
 		return disapNames;
 	}
 
-	private static Set<String> getPrimedDisapVarNames(IEvent event) {
+	private static Set<String> getDisapVarNames(IEvent event) {
 		final Set<IDeclaration> vars = CompletionUtil.getDisappearingVars(event
 				.getRodinFile());
 		removeDeterministicallyAssigned(vars, CompletionUtil
 				.getAbstractEvents(event));
-		final Set<String> disapNames = getNames(vars);
+		return getNames(vars);
+	}
+	
+	private static Set<String> getPrimedDisapVarNames(IEvent event) {
+		final Set<String> disapNames = getDisapVarNames(event);
 		return getPrimedNames(disapNames);
 	}
 

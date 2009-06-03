@@ -208,15 +208,23 @@ public class AutoCompletionTests extends BuilderTest {
 		super.tearDown();
 	}
 
+	private void doTest(IAttributeLocation axiomPred, String... expected) {
+		doTest("", axiomPred, expected);
+	}
+
+	private void doTest(String prefix, IAttributeLocation location, String... expected) {
+		final List<String> completions = AutoCompletion
+				.getCompletions(location, prefix);
+		assertEquals("bad completions", asList(expected), completions);
+	}
+
 	public void testCtxLocalCstInAxm() throws Exception {
 		final IContextRoot c1 = ResourceUtils.createContext(rodinProject,
 				"Ctx", C1);
 		final IAxiom axiom = c1.getAxiom(INTERNAL_ELEMENT1);
 		final IAttributeLocation axiomPred = RodinCore.getInternalLocation(
 				axiom, PREDICATE_ATTRIBUTE);
-		final List<String> completions = AutoCompletion
-				.getCompletions(axiomPred);
-		assertEquals("bad completions", asList("cst1"), completions);
+		doTest(axiomPred, "cst1");
 	}
 
 	public void testCtxAbstractSetInThm() throws Exception {
@@ -226,9 +234,7 @@ public class AutoCompletionTests extends BuilderTest {
 		final IAxiom theorem = c2.getAxiom(INTERNAL_THM1);
 		final IAttributeLocation axiomPred = RodinCore.getInternalLocation(
 				theorem, PREDICATE_ATTRIBUTE);
-		final List<String> completions = AutoCompletion
-				.getCompletions(axiomPred);
-		assertEquals("bad completions", asList("cst1", "set1"), completions);
+		doTest(axiomPred, "cst1", "set1");
 	}
 
 	public void testMchAbstractSetCstLocalVarInInvariant() throws Exception {
@@ -239,9 +245,7 @@ public class AutoCompletionTests extends BuilderTest {
 		final IInvariant invariant = m1.getInvariant(INTERNAL_INV1);
 		final IAttributeLocation invPred = RodinCore.getInternalLocation(
 				invariant, PREDICATE_ATTRIBUTE);
-		final List<String> completions = AutoCompletion.getCompletions(invPred);
-		assertEquals("bad completions", asList("cst1", "set1", "varM1"),
-				completions);
+		doTest(invPred, "cst1", "set1", "varM1");
 	}
 
 	public void testMchAbstractSetCstLocalVarInVariant() throws Exception {
@@ -252,9 +256,7 @@ public class AutoCompletionTests extends BuilderTest {
 		final IVariant variant = m1.getVariant(INTERNAL_1);
 		final IAttributeLocation vrtPred = RodinCore.getInternalLocation(
 				variant, EventBAttributes.EXPRESSION_ATTRIBUTE);
-		final List<String> completions = AutoCompletion.getCompletions(vrtPred);
-		assertEquals("bad completions", asList("cst1", "set1", "varM1"),
-				completions);
+		doTest(vrtPred, "cst1", "set1", "varM1");
 	}
 
 	public void testMchAbstractVarInInvariant() throws Exception {
@@ -265,11 +267,9 @@ public class AutoCompletionTests extends BuilderTest {
 				M2);
 
 		final IInvariant invariant = m2.getInvariant(INTERNAL_INV1);
-		final IAttributeLocation vrtPred = RodinCore.getInternalLocation(
+		final IAttributeLocation invPred = RodinCore.getInternalLocation(
 				invariant, PREDICATE_ATTRIBUTE);
-		final List<String> completions = AutoCompletion.getCompletions(vrtPred);
-		assertEquals("bad completions",
-				asList("cst1", "set1", "varM1", "varM2"), completions);
+		doTest(invPred, "cst1", "set1", "varM2");
 	}
 
 	public void testEvtParamInGuard() throws Exception {
@@ -283,11 +283,7 @@ public class AutoCompletionTests extends BuilderTest {
 		final IGuard guard = evt1.getGuard(INTERNAL_PRM2);
 		final IAttributeLocation grdPred = RodinCore.getInternalLocation(guard,
 				PREDICATE_ATTRIBUTE);
-		final List<String> completions = org.eventb.internal.core.autocompletion.AutoCompletion.getCompletions(grdPred);
-		assertFalse("unexpected parameter of another event", completions
-				.contains("prmM2_2"));
-		assertEquals("bad completions", asList("cst1", "prmM2", "set1",
-				"varM1", "varM2"), completions);
+		doTest(grdPred, "cst1", "prmM2", "set1", "varM2");
 
 	}
 
@@ -303,10 +299,7 @@ public class AutoCompletionTests extends BuilderTest {
 		final IWitness witness = evt1.getWitness(INTERNAL_WIT1);
 		final IAttributeLocation witLabel = RodinCore.getInternalLocation(
 				witness, LABEL_ATTRIBUTE);
-		final List<String> completions = AutoCompletion
-				.getCompletions(witLabel);
-
-		assertEquals("bad completions", asList("prmM1", "varM1'"), completions);
+		doTest(witLabel, "prmM1", "varM1'");
 	}
 
 	public void testEvtInWitPredicate() throws Exception {
@@ -321,10 +314,7 @@ public class AutoCompletionTests extends BuilderTest {
 		final IWitness witness = evt1.getWitness(INTERNAL_WIT1);
 		final IAttributeLocation witPred = RodinCore.getInternalLocation(
 				witness, PREDICATE_ATTRIBUTE);
-		final List<String> completions = AutoCompletion.getCompletions(witPred);
-
-		assertEquals("bad completions", asList("cst1", "prmM1", "prmM2",
-				"set1", "varM1", "varM1'", "varM2"), completions);
+		doTest(witPred, "cst1", "prmM1", "prmM2", "set1", "varM1", "varM1'", "varM2");
 	}
 	
 	public void testRemoveNonDeterministicallyAssignedVars() throws Exception {
@@ -339,11 +329,19 @@ public class AutoCompletionTests extends BuilderTest {
 		final IWitness witness = evt3.getWitness("internal_wit3");
 		final IAttributeLocation witLabel = RodinCore.getInternalLocation(
 				witness, LABEL_ATTRIBUTE);
-		final List<String> completions = AutoCompletion
-				.getCompletions(witLabel);
 
 		// varM1 is deterministically assigned in abstract event
 		// so varM1' must not appear in the completions
-		assertEquals("bad completions", asList("prmM1"), completions);
+		doTest(witLabel, "prmM1");
+	}
+	
+	public void testFilterPrefix() throws Exception {
+		ResourceUtils.createContext(rodinProject, "C1", C1);
+		final IContextRoot c2 = ResourceUtils.createContext(rodinProject, "C2",
+				C2);
+		final IAxiom theorem = c2.getAxiom(INTERNAL_THM1);
+		final IAttributeLocation axiomPred = RodinCore.getInternalLocation(
+				theorem, PREDICATE_ATTRIBUTE);
+		doTest("cs", axiomPred, "cst1");
 	}
 }
