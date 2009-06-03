@@ -87,7 +87,7 @@ public abstract class AbstractHyperlinkComposite {
 
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				page.move(true);
+				page.move(type, true);
 			}
 
 		});
@@ -101,7 +101,7 @@ public abstract class AbstractHyperlinkComposite {
 
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				page.move(false);
+				page.move(type, false);
 			}
 
 		});

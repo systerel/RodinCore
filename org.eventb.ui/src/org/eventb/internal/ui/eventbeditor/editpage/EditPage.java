@@ -229,29 +229,32 @@ public class EditPage extends EventBEditorPage implements
 	 * here is that the current selection contain the list of consecutive
 	 * elements of the same type and has the same parent.
 	 * 
+	 * @param type 
+	 *            the type of the elements to be moved.
 	 * @param up
 	 *            <code>true</code> for moving up, <code>false</code> for
 	 *            moving down.
 	 */
-	protected void move(boolean up) {
+	protected void move(final IInternalElementType<?> type, final boolean up) {
 
-		Object[] elements = getCurrentSelection();
+		final Object[] elements = getCurrentSelection();
 		if (elements.length == 0) {
 			return;
 		}
 
-		IInternalElement firstElement = (IInternalElement) elements[0];
-		IInternalElement lastElement = (IInternalElement) elements[elements.length - 1];
-		IRodinElement parent = firstElement.getParent();
-
+		final IInternalElement firstElement = (IInternalElement) elements[0];
+		final IInternalElementType<?> firstType = firstElement.getElementType();
+		if (firstType != type)
+			return;
+		final IRodinElement parent = firstElement.getParent();
+		final IInternalElement lastElement = (IInternalElement) elements[elements.length - 1];
+		
 		if (parent != null && parent instanceof IInternalElement) {
-
 			IInternalElement iparent = (IInternalElement) parent;
 
-			final IInternalElementType<?> type = firstElement.getElementType();
 			try {
 				final IInternalElement[] children = iparent
-						.getChildrenOfType(type);
+						.getChildrenOfType(firstType);
 
 				assert (children.length > 0);
 
