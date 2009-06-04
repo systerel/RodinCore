@@ -203,4 +203,29 @@ public class ProofSimplifierTests {
 		assertNull(simplified);
 	}
 
+	@Test
+	public void testRemoveSelect() throws Exception {
+		final String sequent = "c ∈ ℤ∖{0} ;; c ∈ ℕ∖{0} |- c ∈ ℕ";
+		
+		final IProofTree prTree = ProverFactory.makeProofTree(TestLib
+				.genSeq(sequent), this);
+		final IProofTreeNode root = prTree.getRoot();
+		Tactics.removeMembership(TestLib.genPred("c ∈ ℤ∖{0}"), IPosition.ROOT)
+				.apply(root.getFirstOpenDescendant(), null);
+		Tactics.removeMembership(TestLib.genPred("c ∈ ℕ∖{0}"), IPosition.ROOT)
+				.apply(root.getFirstOpenDescendant(), null);
+		hyp().apply(root.getFirstOpenDescendant(), null);
+	
+		final IProofTree expected = ProverFactory.makeProofTree(TestLib
+				.genSeq(sequent), this);
+		final IProofTreeNode eRoot = expected.getRoot();
+		Tactics.removeMembership(TestLib.genPred("c ∈ ℕ∖{0}"), IPosition.ROOT)
+		.apply(eRoot.getFirstOpenDescendant(), null);
+		hyp().apply(eRoot.getFirstOpenDescendant(), null);
+		
+		final IProofTree simplified = ProverLib.simplify(prTree, null);
+	
+		assertTree(expected, simplified);
+	}
+
 }

@@ -11,6 +11,8 @@
 
 package org.eventb.internal.core.seqprover.proofSimplifier;
 
+import static org.eventb.core.seqprover.IHypAction.ISelectionHypAction.HIDE_ACTION_TYPE;
+import static org.eventb.core.seqprover.IHypAction.ISelectionHypAction.SELECT_ACTION_TYPE;
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 
 import java.util.ArrayList;
@@ -33,6 +35,10 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
  */
 public class AntecedentSimplifier extends Simplifier<IAntecedent> {
 
+	private static boolean hasType(IHypAction hypAction, String type) {
+		return hypAction.getActionType().equals(type);
+	}
+
 	private final Set<Predicate> neededPreds;
 
 	public AntecedentSimplifier(Set<Predicate> neededPreds) {
@@ -51,6 +57,9 @@ public class AntecedentSimplifier extends Simplifier<IAntecedent> {
 		removeUnneededHide(hypActions, unneededHide, monitor);
 		checkCancel(monitor);
 
+		removeUnneededSelect(hypActions, monitor);
+		checkCancel(monitor);
+		
 		return makeAntecedent(antecedent.getGoal(), antecedent.getAddedHyps(),
 				antecedent.getAddedFreeIdents(), hypActions);
 
@@ -66,7 +75,7 @@ public class AntecedentSimplifier extends Simplifier<IAntecedent> {
 		final Iterator<IHypAction> iter = hypActions.iterator();
 		while (iter.hasNext()) {
 			final IHypAction hypAction = iter.next();
-			if (isHideAction(hypAction)) {
+			if (hasType(hypAction, HIDE_ACTION_TYPE)) {
 				final ISelectionHypAction selHypAction = (ISelectionHypAction) hypAction;
 				final Collection<Predicate> hyps = selHypAction.getHyps();
 				if (unneededHide.containsAll(hyps)) {
@@ -75,11 +84,6 @@ public class AntecedentSimplifier extends Simplifier<IAntecedent> {
 			}
 			checkCancel(monitor);
 		}
-	}
-
-	private boolean isHideAction(final IHypAction hypAction) {
-		return hypAction.getActionType().equals(
-				ISelectionHypAction.HIDE_ACTION_TYPE);
 	}
 
 	private void removeUnneededFwd(List<IHypAction> hypActions,
@@ -101,14 +105,41 @@ public class AntecedentSimplifier extends Simplifier<IAntecedent> {
 		}
 	}
 
-	private boolean keepFwdHypAction(final IForwardInfHypAction fwdHypAction) {
-		final Collection<Predicate> inferredHyps = fwdHypAction
-				.getInferredHyps();
-		boolean keepAction = false;
-		for (Predicate predicate : inferredHyps) {
-			keepAction |= neededPreds.contains(predicate);
-		}
-		return keepAction;
+	
+	// keep the forward action iff one or more inferred hyps are needed
+	private boolean keepFwdHypAction(IForwardInfHypAction fwdHypAction) {
+		return containsNeeded(fwdHypAction.getInferredHyps());
 	}
 
+	
+	
+	private void removeUnneededSelect(List<IHypAction> hypActions,
+			IProofMonitor monitor) throws CancelException {
+		final Iterator<IHypAction> iter = hypActions.iterator();
+		while (iter.hasNext()) {
+			final IHypAction hypAction = iter.next();
+			if (hasType(hypAction, SELECT_ACTION_TYPE)) {
+				final ISelectionHypAction selHypAction = (ISelectionHypAction) hypAction;
+				
+				if (!keepSelHypAction(selHypAction)) {
+					iter.remove();
+				}
+			}
+			checkCancel(monitor);
+		}
+	}
+
+	// keep the selection action iff one or more selected hyps are needed
+	private boolean keepSelHypAction(ISelectionHypAction selHypAction) {
+		return containsNeeded(selHypAction.getHyps());
+	}
+
+	private boolean containsNeeded(Collection<Predicate> preds) {
+		for (Predicate pred : preds) {
+			if (neededPreds.contains(pred)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
