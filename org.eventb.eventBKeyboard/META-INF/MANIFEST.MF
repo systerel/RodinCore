@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EventBKeyboard Plug-in
 Bundle-SymbolicName: org.eventb.eventBKeyboard; singleton:=true
-Bundle-Version: 2.8.0
+Bundle-Version: 2.8.0.qualifier
 Bundle-Activator: org.eventb.eventBKeyboard.EventBKeyboardPlugin
 Bundle-Vendor: ETH Zurich
 Bundle-Localization: plugin
