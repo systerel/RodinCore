@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.4"?>
 
-<product name="%productName" id="org.rodinp.platform.product" application="org.eclipse.ui.ide.workbench" version="1.0.0" useFeatures="true">
+<product name="%productName" id="org.rodinp.platform.product" application="org.eclipse.ui.ide.workbench" version="@version@" useFeatures="true">
 
    <aboutInfo>
       <image path="/org.rodinp.platform/icons/about.gif"/>

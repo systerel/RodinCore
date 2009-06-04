@@ -71,8 +71,8 @@
 	<!-- ===================================================================== -->
 	<target name="postSetup">
 		<antcall target="getBaseComponents" />
-		
         <antcall target="copySources" />
+        <antcall target="fixVersions" />
 	</target>
 
 	<!-- Skipped when run through CruiseControl, as CC uses a different mechanism -->
@@ -133,6 +133,23 @@
 	        </copy>
 
 	</target>
+
+    <!-- Fix product version -->
+	<target name="fixVersions"
+		description="Fix product name and artefact versions">
+		<replace
+			file="${buildDirectory}/plugins/org.rodinp.platform/Rodin.product"
+			summary="true">
+			<replacefilter token="%productName" value="Rodin Platform"/>
+			<replacefilter token="@version@" value="${buildVersion}"/>
+		</replace>
+		<replace
+			file="${buildDirectory}/plugins/org.rodinp.platform/plugin.properties"
+			summary="true">
+			<replacefilter token="@version@" value="${buildId}"/>
+		</replace>
+	</target>
+
 	
 	<!-- ===================================================================== -->
 	<!-- Steps to do before fetching the build elements -->
@@ -201,7 +218,6 @@
 	<target name="postBuild">
 		<antcall target="gatherLogs" />
 
-		<antcall target="run.director.for.macosx.x86"/>
 		<antcall target="run.director.for.macosx.ppc"/>
 		<antcall target="run.director.for.win32"/>
 		<antcall target="run.director.for.linux"/>
@@ -213,15 +229,6 @@
 			<param name="p2.os" value="macosx" />
 			<param name="p2.ws" value="carbon" />
 			<param name="p2.arch" value="ppc" />
-		</antcall>
-	</target>
-
-	<target name="run.director.for.macosx.x86" depends="check.director.for.macosx"
-			if="do.director.for.macosx">
-		<antcall target="run.director.for">
-			<param name="p2.os" value="macosx" />
-			<param name="p2.ws" value="carbon" />
-			<param name="p2.arch" value="x86" />
 		</antcall>
 	</target>
 	
@@ -278,17 +285,21 @@
 		</copy>
 
                 <!-- when building with cruisecontrol, we use Linux zip to preserve permissions -->
-                <antcall target="zip.ant" />
-                <antcall target="zip.linux"/>
+                <antcall target="zip.nocc" />
+                <antcall target="zip.cc"/>
 
 		<delete dir="${buildDirectory}/result/tmp" />
 	</target>
 
-        <target name="zip.ant" unless="cruisecontrol">
-		<zip destfile="${buildDirectory}/result/rodin-product-${p2.os}.${p2.ws}.${p2.arch}.zip" basedir="${buildDirectory}/result/tmp" />
+        <target name="zip.nocc" unless="cruisecontrol">
+          <exec executable="zip" dir="${buildDirectory}/result/tmp">
+            <arg value="-r"/>
+            <arg value="${buildDirectory}/../rodin-${buildId}-${p2.os}.zip"/>
+            <arg value="rodin"/>
+          </exec>
 	</target>
 
-        <target name="zip.linux"  if="cruisecontrol" >
+        <target name="zip.cc"  if="cruisecontrol" >
           <exec executable="zip" dir="${buildDirectory}/result/tmp">
             <arg value="-r"/>
             <arg value="${buildDirectory}/result/rodin-product-${p2.os}.${p2.ws}.${p2.arch}.zip"/>
@@ -305,7 +316,7 @@
 			<arg line="-consoleLog" />
 			<arg line="-flavor ${p2.flavor}" />
 			<arg line="-installIU ${p2.IU}" />
-			<arg line="-version ${buildId}" />
+			<arg line="-version ${buildVersion}" />
 			<arg line="-p2.os ${p2.os}" />
 			<arg line="-p2.ws ${p2.ws}" />
 			<arg line="-p2.arch ${p2.arch}" />
