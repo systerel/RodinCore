@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
  *     Systerel - mathematical language V2
+ *     Systerel - added dispose listener to hypothesis composite
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
@@ -50,6 +51,7 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.TacticPositionUI;
+import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.proofcontrol.IProofControlPage;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.prover.IProofCommand;
@@ -175,6 +177,8 @@ public class HypothesisRow {
 			hypothesisComposite.setBackground(background);		
 		}
 		hypothesisComposite.setLayout(new GridLayout());
+		EventBEditorUtils.changeFocusWhenDispose(hypothesisComposite,
+				scrolledForm.getParent());
 
 		Predicate pred = hyp;
 		actualString = pred.toString();

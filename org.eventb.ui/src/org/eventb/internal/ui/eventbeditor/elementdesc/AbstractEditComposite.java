@@ -11,6 +11,7 @@
  *     Systerel - made IAttributeFactory generic
  *     Systerel - separation of file and root element
  *     Systerel - used ElementDescRegistry
+ *     Systerel - added dispose listener to row composite
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.elementdesc;
 
@@ -153,6 +154,7 @@ public abstract class AbstractEditComposite implements IEditComposite {
 			postfixLabel.setBackground(EventBSharedColor
 					.getSystemColor(SWT.COLOR_CYAN));
 		}
+		EventBEditorUtils.changeFocusWhenDispose(composite, form);
 	}
 
 	public abstract void initialise(boolean refreshMarker);

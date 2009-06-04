@@ -13,6 +13,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - added getChildTowards
  *     Systerel - theorems almost everywhere
+ *     Systerel - added changeFocusWhenDispose
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -25,6 +26,9 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -1053,6 +1057,32 @@ public class EventBEditorUtils {
 			current = current.getParent();
 		}
 		return current;
+	}
+
+	/**
+	 * Adds a dispose listener that gives the focus to another composite.
+	 * 
+	 * @param disposed
+	 *            the composite to be listened to
+	 * @param parent
+	 *            the composite that will receive the focus
+	 * */
+	public static void changeFocusWhenDispose(Composite disposed,
+			Composite parent) {
+		disposed.addDisposeListener(new EditDisposeListener(parent));
+	}
+
+	static class EditDisposeListener implements DisposeListener {
+
+		private final Composite parent;
+
+		public EditDisposeListener(Composite parent) {
+			this.parent = parent;
+		}
+
+		public void widgetDisposed(DisposeEvent e) {
+			parent.setFocus();
+		}
 	}
 
 }

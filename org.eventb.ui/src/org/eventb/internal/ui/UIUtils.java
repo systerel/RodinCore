@@ -695,6 +695,9 @@ public class UIUtils {
 	public static void setStringAttribute(
 			IInternalElement element, IAttributeManipulation factory, String value,
 			IProgressMonitor monitor) {
+		if (!element.exists())
+			return;
+
 		try {
 			if (attributeHasChanged(element, factory, value, monitor)) {
 				final IRodinFile rodinFile = element.getRodinFile();
