@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
+import static org.eclipse.ui.actions.ActionFactory.REDO;
+import static org.eclipse.ui.actions.ActionFactory.UNDO;
 import static org.eventb.internal.ui.utils.Messages.error_cannot_save_as_message;
 import static org.eventb.internal.ui.utils.Messages.error_unsupported_action;
 
@@ -30,6 +32,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
@@ -42,10 +45,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -57,6 +61,7 @@ import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributo
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
+import org.eventb.internal.ui.eventbeditor.actions.HistoryAction;
 import org.eventb.internal.ui.eventbeditor.actions.HistoryActionFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.EditPage;
 import org.eventb.internal.ui.eventbeditor.operations.History;
@@ -349,17 +354,30 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 
 	private void setRetargetedAction() {
 		final IWorkbenchWindow wb = getEditorSite().getWorkbenchWindow();
-		final IActionBars bars = getEditorSite().getActionBars();
-		final String undoID = ActionFactory.UNDO.getId();
-		final String redoID = ActionFactory.REDO.getId();
 		final HistoryActionFactory actionFactory = HistoryActionFactory.INSTANCE;
 		final Action undoAction = actionFactory.getUndoAction(wb);
 		final Action redoAction = actionFactory.getRedoAction(wb);
+		final IPartListener listener = new PartListener();
+		setHistoryHandler(UNDO.getId(), undoAction, listener);
+		setHistoryHandler(REDO.getId(), redoAction, listener);
+	}
 
-		if (!(bars.getGlobalActionHandler(undoID) == undoAction))
-			bars.setGlobalActionHandler(undoID, undoAction);
-		if (!(bars.getGlobalActionHandler(redoID) == redoAction))
-			bars.setGlobalActionHandler(redoID, redoAction);
+	IAction getGlobalActionHandler(String actionId) {
+		final IActionBars bars = getEditorSite().getActionBars();
+		return bars.getGlobalActionHandler(actionId);
+	}
+
+	/**
+	 * Set a global action handler for a undo/redo action and add the given part
+	 * listener.
+	 * */
+	private void setHistoryHandler(String actionId, IAction handler,
+			IPartListener listener) {
+		if (!(getGlobalActionHandler(actionId) == handler)) {
+			final IActionBars bars = getEditorSite().getActionBars();
+			bars.setGlobalActionHandler(actionId, handler);
+			getEditorSite().getPage().addPartListener(listener);
+		}
 	}
 	
 // protected abstract IRodinFile getRodinFile(IEditorInput input);
@@ -735,4 +753,42 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 				.getEditorSite().getSelectionProvider();
 		selectionProvider.fireSelectionChanged(event);
 	}
+
+	/**
+	 * A listener to update the undo/redo action when the Event-B editor is
+	 * activated.
+	 */
+	class PartListener implements IPartListener {
+		private void refreshUndoRedoAction() {
+			final IAction undoAction = getGlobalActionHandler(UNDO.getId());
+			final IAction redoAction = getGlobalActionHandler(REDO.getId());
+
+			if (undoAction instanceof HistoryAction
+					&& redoAction instanceof HistoryAction) {
+				((HistoryAction) undoAction).refresh();
+				((HistoryAction) redoAction).refresh();
+			}
+		}
+
+		public void partActivated(IWorkbenchPart part) {
+			refreshUndoRedoAction();
+		}
+
+		public void partBroughtToTop(IWorkbenchPart part) {
+			// do nothing
+		}
+
+		public void partClosed(IWorkbenchPart part) {
+			// do nothing
+		}
+
+		public void partDeactivated(IWorkbenchPart part) {
+			// do nothing
+		}
+
+		public void partOpened(IWorkbenchPart part) {
+			// do nothing
+		}
+	}
+
 }
