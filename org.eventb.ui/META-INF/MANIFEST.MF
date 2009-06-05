@@ -23,6 +23,7 @@ Export-Package: org.eventb.internal.ui;x-friends:="org.eventb.ui.tests,fr.syster
  org.eventb.internal.ui.eventbeditor.editpage;x-friends:="org.eventb.ui.tests",
  org.eventb.internal.ui.eventbeditor.elementdesc;x-friends:="org.eventb.ui.tests",
  org.eventb.internal.ui.eventbeditor.htmlpage;x-friends:="org.eventb.ui.tests",
+ org.eventb.internal.ui.eventbeditor.imageprovider,
  org.eventb.internal.ui.eventbeditor.manipulation,
  org.eventb.internal.ui.eventbeditor.operations;x-friends:="org.eventb.ui.tests",
  org.eventb.internal.ui.preferences;x-friends:="org.eventb.ui.tests",

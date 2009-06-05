@@ -24,6 +24,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.TextDesc.Style;
+import org.eventb.internal.ui.eventbeditor.imageprovider.DefaultImageProvider;
+import org.eventb.internal.ui.eventbeditor.imageprovider.IImageProvider;
 import org.eventb.internal.ui.eventbeditor.manipulation.AbstractBooleanManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
@@ -54,6 +56,9 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	private static final String ATTR_ATTRIBUTE_TYPE = "typeId";
 	private static final String ATTR_ATTRIBUTE_ID = "id";
 	private static final String ATTR_ATTRIBUTE_FOREGROUND_COLOR = "foregroundColor";
+
+	private static final String ATTR_ELEMENT_IMAGE_PROVIDER = "imageProvider";
+	private static final String ATTR_ELEMENT_IMAGE_PATH = "imagePath";
 
 	static final IElementDesc nullElement = new NullElementDesc();
 	static final IAttributeDesc nullAttribute = new NullAttributeDesc();
@@ -471,13 +476,17 @@ public class ElementDescRegistry implements IElementDescRegistry {
 
 		@Override
 		public void put(IConfigurationElement element) {
-
 			final String prefix = getStringAttribute(element, "prefix");
 			final String childrenSuffix = getStringAttribute(element,
 					"childrenSuffix");
-			final String imageName = getStringAttribute(element, "imagePath");
-			final ImageDescriptor imageDesc = EventBImage.getImageDescriptor(
-					element.getContributor().getName(), imageName);
+			final IImageProvider imgProvider;
+			try {
+				imgProvider = getImageProvider(element);
+			} catch (CoreException e) {
+				final String message = "Cannot get the image provider";
+				UIUtils.log(e, message);
+				return;
+			}
 			final int defaultColumn = getDefaultColumn(element);
 			final IElementType<?> elementType = getElementType(element);
 
@@ -496,11 +505,27 @@ public class ElementDescRegistry implements IElementDescRegistry {
 			final IAttributeDesc autoNameAttribute = getAutoNamingAttribute(autoNamingConfig);
 
 			final ElementDesc elementDesc = new ElementDesc(prefix,
-					childrenSuffix, imageDesc, attributeDesc, atColumn,
+					childrenSuffix, imgProvider, attributeDesc, atColumn,
 					childrenType, autoNamePrefix, autoNameAttribute,
 					defaultColumn);
 
 			elementMap.put(elementType, elementDesc);
+		}
+
+		private IImageProvider getImageProvider(IConfigurationElement element)
+				throws CoreException {
+			if (element.getAttribute(ATTR_ELEMENT_IMAGE_PROVIDER) != null) {
+				final Object obj = element
+						.createExecutableExtension(ATTR_ELEMENT_IMAGE_PROVIDER);
+				return (IImageProvider) obj;
+			} else {
+				final String imageName = getStringAttribute(element,
+						ATTR_ELEMENT_IMAGE_PATH);
+				final ImageDescriptor imageDesc = EventBImage
+						.getImageDescriptor(element.getContributor().getName(),
+								imageName);
+				return new DefaultImageProvider(imageDesc);
+			}
 		}
 
 		private IAttributeDesc[] getArray(List<IAttributeDesc> list) {
@@ -559,5 +584,4 @@ public class ElementDescRegistry implements IElementDescRegistry {
 			return desc;
 		}
 	}
-
 }

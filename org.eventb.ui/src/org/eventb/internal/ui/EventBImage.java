@@ -29,7 +29,6 @@ import org.eventb.internal.ui.markers.IMarkerRegistry;
 import org.eventb.internal.ui.markers.MarkerRegistry;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
-import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -268,7 +267,7 @@ public class EventBImage {
 	}
 
 	/**
-	 * Getting an impage corresponding to a Rodin element.
+	 * Getting an image corresponding to a Rodin element.
 	 * <p>
 	 * 
 	 * @param element
@@ -276,8 +275,7 @@ public class EventBImage {
 	 * @return The image for displaying corresponding to the input element
 	 */
 	public static Image getRodinImage(IRodinElement element) {
-		final ImageDescriptor desc = getImageDescriptor(element
-				.getElementType());
+		final ImageDescriptor desc = getImageDescriptor(element);
 		if (desc == null)
 			return null;
 
@@ -523,11 +521,10 @@ public class EventBImage {
 		return image;
 	}
 
-	public static ImageDescriptor getImageDescriptor(
-			IElementType<?> type) {
-		IElementDesc elementDesc = ElementDescRegistry.getInstance()
-				.getElementDesc(type);
-		return elementDesc.getImageDescriptor();
+	public static ImageDescriptor getImageDescriptor(IRodinElement element) {
+		final IElementDesc elementDesc = ElementDescRegistry.getInstance()
+				.getElementDesc(element.getElementType());
+		return elementDesc.getImageProvider().getImageDescriptor(element);
 	}
 
 	public static Image getImage(ImageDescriptor desc, int overlay) {

@@ -2126,7 +2126,7 @@
       </element>
       <element
             defaultColumn="1"
-            imagePath="icons/full/obj16/inv_obj.gif"
+            imageProvider="org.eventb.internal.ui.eventbeditor.imageprovider.InvariantImageProvider"
             prefix="INVARIANTS"
             typeId="org.eventb.core.invariant">
       </element>
@@ -2157,7 +2157,7 @@
       </element>
       <element
             defaultColumn="1"
-            imagePath="icons/full/obj16/grd_obj.gif"
+            imageProvider="org.eventb.internal.ui.eventbeditor.imageprovider.GuardImageProvider"
             prefix="WHERE"
             typeId="org.eventb.core.guard">
       </element>
@@ -2193,7 +2193,7 @@
       </element>
       <element
             defaultColumn="1"
-            imagePath="icons/full/obj16/axm_obj.gif"
+            imageProvider="org.eventb.internal.ui.eventbeditor.imageprovider.AxiomImageProvider"
             prefix="AXIOMS"
             typeId="org.eventb.core.axiom">
       </element>

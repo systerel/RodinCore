@@ -11,10 +11,17 @@
 package org.eventb.internal.ui.eventbeditor.elementdesc;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eventb.internal.ui.eventbeditor.imageprovider.IImageProvider;
 import org.rodinp.core.IElementType;
+import org.rodinp.core.IRodinElement;
 
 class NullElementDesc implements IElementDesc {
 
+	private static final IImageProvider nullImgProvider = new IImageProvider() {
+		public ImageDescriptor getImageDescriptor(IRodinElement element) {
+			return null;
+		}
+	};
 	private final IAttributeDesc nullAttribute = new NullAttributeDesc();
 	private final AttributeDesc[] nullAttributes = new AttributeDesc[0];
 	private final IElementType<?>[] nullChildren = new IElementType<?>[0];
@@ -23,8 +30,8 @@ class NullElementDesc implements IElementDesc {
 		return (AttributeDesc) nullAttribute;
 	}
 
-	public ImageDescriptor getImageDescriptor() {
-		return null;
+	public IImageProvider getImageProvider() {
+		return nullImgProvider;
 	}
 
 	public AttributeDesc[] getAttributeDescription() {

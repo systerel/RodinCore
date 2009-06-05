@@ -26,7 +26,6 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
@@ -44,7 +43,6 @@ import org.eventb.core.ISeesContext;
 import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
-import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.eventbeditor.elementdesc.AttributeDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ComboDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
@@ -54,6 +52,11 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.NullAttributeDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.TextDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ToggleDesc;
+import org.eventb.internal.ui.eventbeditor.imageprovider.AxiomImageProvider;
+import org.eventb.internal.ui.eventbeditor.imageprovider.DefaultImageProvider;
+import org.eventb.internal.ui.eventbeditor.imageprovider.GuardImageProvider;
+import org.eventb.internal.ui.eventbeditor.imageprovider.IImageProvider;
+import org.eventb.internal.ui.eventbeditor.imageprovider.InvariantImageProvider;
 import org.eventb.internal.ui.eventbeditor.manipulation.AssignmentAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.CommentAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.ConvergenceAttributeManipulation;
@@ -77,7 +80,8 @@ public class TestElementDescRegistry extends TestCase {
 	private final IInternalElementType<?>[] noChildren = new IInternalElementType<?>[0];
 	private final String nullPrefix = "";
 	private final IAttributeDesc nullAttribute = new NullAttributeDesc();
-
+	private final Class<? extends IImageProvider> defaultImgProvider = DefaultImageProvider.class;
+	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -88,8 +92,8 @@ public class TestElementDescRegistry extends TestCase {
 		final IElementDesc desc = registry
 				.getElementDesc(IMachineRoot.ELEMENT_TYPE);
 
-		assertElementDesc(desc, "MACHINE", "END",
-				"icons/full/obj16/mch_obj.gif", nullPrefix, nullAttribute, 0);
+		assertElementDesc(desc, "MACHINE", "END", defaultImgProvider,
+				nullPrefix, nullAttribute, 0);
 
 		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
 				getCommentedDesc());
@@ -105,8 +109,8 @@ public class TestElementDescRegistry extends TestCase {
 		final IElementDesc desc = registry
 				.getElementDesc(IContextRoot.ELEMENT_TYPE);
 
-		assertElementDesc(desc, "CONTEXT", "END",
-				"icons/full/obj16/ctx_obj.gif", nullPrefix, nullAttribute, 0);
+		assertElementDesc(desc, "CONTEXT", "END", defaultImgProvider,
+				nullPrefix, nullAttribute, 0);
 
 		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
 				getCommentedDesc());
@@ -125,8 +129,8 @@ public class TestElementDescRegistry extends TestCase {
 				new RefinesMachineAbstractMachineNameAttributeManipulation(),
 				"", "", false, TARGET_ATTRIBUTE, true);
 
-		assertElementDesc(desc, "REFINES", "", "icons/full/obj16/mch_obj.gif",
-				nullPrefix, nullAttribute, 0);
+		assertElementDesc(desc, "REFINES", "", defaultImgProvider, nullPrefix,
+				nullAttribute, 0);
 
 		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
 				expectedAttribute);
@@ -143,8 +147,8 @@ public class TestElementDescRegistry extends TestCase {
 				new SeesContextNameAttributeManipulation(), "", "", false,
 				TARGET_ATTRIBUTE, true);
 
-		assertElementDesc(desc, "SEES", "", "icons/full/obj16/ctx_obj.gif",
-				nullPrefix, nullAttribute, 0);
+		assertElementDesc(desc, "SEES", "", defaultImgProvider, nullPrefix,
+				nullAttribute, 0);
 
 		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
 				expectedAttribute);
@@ -160,8 +164,8 @@ public class TestElementDescRegistry extends TestCase {
 		final AttributeDesc expectedIdentifier = getIdentifierDesc();
 		final AttributeDesc expectedComment = getCommentedDesc();
 
-		assertElementDesc(desc, "VARIABLES", "",
-				"icons/full/obj16/var_obj.gif", "var", expectedIdentifier, 0);
+		assertElementDesc(desc, "VARIABLES", "", defaultImgProvider, "var",
+				expectedIdentifier, 0);
 
 		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
 				expectedIdentifier, expectedComment);
@@ -179,8 +183,8 @@ public class TestElementDescRegistry extends TestCase {
 		final AttributeDesc expectedTheorem = getTheoremDesc();
 		final AttributeDesc expectedComment = getCommentedDesc();
 
-		assertElementDesc(desc, "INVARIANTS", "",
-				"icons/full/obj16/inv_obj.gif", "inv", expectedLabel, 1);
+		assertElementDesc(desc, "INVARIANTS", "", InvariantImageProvider.class,
+				"inv", expectedLabel, 1);
 
 		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
 				expectedLabel, expectedPredicate, expectedTheorem,
@@ -196,7 +200,7 @@ public class TestElementDescRegistry extends TestCase {
 
 		final AttributeDesc expectedExpression = getExpressionDesc();
 
-		assertElementDesc(desc, "VARIANT", "", "icons/sample.gif", nullPrefix,
+		assertElementDesc(desc, "VARIANT", "", defaultImgProvider, nullPrefix,
 				nullAttribute, 0);
 
 		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
@@ -218,8 +222,8 @@ public class TestElementDescRegistry extends TestCase {
 				CONVERGENCE_ATTRIBUTE, true);
 		final AttributeDesc expectedComment = getCommentedDesc();
 
-		assertElementDesc(desc, "EVENTS", "END",
-				"icons/full/obj16/evt_obj.gif", "evt", expectedLabel, 0);
+		assertElementDesc(desc, "EVENTS", "END", defaultImgProvider, "evt",
+				expectedLabel, 0);
 
 		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
 				expectedLabel, expectedExtended, expectedConvergence,
@@ -239,8 +243,8 @@ public class TestElementDescRegistry extends TestCase {
 				new RefinesEventAbstractEventLabelAttributeManipulation(), "",
 				"", false, TARGET_ATTRIBUTE, true);
 
-		assertElementDesc(desc, "REFINES", "", "icons/full/obj16/evt_obj.gif",
-				nullPrefix, nullAttribute, 0);
+		assertElementDesc(desc, "REFINES", "", defaultImgProvider, nullPrefix,
+				nullAttribute, 0);
 
 		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
 				expectedAttribute);
@@ -256,8 +260,8 @@ public class TestElementDescRegistry extends TestCase {
 		final AttributeDesc expectedIdentifier = getIdentifierDesc();
 		final AttributeDesc expectedComment = getCommentedDesc();
 
-		assertElementDesc(desc, "ANY", "", "icons/full/obj16/var_obj.gif",
-				"prm", expectedIdentifier, 0);
+		assertElementDesc(desc, "ANY", "", defaultImgProvider, "prm",
+				expectedIdentifier, 0);
 
 		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
 				expectedIdentifier, expectedComment);
@@ -274,8 +278,8 @@ public class TestElementDescRegistry extends TestCase {
 		final AttributeDesc expectedTheorem = getTheoremDesc();
 		final AttributeDesc expectedComment = getCommentedDesc();
 
-		assertElementDesc(desc, "WHERE", "", "icons/full/obj16/grd_obj.gif",
-				"grd", expectedLabel, 1);
+		assertElementDesc(desc, "WHERE", "", GuardImageProvider.class, "grd",
+				expectedLabel, 1);
 
 		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
 				expectedLabel, expectedPredicate, expectedTheorem,
@@ -293,7 +297,7 @@ public class TestElementDescRegistry extends TestCase {
 		final AttributeDesc expectedPredicate = getPredicateDesc();
 		final AttributeDesc expectedComment = getCommentedDesc();
 
-		assertElementDesc(desc, "WITH", "", "icons/sample.gif", "wit",
+		assertElementDesc(desc, "WITH", "", defaultImgProvider, "wit",
 				expectedLabel, 1);
 
 		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
@@ -310,8 +314,8 @@ public class TestElementDescRegistry extends TestCase {
 		final AttributeDesc expectedAssignment = getAssignmentDesc();
 		final AttributeDesc expectedComment = getCommentedDesc();
 
-		assertElementDesc(desc, "THEN", "", "icons/full/obj16/act_obj.gif",
-				"act", expectedLabel, 1);
+		assertElementDesc(desc, "THEN", "", defaultImgProvider, "act",
+				expectedLabel, 1);
 
 		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
 				expectedLabel, expectedAssignment, expectedComment);
@@ -328,8 +332,8 @@ public class TestElementDescRegistry extends TestCase {
 				new ExtendsContextAbstractContextNameAttributeManipulation(),
 				"", "", false, TARGET_ATTRIBUTE, true);
 
-		assertElementDesc(desc, "EXTENDS", "", "icons/full/obj16/ctx_obj.gif",
-				nullPrefix, nullAttribute, 0);
+		assertElementDesc(desc, "EXTENDS", "", defaultImgProvider, nullPrefix,
+				nullAttribute, 0);
 
 		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
 				expectedExtends);
@@ -344,8 +348,8 @@ public class TestElementDescRegistry extends TestCase {
 		final AttributeDesc expectedIdentifier = getIdentifierDesc();
 		final AttributeDesc expectedComment = getCommentedDesc();
 
-		assertElementDesc(desc, "SETS", "", "icons/full/obj16/set_obj.gif",
-				"set", expectedIdentifier, 0);
+		assertElementDesc(desc, "SETS", "", defaultImgProvider, "set",
+				expectedIdentifier, 0);
 
 		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
 				expectedIdentifier, expectedComment);
@@ -361,8 +365,8 @@ public class TestElementDescRegistry extends TestCase {
 		final AttributeDesc expectedIdentifier = getIdentifierDesc();
 		final AttributeDesc expectedComment = getCommentedDesc();
 
-		assertElementDesc(desc, "CONSTANTS", "",
-				"icons/full/obj16/cst_obj.gif", "cst", expectedIdentifier, 0);
+		assertElementDesc(desc, "CONSTANTS", "", defaultImgProvider, "cst",
+				expectedIdentifier, 0);
 
 		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
 				expectedIdentifier, expectedComment);
@@ -379,8 +383,8 @@ public class TestElementDescRegistry extends TestCase {
 		final AttributeDesc expectedTheorem = getTheoremDesc();
 		final AttributeDesc expectedComment = getCommentedDesc();
 
-		assertElementDesc(desc, "AXIOMS", "", "icons/full/obj16/axm_obj.gif",
-				"axm", expectedLabel, 1);
+		assertElementDesc(desc, "AXIOMS", "", AxiomImageProvider.class, "axm",
+				expectedLabel, 1);
 
 		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
 				expectedLabel, expectedPredicate, expectedTheorem,
@@ -391,8 +395,9 @@ public class TestElementDescRegistry extends TestCase {
 	}
 
 	private void assertElementDesc(IElementDesc actualDesc, String prefix,
-			String childrenSuffix, String imageName, String autoNamingPrefix,
-			IAttributeDesc autoNamingAttribute, int defaultColumn) {
+			String childrenSuffix, Class<? extends IImageProvider> imageProvider,
+			String autoNamingPrefix, IAttributeDesc autoNamingAttribute,
+			int defaultColumn) {
 		assertNotNull("ElementDesc should not be null", actualDesc);
 		assertAttributeDesc(autoNamingAttribute, actualDesc
 				.getAutoNameAttribute());
@@ -403,11 +408,8 @@ public class TestElementDescRegistry extends TestCase {
 				actualDesc.getAutoNamePrefix());
 		assertEquals("Unexpected default column", defaultColumn, actualDesc
 				.getDefaultColumn());
-
-		final ImageDescriptor imageDescriptor = EventBImage
-				.getImageDescriptor(imageName);
-		assertEquals("Unexpected image descriptor", imageDescriptor, actualDesc
-				.getImageDescriptor());
+		assertEquals("Unexpected image provider class", imageProvider, actualDesc
+				.getImageProvider().getClass());
 	}
 
 	private void assertChildrens(String msg, IElementType<?>[] actual,

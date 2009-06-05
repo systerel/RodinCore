@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.elementdesc;
 
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eventb.internal.ui.eventbeditor.imageprovider.IImageProvider;
 import org.rodinp.core.IElementType;
 
 /**
@@ -20,7 +20,7 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 
 	private final String childrenSuffix;
 
-	private final ImageDescriptor image;
+	private final IImageProvider imgProvider;
 
 	private final IAttributeDesc[] attributeDesc;
 
@@ -37,13 +37,13 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 	private static final NullAttributeDesc noAttribute = new NullAttributeDesc();
 
 	public ElementDesc(String prefix, String childrenSuffix,
-			ImageDescriptor image, IAttributeDesc[] attributeDesc,
+			IImageProvider imgProvider, IAttributeDesc[] attributeDesc,
 			IAttributeDesc[] atColumn, IElementType<?>[] childrenType,
 			String autoNamePrefix, IAttributeDesc autoNameAttribute,
 			int defaultColumn) {
 		super(prefix);
 		this.childrenSuffix = childrenSuffix;
-		this.image = image;
+		this.imgProvider = imgProvider;
 		this.attributeDesc = attributeDesc;
 		this.atColumn = atColumn;
 		this.childrenType = childrenType;
@@ -59,8 +59,8 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 		return childrenSuffix;
 	}
 
-	public ImageDescriptor getImageDescriptor() {
-		return image;
+	public IImageProvider getImageProvider() {
+		return imgProvider;
 	}
 
 	/**

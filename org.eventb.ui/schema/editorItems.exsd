@@ -72,7 +72,7 @@
          <attribute name="imagePath" type="string">
             <annotation>
                <documentation>
-                  Path to the icon to display for this element.
+                  Path to the icon to display for this element, if any. The element must not define an imagePath and an imageProvider at the same time.
                </documentation>
                <appinfo>
                   <meta.attribute kind="resource"/>
@@ -98,6 +98,16 @@
                <documentation>
                   The default column to edit when the element is selected.
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="imageProvider" type="string">
+            <annotation>
+               <documentation>
+                  The name of the class that will be used to display an icon for this element. The class must implement &lt;samp&gt;org.eventb.internal.ui.eventbeditor.imageprovider.IImageProvider&lt;/samp&gt; and must also have a default contructor. The element must not define an imagePath and an imageProvider at the same time.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eventb.internal.ui.eventbeditor.imageprovider.IImageProvider"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

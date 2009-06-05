@@ -10,7 +10,7 @@
 *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.elementdesc;
 
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eventb.internal.ui.eventbeditor.imageprovider.IImageProvider;
 import org.rodinp.core.IElementType;
 
 public interface IElementDesc extends IItemDesc {
@@ -20,7 +20,7 @@ public interface IElementDesc extends IItemDesc {
 	 */
 	public String getChildrenSuffix();
 
-	public ImageDescriptor getImageDescriptor();
+	public IImageProvider getImageProvider();
 
 	/**
 	 * Return an array of attribute description.
