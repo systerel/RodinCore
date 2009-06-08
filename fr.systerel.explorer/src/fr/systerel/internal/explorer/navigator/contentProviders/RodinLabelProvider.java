@@ -173,16 +173,20 @@ public class RodinLabelProvider implements ILabelProvider {
 	}
 
 	private boolean hasStatistics(Object obj) {
-		if (obj instanceof IConstant || obj instanceof ICarrierSet
-				|| obj instanceof IVariable)
-			return false;
-		if (obj instanceof IElementNode) {
-			final IElementNode node = (IElementNode) obj;
-			final IElementType<?> type = node.getChildrenType();
-			return (type != IConstant.ELEMENT_TYPE
-					&& type != ICarrierSet.ELEMENT_TYPE && type != IVariable.ELEMENT_TYPE);
+		final IElementType<?> type = getElementType(obj);
+		return type != IConstant.ELEMENT_TYPE
+				&& type != ICarrierSet.ELEMENT_TYPE
+				&& type != IVariable.ELEMENT_TYPE;
+	}
+
+	private IElementType<?> getElementType(Object obj) {
+		if (obj instanceof IRodinElement) {
+			return ((IRodinElement) obj).getElementType();
 		}
-		return true;
+		if (obj instanceof IElementNode) {
+			return ((IElementNode) obj).getChildrenType();
+		}
+		return null;
 	}
 
 	public void addListener(ILabelProviderListener listener) {
