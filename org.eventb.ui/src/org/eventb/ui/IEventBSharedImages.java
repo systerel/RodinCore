@@ -170,6 +170,8 @@ public interface IEventBSharedImages {
 
 	public static final String IMG_PENDING_BROKEN_PATH = "icons/pending_broken.gif";
 
+	public static final String IMG_PENDING_OVERLAY_PATH = "icons/full/ovr16/pending_ovr.gif";
+
 	public static final String IMG_REVIEWED_OVERLAY_PATH = "icons/full/ovr16/reviewed_ovr.gif";
 	
 	public static final String IMG_DISCHARGED_OVERLAY_PATH = "icons/full/ovr16/discharged_ovr.gif";

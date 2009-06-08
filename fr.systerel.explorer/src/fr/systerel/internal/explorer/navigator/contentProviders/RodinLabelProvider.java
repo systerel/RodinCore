@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package fr.systerel.internal.explorer.navigator.contentProviders;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
@@ -28,14 +29,20 @@ import org.eventb.core.IPSStatus;
 import org.eventb.core.IVariable;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.OverlayIcon;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.IEventBSharedImages;
+import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.IElementNode;
+import fr.systerel.internal.explorer.model.IModelElement;
+import fr.systerel.internal.explorer.model.ModelController;
 import fr.systerel.internal.explorer.model.ModelElementNode;
 import fr.systerel.internal.explorer.model.ModelPOContainer;
+import fr.systerel.internal.explorer.statistics.IStatistics;
+import fr.systerel.internal.explorer.statistics.Statistics;
 
 /**
  * This class provides labels to all <code>ContentProvider</code> classes.
@@ -43,6 +50,21 @@ import fr.systerel.internal.explorer.model.ModelPOContainer;
 public class RodinLabelProvider implements ILabelProvider {
 
 	public Image getImage(Object element) {
+		final Image image = getIcon(element);
+		if (image == null)
+			return null;
+
+		final String ovrName = getOverlayIcon(element);
+		if (ovrName == null)
+			return image;
+
+		final ImageDescriptor desc = ImageDescriptor.createFromImage(image);
+		final OverlayIcon ovrIcon = new OverlayIcon(desc);
+		ovrIcon.addBottomRight(EventBImage.getImageDescriptor(ovrName));
+		return ovrIcon.createImage();
+	}
+
+	private Image getIcon(Object element) {
 
 		if (element instanceof IPSStatus) {
 			IPSStatus status = ((IPSStatus) element);
@@ -124,6 +146,43 @@ public class RodinLabelProvider implements ILabelProvider {
 			return ((IContainer) obj).getName();
 		}
 		return obj.toString();
+	}
+
+	private String getOverlayIcon(Object obj) {
+		if (!hasStatistics(obj))
+			return null;
+        // Proof status doesn't need overlay icon
+		if (obj instanceof IElementNode) {
+			final IElementNode node = (IElementNode) obj;
+			if (node.getChildrenType().equals(IPSStatus.ELEMENT_TYPE))
+				return null;
+		}
+
+		final IModelElement model = ModelController.getModelElement(obj);
+		if (model == null)
+			return null;
+
+		final IStatistics s = new Statistics(model);
+		if (s.getUndischargedRest() > 0) {
+			return IEventBSharedImages.IMG_PENDING_OVERLAY_PATH;
+		} else if (s.getReviewed() > 0) {
+			return IEventBSharedImages.IMG_REVIEWED_OVERLAY_PATH;
+		} else {
+			return null;
+		}
+	}
+
+	private boolean hasStatistics(Object obj) {
+		if (obj instanceof IConstant || obj instanceof ICarrierSet
+				|| obj instanceof IVariable)
+			return false;
+		if (obj instanceof IElementNode) {
+			final IElementNode node = (IElementNode) obj;
+			final IElementType<?> type = node.getChildrenType();
+			return (type != IConstant.ELEMENT_TYPE
+					&& type != ICarrierSet.ELEMENT_TYPE && type != IVariable.ELEMENT_TYPE);
+		}
+		return true;
 	}
 
 	public void addListener(ILabelProviderListener listener) {
