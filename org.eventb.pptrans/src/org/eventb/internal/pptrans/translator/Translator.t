@@ -20,7 +20,7 @@ import org.eventb.core.ast.expanders.Expanders;
 
 
 /**
- * Implements the predicate reduction rules: BR1-BR7, ER1-ER13, CR1-CR7
+ * Implements the predicate reduction rules: BR1-BR8, ER1-ER13, CR1-CR7
  * 
  * @author Matthias Konrad
  */
@@ -248,7 +248,7 @@ public class Translator extends IdentityTranslator {
 			    	loc);	    				
 	    	}
 	        /**
-	 		*  RULE BR4: 	x ≠ y
+	 		*  RULE BR5: 	x ≠ y
 	 		* 				¬(x = y)
 	 		*/	   		      	
 	    	NotEqual (x, y) -> {
