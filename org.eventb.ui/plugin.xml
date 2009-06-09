@@ -1964,6 +1964,12 @@
             id="org.eventb.ui.edit.paste"
             name="%commands.edit.pasteName">
       </command>
+      <command
+            categoryId="org.eclipse.ui.category.project"
+            description="%commands.project.autoTacticDescription"
+            id="org.eventb.ui.project.autoTactic"
+            name="%commands.project.autoTacticName">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.contexts">
@@ -2086,6 +2092,10 @@
               </not>
             </and>
          </activeWhen>
+      </handler>
+      <handler
+            class="org.eventb.internal.ui.preferences.ToggleAutoTacticPreference"
+            commandId="org.eventb.ui.project.autoTactic">
       </handler>
    </extension>
    <extension
@@ -2614,6 +2624,14 @@
                   style="push">
             </command>
          </toolbar>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:project?after=build.ext">
+         <command
+               commandId="org.eventb.ui.project.autoTactic"
+               id="autoTactic"
+               style="toggle">
+         </command>
       </menuContribution>
    </extension>
 </plugin>

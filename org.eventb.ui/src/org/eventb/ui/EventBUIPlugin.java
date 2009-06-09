@@ -38,6 +38,7 @@ import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.goal.GoalUtils;
 import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
+import org.eventb.internal.ui.preferences.ToggleAutoTacticPreference;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.internal.ui.proofinformation.ProofInformationUtils;
 import org.eventb.internal.ui.prooftreeui.ProofTreeUIUtils;
@@ -155,6 +156,8 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 		configureDebugOptions();
 		
 		initializePreferences();
+		
+		ToggleAutoTacticPreference.registerListener();
 		
 		loadFont();
 	}
