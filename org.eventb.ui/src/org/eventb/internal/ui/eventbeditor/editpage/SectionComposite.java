@@ -80,9 +80,9 @@ public class SectionComposite implements ISectionComposite {
 
 	// expanding status
 	boolean isExpanded;
-	
+
 	FormText prefixFormText;
-	
+
 	// Before hyperlink composite
 	AbstractHyperlinkComposite beforeHyperlinkComposite;
 
@@ -94,15 +94,16 @@ public class SectionComposite implements ISectionComposite {
 	// direct access to the composite of a Rodin element.
 	LinkedList<IElementComposite> elementComps;
 	private Map<IRodinElement, IElementComposite> mapComps;
-	
+
 	// After hyperlink composite
 	AbstractHyperlinkComposite afterHyperlinkComposite;
 
 	int displayedSeverity = IMarker.SEVERITY_INFO;
-	
-	public SectionComposite(EditPage page, FormToolkit toolkit,
-			ScrolledForm form, Composite compParent, IInternalElement parent,
-			IElementRelationship rel, int level) {
+
+	public SectionComposite(final EditPage page, final FormToolkit toolkit,
+			final ScrolledForm form, final Composite compParent,
+			final IInternalElement parent, final IElementRelationship rel,
+			final int level) {
 		this.page = page;
 		this.toolkit = toolkit;
 		this.form = form;
@@ -121,22 +122,23 @@ public class SectionComposite implements ISectionComposite {
 		gridLayout.marginWidth = 0;
 		composite.setLayout(gridLayout);
 		if (EventBEditorUtils.DEBUG) {
-			composite.setBackground(EventBSharedColor.getSystemColor(
-					SWT.COLOR_DARK_CYAN));
+			composite.setBackground(EventBSharedColor
+					.getSystemColor(SWT.COLOR_DARK_CYAN));
 		}
-		
+
 		final ElementDescRegistry registry = ElementDescRegistry.getInstance();
-		
+
 		final String prefix = registry.getPrefix(rel.getChildType());
-		if (prefix != null || prefix != "")
+		if (prefix != null || prefix != "") {
 			createPrefixLabel(prefix);
+		}
 
 		gridLayout = new GridLayout();
 		gridLayout.verticalSpacing = 0;
 		gridLayout.marginWidth = 0;
 		beforeHyperlinkComposite = new BeforeHyperlinkComposite(page, parent,
 				rel.getChildType(), toolkit, composite);
-		
+
 		gridLayout = new GridLayout();
 		gridLayout.verticalSpacing = 0;
 		gridLayout.marginWidth = 0;
@@ -145,8 +147,8 @@ public class SectionComposite implements ISectionComposite {
 		elementComposite.setLayoutData(gridData);
 		elementComposite.setLayout(gridLayout);
 		if (EventBEditorUtils.DEBUG) {
-			elementComposite.setBackground(EventBSharedColor.getSystemColor(
-					SWT.COLOR_GREEN));
+			elementComposite.setBackground(EventBSharedColor
+					.getSystemColor(SWT.COLOR_GREEN));
 		}
 
 		afterHyperlinkComposite = new AfterHyperlinkComposite(page, parent, rel
@@ -155,14 +157,15 @@ public class SectionComposite implements ISectionComposite {
 		final String suffix = registry.getChildrenSuffix(rel.getParentType(),
 				rel.getChildType());
 
-		if (suffix != null && suffix != "")
+		if (!("".equals(suffix))) {
 			createPostfixLabel(suffix);
+		}
 
 		setExpand(false);
 		return;
 	}
 
-	private void createPostfixLabel(String str) {
+	private void createPostfixLabel(final String str) {
 		Composite comp = toolkit.createComposite(composite);
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout gridLayout = new GridLayout();
@@ -188,7 +191,7 @@ public class SectionComposite implements ISectionComposite {
 		widget.setText(text, true, true);
 	}
 
-	private void createPrefixLabel(String str) {
+	private void createPrefixLabel(final String str) {
 		Composite comp = toolkit.createComposite(composite);
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout gridLayout = new GridLayout();
@@ -204,13 +207,12 @@ public class SectionComposite implements ISectionComposite {
 		tmp.setLayoutData(gridData);
 
 		folding = toolkit.createImageHyperlink(comp, SWT.TOP);
-		folding
-				.setImage(EventBImage
-						.getImage(IEventBSharedImages.IMG_COLLAPSED));
+		folding.setImage(EventBImage
+				.getImage(IEventBSharedImages.IMG_COLLAPSED));
 		folding.addHyperlinkListener(new HyperlinkAdapter() {
 
 			@Override
-			public void linkActivated(HyperlinkEvent e) {
+			public void linkActivated(final HyperlinkEvent e) {
 				folding();
 			}
 
@@ -218,7 +220,7 @@ public class SectionComposite implements ISectionComposite {
 
 		folding.addMouseTrackListener(new MouseTrackListener() {
 
-			public void mouseEnter(MouseEvent e) {
+			public void mouseEnter(final MouseEvent e) {
 				if (isExpanded()) {
 					folding.setImage(EventBImage
 							.getImage(IEventBSharedImages.IMG_EXPANDED_HOVER));
@@ -228,11 +230,11 @@ public class SectionComposite implements ISectionComposite {
 				}
 			}
 
-			public void mouseExit(MouseEvent e) {
+			public void mouseExit(final MouseEvent e) {
 				updateExpandStatus();
 			}
 
-			public void mouseHover(MouseEvent e) {
+			public void mouseHover(final MouseEvent e) {
 				// Do nothing
 			}
 
@@ -258,14 +260,13 @@ public class SectionComposite implements ISectionComposite {
 		setExpand(!isExpanded);
 	}
 
-	public void setExpand(boolean isExpanded) {
+	public void setExpand(final boolean isExpanded) {
 		long beforeTime = System.currentTimeMillis();
-		form.setRedraw(false);	
+		form.setRedraw(false);
 		this.isExpanded = isExpanded;
 		if (isExpanded) {
 			createElementComposites();
-		}
-		else {
+		} else {
 			beforeHyperlinkComposite.setHeightHint(0);
 			GridData gridData = (GridData) elementComposite.getLayoutData();
 			gridData.heightHint = 0;
@@ -276,10 +277,11 @@ public class SectionComposite implements ISectionComposite {
 		form.reflow(true);
 		form.setRedraw(true);
 		long afterTime = System.currentTimeMillis();
-		if (EventBEditorUtils.DEBUG)
+		if (EventBEditorUtils.DEBUG) {
 			EventBEditorUtils.debug("Duration: " + (afterTime - beforeTime)
 					+ " ms");
-		
+		}
+
 	}
 
 	void updateExpandStatus() {
@@ -295,38 +297,43 @@ public class SectionComposite implements ISectionComposite {
 	private void createElementComposites() {
 
 		try {
-			IRodinElement[] children = parent.getChildrenOfType(rel.getChildType());
-			if (!beforeHyperlinkComposite.isInitialised())
+			IRodinElement[] children = parent.getChildrenOfType(rel
+					.getChildType());
+			if (!beforeHyperlinkComposite.isInitialised()) {
 				beforeHyperlinkComposite.createHyperlinks(toolkit, level);
-			
-			if (children.length != 0)
+			}
+
+			if (children.length != 0) {
 				beforeHyperlinkComposite.setHeightHint(SWT.DEFAULT);
-			else
+			} else {
 				beforeHyperlinkComposite.setHeightHint(0);
-			
+			}
+
 			if (elementComps == null) {
 				elementComps = new LinkedList<IElementComposite>();
 				mapComps = new HashMap<IRodinElement, IElementComposite>();
 				for (IRodinElement child : children) {
-					final IElementComposite comp = new ElementComposite(page, toolkit, form,
-							elementComposite, child, level);
+					final IElementComposite comp = new ElementComposite(page,
+							toolkit, form, elementComposite, child, level);
 					elementComps.add(comp);
 					mapComps.put(child, comp);
 				}
 			}
 			GridData gridData = (GridData) elementComposite.getLayoutData();
-			if (elementComps.size() != 0)
+			if (elementComps.size() != 0) {
 				gridData.heightHint = SWT.DEFAULT;
-			else
+			} else {
 				gridData.heightHint = 0;
-			
+			}
+
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if (!afterHyperlinkComposite.isInitialised())
+		if (!afterHyperlinkComposite.isInitialised()) {
 			afterHyperlinkComposite.createHyperlinks(toolkit, level);
-		
+		}
+
 		afterHyperlinkComposite.setHeightHint(SWT.DEFAULT);
 	}
 
@@ -334,7 +341,7 @@ public class SectionComposite implements ISectionComposite {
 		composite.dispose();
 	}
 
-	public void refresh(IRodinElement element) {
+	public void refresh(final IRodinElement element) {
 		final IElementComposite comp = getCompositeTowards(element);
 		if (comp != null) {
 			comp.refresh(element);
@@ -345,9 +352,10 @@ public class SectionComposite implements ISectionComposite {
 		return rel.getChildType();
 	}
 
-	public void elementRemoved(IRodinElement element) {
-		if (elementComps == null)
+	public void elementRemoved(final IRodinElement element) {
+		if (elementComps == null) {
 			return;
+		}
 
 		final IElementComposite comp = getCompositeTowards(element);
 		if (comp != null) {
@@ -363,7 +371,7 @@ public class SectionComposite implements ISectionComposite {
 
 		if (elementComps.size() == 0) {
 			GridData gridData = (GridData) elementComposite.getLayoutData();
-			gridData.heightHint = 0;			
+			gridData.heightHint = 0;
 		}
 		updateHyperlink();
 		form.reflow(true);
@@ -372,16 +380,16 @@ public class SectionComposite implements ISectionComposite {
 	private void updateHyperlink() {
 		if (elementComps == null || elementComps.size() == 0 || !isExpanded) {
 			beforeHyperlinkComposite.setHeightHint(0);
-		}
-		else {
+		} else {
 			beforeHyperlinkComposite.setHeightHint(SWT.DEFAULT);
 		}
 	}
 
-	public void elementAdded(IRodinElement element) {
-		if (elementComps == null)
+	public void elementAdded(final IRodinElement element) {
+		if (elementComps == null) {
 			return;
-			
+		}
+
 		if (element.getParent().equals(parent)
 				&& element.getElementType() == rel.getChildType()) {
 			// Create a new Element composite added to the end of the list
@@ -402,22 +410,26 @@ public class SectionComposite implements ISectionComposite {
 		updateHyperlink();
 	}
 
-	public void childrenChanged(IRodinElement element, IElementType<?> childrenType) {
-		if (elementComps == null)
+	public void childrenChanged(final IRodinElement element,
+			final IElementType<?> childrenType) {
+		if (elementComps == null) {
 			return;
+		}
 
 		if (parent.equals(element) && childrenType == rel.getChildType()) {
 			// Sorting the section
 			try {
 				Rectangle bounds = elementComposite.getBounds();
-				IRodinElement[] children = parent.getChildrenOfType(rel.getChildType());
+				IRodinElement[] children = parent.getChildrenOfType(rel
+						.getChildType());
 				assert children.length == elementComps.size();
 				for (int i = 0; i < children.length; ++i) {
 					IRodinElement child = children[i];
 					// find elementComp corresponding to child
 					int index = indexOf(child);
-					if (index == i)
+					if (index == i) {
 						continue;
+					}
 					IElementComposite elementComp = elementComps.get(index);
 					assert (elementComp != null);
 
@@ -430,7 +442,8 @@ public class SectionComposite implements ISectionComposite {
 					} else {
 						IElementComposite prevElementComposite = elementComps
 								.get(i - 1);
-						Composite prevComp = prevElementComposite.getComposite();
+						Composite prevComp = prevElementComposite
+								.getComposite();
 						comp.moveBelow(prevComp);
 						comp.redraw();
 						comp.pack();
@@ -451,30 +464,34 @@ public class SectionComposite implements ISectionComposite {
 		}
 	}
 
-	private int indexOf(IRodinElement child) {
+	private int indexOf(final IRodinElement child) {
 		int i = 0;
 		for (IElementComposite elementComp : elementComps) {
-			if (elementComp.getElement().equals(child))
+			if (elementComp.getElement().equals(child)) {
 				return i;
+			}
 			++i;
 		}
 		return -1;
 	}
 
-	public boolean select(IRodinElement element, boolean selected) {
+	public boolean select(final IRodinElement element, final boolean selected) {
 		final IRodinElement child = getChildTowards(element);
-		if (child == null)
+		if (child == null) {
 			return false;
+		}
 
-		if (selected)
+		if (selected) {
 			setExpand(true);
+		}
 		final IElementComposite comp = getComposite(child);
-		if (comp == null)
+		if (comp == null) {
 			return false;
+		}
 		return comp.select(element, selected);
 	}
 
-	public void recursiveExpand(IRodinElement element) {
+	public void recursiveExpand(final IRodinElement element) {
 		if (parent.equals(element) || element.isAncestorOf(parent)) {
 			setExpand(true);
 			for (IElementComposite elementComp : elementComps) {
@@ -482,8 +499,9 @@ public class SectionComposite implements ISectionComposite {
 			}
 		} else {
 			final IRodinElement child = getChildTowards(element);
-			if (child == null)
+			if (child == null) {
 				return;
+			}
 			setExpand(true);
 			final IElementComposite comp = getComposite(child);
 			if (comp != null) {
@@ -492,13 +510,16 @@ public class SectionComposite implements ISectionComposite {
 		}
 	}
 
-	public void edit(IInternalElement element, IAttributeType attributeType,
-			int charStart, int charEnd) {
+	public void edit(final IInternalElement element,
+			final IAttributeType attributeType, final int charStart,
+			final int charEnd) {
 		final IRodinElement child = getChildTowards(element);
-		if (child == null)
+		if (child == null) {
 			return;
-		if (!isExpanded())
+		}
+		if (!isExpanded()) {
 			setExpand(true);
+		}
 
 		final IElementComposite comp = getComposite(child);
 		if (comp != null) {
@@ -506,7 +527,8 @@ public class SectionComposite implements ISectionComposite {
 		}
 	}
 
-	public void refresh(IRodinElement element, Set<IAttributeType> set) {
+	public void refresh(final IRodinElement element,
+			final Set<IAttributeType> set) {
 		final IElementComposite comp = getCompositeTowards(element);
 		if (comp != null) {
 			comp.refresh(element, set);
@@ -522,33 +544,33 @@ public class SectionComposite implements ISectionComposite {
 		try {
 			final int severity = MarkerUIRegistry.getDefault()
 					.getMaxMarkerSeverity(parent, rel.getChildType());
-			
-			if (severity == displayedSeverity)
+
+			if (severity == displayedSeverity) {
 				return;
-			displayedSeverity = severity; 
+			}
+			displayedSeverity = severity;
 
 			if (severity == IMarker.SEVERITY_ERROR) {
 				prefixFormText.setBackground(RED);
 				prefixFormText.setForeground(YELLOW);
-			}
-			else if (severity == IMarker.SEVERITY_WARNING) {
+			} else if (severity == IMarker.SEVERITY_WARNING) {
 				prefixFormText.setBackground(YELLOW);
 				prefixFormText.setForeground(RED);
-			}
-			else {
+			} else {
 				prefixFormText.setBackground(WHITE);
 				prefixFormText.setForeground(BLACK);
-			} 
+			}
 		} catch (CoreException e) {
 			return;
 		}
 	}
-	
+
 	public void recursiveExpand() {
 		setExpand(true);
-		if (elementComps == null)
+		if (elementComps == null) {
 			return;
-		
+		}
+
 		for (IElementComposite elementComp : elementComps) {
 			elementComp.setExpand(true);
 		}
@@ -562,19 +584,20 @@ public class SectionComposite implements ISectionComposite {
 		}
 		setExpand(false);
 	}
-	
-	protected IElementComposite getComposite(IRodinElement element) {
-		if (element == null || mapComps == null)
+
+	protected IElementComposite getComposite(final IRodinElement element) {
+		if (element == null || mapComps == null) {
 			return null;
+		}
 		return mapComps.get(element);
 	}
-	
-	protected IElementComposite getCompositeTowards(IRodinElement element) {
+
+	protected IElementComposite getCompositeTowards(final IRodinElement element) {
 		final IRodinElement child = getChildTowards(element);
 		return getComposite(child);
 	}
-	
-	protected IRodinElement getChildTowards(IRodinElement element) {
+
+	protected IRodinElement getChildTowards(final IRodinElement element) {
 		return EventBEditorUtils.getChildTowards(parent, element);
 	}
 }
