@@ -129,7 +129,7 @@ public class SectionComposite implements ISectionComposite {
 		final ElementDescRegistry registry = ElementDescRegistry.getInstance();
 
 		final String prefix = registry.getPrefix(rel.getChildType());
-		if (prefix != null || prefix != "") {
+		if (notVoid(prefix)) {
 			createPrefixLabel(prefix);
 		}
 
@@ -157,12 +157,15 @@ public class SectionComposite implements ISectionComposite {
 		final String suffix = registry.getChildrenSuffix(rel.getParentType(),
 				rel.getChildType());
 
-		if (!("".equals(suffix))) {
+		if (notVoid(suffix)) {
 			createPostfixLabel(suffix);
 		}
 
 		setExpand(false);
-		return;
+	}
+
+	private boolean notVoid(final String prefix) {
+		return prefix != null && prefix.length() != 0;
 	}
 
 	private void createPostfixLabel(final String str) {
