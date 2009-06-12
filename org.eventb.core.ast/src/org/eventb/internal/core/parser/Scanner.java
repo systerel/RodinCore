@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Vector;
 
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.LanguageVersion;
+
 /**
  * This class maps the JFlex lexer with the Coco/R scanner. Note that
  * the lexer returns the first recognized token of a string.
@@ -81,4 +84,18 @@ public class Scanner {
 	protected ParseResult getResult() {
 		return lexer.result; 
 	}
+	
+	public static boolean isValidIdentifierName(FormulaFactory factory,
+			String name) {
+		// just to get problems
+		final ParseResult result = new ParseResult(factory,
+				LanguageVersion.LATEST, name);
+
+		final Scanner scanner = new Scanner(name, result);
+
+		final Token token = scanner.Peek();
+		return (!result.hasProblem() && token != null
+				&& token.kind == Parser._IDENT && token.val.equals(name));
+	}
+
 }

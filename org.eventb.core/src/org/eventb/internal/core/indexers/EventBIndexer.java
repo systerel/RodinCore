@@ -32,6 +32,21 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 
 	private static final IRodinFile[] NO_DEPENDENCIES = new IRodinFile[0];
 
+	protected static String getIdentifierName(IIdentifierElement ident)
+			throws RodinDBException {
+		if (ident.hasIdentifierString()) {
+			final String name = ident.getIdentifierString();
+			if (isValidIdentifierName(name)) {
+				return name;
+			}
+		}
+		return null;
+	}
+
+	protected static boolean isValidIdentifierName(String name) {
+		return IdentTable.ff.isValidIdentifierName(name);
+	}
+	
 	protected IIndexingBridge currentBridge;
 
 	public boolean index(IIndexingBridge bridge) {

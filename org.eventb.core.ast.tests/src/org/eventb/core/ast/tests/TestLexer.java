@@ -204,4 +204,17 @@ public class TestLexer extends AbstractTests {
     			assertEquals("The problem should be a lexer error", ProblemKind.LexerError, problem.getMessage());
         	}
         }
+		
+		public void testIsValidIdentifierName() throws Exception {
+			assertTrue(ff.isValidIdentifierName("foo"));
+			assertTrue(ff.isValidIdentifierName("foo'"));
+			assertFalse(ff.isValidIdentifierName("foo bar"));
+			assertFalse(ff.isValidIdentifierName(" foo"));
+			assertFalse(ff.isValidIdentifierName("foo "));
+			assertFalse(ff.isValidIdentifierName("foo	bar"));
+			assertFalse(ff.isValidIdentifierName("foo'bar"));
+			assertFalse(ff.isValidIdentifierName("'"));
+			assertFalse(ff.isValidIdentifierName(""));
+			assertFalse(ff.isValidIdentifierName("    "));
+		}
 }

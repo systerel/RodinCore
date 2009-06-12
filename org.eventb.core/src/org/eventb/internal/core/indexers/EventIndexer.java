@@ -16,6 +16,8 @@ import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
 import static org.eventb.core.EventBPlugin.DECLARATION;
 import static org.eventb.core.EventBPlugin.REDECLARATION;
 import static org.eventb.core.EventBPlugin.REFERENCE;
+import static org.eventb.internal.core.indexers.EventBIndexer.getIdentifierName;
+import static org.eventb.internal.core.indexers.EventBIndexer.isValidIdentifierName;
 import static org.eventb.internal.core.indexers.IdentTable.getUnprimedName;
 import static org.rodinp.core.RodinCore.getInternalLocation;
 
@@ -183,7 +185,7 @@ public class EventIndexer extends Cancellable {
 		for (IWitness witness : witnesses) {
 			if (witness.hasLabel()) {
 				final String label = witness.getLabel();
-				if (label.length() == 0) {
+				if (!isValidIdentifierName(label)) {
 					continue;
 				}
 				final String name = getUnprimedName(label);
@@ -205,17 +207,14 @@ public class EventIndexer extends Cancellable {
 	private void processParameters(IParameter[] parameters, SymbolTable totalST)
 			throws RodinDBException {
 		for (IParameter parameter : parameters) {
-			if (parameter.hasIdentifierString()) {
-				final String ident = parameter.getIdentifierString();
-				if (ident.length() == 0) {
-					continue;
-				}
-				IDeclaration declaration = bridge.declare(parameter, ident);
+			final String name = getIdentifierName(parameter);
+			if (name != null) {
+				IDeclaration declaration = bridge.declare(parameter, name);
 				addIdentOcc(declaration, DECLARATION, parameter);
 				totalST.put(declaration);
 				bridge.export(declaration);
 
-				refAnyAbstractParam(ident, parameter, totalST);
+				refAnyAbstractParam(name, parameter, totalST);
 			}
 		}
 	}

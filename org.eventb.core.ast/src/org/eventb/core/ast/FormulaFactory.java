@@ -18,7 +18,6 @@ import java.math.BigInteger;
 import java.util.Collection;
 
 import org.eventb.internal.core.ast.Position;
-import org.eventb.internal.core.parser.Lexer;
 import org.eventb.internal.core.parser.ParseResult;
 import org.eventb.internal.core.parser.Parser;
 import org.eventb.internal.core.parser.Scanner;
@@ -1112,7 +1111,7 @@ public class FormulaFactory {
 	 *         identifier
 	 */
 	public boolean isValidIdentifierName(String name) {
-		return Lexer.isValidIdentifierName(name);
+		return Scanner.isValidIdentifierName(this, name);
 	}
 
 	/**

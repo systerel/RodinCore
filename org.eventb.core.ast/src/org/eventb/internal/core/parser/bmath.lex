@@ -13,10 +13,6 @@ package org.eventb.internal.core.parser;
 
 import static org.eventb.core.ast.LanguageVersion.V1;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
@@ -39,20 +35,6 @@ import org.eventb.core.ast.SourceLocation;
 
 	private Token symbol(int kind) {
 		return new Token(kind, yytext(), yychar);
-	}
-
-	public static boolean isValidIdentifierName(String name) {
-		final Reader reader = new StringReader(name);
-		final Lexer lexer = new Lexer(reader);
-		try {
-			final Token token = lexer.next_token();
-			return (token != null &&
-					token.kind == Parser._IDENT &&
-					token.val.equals(name));
-		} catch (IOException e) {
-			// Should never happen, but let's be conservative
-			return false;
-		}
 	}
 %}
 

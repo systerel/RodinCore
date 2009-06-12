@@ -114,11 +114,8 @@ public class MachineIndexer extends EventBIndexer {
 			SymbolTable declImports) throws RodinDBException {
 
 		for (IIdentifierElement ident : idents) {
-			if (ident.hasIdentifierString()) {
-				final String name = ident.getIdentifierString();
-				if (name.length() == 0) {
-					continue;
-				}
+			final String name = getIdentifierName(ident);
+			if (name != null) {
 				final IDeclaration declaration = indexDeclaration(ident, name);
 				export(declaration);
 				refIfRedeclared(name, declImports, ident);

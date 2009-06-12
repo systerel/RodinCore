@@ -858,6 +858,38 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrences(varExp, occRefLblWit, occRefPredWit);
 	}
 
+	public void testPrimeWitnessLabelBug2804046() throws Exception {
+		final String PRIME_WIT_LABEL =
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+						+ "<org.eventb.core.machineFile"
+						+ "		org.eventb.core.configuration=\"org.eventb.core.fwd\""
+						+ "		version=\"5\">"
+						+ "<org.eventb.core.refinesMachine"
+						+ "		name=\"internal_element1\""
+						+ "		org.eventb.core.target=\"exporter\"/>"
+						+ "<org.eventb.core.event"
+						+ "		name=\"internal_element1\""
+						+ "		org.eventb.core.convergence=\"0\""
+						+ "		org.eventb.core.extended=\"false\""
+						+ "		org.eventb.core.label=\"evt1\">"
+						+ "		<org.eventb.core.witness"
+						+ "				name=\"internal_element1\""
+						+ "				org.eventb.core.label=\"'\""
+						+ "				org.eventb.core.predicate=\"⊤\"/>"
+						+ "</org.eventb.core.event>"
+						+ "</org.eventb.core.machineFile>";
+
+		final IMachineRoot importer = ResourceUtils.createMachine(rodinProject,
+				IMPORTER, PRIME_WIT_LABEL);
+
+		final BridgeStub tk = new BridgeStub(importer);
+
+		final MachineIndexer indexer = new MachineIndexer();
+
+		// throws AssertionError (or NullPointerException) when the bug is present
+		assertTrue(indexer.index(tk));
+	}
+
 	public void testEventVarRedeclaredRefInGuard() throws Exception {
 		final IMachineRoot exporter =
 				ResourceUtils.createMachine(rodinProject, EXPORTER, VAR_1DECL);
