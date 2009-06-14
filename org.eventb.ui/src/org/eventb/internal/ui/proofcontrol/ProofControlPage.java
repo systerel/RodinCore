@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Systerel - used EventBPreferenceStore
  *     Systerel - added direct access to preference pages
  *     Systerel - passed the focus request to the text field
+ *     Systerel - the input area is now a StyledText
  *******************************************************************************/
 package org.eventb.internal.ui.proofcontrol;
 
@@ -35,6 +36,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetEvent;
@@ -64,7 +66,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IActionBars;
@@ -91,8 +92,8 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.internal.ui.EventBControl;
 import org.eventb.internal.ui.EventBImage;
-import org.eventb.internal.ui.EventBMath;
-import org.eventb.internal.ui.IEventBInputText;
+import org.eventb.internal.ui.EventBStyledText;
+import org.eventb.internal.ui.IEventBControl;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
@@ -122,7 +123,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	
 	Action openPreferences;
 
-	IEventBInputText textInput;
+	IEventBControl textInput;
+	StyledText textWidget;
 
 	ProverUI editor;
 
@@ -226,7 +228,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 										+ ProofControlPage.this.editor
 												.getRodinInputFile()
 												.getElementName());
-							Text textWidget = textInput.getTextWidget();
 							final IUserSupport userSupport = editor
 									.getUserSupport();
 							boolean interruptable = registry.isInterruptable(
@@ -299,7 +300,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 						ProofControlUtils.debug("File "
 								+ ProofControlPage.this.editor.getRodinInputFile()
 										.getElementName());
-					Text textWidget = textInput.getTextWidget();
 					try {
 
 						final IUserSupport userSupport = editor
@@ -631,26 +631,29 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		smiley.setBackground(scrolledForm.getBackground());
 
 		// A text field
-		textInput = new EventBMath(toolkit.createText(midComp, "", SWT.MULTI));
+		textWidget = new StyledText(midComp, SWT.MULTI | SWT.BORDER); 
+		toolkit.adapt(textWidget, true, false);	
+		textInput = new EventBStyledText(textWidget, true);
 
-		textInput.getTextWidget().addModifyListener(new ModifyListener() {
+		if (ProofControlUtils.DEBUG) {
+			textWidget.addModifyListener(new ModifyListener() {
 
-			public void modifyText(ModifyEvent e) {
-				if (ProofControlUtils.DEBUG)
+				public void modifyText(ModifyEvent e) {
 					ProofControlUtils.debug("File: "
 							+ ProofControlPage.this.editor.getRodinInputFile()
 									.getElementName());
-			}
+				}
 
-		});
+			});
+		}
 
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.heightHint = textInput.getTextWidget().getLineHeight() * 2;
+		gd.heightHint = textWidget.getLineHeight() * 2;
 		gd.widthHint = 200;
-		textInput.getTextWidget().setLayoutData(gd);
-		textInput.getTextWidget().addModifyListener(new ModifyListener() {
+		textWidget.setLayoutData(gd);
+		textWidget.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				currentInput = textInput.getTextWidget().getText();
+				currentInput = textWidget.getText();
 				updateToolItems(editor.getUserSupport());
 			}
 		});
@@ -661,7 +664,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		historyCombo.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
-				textInput.getTextWidget().setText(historyCombo.getText());
+				textWidget.setText(historyCombo.getText());
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -846,7 +849,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 */
 	@Override
 	public void setFocus() {
-		textInput.getTextWidget().setFocus();
+		textWidget.setFocus();
 	}
 
 	/*
@@ -864,11 +867,11 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 */
 	void updateToolItems(IUserSupport userSupport) {
 		for (GlobalTacticDropdownToolItem item : dropdownItems) {
-			item.updateStatus(userSupport, textInput.getTextWidget().getText());
+			item.updateStatus(userSupport, textWidget.getText());
 		}
 
 		for (GlobalTacticToolItem item : toolItems) {
-			item.updateStatus(userSupport, textInput.getTextWidget().getText());
+			item.updateStatus(userSupport, textWidget.getText());
 		}
 
 		return;
@@ -1020,6 +1023,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	}
 
 	public String getInput() {
-		return textInput.getTextWidget().getText();
+		return textWidget.getText();
 	}
 }
