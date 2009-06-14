@@ -41,6 +41,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Control;
@@ -393,8 +394,15 @@ public class UIUtils {
 		try {
 			IEditorPart editor = EventBUIPlugin.getActivePage().openEditor(
 					new FileEditorInput(component.getResource()), desc.getId());
-			editor.getSite().getSelectionProvider().setSelection(
-					new StructuredSelection(obj));
+			if (editor == null) {
+				// External editor
+				return;
+			}
+			final ISelectionProvider sp = editor.getSite().getSelectionProvider();
+			if (sp == null) {
+				return;
+			}
+			sp.setSelection(new StructuredSelection(obj));
 		} catch (PartInitException e) {
 			String errorMsg = "Error opening Editor";
 			MessageDialog.openError(null, null, errorMsg);
