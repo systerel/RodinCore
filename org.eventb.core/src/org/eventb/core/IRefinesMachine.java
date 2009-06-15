@@ -95,12 +95,22 @@ public interface IRefinesMachine extends IInternalElement {
 	/**
 	 * Returns a handle to the unchecked version of the abstract machine.
 	 * 
-	 * @return a handle to the unchecked version of the abstract machine (
-	 *         IRodinFile(IMachineRoot) )
+	 * @return a handle to the unchecked version of the abstract machine
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
 	IRodinFile getAbstractMachine() throws RodinDBException;
+
+	/**
+	 * Returns a handle to the root of the unchecked version of the abstract
+	 * machine.
+	 * 
+	 * @return a handle to the root of the unchecked version of the abstract
+	 *         machine
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	IMachineRoot getAbstractMachineRoot() throws RodinDBException;
 
 	/**
 	 * Returns a handle to the checked version of the abstract machine, that is
@@ -111,5 +121,16 @@ public interface IRefinesMachine extends IInternalElement {
 	 *             if there was a problem accessing the database
 	 */
 	IRodinFile getAbstractSCMachine() throws RodinDBException;
+
+	/**
+	 * Returns a handle to the root of the checked version of the abstract
+	 * machine, that is the root produced when statically checking that machine.
+	 * 
+	 * @return a handle to the root of the checked version of the abstract
+	 *         machine
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	ISCMachineRoot getAbstractSCMachineRoot() throws RodinDBException;
 
 }

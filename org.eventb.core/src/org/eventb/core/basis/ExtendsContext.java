@@ -13,14 +13,12 @@ package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.EventBPlugin;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.ISCContextRoot;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * Implementation of Event-B context extensions as an extension of the Rodin database.
@@ -37,7 +35,7 @@ import org.rodinp.core.basis.InternalElement;
  * @author Stefan Hallerstede
  *
  */
-public class ExtendsContext extends InternalElement implements IExtendsContext {
+public class ExtendsContext extends EventBElement implements IExtendsContext {
 
 	/**
 	 *  Constructor used by the Rodin database. 
@@ -46,9 +44,6 @@ public class ExtendsContext extends InternalElement implements IExtendsContext {
 		super(name, parent);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.basis.RodinElement#getElementType()
-	 */
 	@Override
 	public IInternalElementType<IExtendsContext> getElementType() {
 		return ELEMENT_TYPE;
@@ -59,27 +54,21 @@ public class ExtendsContext extends InternalElement implements IExtendsContext {
 		return hasAttribute(EventBAttributes.TARGET_ATTRIBUTE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.IExtendsContext#getAbstractContextName()
-	 */
 	public String getAbstractContextName() 
 	throws RodinDBException {
 		return getAttributeValue(EventBAttributes.TARGET_ATTRIBUTE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.IExtendsContext#getAbstractSCContext()
-	 */
 	public ISCContextRoot getAbstractSCContext() throws RodinDBException {
 		final String bareName = getAbstractContextName();
-		final String scName = EventBPlugin.getSCContextFileName(bareName);
-		final IRodinProject project = getRodinProject();
-		return (ISCContextRoot) project.getRodinFile(scName).getRoot();
+		return getEventBProject().getSCContextRoot(bareName);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.IExtendsContext#setAbstractContextName(java.lang.String)
-	 */
+	public IContextRoot getAbstractContextRoot() throws RodinDBException {
+		final String bareName = getAbstractContextName();
+		return getEventBProject().getContextRoot(bareName);
+	}
+
 	public void setAbstractContextName(String name, IProgressMonitor monitor) 
 	throws RodinDBException {
 		setAttributeValue(EventBAttributes.TARGET_ATTRIBUTE, name, monitor);

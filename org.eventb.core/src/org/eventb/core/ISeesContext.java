@@ -65,6 +65,16 @@ public interface ISeesContext extends IInternalElement {
 	String getSeenContextName() throws RodinDBException;
 
 	/**
+	 * Returns a handle to the root of the unchecked version of the context that
+	 * is seen by the machine which contains this element.
+	 * 
+	 * @return the seen context root
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	IContextRoot getSeenContextRoot() throws RodinDBException;
+
+	/**
 	 * Sets the name of the context that is seen by the machine which contains
 	 * this element.
 	 * 

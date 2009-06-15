@@ -13,14 +13,13 @@ package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.EventBPlugin;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesMachine;
+import org.eventb.core.ISCMachineRoot;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * Implementation of Event-B machine refinement as an extension of the Rodin database.
@@ -36,7 +35,7 @@ import org.rodinp.core.basis.InternalElement;
  * 
  * @author Stefan Hallerstede
  */
-public class RefinesMachine extends InternalElement implements IRefinesMachine {
+public class RefinesMachine extends EventBElement implements IRefinesMachine {
 
 	/**
 	 *  Constructor used by the Rodin database. 
@@ -49,46 +48,33 @@ public class RefinesMachine extends InternalElement implements IRefinesMachine {
 		return hasAttribute(EventBAttributes.TARGET_ATTRIBUTE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.IRefinesMachine#getRefinedMachine()
-	 */
 	public String getAbstractMachineName() throws RodinDBException {
 		return getAttributeValue(EventBAttributes.TARGET_ATTRIBUTE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.rodinp.core.IRodinElement#getElementType()
-	 */
 	@Override
 	public IInternalElementType<IRefinesMachine> getElementType() {
 		return ELEMENT_TYPE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.IRefinesMachine#getAbstractMachine()
-	 */
-	public IRodinFile getAbstractMachine() 
-	throws RodinDBException {
-		final String bareName = getAbstractMachineName();
-		final String scName = EventBPlugin.getMachineFileName(bareName);
-		final IRodinProject project = getRodinProject();
-		return project.getRodinFile(scName);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.IRefinesMachine#getAbstractSCMachine()
-	 */
-	public IRodinFile getAbstractSCMachine() 
-	throws RodinDBException {
-		final String bareName = getAbstractMachineName();
-		final String scName = EventBPlugin.getSCMachineFileName(bareName);
-		final IRodinProject project = getRodinProject();
-		return project.getRodinFile(scName);
+	public IRodinFile getAbstractMachine() throws RodinDBException {
+		return getAbstractMachineRoot().getRodinFile();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.IRefinesMachine#setAbstractMachineName(java.lang.String)
-	 */
+	public IMachineRoot getAbstractMachineRoot() throws RodinDBException {
+		final String bareName = getAbstractMachineName();
+		return getEventBProject().getMachineRoot(bareName);
+	}
+
+	public IRodinFile getAbstractSCMachine() throws RodinDBException {
+		return getAbstractSCMachineRoot().getRodinFile();
+	}
+
+	public ISCMachineRoot getAbstractSCMachineRoot() throws RodinDBException {
+		final String bareName = getAbstractMachineName();
+		return getEventBProject().getSCMachineRoot(bareName);
+	}
+
 	public void setAbstractMachineName(String name, IProgressMonitor monitor) throws RodinDBException {
 		setAttributeValue(EventBAttributes.TARGET_ATTRIBUTE, name, monitor);
 	}

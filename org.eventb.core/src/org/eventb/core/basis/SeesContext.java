@@ -13,14 +13,12 @@ package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.EventBPlugin;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.ISeesContext;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.basis.InternalElement;
 
 /**
  * Implementation of Event-B sees relationship as an extension of the Rodin database.
@@ -37,7 +35,7 @@ import org.rodinp.core.basis.InternalElement;
  * @author Stefan Hallerstede
  *
  */
-public class SeesContext extends InternalElement implements ISeesContext {
+public class SeesContext extends EventBElement implements ISeesContext {
 
 	/**
 	 *  Constructor used by the Rodin database. 
@@ -53,9 +51,12 @@ public class SeesContext extends InternalElement implements ISeesContext {
 
 	public IRodinFile getSeenSCContext() throws RodinDBException {
 		final String bareName = getSeenContextName();
-		final String scName = EventBPlugin.getSCContextFileName(bareName);
-		final IRodinProject project = getRodinProject();
-		return project.getRodinFile(scName);
+		return getEventBProject().getSCContextFile(bareName);
+	}
+	
+	public IContextRoot getSeenContextRoot() throws RodinDBException {
+		final String bareName = getSeenContextName();
+		return getEventBProject().getContextRoot(bareName);
 	}
 	
 	public boolean hasSeenContextName() throws RodinDBException {

@@ -86,6 +86,16 @@ public interface IExtendsContext extends IInternalElement {
 	String getAbstractContextName() throws RodinDBException;
 
 	/**
+	 * Returns a handle to the root of the unchecked version of the context
+	 * which is extended by the context which contains this element.
+	 * 
+	 * @return the root of the abstract context
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 */
+	IContextRoot getAbstractContextRoot() throws RodinDBException;
+
+	/**
 	 * Sets the name of a context which is extended by the context which
 	 * contains this element.
 	 * 

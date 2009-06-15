@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
@@ -26,12 +25,10 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.IRefinesMachine;
-import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISeesContext;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
@@ -450,7 +447,9 @@ public class ModelProject implements IModelElement {
 	 * @throws RodinDBException
 	 */
 	protected void processRefines(IRefinesMachine refinesClause, ModelMachine machine) throws RodinDBException {
-		final IMachineRoot abst = (IMachineRoot) refinesClause.getAbstractMachine().getRoot();
+		if (!refinesClause.hasAbstractMachineName())
+			return;
+		final IMachineRoot abst = refinesClause.getAbstractMachineRoot();
 		// May not exist, if there are some errors in the project (e.g. was deleted)
 		if (abst.exists()) {
 			if (!machines.containsKey(abst)) {
@@ -469,7 +468,9 @@ public class ModelProject implements IModelElement {
 	}
 	
 	protected void processSees(ISeesContext seesClause, ModelMachine machine) throws RodinDBException {
-		IContextRoot ctx = ((ISCContextRoot) seesClause.getSeenSCContext().getRoot()).getContextRoot();
+		if (!seesClause.hasSeenContextName())
+			return;
+		final IContextRoot ctx = seesClause.getSeenContextRoot();
 		// May not exist, if there are some errors in the project (e.g. was deleted)
 		if (ctx.exists()) {
 			if (!contexts.containsKey(ctx)) {
@@ -483,31 +484,27 @@ public class ModelProject implements IModelElement {
 	}
 	
 	protected void processExtends(IExtendsContext extendsClause, ModelContext context) throws RodinDBException {
-		if (extendsClause.getAbstractSCContext() != null) {
-			IRodinFile file = internalProject.getRodinFile(EventBPlugin.getContextFileName(extendsClause.getAbstractContextName()));
-			IContextRoot extCtx =  (IContextRoot) file.getRoot();
-			// May not exist, if there are some errors in the project (e.g. was deleted)
-			if (extCtx.exists()) {
-				if (!contexts.containsKey(extCtx)) {
-					processContext(extCtx);
+		if (!extendsClause.hasAbstractContextName())
+			return;
+		final IContextRoot extCtx = extendsClause.getAbstractContextRoot();
+		// May not exist, if there are some errors in the project (e.g. was deleted)
+		if (extCtx.exists()) {
+			if (!contexts.containsKey(extCtx)) {
+				processContext(extCtx);
+			}
+			ModelContext exendsCtx = contexts.get(extCtx);
+			// don't allow cycles!
+			if (!exendsCtx.getAncestors().contains(context)) {
+				exendsCtx.addExtendedByContext(context);
+				context.addExtendsContext(exendsCtx);
+				context.addAncestor(exendsCtx);
+				context.addAncestors(exendsCtx.getAncestors());
+			} else {
+				if (ExplorerUtils.DEBUG) {
+					System.out.println("Context is in cycle: " +context);
 				}
-				ModelContext exendsCtx = contexts.get(extCtx);
-				// don't allow cycles!
-				if (!exendsCtx.getAncestors().contains(context)) {
-					exendsCtx.addExtendedByContext(context);
-					context.addExtendsContext(exendsCtx);
-					context.addAncestor(exendsCtx);
-					context.addAncestors(exendsCtx.getAncestors());
-				} else {
-					if (ExplorerUtils.DEBUG) {
-						System.out.println("Context is in cycle: " +context);
-					}
-					
-				}
-					
 			}
 		}
-		
 	}
 
 	public IModelElement getModelElement(IRodinElement element) {
