@@ -44,8 +44,6 @@ import org.rodinp.internal.core.indexer.persistence.PersistentPIM;
 
 public final class IndexManager {
 
-	// TODO change scheduling rules to the file being processed
-
 	// For debugging and tracing purposes
 	public static boolean DEBUG;
 	public static boolean VERBOSE;
@@ -323,6 +321,7 @@ public final class IndexManager {
 	}
 
 	public synchronized PersistentIndexManager getPersistentData() {
+		// TODO move side effects to stop() ?
 		final Set<IIndexDelta> deltaSet = new HashSet<IIndexDelta>();
 		deltaSet.addAll(currentDeltas);
 		queue.drainTo(deltaSet);
@@ -381,6 +380,7 @@ public final class IndexManager {
 		RodinCore.removeElementChangedListener(listener);
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
 		indexingEnabled = false;
+		indexing.cancel();
 	}
 
 	void printVerbose(String message) {
@@ -420,6 +420,18 @@ public final class IndexManager {
 		}
 	}
 
+	public void stop() {
+		// avoid processing future deltas
+		indexingEnabled = false;
+		// make pims reject (but record) future indexing requests
+		// (even if indexing is disabled, deltas might be under process)
+		for (ProjectIndexManager pim : pppim.pims()) {
+			pim.setProjectVanishing();
+		}
+		// stop current indexing
+		indexing.cancel();
+	}
+	
 	public void projectVanishing(IRodinProject project) {
 		printVerbose("INDEXER: Project " + project + " vanishes");
 		final ProjectIndexManager pim = this.pppim.get(project);

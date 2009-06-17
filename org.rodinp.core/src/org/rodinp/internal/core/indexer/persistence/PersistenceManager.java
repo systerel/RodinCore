@@ -68,6 +68,9 @@ public class PersistenceManager implements ISaveParticipant {
 		switch (context.getKind()) {
 
 		case ISaveContext.FULL_SAVE: {
+			// avoid workspace deadlock: stop indexing definitely
+			IndexManager.getDefault().stop();
+			
 			final IPath[] previousFiles = context.getFiles();
 			final int saveNumber = context.getSaveNumber();
 			final IPath saveFilePath = getFullSaveName(saveNumber);
