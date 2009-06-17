@@ -137,16 +137,16 @@ public class TextEditComposite extends AbstractEditComposite {
 			}
 			text = new StyledText(composite, style);
 
+			final IAttributeType attType = attrDesc.getAttributeType();
+			final IAttributeLocation location = RodinCore.getInternalLocation(element, attType);
+			adapter = ContentProposalFactory.getContentProposal(location, text);
 			text.addVerifyKeyListener(new VerifyKeyListener() {
 				public void verifyKey(VerifyEvent event) {
-					if (!adapter.IsProposalClosed()
+					if (adapter.isProposalPopupOpen()
 							&& event.character == SWT.CR)
 						event.doit = false;
 				}
 			});
-			final IAttributeType attType = attrDesc.getAttributeType();
-			final IAttributeLocation location = RodinCore.getInternalLocation(element, attType);
-			adapter = ContentProposalFactory.getContentProposal(location, text);
 
 			setText(value);
 			

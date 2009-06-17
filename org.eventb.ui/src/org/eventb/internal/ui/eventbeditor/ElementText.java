@@ -80,7 +80,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 			final String contents = textWidget.getText();
 			switch (event.type) {
 			case SWT.FocusOut:
-				if(!adapter.IsProposalClosed())
+				if (adapter.isProposalPopupOpen())
 					break;
 				commit(element, column, Text2EventBMathTranslator
 						.translate(contents));
@@ -119,10 +119,10 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 				editor.layout();
 				break;
 			case SWT.Traverse:
+				if (adapter.isProposalPopupOpen())
+					break;
 				switch (event.detail) {
 				case SWT.TRAVERSE_RETURN:
-					if(!adapter.IsProposalClosed())
-						break;
 					commit(element, column, Text2EventBMathTranslator
 							.translate(contents));
 					textWidget.getParent().dispose();

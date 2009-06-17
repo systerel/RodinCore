@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Control;
  * An {@link IControlContentAdapter} for StyledText controls. Based on
  * {@link TextContentAdapter}
  */
-class StyledTextContentAdapter implements IControlContentAdapter {
+public class StyledTextContentAdapter implements IControlContentAdapter {
 	public String getControlContents(Control control) {
 		return ((StyledText) control).getText();
 	}
