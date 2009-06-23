@@ -77,7 +77,11 @@ public class DeltaQueuer implements IElementChangedListener,
 				if (element instanceof IRodinProject) {
 					enqueueAffectedProject((IRodinProject) element, delta);
 				} else { // special cases like deleting a closed project
-					enqueueResourceDeltas(delta.getResourceDeltas());
+					final IResourceDelta[] resourceDeltas = delta
+							.getResourceDeltas();
+					if (resourceDeltas != null) {
+						enqueueResourceDeltas(resourceDeltas);
+					}
 				}
 			}
 		}
