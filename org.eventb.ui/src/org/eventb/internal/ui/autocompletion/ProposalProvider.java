@@ -15,13 +15,9 @@ import java.util.List;
 import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.ast.FormulaFactory;
 import org.rodinp.core.location.IAttributeLocation;
 
 public class ProposalProvider implements IContentProposalProvider {
-
-	// TODO see if we can factorize a unique FormulaFactory for the plugin
-	private static final FormulaFactory ff = FormulaFactory.getDefault();
 
 	private static class Proposal implements IContentProposal {
 
@@ -60,21 +56,9 @@ public class ProposalProvider implements IContentProposalProvider {
 		this.location = location;
 	}
 
-	private String getPrefix(String text, int position) {
-		if (position == 0)
-			return "";
-		int i;
-		for (i = position - 1; i >= 0; i--) {
-			final String candidate = text.substring(i, position);
-			if (!ff.isValidIdentifierName(candidate)) {
-				return text.substring(i + 1, position);
-			}
-		}
-		return text.substring(0, position);
-	}
-
 	public IContentProposal[] getProposals(String contents, int position) {
-		final String prefix = getPrefix(contents, position);
+		final PrefixComputer pc = new PrefixComputer(contents, position);
+		final String prefix = pc.getPrefix();
 		final List<String> completions = EventBPlugin.getCompletions(location,
 				prefix);
 		return makeProposals(contents, position, prefix, completions);
