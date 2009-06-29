@@ -132,4 +132,36 @@ public class TestMachineInit extends EventBPOTest {
 		sequentHasGoal(sequent, typeEnvironment, "1=0+1");
 	}
 	
+	public void testInit_Bug2813537() throws Exception {
+		
+		IMachineRoot abs = createMachine("abs");
+		addVariables(abs, "x", "y", "z");
+		addInvariants(abs, makeSList("I1"), makeSList("x∈ℤ ∧ y∈ℤ ∧ z∈ℤ"), false);
+		addEvent(abs, init, 
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A1"), makeSList("x,y,z ≔ 0,0,0"));
+		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("x", intType);
+		typeEnvironment.addName("y", intType);
+		typeEnvironment.addName("z", intType);
+		saveRodinFileOf(abs);
+		runBuilder();
+		
+		IMachineRoot con = createMachine("cnc");
+		addMachineRefines(con, "abs");
+		addVariables(con, "x");
+		addEvent(con, init,
+				makeSList(), 
+				makeSList(), makeSList(), 
+				makeSList("A1"), makeSList("x ≔ 0"));
+		saveRodinFileOf(con);
+
+		// ArrayIndexOutOfBoundsException is thrown when the bug is present
+		// and results in a build problem
+		runBuilder();
+	}
+	
+	
+
 }

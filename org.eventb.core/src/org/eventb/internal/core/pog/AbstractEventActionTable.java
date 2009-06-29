@@ -100,8 +100,9 @@ public class AbstractEventActionTable extends EventActionTable implements
 				FreeIdentifier[] lhsP = new FreeIdentifier[pcount];
 				Expression[] rhsP = new Expression[pcount];
 			
-				FreeIdentifier[] lhsD = new FreeIdentifier[pcount];
-				Expression[] rhsD = new Expression[pcount];
+				final int dCount = lhs.length - pcount;
+				FreeIdentifier[] lhsD = new FreeIdentifier[dCount];
+				Expression[] rhsD = new Expression[dCount];
 			
 				int p = 0;
 				int d = 0;
