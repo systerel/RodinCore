@@ -1,17 +1,18 @@
 <!--
-
-   DTD for Event-B proof files.
-
-   This DTD concerns proof files that are manipulated by the proof obligation
-   manager.
-
-   Copyright (c) 2006-07 ETH Zurich.
+   Copyright (c) 2006-09 ETH Zurich and others.
 
    All rights reserved. This program and the accompanying materials
    are made available under the terms of the Eclipse Public License v1.0
    which accompanies this distribution, and is available at
    http://www.eclipse.org/legal/epl-v10.html
+   
+   Contributors:
+   		ETH Zurich - Initial API and implementation
+   		
+   DTD for Event-B proof files.
 
+   This DTD concerns proof files that are manipulated by the proof obligation
+   manager.
 -->
 
 <!-- Element Names -->
