@@ -17,34 +17,15 @@ public class PrefixComputer {
 	// TODO see if we can factorize a unique FormulaFactory for the plugin
 	private static final FormulaFactory ff = FormulaFactory.getDefault();
 
-	// linear search from start to end
-	private static int getPrefixLinear(String text, int start, int end) {
-		for (int pos = start; pos < end; pos++) {
-			final String candidate = text.substring(pos, end);
-			if (ff.isValidIdentifierName(candidate)) {
-				return pos;
-			}
-		}
-		return end;
+	private static boolean isIdentifierPrefix(String string) {
+		// a prefix of an identifier is a valid identifier 
+		return ff.isValidIdentifierName(string);
 	}
 	
-	// search by pitch
-	private static int getPrefixPitch(String string, int position) {
-		final int pitch = 4;
-		if (position < pitch) {
-			return getPrefixLinear(string, 0, position);
-		}
-		final int pitchedPos = position - pitch;
-		final String candidate = string.substring(pitchedPos, position);
-		if (ff.isValidIdentifierName(candidate)) {
-			// any prefix of a prefix is a prefix ("" is considered a prefix)
-			// => shift left
-			return getPrefixPitch(string, pitchedPos);
-		} else {
-			return getPrefixLinear(string, pitchedPos, position);
-		}
+	private static boolean isIdentifierSuffix(String string) {
+		return ff.isValidIdentifierName("P" + string);
 	}
-	
+
 	private final String string;
 	private final int position;
 	
@@ -54,8 +35,25 @@ public class PrefixComputer {
 	}
 	
 	public String getPrefix() {
-		final int prefixPos = getPrefixPitch(string, position);
-		return string.substring(prefixPos, position);
+		final int suffixPos = getLowestSuffixPos();
+		
+		final String candidate = string.substring(suffixPos, position);
+		if (isIdentifierPrefix(candidate)) {
+			return candidate;
+		} else {
+			return "";
+		}
+	}
+
+	private int getLowestSuffixPos() {
+		int pos;
+		for (pos = position; pos > 0; pos--) {
+			final String suffix = string.substring(pos-1, position);
+			if (!isIdentifierSuffix(suffix)) {
+				return pos;
+			}
+		}
+		return pos;
 	}
 
 }

@@ -37,12 +37,24 @@ public class PrefixComputerTests extends EventBUITest {
 	public void testLength1Space() throws Exception {
 		doPrefixTest(" ", 1, "");
 	}
-
-	public void testLength2() throws Exception {
-		doPrefixTest("   consta", 8, "const");
+	
+	public void testLength1Number() throws Exception {
+		doPrefixTest("1", 1, "");
 	}
 
-	public void testLength3Space2() throws Exception {
+	public void testSpacesBefore() throws Exception {
+		doPrefixTest("  c", 3, "c");
+	}
+	
+	public void testPosNotEnd() throws Exception {
+		doPrefixTest("consta", 5, "const");
+	}
+
+	public void testSuffixNotPrefix() throws Exception {
+		doPrefixTest("  1234", 6, "");
+	}
+
+	public void testLongNoSpace() throws Exception {
 		doPrefixTest("abcd+efghijklmnopqrstuv", 23, "efghijklmnopqrstuv");
 	}
 
@@ -50,4 +62,9 @@ public class PrefixComputerTests extends EventBUITest {
 	public void testBug2808375() throws Exception {
 		doPrefixTest("c1", 2, "c1");
 	}
+
+	public void testBug2808375_2() throws Exception {
+		doPrefixTest("c123456", 7, "c123456");
+	}
+	
 }
