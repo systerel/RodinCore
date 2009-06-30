@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import static org.eventb.core.ast.LanguageVersion.V2;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCExpressionElement;
 import org.eventb.core.ast.Expression;
@@ -48,7 +50,7 @@ public abstract class SCExpressionElement extends EventBElement
 	public Expression getExpression(FormulaFactory factory) throws RodinDBException {
 		
 		String contents = getExpressionString();
-		IParseResult parserResult = factory.parseExpression(contents);
+		IParseResult parserResult = factory.parseExpression(contents, V2, null);
 		if (parserResult.getProblems().size() != 0) {
 			throw Util.newRodinDBException(
 					Messages.database_SCExpressionParseFailure,

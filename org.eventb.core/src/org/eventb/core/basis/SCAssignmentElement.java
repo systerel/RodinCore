@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import static org.eventb.core.ast.LanguageVersion.V2;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCAssignmentElement;
 import org.eventb.core.ast.Assignment;
@@ -49,7 +51,7 @@ public abstract class SCAssignmentElement extends EventBElement
 	throws RodinDBException {
 		
 		String contents = getAssignmentString();
-		IParseResult parserResult = factory.parseAssignment(contents);
+		IParseResult parserResult = factory.parseAssignment(contents, V2, null);
 		if (parserResult.getProblems().size() != 0) {
 			throw Util.newRodinDBException(
 					Messages.database_SCAssignmentParseFailure,
