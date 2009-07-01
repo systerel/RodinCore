@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - allowed for multiple configurations in input files
  *******************************************************************************/
 package org.eventb.internal.core.tool;
 
@@ -12,6 +16,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -29,6 +34,9 @@ public abstract class ConfigManager<T, C extends ConfigWithClosure<T>> extends S
 	// Local id of the configuration extension point of this plugin
 	private static final String CONFIGURATION_ID = "configurations";
 	
+	// Separator between configuration ids
+	private static final String CONFIG_DELIM = ";";
+
 	// Access to configurations using their unique id
 	private Map<String, C> configs;
 	private final boolean verbose;
@@ -107,13 +115,21 @@ public abstract class ConfigManager<T, C extends ConfigWithClosure<T>> extends S
 		return configs.get(id);
 	}
 	
-	private List<T> NO_CONFIG = new ArrayList<T>(0);
-	
-	public List<T> getConfigClosure(String id) {
-		C config = getConfig(id);
-		if (config == null)
-			return NO_CONFIG;
-		return config.computeClosure(configs);
+	public List<T> getConfigClosure(String configIds) {
+		final List<T> result = new ArrayList<T>();
+		final StringTokenizer tokenizer = new StringTokenizer(configIds,
+				CONFIG_DELIM);
+		while (tokenizer.hasMoreTokens()) {
+			final String configId = tokenizer.nextToken();
+			addConfigClosure(result, configId);
+		}
+		return result;
+	}
+
+	private void addConfigClosure(final List<T> moduleList, String configId) {
+		C config = getConfig(configId);
+		if (config != null)
+			moduleList.addAll(config.computeClosure(configs));
 	}
 	
 	protected abstract String getName();

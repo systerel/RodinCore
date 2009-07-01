@@ -95,8 +95,8 @@ public class ProjectBuildTests extends EventBTest {
 	}
 
 	/**
-	 * Regression test for bug # TODO. Two components depend on a third one, but
-	 * PO are generated only for one of them.
+	 * Regression test for builder bug: Two components depend on a third one,
+	 * but PO are generated only for one of them.
 	 */
 	public void testTwoConcrete() throws Exception {
 		final IMachineRoot abs = createMachine("M1");
@@ -116,6 +116,28 @@ public class ProjectBuildTests extends EventBTest {
 		runBuilder();
 		assertNoMarker(abs.getRodinProject());
 		assertGenerated(abs, con1, con2);
+	}
+
+	/**
+	 * Test ensuring that several configurations can be given within a file, and
+	 * that the SC and POG work appropriately as soon as one configuration is
+	 * present.
+	 */
+	public void testMultipleConfigurations() throws Exception {
+		final String inexistentConfig = "org.event.core.tests.inexistent";
+		
+		final IMachineRoot abs = createMachine("M1");
+		final String oldConfig = abs.getConfiguration();
+		final String newConfig = oldConfig + ";" + inexistentConfig;
+		abs.setConfiguration(newConfig, null);
+		addInitialisation(abs);
+		saveRodinFileOf(abs);
+
+		runBuilder();
+		assertNoMarker(abs.getRodinProject());
+		assertGenerated(abs);
+		
+		assertEquals(newConfig, abs.getSCMachineRoot().getConfiguration());
 	}
 
 }
