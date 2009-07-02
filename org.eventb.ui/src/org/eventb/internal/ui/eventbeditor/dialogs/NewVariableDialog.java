@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,11 @@
  *     Systerel - separation of file and root element
  *     Systerel - increased index of label when add new input
  *     Systerel - used label prefix set by user
+ *     Systerel - replaced setFieldValues() with checkAndSetFieldValues()
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.dialogs;
 
+import static java.util.Collections.singletonList;
 import static org.eclipse.jface.dialogs.IDialogConstants.CANCEL_ID;
 import static org.eclipse.jface.dialogs.IDialogConstants.CANCEL_LABEL;
 import static org.eclipse.jface.dialogs.IDialogConstants.OK_ID;
@@ -163,9 +165,13 @@ public class NewVariableDialog extends EventBDialog {
 			createInvariant();
 			updateSize();
 		} else if (buttonId == OK_ID) {
-			setFieldValues();
+			if (!checkAndSetFieldValues()) {
+				return;
+			}
 		} else if (buttonId == ADD_ID) {
-			setFieldValues();
+			if (!checkAndSetFieldValues()) {
+				return;
+			}
 			addValues();
 			initialise();
 		}
@@ -215,10 +221,15 @@ public class NewVariableDialog extends EventBDialog {
 				.getRodinInput());
 	}
 	
-	private void setFieldValues() {
-		invariantsResult = new ArrayList<Pair<String, String>>();
-
+	private boolean checkAndSetFieldValues() {
 		identifierResult = getText(identifierText);
+
+		if (!checkNewIdentifiers(singletonList(identifierResult), true)) {
+			identifierResult = null;
+			return false;
+		}
+		
+		invariantsResult = new ArrayList<Pair<String, String>>();
 		fillPairResult(invariantsTexts, invariantsResult);
 		if (dirtyTexts.contains(initSubstitutionText.getTextWidget())) {
 			initLabelResult = getText(initLabelText);
@@ -227,6 +238,7 @@ public class NewVariableDialog extends EventBDialog {
 			initLabelResult = null;
 			initSubstitutionResult = null;
 		}
+		return true;
 	}
 
 	/**

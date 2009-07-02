@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
+ *     Systerel - added checkAndSetFieldValues()
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.dialogs;
 
@@ -18,7 +19,7 @@ import static org.eclipse.jface.dialogs.IDialogConstants.OK_LABEL;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.List;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -36,7 +37,7 @@ public class NewEnumeratedSetDialog extends EventBDialog {
 
 	private String name;
 
-	private Collection<String> elements;
+	private final List<String> elements = new ArrayList<String>();
 
 	private IEventBInputText nameText;
 
@@ -99,16 +100,32 @@ public class NewEnumeratedSetDialog extends EventBDialog {
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == CANCEL_ID) {
 			name = null;
-			elements = new HashSet<String>();
+			elements.clear();
 		} else if (buttonId == MORE_ELEMENT_ID) {
 			createElement();
 			updateSize();
 		} else if (buttonId == OK_ID) {
-			name = nameText.getTextWidget().getText();
-			elements = new ArrayList<String>();
-			fillResult(elementTexts, elements);
+			if (!checkAndSetFieldValues()) {
+				return;
+			}
 		}
 		super.buttonPressed(buttonId);
+	}
+	
+	private boolean checkAndSetFieldValues() {
+		name = nameText.getTextWidget().getText();
+		elements.clear();
+		fillResult(elementTexts, elements);
+		
+		final List<String> allNames = new ArrayList<String>(elements);
+		allNames.add(name);
+		
+		if (!checkNewIdentifiers(allNames, true)) {
+			name = null;
+			elements.clear();
+			return false;
+		}
+		return true;
 	}
 	
 	/**

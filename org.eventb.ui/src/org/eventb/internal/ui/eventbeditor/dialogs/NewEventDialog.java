@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Systerel - added history support
  *     Systerel - separation of file and root element
  *     Systerel - used label prefix set by user
+ *     Systerel - replaced setFieldValues() with checkAndSetFieldValues()
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.dialogs;
 
@@ -22,6 +23,7 @@ import static org.eclipse.jface.dialogs.IDialogConstants.OK_LABEL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -56,11 +58,11 @@ public class NewEventDialog extends EventBDialog {
 
 	protected String labelResult;
 
-	protected Collection<String> parsResult;
+	protected final Collection<String> parsResult = new ArrayList<String>();
 
-	private Collection<Pair<String, String>> grdResults;
+	private final Collection<Pair<String, String>> grdResults = new ArrayList<Pair<String, String>>();
 
-	private Collection<Pair<String, String>> actResults;
+	private final Collection<Pair<String, String>> actResults = new ArrayList<Pair<String, String>>();
 
 	private IEventBInputText labelText;
 
@@ -112,9 +114,9 @@ public class NewEventDialog extends EventBDialog {
 
 	private void initValue(){
 		labelResult = null;
-		parsResult = new HashSet<String>();
-		grdResults = new HashSet<Pair<String, String>>();
-		actResults = new HashSet<Pair<String, String>>();
+		parsResult.clear();
+		grdResults.clear();
+		actResults.clear();
 	}
 
 	private String getAutoNamePrefix(IInternalElementType<?> type) {
@@ -275,9 +277,13 @@ public class NewEventDialog extends EventBDialog {
 			createAction();
 			updateSize();
 		} else if (buttonId == OK_ID) {
-			setFieldValues();
+			if (!checkAndSetFieldValues()) {
+				return;
+			}
 		} else if (buttonId == ADD_ID) {
-			setFieldValues();
+			if (!checkAndSetFieldValues()) {
+				return;
+			}
 			addValues();
 			initialise();
 			updateSize();
@@ -343,15 +349,26 @@ public class NewEventDialog extends EventBDialog {
 		scrolledForm.reflow(true);
 	}
 
-	private void setFieldValues() {
-		parsResult = new ArrayList<String>();
-		grdResults = new ArrayList<Pair<String, String>>();
-		actResults = new ArrayList<Pair<String, String>>();
-
+	private boolean checkAndSetFieldValues() {
 		labelResult = getText(labelText);
+
+		parsResult.clear();
 		fillResult(parTexts, parsResult);
+
+		final List<String> names = new ArrayList<String>(parsResult);
+		names.add(labelResult);
+		if (!checkNewIdentifiers(names, true)) {
+			labelResult = null;
+			parsResult.clear();
+			return false;
+		}
+		
+		grdResults.clear();
 		fillPairResult(grdTexts, grdResults);
+		
+		actResults.clear();
 		fillPairResult(actTexts, actResults);
+		return true;
 	}
 
 	/**

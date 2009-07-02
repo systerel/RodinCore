@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
  *     Systerel - add getNameInputText and getContentInputText to factor several methods
+ *     Systerel - added checkNewIdentifiers()
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.dialogs;
 
@@ -17,6 +18,9 @@ import static org.eclipse.jface.dialogs.IDialogConstants.CLIENT_ID;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -32,13 +36,16 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.utils.Messages;
 
 /**
  * @author htson
@@ -59,6 +66,8 @@ public abstract class EventBDialog extends Dialog {
 
 	private final int MAX_HEIGHT = 500;
 
+	protected static final FormulaFactory ff = FormulaFactory.getDefault();
+	
 	protected static final int ADD_ID = CLIENT_ID + 1;
 	protected static final int MORE_PARAMETER_ID = CLIENT_ID + 2;
 	protected static final int MORE_GUARD_ID = CLIENT_ID + 3;
@@ -404,5 +413,48 @@ public abstract class EventBDialog extends Dialog {
 	protected Pair<IEventBInputText, IEventBInputText> newWidgetPair(
 			IEventBInputText name, IEventBInputText content) {
 		return new Pair<IEventBInputText, IEventBInputText>(name, content);
+	}
+	
+	protected static boolean checkNewIdentifiers(List<String> names,
+			boolean showInfoOnProblem) {
+		final Collection<String> invalidIdentifiers = getInvalidIdentifiers(names);
+		if (!invalidIdentifiers.isEmpty()) {
+			if (showInfoOnProblem) {
+				UIUtils.showInfo(Messages.dialogs_invalidIdentifiers + ":\n"
+						+ invalidIdentifiers);
+			}
+			return false;
+		}
+		final Collection<String> duplicateNames = getDuplicateNames(names);
+		if (!duplicateNames.isEmpty()) {
+			if (showInfoOnProblem) {
+				UIUtils.showInfo(Messages.dialogs_duplicateNames + ":\n"
+						+ duplicateNames);
+			}
+			return false;
+		}
+		return true;
+	}
+
+	private static Collection<String> getInvalidIdentifiers(
+			Collection<String> names) {
+		final List<String> invalidIdentifiers = new ArrayList<String>();
+		for (String name : names) {
+			if (!ff.isValidIdentifierName(name)) {
+				invalidIdentifiers.add(name);
+			}
+		}
+		return invalidIdentifiers;
+	}
+
+	private static Collection<String> getDuplicateNames(List<String> names) {
+		final Set<String> duplicateNames = new LinkedHashSet<String>();
+		for (int i = 1; i < names.size(); i++) {
+			final String name = names.get(i - 1);
+			if (names.subList(i, names.size()).contains(name)) {
+				duplicateNames.add(name);
+			}
+		}
+		return duplicateNames;
 	}
 }

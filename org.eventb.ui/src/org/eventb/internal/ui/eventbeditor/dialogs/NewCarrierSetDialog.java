@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
+ *     Systerel - added checkAndSetFieldValues()
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.dialogs;
 
@@ -35,7 +36,7 @@ public class NewCarrierSetDialog extends EventBDialog {
 
 	private final String defaultPrefix;
 
-	private final Collection<String> namesResults;
+	private final List<String> namesResults;
 
 	private final List<IEventBInputText> namesTexts;
 
@@ -123,9 +124,20 @@ public class NewCarrierSetDialog extends EventBDialog {
 			toolkit.paintBordersFor(getBody());
 			updateSize();
 		} else if (buttonId == OK_ID) {
-			fillResult(namesTexts, namesResults);
+			if (!checkAndSetFieldValues()) {
+				return;
+			}
 		}
 		super.buttonPressed(buttonId);
+	}
+
+	private boolean checkAndSetFieldValues() {
+		fillResult(namesTexts, namesResults);
+		if (!checkNewIdentifiers(namesResults, true)) {
+			namesResults.clear();
+			return false;
+		}
+		return true;
 	}
 
 	/**

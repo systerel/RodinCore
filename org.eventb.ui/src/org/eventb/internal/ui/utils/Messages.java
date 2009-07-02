@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Systerel - added messages for UIUtils
  *     Systerel - replaced inherited by extended
  *     Systerel - added messages for Proof Simplification
+ *     Systerel - added messages for Dialogs
  *******************************************************************************/
 package org.eventb.internal.ui.utils;
 
@@ -146,6 +147,9 @@ public final class Messages {
 	public static String proofSimplification_noProofsToSimplify;
 	public static String proofSimplification_symplifyingProofs;
 	
+	// Dialogs
+	public static String dialogs_invalidIdentifiers;
+	public static String dialogs_duplicateNames;
 	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
