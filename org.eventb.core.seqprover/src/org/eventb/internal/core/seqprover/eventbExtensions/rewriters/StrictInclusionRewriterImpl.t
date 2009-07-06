@@ -13,6 +13,7 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 import java.math.BigInteger;
 
 import org.eventb.core.ast.*;
+import org.eventb.core.seqprover.ProverRule;
 
 /**
  * Basic manual rewriter for the Event-B sequent prover.
@@ -22,6 +23,7 @@ public class StrictInclusionRewriterImpl extends AutoRewriterImpl {
 
 	%include {FormulaV2.tom}
 	
+	@ProverRule("DEF_SUBSET")
 	@Override
 	public Predicate rewrite(RelationalPredicate predicate) {
 		Predicate newPredicate = super.rewrite(predicate);

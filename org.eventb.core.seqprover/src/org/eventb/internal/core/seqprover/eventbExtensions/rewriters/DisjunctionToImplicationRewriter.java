@@ -4,6 +4,7 @@ import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 public class DisjunctionToImplicationRewriter extends DefaultRewriter {
@@ -13,6 +14,7 @@ public class DisjunctionToImplicationRewriter extends DefaultRewriter {
 		super(autoFlattening, ff);
 	}
 
+	@ProverRule("DEF_OR")
 	@Override
 	public Predicate rewrite(AssociativePredicate predicate) {
 		if (Lib.isDisj(predicate))

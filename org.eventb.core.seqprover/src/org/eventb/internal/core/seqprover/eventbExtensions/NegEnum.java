@@ -21,6 +21,7 @@ import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
@@ -42,6 +43,7 @@ public class NegEnum extends MultiplePredInputReasoner implements IReasoner {
 		return REASONER_ID;
 	}
 
+	@ProverRule( { "NEG_IN_L", "NEG_IN_R" })
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
 		if (!(input instanceof MultiplePredInput)) {

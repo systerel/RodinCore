@@ -12,6 +12,7 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
@@ -28,6 +29,7 @@ public class FunOvr extends AbstractManualInference {
 	}
 
 	@Override
+	@ProverRule({"OV_L", "OV_R"})
 	protected IAntecedent[] getAntecedents(IProverSequent seq, Predicate pred,
 			IPosition position) {
 		Predicate predicate = pred;

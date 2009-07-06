@@ -14,6 +14,7 @@ import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
@@ -43,6 +44,7 @@ public class ExI implements IReasoner {
 		return new MultipleExprInput(reader, EXPRS_KEY);
 	}
 	
+	@ProverRule("EXISTS_INST")
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput, IProofMonitor pm){
 	
 		if (! Lib.isExQuant(seq.goal()))

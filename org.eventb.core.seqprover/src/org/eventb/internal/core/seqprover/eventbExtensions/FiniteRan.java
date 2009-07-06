@@ -10,6 +10,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
@@ -25,6 +26,7 @@ public class FiniteRan extends EmptyInputReasoner {
 		return REASONER_ID;
 	}
 
+	@ProverRule("FIN_REL_RAN_R")
 	protected IAntecedent[] getAntecedents(IProverSequent seq) {
 		Predicate goal = seq.goal();
 

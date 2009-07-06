@@ -4,6 +4,8 @@ import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.ProverRule;
+import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 public class ContImplRewriter extends DefaultRewriter {
 
@@ -12,8 +14,12 @@ public class ContImplRewriter extends DefaultRewriter {
 		super(autoFlattening, ff);
 	}
 
+	@ProverRule("DERIV_IMP")
 	@Override
 	public Predicate rewrite(BinaryPredicate predicate) {
+		if (!Lib.isImp(predicate)) {
+			return predicate;
+		}
 		Predicate P = predicate.getLeft();
 		Predicate Q = predicate.getRight();
 		FormulaFactory ff = FormulaFactory.getDefault();

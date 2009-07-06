@@ -44,6 +44,7 @@ import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 
@@ -123,6 +124,8 @@ public class CardComparison extends AbstractManualInference {
 		return "card. comparison";
 	}
 
+	@ProverRule( { "DERIV_EQUAL_CARD", "DERIV_LE_CARD", "DERIV_LT_CARD",
+			"DERIV_GE_CARD", "DERIV_GT_CARD" })
 	@Override
 	protected IAntecedent[] getAntecedents(IProverSequent seq, Predicate pred,
 			IPosition pos) {

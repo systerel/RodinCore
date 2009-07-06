@@ -40,7 +40,7 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.core.seqprover.ProverRule;
 
 /**
  * Basic automated rewriter for the Event-B sequent prover.
@@ -57,6 +57,7 @@ public class RanCompRewriterImpl extends DefaultRewriter {
 		
 	%include {FormulaV2.tom}
 	
+	@ProverRule( { "DERIV_FCOMP_RANRES", "DERIV_FCOMP_RANSUB" })
 	@Override
 	public Expression rewrite(AssociativeExpression expression) {
 		if (subExp.getTag() != Expression.RANRES &&

@@ -7,6 +7,7 @@ import java.util.Set;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
@@ -35,6 +36,7 @@ public class ModusTollens extends HypothesisReasoner {
 		return REASONER_ID;
 	}
 
+	@ProverRule("HM")
 	@Override
 	protected IAntecedent[] getAntecedents(IProverSequent sequent,
 			Predicate pred) throws IllegalArgumentException {

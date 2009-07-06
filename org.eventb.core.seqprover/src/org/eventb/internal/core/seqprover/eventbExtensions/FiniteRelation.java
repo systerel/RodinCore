@@ -12,6 +12,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
@@ -27,7 +28,8 @@ public class FiniteRelation extends SingleExprInputReasoner {
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
-
+	
+	@ProverRule("FIN_REL_R")
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
 		
@@ -77,7 +79,7 @@ public class FiniteRelation extends SingleExprInputReasoner {
 		Predicate newGoal1 = ff.makeSimplePredicate(Predicate.KFINITE, S, null);
 		antecidents[1] = ProverFactory.makeAntecedent(newGoal1);
 
-		// finite(S)
+		// finite(T)
 		Predicate newGoal2 = ff.makeSimplePredicate(Predicate.KFINITE, T, null);
 		antecidents[2] = ProverFactory.makeAntecedent(newGoal2);
 

@@ -40,7 +40,7 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.core.seqprover.ProverRule;
 
 /**
  * Basic automated rewriter for the Event-B sequent prover.
@@ -56,7 +56,8 @@ public class CompUnionDistRewriterImpl extends DefaultRewriter {
 	}
 		
 	%include {FormulaV2.tom}
-	
+
+	@ProverRule( { "DISTRI_FCOMP_BUNION_R", "DISTRI_FCOMP_BUNION_L" }) 
 	@Override
 	public Expression rewrite(AssociativeExpression expression) {
 	    %match (Expression expression) {
@@ -64,7 +65,7 @@ public class CompUnionDistRewriterImpl extends DefaultRewriter {
 			/**
 	    	 * Comp/Union distribution :
 	    	 * p; ... ;(q ∪ ... ∪ r); ... ; s ==  
-	    	 *       (p; ... ;q; ... ; s) ∪ ... ∪ (p; ... ;q; ... ; s)
+	    	 *       (p; ... ;q; ... ; s) ∪ ... ∪ (p; ... ;r; ... ; s)
 	    	 */
 			Fcomp(children) -> {
 				Collection<Expression> newChildren = new ArrayList<Expression>(

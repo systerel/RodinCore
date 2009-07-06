@@ -12,8 +12,6 @@
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -32,18 +30,15 @@ import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
-import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
-import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.core.seqprover.ProverRule;
 
 /**
  * Basic automated rewriter for the Event-B sequent prover.
@@ -57,6 +52,8 @@ public class RanDistLeftRewriterImpl extends DefaultRewriter {
 		
 	%include {FormulaV2.tom}
 	
+	@ProverRule( { "DISTRI_RANSUB_BUNION_L", "DISTRI_RANSUB_BINTER_L",
+			       "DISTRI_RANRES_BUNION_L", "DISTRI_RANRES_BINTER_L" })
 	@Override
 	public Expression rewrite(BinaryExpression expression) {
 	    %match (Expression expression) {

@@ -40,7 +40,7 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.core.seqprover.ProverRule;
 
 /**
  * Basic automated rewriter for the Event-B sequent prover.
@@ -54,6 +54,7 @@ public class RelImgUnionRightRewriterImpl extends DefaultRewriter {
 		
 	%include {FormulaV2.tom}
 	
+    @ProverRule("DISTRI_RELIMAGE_BUNION_R")
 	@Override
 	public Expression rewrite(BinaryExpression expression) {
 	    %match (Expression expression) {

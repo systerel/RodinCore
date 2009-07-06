@@ -8,6 +8,7 @@ import java.util.Collections;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
@@ -35,6 +36,7 @@ public final class ConjF extends ForwardInfReasoner {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.seqprover.reasonerInputs.ForwardInfReasoner#getForwardInf(org.eventb.core.seqprover.IProverSequent, org.eventb.core.ast.Predicate)
 	 */
+	@ProverRule("AND_L")
 	@Override
 	protected IForwardInfHypAction getForwardInf(IProverSequent sequent,
 			Predicate pred) throws IllegalArgumentException {

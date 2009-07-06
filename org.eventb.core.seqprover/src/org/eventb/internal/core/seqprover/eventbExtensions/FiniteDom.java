@@ -10,6 +10,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
@@ -24,11 +25,12 @@ public class FiniteDom extends EmptyInputReasoner {
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
-
+	
+	@ProverRule("FIN_REL_DOM_R")
 	protected IAntecedent[] getAntecedents(IProverSequent seq) {
 		Predicate goal = seq.goal();
 
-		// goal should have the form finite(ran(r))
+		// goal should have the form finite(dom(r))
 		if (!Lib.isFinite(goal))
 			return null;
 		SimplePredicate sPred = (SimplePredicate) goal;

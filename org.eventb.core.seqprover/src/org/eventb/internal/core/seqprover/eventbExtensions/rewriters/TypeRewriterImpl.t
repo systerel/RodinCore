@@ -38,6 +38,7 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
+import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 /**
@@ -52,6 +53,7 @@ public class TypeRewriterImpl extends DefaultRewriter {
 		
 	%include {FormulaV2.tom}
 	
+    @ProverRule( { "SIMP_TYPE_IN", "SIMP_TYPE_EQUAL_EMPTY" })
 	@Override
 	public Predicate rewrite(RelationalPredicate predicate) {
 	    %match (Predicate predicate) {

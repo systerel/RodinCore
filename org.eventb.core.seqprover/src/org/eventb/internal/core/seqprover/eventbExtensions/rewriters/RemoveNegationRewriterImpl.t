@@ -21,10 +21,8 @@ import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
-import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.IntegerLiteral;
@@ -38,7 +36,7 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.core.seqprover.ProverRule;
 
 /**
  * Basic manual rewriter for the Event-B sequent prover.
@@ -52,6 +50,8 @@ public class RemoveNegationRewriterImpl extends AutoRewriterImpl {
 
 	%include {FormulaV2.tom}
 	
+	@ProverRule( { "DEF_SPECIAL_NOT_EQUAL", "DISTRI_NOT_AND", "DISTRI_NOT_OR",
+			       "DERIV_NOT_IMP", "DERIV_NOT_FORALL", "DERIV_NOT_EXISTS" })
 	@Override
 	public Predicate rewrite(UnaryPredicate predicate) {
 		Predicate newPredicate = super.rewrite(predicate);
@@ -61,6 +61,7 @@ public class RemoveNegationRewriterImpl extends AutoRewriterImpl {
 	    %match (Predicate predicate) {
 
 			/**
+			 * DEF_SPECIAL_NOT_EQUAL
 			 * Negation: ¬(S = ∅) == ∃x·x ∈ S
 			 */
 			Not(Equal(S, EmptySet())) -> {
@@ -68,6 +69,7 @@ public class RemoveNegationRewriterImpl extends AutoRewriterImpl {
 			}
 			
 			/**
+			 * DEF_SPECIAL_NOT_EQUAL
 			 * Negation: ¬(∅ = S) == ∃x·x ∈ S
 			 */
 			Not(Equal(EmptySet(), S)) -> {
@@ -75,6 +77,7 @@ public class RemoveNegationRewriterImpl extends AutoRewriterImpl {
 			}
 			
 			/**
+			 * DISTRI_NOT_AND
 			 * Negation: ¬(P ∧ ... ∧ Q) == ¬P ⋁ ... ⋁ ¬Q
 			 */
 			Not(Land(children)) -> {
@@ -82,6 +85,7 @@ public class RemoveNegationRewriterImpl extends AutoRewriterImpl {
 			}
 			
 			/**
+			 * DISTRI_NOT_OR
 			 * Negation: ¬(P ⋁ ... ⋁ Q) == ¬P ∧ ... ∧ ¬Q
 			 */
 			Not(Lor(children)) -> {
@@ -89,6 +93,7 @@ public class RemoveNegationRewriterImpl extends AutoRewriterImpl {
 			}
 			
 			/**
+			 * DERIV_NOT_IMP
 			 * Negation: ¬(P ⇒ Q) == P ∧ ¬Q
 			 */
 			Not(Limp(P, Q)) -> {
@@ -96,6 +101,7 @@ public class RemoveNegationRewriterImpl extends AutoRewriterImpl {
 			}
 			
 			/**
+			 * DERIV_NOT_FORALL
 			 * Negation: ¬(∀x·P) == ∃x·¬P
 			 */
 			Not(ForAll(idents, P)) -> {
@@ -103,6 +109,7 @@ public class RemoveNegationRewriterImpl extends AutoRewriterImpl {
 			}
 			
 			/**
+			 * DERIV_NOT_EXISTS
 			 * Negation: ¬(∃x·P) == ∀x·¬P
 			 */
 			Not(Exists(idents, P)) -> {

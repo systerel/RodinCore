@@ -7,6 +7,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 
@@ -35,6 +36,7 @@ public class Conj extends AbstractRewriter {
 		return ProverFactory.makeHideHypAction(Arrays.asList(pred));
 	}
 
+	@ProverRule({"AND_L", "AND_R"})
 	@Override
 	protected Predicate[] rewrite(Predicate pred) {
 		// TODO optimize for duplicate sub-formulas

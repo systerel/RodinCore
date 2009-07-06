@@ -22,6 +22,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 
 /**
@@ -55,6 +56,7 @@ public final class ProverSequent implements IInternalProverSequent{
 	 * 
 	 * Chosen to be LinkedHashSets to preserve their order.
 	 */
+	@ProverRule("DBL_HYP")
 	private final LinkedHashSet<Predicate> globalHypotheses;
 	private final LinkedHashSet<Predicate> localHypotheses;
 	

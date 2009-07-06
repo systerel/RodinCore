@@ -12,7 +12,6 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import java.math.BigInteger;
-import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -22,33 +21,26 @@ import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
-import org.eventb.core.ast.DefaultFilter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.IntegerLiteral;
-import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
-import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
-import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
-import org.eventb.core.seqprover.eventbExtensions.Tactics;
 
 /**
  * Basic implementation for Function Converse inference rule f~(f(E))
@@ -83,6 +75,7 @@ public class FunInterImg extends AbstractManualInference {
 	}
 
 	@Override
+	@ProverRule( { "DIS_BINTER_L", "DIS_BINTER_R" })
 	protected IAntecedent[] getAntecedents(IProverSequent seq, Predicate pred,
 			IPosition position) {
 		Predicate predicate = pred;

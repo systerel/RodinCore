@@ -12,6 +12,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
@@ -38,6 +39,7 @@ public class ExF extends ForwardInfReasoner {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.seqprover.reasonerInputs.ForwardInfReasoner#getForwardInf(org.eventb.core.seqprover.IProverSequent, org.eventb.core.ast.Predicate)
 	 */
+	@ProverRule("XST_L") 
 	@Override
 	protected IForwardInfHypAction getForwardInf(IProverSequent sequent,
 			Predicate pred) throws IllegalArgumentException {

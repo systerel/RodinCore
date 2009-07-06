@@ -38,6 +38,7 @@ import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.expanders.Expanders;
+import org.eventb.core.seqprover.ProverRule;
 
 /**
  * Automated rewriter for the Event-B sequent prover: expand the definition of
@@ -52,6 +53,7 @@ public class PartitionRewriterImpl extends DefaultRewriter {
 		
 	%include {FormulaV2.tom}
 	
+	@ProverRule("DEF_PARTITION")
 	@Override
 	public Predicate rewrite(MultiplePredicate predicate) {
 	    %match (Predicate predicate) {

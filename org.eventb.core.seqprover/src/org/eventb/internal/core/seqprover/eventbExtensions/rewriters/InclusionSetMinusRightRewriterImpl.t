@@ -21,10 +21,8 @@ import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
-import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.IntegerLiteral;
@@ -38,7 +36,7 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.core.seqprover.ProverRule;
 
 /**
  * Basic manual rewriter for the Event-B sequent prover.
@@ -51,7 +49,8 @@ public class InclusionSetMinusRightRewriterImpl extends AutoRewriterImpl {
 	}
 
 	%include {FormulaV2.tom}
-	
+
+    @ProverRule("DERIV_SUBSETEQ_SETMINUS_R")	
 	@Override
 	public Predicate rewrite(RelationalPredicate predicate) {
 

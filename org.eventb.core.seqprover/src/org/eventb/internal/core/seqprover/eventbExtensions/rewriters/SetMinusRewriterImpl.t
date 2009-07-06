@@ -34,16 +34,14 @@ import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
-import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.core.seqprover.ProverRule;
 
 /**
  * Basic automated rewriter for the Event-B sequent prover.
@@ -57,6 +55,8 @@ public class SetMinusRewriterImpl extends DefaultRewriter {
 		
 	%include {FormulaV2.tom}
 	
+    @ProverRule( { "DERIV_TYPE_SETMINUS_BINTER", "DERIV_TYPE_SETMINUS_BUNION",
+       	           "DERIV_TYPE_SETMINUS_SETMINUS" })
 	@Override
 	public Expression rewrite(BinaryExpression expression) {
 	    %match (Expression expression) {
