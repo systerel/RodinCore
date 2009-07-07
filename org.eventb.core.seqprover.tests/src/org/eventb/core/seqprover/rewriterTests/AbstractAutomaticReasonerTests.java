@@ -18,7 +18,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractAut
  */
 public abstract class AbstractAutomaticReasonerTests extends AbstractReasonerTests {
 
-	class SuccessfulTest {
+	public class SuccessfulTest {
 		String sequenceImage;
 		String [] results;
 		public SuccessfulTest(String sequenceImage, String... results) {
