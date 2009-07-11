@@ -23,7 +23,7 @@ public class Pair<S extends Object, T extends Object> {
 	public boolean equals(Object obj) {
 		if (obj == null)
 			return this == null;
-		if (obj instanceof Pair) {
+		if (obj instanceof Pair<?, ?>) {
 			Pair<?, ?> pair = (Pair<?, ?>) obj;
 			return pair.getFirst().equals(obj1)
 					&& pair.getSecond().equals(obj2);

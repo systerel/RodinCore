@@ -129,7 +129,7 @@ public abstract class SymbolInfo<E extends IInternalElement, T extends IInternal
 
 	@Override
 	public final boolean equals(Object obj) {
-		return obj instanceof SymbolInfo
+		return obj instanceof SymbolInfo<?, ?, ?>
 				&& symbol.equals(((SymbolInfo<?, ?, ?>) obj).getSymbol());
 	}
 

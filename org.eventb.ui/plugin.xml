@@ -846,7 +846,7 @@
          <propertyTab
                category="eventB"
                id="org.eventb.ui.basicTab"
-               label="Basic"/>
+               label="%propertyTab.machine.label"/>
       </propertyTabs>
    </extension>
    <extension
@@ -855,7 +855,7 @@
          <propertyTab
                category="eventB"
                id="org.eventb.ui.basicTab"
-               label="Basic"/>
+               label="%propertyTab.context.label"/>
       </propertyTabs>
    </extension>
    <extension

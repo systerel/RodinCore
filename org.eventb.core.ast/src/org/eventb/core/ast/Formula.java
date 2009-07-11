@@ -1113,7 +1113,7 @@ public abstract class Formula<T extends Formula<T>> {
 		if (this == obj) {
 			return true;
 		}
-		if (! (obj instanceof Formula)) {
+		if (! (obj instanceof Formula<?>)) {
 			return false;
 		}
 		Formula<?> otherFormula = (Formula<?>) obj;
@@ -1141,7 +1141,7 @@ public abstract class Formula<T extends Formula<T>> {
 		if (this == obj) { 
 			return true;
 		}
-		if (! (obj instanceof Formula)) {
+		if (! (obj instanceof Formula<?>)) {
 			return false;
 		}
 		Formula<?> otherFormula = (Formula<?>) obj;

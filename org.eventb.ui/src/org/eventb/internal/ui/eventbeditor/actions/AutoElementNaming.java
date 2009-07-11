@@ -37,7 +37,7 @@ public abstract class AutoElementNaming implements IEditorActionDelegate {
 	}
 
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
-		if (targetEditor instanceof IEventBEditor)
+		if (targetEditor instanceof IEventBEditor<?>)
 			editor = (IEventBEditor<?>) targetEditor;
 	}
 

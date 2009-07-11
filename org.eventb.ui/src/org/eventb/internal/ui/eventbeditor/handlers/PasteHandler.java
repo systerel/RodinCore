@@ -118,7 +118,7 @@ public class PasteHandler extends AbstractHandler implements IHandler {
 	 * */
 	private IInternalElement getRodinInput() {
 		IEditorPart editor = EventBUIPlugin.getActivePage().getActiveEditor();
-		if (editor instanceof IEventBEditor) {
+		if (editor instanceof IEventBEditor<?>) {
 			return ((IEventBEditor<?>) editor).getRodinInput();
 		} else {
 			return null;
