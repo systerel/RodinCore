@@ -10,8 +10,16 @@
  *******************************************************************************/
 package org.eventb.core.tests.indexers;
 
-import static org.eventb.core.EventBAttributes.*;
-import static org.eventb.core.EventBPlugin.*;
+import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.EXPRESSION_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
+import static org.eventb.core.EventBPlugin.DECLARATION;
+import static org.eventb.core.EventBPlugin.MODIFICATION;
+import static org.eventb.core.EventBPlugin.REDECLARATION;
+import static org.eventb.core.EventBPlugin.REFERENCE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +56,12 @@ public class OccUtils {
 		return makeDecl(declaration, label, LABEL_ATTRIBUTE);
 	}
 
+	public static IOccurrence makeSelfDecl(IDeclaration decl) {
+		final IInternalLocation loc = RodinCore.getInternalLocation(decl
+				.getElement());
+		return newOcc(DECLARATION, loc, decl);
+	}
+	
 	private static IOccurrence makeDecl(IDeclaration declaration,
 			IInternalElement element, IAttributeType.String attribute) {
 		if (!element.equals(declaration.getElement())) {
@@ -121,6 +135,11 @@ public class OccUtils {
 	public static IOccurrence makeRefLabel(ILabeledElement label,
 			IDeclaration declaration) {
 		return makeRef(label, LABEL_ATTRIBUTE, declaration);
+	}
+
+	public static IOccurrence makeRefTarget(IInternalElement targetElement,
+			IDeclaration declaration) {
+		return makeRef(targetElement, TARGET_ATTRIBUTE, declaration);
 	}
 
 	public static IOccurrence makeRedeclIdent(IIdentifierElement ident,

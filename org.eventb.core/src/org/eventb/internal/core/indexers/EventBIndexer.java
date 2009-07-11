@@ -11,15 +11,18 @@
 package org.eventb.internal.core.indexers;
 
 import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
-import static org.eventb.core.EventBPlugin.*;
+import static org.eventb.core.EventBPlugin.DECLARATION;
+import static org.eventb.core.EventBPlugin.REDECLARATION;
 import static org.rodinp.core.RodinCore.getInternalLocation;
 
 import java.util.concurrent.CancellationException;
 
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.IPredicateElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IIndexer;
@@ -86,6 +89,16 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 	protected abstract IRodinFile[] getDeps(IInternalElement root)
 			throws RodinDBException;
 
+	protected IDeclaration indexAndExportRoot(IEventBRoot root) {
+		final IDeclaration rootDecl = currentBridge.declare(root, root
+				.getElementName());
+		currentBridge.addOccurrence(rootDecl, DECLARATION, RodinCore
+				.getInternalLocation(root));
+		currentBridge.export(rootDecl);
+
+		return rootDecl;
+	}
+	
 	// the identifier must be checked non empty before calling this method
 	protected IDeclaration indexDeclaration(IIdentifierElement ident,
 			String identifier) {

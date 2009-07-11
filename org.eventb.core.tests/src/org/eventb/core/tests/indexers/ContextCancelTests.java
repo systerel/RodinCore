@@ -67,8 +67,8 @@ public class ContextCancelTests extends EventBIndexerTests {
 
 		indexer.index(tk);
 
-		tk.assertNumDecl(0);
-		tk.assertNumOcc(0);
+		tk.assertNumDecl(1); // root declaration
+		tk.assertNumOcc(1); // root occurrence
 	}
 
 	public void testCancelAfterDecl() throws Exception {

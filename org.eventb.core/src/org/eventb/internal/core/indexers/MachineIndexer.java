@@ -11,7 +11,6 @@
 package org.eventb.internal.core.indexers;
 
 import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
-import static org.eventb.core.EventBPlugin.getContextFileName;
 import static org.rodinp.core.RodinCore.getInternalLocation;
 
 import java.util.ArrayList;
@@ -20,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eventb.core.IEvent;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IExpressionElement;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.IMachineRoot;
@@ -30,7 +30,6 @@ import org.eventb.core.IVariable;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.indexer.IDeclaration;
 
@@ -42,6 +41,48 @@ public class MachineIndexer extends EventBIndexer {
 
 	private static final String ID = "fr.systerel.eventb.indexer.machine";
 
+	private static final DependenceIndexer<ISeesContext> seesIndexer = new DependenceIndexer<ISeesContext>() {
+
+		@Override
+		protected boolean hasName(ISeesContext clause) throws RodinDBException {
+			return clause.hasSeenContextName();
+		}
+
+		@Override
+		protected String getName(ISeesContext clause) throws RodinDBException {
+			return clause.getSeenContextName();
+		}
+
+		@Override
+		protected IEventBRoot getRoot(ISeesContext clause)
+				throws RodinDBException {
+			return clause.getSeenContextRoot();
+		}
+
+	};
+
+	private static DependenceIndexer<IRefinesMachine> refinesIndexer = new DependenceIndexer<IRefinesMachine>() {
+
+		@Override
+		protected boolean hasName(IRefinesMachine clause)
+				throws RodinDBException {
+			return clause.hasAbstractMachineName();
+		}
+
+		@Override
+		protected String getName(IRefinesMachine clause)
+				throws RodinDBException {
+			return clause.getAbstractMachineName();
+		}
+
+		@Override
+		protected IEventBRoot getRoot(IRefinesMachine clause)
+				throws RodinDBException {
+			return clause.getAbstractMachineRoot();
+		}
+
+	};
+
 	@Override
 	protected void index(IInternalElement root) throws RodinDBException {
 		if (!(root instanceof IMachineRoot)) {
@@ -52,7 +93,14 @@ public class MachineIndexer extends EventBIndexer {
 
 	private void index(IMachineRoot root) throws RodinDBException {
 		checkCancel();
+		
+		indexAndExportRoot(root);
+		checkCancel();
 
+		processSees(root.getSeesClauses());
+		processRefines(root.getRefinesClauses());
+		checkCancel();
+		
 		final SymbolTable importST = new SymbolTable(null);
 		final SymbolTable eventST = new SymbolTable(null);
 		final Map<IEvent, SymbolTable> absParamTables =
@@ -71,6 +119,16 @@ public class MachineIndexer extends EventBIndexer {
 		checkCancel();
 
 		processEvents(root.getEvents(), absParamTables, eventST, declImportST);
+	}
+
+	private void processSees(ISeesContext[] seesClauses)
+			throws RodinDBException {
+		seesIndexer.process(currentBridge, seesClauses);
+	}
+
+	private void processRefines(IRefinesMachine[] refinesClauses)
+			throws RodinDBException {
+		refinesIndexer.process(currentBridge, refinesClauses);
 	}
 
 	private void processImports(IDeclaration[] imports,
@@ -170,61 +228,14 @@ public class MachineIndexer extends EventBIndexer {
 
 		final IRefinesMachine[] refines = machine.getRefinesClauses();
 		final ISeesContext[] sees = machine.getSeesClauses();
+		
+		final List<IRodinFile> refined = refinesIndexer.getDeps(refines);
+		final List<IRodinFile> seen = seesIndexer.getDeps(sees);
 
-		addRefinedFiles(refines, dependFiles);
-		addSeenFiles(sees, dependFiles);
+		dependFiles.addAll(refined);
+		dependFiles.addAll(seen);
 
 		return dependFiles.toArray(new IRodinFile[dependFiles.size()]);
-	}
-
-	/**
-	 * @param sees
-	 * @param extendedFiles
-	 * @throws RodinDBException
-	 */
-	private void addSeenFiles(ISeesContext[] sees,
-			List<IRodinFile> extendedFiles) throws RodinDBException {
-		for (ISeesContext seesContext : sees) {
-			final IRodinFile seenFile = getSeenFile(seesContext);
-			if (seenFile != null) {
-				extendedFiles.add(seenFile);
-			}
-		}
-
-	}
-
-	/**
-	 * @param seesContext
-	 * @throws RodinDBException
-	 */
-	private IRodinFile getSeenFile(ISeesContext seesContext)
-			throws RodinDBException {
-		if (!seesContext.hasSeenContextName()) {
-			return null;
-		}
-
-		final String seenBareName = seesContext.getSeenContextName();
-		final String seenFileName = getContextFileName(seenBareName);
-
-		final IRodinProject project = seesContext.getRodinProject();
-
-		return project.getRodinFile(seenFileName);
-	}
-
-	/**
-	 * @param refines
-	 * @param extendedFiles
-	 * @throws RodinDBException
-	 */
-	private void addRefinedFiles(IRefinesMachine[] refines,
-			List<IRodinFile> extendedFiles) throws RodinDBException {
-		for (IRefinesMachine refinesMachine : refines) {
-			if (refinesMachine.hasAbstractMachineName()) {
-				final IRodinFile absMachine =
-						refinesMachine.getAbstractMachine();
-				extendedFiles.add(absMachine);
-			}
-		}
 	}
 
 	public String getId() {

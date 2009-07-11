@@ -23,6 +23,8 @@ import static org.eventb.core.tests.indexers.OccUtils.makeRefAssign;
 import static org.eventb.core.tests.indexers.OccUtils.makeRefExpr;
 import static org.eventb.core.tests.indexers.OccUtils.makeRefLabel;
 import static org.eventb.core.tests.indexers.OccUtils.makeRefPred;
+import static org.eventb.core.tests.indexers.OccUtils.makeRefTarget;
+import static org.eventb.core.tests.indexers.OccUtils.makeSelfDecl;
 import static org.eventb.core.tests.indexers.OccUtils.newDecl;
 
 import org.eventb.core.IAction;
@@ -35,6 +37,8 @@ import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
+import org.eventb.core.IRefinesMachine;
+import org.eventb.core.ISeesContext;
 import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
@@ -78,7 +82,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		assertTrue(indexer.index(tk));
 
-		tk.assertDeclarations(declVar1);
+		tk.assertDeclarationsOtherThanRoot(declVar1);
 	}
 
 	public void testNoDeclarationEmptyName() throws Exception {
@@ -112,7 +116,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		assertTrue(indexer.index(tk));
 
-		tk.assertDeclarations();
+		tk.assertDeclarationsOtherThanRoot();
 	}
 	
 	/**
@@ -211,7 +215,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		assertTrue(indexer.index(tk));
 
-		tk.assertExports(declVar1);
+		tk.assertExportsOtherThanRoot(declVar1);
 	}
 
 	/**
@@ -234,7 +238,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		assertTrue(indexer.index(tk));
 
-		tk.assertEmptyExports();
+		tk.assertExportsOtherThanRoot();
 	}
 
 	private static final String CST_1DECL_SET_1DECL =
@@ -269,7 +273,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		assertTrue(indexer.index(tk));
 
-		tk.assertExports(declSet1, declCst1);
+		tk.assertExportsOtherThanRoot(declSet1, declCst1);
 	}
 
 	private static final String VAR_1REF_INV =
@@ -505,9 +509,9 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 		assertTrue(indexer.index(tk));
 
-		tk.assertDeclarations(declEvt1);
+		tk.assertDeclarationsOtherThanRoot(declEvt1);
 		tk.assertOccurrences(event, occEventDecl);
-		tk.assertExports(declEvt1);
+		tk.assertExportsOtherThanRoot(declEvt1);
 	}
 
 	public void testEventRedeclaration() throws Exception {
@@ -1336,6 +1340,81 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrencesOtherThanDecl(var1, occAssignVar1, occRefVar1);
 		tk.assertOccurrencesOtherThanDecl(var2, occRefVar2);
 
+	}
+	
+	public void testIndexRoot() throws Exception {
+		final IMachineRoot machine = ResourceUtils.createMachine(rodinProject,
+				MCH_BARE_NAME, EMPTY_MACHINE);
+
+		final IDeclaration declRoot = newDecl(machine, MCH_BARE_NAME);
+		final IOccurrence occRoot = makeSelfDecl(declRoot);
+
+		final BridgeStub bridge = new BridgeStub(machine);
+
+		final MachineIndexer indexer = new MachineIndexer();
+
+		assertTrue(indexer.index(bridge));
+
+		bridge.assertDeclarations(declRoot);
+		bridge.assertOccurrences(machine, occRoot);
+	}
+	
+	public void testRefSees() throws Exception {
+		final String c1Name = "c1";
+		final IContextRoot seenRoot = createContext(c1Name);
+
+		final IDeclaration declSeenRoot = newDecl(seenRoot, c1Name);
+
+		final String SEES_CONTEXT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
+				+ "		<org.eventb.core.seesContext"
+				+ "   		name=\"internal_element1\""
+				+ "			org.eventb.core.target=\"" + c1Name	+ "\"/>"
+				+ "</org.eventb.core.machineFile>";
+
+		final IMachineRoot seeing = ResourceUtils.createMachine(rodinProject,
+				"seeing", SEES_CONTEXT);
+
+		final ISeesContext seesClause = seeing.getSeesClause(INTERNAL_ELEMENT1);
+		final IOccurrence occSeenRoot = makeRefTarget(seesClause, declSeenRoot);
+
+		final BridgeStub tk = new BridgeStub(seeing, declSeenRoot);
+
+		final MachineIndexer indexer = new MachineIndexer();
+
+		assertTrue(indexer.index(tk));
+
+		tk.assertOccurrences(declSeenRoot.getElement(), occSeenRoot);
+	}
+
+	public void testRefRefines() throws Exception {
+		final String m1Name = "m1";
+		final IMachineRoot refinedRoot = createMachine(m1Name);
+
+		final IDeclaration declRefinedRoot = newDecl(refinedRoot, m1Name);
+
+		final String REFINES_MACHINE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
+				+ "		<org.eventb.core.refinesMachine"
+				+ "  		name=\"internal_element1\""
+				+ "			org.eventb.core.target=\"" + m1Name + "\"/>"
+				+ "</org.eventb.core.machineFile>";
+
+		final IMachineRoot refinining = ResourceUtils.createMachine(
+				rodinProject, "seeing", REFINES_MACHINE);
+
+		final IRefinesMachine refinesClause = refinining
+				.getRefinesClause(INTERNAL_ELEMENT1);
+		final IOccurrence occRefinedRoot = makeRefTarget(refinesClause,
+				declRefinedRoot);
+
+		final BridgeStub tk = new BridgeStub(refinining, declRefinedRoot);
+
+		final MachineIndexer indexer = new MachineIndexer();
+
+		assertTrue(indexer.index(tk));
+
+		tk.assertOccurrences(declRefinedRoot.getElement(), occRefinedRoot);
 	}
 
 }

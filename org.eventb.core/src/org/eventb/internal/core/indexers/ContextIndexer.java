@@ -10,17 +10,14 @@
  *******************************************************************************/
 package org.eventb.internal.core.indexers;
 
-import static org.eventb.core.EventBPlugin.getContextFileName;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eventb.core.IContextRoot;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.IIdentifierElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.indexer.IDeclaration;
 
@@ -32,6 +29,27 @@ public class ContextIndexer extends EventBIndexer {
 
 	private static final String ID = "fr.systerel.eventb.indexer.context";
 
+	private static DependenceIndexer<IExtendsContext> extendsIndexer = new DependenceIndexer<IExtendsContext>() {
+
+		@Override
+		protected boolean hasName(IExtendsContext clause)
+				throws RodinDBException {
+			return clause.hasAbstractContextName();
+		}
+
+		@Override
+		protected String getName(IExtendsContext clause)
+				throws RodinDBException {
+			return clause.getAbstractContextName();
+		}
+
+		@Override
+		protected IEventBRoot getRoot(IExtendsContext clause)
+				throws RodinDBException {
+			return clause.getAbstractContextRoot();
+		}
+	};
+
 	@Override
 	protected void index(IInternalElement root) throws RodinDBException {
 		if (!(root instanceof IContextRoot)) {
@@ -41,6 +59,12 @@ public class ContextIndexer extends EventBIndexer {
 	}
 
 	private void index(IContextRoot root) throws RodinDBException {
+		checkCancel();
+		
+		indexAndExportRoot(root);
+		checkCancel();
+		
+		processExtends(root.getExtendsClauses());
 		checkCancel();
 
 		final SymbolTable importST = new SymbolTable(null);
@@ -54,6 +78,11 @@ public class ContextIndexer extends EventBIndexer {
 		checkCancel();
 
 		processPredicateElements(root.getAxioms(), totalST);
+	}
+
+	private void processExtends(IExtendsContext[] extendsClauses)
+			throws RodinDBException {
+		extendsIndexer.process(currentBridge, extendsClauses);
 	}
 
 	private void processImports(IDeclaration[] imports, SymbolTable importST) {
@@ -82,38 +111,10 @@ public class ContextIndexer extends EventBIndexer {
 		}
 		final IContextRoot context = (IContextRoot) root;
 
-		final List<IRodinFile> extFiles = new ArrayList<IRodinFile>();
-
 		final IExtendsContext[] extendsClauses = context.getExtendsClauses();
+		final List<IRodinFile> deps = extendsIndexer.getDeps(extendsClauses);
 
-		addExtendedFiles(extendsClauses, extFiles);
-
-		return extFiles.toArray(new IRodinFile[extFiles.size()]);
-	}
-
-	private void addExtendedFiles(IExtendsContext[] extendsClauses,
-			List<IRodinFile> extendedFiles) throws RodinDBException {
-
-		for (IExtendsContext extendsContext : extendsClauses) {
-			final IRodinFile extended = getExtendedFile(extendsContext);
-			if (extended != null) {
-				extendedFiles.add(extended);
-			}
-		}
-	}
-
-	private IRodinFile getExtendedFile(IExtendsContext extendsContext)
-			throws RodinDBException {
-		if (!extendsContext.hasAbstractContextName()) {
-			return null;
-		}
-
-		final String extBareName = extendsContext.getAbstractContextName();
-		final String extFileName = getContextFileName(extBareName);
-
-		final IRodinProject project = extendsContext.getRodinProject();
-
-		return project.getRodinFile(extFileName);
+		return deps.toArray(new IRodinFile[deps.size()]);
 	}
 
 	public String getId() {

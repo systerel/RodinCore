@@ -11,7 +11,6 @@
 package org.eventb.core.tests.indexers;
 
 import static org.eventb.core.EventBPlugin.DECLARATION;
-import static org.eventb.core.tests.ResourceUtils.EMPTY_DECL;
 import static org.eventb.core.tests.indexers.ListAssert.assertSameElements;
 import static org.eventb.core.tests.indexers.OccUtils.newDecl;
 import static org.eventb.core.tests.indexers.OccUtils.newOcc;
@@ -19,6 +18,7 @@ import static org.eventb.core.tests.indexers.OccUtils.newOcc;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -102,6 +102,20 @@ public class BridgeStub implements IIndexingBridge {
 		final List<IDeclaration> expList = Arrays.asList(expected);
 		assertSameElements(expList, declarations, "declarations");
 	}
+	
+	public void assertDeclarationsOtherThanRoot(IDeclaration... expected) {
+		removeRootDeclaration(declarations);
+		assertDeclarations(expected);
+	}
+
+	private void removeRootDeclaration(List<IDeclaration> decls) {
+		final Iterator<IDeclaration> iter = decls.iterator();
+		while(iter.hasNext()) {
+			if (iter.next().getElement().equals(root)) {
+				iter.remove();
+			}
+		}
+	}
 
 	public void assertDeclarations(IElementType<?> elementType,
 			IDeclaration... expected) {
@@ -120,8 +134,9 @@ public class BridgeStub implements IIndexingBridge {
 		assertSameElements(expList, exports, "exports");
 	}
 
-	public void assertEmptyExports() {
-		assertSameElements(EMPTY_DECL, exports, "exports");
+	public void assertExportsOtherThanRoot(IDeclaration... expected) {
+		removeRootDeclaration(exports);
+		assertExports(expected);
 	}
 
 	public void assertExports(IElementType<?> elementType,

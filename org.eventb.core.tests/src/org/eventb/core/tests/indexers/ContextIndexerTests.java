@@ -15,12 +15,15 @@ import static org.eventb.core.tests.ResourceUtils.INTERNAL_ELEMENT1;
 import static org.eventb.core.tests.ResourceUtils.MCH_BARE_NAME;
 import static org.eventb.core.tests.indexers.OccUtils.makeDecl;
 import static org.eventb.core.tests.indexers.OccUtils.makeRefPred;
+import static org.eventb.core.tests.indexers.OccUtils.makeRefTarget;
+import static org.eventb.core.tests.indexers.OccUtils.makeSelfDecl;
 import static org.eventb.core.tests.indexers.OccUtils.newDecl;
 
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextRoot;
+import org.eventb.core.IExtendsContext;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.tests.ResourceUtils;
 import org.eventb.internal.core.indexers.ContextIndexer;
@@ -72,7 +75,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 		assertTrue(indexer.index(tk));
 
-		tk.assertDeclarations(declCst1);
+		tk.assertDeclarationsOtherThanRoot(declCst1);
 	}
 
 	public void testNoDeclarationEmptyName() throws Exception {
@@ -93,7 +96,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 		assertTrue(indexer.index(tk));
 
-		tk.assertDeclarations();
+		tk.assertDeclarationsOtherThanRoot();
 	}
 
 	/**
@@ -197,7 +200,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 		assertTrue(indexer.index(tk));
 
-		tk.assertExports(declCst1);
+		tk.assertExportsOtherThanRoot(declCst1);
 	}
 
 	/**
@@ -220,7 +223,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 		assertTrue(indexer.index(tk));
 
-		tk.assertExports(declCst1);
+		tk.assertExportsOtherThanRoot(declCst1);
 	}
 
 	private static final String CST_1REF_AXM =
@@ -340,7 +343,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 
 		assertTrue(indexer.index(tk));
 
-		tk.assertDeclarations(declSet1);
+		tk.assertDeclarationsOtherThanRoot(declSet1);
 	}
 
 	/**
@@ -472,4 +475,74 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		// true because the axiom that did not parse was ignored
 	}
 
+	public void testRootDeclaration() throws Exception {
+		final IContextRoot context = ResourceUtils.createContext(rodinProject,
+				CTX_BARE_NAME, EMPTY_CONTEXT);
+
+		final IDeclaration declRoot = newDecl(context, CTX_BARE_NAME);
+		final IOccurrence occRoot = makeSelfDecl(declRoot);
+
+		final BridgeStub bridge = new BridgeStub(context);
+
+		final ContextIndexer indexer = new ContextIndexer();
+
+		assertTrue(indexer.index(bridge));
+
+		bridge.assertDeclarations(declRoot);
+		bridge.assertOccurrences(context, occRoot);
+	}
+	
+	public void testRefExtends() throws Exception {
+		final String c1Name = "c1";
+		final IContextRoot extRoot = createContext(c1Name);
+
+		final IDeclaration declC1Root = newDecl(extRoot, c1Name);
+
+		final String EXTENDS_CONTEXT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+				+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
+				+ "		<org.eventb.core.extendsContext"
+				+ "			name=\"internal_element1\""
+				+ "			org.eventb.core.target=\"" + c1Name + "\"/>"
+				+ "</org.eventb.core.contextFile>";
+		
+		final IContextRoot extending = ResourceUtils.createContext(
+				rodinProject, "extending", EXTENDS_CONTEXT);
+
+		final IExtendsContext extendsClause = extending.getExtendsClause(INTERNAL_ELEMENT1);
+		final IOccurrence occC1Root = makeRefTarget(extendsClause, declC1Root);
+
+		final BridgeStub tk = new BridgeStub(extending, declC1Root);
+
+		final ContextIndexer indexer = new ContextIndexer();
+
+		assertTrue(indexer.index(tk));
+
+		tk.assertOccurrences(declC1Root.getElement(), occC1Root);
+	}
+
+	// Verify that root name does not introduce conflicts in symbol table
+	public void testRootCstSameName() throws Exception {
+		final IContextRoot context = ResourceUtils.createContext(rodinProject,
+				CST1, CST_1DECL_1REF_THM);
+		final IDeclaration declCtxRoot = newDecl(context, CST1);
+		final IOccurrence occCtxRoot = makeSelfDecl(declCtxRoot);
+
+		final IConstant cst1 = context.getConstant(INTERNAL_ELEMENT1);
+		final IDeclaration declCst1 = newDecl(cst1, CST1);
+		final IOccurrence occDeclCst1 = makeDecl(cst1, declCst1);
+
+		final IAxiom thm = context.getAxiom(INTERNAL_ELEMENT1);
+		final IOccurrence occRef = makeRefPred(thm, 9, 13, declCst1);
+
+		final BridgeStub tk = new BridgeStub(context);
+
+		final ContextIndexer indexer = new ContextIndexer();
+
+		assertTrue(indexer.index(tk));
+
+		tk.assertDeclarations(declCtxRoot, declCst1);
+		tk.assertOccurrences(context, occCtxRoot);
+		tk.assertOccurrences(cst1, occDeclCst1, occRef);
+
+	}
 }
