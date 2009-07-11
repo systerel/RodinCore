@@ -56,7 +56,7 @@ public class NameTableUsageTests extends IndexTests {
 		Set<IDeclaration> actualElements = manager.getDeclarations(rodinFile
 				.getRodinProject(), name);
 
-		if (DEBUG && message != null) {
+		if (DEBUG) {
 			System.out.println(getName() + ": " + message);
 		}
 		assertSameElements(expectedElements, actualElements, "declarations");
