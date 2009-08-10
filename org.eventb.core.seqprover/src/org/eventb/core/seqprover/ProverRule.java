@@ -28,7 +28,7 @@ import java.lang.annotation.RetentionPolicy;
  *    ...
  * }
  * 
- * @ProverRule( { "TRUE_GOAL", "SIMPLIFY_NOTEQUAL", "MODUS_PONENS" })
+ * @ProverRule( { "TRUE_GOAL", "SIMPLIFY_NOTEQUAL", "AUTO_MH" })
  * public void applySeveralRules() {
  *    ...
  * }
