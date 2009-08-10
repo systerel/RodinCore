@@ -208,6 +208,7 @@ public class TestLexer extends AbstractTests {
 		public void testIsValidIdentifierName() throws Exception {
 			assertTrue(ff.isValidIdentifierName("foo"));
 			assertTrue(ff.isValidIdentifierName("foo'"));
+			assertFalse(ff.isValidIdentifierName("foo''"));
 			assertFalse(ff.isValidIdentifierName("foo bar"));
 			assertFalse(ff.isValidIdentifierName(" foo"));
 			assertFalse(ff.isValidIdentifierName("foo "));
