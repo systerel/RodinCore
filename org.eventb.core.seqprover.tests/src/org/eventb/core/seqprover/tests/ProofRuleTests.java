@@ -1,9 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
 
 package org.eventb.core.seqprover.tests;
@@ -12,6 +15,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertSame;
 
 import java.util.Collections;
 import java.util.Set;
@@ -22,11 +26,19 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IHypAction;
+import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.IReasoner;
+import org.eventb.core.seqprover.IReasonerDesc;
+import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
+import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 import org.junit.Test;
 
 /**
@@ -45,6 +57,11 @@ public class ProofRuleTests {
 	private final static IAntecedent[] NO_ANTECEDENTS = new IAntecedent[0];
 	private final static Set<Predicate> NO_HYPS = Collections.emptySet();
 	
+	private static final IReasonerDesc fakeDesc = SequentProver
+			.getReasonerRegistry().getReasonerDesc("noId");
+	private static final IReasoner fakeReas = fakeDesc.getInstance();
+	private static final IReasonerInput emptyInput = new EmptyInput();
+	
 	/**
 	 * Rule discharging a sequent with a true goal.
 	 * 
@@ -52,7 +69,7 @@ public class ProofRuleTests {
 	 * Goal dependent.
 	 */
 	private final static IProofRule trueGoal = 
-		ProverFactory.makeProofRule(null, null, True, NO_HYPS, IConfidence.DISCHARGED_MAX, "trueGoal", NO_ANTECEDENTS);
+		ProverFactory.makeProofRule(fakeDesc, emptyInput, True, NO_HYPS, IConfidence.DISCHARGED_MAX, "trueGoal", NO_ANTECEDENTS);
 
 	/**
 	 * Rule discharging a sequent with a false hypothesis.
@@ -61,7 +78,7 @@ public class ProofRuleTests {
 	 * Goal independent.
 	 */
 	private final static IProofRule  falseHyp= 
-		ProverFactory.makeProofRule(null, null, null, False, "falseHyp", NO_ANTECEDENTS);
+		ProverFactory.makeProofRule(fakeReas, emptyInput, null, False, "falseHyp", NO_ANTECEDENTS);
 	
 	/**
 	 * Rule that duplicates a sequent.
@@ -70,7 +87,7 @@ public class ProofRuleTests {
 	 * Goal independent.
 	 */
 	protected final static IProofRule  duplicate= 
-		ProverFactory.makeProofRule(null,null,null,null,IConfidence.DISCHARGED_MAX,"duplicate", 
+		ProverFactory.makeProofRule(fakeReas,emptyInput,null,null,IConfidence.DISCHARGED_MAX,"duplicate", 
 				new IAntecedent[]{ProverFactory.makeAntecedent(null),ProverFactory.makeAntecedent(null)});
 
 	/**
@@ -92,7 +109,7 @@ public class ProofRuleTests {
 				Collections.singleton(pred),
 				null);
 		return ProverFactory.makeProofRule(
-				null,null,
+				fakeReas,emptyInput,
 				null,
 				"cut ("+pred.toString()+")",
 				anticidents);
@@ -114,7 +131,7 @@ public class ProofRuleTests {
 		anticidents[0] = ProverFactory.makeAntecedent(
 				null,null,new FreeIdentifier[] {freeIdent},null);
 		return ProverFactory.makeProofRule(
-				null,null,
+				fakeReas,emptyInput,
 				null,
 				"introFreeIdent ("+freeIdent.toString()+")",
 				anticidents);
@@ -130,7 +147,7 @@ public class ProofRuleTests {
 		IAntecedent[] anticidents = new IAntecedent[1];
 		anticidents[0] = ProverFactory.makeAntecedent(null);
 		return ProverFactory.makeProofRule(
-				null, null,
+				fakeReas, emptyInput,
 				True, NO_HYPS,
 				IConfidence.DISCHARGED_MAX,
 				"illFormed", anticidents);
@@ -151,7 +168,7 @@ public class ProofRuleTests {
 		IHypAction selectHypAction = 
 			ProverFactory.makeSelectHypAction(Collections.singleton(pred));
 		return ProverFactory.makeProofRule(
-				null,null,
+				fakeReas,emptyInput,
 				"select ("+pred.toString()+")",
 				Collections.singletonList(selectHypAction));
 	}
@@ -171,7 +188,7 @@ public class ProofRuleTests {
 		IHypAction selectHypAction = 
 			ProverFactory.makeHideHypAction(Collections.singleton(pred));
 		return ProverFactory.makeProofRule(
-				null,null,
+				fakeReas,emptyInput,
 				"hide ("+pred.toString()+")",
 				Collections.singletonList(selectHypAction));
 	}
@@ -199,7 +216,7 @@ public class ProofRuleTests {
 					new FreeIdentifier[] {freeIdent},
 					Collections.singleton(pred2));
 		return ProverFactory.makeProofRule(
-				null,null,
+				fakeReas,emptyInput,
 				"fwdInf ("+pred1.toString()+")",
 				Collections.singletonList(fwdInfHypAction));
 	}
@@ -369,4 +386,30 @@ public class ProofRuleTests {
 		
 	}
 
+	/**
+	 * Ensure that proof rules constructed with an unregistered reasoner allow
+	 * retrieving this very reasoner.
+	 */
+	@Test
+	public void testProofRuleReasoner() throws Exception {
+		final IReasoner original = new EmptyInputReasoner() {
+		
+			public String getReasonerID() {
+				return "testProofRuleReasoner_noId";
+			}
+		
+			public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
+					IProofMonitor pm) {
+				return null;
+			}
+		};
+
+		final IProofRule rule = ProverFactory.makeProofRule(original, emptyInput, "no display", null);
+		final IReasoner generatedBy = rule.generatedBy(); 
+		assertSame(original, generatedBy);
+
+		final IReasonerDesc desc = rule.getReasonerDesc();
+		final IReasoner instance = desc.getInstance();
+		assertSame(generatedBy, instance);
+	}
 }

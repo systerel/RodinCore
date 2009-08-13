@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - moved part of behaviour to IReasonerDesc
  *******************************************************************************/
 package org.eventb.core.seqprover;
 
@@ -17,7 +21,9 @@ package org.eventb.core.seqprover;
  * <li>It has been registered through the <code>reasoners</code> extension
  * point.</li>
  * <li>Its name has been requested by way of {@link #getReasonerName()}.</li>
- * <li>Its instance has been requested by way of {@link #getReasonerInstance()}.</li>
+ * <li>Its instance has been requested by way of {@link #getReasonerInstance()}.
+ * </li>
+ * <li>Its descriptor has been requested by way of {@link #getReasonerDesc()}.</li>
  * </ul>
  * </p>
  * <p>
@@ -66,7 +72,9 @@ public interface IReasonerRegistry {
 	 *            the id of the reasoner
 	 * @return an instance of the reasoner (might be a dummy one in case of
 	 *         error)
+	 * @deprecated use {@link #getReasonerDesc(String)}.getInstance()
 	 */
+	@Deprecated
 	IReasoner getReasonerInstance(String reasonerID);
 
 	/**
@@ -80,7 +88,9 @@ public interface IReasonerRegistry {
 	 * @param reasonerID
 	 *            the id of the reasoner
 	 * @return the name of the reasoner with the given id
+	 * @deprecated use {@link #getReasonerDesc(String)}.getName()
 	 */
+	@Deprecated
 	String getReasonerName(String reasonerID);
 
 	/**
@@ -98,5 +108,27 @@ public interface IReasonerRegistry {
 	 * @return <code>true</code> iff the given reasoner is a dummy reasoner
 	 */
 	boolean isDummyReasoner(IReasoner reasoner);
+
+	/**
+	 * Returns the descriptor of the reasoner with the given id.
+	 * <p>
+	 * In case no reasoner extension with the given id has been registered, a
+	 * placeholder descriptor is returned. Subsequently, the reasoner is
+	 * considered as registered (with a dummy instance).
+	 * </p>
+	 * <p>
+	 * Alternatively, the given parameter can be an encoding of both the id and
+	 * the version of a reasoner, as returned by
+	 * {@link IReasonerDesc#getVersionedId()}. In this case, the returned
+	 * descriptor will bear the encoded version (fetched through
+	 * {@link IReasonerDesc#getVersion()}) instead of the registered version.
+	 * </p>
+	 * 
+	 * @param id
+	 *            the id of a reasoner; alternatively, the encoding of an id
+	 *            with a version
+	 * @return a descriptor of the reasoner with the given id
+	 */
+	IReasonerDesc getReasonerDesc(String id);
 
 }

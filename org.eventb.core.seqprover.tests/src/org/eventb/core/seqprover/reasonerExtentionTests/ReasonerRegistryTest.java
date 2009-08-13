@@ -1,19 +1,24 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - moved part of tests to ReasonerDescTests
+ *******************************************************************************/
 package org.eventb.core.seqprover.reasonerExtentionTests;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
 import org.eventb.core.seqprover.IReasoner;
-import org.eventb.core.seqprover.IReasonerFailure;
-import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.IReasonerRegistry;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
-import org.eventb.core.seqprover.tests.TestLib;
 import org.junit.Test;
 
 /**
@@ -29,11 +34,11 @@ public class ReasonerRegistryTest {
 	private static int count = 0;
 	
 	// Each call returns a new dummy id, not used before.
-	private static String getDummyId() {
+	public static String getDummyId() {
 		return "dummy_id_" + (++ count);
 	}
 	
-	private final IReasonerRegistry registry = SequentProver.getReasonerRegistry();
+	private static final IReasonerRegistry registry = SequentProver.getReasonerRegistry();
 
 	/**
 	 * Asserts that the given reasoner id has been registered. This is checked
@@ -85,8 +90,8 @@ public class ReasonerRegistryTest {
 		assertNotKnown(idOther);
 		
 		// After some registry requests, new ids appear
-		registry.getReasonerName(idName);
-		registry.getReasonerInstance(idInstance);
+		registry.getReasonerDesc(idName);
+		registry.getReasonerDesc(idInstance);
 		assertKnown(TrueGoal.REASONER_ID);
 		assertKnown(idName);
 		assertKnown(idInstance);
@@ -94,51 +99,14 @@ public class ReasonerRegistryTest {
 	}
 
 	/**
-	 * Test method for {@link IReasonerRegistry#getReasonerInstance(String)}.
-	 */
-	@Test
-	public void testGetReasonerInstance() {
-		IReasoner reasoner = registry.getReasonerInstance(TrueGoal.REASONER_ID);
-		assertTrue(reasoner instanceof TrueGoal);
-		
-		reasoner = registry.getReasonerInstance(getDummyId());
-		assertTrue(reasoner instanceof IReasoner);
-	}
-
-	/**
-	 * Test method for {@link IReasonerRegistry#getReasonerName(String)}.
-	 */
-	@Test
-	public void testGetReasonerName() {
-		assertTrue(registry.getReasonerName(TrueGoal.REASONER_ID).equals("⊤ goal"));
-		assertNotNull(registry.getReasonerName(getDummyId()));
-	}
-	
-	/**
-	 * Ensures that a dummy reasoner always fails.
-	 */
-	@Test
-	public void testDummyReasoner() {
-		String id = getDummyId();
-		IReasoner dummyReasoner = registry.getReasonerInstance(id);
-		assertEquals(dummyReasoner.getReasonerID(), id);
-		IReasonerOutput reasonerOutput = dummyReasoner.apply(
-				TestLib.genSeq(" 1=1 |- 1=1"),
-				new EmptyInput(),
-				null
-		);
-		assertTrue(reasonerOutput instanceof IReasonerFailure);
-	}
-	
-	/**
 	 * Test method for {@link IReasonerRegistry#isDummyReasoner(String)}.
 	 */
 	@Test
 	public void testIsDummyReasoner() {
-		IReasoner dummyReasoner = registry.getReasonerInstance(getDummyId());
+		IReasoner dummyReasoner = registry.getReasonerDesc(getDummyId()).getInstance();
 		assertTrue(registry.isDummyReasoner(dummyReasoner));
 		
-		IReasoner trueGoal = registry.getReasonerInstance(TrueGoal.REASONER_ID);
+		IReasoner trueGoal = registry.getReasonerDesc(TrueGoal.REASONER_ID).getInstance();
 		assertFalse(registry.isDummyReasoner(trueGoal));
 	}
 

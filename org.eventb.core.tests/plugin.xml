@@ -8,6 +8,11 @@
             id="tracingReasoner"
             name="Tracing Reasoner">
       </reasoner>
+      <reasoner
+            class="org.eventb.core.tests.pom.ReasonerV2"
+            id="reasonerV2"
+            name="Reasoner V2">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">

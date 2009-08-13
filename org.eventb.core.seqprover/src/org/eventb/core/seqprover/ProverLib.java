@@ -91,8 +91,9 @@ public class ProverLib {
 
 	private static boolean deepEquals(IProofRule r1, IProofRule r2) {
 		if (r1 == r2) return true;
-		if (! r1.generatedBy().getReasonerID().
-				equals(r2.generatedBy().getReasonerID())) return false;
+		final IReasonerDesc desc1 = r1.getReasonerDesc();
+		final IReasonerDesc desc2 = r2.getReasonerDesc();
+		if (!deepEquals(desc1, desc2)) return false;
 		if (! r1.getDisplayName().equals(r2.getDisplayName())) return false;
 		if (r1.getConfidence() != r2.getConfidence()) return false;
 		if (r1.getGoal() == null && r2.getGoal() != null) return false;
@@ -106,6 +107,12 @@ public class ProverLib {
 			if (! deepEquals(r1.getAntecedents()[i], r2.getAntecedents()[i])) return false;
 		}
 		return true;
+	}
+
+	private static boolean deepEquals(IReasonerDesc desc1, IReasonerDesc desc2) {
+		if (!desc1.getId().equals(desc2.getId()))
+			return false;
+		return desc1.getVersion() == desc2.getVersion();
 	}
 
 	private static boolean deepEquals(IAntecedent a1, IAntecedent a2) {

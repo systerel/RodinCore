@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - deserialization of reasoner version through IReasonerDesc
  *******************************************************************************/
 package org.eventb.core.basis;
 
@@ -22,6 +26,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IReasoner;
+import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
@@ -50,14 +55,20 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 	}
 
 
-	private String getReasonerID() throws RodinDBException {
+	private String getReasonerID() {
 		return getElementName();
 	}
 
-	private IReasoner getReasoner()throws RodinDBException {
+	private IReasoner getReasoner() {
+		return getReasonerDesc().getInstance();
+	}
+	
+	// returns a descriptor with the version of the reasoner used in the proof
+	// the version is encoded in the element name (this.getReasonerID())
+	private IReasonerDesc getReasonerDesc() {
 		final IReasonerRegistry reasonerRegistry = SequentProver.getReasonerRegistry();
-		return reasonerRegistry.getReasonerInstance(this.getReasonerID());
-	} 
+		return reasonerRegistry.getReasonerDesc(this.getReasonerID());
+	}
 
 	public IProofSkeleton getProofSkeleton(IProofStoreReader store,
 			final String comment) throws RodinDBException {
@@ -89,7 +100,7 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 			throw (RodinDBException) e.getCause();
 		}
 		final IProofRule proofRule = ProverFactory.makeProofRule(
-				getReasoner(),
+				getReasonerDesc(),
 				input, 
 				goal, 
 				neededHyps, 

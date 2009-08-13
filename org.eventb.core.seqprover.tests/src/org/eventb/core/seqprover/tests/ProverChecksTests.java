@@ -25,9 +25,12 @@ import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
+import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.internal.core.seqprover.ProverChecks;
 import org.junit.Test;
 
@@ -121,8 +124,10 @@ public class ProverChecksTests extends TestCase{
 		IProofRule rule;
 		IAntecedent[] antecedents;
 		
-		IReasoner generatedBy = null;
-		IReasonerInput generatedUsing = null;
+		final IReasonerDesc fakeDesc = SequentProver
+		.getReasonerRegistry().getReasonerDesc("noId");
+		IReasoner generatedBy =  fakeDesc.getInstance();
+		IReasonerInput generatedUsing = new EmptyInput();
 		
 		// The identity rule
 		antecedents = new IAntecedent[]{

@@ -69,7 +69,9 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the fully-qualified name of an implementation of &lt;code&gt;org.eventb.core.seqprover.IReasoner&lt;/code&gt;
+                  the fully-qualified name of an implementation of either &lt;code&gt;org.eventb.core.seqprover.IReasoner&lt;/code&gt; or &lt;code&gt;org.eventb.core.seqprover.IVersionedReasoner&lt;/code&gt;
+
+In the latter case, the version of the reasoner will be stored into proofs that use it. This allows to safely implement reasoner evolutions: when reusing a proof, it checks if reasoner versions have changed since the proof was committed.
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn="org.eventb.core.seqprover.IReasoner"/>

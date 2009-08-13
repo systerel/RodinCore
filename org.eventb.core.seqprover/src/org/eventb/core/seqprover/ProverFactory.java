@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added makeProofRule(IReasonerDesc, ...)
+ *******************************************************************************/
 package org.eventb.core.seqprover;
 
 import java.util.Collection;
@@ -97,6 +108,49 @@ public final class ProverFactory {
 				goal,neededHyps,
 				confidence,display,
 				antecedents);
+	}
+
+	/**
+	 * Returns a new proof rule with the given information
+	 * 
+	 * <p>
+	 * This is similar to
+	 * {@link #makeProofRule(IReasoner, IReasonerInput, Predicate, Set, Integer, String, IAntecedent...)}
+	 * , except that the reasoner is given through its descriptor, which can
+	 * later be retrieved by calling {@link IReasonerOutput#getReasonerDesc()}.
+	 * </p>
+	 * 
+	 * @param generatedBy
+	 *            A descriptor of the reasoner used
+	 * @param generatedUsing
+	 *            The reasoner input used
+	 * @param goal
+	 *            The goal of the proof rule, or <code>null</code> iff the proof
+	 *            rule is applicable to a sequent with any goal. In the latter
+	 *            case it is permitted that the antecedents may also contain a
+	 *            <code>null</code> goal.
+	 * @param neededHyps
+	 *            The hypotheses needed for the proof rule to be applicable, or
+	 *            <code>null</code> iff no hypotheses are needed.
+	 * @param confidence
+	 *            The confidence level of the proof rule, or <code>null</code>
+	 *            iff the greatest confidence level (i.e.
+	 *            <code>IConfidence.DISCHARGED_MAX</code>) is to be used.
+	 * @param display
+	 *            The display string for the proof rule, or <code>null</code>
+	 *            iff the reasoner id is to be used.
+	 * @param antecedents
+	 *            The antecedents of the proof rule, or <code>null</code> iff
+	 *            this rule has no antecedents.
+	 * @return A new proof rule with the given information.
+	 */
+	public static IProofRule makeProofRule(IReasonerDesc generatedBy,
+			IReasonerInput generatedUsing, Predicate goal,
+			Set<Predicate> neededHyps, Integer confidence, String display,
+			IAntecedent... antecedents) {
+
+		return new ProofRule(generatedBy, generatedUsing, goal, neededHyps,
+				confidence, display, antecedents);
 	}
 	
 	/**

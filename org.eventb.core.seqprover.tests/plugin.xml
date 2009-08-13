@@ -33,6 +33,21 @@
             id="showOriginalRewrites"
             name="Simple rewriter (show original)">
       </reasoner>
+      <reasoner
+            class="org.eventb.core.seqprover.reasonerExtentionTests.ReasonerV1"
+            id="reasonerV1"
+            name="reasonerV1">
+      </reasoner>
+      <reasoner
+            class="org.eventb.core.seqprover.proofBuilderTests.SuccessReasoner"
+            id="successReasoner"
+            name="Success Reasoner">
+      </reasoner>
+      <reasoner
+            class="org.eventb.core.seqprover.proofBuilderTests.FailureReasoner"
+            id="failureReasoner"
+            name="Failure Reasoner">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">

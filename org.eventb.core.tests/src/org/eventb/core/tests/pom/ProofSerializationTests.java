@@ -27,14 +27,20 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IConfidence;
+import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.IReasonerDesc;
+import org.eventb.core.seqprover.IReasonerRegistry;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
+import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
+import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -209,4 +215,40 @@ public class ProofSerializationTests extends TestCase {
 		proofTree.getRoot().pruneChildren();
 	}
 
+	public void testReasonerVersionCurrent() throws Exception {
+		IPRProof proof1 = prRoot.getProof("proof1");
+		proof1.create(null, null);
+
+		IProverSequent sequent = TestLib.genSeq("|- ⊤ ⇒ ⊤");
+		IProofTree proofTree = ProverFactory.makeProofTree(sequent, null);
+		
+		checkProofTreeSerialization(proof1, proofTree, false);
+		
+		BasicTactics.reasonerTac(new ReasonerV2(), new EmptyInput())
+				.apply(proofTree.getRoot(), null);
+
+		checkProofTreeSerialization(proof1, proofTree, true);
+
+	}
+
+	public void testReasonerVersionOld() throws Exception {
+		IPRProof proof1 = prRoot.getProof("proof1");
+		proof1.create(null, null);
+
+		IProverSequent sequent = TestLib.genSeq("|- ⊤ ⇒ ⊤");
+		IProofTree proofTree = ProverFactory.makeProofTree(sequent, null);
+
+		final IReasonerRegistry registry = SequentProver.getReasonerRegistry();
+		final IReasonerDesc desc = registry
+				.getReasonerDesc(new ReasonerV2().getReasonerID() + ":1");
+		final Set<Predicate> noHyps = Collections.emptySet();
+		final IProofRule rule = ProverFactory.makeProofRule(desc,
+				new EmptyInput(), sequent.goal(), noHyps,
+				IConfidence.DISCHARGED_MAX, desc.getName());
+		final boolean success = proofTree.getRoot().applyRule(rule);
+		assertTrue(success);
+		assertTrue(proofTree.isClosed());
+
+		checkProofTreeSerialization(proof1, proofTree, true);
+	}
 }

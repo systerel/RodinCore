@@ -1,11 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - serialization of reasoner version through rule name
  *******************************************************************************/
-
 package org.eventb.core.basis;
 
 import static org.eventb.core.EventBAttributes.COMMENT_ATTRIBUTE;
@@ -33,6 +36,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofSkeleton;
+import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinElement;
@@ -237,14 +241,19 @@ public abstract class EventBProofElement extends InternalElement implements
 		setComment(comment, null);
 		
 		if (skel.getRule() == null) return;
-				
-		IPRProofRule prRule = getProofRule(
-				skel.getRule().generatedBy().getReasonerID());
+
+		final String ruleName = getVersionedRuleName(skel.getRule());
+		final IPRProofRule prRule = getProofRule(ruleName);
 		prRule.create(null,null);
 		
 		prRule.setProofRule(skel, store, monitor);
 	}
 
+	private static String getVersionedRuleName(IProofRule rule) {
+		final IReasonerDesc desc = rule.getReasonerDesc();
+		return desc.getVersionedId();
+	}
+	
 	public IProofSkeleton getSkeleton(IProofStoreReader store) throws RodinDBException {
 		final String comment = getComment();
 

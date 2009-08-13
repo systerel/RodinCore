@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added a constructor with IReasonerDesc
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
 import java.util.ArrayList;
@@ -14,6 +25,7 @@ import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
+import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.IReasonerInput;
 
 // TODO : preserve order of hypotheses stored by using a LinkedHashSet inplementation
@@ -116,12 +128,24 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		this.display = display == null ? generatedBy.getReasonerID() : display;		
 	}
 
+	public ProofRule(IReasonerDesc generatedBy, IReasonerInput generatedUsing,
+			Predicate goal, Set<Predicate> neededHyps, Integer confidence,
+			String display, IAntecedent[] antecedents) {
+		super(generatedBy,generatedUsing);
+		
+		this.goal = goal;
+		this.antecedents = antecedents == null ? NO_ANTECEDENTS : antecedents.clone();
+		this.neededHypotheses = neededHyps == null ? NO_HYPS : new LinkedHashSet<Predicate>(neededHyps);
+		this.reasonerConfidence = confidence == null ? IConfidence.DISCHARGED_MAX : confidence;
+		this.display = display == null ? generatedBy.getId() : display;	
+	}
+
 	public String getDisplayName() {
 		return display;
 	}
 
 	public String getRuleID() {
-		return generatedBy.getReasonerID();
+		return getReasonerDesc().getId();
 	}
 
 	public int getConfidence() {
