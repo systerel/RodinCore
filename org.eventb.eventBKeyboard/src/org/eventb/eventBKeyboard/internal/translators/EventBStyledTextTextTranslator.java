@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - handling of LaTeX symbols
+ ******************************************************************************/
+
 package org.eventb.eventBKeyboard.internal.translators;
 
 import java.util.Collection;
@@ -9,29 +22,10 @@ import org.eventb.internal.eventBKeyboard.KeyboardUtils;
 
 public class EventBStyledTextTextTranslator implements
 IEventBStyledTextTranslator {
-	/**
-	 * Testing if a character is a text character
-	 * 
-	 * @param c
-	 *            a character
-	 * @return true if the character is one of the text characters (i.e. 'A' to
-	 *         'Z', 'a' to 'z', etc.) false otherwise
-	 */
-	private boolean isTextCharacter(char c) {
-		if (c <= 'Z' && c >= 'A')
-			return true;
-		if (c <= 'z' && c >= 'a')
-			return true;
-		if (c <= '9' && c >= '0')
-			return true;
-		if (c == '_')
-			return true;
-		return false;
-	}
 
-	private static HashMap<String, Collection<Symbol>> symbols = null;
+	HashMap<String, Collection<Symbol>> symbols = null;
 
-	private static int maxSize = 0;
+	int maxSize = 0;
 
 	public void translate(StyledText widget) {
 		if (symbols == null) {
@@ -43,7 +37,7 @@ IEventBStyledTextTranslator {
 		translate(widget, 0, text.length());
 	}
 
-	private void translate(StyledText widget, int beginIndex, int endIndex) {
+	void translate(StyledText widget, int beginIndex, int endIndex) {
 		KeyboardUtils.debugText("***************************************");
 		KeyboardUtils.debugText("Begin: " + beginIndex);
 		KeyboardUtils.debugText("End: " + endIndex);
@@ -78,14 +72,14 @@ IEventBStyledTextTranslator {
 						realIndex = beginIndex + index;
 
 						if (index != 0) {
-							if (isTextCharacter(subString.charAt(index - 1))) {
+							if (Utils.isTextCharacter(subString.charAt(index - 1))) {
 								index = subString.indexOf(test, index + 1);
 								continue;
 							}
 						}
 
 						if (realIndex + test.length() != endIndex) {
-							if (isTextCharacter(text.charAt(realIndex
+							if (Utils.isTextCharacter(text.charAt(realIndex
 									+ test.length()))) {
 								index = subString.indexOf(test, index + 1);
 								continue;
@@ -111,7 +105,7 @@ IEventBStyledTextTranslator {
 							// current pos
 							widget.setSelection(currentPos);
 						}
-						// Transate before current pos
+						// Translate before current pos
 						else if (realIndex + test.length() < currentPos)
 							widget.setSelection(currentPos - test.length()
 									+ result.length());

@@ -26,9 +26,9 @@ import org.eventb.internal.eventBKeyboard.KeyboardUtils;
  */
 public class EventBKeyboardMathTranslator implements IEventBKeyboardTranslator {
 
-	private static HashMap<String, Collection<Symbol>> symbols = null;
+	private HashMap<String, Collection<Symbol>> symbols = null;
 
-	private static int maxSize = 0;
+	private int maxSize = 0;
 
 	public void translate(Text widget) {
 		if (symbols == null) {

@@ -11,6 +11,7 @@
 # Contributors:
 #     ETH Zurich - initial API and implementation as
 #     Systerel - Added Unicode glyphs as images
+#     Systerel - Added LaTeX-like commands
 ###############################################################################
 -->
 
@@ -33,14 +34,18 @@
     <table border="1" cellspacing="0" cellpadding="2" align="center">
 	<tr>
 	  <th width="15%" align="center">ASCII</th>
-	  <th width="15%"align="center">Math</th>
-	  <th width="50%" align="center">Meaning</th>
+	  <th width="15%" align="center">LaTeX-like</th>
+	  <th width="15%" align="center">Math</th>
+	  <th width="35%" align="center">Meaning</th>
 	  <th width="20%" align="center">Unicode</th>
 	</tr>
 	
 	<tr>
 	  <td align="center">
 	    <code>NAT</code>
+	  </td>
+	  <td align="center">
+	  	nat
 	  </td>
 	  <td align="center">
 	    <img src="../../images/nat.gif" alt="The set of natural numbers">
@@ -58,6 +63,9 @@
 	    <code>NAT1</code>
 	  </td>
 	  <td align="center">
+	    natn
+	  </td>
+	  <td align="center">
 	    <img src="../../images/nat1.gif" alt="The set of positive natural numbers">
 	  </td>
 	  <td>
@@ -71,6 +79,9 @@
 	<tr>
 	  <td align="center">
 	    <code>INT</code>
+	  </td>
+	  <td align="center">
+	    intg
 	  </td>
 	  <td align="center">
 	    <img src="../../images/int.gif" alt="The set of integer numbers">
@@ -88,6 +99,9 @@
 	    <code>POW</code>
 	  </td>
 	  <td align="center">
+	    pow
+	  </td>
+	  <td align="center">
 	    <img src="../../images/pow.gif" alt="Power set">
 	  </td>
 	  <td>
@@ -103,6 +117,9 @@
 	    <code>POW1</code>
 	  </td>
 	  <td align="center">
+	    pown
+	  </td>
+	  <td align="center">
 	    <img src="../../images/pow1.gif" alt="Set of all non-empty subsets">
 	  </td>
 	  <td>
@@ -114,12 +131,15 @@
 	</tr>
 
 	<tr>
-	  <td colspan="4"> &nbsp; </td>
+	  <td colspan="5"> &nbsp; </td>
 	</tr>
 	
 	<tr>
 	  <td align="center">
 	    <code>(</code>
+	  </td>
+	  <td align="center">
+	    (
 	  </td>
 	  <td align="center">
 	    (
@@ -137,6 +157,9 @@
 	  </td>
 	  <td align="center">
 	    )
+	  </td>
+	  <td align="center">
+	    )
 	  <td>
 	    Right parenthesis
 	  </td>
@@ -148,6 +171,9 @@
 	<tr>
 	  <td align="center">
 	    <code><=></code>
+	  </td>
+	  <td align="center">
+	    leqv
 	  </td>
 	  <td align="center">
   	    <img src="../../images/logical_equivalence.gif" alt="Logical equivalence">
@@ -165,6 +191,9 @@
 	    <code>=></code>
 	  </td>
 	  <td align="center">
+	    limp
+	  </td>
+	  <td align="center">
   	    <img src="../../images/logical_implication.gif" alt="Logical implication">
 	  </td>
 	  <td>
@@ -178,6 +207,9 @@
 	<tr>
 	  <td align="center">
 	    <code>&</code>
+	  </td>
+	  <td align="center">
+	    land
 	  </td>
 	  <td align="center">
   	    <img src="../../images/logical_and.gif" alt="Logical and">
@@ -195,6 +227,9 @@
 	    <code>or</code>
 	  </td>
 	  <td align="center">
+	    lor
+	  </td>
+	  <td align="center">
   	    <img src="../../images/logical_or.gif" alt="Logical or">
 	  </td>
 	  <td>
@@ -208,6 +243,9 @@
 	<tr>
 	  <td align="center">
 	    <code>not</code>
+	  </td>
+	  <td align="center">
+	    lnot
 	  </td>
 	  <td align="center">
   	    <img src="../../images/not.gif" alt="Not sign">
@@ -225,6 +263,9 @@
 	    <code>true</code>
 	  </td>
 	  <td align="center">
+	    btrue
+	  </td>
+	  <td align="center">
 	    <img src="../../images/true.gif" alt="true predicate">
 	  </td>
 	  <td>
@@ -238,6 +279,9 @@
 	<tr>
 	  <td align="center">
 	    <code>false</code>
+	  </td>
+	  <td align="center">
+	    bfalse
 	  </td>
 	  <td align="center">
 	    <img src="../../images/false.gif" alt="false predicate">
@@ -255,6 +299,9 @@
 	    <code>!</code>
 	  </td>
 	  <td align="center">
+	    forall
+	  </td>
+	  <td align="center">
 	    <img src="../../images/forall.gif" alt="For all">
 	  </td>
 	  <td>
@@ -268,6 +315,9 @@
 	<tr>
 	  <td align="center">
 	    <code>#</code>
+	  </td>
+	  <td align="center">
+	    exists
 	  </td>
 	  <td align="center">
 	    <img src="../../images/exists.gif" alt="There exists">
@@ -287,6 +337,9 @@
 	  <td align="center">
 	    ,
 	  </td>
+	  <td align="center">
+	    ,
+	  </td>
 	  <td>
 	    Comma
 	  </td>
@@ -300,6 +353,9 @@
 	    <code>.</code>
 	  </td>
 	  <td align="center">
+	    qdot
+	  </td>
+	  <td align="center">
 	    <img src="../../images/middle_dot.gif" alt="Middle dot">
 	  </td>
 	  <td>
@@ -311,12 +367,15 @@
 	</tr>
 
 	<tr>
-	  <td colspan="4"> &nbsp; </td>
+	  <td colspan="5"> &nbsp; </td>
 	</tr>
 
 	<tr>
 	  <td align="center">
 	    <code>=</code>
+	  </td>
+	  <td align="center">
+	    =
 	  </td>
 	  <td align="center">
 	    =
@@ -332,6 +391,9 @@
 	<tr>
 	  <td align="center">
 	    <code>/=</code>
+	  </td>
+	  <td align="center">
+	    neq
 	  </td>
 	  <td align="center">
 	    <img src="../../images/not_eq.gif" alt="Not equal to">
@@ -351,6 +413,9 @@
 	  <td align="center">
 	    &lt;
 	  </td>
+	  <td align="center">
+	    &lt;
+	  </td>
 	  <td>
 	    Less than
 	  </td>
@@ -362,6 +427,9 @@
 	<tr>
 	  <td align="center">
 	    <code>&lt;=</code>
+	  </td>
+	  <td align="center">
+	    leq
 	  </td>
 	  <td align="center">
   	    <img src="../../images/less_or_eq.gif" alt="Less than or equal to">
@@ -381,6 +449,9 @@
 	  <td align="center">
 	    &gt;
 	  </td>
+	  <td align="center">
+	    &gt;
+	  </td>
 	  <td>
 	    Greater than
 	  </td>
@@ -392,6 +463,9 @@
 	<tr>
 	  <td align="center">
 	    <code>&gt;=</code>
+	  </td>
+	  <td align="center">
+	    geq
 	  </td>
 	  <td align="center">
   	    <img src="../../images/greater_or_eq.gif" alt="Greater than or equal to">
@@ -409,6 +483,9 @@
 	    <code>:</code>
 	  </td>
 	  <td align="center">
+	    in
+	  </td>
+	  <td align="center">
   	    <img src="../../images/element_of.gif" alt="Element of">
 	  </td>
 	  <td>
@@ -422,6 +499,9 @@
 	<tr>
 	  <td align="center">
 	    <code>/:</code>
+	  </td>
+	  <td align="center">
+	    notin
 	  </td>
 	  <td align="center">
   	    <img src="../../images/not_element_of.gif" alt="Not an element of">
@@ -439,6 +519,9 @@
 	    <code><<:</code>
 	  </td>
 	  <td align="center">
+	    subset
+	  </td>
+	  <td align="center">
   	    <img src="../../images/subset.gif" alt="(Proper) Subset of">
 	  </td>
 	  <td>
@@ -452,6 +535,9 @@
 	<tr>
 	  <td align="center">
 	    <code>/<<:</code>
+	  </td>
+	  <td align="center">
+	    notsubset
 	  </td>
 	  <td align="center">
   	    <img src="../../images/not_subset.gif" alt="Not a (proper) subset of">
@@ -469,6 +555,9 @@
 	    <code><:</code>
 	  </td>
 	  <td align="center">
+	    subseteq
+	  </td>
+	  <td align="center">
   	    <img src="../../images/subset_or_eq.gif" alt="Subset of or equal to">
 	  </td>
 	  <td>
@@ -484,6 +573,9 @@
 	    <code>/<:</code>
 	  </td>
 	  <td align="center">
+	    notsubseteq
+	  </td>
+	  <td align="center">
   	    <img src="../../images/not_subset_or_eq.gif" alt="Neither a subset of nor equal to">
 	  </td>
 	  <td>
@@ -495,12 +587,15 @@
 	</tr>
 
 	<tr>
-	  <td colspan="4"> &nbsp; </td>
+	  <td colspan="5"> &nbsp; </td>
 	</tr>
 
 	<tr>
 	  <td align="center">
 	    <code><-></code>
+	  </td>
+	  <td align="center">
+	    rel
 	  </td>
 	  <td align="center">
   	    <img src="../../images/relation.gif" alt="Relation">
@@ -518,6 +613,9 @@
 	    <code><<-></code>
 	  </td>
 	  <td align="center">
+	    trel
+	  </td>
+	  <td align="center">
   	    <img src="../../images/total_rel.gif" alt="Total relation">
 	  </td>
 	  <td>
@@ -531,6 +629,9 @@
 	<tr>
 	  <td align="center">
 	    <code><->></code>
+	  </td>
+	  <td align="center">
+	    srel
 	  </td>
 	  <td align="center">
   	    <img src="../../images/surj_rel.gif" alt="Surjective relation">
@@ -548,6 +649,9 @@
 	    <code><<->></code>
 	  </td>
 	  <td align="center">
+	    strel
+	  </td>
+	  <td align="center">
   	    <img src="../../images/total_surj_rel.gif" alt="Total surjective relation">
 	  </td>
 	  <td>
@@ -561,6 +665,9 @@
 	<tr>
 	  <td align="center">
 	    <code>+-></code>
+	  </td>
+	  <td align="center">
+	    pfun
 	  </td>
 	  <td align="center">
   	    <img src="../../images/partial_fun.gif" alt="Partial funtion">
@@ -578,6 +685,9 @@
 	    <code>--></code>
 	  </td>
 	  <td align="center">
+	    tfun
+	  </td>
+	  <td align="center">
   	    <img src="../../images/total_fun.gif" alt="Total funtion">
 	  </td>
 	  <td>
@@ -591,6 +701,9 @@
 	<tr>
 	  <td align="center">
 	    <code>>+></code>
+	  </td>
+	  <td align="center">
+	    pinj
 	  </td>
 	  <td align="center">
   	    <img src="../../images/partial_inj.gif" alt="Partial injection">
@@ -608,6 +721,9 @@
 	    <code>>-></code>
 	  </td>
 	  <td align="center">
+	    tinj
+	  </td>
+	  <td align="center">
   	    <img src="../../images/total_inj.gif" alt="Total injection">
 	  </td>
 	  <td>
@@ -621,6 +737,9 @@
 	<tr>
 	  <td align="center">
 	    <code>+>></code>
+	  </td>
+	  <td align="center">
+	    psur
 	  </td>
 	  <td align="center">
   	    <img src="../../images/partial_surj.gif" alt="Partial surjection">
@@ -638,6 +757,9 @@
 	    <code>->></code>
 	  </td>
 	  <td align="center">
+	    tsur
+	  </td>
+	  <td align="center">
   	    <img src="../../images/total_surj.gif" alt="Total surjection">
 	  </td>
 	  <td>
@@ -653,6 +775,9 @@
 	    <code>>->></code>
 	  </td>
 	  <td align="center">
+	    tbij
+	  </td>
+	  <td align="center">
   	    <img src="../../images/bijection.gif" alt="Bijection">
 	  </td>
 	  <td>
@@ -664,12 +789,15 @@
 	</tr>
 
 	<tr>
-	  <td colspan="4"> &nbsp; </td>
+	  <td colspan="5"> &nbsp; </td>
 	</tr>
 
 	<tr>
 	  <td align="center">
 	    <code>{</code>
+	  </td>
+	  <td align="center">
+	    {
 	  </td>
 	  <td align="center">
 	    {
@@ -689,6 +817,9 @@
 	  <td align="center">
 	    }
 	  </td>
+	  <td align="center">
+	    }
+	  </td>
 	  <td>
 	    Right curly bracket
 	  </td>
@@ -700,6 +831,9 @@
 	<tr>
 	  <td align="center">
 	    <code>|-></code>
+	  </td>
+	  <td align="center" rowspan="2">
+	    mapsto
 	  </td>
 	  <td align="center" rowspan="2">
   	    <img src="../../images/maplet.gif" alt="Maplet">
@@ -722,6 +856,9 @@
 	    <code>{}</code>
 	  </td>
 	  <td align="center">
+	    emptyset
+	  </td>
+	  <td align="center">
   	    <img src="../../images/empty.gif" alt="Empty set">
 	  </td>
 	  <td>
@@ -735,6 +872,9 @@
 	<tr>
 	  <td align="center">
 	    <code>/\</code>
+	  </td>
+	  <td align="center">
+	    binter
 	  </td>
 	  <td align="center">
   	    <img src="../../images/inter.gif" alt="Intersection">
@@ -752,6 +892,9 @@
 	    <code>\/</code>
 	  </td>
 	  <td align="center">
+	    bunion
+	  </td>
+	  <td align="center">
 	    <img src="../../images/union.gif" alt="Union">
 	  </td>
 	  <td>
@@ -765,6 +908,9 @@
 	<tr>
 	  <td align="center">
 	    <code>\</code>
+	  </td>
+	  <td align="center">
+	    setminus
 	  </td>
 	  <td align="center">
 	    <img src="../../images/set_minus.gif" alt="Set minus">
@@ -782,6 +928,9 @@
 	    <code>**</code>
 	  </td>
 	  <td align="center">
+	    cprod
+	  </td>
+	  <td align="center">
 	    <img src="../../images/cartesian_product.gif" alt="Cartesian product">
 	  </td>
 	  <td>
@@ -793,12 +942,15 @@
 	</tr>
 
 	<tr>
-	  <td colspan="4"> &nbsp; </td>
+	  <td colspan="5"> &nbsp; </td>
 	</tr>
 
 	<tr>
 	  <td align="center">
 	    <code>[</code>
+	  </td>
+	  <td align="center">
+	    [
 	  </td>
 	  <td align="center">
 	    [
@@ -818,6 +970,9 @@
 	  <td align="center">
 	    ]
 	  </td>
+	  <td align="center">
+	    ]
+	  </td>
 	  <td>
 	    Right square bracket
 	  </td>
@@ -829,6 +984,9 @@
 	<tr>
 	  <td align="center">
 	    <code><+</code>
+	  </td>
+	  <td align="center">
+	    ovl
 	  </td>
 	  <td align="center">
 	    <img src="../../images/rel_over.gif" alt="Relation overriding">
@@ -846,6 +1004,9 @@
 	    <code>circ</code>
 	  </td>
 	  <td align="center">
+	    bcomp
+	  </td>
+	  <td align="center">
 	    <img src="../../images/circ.gif" alt="Backward composition">
 	  </td>
 	  <td>
@@ -859,6 +1020,9 @@
 	<tr>
 	  <td align="center">
 	    <code>;</code>
+	  </td>
+	  <td align="center">
+	    fcomp
 	  </td>
 	  <td align="center">
 	    ;
@@ -876,6 +1040,9 @@
 	    <code>><</code>
 	  </td>
 	  <td align="center">
+	    dprod
+	  </td>
+	  <td align="center">
 	    <img src="../../images/direct_product.gif" alt="Direct product">
 	  </td>
 	  <td>
@@ -889,6 +1056,9 @@
 	<tr>
 	  <td align="center">
 	    <code>||</code>
+	  </td>
+	  <td align="center">
+	    pprod
 	  </td>
 	  <td align="center">
 	    <img src="../../images/parallel_product.gif" alt="Parallel product">
@@ -906,6 +1076,9 @@
 	    <code>~</code>
 	  </td>
 	  <td align="center">
+	    &nbsp;
+	  </td>
+	  <td align="center">
 	    ~
 	  </td>
 	  <td>
@@ -919,6 +1092,9 @@
 	<tr>
 	  <td align="center">
 	    <code><|</code>
+	  </td>
+	  <td align="center">
+	    domres
 	  </td>
 	  <td align="center">
 	    <img src="../../images/dom_restriction.gif" alt="Domain restriction">
@@ -936,6 +1112,9 @@
 	    <code><<|</code>
 	  </td>
 	  <td align="center">
+	    domsub
+	  </td>
+	  <td align="center">
 	     <img src="../../images/dom_sub.gif" alt="Domain subtraction">
 	  </td>
 	  <td>
@@ -949,6 +1128,9 @@
 	<tr>
 	  <td align="center">
 	    <code>|></code>
+	  </td>
+	  <td align="center">
+	    ranres
 	  </td>
 	  <td align="center">
 	     <img src="../../images/ran_restriction.gif" alt="Range restriction">
@@ -966,6 +1148,9 @@
 	    <code>|>></code>
 	  </td>
 	  <td align="center">
+	    ransub
+	  </td>
+	  <td align="center">
 	     <img src="../../images/ran_sub.gif" alt="Range subtraction">
 	  </td>
 	  <td>
@@ -977,12 +1162,15 @@
 	</tr>
 
 	<tr>
-	  <td colspan="4"> &nbsp; </td>
+	  <td colspan="5"> &nbsp; </td>
 	</tr>
 
 	<tr>
 	  <td align="center">
 	    <code>%</code>
+	  </td>
+	  <td align="center">
+	    lambda
 	  </td>
 	  <td align="center">
    	    <img src="../../images/lambda.gif" alt="Lambda">
@@ -1000,6 +1188,9 @@
 	    <code>INTER</code>
 	  </td>
 	  <td align="center">
+	    Inter
+	  </td>
+	  <td align="center">
 	     <img src="../../images/n-ary_inter.gif" alt="N-ary intersection">
 	  </td>
 	  <td>
@@ -1013,6 +1204,9 @@
 	<tr>
 	  <td align="center">
 	    <code>UNION</code>
+	  </td>
+	  <td align="center">
+	    Union
 	  </td>
 	  <td align="center">
 	     <img src="../../images/n-ary_union.gif" alt="N-ary union">
@@ -1030,6 +1224,9 @@
 	    <code>|</code>
 	  </td>
 	  <td align="center">
+	    mid
+	  </td>
+	  <td align="center">
 	     <img src="../../images/such_that.gif" alt="Such that">
 	  </td>
 	  <td>
@@ -1041,12 +1238,15 @@
 	</tr>
 
 	<tr>
-	  <td colspan="4"> &nbsp; </td>
+	  <td colspan="5"> &nbsp; </td>
 	</tr>
 
 	<tr>
 	  <td align="center">
 	    <code>..</code>
+	  </td>
+	  <td align="center">
+	    upto
 	  </td>
 	  <td align="center">
 	     <img src="../../images/upto.gif" alt="Upto operation">
@@ -1066,6 +1266,9 @@
 	  <td align="center">
 	    +
 	  </td>
+	  <td align="center">
+	    +
+	  </td>
 	  <td>
 	    Addition sign
 	  </td>
@@ -1077,6 +1280,9 @@
 	<tr>
 	  <td align="center">
 	    <code>-</code>
+	  </td>
+	  <td align="center">
+	    -
 	  </td>
 	  <td align="center">
 	     <img src="../../images/minus.gif" alt="Minus sign">
@@ -1094,6 +1300,9 @@
 	    <code>*</code>
 	  </td>
 	  <td align="center">
+	    *
+	  </td>
+	  <td align="center">
    	    *
 	  </td>
 	  <td>
@@ -1107,6 +1316,9 @@
 	<tr>
 	  <td align="center">
 	    <code>/</code>
+	  </td>
+	  <td align="center">
+	    div
 	  </td>
 	  <td align="center">
 	     <img src="../../images/division.gif" alt="Division sign">
@@ -1124,6 +1336,9 @@
 	    <code>^</code>
 	  </td>
 	  <td align="center">
+	    expn
+	  </td>
+	  <td align="center">
 	    ^
 	  </td>
 	  <td>
@@ -1135,12 +1350,15 @@
 	</tr>
 
 	<tr>
-	  <td colspan="4"> &nbsp; </td>
+	  <td colspan="5"> &nbsp; </td>
 	</tr>
 
 	<tr>
 	  <td align="center">
 	    <code>oftype</code>
+	  </td>
+	  <td align="center">
+	    &nbsp;
 	  </td>
 	  <td align="center">
   	    <img src="../../images/of_type.gif" alt="Of type">
@@ -1154,12 +1372,15 @@
 	</tr>
 	
 	<tr>
-	  <td colspan="4"> &nbsp; </td>
+	  <td colspan="5"> &nbsp; </td>
 	</tr>
 
 	<tr>
 	  <td align="center">
 	    <code>:=</code>
+	  </td>
+	  <td align="center">
+	    bcmeq
 	  </td>
 	  <td align="center">
 	     <img src="../../images/becomes_equal.gif" alt="Becomes equal">
@@ -1178,6 +1399,9 @@
 	    <code>::</code>
 	  </td>
 	  <td align="center">
+	    bcmin
+	  </td>
+	  <td align="center">
 	     <img src="../../images/becomes_elem_of.gif" alt="Becomes an element of">
 	  </td>
 	  <td>
@@ -1191,6 +1415,9 @@
 	<tr>
 	  <td align="center">
 	    <code>:|</code>
+	  </td>
+	  <td align="center">
+	    bcmsuch
 	  </td>
 	  <td align="center">
 	     <img src="../../images/becomes_such_that.gif" alt="Becomes such that">

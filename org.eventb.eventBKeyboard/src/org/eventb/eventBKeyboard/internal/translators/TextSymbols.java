@@ -15,9 +15,9 @@ public class TextSymbols extends AbstractSymbols {
 
 	public TextSymbols() {
 		super(new Symbol[] {
-				new Symbol("NAT1", "\u2115\u0031"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("NAT1", "\u2115\u2081"), //$NON-NLS-1$ //$NON-NLS-2$
 				new Symbol("NAT", "\u2115"), //$NON-NLS-1$ //$NON-NLS-2$
-				new Symbol("POW1", "\u2119\u0031"), //$NON-NLS-1$ //$NON-NLS-2$
+				new Symbol("POW1", "\u2119\u2081"), //$NON-NLS-1$ //$NON-NLS-2$
 				new Symbol("POW", "\u2119"), //$NON-NLS-1$ //$NON-NLS-2$
 				new Symbol("INT", "\u2124"), //$NON-NLS-1$ //$NON-NLS-2$
 				new Symbol("INTER", "\u22c2"), //$NON-NLS-1$ //$NON-NLS-2$
@@ -29,6 +29,10 @@ public class TextSymbols extends AbstractSymbols {
 				new Symbol("circ", "\u2218"), //$NON-NLS-1$ //$NON-NLS-2$
 				new Symbol("oftype", "\u2982"), //$NON-NLS-1$ //$NON-NLS-2$
 		});
+	}
+	
+	public TextSymbols(Symbol[] rawSymbols) {
+		super(rawSymbols);
 	}
 
 }

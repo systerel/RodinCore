@@ -91,6 +91,7 @@ public class EventBKeyboardExpressionTestCase extends TestCase {
 		for (int i = 0; i < input.length(); i++)
 			insert("" + input.charAt(i));
 		String actual = formula.getText();
+		actual = actual.replaceAll(Text.DELIMITER, "\n");		
 		assertEquals(message, expect, actual);
 	}
 

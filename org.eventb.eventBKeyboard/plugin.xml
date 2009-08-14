@@ -57,9 +57,13 @@
       	class="org.eventb.eventBKeyboard.internal.translators.EventBKeyboardTextTranslator">
       </translator>
       <translator
+      	class="org.eventb.eventBKeyboard.internal.translators.EventBKeyboardLaTeXTranslator">
+      </translator>
+      <translator
       	class="org.eventb.eventBKeyboard.internal.translators.EventBKeyboardMathTranslator">
       </translator>
-      <translator class="org.eventb.eventBKeyboard.internal.translators.EventBStyledTextMathTranslator"/>
       <translator class="org.eventb.eventBKeyboard.internal.translators.EventBStyledTextTextTranslator"/>
+      <translator class="org.eventb.eventBKeyboard.internal.translators.EventBStyledTextLaTeXTranslator"/>
+      <translator class="org.eventb.eventBKeyboard.internal.translators.EventBStyledTextMathTranslator"/>
    </extension>
 </plugin>

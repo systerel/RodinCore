@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - handling of LaTeX symbols
  ******************************************************************************/
 
 package org.eventb.eventBKeyboard.internal.translators;
@@ -26,9 +27,9 @@ import org.eventb.internal.eventBKeyboard.KeyboardUtils;
  */
 public class EventBKeyboardTextTranslator implements IEventBKeyboardTranslator {
 
-	private static HashMap<String, Collection<Symbol>> symbols = null;
+	HashMap<String, Collection<Symbol>> symbols = null;
 
-	private static int maxSize = 0;
+	int maxSize = 0;
 
 	/**
 	 * Translate the content of the text widget. Because of the "space", it
@@ -47,7 +48,7 @@ public class EventBKeyboardTextTranslator implements IEventBKeyboardTranslator {
 		translate(widget, 0, text.length());
 	}
 
-	private void translate(Text widget, int beginIndex, int endIndex) {
+	void translate(Text widget, int beginIndex, int endIndex) {
 		KeyboardUtils.debugText("***************************************");
 		KeyboardUtils.debugText("Begin: " + beginIndex);
 		KeyboardUtils.debugText("End: " + endIndex);
@@ -121,7 +122,7 @@ public class EventBKeyboardTextTranslator implements IEventBKeyboardTranslator {
 							// current pos
 							widget.setSelection(currentPos);
 						}
-						// Transate before current pos
+						// Translate before current pos
 						else if (realIndex + test.length() < currentPos)
 							widget.setSelection(currentPos - test.length()
 									+ result.length());

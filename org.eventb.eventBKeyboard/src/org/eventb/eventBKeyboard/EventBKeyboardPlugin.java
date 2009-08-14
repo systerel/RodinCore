@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - handling of LaTeX symbols
  ******************************************************************************/
 
 package org.eventb.eventBKeyboard;
@@ -16,6 +17,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eventb.eventBKeyboard.internal.translators.LaTeXSymbols;
 import org.eventb.eventBKeyboard.internal.translators.MathSymbols;
 import org.eventb.eventBKeyboard.internal.translators.TextSymbols;
 import org.eventb.internal.eventBKeyboard.KeyboardUtils;
@@ -36,10 +38,10 @@ public class EventBKeyboardPlugin extends AbstractUIPlugin {
 
 	public static final String PLUGIN_ID = "org.eventb.eventBKeyboard";
 	
-	private static final String MATH_TRACE = PLUGIN_ID + "/debug/text";
+	private static final String MATH_TRACE = PLUGIN_ID + "/debug/math";
 
-	private static final String TEXT_TRACE = PLUGIN_ID + "/debug/math";
-
+	private static final String TEXT_TRACE = PLUGIN_ID + "/debug/text";
+	
 	// The shared instance.
 	private static EventBKeyboardPlugin plugin;
 
@@ -58,6 +60,7 @@ public class EventBKeyboardPlugin extends AbstractUIPlugin {
 		super.start(context);
 		new MathSymbols();
 		new TextSymbols();
+		new LaTeXSymbols();
 		configureDebugOptions();
 	}
 
@@ -73,7 +76,6 @@ public class EventBKeyboardPlugin extends AbstractUIPlugin {
 			option = Platform.getDebugOption(MATH_TRACE);
 			if (option != null)
 				KeyboardUtils.MATH_DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-
 		}
 	}
 

@@ -10,9 +10,9 @@ import org.eventb.internal.eventBKeyboard.KeyboardUtils;
 public class EventBStyledTextMathTranslator implements
 		IEventBStyledTextTranslator {
 
-	private static HashMap<String, Collection<Symbol>> symbols = null;
+	private HashMap<String, Collection<Symbol>> symbols = null;
 
-	private static int maxSize = 0;
+	private int maxSize = 0;
 
 	public void translate(StyledText widget) {
 		if (symbols == null) {
