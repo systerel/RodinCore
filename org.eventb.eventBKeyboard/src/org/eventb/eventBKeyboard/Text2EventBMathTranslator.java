@@ -59,7 +59,7 @@ public class Text2EventBMathTranslator {
 			latexSymbols = lsymbol.getSymbols();
 			maxLaTeXSize = lsymbol.getMaxSize();
 		}
-		String translation = translateSymbols(str, maxLaTeXSize, latexSymbols);
+		String translation = translateTextSymbols(str, maxLaTeXSize, latexSymbols);
 		if (translation != null)
 			return translation;
 		
@@ -69,7 +69,7 @@ public class Text2EventBMathTranslator {
 			mathSymbols = ssymbols.getSymbols();
 			maxMathSize = ssymbols.getMaxSize();
 		}
-		translation = translateSymbols(str, maxMathSize, mathSymbols);
+		translation = translateMathSymbols(str, maxMathSize, mathSymbols);
 		if (translation != null)
 			return translation;
 
@@ -79,32 +79,14 @@ public class Text2EventBMathTranslator {
 			textSymbols = tsymbol.getSymbols();
 			maxSize = tsymbol.getMaxSize();
 		}
-		for (int i = maxSize; i > 0; i--) {
-			String key = AbstractSymbols.generateKey(i);
-
-			Collection<Symbol> collection = textSymbols.get(key);
-			if (collection != null) {
-				for (Symbol symbol : collection) {
-					String combo = symbol.getCombo();
-					int index = comboIndex(str, combo);
-					if (index == 0) {
-						return symbol.getTranslation()
-								+ translate(str.substring(combo.length()));
-					} else if (index != -1) {
-						return translate(str.substring(0, index))
-								+ symbol.getTranslation()
-								+ translate(str.substring(index
-										+ combo.length()));
-					}
-
-				}
-			}
-		}
+		translation = translateTextSymbols(str, maxSize, textSymbols);
+		if (translation != null)
+			return translation;
 
 		return str;
 	}
 
-	private static String translateSymbols(String str, int size,
+	private static String translateMathSymbols(String str, int size,
 			HashMap<String, Collection<Symbol>> symbols) {
 		for (int i = size; i > 0; i--) {
 			String key = AbstractSymbols.generateKey(i);
@@ -120,6 +102,32 @@ public class Text2EventBMathTranslator {
 								+ translate(str.substring(index
 										+ combo.length()));
 					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	private static String translateTextSymbols(String str, int size,
+			HashMap<String, Collection<Symbol>> symbols) {
+		for (int i = size; i > 0; i--) {
+			String key = AbstractSymbols.generateKey(i);
+
+			Collection<Symbol> collection = symbols.get(key);
+			if (collection != null) {
+				for (Symbol symbol : collection) {
+					String combo = symbol.getCombo();
+					int index = comboIndex(str, combo);
+					if (index == 0) {
+						return symbol.getTranslation()
+								+ translate(str.substring(combo.length()));
+					} else if (index != -1) {
+						return translate(str.substring(0, index))
+								+ symbol.getTranslation()
+								+ translate(str.substring(index
+										+ combo.length()));
+					}
+
 				}
 			}
 		}
