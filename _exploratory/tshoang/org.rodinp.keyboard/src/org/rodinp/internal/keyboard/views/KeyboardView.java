@@ -71,7 +71,7 @@ public class KeyboardView extends ViewPart implements
 
 		// Using a special fonts for showing Event-B symbols.
 		Font font = JFaceResources
-				.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+				.getFont(PreferenceConstants.RODIN_MATH_FONT);
 		formula.setFont(font);
 	}
 
@@ -79,9 +79,9 @@ public class KeyboardView extends ViewPart implements
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(PreferenceConstants.EVENTB_MATH_FONT)) {
+		if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
 			Font font = JFaceResources
-					.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+					.getFont(PreferenceConstants.RODIN_MATH_FONT);
 			formula.setFont(font);
 		}
 	}

@@ -20,9 +20,9 @@ package org.rodinp.keyboard.preferences;
 public class PreferenceConstants {
 
 	/**
-	 * Property identifier for Event-B Text font, value
-	 * <code>org.eventb.eventBKeyboard.textFont</code>.
+	 * Property identifier for RODIN Text font, value
+	 * <code>org.rodinp.keyboard.textFont</code>.
 	 */
-	public static final String EVENTB_MATH_FONT = "org.rodinp.keyboard.textFont";
+	public static final String RODIN_MATH_FONT = "org.rodinp.keyboard.textFont";
 
 }
