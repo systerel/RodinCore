@@ -37,6 +37,9 @@ sub filter {
 # Process one Java source file
 sub processSourceFile {
 	my($filename) = @_;
+	if ($filename eq 'ProverRule.java') {
+		return; # avoid examples in interface source file
+	}
 	DEBUG and print STDERR "Processing $filename\n";
 	open(FH, '<:utf8', $filename) or die $!;
 	local $/; # enable localized slurp mode
