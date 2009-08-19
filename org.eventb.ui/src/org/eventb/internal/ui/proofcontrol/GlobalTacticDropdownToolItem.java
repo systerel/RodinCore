@@ -43,8 +43,7 @@ public abstract class GlobalTacticDropdownToolItem {
 
 	String active = null;
 
-	static final TacticUIRegistry registry = TacticUIRegistry
-			.getDefault();
+	static final TacticUIRegistry registry = TacticUIRegistry.getDefault();
 
 	/**
 	 * @author htson
@@ -80,6 +79,7 @@ public abstract class GlobalTacticDropdownToolItem {
 			}
 			MenuItem menuItem = new MenuItem(menu, SWT.NONE);
 			menuItem.setImage(registry.getIcon(tacticID));
+			menuItem.setText(registry.getTip(tacticID));
 
 			menuItem.setData(tacticID);
 			menuItem.addSelectionListener(new SelectionAdapter() {
