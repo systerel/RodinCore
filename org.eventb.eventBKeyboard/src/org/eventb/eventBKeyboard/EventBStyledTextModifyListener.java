@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * This used to be abstract class AbstractSymbols. 
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.eventBKeyboard;
 
 import java.util.ArrayList;
@@ -13,6 +25,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eventb.internal.eventBKeyboard.KeyboardUtils;
+import org.rodinp.keyboard.RodinKeyboardPlugin;
 
 /**
  * @author htson
@@ -20,7 +33,10 @@ import org.eventb.internal.eventBKeyboard.KeyboardUtils;
  *         The main class for translating ASCII into mathematical language of
  *         Event-B. This is done by using all the translators found in the
  *         extension registry.
+ *         </p>
+ * @deprecated use {@link RodinKeyboardPlugin#getRodinModifyListener()}
  */
+@Deprecated
 public class EventBStyledTextModifyListener implements ModifyListener {
 
 	// The extension identifier.
@@ -35,8 +51,8 @@ public class EventBStyledTextModifyListener implements ModifyListener {
 
 	/**
 	 * Main method for the listener. This is call when the text in the widget
-	 * has been changed. This gets all the transator from the extension register
-	 * and invokes them.
+	 * has been changed. This gets all the translator from the extension
+	 * register and invokes them.
 	 * <p>
 	 * 
 	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
