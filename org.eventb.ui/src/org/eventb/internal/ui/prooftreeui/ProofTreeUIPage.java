@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - Added a constant for the user support manager
+ *     ETH Zurich - adapted to org.rodinp.keyboard
  ******************************************************************************/
 package org.eventb.internal.ui.prooftreeui;
 
@@ -54,11 +55,11 @@ import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 /**
  * @author htson
@@ -108,14 +109,14 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		}
 
 		public Font getFont(Object element) {
-			return JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+			return JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
 		}
 
 		public void propertyChange(PropertyChangeEvent event) {
 			if (event.getProperty()
-					.equals(PreferenceConstants.EVENTB_MATH_FONT)) {
+					.equals(PreferenceConstants.RODIN_MATH_FONT)) {
 				if (event.getProperty().equals(
-						PreferenceConstants.EVENTB_MATH_FONT)) {
+						PreferenceConstants.RODIN_MATH_FONT)) {
 					viewer.refresh();
 				}
 			}

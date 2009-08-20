@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,11 +7,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
  *     Systerel - changed double click behavior
  *     Systerel - set tree focus when dispose
+ *     ETH Zurich - adapted to org.rodinp.keyboard
  ******************************************************************************/
-
 package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.swt.SWT;
@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.TimerText;
 import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
@@ -37,6 +36,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.location.IAttributeLocation;
+import org.rodinp.keyboard.RodinKeyboardPlugin;
 
 /**
  * @author htson
@@ -82,7 +82,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 			case SWT.FocusOut:
 				if (adapter.isProposalPopupOpen())
 					break;
-				commit(element, column, Text2EventBMathTranslator
+				commit(element, column, RodinKeyboardPlugin.getDefault()
 						.translate(contents));
 				textWidget.getParent().dispose();
 				text.dispose();
@@ -123,7 +123,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 					break;
 				switch (event.detail) {
 				case SWT.TRAVERSE_RETURN:
-					commit(element, column, Text2EventBMathTranslator
+					commit(element, column, RodinKeyboardPlugin.getDefault()
 							.translate(contents));
 					textWidget.getParent().dispose();
 					text.dispose();
@@ -138,7 +138,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 					tree.setFocus();
 					break;
 				case SWT.TRAVERSE_TAB_NEXT:
-					commit(element, column, Text2EventBMathTranslator
+					commit(element, column, RodinKeyboardPlugin.getDefault()
 							.translate(contents));
 					textWidget.getParent().dispose();
 					text.dispose();
@@ -146,7 +146,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 					event.doit = false;
 					break;
 				case SWT.TRAVERSE_TAB_PREVIOUS:
-					commit(element, column, Text2EventBMathTranslator
+					commit(element, column, RodinKeyboardPlugin.getDefault()
 							.translate(contents));
 					textWidget.getParent().dispose();
 					text.dispose();

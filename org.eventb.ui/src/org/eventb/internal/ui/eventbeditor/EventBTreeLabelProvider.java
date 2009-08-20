@@ -1,5 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +10,8 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
  *     Systerel - used ElementDescRegistry
- *******************************************************************************/
+ *     ETH Zurich - adapted to org.rodinp.keyboard
+ ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.jface.resource.JFaceResources;
@@ -23,7 +25,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
@@ -31,6 +32,7 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry.Colu
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 /**
  * @author htson
@@ -163,13 +165,13 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 */
 	public Font getFont(Object element, int columnIndex) {
 		if (font == null) {
-			font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+			font = JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
 		}
 		return font;
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {
-		font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+		font = JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
 		viewer.refresh();
 	}
 

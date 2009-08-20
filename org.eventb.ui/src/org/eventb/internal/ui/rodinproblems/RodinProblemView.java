@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,11 +7,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     ETH Zurich - adapted to org.rodinp.keyboard
  ******************************************************************************/
 package org.eventb.internal.ui.rodinproblems;
-
-import static org.eventb.eventBKeyboard.preferences.PreferenceConstants.EVENTB_MATH_FONT;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.resource.JFaceResources;
@@ -19,6 +18,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.views.markers.internal.ProblemView;
+import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 /**
  * Overriding of the regular Problems view for Rodin.
@@ -45,7 +45,7 @@ public class RodinProblemView extends ProblemView {
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		final Tree tree = getViewer().getTree();
-		final Font font = JFaceResources.getFont(EVENTB_MATH_FONT);
+		final Font font = JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
 		tree.setFont(font);
 	}
 

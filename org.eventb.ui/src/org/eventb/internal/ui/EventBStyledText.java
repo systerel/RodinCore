@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -10,18 +10,16 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - changed double click behavior
  *     Systerel - added class Translator
+ *     ETH Zurich - adapted to org.rodinp.keyboard
  ******************************************************************************/
-
 package org.eventb.internal.ui;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.widgets.Text;
-import org.eventb.eventBKeyboard.EventBStyledTextModifyListener;
-import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
+import org.rodinp.keyboard.RodinKeyboardPlugin;
 
 /**
  * @author htson
@@ -45,8 +43,9 @@ public class EventBStyledText extends EventBControl implements IEventBInputText 
 		this.text = text;
 		text.addMouseListener(new DoubleClickStyledTextListener(text));
 		if (isMath) {
-			final Translator translator = new Translator(text);
-			text.addModifyListener(translator);
+			// final Translator translator = new Translator(text);
+			text.addModifyListener(RodinKeyboardPlugin.getDefault()
+					.createRodinModifyListener());
 			text.addFocusListener(new FocusListener() {
 				public void focusGained(FocusEvent e) {
 					if (translate()) {
@@ -59,6 +58,7 @@ public class EventBStyledText extends EventBControl implements IEventBInputText 
 				}
 			});
 		} else {
+			text.addMouseListener(new DoubleClickStyledTextListener(text));
 			text.addFocusListener(new FocusAdapter() {
 				@Override
 				public void focusLost(FocusEvent e) {
@@ -75,7 +75,7 @@ public class EventBStyledText extends EventBControl implements IEventBInputText 
 			return false;
 		}
 		final String original = text.getText();
-		final String translated = Text2EventBMathTranslator.translate(original);
+		final String translated = RodinKeyboardPlugin.getDefault().translate(original);
 		if (original.equals(translated)) {
 			return false;
 		}
@@ -96,21 +96,21 @@ public class EventBStyledText extends EventBControl implements IEventBInputText 
 	public Text getTextWidget() {
 		return (Text) getControl();
 	}
-
-	class Translator extends EventBStyledTextModifyListener {
-		private final StyledText widget;
-
-		public Translator(StyledText widget) {
-			this.widget = widget;
-		}
-
-		@Override
-		public void modifyText(ModifyEvent e) {
-			if (!widget.isFocusControl()) {
-				return;
-			}
-			super.modifyText(e);
-		}
-	}
+//
+//	class Translator extends RodinModifyListener {
+//		private final StyledText widget;
+//
+//		public Translator(StyledText widget) {
+//			this.widget = widget;
+//		}
+//
+//		@Override
+//		public void modifyText(ModifyEvent e) {
+//			if (!widget.isFocusControl()) {
+//				return;
+//			}
+//			super.modifyText(e);
+//		}
+//	}
 	
 }

@@ -10,6 +10,7 @@
  *     Systerel - used EventBSharedColor
  *     Systerel - changed double click behavior
  *     Systerel - fixed menu bug
+ *     ETH Zurich - adapted to org.rodinp.keyboard
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
@@ -42,7 +43,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.DoubleClickStyledTextListener;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBSharedColor;
@@ -52,6 +52,7 @@ import org.eventb.internal.ui.proofcontrol.IProofControlPage;
 import org.eventb.ui.prover.IProofCommand;
 import org.eventb.ui.prover.ITacticProvider;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 public class EventBPredicateText implements IPropertyChangeListener {
 	private final static int MARGIN = 5;
@@ -95,7 +96,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		styledText = new StyledText(parent, SWT.MULTI | SWT.FULL_SELECTION);
 		styledText.addMouseListener(new DoubleClickStyledTextListener(styledText));
 		Font font = JFaceResources
-				.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+				.getFont(PreferenceConstants.RODIN_MATH_FONT);
 		JFaceResources.getFontRegistry().addListener(this);
 		styledText.setFont(font);
 		styledText.setEditable(false);
@@ -226,9 +227,9 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(PreferenceConstants.EVENTB_MATH_FONT)) {
+		if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
 			Font font = JFaceResources
-					.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+					.getFont(PreferenceConstants.RODIN_MATH_FONT);
 			styledText.setFont(font);
 			styledText.pack();
 		}

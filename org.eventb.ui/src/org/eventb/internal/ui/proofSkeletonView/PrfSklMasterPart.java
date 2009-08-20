@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
+ *     ETH Zurich - adapted to org.rodinp.keyboard
  *******************************************************************************/
 package org.eventb.internal.ui.proofSkeletonView;
 
@@ -25,13 +26,13 @@ import org.eventb.core.IPRProof;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IProofTree;
-import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 /**
  * Master part of the MasterDetailsBlock for the proof skeleton viewer.
@@ -42,7 +43,7 @@ import org.rodinp.core.RodinDBException;
 public class PrfSklMasterPart implements IFormPart {
 
 	private static final Font EVENTB_FONT = JFaceResources
-			.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+			.getFont(PreferenceConstants.RODIN_MATH_FONT);
 
 	private TreeViewer viewer;
 	private IManagedForm managedForm;

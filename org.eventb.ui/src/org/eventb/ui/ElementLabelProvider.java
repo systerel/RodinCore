@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,10 +7,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
  *     Systerel - used ElementDescRegistry
+ *     ETH Zurich - adapted to org.rodinp.keyboard
  ******************************************************************************/
-
 package org.eventb.ui;
 
 import static org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry.Column.LABEL;
@@ -35,7 +35,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
-import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.RodinElementTableLabelProvider;
 import org.eventb.internal.ui.RodinElementTreeLabelProvider;
@@ -43,6 +42,7 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinMarkerUtil;
+import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 /**
  * @author htson
@@ -87,12 +87,12 @@ public class ElementLabelProvider extends LabelProvider implements
 	}
 
 	public Font getFont(Object element) {
-		return JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+		return JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(PreferenceConstants.EVENTB_MATH_FONT)) {
-			if (event.getProperty().equals(PreferenceConstants.EVENTB_MATH_FONT)) {
+		if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
+			if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
 				viewer.refresh();
 			}
 		}

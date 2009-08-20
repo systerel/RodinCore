@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
  *     Systerel - added history support
+ *     ETH Zurich - adapted to org.rodinp.keyboard
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -37,7 +38,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eventb.core.ICommentedElement;
-import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
@@ -45,6 +45,7 @@ import org.eventb.internal.ui.TimerText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.manipulation.CommentAttributeManipulation;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 public class CommentToolTip {
 	Shell parentShell;
@@ -298,7 +299,7 @@ public class CommentToolTip {
 						| GridData.VERTICAL_ALIGN_CENTER));
 				// Create a new font for this label
 				Font font = JFaceResources
-						.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+						.getFont(PreferenceConstants.RODIN_MATH_FONT);
 				tipLabel.setFont(font);
 
 				// tipLabel.setData ("_TABLEITEM", item);

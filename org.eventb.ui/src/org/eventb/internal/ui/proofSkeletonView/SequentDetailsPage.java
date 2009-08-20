@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
+ *     ETH Zurich - adapted to org.rodinp.keyboard
  *******************************************************************************/
 package org.eventb.internal.ui.proofSkeletonView;
 
@@ -33,7 +34,7 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
+import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 /**
  * DetailsPage for sequents. It is used within the proof skeleton
@@ -45,7 +46,7 @@ import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 public class SequentDetailsPage implements IDetailsPage {
 
 	private static final Font EVENTB_FONT = JFaceResources
-			.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+			.getFont(PreferenceConstants.RODIN_MATH_FONT);
 
 	private ListViewer viewer;
 

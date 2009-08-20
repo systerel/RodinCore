@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,9 +7,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     ETH Zurich - adapted to org.rodinp.keyboard
  ******************************************************************************/
-
 package org.eventb.internal.ui;
 
 import org.eclipse.jface.resource.JFaceResources;
@@ -17,7 +17,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Control;
-import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
+import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 /**
  * @author htson
@@ -41,7 +41,7 @@ public class EventBControl implements IEventBControl, IPropertyChangeListener {
 	public EventBControl(Control control) {
 		this.control = control;
 		Font font = JFaceResources
-				.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+				.getFont(PreferenceConstants.RODIN_MATH_FONT);
 		control.setFont(font);
 
 		JFaceResources.getFontRegistry().addListener(this);
@@ -53,9 +53,9 @@ public class EventBControl implements IEventBControl, IPropertyChangeListener {
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(PreferenceConstants.EVENTB_MATH_FONT)) {
+		if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
 			Font font = JFaceResources
-					.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+					.getFont(PreferenceConstants.RODIN_MATH_FONT);
 			control.setFont(font);
 		}
 	}

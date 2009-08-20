@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
+ *     ETH Zurich - adapted to org.rodinp.keyboard
  *******************************************************************************/
 package org.eventb.internal.ui.prooftreeui;
 
@@ -37,11 +38,11 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.IEventBInputText;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 public class ProofTreeUIToolTip {
 	Shell parentShell;
@@ -145,7 +146,7 @@ public class ProofTreeUIToolTip {
 
 		// Create a new font for this label
 		Font font = JFaceResources
-				.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+				.getFont(PreferenceConstants.RODIN_MATH_FONT);
 		tipLabel.setFont(font);
 
 		// Create a separator

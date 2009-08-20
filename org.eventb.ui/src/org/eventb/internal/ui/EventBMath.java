@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,15 +9,15 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - changed double click behavior
+ *     ETH Zurich - adapted to org.rodinp.keyboard
  ******************************************************************************/
-
 package org.eventb.internal.ui;
 
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Text;
-import org.eventb.eventBKeyboard.EventBTextModifyListener;
-import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
+import org.rodinp.keyboard.RodinKeyboardPlugin;
 
 /**
  * @author htson
@@ -29,7 +29,7 @@ public class EventBMath extends EventBControl implements IEventBInputText {
 
 	boolean translate;
 	
-	EventBTextModifyListener listener;
+	ModifyListener listener;
 	
 	/**
 	 * Constructor.
@@ -40,7 +40,8 @@ public class EventBMath extends EventBControl implements IEventBInputText {
 	 */
 	public EventBMath(final Text text) {
 		super(text);
-		listener = new EventBTextModifyListener();
+		final RodinKeyboardPlugin kbrdPlugin = RodinKeyboardPlugin.getDefault();
+		listener = kbrdPlugin.createRodinModifyListener();
 		text.addMouseListener(new DoubleClickTextListener(text));
 		text.addModifyListener(listener);
 		text.addFocusListener(new FocusListener() {
@@ -51,7 +52,7 @@ public class EventBMath extends EventBControl implements IEventBInputText {
 
 			public void focusLost(FocusEvent e) {
 				if (text.getEditable() && translate) {
-					String translateStr = Text2EventBMathTranslator.translate(text
+					String translateStr = kbrdPlugin.translate(text
 							.getText());
 					if (!text.getText().equals(translateStr)) {
 						text.setText(translateStr);
@@ -75,16 +76,6 @@ public class EventBMath extends EventBControl implements IEventBInputText {
 	 */
 	public Text getTextWidget() {
 		return (Text) getControl();
-	}
-
-	/**
-	 * Enable/disable the translation.
-	 * 
-	 * @param translate
-	 */
-	public void setTranslate(boolean translate) {
-		this.translate = translate;
-		listener.setEnable(translate);
 	}
 
 }

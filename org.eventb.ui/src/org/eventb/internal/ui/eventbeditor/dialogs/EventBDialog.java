@@ -10,6 +10,7 @@
  *     Systerel - used EventBSharedColor
  *     Systerel - add getNameInputText and getContentInputText to factor several methods
  *     Systerel - added checkNewIdentifiers()
+ *     ETH Zurich - adapted to org.rodinp.keyboard
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.dialogs;
 
@@ -37,7 +38,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.EventBText;
@@ -46,6 +46,7 @@ import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.utils.Messages;
+import org.rodinp.keyboard.RodinKeyboardPlugin;
 
 /**
  * @author htson
@@ -392,8 +393,8 @@ public abstract class EventBDialog extends Dialog {
 	}
 
 	protected String translate(IEventBInputText text) {
-		return Text2EventBMathTranslator.translate(text.getTextWidget()
-				.getText());
+		return RodinKeyboardPlugin.getDefault().translate(
+				text.getTextWidget().getText());
 	}
 	
 	protected String[] getFirst(Collection<Pair<String, String>> pairs) {
