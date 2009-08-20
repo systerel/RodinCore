@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eventb.keyboard.tests
+Bundle-Version: 1.0.0
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Require-Bundle: org.rodinp.keyboard.tests;bundle-version="1.0.0",
+ org.eventb.keyboard;bundle-version="1.0.0"
+Bundle-Vendor: %providerName
