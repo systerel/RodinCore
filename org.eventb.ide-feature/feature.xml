@@ -47,13 +47,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eventb.eventBKeyboard"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eventb.core.ast"
          download-size="0"
          install-size="0"
@@ -96,6 +89,20 @@
 
    <plugin
          id="fr.systerel.explorer"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.rodinp.keyboard"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eventb.keyboard"
          download-size="0"
          install-size="0"
          version="0.0.0"
