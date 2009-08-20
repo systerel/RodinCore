@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eventb.eventBKeyboard" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.rodinp.keyboard" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.eventb.eventBKeyboard" id="symbols" name="Event-B Keyboard symbols"/>
+         <meta.schema plugin="org.rodinp.keyboard" id="symbols" name="Rodin Keyboard symbols"/>
       </appinfo>
       <documentation>
          &lt;p&gt;The Rodin platform supports the use of extensible mathematical symbols that can be typed in when editing models. Mathematical symbols are associated with key combos.
