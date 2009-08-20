@@ -1,0 +1,6 @@
+<contexts>
+	<context id="keyboardView">
+    <description>Keyboard combos can be used to type in mathematical symbols.</description>
+    <topic href="html/gettingstarted/combos.html" label="Keyboard combos"/>
+	</context>
+</contexts>
