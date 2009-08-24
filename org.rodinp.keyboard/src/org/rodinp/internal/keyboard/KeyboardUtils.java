@@ -21,7 +21,9 @@ public class KeyboardUtils {
 	public static boolean MATH_DEBUG = false;
 	
 	public static void debug(String str) {
-		System.out.println(str);
+		if (DEBUG) {
+			System.out.println(str);
+		}
 	}
 	
 	public static void debugText(String str) {

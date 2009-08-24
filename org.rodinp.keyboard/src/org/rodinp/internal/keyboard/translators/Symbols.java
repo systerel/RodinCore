@@ -185,7 +185,12 @@ public class Symbols {
 	}
 
 	public boolean containRawCombo(String combo) {
-		return rawSymbols.contains(combo);
+		for (Symbol symbol : rawSymbols) {
+			if (symbol.getCombo().equals(combo)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

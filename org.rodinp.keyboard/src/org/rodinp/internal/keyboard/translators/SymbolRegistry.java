@@ -12,7 +12,9 @@
  *******************************************************************************/
 package org.rodinp.internal.keyboard.translators;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -21,9 +23,10 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.rodinp.internal.keyboard.KeyboardUtils;
 import org.rodinp.keyboard.RodinKeyboardPlugin;
+
 public class SymbolRegistry {
-	
-	private String SYMBOLS_ID = RodinKeyboardPlugin.PLUGIN_ID + ".symbols"; 
+
+	private String SYMBOLS_ID = RodinKeyboardPlugin.PLUGIN_ID + ".symbols";
 
 	private static SymbolRegistry instance;
 	
@@ -64,18 +67,25 @@ public class SymbolRegistry {
 		IConfigurationElement[] configurations = extensionPoint
 				.getConfigurationElements();
 		
+		final List<String> registeredIDs = new ArrayList<String>();
 		for (IConfigurationElement configuration : configurations) {
-			String id = configuration.getAttribute("id"); //$NON-NLS-1$
-			
+			String id = configuration.getNamespaceIdentifier()
+					+ "." + configuration.getAttribute("id"); //$NON-NLS-1$
+
 			if (configuration.getName().equals("symbol")) {
+				if (registeredIDs.contains(id)) {
+					KeyboardUtils.debug("Duplicate id " + id
+							+ ": ignored this configuration.");
+					continue;
+				}
+				registeredIDs.add(id);
+				
 				String combo = configuration.getAttribute("combo");
 				if (combo == null) {
-					if (KeyboardUtils.DEBUG) {
-						KeyboardUtils.debug("Configuration with id " + id
-								+ " does not have any combo value,"
-								+ " ignore this configuration.");
-						continue;
-					}
+					KeyboardUtils.debug("Configuration with id " + id
+							+ " does not have any combo value,"
+							+ " ignored this configuration.");
+					continue;
 				}
 				boolean isText = isTextSymbol(combo);
 				Symbols symbols;
@@ -86,24 +96,18 @@ public class SymbolRegistry {
 				}
 				
 				if (symbols.containRawCombo(combo)) {
-					if (KeyboardUtils.DEBUG) {
-						KeyboardUtils
-								.debug("Translation already exists for combination "
-										+ combo
-										+ ", ignore this configuration.");
-					}
+					KeyboardUtils
+							.debug("Translation already exists for combination "
+									+ combo + ", ignored this configuration.");
 					continue;
-				}
-				else {
+				} else {
 					String translation = configuration
 							.getAttribute("translation");
 					if (translation == null) {
-						if (KeyboardUtils.DEBUG) {
-							KeyboardUtils.debug("Configuration with id " + id
-									+ " does not have any translation value,"
-									+ " ignore this configuration.");
-						}
-						continue;						
+						KeyboardUtils.debug("Configuration with id " + id
+								+ " does not have any translation value,"
+								+ " ignored this configuration.");
+						continue;
 					}
 					Symbol symbol = new Symbol(combo, translation);
 					symbols.addRawSymbol(symbol);

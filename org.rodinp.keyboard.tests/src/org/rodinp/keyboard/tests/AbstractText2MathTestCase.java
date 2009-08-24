@@ -22,7 +22,7 @@ import org.rodinp.keyboard.RodinKeyboardPlugin;
  *         This class contains some simple test cases for Text2EventBMath
  *         translator. This tests the translation on all the symbols separately.
  */
-public class AbstractText2MathTestCase extends TestCase {
+public abstract class AbstractText2MathTestCase extends TestCase {
 
 	protected void testTranslator(String message, String input, String expected) {
 		RodinKeyboardPlugin kbrdPlugin = RodinKeyboardPlugin.getDefault();
