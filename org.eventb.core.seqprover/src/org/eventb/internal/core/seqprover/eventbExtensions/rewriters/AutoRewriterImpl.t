@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language V2
+ *     Systerel - SIMP_IN_COMPSET_*, SIMP_SPECIAL_OVERL, SIMP_FUNIMAGE_LAMBDA
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
@@ -46,6 +47,7 @@ import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.internal.core.seqprover.eventbExtensions.OnePointSimplifier;
 
 /**
  * Basic automated rewriter for the Event-B sequent prover.
@@ -409,7 +411,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    return predicate;
 	}
 
-    @ProverRule({"SIMP_FORALL_AND", "SIMP_EXISTS_OR", "SUBST_FORALL_AND"}) 
+    @ProverRule({"SIMP_FORALL_AND", "SIMP_EXISTS_OR"}) 
 	@Override
 	public Predicate rewrite(QuantifiedPredicate predicate) {
 	    %match (Predicate predicate) {
@@ -442,15 +444,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				return makeAssociativePredicate(Predicate.LOR, predicates);
 	    	}
 	    	
-	    	/**
-             * SUBST_FORALL_AND
-	    	 * Quantification 3: ∀x, ..., y, ..., z·P(y) ∧ ... ∧ y = E ∧ ... ∧ Q(y) ⇒ R(y) 
-	    	 *                == ∀x, ..., ...,z·P(E) ∧ ... ∧ ... ∧ Q(E) ⇒ R(E)
-	    	 */
-	    	ForAll(idents, Limp(Land(children), R)) -> {
-	    		return FormulaSimplification.checkForAllOnePointRule(predicate, `idents, `children, `R);
-	    	}
-	    	
 	    }
 	    return predicate;
 	}
@@ -463,7 +456,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
             "DERIV_SUBSETEQ_SETMINUS_L", "SIMP_SUBSETEQ_BUNION",
             "SIMP_SUBSETEQ_BINTER", "DERIV_SUBSETEQ_BUNION",
             "DERIV_SUBSETEQ_BINTER", "SIMP_SPECIAL_IN", "SIMP_MULTI_IN",
-            "SIMP_IN_SING", "SIMP_IN_COMPSET", "SIMP_IN_COMPSET_GENERAL",
+            "SIMP_IN_SING", "SIMP_IN_COMPSET", "SIMP_IN_COMPSET_ONEPOINT",
             "SIMP_EQUAL_SING", "SIMP_LIT_EQUAL", "SIMP_LIT_LE", "SIMP_LIT_LT",
 			"SIMP_LIT_GE", "SIMP_LIT_GT", "SIMP_SPECIAL_EQUAL_CARD",
 			"SIMP_LIT_EQUAL_CARD_1", "SIMP_LIT_GT_CARD_0",
@@ -692,23 +685,32 @@ public class AutoRewriterImpl extends DefaultRewriter {
 
 			/**
              * SIMP_IN_COMPSET
+	    	 * Set Theory: F ∈ {x,y,... · P(x,y,...) | E(x,y,...)} == ∃x,y,...· P(x,y,...) ∧ E(x,y,...) = F
+             * SIMP_IN_COMPSET_ONEPOINT
 	    	 * Set Theory 10: E ∈ {x · P(x) | x} == P(E)
 	    	 */
 	    	In(E, Cset(idents, guard, expression)) -> {
-				if (`idents.length == 1) {
-					Expression expression = `expression;
-					if (expression instanceof BoundIdentifier) {
-						BoundIdentifier boundIdent = (BoundIdentifier) `expression;
-						if (boundIdent.getBoundIndex() == 0) {
-							QuantifiedPredicate qPred = makeQuantifiedPredicate(
-									Predicate.FORALL, `idents, `guard);
-							Expression [] expressions = new Expression[1];
-							expressions[0] = `E;
-							return qPred.instantiate(expressions, ff);
-						}
-					}
+				Predicate equalsPred = makeRelationalPredicate(Predicate.EQUAL,
+				                        `expression,
+				                        `E.shiftBoundIdentifiers(`idents.length, ff));
+				Predicate conjunctionPred = makeAssociativePredicate(Predicate.LAND,
+				                                `guard, equalsPred);
+
+				Predicate existsPred = makeQuantifiedPredicate(Predicate.EXISTS,
+				                           `idents, conjunctionPred);
+				
+				final OnePointSimplifier onePoint = 
+				    new OnePointSimplifier(existsPred, equalsPred, ff);
+				onePoint.match();
+
+				if (onePoint.isApplicable()) {
+					// no need to generate a WD PO for the replacement:
+					// it is already generated separately by POM 
+					// for the whole predicate
+					return onePoint.getSimplifiedPredicate();
+				} else {
+					return existsPred;
 				}
-				return predicate;
 	    	}
 		
 			/**
@@ -928,6 +930,15 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    			}
 	    		}
 	    	}
+	    	
+            /**
+             * SIMP_SPECIAL_OVERL
+			 * Set theory: r  ...  ∅  ...  s  ==  r  ...  s
+			 */
+	    	Ovr(children) -> {
+	    		return FormulaSimplification.simplifyAssociativeExpression(expression, `children);
+    		}
+	    	
 	    }
 	    return expression;
 	}
@@ -1205,6 +1216,18 @@ public class AutoRewriterImpl extends DefaultRewriter {
 					return `children[0];
 			}
 
+            /**
+             * SIMP_FUNIMAGE_LAMBDA
+             *
+             */
+            FunImage(cSet@Cset(_,_,Mapsto(_,_)),x) -> {
+                final QuantifiedExpression cSet = (QuantifiedExpression) `cSet;
+                if (cSet.getForm() == QuantifiedExpression.Form.Lambda) {
+                    final LambdaImageComputer computer = new LambdaImageComputer(cSet);
+                    computer.init();
+                    return computer.computeImage(`x, ff);
+                }
+            }
 		}
 	    return expression;
 	}

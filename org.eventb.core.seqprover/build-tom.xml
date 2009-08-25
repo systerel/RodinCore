@@ -41,6 +41,7 @@
 	
 	<target name="clean" description="clean up">
 		<delete file="${rewriter.src}/AndOrDistRewriterImpl.java" />
+		<delete file="${rewriter.src}/ArithRewriterImpl.java" />
 		<delete file="${rewriter.src}/AutoRewriterImpl.java" />
 		<delete file="${rewriter.src}/CompImgRewriterImpl.java" />
 		<delete file="${rewriter.src}/CompUnionDistRewriterImpl.java" />
@@ -73,10 +74,12 @@
 		<delete file="${inference.src}/CardUpTo.java" />
 		<delete file="${inference.src}/FiniteMax.java" />
 		<delete file="${inference.src}/FiniteMin.java" />
+        <delete file="${inference.src}/FiniteHypBoundedGoal.java" />
 		<delete file="${inference.src}/FunCompImg.java" />
 		<delete file="${inference.src}/FunInterImg.java" />
 		<delete file="${inference.src}/FunSetMinusImg.java" />
 		<delete file="${inference.src}/FunSingletonImg.java" />
+		<delete file="${inference.src}/OnePointSimplifier.java" />
     </target>
 	
 </project>

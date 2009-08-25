@@ -1887,6 +1887,26 @@
             tacticProvider="org.eventb.internal.ui.prover.tactics.PartitionRewrites"
             target="hypothesis"
             tooltip="%proofTactic.partitionRewrites.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.arithRewritesHyp"
+            interrupt="true"
+            name="%proofTactic.arithRewrites.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.Arith"
+            target="hypothesis"
+            tooltip="%proofTactic.arithRewrites.tooltip">
+      </tactic>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.arithRewritesGoal"
+            interrupt="true"
+            name="%proofTactic.arithRewrites.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.Arith"
+            target="goal"
+            tooltip="%proofTactic.arithRewrites.tooltip">
+      </tactic>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">

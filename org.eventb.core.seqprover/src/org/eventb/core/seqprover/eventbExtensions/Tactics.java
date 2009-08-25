@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added partition tactic (math V2)
+ *     Systerel - added rm for UPTO and Arith and OnePoint tactics
  ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
@@ -29,6 +30,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.MultiplePredicate;
@@ -101,7 +103,11 @@ import org.eventb.internal.core.seqprover.eventbExtensions.He;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
 import org.eventb.internal.core.seqprover.eventbExtensions.ModusTollens;
+import org.eventb.internal.core.seqprover.eventbExtensions.OnePointRule;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AndOrDistRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ArithRewriterImpl;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ArithRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompImgRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompUnionDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHypRewrites;
@@ -140,6 +146,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.UnionInterD
  * @author Farhad Mehta, htson
  * 
  * TODO : complete comments.
+ * @since 1.1
  */
 public class Tactics {
 
@@ -1148,6 +1155,9 @@ public class Tactics {
 					}
 					if (right instanceof BinaryExpression
 							&& rTag == Expression.TBIJ) {
+						return true;
+					}
+					if (rTag == Expression.UPTO) {
 						return true;
 					}
 					if (Lib.isDirectProduct(right) && Lib.isMapping(left)) {
@@ -3383,6 +3393,91 @@ public class Tactics {
 	public static ITactic partitionRewrites(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new PartitionRewrites(),
 				new PartitionRewrites.Input(hyp, position));
+	}
+
+	/**
+	 * Return the list of applicable positions of the tactic
+	 * "arithmetic rewrites" {@link ArithRewrites} to a predicate.
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @since 1.1
+	 */
+	public static List<IPosition> arithGetPositions(Predicate predicate) {
+		final IFormulaRewriter rewriter = new ArithRewriterImpl();
+		return predicate.getPositions(new DefaultFilter() {
+			@Override
+			public boolean select(BinaryExpression expr) {
+				return rewriter.rewrite(expr) != expr;
+			}
+
+			@Override
+			public boolean select(AssociativeExpression expr) {
+				return rewriter.rewrite(expr) != expr;
+			}
+
+			@Override
+			public boolean select(RelationalPredicate pred) {
+				return rewriter.rewrite(pred) != pred;
+			}
+		});
+	}
+
+	/**
+	 * Return the tactic "arithmetic rewrites" {@link ArithRewrites} which is
+	 * applicable to a predicate at a given position.
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "arithmetic rewrites"
+	 * @since 1.1
+	 */
+	public static ITactic arithRewrites(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new ArithRewrites(),
+				new AbstractManualRewrites.Input(hyp, position));
+	}
+
+	/**
+	 * Returns whether the one-point rule is applicable to the given predicate.
+	 * 
+	 * @param predicate
+	 *            a predicate to check
+	 * @return <code>true</code> iff one-point rules is applicable to the given
+	 *         predicate
+	 * @since 1.1
+	 */
+	public static boolean isOnePointApplicable(Predicate predicate) {
+		return OnePointRule.isApplicable(predicate);
+	}
+
+	/**
+	 * Returns the tactic "one-point rule" {@link OnePointRule} which is
+	 * applicable to the goal of a sequent.
+	 * 
+	 * @return the tactic "one-point rule on goal"
+	 * @since 1.1
+	 */
+	public static ITactic onePointGoal() {
+		return BasicTactics.reasonerTac(new OnePointRule(),
+				new OnePointRule.Input(null));
+	}
+
+	/**
+	 * Returns the tactic "one-point rule" {@link OnePointRule} which is
+	 * applicable to a hypothesis of a sequent.
+	 * 
+	 * @param hyp
+	 *            a hypothesis on which one-point rule is applicable
+	 * @return the tactic "one-point rule on hyp"
+	 * @since 1.1
+	 */
+	public static ITactic onePointHyp(Predicate hyp) {
+		return BasicTactics.reasonerTac(new OnePointRule(),
+				new OnePointRule.Input(hyp));
 	}
 
 }

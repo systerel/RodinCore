@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added funOvrGoalTac to the default
+ *     Systerel - added finiteHypBoundedGoalTac to the default
  *******************************************************************************/
 package org.eventb.internal.core.pm;
 
@@ -45,6 +46,7 @@ public class PostTacticPreference extends AutoTacticPreference {
 	            "org.eventb.core.seqprover.goalInHypTac",
 	            "org.eventb.core.seqprover.goalDisjInHypTac",
 	            "org.eventb.core.seqprover.funGoalTac",
+	            "org.eventb.core.seqprover.finiteHypBoundedGoalTac",
 	            "org.eventb.core.seqprover.autoRewriteTac",
 	            "org.eventb.core.seqprover.typeRewriteTac",
 	            "org.eventb.core.seqprover.existsHypTac",

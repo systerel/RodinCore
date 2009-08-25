@@ -1216,6 +1216,9 @@
       <tactic id="org.eventb.core.seqprover.clarifyGoalTac"/>
       <tactic id="org.eventb.core.seqprover.funOvrGoalTac"/>
       <tactic id="org.eventb.core.seqprover.funOvrHypTac"/>
+      <tactic id="org.eventb.core.seqprover.onePointHypTac"/>
+      <tactic id="org.eventb.core.seqprover.onePointGoalTac"/>
+      <tactic id="org.eventb.core.seqprover.finiteHypBoundedGoalTac"/>
    </extension>
    <extension
          point="org.eventb.core.pomTactics">
@@ -1232,6 +1235,9 @@
       <tactic id="org.eventb.core.seqprover.funOvrGoalTac"/>
       <tactic id="org.eventb.core.seqprover.funOvrHypTac"/>
       <tactic id="org.eventb.core.seqprover.partitionRewriteTac"/>
+      <tactic id="org.eventb.core.seqprover.onePointHypTac"/>
+      <tactic id="org.eventb.core.seqprover.onePointGoalTac"/>
+      <tactic id="org.eventb.core.seqprover.finiteHypBoundedGoalTac"/>
    </extension>
    <extension
          point="org.rodinp.core.fileElementVersions">

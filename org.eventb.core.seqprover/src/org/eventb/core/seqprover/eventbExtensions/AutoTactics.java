@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added FunOvrGoalTac and FunOvrHypTac tactics
  *     Systerel - added PartitionRewriteTac tactic (math V2)
+ *     Systerel - added FiniteHypBoundedGoalTac and OnePoint*Tac
  ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
@@ -35,6 +36,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.AllI;
 import org.eventb.internal.core.seqprover.eventbExtensions.AutoImpF;
 import org.eventb.internal.core.seqprover.eventbExtensions.Conj;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteHypBoundedGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.HypOr;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
 import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
@@ -154,6 +156,22 @@ public class AutoTactics {
 		}
 	}
 
+	/**
+	 * Discharges a sequent whose goal states that an expression E has a lower
+	 * or a upper bound (e.g. '∃n·(∀x·x ∈ S ⇒ x ≤ n)'), when there is an
+	 * hypothesis that states the finiteness of E (i.e. 'finite(S)').
+	 * 
+	 * @author Nicolas Beauger
+	 * @since 1.1
+	 * 
+	 */
+	public static class FiniteHypBoundedGoalTac extends AbsractLazilyConstrTactic {
+
+		@Override
+		protected ITactic getSingInstance() {
+			return BasicTactics.reasonerTac(new FiniteHypBoundedGoal(), EMPTY_INPUT);
+		}
+	}
 
 	//*************************************************
 	//
@@ -560,6 +578,89 @@ public class AutoTactics {
 		@Override
 		protected ITactic getSingInstance() {
 			return loopOnAllPending(new FunOvrHypOnceTac());
+		}
+
+	}
+	
+	/**
+	 * Applies automatically the <code>OnePointGoal</code> tactic to the goal.
+	 * 
+	 * @author Nicolas Beauger
+	 */
+	private static class OnePointGoalOnceTac implements ITactic {
+
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			if (pm != null && pm.isCanceled()) {
+				return "Canceled";
+			}
+			final Predicate goal = ptNode.getSequent().goal();
+			if (!Tactics.isOnePointApplicable(goal)) {
+				return "Tactic unapplicable";
+			}
+			if (pm != null && pm.isCanceled()) {
+				return "Canceled";
+			}
+			return Tactics.onePointGoal().apply(ptNode, pm);
+		}
+
+	}
+
+	/**
+	 * Applies automatically, repeatedly and recursively the
+	 * <code>OnePointGoalOnceTac</code> to the proof subtree rooted at the given
+	 * node.
+	 * 
+	 * @author Nicolas Beauger
+	 * @since 1.1
+	 */
+	public static class OnePointGoalTac extends AbsractLazilyConstrTactic {
+
+		@Override
+		protected ITactic getSingInstance() {
+			return loopOnAllPending(new OnePointGoalOnceTac());
+		}
+
+	}
+
+	/**
+	 * Applies automatically the <code>OnePointHyp</code> tactic to the selected
+	 * hypotheses.
+	 * 
+	 * @author Nicolas Beauger
+	 * @since 1.1
+	 */
+	private static class OnePointHypOnceTac implements ITactic {
+
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			if (pm != null && pm.isCanceled()) {
+				return "Canceled";
+			}
+			for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
+				if (Tactics.isOnePointApplicable(shyp)) {
+					return Tactics.onePointHyp(shyp);
+				}
+				if (pm != null && pm.isCanceled()) {
+					return "Canceled";
+				}
+			}
+			return "Tactic unapplicable";
+		}
+
+	}
+
+	/**
+	 * Applies automatically, repeatedly and recursively the
+	 * <code>OnePointHypOnceTac</code> to the proof subtree rooted at the given
+	 * node.
+	 * 
+	 * @author Nicolas Beauger
+	 * @since 1.1
+	 */
+	public static class OnePointHypTac extends AbsractLazilyConstrTactic {
+
+		@Override
+		protected ITactic getSingInstance() {
+			return loopOnAllPending(new OnePointHypOnceTac());
 		}
 
 	}

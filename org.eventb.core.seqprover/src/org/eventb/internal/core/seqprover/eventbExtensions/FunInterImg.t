@@ -112,7 +112,7 @@ public class FunInterImg extends AbstractManualInference {
 		// There will be 2 antecidents
 		IAntecedent[] antecidents = new IAntecedent[2];
 
-		// f : A +-> B (from type of f)
+		// f~ : A +-> B (from type of f)
 		antecidents[0] = makeFunctionalAntecident(f, true, Expression.PFUN);
 		
 		// f[S] /\ ... /\ f[T]

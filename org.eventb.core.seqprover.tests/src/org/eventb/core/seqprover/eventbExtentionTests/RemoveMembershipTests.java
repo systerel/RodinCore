@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - allowing subclasses to provide a type environment
  *     Systerel - mathematical language V2
+ *     Systerel - added DEF_IN_UPTO
  ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
@@ -449,6 +450,11 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 	
 	String resultP87 = "∀x·x=0⇒{x,1}∈ℙ(T)∧{x,1}≠∅";
 
+	// E : a .. b == a <= E & E <=b
+	String P88 = "0 = x ⇒ x ∈ 0‥1";
+
+	String resultP88 = "0=x⇒0≤x∧x≤1";
+
 	
 	@Override
 	public String getReasonerID() {
@@ -544,6 +550,7 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 				P84, "1.1",
 				P86, "1",
 				P87, "1.1",
+				P88, "1",
 				domRes3, "",
 				domSub3, "",
 				ranRes3, "",
@@ -644,7 +651,8 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 				new SuccessfulTest(P83, "1", resultP83),
 				new SuccessfulTest(P84, "1.1", resultP84),
 				new SuccessfulTest(P86, "1", resultP86),
-				new SuccessfulTest(P87, "1.1", resultP87)
+				new SuccessfulTest(P87, "1.1", resultP87),
+				new SuccessfulTest(P88, "1", resultP88),
 		};
 	}
 

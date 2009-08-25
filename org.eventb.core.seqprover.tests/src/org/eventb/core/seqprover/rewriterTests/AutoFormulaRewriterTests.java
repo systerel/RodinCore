@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,12 +7,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - SIMP_IN_COMPSET, SIMP_SPECIAL_OVERL, SIMP_FUNIMAGE_LAMBDA
+ *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
-
-import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.runtime.Assert;
 import org.eventb.core.ast.AtomicExpression;
@@ -23,7 +21,6 @@ import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
 import org.junit.Test;
 
@@ -311,30 +308,6 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 				"(∃x, y·x > 0 ∧ y > 0 ∧ z > 0) ∨ (∃x, y·y < 2 ∧ x < 2 ∧ z < 2) ∨ (∃x, y·y < 1 ∧ x < 1 ∧ z < 1)",
 				"∃x, y·(x > 0 ∧ y > 0 ∧ z > 0) ∨ (y < 2 ∧ x < 2 ∧ z < 2) ∨ (y < 1 ∧ x < 1 ∧ z < 1)");
 
-		// Ensures that one-point rule detection code doesn't break
-		Predicate input = Lib.parsePredicate(
-				"∀x·x ∈ ℕ ⇒ (∀y·y ∈ ℕ ∧ x = −1 ⇒ y ∈ ℕ1)");
-			
-//			ff.makeQuantifiedPredicate(Predicate.FORALL,
-//				new BoundIdentDecl[] { x },
-//				ff.makeBinaryPredicate(Predicate.LIMP,
-//						Q,
-//						ff.makeQuantifiedPredicate(Predicate.FORALL,
-//								new BoundIdentDecl[] {y},
-//								ff.makeBinaryPredicate(LIMP,
-//										left, right, location)
-//								ff.makeRelationalPredicate(Predicate.EQUAL,
-//										ff.makeBoundIdentifier(1, null),
-//										number0,
-//										null
-//								),
-//								null
-//						),
-//						null
-//				),
-//				null
-//		);
-		assertEquals("One-point rule", input, input.rewrite(r));
 	}
 
 	/**
@@ -527,6 +500,22 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 		// E : {x | P(x)} == P(E)
 		predicateTest("x > 0 ∧ x < 2", "x ∈ {y ∣ y > 0 ∧ y < 2}");
 
+		// E : {x . P(x) | x} == P(E)
+		predicateTest("n ≥ 0", "n ∈ {x·x≥0∣x}");
+		predicateTest("∀n·n≥1 ⇒ n ≥ 0", "∀n·n≥1 ⇒ n ∈ {x·x≥0∣x}");
+		
+		// F : {x,y . P(x,y) | E(x,y) == #x,y . P(x,y) & E(x,y) = F
+		predicateTest("∃x,y· (x≥ 0 ∧ y≥ 0) ∧ x+y = n", "n ∈ {x,y·x≥0∧y≥0∣x+y}");
+		predicateTest("∀n·n≥0 ⇒ (∃x,y· (x≥ 0 ∧ y≥ 0) ∧ x+y = n)", "∀n·n≥0 ⇒ n ∈ {x,y·x≥0∧y≥0∣x+y}");
+		// One Point Rule applies
+		predicateTest("∀n·n≥0 ⇒ (∃y· (n ≥ 0 ∧ y≥ 0))", "∀n·n≥0 ⇒ n ∈ {x,y·x≥0∧y≥0∣x}");
+		predicateTest("∀n,m·n≥0 ⇒ (∃y· (n ≥ 0 ∧ y≥ m))", "∀n,m·n≥0 ⇒ n ∈ {x,y·x≥0∧y≥m∣x}");
+		// One Point Rule applies replacement on expression ('x=n' here)
+		predicateTest("n=0", "n ∈ {x·x=0∣x}");
+		// One Point Rule does not apply replacement on guard ('x=0' here)
+		predicateTest("∃x· x=0 ∧ x+1 = n", "n ∈ {x·x=0∣x+1}");
+		// Jean-Raymond Abrial's bug
+		predicateTest("∃z·(∃x,y·(x>0∧y>0)∧g(x+y)−g(x)−g(y)=l)∧l=z", "∃z·(l∈ {x,y·x>0 ∧ y>0 ∣ g(x+y)−g(x)−g(y)})∧l=z");
 		
 		// S \ S == {}
 		inputExp = makeInputExpression("{y ∣ y > 0} ∖ {y ∣ y > 0}");
@@ -837,6 +826,17 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 		expressionTest("TRUE", "(ℕ × {TRUE})(1)");
 		expressionTest("1", "(BOOL × {1})(TRUE)");
 	
+		// r <+ ... <+ {} <+ ... <+ s = r <+ ... <+ s
+		expressionTest("{1 ↦ 2}  {3 ↦ 4}", "{1 ↦ 2}  ∅  {3 ↦ 4}");
+		
+		// (%x . P | E)(y)
+		expressionTest("0", "(λx·x∈ℤ∣x)(0)");
+		expressionTest("1+2", "(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(1↦2)");
+		expressionTest("prj1(1↦2)", "(λx·x∈ℤ×ℤ∣prj1(x))(1↦2)");
+		expressionTest(
+				"{m↦n∣m>5−3 ∧ n> (8−4)∗2}",
+				"(λ(x↦y)↦((a↦b)↦(c ⦂ ℤ ))·x∈ℤ∧y∈ℤ∧a∈ℤ∧b∈ℤ ∣{m↦n∣m>y−x ∧ n>(b−a)∗c})((3↦5)↦((4↦8)↦2))");
+		predicateTest("∀x·x=ℕ⇒x={m∣m>0+0}", "∀x·x=ℕ⇒x=(λa↦b·a∈ℕ∧b∈ℕ∣{m∣m>a+b})(0↦0)");
 	}
 
 

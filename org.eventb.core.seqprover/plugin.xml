@@ -345,6 +345,21 @@
             id="partitionRewrites"
             name="%partitionRewritesName">
       </reasoner>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ArithRewrites"
+            id="arithRewrites"
+            name="%arithRewritesName">
+      </reasoner>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.OnePointRule"
+            id="onePointRule"
+            name="%onePointRuleName">
+      </reasoner>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.FiniteHypBoundedGoal"
+            id="finiteHypBoundedGoal"
+            name="%finiteHypBoundedGoalName">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">
@@ -461,6 +476,24 @@
             description="%partitionRewriteTacDesc"
             id="partitionRewriteTac"
             name="%partitionRewriteTacName">
+      </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$OnePointGoalTac"
+            description="%onePointGoalTacDesc"
+            id="onePointGoalTac"
+            name="%onePointGoalTacName">
+      </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$OnePointHypTac"
+            description="%onePointHypTacDesc"
+            id="onePointHypTac"
+            name="%onePointHypTacName">
+      </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$FiniteHypBoundedGoalTac"
+            description="%finiteHypBoundedGoalDesc"
+            id="finiteHypBoundedGoalTac"
+            name="%finiteHypBoundedGoalName">
       </autoTactic>
 
    </extension>

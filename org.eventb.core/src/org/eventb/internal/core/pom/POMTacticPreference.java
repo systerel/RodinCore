@@ -8,7 +8,8 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added funOvrGoalTac to the default
- *     Systerel - added partitionRewrite to the default
+ *     Systerel - added partitionRewriteTac to the default
+ *     Systerel - added finiteHypBoundedGoalTac to the default
  ******************************************************************************/
 package org.eventb.internal.core.pom;
 
@@ -45,6 +46,7 @@ public class POMTacticPreference extends AutoTacticPreference {
 	            "org.eventb.core.seqprover.falseHypTac",
 	            "org.eventb.core.seqprover.goalInHypTac",
 	            "org.eventb.core.seqprover.funGoalTac",
+	            "org.eventb.core.seqprover.finiteHypBoundedGoalTac",
 	            "com.clearsy.atelierb.provers.core.ml",
 	            "org.eventb.core.seqprover.partitionRewriteTac",
 	            "org.eventb.core.seqprover.autoRewriteTac",

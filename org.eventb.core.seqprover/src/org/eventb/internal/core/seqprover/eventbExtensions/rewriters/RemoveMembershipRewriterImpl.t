@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language V2
+ *     Systerel - added DEF_IN_UPTO
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
@@ -391,6 +392,16 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 				Predicate pred2 = makeRelationalPredicate(Predicate.NOTEQUAL, `S, makeEmptySet(`S.getType()));
 				return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
 	    	}
+	    	
+	    	/**
+             * DEF_IN_UPTO
+             * Set Theory: E ∈ a‥b == a ≤ E ∧ E ≤ b
+             */
+            In(E, UpTo(a, b))->{
+				Predicate pred1 = makeRelationalPredicate(Formula.LE, `a, `E );
+				Predicate pred2 = makeRelationalPredicate(Formula.LE, `E, `b);
+				return makeAssociativePredicate(Predicate.LAND, pred1, pred2);				
+			}
 	    }
 	    return predicate;
 	}
