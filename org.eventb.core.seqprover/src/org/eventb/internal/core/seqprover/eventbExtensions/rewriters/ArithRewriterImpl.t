@@ -12,10 +12,8 @@
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
@@ -44,6 +42,7 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
+import org.eventb.core.seqprover.ProverRule;
 
 /**
  * Basic automated arithmetic rewriter for the Event-B sequent prover.
@@ -105,10 +104,13 @@ public class ArithRewriterImpl extends DefaultRewriter {
     
 	%include {FormulaV2.tom}
 	
+    @ProverRule( { "SIMP_MINUS_PLUS_L", "SIMP_MINUS_PLUS_R",
+            "SIMP_MINUS_PLUS_PLUS", "SIMP_MINUS_UNMINUS" })
 	@Override
 	public Expression rewrite(BinaryExpression expression) {
 	    %match (Expression expression) {
 	        /**
+             * SIMP_MINUS_PLUS_L
 	         * Arithmetics: (A + ... + C + ... + B) − C == A + .. + B
 	         */
 			Minus(Plus(children), C) -> {
@@ -119,6 +121,7 @@ public class ArithRewriterImpl extends DefaultRewriter {
 			}
 			
 			/**
+             * SIMP_MINUS_PLUS_R
 			 * Arithmetics: C − (A + ... + C + ... + B)  ==  −(A + ... + B)
 			 */
 			Minus(C, Plus(children)) -> {
@@ -129,6 +132,7 @@ public class ArithRewriterImpl extends DefaultRewriter {
 			}
 			
 			/**
+             * SIMP_MINUS_PLUS_PLUS
 			 * Arithmetics: (A + ... + E + ... + B) − (C + ... + E + ... + D)  == (A + ... + B) − (C + ... + D)
 			 */
 			Minus(Plus(left), Plus(right)) -> {
@@ -141,6 +145,7 @@ public class ArithRewriterImpl extends DefaultRewriter {
 			}
 			
             /**
+             * SIMP_MINUS_UNMINUS
              * Arithmetics: A − (− B)  == A + B
              */
 			Minus(A, UnMinus(B)) -> {
@@ -168,12 +173,14 @@ public class ArithRewriterImpl extends DefaultRewriter {
 	    }
 	    return expression;
 	}
-
+    
+    @ProverRule("SIMP_MULTI_PLUS_MINUS")
 	@Override
 	public Expression rewrite(AssociativeExpression expression) {
 	    %match (Expression expression) {
 			/**
-	         * Arithmetics: (A + ... + D + ... + (C − D) + ... + B) == A + ... + C + ... + B
+	         * SIMP_MULTI_PLUS_MINUS
+             * Arithmetics: (A + ... + D + ... + (C − D) + ... + B) == A + ... + C + ... + B
 	         */
 			Plus(children) -> {
 			    // search for children of the form (C-D)
@@ -192,13 +199,17 @@ public class ArithRewriterImpl extends DefaultRewriter {
 	    return expression;
 	}
 
+    @ProverRule( { "SIMP_MULTI_ARITHREL_PLUS_PLUS", "SIMP_MULTI_ARITHREL_PLUS_R",
+            "SIMP_MULTI_ARITHREL_PLUS_L", "SIMP_MULTI_ARITHREL_MINUS_MINUS_R",
+            "SIMP_MULTI_ARITHREL_MINUS_MINUS_L" })
 	@Override
 	public Predicate rewrite(RelationalPredicate predicate) {
 		%match (Predicate predicate) {
 			/**
-			 * Arithmetic: A + ... + E + ... + B  = C + ... + E + ... + D   == A + ... + B = C + ... + D
+             * SIMP_MULTI_ARITHREL_PLUS_PLUS
+             * Arithmetic: A + ... + E + ... + B  < C + ... + E + ... + D   == A + ... + B = C + ... + D
 			 */
-			Equal(Plus(childrenLeft), Plus(childrenRight)) -> {
+			(Equal|Lt|Le|Gt|Ge)(Plus(childrenLeft), Plus(childrenRight)) -> {
 			    for(Expression left: `childrenLeft) {
 			        final Expression sameAsLeft = findSame(left, `childrenRight);
 			        if (sameAsLeft != null) {
@@ -208,83 +219,10 @@ public class ArithRewriterImpl extends DefaultRewriter {
 			}
 
 			/**
-			 * Arithmetic: C = A + ... + C ... + B   ==   0 = A + ... + B
-			 */
-			Equal(C, Plus(children)) -> {
-                final Expression sameAsC = findSame(`C, `children);
-                if (sameAsC != null) {
-                    return simplify(predicate, `C, sameAsC);
-                }
-			}
-
-			/**
-			 * Arithmetic: A + ... + C ... + B = C   ==   A + ... + B = 0
-			 */
-			Equal(Plus(children), C) -> {
-                final Expression sameAsC = findSame(`C, `children);
-                if (sameAsC != null) {
-                    return simplify(predicate, `C, sameAsC);
-                }
-			}
-
-			/**
-			 * Arithmetic: A − C = B − C  == A = B
-			 */
-			Equal(Minus(_, c1@C), Minus(_, c2@C)) -> {
-			    return simplify(predicate, `c1, `c2);
-			}
-			
-			/**
-			 * Arithmetic: A − C < B − C  == A < B
-			 */
-			Lt(Minus(_, c1@C), Minus(_, c2@C)) -> {
-			    return simplify(predicate, `c1, `c2);
-			}
-			
-			/**
-			 * Arithmetic: A − C ≤ B − C  == A ≤ B
-			 */
-			Le(Minus(_, c1@C), Minus(_, c2@C)) -> {
-                return simplify(predicate, `c1, `c2);
-			}
-
-			/**
-			 * Arithmetic: C − A = C − B  == A = B
-			 */
-			Equal(Minus(C, A), Minus(C, B)) -> {
-				return makeRelationalPredicate(Predicate.EQUAL, `A, `B);
-			}
-			
-			/**
-			 * Arithmetic: C − A < C − B  == B < A
-			 */
-			Lt(Minus(C, A), Minus(C, B)) -> {
-				return makeRelationalPredicate(Predicate.LT, `B, `A);
-			}
-			
-			/**
-			 * Arithmetic: C − A ≤ C − B  == B ≤ A
-			 */
-			Le(Minus(C, A), Minus(C, B)) -> {
-				return makeRelationalPredicate(Predicate.LE, `B, `A);
-			}
-			
-			/**
-			 * Arithmetic: A + ... + E + ... + B  < C + ... + E + ... + D   == A + ... + B < C + ... + D
-			 */
-			Lt(Plus(childrenLeft), Plus(childrenRight)) -> {
-                for(Expression left: `childrenLeft) {
-                    final Expression sameAsLeft = findSame(left, `childrenRight);
-                    if (sameAsLeft != null) {
-                        return simplify(predicate, left, sameAsLeft);
-                    }
-                }
-			}
-
-			/**
+             * SIMP_MULTI_ARITHREL_PLUS_R
 			 * Arithmetic: C < A + ... + C ... + B   ==   0 < A + ... + B
 			 */
-			Lt(C, Plus(children)) -> {
+			(Equal|Lt|Le|Gt|Ge)(C, Plus(children)) -> {
                 final Expression sameAsC = findSame(`C, `children);
                 if (sameAsC != null) {
                     return simplify(predicate, `C, sameAsC);
@@ -292,9 +230,10 @@ public class ArithRewriterImpl extends DefaultRewriter {
 			}
 
 			/**
-			 * Arithmetic: A + ... + C ... + B < C   ==   A + ... + B < 0
+			 * SIMP_MULTI_ARITHREL_PLUS_L
+             * Arithmetic: A + ... + C ... + B < C   ==   A + ... + B < 0
 			 */
-			Lt(Plus(children), C) -> {
+			(Equal|Lt|Le|Gt|Ge)(Plus(children), C) -> {
                 final Expression sameAsC = findSame(`C, `children);
                 if (sameAsC != null) {
                     return simplify(predicate, `C, sameAsC);
@@ -302,35 +241,19 @@ public class ArithRewriterImpl extends DefaultRewriter {
 			}
 
 			/**
-			 * Arithmetic: A + ... + E + ... + B  ≤ C + ... + E + ... + D   == A + ... + B ≤ C + ... + D
+             * SIMP_MULTI_ARITHREL_MINUS_MINUS_R
+			 * Arithmetic: A − C < B − C  == A < B
 			 */
-			Le(Plus(childrenLeft), Plus(childrenRight)) -> {
-                for(Expression left: `childrenLeft) {
-                    final Expression sameAsLeft = findSame(left, `childrenRight);
-                    if (sameAsLeft != null) {
-                        return simplify(predicate, left, sameAsLeft);
-                    }
-                }
+			(Equal|Lt|Le|Gt|Ge)(Minus(_, c1@C), Minus(_, c2@C)) -> {
+			    return simplify(predicate, `c1, `c2);
 			}
-
+			
 			/**
-			 * Arithmetic: C ≤ A + ... + C ... + B   ==   0 ≤ A + ... + B
+             * SIMP_MULTI_ARITHREL_MINUS_MINUS_L
+			 * Arithmetic: C − A < C − B  == B < A
 			 */
-			Le(C, Plus(children)) -> {
-                final Expression sameAsC = findSame(`C, `children);
-                if (sameAsC != null) {
-                    return simplify(predicate, `C, sameAsC);
-                }
-			}
-
-			/**
-			 * Arithmetic: A + ... + C ... + B ≤ C   ==   A + ... + B ≤ 0
-			 */
-			Le(Plus(children), C) -> {
-                final Expression sameAsC = findSame(`C, `children);
-                if (sameAsC != null) {
-                    return simplify(predicate, `C, sameAsC);
-                }
+			(Equal|Lt|Le|Gt|Ge)(Minus(C, A), Minus(C, B)) -> {
+				return makeRelationalPredicate(predicate.getTag(), `B, `A);
 			}
 		}
 		return predicate;

@@ -207,8 +207,8 @@ public class ArithFormulaRewriterTests extends AbstractFormulaRewriterTests {
 		// A - C <= B - C  ==  A <= B
 		predicateTest("a ≤ c ∗ 2", "a − b ≤ c ∗ 2 − b");
 		
-		// C - A = C - B  ==  A = B
-		predicateTest("a = c ∗ 2", "b − a = b − c ∗ 2");
+		// C - A = C - B  ==  B = A
+		predicateTest("c ∗ 2 = a", "b − a = b − c ∗ 2");
 		
 		// C - A < C - B  ==  B < A
 		predicateTest("c ∗ 2 < a", "b − a < b − c ∗ 2");
