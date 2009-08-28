@@ -3,31 +3,6 @@
 <plugin>
 
    <extension
-         point="org.eclipse.ui.views">
-      <category
-            name="RODIN"
-            id="org.eventb.eventBKeyboard">
-      </category>
-      <view
-            name="Event-B Keyboard"
-            icon="icons/keyboard.gif"
-            category="org.eventb.eventBKeyboard"
-            class="org.eventb.eventBKeyboard.internal.views.EventBKeyboardView"
-            id="org.eventb.eventBKeyboard.views.EventBKeyboardView">
-      </view>
-   </extension>
-   <extension
-         point="org.eclipse.help.toc">
-      <toc
-            file="toc.xml"
-            primary="true"/>
-      <toc file="tocconcepts.xml"/>
-      <toc file="tocgettingstarted.xml"/>
-      <toc file="tocreference.xml"/>
-      <toc file="tocsamples.xml"/>
-      <toc file="toctasks.xml"/>
-   </extension>
-   <extension
          point="org.eclipse.ui.themes">
          <themeElementCategory label="%eventBPresentation.label" id="org.eventb.eventBKeyboard.presentation"/>
       <fontDefinition
