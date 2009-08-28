@@ -15,8 +15,8 @@ package org.eventb.internal.ui;
 
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Text;
+import org.eventb.eventBKeyboard.EventBTextModifyListener;
 import org.rodinp.keyboard.RodinKeyboardPlugin;
 
 /**
@@ -29,7 +29,7 @@ public class EventBMath extends EventBControl implements IEventBInputText {
 
 	boolean translate;
 	
-	ModifyListener listener;
+	final EventBTextModifyListener listener = new EventBTextModifyListener();
 	
 	/**
 	 * Constructor.
@@ -40,8 +40,6 @@ public class EventBMath extends EventBControl implements IEventBInputText {
 	 */
 	public EventBMath(final Text text) {
 		super(text);
-		final RodinKeyboardPlugin kbrdPlugin = RodinKeyboardPlugin.getDefault();
-		listener = kbrdPlugin.createRodinModifyListener();
 		text.addMouseListener(new DoubleClickTextListener(text));
 		text.addModifyListener(listener);
 		text.addFocusListener(new FocusListener() {
@@ -52,7 +50,7 @@ public class EventBMath extends EventBControl implements IEventBInputText {
 
 			public void focusLost(FocusEvent e) {
 				if (text.getEditable() && translate) {
-					String translateStr = kbrdPlugin.translate(text
+					String translateStr = RodinKeyboardPlugin.getDefault().translate(text
 							.getText());
 					if (!text.getText().equals(translateStr)) {
 						text.setText(translateStr);

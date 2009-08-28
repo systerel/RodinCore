@@ -18,7 +18,9 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.widgets.Text;
+import org.eventb.eventBKeyboard.EventBStyledTextModifyListener;
 import org.rodinp.keyboard.RodinKeyboardPlugin;
 
 /**
@@ -43,9 +45,8 @@ public class EventBStyledText extends EventBControl implements IEventBInputText 
 		this.text = text;
 		text.addMouseListener(new DoubleClickStyledTextListener(text));
 		if (isMath) {
-			// final Translator translator = new Translator(text);
-			text.addModifyListener(RodinKeyboardPlugin.getDefault()
-					.createRodinModifyListener());
+			final Translator translator = new Translator(text);
+			text.addModifyListener(translator);
 			text.addFocusListener(new FocusListener() {
 				public void focusGained(FocusEvent e) {
 					if (translate()) {
@@ -96,21 +97,21 @@ public class EventBStyledText extends EventBControl implements IEventBInputText 
 	public Text getTextWidget() {
 		return (Text) getControl();
 	}
-//
-//	class Translator extends RodinModifyListener {
-//		private final StyledText widget;
-//
-//		public Translator(StyledText widget) {
-//			this.widget = widget;
-//		}
-//
-//		@Override
-//		public void modifyText(ModifyEvent e) {
-//			if (!widget.isFocusControl()) {
-//				return;
-//			}
-//			super.modifyText(e);
-//		}
-//	}
+
+	class Translator extends EventBStyledTextModifyListener {
+		private final StyledText widget;
+
+		public Translator(StyledText widget) {
+			this.widget = widget;
+		}
+
+		@Override
+		public void modifyText(ModifyEvent e) {
+			if (!widget.isFocusControl()) {
+				return;
+			}
+			super.modifyText(e);
+		}
+	}
 	
 }
