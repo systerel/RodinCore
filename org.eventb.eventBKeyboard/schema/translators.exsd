@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eventb.eventBKeyboard">
+<schema targetNamespace="org.eventb.eventBKeyboard" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eventb.eventBKeyboard" id="translators" name="EventB Keyboard Translators"/>
@@ -11,6 +11,11 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element deprecated="true" replacement="org.rodinp.keyboard.symbols" />
+         </appinfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="translator" minOccurs="1" maxOccurs="unbounded"/>
@@ -43,6 +48,11 @@
    </element>
 
    <element name="translator">
+      <annotation>
+         <appinfo>
+            <meta.element deprecated="true"/>
+         </appinfo>
+      </annotation>
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>

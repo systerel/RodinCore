@@ -9,6 +9,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - handling of LaTeX symbols
+ *     Systerel - delegated to org.rodinp.keyboard
  ******************************************************************************/
 
 package org.eventb.eventBKeyboard;
@@ -17,9 +18,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eventb.eventBKeyboard.internal.translators.LaTeXSymbols;
-import org.eventb.eventBKeyboard.internal.translators.MathSymbols;
-import org.eventb.eventBKeyboard.internal.translators.TextSymbols;
 import org.eventb.internal.eventBKeyboard.KeyboardUtils;
 import org.osgi.framework.BundleContext;
 
@@ -58,9 +56,6 @@ public class EventBKeyboardPlugin extends AbstractUIPlugin {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		new MathSymbols();
-		new TextSymbols();
-		new LaTeXSymbols();
 		configureDebugOptions();
 	}
 
