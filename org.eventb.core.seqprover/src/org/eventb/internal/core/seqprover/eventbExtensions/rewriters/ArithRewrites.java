@@ -21,10 +21,11 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.seqprover.IHypAction;
+import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 
-public class ArithRewrites extends AbstractManualRewrites {
+public class ArithRewrites extends AbstractManualRewrites implements IVersionedReasoner {
 
 	private static final IFormulaRewriter rewriter = new ArithRewriterImpl();
 
@@ -68,6 +69,10 @@ public class ArithRewrites extends AbstractManualRewrites {
 			return null;
 		return pred.rewriteSubFormula(position, newSubFormula, FormulaFactory
 				.getDefault());
+	}
+
+	public int getVersion() {
+		return 0;
 	}
 
 }
