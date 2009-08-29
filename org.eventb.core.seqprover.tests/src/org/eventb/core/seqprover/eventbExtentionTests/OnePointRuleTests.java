@@ -49,14 +49,14 @@ public class OnePointRuleTests extends AbstractReasonerTests {
 	@Override
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
 		return new SuccessfullReasonerApplication[] {
-//				// One quantified identifier => result not quantified
-//				newSuccessGoal("∀x· x=0 ∧ x+1=0 ⇒ x+1=2", "0+1=0⇒0+1=2", "⊤"),
-//
-//				// Two quantified identifiers => result quantified
-//				newSuccessGoal("∀x,y· x=0 ∧ x+1=y ⇒ y=1", "∀y·0+1=y⇒y=1", "⊤"),
-//
-//				// 'One conjunct' => no more implication
-//				newSuccessGoal("∀x· x=0 ⇒ x+x=0", "0+0=0", "⊤"),
+				// One quantified identifier => result not quantified
+				newSuccessGoal("∀x· x=0 ∧ x+1=0 ⇒ x+1=2", "0+1=0⇒0+1=2", "⊤"),
+
+				// Two quantified identifiers => result quantified
+				newSuccessGoal("∀x,y· x=0 ∧ x+1=y ⇒ y=1", "∀y·0+1=y⇒y=1", "⊤"),
+
+				// 'One conjunct' => no more implication
+				newSuccessGoal("∀x· x=0 ⇒ x+x=0", "0+0=0", "⊤"),
 				
 				// 'One conjunct' and Two quantified identifiers
 				newSuccessGoal("∀x,y· x=y ⇒ x+y=2∗x", "∀y·y+y=2∗y", "⊤"),
@@ -70,7 +70,7 @@ public class OnePointRuleTests extends AbstractReasonerTests {
 						new OnePointRule.Input(TestLib
 								.genPred("∀x· x=0 ∧ x+1=0 ⇒ x+1=2")),
 						"[{}[∀x·x=0∧x+1=0⇒x+1=2][][0+1=0⇒0+1=2] |- ⊥,"
-								+ " {}[][][∀x·x=0∧x+1=0⇒x+1=2] |- ⊤]"),
+								+ " {}[∀x·x=0∧x+1=0⇒x+1=2][][] |- ⊤]"),
 
 				// Behaves the same with ∃ quantifier
 				newSuccessGoal("∃x,y· x=0 ∧ x+1=y ⇒ y=1", "∃y·0+1=y⇒y=1", "⊤"),

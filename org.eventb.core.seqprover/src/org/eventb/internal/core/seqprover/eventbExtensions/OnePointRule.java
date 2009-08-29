@@ -16,6 +16,7 @@ import static org.eventb.core.seqprover.ProverFactory.makeForwardInfHypAction;
 import static org.eventb.core.seqprover.ProverFactory.makeHideHypAction;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.ff;
 
+import java.util.Collections;
 import java.util.Set;
 
 import org.eventb.core.ast.Expression;
@@ -24,15 +25,16 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
+import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.SerializeException;
+import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
@@ -41,7 +43,7 @@ import org.eventb.core.seqprover.proofBuilder.ReplayHints;
  * @author "Nicolas Beauger"
  * 
  */
-public class OnePointRule implements IReasoner {
+public class OnePointRule implements IVersionedReasoner {
 
 	public static class Input implements IReasonerInput {
 
@@ -139,16 +141,17 @@ public class OnePointRule implements IReasoner {
 		// There will be 2 antecedents
 		IAntecedent[] antecedents = new IAntecedent[2];
 
+		final ISelectionHypAction hideOnePointPred = makeHideHypAction(singleton(pred));
 		if (isGoal) {
 			antecedents[0] = ProverFactory.makeAntecedent(simplified);
 		} else {
 			antecedents[0] = ProverFactory.makeAntecedent(null, null, null,
 					asList(makeForwardInfHypAction(singleton(pred),
-							singleton(simplified)),
-							makeHideHypAction(singleton(pred))));
+							singleton(simplified)), hideOnePointPred));
 		}
 
-		antecedents[1] = ProverFactory.makeAntecedent(replacementWD);
+		antecedents[1] = ProverFactory.makeAntecedent(replacementWD,
+				Collections.<Predicate> emptySet(), hideOnePointPred);
 
 		return antecedents;
 	}
@@ -179,5 +182,8 @@ public class OnePointRule implements IReasoner {
 		return new Input(pred);
 	}
 
+	public int getVersion() {
+		return 0;
+	}
 
 }

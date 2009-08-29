@@ -637,7 +637,7 @@ public class AutoTactics {
 			}
 			for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
 				if (Tactics.isOnePointApplicable(shyp)) {
-					return Tactics.onePointHyp(shyp);
+					return Tactics.onePointHyp(shyp).apply(ptNode, pm);
 				}
 				if (pm != null && pm.isCanceled()) {
 					return "Canceled";
