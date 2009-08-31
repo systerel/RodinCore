@@ -38,7 +38,9 @@ public class TwoStateControl {
 	}
 
 	public void refresh() {
-		button.setSelection((getValue().equals(selectedValue)));
+		final String value = getValue();
+		button.setSelection((value.equals(selectedValue)));
+		button.setText(value);
 	}
 
 	private String getValue() {
