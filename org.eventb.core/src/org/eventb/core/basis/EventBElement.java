@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     University of Dusseldorf - added theorem attribute
  *     Systerel - added method getEventBProject()
+ *     Systerel - added methods for generated elements
  *******************************************************************************/
 package org.eventb.core.basis;
 
@@ -284,6 +285,31 @@ public abstract class EventBElement extends InternalElement {
 	public void setTheorem(boolean newValue, IProgressMonitor monitor)
 			throws RodinDBException {
 		final IAttributeType.Boolean aType = EventBAttributes.THEOREM_ATTRIBUTE;
+		if (newValue) {
+			setAttributeValue(aType, newValue, monitor);
+		} else {
+			removeAttribute(aType, monitor);
+		}
+	}
+
+	public boolean hasGenerated() throws RodinDBException {
+		return true;
+	}
+
+	public boolean isGenerated() throws RodinDBException {
+		final IAttributeType.Boolean aType = EventBAttributes.GENERATED_ATTRIBUTE;
+		if (hasAttribute(aType) && getAttributeValue(aType)) {
+			return true;
+		}
+		if (parent instanceof EventBElement) {
+			return ((EventBElement) parent).isGenerated();
+		}
+		return false;
+	}
+
+	public void setGenerated(boolean newValue, IProgressMonitor monitor)
+			throws RodinDBException {
+		final IAttributeType.Boolean aType = EventBAttributes.GENERATED_ATTRIBUTE;
 		if (newValue) {
 			setAttributeValue(aType, newValue, monitor);
 		} else {

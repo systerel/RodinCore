@@ -522,6 +522,11 @@
             kind="boolean"
             name="%eventBtheoremAttribute">
       </attributeType>
+      <attributeType
+            id="generated"
+            kind="boolean"
+            name="%eventBgeneratedAttribute">
+      </attributeType>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">

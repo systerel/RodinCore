@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - introduction of generated elements
  *******************************************************************************/
 package org.eventb.core;
 
@@ -68,6 +72,9 @@ public final class EventBAttributes {
 	
 	public static IAttributeType.Boolean THEOREM_ATTRIBUTE =
 		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".theorem");
+	
+	public static IAttributeType.Boolean GENERATED_ATTRIBUTE =
+		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".generated");
 	
 	public static IAttributeType.String TARGET_ATTRIBUTE =
 		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".target");
