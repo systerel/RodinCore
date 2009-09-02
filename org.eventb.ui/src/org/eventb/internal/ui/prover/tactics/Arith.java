@@ -36,7 +36,11 @@ public class Arith extends DefaultTacticProvider {
 		} else {
 			predicate = hyp;
 		}
-		return Tactics.arithGetPositions(predicate);
+		final List<IPosition> positions = Tactics.arithGetPositions(predicate);
+		if (positions.size() == 0) {
+			return null;
+		}
+		return positions;
 	}
 
 	@Override
