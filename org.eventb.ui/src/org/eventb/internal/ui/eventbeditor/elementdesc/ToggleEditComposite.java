@@ -69,4 +69,11 @@ public class ToggleEditComposite extends AbstractEditComposite {
 		checkBox.setForeground(BLACK);
 	}
 
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		if (control != null) {
+			control.getButton().setEnabled(!readOnly);
+		}
+	}
+
 }

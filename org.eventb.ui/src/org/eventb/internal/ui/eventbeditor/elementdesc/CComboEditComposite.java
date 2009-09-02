@@ -14,6 +14,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - used ElementDescRegistry
  *     Systerel - update combo list on focus gain
+ *     Systerel - introduced read only elements
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.elementdesc;
 
@@ -164,6 +165,13 @@ public class CComboEditComposite extends AbstractEditComposite {
 		}
 			
 		FormToolkit.ensureVisible(combo);
+	}
+
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		if (combo != null) {
+			combo.setEnabled(!readOnly);
+		}
 	}
 
 }

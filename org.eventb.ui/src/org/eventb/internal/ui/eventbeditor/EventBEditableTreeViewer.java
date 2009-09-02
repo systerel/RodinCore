@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,11 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
  *     Systerel - used ElementDescRegistry
+ *     Systerel - introduced read only elements
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
+import static org.eventb.internal.ui.EventBUtils.isReadOnly;
 import static org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry.Column.LABEL;
 
 import java.util.Collection;
@@ -353,6 +355,11 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 		text.setText(item.getText(column));
 		text.selectAll();
 		text.setFocus();
+		
+		if(isReadOnly(editor.getRodinInput())) {
+			text.setEditable(false);
+		}
+
 	}
 
 	public void elementChanged(ElementChangedEvent event) {

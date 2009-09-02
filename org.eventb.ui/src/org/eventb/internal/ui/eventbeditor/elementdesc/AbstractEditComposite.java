@@ -12,8 +12,11 @@
  *     Systerel - separation of file and root element
  *     Systerel - used ElementDescRegistry
  *     Systerel - added dispose listener to row composite
+ *     Systerel - introduced read only elements
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.elementdesc;
+
+import static org.eventb.internal.ui.EventBUtils.isReadOnly;
 
 import java.util.Set;
 
@@ -109,6 +112,7 @@ public abstract class AbstractEditComposite implements IEditComposite {
 	
 	public void refresh(boolean refreshMarker) {
 		initialise(refreshMarker);
+		setReadOnly(isReadOnly(element)); 
 		internalPack();
 	}
 
@@ -154,6 +158,7 @@ public abstract class AbstractEditComposite implements IEditComposite {
 			postfixLabel.setBackground(EventBSharedColor
 					.getSystemColor(SWT.COLOR_CYAN));
 		}
+		setReadOnly(isReadOnly(element)); 
 		EventBEditorUtils.changeFocusWhenDispose(composite, form);
 	}
 
@@ -218,5 +223,22 @@ public abstract class AbstractEditComposite implements IEditComposite {
 			refresh(true);
 		}
 	}
+
+	/**
+	 * Sets the read only state of this composite.
+	 * <p>
+	 * After it has been called with <code>true</code> argument, the user is no
+	 * more able to edit the composite contents.
+	 * </p>
+	 * <p>
+	 * Conversely, after it has been called with <code>false</code> argument,
+	 * the user is able to edit the composite contents.
+	 * </p>
+	 * 
+	 * @param readOnly
+	 *            <code>true</code> to make the composite read only,
+	 *            <code>false</code> otherwise
+	 */
+	public abstract void setReadOnly(boolean readOnly);
 
 }

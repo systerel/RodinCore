@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
  *     Systerel - separation of file and root element
+ *     Systerel - introduced read only elements
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -87,6 +88,9 @@ public abstract class AbstractHyperlinkComposite {
 
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
+				if (checkAndShowReadOnly()) {
+					return;
+				}
 				page.move(type, true);
 			}
 
@@ -101,11 +105,18 @@ public abstract class AbstractHyperlinkComposite {
 
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
+				if (checkAndShowReadOnly()) {
+					return;
+				}
 				page.move(type, false);
 			}
 
 		});
 		downHyperlink.setLayoutData(new GridData());
+	}
+
+	protected boolean checkAndShowReadOnly() {
+		return EventBEditorUtils.checkAndShowReadOnly(parent);
 	}
 
 }

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
 
+import static org.eventb.internal.ui.EventBUtils.isReadOnly;
+
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -85,6 +87,9 @@ public abstract class ToggleSection extends AbstractPropertySection implements
 
 		control.setElement(element);
 		control.refresh();
+		if(element != null) {
+			control.getButton().setEnabled(!isReadOnly(element));
+		}
 	}
 
 	@Override

@@ -1,27 +1,25 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - introduced read only elements through new super class
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.actions;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IEditorActionDelegate;
-import org.eclipse.ui.IEditorPart;
-import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
+import org.eventb.core.IContextRoot;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 
-public class NewEnumeratedSet implements IEditorActionDelegate {
+public class NewEnumeratedSet extends AbstractNewActionDelegate<IContextRoot> {
 
-	EventBContextEditor editor;
-	
-	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
-		if (targetEditor instanceof EventBContextEditor)
-			editor = (EventBContextEditor) targetEditor;
-	}
-
-	public void run(IAction action) {
+	@Override
+	public void runAction(IAction action) {
 		EventBEditorUtils.newEnumeratedSet(editor, null);
-	}
-
-	public void selectionChanged(IAction action, ISelection selection) {
-		return; // Do nothing
 	}
 	
 }

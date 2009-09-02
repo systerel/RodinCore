@@ -14,8 +14,14 @@
  *     Systerel - added getChildTowards
  *     Systerel - theorems almost everywhere
  *     Systerel - added changeFocusWhenDispose
+ *     Systerel - added checkAndShowReadOnly
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
+
+import static org.eventb.internal.ui.EventBUtils.isReadOnly;
+import static org.eventb.internal.ui.UIUtils.showInfo;
+import static org.eventb.internal.ui.utils.Messages.bind;
+import static org.eventb.internal.ui.utils.Messages.dialogs_readOnlyElement;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,9 +46,12 @@ import org.eventb.core.ICommentedElement;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.IGuard;
+import org.eventb.core.IIdentifierElement;
 import org.eventb.core.IInvariant;
+import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
@@ -807,7 +816,7 @@ public class EventBEditorUtils {
 	 * @param editor
 	 *            the editor that made the call to this method.
 	 */
-	public static void newEvent(final EventBMachineEditor editor,
+	public static void newEvent(IEventBEditor<IMachineRoot> editor,
 			IProgressMonitor monitor) {
 
 		final NewEventDialog dialog = new NewEventDialog(editor,
@@ -850,7 +859,7 @@ public class EventBEditorUtils {
 	 * @param editor
 	 *            the editor that made the call to this method.
 	 */
-	public static void newCarrierSets(final EventBContextEditor editor,
+	public static void newCarrierSets(IEventBEditor<IContextRoot> editor,
 			IProgressMonitor monitor) {
 
 		final IContextRoot ctxRoot = editor.getRodinInput();
@@ -878,7 +887,7 @@ public class EventBEditorUtils {
 	 * @param editor
 	 *            the editor that made the call to this method.
 	 */
-	public static void newEnumeratedSet(final EventBContextEditor editor,
+	public static void newEnumeratedSet(IEventBEditor<IContextRoot> editor,
 			IProgressMonitor monitor) {
 		final IContextRoot ctxRoot = editor.getRodinInput();
 		final String identifier = UIUtils.getFreeElementIdentifier(ctxRoot,
@@ -1085,4 +1094,39 @@ public class EventBEditorUtils {
 		}
 	}
 
+	/**
+	 * Returns whether the given element is read only. Additionally, if the
+	 * given element is read only, this method informs the user through an info
+	 * window.
+	 * 
+	 * @param element
+	 *            an element to check
+	 * @return true iff the given element is read only
+	 */
+	public static boolean checkAndShowReadOnly(IRodinElement element) {
+		if (!(element instanceof IInternalElement)) {
+			return false;
+		}
+		final boolean readOnly = isReadOnly((IInternalElement) element);
+		if (readOnly) {
+			final String displayName = getDisplayName(element);
+			showInfo(bind(dialogs_readOnlyElement, displayName));
+		}
+		return readOnly;
+	}
+
+	private static String getDisplayName(IRodinElement element) {
+		try {
+			if(element instanceof ILabeledElement) {
+				return ((ILabeledElement)element).getLabel();
+			} else if (element instanceof IIdentifierElement) {
+				return ((IIdentifierElement)element).getIdentifierString();
+			} else if (element instanceof IEventBRoot) {
+				return element.getElementName();
+			}
+		} catch (RodinDBException e) {
+			UIUtils.log(e, "when checking for read-only element");
+		}
+		return "";
+	}
 }

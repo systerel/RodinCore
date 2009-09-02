@@ -13,6 +13,7 @@
  *     Systerel - added getImplicitChildren(), refactored getAbstractEvent()
  *     Systerel - separation of file and root element
  *     Systerel - added getAbstractContexts()
+ *     Systerel - added isReadOnly()
  *******************************************************************************/
 package org.eventb.internal.ui;
 
@@ -26,6 +27,7 @@ import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IEventBProject;
 import org.eventb.core.IExtendsContext;
+import org.eventb.core.IGeneratedElement;
 import org.eventb.core.IGuard;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineRoot;
@@ -286,6 +288,31 @@ public class EventBUtils {
 			IInternalElement parent, IInternalElementType<T> type,
 			String prefix) throws RodinDBException {
 		return UIUtils.getFreePrefixIndex(parent, type, null, prefix);		
+	}
+
+	
+	/**
+	 * Returns whether the given element is read only.
+	 * <p>
+	 * An element is read only iff its root is a generated element.
+	 * </p>
+	 * 
+	 * @param element
+	 *            an internal element to check
+	 * @return <code>true</code> iff the given element is read only
+	 */
+	public static boolean isReadOnly(IInternalElement element) {
+		// TODO modify code when types other than IEventBRoot can be generated
+		final IInternalElement root = element.getRoot();
+		if (!(root instanceof IGeneratedElement)) {
+			return false;
+		}
+		try {
+			return ((IGeneratedElement) root).isGenerated();
+		} catch (RodinDBException e) {
+			UIUtils.log(e, "while checking for generated attribute in " + root);
+			return false;
+		}
 	}
 
 }

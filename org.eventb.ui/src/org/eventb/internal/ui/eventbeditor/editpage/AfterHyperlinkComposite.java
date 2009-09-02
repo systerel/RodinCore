@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
  *     Systerel - separation of file and root element
+ *     Systerel - introduced read only elements
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -53,6 +54,9 @@ public class AfterHyperlinkComposite extends AbstractHyperlinkComposite {
 
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
+				if (checkAndShowReadOnly()) {
+					return;
+				}
 				AtomicOperation operation = OperationFactory
 						.createElementGeneric(parent, type, null);
 				History.getInstance().addOperation(operation);

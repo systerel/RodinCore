@@ -150,6 +150,7 @@ public final class Messages {
 	// Dialogs
 	public static String dialogs_invalidIdentifiers;
 	public static String dialogs_duplicateNames;
+	public static String dialogs_readOnlyElement;
 	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

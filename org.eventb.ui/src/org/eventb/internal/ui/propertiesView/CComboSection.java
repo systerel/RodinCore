@@ -12,10 +12,12 @@
  *     Systerel - removed MouseWheel Listener of CCombo
  *     Systerel - separation of file and root element
  *     Systerel - update combo list on focus gain
+ *     Systerel - introduced read only elements
  *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
 
 import static org.eventb.internal.ui.UIUtils.COMBO_VALUE_UNDEFINED;
+import static org.eventb.internal.ui.EventBUtils.isReadOnly;
 import static org.eventb.internal.ui.UIUtils.resetCComboValues;
 
 import org.eclipse.jface.viewers.ISelection;
@@ -133,6 +135,9 @@ public abstract class CComboSection extends AbstractPropertySection implements
 			return;
 
 		comboWidget.setText(getValue());
+		if(element != null) {
+			comboWidget.setEnabled(!isReadOnly(element));
+		}
 		super.refresh();
 	}
 

@@ -14,6 +14,7 @@
  *     Systerel - changed double click behavior
  *     Systerel - separation of file and root element
  *     Systerel - used ElementDescRegistry
+ *     Systerel - introduced read only elements
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.elementdesc;
 
@@ -292,6 +293,13 @@ public class TextEditComposite extends AbstractEditComposite {
 			text.selectAll(); // Select all
 		text.setFocus();
 		FormToolkit.ensureVisible(text);
+	}
+
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		if (text != null) {
+			text.setEditable(!readOnly);
+		}
 	}
 
 }

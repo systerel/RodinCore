@@ -9,8 +9,11 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - changed double click behavior
  *     Systerel - separation of file and root element
+ *     Systerel - introduced read only elements
  *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
+
+import static org.eventb.internal.ui.EventBUtils.isReadOnly;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -142,6 +145,10 @@ public abstract class TextSection extends AbstractPropertySection implements
 			String text = getText();
 			if (text != null && !textWidget.getText().equals(text))
 				textWidget.setText(text);
+			
+			if(element != null) {
+				textWidget.setEditable(!isReadOnly(element));
+			}
 		} catch (RodinDBException e) {
 			EventBUIExceptionHandler.handleGetAttributeException(e,
 					EventBUIExceptionHandler.UserAwareness.IGNORE);		

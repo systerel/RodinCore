@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
  *     Systerel - separation of file and root element
+ *     Systerel - introduced read only elements
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -56,6 +57,9 @@ public class BeforeHyperlinkComposite extends AbstractHyperlinkComposite {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				try {
+					if (checkAndShowReadOnly()) {
+						return;
+					}
 					IInternalElement[] children = parent.getChildrenOfType(type);
 					assert (children.length != 0);
 					IInternalElement first = children[0];

@@ -8,9 +8,11 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - replaced local variable by parameter
+ *     Systerel - introduced read only elements
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
+import static org.eventb.internal.ui.eventbeditor.EventBEditorUtils.checkAndShowReadOnly;
 import static org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry.Column.CONTENT;
 import static org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry.Column.LABEL;
 
@@ -185,6 +187,9 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 			 */
 			@Override
 			public void run() {
+				if(checkAndShowReadOnly(editor.getRodinInput())) {
+					return;
+				}
 				actionSet.handleUp.run();
 			}
 		};
@@ -202,6 +207,9 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 			 */
 			@Override
 			public void run() {
+				if(checkAndShowReadOnly(editor.getRodinInput())) {
+					return;
+				}
 				actionSet.handleDown.run();
 			}
 		};
