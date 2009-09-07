@@ -29,6 +29,7 @@ import org.rodinp.keyboard.RodinKeyboardPlugin;
  *         This is the class that holds a StyledText to display and to retrieve
  *         expressions which are in the mathematical language of Event-B.
  */
+@SuppressWarnings("deprecation")  // TODO 2.0: use new keyboard plug-in here
 public class EventBStyledText extends EventBControl implements IEventBInputText {
 
 	private final StyledText text;

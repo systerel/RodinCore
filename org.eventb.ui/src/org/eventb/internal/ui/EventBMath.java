@@ -25,6 +25,7 @@ import org.rodinp.keyboard.RodinKeyboardPlugin;
  *         This is the class that holds a Text widget to display and to retrieve
  *         expressions which are in the mathematical language of Event-B.
  */
+@SuppressWarnings("deprecation")  // TODO 2.0: use new keyboard plug-in here
 public class EventBMath extends EventBControl implements IEventBInputText {
 
 	boolean translate;
