@@ -168,7 +168,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	public <T extends IInternalElement> T createElement(
 			final IInternalElement root, IInternalElement parent,
 			final IInternalElementType<T> type, final IInternalElement sibling)
-			throws CoreException {
+			throws RodinDBException {
 		final T newElement = parent.createChild(type, sibling, null);
 		final IAttributeDesc[] attrDesc = getAttributes(type);
 		for (IAttributeDesc desc : attrDesc) {
