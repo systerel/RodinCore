@@ -12,18 +12,16 @@ package org.eventb.internal.ui.eventbeditor.operations;
 
 import java.util.Collection;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.RodinDBException;
 
 /**
  * Operation Node to create an element. A root operation create the element and
  * the children operation set the attribute.
  */
-public class OperationCreateElement extends AbstractOperation implements
+public class OperationCreateElement extends AbstractEventBOperation implements
 		OperationTree {
 
 	private final CreateElementGeneric<?> operationCreate;
@@ -37,27 +35,25 @@ public class OperationCreateElement extends AbstractOperation implements
 	}
 
 	@Override
-	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		operationCreate.execute(monitor, info);
+	public void doExecute(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException {
+		operationCreate.doExecute(monitor, info);
 		final IInternalElement element = operationCreate.getCreatedElement();
-		for (OperationTree op : operationChildren) {
-			op.setParent(element);
-		}
-		return operationChildren.execute(monitor, info);
+		operationChildren.setParent(element);
+		operationChildren.doExecute(monitor, info);
 	}
 
 	@Override
-	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		operationCreate.redo(monitor, info);
-		return operationChildren.redo(monitor, info);
+	public void doRedo(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException {
+		operationCreate.doRedo(monitor, info);
+		operationChildren.doRedo(monitor, info);
 	}
 
 	@Override
-	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		return operationCreate.undo(monitor, info);
+	public void doUndo(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException {
+		operationCreate.doUndo(monitor, info);
 	}
 
 	/**
@@ -77,8 +73,6 @@ public class OperationCreateElement extends AbstractOperation implements
 		return operationCreate.getCreatedElements();
 	}
 
-
-
 	/**
 	 * @return if many element are created, return the first created element. For example, in case of an
 	 *         event with action, getCreatedElement() is the event.
@@ -88,8 +82,6 @@ public class OperationCreateElement extends AbstractOperation implements
 		return operationCreate.getCreatedElement();
 	}
 
-
-	
 	public void addSubCommande(OperationTree cmd) {
 		if (cmd != this) {
 			operationChildren.addCommand(cmd);

@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.operations;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
@@ -34,31 +31,18 @@ class ChangeAttributeWithManipulation extends OperationLeaf {
 	}
 
 	@Override
-	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		try {
-			// if getValue throws an exception, valueUndo is initialised with
-			// null
-			valueUndo = null;
-			if (manipulation.hasValue(element, monitor)) {
-				valueUndo = manipulation.getValue(element, monitor);
-			}
-			setValue(valueDo, monitor);
-		} catch (RodinDBException e) {
-			return e.getStatus();
+	public void doExecute(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException {
+		if (manipulation.hasValue(element, monitor)) {
+			valueUndo = manipulation.getValue(element, monitor);
 		}
-		return Status.OK_STATUS;
+		setValue(valueDo, monitor);
 	}
 
 	@Override
-	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		try {
-			setValue(valueDo, monitor);
-		} catch (RodinDBException e) {
-			return e.getStatus();
-		}
-		return Status.OK_STATUS;
+	public void doRedo(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException {
+		setValue(valueDo, monitor);
 	}
 
 	private void setValue(String value, IProgressMonitor monitor)
@@ -71,14 +55,9 @@ class ChangeAttributeWithManipulation extends OperationLeaf {
 	}
 
 	@Override
-	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		try {
-			setValue(valueUndo, monitor);
-		} catch (RodinDBException e) {
-			return e.getStatus();
-		}
-		return Status.OK_STATUS;
+	public void doUndo(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException {
+		setValue(valueUndo, monitor);
 	}
 
 	/**

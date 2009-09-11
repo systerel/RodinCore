@@ -66,22 +66,25 @@ public class History {
 	}
 
 	public void addOperation(AtomicOperation operation) {
-		try {
-			if (operation != null) {
-				contexts.addAll(Arrays.asList(operation.getContexts()));
-				history.execute(operation, null, null);
-				setLimit(operation.getContexts());
-			}
-		} catch (ExecutionException e) {
-			UIUtils.log(e.getCause(), "when executing an operation");
+		if (operation == null) {
+			return;
 		}
+		contexts.addAll(Arrays.asList(operation.getContexts()));
+		try {
+			history.execute(operation, null, null);
+		} catch (ExecutionException e) {
+			UIUtils.showUnexpectedError(e.getCause(),
+					"when executing operation:" + operation.getLabel());
+		}
+		setLimit(operation.getContexts());
 	}
 
 	public void redo(IUndoContext context) {
 		try {
 			history.redo(context, null, null);
 		} catch (ExecutionException e) {
-			UIUtils.log(e.getCause(), "when redoing an operation");
+			UIUtils.showUnexpectedError(e.getCause(), "when redoing operation:"
+					+ context.getLabel());
 		}
 	}
 
@@ -89,7 +92,8 @@ public class History {
 		try {
 			history.undo(context, null, null);
 		} catch (ExecutionException e) {
-			UIUtils.log(e.getCause(), "when undoing an operation");
+			UIUtils.showUnexpectedError(e.getCause(), "when undoing operation:"
+					+ context.getLabel());
 		}
 	}
 

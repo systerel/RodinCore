@@ -13,10 +13,9 @@ package org.eventb.internal.ui.eventbeditor.operations;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.core.commands.operations.AbstractOperation;
 import org.rodinp.core.IInternalElement;
 
-abstract class OperationLeaf extends AbstractOperation implements OperationTree {
+abstract class OperationLeaf extends AbstractEventBOperation implements OperationTree {
 
 	private ArrayList<IInternalElement> createdElements;
 

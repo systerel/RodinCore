@@ -12,11 +12,8 @@ package org.eventb.internal.ui.eventbeditor.operations;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eventb.internal.ui.Pair;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -61,42 +58,29 @@ class CreateIdenticalElement extends OperationLeaf {
 	}
 
 	@Override
-	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		try {
-			if (!element.exists()) {
-				element.create(null, monitor);
-			}
-			setBooleanAttributes(listBoolean, monitor);
-			setHandleAttributes(listHandle, monitor);
-			setIntegerAttributes(listInteger, monitor);
-			setLongAttributes(listLong, monitor);
-			setStringAttributes(listString, monitor);
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public void doExecute(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException {
+		if (!element.exists()) {
+			element.create(null, monitor);
 		}
-		return Status.OK_STATUS;
+		setBooleanAttributes(listBoolean, monitor);
+		setHandleAttributes(listHandle, monitor);
+		setIntegerAttributes(listInteger, monitor);
+		setLongAttributes(listLong, monitor);
+		setStringAttributes(listString, monitor);
 	}
 
 	@Override
-	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		return execute(monitor, info);
+	public void doRedo(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException {
+		doExecute(monitor, info);
 	}
 
 	@Override
-	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		try {
-			element.delete(true, monitor);
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return Status.OK_STATUS;
+	public void doUndo(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException {
+		element.delete(true, monitor);
 	}
-
 
 	private void getAttributes(IAttributeType type) throws RodinDBException {
 		if (type instanceof IAttributeType.Boolean) {

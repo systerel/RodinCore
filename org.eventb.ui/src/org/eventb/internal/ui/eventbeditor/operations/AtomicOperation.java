@@ -12,41 +12,27 @@ package org.eventb.internal.ui.eventbeditor.operations;
 
 import java.util.Collection;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-public class AtomicOperation extends AbstractOperation {
+public class AtomicOperation extends AbstractEventBOperation {
 
 	abstract class AbstractNavigation {
 
-		IStatus status;
+		abstract void doRun(IProgressMonitor monitor, final IAdaptable info)
+				throws RodinDBException;
 
-		abstract IStatus doRun(IProgressMonitor monitor, final IAdaptable info)
-				throws ExecutionException;
-
-		IStatus run(IProgressMonitor monitor, final IAdaptable info) {
-			try {
-				RodinCore.run(new IWorkspaceRunnable() {
-					public void run(IProgressMonitor m) throws RodinDBException {
-						try {
-							status = doRun(m, info);
-						} catch (ExecutionException e) {
-							e.printStackTrace();
-						}
-					}
-				}, context.getRodinFile().getSchedulingRule(), monitor);
-			} catch (RodinDBException e) {
-				e.printStackTrace();
-				return e.getStatus();
-			}
-			return status;
+		void run(IProgressMonitor monitor, final IAdaptable info)
+				throws RodinDBException {
+			RodinCore.run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor m) throws RodinDBException {
+					doRun(m, info);
+				}
+			}, context.getRodinFile().getSchedulingRule(), monitor);
 		}
 	}
 
@@ -56,29 +42,26 @@ public class AtomicOperation extends AbstractOperation {
 
 	private final AbstractNavigation execute = new AbstractNavigation() {
 		@Override
-		IStatus doRun(IProgressMonitor monitor, IAdaptable info)
-				throws ExecutionException {
-			return operation.execute(monitor, info);
+		void doRun(IProgressMonitor monitor, IAdaptable info)
+				throws RodinDBException {
+			operation.doExecute(monitor, info);
 		}
-
 	};
 
 	private final AbstractNavigation undo = new AbstractNavigation() {
 		@Override
-		IStatus doRun(IProgressMonitor monitor, IAdaptable info)
-				throws ExecutionException {
-			return operation.undo(monitor, info);
+		void doRun(IProgressMonitor monitor, IAdaptable info)
+				throws RodinDBException {
+			operation.doUndo(monitor, info);
 		}
-
 	};
 
 	private final AbstractNavigation redo = new AbstractNavigation() {
 		@Override
-		IStatus doRun(IProgressMonitor monitor, IAdaptable info)
-				throws ExecutionException {
-			return operation.redo(monitor, info);
+		void doRun(IProgressMonitor monitor, IAdaptable info)
+				throws RodinDBException {
+			operation.doRedo(monitor, info);
 		}
-
 	};
 
 	public AtomicOperation(RodinFileUndoContext context, OperationTree operation) {
@@ -89,21 +72,21 @@ public class AtomicOperation extends AbstractOperation {
 	}
 
 	@Override
-	public IStatus execute(IProgressMonitor monitor, final IAdaptable info)
-			throws ExecutionException {
-		return execute.run(monitor, info);
+	public void doExecute(IProgressMonitor monitor, final IAdaptable info)
+			throws RodinDBException {
+		execute.run(monitor, info);
 	}
 
 	@Override
-	public IStatus redo(IProgressMonitor monitor, final IAdaptable info)
-			throws ExecutionException {
-		return redo.run(monitor, info);
+	public void doRedo(IProgressMonitor monitor, final IAdaptable info)
+			throws RodinDBException {
+		redo.run(monitor, info);
 	}
 
 	@Override
-	public IStatus undo(IProgressMonitor monitor, final IAdaptable info)
-			throws ExecutionException {
-		return undo.run(monitor, info);
+	public void doUndo(IProgressMonitor monitor, final IAdaptable info)
+			throws RodinDBException {
+		undo.run(monitor, info);
 	}
 
 	public IInternalElement getCreatedElement() {

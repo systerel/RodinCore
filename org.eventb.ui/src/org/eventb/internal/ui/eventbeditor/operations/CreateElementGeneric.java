@@ -13,15 +13,12 @@ package org.eventb.internal.ui.eventbeditor.operations;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinDBException;
 
 class CreateElementGeneric<T extends IInternalElement> extends OperationLeaf {
 
@@ -42,35 +39,29 @@ class CreateElementGeneric<T extends IInternalElement> extends OperationLeaf {
 	}
 
 	@Override
-	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
+	public void doExecute(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException {
 
-		try {
-			final IInternalElement root = parent.getRoot();
-			element = ElementDescRegistry.getInstance().createElement(root,
-					parent, type, sibling);
-			// page.recursiveExpand(element);
-		} catch (CoreException e) {
-			return e.getStatus();
-		}
+		final IInternalElement root = parent.getRoot();
+		element = ElementDescRegistry.getInstance().createElement(root,
+				parent, type, sibling);
 		final OperationBuilder builder = new OperationBuilder();
 		operationDelete = builder.deleteElement(element, true);
-		return Status.OK_STATUS;
 	}
 
 	@Override
-	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		return operationDelete.undo(monitor, info);
+	public void doRedo(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException {
+		operationDelete.doUndo(monitor, info);
 	}
 
 	@Override
-	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
+	public void doUndo(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException {
 		if (first) {
-			return operationDelete.execute(monitor, info);
+			operationDelete.doExecute(monitor, info);
 		} else {
-			return operationDelete.redo(monitor, info);
+			operationDelete.doRedo(monitor, info);
 		}
 	}
 

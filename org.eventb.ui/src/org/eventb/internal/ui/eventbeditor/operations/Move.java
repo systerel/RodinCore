@@ -11,11 +11,8 @@
 
 package org.eventb.internal.ui.eventbeditor.operations;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
@@ -35,51 +32,43 @@ public class Move extends OperationLeaf {
 		this.newSibling = newSibling;
 		oldParent = (IInternalElement) movedElement.getParent();
 		oldSibling = getNextSibling(movedElement);
-
 	}
 
 	private IInternalElement getNextSibling(IInternalElement element) {
 		try {
 			return element.getNextSibling();
 		} catch (RodinDBException e) {
-			e.printStackTrace();
 			return null;
 		}
 	}
 
-	private IStatus move(IInternalElement lNewParent,
-			IInternalElement lNewSibling, IProgressMonitor monitor) {
-		try {
-			movedElement.move(lNewParent, lNewSibling, movedElement
-					.getElementName(), false, monitor);
-		} catch (RodinDBException e) {
-			e.printStackTrace();
-			return e.getStatus();
-		}
-		return Status.OK_STATUS;
+	private void move(IInternalElement lNewParent,
+			IInternalElement lNewSibling, IProgressMonitor monitor)
+			throws RodinDBException {
+		movedElement.move(lNewParent, lNewSibling, movedElement
+				.getElementName(), false, monitor);
 	}
 
 	@Override
-	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		return move(newParent, newSibling, monitor);
+	public void doExecute(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException {
+		move(newParent, newSibling, monitor);
 	}
 
 	@Override
-	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		return move(oldParent, oldSibling, monitor);
+	public void doUndo(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException {
+		move(oldParent, oldSibling, monitor);
 	}
 
 	@Override
-	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		return move(newParent, newSibling, monitor);
+	public void doRedo(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException {
+		move(newParent, newSibling, monitor);
 	}
 
 	public void setParent(IInternalElement element) {
-		// TODO Auto-generated method stub
-
+		// do nothing
 	}
 
 }

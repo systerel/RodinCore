@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.operations;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eventb.core.IAction;
 import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IEvent;
@@ -44,44 +41,27 @@ class CreateInitialisation extends OperationLeaf {
 	}
 
 	@Override
-	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		try {
-			// EventBEditorUtils.createNewInitialisationAction(editor, actLabel,
-			// actSub, monitor);
-
-			event = getInitialisationEvent(monitor);
-			action = event.createChild(IAction.ELEMENT_TYPE, null, monitor);
-			action.setLabel(actLabel, monitor);
-			action.setAssignmentString(actSub, monitor);
-			// editor.addNewElement(action);
-
-		} catch (RodinDBException e) {
-			return e.getStatus();
-		}
-		return Status.OK_STATUS;
+	public void doExecute(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException {
+		event = getInitialisationEvent(monitor);
+		action = event.createChild(IAction.ELEMENT_TYPE, null, monitor);
+		action.setLabel(actLabel, monitor);
+		action.setAssignmentString(actSub, monitor);
 	}
 
 	@Override
-	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		return execute(monitor, info);
+	public void doRedo(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException {
+		doExecute(monitor, info);
 	}
 
 	@Override
-	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		try {
-			action.delete(true, monitor);
-			if (newInit) {
-				event.delete(true, monitor);
-			}
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public void doUndo(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException {
+		action.delete(true, monitor);
+		if (newInit) {
+			event.delete(true, monitor);
 		}
-
-		return Status.OK_STATUS;
 	}
 
 	private IEvent getInitialisationEvent(IProgressMonitor monitor)

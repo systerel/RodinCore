@@ -12,11 +12,24 @@ package org.eventb.internal.ui.eventbeditor.operations;
 
 import java.util.Collection;
 
-import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.RodinDBException;
 
-interface OperationTree extends IUndoableOperation {
-	// TODO changer par setCreatedElementParent
+interface OperationTree {
+	
+	String getLabel();
+	
+	void doExecute(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException;
+
+	void doRedo(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException;
+
+	void doUndo(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException;
+
 	void setParent(IInternalElement element) ;
 	Collection<IInternalElement> getCreatedElements();
 	IInternalElement getCreatedElement();

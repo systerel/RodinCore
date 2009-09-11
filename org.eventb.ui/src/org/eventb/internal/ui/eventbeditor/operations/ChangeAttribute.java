@@ -13,12 +13,8 @@ package org.eventb.internal.ui.eventbeditor.operations;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
@@ -28,7 +24,7 @@ class ChangeAttribute extends OperationLeaf {
 
 	private IInternalElement element;
 	private final IAttributeValue[] values;
-	
+
 	private final List<IAttributeValue> newValues = new ArrayList<IAttributeValue>();
 	private final List<IAttributeValue> oldValues = new ArrayList<IAttributeValue>();
 	private final List<IAttributeType> newAttributes = new ArrayList<IAttributeType>();
@@ -45,56 +41,38 @@ class ChangeAttribute extends OperationLeaf {
 	}
 
 	@Override
-	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
+	public void doExecute(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException {
 		assert element != null;
-		try {
-			for (IAttributeValue value : values) {
-				final IAttributeType type = value.getType();
-				if (element.hasAttribute(type)) {
-					oldValues.add(element.getAttributeValue(type));
-				} else {
-					newAttributes.add(type);
-				}
-				element.setAttributeValue(value, monitor);
-				newValues.add(value);
+		for (IAttributeValue value : values) {
+			final IAttributeType type = value.getType();
+			if (element.hasAttribute(type)) {
+				oldValues.add(element.getAttributeValue(type));
+			} else {
+				newAttributes.add(type);
 			}
-		} catch (RodinDBException e) {
-			UIUtils.log(e, "when executing operation " + this);
-			return e.getStatus();
+			element.setAttributeValue(value, monitor);
+			newValues.add(value);
 		}
-		return Status.OK_STATUS;
 	}
 
 	@Override
-	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		try {
-			for (IAttributeValue value : newValues) {
-				element.setAttributeValue(value, monitor);
-			}
-		} catch (RodinDBException e) {
-			UIUtils.log(e, "when redoing operation " + this);
-			return e.getStatus();
+	public void doRedo(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException {
+		for (IAttributeValue value : newValues) {
+			element.setAttributeValue(value, monitor);
 		}
-		return Status.OK_STATUS;
 	}
 
 	@Override
-	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
-		try {
-			for (IAttributeValue value : oldValues) {
-				element.setAttributeValue(value, monitor);
-			}
-			for (IAttributeType type : newAttributes) {
-				element.removeAttribute(type, monitor);
-			}
-		} catch (RodinDBException e) {
-			UIUtils.log(e, "when undoing operation " + this);
-			return e.getStatus();
+	public void doUndo(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException {
+		for (IAttributeValue value : oldValues) {
+			element.setAttributeValue(value, monitor);
 		}
-		return Status.OK_STATUS;
+		for (IAttributeType type : newAttributes) {
+			element.removeAttribute(type, monitor);
+		}
 	}
 
 	public void setParent(IInternalElement element) {

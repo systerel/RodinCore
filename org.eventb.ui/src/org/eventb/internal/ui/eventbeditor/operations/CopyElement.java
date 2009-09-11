@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.operations;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
@@ -32,11 +29,11 @@ public class CopyElement extends OperationLeaf {
 	private final IInternalElement defaultParent;
 	private IInternalElement source;
 	private boolean first;
-	// Operation to delete the copy. Use in undo
+
+	// Operation to delete the copy. Used in undo
 	private OperationTree operationDelete;
 
-	public CopyElement(IInternalElement parent,
-			IInternalElement source) {
+	public CopyElement(IInternalElement parent, IInternalElement source) {
 		super("CopyElement");
 		this.defaultParent = parent;
 		this.source = source;
@@ -44,80 +41,69 @@ public class CopyElement extends OperationLeaf {
 	}
 
 	@Override
-	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
+	public void doExecute(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException {
 		IInternalElement copyParent;
 		String nameCopy;
 		final OperationBuilder builder;
 		final IInternalElement element;
 		final String copyId;
 
-		try {
-			copyParent = defaultParent.getRoot();
-			if (source instanceof IEvent) {
-				copyId = "evt";
-			} else if (source instanceof IInvariant) {
-				copyId = "inv";
-			} else if (source instanceof IVariant) {
-				copyId = "variant";
-			} else if (source instanceof IAxiom) {
-				copyId = "axm";
-			} else if (source instanceof IConstant) {
-				copyId = "cst";
-			} else if (source instanceof ICarrierSet) {
-				copyId = "set";
+		copyParent = defaultParent.getRoot();
+		if (source instanceof IEvent) {
+			copyId = "evt";
+		} else if (source instanceof IInvariant) {
+			copyId = "inv";
+		} else if (source instanceof IVariant) {
+			copyId = "variant";
+		} else if (source instanceof IAxiom) {
+			copyId = "axm";
+		} else if (source instanceof IConstant) {
+			copyId = "cst";
+		} else if (source instanceof ICarrierSet) {
+			copyId = "set";
 
-			} else if (source instanceof IVariable) {
-				copyId = "set";
-			} else {
-				copyId = "element";
-				copyParent = defaultParent;
-			}
+		} else if (source instanceof IVariable) {
+			copyId = "set";
+		} else {
+			copyId = "element";
+			copyParent = defaultParent;
+		}
 
-			final IInternalElementType<?> copyType = source.getElementType();
+		final IInternalElementType<?> copyType = source.getElementType();
 
-			nameCopy = copyId
-					+ EventBUtils.getFreeChildNameIndex(copyParent, copyType,
-							copyId);
-			source.copy(copyParent, null, nameCopy, false, null);
-			builder = new OperationBuilder();
-			element = copyParent.getInternalElement(source.getElementType(),
-					nameCopy);
+		nameCopy = copyId
+				+ EventBUtils.getFreeChildNameIndex(copyParent, copyType,
+						copyId);
+		source.copy(copyParent, null, nameCopy, false, null);
+		builder = new OperationBuilder();
+		element = copyParent.getInternalElement(source.getElementType(),
+				nameCopy);
 
-			if (element != null) {
-				operationDelete = builder.deleteElement(element, true);
-				return Status.OK_STATUS;
-			} else {
-				operationDelete = null;
-				return Status.OK_STATUS;
-			}
-		} catch (RodinDBException e) {
-			operationDelete = null;
-			return e.getStatus();
+		if (element != null) {
+			operationDelete = builder.deleteElement(element, true);
 		}
 	}
 
 	@Override
-	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
+	public void doRedo(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException {
 		if (operationDelete != null) {
-			return operationDelete.undo(monitor, info);
+			operationDelete.doUndo(monitor, info);
 		}
-		return Status.OK_STATUS;
 	}
 
 	@Override
-	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
-			throws ExecutionException {
+	public void doUndo(IProgressMonitor monitor, IAdaptable info)
+			throws RodinDBException {
 		if (operationDelete != null) {
 			if (first) {
 				first = false;
-				return operationDelete.execute(monitor, info);
+				operationDelete.doExecute(monitor, info);
 			} else {
-				return operationDelete.redo(monitor, info);
+				operationDelete.doRedo(monitor, info);
 			}
 		}
-		return Status.OK_STATUS;
 	}
 
 	public void setParent(IInternalElement element) {
