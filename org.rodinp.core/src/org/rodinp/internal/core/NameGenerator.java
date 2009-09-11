@@ -20,6 +20,19 @@ import java.util.Arrays;
  * <code>#x27-#x7E</code>, except the "<" sign.  This choice ensures that each
  * character will take exactly one byte in the UTF-8 encoded XML file.
  * </p>
+ * <p>
+ * The generated name is guaranteed to be greater than any used name, according
+ * to a total order.  Strings are ordered in the following way, from smaller to
+ * greater:
+ * <ol>
+ * <li>All invalid strings, ordered lexically.  Invalid strings are strings
+ *  that contain some character outside range.</li>
+ * <li>The empty string.</li>
+ * <li>Strings of length 1, ordered lexicographically.</li>
+ * <li>Strings of length 2, ordered lexicographically.</li>
+ * <li>etc.</li>
+ * </ol>
+ * </p>
  * 
  * @author Laurent Voisin
  */
@@ -33,11 +46,24 @@ public class NameGenerator {
 	private String greatest = "";
 
 	public void addUsedName(String s) {
-		if (isValid(s) && greatest.compareTo(s) < 0) {
+		if (isGreater(s)) {
 			greatest = s;
 		}
 	}
 
+	private boolean isGreater(String s) {
+		if (!isValid(s)) {
+			return false;
+		}
+		if (s.length() < greatest.length()) {
+			return false;
+		}
+		if (greatest.length() < s.length()) {
+			return true;
+		}
+		return greatest.compareTo(s) < 0;
+	}
+	
 	public static boolean isValid(String s) {
 		boolean result = true;
 		for (int i = 0; result && i < s.length(); i++) {

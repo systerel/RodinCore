@@ -131,6 +131,15 @@ public class NameGeneratorTests extends TestCase {
 		assertNextName("fop'");
 	}
 
+	/**
+	 * Ensures that carries are propagated when increasing. 
+	 */
+	public void testBug2856893() {
+		g.addUsedName("~");
+		g.addUsedName("''");
+		assertNextName("'(");
+	}
+
 	private void assertNextName(String expected) {
 		assertEquals(expected, g.advance());
 	}
