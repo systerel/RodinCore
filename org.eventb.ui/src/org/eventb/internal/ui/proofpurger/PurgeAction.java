@@ -14,7 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
@@ -235,14 +234,10 @@ public class PurgeAction implements IObjectActionDelegate {
 			new ProgressMonitorDialog(site.getShell()).run(true, true,
 					operation);
 		} catch (InvocationTargetException e) {
-			final Throwable cause = e.getCause();
 			final String errorMessage =
 					Messages.filepurgeaction_runningpurgeroperation
 							+ operation.toString();
-			UIUtils.log(cause, errorMessage);
-			if (cause instanceof CoreException) {
-				UIUtils.showUnexpectedError((CoreException) cause);
-			}
+			UIUtils.showUnexpectedError(e.getCause(), errorMessage);
 		} catch (InterruptedException e) {
 			// Propagate the interruption
 			Thread.currentThread().interrupt();

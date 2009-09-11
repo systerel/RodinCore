@@ -20,6 +20,7 @@
 package org.eventb.internal.ui;
 
 import static org.eclipse.swt.SWT.MouseWheel;
+import static org.eventb.ui.EventBUIPlugin.PLUGIN_ID;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
@@ -53,7 +54,6 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
@@ -71,8 +71,6 @@ import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.Constants;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -850,13 +848,9 @@ public class UIUtils {
 	 * @param message The dialog message.
 	 */
 	public static void showInfo(final String message) {
-		final String pluginName = getPluginName();
 		syncExec(new Runnable() {
 			public void run() {
-				final IWorkbenchWindow activeWorkbenchWindow = EventBUIPlugin
-						.getActiveWorkbenchWindow();
-				MessageDialog.openInformation(activeWorkbenchWindow.getShell(),
-						pluginName, message);
+				MessageDialog.openInformation(getShell(), null, message);
 			}
 		});
 
@@ -864,26 +858,24 @@ public class UIUtils {
 
 	/**
 	 * Opens an information dialog to the user displaying the given message.
-	 *  
-	 * @param message The dialog message.
+	 * 
+	 * @param message
+	 *            The dialog message.
 	 */
 	public static boolean showQuestion(final String message) {
-		final String pluginName = getPluginName();
 		class Question implements Runnable {
 			private boolean response;
 
 			public void run() {
-				final IWorkbenchWindow activeWorkbenchWindow = EventBUIPlugin
-						.getActiveWorkbenchWindow();
-				response = MessageDialog.openQuestion(activeWorkbenchWindow
-						.getShell(), pluginName, message);
+				response = MessageDialog
+						.openQuestion(getShell(), null, message);
 			}
+
 			public boolean getResponse() {
 				return response;
 			}
 		}
 		final Question question = new Question();
-
 		syncExec(question);
 		return question.getResponse();
 	}
@@ -891,31 +883,36 @@ public class UIUtils {
 	/**
 	 * Opens an error dialog to the user showing the given unexpected error.
 	 * 
-	 * @param e The unexpected error.
+	 * @param exc
+	 *            The unexpected error.
+	 * @param errorMessage
+	 *            error message for logging
 	 */
-	public static void showUnexpectedError(final CoreException e) {
-		final String pluginName = getPluginName();
+	public static void showUnexpectedError(final Throwable exc,
+			final String errorMessage) {
+		UIUtils.log(exc, errorMessage);
+		final IStatus status;
+		if (exc instanceof CoreException) {
+			status = ((CoreException) exc).getStatus();
+		} else {
+			final String msg = "Internal error " + errorMessage;
+			status = new Status(IStatus.ERROR, PLUGIN_ID, msg, exc);
+		}
 		syncExec(new Runnable() {
 			public void run() {
-				final IStatus status = new Status(IStatus.ERROR,
-						EventBUIPlugin.PLUGIN_ID, IStatus.ERROR, e.getStatus()
-								.getMessage(), null);
-				ErrorDialog.openError(EventBUIPlugin.getActiveWorkbenchWindow()
-						.getShell(), pluginName,
+				ErrorDialog.openError(getShell(), null,
 						Messages.uiUtils_unexpectedError, status);
 			}
 		});
+	}
 
+	static Shell getShell() {
+		return EventBUIPlugin.getActiveWorkbenchWindow().getShell();
 	}
 	
 	private static void syncExec(Runnable runnable) {
 		final Display display = PlatformUI.getWorkbench().getDisplay();
 		display.syncExec(runnable);
-	}
-
-	private static String getPluginName() {
-		final Bundle bundle = EventBUIPlugin.getDefault().getBundle();
-		return (String) bundle.getHeaders().get(Constants.BUNDLE_NAME);
 	}
 
 	/*

@@ -197,10 +197,7 @@ public class ProofSimplifyAction implements IObjectActionDelegate {
 			new ProgressMonitorDialog(site.getShell()).run(true, true, op);
 		} catch (InvocationTargetException e) {
 			final Throwable cause = e.getCause();
-			UIUtils.log(cause, "while simplifying proofs"); //$NON-NLS-1$
-			if (cause instanceof CoreException) {
-				UIUtils.showUnexpectedError((CoreException) cause);
-			}
+			UIUtils.showUnexpectedError(cause, "while simplifying proofs");
 		} catch (InterruptedException e) {
 			// Propagate the interruption
 			Thread.currentThread().interrupt();
