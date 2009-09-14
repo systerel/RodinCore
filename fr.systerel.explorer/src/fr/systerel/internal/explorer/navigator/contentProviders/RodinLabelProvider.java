@@ -100,6 +100,7 @@ public class RodinLabelProvider implements ILabelProvider {
 						.getModelParent();
 				boolean discharged = parent.getMinConfidence() > IConfidence.REVIEWED_MAX;
 				boolean reviewed = parent.getMinConfidence() > IConfidence.PENDING;
+				boolean unattempted = parent.getMinConfidence() == IConfidence.UNATTEMPTED;
 
 				if (discharged) {
 					return EventBImage
@@ -107,6 +108,9 @@ public class RodinLabelProvider implements ILabelProvider {
 				} else if (reviewed) {
 					return EventBImage
 							.getImage(IEventBSharedImages.IMG_REVIEWED);
+				} else if (unattempted) {
+					return EventBImage
+							.getImage(IEventBSharedImages.IMG_PENDING_PALE);
 				} else {
 					return EventBImage
 							.getImage(IEventBSharedImages.IMG_PENDING);

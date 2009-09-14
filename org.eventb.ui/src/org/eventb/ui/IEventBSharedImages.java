@@ -55,6 +55,8 @@ public interface IEventBSharedImages {
 
 	public static final String IMG_PENDING = "Pending";
 
+	public static final String IMG_PENDING_PALE = "Pending Pale";
+
 	public static final String IMG_PENDING_BROKEN = "Pending Broken";
 
 	public static final String IMG_REVIEWED = "REVIEWED";

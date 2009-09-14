@@ -121,6 +121,8 @@ public class EventBImage {
 
 		registerImage(registry, IEventBSharedImages.IMG_PENDING,
 				"icons/pending.gif");
+		registerImage(registry, IEventBSharedImages.IMG_PENDING_PALE,
+				"icons/pending_pale.gif");
 		registerImage(registry, IEventBSharedImages.IMG_PENDING_BROKEN,
 				"icons/pending_broken.gif");
 		registerImage(registry, IEventBSharedImages.IMG_APPLIED,
@@ -428,7 +430,7 @@ public class EventBImage {
 
 		boolean isAttempted = confidence > IConfidence.UNATTEMPTED;
 		if (!isAttempted)
-			base_path = IEventBSharedImages.IMG_PENDING_PATH;
+			base_path = IEventBSharedImages.IMG_PENDING_PALE_PATH;
 		else {
 			boolean isProofBroken = false;
 			try {
