@@ -48,7 +48,20 @@ public class RefinesMachineAbstractMachineNameAttributeManipulation extends
 
 	public void setValue(IRodinElement element, String str,
 			IProgressMonitor monitor) throws RodinDBException {
-		asRefinesMachine(element).setAbstractMachineName(str, null);
+		IRefinesMachine ref = asRefinesMachine(element);
+		ref.setAbstractMachineName(str, null);
+		IMachineRoot root = (IMachineRoot) ref.getRoot();
+		IMachineRoot abstractMachineRoot = ref.getAbstractMachineRoot();
+		if (abstractMachineRoot.exists()) {
+			try {
+				root.setConfiguration(abstractMachineRoot.getConfiguration(),
+						null);
+			} catch (RodinDBException e) {
+				UIUtils.showUnexpectedError(e,
+						"Impossible to update the configuration for machine "
+								+ root.getComponentName() + "!");
+			}
+		}
 	}
 
 	public String[] getPossibleValues(IRodinElement element,
@@ -84,7 +97,7 @@ public class RefinesMachineAbstractMachineNameAttributeManipulation extends
 			return false;
 		}
 	}
-	
+
 	private IMachineRoot[] getMachineRoots(IRodinElement refinesMachine) {
 		final IRodinProject rp = refinesMachine.getRodinProject();
 		try {
