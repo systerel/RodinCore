@@ -166,8 +166,9 @@ public class Refines implements IObjectActionDelegate {
 		try {
 			RodinCore.run(op, null);
 		} catch (RodinDBException e) {
-			// TODO report error to end user
-			e.printStackTrace();
+			UIUtils.log(e, "When creating a refinement of abstract machine "
+					+ absRoot.getComponentName() + " by concrete machine "
+					+ conRoot.getComponentName());
 			return;
 		}
 		UIUtils.linkToEventBEditor(con);
@@ -199,8 +200,8 @@ public class Refines implements IObjectActionDelegate {
 	 * 
 	 * @param abs
 	 *            the abstract machine to refine
-	 * @return the concrete machine entered by the user or <code>null</code>
-	 *         if canceled.
+	 * @return the concrete machine entered by the user or <code>null</code> if
+	 *         canceled.
 	 */
 	private IRodinFile askRefinementMachineFor(IRodinFile abs) {
 		final IRodinProject prj = abs.getRodinProject();
