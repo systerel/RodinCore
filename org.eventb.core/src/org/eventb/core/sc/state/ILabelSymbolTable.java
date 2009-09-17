@@ -8,7 +8,6 @@
 package org.eventb.core.sc.state;
 
 import org.eventb.core.ILabeledElement;
-import org.eventb.internal.core.sc.symbolTable.ISymbolTable;
 import org.rodinp.core.IInternalElementType;
 
 /**

@@ -10,13 +10,11 @@
  *     Soton - redesign of symbol table
  *     Systerel - separation of file and root element
  *******************************************************************************/
-package org.eventb.internal.core.sc.symbolTable;
+package org.eventb.core.sc.state;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.sc.IMarkerDisplay;
-import org.eventb.core.sc.state.IIdentifierSymbolInfo;
-import org.eventb.core.sc.state.ILabelSymbolInfo;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;

@@ -12,10 +12,10 @@ import java.util.Hashtable;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.tool.IStateRepository;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.tool.types.IState;
-import org.eventb.internal.core.tool.types.IStateRepository;
 
 /**
  * @author Stefan Hallerstede

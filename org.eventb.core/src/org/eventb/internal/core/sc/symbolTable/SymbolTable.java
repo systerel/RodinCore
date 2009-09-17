@@ -12,6 +12,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.sc.state.ISymbolInfo;
+import org.eventb.core.sc.state.ISymbolTable;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.tool.state.State;
 import org.rodinp.core.IInternalElement;

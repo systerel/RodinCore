@@ -14,7 +14,6 @@ package org.eventb.core.sc.state;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ILabeledElement;
-import org.eventb.internal.core.sc.symbolTable.ISymbolInfo;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 

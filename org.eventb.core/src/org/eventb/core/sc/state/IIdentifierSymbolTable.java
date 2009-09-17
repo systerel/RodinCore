@@ -14,7 +14,6 @@ import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.tool.IStateType;
-import org.eventb.internal.core.sc.symbolTable.ISymbolTable;
 import org.rodinp.core.IInternalElementType;
 
 /**

@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.IMarkerDisplay;
-import org.eventb.internal.core.sc.symbolTable.ISymbolInfo;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 

@@ -9,6 +9,7 @@ package org.eventb.internal.core.tool.types;
 
 import org.eventb.core.pog.state.IPOGState;
 import org.eventb.core.sc.state.ISCState;
+import org.eventb.core.tool.IStateRepository;
 import org.eventb.core.tool.IStateType;
 
 /**

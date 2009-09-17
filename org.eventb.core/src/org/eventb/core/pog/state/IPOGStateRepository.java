@@ -12,7 +12,7 @@
 package org.eventb.core.pog.state;
 
 import org.eventb.core.IPORoot;
-import org.eventb.internal.core.tool.types.IStateRepository;
+import org.eventb.core.tool.IStateRepository;
 
 /**
  * This class provides access to the proof obligation generator state repository.

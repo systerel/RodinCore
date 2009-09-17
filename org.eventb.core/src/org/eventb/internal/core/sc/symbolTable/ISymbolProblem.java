@@ -8,6 +8,7 @@
 package org.eventb.internal.core.sc.symbolTable;
 
 import org.eventb.core.sc.IMarkerDisplay;
+import org.eventb.core.sc.state.ISymbolInfo;
 import org.rodinp.core.RodinDBException;
 
 interface ISymbolProblem {

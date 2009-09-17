@@ -5,11 +5,9 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eventb.internal.core.sc.symbolTable;
+package org.eventb.core.sc.state;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.sc.state.IIdentifierSymbolTable;
-import org.eventb.core.sc.state.ILabelSymbolTable;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 

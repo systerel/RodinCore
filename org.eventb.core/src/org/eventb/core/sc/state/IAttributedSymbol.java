@@ -10,7 +10,7 @@
  *     Soton - redesign of symbol table
  *     Systerel - separation of file and root element
  *******************************************************************************/
-package org.eventb.internal.core.sc.symbolTable;
+package org.eventb.core.sc.state;
 
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinElement;

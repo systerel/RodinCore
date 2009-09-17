@@ -8,6 +8,7 @@
 package org.eventb.internal.core.tool.types;
 
 import org.eventb.core.tool.IModuleType;
+import org.eventb.core.tool.IStateRepository;
 
 
 /**
