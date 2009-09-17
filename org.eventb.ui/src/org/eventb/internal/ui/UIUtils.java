@@ -893,7 +893,9 @@ public class UIUtils {
 		UIUtils.log(exc, errorMessage);
 		final IStatus status;
 		if (exc instanceof CoreException) {
-			status = ((CoreException) exc).getStatus();
+			IStatus s = ((CoreException) exc).getStatus();
+			status = new Status(s.getSeverity(), s.getPlugin(), s.getMessage()
+					+ "\n" + errorMessage, s.getException());
 		} else {
 			final String msg = "Internal error " + errorMessage;
 			status = new Status(IStatus.ERROR, PLUGIN_ID, msg, exc);
