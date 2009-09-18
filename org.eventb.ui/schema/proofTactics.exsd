@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eventb.ui">
+<schema targetNamespace="org.eventb.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eventb.ui" id="proofTactics" name="%point.proofTacticsName"/>
@@ -16,6 +16,9 @@ The Event-B Proving User Interface is used for interactively discharging proof o
 
    <element name="extension">
       <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
          <documentation>
             Plug-in writers register new proof commands to the Event-B Proving User Interface by extending this extension point. This is the root element.  This contains a sequence of &lt;samp&gt;tactic&lt;/samp&gt;, &lt;samp&gt;toolbar&lt;/samp&gt; and &lt;samp&gt;dropdown&lt;/samp&gt; elements.
          </documentation>
@@ -129,7 +132,7 @@ The Event-B Proving User Interface is used for interactively discharging proof o
          <attribute name="proofCommand" type="string">
             <annotation>
                <documentation>
-                  the name of a class which will be used to invoke the proof tactic. The class must implement &lt;samp&gt;org.eventb.ui.prover.IProofCommand&lt;/samp&gt;. 
+                  the name of a class which will be used to invoke the proof tactic. The class must implement &lt;samp&gt;org.eventb.ui.prover.IProofCommand&lt;/samp&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eventb.ui.prover.IProofCommand"/>
@@ -165,6 +168,14 @@ The Event-B Proving User Interface is used for interactively discharging proof o
                <appInfo>
                   <meta.attribute translatable="true"/>
                </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="skipPostTactic" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  Skips post tactic after tactic application.
+Most contributors need not use this option. You should have a strong reason to skip post tactic.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

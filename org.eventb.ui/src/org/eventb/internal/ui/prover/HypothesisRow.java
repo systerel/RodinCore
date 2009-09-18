@@ -10,15 +10,19 @@
  *     Systerel - used EventBSharedColor
  *     Systerel - mathematical language V2
  *     Systerel - added dispose listener to hypothesis composite
+ *     Systerel - refactored to use ITacticProvider2 and ITacticApplication
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
-import static org.eventb.core.ast.LanguageVersion.V2;
+import static org.eventb.internal.ui.prover.ProverUIUtils.applyCommand;
+import static org.eventb.internal.ui.prover.ProverUIUtils.applyTactic;
+import static org.eventb.internal.ui.prover.ProverUIUtils.checkRange;
+import static org.eventb.internal.ui.prover.ProverUIUtils.getParsedTypeChecked;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +32,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -40,23 +45,19 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.IPosition;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.internal.provisional.ui.prover.IPositionApplication;
+import org.eventb.internal.provisional.ui.prover.IPredicateApplication;
+import org.eventb.internal.provisional.ui.prover.ITacticApplication;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
-import org.eventb.internal.ui.TacticPositionUI;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
-import org.eventb.internal.ui.proofcontrol.IProofControlPage;
 import org.eventb.ui.IEventBSharedImages;
-import org.eventb.ui.prover.IProofCommand;
-import org.eventb.ui.prover.ITacticProvider;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -66,44 +67,39 @@ import org.rodinp.core.RodinDBException;
  */
 public class HypothesisRow {
 
-	private static final FormulaFactory formulaFactory = FormulaFactory
-			.getDefault();
-
 	// Set of composites and button.
-	private Button checkBox;
+	private final Button checkBox;
 
-	private Composite buttonComposite;
+	private final Composite buttonComposite;
 
-	private Composite hypothesisComposite;
+	private final Composite hypothesisComposite;
 
-	private ProverUI proverUI;
+	private final ProverUI proverUI;
 	
-	EventBPredicateText hypothesisText;
+	private EventBPredicateText hypothesisText;
 
 	// The UserSupport associated with this instance of the editor.
-	IUserSupport userSupport;
+	private final IUserSupport userSupport;
 
 	// The hypothesis contains in this row.
-	Predicate hyp;
+	private final Predicate hyp;
 
 	// This should be varied when the user resize.
-	private int max_length = 30;
+	private static final int max_length = 30;
 
-	private Color background;
+	private final Color background;
 
-	private boolean enable;
+	private final boolean enable;
 
-	private String actualString;
+	private final FormToolkit toolkit;
 
-	private Predicate parsedPred;
-
-	private FormToolkit toolkit;
-
-	SelectionListener listener;
+	private final SelectionListener listener;
 	
-	private ScrolledForm scrolledForm;
+	private final ScrolledForm scrolledForm;
 	
-	private Collection<ImageHyperlink> hyperlinks;
+	private final Collection<ImageHyperlink> hyperlinks;
+
+	private final ITypeEnvironment typeEnv;
 	
 	/**
 	 * @author htson
@@ -165,7 +161,6 @@ public class HypothesisRow {
 		buttonComposite.setLayoutData(new GridData(SWT.FILL,
 				SWT.FILL, false, false));
 		hyperlinks = new ArrayList<ImageHyperlink>();
-		createImageHyperlinks(buttonComposite);
 
 		hypothesisComposite = toolkit.createComposite(parent);
 		gd = new GridData(SWT.FILL, SWT.FILL, true, false);
@@ -181,53 +176,41 @@ public class HypothesisRow {
 				scrolledForm.getParent());
 
 		Predicate pred = hyp;
-		actualString = pred.toString();
-		IParseResult parseResult = formulaFactory.parsePredicate(actualString, V2, null);
-		assert !parseResult.hasProblem();
-		parsedPred = parseResult.getParsedPredicate();
+		final String parsedString = pred.toString();
 
-		createHypothesisText();
+		typeEnv = userSupport.getCurrentPO()
+				.getCurrentNode().getSequent().typeEnvironment();
+		final Predicate parsedPredicate = getParsedTypeChecked(parsedString, typeEnv);
+
+		
+		createImageHyperlinks(buttonComposite, parsedPredicate);
+
+		createHypothesisText(parsedPredicate, parsedString);
 
 	}
 
-	public void createHypothesisText() {
+	public void createHypothesisText(Predicate parsedPredicate, String parsedString) {
 		if (hypothesisText != null)
 			hypothesisText.dispose();
-		hypothesisText = new EventBPredicateText(false, toolkit, hypothesisComposite,
-				proverUI, scrolledForm);
+		hypothesisText = new EventBPredicateText(false, toolkit,
+				hypothesisComposite, proverUI, scrolledForm);
 		StyledText textWidget = hypothesisText.getMainTextWidget();
 		textWidget.setBackground(background);
 		textWidget.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		// int borderWidth =
-		// hypothesisText.getMainTextWidget().getBorderWidth();
-		// hypothesisText.getMainTextWidget().setText(" ");
-		// hypothesisComposite.pack(true);
-		// int textWidth = hypothesisText.getMainTextWidget().getSize().x;
-		//
-		// Rectangle rec = hypothesisComposite.getBounds();
-		// Point size = hypothesisComposite.getSize();
-		// int compositeWidth = hypothesisComposite.getClientArea().width;
-		// if (textWidth != 0) {
-		// max_length = (compositeWidth - borderWidth) / textWidth;
-		// } else
-		// max_length = 30;
+		if (enable && parsedPredicate.getTag() == Formula.FORALL) {
+			QuantifiedPredicate qpred = (QuantifiedPredicate) parsedPredicate;
 
-		if (enable && parsedPred instanceof QuantifiedPredicate
-				&& parsedPred.getTag() == Formula.FORALL) {
-			QuantifiedPredicate qpred = (QuantifiedPredicate) parsedPred;
-			
 			String string = "\u2200 ";
 			BoundIdentDecl[] idents = qpred.getBoundIdentDecls();
-			int [] indexes = new int[idents.length];
+			int[] indexes = new int[idents.length];
 
 			int i = 0;
 			for (BoundIdentDecl ident : idents) {
 				SourceLocation loc = ident.getSourceLocation();
-				String image = actualString.substring(loc.getStart(), loc
+				String image = parsedString.substring(loc.getStart(), loc
 						.getEnd() + 1);
-				if (ProverUIUtils.DEBUG)
-					ProverUIUtils.debug("Ident: " + image);
+				ProverUIUtils.debug("Ident: " + image);
 				string += " " + image + " ";
 				int x = string.length();
 				string += " ";
@@ -239,11 +222,8 @@ public class HypothesisRow {
 					string += ", ";
 				}
 			}
-			String str = PredicateUtil.prettyPrint(max_length, actualString,
+			String str = PredicateUtil.prettyPrint(max_length, parsedString,
 					qpred.getPredicate());
-			// SourceLocation loc = qpred.getPredicate().getSourceLocation();
-			// String str = actualString.substring(loc.getStart(),
-			// loc.getEnd());
 
 			string += str;
 
@@ -251,98 +231,67 @@ public class HypothesisRow {
 			// Get the list of applicable tactic
 			// For each tactic, get the applicable positions
 
-			IParseResult parseResult = formulaFactory.parsePredicate(string, V2, null);
-			assert !parseResult.hasProblem();
-			Predicate parsedStr = parseResult.getParsedPredicate();
+			Predicate parsedStr = getParsedTypeChecked(string, typeEnv);
 
-			Map<Point, TacticPositionUI> links = new HashMap<Point, TacticPositionUI>();
-
-			final TacticUIRegistry tacticUIRegistry = TacticUIRegistry
-					.getDefault();
-
-			String[] tactics = tacticUIRegistry.getApplicableToHypothesis(
-					userSupport, hyp);
-
-			for (final String tacticID : tactics) {
-				List<IPosition> positions = tacticUIRegistry
-						.getApplicableToHypothesisPositions(tacticID,
-								userSupport, hyp);
-				if (positions.size() == 0)
-					continue;
-				for (final IPosition position : positions) {
-					Point pt = tacticUIRegistry.getOperatorPosition(tacticID,
-							parsedStr, string, position);
-					// Point pt = ProverUIUtils.getOperatorPosition(parsedStr,
-					// position);
-					TacticPositionUI tacticPositionUI = links.get(pt);
-					if (tacticPositionUI == null) {
-						tacticPositionUI = new TacticPositionUI(pt);
-						links.put(pt, tacticPositionUI);
-					}
-					tacticPositionUI.addTacticPosition(tacticID, position);
-
-					// runnables.add(new Runnable() {
-					// public void run() {
-					// applyTactic(tacticID, node, position);
-					// }
-					// });
-				}
-			}
-			hypothesisText.setText(string, userSupport, hyp, indexes, links.values());
+			final Map<Point, List<ITacticApplication>> links = getLinksToApplications(
+					userSupport, string, parsedStr);
+			hypothesisText.setText(string, userSupport, hyp, indexes, links);
 		} else {
-			String str = PredicateUtil.prettyPrint(max_length, actualString,
-					parsedPred);
+			String str = PredicateUtil.prettyPrint(max_length, parsedString,
+					parsedPredicate);
 
-			IParseResult parseResult = formulaFactory.parsePredicate(str, V2, null);
-			assert !parseResult.hasProblem();
-			Predicate parsedStr = parseResult.getParsedPredicate();
+			Predicate parsedStr = getParsedTypeChecked(str, typeEnv);
 
-			int [] indexes = new int[0];
+			int[] indexes = new int[0];
 
-			Map<Point, TacticPositionUI> links = new HashMap<Point, TacticPositionUI>();
+			final Map<Point, List<ITacticApplication>> links;
 
 			if (enable) {
-				final TacticUIRegistry tacticUIRegistry = TacticUIRegistry
-						.getDefault();
-
-				String[] tactics = tacticUIRegistry.getApplicableToHypothesis(
-						userSupport, hyp);
-
-				for (final String tacticID : tactics) {
-					List<IPosition> positions = tacticUIRegistry
-							.getApplicableToHypothesisPositions(tacticID,
-									userSupport, hyp);
-					if (positions.size() == 0)
-						continue;
-					for (IPosition position : positions) {
-						Point pt = tacticUIRegistry.getOperatorPosition(
-								tacticID, parsedStr, str, position);
-						TacticPositionUI tacticPositionUI = links.get(pt);
-						if (tacticPositionUI == null) {
-							tacticPositionUI = new TacticPositionUI(pt);
-							links.put(pt, tacticPositionUI);
-						}
-						tacticPositionUI.addTacticPosition(tacticID, position);
-
-						// runnables.add(new Runnable() {
-						// public void run() {
-						// applyTactic(tacticID, node, position);
-						// }
-						// });
-					}
-				}
+				links = getLinksToApplications(userSupport, str, parsedStr);
+			} else {
+				links = Collections.emptyMap();
 			}
-			hypothesisText.setText(str, userSupport, hyp, indexes, links.values());
+			hypothesisText.setText(str, userSupport, hyp, indexes, links);
 		}
 		toolkit.paintBordersFor(hypothesisComposite);
+	}
+
+	private static Map<Point, List<ITacticApplication>> getLinksToApplications(
+			IUserSupport us, String string, Predicate parsedStr) {
+		final Map<Point, List<ITacticApplication>> links = new HashMap<Point, List<ITacticApplication>>();
+
+		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
+
+		final List<ITacticApplication> tactics = tacticUIRegistry
+				.getTacticApplicationsToHypothesis(us, parsedStr);
+
+		for (final ITacticApplication tacticAppli : tactics) {
+			if (tacticAppli instanceof IPositionApplication) {
+				final Point pt = ((IPositionApplication) tacticAppli)
+						.getHyperlinkBounds(string, parsedStr);
+				if (!checkRange(pt, string)) {
+					UIUtils.log(null, "invalid hyperlink bounds ("
+							+ pt.toString() + ") for tactic "
+							+ tacticAppli.getTacticID()
+							+ ". Application abandoned.");
+					continue;
+				}
+				List<ITacticApplication> tacticApplications = links.get(pt);
+				if (tacticApplications == null) {
+					tacticApplications = new ArrayList<ITacticApplication>();
+					links.put(pt, tacticApplications);
+				}
+				tacticApplications.add(tacticAppli);
+			}
+		}
+		return links;
 	}
 
 	/*
 	 * Creating a null hyperlink
 	 */
 	private void createNullHyperlinks() {
-		if (ProverUIUtils.DEBUG)
-			ProverUIUtils.debug("Create Null Image");
+		ProverUIUtils.debug("Create Null Image");
 		ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
 				SWT.CENTER);
 		hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -360,40 +309,64 @@ public class HypothesisRow {
 	 * <p>
 	 * 
 	 */
-	private void createImageHyperlinks(Composite parent) {
-		final IProofTreeNode node = userSupport.getCurrentPO().getCurrentNode();
-
+	private void createImageHyperlinks(Composite parent, Predicate parsedPred) {
 		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
-		String[] tactics = tacticUIRegistry.getApplicableToHypothesis(
-				userSupport, hyp);
-
-		if (tactics.length == 0) {
+		List<ITacticApplication> tactics = tacticUIRegistry
+				.getTacticApplicationsToHypothesis(userSupport, parsedPred);
+		final List<ICommandApplication> commands = tacticUIRegistry
+				.getCommandApplicationsToHypothesis(userSupport, parsedPred);
+		if (tactics.isEmpty() && commands.isEmpty()) {
 			createNullHyperlinks();
 			return;
 		}
 
-		for (final String tacticID : tactics) {
-			List<IPosition> positions = tacticUIRegistry
-					.getApplicableToHypothesisPositions(tacticID, userSupport,
-							hyp);
-			if (positions.size() != 0)
+		for (final ITacticApplication tacticAppli : tactics) {
+			
+			if (!(tacticAppli instanceof IPredicateApplication))
 				continue;
+			
+			final IHyperlinkListener hlListener = new IHyperlinkListener() {
 
-			ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
-					SWT.CENTER);
-			hyperlink
-					.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, true));
-			toolkit.adapt(hyperlink, true, true);
-			hyperlink.setImage(tacticUIRegistry.getIcon(tacticID));
-			hyperlink
-					.addHyperlinkListener(new HyperlinkListener(tacticID, node));
-			hyperlink.setBackground(background);
-			hyperlink.setToolTipText(tacticUIRegistry.getTip(tacticID));
-			hyperlink.setEnabled(enable);
-			hyperlinks.add(hyperlink);
+				public void linkEntered(HyperlinkEvent e) {
+					return;
+				}
+
+				public void linkExited(HyperlinkEvent e) {
+					return;
+				}
+
+				public void linkActivated(HyperlinkEvent e) {
+					apply(tacticAppli, tacticUIRegistry
+							.isSkipPostTactic(tacticAppli.getTacticID()));
+				}
+			};
+			final IPredicateApplication predAppli = (IPredicateApplication) tacticAppli;
+			final Image icon = ProverUIUtils.getIcon(predAppli);
+			final String tooltip = ProverUIUtils.getTooltip(predAppli);
+			ProverUIUtils.addHyperlink(buttonComposite, toolkit, SWT.BEGINNING,
+					icon, tooltip, hlListener, enable);
+		}
+		
+		for (final ICommandApplication commandAppli : commands) {
+			final IHyperlinkListener hlListener = new IHyperlinkListener() {
+
+				public void linkEntered(HyperlinkEvent e) {
+					return;
+				}
+
+				public void linkExited(HyperlinkEvent e) {
+					return;
+				}
+
+				public void linkActivated(HyperlinkEvent e) {
+					apply(commandAppli);
+				}
+
+			};
+			ProverUIUtils.addHyperlink(buttonComposite, toolkit, SWT.FILL, commandAppli
+					.getIcon(), commandAppli.getTooltip(), hlListener, enable);
 		}
 
-		return;
 	}
 
 	/**
@@ -434,65 +407,21 @@ public class HypothesisRow {
 		return hyp;
 	}
 
-	void applyTactic(String tacticID, IProofTreeNode node, IPosition position) {
-		TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
-		Set<Predicate> hypSet = new HashSet<Predicate>();
-		hypSet.add(hyp);
-		String[] inputs = hypothesisText.getResults();
+	void apply(ITacticApplication tacticAppli, boolean skipPostTactic) {
+		final String[] inputs = hypothesisText.getResults();
 		if (ProverUIUtils.DEBUG)
 			for (String input : inputs)
 				ProverUIUtils.debug("Input: \"" + input + "\"");
 
-		IProofControlPage proofControlPage = this.proverUI.getProofControl();
-		String globalInput = proofControlPage.getInput();
-
-		ITacticProvider provider = tacticUIRegistry.getTacticProvider(tacticID);
-		if (provider != null)
-			try {
-				userSupport.applyTacticToHypotheses(provider.getTactic(node,
-						hyp, position, inputs, globalInput), hypSet, true,
-						new NullProgressMonitor());
-			} catch (RodinDBException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			}
-		else {
-			IProofCommand command = tacticUIRegistry.getProofCommand(tacticID,
-					TacticUIRegistry.TARGET_HYPOTHESIS);
-			if (command != null) {
-				try {
-					command.apply(userSupport, hyp, inputs,
-							new NullProgressMonitor());
-				} catch (RodinDBException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		}
+		final String globalInput = this.proverUI.getProofControl().getInput();
+		final Set<Predicate> hypSet = Collections.singleton(hyp);
+		applyTactic(tacticAppli.getTactic(inputs, globalInput),
+				userSupport, hypSet, skipPostTactic, new NullProgressMonitor());
 	}
 
-	class HyperlinkListener implements IHyperlinkListener {
-		private String tacticID;
-
-		private IProofTreeNode node;
-
-		public HyperlinkListener(String tacticID, IProofTreeNode node) {
-			this.node = node;
-			this.tacticID = tacticID;
-		}
-
-		public void linkEntered(HyperlinkEvent e) {
-			return;
-		}
-
-		public void linkExited(HyperlinkEvent e) {
-			return;
-		}
-
-		public void linkActivated(HyperlinkEvent e) {
-			applyTactic(tacticID, node, null);
-		}
-
+	void apply(ICommandApplication commandAppli) {
+		final String[] inputs = hypothesisText.getResults();
+		applyCommand(commandAppli.getProofCommand(), userSupport, hyp, inputs, new NullProgressMonitor());
 	}
 
 	public void setSelected(boolean selected) {

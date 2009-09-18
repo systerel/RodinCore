@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,18 +7,34 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - refactored to use ITacticProvider2 and ITacticApplication
  ******************************************************************************/
 
 package org.eventb.internal.ui.prover;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eventb.core.IPSStatus;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.ITypeCheckResult;
+import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.LanguageVersion;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
@@ -30,7 +46,10 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
+import org.eventb.internal.provisional.ui.prover.IPositionApplication;
+import org.eventb.internal.provisional.ui.prover.IPredicateApplication;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.ui.prover.IProofCommand;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -59,7 +78,9 @@ public class ProverUIUtils {
 	 *            the message to print out
 	 */
 	public static void debug(String message) {
-		System.out.println(DEBUG_PREFIX + message);
+		if (DEBUG) {
+			System.out.println(DEBUG_PREFIX + message);
+		}
 	}
 
 	/**
@@ -131,12 +152,81 @@ public class ProverUIUtils {
 				try {
 					userSupport.applyTactic(tactic, applyPostTactic, monitor);
 				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					UIUtils.log(e, "while applying a tactic");
+					if (DEBUG)
+						e.printStackTrace();
 				}
 			}
 		});
 	}
+	
+	/**
+	 * Applies the given command using the given user support and arguments.
+	 * 
+	 * @param command
+	 *            a command to apply
+	 * @param userSupport
+	 *            the user support on which the command is to be applied
+	 * @param hyp
+	 *            the current hypothesis or <code>null</code> to apply to the
+	 *            goal
+	 * @param inputs
+	 *            the inputs of the tactic
+	 * @param pm
+	 *            a progress monitor
+	 */
+	public static void applyCommand(IProofCommand command, IUserSupport userSupport, Predicate hyp, String[] inputs, IProgressMonitor pm) {
+		if(pm != null)
+			pm.beginTask("Proving", IProgressMonitor.UNKNOWN);
+		try {
+			command.apply(userSupport, hyp, inputs, pm);
+		} catch (RodinDBException e) {
+			if (UIUtils.DEBUG)
+				e.printStackTrace();
+			UIUtils.log(e, "Error applying proof command");
+		} finally {
+			if(pm != null)
+				pm.done();
+		}
+	}
+
+	/**
+	 * Applies the given tactic using the given user support and arguments.
+	 * 
+	 * @param tactic
+	 *            a tactic to apply
+	 * @param userSupport
+	 *            the user support on which the tactic is to be applied
+	 * @param hyps
+	 *            a set of hypotheses or <code>null</code>
+	 * @param skipPostTactic
+	 *            if <code>true</code>, post tactic will NOT be applied;
+	 *            otherwise post tactic will be applied provided that the user
+	 *            did not deactivate them
+	 * @param pm
+	 *            a progress monitor
+	 */
+	public static void applyTactic(ITactic tactic, IUserSupport userSupport,
+			Set<Predicate> hyps, boolean skipPostTactic, IProgressMonitor pm) {
+		if (pm != null)
+			pm.beginTask("Proving", IProgressMonitor.UNKNOWN);
+		try {
+			if (hyps == null) {
+				userSupport.applyTactic(tactic, !skipPostTactic, pm);
+			} else {
+				userSupport.applyTacticToHypotheses(tactic, hyps,
+						!skipPostTactic, pm);
+			}
+		} catch (RodinDBException e) {
+			if (UIUtils.DEBUG)
+				e.printStackTrace();
+			UIUtils.log(e, "Error applying tactic");
+		} finally {
+			if (pm != null)
+				pm.done();
+		}
+	}
+
 	
 	/**
 	 * Converts an array of tactic IDs to an array of tactic descriptor
@@ -227,6 +317,113 @@ public class ProverUIUtils {
 		int confidence = status.getConfidence();
 		return confidence > IConfidence.PENDING
 				&& confidence <= IConfidence.REVIEWED_MAX;
+	}
+
+	public static void addHyperlink(Composite parent, FormToolkit toolkit, int alignment, Image icon, String tooltip, IHyperlinkListener listener, boolean enable) {
+		ImageHyperlink hyperlink = new ImageHyperlink(parent,
+				SWT.CENTER);
+		hyperlink.setLayoutData(new GridData(alignment, alignment, false,
+				false));
+		toolkit.adapt(hyperlink, true, true);
+		hyperlink.setImage(icon);
+	
+		hyperlink.addHyperlinkListener(listener);
+		hyperlink.setToolTipText(tooltip);
+		hyperlink.setEnabled(enable);
+	}
+
+	/**
+	 * Returns the hyperlink label contained in the given application; defaults
+	 * to extension tooltip if the given application does not override it.
+	 * 
+	 * @param posAppli
+	 *            a position application
+	 * @return a non <code>null</code> hyperlink label String
+	 */
+	public static String getHyperlinkLabel(IPositionApplication posAppli) {
+		final String linkLabel = posAppli.getHyperlinkLabel();
+		if (linkLabel != null) {
+			return linkLabel;
+		}
+		return TacticUIRegistry.getDefault().getTip(posAppli.getTacticID());
+	}
+	
+	/**
+	 * Returns the icon image contained in the given application; defaults to
+	 * extension icon if the given application does not override it.
+	 * 
+	 * @param predAppli
+	 *            a predicate application
+	 * @return a non <code>null</code> icon image
+	 */
+	public static Image getIcon(IPredicateApplication predAppli) {
+		final Image icon = predAppli.getIcon();
+		if (icon != null) {
+			return icon;
+		}
+		return TacticUIRegistry.getDefault().getIcon(predAppli.getTacticID());
+	}
+	
+	/**
+	 * Returns the tooltip contained in the given application; defaults to
+	 * extension tooltip if the given application does not override it.
+	 * 
+	 * @param predAppli
+	 *            a predicate application
+	 * 
+	 * @return a non <code>null</code> tooltip String
+	 * 
+	 */
+	public static String getTooltip(IPredicateApplication predAppli) {
+		final String tooltip = predAppli.getTooltip();
+		if (tooltip != null) {
+			return tooltip;
+		}
+		return TacticUIRegistry.getDefault().getTip(predAppli.getTacticID());
+	}
+	
+	private static final FormulaFactory formulaFactory = FormulaFactory
+	.getDefault();
+
+	/**
+	 * Returns a parsed and type checked version of the given predicate string,
+	 * using the given type environment.
+	 * <p>
+	 * Used by methods that require source locations and/or type checked
+	 * predicates.
+	 * </p>
+	 * <p>
+	 * Assumes that the given string is indeed parseable and type checkable.
+	 * </p>
+	 * 
+	 * @param predString
+	 *            a predicate string
+	 * @param typeEnv
+	 *            a type environment that allows type checking the predicate
+	 * @return a parsed and type checked predicate
+	 */
+	public static Predicate getParsedTypeChecked(String predString, ITypeEnvironment typeEnv) {
+		IParseResult parseResult = formulaFactory.parsePredicate(predString, LanguageVersion.LATEST, null);
+		assert !parseResult.hasProblem();
+		Predicate parsedStr = parseResult.getParsedPredicate();
+		final ITypeCheckResult typeCheckResult = parsedStr.typeCheck(typeEnv);
+		assert !typeCheckResult.hasProblem();
+		return parsedStr;
+	}
+
+	/**
+	 * Checks that the given point gives a valid range inside the given string.
+	 * 
+	 * @param pt
+	 *            a range to check; the range is considered from pt.x
+	 *            (inclusive) to pt.y (exclusive)
+	 * @param string
+	 *            a string
+	 * @return <code>true</code> iff the point gives a valid range inside the
+	 *         string
+	 */
+	public static boolean checkRange(Point pt, String string) {
+		return pt.x >= 0 && pt.y <= string.length() && pt.x < pt.y;
 	}
 
 }

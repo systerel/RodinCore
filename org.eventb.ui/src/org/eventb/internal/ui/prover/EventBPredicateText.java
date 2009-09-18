@@ -11,12 +11,13 @@
  *     Systerel - changed double click behavior
  *     Systerel - fixed menu bug
  *     ETH Zurich - adapted to org.rodinp.keyboard
+ *     Systerel - refactored to use ITacticProvider2 and ITacticApplication
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -40,18 +41,13 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IUserSupport;
+import org.eventb.internal.provisional.ui.prover.ITacticApplication;
 import org.eventb.internal.ui.DoubleClickStyledTextListener;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.IEventBInputText;
-import org.eventb.internal.ui.TacticPositionUI;
-import org.eventb.internal.ui.proofcontrol.IProofControlPage;
-import org.eventb.ui.prover.IProofCommand;
-import org.eventb.ui.prover.ITacticProvider;
-import org.rodinp.core.RodinDBException;
 import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 public class EventBPredicateText implements IPropertyChangeListener {
@@ -60,51 +56,50 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	// Constants for showing different cursors
 	private IUserSupport us;
 
+	// Represents current predicate (hypothesis or goal)
 	private Predicate hyp;
 
-	StyledText styledText;
+	private final StyledText styledText;
 	
 	IEventBInputText [] boxes;
 	
 	int [] offsets;
 
-	TacticHyperlinkManager manager;
+	final TacticHyperlinkManager manager;
 	
-	private ProverUI proverUI;
+	private final ProverUI proverUI;
 	
-	Collection<Point> dirtyStates;
+	final MouseDownListener mouseDownListener = new MouseDownListener();
 
-	MouseDownListener mouseDownListener = new MouseDownListener();
+	final MouseMoveListener mouseMoveListener = new MouseMoveListener();
 
-	MouseMoveListener mouseMoveListener = new MouseMoveListener();
+	final MouseHoverListener mouseHoverListener = new MouseHoverListener();
 
-	MouseHoverListener mouseHoverListener = new MouseHoverListener();
+	final MouseExitListener mouseExitListener = new MouseExitListener();
 
-	MouseExitListener mouseExitListener = new MouseExitListener();
-
-	MouseEnterListener mouseEnterListener = new MouseEnterListener();
+	final MouseEnterListener mouseEnterListener = new MouseEnterListener();
 
 	private ScrolledForm scrolledForm;
 
 	boolean isGoal;
 	
-	public EventBPredicateText(boolean isGoal, FormToolkit toolkit, final Composite parent, ProverUI proverUI, ScrolledForm scrolledForm) {
+	public EventBPredicateText(boolean isGoal, FormToolkit toolkit,
+			final Composite parent, ProverUI proverUI, ScrolledForm scrolledForm) {
 		this.isGoal = isGoal;
 		this.proverUI = proverUI;
 		this.scrolledForm = scrolledForm;
-		dirtyStates = new ArrayList<Point>();
-		styledText = new StyledText(parent, SWT.MULTI | SWT.FULL_SELECTION);
+		this.styledText = new StyledText(parent, SWT.MULTI | SWT.FULL_SELECTION);
 		styledText.addMouseListener(new DoubleClickStyledTextListener(styledText));
-		Font font = JFaceResources
+		final Font font = JFaceResources
 				.getFont(PreferenceConstants.RODIN_MATH_FONT);
 		JFaceResources.getFontRegistry().addListener(this);
 		styledText.setFont(font);
 		styledText.setEditable(false);
-		manager = new TacticHyperlinkManager(styledText) {
+		this.manager = new TacticHyperlinkManager(styledText) {
 
 			@Override
-			protected void applyTactic(String tacticID, IPosition position) {
-				EventBPredicateText.this.applyTactic(tacticID, position);
+			protected void applyTactic(ITacticApplication application) {
+				EventBPredicateText.this.applyTactic(application);
 			}
 
 			@Override
@@ -135,7 +130,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 	// This must be called after initialisation
 	public void setText(String string, IUserSupport us, Predicate hyp,
-			int [] positions, Collection<TacticPositionUI> links) {
+			int [] positions, Map<Point, List<ITacticApplication>> links) {
 		this.hyp = hyp;
 		this.us = us;
 		styledText.setText(string);
@@ -166,16 +161,13 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			}
 		});
 
-		//		styledText.pack();
-//		styledText.addModifyListener(new EventBStyledTextModifyListener());
-
 		setStyle();
 	}
 
 	private void createTextBoxes() {
 		if (offsets == null)
 			return;
-		boxes = new IEventBInputText[offsets.length];
+		this.boxes = new IEventBInputText[offsets.length];
 		for (int i = 0; i < offsets.length; ++i) {
 			final Text text = new Text(styledText, SWT.SINGLE);
 			final int offset = offsets[i];
@@ -196,21 +188,17 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	}
 
 	protected void resizeControl(Text text, int offset) {
-		StyleRange style = new StyleRange ();
+		final StyleRange style = new StyleRange ();
 		style.start = offset;
 		style.length = 1;
 		text.pack();
-		Rectangle rect = text.getBounds();
-		int ascent = 2 * rect.height / 3;
-		int descent = rect.height - ascent;
+		final Rectangle rect = text.getBounds();
+		final int ascent = 2 * rect.height / 3;
+		final int descent = rect.height - ascent;
 		style.metrics = new GlyphMetrics(ascent + MARGIN, descent + MARGIN,
 				rect.width + 2 * MARGIN);
 		styledText.setStyleRange(style);
 		scrolledForm.reflow(true);
-//		IFormPage page = proverUI.getActivePageInstance();
-//		if (page != null && page instanceof ProofsPage) {
-//			((ProofsPage) page).autoLayout();
-//		}
 	}
 
 	private void setStyle() {
@@ -259,6 +247,9 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		return results;
 	}
 
+	// Note: problems with mouse event management prevent from using interfaces
+	// MouseListener and MouseTrackListener
+		
 	class MouseDownListener implements Listener {
 
 		public void handleEvent(Event e) {
@@ -271,7 +262,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 		public void handleEvent(Event e) {
 			manager.hideMenu();
-			Point location = new Point(e.x, e.y);
+			final Point location = new Point(e.x, e.y);
 			manager.setMousePosition(location);
 		}
 	}
@@ -281,7 +272,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		public void handleEvent(Event e) {
 			if (ProverUIUtils.DEBUG)
 				ProverUIUtils.debug("Enter ");
-			Point location = new Point(e.x, e.y);
+			final Point location = new Point(e.x, e.y);
 			manager.setMousePosition(location);
 		}
 	}
@@ -304,44 +295,20 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 	}
 
-	void applyTactic(String tacticID, IPosition position) {
+
+	void applyTactic(ITacticApplication application) {
 		assert (hyp != null);
-		TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
-		Set<Predicate> hypSet = new HashSet<Predicate>();
-		hypSet.add(hyp);
-		String[] inputs = this.getResults();
+		final Set<Predicate> hypSet = Collections.singleton(hyp);
+		final String[] inputs = this.getResults();
 		if (ProverUIUtils.DEBUG)
 			for (String input : inputs)
 				ProverUIUtils.debug("Input: \"" + input + "\"");
 
-		IProofControlPage proofControlPage = this.proverUI.getProofControl();
-		String globalInput = proofControlPage.getInput();
-		
-		ITacticProvider provider = tacticUIRegistry.getTacticProvider(tacticID);
-		if (provider != null)
-			try {
-				Predicate pred = null;
-				if (!isGoal)
-					pred = hyp;
-				us.applyTacticToHypotheses(provider.getTactic(us.getCurrentPO()
-						.getCurrentNode(), pred, position, inputs, globalInput),
-						hypSet, true, new NullProgressMonitor());
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		else {
-			IProofCommand command = tacticUIRegistry.getProofCommand(tacticID,
-					TacticUIRegistry.TARGET_HYPOTHESIS);
-			if (command != null) {
-				try {
-					command.apply(us, hyp, inputs, new NullProgressMonitor());
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
+		final String globalInput = proverUI.getProofControl().getInput();
+		final boolean skipPostTactic = TacticUIRegistry.getDefault()
+				.isSkipPostTactic(application.getTacticID());
+		ProverUIUtils.applyTactic(application.getTactic(inputs, globalInput),
+				us, hypSet, skipPostTactic, new NullProgressMonitor());
 	}
 
 }

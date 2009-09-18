@@ -9,12 +9,15 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
  *     Systerel - fixed menu bug
+ *     Systerel - refactored to use ITacticProvider2 and ITacticApplication
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import static org.eventb.internal.ui.prover.ProverUIUtils.getHyperlinkLabel;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
@@ -29,10 +32,9 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eventb.core.ast.IPosition;
+import org.eventb.internal.provisional.ui.prover.IPositionApplication;
+import org.eventb.internal.provisional.ui.prover.ITacticApplication;
 import org.eventb.internal.ui.EventBSharedColor;
-import org.eventb.internal.ui.Pair;
-import org.eventb.internal.ui.TacticPositionUI;
 
 public abstract class TacticHyperlinkManager {
 
@@ -44,7 +46,7 @@ public abstract class TacticHyperlinkManager {
 
 	StyledText text;
 
-	Collection<TacticPositionUI> links;
+	Map<Point, List<ITacticApplication>> links;
 
 	Menu tipMenu;
 
@@ -52,28 +54,12 @@ public abstract class TacticHyperlinkManager {
 
 	public TacticHyperlinkManager(StyledText text) {
 		this.text = text;
-		links = new ArrayList<TacticPositionUI>();
+		links = new HashMap<Point, List<ITacticApplication>>();
 		currentLink = null;
 	}
 
-	public void setHyperlinks(Collection<TacticPositionUI> links) {
+	public void setHyperlinks(Map<Point, List<ITacticApplication>> links) {
 		this.links = links;
-	}
-
-	public void updateHyperlinks(int index, int offset) {
-		for (TacticPositionUI link : links) {
-			// IMPORTANT: Do NOT add/remove the map while iterating through it
-			// IMPORTANT: Modified the key is NOT allowed either
-			Point point = link.getPoint();
-			if (point.x > index) {
-				link.setPoint(new Point(point.x + offset, point.y + offset));
-			}
-		}
-
-		if (currentLink != null && currentLink.x > index) {
-			setCurrentLink(new Point(currentLink.x + offset, currentLink.y
-					+ offset));
-		}
 	}
 
 	public void enableCurrentLink() {
@@ -89,8 +75,7 @@ public abstract class TacticHyperlinkManager {
 	}
 
 	public void setHyperlinkStyle() {
-		for (TacticPositionUI link : links) {
-			Point point = link.getPoint();
+		for (Point point : links.keySet()) {
 			StyleRange style = new StyleRange();
 			style.start = point.x;
 			style.length = point.y - point.x;
@@ -100,71 +85,57 @@ public abstract class TacticHyperlinkManager {
 	}
 
 	public void activateHyperlink(Point link, Point widgetPosition) {
-		TacticPositionUI tacticPositionUI = getTacticPositionUI(link);
-		List<Pair<String, IPosition>> tacticPositions = tacticPositionUI
-				.getTacticPositions();
+		List<ITacticApplication> tacticPositions = links.get(link);
 		if (tacticPositions.size() == 1) {
 			// Apply the only rule.
-			Pair<String, IPosition> tacticPosition = tacticPositions
-					.get(0);
-			applyTactic(tacticPosition.getFirst(), tacticPosition
-					.getSecond());
+			ITacticApplication tacticUIInfo = tacticPositions.get(0);
+			applyTactic(tacticUIInfo);
 		} else {
-			showToolTip(tacticPositionUI, widgetPosition);
+			showToolTip(tacticPositions, widgetPosition);
 		}
 	}
 
-	private TacticPositionUI getTacticPositionUI(Point link) {
-		for (TacticPositionUI tacticPosition : links) {
-			if (link.equals(tacticPosition.getPoint())) {
-				return tacticPosition;
-			}
-		}
-		return null;
-	}
-
-	protected abstract void applyTactic(String tacticID, IPosition position);
+	protected abstract void applyTactic(ITacticApplication tacticPosition);
 
 	public Point getLink(Point location) {
+		
 		int offset = getCharacterOffset(location);
 		if (offset == -1)
 			return null;
-		for (TacticPositionUI link : links) {
-			Point index = link.getPoint();
+		for (Point index : links.keySet()) {
 			if (index.x <= offset && offset < index.y)
 				return index;
 		}
 		return null;
 	}
 
-	void showToolTip(TacticPositionUI tacticPositionUI, Point widgetPosition) {
-		List<Pair<String, IPosition>> tacticPositions = tacticPositionUI
-				.getTacticPositions();
+	void showToolTip(List<ITacticApplication> tacticPositions, Point widgetPosition) {
 
 		if (tipMenu != null && !tipMenu.isDisposed())
 			tipMenu.dispose();
 
 		tipMenu = new Menu(text.getShell(), SWT.POP_UP);
 
-		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
-		for (Pair<String, IPosition> tacticPosition : tacticPositions) {
-			final String tacticID = tacticPosition.getFirst();
-			final IPosition position = tacticPosition.getSecond();
+		for (final ITacticApplication tacticPosition : tacticPositions) {
+			if (tacticPosition instanceof IPositionApplication) {
+				final MenuItem item = new MenuItem(tipMenu, SWT.PUSH);
 
-			MenuItem item = new MenuItem(tipMenu, SWT.PUSH);
-			item.setText(tacticUIRegistry.getTip(tacticID));
-			item.addSelectionListener(new SelectionListener() {
+				final String linkLabel = getHyperlinkLabel((IPositionApplication) tacticPosition);
+				
+				item.setText(linkLabel);
+				item.addSelectionListener(new SelectionListener() {
 
-				public void widgetDefaultSelected(SelectionEvent se) {
-					widgetSelected(se);
-				}
+					public void widgetDefaultSelected(SelectionEvent se) {
+						widgetSelected(se);
+					}
 
-				public void widgetSelected(SelectionEvent se) {
-					applyTactic(tacticID, position);
-					enableListeners();
-				}
+					public void widgetSelected(SelectionEvent se) {
+						applyTactic(tacticPosition);
+						enableListeners();
+					}
 
-			});
+				});
+			}
 		}
 
 		Point tipPosition = text.toDisplay(widgetPosition);
@@ -188,7 +159,7 @@ public abstract class TacticHyperlinkManager {
 	public void showToolTip(Point widgetPosition) {
 		if (currentLink == null)
 			return;
-		TacticPositionUI tacticPositionUI = getTacticPositionUI(currentLink);
+		List<ITacticApplication> tacticPositionUI = links.get(currentLink);
 		showToolTip(tacticPositionUI, widgetPosition);
 	}
 
@@ -255,7 +226,6 @@ public abstract class TacticHyperlinkManager {
 			// if (ProverUIUtils.DEBUG)
 			// ProverUIUtils.debug("Invalid");
 		}
-		return;
 	}
 
 	int getCharacterOffset(Point pt) {
@@ -284,7 +254,6 @@ public abstract class TacticHyperlinkManager {
 			setCurrentLink(link);
 			activateHyperlink(link, location);
 		}
-		return;
 	}
 
 }

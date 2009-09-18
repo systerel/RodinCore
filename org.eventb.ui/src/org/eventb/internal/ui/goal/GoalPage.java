@@ -10,13 +10,18 @@
  *     Systerel - Added a constant for the user support manager
  *     Systerel - used EventBSharedColor
  *     Systerel - mathematical language V2
+ *     Systerel - refactored to use ITacticProvider2 and ITacticApplication
  ******************************************************************************/
 package org.eventb.internal.ui.goal;
 
-import static org.eventb.core.ast.LanguageVersion.V2;
+import static org.eventb.internal.ui.prover.ProverUIUtils.applyCommand;
+import static org.eventb.internal.ui.prover.ProverUIUtils.applyTactic;
+import static org.eventb.internal.ui.prover.ProverUIUtils.checkRange;
+import static org.eventb.internal.ui.prover.ProverUIUtils.getIcon;
+import static org.eventb.internal.ui.prover.ProverUIUtils.getTooltip;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,9 +51,7 @@ import org.eclipse.ui.part.Page;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.IPosition;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
@@ -60,20 +63,21 @@ import org.eventb.core.pm.IUserSupportInformation;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.internal.provisional.ui.prover.IPositionApplication;
+import org.eventb.internal.provisional.ui.prover.IPredicateApplication;
+import org.eventb.internal.provisional.ui.prover.ITacticApplication;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
-import org.eventb.internal.ui.TacticPositionUI;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.internal.ui.prover.EventBPredicateText;
+import org.eventb.internal.ui.prover.ICommandApplication;
 import org.eventb.internal.ui.prover.PredicateUtil;
 import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
 import org.eventb.ui.IEventBSharedImages;
-import org.eventb.ui.prover.IProofCommand;
-import org.eventb.ui.prover.ITacticProvider;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -85,9 +89,7 @@ public class GoalPage extends Page implements IGoalPage {
 	private static final IUserSupportManager USM = EventBPlugin
 			.getUserSupportManager();
 
-	private static final FormulaFactory ff = FormulaFactory.getDefault();
-
-	protected IUserSupport userSupport;
+	protected final IUserSupport userSupport;
 
 	private FormToolkit toolkit;
 
@@ -194,8 +196,7 @@ public class GoalPage extends Page implements IGoalPage {
 	}
 
 	private void createNullHyperlinks() {
-		if (ProverUIUtils.DEBUG)
-			ProverUIUtils.debug("Create Null Image");
+		ProverUIUtils.debug("Create Null Image");
 		ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
 				SWT.CENTER);
 		hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -214,28 +215,22 @@ public class GoalPage extends Page implements IGoalPage {
 	private void createImageHyperlinks(boolean enable) {
 
 		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
-		String[] tactics = tacticUIRegistry.getApplicableToGoal(userSupport);
+		final List<ITacticApplication> tactics = tacticUIRegistry.getTacticApplicationsToGoal(userSupport);
+		final List<ICommandApplication> commands = tacticUIRegistry.getCommandApplicationsToGoal(userSupport);
 
-		if (tactics.length == 0) {
+		if (tactics.isEmpty() && commands.isEmpty()) {
 			createNullHyperlinks();
+			return;
 		}
 
-		for (final String tacticID : tactics) {
+		for (final ITacticApplication tacticAppli : tactics) {
 
-			List<IPosition> positions = tacticUIRegistry
-					.getApplicableToGoalPositions(tacticID, userSupport);
-
-			if (positions.size() != 0)
+			if (!(tacticAppli instanceof IPredicateApplication))
 				continue;
 
-			ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
-					SWT.CENTER);
-			hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
-					false));
-			toolkit.adapt(hyperlink, true, true);
-			hyperlink.setImage(tacticUIRegistry.getIcon(tacticID));
-
-			hyperlink.addHyperlinkListener(new IHyperlinkListener() {
+			final IPredicateApplication predAppli = (IPredicateApplication) tacticAppli;
+			
+			final IHyperlinkListener listener = new IHyperlinkListener() {
 
 				public void linkEntered(HyperlinkEvent e) {
 					return;
@@ -246,16 +241,34 @@ public class GoalPage extends Page implements IGoalPage {
 				}
 
 				public void linkActivated(HyperlinkEvent e) {
-					IProofTreeNode node = userSupport.getCurrentPO().getCurrentNode();
-					applyTactic(tacticID, node, null);
+					apply(tacticAppli, tacticUIRegistry
+							.isSkipPostTactic(tacticAppli.getTacticID()));
 				}
 
-			});
-			hyperlink.setToolTipText(tacticUIRegistry.getTip(tacticID));
-			hyperlink.setEnabled(enable);
+			};
+			ProverUIUtils.addHyperlink(buttonComposite, toolkit, SWT.FILL, getIcon(predAppli),
+					getTooltip(predAppli), listener, enable);
 		}
 
-		return;
+		for (final ICommandApplication commandAppli : commands) {
+			final IHyperlinkListener listener = new IHyperlinkListener() {
+
+				public void linkEntered(HyperlinkEvent e) {
+					return;
+				}
+
+				public void linkExited(HyperlinkEvent e) {
+					return;
+				}
+
+				public void linkActivated(HyperlinkEvent e) {
+					apply(commandAppli);
+				}
+
+			};
+			ProverUIUtils.addHyperlink(buttonComposite, toolkit, SWT.FILL, commandAppli
+					.getIcon(), commandAppli.getTooltip(), listener, enable);
+		}
 	}
 
 	private void createGoalText(final IProofTreeNode node) {
@@ -264,31 +277,18 @@ public class GoalPage extends Page implements IGoalPage {
 			goalText.dispose();
 		goalText = new EventBPredicateText(true, toolkit, goalComposite, proverUI, scrolledForm);
 		final StyledText styledText = goalText.getMainTextWidget();
-		// styledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-		// true));
-
-		// int borderWidth = styledText.getBorderWidth();
-		// styledText.setText(" ");
-		// goalComposite.pack(true);
-		// int textWidth = styledText.getSize().x;
-		//
-		// Rectangle rec = goalComposite.getBounds();
-		// Point size = goalComposite.getSize();
-		// int compositeWidth = goalComposite.getClientArea().width;
-		// if (textWidth != 0) {
-		// max_length = (compositeWidth - borderWidth) / textWidth;
-		// } else
-		// max_length = 30;
 
 		if (node == null) {
-			goalText.setText("No current goal", userSupport, null, null, new ArrayList<TacticPositionUI>());
+			goalText.setText("No current goal", userSupport, null, null,
+					Collections.<Point, List<ITacticApplication>> emptyMap());
 			styledText.setBackground(color);
 		} else {
 			Predicate goal = node.getSequent().goal();
-			String tmpString = goal.toString();
-			IParseResult parseResult = ff.parsePredicate(tmpString, V2, null);
-			assert !parseResult.hasProblem();
-			Predicate tmpPred = parseResult.getParsedPredicate();
+			final String tmpString = goal.toString();
+			final ITypeEnvironment typeEnv = userSupport.getCurrentPO()
+					.getCurrentNode().getSequent().typeEnvironment();
+			final Predicate tmpPred = ProverUIUtils.getParsedTypeChecked(
+					tmpString, typeEnv);
 
 			int [] indexes = new int[0];
 
@@ -299,15 +299,15 @@ public class GoalPage extends Page implements IGoalPage {
 				actualString = PredicateUtil.prettyPrint(max_length, tmpString,
 						tmpPred);
 			}
-			IParseResult parsedResult = ff.parsePredicate(actualString, V2, null);
-			assert !parsedResult.hasProblem();
-			parsedPred = parsedResult.getParsedPredicate();
+			parsedPred = ProverUIUtils.getParsedTypeChecked(actualString, typeEnv);
 
-			Collection<TacticPositionUI> links = new ArrayList<TacticPositionUI>();
+			final Map<Point, List<ITacticApplication>> links;
 			if (node.isOpen()) {
-				links = getHyperlinks();
+				links = getHyperlinks(userSupport, actualString, parsedPred);
+			} else {
+				links = Collections.emptyMap();
 			}
-			goalText.setText(actualString, userSupport, node.getSequent().goal(),
+			goalText.setText(actualString, userSupport, goal,
 					indexes, links);
 
 			if (!node.isOpen()) {
@@ -316,164 +316,55 @@ public class GoalPage extends Page implements IGoalPage {
 
 		}
 		toolkit.paintBordersFor(goalComposite);
-
-		// DragSource source = new DragSource(styledText, DND.DROP_COPY
-		// | DND.DROP_MOVE);
-		// source.setTransfer(new Transfer[] { TextTransfer.getInstance() });
-		// source.addDragListener(new DragSourceAdapter() {
-		// Point selection;
-		//
-		// public void dragStart(DragSourceEvent e) {
-		// selection = goalText.getMainTextWidget().getSelection();
-		// e.doit = selection.x != selection.y;
-		// }
-		//
-		// public void dragSetData(DragSourceEvent e) {
-		// e.data = goalText.getMainTextWidget().getText(selection.x,
-		// selection.y - 1);
-		// }
-		//
-		// public void dragFinished(DragSourceEvent e) {
-		// if (e.detail == DND.DROP_MOVE) {
-		// goalText.getMainTextWidget().replaceTextRange(selection.x,
-		// selection.y - selection.x, "");
-		// }
-		// selection = null;
-		// }
-		// });
-
-		// styledText.addListener(SWT.MouseDown, new Listener() {
-		// public void handleEvent(Event e) {
-		// Point location = new Point(e.x, e.y);
-		// Point maxLocation = styledText.getLocationAtOffset(styledText
-		// .getCharCount());
-		// int maxOffset = styledText.getCharCount();
-		// if (location.y >= maxLocation.y + styledText.getLineHeight()) {
-		// styledText.setCaretOffset(maxOffset);
-		// return;
-		// }
-		// int startLineOffset = styledText.getOffsetAtLocation(new Point(0,
-		// location.y));
-		// int line = styledText.getLineAtOffset(startLineOffset);
-		// Point pt = styledText.getSelection();
-		// ProverUIUtils.debugProverUI("Selection: " + pt.x + ", " + pt.y);
-		// if (line == styledText.getLineCount() - 1) {
-		// if (location.x > maxLocation.x) {
-		// styledText.setCaretOffset(maxOffset);
-		// } else {
-		// int offset = styledText.getOffsetAtLocation(location);
-		// // styledText.setCaretOffset(offset);
-		// if (pt.x <= offset && offset <= pt.y) {
-		// ProverUIUtils.debugProverUI("Drag: " + offset);
-		// }
-		// else {
-		// ProverUIUtils.debugProverUI("Select " + offset);
-		// }
-		// }
-		// return;
-		// }
-		//				
-		//				
-		//				
-		// int startNextLineOffset = styledText.getOffsetAtLine(line + 1);
-		// Point lineEnd = styledText
-		// .getLocationAtOffset(startNextLineOffset - 1);
-		// if (location.x > lineEnd.x) {
-		// // styledText.setCaretOffset(startNextLineOffset - 1);
-		// } else {
-		// int offset = styledText.getOffsetAtLocation(location);
-		// // styledText.setCaretOffset(offset);
-		// if (pt.x <= offset && offset <= pt.y) {
-		// ProverUIUtils.debugProverUI("Drag: " + offset);
-		// }
-		// else {
-		// ProverUIUtils.debugProverUI("Select " + offset);
-		// }
-		// }
-		// }
-		// });
-
-		// source.addDragListener(new DragSourceListener() {
-		// Point selection;
-		//
-		// public void dragStart(DragSourceEvent event) {
-		// ProverUIUtils.debugProverUI("Start dragging: ");
-		// selection = styledText.getSelection();
-		// event.doit = selection.x != selection.y;
-		// }
-		//
-		// public void dragSetData(DragSourceEvent event) {
-		// ProverUIUtils.debugProverUI("Set Data: ");
-		// event.data = styledText.getText(selection.x, selection.y - 1);
-		//
-		// }
-		//
-		// public void dragFinished(DragSourceEvent event) {
-		// ProverUIUtils.debugProverUI("Finish dragging ");
-		//
-		// }
-		//
-		// });
-
 	}
 
-	void applyTactic(String tacticID, IProofTreeNode node, IPosition position) {
-		TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
+	void apply(ICommandApplication commandAppli) {
+		final String[] inputs = goalText.getResults();
+		applyCommand(commandAppli.getProofCommand(), userSupport, null,
+				inputs, new NullProgressMonitor());
+	}
+	
+	void apply(ITacticApplication tacticAppli, boolean skipPostTactic) {
 		String[] inputs = goalText.getResults();
 		if (ProverUIUtils.DEBUG)
 			for (String input : inputs)
 				ProverUIUtils.debug("Input: \"" + input + "\"");
 
-		ITacticProvider provider = tacticUIRegistry.getTacticProvider(tacticID);
-		String globalInput = this.proverUI.getProofControl().getInput();
-		if (provider != null)
-			try {
-				userSupport.applyTactic(
-						provider.getTactic(node, null,
-						position, inputs, globalInput), true,
-						new NullProgressMonitor());
-			} catch (RodinDBException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			}
-		else {
-			IProofCommand command = tacticUIRegistry.getProofCommand(tacticID,
-					TacticUIRegistry.TARGET_HYPOTHESIS);
-			if (command != null) {
-				try {
-					command.apply(userSupport, null, inputs, new NullProgressMonitor());
-				} catch (RodinDBException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		}
+		final String globalInput = this.proverUI.getProofControl().getInput();
+		
+		applyTactic(tacticAppli.getTactic(inputs, globalInput),
+				userSupport, null, skipPostTactic, new NullProgressMonitor());
 	}
 
-	private Collection<TacticPositionUI> getHyperlinks() {
-		Map<Point, TacticPositionUI> links = new HashMap<Point, TacticPositionUI>();
+	private static Map<Point, List<ITacticApplication>> getHyperlinks(
+			IUserSupport us, String parsedString, Predicate parsedPredicate) {
+		Map<Point, List<ITacticApplication>> links = new HashMap<Point, List<ITacticApplication>>();
 
 		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
 
-		String[] tactics = tacticUIRegistry.getApplicableToGoal(userSupport);
+		List<ITacticApplication> applications = tacticUIRegistry
+				.getTacticApplicationsToGoal(us);
 
-		for (final String tacticID : tactics) {
-			List<IPosition> positions = tacticUIRegistry
-					.getApplicableToGoalPositions(tacticID, userSupport);
-			if (positions.size() == 0)
-				continue;
-			for (final IPosition position : positions) {
-				Point pt = tacticUIRegistry.getOperatorPosition(tacticID,
-						parsedPred, actualString, position);
-				TacticPositionUI tacticPositionUI = links.get(pt);
-				if (tacticPositionUI == null) {
-					tacticPositionUI = new TacticPositionUI(pt);
-					links.put(pt, tacticPositionUI);
+		for (ITacticApplication application : applications) {
+			if (application instanceof IPositionApplication) {
+				Point pt = ((IPositionApplication) application)
+						.getHyperlinkBounds(parsedString, parsedPredicate);
+				if (!checkRange(pt, parsedString)) {
+					UIUtils.log(null, "invalid hyperlink bounds ("
+							+ pt.toString() + ") for tactic "
+							+ application.getTacticID()
+							+ ". Application abandoned.");
+					continue;
 				}
-				tacticPositionUI.addTacticPosition(tacticID, position);
+				List<ITacticApplication> applicationList = links.get(pt);
+				if (applicationList == null) {
+					applicationList = new ArrayList<ITacticApplication>();
+					links.put(pt, applicationList);
+				}
+				applicationList.add(application);
 			}
 		}
-		return links.values();
+		return links;
 	}
 	
 	private int [] getIndexesString(Predicate pred,
@@ -489,7 +380,6 @@ public class GoalPage extends Page implements IGoalPage {
 			SourceLocation loc = ident.getSourceLocation();
 			String image = sourceString.substring(loc.getStart(),
 					loc.getEnd() + 1);
-			// ProverUIUtils.debugProverUI("Ident: " + image);
 			actualString += " " + image + " ";
 			int offset = actualString.length();
 			actualString += "\uFFFC";

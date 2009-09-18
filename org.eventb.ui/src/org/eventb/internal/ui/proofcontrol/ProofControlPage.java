@@ -12,8 +12,12 @@
  *     Systerel - added direct access to preference pages
  *     Systerel - passed the focus request to the text field
  *     Systerel - the input area is now a StyledText
+ *     Systerel - refactored to use ITacticProvider2 and ITacticApplication
  *******************************************************************************/
 package org.eventb.internal.ui.proofcontrol;
+
+import static org.eventb.internal.ui.prover.ProverUIUtils.applyCommand;
+import static org.eventb.internal.ui.prover.ProverUIUtils.applyTactic;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -90,21 +94,19 @@ import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
+import org.eventb.internal.provisional.ui.prover.ITacticApplication;
 import org.eventb.internal.ui.EventBControl;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBStyledText;
 import org.eventb.internal.ui.IEventBControl;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
+import org.eventb.internal.ui.prover.ICommandApplication;
 import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
 import org.eventb.ui.IEventBSharedImages;
-import org.eventb.ui.prover.IProofCommand;
-import org.eventb.ui.prover.ITacticProvider;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -222,43 +224,37 @@ public class ProofControlPage extends Page implements IProofControlPage,
 						item, dropdownID) {
 					@Override
 					public void apply(final String tacticID) {
-						try {
-							if (ProofControlUtils.DEBUG)
-								ProofControlUtils.debug("File "
-										+ ProofControlPage.this.editor
-												.getRodinInputFile()
-												.getElementName());
-							final IUserSupport userSupport = editor
-									.getUserSupport();
-							boolean interruptable = registry.isInterruptable(
-									tacticID, TacticUIRegistry.TARGET_GLOBAL);
-							ITacticProvider provider = registry
-									.getTacticProvider(tacticID);
-							if (provider != null) {
-								applyTacticProvider(provider, userSupport,
-										interruptable);
-							} else {
-								IProofCommand command = registry
-										.getProofCommand(tacticID,
-												TacticUIRegistry.TARGET_GLOBAL);
-								if (command != null) {
-									applyGlobalExpertTactic(command,
-											userSupport, interruptable);
-								} else {
-									return;
-								}
-							}
-							if (!currentInput.equals("")) {
-								historyCombo.add(currentInput, 0);
-							}
-							if (textWidget.getText() != "") {
-								textWidget.setText("");
-							}
-							currentInput = "";
-						} catch (RodinDBException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+						if (ProofControlUtils.DEBUG)
+							ProofControlUtils.debug("File "
+									+ ProofControlPage.this.editor
+									.getRodinInputFile()
+											.getElementName());
+						final IUserSupport userSupport = editor
+								.getUserSupport();
+						boolean interruptable = registry.isInterruptable(
+								tacticID, TacticUIRegistry.TARGET_GLOBAL);
+						final boolean skipPostTactic = registry
+								.isSkipPostTactic(tacticID);
+						Object application = registry.getGlobalApplication(
+								tacticID, userSupport, currentInput);
+
+						if (application instanceof ITacticApplication) {
+							applyTacticProvider(
+									(ITacticApplication) application,
+									userSupport, interruptable, skipPostTactic);
+						} else if (application instanceof ICommandApplication) {
+							applyGlobalExpertTactic((ICommandApplication) application,
+									userSupport, interruptable);
+						} else {
+							return;
 						}
+						if (!currentInput.equals("")) {
+							historyCombo.add(currentInput, 0);
+						}
+						if (textWidget.getText() != "") {
+							textWidget.setText("");
+						}
+						currentInput = "";
 					}
 				};
 
@@ -300,31 +296,23 @@ public class ProofControlPage extends Page implements IProofControlPage,
 						ProofControlUtils.debug("File "
 								+ ProofControlPage.this.editor.getRodinInputFile()
 										.getElementName());
-					try {
 
-						final IUserSupport userSupport = editor
-								.getUserSupport();
-						boolean interruptable = registry.isInterruptable(
-								tacticID, TacticUIRegistry.TARGET_GLOBAL);
-						ITacticProvider provider = TacticUIRegistry
-								.getDefault().getTacticProvider(tacticID);
-						if (provider != null) {
-							applyTacticProvider(provider, userSupport,
-									interruptable);
-						} else {
-							IProofCommand command = TacticUIRegistry
-									.getDefault().getProofCommand(tacticID,
-											TacticUIRegistry.TARGET_GLOBAL);
-							if (command != null) {
-								applyGlobalExpertTactic(command, userSupport,
-										interruptable);
-							} else {
-								return;
-							}
-						}
-					} catch (RodinDBException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+					final IUserSupport userSupport = editor
+					.getUserSupport();
+					final boolean interruptable = registry.isInterruptable(
+							tacticID, TacticUIRegistry.TARGET_GLOBAL);
+					final boolean skipPostTactic = registry
+							.isSkipPostTactic(tacticID);
+					Object application = TacticUIRegistry
+					.getDefault().getGlobalApplication(tacticID, userSupport, currentInput);
+					if (application instanceof ITacticApplication) {
+						applyTacticProvider((ITacticApplication) application, userSupport,
+								interruptable, skipPostTactic);
+					} else if (application instanceof ICommandApplication) {
+						applyGlobalExpertTactic((ICommandApplication) application, userSupport,
+								interruptable);
+					} else {
+						return;
 					}
 					if (!currentInput.equals("")) {
 						historyCombo.add(currentInput, 0);
@@ -359,63 +347,40 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	}
 
 	// Applies a global tactic to the current proof tree node.
-	void applyGlobalExpertTactic(final IProofCommand command,
-			final IUserSupport userSupport, final boolean interruptable)
-			throws RodinDBException {
+	void applyGlobalExpertTactic(final ICommandApplication command,
+			final IUserSupport userSupport, final boolean interruptable) {
 
 		final String[] inputs = { currentInput };
 		if (interruptable) {
 			applyTacticWithProgress(new IRunnableWithProgress() {
 				public void run(IProgressMonitor pm)
 						throws InvocationTargetException {
-					try {
-						pm.beginTask("Proving", IProgressMonitor.UNKNOWN);
-						command.apply(userSupport, null, inputs, pm);
-					} catch (RodinDBException e) {
-						e.printStackTrace();
-						UIUtils.log(e, "Error applying proof command");
-					} finally {
-						pm.done();
-					}
+					applyCommand(command.getProofCommand(), userSupport, null,
+							inputs, pm);
 				}
 			});
 
 		} else {
-			command.apply(userSupport, null, inputs, null);
+			applyCommand(command.getProofCommand(), userSupport, null, inputs, null);
 		}
 	}
 
+	
 	// Applies a global tactic to the current proof tree node.
-	void applyTacticProvider(ITacticProvider provider,
-			final IUserSupport userSupport, boolean interruptable) {
+	void applyTacticProvider(ITacticApplication provider,
+			final IUserSupport userSupport, boolean interruptable,
+			final boolean skipPostTactic) {
 
-		IProofTreeNode node = userSupport.getCurrentPO().getCurrentNode();
-		final ITactic tactic = provider.getTactic(node, null, null, null,
-				currentInput);
+		final ITactic tactic = provider.getTactic(null, currentInput);
 		if (interruptable) {
 			applyTacticWithProgress(new IRunnableWithProgress() {
 				public void run(IProgressMonitor pm)
 						throws InvocationTargetException {
-					try {
-						pm.beginTask("Proving", IProgressMonitor.UNKNOWN);
-						try {
-							userSupport.applyTactic(tactic, true, pm);
-						} catch (RodinDBException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					} finally {
-						pm.done();
-					}
+					applyTactic(tactic, userSupport, null, skipPostTactic, pm);
 				}
 			});
 		} else {
-			try {
-				userSupport.applyTactic(tactic, true, null);
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			applyTactic(tactic, userSupport, null, skipPostTactic, null);
 		}
 	}
 

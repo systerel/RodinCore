@@ -17,7 +17,8 @@ Require-Bundle: org.eclipse.ui;visibility:=reexport,
  org.rodinp.keyboard;bundle-version="1.0.0",
  org.eventb.eventBKeyboard;bundle-version="2.9.0"
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eventb.internal.ui;x-friends:="org.eventb.ui.tests,fr.systerel.explorer",
+Export-Package: org.eventb.internal.provisional.ui.prover;x-internal:=true,
+ org.eventb.internal.ui;x-friends:="org.eventb.ui.tests,fr.systerel.explorer",
  org.eventb.internal.ui.autocompletion;x-friends:="org.eventb.ui.tests",
  org.eventb.internal.ui.eventbeditor;x-friends:="org.eventb.ui.tests",
  org.eventb.internal.ui.eventbeditor.actions,

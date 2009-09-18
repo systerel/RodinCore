@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
+ * Copyright (c) 2005-2009 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,18 +7,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - refactored to use ITacticProvider2 and ITacticApplication
  ******************************************************************************/
 
 package org.eventb.internal.ui.proofcontrol;
 
 import org.eclipse.swt.widgets.ToolItem;
-import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
-import org.eventb.ui.prover.IProofCommand;
-import org.eventb.ui.prover.ITacticProvider;
 
 /**
  * @author htson
@@ -75,22 +72,9 @@ public class GlobalTacticToolItem {
 	}
 
 	private boolean shouldBeEnabled(IUserSupport us, String input) {
-		final ITacticProvider provider = registry.getTacticProvider(tacticID);
-		if (provider != null) {
-			final IProofState currentPO = us.getCurrentPO();
-			if (currentPO == null) {
-				return false;
-			}
-			final IProofTreeNode node = currentPO.getCurrentNode();
-			return provider.getApplicablePositions(node, null, input) != null;
-		}
-
-		final IProofCommand command = registry.getProofCommand(tacticID,
-				TacticUIRegistry.TARGET_GLOBAL);
-		if (command != null) {
-			return command.isApplicable(us, null, input);
-		}
-		return false;
+		final Object application = registry.getGlobalApplication(tacticID, us,
+				input);
+		return application != null;
 	}
 
 	/**
