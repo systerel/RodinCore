@@ -10,6 +10,7 @@
  *     Systerel - used EventBSharedColor
  *     Systerel - used ElementDescRegistry
  *     Systerel - introduced read only elements
+ *     Systerel - managed text insertion command
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -43,12 +44,14 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.swt.IFocusService;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
+import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IInternalElement;
@@ -79,6 +82,11 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 	private KeyListener keyListener;
 
 	private static final int DEFAULT_COLUMN = 0;
+
+	// a unique ID for all text controls provided as variable to core
+	// expressions for the various services; must NOT be used for comparison
+	private static final String TEXT_CONTROL_ID = EventBUIPlugin.PLUGIN_ID
+			+ ".controls.text";
 
 	/**
 	 * Create the tree column for this tree viewer.
@@ -351,15 +359,18 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 						- inset * 2, rect.height - inset * 2);
 			}
 		});
+		if(isReadOnly(editor.getRodinInput())) {
+			text.setEditable(false);
+		} else {
+			final IFocusService service = (IFocusService) editor.getSite()
+					.getService(IFocusService.class);
+			service.addFocusTracker(text, TEXT_CONTROL_ID);
+		}
+		
 		treeEditor1.setEditor(composite, item, column);
 		text.setText(item.getText(column));
 		text.selectAll();
 		text.setFocus();
-		
-		if(isReadOnly(editor.getRodinInput())) {
-			text.setEditable(false);
-		}
-
 	}
 
 	public void elementChanged(ElementChangedEvent event) {

@@ -15,8 +15,11 @@
  *     Systerel - separation of file and root element
  *     Systerel - used ElementDescRegistry
  *     Systerel - introduced read only elements
+ *     Systerel - managed text insertion command
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.elementdesc;
+
+import static org.eventb.internal.ui.EventBUtils.isReadOnly;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -40,6 +43,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.swt.IFocusService;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.EventBStyledText;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
@@ -61,6 +65,11 @@ public class TextEditComposite extends AbstractEditComposite {
 
 	public static final String CONTEXT_ID = EventBUIPlugin.PLUGIN_ID
 	+ ".contexts.textEditCompositeScope";
+	
+	// a unique ID for all text controls provided as variable to core
+	// expressions for the various services; must NOT be used for comparison
+	private static final String TEXT_CONTROL_ID = EventBUIPlugin.PLUGIN_ID
+			+ ".controls.styledText";
 	
 	// Activate a new context when actually editing this text composite
 	private static class ContextActivator implements FocusListener {
@@ -182,11 +191,26 @@ public class TextEditComposite extends AbstractEditComposite {
 				}
 			};
 			this.getFormToolkit().paintBordersFor(composite);
+			
+			manageFocusTracker(!isReadOnly(element));
 		}else{
 			setText(value);
 		}
 	}
 
+	private void manageFocusTracker(boolean track) {
+		if (text == null)
+			return;
+		final IFocusService service = (IFocusService) fEditor.getSite()
+				.getService(IFocusService.class);
+
+		// always remove first, to prevent from adding tracker twice
+		service.removeFocusTracker(text);
+		if (track) {
+			service.addFocusTracker(text, TEXT_CONTROL_ID);
+		}
+	}
+	
 	private void setText(String value){
 		if (!text.getText().equals(value))
 			text.setText(value);
@@ -299,6 +323,7 @@ public class TextEditComposite extends AbstractEditComposite {
 	public void setReadOnly(boolean readOnly) {
 		if (text != null) {
 			text.setEditable(!readOnly);
+			manageFocusTracker(!readOnly);
 		}
 	}
 

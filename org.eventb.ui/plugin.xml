@@ -1990,6 +1990,17 @@
             id="org.eventb.ui.project.autoTactic"
             name="%commands.project.autoTacticName">
       </command>
+      <command
+            categoryId="org.eventb.ui.categories.edit"
+            description="%commands.edit.insertDescription"
+            id="org.eventb.ui.edit.insert"
+            name="%commands.edit.insertName">
+         <commandParameter
+               id="org.eventb.ui.edit.insert.text"
+               name="%commands.edit.insert.textName"
+               optional="false">
+         </commandParameter>
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.contexts">
@@ -2116,6 +2127,36 @@
       <handler
             class="org.eventb.internal.ui.preferences.ToggleAutoTacticPreference"
             commandId="org.eventb.ui.project.autoTactic">
+      </handler>
+      <handler
+            class="org.eventb.internal.ui.eventbeditor.handlers.InsertHandler"
+            commandId="org.eventb.ui.edit.insert">
+         <activeWhen>
+            <and>
+               <with
+                     variable="activeEditorId">
+                  <or>
+                     <equals
+                           value="org.eventb.ui.editors.machine">
+                     </equals>
+                     <equals
+                           value="org.eventb.ui.editors.context">
+                     </equals>
+                  </or>
+               </with>
+               <with
+                     variable="activeFocusControlId">
+                   <or>
+                     <equals
+                           value="org.eventb.ui.controls.text">
+                     </equals>
+                     <equals
+                           value="org.eventb.ui.controls.styledText">
+                     </equals>
+                  </or>
+               </with>
+            </and>
+          </activeWhen>
       </handler>
    </extension>
    <extension
