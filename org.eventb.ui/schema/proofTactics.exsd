@@ -122,7 +122,7 @@ The Event-B Proving User Interface is used for interactively discharging proof o
          <attribute name="tacticProvider" type="string">
             <annotation>
                <documentation>
-                  the name of a class which will be used to invoke the proof tactic. The class must implement &lt;samp&gt;org.eventb.ui.prover.ITacticProvider&lt;/samp&gt;. There is a default implementation &lt;samp&gt;org.eventb.ui.prover.DefaultTacticProvider&lt;/samp&gt;.
+                  the name of a class which will be used to invoke the proof tactic. The class must implement &lt;samp&gt;org.eventb.ui.prover.ITacticProvider&lt;/samp&gt;. There is a default implementation &lt;samp&gt;org.eventb.ui.prover.DefaultTacticProvider&lt;/samp&gt;. Alternatively, the class may implement &lt;samp&gt;org.eventb.ui.prover.ITacticProvider2&lt;/samp&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eventb.ui.prover.DefaultTacticProvider:org.eventb.ui.prover.ITacticProvider"/>

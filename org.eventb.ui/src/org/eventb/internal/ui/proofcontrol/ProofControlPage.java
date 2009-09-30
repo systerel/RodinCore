@@ -94,7 +94,6 @@ import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
-import org.eventb.internal.provisional.ui.prover.ITacticApplication;
 import org.eventb.internal.ui.EventBControl;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBStyledText;
@@ -107,6 +106,7 @@ import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
 import org.eventb.ui.IEventBSharedImages;
+import org.eventb.ui.prover.ITacticApplication;
 
 /**
  * @author htson

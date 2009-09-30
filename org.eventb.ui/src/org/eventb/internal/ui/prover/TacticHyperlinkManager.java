@@ -32,8 +32,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eventb.internal.provisional.ui.prover.IPositionApplication;
-import org.eventb.internal.provisional.ui.prover.ITacticApplication;
+import org.eventb.ui.prover.IPositionApplication;
+import org.eventb.ui.prover.ITacticApplication;
 import org.eventb.internal.ui.EventBSharedColor;
 
 public abstract class TacticHyperlinkManager {

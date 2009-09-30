@@ -43,11 +43,11 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.internal.provisional.ui.prover.ITacticApplication;
 import org.eventb.internal.ui.DoubleClickStyledTextListener;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.IEventBInputText;
+import org.eventb.ui.prover.ITacticApplication;
 import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 public class EventBPredicateText implements IPropertyChangeListener {

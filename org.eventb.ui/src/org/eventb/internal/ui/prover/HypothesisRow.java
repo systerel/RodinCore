@@ -50,14 +50,14 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.internal.provisional.ui.prover.IPositionApplication;
-import org.eventb.internal.provisional.ui.prover.IPredicateApplication;
-import org.eventb.internal.provisional.ui.prover.ITacticApplication;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.IEventBSharedImages;
+import org.eventb.ui.prover.IPositionApplication;
+import org.eventb.ui.prover.IPredicateApplication;
+import org.eventb.ui.prover.ITacticApplication;
 
 /**
  * @author htson
