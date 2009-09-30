@@ -96,6 +96,9 @@
 	        <copy todir="${buildDirectory}/plugins/org.rodinp.core">
 	            <fileset dir="${builder}/../org.rodinp.core" />
 	        </copy>
+	        <copy todir="${buildDirectory}/plugins/org.rodinp.keyboard">
+	            <fileset dir="${builder}/../org.rodinp.keyboard" />
+	        </copy>
 
 	        <copy todir="${buildDirectory}/plugins/org.rodinp.platform">
 	            <fileset dir="${builder}/../org.rodinp.platform" />
@@ -110,6 +113,12 @@
 	        <copy todir="${buildDirectory}/plugins/org.eventb.core.seqprover">
 	            <fileset dir="${builder}/../org.eventb.core.seqprover" />
 	        </copy>
+	        <copy todir="${buildDirectory}/plugins/org.eventb.keyboard">
+	            <fileset dir="${builder}/../org.eventb.keyboard" />
+	        </copy>
+	        <copy todir="${buildDirectory}/plugins/ch.ethz.eventb.keyboard.latex">
+    	        <fileset dir="${builder}/../ch.ethz.eventb.keyboard.latex" />
+        	</copy>
 	        <copy todir="${buildDirectory}/plugins/org.eventb.ui">
 	            <fileset dir="${builder}/../org.eventb.ui" />
 	        </copy>
