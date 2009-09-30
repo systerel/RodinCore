@@ -1727,7 +1727,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * <p>
 	 * The following optimisations are implemented:
 	 * <ul>
-	 * <li>"⊤" is elimated from formulas where possible</li>
+	 * <li>"⊤" is eliminated from formulas where possible</li>
 	 * <li>implications are replaced by conjunctions according to the
 	 *     equivalences
 	 * <pre>

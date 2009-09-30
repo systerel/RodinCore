@@ -811,6 +811,17 @@ public class BinaryExpression extends Expression {
 				extraConjunct);
 	}
 
+	private Predicate getWDPredicateMOD(FormulaFactory ff) {
+		Predicate leftConjunct = left.getWDPredicateRaw(ff);
+		Predicate rightConjunct = right.getWDPredicateRaw(ff);
+		
+		Expression zero =  ff.makeIntegerLiteral(BigInteger.ZERO, null);
+		Predicate leftWD = ff.makeRelationalPredicate(LE, zero, left, null);
+		Predicate rightWD = ff.makeRelationalPredicate(LT, zero, right, null);
+		return getWDSimplifyC(ff, getWDSimplifyC(ff, getWDSimplifyC(ff,
+				leftConjunct, rightConjunct), leftWD), rightWD);
+	}
+
 	private Predicate getWDPredicateEXPN(FormulaFactory ff) {
 		Predicate leftConjunct = left.getWDPredicateRaw(ff);
 		Predicate rightConjunct = right.getWDPredicateRaw(ff);
@@ -846,8 +857,8 @@ public class BinaryExpression extends Expression {
 	@Override
 	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
 		switch (getTag()) {
-		case DIV:      
-		case MOD:      return getWDPredicateDIV(formulaFactory);
+		case DIV:      return getWDPredicateDIV(formulaFactory);
+		case MOD:      return getWDPredicateMOD(formulaFactory);
 		case EXPN:     return getWDPredicateEXPN(formulaFactory);
 		case FUNIMAGE: return getWDPredicateFUNIMAGE(formulaFactory);
 		default:

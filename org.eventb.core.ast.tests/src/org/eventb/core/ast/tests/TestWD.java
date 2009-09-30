@@ -129,7 +129,7 @@ public class TestWD extends AbstractTests {
 					"∧ f(y)∈dom(f)) ∧ f ∈ ℤ ⇸ ℤ"
 			), new TestPredicate(
 					"(x÷y=y) ⇔ (y mod x=0)",
-					"y≠0 ∧ x≠0"
+					"y≠0 ∧ 0 ≤ y ∧ 0 < x"
 			), new TestPredicate(
 					"∀z \u00b7 x^z>y",
 					"∀z \u00b7 0≤x ∧ 0≤z"
@@ -163,7 +163,7 @@ public class TestWD extends AbstractTests {
 					"⊤"
 			), new TestPredicate(
 					"x+y+(x mod y)\u2217x+1=0 ⇒ y<x",
-					"y≠0"
+					"0 ≤ x ∧ 0 < y"
 			), new TestAssignment(
 					"x≔y",
 					"⊤"
