@@ -29,6 +29,7 @@ import org.rodinp.core.RodinCore;
  * </p>
  * 
  * @author Nicolas Beauger
+ * @since 1.0
  */
 public interface IOccurrenceKind {
 

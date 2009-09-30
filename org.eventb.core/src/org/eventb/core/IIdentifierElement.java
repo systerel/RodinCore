@@ -28,6 +28,7 @@ import org.rodinp.core.RodinDBException;
  * </p>
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public interface IIdentifierElement extends IInternalElement {
 	

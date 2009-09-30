@@ -21,6 +21,7 @@ import org.rodinp.core.IInternalElementType;
  * 
  * @author Stefan Hallerstede
  * 
+ * @since 1.1
  */
 public interface ISymbolTable<E extends IInternalElement, T extends IInternalElementType<? extends E>, I extends ISymbolInfo<E, T>> {
 

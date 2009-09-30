@@ -30,6 +30,7 @@ import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
  *         together.
  *         <li>There is a boolean flag to enable/disable the tactic preference.
  *         </ul>
+ * @since 1.0
  * 
  */
 public interface IAutoTacticPreference {

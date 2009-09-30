@@ -51,6 +51,7 @@ import org.rodinp.core.location.IAttributeLocation;
 
 /**
  * The Event-B core plugin class.
+ * @since 1.0
  */
 public class EventBPlugin extends Plugin {
 

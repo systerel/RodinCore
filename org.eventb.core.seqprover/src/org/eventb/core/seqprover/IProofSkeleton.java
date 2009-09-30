@@ -22,6 +22,7 @@ import org.eventb.internal.core.seqprover.ProofTreeNode;
  * @see ProofBuilder
  * 
  * @author Farhad Mehta
+ * @since 1.0
  */
 public interface IProofSkeleton {
 

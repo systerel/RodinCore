@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Text;
  * @author htson
  *         <p>
  *         The interface for Event-B Keyboard translator
+ * @since 2.9
  */
 public interface IEventBKeyboardTranslator {
 

@@ -26,6 +26,7 @@ import org.rodinp.core.IRodinElement;
  *
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public class SCCarrierSet extends SCIdentifierElement implements ISCCarrierSet {
 	

@@ -30,6 +30,7 @@ package org.rodinp.core;
  * </p>
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public interface ISnapshotable extends IRodinElement {
 

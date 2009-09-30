@@ -19,6 +19,7 @@ package org.rodinp.core.location;
  * @see IAttributeLocation
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public interface IAttributeSubstringLocation extends IAttributeLocation {
 

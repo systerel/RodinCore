@@ -10,6 +10,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * TODO: document Expression.
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public abstract class Expression extends Formula<Expression> {
 

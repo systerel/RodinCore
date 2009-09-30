@@ -38,6 +38,7 @@ import org.eventb.internal.core.seqprover.ReasonerFailure;
  * </p>
  * 
  * @author Farhad Mehta
+ * @since 1.0
  */
 public abstract class ForwardInfReasoner implements IReasoner {
 	

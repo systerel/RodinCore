@@ -25,6 +25,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * each assigned identifier.
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public class BecomesEqualTo extends Assignment {
 

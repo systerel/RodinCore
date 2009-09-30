@@ -12,6 +12,7 @@ package org.eventb.core.ast;
  * Exception raised when a service has been called on an unsupported expression.
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public class InvalidExpressionException extends Exception {
 

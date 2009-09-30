@@ -16,6 +16,7 @@ package org.eventb.core.seqprover;
  *         <p>
  *         This is the interface for filters that can be used to traverse the
  *         proof tree.
+ * @since 1.0
  */
 public interface IProofTreeNodeFilter {
 

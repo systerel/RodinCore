@@ -14,6 +14,7 @@ import java.util.Set;
  * Denotes the predefined integer type which corresponds to the set of all integers.
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public class IntegerType extends Type {
 

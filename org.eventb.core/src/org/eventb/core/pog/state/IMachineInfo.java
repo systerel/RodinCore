@@ -23,6 +23,7 @@ import org.rodinp.core.IRodinFile;
  * </p>
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public interface IMachineInfo extends IPOGState {
 

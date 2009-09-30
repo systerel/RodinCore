@@ -48,6 +48,7 @@ import org.rodinp.core.location.IInternalLocation;
  * @see IIndexer
  * 
  * @author Nicolas Beauger
+ * @since 1.0
  */
 public interface IIndexingBridge {
 

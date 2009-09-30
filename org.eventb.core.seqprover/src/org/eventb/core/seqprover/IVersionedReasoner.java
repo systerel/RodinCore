@@ -31,6 +31,7 @@ package org.eventb.core.seqprover;
  * 
  * @author "Nicolas Beauger"
  * 
+ * @since 1.1
  */
 public interface IVersionedReasoner extends IReasoner {
 

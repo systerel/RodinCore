@@ -20,6 +20,7 @@ import java.util.Arrays;
  * </p>
  * 
  * @author François Terrier
+ * @since 1.0
  */
 public class ASTProblem {
 	

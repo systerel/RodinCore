@@ -21,6 +21,7 @@ import org.rodinp.core.IAttributeType;
  * @see IAttributeSubstringLocation
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public interface IAttributeLocation extends IInternalLocation {
 

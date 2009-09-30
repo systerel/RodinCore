@@ -17,6 +17,7 @@ import org.eventb.core.tool.IStateRepository;
  * 
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public interface ISCStateRepository extends IStateRepository<ISCState> {
 	

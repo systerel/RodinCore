@@ -22,6 +22,7 @@ import org.eventb.internal.pptrans.translator.PredicateSimplification;
  * 
  * 
  * @author Matthias Konrad
+ * @since 0.2
  */
 
 public class Translator {

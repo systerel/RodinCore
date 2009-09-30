@@ -12,6 +12,7 @@ import org.eventb.core.ast.Predicate;
  * </p>
  * 
  * @author Farhad Mehta
+ * @since 1.0
  */
 public interface IReasonerInputWriter {
 

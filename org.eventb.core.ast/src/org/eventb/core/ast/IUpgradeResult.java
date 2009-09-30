@@ -19,6 +19,7 @@ package org.eventb.core.ast;
  * </p>
  * 
  * @author Nicolas Beauger
+ * @since 1.0
  */
 public interface IUpgradeResult<T extends Formula<T>> extends IResult {
 

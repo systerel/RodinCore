@@ -36,6 +36,7 @@ import org.rodinp.core.RodinDBException;
  * @see IProofManager
  * 
  * @author Farhad Mehta
+ * @since 1.0
  */
 public interface IPRHypAction extends IInternalElement {
 

@@ -19,6 +19,7 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
  * 
  * @author Farhad Mehta
  *
+ * @since 1.0
  */
 public class ReplayHints {
 //	 TODO : Rename to freeIdentRename

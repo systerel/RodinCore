@@ -53,6 +53,7 @@ import org.eventb.internal.core.seqprover.Util;
  * 
  * @author François Terrier
  * @author Laurent Voisin
+ * @since 1.0
  */
 public abstract class XProverReasoner implements IReasoner {
 	

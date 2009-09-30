@@ -34,6 +34,9 @@ import org.eventb.internal.core.pm.TypeEnvironmentSorter;
 import org.eventb.internal.core.pm.TypeEnvironmentSorter.Entry;
 import org.rodinp.core.RodinDBException;
 
+/**
+ * @since 1.0
+ */
 public class ProofStoreCollector implements IProofStoreCollector {
 
 	private final ITypeEnvironment baseTypEnv;

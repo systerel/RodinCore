@@ -29,6 +29,7 @@ import org.rodinp.core.RodinDBException;
  *
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public class SCVariable extends SCIdentifierElement implements ISCVariable {
 	

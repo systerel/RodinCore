@@ -26,6 +26,7 @@ import org.rodinp.core.IRodinFile;
  * 
  * @author Nicolas Beauger
  * @author Laurent Voisin
+ * @since 1.0
  */
 public interface IInternalLocation extends IRodinLocation {
 

@@ -37,6 +37,7 @@ import org.rodinp.core.RodinDBException;
  * </p>
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public class SCMachineRoot extends EventBRoot implements ISCMachineRoot {
 

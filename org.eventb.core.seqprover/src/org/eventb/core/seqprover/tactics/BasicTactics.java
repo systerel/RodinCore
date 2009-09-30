@@ -33,6 +33,7 @@ import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
  * 
  * @author Farhad Mehta
  *
+ * @since 1.0
  */
 public class BasicTactics {
 	

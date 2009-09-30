@@ -22,6 +22,7 @@ import org.rodinp.core.RodinDBException;
  *         Event-B Table/Tree.
  *
  * @deprecated This interface is not used anymore.
+ * @since 1.0
  */
 @Deprecated
 public interface IElementModifier {

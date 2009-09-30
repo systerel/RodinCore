@@ -26,6 +26,7 @@ import org.rodinp.core.RodinDBException;
  * </p>
  *
  * @author Laurent Voisin
+ * @since 1.0
  */
 public class PSRoot extends EventBRoot implements IPSRoot{
 	

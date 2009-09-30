@@ -25,6 +25,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author htson
  * 
+ * @since 1.0
  */
 public interface ICommentedElement extends IInternalElement {
 

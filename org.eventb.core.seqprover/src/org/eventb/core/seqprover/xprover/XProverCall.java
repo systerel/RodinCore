@@ -33,6 +33,7 @@ import org.eventb.core.seqprover.IProofMonitor;
  * </p>
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public abstract class XProverCall implements Runnable, Cancellable {
 	

@@ -66,6 +66,7 @@ import org.rodinp.internal.core.version.ConversionResult;
  * <code>RodinCore.getRodinCore()</code>. The Rodin core plug-in will be
  * activated automatically if not already active.
  * </p>
+ * @since 1.0
  */
 
 public class RodinCore extends Plugin {

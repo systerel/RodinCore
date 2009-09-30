@@ -27,6 +27,7 @@ import org.rodinp.core.RodinDBException;
  * </p>
  *
  * @author Laurent Voisin
+ * @since 1.0
  */
 public class PORoot extends EventBRoot implements IPORoot{
 	

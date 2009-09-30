@@ -54,6 +54,7 @@ import org.eventb.internal.core.seqprover.ProofTreeNode;
  * 
  * @author Farhad Mehta
  *
+ * @since 1.0
  */
 public class ProofBuilder {
 

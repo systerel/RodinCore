@@ -36,6 +36,7 @@ import org.rodinp.core.RodinDBException;
  * </p>
  * 
  * @author Stefan Hallerstede
+ * @since 1.0
  */
 public class SCSeesContext extends EventBElement implements
 		ISCSeesContext {

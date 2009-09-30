@@ -43,6 +43,7 @@ import org.rodinp.core.basis.InternalElement;
  * @see IPOSelectionHint
  * 
  * @author Stefan Hallerstede
+ * @since 1.0
  */
 public interface IPORoot extends IEventBRoot, IPOStampedElement {
 

@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 
  * @see IGraph
  * @see IAutomaticTool
+ * @since 1.0
  */
 public interface IExtractor {
 	

@@ -10,6 +10,9 @@ import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
+/**
+ * @since 1.0
+ */
 public class MultipleExprInput implements IReasonerInput{
 	
 	private Expression[] expressions;

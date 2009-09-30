@@ -49,6 +49,7 @@ import org.rodinp.core.RodinDBException;
  * @see org.rodinp.core.IRodinElement#getElementName()
  * 
  * @author Stefan Hallerstede
+ * @since 1.0
  */
 public interface ISCContextRoot extends ISCContext, IEventBRoot, IAccuracyElement, IConfigurationElement {
 

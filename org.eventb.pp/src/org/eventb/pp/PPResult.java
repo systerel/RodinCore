@@ -13,6 +13,7 @@ package org.eventb.pp;
  *
  * @author François Terrier
  *
+ * @since 0.2
  */
 public class PPResult {
 

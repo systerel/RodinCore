@@ -17,6 +17,7 @@ import org.eventb.internal.core.tool.types.IState;
 /**
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public final class POGCore {
 	

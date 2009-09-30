@@ -37,6 +37,7 @@ import org.rodinp.internal.core.ElementType;
  * </p>
  * 
  * @see RodinCore#valueOf(IWorkspaceRoot)
+ * @since 1.0
  */
 public interface IRodinDB extends IRodinElement, IOpenable, IParent {
 

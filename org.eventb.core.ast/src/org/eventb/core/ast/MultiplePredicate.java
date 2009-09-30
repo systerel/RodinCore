@@ -37,7 +37,7 @@ import org.eventb.internal.core.typecheck.TypeVariable;
  * </p>
  * 
  * @author Nicolas Beauger
- * @since Math Language V2
+ * @since 1.0
  */
 public class MultiplePredicate extends Predicate {
 

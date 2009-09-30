@@ -23,6 +23,7 @@ package org.rodinp.core;
  * 
  * @see IRodinDBStatus
  * @see org.eclipse.core.runtime.IStatus#getCode()
+ * @since 1.0
  */
 public interface IRodinDBStatusConstants {
 	

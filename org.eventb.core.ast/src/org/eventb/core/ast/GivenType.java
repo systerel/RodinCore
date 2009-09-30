@@ -15,6 +15,7 @@ import java.util.Set;
  * a carrier-set declared in a context.
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public class GivenType extends Type {
 	

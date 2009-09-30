@@ -53,6 +53,7 @@ import org.rodinp.keyboard.preferences.PreferenceConstants;
  *         </p>
  * @deprecated use {@link RodinElementTreeLabelProvider} or
  *             {@link RodinElementTableLabelProvider} instead.
+ * @since 1.0
  * 
  */
 @Deprecated

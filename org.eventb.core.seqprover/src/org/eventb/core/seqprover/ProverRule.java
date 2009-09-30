@@ -36,6 +36,7 @@ import java.lang.annotation.RetentionPolicy;
  * </p>
  * 
  * @author "Nicolas Beauger"
+ * @since 1.0
  * 
  */
 @Retention(RetentionPolicy.SOURCE)

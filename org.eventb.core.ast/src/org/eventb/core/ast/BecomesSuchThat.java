@@ -46,6 +46,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * </ul>
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public class BecomesSuchThat extends Assignment {
 

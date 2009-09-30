@@ -8,6 +8,9 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 
+/**
+ * @since 1.0
+ */
 public class PRStringInput extends InternalElement implements IPRStringInput{
 
 	public PRStringInput(String name, IRodinElement parent) {

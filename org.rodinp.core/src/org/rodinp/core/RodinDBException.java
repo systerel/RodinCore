@@ -29,6 +29,7 @@ import org.rodinp.internal.core.RodinDBStatus;
  * 
  * @see IRodinDBStatus
  * @see IRodinDBStatusConstants
+ * @since 1.0
  */
 public class RodinDBException extends CoreException {
 

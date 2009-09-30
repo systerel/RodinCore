@@ -44,6 +44,7 @@ import org.eventb.internal.core.seqprover.proofSimplifier.Simplifier.CancelExcep
  *
  * @author Farhad Mehta
  *
+ * @since 1.0
  */
 public class ProverLib {
 

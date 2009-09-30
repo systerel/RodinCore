@@ -45,6 +45,7 @@ import org.eventb.internal.core.typecheck.TypeVariable;
  * </p>
  * 
  * @author François Terrier
+ * @since 1.0
  */
 public class QuantifiedExpression extends Expression {
 	

@@ -45,6 +45,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Laurent Voisin
  * @author Stefan Hallerstede
+ * @since 1.0
  */
 public interface IEvent extends ICommentedElement, ILabeledElement, IConvergenceElement {
 

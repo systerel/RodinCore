@@ -24,6 +24,7 @@ import org.rodinp.core.IRodinElement;
  * </p>
  *
  * @author Laurent Voisin
+ * @since 1.0
  */
 @Deprecated
 public class Theorem extends EventBElement implements ITheorem {

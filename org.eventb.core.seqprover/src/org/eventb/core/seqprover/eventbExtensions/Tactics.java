@@ -148,7 +148,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.UnionInterD
  * @author Farhad Mehta, htson
  * 
  * TODO : complete comments.
- * @since 1.1
+ * @since 1.0
  */
 public class Tactics {
 

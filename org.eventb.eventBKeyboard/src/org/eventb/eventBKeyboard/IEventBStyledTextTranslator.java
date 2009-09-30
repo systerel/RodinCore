@@ -18,6 +18,7 @@ import org.eclipse.swt.custom.StyledText;
  * @author htson
  *         <p>
  *         The interface for Event-B Keyboard translator
+ * @since 2.9
  */
 public interface IEventBStyledTextTranslator {
 

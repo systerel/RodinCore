@@ -22,6 +22,7 @@ import org.eventb.core.ast.Predicate;
  * 
  * @author Farhad Mehta
  *
+ * @since 1.0
  */
 public interface IProofDependencies{
 	

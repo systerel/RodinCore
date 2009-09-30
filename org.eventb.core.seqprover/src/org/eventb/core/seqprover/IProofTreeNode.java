@@ -39,6 +39,7 @@ import org.eventb.core.seqprover.tactics.BasicTactics;
  * 
  * @author Farhad Mehta
  * @author Laurent Voisin
+ * @since 1.0
  */
 public interface IProofTreeNode extends IProofSkeleton {
 

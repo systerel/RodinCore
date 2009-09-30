@@ -25,6 +25,7 @@ import org.eventb.core.ast.Predicate;
  * 
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public interface IEventActionTable extends IPOGState {
 

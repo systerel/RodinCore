@@ -34,6 +34,7 @@ import org.rodinp.core.RodinDBException;
  * </p>
  * 
  * @author Stefan Hallerstede
+ * @since 1.0
  */
 public class RefinesMachine extends EventBElement implements IRefinesMachine {
 

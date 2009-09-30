@@ -30,6 +30,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * </p>
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public abstract class Assignment extends Formula<Assignment> {
 

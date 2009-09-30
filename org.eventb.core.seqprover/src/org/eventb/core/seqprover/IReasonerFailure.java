@@ -12,6 +12,7 @@ package org.eventb.core.seqprover;
  * 
  * @author Farhad Mehta
  *
+ * @since 1.0
  */
 public interface IReasonerFailure extends IReasonerOutput{
 	

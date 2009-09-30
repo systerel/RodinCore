@@ -17,6 +17,7 @@ package org.eventb.core.seqprover;
  * </p>
  * 
  * @author Farhad Mehta
+ * @since 1.0
  */
 public interface IReasoner {
 

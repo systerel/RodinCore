@@ -6,6 +6,9 @@ import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.SerializeException;
 
+/**
+ * @since 1.0
+ */
 public abstract class SinglePredInputReasoner implements IReasoner {
 	
 	public void serializeInput(IReasonerInput rInput,

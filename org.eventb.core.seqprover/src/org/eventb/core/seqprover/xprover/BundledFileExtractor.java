@@ -31,6 +31,7 @@ import org.osgi.framework.Bundle;
  * </p>
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public class BundledFileExtractor {
 

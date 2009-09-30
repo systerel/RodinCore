@@ -16,6 +16,7 @@ package org.eventb.core.seqprover;
  * @see IReasonerInputWriter
  * 
  * @author Farhad Mehta
+ * @since 1.0
  */
 public class SerializeException extends Exception {
 	

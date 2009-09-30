@@ -18,6 +18,7 @@ package org.eventb.eventBKeyboard.preferences;
  *         Constant definitions for Event-B Text font preference.
  *         </p>
  * @deprecated use {@link org.rodinp.keyboard.preferences.PreferenceConstants}
+ * @since 2.9
  */
 @Deprecated
 public class PreferenceConstants {

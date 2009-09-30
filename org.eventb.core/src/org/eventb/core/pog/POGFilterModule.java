@@ -19,6 +19,7 @@ import org.eventb.internal.core.tool.types.IProcessorModule;
  * 
  * @author Stefan Hallerstede
  * 
+ * @since 1.0
  */
 public abstract class POGFilterModule extends POGModule implements IPOGFilterModule {
 

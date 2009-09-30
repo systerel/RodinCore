@@ -48,6 +48,7 @@ import org.rodinp.internal.core.util.Util;
  * Root of Rodin element handle hierarchy.
  * 
  * @see IRodinElement
+ * @since 1.0
  */
 public abstract class RodinElement extends PlatformObject implements
 		IRodinElement {

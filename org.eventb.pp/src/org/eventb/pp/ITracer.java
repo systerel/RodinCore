@@ -17,6 +17,7 @@ import org.eventb.core.ast.Predicate;
  * to the proof.
  *
  * @author François Terrier
+ * @since 0.2
  */
 public interface ITracer {
 

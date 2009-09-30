@@ -37,6 +37,7 @@ package org.rodinp.core.indexer;
  * 
  * @author Nicolas Beauger
  * 
+ * @since 1.0
  */
 public interface IPropagator {
 

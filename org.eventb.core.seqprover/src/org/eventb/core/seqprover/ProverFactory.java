@@ -36,6 +36,7 @@ import org.eventb.internal.core.seqprover.ProofRule.Antecedent;
  * 
  * @author Farhad Mehta
  *
+ * @since 1.0
  */
 public final class ProverFactory {
 

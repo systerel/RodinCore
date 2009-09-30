@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * </p>
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 //TODO document IInternalElement
 public interface IInternalElement extends IRodinElement, IElementManipulation,

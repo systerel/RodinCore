@@ -33,6 +33,7 @@ import org.rodinp.core.RodinCore;
  * @see ISCIdentifierElement#setType(Type, IProgressMonitor)
  * 
  * @author Stefan Hallerstede
+ * @since 1.0
  */
 public interface ISCConstant extends ITraceableElement, ISCIdentifierElement {
 

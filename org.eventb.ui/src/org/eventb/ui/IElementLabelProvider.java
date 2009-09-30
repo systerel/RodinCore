@@ -20,6 +20,7 @@ import org.rodinp.core.RodinDBException;
  *         A common interface for proving label of an object
  *         
  * @deprecated This interface is not used anymore.
+ * @since 1.0
  */
 @Deprecated
 public interface IElementLabelProvider {

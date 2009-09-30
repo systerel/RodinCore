@@ -32,6 +32,7 @@ import org.rodinp.core.RodinCore;
  * 
  * @author Laurent Voisin
  * @author Stefan Hallerstedes
+ * @since 1.0
  */
 public interface IGuard extends ICommentedElement, ILabeledElement, IDerivedPredicateElement {
 	

@@ -31,6 +31,7 @@ import org.rodinp.core.RodinCore;
  * 
  * @author Laurent Voisin
  * @author Stefan Hallerstede
+ * @since 1.0
  */
 public interface IAxiom extends ICommentedElement, ILabeledElement, IDerivedPredicateElement {
 

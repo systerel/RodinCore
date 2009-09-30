@@ -25,6 +25,7 @@ import org.osgi.framework.BundleContext;
  * @author htson
  *         <p>
  *         The main plugin class for the Event-B Keyboard.
+ * @since 2.9
  */
 public class EventBKeyboardPlugin extends AbstractUIPlugin {
 

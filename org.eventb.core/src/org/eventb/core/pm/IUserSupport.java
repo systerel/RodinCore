@@ -50,6 +50,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Thai Son Hoang
  * @author Laurent Voisin
+ * @since 1.0
  */
 public interface IUserSupport extends IElementChangedListener {
 

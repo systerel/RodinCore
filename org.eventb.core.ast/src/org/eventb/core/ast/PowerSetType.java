@@ -14,6 +14,7 @@ import java.util.Set;
  * Denotes a power-set type.
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public class PowerSetType extends Type {
 	

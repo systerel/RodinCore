@@ -12,6 +12,9 @@
 
 package org.eventb.core.pm;
 
+/**
+ * @since 1.0
+ */
 public interface IUserSupportInformation {
 
 	public static final int MAX_PRIORITY = 2;

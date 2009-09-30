@@ -46,6 +46,7 @@ import org.eventb.core.seqprover.ITactic;
  *         {@link org.eventb.ui.prover.ITacticProvider}. Plug-in writers should
  *         extends this class in order to provide their own tactic to the
  *         Proving User Interface.
+ * @since 1.0
  */
 public class DefaultTacticProvider implements ITacticProvider {
 

@@ -63,6 +63,7 @@ import org.rodinp.core.RodinDBException;
  * @see IProofComponent#createProofAttempt(String, String, IProgressMonitor)
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public interface IProofAttempt {
 

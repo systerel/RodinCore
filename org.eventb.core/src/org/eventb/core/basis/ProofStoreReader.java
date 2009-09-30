@@ -33,6 +33,9 @@ import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.rodinp.core.RodinDBException;
 
+/**
+ * @since 1.0
+ */
 public class ProofStoreReader implements IProofStoreReader {
 
 	private final IPRProof prProof;

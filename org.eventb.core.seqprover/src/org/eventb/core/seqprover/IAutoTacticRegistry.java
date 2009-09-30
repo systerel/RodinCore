@@ -32,6 +32,7 @@ package org.eventb.core.seqprover;
  * @see SequentProver#getAutoTacticRegistry()
  * 
  * @author Farhad Mehta
+ * @since 1.0
  */
 public interface IAutoTacticRegistry {
 

@@ -5,6 +5,9 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
 
+/**
+ * @since 1.0
+ */
 public abstract class EmptyInputReasoner implements IReasoner {
 
 	private static EmptyInput emptyReasonerInput = new EmptyInput();

@@ -17,6 +17,7 @@ import org.eventb.internal.core.ast.Position;
  * 
  * @author François Terrier
  *
+ * @since 1.0
  */
 public abstract class Identifier extends Expression {
 	

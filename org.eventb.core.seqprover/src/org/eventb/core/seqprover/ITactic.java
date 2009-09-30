@@ -19,6 +19,7 @@ import org.eventb.core.seqprover.tactics.BasicTactics;
  * 
  * @author Farhad Mehta
  *
+ * @since 1.0
  */
 public interface ITactic {
 	

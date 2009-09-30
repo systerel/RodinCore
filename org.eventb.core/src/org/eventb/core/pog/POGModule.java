@@ -21,6 +21,7 @@ import org.eventb.internal.core.tool.types.IPOGProcessorModule;
  * 
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public abstract class POGModule extends Module {
 	

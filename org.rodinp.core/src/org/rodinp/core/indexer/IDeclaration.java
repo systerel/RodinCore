@@ -24,6 +24,7 @@ import org.rodinp.core.IInternalElement;
  * @noimplement
  * @author Nicolas Beauger
  * 
+ * @since 1.0
  */
 public interface IDeclaration {
 

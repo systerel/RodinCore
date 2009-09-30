@@ -17,6 +17,7 @@ package org.eventb.core.ast;
  * </p>
  * 
  * @author Nicolas Beauger
+ * @since 1.0
  */
 public class DefaultSimpleVisitor implements ISimpleVisitor {
 

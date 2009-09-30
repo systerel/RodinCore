@@ -22,6 +22,7 @@ import org.rodinp.core.IRodinProblem;
 /**
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public enum GraphProblem implements IRodinProblem {
 

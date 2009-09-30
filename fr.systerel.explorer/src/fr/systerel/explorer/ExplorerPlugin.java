@@ -18,6 +18,7 @@ import fr.systerel.internal.explorer.navigator.ExplorerUtils;
 
 /**
  * The activator class controls the plug-in life cycle
+ * @since 1.0
  */
 public class ExplorerPlugin extends AbstractUIPlugin {
 

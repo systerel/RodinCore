@@ -34,6 +34,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * TODO: give examples and a better specification.
  * 
  * @author François Terrier
+ * @since 1.0
  */
 public class BoundIdentifier extends Identifier {
 	

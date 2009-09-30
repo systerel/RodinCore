@@ -21,6 +21,7 @@ package org.rodinp.core.version;
  * </p>
  * 
  * @author Nicolas Beauger
+ * @since 1.0
  */
 public interface IAttributeModifier {
 

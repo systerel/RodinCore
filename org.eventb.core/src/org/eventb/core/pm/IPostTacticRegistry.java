@@ -18,6 +18,7 @@ import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
  *         <p>
  *         This defines the interface for the post-tactic registry
  *         @deprecated use {@link IAutoTacticPreference} instead.
+ * @since 1.0
  */
 @Deprecated
 public interface IPostTacticRegistry {

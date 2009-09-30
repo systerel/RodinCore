@@ -34,6 +34,7 @@ import org.rodinp.core.RodinCore;
  * @see ISCPredicateElement#setPredicate(Predicate, IProgressMonitor)
  * 
  * @author Stefan Hallerstede
+ * @since 1.0
  */
 @Deprecated
 public interface ISCTheorem 

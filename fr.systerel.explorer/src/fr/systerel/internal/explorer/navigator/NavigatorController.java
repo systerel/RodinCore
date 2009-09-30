@@ -49,6 +49,7 @@ import fr.systerel.internal.explorer.navigator.filters.ObligationTextFilter;
 /**
  * This class is used to set up the Navigator. It sets up the tool bar in the
  * navigator and instantiates the <code>ModelController</code>.
+ * @since 1.0
  * 
  */
 public class NavigatorController {

@@ -26,6 +26,7 @@ import java.util.EventObject;
  *
  * @see IElementChangedListener
  * @see IRodinElementDelta
+ * @since 1.0
  */
 public class ElementChangedEvent extends EventObject {
 	

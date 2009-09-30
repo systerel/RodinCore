@@ -26,6 +26,7 @@ import org.rodinp.core.IRodinElement;
  * 
  * @author Laurent Voisin
  * @author Stefan Hallerstede
+ * @since 1.1
  */
 public interface IAttributedSymbol {
 

@@ -27,6 +27,7 @@ import org.rodinp.core.RodinCore;
  * 
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public interface IParameter extends ICommentedElement, IIdentifierElement {
 

@@ -12,6 +12,7 @@ import org.eventb.internal.core.tool.types.IModule;
 /**
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public interface IModuleType<T extends IModule> {
 

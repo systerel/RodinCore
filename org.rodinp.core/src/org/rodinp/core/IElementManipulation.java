@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
+ * @since 1.0
  */
 public interface IElementManipulation extends IRodinElement {
 

@@ -19,6 +19,7 @@ import org.rodinp.core.RodinCore;
  * 
  * @author Stefan Hallerstede
  * @author Farhad Mehta
+ * @since 1.0
  */
 public final class EventBAttributes {
 

@@ -26,6 +26,7 @@ package org.rodinp.core;
  * </p>
  * 
  * @see RodinCore#newRegion()
+ * @since 1.0
  */
 public interface IRegion {
 

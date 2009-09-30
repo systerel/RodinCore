@@ -34,6 +34,7 @@ import org.eventb.internal.core.upgrade.VersionUpgrader;
  * </p>
  *  
  * @author François Terrier
+ * @since 1.0
  */
 
 public class FormulaFactory {

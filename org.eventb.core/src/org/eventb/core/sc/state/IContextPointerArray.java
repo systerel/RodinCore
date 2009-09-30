@@ -33,6 +33,7 @@ import org.rodinp.core.IRodinFile;
  * 
  * @author Stefan Hallerstede
  * 
+ * @since 1.0
  */
 public interface IContextPointerArray extends ISCState {
 

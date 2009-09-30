@@ -20,6 +20,7 @@ import org.eventb.core.IConvergenceElement;
  * 
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public interface IConvergenceInfo extends ISCState {
 	

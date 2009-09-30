@@ -69,6 +69,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @see IAttributeType.String#makeValue(java.lang.String)
  * @see IInternalElement#getAttributeValues()
  * @see IInternalElement#setAttributeValue(IAttributeValue, IProgressMonitor)
+ * @since 1.0
  */
 public interface IAttributeValue {
 

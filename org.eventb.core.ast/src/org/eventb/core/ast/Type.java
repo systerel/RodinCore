@@ -29,6 +29,7 @@ import java.util.Set;
  * </p>
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public abstract class Type {
 

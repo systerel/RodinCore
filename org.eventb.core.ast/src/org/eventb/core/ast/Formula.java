@@ -51,6 +51,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * 
  * @param <T>
  *            TODO comment type parameter
+ * @since 1.0
  */
 public abstract class Formula<T extends Formula<T>> {
 

@@ -37,6 +37,7 @@ import org.rodinp.core.RodinCore;
  * 
  * @author Stefan Hallerstede
  * 
+ * @since 1.0
  */
 public interface ISCInvariant 
 extends ITraceableElement, ILabeledElement, ISCPredicateElement, IDerivedPredicateElement {

@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
  * quantified formulas.
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public abstract class QuantifiedUtil {
 

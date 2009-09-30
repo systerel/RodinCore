@@ -22,6 +22,7 @@ import org.eventb.core.tool.IStateType;
  * </p>
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public interface IAbstractEventTable extends ISCState {
 	

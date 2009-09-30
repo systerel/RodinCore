@@ -23,6 +23,7 @@ import org.eventb.core.seqprover.proofBuilder.ReplayHints;
  * </p>
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public class XProverInput implements IReasonerInput {
 	

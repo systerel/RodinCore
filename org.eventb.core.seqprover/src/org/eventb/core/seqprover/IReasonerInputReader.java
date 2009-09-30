@@ -22,6 +22,7 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
  * 
  * 
  * @author Farhad Mehta
+ * @since 1.0
  */
 public interface IReasonerInputReader {
 

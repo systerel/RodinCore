@@ -15,6 +15,9 @@ import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.internal.core.seqprover.tacticPreference.TacticPreferenceUtils;
 
+/**
+ * @since 1.0
+ */
 public abstract class AutoTacticPreference implements IAutoTacticPreference {
 
 	private boolean enabled = false;

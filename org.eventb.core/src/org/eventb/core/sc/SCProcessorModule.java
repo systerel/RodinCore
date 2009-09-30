@@ -31,6 +31,7 @@ import org.rodinp.core.IRodinElement;
  * 
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public abstract class SCProcessorModule extends SCModule implements ISCProcessorModule {
 

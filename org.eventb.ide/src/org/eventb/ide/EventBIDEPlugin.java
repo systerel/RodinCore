@@ -14,6 +14,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The main plugin class for Event-B UI.
+ * @since 1.0
  */
 public class EventBIDEPlugin extends AbstractUIPlugin {
 

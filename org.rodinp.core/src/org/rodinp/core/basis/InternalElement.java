@@ -61,6 +61,7 @@ import org.rodinp.internal.core.util.Util;
  * </p>
  * 
  * @see IInternalElement
+ * @since 1.0
  */
 public abstract class InternalElement extends RodinElement implements
 		IInternalElement {

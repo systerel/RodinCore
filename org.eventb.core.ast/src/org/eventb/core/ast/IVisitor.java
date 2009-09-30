@@ -129,6 +129,7 @@ package org.eventb.core.ast;
  * @see Formula#accept(IVisitor)
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public interface IVisitor {
 

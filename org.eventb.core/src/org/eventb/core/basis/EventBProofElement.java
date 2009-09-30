@@ -52,6 +52,7 @@ import org.rodinp.core.basis.InternalElement;
  * 
  * @author Farhad Mehta
  * 
+ * @since 1.0
  */
 public abstract class EventBProofElement extends InternalElement implements
 		IPRProofInfoElement, IPOStampedElement {

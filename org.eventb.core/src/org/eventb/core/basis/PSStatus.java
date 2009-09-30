@@ -39,6 +39,7 @@ import org.rodinp.core.RodinDBException;
  *
  * @author Farhad Mehta
  *
+ * @since 1.0
  */
 public class PSStatus extends EventBProofElement implements IPSStatus {
 

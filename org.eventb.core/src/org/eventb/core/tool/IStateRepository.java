@@ -26,6 +26,7 @@ import org.eventb.internal.core.tool.types.IState;
  * This interface is not intended to be implemented by clients.
  * </p> 
  * @author Stefan Hallerstede
+ * @since 1.1
  */
 public interface IStateRepository <I extends IState> {
 

@@ -68,6 +68,7 @@ import org.rodinp.core.IRodinFile;
  * @see IIndexingBridge
  * 
  * @author Nicolas Beauger
+ * @since 1.0
  */
 public interface IIndexer {
 

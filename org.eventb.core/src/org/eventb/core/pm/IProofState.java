@@ -33,6 +33,7 @@ import org.rodinp.core.RodinDBException;
  *         hypotheses, the set of searched hypotheses.
  *         <p>
  *         This interface is NOT supposed to be implemented by clients.
+ * @since 1.0
  */
 public interface IProofState extends IProofTreeChangedListener {
 

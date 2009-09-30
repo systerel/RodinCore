@@ -6,6 +6,9 @@ import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
+/**
+ * @since 1.0
+ */
 public class SingleStringInput implements IReasonerInput{
 	
 	private String string;

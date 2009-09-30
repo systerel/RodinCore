@@ -34,6 +34,7 @@ import org.rodinp.core.basis.InternalElement;
  * @author htson
  * @author Stefan Hallerstede
  * 
+ * @since 1.0
  */
 public abstract class EventBElement extends InternalElement {
 

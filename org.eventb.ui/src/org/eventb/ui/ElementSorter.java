@@ -28,6 +28,7 @@ import org.rodinp.core.IRodinProject;
  *         This class extends
  *         <code>org.eclipse.jface.viewers.ViewerSorter</code> and provides a
  *         sorter for different elements which appeared in the UI
+ * @since 1.0
  * 
  */
 public class ElementSorter extends ViewerSorter {

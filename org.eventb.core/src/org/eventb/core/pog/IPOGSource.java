@@ -17,6 +17,7 @@ import org.rodinp.core.IRodinElement;
  * 
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public interface IPOGSource {
 	

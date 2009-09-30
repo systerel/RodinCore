@@ -24,6 +24,7 @@ import org.rodinp.core.location.IInternalLocation;
  * </p>
  * 
  * @author Nicolas Beauger
+ * @since 1.0
  */
 public interface IOccurrence {
 

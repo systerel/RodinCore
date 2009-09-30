@@ -25,6 +25,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * the assigned identifier.
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public class BecomesMemberOf extends Assignment {
 

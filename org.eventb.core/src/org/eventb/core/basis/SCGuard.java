@@ -25,6 +25,7 @@ import org.rodinp.core.IRodinElement;
  * </p>
  *
  * @author Stefan Hallerstede
+ * @since 1.0
  */
 public class SCGuard extends SCPredicateElement implements ISCGuard {
 

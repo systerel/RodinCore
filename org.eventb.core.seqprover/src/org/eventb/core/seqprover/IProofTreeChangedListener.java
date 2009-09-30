@@ -19,6 +19,7 @@ package org.eventb.core.seqprover;
  * </p>
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public interface IProofTreeChangedListener {
 

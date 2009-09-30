@@ -26,6 +26,7 @@ import org.rodinp.core.RodinDBException;
  * @noimplement
  * 
  * @author "Nicolas Beauger"
+ * @since 1.0
  */
 public interface IGeneratedElement {
 

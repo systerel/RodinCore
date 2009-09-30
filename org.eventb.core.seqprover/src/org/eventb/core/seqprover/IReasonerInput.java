@@ -17,6 +17,7 @@ import org.eventb.core.seqprover.proofBuilder.ReplayHints;
  * @see IReasonerInputWriter
  * 
  * @author Farhad Mehta
+ * @since 1.0
  */
 public interface IReasonerInput {
 	

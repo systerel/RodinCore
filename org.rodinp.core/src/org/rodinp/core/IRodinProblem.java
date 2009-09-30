@@ -28,6 +28,7 @@ package org.rodinp.core;
  *      IRodinProblem, Object[])
  * @see IInternalElement#createProblemMarker(IAttributeType, IRodinProblem,
  *      Object[])
+ * @since 1.0
  */
 public interface IRodinProblem {
 

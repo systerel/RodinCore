@@ -38,6 +38,7 @@ import org.eventb.internal.core.seqprover.IInternalProverSequent;
  * 
  * @author Farhad Mehta
  *
+ * @since 1.0
  */
 public interface IHypAction {
 	

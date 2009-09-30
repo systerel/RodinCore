@@ -3,6 +3,9 @@ package org.eventb.core.seqprover.reasonerInputs;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
+/**
+ * @since 1.0
+ */
 public class EmptyInput implements IReasonerInput {
 
 	public EmptyInput() {

@@ -26,6 +26,7 @@ import org.eventb.core.tool.IStateType;
  * @see IAccuracyInfo
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public interface IEventHypothesisManager extends IHypothesisManager {
 

@@ -31,6 +31,7 @@ import org.rodinp.core.RodinCore;
  * @see IExpressionElement#setExpressionString(String,IProgressMonitor)
  * 
  * @author Stefan Hallerstede
+ * @since 1.0
  */
 public interface IVariant extends ICommentedElement, IExpressionElement {
 

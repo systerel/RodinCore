@@ -35,6 +35,7 @@ import org.rodinp.core.RodinDBException;
  * </p>
  * 
  * @author Stefan Hallerstede
+ * @since 1.0
  */
 public abstract class SCAssignmentElement extends EventBElement
 		implements ISCAssignmentElement {

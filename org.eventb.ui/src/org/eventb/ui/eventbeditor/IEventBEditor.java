@@ -25,6 +25,7 @@ import org.rodinp.core.IRodinElement;
  * @param <R>
  *            This specifies the "input type" of the editor, e.g. IMachineRoot
  *            or IContextRoot.
+ * @since 1.0
  */
 public interface IEventBEditor<R extends IInternalElement> extends IEditorPart,
 		IGotoMarker {

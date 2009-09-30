@@ -12,6 +12,9 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 
+/**
+ * @since 1.0
+ */
 public class PRExprRef extends InternalElement implements IPRExprRef{
 
 	public PRExprRef(String name, IRodinElement parent) {

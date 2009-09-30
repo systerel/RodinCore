@@ -22,6 +22,7 @@ package org.eventb.core.ast;
  * </p>
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public interface IParseResult extends IResult {
 

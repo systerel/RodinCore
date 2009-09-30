@@ -18,6 +18,7 @@ import org.rodinp.core.IInternalElementType;
 /**
  * An element node is a node in the navigator tree that is in between a
  * machine/context and its invariants, theorems, proof obligations etc.
+ * @since 1.0
  * 
  */
 public interface IElementNode {

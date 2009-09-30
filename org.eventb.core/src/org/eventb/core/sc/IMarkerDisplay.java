@@ -17,6 +17,7 @@ import org.rodinp.core.IAttributeType.String;
 /**
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public interface IMarkerDisplay {
 	

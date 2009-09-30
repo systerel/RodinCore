@@ -44,6 +44,7 @@ import org.rodinp.core.IRodinProject;
  * </p>
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public interface IEventBProject extends IAdaptable {
 

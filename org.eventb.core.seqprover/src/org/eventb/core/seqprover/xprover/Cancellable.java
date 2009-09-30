@@ -11,6 +11,7 @@ package org.eventb.core.seqprover.xprover;
  * Common protocol for cancellable tasks.
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public interface Cancellable {
 

@@ -36,6 +36,7 @@ import org.rodinp.internal.core.ElementType;
  * TODO write doc for IRodinFile.
  *
  * @author Laurent Voisin
+ * @since 1.0
  */
 public interface IRodinFile extends IRodinElement, IOpenable, IParent,
 		IElementManipulation, ISnapshotable {

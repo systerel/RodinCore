@@ -15,6 +15,7 @@ import org.rodinp.internal.core.indexer.IndexManager;
 
 /**
  * @author Nicolas Beauger
+ * @since 1.0
  */
 public class DebugHelpers {
 

@@ -26,6 +26,7 @@ import org.rodinp.core.IInternalElement;
  * @see IPOSelectionHint
  * 
  * @author Stefan Hallerstede
+ * @since 1.0
  */
 public interface IPOHint extends IInternalElement {
 	

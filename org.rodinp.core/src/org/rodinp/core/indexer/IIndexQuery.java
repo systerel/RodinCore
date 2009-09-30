@@ -81,7 +81,7 @@ import org.rodinp.core.location.IInternalLocation;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @since 0.9.2
+ * @since 1.0
  * @author Nicolas Beauger
  */
 public interface IIndexQuery {

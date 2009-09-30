@@ -23,6 +23,7 @@ import org.eclipse.ui.forms.editor.FormPage;
  *         {@link org.eclipse.ui.forms.editor.FormPage}. Plug-in writers
  *         suppose to extend this class when adding a new page to the Event-B
  *         Editor.
+ * @since 1.0
  */
 public abstract class EventBEditorPage extends FormPage {
 

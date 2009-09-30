@@ -14,7 +14,7 @@ package org.eventb.core.ast;
  * Language versions known by the AST library.
  * 
  * @author Nicolas Beauger
- * @since Math Language V2
+ * @since 1.0
  */
 public enum LanguageVersion {
 

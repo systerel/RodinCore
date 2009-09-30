@@ -23,6 +23,7 @@ package org.eventb.core.ast;
  * The objects of this class are immutable.
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public class SourceLocation {
 

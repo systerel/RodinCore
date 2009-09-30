@@ -15,6 +15,7 @@ package org.eventb.pp;
  * </p>
  * 
  * @author Laurent Voisin
+ * @since 0.2
  */
 public interface IPPMonitor {
 

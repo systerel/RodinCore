@@ -7,6 +7,7 @@ import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
  * @author htson
  * <p>
  * @deprecated use {@link IAutoTacticPreference} instead.
+ * @since 1.0
  */
 @Deprecated
 public interface IProvingMode {

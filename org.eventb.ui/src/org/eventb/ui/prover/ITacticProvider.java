@@ -25,6 +25,7 @@ import org.eventb.core.seqprover.ITactic;
  *         <p>
  *         This is the common interface fo providing tactics to the proving user
  *         interface.
+ * @since 1.0
  */
 public interface ITacticProvider {
 

@@ -17,6 +17,7 @@ import org.eventb.internal.core.tool.types.IState;
  * </p>
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public interface ISCState extends IState {
   // marker class for static checker state

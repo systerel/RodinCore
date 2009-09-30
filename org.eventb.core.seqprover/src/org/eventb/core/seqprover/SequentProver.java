@@ -10,6 +10,7 @@ import org.osgi.framework.BundleContext;
 
 /**
  * The main plugin class to be used in the desktop.
+ * @since 1.0
  */
 public class SequentProver extends Plugin {
 

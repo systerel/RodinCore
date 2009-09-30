@@ -53,6 +53,7 @@ import org.rodinp.core.RodinCore;
  * @author htson
  *         <p>
  *         The main plugin class for Event-B UI.
+ * @since 1.0
  */
 public class EventBUIPlugin extends AbstractUIPlugin {
 

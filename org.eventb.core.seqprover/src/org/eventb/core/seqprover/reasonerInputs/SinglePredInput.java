@@ -9,6 +9,9 @@ import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
+/**
+ * @since 1.0
+ */
 public class SinglePredInput implements IReasonerInput{
 	
 	private static final String SERIALIZATION_KEY = "pred";

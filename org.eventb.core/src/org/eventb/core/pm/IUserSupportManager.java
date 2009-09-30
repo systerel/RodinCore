@@ -40,6 +40,7 @@ import org.rodinp.core.RodinDBException;
  * </p>
  * 
  * @see RodinCore#valueOf(IWorkspaceRoot)
+ * @since 1.0
  */
 public interface IUserSupportManager {
 

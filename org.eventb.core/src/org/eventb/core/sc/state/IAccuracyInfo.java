@@ -19,6 +19,7 @@ package org.eventb.core.sc.state;
  * 
  * @author Stefan Hallerstede
  * 
+ * @since 1.0
  */
 public interface IAccuracyInfo extends ISCState {
 

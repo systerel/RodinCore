@@ -28,6 +28,7 @@ import org.eventb.core.ast.Predicate;
  * 
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public interface IPredicateTable<PE extends ISCPredicateElement> extends IPOGState {
 

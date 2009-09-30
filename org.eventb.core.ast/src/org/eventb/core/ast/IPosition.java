@@ -24,6 +24,7 @@ import org.eventb.internal.core.ast.Position;
  * </p>
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public interface IPosition extends Comparable<IPosition> {
 

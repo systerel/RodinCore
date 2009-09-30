@@ -42,6 +42,7 @@ import org.rodinp.core.RodinDBException;
 /**
  * @author Farhad Mehta
  *
+ * @since 1.0
  */
 public class PRProofRule extends EventBProofElement implements IPRProofRule {
 

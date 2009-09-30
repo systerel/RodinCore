@@ -17,6 +17,7 @@ package org.eventb.core.pog.state;
  * 
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public interface ICorrespondence {
 

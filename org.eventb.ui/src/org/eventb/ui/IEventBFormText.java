@@ -18,6 +18,7 @@ import org.eclipse.ui.forms.widgets.FormText;
  * @author htson
  *         <p>
  *         This is the interface for Event-B FormText.
+ * @since 1.0
  */
 public interface IEventBFormText {
 

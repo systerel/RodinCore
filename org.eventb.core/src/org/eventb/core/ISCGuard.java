@@ -35,6 +35,7 @@ import org.rodinp.core.RodinCore;
  * @see ISCPredicateElement#setPredicate(Predicate, IProgressMonitor)
  * 
  * @author Stefan Hallerstede
+ * @since 1.0
  */
 public interface ISCGuard extends ITraceableElement, ILabeledElement, ISCPredicateElement, IDerivedPredicateElement {
 

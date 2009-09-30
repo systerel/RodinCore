@@ -29,6 +29,7 @@ import org.eventb.core.ast.Type;
  * </p>
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public interface ISmartFactory {
 

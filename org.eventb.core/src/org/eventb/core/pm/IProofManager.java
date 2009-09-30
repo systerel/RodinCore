@@ -28,6 +28,7 @@ import org.eventb.core.IEventBRoot;
  * </p>
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public interface IProofManager {
 

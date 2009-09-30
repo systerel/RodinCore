@@ -26,6 +26,7 @@ import org.eventb.internal.core.ast.expanders.SmartFactory;
  * </p>
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public class Expanders {
 

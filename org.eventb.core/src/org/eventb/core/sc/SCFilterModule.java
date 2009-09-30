@@ -24,6 +24,7 @@ import org.eventb.internal.core.tool.types.ISCFilterModule;
  *
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public abstract class SCFilterModule extends SCModule implements ISCFilterModule {
 

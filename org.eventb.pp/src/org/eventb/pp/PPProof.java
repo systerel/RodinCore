@@ -54,6 +54,7 @@ import org.eventb.pptrans.Translator;
  *
  * @author François Terrier
  *
+ * @since 0.2
  */
 public class PPProof {
 

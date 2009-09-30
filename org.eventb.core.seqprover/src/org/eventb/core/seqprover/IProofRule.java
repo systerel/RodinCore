@@ -42,6 +42,7 @@ import org.eventb.core.ast.Predicate;
  * @see org.eventb.core.seqprover.ProverFactory
  * 
  * @author Farhad Mehta
+ * @since 1.0
  */
 public interface IProofRule extends IReasonerOutput{
 

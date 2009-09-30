@@ -26,6 +26,7 @@ import org.rodinp.core.RodinDBException;
  * Utility methods shared by {@link PRStoredPred} and {@link PRStoredExpr}.
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public class PRUtil {
 

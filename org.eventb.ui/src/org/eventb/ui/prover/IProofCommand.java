@@ -22,6 +22,7 @@ import org.rodinp.core.RodinDBException;
  *         <p>
  *         This is the common interface fo providing proof commands to the
  *         proving user interface.
+ * @since 1.0
  */
 public interface IProofCommand {
 

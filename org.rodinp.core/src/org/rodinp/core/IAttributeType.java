@@ -54,6 +54,7 @@ package org.rodinp.core;
  * @see RodinCore#getIntegerAttrType(java.lang.String)
  * @see RodinCore#getLongAttrType(java.lang.String)
  * @see RodinCore#getStringAttrType(java.lang.String)
+ * @since 1.0
  */
 public interface IAttributeType {
 

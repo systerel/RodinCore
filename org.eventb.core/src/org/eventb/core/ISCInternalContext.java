@@ -35,6 +35,7 @@ import org.rodinp.core.RodinCore;
  * @see ISCContext
  * 
  * @author Stefan Hallerstede
+ * @since 1.0
  */
 public interface ISCInternalContext extends IInternalElement, ISCContext {
 

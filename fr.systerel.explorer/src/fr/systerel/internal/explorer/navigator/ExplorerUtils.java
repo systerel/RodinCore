@@ -23,6 +23,7 @@ import org.rodinp.core.RodinDBException;
 /**
  *         This class contains some utility static methods that are used in this
  *         Explorer plug-in.
+ * @since 1.0
  *
  */
 public class ExplorerUtils {

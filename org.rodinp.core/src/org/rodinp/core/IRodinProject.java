@@ -40,6 +40,7 @@ import org.rodinp.internal.core.ElementType;
  * </p>
  * 
  * @see RodinCore#valueOf(IProject)
+ * @since 1.0
  */
 public interface IRodinProject extends IParent, IRodinElement, IOpenable {
 

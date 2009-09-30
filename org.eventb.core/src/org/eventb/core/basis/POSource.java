@@ -21,6 +21,7 @@ import org.rodinp.core.RodinDBException;
 /**
  * @author halstefa
  *
+ * @since 1.0
  */
 public class POSource extends EventBElement implements IPOSource {
 	

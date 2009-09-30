@@ -49,6 +49,7 @@ import org.rodinp.core.builder.IExtractor;
 /**
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public abstract class ProofObligationGenerator implements IAutomaticTool, IExtractor {
 

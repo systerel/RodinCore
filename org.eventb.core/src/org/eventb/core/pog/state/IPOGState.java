@@ -18,6 +18,7 @@ import org.eventb.internal.core.tool.types.IState;
  * 
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public interface IPOGState extends IState {
 //	 marker class for proof obligation generator state

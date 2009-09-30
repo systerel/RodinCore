@@ -29,6 +29,7 @@ import org.rodinp.core.RodinCore;
  * 
  * @author Farhad Mehta
  * 
+ * @since 1.0
  */
 public interface IPRIdentifier extends ISCIdentifierElement {
 

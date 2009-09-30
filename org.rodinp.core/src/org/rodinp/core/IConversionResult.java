@@ -106,6 +106,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 
  * @author Stefan Hallerstede
  * 
+ * @since 1.0
  */
 public interface IConversionResult {
 

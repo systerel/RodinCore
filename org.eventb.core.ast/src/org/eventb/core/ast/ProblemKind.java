@@ -22,6 +22,7 @@ package org.eventb.core.ast;
  * 
  * @author François Terrier
  * 
+ * @since 1.0
  */
 public enum ProblemKind {
 	

@@ -74,6 +74,7 @@ import org.eventb.core.ast.UnaryPredicate;
  * 
  * @author Farhad Mehta, htson
  * 
+ * @since 1.0
  */
 public final class Lib {
 

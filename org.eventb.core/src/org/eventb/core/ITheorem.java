@@ -31,6 +31,7 @@ import org.rodinp.core.RodinCore;
  * @see IPredicateElement#setPredicateString(String, IProgressMonitor)
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 @Deprecated
 public interface ITheorem extends ICommentedElement, ILabeledElement, IPredicateElement {

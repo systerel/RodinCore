@@ -44,6 +44,7 @@ import org.rodinp.core.IInternalElement;
  * </p>
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public interface IEventBRoot extends IInternalElement, IGeneratedElement {
 

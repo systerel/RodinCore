@@ -39,6 +39,7 @@ package org.rodinp.core;
  * @see IRodinFile#ELEMENT_TYPE
  * @see RodinCore#getElementType(String)
  * @see RodinCore#getInternalElementType(String)
+ * @since 1.0
  */
 public interface IElementType<T extends IRodinElement> {
 

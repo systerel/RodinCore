@@ -19,6 +19,7 @@ import org.eventb.internal.core.seqprover.xprover.StreamPumper;
  * Utility class for monitoring an external process.
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public class ProcessMonitor {
 

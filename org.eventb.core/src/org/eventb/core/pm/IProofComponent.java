@@ -59,6 +59,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @see IProofManager#getProofComponent(IEventBRoot)
  * @see IProofAttempt
+ * @since 1.0
  */
 public interface IProofComponent {
 

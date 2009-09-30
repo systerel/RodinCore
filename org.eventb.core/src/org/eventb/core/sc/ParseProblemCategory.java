@@ -13,6 +13,7 @@ package org.eventb.core.sc;
 
 /**
  * @author Laurent Voisin
+ * @since 1.0
  */
 public class ParseProblemCategory {
 

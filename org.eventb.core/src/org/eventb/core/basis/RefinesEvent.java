@@ -29,6 +29,7 @@ import org.rodinp.core.basis.InternalElement;
  * </p>
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public class RefinesEvent extends InternalElement implements IRefinesEvent {
 

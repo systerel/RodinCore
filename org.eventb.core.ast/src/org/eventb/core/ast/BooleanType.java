@@ -14,6 +14,7 @@ import java.util.Set;
  * Denotes the predefined boolean type which corresponds to the set of boolean values.
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public class BooleanType extends Type {
 

@@ -30,6 +30,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Stefan Hallerstede
  * @author Laurent Voisin
+ * @since 1.0
  */
 public abstract class EventBRoot extends EventBElement implements IEventBRoot,
 		IPOStampedElement {

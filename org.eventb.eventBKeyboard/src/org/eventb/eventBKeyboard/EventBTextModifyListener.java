@@ -36,6 +36,7 @@ import org.rodinp.keyboard.RodinKeyboardPlugin;
  *         extension registry.
  *         </p>
  * @deprecated use {@link RodinKeyboardPlugin#getRodinModifyListener()}.
+ * @since 2.9
  */
 @Deprecated
 public class EventBTextModifyListener implements ModifyListener {

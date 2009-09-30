@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.IStatus;
  * 
  * @see IStatus
  * @see IRodinDBStatusConstants
+ * @since 1.0
  */
 public interface IRodinDBStatus extends IStatus {
 

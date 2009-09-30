@@ -40,6 +40,7 @@ import org.rodinp.core.RodinDBException;
  * @see ILabeledElement#setLabel(String, IProgressMonitor)
  * 
  * @author Stefan Hallerstede
+ * @since 1.0
  */
 public interface ISCEvent 
 extends ITraceableElement, ILabeledElement, IConvergenceElement, IAccuracyElement {

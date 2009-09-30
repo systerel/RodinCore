@@ -33,6 +33,7 @@ import org.rodinp.internal.core.util.Util;
  * 
  * @author Laurent Voisin
  * @author Thai Son Hoang
+ * @since 1.0
  */
 public final class RodinMarkerUtil {
 

@@ -43,6 +43,7 @@ import org.rodinp.core.RodinDBException;
  * @see IRodinElement#getElementName()
  * 
  * @author Laurent Voisin
+ * @since 1.0
  */
 public interface IRefinesMachine extends IInternalElement {
 

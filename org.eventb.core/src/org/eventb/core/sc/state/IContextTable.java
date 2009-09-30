@@ -22,6 +22,7 @@ import org.eventb.core.tool.IStateType;
  * 
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public interface IContextTable extends ISCState {
 

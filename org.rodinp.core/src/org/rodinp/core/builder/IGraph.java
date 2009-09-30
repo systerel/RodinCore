@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.CoreException;
  * </p>
  * @see org.rodinp.core.builder.IExtractor
  *
+ * @since 1.0
  */
 public interface IGraph {
 

@@ -23,6 +23,7 @@ import org.eventb.internal.core.seqprover.ReasonerFailure;
  * 
  * @author Laurent Voisin
  * @author Farhad Mehta
+ * @since 1.0
  */
 public abstract class HypothesisReasoner implements IReasoner {
 	

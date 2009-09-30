@@ -25,6 +25,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Stefan Hallerstede
  * 
+ * @since 1.1
  */
 public interface ISymbolInfo<E extends IInternalElement, T extends IInternalElementType<? extends E>>
 		extends Comparable<ISymbolInfo<?, ?>>, IAttributedSymbol {

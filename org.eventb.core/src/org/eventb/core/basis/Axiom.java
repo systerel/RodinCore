@@ -25,6 +25,7 @@ import org.rodinp.core.IRodinElement;
  *
  * @author Laurent Voisin
  * @author Stefan Hallerstede
+ * @since 1.0
  */
 public class Axiom extends EventBElement implements IAxiom {
 	

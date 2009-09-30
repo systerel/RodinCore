@@ -21,6 +21,7 @@ package org.eventb.core.seqprover;
  * </p>
  * 
  * @author "Nicolas Beauger"
+ * @since 1.0
  */
 public interface IReasonerDesc {
 

@@ -3,6 +3,9 @@ package org.eventb.core.pm;
 import org.eventb.core.seqprover.IProofTreeDelta;
 
 
+/**
+ * @since 1.0
+ */
 public interface IProofStateDelta {
 
 	public static final int ADDED = 1;

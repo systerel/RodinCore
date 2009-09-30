@@ -21,6 +21,7 @@ import org.eventb.internal.ui.EventBControl;
  *         <p>
  *         This is the decorator class to the FormText that used the Event-B
  *         Math Font.
+ * @since 1.0
  */
 public class EventBFormText extends EventBControl implements IEventBFormText {
 

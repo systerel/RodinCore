@@ -27,6 +27,7 @@ import org.rodinp.core.RodinDBException;
 /**
  * @author Farhad Mehta
  *
+ * @since 1.0
  */
 public class PRRuleAntecedent extends EventBProofElement implements IPRRuleAntecedent {
 

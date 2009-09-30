@@ -12,6 +12,9 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 
+/**
+ * @since 1.0
+ */
 public class PRPredRef extends InternalElement implements IPRPredRef{
 
 	public PRPredRef(String name, IRodinElement parent) {

@@ -33,6 +33,7 @@ import org.rodinp.core.RodinCore;
  * @see ISCPredicateElement#setPredicate(org.eventb.core.ast.Predicate, IProgressMonitor)
  * 
  * @author Stefan Hallerstede
+ * @since 1.0
  */
 public interface ISCWitness extends ITraceableElement, ILabeledElement, ISCPredicateElement {
 

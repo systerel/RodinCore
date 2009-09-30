@@ -60,6 +60,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrite
  * 
  * @author Farhad Mehta
  * 
+ * @since 1.0
  */
 public class AutoTactics {
 

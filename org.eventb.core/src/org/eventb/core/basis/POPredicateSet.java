@@ -30,6 +30,7 @@ import org.rodinp.core.RodinDBException;
  *
  * @author Stefan Hallerstede
  *
+ * @since 1.0
  */
 public class POPredicateSet extends EventBPOElement implements IPOPredicateSet {
 

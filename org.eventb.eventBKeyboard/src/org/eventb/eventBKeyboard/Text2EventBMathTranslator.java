@@ -22,6 +22,7 @@ import org.rodinp.keyboard.RodinKeyboardPlugin;
  *         mathematical language.
  *         </p>
  * @deprecated use {@link RodinKeyboardPlugin#translate(String)}
+ * @since 2.9
  */
 @Deprecated
 public class Text2EventBMathTranslator {

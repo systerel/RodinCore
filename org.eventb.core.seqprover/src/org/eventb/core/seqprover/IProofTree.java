@@ -32,6 +32,7 @@ package org.eventb.core.seqprover;
  * 
  * @author Farhad Mehta
  * @author Laurent Voisin
+ * @since 1.0
  */
 public interface IProofTree {
 

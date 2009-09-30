@@ -46,6 +46,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * </p>
  * 
  * @author François Terrier
+ * @since 1.0
  */
 public class QuantifiedPredicate extends Predicate {
 	
