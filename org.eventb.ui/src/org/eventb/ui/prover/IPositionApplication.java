@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.provisional.ui.prover;
+package org.eventb.ui.prover;
 
 import org.eclipse.swt.graphics.Point;
 import org.eventb.core.ast.Predicate;
@@ -18,12 +18,6 @@ import org.eventb.core.ast.Predicate;
  * <p>
  * Implementors of this interface will be applied through a hyperlink in a
  * hypothesis or goal predicate text.
- * </p>
- * <p>
- * <strong>EXPERIMENTAL</strong>. This interface has been added as part of a
- * work in progress. There is no guarantee that this API will work or that it
- * will remain the same. Please do not use this API without consulting with the
- * Systerel team.
  * </p>
  * 
  * @author Nicolas Beauger

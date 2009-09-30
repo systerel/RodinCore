@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.provisional.ui.prover;
+package org.eventb.ui.prover;
 
 import java.util.List;
 
@@ -21,12 +21,6 @@ import org.eventb.ui.prover.ITacticProvider;
  * <p>
  * Contributors can use an implementor of this interface as an alternative to
  * {@link ITacticProvider} in the 'proofTactics' extension point.
- * </p>
- * <p>
- * <strong>EXPERIMENTAL</strong>. This interface has been added as part of a
- * work in progress. There is no guarantee that this API will work or that it
- * will remain the same. Please do not use this API without consulting with the
- * Systerel team.
  * </p>
  * 
  * @author Nicolas Beauger
