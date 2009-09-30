@@ -2,7 +2,7 @@
 <feature
       id="org.eventb.ide"
       label="%featureName"
-      version="1.0.0.qualifier"
+      version="1.1.0.qualifier"
       provider-name="%providerName"
       image="rodin_update_120.jpg">
 
@@ -114,5 +114,11 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="ch.ethz.eventb.keyboard.latex"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>
