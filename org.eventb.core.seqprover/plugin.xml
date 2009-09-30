@@ -360,6 +360,11 @@
             id="finiteHypBoundedGoal"
             name="%finiteHypBoundedGoalName">
       </reasoner>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TotalDomRewrites"
+            id="totalDom"
+            name="%totalDomName">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">

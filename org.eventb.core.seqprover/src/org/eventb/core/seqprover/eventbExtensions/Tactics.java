@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added partition tactic (math V2)
  *     Systerel - added rm for UPTO and Arith and OnePoint tactics
+ *     Systerel - added Total Domain Substitution
  ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
@@ -136,6 +137,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegat
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetEqlRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetMinusRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.StrictInclusionRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TotalDomFacade;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.UnionInterDistRewrites;
 
 /**
@@ -3478,6 +3480,39 @@ public class Tactics {
 	public static ITactic onePointHyp(Predicate hyp) {
 		return BasicTactics.reasonerTac(new OnePointRule(),
 				new OnePointRule.Input(hyp));
+	}
+
+	/**
+	 * Returns the tactic "total domain substitution" for a given substitute.
+	 * It is applicable to any predicate of a sequent.
+	 * 
+	 * @param hyp a hypothesis, or <code>null</code> to specify the goal
+	 * @param position a valid position of an expression in the specified predicate
+	 * @param substitute a substitute to the specified expression
+	 * @return the tactic "total domain substitution"
+	 * 
+	 * @since 1.1
+	 */
+	public static ITactic totalDomRewrites(Predicate hyp, IPosition position,
+			Expression substitute) {
+		return TotalDomFacade.getTactic(hyp, position, substitute);
+	}
+
+	/**
+	 * Returns a set of possible total domain substitutions for the given
+	 * expression in the given sequent.
+	 * 
+	 * @param sequent
+	 *            a sequent
+	 * @param expression
+	 *            an expression to substitute
+	 * @return a set of substitutes (empty if none was found)
+	 * 
+	 * @since 1.1
+	 */
+	public static Set<Expression> totalDomGetSubstitutions(
+			IProverSequent sequent, Expression expression) {
+		return TotalDomFacade.getSubstitutions(sequent, expression);
 	}
 
 }
