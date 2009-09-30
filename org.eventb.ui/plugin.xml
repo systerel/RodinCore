@@ -1907,6 +1907,26 @@
             target="goal"
             tooltip="%proofTactic.arithRewrites.tooltip">
       </tactic>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.totalDomHyp"
+            interrupt="true"
+            name="%proofTactic.totalDomHyp.name"
+            priorty="5"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.TotalDomainSubstitution"
+            target="hypothesis"
+            tooltip="%proofTactic.totalDom.tooltip">
+      </tactic>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.totalDomGoal"
+            interrupt="true"
+            name="%proofTactic.totalDomGoal.name"
+            priorty="5"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.TotalDomainSubstitution"
+            target="goal"
+            tooltip="%proofTactic.totalDom.tooltip">
+      </tactic>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
