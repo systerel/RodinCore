@@ -2,29 +2,6 @@
 <?eclipse version="3.2"?>
 <plugin>
 
-   <extension
-         point="org.eclipse.ui.themes">
-         <themeElementCategory label="%eventBPresentation.label" id="org.eventb.eventBKeyboard.presentation"/>
-      <fontDefinition
-            categoryId="org.eventb.eventBKeyboard.presentation"
-            id="org.eventb.eventBKeyboard.textFont"
-            isEditable="true"
-            defaultsTo="org.eventb.eventBKeyboard.braveSansMono"
-            label="%eventBKeyboardFontDefinition.label">
-         <description>
-            %eventBKeyboardFontDefinition.description
-         </description>
-      </fontDefinition>
-      <fontDefinition
-            id="org.eventb.eventBKeyboard.braveSansMono"
-            isEditable="false"
-            label="%eventBKeyboardBraveSansMono.label"
-            value="Brave Sans Mono-regular-10">
-         <description>
-            %eventBKeyboardBraveSansMono.description
-         </description>
-	  </fontDefinition>
-   </extension>
    <extension-point id="translators" name="EventB Keyboard Translators" schema="schema/translators.exsd"/>
    <extension
          point="org.eventb.eventBKeyboard.translators">

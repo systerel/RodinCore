@@ -28,6 +28,6 @@ public class PreferenceConstants {
 	 * @deprecated user {@link org.rodinp.keyboard.preferences.PreferenceConstants#RODIN_MATH_FONT}
 	 */
 	@Deprecated
-	public static final String EVENTB_MATH_FONT = "org.eventb.eventBKeyboard.textFont";
+	public static final String EVENTB_MATH_FONT = org.rodinp.keyboard.preferences.PreferenceConstants.RODIN_MATH_FONT;
 
 }
