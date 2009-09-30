@@ -24,10 +24,10 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.internal.provisional.ui.prover.IPositionApplication;
-import org.eventb.internal.provisional.ui.prover.ITacticApplication;
-import org.eventb.internal.provisional.ui.prover.ITacticProvider2;
-import org.eventb.internal.provisional.ui.prover.TacticProviderUtils;
+import org.eventb.ui.prover.IPositionApplication;
+import org.eventb.ui.prover.ITacticApplication;
+import org.eventb.ui.prover.ITacticProvider2;
+import org.eventb.ui.prover.TacticProviderUtils;
 
 public class TotalDomainSubstitution implements ITacticProvider2 {
 
