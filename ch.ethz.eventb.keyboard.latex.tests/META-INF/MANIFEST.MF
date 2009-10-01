@@ -7,3 +7,4 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: ch.ethz.eventb.keyboard.latex;bundle-version="1.0.0",
  org.rodinp.keyboard.tests;bundle-version="1.0.0"
 Bundle-Vendor: %providerName
+Bundle-Localization: plugin
