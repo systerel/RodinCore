@@ -1042,7 +1042,7 @@ public class RodinTests extends AbstractRodinTest {
 					mSet(
 							"∀r·r∈R⇒nxt(r)∈rtbl∼[{r}] ∖ {lst(r)} ⤖ rtbl∼[{r}] ∖ {fst(r)}",
 							"nxt∈R → (B ⤔ B)"),
-					"∀r·r∈R⇒r∈dom(nxt)∧nxt∼;({r} ◁ nxt)⊆id(ℙ(B × B))∧r∈dom(nxt)∧nxt∼;({r} ◁ nxt)⊆id(ℙ(B × B))",
+					"∀r·r∈R⇒r∈dom(nxt)∧nxt∼;({r} ◁ nxt)⊆id∧r∈dom(nxt)∧nxt∼;({r} ◁ nxt)⊆id",
 					true);
 			doTest(mSet("R ⊆ C"), "r[R] ⊆ r[C]", true);
 			doTest(mSet("a = c"), "a ∈ {c,d}", true);
@@ -1094,7 +1094,7 @@ public class RodinTests extends AbstractRodinTest {
 	public void testBug1840292(){
 		doTest(mList("r3", "ℙ(S×S)", "r2", "ℙ(S×S)", "r", "ℙ(S×S)", "S",
 				"ℙ(S)", "R", "ℙ(ℙ(S×S))"), mSet("R∈ℙ(S ↔ S)", "r∈R", "r∼∈R",
-				"r∩id(S)=∅", "∅∈R", "r3∈S ↔ S", "r2∈S ↔ S"), "(r ∖ r2);r3⊆r3",
+				"r∩id=∅", "∅∈R", "r3∈S ↔ S", "r2∈S ↔ S"), "(r ∖ r2);r3⊆r3",
 				false,
 				2000);
 	}
@@ -1102,7 +1102,7 @@ public class RodinTests extends AbstractRodinTest {
     @Test
 	public void testBug1840292_1(){
 		doTest(mList("r", "ℙ(S×S)", "S", "ℙ(S)", "R", "ℙ(ℙ(S×S))"),
-				mSet("r∼∈ U", "∅∈R", "r∩id(S)=∅"),
+				mSet("r∼∈ U", "∅∈R", "r∩id=∅"),
 				"r = ∅",
 				false,
 				2000);
