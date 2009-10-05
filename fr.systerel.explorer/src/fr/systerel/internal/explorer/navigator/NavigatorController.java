@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.CoolItem;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -65,7 +66,11 @@ public class NavigatorController {
 		}
 
 		public void refresh(final List<IRodinElement> toRefresh) {
-			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+			final Display display = PlatformUI.getWorkbench().getDisplay();
+			if (display.isDisposed()) {
+				return;
+			}
+			display.asyncExec(new Runnable() {
 				public void run() {
 					refreshViewer(toRefresh);
 				}

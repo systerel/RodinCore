@@ -850,6 +850,9 @@ public class EditPage extends EventBEditorPage implements
 
 	private void resourceChangedRefresh(final Map<IRodinElement, Set<IAttributeType>> map) {
 		final Display display = this.getSite().getShell().getDisplay();
+		if (display.isDisposed()) {
+			return;
+		}
 		display.syncExec(new Runnable() {
 			public void run() {
 				toRefreshPrefixMarker = new HashSet<ISectionComposite>();
