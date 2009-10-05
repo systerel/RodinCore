@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            category="org.eventb.ui"
+            class="org.eventb.symboltable.internal.SymbolViewPart"
+            icon="icons/symbol_table.png"
+            id="org.eventb.symboltable.view"
+            name="%symbolViewName"
+            restorable="true">
+      </view>
+   </extension>
+
+</plugin>
