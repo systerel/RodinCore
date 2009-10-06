@@ -37,6 +37,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -853,22 +854,30 @@ public class EditPage extends EventBEditorPage implements
 		if (display.isDisposed()) {
 			return;
 		}
-		display.syncExec(new Runnable() {
-			public void run() {
-				toRefreshPrefixMarker = new HashSet<ISectionComposite>();
-				for (Entry<IRodinElement, Set<IAttributeType>> entry : map
-						.entrySet()) {
-					final IRodinElement key = entry.getKey();
-					final Set<IAttributeType> set = entry.getValue();
-					final ISectionComposite comp = getCompositeTowards(key);
-					if (comp != null) {
-						addToRefreshPrefixMarker(comp);
-						comp.refresh(key, set);
+		try {
+			display.syncExec(new Runnable() {
+				public void run() {
+					toRefreshPrefixMarker = new HashSet<ISectionComposite>();
+					for (Entry<IRodinElement, Set<IAttributeType>> entry : map
+							.entrySet()) {
+						final IRodinElement key = entry.getKey();
+						final Set<IAttributeType> set = entry.getValue();
+						final ISectionComposite comp = getCompositeTowards(key);
+						if (comp != null) {
+							addToRefreshPrefixMarker(comp);
+							comp.refresh(key, set);
+						}
 					}
+					refreshPrefixMarker();
 				}
-				refreshPrefixMarker();
+			});
+		} catch (SWTException e) {
+			if (e.code == SWT.ERROR_DEVICE_DISPOSED) {
+				// do not refresh
+				return;
 			}
-		});
+			throw e;
+		}
 	}
 
 	void refreshPrefixMarker() {

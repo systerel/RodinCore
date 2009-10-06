@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -70,11 +71,19 @@ public class NavigatorController {
 			if (display.isDisposed()) {
 				return;
 			}
-			display.asyncExec(new Runnable() {
-				public void run() {
-					refreshViewer(toRefresh);
+			try {
+				display.asyncExec(new Runnable() {
+					public void run() {
+						refreshViewer(toRefresh);
+					}
+				});
+			} catch (SWTException e) {
+				if (e.code == SWT.ERROR_DEVICE_DISPOSED) {
+					// do not refresh
+					return;
 				}
-			});
+				throw e;
+			}
 		}
 
 		void refreshViewer(List<IRodinElement> toRefresh) {
