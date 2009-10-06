@@ -311,6 +311,9 @@ public class TextEditComposite extends AbstractEditComposite {
 	}
 
 	public void edit(int charStart, int charEnd) {
+		if (text == null) {
+			return;
+		}
 		if (charStart != -1 && charEnd != -1)
 			text.setSelection(charStart, charEnd);
 		else
