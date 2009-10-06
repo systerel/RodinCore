@@ -12,6 +12,8 @@ package org.eventb.ui.eventbeditor.operation.tests;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAxiom;
@@ -314,6 +316,42 @@ public class TestOperation extends OperationTest {
 
 		final ArrayList<Pair<String, String>> invariantCollection = new ArrayList<Pair<String, String>>(
 				Arrays.asList(invariants));
+
+		final AtomicOperation op = OperationFactory.createVariableWizard(mch,
+				"myVariable", invariantCollection, "act1", "myVariable := 1");
+
+		verifyOperation(op, mch, mchElement);
+	}
+
+	@Test
+	public void testCreateVariableWizardNoInit() throws Exception {
+		addElementWithIdentifier(mchElement, IVariable.ELEMENT_TYPE,
+				"myVariable");
+		addInvariant(mchElement, "inv1", "myVariable > 0");
+		addInvariant(mchElement, "inv2", "myVariable < 3");
+
+		InvariantsPair[] invariants = new InvariantsPair[] {
+				new InvariantsPair("inv1", "myVariable > 0"),
+				new InvariantsPair("inv2", "myVariable < 3") };
+
+		final ArrayList<Pair<String, String>> invariantCollection = new ArrayList<Pair<String, String>>(
+				Arrays.asList(invariants));
+
+		final AtomicOperation op = OperationFactory.createVariableWizard(mch,
+				"myVariable", invariantCollection, null, null);
+
+		verifyOperation(op, mch, mchElement);
+	}
+
+	@Test
+	public void testCreateVariableWizardNoInvariant() throws Exception {
+		addElementWithIdentifier(mchElement, IVariable.ELEMENT_TYPE,
+				"myVariable");
+		final Element event = addEventElement(mchElement, "INITIALISATION");
+		addAction(event, "act1", "myVariable := 1");
+
+		final Collection<Pair<String, String>> invariantCollection = Collections
+				.emptyList();
 
 		final AtomicOperation op = OperationFactory.createVariableWizard(mch,
 				"myVariable", invariantCollection, "act1", "myVariable := 1");

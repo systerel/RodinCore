@@ -701,12 +701,27 @@ public class EventBEditorUtils {
 				.getInvariants();
 		final String actName = dialog.getInitActionName();
 		final String actSub = dialog.getInitActionSubstitution();
-		final AtomicOperation operation = OperationFactory
-				.createVariableWizard(editor.getRodinInput(), varName,
-						invariant, actName, actSub);
-		addOperationToHistory(operation, editor);
+		newVariable(editor, varName, invariant, actName, actSub);
 	}
 
+	/**
+	 * Returns a command that creates a new variable with the given invariants
+	 * and initialization.
+	 * 
+	 * @param editor
+	 *            the editor that made the call to this method
+	 * @param varName
+	 *            the name of the created variable
+	 * @param invariant
+	 *            a collection of invariants, possibly empty if no invariants
+	 *            are desired
+	 * @param actName
+	 *            the initialization action label, or <code>null</code> if no
+	 *            initialization is desired
+	 * @param actSub
+	 *            the initialization assignment predicate , or <code>null</code>
+	 *            if no initialization is desired
+	 */
 	public static void newVariable(IEventBEditor<IMachineRoot> editor, String varName,
 			final Collection<Pair<String, String>> invariant, String actName,
 			String actSub) {

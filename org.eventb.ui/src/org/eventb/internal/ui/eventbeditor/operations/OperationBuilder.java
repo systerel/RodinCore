@@ -167,13 +167,36 @@ class OperationBuilder {
 		return cmd;
 	}
 
+	/**
+	 * Returns a command that creates a new variable with the given invariants
+	 * and initialization.
+	 * 
+	 * @param root
+	 *            the root of the machine where the variable is created
+	 * @param varName
+	 *            the name of the created variable
+	 * @param invariant
+	 *            a collection of invariants, possibly empty if no invariants
+	 *            are desired
+	 * @param actName
+	 *            the initialization action label, or <code>null</code> if no
+	 *            initialization is desired
+	 * @param actSub
+	 *            the initialization assignment predicate , or <code>null</code>
+	 *            if no initialization is desired
+	 * @return a command that creates a new variable
+	 */
 	public OperationTree createVariable(IMachineRoot root, String varName,
 			Collection<Pair<String, String>> invariant, String actName,
 			String actSub) {
 		OperationNode cmd = new OperationNode();
 		cmd.addCommand(createVariable(root, varName));
-		cmd.addCommand(createInvariantList(root, invariant));
-		cmd.addCommand(createInitialisation(root, actName, actSub));
+		if (!invariant.isEmpty()) {
+			cmd.addCommand(createInvariantList(root, invariant));
+		}
+		if (actName != null && actSub != null) {
+			cmd.addCommand(createInitialisation(root, actName, actSub));
+		}
 		return cmd;
 	}
 

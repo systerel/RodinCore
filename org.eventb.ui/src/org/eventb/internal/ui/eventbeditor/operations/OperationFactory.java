@@ -106,6 +106,25 @@ public class OperationFactory {
 		return op;
 	}
 
+	/**
+	 * Returns a command that creates a new variable with the given invariants
+	 * and initialization.
+	 * 
+	 * @param root
+	 *            the root of the machine where the variable is created
+	 * @param varName
+	 *            the name of the created variable
+	 * @param invariant
+	 *            a collection of invariants, possibly empty if no invariants
+	 *            are desired
+	 * @param actName
+	 *            the initialization action label, or <code>null</code> if no
+	 *            initialization is desired
+	 * @param actSub
+	 *            the initialization assignment predicate , or <code>null</code>
+	 *            if no initialization is desired
+	 * @return a command that creates a new variable
+	 */
 	public static AtomicOperation createVariableWizard(final IMachineRoot root,
 			final String varName,
 			final Collection<Pair<String, String>> invariant,
@@ -114,7 +133,7 @@ public class OperationFactory {
 		final AtomicOperation op = new AtomicOperation(
 				getRodinFileUndoContext(root), builder.createVariable(root,
 						varName, invariant, actName, actSub));
-		op.setLabel("Create Constant");
+		op.setLabel("Create Variable");
 		return op;
 	}
 

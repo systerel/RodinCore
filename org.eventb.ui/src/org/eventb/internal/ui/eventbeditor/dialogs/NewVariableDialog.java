@@ -252,10 +252,10 @@ public class NewVariableDialog extends EventBDialog {
 	}
 
 	/**
-	 * Get the invariant name.
-	 * <p>
+	 * Get invariants (name and predicate) as input by the user.
 	 * 
-	 * @return the invariant name as input by the user
+	 * @return invariants as a collection of pairs (name, predicate); never
+	 *         <code>null</code>, but might be empty
 	 */
 	public Collection<Pair<String, String>> getInvariants() {
 		return invariantsResult;
@@ -263,14 +263,20 @@ public class NewVariableDialog extends EventBDialog {
 
 	/**
 	 * Get the initialization action.
-	 * <p>
 	 * 
-	 * @return the initialization action as input by the user
+	 * @return the initialization action as input by the user, or
+	 *         <code>null</code> if the action was not modified
 	 */
 	public String getInitActionSubstitution() {
 		return initSubstitutionResult;
 	}
 
+	/**
+	 * Get the initialization action label.
+	 * 
+	 * @return the initialization action label as input by the user, or
+	 *         <code>null</code> if the action label was not modified
+	 */
 	public String getInitActionName() {
 		return initLabelResult;
 	}
