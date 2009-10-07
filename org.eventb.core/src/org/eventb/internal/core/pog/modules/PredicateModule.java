@@ -95,7 +95,7 @@ public abstract class PredicateModule<PE extends ISCPredicateElement> extends Ut
 
 			if (isTheorem) {
 				createProofObligation(targetRoot, poPrefix,
-						predicateElement, predicate, monitor);
+						predicateElement, i, predicate, monitor);
 			}
 
 		}
@@ -103,7 +103,7 @@ public abstract class PredicateModule<PE extends ISCPredicateElement> extends Ut
 	}
 
 	protected void createProofObligation(IPORoot target, String poPrefix,
-			PE predicateElement, Predicate predicate, IProgressMonitor monitor)
+			PE predicateElement, int index, Predicate predicate, IProgressMonitor monitor)
 			throws CoreException {
 		final String poName = poPrefix + "/THM";
 		if (goalIsTrivial(predicate)) {

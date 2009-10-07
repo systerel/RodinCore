@@ -110,41 +110,66 @@ public class FwdMachineEventGuardModule extends PredicateModule<ISCGuard> {
 	@Override
 	protected void createWDProofObligation(
 			IPORoot target, 
-			String poPrefix, 
+			String poPrefix,
 			ISCGuard predicateElement, 
 			Predicate predicate, 
 			int index,
-			boolean isTheorem,
+			boolean isTheorem, 
 			IProgressMonitor monitor) throws CoreException {
-		
-		if (isRedundantWDProofObligation(predicate, index))
+
+		if (isRedundantProofObligation(predicate, index, false))
 			return;
-		
+
 		super.createWDProofObligation(target, poPrefix, predicateElement,
 				predicate, index, isTheorem, monitor);
 	}
-	
-	private boolean isRedundantWDProofObligation(Predicate predicate, int index) {
-		
-		List<IAbstractEventGuardTable> abstractEventGuardTables = 
-			abstractEventGuardList.getAbstractEventGuardTables();
-		
+
+	@Override
+	protected void createProofObligation(
+			IPORoot target, 
+			String poPrefix,
+			ISCGuard predicateElement, 
+			int index, 
+			Predicate predicate,
+			IProgressMonitor monitor) throws CoreException {
+
+		if (isRedundantProofObligation(predicate, index, true))
+			return;
+
+		super.createProofObligation(target, poPrefix, predicateElement, index,
+				predicate, monitor);
+	}
+
+	private boolean isRedundantProofObligation(Predicate predicate, int index,
+			boolean isTheorem) throws CoreException {
+
+		List<IAbstractEventGuardTable> abstractEventGuardTables = abstractEventGuardList
+				.getAbstractEventGuardTables();
+
 		for (IAbstractEventGuardTable abstractEventGuardTable : abstractEventGuardTables) {
-		
-			if (isFreshPOForAbstractGuard(predicate, index, abstractEventGuardTable))
+
+			if (isFreshPOForAbstractGuard(predicate, index,
+					abstractEventGuardTable, isTheorem))
 				continue;
-			
+
 			return true;
 		}
 		return false;
 	}
 
-	private boolean isFreshPOForAbstractGuard(Predicate predicate, int index, IAbstractEventGuardTable abstractEventGuardTable) {
+	private boolean isFreshPOForAbstractGuard(Predicate predicate, int index,
+			IAbstractEventGuardTable abstractEventGuardTable, boolean isTheorem)
+			throws CoreException {
 		int absIndex = abstractEventGuardTable.indexOfPredicate(predicate);
 
 		if (absIndex == -1)
 			return true;
 
+		if (isTheorem
+				&& !abstractEventGuardTable.getElements().get(absIndex)
+						.isTheorem())
+			return true;
+			
 		for (int k=0; k<absIndex; k++) {
 		
 			int indexOfConcrete = abstractEventGuardTable.getIndexOfCorrespondingConcrete(k);

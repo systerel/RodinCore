@@ -15,6 +15,8 @@ package org.eventb.core.tests.pog;
 
 import static org.eventb.core.ast.LanguageVersion.V2;
 
+import java.util.List;
+
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
@@ -352,7 +354,7 @@ public class TestMachineRefines extends EventBPOTest {
 		addInvariants(abs, makeSList("I"), makeSList("A∈ℕ"), false);
 		addEvent(abs, "evt", 
 				makeSList("x"), 
-				makeSList("G1", "G2"), makeSList("1 > x", "x−1∈ℕ"), 
+				makeSList("G1", "G2"), makeSList("1 > x", "x−1∈ℕ"), makeBList(false, true),
 				makeSList("S"), makeSList("A≔A+1"));
 		saveRodinFileOf(abs);
 		
@@ -377,6 +379,7 @@ public class TestMachineRefines extends EventBPOTest {
 		
 		noSequent(po, "evt/G1/REF");
 		noSequent(po, "evt/G2/REF");
+		noSequent(po, "evt/G2/THM");
 		noSequent(po, "evt/S/SIM");
 		
 		sequent= getSequent(po, "evt/J/INV");
@@ -638,7 +641,7 @@ public class TestMachineRefines extends EventBPOTest {
 		addInvariants(abs, makeSList("I1", "I2"), makeSList("A∈ℕ", "B∈ℕ"), false, false);
 		addEvent(abs, "evt", 
 				makeSList("x"), 
-				makeSList("GA", "HA"), makeSList("x>0", "B÷x>0"), 
+				makeSList("GA", "HA"), makeSList("x>0", "B÷x>0"), makeBList(false, true), 
 				makeSList("SA", "TA"), makeSList("A :∣ A'>x", "B ≔ x÷x"));
 		saveRodinFileOf(abs);
 		
@@ -653,6 +656,7 @@ public class TestMachineRefines extends EventBPOTest {
 		containsIdentifiers(apo, "A", "B");
 		
 		getSequent(apo, "evt/HA/WD");
+		getSequent(apo, "evt/HA/THM");
 		getSequent(apo, "evt/SA/FIS");
 		getSequent(apo, "evt/TA/WD");
 		getSequent(apo, "evt/I1/INV");
@@ -662,8 +666,7 @@ public class TestMachineRefines extends EventBPOTest {
 		containsIdentifiers(cpo, "A", "B");
 		
 		// no sequents!
-		
-		getSequents(cpo);
+		getExactSequents(cpo);
 	}
 	
 	/*
@@ -1475,6 +1478,90 @@ public class TestMachineRefines extends EventBPOTest {
 		
 		IPORoot po = ref.getPORoot();
 		noSequent(po, "evt/MRG");
+	}
+	
+	/*
+	 * PO filter: the POG should not generate THM POs for guards when these
+	 * conditions have already been proved for the abstract event
+	 */
+	public void testRefines_27() throws Exception {
+		IMachineRoot abs = createMachine("abs");
+		addEvent(abs, "evt", 
+				makeSList(), 
+				makeSList("G","H"), makeSList("min(ℕ)∈ℕ","0 ≤ min({0})"), 
+				makeBList(false,true), 
+				makeSList(), makeSList());
+		saveRodinFileOf(abs);
+		
+		IMachineRoot ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		IEvent event = addEvent(ref, "evt", 
+				makeSList(), 
+				makeSList("G","H","K"), makeSList("min(ℕ)∈ℕ","0 ≤ min({0})","2 > 1"), 
+				makeBList(false,true,false),
+				makeSList(), makeSList());
+		addEventRefines(event, "evt");
+		saveRodinFileOf(ref);
+		runBuilder();
+		
+		IPORoot po = ref.getPORoot();
+		getExactSequents(po);
+	}
+	
+	/*
+	 * PO filter: the POG should generate THM POs for guards when these
+	 * conditions have not been proved for the abstract event
+	 */
+	public void testRefines_28() throws Exception {
+		IMachineRoot abs = createMachine("abs");
+		addEvent(abs, "evt", 
+				makeSList(), 
+				makeSList("G","H","K"), makeSList("min(ℕ)∈ℕ","0 ≤ min({0})","2 > 1"), 
+				makeBList(false,true,true), 
+				makeSList(), makeSList());
+		saveRodinFileOf(abs);
+		
+		IMachineRoot ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		IEvent event = addEvent(ref, "evt", 
+				makeSList(), 
+				makeSList("G","K"), makeSList("min(ℕ)∈ℕ","2 > 1"), 
+				makeBList(false,true),
+				makeSList(), makeSList());
+		addEventRefines(event, "evt");
+		saveRodinFileOf(ref);
+		runBuilder();
+		
+		IPORoot po = ref.getPORoot();
+		getExactSequents(po, "evt/K/THM");
+	}
+	
+	/*
+	 * PO filter: the POG should generate THM POs for guards when these
+	 * conditions have not been proved for the abstract event
+	 */
+	public void testRefines_29() throws Exception {
+		IMachineRoot abs = createMachine("abs");
+		addEvent(abs, "evt", 
+				makeSList(), 
+				makeSList("G","H"), makeSList("min(ℕ)∈ℕ","0 ≤ min({0})"), 
+				makeBList(false,false), 
+				makeSList(), makeSList());
+		saveRodinFileOf(abs);
+		
+		IMachineRoot ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		IEvent event = addEvent(ref, "evt", 
+				makeSList(), 
+				makeSList("G","H","K"), makeSList("min(ℕ)∈ℕ","0 ≤ min({0})","2 > 1"), 
+				makeBList(false,true,false),
+				makeSList(), makeSList());
+		addEventRefines(event, "evt");
+		saveRodinFileOf(ref);
+		runBuilder();
+		
+		IPORoot po = ref.getPORoot();
+		getExactSequents(po, "evt/H/THM");
 	}
 
 }

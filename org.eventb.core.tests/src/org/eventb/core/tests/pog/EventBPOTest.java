@@ -136,10 +136,15 @@ public abstract class EventBPOTest extends EventBTest {
 		return sequent;
 	}
 	
+	public List<IPOSequent> getExactSequents(IPORoot root, String... strings)
+			throws RodinDBException {
+		assertEquals(strings.length, root.getSequents().length);
+		return getSequents(root, strings);
+	}
 		
 	public void noSequent(IPORoot root, String name) {
 		IPOSequent sequent = root.getInternalElement(IPOSequent.ELEMENT_TYPE, name);
-		
+
 		assertFalse("sequent should not exist", sequent.exists());
 	}
 	
