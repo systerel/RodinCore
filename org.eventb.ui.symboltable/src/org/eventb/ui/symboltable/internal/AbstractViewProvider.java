@@ -10,7 +10,7 @@
  *     Heinrich Heine Universitaet Duesseldorf - initial API and implementation
  *******************************************************************************/
 
-package org.eventb.symboltable.internal;
+package org.eventb.ui.symboltable.internal;
 
 import java.text.MessageFormat;
 

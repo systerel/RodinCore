@@ -13,6 +13,7 @@
 <project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/org.eventb.pp,org.eventb.pp"/>
 <project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/org.eventb.pp.ui,org.eventb.pp.ui"/>
 <project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/org.eventb.pptrans,org.eventb.pptrans"/>
+<project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/org.eventb.ui.symboltable,org.eventb.ui.symboltable"/>
 <project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/org.eventb.ui,org.eventb.ui"/>
 <project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/org.rodinp,org.rodinp"/>
 <project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/org.rodinp-feature,org.rodinp-feature"/>

@@ -10,7 +10,7 @@
  *     Heinrich Heine Universitaet Duesseldorf - initial API and implementation
  *******************************************************************************/
 
-package org.eventb.symboltable.internal;
+package org.eventb.ui.symboltable.internal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.ExpandBar;
 import org.eclipse.swt.widgets.ExpandItem;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eventb.symboltable.internal.Symbol.Category;
+import org.eventb.ui.symboltable.internal.Symbol.Category;
 
 public class CategorizedViewProvider extends AbstractViewProvider implements
 		IViewProvider {

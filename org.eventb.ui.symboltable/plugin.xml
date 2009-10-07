@@ -6,9 +6,9 @@
       <view
             allowMultiple="false"
             category="org.eventb.ui"
-            class="org.eventb.symboltable.internal.SymbolViewPart"
+            class="org.eventb.ui.symboltable.internal.SymbolViewPart"
             icon="icons/symbol_table.png"
-            id="org.eventb.symboltable.view"
+            id="org.eventb.ui.symboltable.view"
             name="%symbolViewName"
             restorable="true">
       </view>

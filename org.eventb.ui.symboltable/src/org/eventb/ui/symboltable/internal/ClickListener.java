@@ -11,7 +11,7 @@
  *     Systerel - used Eclipse Command Framework
  *******************************************************************************/
 
-package org.eventb.symboltable.internal;
+package org.eventb.ui.symboltable.internal;
 
 import java.util.HashMap;
 
@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eventb.symboltable.SymbolTablePlugin;
+import org.eventb.ui.symboltable.SymbolTablePlugin;
 
 public class ClickListener implements MouseListener {
 

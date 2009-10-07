@@ -11,7 +11,7 @@
  *     Systerel - used Eclipse Command Framework
  *******************************************************************************/
 
-package org.eventb.symboltable.internal;
+package org.eventb.ui.symboltable.internal;
 
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.swt.widgets.Composite;

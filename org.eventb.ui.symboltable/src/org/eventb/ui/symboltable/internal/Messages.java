@@ -8,12 +8,12 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.symboltable.internal;
+package org.eventb.ui.symboltable.internal;
 
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eventb.symboltable.internal.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eventb.ui.symboltable.internal.messages"; //$NON-NLS-1$
 
 	public static String view_tooltip;
 
