@@ -1,11 +1,26 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - corrected: hid original hyp and added notImpRight hypothesis
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import java.util.Arrays;
-import java.util.HashSet;
+import static java.util.Collections.singleton;
+import static org.eventb.core.seqprover.ProverFactory.makeHideHypAction;
+
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
@@ -28,9 +43,10 @@ import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
  *
  */
 // TODO : Rename to impEcontrapositive to be uniform with impE
-public class ModusTollens extends HypothesisReasoner {
+public class ModusTollens extends HypothesisReasoner implements IVersionedReasoner {
 
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".mt";
+	private static final int VERSION = 0;
 
 	public String getReasonerID() {
 		return REASONER_ID;
@@ -49,20 +65,21 @@ public class ModusTollens extends HypothesisReasoner {
 					"Hypothesis is not an implication: " + pred);
 		}
 
+		final IHypAction hideHypAction = makeHideHypAction(singleton(pred));
 		final Predicate notImpRight = Lib.makeNeg(Lib.impRight(pred));
 		final Predicate notImpLeft = Lib.makeNeg(Lib.impLeft(pred));
+		final Set<Predicate> addedHyps = new LinkedHashSet<Predicate>();
+		addedHyps.addAll(Lib.breakPossibleConjunct(notImpRight));
+		addedHyps.addAll(Lib.breakPossibleConjunct(notImpLeft));
 		
-		final Set<Predicate> addedHyps = Lib.breakPossibleConjunct(notImpLeft);
-		Set<Predicate> deselectedHyps = new HashSet<Predicate>();
-		deselectedHyps.add(pred);
 		return new IAntecedent[] {
 				ProverFactory.makeAntecedent(
 						notImpRight,null,
-						ProverFactory.makeDeselectHypAction(Arrays.asList(pred))),
+						hideHypAction),
 				ProverFactory.makeAntecedent(
 						null,
 						addedHyps,
-						ProverFactory.makeDeselectHypAction(deselectedHyps))
+						hideHypAction)
 		};
 
 	}
@@ -75,6 +92,10 @@ public class ModusTollens extends HypothesisReasoner {
 	@Override
 	protected boolean isGoalDependent(IProverSequent sequent, Predicate pred) {
 		return false;
+	}
+
+	public int getVersion() {
+		return VERSION;
 	}
 
 }

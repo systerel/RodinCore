@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - corrected: hid original hyp and added notImpRight hypothesis
+ *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
 
@@ -28,7 +39,7 @@ public class ModusTollensTests extends AbstractReasonerTests {
 				new SuccessfullReasonerApplication(
 						TestLib.genSeq("  1∈P ⇒ 2∈P  |- 3∈P "),
 						new HypothesisReasoner.Input(TestLib.genPred("1∈P ⇒ 2∈P")),
-						"[{P=ℙ(ℤ)}[][1∈P⇒2∈P][] |- ¬2∈P, {P=ℙ(ℤ)}[][1∈P⇒2∈P][¬1∈P] |- 3∈P]"
+						"[{P=ℙ(ℤ)}[1∈P⇒2∈P][][] |- ¬2∈P, {P=ℙ(ℤ)}[1∈P⇒2∈P][][¬2∈P, ¬1∈P] |- 3∈P]"
 						)
 		};
 	}
