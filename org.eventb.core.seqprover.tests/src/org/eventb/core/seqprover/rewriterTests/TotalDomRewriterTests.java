@@ -73,14 +73,17 @@ public class TotalDomRewriterTests {
 		// total injection
 		doValidTest("↣");
 
+		// total surjection
+		doValidTest("↠");
+		
 		// total bijection
 		doValidTest("⤖");
 
 		// total relation
 		doValidTest("");
 
-		// total surjection
-		doValidTest("↠");
+		// total surjective relation
+		doValidTest("");
 	}
 
 	private static void doValidTest(String arrow) {
@@ -120,9 +123,6 @@ public class TotalDomRewriterTests {
 
 		// surjective relation
 		doInvalidTest("");
-
-		// total surjective relation
-		doInvalidTest("");
 
 		// partial function
 		doInvalidTest("⇸");

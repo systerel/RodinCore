@@ -29,22 +29,24 @@ import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
+import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
-public class TotalDomRewrites implements IReasoner {
+public class TotalDomRewrites implements IVersionedReasoner {
 
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".totalDom";
-
+	private static final int VERSION = 0;
+	
 	public static class Input implements IReasonerInput {
 		public static final String POSITION_KEY = "pos";
 		public static final String SUBSTITUTE_KEY = "subst";
@@ -87,6 +89,11 @@ public class TotalDomRewrites implements IReasoner {
 		return REASONER_ID;
 	}
 
+	public int getVersion() {
+		return VERSION;
+	}
+
+	@ProverRule("DERIV_DOM_TOTALREL")
 	public IReasonerOutput apply(IProverSequent seq,
 			IReasonerInput reasonerInput, IProofMonitor pm) {
 

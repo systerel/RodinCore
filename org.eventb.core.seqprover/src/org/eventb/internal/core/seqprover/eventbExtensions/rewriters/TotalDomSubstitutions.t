@@ -92,7 +92,7 @@ public class TotalDomSubstitutions {
 			}
 			
 			/**
-	         * Total injective function
+	         * Total injection
 	         */
 			In(left,Tinj(left1,_))->
 			{
@@ -100,7 +100,7 @@ public class TotalDomSubstitutions {
 			}
 			
 			/**
-	         * Total surjective function
+	         * Total surjection
 	         */
 			In(left,Tsur(left1,_))->
 			{
@@ -108,7 +108,7 @@ public class TotalDomSubstitutions {
 			}
 
 			/**
-	         * Bijective function
+	         * Bijection
 	         */
 			In(left,Tbij(left1,_))->
 			{
@@ -122,6 +122,15 @@ public class TotalDomSubstitutions {
 			{
 						addSubstitution(`left, `left1);
 			}
+            
+            /**
+             * Total surjective relation
+             */
+            In(left,Strel(left1,_))->
+            {
+                        addSubstitution(`left, `left1);
+            }
+            
 			}
 	} 
 	
