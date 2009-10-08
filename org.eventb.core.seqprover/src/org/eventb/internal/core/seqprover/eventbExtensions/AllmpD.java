@@ -8,10 +8,13 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - deselect WD predicate and used hypothesis
+ *     Systerel - deselect WD pred and used hyp in 2 first antecedents (ver 0)
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import java.util.HashSet;
+import static java.util.Collections.singleton;
+import static org.eventb.core.seqprover.ProverFactory.makeDeselectHypAction;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -23,9 +26,11 @@ import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
+import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 
@@ -39,14 +44,19 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
  * @author Farhad Mehta
  *
  */
-public class AllmpD extends AllD {
+public class AllmpD extends AllD implements IVersionedReasoner {
 	
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".allmpD";
+	private static final int VERSION = 0;
 		
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
 	
+	public int getVersion() {
+		return VERSION;
+	}
+
 	@ProverRule("FORALL_INST_MP")
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput, IProofMonitor pm){
 	
@@ -109,34 +119,37 @@ public class AllmpD extends AllD {
 		IAntecedent[] anticidents = new IAntecedent[3];
 
 		// Well definedness condition
-		anticidents[0] = ProverFactory.makeAntecedent(Lib.makeConj(WDpreds));
-
+		{
+			final ISelectionHypAction deselect = makeDeselectHypAction(singleton(univHyp));
+			anticidents[0] = ProverFactory.makeAntecedent(
+					Lib.makeConj(WDpreds), null, deselect);
+		}
 		// The instantiated to impLeft goal
 		{
-			final Set<Predicate> addedHyps = new LinkedHashSet<Predicate>();
-			addedHyps.addAll(WDpreds);
-
+			final Set<Predicate> addedHyps = new LinkedHashSet<Predicate>(WDpreds);
+			final Set<Predicate> toDeselect = new LinkedHashSet<Predicate>(WDpreds);
+			toDeselect.add(univHyp);
+			final ISelectionHypAction deselect = makeDeselectHypAction(toDeselect);
 			anticidents[1] = ProverFactory.makeAntecedent(
 					impLeft,
 					addedHyps,
-					ProverFactory.makeDeselectHypAction(WDpreds)
+					deselect
 			);
 		}
 
 		// The instantiated continuation
 		{
-			final Set<Predicate> addedHyps = new LinkedHashSet<Predicate>();
-			addedHyps.addAll(WDpreds);
+			final Set<Predicate> addedHyps = new LinkedHashSet<Predicate>(WDpreds);
 			addedHyps.addAll(Lib.breakPossibleConjunct(impRight));
 
-			final Set<Predicate> toDeselect = new HashSet<Predicate>();
+			final Set<Predicate> toDeselect = new LinkedHashSet<Predicate>(WDpreds);
 			toDeselect.add(univHyp);
-			toDeselect.addAll(WDpreds);
 
+			final ISelectionHypAction deselect = makeDeselectHypAction(toDeselect);
 			anticidents[2] = ProverFactory.makeAntecedent(
 					null,
 					addedHyps,
-					ProverFactory.makeDeselectHypAction(toDeselect)
+					deselect
 			);
 		}
 		
