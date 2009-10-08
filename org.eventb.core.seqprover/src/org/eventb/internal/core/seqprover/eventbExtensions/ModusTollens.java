@@ -7,11 +7,14 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     Systerel - corrected: hid original hyp and added notImpRight hypothesis
+ *     Systerel - corrected: hid original hyp, added notImpRight hyp (ver 0)
+ *     Systerel - visibility: deselected notImpRight hyp (ver 1)
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
+import static org.eventb.core.seqprover.ProverFactory.makeDeselectHypAction;
 import static org.eventb.core.seqprover.ProverFactory.makeHideHypAction;
 
 import java.util.LinkedHashSet;
@@ -46,7 +49,7 @@ import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 public class ModusTollens extends HypothesisReasoner implements IVersionedReasoner {
 
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".mt";
-	private static final int VERSION = 0;
+	private static final int VERSION = 1;
 
 	public String getReasonerID() {
 		return REASONER_ID;
@@ -65,22 +68,36 @@ public class ModusTollens extends HypothesisReasoner implements IVersionedReason
 					"Hypothesis is not an implication: " + pred);
 		}
 
+		// Generate the antecedents
+		final IAntecedent[] antecedents = new IAntecedent[2];
+
+		
 		final IHypAction hideHypAction = makeHideHypAction(singleton(pred));
 		final Predicate notImpRight = Lib.makeNeg(Lib.impRight(pred));
 		final Predicate notImpLeft = Lib.makeNeg(Lib.impLeft(pred));
-		final Set<Predicate> addedHyps = new LinkedHashSet<Predicate>();
-		addedHyps.addAll(Lib.breakPossibleConjunct(notImpRight));
-		addedHyps.addAll(Lib.breakPossibleConjunct(notImpLeft));
 		
-		return new IAntecedent[] {
-				ProverFactory.makeAntecedent(
-						notImpRight,null,
-						hideHypAction),
-				ProverFactory.makeAntecedent(
-						null,
-						addedHyps,
-						hideHypAction)
-		};
+		// notImpRight goal
+		antecedents[0] = ProverFactory.makeAntecedent(
+				notImpRight,
+				null,
+				hideHypAction);
+		
+		// continuation
+		final Set<Predicate> notImpRightPreds = Lib.breakPossibleConjunct(notImpRight);
+		final Set<Predicate> notImpLeftPreds = Lib.breakPossibleConjunct(notImpLeft);
+		
+		final Set<Predicate> addedHyps = new LinkedHashSet<Predicate>();
+		addedHyps.addAll(notImpRightPreds);
+		addedHyps.addAll(notImpLeftPreds);
+		final IHypAction deselect = makeDeselectHypAction(notImpRightPreds);
+
+		antecedents[1] = ProverFactory.makeAntecedent(
+				null,
+				addedHyps,
+				null,
+				asList(hideHypAction, deselect));
+		
+		return antecedents;
 
 	}
 

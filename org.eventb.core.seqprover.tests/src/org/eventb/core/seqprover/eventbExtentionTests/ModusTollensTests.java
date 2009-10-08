@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - corrected: hid original hyp and added notImpRight hypothesis
+ *     Systerel - visibility: deselected notImpRight hypothesis
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
@@ -39,7 +40,7 @@ public class ModusTollensTests extends AbstractReasonerTests {
 				new SuccessfullReasonerApplication(
 						TestLib.genSeq("  1∈P ⇒ 2∈P  |- 3∈P "),
 						new HypothesisReasoner.Input(TestLib.genPred("1∈P ⇒ 2∈P")),
-						"[{P=ℙ(ℤ)}[1∈P⇒2∈P][][] |- ¬2∈P, {P=ℙ(ℤ)}[1∈P⇒2∈P][][¬2∈P, ¬1∈P] |- 3∈P]"
+						"[{P=ℙ(ℤ)}[1∈P⇒2∈P][][] |- ¬2∈P, {P=ℙ(ℤ)}[1∈P⇒2∈P][¬2∈P][¬1∈P] |- 3∈P]"
 						)
 		};
 	}
