@@ -1,14 +1,27 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - hide original predicate (ver 0)
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import org.eventb.core.ast.IFormulaRewriter;
+import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.SequentProver;
 
-public class TypeRewrites extends AbstractAutoRewrites {
+public class TypeRewrites extends AbstractAutoRewrites implements IVersionedReasoner {
 	
 	private static final IFormulaRewriter rewriter = new TypeRewriterImpl();
+	private static final int VERSION = 0;
 	
 	public TypeRewrites() {
-		super(rewriter, false);
+		super(rewriter, true);
 	}
 
 	public static String REASONER_ID = SequentProver.PLUGIN_ID
@@ -21,6 +34,10 @@ public class TypeRewrites extends AbstractAutoRewrites {
 	@Override
 	protected String getDisplayName() {
 		return "type rewrites";
+	}
+
+	public int getVersion() {
+		return VERSION;
 	}
 
 }
