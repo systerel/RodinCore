@@ -78,6 +78,10 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		// Default values for borders and colors and fonts
 		store.setDefault(PreferenceConstants.P_BORDER_ENABLE, true);
 		
+		// Default value consider hidden hypotheses
+		store.setDefault(PreferenceConstants.P_CONSIDER_HIDDEN_HYPOTHESES,
+				false);
+		
 		PreferenceConverter.setDefault(store,
 				PreferenceConstants.P_TEXT_FOREGROUND, EventBSharedColor
 						.getSystemColor(SWT.COLOR_DARK_GREEN).getRGB());

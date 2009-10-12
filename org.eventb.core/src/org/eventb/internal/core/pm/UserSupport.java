@@ -15,6 +15,7 @@ package org.eventb.internal.core.pm;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -30,6 +31,7 @@ import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportInformation;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProofTreeNodeFilter;
+import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.internal.core.ProofMonitor;
@@ -383,8 +385,12 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	public void searchHyps(String token) {
 		checkCurrentPS();
 		token = token.trim();
-		final Set<Predicate> hyps = ProverLib.hypsTextSearch(currentPS
-				.getCurrentNode().getSequent(), token);
+		final IProverSequent sequent = currentPS.getCurrentNode().getSequent();
+		final Set<Predicate> hyps = ProverLib.hypsTextSearch(sequent, token);
+		final boolean considerHiddenHyps = manager.isConsiderHiddenHypotheses();
+		if (!considerHiddenHyps) {
+			removeHiddenHyps(hyps, sequent);
+		}
 		manager.run(new Runnable() {
 			public void run() {
 				currentPS.setSearched(hyps);
@@ -393,6 +399,17 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 								IUserSupportInformation.MAX_PRIORITY));
 			}
 		});
+	}
+
+	private static void removeHiddenHyps(Set<Predicate> hyps,
+			IProverSequent sequent) {
+		final Iterator<Predicate> iter = hyps.iterator();
+		while (iter.hasNext()) {
+			final Predicate hyp = iter.next();
+			if (sequent.isHidden(hyp)) {
+				iter.remove();
+			}
+		}
 	}
 
 	public void removeSearchedHypotheses(final Collection<Predicate> hyps) {

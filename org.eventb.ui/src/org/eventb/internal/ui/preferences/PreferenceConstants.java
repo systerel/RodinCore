@@ -131,5 +131,10 @@ public class PreferenceConstants {
 	 */
 	public static final String P_BOX_BORDER_COLOR = "Box border color";
 
+	/**
+	 * Preference key for considering hidden hypotheses in search
+	 */
+	public static final String P_CONSIDER_HIDDEN_HYPOTHESES = "Consider hidden hypotheses in search";
+
 
 }

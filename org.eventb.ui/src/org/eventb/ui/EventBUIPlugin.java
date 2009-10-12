@@ -212,6 +212,11 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 		b = EventBPreferenceStore
 				.getBooleanPreference(PreferenceConstants.P_AUTOTACTIC_ENABLE);
 		autoTacticPreference.setEnabled(b);
+		
+		// Initialize consider hidden hyps
+		b = EventBPreferenceStore
+				.getBooleanPreference(PreferenceConstants.P_CONSIDER_HIDDEN_HYPOTHESES);
+		EventBPlugin.getUserSupportManager().setConsiderHiddenHypotheses(b);
 	}
 
 	/**

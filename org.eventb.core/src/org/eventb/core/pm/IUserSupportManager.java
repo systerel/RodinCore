@@ -114,4 +114,14 @@ public interface IUserSupportManager {
 	 */
 	public void run(Runnable op) throws RodinDBException;
 
+	/**
+	 * Sets whether or not to consider hidden hypotheses in search results.
+	 * 
+	 * @param value
+	 *            <code>true</code> to include hidden hypotheses in search
+	 *            results, <code>false</code> otherwise
+	 * @since 1.1
+	 */
+	void setConsiderHiddenHypotheses(boolean value);
+
 }

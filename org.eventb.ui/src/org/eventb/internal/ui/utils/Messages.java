@@ -92,6 +92,7 @@ public final class Messages {
 	public static String preferencepage_posttactic_selectedtacticsdescription;
 	public static String preferencepage_eventb_description;
 	public static String preferencepage_provingui_description;
+	public static String preferencepage_provingui_considerHiddenHypotheses;
 	public static String preferencepage_seqprover_description;
 	public static String preferencepage_twolistselectioneditor_availablelabel;
 	public static String preferencepage_twolistselectioneditor_selectedlabel;

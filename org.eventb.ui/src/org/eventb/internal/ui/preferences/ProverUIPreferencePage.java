@@ -11,9 +11,11 @@
  ******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eventb.core.EventBPlugin;
 import org.eventb.internal.ui.utils.Messages;
 
 /**
@@ -33,6 +35,8 @@ import org.eventb.internal.ui.utils.Messages;
 public class ProverUIPreferencePage extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
 
+	private BooleanFieldEditor considerHiddenHypsEditor;
+
 	/**
 	 * Constructor.
 	 */
@@ -49,7 +53,10 @@ public class ProverUIPreferencePage extends FieldEditorPreferencePage implements
 	 */
 	@Override
 	public void createFieldEditors() {
-		// Do nothing at the moment.
+		considerHiddenHypsEditor = new BooleanFieldEditor(PreferenceConstants.P_CONSIDER_HIDDEN_HYPOTHESES,
+				Messages.preferencepage_provingui_considerHiddenHypotheses,
+				getFieldEditorParent());
+		addField(considerHiddenHypsEditor);
 	}
 
 	/* (non-Javadoc)
@@ -59,4 +66,10 @@ public class ProverUIPreferencePage extends FieldEditorPreferencePage implements
 		// Do nothing.
 	}
 	
+	@Override
+	public boolean performOk() {
+		EventBPlugin.getUserSupportManager().setConsiderHiddenHypotheses(
+				considerHiddenHypsEditor.getBooleanValue());
+		return super.performOk();
+	}
 }

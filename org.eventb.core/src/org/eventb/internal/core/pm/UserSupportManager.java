@@ -29,6 +29,8 @@ public class UserSupportManager implements IUserSupportManager {
 	private static UserSupportManager instance;
 	
 	private DeltaProcessor deltaProcessor;
+
+	private boolean considerHiddenHypotheses = false;
 	
 	private UserSupportManager() {
 		// Singleton: Private default constructor
@@ -111,5 +113,11 @@ public class UserSupportManager implements IUserSupportManager {
 		deltaProcessor.fireDeltas();
 	}
 
+	public void setConsiderHiddenHypotheses(boolean value) {
+		this.considerHiddenHypotheses  = value;
+	}
 
+	public boolean isConsiderHiddenHypotheses() {
+		return considerHiddenHypotheses;
+	}
 }
