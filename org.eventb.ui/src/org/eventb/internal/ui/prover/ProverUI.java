@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - Added a constant for the user support manager
  *     Systerel - separation of file and root element
+ *     Systerel - handled user support saving state
  ******************************************************************************/
 package org.eventb.internal.ui.prover;
 
@@ -299,6 +300,7 @@ public class ProverUI extends EventBFormEditor implements
 			final IProofState[] results = new IProofState[length];
 			System.arraycopy(objects, 0, results, 0, length);
 
+			userSupport.setSaving(true);
 			try {
 				RodinCore.run(new IWorkspaceRunnable() {
 					public void run(IProgressMonitor pm) throws RodinDBException {
@@ -308,6 +310,8 @@ public class ProverUI extends EventBFormEditor implements
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} finally {
+				userSupport.setSaving(false);
 			}
 		}
 		saving = false;

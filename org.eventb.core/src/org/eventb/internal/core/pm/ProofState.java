@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - refactored for using the Proof Manager API
  *     Systerel - added proof simplification on commit
+ *     Systerel - removed post-tactics call when saving
  ******************************************************************************/
 package org.eventb.internal.core.pm;
 
@@ -141,7 +142,7 @@ public class ProofState implements IProofState {
 				
 				ProofState.this.newProofTree();
 				
-				if (!pt.getRoot().isClosed()) {
+				if (!pt.getRoot().isClosed() && !userSupport.isSaving()) {
 					// Run Post tactic at the root of the tree
 					IAutoTacticPreference postTacticPreference = EventBPlugin
 							.getPostTacticPreference();

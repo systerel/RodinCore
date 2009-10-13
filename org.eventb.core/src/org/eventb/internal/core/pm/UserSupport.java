@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - refactored for using the Proof Manager API
  *     Systerel - added missing cleanup in dispose() and refresh()
  *     Systerel - separation of file and root element
+ *     Systerel - added saving state
  ******************************************************************************/
 package org.eventb.internal.core.pm;
 
@@ -512,6 +513,8 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	}
 
 	UserSupportDeltaProcessor usDeltaProcessor;
+
+	private boolean saving = false;
 	
 	public void elementChanged(final ElementChangedEvent event) {
 		final IProgressMonitor monitor = new NullProgressMonitor();
@@ -630,5 +633,13 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 	public IProofComponent getProofComponent() {
 		return pc;
+	}
+
+	public void setSaving(boolean saving) {
+		this.saving = saving;
+	}
+	
+	public boolean isSaving() {
+		return saving ;
 	}
 }
