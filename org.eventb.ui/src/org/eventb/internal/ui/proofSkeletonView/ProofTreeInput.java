@@ -18,15 +18,24 @@ import org.eventb.core.seqprover.IProofTree;
  *
  */
 public class ProofTreeInput implements IViewerInput {
-	final IProofTree proofTree;
+
+	private final IProofTree proofTree;
 	
-	public ProofTreeInput(IProofTree proofTree) {
+	private final String tooltip;
+	
+	public ProofTreeInput(IProofTree proofTree, String tooltip) {
 		this.proofTree = proofTree;
+		this.tooltip = tooltip;
 	}
 
 
 	public Object[] getElements() {
 		return new Object[] {proofTree.getRoot()};
+	}
+
+
+	public String getTitleTooltip() {
+		return tooltip;
 	}
 
 }

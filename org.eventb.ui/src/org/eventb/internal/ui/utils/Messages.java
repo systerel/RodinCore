@@ -13,6 +13,7 @@
  *     Systerel - replaced inherited by extended
  *     Systerel - added messages for Proof Simplification
  *     Systerel - added messages for Dialogs
+ *     Systerel - added messages for Proof Skeleton
  *******************************************************************************/
 package org.eventb.internal.ui.utils;
 
@@ -141,6 +142,10 @@ public final class Messages {
 	public static String proofskeleton_pendingnode;
 	public static String proofskeleton_copy_title;
 	public static String proofskeleton_copy_toolTip;
+	public static String proofskeleton_buildfailed;
+	public static String proofskeleton_editedtree;
+	public static String proofskeleton_savedproof;
+	public static String proofskeleton_proofdoesnotexist;
 
 	// Proof Simplification
 	public static String proofSimplification_fetchingProofs;

@@ -17,5 +17,18 @@ package org.eventb.internal.ui.proofSkeletonView;
  */
 public interface IViewerInput {
 
+	/**
+	 * Returns the elements to be used by the viewer's content provider.
+	 * 
+	 * @return an array of objects
+	 */
 	Object[] getElements();
+
+	
+	/**
+	 * Returns the title tooltip to display.
+	 * 
+	 * @return a String, or <code>null</code> to clear tooltip
+	 */
+	String getTitleTooltip();
 }

@@ -12,6 +12,7 @@ package org.eventb.internal.ui.proofSkeletonView;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
@@ -19,7 +20,21 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eventb.core.IPRProof;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
+import org.eventb.core.seqprover.IProofTree;
+import org.eventb.core.seqprover.IProofTreeChangedListener;
+import org.eventb.core.seqprover.IProofTreeDelta;
+import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.internal.ui.utils.Messages;
+import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IElementChangedListener;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinElementDelta;
+import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Nicolas Beauger
@@ -27,11 +42,169 @@ import org.eventb.core.IPSStatus;
  */
 public class InputManager implements IPartListener2, ISelectionListener {
 
-	private final ProofSkeletonView view;
+	private static abstract class InputMaker<T> {
+		protected final InputManager manager;
+		protected final T selection;
+		
+		public InputMaker(InputManager manager, T selection) {
+			this.manager = manager;
+			this.selection = selection;
+		}
+
+		public T getSelection() {
+			return selection;
+		}
+		
+		public abstract IViewerInput makeInput();
+		
+		public abstract void addInputChangedListener();
+		
+		public abstract void removeInputChangedListener();
+	}
+
+	private static class DefaultInputMaker extends InputMaker<Object> {
+		
+		public DefaultInputMaker() {
+			super(null, new Object());
+		}
+
+		@Override
+		public IViewerInput makeInput() {
+			return DefaultInput.getDefault();
+		}
+
+		@Override
+		public void addInputChangedListener() {
+			// nothing to do
+		}
+
+		@Override
+		public void removeInputChangedListener() {
+			// nothing to do
+		}
+	}
+	
+	private static class StatusInputMaker extends InputMaker<IPSStatus> {
+	
+		public StatusInputMaker(InputManager manager, IPSStatus status) {
+			super(manager, status);
+		}
+		
+		private final IElementChangedListener statusListener = new IElementChangedListener() {
+			public void elementChanged(ElementChangedEvent event) {
+				reloadIfInputChanged(event.getDelta());
+			}
+		};
+		
+		void reloadIfInputChanged(IRodinElementDelta delta) {
+			final IRodinElementDelta statusDelta = getStatusDelta(delta, selection);
+			if (statusDelta == null) {
+				// not concerned by delta
+				return;
+			}
+			if (statusDelta.getKind() == IRodinElementDelta.REMOVED) {
+				// the status has been removed
+				manager.setViewInput(new DefaultInputMaker());
+			} else {
+				// the status has been updated
+				manager.setViewInput(this);
+			}
+		}
+		
+		// returns the child delta that concerns the given status
+		// or null if not found
+		private static IRodinElementDelta getStatusDelta(
+				IRodinElementDelta delta, IPSStatus status) {
+			final IRodinElement element = delta.getElement();
+			if (element.isRoot()
+					&& element.getElementType() != IPSRoot.ELEMENT_TYPE) {
+				return null;
+			}
+			if (status.equals(element)) {
+				return delta;
+			} else {
+				final IRodinElementDelta[] childred = delta
+						.getAffectedChildren();
+				for (IRodinElementDelta child : childred) {
+					final IRodinElementDelta found = getStatusDelta(child,
+							status);
+					if (found != null) {
+						return found;
+					}
+				}
+				return null;
+			}
+		}
+
+		@Override
+		public IViewerInput makeInput() {
+			final IPRProof proof = selection.getProof();
+			if (!proof.exists()) {
+				return new ProofErrorInput(proof,
+						Messages.proofskeleton_proofdoesnotexist);
+			}
+			try {
+				final IProofTree prTree = proof.getProofTree(null);
+				if (prTree == null) {
+					return new ProofErrorInput(proof,
+							Messages.proofskeleton_buildfailed);
+				}
+				final String tooltip = Messages.bind(
+						Messages.proofskeleton_savedproof, proof
+								.getElementName());
+				return new ProofTreeInput(prTree, tooltip);
+			} catch (RodinDBException e) {
+				return new ProofErrorInput(proof, e
+						.getLocalizedMessage());
+			}
+		}
+
+		@Override
+		public void addInputChangedListener() {
+			RodinCore.addElementChangedListener(statusListener);
+		}
+
+		@Override
+		public void removeInputChangedListener() {
+			RodinCore.removeElementChangedListener(statusListener);
+		}
+	}
+
+	private static class TreeInputMaker extends InputMaker<IProofTree> {
+		
+		public TreeInputMaker(InputManager manager, IProofTree tree) {
+			super(manager, tree);
+		}
+	
+		private IProofTreeChangedListener proofTreeListener = new IProofTreeChangedListener() {
+			public void proofTreeChanged(IProofTreeDelta delta) {
+				manager.setViewInput(TreeInputMaker.this);
+			}
+		};
+		
+		@Override
+		public IViewerInput makeInput() {
+			return new ProofTreeInput(selection,
+					Messages.proofskeleton_editedtree);
+		}
+
+		@Override
+		public void addInputChangedListener() {
+			selection.addChangeListener(proofTreeListener);
+		}
+
+		@Override
+		public void removeInputChangedListener() {
+			selection.removeChangeListener(proofTreeListener);
+		}
+	}
+
+	final ProofSkeletonView view;
 	private final String partId;
 	private final IWorkbenchWindow workbenchWindow;
 	private final ISelectionService selectionService;
-	private volatile IPSStatus currentInput;
+	volatile InputMaker<?> currentInputMaker;
+
 
 	public InputManager(ProofSkeletonView view) {
 		this.view = view;
@@ -47,21 +220,51 @@ public class InputManager implements IPartListener2, ISelectionListener {
 	private void filterAndProcessNewSelection(IWorkbenchPart sourcepart,
 			ISelection selection) {
 
-		IPSStatus status = null;
+		InputMaker<?> newInputMaker = null;
 		if (sourcepart == view) {
 			return;
-		} else if (!selection.isEmpty()
-				&& selection instanceof IStructuredSelection) {
-			final Object firstElement = ((IStructuredSelection) selection)
+		}
+		if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
+			Object element = ((IStructuredSelection) selection)
 					.getFirstElement();
-			if (firstElement instanceof IPSStatus) {
-				status = (IPSStatus) firstElement;
+			if (element == null) {
+				return;
+			}
+			if (element instanceof IPSStatus) {
+				newInputMaker = new StatusInputMaker(this, (IPSStatus) element);
+			} else if (element instanceof IProofTreeNode) {
+				final IProofTree tree = ((IProofTreeNode) element).getProofTree();
+				newInputMaker = new TreeInputMaker(this, tree);
+				element = tree;
+			}
+			if (newInputMaker != null && inputChanged(newInputMaker)) {
+				setViewInput(newInputMaker);
 			}
 		}
-		if (status != null && !status.equals(currentInput)) {
-			currentInput = status;
-			view.setInput(currentInput);
+	}
+
+	private boolean inputChanged(InputMaker<?> newInputMaker) {
+		if (currentInputMaker == null) {
+			return true;
 		}
+		final Object currentSelection = currentInputMaker.getSelection();
+		final Object newSelection = newInputMaker.getSelection();
+		return !newSelection.equals(currentSelection);
+	}
+	
+	void setViewInput(final InputMaker<?> maker) {
+		final Display display = PlatformUI.getWorkbench().getDisplay();
+		display.asyncExec(new Runnable() {
+			public void run() {
+				if (currentInputMaker != null) {
+					currentInputMaker.removeInputChangedListener();
+				}
+				final IViewerInput input = maker.makeInput();
+				maker.addInputChangedListener();
+				currentInputMaker = maker;
+				view.setInput(input);
+			}
+		});
 	}
 
 	public void partVisible(IWorkbenchPartReference partRef) {
@@ -90,7 +293,9 @@ public class InputManager implements IPartListener2, ISelectionListener {
 	}
 
 	public void partClosed(IWorkbenchPartReference partRef) {
-		// do nothing
+		if (partRef.getId().equals(partId) && currentInputMaker != null) {
+			currentInputMaker.removeInputChangedListener();
+		}
 	}
 
 	public void partInputChanged(IWorkbenchPartReference partRef) {
@@ -102,13 +307,12 @@ public class InputManager implements IPartListener2, ISelectionListener {
 	}
 
 	private void fireCurrentSelection() {
-		final IWorkbenchPage activePage = workbenchWindow.getActivePage();
-		if (activePage != null) {
-			final ISelection selection = activePage.getSelection();
-			if (selection != null) {
-				final IWorkbenchPart activePart = activePage.getActivePart();
-				this.selectionChanged(activePart, selection);
-			}
+		final ISelection selection = selectionService.getSelection();
+		if (selection != null) {
+			final IWorkbenchPage activePage = workbenchWindow.getActivePage();
+			final IWorkbenchPart activePart = activePage == null ? null
+					: activePage.getActivePart();
+			this.selectionChanged(activePart, selection);
 		}
 	}
 

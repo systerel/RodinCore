@@ -15,7 +15,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.part.ViewPart;
-import org.eventb.core.IPSStatus;
 
 /**
  * ViewPart for displaying proof skeletons.
@@ -72,12 +71,13 @@ public class ProofSkeletonView extends ViewPart {
 		masterDetailsBlock.switchOrientation();
 	}
 
-	public void setInput(IPSStatus input) {
+	public void setInput(IViewerInput input) {
 		if (managedForm != null) {
 			if(!managedForm.getForm().isDisposed()) {
 				managedForm.setInput(input);
 			}
 		}
+		setTitleToolTip(input.getTitleTooltip());
 	}
 
 }

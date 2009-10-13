@@ -17,21 +17,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
-import org.eventb.core.IEventBRoot;
-import org.eventb.core.IPRProof;
-import org.eventb.core.IPSRoot;
-import org.eventb.core.IPSStatus;
-import org.eventb.core.seqprover.IProofTree;
-import org.rodinp.core.ElementChangedEvent;
-import org.rodinp.core.IElementChangedListener;
-import org.rodinp.core.IRodinElement;
-import org.rodinp.core.IRodinElementDelta;
-import org.rodinp.core.RodinCore;
-import org.rodinp.core.RodinDBException;
 import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 /**
@@ -62,42 +49,6 @@ public class PrfSklMasterPart implements IFormPart {
 				.getSelection());
 	}
 
-	private final IElementChangedListener statusListener = new IElementChangedListener() {
-
-		public void elementChanged(ElementChangedEvent event) {
-			reloadIfInputChanged(event.getDelta());
-		}
-
-	};
-
-	void reloadIfInputChanged(IRodinElementDelta delta) {
-		final Object currentInput = managedForm.getInput();
-		if (currentInput instanceof IPSStatus) {
-			final IPSStatus status = (IPSStatus) currentInput;
-			if (contains(delta, status)) {
-				setViewerInput(status);
-			}
-		}
-	}
-
-	private static boolean contains(IRodinElementDelta delta, IPSStatus status) {
-		final IRodinElement element = delta.getElement();
-		if (element instanceof IEventBRoot && !(element instanceof IPSRoot)) {
-			return false;
-		}
-		if (status.equals(element)) {
-			return true;
-		} else {
-			final IRodinElementDelta[] childred = delta.getAffectedChildren();
-			for (IRodinElementDelta child : childred) {
-				if (contains(child, status)) {
-					return true;
-				}
-			}
-			return false;
-		}
-	}
-
 	/**
 	 * Constructor.
 	 * 
@@ -116,10 +67,7 @@ public class PrfSklMasterPart implements IFormPart {
 		if (input == null) {
 			return false;
 		}
-		if (input instanceof IPSStatus) {
-			setViewerInput((IPSStatus) input);
-			return true;
-		} else  if (input instanceof IViewerInput) {
+		if (input instanceof IViewerInput) {
 			setViewerInput((IViewerInput) input);
 			return true;
 		}
@@ -127,38 +75,12 @@ public class PrfSklMasterPart implements IFormPart {
 	}
 
 	void setViewerInput(IViewerInput input) {
-		if (input instanceof ProofTreeInput) {
-			RodinCore.addElementChangedListener(statusListener);
-		} else {
-			RodinCore.removeElementChangedListener(statusListener);
-		}
 		if (viewer != null) {
 			viewer.setInput(input);
 			viewer.getTree().setSelection(viewer.getTree().getItem(0));
 			treeListener.selectionChanged(new SelectionChangedEvent(viewer,
 					viewer.getSelection()));
 		}
-	}
-
-	private void setViewerInput(IPSStatus status) {
-		final IPRProof proof = status.getProof();
-		final Display display = PlatformUI.getWorkbench().getDisplay();
-		display.asyncExec(new Runnable() {
-			public void run() {
-				try {
-					final IProofTree prTree = proof.getProofTree(null);
-					if (prTree != null) {
-						setViewerInput(new ProofTreeInput(prTree));
-					} else {
-						setViewerInput(new ProofErrorInput(proof,
-								"Failed to build the proof tree"));
-					}
-				} catch (RodinDBException e) {
-					setViewerInput(new ProofErrorInput(proof, e
-							.getLocalizedMessage()));
-				}
-			}
-		});
 	}
 
 	public void setFocus() {
@@ -182,7 +104,6 @@ public class PrfSklMasterPart implements IFormPart {
 	}
 
 	public void dispose() {
-		RodinCore.removeElementChangedListener(statusListener);
 		viewer.removeSelectionChangedListener(treeListener);
 		viewer.getTree().dispose();
 		viewer.getControl().dispose();

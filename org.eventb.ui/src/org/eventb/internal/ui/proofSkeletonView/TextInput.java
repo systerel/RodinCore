@@ -25,4 +25,9 @@ public abstract class TextInput implements IViewerInput {
 		return new Object[] { getText() };
 	}
 
+	public String getTitleTooltip() {
+		// clear title tooltip (all needed info are in the displayed text)
+		return null;
+	}
+
 }
