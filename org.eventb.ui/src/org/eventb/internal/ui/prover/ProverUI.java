@@ -19,7 +19,6 @@ import static org.eventb.internal.ui.utils.Messages.error_unsupported_action;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -300,18 +299,10 @@ public class ProverUI extends EventBFormEditor implements
 			final IProofState[] results = new IProofState[length];
 			System.arraycopy(objects, 0, results, 0, length);
 
-			userSupport.setSaving(true);
 			try {
-				RodinCore.run(new IWorkspaceRunnable() {
-					public void run(IProgressMonitor pm) throws RodinDBException {
-						userSupport.doSave(results, pm);
-					}
-				}, null);
+				userSupport.doSave(results, monitor);
 			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} finally {
-				userSupport.setSaving(false);
+				UIUtils.log(e, "while saving");
 			}
 		}
 		saving = false;

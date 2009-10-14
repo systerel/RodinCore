@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2008 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
- *     Systerel - added set and is saving
  *******************************************************************************/
 package org.eventb.core.pm;
 
@@ -356,23 +355,4 @@ public interface IUserSupport extends IElementChangedListener {
 	boolean selectNextSubgoal(boolean rootIncluded, IProofTreeNodeFilter filter)
 			throws RodinDBException;
 
-	/**
-	 * Sets the saving state of this user support. Every setting to
-	 * <code>true</code> must be followed by a corresponding setting to
-	 * <code>false</code>.
-	 * 
-	 * @param saving
-	 *            <code>true</code> to state that saving is in progress,
-	 *            <code>false</code> in the contrary.
-	 * @since 1.1
-	 */
-	void setSaving(boolean saving);
-
-	/**
-	 * Returns the saving state of this user support.
-	 * 
-	 * @return <code>true</code> iff saving is in progress.
-	 * @since 1.1
-	 */
-	boolean isSaving();
 }

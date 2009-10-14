@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBPlugin;
@@ -576,18 +577,27 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 	}
 
-	public void doSave(IProofState[] states, IProgressMonitor monitor)
+	public void doSave(final IProofState[] states, IProgressMonitor monitor)
 			throws RodinDBException {
 		if (proofStates == null) {
 			return;
 		}
-		for (IProofState state : states) {
-			state.setProofTree(monitor);
-			// state.getPSStatus().setManualProof(true, monitor);
-		}
-		pc.save(monitor, true);
-		for (IProofState state : states) {
-			state.setDirty(false);
+		saving = true;
+		try {
+			RodinCore.run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor pm) throws RodinDBException {
+					for (IProofState state : states) {
+						state.setProofTree(pm);
+						// state.getPSStatus().setManualProof(true, monitor);
+					}
+					pc.save(pm, true);
+					for (IProofState state : states) {
+						state.setDirty(false);
+					}
+				}
+			}, monitor);
+		} finally {
+			saving = false;
 		}
 	}
 
@@ -635,10 +645,12 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		return pc;
 	}
 
-	public void setSaving(boolean saving) {
-		this.saving = saving;
-	}
-	
+	/**
+	 * Returns the saving state of this user support.
+	 * 
+	 * @return <code>true</code> iff saving is in progress
+	 * @since 1.1
+	 */
 	public boolean isSaving() {
 		return saving ;
 	}
