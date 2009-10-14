@@ -143,8 +143,6 @@ public final class Messages {
 	public static String proofskeleton_copy_title;
 	public static String proofskeleton_copy_toolTip;
 	public static String proofskeleton_buildfailed;
-	public static String proofskeleton_editedtree;
-	public static String proofskeleton_savedproof;
 	public static String proofskeleton_proofdoesnotexist;
 
 	// Proof Simplification

@@ -25,9 +25,6 @@ import org.eventb.core.IPRProof;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IProofTree;
-import org.eventb.core.seqprover.IProofTreeChangedListener;
-import org.eventb.core.seqprover.IProofTreeDelta;
-import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.utils.Messages;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
@@ -149,9 +146,7 @@ public class InputManager implements IPartListener2, ISelectionListener {
 					return new ProofErrorInput(proof,
 							Messages.proofskeleton_buildfailed);
 				}
-				final String tooltip = Messages.bind(
-						Messages.proofskeleton_savedproof, proof
-								.getElementName());
+				final String tooltip = proof.getElementName();
 				return new ProofTreeInput(prTree, tooltip);
 			} catch (RodinDBException e) {
 				return new ProofErrorInput(proof, e
@@ -167,35 +162,6 @@ public class InputManager implements IPartListener2, ISelectionListener {
 		@Override
 		public void removeInputChangedListener() {
 			RodinCore.removeElementChangedListener(statusListener);
-		}
-	}
-
-	private static class TreeInputMaker extends InputMaker<IProofTree> {
-		
-		public TreeInputMaker(InputManager manager, IProofTree tree) {
-			super(manager, tree);
-		}
-	
-		private IProofTreeChangedListener proofTreeListener = new IProofTreeChangedListener() {
-			public void proofTreeChanged(IProofTreeDelta delta) {
-				manager.setViewInput(TreeInputMaker.this);
-			}
-		};
-		
-		@Override
-		public IViewerInput makeInput() {
-			return new ProofTreeInput(selection,
-					Messages.proofskeleton_editedtree);
-		}
-
-		@Override
-		public void addInputChangedListener() {
-			selection.addChangeListener(proofTreeListener);
-		}
-
-		@Override
-		public void removeInputChangedListener() {
-			selection.removeChangeListener(proofTreeListener);
 		}
 	}
 
@@ -220,7 +186,6 @@ public class InputManager implements IPartListener2, ISelectionListener {
 	private void filterAndProcessNewSelection(IWorkbenchPart sourcepart,
 			ISelection selection) {
 
-		InputMaker<?> newInputMaker = null;
 		if (sourcepart == view) {
 			return;
 		}
@@ -231,14 +196,11 @@ public class InputManager implements IPartListener2, ISelectionListener {
 				return;
 			}
 			if (element instanceof IPSStatus) {
-				newInputMaker = new StatusInputMaker(this, (IPSStatus) element);
-			} else if (element instanceof IProofTreeNode) {
-				final IProofTree tree = ((IProofTreeNode) element).getProofTree();
-				newInputMaker = new TreeInputMaker(this, tree);
-				element = tree;
-			}
-			if (newInputMaker != null && inputChanged(newInputMaker)) {
-				setViewInput(newInputMaker);
+				final InputMaker<?> newInputMaker = new StatusInputMaker(this,
+						(IPSStatus) element);
+				if (inputChanged(newInputMaker)) {
+					setViewInput(newInputMaker);
+				}
 			}
 		}
 	}
