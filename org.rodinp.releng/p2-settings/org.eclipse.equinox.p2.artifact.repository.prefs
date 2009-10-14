@@ -34,3 +34,8 @@ repositories/http\:__www.animb.org_updatesite/url=http\://www.animb.org/updatesi
 repositories/http\:__www.animb.org_updatesite/enabled=true
 repositories/http\:__www.animb.org_updatesite/isSystem=false
 repositories/http\:__www.animb.org_updatesite/name=AnimB
+
+repositories/http\:__iliasov.org_modplugin/url=http\://iliasov.org/modplugin
+repositories/http\:__iliasov.org_modplugin/enabled=true
+repositories/http\:__iliasov.org_modplugin/isSystem=false
+repositories/http\:__iliasov.org_modplugin/name=Modularisation
