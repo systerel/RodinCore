@@ -122,6 +122,9 @@
 	        <copy todir="${buildDirectory}/plugins/org.eventb.ui">
 	            <fileset dir="${builder}/../org.eventb.ui" />
 	        </copy>
+	        <copy todir="${buildDirectory}/plugins/org.eventb.ui.symboltable">
+    	        <fileset dir="${builder}/../org.eventb.ui.symboltable" />
+        	</copy>
 	        <copy todir="${buildDirectory}/plugins/org.eventb.eventBKeyboard">
 	            <fileset dir="${builder}/../org.eventb.eventBKeyboard" />
 	        </copy>
@@ -292,29 +295,45 @@
 		<copy todir="${p2.settings}">
 			<fileset dir="${builder}/p2-settings" includes="**" />
 		</copy>
+		
+		<!-- Fix the bundles.info for the dropins folder -->
+		<antcall target="fix.bundles.info">
+			<param name="configuration" value="${buildDirectory}/result/tmp/rodin/configuration"/>
+		</antcall>
 
-                <!-- when building with cruisecontrol, we use Linux zip to preserve permissions -->
-                <antcall target="zip.nocc" />
-                <antcall target="zip.cc"/>
+		<!-- when building with cruisecontrol, we use Linux zip to preserve permissions -->
+		<antcall target="zip.nocc" />
+		<antcall target="zip.cc"/>
 
 		<delete dir="${buildDirectory}/result/tmp" />
 	</target>
 
-        <target name="zip.nocc" unless="cruisecontrol">
-          <exec executable="zip" dir="${buildDirectory}/result/tmp">
-            <arg value="-r"/>
+	<property name="bundles.info.pattern"
+		value="^(org.eclipse.equinox.p2.reconciler.dropins.*),false$"/>
+	<property name="bundles.info.replace"
+		value="\1,true"/>
+	
+	<target name="fix.bundles.info">
+		<replaceregexp file="${configuration}/org.eclipse.equinox.simpleconfigurator/bundles.info" byline="true">
+			<regexp pattern="${bundles.info.pattern}"/>
+			<substitution expression="${bundles.info.replace}"/>
+		</replaceregexp>
+	</target>
+	
+ 	<target name="zip.nocc" unless="cruisecontrol">
+		<exec executable="zip" dir="${buildDirectory}/result/tmp">
+			<arg value="-r"/>
             <arg value="${buildDirectory}/../rodin-${buildId}-${p2.os}.zip"/>
-            <arg value="rodin"/>
-          </exec>
+			<arg value="rodin"/>
+		</exec>
 	</target>
 
-        <target name="zip.cc"  if="cruisecontrol" >
-          <exec executable="zip" dir="${buildDirectory}/result/tmp">
-            <arg value="-r"/>
-            <arg value="${buildDirectory}/result/rodin-product-${p2.os}.${p2.ws}.${p2.arch}.zip"/>
-            <arg value="rodin"/>
-          </exec>
-
+	<target name="zip.cc"  if="cruisecontrol" >
+		<exec executable="zip" dir="${buildDirectory}/result/tmp">
+			<arg value="-r"/>
+			<arg value="${buildDirectory}/result/rodin-product-${p2.os}.${p2.ws}.${p2.arch}.zip"/>
+			<arg value="rodin"/>
+		</exec>
 	</target>
 
 	<target name="run.director">
