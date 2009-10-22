@@ -10,6 +10,7 @@ org.eventb.core/debug/pog/moduleconf = false
 org.eventb.core/debug/pog/modules = false
 org.eventb.core/debug/pog/trivial = false
 org.eventb.core/debug/pom = false
+org.eventb.core/debug/pom/recalculate = false
 org.eventb.core/debug/poloader = false
 org.eventb.core/debug/pm = false
 org.eventb.core/perf/pom/proofReuse = false

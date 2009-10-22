@@ -39,6 +39,7 @@ import org.eventb.internal.core.pog.modules.UtilityModule;
 import org.eventb.internal.core.pom.AutoPOM;
 import org.eventb.internal.core.pom.POLoader;
 import org.eventb.internal.core.pom.POMTacticPreference;
+import org.eventb.internal.core.pom.RecalculateAutoStatus;
 import org.eventb.internal.core.sc.SCUtil;
 import org.osgi.framework.BundleContext;
 import org.rodinp.core.IRodinElement;
@@ -78,6 +79,7 @@ public class EventBPlugin extends Plugin {
 	private static final String POG_TRACE_MODULES = PLUGIN_ID + "/debug/pog/modules"; //$NON-NLS-1$
 	private static final String POG_TRACE_TRIVIAL = PLUGIN_ID + "/debug/pog/trivial"; //$NON-NLS-1$
 	private static final String POM_TRACE = PLUGIN_ID + "/debug/pom"; //$NON-NLS-1$
+	private static final String POM_TRACE_RECALCULATE = PLUGIN_ID + "/debug/pom/recalculate"; //$NON-NLS-1$
 	private static final String PO_LOADER_TRACE = PLUGIN_ID + "/debug/poloader"; //$NON-NLS-1$
 	private static final String PM_TRACE = PLUGIN_ID + "/debug/pm"; //$NON-NLS-1$
 	private static final String PERF_POM_PROOFREUSE_TRACE = PLUGIN_ID + "/perf/pom/proofReuse"; //$NON-NLS-1$
@@ -275,6 +277,9 @@ public class EventBPlugin extends Plugin {
 			option = Platform.getDebugOption(POM_TRACE);
 			if (option != null)
 				AutoPOM.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+			option = Platform.getDebugOption(POM_TRACE_RECALCULATE);
+			if (option != null)
+				RecalculateAutoStatus.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 			option = Platform.getDebugOption(PO_LOADER_TRACE);
 			if (option != null)
 				POLoader.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$

@@ -105,6 +105,8 @@ public abstract class EventBProofElement extends InternalElement implements
 			throws RodinDBException {
 
 		setAttributeTrue(MANUAL_PROOF_ATTRIBUTE, value, monitor);
+		
+		assert(value == getHasManualProof());
 	}
 
 	/**

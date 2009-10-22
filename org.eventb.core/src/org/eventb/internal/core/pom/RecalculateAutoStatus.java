@@ -46,6 +46,8 @@ import org.rodinp.core.RodinDBException;
  */
 public final class RecalculateAutoStatus {
 
+	public static boolean DEBUG;
+
 	private RecalculateAutoStatus() {
 		// Nothing to do.
 	}
@@ -93,9 +95,22 @@ public final class RecalculateAutoStatus {
 			// Update the tree if it was discharged
 			if (autoProofTree.isClosed()) {
 				prProof.setProofTree(autoProofTree, null);
-				PSWrapper.updateStatus(status, new SubProgressMonitor(pm, 1));
+				
+				if (DEBUG) {
+					if (status.getHasManualProof()) {
+						System.out.println("Proof " + status.getElementName() + " is now automatic.");
+					}
+				}
+				
+				PSWrapper.updateStatus(status, new SubProgressMonitor(pm, 1));				
 				status.setHasManualProof(false, null);
 			} else {
+				if (DEBUG) {
+					if (!status.getHasManualProof()) {
+						System.out.println("Proof " + status.getElementName() + " is now manual.");
+					}
+				}
+				
 				status.setHasManualProof(true, null);
 			}
 			return true;
