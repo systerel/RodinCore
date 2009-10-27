@@ -11,6 +11,7 @@
  *     Systerel - mathematical language V2
  *     Systerel - added dispose listener to hypothesis composite
  *     Systerel - refactored to use ITacticProvider2 and ITacticApplication
+ *     Systerel - bug correction (oftype) #2884753
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
@@ -175,16 +176,16 @@ public class HypothesisRow {
 		EventBEditorUtils.changeFocusWhenDispose(hypothesisComposite,
 				scrolledForm.getParent());
 
-		Predicate pred = hyp;
+		final Predicate pred = hyp; // This predicate type-checks
 		final String parsedString = pred.toString();
 
 		typeEnv = userSupport.getCurrentPO()
 				.getCurrentNode().getSequent().typeEnvironment();
-		final Predicate parsedPredicate = getParsedTypeChecked(parsedString, typeEnv);
-
+		//Predicate containing the SourceLocations
+		final Predicate parsedPredicate = getParsedTypeChecked(parsedString, typeEnv); 
+						
+		createImageHyperlinks(buttonComposite, hyp);
 		
-		createImageHyperlinks(buttonComposite, parsedPredicate);
-
 		createHypothesisText(parsedPredicate, parsedString);
 
 	}
@@ -227,14 +228,13 @@ public class HypothesisRow {
 
 			string += str;
 
-			// Reparsed the String,
-			// Get the list of applicable tactic
+			
+			// Get the list of applicable tactic on the type-checked hypothesis
 			// For each tactic, get the applicable positions
 
-			Predicate parsedStr = getParsedTypeChecked(string, typeEnv);
-
 			final Map<Point, List<ITacticApplication>> links = getLinksToApplications(
-					userSupport, string, parsedStr);
+					userSupport, string, hyp); //here we load hyp as it is typeChecked
+											   //but without sourcelocations.
 			hypothesisText.setText(string, userSupport, hyp, indexes, links);
 		} else {
 			String str = PredicateUtil.prettyPrint(max_length, parsedString,
@@ -256,14 +256,14 @@ public class HypothesisRow {
 		toolkit.paintBordersFor(hypothesisComposite);
 	}
 
-	private static Map<Point, List<ITacticApplication>> getLinksToApplications(
+	private  Map<Point, List<ITacticApplication>> getLinksToApplications(
 			IUserSupport us, String string, Predicate parsedStr) {
 		final Map<Point, List<ITacticApplication>> links = new HashMap<Point, List<ITacticApplication>>();
 
 		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
 
 		final List<ITacticApplication> tactics = tacticUIRegistry
-				.getTacticApplicationsToHypothesis(us, parsedStr);
+				.getTacticApplicationsToHypothesis(us, hyp);
 
 		for (final ITacticApplication tacticAppli : tactics) {
 			if (tacticAppli instanceof IPositionApplication) {
