@@ -18,7 +18,7 @@ package org.eventb.internal.ui.prover;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyCommand;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyTactic;
 import static org.eventb.internal.ui.prover.ProverUIUtils.checkRange;
-import static org.eventb.internal.ui.prover.ProverUIUtils.getParsedTypeChecked;
+import static org.eventb.internal.ui.prover.ProverUIUtils.getParsed;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,7 +46,6 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
@@ -100,7 +99,6 @@ public class HypothesisRow {
 	
 	private final Collection<ImageHyperlink> hyperlinks;
 
-	private final ITypeEnvironment typeEnv;
 	
 	/**
 	 * @author htson
@@ -179,10 +177,8 @@ public class HypothesisRow {
 		final Predicate pred = hyp; // This predicate type-checks
 		final String parsedString = pred.toString();
 
-		typeEnv = userSupport.getCurrentPO()
-				.getCurrentNode().getSequent().typeEnvironment();
 		//Predicate containing the SourceLocations
-		final Predicate parsedPredicate = getParsedTypeChecked(parsedString, typeEnv); 
+		final Predicate parsedPredicate = getParsed(parsedString); 
 						
 		createImageHyperlinks(buttonComposite, hyp);
 		
@@ -240,7 +236,7 @@ public class HypothesisRow {
 			String str = PredicateUtil.prettyPrint(max_length, parsedString,
 					parsedPredicate);
 
-			Predicate parsedStr = getParsedTypeChecked(str, typeEnv);
+			Predicate parsedStr = getParsed(str);
 
 			int[] indexes = new int[0];
 

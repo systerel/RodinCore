@@ -11,6 +11,7 @@
  *     Systerel - used EventBSharedColor
  *     Systerel - mathematical language V2
  *     Systerel - refactored to use ITacticProvider2 and ITacticApplication
+ *     Systerel - modifying getParsedTypeChecked() calls to getParsed()
  ******************************************************************************/
 package org.eventb.internal.ui.goal;
 
@@ -51,7 +52,6 @@ import org.eclipse.ui.part.Page;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
@@ -63,9 +63,6 @@ import org.eventb.core.pm.IUserSupportInformation;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.ui.prover.IPositionApplication;
-import org.eventb.ui.prover.IPredicateApplication;
-import org.eventb.ui.prover.ITacticApplication;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.UIUtils;
@@ -78,6 +75,9 @@ import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
 import org.eventb.ui.IEventBSharedImages;
+import org.eventb.ui.prover.IPositionApplication;
+import org.eventb.ui.prover.IPredicateApplication;
+import org.eventb.ui.prover.ITacticApplication;
 
 /**
  * @author htson
@@ -285,10 +285,8 @@ public class GoalPage extends Page implements IGoalPage {
 		} else {
 			Predicate goal = node.getSequent().goal();
 			final String tmpString = goal.toString();
-			final ITypeEnvironment typeEnv = userSupport.getCurrentPO()
-					.getCurrentNode().getSequent().typeEnvironment();
-			final Predicate tmpPred = ProverUIUtils.getParsedTypeChecked(
-					tmpString, typeEnv);
+			final Predicate tmpPred = ProverUIUtils.getParsed(
+					tmpString);
 
 			int [] indexes = new int[0];
 
@@ -299,7 +297,7 @@ public class GoalPage extends Page implements IGoalPage {
 				actualString = PredicateUtil.prettyPrint(max_length, tmpString,
 						tmpPred);
 			}
-			parsedPred = ProverUIUtils.getParsedTypeChecked(actualString, typeEnv);
+			parsedPred = ProverUIUtils.getParsed(actualString);
 
 			final Map<Point, List<ITacticApplication>> links;
 			if (node.isOpen()) {

@@ -9,6 +9,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - refactored to use ITacticProvider2 and ITacticApplication
+ *     Systerel - added getParsed()
  ******************************************************************************/
 
 package org.eventb.internal.ui.prover;
@@ -403,12 +404,31 @@ public class ProverUIUtils {
 	 * @return a parsed and type checked predicate
 	 */
 	public static Predicate getParsedTypeChecked(String predString, ITypeEnvironment typeEnv) {
-		IParseResult parseResult = formulaFactory.parsePredicate(predString, LanguageVersion.LATEST, null);
-		assert !parseResult.hasProblem();
-		Predicate parsedStr = parseResult.getParsedPredicate();
-		final ITypeCheckResult typeCheckResult = parsedStr.typeCheck(typeEnv);
+		final Predicate parsedPred = getParsed(predString);
+		final ITypeCheckResult typeCheckResult = parsedPred.typeCheck(typeEnv);
 		assert !typeCheckResult.hasProblem();
-		return parsedStr;
+		return parsedPred;
+	}
+	
+	/**
+	 * Returns a parsed and  not type checked version of the given predicate string,
+	 * using the given type environment.
+	 * <p>
+	 * Used by methods that require source locations.
+	 * </p>
+	 * <p>
+	 * Assumes that the given string is indeed parseable.
+	 * </p>
+	 * 
+	 * @param predString
+	 *            a predicate string
+	 * @return a parsed predicate
+	 */
+	public static Predicate getParsed(String predString) {
+		final IParseResult parseResult = formulaFactory.parsePredicate(predString, LanguageVersion.LATEST, null);
+		assert !parseResult.hasProblem();
+		final Predicate parsedPred = parseResult.getParsedPredicate();
+		return parsedPred;
 	}
 
 	/**
