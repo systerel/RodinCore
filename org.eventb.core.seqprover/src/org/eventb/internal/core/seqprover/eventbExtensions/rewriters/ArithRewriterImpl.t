@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
+import static org.eventb.core.ast.IPosition.ROOT;
+
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collection;
@@ -50,16 +52,70 @@ import org.eventb.core.seqprover.ProverRule;
 @SuppressWarnings("unused")
 public class ArithRewriterImpl extends DefaultRewriter {
 	
+    private static final IPosition LEFT_CHILD = ROOT.getFirstChild();
+    private static final IPosition LEFT_FIRST_CHILD = LEFT_CHILD.getFirstChild();
+    private static final IPosition RIGHT_CHILD = LEFT_CHILD.getNextSibling();
+    private static final IPosition RIGHT_FIRST_CHILD = RIGHT_CHILD.getFirstChild();
+
+    private static IPosition getSecondChild(IPosition position) {
+        return position.getFirstChild().getNextSibling();
+    }
+
+	private static class SameFormulaeFinder {
+    
+        private final Formula<?>[] left;
+        private final IPosition firstLeftPos;
+        private final Formula<?>[] right;
+        private final IPosition firstRightPos;
+    
+        public SameFormulaeFinder(Formula<?> left, IPosition leftPos, Formula<?>[] right, IPosition firstRightPos) {
+            this(new Formula<?>[] {left}, leftPos, right, firstRightPos);
+        }
+
+        public SameFormulaeFinder(Formula<?>[] left, IPosition firstLeftPos, Formula<?>[] right, IPosition firstRightPos) {
+            this.left = left;
+            this.firstLeftPos = firstLeftPos;
+            this.right = right;
+            this.firstRightPos = firstRightPos;
+        }
+
+        public IPosition[] findSame() {
+            for (int l = 0; l < left.length; l++) {
+                final int r = getEqualsIndex(left[l], right);
+                if (r >= 0) {
+                    final IPosition samePosLeft = nextSibling(firstLeftPos, l);
+                    final IPosition samePosRight = nextSibling(firstRightPos, r);
+                    return mArray(samePosLeft, samePosRight); 
+                }
+            }
+            return null;
+        }
+
+        private static <T> T[] mArray(T... objs) {
+            return objs;
+        }
+
+        private static <T> int getEqualsIndex(T f, T[] candidates) {
+            for (int i = 0; i < candidates.length; i++) {
+                if (f.equals(candidates[i])) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+        
+        private static IPosition nextSibling(IPosition position, int n) {
+           assert n >= 0;
+           IPosition result = position;
+           for (int i=0; i<n; i++) {
+              result = result.getNextSibling();
+           }
+           return result;
+        }
+	}
+
 	protected AssociativeExpression makeAssociativeExpression(int tag, Collection<Expression> children) {
 		return ff.makeAssociativeExpression(tag, children, null);
-	}
-
-	protected BinaryExpression makeBinaryExpression(int tag, Expression left, Expression right) {
-		return ff.makeBinaryExpression(tag, left, right, null);
-	}
-
-	protected UnaryExpression makeUnaryExpression(int tag, Expression child) {
-		return ff.makeUnaryExpression(tag, child, null);
 	}
 
 	protected RelationalPredicate makeRelationalPredicate(int tag, Expression left,
@@ -70,35 +126,13 @@ public class ArithRewriterImpl extends DefaultRewriter {
 	public ArithRewriterImpl() {
 		super(true, FormulaFactory.getDefault());
 	}
-		
-    private static <T extends Formula<T>> T findSame(T f, T[] candidates) {
-        for (T candidate : candidates) {
-            if (f.equals(candidate)) {
-                return candidate;
-            }
-        }
-        return null;
-    }
     
-    private static IPosition[] getPositions(Formula<?> formula,
-            Formula<?>... subFormulae) {
-        final IPosition[] positions = new IPosition[subFormulae.length];
-        for (int i = 0; i < positions.length; i++) {
-            positions[i] = formula.getPosition(subFormulae[i]
-                    .getSourceLocation());
-        }
-        return positions;
-    }
-
-    private Expression simplify(Expression expression, Expression e1,
-            Expression e2) {
-        final IPosition[] positions = getPositions(expression, e1, e2);
+    private Expression simplify(Expression expression, IPosition... positions) {
         return AdditiveSimplifier.simplify(expression, positions, ff);
     }
 
     private RelationalPredicate simplify(RelationalPredicate predicate,
-            Expression e1, Expression e2) {
-        final IPosition[] positions = getPositions(predicate, e1, e2);
+            IPosition... positions) {
         return AdditiveSimplifier.simplify(predicate, positions, ff);
     }
     
@@ -114,9 +148,12 @@ public class ArithRewriterImpl extends DefaultRewriter {
 	         * Arithmetics: (A + ... + C + ... + B) − C == A + .. + B
 	         */
 			Minus(Plus(children), C) -> {
-			    final Expression sameAsC = findSame(`C, `children);
-                if (sameAsC != null) {
-                    return simplify(expression, `C, sameAsC);
+			    final SameFormulaeFinder finder =
+			        new SameFormulaeFinder(`C, RIGHT_CHILD,
+			                               `children, LEFT_FIRST_CHILD);
+                final IPosition[] found = finder.findSame();
+			    if (found != null) {
+                    return simplify(expression, found);
                 } 
 			}
 			
@@ -125,10 +162,13 @@ public class ArithRewriterImpl extends DefaultRewriter {
 			 * Arithmetics: C − (A + ... + C + ... + B)  ==  −(A + ... + B)
 			 */
 			Minus(C, Plus(children)) -> {
-                final Expression sameAsC = findSame(`C, `children);
-                if (sameAsC != null) {
-                    return simplify(expression, `C, sameAsC);
-                } 
+                final SameFormulaeFinder finder =
+                    new SameFormulaeFinder(`C, LEFT_CHILD,
+                                           `children, RIGHT_FIRST_CHILD);
+                final IPosition[] found = finder.findSame();
+                if (found != null) {
+                    return simplify(expression, found);
+                }
 			}
 			
 			/**
@@ -136,12 +176,13 @@ public class ArithRewriterImpl extends DefaultRewriter {
 			 * Arithmetics: (A + ... + E + ... + B) − (C + ... + E + ... + D)  == (A + ... + B) − (C + ... + D)
 			 */
 			Minus(Plus(left), Plus(right)) -> {
-			    for(Expression e: `left) {
-			        final Expression sameAsE = findSame(e, `right);
-                    if (sameAsE != null) {
-                        return simplify(expression, e, sameAsE);
-                    } 
-			    }
+                final SameFormulaeFinder finder =
+                    new SameFormulaeFinder(`left, LEFT_FIRST_CHILD,
+                                           `right, RIGHT_FIRST_CHILD);
+                final IPosition[] found = finder.findSame();
+                if (found != null) {
+                    return simplify(expression, found);
+                }
 			}
 			
             /**
@@ -185,14 +226,19 @@ public class ArithRewriterImpl extends DefaultRewriter {
 			Plus(children) -> {
 			    // search for children of the form (C-D)
 			    final List<Expression> minusChildren;
+			    IPosition cMinusDPos = LEFT_CHILD;
 			    for (Expression child: `children) {
 			        if(child.getTag() == Expression.MINUS) {
 			            final Expression d = ((BinaryExpression) child).getRight();
-                        final Expression sameAsD = findSame(d, `children);
-                        if (sameAsD != null) {
-                            return simplify(expression, d, sameAsD);
-                        } 
+                        final SameFormulaeFinder finder =
+                            new SameFormulaeFinder(d, getSecondChild(cMinusDPos),
+                                                   `children, LEFT_CHILD);
+                        final IPosition[] found = finder.findSame();
+                        if (found != null) {
+                            return simplify(expression, found);
+                        }
 			        }
+		            cMinusDPos = cMinusDPos.getNextSibling();
 			    }
 			}   
 		}
@@ -210,12 +256,13 @@ public class ArithRewriterImpl extends DefaultRewriter {
              * Arithmetic: A + ... + E + ... + B  < C + ... + E + ... + D   == A + ... + B = C + ... + D
 			 */
 			(Equal|Lt|Le|Gt|Ge)(Plus(childrenLeft), Plus(childrenRight)) -> {
-			    for(Expression left: `childrenLeft) {
-			        final Expression sameAsLeft = findSame(left, `childrenRight);
-			        if (sameAsLeft != null) {
-                        return simplify(predicate, left, sameAsLeft);
-                    }
-			    }
+                final SameFormulaeFinder finder =
+                    new SameFormulaeFinder(`childrenLeft, LEFT_FIRST_CHILD,
+                                           `childrenRight, RIGHT_FIRST_CHILD);
+                final IPosition[] found = finder.findSame();
+                if (found != null) {
+                    return simplify(predicate, found);
+                }
 			}
 
 			/**
@@ -223,9 +270,12 @@ public class ArithRewriterImpl extends DefaultRewriter {
 			 * Arithmetic: C < A + ... + C ... + B   ==   0 < A + ... + B
 			 */
 			(Equal|Lt|Le|Gt|Ge)(C, Plus(children)) -> {
-                final Expression sameAsC = findSame(`C, `children);
-                if (sameAsC != null) {
-                    return simplify(predicate, `C, sameAsC);
+                final SameFormulaeFinder finder =
+                    new SameFormulaeFinder(`C, LEFT_CHILD,
+                                           `children, RIGHT_FIRST_CHILD);
+                final IPosition[] found = finder.findSame();
+                if (found != null) {
+                    return simplify(predicate, found);
                 }
 			}
 
@@ -234,9 +284,12 @@ public class ArithRewriterImpl extends DefaultRewriter {
              * Arithmetic: A + ... + C ... + B < C   ==   A + ... + B < 0
 			 */
 			(Equal|Lt|Le|Gt|Ge)(Plus(children), C) -> {
-                final Expression sameAsC = findSame(`C, `children);
-                if (sameAsC != null) {
-                    return simplify(predicate, `C, sameAsC);
+                final SameFormulaeFinder finder =
+                    new SameFormulaeFinder(`C, RIGHT_CHILD,
+                                           `children, LEFT_FIRST_CHILD);
+                final IPosition[] found = finder.findSame();
+                if (found != null) {
+                    return simplify(predicate, found);
                 }
 			}
 
@@ -244,8 +297,9 @@ public class ArithRewriterImpl extends DefaultRewriter {
              * SIMP_MULTI_ARITHREL_MINUS_MINUS_R
 			 * Arithmetic: A − C < B − C  == A < B
 			 */
-			(Equal|Lt|Le|Gt|Ge)(Minus(_, c1@C), Minus(_, c2@C)) -> {
-			    return simplify(predicate, `c1, `c2);
+			(Equal|Lt|Le|Gt|Ge)(Minus(_, C), Minus(_, C)) -> {
+			    return simplify(predicate, getSecondChild(LEFT_CHILD),
+			                               getSecondChild(RIGHT_CHILD));
 			}
 			
 			/**

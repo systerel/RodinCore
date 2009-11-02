@@ -31,6 +31,7 @@ public class ArithRewrites extends AbstractManualRewrites implements IVersionedR
 
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".arithRewrites";
+	private static final int REASONER_VERSION = 1;
 
 	public String getReasonerID() {
 		return REASONER_ID;
@@ -72,7 +73,7 @@ public class ArithRewrites extends AbstractManualRewrites implements IVersionedR
 	}
 
 	public int getVersion() {
-		return 0;
+		return REASONER_VERSION;
 	}
 
 }
