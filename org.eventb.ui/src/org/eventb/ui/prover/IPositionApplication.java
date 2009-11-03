@@ -36,7 +36,8 @@ public interface IPositionApplication extends ITacticApplication {
 	 * @param parsedString
 	 *            the actual String displayed by the prover ui.
 	 * @param parsedPredicate
-	 *            the result of the parsing of the String
+	 *            the result of the parsing of the String, source locations are
+	 *            correct but the predicate may not be type-checked
 	 * @return a Point with x (inclusive) and y (exclusive) as hyperlink bounds
 	 */
 	Point getHyperlinkBounds(String parsedString, Predicate parsedPredicate);

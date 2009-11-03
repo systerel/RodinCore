@@ -174,13 +174,12 @@ public class HypothesisRow {
 		EventBEditorUtils.changeFocusWhenDispose(hypothesisComposite,
 				scrolledForm.getParent());
 
-		final Predicate pred = hyp; // This predicate type-checks
-		final String parsedString = pred.toString();
+		final String parsedString = hyp.toString();
 
 		//Predicate containing the SourceLocations
 		final Predicate parsedPredicate = getParsed(parsedString); 
 						
-		createImageHyperlinks(buttonComposite, hyp);
+		createImageHyperlinks(buttonComposite);
 		
 		createHypothesisText(parsedPredicate, parsedString);
 
@@ -225,25 +224,26 @@ public class HypothesisRow {
 			string += str;
 
 			
-			// Get the list of applicable tactic on the type-checked hypothesis
-			// For each tactic, get the applicable positions
-
+			// Get the list of applicable tactic on the parsed but 
+			// not type-checked pretty printed string.
+			// For each tactic, get the applicable positions.
+			Predicate parsedPred = getParsed(string);
+			
 			final Map<Point, List<ITacticApplication>> links = getLinksToApplications(
-					userSupport, string, hyp); //here we load hyp as it is typeChecked
-											   //but without sourcelocations.
-			hypothesisText.setText(string, userSupport, hyp, indexes, links);
+					userSupport, string, parsedPred);
+					hypothesisText.setText(string, userSupport, hyp, indexes, links);
 		} else {
 			String str = PredicateUtil.prettyPrint(max_length, parsedString,
 					parsedPredicate);
 
-			Predicate parsedStr = getParsed(str);
+			Predicate parsedPred = getParsed(str);
 
 			int[] indexes = new int[0];
 
 			final Map<Point, List<ITacticApplication>> links;
 
 			if (enable) {
-				links = getLinksToApplications(userSupport, str, parsedStr);
+				links = getLinksToApplications(userSupport, str, parsedPred);
 			} else {
 				links = Collections.emptyMap();
 			}
@@ -305,12 +305,12 @@ public class HypothesisRow {
 	 * <p>
 	 * 
 	 */
-	private void createImageHyperlinks(Composite parent, Predicate parsedPred) {
+	private void createImageHyperlinks(Composite parent) {
 		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
 		List<ITacticApplication> tactics = tacticUIRegistry
-				.getTacticApplicationsToHypothesis(userSupport, parsedPred);
+				.getTacticApplicationsToHypothesis(userSupport, hyp);
 		final List<ICommandApplication> commands = tacticUIRegistry
-				.getCommandApplicationsToHypothesis(userSupport, parsedPred);
+				.getCommandApplicationsToHypothesis(userSupport, hyp);
 		if (tactics.isEmpty() && commands.isEmpty()) {
 			createNullHyperlinks();
 			return;
