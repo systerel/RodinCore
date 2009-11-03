@@ -15,8 +15,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.swt.graphics.Point;
-import org.eventb.core.ast.DefaultVisitor;
+import org.eventb.core.ast.DefaultFilter;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.UnaryExpression;
@@ -24,6 +25,7 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.prover.IPositionApplication;
 import org.eventb.ui.prover.ITacticApplication;
 import org.eventb.ui.prover.ITacticProvider2;
@@ -72,45 +74,55 @@ public class TotalDomainSubstitution implements ITacticProvider2 {
 
 	}
 
-	private static class TotalDomApplicationVisitor extends DefaultVisitor {
+	private static class ApplicationComputer {
 
 		private final IProverSequent sequent;
 		private final Predicate hyp;
 		private final Predicate predicate;
 		private final List<ITacticApplication> applications = new ArrayList<ITacticApplication>();
 
-		public TotalDomApplicationVisitor(IProverSequent sequent,
+		public ApplicationComputer(IProverSequent sequent,
 				Predicate hyp, Predicate predicate) {
 			this.sequent = sequent;
 			this.hyp = hyp;
 			this.predicate = predicate;
 		}
 
-		@Override
-		public boolean enterKDOM(final UnaryExpression expr) {
-			final Expression child = expr.getChild();
+		public List<ITacticApplication> getApplications() {
+			final List<IPosition> domPositions = predicate.getPositions(new DefaultFilter() {
+				@Override
+				public boolean select(UnaryExpression expression) {
+					return expression.getTag() == Formula.KDOM;
+				}
+			});
+			for (IPosition position : domPositions) {
+				final UnaryExpression domExpr = (UnaryExpression) predicate.getSubFormula(position);
+				final Expression child = domExpr.getChild();
 
-			final Set<Expression> substitutes = Tactics
-					.totalDomGetSubstitutions(sequent, child);
-			if (substitutes.isEmpty()) {
-				return true;
+				final Set<Expression> substitutes = Tactics
+						.totalDomGetSubstitutions(sequent, child);
+				if (substitutes.isEmpty()) {
+					continue;
+				}
+				
+				addApplications(position, domExpr, substitutes);
 			}
+			return applications;
+		}
 
-			final IPosition position = predicate.getPosition(expr
-					.getSourceLocation());
-			final String labelStart = "Replace " + expr.toString() + " with ";
+		private void addApplications(IPosition position,
+				Expression domainExpression, Set<Expression> substitutes) {
+			final String replaced = domainExpression.toString();
 
 			for (final Expression subst : substitutes) {
-				final String hyperlinkLabel = labelStart + subst.toString();
+				final String replaceWith = subst.toString();
+				final String hyperlinkLabel = Messages.bind(
+						Messages.tactics_replaceWith, replaced, replaceWith);
 				applications.add(new TotalDomApplication(hyp, position, subst,
 						hyperlinkLabel));
 			}
-			return true;
 		}
-
-		public List<ITacticApplication> getApplications() {
-			return applications;
-		}
+		
 	}
 
 	public List<ITacticApplication> getPossibleApplications(
@@ -120,10 +132,9 @@ public class TotalDomainSubstitution implements ITacticProvider2 {
 		final boolean isGoal = (hyp == null);
 		final Predicate pred = isGoal ? sequent.goal() : hyp;
 
-		final TotalDomApplicationVisitor visitor = new TotalDomApplicationVisitor(
+		final ApplicationComputer appliComputer = new ApplicationComputer(
 				sequent, hyp, pred);
-		pred.accept(visitor);
-		return visitor.getApplications();
+		return appliComputer.getApplications();
 	}
 
 }

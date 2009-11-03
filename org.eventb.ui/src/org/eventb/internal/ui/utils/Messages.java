@@ -14,6 +14,7 @@
  *     Systerel - added messages for Proof Simplification
  *     Systerel - added messages for Dialogs
  *     Systerel - added messages for Proof Skeleton
+ *     Systerel - added message for Tactics
  *******************************************************************************/
 package org.eventb.internal.ui.utils;
 
@@ -155,6 +156,9 @@ public final class Messages {
 	public static String dialogs_invalidIdentifiers;
 	public static String dialogs_duplicateNames;
 	public static String dialogs_readOnlyElement;
+	
+	// Tactics
+	public static String tactics_replaceWith;
 	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
