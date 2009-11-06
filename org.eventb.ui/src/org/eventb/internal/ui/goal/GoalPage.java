@@ -297,7 +297,7 @@ public class GoalPage extends Page implements IGoalPage {
 				actualString = PredicateUtil.prettyPrint(max_length, tmpString,
 						tmpPred);
 			}
-			parsedPred = ProverUIUtils.getParsed(actualString);
+			parsedPred = parseActualString(actualString);
 
 			final Map<Point, List<ITacticApplication>> links;
 			if (node.isOpen()) {
@@ -314,6 +314,11 @@ public class GoalPage extends Page implements IGoalPage {
 
 		}
 		toolkit.paintBordersFor(goalComposite);
+	}
+
+	private static Predicate parseActualString(String predicateString) {
+		final String parseable = predicateString.replace('\uFFFC', ' ');
+		return ProverUIUtils.getParsed(parseable);
 	}
 
 	void apply(ICommandApplication commandAppli) {
