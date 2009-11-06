@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - support for #x.x=c and NPE fix (ver 1)
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
@@ -44,6 +45,8 @@ import org.eventb.core.seqprover.proofBuilder.ReplayHints;
  * 
  */
 public class OnePointRule implements IVersionedReasoner {
+
+	private static final int REASONER_VERSION = 1;
 
 	public static class Input implements IReasonerInput {
 
@@ -183,7 +186,7 @@ public class OnePointRule implements IVersionedReasoner {
 	}
 
 	public int getVersion() {
-		return 0;
+		return REASONER_VERSION;
 	}
 
 }

@@ -74,11 +74,15 @@ public class OnePointRuleTests extends AbstractReasonerTests {
 
 				// Behaves the same with ∃ quantifier
 				newSuccessGoal("∃x,y· x=0 ∧ x+1=y ⇒ y=1", "∃y·0+1=y⇒y=1", "⊤"),
-				
+
+				// Non conjunctive ∃ predicate
+				newSuccessGoal("∃y· y=0", "⊤", "⊤"),
 				// simple conjunction with ∃ quantifier
 				newSuccessGoal("∃x,y· x=0 ∧ x+1=y", "∃y·0+1=y", "⊤"),
 				
 				// Also works with bound identifier on the rhs of the equality
+				newSuccessGoal("∃y· 0=y", "⊤", "⊤"),
+				newSuccessGoal("∃x,y· 0=x ∧ x+1=y", "∃y·0+1=y", "⊤"),
 				newSuccessGoal("∀x· 0=x ∧ x+1=0 ⇒ x+1=2", "0+1=0⇒0+1=2", "⊤"),
 				
 				// Will work in chain

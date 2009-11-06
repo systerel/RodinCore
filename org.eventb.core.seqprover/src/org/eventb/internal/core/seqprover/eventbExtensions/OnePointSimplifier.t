@@ -40,6 +40,7 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
+import org.eventb.core.seqprover.eventbExtensions.Lib;
  
 @SuppressWarnings("unused")
 public class OnePointSimplifier {
@@ -172,11 +173,12 @@ public class OnePointSimplifier {
                  Limp(impLeft,
                       impRight)) -> {
                  processMatching(`identDecls, getConjuncts(`impLeft), `impRight);
+                 return;
           }
           
-	      Exists(identDecls, Land(conjuncts)) -> {
-
-             processMatching(`identDecls, `conjuncts, null);
+	      Exists(identDecls, pred) -> {
+                 processMatching(`identDecls, getConjuncts(`pred), null);
+                 return;
 	      }
 	   }
 	}
@@ -191,6 +193,7 @@ public class OnePointSimplifier {
     }
 	
 	private void processMatching(BoundIdentDecl[] identDecls, Predicate[] conjuncts, Predicate impRight) {
+	    matched = false;
         int conjIndex = 0;
         for (conjIndex = 0; conjIndex < conjuncts.length; conjIndex++) {
             replacement = getReplacement(conjuncts[conjIndex], identDecls);
@@ -208,8 +211,11 @@ public class OnePointSimplifier {
         } else { // imply conjunctive form
             innerPred = makeInnerPred(conjunctsList, impRight);
         }
-         
-        simplifiedPredicate = makeSimplifiedPredicate(identDecls, innerPred);
+        if (innerPred == null) {
+            simplifiedPredicate = Lib.True; 
+        } else {
+            simplifiedPredicate = makeSimplifiedPredicate(identDecls, innerPred);
+        }
         matched = true;
 	}
 	
