@@ -1225,7 +1225,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
                 if (cSet.getForm() == QuantifiedExpression.Form.Lambda) {
                     final LambdaImageComputer computer = new LambdaImageComputer(cSet);
                     computer.init();
-                    return computer.computeImage(`x, ff);
+                    final Expression lambdaImage = computer.computeImage(`x, ff);
+                    if (lambdaImage != null) {
+                        return lambdaImage;
+                    }
                 }
             }
 		}

@@ -837,6 +837,8 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 				"{m↦n∣m>5−3 ∧ n> (8−4)∗2}",
 				"(λ(x↦y)↦((a↦b)↦(c ⦂ ℤ ))·x∈ℤ∧y∈ℤ∧a∈ℤ∧b∈ℤ ∣{m↦n∣m>y−x ∧ n>(b−a)∗c})((3↦5)↦((4↦8)↦2))");
 		predicateTest("∀x·x=ℕ⇒x={m∣m>0+0}", "∀x·x=ℕ⇒x=(λa↦b·a∈ℕ∧b∈ℕ∣{m∣m>a+b})(0↦0)");
+		// verify that no exception is thrown when no rewrite occurs
+		expressionTest("(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(w)", "(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(w)", "w", "ℤ×ℤ");
 	}
 
 
