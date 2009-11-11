@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.operations;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -71,9 +71,7 @@ class CreateElementGeneric<T extends IInternalElement> extends OperationLeaf {
 
 	@Override
 	public Collection<IInternalElement> getCreatedElements() {
-		ArrayList<IInternalElement> result = new ArrayList<IInternalElement>();
-		result.add(element);
-		return result;
+		return Collections.singletonList(element);
 	}
 
 	@Override

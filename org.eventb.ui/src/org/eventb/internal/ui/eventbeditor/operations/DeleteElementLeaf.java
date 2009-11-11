@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,18 +17,18 @@ import org.rodinp.core.RodinDBException;
 
 class DeleteElementLeaf extends OperationLeaf {
 
-	private IInternalElement element;
+	private final IInternalElement element;
+	private final boolean force;
+
 	private OperationTree createTree;
 	private IInternalElement nextSibling;
-	private final boolean force;
 
 	public DeleteElementLeaf(IInternalElement element,
 			OperationTree createTree, boolean force) {
 		super("DeleteElement");
 		this.element = element;
-		this.createTree = createTree;
-		nextSibling = null;
 		this.force = force;
+		this.createTree = createTree;
 	}
 
 	@Override
