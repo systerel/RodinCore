@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.eventb.core.EventBAttributes;
+import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
@@ -384,6 +385,21 @@ public class TestOperation extends OperationTest {
 
 		final AtomicOperation op = OperationFactory.deleteElement(inv);
 
+		verifyOperation(op, mch, mchElement);
+	}
+
+	/**
+	 * ensures that an element is deleted when execute and redo operation.<br>
+	 * ensures that the deleted element is created, including its child.
+	 */
+	@Test
+	public void testDeleteElementWithChild() throws Exception {
+		final IEvent evt = createEvent(mch, "evt");
+		final IAction act = evt.createChild(IAction.ELEMENT_TYPE, null, null);
+		act.setLabel("act", null);
+		act.setAssignmentString("assignment", null);
+		
+		final AtomicOperation op = OperationFactory.deleteElement(evt);
 		verifyOperation(op, mch, mchElement);
 	}
 
