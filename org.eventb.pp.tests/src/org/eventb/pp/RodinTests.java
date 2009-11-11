@@ -1182,4 +1182,15 @@ public class RodinTests extends AbstractRodinTest {
 				false);
 	}
 
+    @Test
+	public void testBUG() throws Exception {
+		doTest( //
+				mList( //
+						"S", "ℙ(S)", //
+						"a", "S" //
+				), Util.<String> mSet(), //
+				"a=b ∨ c=b ⇔ a=b ∨ d=b", //
+				false);
+	}
+
 }
