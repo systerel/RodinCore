@@ -10,6 +10,7 @@
  *     Systerel - added partition tactic (math V2)
  *     Systerel - added rm for UPTO and Arith and OnePoint tactics
  *     Systerel - added Total Domain Substitution
+ *     Systerel - added contrHyps() (CNTR)
  ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
@@ -57,6 +58,7 @@ import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
+import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
 import org.eventb.core.seqprover.reasonerInputs.SingleExprInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
@@ -73,6 +75,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.CardUpTo;
 import org.eventb.internal.core.seqprover.eventbExtensions.Conj;
 import org.eventb.internal.core.seqprover.eventbExtensions.ConjF;
 import org.eventb.internal.core.seqprover.eventbExtensions.Contr;
+import org.eventb.internal.core.seqprover.eventbExtensions.ContrHyps;
 import org.eventb.internal.core.seqprover.eventbExtensions.Cut;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.DoCase;
@@ -766,6 +769,10 @@ public class Tactics {
 		return (!seq.goal().equals(Lib.makeNeg(hyp)));
 	}
 	
+	public static ITactic contrHyps(Predicate hyp) {
+		return BasicTactics.reasonerTac(new ContrHyps(), new HypothesisReasoner.Input(hyp));
+	}
+
 //	/**
 //	 * This tactic tries to find a contradiction for a negated hyp in the selected hyps.
 //	 * 

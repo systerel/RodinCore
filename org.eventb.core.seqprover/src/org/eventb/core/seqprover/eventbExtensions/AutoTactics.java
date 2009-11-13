@@ -10,6 +10,7 @@
  *     Systerel - added FunOvrGoalTac and FunOvrHypTac tactics
  *     Systerel - added PartitionRewriteTac tactic (math V2)
  *     Systerel - added FiniteHypBoundedGoalTac and OnePoint*Tac
+ *     Systerel - modified FindContrHypsTac to use ContrHyps (discharge)
  ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
@@ -174,6 +175,26 @@ public class AutoTactics {
 		}
 	}
 
+	/**
+	 * Discharges a sequent by finding contradictory hypotheses.
+	 * This tactic tries to find a contradiction using each selected hypothesis that is a negation.
+	 * 
+	 * @author Farhad Mehta
+	 *
+	 */
+	public static class FindContrHypsTac implements ITactic{
+
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
+				if (Lib.isNeg(shyp) &&
+						ptNode.getSequent().containsHypotheses(Lib.breakPossibleConjunct(Lib.negPred(shyp)))){
+					return Tactics.contrHyps(shyp).apply(ptNode, pm);
+				}
+			}
+			return "Selected hypotheses contain no contradicting negations";
+		};
+	}
+
 	//*************************************************
 	//
 	//				Simplifying Auto tactics
@@ -276,26 +297,6 @@ public class AutoTactics {
 		
 	}
 	
-	/**
-	 * Simplifies a sequent by finding contradictory hypotheses and initiating a proof by contradiction.
-	 * This tactic tries to find a contradiction using each selected hypothesis that is a negation.
-	 * 
-	 * @author Farhad Mehta
-	 *
-	 */
-	public static class FindContrHypsTac implements ITactic{
-
-		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
-				if (Lib.isNeg(shyp) &&
-						ptNode.getSequent().containsHypotheses(Lib.breakPossibleConjunct(Lib.negPred(shyp)))){
-					return Tactics.falsifyHyp(shyp).apply(ptNode, pm);
-				}
-			}
-			return "Selected hypotheses contain no contradicting negations";
-		};
-	}
-
 	/**
 	 * Simplifies a sequent by rewriting all selected hypotheses and the goal using a (selected) hypothesis that is an equality
 	 * between a free variable and an expression that does not contain the free variable. The used equality remains in the

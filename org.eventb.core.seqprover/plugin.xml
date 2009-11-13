@@ -28,6 +28,10 @@
              class="org.eventb.internal.core.seqprover.eventbExtensions.Contr"
              id="contr"
              name="%contrName"/>
+       <reasoner
+             class="org.eventb.internal.core.seqprover.eventbExtensions.ContrHyps"
+             id="contrHyps"
+             name="%contrHypsName"/>
       <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.Cut"
             id="cut"
