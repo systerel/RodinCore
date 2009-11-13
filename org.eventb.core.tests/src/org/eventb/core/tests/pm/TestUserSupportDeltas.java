@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
-import java.util.ArrayList;
+import static java.util.Collections.singleton;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -344,29 +345,22 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		IProofState currentPO = userSupport.getCurrentPO();
 		Collection<Predicate> searched = currentPO.getSearched();
 
-		assertTrue("Search has 3 elements ", searched.size() == 3);
+		assertEquals("Unexpected search size", 2, searched.size());
 
 		Iterator<Predicate> iterator = searched.iterator();
 		Predicate hyp1 = iterator.next();
 		Predicate hyp2 = iterator.next();
-		Predicate hyp3 = iterator.next();
-
-		Collection<Predicate> hyps2 = new ArrayList<Predicate>();
-		hyps2.add(hyp2);
-		Collection<Predicate> hyps13 = new ArrayList<Predicate>();
-		hyps13.add(hyp1);
-		hyps13.add(hyp3);
 
 		startDeltas();
-		userSupport.removeSearchedHypotheses(hyps2);
+		userSupport.removeSearchedHypotheses(singleton(hyp2));
 		assertDeltas("Second hypothesis has been removed ",
 				"[*] x.bps [STATE|INFORMATION]\n"
 						+ "Removed hypotheses from search (priority 2)\n"
 						+ "  [*] PO7[org.eventb.core.psStatus] [SEARCH]");
 
 		clearDeltas();
-		userSupport.removeSearchedHypotheses(hyps13);
-		assertDeltas("First and third hypotheses has been removed ",
+		userSupport.removeSearchedHypotheses(singleton(hyp1));
+		assertDeltas("First hypothesis has been removed ",
 				"[*] x.bps [STATE|INFORMATION]\n"
 						+ "Removed hypotheses from search (priority 2)\n"
 						+ "  [*] PO7[org.eventb.core.psStatus] [SEARCH]");
@@ -450,7 +444,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		userSupport.searchHyps("=");
 
 		Collection<Predicate> searched = currentPO.getSearched();
-		assertTrue("Search size is 3 ", searched.size() == 3);
+		assertEquals("Unexpected search size", 2, searched.size());
 
 		Iterator<Predicate> iterator = searched.iterator();
 		Predicate hyp1 = iterator.next();

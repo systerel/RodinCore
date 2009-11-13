@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
-import java.util.ArrayList;
+import static java.util.Collections.singleton;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -408,12 +409,12 @@ public class TestUserSupports extends TestPM {
 		userSupport.searchHyps("=");
 
 		Collection<Predicate> searched = currentPO.getSearched();
-		assertTrue("Search size is 3 ", searched.size() == 3);
+		assertEquals("Unexpected search size", 2, searched.size());
 
 		userSupport.searchHyps("Empty search");
 
 		searched = currentPO.getSearched();
-		assertTrue("Search is empty ", searched.size() == 0);
+		assertTrue("Search should be empty ", searched.isEmpty());
 	}
 
 	public void testRemoveSearchedHypotheses() throws CoreException {
@@ -425,28 +426,21 @@ public class TestUserSupports extends TestPM {
 		IProofState currentPO = userSupport.getCurrentPO();
 		Collection<Predicate> searched = currentPO.getSearched();
 
-		assertTrue("Search has 3 elements ", searched.size() == 3);
+		assertEquals("Unexpected search size", 2, searched.size());
 
 		Iterator<Predicate> iterator = searched.iterator();
 		Predicate hyp1 = iterator.next();
 		Predicate hyp2 = iterator.next();
-		Predicate hyp3 = iterator.next();
 
-		Collection<Predicate> hyps2 = new ArrayList<Predicate>();
-		hyps2.add(hyp2);
-		Collection<Predicate> hyps13 = new ArrayList<Predicate>();
-		hyps13.add(hyp1);
-		hyps13.add(hyp3);
-
-		userSupport.removeSearchedHypotheses(hyps2);
+		userSupport.removeSearchedHypotheses(singleton(hyp2));
 		searched = currentPO.getSearched();
 		assertFalse("Second hypothesis has been removed ", searched
 				.contains(hyp2));
-		assertTrue("Search has 2 elements ", searched.size() == 2);
+		assertEquals("Unexpected search size", 1, searched.size());
 
-		userSupport.removeSearchedHypotheses(hyps13);
+		userSupport.removeSearchedHypotheses(singleton(hyp1));
 		searched = currentPO.getSearched();
-		assertTrue("Search has no elements ", searched.size() == 0);
+		assertTrue("Search should be empty", searched.isEmpty());
 	}
 
 	public void testSelectNode() throws CoreException {
@@ -509,7 +503,7 @@ public class TestUserSupports extends TestPM {
 		userSupport.searchHyps("=");
 
 		Collection<Predicate> searched = currentPO.getSearched();
-		assertTrue("Search size is 3 ", searched.size() == 3);
+		assertEquals("Unexpected search size", 2, searched.size());
 
 		Iterator<Predicate> iterator = searched.iterator();
 		Predicate hyp1 = iterator.next();
@@ -538,4 +532,23 @@ public class TestUserSupports extends TestPM {
 		assertTrue("Node 1 is open again ", node1.isOpen());
 	}
 
+	public void testSearchConsiderHiddenHypotheses() throws Exception {
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
+
+		IProofState currentPO = userSupport.getCurrentPO();
+
+		userSupport.searchHyps("=");
+
+		final Collection<Predicate> searched = currentPO.getSearched();
+		assertEquals("Unexpected search size", 2, searched.size());
+		
+		// consider hidden hypotheses
+		manager.setConsiderHiddenHypotheses(true);
+		
+		userSupport.searchHyps("=");
+
+		final Collection<Predicate> searchedWithHidden = currentPO.getSearched();
+		assertEquals("Unexpected search size", 3, searchedWithHidden.size());
+	}
 }
