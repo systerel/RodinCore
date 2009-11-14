@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language V2
+ *     Systerel - various cleanup
  ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
@@ -19,6 +20,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,9 +46,7 @@ import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.LiteralPredicate;
-import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -95,45 +95,31 @@ public final class Lib {
 			Expression.FALSE, null);
 
 	public static boolean isTrue(Predicate P) {
-		if (P instanceof LiteralPredicate && P.getTag() == Formula.BTRUE)
-			return true;
-		return false;
+		return P.getTag() == Formula.BTRUE;
 	}
 
 	public static boolean isFalse(Predicate P) {
-		if (P instanceof LiteralPredicate && P.getTag() == Formula.BFALSE)
-			return true;
-		return false;
+		return P.getTag() == Formula.BFALSE;
 	}
 
 	public static boolean isEmptySet(Expression e) {
-		if (e instanceof AtomicExpression && e.getTag() == Formula.EMPTYSET)
-			return true;
-		return false;
+		return e.getTag() == Formula.EMPTYSET;
 	}
 	
 	public static boolean isFreeIdent(Expression e) {
-		if (e instanceof FreeIdentifier && e.getTag() == Formula.FREE_IDENT)
-			return true;
-		return false;
+		return e.getTag() == Formula.FREE_IDENT;
 	}
 
 	public static boolean isUnivQuant(Predicate P) {
-		if (P instanceof QuantifiedPredicate && P.getTag() == Formula.FORALL)
-			return true;
-		return false;
+		return P.getTag() == Formula.FORALL;
 	}
 
 	public static boolean isDisj(Predicate P) {
-		if (P instanceof AssociativePredicate && P.getTag() == Formula.LOR)
-			return true;
-		return false;
+		return P.getTag() == Formula.LOR;
 	}
 
 	public static boolean isNeg(Predicate P) {
-		if (P instanceof UnaryPredicate && P.getTag() == Formula.NOT)
-			return true;
-		return false;
+		return P.getTag() == Formula.NOT;
 	}
 
 	public static Predicate negPred(Predicate P) {
@@ -143,21 +129,15 @@ public final class Lib {
 	}
 
 	public static boolean isConj(Predicate P) {
-		if (P instanceof AssociativePredicate && P.getTag() == Formula.LAND)
-			return true;
-		return false;
+		return P.getTag() == Formula.LAND;
 	}
 
 	public static boolean isExQuant(Predicate P) {
-		if (P instanceof QuantifiedPredicate && P.getTag() == Formula.EXISTS)
-			return true;
-		return false;
+		return P.getTag() == Formula.EXISTS;
 	}
 
 	public static boolean isImp(Predicate P) {
-		if (P instanceof BinaryPredicate && P.getTag() == Formula.LIMP)
-			return true;
-		return false;
+		return P.getTag() == Formula.LIMP;
 	}
 
 	public static Predicate impRight(Predicate P) {
@@ -178,17 +158,22 @@ public final class Lib {
 		return ((AssociativePredicate) P).getChildren();
 	}
 
-	private static Set<Predicate> singeleton(Predicate P) {
-		HashSet<Predicate> result = new HashSet<Predicate>(1);
-		result.add(P);
-		return result;
-	}
-
+	/**
+	 * Returns a set of conjuncts of <code>P</code> when it is a conjunction,
+	 * otherwise a singleton set containing <code>P</code>. The returned set is
+	 * mutable.
+	 * 
+	 * @param P
+	 *            a predicate
+	 * @return a mutable set of conjuncts of the given predicate
+	 */
 	public static Set<Predicate> breakPossibleConjunct(Predicate P) {
-		if (!isConj(P))
-			return singeleton(P);
-		return new LinkedHashSet<Predicate>(Arrays.asList(((AssociativePredicate) P)
-				.getChildren()));
+		final List<Predicate> list;
+		if (isConj(P))
+			list = Arrays.asList(conjuncts(P));
+		else
+			list = Arrays.asList(P);
+		return new LinkedHashSet<Predicate>(list);
 	}
 	
 	public static boolean removeTrue(Set<Predicate> preds){
@@ -202,9 +187,7 @@ public final class Lib {
 	}
 
 	public static boolean isEq(Predicate P) {
-		if (P instanceof RelationalPredicate && P.getTag() == Formula.EQUAL)
-			return true;
-		return false;
+		return P.getTag() == Formula.EQUAL;
 	}
 
 	public static Expression eqLeft(Predicate P) {
@@ -220,47 +203,35 @@ public final class Lib {
 	}
 
 	public static boolean isNotEq(Predicate P) {
-		if (P instanceof RelationalPredicate && P.getTag() == Formula.NOTEQUAL)
-			return true;
-		return false;
+		return P.getTag() == Formula.NOTEQUAL;
 	}
 
 	public static boolean isInclusion(Predicate P) {
-		if (P instanceof RelationalPredicate && P.getTag() == Formula.IN)
-			return true;
-		return false;
+		return P.getTag() == Formula.IN;
 	}
 
 	public static boolean isNotInclusion(Predicate P) {
-		if (P instanceof RelationalPredicate && P.getTag() == Formula.NOTIN)
-			return true;
-		return false;
+		return P.getTag() == Formula.NOTIN;
 	}
 
 	public static Expression getElement(Predicate P) {
-		if (!(P instanceof RelationalPredicate && (P.getTag() == Formula.NOTIN || P
-				.getTag() == Formula.IN)))
+		if (!isInclusion(P) && !isNotInclusion(P))
 			return null;
 		return ((RelationalPredicate) P).getLeft();
 	}
 
 	public static Expression getSet(Predicate P) {
-		if (!(P instanceof RelationalPredicate && (P.getTag() == Formula.NOTIN || P
-				.getTag() == Formula.IN)))
+		if (!isInclusion(P) && !isNotInclusion(P))
 			return null;
 		return ((RelationalPredicate) P).getRight();
 	}
 
 	public static boolean isSubset(Predicate P) {
-		if (P instanceof RelationalPredicate && P.getTag() == Formula.SUBSET)
-			return true;
-		return false;
+		return P.getTag() == Formula.SUBSET;
 	}
 
 	public static boolean isNotSubset(Predicate P) {
-		if (P instanceof RelationalPredicate && P.getTag() == Formula.NOTSUBSET)
-			return true;
-		return false;
+		return P.getTag() == Formula.NOTSUBSET;
 	}
 
 	public static Expression subset(Predicate P) {
@@ -590,7 +561,7 @@ public final class Lib {
 		@Override
 		public Expression rewrite(AssociativeExpression expression) {
 			int tag = expression.getTag();
-			if (from instanceof AssociativeExpression && from.getTag() == tag) {
+			if (from.getTag() == tag) {
 				AssociativeExpression aExp = (AssociativeExpression) from;
 				Expression[] children = expression.getChildren();
 				Expression[] rewriteChildren = aExp.getChildren();
@@ -796,11 +767,7 @@ public final class Lib {
 	}
 
 	public static boolean isFunApp(Formula<?> formula) {
-		if (formula instanceof BinaryExpression
-				&& formula.getTag() == Expression.FUNIMAGE) {
-			return true;
-		}
-		return false;
+		return formula.getTag() == Expression.FUNIMAGE;
 	}
 
 	/**
@@ -814,11 +781,7 @@ public final class Lib {
 	 *         otherwise.
 	 */
 	public static boolean isOvr(Expression expression) {
-		if (expression instanceof AssociativeExpression
-				&& expression.getTag() == Expression.OVR) {
-			return true;
-		}
-		return false;
+		return expression.getTag() == Expression.OVR;
 	}
 
 	/**
@@ -831,11 +794,7 @@ public final class Lib {
 	 *         (binary expression with tag PFUN)
 	 */
 	public static boolean isPFun(Expression expression) {
-		if (expression instanceof BinaryExpression
-				&& expression.getTag() == Expression.PFUN) {
-			return true;
-		}
-		return false;
+		return expression.getTag() == Expression.PFUN;
 	}
 	
 	/**
@@ -848,21 +807,15 @@ public final class Lib {
 	 *         (binary expression with tag PFUN or TFUN or PINJ or TINJ or PSUR or TSUR or TBIJ)
 	 */
 	public static boolean isFun(Expression expression) {
-		if (expression instanceof BinaryExpression
-				&& (
-						expression.getTag() == Expression.PFUN ||
-						expression.getTag() == Expression.TFUN ||
-						expression.getTag() == Expression.PINJ ||
-						expression.getTag() == Expression.TINJ ||
-						expression.getTag() == Expression.PSUR ||
-						expression.getTag() == Expression.TSUR ||
-						expression.getTag() == Expression.TBIJ )) {
-			return true;
-		}
-		return false;
-	}
-	
-	
+		return expression.getTag() == Expression.PFUN
+				|| expression.getTag() == Expression.TFUN
+				|| expression.getTag() == Expression.PINJ
+				|| expression.getTag() == Expression.TINJ
+				|| expression.getTag() == Expression.PSUR
+				|| expression.getTag() == Expression.TSUR
+				|| expression.getTag() == Expression.TBIJ;
+	}	
+
 	/**
 	 * Returns the right hand side of a binary expression.
 	 * 
@@ -896,12 +849,8 @@ public final class Lib {
 	}
 
 	public static boolean isSetExtension(Expression expression) {
-		if (expression instanceof SetExtension) {
-			return true;
-		}
-		return false;
+		return expression.getTag() == Formula.SETEXT;
 	}
-
 
 	/**
 	 * Test if the formula is a set intersection "S ∩ ... ∩ T".
@@ -914,8 +863,7 @@ public final class Lib {
 	 * @author htson
 	 */
 	public static boolean isInter(Expression expression) {
-		return expression instanceof AssociativeExpression
-				&& expression.getTag() == Expression.BINTER;
+		return expression.getTag() == Expression.BINTER;
 	}
 
 
@@ -930,26 +878,19 @@ public final class Lib {
 	 * @author htson
 	 */
 	public static boolean isUnion(Expression expression) {
-		return expression instanceof AssociativeExpression
-				&& expression.getTag() == Expression.BUNION;
+		return expression.getTag() == Expression.BUNION;
 	}
 
 	public static boolean isConv(Expression expression) {
-		return expression instanceof UnaryExpression
-				&& expression.getTag() == Expression.CONVERSE;
+		return expression.getTag() == Expression.CONVERSE;
 	}
 
 	public static boolean isRelImg(Formula<?> formula) {
-		if (formula instanceof BinaryExpression
-				&& formula.getTag() == Expression.RELIMAGE) {
-			return true;
-		}
-		return false;
+		return formula.getTag() == Expression.RELIMAGE;
 	}
 
 	public static boolean isSetMinus(Formula<?> formula) {
-		return formula instanceof BinaryExpression
-				&& formula.getTag() == Expression.SETMINUS;
+		return formula.getTag() == Expression.SETMINUS;
 	}
 
 	/**
@@ -963,8 +904,7 @@ public final class Lib {
 	 * @author htson
 	 */
 	public static boolean isMapping(Formula<?> formula) {
-		return formula instanceof BinaryExpression
-				&& formula.getTag() == Expression.MAPSTO;
+		return formula.getTag() == Expression.MAPSTO;
 	}
 
 
@@ -997,8 +937,7 @@ public final class Lib {
 	 * @author htson
 	 */
 	public static boolean isDirectProduct(Formula<?> formula) {
-		return formula instanceof BinaryExpression
-				&& formula.getTag() == Expression.DPROD;
+		return formula.getTag() == Expression.DPROD;
 	}
 
 
@@ -1013,54 +952,8 @@ public final class Lib {
 	 * @author htson
 	 */
 	public static boolean isParallelProduct(Formula<?> formula) {
-		return formula instanceof BinaryExpression
-				&& formula.getTag() == Expression.PPROD;
+		return formula.getTag() == Expression.PPROD;
 	}
-
-	// /**
-	// * Typechecks a formula assuming an initial type environment
-	// *
-	// * @param f
-	// * The formula to type check
-	// * @param initialTypeEnvironment
-	// * The initial type environment to use while type checking the formula.
-	// * This type environment is not modified
-	// * @return The type environment enriched with the extra type information
-	// inferred
-	// * from the input formula
-	// */
-	// private static ITypeEnvironment typeCheck(Formula f,ITypeEnvironment
-	// initialTypeEnvironment) {
-	// ITypeCheckResult tcr = f.typeCheck(initialTypeEnvironment);
-	// if (! tcr.isSuccess()) return null;
-	// if (tcr.getInferredEnvironment().isEmpty()) return
-	// tcr.getInitialTypeEnvironment();
-	// ITypeEnvironment result = initialTypeEnvironment.clone();
-	// result.addAll(tcr.getInferredEnvironment());
-	// return result;
-	// }
-
-	// public static ITypeEnvironment typeCheck(Formula... formulae) {
-	// ITypeEnvironment typeEnvironment = ff.makeTypeEnvironment();
-	// for (Formula f:formulae)
-	// {
-	// typeEnvironment = typeCheck(f,typeEnvironment);
-	// if (typeEnvironment == null) return null;
-	// }
-	// return typeEnvironment;
-	// }
-
-	// public Predicate disprovedCase(Map<FreeIdentifier,Expression>
-	// counterExample){
-	// List<Predicate> predicates = new
-	// ArrayList<Predicate>(counterExample.size());
-	// for (Map.Entry<FreeIdentifier, Expression> assignment :
-	// counterExample.entrySet())
-	// {
-	// predicates.add(makeEq(assignment.getKey(), assignment.getValue()));
-	// }
-	// return makeConj(predicates);
-	// }
 
 	/**
 	 * Contruct an integer literal ({@link IntegerLiteral} from an integer.
@@ -1072,8 +965,7 @@ public final class Lib {
 	 * @author htson
 	 */
 	public static IntegerLiteral makeIntegerLiteral(int n) {
-		BigInteger literal = new BigInteger("" + n);
-		return ff.makeIntegerLiteral(literal, null);
+		return ff.makeIntegerLiteral(BigInteger.valueOf(n), null);
 	}
 
 
@@ -1088,7 +980,7 @@ public final class Lib {
 	 * @author htson
 	 */
 	public static boolean isFinite(Formula<?> formula) {
-		return (formula instanceof SimplePredicate && formula.getTag() == Predicate.KFINITE);
+		return formula.getTag() == Predicate.KFINITE;
 	}
 
 
@@ -1105,14 +997,9 @@ public final class Lib {
 	 */
 	public static boolean isRelation(Formula<?> formula) {
 		if (formula instanceof Expression) {
-			Expression r = (Expression) formula;
-			Type type = r.getType();
-			if (type instanceof PowerSetType) {
-				Type baseType = type.getBaseType();
-				if (baseType instanceof ProductType) {
-					return true;
-				}
-			}
+			final Expression expr = (Expression) formula;
+			final Type type = expr.getType();
+			return type != null && type.getSource() != null;
 		}
 		return false;
 	}
@@ -1129,7 +1016,7 @@ public final class Lib {
 	 * @author htson
 	 */
 	public static boolean isSetOfRelation(Formula<?> formula) {
-		return (formula instanceof BinaryExpression && formula.getTag() == Expression.REL);
+		return formula.getTag() == Expression.REL;
 	}
 
 
@@ -1144,7 +1031,7 @@ public final class Lib {
 	 * @author htson
 	 */
 	public static boolean isRan(Formula<?> formula) {
-		return (formula instanceof UnaryExpression && formula.getTag() == Expression.KRAN);
+		return formula.getTag() == Expression.KRAN;
 	}
 
 	
@@ -1159,7 +1046,7 @@ public final class Lib {
 	 * @author htson
 	 */
 	public static boolean isDom(Formula<?> formula) {
-		return (formula instanceof UnaryExpression && formula.getTag() == Expression.KDOM);
+		return formula.getTag() == Expression.KDOM;
 	}
 
 
@@ -1175,7 +1062,7 @@ public final class Lib {
 	 * @author htson
 	 */
 	public static boolean isSetOfPartialFunction(Formula<?> formula) {
-		return (formula instanceof BinaryExpression && formula.getTag() == Expression.PFUN);
+		return formula.getTag() == Expression.PFUN;
 	}
 
 	
@@ -1190,7 +1077,7 @@ public final class Lib {
 	 * @author htson
 	 */
 	public static boolean isBoundIdentifier(Formula<?> formula) {
-		return (formula instanceof BoundIdentifier);
+		return formula.getTag() == Formula.BOUND_IDENT;
 	}
 
 
@@ -1205,15 +1092,12 @@ public final class Lib {
 	 * @author htson
 	 */
 	public static boolean isSetOfIntegers(Formula<?> formula) {
-		if (!(formula instanceof Expression)) {
-			return false;
+		if (formula instanceof Expression) {
+			final Expression expr = (Expression) formula;
+			final Type type = expr.getType();
+			return type != null && type.getBaseType() instanceof IntegerType;
 		}
-		Expression expression = (Expression) formula;
-		Type type = expression.getType();
-		if (type == null) {
-			return false;
-		}
-		return type.getBaseType() instanceof IntegerType;
+		return false;
 	}
 
 
