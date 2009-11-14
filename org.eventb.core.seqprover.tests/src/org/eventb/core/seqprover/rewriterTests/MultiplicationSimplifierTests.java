@@ -32,8 +32,8 @@ public class MultiplicationSimplifierTests {
 		return ff.makeAssociativeExpression(MUL, children, null);
 	}
 
-	private static IntegerLiteral lit(int value) {
-		final BigInteger bi = new BigInteger(Integer.toString(value));
+	private static IntegerLiteral lit(long value) {
+		final BigInteger bi = BigInteger.valueOf(value);
 		return ff.makeIntegerLiteral(bi, null);
 	}
 

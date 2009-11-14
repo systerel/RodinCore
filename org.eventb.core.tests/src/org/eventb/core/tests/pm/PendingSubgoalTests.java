@@ -54,7 +54,7 @@ public class PendingSubgoalTests extends TestPM {
 	
 	private static Expression L0 = ff.makeIntegerLiteral(BigInteger.ZERO, null);
 	private static Expression L1 = ff.makeIntegerLiteral(BigInteger.ONE, null);
-	private static Expression L2 = ff.makeIntegerLiteral(new BigInteger("2"), null);
+	private static Expression L2 = ff.makeIntegerLiteral(BigInteger.valueOf(2), null);
 	
 	private static Predicate G = ff.makeRelationalPredicate(
 			Predicate.EQUAL, id_x, L0, null);

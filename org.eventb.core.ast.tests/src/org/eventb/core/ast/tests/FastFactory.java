@@ -180,8 +180,8 @@ public class FastFactory {
 		return ff.makeIntegerLiteral(BigInteger.ZERO, null);
 	}
 
-	public static IntegerLiteral mIntegerLiteral(int value) {
-		return ff.makeIntegerLiteral(new BigInteger(Integer.toString(value)), null);
+	public static IntegerLiteral mIntegerLiteral(long value) {
+		return ff.makeIntegerLiteral(BigInteger.valueOf(value), null);
 	}
 
 	public static <T> T[] mList(T... objs) {
