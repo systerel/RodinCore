@@ -54,6 +54,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.osgi.service.prefs.BackingStoreException;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -65,6 +67,7 @@ import org.rodinp.internal.core.builder.BuildState;
 import org.rodinp.internal.core.builder.RodinBuilder;
 import org.rodinp.internal.core.indexer.RodinIndexer;
 import org.rodinp.internal.core.util.Messages;
+import org.rodinp.internal.core.util.Util;
 
 /**
  * The <code>RodinDBManager</code> manages instances of <code>IRodinDB</code>.
@@ -966,11 +969,10 @@ public class RodinDBManager implements ISaveParticipant {
 	}
 
 	public void shutdown () {
-		RodinCore javaCore = RodinCore.getRodinCore();
-		javaCore.savePluginPreferences();
+	    savePluginPreferences(RodinCore.PLUGIN_ID);
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace.removeResourceChangeListener(this.deltaState);
-		workspace.removeSaveParticipant(javaCore);
+		workspace.removeSaveParticipant(RodinCore.getRodinCore());
 		
 		RodinIndexer.stop();
 	
@@ -982,6 +984,15 @@ public class RodinDBManager implements ISaveParticipant {
 		}
 		
 		// Note: no need to close the Rodin database as this just removes Rodin element infos from the Rodin database cache
+	}
+
+	private static void savePluginPreferences(String pluginId) {
+		final InstanceScope instanceScope = new InstanceScope();
+		try {
+			instanceScope.getNode(pluginId).flush();
+		} catch (BackingStoreException e) {
+			Util.log(e, "while saving preferences for: " + pluginId);
+		}
 	}
 
 	public DocumentBuilder getDocumentBuilder() throws RodinDBException {
