@@ -9,7 +9,7 @@
    <extension-point id="postTactics" name="%postTactics" schema="schema/postTactics.exsd"/>
    <extension-point id="pomTactics" name="%pomTactics" schema="schema/pomTactics.exsd"/>
    <extension
-         point="org.eclipse.core.runtime.contentTypes">
+         point="org.eclipse.core.contenttype.contentTypes">
       <content-type
             base-type="org.rodinp.core.rodin"
             file-extensions="bum"

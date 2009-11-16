@@ -13,7 +13,7 @@
    <extension-point id="indexers" name="%indexersName" schema="schema/indexers.exsd"/>
    <extension-point id="occurrenceKinds" name="%occurrenceKindsName" schema="schema/occurrenceKinds.exsd"/>
 
-   <extension point="org.eclipse.core.runtime.contentTypes">
+   <extension point="org.eclipse.core.contenttype.contentTypes">
 		<content-type
         base-type="org.eclipse.core.runtime.xml"
         default-charset="UTF-8"
