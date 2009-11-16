@@ -592,7 +592,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		
 		smiley = new ImageHyperlink(midComp, SWT.BOTTOM);
 		smiley.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		smiley.setEnabled(false);
 		smiley.setBackground(scrolledForm.getBackground());
 
 		// A text field
