@@ -359,7 +359,8 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 						- inset * 2, rect.height - inset * 2);
 			}
 		});
-		if(isReadOnly(editor.getRodinInput())) {
+		if ((itemData instanceof IInternalElement)
+				&& isReadOnly((IInternalElement) itemData)) {
 			text.setEditable(false);
 		} else {
 			final IFocusService service = (IFocusService) editor.getSite()

@@ -18,10 +18,12 @@ package org.eventb.ui.tests;
 
 import java.util.Arrays;
 
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
+import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.internal.ui.EventBUtils;
@@ -451,6 +453,68 @@ public class TestEventBUtils extends EventBUITest {
 		m2.getRodinFile().save(null, true);
 
 		assertImplicitChildren(m2Event, p, grd1, act1, q, grd2, act2);
+	}
+
+	private static void setGenerated(IInternalElement element)
+			throws RodinDBException {
+		element.setAttributeValue(EventBAttributes.GENERATED_ATTRIBUTE, true,
+				null);
+	}
+	
+	private static void assertReadOnly(IInternalElement element) {
+		assertTrue("Read only expected", EventBUtils.isReadOnly(element));
+	}
+
+	private static void assertNotReadOnly(IInternalElement element) {
+		assertFalse("Expected NOT read only", EventBUtils.isReadOnly(element));
+	}
+
+	/**
+	 * Ensures that a generated element (bearing the generated attribute) is
+	 * read only.
+	 */
+	@Test
+	public void testIsReadOnlyInternalElement() throws Exception {
+		final IMachineRoot mch = createMachine("mch");
+		final IInvariant inv = createInvariant(mch, "inv", "", false);
+
+		assertNotReadOnly(inv);
+		setGenerated(inv);
+		assertReadOnly(inv);
+	}
+	
+	/**
+	 * Ensures that a generated root element (bearing the generated attribute)
+	 * is read only as well as its descendants.
+	 */
+	@Test
+	public void testIsReadOnlyRoot() throws Exception {
+		final IMachineRoot mch = createMachine("mch");
+		final IInvariant inv = createInvariant(mch, "inv", "", false);
+		
+		assertNotReadOnly(mch);
+		assertNotReadOnly(inv);
+		setGenerated(mch);
+		assertReadOnly(mch);
+		assertReadOnly(inv);
+	}
+
+	/**
+	 * Ensures that elements inside a generated subtree are read only and
+	 * elements outside are not read only.
+	 */
+	@Test
+	public void testIsReadOnlySubTree() throws Exception {
+		final IMachineRoot mch = createMachine("mch");
+		final IInvariant inv = createInvariant(mch, "inv", "", false);
+		final IEvent evt = createEvent(mch, "evt");
+		final IAction act = createAction(evt, "act", "");
+		
+		setGenerated(evt);
+		assertReadOnly(evt);
+		assertReadOnly(act);
+		assertNotReadOnly(mch);
+		assertNotReadOnly(inv);
 	}
 
 }

@@ -17,6 +17,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui;
 
+import static org.eventb.core.EventBAttributes.GENERATED_ATTRIBUTE;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,7 +29,6 @@ import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IEventBProject;
 import org.eventb.core.IExtendsContext;
-import org.eventb.core.IGeneratedElement;
 import org.eventb.core.IGuard;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineRoot;
@@ -302,17 +303,26 @@ public class EventBUtils {
 	 * @return <code>true</code> iff the given element is read only
 	 */
 	public static boolean isReadOnly(IInternalElement element) {
-		// TODO modify code when types other than IEventBRoot can be generated
-		final IInternalElement root = element.getRoot();
-		if (!(root instanceof IGeneratedElement)) {
-			return false;
-		}
 		try {
-			return ((IGeneratedElement) root).isGenerated();
+			if (isGenerated(element)) {
+				return true;
+			}
+			final IRodinElement parent = element.getParent();
+			if (!(parent instanceof IInternalElement)) {
+				return false;
+			}
+			return isReadOnly((IInternalElement) parent);
 		} catch (RodinDBException e) {
-			UIUtils.log(e, "while checking for generated attribute in " + root);
+			UIUtils.log(e, "while checking for generated attribute in "
+					+ element);
 			return false;
 		}
+	}
+
+	private static boolean isGenerated(IInternalElement element)
+			throws RodinDBException {
+		return element.hasAttribute(GENERATED_ATTRIBUTE)
+				&& element.getAttributeValue(GENERATED_ATTRIBUTE);
 	}
 
 }
