@@ -84,6 +84,10 @@ public class PasteHandler extends AbstractHandler implements IHandler {
 		if (!(target instanceof IInternalElement) || !target.exists())
 			return "Target does not exist";
 
+		if (EventBEditorUtils.checkAndShowReadOnly(target)) {
+			return null;
+		}
+		
 		History.getInstance().addOperation(
 				OperationFactory.copyElements((IInternalElement) target,
 						handleData));

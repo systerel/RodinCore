@@ -143,6 +143,9 @@ public class PasteAction extends SelectionListenerAction {
 		}else{
 			pasteInto = root.getRoot();
 		}
+		if (EventBEditorUtils.checkAndShowReadOnly(pasteInto)) {
+			return;
+		}
 		History.getInstance().addOperation(OperationFactory.copyElements(pasteInto, handleData));
 
 	}
