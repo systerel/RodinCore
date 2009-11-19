@@ -1,9 +1,9 @@
 = HOWTO generate documentation =
 
 == Rodin User Manual =
-python mw2html.py  -f -r"Rodin_User_Manual"  "http://wiki.event-b.org/index.php/Index_(Rodin_User_Manual)" /home/clabaut/workspace/org.eventb.doc.user/html/ 
+python mw2html.py  -f -r"Rodin_User_Manual" -R'Index \(([^<]*)\) - Event-B'  "http://wiki.event-b.org/index.php/Index_(Rodin_User_Manual)" /home/clabaut/workspace/org.eventb.doc.user/html/ 
 == Rodin Tutorial =
-python mw2html.py  -f -r"Rodin_Tutorial"  "http://wiki.event-b.org/index.php/Index_(Rodin_Tutorial)" /home/clabaut/workspace/org.eventb.doc.user/html/
+python mw2html.py  -f -r"Rodin_Tutorial" -R'Index \(([^<]*)\) - Event-B'  "http://wiki.event-b.org/index.php/Index_(Rodin_Tutorial)" /home/clabaut/workspace/org.eventb.doc.user/html/
 
 = HOWTO write documentation =
 TODO

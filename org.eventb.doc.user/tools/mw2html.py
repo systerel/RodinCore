@@ -55,7 +55,9 @@ class Config:
                made_by=True, overwrite=False, footer=None,
                skin=MONOBOOK_SKIN, move_href=True, image_dir = True,
                remove_png=True, remove_history=True,url_regex=None,
-               verbose=logging.WARNING):
+               verbose=logging.WARNING,
+               title_extract_re = r'([^<]*) - Event-B'
+               ):
     self.rooturl         = rooturl
     self.outdir          = os.path.abspath(outdir)
     self.flatten         = flatten
@@ -70,6 +72,7 @@ class Config:
     self.skin            = skin
     self.move_href       = move_href
     self.url_regex       = url_regex
+    self.title_extract_re = title_extract_re
     if self.sidebar is not None:
       self.sidebar       = os.path.abspath(self.sidebar)
     if self.footer is not None:
@@ -200,7 +203,9 @@ def gen_xml_toc(doc,config):
 <?NLS TYPE="org.eclipse.help.toc"?>
 """
 
-    title=re.search(r'<title>Index \(([^<]*)\) - Event-B</title>',doc).group(1)
+    #title=re.search(r'<title>Index \(([^<]*)\) - Event-B</title>',doc).group(1)
+    title=re.search(r'<title>%s</title>' % config.title_extract_re,
+            doc).group(1)
     filename=path_to_filename("", title+".xml",config)
 
     logging.info("Generate %s file" % filename)
@@ -792,7 +797,10 @@ def usage():
     -t, --top=a.html     - Paste HTML fragment file into top horiz bar.
     -b, --bottom=a.html  - Paste HTML fragment file into footer horiz bar.
     -i, --index=filename - Move given filename in outdir to index.html.
-    -r, --url-regex=re   - Only follow url matching the regex.
+    -r, --title-regex=re - Only follow url matching the regex.
+    -R, --title-extract-re
+                         - regex used to extract TOC titles from <title> elmt.
+                           Default to '([^<]*) - Event-B'
     -v, --verbose        - Show more informations.
     -d, --debug          - Show debugging informations.
     -q, --quiet          - Only show critical errors.
@@ -824,12 +832,12 @@ def main():
   Command line interface.
   """
   try:
-      (opts, args) = getopt.gnu_getopt(sys.argv[1:], 'fl:t:b:i:r:vdq',
+      (opts, args) = getopt.gnu_getopt(sys.argv[1:], 'fl:t:b:i:r:R:vdq',
                    ['force', 'no-flatten', 'no-lower', 'no-clean',
                     'no-hack-skin', 'no-made-by', 'left=',
                     'top=', 'bottom=', 'index=', 'no-move-href',
                     'no-remove-png', 'no-images', 'no-remove-history',
-                    'title-regex=', 'no-image-dir',
+                    'title-regex=', 'no-image-dir', 'title-extract-re=',
                     'verbose', 'debug', 'quiet'])
   except getopt.GetoptError:
     usage()
@@ -875,7 +883,9 @@ def main():
     if opt in ['-i', '--index']:
       config.index          = arg
     if opt in ['-r', '--title-regex']:
-      config.url_regex          = arg
+      config.url_regex      = arg
+    if opt in ['-R', '--title-extract-re']:
+      config.title_extract_re   = arg
     if opt in ['-v', '--verbose']:
       config.verbose          = logging.INFO
     if opt in ['-d', '--debug']:
