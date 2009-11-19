@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.projectexplorer.actions;
 
+import static org.eventb.core.EventBAttributes.GENERATED_ATTRIBUTE;
 import static org.eventb.core.IConvergenceElement.Convergence.ANTICIPATED;
 import static org.eventb.core.IConvergenceElement.Convergence.ORDINARY;
 
@@ -34,9 +35,11 @@ import org.eventb.core.ISeesContext;
 import org.eventb.core.IVariable;
 import org.eventb.core.IConvergenceElement.Convergence;
 import org.eventb.internal.ui.UIUtils;
+import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinDB;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -61,6 +64,7 @@ public class Refines implements IObjectActionDelegate {
 			copyChildrenOfType(con, abs, ISeesContext.ELEMENT_TYPE, monitor);
 			copyChildrenOfType(con, abs, IVariable.ELEMENT_TYPE, monitor);
 			createEvents(monitor);
+			removeGenerated(con, monitor);
 			con.getRodinFile().save(null, false);
 		}
 
@@ -71,7 +75,7 @@ public class Refines implements IObjectActionDelegate {
 			refines.setAbstractMachineName(abs.getComponentName(), monitor);
 		}
 
-		private <T extends IInternalElement> void copyChildrenOfType(
+		private static <T extends IInternalElement> void copyChildrenOfType(
 				IEventBRoot destination, IEventBRoot original,
 				IInternalElementType<T> type, IProgressMonitor monitor)
 				throws RodinDBException {
@@ -82,6 +86,23 @@ public class Refines implements IObjectActionDelegate {
 			final IEventBRoot[] containers = new IEventBRoot[] { destination };
 			final IRodinDB rodinDB = destination.getRodinDB();
 			rodinDB.copy(elements, containers, null, null, false, monitor);
+		}
+
+		private static void copyAttributes(IInternalElement destination,
+				IInternalElement original, IProgressMonitor monitor)
+				throws RodinDBException {
+			for (IAttributeValue value : original.getAttributeValues()) {
+				destination.setAttributeValue(value, monitor);
+			}
+		}
+		
+		private static void removeGenerated(IInternalElement element,
+				IProgressMonitor monitor) throws RodinDBException {
+			element.removeAttribute(GENERATED_ATTRIBUTE, monitor);
+			final IRodinElement[] children = element.getChildren();
+			for (IRodinElement child : children) {
+				removeGenerated((IInternalElement) child, monitor);
+			}
 		}
 
 		private void createEvents(IProgressMonitor monitor)
@@ -98,12 +119,9 @@ public class Refines implements IObjectActionDelegate {
 			final String label = absEvt.getLabel();
 			final IEvent conEvt = con.getEvent(name);
 			conEvt.create(null, monitor);
-			conEvt.setLabel(label, monitor);
+			copyAttributes(conEvt, absEvt, monitor);
 			conEvt.setExtended(true, monitor);
 			createRefinesEventClause(conEvt, label, monitor);
-			if (absEvt.hasComment()) {
-				conEvt.setComment(absEvt.getComment(), monitor);
-			}
 			setConvergence(conEvt, absEvt, monitor);
 		}
 
