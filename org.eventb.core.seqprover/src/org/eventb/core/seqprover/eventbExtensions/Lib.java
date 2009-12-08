@@ -46,6 +46,7 @@ import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.LiteralPredicate;
+import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
@@ -675,6 +676,11 @@ public final class Lib {
 			return this.<Predicate>doRewrite(predicate);
 		}
 
+		@Override
+		public Predicate rewrite(MultiplePredicate predicate) {
+			return this.<Predicate>doRewrite(predicate);
+		}
+		
 		@Override
 		public Expression rewrite(QuantifiedExpression expression) {
 			return this.<Expression>doRewrite(expression);
