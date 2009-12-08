@@ -31,6 +31,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
+import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -247,6 +248,11 @@ public class SourceLocationChecker extends DefaultVisitor {
 	@Override
 	public boolean enterKMIN(UnaryExpression expr) {
 		return enterFormula(expr);
+	}
+
+	@Override
+	public boolean enterKPARTITION(MultiplePredicate pred) {
+		return enterFormula(pred);
 	}
 
 	@Override
@@ -623,6 +629,11 @@ public class SourceLocationChecker extends DefaultVisitor {
 	public boolean exitKMIN(UnaryExpression expr) {
 		return exitFormula(expr);
 	}
+	
+	@Override
+	public boolean exitKPARTITION(MultiplePredicate pred) {
+		return exitFormula(pred);
+	}
 
 	@Override
 	public boolean exitKPRJ1(UnaryExpression expr) {
@@ -900,7 +911,22 @@ public class SourceLocationChecker extends DefaultVisitor {
 	}
 
 	@Override
+	public boolean visitKID_GEN(AtomicExpression expr) {
+		return visitFormula(expr, false);
+	}
+
+	@Override
 	public boolean visitKPRED(AtomicExpression expr) {
+		return visitFormula(expr, false);
+	}
+
+	@Override
+	public boolean visitKPRJ1_GEN(AtomicExpression expr) {
+		return visitFormula(expr, false);
+	}
+
+	@Override
+	public boolean visitKPRJ2_GEN(AtomicExpression expr) {
 		return visitFormula(expr, false);
 	}
 
