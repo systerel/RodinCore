@@ -8,6 +8,7 @@
  * 
  * Contributors:
  *     Heinrich Heine Universitaet Duesseldorf - initial API and implementation
+ *     Systerel - Removed erroneous calls to dispose() 
  *******************************************************************************/
 
 package org.eventb.ui.symboltable.internal;
@@ -58,8 +59,5 @@ public abstract class AbstractViewProvider {
 
 	protected void dispose() {
 		symbolFont.dispose();
-		white.dispose();
-		gray.dispose();
-		black.dispose();
 	}
 }
