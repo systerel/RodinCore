@@ -13,5 +13,20 @@
             restorable="true">
       </view>
    </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eventb.ui.perspective.eventb">
+         <viewShortcut
+               id="org.eventb.ui.symboltable.view">
+         </viewShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eventb.ui.perspective.proving">
+         <viewShortcut
+               id="org.eventb.ui.symboltable.view">
+         </viewShortcut>
+      </perspectiveExtension>
+   </extension>
 
 </plugin>
