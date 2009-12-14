@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language v2
+ *     Systerel - added support for predicate variables
  *******************************************************************************/ 
 package org.eventb.core.ast.tests;
 
@@ -25,6 +26,7 @@ import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
+import static org.eventb.core.ast.tests.FastFactory.mPredicateVariable;
 
 import java.util.HashMap;
 
@@ -150,6 +152,7 @@ public class TestSourceLocation extends AbstractTests {
 	
 	private final Predicate btrue = mLiteralPredicate(BTRUE);
 	private final Predicate bfalse = mLiteralPredicate(BFALSE);
+	private final Predicate pv_P = mPredicateVariable("$P");
 	
 	/**
 	 * Tests for {@link Formula#getPosition(SourceLocation)}.
@@ -200,6 +203,9 @@ public class TestSourceLocation extends AbstractTests {
 		// MultiplePredicate
 		assertPositionsP("partition(x)", 10, 10, id_x);
 		assertPositionsP("partition(x,y)", 10, 10, id_x, 12, 12, id_y);
+
+		// PredicateVariable
+		assertPositionsP("$P⇒⊥", 0, 1, pv_P, 3, 3, bfalse);
 
 		// QuantifiedExpression
 		assertPositionsE("⋃x·⊤∣x", 1,1, bd_x, 3,3, btrue, 5,5, b0);

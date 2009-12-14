@@ -10,6 +10,7 @@
  *     Systerel - added accept for ISimpleVisitor
  *     Systerel - fixed bug in synthesizeType()
  *     Systerel - mathematical language v2
+ *     Systerel - added support for predicate variables
  *******************************************************************************/ 
 package org.eventb.core.ast;
 
@@ -72,6 +73,7 @@ public class AssociativeExpression extends Expression {
 		super(tag, location, combineHashCodes(children));
 		this.children = children.clone();
 		checkPreconditions();
+		setPredicateVariableCache(this.children);
 		synthesizeType(factory, null);
 	}
 
@@ -82,6 +84,7 @@ public class AssociativeExpression extends Expression {
 		Expression[] model = new Expression[children.size()];
 		this.children = children.toArray(model);
 		checkPreconditions();
+		setPredicateVariableCache(this.children);
 		synthesizeType(factory, null);
 	}
 

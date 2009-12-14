@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added accept for ISimpleVisitor
  *     Systerel - fixed bug in synthesizeType()
+ *     Systerel - added support for predicate variables
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -53,6 +54,7 @@ public class SimplePredicate extends Predicate {
 		
 		assert tag >= firstTag && tag < firstTag+tags.length;
 		
+		setPredicateVariableCache(this.child);
 		synthesizeType(ff);
 	}
 

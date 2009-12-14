@@ -34,6 +34,8 @@ import org.eventb.internal.core.seqprover.ProofRule.Antecedent;
  * Static class with factory methods required to construct various data structures
  * used in the sequent prover.
  * 
+ * No predicate variables are allowed in any of these methods.
+ * 
  * @author Farhad Mehta
  *
  * @since 1.0

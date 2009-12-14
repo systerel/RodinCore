@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added accept for ISimpleVisitor
  *     Systerel - mathematical language v2
+ *     Systerel - added support for predicate variables
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -91,6 +92,7 @@ public class BinaryExpression extends Expression {
 		assert left != null;
 		assert right != null;
 		
+		setPredicateVariableCache(this.left, this.right);
 		synthesizeType(factory, null);
 	}
 	

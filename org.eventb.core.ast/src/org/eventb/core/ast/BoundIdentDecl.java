@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added accept for ISimpleVisitor
+ *     Systerel - added support for predicate variables
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -50,8 +51,10 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 		assert tag == Formula.BOUND_IDENT_DECL;
 		assert name != null;
 		assert name.length() != 0;
+		assert !name.contains(PredicateVariable.LEADING_SYMBOL);
 		this.name = name;
 
+		setPredicateVariableCache();
 		synthesizeType(givenType);
 	}
 

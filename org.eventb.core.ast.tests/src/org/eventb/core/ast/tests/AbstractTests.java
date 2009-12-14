@@ -23,6 +23,7 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.Type;
 
 /**
@@ -54,7 +55,12 @@ public abstract class AbstractTests extends TestCase {
 	}
 	
 	public static Expression parseExpression(String image, LanguageVersion version) {
-		final IParseResult result = ff.parseExpression(image, version, null);
+		final IParseResult result;
+		if (image.contains(PredicateVariable.LEADING_SYMBOL)) {
+			result = ff.parseExpressionPattern(image, version, null);
+		} else {
+			result = ff.parseExpression(image, version, null);
+		}
 		assertSuccess(makeFailMessage(image, result), result);
 		return result.getParsedExpression();
 	}
@@ -64,7 +70,12 @@ public abstract class AbstractTests extends TestCase {
 	}
 	
 	public static Predicate parsePredicate(String image, LanguageVersion version) {
-		final IParseResult result = ff.parsePredicate(image, version, null);
+		final IParseResult result;
+		if (image.contains(PredicateVariable.LEADING_SYMBOL)) {
+			result = ff.parsePredicatePattern(image, version, null);
+		} else {
+			result = ff.parsePredicate(image, version, null);
+		}
 		assertSuccess(makeFailMessage(image, result), result);
 		return result.getParsedPredicate();
 	}

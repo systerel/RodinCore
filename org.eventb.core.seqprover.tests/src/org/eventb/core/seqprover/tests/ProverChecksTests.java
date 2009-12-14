@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,13 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - moved all type-checking code to class TypeChecker
+ *     Systerel - added checks about predicate variables
  *******************************************************************************/
 package org.eventb.core.seqprover.tests;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -55,6 +58,7 @@ public class ProverChecksTests extends TestCase{
 	private static final Predicate px_bool = TestLib.genPred("x=TRUE");
 	private static final FreeIdentifier x_int = factory.makeFreeIdentifier("x", null, factory.makeIntegerType());
 	private static final FreeIdentifier y_int = factory.makeFreeIdentifier("y", null, factory.makeIntegerType());
+	private static final Predicate pv_P = factory.makePredicateVariable("$P", null);
 	
 	/**
 	 * Tests the correct failure of the {@link ProverChecks#checkSequent(org.eventb.core.seqprover.IProverSequent)} method.
@@ -166,4 +170,24 @@ public class ProverChecksTests extends TestCase{
 		
 	}
 
+	/**
+	 * Tests the correctness of the
+	 * {@link ProverChecks#checkNoPredicateVariable(Predicate)} and
+	 * {@link ProverChecks#checkNoPredicateVariable(Collection)} methods.
+	 */
+	@Test
+	public void testCheckNoPredicateVariable() throws Exception {
+		final Predicate null_pred = null;
+		assertTrue(ProverChecks.checkNoPredicateVariable(null_pred));
+		assertTrue(ProverChecks.checkNoPredicateVariable(py_int));
+		assertFalse(ProverChecks.checkNoPredicateVariable(pv_P));
+		
+		final Collection<Predicate> null_preds = null;
+		final Collection<Predicate> no_preds = Collections.emptyList();
+		assertTrue(ProverChecks.checkNoPredicateVariable(null_preds));
+		assertTrue(ProverChecks.checkNoPredicateVariable(no_preds));
+		assertTrue(ProverChecks.checkNoPredicateVariable(Arrays.asList(py_int)));
+		assertFalse(ProverChecks.checkNoPredicateVariable(Arrays.asList(pv_P)));
+		assertFalse(ProverChecks.checkNoPredicateVariable(Arrays.asList(py_int, pv_P)));
+	}
 }

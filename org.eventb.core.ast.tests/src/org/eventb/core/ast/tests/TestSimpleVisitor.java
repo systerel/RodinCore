@@ -37,6 +37,7 @@ import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -224,6 +225,14 @@ public class TestSimpleVisitor extends TestCase {
 
 	public void testLiteralPredicate() {
 		assertVisit(ff.makeLiteralPredicate(Formula.BTRUE, null));
+	}
+
+	public void testPredicateVariable() {
+		final PredicateVariable pvP = ff.makePredicateVariable("$P", null);
+		final TestVisitor testVisitor = new TestVisitor();
+		pvP.accept(testVisitor);
+		assertEquals("Predicate variable node should not be visited", 0,
+				testVisitor.getTrace().length());
 	}
 
 	public void testQuantifiedExpression() {

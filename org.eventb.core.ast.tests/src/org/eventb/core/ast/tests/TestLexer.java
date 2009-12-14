@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract test class
  *     Systerel - mathematical language v2
+ *     Systerel - added support for predicate variables
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -136,6 +137,7 @@ public class TestLexer extends AbstractTests {
                 { "x", "_toto", "x'"  			 },	// _IDENT
                 { "2", "001"		   			 },	// _INTLIT
                 { "\u2982"                       }, // _TYPING
+                { "$P", "$_toto"			     }, // _PREDVAR
         };
         
         private static final String[] invalidStrings = new String[] {
@@ -217,5 +219,7 @@ public class TestLexer extends AbstractTests {
 			assertFalse(ff.isValidIdentifierName("'"));
 			assertFalse(ff.isValidIdentifierName(""));
 			assertFalse(ff.isValidIdentifierName("    "));
+			assertFalse(ff.isValidIdentifierName("$P"));
+			assertFalse(ff.isValidIdentifierName("l$"));
 		}
 }

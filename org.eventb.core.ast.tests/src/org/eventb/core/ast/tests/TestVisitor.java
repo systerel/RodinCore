@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language v2
+ *     Systerel - added support for predicate variables
  *******************************************************************************/ 
 package org.eventb.core.ast.tests;
 
@@ -1269,6 +1270,10 @@ public class TestVisitor extends TestCase {
 				new TestItem(
 					ff.makeIntegerLiteral(BigInteger.ZERO, null),
 					1
+				),
+				new TestItem(
+					ff.makePredicateVariable("$P", null),
+					0
 				),
 				new TestItem(
 					ff.makeSetExtension(mList(e1, e2, e3), null),

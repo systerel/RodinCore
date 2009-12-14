@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract test class
  *     Systerel - mathematical language v2
+ *     Systerel - added support for predicate variables
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -32,6 +33,7 @@ import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mMultiplePredicate;
+import static org.eventb.core.ast.tests.FastFactory.mPredicateVariable;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedExpression;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
@@ -275,6 +277,16 @@ public class TestParser extends AbstractTests {
 					)
 			),
 			
+			// PredicateVariable
+			new PredTestPair(
+					"$P",
+					mPredicateVariable("$P")),
+			new PredTestPair(
+					"$P\u2227$Q",
+					mAssociativePredicate(Formula.LAND,
+							mPredicateVariable("$P"),
+							mPredicateVariable("$Q"))),
+
 			// SimplePredicate
 			new PredTestPair(
 					"\u22a5\u2227\u22a5", 
@@ -455,6 +467,9 @@ public class TestParser extends AbstractTests {
 			new ExprTestPair(
 					"bool(\u22a5)", 
 					mBoolExpression(bfalse)
+			), new ExprTestPair(
+					"bool($P)",
+					mBoolExpression(mPredicateVariable("$P"))
 			), new ExprTestPair(
 					"card(x)", 
 					mUnaryExpression(Formula.KCARD, id_x) 

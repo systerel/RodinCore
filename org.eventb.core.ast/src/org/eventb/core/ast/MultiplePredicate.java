@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - added support for predicate variables
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -59,6 +60,7 @@ public class MultiplePredicate extends Predicate {
 		this.children = children.clone();
 
 		checkPreconditions();
+		setPredicateVariableCache(this.children);
 		synthesizeType(factory);
 	}
 
@@ -69,6 +71,7 @@ public class MultiplePredicate extends Predicate {
 		this.children = children.toArray(temp);
 
 		checkPreconditions();
+		setPredicateVariableCache(this.children);
 		synthesizeType(factory);
 	}
 

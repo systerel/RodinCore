@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,13 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - moved all type-checking code to class TypeChecker
+ *     Systerel - added checking methods about predicate variables
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -70,6 +72,40 @@ public class ProverChecks {
 	// Public Methods :
 	// *******************************************************************************************
 
+	/**
+	 * Checks that the given predicate does not contain predicate variables.
+	 * 
+	 * @return <code>true</code> if the predicate contains no predicate
+	 *         variables, <code>false</code> otherwise.
+	 */
+	public static boolean checkNoPredicateVariable(Predicate pred) {
+		if (pred != null && pred.hasPredicateVariable()) {
+			Util.log(null, "Unexpected predicate variable found in " + pred);
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Checks that the given predicates do not contain predicate variables.
+	 * 
+	 * @param predicates
+	 *            the predicates to check
+	 * @return <code>true</code> if no predicate contains predicate variables,
+	 *         <code>false</code> otherwise.
+	 */
+	public static boolean checkNoPredicateVariable(
+			Collection<Predicate> predicates) {
+		if (predicates == null) {
+			return true;
+		}
+		for (final Predicate pred : predicates) {
+			if (!checkNoPredicateVariable(pred)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	/**
 	 * Checks the assumptions made on a given sequent by the sequent prover.

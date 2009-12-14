@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - type-checking is now done with class TypeChecker
+ *     Systerel - added check about predicate variables
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
@@ -248,6 +249,10 @@ public final class ProverSequent implements IInternalProverSequent{
 			return null;
 		if (!checker.areAddedIdentsFresh())
 			return null;
+		if (!ProverChecks.checkNoPredicateVariable(addhyps))
+			return null;
+		if (!ProverChecks.checkNoPredicateVariable(newGoal))
+			return null;
 		newTypeEnv = checker.getTypeEnvironment();
 		modified |= checker.hasNewTypeEnvironment();
 
@@ -355,6 +360,8 @@ public final class ProverSequent implements IInternalProverSequent{
 			return this;
 		if (!checker.areAddedIdentsFresh())
 			return this;
+		if (!ProverChecks.checkNoPredicateVariable(infHyps))
+			return null;
 
 		final ITypeEnvironment newTypeEnv = checker.getTypeEnvironment();
 		modified |= checker.hasNewTypeEnvironment();

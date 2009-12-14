@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added accept for ISimpleVisitor
+ *     Systerel - added support for predicate variables
  *******************************************************************************/ 
 package org.eventb.core.ast;
 
@@ -64,6 +65,7 @@ public class AssociativePredicate extends Predicate {
 		this.children = children.clone();
 		
 		checkPreconditions();
+		setPredicateVariableCache(this.children);
 		synthesizeType(ff);
 	}
 
@@ -75,6 +77,7 @@ public class AssociativePredicate extends Predicate {
 		this.children = children.toArray(model);
 
 		checkPreconditions();
+		setPredicateVariableCache(this.children);
 		synthesizeType(ff);
 	}
 

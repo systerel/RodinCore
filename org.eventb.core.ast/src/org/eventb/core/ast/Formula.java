@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract accept method for ISimpleVisitor
  *     Systerel - mathematical language v2
+ *     Systerel - added support for predicate variables
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -64,6 +65,11 @@ public abstract class Formula<T extends Formula<T>> {
 	// Hash code for this formula
 	private final int hashCode;
 	
+	// Array of predicate variables occurring in this formula.
+	// This is a quasi-final field, it must only be set in a constructor (but
+	// not necessarily the Formula constructor).
+	private PredicateVariable[] predVars;
+
 	// Sorted array of free identifiers occurring in this formula.
 	// This is a quasi-final field, it must only be set in a constructor (but
 	// not necessarily the Formula constructor).
@@ -138,6 +144,14 @@ public abstract class Formula<T extends Formula<T>> {
 	 * BecomesSuchThat AST node.
 	 */
 	public final static int BECOMES_SUCH_THAT = 8;
+
+	/**
+	 * <code>PREDICATE_VARIABLE</code> represents a predicate variable.
+	 * 
+	 * @see PredicateVariable
+	 * @since 1.2
+	 */
+	public final static int PREDICATE_VARIABLE = 9;
 
 	/**
 	 * First tag for a relational predicate.
@@ -856,6 +870,9 @@ public abstract class Formula<T extends Formula<T>> {
 	protected final static BoundIdentifier[] NO_BOUND_IDENT =
 		new BoundIdentifier[0];
 	
+	private final static PredicateVariable[] NO_PRED_VAR =
+		new PredicateVariable[0];
+
 	protected final static String[] NO_STRING = new String[0];
 
 	// Internal constructor for derived classes (with location).
@@ -971,6 +988,41 @@ public abstract class Formula<T extends Formula<T>> {
 			lists.add(NO_BOUND_IDENT);
 		}
 		return IdentListMerger.makeMerger(lists);
+	}
+	
+	/**
+	 * Computes the cache of predicate variable occurring in this formula.
+	 * 
+	 * @param children
+	 *            children of this formula whose predicate variable caches need
+	 *            to be merged
+	 * @since 1.2
+	 */
+	protected void setPredicateVariableCache(Formula<?>... children) {
+		if (children.length == 0) {
+			predVars = NO_PRED_VAR;
+			return;
+		}
+
+		if (children.length == 1) {
+			final Formula<?> child = children[0];
+			if (child.getTag() == PREDICATE_VARIABLE) {
+				predVars = new PredicateVariable[] { (PredicateVariable) child };
+			} else {
+				predVars = child.predVars;
+			}
+			return;
+		}
+
+		final List<PredicateVariable> result = new ArrayList<PredicateVariable>();
+		for (final Formula<?> child : children) {
+			for (final PredicateVariable predVar : child.predVars) {
+				if (!result.contains(predVar)) {
+					result.add(predVar);
+				}
+			}
+		}
+		predVars = result.toArray(new PredicateVariable[result.size()]);
 	}
 
 	/**
@@ -1255,6 +1307,32 @@ public abstract class Formula<T extends Formula<T>> {
 		collectFreeIdentifiers(freeIdentSet);
 		FreeIdentifier[] model = new FreeIdentifier[freeIdentSet.size()];
 		return freeIdentSet.toArray(model);
+	}
+
+	/**
+	 * Returns a list of all predicate variables that occur within this formula.
+	 * <p>
+	 * This method uses a cache, so that it doesn't have to traverse this formula
+	 * each time it is called.
+	 * </p>
+	 * 
+	 * @return an array of all predicate variables that occur within this
+	 *         formula
+	 * @since 1.2
+	 */
+	public PredicateVariable[] getPredicateVariables() {
+		return predVars.clone();
+	}
+
+	/**
+	 * Tells whether this formula contains predicate variables or not.
+	 * 
+	 * @return <code>true</code> iff this formula contains some predicate
+	 *         variable
+	 * @since 1.2
+	 */
+	public boolean hasPredicateVariable(){
+	  return predVars.length > 0;	
 	}
 
 	/**

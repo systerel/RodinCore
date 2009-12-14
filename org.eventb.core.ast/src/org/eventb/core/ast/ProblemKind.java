@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added upgrade to mathematical language v2
+ *     Systerel - added support for predicate variables
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -108,6 +109,12 @@ public enum ProblemKind {
 	 * No argument.
 	 */
 	NotUpgradableError ("Formula cannot be upgraded."),
+	
+	/**
+	 * Argument 0 is the illegal predicate variable.
+	 * @since 1.2
+	 */
+	PredicateVariableNotAllowed("Predicate variable %1$s is not allowed here."),
 	;
 		
 	private String message;

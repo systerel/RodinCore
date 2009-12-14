@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language v2
+ *     Systerel - added PredicateVariables
  *******************************************************************************/ 
 package org.eventb.internal.core.parser;
 
@@ -40,10 +41,12 @@ import org.eventb.core.ast.SourceLocation;
 
 WhiteSpace = [:space:] | [\u0009-\u000d\u001c-\u001f]
 
-/* For identifiers, we have to take care of the lambda sign
+Meta = "$"
+
+/* For identifiers, we have to take care of lambda and meta signs
  * which can not be part of them (contrary to Java).
  */
-Identifier =  !(![:jletter:] | "\u03bb") (!(![:jletterdigit:] | "\u03bb"))*
+Identifier =  !(![:jletter:] | ("\u03bb" | {Meta})) (!(![:jletterdigit:] | ("\u03bb" | {Meta})))*
 IntegerLiteral = [:digit:]([:digit:])*
 Prime = "'"
 FullStop = "." | "\u2024"
@@ -150,6 +153,7 @@ FullStop = "." | "\u2024"
                         }
                       }
 {FullStop}            { return symbol(Parser._DOT); }
+{Meta}{Identifier}	  { return symbol(Parser._PREDVAR); }
 {Identifier}{Prime}?  { return symbol(Parser._IDENT); }
 {IntegerLiteral}      { return symbol(Parser._INTLIT); }
 {WhiteSpace}+         { /* ignore */ }

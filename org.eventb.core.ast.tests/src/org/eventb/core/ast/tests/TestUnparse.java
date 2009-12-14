@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract test class
  *     Systerel - mathematical language v2
+ *     Systerel - added support for predicate variables
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -78,6 +79,7 @@ import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.UnaryExpression;
@@ -120,6 +122,8 @@ public class TestUnparse extends AbstractTests {
 	private static BoundIdentifier b0 = ff.makeBoundIdentifier(0, null);
 	private static BoundIdentifier b1 = ff.makeBoundIdentifier(1, null);
 	private static BoundIdentifier b2 = ff.makeBoundIdentifier(2, null);
+
+	private static PredicateVariable pv_P = ff.makePredicateVariable("$P", null);
 
 	private static LiteralPredicate btrue = ff.makeLiteralPredicate(BTRUE, null);
 
@@ -415,6 +419,10 @@ public class TestUnparse extends AbstractTests {
 			),
 	};
 			
+	private PredTestPair[] predPatternTestPairs = new PredTestPair[] {
+			new PredTestPair("$P", pv_P),
+	};
+
 	// Various special cases for expressions
 	private ExprTestPair[] specialExprTestPairs = new ExprTestPair[] {
 			new ExprTestPair(
@@ -476,6 +484,9 @@ public class TestUnparse extends AbstractTests {
 							mAssociativeExpression(MUL,
 									mIntegerLiteral(1),
 									mIntegerLiteral(1)))
+			), new ExprTestPair(
+					"bool($P)",
+					FastFactory.mBoolExpression(pv_P)
 			),
 	};
 	
@@ -526,6 +537,9 @@ public class TestUnparse extends AbstractTests {
 									)
 							)
 					))
+			), new PredTestPair(
+					"$P",
+					pv_P
 			),
 	};
 
@@ -966,6 +980,27 @@ public class TestUnparse extends AbstractTests {
 		return formulae;
 	}
 	
+	private Predicate[] constructAssociativePredicateVariableTrees(TagSupply tagSupply) {
+		final Set<Integer> associativePredicates = tagSupply.associativePredicateTags;
+		final int length = associativePredicates.size();
+		Predicate[]  formulae = new Predicate[length * 1 * 3];
+		int idx = 0;
+		for (int assocTag : associativePredicates) {
+			formulae[idx ++] = mAssociativePredicate(assocTag,
+					pv_P,
+					btrue);
+			formulae[idx ++] = mAssociativePredicate(assocTag,
+					btrue,
+					pv_P,
+					btrue);
+			formulae[idx ++] = mAssociativePredicate(assocTag,
+					btrue,
+					pv_P);
+		}
+		assert idx == formulae.length;
+		return formulae;
+	}
+
 	private Predicate[] constructBinaryBinaryPredicateTrees (TagSupply tagSupply) {
 		final Set<Integer> binaryPredicates = tagSupply.binaryPredicateTags;
 		final int binarySize = binaryPredicates.size();
@@ -981,6 +1016,24 @@ public class TestUnparse extends AbstractTests {
 						btrue,
 						mBinaryPredicate(binaryTag1, btrue, btrue));
 			}
+		}
+		assert idx == formulae.length;
+		return formulae;
+	}
+
+	private Predicate[] constructBinaryPredicateVariableTrees (TagSupply tagSupply) {
+		final Set<Integer> binaryPredicates = tagSupply.binaryPredicateTags;
+		final int binarySize = binaryPredicates.size();
+		int length = binarySize;
+		Predicate[]  formulae = new Predicate[length * 1 * 2];
+		int idx = 0;
+		for (int binaryTag : binaryPredicates) {
+			formulae[idx ++] = mBinaryPredicate(binaryTag,
+					pv_P,
+					btrue);
+			formulae[idx ++] = mBinaryPredicate(binaryTag,
+					btrue,
+					pv_P);
 		}
 		assert idx == formulae.length;
 		return formulae;
@@ -1033,6 +1086,19 @@ public class TestUnparse extends AbstractTests {
 		return formulae;
 	}
 	
+	private Predicate[] constructUnaryPredicateVariableTrees(TagSupply tagSupply) {
+		final Set<Integer> unaryPredicates = tagSupply.unaryPredicateTags;
+		final int unarySize = unaryPredicates.size();
+		Predicate[] formulae = new Predicate[unarySize * 1];
+		int idx = 0;
+		for (int unaryTag : unaryPredicates) {
+			formulae[idx ++] = mUnaryPredicate(unaryTag,
+					pv_P);
+		}
+		assert idx == formulae.length;
+		return formulae;
+	}
+
 	private Predicate[] constructAssociativeUnaryPredicateTrees(TagSupply tagSupply) {
 		final Set<Integer> associativePredicates = tagSupply.associativePredicateTags;
 		final int assocSize = associativePredicates.size();
@@ -1171,6 +1237,20 @@ public class TestUnparse extends AbstractTests {
 		return formulae;
 	}
 	
+	private Predicate[] constructQuantifiedPredicateVariableTrees(TagSupply tagSupply) {
+		final Set<Integer> quantifiedPredicates = tagSupply.quantifiedPredicateTags;
+		final int quantSize = quantifiedPredicates.size();
+		Predicate[] formulae = new Predicate[quantSize * 1];
+		int idx = 0;
+		for (int quantTag : quantifiedPredicates) {
+			formulae[idx ++] = mQuantifiedPredicate(quantTag,
+					mList(bd_y),
+					pv_P);
+		}
+		assert idx == formulae.length;
+		return formulae;
+	}
+
 	private Predicate[] constructMultiplePredicateTrees(TagSupply tagSupply) {
 		final List<Expression> exprs = Common.constructExpressions(tagSupply);
 		final int exprsSize = exprs.size();
@@ -1244,6 +1324,7 @@ public class TestUnparse extends AbstractTests {
 	public void testStringFormula() {
 		routineTestStringFormula(associativeExpressionTestPairs);
 		routineTestStringFormula(associativePredicateTestPairs);
+		routineTestStringFormula(predPatternTestPairs);
 		routineTestStringFormula(specialExprTestPairs);
 		routineTestStringFormula(specialPredTestPairs);
 		routineTestStringFormula(assignmentTestPairs);
@@ -1272,8 +1353,11 @@ public class TestUnparse extends AbstractTests {
 		routineTest(constructQuantifiedAssociativeTree(tagSupply), ver);
 		routineTest(constructQuantifiedUnaryTree(tagSupply), ver);
 		routineTest(constructAssociativeAssociativePredicateTree(tagSupply), ver);
+		routineTest(constructAssociativePredicateVariableTrees(tagSupply), ver);
 		routineTest(constructBinaryBinaryPredicateTrees(tagSupply), ver);
+		routineTest(constructBinaryPredicateVariableTrees(tagSupply), ver);
 		routineTest(constructUnaryUnaryPredicateTrees(tagSupply), ver);
+		routineTest(constructUnaryPredicateVariableTrees(tagSupply), ver);
 		routineTest(constructAssociativeBinaryPredicateTrees(tagSupply), ver);
 		routineTest(constructAssociativeUnaryPredicateTrees(tagSupply), ver);
 		routineTest(constructBinaryUnaryPredicateTrees(tagSupply), ver);
@@ -1281,6 +1365,7 @@ public class TestUnparse extends AbstractTests {
 		routineTest(constructQuantifiedBinaryPredicateTrees(tagSupply), ver);
 		routineTest(constructQuantifiedAssociativePredicateTrees(tagSupply), ver);
 		routineTest(constructQuantifiedUnaryPredicateTrees(tagSupply), ver);
+		routineTest(constructQuantifiedPredicateVariableTrees(tagSupply), ver);
 		routineTest(constructMultiplePredicateTrees(tagSupply), ver);
 		routineTest(constructRelop(tagSupply), ver);
 		routineTest(constructQuantifierWithPredicate(tagSupply), ver);

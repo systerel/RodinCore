@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language v2
+ *     Systerel - added support for predicate variables
  *******************************************************************************/ 
 package org.eventb.core.ast.tests;
 
@@ -43,6 +44,7 @@ import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mMaplet;
 import static org.eventb.core.ast.tests.FastFactory.mMultiplePredicate;
+import static org.eventb.core.ast.tests.FastFactory.mPredicateVariable;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedExpression;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
@@ -75,6 +77,7 @@ import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -307,6 +310,9 @@ public class TestSubFormulas extends TestCase {
 	private static Expression b0 = mBoundIdentifier(0, INT);
 	private static Expression b1 = mBoundIdentifier(1, INT);
 
+	private static final PredicateVariable pv_P = mPredicateVariable("$P");
+	private static final PredicateVariable pv_Q = mPredicateVariable("$Q");
+	
 	private static Expression m0x = mMaplet(b0, id_x);
 	private static Expression m0X = mMaplet(b0, id_X);
 	private static Expression m01x = mMaplet(mMaplet(b0, b1), id_x);
@@ -327,6 +333,9 @@ public class TestSubFormulas extends TestCase {
 
 	private static FixedFilter<Predicate> equalsFilter
 			= new FixedFilter<Predicate>(equals, equalsX);
+
+	private static FixedFilter<Predicate> pvFilter
+			= new FixedFilter<Predicate>(pv_P, pv_Q);
 
 	private static final IFormulaFilter defaultFilter = new DefaultFilter();
 	
@@ -686,6 +695,21 @@ public class TestSubFormulas extends TestCase {
 				mUnaryPredicate(NOT, equals),
 				"0",
 				mUnaryPredicate(NOT, equalsX));
+	}
+	
+	public void testPredicateVariables() throws Exception {
+		final Predicate p_and_true = mAssociativePredicate(LAND, pv_P, btrue);
+		final Predicate q_and_true = mAssociativePredicate(LAND, pv_Q, btrue);
+		final IPosition posP = IPosition.ROOT.getFirstChild();
+		
+		final List<IPosition> actualPositions = p_and_true.getPositions(pvFilter);
+		
+		assertTrue("The filtering on predicate variables should be disabled",
+				actualPositions.isEmpty());
+		assertEquals("Unexpected sub-formula",
+				pv_P, p_and_true.getSubFormula(posP));
+		assertEquals("Unexpected rewrite",
+				q_and_true, p_and_true.rewriteSubFormula(posP, pv_Q, ff));
 	}
 	
 	private <T extends Formula<T>> void checkRootPosition(Formula<T> f1,

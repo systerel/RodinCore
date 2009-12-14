@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract test class
  *     Systerel - mathematical language v2
+ *     Systerel - added support for predicate variables
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -36,6 +37,7 @@ import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -296,5 +298,9 @@ public class FastFactory {
 
 	public static MultiplePredicate mMultiplePredicate(Expression... expressions) {
 		return ff.makeMultiplePredicate(Formula.KPARTITION, expressions, null);
+	}
+
+	public static PredicateVariable mPredicateVariable(String name) {
+		return ff.makePredicateVariable(name, null);
 	}
 }

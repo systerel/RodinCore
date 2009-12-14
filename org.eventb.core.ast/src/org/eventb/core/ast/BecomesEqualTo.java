@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added accept for ISimpleVisitor
+ *     Systerel - added support for predicate variables
  *******************************************************************************/ 
 package org.eventb.core.ast;
 
@@ -36,6 +37,7 @@ public class BecomesEqualTo extends Assignment {
 		super(BECOMES_EQUAL_TO, location, value.hashCode(), assignedIdent);
 		this.values = new Expression[] {value};
 		checkPreconditions();
+		setPredicateVariableCache(this.values);
 		synthesizeType(ff);
 	}
 
@@ -44,6 +46,7 @@ public class BecomesEqualTo extends Assignment {
 		super(BECOMES_EQUAL_TO, location, combineHashCodes(values), assignedIdents);
 		this.values = values.clone();
 		checkPreconditions();
+		setPredicateVariableCache(this.values);
 		synthesizeType(ff);
 	}
 
@@ -53,6 +56,7 @@ public class BecomesEqualTo extends Assignment {
 		super(BECOMES_EQUAL_TO, location, combineHashCodes(values), assignedIdents);
 		this.values = values.toArray(new Expression[values.size()]);
 		checkPreconditions();
+		setPredicateVariableCache(this.values);
 		synthesizeType(ff);
 	}
 

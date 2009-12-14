@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added accept for ISimpleVisitor
  *     Systerel - mathematical language v2
+ *     Systerel - added support for predicate variables
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -110,6 +111,7 @@ public class UnaryExpression extends Expression {
 		assert tag >= firstTag && tag < firstTag+tags.length;
 		assert child != null;
 		
+		setPredicateVariableCache(this.child);
 		synthesizeType(factory, null);
 	}
 

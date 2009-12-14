@@ -48,7 +48,21 @@ public class TestOrigin extends AbstractTests {
 			return result.getParsedExpression();
 		}
 	}
+	
+	private static class ExprPatternTestOrigin extends ExprTestOrigin {
 
+		ExprPatternTestOrigin(String image) {
+			super(image);
+		}
+		
+		@Override
+		Formula<?> parse(String image) {
+			final IParseResult result = ff.parseExpressionPattern(image, LATEST, this);
+			assertSuccess("Parse failed for " + image, result);
+			return result.getParsedExpression();
+		}
+	}
+	
 	private static class PredTestOrigin extends TestAllOrigins {
 
 		PredTestOrigin(String image) {
@@ -58,6 +72,20 @@ public class TestOrigin extends AbstractTests {
 		@Override
 		Formula<?> parse(String image) {
 			final IParseResult result = ff.parsePredicate(image, LATEST, this);
+			assertSuccess("Parse failed for " + image, result);
+			return result.getParsedPredicate();
+		}
+	}
+
+	private static class PredPatternTestOrigin extends TestAllOrigins {
+
+		PredPatternTestOrigin(String image) {
+			super(image);
+		}
+
+		@Override
+		Formula<?> parse(String image) {
+			final IParseResult result = ff.parsePredicatePattern(image, LATEST, this);
 			assertSuccess("Parse failed for " + image, result);
 			return result.getParsedPredicate();
 		}
@@ -81,8 +109,16 @@ public class TestOrigin extends AbstractTests {
 		new PredTestOrigin(image).verify();
 	}
 
+	private static void verifyPredicatePattern(String image) {
+		new PredPatternTestOrigin(image).verify();
+	}
+
 	private static void verifyExpression(String image) {
 		new ExprTestOrigin(image).verify();
+	}
+
+	private static void verifyExpressionPattern(String image) {
+		new ExprPatternTestOrigin(image).verify();
 	}
 
 	private static void verifyAssignment(String image) {
@@ -96,6 +132,9 @@ public class TestOrigin extends AbstractTests {
 		verifyPredicate("\u22a5");
 		verifyPredicate("\u00ac\u00ac\u22a5");
 		verifyPredicate("∀x·x ∈ S ∧ (∀x·x ∈ T)");
+		
+		verifyPredicatePattern("$P");
+		verifyExpressionPattern("bool($P)");
 
 		verifyExpression("bool(\u22a5)");
 		verifyExpression("−x+y+z");

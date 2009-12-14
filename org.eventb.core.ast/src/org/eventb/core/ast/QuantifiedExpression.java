@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added accept for ISimpleVisitor
  *     Systerel - mathematical language v2
+ *     Systerel - added support for predicate variables
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -113,6 +114,7 @@ public class QuantifiedExpression extends Expression {
 		this.form = form;
 
 		checkPreconditions();
+		setPredicateVariableCache(this.pred, this.expr);
 		synthesizeType(factory, null);
 	}
 	
@@ -133,6 +135,7 @@ public class QuantifiedExpression extends Expression {
 		this.form = form;
 
 		checkPreconditions();
+		setPredicateVariableCache(this.pred, this.expr);
 		synthesizeType(factory, null);
 	}
 	

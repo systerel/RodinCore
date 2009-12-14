@@ -60,6 +60,7 @@ public class Parser {
 	private final ParseResult result;
 	private final FormulaFactory factory;
 	private final LanguageVersion version;
+	private final boolean withPredVar;
 	
 	/**
 	 * Returns the current parsing result.
@@ -76,17 +77,22 @@ public class Parser {
 	 * Creates a new parser that reads tokens produced by
 	 * <code>scanner</code> and creates the resulting Abstract Syntax Tree.
 	 * The outcome of both scanning and parsing is stored in the given result.
+	 * Predicate variables are allowed iff <code>withPredVar</code> is set to
+	 * <code>true</code>.
 	 * 
 	 * @param clazz Formula class that this parser recognises
 	 * @param scanner the scanner to get input tokens from
 	 * @param result the result of scan and parse
+	 * @param withPredVar <code>true</code> iff predicate variables are allowed
 	 */
-	public Parser(Class<?> clazz, Scanner scanner, ParseResult result) {
+	public Parser(Class<?> clazz, Scanner scanner, ParseResult result,
+			boolean withPredVar) {
 		this.scanner = scanner;
 		this.factory = result.factory;
 		this.clazz = clazz;
 		this.result = result;
 		this.version = result.version;
+		this.withPredVar = withPredVar;
 		
 	    assert (clazz == Predicate.class ||
 	    		clazz == Expression.class ||

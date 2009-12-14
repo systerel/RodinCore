@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language v2
+ *     Systerel - added support for predicate variables
  *******************************************************************************/ 
 import static org.eventb.core.ast.LanguageVersion.V1;
 
@@ -353,6 +354,16 @@ COMPILER Bmath
 		return new ParserException("Unexpected left parenthesis.");
 	}
 
+	private void unexpectedPREDVAROccurence(int startPos) {
+		SourceLocation loc = newSourceLoc(startPos);
+		final ASTProblem problem = new ASTProblem(
+				loc,
+				ProblemKind.PredicateVariableNotAllowed,
+				ProblemSeverities.Error,
+				t.val);
+		result.addProblem(problem);
+	}
+
 	private Expression makeUNMINUS(int startPos, Expression expr) {
 		final SourceLocation loc = newSourceLoc(startPos);
         if (expr instanceof IntegerLiteral
@@ -473,6 +484,7 @@ TOKENS
 	IDENT
 	INTLIT
 	TYPING
+	PREDVAR
 
 
 PRODUCTIONS
@@ -1111,6 +1123,16 @@ PRODUCTIONS
         BFALSE                              (. pred = factory.makeLiteralPredicate(Formula.BFALSE, newSourceLoc(t.pos)); .)
     |
         BTRUE                               (. pred = factory.makeLiteralPredicate(Formula.BTRUE, newSourceLoc(t.pos)); .)
+    |
+    	PREDVAR								(. if (withPredVar) {
+    											   final SourceLocation loc = newSourceLoc(startPos);
+    					                           pred = factory.makePredicateVariable(t.val, loc);
+    		                                   } else {
+    		                                	  unexpectedPREDVAROccurence(startPos);
+    		                                	  // Return a dummy value repairing temporarilly this error
+    											  pred = factory.makeLiteralPredicate(Formula.BTRUE, newSourceLoc(t.pos));
+    										   }
+                                            .)        
     |
         KFINITE
         LPAR

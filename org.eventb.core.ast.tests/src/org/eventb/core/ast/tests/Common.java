@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language v2
+ *     Systerel - added support for predicate variables
  *******************************************************************************/ 
 package org.eventb.core.ast.tests;
 
@@ -29,6 +30,7 @@ import static org.eventb.core.ast.Formula.KPRJ1;
 import static org.eventb.core.ast.Formula.KPRJ1_GEN;
 import static org.eventb.core.ast.Formula.KPRJ2;
 import static org.eventb.core.ast.Formula.KPRJ2_GEN;
+import static org.eventb.core.ast.Formula.PREDICATE_VARIABLE;
 import static org.eventb.core.ast.LanguageVersion.V1;
 import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.core.ast.tests.FastFactory.mList;
@@ -55,6 +57,7 @@ import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -75,6 +78,7 @@ public class Common {
 	public static final BigInteger TWO = BigInteger.valueOf(2);
 	public static final BigInteger FIVE = BigInteger.valueOf(5);
 	public static final BigInteger MINUS_FIVE = BigInteger.valueOf(-5);
+	public static final String PRED_VAR_P_NAME = PredicateVariable.LEADING_SYMBOL + "P";
 
 	protected static final List<Integer> notV1AtomicExprTags = Arrays.asList(
 			KPRJ1_GEN, KPRJ2_GEN, KID_GEN);
@@ -145,6 +149,8 @@ public class Common {
 				FIRST_LITERAL_PREDICATE, LiteralPredicate.TAGS_LENGTH);
 		protected final Set<Integer> multiplePredicateTags = setOf(
 				FIRST_MULTIPLE_PREDICATE, MultiplePredicate.TAGS_LENGTH);
+		protected final Set<Integer> predicateVariableTags = setOf(
+				PREDICATE_VARIABLE, 1);
 		protected final Set<Integer> relationalPredicateTags = setOf(
 				FIRST_RELATIONAL_PREDICATE, RelationalPredicate.TAGS_LENGTH);
 		protected final Set<Integer> quantifiedPredicateTags = setOf(
@@ -234,6 +240,7 @@ public class Common {
 			predicates.add(ff.makeMultiplePredicate(tag, mList(id_S,
 					singleton_s), null));
 		}
+		predicates.add(ff.makePredicateVariable(PRED_VAR_P_NAME, null));
 		return predicates;
 	}
 

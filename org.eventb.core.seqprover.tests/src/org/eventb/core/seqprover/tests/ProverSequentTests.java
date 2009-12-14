@@ -1,9 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - moved all type-checking code to class TypeChecker
+ *     Systerel - added checks about predicate variables
  *******************************************************************************/
 
 package org.eventb.core.seqprover.tests;
@@ -42,6 +47,7 @@ public class ProverSequentTests extends TestCase{
 	private final static FreeIdentifier freeIdent_x_int = factory.makeFreeIdentifier("x", null, factory.makeIntegerType());
 	private final static FreeIdentifier freeIdent_x_bool = factory.makeFreeIdentifier("x", null, factory.makeBooleanType());
 	private final static FreeIdentifier freeIdent_y_int = factory.makeFreeIdentifier("y", null, factory.makeIntegerType());
+	private static final Predicate pv_P = factory.makePredicateVariable("$P", null);
 	
 	
 	
@@ -75,6 +81,10 @@ public class ProverSequentTests extends TestCase{
 		newSeq = ((IInternalProverSequent)seq).modify(null, Collections.singleton(pred_y), null);
 		assertNull(newSeq);
 		newSeq = ((IInternalProverSequent)seq).modify(new FreeIdentifier[] {freeIdent_y_int, freeIdent_y_int}, null, null);
+		assertNull(newSeq);
+		newSeq = ((IInternalProverSequent)seq).modify(null, null, pv_P);
+		assertNull(newSeq);
+		newSeq = ((IInternalProverSequent)seq).modify(null, Collections.singleton(pv_P), null);
 		assertNull(newSeq);
 		
 		// success tests
@@ -287,5 +297,10 @@ public class ProverSequentTests extends TestCase{
 		assertTrue(newSeq.isHidden(pred2_x));
 		assertTrue(newSeq.isSelected(True));
 		
+		// predicate variables in infHyps
+		seq = TestLib.genSeq(" 1=1 ;; ⊥ |- ⊥ ");
+		newSeq = ((IInternalProverSequent)seq).performfwdInf(hyps, null,
+				Collections.singleton(pv_P));
+		assertNull(newSeq);
 	}
 }

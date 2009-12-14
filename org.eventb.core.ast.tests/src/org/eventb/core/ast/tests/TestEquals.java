@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract test class
+ *     Systerel - added support for predicate variables
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -25,6 +26,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.QuantifiedExpression;
 
 
@@ -53,6 +55,10 @@ public class TestEquals extends AbstractTests {
 
 	private BoundIdentifier b0 = ff.makeBoundIdentifier(0, null);
 	private BoundIdentifier b1 = ff.makeBoundIdentifier(1, null);
+	
+	private final PredicateVariable pv_P = ff.makePredicateVariable("$P", null);
+	private final PredicateVariable pv_P_bis = ff.makePredicateVariable("$P", null);
+	private final PredicateVariable pv_Q = ff.makePredicateVariable("$Q", null);
 	
 	private TestItem<?>[] equals = {
 		new TestItem<Expression>(id_x, id_x),
@@ -137,6 +143,9 @@ public class TestEquals extends AbstractTests {
 						mMaplet(b0, b0), null, QuantifiedExpression.Form.Lambda
 				)
 		),
+		// predicate variables
+		new TestItem<Predicate>(
+				pv_P, pv_P_bis),
 	};
 	
 	private TestItem<?>[] notEquals = {
@@ -178,7 +187,10 @@ public class TestEquals extends AbstractTests {
 							mBinaryExpression(b0, b1)
 					)
 			),
-		};
+			// predicate variables
+			new TestItem<Predicate>(
+					pv_P, pv_Q),
+	};
 		
 	
 	/**

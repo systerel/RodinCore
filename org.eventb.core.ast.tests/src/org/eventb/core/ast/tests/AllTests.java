@@ -50,6 +50,7 @@ public class AllTests {
 		suite.addTestSuite(TestVersionUpgrader.class);
 		suite.addTestSuite(PartitionExpanderTests.class);
 		suite.addTestSuite(SmartFactoryTests.class);
+		suite.addTestSuite(TestPredicateVariables.class);
 		//$JUnit-END$
 		return suite;
 	}

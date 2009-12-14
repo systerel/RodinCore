@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added constraints about predicate variables
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
 import java.util.Collection;
@@ -21,6 +32,7 @@ public interface IInternalProverSequent extends IProverSequent{
 	 * <ul>
 	 * <li> All the new free identifiers provided do not appear in the type environment 
 	 * of the sequent, and
+	 * <li> The hypotheses and new goal provided do not contain predicate variables, and
 	 * <li> The hypotheses and new goal provided can be successfully type checked using 
 	 * the type environment of the sequent enriched with the new free identifiers.
 	 * </ul>
@@ -141,6 +153,8 @@ public interface IInternalProverSequent extends IProverSequent{
 	 * sequent, and
 	 * <li> All <code>addedIdents</code> do not occur in the type environment
 	 * of the sequent, and
+     * <li>All <code>inferredHyps</code> and <code>hyps</code>hypotheses do not
+	 * contain predicate variables, and
 	 * <li> All <code>inferredHyps</code> can be successfully type checked
 	 * using the type environment of the sequent enriched with the
 	 * <code>addedIdents</code>, and
@@ -157,9 +171,10 @@ public interface IInternalProverSequent extends IProverSequent{
 	 * <li> Hidden iff all of the <code>hyps</code> are hidden
 	 * </ul>
 	 * <p>
-	 * This operation is always successful, as soon as it type-checks. In case
-	 * the sequent is not modified, a reference to the original sequent is
-	 * returned. The case of non-modification can therefore be checked using
+	 * This operation is always successful, as soon as it type-checks, and does not
+     * contain predicate variables. In case the sequent is not modified, a reference to
+	 * the original sequent is returned.
+     * The case of non-modification can therefore be checked using
 	 * <code>==</code>. In case of type-check error, <code>null</code> is
 	 * returned.
 	 * </p>
