@@ -206,9 +206,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 
 			@Override
 			public void mouseDown(MouseEvent e) {
-				Control old = treeEditor.getEditor();
-				if (old != null)
-					old.dispose();
+				disposeOpenedEditor();
 
 				// Determine where the mouse was clicked
 				Point pt = new Point(e.x, e.y);
@@ -506,6 +504,15 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 
 	public void selectionChanged(SelectionChangedEvent event) {
 		((EventBEditor<?>) editor).pageSelectionChanged(event);
+		disposeOpenedEditor();
+	}
+
+
+	// Disposes the active editor if any
+	void disposeOpenedEditor() {
+		final Control old = treeEditor.getEditor();
+		if (old != null)
+			old.dispose();
 	}
 
 }
