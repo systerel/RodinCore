@@ -67,7 +67,7 @@ public class IsFunGoal extends EmptyInputReasoner{
 		// TODO : maybe look first in selected hypotheses.
 		
 		Predicate funHyp = null;
-		for (Predicate hyp : seq.hypIterable()) {
+		for (Predicate hyp : seq.visibleHypIterable()) {
 			if (Lib.isInclusion(hyp) && 
 					Lib.isFun(Lib.getSet(hyp)) && 
 					element.equals(Lib.getElement(hyp)) ){

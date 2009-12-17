@@ -54,7 +54,7 @@ public class TotalDomSubstitutions {
 	}
 	
 	public void computeSubstitutions() {
-		for (Predicate hyp : sequent.hypIterable()) {
+		for (Predicate hyp : sequent.visibleHypIterable()) {
 			computeSubstitution(hyp);
 		}
 	}
