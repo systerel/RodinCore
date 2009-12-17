@@ -13,6 +13,7 @@ package org.eventb.core.ast;
 
 /**
  * Implementation of the visitor design pattern for event-B formulas.
+ * This visitor does not support predicate variables. See {@link IVisitor2}.
  * <p>
  * Instances of this interface are passed as argument to the
  * {@link Formula#accept(IVisitor)} in order to traverse an AST in depth-first

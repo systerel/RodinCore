@@ -13,7 +13,8 @@ package org.eventb.core.ast;
 
 /**
  * Common protocol for formula filters. A formula filter tells whether a given
- * formula satisfies some criterion.
+ * formula satisfies some criterion. This protocol does not support predicate
+ * variables. See {@link IFormulaFilter2}.
  * <p>
  * This interface contains one method for each of the sub-classes of
  * <code>Formula</code>, except assignments which are not covered by

@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language v2
+ *     Systerel - added support for predicate variables
  *******************************************************************************/ 
 package org.eventb.core.ast;
 
@@ -21,7 +22,7 @@ package org.eventb.core.ast;
  * @author Laurent Voisin
  * @since 1.0
  */
-public class DefaultRewriter implements IFormulaRewriter {
+public class DefaultRewriter implements IFormulaRewriter2 {
 	
 	private final boolean autoFlattening;
 	
@@ -102,6 +103,13 @@ public class DefaultRewriter implements IFormulaRewriter {
 
 	public Predicate rewrite(MultiplePredicate predicate) {
 		return predicate;
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	public Predicate rewrite(PredicateVariable predVar) {
+		return predVar;
 	}
 
 	public Expression rewrite(QuantifiedExpression expression) {

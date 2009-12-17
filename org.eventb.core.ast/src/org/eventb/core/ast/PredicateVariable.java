@@ -143,7 +143,13 @@ public class PredicateVariable extends Predicate {
 	@Override
 	protected void getPositions(IFormulaFilter filter, IntStack indexes,
 			List<IPosition> positions) {
-		// TODO implement
+		if (!(filter instanceof IFormulaFilter2)) {
+			throw new IllegalArgumentException(
+					"The given filter shall support predicate variables");
+		}
+		if (((IFormulaFilter2) filter).select(this)) {
+			positions.add(new Position(indexes));
+		}
 	}
 
 	@Override
@@ -163,18 +169,28 @@ public class PredicateVariable extends Predicate {
 
 	@Override
 	public boolean accept(IVisitor visitor) {
-		// TODO implement
-		return false;
+		if (!(visitor instanceof IVisitor2)) {
+			throw new IllegalArgumentException(
+					"The given visitor shall support predicate variables");
+		}
+		return ((IVisitor2) visitor).visitPREDICATE_VARIABLE(this);
 	}
 
 	@Override
 	public void accept(ISimpleVisitor visitor) {
-		// TODO implement
+		if (!(visitor instanceof ISimpleVisitor2)) {
+			throw new IllegalArgumentException(
+					"The given visitor shall support predicate variables");
+		}
+		((ISimpleVisitor2) visitor).visitPredicateVariable(this);
 	}
 
 	@Override
 	public Predicate rewrite(IFormulaRewriter rewriter) {
-		// TODO implement
-		return null;
+		if (!(rewriter instanceof IFormulaRewriter2)) {
+			throw new IllegalArgumentException(
+					"The given rewriter shall support predicate variables");
+		}
+		return ((IFormulaRewriter2) rewriter).rewrite(this);
 	}
 }

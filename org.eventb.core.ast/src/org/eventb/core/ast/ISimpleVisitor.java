@@ -11,7 +11,8 @@
 package org.eventb.core.ast;
 
 /**
- * Simplified version of the visitor. Here, the corresponding accept method only
+ * Simplified version of the visitor. This visitor does not support predicate
+ * variables. See {@link IVisitor2}. Here, the corresponding accept method only
  * performs a call of the visit method. AST traversal must be managed within the
  * visit methods of the implementer of this class.
  * 

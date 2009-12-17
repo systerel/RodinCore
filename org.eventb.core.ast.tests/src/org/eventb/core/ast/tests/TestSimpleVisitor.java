@@ -33,6 +33,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ISimpleVisitor;
+import org.eventb.core.ast.ISimpleVisitor2;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
@@ -145,6 +146,13 @@ public class TestSimpleVisitor extends TestCase {
 		}
 	}
 
+	static class TestVisitor2 extends TestVisitor implements ISimpleVisitor2 {
+
+		public void visitPredicateVariable(PredicateVariable predVar) {
+			b.append(predVar.getClass());
+		}
+	}
+	
 	private final FormulaFactory ff = FormulaFactory.getDefault();
 
 	private final FreeIdentifier id_x = ff.makeFreeIdentifier("x", null);
@@ -160,13 +168,17 @@ public class TestSimpleVisitor extends TestCase {
 
 	private BoundIdentDecl bid = ff.makeBoundIdentDecl("x", null);
 
-	private final String assertMessage = "visit method was not called properly";
+	private static final String assertMessage = "visit method was not called properly";
 
-	private <T extends Formula<?>> void assertVisit(T formula) {
+	private static <T extends Formula<?>> void assertVisit(T formula) {
+		assertVisit(formula, new TestVisitor());
+	}
+	
+	private static <T extends Formula<?>> void assertVisit(T formula,
+			TestVisitor visitor) {
 		final String expected = formula.getClass().toString();
-		final TestVisitor testVisitor = new TestVisitor();
-		formula.accept(testVisitor);
-		assertEquals(assertMessage, expected, testVisitor.getTrace());
+		formula.accept(visitor);
+		assertEquals(assertMessage, expected, visitor.getTrace());
 	}
 
 	public void testAssociativeExpression() {
@@ -229,10 +241,13 @@ public class TestSimpleVisitor extends TestCase {
 
 	public void testPredicateVariable() {
 		final PredicateVariable pvP = ff.makePredicateVariable("$P", null);
-		final TestVisitor testVisitor = new TestVisitor();
-		pvP.accept(testVisitor);
-		assertEquals("Predicate variable node should not be visited", 0,
-				testVisitor.getTrace().length());
+		try {
+			pvP.accept(new TestVisitor());
+			fail("IllegalArgumentException expected on predicate variables");
+		} catch (IllegalArgumentException e) {
+			// as expected
+		}
+		assertVisit(pvP, new TestVisitor2());
 	}
 
 	public void testQuantifiedExpression() {

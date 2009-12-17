@@ -13,7 +13,8 @@ package org.eventb.core.ast;
 
 /**
  * Common protocol for formula rewriters. A formula rewriter implements
- * rewriting of sub-formulas of some formula.
+ * rewriting of sub-formulas of some formula. This protocol does not support
+ * predicate variables. See {@link IFormulaRewriter2}.
  * <p>
  * This interface contains one method for each of the sub-classes of
  * <code>Formula</code>, except assignments which are not covered by

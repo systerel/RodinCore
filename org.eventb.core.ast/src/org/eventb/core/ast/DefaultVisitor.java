@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language v2
+ *     Systerel - added support for predicate variables
  *******************************************************************************/ 
 package org.eventb.core.ast;
 
@@ -20,7 +21,7 @@ package org.eventb.core.ast;
  * @author Laurent Voisin
  * @since 1.0
  */
-public class DefaultVisitor implements IVisitor {
+public class DefaultVisitor implements IVisitor2 {
 
 	public boolean visitFREE_IDENT(FreeIdentifier ident) {
 		return true;
@@ -714,6 +715,13 @@ public class DefaultVisitor implements IVisitor {
 		return true;
 	}
 
+	/**
+	 * @since 1.2
+	 */
+	public boolean visitPREDICATE_VARIABLE(PredicateVariable predVar){
+		return true;
+	}
+	
 	public boolean enterKFINITE(SimplePredicate pred) {
 		return true;
 	}

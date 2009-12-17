@@ -8,13 +8,13 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language v2
- *******************************************************************************/ 
+ *     Systerel - added support for predicate variables
+ *******************************************************************************/
 package org.eventb.core.ast;
 
 /**
- * Implementation of a default filter that does not perform select any
- * sub-formula. Provides a basis for implementing simple filters by
- * sub-classing.
+ * Implementation of a default filter that does not select any sub-formula.
+ * Provides a basis for implementing simple filters by sub-classing.
  * <p>
  * Clients may extend this class.
  * </p>
@@ -22,7 +22,7 @@ package org.eventb.core.ast;
  * @author Laurent Voisin
  * @since 1.0
  */
-public class DefaultFilter implements IFormulaFilter {
+public class DefaultFilter implements IFormulaFilter2 {
 
 	public boolean select(AssociativeExpression expression) {
 		return false;
@@ -69,6 +69,13 @@ public class DefaultFilter implements IFormulaFilter {
 	}
 
 	public boolean select(MultiplePredicate predicate) {
+		return false;
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	public boolean select(PredicateVariable predVar) {
 		return false;
 	}
 

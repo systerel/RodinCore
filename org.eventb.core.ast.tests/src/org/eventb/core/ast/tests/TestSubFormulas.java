@@ -69,8 +69,10 @@ import org.eventb.core.ast.DefaultFilter;
 import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IFormulaFilter;
+import org.eventb.core.ast.IFormulaFilter2;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.IntegerLiteral;
@@ -176,6 +178,18 @@ public class TestSubFormulas extends TestCase {
 			return searched.equals(predicate);
 		}
 		
+	}
+
+	private static class FixedFilter2<T extends Formula<T>> extends
+			FixedFilter<T> implements IFormulaFilter2 {
+
+		public FixedFilter2(Formula<T> searched, Formula<T> replacement) {
+			super(searched, replacement);
+		}
+
+		public boolean select(PredicateVariable predVar) {
+			return searched.equals(predVar);
+		}
 	}
 
 	private static class FixedRewriter<T extends Formula<T>> extends DefaultRewriter {
@@ -285,6 +299,108 @@ public class TestSubFormulas extends TestCase {
 		public Predicate rewrite(UnaryPredicate predicate) {
 			return this.<Predicate>doRewrite(predicate);
 		}
+
+		@Override
+		public Predicate rewrite(PredicateVariable predVar) {
+			return this.<Predicate>doRewrite(predVar);
+		}
+
+	}
+
+	private static class OldRewriter implements IFormulaRewriter {
+
+		public OldRewriter() {
+			super();
+		}
+
+		public boolean autoFlatteningMode() {
+			return false;
+		}
+
+		public void enteringQuantifier(int nbOfDeclarations) {
+			// nothing to do
+		}
+
+		public FormulaFactory getFactory() {
+			return ff;
+		}
+
+		public void leavingQuantifier(int nbOfDeclarations) {
+			// nothing to do
+		}
+
+		public Expression rewrite(AssociativeExpression expression) {
+			return null;
+		}
+
+		public Predicate rewrite(AssociativePredicate predicate) {
+			return null;
+		}
+
+		public Expression rewrite(AtomicExpression expression) {
+			return null;
+		}
+
+		public Expression rewrite(BinaryExpression expression) {
+			return null;
+		}
+
+		public Predicate rewrite(BinaryPredicate predicate) {
+			return null;
+		}
+
+		public Expression rewrite(BoolExpression expression) {
+			return null;
+		}
+
+		public Expression rewrite(BoundIdentifier identifier) {
+			return null;
+		}
+
+		public Expression rewrite(FreeIdentifier identifier) {
+			return null;
+		}
+
+		public Expression rewrite(IntegerLiteral literal) {
+			return null;
+		}
+
+		public Predicate rewrite(LiteralPredicate predicate) {
+			return null;
+		}
+
+		public Predicate rewrite(MultiplePredicate predicate) {
+			return null;
+		}
+
+		public Expression rewrite(QuantifiedExpression expression) {
+			return null;
+		}
+
+		public Predicate rewrite(QuantifiedPredicate predicate) {
+			return null;
+		}
+
+		public Predicate rewrite(RelationalPredicate predicate) {
+			return null;
+		}
+
+		public Expression rewrite(SetExtension expression) {
+			return null;
+		}
+
+		public Predicate rewrite(SimplePredicate predicate) {
+			return null;
+		}
+
+		public Expression rewrite(UnaryExpression expression) {
+			return null;
+		}
+
+		public Predicate rewrite(UnaryPredicate predicate) {
+			return null;
+		}
+
 	}
 
 	private static Type INT = ff.makeIntegerType();
@@ -310,9 +426,6 @@ public class TestSubFormulas extends TestCase {
 	private static Expression b0 = mBoundIdentifier(0, INT);
 	private static Expression b1 = mBoundIdentifier(1, INT);
 
-	private static final PredicateVariable pv_P = mPredicateVariable("$P");
-	private static final PredicateVariable pv_Q = mPredicateVariable("$Q");
-	
 	private static Expression m0x = mMaplet(b0, id_x);
 	private static Expression m0X = mMaplet(b0, id_X);
 	private static Expression m01x = mMaplet(mMaplet(b0, b1), id_x);
@@ -332,10 +445,7 @@ public class TestSubFormulas extends TestCase {
 			= new FixedFilter<Expression>(id_S, id_U);
 
 	private static FixedFilter<Predicate> equalsFilter
-			= new FixedFilter<Predicate>(equals, equalsX);
-
-	private static FixedFilter<Predicate> pvFilter
-			= new FixedFilter<Predicate>(pv_P, pv_Q);
+			= new FixedFilter2<Predicate>(equals, equalsX);
 
 	private static final IFormulaFilter defaultFilter = new DefaultFilter();
 	
@@ -648,6 +758,9 @@ public class TestSubFormulas extends TestCase {
 				mLiteralPredicate());
 
 		checkPositions(equalsFilter,
+				mPredicateVariable("$P"));
+
+		checkPositions(equalsFilter,
 				mQuantifiedExpression(CSET, Implicit, mList(bd_x), btrue, id_x));
 		checkPositions(equalsFilter,
 				mQuantifiedExpression(CSET, Implicit, mList(bd_x), equals, id_x),
@@ -697,26 +810,20 @@ public class TestSubFormulas extends TestCase {
 				mUnaryPredicate(NOT, equalsX));
 	}
 	
-	public void testPredicateVariables() throws Exception {
-		final Predicate p_and_true = mAssociativePredicate(LAND, pv_P, btrue);
-		final Predicate q_and_true = mAssociativePredicate(LAND, pv_Q, btrue);
-		final IPosition posP = IPosition.ROOT.getFirstChild();
-		
-		final List<IPosition> actualPositions = p_and_true.getPositions(pvFilter);
-		
-		assertTrue("The filtering on predicate variables should be disabled",
-				actualPositions.isEmpty());
-		assertEquals("Unexpected sub-formula",
-				pv_P, p_and_true.getSubFormula(posP));
-		assertEquals("Unexpected rewrite",
-				q_and_true, p_and_true.rewriteSubFormula(posP, pv_Q, ff));
+	public void testOldFilterOnPredicateVariable() throws Exception {
+		try {
+			mPredicateVariable("$P").getPositions(idFilter);
+			fail("IllegalArgumentException expected");
+		} catch (IllegalArgumentException e) {
+			// as expected
+		}
 	}
 	
 	private <T extends Formula<T>> void checkRootPosition(Formula<T> f1,
 			Formula<T> f2) {
 		assertEquals(f1.getClass(), f2.getClass());
 		assertFalse(f1.equals(f2));
-		final FixedFilter<T> filter = new FixedFilter<T>(f1, f2);
+		final FixedFilter<T> filter = new FixedFilter2<T>(f1, f2);
 		checkPositions(filter, f2);
 		checkPositions(filter, f1, "", f2);
 		
@@ -784,6 +891,10 @@ public class TestSubFormulas extends TestCase {
 		checkRootPosition(
 				mMultiplePredicate(id_S, id_S),
 				mMultiplePredicate(id_T, id_T)
+		);
+		checkRootPosition(
+				mPredicateVariable("$P"),
+				mPredicateVariable("$Q")
 		);
 		checkRootPosition(
 				mQuantifiedExpression(CSET, Implicit, mList(bd_x), btrue, id_x),
@@ -1099,6 +1210,10 @@ public class TestSubFormulas extends TestCase {
 				mMultiplePredicate(id_S, id_S),
 				mMultiplePredicate(id_S, id_T)
 		);
+		this.<Predicate>checkRootRewriting(
+				mPredicateVariable("$P"),
+				mPredicateVariable("$Q")
+		);
 		this.<Expression>checkRootRewriting(
 				mQuantifiedExpression(CSET, Implicit, mList(bd_x), btrue, id_x),
 				mQuantifiedExpression(CSET, Implicit, mList(bd_x), btrue, id_y)
@@ -1128,4 +1243,14 @@ public class TestSubFormulas extends TestCase {
 				mUnaryPredicate(NOT, btrue)
 		);
 	}
+
+	public void testOldRewriterOnPredicateVariable() throws Exception {
+		try {
+			mPredicateVariable("$P").rewrite(new OldRewriter());
+			fail("IllegalArgumentException expected");
+		} catch (IllegalArgumentException e) {
+			// as expected
+		}
+	}
+
 }

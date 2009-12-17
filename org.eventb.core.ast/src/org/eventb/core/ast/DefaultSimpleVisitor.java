@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - added support for predicate variables
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -19,7 +20,7 @@ package org.eventb.core.ast;
  * @author Nicolas Beauger
  * @since 1.0
  */
-public class DefaultSimpleVisitor implements ISimpleVisitor {
+public class DefaultSimpleVisitor implements ISimpleVisitor2 {
 
 	public void visitAssociativeExpression(AssociativeExpression expression) {
 		// Do nothing
@@ -78,6 +79,13 @@ public class DefaultSimpleVisitor implements ISimpleVisitor {
 	}
 
 	public void visitMultiplePredicate(MultiplePredicate predicate) {
+		// Do nothing
+	}
+
+	/**
+	 * @since 1.2
+	 */
+	public void visitPredicateVariable(PredicateVariable predVar) {
 		// Do nothing
 	}
 

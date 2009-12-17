@@ -39,10 +39,12 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IVisitor;
+import org.eventb.core.ast.IVisitor2;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -56,18 +58,30 @@ public class TestVisitor extends TestCase {
 	FormulaFactory ff = FormulaFactory.getDefault();
 	
 	private static class TestItem {
-		Formula<?> formula;
-		int expectedCount;
+		private final Formula<?> formula;
+		private final int expectedCount;
+		private final CounterVisitor visitor;
 		
 		TestItem(Formula<?> formula, int expectedCount) {
+			this(formula, expectedCount, new CounterVisitor());
+		}
+		
+		TestItem(Formula<?> formula, int expectedCount, CounterVisitor visitor) {
 			this.formula = formula;
 			this.expectedCount = expectedCount;
+			this.visitor = visitor;
 		}
+
+		public void runTest() {
+			formula.accept(visitor);
+			assertEquals(formula.toString(), expectedCount, visitor.getCount());
+		}
+
 	}
 
 	private static class CounterVisitor implements IVisitor {
 
-		private int count;
+		protected int count;
 		
 		CounterVisitor() { super(); }
 		
@@ -1237,6 +1251,28 @@ public class TestVisitor extends TestCase {
 
 	}
 	
+	private static class CounterVisitor2 extends CounterVisitor implements IVisitor2 {
+	
+		CounterVisitor2() {
+			super();
+		}
+		
+		public boolean visitPREDICATE_VARIABLE(PredicateVariable predVar) {
+			++ count;
+			return true;
+		}
+	}
+
+	private static void assertException(Formula<?> formula, IVisitor visitor) {
+		try {
+			formula.accept(visitor);
+			fail("IllegalArgumentException expected for "
+					+ formula.toString());
+		} catch (IllegalArgumentException e) {
+			// as expected
+		}
+	}
+
 	// Some simple expressions.
 	private Expression e1 = mIntegerLiteral();
 	private Expression e2 = mIntegerLiteral();
@@ -1273,7 +1309,7 @@ public class TestVisitor extends TestCase {
 				),
 				new TestItem(
 					ff.makePredicateVariable("$P", null),
-					0
+					1, new CounterVisitor2()
 				),
 				new TestItem(
 					ff.makeSetExtension(mList(e1, e2, e3), null),
@@ -1647,9 +1683,7 @@ public class TestVisitor extends TestCase {
 	 */
 	public void testAcceptFull() {
 		for (TestItem item: items) {
-			CounterVisitor visitor = new CounterVisitor();
-			item.formula.accept(visitor);
-			assertEquals(item.formula.toString(), item.expectedCount, visitor.getCount());
+			item.runTest();
 		}
 	}
 
@@ -1708,6 +1742,15 @@ public class TestVisitor extends TestCase {
 		};
 		expr.accept(visitor);
 		assertEquals(4, visitor.getCount());
+	}
+
+	/**
+	 * Ensures that an old visitor run on a predicate variable raises an
+	 * exception.
+	 */
+	public void testOldVisitorOnPredicateVariable() throws Exception {
+		final Predicate pv = ff.makePredicateVariable("$P", null);
+		assertException(pv, new CounterVisitor());
 	}
 
 }
