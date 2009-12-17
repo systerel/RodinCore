@@ -116,11 +116,6 @@ public class TestVersionUpgrader extends AbstractTests {
 			this.checker = checker;
 		}
 
-		// FIXME remove this
-		public String getBeforeUpgrade() {
-			return input;
-		}
-
 		public void verifyUpgrade() {
 			checker.verify(upgrade());
 		}
@@ -192,9 +187,6 @@ public class TestVersionUpgrader extends AbstractTests {
 	}
 
 	private static class ParenExpMaker {
-		private static final String lpar = "(";
-		private static final String rpar = ")";
-
 		private final TestVersionUpgrader.SetOpImageTags setOp;
 		private final String x;
 		private final String y;
@@ -219,32 +211,6 @@ public class TestVersionUpgrader extends AbstractTests {
 			sb.append(y);
 			sb.append(setOp.getImage());
 			sb.append(z);
-
-			return sb.toString();
-		}
-
-		public String makeLeft() {
-			final StringBuilder sb = new StringBuilder();
-			sb.append(lpar);
-			sb.append(x);
-			sb.append(setOp.getImage());
-			sb.append(y);
-			sb.append(rpar);
-			sb.append(setOp.getImage());
-			sb.append(z);
-
-			return sb.toString();
-		}
-
-		public String makeRight() {
-			final StringBuilder sb = new StringBuilder();
-			sb.append(x);
-			sb.append(setOp.getImage());
-			sb.append(lpar);
-			sb.append(y);
-			sb.append(setOp.getImage());
-			sb.append(z);
-			sb.append(rpar);
 
 			return sb.toString();
 		}
