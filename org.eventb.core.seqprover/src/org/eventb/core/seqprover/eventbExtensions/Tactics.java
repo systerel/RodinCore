@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -413,9 +414,7 @@ public class Tactics {
 
 				Set<Predicate> hypsToSelect = ProverLib.hypsFreeIdentsSearch(
 						seq, freeIdents);
-				for (Predicate hyp : seq.selectedHypIterable()) {
-					hypsToSelect.remove(hyp);
-				}
+				removeHiddenAndSelectedHyps(hypsToSelect, seq);
 				if (hypsToSelect.isEmpty())
 					return "No more hypotheses found";
 				return (mngHyp(ProverFactory.makeSelectHypAction(hypsToSelect)))
@@ -425,6 +424,17 @@ public class Tactics {
 		};
 	}
 
+	private static void removeHiddenAndSelectedHyps(Set<Predicate> hyps,
+			IProverSequent sequent) {
+		final Iterator<Predicate> iter = hyps.iterator();
+		while (iter.hasNext()) {
+			final Predicate hyp = iter.next();
+			if (sequent.isHidden(hyp) || sequent.isSelected(hyp)) {
+				iter.remove();
+			}
+		}
+	}
+	
 	// Tactics applicable on the goal
 
 	/**
