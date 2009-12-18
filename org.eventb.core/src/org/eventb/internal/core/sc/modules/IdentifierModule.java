@@ -10,6 +10,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - ensure that all AST problems are reported
  *     Systerel - mathematical language V2
+ *     Systerel - added check on primed identifiers
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -49,7 +50,7 @@ public abstract class IdentifierModule extends SCProcessorModule {
 
 	protected static FreeIdentifier parseIdentifier(String name,
 			IInternalElement element, IAttributeType.String attrType,
-			FormulaFactory factory, IMarkerDisplay display)
+			FormulaFactory factory, IMarkerDisplay display, boolean primeAllowed)
 			throws RodinDBException {
 
 		IParseResult pResult = factory.parseExpression(name, V2, element);
@@ -60,6 +61,11 @@ public abstract class IdentifierModule extends SCProcessorModule {
 			return null;
 		}
 		FreeIdentifier identifier = (FreeIdentifier) expr;
+		if (!(primeAllowed)&&identifier.isPrimed()){
+			display.createProblemMarker(element, attrType,
+					GraphProblem.InvalidIdentifierError, name);
+			return null;
+		}
 		if (!name.equals(identifier.getName())) {
 			display.createProblemMarker(element, attrType,
 					GraphProblem.InvalidIdentifierSpacesError, name);
@@ -84,7 +90,7 @@ public abstract class IdentifierModule extends SCProcessorModule {
 		if (element.hasIdentifierString()) {
 
 			return parseIdentifier(element.getIdentifierString(), element,
-					EventBAttributes.IDENTIFIER_ATTRIBUTE, factory, this);
+					EventBAttributes.IDENTIFIER_ATTRIBUTE, factory, this, false);
 		} else {
 
 			createProblemMarker(element, EventBAttributes.IDENTIFIER_ATTRIBUTE,

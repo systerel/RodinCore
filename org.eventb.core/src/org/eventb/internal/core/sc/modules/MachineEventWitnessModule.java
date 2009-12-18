@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ * 	   Systerel - added check on primed identifiers
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -290,7 +291,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 		// (we do not need to do anything else because the witness will be
 		// invalid anyway!)
 		IdentifierModule.parseIdentifier(symbol, element,
-				EventBAttributes.LABEL_ATTRIBUTE, factory, this);
+				EventBAttributes.LABEL_ATTRIBUTE, factory, this, true);
 		return SymbolFactory.getInstance().makeLocalWitness(symbol, true, element,
 				component);
 	}

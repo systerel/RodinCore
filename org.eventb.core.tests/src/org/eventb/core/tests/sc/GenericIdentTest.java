@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - ensure that all AST problems are reported
  *     University of Dusseldorf - added theorem attribute
+ * 	   Systerel - added check on primed identifiers
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -137,4 +138,31 @@ extends GenericEventBSCTest<E, SCE> {
 		hasMarker(getGeneric().getPredicates(cmp)[0]);
 	}
 
+	
+	/**
+	 * An identifier declaration cannot be primed.
+	 */
+	public void testIdents_05_bug2815882() throws Exception {
+		final E cmp = getGeneric().createElement("cmp");
+
+		getGeneric().addIdents(cmp, makeSList("v'"));
+		getGeneric().addPredicates(cmp, makeSList("I1"), makeSList("v'∈ℤ"), false);
+
+		getGeneric().save(cmp);
+		
+		runBuilder();
+		
+		final ITypeEnvironment environment = factory.makeTypeEnvironment();
+		environment.addName("v'", factory.makeIntegerType());
+		
+		final SCE file = getGeneric().getSCElement(cmp);
+		
+		getGeneric().containsIdents(file);
+		
+		getGeneric().containsPredicates(file, emptyEnv, makeSList(), makeSList());
+		
+		hasMarker(getGeneric().getIdents(cmp)[0]);
+		hasMarker(getGeneric().getPredicates(cmp)[0]);
+	}
+	
 }
