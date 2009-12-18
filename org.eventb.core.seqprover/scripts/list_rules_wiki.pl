@@ -11,6 +11,7 @@
 ################################################################################
 #
 # Extract prover rule names from Event-B wiki
+# Only rules that are marked as implemented are extracted.
 #
 
 use warnings;
@@ -44,7 +45,7 @@ sub extractPage {
 	DEBUG and print STDERR "Processing $url\n";
 	my $content = get($url);
 	DEBUG and print STDERR "$content\n";
-	while ($content =~ /\{\{ \s* Rulename \s* \| \s* (\S+) \s* \}\}/gx) {
+	while ($content =~ /\|\s*\S\s*\|\|\s*\{\{ \s* Rulename \s* \| \s* (\S+) \s* \}\}/gx) {
 		DEBUG and print STDERR "  Found $1\n";
 		$rules{$1} = 1;
 	}
