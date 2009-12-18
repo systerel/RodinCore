@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - fixed expanding
  ******************************************************************************/
 
 package org.eventb.internal.ui.eventbeditor.editpage;
@@ -162,13 +163,14 @@ public interface IElementComposite {
 	public void refresh(IRodinElement element, Set<IAttributeType> set);
 
 	/**
-	 * Set the expand status of the element composite. If the element has not
-	 * been expanded before, this will be expanded recursively to its children.
+	 * Set the expand status of the element composite.
 	 * 
 	 * @param isExpanded
-	 *            <code>true</code> if the element composite is going to
-	 *            expand, <code>false</code> otherwise.
+	 *            <code>true</code> if the element composite is going to expand,
+	 *            <code>false</code> otherwise.
+	 * @param recursive
+	 *            <code>true</code> to propagate expand state recursively
 	 */
-	public void setExpand(boolean isExpanded);
+	public void setExpand(boolean isExpanded, boolean recursive);
 	
 }

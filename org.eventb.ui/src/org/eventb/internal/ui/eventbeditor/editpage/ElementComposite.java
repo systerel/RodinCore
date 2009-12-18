@@ -11,8 +11,12 @@
  *     Systerel - separation of file and root element
  *     Systerel - used ElementDescRegistry
  *     Systerel - optimized tree traversal
+ *     Systerel - fixed expanding
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
+
+import static org.eventb.internal.ui.preferences.EventBPreferenceStore.getBooleanPreference;
+import static org.eventb.internal.ui.preferences.PreferenceConstants.P_EXPAND_SECTIONS;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -103,14 +107,14 @@ public class ElementComposite implements IElementComposite {
 		gridLayout.verticalSpacing = 0;
 		mainSectionComposite.setLayout(gridLayout);
 
-		setExpand(false);
+		setExpand(false, false);
 	}
 
 	public void folding() {
-		setExpand(!isExpanded);
+		setExpand(!isExpanded, false);
 	}
 
-	public void setExpand(boolean isExpanded) {
+	public void setExpand(boolean isExpanded, boolean recursive) {
 		long beforeTime = 0;
 		if (EventBEditorUtils.DEBUG)
 			beforeTime = System.currentTimeMillis();
@@ -119,7 +123,6 @@ public class ElementComposite implements IElementComposite {
 		if (isExpanded) {
 			if (sectionComps == null) {
 				createSectionComposites();
-				recursivelyExpandSectionComposites();
 			}
 			GridData gridData = (GridData) mainSectionComposite.getLayoutData();
 			if (sectionComps.size() == 0) {
@@ -127,9 +130,12 @@ public class ElementComposite implements IElementComposite {
 			} else {
 				gridData.heightHint = SWT.DEFAULT;
 			}
+			expandSections(recursive);
 		} else {
 			GridData gridData = (GridData) mainSectionComposite.getLayoutData();
 			gridData.heightHint = 0;
+			// collapse is always recursive
+			expandSections(true);
 		}
 		row.updateExpandStatus();
 		form.reflow(true);
@@ -141,10 +147,15 @@ public class ElementComposite implements IElementComposite {
 		}
 	}
 
-	private void recursivelyExpandSectionComposites() {
-		assert sectionComps != null;
-		for (ISectionComposite sectionComp : sectionComps) {
-			sectionComp.recursiveExpand();
+	private void expandSections(boolean recursive) {
+		if (sectionComps == null) {
+			return;
+		}
+		final boolean expandSections = getBooleanPreference(P_EXPAND_SECTIONS);
+		if (expandSections || recursive) {
+			for (ISectionComposite sectionComp : sectionComps) {
+				sectionComp.setExpand(isExpanded, recursive);
+			}
 		}
 	}
 
@@ -282,7 +293,7 @@ public class ElementComposite implements IElementComposite {
 			return false;
 
 		if (selected)
-			setExpand(true);
+			setExpand(true, false);
 		final ISectionComposite comp = getComposite(child);
 		if (comp == null)
 			return false;
@@ -295,16 +306,13 @@ public class ElementComposite implements IElementComposite {
 			return;
 
 		if (element.equals(rElement) || element.isAncestorOf(rElement)) {
-			setExpand(true);
-			for (ISectionComposite sectionComp : sectionComps) {
-				sectionComp.recursiveExpand(element);
-			}
+			setExpand(true, true);
 		} else {
 			final IRodinElement child = getChildTowards(element);
 			if (child == null)
 				return;
 
-			setExpand(true);
+			setExpand(true, false);
 			final ISectionComposite comp = getComposite(child);
 			if (comp != null) {
 				comp.recursiveExpand(element);
@@ -326,7 +334,7 @@ public class ElementComposite implements IElementComposite {
 			return;
 
 		if (!isExpanded())
-			setExpand(true);
+			setExpand(true, false);
 		final ISectionComposite comp = getComposite(child);
 		if (comp != null) {
 			comp.edit(element, attributeType, charStart, charEnd);

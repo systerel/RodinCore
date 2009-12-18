@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - added "show borders" and "font color" options
  *     Systerel - added new options
  *     Systerel - added constants for preference page ids
+ *     Systerel - added constant for expand section preference
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
@@ -136,5 +137,9 @@ public class PreferenceConstants {
 	 */
 	public static final String P_CONSIDER_HIDDEN_HYPOTHESES = "Consider hidden hypotheses in search";
 
+	/**
+	 * Preference key for recursive expand
+	 */
+	public static final String P_EXPAND_SECTIONS = "Expand sections when unfolding an element";
 
 }

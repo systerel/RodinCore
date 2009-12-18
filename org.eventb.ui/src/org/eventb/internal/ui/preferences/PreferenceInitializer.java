@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added "show borders" and "font color" options
  *     Systerel - used EventBPreferenceStore
+ *     Systerel - added expand section preference
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
@@ -81,6 +82,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		// Default value consider hidden hypotheses
 		store.setDefault(PreferenceConstants.P_CONSIDER_HIDDEN_HYPOTHESES,
 				false);
+		
+		// Default value for section expanding 
+		store.setDefault(PreferenceConstants.P_EXPAND_SECTIONS, true);
 		
 		PreferenceConverter.setDefault(store,
 				PreferenceConstants.P_TEXT_FOREGROUND, EventBSharedColor

@@ -11,6 +11,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - used ElementDescRegistry
  *     Systerel - optimized tree traversal
+ *     Systerel - fixed expanding
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -161,7 +162,7 @@ public class SectionComposite implements ISectionComposite {
 			createPostfixLabel(suffix);
 		}
 
-		setExpand(false);
+		setExpand(false, false);
 	}
 
 	private boolean notVoid(final String prefix) {
@@ -260,20 +261,25 @@ public class SectionComposite implements ISectionComposite {
 	}
 
 	protected void folding() {
-		setExpand(!isExpanded);
+		setExpand(!isExpanded, false);
 	}
 
-	public void setExpand(final boolean isExpanded) {
+	public void setExpand(final boolean isExpanded, boolean recursive) {
 		long beforeTime = System.currentTimeMillis();
 		form.setRedraw(false);
 		this.isExpanded = isExpanded;
 		if (isExpanded) {
 			createElementComposites();
+			if (recursive) {
+				recursiveSetExpand();
+			}
 		} else {
 			beforeHyperlinkComposite.setHeightHint(0);
 			GridData gridData = (GridData) elementComposite.getLayoutData();
 			gridData.heightHint = 0;
 			afterHyperlinkComposite.setHeightHint(0);
+			// collapse is always recursive
+			recursiveSetExpand();
 		}
 		updateExpandStatus();
 		refreshPrefixMarker();
@@ -485,7 +491,7 @@ public class SectionComposite implements ISectionComposite {
 		}
 
 		if (selected) {
-			setExpand(true);
+			setExpand(true, false);
 		}
 		final IElementComposite comp = getComposite(child);
 		if (comp == null) {
@@ -496,7 +502,7 @@ public class SectionComposite implements ISectionComposite {
 
 	public void recursiveExpand(final IRodinElement element) {
 		if (parent.equals(element) || element.isAncestorOf(parent)) {
-			setExpand(true);
+			setExpand(true, true);
 			for (IElementComposite elementComp : elementComps) {
 				elementComp.recursiveExpand(element);
 			}
@@ -505,7 +511,7 @@ public class SectionComposite implements ISectionComposite {
 			if (child == null) {
 				return;
 			}
-			setExpand(true);
+			setExpand(true, false);
 			final IElementComposite comp = getComposite(child);
 			if (comp != null) {
 				comp.recursiveExpand(element);
@@ -521,7 +527,7 @@ public class SectionComposite implements ISectionComposite {
 			return;
 		}
 		if (!isExpanded()) {
-			setExpand(true);
+			setExpand(true, false);
 		}
 
 		final IElementComposite comp = getComposite(child);
@@ -568,26 +574,16 @@ public class SectionComposite implements ISectionComposite {
 		}
 	}
 
-	public void recursiveExpand() {
-		setExpand(true);
+	private void recursiveSetExpand() {
 		if (elementComps == null) {
 			return;
 		}
 
 		for (IElementComposite elementComp : elementComps) {
-			elementComp.setExpand(true);
+			elementComp.setExpand(isExpanded, true);
 		}
 	}
-
-	public void recursiveCollapse() {
-		if (elementComps != null) {
-			for (IElementComposite elementComp : elementComps) {
-				elementComp.setExpand(false);
-			}
-		}
-		setExpand(false);
-	}
-
+	
 	protected IElementComposite getComposite(final IRodinElement element) {
 		if (element == null || mapComps == null) {
 			return null;

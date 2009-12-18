@@ -15,6 +15,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - used ElementDescRegistry
  *     Systerel - optimized tree traversal
+ *     Systerel - fixed expanding
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -299,7 +300,7 @@ public class EditPage extends EventBEditorPage implements
 			public void linkActivated(HyperlinkEvent e) {
 				assert sectionComps != null;
 				for (ISectionComposite sectionComp : sectionComps) {
-					sectionComp.recursiveExpand();
+					sectionComp.setExpand(true, true);
 				}
 			}
 			public void linkEntered(HyperlinkEvent e) {
@@ -313,7 +314,7 @@ public class EditPage extends EventBEditorPage implements
 			public void linkActivated(HyperlinkEvent e) {
 				assert sectionComps != null;
 				for (ISectionComposite sectionComp : sectionComps) {
-					sectionComp.recursiveCollapse();
+					sectionComp.setExpand(false, true);
 				}
 			}
 			public void linkEntered(HyperlinkEvent e) {

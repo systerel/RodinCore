@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,6 +9,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added method for marker refresh
+ *     Systerel - fixed expanding
  ******************************************************************************/
 
 package org.eventb.internal.ui.eventbeditor.editpage;
@@ -143,13 +144,13 @@ public interface ISectionComposite {
 	void refresh(IRodinElement element, Set<IAttributeType> set);
 
 	/**
-	 * Recursively extend the section composite.
+	 * Set the expand status of the section composite.
+	 * 
+	 * @param isExpanded
+	 *            <code>true</code> if the section composite is going to expand,
+	 *            <code>false</code> otherwise.
+	 * @param recursive
+	 *            <code>true</code> to propagate expand state recursively
 	 */
-	void recursiveExpand();
-
-	/**
-	 * Recursively collapse the section composite.
-	 */
-	void recursiveCollapse();
-
+	void setExpand(boolean isExpanded, boolean recursive);
 }

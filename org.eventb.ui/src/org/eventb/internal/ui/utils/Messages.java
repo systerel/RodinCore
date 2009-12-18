@@ -15,6 +15,7 @@
  *     Systerel - added messages for Dialogs
  *     Systerel - added messages for Proof Skeleton
  *     Systerel - added message for Tactics
+ *     Systerel - added "expand section" preference
  *******************************************************************************/
 package org.eventb.internal.ui.utils;
 
@@ -86,6 +87,7 @@ public final class Messages {
 	public static String preferencepage_machineeditor_editorpagedescription;
 	public static String preferencepage_editorpage_tab_title;
 	public static String preferencepage_modellingui_description;
+	public static String preferencepage_modellingui_expandSections;
 	public static String preferencepage_pomtactic_description;
 	public static String preferencepage_pomtactic_enablementdescription;
 	public static String preferencepage_pomtactic_selectedtacticsdescription;
