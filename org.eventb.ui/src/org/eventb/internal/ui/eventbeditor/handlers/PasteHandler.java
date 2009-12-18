@@ -9,8 +9,13 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - added history support
+ *     Systerel - added check before pasting element
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.handlers;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -26,10 +31,13 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eventb.internal.ui.RodinHandleTransfer;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
+import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
@@ -62,19 +70,18 @@ public class PasteHandler extends AbstractHandler implements IHandler {
 		// Try to handle by using a rodin handle transfer.
 		RodinHandleTransfer rodinHandleTransfer = RodinHandleTransfer
 				.getInstance();
-		final IRodinElement[] handleData = (IRodinElement[]) clipboard
+		final IRodinElement[] elements = (IRodinElement[]) clipboard
 				.getContents(rodinHandleTransfer);
 
 		// There is no data in the clipboard for rodin handle transfer then do nothing.
-		if (handleData == null)
+		if (elements == null)
 			return "Nothing to paste";
 		
 		// Check for the existing of the elements to be pasted.
-		for (IRodinElement element : handleData) {
+		for (IRodinElement element : elements) {
 			if (!element.exists()) {
-				Shell shell = workbench.getActiveWorkbenchWindow().getShell();
-				MessageDialog.openError(shell, "Cannot Paste", "Element "
-						+ element + " does not exist.");
+				openError(Messages.bind(Messages.dialogs_nothingToPaste,
+						element));
 			}
 		}
 		
@@ -87,11 +94,19 @@ public class PasteHandler extends AbstractHandler implements IHandler {
 		if (EventBEditorUtils.checkAndShowReadOnly(target)) {
 			return null;
 		}
-		
-		History.getInstance().addOperation(
-				OperationFactory.copyElements((IInternalElement) target,
-						handleData));
 
+		final IElementType<?> typeNotAllowed = elementTypeNotAllowed(
+				elements, target);
+		if (typeNotAllowed == null) {
+			copyElements(elements, target);
+		} else if (haveSameType(elements, target)) {
+			copyElements(elements, target.getParent());
+		} else {
+			openError(Messages
+					.bind(Messages.dialogs_pasteNotAllowed, typeNotAllowed
+							.getName(), target.getElementType().getName()));
+			return null;
+		}
 		if (EventBEditorUtils.DEBUG)
 			EventBEditorUtils.debug("PASTE SUCCESSFULLY");
 		return null;
@@ -129,4 +144,61 @@ public class PasteHandler extends AbstractHandler implements IHandler {
 		}
 	}
 
+	/**
+	 * Returns the type of an element that is not allowed to be pasted as child
+	 * of target.
+	 * 
+	 * @return the type that is not allowed to be pasted or <code>null</code> if
+	 *         all elements to paste can become valid children
+	 * */
+	private static IElementType<?> elementTypeNotAllowed(
+			IRodinElement[] toPaste, IRodinElement target) {
+		final Set<IElementType<?>> allowedTypes = getAllowedChildTypes(target);
+		for (IRodinElement e : toPaste) {
+			final IElementType<?> type = e.getElementType();
+			if (!allowedTypes.contains(type)) {
+				return type;
+			}
+		}
+		return null;
+	}
+
+	private static Set<IElementType<?>> getAllowedChildTypes(
+			IRodinElement target) {
+		final IElementType<?> targetType = target.getElementType();
+		final IElementType<?>[] childTypes = ElementDescRegistry.getInstance()
+				.getChildTypes(targetType);
+		final Set<IElementType<?>> allowedTypes = new HashSet<IElementType<?>>(
+				Arrays.asList(childTypes));
+		return allowedTypes;
+	}
+	
+	private static boolean haveSameType(IRodinElement[]toPaste, IRodinElement target){
+		final IElementType<?> targetType = target.getElementType();
+		for (IRodinElement e : toPaste) {
+			if (targetType != e.getElementType()) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Opens an Error Dialog to display the message.
+	 */
+	private static void openError(String message) {
+		final Shell shell = EventBUIPlugin.getActiveWorkbenchShell();
+		MessageDialog.openError(shell, "Cannot Paste", message);
+	}
+	
+	/**
+	 * Perform a copy operation through the undo history.
+	 */
+	private static void copyElements(IRodinElement[] handleData,
+			IRodinElement target) {
+		History.getInstance().addOperation(
+				OperationFactory.copyElements((IInternalElement) target,
+						handleData));
+	}
+	
 }

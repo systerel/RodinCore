@@ -156,6 +156,8 @@ public final class Messages {
 	public static String dialogs_invalidIdentifiers;
 	public static String dialogs_duplicateNames;
 	public static String dialogs_readOnlyElement;
+	public static String dialogs_nothingToPaste;
+	public static String dialogs_pasteNotAllowed;
 	
 	// Tactics
 	public static String tactics_replaceWith;
