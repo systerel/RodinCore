@@ -138,13 +138,13 @@ public class ArithRewriterImpl extends DefaultRewriter {
     
 	%include {FormulaV2.tom}
 	
-    @ProverRule( { "SIMP_MINUS_PLUS_L", "SIMP_MINUS_PLUS_R",
-            "SIMP_MINUS_PLUS_PLUS", "SIMP_MINUS_UNMINUS" })
+    @ProverRule( { "SIMP_MULTI_MINUS_PLUS_L", "SIMP_MULTI_MINUS_PLUS_R",
+            "SIMP_MULTI_MINUS_PLUS_PLUS", "SIMP_MINUS_UNMINUS" })
 	@Override
 	public Expression rewrite(BinaryExpression expression) {
 	    %match (Expression expression) {
 	        /**
-             * SIMP_MINUS_PLUS_L
+             * SIMP_MULTI_MINUS_PLUS_L
 	         * Arithmetics: (A + ... + C + ... + B) − C == A + .. + B
 	         */
 			Minus(Plus(children), C) -> {
@@ -158,7 +158,7 @@ public class ArithRewriterImpl extends DefaultRewriter {
 			}
 			
 			/**
-             * SIMP_MINUS_PLUS_R
+             * SIMP_MULTI_MINUS_PLUS_R
 			 * Arithmetics: C − (A + ... + C + ... + B)  ==  −(A + ... + B)
 			 */
 			Minus(C, Plus(children)) -> {
@@ -172,7 +172,7 @@ public class ArithRewriterImpl extends DefaultRewriter {
 			}
 			
 			/**
-             * SIMP_MINUS_PLUS_PLUS
+             * SIMP_MULTI_MINUS_PLUS_PLUS
 			 * Arithmetics: (A + ... + E + ... + B) − (C + ... + E + ... + D)  == (A + ... + B) − (C + ... + D)
 			 */
 			Minus(Plus(left), Plus(right)) -> {
