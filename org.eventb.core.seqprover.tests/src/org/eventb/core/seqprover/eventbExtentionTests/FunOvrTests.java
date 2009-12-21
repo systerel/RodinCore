@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
 import java.util.List;
@@ -20,43 +30,42 @@ public class FunOvrTests extends AbstractManualInferenceTests {
 
 	String P3 = "(f  g  {2 ↦ 3})(y) = 3";
 
-	String resultP3GoalA = "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[][][⊤, y=2] |- 3=3";
+	String resultP3GoalA = "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[][][⊤;; y=2] |- 3=3";
+	String resultP3GoalB = "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[][][⊤;; ¬y=2] |- (fg)(y)=3";
 
-	String resultP3GoalB = "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[][][⊤, ¬y=2] |- (fg)(y)=3";
+	String resultP3HypA = "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[(fg{2 ↦ 3})(y)=3][][y=2;; 3=3] |- ⊤";
 
-	String resultP3HypA = "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[(fg{2 ↦ 3})(y)=3][][y=2, 3=3] |- ⊤";
-
-	String resultP3HypB = "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[(fg{2 ↦ 3})(y)=3][][¬y=2, (fg)(y)=3] |- ⊤";
+	String resultP3HypB = "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[(fg{2 ↦ 3})(y)=3][][¬y=2;; (fg)(y)=3] |- ⊤";
 
 	String P4 = "3 = (f  {2 ↦ 3}  h)(y)";
 
-	String resultP4GoalA = "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[][][⊤, y∈dom(h)] |- 3=h(y)";
+	String resultP4GoalA = "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[][][⊤;; y∈dom(h)] |- 3=h(y)";
 
-	String resultP4GoalB = "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[][][⊤, ¬y∈dom(h)] |- 3=(f{2 ↦ 3})(y)";
+	String resultP4GoalB = "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[][][⊤;; ¬y∈dom(h)] |- 3=(f{2 ↦ 3})(y)";
 
-	String resultP4HypA = "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[3=(f{2 ↦ 3}h)(y)][][y∈dom(h), 3=h(y)] |- ⊤";
+	String resultP4HypA = "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[3=(f{2 ↦ 3}h)(y)][][y∈dom(h);; 3=h(y)] |- ⊤";
 
-	String resultP4HypB = "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[3=(f{2 ↦ 3}h)(y)][][¬y∈dom(h), 3=(f{2 ↦ 3})(y)] |- ⊤";
+	String resultP4HypB = "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[3=(f{2 ↦ 3}h)(y)][][¬y∈dom(h);; 3=(f{2 ↦ 3})(y)] |- ⊤";
 	
 	String P5 = "¬((f  g  {2 ↦ 3})(y) = 3)";
 
-	String resultP5GoalA = "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[][][⊤, y=2] |- ¬3=3";
+	String resultP5GoalA = "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[][][⊤;; y=2] |- ¬3=3";
 
-	String resultP5GoalB = "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[][][⊤, ¬y=2] |- ¬(fg)(y)=3";
+	String resultP5GoalB = "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[][][⊤;; ¬y=2] |- ¬(fg)(y)=3";
 
-	String resultP5HypA = "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[¬(fg{2 ↦ 3})(y)=3][][y=2, ¬3=3] |- ⊤";
+	String resultP5HypA = "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[¬(fg{2 ↦ 3})(y)=3][][y=2;; ¬3=3] |- ⊤";
 
-	String resultP5HypB = "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[¬(fg{2 ↦ 3})(y)=3][][¬y=2, ¬(fg)(y)=3] |- ⊤";
+	String resultP5HypB = "{f=ℙ(ℤ×ℤ), y=ℤ, g=ℙ(ℤ×ℤ)}[¬(fg{2 ↦ 3})(y)=3][][¬y=2;; ¬(fg)(y)=3] |- ⊤";
 
 	String P6 = "¬3 = (f  {2 ↦ 3}  h)(y)";
 
-	String resultP6GoalA = "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[][][⊤, y∈dom(h)] |- ¬3=h(y)";
+	String resultP6GoalA = "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[][][⊤;; y∈dom(h)] |- ¬3=h(y)";
 
-	String resultP6GoalB = "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[][][⊤, ¬y∈dom(h)] |- ¬3=(f{2 ↦ 3})(y)";
+	String resultP6GoalB = "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[][][⊤;; ¬y∈dom(h)] |- ¬3=(f{2 ↦ 3})(y)";
 
-	String resultP6HypA = "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[¬3=(f{2 ↦ 3}h)(y)][][y∈dom(h), ¬3=h(y)] |- ⊤";
+	String resultP6HypA = "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[¬3=(f{2 ↦ 3}h)(y)][][y∈dom(h);; ¬3=h(y)] |- ⊤";
 
-	String resultP6HypB = "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[¬3=(f{2 ↦ 3}h)(y)][][¬y∈dom(h), ¬3=(f{2 ↦ 3})(y)] |- ⊤";
+	String resultP6HypB = "{h=ℙ(ℤ×ℤ), f=ℙ(ℤ×ℤ), y=ℤ}[¬3=(f{2 ↦ 3}h)(y)][][¬y∈dom(h);; ¬3=(f{2 ↦ 3})(y)] |- ⊤";
 	
 	protected List<IPosition> getPositions(Predicate predicate) {
 		return Tactics.funOvrGetPositions(predicate);

@@ -35,6 +35,7 @@ import org.eventb.core.seqprover.IReasonerFailure;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TotalDomRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TotalDomSubstitutions;
@@ -42,12 +43,12 @@ import org.junit.Test;
 
 public class TotalDomRewriterTests {
 
-	private static final IntegerLiteral ZERO = TestLib.ff.makeIntegerLiteral(
+	private static final IntegerLiteral ZERO = Lib.ff.makeIntegerLiteral(
 			BigInteger.ZERO, null);
-	private static final IntegerLiteral ONE = TestLib.ff.makeIntegerLiteral(
+	private static final IntegerLiteral ONE = Lib.ff.makeIntegerLiteral(
 			BigInteger.ONE, null);
 	private static final IPosition FIRST_CHILD = IPosition.ROOT.getFirstChild();
-	private static final AtomicExpression NAT = TestLib.ff
+	private static final AtomicExpression NAT = Lib.ff
 			.makeAtomicExpression(Formula.NATURAL, null);
 
 	private static final IReasoner rewriter = new TotalDomRewrites();
@@ -109,10 +110,10 @@ public class TotalDomRewriterTests {
 				.goal()).getLeft()).getChild();
 		final List<Expression> list01 = new ArrayList<Expression>();
 		list01.addAll(Arrays.asList(ZERO, ONE));
-		final Expression setExt01 = TestLib.ff.makeSetExtension(list01, null);
+		final Expression setExt01 = Lib.ff.makeSetExtension(list01, null);
 		final List<Expression> list10 = new ArrayList<Expression>();
 		list10.addAll(Arrays.asList(ONE, ZERO));
-		final Expression setExt10 = TestLib.ff.makeSetExtension(list10, null);
+		final Expression setExt10 = Lib.ff.makeSetExtension(list10, null);
 		assertSubstitutions(seq, id_f, setExt01, setExt10);
 	}
 

@@ -38,15 +38,15 @@ public class ImpETests extends AbstractReasonerTests {
 				new SuccessfullReasonerApplication(
 						TestLib.genSeq("  1∈P ⇒ 2∈P  |- 3∈P "),
 						new HypothesisReasoner.Input(TestLib.genPred("1∈P ⇒ 2∈P")),
-						"[{P=ℙ(ℤ)}[1∈P⇒2∈P][][] |- 1∈P," +
-						" {P=ℙ(ℤ)}[1∈P⇒2∈P][][2∈P] |- 3∈P]"
+						"{P=ℙ(ℤ)}[1∈P⇒2∈P][][] |- 1∈P",
+						"{P=ℙ(ℤ)}[1∈P⇒2∈P][][2∈P] |- 3∈P"
 				),
 				// Test with embedded conjunction
 				new SuccessfullReasonerApplication(
 						TestLib.genSeq("1∈P ∧ 2∈P ⇒ 3∈P ∧ 4∈P  |- 5∈P "),
 						new HypothesisReasoner.Input(TestLib.genPred("1∈P ∧ 2∈P ⇒ 3∈P ∧ 4∈P")),
-						"[{P=ℙ(ℤ)}[1∈P∧2∈P⇒3∈P∧4∈P][][] |- 1∈P∧2∈P," +
-						" {P=ℙ(ℤ)}[1∈P∧2∈P⇒3∈P∧4∈P][][3∈P, 4∈P] |- 5∈P]"
+						"{P=ℙ(ℤ)}[1∈P∧2∈P⇒3∈P∧4∈P][][] |- 1∈P∧2∈P",
+						"{P=ℙ(ℤ)}[1∈P∧2∈P⇒3∈P∧4∈P][][3∈P;; 4∈P] |- 5∈P"
 				),
 		};
 	}

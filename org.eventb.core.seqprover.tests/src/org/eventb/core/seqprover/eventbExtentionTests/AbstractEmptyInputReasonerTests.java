@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
 import java.util.ArrayList;
@@ -34,9 +44,8 @@ public abstract class AbstractEmptyInputReasonerTests extends
 		Collection<SuccessfullReasonerApplication> successfullReasonerApps = new ArrayList<SuccessfullReasonerApplication>();
 		SuccessfulTest[] successfulTests = getSuccessfulTests();
 		for (SuccessfulTest test : successfulTests) {
-			Collection<SuccessfullReasonerApplication> apps = makeSuccessfullReasonerApplication(
-					test.sequenceImage, test.results);
-			successfullReasonerApps.addAll(apps);
+			successfullReasonerApps.add(makeSuccessfullReasonerApplication(
+					test.sequenceImage, test.results));
 
 		}
 		return successfullReasonerApps
@@ -44,28 +53,11 @@ public abstract class AbstractEmptyInputReasonerTests extends
 						.size()]); 
 	}
 
-	protected Collection<SuccessfullReasonerApplication> makeSuccessfullReasonerApplication(
-			String sequenceImage, String [] results) {
-		Collection<SuccessfullReasonerApplication> successfullReasonerApps = new ArrayList<SuccessfullReasonerApplication>();
-
+	private SuccessfullReasonerApplication makeSuccessfullReasonerApplication(
+			String sequenceImage, String[] results) {
 		IReasonerInput input = new EmptyInput();
-		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(sequenceImage), input));
-		
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("[");
-		boolean first = true;
-		for (String result : results) {
-			if (first)
-				first = false;
-			else
-				buffer.append(", ");
-			buffer.append(result);
-		}
-		buffer.append("]");
-		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(sequenceImage), input, buffer.toString()));
-		return successfullReasonerApps;
+		return new SuccessfullReasonerApplication(
+				TestLib.genSeq(sequenceImage), input, results);
 	}
 
 	@Override

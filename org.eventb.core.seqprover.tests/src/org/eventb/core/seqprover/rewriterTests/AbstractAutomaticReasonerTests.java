@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
 import java.util.ArrayList;
@@ -50,21 +60,7 @@ public abstract class AbstractAutomaticReasonerTests extends AbstractReasonerTes
 
 		IReasonerInput input = new EmptyInput();
 		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genFullSeq(sequenceImage), input));
-		
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("[");
-		boolean first = true;
-		for (String result : results) {
-			if (first)
-				first = false;
-			else
-				buffer.append(", ");
-			buffer.append(result);
-		}
-		buffer.append("]");
-		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genFullSeq(sequenceImage), input, buffer.toString()));
+				.genFullSeq(sequenceImage), input, results));
 		return successfullReasonerApps;
 	}
 

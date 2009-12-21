@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
 import java.util.List;
@@ -21,43 +31,43 @@ public class CardUpToTests extends AbstractManualInferenceTests {
 
 	String P3 = "card(1‥x) = 2";
 
-	String resultP3GoalA = "{x=ℤ}[][][⊤, 1≤x] |- x − 1+1=2";
+	String resultP3GoalA = "{x=ℤ}[][][⊤;; 1≤x] |- x − 1+1=2";
 
-	String resultP3GoalB = "{x=ℤ}[][][⊤, x<1] |- 0=2";
+	String resultP3GoalB = "{x=ℤ}[][][⊤;; x<1] |- 0=2";
 
-	String resultP3HypA = "{x=ℤ}[card(1 ‥ x)=2][][1≤x, x − 1+1=2] |- ⊤";
+	String resultP3HypA = "{x=ℤ}[card(1 ‥ x)=2][][1≤x;; x − 1+1=2] |- ⊤";
 
-	String resultP3HypB = "{x=ℤ}[card(1 ‥ x)=2][][x<1, 0=2] |- ⊤";
+	String resultP3HypB = "{x=ℤ}[card(1 ‥ x)=2][][x<1;; 0=2] |- ⊤";
 
 	String P4 = "2 = card(1‥x)";
 
-	String resultP4GoalA = "{x=ℤ}[][][⊤, 1≤x] |- 2=x − 1+1";
+	String resultP4GoalA = "{x=ℤ}[][][⊤;; 1≤x] |- 2=x − 1+1";
 
-	String resultP4GoalB = "{x=ℤ}[][][⊤, x<1] |- 2=0";
+	String resultP4GoalB = "{x=ℤ}[][][⊤;; x<1] |- 2=0";
 
-	String resultP4HypA = "{x=ℤ}[2=card(1 ‥ x)][][1≤x, 2=x − 1+1] |- ⊤";
+	String resultP4HypA = "{x=ℤ}[2=card(1 ‥ x)][][1≤x;; 2=x − 1+1] |- ⊤";
 
-	String resultP4HypB = "{x=ℤ}[2=card(1 ‥ x)][][x<1, 2=0] |- ⊤";
+	String resultP4HypB = "{x=ℤ}[2=card(1 ‥ x)][][x<1;; 2=0] |- ⊤";
 
 	String P5 = "¬card(1‥x) = 2";
 
-	String resultP5GoalA = "{x=ℤ}[][][⊤, 1≤x] |- ¬x − 1+1=2";
+	String resultP5GoalA = "{x=ℤ}[][][⊤;; 1≤x] |- ¬x − 1+1=2";
 
-	String resultP5GoalB = "{x=ℤ}[][][⊤, x<1] |- ¬0=2";
+	String resultP5GoalB = "{x=ℤ}[][][⊤;; x<1] |- ¬0=2";
 
-	String resultP5HypA = "{x=ℤ}[¬card(1 ‥ x)=2][][1≤x, ¬x − 1+1=2] |- ⊤";
+	String resultP5HypA = "{x=ℤ}[¬card(1 ‥ x)=2][][1≤x;; ¬x − 1+1=2] |- ⊤";
 
-	String resultP5HypB = "{x=ℤ}[¬card(1 ‥ x)=2][][x<1, ¬0=2] |- ⊤";
+	String resultP5HypB = "{x=ℤ}[¬card(1 ‥ x)=2][][x<1;; ¬0=2] |- ⊤";
 
 	String P6 = "¬2 = card(1‥x)";
 
-	String resultP6GoalA = "{x=ℤ}[][][⊤, 1≤x] |- ¬2=x − 1+1";
+	String resultP6GoalA = "{x=ℤ}[][][⊤;; 1≤x] |- ¬2=x − 1+1";
 
-	String resultP6GoalB = "{x=ℤ}[][][⊤, x<1] |- ¬2=0";
+	String resultP6GoalB = "{x=ℤ}[][][⊤;; x<1] |- ¬2=0";
 
-	String resultP6HypA = "{x=ℤ}[¬2=card(1 ‥ x)][][1≤x, ¬2=x − 1+1] |- ⊤";
+	String resultP6HypA = "{x=ℤ}[¬2=card(1 ‥ x)][][1≤x;; ¬2=x − 1+1] |- ⊤";
 
-	String resultP6HypB = "{x=ℤ}[¬2=card(1 ‥ x)][][x<1, ¬2=0] |- ⊤";
+	String resultP6HypB = "{x=ℤ}[¬2=card(1 ‥ x)][][x<1;; ¬2=0] |- ⊤";
 
 	
 	protected String [] getTestGetPositions() {

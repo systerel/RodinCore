@@ -31,9 +31,8 @@ public class OnePointRuleTests extends AbstractReasonerTests {
 	private static SuccessfullReasonerApplication newSuccessGoal(String goal,
 			String simplifiedGoal, String WDgoal) {
 		return new SuccessfullReasonerApplication(
-				TestLib.genSeq(" |- " + goal), goalInput, "[{}[][][] |- "
-						+ simplifiedGoal + ", {}[][][] |- " + WDgoal + "]");
-
+				TestLib.genSeq(" |- " + goal), goalInput, "{}[][][] |- "
+						+ simplifiedGoal, "{}[][][] |- " + WDgoal);
 	}
 	
 	private static UnsuccessfullReasonerApplication newFailureGoal(String goal) {
@@ -69,8 +68,8 @@ public class OnePointRuleTests extends AbstractReasonerTests {
 						.genSeq("∀x· x=0 ∧ x+1=0 ⇒ x+1=2 |- ⊥"),
 						new OnePointRule.Input(TestLib
 								.genPred("∀x· x=0 ∧ x+1=0 ⇒ x+1=2")),
-						"[{}[∀x·x=0∧x+1=0⇒x+1=2][][0+1=0⇒0+1=2] |- ⊥,"
-								+ " {}[∀x·x=0∧x+1=0⇒x+1=2][][] |- ⊤]"),
+						"{}[∀x·x=0∧x+1=0⇒x+1=2][][0+1=0⇒0+1=2] |- ⊥",
+						"{}[∀x·x=0∧x+1=0⇒x+1=2][][] |- ⊤"),
 
 				// Behaves the same with ∃ quantifier
 				newSuccessGoal("∃x,y· x=0 ∧ x+1=y ⇒ y=1", "∃y·0+1=y⇒y=1", "⊤"),

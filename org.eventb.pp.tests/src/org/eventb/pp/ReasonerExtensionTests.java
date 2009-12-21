@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.pp;
 
 import org.eventb.core.seqprover.IReasonerInput;
@@ -20,11 +30,9 @@ public class ReasonerExtensionTests extends AbstractReasonerTests {
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
 		return new SuccessfullReasonerApplication[] {
 				new SuccessfullReasonerApplication(TestLib
-						.genSeq(" x = 1 |- x = 1 "), input,
-						"[]"),
+						.genSeq(" x = 1 |- x = 1 "), input),
 				new SuccessfullReasonerApplication(TestLib
-						.genSeq(" 1∈P |- 1∈P "), input,
-						"[]")				
+						.genSeq(" 1∈P |- 1∈P "), input)
 		};
 	}
 

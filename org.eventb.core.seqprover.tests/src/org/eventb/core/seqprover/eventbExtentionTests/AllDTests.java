@@ -42,43 +42,43 @@ public class AllDTests extends AbstractReasonerTests {
 				// hyp not univ quantified implication, but still univ quantified
 				new SuccessfullReasonerApplication(TestLib.genSeq(" ∀x· x=0 |- ⊥ "), 
 						new AllD.Input(TestLib.genPred("∀x· x=0"), Lib.makeTypeEnvironment(),new String[]{"0"}),
-						"[{}[][][∀x·x=0] |- ⊤," +
-						" {}[][∀x·x=0][0=0] |- ⊥]"
+						"{}[][][∀x·x=0] |- ⊤",
+						"{}[][∀x·x=0][0=0] |- ⊥"
 				),
 				// without WD condition
 				new SuccessfullReasonerApplication(
 						seq,
 						new AllD.Input(hyp,seq.typeEnvironment(),new String[]{"0","1"}),
-						"[{P=ℙ(ℤ)}[][][∀x,y·x∈ℤ⇒x∈P∧y∈P] |- ⊤," +
-						" {P=ℙ(ℤ)}[][∀x,y·x∈ℤ⇒x∈P∧y∈P][0∈ℤ⇒0∈P∧1∈P] |- ⊥]"
+						"{P=ℙ(ℤ)}[][][∀x,y·x∈ℤ⇒x∈P∧y∈P] |- ⊤",
+						"{P=ℙ(ℤ)}[][∀x,y·x∈ℤ⇒x∈P∧y∈P][0∈ℤ⇒0∈P∧1∈P] |- ⊥"
 				),
 				// with WD condition
 				new SuccessfullReasonerApplication(
 						seq,
 						new AllD.Input(hyp,seq.typeEnvironment(),new String[]{"0","1÷0"}),
-						"[{P=ℙ(ℤ)}[][][∀x,y·x∈ℤ⇒x∈P∧y∈P] |- 0≠0," +
-						" {P=ℙ(ℤ)}[][∀x,y·x∈ℤ⇒x∈P∧y∈P, 0≠0][0∈ℤ⇒0∈P∧1 ÷ 0∈P] |- ⊥]"
+						"{P=ℙ(ℤ)}[][][∀x,y·x∈ℤ⇒x∈P∧y∈P] |- 0≠0",
+						"{P=ℙ(ℤ)}[][∀x,y·x∈ℤ⇒x∈P∧y∈P;; 0≠0][0∈ℤ⇒0∈P∧1 ÷ 0∈P] |- ⊥"
 				),
 				// not all bound idents instantiated
 				new SuccessfullReasonerApplication(
 						seq,
 						new AllD.Input(hyp,seq.typeEnvironment(),new String[]{"0"}),
-						"[{P=ℙ(ℤ)}[][][∀x,y·x∈ℤ⇒x∈P∧y∈P] |- ⊤," +
-						" {P=ℙ(ℤ)}[][∀x,y·x∈ℤ⇒x∈P∧y∈P][∀y·0∈ℤ⇒0∈P∧y∈P] |- ⊥]"
+						"{P=ℙ(ℤ)}[][][∀x,y·x∈ℤ⇒x∈P∧y∈P] |- ⊤",
+						"{P=ℙ(ℤ)}[][∀x,y·x∈ℤ⇒x∈P∧y∈P][∀y·0∈ℤ⇒0∈P∧y∈P] |- ⊥"
 				),
 				// only first bound ident instantiated
 				new SuccessfullReasonerApplication(
 						seq,
 						new AllD.Input(hyp,seq.typeEnvironment(),new String[]{"0", null}),
-						"[{P=ℙ(ℤ)}[][][∀x,y·x∈ℤ⇒x∈P∧y∈P] |- ⊤," +
-						" {P=ℙ(ℤ)}[][∀x,y·x∈ℤ⇒x∈P∧y∈P][∀y·0∈ℤ⇒0∈P∧y∈P] |- ⊥]"
+						"{P=ℙ(ℤ)}[][][∀x,y·x∈ℤ⇒x∈P∧y∈P] |- ⊤",
+						"{P=ℙ(ℤ)}[][∀x,y·x∈ℤ⇒x∈P∧y∈P][∀y·0∈ℤ⇒0∈P∧y∈P] |- ⊥"
 				),
 				// only second bound ident instantiated
 				new SuccessfullReasonerApplication(
 						seq,
 						new AllD.Input(hyp,seq.typeEnvironment(),new String[]{null, "0"}),
-						"[{P=ℙ(ℤ)}[][][∀x,y·x∈ℤ⇒x∈P∧y∈P] |- ⊤," +
-						" {P=ℙ(ℤ)}[][∀x,y·x∈ℤ⇒x∈P∧y∈P][∀x·x∈ℤ⇒x∈P∧0∈P] |- ⊥]"
+						"{P=ℙ(ℤ)}[][][∀x,y·x∈ℤ⇒x∈P∧y∈P] |- ⊤",
+						"{P=ℙ(ℤ)}[][∀x,y·x∈ℤ⇒x∈P∧y∈P][∀x·x∈ℤ⇒x∈P∧0∈P] |- ⊥"
 				),
 		};
 	}

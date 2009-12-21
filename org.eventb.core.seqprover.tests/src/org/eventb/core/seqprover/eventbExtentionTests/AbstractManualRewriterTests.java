@@ -1,14 +1,25 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eventb.core.ast.IPosition;
-import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
 
@@ -39,54 +50,36 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 
 	protected Collection<SuccessfullReasonerApplication> makeSuccessfullReasonerApplication(
 			String predicateImage, String positionImage, String [] results) {
-		Collection<SuccessfullReasonerApplication> successfullReasonerApps = new ArrayList<SuccessfullReasonerApplication>();
-		
-		Predicate predicate = TestLib.genPred(predicateImage);
-		ITypeCheckResult typeCheck = predicate.typeCheck(ff.makeTypeEnvironment());
-		ITypeEnvironment inferredEnvironment = typeCheck
-				.getInferredEnvironment();
+		final List<SuccessfullReasonerApplication> apps = new ArrayList<SuccessfullReasonerApplication>();		
+		final ITypeEnvironment typenv = Lib.makeTypeEnvironment();
+		final Predicate predicate = TestLib.genPred(typenv, predicateImage);
 
 		// Successful in goal
 		IReasonerInput input = new AbstractManualRewrites.Input(null, ff
 				.makePosition(positionImage));
-		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(" ⊤ |- " + predicate), input));
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("[");
-		boolean first = true;
-		for (String result : results) {
-			if (first)
-				first = false;
-			else
-				buffer.append(", ");
-			buffer.append(inferredEnvironment + "[][][⊤] |- "+ result);
+		final IProverSequent[] expecteds = new IProverSequent[results.length];
+		for (int i = 0; i < expecteds.length; i++) {
+			expecteds[i] = TestLib.genFullSeq(typenv, "", "", "⊤", results[i]);
 		}
-		buffer.append("]");
-		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(" ⊤ |- " + predicate), input, buffer.toString()));
+		apps.add(new SuccessfullReasonerApplication(TestLib
+				.genSeq(" ⊤ |- " + predicate), input, expecteds));
 
 		// Successful in hypothesis
 		input = new AbstractManualRewrites.Input(predicate, ff
 				.makePosition(positionImage));
-
-		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(predicate + " |- ⊤"), input));
 		
-		buffer = new StringBuffer();
-		buffer.append("[" + inferredEnvironment
-				+ "[" + predicate + "][][");
-		first = true;
+		final StringBuilder sb = new StringBuilder();
+		String sep = "";
 		for (String result : results) {
-			if (first)
-				first = false;
-			else
-				buffer.append(", ");
-			buffer.append(result);
+			sb.append(sep);
+			sb.append(result);
+			sep = " ;; ";
 		}
-		buffer.append("] |- ⊤]");
-		successfullReasonerApps.add(new SuccessfullReasonerApplication(TestLib
-				.genSeq(predicate + " |- ⊤"), input, buffer.toString()));
-		return successfullReasonerApps;
+		final IProverSequent expected = TestLib.genFullSeq(typenv, predicate
+				.toString(), "", sb.toString(), "⊤");
+		apps.add(new SuccessfullReasonerApplication(TestLib
+				.genSeq(predicate + " |- ⊤"), input, expected));
+		return apps;
 	}
 	
 
