@@ -125,17 +125,6 @@ public class TestLib {
 		return ProverFactory.makeProofTree(genSeq(str), null).getRoot();
 	}
 		
-	public static ITypeEnvironment genTypeEnv(String... strs){
-		ITypeEnvironment typeEnv = Lib.makeTypeEnvironment();
-		assert strs.length % 2 == 0;
-		for (int i = 0; i+1 < strs.length; i=i+2) {
-			Type type = Lib.parseType(strs[i+1]);
-			assert type != null;
-			typeEnv.addName(strs[i],type);
-		}
-		return typeEnv;
-	}
-
 	/**
 	 * Builds a sequent from several strings detailing its type environment,
 	 * hypotheses and goal. Sets of hypotheses are given as one string
@@ -201,14 +190,31 @@ public class TestLib {
 			String hiddenHypsImage, String defaultHypsImage,
 			String selHypsImage, String goalImage) {
 
-		final ITypeEnvironment typenv = parseTypeEnv(typeEnvImage);
+		final ITypeEnvironment typenv = genTypeEnv(typeEnvImage);
 		return genFullSeq(typenv, hiddenHypsImage, defaultHypsImage, selHypsImage, goalImage);
 	}
 
 	private static final Pattern typEnvPairPattern = Pattern
 			.compile("^([^=]*)=([^=]*)$");
-	
-	private static ITypeEnvironment parseTypeEnv(String typeEnvImage) {
+
+	/**
+	 * Generates the type environment specified by the given string. The string
+	 * contains pairs of form <code>ident=type</code> separated by commas.
+	 * <p>
+	 * Example of valid parameters are:
+	 * <ul>
+	 * <li><code>""</code></li>
+	 * <li><code>"x=S"</code></li>
+	 * <li><code>"x=S,y=T"</code></li>
+	 * <li><code>"x=S,r=ℙ(S×S)"</code></li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param typeEnvImage
+	 *            image of the type environment to generate
+	 * @return the type environment described by the given string
+	 */
+	public static ITypeEnvironment genTypeEnv(String typeEnvImage) {
 		final ITypeEnvironment result = Lib.makeTypeEnvironment();
 		if (typeEnvImage.length() == 0) {
 			return result;

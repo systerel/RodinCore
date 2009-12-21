@@ -148,7 +148,7 @@ public class ProofSimplifierTests {
 	}
 
 	private IProofTree makeMoreComplex() {
-		final ITypeEnvironment typeEnv = genTypeEnv("c", "S", "c2", "ℤ", "r", "ℙ(S×S)");
+		final ITypeEnvironment typeEnv = genTypeEnv("c=S,c2=ℤ,r=ℙ(S×S)");
 		typeEnv.addGivenSet("S");
 		final Set<Predicate> hyps = genPreds(typeEnv, "c∈dom(r)", "c2=0" , "c2≠c1" , "r∈S ⇸ S" , "∀x·r(x)∈S ∖ {x}");
 		final Predicate goal = TestLib.genPred(typeEnv, "r(r(c)) ≠ r(c)");

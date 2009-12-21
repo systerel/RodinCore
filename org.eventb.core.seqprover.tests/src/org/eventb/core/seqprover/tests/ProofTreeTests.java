@@ -1,9 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
 
 package org.eventb.core.seqprover.tests;
@@ -381,7 +384,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertTrue(ProverLib.proofReusable(proofDependencies,sequent));
 		assertTrue(proofDependencies.getGoal().equals(TestLib.genPred("x=1")));
 		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genPreds("x=1")));
-		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv("x","ℤ")));
+		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv("x=ℤ")));
 		assertTrue(proofDependencies.getIntroducedFreeIdents().size() == 0);
 		
 		// test getUsedHypotheses
@@ -394,7 +397,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertTrue(proofDependencies.getGoal().equals(TestLib.genPred("x=1 ⇒ x=1")));
 		assertFalse(proofDependencies.getUsedHypotheses().containsAll(TestLib.genPreds("x=1")));
 		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genPreds()));
-		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv("x","ℤ")));
+		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv("x=ℤ")));
 		assertTrue(proofDependencies.getIntroducedFreeIdents().size() == 0);
 		
 		
@@ -406,7 +409,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertTrue(ProverLib.proofReusable(proofDependencies,sequent));
 		assertNull(proofDependencies.getGoal());
 		assertTrue(proofDependencies.getUsedHypotheses().isEmpty());
-		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv("y","ℤ")));
+		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv("y=ℤ")));
 		assertTrue(proofDependencies.getIntroducedFreeIdents().size() == 0);
 		
 		//	 test getIntroducedFreeIdents
@@ -417,7 +420,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertTrue(ProverLib.proofReusable(proofDependencies,sequent));
 		assertTrue(proofDependencies.getGoal().equals(TestLib.genPred("∀ x· x∈ℤ")));
 		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genPreds()));
-		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv()));
+		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv("")));
 		assertTrue(proofDependencies.getIntroducedFreeIdents().contains("x"));
 		
 		// test getGoal

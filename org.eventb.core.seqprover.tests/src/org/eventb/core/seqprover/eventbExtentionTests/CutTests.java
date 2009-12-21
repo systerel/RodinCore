@@ -57,12 +57,12 @@ public class CutTests extends AbstractReasonerTests {
 				// Input cannot be parsed
 				new UnsuccessfullReasonerApplication(TestLib
 						.genSeq(" 1∈P |- 2∈P "), 
-						new SinglePredInput("#unparsable#",TestLib.genTypeEnv()),
+						new SinglePredInput("#unparsable#",TestLib.genTypeEnv("")),
 						"Parse error for predicate: #unparsable#"),
 				// Input cannot be type-checked
 				new UnsuccessfullReasonerApplication(TestLib
 						.genSeq(" 1∈P |- 2∈P "), 
-						new SinglePredInput("y∈P",TestLib.genTypeEnv()),
+						new SinglePredInput("y∈P",TestLib.genTypeEnv("")),
 						"Type check failed for Predicate: y∈P")
 //				The test framework cannot test the following type of failure
 //				// Rule can be generated, but cannot be applied (extra free variable in input predicate)
