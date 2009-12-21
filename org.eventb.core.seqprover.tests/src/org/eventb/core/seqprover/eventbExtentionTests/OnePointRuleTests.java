@@ -58,7 +58,7 @@ public class OnePointRuleTests extends AbstractReasonerTests {
 				newSuccessGoal("∀x· x=0 ⇒ x+x=0", "0+0=0", "⊤"),
 				
 				// 'One conjunct' and Two quantified identifiers
-				newSuccessGoal("∀x,y· x=y ⇒ x+y=2∗x", "∀y·y+y=2∗y", "⊤"),
+				newSuccessGoal("∀x,y· x=y ⇒ x+y=2∗x", "∀x·x+x=2∗x", "⊤"),
 				
 				// Replacement expression is not trivial => more complex WD
 				newSuccessGoal("∀x,y· x = prj1(0↦1) ∧ x+1=y ⇒ y=1", "∀y·prj1(0 ↦ 1)+1=y⇒y=1", "0 ↦ 1∈dom(prj1)∧prj1∈ℤ × ℤ ⇸ ℤ"),
@@ -71,8 +71,8 @@ public class OnePointRuleTests extends AbstractReasonerTests {
 						"{}[∀x·x=0∧x+1=0⇒x+1=2][][0+1=0⇒0+1=2] |- ⊥",
 						"{}[∀x·x=0∧x+1=0⇒x+1=2][][] |- ⊤"),
 
-				// Behaves the same with ∃ quantifier
-				newSuccessGoal("∃x,y· x=0 ∧ x+1=y ⇒ y=1", "∃y·0+1=y⇒y=1", "⊤"),
+				// ∃ quantifier conjunctive form
+				newSuccessGoal("∃x,y· x=0 ∧ x+1=y ∧ y=1", "∃y·0+1=y∧y=1", "⊤"),
 
 				// Non conjunctive ∃ predicate
 				newSuccessGoal("∃y· y=0", "⊤", "⊤"),
@@ -108,12 +108,21 @@ public class OnePointRuleTests extends AbstractReasonerTests {
 				// Matching predicate for one point rule is not root
 				newFailureGoal("∀x·x ∈ ℕ ⇒ (∀y·y = 1 ∧ y ∈ ℕ ⇒ y = y∗y)"),
 				
+				// Exists with implication
+				newFailureGoal("∃x· x=0 ⇒ x=1"),
+
+				// Forall with conjunction
+				newFailureGoal("∀x· x=0 ∧ x=1"),
+
 				// Matching substitution bound identifier is declared outside
 				new UnsuccessfullReasonerApplication(ProverFactory.makeSequent(
 						null, null, boundOutside), goalInput),
 				
 				// Self-referring expressions (x=x+x, x=x*x) are not applicable
 				newFailureGoal("∀x· x=x+x ∧ x=x∗x ⇒ x=0"),
+				
+				//Failure goal with x=x replacement
+				newFailureGoal("∀x·x=x∧x>0⇒⊥")
 		};
 	}
 

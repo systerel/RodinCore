@@ -46,7 +46,7 @@ import org.eventb.core.seqprover.proofBuilder.ReplayHints;
  */
 public class OnePointRule implements IVersionedReasoner {
 
-	private static final int REASONER_VERSION = 1;
+	private static final int REASONER_VERSION = 2;
 
 	public static class Input implements IReasonerInput {
 
@@ -95,8 +95,8 @@ public class OnePointRule implements IVersionedReasoner {
 		}
 		final OnePointSimplifier matcher = new OnePointSimplifier(
 				(QuantifiedPredicate) formula, ff);
-		matcher.match();
-		return matcher.isApplicable();
+		matcher.matchAndApply();
+		return matcher.wasSuccessfullyApplied();
 	}
 
 	@ProverRule( { "ONE_POINT_L", "ONE_POINT_R" })
@@ -130,13 +130,13 @@ public class OnePointRule implements IVersionedReasoner {
 	private IAntecedent[] getAntecedents(Predicate pred, boolean isGoal) {
 
 		final OnePointSimplifier onePoint = new OnePointSimplifier(pred, ff);
-		onePoint.match();
+		onePoint.matchAndApply();
 
-		if (!onePoint.isApplicable()) {
+		if (!onePoint.wasSuccessfullyApplied()) {
 			return null;
 		}
 		
-		final Predicate simplified = onePoint.getSimplifiedPredicate();
+		final Predicate simplified = onePoint.getProcessedPredicate();
 
 		final Expression replacement = onePoint.getReplacement();
 		final Predicate replacementWD = Lib.WD(replacement);

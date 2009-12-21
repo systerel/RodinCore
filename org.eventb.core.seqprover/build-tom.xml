@@ -68,8 +68,10 @@
 		<delete file="${rewriter.src}/SetEqlRewriterImpl.java" />
 		<delete file="${rewriter.src}/SetMinusRewriterImpl.java" />
 		<delete file="${rewriter.src}/StrictInclusionRewriterImpl.java" />
+		<delete file="${rewriter.src}/TotalDomSubstitutions.java" />
 		<delete file="${rewriter.src}/TypeRewriterImpl.java" />
 		<delete file="${rewriter.src}/UnionInterDistRewriterImpl.java" />
+
 		<delete file="${inference.src}/CardComparison.java" />
 		<delete file="${inference.src}/CardUpTo.java" />
 		<delete file="${inference.src}/FiniteMax.java" />
@@ -79,7 +81,7 @@
 		<delete file="${inference.src}/FunInterImg.java" />
 		<delete file="${inference.src}/FunSetMinusImg.java" />
 		<delete file="${inference.src}/FunSingletonImg.java" />
-		<delete file="${inference.src}/OnePointSimplifier.java" />
+		<delete file="${inference.src}/OnePointFilterUtils.java" />
     </target>
 	
 </project>

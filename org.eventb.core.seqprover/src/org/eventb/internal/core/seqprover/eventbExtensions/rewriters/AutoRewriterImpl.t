@@ -701,13 +701,13 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				
 				final OnePointSimplifier onePoint = 
 				    new OnePointSimplifier(existsPred, equalsPred, ff);
-				onePoint.match();
+				onePoint.matchAndApply();
 
-				if (onePoint.isApplicable()) {
+				if (onePoint.wasSuccessfullyApplied()) {
 					// no need to generate a WD PO for the replacement:
 					// it is already generated separately by POM 
 					// for the whole predicate
-					return onePoint.getSimplifiedPredicate();
+					return onePoint.getProcessedPredicate();
 				} else {
 					return existsPred;
 				}
