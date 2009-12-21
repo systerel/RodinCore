@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2009 ETH Zurich.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,13 +8,13 @@
  *
  * Contributors:
  *     Rodin @ ETH Zurich
+ *	   Systerel - redirected dialog opening	
  ******************************************************************************/
 
 package org.eventb.internal.ui;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.RodinDBException;
 
@@ -94,13 +94,13 @@ public class EventBUIExceptionHandler {
 			int severity = status.getSeverity();
 			switch (severity) {
 			case IStatus.ERROR:
-				MessageDialog.openError(null, msg, status.getMessage());
+				UIUtils.showError(msg, status.getMessage());
 				break;
 			case IStatus.WARNING:
-				MessageDialog.openWarning(null, msg, status.getMessage());
+				UIUtils.showWarning(msg, status.getMessage());
 				break;
 			case IStatus.INFO:
-				MessageDialog.openInformation(null, msg, status.getMessage());
+				UIUtils.showInfo(msg, status.getMessage());
 				break;
 			}
 		}
@@ -128,15 +128,13 @@ public class EventBUIExceptionHandler {
 			int severity = rodinDBStatus.getSeverity();
 			switch (severity) {
 			case IStatus.ERROR:
-				MessageDialog.openError(null, msg, rodinDBStatus.getMessage());
+				UIUtils.showError(msg, rodinDBStatus.getMessage());
 				break;
 			case IStatus.WARNING:
-				MessageDialog
-						.openWarning(null, msg, rodinDBStatus.getMessage());
+				UIUtils.showWarning(msg, rodinDBStatus.getMessage());
 				break;
 			case IStatus.INFO:
-				MessageDialog.openInformation(null, msg, rodinDBStatus
-						.getMessage());
+				UIUtils.showInfo(msg, rodinDBStatus.getMessage());
 				break;
 			}
 			if (UIUtils.DEBUG) {

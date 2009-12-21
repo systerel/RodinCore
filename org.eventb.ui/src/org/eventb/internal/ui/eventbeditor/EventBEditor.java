@@ -9,13 +9,12 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
  *     Systerel - separation of file and root element
+ *     Systerel - redirected dialog opening
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
 import static org.eclipse.ui.actions.ActionFactory.REDO;
 import static org.eclipse.ui.actions.ActionFactory.UNDO;
-import static org.eventb.internal.ui.utils.Messages.error_cannot_save_as_message;
-import static org.eventb.internal.ui.utils.Messages.error_unsupported_action;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +32,6 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -41,7 +39,6 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -61,11 +58,13 @@ import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributo
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.actions.HistoryAction;
 import org.eventb.internal.ui.eventbeditor.actions.HistoryActionFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.EditPage;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
+import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
@@ -522,10 +521,8 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 
 	@Override
 	public void doSaveAs() {
-		final Shell shell = getSite().getShell();
-		final String title = error_unsupported_action;
-		final String message = error_cannot_save_as_message;
-		MessageDialog.openError(shell, title, message);
+		UIUtils.showError(Messages.bind(Messages.error_unsupported_action),
+				Messages.bind(Messages.error_cannot_save_as_message));
 	}
 
 	@Override

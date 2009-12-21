@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - redirected dialog opening and externalized strings
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -24,6 +25,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eventb.internal.ui.RodinElementTreeLabelProvider;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.ElementSorter;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
@@ -111,8 +113,9 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 				} catch (RodinDBException e) {
 					e.printStackTrace();
 					EventBMachineEditorContributor.sampleAction.refreshAll();
-					MessageDialog.openError(null, "Error",
-							"Cannot get children of " + parent);
+					UIUtils.showError(Messages.bind(Messages.title_error),
+							Messages.bind(Messages.dialogs_canNotGetChildren,
+									parent));
 				}
 			}
 			return new Object[0];

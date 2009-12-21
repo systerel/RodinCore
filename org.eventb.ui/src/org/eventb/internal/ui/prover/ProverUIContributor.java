@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - redirected dialog opening and externalized strings
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
@@ -17,7 +18,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -28,6 +28,8 @@ import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.part.MultiPageEditorActionBarContributor;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.utils.Messages;
 
 /**
  * @author htson
@@ -104,8 +106,8 @@ public class ProverUIContributor extends MultiPageEditorActionBarContributor {
 		sampleAction = new Action() {
 			@Override
 			public void run() {
-				MessageDialog.openInformation(null, "Event-B UI Plug-in",
-						"Sample Action Executed");
+				UIUtils.showInfo(Messages.bind(Messages.title_ui_plugin),
+						Messages.bind(Messages.dialogs_sample_action_executed));
 			}
 		};
 		sampleAction.setText("Sample Action");

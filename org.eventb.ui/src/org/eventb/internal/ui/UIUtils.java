@@ -16,6 +16,7 @@
  *     Systerel - added method to remove MouseWheel Listener of CCombo
  *     Systerel - used ElementDescRegistry
  *     Systerel - update combo list on focus gain
+ *	   Systerel - added dialog opening methods
  *******************************************************************************/
 package org.eventb.internal.ui;
 
@@ -848,9 +849,21 @@ public class UIUtils {
 	 * @param message The dialog message.
 	 */
 	public static void showInfo(final String message) {
+		showInfo(null, message);
+	}
+
+	/**
+	 * Opens an information dialog to the user displaying the given message.
+	 * 
+	 * @param title
+	 *            The title of the dialog
+	 * @param message
+	 *            The dialog message
+	 */
+	public static void showInfo(final String title, final String message) {
 		syncExec(new Runnable() {
 			public void run() {
-				MessageDialog.openInformation(getShell(), null, message);
+				MessageDialog.openInformation(getShell(), title, message);
 			}
 		});
 
@@ -878,6 +891,38 @@ public class UIUtils {
 		final Question question = new Question();
 		syncExec(question);
 		return question.getResponse();
+	}
+	
+	/**
+	 * Opens an error dialog to the user displaying the given message.
+	 * 
+	 * @param message
+	 *            The dialog message displayed
+	 * @param title 
+	 */
+	public static void showError(final String title, final String message) {
+		syncExec(new Runnable() {
+			public void run() {
+				MessageDialog.openError(getShell(), title, message);
+			}
+		});
+	}
+	
+	/**
+	 * Opens a warning dialog to the user displaying the given message.
+	 * 
+	 * @param title
+	 *            The title of the dialog window
+	 * @param message
+	 *            The dialog message displayed
+	 * 
+	 */
+	public static void showWarning(final String title, final String message) {
+		syncExec(new Runnable() {
+			public void run() {
+				MessageDialog.openWarning(getShell(), title, message);
+			}
+		});
 	}
 
 	/**

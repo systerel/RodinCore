@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,11 @@
  *     Systerel - Added a constant for the user support manager
  *     Systerel - used EventBSharedColor
  *     Systerel - computed size of hypothesis composite
+ *     Systerel - redirected dialog opening
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -36,6 +36,8 @@ import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.internal.ui.EventBSharedColor;
+import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.utils.Messages;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -302,13 +304,12 @@ public class ProofsPage extends FormPage implements
 							}
 
 							if (psKind == IProofStateDelta.REMOVED) {
-								MessageDialog
-										.openInformation(
-												ProofsPage.this
-														.getManagedForm()
-														.getForm().getShell(),
-												"Proof Obligation Deleted",
-												"The proof obligation that you are working on has been deleted and is going to be closed now.");
+								UIUtils
+										.showInfo(
+												Messages
+														.bind(Messages.title_po_Deleted),
+												Messages
+														.bind(Messages.dialogs_po_Deleted));
 								try {
 									userSupport.setCurrentPO(null, new NullProgressMonitor());
 								} catch (RodinDBException e) {

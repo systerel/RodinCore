@@ -10,6 +10,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - added history support
  *     Systerel - added check before pasting element
+ *     Systerel - redirected dialog opening
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.handlers;
 
@@ -21,15 +22,14 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eventb.internal.ui.RodinHandleTransfer;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.operations.History;
@@ -80,8 +80,11 @@ public class PasteHandler extends AbstractHandler implements IHandler {
 		// Check for the existing of the elements to be pasted.
 		for (IRodinElement element : elements) {
 			if (!element.exists()) {
-				openError(Messages.bind(Messages.dialogs_nothingToPaste,
-						element));
+				UIUtils
+						.showError(
+								Messages.bind(Messages.title_nothingToPaste),
+								Messages.bind(Messages.dialogs_nothingToPaste,
+										element));
 			}
 		}
 		
@@ -102,9 +105,10 @@ public class PasteHandler extends AbstractHandler implements IHandler {
 		} else if (haveSameType(elements, target)) {
 			copyElements(elements, target.getParent());
 		} else {
-			openError(Messages
-					.bind(Messages.dialogs_pasteNotAllowed, typeNotAllowed
-							.getName(), target.getElementType().getName()));
+			UIUtils.showError(Messages.bind(Messages.title_canNotPaste),
+					Messages.bind(Messages.dialogs_pasteNotAllowed,
+							typeNotAllowed.getName(), target.getElementType()
+									.getName()));
 			return null;
 		}
 		if (EventBEditorUtils.DEBUG)
@@ -181,14 +185,6 @@ public class PasteHandler extends AbstractHandler implements IHandler {
 			}
 		}
 		return true;
-	}
-	
-	/**
-	 * Opens an Error Dialog to display the message.
-	 */
-	private static void openError(String message) {
-		final Shell shell = EventBUIPlugin.getActiveWorkbenchShell();
-		MessageDialog.openError(shell, "Cannot Paste", message);
 	}
 	
 	/**

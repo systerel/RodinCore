@@ -9,15 +9,17 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - introduced read only elements through new super class
+ *     Systerel - redirected dialog opening and externalized strings
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.actions;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IVariant;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.utils.Messages;
 import org.rodinp.core.RodinDBException;
 
 public class NewVariant extends AbstractNewActionDelegate<IMachineRoot> {
@@ -33,8 +35,8 @@ public class NewVariant extends AbstractNewActionDelegate<IMachineRoot> {
 			return;
 		}
 		if (length != 0)
-			MessageDialog.openError(editor.getEditorSite().getShell(),
-					"Variant Exist", "Variant already exists in this machine");
+			UIUtils.showError(Messages.bind(Messages.title_variantExists),
+					Messages.bind(Messages.dialogs_variantAlreadyExists));
 		else
 			EventBEditorUtils.newVariant(editor);
 	}

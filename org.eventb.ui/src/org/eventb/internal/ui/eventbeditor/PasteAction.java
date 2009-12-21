@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
  *     Systerel - separation of file and root element
+ *     Systerel - redirected dialog opening and externalized strings
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -16,7 +17,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.FileTransfer;
@@ -28,6 +28,7 @@ import org.eclipse.ui.actions.CopyProjectOperation;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eventb.internal.ui.RodinHandleTransfer;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.internal.ui.utils.Messages;
@@ -130,8 +131,9 @@ public class PasteAction extends SelectionListenerAction {
 			return;
 		for (IRodinElement element : handleData) {
 			if (!element.exists()) {
-				MessageDialog.openError(this.shell, "Cannot Paste", "Element "
-						+ element + " does not exist.");
+				UIUtils.showError(Messages.bind(Messages.title_canNotPaste),
+						Messages.bind(Messages.dialogs_elementDoesNotExist,
+								element));
 			}
 		}
 		// enablement should ensure that we always have access to a

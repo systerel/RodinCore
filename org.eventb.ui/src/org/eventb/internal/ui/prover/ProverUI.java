@@ -10,6 +10,7 @@
  *     Systerel - Added a constant for the user support manager
  *     Systerel - separation of file and root element
  *     Systerel - handled user support saving state
+ *     Systerel - redirected dialog opening and externalized strings
  ******************************************************************************/
 package org.eventb.internal.ui.prover;
 
@@ -60,6 +61,7 @@ import org.eventb.internal.ui.prooftreeui.IProofTreeUIPage;
 import org.eventb.internal.ui.prooftreeui.ProofTreeUIPage;
 import org.eventb.internal.ui.searchhypothesis.ISearchHypothesisPage;
 import org.eventb.internal.ui.searchhypothesis.SearchHypothesisPage;
+import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
@@ -184,8 +186,8 @@ public class ProverUI extends EventBFormEditor implements
 		try {
 			addPage(new ProofsPage(this));
 		} catch (PartInitException e) {
-			MessageDialog.openError(null, "Prover UI Editor",
-					"Error creating pages for Prover UI Editor");
+			UIUtils.showError(Messages.bind(Messages.title_prover_editor),
+					Messages.bind(Messages.dialogs_prover_error_creating_page));
 			// TODO Handle exception
 		}
 	}

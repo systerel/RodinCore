@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -10,6 +10,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - replaced inherited by extended, added tool configuration
  *     Systerel - separation of file and root element
+ *     Systerel - redirected dialog opening and externalized strings
  ******************************************************************************/
 package org.eventb.internal.ui.wizards;
 
@@ -27,7 +28,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -39,6 +39,7 @@ import org.eventb.core.IConvergenceElement;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDB;
@@ -121,8 +122,7 @@ public class NewComponentWizard extends Wizard implements INewWizard {
 			return false;
 		} catch (InvocationTargetException e) {
 			Throwable realException = e.getTargetException();
-			MessageDialog.openError(getShell(), "Error", realException
-					.getMessage());
+			UIUtils.showError(Messages.title_error, realException.getMessage());
 			return false;
 		}
 		return true;

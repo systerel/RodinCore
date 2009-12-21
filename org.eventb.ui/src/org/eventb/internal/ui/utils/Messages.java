@@ -16,6 +16,7 @@
  *     Systerel - added messages for Proof Skeleton
  *     Systerel - added message for Tactics
  *     Systerel - added "expand section" preference
+ *     Systerel - added messages for dialogs
  *******************************************************************************/
 package org.eventb.internal.ui.utils;
 
@@ -160,6 +161,22 @@ public final class Messages {
 	public static String dialogs_readOnlyElement;
 	public static String dialogs_nothingToPaste;
 	public static String dialogs_pasteNotAllowed;
+	public static String dialogs_variantAlreadyExists;
+	public static String dialogs_canNotGetChildren;
+	public static String dialogs_elementDoesNotExist;
+	public static String dialogs_po_Deleted;
+	public static String dialogs_prover_error_creating_page;
+	public static String dialogs_sample_action_executed;
+	
+	//Dialog titles
+	public static String title_error;
+	public static String title_unexpectedError;
+	public static String title_nothingToPaste;
+	public static String title_canNotPaste;
+	public static String title_variantExists;
+	public static String title_po_Deleted;
+	public static String title_prover_editor;
+	public static String title_ui_plugin;
 	
 	// Tactics
 	public static String tactics_replaceWith;

@@ -13,6 +13,7 @@
  *     Systerel - passed the focus request to the text field
  *     Systerel - the input area is now a StyledText
  *     Systerel - refactored to use ITacticProvider2 and ITacticApplication
+ *     Systerel - redirected dialog opening and externalized strings
  *******************************************************************************/
 package org.eventb.internal.ui.proofcontrol;
 
@@ -33,7 +34,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -98,6 +98,7 @@ import org.eventb.internal.ui.EventBControl;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBStyledText;
 import org.eventb.internal.ui.IEventBControl;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.internal.ui.prover.ICommandApplication;
@@ -105,6 +106,7 @@ import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
+import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.prover.ITacticApplication;
 
@@ -188,7 +190,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				ProofControlUtils.debug("Interrupt");
 			realException.printStackTrace();
 			final String message = realException.getMessage();
-			MessageDialog.openError(shell, "Unexpected Error", message);
+			UIUtils.showError(Messages.bind(Messages.title_unexpectedError),
+					message);
 			return;
 		}
 	}
