@@ -269,14 +269,16 @@ public class TestLib {
 	 *            The string version of the predicate
 	 * @param typeEnv
 	 *            The type environment to check the predicate with
-	 * @return The type checked predicate, or <code>null</code> if there was a
-	 *         parsing or type checking error.
+	 * @return The type checked predicate
 	 */
-	public static Predicate genPred(ITypeEnvironment typeEnv, String str){
+	public static Predicate genPred(ITypeEnvironment typeEnv, String str) {
 		final Predicate result = Lib.parsePredicate(str);
-		if (result == null) return null;
+		if (result == null)
+			throw new IllegalArgumentException("Invalid predicate: " + str);
 		final ITypeCheckResult tcResult = result.typeCheck(typeEnv);
-		if (! tcResult.isSuccess()) return null;
+		if (!tcResult.isSuccess())
+			throw new IllegalArgumentException("Predicate: " + result
+					+ " does not typecheck in environment " + typeEnv);
 		typeEnv.addAll(tcResult.getInferredEnvironment());
 		return result;
 	}
