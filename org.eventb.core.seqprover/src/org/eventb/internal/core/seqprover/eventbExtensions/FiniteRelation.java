@@ -1,96 +1,88 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import static org.eventb.core.ast.Formula.IN;
+import static org.eventb.core.ast.Formula.KFINITE;
+import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
+import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
+import static org.eventb.core.seqprover.ProverFactory.reasonerFailure;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.ff;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.isFinite;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.isRelation;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.isSetOfRelation;
+
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.seqprover.IProofMonitor;
-import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
-import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.SingleExprInput;
 import org.eventb.core.seqprover.reasonerInputs.SingleExprInputReasoner;
 
-public class FiniteRelation extends SingleExprInputReasoner {
+public class FiniteRelation extends SingleExprInputReasoner implements
+		IVersionedReasoner {
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".finiteRelation";
+	public static String REASONER_ID = SequentProver.PLUGIN_ID
+			+ ".finiteRelation";
 
-	private static FormulaFactory ff = FormulaFactory.getDefault();
-	
+	private static final int VERSION = 0;
+
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
-	
+
 	@ProverRule("FIN_REL_R")
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
-		
-		Predicate goal = seq.goal();
-		if (!Lib.isFinite(goal))
-			return ProverFactory.reasonerFailure(this, input,
-					"Goal is not a finiteness");
-		SimplePredicate sPred = (SimplePredicate) goal;
-		if (!Lib.isRelation(sPred.getExpression()))
-			return ProverFactory.reasonerFailure(this, input,
-				"Goal is not a finiteness of a relation");
-		
-		Expression r = ((SimplePredicate) goal).getExpression();
-		
+
+		final Predicate goal = seq.goal();
+		if (!isFinite(goal))
+			return reasonerFailure(this, input, "Goal is not a finiteness");
+		final SimplePredicate sPred = (SimplePredicate) goal;
+		if (!isRelation(sPred.getExpression()))
+			return reasonerFailure(this, input,
+					"Goal is not a finiteness of a relation");
+		final Expression r = ((SimplePredicate) goal).getExpression();
+
+		if (input.hasError()) {
+			return reasonerFailure(this, input, input.getError());
+		}
 		if (!(input instanceof SingleExprInput))
-			return ProverFactory.reasonerFailure(this, input,
+			return reasonerFailure(this, input,
 					"Expected a single expression input");
-
-		if (((SingleExprInput) input).hasError()) {
-			return ProverFactory.reasonerFailure(this, input,
-					((SingleExprInput) input).getError());
+		final Expression relSet = ((SingleExprInput) input).getExpression();
+		if (!isSetOfRelation(relSet)) {
+			return reasonerFailure(this, input,
+					"Expected a set of all relations S ↔ T");
 		}
-		Expression relation = ((SingleExprInput) input).getExpression();
+		final Expression S = ((BinaryExpression) relSet).getLeft();
+		final Expression T = ((BinaryExpression) relSet).getRight();
 
-		if (!Lib.isSetOfRelation(relation)) {
-			return ProverFactory.reasonerFailure(this, input,
-				"Expected a set of all relations S ↔ T");
+		// Check compatibility of types
+		if (!r.getType().equals(relSet.getType().getBaseType())) {
+			return reasonerFailure(this, input, "Type check failed for " + r
+					+ "∈" + relSet);
 		}
+		
+		final IAntecedent[] antecedents = new IAntecedent[] { //
+				makeAntecedent(relSet.getWDPredicate(ff)), //
+				makeAntecedent(ff.makeRelationalPredicate(IN, r, relSet, null)), //
+				makeAntecedent(ff.makeSimplePredicate(KFINITE, S, null)), //
+				makeAntecedent(ff.makeSimplePredicate(KFINITE, T, null)), //
+		};
 
-		// There will be 3 antecidents
-		IAntecedent[] antecidents = new IAntecedent[3];
-		
-		Expression S = ((BinaryExpression) relation).getLeft();
-		Expression T = ((BinaryExpression) relation).getRight();
-		
-		// r : S <-> T
-		Predicate newGoal0 = ff.makeRelationalPredicate(Predicate.IN, r,
-				relation, null);
-		ITypeCheckResult typeCheck = newGoal0.typeCheck(ff.makeTypeEnvironment());
-		if (!typeCheck.isSuccess()) {
-			return ProverFactory.reasonerFailure(this, input,
-					"Type check failed for " + newGoal0);			
-		}
-		antecidents[0] = ProverFactory.makeAntecedent(newGoal0);
-		
-		// finite(S)
-		Predicate newGoal1 = ff.makeSimplePredicate(Predicate.KFINITE, S, null);
-		antecidents[1] = ProverFactory.makeAntecedent(newGoal1);
+		return makeProofRule(this, input, goal, "finite of relation",
+				antecedents);
+	}
 
-		// finite(T)
-		Predicate newGoal2 = ff.makeSimplePredicate(Predicate.KFINITE, T, null);
-		antecidents[2] = ProverFactory.makeAntecedent(newGoal2);
-
-		
-		IProofRule reasonerOutput = ProverFactory.makeProofRule(
-				this,input,
-				goal,
-				"finite of relation",
-				antecidents);
-		
-		return reasonerOutput;
+	public int getVersion() {
+		return VERSION;
 	}
 
 }
