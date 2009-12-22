@@ -2714,5 +2714,8 @@
                style="toggle">
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eventb.ui.views.ProofSkeleton?after=additions">
+      </menuContribution>
    </extension>
 </plugin>
