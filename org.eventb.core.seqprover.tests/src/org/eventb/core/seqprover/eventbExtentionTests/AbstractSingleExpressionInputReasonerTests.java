@@ -13,6 +13,8 @@ package org.eventb.core.seqprover.eventbExtentionTests;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
@@ -30,48 +32,36 @@ import org.eventb.core.seqprover.tests.TestLib;
 public abstract class AbstractSingleExpressionInputReasonerTests extends AbstractManualReasonerTests {
 
 	class SuccessfulTest {
-		String sequenceImage;
-		String hypothesisImage;
-		String expressionImage;
-		String [] results;
-		public SuccessfulTest(String sequenceImage, String hypothesisImage,
-				String expressionImage, String... results) {
-			this.sequenceImage = sequenceImage;
-			this.hypothesisImage = hypothesisImage;
+		private final String sequentImage;
+		private final String expressionImage;
+		private final String [] results;
+
+		public SuccessfulTest(String sequenceImage, String expressionImage,
+				String... results) {
+			this.sequentImage = sequenceImage;
 			this.expressionImage = expressionImage;
 			this.results = results;
 		}
+
+		SuccessfullReasonerApplication makeSuccessfullReasonerApplication() {
+			final IProverSequent sequent = TestLib.genSeq(sequentImage);
+			final ITypeEnvironment te = sequent.typeEnvironment().clone();
+			final Expression expr = TestLib.genExpr(te, expressionImage);
+			final IReasonerInput input = new SingleExprInput(expr);
+			return new SuccessfullReasonerApplication(sequent, input, results);
+		}
+
 	}
 	
 	protected abstract SuccessfulTest[] getSuccessfulTests();
 
 	@Override
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
-		Collection<SuccessfullReasonerApplication> successfullReasonerApps = new ArrayList<SuccessfullReasonerApplication>();
-		SuccessfulTest [] successfulTests = getSuccessfulTests();
-		for (SuccessfulTest test : successfulTests) {
-			successfullReasonerApps.add(makeSuccessfullReasonerApplication(
-					test.sequenceImage, test.hypothesisImage,
-					test.expressionImage, test.results));
-
+		Collection<SuccessfullReasonerApplication> apps = new ArrayList<SuccessfullReasonerApplication>();
+		for (SuccessfulTest test : getSuccessfulTests()) {
+			apps.add(test.makeSuccessfullReasonerApplication());
 		}
-		return successfullReasonerApps
-				.toArray(new SuccessfullReasonerApplication[successfullReasonerApps
-						.size()]); 
-	}
-
-	private SuccessfullReasonerApplication makeSuccessfullReasonerApplication(
-			String sequenceImage, String hypothesisImage,
-			String expressionImage, String[] results) {
-		Predicate predicate = null;
-		if (hypothesisImage != null) {
-			predicate = TestLib.genPred(hypothesisImage);
-			predicate.typeCheck(ff.makeTypeEnvironment());
-		}
-
-		IReasonerInput input = new SingleExprInput(Lib.parseExpression(expressionImage));
-		return new SuccessfullReasonerApplication(
-				TestLib.genSeq(sequenceImage), input, results);
+		return apps.toArray(new SuccessfullReasonerApplication[apps.size()]);
 	}
 
 	@Override
