@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
 import java.util.List;
@@ -15,19 +25,29 @@ import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSet;
  */
 public class FiniteSetTests extends AbstractSingleExpressionInputReasonerTests {
 
-	String P1 = "finite({x ∣ x ∈ ℕ})";
-
-	String resultP1GoalA = "{}[][][⊤] |- finite(ℕ)";
-
-	String resultP1GoalB = "{}[][][⊤] |- {x ∣ x∈ℕ}⊆ℕ";
+	private static final String P1 = "finite({x ∣ x ∈ ℕ})";
+	private static final String[] P1Result = new String[] { //
+			"{}[][][⊤] |- ⊤", //
+			"{}[][][⊤] |- finite(ℕ)", //
+			"{}[][][⊤] |- {x ∣ x∈ℕ}⊆ℕ", //
+	};
 		
-	String P2 = "finite({x ↦ (y ↦ z) ∣ x ∈ ℕ ∧ y ∈ BOOL ∧ z ∈ ℕ})";
+	private static final String P2 = "finite({x ↦ (y ↦ z) ∣ x ∈ ℕ ∧ y ∈ BOOL ∧ z ∈ ℕ})";
+	private static final String[] P2Result = new String[] { //
+			"{}[][][⊤] |- ⊤", //
+			"{}[][][⊤] |- finite(ℕ × (BOOL × ℕ))", //
+			"{}[][][⊤] |- {x ↦ (y ↦ z) ∣ x∈ℕ∧y∈BOOL∧z∈ℕ}⊆ℕ × (BOOL × ℕ)", //
+	};
 
-	String resultP2GoalA = "{}[][][⊤] |- finite(ℕ × (BOOL × ℕ))";
+	private static final String P3 = //
+	"a = 1 ⇒ finite({x ↦ (y ↦ z) ∣ x ∈ ℕ ∧ y ∈ BOOL ∧ z ∈ ℕ})";
 
-	String resultP2GoalB = "{}[][][⊤] |- {x ↦ (y ↦ z) ∣ x∈ℕ∧y∈BOOL∧z∈ℕ}⊆ℕ × (BOOL × ℕ)";
-
-	String P3= "a = 1 ⇒ finite({x ↦ (y ↦ z) ∣ x ∈ ℕ ∧ y ∈ BOOL ∧ z ∈ ℕ})";
+	private static final String P4 = "finite({x ∣ x = max(S)})";
+	private static final String[] P4Result = new String[] { //
+			"{}[][][⊤] |- S≠∅ ∧ (∃b·∀x·x∈S⇒b≤x)", //
+			"{}[][][⊤] |- finite({x ∣ x = min(S)})", //
+			"{}[][][⊤] |- {x ∣ x = max(S)} ⊆ {x ∣ x = min(S)}", //
+	};
 
 	protected String [] getTestGetPositions() {
 		return new String [] {
@@ -49,11 +69,11 @@ public class FiniteSetTests extends AbstractSingleExpressionInputReasonerTests {
 	protected SuccessfulTest[] getSuccessfulTests() {
 		return new SuccessfulTest[] {
 				// P1 in goal
-				new SuccessfulTest(" ⊤ |- " + P1, null, "ℕ", resultP1GoalA,
-						resultP1GoalB),
+				new SuccessfulTest(" ⊤ |- " + P1, "ℕ", P1Result),
 				// P2 in goal
-				new SuccessfulTest(" ⊤ |- " + P2, null, "ℕ × (BOOL × ℕ)",
-						resultP2GoalA, resultP2GoalB),
+				new SuccessfulTest(" ⊤ |- " + P2, "ℕ × (BOOL × ℕ)", P2Result),
+				// P4 in goal
+				new SuccessfulTest(" ⊤ |- " + P4, "{x ∣ x = min(S)}", P4Result),
 		};
 	}
 
