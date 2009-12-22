@@ -12,7 +12,9 @@ import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.tactics.BasicTactics;
+import org.eventb.internal.ui.proofSkeletonView.ProofSkeletonView;
 import org.eventb.internal.ui.prover.ProverUIUtils;
+import org.eventb.ui.EventBUIPlugin;
 
 public class Paste implements IObjectActionDelegate {
 
@@ -62,6 +64,11 @@ public class Paste implements IObjectActionDelegate {
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection sel) {
+		final IWorkbenchPart part = EventBUIPlugin.getActivePage().getActivePart();
+		if (part instanceof ProofSkeletonView){
+			action.setEnabled(false);
+			return;
+		}
 		if (userSupport == null) {
 			action.setEnabled(false);
 			return;

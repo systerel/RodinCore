@@ -10,6 +10,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.eventb.internal.ui.proofSkeletonView.ProofSkeletonView;
+import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.RodinDBException;
 
 public class Prune implements IObjectActionDelegate {
@@ -57,6 +59,11 @@ public class Prune implements IObjectActionDelegate {
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection sel) {
+		final IWorkbenchPart part = EventBUIPlugin.getActivePage().getActivePart();
+		if (part instanceof ProofSkeletonView){
+			action.setEnabled(false);
+			return;
+		}
 		if (userSupport == null) {
 			action.setEnabled(false);
 			return;

@@ -7,11 +7,15 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - added contextual menu to copy proof trees
  *******************************************************************************/
 package org.eventb.internal.ui.proofSkeletonView;
 
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.part.ViewPart;
@@ -39,6 +43,13 @@ public class ProofSkeletonView extends ViewPart {
 		selManager = new InputManager(this);
 
 		getSite().getPage().addPartListener(selManager);
+		
+		final Control control = masterDetailsBlock.getViewer().getControl();
+		final MenuManager menuManager = new MenuManager();
+		final Menu menu = menuManager.createContextMenu(control);
+		masterDetailsBlock.getViewer().getControl().setMenu(menu);
+		getSite().registerContextMenu(menuManager, masterDetailsBlock.getViewer());
+		getSite().setSelectionProvider(masterDetailsBlock.getViewer());
 	}
 
 	@Override
