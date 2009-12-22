@@ -225,8 +225,11 @@ public abstract class AbstractReasonerTests {
 				actuals);
 		final IProverSequent[] expecteds = reasonerApp.getNewSequents();
 		assertEquals(expecteds.length, actuals.length);
-		for (int i=0; i < expecteds.length;i++){
-			assertTrue(ProverLib.deepEquals(expecteds[i], actuals[i]));
+		for (int i=0; i < expecteds.length;i++) {
+			if (!ProverLib.deepEquals(expecteds[i], actuals[i])) {
+				fail("Expected sequent:<" + expecteds[i] + "> but was:<" + actuals[i]
+						+ ">");
+			}
 		}
 		return rule;
 	}

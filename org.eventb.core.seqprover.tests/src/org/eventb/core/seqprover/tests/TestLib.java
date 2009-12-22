@@ -307,6 +307,29 @@ public class TestLib {
 			hyps.add(genPred(typeEnv, s));
 		return hyps;
 	}
+
+	/**
+	 * Generates a type checked expression from a string and a type environment.
+	 * As a side-effect the given type environment gets completed with the types
+	 * inferred during type check.
+	 * 
+	 * @param str
+	 *            The string version of the expression
+	 * @param typeEnv
+	 *            The type environment to check the expression with
+	 * @return The type checked expression
+	 */
+	public static Expression genExpr(ITypeEnvironment typeEnv, String str) {
+		final Expression result = Lib.parseExpression(str);
+		if (result == null)
+			throw new IllegalArgumentException("Invalid expression: " + str);
+		final ITypeCheckResult tcResult = result.typeCheck(typeEnv);
+		if (!tcResult.isSuccess())
+			throw new IllegalArgumentException("Predicate: " + result
+					+ " does not typecheck in environment " + typeEnv);
+		typeEnv.addAll(tcResult.getInferredEnvironment());
+		return result;
+	}
 	
 	/**
 	 * Searches the set of hypotheses in the given sequent for the given
@@ -324,8 +347,7 @@ public class TestLib {
 	 * 		The sequent copy of the hypothesis in case it is found, or
 	 * 		<code>null</code> otherwise.
 	 */
-	public static Predicate getHypRef(IProverSequent seq, Predicate hyp)
-	{
+	public static Predicate getHypRef(IProverSequent seq, Predicate hyp) {
 		for (Predicate pred : seq.hypIterable()) {
 			if (hyp.equals(pred)) return pred;
 		}
@@ -355,8 +377,7 @@ public class TestLib {
 	 * @throws IllegalArgumentException
 	 * 		in case the sequent has no hypotheses
 	 */
-	public static Predicate getFirstHyp(IProverSequent seq)
-	{
+	public static Predicate getFirstHyp(IProverSequent seq) {
 		for (Predicate pred : seq.hypIterable()) {
 			return pred;
 		}
