@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2009 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -12,6 +12,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - added implicit children for events
  *     Systerel - added theorem attribute of IDerivedPredicateElement
+ * 	   Systerel - fixed bug #2884774 : display guards marked as theorems
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.htmlpage;
 
@@ -645,7 +646,8 @@ public abstract class AstConverter {
 				for (IGuard guard: guards) {
 					beginLevel3();
 					try {
-						appendGuard(guard, evt);
+						final boolean isTheorem = isTheorem(guard);
+						appendGuard(guard, evt, isTheorem);
 					} catch (RodinDBException e) {
 						EventBEditorUtils.debugAndLogError(e,
 								"Cannot get details for guard "
@@ -908,16 +910,34 @@ public abstract class AstConverter {
 				END_IMPLICIT_GUARD_PREDICATE);
 	}
 	
-	private void appendGuard(IGuard grd, IEvent evt) throws RodinDBException {
+	private void appendGuard(IGuard grd, IEvent evt, boolean isTheorem)
+			throws RodinDBException {
+		appendGuardLabel(grd, evt, isTheorem);
+		appendGuardPredicate(grd, evt, isTheorem);
+	}
+
+	private void appendGuardLabel(IGuard grd, IEvent evt, boolean isTheorem)
+			throws RodinDBException {
 		final String label = makeHyperlink(grd.getHandleIdentifier(),
 				wrapString(grd.getLabel()));
-		final String predicate = wrapString(grd.getPredicateString());
-		final String bgl = getBeginGuardLabel(grd, evt);
-		final String egl = getEndGuardLabel(grd, evt);
-		final String bgp = getBeginGuardPredicate(grd, evt);
-		final String egp = getEndGuardPredicate(grd, evt);
+		final String bgl;
+		final String egl;
+		if (isTheorem) {
+			bgl = BEGIN_THEOREM_LABEL;
+			egl = END_THEOREM_LABEL;
+		} else {
+			bgl = getBeginGuardLabel(grd, evt);
+			egl = getEndGuardLabel(grd, evt);
+		}
 		append(label, bgl, egl, BEGIN_GUARD_LABEL_SEPARATOR,
 				END_GUARD_LABEL_SEPARATOR);
+	}
+
+	private void appendGuardPredicate(IGuard grd, IEvent evt, boolean isTheorem)
+			throws RodinDBException {
+		final String predicate = wrapString(grd.getPredicateString());
+		final String bgp = getBeginGuardPredicate(grd, evt);
+		final String egp = getEndGuardPredicate(grd, evt);
 		append(predicate, bgp, egp, BEGIN_GUARD_PREDICATE_SEPARATOR,
 				END_GUARD_PREDICATE_SEPARATOR);
 	}
