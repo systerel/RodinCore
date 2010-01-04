@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ package org.eventb.internal.ui.utils;
 import java.text.MessageFormat;
 
 import org.eclipse.osgi.util.NLS;
+import org.rodinp.core.IParent;
 
 public final class Messages {
 
@@ -197,6 +198,10 @@ public final class Messages {
 	 */
 	public static String bind(String message, Object... bindings) {
 		return MessageFormat.format(message, bindings);
+	}
+	
+	public static String dialogs_canNotGetChildren(IParent parent) {
+		return bind(dialogs_canNotGetChildren, parent);
 	}
 	
 	private Messages() {

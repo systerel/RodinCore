@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,9 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
-import org.eclipse.jface.dialogs.MessageDialog;
+import static org.eventb.internal.ui.utils.Messages.dialogs_canNotGetChildren;
+import static org.eventb.internal.ui.utils.Messages.title_error;
+
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -25,7 +27,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eventb.internal.ui.RodinElementTreeLabelProvider;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.ElementSorter;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
@@ -106,16 +107,16 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 		 * 
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
-		public Object[] getChildren(Object parent) {
-			if (parent instanceof IParent) {
+		public Object[] getChildren(Object obj) {
+			if (obj instanceof IParent) {
+				final IParent parent = (IParent) obj;
 				try {
-					return ((IParent) parent).getChildren();
+					return parent.getChildren();
 				} catch (RodinDBException e) {
 					e.printStackTrace();
 					EventBMachineEditorContributor.sampleAction.refreshAll();
-					UIUtils.showError(Messages.bind(Messages.title_error),
-							Messages.bind(Messages.dialogs_canNotGetChildren,
-									parent));
+					UIUtils.showError(title_error,
+							dialogs_canNotGetChildren(parent));
 				}
 			}
 			return new Object[0];
@@ -126,15 +127,17 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 		 * 
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 		 */
-		public boolean hasChildren(Object parent) {
-			if (parent instanceof IParent)
+		public boolean hasChildren(Object obj) {
+			if (obj instanceof IParent) {
+				final IParent parent = (IParent) obj;
 				try {
-					return ((IParent) parent).hasChildren();
+					return parent.hasChildren();
 				} catch (RodinDBException e) {
-					MessageDialog.openError(null, "Error",
-							"Cannot check hasChildren of " + parent);
+					UIUtils.showError(title_error,
+							dialogs_canNotGetChildren(parent));
 					e.printStackTrace();
 				}
+			}
 			return false;
 		}
 
