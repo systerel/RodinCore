@@ -12,6 +12,7 @@
 package org.eventb.internal.ui.proofSkeletonView;
 
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -44,12 +45,17 @@ public class ProofSkeletonView extends ViewPart {
 
 		getSite().getPage().addPartListener(selManager);
 		
-		final Control control = masterDetailsBlock.getViewer().getControl();
+		addContextMenu();
+	}
+
+	private void addContextMenu() {
+		final Viewer viewer = masterDetailsBlock.getViewer();
+		final Control control = viewer.getControl();
 		final MenuManager menuManager = new MenuManager();
 		final Menu menu = menuManager.createContextMenu(control);
-		masterDetailsBlock.getViewer().getControl().setMenu(menu);
-		getSite().registerContextMenu(menuManager, masterDetailsBlock.getViewer());
-		getSite().setSelectionProvider(masterDetailsBlock.getViewer());
+		control.setMenu(menu);
+		getSite().registerContextMenu(menuManager, viewer);
+		getSite().setSelectionProvider(viewer);
 	}
 
 	@Override
@@ -59,6 +65,7 @@ public class ProofSkeletonView extends ViewPart {
 
 	@Override
 	public void dispose() {
+		getSite().setSelectionProvider(null);
 		getSite().getPage().removePartListener(selManager);
 		super.dispose();
 	}
