@@ -61,5 +61,10 @@
          </presentation>
       </config>
    </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <primaryWizard id="org.eventb.ui.wizards.NewProject"/>
+      <primaryWizard id="org.eventb.ui.wizards.NewComponent"/>
+   </extension>
 
 </plugin>
