@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eventb.internal.ui.proofpurger;
 
+import static org.rodinp.core.RodinCore.asRodinElement;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -199,17 +200,6 @@ public class PurgeAction implements IObjectActionDelegate {
 
 	private boolean isProjectOrEventBRoot(IRodinElement elem) {
 		return (elem instanceof IRodinProject || elem instanceof IEventBRoot);
-	}
-
-	private IRodinElement asRodinElement(Object o) {
-		if (o instanceof IRodinElement) {
-			return (IRodinElement) o;
-		}
-		if (o instanceof IAdaptable) {
-			final IAdaptable adaptable = (IAdaptable) o;
-			return (IRodinElement) adaptable.getAdapter(IRodinElement.class);
-		}
-		return null;
 	}
 
 	private boolean launchPurgerSelectionDialog(IPRProof[] unusedProofs,
