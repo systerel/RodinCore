@@ -6,6 +6,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofSkeleton;
@@ -64,7 +65,12 @@ public class Paste implements IObjectActionDelegate {
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection sel) {
-		final IWorkbenchPart part = EventBUIPlugin.getActivePage().getActivePart();
+		final IWorkbenchPage page = EventBUIPlugin.getActivePage();
+		if (page == null) {
+			action.setEnabled(false);
+			return;
+		}
+		final IWorkbenchPart part = page.getActivePart();
 		if (part instanceof ProofSkeletonView){
 			action.setEnabled(false);
 			return;
