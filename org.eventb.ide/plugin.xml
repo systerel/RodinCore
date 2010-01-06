@@ -69,6 +69,8 @@
                id="org.eventb.ui.views.RodinProblemView"
                relationship="stack"
                relative="org.eventb.ui.views.ProofControl"/>
+         <newWizardShortcut id="org.eventb.ui.wizards.NewProject"/>
+         <newWizardShortcut id="org.eventb.ui.wizards.NewComponent"/>
       </perspectiveExtension>
       <perspectiveExtension targetID="org.eventb.ui.perspective.eventb">
          <view
