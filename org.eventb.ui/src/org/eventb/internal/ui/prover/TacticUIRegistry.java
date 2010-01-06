@@ -721,8 +721,10 @@ public class TacticUIRegistry {
 
 				TacticUILoader loader = new TacticUILoader(configuration);
 				final TacticUIInfo info = loader.load();
-				putInRegistry(info, target);
+				if (info != null) {
+					putInRegistry(info, target);
 					printDebugRegistration(id, tacticStr);
+				}
 			} else {
 				final String toolbarStr = "toolbar";
 				if (configuration.getName().equals(toolbarStr)) {
