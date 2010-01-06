@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,13 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - improved detection of project name
  *******************************************************************************/
 package org.eventb.internal.ui.wizards;
+
+import static org.rodinp.core.RodinCore.asRodinElement;
+
+import java.util.Iterator;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -204,23 +209,8 @@ public class NewComponentWizardPage extends WizardPage {
 		machineButton.setSelection(true);
 		contextButton.setSelection(false);
 
-		IRodinProject project = null;
-		if (selection != null && selection.isEmpty() == false
-				&& selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
-			if (ssel.size() > 1)
-				return;
-			Object element = ssel.getFirstElement();
-			IRodinElement curr;
-			if (element instanceof IRodinElement) {
-				curr = (IRodinElement) element;
-			} else
-				curr = null;
-			while (!(curr instanceof IRodinProject || curr == null)) {
-				curr = curr.getParent();
-			}
-			project = (IRodinProject) curr;
-		} 
+		final IRodinProject project;
+		project = getProjectFromSelection();
 
 		if (UIUtils.DEBUG)
 			System.out.println("Project " + project);
@@ -233,6 +223,20 @@ public class NewComponentWizardPage extends WizardPage {
 		else {
 			projectText.setFocus();
 		}
+	}
+
+	private IRodinProject getProjectFromSelection() {
+		if (!(selection instanceof IStructuredSelection))
+			return null;
+		final Iterator<?> iter = ((IStructuredSelection) selection).iterator();
+		while (iter.hasNext()) {
+			final Object obj = iter.next();
+			final IRodinElement element = asRodinElement(obj);
+			if (element != null) {
+				return element.getRodinProject();
+			}
+		}
+		return null;
 	}
 
 	/**
