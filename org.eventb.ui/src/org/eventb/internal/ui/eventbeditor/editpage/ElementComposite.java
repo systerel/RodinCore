@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -151,8 +151,7 @@ public class ElementComposite implements IElementComposite {
 		if (sectionComps == null) {
 			return;
 		}
-		final boolean expandSections = getBooleanPreference(P_EXPAND_SECTIONS);
-		if (expandSections || recursive) {
+		if (recursive || getBooleanPreference(P_EXPAND_SECTIONS)) {
 			for (ISectionComposite sectionComp : sectionComps) {
 				sectionComp.setExpand(isExpanded, recursive);
 			}
