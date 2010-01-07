@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,11 @@
  *     Systerel - redirected dialog opening
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.handlers;
+
+import static org.eventb.internal.ui.utils.Messages.dialogs_nothingToPaste;
+import static org.eventb.internal.ui.utils.Messages.dialogs_pasteNotAllowed;
+import static org.eventb.internal.ui.utils.Messages.title_canNotPaste;
+import static org.eventb.internal.ui.utils.Messages.title_nothingToPaste;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -34,7 +39,6 @@ import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
-import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IElementType;
@@ -80,11 +84,8 @@ public class PasteHandler extends AbstractHandler implements IHandler {
 		// Check for the existing of the elements to be pasted.
 		for (IRodinElement element : elements) {
 			if (!element.exists()) {
-				UIUtils
-						.showError(
-								Messages.bind(Messages.title_nothingToPaste),
-								Messages.bind(Messages.dialogs_nothingToPaste,
-										element));
+				UIUtils.showError(title_nothingToPaste,
+						dialogs_nothingToPaste(element));
 			}
 		}
 		
@@ -105,10 +106,9 @@ public class PasteHandler extends AbstractHandler implements IHandler {
 		} else if (haveSameType(elements, target)) {
 			copyElements(elements, target.getParent());
 		} else {
-			UIUtils.showError(Messages.bind(Messages.title_canNotPaste),
-					Messages.bind(Messages.dialogs_pasteNotAllowed,
-							typeNotAllowed.getName(), target.getElementType()
-									.getName()));
+			UIUtils.showError(title_canNotPaste,
+					dialogs_pasteNotAllowed(typeNotAllowed.getName(), target
+							.getElementType().getName()));
 			return null;
 		}
 		if (EventBEditorUtils.DEBUG)

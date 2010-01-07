@@ -24,6 +24,7 @@ import java.text.MessageFormat;
 
 import org.eclipse.osgi.util.NLS;
 import org.rodinp.core.IParent;
+import org.rodinp.core.IRodinElement;
 
 public final class Messages {
 
@@ -205,6 +206,22 @@ public final class Messages {
 	
 	public static String dialogs_canNotGetChildren(IParent parent) {
 		return bind(dialogs_canNotGetChildren, parent);
+	}
+	
+	public static String dialogs_nothingToPaste(IRodinElement element) {
+		return bind(dialogs_nothingToPaste, element);
+	}
+	
+	public static String dialogs_pasteNotAllowed(String name1, String name2) {
+		return bind(dialogs_pasteNotAllowed, name1, name2);
+	}
+	
+	public static String dialogs_elementDoesNotExist(IRodinElement element) {
+		return bind(dialogs_elementDoesNotExist, element);
+	}
+	
+	public static String dialogs_readOnlyElement(String str) {
+		return bind(dialogs_readOnlyElement, str);
 	}
 	
 	private Messages() {

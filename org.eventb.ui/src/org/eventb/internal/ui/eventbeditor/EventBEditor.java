@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,8 @@ package org.eventb.internal.ui.eventbeditor;
 
 import static org.eclipse.ui.actions.ActionFactory.REDO;
 import static org.eclipse.ui.actions.ActionFactory.UNDO;
+import static org.eventb.internal.ui.utils.Messages.error_cannot_save_as_message;
+import static org.eventb.internal.ui.utils.Messages.error_unsupported_action;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -64,7 +66,6 @@ import org.eventb.internal.ui.eventbeditor.actions.HistoryActionFactory;
 import org.eventb.internal.ui.eventbeditor.editpage.EditPage;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
-import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
@@ -521,8 +522,8 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 
 	@Override
 	public void doSaveAs() {
-		UIUtils.showError(Messages.bind(Messages.error_unsupported_action),
-				Messages.bind(Messages.error_cannot_save_as_message));
+		UIUtils.showError(error_unsupported_action,
+				error_cannot_save_as_message);
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,9 @@
  *     Systerel - redirected dialog opening and externalized strings
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
+
+import static org.eventb.internal.ui.utils.Messages.dialogs_sample_action_executed;
+import static org.eventb.internal.ui.utils.Messages.title_ui_plugin;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -29,7 +32,6 @@ import org.eclipse.ui.part.MultiPageEditorActionBarContributor;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.utils.Messages;
 
 /**
  * @author htson
@@ -106,8 +108,7 @@ public class ProverUIContributor extends MultiPageEditorActionBarContributor {
 		sampleAction = new Action() {
 			@Override
 			public void run() {
-				UIUtils.showInfo(Messages.bind(Messages.title_ui_plugin),
-						Messages.bind(Messages.dialogs_sample_action_executed));
+				UIUtils.showInfo(title_ui_plugin,dialogs_sample_action_executed);
 			}
 		};
 		sampleAction.setText("Sample Action");

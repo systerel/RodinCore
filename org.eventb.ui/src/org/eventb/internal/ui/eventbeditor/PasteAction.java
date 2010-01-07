@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,9 @@
  *     Systerel - redirected dialog opening and externalized strings
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
+
+import static org.eventb.internal.ui.utils.Messages.dialogs_elementDoesNotExist;
+import static org.eventb.internal.ui.utils.Messages.title_canNotPaste;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -131,9 +134,8 @@ public class PasteAction extends SelectionListenerAction {
 			return;
 		for (IRodinElement element : handleData) {
 			if (!element.exists()) {
-				UIUtils.showError(Messages.bind(Messages.title_canNotPaste),
-						Messages.bind(Messages.dialogs_elementDoesNotExist,
-								element));
+				UIUtils.showError(title_canNotPaste,
+						dialogs_elementDoesNotExist(element));
 			}
 		}
 		// enablement should ensure that we always have access to a

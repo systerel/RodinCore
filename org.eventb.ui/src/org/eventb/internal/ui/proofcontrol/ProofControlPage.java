@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ package org.eventb.internal.ui.proofcontrol;
 
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyCommand;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyTactic;
+import static org.eventb.internal.ui.utils.Messages.title_unexpectedError;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -106,7 +107,6 @@ import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
-import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.prover.ITacticApplication;
 
@@ -190,8 +190,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				ProofControlUtils.debug("Interrupt");
 			realException.printStackTrace();
 			final String message = realException.getMessage();
-			UIUtils.showError(Messages.bind(Messages.title_unexpectedError),
-					message);
+			UIUtils.showError(title_unexpectedError,message);
 			return;
 		}
 	}

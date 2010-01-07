@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,14 +14,15 @@
  ******************************************************************************/
 package org.eventb.internal.ui.prover;
 
+import static org.eventb.internal.ui.utils.Messages.dialogs_prover_error_creating_page;
 import static org.eventb.internal.ui.utils.Messages.error_cannot_save_as_message;
 import static org.eventb.internal.ui.utils.Messages.error_unsupported_action;
+import static org.eventb.internal.ui.utils.Messages.title_prover_editor;
 
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -30,7 +31,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
@@ -61,7 +61,6 @@ import org.eventb.internal.ui.prooftreeui.IProofTreeUIPage;
 import org.eventb.internal.ui.prooftreeui.ProofTreeUIPage;
 import org.eventb.internal.ui.searchhypothesis.ISearchHypothesisPage;
 import org.eventb.internal.ui.searchhypothesis.SearchHypothesisPage;
-import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
@@ -186,8 +185,8 @@ public class ProverUI extends EventBFormEditor implements
 		try {
 			addPage(new ProofsPage(this));
 		} catch (PartInitException e) {
-			UIUtils.showError(Messages.bind(Messages.title_prover_editor),
-					Messages.bind(Messages.dialogs_prover_error_creating_page));
+			UIUtils.showError(title_prover_editor,
+					dialogs_prover_error_creating_page);
 			// TODO Handle exception
 		}
 	}
@@ -276,10 +275,8 @@ public class ProverUI extends EventBFormEditor implements
 
 	@Override
 	public void doSaveAs() {
-		final Shell shell = getSite().getShell();
-		final String title = error_unsupported_action;
-		final String message = error_cannot_save_as_message;
-		MessageDialog.openError(shell, title, message);
+		UIUtils.showError(error_unsupported_action,
+				error_cannot_save_as_message);
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,12 +15,12 @@
  *     Systerel - theorems almost everywhere
  *     Systerel - added changeFocusWhenDispose
  *     Systerel - added checkAndShowReadOnly
+ *     Systerel - replaced Messages.bind() by a static method
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
 import static org.eventb.internal.ui.EventBUtils.isReadOnly;
 import static org.eventb.internal.ui.UIUtils.showInfo;
-import static org.eventb.internal.ui.utils.Messages.bind;
 import static org.eventb.internal.ui.utils.Messages.dialogs_readOnlyElement;
 
 import java.util.Arrays;
@@ -1124,8 +1124,7 @@ public class EventBEditorUtils {
 		}
 		final boolean readOnly = isReadOnly((IInternalElement) element);
 		if (readOnly) {
-			final String displayName = getDisplayName(element);
-			showInfo(bind(dialogs_readOnlyElement, displayName));
+			showInfo(dialogs_readOnlyElement(getDisplayName(element)));
 		}
 		return readOnly;
 	}
