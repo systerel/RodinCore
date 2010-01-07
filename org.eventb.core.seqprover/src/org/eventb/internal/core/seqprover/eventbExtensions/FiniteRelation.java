@@ -44,11 +44,10 @@ public class FiniteRelation extends SingleExprInputReasoner implements
 		final Predicate goal = seq.goal();
 		if (!isFinite(goal))
 			return reasonerFailure(this, input, "Goal is not a finiteness");
-		final SimplePredicate sPred = (SimplePredicate) goal;
-		if (!isRelation(sPred.getExpression()))
+		final Expression r = ((SimplePredicate) goal).getExpression();
+		if (!isRelation(r))
 			return reasonerFailure(this, input,
 					"Goal is not a finiteness of a relation");
-		final Expression r = ((SimplePredicate) goal).getExpression();
 
 		if (input.hasError()) {
 			return reasonerFailure(this, input, input.getError());
