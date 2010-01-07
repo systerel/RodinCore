@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -214,6 +214,8 @@ public class EventBImage {
 				IEventBSharedImages.IMG_PARAMETER_PATH);
 		registerImage(registry, IEventBSharedImages.IMG_ACTION,
 				IEventBSharedImages.IMG_ACTION_PATH);
+		registerImage(registry, IEventBSharedImages.IMG_SH_PROVER,
+				IEventBSharedImages.IMG_SH_PROVER_PATH);
 
 	}
 

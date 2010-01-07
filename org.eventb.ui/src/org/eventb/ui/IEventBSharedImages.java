@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009 ETH Zurich.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - Initial API and implementation
+ *     Systerel - added IMG_SH_PROVER
  ******************************************************************************/
 
 package org.eventb.ui;
@@ -118,6 +119,8 @@ public interface IEventBSharedImages {
 	
 	public static final String IMG_ACTION = "Action";
 	
+	public static final String IMG_SH_PROVER = "Search Hypotesis";
+	
 	/**
 	 * Paths to the icons for buttons, menus, etc.
 	 */
@@ -224,4 +227,6 @@ public interface IEventBSharedImages {
 	public static final String IMG_PARAMETER_PATH = "icons/full/obj16/var_obj.gif";
 	
 	public static final String IMG_ACTION_PATH = "icons/full/obj16/act_obj.gif";
+	
+	public static final String IMG_SH_PROVER_PATH = "icons/full/ctool16/sh_prover.gif";
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,10 +9,12 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     ETH Zurich - adapted to org.rodinp.keyboard
+ *     Systerel - added input string passing to SearchHypothesis view
  ******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ui.IViewPart;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.internal.ui.UIUtils;
@@ -30,7 +32,10 @@ public class SearchHypotheses implements IProofCommand {
 				inputs[0]);
 		us.searchHyps(input);
 		// Trying to show the Search View
-		UIUtils.showView(SearchHypothesis.VIEW_ID);
+		final IViewPart view = UIUtils.showView(SearchHypothesis.VIEW_ID);
+		if (view != null && view instanceof SearchHypothesis){
+			((SearchHypothesis) view).setSearchedHyp(input);
+		}
 	}
 
 	public boolean isApplicable(IUserSupport us, Predicate hyp, String input) {

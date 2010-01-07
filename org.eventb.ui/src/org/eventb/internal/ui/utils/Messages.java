@@ -75,6 +75,9 @@ public final class Messages {
 	public static String searchedHypothesis_toolItem_selectAll_toolTipText;
 	public static String searchedHypothesis_toolItem_inverseSelection_toolTipText;
 	public static String searchedHypothesis_toolItem_selectNone_toolTipText;
+	public static String searchedHypothesis_toolItem_search_toolTipText;
+	public static String searchedHypothesis_toolItem_refresh_toolTipText;
+	public static String searchedHypothesis_toolItem_preferences;
 	
 	// Selected hypotheses
 	public static String selectedHypothesis_toolItem_remove_toolTipText;

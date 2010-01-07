@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@
  *     Systerel - used ElementDescRegistry
  *     Systerel - update combo list on focus gain
  *	   Systerel - added dialog opening methods
+ *	   Systerel - made showView return the shown view 
  *******************************************************************************/
 package org.eventb.internal.ui;
 
@@ -489,19 +490,18 @@ public class UIUtils {
 
 	/**
 	 * Activate a particular view given the ID.
-	 * <p>
 	 * 
 	 * @param view_ID
 	 *            the ID of the view which will be activate
+	 * @return the IViewPart shown or null in case of failure
 	 */
-	public static void showView(String view_ID) {
+	public static IViewPart showView(String view_ID) {
 		try {
-			EventBUIPlugin.getActivePage().showView(view_ID);
+			return EventBUIPlugin.getActivePage().showView(view_ID);
 		} catch (PartInitException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log(e, "while trying to show view " + view_ID);
 		}
-		return;
+		return null;
 	}
 
 	/**
