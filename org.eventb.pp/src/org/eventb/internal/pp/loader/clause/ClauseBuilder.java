@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,7 @@ public final class ClauseBuilder {
 	public static void debug(String message){
 		System.out.println(prefix+message);
 	}
-	private static StringBuilder prefix = new StringBuilder("");
+	private static final StringBuilder prefix = new StringBuilder("");
 	public static void debugEnter(AbstractFormula<?> pred) {
 		if (DEBUG) debug("Entering "+pred+": "+pred.getStringDeps());
 		prefix.append("  ");
