@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,10 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - replaced Messages.bind() by tactics_replaceWith()
  *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
+import static org.eventb.internal.ui.utils.Messages.tactics_replaceWith;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +27,6 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.prover.IPositionApplication;
 import org.eventb.ui.prover.ITacticApplication;
 import org.eventb.ui.prover.ITacticProvider2;
@@ -116,8 +117,8 @@ public class TotalDomainSubstitution implements ITacticProvider2 {
 
 			for (final Expression subst : substitutes) {
 				final String replaceWith = subst.toString();
-				final String hyperlinkLabel = Messages.bind(
-						Messages.tactics_replaceWith, replaced, replaceWith);
+				final String hyperlinkLabel = tactics_replaceWith(replaced,
+						replaceWith);
 				applications.add(new TotalDomApplication(hyp, position, subst,
 						hyperlinkLabel));
 			}

@@ -224,6 +224,10 @@ public final class Messages {
 		return bind(dialogs_readOnlyElement, str);
 	}
 	
+	public static String tactics_replaceWith(String s1, String s2){
+		return bind(tactics_replaceWith, s1, s2);
+	}
+	
 	private Messages() {
 		// Do not instantiate
 	}
