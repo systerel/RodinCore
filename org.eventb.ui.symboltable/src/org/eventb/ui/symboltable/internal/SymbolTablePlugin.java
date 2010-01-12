@@ -11,50 +11,26 @@
  *     Systerel - used Eclipse Command Framework
  *******************************************************************************/
 
-package org.eventb.ui.symboltable;
+package org.eventb.ui.symboltable.internal;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 /**
  * The activator class controls the plug-in life cycle
- * @since 1.0
+ * @since 1.1
  */
 public class SymbolTablePlugin extends AbstractUIPlugin {
-
-	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eventb.ui.symboltable";
-	public static final String SYMBOL_TABLE_VIEW_ID = PLUGIN_ID + ".view";
 
 	// The shared instance
 	private static SymbolTablePlugin plugin;
 
-	/**
-	 * The constructor
-	 */
-	public SymbolTablePlugin() {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
-	 * )
-	 */
 	@Override
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
-	 * )
-	 */
 	@Override
 	public void stop(final BundleContext context) throws Exception {
 		plugin = null;

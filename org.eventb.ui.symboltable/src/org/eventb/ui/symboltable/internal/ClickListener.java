@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eventb.ui.symboltable.SymbolTablePlugin;
+import org.eventb.ui.symboltable.ISymbolTableConstants;
 
 public class ClickListener implements MouseListener {
 
@@ -116,7 +116,7 @@ public class ClickListener implements MouseListener {
 	// Logs the given exception with the given context message.
 	private static void log(Exception e, String message) {
 		final IStatus status = new Status(IStatus.ERROR,
-				SymbolTablePlugin.PLUGIN_ID, IStatus.ERROR, message, e);
+				ISymbolTableConstants.PLUGIN_ID, IStatus.ERROR, message, e);
 		SymbolTablePlugin.getDefault().getLog().log(status);
 	}
 }

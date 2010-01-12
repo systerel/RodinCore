@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.ui.symboltable.tests;
 
-import static org.eventb.ui.symboltable.SymbolTablePlugin.SYMBOL_TABLE_VIEW_ID;
+import static org.eventb.ui.symboltable.ISymbolTableConstants.SYMBOL_TABLE_VIEW_ID;
 import static org.junit.Assert.fail;
 
 import org.eclipse.ui.IViewPart;

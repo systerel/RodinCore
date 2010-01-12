@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %BundleName
 Bundle-SymbolicName: org.eventb.ui.symboltable;singleton:=true
-Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.eventb.ui.symboltable.SymbolTablePlugin
+Bundle-Version: 1.1.0.qualifier
+Bundle-Activator: org.eventb.ui.symboltable.internal.SymbolTablePlugin
 Require-Bundle: org.eventb.ui;bundle-version="1.1.0",
  org.eclipse.core.expressions;bundle-version="3.4.1"
 Bundle-ActivationPolicy: lazy
