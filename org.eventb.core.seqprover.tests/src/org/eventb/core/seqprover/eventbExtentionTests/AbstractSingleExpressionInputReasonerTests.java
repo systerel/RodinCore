@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,8 +46,7 @@ public abstract class AbstractSingleExpressionInputReasonerTests extends Abstrac
 		SuccessfullReasonerApplication makeSuccessfullReasonerApplication() {
 			final IProverSequent sequent = TestLib.genSeq(sequentImage);
 			final ITypeEnvironment te = sequent.typeEnvironment().clone();
-			final Expression expr = TestLib.genExpr(te, expressionImage);
-			final IReasonerInput input = new SingleExprInput(expr);
+			final IReasonerInput input = makeInput(TestLib.genExpr(te, expressionImage));
 			return new SuccessfullReasonerApplication(sequent, input, results);
 		}
 
@@ -93,8 +92,7 @@ public abstract class AbstractSingleExpressionInputReasonerTests extends Abstrac
 			predicate = TestLib.genPred(predicateImage);
 			predicate.typeCheck(ff.makeTypeEnvironment());
 		}
-		IReasonerInput input = new SingleExprInput(Lib
-				.parseExpression(expressionImage));
+		IReasonerInput input = makeInput(Lib.parseExpression(expressionImage));
 		
 		IProverSequent sequent = TestLib.genSeq(sequentImage);
 		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(
@@ -103,6 +101,10 @@ public abstract class AbstractSingleExpressionInputReasonerTests extends Abstrac
 				sequent, input, reason));
 
 		return unsuccessfullReasonerApps;
+	}
+
+	protected IReasonerInput makeInput(Expression expr) {
+		return new SingleExprInput(expr);
 	}
 
 //	@Override

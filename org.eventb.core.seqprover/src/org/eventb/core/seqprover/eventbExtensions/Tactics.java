@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Systerel - added rm for UPTO and Arith and OnePoint tactics
  *     Systerel - added Total Domain Substitution
  *     Systerel - added contrHyps() (CNTR)
+ *     Systerel - fixed rules FIN_FUN_*
  ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
@@ -143,6 +144,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetMinusRew
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.StrictInclusionRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TotalDomFacade;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.UnionInterDistRewrites;
+import org.eventb.internal.core.seqprover.reasonerInputs.PFunSetInput;
 
 /**
  * This class contains static methods that wrap Event-B reasoner extensions into
@@ -2982,7 +2984,7 @@ public class Tactics {
 	public static ITactic finiteFunction(IProverSequent sequent,
 			String expressionImage) {
 		return BasicTactics
-				.reasonerTac(new FiniteFunction(), new SingleExprInput(
+				.reasonerTac(new FiniteFunction(), new PFunSetInput(
 						expressionImage, sequent.typeEnvironment()));
 	}
 
@@ -3021,7 +3023,7 @@ public class Tactics {
 	public static ITactic finiteFunConv(IProverSequent sequent,
 			String expressionImage) {
 		return BasicTactics
-				.reasonerTac(new FiniteFunConv(), new SingleExprInput(
+				.reasonerTac(new FiniteFunConv(), new PFunSetInput(
 						expressionImage, sequent.typeEnvironment()));
 	}
 
@@ -3045,7 +3047,40 @@ public class Tactics {
 		return new ArrayList<IPosition>();
 	}
 
+	@Deprecated
+	public static ITactic finiteFunRelImg() {
+		return new ITactic() {
 
+			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+				final Predicate goal = ptNode.getSequent().goal();
+				final PFunSetInput input = computeInput(goal);
+				if (input == null) {
+					return "Tactic inapplicable";
+				}
+				return BasicTactics.reasonerTac(new FiniteFunRelImg(), input)
+						.apply(ptNode, pm);
+			}
+
+			private PFunSetInput computeInput(final Predicate goal) {
+				if (!Lib.isFinite(goal)) {
+					return null;
+				}
+				final Expression img = ((SimplePredicate) goal).getExpression();
+				if (!Lib.isRelImg(img)) {
+					return null;
+				}
+				final Expression f = ((BinaryExpression) img).getLeft();
+				final Type type = f.getType();
+				final Expression S = type.getSource().toExpression(Lib.ff);
+				final Expression T = type.getTarget().toExpression(Lib.ff);
+				final BinaryExpression set = Lib.ff.makeBinaryExpression(
+						Expression.PFUN, S, T, null);
+				final PFunSetInput input = new PFunSetInput(set);
+				return input;
+			}
+		};
+	}
+	
 	/**
 	 * Return the tactic "Finite of relational image of a function "
 	 * {@link FiniteFunRelImg}.
@@ -3054,9 +3089,11 @@ public class Tactics {
 	 * @return The tactic "finite of relational image of a function"
 	 * @author htson
 	 */
-	public static ITactic finiteFunRelImg() {
+	public static ITactic finiteFunRelImg(IProverSequent sequent,
+			String expressionImage) {
 		return BasicTactics
-				.reasonerTac(new FiniteFunRelImg(), EMPTY_INPUT);
+				.reasonerTac(new FiniteFunRelImg(), new PFunSetInput(
+						expressionImage, sequent.typeEnvironment()));
 	}
 
 
@@ -3093,7 +3130,7 @@ public class Tactics {
 	public static ITactic finiteFunRan(IProverSequent sequent,
 			String expressionImage) {
 		return BasicTactics
-			.reasonerTac(new FiniteFunRan(), new SingleExprInput(
+			.reasonerTac(new FiniteFunRan(), new PFunSetInput(
 				expressionImage, sequent.typeEnvironment()));
 	}
 
@@ -3132,7 +3169,7 @@ public class Tactics {
 	public static ITactic finiteFunDom(IProverSequent sequent,
 			String expressionImage) {
 		return BasicTactics
-			.reasonerTac(new FiniteFunDom(), new SingleExprInput(
+			.reasonerTac(new FiniteFunDom(), new PFunSetInput(
 				expressionImage, sequent.typeEnvironment()));
 	}
 

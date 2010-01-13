@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - fixed rules FIN_FUN_*
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
@@ -22,18 +23,30 @@ import org.eventb.internal.core.seqprover.eventbExtensions.FiniteFunction;
  * 
  * @author htson
  */
-public class FiniteFuntionTests extends AbstractSingleExpressionInputReasonerTests {
+public class FiniteFuntionTests extends AbstractPFunSetInputReasonerTests {
 
-	String P1 = "finite({0 ↦ (3 ↦ 2),1 ↦ (3 ↦ x),1 ↦ (2 ↦ 3)})";
+	private static final String P1 = "finite({0 ↦ (3 ↦ 2),1 ↦ (3 ↦ x),1 ↦ (2 ↦ 3)})";
+	private static final String P1Input = "ℕ ⇸ ℕ × ℕ";
 
-	String resultP1GoalA = "{x=ℤ}[][][⊤] |- {0 ↦ (3 ↦ 2),1 ↦ (3 ↦ x),1 ↦ (2 ↦ 3)}∈ℕ ⇸ ℕ × ℕ";
+	private static final String[] P1Result = {
+			"{x=ℤ}[][][⊤] |- ⊤", //
+			"{x=ℤ}[][][⊤] |- {0 ↦ (3 ↦ 2),1 ↦ (3 ↦ x),1 ↦ (2 ↦ 3)} ∈ ℕ ⇸ ℕ × ℕ", //
+			"{x=ℤ}[][][⊤] |- finite(ℕ)", //
+	};
 
-	String resultP1GoalB = "{x=ℤ}[][][⊤] |- finite(ℕ)";
-		
-	String P2 = "x = 1 ⇒ finite({0 ↦ (3 ↦ 2),1 ↦ (3 ↦ x),1 ↦ (2 ↦ 3)})";
+	private static final String P2 = "x = 1 ⇒ finite({0 ↦ (3 ↦ 2),1 ↦ (3 ↦ x),1 ↦ (2 ↦ 3)})";
 
-	String P3 = "finite({0 ↦ 3,1 ↦ x,1 ↦ 2}[{x}])";
-
+	private static final String P3 = "finite({0 ↦ 3,1 ↦ x,1 ↦ 2}[{x}])";
+	
+    private static final String P4 = "finite({0 ↦ 1})";
+    private static final String P4Input = "{1÷2} ⇸ {3÷4}";
+	
+	private static final String[] P4Result = {
+		"{}[][][⊤] |- 2≠0∧4≠0", //
+		"{}[][][⊤] |- {0 ↦ 1} ∈ {1÷2} ⇸ {3÷4}", //
+		"{}[][][⊤] |- finite({1÷2})", //
+	};
+	
 	protected String [] getTestGetPositions() {
 		return new String [] {
 				P1, "ROOT",
@@ -54,31 +67,33 @@ public class FiniteFuntionTests extends AbstractSingleExpressionInputReasonerTes
 	protected SuccessfulTest[] getSuccessfulTests() {
 		return new SuccessfulTest[] {
 				// P1 in goal
-				new SuccessfulTest(" ⊤ |- " + P1, "ℕ⇸ℕ × ℕ", resultP1GoalA, resultP1GoalB),
+				new SuccessfulTest(" ⊤ |- " + P1, P1Input, P1Result),
+				// P4 in goal
+				new SuccessfulTest(" ⊤ |- " + P4, P4Input, P4Result),
 		};
 	}
 
 	protected String[] getUnsuccessfulTests() {
 		return new String[] {
-				// P1 in goal
+				// correct goal, wrong input
 				" ⊤ |- " + P1,
 				null,
 				"ℕ ↔ BOOL × ℕ",
 				"Expected a set of all partial functions S ⇸ T",
-				// P1 in goal
+				// Correct goal, type-check error with input
 				" ⊤ |- " + P1,
 				null,
 				"ℕ ⇸ BOOL × ℕ",
 				"Type check failed for " + "{0 ↦ (3 ↦ 2),1 ↦ (3 ↦ x),1 ↦ (2 ↦ 3)}∈ℕ ⇸ BOOL × ℕ",
-				// P2 in goal
+				// incorrect goal
 				" ⊤ |- " + P2,
 				null,
 				"ℕ",
 				"Goal is not a finiteness",
-				// P3 in goal
+				// incorrect goal, local check
 				" ⊤ |- " + P3,
 				null,
-				"ℕ",
+				"ℕ ⇸ BOOL × ℕ",
 				"Goal is not a finiteness of a relation"
 		};
 	}

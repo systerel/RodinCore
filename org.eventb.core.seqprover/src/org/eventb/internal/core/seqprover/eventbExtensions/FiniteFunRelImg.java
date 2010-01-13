@@ -1,89 +1,95 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - fixed rules FIN_FUN_*
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
+
+import static org.eventb.core.ast.Formula.IN;
+import static org.eventb.core.ast.Formula.KFINITE;
+import static org.eventb.core.seqprover.ProverFactory.reasonerFailure;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.ff;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.isRelImg;
 
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.ProductType;
-import org.eventb.core.ast.SimplePredicate;
-import org.eventb.core.ast.Type;
-import org.eventb.core.seqprover.IProofMonitor;
-import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.IReasonerFailure;
 import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.IReasonerOutput;
-import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
-import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
+import org.eventb.internal.core.seqprover.reasonerInputs.PFunSetInput;
+import org.eventb.internal.core.seqprover.reasonerInputs.PFunSetInputReasoner;
 
-public class FiniteFunRelImg extends EmptyInputReasoner {
+@ProverRule("FIN_FUN_IMG_R")
+public class FiniteFunRelImg extends PFunSetInputReasoner {
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".finiteFunRelImg";
+	private static final int VERSION = 0;
 
-	private static FormulaFactory ff = FormulaFactory.getDefault();
-	
+	private static final String REASONER_DESC = "finite of relational image of a function";
+
+	public static String REASONER_ID = SequentProver.PLUGIN_ID
+			+ ".finiteFunRelImg";
+
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
-	
-	@ProverRule("FIN_FUN_IMG_R")
-	protected IAntecedent[] getAntecedents(IProverSequent seq) {
-		Predicate goal = seq.goal();
 
-		// goal should have the form finite(r[s])
-		if (!Lib.isFinite(goal))
-			return null;
-		SimplePredicate sPred = (SimplePredicate) goal;
-		if (!Lib.isRelImg(sPred.getExpression()))
-			return null;
-		
-		// There will be 2 antecidents
-		IAntecedent[] antecidents = new IAntecedent[2];
-		
-		BinaryExpression expression = (BinaryExpression) sPred.getExpression();
-		
-		// f : A +-> B, where A and B are from the type of f 
-		Expression f = expression.getLeft();
-		Type type = f.getType();
-		assert type instanceof PowerSetType;
-		Type baseType = type.getBaseType();
-		assert baseType instanceof ProductType;
-		ProductType pType = (ProductType) baseType;
-		Type S = pType.getLeft();
-		Type T = pType.getRight();
-		Expression pFun = ff.makeBinaryExpression(Expression.PFUN, S
-				.toExpression(ff), T.toExpression(ff), null);
-		Predicate newGoal0 = ff.makeRelationalPredicate(Predicate.IN, f, pFun,
-				null);
-		antecidents[0] = ProverFactory.makeAntecedent(newGoal0);
-		
-		// finite(s)
-		Expression s = expression.getRight();
-		
-		Predicate newGoal1 = ff.makeSimplePredicate(Predicate.KFINITE, s, null);
-		antecidents[1] = ProverFactory.makeAntecedent(newGoal1);
-
-		return antecidents;
+	public static int getVersion() {
+		return VERSION;
 	}
 
-	protected String getDisplayName() {
-		return "finite of relational image of a function";
+	protected String getReasonerDesc() {
+		return REASONER_DESC;
 	}
 
-	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
-			IProofMonitor pm) {
-		IAntecedent[] antecidents = getAntecedents(seq);
-		if (antecidents == null)
-			return ProverFactory.reasonerFailure(this, input,
-					"Inference " + getReasonerID()
-							+ " is not applicable");
+	@Override
+	protected IReasonerFailure verifyGoal(Predicate goal, IReasonerInput input) {
+		// f[s]
+		final Expression expr = getFiniteExpression(goal);
+		if (!isRelImg(expr)) {
+			return reasonerFailure(this, input,
+					"Goal is not a finiteness of a relation image");
+		}
+		return null;
+	}
 
-		// Generate the successful reasoner output
-		return ProverFactory.makeProofRule(this, input, seq.goal(),
-				getDisplayName(), antecidents);
+	@Override
+	protected IReasonerFailure verifyInput(Predicate goal, PFunSetInput input) {
+		// f[s]
+		final BinaryExpression img = (BinaryExpression) getFiniteExpression(goal);
+		final Expression f = img.getLeft();
+		final Expression set = input.getExpression();
+
+		if (!f.getType().equals(set.getType().getBaseType())) {
+			return reasonerFailure(this, input, "Type check failed for " + f
+					+ "∈" + set);
+		}
+		return null;
+	}
+
+	@Override
+	protected Predicate[] getSubgoals(Predicate goal, PFunSetInput input) {
+		final BinaryExpression img = (BinaryExpression) getFiniteExpression(goal);
+		final Expression f = img.getLeft();
+		final Expression s = img.getRight();
+		final Expression inputExpr = input.getExpression();
+		return new Predicate[] {
+		// WD(S +-> T)
+				inputExpr.getWDPredicate(ff), //		
+
+				// f : S +-> T
+				ff.makeRelationalPredicate(IN, f, inputExpr, null),
+
+				// finite(s)
+				ff.makeSimplePredicate(KFINITE, s, null), //
+		};
 	}
 
 }
