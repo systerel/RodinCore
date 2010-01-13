@@ -3088,6 +3088,7 @@ public class Tactics {
 	 * 
 	 * @return The tactic "finite of relational image of a function"
 	 * @author htson
+	 * @since 1.2
 	 */
 	public static ITactic finiteFunRelImg(IProverSequent sequent,
 			String expressionImage) {

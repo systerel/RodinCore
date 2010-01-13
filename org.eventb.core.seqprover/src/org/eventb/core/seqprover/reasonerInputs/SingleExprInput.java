@@ -27,6 +27,9 @@ public class SingleExprInput implements IReasonerInput{
 	private static final String SERIALIZATION_KEY = "expr";
 
 	private Expression expression;
+	/**
+	 * @since 1.2
+	 */
 	protected String error;
 	
 	public SingleExprInput(String exprString, ITypeEnvironment typeEnv){
