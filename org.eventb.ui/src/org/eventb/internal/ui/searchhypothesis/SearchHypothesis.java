@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eventb.core.EventBPlugin;
@@ -142,7 +143,6 @@ public class SearchHypothesis extends ProverContentOutline implements
 	public SearchHypothesis() {
 		super(Messages.searchedHypothesis_defaultMessage);
 		store = EventBPreferenceStore.getPreferenceStore();
-		store.addPropertyChangeListener(this);
 		supportMng = EventBPlugin.getUserSupportManager();
 	}
 
@@ -165,6 +165,7 @@ public class SearchHypothesis extends ProverContentOutline implements
 			fillDropDownList(actionBars.getMenuManager());
 			addTextSearch(actionBars.getToolBarManager());
 			fillMenu(actionBars.getToolBarManager());
+			store.addPropertyChangeListener(this);
 			return new PageRec(part, page);
 		}
 		// There is no Search Hypotheses Page
@@ -221,12 +222,13 @@ public class SearchHypothesis extends ProverContentOutline implements
 		search = new Action(null, Action.AS_PUSH_BUTTON) {
 			@Override
 			public void run() {
-				final IEditorPart editor = EventBUIPlugin.getActivePage()
-						.getActiveEditor();
-				final String searchString = sBox.getSearchString();
-				if (!(editor instanceof ProverUI)) {
+				if (getActiveProverUI() == null) {
 					return;
 				}
+				if (sBox == null){
+					return;
+				}
+				final String searchString = sBox.getSearchString();
 				final String toSearch = RodinKeyboardPlugin.getDefault()
 						.translate(searchString);
 				setSearchedHyp(toSearch);
@@ -288,13 +290,10 @@ public class SearchHypothesis extends ProverContentOutline implements
 	 * Searches hypotheses with the current string to refresh the view.
 	 */
 	public void updateView() {
-		final IEditorPart editor = EventBUIPlugin.getActivePage()
-				.getActiveEditor();
-		if (!(editor instanceof ProverUI)) {
-			return;
+		final IUserSupport userSupport = getCurrentUserSupport();
+		if (userSupport != null && userSupport.getCurrentPO() != null) {
+			userSupport.searchHyps(searchedHyp);
 		}
-		final IUserSupport userSupport = ((ProverUI) editor).getUserSupport();
-		userSupport.searchHyps(searchedHyp);
 	}
 
 	/**
@@ -304,5 +303,25 @@ public class SearchHypothesis extends ProverContentOutline implements
 		supportMng.setConsiderHiddenHypotheses(b);
 		store.setValue(PreferenceConstants.P_CONSIDER_HIDDEN_HYPOTHESES, b);
 	}
+	
+	protected static ProverUI getActiveProverUI() {
+		IWorkbenchPage acPage = EventBUIPlugin.getActivePage();
+		if (acPage == null) {
+			return null;
+		}
+		IEditorPart editor = acPage.getActiveEditor();
+		if (!(editor instanceof ProverUI)) {
+			return null;
+		}
+		return ((ProverUI) editor);
+	}
 
+	protected static IUserSupport getCurrentUserSupport() {
+		final ProverUI proverUI = getActiveProverUI();
+		if (proverUI == null) {
+			return null;
+		}
+		return getActiveProverUI().getUserSupport();
+	}
+	
 }
