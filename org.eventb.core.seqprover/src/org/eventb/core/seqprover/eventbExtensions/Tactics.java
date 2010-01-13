@@ -779,6 +779,9 @@ public class Tactics {
 		return (!seq.goal().equals(Lib.makeNeg(hyp)));
 	}
 	
+	/**
+	 * @since 1.2
+	 */
 	public static ITactic contrHyps(Predicate hyp) {
 		return BasicTactics.reasonerTac(new ContrHyps(), new HypothesisReasoner.Input(hyp));
 	}
