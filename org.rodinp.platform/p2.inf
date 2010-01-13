@@ -1,0 +1,18 @@
+instructions.configure=\
+  addRepository(type:0,location:http${#58}//download.eclipse.org/releases/ganymede);\
+  addRepository(type:1,location:http${#58}//download.eclipse.org/releases/ganymede);\
+  addRepository(type:0,location:http${#58}//bmethod.com/update_site/atelierb_provers);\
+  addRepository(type:1,location:http${#58}//bmethod.com/update_site/atelierb_provers);\
+  addRepository(type:0,location:http${#58}//bmethod.com/update_site/b2rodin);\
+  addRepository(type:1,location:http${#58}//bmethod.com/update_site/b2rodin);\
+  addRepository(type:0,location:http${#58}//bmethod.com/update_site/brama);\
+  addRepository(type:1,location:http${#58}//bmethod.com/update_site/brama);\
+  addRepository(type:0,location:http${#58}//rodin-b-sharp.sourceforge.net/updates);\
+  addRepository(type:1,location:http${#58}//rodin-b-sharp.sourceforge.net/updates);\
+  addRepository(type:0,location:http${#58}//www.stups.uni-duesseldorf.de/update);\
+  addRepository(type:1,location:http${#58}//www.stups.uni-duesseldorf.de/update);\
+  addRepository(type:0,location:http${#58}//www.animb.org/updatesite);\
+  addRepository(type:1,location:http${#58}//www.animb.org/updatesite);\
+  addRepository(type:0,location:http${#58}//iliasov.org/modplugin);\
+  addRepository(type:1,location:http${#58}//iliasov.org/modplugin);\
+  
