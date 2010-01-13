@@ -23,7 +23,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.FiniteFunction;
  * 
  * @author htson
  */
-public class FiniteFuntionTests extends AbstractPFunSetInputReasonerTests {
+public class FiniteFunctionTests extends AbstractPFunSetInputReasonerTests {
 
 	private static final String P1 = "finite({0 ↦ (3 ↦ 2),1 ↦ (3 ↦ x),1 ↦ (2 ↦ 3)})";
 	private static final String P1Input = "ℕ ⇸ ℕ × ℕ";
