@@ -17,7 +17,7 @@ package org.eventb.ui;
  * A registry for common images used by the Event-B User Interface which may be useful 
  * to other plug-ins.
  * <p>
- * This inteface provides <code>Image</code> and <code>ImageDescriptor</code>s
+ * This interface provides <code>Image</code> and <code>ImageDescriptor</code>s
  * for each named image in the interface.  All <code>Image</code> objects provided 
  * by this class are managed by this class and must never be disposed 
  * by other clients.
@@ -26,6 +26,7 @@ package org.eventb.ui;
  * This interface is not intended to be implemented by clients.
  * </p>
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 
 public interface IEventBSharedImages {
