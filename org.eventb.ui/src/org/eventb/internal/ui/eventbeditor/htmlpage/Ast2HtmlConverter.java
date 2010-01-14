@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -11,6 +11,7 @@
  *     Systerel - replaced inherited by extended
  *     Systerel - added implicit children for events
  *     Systerel - added theorem attribute of IDerivedPredicateElement
+ *     Systerel - added guard theorem labels
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.htmlpage;
 
@@ -81,8 +82,12 @@ public class Ast2HtmlConverter extends AstConverter {
 		END_IMPLICIT_PARAMETER_IDENTIFIER = "</td>";
 		BEGIN_GUARD_LABEL = "<td class=\"guardLabel\" align=\"left\" valign=\"center\">";
 		END_GUARD_LABEL = "</td>";
+		BEGIN_GUARD_THEOREM_LABEL = "<td class=\"guardTheoremLabel\" align=\"left\" valign=\"center\">";
+		END_GUARD_THEOREM_LABEL = "</td>";
 		BEGIN_IMPLICIT_GUARD_LABEL = "<td class=\"implicitGuardLabel\" align=\"left\" valign=\"center\">";
 		END_IMPLICIT_GUARD_LABEL = "</td>";
+		BEGIN_IMPLICIT_GUARD_THEOREM_LABEL = "<td class=\"implicitGuardTheoremLabel\" align=\"left\" valign=\"center\">";
+		END_IMPLICIT_GUARD_THEOREM_LABEL = "</td>";
 		BEGIN_GUARD_PREDICATE = "<td class=\"guardPredicate\" align=\"left\" valign=\"center\">";
 		END_GUARD_PREDICATE = "</td>";
 		BEGIN_IMPLICIT_GUARD_PREDICATE = "<td class=\"implicitGuardPredicate\" align=\"left\" valign=\"center\">";

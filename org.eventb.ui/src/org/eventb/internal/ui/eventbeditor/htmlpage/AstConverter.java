@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -123,8 +123,12 @@ public abstract class AstConverter {
 	protected String END_PARAMETER_IDENTIFIER_SEPARATOR = null;
 	protected String BEGIN_GUARD_LABEL = "";
 	protected String END_GUARD_LABEL = "";
+	protected String BEGIN_GUARD_THEOREM_LABEL = "";
+	protected String END_GUARD_THEOREM_LABEL = "";
 	protected String BEGIN_IMPLICIT_GUARD_LABEL = "";
 	protected String END_IMPLICIT_GUARD_LABEL = "";
+	protected String BEGIN_IMPLICIT_GUARD_THEOREM_LABEL = "";
+	protected String END_IMPLICIT_GUARD_THEOREM_LABEL = "";
 	protected String BEGIN_GUARD_LABEL_SEPARATOR = null;
 	protected String END_GUARD_LABEL_SEPARATOR = ":";
 	protected String BEGIN_GUARD_PREDICATE = "";
@@ -899,6 +903,16 @@ public abstract class AstConverter {
 		return getDirectOrImplicitChild(evt, grd, END_GUARD_LABEL,
 				END_IMPLICIT_GUARD_LABEL);
 	}
+	
+	private String getBeginGuardTheoremLabel(IGuard grd, IEvent evt) {
+		return getDirectOrImplicitChild(evt, grd, BEGIN_GUARD_THEOREM_LABEL,
+				BEGIN_IMPLICIT_GUARD_THEOREM_LABEL);
+	}
+
+	private String getEndGuardTheoremLabel(IGuard grd, IEvent evt) {
+		return getDirectOrImplicitChild(evt, grd, END_GUARD_THEOREM_LABEL,
+				END_IMPLICIT_GUARD_THEOREM_LABEL);
+	}
 
 	private String getBeginGuardPredicate(IGuard grd, IEvent evt) {
 		return getDirectOrImplicitChild(evt, grd, BEGIN_GUARD_PREDICATE,
@@ -923,8 +937,8 @@ public abstract class AstConverter {
 		final String bgl;
 		final String egl;
 		if (isTheorem) {
-			bgl = BEGIN_THEOREM_LABEL;
-			egl = END_THEOREM_LABEL;
+			bgl = getBeginGuardTheoremLabel(grd, evt);
+			egl = getEndGuardTheoremLabel(grd, evt);
 		} else {
 			bgl = getBeginGuardLabel(grd, evt);
 			egl = getEndGuardLabel(grd, evt);
