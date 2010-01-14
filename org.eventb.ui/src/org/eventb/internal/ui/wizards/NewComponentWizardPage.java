@@ -217,10 +217,14 @@ public class NewComponentWizardPage extends WizardPage {
 		
 		if (project != null) {
 			projectText.setText(project.getElementName());
-			componentText.setFocus();
+			final Text cTextComp = componentText;
+			UIUtils.asyncPostRunnable(new Runnable() {
+				public void run() {
+					cTextComp.setFocus();
+				}
+			}, cTextComp);
 			componentText.selectAll();
-		}
-		else {
+		} else {
 			projectText.setFocus();
 		}
 	}
