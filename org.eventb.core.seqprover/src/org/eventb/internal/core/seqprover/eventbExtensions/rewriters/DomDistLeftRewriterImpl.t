@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language V2
+ *     Systerel - fixed rules DISTRI_DOMSUB_BUNION_L and DISTRI_DOMSUB_BINTER_L
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
@@ -75,19 +76,19 @@ public class DomDistLeftRewriterImpl extends DefaultRewriter {
 			}
 			
 			/**
-	    	 * Set Theory : (s ∪ ... ∪ t) ⩤ r == (s ⩤ r) ∪ ... ∪ (t ⩤ r)
+	    	 * Set Theory : (s ∪ ... ∪ t) ⩤ r == (s ⩤ r) ∩ ... ∩ (t ⩤ r)
 	    	 */
 			DomSub(BUnion(children), r) -> {
 				return makeDomainAssociative(
-						Expression.BUNION, Expression.DOMSUB, `r, `children);
+						Expression.BINTER, Expression.DOMSUB, `r, `children);
 			}
 			
 			/**
-	    	 * Set Theory : (s ∩ ... ∩ t) ⩤ r == (s ⩤ r) ∩ ... ∩ (t ⩤ r)
+	    	 * Set Theory : (s ∩ ... ∩ t) ⩤ r == (s ⩤ r) ∪ ... ∪ (t ⩤ r)
 	    	 */
 			DomSub(BInter(children), r) -> {
 				return makeDomainAssociative(
-						Expression.BINTER, Expression.DOMSUB, `r, `children);
+						Expression.BUNION, Expression.DOMSUB, `r, `children);
 			}
 			
 	    }

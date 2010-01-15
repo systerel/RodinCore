@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language V2
+ *     Systerel - fixed rules DISTRI_RANSUB_BUNION_R and DISTRI_RANSUB_BINTER_R
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
@@ -75,19 +76,19 @@ public class RanDistRightRewriterImpl extends DefaultRewriter {
 			}
 			
 			/**
-	    	 * Set Theory : r ⩥ (s ∪ ... ∪ t) == (r ⩥ s) ∪ ... ∪ (r ⩥ t)
+	    	 * Set Theory : r ⩥ (s ∪ ... ∪ t) == (r ⩥ s) ∩ ... ∩ (r ⩥ t)
 	    	 */
 			RanSub(r, BUnion(children)) -> {
 				return makeRangeAssociative(
-						Expression.BUNION, Expression.RANSUB, `r, `children);
+						Expression.BINTER, Expression.RANSUB, `r, `children);
 			}
 			
 			/**
-	    	 * Set Theory : r ⩥ (s ∩ ... ∩ t) == (r ⩥ s) ∩ ... ∩ (r ⩥ t)
+	    	 * Set Theory : r ⩥ (s ∩ ... ∩ t) == (r ⩥ s) ∪ ... ∪ (r ⩥ t)
 	    	 */
 			RanSub(r, BInter(children)) -> {
 				return makeRangeAssociative(
-						Expression.BINTER, Expression.RANSUB, `r, `children);
+						Expression.BUNION, Expression.RANSUB, `r, `children);
 			}
 			
 	    }

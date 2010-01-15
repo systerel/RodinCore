@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - fixed rules DISTRI_DOMSUB_BUNION_L and DISTRI_DOMSUB_BINTER_L
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import java.util.Arrays;
@@ -14,9 +25,15 @@ import org.eventb.core.seqprover.SequentProver;
 
 public class DomDistLeftRewrites extends AbstractManualRewrites {
 
+	private static final int VERSION = 0;
+	
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".domDistLeftRewrites";
 
+	public static int getVersion() {
+		return VERSION;
+	}
+	
 	public String getReasonerID() {
 		return REASONER_ID;
 	}

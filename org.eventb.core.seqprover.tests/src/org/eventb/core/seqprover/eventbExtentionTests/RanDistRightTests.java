@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - Fixed DISTRI_RANSUB_BUNION_R and DISTRI_RANSUB_BINTER_R 
+ *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
 import java.util.List;
@@ -43,32 +54,32 @@ public class RanDistRightTests extends AbstractManualRewriterTests {
 	String resultP6 = "∀x·x=0⇒(r ▷ {1,x})∩(r ▷ {2})∩(r ▷ {3,x})={x ↦ x}";
 
 
-	// r |> (s \/ ... \/ t) == (r |> s) \/ ... \/ (r |> t)
+	// r |> (s \/ ... \/ t) == (r |> s) /\ ... /\ (r |> t)
 	String P7 = "r ⩥ ({1, x} ∪ {2} ∪ {3, x}) = {x ↦ x}";
 
-	String resultP7 = "(r ⩥ {1,x})∪(r ⩥ {2})∪(r ⩥ {3,x})={x ↦ x}";
+	String resultP7 = "(r ⩥ {1,x})∩(r ⩥ {2})∩(r ⩥ {3,x})={x ↦ x}";
 
 	String P8 = "(1 = x) ⇒ {x ↦ x} = r ⩥ ({1, x} ∪ {2} ∪ {3, x})";
 
-	String resultP8 = "1=x⇒{x ↦ x}=(r ⩥ {1,x})∪(r ⩥ {2})∪(r ⩥ {3,x})";
+	String resultP8 = "1=x⇒{x ↦ x}=(r ⩥ {1,x})∩(r ⩥ {2})∩(r ⩥ {3,x})";
 
 	String P9 = "∀x·x = 0 ⇒ r ⩥ ({1, x} ∪ {2} ∪ {3, x}) = {x ↦ x}";
 
-	String resultP9 = "∀x·x=0⇒(r ⩥ {1,x})∪(r ⩥ {2})∪(r ⩥ {3,x})={x ↦ x}";
+	String resultP9 = "∀x·x=0⇒(r ⩥ {1,x})∩(r ⩥ {2})∩(r ⩥ {3,x})={x ↦ x}";
 
 
-	// r |> (s /\ ... /\ t) == (r |> s) /\ ... /\ (r |> t)
+	// r |> (s /\ ... /\ t) == (r |> s) \/ ... \/ (r |> t)
 	String P10 = "r ⩥ ({1, x} ∩ {2} ∩ {3, x}) = {x ↦ x}";
 
-	String resultP10 = "(r ⩥ {1,x})∩(r ⩥ {2})∩(r ⩥ {3,x})={x ↦ x}";
+	String resultP10 = "(r ⩥ {1,x})∪(r ⩥ {2})∪(r ⩥ {3,x})={x ↦ x}";
 
 	String P11 = "(1 = x) ⇒ {x ↦ x} = r ⩥ ({1, x} ∩ {2} ∩ {3, x})";
 
-	String resultP11 = "1=x⇒{x ↦ x}=(r ⩥ {1,x})∩(r ⩥ {2})∩(r ⩥ {3,x})";
+	String resultP11 = "1=x⇒{x ↦ x}=(r ⩥ {1,x})∪(r ⩥ {2})∪(r ⩥ {3,x})";
 
 	String P12 = "∀x·x = 0 ⇒ r ⩥ ({1, x} ∩ {2} ∩ {3, x}) = {x ↦ x}";
 
-	String resultP12 = "∀x·x=0⇒(r ⩥ {1,x})∩(r ⩥ {2})∩(r ⩥ {3,x})={x ↦ x}";
+	String resultP12 = "∀x·x=0⇒(r ⩥ {1,x})∪(r ⩥ {2})∪(r ⩥ {3,x})={x ↦ x}";
 
 	@Override
 	public String getReasonerID() {
