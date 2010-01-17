@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?pde version="3.4"?>
+<?pde version="3.5"?>
 
-<product name="%productName" id="org.rodinp.platform.product" application="org.eclipse.ui.ide.workbench" version="@version@" useFeatures="true">
+<product name="%productName" uid="org.rodinp.platform.product" id="org.rodinp.platform.product" application="org.eclipse.ui.ide.workbench" version="1.2.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/org.rodinp.platform/icons/about.gif"/>
@@ -39,6 +39,7 @@
    <vm>
    </vm>
 
+
    <plugins>
    </plugins>
 
@@ -46,5 +47,6 @@
       <feature id="org.rodinp.platform" version="1.1.0.qualifier"/>
       <feature id="org.eventb.ide" version="1.1.0.qualifier"/>
    </features>
+
 
 </product>
