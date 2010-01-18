@@ -20,17 +20,18 @@ import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
+import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 
-public class RanDistRightRewrites extends AbstractManualRewrites {
+public class RanDistRightRewrites extends AbstractManualRewrites implements IVersionedReasoner  {
 
 	private static final int VERSION = 0;
 	
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".ranDistRightRewrites";
 
-	public static int getVersion() {
+	public int getVersion() {
 		return VERSION;
 	}
 	
