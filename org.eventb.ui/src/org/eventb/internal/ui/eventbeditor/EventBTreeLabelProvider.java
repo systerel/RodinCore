@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -11,9 +11,18 @@
  *     Systerel - used EventBSharedColor
  *     Systerel - used ElementDescRegistry
  *     ETH Zurich - adapted to org.rodinp.keyboard
+ *     Systerel - fixed bug #1824569
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -21,10 +30,13 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableFontProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
@@ -32,6 +44,7 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry.Colu
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 /**
@@ -41,7 +54,7 @@ import org.rodinp.keyboard.preferences.PreferenceConstants;
  *         Tree Viewer.
  */
 public class EventBTreeLabelProvider implements ITableLabelProvider,
-		ITableFontProvider, ITableColorProvider, IPropertyChangeListener {
+		ITableFontProvider, ITableColorProvider, IPropertyChangeListener, IResourceChangeListener {
 
 	// The associated Event-B Editor
 	private IEventBEditor<?> editor;
@@ -62,6 +75,10 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 		this.editor = editor;
 		this.viewer = viewer;
 		JFaceResources.getFontRegistry().addListener(this);
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		workspace.addResourceChangeListener(this,
+				IResourceChangeEvent.POST_BUILD
+						| IResourceChangeEvent.POST_CHANGE);
 	}
 
 	/*
@@ -107,7 +124,8 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
 	public void dispose() {
-		// Do nothing
+		JFaceResources.getFontRegistry().removeListener(this);
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
 
 	/*
@@ -117,6 +135,8 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 *      java.lang.String)
 	 */
 	public boolean isLabelProperty(Object element, String property) {
+		if (property.equals(RodinMarkerUtil.RODIN_PROBLEM_MARKER))
+			return true;
 		return false;
 	}
 
@@ -173,6 +193,43 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	public void propertyChange(PropertyChangeEvent event) {
 		font = JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
 		viewer.refresh();
+	}
+
+	public void resourceChanged(IResourceChangeEvent event) {
+		final Set<Object> elements = getRefreshElements(event);
+		if (elements.size() != 0) {
+			final String[] properties = new String[] { RodinMarkerUtil.RODIN_PROBLEM_MARKER };
+			Display display = viewer.getControl().getDisplay();
+			final EventBEditableTreeViewer v = viewer;
+			display.syncExec(new Runnable() {
+				public void run() {
+					for (Object element : elements) {
+						v.update(element, properties);
+					}
+				}
+
+			});
+		}
+	}
+
+	protected Set<Object> getRefreshElements(IResourceChangeEvent event) {
+		IMarkerDelta[] rodinProblemMakerDeltas = event.findMarkerDeltas(
+				RodinMarkerUtil.RODIN_PROBLEM_MARKER, true);
+		final Set<Object> elements = new HashSet<Object>();
+		for (IMarkerDelta delta : rodinProblemMakerDeltas) {
+			Object element = RodinMarkerUtil.getElement(delta);
+			if (element != null && !elements.contains(element)) { 
+				elements.add(element);
+				element = ((ITreeContentProvider) ((TreeViewer) viewer)
+						.getContentProvider()).getParent(element);
+				while (element != null) {
+					elements.add(element);
+					element = ((ITreeContentProvider) ((TreeViewer) viewer)
+							.getContentProvider()).getParent(element);
+				}
+			}
+		}
+		return elements;
 	}
 
 }
