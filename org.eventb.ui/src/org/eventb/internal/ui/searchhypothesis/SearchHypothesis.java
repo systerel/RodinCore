@@ -46,7 +46,6 @@ import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
-import org.rodinp.keyboard.RodinKeyboardPlugin;
 
 /**
  * @author htson
@@ -80,9 +79,7 @@ public class SearchHypothesis extends ProverContentOutline implements
 
 				public void keyPressed(KeyEvent e) {
 					if (e.keyCode == SWT.CR) {
-						searchHypothesis.setSearchedHyp(text.getText());
-						searchHypothesis.updateView();
-						setFocus();
+						search();
 					}
 				}
 			};
@@ -98,16 +95,14 @@ public class SearchHypothesis extends ProverContentOutline implements
 			ti.setWidth(200);
 		}
 
-		public String getSearchString() {
-			return text.getText();
-		}
-
-		public void setSearchString(String str) {
-			text.setText(str);
-		}
-
 		public void setFocus() {
 			text.setFocus();
+		}
+
+		public void search() {
+			searchHypothesis.setSearchedHyp(text.getText());
+			searchHypothesis.updateView();
+			setFocus();
 		}
 
 	}
@@ -159,11 +154,11 @@ public class SearchHypothesis extends ProverContentOutline implements
 			final ISearchHypothesisPage page = (ISearchHypothesisPage) obj;
 			initPage(page);
 			page.createControl(getPageBook());
+			final IActionBars actionBars = page.getSite().getActionBars();
+			addTextSearch(actionBars.getToolBarManager());
 			makeButtons();
 			makeDropDownItems();
-			final IActionBars actionBars = page.getSite().getActionBars();
 			fillDropDownList(actionBars.getMenuManager());
-			addTextSearch(actionBars.getToolBarManager());
 			fillMenu(actionBars.getToolBarManager());
 			store.addPropertyChangeListener(this);
 			return new PageRec(part, page);
@@ -192,7 +187,6 @@ public class SearchHypothesis extends ProverContentOutline implements
 	 */
 	public void setSearchedHyp(String input) {
 		searchedHyp = input;
-		searchBox.setSearchString(searchedHyp);
 	}
 
 	/**
@@ -218,21 +212,14 @@ public class SearchHypothesis extends ProverContentOutline implements
 				.getImageRegistry().getDescriptor(
 						IEventBSharedImages.IMG_INVERSE));
 
-		final SearchBox sBox = this.searchBox;
+		final SearchBox sBox = searchBox;
 		search = new Action(null, Action.AS_PUSH_BUTTON) {
 			@Override
 			public void run() {
 				if (getActiveProverUI() == null) {
 					return;
 				}
-				if (sBox == null){
-					return;
-				}
-				final String searchString = sBox.getSearchString();
-				final String toSearch = RodinKeyboardPlugin.getDefault()
-						.translate(searchString);
-				setSearchedHyp(toSearch);
-				updateView();
+				sBox.search();
 			}
 		};
 		search
