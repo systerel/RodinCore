@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<project name="deploy" default="generate-help">
+	
+	<dirname property="tool.dir" file="${ant.file.deploy}"/>
+<!--
+	<property name="dest.dir" value="${tool.dir}/.."/>
+	<property name="wiki.domain" value="http://wiki.event-b.org"/>
+	<property name="wiki.page" value="Decomposition_Plug-in_User_Guide"/>
+	<property name="help.title" value="Decomposition Plug-in User's Guide"/>
+-->
+	<path id="classpath">
+		<fileset dir="${tool.dir}">
+			<include name="org.eclipse.mylyn.wikitext.*core*.jar"/>
+			<include name="pyAntTasks-1.2.jar"/>
+		</fileset>
+	</path>
+
+	<taskdef classpathref="classpath" resource="pyAntTasks.properties"/>
+	<taskdef classpathref="classpath" resource="org/eclipse/mylyn/wikitext/core/util/anttask/tasks.properties" />
+
+    <!-- ===================================================================== -->
+    <!-- The following properties must be set:                                 -->
+    <!-- dest.dir - where generated docs will be placed                        -->
+	<!-- wiki.domain - the wiki domain (ex:"http://wiki.event-b.org")          -->
+	<!-- wiki.page - the wiki page (such as url = wiki.domain/wiki.page )      -->
+	<!-- help.title - the title of the generated html document                 -->
+    <!-- ===================================================================== -->
+	<target name="generate-help" depends="get-mediawiki" description="Generate Eclipse help from MediaWiki source">
+		<wikitext-to-eclipse-help markupLanguage="MediaWiki"
+			overwrite="true"
+			multipleOutputFiles="true"
+			formatOutput="true"
+			navigationImages="true"
+			helpPrefix="doc"
+			prependImagePrefix="images">
+			<fileset dir="${dest.dir}">
+				<include name="${wiki.page}.mediawiki"/>
+			</fileset>
+		</wikitext-to-eclipse-help>
+		
+		<replaceregexp match="&lt;toc topic=&quot;doc/${wiki.page}.html&quot; label=&quot;${wiki.page}&quot;&gt;" replace="&lt;toc topic=&quot;doc/${wiki.page}.html&quot; label=&quot;${help.title}&quot;&gt;">
+			<fileset dir="${dest.dir}" includes="${wiki.page}-toc.xml"/>
+		</replaceregexp>
+		
+		<replaceregexp match="&lt;a href=&quot;/wiki" replace="&lt;a href=&quot;${wiki.domain}/index.php" flags="g">
+			<fileset dir="${dest.dir}" includes="${wiki.page}.html"/>
+		</replaceregexp>
+
+		<replaceregexp match="\{\{TOC(.*?)\}\}" replace="" flags="g">
+			<fileset dir="${dest.dir}" includes="${wiki.page}.html"/>
+		</replaceregexp>
+	</target>
+
+	<target name="get-mediawiki" description="Get the MediaWiki source">
+		<py-run script="Main.py" pythonpath="${tool.dir}" optimize="0">
+			<arg value="-o"/>
+			<arg value="${dest.dir}"/>
+			<arg value="-d"/>
+			<arg value="${wiki.domain}"/>
+			<arg value="${wiki.page}"/>
+		</py-run>
+	</target>
+
+</project>
