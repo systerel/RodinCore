@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Event-B Explorer Tests
 Bundle-SymbolicName: fr.systerel.explorer.tests
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-Vendor: Systerel
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

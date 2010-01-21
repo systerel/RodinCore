@@ -2,7 +2,7 @@
 <feature
       id="org.rodinp.platform"
       label="%featureName"
-      version="1.1.0.qualifier"
+      version="1.2.0.qualifier"
       provider-name="%providerName"
       os="linux,win32,macosx"
       ws="gtk,win32,carbon"
@@ -22,7 +22,6 @@
    </license>
 
    <url>
-      <!-- update label="%updateSiteName" url="http://rodin-b-sharp.sourceforge.net/updates"/-->
       <discovery label="%updateSiteName" url="http://rodin-b-sharp.sourceforge.net/updates"/>
    </url>
 
