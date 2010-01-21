@@ -3,12 +3,7 @@
 <project name="deploy" default="generate-help">
 	
 	<dirname property="tool.dir" file="${ant.file.deploy}"/>
-<!--
-	<property name="dest.dir" value="${tool.dir}/.."/>
-	<property name="wiki.domain" value="http://wiki.event-b.org"/>
-	<property name="wiki.page" value="Decomposition_Plug-in_User_Guide"/>
-	<property name="help.title" value="Decomposition Plug-in User's Guide"/>
--->
+
 	<path id="classpath">
 		<fileset dir="${tool.dir}">
 			<include name="org.eclipse.mylyn.wikitext.*core*.jar"/>
