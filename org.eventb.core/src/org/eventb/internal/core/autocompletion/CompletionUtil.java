@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2009 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eventb.internal.core.autocompletion;
 import static org.eventb.core.EventBPlugin.MODIFICATION;
 import static org.eventb.core.EventBPlugin.REDECLARATION;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -27,6 +28,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.LanguageVersion;
+import org.eventb.internal.core.Util;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
@@ -44,6 +46,9 @@ public class CompletionUtil {
 
 	// disappearing parameters
 	public static Set<IDeclaration> getDisappearingParams(IEvent event) {
+		if(isExtended(event)) {
+			return Collections.emptySet();
+		}
 		final Set<IEvent> abstractEvents = getAbstractEvents(event);
 		final Set<IDeclaration> absParams = getParameters(abstractEvents);
 		final Set<IDeclaration> redeclared = getRedeclared(event);
@@ -52,18 +57,31 @@ public class CompletionUtil {
 		return absParams;
 	}
 
-	private static Set<IDeclaration> getParams(IEvent event) {
+	public static Set<IDeclaration> getParameters(IEvent event) {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		final Set<IDeclaration> declarations = query.getDeclarations(event.getRodinFile());
 		new ParameterFilter(event).apply(declarations);
+		if (isExtended(event)) {
+			declarations.addAll(getParameters(getAbstractEvents(event)));
+		}
 		return declarations;
+	}
+	
+	private static boolean isExtended(IEvent event) {
+		try {
+			return event.isExtended();
+		} catch (RodinDBException e) {
+			Util.log(e, "Autocompletion: while fetching extended attribute of "
+					+ event);
+			return false;
+		}
 	}
 
 	private static Set<IDeclaration> getParameters(
 			Set<IEvent> abstractEvents) {
 		final Set<IDeclaration> abstractParams = new LinkedHashSet<IDeclaration>();
 		for (IEvent event : abstractEvents) {
-			abstractParams.addAll(getParams(event));
+			abstractParams.addAll(getParameters(event));
 		}
 		return abstractParams;
 	}

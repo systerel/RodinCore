@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2009 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@ package org.eventb.internal.core.autocompletion;
 
 import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 import static org.eventb.internal.core.autocompletion.CompletionUtil.getDeterministicallyAssignedVars;
+import static org.eventb.internal.core.autocompletion.CompletionUtil.getDisappearingVars;
+import static org.eventb.internal.core.autocompletion.CompletionUtil.getParameters;
 import static org.eventb.internal.core.indexers.IdentTable.getPrimedName;
 
 import java.util.ArrayList;
@@ -135,7 +137,8 @@ public class AutoCompletion {
 
 	private static Set<String> getGrdActCompletions(IEvent event) {
 		final Set<IDeclaration> decls = getVisibleDecls(event.getRodinFile());
-		final AbstractFilter concreteParams = new ParameterFilter(event);
+		final Set<IDeclaration> parameters = getParameters(event);
+		final AbstractFilter concreteParams = new EnumeratedFilter(parameters);
 		new CombinedFilter(SET_CST_VAR_FILTER, concreteParams).apply(decls);
 		removeDisappearingVars(decls, event.getRodinFile());
 		return getNames(decls);
@@ -143,24 +146,21 @@ public class AutoCompletion {
 
 	private static void removeDisappearingVars(final Set<IDeclaration> decls,
 			IRodinFile file) {
-		final Set<IDeclaration> disapVars = CompletionUtil
-				.getDisappearingVars(file);
+		final Set<IDeclaration> disapVars = getDisappearingVars(file);
 		decls.removeAll(disapVars);
 	}
 
 	private static Set<String> getWitnessCompletions(
 			IAttributeLocation location, IEvent event) {
 
-		final AbstractFilter abstractParams = new ParameterFilter(event);
 		if (isLabel(location)) { // witness label
 			return getWitnessLabelCompletions(event);
 		} else { // witness predicate
-			return getWitnessPredicateCompletions(event, abstractParams);
+			return getWitnessPredicateCompletions(event);
 		}
 	}
 
-	private static Set<String> getWitnessPredicateCompletions(IEvent event,
-			final AbstractFilter abstractParams) {
+	private static Set<String> getWitnessPredicateCompletions(IEvent event) {
 		final Set<String> compls = getGrdActCompletions(event);
 		compls.addAll(getDisapVarNames(event));
 		compls.addAll(getWitnessLabelCompletions(event));
@@ -169,7 +169,6 @@ public class AutoCompletion {
 
 	private static Set<String> getWitnessLabelCompletions(IEvent event) {
 		final Set<String> disapNames = getPrimedDisapVarNames(event);
-		// TODO ¿ really get parameters for INITIALISATION ?
 
 		try {
 			if (event.isInitialisation()) {

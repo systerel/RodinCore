@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -283,7 +283,8 @@ public class AutoCompletionTests extends BuilderTest {
 		final IGuard guard = evt1.getGuard(INTERNAL_PRM2);
 		final IAttributeLocation grdPred = RodinCore.getInternalLocation(guard,
 				PREDICATE_ATTRIBUTE);
-		doTest(grdPred, "cst1", "prmM2", "set1", "varM2");
+		// includes prmM1 from extended event
+		doTest(grdPred, "cst1", "prmM1", "prmM2", "set1", "varM2");
 
 	}
 
@@ -299,7 +300,8 @@ public class AutoCompletionTests extends BuilderTest {
 		final IWitness witness = evt1.getWitness(INTERNAL_WIT1);
 		final IAttributeLocation witLabel = RodinCore.getInternalLocation(
 				witness, LABEL_ATTRIBUTE);
-		doTest(witLabel, "prmM1", "varM1'");
+		// "prmM1" does not disappear because evt1 is extended
+		doTest(witLabel, "varM1'");
 	}
 
 	public void testEvtInWitPredicate() throws Exception {
@@ -332,6 +334,7 @@ public class AutoCompletionTests extends BuilderTest {
 
 		// varM1 is deterministically assigned in abstract event
 		// so varM1' must not appear in the completions
+		// but but evt3 is not extended so prmM1 disappears
 		doTest(witLabel, "prmM1");
 	}
 	
