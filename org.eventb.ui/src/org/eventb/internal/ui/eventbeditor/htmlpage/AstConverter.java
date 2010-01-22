@@ -13,6 +13,7 @@
  *     Systerel - added implicit children for events
  *     Systerel - added theorem attribute of IDerivedPredicateElement
  * 	   Systerel - fixed bug #2884774 : display guards marked as theorems
+ * 	   Systerel - fixed bug #2936324 : Extends clauses in pretty print
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.htmlpage;
 
@@ -272,18 +273,19 @@ public abstract class AstConverter {
 
 		} else if (root instanceof IContextRoot) {
 			// EXTENDS clause
-			IRodinElement[] extendz;
 			try {
-				extendz = root
+				final IRodinElement[] extendz = root
 						.getChildrenOfType(IExtendsContext.ELEMENT_TYPE);
 				if (extendz.length != 0) {
-					IExtendsContext extend = (IExtendsContext) extendz[0];
-					String name = extend.getAbstractContextName();
 					masterKeyword("EXTENDS");
-					beginLevel1();
-					appendComponentName(makeHyperlink(EventBPlugin
-							.getContextFileName(name), wrapString(name)));
-					endLevel1();
+					for (IRodinElement extend : extendz) {
+						beginLevel1();
+						final String name = ((IExtendsContext) extend)
+								.getAbstractContextName();
+						appendComponentName(makeHyperlink(EventBPlugin
+								.getContextFileName(name), wrapString(name)));
+						endLevel1();
+					}
 				}
 			} catch (RodinDBException e) {
 				EventBEditorUtils.debugAndLogError(e,
