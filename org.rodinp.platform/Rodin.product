@@ -44,8 +44,8 @@
    </plugins>
 
    <features>
-      <feature id="org.rodinp.platform" version="1.2.0.qualifier"/>
-      <feature id="org.eventb.ide" version="1.2.0.qualifier"/>
+      <feature id="org.rodinp.platform" version="0.0.0"/>
+      <feature id="org.eventb.ide" version="0.0.0"/>
    </features>
 
 
