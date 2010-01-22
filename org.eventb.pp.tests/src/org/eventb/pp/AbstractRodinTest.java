@@ -16,6 +16,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.LanguageVersion;
@@ -44,8 +45,9 @@ public abstract class AbstractRodinTest extends AbstractPPTest {
 		}
 
 		private static Predicate parsePredicate(String pred) {
-			return ff.parsePredicate(pred, LANGUAGE_VERSION, null)
-					.getParsedPredicate();
+			final IParseResult result = ff.parsePredicate(pred, LANGUAGE_VERSION, null);
+			assertFalse(result.hasProblem());
+			return result.getParsedPredicate();
 		}
 
 		private static ITypeEnvironment parseTypeEnvironment(
