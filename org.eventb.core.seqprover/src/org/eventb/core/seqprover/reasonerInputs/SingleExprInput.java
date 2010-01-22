@@ -70,6 +70,8 @@ public class SingleExprInput implements IReasonerInput{
 	 * @since 1.2
 	 */
 	protected void setError(String message) {
+		if (message == null)
+			throw new IllegalArgumentException("null error message");
 		if (hasError()) 
 			throw new IllegalStateException("An error was already detected.");
 		expression = null;
