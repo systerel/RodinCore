@@ -23,11 +23,12 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IActionBars;
@@ -38,7 +39,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
-import org.eventb.internal.ui.EventBStyledText;
+import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.internal.ui.prover.ProverContentOutline;
@@ -57,7 +58,7 @@ public class SearchHypothesis extends ProverContentOutline implements
 
 	private static final class SearchBox extends ToolBarContributionItem {
 
-		protected StyledText text;
+		protected Text text;
 
 		protected SearchHypothesis searchHypothesis;
 
@@ -69,21 +70,18 @@ public class SearchHypothesis extends ProverContentOutline implements
 		protected Composite createComposite(ToolBar parent) {
 			final Composite composite = new Composite(parent, SWT.FLAT);
 			composite.setLayout(new FillLayout());
-			text = new StyledText(composite, SWT.SINGLE | SWT.BORDER);
-			new EventBStyledText(text, true);
-			final KeyListener listener = new KeyListener() {
+			text = new Text(composite, SWT.SINGLE | SWT.BORDER);
+			final EventBMath math = new EventBMath(text);
+			final SelectionListener listener = new SelectionAdapter() {
 
-				public void keyReleased(KeyEvent e) {
-					// do nothing
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+					math.translate();
+					search();
 				}
-
-				public void keyPressed(KeyEvent e) {
-					if (e.keyCode == SWT.CR) {
-						search();
-					}
-				}
+				
 			};
-			text.addKeyListener(listener);
+			text.addSelectionListener(listener);
 			return composite;
 		}
 
