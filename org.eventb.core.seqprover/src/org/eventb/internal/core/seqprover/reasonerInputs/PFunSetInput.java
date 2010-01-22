@@ -52,7 +52,7 @@ public class PFunSetInput extends SingleExprInput {
 		
 		final Expression expr = getExpression();
 		if (!Lib.isSetOfPartialFunction(expr)) {
-			error =	"Expected a set of all partial functions S ⇸ T";
+			setError("Expected a set of all partial functions S ⇸ T");
 			return;
 		}
 	 	left = ((BinaryExpression) expr).getLeft();

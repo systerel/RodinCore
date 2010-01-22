@@ -27,22 +27,18 @@ public class SingleExprInput implements IReasonerInput{
 	private static final String SERIALIZATION_KEY = "expr";
 
 	private Expression expression;
-	/**
-	 * @since 1.2
-	 */
-	protected String error;
+	private String error;
 	
 	public SingleExprInput(String exprString, ITypeEnvironment typeEnv){
 		
 		expression = Lib.parseExpression(exprString);
 		if (expression == null)
 		{
-			error = "Parse error for expression: "+ exprString;
+			setError("Parse error for expression: " + exprString);
 			return;
 		}
 		if (! Lib.typeCheckClosed(expression,typeEnv)){
-			error = "Type check failed for expression: "+expression;
-			expression = null;
+			setError("Type check failed for expression: " + expression);
 			return;
 		}
 		error = null;
@@ -63,6 +59,21 @@ public class SingleExprInput implements IReasonerInput{
 	 */
 	public final String getError() {
 		return error;
+	}
+	
+	/**
+	 * Allows subclasses to signal an error in this input. Must not be called if
+	 * an error was already detected.
+	 * 
+	 * @param message
+	 *            new error message
+	 * @since 1.2
+	 */
+	protected void setError(String message) {
+		if (hasError()) 
+			throw new IllegalStateException("An error was already detected.");
+		expression = null;
+		error = message;
 	}
 
 	/**
