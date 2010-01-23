@@ -42,12 +42,10 @@ import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
 import org.eventb.core.IConvergenceElement.Convergence;
-import org.eventb.core.basis.SeesContext;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -252,13 +250,11 @@ public abstract class AstConverter {
 			IProgressMonitor monitor) {
 		if (root instanceof IMachineRoot) {
 			// REFINES clause
-			IRodinElement[] refines;
 			try {
-				refines = root
+				final IRefinesMachine[] refines = root
 						.getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
 				if (refines.length != 0) {
-					IRefinesMachine refine = (IRefinesMachine) refines[0];
-					String name = refine.getAbstractMachineName();
+					final String name = refines[0].getAbstractMachineName();
 					masterKeyword("REFINES");
 					beginLevel1();
 					appendComponentName(makeHyperlink(EventBPlugin
@@ -274,14 +270,13 @@ public abstract class AstConverter {
 		} else if (root instanceof IContextRoot) {
 			// EXTENDS clause
 			try {
-				final IRodinElement[] extendz = root
+				final IExtendsContext[] extendz = root
 						.getChildrenOfType(IExtendsContext.ELEMENT_TYPE);
 				if (extendz.length != 0) {
 					masterKeyword("EXTENDS");
-					for (IRodinElement extend : extendz) {
+					for (final IExtendsContext extend : extendz) {
 						beginLevel1();
-						final String name = ((IExtendsContext) extend)
-								.getAbstractContextName();
+						final String name = extend.getAbstractContextName();
 						appendComponentName(makeHyperlink(EventBPlugin
 								.getContextFileName(name), wrapString(name)));
 						endLevel1();
@@ -296,9 +291,9 @@ public abstract class AstConverter {
 		}
 
 		// SEES clause for both context and machine
-		IRodinElement[] seeContexts;
+		final ISeesContext[] seesContexts;
 		try {
-			seeContexts = root
+			seesContexts = root
 					.getChildrenOfType(ISeesContext.ELEMENT_TYPE);
 		} catch (RodinDBException e) {
 			EventBEditorUtils.debugAndLogError(e, "Cannot get sees machine of "
@@ -306,21 +301,19 @@ public abstract class AstConverter {
 			return;
 		}
 
-		int length = seeContexts.length;
-		if (length != 0) {
+		if (seesContexts.length != 0) {
 			masterKeyword("SEES");
-			for (int i = 0; i < length; i++) {
+			for (final ISeesContext seesContext: seesContexts) {
 				try {
 					beginLevel1();
-					appendComponentName(
-							makeHyperlink(root.getHandleIdentifier(),
-									wrapString(((SeesContext) seeContexts[i])
-											.getSeenContextName())));
+					final String name = seesContext.getSeenContextName();
+					appendComponentName(makeHyperlink(root
+							.getHandleIdentifier(), wrapString(name)));
 					endLevel1();
 				} catch (RodinDBException e) {
 					EventBEditorUtils.debugAndLogError(e,
 							"Cannot get seen context name of "
-									+ seeContexts[i].getElementName());
+									+ seesContext.getElementName());
 				}
 			}
 		}
