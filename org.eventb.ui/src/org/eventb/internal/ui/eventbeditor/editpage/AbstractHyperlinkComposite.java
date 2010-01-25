@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,11 @@
  *     Systerel - used EventBSharedColor
  *     Systerel - separation of file and root element
  *     Systerel - introduced read only elements
+ *     Systerel - fixed Hyperlink.setImage() calls
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
+
+import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -82,7 +85,7 @@ public abstract class AbstractHyperlinkComposite {
 		initialised = true;
 		upHyperlink = toolkit.createImageHyperlink(
 				composite, SWT.TOP);
-		upHyperlink.setImage(EventBImage
+		setHyperlinkImage(upHyperlink, EventBImage
 				.getImage(IEventBSharedImages.IMG_UP));
 		upHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
 
@@ -99,7 +102,7 @@ public abstract class AbstractHyperlinkComposite {
 		
 		downHyperlink = toolkit.createImageHyperlink(
 				composite, SWT.TOP);
-		downHyperlink.setImage(EventBImage
+		setHyperlinkImage(downHyperlink, EventBImage
 				.getImage(IEventBSharedImages.IMG_DOWN));
 		downHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,11 @@
  *     Systerel - used ElementDescRegistry
  *     Systerel - optimized tree traversal
  *     Systerel - fixed expanding
+ *     Systerel - fixed Hyperlink.setImage() calls
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
+
+import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -362,8 +365,7 @@ public class EditPage extends EventBEditorPage implements
 				toolkit.createImageHyperlink(comp, SWT.TOP);
 		// to fix bug 2420471
 		removeFocusListener(hyperlinkExpand);
-		hyperlinkExpand.setImage(EventBImage
-				.getImage(image));
+		setHyperlinkImage(hyperlinkExpand, EventBImage.getImage(image));
 		final GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
 		hyperlinkExpand.setLayoutData(gd);
 		hyperlinkExpand.addHyperlinkListener(listener);

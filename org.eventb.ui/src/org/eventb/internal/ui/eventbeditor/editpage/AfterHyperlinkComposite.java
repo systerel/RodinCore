@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,11 @@
  *     Systerel - added history support
  *     Systerel - separation of file and root element
  *     Systerel - introduced read only elements
+ *     Systerel - fixed Hyperlink.setImage() calls
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
+
+import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -48,7 +51,7 @@ public class AfterHyperlinkComposite extends AbstractHyperlinkComposite {
 
 		addAfterHyperlink = toolkit.createImageHyperlink(composite,
 				SWT.TOP);
-		addAfterHyperlink.setImage(EventBImage
+		setHyperlinkImage(addAfterHyperlink, EventBImage
 				.getImage(IEventBSharedImages.IMG_ADD));
 		addAfterHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
 

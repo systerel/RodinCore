@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 ETH Zurich and others.
+ * Copyright (c) 2008, 2010 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -14,6 +14,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - added getAbstractContexts()
  *     Systerel - added isReadOnly()
+ *     Systerel - fixed Hyperlink.setImage() calls
  *******************************************************************************/
 package org.eventb.internal.ui;
 
@@ -23,6 +24,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAction;
 import org.eventb.core.IContextRoot;
@@ -323,6 +326,22 @@ public class EventBUtils {
 			throws RodinDBException {
 		return element.hasAttribute(GENERATED_ATTRIBUTE)
 				&& element.getAttributeValue(GENERATED_ATTRIBUTE);
+	}
+
+	/**
+	 * Use this method to avoid a bug on Mac Platform, instead of
+	 * <code>hyperlink.setImage(image);</code>
+	 * 
+	 * @param hyperlink
+	 *            an hyperlink
+	 * @param image
+	 *            an image
+	 */
+	public static void setHyperlinkImage(ImageHyperlink hyperlink, Image image) {
+		final boolean enabled = hyperlink.isEnabled();
+		hyperlink.setEnabled(false);
+		hyperlink.setImage(image);
+		hyperlink.setEnabled(enabled);
 	}
 
 }

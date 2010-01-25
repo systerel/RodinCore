@@ -14,9 +14,11 @@
  *     Systerel - the input area is now a StyledText
  *     Systerel - refactored to use ITacticProvider2 and ITacticApplication
  *     Systerel - redirected dialog opening and externalized strings
+ *     Systerel - fixed Hyperlink.setImage() calls
  *******************************************************************************/
 package org.eventb.internal.ui.proofcontrol;
 
+import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyCommand;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyTactic;
 import static org.eventb.internal.ui.utils.Messages.title_unexpectedError;
@@ -682,7 +684,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				}
 			}
 		}
-		smiley.setImage(image);
+		setHyperlinkImage(smiley, image);
+//		smiley.setEnabled(true);
 		midComp.pack();
 	}
 

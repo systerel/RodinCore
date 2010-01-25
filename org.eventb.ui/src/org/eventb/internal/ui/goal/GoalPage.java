@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,11 @@
  *     Systerel - mathematical language V2
  *     Systerel - refactored to use ITacticProvider2 and ITacticApplication
  *     Systerel - modifying getParsedTypeChecked() calls to getParsed()
+ *     Systerel - fixed Hyperlink.setImage() calls
  ******************************************************************************/
 package org.eventb.internal.ui.goal;
 
+import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyCommand;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyTactic;
 import static org.eventb.internal.ui.prover.ProverUIUtils.checkRange;
@@ -202,7 +204,7 @@ public class GoalPage extends Page implements IGoalPage {
 		hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		toolkit.adapt(hyperlink, true, true);
-		hyperlink.setImage(EventBImage.getImage(IEventBSharedImages.IMG_NULL));
+		setHyperlinkImage(hyperlink, EventBImage.getImage(IEventBSharedImages.IMG_NULL));
 		hyperlink.setEnabled(false);
 		return;
 	}

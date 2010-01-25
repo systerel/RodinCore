@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,11 @@
  *     Systerel - added history support
  *     Systerel - used ElementDescRegistry
  *     Systerel - introduced read only elements
+ *     Systerel - fixed Hyperlink.setImage() calls
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
+import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
 import static org.eventb.internal.ui.eventbeditor.EventBEditorUtils.checkAndShowReadOnly;
 
 import org.eclipse.swt.SWT;
@@ -78,7 +80,7 @@ public class ButtonComposite {
 		tmp.setLayoutData(gridData);
 
 		foldingHyperlink = toolkit.createImageHyperlink(composite, SWT.TOP);
-		foldingHyperlink.setImage(EventBImage
+		setHyperlinkImage(foldingHyperlink, EventBImage
 				.getImage(IEventBSharedImages.IMG_COLLAPSED));
 		foldingHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
 
@@ -93,10 +95,10 @@ public class ButtonComposite {
 
 			public void mouseEnter(MouseEvent e) {
 				if (elementComp.isExpanded()) {
-					foldingHyperlink.setImage(EventBImage
+					setHyperlinkImage(foldingHyperlink, EventBImage
 							.getImage(IEventBSharedImages.IMG_EXPANDED_HOVER));
 				} else {
-					foldingHyperlink.setImage(EventBImage
+					setHyperlinkImage(foldingHyperlink, EventBImage
 							.getImage(IEventBSharedImages.IMG_COLLAPSED_HOVER));
 				}
 			}
@@ -113,7 +115,7 @@ public class ButtonComposite {
 
 		final IRodinElement element = elementComp.getElement();
 		selectHyperlink = toolkit.createImageHyperlink(composite, SWT.TOP);
-		selectHyperlink.setImage(EventBImage.getRodinImage(element));
+		setHyperlinkImage(selectHyperlink, EventBImage.getRodinImage(element));
 		selectHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
@@ -130,7 +132,7 @@ public class ButtonComposite {
 		handler.activateHoverHelp(selectHyperlink);
 
 		removeHyperlink = toolkit.createImageHyperlink(composite, SWT.TOP);
-		removeHyperlink.setImage(EventBImage
+		setHyperlinkImage(removeHyperlink, EventBImage
 				.getImage(IEventBSharedImages.IMG_REMOVE));
 		removeHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
@@ -155,7 +157,7 @@ public class ButtonComposite {
 			foldingHyperlink.setVisible(true);
 		} else
 			foldingHyperlink.setVisible(false);
-		selectHyperlink.setImage(EventBImage.getRodinImage(element));
+		setHyperlinkImage(selectHyperlink, EventBImage.getRodinImage(element));
 		selectHyperlink.redraw();
 	}
 
@@ -180,10 +182,10 @@ public class ButtonComposite {
 
 	public void updateExpandStatus() {
 		if (elementComp.isExpanded()) {
-			foldingHyperlink.setImage(EventBImage
+			setHyperlinkImage(foldingHyperlink, EventBImage
 					.getImage(IEventBSharedImages.IMG_EXPANDED));
 		} else {
-			foldingHyperlink.setImage(EventBImage
+			setHyperlinkImage(foldingHyperlink, EventBImage
 					.getImage(IEventBSharedImages.IMG_COLLAPSED));
 		}
 	}

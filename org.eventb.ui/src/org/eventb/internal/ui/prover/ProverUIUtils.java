@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -10,9 +10,11 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - refactored to use ITacticProvider2 and ITacticApplication
  *     Systerel - added getParsed()
+ *     Systerel - fixed Hyperlink.setImage() calls
  ******************************************************************************/
-
 package org.eventb.internal.ui.prover;
+
+import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -47,9 +49,9 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.prover.IPositionApplication;
 import org.eventb.ui.prover.IPredicateApplication;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.prover.IProofCommand;
 import org.rodinp.core.RodinDBException;
 
@@ -326,7 +328,7 @@ public class ProverUIUtils {
 		hyperlink.setLayoutData(new GridData(alignment, alignment, false,
 				false));
 		toolkit.adapt(hyperlink, true, true);
-		hyperlink.setImage(icon);
+		setHyperlinkImage(hyperlink, icon);
 	
 		hyperlink.addHyperlinkListener(listener);
 		hyperlink.setToolTipText(tooltip);
