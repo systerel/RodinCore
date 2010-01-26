@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 ETH Zurich and others.
+ * Copyright (c) 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - refactored and used tactic applications
+ *     Systerel - added reference to original hypothesis
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
@@ -46,7 +47,8 @@ import org.eventb.core.seqprover.IProverSequent;
 @SuppressWarnings("unused")
 public class TotalDomSubstitutions {
 	
-	private final Map<Expression, Set<Expression>> substitutions = new HashMap<Expression, Set<Expression>>();
+	// substitution map: function |-> ( substitute |-> hypothesis )
+	private final Map<Expression, Map<Expression, Predicate>> substitutions = new HashMap<Expression, Map<Expression, Predicate>>();
 	private final IProverSequent sequent;
 	
 	public TotalDomSubstitutions(IProverSequent sequent) {
@@ -60,20 +62,28 @@ public class TotalDomSubstitutions {
 	}
 	
 	public Set<Expression> get(Expression expression) {
-	    final Set<Expression> result = substitutions.get(expression);
-	    if (result == null) {
+	    final Map<Expression, Predicate> map = substitutions.get(expression);
+	    if (map == null) {
 	        return Collections.emptySet();
 	    }
-		return result;
+		return map.keySet();
 	}
-	
-    private void addSubstitution(Expression from, Expression to) {
-        Set<Expression> set = substitutions.get(from);
-        if (set == null) {
-            set = new HashSet<Expression>();
-            substitutions.put(from, set);
+
+    public Predicate getNeededHyp(Expression expression, Expression substitute) {
+        final Map<Expression, Predicate> map = substitutions.get(expression);
+        if (map == null) {
+            return null;
         }
-        set.add(to);
+        return map.get(substitute);
+    }
+    
+    private void addSubstitution(Expression from, Expression to, Predicate hyp) {
+    	Map<Expression, Predicate> map = substitutions.get(from);
+        if (map == null) {
+            map = new HashMap<Expression, Predicate>();
+            substitutions.put(from, map);
+        }
+        map.put(to, hyp);
     }
 
 	%include {FormulaV2.tom}
@@ -88,7 +98,7 @@ public class TotalDomSubstitutions {
 	         */
 			In(left,Tfun(left1,_))->
 			{
-						addSubstitution(`left, `left1);
+						addSubstitution(`left, `left1, predicate);
 			}
 			
 			/**
@@ -96,7 +106,7 @@ public class TotalDomSubstitutions {
 	         */
 			In(left,Tinj(left1,_))->
 			{
-						addSubstitution(`left, `left1);
+						addSubstitution(`left, `left1, predicate);
 			}
 			
 			/**
@@ -104,7 +114,7 @@ public class TotalDomSubstitutions {
 	         */
 			In(left,Tsur(left1,_))->
 			{
-						addSubstitution(`left, `left1);
+						addSubstitution(`left, `left1, predicate);
 			}
 
 			/**
@@ -112,7 +122,7 @@ public class TotalDomSubstitutions {
 	         */
 			In(left,Tbij(left1,_))->
 			{
-						addSubstitution(`left, `left1);
+						addSubstitution(`left, `left1, predicate);
 			}
 			
 			/**
@@ -120,7 +130,7 @@ public class TotalDomSubstitutions {
 	         */
 			In(left,Trel(left1,_))->
 			{
-						addSubstitution(`left, `left1);
+						addSubstitution(`left, `left1, predicate);
 			}
             
             /**
@@ -128,7 +138,7 @@ public class TotalDomSubstitutions {
              */
             In(left,Strel(left1,_))->
             {
-                        addSubstitution(`left, `left1);
+                        addSubstitution(`left, `left1, predicate);
             }
             
 			}

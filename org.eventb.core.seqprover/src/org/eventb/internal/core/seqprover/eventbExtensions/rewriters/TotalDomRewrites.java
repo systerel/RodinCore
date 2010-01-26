@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - added needed hypothesis in antecedent (ver 1)
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
@@ -45,8 +46,10 @@ import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 public class TotalDomRewrites implements IVersionedReasoner {
 
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".totalDom";
-	private static final int VERSION = 0;
+	private static final int VERSION = 1;
 	
+	private static final FormulaFactory ff = FormulaFactory.getDefault();
+
 	public static class Input implements IReasonerInput {
 		public static final String POSITION_KEY = "pos";
 		public static final String SUBSTITUTE_KEY = "subst";
@@ -105,37 +108,48 @@ public class TotalDomRewrites implements IVersionedReasoner {
 		substitutions.computeSubstitutions();
 
 		final Predicate goal = seq.goal();
+		final Predicate toRewrite;
 		if (hyp == null) {
-			// Goal rewriting
-			Predicate newGoal = rewrite(goal, input, substitutions);
-
-			if (newGoal == null) {
-				return failure(input, goal);
-			}
-			final IAntecedent antecedent = ProverFactory
-					.makeAntecedent(newGoal);
-			return ProverFactory.makeProofRule(this, input, goal,
-					getDisplayName(hyp, position), antecedent);
+			toRewrite = goal;
 		} else {
-			// Hypothesis rewriting
 			if (!seq.containsHypothesis(hyp)) {
 				return ProverFactory.reasonerFailure(this, input,
 						"Nonexistent hypothesis: " + hyp);
 			}
+			toRewrite = hyp;
+		}
+		final Expression function = getFunction(toRewrite, position);
+		if (function == null) {
+			return failure(input, toRewrite);
+		}
+		final Predicate rewritten = rewrite(toRewrite, input, function, substitutions);
+		if (rewritten == null) {
+			return failure(input, toRewrite);
+		}
+		final Predicate neededHyp = substitutions.getNeededHyp(function, input.substitute);
+		if (neededHyp == null) {
+			return failure(input, toRewrite);
+		}
 
-			Predicate inferredHyp = rewrite(hyp, input, substitutions);
-			if (inferredHyp == null) {
-				return failure(input, hyp);
-			}
-
+		if (hyp == null) {
+			// Goal rewriting
+			final Predicate newGoal = rewritten;
+			final IAntecedent antecedent = ProverFactory
+					.makeAntecedent(newGoal);
+			return ProverFactory.makeProofRule(this, input, goal, neededHyp,
+					getDisplayName(hyp, position), antecedent);
+		} else {
+			// Hypothesis rewriting
+			final Predicate inferredHyp = rewritten;
 			final List<IHypAction> hypActions = Arrays.<IHypAction> asList(
 					makeForwardInfHypAction(singleton(hyp),
 							singleton(inferredHyp)),
 					makeHideHypAction(singleton(hyp)),
 					makeSelectHypAction(singleton(inferredHyp)));
-
-			return ProverFactory.makeProofRule(this, input, getDisplayName(hyp,
-					position), hypActions);
+			final IAntecedent antecedent = ProverFactory.makeAntecedent(null,
+					null, null, hypActions);
+			return ProverFactory.makeProofRule(this, input, neededHyp, null,
+					getDisplayName(hyp, position), antecedent);
 		}
 	}
 
@@ -161,42 +175,29 @@ public class TotalDomRewrites implements IVersionedReasoner {
 		return ProverFactory.makeHideHypAction(Arrays.asList(pred));
 	}
 
-	protected Predicate rewrite(Predicate pred, Input input,
-			TotalDomSubstitutions substitutions) {
-		final Formula<?> subFormula = pred.getSubFormula(input.position);
+	private Expression getFunction(Predicate pred, IPosition position) {
+		final Formula<?> subFormula = pred.getSubFormula(position);
 		if (subFormula.getTag() != Expression.KDOM) {
 			return null;
 		}
-
-		final Set<Expression> substitutes = substitutions
-				.get(((UnaryExpression) subFormula).getChild());
-		if (substitutes.isEmpty()) {
-			return null;
-		}
-
-		final Expression substitute = fetchSubstitute(input.substitute,
-				substitutes);
-		if (substitute == null) {
-			return null;
-		}
-
-		return pred.rewriteSubFormula(input.position, substitute,
-				FormulaFactory.getDefault());
-
+		return ((UnaryExpression) subFormula).getChild();
 	}
 
-	private static Expression fetchSubstitute(Expression substCandidate,
-			Set<Expression> substitutes) {
-		if (substitutes.contains(substCandidate)) {
-			return substCandidate;
+	protected Predicate rewrite(Predicate pred, Input input, Expression function,
+			TotalDomSubstitutions substitutions) {
+
+		final Set<Expression> substitutes = substitutions.get(function);
+		if (!substitutes.contains(input.substitute)) {
+			return null;
 		}
-		return null;
+
+		return pred.rewriteSubFormula(input.position, input.substitute, ff);
+
 	}
 
 	public final IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
 
-		final FormulaFactory ff = FormulaFactory.getDefault();
 		final String posString = reader.getString(Input.POSITION_KEY);
 		final IPosition position = ff.makePosition(posString);
 		final Expression[] substitutes = reader.getExpressions(Input.SUBSTITUTE_KEY);
