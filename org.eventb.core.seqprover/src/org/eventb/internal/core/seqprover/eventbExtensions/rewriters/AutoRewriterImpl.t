@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,10 +9,9 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language V2
  *     Systerel - SIMP_IN_COMPSET_*, SIMP_SPECIAL_OVERL, SIMP_FUNIMAGE_LAMBDA
+ *     Systerel - Added tracing mechanism
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
-
-import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractAutoRewrites.DEBUG;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -56,6 +55,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.OnePointSimplifier;
  */
 @SuppressWarnings("unused")
 public class AutoRewriterImpl extends DefaultRewriter {
+
+	public static boolean DEBUG;
 
 	private final IntegerLiteral number0 = ff.makeIntegerLiteral(BigInteger.ZERO, null);
 	
@@ -112,8 +113,12 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		return ff.makeSimplePredicate(tag, expression, null);
 	}
 
-	protected static void trace(Formula<?> from, Formula<?> to, String... rules) {
+	private static <T extends Formula<T>> void trace(T from, T to, String rule,
+			String... otherRules) {
 		if (!DEBUG) {
+			return;
+		}
+		if (from == to) {
 			return;
 		}
 		final StringBuilder sb = new StringBuilder();
@@ -121,16 +126,15 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		sb.append(from);
 		sb.append("  \u219d  ");
 		sb.append(to);
-		
-		if (rules.length > 0) {
-		    sb.append("   (");
-		    sb.append(rules[0]);
-		    for(int i=1; i<rules.length; i++) {
-		    	sb.append(" | ");
-		    	sb.append(rules[i]);
-		    }
-		    sb.append(")");
+
+		sb.append("   (");
+		sb.append(rule);
+		for (final String r : otherRules) {
+			sb.append(" | ");
+			sb.append(r);
 		}
+		sb.append(")");
+
 		System.out.println(sb);
 	}
 	
@@ -244,17 +248,24 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Conjunction 1: P ∧ ... ∧ ⊤ ∧ ... ∧ Q  == P ∧ ... ∧ Q
              * SIMP_SPECIAL_AND_BFALSE
 	    	 * Conjunction 2: P ∧ ... ∧ ⊥ ∧ ... ∧ Q  == ⊥
+	    	 */
+	    	Land(children) -> {
+				result = FormulaSimplification.simplifyAssociativePredicate(predicate, `children, Lib.True,
+    				Lib.False);
+				trace(predicate, result, "SIMP_SPECIAL_AND_BTRUE", "SIMP_SPECIAL_AND_BFALSE");
+				return result;
+			}
+
+	    	/**
              * SIMP_SPECIAL_OR_BTRUE
 	    	 * Disjunction 1: P ⋁ ... ⋁ ⊤ ⋁ ... ⋁ Q  == ⊤
              * SIMP_SPECIAL_OR_BFALSE
 	    	 * Disjunction 2: P ⋁ ... ⋁ ⊥ ⋁ ... ⋁ Q  == P ⋁ ... ⋁ Q
 	    	 */
-	    	(Land | Lor) (children) -> {
-				boolean isAnd = predicate.getTag() == Formula.LAND;
-
-				result = FormulaSimplification.simplifyAssociativePredicate(predicate, `children, isAnd ? Lib.True : Lib.False,
-    				isAnd ? Lib.False : Lib.True);
-				trace(predicate, result, "SIMP_SPECIAL_AND_BTRUE", "SIMP_SPECIAL_AND_BFALSE", "SIMP_SPECIAL_OR_BTRUE", "SIMP_SPECIAL_OR_BFALSE");
+	    	Lor(children) -> {
+				result = FormulaSimplification.simplifyAssociativePredicate(predicate, `children, Lib.False,
+    				Lib.True);
+				trace(predicate, result, "SIMP_SPECIAL_OR_BTRUE", "SIMP_SPECIAL_OR_BFALSE");
 				return result;
 			}
 	    }
@@ -1047,20 +1058,28 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	/**
              * SIMP_SPECIAL_BINTER
 	    	 * Set Theory: S ∩ ... ∩ ∅ ∩ ... ∩ T == ∅
-	    	 * SIMP_SPECIAL_BUNION
-             * Set Theory: S ∪ ... ∪ ∅ ∪ ... ∪ T == S ∪ ... ∪ T
 	    	 * SIMP_TYPE_BINTER
              * Set Theory: S ∩ ... ∩ U ∩ ... ∩ T == S ∩ ... ∩ ... ∩ T
-	    	 * SIMP_TYPE_BUNION
-             * Set Theory: S ∪ ... ∪ U ∪ ... ∪ T == U
              * SIMP_MULTI_BINTER
              * Set Theory: S ∩ ... ∩ T ∩ T ∩ ... ∩ V == S ∩ ... ∩ T ∩ ... ∩ V
+	    	 */
+	    	BInter(children) -> {
+	    		result = FormulaSimplification.simplifyAssociativeExpression(expression, `children);
+	    		trace(expression, result, "SIMP_SPECIAL_BINTER", "SIMP_TYPE_BINTER", "SIMP_MULTI_BINTER");
+				return result;
+	    	}
+
+	    	/**
+	    	 * SIMP_SPECIAL_BUNION
+             * Set Theory: S ∪ ... ∪ ∅ ∪ ... ∪ T == S ∪ ... ∪ T
+	    	 * SIMP_TYPE_BUNION
+             * Set Theory: S ∪ ... ∪ U ∪ ... ∪ T == U
              * SIMP_MULTI_BUNION
              * Set Theory: S ∪ ... ∪ T ∪ T ∪ ... ∪ V == S ∪ ... ∪ T ∪ ... ∪ V
 	    	 */
-	    	(BInter | BUnion) (children) -> {
+	    	BUnion(children) -> {
 	    		result = FormulaSimplification.simplifyAssociativeExpression(expression, `children);
-	    		trace(expression, result, "SIMP_SPECIAL_BINTER", "SIMP_SPECIAL_BUNION", "SIMP_TYPE_BINTER", "SIMP_TYPE_BUNION", "SIMP_MULTI_BINTER", "SIMP_MULTI_BUNION");
+	    		trace(expression, result, "SIMP_SPECIAL_BUNION", "SIMP_TYPE_BUNION", "SIMP_MULTI_BUNION");
 				return result;
 	    	}
 

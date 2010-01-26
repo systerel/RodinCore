@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import java.util.ArrayList;
@@ -19,8 +29,6 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
 public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 
-	public static boolean DEBUG;
-	
 	private IFormulaRewriter rewriter;
 
 	private boolean hideOriginal;
@@ -120,7 +128,6 @@ public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 	 */
 	private Predicate recursiveRewrite(Predicate pred) {
 		Predicate resultPred;
-		if (DEBUG) System.out.println("AutoRewriter: rewriting " + pred);
 		resultPred = pred.rewrite(rewriter);
 		while (resultPred != pred) {
 			pred = resultPred;
