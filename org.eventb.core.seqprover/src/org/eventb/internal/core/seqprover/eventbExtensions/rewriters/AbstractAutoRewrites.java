@@ -19,6 +19,8 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
 public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 
+	public static boolean DEBUG;
+	
 	private IFormulaRewriter rewriter;
 
 	private boolean hideOriginal;
@@ -118,6 +120,7 @@ public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 	 */
 	private Predicate recursiveRewrite(Predicate pred) {
 		Predicate resultPred;
+		if (DEBUG) System.out.println("AutoRewriter: rewriting " + pred);
 		resultPred = pred.rewrite(rewriter);
 		while (resultPred != pred) {
 			pred = resultPred;

@@ -6,6 +6,7 @@ import org.eventb.core.seqprover.xprover.XProverReasoner;
 import org.eventb.internal.core.seqprover.ProverChecks;
 import org.eventb.internal.core.seqprover.ReasonerRegistry;
 import org.eventb.internal.core.seqprover.AutoTacticRegistry;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractAutoRewrites;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -29,6 +30,8 @@ public class SequentProver extends Plugin {
 			+ "/debug/tacticRegistry"; //$NON-NLS-1$
 	private static final String XPROVER_TRACE = PLUGIN_ID
 			+ "/debug/xProver"; //$NON-NLS-1$
+	private static final String AUTO_REWRITER_TRACE = PLUGIN_ID
+			+ "/debug/autoRewriter"; //$NON-NLS-1$
 	
 	/**
 	 * The shared instance.
@@ -90,6 +93,9 @@ public class SequentProver extends Plugin {
 			option = Platform.getDebugOption(XPROVER_TRACE);
 			if (option != null)
 				XProverReasoner.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+			option = Platform.getDebugOption(AUTO_REWRITER_TRACE);
+			if (option != null)
+				AbstractAutoRewrites.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 	}
 
