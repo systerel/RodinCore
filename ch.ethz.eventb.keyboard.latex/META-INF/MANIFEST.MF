@@ -3,6 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: ch.ethz.eventb.keyboard.latex;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Require-Bundle: org.rodinp.keyboard;bundle-version="1.0.0"
+Require-Bundle: org.rodinp.keyboard
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin

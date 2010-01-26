@@ -8,7 +8,7 @@ Bundle-Vendor: ETH Zurich
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.rodinp.keyboard;bundle-version="1.0.0"
+ org.rodinp.keyboard
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eventb.eventBKeyboard,
  org.eventb.eventBKeyboard.internal.views;x-friends:="org.eventb.eventBKeyboard.tests",

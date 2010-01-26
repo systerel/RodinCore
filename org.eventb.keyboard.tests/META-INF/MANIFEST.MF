@@ -4,7 +4,7 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eventb.keyboard.tests
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Require-Bundle: org.rodinp.keyboard.tests;bundle-version="1.0.0",
- org.eventb.keyboard;bundle-version="1.0.0"
+Require-Bundle: org.rodinp.keyboard.tests,
+ org.eventb.keyboard
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
