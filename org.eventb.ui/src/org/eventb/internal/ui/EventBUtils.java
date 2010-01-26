@@ -338,7 +338,7 @@ public class EventBUtils {
 	 *            an image
 	 */
 	public static void setHyperlinkImage(ImageHyperlink hyperlink, Image image) {
-		final boolean enabled = hyperlink.isEnabled();
+		final boolean enabled = hyperlink.getEnabled();
 		hyperlink.setEnabled(false);
 		hyperlink.setImage(image);
 		hyperlink.setEnabled(enabled);

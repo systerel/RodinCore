@@ -685,7 +685,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			}
 		}
 		setHyperlinkImage(smiley, image);
-		smiley.setEnabled(true);
 		midComp.pack();
 	}
 
