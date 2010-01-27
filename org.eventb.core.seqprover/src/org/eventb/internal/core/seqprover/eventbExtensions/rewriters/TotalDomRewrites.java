@@ -8,6 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *     Systerel - added needed hypothesis in antecedent (ver 1)
+ *     Systerel - fixed bug in hypothesis rewriting (ver 2)
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
@@ -46,7 +47,7 @@ import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 public class TotalDomRewrites implements IVersionedReasoner {
 
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".totalDom";
-	private static final int VERSION = 1;
+	private static final int VERSION = 2;
 	
 	private static final FormulaFactory ff = FormulaFactory.getDefault();
 
@@ -148,7 +149,7 @@ public class TotalDomRewrites implements IVersionedReasoner {
 					makeSelectHypAction(singleton(inferredHyp)));
 			final IAntecedent antecedent = ProverFactory.makeAntecedent(null,
 					null, null, hypActions);
-			return ProverFactory.makeProofRule(this, input, neededHyp, null,
+			return ProverFactory.makeProofRule(this, input, null, neededHyp,
 					getDisplayName(hyp, position), antecedent);
 		}
 	}
@@ -177,7 +178,7 @@ public class TotalDomRewrites implements IVersionedReasoner {
 
 	private Expression getFunction(Predicate pred, IPosition position) {
 		final Formula<?> subFormula = pred.getSubFormula(position);
-		if (subFormula.getTag() != Expression.KDOM) {
+		if (subFormula == null || subFormula.getTag() != Expression.KDOM) {
 			return null;
 		}
 		return ((UnaryExpression) subFormula).getChild();
