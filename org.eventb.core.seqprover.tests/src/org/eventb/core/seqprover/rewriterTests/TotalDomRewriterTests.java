@@ -17,6 +17,7 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -92,6 +93,8 @@ public class TotalDomRewriterTests {
 				+ "ℕ |- dom(f)=ℕ");
 		final Expression id_f = ((UnaryExpression) ((RelationalPredicate) seq
 				.goal()).getLeft()).getChild();
+		final Predicate neededHyp = seq.hypIterable().iterator().next();
+		
 		assertSubstitutions(seq, id_f, NAT);
 		final IReasonerOutput output = rewriter.apply(seq, input, null);
 		assertTrue(output instanceof IProofRule);
@@ -100,6 +103,9 @@ public class TotalDomRewriterTests {
 		assertEquals(1, antecedents.length);
 		final Predicate pred = antecedents[0].getGoal();
 		assertTrue(pred.toString().equals("ℕ=ℕ"));
+		
+		final Set<Predicate> neededHyps = rule.getNeededHyps();
+		assertEquals(Collections.singleton(neededHyp), neededHyps);
 	}
 
 	@Test
