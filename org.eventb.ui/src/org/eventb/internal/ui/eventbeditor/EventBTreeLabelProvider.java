@@ -12,8 +12,13 @@
  *     Systerel - used ElementDescRegistry
  *     ETH Zurich - adapted to org.rodinp.keyboard
  *     Systerel - fixed bug #1824569
+ *     Systerel - refactored and fixed update for Rodin problem markers
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
+
+import static org.rodinp.core.RodinMarkerUtil.RODIN_PROBLEM_MARKER;
+import static org.rodinp.core.RodinMarkerUtil.getElement;
+import static org.rodinp.keyboard.preferences.PreferenceConstants.RODIN_MATH_FONT;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,12 +36,10 @@ import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableFontProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
@@ -44,8 +47,6 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry.Colu
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinMarkerUtil;
-import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 /**
  * @author htson
@@ -135,7 +136,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 *      java.lang.String)
 	 */
 	public boolean isLabelProperty(Object element, String property) {
-		if (property.equals(RodinMarkerUtil.RODIN_PROBLEM_MARKER))
+		if (property.equals(RODIN_PROBLEM_MARKER))
 			return true;
 		return false;
 	}
@@ -185,51 +186,76 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 */
 	public Font getFont(Object element, int columnIndex) {
 		if (font == null) {
-			font = JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
+			font = JFaceResources.getFont(RODIN_MATH_FONT);
 		}
 		return font;
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {
-		font = JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
+		font = JFaceResources.getFont(RODIN_MATH_FONT);
 		viewer.refresh();
 	}
 
 	public void resourceChanged(IResourceChangeEvent event) {
-		final Set<Object> elements = getRefreshElements(event);
-		if (elements.size() != 0) {
-			final String[] properties = new String[] { RodinMarkerUtil.RODIN_PROBLEM_MARKER };
-			Display display = viewer.getControl().getDisplay();
-			final EventBEditableTreeViewer v = viewer;
-			display.syncExec(new Runnable() {
-				public void run() {
-					for (Object element : elements) {
-						v.update(element, properties);
-					}
-				}
-
-			});
-		}
+		final TreeLabelUpdater tlu = new TreeLabelUpdater(event, viewer);
+		tlu.performUpdate();
 	}
 
-	protected Set<Object> getRefreshElements(IResourceChangeEvent event) {
-		IMarkerDelta[] rodinProblemMakerDeltas = event.findMarkerDeltas(
-				RodinMarkerUtil.RODIN_PROBLEM_MARKER, true);
-		final Set<Object> elements = new HashSet<Object>();
-		for (IMarkerDelta delta : rodinProblemMakerDeltas) {
-			Object element = RodinMarkerUtil.getElement(delta);
-			if (element != null && !elements.contains(element)) { 
-				elements.add(element);
-				element = ((ITreeContentProvider) ((TreeViewer) viewer)
-						.getContentProvider()).getParent(element);
-				while (element != null) {
-					elements.add(element);
-					element = ((ITreeContentProvider) ((TreeViewer) viewer)
-							.getContentProvider()).getParent(element);
-				}
+	/**
+	 * Processes resource change events for <code>RODIN_PROBLEM_MARKER</code>
+	 * and updates the corresponding elements in the tree viewer.
+	 */
+	private static class TreeLabelUpdater implements Runnable {
+
+		private static final String[] PROPERTIES = new String[] { RODIN_PROBLEM_MARKER };
+
+		private final EventBEditableTreeViewer viewer;
+		private final ITreeContentProvider contentProvider;
+		private final IResourceChangeEvent event;
+
+		private final Set<Object> elementsToUpdate;
+
+		public TreeLabelUpdater(IResourceChangeEvent event,
+				EventBEditableTreeViewer viewer) {
+			this.viewer = viewer;
+			this.contentProvider = (ITreeContentProvider) viewer
+					.getContentProvider();
+			this.event = event;
+			this.elementsToUpdate = new HashSet<Object>();
+		}
+
+		public void performUpdate() {
+			computeElementsToUpdate();
+			if (!elementsToUpdate.isEmpty()) {
+				updateTreeLabels();
 			}
 		}
-		return elements;
-	}
 
+		private void computeElementsToUpdate() {
+			final IMarkerDelta[] deltas = event.findMarkerDeltas(
+					RODIN_PROBLEM_MARKER, true);
+			for (final IMarkerDelta delta : deltas) {
+				addElementAndAncestors(getElement(delta));
+			}
+		}
+
+		private void addElementAndAncestors(Object element) {
+			while (element != null) {
+				final boolean wasNew = elementsToUpdate.add(element);
+				if (!wasNew)
+					break;
+				element = contentProvider.getParent(element);
+			}
+		}
+
+		private void updateTreeLabels() {
+			viewer.getControl().getDisplay().syncExec(this);
+		}
+
+		public void run() {
+			for (final Object element : elementsToUpdate) {
+				viewer.update(element, PROPERTIES);
+			}
+		}
+	}
 }
