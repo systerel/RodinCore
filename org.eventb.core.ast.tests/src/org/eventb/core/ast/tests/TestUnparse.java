@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - added abstract test class
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
+ *     Systerel - added tests for quantified expressions
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -1304,18 +1305,24 @@ public class TestUnparse extends AbstractTests {
 		return formulae; 
 	}
 	
-	// this test ensures that an associative expression treats all
-	// its children the same way
 	private void routineTestStringFormula(TestPair[] pairs) {
 		for (TestPair pair: pairs) {
-			String formula = pair.getFormula().toString();
-			String formulaParenthesized = pair.getFormula().toStringFullyParenthesized();
-			assertEquals("\nTest failed on original String: "+pair.image+"\nUnparser produced: "+formula+"\n",
-					pair.image, formula);
-			
-			pair.verify(formula);
-			pair.verify(formulaParenthesized);
+			routineTestStringFormula(pair);
 		}
+	}
+
+	private void routineTestStringFormula(TestPair pair) {
+		String formula = pair.getFormula().toString();
+		String formulaParenthesized = pair.getFormula().toStringFullyParenthesized();
+		assertEquals("\nTest failed on original String: "+pair.image+"\nUnparser produced: "+formula+"\n",
+				pair.image, formula);
+		
+		pair.verify(formula);
+		pair.verify(formulaParenthesized);
+	}
+
+	private void routineTestStringExpression(String image, Expression expr) {
+		routineTestStringFormula(new ExprTestPair(image, expr));
 	}
 	
 	/**
@@ -1473,6 +1480,118 @@ public class TestUnparse extends AbstractTests {
 			pairsNeg[i] = new ExprTestPair(newImage, newExpr);
 		}
 		routineTestStringFormula(pairsNeg);
+	}
+
+	/**
+	 * Ensures that quantified expressions built programmatically have their
+	 * form automatically changed so that they can be unparsed and parsed back
+	 * without error.
+	 */
+	public void testQuantifiedExpressionForm() throws Exception {
+		// Lambda with duplicate pattern identifier (simple)
+		routineTestStringExpression(
+				"λx ↦ x·⊤ ∣ x", 
+				mQuantifiedExpression(CSET, Lambda,
+						mList(bd_x), btrue, 
+						mMaplet(b0, b0, b0)
+				)
+		);
+
+		// Lambda with duplicate pattern identifier (complex)
+		routineTestStringExpression(
+				"λx ↦ y ↦ x·⊤ ∣ x+y", 
+				mQuantifiedExpression(CSET, Lambda,
+						mList(bd_x, bd_y), btrue, 
+						mMaplet(b1, b0, b1,
+								mAssociativeExpression(PLUS, b1, b0)
+						)
+				)
+		);
+
+		// Lambda with literal in pattern
+		routineTestStringExpression(
+				"{x ↦ 2 ↦ x ∣ ⊤}",
+				mQuantifiedExpression(CSET, Lambda,
+						mList(bd_x), btrue, 
+						mMaplet(b0, two, b0)
+				)
+		);
+
+		// Lambda with free identifier in pattern
+		routineTestStringExpression(
+				"{x,y·⊤ ∣ x ↦ t ↦ y ↦ x}",
+				mQuantifiedExpression(CSET, Lambda,
+						mList(bd_x, bd_y), btrue, 
+						mMaplet(b1, id_t, b0, b1)
+				)
+		);
+
+		// Lambda with outer bound identifier in pattern
+		routineTestStringExpression(
+				"{x·⊤ ∣ {y·⊤ ∣ y ↦ x ↦ y}}",
+				mQuantifiedExpression(CSET, Explicit,
+						mList(bd_x), btrue,
+						mQuantifiedExpression(CSET, Lambda,
+								mList(bd_y), btrue, 
+								mMaplet(b0, b1, b0)
+						)
+				)
+		);
+
+		// Implicit formulas with free identifier in expression
+		routineTestStringExpression(
+				"{x·⊤ ∣ t}",
+				mQuantifiedExpression(CSET, Implicit,
+						mList(bd_x), btrue,
+						id_t
+				)
+		);
+		routineTestStringExpression(
+				"⋃x·⊤ ∣ t",
+				mQuantifiedExpression(QUNION, Implicit,
+						mList(bd_x), btrue,
+						id_t
+				)
+		);
+		routineTestStringExpression(
+				"⋂x·⊤ ∣ t",
+				mQuantifiedExpression(QINTER, Implicit,
+						mList(bd_x), btrue,
+						id_t
+				)
+		);
+
+		// Implicit formulas with outer bound identifier in expression
+		routineTestStringExpression(
+				"{x·⊤ ∣ {y·⊤ ∣ x}}",
+				mQuantifiedExpression(CSET, Explicit,
+						mList(bd_x), btrue,
+						mQuantifiedExpression(CSET, Implicit,
+								mList(bd_y), btrue,
+								b1
+						)
+				)
+		);
+		routineTestStringExpression(
+				"{x·⊤ ∣ ⋃y·⊤ ∣ x}",
+				mQuantifiedExpression(CSET, Explicit,
+						mList(bd_x), btrue,
+						mQuantifiedExpression(QUNION, Implicit,
+								mList(bd_y), btrue,
+								b1
+						)
+				)
+		);
+		routineTestStringExpression(
+				"{x·⊤ ∣ ⋂y·⊤ ∣ x}",
+				mQuantifiedExpression(CSET, Explicit,
+						mList(bd_x), btrue,
+						mQuantifiedExpression(QINTER, Implicit,
+								mList(bd_y), btrue,
+								b1
+						)
+				)
+		);
 	}
 
 }

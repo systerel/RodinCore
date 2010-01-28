@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - added accept for ISimpleVisitor
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
+ *     Systerel - added form filtering
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -92,7 +93,7 @@ public class QuantifiedExpression extends Expression {
 
 	/**
 	 * @param expr the expression in the quantified expression. Must not be <code>null</code>
-	 * @param pred the predicate in the quxantified expression. Must not be <code>null</code>
+	 * @param pred the predicate in the quantified expression. Must not be <code>null</code>
 	 * @param boundIdentifiers the identifiers that are bound to this specific quantified expression. Must not be <code>null</code>
 	 * @param tag the associated tag
 	 * @param location the location in the formula {@link org.eventb.core.ast.SourceLocation}
@@ -111,11 +112,13 @@ public class QuantifiedExpression extends Expression {
 		this.quantifiedIdentifiers = boundIdentifiers.clone();
 		this.expr = expr;
 		this.pred = pred;
-		this.form = form;
 
-		checkPreconditions();
+		checkPreconditions(form);
 		setPredicateVariableCache(this.pred, this.expr);
 		synthesizeType(factory, null);
+
+		// Must be after synthesizeType()
+		this.form = filterForm(form);
 	}
 	
 	protected QuantifiedExpression(Expression expr, Predicate pred,
@@ -132,22 +135,24 @@ public class QuantifiedExpression extends Expression {
 		this.quantifiedIdentifiers = boundIdentifiers.toArray(model);
 		this.expr = expr;
 		this.pred = pred;
-		this.form = form;
 
-		checkPreconditions();
+		checkPreconditions(form);
 		setPredicateVariableCache(this.pred, this.expr);
 		synthesizeType(factory, null);
+
+		// Must be after synthesizeType()
+		this.form = filterForm(form);
 	}
 	
 	// Common initialization.
-	private void checkPreconditions() {
+	private void checkPreconditions(Form inputForm) {
 		assert getTag() >= firstTag && getTag() < firstTag+tags.length;
 		assert quantifiedIdentifiers != null;
 		assert 1 <= quantifiedIdentifiers.length;
 		assert pred != null;
 		assert expr != null;
 
-		if (form == Form.Lambda) {
+		if (inputForm == Form.Lambda) {
 			assert getTag() == Formula.CSET;
 			assert expr.getTag() == Formula.MAPSTO;
 		}
@@ -205,6 +210,38 @@ public class QuantifiedExpression extends Expression {
 		setFinalType(resultType, givenType);
 	}
 	
+	private Form filterForm(Form inputForm) {
+		switch (inputForm) {
+		case Lambda:
+			if (isValidLambdaPattern(((BinaryExpression) expr).getLeft())) {
+				return Form.Lambda;
+			}
+			// Fall through
+		case Implicit:
+			if (expr.freeIdents.length == 0) {
+				// Expression is closed
+				return Form.Implicit;
+			}
+			// Fall through
+		case Explicit:
+			// Fall through
+		}
+		return Form.Explicit;
+	}
+	
+	private boolean isValidLambdaPattern(Expression pattern) {
+		switch (pattern.getTag()) {
+		case MAPSTO:
+			final BinaryExpression maplet = (BinaryExpression) pattern;
+			return isValidLambdaPattern(maplet.getLeft())
+					&& isValidLambdaPattern(maplet.getRight());
+		case BOUND_IDENT:
+			final BoundIdentifier ident = (BoundIdentifier) pattern;
+			return ident.getBoundIndex() < quantifiedIdentifiers.length;
+		}
+		return false;
+	}
+
 	// indicates when the toString method should put parentheses
 	private static BitSet noParenthesesMap;
 	private static BitSet rightNoParenthesesMap;
