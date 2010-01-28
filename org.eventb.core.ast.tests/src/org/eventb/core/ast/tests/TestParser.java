@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - added abstract test class
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
+ *     Systerel - added tests for lambda with duplicate idents in pattern
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -32,6 +33,7 @@ import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
+import static org.eventb.core.ast.tests.FastFactory.mMaplet;
 import static org.eventb.core.ast.tests.FastFactory.mMultiplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mPredicateVariable;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedExpression;
@@ -1025,6 +1027,20 @@ public class TestParser extends AbstractTests {
 									mBinaryExpression(Formula.MAPSTO, b2, 
 											mBinaryExpression(Formula.MAPSTO, b1, b0)
 									), b0
+							)
+					)
+			), new ExprTestPair(
+					"\u03bb x\u21a6x\u00b7\u22a5\u2223x", 
+					mQuantifiedExpression(Formula.CSET, Lambda,
+							mList(bd_x), bfalse, 
+							mMaplet(b0, b0, b0)
+					)
+			), new ExprTestPair(
+					"\u03bb x\u21a6y\u21a6x\u00b7\u22a5\u2223x+y", 
+					mQuantifiedExpression(Formula.CSET, Lambda,
+							mList(bd_x, bd_y), bfalse, 
+							mMaplet(b1, b0, b1,
+									mAssociativeExpression(Formula.PLUS, b1, b0)
 							)
 					)
 			), 
