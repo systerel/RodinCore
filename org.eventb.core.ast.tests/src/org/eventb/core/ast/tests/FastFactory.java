@@ -13,6 +13,24 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.Formula.BTRUE;
+import static org.eventb.core.ast.Formula.EQUAL;
+import static org.eventb.core.ast.Formula.FORALL;
+import static org.eventb.core.ast.Formula.KFINITE;
+import static org.eventb.core.ast.Formula.KID_GEN;
+import static org.eventb.core.ast.Formula.KPARTITION;
+import static org.eventb.core.ast.Formula.KPRJ1_GEN;
+import static org.eventb.core.ast.Formula.KPRJ2_GEN;
+import static org.eventb.core.ast.Formula.LAND;
+import static org.eventb.core.ast.Formula.LIMP;
+import static org.eventb.core.ast.Formula.MAPSTO;
+import static org.eventb.core.ast.Formula.MINUS;
+import static org.eventb.core.ast.Formula.NOT;
+import static org.eventb.core.ast.Formula.PLUS;
+import static org.eventb.core.ast.Formula.POW;
+import static org.eventb.core.ast.Formula.QUNION;
+import static org.eventb.core.ast.Formula.TRUE;
+import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
 import static org.eventb.core.ast.tests.AbstractTests.parseType;
 
 import java.math.BigInteger;
@@ -29,7 +47,6 @@ import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -63,7 +80,7 @@ public class FastFactory {
 
 	public static AssociativeExpression mAssociativeExpression(
 			Expression... children) {
-		return mAssociativeExpression(Formula.PLUS, children);
+		return mAssociativeExpression(PLUS, children);
 	}
 
 	public static AssociativeExpression mAssociativeExpression(
@@ -78,11 +95,11 @@ public class FastFactory {
 
 	public static AssociativePredicate mAssociativePredicate(
 			Predicate... children) {
-		return mAssociativePredicate(Formula.LAND, children);
+		return mAssociativePredicate(LAND, children);
 	}
 
 	public static AtomicExpression mAtomicExpression() {
-		return ff.makeAtomicExpression(Formula.TRUE, null);
+		return mAtomicExpression(TRUE);
 	}
 
 	public static AtomicExpression mAtomicExpression(int tag) {
@@ -94,15 +111,15 @@ public class FastFactory {
 	}
 
 	public static AtomicExpression mPrj1(Type type) {
-		return ff.makeAtomicExpression(Formula.KPRJ1_GEN, null, type);
+		return ff.makeAtomicExpression(KPRJ1_GEN, null, type);
 	}
 
 	public static AtomicExpression mPrj2(Type type) {
-		return ff.makeAtomicExpression(Formula.KPRJ2_GEN, null, type);
+		return ff.makeAtomicExpression(KPRJ2_GEN, null, type);
 	}
 
 	public static AtomicExpression mId(Type type) {
-		return ff.makeAtomicExpression(Formula.KID_GEN, null, type);
+		return ff.makeAtomicExpression(KID_GEN, null, type);
 	}
 
 	public static BecomesEqualTo mBecomesEqualTo(FreeIdentifier ident, Expression value) {
@@ -132,7 +149,7 @@ public class FastFactory {
 	
 	public static BinaryExpression mBinaryExpression(Expression left,
 			Expression right) {
-		return mBinaryExpression(Formula.MINUS, left, right);
+		return mBinaryExpression(MINUS, left, right);
 	}
 
 	public static BinaryExpression mBinaryExpression(int tag, Expression left,
@@ -147,7 +164,7 @@ public class FastFactory {
 
 	public static BinaryPredicate mBinaryPredicate(Predicate left,
 			Predicate right) {
-		return mBinaryPredicate(Formula.LIMP, left, right);
+		return mBinaryPredicate(LIMP, left, right);
 	}
 
 	public static BoolExpression mBoolExpression(Predicate pred) {
@@ -155,7 +172,7 @@ public class FastFactory {
 	}
 
 	public static BoundIdentDecl mBoundIdentDecl(String name) {
-		return ff.makeBoundIdentDecl(name, null);
+		return mBoundIdentDecl(name, null);
 	}
 
 	public static BoundIdentDecl mBoundIdentDecl(String name, Type type) {
@@ -163,7 +180,7 @@ public class FastFactory {
 	}
 
 	public static BoundIdentifier mBoundIdentifier(int index) {
-		return ff.makeBoundIdentifier(index, null);
+		return mBoundIdentifier(index, null);
 	}
 
 	public static BoundIdentifier mBoundIdentifier(int index, Type type) {
@@ -171,7 +188,7 @@ public class FastFactory {
 	}
 
 	public static FreeIdentifier mFreeIdentifier(String name) {
-		return ff.makeFreeIdentifier(name, null);
+		return mFreeIdentifier(name, null);
 	}
 
 	public static FreeIdentifier mFreeIdentifier(String name, Type type) {
@@ -195,17 +212,23 @@ public class FastFactory {
 	}
 
 	public static LiteralPredicate mLiteralPredicate() {
-		return ff.makeLiteralPredicate(Formula.BTRUE, null);
+		return mLiteralPredicate(BTRUE);
 	}
 
-	public static BinaryExpression mMaplet(Expression left, Expression right) {
-		return ff.makeBinaryExpression(Formula.MAPSTO, left, right, null);
+	// Builds left-associative maplet chains
+	public static BinaryExpression mMaplet(Expression left, Expression right,
+			Expression... others) {
+		BinaryExpression maplet;
+		maplet = mBinaryExpression(MAPSTO, left, right);
+		for (final Expression other: others) {
+			maplet = mBinaryExpression(MAPSTO, maplet, other);
+		}
+		return maplet;
 	}
 
 	public static QuantifiedExpression mQuantifiedExpression(
 			BoundIdentDecl[] boundIdents, Predicate pred, Expression expr) {
-		return mQuantifiedExpression(Formula.QUNION,
-				QuantifiedExpression.Form.Explicit, boundIdents, pred, expr);
+		return mQuantifiedExpression(QUNION, Explicit, boundIdents, pred, expr);
 	}
 
 	public static QuantifiedExpression mQuantifiedExpression(int tag,
@@ -217,7 +240,7 @@ public class FastFactory {
 
 	public static QuantifiedPredicate mQuantifiedPredicate(
 			BoundIdentDecl[] boundIdents, Predicate pred) {
-		return mQuantifiedPredicate(Formula.FORALL, boundIdents, pred);
+		return mQuantifiedPredicate(FORALL, boundIdents, pred);
 	}
 
 	public static QuantifiedPredicate mQuantifiedPredicate(int tag,
@@ -227,7 +250,7 @@ public class FastFactory {
 
 	public static RelationalPredicate mRelationalPredicate(Expression left,
 			Expression right) {
-		return mRelationalPredicate(Formula.EQUAL, left, right);
+		return mRelationalPredicate(EQUAL, left, right);
 	}
 
 	public static RelationalPredicate mRelationalPredicate(int tag,
@@ -240,7 +263,7 @@ public class FastFactory {
 	}
 
 	public static SimplePredicate mSimplePredicate(Expression expr) {
-		return ff.makeSimplePredicate(Formula.KFINITE, expr, null);
+		return ff.makeSimplePredicate(KFINITE, expr, null);
 	}
 
 	public static ITypeEnvironment mTypeEnvironment() {
@@ -277,7 +300,7 @@ public class FastFactory {
 	}
 
 	public static UnaryExpression mUnaryExpression(Expression child) {
-		return mUnaryExpression(Formula.POW, child);
+		return mUnaryExpression(POW, child);
 	}
 
 	public static UnaryExpression mUnaryExpression(int tag, Expression child) {
@@ -289,7 +312,7 @@ public class FastFactory {
 	}
 	
 	public static UnaryPredicate mUnaryPredicate(Predicate child) {
-		return mUnaryPredicate(Formula.NOT, child);
+		return mUnaryPredicate(NOT, child);
 	}
 
 	public static MultiplePredicate mMultiplePredicate(int tag, Expression... expressions) {
@@ -297,7 +320,7 @@ public class FastFactory {
 	}
 
 	public static MultiplePredicate mMultiplePredicate(Expression... expressions) {
-		return ff.makeMultiplePredicate(Formula.KPARTITION, expressions, null);
+		return mMultiplePredicate(KPARTITION, expressions);
 	}
 
 	public static PredicateVariable mPredicateVariable(String name) {
