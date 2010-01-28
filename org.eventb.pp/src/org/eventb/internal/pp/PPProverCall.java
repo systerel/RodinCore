@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added cancellation tests
+ *     Systerel - fixed assertions in isValid() and others
  *******************************************************************************/
 package org.eventb.internal.pp;
 
@@ -55,7 +56,8 @@ public class PPProverCall extends XProverCall implements IPPMonitor {
 	@Override
 	public boolean isValid() {
 		if (result == null) {
-			throw new IllegalStateException("isValid() called before run().");
+			// run() has not finished yet.
+			return false;
 		}
 		return result.getResult() == Result.valid;
 	}
@@ -84,18 +86,18 @@ public class PPProverCall extends XProverCall implements IPPMonitor {
 
 	@Override
 	public boolean isGoalNeeded() {
-		if (result == null) {
+		if (!isValid()) {
 			throw new IllegalStateException(
-					"isGoalNeeded() called before run().");
+					"isGoalNeeded() called on invalid proof.");
 		}
 		return result.getTracer().isGoalNeeded();
 	}
 
 	@Override
 	public Set<Predicate> neededHypotheses() {
-		if (result == null) {
+		if (!isValid()) {
 			throw new IllegalStateException(
-					"neededHypotheses() called before run().");
+					"neededHypotheses() called on invalid proof.");
 		}
 		return new HashSet<Predicate>(result.getTracer().getNeededHypotheses());
 	}
