@@ -120,6 +120,9 @@ public interface IEventBSharedImages {
 	
 	public static final String IMG_ACTION = "Action";
 	
+	/**
+	 * @since 1.2
+	 */
 	public static final String IMG_SH_PROVER = "Search Hypotesis";
 	
 	/**
@@ -229,5 +232,8 @@ public interface IEventBSharedImages {
 	
 	public static final String IMG_ACTION_PATH = "icons/full/obj16/act_obj.gif";
 	
+	/**
+	 * @since 1.2
+	 */
 	public static final String IMG_SH_PROVER_PATH = "icons/full/ctool16/sh_prover.gif";
 }
