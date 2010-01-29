@@ -23,11 +23,16 @@ Export-Package: org.eventb.core,
  org.eventb.internal.core.autocompletion;x-friends:="org.eventb.core.tests",
  org.eventb.internal.core.indexers;x-friends:="org.eventb.core.tests",
  org.eventb.internal.core.pm;x-friends:="org.eventb.core.tests",
+ org.eventb.internal.core.pog;x-internal:=true,
+ org.eventb.internal.core.pog.modules;x-internal:=true,
  org.eventb.internal.core.pom;x-friends:="org.eventb.core.tests",
+ org.eventb.internal.core.sc;x-internal:=true,
  org.eventb.internal.core.sc.modules;x-friends:="org.eventb.core.tests",
+ org.eventb.internal.core.sc.symbolTable;x-internal:=true,
  org.eventb.internal.core.tool;x-friends:="org.eventb.core.tests",
  org.eventb.internal.core.tool.graph;x-friends:="org.eventb.core.tests",
  org.eventb.internal.core.tool.state;x-friends:="org.eventb.core.tests",
- org.eventb.internal.core.tool.types;x-friends:="org.eventb.core.tests"
+ org.eventb.internal.core.tool.types;x-friends:="org.eventb.core.tests",
+ org.eventb.internal.core.upgrade;x-internal:=true
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Eclipse-ExtensibleAPI: true
