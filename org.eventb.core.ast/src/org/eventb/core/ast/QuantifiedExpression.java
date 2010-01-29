@@ -81,6 +81,43 @@ public class QuantifiedExpression extends Expression {
 		Explicit
 	}
 
+	/**
+	 * Implements a checker for lambda patterns. From the end-user point of view, a
+	 * lambda pattern must be made of pairwise distinct identifiers conjoined into
+	 * maplets. Internally, this translates to having a pattern made of bound
+	 * identifiers whose indexes are sorted in decreasing order when traversing the
+	 * maplets from left to right.
+	 * <p>
+	 * This class implements an algorithm for checking that a lambda pattern indeed
+	 * fulfills this constraint.
+	 * </p>
+	 */
+	private static class PatternChecker {
+
+		private int expectedIndex;
+
+		public PatternChecker(int nbBoundIdentDecls) {
+			this.expectedIndex = nbBoundIdentDecls - 1;
+		}
+
+		public boolean verify(Expression pattern) {
+			return traverse(pattern) && expectedIndex == -1;
+		}
+
+		private boolean traverse(Expression pattern) {
+			switch (pattern.getTag()) {
+			case QuantifiedExpression.MAPSTO:
+				final BinaryExpression maplet = (BinaryExpression) pattern;
+				return traverse(maplet.getLeft()) && traverse(maplet.getRight());
+			case QuantifiedExpression.BOUND_IDENT:
+				final BoundIdentifier ident = (BoundIdentifier) pattern;
+				return ident.getBoundIndex() == expectedIndex--;
+			}
+			return false;
+		}
+
+	}
+	
 	// offset of the tag interval in Formula
 	protected final static int firstTag = FIRST_QUANTIFIED_EXPRESSION;
 	protected final static String[] tags = {
@@ -213,7 +250,9 @@ public class QuantifiedExpression extends Expression {
 	private Form filterForm(Form inputForm) {
 		switch (inputForm) {
 		case Lambda:
-			if (isValidLambdaPattern(((BinaryExpression) expr).getLeft())) {
+			final PatternChecker checker = new PatternChecker(
+					quantifiedIdentifiers.length);
+			if (checker.verify(((BinaryExpression) expr).getLeft())) {
 				return Form.Lambda;
 			}
 			// Fall through
@@ -229,19 +268,6 @@ public class QuantifiedExpression extends Expression {
 		return Form.Explicit;
 	}
 	
-	private boolean isValidLambdaPattern(Expression pattern) {
-		switch (pattern.getTag()) {
-		case MAPSTO:
-			final BinaryExpression maplet = (BinaryExpression) pattern;
-			return isValidLambdaPattern(maplet.getLeft())
-					&& isValidLambdaPattern(maplet.getRight());
-		case BOUND_IDENT:
-			final BoundIdentifier ident = (BoundIdentifier) pattern;
-			return ident.getBoundIndex() < quantifiedIdentifiers.length;
-		}
-		return false;
-	}
-
 	// indicates when the toString method should put parentheses
 	private static BitSet noParenthesesMap;
 	private static BitSet rightNoParenthesesMap;

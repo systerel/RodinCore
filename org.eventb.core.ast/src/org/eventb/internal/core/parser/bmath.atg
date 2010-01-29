@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
+ *     Systerel - added detection of duplicate names in lambda patterns
  *******************************************************************************/ 
 import static org.eventb.core.ast.LanguageVersion.V1;
 
@@ -368,7 +369,7 @@ COMPILER Bmath
 		final SourceLocation loc = newSourceLoc(startPos);
         if (expr instanceof IntegerLiteral
         		&& expr.getSourceLocation().getStart() == startPos + 1) {
-			// A unary minus followed by an integer literalm glued together,
+			// A unary minus followed by an integer literal, glued together,
 			// this is a negative integer literal
         	final IntegerLiteral lit = (IntegerLiteral) expr;
         	return factory.makeIntegerLiteral(lit.getValue().negate(), loc);
@@ -559,20 +560,17 @@ PRODUCTIONS
     Expression <out Expression expr, Binding binding>        (. final int startPos = la.pos;
                 												expr = null; .)    
     =
-        LAMBDA                                               (. List<BoundIdentDecl> inbinding;
-                                                                Expression inpattern;
+        LAMBDA                                               (. Pattern inpattern = new Pattern(result);
                                                                 Predicate inpred;
                                                                 Expression inexpr; .)
-        DeclPattern <out inpattern>                          (. // LAMBDA implicit quantifier
-                                                                inbinding = new Vector<BoundIdentDecl>();
-                                                                inpattern = inpattern.bindAllFreeIdents(inbinding, factory);
-                                                                binding = new Binding(binding, inbinding); .)
+        DeclPattern <inpattern>                              (. // LAMBDA implicit quantifier
+                                                                binding = new Binding(binding, inpattern.getDecls()); .)
         QDOT
         Predicate <out inpred, binding>
         MID
-        Expression <out inexpr, binding>                     (. Expression pair = factory.makeBinaryExpression(Formula.MAPSTO, inpattern, inexpr, null);
+        Expression <out inexpr, binding>                     (. Expression pair = factory.makeBinaryExpression(Formula.MAPSTO, inpattern.getPattern(), inexpr, null);
         														SourceLocation loc = newSourceLoc(startPos);
-                                                                expr = factory.makeQuantifiedExpression(Formula.CSET, inbinding, inpred, pair, loc, QuantifiedExpression.Form.Lambda); .)
+                                                                expr = factory.makeQuantifiedExpression(Formula.CSET, inpattern.getDecls(), inpred, pair, loc, QuantifiedExpression.Form.Lambda); .)
     |                                                        (. int tag;
                                                                 QuantifiedExpression.Form form = null;
                                                                 List<BoundIdentDecl> inbinding = null;
@@ -1025,25 +1023,22 @@ PRODUCTIONS
         }
     .
 
-    DeclPattern <out Expression expr>                (. final int startPos = la.pos; .)
+    DeclPattern <Pattern pattern>             (. final int startPos = la.pos; .)
     =
-        DeclPatternAtom <out expr>
+        DeclPatternAtom <pattern>
         {
             MAPSTO
-            DeclPatternAtom <out Expression inexpr>  (. expr = factory.makeBinaryExpression(Formula.MAPSTO, expr, inexpr, newSourceLoc(startPos)); .)
+            DeclPatternAtom <pattern>         (. pattern.mapletParsed(newSourceLoc(startPos)); .)
         }
     .
 
-    DeclPatternAtom <out Expression expr>     (. expr = null; .)
+    DeclPatternAtom <Pattern pattern>
     =
         LPAR 
-        DeclPattern <out expr>
+        DeclPattern <pattern>
         RPAR
     |
-        IdentDecl<out BoundIdentDecl decl>    (. final String name = decl.getName();
-        										 final SourceLocation loc = decl.getSourceLocation();
-        										 final Type type = decl.getType();
-										         expr = factory.makeFreeIdentifier(name, loc, type); .)
+        IdentDecl<out BoundIdentDecl decl>    (. pattern.declParsed(decl); .)
     .
     
     Predicate <out Predicate pred, Binding binding> 
@@ -1129,7 +1124,7 @@ PRODUCTIONS
     					                           pred = factory.makePredicateVariable(t.val, loc);
     		                                   } else {
     		                                	  unexpectedPREDVAROccurence(startPos);
-    		                                	  // Return a dummy value repairing temporarilly this error
+    		                                	  // Return a dummy value repairing temporarily this error
     											  pred = factory.makeLiteralPredicate(Formula.BTRUE, newSourceLoc(t.pos));
     										   }
                                             .)        

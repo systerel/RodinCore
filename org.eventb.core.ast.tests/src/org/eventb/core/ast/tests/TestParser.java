@@ -33,7 +33,6 @@ import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
-import static org.eventb.core.ast.tests.FastFactory.mMaplet;
 import static org.eventb.core.ast.tests.FastFactory.mMultiplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mPredicateVariable;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedExpression;
@@ -1029,20 +1028,6 @@ public class TestParser extends AbstractTests {
 									), b0
 							)
 					)
-			), new ExprTestPair(
-					"\u03bb x\u21a6x\u00b7\u22a5\u2223x", 
-					mQuantifiedExpression(Formula.CSET, Lambda,
-							mList(bd_x), bfalse, 
-							mMaplet(b0, b0, b0)
-					)
-			), new ExprTestPair(
-					"\u03bb x\u21a6y\u21a6x\u00b7\u22a5\u2223x+y", 
-					mQuantifiedExpression(Formula.CSET, Lambda,
-							mList(bd_x, bd_y), bfalse, 
-							mMaplet(b1, b0, b1,
-									mAssociativeExpression(Formula.PLUS, b1, b0)
-							)
-					)
 			), 
 			
 			// UnBound
@@ -1187,6 +1172,12 @@ public class TestParser extends AbstractTests {
 			"(\u2205\u2982x\u21a6y)",	// rhs is not a type 
 			"(\u2205\u2982\u2124)",		// type is not a set type
 			"f(x)∼",
+			// Duplicate idents in lambda pattern
+			"\u03bb x\u21a6x\u00b7\u22a5\u2223x", 
+			"\u03bb x\u21a6y\u21a6x\u00b7\u22a5\u2223x+y", 
+			"\u03bb x\u21a6 (x \u2982 \u2124) \u00b7\u22a4\u2223x", 
+			"\u03bb(x \u2982 BOOL) \u21a6 x \u00b7\u22a4\u2223x", 
+			"\u03bb(x \u2982 BOOL) \u21a6 (x \u2982 \u2124) \u00b7\u22a4\u2223x", 
 	};
 
 	AssignmentTestPair[] assigns = new AssignmentTestPair[] {

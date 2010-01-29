@@ -457,6 +457,14 @@ public class TestUnparse extends AbstractTests {
 							)
 					)
 			), new ExprTestPair(
+					"λx ↦ x0·⊤ ∣ x+x0",
+					mQuantifiedExpression(CSET, Lambda,
+							mList(bd_x, bd_x),
+							btrue,
+							mMaplet(b1, b0, mAssociativeExpression(PLUS, b1, b0)
+							)
+					)
+			), new ExprTestPair(
 					"\u2212(1)",
 					mUnaryExpression(UNMINUS,
 							mIntegerLiteral(1)
@@ -1490,7 +1498,7 @@ public class TestUnparse extends AbstractTests {
 	public void testQuantifiedExpressionForm() throws Exception {
 		// Lambda with duplicate pattern identifier (simple)
 		routineTestStringExpression(
-				"λx ↦ x·⊤ ∣ x", 
+				"{x ↦ x ↦ x ∣ ⊤}", 
 				mQuantifiedExpression(CSET, Lambda,
 						mList(bd_x), btrue, 
 						mMaplet(b0, b0, b0)
@@ -1499,12 +1507,21 @@ public class TestUnparse extends AbstractTests {
 
 		// Lambda with duplicate pattern identifier (complex)
 		routineTestStringExpression(
-				"λx ↦ y ↦ x·⊤ ∣ x+y", 
+				"{x ↦ y ↦ x ↦ x+y ∣ ⊤}", 
 				mQuantifiedExpression(CSET, Lambda,
 						mList(bd_x, bd_y), btrue, 
 						mMaplet(b1, b0, b1,
 								mAssociativeExpression(PLUS, b1, b0)
 						)
+				)
+		);
+
+		// Lambda with duplicate pattern identifier (--> Explicit)
+		routineTestStringExpression(
+				"{x·⊤ ∣ x ↦ x ↦ t}", 
+				mQuantifiedExpression(CSET, Lambda,
+						mList(bd_x), btrue, 
+						mMaplet(b0, b0, id_t)
 				)
 		);
 
@@ -1590,6 +1607,48 @@ public class TestUnparse extends AbstractTests {
 								mList(bd_y), btrue,
 								b1
 						)
+				)
+		);
+	}
+
+	/**
+	 * Ensures that a quantified expression which cannot be parsed back as
+	 * Implicit is unparsed in Explicit form.
+	 */
+	public void disabled_testQuantifiedExpressionOrder() throws Exception {
+		// Lambda with inverted pattern
+		routineTestStringExpression(
+				"{x ↦ y ↦ x+y ∣ ⊤}", 
+				mQuantifiedExpression(CSET, Lambda,
+						mList(bd_y, bd_x), btrue, 
+						mMaplet(b0, b1,
+								mAssociativeExpression(PLUS, b0, b1)
+						)
+				)
+		);
+
+		// Lambda with incomplete pattern
+		routineTestStringExpression(
+				"{x,y·⊤ ∣ x ↦ 2}", 
+				mQuantifiedExpression(CSET, Lambda,
+						mList(bd_x, bd_y), btrue, 
+						mMaplet(b1, two)
+				)
+		);
+		routineTestStringExpression(
+				"{x,y·⊤ ∣ y ↦ 2}", 
+				mQuantifiedExpression(CSET, Lambda,
+						mList(bd_x, bd_y), btrue, 
+						mMaplet(b0, two)
+				)
+		);
+
+		// Inverted order of variable declarations
+		routineTestStringExpression(
+				"{y,x·x ↦ y ∣ ⊤}", 
+				mQuantifiedExpression(CSET, Implicit,
+						mList(bd_y, bd_x), btrue, 
+						mMaplet(b0, b1)
 				)
 		);
 	}
