@@ -10,6 +10,7 @@
  *     Systerel - added history support
  *     Systerel - separation of file and root element
  *     Systerel - redirected dialog opening
+ *     Systerel - refactored saveDefaultPage()
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -443,19 +444,24 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 	 * Saving the default page for the next open.
 	 */
 	private void saveDefaultPage() {
-		IRodinFile inputFile = this.getRodinInputFile();
-		try {
-			if (EventBEditorUtils.DEBUG)
-				EventBEditorUtils.debug("Save Page: " + lastActivePageID);
-			if (lastActivePageID != null)
-				inputFile.getResource().setPersistentProperty(
-						new QualifiedName(EventBUIPlugin.PLUGIN_ID,
-								"default-editor-page"), lastActivePageID);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+        if (lastActivePageID == null) {
+            return;
+        }
+        final IFile resource = this.getRodinInputFile().getResource();
+        if (!resource.exists()) {
+            return;
+        }
+        if (EventBEditorUtils.DEBUG)
+            EventBEditorUtils.debug("Save Page: " + lastActivePageID);
+        final QualifiedName key = new QualifiedName(EventBUIPlugin.PLUGIN_ID,
+                "default-editor-page");
+        try {
+            resource.setPersistentProperty(key, lastActivePageID);
+        } catch (CoreException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    } 
 
 	/*
 	 * (non-Javadoc)
