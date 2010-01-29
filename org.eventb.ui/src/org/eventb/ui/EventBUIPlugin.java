@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - refactored getRodinDatabase()
  *     Systerel - added ColorManager
  *     Systerel - used EventBPreferenceStore
+ *     Systerel - installation of EditorManager
  *******************************************************************************/
 package org.eventb.ui;
 
@@ -34,6 +35,7 @@ import org.eventb.internal.ui.ColorManager;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.cachehypothesis.CacheHypothesisUtils;
+import org.eventb.internal.ui.eventbeditor.EditorManager;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.goal.GoalUtils;
 import org.eventb.internal.ui.preferences.EventBPreferenceStore;
@@ -161,6 +163,8 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 		ToggleAutoTacticPreference.registerListener();
 		
 		loadFont();
+		
+		RodinCore.addElementChangedListener(new EditorManager());
 	}
 
 	/**
