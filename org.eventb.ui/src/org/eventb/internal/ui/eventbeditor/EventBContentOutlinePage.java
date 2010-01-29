@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - redirected dialog opening and externalized strings
+ *     Systerel - fixed Rodin errors when input does not exist
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -180,8 +181,8 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 		}
 	}
 
-	// The current editting element.
-	private Object fInput;
+	// The currently edited element.
+	private IInternalElement fInput;
 
 	// The current associated editor.
 	IEventBEditor<?> fEditor;
@@ -251,7 +252,7 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 	 * @param input
 	 *            the input of this outline page
 	 */
-	public void setInput(Object input) {
+	public void setInput(IInternalElement input) {
 		fInput = input;
 		update();
 	}
@@ -268,7 +269,7 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 
 				// Saving the expanded elements
 				Object[] elements = viewer.getExpandedElements();
-				viewer.setInput(fInput);
+				viewer.setInput(fInput.exists() ? fInput : null);
 				viewer.setExpandedElements(elements);
 				control.setRedraw(true);
 			}
