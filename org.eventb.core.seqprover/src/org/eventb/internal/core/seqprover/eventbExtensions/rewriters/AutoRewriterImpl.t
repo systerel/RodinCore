@@ -1505,8 +1505,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	@ProverRule( { "SIMP_CONVERSE_CONVERSE", "SIMP_CONVERSE_SETENUM",
 			"SIMP_DOM_COMPSET", "SIMP_RAN_COMPSET", "SIMP_MINUS_MINUS",
 			"SIMP_SPECIAL_CARD", "SIMP_CARD_SING", "SIMP_CARD_POW",
-			"SIMP_CARD_CPROD", "SIMP_CARD_SETMINUS", "SIMP_CARD_BUNION",
-			"SIMP_SPECIAL_DOM", "SIMP_SPECIAL_RAN" })
+			"SIMP_CARD_BUNION", "SIMP_SPECIAL_DOM", "SIMP_SPECIAL_RAN" })
 	@Override
 	public Expression rewrite(UnaryExpression expression) {
 		final Expression result;
@@ -1631,37 +1630,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				Expression cardS = makeUnaryExpression(Expression.KCARD, `S);
 				result = makeBinaryExpression(Expression.EXPN, number2, cardS);
 	    		trace(expression, result, "SIMP_CARD_POW");
-	    		return result;
-			}
-			
-			/**
-	    	 * SIMP_CARD_CPROD
-             * Cardinality: card(S × T) == card(S) ∗ card(T)
-	    	 */
-			Card(Cprod(S, T)) -> {
-				Expression [] cards = new Expression[2];
-				cards[0] = makeUnaryExpression(Expression.KCARD, `S);
-				cards[1] = makeUnaryExpression(Expression.KCARD, `T);
-				result = makeAssociativeExpression(Expression.MUL, cards);
-	    		trace(expression, result, "SIMP_CARD_CPROD");
-	    		return result;
-			}
-			
-			/**
-             * SIMP_CARD_SETMINUS
-	    	 * Cardinality: card(S ∖ T) = card(S) − card(S ∩ T)
-	    	 */
-			Card(SetMinus(S, T)) -> {
-				Expression cardS = makeUnaryExpression(Expression.KCARD, `S);
-				Expression [] children = new Expression[2];
-				children[0] = `S;
-				children[1] = `T;
-				Expression sInterT = makeAssociativeExpression(Expression.BINTER,
-						children);
-				Expression cardSInterT = makeUnaryExpression(Expression.KCARD,
-						sInterT);
-				result = makeBinaryExpression(Expression.MINUS, cardS, cardSInterT);
-	    		trace(expression, result, "SIMP_CARD_SETMINUS");
 	    		return result;
 			}
 			
