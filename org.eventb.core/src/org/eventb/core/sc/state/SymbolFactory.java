@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 University of Southampton and others.
+ * Copyright (c) 2008, 2010 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,9 @@
  * Contributors:
  *     University of Southampton - initial API and implementation
  *     University of Dusseldorf - added theorem attribute
+ *     Systerel - published symbol factory
  *******************************************************************************/
-package org.eventb.internal.core.sc.symbolTable;
+package org.eventb.core.sc.state;
 
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.ISCAction;
@@ -25,17 +26,24 @@ import org.eventb.core.ISCVariant;
 import org.eventb.core.ISCWitness;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IMarkerDisplay;
-import org.eventb.core.sc.state.IIdentifierSymbolInfo;
-import org.eventb.core.sc.state.ILabelSymbolInfo;
-import org.eventb.core.sc.state.ISymbolInfo;
+import org.eventb.internal.core.sc.symbolTable.ISymbolProblem;
+import org.eventb.internal.core.sc.symbolTable.ITypedSymbolProblem;
+import org.eventb.internal.core.sc.symbolTable.IdentifierSymbolInfo;
+import org.eventb.internal.core.sc.symbolTable.LabelSymbolInfo;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProblem;
 import org.rodinp.core.RodinDBException;
 
 /**
- * @author Stefan Hallerstede
+ * This class is the factory class for symbol informations used by static
+ * checker modules.
+ * <p>
+ * It is intended to be used to instantiate all types of symbol informations.
+ * </p>
  * 
+ * @author Stefan Hallerstede
+ * @since 1.2
  */
 public final class SymbolFactory {
 
@@ -483,6 +491,21 @@ public final class SymbolFactory {
 		return factory;
 	}
 
+	/**
+	 * Creates a new instance of IIdentifierSymbolInfo for a local carrier set
+	 * with the given parameters.
+	 * 
+	 * @param symbol
+	 *            the name of the carrier set
+	 * @param persistent
+	 *            <code>true</code> iff the resulting info shall be persistent
+	 * @param problemElement
+	 *            an element to which to attach problem markers
+	 * @param component
+	 *            the name of the component that contains this symbol
+	 * @return a new instance of IIdentifierSymbolInfo
+	 * @see ISymbolInfo
+	 */
 	public IIdentifierSymbolInfo makeLocalCarrierSet(String symbol,
 			boolean persistent, IInternalElement problemElement,
 			String component) {
@@ -492,6 +515,21 @@ public final class SymbolFactory {
 				localCarrierSetSymbolProblem);
 	}
 
+	/**
+	 * Creates a new instance of IIdentifierSymbolInfo for an imported carrier
+	 * set with the given parameters.
+	 * 
+	 * @param symbol
+	 *            the name of the carrier set
+	 * @param persistent
+	 *            <code>true</code> iff the resulting info shall be persistent
+	 * @param problemElement
+	 *            an element to which to attach problem markers
+	 * @param component
+	 *            the name of the component that contains this symbol
+	 * @return a new instance of IIdentifierSymbolInfo
+	 * @see ISymbolInfo
+	 */
 	public IIdentifierSymbolInfo makeImportedCarrierSet(String symbol,
 			boolean persistent, IInternalElement problemElement,
 			IAttributeType problemAttributeType, String component) {
@@ -500,6 +538,21 @@ public final class SymbolFactory {
 				importedCarrierSetSymbolProblem);
 	}
 
+	/**
+	 * Creates a new instance of IIdentifierSymbolInfo for a local constant with
+	 * the given parameters.
+	 * 
+	 * @param symbol
+	 *            the name of the constant
+	 * @param persistent
+	 *            <code>true</code> iff the resulting info shall be persistent
+	 * @param problemElement
+	 *            an element to which to attach problem markers
+	 * @param component
+	 *            the name of the component that contains this symbol
+	 * @return a new instance of IIdentifierSymbolInfo
+	 * @see ISymbolInfo
+	 */
 	public IIdentifierSymbolInfo makeLocalConstant(String symbol,
 			boolean persistent, IInternalElement problemElement,
 			String component) {
@@ -509,6 +562,21 @@ public final class SymbolFactory {
 				localConstantSymbolProblem);
 	}
 
+	/**
+	 * Creates a new instance of IIdentifierSymbolInfo for an imported constant
+	 * with the given parameters.
+	 * 
+	 * @param symbol
+	 *            the name of the constant
+	 * @param persistent
+	 *            <code>true</code> iff the resulting info shall be persistent
+	 * @param problemElement
+	 *            an element to which to attach problem markers
+	 * @param component
+	 *            the name of the component that contains this symbol
+	 * @return a new instance of IIdentifierSymbolInfo
+	 * @see ISymbolInfo
+	 */
 	public IIdentifierSymbolInfo makeImportedConstant(String symbol,
 			boolean persistent, IInternalElement problemElement,
 			IAttributeType problemAttributeType, String component) {
@@ -517,6 +585,21 @@ public final class SymbolFactory {
 				importedConstantSymbolProblem);
 	}
 
+	/**
+	 * Creates a new instance of IIdentifierSymbolInfo for a local variable with
+	 * the given parameters.
+	 * 
+	 * @param symbol
+	 *            the name of the variable
+	 * @param persistent
+	 *            <code>true</code> iff the resulting info shall be persistent
+	 * @param problemElement
+	 *            an element to which to attach problem markers
+	 * @param component
+	 *            the name of the component that contains this symbol
+	 * @return a new instance of IIdentifierSymbolInfo
+	 * @see ISymbolInfo
+	 */
 	public IIdentifierSymbolInfo makeLocalVariable(String symbol,
 			boolean persistent, IInternalElement problemElement,
 			String component) {
@@ -526,6 +609,21 @@ public final class SymbolFactory {
 				localVariableSymbolProblem);
 	}
 
+	/**
+	 * Creates a new instance of IIdentifierSymbolInfo for an imported variable
+	 * with the given parameters.
+	 * 
+	 * @param symbol
+	 *            the name of the variable
+	 * @param persistent
+	 *            <code>true</code> iff the resulting info shall be persistent
+	 * @param problemElement
+	 *            an element to which to attach problem markers
+	 * @param component
+	 *            the name of the component that contains this symbol
+	 * @return a new instance of IIdentifierSymbolInfo
+	 * @see ISymbolInfo
+	 */
 	public IIdentifierSymbolInfo makeImportedVariable(String symbol,
 			boolean persistent, IInternalElement problemElement,
 			IAttributeType problemAttributeType, String component) {
@@ -534,6 +632,21 @@ public final class SymbolFactory {
 				importedVariableSymbolProblem);
 	}
 
+	/**
+	 * Creates a new instance of IIdentifierSymbolInfo for a local parameter
+	 * with the given parameters.
+	 * 
+	 * @param symbol
+	 *            the name of the parameter
+	 * @param persistent
+	 *            <code>true</code> iff the resulting info shall be persistent
+	 * @param problemElement
+	 *            an element to which to attach problem markers
+	 * @param component
+	 *            the name of the component that contains this symbol
+	 * @return a new instance of IIdentifierSymbolInfo
+	 * @see ISymbolInfo
+	 */
 	public IIdentifierSymbolInfo makeLocalParameter(String symbol,
 			boolean persistent, IInternalElement problemElement,
 			String component) {
@@ -543,6 +656,21 @@ public final class SymbolFactory {
 				localParameterSymbolProblem);
 	}
 
+	/**
+	 * Creates a new instance of IIdentifierSymbolInfo for an imported parameter
+	 * with the given parameters.
+	 * 
+	 * @param symbol
+	 *            the name of the parameter
+	 * @param persistent
+	 *            <code>true</code> iff the resulting info shall be persistent
+	 * @param problemElement
+	 *            an element to which to attach problem markers
+	 * @param component
+	 *            the name of the component that contains this symbol
+	 * @return a new instance of IIdentifierSymbolInfo
+	 * @see ISymbolInfo
+	 */
 	public IIdentifierSymbolInfo makeImportedParameter(String symbol,
 			boolean persistent, IInternalElement problemElement,
 			IAttributeType problemAttributeType, String component) {
@@ -551,6 +679,21 @@ public final class SymbolFactory {
 				importedParameterSymbolProblem);
 	}
 
+	/**
+	 * Creates a new instance of IIdentifierSymbolInfo for a local axiom with
+	 * the given parameters.
+	 * 
+	 * @param symbol
+	 *            the name of the axiom
+	 * @param persistent
+	 *            <code>true</code> iff the resulting info shall be persistent
+	 * @param problemElement
+	 *            an element to which to attach problem markers
+	 * @param component
+	 *            the name of the component that contains this symbol
+	 * @return a new instance of IIdentifierSymbolInfo
+	 * @see ISymbolInfo
+	 */
 	public ILabelSymbolInfo makeLocalAxiom(String symbol, boolean persistent,
 			IInternalElement problemElement, String component) {
 		return new LabelSymbolInfo(symbol, ISCAxiom.ELEMENT_TYPE, persistent,
@@ -558,6 +701,21 @@ public final class SymbolFactory {
 				axiomSymbolProblem);
 	}
 
+	/**
+	 * Creates a new instance of IIdentifierSymbolInfo for a local invariant
+	 * with the given parameters.
+	 * 
+	 * @param symbol
+	 *            the name of the invariant
+	 * @param persistent
+	 *            <code>true</code> iff the resulting info shall be persistent
+	 * @param problemElement
+	 *            an element to which to attach problem markers
+	 * @param component
+	 *            the name of the component that contains this symbol
+	 * @return a new instance of IIdentifierSymbolInfo
+	 * @see ISymbolInfo
+	 */
 	public ILabelSymbolInfo makeLocalInvariant(String symbol,
 			boolean persistent, IInternalElement problemElement,
 			String component) {
@@ -566,6 +724,21 @@ public final class SymbolFactory {
 				component, invariantSymbolProblem);
 	}
 
+	/**
+	 * Creates a new instance of IIdentifierSymbolInfo for a local event with
+	 * the given parameters.
+	 * 
+	 * @param symbol
+	 *            the name of the event
+	 * @param persistent
+	 *            <code>true</code> iff the resulting info shall be persistent
+	 * @param problemElement
+	 *            an element to which to attach problem markers
+	 * @param component
+	 *            the name of the component that contains this symbol
+	 * @return a new instance of IIdentifierSymbolInfo
+	 * @see ISymbolInfo
+	 */
 	public ILabelSymbolInfo makeLocalEvent(String symbol, boolean persistent,
 			IInternalElement problemElement, String component) {
 		return new LabelSymbolInfo(symbol, ISCEvent.ELEMENT_TYPE, persistent,
@@ -573,6 +746,21 @@ public final class SymbolFactory {
 				eventSymbolProblem);
 	}
 
+	/**
+	 * Creates a new instance of IIdentifierSymbolInfo for a local guard with
+	 * the given parameters.
+	 * 
+	 * @param symbol
+	 *            the name of the guard
+	 * @param persistent
+	 *            <code>true</code> iff the resulting info shall be persistent
+	 * @param problemElement
+	 *            an element to which to attach problem markers
+	 * @param component
+	 *            the name of the component that contains this symbol
+	 * @return a new instance of IIdentifierSymbolInfo
+	 * @see ISymbolInfo
+	 */
 	public ILabelSymbolInfo makeLocalGuard(String symbol, boolean persistent,
 			IInternalElement problemElement, String component) {
 		return new LabelSymbolInfo(symbol, ISCGuard.ELEMENT_TYPE, persistent,
@@ -580,6 +768,21 @@ public final class SymbolFactory {
 				guardSymbolProblem);
 	}
 
+	/**
+	 * Creates a new instance of IIdentifierSymbolInfo for an imported guard
+	 * with the given parameters.
+	 * 
+	 * @param symbol
+	 *            the name of the guard
+	 * @param persistent
+	 *            <code>true</code> iff the resulting info shall be persistent
+	 * @param problemElement
+	 *            an element to which to attach problem markers
+	 * @param component
+	 *            the name of the component that contains this symbol
+	 * @return a new instance of IIdentifierSymbolInfo
+	 * @see ISymbolInfo
+	 */
 	public ILabelSymbolInfo makeImportedGuard(String symbol,
 			boolean persistent, IInternalElement problemElement,
 			IAttributeType problemAttributeType, String component) {
@@ -588,6 +791,21 @@ public final class SymbolFactory {
 				guardSymbolProblem);
 	}
 
+	/**
+	 * Creates a new instance of IIdentifierSymbolInfo for a local action with
+	 * the given parameters.
+	 * 
+	 * @param symbol
+	 *            the name of the action
+	 * @param persistent
+	 *            <code>true</code> iff the resulting info shall be persistent
+	 * @param problemElement
+	 *            an element to which to attach problem markers
+	 * @param component
+	 *            the name of the component that contains this symbol
+	 * @return a new instance of IIdentifierSymbolInfo
+	 * @see ISymbolInfo
+	 */
 	public ILabelSymbolInfo makeLocalAction(String symbol, boolean persistent,
 			IInternalElement problemElement, String component) {
 		return new LabelSymbolInfo(symbol, ISCAction.ELEMENT_TYPE, persistent,
@@ -595,6 +813,21 @@ public final class SymbolFactory {
 				actionSymbolProblem);
 	}
 
+	/**
+	 * Creates a new instance of IIdentifierSymbolInfo for an imported action
+	 * with the given parameters.
+	 * 
+	 * @param symbol
+	 *            the name of the action
+	 * @param persistent
+	 *            <code>true</code> iff the resulting info shall be persistent
+	 * @param problemElement
+	 *            an element to which to attach problem markers
+	 * @param component
+	 *            the name of the component that contains this symbol
+	 * @return a new instance of IIdentifierSymbolInfo
+	 * @see ISymbolInfo
+	 */
 	public ILabelSymbolInfo makeImportedAction(String symbol,
 			boolean persistent, IInternalElement problemElement,
 			IAttributeType problemAttributeType, String component) {
@@ -603,6 +836,21 @@ public final class SymbolFactory {
 				actionSymbolProblem);
 	}
 
+	/**
+	 * Creates a new instance of IIdentifierSymbolInfo for a local variant with
+	 * the given parameters.
+	 * 
+	 * @param symbol
+	 *            the name of the variant
+	 * @param persistent
+	 *            <code>true</code> iff the resulting info shall be persistent
+	 * @param problemElement
+	 *            an element to which to attach problem markers
+	 * @param component
+	 *            the name of the component that contains this symbol
+	 * @return a new instance of IIdentifierSymbolInfo
+	 * @see ISymbolInfo
+	 */
 	public ILabelSymbolInfo makeLocalVariant(String symbol, boolean persistent,
 			IInternalElement problemElement, String component) {
 		return new LabelSymbolInfo(symbol, ISCVariant.ELEMENT_TYPE, persistent,
@@ -610,6 +858,21 @@ public final class SymbolFactory {
 				variantSymbolProblem);
 	}
 
+	/**
+	 * Creates a new instance of IIdentifierSymbolInfo for a local witness with
+	 * the given parameters.
+	 * 
+	 * @param symbol
+	 *            the name of the witness
+	 * @param persistent
+	 *            <code>true</code> iff the resulting info shall be persistent
+	 * @param problemElement
+	 *            an element to which to attach problem markers
+	 * @param component
+	 *            the name of the component that contains this symbol
+	 * @return a new instance of IIdentifierSymbolInfo
+	 * @see ISymbolInfo
+	 */
 	public ILabelSymbolInfo makeLocalWitness(String symbol, boolean persistent,
 			IInternalElement problemElement, String component) {
 		return new LabelSymbolInfo(symbol, ISCWitness.ELEMENT_TYPE, persistent,

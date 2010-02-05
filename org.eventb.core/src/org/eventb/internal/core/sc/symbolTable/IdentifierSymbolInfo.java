@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Soton - redesign of symbol table
  *     Systerel - separation of file and root element
+ *     Systerel - published symbol factory
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
@@ -27,7 +28,7 @@ import org.rodinp.core.IInternalElementType;
  * @author Stefan Hallerstede
  * 
  */
-class IdentifierSymbolInfo
+public class IdentifierSymbolInfo
 		extends
 		SymbolInfo<ISCIdentifierElement, IInternalElementType<? extends ISCIdentifierElement>, ITypedSymbolProblem>
 		implements IIdentifierSymbolInfo {
