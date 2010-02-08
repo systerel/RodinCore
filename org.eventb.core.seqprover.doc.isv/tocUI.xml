@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?NLS TYPE="org.eclipse.help.toc"?>
-
-<toc label="Contributing to the Sequent Prover" topic="hrep=html/guide/contributing.html">
-	<topic label="Hypothesis Tactics"/>
-	<topic label="Goal Tactics"/>
-	<topic label="Global Tactics"/>
-	<topic label="Proof Commands"/>
-</toc>

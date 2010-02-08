@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?NLS TYPE="org.eclipse.help.toc"?>
-
-<toc label="Event-B Tactics" topic="hrep=html/guide/eventBTactics.html">
-	<topic label="POM Tactics" href="html/guide/pomTactics.html"/>
-	<topic label="Post-Tactics" href="html/guide/postTactics.html"/>
-</toc>

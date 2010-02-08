@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: FR 1866809 Tests Plug-in
-Bundle-SymbolicName: org.eventb.contributer.seqprover.fr1866809.tests
-Bundle-Version: 1.0.0
-Require-Bundle: org.eventb.core.seqprover.tests,
- org.eventb.contributer.seqprover.fr1866809
