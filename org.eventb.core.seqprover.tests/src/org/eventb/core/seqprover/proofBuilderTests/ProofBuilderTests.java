@@ -188,7 +188,7 @@ public class ProofBuilderTests {
 
 		final IProofDependencies proofDeps = ProverFactory
 				.makeProofDependencies(true, TestLib.genPred("c1=0∧c1<c2"),
-						TestLib.genPreds("c1=0"), TestLib
+						TestLib.genPreds("c1=0","c1<c2"), TestLib
 								.genTypeEnv("c1=ℤ,c2=ℤ"), Collections
 								.<String> emptySet());
 		assertFalse(
