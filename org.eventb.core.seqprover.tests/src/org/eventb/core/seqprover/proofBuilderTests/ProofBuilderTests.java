@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2009, 2010 Systerel and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Systerel - initial API and implementation
+ *******************************************************************************/
 package org.eventb.core.seqprover.proofBuilderTests;
 
 import static org.junit.Assert.assertEquals;
@@ -9,6 +19,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IConfidence;
+import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTree;
@@ -19,6 +30,7 @@ import org.eventb.core.seqprover.IReasonerRegistry;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
@@ -113,6 +125,14 @@ public class ProofBuilderTests {
 
 		assertFalse("should not have been able to reuse", ProofBuilder.reuse(
 				node, trivialSkeleton, null));
+		
+		final IProofDependencies proofDeps = ProverFactory
+				.makeProofDependencies(true, trivialSkeleton.getRule()
+						.getGoal(), Collections.<Predicate> emptySet(), TestLib
+						.genTypeEnv(""), Collections.<String> emptySet());
+		assertFalse(
+				"[ProverLib] should not claim a proof is reusable when it is not",
+				ProverLib.proofReusable(proofDeps, trueSequent));
 	}
 
 	@Test
@@ -125,6 +145,13 @@ public class ProofBuilderTests {
 
 		assertTrue("could not reuse", ProofBuilder.reuse(node, trivialSkeleton,
 				null));
+
+		final IProofDependencies proofDeps = ProverFactory
+				.makeProofDependencies(true, trivialSkeleton.getRule()
+						.getGoal(), Collections.<Predicate> emptySet(), TestLib
+						.genTypeEnv(""), Collections.<String> emptySet());
+		assertTrue("[ProverLib] should be reusable", ProverLib.proofReusable(
+				proofDeps, trivialSequent));
 	}
 
 	@Test
@@ -138,6 +165,14 @@ public class ProofBuilderTests {
 		assertTrue("could not reuse", ProofBuilder.reuse(node, branchSkeleton,
 				null));
 		assertTrue(t.isClosed());
+
+		final IProofDependencies proofDeps = ProverFactory
+				.makeProofDependencies(true, TestLib.genPred("c1=0∧c1<c2"),
+						TestLib.genPreds("c1=0", "0<c2"), TestLib
+								.genTypeEnv("c1=ℤ,c2=ℤ"), Collections
+								.<String> emptySet());
+		assertTrue("[ProverLib] should be reusable", ProverLib.proofReusable(
+				proofDeps, branchSequent));
 	}
 
 	@Test
@@ -150,6 +185,15 @@ public class ProofBuilderTests {
 
 		assertFalse("should not be able to reuse", ProofBuilder.reuse(node,
 				branchSkeleton, null));
+
+		final IProofDependencies proofDeps = ProverFactory
+				.makeProofDependencies(true, TestLib.genPred("c1=0∧c1<c2"),
+						TestLib.genPreds("c1=0"), TestLib
+								.genTypeEnv("c1=ℤ,c2=ℤ"), Collections
+								.<String> emptySet());
+		assertFalse(
+				"[ProverLib] should not claim a proof is reusable when it is not",
+				ProverLib.proofReusable(proofDeps, branchSequent));
 	}
 
 	private static String makeMessage(boolean successExpected) {
