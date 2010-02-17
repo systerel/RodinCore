@@ -43,7 +43,7 @@ import org.rodinp.core.RodinDBException;
  * </p>
  * 
  * @author Stefan Hallerstede
- * @since 1.2
+ * @since 1.3
  */
 public final class SymbolFactory {
 
