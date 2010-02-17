@@ -27,7 +27,7 @@ public class ProofErrorInput extends TextInput {
 		final StringBuilder sb = new StringBuilder();
 		sb.append(Messages.proofskeleton_cantdisplayproof);
 		sb.append(proof.getElementName());
-		sb.append("\nReason:\n");
+		sb.append("\r\nReason:\r\n");
 		sb.append(reason);
 		return sb.toString();
 	}
