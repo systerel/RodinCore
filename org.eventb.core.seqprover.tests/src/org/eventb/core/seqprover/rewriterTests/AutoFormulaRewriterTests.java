@@ -1123,16 +1123,6 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 		expressionTest("2^(card({x ∣ x >0}))", "card(ℙ({x ∣ x > 0}))");
 		
 		
-		// card(S ** T) == card(S) * card(T)
-		expressionTest("card({x ∣ x > 0}) ∗ card({y ∣ y < 0})",
-				"card({x ∣ x > 0} × {y ∣ y < 0})");
-		
-		
-		// card(S \ T) == card(S) - card(S /\ T)
-		expressionTest("card({x ∣ x > 0}) − card({x ∣ x > 0} ∩ {y ∣ y < 0})",
-				"card({x ∣ x > 0} ∖ {y ∣ y < 0})");
-		
-		
 		// card(S) = 0  ==  S = {}
 		predicateTest("{x ∣ x > 0} = ∅", "card({x ∣ x > 0}) = 0");
 
