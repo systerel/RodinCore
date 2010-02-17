@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - added abstract accept method for ISimpleVisitor
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
+ *     Systerel - added support for mathematical extensions
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -941,6 +942,18 @@ public abstract class Formula<T extends Formula<T>> {
 		return result;
 	}
 	
+	private static <S extends Formula<?>> ArrayList<FreeIdentifier[]> getFreeIdentifiers(
+			S... formulas) {
+		final ArrayList<FreeIdentifier[]> lists = new ArrayList<FreeIdentifier[]>(
+				formulas.length);
+		for (Formula<?> formula : formulas) {
+			final FreeIdentifier[] freeIdents = formula.freeIdents;
+			if (freeIdents.length != 0)
+				lists.add(freeIdents);
+		}
+		return lists;
+	}
+
 	/**
 	 * Merges the list of free identifiers of the given formulas.
 	 * 
@@ -952,18 +965,24 @@ public abstract class Formula<T extends Formula<T>> {
 	protected static <S extends Formula<?>> IdentListMerger mergeFreeIdentifiers(
 			S... formulas) {
 		
-		ArrayList<FreeIdentifier[]> lists = 
-			new ArrayList<FreeIdentifier[]>(formulas.length);
-		for (Formula<?> formula : formulas) {
-			final FreeIdentifier[] freeIdents = formula.freeIdents;
-			if (freeIdents.length != 0)
-				lists.add(freeIdents);
-		}
+		ArrayList<FreeIdentifier[]> lists = getFreeIdentifiers(formulas);
 		// Ensure the list is not empty.
 		if (lists.size() == 0) {
 			lists.add(NO_FREE_IDENT);
 		}
 		return IdentListMerger.makeMerger(lists);
+	}
+
+	private static <S extends Formula<?>> ArrayList<BoundIdentifier[]> getBoundIdentifiers(
+			S[] formulas) {
+		ArrayList<BoundIdentifier[]> lists = new ArrayList<BoundIdentifier[]>(
+				formulas.length);
+		for (Formula<?> formula : formulas) {
+			final BoundIdentifier[] boundIdents = formula.boundIdents;
+			if (boundIdents.length != 0)
+				lists.add(boundIdents);
+		}
+		return lists;
 	}
 
 	/**
@@ -976,13 +995,7 @@ public abstract class Formula<T extends Formula<T>> {
 	protected static <S extends Formula<?>> IdentListMerger mergeBoundIdentifiers(
 			S[] formulas) {
 		
-		ArrayList<BoundIdentifier[]> lists = 
-			new ArrayList<BoundIdentifier[]>(formulas.length);
-		for (Formula<?> formula : formulas) {
-			final BoundIdentifier[] boundIdents = formula.boundIdents;
-			if (boundIdents.length != 0)
-				lists.add(boundIdents);
-		}
+		ArrayList<BoundIdentifier[]> lists = getBoundIdentifiers(formulas);
 		// Ensure the list is not empty.
 		if (lists.size() == 0) {
 			lists.add(NO_BOUND_IDENT);

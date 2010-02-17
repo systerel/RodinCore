@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
+ *     Systerel - added support for mathematical extensions
  *******************************************************************************/ 
 package org.eventb.core.ast;
 
@@ -955,6 +956,48 @@ public class DefaultVisitor implements IVisitor2 {
 	}
 
 	public boolean exitKPARTITION(MultiplePredicate pred) {
+		return true;
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public boolean enterExtendedExpression(ExtendedExpression expression) {
+		return true;
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public boolean continueExtendedExpression(ExtendedExpression expression) {
+		return true;
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public boolean exitExtendedExpression(ExtendedExpression expression) {
+		return true;
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public boolean enterExtendedPredicate(ExtendedPredicate predicate) {
+		return true;
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public boolean continueExtendedPredicate(ExtendedPredicate predicate) {
+		return true;
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public boolean exitExtendedPredicate(ExtendedPredicate predicate) {
 		return true;
 	}
 

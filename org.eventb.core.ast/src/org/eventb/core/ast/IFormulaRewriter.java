@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language v2
+ *     Systerel - added support for mathematical extensions
  *******************************************************************************/ 
 package org.eventb.core.ast;
 
@@ -275,5 +276,15 @@ public interface IFormulaRewriter {
 	 * @return the given predicate rewritten
 	 */
 	Predicate rewrite(UnaryPredicate predicate);
+
+	/**
+	 * @since 2.0
+	 */
+	Expression rewrite(ExtendedExpression expression);
+
+	/**
+	 * @since 2.0
+	 */
+	Predicate rewrite(ExtendedPredicate predicate);
 
 }

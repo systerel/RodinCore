@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - added origin
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
+ *     Systerel - added support for mathematical extensions
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -17,7 +18,14 @@ import static org.eventb.core.ast.LanguageVersion.V1;
 
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
+import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.parser.ParseResult;
 import org.eventb.internal.core.parser.Parser;
@@ -42,6 +50,12 @@ public class FormulaFactory {
 
 	static FormulaFactory DEFAULT_INSTANCE = new FormulaFactory();
 
+	private static final Map<Integer, IFormulaExtension> allExtensions = new HashMap<Integer, IFormulaExtension>();
+	
+	// TODO maybe not needed, but how to check that no attempt is made to
+	// create a formula with a tag that should be managed by another factory ?
+	private final Set<IFormulaExtension> extensions;
+	
 	/**
 	 * Returns the default instance of the type factory.
 	 * 
@@ -51,10 +65,97 @@ public class FormulaFactory {
 		return DEFAULT_INSTANCE;
 	}
 
+	/**
+	 * @since 2.0
+	 */
+	public static FormulaFactory getInstance(Set<IFormulaExtension> extensions) {
+		synchronized (DEFAULT_INSTANCE) {
+			for (IFormulaExtension extension : extensions) {
+				if (allExtensions.containsKey(extension)) {
+					// TODO
+					return null;
+				}
+				final Integer tag = null;// TODO
+				allExtensions.put(tag, extension);
+			}
+		}
+		return new FormulaFactory(extensions);
+	}
+	
 	protected FormulaFactory() {
-		// Nothing to do
+		this(Collections.<IFormulaExtension>emptySet());
 	}
 
+	/**
+	 * @since 2.0
+	 */
+	protected FormulaFactory(Set<IFormulaExtension> extensions) {
+		this.extensions = extensions;
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public ExtendedExpression makeExtendedExpression(int tag,
+			Expression[] expressions, Predicate[] predicates,
+			SourceLocation location) {
+		final IFormulaExtension extension;
+		synchronized (DEFAULT_INSTANCE) {
+			extension = allExtensions.get(tag);
+		}
+		assert extension instanceof IExpressionExtension;
+		if (!extensions.contains(extension)) {
+			throw new IllegalArgumentException(
+					"the tag is not supported by this factory: " + tag);
+		}
+		return new ExtendedExpression(tag, expressions, predicates, location,
+				this, (IExpressionExtension) extension);
+	}
+	
+	/**
+	 * @since 2.0
+	 */
+	public ExtendedExpression makeExtendedExpression(int tag,
+			Collection<Expression> expressions,
+			Collection<Predicate> predicates,
+			SourceLocation sourceLocation) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public ExtendedPredicate makeExtendedPredicate(int tag,
+			Expression[] expressions, Predicate[] predicates,
+			SourceLocation location) {
+		final IFormulaExtension extension;
+		synchronized (DEFAULT_INSTANCE) {
+			extension = allExtensions.get(tag);
+		}
+		assert extension instanceof IPredicateExtension;
+		return new ExtendedPredicate(tag, expressions, predicates, location,
+				this, (IPredicateExtension) extension);
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public ExtendedPredicate makeExtendedPredicate(int tag,
+			Collection<Expression> expressions,
+			Collection<Predicate> predicates,
+			SourceLocation sourceLocation) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public int getTag(IFormulaExtension extension) {
+		return 0; // TODO
+	}
+	
 	/**
 	 * Returns a new associative expression
 	 * <p>
