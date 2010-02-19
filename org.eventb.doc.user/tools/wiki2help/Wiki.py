@@ -21,7 +21,7 @@ class Wiki:
     
     def get_mediawiki_image_list(self, xml):
         matches = re.findall("\[\[Image:(.*?)[\]\|]", xml)
-        images = [(match, '/images/' + match.capitalize()) for match in matches]
+        images = [(match, '/images/' + match[0].upper() + match[1:]) for match in matches]
         return images
     
     def get_html_image_list(self, html):

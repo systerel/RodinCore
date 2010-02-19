@@ -78,6 +78,7 @@ def manage_math_markups(wiki_from, page_from, dir_to, xml):
     s = re.sub("&lt;","<",s)
     s = re.sub("&gt;",">",s)
     s = re.sub("&quot;","\"",s)
+    s = re.sub("&amp;","&",s)
     return s
     
 def get_html_page(wiki_from, page_from, dir_to):
