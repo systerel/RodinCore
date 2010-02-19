@@ -2,6 +2,7 @@
 import sys
 import getopt
 import textwrap
+import re
 import Wiki
 from ImageDownloader import ImageDownloader
 
@@ -67,9 +68,17 @@ def export_mediawiki_page(wiki_from, page_from, dir_to):
     
 def manage_math_markups(wiki_from, page_from, dir_to, xml):
     html_images = get_html_page(wiki_from, page_from, dir_to)
-    image_alts = [img[0] for img in html_images]
-    image_names = [img[1][img[1].rfind("/")+1:] for img in html_images]
-    return wiki_from.patch_mediawiki_file(page_from, dir_to, xml, image_alts, image_names)
+    math_markups = [img[0] for img in html_images]
+    images = [img[1][img[1].rfind("/")+1:] for img in html_images]
+    s = xml
+    for i in range(0, len(math_markups)):
+        s = re.sub("&lt;math&gt;" + math_markups[i].replace("\\","\\\\") + "&lt;/math&gt;", "[[Image:" + images[i] + "]]", s)
+    s = re.sub("&lt;math&gt;(.*?)_(.*?)&lt;/math&gt;","&lt;math&gt;\\1<sub>\\2</sub>&lt;/math&gt;",s)
+    s = re.sub("&lt;math&gt;(.*?)&lt;/math&gt;","<i>\\1</i>",s)
+    s = re.sub("&lt;","<",s)
+    s = re.sub("&gt;",">",s)
+    s = re.sub("&quot;","\"",s)
+    return s
     
 def get_html_page(wiki_from, page_from, dir_to):
     html = wiki_from.get_page(page_from)

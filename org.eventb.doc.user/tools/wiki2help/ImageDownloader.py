@@ -5,11 +5,11 @@ class ImageDownloader:
     def __init__(self, urlBase, savePath):
         self.urlBase = urlBase
         self.path = savePath
-        if not os.path.exists(savePath):
-            os.mkdir(savePath)
         self.images = {}    
     def _saveImage(self, url, name):
         self.images[url] = False
+        if not os.path.exists(self.path):
+            os.mkdir(self.path)
         ImageDownload(name, self.urlBase + url, self.path + name)
     def saveImages(self, urls, names):
         for i in range(0, len(urls) ):

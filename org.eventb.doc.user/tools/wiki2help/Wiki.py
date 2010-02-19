@@ -34,7 +34,7 @@ class Wiki:
         data = {
             'curonly': 'on',
             'pages': text,
-            #'templates': '',
+            'templates': 'on',
             #'wpDownload': '',
             'submit': 'Export'
         }
@@ -47,18 +47,7 @@ class Wiki:
         return result.read()
     
     def write_mediawiki_file(self, title, dir_to, xml):
-        matches = re.findall("<text xml:space=\"preserve\">(.*)</text>", xml, re.DOTALL)
+        matches = re.findall("<text xml:space=\"preserve\">(.*?)</text>", xml, re.DOTALL)
         xml_file = open(dir_to + '/' + title + '.mediawiki', "w")
         xml_file.write(matches[0])
         xml_file.close()
-        
-    def patch_mediawiki_file(self, title, dir_to, xml, math_markups, images):
-        s = xml
-        for i in range(0, len(math_markups)):
-            s = re.sub("&lt;math&gt;" + math_markups[i].replace("\\","\\\\") + "&lt;/math&gt;", "[[Image:" + images[i] + "]]", s)
-        s = re.sub("&lt;math&gt;(.*?)_(.*?)&lt;/math&gt;","&lt;math&gt;\\1<sub>\\2</sub>&lt;/math&gt;",s)
-        s = re.sub("&lt;math&gt;(.*?)&lt;/math&gt;","<i>\\1</i>",s)
-        s = re.sub("&lt;","<",s)
-        s = re.sub("&gt;",">",s)
-        s = re.sub("&quot;","\"",s)
-        return s

@@ -19,7 +19,7 @@
     <!-- dest.dir - where generated docs will be placed                        -->
 	<!-- wiki.domain - the wiki domain (ex:"http://wiki.event-b.org")          -->
 	<!-- wiki.page - the wiki page (such as url = wiki.domain/wiki.page )      -->
-	<!-- help.title - the title of the generated html document                 -->
+	<!-- help.title - the title of the generated Eclipse Help page             -->
     <!-- ===================================================================== -->
 	<target name="generate-help" depends="get-mediawiki" description="Generate Eclipse help from MediaWiki source">
 		<wikitext-to-eclipse-help markupLanguage="MediaWiki"
@@ -45,6 +45,27 @@
 		<replaceregexp match="\{\{TOC(.*?)\}\}" replace="" flags="g">
 			<fileset dir="${dest.dir}" includes="${wiki.page}.html"/>
 		</replaceregexp>
+	</target>
+	
+	<target name="generate-html" depends="get-mediawiki" description="Generate HTML from MediaWiki source">
+			<wikitext-to-html markupLanguage="MediaWiki"
+				overwrite="true"
+				multipleOutputFiles="true"
+				formatOutput="true"
+				navigationImages="true"
+				prependImagePrefix="images">
+				<fileset dir="${dest.dir}">
+					<include name="${wiki.page}.mediawiki"/>
+				</fileset>
+			</wikitext-to-html>
+			
+			<replaceregexp match="&lt;a href=&quot;/wiki" replace="&lt;a href=&quot;${wiki.domain}/index.php" flags="g">
+				<fileset dir="${dest.dir}" includes="${wiki.page}.html"/>
+			</replaceregexp>
+
+			<replaceregexp match="\{\{TOC(.*?)\}\}" replace="" flags="g">
+				<fileset dir="${dest.dir}" includes="${wiki.page}.html"/>
+			</replaceregexp>
 	</target>
 
 	<target name="get-mediawiki" description="Get the MediaWiki source">
