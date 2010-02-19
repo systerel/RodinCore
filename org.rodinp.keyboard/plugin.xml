@@ -62,28 +62,8 @@
    <extension
          point="org.eclipse.help.toc">
       <toc
-            file="toc/toc.xml"
+            file="doc/Rodin_Keyboard_User_Guide-toc.xml"
             primary="true">
-      </toc>
-      <toc
-            file="toc/tocconcepts.xml"
-            primary="false">
-      </toc>
-      <toc
-            file="toc/tocgettingstarted.xml"
-            primary="false">
-      </toc>
-      <toc
-            file="toc/tocreference.xml"
-            primary="false">
-      </toc>
-      <toc
-            file="toc/tocsamples.xml"
-            primary="false">
-      </toc>
-      <toc
-            file="toc/toctasks.xml"
-            primary="false">
       </toc>
    </extension>
 

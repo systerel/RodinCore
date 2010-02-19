@@ -1,0 +1,255 @@
+{{TOCright}}
+
+== Introduction ==
+
+This short help page provides necessary information on the Rodin Keyboard plug-in and also on how to extend the plug-in.
+
+== Getting Started ==
+=== Overview ===
+The Rodin Keyboard plug-in creates a view (namely "RODIN Keyboard") under Event-B category.
+
+You can open "RODIN Keyboard" view now: 
+
+# Go to Window/Show View/Other. 
+# Choose the "RODIN Keyboard" view from the Event-B category. 
+
+The view contains a text area which takes an ASCII input and translate it into the mathematical language (defined by extensions).
+
+=== Special Combos ===
+Below are the special combos (set of ASCII characters) and their translations into the Event-B mathematical language.
+
+{| border="1" cellspacing="0"  
+! ASCII !! LaTeX !! Math !! Meaning !! Unicode
+|- 
+|align="center" | <code>NAT</code> || align="center" | \nat || align="center" | [[Image:43582ae991a99b68beb25d45d2d69e0c.png]] || The set of natural numbers || U+2115
+|-
+|align="center" | <code>NAT1</code> || align="center" | \natn || align="center" | [[Image:e62dc54e8a3a665089cd166978dad9a8.png]] || The set of positive natural numbers || U+2115 U+0031
+|-
+|align="center" | <code>INT</code> || align="center" | \intg || align="center" | [[Image:b4a76c35c54f1b0383256169a8c0a361.png]] || The set of integer numbers || U+2124
+|-
+|align="center" | <code>POW</code> || align="center" | \pow || align="center" | [[Image:6729d7a66f402217cc9300bf7ef049cc.png]] || The set of all subsets (power set) || U+2119
+|-
+|align="center" | <code>POW1</code> || align="center" | \pown || align="center" | [[Image:44523d89691c90843bcc377a3afcea39.png]] || The set of all non-empty subsets || U+2119 U+0031
+|-
+|colspan="5" | &nbsp;
+|-
+|align="center" | <code>(</code> || align="center" | ( || align="center" | ( || Left parenthesis || U+0028
+|-
+|align="center" | <code>)</code> || align="center" | ) || align="center" | ) || Right parenthesis || U+0029
+|-
+|align="center" | <code><=></code> || align="center" | \leqv || align="center" | [[Image:eb63683a0e9867406ca8827e6e30f82e.png]] || Logical equivalence || U+21D4
+|-
+|align="center" | <code>=></code> || align="center" | \limp || align="center" | [[Image:81ab5711cc3962151a413a390190f43c.png]] || Logical implication || U+21D2
+|-
+|align="center" | <code>&</code> || align="center" | \land || align="center" | [[Image:9cae4437756a15b8e44ec23e07fb1f65.png]] || Logical conjunction || U+2227
+|-
+|align="center" | <code>or</code> || align="center" | \lor || align="center" | [[Image:5addb134385e47a2efa484f6306e75a1.png]] || Logical disjunction || U+2228
+|-
+|align="center" | <code>not</code> || align="center" | \lnot || align="center" | [[Image:8efca960b209402104b448a5ad9486a8.png]] || Not sign || U+00AC
+|-
+|align="center" | <code>true</code> || align="center" | \btrue || align="center" | [[Image:e430ee984131145da820d9b5e74c0d91.png]] || True predicate || U+22A4
+|-
+|align="center" | <code>false</code> || align="center" | \bfalse || align="center" | [[Image:10a1fe7ae889df25fe8ea66d7df1823f.png]] || False predicate || U+22A5
+|-
+|align="center" | <code>!</code> || align="center" | \forall || align="center" | [[Image:d4d49bead125261b226eaa867bd016ce.png]] || For all || U+2200
+|-
+|align="center" | <code>#</code> || align="center" | \exists || align="center" | [[Image:93ebe8636e1f8d60004fe33d1321674e.png]] || There exists || U+2203
+|-
+|align="center" | <code>,</code> || align="center" | , || align="center" | , || Comma || U+002C
+|-
+|align="center" | <code>.</code> || align="center" | \qdot || align="center" | [[Image:fee1e2a11d6640f13cc6a0ce7858b5d6.png]] || Middle dot || U+00B7
+|-
+|colspan="5" | &nbsp;
+|-
+|align="center" | <code>=</code> || align="center" | = || align="center" | = || Equal to || U+003D
+|-
+|align="center" | <code>/=</code> || align="center" | \neq || align="center" | [[Image:bd0d5f08997b7a4ad8598963f7e50231.png]] || Not equal to || U+2260
+|-
+|align="center" | <code>&lt;</code> || align="center" | &lt; || align="center" | &lt; || Less than || U+003C
+|-
+|align="center" | <code>&lt;=</code> || align="center" | \leq || align="center" | [[Image:49dc1443f33cf63082d6e193dd2af78f.png]] || Less than or equal to || U+2264
+|-
+|align="center" | <code>&gt;</code> || align="center" | &gt; || align="center" | &gt; || Greater than || U+003E
+|-
+|align="center" | <code>&gt;=</code> || align="center" | \geq || align="center" | [[Image:8fbe2a506fe3db0835548e1b648ec977.png]] || Greater than or equal to || U+2265
+|-
+|align="center" | <code>:</code> || align="center" | \in || align="center" | [[Image:8c20c78b364ed5dbadd49e5b997aa1cc.png]] || Element of || U+2208
+|-
+|align="center" | <code>/:</code> || align="center" | \notin || align="center" | [[Image:692614f72e231db0d2313050ac29e113.png]] || Not an element of || U+2209
+|-
+|align="center" | <code><<:</code> || align="center" | \subset || align="center" | [[Image:7afa88c2877d79e6a8a190b360edfcd6.png]] || (Proper) Subset of || U+2282
+|-
+|align="center" | <code>/<<:</code> || align="center" | \notsubset || align="center" | [[Image:8289b58f87a75b175cd9d7f17285b37f.png]] || Not a (proper) subset of || U+2284
+|-
+|align="center" | <code><:</code> || align="center" | \subseteq || align="center" | [[Image:a07903a0504f50f27e2a85c27e47fbd5.png]] || Subset of or equal to || U+2286
+|-
+|align="center" | <code>/<:</code> || align="center" | \notsubseteq || align="center" | [[Image:7799a23b00b62e281c518be57895d765.png]] || Neither a subset of nor equal to || U+2288
+|-
+|colspan="5" | &nbsp;
+|-
+|align="center" | <code><-></code> || align="center" | \rel || align="center" | [[Image:c6251476678b044a0248b0e66240a694.png]] || Relation || U+2194
+|-
+|align="center" | <code><<-></code> || align="center" | \trel || align="center" | [[Image:589f2aaefcd8878ab1dc75e3852d1efc.png]] || Total relation || U+E100
+|-
+|align="center" | <code><->></code> || align="center" | \srel || align="center" | [[Image:44aa9f5c4e9230da8e51d084a6716ac2.png]] || Surjective relation || U+E101
+|-
+|align="center" | <code><<->></code> || align="center" | \strel || align="center" | [[Image:83468adf452c15d36d95f2abb501a7d7.png]] || Total surjective relation || U+E102
+|-
+|align="center" | <code>+-></code> || align="center" | \pfun || align="center" | [[Image:0b0d0d5524bb2a2d69b962fd0764b865.png]] || Partial function || U+21F8
+|-
+|align="center" | <code>--></code> || align="center" | \tfun || align="center" | [[Image:6e784a06b4553cfa548efc06049aa748.png]] || Total function || U+2192
+|-
+|align="center" | <code>>+></code> || align="center" | \pinj || align="center" | [[Image:45b58767ad3c5a774388a059c1d4842e.png]] || Partial injection || U+2914
+|-
+|align="center" | <code>>-></code> || align="center" | \tinj || align="center" | [[Image:cda53af3b6a87afaa0f438808b4c7a3b.png]] || Total injection || U+21A3
+|-
+|align="center" | <code>+>></code> || align="center" | \psur || align="center" | [[Image:f4b2bd8c232a4b086efaf075040951ad.png]] || Partial surjection || U+2900
+|-
+|align="center" | <code>->></code> || align="center" | \tsur || align="center" | [[Image:1150bf2990812e89e7c6daea65258404.png]] || Total surjection || U+21A0
+|-
+|align="center" | <code>>->></code> || align="center" | \tbij || align="center" | [[Image:a874b581e2b893df996c75ae52432245.png]] || Bijection || U+2916
+|-
+|colspan="5" | &nbsp;
+|-
+|align="center" | <code>{</code> || align="center" | { || align="center" | { || Left curly bracket || U+007B
+|-
+|align="center" | <code>}</code> || align="center" | } || align="center" | } || Right curly bracket || U+007D
+|-
+|align="center" | <code>|-></code> || align="center" rowspan="2" | \mapsto || align="center" rowspan="2" | [[Image:9450612598aafa1f56196840d7f83ff9.png]] || align="center" rowspan="2" | Maplet || rowspan="2" | U+21A6
+|-
+|align="center" | <code>,,</code>
+|-
+|align="center" | <code>{}</code> || align="center" | \emptyset || align="center" | [[Image:4df085f70a97244c977b6ff20b1952b4.png]] || Empty set || U+2205
+|-
+|align="center" | <code>/\</code> || align="center" | \binter || align="center" | [[Image:cd8cd0416e65ccb97e16727b7fe06421.png]] || Intersection || U+2229
+|-
+|align="center" | <code>\/</code> || align="center" | \bunion || align="center" | [[Image:2c58fb3f33c5bd9a0b7613ac52890b95.png]] || Union || U+222A
+|-
+|align="center" | <code>\</code> || align="center" | \setminus || align="center" | [[Image:17d233e7f25e7e6108e6e8135fc5bf65.png]] || Set minus || U+2216
+|-
+|align="center" | <code>**</code> || align="center" | \cprod || align="center" | [[Image:fde5caf0acafafcc8e7b5578feeb2e89.png]] || Cartesian product || U+00D7
+|-
+|colspan="5" | &nbsp;
+|-
+|align="center" | <code>[</code> || align="center" | [ || align="center" | [ || Left square bracket || U+005B
+|-
+|align="center" | <code>]</code> || align="center" | ] || align="center" | ] || Right square bracket || U+005D
+|-
+|align="center" | <code><+</code> || align="center" | \ovl || align="center" | [[Image:c0936565b45c2c8cb9682d3acf1f05fd.png]] || Relation overriding || U+E103
+|-
+|align="center" | <code>circ</code> || align="center" | \bcomp || align="center" | [[Image:fd117cd15b3ef4597d0cea346fa19901.png]] || Backward composition || U+2218
+|-
+|align="center" | <code>;</code> || align="center" | \fcomp || align="center" | [[Image:b0746b1e8bc6da24ad23ac772b07e26b.png]] || Forward composition || U+003B
+|-
+|align="center" | <code>><</code> || align="center" | \dprod || align="center" | [[Image:ac4193e73746615d69f69900cdeb7986.png]] || Direct product || U+2297
+|-
+|align="center" | <code>|</code><code>|</code> || align="center" | \pprod || align="center" | [[Image:8e90f8596d45a047fc4ccbb993b917c8.png]] || Parallel product || U+2225
+|-
+|align="center" | <code>~</code> || align="center" | \conv || align="center" | ~ || Tilde operator || U+223C
+|-
+|align="center" | <code><|</code> || align="center" | \domres || align="center" | [[Image:9fba0965aeb8394e69a877c06310120d.png]] || Domain restriction || U+25C1
+|-
+|align="center" | <code><<|</code> || align="center" | \domsub || align="center" | [[Image:6f0863451e6eb859f49077b64c8b6ee7.png]] || Domain subtraction || U+2A64
+|-
+|align="center" | <code>|></code> || align="center" | \ranres || align="center" | [[Image:ad600b4c9652b79d5e323b80a50d46f2.png]] || Range restriction || U+25B7
+|-
+|align="center" | <code>|>></code> || align="center" | \ransub || align="center" | [[Image:779e759bc537a67c213e3f0c7470dbab.png]] || Range subtraction || U+2A65
+|-
+|colspan="5" | &nbsp;
+|-
+|align="center" | <code>%</code> || align="center" | \lambda || align="center" | <i>\lambda</i> || Lambda || U+03BB
+|-
+|align="center" | <code>INTER</code> || align="center" | \Inter || align="center" | [[Image:76683100fbf9c07def9d392a3cd99cb3.png]] || N-ary intersection || U+22C2
+|-
+|align="center" | <code>UNION</code> || align="center" | \Union || align="center" | [[Image:9b5bd69e25cc6788fc22b6c8220855d0.png]] || N-ary union || U+22C3
+|-
+|align="center" | <code>|</code> || align="center" | \mid || align="center" | [[Image:728bff8337a6159ae62c40d8c00f1ab6.png]] || Such that || U+2223
+|-
+|colspan="5" | &nbsp;
+|-
+|align="center" | <code>..</code> || align="center" | \upto || align="center" | [[Image:c7f92374b2333a3675f803811224c5a2.png]] || Upto sign || U+2025
+|-
+|align="center" | <code>+</code> || align="center" | + || align="center" | + || Addition sign || U+002B
+|-
+|align="center" | <code>-</code> || align="center" | - || align="center" | - || Subtraction sign || U+2212
+|-
+|align="center" | <code>*</code> || align="center" | * || align="center" | * || Multiplication sign || U+2217
+|-
+|align="center" | <code>/</code> || align="center" | \div || align="center" | [[Image:a3933e4fee514b1dfa4cea09af6ae53e.png]] || Division sign || U+00F7
+|-
+|align="center" | <code>^</code> || align="center" | \expn || align="center" | [[Image:cd35cf63b7b996da825c410a01ecaeaa.png]] || Exponentiation sign || U+005E
+|-
+|colspan="5" | &nbsp;
+|-
+|align="center" | <code>oftype</code> || align="center" | \oftype || align="center" | [[Image:oftype.png]] || Typing operator || U+2982
+|-
+|colspan="5" | &nbsp;
+|-
+|align="center" | <code>:=</code> || align="center" | \bcmeq || align="center" | [[Image:25fbd0ace687134f1504a8cba0efa23c.png]] || Becomes equal to || U+2254
+|-
+|align="center" | <code>::</code> || align="center" | \bcmin || align="center" | [[Image:fb878c0424f29e0675b77d27915ba670.png]] || Becomes an element of || U+003A U+2208 
+|-
+|align="center" | <code>:|</code> || align="center" | \bcmsuch || align="center" | [[Image:9c4e02de3d21000cc05a87df1fdc9122.png]] || Becomes such that || U+003A U+2223
+|}
+
+== Concepts ==
+=== RODIN Keyboard View ===
+The view contains a text area where ASCII input can be typed in. The text will be translated into the mathematical language (which is extensible) when there is a modification of the text. The translation is done for the whole text spanned over multiple lines. 
+
+Below is an example of the view which is attached to the bottom area of the workbench.
+
+<center>
+[[Image:RODIN_keyboard_view.png]]
+</center>
+
+== Tasks ==
+=== Entering a Mathematical Formula ===
+A formula in the mathematical language of Event-B can be typed in the text area of the RODIN Keyboard view. The view will translate the formula from ASCII into the mathematical language as specified [[#Special_Combos | here]]. The formula can be copied as normal (Unicode) text.
+
+=== Changing the Font ===
+In order to display the Unicode characters for the mathematical language, there is a special font associated with the text area. This font can be changed in the Preferences page associated with the Colors and Fonts. It can be opened from the category "General/Appearance/Colors And Fonts". Any font can be chosen, but mathematical language formulas can be displayed correctly only if the chosen font contains the Unicode characters for the mathematical language. From the Preferences page, you can choose the font, the style and the size for the text area. 
+
+More information about the Preferences page can be found [[#Preferences | here]].
+
+=== Extending the Keyboard ===
+There is an extension point to extend the keyboard namely <tt>org.rodinp.keyboard.symbols</tt>. An example of this extension point is shown below.
+
+ <extension point="org.eventb.eventBKeyboard.translators">
+ <translator
+ class="org.eventb.eventBKeyboard.views.EventBKeyboardTextTranslator">
+ </translator>
+ <translator
+ class="org.eventb.eventBKeyboard.views.EventBKeyboardMathTranslator">
+ </translator>
+ </extension>
+
+The class attribute must be a fully qualified name of the class that implements <tt>org.eventb.eventBKeyboard.views.IEventBKeyboardTranslator</tt>. It involves to implement the abstract <tt>translate(Text widget)</tt> method. An example can be taken from <tt>org.eventb.eventBKeyboard.views.EventBKeyboardTextTranslator</tt> or <tt>org.eventb.eventBKeyboard.views.EventBKeyboardMathTranslator</tt>. 
+
+== Reference ==
+=== Release Notes ===
+See the [http://wiki.event-b.org/index.php/Keyboard_Release_History Keyboard Release History].
+
+=== Preferences ===
+The Preferences page is used to change the font of the text area in the RODIN Keyboard view. You can access it from the "General/Appearance/Colors and Fonts" page.
+
+A sample of this preferences page is shown below.
+
+[[Image:Keyboard_preferences.jpg]]
+
+The button "Change Font" is used to choose a new font. A pop-up dialog will be open and you can choose from the set of system fonts. The button "Reset" is used to set the font to the default Brave Sans Mono font.
+
+There are four other buttons at the bottom of the page:
+* Restore Default: Restore the default fonts. It does not affect the Keyboard view. 
+* Apply: Apply the current chosen font for the Keyboard view. 
+* OK: Store the preference values to the preference store and close the page. It also applies the current chosen font for the Keyboard view. 
+* Cancel: Close the page immediately without saving the preference values. Obviously, this does not affect the Keyboard view. 
+
+== Samples ==
+=== Expression ===
+{{TODO}}
+
+=== Jumping ===
+{{TODO}}
+
+[[Category:User documentation]]
+[[Category:Work in progress]]

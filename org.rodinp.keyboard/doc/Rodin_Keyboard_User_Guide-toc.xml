@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<toc topic="doc/Rodin_Keyboard_User_Guide.html" label="Rodin Keyboard User Guide">
+	<topic href="doc/Rodin_Keyboard_User_Guide.html" label="Introduction"></topic>
+	<topic href="doc/Rodin_Keyboard_User_Guide.html#Getting_Started" label="Getting Started">
+		<topic href="doc/Rodin_Keyboard_User_Guide.html#Overview" label="Overview"></topic>
+		<topic href="doc/Rodin_Keyboard_User_Guide.html#Special_Combos" label="Special Combos"></topic>
+	</topic>
+	<topic href="doc/Rodin_Keyboard_User_Guide.html#Concepts" label="Concepts">
+		<topic href="doc/Rodin_Keyboard_User_Guide.html#RODIN_Keyboard_View" label="RODIN Keyboard View"></topic>
+	</topic>
+	<topic href="doc/Rodin_Keyboard_User_Guide.html#Tasks" label="Tasks">
+		<topic href="doc/Rodin_Keyboard_User_Guide.html#Entering_a_Mathematical_Formula" label="Entering a Mathematical Formula"></topic>
+		<topic href="doc/Rodin_Keyboard_User_Guide.html#Changing_the_Font" label="Changing the Font"></topic>
+		<topic href="doc/Rodin_Keyboard_User_Guide.html#Extending_the_Keyboard" label="Extending the Keyboard"></topic>
+	</topic>
+	<topic href="doc/Rodin_Keyboard_User_Guide.html#Reference" label="Reference">
+		<topic href="doc/Rodin_Keyboard_User_Guide.html#Release_Notes" label="Release Notes"></topic>
+		<topic href="doc/Rodin_Keyboard_User_Guide.html#Preferences" label="Preferences"></topic>
+	</topic>
+	<topic href="doc/Rodin_Keyboard_User_Guide.html#Samples" label="Samples">
+		<topic href="doc/Rodin_Keyboard_User_Guide.html#Expression" label="Expression"></topic>
+		<topic href="doc/Rodin_Keyboard_User_Guide.html#Jumping" label="Jumping"></topic>
+	</topic>
+</toc>
