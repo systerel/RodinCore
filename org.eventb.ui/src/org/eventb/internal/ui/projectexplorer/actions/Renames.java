@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - added default name
+ *     Systerel - added renaming of proof files
  *******************************************************************************/
 package org.eventb.internal.ui.projectexplorer.actions;
 
@@ -23,7 +24,9 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextRoot;
+import org.eventb.core.IEventBProject;
 import org.eventb.core.IMachineRoot;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -71,6 +74,10 @@ public class Renames implements IObjectActionDelegate {
 					return;
 				final IRodinFile file = root.getRodinFile();
 				final IRodinProject prj = file.getRodinProject();
+				final IEventBProject evbProject = (IEventBProject) prj
+						.getAdapter(IEventBProject.class);
+				final IRodinFile proofFile = evbProject.getPRFile(root
+						.getElementName());
 
 				InputDialog dialog = new InputDialog(part.getSite().getShell(),
 						"Rename Component",
@@ -92,6 +99,16 @@ public class Renames implements IObjectActionDelegate {
 						public void run(IProgressMonitor monitor)
 								throws RodinDBException {
 							String newName = null;
+							newName = EventBPlugin.getPRFileName(bareName);
+							IRodinFile pRFile = evbProject.getPRFile(bareName);
+							if (pRFile.exists()) {
+								if (cancelRenaming(bareName)) {
+									return;
+								}
+								proofFile.rename(newName, true, monitor);
+							} else {
+								proofFile.rename(newName, false, monitor);
+							}
 							if (root instanceof IContextRoot)
 								newName = EventBPlugin
 										.getContextFileName(bareName);
@@ -130,4 +147,14 @@ public class Renames implements IObjectActionDelegate {
 	public void selectionChanged(IAction action, ISelection sel) {
 		this.selection = sel;
 	}
+
+	public boolean cancelRenaming(String newName) {
+		return UIUtils
+				.showQuestion("There are already proofs for component "
+						+ newName
+						+ " in this project.\n"
+						+ "By continuing this rename operation, these proofs will be lost.\n"
+						+ "Do you want to preserve these proofs and cancel this renaming?");
+	}
+
 }
