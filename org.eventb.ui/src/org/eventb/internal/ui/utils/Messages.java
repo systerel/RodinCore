@@ -172,6 +172,7 @@ public final class Messages {
 	public static String dialogs_po_Deleted;
 	public static String dialogs_prover_error_creating_page;
 	public static String dialogs_sample_action_executed;
+	public static String dialogs_cancel_renaming;
 	
 	//Dialog titles
 	public static String title_error;
@@ -224,6 +225,10 @@ public final class Messages {
 		return bind(dialogs_readOnlyElement, str);
 	}
 	
+	public static String dialogs_cancelRenaming(String s1){
+		return bind(dialogs_cancel_renaming, s1);
+	}
+
 	public static String tactics_replaceWith(String s1, String s2){
 		return bind(tactics_replaceWith, s1, s2);
 	}

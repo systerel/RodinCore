@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.projectexplorer.actions;
 
+import static org.eventb.internal.ui.utils.Messages.dialogs_cancelRenaming;
+
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
@@ -143,12 +145,7 @@ public class Renames implements IObjectActionDelegate {
 	}
 
 	public boolean cancelRenaming(String newName) {
-		return UIUtils
-				.showQuestion("There are already proofs for component "
-						+ newName
-						+ " in this project.\n"
-						+ "By continuing this rename operation, these proofs will be lost.\n"
-						+ "Do you want to preserve these proofs and cancel this renaming?");
+		return UIUtils.showQuestion(dialogs_cancelRenaming(newName));
 	}
 
 }
