@@ -38,10 +38,6 @@ public class Renames implements IObjectActionDelegate {
 	private ISelection selection;
 
 	private IWorkbenchPart part;
-
-	private String defaultMachineName = "mch";
-
-	private String defaultContextName = "ctx";
 	
 	private String defaultName = "";
 	
@@ -132,10 +128,8 @@ public class Renames implements IObjectActionDelegate {
 	}
 
 	private String getDefaultName(IInternalElement root) {
-		if (root instanceof IMachineRoot) {
-			return defaultMachineName;
-		} else if (root instanceof IContextRoot) {
-			return defaultContextName;
+		if (root instanceof IMachineRoot || root instanceof IContextRoot) {
+			return root.getElementName();
 		} else {
 			return defaultName;
 		}
