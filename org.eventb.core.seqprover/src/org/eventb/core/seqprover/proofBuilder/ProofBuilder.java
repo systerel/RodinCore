@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,11 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - in reuse() and rebuild(), try to replay if the reasoner
  *                version has changed
+ *     Systerel - in reuse(), no more try to replay; check reasoners registered
  *******************************************************************************/
 package org.eventb.core.seqprover.proofBuilder;
+
+import static org.eventb.core.seqprover.ProverLib.isRuleReusable;
 
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
@@ -35,7 +38,7 @@ import org.eventb.internal.core.seqprover.ProofTreeNode;
  * 				node is tried for reuse. No reasoner is called. This way is guaranteed to succeed if the sequent
  * 				of the open proof tree node satisfies the dependencies of the proof skeleton.
  *              The only exception to the above statements is when a reasoner version has changed: in this case,
- *              the reasoner (with the latest version) is called, as for a replay.
+ *              the reuse fails.
  * <li> Replay : Each reasoner that is mentioned in the proof skeleton in replayed to generate a rule to use. The rules 
  * 				present in the proof skeleton nodes are ignored. This method can be used to re-validate proof skeletons since 
  * 				it completely ignores stored rules.
@@ -58,10 +61,6 @@ import org.eventb.internal.core.seqprover.ProofTreeNode;
  */
 public class ProofBuilder {
 
-	private static boolean hasVersionConflict(IProofRule rule) {
-		return rule.getReasonerDesc().hasVersionConflict();
-	}
-	
 	private static IReasonerOutput getReplayOutput(IProofRule rule,
 			IProverSequent sequent, IProofMonitor proofMonitor) {
 		final IReasoner reasoner = rule.generatedBy();
@@ -116,15 +115,8 @@ public class ProofBuilder {
 		// Check if reuse was cancelled. 
 		if (proofMonitor!= null && proofMonitor.isCanceled()) return false;
 
-		if (hasVersionConflict(reuseProofRule)) {
-			// Try to replay the rule
-			final IReasonerOutput replayReasonerOutput = getReplayOutput(
-					reuseProofRule, node.getSequent(), proofMonitor);
-
-			// Check if reasoner successfully generated a rule.
-			if (!(replayReasonerOutput instanceof IProofRule)) return false;
-
-			reuseProofRule = (IProofRule) replayReasonerOutput;
+		if (!isRuleReusable(reuseProofRule)) {
+			return false;
 		}
 		
 		// Try to reuse the rule
@@ -256,7 +248,7 @@ public class ProofBuilder {
 		boolean replaySuccessfull = false;
 
 		// If there are replay hints or version conflict do not try a reuse
-		if (replayHints.isEmpty() && !hasVersionConflict(reuseProofRule))
+		if (replayHints.isEmpty() && isRuleReusable(reuseProofRule))
 		{
 			// see if reuse works
 			reuseSuccessfull = node.applyRule(reuseProofRule);

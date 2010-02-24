@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - fixed bugs, added deepEquals(IHypAction, IHypAction)
  *     Systerel - added simplify(IProofTree, IProofMonitor)
+ *     Systerel - checked reasoner versions before reusing proofs
  *******************************************************************************/
 package org.eventb.core.seqprover;
 
@@ -24,6 +25,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.internal.core.seqprover.ReasonerRegistry;
 import org.eventb.internal.core.seqprover.proofSimplifier.ProofTreeSimplifier;
 import org.eventb.internal.core.seqprover.proofSimplifier.Simplifier.CancelException;
 
@@ -208,7 +210,35 @@ public class ProverLib {
 		(confidence <= IConfidence.DISCHARGED_MAX);		
 	}
 
-	public static boolean proofReusable(IProofDependencies proofDependencies,IProverSequent sequent){
+	/**
+	 * Returns whether the given proof dependencies allow a reuse of the
+	 * corresponding proof on the given sequent.
+	 * <p>
+	 * This method does NOT take reasoner versions into account. Thus, the
+	 * result might be <code>true</code> even though the rules used in the proof
+	 * come from non registered or outdated reasoners. This method should only
+	 * be used for proof trees known to have been built using valid reasoners.
+	 * </p>
+	 * <p>
+	 * When in doubt, use
+	 * {@link #isProofReusable(IProofDependencies, IProofSkeleton, IProverSequent)}
+	 * instead.
+	 * </p>
+	 * 
+	 * @param proofDependencies
+	 *            proof dependencies of a proof to reuse
+	 * @param sequent
+	 *            a sequent on which to check reusability
+	 * @return <code>true</code> iff the proof dependencies allow to reuse the
+	 *         proof on the sequent
+	 */
+	public static boolean proofReusable(IProofDependencies proofDependencies,
+			IProverSequent sequent) {
+		return isProofDepsReusable(proofDependencies, sequent);
+	}
+
+	private static boolean isProofDepsReusable(
+			IProofDependencies proofDependencies, IProverSequent sequent) {
 		if (! proofDependencies.hasDeps()) return true;
 		if (proofDependencies.getGoal() != null && ! sequent.goal().equals(proofDependencies.getGoal())) return false;
 		if (! sequent.containsHypotheses(proofDependencies.getUsedHypotheses())) return false;
@@ -219,6 +249,78 @@ public class ProverLib {
 		return true;
 	}
 
+	/**
+	 * Returns whether the given proof rule can be reused.
+	 * <p>
+	 * A rule is considered reusable iff the following conditions are met:
+	 * <li>the reasoner which generated the rule is (currently) registered</li>
+	 * <li>the reasoner which generated the rule has the same version as the
+	 * version it is (currently) registered with</li>
+	 * </p>
+	 * <p>
+	 * As a consequence, the returned value for a given rule might be different,
+	 * depending on the contents of the reasoner registry.
+	 * </p>
+	 * 
+	 * @param rule
+	 *            a proof rule
+	 * @return <code>true</code> iff the proof rule is reusable
+	 * @since 1.3
+	 */
+	public static boolean isRuleReusable(IProofRule rule) {
+		final IReasonerDesc reasoner = rule.getReasonerDesc();
+		final boolean isRegistered = ReasonerRegistry.getReasonerRegistry()
+				.isRegistered(reasoner.getId());
+	
+		return isRegistered && !reasoner.hasVersionConflict();
+	}
+
+	private static boolean isVersionCompatible(IProofSkeleton proofSkeleton) {
+		final IProofRule rule = proofSkeleton.getRule();
+		if (rule == null) {
+			// leaf: no reasoner => no compatibility problem
+			return true;
+		}
+		if (!isRuleReusable(rule)) {
+			return false;
+		}
+		for (IProofSkeleton childNode : proofSkeleton.getChildNodes()) {
+			if (!isVersionCompatible(childNode)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Returns whether a proof can be reused on the given sequent.
+	 * <p>
+	 * The result is computed from proof dependencies and a proof skeleton. The
+	 * given proof dependencies and proof skeleton must come from the same
+	 * proof, the one whose reusability is checked.
+	 * </p>
+	 * <p>
+	 * This method does take reasoner versions into account. It can be safely
+	 * assumed that <code>false</code> will be returned when either proof
+	 * dependencies are not satisfied or the reasoners mentioned in the proof
+	 * skeleton are not registered or outdated.
+	 * </p>
+	 * 
+	 * @param proofDependencies
+	 *            proof dependencies of the proof to reuse
+	 * @param proofSkeleton
+	 *            proof skeleton of the proof to reuse
+	 * @param sequent
+	 *            a sequent on which to check for reusability
+	 * @return <code>true</code> iff the proof tree can be reused on the sequent
+	 * @since 1.3
+	 */
+	public static boolean isProofReusable(IProofDependencies proofDependencies,
+			IProofSkeleton proofSkeleton, IProverSequent sequent) {
+		return isProofDepsReusable(proofDependencies, sequent)
+				&& isVersionCompatible(proofSkeleton);
+	}
+	
 	public static Set<Predicate> hypsTextSearch(IProverSequent sequent, String token) {
 		Set<Predicate> result = new LinkedHashSet<Predicate>();
 		for (Predicate hypothesis : sequent.hypIterable()){

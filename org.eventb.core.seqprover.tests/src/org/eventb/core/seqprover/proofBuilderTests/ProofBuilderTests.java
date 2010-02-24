@@ -19,7 +19,6 @@ import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IConfidence;
-import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTree;
@@ -45,7 +44,7 @@ public class ProofBuilderTests {
 		return TestLib.genSeq(sequent);
 	}
 
-	private static IProofSkeleton makeSkeleton(IProverSequent sequent,
+	private static IProofTree makeProofTree(IProverSequent sequent,
 			boolean assertClosed, ITactic... tactics) {
 		final IProofTree t = ProverFactory.makeProofTree(sequent, null);
 		final IProofTreeNode node = t.getRoot();
@@ -54,7 +53,7 @@ public class ProofBuilderTests {
 		if (assertClosed) {
 			assertTrue(t.isClosed());
 		}
-		return node.copyProofSkeleton();
+		return t;
 	}
 
 	private static IProverSequent makeTrueSequent() {
@@ -65,9 +64,9 @@ public class ProofBuilderTests {
 		return makeSequent("|- 0 = 0");
 	}
 
-	private static IProofSkeleton makeTrivialSkeleton() {
+	private static IProofTree makeTrivialProofTree() {
 		final IProverSequent trivialSequent = makeTrivialSequent();
-		return makeSkeleton(trivialSequent, true,
+		return makeProofTree(trivialSequent, true,
 				new AutoTactics.AutoRewriteTac(), //
 				new AutoTactics.TrueGoalTac());
 	}
@@ -76,9 +75,9 @@ public class ProofBuilderTests {
 		return makeSequent("c1 = 0 ;; 0 < c2 |- c1 = 0 ∧ c1 < c2");
 	}
 
-	private static IProofSkeleton makeBranchSkeleton() {
+	private static IProofTree makeBranchProofTree() {
 		final IProverSequent branchSequent = makeBranchSequent();
-		return makeSkeleton(branchSequent, true, //
+		return makeProofTree(branchSequent, true, //
 				new AutoTactics.ConjGoalTac(), //
 				new AutoTactics.GoalInHypTac(), //
 				new AutoTactics.EqHypTac());
@@ -88,14 +87,14 @@ public class ProofBuilderTests {
 		return makeSequent("c1 = 0 ;; c1 < c2 |- c1 = 0 ∧ c1 < c2");
 	}
 
-	private static IProofSkeleton makeBranchSkeleton2() {
+	private static IProofTree makeBranchProofTree2() {
 		final IProverSequent branchSequent = makeBranchSequent2();
-		return makeSkeleton(branchSequent, false, //
+		return makeProofTree(branchSequent, false, //
 				new AutoTactics.ConjGoalTac(), //
 				new AutoTactics.GoalInHypTac());
 	}
 
-	private static IProofSkeleton makeVersionSkeleton(
+	private static IProofTree makeVersionProofTree(
 			IVersionedReasoner reasoner) {
 		final IProverSequent trueSequent = makeTrueSequent();
 		final IProofTree t = ProverFactory.makeProofTree(trueSequent, null);
@@ -112,133 +111,156 @@ public class ProofBuilderTests {
 		final boolean success = node.applyRule(rule);
 		assertTrue(success);
 		assertTrue(t.isClosed());
-		return node;
+		return t;
 	}
 	
 	@Test
 	public void reuseCannotApplyRules() {
 		final IProverSequent trueSequent = makeTrueSequent();
-		final IProofSkeleton trivialSkeleton = makeTrivialSkeleton();
+		final IProofTree trivialTree = makeTrivialProofTree();
 
 		IProofTree prTree = ProverFactory.makeProofTree(trueSequent, null);
 		IProofTreeNode node = prTree.getRoot();
 
 		assertFalse("should not have been able to reuse", ProofBuilder.reuse(
-				node, trivialSkeleton, null));
-		
-		final IProofDependencies proofDeps = ProverFactory
-				.makeProofDependencies(true, trivialSkeleton.getRule()
-						.getGoal(), Collections.<Predicate> emptySet(), TestLib
-						.genTypeEnv(""), Collections.<String> emptySet());
+				node, trivialTree.getRoot(), null));
+
 		assertFalse(
 				"[ProverLib] should not claim a proof is reusable when it is not",
-				ProverLib.proofReusable(proofDeps, trueSequent));
+				ProverLib.isProofReusable(trivialTree.getProofDependencies(),
+						trivialTree.getRoot(), trueSequent));
 	}
 
 	@Test
 	public void reuseTrivial() throws Exception {
 		final IProverSequent trivialSequent = makeTrivialSequent();
-		final IProofSkeleton trivialSkeleton = makeTrivialSkeleton();
+		final IProofTree trivialTree = makeTrivialProofTree();
 
 		IProofTree prTree = ProverFactory.makeProofTree(trivialSequent, null);
 		IProofTreeNode node = prTree.getRoot();
 
-		assertTrue("could not reuse", ProofBuilder.reuse(node, trivialSkeleton,
-				null));
+		assertTrue("could not reuse", ProofBuilder.reuse(node, trivialTree
+				.getRoot(), null));
 
-		final IProofDependencies proofDeps = ProverFactory
-				.makeProofDependencies(true, trivialSkeleton.getRule()
-						.getGoal(), Collections.<Predicate> emptySet(), TestLib
-						.genTypeEnv(""), Collections.<String> emptySet());
-		assertTrue("[ProverLib] should be reusable", ProverLib.proofReusable(
-				proofDeps, trivialSequent));
+		assertTrue("[ProverLib] should be reusable", ProverLib.isProofReusable(
+				trivialTree.getProofDependencies(),
+				trivialTree.getRoot(), trivialSequent));
 	}
 
 	@Test
 	public void reuseBranch() throws Exception {
 		final IProverSequent branchSequent = makeBranchSequent();
-		final IProofSkeleton branchSkeleton = makeBranchSkeleton();
+		final IProofTree branchTree = makeBranchProofTree();
 
 		final IProofTree t = ProverFactory.makeProofTree(branchSequent, null);
 		final IProofTreeNode node = t.getRoot();
 
-		assertTrue("could not reuse", ProofBuilder.reuse(node, branchSkeleton,
-				null));
+		assertTrue("could not reuse", ProofBuilder.reuse(node, branchTree
+				.getRoot(), null));
 		assertTrue(t.isClosed());
 
-		final IProofDependencies proofDeps = ProverFactory
-				.makeProofDependencies(true, TestLib.genPred("c1=0∧c1<c2"),
-						TestLib.genPreds("c1=0", "0<c2"), TestLib
-								.genTypeEnv("c1=ℤ,c2=ℤ"), Collections
-								.<String> emptySet());
-		assertTrue("[ProverLib] should be reusable", ProverLib.proofReusable(
-				proofDeps, branchSequent));
+		assertTrue("[ProverLib] should be reusable", ProverLib.isProofReusable(
+				branchTree.getProofDependencies(),
+				branchTree.getRoot(), branchSequent));
 	}
 
 	@Test
 	public void reuseCannotApplyRuleOneBranch() throws Exception {
 		final IProverSequent branchSequent = makeBranchSequent();
-		final IProofSkeleton branchSkeleton = makeBranchSkeleton2();
+		final IProofTree branchTree2 = makeBranchProofTree2();
 
 		final IProofTree t = ProverFactory.makeProofTree(branchSequent, null);
 		final IProofTreeNode node = t.getRoot();
 
 		assertFalse("should not be able to reuse", ProofBuilder.reuse(node,
-				branchSkeleton, null));
+				branchTree2.getRoot(), null));
 
-		final IProofDependencies proofDeps = ProverFactory
-				.makeProofDependencies(true, TestLib.genPred("c1=0∧c1<c2"),
-						TestLib.genPreds("c1=0","c1<c2"), TestLib
-								.genTypeEnv("c1=ℤ,c2=ℤ"), Collections
-								.<String> emptySet());
 		assertFalse(
 				"[ProverLib] should not claim a proof is reusable when it is not",
-				ProverLib.proofReusable(proofDeps, branchSequent));
+				ProverLib.isProofReusable(branchTree2.getProofDependencies(),
+						branchTree2.getRoot(), branchSequent));
 	}
 
-	private static String makeMessage(boolean successExpected) {
-		return "should " + (successExpected ? "" : "not ")
+	@Test
+	public void reuseUnknownReasoner() throws Exception {
+		final AbstractFakeReasoner unknown = new AbstractFakeReasoner(0, true) {
+			public String getReasonerID() {
+				return "org.eventb.core.seqprover.tests.unknown";
+			}
+		};
+		final IProverSequent trivialSequent = makeTrivialSequent();
+		final IProofTree trivialTree = makeProofTree(trivialSequent, true,
+				BasicTactics.reasonerTac(unknown, null));
+
+		final IProofTree prTree = ProverFactory.makeProofTree(trivialSequent, null);
+		final IProofTreeNode node = prTree.getRoot();
+		
+		assertFalse(makeMessage("ProofBuilder.reuse()", false), ProofBuilder
+				.reuse(node, trivialTree.getRoot(), null));
+		assertFalse(makeMessage("ProverLib.isProofReusable()", false), ProverLib
+				.isProofReusable(trivialTree.getProofDependencies(),
+						trivialTree.getRoot(), trivialSequent));
+	}
+	
+	private static String makeMessage(String reuser, boolean successExpected) {
+		return reuser + " should " + (successExpected ? "" : "not ")
 				+ "have been able to reuse";
 	}
 
-	private static void doVersionTest(IVersionedReasoner reasoner,
+	// makes a proof discharged by the given reasoner in its inner version
+	// tries to reuse the proof (registered reasoner version = 2)
+	// verifies that:
+	// ProverLib.isProofReusable() == successExpected
+	// ProofBuilder.reuse()        == successExpected
+	// treeAfterReuse.isClosed()   == successExpected
+	private static void doVersionTest(AbstractFakeReasoner reasoner,
 			boolean successExpected) {
 		final IProverSequent sequent = makeTrueSequent();
-		final IProofSkeleton skeleton = makeVersionSkeleton(reasoner);
+		final IProofTree reused = makeVersionProofTree(reasoner);
+		final IProofSkeleton reusedSkel = reused.getRoot();
 
-		final IProofTree t = ProverFactory.makeProofTree(sequent, null);
-		final IProofTreeNode node = t.getRoot();
+		final IProofTree treeAfterReuse = ProverFactory.makeProofTree(sequent,
+				null);
+		final IProofTreeNode node = treeAfterReuse.getRoot();
 
-		final boolean success = ProofBuilder.reuse(node, skeleton, null);
-		assertEquals(makeMessage(successExpected), successExpected, success);
+		final boolean successReusable = ProverLib.isProofReusable(reused
+				.getProofDependencies(), reusedSkel, sequent);
+		assertEquals(
+				makeMessage("ProverLib.isProofReusable()", successExpected),
+				successExpected, successReusable);
+
+		final boolean success = ProofBuilder.reuse(node, reusedSkel, null);
+		assertEquals(makeMessage("ProofBuilder.reuse()", successExpected),
+				successExpected, success);
+		assertEquals("Proof tree closed", successExpected, treeAfterReuse
+				.isClosed());
 	}
 
-	// no replay
+	// Common case: the reasoner is the same as the one used in the proof
+	// no version conflict => success expected
 	@Test
-	public void reuseSuccessNoReplay() throws Exception {
+	public void reuseSuccessSameVersion() throws Exception {
 		final SuccessReasoner reasoner = new SuccessReasoner(2, true);
 		doVersionTest(reasoner, true);
 	}
 
-	// replay is called and succeeds
+	// Evolution case: the reasoner version changed since the proof was made
+	// with version conflict => failure expected
+	// Also checks that the reasoner is not called when in other version:
+	// calling the reasoner again would succeed and close the tree
 	@Test
-	public void reuseSuccessWithReplay() throws Exception {
+	public void reuseSuccessOtherVersion() throws Exception {
 		final SuccessReasoner reasoner = new SuccessReasoner(1, true);
-		doVersionTest(reasoner, true);
+		doVersionTest(reasoner, false);
 	}
 
-	// no replay
+	// Verify that the reasoner is not called when in same version:
+	// calling the reasoner again would fail and the tree would not be closed
+	// success expected
 	@Test
-	public void reuseFailureNoReplay() throws Exception {
+	public void reuseFailureSameVersion() throws Exception {
 		final FailureReasoner reasoner = new FailureReasoner(2, true);
 		doVersionTest(reasoner, true);
-	}
-
-	// replay is called and fails
-	@Test
-	public void reuseFailureWithReplay() throws Exception {
-		final FailureReasoner reasoner = new FailureReasoner(1, true);
-		doVersionTest(reasoner, false);
 	}
 
 }

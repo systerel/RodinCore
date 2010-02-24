@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - checked reasoner versions before reusing proofs
  *******************************************************************************/
 package org.eventb.internal.core;
 
@@ -214,7 +215,8 @@ public class PSWrapper implements IPSWrapper {
 		final boolean broken;
 		if (prProof.exists()) {
 			IProofDependencies deps = prProof.getProofDependencies(ff, pm);
-			broken = ! ProverLib.proofReusable(deps,seq);
+			final IProofSkeleton skel = prProof.getSkeleton(ff, pm);
+			broken = ! ProverLib.isProofReusable(deps, skel, seq);
 		} else {
 			broken = false;
 		}
