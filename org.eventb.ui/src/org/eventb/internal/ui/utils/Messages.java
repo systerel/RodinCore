@@ -23,6 +23,7 @@ package org.eventb.internal.ui.utils;
 import java.text.MessageFormat;
 
 import org.eclipse.osgi.util.NLS;
+import org.eventb.core.IPRProof;
 import org.rodinp.core.IParent;
 import org.rodinp.core.IRodinElement;
 
@@ -232,7 +233,12 @@ public final class Messages {
 	public static String tactics_replaceWith(String s1, String s2){
 		return bind(tactics_replaceWith, s1, s2);
 	}
-	
+
+	public static String proofSkeleton_cantDisplay(IPRProof proof, String reason) {
+		return bind(proofskeleton_cantdisplayproof, proof.getElementName(),
+				reason);
+	}
+
 	private Messages() {
 		// Do not instantiate
 	}
