@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
+ *     Systerel - added support for mathematical extensions
  *******************************************************************************/ 
 package org.eventb.core.ast.tests;
 
@@ -68,6 +69,8 @@ import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.DefaultFilter;
 import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.ExtendedExpression;
+import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -175,6 +178,14 @@ public class TestSubFormulas extends TestCase {
 		}
 
 		public boolean select(UnaryPredicate predicate) {
+			return searched.equals(predicate);
+		}
+
+		public boolean select(ExtendedExpression expression) {
+			return searched.equals(expression);
+		}
+
+		public boolean select(ExtendedPredicate predicate) {
 			return searched.equals(predicate);
 		}
 		
@@ -398,6 +409,14 @@ public class TestSubFormulas extends TestCase {
 		}
 
 		public Predicate rewrite(UnaryPredicate predicate) {
+			return null;
+		}
+
+		public Expression rewrite(ExtendedExpression expression) {
+			return null;
+		}
+
+		public Predicate rewrite(ExtendedPredicate predicate) {
 			return null;
 		}
 
