@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich.
+ * Copyright (c) 2005, 2010 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,15 @@
  *     Systerel - refactored for using the Proof Manager API
  *     Systerel - refactored code to improve maintainability
  *     Systerel - added proof simplification on commit
+ *     Systerel - replaced subProgressMonitor by SubMonitor and refactored 
  *******************************************************************************/
 package org.eventb.internal.core.pom;
 
-import static org.eclipse.core.runtime.SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK;
 import static org.eventb.core.seqprover.IConfidence.PENDING;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPSStatus;
@@ -51,23 +52,18 @@ public final class AutoProver {
 	public static void run(IProofComponent pc, IPSStatus[] pos,
 			IProgressMonitor monitor) throws RodinDBException {
 		boolean dirty = false;
-		try {
-			monitor.beginTask("auto-proving", pos.length);
-			for (IPSStatus status : pos) {
-				if (monitor.isCanceled()) {
-					pc.makeConsistent(null);
-					throw new OperationCanceledException();
-				}
-				final IProgressMonitor subMonitor = new SubProgressMonitor(
-						monitor, 2, PREPEND_MAIN_LABEL_TO_SUBTASK);
-				dirty |= processPo(pc, status, subMonitor);
+		final SubMonitor subMonitor = SubMonitor.convert(monitor,100);
+		subMonitor.beginTask("Auto-proving...", pos.length);
+		for (IPSStatus status : pos) {
+			if (monitor.isCanceled()) {
+				pc.makeConsistent(null);
+				throw new OperationCanceledException();
 			}
-			dirty = true;
-			if (dirty) {
-				pc.save(null, false);
-			}
-		} finally {
-			monitor.done();
+			dirty |= processPo(pc, status, subMonitor.newChild(1));
+		}
+		dirty = true;
+		if (dirty) {
+			pc.save(null, false);
 		}
 	}
 
@@ -75,45 +71,38 @@ public final class AutoProver {
 			IProgressMonitor pm) throws RodinDBException {
 		
 		final String poName = status.getElementName();
+		final IProofAttempt pa = load(pc, poName, pm);
 		try {
-			pm.beginTask(poName + ":", 3);
-			final IProofAttempt pa = load(pc, poName, pm);
-			try {
-				prove(pa, pm);
-				return commit(pa, pm);
-			} finally {
-				pa.dispose();
-			}
+			prove(pa, poName, pm);
+			return commit(pa, poName, pm);
 		} finally {
-			pm.done();
+			pa.dispose();
 		}
 	}
 
 	// Consumes one tick of the given progress monitor
 	private static IProofAttempt load(IProofComponent pc, String poName,
 			IProgressMonitor pm) throws RodinDBException {
-		pm.subTask("loading");
-		final SubProgressMonitor spm = new SubProgressMonitor(pm, 1);
-		return pc.createProofAttempt(poName, AUTO_PROVER, spm);
+		pm.subTask(poName+" : loading");
+		return pc.createProofAttempt(poName, AUTO_PROVER, pm);
 	}
 	
 	// Consumes one tick of the given progress monitor
-	private static void prove(IProofAttempt pa, IProgressMonitor pm) {
-		pm.subTask("proving");
+	private static void prove(IProofAttempt pa, String poName,
+			IProgressMonitor pm) {
+		pm.subTask(poName+" : proving");
 		final ITactic tactic = PREF.getSelectedComposedTactic();
-		final SubProgressMonitor spm = new SubProgressMonitor(pm, 1);
-		tactic.apply(pa.getProofTree().getRoot(), new ProofMonitor(spm));
+		tactic.apply(pa.getProofTree().getRoot(), new ProofMonitor(pm));
 	}
 
 	// Consumes one tick of the given progress monitor
-	private static boolean commit(IProofAttempt pa, IProgressMonitor pm)
+	private static boolean commit(IProofAttempt pa,String poName, IProgressMonitor pm)
 			throws RodinDBException {
-		pm.subTask("committing");
+		pm.subTask(poName+" : committing");
 		if (shouldCommit(pa)) {
 			pa.commit(false, true, new SubProgressMonitor(pm, 1));
 			return true;
 		}
-		pm.worked(1);
 		return false;
 	}
 
