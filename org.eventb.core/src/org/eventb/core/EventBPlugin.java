@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - added as***File()
  *     Systerel - separation of file and root element
  *     Systerel - added simplifyProof()
+ *     Systerel - added rebuildProof()
  *******************************************************************************/
 package org.eventb.core;
 
@@ -31,6 +32,7 @@ import org.eventb.internal.core.indexers.EventPropagator;
 import org.eventb.internal.core.indexers.IdentifierPropagator;
 import org.eventb.internal.core.pm.PostTacticPreference;
 import org.eventb.internal.core.pm.ProofManager;
+import org.eventb.internal.core.pm.ProofRebuilder;
 import org.eventb.internal.core.pm.ProofSimplifier;
 import org.eventb.internal.core.pm.UserSupportManager;
 import org.eventb.internal.core.pm.UserSupportUtils;
@@ -606,9 +608,49 @@ public class EventBPlugin extends Plugin {
 		return IdentifierPropagator.getDefault();
 	}
 
+	/**
+	 * Attempts to simplify the given proof.
+	 * 
+	 * @param proof
+	 *            a proof to simplify
+	 * @param factory
+	 *            the formula factory to use for building the proof skeleton
+	 * @param monitor
+	 *            the progress monitor to use for reporting progress to the
+	 *            user. It is the caller's responsibility to call done() on the
+	 *            given monitor. Accepts <code>null</code>, indicating that no
+	 *            progress should be reported and that the operation cannot be
+	 *            cancelled.
+	 * @return <code>true</code> iff the proof has been successfully simplified
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the proof
+	 */
 	public static boolean simplifyProof(IPRProof proof, FormulaFactory factory,
 			IProgressMonitor monitor) throws RodinDBException {
-		return new ProofSimplifier(proof, factory).simplify(monitor);
+		return new ProofSimplifier(proof, factory).perform(monitor);
+	}
+
+	/**
+	 * Attempts to rebuild the given proof.
+	 * 
+	 * @param proof
+	 *            a proof to rebuild
+	 * @param factory
+	 *            the formula factory to use for building the proof skeleton
+	 * @param monitor
+	 *            the progress monitor to use for reporting progress to the
+	 *            user. It is the caller's responsibility to call done() on the
+	 *            given monitor. Accepts <code>null</code>, indicating that no
+	 *            progress should be reported and that the operation cannot be
+	 *            cancelled.
+	 * @return <code>true</code> iff the proof has been successfully rebuilt
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the proof
+	 * @since 1.3
+	 */
+	public static boolean rebuildProof(IPRProof proof, FormulaFactory factory,
+			IProgressMonitor monitor) throws RodinDBException {
+		return new ProofRebuilder(proof, factory).perform(monitor);
 	}
 
 	public static List<String> getCompletions(IAttributeLocation location,
