@@ -2982,31 +2982,31 @@ public interface IVisitor {
 	/**
 	 * @since 2.0
 	 */
-	boolean enterExtendedExpression(ExtendedExpression extendedExpression);
+	boolean enterExtendedExpression(ExtendedExpression expr);
 
 	/**
 	 * @since 2.0
 	 */
-	boolean continueExtendedExpression(ExtendedExpression extendedExpression);
+	boolean continueExtendedExpression(ExtendedExpression expr);
 
 	/**
 	 * @since 2.0
 	 */
-	boolean exitExtendedExpression(ExtendedExpression extendedExpression);
+	boolean exitExtendedExpression(ExtendedExpression expr);
 
 	/**
 	 * @since 2.0
 	 */
-	boolean enterExtendedPredicate(ExtendedPredicate extendedPredicate);
+	boolean enterExtendedPredicate(ExtendedPredicate pred);
 
 	/**
 	 * @since 2.0
 	 */
-	boolean continueExtendedPredicate(ExtendedPredicate extendedPredicate);
+	boolean continueExtendedPredicate(ExtendedPredicate pred);
 
 	/**
 	 * @since 2.0
 	 */
-	boolean exitExtendedPredicate(ExtendedPredicate extendedPredicate);
+	boolean exitExtendedPredicate(ExtendedPredicate pred);
 
 }

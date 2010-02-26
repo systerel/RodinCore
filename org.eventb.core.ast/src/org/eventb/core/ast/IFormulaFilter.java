@@ -207,11 +207,11 @@ public interface IFormulaFilter {
 	/**
 	 * @since 2.0
 	 */
-	boolean select(ExtendedExpression extendedExpression);
+	boolean select(ExtendedExpression expression);
 
 	/**
 	 * @since 2.0
 	 */
-	boolean select(ExtendedPredicate extendedPredicate);
+	boolean select(ExtendedPredicate predicate);
 
 }
