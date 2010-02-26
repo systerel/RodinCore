@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
   *******************************************************************************/
 package fr.systerel.internal.explorer.navigator.actionProviders;
 
+import static fr.systerel.internal.explorer.navigator.ExplorerUtils.runWithProgress;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,14 +19,10 @@ import java.util.Arrays;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
@@ -34,7 +32,6 @@ import org.eventb.internal.core.pom.RecalculateAutoStatus;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
-import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -151,27 +148,6 @@ public class RecalculateAutoStatusAction extends Action {
 		runWithProgress(op);
 	}
 
-
-	private void runWithProgress(IRunnableWithProgress op) {
-		final Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
-		ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
-		try {
-			dialog.run(true, true, op);
-		} catch (InterruptedException exception) {
-			if (ProofControlUtils.DEBUG)
-				ProofControlUtils.debug("Interrupt");
-			return;
-		} catch (InvocationTargetException exception) {
-			final Throwable realException = exception.getTargetException();
-			if (ProofControlUtils.DEBUG)
-				ProofControlUtils.debug("Interrupt");
-			realException.printStackTrace();
-			final String message = realException.getMessage();
-			MessageDialog.openError(shell, "Unexpected Error", message);
-			return;
-		}
-	}
-	
 	void treatRoot(IEventBRoot root, IProgressMonitor monitor) {
 		IPSRoot psRoot = root.getPSRoot();
 		IRodinFile psFile = psRoot.getRodinFile();

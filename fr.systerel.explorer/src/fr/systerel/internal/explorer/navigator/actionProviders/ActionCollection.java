@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
   *******************************************************************************/
 package fr.systerel.internal.explorer.navigator.actionProviders;
 
+import static fr.systerel.internal.explorer.navigator.ExplorerUtils.factory;
 import static org.eventb.ui.EventBUIPlugin.PROOF_CONTROL_VIEW_ID;
 import static org.eventb.ui.EventBUIPlugin.PROOF_TREE_VIEW_ID;
 
@@ -374,6 +375,9 @@ public class ActionCollection {
 		return new RecalculateAutoStatusAction(site.getStructuredViewer());
 	}
 	
+	public static ReplayUndischargedAction getReplayUndischargedAction(ICommonActionExtensionSite site) {
+		return new ReplayUndischargedAction(site.getStructuredViewer(), factory);
+	}
 	
 	static void selectPO(IPSStatus ps) {
 		final IRodinFile component = (IRodinFile) UIUtils.getOpenable(ps);
