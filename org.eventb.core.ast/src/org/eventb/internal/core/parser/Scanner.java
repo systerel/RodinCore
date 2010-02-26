@@ -6,8 +6,6 @@
  */
 package org.eventb.internal.core.parser;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Vector;
@@ -16,40 +14,37 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.LanguageVersion;
 
 /**
- * This class maps the JFlex lexer with the Coco/R scanner. Note that
- * the lexer returns the first recognized token of a string.
- * It respects the specification of a Coco/R scanner, described in the Coco/R user manual.
+ * This class maps the JFlex lexer with the Coco/R scanner. Note that the lexer
+ * returns the first recognized token of a string. It respects the specification
+ * of a Coco/R scanner, described in the Coco/R user manual.
  * 
  * @author François Terrier
  */
 public class Scanner {
 	// list of the tokens which were looked-ahead
-	private List<Token> list = new Vector<Token>();
+	private final List<Token> list = new Vector<Token>();
 
 	// iterator on the look-ahead list
 	private ListIterator<Token> iterator = list.listIterator();
 
-	private Lexer lexer = null;
-
+	private GenScan lexer = null;
+	
 	/**
 	 * Creates a new scanner that takes its input from <code>str</code>.
 	 * 
-	 * @param str the string to read from.
-	 * @param result the result of this scan and parse
+	 * @param str
+	 *            the string to read from.
+	 * @param result
+	 *            the result of this scan and parse
 	 */
 	public Scanner(String str, ParseResult result) {
-		lexer = new Lexer(new StringReader(str));
+		lexer = GenScan.getBasicLexer();
+		lexer.parse(str);
 		lexer.result = result;
 	}
-	
+
 	private Token getNextToken() {
-		try {
-			return lexer.next_token();
-		} catch (IOException e) {
-			// Can never happen when reading from a String.
-			assert(false);
-			return null;
-		}
+		return lexer.nextToken();
 	}
 
 	// Returns the next token.
@@ -79,17 +74,20 @@ public class Scanner {
 		iterator = list.listIterator(0);
 	}
 
-	// Returns the lexer result. 
+	// Returns the lexer result.
 	// Used by class Parser to share common problems (error reports).
 	protected ParseResult getResult() {
-		return lexer.result; 
+		return lexer.result;
 	}
-	
-	public static boolean isValidIdentifierName(FormulaFactory factory,
+
+	public static boolean isValidIdentifierName(
+			FormulaFactory factory,
 			String name) {
 		// just to get problems
-		final ParseResult result = new ParseResult(factory,
-				LanguageVersion.LATEST, name);
+		final ParseResult result = new ParseResult(
+				factory,
+				LanguageVersion.LATEST,
+				name);
 
 		final Scanner scanner = new Scanner(name, result);
 
