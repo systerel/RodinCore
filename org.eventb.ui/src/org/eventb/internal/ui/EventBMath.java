@@ -37,7 +37,8 @@ public class EventBMath extends EventBControl implements IEventBInputText {
 	public EventBMath(final Text text) {
 		super(text);
 		text.addMouseListener(new DoubleClickTextListener(text));
-		text.addModifyListener(RodinKeyboardPlugin.getDefault().getRodinModifyListener());
+		final RodinKeyboardPlugin keyBPlugin = RodinKeyboardPlugin.getDefault();
+		text.addModifyListener(keyBPlugin.createRodinModifyListener());
 		text.addFocusListener(new FocusAdapter() {
 
 			@Override
