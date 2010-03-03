@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language V2
+ *     Systerel - added pred and succ (IR47, IR48)
  *******************************************************************************/
 
 package org.eventb.internal.pptrans.translator;
@@ -190,7 +191,7 @@ public class Translator extends IdentityTranslator {
 		
 	    %match (Predicate pred) {
 	    	/**
-	    	 *	All ∈ rules are implemented in translateEqual
+	    	 *	All ∈ rules are implemented in translateIn
 	    	 */
 	    	In(e, rhs) -> {
 	    		Predicate result = translateIn(`e, `rhs, loc);
@@ -1126,12 +1127,34 @@ public class Translator extends IdentityTranslator {
 			Converse(r) -> {
 				return translateIn(ff.makeBinaryExpression(Formula.MAPSTO, f, e, loc), `r, loc);
 			}
+	        /**
+	        * RULE IR47:	e ↦ f ∈ pred
+	        *	  			e = f + 1
+	        */
+			PRED() -> {
+				return translateEqual(equalsPlusOne(e, f, loc));
+			}
+	        /**
+	        * RULE IR48:	e ↦ f ∈ succ
+	        *	  			f = e + 1
+	        */
+			SUCC() -> {
+				return translateEqual(equalsPlusOne(f, e, loc));
+			}
 			_ -> {
 				return null;
 	    	}
 		}
 	}
 	
+	private Predicate equalsPlusOne(Expression left, Expression right,
+			SourceLocation loc) {
+		final Expression one = ff.makeIntegerLiteral(BigInteger.ONE, null);
+		final Expression plusOne = ff.makeAssociativeExpression(Formula.PLUS,
+				Arrays.asList(right, one), loc);
+		return ff.makeRelationalPredicate(Formula.EQUAL, left, plusOne, loc);
+	}
+
 	protected Predicate translateIn_EF_G(
 		Expression expr, Expression rhs, SourceLocation loc) {
 		Expression e = null, f = null, g = null;

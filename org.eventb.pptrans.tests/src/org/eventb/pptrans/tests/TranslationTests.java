@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language V2 (BR8, IR39, IR43, IR44)
+ *     Systerel - added pred and succ (IR47, IR48)
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
@@ -1562,6 +1563,63 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir46);
 	}
 	
+	/**
+	 * Tests for IR47 and IR48
+	 */
+	ITypeEnvironment te_ir47_48 = mTypeEnvironment(
+			mList("e", "f", "foo"), 
+			mList(INT, INT, REL(INT, INT)));
+
+	public void testIR47_simple() {
+		doTest( "e↦f ∈ pred", 
+				"e = f + 1", 
+				true, 
+				te_ir47_48);
+	}
+
+	public void testIR47_recursive() {
+		doTest( "e↦f ∈ ℕ ◁ pred", 
+				"e = f + 1 ∧ 0 ≤ e", 
+				true, 
+				te_ir47_48);
+	}
+
+	public void testIR47_complex() {
+		doTest( "e+1↦f+2 ∈ pred", 
+				"e + 1 = (f + 2) + 1", 
+				true, 
+				te_ir47_48);
+		doTest( "foo(e)↦foo(f) ∈ pred", 
+				"foo(e) = foo(f) + 1", 
+				true, 
+				te_ir47_48);
+	}
+
+	public void testIR48_simple() {
+		doTest( "e↦f ∈ succ", 
+				"f = e + 1", 
+				true, 
+				te_ir47_48);
+	}
+	
+	public void testIR48_recursive() {
+		doTest( "e↦f ∈ ℕ ◁ succ", 
+				"f = e + 1 ∧ 0 ≤ e", 
+				true, 
+				te_ir47_48);
+	}
+
+	public void testIR48_complex() {
+		doTest( "e+1↦f−2 ∈ succ", 
+				"f − 2 = (e + 1) + 1", 
+				true, 
+				te_ir47_48);
+		doTest( "foo(e)↦foo(f) ∈ succ", 
+				"foo(f) = foo(e) + 1", 
+				true, 
+				te_ir47_48);
+	}
+
 	public void testFALSE_1() {
 		doTest( "b = FALSE", 
 				"¬(b = TRUE)", 
