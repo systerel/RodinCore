@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,12 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBPreferenceStore
+ *     Systerel - removed direct access to tactic preferences
  ******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -182,41 +182,6 @@ public abstract class TacticPreferencePage extends FieldEditorPreferencePage
 	 */
 	public void init(IWorkbench workbench) {
 		// Do nothing
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#performOk()
-	 */
-	@Override
-	public boolean performOk() {
-		setTactics();
-		setEnablement();
-		return super.performOk();
-	}
-
-	/**
-	 * Utility method for setting the enablement value to the corresponding
-	 * tactic preference.
-	 */
-	private void setEnablement() {
-		tacticPreference.setEnabled(enablementEditor.getBooleanValue());
-	}
-
-	/**
-	 * Utility method for setting the selected tactics to the corresponding
-	 * tactic preference.
-	 */
-	private void setTactics() {
-		ArrayList<Object> objects = tacticsEditor.getSelectedObjects();
-		List<ITacticDescriptor> tacticDescs = new ArrayList<ITacticDescriptor>(
-				objects.size());
-		for (Object object : objects) {
-			tacticDescs.add((ITacticDescriptor) object);
-		}
-		
-		tacticPreference.setSelectedDescriptors(tacticDescs);
 	}
 
 }

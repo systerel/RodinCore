@@ -15,6 +15,7 @@
  *     Systerel - refactored to use ITacticProvider2 and ITacticApplication
  *     Systerel - redirected dialog opening and externalized strings
  *     Systerel - fixed Hyperlink.setImage() calls
+ *     Systerel - removed direct access to tactic preferences
  *******************************************************************************/
 package org.eventb.internal.ui.proofcontrol;
 
@@ -96,7 +97,6 @@ import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.internal.ui.EventBControl;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBStyledText;
@@ -775,17 +775,11 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				boolean checked = !expertMode.isChecked();
 				store.setValue(PreferenceConstants.P_POSTTACTIC_ENABLE,
 						checked);
-				IAutoTacticPreference postTacticPreference = EventBPlugin
-					.getPostTacticPreference();
-				postTacticPreference.setEnabled(checked);
 			}
 		};
 		boolean b = EventBPreferenceStore.getBooleanPreference(PreferenceConstants.P_POSTTACTIC_ENABLE);
 		expertMode.setChecked(!b);
 
-		IAutoTacticPreference postTacticPreference = EventBPlugin
-				.getPostTacticPreference();
-		postTacticPreference.setEnabled(b);
 		expertMode.setToolTipText("Disable post-tactic");
 
 		expertMode

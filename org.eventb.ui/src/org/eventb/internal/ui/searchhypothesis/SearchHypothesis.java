@@ -9,6 +9,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added dropdown list, buttons and search field
+ *     Systerel - removed direct access to 'consider hidden hyps' preference
  ******************************************************************************/
 
 package org.eventb.internal.ui.searchhypothesis;
@@ -36,9 +37,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
@@ -107,8 +106,6 @@ public class SearchHypothesis extends ProverContentOutline implements
 
 	private final IPreferenceStore store;
 
-	private final IUserSupportManager supportMng;
-
 	private Action considerHidden;
 
 	private Action openPreferences;
@@ -136,7 +133,6 @@ public class SearchHypothesis extends ProverContentOutline implements
 	public SearchHypothesis() {
 		super(Messages.searchedHypothesis_defaultMessage);
 		store = EventBPreferenceStore.getPreferenceStore();
-		supportMng = EventBPlugin.getUserSupportManager();
 	}
 
 	/*
@@ -285,7 +281,6 @@ public class SearchHypothesis extends ProverContentOutline implements
 	 * Sets the preferences in store and support manager.
 	 */
 	public void setPreferences(boolean b) {
-		supportMng.setConsiderHiddenHypotheses(b);
 		store.setValue(PreferenceConstants.P_CONSIDER_HIDDEN_HYPOTHESES, b);
 	}
 	

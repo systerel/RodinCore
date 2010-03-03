@@ -792,7 +792,7 @@ public class UIUtils {
 	 *            a list of objects.
 	 * @return the comma separated string representation of input objects.
 	 */
-	public static String toCommaSeparatedList(ArrayList<Object> objects) {
+	public static <T> String toCommaSeparatedList(List<T> objects) {
 		StringBuffer buffer = new StringBuffer();
 		boolean sep = false;
 		for (Object item : objects) {

@@ -11,6 +11,7 @@
  *     Systerel - added ColorManager
  *     Systerel - used EventBPreferenceStore
  *     Systerel - installation of EditorManager
+ *     Systerel - used a preference observer
  *******************************************************************************/
 package org.eventb.ui;
 
@@ -26,10 +27,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.internal.ui.BundledFileExtractor;
 import org.eventb.internal.ui.ColorManager;
 import org.eventb.internal.ui.EventBImage;
@@ -38,8 +37,7 @@ import org.eventb.internal.ui.cachehypothesis.CacheHypothesisUtils;
 import org.eventb.internal.ui.eventbeditor.EditorManager;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.goal.GoalUtils;
-import org.eventb.internal.ui.preferences.EventBPreferenceStore;
-import org.eventb.internal.ui.preferences.PreferenceConstants;
+import org.eventb.internal.ui.preferences.UIPreferenceObserver;
 import org.eventb.internal.ui.preferences.ToggleAutoTacticPreference;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.internal.ui.proofinformation.ProofInformationUtils;
@@ -189,38 +187,9 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	 */
 	private void initializePreferences() {
 		final IPreferenceStore store = getPreferenceStore();
-
-		// Initialize the post-tactics
-		String s = store.getString(PreferenceConstants.P_POSTTACTICS);
-		String[] postTacticIDs = UIUtils.parseString(s);
-		
-		IAutoTacticPreference postTacticPreference = EventBPlugin
-				.getPostTacticPreference();
-		postTacticPreference
-				.setSelectedDescriptors(ProverUIUtils
-						.stringsToTacticDescriptors(postTacticPreference,
-								postTacticIDs));
-		boolean b = EventBPreferenceStore
-				.getBooleanPreference(PreferenceConstants.P_POSTTACTIC_ENABLE);
-		postTacticPreference.setEnabled(b);
-
-		// Initialize the auto-tactics
-		s = store.getString(PreferenceConstants.P_AUTOTACTICS);
-		String[] autoTacticIDs = UIUtils.parseString(s);
-		IAutoTacticPreference autoTacticPreference = EventBPlugin
-				.getAutoTacticPreference();
-		autoTacticPreference
-				.setSelectedDescriptors(ProverUIUtils
-						.stringsToTacticDescriptors(autoTacticPreference,
-								autoTacticIDs));
-		b = EventBPreferenceStore
-				.getBooleanPreference(PreferenceConstants.P_AUTOTACTIC_ENABLE);
-		autoTacticPreference.setEnabled(b);
-		
-		// Initialize consider hidden hyps
-		b = EventBPreferenceStore
-				.getBooleanPreference(PreferenceConstants.P_CONSIDER_HIDDEN_HYPOTHESES);
-		EventBPlugin.getUserSupportManager().setConsiderHiddenHypotheses(b);
+		final UIPreferenceObserver prefObs = new UIPreferenceObserver(store);
+		prefObs.initPreferences();
+		store.addPropertyChangeListener(prefObs);
 	}
 
 	/**
