@@ -28,8 +28,9 @@ import org.eventb.eventBKeyboard.internal.views.EventBKeyboardView;
  *         This class contains some expression test cases for Event-B Keyboard.
  *         This test the Keyboard on some large expressions taken from Prof.
  *         Jean-Raymond Abrial's Marriage and SHWT developments
+ * @deprecated use org.eventb.keyboard.tests instead
  */
-@SuppressWarnings("deprecation")
+@Deprecated
 public class EventBKeyboardExpressionTestCase extends TestCase {
 
 	private Text formula;

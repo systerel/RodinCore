@@ -28,8 +28,9 @@ import org.eventb.eventBKeyboard.internal.views.EventBKeyboardView;
  *         This class contains some test cases for Event-B Keyboard. This test
  *         the Keyboard on some large expressions where there are some jumpings.
  *         The text is taken from Prof. Jean-Raymond Abrial's SHWT development.
+ * @deprecated use org.eventb.keyboard.tests instead
  */
-@SuppressWarnings("deprecation")
+@Deprecated
 public class EventBKeyboardJumpingTestCase extends TestCase {
 
 	private Text formula;

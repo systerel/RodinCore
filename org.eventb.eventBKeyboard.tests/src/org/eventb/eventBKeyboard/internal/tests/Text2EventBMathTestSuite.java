@@ -20,7 +20,9 @@ import junit.framework.TestSuite;
  *         <p>
  *         JUnit Testing Suite contain all the Test Case for Text2EventBMath
  *         translator.
+ * @deprecated use org.eventb.keyboard.tests instead
  */
+@Deprecated
 public class Text2EventBMathTestSuite {
 
 	/**

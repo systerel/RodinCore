@@ -19,7 +19,10 @@ import junit.framework.TestSuite;
  * @author htson
  * <p>
  * JUnit Testing Suite contain all the Test Case for Event-B Keyboard
+ * 
+ * @deprecated use org.eventb.keyboard.tests instead
  */
+@Deprecated
 public class EventBKeyboardTestSuite {
 
 	/**

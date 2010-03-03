@@ -22,8 +22,9 @@ import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
  *         <p>
  *         This class contains some simple test cases for Text2EventBMath
  *         translator. This tests the translation on all the symbols separately.
+ * @deprecated use org.eventb.keyboard.tests instead
  */
-@SuppressWarnings("deprecation")
+@Deprecated
 public class Text2EventBMathSimpleTestCase extends TestCase {
 
 	public void testNAT() {

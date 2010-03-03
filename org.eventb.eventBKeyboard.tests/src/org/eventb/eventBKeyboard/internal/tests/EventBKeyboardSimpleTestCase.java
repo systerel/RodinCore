@@ -28,8 +28,9 @@ import org.eventb.eventBKeyboard.internal.views.EventBKeyboardView;
  *         <p>
  *         This class contains some simple test cases for Event-B Keyboard. This
  *         test all the symbols separately.
+ * @deprecated use org.eventb.keyboard.tests instead
  */
-@SuppressWarnings("deprecation")
+@Deprecated
 public class EventBKeyboardSimpleTestCase extends TestCase {
 
 	private Text formula;

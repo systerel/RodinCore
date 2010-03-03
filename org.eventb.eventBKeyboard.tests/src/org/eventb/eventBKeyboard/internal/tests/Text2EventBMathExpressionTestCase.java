@@ -23,8 +23,9 @@ import org.eventb.eventBKeyboard.Text2EventBMathTranslator;
  *         translator. This tests the translation on some large expressions
  *         taken from Prof. Jean-Raymond Abrial's Marriage and SHWT
  *         developments.
+ * @deprecated use org.eventb.keyboard.tests instead
  */
-@SuppressWarnings("deprecation")
+@Deprecated
 public class Text2EventBMathExpressionTestCase extends TestCase {
 
 	public void testMarriageInvariants() {
