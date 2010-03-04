@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     ETH Zurich - adaptation from JDT to Rodin
  *     Systerel - removed deprecated methods and occurrence count
  *     Systerel - separation of file and root element
+ *     Systerel - now using Token objects
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -35,6 +36,7 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.RodinElement;
 import org.rodinp.internal.core.RodinDBManager.OpenableMap;
 import org.rodinp.internal.core.util.MementoTokenizer;
+import org.rodinp.internal.core.util.MementoTokenizer.Token;
 
 /**
  * Handle for a Rodin Project.
@@ -176,12 +178,11 @@ public class RodinProject extends Openable implements IRodinProject {
 	}
 
 	@Override
-	public IRodinElement getHandleFromMemento(String token, MementoTokenizer memento) {
-		switch (token.charAt(0)) {
-			case REM_EXTERNAL:
+	public IRodinElement getHandleFromMemento(Token token, MementoTokenizer memento) {
+		if (token == Token.EXTERNAL) {
 				if (!memento.hasMoreTokens())
 					return this;
-				String fileName = memento.nextToken();
+				String fileName = memento.nextToken().getRepresentation();
 				RodinElement file = getRodinFile(fileName);
 				if (file == null) {
 					return null;

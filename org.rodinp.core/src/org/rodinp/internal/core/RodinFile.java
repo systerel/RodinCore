@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Systerel - added clear() method
  *     Systerel - removed deprecated methods and occurrence count
  *     Systerel - separation of file and root element
+ *     Systerel - now using Token objects
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -29,6 +30,7 @@ import org.rodinp.core.basis.RodinElement;
 import org.rodinp.internal.core.RodinDBManager.OpenableMap;
 import org.rodinp.internal.core.util.MementoTokenizer;
 import org.rodinp.internal.core.util.Messages;
+import org.rodinp.internal.core.util.MementoTokenizer.Token;
 
 /**
  * Represents an entire Rodin file. File elements need to be opened before they
@@ -167,9 +169,8 @@ public final class RodinFile extends Openable implements IRodinFile {
 	}
 
 	@Override
-	public final IRodinElement getHandleFromMemento(String token, MementoTokenizer memento) {
-		switch (token.charAt(0)) {
-		case REM_INTERNAL:
+	public final IRodinElement getHandleFromMemento(Token token, MementoTokenizer memento) {
+		if (token == Token.INTERNAL) {
 			return RodinElement.getInternalHandleFromMemento(memento, this);
 		}
 		return null;

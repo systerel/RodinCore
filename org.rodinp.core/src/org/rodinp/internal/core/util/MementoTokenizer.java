@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,31 @@
  *     		org.eclipse.jdt.internal.core.util.MementoTokenizer
  *     ETH Zurich - adaptation from JDT to Rodin
  *     Systerel - removed occurrence count
+ *     Systerel - now using Token objects
  *******************************************************************************/
 package org.rodinp.internal.core.util;
 
 import org.rodinp.core.basis.RodinElement;
 
 public class MementoTokenizer {
-	private static final String EXTERNAL = Character.toString(RodinElement.REM_EXTERNAL);
-	private static final String INTERNAL = Character.toString(RodinElement.REM_INTERNAL);
-	private static final String TYPE_SEP = Character.toString(RodinElement.REM_TYPE_SEP);
+	
+	public static class Token {
+
+		public static Token	EXTERNAL = new Token(Character.toString(RodinElement.REM_EXTERNAL));
+		public static Token	INTERNAL = new Token(Character.toString(RodinElement.REM_INTERNAL));
+		public static Token	TYPE_SEP = new Token(Character.toString(RodinElement.REM_TYPE_SEP));
+		
+		private final String representation;
+		
+		Token(String representation) {
+			this.representation = representation;
+		}
+
+		public String getRepresentation() {
+			return representation;
+		}
+
+	}
 
 	private final char[] memento;
 	private final int length;
@@ -33,7 +49,7 @@ public class MementoTokenizer {
 		return this.index < this.length;
 	}
 	
-	public String nextToken() {
+	public Token nextToken() {
 		int start = this.index;
 		StringBuffer buffer = null;
 		switch (this.memento[this.index++]) {
@@ -43,11 +59,11 @@ public class MementoTokenizer {
 				start = ++this.index;
 				break;
 			case RodinElement.REM_EXTERNAL:
-				return EXTERNAL;
+				return Token.EXTERNAL;
 			case RodinElement.REM_INTERNAL:
-				return INTERNAL;
+				return Token.INTERNAL;
 			case RodinElement.REM_TYPE_SEP:
-				return TYPE_SEP;
+				return Token.TYPE_SEP;
 		}
 		loop: while (this.index < this.length) {
 			switch (this.memento[this.index]) {
@@ -65,9 +81,9 @@ public class MementoTokenizer {
 		}
 		if (buffer != null) {
 			buffer.append(this.memento, start, this.index - start);
-			return buffer.toString();
+			return new Token(buffer.toString());
 		} else {
-			return new String(this.memento, start, this.index - start);
+			return new Token(new String(this.memento, start, this.index - start));
 		}
 	}
 	

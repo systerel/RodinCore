@@ -1,12 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * Strongly inspired by org.eclipse.jdt.internal.core.JavaModel.java which is
- * 
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 		IBM Corporation and others - initial API and implementation as
+ * 			org.eclipse.jdt.internal.core.JavaModel
+ *  	ETH Zurich - adaptation from JDT to Rodin
+ *		Systerel - now using Token objects
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -31,6 +34,7 @@ import org.rodinp.core.basis.RodinElement;
 import org.rodinp.internal.core.RodinDBManager.OpenableMap;
 import org.rodinp.internal.core.util.MementoTokenizer;
 import org.rodinp.internal.core.util.Messages;
+import org.rodinp.internal.core.util.MementoTokenizer.Token;
 
 /**
  * Implementation of
@@ -171,13 +175,12 @@ public class RodinDB extends Openable implements IRodinDB {
 	 * @see RodinElement
 	 */
 	@Override
-	public IRodinElement getHandleFromMemento(String token,
+	public IRodinElement getHandleFromMemento(Token token,
 			MementoTokenizer memento) {
-		switch (token.charAt(0)) {
-		case REM_EXTERNAL:
+		if (token == Token.EXTERNAL) {
 			if (!memento.hasMoreTokens())
 				return this;
-			String projectName = memento.nextToken();
+			String projectName = memento.nextToken().getRepresentation();
 			RodinElement project = (RodinElement) getRodinProject(projectName);
 			if (project == null) {
 				return null;

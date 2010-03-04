@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  *     Systerel - added inquiry methods
  *     Systerel - added creation of new internal element child
  *     Systerel - generic attribute manipulation
+ *     Systerel - now using Token objects
  *******************************************************************************/
 package org.rodinp.core.basis;
 
@@ -50,6 +51,7 @@ import org.rodinp.internal.core.RodinFileElementInfo;
 import org.rodinp.internal.core.util.MementoTokenizer;
 import org.rodinp.internal.core.util.Messages;
 import org.rodinp.internal.core.util.Util;
+import org.rodinp.internal.core.util.MementoTokenizer.Token;
 
 /**
  * This abstract class is intended to be implemented by clients that contribute
@@ -223,10 +225,9 @@ public abstract class InternalElement extends RodinElement implements
 	}
 
 	@Override
-	protected IRodinElement getHandleFromMemento(String token,
+	protected IRodinElement getHandleFromMemento(Token token,
 			MementoTokenizer memento) {
-		switch (token.charAt(0)) {
-		case REM_INTERNAL:
+		if (token == Token.INTERNAL) {
 			return RodinElement.getInternalHandleFromMemento(memento, this);
 		}
 		return this;

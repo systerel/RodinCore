@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     ETH Zurich - adaptation from JDT to Rodin
  *     Systerel - removed occurrence count
  *     Systerel - separation of file and root element
+ *     Systerel - added tests for internal elements named "|"
  *******************************************************************************/
 package org.rodinp.core.tests;
 
@@ -161,6 +162,51 @@ public class MementoTests extends ModifyingResourceTests {
 	}
 
 	/**
+	 * Tests that a top-level internal element named "|" can be persisted and
+	 * restored using its memento.
+	 * Refers to bug #2961115
+	 */
+	public void testTopMementoPipe() {
+		final IInternalElementType<NamedElement> type = NamedElement.ELEMENT_TYPE;
+		IRodinFile rf = getRodinFile("/P/X.test");
+		RodinTestRoot root = (RodinTestRoot) rf.getRoot();
+		
+		// Root is named "|"
+		NamedElement ne = root.getInternalElement(type, "|");
+		final String prefix = expectedRootMemento(root) + "|" + type.getId();
+		assertMemento(prefix + "#\\|", ne);
+		
+		// Root is named "||"
+		ne = root.getInternalElement(type, "||");
+		assertMemento(prefix + "#\\|\\|", ne);
+		
+		// Root is named "\|"
+		ne = root.getInternalElement(type, "\\|");
+		assertMemento(prefix + "#\\\\\\|", ne);
+		
+		// Root is named "\#|"
+		ne = root.getInternalElement(type, "\\#|");
+		assertMemento(prefix + "#\\\\\\#\\|", ne);
+	}
+
+	/**
+	 * Tests that a top-level internal element named "#" can be persisted and
+	 * restored using its memento.
+	 */
+	public void testMementoHash() {
+		final IInternalElementType<NamedElement> type = NamedElement.ELEMENT_TYPE;
+		IRodinFile rf = getRodinFile("/P/X.test");
+		RodinTestRoot root = (RodinTestRoot) rf.getRoot();
+		NamedElement ne = root.getInternalElement(type, "#");
+		String expectedNEMemento = expectedRootMemento(root) + "|"
+				+ type.getId() + "#\\#";
+		assertMemento(expectedNEMemento, ne);
+
+		NamedElement ne2 = ne.getInternalElement(type, "bar");
+		assertMemento(expectedNEMemento + "|" + type.getId() + "#bar", ne2);
+	}
+
+	/**
 	 * Tests that a non top-level internal element can be persisted and
 	 * restored using its memento.
 	 */
@@ -188,6 +234,32 @@ public class MementoTests extends ModifyingResourceTests {
 		// Top and child with empty name
 		ne = top.getInternalElement(nType, "");
 		assertMemento(prefix + "|" + nType.getId() + "#", ne);
+	}
+	
+	/**
+	 * Tests that a non top-level internal element named "|" can be persisted
+	 * and restored using its memento.
+	 * Refers to bug #2961115
+	 */
+	public void testNonTopMementoPipe() {
+		final IInternalElementType<NamedElement> nType = NamedElement.ELEMENT_TYPE;
+		IRodinFile rf = getRodinFile("/P/X.test");
+
+		RodinTestRoot root = (RodinTestRoot) rf.getRoot();
+		IInternalElement top = root.getInternalElement(nType, "foo");
+		String prefix = expectedRootMemento(root) + "|" + nType.getId() + "#foo";
+		IInternalElement ne = top.getInternalElement(nType, "|");
+		assertMemento(prefix + "|" + nType.getId() + "#\\|", ne);
+
+		// Top with empty name, child named "|"
+		top = root.getInternalElement(nType, "");
+		prefix = expectedRootMemento(root) + "|" + nType.getId() + "#";
+		ne = top.getInternalElement(nType, "|");
+		assertMemento(prefix + "|" + nType.getId() + "#\\|", ne);
+
+		// Top empty name, child  "\#|"
+		ne = top.getInternalElement(nType, "\\#|");
+		assertMemento(prefix + "|" + nType.getId() + "#\\\\\\#\\|", ne);
 	}
 
 	public void testNullMemento() {

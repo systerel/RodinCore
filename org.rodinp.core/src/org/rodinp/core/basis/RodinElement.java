@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Systerel - removed deprecated methods
  *     Systerel - removed occurrence count and unnamed elements
  *     Systerel - separation of file and root element
+ * 	   Systerel - now using Token objects
  *******************************************************************************/
 package org.rodinp.core.basis;
 
@@ -43,6 +44,7 @@ import org.rodinp.internal.core.RodinElementInfo;
 import org.rodinp.internal.core.RodinProject;
 import org.rodinp.internal.core.util.MementoTokenizer;
 import org.rodinp.internal.core.util.Util;
+import org.rodinp.internal.core.util.MementoTokenizer.Token;
 
 /**
  * Root of Rodin element handle hierarchy.
@@ -114,9 +116,9 @@ public abstract class RodinElement extends PlatformObject implements
 			MementoTokenizer memento, IRodinElement parent) {
 
 		if (! memento.hasMoreTokens()) return parent;
-		String childTypeId = memento.nextToken();
+		String childTypeId = memento.nextToken().getRepresentation();
 		if (! memento.hasMoreTokens()) return parent;
-		if (memento.nextToken().charAt(0) != REM_TYPE_SEP) return parent;
+		if (memento.nextToken() != Token.TYPE_SEP) return parent;
 		final ElementTypeManager manager = ElementTypeManager.getInstance();
 		final InternalElementType<? extends IInternalElement> childType = 
 			manager.getInternalElementType(childTypeId);
@@ -125,18 +127,15 @@ public abstract class RodinElement extends PlatformObject implements
 			return null;
 		}
 		final String childName;
-		final String lookahead;
+		final Token lookahead;
 		if (memento.hasMoreTokens()) {
-			String token = memento.nextToken();
-			switch (token.charAt(0)) {
-			case REM_INTERNAL:
-				lookahead = token;
+			final Token nextToken = memento.nextToken();
+			if (nextToken == Token.INTERNAL) {
+				lookahead = nextToken;
 				childName = "";
-				break;
-			default:
+			} else {
 				lookahead = null;
-				childName = token;
-				break;
+				childName = nextToken.getRepresentation();
 			}
 		} else {
 			// Child with an empty name.
@@ -304,7 +303,7 @@ public abstract class RodinElement extends PlatformObject implements
 	 * the current delimiter indicating the type of the next token(s). The given
 	 * working copy owner is used only for file element handles.
 	 */
-	protected abstract IRodinElement getHandleFromMemento(String token,
+	protected abstract IRodinElement getHandleFromMemento(Token lookahead,
 			MementoTokenizer memento);
 
 	/*
@@ -314,7 +313,7 @@ public abstract class RodinElement extends PlatformObject implements
 	public IRodinElement getHandleFromMemento(MementoTokenizer memento) {
 		if (!memento.hasMoreTokens())
 			return this;
-		String token = memento.nextToken();
+		final Token token = memento.nextToken();
 		return getHandleFromMemento(token, memento);
 	}
 
