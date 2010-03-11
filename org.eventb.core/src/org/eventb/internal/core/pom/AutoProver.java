@@ -14,16 +14,20 @@
  *******************************************************************************/
 package org.eventb.internal.core.pom;
 
-import static org.eclipse.core.runtime.SubProgressMonitor.*;
+import static org.eclipse.core.runtime.SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK;
+import static org.eclipse.core.runtime.SubProgressMonitor.SUPPRESS_SUBTASK_LABEL;
 import static org.eventb.core.seqprover.IConfidence.PENDING;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IProofComponent;
+import org.eventb.core.pm.IProofManager;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
@@ -74,6 +78,24 @@ public final class AutoProver {
 		}
 	}
 
+	public static void run(IPSStatus[] pos, IProgressMonitor monitor)
+			throws RodinDBException {
+		final SubMonitor subMonitor = SubMonitor.convert(monitor,
+				"auto-proving", pos.length);
+		final IProofManager pm = EventBPlugin.getProofManager();
+		try {
+			for (IPSStatus status : pos) {
+				final IPSRoot psRoot = (IPSRoot) status.getRoot();
+				final IProofComponent pc = pm
+						.getProofComponent(psRoot);
+
+				run(pc, new IPSStatus[] {status}, subMonitor.newChild(1));
+			}
+		} finally {
+			monitor.done();
+		}
+	}
+	
 	private static boolean processPo(IProofComponent pc, IPSStatus status,
 			IProgressMonitor pm) throws RodinDBException {
 		

@@ -45,12 +45,6 @@ public class RootActionProvider extends NavigatorActionProvider {
 		menu.add(new Separator(GROUP_MODELLING));
 		menu.appendToGroup(GROUP_MODELLING, ActionCollection
 				.getDeleteAction(site));
-		menu.appendToGroup(GROUP_MODELLING, ActionCollection
-				.getRetryAutoProversAction(site));
-		menu.appendToGroup(GROUP_MODELLING, ActionCollection
-				.getRecalculateAutoStatusAction(site));
-		menu.appendToGroup(GROUP_MODELLING, ActionCollection
-				.getReplayUndischargedAction(site));
 	}
 
 }

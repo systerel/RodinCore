@@ -11,12 +11,18 @@
  *******************************************************************************/
 package org.eventb.internal.core.pom;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRProof;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProverSequent;
@@ -52,11 +58,23 @@ public final class RecalculateAutoStatus {
 		// Nothing to do.
 	}
 
-	public static void run(IRodinFile prFile, IRodinFile psFile, IPSStatus[] pos,
-			IProgressMonitor monitor) throws RodinDBException {
+	public static void run(IRodinFile prFile, IRodinFile psFile,
+			IPSStatus[] pos, IProgressMonitor monitor) throws RodinDBException {
+		final Set<IPSStatus> set = new HashSet<IPSStatus>(Arrays.asList(pos));
+		run(set, monitor);
+	}
+
+	
+	public static void run(Set<IPSStatus> pos, IProgressMonitor monitor)
+			throws RodinDBException {
+		final Set<IRodinFile> prFiles = new HashSet<IRodinFile>();
+		final Set<IRodinFile> psFiles = new HashSet<IRodinFile>();
 		try {
-			monitor.beginTask("auto-proving", pos.length);
+			monitor.beginTask("auto-proving", pos.size());
 			for (IPSStatus status : pos) {
+				final IRodinFile psFile = status.getRodinFile();
+				final IPSRoot psRoot = (IPSRoot) status.getRoot();
+				final IRodinFile prFile = psRoot.getPRRoot().getRodinFile();
 				if (monitor.isCanceled()) {
 					prFile.makeConsistent(null);
 					psFile.makeConsistent(null);
@@ -65,14 +83,24 @@ public final class RecalculateAutoStatus {
 				IProgressMonitor subMonitor = new SubProgressMonitor(monitor,
 						2, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
 				processPo(prFile, status, subMonitor);
+				prFiles.add(prFile);
+				psFiles.add(psFile);
 			}
-			prFile.save(null, false, true);
-			psFile.save(null, false, false);
+			saveAll(prFiles, null, false, true);
+			saveAll(psFiles, null, false, false);
 		} finally {
 			monitor.done();
 		}
 	}
 
+	private static void saveAll(Collection<IRodinFile> files,
+			IProgressMonitor monitor, boolean force, boolean keepHistory)
+			throws RodinDBException {
+		for (IRodinFile file : files) {
+			file.save(monitor, force, keepHistory);
+		}
+	}
+	
 	private static boolean processPo(IRodinFile prFile, IPSStatus status,
 			IProgressMonitor pm) throws RodinDBException {
 

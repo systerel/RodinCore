@@ -382,32 +382,6 @@
             </or>
          </enablement>
       </actionProvider>
-      <actionProvider
-            class="fr.systerel.internal.explorer.navigator.actionProviders.POActionProvider"
-            id="fr.systerel.explorer.navigator.actionProviders.po">
-         <enablement>
-            <or>
-               <instanceof
-                     value="org.eventb.core.IPSStatus">
-               </instanceof>
-               <instanceof
-                     value="org.eclipse.core.resources.IProject">
-               </instanceof>
-               <instanceof
-                     value="fr.systerel.explorer.IElementNode">
-               </instanceof>
-               <instanceof
-                     value="org.eventb.core.IEvent">
-               </instanceof>
-               <instanceof
-                     value="org.eventb.core.IInvariant">
-               </instanceof>
-               <instanceof
-                     value="org.eventb.core.IAxiom">
-               </instanceof>
-            </or>
-         </enablement>
-      </actionProvider>
       <navigatorContent
             activeByDefault="true"
             contentProvider="fr.systerel.internal.explorer.navigator.contentProviders.MachineContentProvider"
@@ -607,5 +581,64 @@
          </action>
       </viewContribution>
    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:fr.systerel.explorer.navigator.view">
+         <separator
+               name="fr.systerel.explorer.separator.commands"
+               visible="true">
+         </separator>
+         <command
+               commandId="fr.systerel.explorer.retryAutoProvers"
+               icon="icons/discharged.gif"
+               label="%navigatorCommand.autoProvers.label"
+               style="push">
+         </command>
+         <command
+               commandId="fr.systerel.explorer.recalculateAutoStatus"
+               icon="icons/discharged.gif"
+               label="%navigatorCommand.autoStatus.label"
+               style="push">
+         </command>
+         <command
+               commandId="fr.systerel.explorer.replay"
+               icon="icons/discharged_broken.gif"
+               label="%navigatorCommand.replay.name"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="fr.systerel.explorer.retryAutoProvers"
+            name="%navigatorCommand.autoProvers.name">
+      </command>
+      <command
+            id="fr.systerel.explorer.recalculateAutoStatus"
+            name="%navigatorCommand.autoStatus.name">
+      </command>
+      <command
+            id="fr.systerel.explorer.replay"
+            name="%navigatorCommand.replay.name">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="fr.systerel.internal.explorer.navigator.handlers.RetryAutoProversHandler"
+            commandId="fr.systerel.explorer.retryAutoProvers">
+      </handler>
+      <handler
+            class="fr.systerel.internal.explorer.navigator.handlers.RecalculateAutoStatusHandler"
+            commandId="fr.systerel.explorer.recalculateAutoStatus">
+      </handler>
+      <handler
+            class="fr.systerel.internal.explorer.navigator.handlers.ReplayUndischargedHandler"
+            commandId="fr.systerel.explorer.replay">
+      </handler>
+   </extension>
+
 
 </plugin>

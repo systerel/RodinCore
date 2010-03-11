@@ -10,7 +10,6 @@
   *******************************************************************************/
 package fr.systerel.internal.explorer.navigator.actionProviders;
 
-import static fr.systerel.internal.explorer.navigator.ExplorerUtils.factory;
 import static org.eventb.ui.EventBUIPlugin.PROOF_CONTROL_VIEW_ID;
 import static org.eventb.ui.EventBUIPlugin.PROOF_TREE_VIEW_ID;
 
@@ -365,18 +364,6 @@ public class ActionCollection {
 		newComponentAction.setImageDescriptor(EventBImage
 				.getImageDescriptor(IEventBSharedImages.IMG_NEW_COMPONENT_PATH));
 		return newComponentAction;
-	}
-	
-	public static RetryAutoProversAction getRetryAutoProversAction(final ICommonActionExtensionSite site) {
-		return new RetryAutoProversAction(site.getStructuredViewer());
-	}
-	
-	public static RecalculateAutoStatusAction getRecalculateAutoStatusAction(final ICommonActionExtensionSite site) {
-		return new RecalculateAutoStatusAction(site.getStructuredViewer());
-	}
-	
-	public static ReplayUndischargedAction getReplayUndischargedAction(ICommonActionExtensionSite site) {
-		return new ReplayUndischargedAction(site.getStructuredViewer(), factory);
 	}
 	
 	static void selectPO(IPSStatus ps) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,16 @@
   *******************************************************************************/
 package fr.systerel.explorer;
 
+import static fr.systerel.internal.explorer.navigator.ExplorerUtils.getExplorerSelection;
+import static fr.systerel.internal.explorer.navigator.ExplorerUtils.getStatuses;
+
+import java.util.Set;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eventb.core.IPSStatus;
+import org.eventb.core.seqprover.IConfidence;
 import org.osgi.framework.BundleContext;
 
 import fr.systerel.internal.explorer.navigator.ExplorerUtils;
@@ -65,5 +73,28 @@ public class ExplorerPlugin extends AbstractUIPlugin {
 		}
 	}
 	
+	/**
+	 * Computes and returns the Proof Status elements under the current explorer
+	 * selection.
+	 * 
+	 * @param pendingOnly
+	 *            get only statuses with confidence {@link IConfidence#PENDING}
+	 *            or less, or which are broken ({@link IPSStatus#isBroken()})
+	 * @param monitor
+	 *            the progress monitor to use for reporting progress to the
+	 *            user. It is the caller's responsibility to call done() on the
+	 *            given monitor. Accepts <code>null</code>, indicating that no
+	 *            progress should be reported and that the operation cannot be
+	 *            cancelled.
+	 * 
+	 * @return a set of statuses
+	 * @throws InterruptedException
+	 * @since 1.3
+	 */
+	public static Set<IPSStatus> getSelectedStatuses(boolean pendingOnly,
+			IProgressMonitor monitor) throws InterruptedException {
+		final Object[] objects = getExplorerSelection();
+		return getStatuses(objects, pendingOnly, monitor);
+	}
 
 }
