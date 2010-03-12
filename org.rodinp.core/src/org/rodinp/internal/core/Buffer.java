@@ -364,8 +364,8 @@ public class Buffer {
 				if (child != null) {
 					final Element domOtherChild = result.put(child, domChild);
 					if (domOtherChild != null) {
-						Util.log(null, "Duplicate child in "
-								+ element.getHandleIdentifier());
+						Util.log(null, "Duplicate child "
+								+ child.toStringWithAncestors());
 						// Put back the first one.
 						result.put(child, domOtherChild);
 					}
