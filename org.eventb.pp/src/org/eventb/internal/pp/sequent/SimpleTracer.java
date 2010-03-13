@@ -29,11 +29,11 @@ public class SimpleTracer implements ITracer {
 	private final boolean goalNeeded;
 
 	public SimpleTracer(InputPredicate ip) {
-		if (ip.isGoal) {
+		if (ip.isGoal()) {
 			this.hypotheses = emptyList();
 			this.goalNeeded = true;
 		} else {
-			this.hypotheses = singletonList(ip.originalPredicate);
+			this.hypotheses = singletonList(ip.originalPredicate());
 			this.goalNeeded = false;
 		}
 	}

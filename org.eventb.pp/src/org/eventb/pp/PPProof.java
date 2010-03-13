@@ -8,17 +8,17 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added cancellation tests
+ *     Systerel - added sequent normalization
  *******************************************************************************/
 package org.eventb.pp;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CancellationException;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.internal.pp.CancellationChecker;
 import org.eventb.internal.pp.core.ClauseDispatcher;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.PredicateTable;
@@ -35,6 +35,7 @@ import org.eventb.internal.pp.core.simplifiers.OnePointRule;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
 import org.eventb.internal.pp.loader.predicate.AbstractContext;
 import org.eventb.internal.pp.sequent.InputPredicate;
+import org.eventb.internal.pp.sequent.InputSequent;
 import org.eventb.internal.pp.sequent.SimpleTracer;
 import org.eventb.pp.PPResult.Result;
 
@@ -56,6 +57,8 @@ import org.eventb.pp.PPResult.Result;
  */
 public class PPProof {
 
+	private static final FormulaFactory ff = FormulaFactory.getDefault();
+
 	/**
 	 * Debug flag for <code>PROVER_TRACE</code>
 	 */
@@ -71,11 +74,13 @@ public class PPProof {
 	 */
 	public static Runnable translateHook = null;
 	public static Runnable loadHook = null;
-	
+
+	private final CancellationChecker cancellation;
+
+	// TODO removed monitor when cancellation checker is implemented everywhere
 	private final IPPMonitor monitor;
 	
-	private List<InputPredicate> hypotheses = new ArrayList<InputPredicate>();
-	private InputPredicate goal;
+	private final InputSequent sequent;
 	
 	private VariableContext context;
 	private PredicateTable table;
@@ -86,36 +91,24 @@ public class PPProof {
 	private ClauseDispatcher proofStrategy;
 	
 	public PPProof(Predicate[] hypotheses, Predicate goal, IPPMonitor monitor) {
-		setHypotheses(Arrays.asList(hypotheses));
-		this.goal = new InputPredicate(goal,true);
+		this.cancellation = CancellationChecker.newChecker(monitor);
+		this.sequent = new InputSequent(hypotheses, goal, ff, cancellation);
 		this.monitor = monitor;
 	}
 
 	public PPProof(Set<Predicate> hypotheses, Predicate goal, IPPMonitor monitor) {
-		setHypotheses(hypotheses);
-		this.goal = new InputPredicate(goal,true);
+		this.cancellation = CancellationChecker.newChecker(monitor);
+		this.sequent = new InputSequent(hypotheses, goal, ff, cancellation);
 		this.monitor = monitor;
 	}
 
 	public PPProof(Iterable<Predicate> hypotheses, Predicate goal,
 			IPPMonitor monitor) {
-		setHypotheses(hypotheses);
-		this.goal = new InputPredicate(goal,true);
+		this.cancellation = CancellationChecker.newChecker(monitor);
+		this.sequent = new InputSequent(hypotheses, goal, ff, cancellation);
 		this.monitor = monitor;
 	}
 	
-	private void setHypotheses(Iterable<Predicate> predicates) {
-		for (Predicate predicate : predicates) {
-			this.hypotheses.add(new InputPredicate(predicate,false));
-		}
-	}
-	
-	private void checkCancellation() {
-		if (monitor != null && monitor.isCanceled()) {
-			throw new CancellationException();
-		}
-	}
-		
 	/**
 	 * Returns the result of this proof.
 	 * 
@@ -134,16 +127,14 @@ public class PPProof {
 		return clauses;
 	}
 	
+	@Deprecated
 	public List<Predicate> getTranslatedHypotheses() {
-		List<Predicate> result = new ArrayList<Predicate>();
-		for (InputPredicate hypothesis : hypotheses) {
-			result.add(hypothesis.getTranslatedPredicate());
-		}
-		return result;
+		return sequent.getTranslatedHypotheses();
 	}
 	
+	@Deprecated
 	public Predicate getTranslatedGoal() {
-		return goal.getTranslatedPredicate();
+		return sequent.getTranslatedGoal();
 	}
 	
 	/**
@@ -151,12 +142,8 @@ public class PPProof {
 	 * and goal to predicate calculus.
 	 */
 	public void translate() {
-		for (InputPredicate predicate : hypotheses) {
-			predicate.translate();
-			checkCancellation();
-		}
-		goal.translate();
-		checkCancellation();
+		sequent.translate();
+		cancellation.check();
 		runHook(translateHook);
 	}
 	
@@ -167,7 +154,7 @@ public class PPProof {
 	public void load() {
 		final AbstractContext loadContext = new AbstractContext();
 		load(loadContext);
-		checkCancellation();
+		cancellation.check();
 		runHook(loadHook);
 	}
 	
@@ -178,26 +165,20 @@ public class PPProof {
 	}
 
 	protected void load(AbstractContext loadContext){
-		for (InputPredicate predicate : hypotheses) {
+		for (InputPredicate predicate : sequent.getPredicates()) {
 			if (predicate.loadPhaseOne(loadContext)) {
 				proofFound(predicate);
 				debugResult();
 				return;
 			}
-			checkCancellation();
+			cancellation.check();
 		}
-		if (goal.loadPhaseOne(loadContext)) {
-			proofFound(goal);
-			debugResult();
-			return;
-		}
-		checkCancellation();
 
 		final ClauseBuilder cBuilder = new ClauseBuilder(monitor);
 		cBuilder.loadClausesFromContext(loadContext);
-		checkCancellation();
+		cancellation.check();
 		cBuilder.buildPredicateTypeInformation(loadContext);
-		checkCancellation();
+		cancellation.check();
 
 		clauses = cBuilder.getClauses();
 		context = cBuilder.getVariableContext();

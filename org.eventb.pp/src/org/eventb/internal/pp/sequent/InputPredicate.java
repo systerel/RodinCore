@@ -7,10 +7,15 @@
  * 
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - added sequent normalization
  *******************************************************************************/
 package org.eventb.internal.pp.sequent;
 
+import java.util.Map;
+
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.PPCore;
 import org.eventb.internal.pp.loader.predicate.AbstractContext;
@@ -46,8 +51,9 @@ public class InputPredicate {
 		return null;
 	}
 
-	final boolean isGoal;
-	final Predicate originalPredicate;
+	private final boolean isGoal;
+	private final Predicate originalPredicate;
+	private Predicate normalizedPredicate;
 	private Predicate translatedPredicate;
 
 	public InputPredicate(Predicate originalPredicate, boolean isGoal) {
@@ -73,10 +79,35 @@ public class InputPredicate {
 	}
 
 	public void translate() {
-		translatedPredicate = translate(originalPredicate);
+		if (normalizedPredicate == null) {
+			throw new IllegalStateException(
+					"Substitution should be invoked first");
+		}
+		translatedPredicate = translate(normalizedPredicate);
 	}
 
-	public Predicate getTranslatedPredicate() {
+	public void normalize(Map<FreeIdentifier, Expression> subst) {
+		normalizedPredicate = originalPredicate.substituteFreeIdents(subst, ff);
+	}
+	
+	public Predicate translatedPredicate() {
 		return translatedPredicate;
 	}
+	
+	public Predicate normalizedPredicate() {
+		return normalizedPredicate;
+	}
+
+	public Predicate originalPredicate() {
+		return originalPredicate;
+	}
+	
+	public boolean isGoal() {
+		return isGoal;
+	}
+	
+	public FreeIdentifier[] freeIdentifiers() {
+		return originalPredicate.getFreeIdentifiers();
+	}
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.internal.pp.core.elements.terms.Util;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class RodinTests extends AbstractRodinTest {
@@ -55,6 +56,7 @@ public class RodinTests extends AbstractRodinTest {
 	}
 
 	@Test
+    @Ignore("Takes too much time")
 	public void testList() {
 		doTest(
 			mList(
@@ -1179,7 +1181,7 @@ public class RodinTests extends AbstractRodinTest {
 						"¬link∈RLinks", //
 						"x ↦ x0∈rlinks(n)" //
 				), "x ↦ x0 ∈ RLinks ∪ {link} ∪ (DLinks ∖ {link})", //
-				false);
+				true);
 	}
 
     @Test
@@ -1193,4 +1195,34 @@ public class RodinTests extends AbstractRodinTest {
 				false);
 	}
 
+	@Test
+	public void testMapletVariable() throws Exception {
+		doTest( //
+				mList( //
+						"S", "ℙ(S)", //
+						"T", "ℙ(T)", //
+						"A", "ℙ(S)", //
+						"a", "ℙ(S)", //
+						"B", "ℙ(T)", //
+						"b", "ℙ(T)", //
+						"x", "S×T" //
+				), mSet(//
+						"a ⊆ A",//
+						"b ⊆ B",//
+						"x ∈ a×b"), //
+				"x ∈ A×B", //
+				true);
+	}
+
+	@Test
+	public void bug2961857() throws Exception {
+		doTest( //
+				mList( //
+						"S", "ℙ(S)", //
+						"T", "ℙ(T)", //
+						"p", "S×T" //
+				), Util.<String>mSet(), //
+				"p ∈ dom(prj1)", //
+				true);
+	}
 }
