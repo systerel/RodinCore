@@ -15,6 +15,7 @@ import static org.eventb.internal.pp.core.elements.terms.Util.mSet;
 
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -88,6 +89,7 @@ public class HypothesisSensitivity extends AbstractRodinTest {
 	 * 20034 steps.
 	 */
 	@Test
+    @Ignore("Takes too much time")
 	public void H1H2H3H5() {
 		doTest(H1, H2, H3, H5);
 	}
@@ -96,6 +98,7 @@ public class HypothesisSensitivity extends AbstractRodinTest {
 	 * > 50000 steps.
 	 */
 	@Test
+    @Ignore("Takes too much time")
 	public void H1H2H3H4H5() {
 		doTest(H1, H2, H3, H4, H5);
 	}
@@ -104,6 +107,7 @@ public class HypothesisSensitivity extends AbstractRodinTest {
 	 * > 50000 steps.
 	 */
 	@Test
+    @Ignore("Takes too much time")
 	public void originalLemma() {
 		doTest(typenv,
 				mSet(

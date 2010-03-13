@@ -13,6 +13,7 @@ package org.eventb.pp;
 import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 import static org.eventb.internal.pp.core.elements.terms.Util.mSet;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -24,6 +25,7 @@ import org.junit.Test;
  * 
  * @author Laurent Voisin
  */
+@Ignore("Takes too much time")
 public class SeedSearchProblem extends AbstractRodinTest {
 
 	@Test
