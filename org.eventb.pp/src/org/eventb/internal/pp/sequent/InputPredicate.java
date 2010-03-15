@@ -17,8 +17,8 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
-import org.eventb.internal.pp.PPCore;
 import org.eventb.internal.pp.loader.predicate.AbstractContext;
+import org.eventb.pp.PPCore;
 import org.eventb.pp.PPProof;
 import org.eventb.pptrans.Translator;
 

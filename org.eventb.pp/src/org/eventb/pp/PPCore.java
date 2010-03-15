@@ -1,12 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2006,2008 ETH Zurich.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - published newPP tactic
  *******************************************************************************/
-
-package org.eventb.internal.pp;
+package org.eventb.pp;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -14,6 +17,8 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.tactics.BasicTactics;
+import org.eventb.internal.pp.PPInput;
+import org.eventb.internal.pp.PPReasoner;
 import org.eventb.internal.pp.core.ClauseDispatcher;
 import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.Dumper;
@@ -22,9 +27,11 @@ import org.eventb.internal.pp.core.provers.predicate.PredicateProver;
 import org.eventb.internal.pp.core.provers.seedsearch.SeedSearchProver;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
 import org.eventb.internal.pp.loader.predicate.AbstractContext;
-import org.eventb.pp.PPProof;
 import org.osgi.framework.BundleContext;
 
+/**
+ * @since 0.5
+ */
 public class PPCore extends Plugin {
 
 	public static final String PLUGIN_ID = "org.eventb.pp"; //$NON-NLS-1$
@@ -138,14 +145,19 @@ public class PPCore extends Plugin {
 	
 	
 	/**
-	 * Returns a tactic that calls PP with the given parameters.
+	 * Returns a tactic that calls newPP with the given parameters.
 	 * 
-	 * @param restricted <code>true</code> iff only selected hypotheses should be considered
-	 * @param timeout timeout in milliseconds
-	 * @param maxSteps maximum number of steps after which PP stops or -1 for no limit
+	 * @param restricted
+	 *            <code>true</code> iff only selected hypotheses should be
+	 *            considered
+	 * @param timeout
+	 *            timeout in milliseconds
+	 * @param maxSteps
+	 *            maximum number of steps after which PP stops or -1 for no
+	 *            limit
 	 * @return a tactic that calls PP with the given parameters
 	 */
-	public static ITactic pp(boolean restricted, long timeout, int maxSteps) {
+	public static ITactic newPP(boolean restricted, long timeout, int maxSteps) {
 		return BasicTactics.reasonerTac(
 				new PPReasoner(),
 				new PPInput(restricted,timeout,maxSteps));

@@ -1,16 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
-
 package org.eventb.internal.pp;
 
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics.AbsractLazilyConstrTactic;
+import org.eventb.pp.PPCore;
 
 /**
  * This class file contains static classes that extend the autoTactics extension point in the sequent prover
@@ -41,7 +44,7 @@ public class AutoTactics {
 
 		@Override
 		protected ITactic getSingInstance() {
-			return PPCore.pp(true, 500, 2000);
+			return PPCore.newPP(true, 500, 2000);
 		}
 	}
 	
@@ -58,7 +61,7 @@ public class AutoTactics {
 
 		@Override
 		protected ITactic getSingInstance() {
-			return Tactics.afterLasoo(PPCore.pp(true, 2000, 3000));
+			return Tactics.afterLasoo(PPCore.newPP(true, 2000, 3000));
 		}
 	}
 	
@@ -75,7 +78,7 @@ public class AutoTactics {
 
 		@Override
 		protected ITactic getSingInstance() {
-			return PPCore.pp(false, 2000, 3000);
+			return PPCore.newPP(false, 2000, 3000);
 		}
 	}
 	
