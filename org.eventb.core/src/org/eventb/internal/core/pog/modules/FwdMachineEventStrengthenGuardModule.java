@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - added PO nature
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
@@ -26,6 +27,7 @@ import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.IPOGHint;
+import org.eventb.core.pog.IPOGNature;
 import org.eventb.core.pog.IPOGPredicate;
 import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGCore;
@@ -164,7 +166,7 @@ public class FwdMachineEventStrengthenGuardModule extends MachineEventRefinement
 		createPO(
 				target, 
 				sequentName, 
-				"Guard strengthening (merge)",
+				IPOGNature.GUARD_STRENGTHENING_MERGE,
 				fullHypothesis,
 				hyp,
 				makePredicate(disjPredicate, concreteEvent.getSource()),
@@ -213,7 +215,7 @@ public class FwdMachineEventStrengthenGuardModule extends MachineEventRefinement
 			createPO(
 					target, 
 					sequentName, 
-					"Guard strengthening (split)",
+					IPOGNature.GUARD_STRENGTHENING_SPLIT,
 					fullHypothesis,
 					hyp,
 					makePredicate(absGuard, absGuardElement.getSource()),

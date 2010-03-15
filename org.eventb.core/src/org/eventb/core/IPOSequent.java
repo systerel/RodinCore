@@ -1,14 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added PO nature
  *******************************************************************************/
 
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.pog.IPOGNature;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
@@ -31,7 +36,7 @@ import org.rodinp.core.RodinDBException;
  * </p>
  *
  * @author Stefan Hallerstede
- *
+ * @noimplement This interface is not intended to be implemented by clients.
  * @since 1.0
  */
 public interface IPOSequent extends IInternalElement, IPOStampedElement, IAccuracyElement {
@@ -118,6 +123,10 @@ public interface IPOSequent extends IInternalElement, IPOStampedElement, IAccura
 
 	/**
 	 * Returns a more descriptive name of this proof obligation.
+	 * <p>
+	 * Equivalent to <code>getPOGNature().getDescription()</code>. Use
+	 * {@link #getPOGNature()} to compare Proof Obligation natures.
+	 * </p>
 	 * 
 	 * @return a descriptive proof obligation name
 	 */
@@ -126,12 +135,17 @@ public interface IPOSequent extends IInternalElement, IPOStampedElement, IAccura
 	/**
 	 * Sets the descriptive name of this proof obligation.
 	 * 
-	 * @param description the descriptive name
+	 * @param description
+	 *            the descriptive name
 	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @throws RodinDBException if there was a problem accessing the database
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 * @deprecated set a nature instead (
+	 *             {@link #setPOGNature(IPOGNature, IProgressMonitor)})
 	 */
+	@Deprecated
 	void setDescription(String description, IProgressMonitor monitor) throws RodinDBException;
 
 	/**
@@ -183,5 +197,33 @@ public interface IPOSequent extends IInternalElement, IPOStampedElement, IAccura
 	 *             if there was a problem accessing the database
 	 */
 	IPOSelectionHint[] getSelectionHints() throws RodinDBException;
+
+	/**
+	 * Returns the nature of this proof obligation.
+	 * 
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 * @since 1.3
+	 */
+	IPOGNature getPOGNature() throws RodinDBException;
+
+	/**
+	 * Sets the nature of this proof obligation.
+	 * 
+	 * Actually, <code>IPOSequent.setPOGNature(nature, monitor)</code> and
+	 * <code>IPOSequent.setDescription(nature.getDescription(), monitor)</code>
+	 * are equivalent.
+	 * 
+	 * @param nature
+	 *            the nature
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
+	 * @throws RodinDBException
+	 *             if there was a problem accessing the database
+	 * @since 1.3
+	 */
+	void setPOGNature(IPOGNature nature, IProgressMonitor monitor)
+			throws RodinDBException;
 
 }

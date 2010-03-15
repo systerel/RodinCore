@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - added PO nature
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
@@ -27,6 +28,7 @@ import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.IPOGHint;
+import org.eventb.core.pog.IPOGNature;
 import org.eventb.core.pog.IPOGPredicate;
 import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.POGCore;
@@ -95,12 +97,12 @@ public class FwdMachineEventActionModule extends MachineEventActionUtilityModule
 				Predicate wdPredicate = assignment.getWDPredicate(factory);
 				createProofObligation(target, hyp,
 						wdPredicate, action, sources, hints, 
-						"WD", "Well-definedness of action", monitor);
+						"WD", IPOGNature.ACTION_WELL_DEFINEDNESS, monitor);
 				
 				Predicate fisPredicate = assignment.getFISPredicate(factory);
 				createProofObligation(target, hyp,
 						fisPredicate, action, sources, hints, 
-						"FIS", "Feasibility of action", monitor);
+						"FIS", IPOGNature.ACTION_FEASIBILITY, monitor);
 				
 			}
 		}
@@ -164,7 +166,7 @@ public class FwdMachineEventActionModule extends MachineEventActionUtilityModule
 			IPOGSource[] sources, 
 			IPOGHint[] hints, 
 			String suffix,
-			String desc,
+			IPOGNature nature,
 			IProgressMonitor monitor) throws CoreException {
 		String sequentName = concreteEventLabel + "/" + action.getLabel() + "/" + suffix;
 		if (goalIsTrivial(predicate)) {
@@ -175,7 +177,7 @@ public class FwdMachineEventActionModule extends MachineEventActionUtilityModule
 		createPO(
 				target, 
 				sequentName, 
-				desc, 
+				nature, 
 				fullHypothesis, 
 				hyp, 
 				makePredicate(predicate, action.getSource()), 

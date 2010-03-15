@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,14 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     University of Dusseldorf - added theorem attribute
+ *     Systerel - added PO nature
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCInvariant;
+import org.eventb.core.pog.IPOGNature;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IHypothesisManager;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
@@ -49,11 +51,11 @@ public class FwdMachineInvariantModule extends PredicateModule<ISCInvariant> {
 	}
 
 	@Override
-	protected String getWDProofObligationDescription(boolean isTheorem) {
+	protected IPOGNature getWDProofObligationNature(boolean isTheorem) {
 		if (isTheorem) {
-			return "Well-definedness of Theorem";
+			return IPOGNature.THEOREM_WELL_DEFINEDNESS;
 		} else {
-			return "Well-definedness of Invariant";
+			return IPOGNature.INVARIANT_WELL_DEFINEDNESS;
 		}
 	}
 

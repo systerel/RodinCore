@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     University of Dusseldorf - added theorem attribute
+ *     Systerel - added PO nature
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
@@ -21,6 +22,7 @@ import org.eventb.core.IPORoot;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCGuard;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pog.IPOGNature;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IAbstractEventGuardList;
 import org.eventb.core.pog.state.IAbstractEventGuardTable;
@@ -183,11 +185,11 @@ public class FwdMachineEventGuardModule extends PredicateModule<ISCGuard> {
 	}
 
 	@Override
-	protected String getWDProofObligationDescription(boolean isTheorem) {
+	protected IPOGNature getWDProofObligationNature(boolean isTheorem) {
 		if (isTheorem) {
-			return "Well-definedness of Theorem";
+			return IPOGNature.THEOREM_WELL_DEFINEDNESS;
 		} else {
-			return "Well-definedness of Guard";
+			return IPOGNature.GUARD_WELL_DEFINEDNESS;
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     University of Dusseldorf - added theorem attribute
+ *     Systerel - added PO nature
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
@@ -24,6 +25,7 @@ import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.IPOGHint;
+import org.eventb.core.pog.IPOGNature;
 import org.eventb.core.pog.IPOGSource;
 import org.eventb.core.pog.state.IHypothesisManager;
 import org.eventb.core.pog.state.IPOGStateRepository;
@@ -118,7 +120,7 @@ public abstract class PredicateModule<PE extends ISCPredicateElement> extends Ut
 		createPO(
 				target,
 				poName,
-				"Theorem",
+				IPOGNature.THEOREM,
 				hypothesis,
 				emptyPredicates,
 				makePredicate(predicate, predicateSource),
@@ -150,7 +152,7 @@ public abstract class PredicateModule<PE extends ISCPredicateElement> extends Ut
 		createPO(
 				target,
 				poName,
-				getWDProofObligationDescription(isTheorem),
+				getWDProofObligationNature(isTheorem),
 				hypothesis,
 				emptyPredicates,
 				makePredicate(wdPredicate, predicateSource),
@@ -166,7 +168,7 @@ public abstract class PredicateModule<PE extends ISCPredicateElement> extends Ut
 				monitor);
 	}
 
-	protected abstract String getWDProofObligationDescription(boolean isTheorem);
+	protected abstract IPOGNature getWDProofObligationNature(boolean isTheorem);
 
 	private String getWDProofObligationName(String poPrefix) {
 		return poPrefix + "/WD";

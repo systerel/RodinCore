@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - added PO nature
  *******************************************************************************/
 package org.eventb.core.pog;
 
@@ -22,6 +23,7 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.state.IPOGStateRepository;
+import org.eventb.internal.core.pog.POGNatureFactory;
 import org.eventb.internal.core.tool.types.IFilterModule;
 import org.eventb.internal.core.tool.types.IModule;
 import org.eventb.internal.core.tool.types.IPOGFilterModule;
@@ -61,16 +63,17 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 	/**
 	 * Create a proof obligation in the specified file.
 	 * 
-	 * @param target the target file
+	 * @param target
+	 *            the target file
 	 * @param name
 	 *            the name of the proof obligation
 	 * @param desc
 	 *            a description of the proof obligation
-	 * @param globalHypothesis
-	 *            the global hypothesis (shared between proof obligations)
-	 * @param localHypothesis
-	 *            the local hypothesis (<b>not</b> share between proof
-	 *            obliagtions)
+	 * @param globalHypotheses
+	 *            the global hypotheses (shared between proof obligations)
+	 * @param localHypotheses
+	 *            the local hypotheses (<b>not</b> shared between proof
+	 *            obligations)
 	 * @param goal
 	 *            the goal to be proved
 	 * @param sources
@@ -78,17 +81,67 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 	 *            was derived
 	 * @param hints
 	 *            hints for a theorem prover
+	 * @param accurate
+	 *            the accuracy of the PO sequent
 	 * @param monitor
-	 *            if there was a problem during the initialisation of one of the
-	 *            modules
-	 * @throws CoreException if there has been any problem creating the proof obligation
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
+	 * @throws CoreException
+	 *             if there has been any problem creating the proof obligation
+	 * @deprecated use the method with a IPOGNature instead
 	 */
+	@Deprecated
 	protected final void createPO(
 			IPORoot target, 
 			String name,
 			String desc,
-			IPOPredicateSet globalHypothesis,
-			List<IPOGPredicate> localHypothesis,
+			IPOPredicateSet globalHypotheses,
+			List<IPOGPredicate> localHypotheses,
+			IPOGPredicate goal,
+			IPOGSource[] sources,
+			IPOGHint[] hints,
+			boolean accurate,
+			IProgressMonitor monitor) throws CoreException {
+		createPO(target, name, makeNature(desc), globalHypotheses,
+				localHypotheses, goal, sources, hints, accurate, monitor);
+	}
+
+	/**
+	 * Create a proof obligation in the specified file.
+	 * 
+	 * @param target
+	 *            the target file
+	 * @param name
+	 *            the name of the proof obligation
+	 * @param nature
+	 *            the nature of the proof obligation
+	 * @param globalHypotheses
+	 *            the global hypotheses (shared between proof obligations)
+	 * @param localHypotheses
+	 *            the local hypotheses (<b>not</b> shared between proof
+	 *            obligations)
+	 * @param goal
+	 *            the goal to be proved
+	 * @param sources
+	 *            references to source elements from which the proof obligation
+	 *            was derived
+	 * @param hints
+	 *            hints for a theorem prover
+	 * @param accurate
+	 *            the accuracy of the PO sequent
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
+	 * @throws CoreException
+	 *             if there has been any problem creating the proof obligation
+	 * @since 1.3
+	 */
+	protected final void createPO(
+			IPORoot target, 
+			String name,
+			IPOGNature nature,
+			IPOPredicateSet globalHypotheses,
+			List<IPOGPredicate> localHypotheses,
 			IPOGPredicate goal,
 			IPOGSource[] sources,
 			IPOGHint[] hints,
@@ -102,14 +155,14 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 
 			IPOPredicateSet hypothesis = sequent.getHypothesis(SEQ_HYP_NAME);
 			hypothesis.create(null, monitor);
-			hypothesis.setParentPredicateSet(globalHypothesis, monitor);
+			hypothesis.setParentPredicateSet(globalHypotheses, monitor);
 
-			putPOGPredicates(hypothesis, localHypothesis, monitor);
+			putPOGPredicates(hypothesis, localHypotheses, monitor);
 
 			IPOPredicate goalPredicate = sequent.getGoal(GOAL_NAME);
 			putPredicate(goalPredicate, goal, monitor);
 
-			sequent.setDescription(desc, monitor);
+			sequent.setPOGNature(nature, monitor);
 
 			putPOGSources(sequent, sources, monitor);
 
@@ -389,6 +442,19 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 	 */
 	protected static final IPOPredicateSet getSequentHypothesis(IPORoot target, String sequentName) {
 		return target.getSequent(sequentName).getHypothesis(SEQ_HYP_NAME);
+	}
+
+	/**
+	 * Creates a POG Nature for <code>description</code>.
+	 * 
+	 * @param description
+	 *            the description of the nature
+	 * @return the unique POG Nature corresponding to the given description
+	 * @see IPOGNature
+	 * @since 1.3
+	 */
+	protected static final IPOGNature makeNature(String description) {
+		return POGNatureFactory.getInstance().getNature(description);
 	}
 
 }

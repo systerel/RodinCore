@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added PO nature
  *******************************************************************************/
 package org.eventb.core.basis;
 
@@ -15,7 +19,9 @@ import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSelectionHint;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
+import org.eventb.core.pog.IPOGNature;
 import org.eventb.internal.core.Messages;
+import org.eventb.internal.core.pog.POGNatureFactory;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -124,6 +130,23 @@ public class POSequent extends EventBElement implements IPOSequent {
 
 	public IPOSource getSource(String elementName) {
 		return getInternalElement(IPOSource.ELEMENT_TYPE, elementName);
+	}
+
+	/**
+	 * @since 1.3
+	 */
+	public IPOGNature getPOGNature()
+			throws RodinDBException {
+		return POGNatureFactory.getInstance().getNature(
+				getAttributeValue(EventBAttributes.PODESC_ATTRIBUTE));
+	}
+
+	/**
+	 * @since 1.3
+	 */
+	public void setPOGNature(IPOGNature nature, IProgressMonitor monitor) throws RodinDBException {
+		setAttributeValue(EventBAttributes.PODESC_ATTRIBUTE, nature
+				.getDescription(), monitor);
 	}
 
 }
