@@ -17,6 +17,7 @@ import org.eventb.internal.core.typecheck.TypeCheckResult;
 
 /**
  * @author "Nicolas Beauger"
+ * @since 2.0
  *
  */
 public interface IPredicateExtension extends IFormulaExtension {

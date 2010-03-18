@@ -87,7 +87,7 @@ public class ExtendedPredicate extends Predicate {
 	@Override
 	protected void toString(StringBuilder builder, boolean isRightChild,
 			int parentTag, String[] boundNames, boolean withTypes) {
-		extension.prettyPrint(builder, isRightChild, parentTag, boundNames,
+		extension.prettyPrint(builder, parentTag, boundNames,
 				withTypes, childExpressions, childPredicates);
 	}
 

@@ -39,6 +39,7 @@ public class ExtendedExpression extends Expression {
 	private final Expression[] childExpressions;
 	private final Predicate[] childPredicates;
 	private final IExpressionExtension extension;
+	private final FormulaFactory factory;
 
 	protected ExtendedExpression(int tag, Expression[] expressions,
 			Predicate[] predicates, SourceLocation location,
@@ -48,6 +49,7 @@ public class ExtendedExpression extends Expression {
 		this.childExpressions = expressions.clone();
 		this.childPredicates = predicates.clone();
 		this.extension = extension;
+		this.factory = factory;
 		checkPreconditions();
 		setPredicateVariableCache(getChildren());
 		synthesizeType(factory, null);
@@ -109,8 +111,12 @@ public class ExtendedExpression extends Expression {
 	@Override
 	protected void toString(StringBuilder builder, boolean isRightChild,
 			int parentTag, String[] boundNames, boolean withTypes) {
-		extension.prettyPrint(builder, isRightChild, parentTag, boundNames,
-				withTypes, childExpressions, childPredicates);
+		final boolean needsParen = factory.needsParentheses(isRightChild, getTag(),
+				parentTag);
+		if (needsParen)  builder.append('(');
+		extension.prettyPrint(builder, getTag(), boundNames, withTypes,
+				childExpressions, childPredicates);
+		if (needsParen) builder.append(')');
 	}
 
 	@Override
@@ -131,7 +137,7 @@ public class ExtendedExpression extends Expression {
 	protected void typeCheck(TypeCheckResult result,
 			BoundIdentDecl[] quantifiedIdentifiers) {
 		final Type resultType = extension.typeCheck(result,
-				quantifiedIdentifiers, childExpressions, childPredicates);
+				quantifiedIdentifiers, childExpressions, childPredicates, this);
 		setTemporaryType(resultType, result);
 	}
 
@@ -264,6 +270,8 @@ public class ExtendedExpression extends Expression {
 		if (!changed) {
 			before = this;
 		} else {
+			// FIXME should check preconditions about new children
+			// (flattening could break preconditions) 
 			before = rewriter.getFactory().makeExtendedExpression(getTag(),
 					newChildExpressions, newChildPredicates,
 					getSourceLocation());

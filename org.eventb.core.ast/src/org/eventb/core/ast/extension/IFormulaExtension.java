@@ -16,6 +16,7 @@ import org.eventb.core.ast.Predicate;
 
 /**
  * @author "Nicolas Beauger"
+ * @since 2.0
  *
  */
 public interface IFormulaExtension {
@@ -26,8 +27,8 @@ public interface IFormulaExtension {
 	
 	boolean isFlattenable();
 	
-	void prettyPrint(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes,
+	void prettyPrint(StringBuilder builder, int tag,
+			String[] boundNames, boolean withTypes,
 			Expression[] childExpressions, Predicate[] childPredicates);
 
 	void prettyPrintFullyParenthesized(StringBuilder builder,

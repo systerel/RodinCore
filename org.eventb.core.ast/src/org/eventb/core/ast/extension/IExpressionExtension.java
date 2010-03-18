@@ -18,14 +18,23 @@ import org.eventb.internal.core.typecheck.TypeCheckResult;
 
 /**
  * @author "Nicolas Beauger"
+ * @since 2.0
  * 
  */
 public interface IExpressionExtension extends IFormulaExtension {
 
+	/**
+	 * Returns the type of this expression assuming that the preconditions are
+	 * fulfilled.
+	 * 
+	 * @param childExpressions
+	 * @param childPredicates
+	 * @return a type
+	 */
 	Type getType(Expression[] childExpressions, Predicate[] childPredicates);
 
 	Type typeCheck(TypeCheckResult result,
 			BoundIdentDecl[] quantifiedIdentifiers,
-			Expression[] childExpressions, Predicate[] childPredicates);
+			Expression[] childExpressions, Predicate[] childPredicates, Expression origin);
 
 }
