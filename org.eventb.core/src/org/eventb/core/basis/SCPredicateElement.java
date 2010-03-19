@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,14 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - Mathematical Language V2
+ *     Systerel - added origin of predicates in proof
  ******************************************************************************/
 package org.eventb.core.basis;
 
 import static org.eventb.core.ast.LanguageVersion.V2;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
@@ -54,7 +56,13 @@ implements ISCPredicateElement {
 	@Deprecated
 	public Predicate getPredicate(FormulaFactory factory) throws RodinDBException {
 		String contents = getPredicateString();
-		IParseResult parserResult = factory.parsePredicate(contents, V2, null);
+		final IRodinElement source;
+		if (hasAttribute(EventBAttributes.SOURCE_ATTRIBUTE)) {
+			source = getAttributeValue(EventBAttributes.SOURCE_ATTRIBUTE);
+		} else {
+			source = null;
+		}
+		IParseResult parserResult = factory.parsePredicate(contents, V2, source);
 		if (parserResult.getProblems().size() != 0) {
 			throw Util.newRodinDBException(
 					Messages.database_SCPredicateParseFailure,

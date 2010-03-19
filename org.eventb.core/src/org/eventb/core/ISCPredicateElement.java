@@ -1,11 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007 ETH Zurich.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
-
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added origin of predicates in proof
+ ******************************************************************************/
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -41,6 +44,10 @@ public interface ISCPredicateElement extends IPredicateElement {
 
 	/**
 	 * Returns the untyped predicate contained in this element.
+	 * <p>
+	 * If a {@link EventBAttributes#SOURCE_ATTRIBUTE} is present, it is
+	 * considered the predicate's origin.
+	 * </p>
 	 * 
 	 * @param factory
 	 *            the formula factory to use for building the result
@@ -55,6 +62,10 @@ public interface ISCPredicateElement extends IPredicateElement {
 
 	/**
 	 * Returns the typed predicate contained in this element.
+	 * <p>
+	 * If a {@link EventBAttributes#SOURCE_ATTRIBUTE} is present, it is
+	 * considered the predicate's origin.
+	 * </p>
 	 * 
 	 * @param factory
 	 *            the formula factory to use for building the result

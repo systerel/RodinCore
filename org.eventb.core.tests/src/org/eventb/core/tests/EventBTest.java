@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,15 +83,20 @@ public abstract class EventBTest extends BuilderTest {
 		return "x" + alloc++;
 	}
 	
-	public void addAxioms(IContextRoot root, String[] names, String[] axioms, boolean...derived)
-			throws RodinDBException {
+	public void addAxioms(IContextRoot root, String[] names, String[] axioms,
+			boolean... derived) throws RodinDBException {
 		for (int i = 0; i < names.length; i++) {
-			IAxiom axiom = root.getAxiom(getUniqueName());
-			axiom.create(null, null);
-			axiom.setPredicateString(axioms[i], null);
-			axiom.setLabel(names[i], null);
-			axiom.setTheorem(derived[i], null);
+			addAxiom(root, names[i], axioms[i], derived[i]);
 		}
+	}
+
+	public IAxiom addAxiom(IContextRoot root, String name, String predicate,
+			boolean derived) throws RodinDBException {
+		final IAxiom axiom = root.createChild(IAxiom.ELEMENT_TYPE, null, null);
+		axiom.setPredicateString(predicate, null);
+		axiom.setLabel(name, null);
+		axiom.setTheorem(derived, null);
+		return axiom;
 	}
 
 	public void addAxioms(IContextRoot root, String... strings)
