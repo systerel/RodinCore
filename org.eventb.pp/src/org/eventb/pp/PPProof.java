@@ -77,9 +77,6 @@ public class PPProof {
 
 	private final CancellationChecker cancellation;
 
-	// TODO removed monitor when cancellation checker is implemented everywhere
-	private final IPPMonitor monitor;
-	
 	private final InputSequent sequent;
 	
 	private VariableContext context;
@@ -93,20 +90,17 @@ public class PPProof {
 	public PPProof(Predicate[] hypotheses, Predicate goal, IPPMonitor monitor) {
 		this.cancellation = CancellationChecker.newChecker(monitor);
 		this.sequent = new InputSequent(hypotheses, goal, ff, cancellation);
-		this.monitor = monitor;
 	}
 
 	public PPProof(Set<Predicate> hypotheses, Predicate goal, IPPMonitor monitor) {
 		this.cancellation = CancellationChecker.newChecker(monitor);
 		this.sequent = new InputSequent(hypotheses, goal, ff, cancellation);
-		this.monitor = monitor;
 	}
 
 	public PPProof(Iterable<Predicate> hypotheses, Predicate goal,
 			IPPMonitor monitor) {
 		this.cancellation = CancellationChecker.newChecker(monitor);
 		this.sequent = new InputSequent(hypotheses, goal, ff, cancellation);
-		this.monitor = monitor;
 	}
 	
 	/**
@@ -174,7 +168,7 @@ public class PPProof {
 			cancellation.check();
 		}
 
-		final ClauseBuilder cBuilder = new ClauseBuilder(monitor);
+		final ClauseBuilder cBuilder = new ClauseBuilder(cancellation);
 		cBuilder.loadClausesFromContext(loadContext);
 		cancellation.check();
 		cBuilder.buildPredicateTypeInformation(loadContext);
@@ -198,7 +192,7 @@ public class PPProof {
 		if (result != null) return;
 		if (context == null) throw new IllegalStateException("Loader must be preliminary invoked");
 		
-		initProver(monitor);
+		initProver();
 		if (DEBUG) {
 			debug("==== Original clauses ====");
 			for (Clause clause : clauses) {
@@ -227,8 +221,8 @@ public class PPProof {
 		}
 	}
 	
-	private void initProver(IPPMonitor monitor) {
-		proofStrategy = new ClauseDispatcher(monitor);
+	private void initProver() {
+		proofStrategy = new ClauseDispatcher(cancellation);
 		
 		PredicateProver prover = new PredicateProver(context);
 		CaseSplitter casesplitter = new CaseSplitter(context, proofStrategy.getLevelController());

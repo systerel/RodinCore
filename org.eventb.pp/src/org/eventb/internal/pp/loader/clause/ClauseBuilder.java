@@ -14,6 +14,7 @@ package org.eventb.internal.pp.loader.clause;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eventb.internal.pp.CancellationChecker;
 import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.ClauseFactory;
@@ -36,7 +37,6 @@ import org.eventb.internal.pp.loader.formula.SignedFormula;
 import org.eventb.internal.pp.loader.formula.descriptor.LiteralDescriptor;
 import org.eventb.internal.pp.loader.predicate.IContext;
 import org.eventb.internal.pp.loader.predicate.INormalizedFormula;
-import org.eventb.pp.IPPMonitor;
 
 /**
  * This is the builder for the second phase of the loading process. The input
@@ -66,7 +66,7 @@ public final class ClauseBuilder {
 		prefix.setLength(prefix.length() - 2);
 	}
 	
-	private final IPPMonitor monitor;
+	private final CancellationChecker cancellation;
 	
 	private List<Clause> clauses;
 	private VariableContext variableContext;
@@ -75,8 +75,8 @@ public final class ClauseBuilder {
 	private PredicateTable predicateTable;
 	private VariableTable variableTable;
 
-	public ClauseBuilder(IPPMonitor monitor) {
-		this.monitor = monitor;
+	public ClauseBuilder(CancellationChecker cancellation) {
+		this.cancellation = cancellation;
 	}
 	
 	public void loadClausesFromContext(IContext context) {
@@ -112,7 +112,7 @@ public final class ClauseBuilder {
 		predicateTable = new PredicateTable();
 		bool = new BooleanEqualityTable(context.getNextLiteralIdentifier());
 		clauses = new ArrayList<Clause>();
-		manager = new LabelManager(monitor);
+		manager = new LabelManager(cancellation);
 	}	
 	
 	private void getDefinitions() {

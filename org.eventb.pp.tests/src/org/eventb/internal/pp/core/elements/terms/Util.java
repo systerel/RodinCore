@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryPredicate;
+import org.eventb.internal.pp.CancellationChecker;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.Tracer;
 import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
@@ -109,7 +110,8 @@ public class Util {
 		final AbstractContext context = new AbstractContext();
 		final Predicate pred = parsePredicate(predicate, environment);
 		context.load(pred, false);
-		final ClauseBuilder cBuilder = new ClauseBuilder(null);
+		final CancellationChecker cancellation = CancellationChecker.newChecker(null);
+		final ClauseBuilder cBuilder = new ClauseBuilder(cancellation);
 		cBuilder.loadClausesFromContext(context, table);
 		return cBuilder;
 	}
@@ -118,7 +120,8 @@ public class Util {
 		final AbstractContext context = new AbstractContext();
 		final Predicate pred = parsePredicate(predicate);
 		context.load(pred, false);
-		final ClauseBuilder cBuilder = new ClauseBuilder(null);
+		final CancellationChecker cancellation = CancellationChecker.newChecker(null);
+		final ClauseBuilder cBuilder = new ClauseBuilder(cancellation);
 		cBuilder.loadClausesFromContext(context);
 		return cBuilder;
 	}

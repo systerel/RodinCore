@@ -1,11 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - refactored cancellation tests
  *******************************************************************************/
-
 package org.eventb.internal.pp.core;
 
 import java.util.ArrayList;
@@ -15,12 +18,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eventb.internal.pp.CancellationChecker;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.search.RandomAccessList;
 import org.eventb.internal.pp.core.search.ResetIterator;
 import org.eventb.internal.pp.core.simplifiers.ISimplifier;
 import org.eventb.internal.pp.core.tracing.IOrigin;
-import org.eventb.pp.IPPMonitor;
 import org.eventb.pp.ITracer;
 import org.eventb.pp.PPResult;
 import org.eventb.pp.PPResult.Result;
@@ -86,7 +89,7 @@ public final class ClauseDispatcher  {
 	private final Collection<Clause> originalClauses;
 	private final List<IProverModule> provers;
 	private final ClauseSimplifier simplifier;
-	private final IPPMonitor monitor;
+	private final CancellationChecker cancellation;
 	private final Tracer tracer;
 	private final Dumper dumper;
 	
@@ -95,14 +98,14 @@ public final class ClauseDispatcher  {
 	private boolean terminated = false;
 
 	
-	public ClauseDispatcher(IPPMonitor monitor) {
+	public ClauseDispatcher(CancellationChecker cancellation) {
 		alreadyDispatchedClauses = new RandomAccessList<Clause>();
 		alreadyDispatchedBacktrackClausesIterator = alreadyDispatchedClauses.iterator();
 		nonDispatchedClauses = new RandomAccessList<Clause>();
 		nonDispatchedClausesIterator = nonDispatchedClauses.iterator();
 		nonDispatchedBacktrackClausesIterator = nonDispatchedClauses.iterator();
 		
-		this.monitor = monitor;
+		this.cancellation = cancellation;
 		
 		dumper = new Dumper();
 		tracer = new Tracer();
@@ -192,10 +195,8 @@ public final class ClauseDispatcher  {
 		
 		boolean force = false;
 		while (!terminated) {
-			if (isCanceled()) {
-				terminate(Result.cancel);
-			}
-			else if (!updateCounterAndCheckTermination(nofSteps)) {
+			cancellation.check();
+			if (!updateCounterAndCheckTermination(nofSteps)) {
 				// first phase, treat non dispatched clauses
 				if (!treatNondispatchedClausesAndCheckContradiction()) {
 					// second phase, all clauses have been treated
@@ -249,7 +250,8 @@ public final class ClauseDispatcher  {
 	private boolean treatNondispatchedClausesAndCheckContradiction() {
 		if (DEBUG) debug("== Treating non dispatched clauses ==");
 		nonDispatchedClausesIterator.reset();
-		while (nonDispatchedClausesIterator.hasNext() && !isCanceled()) {
+		while (nonDispatchedClausesIterator.hasNext()) {
+			cancellation.check();
 			Clause clause = nonDispatchedClausesIterator.next();
 			if (DEBUG) debug("== Next clause: "+clause+" ==");
 			
@@ -257,6 +259,7 @@ public final class ClauseDispatcher  {
 
 			Set<IOrigin> contradictions = new HashSet<IOrigin>();
 			for (IProverModule prover : provers) {
+				cancellation.check();
 				ProverResult result = prover.addClauseAndDetectContradiction(clause);
 				if (DEBUG) debug("= Got result from "+prover.toString()+": "+result.toString()+" =");
 				treatProverResultAndCheckContradiction(result, contradictions);
@@ -449,8 +452,4 @@ public final class ClauseDispatcher  {
 		terminated = true;
 	}
 
-	private boolean isCanceled() {
-		return monitor != null && monitor.isCanceled();
-	}
-	
 }

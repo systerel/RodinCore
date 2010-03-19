@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.pp.loader;
 
 import static org.eventb.internal.pp.core.elements.terms.Util.cAEqual;
@@ -35,6 +45,7 @@ import java.util.List;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.internal.pp.CancellationChecker;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.PredicateLiteral;
 import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
@@ -1944,7 +1955,8 @@ public class TestClauseBuilder extends AbstractPPTest {
 	private ClauseBuilder load(List<String> strPredicate, boolean goal,
 			boolean withTypeInfo, ITypeEnvironment typenv, Object... constants) {
 		final AbstractContext context = new AbstractContext();
-		final ClauseBuilder cBuilder = new ClauseBuilder(null);
+		final CancellationChecker cancellation = CancellationChecker.newChecker(null);
+		final ClauseBuilder cBuilder = new ClauseBuilder(cancellation);
 		ITypeEnvironment tmp = typenv.clone();
 		
 		for (String str : strPredicate) {

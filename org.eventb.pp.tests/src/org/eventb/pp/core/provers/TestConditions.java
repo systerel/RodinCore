@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.pp.core.provers;
 
 import static org.eventb.internal.pp.core.elements.terms.Util.cClause;
@@ -12,6 +22,7 @@ import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 
 import java.util.List;
 
+import org.eventb.internal.pp.CancellationChecker;
 import org.eventb.internal.pp.core.ClauseDispatcher;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.PredicateTable;
@@ -52,7 +63,8 @@ public class TestConditions extends AbstractPPTest {
 	}
 	
 	private ClauseDispatcher initProver() {
-		ClauseDispatcher proofStrategy = new ClauseDispatcher(null);
+		final CancellationChecker cancellation = CancellationChecker.newChecker(null);
+		ClauseDispatcher proofStrategy = new ClauseDispatcher(cancellation);
 		VariableContext context = new VariableContext();
 		PredicateTable table = new PredicateTable();
 		
