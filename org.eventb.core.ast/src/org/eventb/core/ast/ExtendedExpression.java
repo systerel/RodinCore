@@ -22,6 +22,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.notation.IFormulaChild;
+import org.eventb.core.ast.extension.notation.INotation;
+import org.eventb.core.ast.extension.notation.INotationElement;
+import org.eventb.core.ast.extension.notation.INotationSymbol;
+import org.eventb.core.ast.extension.notation.IFormulaChild.Kind;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
@@ -113,12 +118,45 @@ public class ExtendedExpression extends Expression {
 			int parentTag, String[] boundNames, boolean withTypes) {
 		final boolean needsParen = factory.needsParentheses(isRightChild, getTag(),
 				parentTag);
+		toStringHelper(builder, extension.getNotation(), boundNames, needsParen, extension.getTagOperator(), getTag(), withTypes);
+	}
+
+	protected void toStringHelper(StringBuilder builder, INotation notation,
+			String[] boundNames, boolean needsParen,
+			String tagOperator, int tag, boolean withTypes) {
 		if (needsParen)  builder.append('(');
-		extension.prettyPrint(builder, getTag(), boundNames, withTypes,
-				childExpressions, childPredicates);
+		boolean isRight = false;
+		for (INotationElement notElem : notation) {
+			// TODO move toString() to INotationElement
+			// TODO see if toString() can be moved to INotation
+			if (notElem instanceof INotationSymbol) {
+				final String symbol = ((INotationSymbol) notElem).getSymbol();
+				builder.append(symbol);
+			} else if (notElem instanceof IFormulaChild) {
+				final IFormulaChild formChild = (IFormulaChild) notElem;
+				final Kind kind = formChild.getKind();
+				final int index = formChild.getIndex();
+				final Formula<?> child;
+				switch(kind) {
+				case EXPRESSION:
+					child = childExpressions[index];
+					// FIXME check IndexOutOfBounds
+					break;
+				case PREDICATE:
+					child = childPredicates[index];
+					break;
+				default:
+					assert false;
+					child = null;
+				}
+				child.toString(builder, isRight, getTag(), boundNames, withTypes);
+				isRight = true;
+			}
+		}
 		if (needsParen) builder.append(')');
 	}
 
+	
 	@Override
 	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
 		if (this.getTag() != other.getTag()) {
@@ -163,9 +201,9 @@ public class ExtendedExpression extends Expression {
 	@Override
 	protected void toStringFullyParenthesized(StringBuilder builder,
 			String[] boundNames) {
-		extension.prettyPrintFullyParenthesized(builder, boundNames,
-				childExpressions, childPredicates);
-
+//		extension.prettyPrintFullyParenthesized(builder, boundNames,
+//				childExpressions, childPredicates);
+//		TODO
 	}
 
 	@Override

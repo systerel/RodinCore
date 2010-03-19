@@ -13,6 +13,7 @@ package org.eventb.core.ast.extension;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.extension.notation.INotation;
 
 /**
  * @author "Nicolas Beauger"
@@ -26,14 +27,8 @@ public interface IFormulaExtension {
 	void checkPreconditions(Expression[] expressions, Predicate[] predicates);
 	
 	boolean isFlattenable();
-	
-	void prettyPrint(StringBuilder builder, int tag,
-			String[] boundNames, boolean withTypes,
-			Expression[] childExpressions, Predicate[] childPredicates);
 
-	void prettyPrintFullyParenthesized(StringBuilder builder,
-			String[] boundNames, Expression[] childExpressions,
-			Predicate[] childPredicates);
+	INotation getNotation();
 	
 	Predicate getWDPredicateRaw(FormulaFactory formulaFactory,
 			Expression[] childExpressions, Predicate[] childPredicates);
