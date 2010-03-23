@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Systerel - added new options
  *     Systerel - added constants for preference page ids
  *     Systerel - added constant for expand section preference
+ *     Systerel - added constants to handle new prefix preferences
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
@@ -70,6 +71,11 @@ public class PreferenceConstants {
 	 * Unique identifier of the preference page for the context editor.
 	 */
 	public static final String CONTEXT_EDITOR_PAGE_ID = "org.eventb.ui.preferences.contextEditor";
+	
+	/**
+	 * Unique identifier of the preference page for the prefix settings.
+	 */
+	public static final String PREFIX_PREFERENCE_PAGE_ID = "org.eventb.ui.preferences.prefixPage";
 	
 	
 	/**
@@ -141,5 +147,14 @@ public class PreferenceConstants {
 	 * Preference key for recursive expand
 	 */
 	public static final String P_EXPAND_SECTIONS = "Expand sections when unfolding an element";
-
+	
+	/**
+	 * Preference key for axiom auto naming prefix
+	 */
+	public static final String P_PREFIX = "p_prefix_";
+	
+	/**
+	 * Preference key indicating if some value is project specific
+	 */
+	public static final String P_SPECIFIC = "project_specific";
 }

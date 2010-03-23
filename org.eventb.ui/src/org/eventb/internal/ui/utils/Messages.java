@@ -17,6 +17,7 @@
  *     Systerel - added message for Tactics
  *     Systerel - added "expand section" preference
  *     Systerel - added messages for dialogs
+ *     Systerel - added messages for the new prefix preference mechanism
  *******************************************************************************/
 package org.eventb.internal.ui.utils;
 
@@ -115,6 +116,10 @@ public final class Messages {
 	public static String preferencepage_colorsandfonts_requiredfieldbackground;
 	public static String preferencepage_colorsandfonts_dirtystatecolor;
 	public static String preferencepage_colorsandfonts_boxbordercolor;
+	public static String preferencepage_prefixSettings_description;
+	public static String preferencepage_prefixSettings_configureLink;
+	public static String preferencepage_prefixSettings_propIDTitle;
+	public static String preferencepage_enableProjectSpecifixSettings;
 	
 
 	// Attribute Manipulation
@@ -174,6 +179,8 @@ public final class Messages {
 	public static String dialogs_prover_error_creating_page;
 	public static String dialogs_sample_action_executed;
 	public static String dialogs_cancel_renaming;
+	public static String dialogs_projectSelection_title;
+	public static String dialogs_projectSelection_description;
 	
 	//Dialog titles
 	public static String title_error;
@@ -238,7 +245,11 @@ public final class Messages {
 		return bind(proofskeleton_cantdisplayproof, proof.getElementName(),
 				reason);
 	}
-
+	
+	public static String preferencepage_prefix_propertyPageTitle(String projectName){
+		return bind(preferencepage_prefixSettings_propIDTitle, projectName);
+	}
+	
 	private Messages() {
 		// Do not instantiate
 	}

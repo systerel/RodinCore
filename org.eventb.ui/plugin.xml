@@ -263,8 +263,8 @@
                toolbarPath="org.eventb.ui.eventBEditor"
                tooltip="%editorAction.newvariant.tooltip"/>
          <menu
-               id="org.eventb.ui.refactoring"
-               label="%editorAction.menu.refactoring">
+               id="org.eventb.ui.rename"
+               label="%editorAction.menu.rename">
             <groupMarker name="Naming"/>
             <separator name="naming-prefix"/>
             <groupMarker name="Prefix"/>
@@ -273,50 +273,27 @@
                class="org.eventb.internal.ui.eventbeditor.actions.AutoActNaming"
                id="org.eventb.ui.actions.autoActLabel"
                label="%editorAction.autoActLabel.label"
-               menubarPath="org.eventb.ui.refactoring/Naming"
+               menubarPath="org.eventb.ui.rename/Naming"
                style="push"/>
          <action
                class="org.eventb.internal.ui.eventbeditor.actions.AutoGrdNaming"
                id="org.eventb.ui.actions.autoGrdLabel"
                label="%editorAction.autoGrdLabel.label"
-               menubarPath="org.eventb.ui.refactoring/Naming"
+               menubarPath="org.eventb.ui.rename/Naming"
                style="push"/>
          <action
                class="org.eventb.internal.ui.eventbeditor.actions.AutoInvNaming"
                id="org.eventb.ui.actions.autoInvNaming"
                label="%editorAction.autoInvLabel.label"
-               menubarPath="org.eventb.ui.refactoring/Naming"
+               menubarPath="org.eventb.ui.rename/Naming"
                style="push"/>
          <action
-               class="org.eventb.internal.ui.eventbeditor.actions.PrefixVarName"
-               id="org.eventb.ui.actions.setVarIdPrefix"
-               label="%editorAction.setVarIdPrefix.label"
-               menubarPath="org.eventb.ui.refactoring/Prefix"
-               style="push"/>
-         <action
-               class="org.eventb.internal.ui.eventbeditor.actions.PrefixEvtName"
-               id="org.eventb.ui.actions.setEvtLabelPrefix"
-               label="%editorAction.setEvtLabelPrefix.label"
-               menubarPath="org.eventb.ui.refactoring/Prefix"
-               style="push"/>
-         <action
-               class="org.eventb.internal.ui.eventbeditor.actions.PrefixActName"
-               id="org.eventb.ui.actions.setActLabelPrefix"
-               label="%editorAction.setActLabelPrefix.label"
-               menubarPath="org.eventb.ui.refactoring/Prefix"
-               style="push"/>
-         <action
-               class="org.eventb.internal.ui.eventbeditor.actions.PrefixInvName"
-               id="org.eventb.ui.actions.setInvLabelPrefix"
-               label="%editorAction.setInvLabelPrefix.label"
-               menubarPath="org.eventb.ui.refactoring/Prefix"
-               style="push"/>
-         <action
-               class="org.eventb.internal.ui.eventbeditor.actions.PrefixGrdName"
-               id="org.eventb.ui.actions.setGrdLabelPrefix"
-               label="%editorAction.setGrdLabelPrefix.label"
-               menubarPath="org.eventb.ui.refactoring/Prefix"
-               style="push"/>
+               class="org.eventb.internal.ui.eventbeditor.actions.ShowPrefixPreferencePage"
+               id="org.eventb.ui.openPrefixSettings"
+               label="%action.OpenPrefixSettings"
+               menubarPath="org.eventb.ui.rename/Prefix"
+               style="push">
+         </action>
       </editorContribution>
       <editorContribution
             id="org.eventb.ui.contextContribution"
@@ -367,8 +344,8 @@
                toolbarPath="org.eventb.ui.eventBEditor"
                tooltip="%editorAction.newaxioms.tooltip"/>
          <menu
-               id="org.eventb.ui.refactoring"
-               label="%editorAction.menu.refactoring">
+               id="org.eventb.ui.rename"
+               label="%editorAction.menu.rename">
             <groupMarker name="Naming"/>
             <separator name="naming-prefix"/>
             <groupMarker name="Prefix"/>
@@ -377,26 +354,15 @@
                class="org.eventb.internal.ui.eventbeditor.actions.AutoAxmNaming"
                id="org.eventb.ui.actions.autoAxmLabel"
                label="%editorAction.autoAxmLabel.label"
-               menubarPath="org.eventb.ui.refactoring/Naming"
+               menubarPath="org.eventb.ui.rename/Naming"
                style="push"/>
          <action
-               class="org.eventb.internal.ui.eventbeditor.actions.PrefixCstName"
-               id="org.eventb.ui.actions.setCstIdPrefix"
-               label="%editorAction.setCstIdPrefix.label"
-               menubarPath="org.eventb.ui.refactoring/Prefix"
-               style="push"/>
-         <action
-               class="org.eventb.internal.ui.eventbeditor.actions.PrefixSetName"
-               id="org.eventb.ui.actions.setSetIdPrefix"
-               label="%editorAction.setSetIdPrefix.label"
-               menubarPath="org.eventb.ui.refactoring/Prefix"
-               style="push"/>
-         <action
-               class="org.eventb.internal.ui.eventbeditor.actions.PrefixAxmName"
-               id="org.eventb.ui.actions.setAxmLabelPrefix"
-               label="%editorAction.setAxmLabelPrefix"
-               menubarPath="org.eventb.ui.refactoring/Prefix"
-               style="push"/>
+               class="org.eventb.internal.ui.eventbeditor.actions.ShowPrefixPreferencePage"
+               id="org.eventb.ui.openPrefixSettings"
+               label="%action.OpenPrefixSettings"
+               menubarPath="org.eventb.ui.rename/Prefix"
+               style="push">
+         </action>
       </editorContribution>
    </extension>
    <extension
@@ -1058,6 +1024,12 @@
             class="org.eventb.internal.ui.preferences.ContextEditorPreferencePage"
             id="org.eventb.ui.preferences.contextEditor"
             name="%preferencePage.contextEditorPage.name">
+      </page>
+      <page
+            category="org.eventb.ui.preferences.modellingUI"
+            class="org.eventb.internal.ui.preferences.PrefixPreferencePage"
+            id="org.eventb.ui.preferences.prefixPage"
+            name="%preferencePage.PrefixPreferencePage.name">
       </page>
    </extension>
    <extension
@@ -2718,4 +2690,17 @@
             locationURI="popup:org.eventb.ui.views.ProofSkeleton?after=additions">
       </menuContribution>
    </extension>
+  <extension
+        point="org.eclipse.ui.propertyPages">
+     <page
+           class="org.eventb.internal.ui.preferences.PrefixPreferencePage"
+           id="org.eventb.ui.preferences.prefixPage"
+           name="%preferencePage.PrefixPreferencePage.name">
+        <enabledWhen>
+           <adapt
+                 type="org.eclipse.core.resources.IProject">
+           </adapt>
+        </enabledWhen>
+     </page>
+  </extension>
 </plugin>

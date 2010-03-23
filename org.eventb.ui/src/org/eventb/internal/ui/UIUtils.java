@@ -17,7 +17,8 @@
  *     Systerel - used ElementDescRegistry
  *     Systerel - update combo list on focus gain
  *	   Systerel - added dialog opening methods
- *	   Systerel - made showView return the shown view 
+ *	   Systerel - made showView return the shown view
+ *	   Systerel - refactored to support the new preference mechanism
  *******************************************************************************/
 package org.eventb.internal.ui;
 
@@ -34,7 +35,6 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -65,11 +65,10 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
-import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
-import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
+import org.eventb.internal.ui.preferences.PreferenceUtils;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
@@ -565,55 +564,18 @@ public class UIUtils {
 	}
 
 	/**
-	 * Returns the name prefix for an element described by its parent and
+	 * Returns a free element label for an element described by its parent and
 	 * element type.
 	 * 
 	 * @param parent
-	 *            parent of element for which a name prefix is wanted
+	 *            the parent of element for which a free label is wanted
 	 * @param type
-	 *            type of element for which a name prefix is wanted
+	 *            the type of the element we want a label for
+	 * @return a non already used label for an element
 	 */
-	public static String getAutoNamePrefix(IInternalElement parent,
-			IInternalElementType<?> type) {
-		final IFile file = parent.getRodinFile().getResource();
-		final QualifiedName propertyName = getQualifiedName(type);
-		try {
-			final String prefix = file.getPersistentProperty(propertyName);
-			if (prefix != null)
-				return prefix;
-		} catch (CoreException e) {
-			EventBUIExceptionHandler.handleGetPersistentPropertyException(e);
-		}
-		final ElementDescRegistry registry = ElementDescRegistry.getInstance();
-		final IElementDesc desc = registry.getElementDesc(type);
-		return desc.getAutoNamePrefix();
-	}
-
-	/**
-	 * Changes the name prefix for an element described by an ancestor and
-	 * element type.
-	 * 
-	 * @param ancestor
-	 *            ancestor of element
-	 * @param type
-	 *            type of element
-	 * @param newPrefix
-	 *            new name prefix or <code>null</code> to delete this property
-	 */
-	public static void setAutoNamePrefix(IInternalElement ancestor,
-			IInternalElementType<?> type, String newPrefix) {
-		final IFile file = ancestor.getRodinFile().getResource();
-		final QualifiedName propertyName = UIUtils.getQualifiedName(type);
-		try {
-			file.setPersistentProperty(propertyName, newPrefix);
-		} catch (CoreException e) {
-			EventBUIExceptionHandler.handleSetPersistentPropertyException(e);
-		}
-	}
-
 	public static String getFreeElementLabel(IInternalElement parent,
 			IInternalElementType<?> type) {
-		final String prefix = getAutoNamePrefix(parent, type);
+		final String prefix = PreferenceUtils.getAutoNamePrefix(parent, type);
 		return prefix + getFreeElementLabelIndex(parent, type, prefix);
 	}
 
@@ -668,7 +630,7 @@ public class UIUtils {
 
 	public static String getFreeElementIdentifier(IInternalElement parent,
 			IInternalElementType<? extends IInternalElement> type) {
-		final String prefix = getAutoNamePrefix(parent, type);
+		final String prefix = PreferenceUtils.getAutoNamePrefix(parent, type);
 		try {
 			return prefix + getFreeElementIdentifierIndex(parent, type, prefix);
 		} catch (RodinDBException e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,12 @@
  *     Systerel - added "show borders" and "font color" options
  *     Systerel - used EventBPreferenceStore
  *     Systerel - added expand section preference
+ *     Systerel - added new prefix preference mechanism support
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -23,6 +25,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.UIUtils;
+import org.rodinp.core.IInternalElementType;
 
 /**
  * @author htson
@@ -107,5 +110,22 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		PreferenceConverter.setDefault(store,
 				PreferenceConstants.P_BOX_BORDER_COLOR, EventBSharedColor
 						.getSystemColor(SWT.COLOR_RED).getRGB());
+		
+		
+		// Set the values for context element prefixes		
+		final Set<IInternalElementType<?>> registeredContextItems = PreferenceUtils
+				.getCtxElementsPrefixes();
+		for (IInternalElementType<?> type : registeredContextItems) {
+			final String name = PreferenceUtils.getPrefixPreferenceKey(type);
+			store.setDefault(name, PreferenceUtils.getAutoNamePrefixFromDesc(type));
+		}
+
+		// Set the values for machine element prefixes
+		final Set<IInternalElementType<?>> registeredMachineItems = PreferenceUtils
+				.getMchElementsPrefixes();
+		for (IInternalElementType<?> type : registeredMachineItems) {
+			final String name = PreferenceUtils.getPrefixPreferenceKey(type);
+			store.setDefault(name, PreferenceUtils.getAutoNamePrefixFromDesc(type));
+		}
 	}
 }

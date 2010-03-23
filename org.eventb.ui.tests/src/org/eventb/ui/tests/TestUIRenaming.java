@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,13 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - updated accorded to new prefix preferences mechanism
  *******************************************************************************/
 package org.eventb.ui.tests;
 
+import static org.eventb.internal.ui.preferences.PreferenceConstants.PREFIX_PREFERENCE_PAGE_ID;
+
+import org.eclipse.core.resources.IProject;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eventb.core.IAction;
@@ -21,12 +25,12 @@ import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineRoot;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.actions.AutoActNaming;
 import org.eventb.internal.ui.eventbeditor.actions.AutoAxmNaming;
 import org.eventb.internal.ui.eventbeditor.actions.AutoElementNaming;
 import org.eventb.internal.ui.eventbeditor.actions.AutoGrdNaming;
 import org.eventb.internal.ui.eventbeditor.actions.AutoInvNaming;
+import org.eventb.internal.ui.preferences.PreferenceUtils;
 import org.eventb.ui.tests.utils.EventBUITest;
 import org.junit.Test;
 import org.rodinp.core.IInternalElementType;
@@ -35,8 +39,8 @@ import org.rodinp.core.RodinDBException;
 /**
  * Tests for the automatic renaming actions of the event-B editor.
  */
-public class TestUIRefactoring extends EventBUITest {
-
+public class TestUIRenaming extends EventBUITest {
+	
 	/**
 	 * Ensures that guard labels are renamed taking account of implicit
 	 * inherited elements.
@@ -85,8 +89,7 @@ public class TestUIRefactoring extends EventBUITest {
 	@Test
 	public void testInvariantRenaming() throws Exception {
 		final IMachineRoot mch = createMachine("m1");
-		final String prefix = UIUtils.getAutoNamePrefix(mch,
-				IInvariant.ELEMENT_TYPE);
+		final String prefix = PreferenceUtils.getAutoNamePrefix(mch, IInvariant.ELEMENT_TYPE);
 		final IInvariant inv1 = createInvariant(mch, prefix + "24", "", false);
 		final IInvariant inv2 = createInvariant(mch, "foo", "", true);
 
@@ -109,8 +112,7 @@ public class TestUIRefactoring extends EventBUITest {
 	@Test
 	public void testAxiomRenaming() throws Exception {
 		final IContextRoot ctx = createContext("c1");
-		final String prefix = UIUtils
-				.getAutoNamePrefix(ctx, IAxiom.ELEMENT_TYPE);
+		final String prefix = PreferenceUtils.getAutoNamePrefix(ctx, IAxiom.ELEMENT_TYPE);
 		final IAxiom axm1 = createAxiom(ctx, prefix + "24", "", false);
 		final IAxiom axm2 = createAxiom(ctx, "foo", "", true);
 
@@ -125,6 +127,15 @@ public class TestUIRefactoring extends EventBUITest {
 	@Test
 	public void testAxiomPrefixRenaming() throws Exception {
 		testContextPrefixRenaming(IAxiom.ELEMENT_TYPE);
+	}
+	
+	/**
+	 * Ensures that axiom labels are renamed taking into account of prefix.
+	 * Testing the new preference/property mechanism for prefixes.
+	 */
+	@Test
+	public void testAxiomPrefixRenamingPrefMechanism() throws Exception {
+		testContextPrefixRenamingByPreference(IAxiom.ELEMENT_TYPE);
 	}
 
 	private void renameGuards(final IMachineRoot mchRoot)
@@ -158,7 +169,7 @@ public class TestUIRefactoring extends EventBUITest {
 			throws RodinDBException, PartInitException {
 		final IMachineRoot m1 = createMachine("m1");
 		final IEvent event1 = createEvent(m1, "event");
-		final String prefix = UIUtils.getAutoNamePrefix(m1, type);
+		final String prefix = PreferenceUtils.getAutoNamePrefix(m1, type);
 
 		final IMachineRoot m2 = createMachine("m2");
 		createRefinesMachineClause(m2, m1.getElementName());
@@ -186,8 +197,10 @@ public class TestUIRefactoring extends EventBUITest {
 		
 		final IMachineRoot m = createMachine("m");
 		final IEvent event = createEvent(m, "event");
-		final String prefix = UIUtils.getAutoNamePrefix(m, type) + "2";
-		UIUtils.setAutoNamePrefix(m, type, prefix);
+		final String oldValue = PreferenceUtils.getAutoNamePrefix(m, type);
+		final String prefix = oldValue + "2";
+		PreferenceUtils.setAutoNamePrefix(type, prefix);
+		
 		final String elt1Label = prefix + "4";
 		final String elt2Label = "foo";
 
@@ -210,14 +223,18 @@ public class TestUIRefactoring extends EventBUITest {
 		
 		assertEquals(prefix + "1", elt1.getLabel());
 		assertEquals(prefix + "2", elt2.getLabel());
+		
+		// We restore previous prefix settings
+		PreferenceUtils.setAutoNamePrefix(type, oldValue);
 	}
 
 	private void testContextPrefixRenaming(IInternalElementType<?> type)
 			throws Exception {
 		
 		final IContextRoot c = createContext("c");
-		final String prefix = UIUtils.getAutoNamePrefix(c, type) + "2";
-		UIUtils.setAutoNamePrefix(c, type, prefix);
+		final String oldValue = PreferenceUtils.getAutoNamePrefix(c, type);
+		final String prefix = oldValue + "2";
+		PreferenceUtils.setAutoNamePrefix(type, prefix);
 		final String elt1label = prefix + "4";
 		final String elt2Label = "foo";
 
@@ -231,6 +248,42 @@ public class TestUIRefactoring extends EventBUITest {
 		}
 		assertEquals(prefix + "1", elt1.getLabel());
 		assertEquals(prefix + "2", elt2.getLabel());
+		
+		// We restore previous prefix settings
+		PreferenceUtils.setAutoNamePrefix(type, oldValue);
+	}
+	
+	private void testContextPrefixRenamingByPreference(IInternalElementType<?> type)
+			throws Exception {
+		
+		final IContextRoot c = createContext("c");
+		final IProject p = c.getRodinProject().getProject();
+		final String globalPrefix = PreferenceUtils.getAutoNamePrefix(c, type);
+		final String prefix = globalPrefix + "2";
+		// Now testing project specific prefix settings
+		PreferenceUtils.setAutoNamePrefix(p, type, prefix);
+		final String elt1label = prefix + "4";
+		final String elt2Label = "foo";
+
+		final ILabeledElement elt1, elt2;
+		if (type.equals(IAxiom.ELEMENT_TYPE)) {
+			elt1 = createAxiom(c, elt1label, "", false);
+			elt2 = createAxiom(c, elt2Label, "", true);
+			renameAxioms(c);
+		} else {
+			throw new IllegalArgumentException("unexpected element type");
+		}
+		assertEquals(prefix + "1", elt1.getLabel());
+		assertEquals(prefix + "2", elt2.getLabel());
+		PreferenceUtils.setAutoNamePrefix(p, type, "");
+		
+		renameAxioms(c);
+		assertEquals(globalPrefix + "1", elt1.getLabel());
+		assertEquals(globalPrefix + "2", elt2.getLabel());
+		
+		// We restore previous prefix values by erasing the project 
+		// specific settings
+		PreferenceUtils.clearAllProperties(PREFIX_PREFERENCE_PAGE_ID, p);
 	}
 	
 }

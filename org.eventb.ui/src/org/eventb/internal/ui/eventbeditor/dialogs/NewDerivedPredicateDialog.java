@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.preferences.PreferenceUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 
@@ -75,7 +76,7 @@ public class NewDerivedPredicateDialog<T extends ILabeledElement> extends
 		texts = new ArrayList<Triplet<IEventBInputText,IEventBInputText,Button>>();
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 
-		prefix = UIUtils.getAutoNamePrefix(root, type);
+		prefix = PreferenceUtils.getAutoNamePrefix(root, type);
 		firstIndex = UIUtils.getFreeElementLabelIndex(root, type, prefix);
 	}
 

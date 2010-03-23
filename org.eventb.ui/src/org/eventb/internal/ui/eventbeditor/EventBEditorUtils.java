@@ -74,6 +74,7 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
+import org.eventb.internal.ui.preferences.PreferenceUtils;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
@@ -684,7 +685,7 @@ public class EventBEditorUtils {
 	public static void intelligentNewVariable(final IEventBEditor<IMachineRoot> editor,
 			final IMachineRoot root) {
 
-		final String prefix = UIUtils.getAutoNamePrefix(editor.getRodinInput(),
+		final String prefix = PreferenceUtils.getAutoNamePrefix(editor.getRodinInput(),
 				IInvariant.ELEMENT_TYPE);
 
 		final NewVariableDialog dialog = new NewVariableDialog(
@@ -1005,7 +1006,7 @@ public class EventBEditorUtils {
 		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
-		return UIUtils.getAutoNamePrefix(root, IAction.ELEMENT_TYPE) + 1;
+		return PreferenceUtils.getAutoNamePrefix(root, IAction.ELEMENT_TYPE) + 1;
 	}
 
 	private static void addNewElement(IEventBEditor<?> editor,

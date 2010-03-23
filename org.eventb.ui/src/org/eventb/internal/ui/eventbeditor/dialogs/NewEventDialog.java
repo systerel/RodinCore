@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.preferences.PreferenceUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
@@ -120,7 +121,7 @@ public class NewEventDialog extends EventBDialog {
 	}
 
 	private String getAutoNamePrefix(IInternalElementType<?> type) {
-		return UIUtils.getAutoNamePrefix(editor.getRodinInput(), type);
+		return PreferenceUtils.getAutoNamePrefix(editor.getRodinInput(), type);
 	}
 	
 	/*
