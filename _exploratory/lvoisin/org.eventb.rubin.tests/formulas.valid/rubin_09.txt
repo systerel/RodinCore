@@ -1,0 +1,43 @@
+/*
+ *  All sequents of this file have been extracted from the book:
+ *     Mathematical Logic: Applications and Theory
+ *     by Jean E. Rubin
+ *     Saunders College Publishing, 1990
+ *     ISBN 0-03-012808-0
+ */
+
+"INVALID, Rubin Exercise 9.B(2), p199":
+!x (Px -> ~Qx),
+!x (Qx | ~Rx),
+#x ~Qx | #x Qx,
+#x (~Px | ~Rx)
+|- X & ~X;
+
+"INVALID, Rubin Exercise 9.B(7), p200":
+!x (Ax -> !y (~By -> Cxy)),
+#x (Ax & !y (Dy -> ~Cxy)),
+!x (Dx -> Bx)
+|- X & ~X;
+
+"INVALID, Rubin Exercise 9.B(9), p200":
+!x (Px -> !y (Qy <-> ~Rxy)),
+#x (Px & !y (~Sy -> Rxy)),
+!x!y (Px & Sy -> ~Rxy),
+!x (Qx <-> Sx)
+|- X & ~X;
+
+"INVALID, Rubin Exercise 9.B(13), p200":
+!x!y (Fx & Gy -> Hxy),
+#x!y (Fx & (Jy -> ~Hxy)),
+!x (Gx -> ~Jx)
+|- X & ~X;
+
+"INVALID, Rubin Exercise 9.B(15), p200":
+#x (Jx & Kx),
+#z (Jz & !y (Ky -> ~Lzy)),
+#x (Jx & #z (Jz & ~Lzx))
+|- X & ~X;
+
+
+"INVALID, dummy theorem (should be last)":
+|- P

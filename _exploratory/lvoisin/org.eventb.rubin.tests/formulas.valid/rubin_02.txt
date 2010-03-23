@@ -1,0 +1,436 @@
+/*
+ *  All sequents of this file have been extracted from the book:
+ *     Mathematical Logic: Applications and Theory
+ *     by Jean E. Rubin
+ *     Saunders College Publishing, 1990
+ *     ISBN 0-03-012808-0
+ */
+
+"INVALID, Rubin Example p14":
+A -> B,
+~A -> C,
+C -> B,
+B
+|- X & ~X;
+
+"INVALID, Rubin Example 2.2, p16":
+B -> H,
+H -> (B -> D),
+B,
+D
+|- X & ~X;
+
+"INVALID, Rubin Example p17":
+A -> ~B,
+C | B,
+D -> ~C,
+D,
+~A
+|- X & ~X;
+
+
+"INVALID, Rubin Example 2.3, p19":
+A -> B | C,
+A -> ~B,
+C -> ~D,
+A -> ~D
+|- X & ~X;
+
+
+"INVALID, Rubin Example 2.4, p21":
+A -> B,
+~A -> ~C | D,
+C & ~D,
+B
+|- X & ~X;
+
+
+"INVALID, Rubin Example 2.5, p25":
+A -> (B -> C),
+C -> ~D,
+~E -> D,
+A & B,
+E
+|- X & ~X;
+
+
+"INVALID, Rubin Example 2.6(a), p27":
+A -> B,
+~A -> C,
+C -> ~D,
+~B -> D,
+B
+|- X & ~X;
+
+"INVALID, Rubin Example 2.6(b), p27":
+A | B,
+C -> ~A,
+~B | D,
+D -> ~C,
+~C
+|- X & ~X;
+
+
+"INVALID, Rubin Example 2.7(a), p28":
+A -> B | C,
+B -> ~A,
+~D -> ~C,
+~A | D
+|- X & ~X;
+
+"INVALID, Rubin Example 2.7(b), p28":
+A -> ~B,
+A | ~B | C,
+B,
+B & C
+|- X & ~X;
+
+"INVALID, Rubin Example 2.7(d), p28":
+A -> C,
+~C | D,
+B <-> D,
+B -> ~(~A & D),
+A <-> B
+|- X & ~X;
+
+
+"INVALID, Rubin Useful Tautologies(1), p30":
+P & (P -> Q) -> Q
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(2), p30":
+~Q & (P -> Q) -> ~P
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(3), p30":
+~P & (P | Q) -> Q
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(4), p30":
+P & Q -> P
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(5), p30":
+P -> P | Q
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(6a), p30":
+P -> (Q -> P & Q)
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(6a), p30":
+(P -> Q) & (P -> R) -> (P -> Q & R)
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(7), p31":
+(P -> Q) & (Q -> R) -> (P -> R)
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(8a), p31":
+(P -> Q) & (~P -> Q) -> Q
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(8b), p31":
+(P | Q -> R) <-> (P -> R) & (Q -> R)
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(9a), p31":
+(P -> Q & ~Q) -> ~P
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(9b), p31":
+P & ~P -> Q
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(10), p31":
+P | ~P
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(11), p31":
+~(P & ~P)
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(12a), p31":
+P | Q <-> Q | P
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(12b), p31":
+P & Q <-> Q & P
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(13a), p31":
+P | (Q | R) <-> (P | Q) | R
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(13b), p31":
+P & (Q & R) <-> (P & Q) & R
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(14a), p31":
+P | (Q & R) <-> (P | Q) & (P | R)
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(14b), p31":
+P & (Q | R) <-> (P & Q) | (P & R)
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(15a), p31":
+~(P | Q) <-> ~P & ~Q
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(15b), p31":
+~(P & Q) <-> ~P | ~Q
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(16), p31":
+~~P <-> P
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(17a), p31":
+(P -> Q) <-> ~P | Q
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(17b), p31":
+~(P -> Q) <-> P & ~Q
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(18a), p31":
+(P <-> Q) <-> (P -> Q) & (Q -> P)
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(18b), p31":
+(P <-> Q) <-> (P & Q) | (~P & ~Q)
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(18c), p31":
+(P <-> Q) <-> (~P | Q) & (P | ~Q)
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(19a), p31":
+P | P <-> P
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(19b), p31":
+P & P <-> P
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(20a), p31":
+(P -> Q) <-> (~Q -> ~P)
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(20b), p31":
+(P -> ~Q) <-> (Q -> ~P)
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(20c), p31":
+(~P -> Q) <-> (~Q -> P)
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(21), p31":
+(P -> (Q -> R)) <-> (P & Q -> R)
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(22a), p31":
+P | (P & Q) <-> P
+|- X & ~X;
+
+"INVALID, Rubin Useful Tautologies(22b), p31":
+P & (P | Q) <-> P
+|- X & ~X;
+
+/*takes time*/
+"INVALID, Rubin Exercise 2.B(1), p32":
+(A | B) | (C & D) <-> (A | B | C) & (A | B | D)
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.B(2), p32":
+~A & (~A -> B | C) -> B | C
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.B(3), p32":
+(A & B) | (A & ~B & C) <-> A & (B | (~B & C))
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.B(4), p32":
+(A & B) | (A & B & C) <-> A & B
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.B(5), p32":
+(A & B & C -> D & ~D) -> ~(A & B & C)
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.B(6), p32":
+A & ~A -> A | ~A
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.B(7), p32":
+(A & ~A) | ~(A & ~A)
+|- X & ~X;
+
+/*takes time*/
+"INVALID, Rubin Exercise 2.B(8), p32":
+(A & ~B & C) | (A & ~B & ~C) <-> (A & ~B) & (C | ~C)
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.B(9), p32":
+~(A | ~B | C) <-> ~A & ~(~B | C)
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.B(10), p32":
+(A & B -> C | D) <-> (A -> (B -> C | D))
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.C(1), p32":
+O -> M | V,
+~M,
+O -> V
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.C(4), p32":
+O & G -> V,
+G,
+V | ~O
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.C(8), p33":
+O -> ~(M | V),
+~V -> ~G,
+~M -> G,
+~O
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.E(2), p33":
+O -> (V <-> G),
+~M -> (V & ~G),
+~O | M
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.E(4), p33":
+O -> V,
+G -> M,
+G -> O | ~M,
+G | ~M,
+M | ~V,
+O <-> G
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.E(5), p33":
+O & G -> V,
+V -> ~M,
+~J -> M,
+M -> ~J,
+G -> (O -> J)
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.E(6), p33":
+~O -> ~V,
+O -> ~G | M,
+~M,
+~G | ~V
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.E(8), p33":
+M | V -> G,
+G-> V,
+O -> ~J | ~V,
+O -> (M -> ~J)
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.G(1), p34":
+P & Q -> R,
+P,
+~R,
+~Q
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.H(1), p35":
+A -> (B -> C),
+C -> ~D,
+~E -> D,
+B -> (A -> E)
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.H(2), p35":
+A | B,
+C -> ~A,
+B -> D,
+C -> ~D,
+~C
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.H(3), p35":
+(A | B) | C,
+A -> (D <-> ~E),
+B -> ~(~D | E),
+E -> ~(C | D),
+~E -> C & D,
+D <-> ~E
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.H(4), p35":
+(A -> B) | (A & ~C),
+A,
+C -> ~B,
+~C -> B,
+~C
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.H(5), p35":
+(A -> B) & (C -> ~D),
+(E -> ~B) & (~F -> D),
+~E | F -> G,
+~B -> D,
+A | C,
+B & G
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.H(6), p35":
+A & C -> D,
+B & C -> D,
+~A & ~B -> E | F,
+G -> ~E,
+F -> H,
+C & ~D,
+~G | H
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.H(7), p35":
+A & (B | C),
+A & B -> D & ~F,
+A -> (C -> ~(D |~F)),
+D <-> ~F
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.H(8), p35":
+A & B -> C,
+A | E,
+G -> (~C & ~D),
+A <-> B,
+A -> C,
+C-> ~D,
+B -> D,
+~A & (G -> E)
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.H(9), p36":
+~A -> C | D,
+B -> E & F,
+E -> D,
+~D,
+(A -> B) -> C
+|- X & ~X;
+
+"INVALID, Rubin Exercise 2.H(12), p36":
+A -> (B -> C),
+~A -> D & ~E,
+A & B -> ~C,
+D -> F | G,
+~B -> (G -> H),
+E | (H | ~G),
+G -> H
+|- X & ~X;
+
+
+
+"INVALID, dummy theorem (should be last)":
+|- P

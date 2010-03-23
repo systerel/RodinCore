@@ -1,0 +1,44 @@
+/*
+ *  All sequents of this file have been extracted from the book:
+ *     Mathematical Logic: Applications and Theory
+ *     by Jean E. Rubin
+ *     Saunders College Publishing, 1990
+ *     ISBN 0-03-012808-0
+ */
+
+"INVALID, Rubin Exercise 1.E(1), p11":
+A | (A & B) <-> A
+|- E & ~E;
+
+"INVALID, Rubin Exercise 1.E(2), p11":
+A & (A | B) <-> A
+|- E & ~E;
+
+"INVALID, Rubin Exercise 1.E(3), p11":
+(A <-> B) <-> (A & B) | (~A & ~B)
+|- E & ~E;
+
+"INVALID, Rubin Exercise 1.E(4), p11":
+~(A & B) <-> ~A | ~B
+|- E & ~E;
+
+"INVALID, Rubin Exercise 1.E(5), p11":
+(A -> B) <-> (~A | B)
+|- E & ~E;
+
+"INVALID, Rubin Exercise 1.E(6), p11":
+~(A -> B) <-> (A & ~B)
+|- E & ~E;
+
+"INVALID, Rubin Exercise 1.E(7), p11":
+(A -> (B -> C)) <-> ((A & B) -> C)
+|- E & ~E;
+
+"INVALID, Rubin Exercise 1.E(8), p11":
+(A | B -> C) <-> (A -> C) & (B -> C)
+|- E & ~E;
+
+
+
+"INVALID, dummy theorem (should be last)":
+|- P

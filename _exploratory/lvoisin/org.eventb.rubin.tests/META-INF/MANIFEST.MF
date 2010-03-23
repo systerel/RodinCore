@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Rubin Tests Plug-in
+Bundle-SymbolicName: org.eventb.rubin.tests
+Bundle-Version: 0.0.0
+Bundle-Vendor: ETH Zurich
+Require-Bundle: org.eclipse.core.runtime,
+ org.eventb.rubin,
+ org.eventb.core.seqprover,
+ com.clearsy.atelierb.provers.core,
+ org.eventb.pp,
+ org.junit4
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

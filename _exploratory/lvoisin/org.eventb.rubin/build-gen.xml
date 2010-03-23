@@ -1,0 +1,62 @@
+<!--****************************************************************************
+ * Copyright (c) 2006 ETH Zurich.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *****************************************************************************-->
+<project name="org.eventb.rubin" default="parser" basedir=".">
+	<description>
+        Generates derived files in the Predicate Calculus parser.
+	</description>
+
+	<!-- set global properties for this build -->
+	<property name="src" location="src" />
+
+	<property name="org.eventb.core.ast.home" location="../org.eventb.core.ast" />
+	<property name="tools" location="${org.eventb.core.ast.home}/tools"/>
+	<property name="coco.home" location="${tools}/Coco-R" />
+	
+	<property name="parser.pkg" value="org.eventb.internal.rubin" />
+	<property name="parser.src" location="${src}/org/eventb/internal/rubin" />
+
+	<uptodate property="Parser.upToDate" targetfile="${parser.src}/Parser.java">
+	    <srcfiles file= "${parser.src}/rubin.atg" />
+	    <srcfiles file= "${parser.src}/Parser.frame" />
+	</uptodate>
+
+	<uptodate property="Scanner.upToDate" targetfile="${parser.src}/Scanner.java">
+	    <srcfiles file= "${parser.src}/rubin.atg" />
+	    <srcfiles file= "${parser.src}/Scanner.frame" />
+	</uptodate>
+
+	<condition property="coco.upToDate">
+		<and>
+			<istrue value="${Scanner.upToDate}"/>
+			<istrue value="${Parser.upToDate}"/>
+		</and>
+	</condition>
+	<!--uptodate property="parser.upToDate">
+	    <srcfiles file= "${parser.src}/rubin.atg" />
+	    <srcfiles file= "${parser.src}/Parser.frame" />
+	    <srcfiles file= "${parser.src}/Scanner.frame" />
+	    <globmapper from="*.frame" to="*.java"/>
+	</uptodate-->
+	
+	<target name="parser" depends=""
+		description="Generate the parser and scanner"
+		unless="coco.upToDate">
+		<java jar="${coco.home}/Coco.jar" fork="true" dir="${parser.src}">
+			<arg line="-package ${parser.pkg}" />
+			<arg file="${parser.src}/rubin.atg" />
+		</java>
+	</target>
+	
+	<target name="clean" description="Clean up generated files">
+		<delete file="${parser.src}/Parser.java" />
+		<delete file="${parser.src}/Parser.java.old" />
+		<delete file="${parser.src}/Scanner.java" />
+		<delete file="${parser.src}/Scanner.java.old" />
+	</target>
+	
+</project>

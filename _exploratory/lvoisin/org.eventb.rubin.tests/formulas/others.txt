@@ -1,0 +1,26 @@
+"VALID, Animals":
+#x Wx,
+#x Fx,
+#x Bx,
+/* #x Cx, */
+#x Sx,
+#x Gx,
+!x (Wx -> Ax),
+!x (Fx -> Ax),
+!x (Bx -> Ax),
+/* !x (Cx -> Ax), */
+!x (Sx -> Ax),
+!x (Gx -> Px),
+!x!y (((Sx | Cx) & By) -> Mxy),
+!x!y ((Bx & Fy) -> Mxy),
+!x!y ((Fx & Wy) -> Mxy),
+!x!y ((Wx & (Fy | Gy)) -> ~Exy),
+/* !x!y ((Bx & Cy) -> Exy), */
+!x!y ((Bx & Sy) -> ~Exy),
+!x ((Cx | Sx) -> #y (Py & Exy)),
+!x (Ax -> (!y (Py -> Exy) | !y (Ay & Myx & #z (Pz & Eyz) -> Exy))) 
+|- #x#y#z (Ax & Ay & Gz & Eyz & Exy);
+
+
+"INVALID, dummy theorem (should be last)":
+|- P
