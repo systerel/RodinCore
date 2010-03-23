@@ -22,11 +22,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.ast.extension.notation.IFormulaChild;
-import org.eventb.core.ast.extension.notation.INotation;
-import org.eventb.core.ast.extension.notation.INotationElement;
-import org.eventb.core.ast.extension.notation.INotationSymbol;
-import org.eventb.core.ast.extension.notation.IFormulaChild.Kind;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
@@ -44,20 +39,20 @@ public class ExtendedExpression extends Expression {
 	private final Expression[] childExpressions;
 	private final Predicate[] childPredicates;
 	private final IExpressionExtension extension;
-	private final FormulaFactory factory;
+	private final FormulaFactory ff;
 
 	protected ExtendedExpression(int tag, Expression[] expressions,
 			Predicate[] predicates, SourceLocation location,
-			FormulaFactory factory, IExpressionExtension extension) {
+			FormulaFactory ff, IExpressionExtension extension) {
 		super(tag, location, combineHashCodes(combineHashCodes(expressions),
 				combineHashCodes(predicates)));
 		this.childExpressions = expressions.clone();
 		this.childPredicates = predicates.clone();
 		this.extension = extension;
-		this.factory = factory;
+		this.ff = ff;
 		checkPreconditions();
 		setPredicateVariableCache(getChildren());
-		synthesizeType(factory, null);
+		synthesizeType(ff, null);
 	}
 
 	private void checkPreconditions() {
@@ -116,47 +111,11 @@ public class ExtendedExpression extends Expression {
 	@Override
 	protected void toString(StringBuilder builder, boolean isRightChild,
 			int parentTag, String[] boundNames, boolean withTypes) {
-		final boolean needsParen = factory.needsParentheses(isRightChild, getTag(),
+		final boolean needsParen = ff.needsParentheses(isRightChild, getTag(),
 				parentTag);
-		toStringHelper(builder, extension.getNotation(), boundNames, needsParen, extension.getTagOperator(), getTag(), withTypes);
+		AssociativeHelper.toStringHelper(builder, extension.getNotation(), boundNames, needsParen, childExpressions, childPredicates, extension.getTagOperator(), getTag(), withTypes);
 	}
 
-	protected void toStringHelper(StringBuilder builder, INotation notation,
-			String[] boundNames, boolean needsParen,
-			String tagOperator, int tag, boolean withTypes) {
-		if (needsParen)  builder.append('(');
-		boolean isRight = false;
-		for (INotationElement notElem : notation) {
-			// TODO move toString() to INotationElement
-			// TODO see if toString() can be moved to INotation
-			if (notElem instanceof INotationSymbol) {
-				final String symbol = ((INotationSymbol) notElem).getSymbol();
-				builder.append(symbol);
-			} else if (notElem instanceof IFormulaChild) {
-				final IFormulaChild formChild = (IFormulaChild) notElem;
-				final Kind kind = formChild.getKind();
-				final int index = formChild.getIndex();
-				final Formula<?> child;
-				switch(kind) {
-				case EXPRESSION:
-					child = childExpressions[index];
-					// FIXME check IndexOutOfBounds
-					break;
-				case PREDICATE:
-					child = childPredicates[index];
-					break;
-				default:
-					assert false;
-					child = null;
-				}
-				child.toString(builder, isRight, getTag(), boundNames, withTypes);
-				isRight = true;
-			}
-		}
-		if (needsParen) builder.append(')');
-	}
-
-	
 	@Override
 	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
 		if (this.getTag() != other.getTag()) {
@@ -287,7 +246,7 @@ public class ExtendedExpression extends Expression {
 		boolean changed = false;
 		for (Expression child : childExpressions) {
 			Expression newChild = child.rewrite(rewriter);
-			if (flatten && extension.isFlattenable()
+			if (flatten && extension.getNotation().isFlattenable()
 					&& getTag() == newChild.getTag()) {
 				final Expression[] grandChildren = ((ExtendedExpression) newChild).childExpressions;
 				newChildExpressions.addAll(Arrays.asList(grandChildren));

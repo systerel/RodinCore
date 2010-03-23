@@ -12,6 +12,7 @@ package org.eventb.core.ast.extension.notation;
 
 /**
  * @author Nicolas Beauger
+ * @since 2.0
  * 
  */
 public interface IFormulaChild extends INotationElement {

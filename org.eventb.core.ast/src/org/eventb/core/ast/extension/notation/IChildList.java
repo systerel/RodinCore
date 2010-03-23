@@ -8,27 +8,17 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.core.ast.extension;
+package org.eventb.core.ast.extension.notation;
 
-import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.extension.notation.INotation;
+import java.util.List;
 
 /**
- * @author "Nicolas Beauger"
+ * @author Nicolas Beauger
  * @since 2.0
  *
  */
-public interface IFormulaExtension {
+public interface IChildList extends INotationElement {
 
-	String getTagOperator();
-
-	void checkPreconditions(Expression[] expressions, Predicate[] predicates);
+	List<INotationElement> getChildren();
 	
-	INotation getNotation();
-	
-	Predicate getWDPredicateRaw(FormulaFactory formulaFactory,
-			Expression[] childExpressions, Predicate[] childPredicates);
-
 }

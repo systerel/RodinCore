@@ -8,15 +8,24 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.core.ast.extension.notation;
+package org.eventb.internal.core.ast.extension.notation;
+
+import org.eventb.core.ast.extension.notation.INotationSymbol;
 
 /**
  * @author Nicolas Beauger
- * @since 2.0
  *
  */
-public interface INotationSymbol extends INotationElement {
+public class NotationSymbol implements INotationSymbol {
 
-	String getSymbol();
+	private final String symbol;
+
+	public NotationSymbol(String symbol) {
+		this.symbol = symbol;
+	}
 	
+	public String getSymbol() {
+		return symbol;
+	}
+
 }

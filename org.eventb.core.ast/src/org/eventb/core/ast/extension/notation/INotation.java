@@ -10,12 +10,26 @@
  *******************************************************************************/
 package org.eventb.core.ast.extension.notation;
 
+
 /**
  * @author Nicolas Beauger
  * @since 2.0
- *
+ * 
  */
 public interface INotation extends Iterable<INotationElement> {
 
+	boolean isFlattenable();
+
+	boolean mapTo(int numExpressions, int numPredicates);
 	
+//	/**
+//	 * Adds the given element to this notation.
+//	 * <p>
+//	 * Must not be called while iterating over this notation;
+//	 * </p>
+//	 * 
+//	 * @param element
+//	 *            a notation element
+//	 */
+//	void add(INotationElement element);
 }

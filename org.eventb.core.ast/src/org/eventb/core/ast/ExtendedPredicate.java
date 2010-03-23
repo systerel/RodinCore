@@ -39,6 +39,7 @@ public class ExtendedPredicate extends Predicate {
 	private final Expression[] childExpressions;
 	private final Predicate[] childPredicates;
 	private final IPredicateExtension extension;
+	private final FormulaFactory ff;
 
 	
 	public ExtendedPredicate(int tag, Expression[] expressions,
@@ -49,6 +50,7 @@ public class ExtendedPredicate extends Predicate {
 		this.childExpressions = expressions.clone();
 		this.childPredicates = predicates.clone();
 		this.extension = extension;
+		this.ff = ff;
 		checkPreconditions();
 		setPredicateVariableCache(getChildren());
 		synthesizeType(ff);
@@ -87,9 +89,9 @@ public class ExtendedPredicate extends Predicate {
 	@Override
 	protected void toString(StringBuilder builder, boolean isRightChild,
 			int parentTag, String[] boundNames, boolean withTypes) {
-//		extension.prettyPrint(builder, parentTag, boundNames,
-//				withTypes, childExpressions, childPredicates);
-//		TODO
+		final boolean needsParen = ff.needsParentheses(isRightChild, getTag(),
+				parentTag);
+		AssociativeHelper.toStringHelper(builder, extension.getNotation(), boundNames, needsParen, childExpressions, childPredicates, extension.getTagOperator(), getTag(), withTypes);
 	}
 
 	@Override
@@ -227,7 +229,7 @@ public class ExtendedPredicate extends Predicate {
 				childPredicates.length + 11);
 		for (Predicate child : childPredicates) {
 			Predicate newChild = child.rewrite(rewriter);
-			if (flatten && extension.isFlattenable()
+			if (flatten && extension.getNotation().isFlattenable()
 					&& getTag() == newChild.getTag()) {
 				final Predicate[] grandChildren = ((ExtendedPredicate) newChild).childPredicates;
 				newChildPredicates.addAll(Arrays.asList(grandChildren));

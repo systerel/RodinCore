@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.extension.samples;
 
+import java.util.ArrayList;
+
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
@@ -18,16 +20,22 @@ import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.notation.IFormulaChild;
+import org.eventb.core.ast.extension.notation.INotation;
+import org.eventb.core.ast.extension.notation.INotationElement;
+import org.eventb.core.ast.extension.notation.INotationSymbol;
+import org.eventb.core.ast.extension.notation.NotationFactory;
+import org.eventb.core.ast.extension.notation.IFormulaChild.Kind;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 
 /**
- * A first attempt at coding an extension. Multiple compilation errors invite to
- * refactor the extension mechanism.
+ * A second attempt at coding an extension, only focusing on pretty print. Went
+ * successfully.
  * 
  * @author Nicolas Beauger
  * 
  */
-public class BinaryPlus implements IExpressionExtension {
+public class BinaryPlus2 implements IExpressionExtension {
 
 	
 	// problem: need a factory for types
@@ -83,24 +91,12 @@ public class BinaryPlus implements IExpressionExtension {
 //		return Formula.getWDSimplifyC(formulaFactory, leftConjunct, rightConjunct);
 	}
 
-	// visibility problems => need a high level notation expression like
-	// 'simple infix'
-	// '[ e_1 @ e_2 | e_3 ]'
-	public void prettyPrint(StringBuilder builder, int parentTag,
-			String[] boundNames, boolean withTypes,
-			Expression[] childExpressions, Predicate[] childPredicates) {
-		
-		childExpressions[0].toString(builder, false, parentTag, boundNames, withTypes);
-		builder.append(getTagOperator());
-		childExpressions[1].toString(builder, true, parentTag, boundNames, withTypes);
-	}
-
-	public void prettyPrintFullyParenthesized(StringBuilder builder, int parentTag,
-			String[] boundNames, Expression[] childExpressions,
-			Predicate[] childPredicates) {
-		childExpressions[0].toStringFullyParenthesized(builder, boundNames);
-		builder.append(getTagOperator());
-		childExpressions[1].toStringFullyParenthesized(builder, boundNames);
+	public INotation getNotation() {
+		final NotationFactory factory = NotationFactory.getInstance();
+		final IFormulaChild firstChild = factory.makeChild(0, Kind.EXPRESSION);
+		final IFormulaChild secondChild = factory.makeChild(1, Kind.EXPRESSION);
+		final INotationSymbol symbol = factory.makeSymbol("+");
+		return factory.makeNotation(firstChild, symbol, secondChild);
 	}
 
 }
