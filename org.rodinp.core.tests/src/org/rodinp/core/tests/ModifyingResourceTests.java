@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Systerel - moved attribute type declarations to super
  *     Systerel - separation of file and root element
  *     Systerel - added creation of new internal element child
+ *     Systerel - imported sub directory
  *******************************************************************************/
 package org.rodinp.core.tests;
 
@@ -280,7 +281,7 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 		projectsURL = FileLocator.toFileURL(projectsURL);
 		File projectsDir = new File(projectsURL.toURI());
 		for (File project: projectsDir.listFiles()) {
-			if (project.isDirectory()) 
+			if (project.isDirectory() && project.getName().equals(projectName)) 
 				importProject(project);
 		}
 	}
@@ -294,11 +295,22 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 		project.open(null);
 		IProjectNature nature = project.getNature(RodinCore.NATURE_ID);
 		nature.configure();
-		for (File file: projectDir.listFiles()) {
+		importFiles(project, projectDir, true);
+	}
+	
+	private static void importFiles(IProject project, File root, boolean isRoot)
+			throws Exception {
+		for (File file : root.listFiles()) {
 			if (file.isFile()) {
 				InputStream is = new FileInputStream(file);
-				IFile target = project.getFile(file.getName());
+				final String name = (isRoot) ? file.getName() : root.getName()
+						+ "/" + file.getName();
+				IFile target = project.getFile(name);
 				target.create(is, false, null);
+			} else if (file.isDirectory() && !file.getName().equals(".svn")) {
+				IFolder folder = project.getFolder(file.getName());
+				folder.create(true, false, null);
+				importFiles(project, file, false);
 			}
 		}
 	}

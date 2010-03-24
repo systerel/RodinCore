@@ -1,14 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - used list of string in Tool Trace
  *******************************************************************************/
-
 package org.rodinp.core.tests.builder;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 
@@ -25,17 +29,8 @@ public abstract class ToolTrace {
 		traces.clear();
 	}
 	
-	public static String getTrace() {
-		StringBuilder builder = new StringBuilder();
-		for (String call : traces) {
-			builder.append(call);
-			builder.append('\n');
-		}
-		// Remove trailing '\n'
-		final int length = builder.length();
-		if (length != 0)
-			builder.deleteCharAt(length - 1);
-		return builder.toString();
+	public static List<String> getTraces() {
+		return new ArrayList<String>(traces);
 	}
 	
 	public static void addTrace(String tool, String method, IFile file) {

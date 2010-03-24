@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - used list of string in Tool Trace
  *******************************************************************************/
 package org.rodinp.core.tests.builder;
 
@@ -45,7 +46,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 		project.getProject().delete(true, true, null);
 	}
 
-	private void runBuilder(String expectedTrace) throws CoreException {
+	private void runBuilder(String... expectedTrace) throws CoreException {
 		super.runBuilder(project, expectedTrace);
 	}
 	
@@ -57,7 +58,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 		createData(ctx, "one");
 		ctx.save(null, true);
 		runBuilder(
-				"CSC extract /P/x.ctx\n" +
+				"CSC extract /P/x.ctx",
 				"CSC run /P/x.csc"
 		);
 		
@@ -75,7 +76,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 		IRodinFile ctx = createRodinFile("P/x.ctx");
 		createData(ctx, "one");
 		ctx.save(null, true);
-		runBuilder(null);
+		runBuilder();
 		ToolTrace.flush();
 
 		ctx.delete(true, null);
@@ -92,16 +93,16 @@ public class CBuilderTest extends AbstractBuilderTest {
 //		ToolTrace.flush();
 		createData(ctx, "one");
 		ctx.save(null, true);
-		runBuilder(null);
+		runBuilder();
 		
 		IRodinFile cty = createRodinFile("P/y.ctx");
 		createDependency(cty, "x");
 		createData(cty, "two");
 		cty.save(null, true);		
 		runBuilder(
-				"CSC extract /P/x.ctx\n" + 
-				"CSC run /P/x.csc\n" + 
-				"CSC extract /P/y.ctx\n" + 
+				"CSC extract /P/x.ctx",
+				"CSC run /P/x.csc",
+				"CSC extract /P/y.ctx",
 				"CSC run /P/y.csc"
 		);
 	}
@@ -114,17 +115,17 @@ public class CBuilderTest extends AbstractBuilderTest {
 		createDependency(cty, "x");
 		createData(cty, "two");
 		cty.save(null, true);		
-		runBuilder(null);
+		runBuilder();
 
 		IRodinFile ctx = createRodinFile("P/x.ctx");
 		createData(ctx, "one");
 		ctx.save(null, true);
 		
 		runBuilder(
-				"CSC extract /P/y.ctx\n" + 
-				"CSC run /P/y.csc\n" + 
-				"CSC extract /P/x.ctx\n" + 
-				"CSC run /P/x.csc\n" + 
+				"CSC extract /P/y.ctx",
+				"CSC run /P/y.csc",
+				"CSC extract /P/x.ctx",
+				"CSC run /P/x.csc",
 				"CSC run /P/y.csc"
 		);
 	}
@@ -136,7 +137,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 		IRodinFile ctx = createRodinFile("P/x.ctx");
 		createData(ctx, "one");
 		ctx.save(null, true);
-		runBuilder(null);
+		runBuilder();
 		
 		IRodinFile cty = createRodinFile("P/y.ctx");
 		createDependency(cty, "x");
@@ -149,11 +150,11 @@ public class CBuilderTest extends AbstractBuilderTest {
 		ctz.save(null, true);
 	
 		runBuilder(
-				"CSC extract /P/x.ctx\n" + 
-				"CSC run /P/x.csc\n" + 
-				"CSC extract /P/y.ctx\n" + 
-				"CSC extract /P/z.ctx\n" + 
-				"CSC run /P/y.csc\n" + 
+				"CSC extract /P/x.ctx",
+				"CSC run /P/x.csc",
+				"CSC extract /P/y.ctx",
+				"CSC extract /P/z.ctx",
+				"CSC run /P/y.csc",
 				"CSC run /P/z.csc"
 		);
 	}
@@ -166,7 +167,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 		createDependency(ctx, "y");
 		createData(ctx, "one");
 		ctx.save(null, true);
-		runBuilder(null);
+		runBuilder();
 		
 		IRodinFile cty = createRodinFile("P/y.ctx");
 		createDependency(cty, "x");
@@ -178,10 +179,10 @@ public class CBuilderTest extends AbstractBuilderTest {
 		ctz.save(null, true);
 	
 		runBuilder(
-				"CSC extract /P/x.ctx\n" + 
-				"CSC run /P/x.csc\n" + 
-				"CSC extract /P/y.ctx\n" + 
-				"CSC extract /P/z.ctx\n" + 
+				"CSC extract /P/x.ctx",
+				"CSC run /P/x.csc",
+				"CSC extract /P/y.ctx",
+				"CSC extract /P/z.ctx",
 				"CSC run /P/z.csc"
 		);
 	}
@@ -202,9 +203,9 @@ public class CBuilderTest extends AbstractBuilderTest {
 			createData(cty, "two");
 			cty.save(null, true);		
 			runBuilder(
-					"CSC extract /P/y.ctx\n" + 
-					"CSC extract /P/x.ctx\n" + 
-					"CSC run /P/x.csc\n" + 
+					"CSC extract /P/y.ctx",
+					"CSC extract /P/x.ctx",
+					"CSC run /P/x.csc",
 					"CSC run /P/y.csc"
 			);
 		} finally {
@@ -230,7 +231,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 			createDependency(cty, "x");
 			createData(cty, "two");
 			cty.save(null, true);		
-			runBuilder(null);
+			runBuilder();
 			ToolTrace.flush();
 			
 			hasMarkers("P/x.ctx");
@@ -241,13 +242,13 @@ public class CBuilderTest extends AbstractBuilderTest {
 
 		createData(ctx, "three");
 		ctx.save(null, true);
-		runBuilder(null);
+		runBuilder();
 		
 		hasNotMarkers("P/x.ctx");
 		
 		runBuilder(
-				"CSC extract /P/x.ctx\n" + 
-				"CSC run /P/x.csc\n" + 
+				"CSC extract /P/x.ctx",
+				"CSC run /P/x.csc",
 				"CSC run /P/y.csc"
 		);
 		
@@ -265,7 +266,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 			createData(ctx, "one");
 			ctx.save(null, true);
 
-			runBuilder(null);
+			runBuilder();
 
 		} finally {
 			CSCTool.FAULTY_BEFORE_TARGET_CREATION = false;
@@ -305,7 +306,7 @@ public class CBuilderTest extends AbstractBuilderTest {
 		createData(ctx, "one");
 		ctx.save(null, true);
 		runBuilder(
-				"CSC extract /P/x.ctx\n" + 
+				"CSC extract /P/x.ctx",
 				"CSC run /P/x.csc"
 		);
 		ToolTrace.flush();
@@ -331,13 +332,13 @@ public class CBuilderTest extends AbstractBuilderTest {
 		createData(cty, "two");
 		cty.save(null, true);		
 		
-		runBuilder(null);
+		runBuilder();
 		ToolTrace.flush();
 		
 		ctx.delete(true, null);
 		
 		runBuilder(
-				"CSC clean /P/x.csc\n" + 
+				"CSC clean /P/x.csc",
 				"CSC run /P/y.csc"
 				);
 		
@@ -349,8 +350,8 @@ public class CBuilderTest extends AbstractBuilderTest {
 		ToolTrace.flush();
 		
 		runBuilder(
-				"CSC extract /P/x.ctx\n" + 
-				"CSC run /P/x.csc\n" + 
+				"CSC extract /P/x.ctx",
+				"CSC run /P/x.csc",
 				"CSC run /P/y.csc"
 		);
 		

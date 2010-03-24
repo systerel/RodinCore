@@ -4,6 +4,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.rodinp.core.tests.builder.CBuilderTest;
+import org.rodinp.core.tests.builder.GraphBuilderTest;
 import org.rodinp.core.tests.builder.MBuilderTest;
 import org.rodinp.core.tests.indexer.DeclarationTests;
 import org.rodinp.core.tests.indexer.DescriptorTests;
@@ -62,6 +63,7 @@ public class AllTests {
 
 		suite.addTestSuite(MBuilderTest.class);
 		suite.addTestSuite(CBuilderTest.class);
+		suite.addTestSuite(GraphBuilderTest.class);
 
 		suite.addTestSuite(BasicVersionTest.class);
 		suite.addTestSuite(FaultyVersionTest.class);

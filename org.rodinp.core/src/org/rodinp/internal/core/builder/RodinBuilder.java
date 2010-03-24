@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - added builder performance trace
+ *     Systerel - build only direct children of project
  *******************************************************************************/
 package org.rodinp.internal.core.builder;
 
@@ -63,6 +64,19 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 		
 		elementTypeManager = ElementTypeManager.getInstance();
      }
+
+	static boolean doVisit(IResource resource) {
+		if (resource == null)
+			return false;
+		final IProject project = resource.getProject();
+		if (project == null)
+			return false;
+		if (!(project.equals(resource) || project.equals(resource
+				.getParent())))
+			return false;
+
+		return true;
+	}
 	
 	class RodinBuilderDeltaVisitor implements IResourceDeltaVisitor {
 
@@ -74,7 +88,10 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 		 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
 		 */
 		public boolean visit(IResourceDelta delta) throws CoreException {
-			IResource resource = delta.getResource();
+			final IResource resource = delta.getResource();
+			if (!doVisit(resource))
+				return false;
+			
 			switch (delta.getKind()) {
 			case IResourceDelta.ADDED:
 				// handle added resource
@@ -145,6 +162,9 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 		final ProgressManager manager;
 		
 		public boolean visit(IResource resource) {
+			if (!doVisit(resource))
+				return false;
+			
 			if (resource instanceof IFile) {
 				markNodeDated(resource, false, manager);
 			}

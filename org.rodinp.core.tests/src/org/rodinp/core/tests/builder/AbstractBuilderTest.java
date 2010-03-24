@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,13 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - fixed for Rodin DB API cleanup
  *     Systerel - separation of file and root element
+ *     Systerel - used list of string in Tool Trace
  *******************************************************************************/
 package org.rodinp.core.tests.builder;
 
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -31,10 +35,16 @@ public abstract class AbstractBuilderTest extends ModifyingResourceTests {
 		super(name);
 	}
 	
-	protected void runBuilder(IRodinProject project, String expectedTrace) throws CoreException {
+	protected void runBuilder(IRodinProject project, String... expectedTrace) throws CoreException {
 		project.getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
-		if (expectedTrace != null)
-			assertStringEquals("Unexpected tool trace", expectedTrace, ToolTrace.getTrace());
+		if (expectedTrace != null && expectedTrace.length > 0)
+			assertTrace(Arrays.asList(expectedTrace), ToolTrace.getTraces());
+	}
+
+	// TODO use a graph to take in consideration the dependence of components
+	private void assertTrace(List<String> expected,
+			List<String> actual) {
+		assertEquals("Unexpected tool trace", expected, actual);
 	}
 	
 	protected void runBuilderClean(IRodinProject project) throws CoreException {

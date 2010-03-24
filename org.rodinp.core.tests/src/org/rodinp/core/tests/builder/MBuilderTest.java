@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - used list of string in Tool Trace
  *******************************************************************************/
 package org.rodinp.core.tests.builder;
 
@@ -41,7 +42,7 @@ public class MBuilderTest extends AbstractBuilderTest {
 		super.tearDown();
 	}
 
-	private void runBuilder(String expectedTrace) throws CoreException {
+	private void runBuilder(String... expectedTrace) throws CoreException {
 		super.runBuilder(project, expectedTrace);
 	}
 	
@@ -68,9 +69,9 @@ public class MBuilderTest extends AbstractBuilderTest {
 		POTool.SHOW_RUN = true;
 		
 		runBuilder(
-				"MSC extract /P/x.mch\n" + 
-				"MSC run /P/x.msc\n" + 
-				"MPO extract /P/x.msc\n" + 
+				"MSC extract /P/x.mch",
+				"MSC run /P/x.msc",
+				"MPO extract /P/x.msc",
 				"MPO run /P/x.po"
 		);
 		
@@ -133,19 +134,19 @@ public class MBuilderTest extends AbstractBuilderTest {
 		POTool.SHOW_RUN = true;	
 		
 		runBuilder(
-				"CSC run /P/z.csc\n" + 
-				"CPO run /P/z.po\n" + 
-				"CSC run /P/x.csc\n" + 
-				"CPO run /P/x.po\n" + 
-				"CSC run /P/y.csc\n" + 
-				"CPO run /P/y.po\n" + 
-				"MSC run /P/a.msc\n" + 
-				"MPO run /P/a.po\n" + 
-				"MSC run /P/b.msc\n" + 
-				"MPO run /P/b.po\n" + 
-				"MSC run /P/c.msc\n" + 
-				"MPO run /P/c.po\n" + 
-				"MSC run /P/d.msc\n" + 
+				"CSC run /P/z.csc",
+				"CPO run /P/z.po",
+				"CSC run /P/x.csc",
+				"CPO run /P/x.po",
+				"CSC run /P/y.csc",
+				"CPO run /P/y.po",
+				"MSC run /P/a.msc",
+				"MPO run /P/a.po",
+				"MSC run /P/b.msc",
+				"MPO run /P/b.po",
+				"MSC run /P/c.msc",
+				"MPO run /P/c.po",
+				"MSC run /P/d.msc",
 				"MPO run /P/d.po"		);
 		
 		IRodinFile scMch = getRodinFile("P/d.msc");
@@ -174,19 +175,19 @@ public class MBuilderTest extends AbstractBuilderTest {
 		cleanBuilder();
 		ToolTrace.flush();
 		runBuilder(
-				"CSC run /P/z.csc\n" + 
-				"CPO run /P/z.po\n" + 
-				"CSC run /P/x.csc\n" + 
-				"CPO run /P/x.po\n" + 
-				"CSC run /P/y.csc\n" + 
-				"CPO run /P/y.po\n" + 
-				"MSC run /P/a.msc\n" + 
-				"MPO run /P/a.po\n" + 
-				"MSC run /P/b.msc\n" + 
-				"MPO run /P/b.po\n" + 
-				"MSC run /P/c.msc\n" + 
-				"MPO run /P/c.po\n" + 
-				"MSC run /P/d.msc\n" + 
+				"CSC run /P/z.csc",
+				"CPO run /P/z.po",
+				"CSC run /P/x.csc",
+				"CPO run /P/x.po",
+				"CSC run /P/y.csc",
+				"CPO run /P/y.po",
+				"MSC run /P/a.msc",
+				"MPO run /P/a.po",
+				"MSC run /P/b.msc",
+				"MPO run /P/b.po",
+				"MSC run /P/c.msc",
+				"MPO run /P/c.po",
+				"MSC run /P/d.msc",
 				"MPO run /P/d.po"
 		);
 	}
@@ -211,9 +212,9 @@ public class MBuilderTest extends AbstractBuilderTest {
 		POTool.SHOW_RUN = false;	
 		
 		runBuilder(qProject,
-				"CSC extract /Q/x.ctx\n" + 
-				"MSC extract /Q/a.mch\n" + 
-				"CSC run /Q/x.csc\n" + 
+				"CSC extract /Q/x.ctx",
+				"MSC extract /Q/a.mch", 
+				"CSC run /Q/x.csc",
 				"MSC run /Q/a.msc"
 			);
 	}
