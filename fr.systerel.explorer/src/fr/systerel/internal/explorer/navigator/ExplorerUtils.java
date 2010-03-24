@@ -212,8 +212,15 @@ public class ExplorerUtils {
 	}
 
 	// Adds statuses located under the given object in the explorer to the given set.
-	private static void addObjectStatuses(Object obj, Set<IPSStatus> statuses, boolean pendingOnly, 
-			SubMonitor subMonitor) throws InterruptedException {
+	// Expects obj to be a rodin project or element, or an element in the explorer model.
+	// At project level, statuses are fetched through the Rodin database, which
+	// avoids depending on the model controller (updated only if project has been expanded).
+	// At under-project levels, statuses are fetched either through the database
+	// or through the model controller, which is necessarily updated
+	// if objects have been selected within.
+	private static void addObjectStatuses(Object obj, Set<IPSStatus> statuses,
+			boolean pendingOnly, SubMonitor subMonitor)
+			throws InterruptedException {
 		if (obj instanceof IProject) {
 			final IRodinProject prj = RodinCore.valueOf((IProject) obj);
 			if (prj != null) {
