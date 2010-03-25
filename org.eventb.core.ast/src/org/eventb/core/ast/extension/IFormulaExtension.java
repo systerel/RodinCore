@@ -22,8 +22,6 @@ import org.eventb.core.ast.extension.notation.INotation;
  */
 public interface IFormulaExtension {
 
-	String getTagOperator();
-
 	void checkPreconditions(Expression[] expressions, Predicate[] predicates);
 	
 	INotation getNotation();

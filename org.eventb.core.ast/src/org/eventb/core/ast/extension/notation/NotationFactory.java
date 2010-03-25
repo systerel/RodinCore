@@ -36,12 +36,14 @@ public class NotationFactory {
 		return INSTANCE;
 	}
 	
-	public INotation makeNotation(INotationElement... elements) {
-		return new FixedSizeNotation(Arrays.asList(elements));
+	public INotation makeNotation(String syntaxSymbol,
+			INotationElement... elements) {
+		return new FixedSizeNotation(syntaxSymbol, Arrays.asList(elements));
 	}
 
-	public INotation makeNotation(List<INotationElement> elements) {
-		return new FixedSizeNotation(elements);
+	public INotation makeNotation(String syntaxSymbol,
+			List<INotationElement> elements) {
+		return new FixedSizeNotation(syntaxSymbol, elements);
 	}
 
 	public INotation makeAssociativeInfixNotation(INotationSymbol symbol, Kind kind) {

@@ -22,6 +22,9 @@ public interface INotation extends Iterable<INotationElement> {
 
 	boolean mapTo(int numExpressions, int numPredicates);
 	
+	// used for syntax tree representation
+	String getSyntaxSymbol();
+	
 //	/**
 //	 * Adds the given element to this notation.
 //	 * <p>

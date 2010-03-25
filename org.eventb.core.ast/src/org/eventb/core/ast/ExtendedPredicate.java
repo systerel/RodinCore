@@ -91,7 +91,7 @@ public class ExtendedPredicate extends Predicate {
 			int parentTag, String[] boundNames, boolean withTypes) {
 		final boolean needsParen = ff.needsParentheses(isRightChild, getTag(),
 				parentTag);
-		AssociativeHelper.toStringHelper(builder, extension.getNotation(), boundNames, needsParen, childExpressions, childPredicates, extension.getTagOperator(), getTag(), withTypes);
+		AssociativeHelper.toStringHelper(builder, extension.getNotation(), boundNames, needsParen, childExpressions, childPredicates, getTag(), withTypes);
 	}
 
 	@Override
@@ -123,7 +123,8 @@ public class ExtendedPredicate extends Predicate {
 	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		return getSyntaxTreeHelper(boundNames, tabs, getChildren(), extension
-				.getTagOperator(), "", this.getClass().getSimpleName());
+				.getNotation().getSyntaxSymbol(), "", this.getClass()
+				.getSimpleName());
 	}
 
 	@Override

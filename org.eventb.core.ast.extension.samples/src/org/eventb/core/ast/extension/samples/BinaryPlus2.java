@@ -96,7 +96,7 @@ public class BinaryPlus2 implements IExpressionExtension {
 		final IFormulaChild firstChild = factory.makeChild(0, Kind.EXPRESSION);
 		final IFormulaChild secondChild = factory.makeChild(1, Kind.EXPRESSION);
 		final INotationSymbol symbol = factory.makeSymbol("+");
-		return factory.makeNotation(firstChild, symbol, secondChild);
+		return factory.makeNotation(symbol.getSymbol(), firstChild, symbol, secondChild);
 	}
 
 }

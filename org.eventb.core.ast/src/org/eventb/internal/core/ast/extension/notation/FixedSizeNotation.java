@@ -26,10 +26,12 @@ import org.eventb.core.ast.extension.notation.IFormulaChild.Kind;
 public class FixedSizeNotation implements INotation {
 
 	private final List<INotationElement> elements;
+	private final String syntaxSymbol; 
 	private boolean mapped = false;
 
-	public FixedSizeNotation(List<INotationElement> elements) {
+	public FixedSizeNotation(String syntaxSymbol, List<INotationElement> elements) {
 		this.elements = new ArrayList<INotationElement>(elements);
+		this.syntaxSymbol = syntaxSymbol;
 	}
 	
 	public Iterator<INotationElement> iterator() {
@@ -65,4 +67,7 @@ public class FixedSizeNotation implements INotation {
 		return false;
 	}
 
+	public String getSyntaxSymbol() {
+		return syntaxSymbol;
+	}
 }

@@ -103,4 +103,8 @@ public class VariableSizeNotation implements INotation {
 		return true;
 	}
 
+	public String getSyntaxSymbol() {
+		return symbol.getSymbol();
+	}
+
 }

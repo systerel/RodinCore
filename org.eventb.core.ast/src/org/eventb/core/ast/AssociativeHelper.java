@@ -113,7 +113,7 @@ import org.eventb.internal.core.ast.LegibilityResult;
 	protected static void toStringHelper(StringBuilder builder,
 			INotation notation, String[] boundNames, boolean needsParen,
 			Expression[] expressions, Predicate[] predicates,
-			String tagOperator, int tag, boolean withTypes) {
+			int tag, boolean withTypes) {
 		if (needsParen)  builder.append('(');
 		boolean isRight = false;
 		for (INotationElement notElem : notation) {
