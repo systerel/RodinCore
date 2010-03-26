@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - now closing editors in the GUI thread using asyncExec()
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbench;
@@ -22,7 +24,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinDB;
@@ -78,6 +79,7 @@ public class EditorManager implements IElementChangedListener {
 	private void closeRelatedEditors(IFile file) {
 		final List<IEditorReference> editorsToClose = new ArrayList<IEditorReference>();
 		final IWorkbench workbench = PlatformUI.getWorkbench();
+		final Display display = workbench.getDisplay();
 		for (final IWorkbenchWindow window : workbench.getWorkbenchWindows()) {
 			for (final IWorkbenchPage page : window.getPages()) {
 				for (final IEditorReference ref : page.getEditorReferences()) {
@@ -95,7 +97,11 @@ public class EditorManager implements IElementChangedListener {
 				final int size = editorsToClose.size();
 				final IEditorReference[] array = new IEditorReference[size];
 				editorsToClose.toArray(array);
-				page.closeEditors(array, false);
+				display.asyncExec(new Runnable() {
+					public void run() {
+						page.closeEditors(array, false);
+					}
+				});
 			}
 		}
 	}
