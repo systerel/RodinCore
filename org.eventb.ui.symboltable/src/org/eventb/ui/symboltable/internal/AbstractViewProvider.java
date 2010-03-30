@@ -53,8 +53,10 @@ public abstract class AbstractViewProvider {
 	}
 
 	protected String createTooltip(final Symbol symbol) {
+		// escape & character for correct display in tooltip
+		final String asciiCombo = symbol.asciiCombo.replace("&", "&&");
 		return MessageFormat.format(TOOLTIP_PATTERN, symbol.description,
-				symbol.asciiCombo);
+				asciiCombo);
 	}
 
 	protected void dispose() {
