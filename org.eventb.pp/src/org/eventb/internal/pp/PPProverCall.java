@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added cancellation tests
  *     Systerel - fixed assertions in isValid() and others
+ *     Systerel - changed proof display to NewPP to avoid ambiguity
  *******************************************************************************/
 package org.eventb.internal.pp;
 
@@ -50,7 +51,7 @@ public class PPProverCall extends XProverCall implements IPPMonitor {
 
 	@Override
 	public String displayMessage() {
-		return "Predicate Prover";
+		return "NewPP";
 	}
 
 	@Override
