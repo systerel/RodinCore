@@ -269,7 +269,7 @@ public class AutoCompletionTests extends BuilderTest {
 		final IInvariant invariant = m2.getInvariant(INTERNAL_INV1);
 		final IAttributeLocation invPred = RodinCore.getInternalLocation(
 				invariant, PREDICATE_ATTRIBUTE);
-		doTest(invPred, "cst1", "set1", "varM2");
+		doTest(invPred, "cst1", "set1", "varM1", "varM2");
 	}
 
 	public void testEvtParamInGuard() throws Exception {

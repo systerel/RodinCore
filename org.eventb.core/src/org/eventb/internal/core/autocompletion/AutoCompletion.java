@@ -27,7 +27,6 @@ import java.util.Set;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IEvent;
-import org.eventb.core.IMachineRoot;
 import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
 import org.eventb.internal.core.Util;
@@ -91,7 +90,7 @@ public class AutoCompletion {
 		final IInternalElement locElem = location.getElement();
 		final IEvent event = getRelativeEvent(locElem);
 		final IRodinFile file = location.getRodinFile();
-		if (event == null) { // axiom, theorem, invariant, variant
+		if (event == null) { // axiom, invariant, variant
 			return getVisibleSetCstVar(file);
 		} else {
 			return getEventCompletions(location, event);
@@ -101,9 +100,6 @@ public class AutoCompletion {
 	private static Set<String> getVisibleSetCstVar(IRodinFile file) {
 		final Set<IDeclaration> decls = getVisibleDecls(file);
 		SET_CST_VAR_FILTER.apply(decls);
-		if (file.getRootElementType() == IMachineRoot.ELEMENT_TYPE) {
-			removeDisappearingVars(decls, file);
-		}
 		return getNames(decls);
 	}
 
