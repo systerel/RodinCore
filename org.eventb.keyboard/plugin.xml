@@ -3,8 +3,8 @@
 <plugin>
 
    <extension
-         id="LaTeX"
-         name="LaTeX-style keyboard combinations"
+         id="Common"
+         name="Common Event-B keyboard combinations"
          point="org.rodinp.keyboard.symbols">
       <symbol
             combo="NAT"
