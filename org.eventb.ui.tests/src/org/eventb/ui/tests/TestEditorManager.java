@@ -252,6 +252,7 @@ public class TestEditorManager extends EventBUITest {
 		rodinProject.getProject().close(null);
 		assertNull(getEditorPartFor(cInput));
 		assertNull(getEditorPartFor(mInput));
+		rodinProject.getProject().open(null);
 	}
 
 	/**
@@ -269,6 +270,7 @@ public class TestEditorManager extends EventBUITest {
 		rodinProject.getProject().close(null);
 		assertEquals(null, getEditorPartFor(mpInput));
 		assertNull(getEditorPartFor(mpInput));
+		rodinProject.getProject().open(null);
 	}
 
 	private static void waitForAsyncExecs() {
