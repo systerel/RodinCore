@@ -8,6 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *     Systerel - now closing editors in the GUI thread using asyncExec()
+ *	   Systerel - added support for closed projects and refactored
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -15,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorReference;
@@ -47,6 +50,8 @@ public class EditorManager implements IElementChangedListener {
 	private void handleDelta(IRodinElementDelta delta) {
 		final IRodinElement element = delta.getElement();
 		if (element instanceof IRodinDB) {
+			handleClosedProjects(delta.getChangedChildren());
+			handleDeletedProjects(delta.getRemovedChildren());
 			final IRodinElementDelta[] deltas = delta.getAffectedChildren();
 			for (final IRodinElementDelta childDelta : deltas) {
 				handleDelta(childDelta);
@@ -58,10 +63,53 @@ public class EditorManager implements IElementChangedListener {
 		}
 	}
 
+	/**
+	 * Method that close all active and inactive editors contained by a project
+	 * that was closed.
+	 * 
+	 * @param changedDeltas
+	 *            the deltas containing closed projects we want to close
+	 *            editors for
+	 */
+	private void handleClosedProjects(IRodinElementDelta[] changedDeltas) {
+		for (final IRodinElementDelta child : changedDeltas) {
+			final IRodinElement elt = child.getElement();
+			if (elt instanceof IRodinProject
+					&& (child.getFlags() & IRodinElementDelta.F_CLOSED) != 0) {
+				final IRodinProject project = elt.getRodinProject();
+				final IProject prj = project.getProject();
+				final EditorInputFilter filter = new ProjectInputFilter(prj);
+				closeRelatedEditors(filter);
+			}
+		}
+	}
+
+	/**
+	 * Method that close all active and inactive editors contained by a project
+	 * that was deleted.
+	 * 
+	 * @param removedPrjDeltas
+	 *            the deltas containing deleted projects we want to close
+	 *            editors for
+	 */
+	private void handleDeletedProjects(IRodinElementDelta[] removedPrjDeltas) {
+		for (final IRodinElementDelta child : removedPrjDeltas) {
+			final IRodinElement elt = child.getElement();
+			if (elt instanceof IRodinProject) {
+				final IRodinProject project = elt.getRodinProject();
+				final IProject prj = project.getProject();
+				final EditorInputFilter filter = new ProjectInputFilter(prj);
+				closeRelatedEditors(filter);
+			}
+		}
+	}
+
 	private void handleRemoveOperation(IRodinElementDelta[] removedDeltas) {
 		final List<IRodinFile> removedFiles = getRemovedFiles(removedDeltas);
 		for (final IRodinFile file : removedFiles) {
-			closeRelatedEditors(file.getResource());
+			final IResource resource = file.getResource();
+			final EditorInputFilter filter = new FileInputFilter(resource);
+			closeRelatedEditors(filter);
 		}
 	}
 
@@ -76,7 +124,7 @@ public class EditorManager implements IElementChangedListener {
 		return files;
 	}
 
-	private void closeRelatedEditors(IFile file) {
+	private void closeRelatedEditors(EditorInputFilter filter) {
 		final List<IEditorReference> editorsToClose = new ArrayList<IEditorReference>();
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		final Display display = workbench.getDisplay();
@@ -90,7 +138,7 @@ public class EditorManager implements IElementChangedListener {
 						// ignore this editor reference
 						continue;
 					}
-					if (isConcernedEditor(file, input)) {
+					if (filter.matches(input)) {
 						editorsToClose.add(ref);
 					}
 				}
@@ -106,12 +154,47 @@ public class EditorManager implements IElementChangedListener {
 		}
 	}
 
-	private boolean isConcernedEditor(IFile file, IEditorInput input) {
-		if (!(input instanceof FileEditorInput)) {
-			return false;
+	abstract static class EditorInputFilter {
+
+		public abstract boolean matches(IEditorInput input);
+
+	}
+
+	private static class FileInputFilter extends EditorInputFilter {
+
+		private final IResource resource;
+
+		public FileInputFilter(IResource resource) {
+			this.resource = resource;
 		}
-		final IFile inputFile = ((FileEditorInput) input).getFile();
-		return inputFile.equals(file);
+
+		@Override
+		public boolean matches(IEditorInput input) {
+			if (!(input instanceof FileEditorInput)) {
+				return false;
+			}
+			final IFile inputFile = ((FileEditorInput) input).getFile();
+			return inputFile.equals(resource);
+		}
+
+	}
+
+	private static class ProjectInputFilter extends EditorInputFilter {
+
+		private final IProject project;
+
+		public ProjectInputFilter(IProject prj) {
+			this.project = prj;
+		}
+
+		@Override
+		public boolean matches(IEditorInput input) {
+			if (!(input instanceof FileEditorInput)) {
+				return false;
+			}
+			final IFile inputFile = ((FileEditorInput) input).getFile();
+			return (inputFile.getProject().equals(project));
+		}
 	}
 
 }
