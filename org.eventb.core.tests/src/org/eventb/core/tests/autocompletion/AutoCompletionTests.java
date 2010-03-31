@@ -196,6 +196,24 @@ public class AutoCompletionTests extends BuilderTest {
 			+ "</org.eventb.core.event>"
 			+ "</org.eventb.core.machineFile>";
 
+	private static final String M3 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+		+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
+		+ "<org.eventb.core.refinesMachine"
+		+ " 	name=\"internal_1\""
+		+ " 	org.eventb.core.target=\"M2\"/>"
+		+ "<org.eventb.core.seesContext"
+		+ " 	name=\"internal_1\""
+		+ " 	org.eventb.core.target=\"C2\"/>"
+		+ "<org.eventb.core.variable"
+		+ " 	name=\"internal_var1\""
+		+ " 	org.eventb.core.identifier=\"varM3\"/>"
+		+ "<org.eventb.core.invariant"
+		+ " 	name=\"internal_inv1\""
+		+ " 	org.eventb.core.label=\"inv1\""
+		+ " 	org.eventb.core.predicate=\"\""
+		+ "		org.eventb.core.theorem=\"false\"/>"
+		+ "</org.eventb.core.machineFile>";
+	
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
@@ -272,6 +290,20 @@ public class AutoCompletionTests extends BuilderTest {
 		doTest(invPred, "cst1", "set1", "varM1", "varM2");
 	}
 
+	public void testMchAbstractVarInInvariant2() throws Exception {
+		ResourceUtils.createContext(rodinProject, "C1", C1);
+		ResourceUtils.createContext(rodinProject, "C2", C2);
+		ResourceUtils.createMachine(rodinProject, "M1", M1);
+		ResourceUtils.createMachine(rodinProject, "M2", M2);
+		final IMachineRoot m3 = ResourceUtils.createMachine(rodinProject, "M3",
+				M3);
+
+		final IInvariant invariant = m3.getInvariant(INTERNAL_INV1);
+		final IAttributeLocation invPred = RodinCore.getInternalLocation(
+				invariant, PREDICATE_ATTRIBUTE);
+		doTest(invPred, "cst1", "set1", "varM2", "varM3");
+	}
+
 	public void testEvtParamInGuard() throws Exception {
 		ResourceUtils.createContext(rodinProject, "C1", C1);
 		ResourceUtils.createContext(rodinProject, "C2", C2);
@@ -346,6 +378,7 @@ public class AutoCompletionTests extends BuilderTest {
 		final IAttributeLocation axiomPred = RodinCore.getInternalLocation(
 				theorem, PREDICATE_ATTRIBUTE);
 		doTest("cs", axiomPred, "cst1");
+		doTest("cst11", axiomPred);
 	}
 	
 	public void testEventLabel() throws Exception {

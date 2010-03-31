@@ -67,20 +67,20 @@ public class AutoCompletion {
 			Thread.currentThread().interrupt();
 		}
 		final Set<String> completionNames = getCompletionNames(location);
-		if (prefix.length() != 0) {
-			filterPrefix(completionNames, prefix);
-		}
+		filterPrefix(completionNames, prefix);
 		final List<String> sortedNames = new ArrayList<String>(completionNames);
 		Collections.sort(sortedNames);
 		return sortedNames;
 	}
 
 	private static void filterPrefix(Set<String> names, String prefix) {
+		if (prefix.length() == 0) {
+			return;
+		}
 		final Iterator<String> iter = names.iterator();
 		while(iter.hasNext()) {
 			final String name = iter.next();
-			if (name.length() < prefix.length()
-					|| !name.substring(0, prefix.length()).equals(prefix)) {
+			if (!name.startsWith(prefix)) {
 				iter.remove();
 			}
 		}
