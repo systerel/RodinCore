@@ -112,10 +112,6 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		return childPredicates.clone();
 	}
 
-	public ExtendedExpression getThis() {
-		return this;
-	}
-
 	@Override
 	protected void toString(StringBuilder builder, boolean isRightChild,
 			int parentTag, String[] boundNames, boolean withTypes) {

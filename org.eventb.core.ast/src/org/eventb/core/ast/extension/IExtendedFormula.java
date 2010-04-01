@@ -11,7 +11,6 @@
 package org.eventb.core.ast.extension;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
 
 /**
@@ -25,5 +24,4 @@ public interface IExtendedFormula {
 
 	Predicate[] getChildPredicates();
 
-	Formula<?> getThis();
 }

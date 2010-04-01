@@ -28,6 +28,7 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.TypeCheckMediator;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -92,10 +93,6 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 		return childPredicates;
 	}
 
-	public ExtendedPredicate getThis() {
-		return this;
-	}
-	
 	private Formula<?>[] getChildren() {
 		return ExtensionHelper.concat(childExpressions, childPredicates);
 	}
@@ -125,8 +122,14 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	@Override
 	protected void typeCheck(TypeCheckResult result,
 			BoundIdentDecl[] quantifiedIdentifiers) {
-		extension.typeCheck(result,
-				quantifiedIdentifiers, childExpressions, childPredicates);
+		for (Expression child : childExpressions) {
+			child.typeCheck(result, quantifiedIdentifiers);
+		}
+		for (Predicate child : childPredicates) {
+			child.typeCheck(result, quantifiedIdentifiers);
+		}
+		extension.typeCheck(new TypeCheckMediator(
+				result, this), this);
 	}
 
 	@Override

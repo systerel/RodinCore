@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.extension;
 
-import org.eventb.core.ast.BoundIdentDecl;
-import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Predicate;
-import org.eventb.internal.core.typecheck.TypeCheckResult;
+import org.eventb.core.ast.ExtendedPredicate;
 
 /**
  * @author "Nicolas Beauger"
@@ -22,8 +19,6 @@ import org.eventb.internal.core.typecheck.TypeCheckResult;
  */
 public interface IPredicateExtension extends IFormulaExtension {
 
-	void typeCheck(TypeCheckResult result,
-			BoundIdentDecl[] quantifiedIdentifiers,
-			Expression[] childExpressions, Predicate[] childPredicates);
+	void typeCheck(ITypeCheckMediator tcMediator, ExtendedPredicate predicate);
 
 }
