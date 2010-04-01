@@ -31,7 +31,7 @@ import org.eventb.core.ast.extension.IWDMediator;
 public class BinaryPlus3 implements IExpressionExtension {
 
 	public Type getType(ITypeMediator mediator, ExtendedExpression expression) {
-		final Type resultType = mediator.getFormulaFactory().makeIntegerType();
+		final Type resultType = mediator.makeIntegerType();
 		for (Expression child : expression.getChildExpressions()) {
 			final Type childType = child.getType();
 			if (!childType.equals(resultType)) {
@@ -43,7 +43,7 @@ public class BinaryPlus3 implements IExpressionExtension {
 
 	public Type typeCheck(ITypeCheckMediator mediator,
 			ExtendedExpression expression) {
-		final Type resultType = mediator.getFormulaFactory().makeIntegerType();
+		final Type resultType = mediator.makeIntegerType();
 		for (Expression child : expression.getChildExpressions()) {
 			mediator.sameType(child.getType(), resultType);
 		}

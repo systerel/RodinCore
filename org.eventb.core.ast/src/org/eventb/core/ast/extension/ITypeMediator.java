@@ -1,6 +1,11 @@
 package org.eventb.core.ast.extension;
 
-import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.BooleanType;
+import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.IntegerType;
+import org.eventb.core.ast.PowerSetType;
+import org.eventb.core.ast.ProductType;
+import org.eventb.core.ast.Type;
 
 /**
  */
@@ -11,6 +16,15 @@ import org.eventb.core.ast.FormulaFactory;
  */
 public interface ITypeMediator {
 
-	FormulaFactory getFormulaFactory();
+	BooleanType makeBooleanType();
 
+	GivenType makeGivenType(String name);
+
+	IntegerType makeIntegerType();
+
+	PowerSetType makePowerSetType(Type base);
+
+	ProductType makeProductType(Type left, Type right);
+
+	PowerSetType makeRelationalType(Type left, Type right);
 }
