@@ -8,15 +8,20 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.core.ast.extension.notation;
+package org.eventb.core.ast.extension;
+
+import org.eventb.core.ast.Formula;
+
 
 /**
  * @author Nicolas Beauger
  * @since 2.0
- *
+ * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface INotationSymbol extends INotationElement {
+public interface IToStringMediator {
 
-	String getSymbol();
+	void append(String string);
+
+	void append(Formula<?> child, boolean isRight);
 	
 }

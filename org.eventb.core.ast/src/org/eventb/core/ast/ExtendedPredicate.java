@@ -13,6 +13,7 @@ package org.eventb.core.ast;
 //FIXME should not use AssociativeHelper (else rename Associative into ...)
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
+import static org.eventb.core.ast.AssociativeHelper.toStringHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
@@ -34,7 +36,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * @since 2.0
  *
  */
-public class ExtendedPredicate extends Predicate {
+public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 
 	private final Expression[] childExpressions;
 	private final Predicate[] childPredicates;
@@ -82,6 +84,18 @@ public class ExtendedPredicate extends Predicate {
 		typeChecked = true;
 	}
 
+	public Expression[] getChildExpressions() {
+		return childExpressions;
+	}
+
+	public Predicate[] getChildPredicates() {
+		return childPredicates;
+	}
+
+	public ExtendedPredicate getThis() {
+		return this;
+	}
+	
 	private Formula<?>[] getChildren() {
 		return ExtensionHelper.concat(childExpressions, childPredicates);
 	}
@@ -91,7 +105,8 @@ public class ExtendedPredicate extends Predicate {
 			int parentTag, String[] boundNames, boolean withTypes) {
 		final boolean needsParen = ff.needsParentheses(isRightChild, getTag(),
 				parentTag);
-		AssociativeHelper.toStringHelper(builder, extension.getNotation(), boundNames, needsParen, childExpressions, childPredicates, getTag(), withTypes);
+		toStringHelper(builder, boundNames, needsParen, withTypes, getTag(),
+				extension, this);
 	}
 
 	@Override
@@ -123,7 +138,7 @@ public class ExtendedPredicate extends Predicate {
 	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		return getSyntaxTreeHelper(boundNames, tabs, getChildren(), extension
-				.getNotation().getSyntaxSymbol(), "", this.getClass()
+				.getSyntaxSymbol(), "", this.getClass()
 				.getSimpleName());
 	}
 
@@ -137,9 +152,8 @@ public class ExtendedPredicate extends Predicate {
 	@Override
 	protected void toStringFullyParenthesized(StringBuilder builder,
 			String[] boundNames) {
-//		extension.prettyPrintFullyParenthesized(builder, boundNames,
-//				childExpressions, childPredicates);
-//		TODO
+		extension.toString(new ToStringFullParenMediator(builder, boundNames),
+				this);
 	}
 
 	@Override
@@ -211,8 +225,8 @@ public class ExtendedPredicate extends Predicate {
 
 	@Override
 	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		return extension.getWDPredicateRaw(formulaFactory, childExpressions,
-				childPredicates);
+		final WDMediator wdMed = new WDMediator(formulaFactory);
+		return extension.getWDPredicate(wdMed, this);
 	}
 
 	@Override
@@ -230,7 +244,7 @@ public class ExtendedPredicate extends Predicate {
 				childPredicates.length + 11);
 		for (Predicate child : childPredicates) {
 			Predicate newChild = child.rewrite(rewriter);
-			if (flatten && extension.getNotation().isFlattenable()
+			if (flatten && extension.isFlattenable()
 					&& getTag() == newChild.getTag()) {
 				final Predicate[] grandChildren = ((ExtendedPredicate) newChild).childPredicates;
 				newChildPredicates.addAll(Arrays.asList(grandChildren));

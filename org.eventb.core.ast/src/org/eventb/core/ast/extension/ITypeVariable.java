@@ -8,13 +8,13 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.core.ast.extension.notation;
+package org.eventb.core.ast.extension;
 
 /**
  * @author Nicolas Beauger
  * @since 2.0
- *
+ * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface INotationElement {
-	// no methods for the moment
+public interface ITypeVariable {
+	// no methods for now
 }

@@ -13,6 +13,7 @@ package org.eventb.core.ast;
 // FIXME should not use AssociativeHelper
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
+import static org.eventb.core.ast.AssociativeHelper.toStringHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,10 +23,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.TypeCheckMediator;
+import org.eventb.internal.core.ast.extension.TypeMediator;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -34,7 +38,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * @since 2.0
  * 
  */
-public class ExtendedExpression extends Expression {
+public class ExtendedExpression extends Expression implements IExtendedFormula {
 
 	private final Expression[] childExpressions;
 	private final Predicate[] childPredicates;
@@ -93,14 +97,14 @@ public class ExtendedExpression extends Expression {
 			return;
 		}
 
-		Type resultType = extension.getType(childExpressions, childPredicates);
+		Type resultType = extension.getType(new TypeMediator(ff), this);
 		if (resultType == null) {
 			return;
 		}
 		setFinalType(resultType, givenType);
 	}
 
-	public Expression[] getChildExpessions() {
+	public Expression[] getChildExpressions() {
 		return childExpressions.clone();
 	}
 
@@ -108,12 +112,17 @@ public class ExtendedExpression extends Expression {
 		return childPredicates.clone();
 	}
 
+	public ExtendedExpression getThis() {
+		return this;
+	}
+
 	@Override
 	protected void toString(StringBuilder builder, boolean isRightChild,
 			int parentTag, String[] boundNames, boolean withTypes) {
 		final boolean needsParen = ff.needsParentheses(isRightChild, getTag(),
 				parentTag);
-		AssociativeHelper.toStringHelper(builder, extension.getNotation(), boundNames, needsParen, childExpressions, childPredicates, getTag(), withTypes);
+		toStringHelper(builder, boundNames, needsParen, withTypes, getTag(),
+				extension, this);
 	}
 
 	@Override
@@ -133,8 +142,14 @@ public class ExtendedExpression extends Expression {
 	@Override
 	protected void typeCheck(TypeCheckResult result,
 			BoundIdentDecl[] quantifiedIdentifiers) {
-		final Type resultType = extension.typeCheck(result,
-				quantifiedIdentifiers, childExpressions, childPredicates, this);
+		for (Expression child : childExpressions) {
+			child.typeCheck(result, quantifiedIdentifiers);
+		}
+		for (Predicate child : childPredicates) {
+			child.typeCheck(result, quantifiedIdentifiers);
+		}
+		final Type resultType = extension.typeCheck(new TypeCheckMediator(
+				result, this), this);
 		setTemporaryType(resultType, result);
 	}
 
@@ -153,22 +168,22 @@ public class ExtendedExpression extends Expression {
 
 	@Override
 	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		return extension.getWDPredicateRaw(formulaFactory, childExpressions,
-				childPredicates);
+		final WDMediator wdMed = new WDMediator(formulaFactory);
+		return extension.getWDPredicate(wdMed, this);
 	}
 
 	@Override
 	protected void toStringFullyParenthesized(StringBuilder builder,
 			String[] boundNames) {
-//		extension.prettyPrintFullyParenthesized(builder, boundNames,
-//				childExpressions, childPredicates);
-//		TODO
+		extension.toString(new ToStringFullParenMediator(builder, boundNames),
+				this);
 	}
 
 	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
+		// only called for test purposes => ask it from extension ?
 		return getSyntaxTreeHelper(boundNames, tabs, getChildren(), extension
-				.getNotation().getSyntaxSymbol(), getTypeName(), this
+				.getSyntaxSymbol(), getTypeName(), this
 				.getClass().getSimpleName());
 	}
 
@@ -246,7 +261,7 @@ public class ExtendedExpression extends Expression {
 		boolean changed = false;
 		for (Expression child : childExpressions) {
 			Expression newChild = child.rewrite(rewriter);
-			if (flatten && extension.getNotation().isFlattenable()
+			if (flatten && extension.isFlattenable()
 					&& getTag() == newChild.getTag()) {
 				final Expression[] grandChildren = ((ExtendedExpression) newChild).childExpressions;
 				newChildExpressions.addAll(Arrays.asList(grandChildren));

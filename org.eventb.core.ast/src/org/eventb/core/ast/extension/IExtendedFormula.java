@@ -8,31 +8,22 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.core.ast.extension.notation;
+package org.eventb.core.ast.extension;
 
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.Predicate;
 
 /**
  * @author Nicolas Beauger
  * @since 2.0
- * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface INotation extends Iterable<INotationElement> {
+public interface IExtendedFormula {
 
-	boolean isFlattenable();
+	Expression[] getChildExpressions();
 
-	boolean mapTo(int numExpressions, int numPredicates);
-	
-	// used for syntax tree representation
-	String getSyntaxSymbol();
-	
-//	/**
-//	 * Adds the given element to this notation.
-//	 * <p>
-//	 * Must not be called while iterating over this notation;
-//	 * </p>
-//	 * 
-//	 * @param element
-//	 *            a notation element
-//	 */
-//	void add(INotationElement element);
+	Predicate[] getChildPredicates();
+
+	Formula<?> getThis();
 }

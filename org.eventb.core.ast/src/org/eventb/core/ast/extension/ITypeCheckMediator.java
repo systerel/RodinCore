@@ -8,20 +8,17 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.core.ast.extension.notation;
+package org.eventb.core.ast.extension;
+
+import org.eventb.core.ast.Type;
 
 /**
  * @author Nicolas Beauger
  * @since 2.0
- * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ * TODO add methods from TypeCheckReseult
  */
-public interface IFormulaChild extends INotationElement {
+public interface ITypeCheckMediator extends ITypeMediator {
 
-	public static enum Kind {
-		PREDICATE, EXPRESSION
-	}
-	
-	Kind getKind();
-	
-	int getIndex();
+	void sameType(Type t1, Type t2);
 }

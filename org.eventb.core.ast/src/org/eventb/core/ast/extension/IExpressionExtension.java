@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.extension;
 
-import org.eventb.core.ast.BoundIdentDecl;
-import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Type;
-import org.eventb.internal.core.typecheck.TypeCheckResult;
 
 /**
  * @author "Nicolas Beauger"
@@ -24,17 +21,19 @@ import org.eventb.internal.core.typecheck.TypeCheckResult;
 public interface IExpressionExtension extends IFormulaExtension {
 
 	/**
-	 * Returns the type of this expression assuming that the preconditions are
-	 * fulfilled.
+	 * Returns the type of the given expression assuming that the preconditions
+	 * are fulfilled.
 	 * 
-	 * @param childExpressions
-	 * @param childPredicates
+	 * @param expression
+	 *            the AST node
 	 * @return a type
 	 */
-	Type getType(Expression[] childExpressions, Predicate[] childPredicates);
+	Type getType(ITypeMediator mediator, ExtendedExpression expression);
 
-	Type typeCheck(TypeCheckResult result,
-			BoundIdentDecl[] quantifiedIdentifiers,
-			Expression[] childExpressions, Predicate[] childPredicates, Expression origin);
+	// TODO these 2 methods can be mixed into 1 with 2 mediator implementations
+	
+	Type typeCheck(ITypeCheckMediator tcMediator, ExtendedExpression expression);
+	// BoundIdentDecl[] quantifiedIdentifiers,
+	// Expression[] childExpressions, Predicate[] childPredicates,
 
 }

@@ -11,22 +11,30 @@
 package org.eventb.core.ast.extension;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.extension.notation.INotation;
 
 /**
  * @author "Nicolas Beauger"
- * @since 2.0
- *
+ * @since 2.0 TODO encapsulate children in mediators
  */
 public interface IFormulaExtension {
 
+	void toString(IToStringMediator mediator, IExtendedFormula formula);
+
 	void checkPreconditions(Expression[] expressions, Predicate[] predicates);
-	
-	INotation getNotation();
-	
-	Predicate getWDPredicateRaw(FormulaFactory formulaFactory,
-			Expression[] childExpressions, Predicate[] childPredicates);
+
+	/**
+	 * 
+	 * @param wdMediator
+	 *            for further purposes
+	 * @param formula
+	 *            the AST node
+	 * @return a predicate, or <code>null</code>
+	 */
+	Predicate getWDPredicate(IWDMediator wdMediator, IExtendedFormula formula);
+
+	String getSyntaxSymbol();
+
+	boolean isFlattenable();
 
 }

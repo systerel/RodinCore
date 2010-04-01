@@ -8,24 +8,18 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.core.ast.extension.notation;
+package org.eventb.core.ast.extension;
 
-import org.eventb.core.ast.extension.notation.INotationSymbol;
+import org.eventb.core.ast.Predicate;
+
 
 /**
  * @author Nicolas Beauger
- *
+ * @since 2.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
-public class NotationSymbol implements INotationSymbol {
+public interface IWDMediator {
 
-	private final String symbol;
-
-	public NotationSymbol(String symbol) {
-		this.symbol = symbol;
-	}
-	
-	public String getSymbol() {
-		return symbol;
-	}
+	Predicate makeChildWDConjunction(IExtendedFormula formula);
 
 }

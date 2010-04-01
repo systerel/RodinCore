@@ -4,11 +4,8 @@
  */
 package org.eventb.core.ast;
 
-import org.eventb.core.ast.extension.notation.IFormulaChild;
-import org.eventb.core.ast.extension.notation.INotation;
-import org.eventb.core.ast.extension.notation.INotationElement;
-import org.eventb.core.ast.extension.notation.INotationSymbol;
-import org.eventb.core.ast.extension.notation.IFormulaChild.Kind;
+import org.eventb.core.ast.extension.IExtendedFormula;
+import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.internal.core.ast.LegibilityResult;
 
 
@@ -71,6 +68,18 @@ import org.eventb.internal.core.ast.LegibilityResult;
 		if (needsParen) builder.append(')');
 	}
 	
+	protected static void toStringHelper(StringBuilder builder,
+			String[] boundNames, boolean needsParen, boolean withTypes, int tag,
+			IFormulaExtension extension, IExtendedFormula formula) {
+		if (needsParen)
+			builder.append('(');
+		final ToStringMediator strMed = new ToStringMediator(builder, tag,
+				boundNames, withTypes);
+		extension.toString(strMed, formula);
+		if (needsParen)
+			builder.append(')');
+	}
+
 	protected static void toStringFullyParenthesizedHelper(
 			StringBuilder builder, String[] boundNames,
 			Formula<?>[] children, String tagOperator) {
@@ -108,44 +117,6 @@ import org.eventb.internal.core.ast.LegibilityResult;
 				return;
 			}
 		}
-	}
-
-	protected static void toStringHelper(StringBuilder builder,
-			INotation notation, String[] boundNames, boolean needsParen,
-			Expression[] expressions, Predicate[] predicates,
-			int tag, boolean withTypes) {
-		if (needsParen)  builder.append('(');
-		boolean isRight = false;
-		for (INotationElement notElem : notation) {
-			// TODO move toString() to INotationElement: impossible
-			// TODO see if toString() can be moved to INotation: idem
-			if (notElem instanceof INotationSymbol) {
-				final String symbol = ((INotationSymbol) notElem).getSymbol();
-				builder.append(symbol);
-			} else if (notElem instanceof IFormulaChild) {
-				final IFormulaChild formChild = (IFormulaChild) notElem;
-				final Kind kind = formChild.getKind();
-				final int index = formChild.getIndex();
-				final Formula<?> child;
-				switch (kind) {
-				case EXPRESSION:
-					child = expressions[index];
-					// FIXME check IndexOutOfBounds or document check needs be made before
-					break;
-				case PREDICATE:
-					child = predicates[index];
-					break;
-				default:
-					assert false;
-					child = null;
-				}
-				child.toString(builder, isRight, tag, boundNames,
-						withTypes);
-				isRight = true;
-			}
-		}
-		if (needsParen)
-			builder.append(')');
 	}
 	
 }
