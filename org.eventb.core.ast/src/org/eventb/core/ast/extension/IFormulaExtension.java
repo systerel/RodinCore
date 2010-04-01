@@ -15,25 +15,17 @@ import org.eventb.core.ast.Predicate;
 
 /**
  * @author "Nicolas Beauger"
- * @since 2.0 TODO encapsulate children in mediators
+ * @since 2.0
  */
 public interface IFormulaExtension {
 
-	void toString(IToStringMediator mediator, IExtendedFormula formula);
-
 	void checkPreconditions(Expression[] expressions, Predicate[] predicates);
 
-	/**
-	 * 
-	 * @param wdMediator
-	 *            for further purposes
-	 * @param formula
-	 *            the AST node
-	 * @return a predicate, or <code>null</code>
-	 */
-	Predicate getWDPredicate(IWDMediator wdMediator, IExtendedFormula formula);
-
 	String getSyntaxSymbol();
+
+	void toString(IToStringMediator mediator, IExtendedFormula formula);
+
+	Predicate getWDPredicate(IWDMediator wdMediator, IExtendedFormula formula);
 
 	boolean isFlattenable();
 
