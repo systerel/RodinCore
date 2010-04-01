@@ -122,14 +122,10 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	@Override
 	protected void typeCheck(TypeCheckResult result,
 			BoundIdentDecl[] quantifiedIdentifiers) {
-		for (Expression child : childExpressions) {
+		for (Formula<?> child : getChildren()) {
 			child.typeCheck(result, quantifiedIdentifiers);
 		}
-		for (Predicate child : childPredicates) {
-			child.typeCheck(result, quantifiedIdentifiers);
-		}
-		extension.typeCheck(new TypeCheckMediator(
-				result, this), this);
+		extension.typeCheck(new TypeCheckMediator(result, this, false), this);
 	}
 
 	@Override

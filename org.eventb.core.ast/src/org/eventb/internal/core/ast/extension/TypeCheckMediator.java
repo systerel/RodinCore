@@ -11,6 +11,7 @@
 package org.eventb.internal.core.ast.extension;
 
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -18,15 +19,26 @@ import org.eventb.internal.core.typecheck.TypeCheckResult;
 /**
  * @author Nicolas Beauger
  */
-public class TypeCheckMediator extends TypeMediator implements ITypeCheckMediator {
+public class TypeCheckMediator extends TypeMediator implements
+		ITypeCheckMediator {
 
 	private final TypeCheckResult result;
 	private final Formula<?> formula;
 
-	public TypeCheckMediator(TypeCheckResult result, Formula<?> formula) {
+	// used for creating fresh type variables,
+	// not <code>null</code> only for typed terminal nodes
+	private final SourceLocation location;
+
+	public TypeCheckMediator(TypeCheckResult result, Formula<?> formula,
+			boolean isTypedTerminal) {
 		super(result.getFormulaFactory());
 		this.result = result;
 		this.formula = formula;
+		this.location = isTypedTerminal ? formula.getSourceLocation() : null;
+	}
+
+	public Type newTypeVariable() {
+		return result.newFreshVariable(location);
 	}
 
 	public void sameType(Type left, Type right) {

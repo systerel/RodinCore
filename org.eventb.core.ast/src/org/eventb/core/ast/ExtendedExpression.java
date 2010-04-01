@@ -138,15 +138,17 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	@Override
 	protected void typeCheck(TypeCheckResult result,
 			BoundIdentDecl[] quantifiedIdentifiers) {
-		for (Expression child : childExpressions) {
+		for (Formula<?> child : getChildren()) {
 			child.typeCheck(result, quantifiedIdentifiers);
 		}
-		for (Predicate child : childPredicates) {
-			child.typeCheck(result, quantifiedIdentifiers);
-		}
-		final Type resultType = extension.typeCheck(new TypeCheckMediator(
-				result, this), this);
+		final TypeCheckMediator mediator = new TypeCheckMediator(result, this,
+				isTerminalNode());
+		final Type resultType = extension.typeCheck(mediator, this);
 		setTemporaryType(resultType, result);
+	}
+
+	private boolean isTerminalNode() {
+		return childExpressions.length == 0 && childPredicates.length == 0;
 	}
 
 	@Override

@@ -20,5 +20,7 @@ import org.eventb.core.ast.Type;
  */
 public interface ITypeCheckMediator extends ITypeMediator {
 
-	void sameType(Type t1, Type t2);
+	Type newTypeVariable();
+	
+	void sameType(Type left, Type right);
 }
