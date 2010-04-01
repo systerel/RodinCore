@@ -23,8 +23,7 @@ import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
 
 /**
- * A first attempt at coding an extension. Multiple compilation errors invite to
- * refactor the extension mechanism.
+ * A third attempt at coding an extension. Looks better (no compile errors !).
  * 
  * @author Nicolas Beauger
  * 
@@ -61,9 +60,9 @@ public class BinaryPlus3 implements IExpressionExtension {
 		return "+";
 	}
 
-	public Predicate getWDPredicate(IWDMediator wdMediator,
+	public Predicate getWDPredicate(IWDMediator mediator,
 			IExtendedFormula formula) {
-		return wdMediator.makeChildWDConjunction(formula);
+		return mediator.makeChildWDConjunction(formula);
 	}
 
 	public void toString(IToStringMediator mediator, IExtendedFormula formula) {
