@@ -1,13 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added set and get for formula factory
  *******************************************************************************/
 package org.eventb.core.tool;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.internal.core.tool.types.IState;
 
@@ -27,6 +32,7 @@ import org.eventb.internal.core.tool.types.IState;
  * </p> 
  * @author Stefan Hallerstede
  * @since 1.1
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IStateRepository <I extends IState> {
 
@@ -86,4 +92,26 @@ public interface IStateRepository <I extends IState> {
 	 *             an exception has occurred earlier with this repository
 	 */
 	void setTypeEnvironment(ITypeEnvironment environment) throws CoreException;
+	
+	/**
+	 * Returns the formula factory stored in the repository.
+	 * 
+	 * @return the formula factory stored in the repository
+	 * @throws CoreException
+	 *             if an exception has occurred earlier with this repository
+	 * @since 1.3
+	 */
+	FormulaFactory getFormulaFactory() throws CoreException;
+	
+	/**
+	 * Sets the formula factory of this state repository.
+	 * 
+	 * @param factory
+	 *            the formula factory to set
+	 * @throws CoreException
+	 *             if the passed formula factory is <code>null</code> or if
+	 *             an exception has occurred earlier with this repository
+	 * @since 1.3
+	 */
+	void setFormulaFactory(FormulaFactory factory) throws CoreException;
 }

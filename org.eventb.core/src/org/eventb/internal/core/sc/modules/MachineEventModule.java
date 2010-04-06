@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added deleteAll() method
  *     Systerel - separation of file and root element
+ *     Systerel - got factory from repository
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -131,7 +132,8 @@ public class MachineEventModule extends LabeledElementModule {
 				repository.setState(concreteEventInfo);
 
 				repository.setState(new StackedIdentifierSymbolTable(
-						identifierSymbolTable, EVENT_IDENT_SYMTAB_SIZE));
+						identifierSymbolTable, EVENT_IDENT_SYMTAB_SIZE,
+						factory));
 
 				repository.setState(new EventLabelSymbolTable(
 						EVENT_LABEL_SYMTAB_SIZE));
@@ -249,7 +251,7 @@ public class MachineEventModule extends LabeledElementModule {
 		identifierSymbolTable = (IIdentifierSymbolTable) repository
 				.getState(IIdentifierSymbolTable.STATE_TYPE);
 
-		factory = FormulaFactory.getDefault();
+		factory = repository.getFormulaFactory();
 
 		machineTypeEnvironment = repository.getTypeEnvironment();
 

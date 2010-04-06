@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - got factory from repository
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -103,7 +104,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 				.getState(IContextTable.STATE_TYPE);
 
 		fetchSCMachine(abstractIdentifierSymbolTable, contextTable,
-				FormulaFactory.getDefault(), null);
+				repository.getFormulaFactory(), null);
 
 		abstractEventTable.makeImmutable();
 

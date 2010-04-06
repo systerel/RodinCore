@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - ensure that all AST problems are reported
  *     Systerel - ensure that all AST problems are reported
+ *     Systerel - got factory from repository
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -303,7 +304,7 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 
-		final FormulaFactory factory = FormulaFactory.getDefault();
+		final FormulaFactory factory = repository.getFormulaFactory();
 
 		final ITypeEnvironment typeEnvironment = repository
 				.getTypeEnvironment();

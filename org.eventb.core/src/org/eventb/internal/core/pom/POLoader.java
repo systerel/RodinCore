@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.core.pom;
 
 import java.util.HashSet;
@@ -32,6 +42,8 @@ public final class POLoader {
 	// flag for debug trace 
 	public static boolean DEBUG = false;
 
+	// FIXME FF: add as method param
+	// or make a field, add to constructor and make methods non static 
 	private static final FormulaFactory factory = FormulaFactory.getDefault();
 
 	private POLoader() {

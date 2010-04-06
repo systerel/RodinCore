@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Systerel - ensure that all AST problems are reported
  *     Systerel - mathematical language V2
  *     Systerel - added check on primed identifiers
+ *     Systerel - got factory from repository
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -48,6 +49,36 @@ public abstract class IdentifierModule extends SCProcessorModule {
 
 	protected IIdentifierSymbolTable identifierSymbolTable;
 
+	/**
+	 * Makes a free identifier from the given name.
+	 * <p>
+	 * Returns <code>null</code> if one of the following happens:
+	 * <li>the given name cannot be parsed as an expression</li>
+	 * <li>the given name is not a valid free identifier name</li>
+	 * <li>the given name is primed and prime is not allowed</li>
+	 * <li>the given name contains leading or trailing spaces</li>
+	 * For the first problem encountered, if any, a problem marker is added and
+	 * <code>null</code> is returned immediately.
+	 * </p>
+	 * 
+	 * @param name
+	 *            a name to parse
+	 * @param element
+	 *            the element associated the the name
+	 * @param attrType
+	 *            the attribute type of the element where the name is located
+	 * @param factory
+	 *            a formula factory to parse the name
+	 * @param display
+	 *            a marker display for problem markers
+	 * @param primeAllowed
+	 *            <code>true</code> if primed names are allowed,
+	 *            <code>false</code> otherwise
+	 * @return a free identifier with the given name, or <code>null</code> if
+	 *         there was a problem making the identifier
+	 * @throws RodinDBException
+	 *             if there is a problem accessing the Rodin database
+	 */
 	protected static FreeIdentifier parseIdentifier(String name,
 			IInternalElement element, IAttributeType.String attrType,
 			FormulaFactory factory, IMarkerDisplay display, boolean primeAllowed)
@@ -145,14 +176,54 @@ public abstract class IdentifierModule extends SCProcessorModule {
 		
 	}
 
+	/**
+	 * Creates a new instance of IIdentifierSymbolInfo
+	 * 
+	 * @param name
+	 *            the name of the identifier
+	 * @param element
+	 *            an element to which to attach problem markers
+	 * @return a new instance of IIdentifierSymbolInfo
+	 */
 	protected abstract IIdentifierSymbolInfo createIdentifierSymbolInfo(
 			String name, IIdentifierElement element);
 
+	/**
+	 * Adds type information about the given identifier symbol to the given type
+	 * environment.
+	 * <p>
+	 * This method is intended to be overridden by identifier modules that
+	 * contribute to the type environment.
+	 * </p>
+	 * 
+	 * @param newSymbolInfo
+	 *            a new identifier symbol info
+	 * @param environment
+	 *            the type environment of the state repository
+	 * @throws CoreException
+	 *             if there was a problem accessing the symbol table
+	 */
 	protected void typeIdentifierSymbol(IIdentifierSymbolInfo newSymbolInfo,
 			final ITypeEnvironment environment) throws CoreException {
 		// by default no type information for the identifier is generated
 	}
 
+	/**
+	 * Inserts the given new identifier symbol info for the given identifier
+	 * element into the symbol table.
+	 * <p>
+	 * In case the symbol is already present in the symbol table, a conflict
+	 * marker is created for conflicting symbols.
+	 * </p>
+	 * 
+	 * @param element
+	 *            an identifier element
+	 * @param newSymbolInfo
+	 *            a new symbol info related to the element
+	 * @return <code>true</code> iff the symbol has been correctly added
+	 * @throws CoreException
+	 *             if there was a problem accessing conflicting symbol infos
+	 */
 	protected boolean insertIdentifierSymbol(IIdentifierElement element,
 			IIdentifierSymbolInfo newSymbolInfo) throws CoreException {
 
@@ -185,7 +256,7 @@ public abstract class IdentifierModule extends SCProcessorModule {
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.initModule(element, repository, monitor);
-		factory = FormulaFactory.getDefault();
+		factory = repository.getFormulaFactory();
 		typeEnvironment = repository.getTypeEnvironment();
 
 		identifierSymbolTable = (IIdentifierSymbolTable) repository

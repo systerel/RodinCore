@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineRoot;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
@@ -85,7 +84,6 @@ public class FwdMachineEventModule extends UtilityModule {
 		machineTypeEnvironment = repository.getTypeEnvironment();
 		machineHypothesisManager =
 			(IMachineHypothesisManager) repository.getState(IMachineHypothesisManager.STATE_TYPE);
-		factory = FormulaFactory.getDefault();
 	}
 
 	/* (non-Javadoc)

@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - got factory from repository
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -263,7 +264,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 		concreteEventInfo = (IConcreteEventInfo) repository
 				.getState(IConcreteEventInfo.STATE_TYPE);
 		isInitialisation = concreteEventInfo.isInitialisation();
-		factory = FormulaFactory.getDefault();
+		factory = repository.getFormulaFactory();
 	}
 
 	@Override

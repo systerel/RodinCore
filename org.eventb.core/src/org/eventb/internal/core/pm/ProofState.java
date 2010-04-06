@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,6 +58,8 @@ public class ProofState implements IProofState {
 	
 	private static final UserSupportManager usm = UserSupportManager.getDefault();
 
+	// FIXME FF: get factory from proof component (add method)
+	// or remove parameter ff from IProofComponent#getProofSkeleton()
 	static final FormulaFactory ff = FormulaFactory.getDefault();
 	
 	// The PR sequent associated with this proof obligation.

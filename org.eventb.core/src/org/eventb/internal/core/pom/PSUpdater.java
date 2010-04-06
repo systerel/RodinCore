@@ -46,6 +46,7 @@ import org.rodinp.core.RodinDBException;
  */
 public class PSUpdater {
 
+	// FIXME FF: compute factory from proof file
 	private static FormulaFactory ff = FormulaFactory.getDefault();
 	
 	// access to the proof files

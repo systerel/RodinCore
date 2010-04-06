@@ -647,6 +647,8 @@ public class EventBPlugin extends Plugin {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the proof
 	 * @since 1.3
+	 * FIXME consider removing the factory parameter as it should be computed
+	 * from informations located in proof file; else provide a method to get it
 	 */
 	public static boolean rebuildProof(IPRProof proof, FormulaFactory factory,
 			IProgressMonitor monitor) throws RodinDBException {

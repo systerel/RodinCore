@@ -175,6 +175,7 @@ public class CompletionUtil {
 			}
 			try {
 				final String assign = ((IAction) locElem).getAssignmentString();
+				// FIXME FF: either avoid ff or get it as @param or compute it
 				final IParseResult result = FormulaFactory.getDefault()
 						.parseAssignment(assign, LanguageVersion.LATEST, assign);
 				if (result.hasProblem()) {

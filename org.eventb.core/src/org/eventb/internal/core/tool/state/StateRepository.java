@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added formula factory field along with set and get methods
  *******************************************************************************/
 package org.eventb.internal.core.tool.state;
 
@@ -35,10 +39,14 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 	
 	private ITypeEnvironment environment;
 	
+	private FormulaFactory factory;
+	
 	public StateRepository() {
 		if (DEBUG)
 			System.out.println("NEW STATE REPOSITORY ##################");
-		environment = FormulaFactory.getDefault().makeTypeEnvironment();
+		// init with default factory
+		factory = FormulaFactory.getDefault();
+		environment = factory.makeTypeEnvironment();
 		repository = new Hashtable<IStateType<?>, I>(REPOSITORY_SIZE);
 		exception = null;
 	}
@@ -80,6 +88,20 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 		this.environment = environment;
 	}
 
+	public FormulaFactory getFormulaFactory() throws CoreException {
+		if (exception != null)
+			throw exception;
+		return factory;
+	}
+	
+	public void setFormulaFactory(FormulaFactory factory) throws CoreException {
+		if (exception != null)
+			throw exception;
+		if (factory == null)
+			throwNewCoreException("Attempt to set null formula factory");
+		this.factory = factory;
+	}
+	
 	public final void setState(I state) throws CoreException {
 		if (DEBUG)
 			System.out.println("SET STATE: " + state.getStateType());

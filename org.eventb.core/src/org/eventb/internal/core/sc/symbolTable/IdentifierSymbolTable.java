@@ -1,9 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008 ETH Zurich, 2008 University of Southampton
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     University of Southampton - maintenance
+ *     Systerel - added formula factory field
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
@@ -31,9 +36,11 @@ public class IdentifierSymbolTable
 		implements IIdentifierSymbolTable {
 
 	private final Set<FreeIdentifier> freeIdentifiers;
+	private final FormulaFactory factory;
 
-	public IdentifierSymbolTable(int identSize) {
+	public IdentifierSymbolTable(int identSize, FormulaFactory factory) {
 		super(identSize);
+		this.factory = factory;
 		freeIdentifiers = new HashSet<FreeIdentifier>(identSize);
 	}
 
@@ -53,8 +60,8 @@ public class IdentifierSymbolTable
 	public void putSymbolInfo(IIdentifierSymbolInfo symbolInfo)
 			throws CoreException {
 		super.putSymbolInfo(symbolInfo);
-		freeIdentifiers.add(FormulaFactory.getDefault().makeFreeIdentifier(
-				symbolInfo.getSymbol(), null));
+		freeIdentifiers.add(factory.makeFreeIdentifier(symbolInfo.getSymbol(),
+				null));
 	}
 
 	public IIdentifierSymbolInfo getSymbolInfoFromTop(String symbol) {

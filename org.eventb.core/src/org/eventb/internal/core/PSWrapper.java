@@ -55,6 +55,8 @@ public class PSWrapper implements IPSWrapper {
 		}
 	}
 
+	// FIXME FF: rebuild factory from information in proof file
+	// ( add IPRRoot.getFormulaFactory() )
 	private static FormulaFactory ff = FormulaFactory.getDefault();
 
 	final IRodinFile psFile;

@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - got factory from repository
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -70,7 +71,7 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 			throws CoreException {
 		super.initModule(element, repository, monitor);
 		variantInfo = new VariantInfo();
-		factory = FormulaFactory.getDefault();
+		factory = repository.getFormulaFactory();
 		repository.setState(variantInfo);
 	}
 
