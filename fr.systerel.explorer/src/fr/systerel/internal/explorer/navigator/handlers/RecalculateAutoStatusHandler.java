@@ -41,13 +41,13 @@ public class RecalculateAutoStatusHandler extends AbstractHandler {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				try {
 					final SubMonitor subMonitor = SubMonitor.convert(monitor,
-							Messages.dialogs_replayingProofs, 10);
+							Messages.dialogs_recalculatingAutoStatus, 10);
 					final Set<IPSStatus> statuses = getSelectedStatuses(false,
 							subMonitor.newChild(1));
 					RecalculateAutoStatus.run(statuses, subMonitor.newChild(9));
 				} catch (RodinDBException e) {
 					EventBUIExceptionHandler.handleRodinException(e,
-							UserAwareness.IGNORE);
+							UserAwareness.INFORM);
 				} catch (InterruptedException e) {
 					// canceled: return as soon as possible 
 				} finally {
