@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,28 +8,29 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - used proof components
  *******************************************************************************/
 package org.eventb.internal.core.pom;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IPOSequent;
-import org.eventb.core.IPRProof;
-import org.eventb.core.IPSRoot;
+import org.eventb.core.IEventBRoot;
+import org.eventb.core.IPRRoot;
 import org.eventb.core.IPSStatus;
+import org.eventb.core.pm.IProofAttempt;
+import org.eventb.core.pm.IProofComponent;
+import org.eventb.core.pm.IProofManager;
 import org.eventb.core.seqprover.IProofTree;
-import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.internal.core.PSWrapper;
+import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.ProofMonitor;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
@@ -54,6 +55,8 @@ public final class RecalculateAutoStatus {
 
 	public static boolean DEBUG;
 
+	private static final String REC_AUTO = "Recalculate auto status"; //$NON-NLS-1$
+	
 	private RecalculateAutoStatus() {
 		// Nothing to do.
 	}
@@ -67,83 +70,65 @@ public final class RecalculateAutoStatus {
 	
 	public static void run(Set<IPSStatus> pos, IProgressMonitor monitor)
 			throws RodinDBException {
-		final Set<IRodinFile> prFiles = new HashSet<IRodinFile>();
-		final Set<IRodinFile> psFiles = new HashSet<IRodinFile>();
+		final SubMonitor pm = SubMonitor.convert(monitor, pos.size());
+		final Set<IProofComponent> prComps = new HashSet<IProofComponent>();
 		try {
-			monitor.beginTask("auto-proving", pos.size());
 			for (IPSStatus status : pos) {
-				final IRodinFile psFile = status.getRodinFile();
-				final IPSRoot psRoot = (IPSRoot) status.getRoot();
-				final IRodinFile prFile = psRoot.getPRRoot().getRodinFile();
-				if (monitor.isCanceled()) {
-					prFile.makeConsistent(null);
-					psFile.makeConsistent(null);
+				if (pm.isCanceled()) {
+					makeAllConsistent(prComps);
 					throw new OperationCanceledException();
 				}
-				IProgressMonitor subMonitor = new SubProgressMonitor(monitor,
-						2, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
-				processPo(prFile, status, subMonitor);
-				prFiles.add(prFile);
-				psFiles.add(psFile);
+				final IProofComponent pc = getProofComponent(status);
+				processPo(pc, status, pm.newChild(1, SubMonitor.SUPPRESS_NONE));
+				prComps.add(pc);
 			}
-			saveAll(prFiles, null, false, true);
-			saveAll(psFiles, null, false, false);
+			saveAll(prComps);
 		} finally {
 			monitor.done();
 		}
 	}
 
-	private static void saveAll(Collection<IRodinFile> files,
-			IProgressMonitor monitor, boolean force, boolean keepHistory)
-			throws RodinDBException {
-		for (IRodinFile file : files) {
-			file.save(monitor, force, keepHistory);
+	private static void processPo(IProofComponent pc, IPSStatus status,
+			SubMonitor pm) throws RodinDBException {
+		
+		final String poName = status.getElementName();
+		if (pc.getProofAttempts(poName).length != 0) {
+			// other attempts exist: don't process this PO
+			return;
 		}
-	}
-	
-	private static boolean processPo(IRodinFile prFile, IPSStatus status,
-			IProgressMonitor pm) throws RodinDBException {
 
+		pm.beginTask(poName + ":", 10); //$NON-NLS-1$
+
+		pm.subTask(Messages.progress_RecalculateAutoStatus_loading);
+		final IProofAttempt pa = pc.createProofAttempt(poName, REC_AUTO, pm.newChild(1));
 		try {
-			pm.beginTask(status.getElementName() + ":", 3);
+			
+			final IProofTree autoProofTree = pa.getProofTree();
 
-			pm.subTask("loading");
-			final IPOSequent poSequent = status.getPOSequent();
-			final IProverSequent sequent = POLoader.readPO(poSequent);
-			final IProofTree autoProofTree = ProverFactory.makeProofTree(sequent,
-					poSequent);
-			pm.worked(1);
+			pm.subTask(Messages.progress_RecalculateAutoStatus_proving);
+			autoTactic().apply(autoProofTree.getRoot(), new ProofMonitor(pm.newChild(7)));
 
-			pm.subTask("proving");
-			autoTactic().apply(autoProofTree.getRoot(), new ProofMonitor(pm));
-			pm.worked(1);
-
-			pm.subTask("saving");
-			final IPRProof prProof = status.getProof();
+			pm.subTask(Messages.progress_RecalculateAutoStatus_saving);
 			// Update the tree if it was discharged
 			if (autoProofTree.isClosed()) {
-				prProof.setProofTree(autoProofTree, null);
+				pa.commit(false, true, pm.newChild(2));
 				
 				if (DEBUG) {
 					if (status.getHasManualProof()) {
-						System.out.println("Proof " + status.getElementName() + " is now automatic.");
+						System.out.println("Proof " + poName + " is now automatic."); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
-				
-				PSWrapper.updateStatus(status, new SubProgressMonitor(pm, 1));				
-				status.setHasManualProof(false, null);
 			} else {
 				if (DEBUG) {
 					if (!status.getHasManualProof()) {
-						System.out.println("Proof " + status.getElementName() + " is now manual.");
+						System.out.println("Proof " + poName + " is now manual."); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 				
 				status.setHasManualProof(true, null);
 			}
-			return true;
-
 		} finally {
+			pa.dispose();
 			pm.done();
 		}
 	}
@@ -151,6 +136,27 @@ public final class RecalculateAutoStatus {
 	private static ITactic autoTactic() {
 		return EventBPlugin.getAutoTacticPreference()
 				.getSelectedComposedTactic();
+	}
+
+	private static void makeAllConsistent(Set<IProofComponent> prComps)
+			throws RodinDBException {
+		for (IProofComponent pc : prComps) {
+			pc.makeConsistent(null);
+		}
+	}
+
+	private static void saveAll(Set<IProofComponent> prComps)
+			throws RodinDBException {
+		for (IProofComponent pc : prComps) {
+			pc.save(null, false);
+		}
+	}
+	
+	private static IProofComponent getProofComponent(IInternalElement element) {
+		final IProofManager pm = EventBPlugin.getProofManager();
+		final IEventBRoot root = (IEventBRoot) element.getRoot();
+		final IPRRoot prRoot = root.getPRRoot();
+		return pm.getProofComponent(prRoot);
 	}
 
 }
