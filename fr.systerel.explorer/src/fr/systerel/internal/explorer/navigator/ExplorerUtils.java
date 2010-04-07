@@ -35,7 +35,6 @@ import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
@@ -100,11 +99,6 @@ public class ExplorerUtils {
 	public static boolean DEBUG;
 
 	public static final String DEBUG_PREFIX = "*** Event-B Explorer *** ";
-
-	/**
-	 * @since 1.3
-	 */
-	public static final FormulaFactory factory = FormulaFactory.getDefault();
 
 	public static IMachineRoot[] getMachineRootChildren(IRodinProject project)
 			throws RodinDBException {
