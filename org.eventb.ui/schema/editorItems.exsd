@@ -1,0 +1,429 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eventb.ui" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="org.eventb.ui" id="editorItems" name="Description of Rodin items to be displayed in the editor"/>
+      </appinfo>
+      <documentation>
+         This extension point allows plug-in writers to specify how to display and modify an Internal Element in Event-B Editor.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <choice minOccurs="1" maxOccurs="unbounded">
+               <element ref="element"/>
+               <element ref="textAttribute"/>
+               <element ref="choiceAttribute"/>
+               <element ref="childRelation"/>
+               <element ref="attributeRelation"/>
+               <element ref="autoNaming"/>
+               <element ref="toggleAttribute"/>
+            </choice>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="element">
+      <annotation>
+         <documentation>
+            Describes how to graphically display a Rodin element.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="typeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Element type of the elements described here, must be the unique ID of a Rodin internal element type (see extension point org.rodinp.core.internalElementTypes).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="imagePath" type="string">
+            <annotation>
+               <documentation>
+                  Path to the icon to display for this element, if any. The element must not define an imagePath and an imageProvider at the same time.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="prefix" type="string">
+            <annotation>
+               <documentation>
+                  Prefix to display before the element
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="childrenSuffix" type="string">
+            <annotation>
+               <documentation>
+                  Suffix to display after the children of this element.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="defaultColumn" type="string">
+            <annotation>
+               <documentation>
+                  The default column to edit when the element is selected.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="imageProvider" type="string">
+            <annotation>
+               <documentation>
+                  The name of the class that will be used to display an icon for this element. The class must implement &lt;samp&gt;org.eventb.internal.ui.eventbeditor.imageprovider.IImageProvider&lt;/samp&gt; and must also have a default contructor. The element must not define an imagePath and an imageProvider at the same time.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eventb.internal.ui.eventbeditor.imageprovider.IImageProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="textAttribute">
+      <annotation>
+         <documentation>
+            Describes how to graphically display a Rodin textual attribute.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Unique identifier for this attribute description.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="typeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Id of the Rodin attribute type to which this description applies (see extension point org.rodinp.core.attributeTypes).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="prefix" type="string">
+            <annotation>
+               <documentation>
+                  prefix to display before the widget to edit the attribute
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="suffix" type="string">
+            <annotation>
+               <documentation>
+                  suffix to display after the widget to edit the attribute
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="expandsHorizontally" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  true if the editing area should expand horizontally.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of a class which will be used for creating/editing the attribute. The class must implement &lt;samp&gt;org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation&lt;/samp&gt; and also must have a default contructor.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="isMath" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  This indicates that the text widget will need math keyboard attachted to it or not.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="style" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Either single or multi lines. Value must be single or multi
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="foregroundColor" type="string">
+            <annotation>
+               <documentation>
+                  preference key determining the foreground color of this widget. Must be defined in PreferenceConstants. If this attribute is not specified, the &quot;Text foreground&quot; preference will be used.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="choiceAttribute">
+      <annotation>
+         <documentation>
+            Describes how to graphically display a Rodin attribute where the user has to select among a list of choices.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Unique identifier for this attribute description.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="typeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Id of the Rodin attribute type to which this description applies (see extension point org.rodinp.core.attributeTypes).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="prefix" type="string">
+            <annotation>
+               <documentation>
+                  prefix to display before the widget to edit the attribute
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="suffix" type="string">
+            <annotation>
+               <documentation>
+                  suffix to display after the widget to edit the attribute
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="expandsHorizontally" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  true if the editing area should expand horizontally.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of a class which will be used for creating/editing the attribute. The class must implement &lt;samp&gt;org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation&lt;/samp&gt; and also must have a default contructor.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="required" type="boolean">
+            <annotation>
+               <documentation>
+                  tells whether this attribute is required. If false, the combo widget will display an &quot;undefined&quot; item in the list of choices.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="attributeReference">
+      <annotation>
+         <documentation>
+            Introduces a reference to an attribute that elements of this type can carry.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="descriptionId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Id of an attribute description in this extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="column" type="string">
+            <annotation>
+               <documentation>
+                  Column in which to display this attribute
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="autoNaming">
+      <annotation>
+         <documentation>
+            Describes how to rename automatically an element. It can&apos;t be two autonaming with the same element type.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="elementTypeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Element type of the element, must be the unique ID of a Rodin internal element type (see extension point org.rodinp.core.internalElementTypes).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="attributeDescriptionId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Id of an attribute description in this extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="namePrefix" type="string" use="required">
+            <annotation>
+               <documentation>
+                  default prefix to rename the element
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="childType">
+      <complexType>
+         <attribute name="typeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Element type of the child, must be the unique ID of a Rodin internal element type (see extension point org.rodinp.core.internalElementTypes).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="priority" type="string">
+            <annotation>
+               <documentation>
+                  The priority of the element, which is used for sorting the elements in the UI in ascending order. Value must be between 1 and 1000. The default priority is the maximum.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="childRelation">
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="childType"/>
+         </sequence>
+         <attribute name="parentTypeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Element type of the parent, must be the unique ID of a Rodin internal element type (see extension point org.rodinp.core.internalElementTypes).
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="attributeRelation">
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="attributeReference"/>
+         </sequence>
+         <attribute name="elementTypeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Element type of the element, must be the unique ID of a Rodin internal element type (see extension point org.rodinp.core.internalElementTypes).
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="toggleAttribute">
+      <annotation>
+         <documentation>
+            Describes how to graphically display a Rodin attribute of type boolean.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Unique identifier for this attribute description.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="typeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Id of the Rodin attribute type to which this description applies (see extension point org.rodinp.core.attributeTypes).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of a class which will be used for creating/editing the attribute. The class must extends &lt;samp&gt;org.eventb.internal.ui.eventbeditor.manipulation.AbstractBooleanManipulation&lt;/samp&gt; and also must have a default contructor.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="org.eventb.internal.ui.eventbeditor.manipulation.AbstractBooleanManipulation:org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         [Enter the first release in which this extension point appears.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiinfo"/>
+      </appinfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+
+</schema>
