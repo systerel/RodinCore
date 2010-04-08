@@ -624,6 +624,8 @@ public class EventBPlugin extends Plugin {
 	 * @return <code>true</code> iff the proof has been successfully simplified
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the proof
+	 * FIXME FF: consider removing the factory parameter as it should be computed
+	 * from informations located in proof file; else provide a method to get it
 	 */
 	public static boolean simplifyProof(IPRProof proof, FormulaFactory factory,
 			IProgressMonitor monitor) throws RodinDBException {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,14 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - added getFormulaFactory()
  *******************************************************************************/
 package org.eventb.core.pm;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSStatus;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.IProofTree;
 import org.rodinp.core.RodinDBException;
 
@@ -64,6 +66,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Laurent Voisin
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IProofAttempt {
 
@@ -181,6 +184,14 @@ public interface IProofAttempt {
 	 * @return the owner of this proof attempt
 	 */
 	String getOwner();
+
+	/**
+	 * Returns the formula factory for this proof attempt.
+	 * 
+	 * @return a formula factory
+	 * @since 1.3
+	 */
+	FormulaFactory getFormulaFactory();
 
 	/**
 	 * Returns the proof tree of this proof attempt. The proof tree can be

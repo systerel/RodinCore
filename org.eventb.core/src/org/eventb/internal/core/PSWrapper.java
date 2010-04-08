@@ -55,8 +55,7 @@ public class PSWrapper implements IPSWrapper {
 		}
 	}
 
-	// FIXME FF: rebuild factory from information in proof file
-	// ( add IPRRoot.getFormulaFactory() )
+	// FIXME FF: rebuild factory from information in PO file
 	private static FormulaFactory ff = FormulaFactory.getDefault();
 
 	final IRodinFile psFile;
@@ -89,7 +88,7 @@ public class PSWrapper implements IPSWrapper {
 	private IProofTree createFreshProofTree(IPSStatus psStatus)
 			throws RodinDBException {
 		final IPOSequent poSequent = psStatus.getPOSequent();
-		final IProverSequent rootSeq = POLoader.readPO(poSequent);
+		final IProverSequent rootSeq = POLoader.readPO(poSequent, ff);
 		final IProofTree pt = ProverFactory.makeProofTree(rootSeq, poSequent);
 		final long poStamp = poSequent.getPOStamp(); 
 		loadedTrees.put(psStatus, new StampedProofTree(poStamp, pt));
@@ -212,7 +211,7 @@ public class PSWrapper implements IPSWrapper {
 			throws RodinDBException {
 
 		final IPOSequent poSequent = status.getPOSequent();
-		final IProverSequent seq =  POLoader.readPO(poSequent);
+		final IProverSequent seq =  POLoader.readPO(poSequent, ff);
 		final IPRProof prProof = status.getProof();
 		final boolean broken;
 		if (prProof.exists()) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,13 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - added getFormulaFactory()
  *******************************************************************************/
 package org.eventb.internal.core.pm;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -143,6 +145,9 @@ public class ProofComponent implements IProofComponent {
 
 	synchronized Collection<ProofAttempt> values(String poName) {
 		final Map<String, ProofAttempt> map = known.get(poName);
+		if (map == null) {
+			return Collections.emptySet();
+		}
 		return map.values();
 	}
 
@@ -177,6 +182,12 @@ public class ProofComponent implements IProofComponent {
 		final IWorkspaceRunnable op = new SaveProofComponentOperation(this,
 				force);
 		RodinCore.run(op, getSchedulingRule(), monitor);
+	}
+
+	public FormulaFactory getFormulaFactory(String poName,
+			IProgressMonitor monitor) {
+		// FIXME FF: read from proof file
+		return FormulaFactory.getDefault();
 	}
 
 }
