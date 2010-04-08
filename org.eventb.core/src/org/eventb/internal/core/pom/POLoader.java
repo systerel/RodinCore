@@ -1,14 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     ETH Zurich - initial API and implementation
- *     Systerel - added formula factory parameter
- *******************************************************************************/
 package org.eventb.internal.core.pom;
 
 import java.util.HashSet;
@@ -43,6 +32,8 @@ public final class POLoader {
 	// flag for debug trace 
 	public static boolean DEBUG = false;
 
+	private static final FormulaFactory factory = FormulaFactory.getDefault();
+
 	private POLoader() {
 		super();
 	}
@@ -57,36 +48,34 @@ public final class POLoader {
 	 * 
 	 * @param poSeq
 	 *            the proof obligation to read
-	 * @param factory
-	 *            the formula factory to use
 	 * @return the sequent of the given proof obligation
 	 * @throws RodinDBException
 	 */
-	public static IProverSequent readPO(IPOSequent poSeq, FormulaFactory factory)
-			throws RodinDBException {
+	public static IProverSequent readPO(IPOSequent poSeq) throws RodinDBException {
 		final ITypeEnvironment typeEnv = factory.makeTypeEnvironment();
 		final Set<Predicate> hypotheses = new LinkedHashSet<Predicate>();
 		final Set<Predicate> selHyps = new LinkedHashSet<Predicate>();
 		final SelectionHints selHints = new SelectionHints(poSeq);
-		loadHypotheses(poSeq, selHints, hypotheses, selHyps, typeEnv, factory);
-		final Predicate goal = readGoal(poSeq, typeEnv, factory);
-		if (! isWDPO(poSeq)) addWDpredicates(goal, hypotheses, factory);
+		loadHypotheses(poSeq, selHints, hypotheses, selHyps, typeEnv);
+		final Predicate goal = readGoal(poSeq, typeEnv);
+		if (! isWDPO(poSeq)) addWDpredicates(goal, hypotheses);
 		return ProverFactory.makeSequent(typeEnv,hypotheses,selHyps,goal);
 	}
 	
 	/**
-	 * Checks if the given {@link IPOSequent} is a proof obligation for proving
-	 * WD of the goal.
+	 * Checks if the given {@link IPOSequent} is a proof obligation for proving WD
+	 * of the goal.
 	 * 
 	 * <p>
-	 * In this case, adding the WD predicate of the goal to the hypotheses can
-	 * be avoided (see {@link #readPO(IPOSequent, FormulaFactory)}).
+	 * In this case, adding the WD predicate of the goal to the hypotheses can be avoided
+	 * (see {@link #readPO(IPOSequent)}).
 	 * </p>
 	 * 
 	 * 
 	 * @param poSeq
-	 *            the sequent to check for
-	 * @return <code>true</code> iff the given PO is a WD PO.
+	 * 		the sequent to check for
+	 * @return
+	 * 		<code>true</code> iff the given PO is a WD PO.
 	 * 
 	 * 
 	 */
@@ -109,14 +98,11 @@ public final class POLoader {
 	 *            set of hypotheses where to store the selected loaded hypotheses
 	 * @param typeEnv
 	 *            type environment to enrich at the same time
-	 * @param factory
-	 *            the formula factory to use
 	 * @throws RodinDBException
 	 */
 	private static void loadHypotheses(IPOSequent poSeq,
-			SelectionHints selHints, Set<Predicate> hypotheses,
-			Set<Predicate> selHyps, ITypeEnvironment typeEnv,
-			FormulaFactory factory) throws RodinDBException {
+			SelectionHints selHints, Set<Predicate> hypotheses, Set<Predicate> selHyps, ITypeEnvironment typeEnv)
+			throws RodinDBException {
 
 		IPOPredicateSet[] dbHyps = poSeq.getHypotheses();
 		if (dbHyps.length == 0) {
@@ -126,19 +112,16 @@ public final class POLoader {
 		if (dbHyps.length != 1) {
 			Util.log(null, "More than one predicate set in PO " + poSeq);
 		}
-		loadPredicateSet(dbHyps[0], selHints, hypotheses, selHyps, typeEnv,
-				factory);
+		loadPredicateSet(dbHyps[0], selHints, hypotheses, selHyps, typeEnv);
 	}
 	
 	private static void loadPredicateSet(IPOPredicateSet poPredSet,
-			SelectionHints selHints, Set<Predicate> hypotheses,
-			Set<Predicate> selHyps, ITypeEnvironment typeEnv,
-			FormulaFactory factory) throws RodinDBException {
+			SelectionHints selHints, Set<Predicate> hypotheses, Set<Predicate> selHyps, ITypeEnvironment typeEnv)
+			throws RodinDBException {
 
 		final IPOPredicateSet parentSet = poPredSet.getParentPredicateSet();
 		if (parentSet != null) {
-			loadPredicateSet(parentSet, selHints, hypotheses, selHyps, typeEnv,
-					factory);
+			loadPredicateSet(parentSet, selHints, hypotheses, selHyps, typeEnv);
 		}
 		for (final IPOIdentifier poIdent: poPredSet.getIdentifiers()) {
 			typeEnv.add(poIdent.getIdentifier(factory));
@@ -150,7 +133,7 @@ public final class POLoader {
 			final Predicate hypothesis = predicate;
 			if ( selected || selHints.contains(poPred)) selHyps.add(hypothesis);
 			hypotheses.add(hypothesis);
-			addWDpredicates(hypothesis, hypotheses, factory);
+			addWDpredicates(hypothesis, hypotheses);
 		}
 	}
 	
@@ -161,13 +144,10 @@ public final class POLoader {
 	 *            PO to read
 	 * @param typeEnv
 	 *            type environment to use
-	 * @param factory
-	 *            the formula factory to use
 	 * @return the goal of the given PO
 	 * @throws RodinDBException
 	 */
-	private static Predicate readGoal(IPOSequent poSeq,
-			ITypeEnvironment typeEnv, FormulaFactory factory)
+	private static Predicate readGoal(IPOSequent poSeq, ITypeEnvironment typeEnv)
 			throws RodinDBException {
 		
 		IPOPredicate[] dbGoals = poSeq.getGoals();
@@ -183,40 +163,36 @@ public final class POLoader {
 	
 
 	/**
-	 * Adds the WD predicates of the given predicate to the given predicate set
-	 * in case it should be added (see {@link #shouldWDpredBeAdded(Predicate)}).
+	 * Adds the WD predicates of the given predicate to the given predicate set in case it
+	 * should be added (see {@link #shouldWDpredBeAdded(Predicate)}).
 	 * 
 	 * <p>
-	 * In case the WD predicate is 'true', this is not added. In case the WD
-	 * predicate is a conjunction, its conjuncts are added.
+	 * In case the WD predicate is 'true', this is not added. In case the WD predicate
+	 * is a conjunction, its conjuncts are added.
 	 * </p>
 	 * 
 	 * @param pred
-	 *            The predicate whose WD predicate should be added to the given
-	 *            predicate set
-	 * @param ff
-	 *            the formula factory to use
+	 * 				The predicate whose WD predicate should be added to the given predicate set
 	 * @param predSet
-	 *            The predicate set to which this WD predicate should be added
+	 * 				The predicate set to which this WD predicate should be added
 	 */
-	private static void addWDpredicates(Predicate pred, Set<Predicate> predSet,
-			FormulaFactory ff) {
+	private static void addWDpredicates(Predicate pred, Set<Predicate> predSet){
 		if (! shouldWDpredBeAdded(pred)) return;
-		Set<Predicate> toAdd = Lib.breakPossibleConjunct(pred.getWDPredicate(ff));
+		Set<Predicate> toAdd = Lib.breakPossibleConjunct(pred.getWDPredicate(Lib.ff));
 		toAdd.remove(Lib.True);
 		predSet.addAll(toAdd);
 	}
 	
 	/**
-	 * Filters predicates for whom WD predicates should be added to the
-	 * hypotheses.
+	 * Filters predicates for whom WD predicates should be added to the hypotheses.
 	 * 
 	 * @param pred
-	 *            the predicate to filter
-	 * @return <code>true</code> iff the WD predicate for this predicate should
-	 *         be added to the hypotheses.
+	 * 		the predicate to filter
+	 * @return
+	 * 		<code>true</code> iff the WD predicate for this predicate should be added to the
+	 * 		hypotheses.
 	 * 
-	 * @see #addWDpredicates(Predicate, Set, FormulaFactory)
+	 * @see #addWDpredicates(Predicate, Set)
 	 */
 	private static boolean shouldWDpredBeAdded(Predicate pred){
 		return (! (pred instanceof QuantifiedPredicate));
