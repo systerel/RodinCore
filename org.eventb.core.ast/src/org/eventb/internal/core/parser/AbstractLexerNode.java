@@ -18,7 +18,6 @@ import java.util.Map.Entry;
  * An abstract node in the recognition graph used by the parameterizable lexer.
  * 
  * @author Christophe Métayer
- * @author Thomas Muller
  * @since 2.0
  */
 public abstract class AbstractLexerNode {

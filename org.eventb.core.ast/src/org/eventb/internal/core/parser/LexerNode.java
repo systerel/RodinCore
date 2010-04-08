@@ -19,7 +19,6 @@ import java.util.HashMap;
  * lexer.
  * 
  * @author Christophe Métayer
- * @author Thomas Muller
  * @since 2.0
  */
 public class LexerNode extends AbstractLexerNode {

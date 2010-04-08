@@ -31,7 +31,6 @@ import org.eventb.core.ast.SourceLocation;
  * A parameterizable lexer.
  * 
  * @author Christophe Métayer
- * @author Thomas Muller
  * @since 2.0
  */
 public class GenScan {
