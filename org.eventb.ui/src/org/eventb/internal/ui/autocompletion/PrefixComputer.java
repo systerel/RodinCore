@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,24 +14,14 @@ import org.eventb.core.ast.FormulaFactory;
 
 public class PrefixComputer {
 
-	// TODO see if we can factorize a unique FormulaFactory for the plugin
-	private static final FormulaFactory ff = FormulaFactory.getDefault();
-
-	private static boolean isIdentifierPrefix(String string) {
-		// a prefix of an identifier is a valid identifier 
-		return ff.isValidIdentifierName(string);
-	}
-	
-	private static boolean isIdentifierSuffix(String string) {
-		return ff.isValidIdentifierName("P" + string);
-	}
-
 	private final String string;
 	private final int position;
+	private final FormulaFactory ff;
 	
-	public PrefixComputer(String string, int position) {
+	public PrefixComputer(String string, int position, FormulaFactory ff) {
 		this.string = string;
 		this.position = position;
+		this.ff = ff;
 	}
 	
 	public String getPrefix() {
@@ -55,5 +45,15 @@ public class PrefixComputer {
 		}
 		return pos;
 	}
+
+	private boolean isIdentifierPrefix(String candidate) {
+		// a prefix of an identifier is a valid identifier 
+		return ff.isValidIdentifierName(candidate);
+	}
+	
+	private boolean isIdentifierSuffix(String candidate) {
+		return ff.isValidIdentifierName("P" + candidate);
+	}
+
 
 }

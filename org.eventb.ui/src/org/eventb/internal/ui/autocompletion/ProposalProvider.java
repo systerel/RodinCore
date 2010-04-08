@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.ast.FormulaFactory;
 import org.rodinp.core.location.IAttributeLocation;
 
 public class ProposalProvider implements IContentProposalProvider {
@@ -51,17 +52,27 @@ public class ProposalProvider implements IContentProposalProvider {
 	}
 
 	private final IAttributeLocation location;
+	private FormulaFactory ff;
 
 	public ProposalProvider(IAttributeLocation location) {
 		this.location = location;
+		this.ff = null;
 	}
 
 	public IContentProposal[] getProposals(String contents, int position) {
-		final PrefixComputer pc = new PrefixComputer(contents, position);
+		if (ff == null) {
+			ff = initFactory();
+		}
+		final PrefixComputer pc = new PrefixComputer(contents, position, ff);
 		final String prefix = pc.getPrefix();
 		final List<String> completions = EventBPlugin.getCompletions(location,
 				prefix);
 		return makeProposals(contents, position, prefix, completions);
+	}
+
+	private FormulaFactory initFactory() {
+		// FIXME FF: compute from location
+		return FormulaFactory.getDefault();
 	}
 
 	private IContentProposal[] makeProposals(String contents, int position,
