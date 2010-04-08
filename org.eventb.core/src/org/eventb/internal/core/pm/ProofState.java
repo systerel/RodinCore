@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2009 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - refactored for using the Proof Manager API
  *     Systerel - added proof simplification on commit
  *     Systerel - removed post-tactics call when saving
+ *     Systerel - got formula factory from proof attempt
  ******************************************************************************/
 package org.eventb.internal.core.pm;
 
@@ -22,7 +23,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IProofComponent;
@@ -58,10 +58,6 @@ public class ProofState implements IProofState {
 	
 	private static final UserSupportManager usm = UserSupportManager.getDefault();
 
-	// FIXME FF: get factory from proof component (add method)
-	// or remove parameter ff from IProofComponent#getProofSkeleton()
-	static final FormulaFactory ff = FormulaFactory.getDefault();
-	
 	// The PR sequent associated with this proof obligation.
 	final IPSStatus status;
 	
@@ -120,7 +116,8 @@ public class ProofState implements IProofState {
 				try {
 					ProofState.this.setDirty(false);
 					IProofComponent pc = pa.getComponent();
-					proofSkeleton = pc.getProofSkeleton(poName, ff, monitor);
+					proofSkeleton = pc.getProofSkeleton(poName, pa
+							.getFormulaFactory(), monitor);
 					if (proofSkeleton != null) {
 						// ProofBuilder.rebuild(pt.getRoot(), proofSkeleton);
 						Object result = BasicTactics.rebuildTac(proofSkeleton).apply(
@@ -495,7 +492,8 @@ public class ProofState implements IProofState {
 	 * @see org.eventb.core.pm.IProofState#isProofReusable()
 	 */
 	public boolean isProofReusable() throws RodinDBException {
-		IProverSequent seq = POLoader.readPO(status.getPOSequent());
+		final IProverSequent seq = POLoader.readPO(status.getPOSequent(), pa
+				.getFormulaFactory());
 		return ProverLib.proofReusable(pt.getProofDependencies(), seq);
 	}
 
