@@ -132,7 +132,7 @@ public class POLoaderTest extends BuilderTest {
 			
 			final IPOSequent poSequent = poSequents[i];
 			assertTrue("POSequent "+ poSequent.getElementName() +" does not exist",poSequent.exists());
-			IProverSequent seq = POLoader.readPO(poSequent);
+			IProverSequent seq = POLoader.readPO(poSequent, factory);
 			assertNotNull("Error generating prover sequent", seq);
 			assertEquals("Sequents for " + poSequent.getElementName() + " do not match",
 					expectedSequents[i],seq.toString());
