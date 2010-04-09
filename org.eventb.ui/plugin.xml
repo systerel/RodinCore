@@ -2158,45 +2158,52 @@
             typeId="org.rodinp.core.project">
       </element>
       <element
-            imagePath="icons/full/obj16/mch_obj.gif"
             childrenSuffix="END"
+            imagePath="icons/full/obj16/mch_obj.gif"
             prefix="MACHINE"
+            prettyPrinter="org.eventb.internal.ui.eventbeditor.prettyprinters.ComponentPrettyPrinter"
             typeId="org.eventb.core.machineFile">
       </element>
       <element
             defaultColumn="0"
             imagePath="icons/full/obj16/mch_obj.gif"
             prefix="REFINES"
+            prettyPrinter="org.eventb.internal.ui.eventbeditor.prettyprinters.DependenciesPrettyPrinter"
             typeId="org.eventb.core.refinesMachine">
       </element>
       <element
             childrenSuffix="END"
             imagePath="icons/full/obj16/ctx_obj.gif"
             prefix="CONTEXT"
+            prettyPrinter="org.eventb.internal.ui.eventbeditor.prettyprinters.ComponentPrettyPrinter"
             typeId="org.eventb.core.contextFile">
       </element>
       <element
             defaultColumn="0"
             imagePath="icons/full/obj16/ctx_obj.gif"
             prefix="SEES"
+            prettyPrinter="org.eventb.internal.ui.eventbeditor.prettyprinters.DependenciesPrettyPrinter"
             typeId="org.eventb.core.seesContext">
       </element>
       <element
             defaultColumn="0"
             imagePath="icons/full/obj16/var_obj.gif"
             prefix="VARIABLES"
+            prettyPrinter="org.eventb.internal.ui.eventbeditor.prettyprinters.VariablesPrettyPrinter"
             typeId="org.eventb.core.variable">
       </element>
       <element
             defaultColumn="1"
             imageProvider="org.eventb.internal.ui.eventbeditor.imageprovider.InvariantImageProvider"
             prefix="INVARIANTS"
+            prettyPrinter="org.eventb.internal.ui.eventbeditor.prettyprinters.InvariantsPrettyPrinter"
             typeId="org.eventb.core.invariant">
       </element>
       <element
             defaultColumn="0"
             imagePath="icons/sample.gif"
             prefix="VARIANT"
+            prettyPrinter="org.eventb.internal.ui.eventbeditor.prettyprinters.VariantsPrettyPrinter"
             typeId="org.eventb.core.variant">
       </element>
       <element
@@ -2204,60 +2211,70 @@
             defaultColumn="0"
             imagePath="icons/full/obj16/evt_obj.gif"
             prefix="EVENTS"
+            prettyPrinter="org.eventb.internal.ui.eventbeditor.prettyprinters.EventsPrettyPrinter"
             typeId="org.eventb.core.event">
       </element>
       <element
             defaultColumn="0"
             imagePath="icons/full/obj16/evt_obj.gif"
             prefix="REFINES"
+            prettyPrinter="org.eventb.internal.ui.eventbeditor.prettyprinters.RefinesEventsPrettyPrint"
             typeId="org.eventb.core.refinesEvent">
       </element>
       <element
             defaultColumn="0"
             imagePath="icons/full/obj16/var_obj.gif"
             prefix="ANY"
+            prettyPrinter="org.eventb.internal.ui.eventbeditor.prettyprinters.ParametersPrettyPrinter"
             typeId="org.eventb.core.parameter">
       </element>
       <element
             defaultColumn="1"
             imageProvider="org.eventb.internal.ui.eventbeditor.imageprovider.GuardImageProvider"
             prefix="WHERE"
+            prettyPrinter="org.eventb.internal.ui.eventbeditor.prettyprinters.GuardsPrettyPrinter"
             typeId="org.eventb.core.guard">
       </element>
       <element
             defaultColumn="1"
             imagePath="icons/sample.gif"
             prefix="WITH"
+            prettyPrinter="org.eventb.internal.ui.eventbeditor.prettyprinters.WitnessesPrettyPrinter"
             typeId="org.eventb.core.witness">
       </element>
       <element
             defaultColumn="1"
             imagePath="icons/full/obj16/act_obj.gif"
             prefix="THEN"
+            prettyPrinter="org.eventb.internal.ui.eventbeditor.prettyprinters.ActionsPrettyPrinter"
             typeId="org.eventb.core.action">
       </element>
       <element
             defaultColumn="0"
             imagePath="icons/full/obj16/ctx_obj.gif"
             prefix="EXTENDS"
+            prettyPrinter="org.eventb.internal.ui.eventbeditor.prettyprinters.DependenciesPrettyPrinter"
             typeId="org.eventb.core.extendsContext">
       </element>
       <element
             defaultColumn="0"
             imagePath="icons/full/obj16/set_obj.gif"
             prefix="SETS"
+            prettyPrinter="org.eventb.internal.ui.eventbeditor.prettyprinters.CarrierSetsPrettyPrinter"
             typeId="org.eventb.core.carrierSet">
       </element>
       <element
             defaultColumn="0"
             imagePath="icons/full/obj16/cst_obj.gif"
             prefix="CONSTANTS"
+            prettyPrinter="org.eventb.internal.ui.eventbeditor.prettyprinters.ConstantsPrettyPrinter"
             typeId="org.eventb.core.constant">
       </element>
       <element
             defaultColumn="1"
             imageProvider="org.eventb.internal.ui.eventbeditor.imageprovider.AxiomImageProvider"
             prefix="AXIOMS"
+            prettyPrinter="org.eventb.internal.ui.eventbeditor.prettyprinters.AxiomsPrettyPrinter"
             typeId="org.eventb.core.axiom">
       </element>
       <textAttribute
@@ -2411,20 +2428,23 @@
                priority="10">
          </childType>
          <childType
-               typeId="org.eventb.core.parameter"
-               priority="20">
+               implicitChildProvider="org.eventb.internal.ui.eventbeditor.prettyprinters.EventsImplicitChildProviders$ParametersImplicitChildProvider"
+               priority="20"
+               typeId="org.eventb.core.parameter">
          </childType>
          <childType
-               typeId="org.eventb.core.guard"
-               priority="30">
+               implicitChildProvider="org.eventb.internal.ui.eventbeditor.prettyprinters.EventsImplicitChildProviders$GuardsImplicitChildProvider"
+               priority="30"
+               typeId="org.eventb.core.guard">
          </childType>
          <childType
                typeId="org.eventb.core.witness"
                priority="40">
          </childType>
          <childType
-               typeId="org.eventb.core.action"
-               priority="50">
+               implicitChildProvider="org.eventb.internal.ui.eventbeditor.prettyprinters.EventsImplicitChildProviders$ActionsImplicitChildProvider"
+               priority="50"
+               typeId="org.eventb.core.action">
          </childType>
       </childRelation>
       <attributeRelation

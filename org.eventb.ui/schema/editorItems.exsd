@@ -2,9 +2,9 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eventb.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eventb.ui" id="editorItems" name="Description of Rodin items to be displayed in the editor"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          This extension point allows plug-in writers to specify how to display and modify an Internal Element in Event-B Editor.
       </documentation>
@@ -12,9 +12,9 @@
 
    <element name="extension">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element />
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <sequence>
@@ -47,9 +47,9 @@
                <documentation>
                   
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -74,9 +74,9 @@
                <documentation>
                   Path to the icon to display for this element, if any. The element must not define an imagePath and an imageProvider at the same time.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="prefix" type="string">
@@ -107,6 +107,16 @@
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eventb.internal.ui.eventbeditor.imageprovider.IImageProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="prettyPrinter" type="string">
+            <annotation>
+               <documentation>
+                  The name of the class that will be used to pretty print this element in the pretty print view. The class must implement &lt;samp&gt;org.eventb.ui.IElementPrettyPrinter&lt;/samp&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eventb.ui.IElementPrettyPrinter"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -160,9 +170,9 @@
                <documentation>
                   the name of a class which will be used for creating/editing the attribute. The class must implement &lt;samp&gt;org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation&lt;/samp&gt; and also must have a default contructor.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="isMath" type="boolean" use="required">
@@ -236,9 +246,9 @@
                <documentation>
                   the name of a class which will be used for creating/editing the attribute. The class must implement &lt;samp&gt;org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation&lt;/samp&gt; and also must have a default contructor.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="required" type="boolean">
@@ -322,6 +332,16 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="implicitChildProvider" type="string">
+            <annotation>
+               <documentation>
+                  The name of the class that will be used to retrieve implicit children of this type in the pretty print view. The class must implement &lt;samp&gt;org.eventb.ui.IImplicitChildProvider&lt;/samp&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eventb.ui.IImplicitChildProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -381,45 +401,45 @@
                <documentation>
                   the name of a class which will be used for creating/editing the attribute. The class must extends &lt;samp&gt;org.eventb.internal.ui.eventbeditor.manipulation.AbstractBooleanManipulation&lt;/samp&gt; and also must have a default contructor.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eventb.internal.ui.eventbeditor.manipulation.AbstractBooleanManipulation:org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          [Enter the first release in which this extension point appears.]
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          [Enter extension point usage example here.]
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="apiinfo"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          [Enter API information here.]
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="implementation"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          [Enter information about supplied implementation of this extension point.]
       </documentation>

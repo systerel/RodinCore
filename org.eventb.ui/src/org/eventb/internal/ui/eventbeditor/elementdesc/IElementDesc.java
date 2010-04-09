@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2008 Systerel and others.
+* Copyright (c) 2008, 2010 Systerel and others.
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
 * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
 *
 * Contributors:
 *     Systerel - initial API and implementation
+*     Systerel - added a method to get child relationships
 *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.elementdesc;
 
 import org.eventb.internal.ui.eventbeditor.imageprovider.IImageProvider;
+import org.eventb.ui.prettyprint.IElementPrettyPrinter;
 import org.rodinp.core.IElementType;
 
 public interface IElementDesc extends IItemDesc {
@@ -36,10 +38,15 @@ public interface IElementDesc extends IItemDesc {
 	public int getDefaultColumn();
 
 	public boolean isSelectable(int i);
+	
+	public IElementRelationship[] getChildRelationships();
 
 	public IElementType<?>[] getChildTypes();
 
 	public String getAutoNamePrefix();
 
 	public IAttributeDesc getAutoNameAttribute();
+	
+	public IElementPrettyPrinter getPrettyPrinter();
+	
 }

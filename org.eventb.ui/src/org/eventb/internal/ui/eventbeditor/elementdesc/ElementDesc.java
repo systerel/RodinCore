@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - replaced childTypes by childRelationships
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.elementdesc;
 
 import org.eventb.internal.ui.eventbeditor.imageprovider.IImageProvider;
+import org.eventb.ui.prettyprint.IElementPrettyPrinter;
 import org.rodinp.core.IElementType;
 
 /**
@@ -26,7 +28,7 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 
 	private final IAttributeDesc[] atColumn;
 
-	private final IElementType<?>[] childrenType;
+	private final IElementRelationship[] childRelationships;
 
 	private final int defaultColumn;
 
@@ -35,21 +37,25 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 	private final IAttributeDesc autoNameAttribute;
 
 	private static final NullAttributeDesc noAttribute = new NullAttributeDesc();
+	
+	private final IElementPrettyPrinter prettyPrinter;
 
 	public ElementDesc(String prefix, String childrenSuffix,
 			IImageProvider imgProvider, IAttributeDesc[] attributeDesc,
-			IAttributeDesc[] atColumn, IElementType<?>[] childrenType,
-			String autoNamePrefix, IAttributeDesc autoNameAttribute,
-			int defaultColumn) {
+			IAttributeDesc[] atColumn,
+			IElementRelationship[] childRelationships, String autoNamePrefix,
+			IAttributeDesc autoNameAttribute, int defaultColumn,
+			IElementPrettyPrinter prettyPrinter) {
 		super(prefix);
 		this.childrenSuffix = childrenSuffix;
 		this.imgProvider = imgProvider;
 		this.attributeDesc = attributeDesc;
 		this.atColumn = atColumn;
-		this.childrenType = childrenType;
+		this.childRelationships = childRelationships;
 		this.autoNamePrefix = autoNamePrefix;
 		this.defaultColumn = defaultColumn;
 		this.autoNameAttribute = autoNameAttribute;
+		this.prettyPrinter = prettyPrinter;
 	}
 
 	/**
@@ -91,7 +97,16 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 	}
 
 	public IElementType<?>[] getChildTypes() {
-		return childrenType;
+		final int childrenLength = childRelationships.length;
+		IElementType<?>[] result = new IElementType<?>[childrenLength];
+		for (int i = 0; i < childrenLength; i++) {
+			result[i] = childRelationships[i].getChildType();
+		}
+		return result;
+	}
+
+	public IElementRelationship[] getChildRelationships() {
+		return childRelationships;
 	}
 
 	public String getAutoNamePrefix() {
@@ -100,6 +115,14 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 
 	public IAttributeDesc getAutoNameAttribute() {
 		return autoNameAttribute;
+	}
+	
+	/**
+	 * Returns the pretty printer associated with this ElementDesc, 
+	 * or <code>null</code> if none.
+	 */
+	public IElementPrettyPrinter getPrettyPrinter() {
+		return prettyPrinter;
 	}
 
 }

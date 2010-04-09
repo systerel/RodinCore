@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,24 +7,32 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - Added priority and implicitChildProvider
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.elementdesc;
 
+import org.eventb.ui.IImplicitChildProvider;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElementType;
 
-public class ElementDescRelationship implements IElementRelationship {
+public class ElementDescRelationship implements IElementRelationship, Comparable<IElementRelationship> {
 
 	private final IInternalElementType<?> childType;
 
 	private final String id;
 
 	private final IElementType<?> parentType;
+	
+	private final int priority;
+
+	private final IImplicitChildProvider childProvider;
 
 	public ElementDescRelationship(IElementType<?> parentType,
-			IInternalElementType<?> childType) {
+			IInternalElementType<?> childType, int priority, IImplicitChildProvider childProvider) {
 		this.childType = childType;
 		this.parentType = parentType;
+		this.priority = priority;
+		this.childProvider = childProvider;
 		id = parentType.getId() + childType.getId();
 	}
 
@@ -39,6 +47,14 @@ public class ElementDescRelationship implements IElementRelationship {
 	public IElementType<?> getParentType() {
 		return parentType;
 	}
+	
+	public int getPriority() {
+		return priority;
+	}
+
+	public IImplicitChildProvider getImplicitChildProvider() {
+		return childProvider;
+	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -48,4 +64,15 @@ public class ElementDescRelationship implements IElementRelationship {
 		return parentType == rel.getParentType()
 				&& childType == rel.getChildType();
 	}
+
+	public int compareTo(IElementRelationship rs) {
+		if (childType == rs.getChildType() && parentType == rs.getParentType())
+			return 0;
+		final int diff = priority - rs.getPriority();
+		if (diff != 0) {
+			return diff;
+		}
+		return childType.getName().compareTo(rs.getChildType().getName());
+	}
+	
 }

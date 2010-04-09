@@ -12,13 +12,13 @@
  *     Systerel - added implicit children for events
  *     Systerel - added theorem attribute of IDerivedPredicateElement
  *     Systerel - added guard theorem labels
+ *     Systerel - refactored according to the new pretty printer
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.htmlpage;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eventb.internal.ui.BundledFileExtractor;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.EventBUIPlugin;
 import org.osgi.framework.Bundle;
 
@@ -56,76 +56,9 @@ public class Ast2HtmlConverter extends AstConverter {
 		END_MULTILINE = "</table></td>";
 		BEGIN_LINE = "<tr>";
 		END_LINE = "</tr>";
-		BEGIN_COMPONENT_NAME = "<td class=\"componentName\" align=\"left\" valign=\"center\">";
-		END_COMPONENT_NAME = "</td>";
+		SPACE = "&nbsp;&nbsp;&nbsp;";
 		BEGIN_COMMENT = "<td class=\"comment\" align=\"left\" valign=\"top\">";
 		END_COMMENT = "</td>";
-		BEGIN_VARIABLE_IDENTIFIER = "<td class=\"variableIdentifier\" align=\"left\" valign=\"center\">";
-		END_VARIABLE_IDENTIFIER = "</td>";
-		BEGIN_INVARIANT_LABEL = "<td class=\"invariantLabel\" align=\"left\" valign=\"center\">";
-		END_INVARIANT_LABEL = "</td>";
-		BEGIN_INVARIANT_PREDICATE = "<td class=\"invariantPredicate\" align=\"left\" valign=\"center\">";
-		END_INVARIANT_PREDICATE = "</td>";
-		BEGIN_THEOREM_LABEL = "<td class=\"theoremLabel\" align=\"left\" valign=\"center\">";
-		END_THEOREM_LABEL = "</td>";
-		BEGIN_EVENT_LABEL = "<td class=\"eventLabel\" align=\"left\" valign=\"center\">";
-		END_EVENT_LABEL = "</td>";
-		BEGIN_EXTENDED = "<td class=\"extended\" align=\"left\" valign=\"center\">";
-		END_EXTENDED = "</td>";
-		BEGIN_CONVERGENCE = "<td class=\"convergence\" align=\"left\" valign=\"center\">";
-		END_CONVERGENCE = "</td>";
-		BEGIN_ABSTRACT_EVENT_LABEL = "<td class=\"abstractEventLabel\" align=\"left\" valign=\"center\">";
-		END_ABSTRACT_EVENT_LABEL = "</td>";
-		BEGIN_PARAMETER_IDENTIFIER = "<td class=\"parameterIdentifier\" align=\"left\" valign=\"center\">";
-		END_PARAMETER_IDENTIFIER = "</td>";
-		BEGIN_IMPLICIT_PARAMETER_IDENTIFIER = "<td class=\"implicitParameterIdentifier\" align=\"left\" valign=\"center\">";
-		END_IMPLICIT_PARAMETER_IDENTIFIER = "</td>";
-		BEGIN_GUARD_LABEL = "<td class=\"guardLabel\" align=\"left\" valign=\"center\">";
-		END_GUARD_LABEL = "</td>";
-		BEGIN_GUARD_THEOREM_LABEL = "<td class=\"guardTheoremLabel\" align=\"left\" valign=\"center\">";
-		END_GUARD_THEOREM_LABEL = "</td>";
-		BEGIN_IMPLICIT_GUARD_LABEL = "<td class=\"implicitGuardLabel\" align=\"left\" valign=\"center\">";
-		END_IMPLICIT_GUARD_LABEL = "</td>";
-		BEGIN_IMPLICIT_GUARD_THEOREM_LABEL = "<td class=\"implicitGuardTheoremLabel\" align=\"left\" valign=\"center\">";
-		END_IMPLICIT_GUARD_THEOREM_LABEL = "</td>";
-		BEGIN_GUARD_PREDICATE = "<td class=\"guardPredicate\" align=\"left\" valign=\"center\">";
-		END_GUARD_PREDICATE = "</td>";
-		BEGIN_IMPLICIT_GUARD_PREDICATE = "<td class=\"implicitGuardPredicate\" align=\"left\" valign=\"center\">";
-		END_IMPLICIT_GUARD_PREDICATE = "</td>";
-		BEGIN_WITNESS_LABEL = "<td class=\"witnessLabel\" align=\"left\" valign=\"center\">";
-		END_WITNESS_LABEL = "</td>";
-		BEGIN_WITNESS_PREDICATE = "<td class=\"witnessPredicate\" align=\"left\" valign=\"center\">";
-		END_WITNESS_PREDICATE = "</td>";
-		BEGIN_ACTION_LABEL = "<td class=\"actionLabel\" align=\"left\" valign=\"center\">";
-		BEGIN_IMPLICIT_ACTION_LABEL = "<td class=\"implicitActionLabel\" align=\"left\" valign=\"center\">";
-		END_ACTION_LABEL = "</td>";
-		END_IMPLICIT_ACTION_LABEL = "</td>";
-		BEGIN_ACTION_ASSIGNMENT = "<td class=\"actionAssignment\" align=\"left\" valign=\"center\">";
-		BEGIN_IMPLICIT_ACTION_ASSIGNMENT = "<td class=\"implicitActionAssignment\" align=\"left\" valign=\"center\">";
-		END_ACTION_ASSIGNMENT = "</td>";
-		END_IMPLICIT_ACTION_ASSIGNMENT = "</td>";
-		BEGIN_VARIANT_EXPRESSION = "<td class=\"variantExpression\" align=\"left\" valign=\"center\">";
-		END_VARIANT_EXPRESSION = "</td>";
-		BEGIN_SET_IDENTIFIER = "<td class=\"setIdentifier\" align=\"left\" valign=\"center\">";
-		END_SET_IDENTIFIER = "</td>";
-		BEGIN_AXIOM_LABEL = "<td class=\"axiomLabel\" align=\"left\" valign=\"center\">";
-		END_AXIOM_LABEL = "</td>";
-		BEGIN_AXIOM_PREDICATE = "<td class=\"axiomPredicate\" align=\"left\" valign=\"center\">";
-		END_AXIOM_PREDICATE = "</td>";
-		BEGIN_CONSTANT_IDENTIFIER = "<td class=\"constantIdentifier\" align=\"left\" valign=\"center\">";
-		END_CONSTANT_IDENTIFIER = "</td>";
-
-		SPACE = "&nbsp;&nbsp;&nbsp;";
-	}
-	
-	@Override
-	protected String makeHyperlink(String hyperlink, String text) {
-		return text;
-	}
-
-	@Override
-	protected String wrapString(String text) {
-		return UIUtils.HTMLWrapUp(text);
 	}
 
 }
