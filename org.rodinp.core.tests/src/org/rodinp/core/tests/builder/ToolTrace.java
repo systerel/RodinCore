@@ -11,7 +11,10 @@
  *******************************************************************************/
 package org.rodinp.core.tests.builder;
 
+import static junit.framework.Assert.assertEquals;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -35,6 +38,11 @@ public abstract class ToolTrace {
 	
 	public static void addTrace(String tool, String method, IFile file) {
 		traces.add(tool + " " + method + " " + file.getFullPath());
+	}
+
+	public static void assertTrace(String... expectedTrace) {
+		assertEquals("Unexpected tool trace", Arrays.asList(expectedTrace),
+				ToolTrace.getTraces());
 	}
 
 }
