@@ -434,6 +434,10 @@ public class Graph implements Serializable, Iterable<Node> {
 		node.setDated(true);
 		if(!node.isDerived())
 			return;
+		if (RodinBuilder.DEBUG_RUN)
+			System.out.println(getClass().getName() + ": Cleaning tool: "
+					+ node.getToolId() + " on node: "
+					+ node.getTarget().getName()); //$NON-NLS-1$ //$NON-NLS-2$
 		IAutomaticTool tool = getManager().getToolDescription(node.getToolId()).getTool(); 
 		if (tool != null)
 			tool.clean(node.getCreator().getFile(), node.getTarget().getFile(), monitor);
