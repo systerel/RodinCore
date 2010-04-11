@@ -9,8 +9,11 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - used list of string in Tool Trace
+ *     Systerel - added test ensuring cleanup always happen
  *******************************************************************************/
 package org.rodinp.core.tests.builder;
+
+import java.util.Arrays;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -359,5 +362,25 @@ public class CBuilderTest extends AbstractBuilderTest {
 	
 	}
 
+	/**
+	 * Ensures that clean removes a generated file, even if it has been modified
+	 * since the last build.
+	 */
+	public void testClean() throws Exception {
+		final IRodinFile ctx = createRodinFile("P/x.ctx");
+		createData(ctx, "one");
+		ctx.save(null, true);
+
+		runBuilder("CSC extract /P/x.ctx", "CSC run /P/x.csc");
+		ToolTrace.flush();
+
+		final IRodinFile csc = getRodinFile("P/x.csc");
+		createData(csc, "new");
+		csc.save(null, true);
+		runBuilder();
+
+		runBuilderClean(project);
+		ToolTrace.assertTrace("CSC clean /P/x.csc");
+	}
 
 }
