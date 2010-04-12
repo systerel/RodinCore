@@ -75,6 +75,7 @@ public class EventsPrettyPrinter extends DefaultPrettyPrinter implements
 	}
 
 	private static void appendExtended(IPrettyPrintStream ps) {
+		ps.appendLevelBegin();
 		ps.appendString("extended", //
 				getHTMLBeginForCSSClass(EXTENDED, //
 						HorizontalAlignment.LEFT, //
@@ -84,6 +85,7 @@ public class EventsPrettyPrinter extends DefaultPrettyPrinter implements
 						VerticalAlignement.MIDDLE), //
 				EXTENDED_SEPARATOR_BEGIN, //
 				EXTENDED_SEPARATOR_END);
+		ps.appendLevelEnd();
 	}
 
 	private static void appendConvergence(IPrettyPrintStream ps,
@@ -96,6 +98,7 @@ public class EventsPrettyPrinter extends DefaultPrettyPrinter implements
 		} else if (convergence == Convergence.CONVERGENT) {
 			string = "convergent";
 		}
+		ps.appendLevelBegin();
 		ps.appendString(string, //
 				getHTMLBeginForCSSClass(CONVERGENCE, //
 						HorizontalAlignment.LEFT, //
@@ -105,14 +108,15 @@ public class EventsPrettyPrinter extends DefaultPrettyPrinter implements
 						VerticalAlignement.MIDDLE), //
 				BEGIN_CONVERGENCE_SEPARATOR, //
 				END_CONVERGENCE_SEPARATOR);
+		ps.appendLevelEnd();
 	}
 
 	private static void appendExtended(IEvent evt, IPrettyPrintStream ps) {
 		try {
 			if (evt.hasExtended() && evt.isExtended()) {
-				ps.appendLevelBegin();
+				ps.incrementLevel();
 				appendExtended(ps);
-				ps.appendLevelEnd();
+				ps.decrementLevel();
 			}
 		} catch (RodinDBException e) {
 			EventBUIExceptionHandler.handleGetAttributeException(e);
@@ -122,8 +126,8 @@ public class EventsPrettyPrinter extends DefaultPrettyPrinter implements
 	private static void appendConvergence(IEvent evt, IPrettyPrintStream ps) {
 		try {
 			Convergence convergence = evt.getConvergence();
-			ps.appendKeyword("STATUS");
 			ps.appendLevelBegin();
+			ps.appendKeyword("STATUS");
 			appendConvergence(ps, convergence);
 			ps.appendLevelEnd();
 		} catch (RodinDBException e) {

@@ -132,8 +132,8 @@ public abstract class AstConverter {
 						"An exception occured");
 			}
 			for (IInternalElement in : children) {
-				stream.incrementLevel();
 				appendItemBegin(in, e, pp);
+				stream.incrementLevel();
 				// We traverse the children of this child element
 				traverse(mon, in);
 				appendItemEnd(in, childDesc, pp);
@@ -184,7 +184,7 @@ public abstract class AstConverter {
 			final IInternalElementType<?> type = rel.getChildType();
 			result.addAll(Arrays.asList(elt.getChildrenOfType(type)));
 		} catch (RodinDBException e) {
-			e.printStackTrace();
+			EventBEditorUtils.debugAndLogError(e, "An exception occured");
 		}
 		return result;
 	}
