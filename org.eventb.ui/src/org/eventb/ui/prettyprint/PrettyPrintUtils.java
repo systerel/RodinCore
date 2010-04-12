@@ -22,7 +22,7 @@ import org.eventb.ui.prettyprint.PrettyPrintAlignments.VerticalAlignement;
  * Static methods that contributors should use to ease the implementation of
  * their contribution pretty printers.
  * 
- * @since 1.2
+ * @since 1.3
  */
 public class PrettyPrintUtils {
 

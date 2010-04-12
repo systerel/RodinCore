@@ -21,7 +21,7 @@ import org.rodinp.core.IInternalElement;
  * the {@link IElementPrettyPrinter} methods.
  * 
  * @author Thomas Muller
- * @since 1.2
+ * @since 1.3
  */
 public class DefaultPrettyPrinter implements IElementPrettyPrinter {
 

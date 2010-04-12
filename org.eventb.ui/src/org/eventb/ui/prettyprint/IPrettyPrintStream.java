@@ -15,7 +15,8 @@ package org.eventb.ui.prettyprint;
  * the pretty print view.
  * 
  * @author Thomas Muller
- * @since 1.2
+ * @since 1.3
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPrettyPrintStream {
 

@@ -20,7 +20,7 @@ package org.eventb.ui.prettyprint;
  * {@link PrettyPrintUtils#getHTMLEndForCSSClass(String, HorizontalAlignment, VerticalAlignement)}.
  * 
  * @author Thomas Muller
- * @since 1.2
+ * @since 1.3
  * 
  */
 public class PrettyPrintAlignments {

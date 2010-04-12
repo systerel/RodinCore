@@ -41,7 +41,7 @@ import org.rodinp.core.IInternalElement;
  * 
  * @see DefaultPrettyPrinter
  * @author Thomas Muller
- * @since 1.2
+ * @since 1.3
  * 
  */
 public interface IElementPrettyPrinter {
