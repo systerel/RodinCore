@@ -8,9 +8,11 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation 
+ *     Systerel - implemented tearDown()
  *******************************************************************************/
 package org.eventb.ui.tests;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
@@ -30,6 +32,7 @@ import org.eventb.internal.ui.eventbeditor.EventBMachineEditor;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.tests.utils.EventBUITest;
+import org.junit.After;
 import org.junit.Test;
 import org.rodinp.core.IRodinElement;
 
@@ -48,6 +51,19 @@ import org.rodinp.core.IRodinElement;
  * @author Thomas Muller
  */
 public class TestEditorManager extends EventBUITest {
+
+	/**
+	 * We re-open the project if it was closed in tests
+	 */
+	@After
+	@Override
+	protected void tearDown() throws Exception {
+		final IProject project = rodinProject.getProject();
+		if (project.exists() && !project.isOpen()) {
+			project.open(null);
+		}
+		super.tearDown();
+	}
 
 	/**
 	 * Ensures that an editor related to a deleted file is correctly closed.
@@ -252,7 +268,6 @@ public class TestEditorManager extends EventBUITest {
 		rodinProject.getProject().close(null);
 		assertNull(getEditorPartFor(cInput));
 		assertNull(getEditorPartFor(mInput));
-		rodinProject.getProject().open(null);
 	}
 
 	/**
@@ -270,7 +285,6 @@ public class TestEditorManager extends EventBUITest {
 		rodinProject.getProject().close(null);
 		assertEquals(null, getEditorPartFor(mpInput));
 		assertNull(getEditorPartFor(mpInput));
-		rodinProject.getProject().open(null);
 	}
 
 	private static void waitForAsyncExecs() {
