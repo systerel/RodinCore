@@ -23,7 +23,7 @@ import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.internal.core.parser.ParseResult;
-import org.eventb.internal.core.parser.Parser;
+import org.eventb.internal.core.parser.GenParser;
 import org.eventb.internal.core.parser.Scanner;
 import org.eventb.internal.core.parser.Token;
 
@@ -145,8 +145,8 @@ public class TestLexer extends AbstractTests {
         	"/",
         };
         
-        private static final int _KPARTITION = Parser.getPartitionT();
-        private static final int _IDENT = Parser.getIdentT();
+        private static final int _KPARTITION = GenParser.getPartitionT();
+        private static final int _IDENT = GenParser.getIdentT();
 
         private static int getExpectedKind(int kind, LanguageVersion version) {
         	if (kind == _KPARTITION && version == V1)
@@ -160,7 +160,7 @@ public class TestLexer extends AbstractTests {
         public void testToken() {
         	
         	// Check that all tokens are listed.
-        	assertEquals("Length of string table", Parser.getMaxT(), toBeLexed.length);
+        	assertEquals("Length of string table", GenParser.getMaxT(), toBeLexed.length);
         	
         	for (LanguageVersion version : LanguageVersion.values()) {
         		testAllTokens(version);

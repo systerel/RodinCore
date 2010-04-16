@@ -27,8 +27,8 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.parser.GenParser;
 import org.eventb.internal.core.parser.ParseResult;
-import org.eventb.internal.core.parser.Parser;
 import org.eventb.internal.core.parser.Scanner;
 import org.eventb.internal.core.typecheck.TypeEnvironment;
 import org.eventb.internal.core.upgrade.UpgradeResult;
@@ -1142,8 +1142,8 @@ public class FormulaFactory {
 			boolean withPredVars) {
 		final ParseResult result = new ParseResult(this, version, origin);
 		final Scanner scanner = new Scanner(formula, result);
-		final Parser parser = new Parser(clazz, scanner, result, withPredVars);
-		parser.Parse();
+		final GenParser parser = new GenParser(clazz, scanner, result, withPredVars);
+		parser.parse();
 		return parser.getResult();
 	}
 

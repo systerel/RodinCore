@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
-import static org.eventb.internal.core.parser.Parser._IDENT;
+import static org.eventb.internal.core.parser.BMath._IDENT;
 
 import java.util.HashMap;
 

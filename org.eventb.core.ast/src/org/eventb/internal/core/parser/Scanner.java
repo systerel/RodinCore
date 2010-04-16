@@ -19,6 +19,8 @@ import org.eventb.core.ast.LanguageVersion;
  * of a Coco/R scanner, described in the Coco/R user manual.
  * 
  * @author François Terrier
+ * 
+ * FIXME update comment
  */
 public class Scanner {
 	// list of the tokens which were looked-ahead
@@ -93,7 +95,7 @@ public class Scanner {
 
 		final Token token = scanner.Peek();
 		return (!result.hasProblem() && token != null
-				&& token.kind == Parser._IDENT && token.val.equals(name));
+				&& token.kind == BMath._IDENT && token.val.equals(name));
 	}
 
 }
