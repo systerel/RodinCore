@@ -31,8 +31,6 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -45,7 +43,6 @@ import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.YesToAllMessageDialog;
 import org.eventb.internal.ui.prover.ProverUI;
-import org.eventb.internal.ui.wizards.NewComponentWizard;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
@@ -54,7 +51,6 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.internal.explorer.navigator.ExplorerUtils;
-import fr.systerel.internal.explorer.navigator.wizards.NewProjectWizard;
 
 /**
  * A collection of actions for the navigator
@@ -306,64 +302,6 @@ public class ActionCollection {
 				.getImageDescriptor(IEventBSharedImages.IMG_DELETE_PATH));
 		
 		return deleteAction;
-	}
-	
-	/**
-	 * 
-	 * @param site
-	 * @return an Action for creating new Projects
-	 */
-	public static Action getNewProjectAction(final ICommonActionExtensionSite site){
-		Action newProjectAction = new Action() {
-			@Override
-			public void run() {
-				BusyIndicator.showWhile(site.getViewSite().getShell().getDisplay(), new Runnable() {
-					public void run() {
-						NewProjectWizard wizard = new NewProjectWizard();
-						WizardDialog dialog = new WizardDialog(EventBUIPlugin
-								.getActiveWorkbenchShell(), wizard);
-						dialog.create();
-						dialog.open();
-					}
-				});
-			}
-		};
-		newProjectAction.setText("&Project");
-		newProjectAction.setToolTipText("Create new project");
-		newProjectAction.setImageDescriptor(EventBImage
-				.getImageDescriptor(IEventBSharedImages.IMG_NEW_PROJECT_PATH));
-		return newProjectAction;
-	}
-	
-	/**
-	 * 
-	 * @param site
-	 * @return An action for creating new components.
-	 */
-	public static Action getNewComponentAction(final ICommonActionExtensionSite site){
-		Action newComponentAction = new Action() {
-			@Override
-			public void run() {
-				BusyIndicator.showWhile(site.getViewSite().getShell().getDisplay(), new Runnable() {
-					public void run() {
-						IStructuredSelection sel = (IStructuredSelection) site.getStructuredViewer().getSelection();
-						NewComponentWizard wizard = new NewComponentWizard();
-						wizard.init(EventBUIPlugin.getDefault().getWorkbench(),
-								sel);
-						WizardDialog dialog = new WizardDialog(EventBUIPlugin
-								.getActiveWorkbenchShell(), wizard);
-						dialog.create();
-						// SWTUtil.setDialogSize(dialog, 500, 500);
-						dialog.open();
-					}
-				});
-			}
-		};
-		newComponentAction.setText("&Component");
-		newComponentAction.setToolTipText("Create new component");
-		newComponentAction.setImageDescriptor(EventBImage
-				.getImageDescriptor(IEventBSharedImages.IMG_NEW_COMPONENT_PATH));
-		return newComponentAction;
 	}
 	
 	static void selectPO(IPSStatus ps) {
