@@ -19,6 +19,5 @@ Export-Package: fr.systerel.explorer,
  fr.systerel.internal.explorer.navigator.contentProviders.complex;x-friends:="fr.systerel.explorer.tests",
  fr.systerel.internal.explorer.navigator.filters;x-friends:="fr.systerel.explorer.tests",
  fr.systerel.internal.explorer.navigator.sorters;x-friends:="fr.systerel.explorer.tests",
- fr.systerel.internal.explorer.navigator.wizards;x-friends:="fr.systerel.explorer.tests",
  fr.systerel.internal.explorer.statistics;x-friends:="fr.systerel.explorer.tests"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

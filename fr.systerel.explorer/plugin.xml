@@ -557,6 +557,16 @@
             id="fr.systerel.explorer.navigator.filters.contexts"
             name="%filters.default">
       </commonFilter>
+      <commonWizard
+            type="new"
+            wizardId="org.eventb.ui.wizards.NewProject">
+         <enablement></enablement>
+      </commonWizard>
+      <commonWizard
+            type="new"
+            wizardId="org.eventb.ui.wizards.NewComponent">
+         <enablement></enablement>
+      </commonWizard>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
