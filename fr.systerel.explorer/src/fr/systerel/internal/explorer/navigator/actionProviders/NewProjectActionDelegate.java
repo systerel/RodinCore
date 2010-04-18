@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -13,13 +13,15 @@ package fr.systerel.internal.explorer.navigator.actionProviders;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
-import org.eventb.ui.EventBUIPlugin;
-
-import fr.systerel.internal.explorer.navigator.wizards.NewProjectWizard;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbench;
+import org.eventb.internal.ui.wizards.NewProjectWizard;
 
 /**
  * 
@@ -28,27 +30,34 @@ import fr.systerel.internal.explorer.navigator.wizards.NewProjectWizard;
  */
 public class NewProjectActionDelegate implements IViewActionDelegate {
 
-	IViewPart view;
+	private IViewPart view;
+	IStructuredSelection ssel;
 	
 	public void init(IViewPart viewPart) {
 		this.view = viewPart;
 	}
 
 	public void run(IAction action) {
-		BusyIndicator.showWhile(view.getSite().getShell().getDisplay(), new Runnable() {
+		final IViewSite site = view.getViewSite();
+		final Shell shell = site.getShell();
+		final IWorkbench workbench = site.getWorkbenchWindow().getWorkbench();
+		BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
 			public void run() {
 				NewProjectWizard wizard = new NewProjectWizard();
-				WizardDialog dialog = new WizardDialog(EventBUIPlugin
-						.getActiveWorkbenchShell(), wizard);
+				wizard.init(workbench, ssel);
+				WizardDialog dialog = new WizardDialog(shell, wizard);
 				dialog.create();
 				dialog.open();
 			}
 		});
 	}
 
-	public void selectionChanged(IAction action, ISelection selection) {
-		// do nothing
-
+	public void selectionChanged(IAction action, ISelection sel) {
+		if (sel instanceof IStructuredSelection) {
+			this.ssel = (IStructuredSelection) sel;
+		} else {
+			this.ssel = null;
+		}
 	}
 
 }
