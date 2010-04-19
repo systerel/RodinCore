@@ -22,6 +22,7 @@ import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
+import org.eventb.core.ast.SourceLocation;
 
 /**
  * @author Nicolas Beauger
@@ -85,13 +86,19 @@ public class GenParser {
 		private final Scanner scanner;
 		protected final FormulaFactory factory;
 		private final BMath grammar;
+		private final Object origin;
 		protected Token t;    // last recognized token
 		protected Token la;   // lookahead token
 		
-		public ParserContext(Scanner scanner, FormulaFactory factory, BMath grammar) {
+		public ParserContext(Scanner scanner, FormulaFactory factory, BMath grammar, Object origin) {
 			this.scanner = scanner;
 			this.factory = factory;
 			this.grammar = grammar;
+			this.origin = origin;
+		}
+		
+		public SourceLocation getSourceLocation(int startPos) {
+			return new SourceLocation(startPos, t.getEnd(), origin);
 		}
 		
 		public void init() {
@@ -146,9 +153,9 @@ public class GenParser {
 	public void parse() {
 
 		try {
-			final ParserContext pc = new ParserContext(scanner, factory, new BMath());
+			final ParserContext pc = new ParserContext(scanner, factory, new BMath(), result.getOrigin());
 			pc.init();
-			final Formula<?> res = Parsers.MainParser.parse(NO_TAG, pc);
+			final Formula<?> res = Parsers.MainParser.parse(NO_TAG, pc, 0);
 			if (clazz.isInstance(res)) {
 				if (clazz == Predicate.class) {
 					result.setParsedPredicate((Predicate) res); 

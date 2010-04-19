@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
+import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BINTER;
+import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.BUNION;
+import static org.eventb.core.ast.Formula.LAND;
+import static org.eventb.core.ast.Formula.LOR;
 import static org.eventb.core.ast.Formula.MUL;
 import static org.eventb.core.ast.Formula.PLUS;
 
@@ -137,7 +141,7 @@ public class BMath {
 	 * mathematical language tokens.
 	 * 
 	 */
-	static Map<String, Integer> basicConf = new HashMap<String, Integer>();
+	static final Map<String, Integer> basicConf = new HashMap<String, Integer>();
 	static {
 		basicConf.put("(", _LPAR);
 		basicConf.put(")", _RPAR);
@@ -243,14 +247,21 @@ public class BMath {
 	private static final String ARITHMETIC = "Arithmetic";
 	private static final String SET_OPERATORS = "Set Operators";
 	private static final String GROUP0 = "GROUP 0";
+	private static final String LOGIC = "Logic";
 
 	private static class CycleError extends Exception {
+
+		private static final long serialVersionUID = 3961303994056706546L;
+
 		public CycleError(String reason) {
 			super(reason);
 		}
 	}
 	
 	private static class SyntaxCompatibleError extends SyntaxError {
+
+		private static final long serialVersionUID = -6230478311681172354L;
+
 		public SyntaxCompatibleError(String reason) {
 			super(reason);
 		}
@@ -376,7 +387,7 @@ public class BMath {
 	public int getOperatorTag(Token token) throws SyntaxError {
 		final Integer tag = operatorTag.get(token.kind);
 		if (tag == null) {
-			throw new SyntaxError("not an operator: "+token.val);
+			throw new SyntaxError("not an operator: " + token.val);
 		}
 		return tag;
 	}
@@ -390,6 +401,8 @@ public class BMath {
 			operatorTag.put(_BUNION, Formula.BUNION);
 			operatorTag.put(_BINTER, Formula.BINTER);
 			operatorTag.put(_RPAR, Formula.NO_TAG);
+			operatorTag.put(_LAND, Formula.LAND);
+			operatorTag.put(_LOR, Formula.LOR);
 
 			groupIds.put(PLUS, ARITHMETIC);
 			groupIds.put(MUL, ARITHMETIC);
@@ -406,9 +419,16 @@ public class BMath {
 			setOpGroup.addCompatibility(BINTER, BINTER);
 			operatorGroups.put(SET_OPERATORS, setOpGroup);
 			
+			groupIds.put(LAND, LOGIC);
+			groupIds.put(LOR, LOGIC);
+			final OperatorGroup logicGroup = new OperatorGroup(LOGIC);
+			logicGroup.addCompatibility(LAND, LAND);
+			logicGroup.addCompatibility(LOR, LOR);
+
 			groupIds.put(Formula.NO_TAG, GROUP0);
 			groupAssociativity.add(GROUP0, ARITHMETIC);
 			groupAssociativity.add(GROUP0, SET_OPERATORS);
+			groupAssociativity.add(GROUP0, LOGIC);
 			
 		} catch (CycleError e) {
 			// TODO Auto-generated catch block
@@ -417,11 +437,15 @@ public class BMath {
 		
 		subParsers.put(_INTLIT, Parsers.INTLIT_SUBPARSER);
 		subParsers.put(_IDENT, Parsers.FREE_IDENT_SUBPARSER);
-		subParsers.put(_BUNION, new Parsers.AssociativeExpressionInfix(Formula.BUNION));
-		subParsers.put(_BINTER, new Parsers.AssociativeExpressionInfix(Formula.BINTER));
-		subParsers.put(_PLUS, new Parsers.AssociativeExpressionInfix(Formula.PLUS));
-		subParsers.put(_MUL, new Parsers.AssociativeExpressionInfix(Formula.MUL));
+		subParsers.put(_BUNION, new Parsers.AssociativeExpressionInfix(BUNION));
+		subParsers.put(_BINTER, new Parsers.AssociativeExpressionInfix(BINTER));
+		subParsers.put(_PLUS, new Parsers.AssociativeExpressionInfix(PLUS));
+		subParsers.put(_MUL, new Parsers.AssociativeExpressionInfix(MUL));
 		subParsers.put(_LPAR, new Parsers.ClosedSugar(_RPAR));
+		subParsers.put(_BTRUE, new Parsers.LiteralPredicateParser(BTRUE));
+		subParsers.put(_BFALSE, new Parsers.LiteralPredicateParser(BFALSE));
+		subParsers.put(_LAND, new Parsers.AssociativePredicateInfix(LAND));
+		subParsers.put(_LOR, new Parsers.AssociativePredicateInfix(LOR));
 	}
 
 	public ISubParser getSubParser(int kind) {
@@ -437,6 +461,7 @@ public class BMath {
 		final String gid1 = groupIds.get(tagleft);
 		final String gid2 = groupIds.get(tagRight);
 		
+		//FIXME NPE
 		if (gid1.equals(GROUP0) && gid2.equals(GROUP0)) {
 			return false;
 		} else if (groupAssociativity.contains(gid1, gid2)) {
