@@ -21,16 +21,27 @@ import static org.eventb.core.ast.Formula.PLUS;
 
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
+import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.IExtendedFormula;
+import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.extension.IToStringMediator;
+import org.eventb.core.ast.extension.ITypeCheckMediator;
+import org.eventb.core.ast.extension.ITypeMediator;
+import org.eventb.core.ast.extension.IWDMediator;
 
 /**
  * This test class aims at supporting generic parser development. It is not part
@@ -44,8 +55,8 @@ public class TestGenParser extends AbstractTests {
 
 	private static final SourceLocationChecker slChecker = new SourceLocationChecker();
 
-	private void doExpressionTest(String formula, Formula<?> expected) {
-		final IParseResult result = ff.parseExpression(formula,
+	private void doExpressionTest(String formula, Formula<?> expected, FormulaFactory factory) {
+		final IParseResult result = factory.parseExpression(formula,
 				LanguageVersion.V2, null);
 		if (result.hasProblem()) {
 			System.out.println(result.getProblems());
@@ -56,6 +67,10 @@ public class TestGenParser extends AbstractTests {
 		assertEquals(expected, actual);
 		
 		actual.accept(slChecker);
+	}
+	
+	private void doExpressionTest(String formula, Formula<?> expected) {
+		doExpressionTest(formula, expected, ff);
 	}
 	
 	private void doPredicateTest(String formula, Predicate expected) {
@@ -165,4 +180,83 @@ public class TestGenParser extends AbstractTests {
 				.getChildren()[1];
 		assertEquals(new SourceLocation(6, 6), childFalse.getSourceLocation());
 	}
+	
+	private static final IExpressionExtension DIRECT_PRODUCT = new IExpressionExtension() {
+
+		public void toString(IToStringMediator mediator,
+				IExtendedFormula formula) {
+			final Expression[] childExpressions = formula.getChildExpressions();
+			mediator.append(childExpressions[0], false);
+			mediator.append(getSyntaxSymbol());
+			mediator.append(childExpressions[1], true);
+		}
+
+		public boolean isFlattenable() {
+			return false;
+		}
+
+		public Predicate getWDPredicate(IWDMediator wdMediator,
+				IExtendedFormula formula) {
+			return wdMediator.makeChildWDConjunction(formula);
+		}
+
+		public String getSyntaxSymbol() {
+			return "⊗";
+		}
+
+		public void checkPreconditions(Expression[] expressions,
+				Predicate[] predicates) {
+			assertTrue(expressions.length == 2);
+			assertTrue(predicates.length == 0);
+		}
+
+		public Type typeCheck(ITypeCheckMediator tcMediator,
+				ExtendedExpression expression) {
+			final Type alpha = tcMediator.newTypeVariable();
+			final Type beta = tcMediator.newTypeVariable();
+			final Type gamma = tcMediator.newTypeVariable();
+			final Type leftType = tcMediator.makeRelationalType(alpha, beta);
+			final Type rightType = tcMediator.makeRelationalType(alpha, gamma);
+
+			final Expression[] children = expression.getChildExpressions();
+			tcMediator.sameType(children[0].getType(), leftType);
+			tcMediator.sameType(children[1].getType(), rightType);
+
+			final Type resultType = tcMediator.makeRelationalType(alpha,
+					tcMediator.makeProductType(beta, gamma));
+			return resultType;
+		}
+
+		public Type getType(ITypeMediator mediator,
+				ExtendedExpression expression) {
+
+			final Expression[] children = expression.getChildExpressions();
+			Type leftType = children[0].getType();
+			Type rightType = children[1].getType();
+
+			final Type alpha = leftType.getSource();
+			final Type beta = leftType.getTarget();
+			final Type gamma = rightType.getTarget();
+			if (alpha != null && beta != null && gamma != null
+					&& alpha.equals(rightType.getSource())) {
+				return ff.makeRelationalType(alpha, ff.makeProductType(beta,
+						gamma));
+			} else {
+				return null;
+			}
+		}
+	};
+
+	public void testExtensionDirectProduct() throws Exception {
+		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
+				.<IFormulaExtension> singleton(DIRECT_PRODUCT));
+		
+		final Expression expected = extFac.makeExtendedExpression(DIRECT_PRODUCT,
+				Arrays.<Expression> asList(
+						extFac.makeFreeIdentifier("A", null),
+						extFac.makeFreeIdentifier("B", null)),
+				Collections.<Predicate> emptySet(), null);
+		doExpressionTest("A⊗B", expected, extFac);
+	}
+
 }

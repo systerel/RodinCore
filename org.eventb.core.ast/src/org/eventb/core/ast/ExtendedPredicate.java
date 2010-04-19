@@ -189,7 +189,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 		if (!changed) {
 			return this;
 		}
-		return factory.makeExtendedPredicate(getTag(), newChildExpressions,
+		return factory.makeExtendedPredicate(extension, newChildExpressions,
 				newChildPredicates, getSourceLocation());
 	}
 
@@ -311,7 +311,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 			Expression[] newChildExpressions = childExpressions.clone();
 			newChildExpressions[index] = rewriter
 					.rewrite(childExpressions[index]);
-			return rewriter.factory.makeExtendedPredicate(getTag(),
+			return rewriter.factory.makeExtendedPredicate(extension,
 					newChildExpressions, childPredicates.clone(),
 					getSourceLocation());
 		} else {
@@ -319,7 +319,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 			Predicate[] newChildPredicates = childPredicates.clone();
 			newChildPredicates[index] = rewriter
 					.rewrite(childPredicates[index]);
-			return rewriter.factory.makeExtendedPredicate(getTag(),
+			return rewriter.factory.makeExtendedPredicate(extension,
 					childExpressions.clone(), newChildPredicates,
 					getSourceLocation());
 		}

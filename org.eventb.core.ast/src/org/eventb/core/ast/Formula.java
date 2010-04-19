@@ -862,6 +862,15 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public final static int KPARTITION = FIRST_MULTIPLE_PREDICATE + 0;
 
+	/**
+	 * First tag for extended formulae.
+	 * 
+	 * @see ExtendedPredicate
+	 * @see ExtendedExpression
+	 * @since 2.0
+	 */
+	public static final int FIRST_EXTENSION_TAG = 1000;
+
 	protected final static BoundIdentDecl[] NO_BOUND_IDENT_DECL =
 		new BoundIdentDecl[0];
 	

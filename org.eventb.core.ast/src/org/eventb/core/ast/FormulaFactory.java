@@ -48,12 +48,14 @@ import org.eventb.internal.core.upgrade.VersionUpgrader;
 
 public class FormulaFactory {
 
-	static FormulaFactory DEFAULT_INSTANCE = new FormulaFactory();
+	private static final FormulaFactory DEFAULT_INSTANCE = new FormulaFactory();
 
-	private static final Map<Integer, IFormulaExtension> allExtensions = new HashMap<Integer, IFormulaExtension>();
+	private static final Map<IFormulaExtension, Integer> ALL_EXTENSIONS = Collections
+			.synchronizedMap(new HashMap<IFormulaExtension, Integer>());
 	
-	// TODO maybe not needed, but how to check that no attempt is made to
-	// create a formula with a tag that should be managed by another factory ?
+	private static volatile int nextExtensionTag = Formula.FIRST_EXTENSION_TAG;
+	
+	// extensions managed by this formula factory
 	private final Set<IFormulaExtension> extensions;
 	
 	/**
@@ -69,14 +71,14 @@ public class FormulaFactory {
 	 * @since 2.0
 	 */
 	public static FormulaFactory getInstance(Set<IFormulaExtension> extensions) {
-		synchronized (DEFAULT_INSTANCE) {
+		synchronized (ALL_EXTENSIONS) {
 			for (IFormulaExtension extension : extensions) {
-				if (allExtensions.containsKey(extension)) {
-					// TODO
-					return null;
+				Integer tag = ALL_EXTENSIONS.get(extension);
+				if (tag == null) {
+					tag = nextExtensionTag;
+					nextExtensionTag++;
+					ALL_EXTENSIONS.put(extension, tag);
 				}
-				final Integer tag = null;// TODO
-				allExtensions.put(tag, extension);
 			}
 		}
 		return new FormulaFactory(extensions);
@@ -96,46 +98,45 @@ public class FormulaFactory {
 	/**
 	 * @since 2.0
 	 */
-	public ExtendedExpression makeExtendedExpression(int tag,
-			Expression[] expressions, Predicate[] predicates,
-			SourceLocation location) {
-		final IFormulaExtension extension;
-		synchronized (DEFAULT_INSTANCE) {
-			extension = allExtensions.get(tag);
-		}
-		assert extension instanceof IExpressionExtension;
+	public ExtendedExpression makeExtendedExpression(
+			IExpressionExtension extension, Expression[] expressions,
+			Predicate[] predicates, SourceLocation location) {
 		if (!extensions.contains(extension)) {
 			throw new IllegalArgumentException(
-					"the tag is not supported by this factory: " + tag);
+					"the extension is not supported by this factory: "
+							+ extension.getSyntaxSymbol());
 		}
+		final int tag = ALL_EXTENSIONS.get(extension);
 		return new ExtendedExpression(tag, expressions, predicates, location,
-				this, (IExpressionExtension) extension);
+				this, extension);
 	}
 	
 	/**
 	 * @since 2.0
 	 */
-	public ExtendedExpression makeExtendedExpression(int tag,
+	public ExtendedExpression makeExtendedExpression(IExpressionExtension extension,
 			Collection<Expression> expressions,
 			Collection<Predicate> predicates,
 			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+		final Expression[] expr = expressions.toArray(new Expression[expressions.size()]);
+		final Predicate[] pred = predicates.toArray(new Predicate[predicates.size()]);
+		return makeExtendedExpression(extension, expr, pred, sourceLocation);
 	}
 
 	/**
 	 * @since 2.0
 	 */
-	public ExtendedPredicate makeExtendedPredicate(int tag,
-			Expression[] expressions, Predicate[] predicates,
-			SourceLocation location) {
-		final IFormulaExtension extension;
-		synchronized (DEFAULT_INSTANCE) {
-			extension = allExtensions.get(tag);
+	public ExtendedPredicate makeExtendedPredicate(
+			IPredicateExtension extension, Expression[] expressions,
+			Predicate[] predicates, SourceLocation location) {
+		if (!extensions.contains(extension)) {
+			throw new IllegalArgumentException(
+					"the extension is not supported by this factory: "
+							+ extension.getSyntaxSymbol());
 		}
-		assert extension instanceof IPredicateExtension;
+		final int tag = ALL_EXTENSIONS.get(extension);
 		return new ExtendedPredicate(tag, expressions, predicates, location,
-				this, (IPredicateExtension) extension);
+				this, extension);
 	}
 
 	/**
@@ -153,7 +154,11 @@ public class FormulaFactory {
 	 * @since 2.0
 	 */
 	public int getTag(IFormulaExtension extension) {
-		return 0; // TODO
+		if (!extensions.contains(extension)) {
+			throw new IllegalArgumentException("unknown extension: "
+					+ extension.getSyntaxSymbol());
+		}
+		return ALL_EXTENSIONS.get(extension);
 	}
 	
 	/**

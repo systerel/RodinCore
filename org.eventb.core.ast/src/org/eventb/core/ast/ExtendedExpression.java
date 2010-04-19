@@ -218,7 +218,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		if (!changed) {
 			return this;
 		}
-		return factory.makeExtendedExpression(getTag(), newChildExpressions,
+		return factory.makeExtendedExpression(extension, newChildExpressions,
 				newChildPredicates, getSourceLocation());
 	}
 
@@ -282,7 +282,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		} else {
 			// FIXME should check preconditions about new children
 			// (flattening could break preconditions) 
-			before = rewriter.getFactory().makeExtendedExpression(getTag(),
+			before = rewriter.getFactory().makeExtendedExpression(extension,
 					newChildExpressions, newChildPredicates,
 					getSourceLocation());
 		}
@@ -337,7 +337,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 			Expression[] newChildExpressions = childExpressions.clone();
 			newChildExpressions[index] = rewriter
 					.rewrite(childExpressions[index]);
-			return rewriter.factory.makeExtendedExpression(getTag(),
+			return rewriter.factory.makeExtendedExpression(extension,
 					newChildExpressions, childPredicates.clone(),
 					getSourceLocation());
 		} else {
@@ -345,7 +345,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 			Predicate[] newChildPredicates = childPredicates.clone();
 			newChildPredicates[index] = rewriter
 					.rewrite(childPredicates[index]);
-			return rewriter.factory.makeExtendedExpression(getTag(),
+			return rewriter.factory.makeExtendedExpression(extension,
 					childExpressions.clone(), newChildPredicates,
 					getSourceLocation());
 		}
