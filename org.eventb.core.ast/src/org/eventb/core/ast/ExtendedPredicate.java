@@ -207,7 +207,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 				goOn = childExpressions[i].accept(visitor);
 			}
 		}
-		for (int i = 0; goOn && i < childExpressions.length; i++) {
+		for (int i = 0; goOn && i < childPredicates.length; i++) {
 			goOn = visitor.continueExtendedPredicate(this);
 			if (goOn) {
 				goOn = childPredicates[i].accept(visitor);

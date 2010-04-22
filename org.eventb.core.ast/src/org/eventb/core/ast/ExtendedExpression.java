@@ -236,7 +236,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 				goOn = childExpressions[i].accept(visitor);
 			}
 		}
-		for (int i = 0; goOn && i < childExpressions.length; i++) {
+		for (int i = 0; goOn && i < childPredicates.length; i++) {
 			goOn = visitor.continueExtendedExpression(this);
 			if (goOn) {
 				goOn = childPredicates[i].accept(visitor);
