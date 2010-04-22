@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eventb.internal.core.pm;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,8 +41,6 @@ import org.rodinp.core.RodinDBException;
  * @author Laurent Voisin
  */
 public class ProofComponent implements IProofComponent {
-
-	static final ProofAttempt[] NO_PROOF_ATTEMPTS = new ProofAttempt[0];
 
 	// Known proof attempts that are still alive (not yet disposed)
 	// Accesses must be synchronized
@@ -82,11 +81,12 @@ public class ProofComponent implements IProofComponent {
 	public ProofAttempt[] getProofAttempts() {
 		final Collection<ProofAttempt> res = new ArrayList<ProofAttempt>();
 		addAllAttempts(res);
-		return res.toArray(NO_PROOF_ATTEMPTS);
+		return res.toArray(new ProofAttempt[res.size()]);
 	}
 
 	public ProofAttempt[] getProofAttempts(String poName) {
-		return values(poName).toArray(NO_PROOF_ATTEMPTS);
+		final Collection<ProofAttempt> res = values(poName);
+		return res.toArray(new ProofAttempt[res.size()]);
 	}
 
 	public IPSRoot getPSRoot() {
@@ -143,6 +143,9 @@ public class ProofComponent implements IProofComponent {
 
 	synchronized Collection<ProofAttempt> values(String poName) {
 		final Map<String, ProofAttempt> map = known.get(poName);
+		if (map == null) {
+			return Collections.emptySet();
+		}
 		return map.values();
 	}
 
