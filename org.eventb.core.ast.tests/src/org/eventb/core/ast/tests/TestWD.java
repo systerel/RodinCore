@@ -27,16 +27,11 @@ import org.eventb.core.ast.Predicate;
  */
 public class TestWD extends AbstractTests {
 	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-	
 	private static IntegerType INTEGER = ff.makeIntegerType();
 	private static BooleanType BOOL = ff.makeBooleanType();
 	private static GivenType S = ff.makeGivenType("S");
 
-	ITypeEnvironment defaultTEnv = mTypeEnvironment(
+	static ITypeEnvironment defaultTEnv = mTypeEnvironment(
 			"x", INTEGER,
 			"y", INTEGER,
 			"A", POW(INTEGER),
@@ -46,13 +41,13 @@ public class TestWD extends AbstractTests {
 			"S", POW(S)
 	);
 	
-	private abstract class TestFormula {
+	private static abstract class TestFormula {
 		// base class of various tests
 		TestFormula() { super(); }
 		public abstract void test();
 	}
 	
-	private class TestPredicate extends TestFormula {
+	private static class TestPredicate extends TestFormula {
 		String input;
 		String expected;
 		ITypeEnvironment env;
@@ -81,7 +76,7 @@ public class TestWD extends AbstractTests {
 		}
 	}
 	
-	private class TestAssignment extends TestFormula {
+	private static class TestAssignment extends TestFormula {
 		String input;
 		String expected;
 		ITypeEnvironment env;
@@ -107,7 +102,11 @@ public class TestWD extends AbstractTests {
 		}
 	}
 	
-	private TestFormula[] formulas = new TestFormula[] {
+	private static void assertWDLemma(String in, String expected) {
+		new TestPredicate(in, expected).test();
+	}
+
+	private static TestFormula[] formulas = new TestFormula[] {
 			new TestPredicate(
 					"x≠y ∧ y=1",
 					"⊤"
@@ -229,5 +228,5 @@ public class TestWD extends AbstractTests {
 			formulas[i].test();
 		}
 	}
-	
+
 }
