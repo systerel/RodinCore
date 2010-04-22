@@ -20,6 +20,7 @@ import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,6 +28,9 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.parser.AbstractGrammar;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.ExtendedGrammar;
 import org.eventb.internal.core.parser.GenParser;
 import org.eventb.internal.core.parser.ParseResult;
 import org.eventb.internal.core.parser.Scanner;
@@ -55,8 +59,10 @@ public class FormulaFactory {
 	
 	private static volatile int nextExtensionTag = Formula.FIRST_EXTENSION_TAG;
 	
-	// extensions managed by this formula factory
-	private final Set<IFormulaExtension> extensions;
+	// tags of extensions managed by this formula factory
+	private final Map<Integer, IFormulaExtension> extensions;
+	
+	private final AbstractGrammar grammar;
 	
 	/**
 	 * Returns the default instance of the type factory.
@@ -71,6 +77,7 @@ public class FormulaFactory {
 	 * @since 2.0
 	 */
 	public static FormulaFactory getInstance(Set<IFormulaExtension> extensions) {
+		final Map<Integer, IFormulaExtension> extMap = new HashMap<Integer, IFormulaExtension>();
 		synchronized (ALL_EXTENSIONS) {
 			for (IFormulaExtension extension : extensions) {
 				Integer tag = ALL_EXTENSIONS.get(extension);
@@ -79,29 +86,44 @@ public class FormulaFactory {
 					nextExtensionTag++;
 					ALL_EXTENSIONS.put(extension, tag);
 				}
+				extMap.put(tag, extension);
 			}
 		}
-		return new FormulaFactory(extensions);
+		return new FormulaFactory(extMap);
 	}
 	
 	protected FormulaFactory() {
-		this(Collections.<IFormulaExtension>emptySet());
+		this(Collections.<Integer, IFormulaExtension>emptyMap());
 	}
 
 	/**
 	 * @since 2.0
 	 */
-	protected FormulaFactory(Set<IFormulaExtension> extensions) {
-		this.extensions = extensions;
+	protected FormulaFactory(Map<Integer, IFormulaExtension> extMap) {
+		this.extensions = extMap;
+		if (extMap.isEmpty()) {
+			this.grammar = BMath.B_MATH;
+		} else {
+			this.grammar = new ExtendedGrammar(new HashSet<IFormulaExtension>(
+					extMap.values()));
+			this.grammar.init();
+		}
 	}
 
+	/**
+	 * @since 2.0
+	 */
+	public AbstractGrammar getGrammar() {
+		return grammar;
+	}
+	
 	/**
 	 * @since 2.0
 	 */
 	public ExtendedExpression makeExtendedExpression(
 			IExpressionExtension extension, Expression[] expressions,
 			Predicate[] predicates, SourceLocation location) {
-		if (!extensions.contains(extension)) {
+		if (!extensions.containsValue(extension)) {
 			throw new IllegalArgumentException(
 					"the extension is not supported by this factory: "
 							+ extension.getSyntaxSymbol());
@@ -129,7 +151,7 @@ public class FormulaFactory {
 	public ExtendedPredicate makeExtendedPredicate(
 			IPredicateExtension extension, Expression[] expressions,
 			Predicate[] predicates, SourceLocation location) {
-		if (!extensions.contains(extension)) {
+		if (!extensions.containsValue(extension)) {
 			throw new IllegalArgumentException(
 					"the extension is not supported by this factory: "
 							+ extension.getSyntaxSymbol());
@@ -153,12 +175,15 @@ public class FormulaFactory {
 	/**
 	 * @since 2.0
 	 */
-	public int getTag(IFormulaExtension extension) {
-		if (!extensions.contains(extension)) {
-			throw new IllegalArgumentException("unknown extension: "
-					+ extension.getSyntaxSymbol());
-		}
+	public static int getTag(IFormulaExtension extension) {
 		return ALL_EXTENSIONS.get(extension);
+	}
+	
+	/**
+	 * @since 2.0
+	 */
+	public IFormulaExtension getExtension(int tag) {
+		return extensions.get(tag);
 	}
 	
 	/**
@@ -1146,7 +1171,7 @@ public class FormulaFactory {
 			LanguageVersion version, Object origin, Class<T> clazz,
 			boolean withPredVars) {
 		final ParseResult result = new ParseResult(this, version, origin);
-		final Scanner scanner = new Scanner(formula, result);
+		final Scanner scanner = new Scanner(formula, result, grammar);
 		final GenParser parser = new GenParser(clazz, scanner, result, withPredVars);
 		parser.parse();
 		return parser.getResult();

@@ -85,15 +85,15 @@ public class GenParser {
 	static class ParserContext {
 		private final Scanner scanner;
 		protected final FormulaFactory factory;
-		private final BMath grammar;
+		private final AbstractGrammar grammar;
 		private final Object origin;
 		protected Token t;    // last recognized token
 		protected Token la;   // lookahead token
 		
-		public ParserContext(Scanner scanner, FormulaFactory factory, BMath grammar, Object origin) {
+		public ParserContext(Scanner scanner, FormulaFactory factory, Object origin) {
 			this.scanner = scanner;
 			this.factory = factory;
-			this.grammar = grammar;
+			this.grammar = factory.getGrammar();
 			this.origin = origin;
 		}
 		
@@ -102,7 +102,6 @@ public class GenParser {
 		}
 		
 		public void init() {
-			grammar.init();
 			la = scanner.Scan();
 		}
 		
@@ -153,7 +152,7 @@ public class GenParser {
 	public void parse() {
 
 		try {
-			final ParserContext pc = new ParserContext(scanner, factory, new BMath(), result.getOrigin());
+			final ParserContext pc = new ParserContext(scanner, factory, result.getOrigin());
 			pc.init();
 			final Formula<?> res = Parsers.MainParser.parse(NO_TAG, pc, 0);
 			if (clazz.isInstance(res)) {

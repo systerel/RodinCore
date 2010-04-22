@@ -6,6 +6,8 @@
  */
 package org.eventb.internal.core.parser;
 
+import static org.eventb.internal.core.parser.BMath.B_MATH;
+
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Vector;
@@ -23,6 +25,7 @@ import org.eventb.core.ast.LanguageVersion;
  * FIXME update comment
  */
 public class Scanner {
+	
 	// list of the tokens which were looked-ahead
 	private final List<Token> list = new Vector<Token>();
 
@@ -40,7 +43,11 @@ public class Scanner {
 	 *            the result of this scan and parse
 	 */
 	public Scanner(String str, ParseResult result) {
-		lexer = GenScan.getBasicLexer();
+		this(str, result, B_MATH);
+	}
+
+	public Scanner(String str, ParseResult result, AbstractGrammar grammar) {
+		lexer = GenScan.getLexer(grammar);
 		lexer.parse(str);
 		lexer.result = result;
 	}

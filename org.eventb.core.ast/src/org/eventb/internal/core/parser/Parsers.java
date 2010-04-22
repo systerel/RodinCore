@@ -14,13 +14,18 @@ import static java.util.Arrays.asList;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.SourceLocation;
+import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.internal.core.parser.GenParser.ParserContext;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 
@@ -67,14 +72,14 @@ public class Parsers {
 
 	static class AssociativeExpressionInfix extends DefaultSubParser {
 
-		private final int tag;
+		protected final int tag;
 
 		public AssociativeExpressionInfix(int tag) {
 			this.tag = tag;
 		}
 
 		@Override
-		public AssociativeExpression led(Formula<?> left, ParserContext pc, int startPos)
+		public Expression led(Formula<?> left, ParserContext pc, int startPos)
 				throws GenParser.SyntaxError {
 			final Formula<?> right = MainParser.parse(tag, pc, pc.la.pos);
 			if (!(left instanceof Expression && right instanceof Expression)) {
@@ -82,17 +87,47 @@ public class Parsers {
 			}
 			final List<Expression> children = new ArrayList<Expression>();
 			if (left.getTag() == tag) {
-				children.addAll(asList(((AssociativeExpression) left)
-						.getChildren()));
+				children.addAll(asList(getChildren(left)));
 			} else {
 				children.add((Expression) left);
 			}
 			children.add((Expression) right);
-			return pc.factory.makeAssociativeExpression(tag, children, pc
-					.getSourceLocation(startPos));
+			final SourceLocation srcLoc = pc.getSourceLocation(startPos);
+			return makeResult(pc.factory, children, srcLoc);
 		}
+		
+		protected Expression[] getChildren(Formula<?> exprWithSameTag) {
+			return ((AssociativeExpression) exprWithSameTag).getChildren();
+		}
+		
+		protected Expression makeResult(FormulaFactory factory,
+				List<Expression> children, SourceLocation srcLoc) {
+			return factory.makeAssociativeExpression(tag, children, srcLoc);
+		}
+		
 	}
 
+	static class ExtendedAssociativeExpressionInfix extends AssociativeExpressionInfix {
+
+		public ExtendedAssociativeExpressionInfix(int tag) {
+			super(tag);
+		}
+		
+		@Override
+		protected Expression[] getChildren(Formula<?> exprWithSameTag) {
+			return ((ExtendedExpression) exprWithSameTag).getChildExpressions();
+		}
+		
+		@Override
+		protected ExtendedExpression makeResult(FormulaFactory factory,
+				List<Expression> children, SourceLocation srcLoc) {
+			final IExpressionExtension extension = (IExpressionExtension) factory
+					.getExtension(tag);
+			return factory.makeExtendedExpression(extension, children, Collections
+					.<Predicate> emptyList(), srcLoc);
+		}
+	}
+	
 	static class AssociativePredicateInfix extends DefaultSubParser {
 
 		private final int tag;

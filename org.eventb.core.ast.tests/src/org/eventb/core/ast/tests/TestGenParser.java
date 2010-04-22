@@ -201,7 +201,7 @@ public class TestGenParser extends AbstractTests {
 		}
 
 		public String getSyntaxSymbol() {
-			return "⊗";
+			return "§";
 		}
 
 		public void checkPreconditions(Expression[] expressions,
@@ -245,18 +245,37 @@ public class TestGenParser extends AbstractTests {
 				return null;
 			}
 		}
+
+		public List<Pair<String>> getAssociativities() {
+			return Collections.emptyList();
+		}
+
+		public List<Pair<String>> getCompatibilities() {
+			return Collections.emptyList();
+		}
+
+		public String getGroupId() {
+			return "My own group";
+		}
+
+		public String getId() {
+			return "direct product extension";
+		}
+
+		public ExtensionKind getKind() {
+			return ExtensionKind.ASSOCIATIVE_INFIX_EXPRESSION;
+		}
 	};
 
 	public void testExtensionDirectProduct() throws Exception {
 		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
 				.<IFormulaExtension> singleton(DIRECT_PRODUCT));
-		
 		final Expression expected = extFac.makeExtendedExpression(DIRECT_PRODUCT,
 				Arrays.<Expression> asList(
 						extFac.makeFreeIdentifier("A", null),
 						extFac.makeFreeIdentifier("B", null)),
 				Collections.<Predicate> emptySet(), null);
-		doExpressionTest("A⊗B", expected, extFac);
+		doExpressionTest("A§B", expected, extFac);
 	}
 
 }

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.extension;
 
+import java.util.List;
+
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
 
@@ -19,6 +21,24 @@ import org.eventb.core.ast.Predicate;
  */
 public interface IFormulaExtension {
 
+	public static enum ExtensionKind {
+		ASSOCIATIVE_INFIX_EXPRESSION
+		
+	}
+	
+	// TODO rather make classes for associativity and compatibility
+	// with addAssociativities(IAssociativityMediator) etc
+	// TODO rename everywhere associativity to priority
+	public static class Pair<T> {
+		public final T left;
+		public final T right;
+		
+		public Pair(T left, T right) {
+			this.left = left;
+			this.right = right;
+		}
+	}
+	
 	void checkPreconditions(Expression[] expressions, Predicate[] predicates);
 
 	String getSyntaxSymbol();
@@ -28,5 +48,15 @@ public interface IFormulaExtension {
 	Predicate getWDPredicate(IWDMediator wdMediator, IExtendedFormula formula);
 
 	boolean isFlattenable();
+
+	String getId();
+
+	String getGroupId();
+
+	ExtensionKind getKind();
+
+	List<Pair<String>> getCompatibilities();
+
+	List<Pair<String>> getAssociativities();
 
 }

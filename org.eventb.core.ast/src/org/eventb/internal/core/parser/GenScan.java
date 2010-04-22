@@ -42,9 +42,9 @@ public class GenScan {
 	 * Retrieves an instance of the parameterizable lexer, and initialize it
 	 * with the given keywords map.
 	 */
-	public static GenScan getBasicLexer() {
+	public static GenScan getLexer(AbstractGrammar grammar) {
 		GenScan genScan = new GenScan();
-		for (Entry<String, Integer> e : BMath.basicConf.entrySet()) {
+		for (Entry<String, Integer> e : grammar.getTokens().entrySet()) {
 			genScan.addToken(e.getKey(), e.getValue());
 		}
 		return genScan;
