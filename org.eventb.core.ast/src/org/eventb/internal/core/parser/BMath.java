@@ -156,7 +156,6 @@ public class BMath extends AbstractGrammar {
 			_KPARTITION = tokens.add("partition");
 			tokens.add(".");
 			tokens.add("\u2024");
-			maxT = tokens.reserved();
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -261,7 +260,6 @@ public class BMath extends AbstractGrammar {
 	static int _INTLIT;
 //	static int _TYPING;
 	static int _PREDVAR;
-	static int maxT;
 
 
 	@Override
@@ -300,4 +298,24 @@ public class BMath extends AbstractGrammar {
 		
 	}
 
+	public int getEOF() {
+		return _EOF;
+	}
+	
+	public int getIDENT() {
+		return _IDENT;
+	}
+	
+	public int getINTLIT() {
+		return _INTLIT;
+	}
+	
+	public int getPARTITION() {
+		return _KPARTITION;
+	}
+	
+	public int getPREDVAR() {
+		return _PREDVAR;
+	}
+	
 }

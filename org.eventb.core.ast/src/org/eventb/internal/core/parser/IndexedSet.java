@@ -23,6 +23,8 @@ public class IndexedSet<T> {
 
 	public static class OverrideException extends Exception {
 
+		private static final long serialVersionUID = -1281802568424261959L;
+
 		public OverrideException(String reason) {
 			super(reason);
 		}

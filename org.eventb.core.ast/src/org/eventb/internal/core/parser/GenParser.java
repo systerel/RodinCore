@@ -187,18 +187,4 @@ public class GenParser {
 		return result;
 	}
 
-	public static int getPartitionT() {
-		return BMath._KPARTITION;
-	}
-
-	public static int getIdentT() {
-		return BMath._IDENT;
-	}
-
-	public static Object getMaxT() {
-		return BMath.maxT;
-	}
-	
-	
-
 }
