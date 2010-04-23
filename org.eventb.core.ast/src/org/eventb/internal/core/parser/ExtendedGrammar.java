@@ -14,6 +14,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.extension.IFormulaExtension.ExtensionKind;
 import org.eventb.internal.core.ast.extension.CompatibilityMediator;
 import org.eventb.internal.core.ast.extension.PriorityMediator;
 import org.eventb.internal.core.parser.IndexedSet.OverrideException;
@@ -36,22 +37,26 @@ public class ExtendedGrammar extends BMath {
 		super.init();
 		try {
 			for (IFormulaExtension extension : extensions) {
-				final int tokenIndex = tokens.add(extension.getSyntaxSymbol());
 				final int tag = FormulaFactory.getTag(extension);
-				operatorTag.put(tokenIndex, tag);
 				final String operatorId = extension.getId();
 				final String groupId = extension.getGroupId();
-				opRegistry.addOperator(tag, operatorId, groupId);
-				switch (extension.getKind()) {
+				final ExtensionKind kind = extension.getKind();
+				final ISubParser subParser;
+				switch (kind) {
 				case ASSOCIATIVE_INFIX_EXPRESSION:
-					subParsers.put(tokenIndex,
-							new Parsers.ExtendedAssociativeExpressionInfix(tag));
+					subParser = new Parsers.ExtendedAssociativeExpressionInfix(
+							tag);
 					break;
 				case BINARY_INFIX_EXPRESSION:
-					subParsers.put(tokenIndex,
-							new Parsers.ExtendedBinaryExpressionInfix(tag));
+					subParser = new Parsers.ExtendedBinaryExpressionInfix(tag);
 					break;
+				default:
+					// should not be ever possible
+					throw new IllegalStateException("Unknown extension kind: "
+							+ kind);
 				}
+				addOperator(extension.getSyntaxSymbol(), tag, operatorId,
+						groupId, subParser);
 			}
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block

@@ -39,6 +39,7 @@ public class BMath extends AbstractGrammar {
 		// singleton
 	}
 	
+	private static final String NO_TAG_ID = "no tag";
 	private static final String LOR_ID = "lor";
 	private static final String LAND_ID = "land";
 	private static final String BINTER_ID = "binter";
@@ -57,18 +58,17 @@ public class BMath extends AbstractGrammar {
 	private final void initTokens() {
 		try {
 			_EOF = tokens.reserved();
-			_IDENT = tokens.reserved();
+//			_IDENT = tokens.reserved();
 			_PREDVAR = tokens.reserved();
-			_INTLIT = tokens.reserved();
-			_LPAR = tokens.add("(");
-			_RPAR = tokens.add(")");
+			// tokens.add("(");
+//			_RPAR = tokens.add(")");
 			tokens.add("[");
 			tokens.add("]");
 			tokens.add("{");
 			tokens.add("}");
 			tokens.add(";");
 			tokens.add(",");
-			_PLUS = tokens.add("+");
+//			_PLUS = tokens.add("+");
 			tokens.add("\u005e");
 			tokens.add("\u00ac");
 			tokens.add("\u00d7");
@@ -95,14 +95,14 @@ public class BMath extends AbstractGrammar {
 			tokens.add("\u2209");
 			tokens.add("\u2212");
 			tokens.add("\u2216");
-			_MUL = tokens.add("\u2217");
+//			_MUL = tokens.add("\u2217");
 			tokens.add("\u2218");
 			tokens.add("\u2223");
 			tokens.add("\u2225");
-			_LAND = tokens.add("\u2227");
-			_LOR = tokens.add("\u2228");
-			_BINTER = tokens.add("\u2229");
-			_BUNION = tokens.add("\u222a");
+//			_LAND = tokens.add("\u2227");
+//			_LOR = tokens.add("\u2228");
+//			_BINTER = tokens.add("\u2229");
+//			_BUNION = tokens.add("\u222a");
 			tokens.add("\u223c");
 			tokens.add("\u2254");
 			tokens.add(":\u2208");
@@ -118,8 +118,8 @@ public class BMath extends AbstractGrammar {
 			tokens.add("\u2286");
 			tokens.add("\u2288");
 			tokens.add("\u2297");
-			_BTRUE = tokens.add("\u22a4");
-			_BFALSE = tokens.add("\u22a5");
+//			_BTRUE = tokens.add("\u22a4");
+//			_BFALSE = tokens.add("\u22a5");
 			tokens.add("\u22c2");
 			tokens.add("\u22c3");
 			tokens.add("\u00b7");
@@ -164,8 +164,7 @@ public class BMath extends AbstractGrammar {
 	}
 
 	static int _EOF;
-	private static int _LPAR;
-	private static int _RPAR;
+//	private static int _RPAR;
 //	static int _LBRACKET;
 //	static int _RBRACKET;
 //	static int _LBRACE;
@@ -194,13 +193,13 @@ public class BMath extends AbstractGrammar {
 //	static int _IN;
 //	static int _NOTIN;
 //	static int _SETMINUS;
-	private static int _MUL;
+//	private static int _MUL;
 //	static int _BCOMP;
 //	static int _PPROD;
-	private static int _LAND;
-	private static int _LOR;
-	private static int _BINTER;
-	private static int _BUNION;
+//	private static int _LAND;
+//	private static int _LOR;
+//	private static int _BINTER;
+//	private static int _BUNION;
 //	static int _BECEQ;
 //	static int _BECMO;
 //	static int _BECST;
@@ -215,8 +214,8 @@ public class BMath extends AbstractGrammar {
 //	static int _SUBSETEQ;
 //	static int _NOTSUBSETEQ;
 //	static int _DPROD;
-	private static int _BTRUE;
-	private static int _BFALSE;
+//	private static int _BTRUE;
+//	private static int _BFALSE;
 //	static int _QINTER;
 //	static int _QUNION;
 //	static int _QDOT;
@@ -233,7 +232,7 @@ public class BMath extends AbstractGrammar {
 //	static int _OVR;
 //	static int _FCOMP;
 //	static int _COMMA;
-	private static int _PLUS;
+//	private static int _PLUS;
 //	static int _MINUS;
 //	static int _DIV;
 //	static int _MID;
@@ -269,47 +268,36 @@ public class BMath extends AbstractGrammar {
 	public void init() {
 		initTokens();
 		
-		operatorTag.put(_PLUS, Formula.PLUS);
-		operatorTag.put(_MUL, Formula.MUL);
-		operatorTag.put(_BUNION, Formula.BUNION);
-		operatorTag.put(_BINTER, Formula.BINTER);
-		operatorTag.put(_RPAR, Formula.NO_TAG);
-		operatorTag.put(_LAND, Formula.LAND);
-		operatorTag.put(_LOR, Formula.LOR);
-		
-		opRegistry.addOperator(PLUS, PLUS_ID, ARITHMETIC);
-		opRegistry.addOperator(MUL, MUL_ID, ARITHMETIC);
+		opRegistry.addOperator(Formula.NO_TAG, NO_TAG_ID, GROUP0);
+		try {
+			_INTLIT = addReservedSubParser(Parsers.INTLIT_SUBPARSER);
+			_IDENT = addReservedSubParser(Parsers.FREE_IDENT_SUBPARSER);
+			addOperator("\u222a", BUNION, BUNION_ID, SET_OPERATORS, new Parsers.AssociativeExpressionInfix(BUNION));
+			addOperator("\u2229", BINTER, BINTER_ID, SET_OPERATORS, new Parsers.AssociativeExpressionInfix(BINTER));
+			addOperator("+", PLUS, PLUS_ID, ARITHMETIC, new Parsers.AssociativeExpressionInfix(PLUS));
+			addOperator("\u2217", MUL, MUL_ID, ARITHMETIC, new Parsers.AssociativeExpressionInfix(MUL));
+			addClosedSubParser("(", ")");
+			addLiteralOperator("\u22a4", BTRUE, new Parsers.LiteralPredicateParser(BTRUE));
+			addLiteralOperator("\u22a5", BFALSE, new Parsers.LiteralPredicateParser(BFALSE));
+			addOperator("\u2227", LAND, LAND_ID, LOGIC, new Parsers.AssociativePredicateInfix(LAND));
+			addOperator("\u2228", LOR, LOR_ID, LOGIC, new Parsers.AssociativePredicateInfix(LOR));
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		opRegistry.addCompatibility(PLUS_ID, PLUS_ID);
 		opRegistry.addCompatibility(MUL_ID, MUL_ID);
-		
-		opRegistry.addOperator(BUNION, BUNION_ID, SET_OPERATORS);
-		opRegistry.addOperator(BINTER, BINTER_ID, SET_OPERATORS);
-		
 		opRegistry.addCompatibility(BUNION_ID, BUNION_ID);
 		opRegistry.addCompatibility(BINTER_ID, BINTER_ID);
-		
-		opRegistry.addOperator(LAND, LAND_ID, LOGIC);
-		opRegistry.addOperator(LOR, LOR_ID, LOGIC);
-		
-		opRegistry.addOperator(Formula.NO_TAG, "no tag", GROUP0);
+
 		try {
 			opRegistry.addPriority(PLUS_ID, MUL_ID);
 		} catch (CycleError e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		subParsers.put(_INTLIT, Parsers.INTLIT_SUBPARSER);
-		subParsers.put(_IDENT, Parsers.FREE_IDENT_SUBPARSER);
-		subParsers.put(_BUNION, new Parsers.AssociativeExpressionInfix(BUNION));
-		subParsers.put(_BINTER, new Parsers.AssociativeExpressionInfix(BINTER));
-		subParsers.put(_PLUS, new Parsers.AssociativeExpressionInfix(PLUS));
-		subParsers.put(_MUL, new Parsers.AssociativeExpressionInfix(MUL));
-		subParsers.put(_LPAR, new Parsers.ClosedSugar(_RPAR));
-		subParsers.put(_BTRUE, new Parsers.LiteralPredicateParser(BTRUE));
-		subParsers.put(_BFALSE, new Parsers.LiteralPredicateParser(BFALSE));
-		subParsers.put(_LAND, new Parsers.AssociativePredicateInfix(LAND));
-		subParsers.put(_LOR, new Parsers.AssociativePredicateInfix(LOR));
+		
 	}
 
 }

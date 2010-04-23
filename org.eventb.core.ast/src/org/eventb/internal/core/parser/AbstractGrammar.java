@@ -13,7 +13,9 @@ package org.eventb.internal.core.parser;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eventb.core.ast.Formula;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
+import org.eventb.internal.core.parser.IndexedSet.OverrideException;
 
 /**
  * @author Nicolas Beauger
@@ -31,9 +33,13 @@ public abstract class AbstractGrammar {
 	}
 
 	protected final IndexedSet<String> tokens = new IndexedSet<String>();
-	protected final Map<Integer, Integer> operatorTag = new HashMap<Integer, Integer>();
+	
+	// maps operator token kind to formula tag
+	private final Map<Integer, Integer> operatorTag = new HashMap<Integer, Integer>();
 		
-	protected final Map<Integer, ISubParser> subParsers = new HashMap<Integer, ISubParser>();
+	// maps operator token kind to a subparser
+	// TODO when backtracking there will be several subparsers for one kind
+	private final Map<Integer, ISubParser> subParsers = new HashMap<Integer, ISubParser>();
 	
 	protected final OperatorRegistry opRegistry = new OperatorRegistry();
 	
@@ -59,6 +65,36 @@ public abstract class AbstractGrammar {
 
 	public ISubParser getSubParser(int kind) {
 		return subParsers.get(kind);
+	}
+	
+	protected void addOperator(String token, int tag, String operatorId, String groupId,
+			ISubParser subParser) throws OverrideException {
+		opRegistry.addOperator(tag, operatorId, groupId);
+		final int kind = tokens.add(token);
+		operatorTag.put(kind, tag);
+		subParsers.put(kind, subParser);
+	}
+	
+	protected int addReservedSubParser(ISubParser subParser)
+			throws OverrideException {
+		final int kind = tokens.reserved();
+		subParsers.put(kind, subParser);
+		return kind;
+	}
+	
+	protected void addClosedSubParser(String open, String close)
+			throws OverrideException {
+		final int openKind = tokens.add(open);
+		final int closeKind = tokens.add(close);
+		operatorTag.put(closeKind, Formula.NO_TAG);
+		subParsers.put(openKind, new Parsers.ClosedSugar(closeKind));
+	}
+	
+	protected void addLiteralOperator(String token, int tag,
+			ISubParser subParser) throws OverrideException {
+		final int kind = tokens.add(token);
+		operatorTag.put(kind, tag);
+		subParsers.put(kind, subParser);
 	}
 	
 }
