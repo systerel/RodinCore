@@ -71,6 +71,16 @@
                relative="org.eventb.ui.views.ProofControl"/>
          <newWizardShortcut id="org.eventb.ui.wizards.NewProject"/>
          <newWizardShortcut id="org.eventb.ui.wizards.NewComponent"/>
+         <viewShortcut
+               id="org.eclipse.pde.runtime.LogView">
+         </viewShortcut>
+         <view
+               id="org.eclipse.pde.runtime.LogView"
+               minimized="false"
+               relationship="stack"
+               relative="org.eventb.ui.views.ProofControl"
+               visible="false">
+         </view>
       </perspectiveExtension>
       <perspectiveExtension targetID="org.eventb.ui.perspective.eventb">
          <view
@@ -90,6 +100,16 @@
          <newWizardShortcut id="org.eventb.ui.wizards.NewComponent"/>
          <perspectiveShortcut id="org.eventb.ui.perspective.proving"/>
          <perspectiveShortcut id="org.eclipse.ui.resourcePerspective"/>
+         <viewShortcut
+               id="org.eclipse.pde.runtime.LogView">
+         </viewShortcut>
+         <view
+               id="org.eclipse.pde.runtime.LogView"
+               minimized="false"
+               relationship="stack"
+               relative="org.eventb.ui.views.RodinProblemView"
+               visible="false">
+         </view>
       </perspectiveExtension>
    </extension>
 
