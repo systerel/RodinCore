@@ -15,8 +15,10 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
+import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.IToStringMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
@@ -74,6 +76,26 @@ public class BinaryPlus3 implements IExpressionExtension {
 
 	public boolean isFlattenable() {
 		return false;
+	}
+
+	public void addCompatibilities(ICompatibilityMediator mediator) {
+		mediator.addCompatibility(getId(), getId());
+	}
+
+	public void addPriorities(IPriorityMediator mediator) {
+		// no priorities to set
+	}
+
+	public String getGroupId() {
+		return "arithmetic";
+	}
+
+	public String getId() {
+		return "binary plus 3";
+	}
+
+	public ExtensionKind getKind() {
+		return ExtensionKind.BINARY_INFIX_EXPRESSION;
 	}
 
 }

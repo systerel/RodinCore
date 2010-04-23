@@ -18,14 +18,15 @@ import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.LOR;
 import static org.eventb.core.ast.Formula.MUL;
 import static org.eventb.core.ast.Formula.PLUS;
+import static org.eventb.internal.core.parser.OperatorRegistry.GROUP0;
 
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.extension.CycleError;
 import org.eventb.internal.core.parser.IndexedSet.OverrideException;
 
 /**
  * @author Nicolas Beauger
- * TODO needs quite a lot of refactorings
- * TODO make extensible grammars (this one + extensions)
+ * TODO needs refactorings
  */
 public class BMath extends AbstractGrammar {
 	
@@ -38,6 +39,16 @@ public class BMath extends AbstractGrammar {
 		// singleton
 	}
 	
+	private static final String LOR_ID = "lor";
+	private static final String LAND_ID = "land";
+	private static final String BINTER_ID = "binter";
+	private static final String BUNION_ID = "bunion";
+	private static final String MUL_ID = "mul";
+	private static final String PLUS_ID = "plus";
+	private static final String ARITHMETIC = "Arithmetic";
+	private static final String SET_OPERATORS = "Set Operators";
+	private static final String LOGIC = "Logic";
+
 	/**
 	 * Configuration table used to parameterize the scanner, with Rodin
 	 * mathematical language tokens.
@@ -254,54 +265,40 @@ public class BMath extends AbstractGrammar {
 	static int maxT;
 
 
-	private static final String ARITHMETIC = "Arithmetic";
-	private static final String SET_OPERATORS = "Set Operators";
-	private static final String LOGIC = "Logic";
-
 	@Override
 	public void init() {
 		initTokens();
 		
+		operatorTag.put(_PLUS, Formula.PLUS);
+		operatorTag.put(_MUL, Formula.MUL);
+		operatorTag.put(_BUNION, Formula.BUNION);
+		operatorTag.put(_BINTER, Formula.BINTER);
+		operatorTag.put(_RPAR, Formula.NO_TAG);
+		operatorTag.put(_LAND, Formula.LAND);
+		operatorTag.put(_LOR, Formula.LOR);
+		
+		opRegistry.addOperator(PLUS, PLUS_ID, ARITHMETIC);
+		opRegistry.addOperator(MUL, MUL_ID, ARITHMETIC);
+		opRegistry.addCompatibility(PLUS_ID, PLUS_ID);
+		opRegistry.addCompatibility(MUL_ID, MUL_ID);
+		
+		opRegistry.addOperator(BUNION, BUNION_ID, SET_OPERATORS);
+		opRegistry.addOperator(BINTER, BINTER_ID, SET_OPERATORS);
+		
+		opRegistry.addCompatibility(BUNION_ID, BUNION_ID);
+		opRegistry.addCompatibility(BINTER_ID, BINTER_ID);
+		
+		opRegistry.addOperator(LAND, LAND_ID, LOGIC);
+		opRegistry.addOperator(LOR, LOR_ID, LOGIC);
+		
+		opRegistry.addOperator(Formula.NO_TAG, "no tag", GROUP0);
 		try {
-			operatorTag.put(_PLUS, Formula.PLUS);
-			operatorTag.put(_MUL, Formula.MUL);
-			operatorTag.put(_BUNION, Formula.BUNION);
-			operatorTag.put(_BINTER, Formula.BINTER);
-			operatorTag.put(_RPAR, Formula.NO_TAG);
-			operatorTag.put(_LAND, Formula.LAND);
-			operatorTag.put(_LOR, Formula.LOR);
-
-			groupIds.put(PLUS, ARITHMETIC);
-			groupIds.put(MUL, ARITHMETIC);
-			final OperatorGroup arithGroup = new OperatorGroup(ARITHMETIC);
-			arithGroup.addCompatibility(PLUS, PLUS);
-			arithGroup.addCompatibility(MUL, MUL);
-			arithGroup.addAssociativity(PLUS, MUL);
-			operatorGroups.put(ARITHMETIC, arithGroup);
-
-			groupIds.put(BUNION, SET_OPERATORS);
-			groupIds.put(BINTER, SET_OPERATORS);
-			final OperatorGroup setOpGroup = new OperatorGroup(SET_OPERATORS);
-			setOpGroup.addCompatibility(BUNION, BUNION);
-			setOpGroup.addCompatibility(BINTER, BINTER);
-			operatorGroups.put(SET_OPERATORS, setOpGroup);
-			
-			groupIds.put(LAND, LOGIC);
-			groupIds.put(LOR, LOGIC);
-			final OperatorGroup logicGroup = new OperatorGroup(LOGIC);
-			logicGroup.addCompatibility(LAND, LAND);
-			logicGroup.addCompatibility(LOR, LOR);
-
-			groupIds.put(Formula.NO_TAG, GROUP0);
-			groupAssociativity.add(GROUP0, ARITHMETIC);
-			groupAssociativity.add(GROUP0, SET_OPERATORS);
-			groupAssociativity.add(GROUP0, LOGIC);
-			
+			opRegistry.addPriority(PLUS_ID, MUL_ID);
 		} catch (CycleError e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		subParsers.put(_INTLIT, Parsers.INTLIT_SUBPARSER);
 		subParsers.put(_IDENT, Parsers.FREE_IDENT_SUBPARSER);
 		subParsers.put(_BUNION, new Parsers.AssociativeExpressionInfix(BUNION));

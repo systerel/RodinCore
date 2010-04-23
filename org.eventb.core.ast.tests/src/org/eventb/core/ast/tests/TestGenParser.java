@@ -35,9 +35,11 @@ import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.IToStringMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
@@ -246,14 +248,6 @@ public class TestGenParser extends AbstractTests {
 			}
 		}
 
-		public List<Pair<String>> getAssociativities() {
-			return Collections.emptyList();
-		}
-
-		public List<Pair<String>> getCompatibilities() {
-			return Collections.emptyList();
-		}
-
 		public String getGroupId() {
 			return "My own group";
 		}
@@ -264,6 +258,14 @@ public class TestGenParser extends AbstractTests {
 
 		public ExtensionKind getKind() {
 			return ExtensionKind.ASSOCIATIVE_INFIX_EXPRESSION;
+		}
+
+		public void addCompatibilities(ICompatibilityMediator mediator) {
+			// no compatibility
+		}
+
+		public void addPriorities(IPriorityMediator mediator) {
+			// no priority
 		}
 	};
 

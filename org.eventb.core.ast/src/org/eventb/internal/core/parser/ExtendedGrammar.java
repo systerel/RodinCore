@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
-import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.IFormulaExtension.Pair;
+import org.eventb.internal.core.ast.extension.CompatibilityMediator;
+import org.eventb.internal.core.ast.extension.PriorityMediator;
 import org.eventb.internal.core.parser.IndexedSet.OverrideException;
 
 /**
@@ -36,54 +36,31 @@ public class ExtendedGrammar extends BMath {
 		super.init();
 		try {
 			for (IFormulaExtension extension : extensions) {
-				int tokenIndex;
-				tokenIndex = tokens.add(extension.getSyntaxSymbol());
+				final int tokenIndex = tokens.add(extension.getSyntaxSymbol());
 				final int tag = FormulaFactory.getTag(extension);
 				operatorTag.put(tokenIndex, tag);
 				final String operatorId = extension.getId();
-				operatorFromId.put(operatorId, tag);
 				final String groupId = extension.getGroupId();
-				OperatorGroup operatorGroup = operatorGroups.get(groupId);
-				if (operatorGroup == null) {
-					operatorGroup = new OperatorGroup(groupId);
-					operatorGroups.put(groupId, operatorGroup);
-				}
-
-				groupIds.put(tag, groupId);
+				opRegistry.addOperator(tag, operatorId, groupId);
 				switch (extension.getKind()) {
 				case ASSOCIATIVE_INFIX_EXPRESSION:
 					subParsers.put(tokenIndex,
 							new Parsers.ExtendedAssociativeExpressionInfix(tag));
 					break;
-					// TODO
+				case BINARY_INFIX_EXPRESSION:
+					subParsers.put(tokenIndex,
+							new Parsers.ExtendedBinaryExpressionInfix(tag));
+					break;
 				}
 			}
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		try {
-			for (IFormulaExtension extension : extensions) {
-				final String groupId = extension.getGroupId();
-				OperatorGroup operatorGroup = operatorGroups.get(groupId);
-				final List<Pair<String>> compatibilities = extension.getCompatibilities();
-				for (Pair<String> compat : compatibilities) {
-					final Integer leftTag = operatorFromId.get(compat.left);
-					final Integer rightTag = operatorFromId.get(compat.right);
-					operatorGroup.addCompatibility(leftTag, rightTag);
-				}
-				final List<Pair<String>> associativities = extension.getAssociativities();
-				for (Pair<String> assoc : associativities) {
-					final Integer leftTag = operatorFromId.get(assoc.left);
-					final Integer rightTag = operatorFromId.get(assoc.right);
-					operatorGroup.addAssociativity(leftTag, rightTag);
-				}
+		for (IFormulaExtension extension : extensions) {
+			extension.addCompatibilities(new CompatibilityMediator(opRegistry));
+			extension.addPriorities(new PriorityMediator(opRegistry));
 
-			}
-			
-		} catch (CycleError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 

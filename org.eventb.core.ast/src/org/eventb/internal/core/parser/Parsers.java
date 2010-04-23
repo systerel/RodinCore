@@ -70,6 +70,52 @@ public class Parsers {
 		
 	}
 
+	static class BinaryExpressionInfix extends DefaultSubParser {
+
+		protected final int tag;
+
+		public BinaryExpressionInfix(int tag) {
+			this.tag = tag;
+		}
+		
+		@Override
+		public Expression led(Formula<?> left, ParserContext pc, int startPos)
+				throws GenParser.SyntaxError {
+			final Formula<?> right = MainParser.parse(tag, pc, pc.la.pos);
+			if (!(left instanceof Expression && right instanceof Expression)) {
+				throw new GenParser.SyntaxError("expected expressions");
+			}
+			final SourceLocation srcLoc = pc.getSourceLocation(startPos);
+			return makeResult(pc.factory, (Expression) left,
+					(Expression) right, srcLoc);
+		}
+		
+		protected Expression makeResult(FormulaFactory factory,
+				Expression left, Expression right, SourceLocation srcLoc) {
+			return factory.makeBinaryExpression(tag, left, right, srcLoc);
+		}
+
+	}
+	
+	static class ExtendedBinaryExpressionInfix extends BinaryExpressionInfix {
+
+		public ExtendedBinaryExpressionInfix(int tag) {
+			super(tag);
+		}
+
+		@Override
+		protected Expression makeResult(FormulaFactory factory,
+				Expression left, Expression right, SourceLocation srcLoc) {
+			final IExpressionExtension extension = (IExpressionExtension) factory
+					.getExtension(tag);
+
+			return factory.makeExtendedExpression(extension,
+					asList(left, right), Collections.<Predicate> emptySet(),
+					srcLoc);
+		}
+
+	}
+	
 	static class AssociativeExpressionInfix extends DefaultSubParser {
 
 		protected final int tag;

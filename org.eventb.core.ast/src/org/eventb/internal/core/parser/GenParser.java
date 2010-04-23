@@ -126,7 +126,8 @@ public class GenParser {
 			if (la.kind == BMath._EOF) { // end of the formula
 				return false;
 			}
-			return grammar.hasLessPriority(parentTag, grammar.getOperatorTag(la));
+			final OperatorRegistry opRegistry = grammar.getOperatorRegistry();
+			return opRegistry.hasLessPriority(parentTag, grammar.getOperatorTag(la));
 		}
 		
 	}
