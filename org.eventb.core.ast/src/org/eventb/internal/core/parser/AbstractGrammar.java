@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eventb.core.ast.Formula;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 import org.eventb.internal.core.parser.IndexedSet.OverrideException;
+import org.eventb.internal.core.parser.Parsers.IdentListParser;
 
 /**
  * @author Nicolas Beauger
@@ -96,5 +97,17 @@ public abstract class AbstractGrammar {
 		operatorTag.put(kind, tag);
 		subParsers.put(kind, subParser);
 	}
-	
+
+	protected void addQuantifiedOperator(String token, String identSeparator,
+			String endList, int tag, String operatorId, String groupId)
+			throws OverrideException {
+		final int identSepKind = tokens.add(identSeparator);
+		final int endListKind = tokens.add(endList);
+		final IdentListParser quantIdentListParser = new IdentListParser(
+				identSepKind, endListKind);
+		final Parsers.QuantifiedPredicateParser quantParser = new Parsers.QuantifiedPredicateParser(
+				tag, quantIdentListParser);
+		addOperator(token, tag, operatorId, groupId, quantParser);
+	}
+
 }

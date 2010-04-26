@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.CycleError;
+import org.eventb.core.ast.extension.IFormulaExtension.Associativity;
 import org.eventb.internal.core.parser.AbstractGrammar.SyntaxCompatibleError;
 
 /**
@@ -106,7 +107,7 @@ public class OperatorRegistry {
 	private static class OperatorGroup {
 		private final Set<Integer> operators = new HashSet<Integer>();
 		private final Relation<Integer> compatibilityRelation = new Relation<Integer>();
-		private final Closure<Integer> operatorAssociativity = new Closure<Integer>();
+		private final Closure<Integer> operatorPriority = new Closure<Integer>();
 
 		private final String id;
 
@@ -126,7 +127,7 @@ public class OperatorRegistry {
 
 		public void addPriority(Integer a, Integer b)
 				throws CycleError {
-			operatorAssociativity.add(a, b);
+			operatorPriority.add(a, b);
 		}
 
 		public boolean contains(Integer a) {
@@ -134,7 +135,7 @@ public class OperatorRegistry {
 		}
 
 		public boolean isAssociative(Integer a, Integer b) {
-			return operatorAssociativity.contains(a, b);
+			return operatorPriority.contains(a, b);
 		}
 		
 		public boolean isCompatible(Integer a, Integer b) {
@@ -149,7 +150,7 @@ public class OperatorRegistry {
 	private final Closure<String> groupPriority = new Closure<String>();
 	private final Map<String, OperatorGroup> operatorGroups = new HashMap<String, OperatorGroup>();
 	private final Map<String, Integer> operatorFromId = new HashMap<String, Integer>();
-
+	private final Map<Integer, Associativity> associativity = new HashMap<Integer, Associativity>();
 	
 	public void addOperator(int tag, String operatorId, String groupId) {
 		operatorFromId.put(operatorId, tag);

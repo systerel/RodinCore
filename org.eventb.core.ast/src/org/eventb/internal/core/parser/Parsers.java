@@ -19,11 +19,14 @@ import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
+import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.internal.core.parser.GenParser.ParserContext;
@@ -61,7 +64,7 @@ public class Parsers {
 		}
 
 		@Override
-		public Formula<?> nud(ParserContext pc, int startPos) throws GenParser.SyntaxError {
+		public Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError {
 			final Formula<?> formula = MainParser.parse(Formula.NO_TAG,
 					pc, pc.la.pos);
 			pc.progress(closeKind);
@@ -80,14 +83,14 @@ public class Parsers {
 		
 		@Override
 		public Expression led(Formula<?> left, ParserContext pc, int startPos)
-				throws GenParser.SyntaxError {
-			final Formula<?> right = MainParser.parse(tag, pc, pc.la.pos);
-			if (!(left instanceof Expression && right instanceof Expression)) {
-				throw new GenParser.SyntaxError("expected expressions");
+				throws SyntaxError {
+			final Expression right = MainParser.parseExpression(tag, pc, pc.la.pos);
+			if (!(left instanceof Expression)) {
+				throw new SyntaxError("expected expressions");
 			}
 			final SourceLocation srcLoc = pc.getSourceLocation(startPos);
 			return makeResult(pc.factory, (Expression) left,
-					(Expression) right, srcLoc);
+					right, srcLoc);
 		}
 		
 		protected Expression makeResult(FormulaFactory factory,
@@ -126,10 +129,10 @@ public class Parsers {
 
 		@Override
 		public Expression led(Formula<?> left, ParserContext pc, int startPos)
-				throws GenParser.SyntaxError {
-			final Formula<?> right = MainParser.parse(tag, pc, pc.la.pos);
-			if (!(left instanceof Expression && right instanceof Expression)) {
-				throw new GenParser.SyntaxError("expected expressions");
+				throws SyntaxError {
+			final Expression right = MainParser.parseExpression(tag, pc, pc.la.pos);
+			if (!(left instanceof Expression)) {
+				throw new SyntaxError("expected expressions");
 			}
 			final List<Expression> children = new ArrayList<Expression>();
 			if (left.getTag() == tag) {
@@ -137,7 +140,7 @@ public class Parsers {
 			} else {
 				children.add((Expression) left);
 			}
-			children.add((Expression) right);
+			children.add(right);
 			final SourceLocation srcLoc = pc.getSourceLocation(startPos);
 			return makeResult(pc.factory, children, srcLoc);
 		}
@@ -184,10 +187,10 @@ public class Parsers {
 
 		@Override
 		public AssociativePredicate led(Formula<?> left, ParserContext pc, int startPos)
-				throws GenParser.SyntaxError {
-			final Formula<?> right = MainParser.parse(tag, pc, pc.la.pos);
-			if (!(left instanceof Predicate && right instanceof Predicate)) {
-				throw new GenParser.SyntaxError("expected predicates");
+				throws SyntaxError {
+			final Predicate right = MainParser.parsePredicate(tag, pc, pc.la.pos);
+			if (!(left instanceof Predicate)) {
+				throw new SyntaxError("expected predicates");
 			}
 			final List<Predicate> children = new ArrayList<Predicate>();
 			if (left.getTag() == tag) {
@@ -196,9 +199,29 @@ public class Parsers {
 			} else {
 				children.add((Predicate) left);
 			}
-			children.add((Predicate) right);
+			children.add(right);
 			return pc.factory.makeAssociativePredicate(tag, children, pc
 					.getSourceLocation(startPos));
+		}
+	}
+
+	static class RelationalPredicateInfix extends DefaultSubParser {
+
+		private final int tag;
+
+		public RelationalPredicateInfix(int tag) {
+			this.tag = tag;
+		}
+
+		@Override
+		public RelationalPredicate led(Formula<?> left, ParserContext pc,
+				int startPos) throws SyntaxError {
+			final Expression right = MainParser.parseExpression(tag, pc, pc.la.pos);
+			if (!(left instanceof Expression)) {
+				throw new SyntaxError("expected expressions");
+			}
+			return pc.factory.makeRelationalPredicate(tag, (Expression) left,
+					right, pc.getSourceLocation(startPos));
 		}
 	}
 
@@ -216,6 +239,61 @@ public class Parsers {
 		}
 	}
 
+	static class QuantifiedPredicateParser extends DefaultSubParser {
+
+		private final int tag;
+		private final IdentListParser identListParser;
+
+		public QuantifiedPredicateParser(int tag, IdentListParser identListParser) {
+			this.tag = tag;
+			this.identListParser = identListParser;
+		}
+
+		@Override
+		public Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError {
+			pc.progress();
+			final List<FreeIdentifier> identList = identListParser.parse(pc, pc.t.pos);
+			identListParser.progressEndList(pc);
+			final Predicate pred = MainParser.parsePredicate(tag, pc, pc.la.pos);
+
+			final List<BoundIdentDecl> boundIdentifiers = new ArrayList<BoundIdentDecl>(identList.size());
+			// TODO use Formula.bindTheseIdents instead
+			for (FreeIdentifier ident: identList) {
+				boundIdentifiers.add(pc.factory.makeBoundIdentDecl(ident.getName(), ident.getSourceLocation()));
+			}
+			return pc.factory.makeQuantifiedPredicate(tag, boundIdentifiers,
+					pred, null);
+		}
+	}
+
+	static class IdentListParser {
+	
+		private final int identSepKind;
+		private final int endListKind;
+		
+		public IdentListParser(int identSepKind, int endListKind) {
+			this.identSepKind = identSepKind;
+			this.endListKind = endListKind;
+		}
+	
+		public List<FreeIdentifier> parse(ParserContext pc, int startPos) throws SyntaxError {
+			final List<FreeIdentifier> idents = new ArrayList<FreeIdentifier>();
+			FreeIdentifier ident = (FreeIdentifier) FREE_IDENT_SUBPARSER.nud(pc, startPos);
+			idents.add(ident);
+			while (pc.la.kind == identSepKind) {
+				pc.progress();
+				pc.progress();
+				ident = (FreeIdentifier) FREE_IDENT_SUBPARSER.nud(pc, pc.t.pos);
+				idents.add(ident);
+			}
+			return idents;
+		}
+		
+		public void progressEndList(ParserContext pc) throws SyntaxError {
+			pc.progress(endListKind);
+		}
+	}
+
 	static class MainParser {
 
 		public static Formula<?> parse(int parentTag, ParserContext pc, int startPos)
@@ -229,6 +307,22 @@ public class Parsers {
 			return left;
 		}
 
+		public static Predicate parsePredicate(int parentTag, ParserContext pc, int startPos) throws SyntaxError {
+			final Formula<?> formula = parse(parentTag, pc, startPos);
+			if (!(formula instanceof Predicate)) {
+				throw new SyntaxError("expected predicate");
+			}
+			return (Predicate) formula;
+		}
+		
+		public static Expression parseExpression(int parentTag, ParserContext pc, int startPos) throws SyntaxError {
+			final Formula<?> formula = parse(parentTag, pc, startPos);
+			if (!(formula instanceof Expression)) {
+				throw new SyntaxError("expected expression");
+			}
+			return (Expression) formula;
+		}
+		
 		private static ISubParser nextSubParser(ParserContext pc)
 				throws SyntaxError {
 			pc.progress();
@@ -243,7 +337,7 @@ public class Parsers {
 	static final ISubParser FREE_IDENT_SUBPARSER = new DefaultSubParser() {
 
 		@Override
-		public Formula<?> nud(ParserContext pc, int startPos) throws GenParser.SyntaxError {
+		public FreeIdentifier nud(ParserContext pc, int startPos) throws SyntaxError {
 			return pc.factory.makeFreeIdentifier(pc.t.val, pc
 					.getSourceLocation(startPos));
 		}

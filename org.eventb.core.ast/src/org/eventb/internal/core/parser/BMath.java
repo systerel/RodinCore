@@ -14,6 +14,8 @@ import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.BUNION;
+import static org.eventb.core.ast.Formula.EQUAL;
+import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.LOR;
 import static org.eventb.core.ast.Formula.MUL;
@@ -49,7 +51,10 @@ public class BMath extends AbstractGrammar {
 	private static final String ARITHMETIC = "Arithmetic";
 	private static final String SET_OPERATORS = "Set Operators";
 	private static final String LOGIC = "Logic";
+	private static final String FORALL_ID = "for all";
 
+	private static final String EQUAL_ID = "equal";
+	private static final String RELATIONAL = "Relational";
 	/**
 	 * Configuration table used to parameterize the scanner, with Rodin
 	 * mathematical language tokens.
@@ -67,7 +72,7 @@ public class BMath extends AbstractGrammar {
 			tokens.add("{");
 			tokens.add("}");
 			tokens.add(";");
-			tokens.add(",");
+//			tokens.add(",");
 //			_PLUS = tokens.add("+");
 			tokens.add("\u005e");
 			tokens.add("\u00ac");
@@ -88,7 +93,7 @@ public class BMath extends AbstractGrammar {
 			tokens.add("\u21d2");
 			tokens.add("\u21d4");
 			tokens.add("\u21f8");
-			tokens.add("\u2200");
+//			tokens.add("\u2200");
 			tokens.add("\u2203");
 			tokens.add("\u2205");
 			tokens.add("\u2208");
@@ -107,7 +112,7 @@ public class BMath extends AbstractGrammar {
 			tokens.add("\u2254");
 			tokens.add(":\u2208");
 			tokens.add(":\u2223");
-			tokens.add("=");
+//			tokens.add("=");
 			tokens.add("\u2260");
 			tokens.add("<");
 			tokens.add("\u2264");
@@ -122,7 +127,7 @@ public class BMath extends AbstractGrammar {
 //			_BFALSE = tokens.add("\u22a5");
 			tokens.add("\u22c2");
 			tokens.add("\u22c3");
-			tokens.add("\u00b7");
+//			tokens.add("\u00b7");
 			tokens.add("\u25b7");
 			tokens.add("\u25c1");
 			tokens.add("\u2900");
@@ -154,7 +159,7 @@ public class BMath extends AbstractGrammar {
 			tokens.add("succ");
 			tokens.add("union");
 			_KPARTITION = tokens.add("partition");
-			tokens.add(".");
+//			tokens.add(".");
 			tokens.add("\u2024");
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
@@ -279,6 +284,8 @@ public class BMath extends AbstractGrammar {
 			addLiteralOperator("\u22a5", BFALSE, new Parsers.LiteralPredicateParser(BFALSE));
 			addOperator("\u2227", LAND, LAND_ID, LOGIC, new Parsers.AssociativePredicateInfix(LAND));
 			addOperator("\u2228", LOR, LOR_ID, LOGIC, new Parsers.AssociativePredicateInfix(LOR));
+			addQuantifiedOperator("\u2200", ",", "\u00b7", FORALL, FORALL_ID, LOGIC);
+			addOperator("=", EQUAL, EQUAL_ID, RELATIONAL, new Parsers.RelationalPredicateInfix(EQUAL));
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

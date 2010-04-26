@@ -112,8 +112,9 @@ public class GenParser {
 		
 		public void progress(int expectedKind) throws SyntaxError {
 			if (la.kind != expectedKind) {
-				throw new SyntaxError("expected symbol " + expectedKind
-						+ " but was " + la.val);
+				throw new SyntaxError("expected symbol \""
+						+ grammar.getTokens().getValue(expectedKind)
+						+ "\" but was \"" + la.val + "\"");
 			}
 			progress();
 		}

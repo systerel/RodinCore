@@ -68,6 +68,15 @@ public class IndexedSet<T> {
 		return index;
 	}
 
+	public T getValue(int index) {
+		for (Entry<T, Integer> entry : map.entrySet()) {
+			if (entry.getValue().equals(index)) {
+				return entry.getKey();
+			}
+		}
+		return null;
+	}
+	
 	public Set<Entry<T, Integer>> entrySet() {
 		return map.entrySet();
 	}
