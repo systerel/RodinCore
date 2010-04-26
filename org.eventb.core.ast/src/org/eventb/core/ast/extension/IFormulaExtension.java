@@ -24,6 +24,11 @@ public interface IFormulaExtension {
 		ASSOCIATIVE_INFIX_EXPRESSION
 	}
 	
+	public static enum Associativity {
+		LEFT,
+		RIGHT
+	}
+	
 	void checkPreconditions(Expression[] expressions, Predicate[] predicates);
 
 	String getSyntaxSymbol();
@@ -44,4 +49,5 @@ public interface IFormulaExtension {
 
 	void addPriorities(IPriorityMediator mediator);
 
+	Associativity getAssociativity();
 }

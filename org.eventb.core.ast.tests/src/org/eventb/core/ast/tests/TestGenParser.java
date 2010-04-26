@@ -14,6 +14,8 @@ import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.BUNION;
+import static org.eventb.core.ast.Formula.EQUAL;
+import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.LOR;
 import static org.eventb.core.ast.Formula.MUL;
@@ -26,6 +28,7 @@ import java.util.List;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.AssociativePredicate;
+import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Formula;
@@ -267,6 +270,10 @@ public class TestGenParser extends AbstractTests {
 		public void addPriorities(IPriorityMediator mediator) {
 			// no priority
 		}
+
+		public Associativity getAssociativity() {
+			return Associativity.LEFT;
+		}
 	};
 
 	public void testExtensionDirectProduct() throws Exception {
@@ -280,4 +287,26 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("A§B", expected, extFac);
 	}
 
+	public void testEqual() throws Exception {
+		final Predicate expected = ff.makeRelationalPredicate(EQUAL, ff
+				.makeFreeIdentifier("A", null), ff
+				.makeFreeIdentifier("B", null), null);
+		doPredicateTest("A=B", expected);
+	}
+	
+	public void testForall() throws Exception {
+		final Predicate expected = ff.makeQuantifiedPredicate(FORALL,
+				new BoundIdentDecl[] { ff.makeBoundIdentDecl("x", null) }, ff
+						.makeLiteralPredicate(BFALSE, null), null);
+		doPredicateTest("∀x·⊥", expected);
+	}
+
+	public void testForallList() throws Exception {
+		final Predicate expected = ff.makeQuantifiedPredicate(FORALL,
+				new BoundIdentDecl[] { ff.makeBoundIdentDecl("x", null),
+						ff.makeBoundIdentDecl("y", null),
+						ff.makeBoundIdentDecl("z", null) }, ff
+						.makeLiteralPredicate(BFALSE, null), null);
+		doPredicateTest("∀x,y,z·⊥", expected);
+	}
 }
