@@ -17,7 +17,9 @@ import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.EXISTS;
 import static org.eventb.core.ast.Formula.FORALL;
+import static org.eventb.core.ast.Formula.GT;
 import static org.eventb.core.ast.Formula.LAND;
+import static org.eventb.core.ast.Formula.LE;
 import static org.eventb.core.ast.Formula.LOR;
 import static org.eventb.core.ast.Formula.MUL;
 import static org.eventb.core.ast.Formula.PLUS;
@@ -327,5 +329,19 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("∃x,y,z·⊥", expected);
 	}
 	
-	
+	public void testGT() throws Exception {
+		final Predicate expected = ff.makeRelationalPredicate(GT,
+				ff.makeFreeIdentifier("x", null),
+				ff.makeIntegerLiteral(BigInteger.ZERO, null), null);
+		doPredicateTest("x>0", expected);
+	}
+
+	public void testLE() throws Exception {
+		final Predicate expected = ff.makeRelationalPredicate(LE,
+				ff.makeFreeIdentifier("x", null),
+				ff.makeIntegerLiteral(BigInteger.ZERO, null), null);
+		doPredicateTest("x≤0", expected);
+	}
+
+
 }

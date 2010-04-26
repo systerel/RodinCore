@@ -17,7 +17,9 @@ import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.EXISTS;
 import static org.eventb.core.ast.Formula.FORALL;
+import static org.eventb.core.ast.Formula.GT;
 import static org.eventb.core.ast.Formula.LAND;
+import static org.eventb.core.ast.Formula.LE;
 import static org.eventb.core.ast.Formula.LOR;
 import static org.eventb.core.ast.Formula.MUL;
 import static org.eventb.core.ast.Formula.PLUS;
@@ -55,6 +57,8 @@ public class BMath extends AbstractGrammar {
 	private static final String EXISTS_ID = "exists";
 
 	private static final String EQUAL_ID = "equal";
+	private static final String GT_ID = "greater than";
+	private static final String LE_ID = "lower or equal";
 	private static final String RELATIONAL = "Relational";
 	/**
 	 * Configuration table used to parameterize the scanner, with Rodin
@@ -283,6 +287,8 @@ public class BMath extends AbstractGrammar {
 			addQuantifiedOperator("\u2200", ",", "\u00b7", FORALL, FORALL_ID, LOGIC);
 			addQuantifiedOperator("\u2203", ",", "\u00b7", EXISTS, EXISTS_ID, LOGIC);
 			addOperator("=", EQUAL, EQUAL_ID, RELATIONAL, new Parsers.RelationalPredicateInfix(EQUAL));
+			addOperator(">", GT, GT_ID, RELATIONAL, new Parsers.RelationalPredicateInfix(GT));
+			addOperator("≤", LE, LE_ID, RELATIONAL, new Parsers.RelationalPredicateInfix(LE));
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
