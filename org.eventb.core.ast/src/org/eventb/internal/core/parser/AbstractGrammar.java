@@ -10,12 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.eventb.core.ast.Formula;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
-import org.eventb.internal.core.parser.IndexedSet.OverrideException;
 import org.eventb.internal.core.parser.Parsers.IdentListParser;
 
 /**
@@ -33,14 +28,18 @@ public abstract class AbstractGrammar {
 		}
 	}
 
+	public static class OverrideException extends Exception {
+	
+		private static final long serialVersionUID = -1281802568424261959L;
+	
+		public OverrideException(String reason) {
+			super(reason);
+		}
+	}
+
 	protected final IndexedSet<String> tokens = new IndexedSet<String>();
 	
-	// maps operator token kind to formula tag
-	private final Map<Integer, Integer> operatorTag = new HashMap<Integer, Integer>();
-		
-	// maps operator token kind to a subparser
-	// TODO when backtracking there will be several subparsers for one kind
-	private final Map<Integer, ISubParser> subParsers = new HashMap<Integer, ISubParser>();
+	private final SubParserRegistry subParsers = new SubParserRegistry();
 	
 	protected final OperatorRegistry opRegistry = new OperatorRegistry();
 	
@@ -48,13 +47,8 @@ public abstract class AbstractGrammar {
 		return opRegistry;
 	}
 	
-	
 	public int getOperatorTag(Token token) throws SyntaxError {
-		final Integer tag = operatorTag.get(token.kind);
-		if (tag == null) {
-			throw new SyntaxError("not an operator: " + token.val);
-		}
-		return tag;
+		return subParsers.getOperatorTag(token);
 	}
 	
 	public IndexedSet<String> getTokens() {
@@ -65,44 +59,41 @@ public abstract class AbstractGrammar {
 	public abstract void init();
 
 	public ISubParser getSubParser(int kind) {
-		return subParsers.get(kind);
+		return subParsers.getSubParser(kind);
 	}
 	
 	protected void addOperator(String token, int tag, String operatorId, String groupId,
 			ISubParser subParser) throws OverrideException {
 		opRegistry.addOperator(tag, operatorId, groupId);
-		final int kind = tokens.add(token);
-		operatorTag.put(kind, tag);
-		subParsers.put(kind, subParser);
+		final int kind = tokens.getOrAdd(token);
+		subParsers.add(tag, kind, subParser);
 	}
 	
 	protected int addReservedSubParser(ISubParser subParser)
 			throws OverrideException {
 		final int kind = tokens.reserved();
-		subParsers.put(kind, subParser);
+		subParsers.addReserved(kind, subParser);
 		return kind;
 	}
 	
 	protected void addClosedSubParser(String open, String close)
 			throws OverrideException {
-		final int openKind = tokens.add(open);
-		final int closeKind = tokens.add(close);
-		operatorTag.put(closeKind, Formula.NO_TAG);
-		subParsers.put(openKind, new Parsers.ClosedSugar(closeKind));
+		final int openKind = tokens.getOrAdd(open);
+		final int closeKind = tokens.getOrAdd(close);
+		subParsers.addClosed(openKind, closeKind, new Parsers.ClosedSugar(closeKind));
 	}
 	
 	protected void addLiteralOperator(String token, int tag,
 			ISubParser subParser) throws OverrideException {
-		final int kind = tokens.add(token);
-		operatorTag.put(kind, tag);
-		subParsers.put(kind, subParser);
+		final int kind = tokens.getOrAdd(token);
+		subParsers.add(tag, kind, subParser);
 	}
 
 	protected void addQuantifiedOperator(String token, String identSeparator,
 			String endList, int tag, String operatorId, String groupId)
 			throws OverrideException {
-		final int identSepKind = tokens.add(identSeparator);
-		final int endListKind = tokens.add(endList);
+		final int identSepKind = tokens.getOrAdd(identSeparator);
+		final int endListKind = tokens.getOrAdd(endList);
 		final IdentListParser quantIdentListParser = new IdentListParser(
 				identSepKind, endListKind);
 		final Parsers.QuantifiedPredicateParser quantParser = new Parsers.QuantifiedPredicateParser(

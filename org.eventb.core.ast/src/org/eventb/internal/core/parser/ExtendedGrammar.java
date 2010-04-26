@@ -17,7 +17,6 @@ import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IFormulaExtension.ExtensionKind;
 import org.eventb.internal.core.ast.extension.CompatibilityMediator;
 import org.eventb.internal.core.ast.extension.PriorityMediator;
-import org.eventb.internal.core.parser.IndexedSet.OverrideException;
 
 /**
  * @author Nicolas Beauger

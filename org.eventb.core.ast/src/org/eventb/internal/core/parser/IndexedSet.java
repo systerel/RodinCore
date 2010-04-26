@@ -21,15 +21,6 @@ import java.util.Map.Entry;
  */
 public class IndexedSet<T> {
 
-	public static class OverrideException extends Exception {
-
-		private static final long serialVersionUID = -1281802568424261959L;
-
-		public OverrideException(String reason) {
-			super(reason);
-		}
-	}
-	
 	public static final int NOT_AN_INDEX = -1;
 
 	private final Map<T, Integer> map = new HashMap<T, Integer>();
@@ -43,13 +34,13 @@ public class IndexedSet<T> {
 		nextIndex = firstIndex;
 	}
 
-	public int add(T key) throws OverrideException {
-		final int index = nextIndex;
-		final Integer old = map.put(key, index);
-		if (old != null) {
-			map.put(key, old);
-			throw new OverrideException("Trying to override " + key);
+	public int getOrAdd(T key) {
+		final Integer current = map.get(key);
+		if (current != null) {
+			return current;
 		}
+		final int index = nextIndex;
+		map.put(key, index);
 		nextIndex++;
 		return index;
 	}

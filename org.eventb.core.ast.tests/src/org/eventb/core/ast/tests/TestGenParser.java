@@ -15,6 +15,7 @@ import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.EQUAL;
+import static org.eventb.core.ast.Formula.EXISTS;
 import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.LOR;
@@ -309,4 +310,22 @@ public class TestGenParser extends AbstractTests {
 						.makeLiteralPredicate(BFALSE, null), null);
 		doPredicateTest("∀x,y,z·⊥", expected);
 	}
+	
+	public void testExists() throws Exception {
+		final Predicate expected = ff.makeQuantifiedPredicate(EXISTS,
+				new BoundIdentDecl[] { ff.makeBoundIdentDecl("x", null) }, ff
+						.makeLiteralPredicate(BFALSE, null), null);
+		doPredicateTest("∃x·⊥", expected);
+	}
+
+	public void testExistsList() throws Exception {
+		final Predicate expected = ff.makeQuantifiedPredicate(EXISTS,
+				new BoundIdentDecl[] { ff.makeBoundIdentDecl("x", null),
+						ff.makeBoundIdentDecl("y", null),
+						ff.makeBoundIdentDecl("z", null) }, ff
+						.makeLiteralPredicate(BFALSE, null), null);
+		doPredicateTest("∃x,y,z·⊥", expected);
+	}
+	
+	
 }
