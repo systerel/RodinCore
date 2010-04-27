@@ -30,4 +30,9 @@ public class PriorityMediator implements IPriorityMediator {
 		registry.addPriority(leftOpId, rightOpId);
 	}
 
+	public void addGroupPriority(String leftGroupId, String rightGroupId)
+			throws CycleError {
+		registry.addGroupPriority(leftGroupId, rightGroupId);
+	}
+
 }

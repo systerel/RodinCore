@@ -38,4 +38,13 @@ public interface ICompatibilityMediator {
 	 */
 	void addCompatibility(String leftOpId, String rightOpId);
 
+	/**
+	 * Adds a compatibility between groups of given ids.
+	 * 
+	 * @param leftGroupId
+	 *            a group id
+	 * @param rightGroupId
+	 *            a group id
+	 */
+	void addGroupCompatibility(String leftGroupId, String rightGroupId);
 }

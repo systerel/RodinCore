@@ -148,6 +148,9 @@ public class OperatorRegistry {
 	//	TODO refactor all these maps
 	private final Map<Integer, String> groupIds = new HashMap<Integer, String>();
 	private final Closure<String> groupPriority = new Closure<String>();
+	
+	// FIXME take group compatibility into account
+	private final Relation<String> groupCompatibility = new Relation<String>();
 	private final Map<String, OperatorGroup> operatorGroups = new HashMap<String, OperatorGroup>();
 	private final Map<String, Integer> operatorFromId = new HashMap<String, Integer>();
 	private final Map<Integer, Associativity> associativity = new HashMap<Integer, Associativity>();
@@ -224,6 +227,10 @@ public class OperatorRegistry {
 	public void addGroupPriority(String leftGroupId, String rightGroupId)
 			throws CycleError {
 		groupPriority.add(leftGroupId, rightGroupId);
+	}
+
+	public void addGroupCompatibility(String leftGroupId, String rightGroupId) {
+		groupCompatibility.add(leftGroupId, rightGroupId);
 	}	
 
 	

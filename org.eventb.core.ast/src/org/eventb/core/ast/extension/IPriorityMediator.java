@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.extension;
 
-
 /**
  * @author Nicolas Beauger
  * @noimplement This interface is not intended to be implemented by clients.
@@ -33,4 +32,16 @@ public interface IPriorityMediator {
 	 */
 	void addPriority(String leftOpId, String rightOpId) throws CycleError;
 
+	/**
+	 * Adds a priority between groups of given ids.
+	 * 
+	 * @param leftGroupId
+	 *            a group id
+	 * @param rightGroupId
+	 *            a group id
+	 * @throws CycleError
+	 *             if adding the given priority introduces a cycle
+	 */
+	void addGroupPriority(String leftGroupId, String rightGroupId)
+			throws CycleError;
 }
