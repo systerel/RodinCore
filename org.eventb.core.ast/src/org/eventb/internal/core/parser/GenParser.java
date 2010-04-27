@@ -120,11 +120,14 @@ public class GenParser {
 		}
 		
 		public ISubParser getSubParser() {
-			return grammar.getSubParser(t.kind);
+			return grammar.getSubParser(t);
 		}
 		
 		public boolean canProgressRight(int parentTag) throws SyntaxError {
 			if (la.kind == BMath._EOF) { // end of the formula
+				return false;
+			}
+			if (!grammar.isOperator(la)) {
 				return false;
 			}
 			final OperatorRegistry opRegistry = grammar.getOperatorRegistry();
@@ -157,6 +160,10 @@ public class GenParser {
 			final ParserContext pc = new ParserContext(scanner, factory, result.getOrigin());
 			pc.init();
 			final Formula<?> res = Parsers.MainParser.parse(NO_TAG, pc, 0);
+			if (pc.la.kind != BMath._EOF) {
+				throw new UnmatchedToken("tokens have been ignored from: \""
+						+ pc.la.val + "\" at position " + pc.la.pos);
+			}
 			if (clazz.isInstance(res)) {
 				if (clazz == Predicate.class) {
 					result.setParsedPredicate((Predicate) res); 

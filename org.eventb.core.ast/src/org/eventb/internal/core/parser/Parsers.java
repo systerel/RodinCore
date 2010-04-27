@@ -11,6 +11,10 @@
 package org.eventb.internal.core.parser;
 
 import static java.util.Arrays.asList;
+import static org.eventb.core.ast.Formula.FREE_IDENT;
+import static org.eventb.core.ast.Formula.FUNIMAGE;
+import static org.eventb.core.ast.Formula.INTLIT;
+import static org.eventb.core.ast.Formula.NO_TAG;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -19,6 +23,7 @@ import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
+import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
@@ -40,10 +45,16 @@ public class Parsers {
 
 	private static class DefaultSubParser implements ISubParser {
 
-		protected DefaultSubParser() {
-			// avoid synthetic accessors emulation
-		}
+		protected final int tag;
 
+		protected DefaultSubParser(int tag) {
+			this.tag = tag;
+		}
+		
+		public int getTag() {
+			return tag;
+		}
+		
 		public Formula<?> led(Formula<?> left, ParserContext pc, int startPos)
 				throws SyntaxError {
 			throw new SyntaxError("unexpected symbol: " + pc.t.val);
@@ -60,12 +71,13 @@ public class Parsers {
 		private final int closeKind;
 
 		public ClosedSugar(int closeKind) {
+			super(NO_TAG);
 			this.closeKind = closeKind;
 		}
 
 		@Override
 		public Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError {
-			final Formula<?> formula = MainParser.parse(Formula.NO_TAG,
+			final Formula<?> formula = MainParser.parse(NO_TAG,
 					pc, pc.la.pos);
 			pc.progress(closeKind);
 			return formula;
@@ -75,10 +87,8 @@ public class Parsers {
 
 	static class BinaryExpressionInfix extends DefaultSubParser {
 
-		protected final int tag;
-
 		public BinaryExpressionInfix(int tag) {
-			this.tag = tag;
+			super(Formula.NO_TAG);
 		}
 		
 		@Override
@@ -121,10 +131,8 @@ public class Parsers {
 	
 	static class AssociativeExpressionInfix extends DefaultSubParser {
 
-		protected final int tag;
-
 		public AssociativeExpressionInfix(int tag) {
-			this.tag = tag;
+			super(tag);
 		}
 
 		@Override
@@ -179,10 +187,8 @@ public class Parsers {
 	
 	static class AssociativePredicateInfix extends DefaultSubParser {
 
-		private final int tag;
-
 		public AssociativePredicateInfix(int tag) {
-			this.tag = tag;
+			super(tag);
 		}
 
 		@Override
@@ -207,10 +213,8 @@ public class Parsers {
 
 	static class RelationalPredicateInfix extends DefaultSubParser {
 
-		private final int tag;
-
 		public RelationalPredicateInfix(int tag) {
-			this.tag = tag;
+			super(tag);
 		}
 
 		@Override
@@ -225,12 +229,24 @@ public class Parsers {
 		}
 	}
 
+	static final ISubParser FUN_IMAGE = new DefaultSubParser(FUNIMAGE) {
+
+		@Override
+		public BinaryExpression led(Formula<?> left, ParserContext pc,
+				int startPos) throws SyntaxError {
+			final Expression right = MainParser.parseExpression(tag, pc, pc.la.pos);
+			if (!(left instanceof Expression)) {
+				throw new SyntaxError("expected expressions");
+			}
+			return pc.factory.makeBinaryExpression(tag, (Expression) left,
+					right, pc.getSourceLocation(startPos));
+		}
+	};
+
 	static class LiteralPredicateParser extends DefaultSubParser {
 
-		private final int tag;
-
 		public LiteralPredicateParser(int tag) {
-			this.tag = tag;
+			super(tag);
 		}
 
 		@Override
@@ -241,11 +257,10 @@ public class Parsers {
 
 	static class QuantifiedPredicateParser extends DefaultSubParser {
 
-		private final int tag;
 		private final IdentListParser identListParser;
 
 		public QuantifiedPredicateParser(int tag, IdentListParser identListParser) {
-			this.tag = tag;
+			super(tag);
 			this.identListParser = identListParser;
 		}
 
@@ -334,7 +349,7 @@ public class Parsers {
 		}
 	}
 
-	static final ISubParser FREE_IDENT_SUBPARSER = new DefaultSubParser() {
+	static final ISubParser FREE_IDENT_SUBPARSER = new DefaultSubParser(FREE_IDENT) {
 
 		@Override
 		public FreeIdentifier nud(ParserContext pc, int startPos) throws SyntaxError {
@@ -343,7 +358,7 @@ public class Parsers {
 		}
 	};
 
-	static final ISubParser INTLIT_SUBPARSER = new DefaultSubParser() {
+	static final ISubParser INTLIT_SUBPARSER = new DefaultSubParser(INTLIT) {
 
 		@Override
 		public Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError {

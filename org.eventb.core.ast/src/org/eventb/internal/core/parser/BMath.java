@@ -17,6 +17,7 @@ import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.EXISTS;
 import static org.eventb.core.ast.Formula.FORALL;
+import static org.eventb.core.ast.Formula.FUNIMAGE;
 import static org.eventb.core.ast.Formula.GT;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.LE;
@@ -60,6 +61,11 @@ public class BMath extends AbstractGrammar {
 	private static final String GT_ID = "greater than";
 	private static final String LE_ID = "lower or equal";
 	private static final String RELATIONAL = "Relational";
+
+	private static final String FUNIMAGE_ID = "Fun Image";
+	private static final String BINARY_EXPRESSION = "Binary expression";
+	
+	
 	/**
 	 * Configuration table used to parameterize the scanner, with Rodin
 	 * mathematical language tokens.
@@ -289,6 +295,7 @@ public class BMath extends AbstractGrammar {
 			addOperator("=", EQUAL, EQUAL_ID, RELATIONAL, new Parsers.RelationalPredicateInfix(EQUAL));
 			addOperator(">", GT, GT_ID, RELATIONAL, new Parsers.RelationalPredicateInfix(GT));
 			addOperator("≤", LE, LE_ID, RELATIONAL, new Parsers.RelationalPredicateInfix(LE));
+			addOperator("(", FUNIMAGE, FUNIMAGE_ID, BINARY_EXPRESSION, Parsers.FUN_IMAGE);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -308,6 +315,7 @@ public class BMath extends AbstractGrammar {
 		
 	}
 
+	// TODO move EOF, IDENT and INTLIT to AbstractGrammar
 	public int getEOF() {
 		return _EOF;
 	}

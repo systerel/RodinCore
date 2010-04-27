@@ -20,6 +20,8 @@ import org.eventb.internal.core.parser.GenParser.SyntaxError;
  */
 public interface ISubParser {
 
+	int getTag();
+	
 	Formula<?> led(Formula<?> left, ParserContext pc, int startPos) throws SyntaxError;
 
 	Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError;

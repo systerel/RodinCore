@@ -51,6 +51,10 @@ public abstract class AbstractGrammar {
 		return subParsers.getOperatorTag(token);
 	}
 	
+	public boolean isOperator(Token token) {
+		return subParsers.isOperator(token);
+	}
+	
 	public IndexedSet<String> getTokens() {
 		return tokens;
 	}
@@ -58,15 +62,15 @@ public abstract class AbstractGrammar {
 	// TODO split into several init methods, one for each data
 	public abstract void init();
 
-	public ISubParser getSubParser(int kind) {
-		return subParsers.getSubParser(kind);
+	public ISubParser getSubParser(Token token) {
+		return subParsers.getSubParser(token);
 	}
 	
 	protected void addOperator(String token, int tag, String operatorId, String groupId,
 			ISubParser subParser) throws OverrideException {
 		opRegistry.addOperator(tag, operatorId, groupId);
 		final int kind = tokens.getOrAdd(token);
-		subParsers.add(tag, kind, subParser);
+		subParsers.add(kind, subParser);
 	}
 	
 	protected int addReservedSubParser(ISubParser subParser)
@@ -86,7 +90,7 @@ public abstract class AbstractGrammar {
 	protected void addLiteralOperator(String token, int tag,
 			ISubParser subParser) throws OverrideException {
 		final int kind = tokens.getOrAdd(token);
-		subParsers.add(tag, kind, subParser);
+		subParsers.add(kind, subParser);
 	}
 
 	protected void addQuantifiedOperator(String token, String identSeparator,

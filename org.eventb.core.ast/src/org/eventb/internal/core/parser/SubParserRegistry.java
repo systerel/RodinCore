@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.eventb.core.ast.Formula;
 import org.eventb.internal.core.parser.AbstractGrammar.OverrideException;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 
@@ -23,48 +24,92 @@ import org.eventb.internal.core.parser.GenParser.SyntaxError;
  */
 public class SubParserRegistry {
 
-	// maps operator token kind to formula tag
-	private final Map<Integer, Integer> operatorTag = new HashMap<Integer, Integer>();
+	private static class KindParsers {
+		//		private final List<ISubParser> ledParsers = new ArrayList<ISubParser>();
+		//		private final List<ISubParser> nudParsers = new ArrayList<ISubParser>();
+		private final List<ISubParser> parsers = new ArrayList<ISubParser>();
+
+		public KindParsers() {
+			// nothing to do
+		}
 		
-	// maps operator token kind to a subparser
-	// TODO when backtracking there will be several subparsers for one kind
-	private final Map<Integer, ISubParser> subParsers = new HashMap<Integer, ISubParser>();
+		//		public void addLed(ISubParser ledParser) {
+		//			if (!ledParsers.contains(ledParser)) {
+		//				ledParsers.add(ledParser);
+		//			}
+		//		}
+		//
+		//		public void addNud(ISubParser ledParser) {
+		//			if (!nudParsers.contains(ledParser)) {
+		//				nudParsers.add(ledParser);
+		//			}
+		//		}
 
+		public void add(ISubParser parser) {
+			if (!parsers.contains(parser)) {
+				parsers.add(parser);
+			}
+		}
+
+		//		public List<ISubParser> getLedParsers() {
+		//			return ledParsers;
+		//		}
+		//		
+		//		public List<ISubParser> getNudParsers() {
+		//			return nudParsers;
+		//		}
+
+		public List<ISubParser> getParsers() {
+			return parsers;
+		}
+	}
+
+	private final Map<Integer, KindParsers> kindParsers = new HashMap<Integer, KindParsers>();
 	
+	// TODO move calls to subparser and remove method
 	public int getOperatorTag(Token token) throws SyntaxError {
-		final Integer tag = operatorTag.get(token.kind);
-		if (tag == null) {
-			throw new SyntaxError("not an operator: " + token.val);
-		}
-		return tag;
+		return getSubParser(token).getTag();
+	}
+
+	public boolean isOperator(Token token) {
+		final KindParsers parsers = kindParsers.get(token.kind);
+		return parsers != null && !parsers.getParsers().isEmpty();
 	}
 	
-	public ISubParser getSubParser(int kind) {
-		return subParsers.get(kind);
+	// TODO
+	public ISubParser getSubParser(Token token) {
+		final KindParsers parsers = kindParsers.get(token.kind);
+		if (parsers == null || parsers.getParsers().isEmpty()) {
+//			throw new SyntaxError("not an operator: " + token.val);
+			return null;
+		}
+		return parsers.getParsers().get(0); 
+		// FIXME
+		// when backtracking there will be several subparsers for one kind
 	}
 	
-	public void add(int tag, int kind, ISubParser subParser) throws OverrideException {
-		final Integer oldTag = operatorTag.put(kind, tag);
-		if (oldTag != null) {
-			operatorTag.put(kind, oldTag);
-			throw new OverrideException("Trying to override operator " + kind);
-		}
-
-		final ISubParser oldSubParser = subParsers.put(kind, subParser);
-		if (oldSubParser != null) {
-			subParsers.put(kind, oldSubParser);
-			throw new OverrideException("Trying to override sub-parser of " + kind);
-		}
-
+	public void add(int kind, ISubParser subParser) throws OverrideException {
+		final KindParsers parsers = fetchParsers(kind);
+		parsers.add(subParser);
 	}
+
+	private KindParsers fetchParsers(int kind) {
+		KindParsers parsers = kindParsers.get(kind);
+		if (parsers == null) {
+			parsers = new KindParsers();
+			kindParsers.put(kind, parsers);
+		}
+		return parsers;
+	}
+
 
 	public void addReserved(int kind, ISubParser subParser) {
-		subParsers.put(kind, subParser);
+		final KindParsers parsers = fetchParsers(kind);
+		parsers.add(subParser);
 	}
 
-	public void addClosed(int openKind, int closeKind, ISubParser subParser) {
-		operatorTag.put(closeKind, Formula.NO_TAG);
-		subParsers.put(openKind, subParser);
+	public void addClosed(int openKind, int closeKind, ISubParser subParser) throws OverrideException {
+		add(openKind, subParser);
 	}
 
 }

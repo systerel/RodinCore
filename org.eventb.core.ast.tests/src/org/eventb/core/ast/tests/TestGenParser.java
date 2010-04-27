@@ -343,5 +343,12 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("x≤0", expected);
 	}
 
+	public void testFunImage() throws Exception {
+		final Expression expected = ff.makeBinaryExpression(Formula.FUNIMAGE,
+				ff.makeFreeIdentifier("f", null),
+				ff.makeIntegerLiteral(BigInteger.ZERO, null), null);
+		doExpressionTest("f(0)", expected);
+	}
+
 
 }
