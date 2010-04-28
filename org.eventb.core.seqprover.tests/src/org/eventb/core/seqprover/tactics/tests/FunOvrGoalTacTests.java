@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - fixed implementation
  *******************************************************************************/
 package org.eventb.core.seqprover.tactics.tests;
 
@@ -14,6 +15,7 @@ import static org.eventb.core.seqprover.tactics.tests.TreeShape.assertRulesAppli
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.conjI;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.empty;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.funOvr;
+import static org.eventb.core.seqprover.tactics.tests.TreeShape.funImgSimp;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -107,14 +109,14 @@ public class FunOvrGoalTacTests {
 				"x ∈ ℤ", //
 				"(fg)(x) ∈ ℕ" //
 		);
-		assertSuccess(pt.getRoot(), funOvr("0", empty, empty));
+		assertSuccess(pt.getRoot(), funOvr("0", empty, funImgSimp("0", empty)));
 	}
 
 	/**
-	 * Ensures that the tactic is applied repeatedly when possible.
+	 * Ensures that the tactic is applied once.
 	 */
 	@Test
-	public void doubleApplication() {
+	public void onceApplication() {
 		final IProofTree pt = genProofTree(//
 				"f ∈ ℤ → ℤ", //
 				"g ∈ ℤ → ℤ", //
@@ -122,8 +124,7 @@ public class FunOvrGoalTacTests {
 				"x ∈ ℤ", //
 				"(fgh)(x) ∈ ℕ" //
 		);
-		assertSuccess(pt.getRoot(), funOvr("0", empty,
-				funOvr("0", empty, empty)));
+		assertSuccess(pt.getRoot(), funOvr("0", empty, empty));
 	}
 
 	/**
@@ -139,8 +140,12 @@ public class FunOvrGoalTacTests {
 				"x ∈ ℤ", //
 				"(fg)(x) ∈ (hi)(x)" //
 		);
-		final TreeShape sub = funOvr("1", empty, empty);
-		assertSuccess(pt.getRoot(), funOvr("0", sub, sub));
+		final TreeShape subf0 = funImgSimp("0", empty);
+		final TreeShape subf1 = funImgSimp("1", empty);
+		final TreeShape subf2 = funImgSimp("0", subf1);
+		final TreeShape sub1 = funOvr("1", empty, subf1);
+		final TreeShape sub2 = funOvr("1", subf0, subf2);
+		assertSuccess(pt.getRoot(), funOvr("0", sub1, sub2));
 	}
 
 	/**
@@ -160,7 +165,7 @@ public class FunOvrGoalTacTests {
 		final IProofTreeNode root = pt.getRoot();
 		new AutoTactics.ConjGoalTac().apply(root, null);
 		final IProofTreeNode left = root.getChildNodes()[0];
-		final TreeShape sub = funOvr("0", empty, empty);
+		final TreeShape sub = funOvr("0", empty, funImgSimp("0", empty));
 		assertSuccess(left, sub);
 		assertRulesApplied(root, conjI(sub, empty));
 	}

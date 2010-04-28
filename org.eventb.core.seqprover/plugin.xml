@@ -369,6 +369,11 @@
             id="totalDom"
             name="%totalDomName">
       </reasoner>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimplifies"
+            id="FunImgDomSub"
+            name="%funImgDomSubName">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">
@@ -503,6 +508,12 @@
             description="%finiteHypBoundedGoalDesc"
             id="finiteHypBoundedGoalTac"
             name="%finiteHypBoundedGoalName">
+      </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$FunImgSimpTac"
+            description="%funImgSimpTacDesc"
+            id="funImgSimpTac"
+            name="%funImgSimpTacName">
       </autoTactic>
 
    </extension>

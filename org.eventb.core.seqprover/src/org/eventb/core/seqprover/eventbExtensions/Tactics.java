@@ -12,6 +12,7 @@
  *     Systerel - added Total Domain Substitution
  *     Systerel - added contrHyps() (CNTR)
  *     Systerel - fixed rules FIN_FUN_*
+ *     Systerel - implemented rules FUNIMG_SET_DOMSUB_L and FUNIMG_DOMSUB_L
  ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
@@ -125,6 +126,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomDistRigh
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomRanUnionDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplHypRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqvRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimpImpl;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimplifies;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpAndRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpOrRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.InclusionSetMinusRightRewrites;
@@ -3571,6 +3574,36 @@ public class Tactics {
 	public static Set<Expression> totalDomGetSubstitutions(
 			IProverSequent sequent, Expression expression) {
 		return TotalDomFacade.getSubstitutions(sequent, expression);
+	}
+
+	/**
+	 * Returns the tactic "Functional Image Simplification" for a given position
+	 * where this tactic can apply. It is applicable to the goal of a sequent.
+	 * 
+	 * @param position
+	 *            a valid position of an expression in the goal
+	 * @return the tactic "Functional Image Simplification"
+	 * 
+	 * @since 1.3
+	 */
+	public static ITactic funImgSimplifies(IPosition position) {
+		return BasicTactics.reasonerTac(new FunImgSimplifies(),
+				new FunImgSimplifies.Input(position));
+	}
+
+	/**
+	 * Returns a set of positions where the rewriter funImgSimpRewrites can
+	 * apply.
+	 * 
+	 * @param sequent
+	 *            a sequent
+	 * @return a set of positions (empty if the tactic is not applicable)
+	 * 
+	 * @since 1.3
+	 */
+	public static List<IPosition> funImgSimpGetPositions(IProverSequent sequent) {
+		final FunImgSimpImpl impl = new FunImgSimpImpl(sequent);
+		return impl.getApplicablePositions();
 	}
 
 }

@@ -1899,6 +1899,16 @@
             target="goal"
             tooltip="%proofTactic.totalDom.tooltip">
       </tactic>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.funImgSimp"
+            interrupt="true"
+            name="%proofTactic.funImgSimp.name"
+            priorty="5"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FunImgSimp"
+            target="goal"
+            tooltip="%proofTactic.funImgSimp.tooltip">
+      </tactic>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">

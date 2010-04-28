@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Systerel - added PartitionRewriteTac tactic (math V2)
  *     Systerel - added FiniteHypBoundedGoalTac and OnePoint*Tac
  *     Systerel - modified FindContrHypsTac to use ContrHyps (discharge)
+ *     Systerel - added FunImgSimpTac tactic (simplify)
  ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
@@ -28,6 +29,7 @@ import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.reasonerInputs.MultiplePredInput;
@@ -477,7 +479,41 @@ public class AutoTactics {
 			return success;
 		}
 	}
+	
+	/**
+	 * Simplifies goals of the form 'A <<| f(C)' where f is of type 'partial
+	 * function'.
+	 * 
+	 * @author Thomas Muller
+	 * @since 1.3
+	 */
+	public static class FunImgSimpTac implements ITactic {
 
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			if (applyFunImgSimplifies(ptNode, null, pm))
+				return null;
+			else
+				return "Tactic unapplicable";
+		}
+
+		private boolean applyFunImgSimplifies(IProofTreeNode ptNode,
+				Predicate hyp, IProofMonitor pm) {
+			boolean success = false;
+			if (hyp != null) {
+				return success;
+			}
+			final IProverSequent sequent = ptNode.getSequent();
+
+			final List<IPosition> positions = Tactics
+					.funImgSimpGetPositions(sequent);
+			for (IPosition position : positions) {
+				final ITactic fidsRewrites = Tactics
+						.funImgSimplifies(position);
+				success |= (fidsRewrites.apply(ptNode, pm) == null);
+			}
+			return success;
+		}
+	}
 	
 	
 	//*************************************************
@@ -537,7 +573,7 @@ public class AutoTactics {
 
 		@Override
 		protected ITactic getSingInstance() {
-			return loopOnAllPending(new FunOvrGoalOnceTac());
+			return loopOnAllPending(new FunOvrGoalOnceTac(), new FunImgSimpTac());
 		}
 
 	}
@@ -579,7 +615,7 @@ public class AutoTactics {
 
 		@Override
 		protected ITactic getSingInstance() {
-			return loopOnAllPending(new FunOvrHypOnceTac());
+			return loopOnAllPending(new FunOvrHypOnceTac(), new FunImgSimpTac());
 		}
 
 	}

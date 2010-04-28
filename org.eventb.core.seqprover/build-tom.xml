@@ -71,6 +71,7 @@
 		<delete file="${rewriter.src}/TotalDomSubstitutions.java" />
 		<delete file="${rewriter.src}/TypeRewriterImpl.java" />
 		<delete file="${rewriter.src}/UnionInterDistRewriterImpl.java" />
+		<delete file="${inference.src}/FunImgSimpImpl.java" />
 
 		<delete file="${inference.src}/CardComparison.java" />
 		<delete file="${inference.src}/CardUpTo.java" />

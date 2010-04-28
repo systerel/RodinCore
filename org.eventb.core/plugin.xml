@@ -1224,6 +1224,8 @@
       <tactic id="org.eventb.core.seqprover.onePointHypTac"/>
       <tactic id="org.eventb.core.seqprover.onePointGoalTac"/>
       <tactic id="org.eventb.core.seqprover.finiteHypBoundedGoalTac"/>
+      <tactic id="org.eventb.core.seqprover.funImgSimpTac">
+      </tactic>
    </extension>
    <extension
          point="org.eventb.core.pomTactics">
@@ -1243,6 +1245,8 @@
       <tactic id="org.eventb.core.seqprover.onePointHypTac"/>
       <tactic id="org.eventb.core.seqprover.onePointGoalTac"/>
       <tactic id="org.eventb.core.seqprover.finiteHypBoundedGoalTac"/>
+      <tactic id="org.eventb.core.seqprover.funImgSimpTac">
+      </tactic>
    </extension>
    <extension
          point="org.rodinp.core.fileElementVersions">

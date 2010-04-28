@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - added FunImgSimp tree shape
  *******************************************************************************/
 package org.eventb.core.seqprover.tactics.tests;
 
@@ -25,6 +26,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.AbstractRewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.Conj;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimplifies;
 
 /**
  * Common implementation for verifying rule applications to a proof subtree. The
@@ -137,6 +139,28 @@ public abstract class TreeShape {
 			return FunOvr.REASONER_ID;
 		}
 	}
+	
+	private static class FunImgSimpShape extends TreeShape {
+		
+		protected final String position;
+
+		public FunImgSimpShape(String position, TreeShape[] expChildren) {
+			super(expChildren);
+			this.position = position;
+		}
+
+		
+		@Override
+		protected void checkInput(IReasonerInput input) {
+			FunImgSimplifies.Input i = (FunImgSimplifies.Input) input;
+			assertEquals(position, i.getPosition().toString());
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return FunImgSimplifies.REASONER_ID;
+		}
+	}
 
 	public static final TreeShape empty = new EmptyShape();
 
@@ -170,6 +194,11 @@ public abstract class TreeShape {
 			TreeShape... children) {
 		return new FunOvrShape(predicate, position, children);
 	}
+	
+	public static TreeShape funImgSimp(String position, TreeShape... children){
+		return new FunImgSimpShape(position, children);
+	}
+	
 
 	protected final TreeShape[] expChildren;
 

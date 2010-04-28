@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - fixed implementation
  *******************************************************************************/
 package org.eventb.core.seqprover.tactics.tests;
 
@@ -162,12 +163,11 @@ public class FunOvrHypTacTests {
 	}
 
 	/**
-	 * Ensures that the tactic is applied repeatedly when possible.
+	 * Ensures that the tactic is applied once.
 	 */
 	@Test
-	public void doubleApplication() {
+	public void onceApplication() {
 		final String hyp1Str = "(fgh)(x) ∈ ℕ";
-		final String hyp2Str = "(fg)(x) ∈ ℕ";
 		final IProofTree pt = genProofTree(//
 				l("f ∈ ℤ → ℤ", //
 						"g ∈ ℤ → ℤ", //
@@ -176,11 +176,9 @@ public class FunOvrHypTacTests {
 				l(hyp1Str), //
 				"⊥");
 		final Predicate hyp1 = parsePredicate(hyp1Str, pt);
-		final Predicate hyp2 = parsePredicate(hyp2Str, pt);
 		assertSuccess(pt.getRoot(), //
 				funOvr(hyp1, "0", //
-						empty, //
-						funOvr(hyp2, "0", empty, empty)));
+						empty, empty));
 	}
 
 	/**
@@ -190,7 +188,7 @@ public class FunOvrHypTacTests {
 	public void recursiveApplication() {
 		final String hyp1Str = "(fg)(x) ∈ (hi)(x)";
 		final String hyp2Str = "g(x) ∈ (hi)(x)";
-		final String hyp3Str = "f(x) ∈ (hi)(x)";
+		final String hyp3Str = "(dom(g) ⩤ f)(x)∈(hi)(x)";
 		final IProofTree pt = genProofTree(//
 				l("f ∈ ℤ → ℤ", //
 						"g ∈ ℤ → ℤ", //

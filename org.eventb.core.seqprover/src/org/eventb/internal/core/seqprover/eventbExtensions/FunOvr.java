@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - Fixed rules OV_SETENUM_L, OV_SETENUM_R, OV_L, OV_R
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import java.util.ArrayList;
@@ -12,13 +23,16 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 
-public class FunOvr extends AbstractManualInference {
+public class FunOvr extends AbstractManualInference implements IVersionedReasoner {
+
+	private static final int VERSION = 0;
 
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".funOvr";
 
@@ -28,8 +42,12 @@ public class FunOvr extends AbstractManualInference {
 		return REASONER_ID;
 	}
 
+	public int getVersion() {
+		return VERSION;
+	}
+
 	@Override
-	@ProverRule({"OV_L", "OV_R"})
+	@ProverRule({"OV_SETENUM_L","OV_SETENUM_R","OV_L", "OV_R"})
 	protected IAntecedent[] getAntecedents(IProverSequent seq, Predicate pred,
 			IPosition position) {
 		Predicate predicate = pred;
@@ -38,12 +56,12 @@ public class FunOvr extends AbstractManualInference {
 
 		Formula<?> subFormula = predicate.getSubFormula(position);
 
-		// "subFormula" should have the form (f <+ ... <+ h)(G)
+		// "subFormula" should have the form (f <+ ... <+ g)(G)
 		if (!Tactics.isFunOvrApp(subFormula))
 			return null;
 		
 		// There will be 2 antecidents
-		IAntecedent[] antecidents = new IAntecedent[2];
+		final IAntecedent[] antecidents = new IAntecedent[2];
 
 		BinaryExpression funAppExp = (BinaryExpression) subFormula;
 		Expression G = funAppExp.getRight();
@@ -51,12 +69,12 @@ public class FunOvr extends AbstractManualInference {
 		
 		AssociativeExpression funOvr = (AssociativeExpression) left;
 		Expression[] children = funOvr.getChildren();
-		Expression h = children[children.length - 1];
+		Expression g = children[children.length - 1];
 		
-		if (Lib.isSetExtension(h)
-				&& ((SetExtension) h).getMembers().length == 1) {
+		if (Lib.isSetExtension(g)
+				&& ((SetExtension) g).getMembers().length == 1) {
 			// g is {E |-> F}
-			Expression[] members = ((SetExtension) h).getMembers();
+			Expression[] members = ((SetExtension) g).getMembers();
 			Expression F = ((BinaryExpression) members[0]).getRight();
 			Expression E = ((BinaryExpression) members[0]).getLeft();
 
@@ -69,9 +87,9 @@ public class FunOvr extends AbstractManualInference {
 		}
 		else {
 			antecidents[0] = createInDomAntecident(pred, predicate, position,
-					h, G);
+					g, G);
 			antecidents[1] = createNotInDomAntecident(pred, predicate, position, children,
-					h, G);
+					g, G);
 		}
 		
 		return antecidents;
@@ -79,46 +97,48 @@ public class FunOvr extends AbstractManualInference {
 
 	private IAntecedent createNotInDomAntecident(Predicate sourcePred,
 			Predicate predicate, IPosition position, Expression[] children,
-			Expression h, Expression G) {
-		Expression fG = makeExpressionFOfG(children, G);
+			Expression g, Expression G) {
 
+		// Make predicate (domSub(dom(g),f))(G)
+		Expression domG = ff.makeUnaryExpression(Expression.KDOM, g, null);
+		Expression fG = makeExpressionFOfG(domG, children, G);
 		Predicate inferredPred = predicate.rewriteSubFormula(position, fG, ff);
 		
-		// Make predicate not(G : dom(h))
-		Expression domH = ff.makeUnaryExpression(Expression.KDOM, h, null);
-		Predicate gInDomH = ff.makeRelationalPredicate(Predicate.IN, G,
-				domH, null);
-		Predicate gNotInDomH = ff.makeUnaryPredicate(Predicate.NOT, gInDomH,
+		// Make predicate not(G : dom(g))
+		Predicate gInDomG = ff.makeRelationalPredicate(Predicate.IN, G,
+				domG, null);
+		Predicate gNotInDomG = ff.makeUnaryPredicate(Predicate.NOT, gInDomG,
 				null);
 
-		return makeAntecedent(sourcePred, inferredPred, gNotInDomH);
+		return makeAntecedent(sourcePred, inferredPred, gNotInDomG);
 	}
 
-	private Expression makeExpressionFOfG(Expression[] children, Expression G) {
-		List<Expression> newChildren = new ArrayList<Expression>();
+	private Expression makeExpressionFOfG(Expression domG, Expression[] children, Expression G) {
+		final List<Expression> newChildren = new ArrayList<Expression>();
 		for (int i = 0; i < children.length - 1; ++i) {
 			newChildren.add(children[i]);
 		}
-		Expression f;
+		final Expression f;
 		if (newChildren.size() != 1) {
-			f = ff.makeAssociativeExpression(Expression.OVR, newChildren,
-					null);
+			f = ff.makeAssociativeExpression(Expression.OVR, newChildren, null);
 		} else {
 			f = newChildren.get(0);
 		}
-		return ff.makeBinaryExpression(Expression.FUNIMAGE, f, G,
-				null);
+		// Make predicate (domSub(dom(g),f))(G)
+		final Expression fDomSubG = ff.makeBinaryExpression(Expression.DOMSUB,
+				domG, f, null);
+		return ff.makeBinaryExpression(Expression.FUNIMAGE, fDomSubG, G, null);
 	}
 
 	private IAntecedent createInDomAntecident(Predicate sourcePred,
-			Predicate predicate, IPosition position, Expression h, Expression G) {
+			Predicate predicate, IPosition position, Expression g, Expression G) {
 		// Generate the new predicate
-		//        P((f <+ ... <+ h)(G)) == P(h(G))
-		Expression F = ff.makeBinaryExpression(Expression.FUNIMAGE, h, G, null);
+		//        P((f <+ ... <+ g)(G)) == P(g(G))
+		Expression F = ff.makeBinaryExpression(Expression.FUNIMAGE, g, G, null);
 		Predicate inferredPred = predicate.rewriteSubFormula(position, F, ff);
 
-		// Make predicate G : dom(h)
-		Expression domH = ff.makeUnaryExpression(Expression.KDOM, h, null);
+		// Make predicate G : dom(g)
+		Expression domH = ff.makeUnaryExpression(Expression.KDOM, g, null);
 		Predicate gInDomH = ff.makeRelationalPredicate(Predicate.IN, G,
 				domH, null);
 		
@@ -129,8 +149,9 @@ public class FunOvr extends AbstractManualInference {
 	private IAntecedent createNotEqualAntecident(Predicate sourcePred,
 			Predicate predicate, IPosition position, Expression[] children,
 			Expression E, Expression G) {
-		Expression fG = makeExpressionFOfG(children, G);
-
+		// Make predicate (domSub({E},f))(G)
+		Expression setE = ff.makeSetExtension(E, null);
+		Expression fG = makeExpressionFOfG(setE,children, G);
 		Predicate inferredPred = predicate.rewriteSubFormula(position, fG, ff);
 		
 		// Make predicate not(G = E)
