@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - fixed NPE in SIMP_FUNIMAGE_LAMBDA (ver 0)
+ *     Systerel - incremented to version 1 after OnePointRule v2 fix
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
@@ -18,7 +19,7 @@ import org.eventb.core.seqprover.SequentProver;
 public class AutoRewrites extends AbstractAutoRewrites implements
 		IVersionedReasoner {
 
-	private static final int REASONER_VERSION = 0;
+	private static final int REASONER_VERSION = 1;
 	private static final IFormulaRewriter rewriter = new AutoRewriterImpl();
 
 	public AutoRewrites() {

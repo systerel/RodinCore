@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,7 +73,7 @@ public class OnePointSimplifier {
 	/**
 	 * Get the predicate resulting from One Point Rule application.
 	 * <p>
-	 * The One Point Rule Smust have been successfully applied.
+	 * The One Point Rule must have been successfully applied.
 	 * </p>
 	 * 
 	 * @return the resulting predicate after One Point Simplification
