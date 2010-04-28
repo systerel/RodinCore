@@ -15,13 +15,12 @@ import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
-import org.eventb.core.seqprover.IReasonerRegistry;
 
 public abstract class ReasonerOutput implements IReasonerOutput {
 
 	private static IReasonerDesc getDesc(IReasoner reasoner) {
 		final String reasonerId = reasoner.getReasonerID();
-		final IReasonerRegistry registry = ReasonerRegistry
+		final ReasonerRegistry registry = ReasonerRegistry
 				.getReasonerRegistry();
 		if (!registry.isRegistered(reasonerId)) {
 			// in case the reasoner is not registered, we just store a
@@ -29,7 +28,8 @@ public abstract class ReasonerOutput implements IReasonerOutput {
 			// it is not registered in order to to avoid side effects
 			return ReasonerDesc.makeUnknownReasonerDesc(reasoner);
 		}
-		return registry.getReasonerDesc(reasonerId);
+		// live version
+		return registry.getLiveReasonerDesc(reasonerId);
 	}
 
 	protected final IReasonerDesc reasonerDesc;

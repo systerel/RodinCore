@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - moved to a separate class and implemented version management
+ *     Systerel - fixed versioning
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
@@ -43,6 +44,8 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
  */
 public class ReasonerDesc implements IReasonerDesc {
 
+	private static final int UNKNOWN_VERSION = NO_VERSION - 1;
+	
 	protected static class ReasonerLoadingException extends Exception {
 		private static final long serialVersionUID = -4173286853724624350L;
 
@@ -125,6 +128,8 @@ public class ReasonerDesc implements IReasonerDesc {
 	private final IConfigurationElement configurationElement;
 	private final String id;
 	private final String name;
+	private int version = UNKNOWN_VERSION;
+	private final boolean isLive;
 
 	/**
 	 * Reasoner instance lazily loaded using <code>configurationElement</code>
@@ -139,19 +144,17 @@ public class ReasonerDesc implements IReasonerDesc {
 		final String nameSpace = element.getNamespaceIdentifier();
 		this.id = nameSpace + "." + localId;
 		this.name = element.getAttribute("name");
-	}
-
-	public ReasonerDesc(IReasoner reasoner) {
-		this(null, reasoner, reasoner.getReasonerID(), Messages.bind(
-				Messages.reasonerDesc_unknown, reasoner.getReasonerID()));
+		this.isLive = true;
 	}
 
 	private ReasonerDesc(IConfigurationElement configurationElement,
-			IReasoner instance, String id, String name) {
+			IReasoner instance, String id, String name, int version) {
 		this.configurationElement = configurationElement;
 		this.instance = instance;
 		this.id = id;
 		this.name = name;
+		this.version = version;
+		this.isLive = false;
 	}
 
 	/**
@@ -170,7 +173,7 @@ public class ReasonerDesc implements IReasonerDesc {
 		final IReasoner dummyInstance = getDummyInstance(id);
 		final String unknownName = Messages.bind(Messages.reasonerDesc_unknown,
 				id);
-		return new ReasonerDesc(null, dummyInstance, id, unknownName);
+		return new ReasonerDesc(null, dummyInstance, id, unknownName, UNKNOWN_VERSION);
 	}
 
 	/**
@@ -188,12 +191,14 @@ public class ReasonerDesc implements IReasonerDesc {
 	static ReasonerDesc makeUnknownReasonerDesc(IReasoner reasoner) {
 		final String reasonerID = reasoner.getReasonerID();
 		String id = reasonerID;
+		final int version;
 		if (reasoner instanceof IVersionedReasoner) {
-			final int version = ((IVersionedReasoner) reasoner).getVersion();
-			id = encodeVersionInId(id, version);
+			version = ((IVersionedReasoner) reasoner).getVersion();
+		} else {
+			version = UNKNOWN_VERSION;
 		}
 		return new ReasonerDesc(null, reasoner, id, Messages.bind(
-				Messages.reasonerDesc_unknown, reasonerID));
+				Messages.reasonerDesc_unknown, reasonerID), version);
 	}
 
 	/**
@@ -207,7 +212,7 @@ public class ReasonerDesc implements IReasonerDesc {
 	public ReasonerDesc copyWithVersion(int version) {
 		final String baseId = decodeId(id);
 		return new ReasonerDesc(configurationElement, instance,
-				encodeVersionInId(baseId, version), name);
+				baseId, name, version);
 	}
 
 	public IReasoner getInstance() {
@@ -259,9 +264,13 @@ public class ReasonerDesc implements IReasonerDesc {
 	}
 
 	public int getVersion() {
-		final int version = decodeVersion(id);
-		if (version == NO_VERSION) {
-			return getRegisteredVersion();
+		if (version != UNKNOWN_VERSION) {
+			return version;
+		}
+		if (isLive) {
+			version = getRegisteredVersion();
+		} else {
+			version = decodeVersion(id);
 		}
 		return version;
 	}

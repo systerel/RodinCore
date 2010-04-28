@@ -101,9 +101,14 @@ public class ProofBuilderTests {
 		final IProofTreeNode node = t.getRoot();
 		final IReasonerRegistry registry = ReasonerRegistry
 				.getReasonerRegistry();
-		final IReasonerDesc desc = registry.getReasonerDesc(reasoner
-				.getReasonerID()
-				+ ":" + reasoner.getVersion());
+		final int storedVersion = reasoner.getVersion();
+		final String versionedId;
+		if (storedVersion >= 0) {
+			versionedId = reasoner.getReasonerID() + ":" + storedVersion;
+		} else {
+			versionedId = reasoner.getReasonerID();
+		}
+		final IReasonerDesc desc = registry.getReasonerDesc(versionedId);
 		final Set<Predicate> noHyps = Collections.emptySet();
 		final IProofRule rule = ProverFactory.makeProofRule(desc,
 				new EmptyInput(), trueSequent.goal(), noHyps,
@@ -251,6 +256,17 @@ public class ProofBuilderTests {
 	@Test
 	public void reuseSuccessOtherVersion() throws Exception {
 		final SuccessReasoner reasoner = new SuccessReasoner(1, true);
+		doVersionTest(reasoner, false);
+	}
+
+	// Evolution case: the reasoner version changed since the proof was made
+	// from NO_VERSION to another version
+	// with version conflict => failure expected
+	// Also checks that the reasoner is not called when in other version:
+	// calling the reasoner again would succeed and close the tree
+	@Test
+	public void reuseSuccessUnversioned() throws Exception {
+		final SuccessReasoner reasoner = new SuccessReasoner(IReasonerDesc.NO_VERSION, true);
 		doVersionTest(reasoner, false);
 	}
 

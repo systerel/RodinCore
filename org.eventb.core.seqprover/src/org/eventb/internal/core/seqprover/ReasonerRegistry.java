@@ -42,7 +42,7 @@ public class ReasonerRegistry implements IReasonerRegistry {
 	private static String REASONERS_ID =
 		SequentProver.PLUGIN_ID + ".reasoners";
 
-	private static final IReasonerRegistry SINGLETON_INSTANCE = new ReasonerRegistry();
+	private static final ReasonerRegistry SINGLETON_INSTANCE = new ReasonerRegistry();
 
 	private static final String[] NO_STRING = new String[0];
 	
@@ -61,7 +61,7 @@ public class ReasonerRegistry implements IReasonerRegistry {
 		// Singleton implementation
 	}
 	
-	public static IReasonerRegistry getReasonerRegistry() {
+	public static ReasonerRegistry getReasonerRegistry() {
 		return SINGLETON_INSTANCE;
 	}
 	
@@ -81,13 +81,15 @@ public class ReasonerRegistry implements IReasonerRegistry {
 	}
 	
 	public IReasoner getReasonerInstance(String id){
-		return getReasonerDesc(id).getInstance();
+		return getLiveReasonerDesc(id).getInstance();
 	}
 	
 	public String getReasonerName(String id){
-		return getReasonerDesc(id).getName();
+		return getLiveReasonerDesc(id).getName();
 	}
 
+	// version is considered serialized in the id
+	// desired version may be NO_VERSION
 	public synchronized IReasonerDesc getReasonerDesc(String id) {
 		if (registry == null) {
 			loadRegistry();
@@ -100,11 +102,25 @@ public class ReasonerRegistry implements IReasonerRegistry {
 			registry.put(noVerId, desc);
 		} else {
 			final int version = decodeVersion(id);
-			if (version != IReasonerDesc.NO_VERSION
-					&& version != desc.getRegisteredVersion()) {
+			if (version != desc.getVersion()) {
 				 // same descriptor with version from id
 				desc = desc.copyWithVersion(version);
 			}
+		}
+		return desc;
+	}
+	
+	// version is considered borne by the reasoner instance
+	public synchronized IReasonerDesc getLiveReasonerDesc(String id) {
+		if (registry == null) {
+			loadRegistry();
+		}
+		final String noVerId = decodeId(id);
+		ReasonerDesc desc = registry.get(noVerId);
+		if (desc == null) {
+			// Unknown reasoner, just create a dummy entry
+			desc = makeUnknownReasonerDesc(id);
+			registry.put(noVerId, desc);
 		}
 		return desc;
 	}

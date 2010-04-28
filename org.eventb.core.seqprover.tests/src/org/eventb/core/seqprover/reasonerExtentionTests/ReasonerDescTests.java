@@ -21,10 +21,9 @@ import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.IReasonerFailure;
 import org.eventb.core.seqprover.IReasonerOutput;
-import org.eventb.core.seqprover.IReasonerRegistry;
-import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.tests.TestLib;
+import org.eventb.internal.core.seqprover.ReasonerRegistry;
 import org.junit.Test;
 
 /**
@@ -32,10 +31,14 @@ import org.junit.Test;
  * 
  */
 public class ReasonerDescTests {
+	private static final ReasonerRegistry registry = ReasonerRegistry.getReasonerRegistry();
 
 	private static IReasonerDesc getDesc(String id) {
-		final IReasonerRegistry registry = SequentProver.getReasonerRegistry();
 		return registry.getReasonerDesc(id);
+	}
+
+	private static IReasonerDesc getLiveDesc(String id) {
+		return registry.getLiveReasonerDesc(id);
 	}
 
 	@Test
@@ -67,9 +70,9 @@ public class ReasonerDescTests {
 		final IReasonerDesc desc = getDesc(ReasonerV1.REASONER_ID);
 		final String versionedID = desc.getVersionedId();
 		assertEquals("Unexpected versioned reasoner name",
-				ReasonerV1.REASONER_ID + ":1", versionedID);
+				ReasonerV1.REASONER_ID, versionedID);
 	}
-
+	
 	@Test
 	public void testGetVersionedIdOtherVersion() throws Exception {
 		final IReasonerDesc desc = getDesc(ReasonerV1.REASONER_ID + ":0");
@@ -79,12 +82,20 @@ public class ReasonerDescTests {
 	}
 
 	@Test
+	public void testGetLiveVersionedId() throws Exception {
+		final IReasonerDesc desc = getLiveDesc(ReasonerV1.REASONER_ID);
+		final String versionedID = desc.getVersionedId();
+		assertEquals("Unexpected versioned reasoner name",
+				ReasonerV1.REASONER_ID + ":1", versionedID);
+	}
+
+	@Test
 	public void testGetVersion() throws Exception {
 		final String msg = "Unexpected reasoner version";
-		assertEquals(msg, NO_VERSION, getDesc(getDummyId()).getVersion());
-		assertEquals(msg, NO_VERSION, getDesc(TrueGoal.REASONER_ID)
+		assertEquals(msg, NO_VERSION, getLiveDesc(getDummyId()).getVersion());
+		assertEquals(msg, NO_VERSION, getLiveDesc(TrueGoal.REASONER_ID)
 				.getVersion());
-		assertEquals(msg, 1, getDesc(ReasonerV1.REASONER_ID).getVersion());
+		assertEquals(msg, 1, getLiveDesc(ReasonerV1.REASONER_ID).getVersion());
 	}
 
 	@Test
@@ -95,15 +106,25 @@ public class ReasonerDescTests {
 	}
 
 	@Test
+	public void testGetLiveVersionedDesc() throws Exception {
+		final String versionedID = ReasonerV1.REASONER_ID + ":2";
+		final int version = getLiveDesc(versionedID).getVersion();
+		assertEquals("Unexpected version", 1, version);
+	}
+
+	@Test
 	public void testHasVersionConflict() throws Exception {
-		final IReasonerDesc desc1 = getDesc(ReasonerV1.REASONER_ID);
+		final IReasonerDesc desc1 = getLiveDesc(ReasonerV1.REASONER_ID);
 		assertFalse("Unexpected conflict", desc1.hasVersionConflict());
 
 		final IReasonerDesc desc2 = getDesc(ReasonerV1.REASONER_ID + ":0");
 		assertTrue("Expected a conflict", desc2.hasVersionConflict());
 
-		final IReasonerDesc desc3 = getDesc(getDummyId());
+		final IReasonerDesc desc3 = getLiveDesc(getDummyId());
 		assertFalse("Unexpected conflict", desc3.hasVersionConflict());
+
+		final IReasonerDesc desc4 = getDesc(getDummyId());
+		assertFalse("Unexpected conflict", desc4.hasVersionConflict());
 	}
 
 	/**
