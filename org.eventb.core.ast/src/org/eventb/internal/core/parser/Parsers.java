@@ -55,18 +55,9 @@ public class Parsers {
 			return tag;
 		}
 		
-		public Formula<?> led(Formula<?> left, ParserContext pc, int startPos)
-				throws SyntaxError {
-			throw new SyntaxError("unexpected symbol: " + pc.t.val);
-		}
-
-		public Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError {
-			throw new SyntaxError("unexpected symbol: " + pc.t.val);
-		}
-
 	}
 
-	private static class DefaultNudParser extends AbstractSubParser implements INudParser {
+	private static abstract class DefaultNudParser extends AbstractSubParser implements INudParser {
 
 		protected DefaultNudParser(int tag) {
 			super(tag);
@@ -74,7 +65,7 @@ public class Parsers {
 
 	}
 
-	private static class DefaultLedParser extends AbstractSubParser implements ILedParser {
+	private static abstract class DefaultLedParser extends AbstractSubParser implements ILedParser {
 
 		protected DefaultLedParser(int tag) {
 			super(tag);
@@ -82,24 +73,14 @@ public class Parsers {
 
 	}
 
-	static class ClosedSugar extends DefaultNudParser {
+	static final INudParser CLOSED_SUGAR = new DefaultNudParser(NO_TAG) {
 
-		private final int closeKind;
-
-		public ClosedSugar(int closeKind) {
-			super(NO_TAG);
-			this.closeKind = closeKind;
-		}
-
-		@Override
 		public Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError {
-			final Formula<?> formula = MainParser.parse(NO_TAG,
-					pc, pc.la.pos);
-			pc.progress(closeKind);
+			final Formula<?> formula = MainParser.parse(NO_TAG, pc, pc.la.pos);
+			pc.progressCloseParen();
 			return formula;
 		}
-		
-	}
+	};
 
 	static class BinaryExpressionInfix extends DefaultLedParser {
 
@@ -107,7 +88,6 @@ public class Parsers {
 			super(Formula.NO_TAG);
 		}
 		
-		@Override
 		public Expression led(Formula<?> left, ParserContext pc, int startPos)
 				throws SyntaxError {
 			final Expression right = MainParser.parseExpression(tag, pc, pc.la.pos);
@@ -151,7 +131,6 @@ public class Parsers {
 			super(tag);
 		}
 
-		@Override
 		public Expression led(Formula<?> left, ParserContext pc, int startPos)
 				throws SyntaxError {
 			final Expression right = MainParser.parseExpression(tag, pc, pc.la.pos);
@@ -207,7 +186,6 @@ public class Parsers {
 			super(tag);
 		}
 
-		@Override
 		public AssociativePredicate led(Formula<?> left, ParserContext pc, int startPos)
 				throws SyntaxError {
 			final Predicate right = MainParser.parsePredicate(tag, pc, pc.la.pos);
@@ -233,7 +211,6 @@ public class Parsers {
 			super(tag);
 		}
 
-		@Override
 		public RelationalPredicate led(Formula<?> left, ParserContext pc,
 				int startPos) throws SyntaxError {
 			final Expression right = MainParser.parseExpression(tag, pc, pc.la.pos);
@@ -247,14 +224,13 @@ public class Parsers {
 
 	static final ILedParser FUN_IMAGE = new DefaultLedParser(FUNIMAGE) {
 
-		@Override
 		public BinaryExpression led(Formula<?> left, ParserContext pc,
 				int startPos) throws SyntaxError {
 			final Expression right = MainParser.parseExpression(tag, pc, pc.la.pos);
 			if (!(left instanceof Expression)) {
 				throw new SyntaxError("expected expressions");
 			}
-			pc.progress(BMath._RPAR);
+			pc.progressCloseParen();
 			return pc.factory.makeBinaryExpression(tag, (Expression) left,
 					right, pc.getSourceLocation(startPos));
 		}
@@ -266,7 +242,6 @@ public class Parsers {
 			super(tag);
 		}
 
-		@Override
 		public Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError {
 			return pc.factory.makeLiteralPredicate(tag, pc.getSourceLocation(startPos));
 		}
@@ -281,7 +256,6 @@ public class Parsers {
 			this.identListParser = identListParser;
 		}
 
-		@Override
 		public Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError {
 			pc.progress();
 			final List<FreeIdentifier> identList = identListParser.parse(pc, pc.t.pos);
@@ -290,13 +264,29 @@ public class Parsers {
 
 			final Predicate boundPred = pred.bindTheseIdents(identList, pc.factory);
 			final List<BoundIdentDecl> boundIdentifiers = new ArrayList<BoundIdentDecl>(identList.size());
-			// TODO use Formula.bindTheseIdents instead
+			// TODO use Formula.bindTheseIdents instead ?
 			for (FreeIdentifier ident: identList) {
 				boundIdentifiers.add(pc.factory.makeBoundIdentDecl(ident.getName(), ident.getSourceLocation()));
 			}
 			return pc.factory.makeQuantifiedPredicate(tag, boundIdentifiers,
 					boundPred, null);
 		}
+	}
+
+	static class UnaryExpression extends DefaultNudParser {
+
+		public UnaryExpression(int tag) {
+			super(tag);
+		}
+
+		public Formula<?> nud(ParserContext pc, int startPos)
+				throws SyntaxError {
+			pc.progressOpenParen();
+			final Expression child = MainParser.parseExpression(tag, pc, pc.la.pos);
+			pc.progressCloseParen();
+			return pc.factory.makeUnaryExpression(tag, child, pc.getSourceLocation(startPos));
+		}
+
 	}
 
 	static class IdentListParser {
@@ -379,7 +369,6 @@ public class Parsers {
 
 	static final INudParser FREE_IDENT_SUBPARSER = new DefaultNudParser(FREE_IDENT) {
 
-		@Override
 		public FreeIdentifier nud(ParserContext pc, int startPos) throws SyntaxError {
 			return pc.factory.makeFreeIdentifier(pc.t.val, pc
 					.getSourceLocation(startPos));
@@ -388,7 +377,6 @@ public class Parsers {
 
 	static final INudParser INTLIT_SUBPARSER = new DefaultNudParser(INTLIT) {
 
-		@Override
 		public Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError {
 			final BigInteger value = BigInteger.valueOf((Integer
 					.valueOf(pc.t.val)));

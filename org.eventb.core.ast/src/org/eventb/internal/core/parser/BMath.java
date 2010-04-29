@@ -19,6 +19,7 @@ import static org.eventb.core.ast.Formula.EXISTS;
 import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.ast.Formula.FUNIMAGE;
 import static org.eventb.core.ast.Formula.GT;
+import static org.eventb.core.ast.Formula.KCARD;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.LE;
 import static org.eventb.core.ast.Formula.LOR;
@@ -64,7 +65,9 @@ public class BMath extends AbstractGrammar {
 	private static final String RELATIONAL = "Relational";
 
 	private static final String FUNIMAGE_ID = "Fun Image";
-	private static final String BINARY_EXPRESSION = "Binary expression";
+	private static final String BINARY_EXPRESSION = "Binary Expression";
+	private static final String KCARD_ID = "Cardinal";
+	private static final String UNARY_EXPRESSION = "Unary Expression";
 	
 	
 	/**
@@ -151,7 +154,7 @@ public class BMath extends AbstractGrammar {
 		tokens.getOrAdd("FALSE");
 		tokens.getOrAdd("TRUE");
 		tokens.getOrAdd("bool");
-		tokens.getOrAdd("card");
+//		tokens.getOrAdd("card");
 		tokens.getOrAdd("dom");
 		tokens.getOrAdd("finite");
 		tokens.getOrAdd("id");
@@ -287,6 +290,7 @@ public class BMath extends AbstractGrammar {
 			addOperator(">", GT, GT_ID, RELATIONAL, new Parsers.RelationalPredicateInfix(GT));
 			addOperator("≤", LE, LE_ID, RELATIONAL, new Parsers.RelationalPredicateInfix(LE));
 			addOperator("(", FUNIMAGE, FUNIMAGE_ID, BINARY_EXPRESSION, Parsers.FUN_IMAGE);
+			addOperator("card", KCARD, KCARD_ID, UNARY_EXPRESSION, new Parsers.UnaryExpression(KCARD));
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

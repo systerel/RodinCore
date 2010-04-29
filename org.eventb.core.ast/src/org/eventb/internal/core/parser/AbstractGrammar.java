@@ -118,7 +118,7 @@ public abstract class AbstractGrammar {
 	
 	private void addClosedSugar(int openKind, int closeKind)
 			throws OverrideException {
-		subParsers.addClosed(openKind, new Parsers.ClosedSugar(closeKind));
+		subParsers.addClosed(_LPAR, Parsers.CLOSED_SUGAR);
 	}
 	
 	protected void addLiteralOperator(String token, int tag,

@@ -12,6 +12,9 @@ package org.eventb.internal.core.parser;
 
 
 import static org.eventb.core.ast.Formula.NO_TAG;
+import static org.eventb.internal.core.parser.AbstractGrammar._EOF;
+import static org.eventb.internal.core.parser.AbstractGrammar._LPAR;
+import static org.eventb.internal.core.parser.AbstractGrammar._RPAR;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Assignment;
@@ -110,6 +113,15 @@ public class GenParser {
 			la = scanner.Scan();
 		}
 		
+		/**
+		 * Checks that the expected token with the given kind is ahead, then
+		 * makes progress.
+		 * 
+		 * @param expectedKind
+		 *            kind of the expected token
+		 * @throws SyntaxError
+		 *             in case an unexpected token is ahead
+		 */
 		public void progress(int expectedKind) throws SyntaxError {
 			if (la.kind != expectedKind) {
 				throw new SyntaxError("expected symbol \""
@@ -117,6 +129,14 @@ public class GenParser {
 						+ "\" but was \"" + la.val + "\"");
 			}
 			progress();
+		}
+		
+		public void progressOpenParen() throws SyntaxError {
+			progress(_LPAR);
+		}
+		
+		public void progressCloseParen() throws SyntaxError {
+			progress(_RPAR);
 		}
 		
 		public INudParser getNudParser() {
@@ -128,7 +148,7 @@ public class GenParser {
 		}
 		
 		public boolean canProgressRight(int parentTag) throws SyntaxError {
-			if (la.kind == BMath._EOF) { // end of the formula
+			if (la.kind == _EOF) { // end of the formula
 				return false;
 			}
 			if (!grammar.isOperator(la)) {
@@ -164,7 +184,7 @@ public class GenParser {
 			final ParserContext pc = new ParserContext(scanner, factory, result.getOrigin());
 			pc.init();
 			final Formula<?> res = Parsers.MainParser.parse(NO_TAG, pc, 0);
-			if (pc.la.kind != BMath._EOF) {
+			if (pc.la.kind != _EOF) {
 				throw new UnmatchedToken("tokens have been ignored from: \""
 						+ pc.la.val + "\" at position " + pc.la.pos);
 			}

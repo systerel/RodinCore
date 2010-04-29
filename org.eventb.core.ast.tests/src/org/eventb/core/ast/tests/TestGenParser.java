@@ -17,7 +17,9 @@ import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.EXISTS;
 import static org.eventb.core.ast.Formula.FORALL;
+import static org.eventb.core.ast.Formula.FUNIMAGE;
 import static org.eventb.core.ast.Formula.GT;
+import static org.eventb.core.ast.Formula.KCARD;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.LE;
 import static org.eventb.core.ast.Formula.LOR;
@@ -359,11 +361,15 @@ public class TestGenParser extends AbstractTests {
 	}
 
 	public void testFunImage() throws Exception {
-		final Expression expected = ff.makeBinaryExpression(Formula.FUNIMAGE,
+		final Expression expected = ff.makeBinaryExpression(FUNIMAGE,
 				ff.makeFreeIdentifier("f", null),
 				ff.makeIntegerLiteral(BigInteger.ZERO, null), null);
 		doExpressionTest("f(0)", expected);
 	}
 
-
+	public void testCard() throws Exception {
+		final Expression expected = ff.makeUnaryExpression(KCARD,
+				ff.makeFreeIdentifier("S", null), null);
+		doExpressionTest("card(S)", expected);
+	}
 }
