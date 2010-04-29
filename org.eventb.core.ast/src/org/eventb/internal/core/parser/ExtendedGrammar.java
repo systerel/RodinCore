@@ -40,7 +40,7 @@ public class ExtendedGrammar extends BMath {
 				final String operatorId = extension.getId();
 				final String groupId = extension.getGroupId();
 				final ExtensionKind kind = extension.getKind();
-				final ISubParser subParser;
+				final ILedParser subParser;
 				switch (kind) {
 				case ASSOCIATIVE_INFIX_EXPRESSION:
 					subParser = new Parsers.ExtendedAssociativeExpressionInfix(

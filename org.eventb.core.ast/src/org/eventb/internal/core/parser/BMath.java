@@ -54,6 +54,7 @@ public class BMath extends AbstractGrammar {
 	private static final String ARITHMETIC = "Arithmetic";
 	private static final String SET_OPERATORS = "Set Operators";
 	private static final String LOGIC = "Logic";
+	private static final String QUANTIFIED = "Quantified";
 	private static final String FORALL_ID = "for all";
 	private static final String EXISTS_ID = "exists";
 
@@ -76,7 +77,8 @@ public class BMath extends AbstractGrammar {
 //			_IDENT = tokens.reserved();
 		_PREDVAR = tokens.reserved();
 		// tokens.add("(");
-//			_RPAR = tokens.add(")");
+		_LPAR = tokens.getOrAdd("(");
+		_RPAR = tokens.getOrAdd(")");
 		tokens.getOrAdd("[");
 		tokens.getOrAdd("]");
 		tokens.getOrAdd("{");
@@ -174,7 +176,8 @@ public class BMath extends AbstractGrammar {
 	}
 
 	static int _EOF;
-//	private static int _RPAR;
+	static int _LPAR;
+	static int _RPAR;
 //	static int _LBRACKET;
 //	static int _RBRACKET;
 //	static int _LBRACE;
@@ -285,13 +288,13 @@ public class BMath extends AbstractGrammar {
 			addOperator("\u2229", BINTER, BINTER_ID, SET_OPERATORS, new Parsers.AssociativeExpressionInfix(BINTER));
 			addOperator("+", PLUS, PLUS_ID, ARITHMETIC, new Parsers.AssociativeExpressionInfix(PLUS));
 			addOperator("\u2217", MUL, MUL_ID, ARITHMETIC, new Parsers.AssociativeExpressionInfix(MUL));
-			addClosedSubParser("(", ")");
+			addClosedSugar(_LPAR, _RPAR);
 			addLiteralOperator("\u22a4", BTRUE, new Parsers.LiteralPredicateParser(BTRUE));
 			addLiteralOperator("\u22a5", BFALSE, new Parsers.LiteralPredicateParser(BFALSE));
 			addOperator("\u2227", LAND, LAND_ID, LOGIC, new Parsers.AssociativePredicateInfix(LAND));
 			addOperator("\u2228", LOR, LOR_ID, LOGIC, new Parsers.AssociativePredicateInfix(LOR));
-			addQuantifiedOperator("\u2200", ",", "\u00b7", FORALL, FORALL_ID, LOGIC);
-			addQuantifiedOperator("\u2203", ",", "\u00b7", EXISTS, EXISTS_ID, LOGIC);
+			addQuantifiedOperator("\u2200", ",", "\u00b7", FORALL, FORALL_ID, QUANTIFIED);
+			addQuantifiedOperator("\u2203", ",", "\u00b7", EXISTS, EXISTS_ID, QUANTIFIED);
 			addOperator("=", EQUAL, EQUAL_ID, RELATIONAL, new Parsers.RelationalPredicateInfix(EQUAL));
 			addOperator(">", GT, GT_ID, RELATIONAL, new Parsers.RelationalPredicateInfix(GT));
 			addOperator("≤", LE, LE_ID, RELATIONAL, new Parsers.RelationalPredicateInfix(LE));
@@ -308,6 +311,11 @@ public class BMath extends AbstractGrammar {
 
 		try {
 			opRegistry.addPriority(PLUS_ID, MUL_ID);
+			opRegistry.addGroupPriority(QUANTIFIED, RELATIONAL);
+			opRegistry.addGroupPriority(QUANTIFIED, SET_OPERATORS);
+			opRegistry.addGroupPriority(QUANTIFIED, ARITHMETIC);
+			opRegistry.addGroupPriority(QUANTIFIED, LOGIC);
+			opRegistry.addGroupPriority(QUANTIFIED, BINARY_EXPRESSION);
 		} catch (CycleError e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -315,7 +323,7 @@ public class BMath extends AbstractGrammar {
 		
 	}
 
-	// TODO move EOF, IDENT and INTLIT to AbstractGrammar
+	// TODO move EOF, LPAR, RPAR, IDENT and INTLIT to AbstractGrammar
 	public int getEOF() {
 		return _EOF;
 	}

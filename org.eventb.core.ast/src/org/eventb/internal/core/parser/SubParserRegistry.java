@@ -25,42 +25,35 @@ import org.eventb.internal.core.parser.GenParser.SyntaxError;
 public class SubParserRegistry {
 
 	private static class KindParsers {
-		//		private final List<ISubParser> ledParsers = new ArrayList<ISubParser>();
-		//		private final List<ISubParser> nudParsers = new ArrayList<ISubParser>();
-		private final List<ISubParser> parsers = new ArrayList<ISubParser>();
+		private final List<ILedParser> ledParsers = new ArrayList<ILedParser>();
+		private final List<INudParser> nudParsers = new ArrayList<INudParser>();
 
 		public KindParsers() {
 			// nothing to do
 		}
-		
-		//		public void addLed(ISubParser ledParser) {
-		//			if (!ledParsers.contains(ledParser)) {
-		//				ledParsers.add(ledParser);
-		//			}
-		//		}
-		//
-		//		public void addNud(ISubParser ledParser) {
-		//			if (!nudParsers.contains(ledParser)) {
-		//				nudParsers.add(ledParser);
-		//			}
-		//		}
 
-		public void add(ISubParser parser) {
-			if (!parsers.contains(parser)) {
-				parsers.add(parser);
+		public void addLed(ILedParser ledParser) {
+			if (!ledParsers.contains(ledParser)) {
+				ledParsers.add(ledParser);
 			}
 		}
 
-		//		public List<ISubParser> getLedParsers() {
-		//			return ledParsers;
-		//		}
-		//		
-		//		public List<ISubParser> getNudParsers() {
-		//			return nudParsers;
-		//		}
+		public void addNud(INudParser ledParser) {
+			if (!nudParsers.contains(ledParser)) {
+				nudParsers.add(ledParser);
+			}
+		}
 
-		public List<ISubParser> getParsers() {
-			return parsers;
+		public List<ILedParser> getLedParsers() {
+			return ledParsers;
+		}
+
+		public List<INudParser> getNudParsers() {
+			return nudParsers;
+		}
+
+		public boolean isEmpty() {
+			return ledParsers.isEmpty() && nudParsers.isEmpty();
 		}
 	}
 
@@ -68,29 +61,60 @@ public class SubParserRegistry {
 	
 	// TODO move calls to subparser and remove method
 	public int getOperatorTag(Token token) throws SyntaxError {
-		return getSubParser(token).getTag();
+		return getFirstSubParser(token).getTag();
+	}
+
+	// FIXME remove
+	private ISubParser getFirstSubParser(Token token) {
+		final KindParsers parsers = kindParsers.get(token.kind);
+		if (parsers == null) {
+			return null;
+		}
+		final List<ILedParser> ledParsers = parsers.getLedParsers();
+		if (!ledParsers.isEmpty()) {
+			return ledParsers.get(0);
+		}
+		final List<INudParser> nudParsers = parsers.getNudParsers();
+		if (!nudParsers.isEmpty()) {
+			return nudParsers.get(0);
+		}
+		return null;
 	}
 
 	public boolean isOperator(Token token) {
 		final KindParsers parsers = kindParsers.get(token.kind);
-		return parsers != null && !parsers.getParsers().isEmpty();
+		return parsers != null && !parsers.isEmpty();
 	}
 	
-	// TODO
-	public ISubParser getSubParser(Token token) {
+	
+	public INudParser getNudParser(Token token) {
 		final KindParsers parsers = kindParsers.get(token.kind);
-		if (parsers == null || parsers.getParsers().isEmpty()) {
-//			throw new SyntaxError("not an operator: " + token.val);
+		if (parsers == null || parsers.isEmpty()) {
 			return null;
 		}
-		return parsers.getParsers().get(0); 
+		return parsers.getNudParsers().get(0); 
 		// FIXME
 		// when backtracking there will be several subparsers for one kind
 	}
 	
-	public void add(int kind, ISubParser subParser) throws OverrideException {
+	public ILedParser getLedParser(Token token) {
+		final KindParsers parsers = kindParsers.get(token.kind);
+		if (parsers == null || parsers.isEmpty()) {
+			return null;
+		}
+		return parsers.getLedParsers().get(0); 
+		// FIXME
+		// when backtracking there will be several subparsers for one kind
+	}
+	
+	public void addNud(int kind, INudParser subParser) throws OverrideException {
 		final KindParsers parsers = fetchParsers(kind);
-		parsers.add(subParser);
+		parsers.addNud(subParser);
+	}
+
+	public void addLed(int kind, ILedParser subParser) throws OverrideException {
+		final KindParsers parsers = fetchParsers(kind);
+		parsers.addLed(subParser);
 	}
 
 	private KindParsers fetchParsers(int kind) {
@@ -103,13 +127,13 @@ public class SubParserRegistry {
 	}
 
 
-	public void addReserved(int kind, ISubParser subParser) {
+	public void addReserved(int kind, INudParser subParser) {
 		final KindParsers parsers = fetchParsers(kind);
-		parsers.add(subParser);
+		parsers.addNud(subParser);
 	}
 
-	public void addClosed(int openKind, int closeKind, ISubParser subParser) throws OverrideException {
-		add(openKind, subParser);
+	public void addClosed(int openKind, INudParser subParser) throws OverrideException {
+		addNud(openKind, subParser);
 	}
 
 }

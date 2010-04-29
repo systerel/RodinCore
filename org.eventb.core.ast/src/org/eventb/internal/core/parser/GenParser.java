@@ -119,8 +119,12 @@ public class GenParser {
 			progress();
 		}
 		
-		public ISubParser getSubParser() {
-			return grammar.getSubParser(t);
+		public INudParser getNudParser() {
+			return grammar.getNudParser(t);
+		}
+		
+		public ILedParser getLedParser() {
+			return grammar.getLedParser(t);
 		}
 		
 		public boolean canProgressRight(int parentTag) throws SyntaxError {

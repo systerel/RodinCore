@@ -127,6 +127,11 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("1+2∗3", expected);
 	}
 	
+	public void testIdentDoubleParen() throws Exception {
+		final Expression expected = ff.makeFreeIdentifier("A", null);
+		doExpressionTest("((A))", expected);
+	}
+
 	public void testUnion() throws Exception {
 		final Expression expected = ff.makeAssociativeExpression(BUNION,
 				Arrays.<Expression> asList(ff.makeFreeIdentifier("A", null)
@@ -311,6 +316,16 @@ public class TestGenParser extends AbstractTests {
 						ff.makeBoundIdentDecl("z", null) }, ff
 						.makeLiteralPredicate(BFALSE, null), null);
 		doPredicateTest("∀x,y,z·⊥", expected);
+	}
+	
+	public void testForallRefs() throws Exception {
+		final Predicate expected = ff.makeQuantifiedPredicate(FORALL,
+				new BoundIdentDecl[] { ff.makeBoundIdentDecl("x", null),
+						ff.makeBoundIdentDecl("y", null) },
+						ff.makeRelationalPredicate(GT,
+								ff.makeBoundIdentifier(1, null),
+								ff.makeBoundIdentifier(0, null), null), null);
+		doPredicateTest("∀x,y·x>y", expected);
 	}
 	
 	public void testExists() throws Exception {

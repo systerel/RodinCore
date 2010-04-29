@@ -10,12 +10,16 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
+import org.eventb.core.ast.Formula;
+import org.eventb.internal.core.parser.GenParser.ParserContext;
+import org.eventb.internal.core.parser.GenParser.SyntaxError;
 
 /**
  * @author Nicolas Beauger
- * 
+ *
  */
-public interface ISubParser {
+public interface ILedParser extends ISubParser {
 
-	int getTag();
+	Formula<?> led(Formula<?> left, ParserContext pc, int startPos) throws SyntaxError;
+
 }

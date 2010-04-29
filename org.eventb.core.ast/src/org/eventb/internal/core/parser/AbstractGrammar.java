@@ -62,35 +62,44 @@ public abstract class AbstractGrammar {
 	// TODO split into several init methods, one for each data
 	public abstract void init();
 
-	public ISubParser getSubParser(Token token) {
-		return subParsers.getSubParser(token);
+	public INudParser getNudParser(Token token) {
+		return subParsers.getNudParser(token);
+	}
+	
+	public ILedParser getLedParser(Token token) {
+		return subParsers.getLedParser(token);
 	}
 	
 	protected void addOperator(String token, int tag, String operatorId, String groupId,
-			ISubParser subParser) throws OverrideException {
+			INudParser subParser) throws OverrideException {
 		opRegistry.addOperator(tag, operatorId, groupId);
 		final int kind = tokens.getOrAdd(token);
-		subParsers.add(kind, subParser);
+		subParsers.addNud(kind, subParser);
 	}
 	
-	protected int addReservedSubParser(ISubParser subParser)
+	protected void addOperator(String token, int tag, String operatorId, String groupId,
+			ILedParser subParser) throws OverrideException {
+		opRegistry.addOperator(tag, operatorId, groupId);
+		final int kind = tokens.getOrAdd(token);
+		subParsers.addLed(kind, subParser);
+	}
+	
+	protected int addReservedSubParser(INudParser subParser)
 			throws OverrideException {
 		final int kind = tokens.reserved();
 		subParsers.addReserved(kind, subParser);
 		return kind;
 	}
 	
-	protected void addClosedSubParser(String open, String close)
+	protected void addClosedSugar(int openKind, int closeKind)
 			throws OverrideException {
-		final int openKind = tokens.getOrAdd(open);
-		final int closeKind = tokens.getOrAdd(close);
-		subParsers.addClosed(openKind, closeKind, new Parsers.ClosedSugar(closeKind));
+		subParsers.addClosed(openKind, new Parsers.ClosedSugar(closeKind));
 	}
 	
 	protected void addLiteralOperator(String token, int tag,
-			ISubParser subParser) throws OverrideException {
+			INudParser subParser) throws OverrideException {
 		final int kind = tokens.getOrAdd(token);
-		subParsers.add(kind, subParser);
+		subParsers.addNud(kind, subParser);
 	}
 
 	protected void addQuantifiedOperator(String token, String identSeparator,

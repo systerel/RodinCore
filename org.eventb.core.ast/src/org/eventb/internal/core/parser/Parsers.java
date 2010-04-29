@@ -43,11 +43,11 @@ import org.eventb.internal.core.parser.GenParser.SyntaxError;
  */
 public class Parsers {
 
-	private static class DefaultSubParser implements ISubParser {
+	private static abstract class AbstractSubParser implements ISubParser {
 
 		protected final int tag;
 
-		protected DefaultSubParser(int tag) {
+		protected AbstractSubParser(int tag) {
 			this.tag = tag;
 		}
 		
@@ -66,7 +66,23 @@ public class Parsers {
 
 	}
 
-	static class ClosedSugar extends DefaultSubParser {
+	private static class DefaultNudParser extends AbstractSubParser implements INudParser {
+
+		protected DefaultNudParser(int tag) {
+			super(tag);
+		}
+
+	}
+
+	private static class DefaultLedParser extends AbstractSubParser implements ILedParser {
+
+		protected DefaultLedParser(int tag) {
+			super(tag);
+		}
+
+	}
+
+	static class ClosedSugar extends DefaultNudParser {
 
 		private final int closeKind;
 
@@ -85,7 +101,7 @@ public class Parsers {
 		
 	}
 
-	static class BinaryExpressionInfix extends DefaultSubParser {
+	static class BinaryExpressionInfix extends DefaultLedParser {
 
 		public BinaryExpressionInfix(int tag) {
 			super(Formula.NO_TAG);
@@ -129,7 +145,7 @@ public class Parsers {
 
 	}
 	
-	static class AssociativeExpressionInfix extends DefaultSubParser {
+	static class AssociativeExpressionInfix extends DefaultLedParser {
 
 		public AssociativeExpressionInfix(int tag) {
 			super(tag);
@@ -185,7 +201,7 @@ public class Parsers {
 		}
 	}
 	
-	static class AssociativePredicateInfix extends DefaultSubParser {
+	static class AssociativePredicateInfix extends DefaultLedParser {
 
 		public AssociativePredicateInfix(int tag) {
 			super(tag);
@@ -211,7 +227,7 @@ public class Parsers {
 		}
 	}
 
-	static class RelationalPredicateInfix extends DefaultSubParser {
+	static class RelationalPredicateInfix extends DefaultLedParser {
 
 		public RelationalPredicateInfix(int tag) {
 			super(tag);
@@ -229,7 +245,7 @@ public class Parsers {
 		}
 	}
 
-	static final ISubParser FUN_IMAGE = new DefaultSubParser(FUNIMAGE) {
+	static final ILedParser FUN_IMAGE = new DefaultLedParser(FUNIMAGE) {
 
 		@Override
 		public BinaryExpression led(Formula<?> left, ParserContext pc,
@@ -238,12 +254,13 @@ public class Parsers {
 			if (!(left instanceof Expression)) {
 				throw new SyntaxError("expected expressions");
 			}
+			pc.progress(BMath._RPAR);
 			return pc.factory.makeBinaryExpression(tag, (Expression) left,
 					right, pc.getSourceLocation(startPos));
 		}
 	};
 
-	static class LiteralPredicateParser extends DefaultSubParser {
+	static class LiteralPredicateParser extends DefaultNudParser {
 
 		public LiteralPredicateParser(int tag) {
 			super(tag);
@@ -255,7 +272,7 @@ public class Parsers {
 		}
 	}
 
-	static class QuantifiedPredicateParser extends DefaultSubParser {
+	static class QuantifiedPredicateParser extends DefaultNudParser {
 
 		private final IdentListParser identListParser;
 
@@ -271,13 +288,14 @@ public class Parsers {
 			identListParser.progressEndList(pc);
 			final Predicate pred = MainParser.parsePredicate(tag, pc, pc.la.pos);
 
+			final Predicate boundPred = pred.bindTheseIdents(identList, pc.factory);
 			final List<BoundIdentDecl> boundIdentifiers = new ArrayList<BoundIdentDecl>(identList.size());
 			// TODO use Formula.bindTheseIdents instead
 			for (FreeIdentifier ident: identList) {
 				boundIdentifiers.add(pc.factory.makeBoundIdentDecl(ident.getName(), ident.getSourceLocation()));
 			}
 			return pc.factory.makeQuantifiedPredicate(tag, boundIdentifiers,
-					pred, null);
+					boundPred, null);
 		}
 	}
 
@@ -313,11 +331,11 @@ public class Parsers {
 
 		public static Formula<?> parse(int parentTag, ParserContext pc, int startPos)
 				throws SyntaxError {
-			ISubParser subParser = nextSubParser(pc);
-			Formula<?> left = subParser.nud(pc, startPos);
+			final INudParser nudParser = nextNudParser(pc);
+			Formula<?> left = nudParser.nud(pc, startPos);
 			while (pc.canProgressRight(parentTag)) {
-				subParser = nextSubParser(pc);
-				left = subParser.led(left, pc, startPos);
+				final ILedParser ledParser = nextLedParser(pc);
+				left = ledParser.led(left, pc, startPos);
 			}
 			return left;
 		}
@@ -338,10 +356,20 @@ public class Parsers {
 			return (Expression) formula;
 		}
 		
-		private static ISubParser nextSubParser(ParserContext pc)
+		private static INudParser nextNudParser(ParserContext pc)
 				throws SyntaxError {
 			pc.progress();
-			final ISubParser subParser = pc.getSubParser();
+			final INudParser subParser = pc.getNudParser();
+			if (subParser == null) {
+				throw new SyntaxError("don't know how to parse: " + pc.t.val);
+			}
+			return subParser;
+		}
+		
+		private static ILedParser nextLedParser(ParserContext pc)
+		throws SyntaxError {
+			pc.progress();
+			final ILedParser subParser = pc.getLedParser();
 			if (subParser == null) {
 				throw new SyntaxError("don't know how to parse: " + pc.t.val);
 			}
@@ -349,7 +377,7 @@ public class Parsers {
 		}
 	}
 
-	static final ISubParser FREE_IDENT_SUBPARSER = new DefaultSubParser(FREE_IDENT) {
+	static final INudParser FREE_IDENT_SUBPARSER = new DefaultNudParser(FREE_IDENT) {
 
 		@Override
 		public FreeIdentifier nud(ParserContext pc, int startPos) throws SyntaxError {
@@ -358,7 +386,7 @@ public class Parsers {
 		}
 	};
 
-	static final ISubParser INTLIT_SUBPARSER = new DefaultSubParser(INTLIT) {
+	static final INudParser INTLIT_SUBPARSER = new DefaultNudParser(INTLIT) {
 
 		@Override
 		public Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError {
