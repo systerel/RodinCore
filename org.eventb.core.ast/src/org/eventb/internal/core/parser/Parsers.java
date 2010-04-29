@@ -43,6 +43,20 @@ import org.eventb.internal.core.parser.GenParser.SyntaxError;
  */
 public class Parsers {
 
+	static class AtomicExpression extends DefaultNudParser {
+
+		protected AtomicExpression(int tag) {
+			super(tag);
+		}
+
+		public Formula<?> nud(ParserContext pc, int startPos)
+				throws SyntaxError {
+			// TODO oftype 
+			return pc.factory.makeAtomicExpression(tag, pc.getSourceLocation(startPos));
+		}
+
+	}
+
 	private static abstract class AbstractSubParser implements ISubParser {
 
 		protected final int tag;

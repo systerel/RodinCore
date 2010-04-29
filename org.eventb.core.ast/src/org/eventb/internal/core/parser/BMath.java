@@ -14,11 +14,13 @@ import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.BUNION;
+import static org.eventb.core.ast.Formula.EMPTYSET;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.EXISTS;
 import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.ast.Formula.FUNIMAGE;
 import static org.eventb.core.ast.Formula.GT;
+import static org.eventb.core.ast.Formula.IN;
 import static org.eventb.core.ast.Formula.KCARD;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.LE;
@@ -68,6 +70,9 @@ public class BMath extends AbstractGrammar {
 	private static final String BINARY_EXPRESSION = "Binary Expression";
 	private static final String KCARD_ID = "Cardinal";
 	private static final String UNARY_EXPRESSION = "Unary Expression";
+	private static final String IN_ID = "In";
+	private static final String EMPTYSET_ID = "Empty Set";
+	private static final String ATOMIC = "Atomic";
 	
 	
 	/**
@@ -291,6 +296,8 @@ public class BMath extends AbstractGrammar {
 			addOperator("≤", LE, LE_ID, RELATIONAL, new Parsers.RelationalPredicateInfix(LE));
 			addOperator("(", FUNIMAGE, FUNIMAGE_ID, BINARY_EXPRESSION, Parsers.FUN_IMAGE);
 			addOperator("card", KCARD, KCARD_ID, UNARY_EXPRESSION, new Parsers.UnaryExpression(KCARD));
+			addOperator("\u2208", IN, IN_ID, RELATIONAL, new Parsers.RelationalPredicateInfix(IN));
+			addOperator("\u2205", EMPTYSET, EMPTYSET_ID, ATOMIC, new Parsers.AtomicExpression(EMPTYSET));
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

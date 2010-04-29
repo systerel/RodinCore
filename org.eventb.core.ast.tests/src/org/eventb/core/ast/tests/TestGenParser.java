@@ -19,6 +19,7 @@ import static org.eventb.core.ast.Formula.EXISTS;
 import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.ast.Formula.FUNIMAGE;
 import static org.eventb.core.ast.Formula.GT;
+import static org.eventb.core.ast.Formula.IN;
 import static org.eventb.core.ast.Formula.KCARD;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.LE;
@@ -33,12 +34,15 @@ import java.util.List;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.AssociativePredicate;
+import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
@@ -63,6 +67,10 @@ import org.eventb.core.ast.extension.IWDMediator;
  */
 public class TestGenParser extends AbstractTests {
 
+	private static final IntegerLiteral ZERO = ff.makeIntegerLiteral(BigInteger.ZERO, null);
+	private static final IntegerLiteral ONE = ff.makeIntegerLiteral(BigInteger.ONE, null);
+	private static final AtomicExpression EMPTY = ff.makeEmptySet(null, null);
+	private static final FreeIdentifier FRID_S = ff.makeFreeIdentifier("S", null);
 	private static final SourceLocationChecker slChecker = new SourceLocationChecker();
 
 	private void doExpressionTest(String formula, Formula<?> expected, FormulaFactory factory) {
@@ -349,27 +357,55 @@ public class TestGenParser extends AbstractTests {
 	public void testGT() throws Exception {
 		final Predicate expected = ff.makeRelationalPredicate(GT,
 				ff.makeFreeIdentifier("x", null),
-				ff.makeIntegerLiteral(BigInteger.ZERO, null), null);
+				ZERO, null);
 		doPredicateTest("x>0", expected);
 	}
 
 	public void testLE() throws Exception {
 		final Predicate expected = ff.makeRelationalPredicate(LE,
 				ff.makeFreeIdentifier("x", null),
-				ff.makeIntegerLiteral(BigInteger.ZERO, null), null);
+				ZERO, null);
 		doPredicateTest("x≤0", expected);
 	}
 
 	public void testFunImage() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(FUNIMAGE,
 				ff.makeFreeIdentifier("f", null),
-				ff.makeIntegerLiteral(BigInteger.ZERO, null), null);
+				ZERO, null);
 		doExpressionTest("f(0)", expected);
 	}
 
 	public void testCard() throws Exception {
 		final Expression expected = ff.makeUnaryExpression(KCARD,
-				ff.makeFreeIdentifier("S", null), null);
+				FRID_S, null);
 		doExpressionTest("card(S)", expected);
+	}
+	
+	public void testIn() throws Exception {
+		final Predicate expected = ff.makeRelationalPredicate(IN, ZERO, FRID_S, null);
+		doPredicateTest("0 ∈ S", expected);		
+	}
+	
+	public void testEmptySet() throws Exception {
+		final Predicate expected = ff.makeRelationalPredicate(IN,
+				ZERO,
+				EMPTY, null);
+		doPredicateTest("0 ∈ ∅", expected);		
+	}
+	
+	public void testEmptySetOfType() throws Exception {
+		final Expression expected = EMPTY;
+		doExpressionTest("∅ ⦂ ℙ(ℤ)", expected);		
+	}
+	
+	public void testSingleton() throws Exception {
+		final Expression expected = ff.makeSetExtension(ZERO, null);
+		doExpressionTest("{0}", expected);		
+	}
+	
+	public void testSetExtension() throws Exception {
+		final Expression expected = ff.makeSetExtension(Arrays
+				.<Expression> asList(ZERO, ONE), null);
+		doExpressionTest("{0,1}", expected);		
 	}
 }
