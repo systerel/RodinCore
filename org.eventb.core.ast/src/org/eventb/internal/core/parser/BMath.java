@@ -73,12 +73,7 @@ public class BMath extends AbstractGrammar {
 	 * 
 	 */
 	private final void initTokens() {
-		_EOF = tokens.reserved();
-//			_IDENT = tokens.reserved();
 		_PREDVAR = tokens.reserved();
-		// tokens.add("(");
-		_LPAR = tokens.getOrAdd("(");
-		_RPAR = tokens.getOrAdd(")");
 		tokens.getOrAdd("[");
 		tokens.getOrAdd("]");
 		tokens.getOrAdd("{");
@@ -175,9 +170,6 @@ public class BMath extends AbstractGrammar {
 		tokens.getOrAdd("\u2024");
 	}
 
-	static int _EOF;
-	static int _LPAR;
-	static int _RPAR;
 //	static int _LBRACKET;
 //	static int _RBRACKET;
 //	static int _LBRACE;
@@ -270,25 +262,21 @@ public class BMath extends AbstractGrammar {
 //	static int _KMAX;
 	static int _KPARTITION;
 //	static int _DOT;
-	static int _IDENT;
-	static int _INTLIT;
 //	static int _TYPING;
 	static int _PREDVAR;
 
 
 	@Override
 	public void init() {
+		super.init();
 		initTokens();
 		
 		opRegistry.addOperator(Formula.NO_TAG, NO_TAG_ID, GROUP0);
 		try {
-			_INTLIT = addReservedSubParser(Parsers.INTLIT_SUBPARSER);
-			_IDENT = addReservedSubParser(Parsers.FREE_IDENT_SUBPARSER);
 			addOperator("\u222a", BUNION, BUNION_ID, SET_OPERATORS, new Parsers.AssociativeExpressionInfix(BUNION));
 			addOperator("\u2229", BINTER, BINTER_ID, SET_OPERATORS, new Parsers.AssociativeExpressionInfix(BINTER));
 			addOperator("+", PLUS, PLUS_ID, ARITHMETIC, new Parsers.AssociativeExpressionInfix(PLUS));
 			addOperator("\u2217", MUL, MUL_ID, ARITHMETIC, new Parsers.AssociativeExpressionInfix(MUL));
-			addClosedSugar(_LPAR, _RPAR);
 			addLiteralOperator("\u22a4", BTRUE, new Parsers.LiteralPredicateParser(BTRUE));
 			addLiteralOperator("\u22a5", BFALSE, new Parsers.LiteralPredicateParser(BFALSE));
 			addOperator("\u2227", LAND, LAND_ID, LOGIC, new Parsers.AssociativePredicateInfix(LAND));
@@ -323,19 +311,6 @@ public class BMath extends AbstractGrammar {
 		
 	}
 
-	// TODO move EOF, LPAR, RPAR, IDENT and INTLIT to AbstractGrammar
-	public int getEOF() {
-		return _EOF;
-	}
-	
-	public int getIDENT() {
-		return _IDENT;
-	}
-	
-	public int getINTLIT() {
-		return _INTLIT;
-	}
-	
 	public int getPARTITION() {
 		return _KPARTITION;
 	}

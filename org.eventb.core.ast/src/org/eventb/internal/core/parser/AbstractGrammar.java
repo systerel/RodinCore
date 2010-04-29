@@ -19,6 +19,12 @@ import org.eventb.internal.core.parser.Parsers.IdentListParser;
  */
 public abstract class AbstractGrammar {
 
+	static int _EOF;
+	static int _LPAR;
+	static int _RPAR;
+	static int _IDENT;
+	static int _INTLIT;
+
 	protected static class SyntaxCompatibleError extends SyntaxError {
 
 		private static final long serialVersionUID = -6230478311681172354L;
@@ -59,8 +65,27 @@ public abstract class AbstractGrammar {
 		return tokens;
 	}
 
-	// TODO split into several init methods, one for each data
-	public abstract void init();
+	/**
+	 * Initialises tokens, parsers and operator relationships.
+	 * <p>
+	 * Subclasses are expected to override and call this method first.
+	 * </p>
+	 */
+	// TODO split into several init methods, one for each data (?)
+	public void init() {
+		_EOF = tokens.reserved();
+		_LPAR = tokens.getOrAdd("(");
+		_RPAR = tokens.getOrAdd(")");
+		try {
+			_INTLIT = addReservedSubParser(Parsers.INTLIT_SUBPARSER);
+			_IDENT = addReservedSubParser(Parsers.FREE_IDENT_SUBPARSER);
+			addClosedSugar(_LPAR, _RPAR);
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 
 	public INudParser getNudParser(Token token) {
 		return subParsers.getNudParser(token);
@@ -84,14 +109,14 @@ public abstract class AbstractGrammar {
 		subParsers.addLed(kind, subParser);
 	}
 	
-	protected int addReservedSubParser(INudParser subParser)
+	private int addReservedSubParser(INudParser subParser)
 			throws OverrideException {
 		final int kind = tokens.reserved();
 		subParsers.addReserved(kind, subParser);
 		return kind;
 	}
 	
-	protected void addClosedSugar(int openKind, int closeKind)
+	private void addClosedSugar(int openKind, int closeKind)
 			throws OverrideException {
 		subParsers.addClosed(openKind, new Parsers.ClosedSugar(closeKind));
 	}
@@ -113,5 +138,18 @@ public abstract class AbstractGrammar {
 				tag, quantIdentListParser);
 		addOperator(token, tag, operatorId, groupId, quantParser);
 	}
+
+	public int getEOF() {
+		return _EOF;
+	}
+	
+	public int getIDENT() {
+		return _IDENT;
+	}
+	
+	public int getINTLIT() {
+		return _INTLIT;
+	}
+	
 
 }
