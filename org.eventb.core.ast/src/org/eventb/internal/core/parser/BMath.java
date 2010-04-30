@@ -47,6 +47,29 @@ public class BMath extends AbstractGrammar {
 		// singleton
 	}
 	
+	private static final String RELOP_PRED = "Relational Operator Predicate";
+	private static final String QUANTIFICATION = "Quantification";
+	private static final String PAIR = "Pair";
+	private static final String RELATION = "Relation";
+	private static final String BINOP = "Binary Operator";
+	private static final String INTERVAL = "Interval";
+	private static final String ARITHMETIC = "Arithmetic";
+	private static final String UNARY_RELATION = "Unary Relation";
+	private static final String TYPED = "Typed";
+	private static final String FUNCTIONAL = "Functional";
+	private static final String BRACE_SETS = "Brace Sets";
+	private static final String IDENT_LIST = "Identifier List";
+	private static final String INFIX_SUBST = "Infix Substitution";
+	private static final String QUANTIFIED_PRED = "Quantified";
+	private static final String LOGIC_PRED = "Logic Predicate";
+	private static final String INFIX_PRED = "Infix Predicate";
+	private static final String NOT_PRED = "Not Predicate";
+	private static final String ATOMIC_PRED = "Atomic Predicate";
+	private static final String ATOMIC_EXPR = "Atomic Expression";
+	private static final String EMPTY_SET = "Empty Set";
+	private static final String BOUND_UNARY = "Bound Unary";
+	private static final String BOOL = "Bool";
+
 	private static final String NO_TAG_ID = "no tag";
 	private static final String LOR_ID = "lor";
 	private static final String LAND_ID = "land";
@@ -54,25 +77,20 @@ public class BMath extends AbstractGrammar {
 	private static final String BUNION_ID = "bunion";
 	private static final String MUL_ID = "mul";
 	private static final String PLUS_ID = "plus";
-	private static final String ARITHMETIC = "Arithmetic";
-	private static final String SET_OPERATORS = "Set Operators";
-	private static final String LOGIC = "Logic";
-	private static final String QUANTIFIED = "Quantified";
 	private static final String FORALL_ID = "for all";
 	private static final String EXISTS_ID = "exists";
 
 	private static final String EQUAL_ID = "equal";
 	private static final String GT_ID = "greater than";
 	private static final String LE_ID = "lower or equal";
-	private static final String RELATIONAL = "Relational";
 
 	private static final String FUNIMAGE_ID = "Fun Image";
-	private static final String BINARY_EXPRESSION = "Binary Expression";
 	private static final String KCARD_ID = "Cardinal";
-	private static final String UNARY_EXPRESSION = "Unary Expression";
 	private static final String IN_ID = "In";
 	private static final String EMPTYSET_ID = "Empty Set";
-	private static final String ATOMIC = "Atomic";
+	private static final String BTRUE_ID = "B True";
+	private static final String BFALSE_ID = "B False";
+	private static final String IDENT_MAPLET_LIST = "Ident Maplet List";
 	
 	
 	/**
@@ -281,40 +299,73 @@ public class BMath extends AbstractGrammar {
 		
 		opRegistry.addOperator(Formula.NO_TAG, NO_TAG_ID, GROUP0);
 		try {
-			addOperator("\u222a", BUNION, BUNION_ID, SET_OPERATORS, new Parsers.AssociativeExpressionInfix(BUNION));
-			addOperator("\u2229", BINTER, BINTER_ID, SET_OPERATORS, new Parsers.AssociativeExpressionInfix(BINTER));
+			addOperator("\u222a", BUNION, BUNION_ID, BINOP, new Parsers.AssociativeExpressionInfix(BUNION));
+			addOperator("\u2229", BINTER, BINTER_ID, BINOP, new Parsers.AssociativeExpressionInfix(BINTER));
 			addOperator("+", PLUS, PLUS_ID, ARITHMETIC, new Parsers.AssociativeExpressionInfix(PLUS));
 			addOperator("\u2217", MUL, MUL_ID, ARITHMETIC, new Parsers.AssociativeExpressionInfix(MUL));
-			addLiteralOperator("\u22a4", BTRUE, new Parsers.LiteralPredicateParser(BTRUE));
-			addLiteralOperator("\u22a5", BFALSE, new Parsers.LiteralPredicateParser(BFALSE));
-			addOperator("\u2227", LAND, LAND_ID, LOGIC, new Parsers.AssociativePredicateInfix(LAND));
-			addOperator("\u2228", LOR, LOR_ID, LOGIC, new Parsers.AssociativePredicateInfix(LOR));
-			addQuantifiedOperator("\u2200", ",", "\u00b7", FORALL, FORALL_ID, QUANTIFIED);
-			addQuantifiedOperator("\u2203", ",", "\u00b7", EXISTS, EXISTS_ID, QUANTIFIED);
-			addOperator("=", EQUAL, EQUAL_ID, RELATIONAL, new Parsers.RelationalPredicateInfix(EQUAL));
-			addOperator(">", GT, GT_ID, RELATIONAL, new Parsers.RelationalPredicateInfix(GT));
-			addOperator("≤", LE, LE_ID, RELATIONAL, new Parsers.RelationalPredicateInfix(LE));
-			addOperator("(", FUNIMAGE, FUNIMAGE_ID, BINARY_EXPRESSION, Parsers.FUN_IMAGE);
-			addOperator("card", KCARD, KCARD_ID, UNARY_EXPRESSION, new Parsers.UnaryExpression(KCARD));
-			addOperator("\u2208", IN, IN_ID, RELATIONAL, new Parsers.RelationalPredicateInfix(IN));
-			addOperator("\u2205", EMPTYSET, EMPTYSET_ID, ATOMIC, new Parsers.AtomicExpression(EMPTYSET));
+			addOperator("\u22a4", BTRUE, BTRUE_ID, ATOMIC_PRED, new Parsers.LiteralPredicateParser(BTRUE));
+			addOperator("\u22a5", BFALSE, BFALSE_ID, ATOMIC_PRED, new Parsers.LiteralPredicateParser(BFALSE));
+			addOperator("\u2227", LAND, LAND_ID, LOGIC_PRED, new Parsers.AssociativePredicateInfix(LAND));
+			addOperator("\u2228", LOR, LOR_ID, LOGIC_PRED, new Parsers.AssociativePredicateInfix(LOR));
+			addQuantifiedOperator("\u2200", ",", "\u00b7", FORALL, FORALL_ID, QUANTIFIED_PRED);
+			addQuantifiedOperator("\u2203", ",", "\u00b7", EXISTS, EXISTS_ID, QUANTIFIED_PRED);
+			addOperator("=", EQUAL, EQUAL_ID, RELOP_PRED, new Parsers.RelationalPredicateInfix(EQUAL));
+			addOperator(">", GT, GT_ID, RELOP_PRED, new Parsers.RelationalPredicateInfix(GT));
+			addOperator("≤", LE, LE_ID, RELOP_PRED, new Parsers.RelationalPredicateInfix(LE));
+			addOperator("(", FUNIMAGE, FUNIMAGE_ID, FUNCTIONAL, Parsers.FUN_IMAGE);
+			addOperator("card", KCARD, KCARD_ID, FUNCTIONAL, new Parsers.UnaryExpression(KCARD));
+			addOperator("\u2208", IN, IN_ID, RELOP_PRED, new Parsers.RelationalPredicateInfix(IN));
+			addOperator("\u2205", EMPTYSET, EMPTYSET_ID, EMPTY_SET, new Parsers.AtomicExpression(EMPTYSET));
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		opRegistry.addCompatibility(PLUS_ID, PLUS_ID);
-		opRegistry.addCompatibility(MUL_ID, MUL_ID);
 		opRegistry.addCompatibility(BUNION_ID, BUNION_ID);
 		opRegistry.addCompatibility(BINTER_ID, BINTER_ID);
+		
+		opRegistry.addCompatibility(PLUS_ID, PLUS_ID);
+		opRegistry.addCompatibility(MUL_ID, MUL_ID);
 
+		opRegistry.addCompatibility(FUNIMAGE_ID, FUNIMAGE_ID);
+		
+		opRegistry.addCompatibility(FORALL_ID, EXISTS_ID);
+		opRegistry.addCompatibility(EXISTS_ID, FORALL_ID);
+		
+		opRegistry.addCompatibility(LAND_ID, LAND_ID);
+		opRegistry.addCompatibility(LOR_ID, LOR_ID);
+		
 		try {
 			opRegistry.addPriority(PLUS_ID, MUL_ID);
-			opRegistry.addGroupPriority(QUANTIFIED, RELATIONAL);
-			opRegistry.addGroupPriority(QUANTIFIED, SET_OPERATORS);
-			opRegistry.addGroupPriority(QUANTIFIED, ARITHMETIC);
-			opRegistry.addGroupPriority(QUANTIFIED, LOGIC);
-			opRegistry.addGroupPriority(QUANTIFIED, BINARY_EXPRESSION);
+			
+			opRegistry.addGroupPriority(GROUP0, INFIX_SUBST);
+			opRegistry.addGroupPriority(INFIX_SUBST, IDENT_LIST);
+			opRegistry.addGroupPriority(INFIX_SUBST, IDENT_MAPLET_LIST);
+			opRegistry.addGroupPriority(QUANTIFIED_PRED, INFIX_PRED);
+			opRegistry.addGroupPriority(INFIX_PRED, LOGIC_PRED);
+			opRegistry.addGroupPriority(LOGIC_PRED, NOT_PRED);
+			opRegistry.addGroupPriority(NOT_PRED, ATOMIC_PRED);
+			opRegistry.addGroupPriority(ATOMIC_PRED, RELOP_PRED);
+			opRegistry.addGroupPriority(INFIX_SUBST, QUANTIFICATION);
+			opRegistry.addGroupPriority(INFIX_SUBST, QUANTIFIED_PRED);
+			opRegistry.addGroupPriority(RELOP_PRED, PAIR);
+			opRegistry.addGroupPriority(QUANTIFICATION, RELOP_PRED);
+			opRegistry.addGroupPriority(GROUP0, QUANTIFICATION);
+			opRegistry.addGroupPriority(GROUP0, TYPED);
+			opRegistry.addGroupPriority(TYPED, QUANTIFICATION);
+			opRegistry.addGroupPriority(QUANTIFICATION, PAIR);
+			opRegistry.addGroupPriority(PAIR, RELATION);
+			opRegistry.addGroupPriority(RELATION, BINOP);
+			opRegistry.addGroupPriority(BINOP, INTERVAL);
+			opRegistry.addGroupPriority(INTERVAL, ARITHMETIC);
+			opRegistry.addGroupPriority(ARITHMETIC, UNARY_RELATION);
+			opRegistry.addGroupPriority(UNARY_RELATION, BOUND_UNARY);
+			opRegistry.addGroupPriority(BOUND_UNARY, BOOL);
+			opRegistry.addGroupPriority(GROUP0, BRACE_SETS);
+			opRegistry.addGroupPriority(BRACE_SETS, QUANTIFICATION);
+			opRegistry.addGroupPriority(BRACE_SETS, QUANTIFIED_PRED);
+			opRegistry.addGroupPriority(GROUP0, FUNCTIONAL);
+			opRegistry.addGroupPriority(FUNCTIONAL, QUANTIFICATION);
 		} catch (CycleError e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
