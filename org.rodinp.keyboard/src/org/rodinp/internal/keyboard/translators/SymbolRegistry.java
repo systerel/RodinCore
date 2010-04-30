@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  * 
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - modified loadRegistry() to handle programmatic contributions
  *******************************************************************************/
 package org.rodinp.internal.keyboard.translators;
 
@@ -17,17 +18,24 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.rodinp.internal.keyboard.KeyboardUtils;
+import org.rodinp.keyboard.ExtensionSymbol;
+import org.rodinp.keyboard.ISymbolsProvider;
 import org.rodinp.keyboard.RodinKeyboardPlugin;
 
 public class SymbolRegistry {
 
 	private String SYMBOLS_ID = RodinKeyboardPlugin.PLUGIN_ID + ".symbols";
 
+	private String SYMBOL_EXTENSION = "symbol";
+	
+	private String SYMBOL_PROVIDER_EXTENSION = "symbolProvider";
+	
 	private static SymbolRegistry instance;
 	
 	private SymbolRegistry() {
@@ -61,61 +69,106 @@ public class SymbolRegistry {
 		}
 		mathSymbols = new Symbols();
 		textSymbols = new Symbols();
-		
-		IExtensionRegistry reg = Platform.getExtensionRegistry();
-		IExtensionPoint extensionPoint = reg.getExtensionPoint(SYMBOLS_ID);
-		IConfigurationElement[] configurations = extensionPoint
-				.getConfigurationElements();
-		
-		final List<String> registeredIDs = new ArrayList<String>();
-		for (IConfigurationElement configuration : configurations) {
-			String id = configuration.getNamespaceIdentifier()
-					+ "." + configuration.getAttribute("id"); //$NON-NLS-1$
 
-			if (configuration.getName().equals("symbol")) {
-				if (registeredIDs.contains(id)) {
-					KeyboardUtils.debug("Duplicate id " + id
-							+ ": ignored this configuration.");
+		final List<String> registeredIDs = new ArrayList<String>();
+
+		final IExtensionRegistry reg = Platform.getExtensionRegistry();
+		final IExtensionPoint extensionPoint = reg
+				.getExtensionPoint(SYMBOLS_ID);
+		final IConfigurationElement[] elements = extensionPoint
+				.getConfigurationElements();
+
+		for (IConfigurationElement element : elements) {
+			if (element.getName().equals(SYMBOL_EXTENSION)) {
+
+				assert element.getName().equals(SYMBOL_EXTENSION);
+				final String id = element.getNamespaceIdentifier() + "."
+						+ element.getAttribute("id");
+				final String combo = element.getAttribute("combo");
+				final String translation = element.getAttribute("translation");
+				addSymbol(id, combo, translation, registeredIDs);
+				continue;
+
+			}
+			if (element.getName().equals(SYMBOL_PROVIDER_EXTENSION)) {
+				assert element.getName().equals(SYMBOL_PROVIDER_EXTENSION);
+				final ISymbolsProvider provider = getSymbolProvider(element);
+				if (provider == null) {
 					continue;
 				}
-				registeredIDs.add(id);
-				
-				String combo = configuration.getAttribute("combo");
-				if (combo == null) {
-					KeyboardUtils.debug("Configuration with id " + id
-							+ " does not have any combo value,"
-							+ " ignored this configuration.");
+				final List<ExtensionSymbol> symbols = provider
+						.getExtensionSymbols();
+				for (ExtensionSymbol symbol : symbols) {
+					final String id = provider.getNamespaceIdentifier() + "."
+							+ symbol.getId();
+					final String combo = symbol.getCombo();
+					final String translation = symbol.getTranslation();
+					addSymbol(id, combo, translation, registeredIDs);
 					continue;
-				}
-				boolean isText = isTextSymbol(combo);
-				Symbols symbols;
-				if (isText) {
-					symbols = textSymbols;
-				} else {
-					symbols = mathSymbols;
-				}
-				
-				if (symbols.containRawCombo(combo)) {
-					KeyboardUtils
-							.debug("Translation already exists for combination "
-									+ combo + ", ignored this configuration.");
-					continue;
-				} else {
-					String translation = configuration
-							.getAttribute("translation");
-					if (translation == null) {
-						KeyboardUtils.debug("Configuration with id " + id
-								+ " does not have any translation value,"
-								+ " ignored this configuration.");
-						continue;
-					}
-					Symbol symbol = new Symbol(combo, translation);
-					symbols.addRawSymbol(symbol);
 				}
 			}
 		}
 	}
-
+	
+	private boolean addSymbol(String id, String combo, String translation,
+			List<String> registeredIds) {
+		if (!isNotRegistered(registeredIds, id)) {
+			return false;
+		}
+		if (!isNotNull(id, combo, translation)) {
+			return false;
+		}
+		final Symbols symbols = getCorrespondingSymbols(combo);
+		if (!isNewCombo(symbols, combo)) {
+			return false;
+		}
+		registeredIds.add(id);
+		final Symbol symbol = new Symbol(combo, translation);
+		symbols.addRawSymbol(symbol);
+		return true;
+	}
+	
+	private boolean isNotRegistered(List<String> registeredIds, String id) {
+		if (registeredIds.contains(id)) {
+			KeyboardUtils.debug("Duplicate id " + id
+					+ ": ignored this configuration.");
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean isNotNull(String id, String combo, String translation) {
+		if (combo == null) {
+			KeyboardUtils.debug("Configuration with id " + id
+					+ " does not have any combo value,"
+					+ " ignored this configuration.");
+			return false;
+		}
+		if (translation == null) {
+			KeyboardUtils.debug("Configuration with id " + id
+					+ " does not have any translation value,"
+					+ " ignored this configuration.");
+			return false;
+		}
+		return true;
+	}
+	
+	private Symbols getCorrespondingSymbols(String combo){
+		if (isTextSymbol(combo)) {
+			return textSymbols;
+		}
+		return mathSymbols;		
+	}
+	
+	private boolean isNewCombo(Symbols symbols, String combo) {
+		if (symbols.containRawCombo(combo)) {
+			KeyboardUtils.debug("Translation already exists for combination "
+					+ combo + ", ignored this configuration.");
+			return false;
+		}
+		return true;
+	}
+	
 	private boolean isTextSymbol(String combo) {
 		for (int i = 0; i < combo.length(); i++) {
 			char c = combo.charAt(i);
@@ -123,6 +176,18 @@ public class SymbolRegistry {
 				return false;
 		}
 		return true;
+	}
+
+	private ISymbolsProvider getSymbolProvider(IConfigurationElement element) {
+		try {
+			return (ISymbolsProvider) element
+					.createExecutableExtension("class");
+		} catch (CoreException e) {
+			KeyboardUtils
+					.debug("Could not retrieve the symbols provider for element"
+							+ element.toString() + ".");
+		}
+		return null;
 	}
 
 	public int getMaxMathSymbolSize() {

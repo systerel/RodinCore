@@ -21,7 +21,8 @@ This extension point allows plugin writers to register new mathematical symbols 
       </annotation>
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
-            <element ref="symbol"/>
+            <element ref="symbol" minOccurs="0" maxOccurs="1"/>
+            <element ref="symbolProvider" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -81,6 +82,27 @@ This extension point allows plugin writers to register new mathematical symbols 
                <documentation>
                   
                </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="symbolProvider">
+      <annotation>
+         <documentation>
+            &lt;p&gt;This extension shall be used to contribute programmatically new mathematical symbols.&lt;/p&gt;
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  &lt;p&gt;Attribute defining the class providing the way to retrieve new mathematical symbols to add.&lt;/p&gt;
+&lt;p&gt;This class have to implement org.rodinp.keyboard.ISymbolsProvider interface.&lt;/p&gt;
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.rodinp.keyboard.ISymbolsProvider"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
