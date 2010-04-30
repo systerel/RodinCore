@@ -1,0 +1,3 @@
+org.rodinp.keyboard/debug=false
+org.rodinp.keyboard/debug/math=false
+org.rodinp.keyboard/debug/text=false
