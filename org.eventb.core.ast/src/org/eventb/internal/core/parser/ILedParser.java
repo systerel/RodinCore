@@ -16,10 +16,31 @@ import org.eventb.internal.core.parser.GenParser.SyntaxError;
 
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
 public interface ILedParser extends ISubParser {
 
-	Formula<?> led(Formula<?> left, ParserContext pc, int startPos) throws SyntaxError;
+	/**
+	 * Parses a left-denoted formula from the given parser context. Current
+	 * token is that just after the operator symbol associated with this parser
+	 * (start of the right part).
+	 * <p>
+	 * When the method returns, current token is the one that immediately
+	 * follows parsed formula.
+	 * </p>
+	 * 
+	 * @param left
+	 *            an already parsed formula that occurs at the left of the
+	 *            operator symbol.
+	 * @param pc
+	 *            current parser context;
+	 * @param startPos
+	 *            current position
+	 * @return the parsed formula
+	 * @throws SyntaxError
+	 *             if the there is a syntax error
+	 */
+	Formula<?> led(Formula<?> left, ParserContext pc, int startPos)
+			throws SyntaxError;
 
 }

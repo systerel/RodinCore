@@ -106,6 +106,7 @@ public class GenParser {
 		
 		public void init() {
 			la = scanner.Scan();
+			progress();
 		}
 		
 		public void progress() {
@@ -123,10 +124,10 @@ public class GenParser {
 		 *             in case an unexpected token is ahead
 		 */
 		public void progress(int expectedKind) throws SyntaxError {
-			if (la.kind != expectedKind) {
+			if (t.kind != expectedKind) {
 				throw new SyntaxError("expected symbol \""
 						+ grammar.getTokens().getValue(expectedKind)
-						+ "\" but was \"" + la.val + "\"");
+						+ "\" but was \"" + t.val + "\"");
 			}
 			progress();
 		}
@@ -148,14 +149,14 @@ public class GenParser {
 		}
 		
 		public boolean canProgressRight(int parentTag) throws SyntaxError {
-			if (la.kind == _EOF) { // end of the formula
+			if (t.kind == _EOF) { // end of the formula
 				return false;
 			}
-			if (!grammar.isOperator(la)) {
+			if (!grammar.isOperator(t)) {
 				return false;
 			}
 			final OperatorRegistry opRegistry = grammar.getOperatorRegistry();
-			return opRegistry.hasLessPriority(parentTag, grammar.getOperatorTag(la));
+			return opRegistry.hasLessPriority(parentTag, grammar.getOperatorTag(t));
 		}
 		
 	}
@@ -183,10 +184,10 @@ public class GenParser {
 		try {
 			final ParserContext pc = new ParserContext(scanner, factory, result.getOrigin());
 			pc.init();
-			final Formula<?> res = Parsers.MainParser.parse(NO_TAG, pc, 0);
-			if (pc.la.kind != _EOF) {
+			final Formula<?> res = Parsers.MainParser.parse(NO_TAG, pc);
+			if (pc.t.kind != _EOF) {
 				throw new UnmatchedToken("tokens have been ignored from: \""
-						+ pc.la.val + "\" at position " + pc.la.pos);
+						+ pc.t.val + "\" at position " + pc.t.pos);
 			}
 			if (clazz.isInstance(res)) {
 				if (clazz == Predicate.class) {

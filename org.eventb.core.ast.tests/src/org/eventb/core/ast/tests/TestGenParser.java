@@ -105,6 +105,11 @@ public class TestGenParser extends AbstractTests {
 		actual.accept(slChecker);
 	}
 
+	public void testIntegerLiteral() throws Exception {
+		final Expression expected = ff.makeIntegerLiteral(BigInteger.ONE, null);
+		doExpressionTest("1", expected);
+	}
+
 	public void testPlus() throws Exception {
 		final Expression expected = ff.makeAssociativeExpression(PLUS,
 				Arrays.<Expression> asList(ff.makeIntegerLiteral(BigInteger

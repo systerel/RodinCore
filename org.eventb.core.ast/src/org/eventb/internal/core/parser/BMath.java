@@ -10,24 +10,9 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
-import static org.eventb.core.ast.Formula.BFALSE;
-import static org.eventb.core.ast.Formula.BINTER;
-import static org.eventb.core.ast.Formula.BTRUE;
-import static org.eventb.core.ast.Formula.BUNION;
-import static org.eventb.core.ast.Formula.EMPTYSET;
-import static org.eventb.core.ast.Formula.EQUAL;
-import static org.eventb.core.ast.Formula.EXISTS;
-import static org.eventb.core.ast.Formula.FORALL;
-import static org.eventb.core.ast.Formula.FUNIMAGE;
-import static org.eventb.core.ast.Formula.GT;
-import static org.eventb.core.ast.Formula.IN;
-import static org.eventb.core.ast.Formula.KCARD;
-import static org.eventb.core.ast.Formula.LAND;
-import static org.eventb.core.ast.Formula.LE;
-import static org.eventb.core.ast.Formula.LOR;
-import static org.eventb.core.ast.Formula.MUL;
-import static org.eventb.core.ast.Formula.PLUS;
+import static org.eventb.core.ast.Formula.*;
 import static org.eventb.internal.core.parser.OperatorRegistry.GROUP0;
+import static org.eventb.internal.core.parser.Parsers.*;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.extension.CycleError;
@@ -91,6 +76,7 @@ public class BMath extends AbstractGrammar {
 	private static final String BTRUE_ID = "B True";
 	private static final String BFALSE_ID = "B False";
 	private static final String IDENT_MAPLET_LIST = "Ident Maplet List";
+	private static final String SETEXT_ID = "Set Extension";
 	
 	
 	/**
@@ -103,7 +89,7 @@ public class BMath extends AbstractGrammar {
 		tokens.getOrAdd("[");
 		tokens.getOrAdd("]");
 		tokens.getOrAdd("{");
-		tokens.getOrAdd("}");
+		_RBRACE = tokens.getOrAdd("}");
 		tokens.getOrAdd(";");
 //			tokens.add(",");
 //			_PLUS = tokens.add("+");
@@ -160,7 +146,7 @@ public class BMath extends AbstractGrammar {
 //			_BFALSE = tokens.add("\u22a5");
 		tokens.getOrAdd("\u22c2");
 		tokens.getOrAdd("\u22c3");
-//			tokens.add("\u00b7");
+		_DOT = tokens.getOrAdd("\u00b7");
 		tokens.getOrAdd("\u25b7");
 		tokens.getOrAdd("\u25c1");
 		tokens.getOrAdd("\u2900");
@@ -199,7 +185,7 @@ public class BMath extends AbstractGrammar {
 //	static int _LBRACKET;
 //	static int _RBRACKET;
 //	static int _LBRACE;
-//	static int _RBRACE;
+	static int _RBRACE;
 //	static int _EXPN;
 //	static int _NOT;
 //	static int _CPROD;
@@ -287,7 +273,7 @@ public class BMath extends AbstractGrammar {
 //	static int _KMIN;
 //	static int _KMAX;
 	static int _KPARTITION;
-//	static int _DOT;
+	static int _DOT;
 //	static int _TYPING;
 	static int _PREDVAR;
 
@@ -299,23 +285,24 @@ public class BMath extends AbstractGrammar {
 		
 		opRegistry.addOperator(Formula.NO_TAG, NO_TAG_ID, GROUP0);
 		try {
-			addOperator("\u222a", BUNION, BUNION_ID, BINOP, new Parsers.AssociativeExpressionInfix(BUNION));
-			addOperator("\u2229", BINTER, BINTER_ID, BINOP, new Parsers.AssociativeExpressionInfix(BINTER));
-			addOperator("+", PLUS, PLUS_ID, ARITHMETIC, new Parsers.AssociativeExpressionInfix(PLUS));
-			addOperator("\u2217", MUL, MUL_ID, ARITHMETIC, new Parsers.AssociativeExpressionInfix(MUL));
-			addOperator("\u22a4", BTRUE, BTRUE_ID, ATOMIC_PRED, new Parsers.LiteralPredicateParser(BTRUE));
-			addOperator("\u22a5", BFALSE, BFALSE_ID, ATOMIC_PRED, new Parsers.LiteralPredicateParser(BFALSE));
-			addOperator("\u2227", LAND, LAND_ID, LOGIC_PRED, new Parsers.AssociativePredicateInfix(LAND));
-			addOperator("\u2228", LOR, LOR_ID, LOGIC_PRED, new Parsers.AssociativePredicateInfix(LOR));
-			addQuantifiedOperator("\u2200", ",", "\u00b7", FORALL, FORALL_ID, QUANTIFIED_PRED);
-			addQuantifiedOperator("\u2203", ",", "\u00b7", EXISTS, EXISTS_ID, QUANTIFIED_PRED);
-			addOperator("=", EQUAL, EQUAL_ID, RELOP_PRED, new Parsers.RelationalPredicateInfix(EQUAL));
-			addOperator(">", GT, GT_ID, RELOP_PRED, new Parsers.RelationalPredicateInfix(GT));
-			addOperator("≤", LE, LE_ID, RELOP_PRED, new Parsers.RelationalPredicateInfix(LE));
-			addOperator("(", FUNIMAGE, FUNIMAGE_ID, FUNCTIONAL, Parsers.FUN_IMAGE);
-			addOperator("card", KCARD, KCARD_ID, FUNCTIONAL, new Parsers.UnaryExpression(KCARD));
-			addOperator("\u2208", IN, IN_ID, RELOP_PRED, new Parsers.RelationalPredicateInfix(IN));
-			addOperator("\u2205", EMPTYSET, EMPTYSET_ID, EMPTY_SET, new Parsers.AtomicExpression(EMPTYSET));
+			addOperator("\u222a", BUNION, BUNION_ID, BINOP, new AssociativeExpressionInfix(BUNION));
+			addOperator("\u2229", BINTER, BINTER_ID, BINOP, new AssociativeExpressionInfix(BINTER));
+			addOperator("+", PLUS, PLUS_ID, ARITHMETIC, new AssociativeExpressionInfix(PLUS));
+			addOperator("\u2217", MUL, MUL_ID, ARITHMETIC, new AssociativeExpressionInfix(MUL));
+			addOperator("\u22a4", BTRUE, BTRUE_ID, ATOMIC_PRED, new LiteralPredicateParser(BTRUE));
+			addOperator("\u22a5", BFALSE, BFALSE_ID, ATOMIC_PRED, new LiteralPredicateParser(BFALSE));
+			addOperator("\u2227", LAND, LAND_ID, LOGIC_PRED, new AssociativePredicateInfix(LAND));
+			addOperator("\u2228", LOR, LOR_ID, LOGIC_PRED, new AssociativePredicateInfix(LOR));
+			addOperator("\u2200", FORALL, FORALL_ID, QUANTIFIED_PRED, new QuantifiedPredicateParser(FORALL));
+			addOperator("\u2203", EXISTS, EXISTS_ID, QUANTIFIED_PRED, new QuantifiedPredicateParser(EXISTS));
+			addOperator("=", EQUAL, EQUAL_ID, RELOP_PRED, new RelationalPredicateInfix(EQUAL));
+			addOperator(">", GT, GT_ID, RELOP_PRED, new RelationalPredicateInfix(GT));
+			addOperator("≤", LE, LE_ID, RELOP_PRED, new RelationalPredicateInfix(LE));
+			addOperator("(", FUNIMAGE, FUNIMAGE_ID, FUNCTIONAL, FUN_IMAGE);
+			addOperator("card", KCARD, KCARD_ID, FUNCTIONAL, new UnaryExpression(KCARD));
+			addOperator("\u2208", IN, IN_ID, RELOP_PRED, new RelationalPredicateInfix(IN));
+			addOperator("\u2205", EMPTYSET, EMPTYSET_ID, EMPTY_SET, new AtomicExpressionParser(EMPTYSET));
+			addOperator("{", SETEXT, SETEXT_ID, BRACE_SETS, SETEXT_PARSER);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

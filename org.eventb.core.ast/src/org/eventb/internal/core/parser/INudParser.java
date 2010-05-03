@@ -16,10 +16,27 @@ import org.eventb.internal.core.parser.GenParser.SyntaxError;
 
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
 public interface INudParser extends ISubParser {
-	
+
+	/**
+	 * Parses a null-denoted formula with the given parser context. The given
+	 * start position corresponds to the current token. The current token is
+	 * that of a symbol associated with this parser .
+	 * <p>
+	 * When the method returns, current token is the one that immediately
+	 * follows parsed formula.
+	 * </p>
+	 * 
+	 * @param pc
+	 *            the parser context
+	 * @param startPos
+	 *            the start position
+	 * @return the parsed formula
+	 * @throws SyntaxError
+	 *             if the there is a syntax error
+	 */
 	Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError;
-	
+
 }

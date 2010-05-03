@@ -201,6 +201,7 @@ public class OperatorRegistry {
 		//FIXME NPE
 		if (gid1.equals(OperatorRegistry.GROUP0) && gid2.equals(OperatorRegistry.GROUP0)) {
 			return false;
+		// Unknown groups have a priority greater than GROUP0
 		} else if (gid1.equals(OperatorRegistry.GROUP0)) {
 			return true;
 		} else if (gid2.equals(OperatorRegistry.GROUP0)) {

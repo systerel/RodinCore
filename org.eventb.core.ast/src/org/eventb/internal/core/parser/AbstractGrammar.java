@@ -11,7 +11,6 @@
 package org.eventb.internal.core.parser;
 
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
-import org.eventb.internal.core.parser.Parsers.IdentListParser;
 
 /**
  * @author Nicolas Beauger
@@ -24,6 +23,7 @@ public abstract class AbstractGrammar {
 	static int _RPAR;
 	static int _IDENT;
 	static int _INTLIT;
+	static int _COMMA;
 
 	protected static class SyntaxCompatibleError extends SyntaxError {
 
@@ -76,6 +76,7 @@ public abstract class AbstractGrammar {
 		_EOF = tokens.reserved();
 		_LPAR = tokens.getOrAdd("(");
 		_RPAR = tokens.getOrAdd(")");
+		_COMMA = tokens.getOrAdd(",");
 		try {
 			_INTLIT = addReservedSubParser(Parsers.INTLIT_SUBPARSER);
 			_IDENT = addReservedSubParser(Parsers.FREE_IDENT_SUBPARSER);
@@ -125,18 +126,6 @@ public abstract class AbstractGrammar {
 			INudParser subParser) throws OverrideException {
 		final int kind = tokens.getOrAdd(token);
 		subParsers.addNud(kind, subParser);
-	}
-
-	protected void addQuantifiedOperator(String token, String identSeparator,
-			String endList, int tag, String operatorId, String groupId)
-			throws OverrideException {
-		final int identSepKind = tokens.getOrAdd(identSeparator);
-		final int endListKind = tokens.getOrAdd(endList);
-		final IdentListParser quantIdentListParser = new IdentListParser(
-				identSepKind, endListKind);
-		final Parsers.QuantifiedPredicateParser quantParser = new Parsers.QuantifiedPredicateParser(
-				tag, quantIdentListParser);
-		addOperator(token, tag, operatorId, groupId, quantParser);
 	}
 
 	public int getEOF() {
