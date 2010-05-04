@@ -88,7 +88,7 @@ public class Parsers {
 	};
 
 	// FIXME current design does not allow subparsers with no tag
-	static final ILedParser OFTYPE = new DefaultLedParser(Formula.NO_TAG) {
+	static final ILedParser OFTYPE = new DefaultLedParser(OFTYPE_TAG) {
 		
 		public Formula<?> led(Formula<?> left, ParserContext pc, int startPos)
 				throws SyntaxError {

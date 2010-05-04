@@ -31,6 +31,7 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.LanguageVersion;
+import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
@@ -63,6 +64,7 @@ public class TestGenParser extends AbstractTests {
 	private static final AtomicExpression INT = ff.makeAtomicExpression(Formula.INTEGER, null);
 	private static final UnaryExpression POW_INT = ff.makeUnaryExpression(POW, INT, null);
 	private static final IntegerType INT_TYPE = ff.makeIntegerType();
+	private static final PowerSetType POW_INT_TYPE = ff.makePowerSetType(INT_TYPE);
 	private static final SourceLocationChecker slChecker = new SourceLocationChecker();
 
 	private void doExpressionTest(String formula, Formula<?> expected, FormulaFactory factory) {
@@ -446,7 +448,7 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testEmptySetOfType() throws Exception {
-		final Expression expected = EMPTY;
+		final Expression expected = ff.makeEmptySet(POW_INT_TYPE, null);
 		doExpressionTest("∅ ⦂ ℙ(ℤ)", expected);		
 	}
 }

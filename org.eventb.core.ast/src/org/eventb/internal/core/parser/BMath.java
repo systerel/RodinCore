@@ -33,6 +33,9 @@ public class BMath extends AbstractGrammar {
 		// singleton
 	}
 	
+	// FIXME try to get rid of this tag
+	static final int OFTYPE_TAG = NO_TAG - 1;
+	
 	private static final String RELOP_PRED = "Relational Operator Predicate";
 	private static final String QUANTIFICATION = "Quantification";
 	private static final String PAIR = "Pair";
@@ -81,6 +84,7 @@ public class BMath extends AbstractGrammar {
 	private static final String INTEGER_ID = "Integer";
 	private static final String POW_ID = "Power Set";
 	private static final String CPROD_ID = "Cartesian Product";
+	private static final String OFTYPE_ID = "Oftype";
 	
 	
 	/**
@@ -310,6 +314,7 @@ public class BMath extends AbstractGrammar {
 			addOperator("\u2124", INTEGER, INTEGER_ID, ATOMIC_EXPR, new AtomicExpressionParser(INTEGER));
 			addOperator("\u2119", POW, POW_ID, BOUND_UNARY, new UnaryExpressionParser(POW));
 			addOperator("\u00d7", CPROD, CPROD_ID, BINOP, new BinaryExpressionInfix(CPROD));
+			addOperator("\u2982", OFTYPE_TAG, OFTYPE_ID, TYPED, OFTYPE);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -344,7 +349,7 @@ public class BMath extends AbstractGrammar {
 			opRegistry.addGroupPriority(INFIX_SUBST, QUANTIFIED_PRED);
 			opRegistry.addGroupPriority(RELOP_PRED, PAIR);
 			opRegistry.addGroupPriority(QUANTIFICATION, RELOP_PRED);
-			opRegistry.addGroupPriority(GROUP0, QUANTIFICATION);
+			opRegistry.addGroupPriority(GROUP0, QUANTIFICATION);// TODO remove: redundant
 			opRegistry.addGroupPriority(GROUP0, TYPED);
 			opRegistry.addGroupPriority(TYPED, QUANTIFICATION);
 			opRegistry.addGroupPriority(QUANTIFICATION, PAIR);
