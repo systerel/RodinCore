@@ -26,6 +26,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.SourceLocation;
+import org.eventb.core.ast.Type;
 
 /**
  * @author Nicolas Beauger
@@ -184,7 +185,12 @@ public class GenParser {
 		try {
 			final ParserContext pc = new ParserContext(scanner, factory, result.getOrigin());
 			pc.init();
-			final Formula<?> res = Parsers.MainParser.parse(NO_TAG, pc);
+			final Object res;
+			if (clazz == Type.class) {
+				res = Parsers.MainParser.parseType(pc);
+			} else {
+				res = Parsers.MainParser.parse(NO_TAG, pc);
+			}
 			if (pc.t.kind != _EOF) {
 				throw new UnmatchedToken("tokens have been ignored from: \""
 						+ pc.t.val + "\" at position " + pc.t.pos);
@@ -196,6 +202,8 @@ public class GenParser {
 					result.setParsedExpression((Expression) res); 
 				} else if (clazz == Assignment.class) {
 					result.setParsedAssignment((Assignment) res); 
+				} else if (clazz == Type.class) {
+					result.setParsedType((Type) res);
 				}
 				// FIXME parsing Type
 				//			else if (StartOf(1)) { 

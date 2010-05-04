@@ -172,10 +172,11 @@ public class OperatorRegistry {
 		group.addCompatibility(leftTag, rightTag);
 	}
 
-	public void addPriority(String leftOpId, String rightOpId)
+	// lowOpId gets a lower priority than highOpId
+	public void addPriority(String lowOpId, String highOpId)
 			throws CycleError {
-		final Integer leftTag = operatorFromId.get(leftOpId);
-		final Integer rightTag = operatorFromId.get(rightOpId);
+		final Integer leftTag = operatorFromId.get(lowOpId);
+		final Integer rightTag = operatorFromId.get(highOpId);
 		final OperatorGroup group = getAndCheckSameGroup(leftTag, rightTag);
 		group.addPriority(leftTag, rightTag);
 	}
@@ -191,7 +192,7 @@ public class OperatorRegistry {
 	}
 	
 	/**
-	 * priority(tagLeft) < priority(tagRight) 
+	 * <code>true</code> iff priority(tagLeft) < priority(tagRight) 
 	 */
 	public boolean hasLessPriority(int tagleft, int tagRight) throws SyntaxCompatibleError {
 		// TODO right associativity
@@ -225,9 +226,10 @@ public class OperatorRegistry {
 
 	}
 
-	public void addGroupPriority(String leftGroupId, String rightGroupId)
+	// lowGroupId gets a lower priority than highGroupId
+	public void addGroupPriority(String lowGroupId, String highGroupId)
 			throws CycleError {
-		groupPriority.add(leftGroupId, rightGroupId);
+		groupPriority.add(lowGroupId, highGroupId);
 	}
 
 	public void addGroupCompatibility(String leftGroupId, String rightGroupId) {

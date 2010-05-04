@@ -29,6 +29,7 @@ import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.InvalidExpressionException;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -74,6 +75,8 @@ public class Parsers {
 
 	}
 	
+	// TODO verify that all parser calls are made with NO_TAG when parsing
+	// formulae inside parentheses
 	static final INudParser CLOSED_SUGAR = new DefaultNudParser(NO_TAG) {
 
 		public Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError {
@@ -89,7 +92,7 @@ public class Parsers {
 		
 		public Formula<?> led(Formula<?> left, ParserContext pc, int startPos)
 				throws SyntaxError {
-			final Type type = MainParser.parseType(pc, pc.la.pos);
+			final Type type = MainParser.parseType(pc);
 			switch (left.getTag()) {
 			case Formula.EMPTYSET:
 				return pc.factory.makeEmptySet(type, pc.getSourceLocation(left
@@ -119,7 +122,7 @@ public class Parsers {
 	static class BinaryExpressionInfix extends DefaultLedParser {
 
 		public BinaryExpressionInfix(int tag) {
-			super(Formula.NO_TAG);
+			super(tag);
 		}
 		
 		public Expression led(Formula<?> left, ParserContext pc, int startPos)
@@ -260,7 +263,7 @@ public class Parsers {
 
 		public BinaryExpression led(Formula<?> left, ParserContext pc,
 				int startPos) throws SyntaxError {
-			final Expression right = MainParser.parseExpression(tag, pc);
+			final Expression right = MainParser.parseExpression(NO_TAG, pc);
 			if (!(left instanceof Expression)) {
 				throw new SyntaxError("expected expressions");
 			}
@@ -307,9 +310,9 @@ public class Parsers {
 		}
 	}
 
-	static class UnaryExpression extends DefaultNudParser {
+	static class UnaryExpressionParser extends DefaultNudParser {
 
-		public UnaryExpression(int tag) {
+		public UnaryExpressionParser(int tag) {
 			super(tag);
 		}
 
@@ -317,7 +320,7 @@ public class Parsers {
 				throws SyntaxError {
 			pc.progress();
 			pc.progressOpenParen();
-			final Expression child = MainParser.parseExpression(tag, pc);
+			final Expression child = MainParser.parseExpression(NO_TAG, pc);
 			pc.progressCloseParen();
 			return pc.factory.makeUnaryExpression(tag, child, pc.getSourceLocation(startPos));
 		}
@@ -399,9 +402,22 @@ public class Parsers {
 			return left;
 		}
 
-		public static Type parseType(ParserContext pc, int startPos) {
-			// TODO
-			return null;//pc.factory.makePowerSetType(pc.factory.makeIntegerType());
+		public static Type parseType(ParserContext pc) throws SyntaxError {
+			final int startPos = pc.t.pos;
+			final Expression expression = parseExpression(NO_TAG, pc);
+			if (!expression.isATypeExpression()) {
+				final int endPos = pc.t.pos;
+				throw new SyntaxError(
+						"expected a type expression between positions "
+								+ startPos + " and " + endPos);
+			}
+			try {
+				return expression.toType(pc.factory);
+			} catch (InvalidExpressionException e) {
+				// TODO should not happen (already checked)
+				e.printStackTrace();
+				return null;
+			}
 		}
 
 		public static Predicate parsePredicate(int parentTag, ParserContext pc) throws SyntaxError {

@@ -16,6 +16,7 @@ import static org.eventb.internal.core.parser.Parsers.*;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.extension.CycleError;
+import org.eventb.internal.core.parser.Parsers.BinaryExpressionInfix;
 
 /**
  * @author Nicolas Beauger
@@ -77,6 +78,9 @@ public class BMath extends AbstractGrammar {
 	private static final String BFALSE_ID = "B False";
 	private static final String IDENT_MAPLET_LIST = "Ident Maplet List";
 	private static final String SETEXT_ID = "Set Extension";
+	private static final String INTEGER_ID = "Integer";
+	private static final String POW_ID = "Power Set";
+	private static final String CPROD_ID = "Cartesian Product";
 	
 	
 	/**
@@ -299,10 +303,13 @@ public class BMath extends AbstractGrammar {
 			addOperator(">", GT, GT_ID, RELOP_PRED, new RelationalPredicateInfix(GT));
 			addOperator("≤", LE, LE_ID, RELOP_PRED, new RelationalPredicateInfix(LE));
 			addOperator("(", FUNIMAGE, FUNIMAGE_ID, FUNCTIONAL, FUN_IMAGE);
-			addOperator("card", KCARD, KCARD_ID, FUNCTIONAL, new UnaryExpression(KCARD));
+			addOperator("card", KCARD, KCARD_ID, FUNCTIONAL, new UnaryExpressionParser(KCARD));
 			addOperator("\u2208", IN, IN_ID, RELOP_PRED, new RelationalPredicateInfix(IN));
 			addOperator("\u2205", EMPTYSET, EMPTYSET_ID, EMPTY_SET, new AtomicExpressionParser(EMPTYSET));
 			addOperator("{", SETEXT, SETEXT_ID, BRACE_SETS, SETEXT_PARSER);
+			addOperator("\u2124", INTEGER, INTEGER_ID, ATOMIC_EXPR, new AtomicExpressionParser(INTEGER));
+			addOperator("\u2119", POW, POW_ID, BOUND_UNARY, new UnaryExpressionParser(POW));
+			addOperator("\u00d7", CPROD, CPROD_ID, BINOP, new BinaryExpressionInfix(CPROD));
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

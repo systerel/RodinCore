@@ -10,22 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.eventb.core.ast.Formula.BFALSE;
-import static org.eventb.core.ast.Formula.BINTER;
-import static org.eventb.core.ast.Formula.BTRUE;
-import static org.eventb.core.ast.Formula.BUNION;
-import static org.eventb.core.ast.Formula.EQUAL;
-import static org.eventb.core.ast.Formula.EXISTS;
-import static org.eventb.core.ast.Formula.FORALL;
-import static org.eventb.core.ast.Formula.FUNIMAGE;
-import static org.eventb.core.ast.Formula.GT;
-import static org.eventb.core.ast.Formula.IN;
-import static org.eventb.core.ast.Formula.KCARD;
-import static org.eventb.core.ast.Formula.LAND;
-import static org.eventb.core.ast.Formula.LE;
-import static org.eventb.core.ast.Formula.LOR;
-import static org.eventb.core.ast.Formula.MUL;
-import static org.eventb.core.ast.Formula.PLUS;
+import static org.eventb.core.ast.Formula.*;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -41,12 +26,15 @@ import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IntegerLiteral;
+import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
@@ -71,6 +59,10 @@ public class TestGenParser extends AbstractTests {
 	private static final IntegerLiteral ONE = ff.makeIntegerLiteral(BigInteger.ONE, null);
 	private static final AtomicExpression EMPTY = ff.makeEmptySet(null, null);
 	private static final FreeIdentifier FRID_S = ff.makeFreeIdentifier("S", null);
+	private static final GivenType S_TYPE = ff.makeGivenType("S");
+	private static final AtomicExpression INT = ff.makeAtomicExpression(Formula.INTEGER, null);
+	private static final UnaryExpression POW_INT = ff.makeUnaryExpression(POW, INT, null);
+	private static final IntegerType INT_TYPE = ff.makeIntegerType();
 	private static final SourceLocationChecker slChecker = new SourceLocationChecker();
 
 	private void doExpressionTest(String formula, Formula<?> expected, FormulaFactory factory) {
@@ -105,6 +97,18 @@ public class TestGenParser extends AbstractTests {
 		actual.accept(slChecker);
 	}
 
+	private void doTypeTest(String formula, Type expected) {
+		final IParseResult result = ff.parseType(formula,
+				LanguageVersion.V2);
+		if (result.hasProblem()) {
+			System.out.println(result.getProblems());
+		}
+		assertFalse(result.hasProblem());
+		final Type actual = result.getParsedType();
+		System.out.println(actual);
+		assertEquals(expected, actual);
+	}
+	
 	public void testIntegerLiteral() throws Exception {
 		final Expression expected = ff.makeIntegerLiteral(BigInteger.ONE, null);
 		doExpressionTest("1", expected);
@@ -391,16 +395,19 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("0 ∈ S", expected);		
 	}
 	
-	public void testEmptySet() throws Exception {
-		final Predicate expected = ff.makeRelationalPredicate(IN,
-				ZERO,
-				EMPTY, null);
-		doPredicateTest("0 ∈ ∅", expected);		
+	public void testInt() throws Exception {
+		final Predicate expected = ff.makeRelationalPredicate(IN, ZERO, INT, null);
+		doPredicateTest("0 ∈ ℤ", expected);
 	}
 	
-	public void testEmptySetOfType() throws Exception {
-		final Expression expected = EMPTY;
-		doExpressionTest("∅ ⦂ ℙ(ℤ)", expected);		
+	public void testPowerSet() throws Exception {
+		final Predicate expected = ff.makeRelationalPredicate(IN, FRID_S, POW_INT, null);
+		doPredicateTest("S ∈ ℙ(ℤ)", expected);
+	}
+	
+	public void testCartProd() throws Exception {
+		final Expression expected = ff.makeBinaryExpression(CPROD, FRID_S, FRID_S, null);
+		doExpressionTest("S × S", expected);
 	}
 	
 	public void testSingleton() throws Exception {
@@ -412,5 +419,34 @@ public class TestGenParser extends AbstractTests {
 		final Expression expected = ff.makeSetExtension(Arrays
 				.<Expression> asList(ZERO, ONE), null);
 		doExpressionTest("{0,1}", expected);		
+	}
+	
+	public void testEmptySet() throws Exception {
+		final Predicate expected = ff.makeRelationalPredicate(IN,
+				ZERO,
+				EMPTY, null);
+		doPredicateTest("0 ∈ ∅", expected);		
+	}
+	
+	public void testParseTypeInt() throws Exception {
+		final Type expected = INT_TYPE;
+		doTypeTest("ℤ", expected);
+	}
+	
+	public void testParseTypeRelational() throws Exception {
+		final Type expected = ff.makeRelationalType(INT_TYPE, INT_TYPE);
+		doTypeTest("ℙ(ℤ×ℤ)", expected);
+	}
+
+	// TODO parsing a given type requires to introduce either a notion of
+	// 'parsing a type' in parser context, or backtracking
+	public void testParseTypeGivenType() throws Exception {
+		final Type expected = S_TYPE;
+		doTypeTest("S", expected);
+	}
+	
+	public void testEmptySetOfType() throws Exception {
+		final Expression expected = EMPTY;
+		doExpressionTest("∅ ⦂ ℙ(ℤ)", expected);		
 	}
 }
