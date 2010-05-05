@@ -121,28 +121,43 @@ public class GenParser {
 		}
 		
 		public SavedContext save() {
-			return new SavedContext(scanner.save(), t, la);
+			return new SavedContext(scanner.save(), t, la, parsingType);
 		}
 		
 		public void restore(SavedContext sc) {
 			scanner.restore(sc.scanState);
 			t = sc.t;
 			la = sc.la;
+			parsingType = sc.parsingType;
 		}
 		
 		static class SavedContext {
 			final ScanState scanState;
 			final Token t;
 			final Token la;
+			final boolean parsingType;
 			
-			public SavedContext(ScanState scanState, Token t, Token la) {
+			SavedContext(ScanState scanState, Token t, Token la, boolean parsingType) {
 				this.scanState = scanState;
 				this.t = t;
 				this.la = la;
+				this.parsingType = parsingType;
 			}
 			
 		}
 		
+		public boolean isParsingType() {
+			return parsingType;
+		}
+		
+		public void startParsingType() {
+			this.parsingType = true;
+		}
+		
+		public void stopParsingType() {
+			this.parsingType = false;
+		}
+
 		/**
 		 * Checks that the expected token with the given kind is ahead, then
 		 * makes progress.

@@ -489,6 +489,7 @@ public class Parsers {
 
 		public static Type parseType(ParserContext pc) throws SyntaxError {
 			final int startPos = pc.t.pos;
+			pc.startParsingType();
 			final Expression expression = parseExpression(NO_TAG, pc);
 			if (!expression.isATypeExpression()) {
 				final int endPos = pc.t.pos;
@@ -502,6 +503,8 @@ public class Parsers {
 				// TODO should not happen (already checked)
 				e.printStackTrace();
 				return null;
+			} finally {
+				pc.stopParsingType();
 			}
 		}
 
@@ -544,8 +547,15 @@ public class Parsers {
 	static final INudParser FREE_IDENT_SUBPARSER = new DefaultNudParser(FREE_IDENT) {
 
 		public FreeIdentifier nud(ParserContext pc, int startPos) throws SyntaxError {
-			final FreeIdentifier ident = pc.factory.makeFreeIdentifier(pc.t.val, pc
-					.getSourceLocation(startPos));
+			final String name = pc.t.val;
+			final Type type;
+			if (pc.isParsingType()) {
+				type = pc.factory.makePowerSetType(pc.factory.makeGivenType(name));
+			} else {
+				type = null;
+			}
+			final FreeIdentifier ident = pc.factory.makeFreeIdentifier(name, pc
+					.getSourceLocation(startPos), type);
 			pc.progress();
 			return ident;
 		}
