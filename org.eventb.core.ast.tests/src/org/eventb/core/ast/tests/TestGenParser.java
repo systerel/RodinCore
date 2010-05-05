@@ -60,9 +60,14 @@ import org.eventb.core.ast.extension.IWDMediator;
  */
 public class TestGenParser extends AbstractTests {
 
-	private static final BoundIdentifier BI_0 = ff
-					.makeBoundIdentifier(0, null);
+	private static final BoundIdentifier BI_0 = ff.makeBoundIdentifier(0, null);
+	private static final BoundIdentifier BI_1 = ff.makeBoundIdentifier(1, null);
+	private static final BoundIdentifier BI_2 = ff.makeBoundIdentifier(2, null);
+	private static final BoundIdentifier BI_3 = ff.makeBoundIdentifier(3, null);
+	private static final BoundIdentDecl BID_u = ff.makeBoundIdentDecl("u", null);
 	private static final BoundIdentDecl BID_x = ff.makeBoundIdentDecl("x", null);
+	private static final BoundIdentDecl BID_y = ff.makeBoundIdentDecl("y", null);
+	private static final BoundIdentDecl BID_z = ff.makeBoundIdentDecl("z", null);
 	private static final LiteralPredicate LIT_BFALSE = ff.makeLiteralPredicate(
 							Formula.BFALSE, null);
 	private static final LiteralPredicate LIT_BTRUE = ff.makeLiteralPredicate(
@@ -481,6 +486,98 @@ public class TestGenParser extends AbstractTests {
 				asList(BID_x), LIT_BTRUE,
 				ff.makeBinaryExpression(MAPSTO, BI_0, BI_0, null), null,
 				Form.Lambda);
-		doExpressionTest("(λx·⊤∣ x)", expected);
+		doExpressionTest("λx·⊤∣ x", expected);
+	}
+	
+	public void testLambdaMaplet() throws Exception {
+		final Expression expected = ff.makeQuantifiedExpression(CSET,
+				asList(BID_x, BID_y),
+				ff.makeRelationalPredicate(GT, BI_1, BI_0, null),
+				ff.makeBinaryExpression(MAPSTO,
+						ff.makeBinaryExpression(MAPSTO,	BI_1, BI_0, null),
+						ff.makeAssociativeExpression(PLUS, 
+								Arrays.<Expression> asList(BI_1, BI_0), null),
+						null),
+				null, Form.Lambda);
+		doExpressionTest("λx↦y·x>y∣ x+y", expected);
+	}
+
+	public void testLambdaMaplet2() throws Exception {
+		final Expression expected = ff.makeQuantifiedExpression(CSET,
+				asList(BID_x, BID_y, BID_z),
+				ff.makeRelationalPredicate(GT,
+						BI_2,
+						ff.makeAssociativeExpression(PLUS, 
+								Arrays.<Expression> asList(BI_1, BI_0), null),
+						null),
+				ff.makeBinaryExpression(MAPSTO,
+						ff.makeBinaryExpression(MAPSTO,
+								ff.makeBinaryExpression(MAPSTO, BI_2, BI_1, null),
+								BI_0,
+								null),
+						ff.makeAssociativeExpression(PLUS, 
+								Arrays.<Expression> asList(BI_2, BI_1, BI_0), null),
+						null),
+				null, Form.Lambda);
+		doExpressionTest("λx↦y↦z·x>y+z∣ x+y+z", expected);
+	}
+
+	public void testLambdaMapletParentheses() throws Exception {
+		final Expression expected = ff.makeQuantifiedExpression(CSET,
+				asList(BID_x, BID_y, BID_z),
+				ff.makeRelationalPredicate(GT,
+						BI_2,
+						ff.makeAssociativeExpression(PLUS, 
+								Arrays.<Expression> asList(BI_1, BI_0), null),
+						null),
+				ff.makeBinaryExpression(MAPSTO,
+						ff.makeBinaryExpression(MAPSTO,
+								BI_2, 
+								ff.makeBinaryExpression(MAPSTO, BI_1, BI_0, null), null),
+						ff.makeAssociativeExpression(PLUS, 
+								Arrays.<Expression> asList(BI_2, BI_1, BI_0), null),
+						null),
+				null, Form.Lambda);
+		doExpressionTest("λx↦(y↦z)·x>y+z∣ x+y+z", expected);
+	}
+	
+	public void testLambdaMapletParentheses2() throws Exception {
+		final Expression expected = ff.makeQuantifiedExpression(CSET,
+				asList(BID_u, BID_x, BID_y, BID_z),
+				ff.makeRelationalPredicate(GT,
+						BI_3,
+						ff.makeAssociativeExpression(PLUS, 
+								Arrays.<Expression> asList(BI_2, BI_1, BI_0), null),
+						null),
+				ff.makeBinaryExpression(MAPSTO,
+						ff.makeBinaryExpression(MAPSTO,
+								ff.makeBinaryExpression(MAPSTO, BI_3, BI_2, null),
+								ff.makeBinaryExpression(MAPSTO, BI_1, BI_0, null), null),
+						ff.makeAssociativeExpression(PLUS, 
+								Arrays.<Expression> asList(BI_3, BI_2, BI_1, BI_0), null),
+						null),
+				null, Form.Lambda);
+		doExpressionTest("λ(u↦x)↦(y↦z)·u>x+y+z∣ u+x+y+z", expected);
+	}
+	
+	public void testLambdaMapletParentheses3() throws Exception {
+		final Expression expected = ff.makeQuantifiedExpression(CSET,
+				asList(BID_u, BID_x, BID_y, BID_z),
+				ff.makeRelationalPredicate(GT,
+						BI_3,
+						ff.makeAssociativeExpression(PLUS, 
+								Arrays.<Expression> asList(BI_2, BI_1, BI_0), null),
+						null),
+				ff.makeBinaryExpression(MAPSTO,
+						ff.makeBinaryExpression(MAPSTO,
+								BI_3,
+								ff.makeBinaryExpression(MAPSTO, 
+										BI_2,
+										ff.makeBinaryExpression(MAPSTO, BI_1, BI_0, null), null), null),
+						ff.makeAssociativeExpression(PLUS, 
+								Arrays.<Expression> asList(BI_3, BI_2, BI_1, BI_0), null),
+						null),
+				null, Form.Lambda);
+		doExpressionTest("λu↦(x↦(y↦z))·u>x+y+z∣ u+x+y+z", expected);
 	}
 }

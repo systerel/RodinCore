@@ -337,6 +337,31 @@ public class Parsers {
 
 	}
 
+	static class PatternParser {
+		
+		public static void parse(ParserContext pc, int startPos, Pattern pattern) throws SyntaxError {
+			parsePatternAtom(pc, pc.t.pos, pattern);
+			while (pc.t.kind == _MAPSTO) {
+				pc.progress();
+				parsePatternAtom(pc, pc.t.pos, pattern);
+				pattern.mapletParsed(pc.getSourceLocation(startPos));
+			}
+		}
+
+		private static void parsePatternAtom(ParserContext pc, int startPos,
+				Pattern pattern) throws SyntaxError {
+			if (pc.t.kind == _LPAR) {
+				pc.progressOpenParen();
+				parse(pc, pc.t.pos, pattern);
+				pc.progressCloseParen();
+			} else {
+				final FreeIdentifier ident = (FreeIdentifier) FREE_IDENT_SUBPARSER.nud(pc, pc.t.pos);
+				pattern.declParsed(ident.asDecl(pc.factory));
+			}
+		}
+
+	}
+	
 	static abstract class AbstListParser<T extends Expression> {
 	
 		public List<T> parse(ParserContext pc, int startPos) throws SyntaxError {
@@ -420,18 +445,32 @@ public class Parsers {
 		
 		public Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError {
 			pc.progress();
-			// FIXME pattern parsing instead
-			final List<FreeIdentifier> idents = IDENT_LIST_PARSER.parse(pc, pc.t.pos);
-			final FreeIdentifier pattern = idents.get(0);
+			final Pattern pattern = new Pattern(pc.result);
+			PatternParser.parse(pc, pc.t.pos, pattern);
+			final List<FreeIdentifier> idents = getFreeIdents(pc, pattern.getDecls());
 			pc.progress(_DOT);
 			final Predicate pred = MainParser.parsePredicate(NO_TAG, pc);
+			final Predicate boundPred = pred.bindTheseIdents(idents, pc.factory);
 			pc.progress(_MID);
 			final Expression expr = MainParser.parseExpression(NO_TAG, pc);
-			final Expression pair = pc.factory.makeBinaryExpression(MAPSTO, pattern, expr, null);
-			final Expression boundPair = pair.bindTheseIdents(idents, pc.factory);
-			final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, idents);
-			return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
-					boundPair, pc.getSourceLocation(startPos), Form.Explicit);
+			final Expression boundExpr = expr.bindTheseIdents(idents, pc.factory);
+			
+			final Expression pair = pc.factory.makeBinaryExpression(MAPSTO,
+					pattern.getPattern(), boundExpr, null);
+			return pc.factory.makeQuantifiedExpression(tag, pattern.getDecls(), boundPred,
+					pair, pc.getSourceLocation(startPos), Form.Lambda);
+		}
+
+		// TODO avoid binding identifiers afterwards, better pass them
+		// as arguments everywhere; reuse Binding from bmath.atg
+		private List<FreeIdentifier> getFreeIdents(ParserContext pc,
+				final List<BoundIdentDecl> decls) {
+			final List<FreeIdentifier> idents = new ArrayList<FreeIdentifier>(decls.size());
+			for (BoundIdentDecl bid : decls) {
+				idents.add(pc.factory.makeFreeIdentifier(bid.getName(), bid
+						.getSourceLocation()));
+			}
+			return idents;
 		}
 	};
 	

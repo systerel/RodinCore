@@ -119,7 +119,7 @@ public class BMath extends AbstractGrammar {
 		tokens.getOrAdd("\u2194");
 		tokens.getOrAdd("\u21a0");
 		tokens.getOrAdd("\u21a3");
-//		tokens.getOrAdd("\u21a6");
+		_MAPSTO = tokens.getOrAdd("\u21a6");
 		tokens.getOrAdd("\u21d2");
 		tokens.getOrAdd("\u21d4");
 		tokens.getOrAdd("\u21f8");
@@ -211,7 +211,7 @@ public class BMath extends AbstractGrammar {
 //	static int _REL;
 //	static int _TSUR;
 //	static int _TINJ;
-//	static int _MAPSTO;
+	static int _MAPSTO;
 //	static int _LIMP;
 //	static int _LEQV;
 //	static int _PFUN;

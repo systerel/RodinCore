@@ -92,22 +92,22 @@ public class GenParser {
 		private final Scanner scanner;
 		protected final FormulaFactory factory;
 		private final AbstractGrammar grammar;
-		private final Object origin;
+		protected final ParseResult result;
 		private boolean parsingType;
 		protected Token t;    // last recognized token
 		protected Token la;   // lookahead token
 		
-		public ParserContext(Scanner scanner, FormulaFactory factory, Object origin) {
+		public ParserContext(Scanner scanner, FormulaFactory factory, ParseResult result) {
 			this.scanner = scanner;
 			this.factory = factory;
 			this.grammar = factory.getGrammar();
-			this.origin = origin;
+			this.result = result;
 		}
 		
 		// FIXME end position is wrong in some parsers
 		// where they have progressed after last token 
 		public SourceLocation getSourceLocation(int startPos) {
-			return new SourceLocation(startPos, t.getEnd(), origin);
+			return new SourceLocation(startPos, t.getEnd(), result.getOrigin());
 		}
 		
 		public void init() {
@@ -226,7 +226,7 @@ public class GenParser {
 	public void parse() {
 
 		try {
-			final ParserContext pc = new ParserContext(scanner, factory, result.getOrigin());
+			final ParserContext pc = new ParserContext(scanner, factory, result);
 			pc.init();
 			final Object res;
 			if (clazz == Type.class) {
