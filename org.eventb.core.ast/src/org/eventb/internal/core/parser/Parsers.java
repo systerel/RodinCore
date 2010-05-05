@@ -416,6 +416,25 @@ public class Parsers {
 		}
 	};
 	
+	static final INudParser CSET_LAMBDA = new DefaultNudParser(CSET) {
+		
+		public Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError {
+			pc.progress();
+			// FIXME pattern parsing instead
+			final List<FreeIdentifier> idents = IDENT_LIST_PARSER.parse(pc, pc.t.pos);
+			final FreeIdentifier pattern = idents.get(0);
+			pc.progress(_DOT);
+			final Predicate pred = MainParser.parsePredicate(NO_TAG, pc);
+			pc.progress(_MID);
+			final Expression expr = MainParser.parseExpression(NO_TAG, pc);
+			final Expression pair = pc.factory.makeBinaryExpression(MAPSTO, pattern, expr, null);
+			final Expression boundPair = pair.bindTheseIdents(idents, pc.factory);
+			final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, idents);
+			return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
+					boundPair, pc.getSourceLocation(startPos), Form.Explicit);
+		}
+	};
+	
 	static class MainParser {
 
 		/**
@@ -459,9 +478,7 @@ public class Parsers {
 					return nudParser.nud(pc, startPos);
 				} catch (SyntaxError e) {
 					errors.add(e);
-					if (iter.hasNext()) {
-						pc.restore(savedContext);
-					}
+					pc.restore(savedContext);
 				}
 			}
 			throw newCompoundError(errors);

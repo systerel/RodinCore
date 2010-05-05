@@ -162,6 +162,7 @@ public class OperatorRegistry {
 			operatorGroup = new OperatorGroup(groupId);
 			operatorGroups.put(groupId, operatorGroup);
 		}
+		// FIXME lambda and { have the same tag but different groups
 		groupIds.put(tag, groupId);
 	}
 	

@@ -460,7 +460,7 @@ public class TestGenParser extends AbstractTests {
 	public void testCSetExplicit() throws Exception {
 		final Expression expected = ff.makeQuantifiedExpression(CSET,
 				asList(BID_x), LIT_BTRUE, BI_0, null, Form.Explicit);
-	doExpressionTest("{x · ⊤ ∣ x}", expected);		
+		doExpressionTest("{x · ⊤ ∣ x}", expected);		
 	}
 	
 	public void testCSetImplicit() throws Exception {
@@ -470,12 +470,17 @@ public class TestGenParser extends AbstractTests {
 
 	}
 	
+	public void testMapsto() throws Exception {
+		final Expression expected = ff.makeBinaryExpression(MAPSTO, ZERO,
+				FRID_S, null);
+		doExpressionTest("0 ↦ S", expected);		
+	}
+	
 	public void testLambda() throws Exception {
 		final Expression expected = ff.makeQuantifiedExpression(CSET,
 				asList(BID_x), LIT_BTRUE,
 				ff.makeBinaryExpression(MAPSTO, BI_0, BI_0, null), null,
 				Form.Lambda);
 		doExpressionTest("(λx·⊤∣ x)", expected);
-		// TODO introduce maplet first
 	}
 }

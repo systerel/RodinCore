@@ -85,8 +85,9 @@ public class BMath extends AbstractGrammar {
 	private static final String POW_ID = "Power Set";
 	private static final String CPROD_ID = "Cartesian Product";
 	private static final String OFTYPE_ID = "Oftype";
-
 	private static final String CSET_ID = "Comprehension Set";
+	private static final String MAPSTO_ID = "Maps to";
+	private static final String LAMBDA_ID = "Lambda";
 	
 	
 	/**
@@ -118,7 +119,7 @@ public class BMath extends AbstractGrammar {
 		tokens.getOrAdd("\u2194");
 		tokens.getOrAdd("\u21a0");
 		tokens.getOrAdd("\u21a3");
-		tokens.getOrAdd("\u21a6");
+//		tokens.getOrAdd("\u21a6");
 		tokens.getOrAdd("\u21d2");
 		tokens.getOrAdd("\u21d4");
 		tokens.getOrAdd("\u21f8");
@@ -315,10 +316,12 @@ public class BMath extends AbstractGrammar {
 			addOperator("{", SETEXT, SETEXT_ID, BRACE_SETS, SETEXT_PARSER);
 			addOperator("{", CSET, CSET_ID, BRACE_SETS, CSET_EXPLICIT);
 			addOperator("{", CSET, CSET_ID, BRACE_SETS, CSET_IMPLICIT);
+			addOperator("\u03bb", CSET, LAMBDA_ID, QUANTIFICATION, CSET_LAMBDA);
 			addOperator("\u2124", INTEGER, INTEGER_ID, ATOMIC_EXPR, new AtomicExpressionParser(INTEGER));
 			addOperator("\u2119", POW, POW_ID, BOUND_UNARY, new UnaryExpressionParser(POW));
 			addOperator("\u00d7", CPROD, CPROD_ID, BINOP, new BinaryExpressionInfix(CPROD));
 			addOperator("\u2982", OFTYPE_TAG, OFTYPE_ID, TYPED, OFTYPE);
+			addOperator("\u21a6", MAPSTO, MAPSTO_ID, PAIR, new BinaryExpressionInfix(MAPSTO));
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
