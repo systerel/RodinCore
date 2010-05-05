@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static java.util.Arrays.asList;
 import static org.eventb.core.ast.Formula.*;
 
 import java.math.BigInteger;
@@ -21,6 +22,7 @@ import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Formula;
@@ -31,11 +33,13 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.LanguageVersion;
+import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
+import org.eventb.core.ast.QuantifiedExpression.Form;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
@@ -56,11 +60,19 @@ import org.eventb.core.ast.extension.IWDMediator;
  */
 public class TestGenParser extends AbstractTests {
 
+	private static final BoundIdentifier BI_0 = ff
+					.makeBoundIdentifier(0, null);
+	private static final BoundIdentDecl BID_x = ff.makeBoundIdentDecl("x", null);
+	private static final LiteralPredicate LIT_BFALSE = ff.makeLiteralPredicate(
+							Formula.BFALSE, null);
+	private static final LiteralPredicate LIT_BTRUE = ff.makeLiteralPredicate(
+							Formula.BTRUE, null);
 	private static final IntegerLiteral ZERO = ff.makeIntegerLiteral(BigInteger.ZERO, null);
 	private static final IntegerLiteral ONE = ff.makeIntegerLiteral(BigInteger.ONE, null);
 	private static final AtomicExpression EMPTY = ff.makeEmptySet(null, null);
 	private static final FreeIdentifier FRID_S = ff.makeFreeIdentifier("S", null);
 	private static final GivenType S_TYPE = ff.makeGivenType("S");
+	private static final PowerSetType POW_S_TYPE = ff.makePowerSetType(S_TYPE);
 	private static final AtomicExpression INT = ff.makeAtomicExpression(Formula.INTEGER, null);
 	private static final UnaryExpression POW_INT = ff.makeUnaryExpression(POW, INT, null);
 	private static final IntegerType INT_TYPE = ff.makeIntegerType();
@@ -188,19 +200,15 @@ public class TestGenParser extends AbstractTests {
 
 	public void testAnd() throws Exception {
 		final Predicate expected = ff.makeAssociativePredicate(Formula.LAND,
-				Arrays.<Predicate> asList(ff.makeLiteralPredicate(
-						Formula.BTRUE, null), ff.makeLiteralPredicate(
-						Formula.BFALSE, null)), null);
+				Arrays.<Predicate> asList(LIT_BTRUE, LIT_BFALSE), null);
 		doPredicateTest("⊤∧⊥", expected);
 	}
 	
 	public void testOrAnd() throws Exception {
 		final Predicate expected = ff.makeAssociativePredicate(LOR,
 				Arrays.<Predicate> asList(ff.makeAssociativePredicate(
-						LAND, Arrays.<Predicate> asList(ff
-								.makeLiteralPredicate(BTRUE, null), ff
-								.makeLiteralPredicate(BFALSE, null)),
-						null), ff.makeLiteralPredicate(BFALSE, null)),
+						LAND, Arrays.<Predicate> asList(LIT_BTRUE, LIT_BFALSE),
+						null), LIT_BFALSE),
 				null);
 		doPredicateTest("(⊤∧⊥)∨⊥", expected);
 	}	
@@ -325,43 +333,40 @@ public class TestGenParser extends AbstractTests {
 	
 	public void testForall() throws Exception {
 		final Predicate expected = ff.makeQuantifiedPredicate(FORALL,
-				new BoundIdentDecl[] { ff.makeBoundIdentDecl("x", null) }, ff
-						.makeLiteralPredicate(BFALSE, null), null);
+				new BoundIdentDecl[] { BID_x }, LIT_BFALSE, null);
 		doPredicateTest("∀x·⊥", expected);
 	}
 
 	public void testForallList() throws Exception {
 		final Predicate expected = ff.makeQuantifiedPredicate(FORALL,
-				new BoundIdentDecl[] { ff.makeBoundIdentDecl("x", null),
+				new BoundIdentDecl[] { BID_x,
 						ff.makeBoundIdentDecl("y", null),
-						ff.makeBoundIdentDecl("z", null) }, ff
-						.makeLiteralPredicate(BFALSE, null), null);
+						ff.makeBoundIdentDecl("z", null) },
+						LIT_BFALSE, null);
 		doPredicateTest("∀x,y,z·⊥", expected);
 	}
 	
 	public void testForallRefs() throws Exception {
 		final Predicate expected = ff.makeQuantifiedPredicate(FORALL,
-				new BoundIdentDecl[] { ff.makeBoundIdentDecl("x", null),
+				new BoundIdentDecl[] { BID_x,
 						ff.makeBoundIdentDecl("y", null) },
 						ff.makeRelationalPredicate(GT,
 								ff.makeBoundIdentifier(1, null),
-								ff.makeBoundIdentifier(0, null), null), null);
+								BI_0, null), null);
 		doPredicateTest("∀x,y·x>y", expected);
 	}
 	
 	public void testExists() throws Exception {
 		final Predicate expected = ff.makeQuantifiedPredicate(EXISTS,
-				new BoundIdentDecl[] { ff.makeBoundIdentDecl("x", null) }, ff
-						.makeLiteralPredicate(BFALSE, null), null);
+				new BoundIdentDecl[] { BID_x }, LIT_BFALSE, null);
 		doPredicateTest("∃x·⊥", expected);
 	}
 
 	public void testExistsList() throws Exception {
 		final Predicate expected = ff.makeQuantifiedPredicate(EXISTS,
-				new BoundIdentDecl[] { ff.makeBoundIdentDecl("x", null),
+				new BoundIdentDecl[] { BID_x,
 						ff.makeBoundIdentDecl("y", null),
-						ff.makeBoundIdentDecl("z", null) }, ff
-						.makeLiteralPredicate(BFALSE, null), null);
+						ff.makeBoundIdentDecl("z", null) }, LIT_BFALSE, null);
 		doPredicateTest("∃x,y,z·⊥", expected);
 	}
 	
@@ -450,5 +455,27 @@ public class TestGenParser extends AbstractTests {
 	public void testEmptySetOfType() throws Exception {
 		final Expression expected = ff.makeEmptySet(POW_INT_TYPE, null);
 		doExpressionTest("∅ ⦂ ℙ(ℤ)", expected);		
+	}
+	
+	public void testCSetExplicit() throws Exception {
+		final Expression expected = ff.makeQuantifiedExpression(CSET,
+				asList(BID_x), LIT_BTRUE, BI_0, null, Form.Explicit);
+	doExpressionTest("{x · ⊤ ∣ x}", expected);		
+	}
+	
+	public void testCSetImplicit() throws Exception {
+		final Expression expected = ff.makeQuantifiedExpression(CSET,
+				asList(BID_x), LIT_BTRUE, BI_0, null, Form.Implicit);
+	doExpressionTest("{x∣ ⊤}", expected);		
+
+	}
+	
+	public void testLambda() throws Exception {
+		final Expression expected = ff.makeQuantifiedExpression(CSET,
+				asList(BID_x), LIT_BTRUE,
+				ff.makeBinaryExpression(MAPSTO, BI_0, BI_0, null), null,
+				Form.Lambda);
+		doExpressionTest("(λx·⊤∣ x)", expected);
+		// TODO introduce maplet first
 	}
 }

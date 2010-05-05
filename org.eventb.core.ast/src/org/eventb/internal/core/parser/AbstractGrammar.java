@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
+import java.util.List;
+
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 
 /**
@@ -88,8 +90,8 @@ public abstract class AbstractGrammar {
 
 	}
 
-	public INudParser getNudParser(Token token) {
-		return subParsers.getNudParser(token);
+	public List<INudParser> getNudParsers(Token token) {
+		return subParsers.getNudParsers(token);
 	}
 	
 	public ILedParser getLedParser(Token token) {

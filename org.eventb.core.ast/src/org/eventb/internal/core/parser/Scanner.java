@@ -14,6 +14,7 @@ import java.util.Vector;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.LanguageVersion;
+import org.eventb.internal.core.parser.GenScan.ScanState;
 
 /**
  * This class maps the JFlex lexer with the Coco/R scanner. Note that the lexer
@@ -105,4 +106,11 @@ public class Scanner {
 				&& token.kind == BMath._IDENT && token.val.equals(name));
 	}
 
+	public ScanState save() {
+		return lexer.save();
+	}
+	
+	public void restore(ScanState state) {
+		lexer.restore(state);
+	}
 }

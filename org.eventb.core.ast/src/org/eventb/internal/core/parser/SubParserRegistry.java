@@ -11,6 +11,7 @@
 package org.eventb.internal.core.parser;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,14 +88,12 @@ public class SubParserRegistry {
 	}
 	
 	
-	public INudParser getNudParser(Token token) {
+	public List<INudParser> getNudParsers(Token token) {
 		final KindParsers parsers = kindParsers.get(token.kind);
-		if (parsers == null || parsers.isEmpty()) {
-			return null;
+		if (parsers == null) {
+			return Collections.emptyList();
 		}
-		return parsers.getNudParsers().get(0); 
-		// FIXME
-		// when backtracking there will be several subparsers for one kind
+		return parsers.getNudParsers(); 
 	}
 	
 	public ILedParser getLedParser(Token token) {

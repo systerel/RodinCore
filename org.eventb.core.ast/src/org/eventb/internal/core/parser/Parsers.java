@@ -17,6 +17,7 @@ import static org.eventb.internal.core.parser.BMath.*;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
@@ -35,9 +36,11 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.QuantifiedExpression.Form;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.internal.core.parser.GenParser.ParserContext;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
+import org.eventb.internal.core.parser.GenParser.ParserContext.SavedContext;
 
 /**
  * @author Nicolas Beauger
@@ -300,14 +303,21 @@ public class Parsers {
 			final Predicate pred = MainParser.parsePredicate(tag, pc);
 
 			final Predicate boundPred = pred.bindTheseIdents(identList, pc.factory);
-			final List<BoundIdentDecl> boundIdentifiers = new ArrayList<BoundIdentDecl>(identList.size());
-			// TODO use Formula.bindTheseIdents instead ?
-			for (FreeIdentifier ident: identList) {
-				boundIdentifiers.add(pc.factory.makeBoundIdentDecl(ident.getName(), ident.getSourceLocation()));
-			}
+			final List<BoundIdentDecl> boundIdentifiers = makeBoundIdentDeclList(
+					pc.factory, identList);
 			return pc.factory.makeQuantifiedPredicate(tag, boundIdentifiers,
 					boundPred, null);
 		}
+	}
+
+	static List<BoundIdentDecl> makeBoundIdentDeclList(FormulaFactory factory,
+			final List<FreeIdentifier> identList) {
+		final List<BoundIdentDecl> boundIdentifiers = new ArrayList<BoundIdentDecl>(identList.size());
+		// TODO use Formula.bindTheseIdents instead ?
+		for (FreeIdentifier ident: identList) {
+			boundIdentifiers.add(ident.asDecl(factory));
+		}
+		return boundIdentifiers;
 	}
 
 	static class UnaryExpressionParser extends DefaultNudParser {
@@ -373,6 +383,39 @@ public class Parsers {
 		}
 	};
 	
+	static final INudParser CSET_EXPLICIT = new DefaultNudParser(CSET) {
+		
+		public Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError {
+			pc.progress();
+			final List<FreeIdentifier> idents = IDENT_LIST_PARSER.parse(pc, pc.t.pos);
+			pc.progress(_DOT);
+			final Predicate pred = MainParser.parsePredicate(NO_TAG, pc);
+			pc.progress(_MID);
+			final Expression expr = MainParser.parseExpression(NO_TAG, pc);
+			pc.progress(_RBRACE);
+			final Expression boundExpr = expr.bindTheseIdents(idents, pc.factory);
+			final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, idents);
+			return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
+					boundExpr, pc.getSourceLocation(startPos), Form.Explicit);
+		}
+	};
+	
+	static final INudParser CSET_IMPLICIT = new DefaultNudParser(CSET) {
+		
+		public Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError {
+			pc.progress();
+			final Expression expr = MainParser.parseExpression(NO_TAG, pc);
+			pc.progress(_MID);
+			final Predicate pred = MainParser.parsePredicate(NO_TAG, pc);
+			pc.progress(_RBRACE);
+			final List<FreeIdentifier> idents = asList(expr.getFreeIdentifiers());
+			final Expression boundExpr = expr.bindTheseIdents(idents, pc.factory);
+			final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, idents);
+			return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
+					boundExpr, pc.getSourceLocation(startPos), Form.Implicit);
+		}
+	};
+	
 	static class MainParser {
 
 		/**
@@ -392,14 +435,56 @@ public class Parsers {
 		public static Formula<?> parse(int parentTag, ParserContext pc)
 				throws SyntaxError {
 			final int startPos = pc.t.pos;
-			final INudParser nudParser = getNudParser(pc);
-			Formula<?> left = nudParser.nud(pc, startPos);
+			final List<INudParser> nudParsers = getNudParsers(pc);
+			Formula<?> left = nudParse(pc, startPos, nudParsers);
 			while (pc.canProgressRight(parentTag)) {
 				final ILedParser ledParser = getLedParser(pc);
 				pc.progress();
 				left = ledParser.led(left, pc, startPos);
 			}
 			return left;
+		}
+		
+		// TODO implement backtracking for led parsers as well 
+
+		private static Formula<?> nudParse(ParserContext pc, int startPos,
+				List<INudParser> parsers) throws SyntaxError {
+			// FIXME store current context and restore it for each sub-parser
+			final List<SyntaxError> errors = new ArrayList<SyntaxError>();
+			final Iterator<INudParser> iter = parsers.iterator();
+			final SavedContext savedContext = pc.save();
+			while(iter.hasNext()) {
+				final INudParser nudParser = iter.next();
+				try {
+					return nudParser.nud(pc, startPos);
+				} catch (SyntaxError e) {
+					errors.add(e);
+					if (iter.hasNext()) {
+						pc.restore(savedContext);
+					}
+				}
+			}
+			throw newCompoundError(errors);
+		}
+
+		// errors must be non empty 
+		private static SyntaxError newCompoundError(List<SyntaxError> errors) {
+			final StringBuilder reason = new StringBuilder(
+					"Parse failed because");
+			if (errors.size()>=2) {
+				reason.append(" either: ");
+			} else {
+				reason.append(": ");
+			}
+			final Iterator<SyntaxError> iter = errors.iterator();
+			while(iter.hasNext()) {
+			final SyntaxError syntaxError = iter.next();
+				reason.append(syntaxError.getMessage());
+				if (iter.hasNext()) {
+					reason.append(" OR ");
+				}
+			}
+			return new SyntaxError(reason.toString());
 		}
 
 		public static Type parseType(ParserContext pc) throws SyntaxError {
@@ -436,13 +521,14 @@ public class Parsers {
 			return (Expression) formula;
 		}
 		
-		private static INudParser getNudParser(ParserContext pc)
+		// returns a non empty list
+		private static List<INudParser> getNudParsers(ParserContext pc)
 				throws SyntaxError {
-			final INudParser subParser = pc.getNudParser();
-			if (subParser == null) {
+			final List<INudParser> subParsers = pc.getNudParsers();
+			if (subParsers.isEmpty()) {
 				throw new SyntaxError("don't know how to parse: " + pc.t.val);
 			}
-			return subParser;
+			return subParsers;
 		}
 		
 		private static ILedParser getLedParser(ParserContext pc)

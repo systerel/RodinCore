@@ -16,10 +16,11 @@ import static org.eventb.internal.core.parser.AbstractGrammar._EOF;
 import static org.eventb.internal.core.parser.AbstractGrammar._LPAR;
 import static org.eventb.internal.core.parser.AbstractGrammar._RPAR;
 
+import java.util.List;
+
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
@@ -27,6 +28,7 @@ import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
+import org.eventb.internal.core.parser.GenScan.ScanState;
 
 /**
  * @author Nicolas Beauger
@@ -91,6 +93,7 @@ public class GenParser {
 		protected final FormulaFactory factory;
 		private final AbstractGrammar grammar;
 		private final Object origin;
+		private boolean parsingType;
 		protected Token t;    // last recognized token
 		protected Token la;   // lookahead token
 		
@@ -101,6 +104,8 @@ public class GenParser {
 			this.origin = origin;
 		}
 		
+		// FIXME end position is wrong in some parsers
+		// where they have progressed after last token 
 		public SourceLocation getSourceLocation(int startPos) {
 			return new SourceLocation(startPos, t.getEnd(), origin);
 		}
@@ -113,6 +118,29 @@ public class GenParser {
 		public void progress() {
 			t = la;
 			la = scanner.Scan();
+		}
+		
+		public SavedContext save() {
+			return new SavedContext(scanner.save(), t, la);
+		}
+		
+		public void restore(SavedContext sc) {
+			scanner.restore(sc.scanState);
+			t = sc.t;
+			la = sc.la;
+		}
+		
+		static class SavedContext {
+			final ScanState scanState;
+			final Token t;
+			final Token la;
+			
+			public SavedContext(ScanState scanState, Token t, Token la) {
+				this.scanState = scanState;
+				this.t = t;
+				this.la = la;
+			}
+			
 		}
 		
 		/**
@@ -141,8 +169,8 @@ public class GenParser {
 			progress(_RPAR);
 		}
 		
-		public INudParser getNudParser() {
-			return grammar.getNudParser(t);
+		public List<INudParser> getNudParsers() {
+			return grammar.getNudParsers(t);
 		}
 		
 		public ILedParser getLedParser() {

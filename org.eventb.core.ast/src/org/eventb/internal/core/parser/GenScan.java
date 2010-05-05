@@ -375,4 +375,26 @@ public class GenScan {
 	public int getLength() {
 		return length;
 	}
+	
+	public ScanState save() {
+		return new ScanState(pos, currentPos, curPosSaved);
+	}
+	
+	public void restore(ScanState state) {
+		this.pos = state.pos;
+		this.currentPos = state.currentPos;
+		this.curPosSaved = state.curPosSaved;
+	}
+	
+	static class ScanState {
+		final int pos;
+		final int currentPos;
+		final int curPosSaved;
+		
+		public ScanState(int pos, int currentPos, int curPosSaved) {
+			this.pos = pos;
+			this.currentPos = currentPos;
+			this.curPosSaved = curPosSaved;
+		}
+	}
 }

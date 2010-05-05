@@ -85,6 +85,8 @@ public class BMath extends AbstractGrammar {
 	private static final String POW_ID = "Power Set";
 	private static final String CPROD_ID = "Cartesian Product";
 	private static final String OFTYPE_ID = "Oftype";
+
+	private static final String CSET_ID = "Comprehension Set";
 	
 	
 	/**
@@ -129,7 +131,7 @@ public class BMath extends AbstractGrammar {
 		tokens.getOrAdd("\u2216");
 //			_MUL = tokens.add("\u2217");
 		tokens.getOrAdd("\u2218");
-		tokens.getOrAdd("\u2223");
+		_MID = tokens.getOrAdd("\u2223");
 		tokens.getOrAdd("\u2225");
 //			_LAND = tokens.add("\u2227");
 //			_LOR = tokens.add("\u2228");
@@ -260,7 +262,7 @@ public class BMath extends AbstractGrammar {
 //	private static int _PLUS;
 //	static int _MINUS;
 //	static int _DIV;
-//	static int _MID;
+	static int _MID;
 //	static int _CONVERSE;
 //	static int _BOOL;
 //	static int _TRUE;
@@ -311,6 +313,8 @@ public class BMath extends AbstractGrammar {
 			addOperator("\u2208", IN, IN_ID, RELOP_PRED, new RelationalPredicateInfix(IN));
 			addOperator("\u2205", EMPTYSET, EMPTYSET_ID, EMPTY_SET, new AtomicExpressionParser(EMPTYSET));
 			addOperator("{", SETEXT, SETEXT_ID, BRACE_SETS, SETEXT_PARSER);
+			addOperator("{", CSET, CSET_ID, BRACE_SETS, CSET_EXPLICIT);
+			addOperator("{", CSET, CSET_ID, BRACE_SETS, CSET_IMPLICIT);
 			addOperator("\u2124", INTEGER, INTEGER_ID, ATOMIC_EXPR, new AtomicExpressionParser(INTEGER));
 			addOperator("\u2119", POW, POW_ID, BOUND_UNARY, new UnaryExpressionParser(POW));
 			addOperator("\u00d7", CPROD, CPROD_ID, BINOP, new BinaryExpressionInfix(CPROD));
