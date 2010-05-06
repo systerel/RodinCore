@@ -418,9 +418,10 @@ public class Parsers {
 			pc.progress(_MID);
 			final Expression expr = MainParser.parseExpression(NO_TAG, pc);
 			pc.progress(_RBRACE);
+			final Predicate boundPred = pred.bindTheseIdents(idents, pc.factory);
 			final Expression boundExpr = expr.bindTheseIdents(idents, pc.factory);
 			final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, idents);
-			return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
+			return pc.factory.makeQuantifiedExpression(tag, boundIdents, boundPred,
 					boundExpr, pc.getSourceLocation(startPos), Form.Explicit);
 		}
 	};
@@ -434,9 +435,10 @@ public class Parsers {
 			final Predicate pred = MainParser.parsePredicate(NO_TAG, pc);
 			pc.progress(_RBRACE);
 			final List<FreeIdentifier> idents = asList(expr.getFreeIdentifiers());
+			final Predicate boundPred = pred.bindTheseIdents(idents, pc.factory);
 			final Expression boundExpr = expr.bindTheseIdents(idents, pc.factory);
 			final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, idents);
-			return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
+			return pc.factory.makeQuantifiedExpression(tag, boundIdents, boundPred,
 					boundExpr, pc.getSourceLocation(startPos), Form.Implicit);
 		}
 	};

@@ -356,7 +356,7 @@ public class TestGenParser extends AbstractTests {
 				new BoundIdentDecl[] { BID_x,
 						ff.makeBoundIdentDecl("y", null) },
 						ff.makeRelationalPredicate(GT,
-								ff.makeBoundIdentifier(1, null),
+								BI_1,
 								BI_0, null), null);
 		doPredicateTest("∀x,y·x>y", expected);
 	}
@@ -471,8 +471,7 @@ public class TestGenParser extends AbstractTests {
 	public void testCSetImplicit() throws Exception {
 		final Expression expected = ff.makeQuantifiedExpression(CSET,
 				asList(BID_x), LIT_BTRUE, BI_0, null, Form.Implicit);
-	doExpressionTest("{x∣ ⊤}", expected);		
-
+		doExpressionTest("{x∣ ⊤}", expected);
 	}
 	
 	public void testMapsto() throws Exception {
@@ -580,4 +579,30 @@ public class TestGenParser extends AbstractTests {
 				null, Form.Lambda);
 		doExpressionTest("λu↦(x↦(y↦z))·u>x+y+z∣ u+x+y+z", expected);
 	}
+	
+	public void testInnerBoundIdentsForall() throws Exception {
+		final Predicate expected = ff.makeQuantifiedPredicate(FORALL,
+				new BoundIdentDecl[] { BID_x },
+				ff.makeQuantifiedPredicate(EXISTS,
+						new BoundIdentDecl[] { BID_y },
+						ff.makeRelationalPredicate(GT,
+								BI_1,
+								BI_0, null), null), null);
+		doPredicateTest("∀x·∃y·x>y", expected);
+	}
+	
+	public void testInnerBoundIdentsCSet() throws Exception {
+		final Expression expected = ff.makeQuantifiedExpression(CSET,
+				asList(BID_x),
+				ff.makeQuantifiedPredicate(EXISTS,
+						new BoundIdentDecl[] { BID_y },
+						ff.makeRelationalPredicate(GT,
+								BI_1,
+								BI_0, null),
+						null),
+				BI_0, null, Form.Implicit);
+		doExpressionTest("{x∣ ∃y·x>y}", expected);		
+	}
+	
+
 }
