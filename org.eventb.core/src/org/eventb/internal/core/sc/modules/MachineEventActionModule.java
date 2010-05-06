@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - fixed bug #2997671 using labels instead of fixed prefix
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -63,7 +64,6 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	}
 
 	private static String ACTION_NAME_PREFIX = "ACT";
-	private static String ACTION_REPAIR_PREFIX = "GEN";
 	private static String ACTION_REPAIR_LABEL = "GEN";
 
 	private IConcreteEventInfo concreteEventInfo;
@@ -219,7 +219,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 			Assignment assignment = factory.makeBecomesSuchThat(patchLHS,
 					patchBound, btrue, null);
 			String label = createFreshLabel();
-			saveAction(target, ACTION_REPAIR_PREFIX, label, assignment, event,
+			saveAction(target, label, label, assignment, event,
 					monitor);
 		}
 	}
