@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - removed deprecated methods
  *     Systerel - separation of file and root element
+ *     Systerel - now returns a NullToolDescription if no tool is known
  *******************************************************************************/
 package org.rodinp.internal.core.builder;
 
@@ -133,6 +134,9 @@ public class ToolManager {
 	public ToolDescription getToolDescription(String id) {
 		computeToolList();
 		ToolDescription toolDesc = tools.get(id);
+		if (toolDesc == null){
+			return new NullToolDescription();
+		}
 		return toolDesc;
 	}
 	
