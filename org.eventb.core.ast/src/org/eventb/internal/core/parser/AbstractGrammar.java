@@ -12,6 +12,7 @@ package org.eventb.internal.core.parser;
 
 import java.util.List;
 
+import org.eventb.core.ast.Formula;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 
 /**
@@ -81,7 +82,7 @@ public abstract class AbstractGrammar {
 		_COMMA = tokens.getOrAdd(",");
 		try {
 			_INTLIT = addReservedSubParser(Parsers.INTLIT_SUBPARSER);
-			_IDENT = addReservedSubParser(Parsers.FREE_IDENT_SUBPARSER);
+			_IDENT = addReservedSubParser(Parsers.IDENT_SUBPARSER);
 			addClosedSugar(_LPAR, _RPAR);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
@@ -90,11 +91,11 @@ public abstract class AbstractGrammar {
 
 	}
 
-	public List<INudParser> getNudParsers(Token token) {
+	public List<INudParser<Formula<?>>> getNudParsers(Token token) {
 		return subParsers.getNudParsers(token);
 	}
 	
-	public ILedParser getLedParser(Token token) {
+	public ILedParser<Formula<?>> getLedParser(Token token) {
 		return subParsers.getLedParser(token);
 	}
 	

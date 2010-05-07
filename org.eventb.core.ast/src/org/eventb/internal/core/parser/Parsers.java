@@ -12,6 +12,7 @@ package org.eventb.internal.core.parser;
 
 import static java.util.Arrays.asList;
 import static org.eventb.core.ast.Formula.*;
+import static org.eventb.internal.core.parser.AbstractGrammar.*;
 import static org.eventb.internal.core.parser.BMath.*;
 
 import java.math.BigInteger;
@@ -25,19 +26,27 @@ import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.Identifier;
+import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.InvalidExpressionException;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.QuantifiedExpression;
+import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.QuantifiedExpression.Form;
 import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.internal.core.parser.GenParser.IParser;
 import org.eventb.internal.core.parser.GenParser.ParserContext;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 import org.eventb.internal.core.parser.GenParser.ParserContext.SavedContext;
@@ -48,7 +57,7 @@ import org.eventb.internal.core.parser.GenParser.ParserContext.SavedContext;
  */
 public class Parsers {
 
-	private static abstract class AbstractSubParser implements ISubParser {
+	private static abstract class AbstractSubParser<T> implements ISubParser<T> {
 
 		protected final int tag;
 
@@ -62,79 +71,332 @@ public class Parsers {
 		
 	}
 
-	private static abstract class DefaultNudParser extends AbstractSubParser implements INudParser {
+	private static abstract class DefaultNudParser<T> extends AbstractSubParser<T> implements INudParser<T> {
 
 		protected DefaultNudParser(int tag) {
 			super(tag);
 		}
 
+		public final T parse(int parentTag, Formula<?> left, ParserContext pc) throws SyntaxError {
+			return nud(pc);
+		}
 	}
 
-	private static abstract class DefaultLedParser extends AbstractSubParser implements ILedParser {
+	private static abstract class DefaultLedParser<T> extends AbstractSubParser<T> implements ILedParser<T> {
 
 		protected DefaultLedParser(int tag) {
 			super(tag);
 		}
+		
+		public final T parse(int parentTag, Formula<?> left, ParserContext pc) throws SyntaxError {
+			return led(left, pc);
+		}
 
 	}
 	
+	private static abstract class MainParser<T> implements IParser<T> {
+	
+		public MainParser() {
+			// void constructor
+		}
+		
+		protected abstract T parse (int parentTag, ParserContext pc) throws SyntaxError;
+		
+		/**
+		 * Parses the formula from the given parser context. Starts from the
+		 * current token. When the method returns, the current token is the one
+		 * that immediately follows the last one that belongs to the parsed
+		 * formula.
+		 * 
+		 * @param parentTag
+		 *            tag of the parent formula, {@link Formula#NO_TAG} if none
+		 * @param pc
+		 *            current parser context
+		 * @return a formula
+		 * @throws SyntaxError
+		 *             if a syntax error occurs while parsing
+		 */
+		public final T parse(int parentTag, Formula<?> left, ParserContext pc)
+				throws SyntaxError {
+			return parse(parentTag, pc);
+		}
+	}
+
+	private static class FormulaParser extends MainParser<Formula<?>> {
+		public FormulaParser() {
+			// void constructor
+		}
+		
+		@Override
+		protected Formula<?> parse(int parentTag, ParserContext pc)
+		throws SyntaxError {
+		
+			final List<INudParser<Formula<?>>> nudParsers = getNudParsers(pc);
+			Formula<?> left = nudParse(pc, nudParsers);
+			while (pc.canProgressRight(parentTag)) {
+				final ILedParser<Formula<?>> ledParser = getLedParser(pc);
+				pc.progress();
+				left = ledParser.led(left, pc);
+			}
+			return left;
+		}
+		
+		// TODO implement backtracking for led parsers as well 
+	
+		private static Formula<?> nudParse(ParserContext pc,
+				List<INudParser<Formula<?>>> parsers) throws SyntaxError {
+			// FIXME store current context and restore it for each sub-parser
+			final List<SyntaxError> errors = new ArrayList<SyntaxError>();
+			final Iterator<INudParser<Formula<?>>> iter = parsers.iterator();
+			final SavedContext savedContext = pc.save();
+			while(iter.hasNext()) {
+				final INudParser<Formula<?>> nudParser = iter.next();
+				try {
+					return nudParser.nud(pc);
+				} catch (SyntaxError e) {
+					errors.add(e);
+					pc.restore(savedContext);
+				}
+			}
+			throw newCompoundError(errors);
+		}
+	
+		// errors must be non empty 
+		private static SyntaxError newCompoundError(List<SyntaxError> errors) {
+			final StringBuilder reason = new StringBuilder(
+					"Parse failed because");
+			if (errors.size()>=2) {
+				reason.append(" either: ");
+			} else {
+				reason.append(": ");
+			}
+			final Iterator<SyntaxError> iter = errors.iterator();
+			while(iter.hasNext()) {
+			final SyntaxError syntaxError = iter.next();
+				reason.append(syntaxError.getMessage());
+				if (iter.hasNext()) {
+					reason.append(" OR ");
+				}
+			}
+			return new SyntaxError(reason.toString());
+		}
+	}
+
+	static final FormulaParser FORMULA_PARSER = new FormulaParser();
+
+	private static class TypeParser implements IParser<Type> {
+		public TypeParser() {
+			// void constructor
+		}
+		
+		public Type parse(int parentTag, Formula<?> left, ParserContext pc) throws SyntaxError {
+			final int startPos = pc.t.pos;
+			pc.startParsingType();
+			final Expression expression = EXPR_PARSER.parse(NO_TAG, pc);
+			if (!expression.isATypeExpression()) {
+				final int endPos = pc.t.pos;
+				throw new SyntaxError(
+						"expected a type expression between positions "
+								+ startPos + " and " + endPos);
+			}
+			try {
+				return expression.toType(pc.factory);
+			} catch (InvalidExpressionException e) {
+				// TODO should not happen (already checked)
+				e.printStackTrace();
+				return null;
+			} finally {
+				pc.stopParsingType();
+			}
+		}
+	}
+
+	static final TypeParser TYPE_PARSER = new TypeParser();
+
+	private static class PredicateParser extends MainParser<Predicate> {
+		public PredicateParser() {
+			// void constructor
+		}
+		
+		@Override
+		public Predicate parse(int parentTag, ParserContext pc) throws SyntaxError {
+			final Formula<?> formula = FORMULA_PARSER.parse(parentTag, pc);
+			if (!(formula instanceof Predicate)) {
+				throw new SyntaxError("expected predicate");
+			}
+			return (Predicate) formula;
+		}
+	}
+
+	static final PredicateParser PRED_PARSER = new PredicateParser();
+
+	private static class ExpressionParser extends MainParser<Expression> {
+		
+		public ExpressionParser() {
+			// void constructor
+		}
+		
+		@Override
+		public Expression parse(int parentTag, ParserContext pc) throws SyntaxError {
+			final Formula<?> formula = FORMULA_PARSER.parse(parentTag, pc);
+			if (!(formula instanceof Expression)) {
+				throw new SyntaxError("expected expression");
+			}
+			return (Expression) formula;
+		}
+	}
+
+	static final ExpressionParser EXPR_PARSER = new ExpressionParser();
+
+	// returns a non empty list
+	static List<INudParser<Formula<?>>> getNudParsers(ParserContext pc)
+			throws SyntaxError {
+		final List<INudParser<Formula<?>>> subParsers = pc.getNudParsers();
+		if (subParsers.isEmpty()) {
+			throw new SyntaxError("don't know how to parse: " + pc.t.val);
+		}
+		return subParsers;
+	}
+
+	static ILedParser<Formula<?>> getLedParser(ParserContext pc)
+	throws SyntaxError {
+		final ILedParser<Formula<?>> subParser = pc.getLedParser();
+		if (subParser == null) {
+			throw new SyntaxError("don't know how to parse: " + pc.t.val);
+		}
+		return subParser;
+	}
+
+	static class IdentSubParser extends DefaultNudParser<Identifier> {
+
+		protected IdentSubParser(int tag) {
+			super(tag);
+		}
+
+		public Identifier nud(ParserContext pc) throws SyntaxError {
+			final Identifier ident = makeIdent(pc);
+			pc.progress();
+			return ident;
+		}
+		
+		// Creates an identifier for the given token.
+		// Takes care of the bindings.
+		private Identifier makeIdent(ParserContext pc) throws SyntaxError {
+			final String name = pc.t.val;
+			final int index = pc.getBoundIndex(name);
+			final SourceLocation loc = pc.getSourceLocation();
+			if (index == -1) {
+				final Type type;
+				if (pc.isParsingType()) {
+					type = pc.factory.makePowerSetType(pc.factory.makeGivenType(name));
+				} else {
+					type = null;
+				}
+				return pc.factory.makeFreeIdentifier(name, loc, type);
+			} else {
+				return pc.factory.makeBoundIdentifier(index, loc);
+			}
+		}
+
+		protected FreeIdentifier parseFreeIdent(ParserContext pc, String name,
+				SourceLocation loc) throws SyntaxError {
+			final Type type;
+			if (pc.isParsingType()) {
+				type = pc.factory.makePowerSetType(pc.factory
+						.makeGivenType(name));
+			} else {
+				type = null;
+			}
+			return pc.factory.makeFreeIdentifier(name, loc, type);
+		}
+
+		protected BoundIdentifier parseBoundIdent(ParserContext pc,
+				String name, int index, SourceLocation loc) throws SyntaxError {
+			return pc.factory.makeBoundIdentifier(index, loc);
+		}
+
+	}
+	
+	static final IdentSubParser IDENT_SUBPARSER = new IdentSubParser(NO_TAG);
+	
+	static final IParser<FreeIdentifier> FREE_IDENT_PARSER = new IParser<FreeIdentifier>() {
+
+		public FreeIdentifier parse(int parentTag, Formula<?> left,
+				ParserContext pc) throws SyntaxError {
+			final Identifier ident = IDENT_SUBPARSER.nud(pc);
+			if (!(ident instanceof FreeIdentifier)) {
+				throw new IllegalStateException("expected a free identifier");
+			}
+			return (FreeIdentifier) ident;
+		}
+	};
+
+	static final INudParser<IntegerLiteral> INTLIT_SUBPARSER = new DefaultNudParser<IntegerLiteral>(INTLIT) {
+	
+		public IntegerLiteral nud(ParserContext pc) throws SyntaxError {
+			final BigInteger value = BigInteger.valueOf((Integer // FIXME NumberFormatException
+					.valueOf(pc.t.val)));
+			pc.progress();
+			return pc.factory.makeIntegerLiteral(value, pc.getSourceLocation());
+		}
+	};
+
 	// TODO verify that all parser calls are made with NO_TAG when parsing
 	// formulae inside parentheses
-	static final INudParser CLOSED_SUGAR = new DefaultNudParser(NO_TAG) {
+	static final INudParser<Formula<?>> CLOSED_SUGAR = new DefaultNudParser<Formula<?>> (NO_TAG) {
 
-		public Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError {
+		public Formula<?> nud(ParserContext pc) throws SyntaxError {
 			pc.progressOpenParen();
-			final Formula<?> formula = MainParser.parse(NO_TAG, pc);
+			final Formula<?> formula = pc.subParse(NO_TAG, null, FORMULA_PARSER);
 			pc.progressCloseParen();
 			return formula;
 		}
 	};
 
 	// FIXME current design does not allow subparsers with no tag
-	static final ILedParser OFTYPE = new DefaultLedParser(OFTYPE_TAG) {
+	static final ILedParser<Formula<?>> OFTYPE = new DefaultLedParser<Formula<?>>(OFTYPE_TAG) {
 		
-		public Formula<?> led(Formula<?> left, ParserContext pc, int startPos)
+		public Formula<?> led(Formula<?> left, ParserContext pc)
 				throws SyntaxError {
-			final Type type = MainParser.parseType(pc);
+			final Type type = pc.subParse(NO_TAG, null, TYPE_PARSER);
 			switch (left.getTag()) {
 			case Formula.EMPTYSET:
-				return pc.factory.makeEmptySet(type, pc.getSourceLocation(left
-						.getSourceLocation().getStart()));
+				return pc.factory.makeEmptySet(type, pc.getSourceLocation());
 			default:
 				throw new SyntaxError("Unexpected oftype");
 			}
 		}
 	};
 	
-	static class AtomicExpressionParser extends DefaultNudParser {
+	static class AtomicExpressionParser extends DefaultNudParser<AtomicExpression> {
 	
 		protected AtomicExpressionParser(int tag) {
 			super(tag);
 		}
 	
-		public Formula<?> nud(ParserContext pc, int startPos)
+		public AtomicExpression nud(ParserContext pc)
 				throws SyntaxError {
 			final AtomicExpression atomExpr = pc.factory.makeAtomicExpression(
-					tag, pc.getSourceLocation(startPos));
+					tag, pc.getSourceLocation());
 			pc.progress();
 			return atomExpr;
 		}
 
 	}
 
-	static class BinaryExpressionInfix extends DefaultLedParser {
+	static class BinaryExpressionInfix extends DefaultLedParser<Expression> {
 
 		public BinaryExpressionInfix(int tag) {
 			super(tag);
 		}
 		
-		public Expression led(Formula<?> left, ParserContext pc, int startPos)
+		public Expression led(Formula<?> left, ParserContext pc)
 				throws SyntaxError {
-			final Expression right = MainParser.parseExpression(tag, pc);
+			final Expression right = pc.subParse(tag, null, EXPR_PARSER);
 			if (!(left instanceof Expression)) {
 				throw new SyntaxError("expected expressions");
 			}
-			final SourceLocation srcLoc = pc.getSourceLocation(startPos);
+			final SourceLocation srcLoc = pc.getSourceLocation();
 			return makeResult(pc.factory, (Expression) left,
 					right, srcLoc);
 		}
@@ -164,16 +426,16 @@ public class Parsers {
 		}
 
 	}
-	
-	static class AssociativeExpressionInfix extends DefaultLedParser {
+
+	static class AssociativeExpressionInfix extends DefaultLedParser<Expression> {
 
 		public AssociativeExpressionInfix(int tag) {
 			super(tag);
 		}
 
-		public Expression led(Formula<?> left, ParserContext pc, int startPos)
+		public Expression led(Formula<?> left, ParserContext pc)
 				throws SyntaxError {
-			final Expression right = MainParser.parseExpression(tag, pc);
+			final Expression right = pc.subParse(tag, null, EXPR_PARSER);
 			if (!(left instanceof Expression)) {
 				throw new SyntaxError("expected expressions");
 			}
@@ -184,7 +446,7 @@ public class Parsers {
 				children.add((Expression) left);
 			}
 			children.add(right);
-			final SourceLocation srcLoc = pc.getSourceLocation(startPos);
+			final SourceLocation srcLoc = pc.getSourceLocation();
 			return makeResult(pc.factory, children, srcLoc);
 		}
 		
@@ -220,15 +482,15 @@ public class Parsers {
 		}
 	}
 	
-	static class AssociativePredicateInfix extends DefaultLedParser {
+	static class AssociativePredicateInfix extends DefaultLedParser<AssociativePredicate> {
 
 		public AssociativePredicateInfix(int tag) {
 			super(tag);
 		}
 
-		public AssociativePredicate led(Formula<?> left, ParserContext pc, int startPos)
+		public AssociativePredicate led(Formula<?> left, ParserContext pc)
 				throws SyntaxError {
-			final Predicate right = MainParser.parsePredicate(tag, pc);
+			final Predicate right = pc.subParse(tag, null, PRED_PARSER);
 			if (!(left instanceof Predicate)) {
 				throw new SyntaxError("expected predicates");
 			}
@@ -241,70 +503,69 @@ public class Parsers {
 			}
 			children.add(right);
 			return pc.factory.makeAssociativePredicate(tag, children, pc
-					.getSourceLocation(startPos));
+					.getSourceLocation());
 		}
 	}
 
-	static class RelationalPredicateInfix extends DefaultLedParser {
+	static class RelationalPredicateInfix extends DefaultLedParser<RelationalPredicate> {
 
 		public RelationalPredicateInfix(int tag) {
 			super(tag);
 		}
 
-		public RelationalPredicate led(Formula<?> left, ParserContext pc,
-				int startPos) throws SyntaxError {
-			final Expression right = MainParser.parseExpression(tag, pc);
+		public RelationalPredicate led(Formula<?> left, ParserContext pc) throws SyntaxError {
+			final Expression right = pc.subParse(tag, null, EXPR_PARSER);
 			if (!(left instanceof Expression)) {
 				throw new SyntaxError("expected expressions");
 			}
 			return pc.factory.makeRelationalPredicate(tag, (Expression) left,
-					right, pc.getSourceLocation(startPos));
+					right, pc.getSourceLocation());
 		}
 	}
 
-	static final ILedParser FUN_IMAGE = new DefaultLedParser(FUNIMAGE) {
+	static final ILedParser<BinaryExpression> FUN_IMAGE = new DefaultLedParser<BinaryExpression>(FUNIMAGE) {
 
-		public BinaryExpression led(Formula<?> left, ParserContext pc,
-				int startPos) throws SyntaxError {
-			final Expression right = MainParser.parseExpression(NO_TAG, pc);
+		public BinaryExpression led(Formula<?> left, ParserContext pc) throws SyntaxError {
+			final Expression right = pc.subParse(NO_TAG, null, EXPR_PARSER);
 			if (!(left instanceof Expression)) {
 				throw new SyntaxError("expected expressions");
 			}
 			pc.progressCloseParen();
 			return pc.factory.makeBinaryExpression(tag, (Expression) left,
-					right, pc.getSourceLocation(startPos));
+					right, pc.getSourceLocation());
 		}
 	};
 
-	static class LiteralPredicateParser extends DefaultNudParser {
+	static class LiteralPredicateParser extends DefaultNudParser<LiteralPredicate> {
 
 		public LiteralPredicateParser(int tag) {
 			super(tag);
 		}
 
-		public Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError {
+		public LiteralPredicate nud(ParserContext pc) throws SyntaxError {
 			final LiteralPredicate litPred = pc.factory.makeLiteralPredicate(
-					tag, pc.getSourceLocation(startPos));
+					tag, pc.getSourceLocation());
 			pc.progress();
 			return litPred;
 		}
 	}
 
-	static class QuantifiedPredicateParser extends DefaultNudParser {
+	static class QuantifiedPredicateParser extends DefaultNudParser<QuantifiedPredicate> {
 
 		public QuantifiedPredicateParser(int tag) {
 			super(tag);
 		}
 
-		public Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError {
+		public QuantifiedPredicate nud(ParserContext pc) throws SyntaxError {
 			pc.progress();
-			final List<FreeIdentifier> identList = IDENT_LIST_PARSER.parse(pc, pc.t.pos);
+			final List<Identifier> identList = pc.subParse(NO_TAG, null, IDENT_LIST_PARSER);
 			pc.progress(_DOT);
-			final Predicate pred = MainParser.parsePredicate(tag, pc);
+			final Predicate pred = pc.subParse(tag, null, PRED_PARSER);
 
-			final Predicate boundPred = pred.bindTheseIdents(identList, pc.factory);
+			final List<FreeIdentifier> freeIdentList = makeFreeIdentList(pc.factory, identList);
+			final Predicate boundPred = pred.bindTheseIdents(freeIdentList, pc.factory);
 			final List<BoundIdentDecl> boundIdentifiers = makeBoundIdentDeclList(
-					pc.factory, identList);
+					pc.factory, freeIdentList);
 			return pc.factory.makeQuantifiedPredicate(tag, boundIdentifiers,
 					boundPred, null);
 		}
@@ -320,312 +581,187 @@ public class Parsers {
 		return boundIdentifiers;
 	}
 
-	static class UnaryExpressionParser extends DefaultNudParser {
+	static List<FreeIdentifier> makeFreeIdentList(FormulaFactory factory,
+			final List<Identifier> identList) throws SyntaxError {
+		final List<FreeIdentifier> freeIdents = new ArrayList<FreeIdentifier>(identList.size());
+		// TODO use Formula.bindTheseIdents instead ?
+		for (Identifier ident: identList) {
+			if (!(ident instanceof FreeIdentifier)) {
+				throw new SyntaxError("expected a free identifier, but was "
+						+ ident);
+			}
+			freeIdents.add((FreeIdentifier) ident);
+		}
+		return freeIdents;
+	}
+
+	static class UnaryExpressionParser extends DefaultNudParser<UnaryExpression> {
 
 		public UnaryExpressionParser(int tag) {
 			super(tag);
 		}
 
-		public Formula<?> nud(ParserContext pc, int startPos)
+		public UnaryExpression nud(ParserContext pc)
 				throws SyntaxError {
 			pc.progress();
 			pc.progressOpenParen();
-			final Expression child = MainParser.parseExpression(NO_TAG, pc);
+			final Expression child = pc.subParse(NO_TAG, null, EXPR_PARSER);
 			pc.progressCloseParen();
-			return pc.factory.makeUnaryExpression(tag, child, pc.getSourceLocation(startPos));
+			return pc.factory.makeUnaryExpression(tag, child, pc.getSourceLocation());
 		}
 
 	}
 
-	static class PatternParser {
+	static class PatternParser implements IParser<Pattern> {
 		
-		public static void parse(ParserContext pc, int startPos, Pattern pattern) throws SyntaxError {
-			parsePatternAtom(pc, pc.t.pos, pattern);
+		final Pattern pattern;
+		
+		public PatternParser(ParseResult result) {
+			this.pattern = new Pattern(result);
+		}
+
+		public Pattern parse(int parentTag, Formula<?> left, ParserContext pc) throws SyntaxError {
+			final PatternAtomParser atomParser = new PatternAtomParser(pattern, this);
+			pc.subParse(NO_TAG, null, atomParser);
 			while (pc.t.kind == _MAPSTO) {
 				pc.progress();
-				parsePatternAtom(pc, pc.t.pos, pattern);
-				pattern.mapletParsed(pc.getSourceLocation(startPos));
+				pc.subParse(NO_TAG, null, atomParser);
+				pattern.mapletParsed(pc.getSourceLocation());
 			}
+			return pattern;
 		}
 
-		private static void parsePatternAtom(ParserContext pc, int startPos,
-				Pattern pattern) throws SyntaxError {
-			if (pc.t.kind == _LPAR) {
-				pc.progressOpenParen();
-				parse(pc, pc.t.pos, pattern);
-				pc.progressCloseParen();
-			} else {
-				final FreeIdentifier ident = (FreeIdentifier) FREE_IDENT_SUBPARSER.nud(pc, pc.t.pos);
-				pattern.declParsed(ident.asDecl(pc.factory));
+		private static class PatternAtomParser implements IParser<Object> {
+
+			private final Pattern pattern;
+			private final PatternParser parser;
+			
+			public PatternAtomParser(Pattern pattern, PatternParser parser) {
+				this.pattern = pattern;
+				this.parser = parser;
+			}
+
+			public Object parse(int parentTag, Formula<?> left,
+					ParserContext pc) throws SyntaxError {
+				if (pc.t.kind == _LPAR) {
+					pc.progressOpenParen();
+					pc.subParse(NO_TAG, null, parser);
+					pc.progressCloseParen();
+				} else {
+					final FreeIdentifier freeIdentifier = pc.subParse(
+							parentTag, left, FREE_IDENT_PARSER);
+					pattern.declParsed(freeIdentifier.asDecl(pc.factory));
+				}
+				return null;
 			}
 		}
-
 	}
+
+	static class AbstListParser<T extends Expression> implements IParser<List<T>> {
 	
-	static abstract class AbstListParser<T extends Expression> {
-	
-		public List<T> parse(ParserContext pc, int startPos) throws SyntaxError {
+		private final IParser<T> parser;
+		
+		public AbstListParser(IParser<T> parser) {
+			this.parser = parser;
+		}
+
+		public List<T> parse(int parentTag, Formula<?> left, ParserContext pc) throws SyntaxError {
 			final List<T> list = new ArrayList<T>();
-			T next = getItem(pc, startPos);
+			T next = pc.subParse(NO_TAG, null, parser);
 			list.add(next);
 			while (pc.t.kind == _COMMA) {
 				pc.progress();
-				next = getItem(pc, pc.t.pos);
+				next = pc.subParse(NO_TAG, null, parser);
 				list.add(next);
 			}
 			return list;
 		}
 		
-		protected abstract T getItem(ParserContext pc, int startPos) throws SyntaxError;
-		
 	}
 
-	static final AbstListParser<Expression> EXPR_LIST_PARSER = new AbstListParser<Expression>() {
-		@Override
-		protected Expression getItem(ParserContext pc, int startPos)
-				throws SyntaxError {
-			return MainParser.parseExpression(NO_TAG, pc);
-		}
-	};
+	static final AbstListParser<Expression> EXPR_LIST_PARSER = new AbstListParser<Expression>(EXPR_PARSER);
 	
-	static final AbstListParser<FreeIdentifier> IDENT_LIST_PARSER = new AbstListParser<FreeIdentifier>() {
-		@Override
-		protected FreeIdentifier getItem(ParserContext pc, int startPos)
-				throws SyntaxError {
-			final FreeIdentifier ident = (FreeIdentifier) FREE_IDENT_SUBPARSER.nud(pc, pc.t.pos);
-			return ident;
-		}
-	};
+	static final AbstListParser<Identifier> IDENT_LIST_PARSER = new AbstListParser<Identifier>(IDENT_SUBPARSER);
 
-	static final INudParser SETEXT_PARSER = new DefaultNudParser(SETEXT) {
+	static final INudParser<SetExtension> SETEXT_PARSER = new DefaultNudParser<SetExtension>(SETEXT) {
 		
-		public Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError {
+		public SetExtension nud(ParserContext pc) throws SyntaxError {
 			pc.progress();
-			final List<Expression> exprs = EXPR_LIST_PARSER.parse(pc, pc.t.pos);
+			final List<Expression> exprs = pc.subParse(NO_TAG, null, EXPR_LIST_PARSER);
 			pc.progress(_RBRACE);
 			
-			return pc.factory.makeSetExtension(exprs, pc.getSourceLocation(startPos));
+			return pc.factory.makeSetExtension(exprs, pc.getSourceLocation());
 		}
 	};
 	
-	static final INudParser CSET_EXPLICIT = new DefaultNudParser(CSET) {
+	static final INudParser<QuantifiedExpression> CSET_EXPLICIT = new DefaultNudParser<QuantifiedExpression>(CSET) {
 		
-		public Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError {
+		public QuantifiedExpression nud(ParserContext pc) throws SyntaxError {
 			pc.progress();
-			final List<FreeIdentifier> idents = IDENT_LIST_PARSER.parse(pc, pc.t.pos);
+			final List<Identifier> idents = pc.subParse(NO_TAG, null, IDENT_LIST_PARSER);
 			pc.progress(_DOT);
-			final Predicate pred = MainParser.parsePredicate(NO_TAG, pc);
+			final Predicate pred = pc.subParse(NO_TAG, null, PRED_PARSER);
 			pc.progress(_MID);
-			final Expression expr = MainParser.parseExpression(NO_TAG, pc);
+			final Expression expr = pc.subParse(NO_TAG, null, EXPR_PARSER);
 			pc.progress(_RBRACE);
-			final Predicate boundPred = pred.bindTheseIdents(idents, pc.factory);
-			final Expression boundExpr = expr.bindTheseIdents(idents, pc.factory);
-			final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, idents);
+			
+			final List<FreeIdentifier> freeIdents = makeFreeIdentList(pc.factory, idents);
+			final Predicate boundPred = pred.bindTheseIdents(freeIdents, pc.factory);
+			final Expression boundExpr = expr.bindTheseIdents(freeIdents, pc.factory);
+			final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, freeIdents);
 			return pc.factory.makeQuantifiedExpression(tag, boundIdents, boundPred,
-					boundExpr, pc.getSourceLocation(startPos), Form.Explicit);
+					boundExpr, pc.getSourceLocation(), Form.Explicit);
 		}
 	};
 	
-	static final INudParser CSET_IMPLICIT = new DefaultNudParser(CSET) {
+	static final INudParser<QuantifiedExpression> CSET_IMPLICIT = new DefaultNudParser<QuantifiedExpression>(CSET) {
 		
-		public Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError {
+		public QuantifiedExpression nud(ParserContext pc) throws SyntaxError {
 			pc.progress();
-			final Expression expr = MainParser.parseExpression(NO_TAG, pc);
+			final Expression expr = pc.subParse(NO_TAG, null, EXPR_PARSER);
 			pc.progress(_MID);
-			final Predicate pred = MainParser.parsePredicate(NO_TAG, pc);
+			final Predicate pred = pc.subParse(NO_TAG, null, PRED_PARSER);
 			pc.progress(_RBRACE);
 			final List<FreeIdentifier> idents = asList(expr.getFreeIdentifiers());
 			final Predicate boundPred = pred.bindTheseIdents(idents, pc.factory);
 			final Expression boundExpr = expr.bindTheseIdents(idents, pc.factory);
 			final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, idents);
 			return pc.factory.makeQuantifiedExpression(tag, boundIdents, boundPred,
-					boundExpr, pc.getSourceLocation(startPos), Form.Implicit);
+					boundExpr, pc.getSourceLocation(), Form.Implicit);
 		}
 	};
 	
-	static final INudParser CSET_LAMBDA = new DefaultNudParser(CSET) {
+	static final INudParser<QuantifiedExpression> CSET_LAMBDA = new DefaultNudParser<QuantifiedExpression>(CSET) {
 		
-		public Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError {
+		public QuantifiedExpression nud(ParserContext pc) throws SyntaxError {
 			pc.progress();
-			final Pattern pattern = new Pattern(pc.result);
-			PatternParser.parse(pc, pc.t.pos, pattern);
-			final List<FreeIdentifier> idents = getFreeIdents(pc, pattern.getDecls());
+			final PatternParser pattParser = new PatternParser(pc.result);
+			final Pattern pattern = pc.subParse(NO_TAG, null, pattParser);
+//			PatternParser.parse(pc.subContext(), pattern);
+			final List<FreeIdentifier> idents = getFreeIdents(pattern.getDecls(), pc.factory);
 			pc.progress(_DOT);
-			final Predicate pred = MainParser.parsePredicate(NO_TAG, pc);
+			final Predicate pred = pc.subParse(NO_TAG, null, PRED_PARSER);
 			final Predicate boundPred = pred.bindTheseIdents(idents, pc.factory);
 			pc.progress(_MID);
-			final Expression expr = MainParser.parseExpression(NO_TAG, pc);
+			final Expression expr = pc.subParse(NO_TAG, null, EXPR_PARSER);
 			final Expression boundExpr = expr.bindTheseIdents(idents, pc.factory);
 			
 			final Expression pair = pc.factory.makeBinaryExpression(MAPSTO,
 					pattern.getPattern(), boundExpr, null);
 			return pc.factory.makeQuantifiedExpression(tag, pattern.getDecls(), boundPred,
-					pair, pc.getSourceLocation(startPos), Form.Lambda);
+					pair, pc.getSourceLocation(), Form.Lambda);
 		}
 
 		// TODO avoid binding identifiers afterwards, better pass them
 		// as arguments everywhere; reuse Binding from bmath.atg
-		private List<FreeIdentifier> getFreeIdents(ParserContext pc,
-				final List<BoundIdentDecl> decls) {
+		private List<FreeIdentifier> getFreeIdents(List<BoundIdentDecl> decls,
+				FormulaFactory factory) {
 			final List<FreeIdentifier> idents = new ArrayList<FreeIdentifier>(decls.size());
 			for (BoundIdentDecl bid : decls) {
-				idents.add(pc.factory.makeFreeIdentifier(bid.getName(), bid
+				idents.add(factory.makeFreeIdentifier(bid.getName(), bid
 						.getSourceLocation()));
 			}
 			return idents;
-		}
-	};
-	
-	static class MainParser {
-
-		/**
-		 * Parses the formula from the given parser context. Starts from the
-		 * current token. When the method returns, the current token is the one
-		 * that immediately follows the last one that belongs to the parsed
-		 * formula.
-		 * 
-		 * @param parentTag
-		 *            tag of the parent formula, {@link Formula#NO_TAG} if none
-		 * @param pc
-		 *            current parser context
-		 * @return a formula
-		 * @throws SyntaxError
-		 *             if a syntax error occurs while parsing
-		 */
-		public static Formula<?> parse(int parentTag, ParserContext pc)
-				throws SyntaxError {
-			final int startPos = pc.t.pos;
-			final List<INudParser> nudParsers = getNudParsers(pc);
-			Formula<?> left = nudParse(pc, startPos, nudParsers);
-			while (pc.canProgressRight(parentTag)) {
-				final ILedParser ledParser = getLedParser(pc);
-				pc.progress();
-				left = ledParser.led(left, pc, startPos);
-			}
-			return left;
-		}
-		
-		// TODO implement backtracking for led parsers as well 
-
-		private static Formula<?> nudParse(ParserContext pc, int startPos,
-				List<INudParser> parsers) throws SyntaxError {
-			// FIXME store current context and restore it for each sub-parser
-			final List<SyntaxError> errors = new ArrayList<SyntaxError>();
-			final Iterator<INudParser> iter = parsers.iterator();
-			final SavedContext savedContext = pc.save();
-			while(iter.hasNext()) {
-				final INudParser nudParser = iter.next();
-				try {
-					return nudParser.nud(pc, startPos);
-				} catch (SyntaxError e) {
-					errors.add(e);
-					pc.restore(savedContext);
-				}
-			}
-			throw newCompoundError(errors);
-		}
-
-		// errors must be non empty 
-		private static SyntaxError newCompoundError(List<SyntaxError> errors) {
-			final StringBuilder reason = new StringBuilder(
-					"Parse failed because");
-			if (errors.size()>=2) {
-				reason.append(" either: ");
-			} else {
-				reason.append(": ");
-			}
-			final Iterator<SyntaxError> iter = errors.iterator();
-			while(iter.hasNext()) {
-			final SyntaxError syntaxError = iter.next();
-				reason.append(syntaxError.getMessage());
-				if (iter.hasNext()) {
-					reason.append(" OR ");
-				}
-			}
-			return new SyntaxError(reason.toString());
-		}
-
-		public static Type parseType(ParserContext pc) throws SyntaxError {
-			final int startPos = pc.t.pos;
-			pc.startParsingType();
-			final Expression expression = parseExpression(NO_TAG, pc);
-			if (!expression.isATypeExpression()) {
-				final int endPos = pc.t.pos;
-				throw new SyntaxError(
-						"expected a type expression between positions "
-								+ startPos + " and " + endPos);
-			}
-			try {
-				return expression.toType(pc.factory);
-			} catch (InvalidExpressionException e) {
-				// TODO should not happen (already checked)
-				e.printStackTrace();
-				return null;
-			} finally {
-				pc.stopParsingType();
-			}
-		}
-
-		public static Predicate parsePredicate(int parentTag, ParserContext pc) throws SyntaxError {
-			final Formula<?> formula = parse(parentTag, pc);
-			if (!(formula instanceof Predicate)) {
-				throw new SyntaxError("expected predicate");
-			}
-			return (Predicate) formula;
-		}
-		
-		public static Expression parseExpression(int parentTag, ParserContext pc) throws SyntaxError {
-			final Formula<?> formula = parse(parentTag, pc);
-			if (!(formula instanceof Expression)) {
-				throw new SyntaxError("expected expression");
-			}
-			return (Expression) formula;
-		}
-		
-		// returns a non empty list
-		private static List<INudParser> getNudParsers(ParserContext pc)
-				throws SyntaxError {
-			final List<INudParser> subParsers = pc.getNudParsers();
-			if (subParsers.isEmpty()) {
-				throw new SyntaxError("don't know how to parse: " + pc.t.val);
-			}
-			return subParsers;
-		}
-		
-		private static ILedParser getLedParser(ParserContext pc)
-		throws SyntaxError {
-			final ILedParser subParser = pc.getLedParser();
-			if (subParser == null) {
-				throw new SyntaxError("don't know how to parse: " + pc.t.val);
-			}
-			return subParser;
-		}
-	}
-
-	static final INudParser FREE_IDENT_SUBPARSER = new DefaultNudParser(FREE_IDENT) {
-
-		public FreeIdentifier nud(ParserContext pc, int startPos) throws SyntaxError {
-			final String name = pc.t.val;
-			final Type type;
-			if (pc.isParsingType()) {
-				type = pc.factory.makePowerSetType(pc.factory.makeGivenType(name));
-			} else {
-				type = null;
-			}
-			final FreeIdentifier ident = pc.factory.makeFreeIdentifier(name, pc
-					.getSourceLocation(startPos), type);
-			pc.progress();
-			return ident;
-		}
-	};
-
-	static final INudParser INTLIT_SUBPARSER = new DefaultNudParser(INTLIT) {
-
-		public Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError {
-			final BigInteger value = BigInteger.valueOf((Integer // FIXME NumberFormatException
-					.valueOf(pc.t.val)));
-			pc.progress();
-			return pc.factory.makeIntegerLiteral(value, pc.getSourceLocation(startPos));
 		}
 	};
 

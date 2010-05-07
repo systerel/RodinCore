@@ -16,11 +16,16 @@ import static org.eventb.internal.core.parser.AbstractGrammar._EOF;
 import static org.eventb.internal.core.parser.AbstractGrammar._LPAR;
 import static org.eventb.internal.core.parser.AbstractGrammar._RPAR;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Assignment;
+import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
@@ -93,20 +98,31 @@ public class GenParser {
 		protected final FormulaFactory factory;
 		private final AbstractGrammar grammar;
 		protected final ParseResult result;
+		private final Binding binding;
+		private final Stack<Integer> startPosStack = new Stack<Integer>();
+		private int startPos = -1;
 		private boolean parsingType;
 		protected Token t;    // last recognized token
 		protected Token la;   // lookahead token
 		
 		public ParserContext(Scanner scanner, FormulaFactory factory, ParseResult result) {
+			this(scanner, factory, result, new Binding(), 0);
+		}
+		
+		protected ParserContext(Scanner scanner, FormulaFactory factory, ParseResult result, Binding binding, int startPos) {
 			this.scanner = scanner;
 			this.factory = factory;
 			this.grammar = factory.getGrammar();
 			this.result = result;
+			this.binding = binding;
 		}
 		
 		// FIXME end position is wrong in some parsers
 		// where they have progressed after last token 
-		public SourceLocation getSourceLocation(int startPos) {
+		public SourceLocation getSourceLocation() {
+			if (startPos < 0) {
+				throw new IllegalStateException("no start position set");
+			}
 			return new SourceLocation(startPos, t.getEnd(), result.getOrigin());
 		}
 		
@@ -184,12 +200,16 @@ public class GenParser {
 			progress(_RPAR);
 		}
 		
-		public List<INudParser> getNudParsers() {
+		public List<INudParser<Formula<?>>> getNudParsers() {
 			return grammar.getNudParsers(t);
 		}
 		
-		public ILedParser getLedParser() {
+		public ILedParser<Formula<?>> getLedParser() {
 			return grammar.getLedParser(t);
+		}
+		
+		public int getBoundIndex(String name) {
+			return binding.getBoundIndex(name);
 		}
 		
 		public boolean canProgressRight(int parentTag) throws SyntaxError {
@@ -203,9 +223,61 @@ public class GenParser {
 			return opRegistry.hasLessPriority(parentTag, grammar.getOperatorTag(t));
 		}
 		
+		// TODO as we always pass null, get rid of left and accept only nud or main parsers (to unify)
+		public <T> T subParse(int parentTag, Formula<?> left, IParser<T> parser) throws SyntaxError {
+			startPosStack.push(startPos);
+			startPos = t.pos;
+			final T res = parser.parse(parentTag, left, this);
+			startPos = startPosStack.pop();
+			return res;
+		}
 	}
 	
+	static interface IParser<T> {
+		T parse(int parentTag, Formula<?> left, ParserContext pc) throws SyntaxError;
+	}
 	
+    private static class Binding {
+    	private Map<String, Integer> binders;
+    	private int maxCount = -1;
+ 
+    	// Creates an empty binding.
+        Binding() {
+        	binders = new HashMap<String, Integer>();
+        }
+    	
+        // Creates a new binding based on <code>base</code> and extended
+        // with <code>ident</code>
+		Binding(Binding base, BoundIdentDecl ident) {
+        	binders = new HashMap<String, Integer>(base.binders);
+			maxCount = base.maxCount;
+    		binders.put(ident.getName(), ++ maxCount);
+    	}
+
+        // Creates a new binding based on <code>base</code> and extended
+        // with <code>idents</code>
+		Binding(Binding base, List<BoundIdentDecl> idents) {
+        	binders = new HashMap<String, Integer>(base.binders);
+			int index = base.maxCount;
+    		for (BoundIdentDecl ident: idents) {
+    			binders.put(ident.getName(), ++ index);
+    		}
+    		maxCount = index;
+    	}
+
+		// Returns the index to use for the identifier <code>name</code>
+		// or -1 if the name is free under this binding.
+		int getBoundIndex(String name) {
+			Integer index = binders.get(name);
+			if (index == null) {
+				return -1;
+			}
+			else {
+				return maxCount - index;
+			}
+		}
+    }
+
 	public GenParser(Class<?> clazz, Scanner scanner, ParseResult result,
 			boolean withPredVar) {
 		super();
@@ -230,9 +302,9 @@ public class GenParser {
 			pc.init();
 			final Object res;
 			if (clazz == Type.class) {
-				res = Parsers.MainParser.parseType(pc);
+				res = pc.subParse(NO_TAG, null, Parsers.TYPE_PARSER);
 			} else {
-				res = Parsers.MainParser.parse(NO_TAG, pc);
+				res = pc.subParse(NO_TAG, null, Parsers.FORMULA_PARSER);
 			}
 			if (pc.t.kind != _EOF) {
 				throw new UnmatchedToken("tokens have been ignored from: \""

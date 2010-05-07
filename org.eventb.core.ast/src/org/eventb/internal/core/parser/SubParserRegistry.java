@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eventb.core.ast.Formula;
 import org.eventb.internal.core.parser.AbstractGrammar.OverrideException;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 
@@ -26,8 +27,8 @@ import org.eventb.internal.core.parser.GenParser.SyntaxError;
 public class SubParserRegistry {
 
 	private static class KindParsers {
-		private final List<ILedParser> ledParsers = new ArrayList<ILedParser>();
-		private final List<INudParser> nudParsers = new ArrayList<INudParser>();
+		private final List<ILedParser<Formula<?>>> ledParsers = new ArrayList<ILedParser<Formula<?>>>();
+		private final List<INudParser<Formula<?>>> nudParsers = new ArrayList<INudParser<Formula<?>>>();
 
 		public KindParsers() {
 			// nothing to do
@@ -45,11 +46,11 @@ public class SubParserRegistry {
 			}
 		}
 
-		public List<ILedParser> getLedParsers() {
+		public List<ILedParser<Formula<?>>> getLedParsers() {
 			return ledParsers;
 		}
 
-		public List<INudParser> getNudParsers() {
+		public List<INudParser<Formula<?>>> getNudParsers() {
 			return nudParsers;
 		}
 
@@ -71,11 +72,11 @@ public class SubParserRegistry {
 		if (parsers == null) {
 			return null;
 		}
-		final List<ILedParser> ledParsers = parsers.getLedParsers();
+		final List<ILedParser<Formula<?>>> ledParsers = parsers.getLedParsers();
 		if (!ledParsers.isEmpty()) {
 			return ledParsers.get(0);
 		}
-		final List<INudParser> nudParsers = parsers.getNudParsers();
+		final List<INudParser<Formula<?>>> nudParsers = parsers.getNudParsers();
 		if (!nudParsers.isEmpty()) {
 			return nudParsers.get(0);
 		}
@@ -88,7 +89,7 @@ public class SubParserRegistry {
 	}
 	
 	
-	public List<INudParser> getNudParsers(Token token) {
+	public List<INudParser<Formula<?>>> getNudParsers(Token token) {
 		final KindParsers parsers = kindParsers.get(token.kind);
 		if (parsers == null) {
 			return Collections.emptyList();
@@ -96,7 +97,7 @@ public class SubParserRegistry {
 		return parsers.getNudParsers(); 
 	}
 	
-	public ILedParser getLedParser(Token token) {
+	public ILedParser<Formula<?>> getLedParser(Token token) {
 		final KindParsers parsers = kindParsers.get(token.kind);
 		if (parsers == null || parsers.isEmpty()) {
 			return null;

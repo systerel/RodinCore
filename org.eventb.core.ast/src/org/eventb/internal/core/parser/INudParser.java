@@ -18,7 +18,7 @@ import org.eventb.internal.core.parser.GenParser.SyntaxError;
  * @author Nicolas Beauger
  * 
  */
-public interface INudParser extends ISubParser {
+public interface INudParser<T> extends ISubParser<T> {
 
 	/**
 	 * Parses a null-denoted formula with the given parser context. The given
@@ -37,6 +37,6 @@ public interface INudParser extends ISubParser {
 	 * @throws SyntaxError
 	 *             if the there is a syntax error
 	 */
-	Formula<?> nud(ParserContext pc, int startPos) throws SyntaxError;
+	T nud(ParserContext pc) throws SyntaxError;
 
 }
