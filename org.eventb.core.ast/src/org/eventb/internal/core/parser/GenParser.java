@@ -98,23 +98,19 @@ public class GenParser {
 		protected final FormulaFactory factory;
 		private final AbstractGrammar grammar;
 		protected final ParseResult result;
-		private final Binding binding;
 		private final Stack<Integer> startPosStack = new Stack<Integer>();
+		private final Stack<Binding> bindingStack = new Stack<Binding>();
 		private int startPos = -1;
+		private Binding binding = new Binding();
 		private boolean parsingType;
 		protected Token t;    // last recognized token
 		protected Token la;   // lookahead token
 		
-		public ParserContext(Scanner scanner, FormulaFactory factory, ParseResult result) {
-			this(scanner, factory, result, new Binding(), 0);
-		}
-		
-		protected ParserContext(Scanner scanner, FormulaFactory factory, ParseResult result, Binding binding, int startPos) {
+		protected ParserContext(Scanner scanner, FormulaFactory factory, ParseResult result) {
 			this.scanner = scanner;
 			this.factory = factory;
 			this.grammar = factory.getGrammar();
 			this.result = result;
-			this.binding = binding;
 		}
 		
 		// FIXME end position is wrong in some parsers
@@ -223,19 +219,36 @@ public class GenParser {
 			return opRegistry.hasLessPriority(parentTag, grammar.getOperatorTag(t));
 		}
 		
-		public <T> T subParse(INudParser<T> parser) throws SyntaxError {
+		private void pushPos() {
 			startPosStack.push(startPos);
 			startPos = t.pos;
-			final T res = parser.nud(this);
+		}
+		
+		private void popPos() {
 			startPos = startPosStack.pop();
+		}
+		
+		public <T> T subParse(INudParser<T> parser) throws SyntaxError {
+			pushPos();
+			final T res = parser.nud(this);
+			popPos();
 			return res;
 		}
 		
 		public <T> T subParse(int parentTag, IMainParser<T> parser) throws SyntaxError {
-			startPosStack.push(startPos);
-			startPos = t.pos;
+			pushPos();
 			final T res = parser.parse(parentTag, this);
-			startPos = startPosStack.pop();
+			popPos();
+			return res;
+		}
+		
+		public <T> T subParse(int parentTag, IMainParser<T> parser, List<BoundIdentDecl> newBoundIdents) throws SyntaxError {
+			pushPos();
+			bindingStack.push(binding);
+			binding = new Binding(binding, newBoundIdents);
+			final T res = parser.parse(parentTag, this);
+			binding = bindingStack.pop();
+			popPos();
 			return res;
 		}
 	}

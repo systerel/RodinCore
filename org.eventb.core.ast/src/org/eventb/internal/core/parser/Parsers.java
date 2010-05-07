@@ -76,10 +76,6 @@ public class Parsers {
 		protected DefaultNudParser(int tag) {
 			super(tag);
 		}
-
-		public final T parse(int parentTag, Formula<?> left, ParserContext pc) throws SyntaxError {
-			return nud(pc);
-		}
 	}
 
 	private static abstract class DefaultLedParser<T> extends AbstractSubParser<T> implements ILedParser<T> {
@@ -87,11 +83,6 @@ public class Parsers {
 		protected DefaultLedParser(int tag) {
 			super(tag);
 		}
-		
-		public final T parse(int parentTag, Formula<?> left, ParserContext pc) throws SyntaxError {
-			return led(left, pc);
-		}
-
 	}
 	
 	private static abstract class DefaultMainParser<T> extends DefaultNudParser<T> implements IMainParser<T> {
@@ -299,13 +290,14 @@ public class Parsers {
 	
 	static final IdentSubParser IDENT_SUBPARSER = new IdentSubParser(NO_TAG);
 	
-	static final INudParser<FreeIdentifier> FREE_IDENT_PARSER = new DefaultNudParser<FreeIdentifier>(
+	static final INudParser<FreeIdentifier> FREE_IDENT_SUBPARSER = new DefaultNudParser<FreeIdentifier>(
 			FREE_IDENT) {
 
 		public FreeIdentifier nud(ParserContext pc) throws SyntaxError {
 			final Identifier ident = IDENT_SUBPARSER.nud(pc);
 			if (!(ident instanceof FreeIdentifier)) {
-				throw new IllegalStateException("expected a free identifier");
+				throw new SyntaxError("expected a free identifier at position "
+						+ pc.getSourceLocation());
 			}
 			return (FreeIdentifier) ident;
 		}
@@ -538,20 +530,18 @@ public class Parsers {
 
 		public QuantifiedPredicate nud(ParserContext pc) throws SyntaxError {
 			pc.progress();
-			final List<Identifier> identList = pc.subParse(IDENT_LIST_PARSER);
+			final List<FreeIdentifier> identList = pc.subParse(FREE_IDENT_LIST_PARSER);
 			pc.progress(_DOT);
-			final Predicate pred = pc.subParse(tag, PRED_PARSER);
-
-			final List<FreeIdentifier> freeIdentList = makeFreeIdentList(pc.factory, identList);
-			final Predicate boundPred = pred.bindTheseIdents(freeIdentList, pc.factory);
 			final List<BoundIdentDecl> boundIdentifiers = makeBoundIdentDeclList(
-					pc.factory, freeIdentList);
+					pc.factory, identList);
+			final Predicate pred = pc.subParse(tag, PRED_PARSER, boundIdentifiers);
+
 			return pc.factory.makeQuantifiedPredicate(tag, boundIdentifiers,
-					boundPred, null);
+					pred, null);
 		}
 	}
 
-	static List<BoundIdentDecl> makeBoundIdentDeclList(FormulaFactory factory,
+	static <T extends Identifier>List<BoundIdentDecl> makeBoundIdentDeclList(FormulaFactory factory,
 			final List<FreeIdentifier> identList) {
 		final List<BoundIdentDecl> boundIdentifiers = new ArrayList<BoundIdentDecl>(identList.size());
 		// TODO use Formula.bindTheseIdents instead ?
@@ -628,7 +618,7 @@ public class Parsers {
 					pc.progressCloseParen();
 				} else {
 					final FreeIdentifier freeIdentifier = pc.subParse(
-							FREE_IDENT_PARSER);
+							FREE_IDENT_SUBPARSER);
 					pattern.declParsed(freeIdentifier.asDecl(pc.factory));
 				}
 				return null;
@@ -663,6 +653,8 @@ public class Parsers {
 	
 	static final AbstListParser<Identifier> IDENT_LIST_PARSER = new AbstListParser<Identifier>(IDENT_SUBPARSER);
 
+	static final AbstListParser<FreeIdentifier> FREE_IDENT_LIST_PARSER = new AbstListParser<FreeIdentifier>(FREE_IDENT_SUBPARSER);
+	
 	static final INudParser<SetExtension> SETEXT_PARSER = new DefaultNudParser<SetExtension>(SETEXT) {
 		
 		public SetExtension nud(ParserContext pc) throws SyntaxError {
@@ -678,19 +670,16 @@ public class Parsers {
 		
 		public QuantifiedExpression nud(ParserContext pc) throws SyntaxError {
 			pc.progress();
-			final List<Identifier> idents = pc.subParse(IDENT_LIST_PARSER);
+			final List<FreeIdentifier> idents = pc.subParse(FREE_IDENT_LIST_PARSER);
 			pc.progress(_DOT);
-			final Predicate pred = pc.subParse(PRED_PARSER);
+			final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, idents);
+			final Predicate pred = pc.subParse(tag, PRED_PARSER, boundIdents);
 			pc.progress(_MID);
-			final Expression expr = pc.subParse(EXPR_PARSER);
+			final Expression expr = pc.subParse(tag, EXPR_PARSER, boundIdents);
 			pc.progress(_RBRACE);
 			
-			final List<FreeIdentifier> freeIdents = makeFreeIdentList(pc.factory, idents);
-			final Predicate boundPred = pred.bindTheseIdents(freeIdents, pc.factory);
-			final Expression boundExpr = expr.bindTheseIdents(freeIdents, pc.factory);
-			final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, freeIdents);
-			return pc.factory.makeQuantifiedExpression(tag, boundIdents, boundPred,
-					boundExpr, pc.getSourceLocation(), Form.Explicit);
+			return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
+					expr, pc.getSourceLocation(), Form.Explicit);
 		}
 	};
 	
@@ -700,13 +689,13 @@ public class Parsers {
 			pc.progress();
 			final Expression expr = pc.subParse(EXPR_PARSER);
 			pc.progress(_MID);
-			final Predicate pred = pc.subParse(PRED_PARSER);
-			pc.progress(_RBRACE);
 			final List<FreeIdentifier> idents = asList(expr.getFreeIdentifiers());
-			final Predicate boundPred = pred.bindTheseIdents(idents, pc.factory);
-			final Expression boundExpr = expr.bindTheseIdents(idents, pc.factory);
 			final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, idents);
-			return pc.factory.makeQuantifiedExpression(tag, boundIdents, boundPred,
+			final Expression boundExpr = expr.bindTheseIdents(idents, pc.factory);
+			
+			final Predicate pred = pc.subParse(tag, PRED_PARSER, boundIdents);
+			pc.progress(_RBRACE);
+			return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
 					boundExpr, pc.getSourceLocation(), Form.Implicit);
 		}
 	};
@@ -717,31 +706,16 @@ public class Parsers {
 			pc.progress();
 			final PatternParser pattParser = new PatternParser(pc.result);
 			final Pattern pattern = pc.subParse(pattParser);
-//			PatternParser.parse(pc.subContext(), pattern);
-			final List<FreeIdentifier> idents = getFreeIdents(pattern.getDecls(), pc.factory);
 			pc.progress(_DOT);
-			final Predicate pred = pc.subParse(PRED_PARSER);
-			final Predicate boundPred = pred.bindTheseIdents(idents, pc.factory);
+			final List<BoundIdentDecl> boundDecls = pattern.getDecls();
+			final Predicate pred = pc.subParse(tag, PRED_PARSER, boundDecls);
 			pc.progress(_MID);
-			final Expression expr = pc.subParse(EXPR_PARSER);
-			final Expression boundExpr = expr.bindTheseIdents(idents, pc.factory);
+			final Expression expr = pc.subParse(tag, EXPR_PARSER, boundDecls);
 			
 			final Expression pair = pc.factory.makeBinaryExpression(MAPSTO,
-					pattern.getPattern(), boundExpr, null);
-			return pc.factory.makeQuantifiedExpression(tag, pattern.getDecls(), boundPred,
+					pattern.getPattern(), expr, null);
+			return pc.factory.makeQuantifiedExpression(tag, boundDecls, pred,
 					pair, pc.getSourceLocation(), Form.Lambda);
-		}
-
-		// TODO avoid binding identifiers afterwards, better pass them
-		// as arguments everywhere; reuse Binding from bmath.atg
-		private List<FreeIdentifier> getFreeIdents(List<BoundIdentDecl> decls,
-				FormulaFactory factory) {
-			final List<FreeIdentifier> idents = new ArrayList<FreeIdentifier>(decls.size());
-			for (BoundIdentDecl bid : decls) {
-				idents.add(factory.makeFreeIdentifier(bid.getName(), bid
-						.getSourceLocation()));
-			}
-			return idents;
 		}
 	};
 
