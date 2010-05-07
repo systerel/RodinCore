@@ -223,18 +223,39 @@ public class GenParser {
 			return opRegistry.hasLessPriority(parentTag, grammar.getOperatorTag(t));
 		}
 		
-		// TODO as we always pass null, get rid of left and accept only nud or main parsers (to unify)
-		public <T> T subParse(int parentTag, Formula<?> left, IParser<T> parser) throws SyntaxError {
+		public <T> T subParse(INudParser<T> parser) throws SyntaxError {
 			startPosStack.push(startPos);
 			startPos = t.pos;
-			final T res = parser.parse(parentTag, left, this);
+			final T res = parser.nud(this);
+			startPos = startPosStack.pop();
+			return res;
+		}
+		
+		public <T> T subParse(int parentTag, IMainParser<T> parser) throws SyntaxError {
+			startPosStack.push(startPos);
+			startPos = t.pos;
+			final T res = parser.parse(parentTag, this);
 			startPos = startPosStack.pop();
 			return res;
 		}
 	}
 	
-	static interface IParser<T> {
-		T parse(int parentTag, Formula<?> left, ParserContext pc) throws SyntaxError;
+	static interface IMainParser<T> extends INudParser<T> {
+
+		/**
+		 * Parses the given parser context. Starts from the current token. When
+		 * the method returns, the current token is the one that immediately
+		 * follows the last one that belongs to the parsed formula.
+		 * 
+		 * @param parentTag
+		 *            tag of the parent formula, {@link Formula#NO_TAG} if none
+		 * @param pc
+		 *            current parser context
+		 * @return a formula
+		 * @throws SyntaxError
+		 *             if a syntax error occurs while parsing
+		 */
+		T parse(int parentTag, ParserContext pc) throws SyntaxError;
 	}
 	
     private static class Binding {
@@ -302,9 +323,9 @@ public class GenParser {
 			pc.init();
 			final Object res;
 			if (clazz == Type.class) {
-				res = pc.subParse(NO_TAG, null, Parsers.TYPE_PARSER);
+				res = pc.subParse(NO_TAG, Parsers.TYPE_PARSER);
 			} else {
-				res = pc.subParse(NO_TAG, null, Parsers.FORMULA_PARSER);
+				res = pc.subParse(NO_TAG, Parsers.FORMULA_PARSER);
 			}
 			if (pc.t.kind != _EOF) {
 				throw new UnmatchedToken("tokens have been ignored from: \""

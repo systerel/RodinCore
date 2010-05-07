@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
-import org.eventb.internal.core.parser.GenParser.IParser;
 
 /**
  * @author Nicolas Beauger
  * 
  */
-public interface ISubParser<T> extends IParser<T> {
+public interface ISubParser<T> {
 
 	// FIXME identifier sub-parser corresponds to several tags, namely
 	// FREE_IDENT and BOUND_IDENT
