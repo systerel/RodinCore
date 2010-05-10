@@ -36,6 +36,7 @@ import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
@@ -83,6 +84,18 @@ public class TestGenParser extends AbstractTests {
 	private static final IntegerType INT_TYPE = ff.makeIntegerType();
 	private static final PowerSetType POW_INT_TYPE = ff.makePowerSetType(INT_TYPE);
 	private static final SourceLocationChecker slChecker = new SourceLocationChecker();
+
+	private static void assertFailure(String formula, ProblemKind problemKind) {
+		final IParseResult result = ff.parseExpression(formula,
+				LanguageVersion.V2, null);
+		assertTrue(result.hasProblem());
+		final List<ASTProblem> problems = result.getProblems();
+		System.out.println(problems);
+		assertEquals(1, problems.size());
+		final ASTProblem problem = problems.get(0);
+		assertTrue(problem.isError());
+		assertEquals(problemKind, problem.getMessage());
+	}
 
 	private void doExpressionTest(String formula, Formula<?> expected, FormulaFactory factory) {
 		final IParseResult result = factory.parseExpression(formula,
@@ -196,11 +209,7 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testUnionInterNoParen() throws Exception {
-		final IParseResult result = ff.parseExpression("A∩B∪C",
-				LanguageVersion.V2, null);
-		assertTrue(result.hasProblem());
-		final List<ASTProblem> problems = result.getProblems();
-		System.out.println(problems);
+		assertFailure("A∩B∪C", ProblemKind.SyntaxError);
 	}
 
 	public void testAnd() throws Exception {
@@ -450,8 +459,6 @@ public class TestGenParser extends AbstractTests {
 		doTypeTest("ℙ(ℤ×ℤ)", expected);
 	}
 
-	// TODO parsing a given type requires to introduce either a notion of
-	// 'parsing a type' in parser context, or backtracking
 	public void testParseTypeGivenType() throws Exception {
 		final Type expected = S_TYPE;
 		doTypeTest("S", expected);
@@ -580,6 +587,10 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("λu↦(x↦(y↦z))·u>x+y+z∣ u+x+y+z", expected);
 	}
 	
+	public void testLambdaDuplicateIdents() throws Exception {
+		assertFailure("λx↦(y↦x)·x>y∣ x+y", ProblemKind.SyntaxError);
+	}
+
 	public void testInnerBoundIdentsForall() throws Exception {
 		final Predicate expected = ff.makeQuantifiedPredicate(FORALL,
 				new BoundIdentDecl[] { BID_x },
@@ -604,5 +615,30 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("{x∣ ∃y·x>y}", expected);		
 	}
 	
-
+	public void testLIMP() throws Exception {
+		final Predicate expected = 
+				ff.makeBinaryPredicate(LIMP,
+						LIT_BFALSE, LIT_BFALSE, null);
+		doPredicateTest("⊥⇒⊥", expected);
+	}
+	
+	// verify that a bound identifier reference after an inner bound predicate
+	// is parsed properly (involves boundStack.pop())
+	public void testBoundAfterInnerBound() throws Exception {
+		final Predicate expected = ff.makeQuantifiedPredicate(FORALL,
+				new BoundIdentDecl[] { BID_x },
+				ff.makeBinaryPredicate(LIMP,
+						ff.makeQuantifiedPredicate(EXISTS,
+								new BoundIdentDecl[] { BID_y },
+							ff.makeRelationalPredicate(GT,
+									BI_1,
+									BI_0, null), null),
+						ff.makeRelationalPredicate(GT,
+								BI_0,
+								ZERO, null),
+						null), null);
+		doPredicateTest("∀x·(∃y·x>y)⇒x>0", expected);
+	}
+	
+	// TODO parse assignments
 }

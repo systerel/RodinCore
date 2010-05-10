@@ -25,6 +25,7 @@ import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BinaryExpression;
+import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
@@ -85,6 +86,25 @@ public class Parsers {
 		}
 	}
 	
+	private static String makeSynErrMessage(Formula<?> formula, Class<?> clazz) {
+		return "expected a " + clazz.getCanonicalName() + ", but was "
+				+ formula + " at position " + formula.getSourceLocation();
+	}
+
+	static Predicate asPredicate(Formula<?> formula) throws SyntaxError {
+		if (!(formula instanceof Predicate)) {
+			throw new SyntaxError(makeSynErrMessage(formula, Predicate.class));
+		}
+		return (Predicate) formula;
+	}
+
+	static Expression asExpression(Formula<?> formula) throws SyntaxError {
+		if (!(formula instanceof Expression)) {
+			throw new SyntaxError(makeSynErrMessage(formula, Expression.class));
+		}
+		return (Expression) formula;
+	}
+
 	private static abstract class DefaultMainParser<T> extends DefaultNudParser<T> implements IMainParser<T> {
 
 		protected DefaultMainParser() {
@@ -118,13 +138,14 @@ public class Parsers {
 	
 		private static Formula<?> nudParse(ParserContext pc,
 				List<INudParser<Formula<?>>> parsers) throws SyntaxError {
-			// FIXME store current context and restore it for each sub-parser
 			final List<SyntaxError> errors = new ArrayList<SyntaxError>();
 			final Iterator<INudParser<Formula<?>>> iter = parsers.iterator();
 			final SavedContext savedContext = pc.save();
 			while(iter.hasNext()) {
 				final INudParser<Formula<?>> nudParser = iter.next();
 				try {
+					// FIXME the call to nud may add problems to pc.result
+					// without throwing an exception
 					return nudParser.nud(pc);
 				} catch (SyntaxError e) {
 					errors.add(e);
@@ -193,10 +214,7 @@ public class Parsers {
 		
 		public Predicate parse(int parentTag, ParserContext pc) throws SyntaxError {
 			final Formula<?> formula = FORMULA_PARSER.parse(parentTag, pc);
-			if (!(formula instanceof Predicate)) {
-				throw new SyntaxError("expected predicate");
-			}
-			return (Predicate) formula;
+			return asPredicate(formula);
 		}
 	}
 
@@ -210,10 +228,7 @@ public class Parsers {
 		
 		public Expression parse(int parentTag, ParserContext pc) throws SyntaxError {
 			final Formula<?> formula = FORMULA_PARSER.parse(parentTag, pc);
-			if (!(formula instanceof Expression)) {
-				throw new SyntaxError("expected expression");
-			}
-			return (Expression) formula;
+			return asExpression(formula);
 		}
 	}
 
@@ -364,12 +379,10 @@ public class Parsers {
 		
 		public Expression led(Formula<?> left, ParserContext pc)
 				throws SyntaxError {
+			final Expression leftExpr = asExpression(left);
 			final Expression right = pc.subParse(tag, EXPR_PARSER);
-			if (!(left instanceof Expression)) {
-				throw new SyntaxError("expected expressions");
-			}
 			final SourceLocation srcLoc = pc.getSourceLocation();
-			return makeResult(pc.factory, (Expression) left,
+			return makeResult(pc.factory, leftExpr,
 					right, srcLoc);
 		}
 		
@@ -407,15 +420,13 @@ public class Parsers {
 
 		public Expression led(Formula<?> left, ParserContext pc)
 				throws SyntaxError {
+			final Expression leftExpr = asExpression(left);
 			final Expression right = pc.subParse(tag, EXPR_PARSER);
-			if (!(left instanceof Expression)) {
-				throw new SyntaxError("expected expressions");
-			}
 			final List<Expression> children = new ArrayList<Expression>();
-			if (left.getTag() == tag) {
-				children.addAll(asList(getChildren(left)));
+			if (leftExpr.getTag() == tag) {
+				children.addAll(asList(getChildren(leftExpr)));
 			} else {
-				children.add((Expression) left);
+				children.add(leftExpr);
 			}
 			children.add(right);
 			final SourceLocation srcLoc = pc.getSourceLocation();
@@ -462,16 +473,14 @@ public class Parsers {
 
 		public AssociativePredicate led(Formula<?> left, ParserContext pc)
 				throws SyntaxError {
+			final Predicate leftPred = asPredicate(left);
 			final Predicate right = pc.subParse(tag, PRED_PARSER);
-			if (!(left instanceof Predicate)) {
-				throw new SyntaxError("expected predicates");
-			}
 			final List<Predicate> children = new ArrayList<Predicate>();
-			if (left.getTag() == tag) {
-				children.addAll(asList(((AssociativePredicate) left)
+			if (leftPred.getTag() == tag) {
+				children.addAll(asList(((AssociativePredicate) leftPred)
 						.getChildren()));
 			} else {
-				children.add((Predicate) left);
+				children.add(leftPred);
 			}
 			children.add(right);
 			return pc.factory.makeAssociativePredicate(tag, children, pc
@@ -486,11 +495,9 @@ public class Parsers {
 		}
 
 		public RelationalPredicate led(Formula<?> left, ParserContext pc) throws SyntaxError {
+			final Expression leftExpr = asExpression(left);
 			final Expression right = pc.subParse(tag, EXPR_PARSER);
-			if (!(left instanceof Expression)) {
-				throw new SyntaxError("expected expressions");
-			}
-			return pc.factory.makeRelationalPredicate(tag, (Expression) left,
+			return pc.factory.makeRelationalPredicate(tag, leftExpr,
 					right, pc.getSourceLocation());
 		}
 	}
@@ -498,12 +505,10 @@ public class Parsers {
 	static final ILedParser<BinaryExpression> FUN_IMAGE = new DefaultLedParser<BinaryExpression>(FUNIMAGE) {
 
 		public BinaryExpression led(Formula<?> left, ParserContext pc) throws SyntaxError {
+			final Expression leftExpr = asExpression(left);
 			final Expression right = pc.subParse(NO_TAG, EXPR_PARSER);
-			if (!(left instanceof Expression)) {
-				throw new SyntaxError("expected expressions");
-			}
 			pc.progressCloseParen();
-			return pc.factory.makeBinaryExpression(tag, (Expression) left,
+			return pc.factory.makeBinaryExpression(tag, leftExpr,
 					right, pc.getSourceLocation());
 		}
 	};
@@ -519,6 +524,21 @@ public class Parsers {
 					tag, pc.getSourceLocation());
 			pc.progress();
 			return litPred;
+		}
+	}
+
+	static class BinaryPredicateParser extends DefaultLedParser<BinaryPredicate> {
+
+		public BinaryPredicateParser(int tag) {
+			super(tag);
+		}
+
+		public BinaryPredicate led(Formula<?> left, ParserContext pc)
+				throws SyntaxError {
+			final Predicate leftPred = asPredicate(left);
+			final Predicate right = pc.subParse(tag, PRED_PARSER);
+			return pc.factory.makeBinaryPredicate(tag, leftPred,
+					right, pc.getSourceLocation());
 		}
 	}
 
@@ -549,20 +569,6 @@ public class Parsers {
 			boundIdentifiers.add(ident.asDecl(factory));
 		}
 		return boundIdentifiers;
-	}
-
-	static List<FreeIdentifier> makeFreeIdentList(FormulaFactory factory,
-			final List<Identifier> identList) throws SyntaxError {
-		final List<FreeIdentifier> freeIdents = new ArrayList<FreeIdentifier>(identList.size());
-		// TODO use Formula.bindTheseIdents instead ?
-		for (Identifier ident: identList) {
-			if (!(ident instanceof FreeIdentifier)) {
-				throw new SyntaxError("expected a free identifier, but was "
-						+ ident);
-			}
-			freeIdents.add((FreeIdentifier) ident);
-		}
-		return freeIdents;
 	}
 
 	static class UnaryExpressionParser extends DefaultNudParser<UnaryExpression> {
