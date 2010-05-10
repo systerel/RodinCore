@@ -79,10 +79,42 @@ public class Parsers {
 		}
 	}
 
-	private static abstract class DefaultLedParser<T> extends AbstractSubParser<T> implements ILedParser<T> {
+	private static abstract class DefaultLedExprParser<T> extends AbstractSubParser<T> implements ILedParser<T> {
 
-		protected DefaultLedParser(int tag) {
+		protected DefaultLedExprParser(int tag) {
 			super(tag);
+		}
+		
+		public final T led(Formula<?> left, ParserContext pc) throws SyntaxError {
+			final Expression leftExpr = asExpression(left);
+			final Expression right = parseRight(pc);
+			return led(leftExpr, right, pc);
+		}
+		
+		protected abstract T led(Expression left, Expression right,
+				ParserContext pc) throws SyntaxError;
+		
+		protected Expression parseRight(ParserContext pc) throws SyntaxError {
+			return pc.subParse(tag, EXPR_PARSER);
+		}
+	}
+	
+	private static abstract class DefaultLedPredParser<T> extends AbstractSubParser<T> implements ILedParser<T> {
+
+		protected DefaultLedPredParser(int tag) {
+			super(tag);
+		}
+		
+		public final T led(Formula<?> left, ParserContext pc) throws SyntaxError {
+			final Predicate leftPred = asPredicate(left);
+			final Predicate right = parseRight(pc);
+			return led(leftPred, right, pc);
+		}
+		
+		protected abstract T led(Predicate left, Predicate right, ParserContext pc) throws SyntaxError;
+		
+		protected Predicate parseRight(ParserContext pc) throws SyntaxError {
+			return pc.subParse(tag, PRED_PARSER);
 		}
 	}
 	
@@ -184,14 +216,12 @@ public class Parsers {
 		}
 		
 		public Type parse(int parentTag, ParserContext pc) throws SyntaxError {
-			final int startPos = pc.t.pos;
 			pc.startParsingType();
-			final Expression expression = EXPR_PARSER.parse(NO_TAG, pc);
+			final Expression expression = pc.subParse(NO_TAG, EXPR_PARSER);
 			if (!expression.isATypeExpression()) {
-				final int endPos = pc.t.pos;
 				throw new SyntaxError(
-						"expected a type expression between positions "
-								+ startPos + " and " + endPos);
+						"expected a type expression at position "
+								+ pc.getSourceLocation());
 			}
 			try {
 				return expression.toType(pc.factory);
@@ -341,9 +371,10 @@ public class Parsers {
 	};
 
 	// FIXME current design does not allow subparsers with no tag
-	static final ILedParser<Formula<?>> OFTYPE = new DefaultLedParser<Formula<?>>(OFTYPE_TAG) {
+	static final DefaultLedExprParser<Expression> OFTYPE = new DefaultLedExprParser<Expression>(OFTYPE_TAG) {
 		
-		public Formula<?> led(Formula<?> left, ParserContext pc)
+		@Override
+		public Expression led(Expression left, Expression right, ParserContext pc)
 				throws SyntaxError {
 			final Type type = pc.subParse(NO_TAG, TYPE_PARSER);
 			switch (left.getTag()) {
@@ -352,6 +383,12 @@ public class Parsers {
 			default:
 				throw new SyntaxError("Unexpected oftype");
 			}
+		}
+		
+		@Override
+		protected Expression parseRight(ParserContext pc) throws SyntaxError {
+			// do not parse right
+			return null;
 		}
 	};
 	
@@ -371,18 +408,17 @@ public class Parsers {
 
 	}
 
-	static class BinaryExpressionInfix extends DefaultLedParser<Expression> {
+	static class BinaryExpressionInfix extends DefaultLedExprParser<Expression> {
 
 		public BinaryExpressionInfix(int tag) {
 			super(tag);
 		}
 		
-		public Expression led(Formula<?> left, ParserContext pc)
+		@Override
+		public Expression led(Expression left, Expression right, ParserContext pc)
 				throws SyntaxError {
-			final Expression leftExpr = asExpression(left);
-			final Expression right = pc.subParse(tag, EXPR_PARSER);
 			final SourceLocation srcLoc = pc.getSourceLocation();
-			return makeResult(pc.factory, leftExpr,
+			return makeResult(pc.factory, left,
 					right, srcLoc);
 		}
 		
@@ -412,21 +448,20 @@ public class Parsers {
 
 	}
 
-	static class AssociativeExpressionInfix extends DefaultLedParser<Expression> {
+	static class AssociativeExpressionInfix extends DefaultLedExprParser<Expression> {
 
 		public AssociativeExpressionInfix(int tag) {
 			super(tag);
 		}
 
-		public Expression led(Formula<?> left, ParserContext pc)
+		@Override
+		public Expression led(Expression left, Expression right, ParserContext pc)
 				throws SyntaxError {
-			final Expression leftExpr = asExpression(left);
-			final Expression right = pc.subParse(tag, EXPR_PARSER);
 			final List<Expression> children = new ArrayList<Expression>();
-			if (leftExpr.getTag() == tag) {
-				children.addAll(asList(getChildren(leftExpr)));
+			if (left.getTag() == tag) {
+				children.addAll(asList(getChildren(left)));
 			} else {
-				children.add(leftExpr);
+				children.add(left);
 			}
 			children.add(right);
 			final SourceLocation srcLoc = pc.getSourceLocation();
@@ -465,22 +500,21 @@ public class Parsers {
 		}
 	}
 	
-	static class AssociativePredicateInfix extends DefaultLedParser<AssociativePredicate> {
+	static class AssociativePredicateInfix extends DefaultLedPredParser<AssociativePredicate> {
 
 		public AssociativePredicateInfix(int tag) {
 			super(tag);
 		}
 
-		public AssociativePredicate led(Formula<?> left, ParserContext pc)
+		@Override
+		public AssociativePredicate led(Predicate left, Predicate right, ParserContext pc)
 				throws SyntaxError {
-			final Predicate leftPred = asPredicate(left);
-			final Predicate right = pc.subParse(tag, PRED_PARSER);
 			final List<Predicate> children = new ArrayList<Predicate>();
-			if (leftPred.getTag() == tag) {
-				children.addAll(asList(((AssociativePredicate) leftPred)
+			if (left.getTag() == tag) {
+				children.addAll(asList(((AssociativePredicate) left)
 						.getChildren()));
 			} else {
-				children.add(leftPred);
+				children.add(left);
 			}
 			children.add(right);
 			return pc.factory.makeAssociativePredicate(tag, children, pc
@@ -488,29 +522,33 @@ public class Parsers {
 		}
 	}
 
-	static class RelationalPredicateInfix extends DefaultLedParser<RelationalPredicate> {
+	static class RelationalPredicateInfix extends DefaultLedExprParser<RelationalPredicate> {
 
 		public RelationalPredicateInfix(int tag) {
 			super(tag);
 		}
 
-		public RelationalPredicate led(Formula<?> left, ParserContext pc) throws SyntaxError {
-			final Expression leftExpr = asExpression(left);
-			final Expression right = pc.subParse(tag, EXPR_PARSER);
-			return pc.factory.makeRelationalPredicate(tag, leftExpr,
+		@Override
+		public RelationalPredicate led(Expression left, Expression right, ParserContext pc) throws SyntaxError {
+			return pc.factory.makeRelationalPredicate(tag, left,
 					right, pc.getSourceLocation());
 		}
 	}
 
-	static final ILedParser<BinaryExpression> FUN_IMAGE = new DefaultLedParser<BinaryExpression>(FUNIMAGE) {
+	static final ILedParser<BinaryExpression> FUN_IMAGE = new DefaultLedExprParser<BinaryExpression>(FUNIMAGE) {
 
-		public BinaryExpression led(Formula<?> left, ParserContext pc) throws SyntaxError {
-			final Expression leftExpr = asExpression(left);
-			final Expression right = pc.subParse(NO_TAG, EXPR_PARSER);
+		@Override
+		public BinaryExpression led(Expression left, Expression right, ParserContext pc) throws SyntaxError {
 			pc.progressCloseParen();
-			return pc.factory.makeBinaryExpression(tag, leftExpr,
+			return pc.factory.makeBinaryExpression(tag, left,
 					right, pc.getSourceLocation());
 		}
+		
+		@Override
+		protected Expression parseRight(ParserContext pc) throws SyntaxError {
+			return pc.subParse(NO_TAG, EXPR_PARSER);
+		}
+		
 	};
 
 	static class LiteralPredicateParser extends DefaultNudParser<LiteralPredicate> {
@@ -527,17 +565,16 @@ public class Parsers {
 		}
 	}
 
-	static class BinaryPredicateParser extends DefaultLedParser<BinaryPredicate> {
+	static class BinaryPredicateParser extends DefaultLedPredParser<BinaryPredicate> {
 
 		public BinaryPredicateParser(int tag) {
 			super(tag);
 		}
 
-		public BinaryPredicate led(Formula<?> left, ParserContext pc)
+		@Override
+		public BinaryPredicate led(Predicate left, Predicate right, ParserContext pc)
 				throws SyntaxError {
-			final Predicate leftPred = asPredicate(left);
-			final Predicate right = pc.subParse(tag, PRED_PARSER);
-			return pc.factory.makeBinaryPredicate(tag, leftPred,
+			return pc.factory.makeBinaryPredicate(tag, left,
 					right, pc.getSourceLocation());
 		}
 	}
