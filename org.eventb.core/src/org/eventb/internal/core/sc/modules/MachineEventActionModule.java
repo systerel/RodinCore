@@ -174,11 +174,10 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 		return error;
 	}
 
-	private void saveAction(ISCEvent target, String dbName, String label,
-			Assignment assignment, IRodinElement source,
-			IProgressMonitor monitor) throws RodinDBException {
-		ISCAction scAction = target.getSCAction(dbName);
-		scAction.create(null, monitor);
+	private void saveAction(ISCEvent target, String label, Assignment assignment,
+			IRodinElement source, IProgressMonitor monitor) throws RodinDBException {
+		ISCAction scAction = target.createChild(ISCAction.ELEMENT_TYPE, null,
+				monitor);
 		scAction.setLabel(label, monitor);
 		scAction.setAssignment(assignment, null);
 		scAction.setSource(source, monitor);
@@ -219,8 +218,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 			Assignment assignment = factory.makeBecomesSuchThat(patchLHS,
 					patchBound, btrue, null);
 			String label = createFreshLabel();
-			saveAction(target, label, label, assignment, event,
-					monitor);
+			saveAction(target, label, assignment, event, monitor);
 		}
 	}
 
