@@ -142,8 +142,8 @@ public class BMath extends AbstractGrammar {
 //			_BUNION = tokens.add("\u222a");
 		tokens.getOrAdd("\u223c");
 		_BECEQ = tokens.getOrAdd("\u2254");
-		tokens.getOrAdd(":\u2208");
-		tokens.getOrAdd(":\u2223");
+		_BECMO = tokens.getOrAdd(":\u2208");
+		_BECST = tokens.getOrAdd(":\u2223");
 //			tokens.add("=");
 		tokens.getOrAdd("\u2260");
 		tokens.getOrAdd("<");
@@ -231,8 +231,8 @@ public class BMath extends AbstractGrammar {
 //	private static int _BINTER;
 //	private static int _BUNION;
 	static int _BECEQ;
-//	static int _BECMO;
-//	static int _BECST;
+	static int _BECMO;
+	static int _BECST;
 //	static int _EQUAL;
 //	static int _NOTEQUAL;
 //	static int _LT;

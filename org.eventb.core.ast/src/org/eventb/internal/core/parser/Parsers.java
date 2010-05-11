@@ -763,14 +763,45 @@ public class Parsers {
 		}
 	};
 
+
+	static List<BoundIdentDecl> makePrimedDecl(List<FreeIdentifier> lhsList, FormulaFactory factory) {
+		final List<BoundIdentDecl> decls = new ArrayList<BoundIdentDecl>(lhsList.size());
+	    for (FreeIdentifier ident: lhsList) {
+			decls.add(ident.asPrimedDecl(factory));
+		}
+		return decls;
+	}
+
+	// used as a main parser; directly called by the general parser.
+	/** @see GenParser#parse() */
 	static final IMainParser<Assignment> ASSIGNMENT_PARSER = new DefaultMainParser<Assignment>() {
 
 		public Assignment parse(int parentTag,
 				ParserContext pc) throws SyntaxError {
 			final List<FreeIdentifier> idents = pc.subParse(FREE_IDENT_LIST_PARSER);
-			pc.progress(_BECEQ);
-			final List<Expression> values = pc.subParse(EXPR_LIST_PARSER);
-			return pc.factory.makeBecomesEqualTo(idents, values, pc.getSourceLocation());
+			final int assignKind = pc.t.kind;
+			pc.progress();
+
+			if (assignKind == _BECEQ) {
+				final List<Expression> values = pc.subParse(EXPR_LIST_PARSER);
+				if (idents.size() != values.size()) {
+					throw new SyntaxError("incompatible size of left and right parts of assignment");
+				}
+				return pc.factory.makeBecomesEqualTo(idents, values, pc.getSourceLocation());
+			} else if (assignKind == _BECMO) {
+				if (idents.size() != 1) {
+					throw new SyntaxError("\'Becomes Equal To\' applies to only one identifier");
+				}
+				final Expression expr = pc.subParse(EXPR_PARSER);
+				return pc.factory.makeBecomesMemberOf(idents.get(0), expr, pc.getSourceLocation());
+			} else if (assignKind == _BECST) {
+				final Predicate condition = pc.subParse(PRED_PARSER);
+				final List<BoundIdentDecl> primed = makePrimedDecl(idents, pc.factory);
+				return pc.factory.makeBecomesSuchThat(idents, primed, condition, pc.getSourceLocation());
+			} else {
+				throw new SyntaxError("Unknown assignment operator: "
+						+ assignKind);
+			}
 		}
 		
 	};

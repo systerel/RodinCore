@@ -90,9 +90,7 @@ public class TestGenParser extends AbstractTests {
 	private static final PowerSetType POW_INT_TYPE = ff.makePowerSetType(INT_TYPE);
 	private static final SourceLocationChecker slChecker = new SourceLocationChecker();
 
-	private static void assertFailure(String formula, ProblemKind problemKind) {
-		final IParseResult result = ff.parseExpression(formula,
-				LanguageVersion.V2, null);
+	private static void assertFailure(IParseResult result, ProblemKind problemKind) {
 		assertTrue(result.hasProblem());
 		final List<ASTProblem> problems = result.getProblems();
 		System.out.println(problems);
@@ -228,7 +226,9 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testUnionInterNoParen() throws Exception {
-		assertFailure("A∩B∪C", ProblemKind.SyntaxError);
+		final IParseResult result = ff.parseExpression("A∩B∪C",
+				LanguageVersion.V2, null);
+		assertFailure(result, ProblemKind.SyntaxError);
 	}
 
 	public void testAnd() throws Exception {
@@ -607,7 +607,9 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testLambdaDuplicateIdents() throws Exception {
-		assertFailure("λx↦(y↦x)·x>y∣ x+y", ProblemKind.SyntaxError);
+		final IParseResult result = ff.parseExpression("λx↦(y↦x)·x>y∣ x+y",
+				LanguageVersion.V2, null);
+		assertFailure(result, ProblemKind.SyntaxError);
 	}
 
 	public void testInnerBoundIdentsForall() throws Exception {
@@ -674,6 +676,33 @@ public class TestGenParser extends AbstractTests {
 				asList(FRID_a, FRID_b, FRID_c),
 				asList(ZERO, EMPTY, ATOM_TRUE), null);
 		doAssignmentTest("a,b,c ≔ 0,∅,TRUE", expected);
+	}
+	
+	public void testBecomesMemberOf() throws Exception {
+		final Assignment expected = ff.makeBecomesMemberOf(FRID_a, FRID_S, null);
+		doAssignmentTest("a :∈ S", expected);
+	}
+
+	public void testBecomesMemberOfList() throws Exception {
+		assertFailure(ff.parseAssignment("a,b :∈ S", LanguageVersion.V2, null),
+				ProblemKind.SyntaxError);
+		assertFailure(ff.parseAssignment("a,b :∈ S,S", LanguageVersion.V2, null),
+				ProblemKind.SyntaxError);
+	}
+
+	public void testBecomesSuchThat() throws Exception {
+		final Assignment expected = ff.makeBecomesSuchThat(FRID_a,
+				FRID_a.asPrimedDecl(ff), LIT_BTRUE, null);
+		doAssignmentTest("a :∣  ⊤", expected);
+	}
+
+	public void testBecomesSuchThatList() throws Exception {
+		final List<FreeIdentifier> idents = asList(FRID_a, FRID_b);
+		final List<BoundIdentDecl> primed = asList(FRID_a.asPrimedDecl(ff),
+				FRID_b.asPrimedDecl(ff));
+		final Assignment expected = ff.makeBecomesSuchThat(idents, primed,
+				LIT_BTRUE, null);
+		doAssignmentTest("a,b :∣  ⊤", expected);
 	}
 
 }
