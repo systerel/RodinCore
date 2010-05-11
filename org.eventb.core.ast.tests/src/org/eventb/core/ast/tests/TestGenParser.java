@@ -42,6 +42,7 @@ import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.QuantifiedExpression.Form;
+import org.eventb.core.ast.extension.CycleError;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
@@ -357,6 +358,132 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("A§B", expected, extFac);
 	}
 
+	private static final IExpressionExtension MONEY = new IExpressionExtension() {
+		private static final String SYNTAX_SYMBOL = "€";
+		private static final String OPERATOR_ID = "Money";
+		
+		public Type getType(ITypeMediator mediator,
+				ExtendedExpression expression) {
+			final Expression[] children = expression.getChildExpressions();
+			final Type resultType = children[0].getType();
+			for (Expression child: children) {
+				final Type childType = child.getType();
+				if (! (childType instanceof IntegerType)) {
+					return null;
+				}
+			}
+			return resultType;
+		}
+
+		public Type typeCheck(ITypeCheckMediator tcMediator,
+				ExtendedExpression expression) {
+			final Expression[] children = expression.getChildExpressions();
+			final Type resultType = tcMediator.makeIntegerType();
+			for (int i = 0; i < children.length; i++) {
+				tcMediator.sameType(children[i].getType(), resultType);
+			}
+			return resultType;
+		}
+
+		public void addCompatibilities(ICompatibilityMediator mediator) {
+			mediator.addCompatibility(getId(), getId());
+		}
+
+		public void addPriorities(IPriorityMediator mediator) {
+			try {
+				mediator.addPriority(getId(), "plus");
+			} catch (CycleError e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		public void checkPreconditions(Expression[] expressions,
+				Predicate[] predicates) {
+			assertTrue(expressions.length >= 2);
+			assertTrue(predicates.length == 0);
+		}
+
+		public Associativity getAssociativity() {
+			return Associativity.LEFT;
+		}
+
+		public String getGroupId() {
+			return "Arithmetic";
+		}
+
+		public String getId() {
+			return OPERATOR_ID;
+		}
+
+		public ExtensionKind getKind() {
+			return ExtensionKind.ASSOCIATIVE_INFIX_EXPRESSION;
+		}
+
+		public String getSyntaxSymbol() {
+			return SYNTAX_SYMBOL;
+		}
+
+		public Predicate getWDPredicate(IWDMediator wdMediator,
+				IExtendedFormula formula) {
+			return wdMediator.makeChildWDConjunction(formula);
+		}
+
+		public boolean isFlattenable() {
+			return true;
+		}
+
+		public void toString(IToStringMediator mediator,
+				IExtendedFormula formula) {
+			final Expression[] childExpressions = formula.getChildExpressions();
+			mediator.append(childExpressions[0], false);
+			for (int i = 1; i < childExpressions.length; i++) {
+				mediator.append(getSyntaxSymbol());
+				mediator.append(childExpressions[i], true);
+			}
+		}
+	};
+
+	// verify that the newly introduced symbol cannot be part of an identifier
+	public void testExtensionSymbol() throws Exception {
+		final String strAEuroB = "A€B";
+		
+		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
+				.<IFormulaExtension> singleton(MONEY));
+		
+		assertTrue(
+				"€ symbol should be a valid part of identifier for default factory",
+				ff.isValidIdentifierName(strAEuroB));
+		assertTrue(
+				"€ symbol should not be a valid part of identifier for extended factory",
+				extFac.isValidIdentifierName(strAEuroB));
+		
+		final FreeIdentifier expectedDefault = ff.makeFreeIdentifier(strAEuroB, null);
+		doExpressionTest(strAEuroB, expectedDefault, ff);
+	
+		final FreeIdentifier expectedExtended = extFac.makeFreeIdentifier(strAEuroB, null);
+		doExpressionTest(strAEuroB, expectedExtended, extFac);
+
+		final Expression expectedExtendedSpaced = extFac.makeExtendedExpression(MONEY,
+				Arrays.<Expression> asList(
+						extFac.makeFreeIdentifier("A", null),
+						extFac.makeFreeIdentifier("B", null)),
+				Collections.<Predicate> emptySet(), null);
+		doExpressionTest("A € B", expectedExtendedSpaced, extFac);
+	}
+	
+	public void testAssociativeExtension() throws Exception {
+		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
+				.<IFormulaExtension> singleton(MONEY));
+		final Expression expected = extFac.makeExtendedExpression(MONEY,
+				Arrays.<Expression> asList(
+						extFac.makeFreeIdentifier("A", null),
+						extFac.makeFreeIdentifier("B", null),
+						extFac.makeFreeIdentifier("C", null)),
+				Collections.<Predicate> emptySet(), null);
+		doExpressionTest("A € B € C", expected, extFac);
+	}
+	
 	public void testEqual() throws Exception {
 		final Predicate expected = ff.makeRelationalPredicate(EQUAL, ff
 				.makeFreeIdentifier("A", null), ff
