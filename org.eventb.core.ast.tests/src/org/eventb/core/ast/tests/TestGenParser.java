@@ -705,4 +705,16 @@ public class TestGenParser extends AbstractTests {
 		doAssignmentTest("a,b :∣  ⊤", expected);
 	}
 
+	public void testBecomesSuchThatPrimed() throws Exception {
+		final List<FreeIdentifier> idents = asList(FRID_a, FRID_b);
+		final List<BoundIdentDecl> primed = asList(FRID_a.asPrimedDecl(ff),
+				FRID_b.asPrimedDecl(ff));
+		final Predicate condition = ff.makeAssociativePredicate(LAND, Arrays.<Predicate>asList(
+				ff.makeRelationalPredicate(EQUAL, BI_1, FRID_b, null),
+				ff.makeRelationalPredicate(EQUAL, BI_0, FRID_a, null)), null);
+		final Assignment expected = ff.makeBecomesSuchThat(idents, primed,
+				condition, null);
+		doAssignmentTest("a,b :∣  a'=b ∧ b'=a  ", expected);
+	}
+
 }

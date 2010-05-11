@@ -795,8 +795,8 @@ public class Parsers {
 				final Expression expr = pc.subParse(EXPR_PARSER);
 				return pc.factory.makeBecomesMemberOf(idents.get(0), expr, pc.getSourceLocation());
 			} else if (assignKind == _BECST) {
-				final Predicate condition = pc.subParse(PRED_PARSER);
 				final List<BoundIdentDecl> primed = makePrimedDecl(idents, pc.factory);
+				final Predicate condition = pc.subParse(NO_TAG, PRED_PARSER, primed);
 				return pc.factory.makeBecomesSuchThat(idents, primed, condition, pc.getSourceLocation());
 			} else {
 				throw new SyntaxError("Unknown assignment operator: "
