@@ -91,29 +91,36 @@ public abstract class AbstractGrammar {
 
 	}
 
-	public List<INudParser<Formula<?>>> getNudParsers(Token token) {
+	public List<INudParser<? extends Formula<?>>> getNudParsers(Token token) {
 		return subParsers.getNudParsers(token);
 	}
 	
-	public ILedParser<Formula<?>> getLedParser(Token token) {
+	public ILedParser<? extends Formula<?>> getLedParser(Token token) {
 		return subParsers.getLedParser(token);
 	}
 	
 	protected void addOperator(String token, int tag, String operatorId, String groupId,
-			INudParser subParser) throws OverrideException {
+			INudParser<? extends Formula<?>> subParser) throws OverrideException {
 		opRegistry.addOperator(tag, operatorId, groupId);
 		final int kind = tokens.getOrAdd(token);
 		subParsers.addNud(kind, subParser);
 	}
 	
 	protected void addOperator(String token, int tag, String operatorId, String groupId,
-			ILedParser subParser) throws OverrideException {
+			ILedParser<? extends Formula<?>> subParser) throws OverrideException {
 		opRegistry.addOperator(tag, operatorId, groupId);
 		final int kind = tokens.getOrAdd(token);
 		subParsers.addLed(kind, subParser);
 	}
-	
-	private int addReservedSubParser(INudParser subParser)
+
+	protected void addOperator(int kind, int tag, String operatorId,
+			String groupId, INudParser<? extends Formula<?>> subParser)
+			throws OverrideException {
+		opRegistry.addOperator(tag, operatorId, groupId);
+		subParsers.addNud(kind, subParser);
+	}
+
+	private int addReservedSubParser(INudParser<? extends Formula<?>>  subParser)
 			throws OverrideException {
 		final int kind = tokens.reserved();
 		subParsers.addReserved(kind, subParser);
@@ -126,7 +133,7 @@ public abstract class AbstractGrammar {
 	}
 	
 	protected void addLiteralOperator(String token, int tag,
-			INudParser subParser) throws OverrideException {
+			INudParser<? extends Formula<?>> subParser) throws OverrideException {
 		final int kind = tokens.getOrAdd(token);
 		subParsers.addNud(kind, subParser);
 	}

@@ -21,10 +21,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.AtomicExpression;
-import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
@@ -157,10 +157,10 @@ public class Parsers {
 		public Formula<?> parse(int parentTag, ParserContext pc)
 				throws SyntaxError {
 		
-			final List<INudParser<Formula<?>>> nudParsers = getNudParsers(pc);
+			final List<INudParser<? extends Formula<?>>> nudParsers = getNudParsers(pc);
 			Formula<?> left = nudParse(pc, nudParsers);
 			while (pc.canProgressRight(parentTag)) {
-				final ILedParser<Formula<?>> ledParser = getLedParser(pc);
+				final ILedParser<? extends Formula<?>> ledParser = getLedParser(pc);
 				pc.progress();
 				left = ledParser.led(left, pc);
 			}
@@ -170,12 +170,12 @@ public class Parsers {
 		// TODO implement backtracking for led parsers as well 
 	
 		private static Formula<?> nudParse(ParserContext pc,
-				List<INudParser<Formula<?>>> parsers) throws SyntaxError {
+				List<INudParser<? extends Formula<?>>> nudParsers) throws SyntaxError {
 			final List<SyntaxError> errors = new ArrayList<SyntaxError>();
-			final Iterator<INudParser<Formula<?>>> iter = parsers.iterator();
+			final Iterator<INudParser<? extends Formula<?>>> iter = nudParsers.iterator();
 			final SavedContext savedContext = pc.save();
 			while(iter.hasNext()) {
-				final INudParser<Formula<?>> nudParser = iter.next();
+				final INudParser<? extends Formula<?>> nudParser = iter.next();
 				try {
 					// FIXME the call to nud may add problems to pc.result
 					// without throwing an exception
@@ -266,18 +266,18 @@ public class Parsers {
 	static final ExpressionParser EXPR_PARSER = new ExpressionParser();
 
 	// returns a non empty list
-	static List<INudParser<Formula<?>>> getNudParsers(ParserContext pc)
+	static List<INudParser<? extends Formula<?>>> getNudParsers(ParserContext pc)
 			throws SyntaxError {
-		final List<INudParser<Formula<?>>> subParsers = pc.getNudParsers();
+		final List<INudParser<? extends Formula<?>>> subParsers = pc.getNudParsers();
 		if (subParsers.isEmpty()) {
 			throw new SyntaxError("don't know how to parse: " + pc.t.val);
 		}
 		return subParsers;
 	}
 
-	static ILedParser<Formula<?>> getLedParser(ParserContext pc)
+	static ILedParser<? extends Formula<?>> getLedParser(ParserContext pc)
 	throws SyntaxError {
-		final ILedParser<Formula<?>> subParser = pc.getLedParser();
+		final ILedParser<? extends Formula<?>> subParser = pc.getLedParser();
 		if (subParser == null) {
 			throw new SyntaxError("don't know how to parse: " + pc.t.val);
 		}
@@ -763,18 +763,16 @@ public class Parsers {
 		}
 	};
 
-	static final ILedParser<BecomesEqualTo> BEC_EQ_TO = new DefaultLedExprParser<BecomesEqualTo>(BECOMES_EQUAL_TO) {
-		
+	static final IMainParser<Assignment> ASSIGNMENT_PARSER = new DefaultMainParser<Assignment>() {
 
-		@Override
-		protected BecomesEqualTo led(Expression left, Expression right,
+		public Assignment parse(int parentTag,
 				ParserContext pc) throws SyntaxError {
-			// FIXME left can be an identifier list ( non-terminal )
-			if (!(left instanceof FreeIdentifier)) {
-				throw new SyntaxError("expected a free identifier");
-			}
-			final FreeIdentifier ident = (FreeIdentifier) left;
-			return pc.factory.makeBecomesEqualTo(ident, right, pc.getSourceLocation());
+			final List<FreeIdentifier> idents = pc.subParse(FREE_IDENT_LIST_PARSER);
+			pc.progress(_BECEQ);
+			final List<Expression> values = pc.subParse(EXPR_LIST_PARSER);
+			return pc.factory.makeBecomesEqualTo(idents, values, pc.getSourceLocation());
 		}
+		
 	};
+	
 }

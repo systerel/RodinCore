@@ -27,30 +27,30 @@ import org.eventb.internal.core.parser.GenParser.SyntaxError;
 public class SubParserRegistry {
 
 	private static class KindParsers {
-		private final List<ILedParser<Formula<?>>> ledParsers = new ArrayList<ILedParser<Formula<?>>>();
-		private final List<INudParser<Formula<?>>> nudParsers = new ArrayList<INudParser<Formula<?>>>();
+		private final List<ILedParser<? extends Formula<?>>> ledParsers = new ArrayList<ILedParser<? extends Formula<?>>>();
+		private final List<INudParser<? extends Formula<?>>> nudParsers = new ArrayList<INudParser<? extends Formula<?>>>();
 
 		public KindParsers() {
 			// nothing to do
 		}
 
-		public void addLed(ILedParser ledParser) {
-			if (!ledParsers.contains(ledParser)) {
-				ledParsers.add(ledParser);
+		public void addLed(ILedParser<? extends Formula<?>> subParser) {
+			if (!ledParsers.contains(subParser)) {
+				ledParsers.add(subParser);
 			}
 		}
 
-		public void addNud(INudParser ledParser) {
-			if (!nudParsers.contains(ledParser)) {
-				nudParsers.add(ledParser);
+		public void addNud(INudParser<? extends Formula<?>> subParser) {
+			if (!nudParsers.contains(subParser)) {
+				nudParsers.add(subParser);
 			}
 		}
 
-		public List<ILedParser<Formula<?>>> getLedParsers() {
+		public List<ILedParser<? extends Formula<?>>> getLedParsers() {
 			return ledParsers;
 		}
 
-		public List<INudParser<Formula<?>>> getNudParsers() {
+		public List<INudParser<? extends Formula<?>>> getNudParsers() {
 			return nudParsers;
 		}
 
@@ -67,16 +67,16 @@ public class SubParserRegistry {
 	}
 
 	// FIXME remove
-	private ISubParser getFirstSubParser(Token token) {
+	private ISubParser<? extends Formula<?>> getFirstSubParser(Token token) {
 		final KindParsers parsers = kindParsers.get(token.kind);
 		if (parsers == null) {
 			return null;
 		}
-		final List<ILedParser<Formula<?>>> ledParsers = parsers.getLedParsers();
+		final List<ILedParser<? extends Formula<?>>> ledParsers = parsers.getLedParsers();
 		if (!ledParsers.isEmpty()) {
 			return ledParsers.get(0);
 		}
-		final List<INudParser<Formula<?>>> nudParsers = parsers.getNudParsers();
+		final List<INudParser<? extends Formula<?>>> nudParsers = parsers.getNudParsers();
 		if (!nudParsers.isEmpty()) {
 			return nudParsers.get(0);
 		}
@@ -89,7 +89,7 @@ public class SubParserRegistry {
 	}
 	
 	
-	public List<INudParser<Formula<?>>> getNudParsers(Token token) {
+	public List<INudParser<? extends Formula<?>>> getNudParsers(Token token) {
 		final KindParsers parsers = kindParsers.get(token.kind);
 		if (parsers == null) {
 			return Collections.emptyList();
@@ -97,7 +97,7 @@ public class SubParserRegistry {
 		return parsers.getNudParsers(); 
 	}
 	
-	public ILedParser<Formula<?>> getLedParser(Token token) {
+	public ILedParser<? extends Formula<?>> getLedParser(Token token) {
 		final KindParsers parsers = kindParsers.get(token.kind);
 		if (parsers == null || parsers.isEmpty()) {
 			return null;
@@ -107,12 +107,12 @@ public class SubParserRegistry {
 		// when backtracking there will be several subparsers for one kind
 	}
 	
-	public void addNud(int kind, INudParser subParser) throws OverrideException {
+	public void addNud(int kind, INudParser<? extends Formula<?>> subParser) throws OverrideException {
 		final KindParsers parsers = fetchParsers(kind);
 		parsers.addNud(subParser);
 	}
 
-	public void addLed(int kind, ILedParser subParser) throws OverrideException {
+	public void addLed(int kind, ILedParser<? extends Formula<?>> subParser) throws OverrideException {
 		final KindParsers parsers = fetchParsers(kind);
 		parsers.addLed(subParser);
 	}
@@ -127,12 +127,12 @@ public class SubParserRegistry {
 	}
 
 
-	public void addReserved(int kind, INudParser subParser) {
+	public void addReserved(int kind, INudParser<? extends Formula<?>> subParser) {
 		final KindParsers parsers = fetchParsers(kind);
 		parsers.addNud(subParser);
 	}
 
-	public void addClosed(int openKind, INudParser subParser) throws OverrideException {
+	public void addClosed(int openKind, INudParser<Formula<?>> subParser) throws OverrideException {
 		addNud(openKind, subParser);
 	}
 

@@ -196,11 +196,11 @@ public class GenParser {
 			progress(_RPAR);
 		}
 		
-		public List<INudParser<Formula<?>>> getNudParsers() {
+		public List<INudParser<? extends Formula<?>>> getNudParsers() {
 			return grammar.getNudParsers(t);
 		}
 		
-		public ILedParser<Formula<?>> getLedParser() {
+		public ILedParser<? extends Formula<?>> getLedParser() {
 			return grammar.getLedParser(t);
 		}
 		
@@ -337,6 +337,13 @@ public class GenParser {
 			final Object res;
 			if (clazz == Type.class) {
 				res = pc.subParse(NO_TAG, Parsers.TYPE_PARSER);
+			} else if (clazz == Assignment.class) {
+				// FIXME particular case required because assignment lhs
+				// is not a terminal (not a formula, but a list of identifiers)
+				// other possibility: introduce a notion of non terminal
+				// returned by sub-parsers, then implement assignment parsing
+				// with led sub-parsers
+				res = pc.subParse(Parsers.ASSIGNMENT_PARSER);
 			} else {
 				res = pc.subParse(NO_TAG, Parsers.FORMULA_PARSER);
 			}

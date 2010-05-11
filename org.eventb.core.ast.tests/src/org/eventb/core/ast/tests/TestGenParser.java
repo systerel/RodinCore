@@ -658,6 +658,11 @@ public class TestGenParser extends AbstractTests {
 						null), null);
 		doPredicateTest("∀x·(∃y·x>y)⇒x>0", expected);
 	}
+
+	public void testTrue() throws Exception {
+		final Expression expected = ff.makeAtomicExpression(TRUE, null);
+		doExpressionTest("TRUE", expected);
+	}
 	
 	public void testAssignment() throws Exception {
 		final Assignment expected = ff.makeBecomesEqualTo(FRID_a, ZERO, null);

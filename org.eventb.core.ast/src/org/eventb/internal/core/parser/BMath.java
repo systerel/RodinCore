@@ -89,7 +89,7 @@ public class BMath extends AbstractGrammar {
 	private static final String MAPSTO_ID = "Maps to";
 	private static final String LAMBDA_ID = "Lambda";
 	private static final String LIMP_ID = "Logical Implication";
-	private static final String BECOMES_EQUAL_TO_ID = "Becomes Equal To";
+	private static final String TRUE_ID = "True";
 	
 	
 	/**
@@ -141,7 +141,7 @@ public class BMath extends AbstractGrammar {
 //			_BINTER = tokens.add("\u2229");
 //			_BUNION = tokens.add("\u222a");
 		tokens.getOrAdd("\u223c");
-		tokens.getOrAdd("\u2254");
+		_BECEQ = tokens.getOrAdd("\u2254");
 		tokens.getOrAdd(":\u2208");
 		tokens.getOrAdd(":\u2223");
 //			tokens.add("=");
@@ -174,7 +174,7 @@ public class BMath extends AbstractGrammar {
 		tokens.getOrAdd("\ue103");
 		tokens.getOrAdd("BOOL");
 		tokens.getOrAdd("FALSE");
-		tokens.getOrAdd("TRUE");
+//		tokens.getOrAdd("TRUE");
 		tokens.getOrAdd("bool");
 //		tokens.getOrAdd("card");
 		tokens.getOrAdd("dom");
@@ -230,7 +230,7 @@ public class BMath extends AbstractGrammar {
 //	private static int _LOR;
 //	private static int _BINTER;
 //	private static int _BUNION;
-//	static int _BECEQ;
+	static int _BECEQ;
 //	static int _BECMO;
 //	static int _BECST;
 //	static int _EQUAL;
@@ -325,7 +325,7 @@ public class BMath extends AbstractGrammar {
 			addOperator("\u2982", OFTYPE_TAG, OFTYPE_ID, TYPED, OFTYPE);
 			addOperator("\u21a6", MAPSTO, MAPSTO_ID, PAIR, new BinaryExpressionInfix(MAPSTO));
 			addOperator("\u21d2", LIMP, LIMP_ID, INFIX_PRED, new BinaryPredicateParser(LIMP));
-			addOperator("\u2254", BECOMES_EQUAL_TO, BECOMES_EQUAL_TO_ID, INFIX_SUBST, BEC_EQ_TO);
+			addOperator("TRUE", TRUE, TRUE_ID, ATOMIC_EXPR, new AtomicExpressionParser(TRUE));
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
