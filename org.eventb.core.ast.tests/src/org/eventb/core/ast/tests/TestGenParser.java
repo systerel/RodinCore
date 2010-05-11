@@ -330,7 +330,7 @@ public class TestGenParser extends AbstractTests {
 		}
 
 		public ExtensionKind getKind() {
-			return ExtensionKind.ASSOCIATIVE_INFIX_EXPRESSION;
+			return ExtensionKind.BINARY_INFIX_EXPRESSION;
 		}
 
 		public void addCompatibilities(ICompatibilityMediator mediator) {
