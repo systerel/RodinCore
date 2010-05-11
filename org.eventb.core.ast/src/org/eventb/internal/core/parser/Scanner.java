@@ -99,7 +99,7 @@ public class Scanner {
 				LanguageVersion.LATEST,
 				name);
 
-		final Scanner scanner = new Scanner(name, result);
+		final Scanner scanner = new Scanner(name, result, factory.getGrammar());
 
 		final Token token = scanner.Peek();
 		return (!result.hasProblem() && token != null
