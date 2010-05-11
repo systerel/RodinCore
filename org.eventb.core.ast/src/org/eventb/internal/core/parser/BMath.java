@@ -89,6 +89,7 @@ public class BMath extends AbstractGrammar {
 	private static final String MAPSTO_ID = "Maps to";
 	private static final String LAMBDA_ID = "Lambda";
 	private static final String LIMP_ID = "Logical Implication";
+	private static final String BECOMES_EQUAL_TO_ID = "Becomes Equal To";
 	
 	
 	/**
@@ -324,6 +325,7 @@ public class BMath extends AbstractGrammar {
 			addOperator("\u2982", OFTYPE_TAG, OFTYPE_ID, TYPED, OFTYPE);
 			addOperator("\u21a6", MAPSTO, MAPSTO_ID, PAIR, new BinaryExpressionInfix(MAPSTO));
 			addOperator("\u21d2", LIMP, LIMP_ID, INFIX_PRED, new BinaryPredicateParser(LIMP));
+			addOperator("\u2254", BECOMES_EQUAL_TO, BECOMES_EQUAL_TO_ID, INFIX_SUBST, BEC_EQ_TO);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

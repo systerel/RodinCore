@@ -24,6 +24,7 @@ import java.util.List;
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.AtomicExpression;
+import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
@@ -762,4 +763,18 @@ public class Parsers {
 		}
 	};
 
+	static final ILedParser<BecomesEqualTo> BEC_EQ_TO = new DefaultLedExprParser<BecomesEqualTo>(BECOMES_EQUAL_TO) {
+		
+
+		@Override
+		protected BecomesEqualTo led(Expression left, Expression right,
+				ParserContext pc) throws SyntaxError {
+			// FIXME left can be an identifier list ( non-terminal )
+			if (!(left instanceof FreeIdentifier)) {
+				throw new SyntaxError("expected a free identifier");
+			}
+			final FreeIdentifier ident = (FreeIdentifier) left;
+			return pc.factory.makeBecomesEqualTo(ident, right, pc.getSourceLocation());
+		}
+	};
 }

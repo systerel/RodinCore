@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eventb.core.ast.ASTProblem;
+import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BoundIdentDecl;
@@ -73,12 +74,16 @@ public class TestGenParser extends AbstractTests {
 							Formula.BFALSE, null);
 	private static final LiteralPredicate LIT_BTRUE = ff.makeLiteralPredicate(
 							Formula.BTRUE, null);
+	private static final AtomicExpression ATOM_TRUE = ff.makeAtomicExpression(TRUE, null);
 	private static final IntegerLiteral ZERO = ff.makeIntegerLiteral(BigInteger.ZERO, null);
 	private static final IntegerLiteral ONE = ff.makeIntegerLiteral(BigInteger.ONE, null);
 	private static final AtomicExpression EMPTY = ff.makeEmptySet(null, null);
 	private static final FreeIdentifier FRID_S = ff.makeFreeIdentifier("S", null);
 	private static final GivenType S_TYPE = ff.makeGivenType("S");
 	private static final PowerSetType POW_S_TYPE = ff.makePowerSetType(S_TYPE);
+	private static final FreeIdentifier FRID_a = ff.makeFreeIdentifier("a", null);
+	private static final FreeIdentifier FRID_b = ff.makeFreeIdentifier("b", null);
+	private static final FreeIdentifier FRID_c = ff.makeFreeIdentifier("c", null);
 	private static final AtomicExpression INT = ff.makeAtomicExpression(Formula.INTEGER, null);
 	private static final UnaryExpression POW_INT = ff.makeUnaryExpression(POW, INT, null);
 	private static final IntegerType INT_TYPE = ff.makeIntegerType();
@@ -141,6 +146,20 @@ public class TestGenParser extends AbstractTests {
 		assertEquals(expected, actual);
 	}
 	
+	private void doAssignmentTest(String formula, Assignment expected) {
+		final IParseResult result = ff.parseAssignment(formula,
+				LanguageVersion.V2, null);
+		if (result.hasProblem()) {
+			System.out.println(result.getProblems());
+		}
+		assertFalse(result.hasProblem());
+		final Assignment actual = result.getParsedAssignment();
+		System.out.println(actual);
+		assertEquals(expected, actual);
+	
+		actual.accept(slChecker);
+	}
+
 	public void testIntegerLiteral() throws Exception {
 		final Expression expected = ff.makeIntegerLiteral(BigInteger.ONE, null);
 		doExpressionTest("1", expected);
@@ -640,5 +659,16 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("∀x·(∃y·x>y)⇒x>0", expected);
 	}
 	
-	// TODO parse assignments
+	public void testAssignment() throws Exception {
+		final Assignment expected = ff.makeBecomesEqualTo(FRID_a, ZERO, null);
+		doAssignmentTest("a ≔ 0", expected);
+	}
+
+	public void testAssignmentList() throws Exception {
+		final Assignment expected = ff.makeBecomesEqualTo(
+				asList(FRID_a, FRID_b, FRID_c),
+				asList(ZERO, EMPTY, ATOM_TRUE), null);
+		doAssignmentTest("a,b,c ≔ 0,∅,TRUE", expected);
+	}
+
 }
