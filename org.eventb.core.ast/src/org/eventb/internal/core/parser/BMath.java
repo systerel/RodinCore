@@ -14,8 +14,8 @@ import static org.eventb.core.ast.Formula.*;
 import static org.eventb.internal.core.parser.OperatorRegistry.GROUP0;
 import static org.eventb.internal.core.parser.Parsers.*;
 
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.extension.CycleError;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.Parsers.BinaryExpressionInfix;
 
 /**
@@ -59,7 +59,6 @@ public class BMath extends AbstractGrammar {
 	private static final String BOUND_UNARY = "Bound Unary";
 	private static final String BOOL = "Bool";
 
-	private static final String NO_TAG_ID = "no tag";
 	private static final String LOR_ID = "lor";
 	private static final String LAND_ID = "land";
 	private static final String BINTER_ID = "binter";
@@ -101,7 +100,7 @@ public class BMath extends AbstractGrammar {
 		_PREDVAR = tokens.reserved();
 		tokens.getOrAdd("[");
 		tokens.getOrAdd("]");
-		tokens.getOrAdd("{");
+		_LBRACE = tokens.getOrAdd("{");
 		_RBRACE = tokens.getOrAdd("}");
 		tokens.getOrAdd(";");
 //			tokens.add(",");
@@ -110,7 +109,7 @@ public class BMath extends AbstractGrammar {
 		tokens.getOrAdd("\u00ac");
 		tokens.getOrAdd("\u00d7");
 		tokens.getOrAdd("\u00f7");
-		tokens.getOrAdd("\u03bb");
+		_LAMBDA = tokens.getOrAdd("\u03bb");
 		tokens.getOrAdd("\u2025");
 		tokens.getOrAdd("\u2115");
 		tokens.getOrAdd("\u21151");
@@ -165,7 +164,7 @@ public class BMath extends AbstractGrammar {
 		tokens.getOrAdd("\u2900");
 		tokens.getOrAdd("\u2914");
 		tokens.getOrAdd("\u2916");
-		tokens.getOrAdd("\u2982");
+		_TYPING = tokens.getOrAdd("\u2982");
 		tokens.getOrAdd("\u2a64");
 		tokens.getOrAdd("\u2a65");
 		tokens.getOrAdd("\ue100");
@@ -197,12 +196,12 @@ public class BMath extends AbstractGrammar {
 
 //	static int _LBRACKET;
 //	static int _RBRACKET;
-//	static int _LBRACE;
+	static int _LBRACE;
 	static int _RBRACE;
 //	static int _EXPN;
 //	static int _NOT;
 //	static int _CPROD;
-//	static int _LAMBDA;
+	static int _LAMBDA;
 //	static int _UPTO;
 //	static int _NATURAL;
 //	static int _NATURAL1;
@@ -287,7 +286,7 @@ public class BMath extends AbstractGrammar {
 //	static int _KMAX;
 	static int _KPARTITION;
 	static int _DOT;
-//	static int _TYPING;
+	static int _TYPING;
 	static int _PREDVAR;
 
 
@@ -296,36 +295,35 @@ public class BMath extends AbstractGrammar {
 		super.init();
 		initTokens();
 		
-		opRegistry.addOperator(Formula.NO_TAG, NO_TAG_ID, GROUP0);
 		try {
-			addOperator("\u222a", BUNION, BUNION_ID, BINOP, new AssociativeExpressionInfix(BUNION));
-			addOperator("\u2229", BINTER, BINTER_ID, BINOP, new AssociativeExpressionInfix(BINTER));
-			addOperator("+", PLUS, PLUS_ID, ARITHMETIC, new AssociativeExpressionInfix(PLUS));
-			addOperator("\u2217", MUL, MUL_ID, ARITHMETIC, new AssociativeExpressionInfix(MUL));
-			addOperator("\u22a4", BTRUE, BTRUE_ID, ATOMIC_PRED, new LiteralPredicateParser(BTRUE));
-			addOperator("\u22a5", BFALSE, BFALSE_ID, ATOMIC_PRED, new LiteralPredicateParser(BFALSE));
-			addOperator("\u2227", LAND, LAND_ID, LOGIC_PRED, new AssociativePredicateInfix(LAND));
-			addOperator("\u2228", LOR, LOR_ID, LOGIC_PRED, new AssociativePredicateInfix(LOR));
-			addOperator("\u2200", FORALL, FORALL_ID, QUANTIFIED_PRED, new QuantifiedPredicateParser(FORALL));
-			addOperator("\u2203", EXISTS, EXISTS_ID, QUANTIFIED_PRED, new QuantifiedPredicateParser(EXISTS));
-			addOperator("=", EQUAL, EQUAL_ID, RELOP_PRED, new RelationalPredicateInfix(EQUAL));
-			addOperator(">", GT, GT_ID, RELOP_PRED, new RelationalPredicateInfix(GT));
-			addOperator("≤", LE, LE_ID, RELOP_PRED, new RelationalPredicateInfix(LE));
-			addOperator("(", FUNIMAGE, FUNIMAGE_ID, FUNCTIONAL, FUN_IMAGE);
-			addOperator("card", KCARD, KCARD_ID, FUNCTIONAL, new UnaryExpressionParser(KCARD));
-			addOperator("\u2208", IN, IN_ID, RELOP_PRED, new RelationalPredicateInfix(IN));
-			addOperator("\u2205", EMPTYSET, EMPTYSET_ID, EMPTY_SET, new AtomicExpressionParser(EMPTYSET));
-			addOperator("{", SETEXT, SETEXT_ID, BRACE_SETS, SETEXT_PARSER);
-			addOperator("{", CSET, CSET_ID, BRACE_SETS, CSET_EXPLICIT);
-			addOperator("{", CSET, CSET_ID, BRACE_SETS, CSET_IMPLICIT);
-			addOperator("\u03bb", CSET, LAMBDA_ID, QUANTIFICATION, CSET_LAMBDA);
-			addOperator("\u2124", INTEGER, INTEGER_ID, ATOMIC_EXPR, new AtomicExpressionParser(INTEGER));
-			addOperator("\u2119", POW, POW_ID, BOUND_UNARY, new UnaryExpressionParser(POW));
-			addOperator("\u00d7", CPROD, CPROD_ID, BINOP, new BinaryExpressionInfix(CPROD));
-			addOperator("\u2982", OFTYPE_TAG, OFTYPE_ID, TYPED, OFTYPE);
-			addOperator("\u21a6", MAPSTO, MAPSTO_ID, PAIR, new BinaryExpressionInfix(MAPSTO));
-			addOperator("\u21d2", LIMP, LIMP_ID, INFIX_PRED, new BinaryPredicateParser(LIMP));
-			addOperator("TRUE", TRUE, TRUE_ID, ATOMIC_EXPR, new AtomicExpressionParser(TRUE));
+			addOperator("\u222a", BUNION_ID, BINOP, new AssociativeExpressionInfix(BUNION));
+			addOperator("\u2229", BINTER_ID, BINOP, new AssociativeExpressionInfix(BINTER));
+			addOperator("+", PLUS_ID, ARITHMETIC, new AssociativeExpressionInfix(PLUS));
+			addOperator("\u2217", MUL_ID, ARITHMETIC, new AssociativeExpressionInfix(MUL));
+			addOperator("\u22a4", BTRUE_ID, ATOMIC_PRED, new LiteralPredicateParser(BTRUE));
+			addOperator("\u22a5", BFALSE_ID, ATOMIC_PRED, new LiteralPredicateParser(BFALSE));
+			addOperator("\u2227", LAND_ID, LOGIC_PRED, new AssociativePredicateInfix(LAND));
+			addOperator("\u2228", LOR_ID, LOGIC_PRED, new AssociativePredicateInfix(LOR));
+			addOperator("\u2200", FORALL_ID, QUANTIFIED_PRED, new QuantifiedPredicateParser(FORALL));
+			addOperator("\u2203", EXISTS_ID, QUANTIFIED_PRED, new QuantifiedPredicateParser(EXISTS));
+			addOperator("=", EQUAL_ID, RELOP_PRED, new RelationalPredicateInfix(EQUAL));
+			addOperator(">", GT_ID, RELOP_PRED, new RelationalPredicateInfix(GT));
+			addOperator("≤", LE_ID, RELOP_PRED, new RelationalPredicateInfix(LE));
+			addOperator("(", FUNIMAGE_ID, FUNCTIONAL, FUN_IMAGE);
+			addOperator("card", KCARD_ID, FUNCTIONAL, new UnaryExpressionParser(KCARD));
+			addOperator("\u2208", IN_ID, RELOP_PRED, new RelationalPredicateInfix(IN));
+			addOperator("\u2205", EMPTYSET_ID, EMPTY_SET, new AtomicExpressionParser(EMPTYSET));
+			addOperator("{", SETEXT_ID, BRACE_SETS, SETEXT_PARSER);
+			addOperator("{", CSET_ID, BRACE_SETS, CSET_EXPLICIT);
+			addOperator("{", CSET_ID, BRACE_SETS, CSET_IMPLICIT);
+			addOperator("\u03bb", LAMBDA_ID, QUANTIFICATION, CSET_LAMBDA);
+			addOperator("\u2124", INTEGER_ID, ATOMIC_EXPR, new AtomicExpressionParser(INTEGER));
+			addOperator("\u2119", POW_ID, BOUND_UNARY, new UnaryExpressionParser(POW));
+			addOperator("\u00d7", CPROD_ID, BINOP, new BinaryExpressionInfix(CPROD));
+			addOperator("\u2982", OFTYPE_ID, TYPED, OFTYPE);
+			addOperator("\u21a6", MAPSTO_ID, PAIR, new BinaryExpressionInfix(MAPSTO));
+			addOperator("\u21d2", LIMP_ID, INFIX_PRED, new BinaryPredicateParser(LIMP));
+			addOperator("TRUE", TRUE_ID, ATOMIC_EXPR, new AtomicExpressionParser(TRUE));
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

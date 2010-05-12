@@ -196,6 +196,22 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("1+2∗3", expected);
 	}
 	
+	// verifies that parentheses do correctly restore priorities when closed
+	// when it fails, the result is 1∗(2+3)
+	public void testPlusMultParen() throws Exception {
+		final Expression expected = ff
+				.makeAssociativeExpression(PLUS, Arrays
+						.<Expression> asList(
+								ff.makeAssociativeExpression(MUL, Arrays.<Expression> asList(ff
+										.makeIntegerLiteral(BigInteger
+												.valueOf(1), null), ff
+										.makeIntegerLiteral(BigInteger
+												.valueOf(2), null)), null),
+												ff.makeIntegerLiteral(BigInteger.valueOf(3), null)
+						), null);
+		doExpressionTest("1∗(2)+3", expected);
+	}
+	
 	public void testIdentDoubleParen() throws Exception {
 		final Expression expected = ff.makeFreeIdentifier("A", null);
 		doExpressionTest("((A))", expected);

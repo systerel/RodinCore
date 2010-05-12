@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eventb.core.ast.Formula;
-import org.eventb.internal.core.parser.AbstractGrammar.OverrideException;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 
 /**

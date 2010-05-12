@@ -11,8 +11,7 @@
 package org.eventb.internal.core.parser;
 
 
-import static org.eventb.core.ast.Formula.NO_TAG;
-import static org.eventb.internal.core.parser.AbstractGrammar._EOF;
+import static org.eventb.internal.core.parser.AbstractGrammar.*;
 import static org.eventb.internal.core.parser.AbstractGrammar._LPAR;
 import static org.eventb.internal.core.parser.AbstractGrammar._RPAR;
 
@@ -42,6 +41,24 @@ import org.eventb.internal.core.parser.GenScan.ScanState;
 public class GenParser {
 
 	
+	protected static class SyntaxCompatibleError extends SyntaxError {
+
+		private static final long serialVersionUID = -6230478311681172354L;
+
+		public SyntaxCompatibleError(String reason) {
+			super(reason);
+		}
+	}
+
+	public static class OverrideException extends Exception {
+	
+		private static final long serialVersionUID = -1281802568424261959L;
+	
+		public OverrideException(String reason) {
+			super(reason);
+		}
+	}
+
 	public static class SyntaxError extends Exception {
 
 		private static final long serialVersionUID = -8349775303104088736L;
@@ -54,12 +71,6 @@ public class GenParser {
 
 	private static class CycleError extends Exception {
 		public CycleError(String reason) {
-			super(reason);
-		}
-	}
-
-	private static class SyntaxCompatibleError extends SyntaxError {
-		public SyntaxCompatibleError(String reason) {
 			super(reason);
 		}
 	}
@@ -80,6 +91,23 @@ public class GenParser {
 
 	}
 
+	private static class StackedValue<T> {
+		T val;
+		private final Stack<T> stack = new Stack<T>();
+		
+		public StackedValue(T initVal) {
+			this.val = initVal;
+		}
+		
+		public void push(T newVal) {
+			stack.push(val);
+			val = newVal;
+		}
+
+		public void pop() {
+			val = stack.pop();
+		}
+	}
 	
 	private final Scanner scanner;
 	
@@ -100,11 +128,10 @@ public class GenParser {
 		protected final FormulaFactory factory;
 		private final AbstractGrammar grammar;
 		protected final ParseResult result;
-		private final Stack<Integer> startPosStack = new Stack<Integer>();
-		private final Stack<Binding> bindingStack = new Stack<Binding>();
-		private int startPos = -1;
+		private final StackedValue<Binding> binding = new StackedValue<Binding>(new Binding());
+		private final StackedValue<Integer> parentKind = new StackedValue<Integer>(_EOF); 
+		private final StackedValue<Integer> startPos = new StackedValue<Integer>(-1); 
 		private int endPos = -1;
-		private Binding binding = new Binding();
 		private boolean parsingType;
 		protected Token t;    // last recognized token
 		protected Token la;   // lookahead token
@@ -124,10 +151,10 @@ public class GenParser {
 		 * @return a source location
 		 */
 		public SourceLocation getSourceLocation() {
-			if (startPos < 0) {
+			if (startPos.val < 0) {
 				throw new IllegalStateException("no start position set");
 			}
-			return new SourceLocation(startPos, endPos, result.getOrigin());
+			return new SourceLocation(startPos.val, endPos, result.getOrigin());
 		}
 		
 		public void init() {
@@ -140,6 +167,14 @@ public class GenParser {
 			endPos = t.getEnd();
 			t = la;
 			la = scanner.Scan();
+		}
+		
+		public void pushParentKind(int newParentKind) {
+			parentKind.push(newParentKind);
+		}
+		
+		public void popParentKind() {
+			parentKind.pop();
 		}
 		
 		public SavedContext save() {
@@ -215,10 +250,11 @@ public class GenParser {
 		}
 		
 		public int getBoundIndex(String name) {
-			return binding.getBoundIndex(name);
+			return binding.val.getBoundIndex(name);
 		}
 		
-		public boolean canProgressRight(int parentTag) throws SyntaxError {
+		// TODO remove needless argument
+		public boolean canProgressRight() throws SyntaxError {
 			if (t.kind == _EOF) { // end of the formula
 				return false;
 			}
@@ -226,16 +262,15 @@ public class GenParser {
 				return false;
 			}
 			final OperatorRegistry opRegistry = grammar.getOperatorRegistry();
-			return opRegistry.hasLessPriority(parentTag, grammar.getOperatorTag(t));
+			return opRegistry.hasLessPriority(parentKind.val, t.kind);
 		}
 		
 		private void pushPos() {
-			startPosStack.push(startPos);
-			startPos = t.pos;
+			startPos.push(t.pos);
 		}
 		
 		private void popPos() {
-			startPos = startPosStack.pop();
+			startPos.pop();
 		}
 		
 		public <T> T subParse(INudParser<T> parser) throws SyntaxError {
@@ -245,19 +280,11 @@ public class GenParser {
 			return res;
 		}
 		
-		public <T> T subParse(int parentTag, IMainParser<T> parser) throws SyntaxError {
+		public <T> T subParse(IMainParser<T> parser, List<BoundIdentDecl> newBoundIdents) throws SyntaxError {
 			pushPos();
-			final T res = parser.parse(parentTag, this);
-			popPos();
-			return res;
-		}
-		
-		public <T> T subParse(int parentTag, IMainParser<T> parser, List<BoundIdentDecl> newBoundIdents) throws SyntaxError {
-			pushPos();
-			bindingStack.push(binding);
-			binding = new Binding(binding, newBoundIdents);
-			final T res = parser.parse(parentTag, this);
-			binding = bindingStack.pop();
+			binding.push(new Binding(binding.val, newBoundIdents));
+			final T res = parser.parse(this);
+			binding.pop();
 			popPos();
 			return res;
 		}
@@ -269,16 +296,14 @@ public class GenParser {
 		 * Parses the given parser context. Starts from the current token. When
 		 * the method returns, the current token is the one that immediately
 		 * follows the last one that belongs to the parsed formula.
-		 * 
-		 * @param parentTag
-		 *            tag of the parent formula, {@link Formula#NO_TAG} if none
 		 * @param pc
 		 *            current parser context
+		 * 
 		 * @return a formula
 		 * @throws SyntaxError
 		 *             if a syntax error occurs while parsing
 		 */
-		T parse(int parentTag, ParserContext pc) throws SyntaxError;
+		T parse(ParserContext pc) throws SyntaxError;
 	}
 	
     private static class Binding {
@@ -346,7 +371,7 @@ public class GenParser {
 			pc.init();
 			final Object res;
 			if (clazz == Type.class) {
-				res = pc.subParse(NO_TAG, Parsers.TYPE_PARSER);
+				res = pc.subParse(Parsers.TYPE_PARSER);
 			} else if (clazz == Assignment.class) {
 				// FIXME particular case required because assignment lhs
 				// is not a terminal (not a formula, but a list of identifiers)
@@ -355,7 +380,7 @@ public class GenParser {
 				// with led sub-parsers
 				res = pc.subParse(Parsers.ASSIGNMENT_PARSER);
 			} else {
-				res = pc.subParse(NO_TAG, Parsers.FORMULA_PARSER);
+				res = pc.subParse(Parsers.FORMULA_PARSER);
 			}
 			if (pc.t.kind != _EOF) {
 				throw new UnmatchedToken("tokens have been ignored from: \""

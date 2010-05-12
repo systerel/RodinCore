@@ -16,8 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.CycleError;
-import org.eventb.core.ast.extension.IFormulaExtension.Associativity;
-import org.eventb.internal.core.parser.AbstractGrammar.SyntaxCompatibleError;
+import org.eventb.internal.core.parser.GenParser.SyntaxCompatibleError;
 
 /**
  * @author Nicolas Beauger
@@ -143,83 +142,95 @@ public class OperatorRegistry {
 		}
 	}
 	
+	private final Map<String, OperatorGroup> idOpGroup = new HashMap<String, OperatorGroup>();
+	// refactored
+	private final Map<Integer, OperatorGroup> kindOpGroup = new HashMap<Integer, OperatorGroup>();
+	private final Map<String, Integer> idKind = new HashMap<String, Integer>();
 	
-	
-	//	TODO refactor all these maps
-	private final Map<Integer, String> groupIds = new HashMap<Integer, String>();
-	private final Map<String, Integer> tagFromId = new HashMap<String, Integer>();
-	private final Map<String, OperatorGroup> operatorGroups = new HashMap<String, OperatorGroup>();
 	
 	private final Closure<String> groupPriority = new Closure<String>();
 	// FIXME take group compatibility into account
 	private final Relation<String> groupCompatibility = new Relation<String>();
 	
-	public void addOperator(int tag, String operatorId, String groupId) {
-		tagFromId.put(operatorId, tag);
-		OperatorGroup operatorGroup = operatorGroups.get(groupId);
+	public void addOperator(Integer kind, String operatorId, String groupId) {
+		idKind.put(operatorId, kind);
+		
+		OperatorGroup operatorGroup = idOpGroup.get(groupId);
 		if (operatorGroup == null) {
 			operatorGroup = new OperatorGroup(groupId);
-			operatorGroups.put(groupId, operatorGroup);
+			idOpGroup.put(groupId, operatorGroup);
 		}
-		// FIXME lambda and { have the same tag but different groups
-		groupIds.put(tag, groupId);
+		final OperatorGroup oldGroup = kindOpGroup.put(kind, operatorGroup);
+		if (oldGroup != null && oldGroup != operatorGroup) {
+			kindOpGroup.put(kind, oldGroup);
+			throw new IllegalArgumentException("when attempting to add group "
+					+ groupId + " for token kind " + kind
+					+ ", found another group already set for this kind: "
+					+ oldGroup.getId());
+		}
 	}
 	
 	public void addCompatibility(String leftOpId, String rightOpId) {
-		final Integer leftTag = tagFromId.get(leftOpId);
-		final Integer rightTag = tagFromId.get(rightOpId);
-		final OperatorGroup group = getAndCheckSameGroup(leftTag, rightTag);
-		group.addCompatibility(leftTag, rightTag);
+		final Integer leftKind = idKind.get(leftOpId);
+		final Integer rightKind = idKind.get(rightOpId);
+		final OperatorGroup group = getAndCheckSameGroup(leftKind, rightKind);
+		group.addCompatibility(leftKind, rightKind);
 	}
 
 	// lowOpId gets a lower priority than highOpId
 	public void addPriority(String lowOpId, String highOpId)
 			throws CycleError {
-		final Integer leftTag = tagFromId.get(lowOpId);
-		final Integer rightTag = tagFromId.get(highOpId);
-		final OperatorGroup group = getAndCheckSameGroup(leftTag, rightTag);
-		group.addPriority(leftTag, rightTag);
+		final Integer leftKind = idKind.get(lowOpId);
+		final Integer rightKind = idKind.get(highOpId);
+		final OperatorGroup group = getAndCheckSameGroup(leftKind, rightKind);
+		group.addPriority(leftKind, rightKind);
 	}
 
 	private OperatorGroup getAndCheckSameGroup(Integer leftTag, Integer rightTag) {
-		final String leftGroupId = groupIds.get(leftTag);
-		final String rightGroupId = groupIds.get(rightTag);
-		if (!leftGroupId.equals(rightGroupId)) {
+		final OperatorGroup leftGroup = kindOpGroup.get(leftTag);
+		final OperatorGroup rightGroup = kindOpGroup.get(rightTag);
+		if (leftGroup != rightGroup) {
 			throw new IllegalArgumentException("Operators " + leftTag + " and "
 					+ rightTag + " do not belong to the same group");
 		}
-		return operatorGroups.get(leftGroupId);
+		return leftGroup;
 	}
 	
 	/**
 	 * <code>true</code> iff priority(tagLeft) < priority(tagRight) 
 	 */
-	public boolean hasLessPriority(int tagleft, int tagRight) throws SyntaxCompatibleError {
+	public boolean hasLessPriority(int leftKind, int rightKind) throws SyntaxCompatibleError {
 		// TODO right associativity
-		final String gid1 = groupIds.get(tagleft);
-		final String gid2 = groupIds.get(tagRight);
-		
+		// TODO encapsulate access to opGroup, returning constant default group0 when none is found
+		final OperatorGroup leftGroup = kindOpGroup.get(leftKind);
+		final OperatorGroup rightGroup = kindOpGroup.get(rightKind);
 		//FIXME NPE
-		if (gid1.equals(OperatorRegistry.GROUP0) && gid2.equals(OperatorRegistry.GROUP0)) {
+		final String leftId = leftGroup.getId();
+		final String rightId = rightGroup.getId();
+		
+		// TODO have the  group0 constant available
+		// TODO compare group references instead of ids
+		// TODO group priority and compatibility should reference groups instead of their ids
+		if (leftId.equals(GROUP0) && rightId.equals(GROUP0)) {
 			return false;
 		// Unknown groups have a priority greater than GROUP0
-		} else if (gid1.equals(OperatorRegistry.GROUP0)) {
+		} else if (leftId.equals(GROUP0)) {
 			return true;
-		} else if (gid2.equals(OperatorRegistry.GROUP0)) {
+		} else if (rightId.equals(GROUP0)) {
 			return false;
-		} else if (groupPriority.contains(gid1, gid2)) {
+		} else if (groupPriority.contains(leftId, rightId)) {
 			return true;
-		} else if (groupPriority.contains(gid2, gid1)) {
+		} else if (groupPriority.contains(rightId, leftId)) {
 			return false;
-		} else if (gid1.equals(gid2)) {
-			final OperatorGroup opGroup = operatorGroups.get(gid1);
-			if (opGroup.isAssociative(tagleft, tagRight)) {
+		} else if (leftGroup == rightGroup) {
+			final OperatorGroup group = leftGroup;
+			if (group.isAssociative(leftKind, rightKind)) {
 				return true;
-			} else if (opGroup.isAssociative(tagRight, tagleft)) {
+			} else if (group.isAssociative(rightKind, leftKind)) {
 				return false;
-			} else if (opGroup.isCompatible(tagleft, tagRight)) {
+			} else if (group.isCompatible(leftKind, rightKind)) {
 				return false;
-			} else throw new SyntaxCompatibleError("Incompatible symbols: "+ tagleft +" with "+tagRight);
+			} else throw new SyntaxCompatibleError("Incompatible symbols: "+ leftKind +" with "+rightKind);
 		} else {
 			return false;
 		}

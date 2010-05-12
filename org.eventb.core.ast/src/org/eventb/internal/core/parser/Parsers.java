@@ -61,6 +61,7 @@ public class Parsers {
 
 	private static abstract class AbstractSubParser<T> implements ISubParser<T> {
 
+		// TODO move tag downwards to sub-classes that really require it
 		protected final int tag;
 
 		protected AbstractSubParser(int tag) {
@@ -78,6 +79,7 @@ public class Parsers {
 		protected DefaultNudParser(int tag) {
 			super(tag);
 		}
+		// TODO could add a check that the parser is indeed called with the good kind
 	}
 
 	private static abstract class DefaultLedExprParser<T> extends AbstractSubParser<T> implements ILedParser<T> {
@@ -96,7 +98,7 @@ public class Parsers {
 				ParserContext pc) throws SyntaxError;
 		
 		protected Expression parseRight(ParserContext pc) throws SyntaxError {
-			return pc.subParse(tag, EXPR_PARSER);
+			return pc.subParse(EXPR_PARSER);
 		}
 	}
 	
@@ -115,7 +117,7 @@ public class Parsers {
 		protected abstract T led(Predicate left, Predicate right, ParserContext pc) throws SyntaxError;
 		
 		protected Predicate parseRight(ParserContext pc) throws SyntaxError {
-			return pc.subParse(tag, PRED_PARSER);
+			return pc.subParse(PRED_PARSER);
 		}
 	}
 	
@@ -145,7 +147,7 @@ public class Parsers {
 		}
 
 		public final T nud(ParserContext pc) throws SyntaxError {
-			return parse(NO_TAG, pc);
+			return parse(pc);
 		}
 	}
 	
@@ -154,15 +156,17 @@ public class Parsers {
 			// void constructor
 		}
 		
-		public Formula<?> parse(int parentTag, ParserContext pc)
+		public Formula<?> parse(ParserContext pc)
 				throws SyntaxError {
 		
 			final List<INudParser<? extends Formula<?>>> nudParsers = getNudParsers(pc);
 			Formula<?> left = nudParse(pc, nudParsers);
-			while (pc.canProgressRight(parentTag)) {
+			while (pc.canProgressRight()) {
 				final ILedParser<? extends Formula<?>> ledParser = getLedParser(pc);
+				pc.pushParentKind(pc.t.kind);
 				pc.progress();
 				left = ledParser.led(left, pc);
+				pc.popParentKind();
 			}
 			return left;
 		}
@@ -216,9 +220,9 @@ public class Parsers {
 			// void constructor
 		}
 		
-		public Type parse(int parentTag, ParserContext pc) throws SyntaxError {
+		public Type parse(ParserContext pc) throws SyntaxError {
 			pc.startParsingType();
-			final Expression expression = pc.subParse(NO_TAG, EXPR_PARSER);
+			final Expression expression = pc.subParse(EXPR_PARSER);
 			if (!expression.isATypeExpression()) {
 				throw new SyntaxError(
 						"expected a type expression at position "
@@ -243,8 +247,8 @@ public class Parsers {
 			// void constructor
 		}
 		
-		public Predicate parse(int parentTag, ParserContext pc) throws SyntaxError {
-			final Formula<?> formula = FORMULA_PARSER.parse(parentTag, pc);
+		public Predicate parse(ParserContext pc) throws SyntaxError {
+			final Formula<?> formula = FORMULA_PARSER.parse(pc);
 			return asPredicate(formula);
 		}
 	}
@@ -257,8 +261,8 @@ public class Parsers {
 			// void constructor
 		}
 		
-		public Expression parse(int parentTag, ParserContext pc) throws SyntaxError {
-			final Formula<?> formula = FORMULA_PARSER.parse(parentTag, pc);
+		public Expression parse(ParserContext pc) throws SyntaxError {
+			final Formula<?> formula = FORMULA_PARSER.parse(pc);
 			return asExpression(formula);
 		}
 	}
@@ -364,7 +368,9 @@ public class Parsers {
 
 		public Formula<?> nud(ParserContext pc) throws SyntaxError {
 			pc.progressOpenParen();
-			final Formula<?> formula = pc.subParse(NO_TAG, FORMULA_PARSER);
+			pc.pushParentKind(_EOF);
+			final Formula<?> formula = pc.subParse(FORMULA_PARSER);
+			pc.popParentKind();
 			pc.progressCloseParen();
 			return formula;
 		}
@@ -376,7 +382,7 @@ public class Parsers {
 		@Override
 		public Expression led(Expression left, Expression right, ParserContext pc)
 				throws SyntaxError {
-			final Type type = pc.subParse(NO_TAG, TYPE_PARSER);
+			final Type type = pc.subParse(TYPE_PARSER);
 			switch (left.getTag()) {
 			case Formula.EMPTYSET:
 				return pc.factory.makeEmptySet(type, pc.getSourceLocation());
@@ -546,7 +552,7 @@ public class Parsers {
 		
 		@Override
 		protected Expression parseRight(ParserContext pc) throws SyntaxError {
-			return pc.subParse(NO_TAG, EXPR_PARSER);
+			return pc.subParse(EXPR_PARSER);
 		}
 		
 	};
@@ -589,7 +595,7 @@ public class Parsers {
 			pc.progress(_DOT);
 			final List<BoundIdentDecl> boundIdentifiers = makeBoundIdentDeclList(
 					pc.factory, identList);
-			final Predicate pred = pc.subParse(tag, PRED_PARSER, boundIdentifiers);
+			final Predicate pred = pc.subParse(PRED_PARSER, boundIdentifiers);
 
 			return pc.factory.makeQuantifiedPredicate(tag, boundIdentifiers,
 					pred, null);
@@ -631,7 +637,7 @@ public class Parsers {
 			this.pattern = new Pattern(result);
 		}
 
-		public Pattern parse(int parentTag, ParserContext pc) throws SyntaxError {
+		public Pattern parse(ParserContext pc) throws SyntaxError {
 			final PatternAtomParser atomParser = new PatternAtomParser(pattern, this);
 			pc.subParse(atomParser);
 			while (pc.t.kind == _MAPSTO) {
@@ -652,7 +658,7 @@ public class Parsers {
 				this.parser = parser;
 			}
 
-			public Object parse(int parentTag, ParserContext pc) throws SyntaxError {
+			public Object parse(ParserContext pc) throws SyntaxError {
 				if (pc.t.kind == _LPAR) {
 					pc.progressOpenParen();
 					pc.subParse(parser);
@@ -714,9 +720,9 @@ public class Parsers {
 			final List<FreeIdentifier> idents = pc.subParse(FREE_IDENT_LIST_PARSER);
 			pc.progress(_DOT);
 			final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, idents);
-			final Predicate pred = pc.subParse(tag, PRED_PARSER, boundIdents);
+			final Predicate pred = pc.subParse(PRED_PARSER, boundIdents);
 			pc.progress(_MID);
-			final Expression expr = pc.subParse(tag, EXPR_PARSER, boundIdents);
+			final Expression expr = pc.subParse(EXPR_PARSER, boundIdents);
 			pc.progress(_RBRACE);
 			
 			return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
@@ -734,7 +740,7 @@ public class Parsers {
 			final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, idents);
 			final Expression boundExpr = expr.bindTheseIdents(idents, pc.factory);
 			
-			final Predicate pred = pc.subParse(tag, PRED_PARSER, boundIdents);
+			final Predicate pred = pc.subParse(PRED_PARSER, boundIdents);
 			pc.progress(_RBRACE);
 			return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
 					boundExpr, pc.getSourceLocation(), Form.Implicit);
@@ -749,9 +755,9 @@ public class Parsers {
 			final Pattern pattern = pc.subParse(pattParser);
 			pc.progress(_DOT);
 			final List<BoundIdentDecl> boundDecls = pattern.getDecls();
-			final Predicate pred = pc.subParse(tag, PRED_PARSER, boundDecls);
+			final Predicate pred = pc.subParse(PRED_PARSER, boundDecls);
 			pc.progress(_MID);
-			final Expression expr = pc.subParse(tag, EXPR_PARSER, boundDecls);
+			final Expression expr = pc.subParse(EXPR_PARSER, boundDecls);
 			
 			final Expression pair = pc.factory.makeBinaryExpression(MAPSTO,
 					pattern.getPattern(), expr, null);
@@ -773,8 +779,7 @@ public class Parsers {
 	/** @see GenParser#parse() */
 	static final IMainParser<Assignment> ASSIGNMENT_PARSER = new DefaultMainParser<Assignment>() {
 
-		public Assignment parse(int parentTag,
-				ParserContext pc) throws SyntaxError {
+		public Assignment parse(ParserContext pc) throws SyntaxError {
 			final List<FreeIdentifier> idents = pc.subParse(FREE_IDENT_LIST_PARSER);
 			final int assignKind = pc.t.kind;
 			pc.progress();
@@ -793,7 +798,7 @@ public class Parsers {
 				return pc.factory.makeBecomesMemberOf(idents.get(0), expr, pc.getSourceLocation());
 			} else if (assignKind == _BECST) {
 				final List<BoundIdentDecl> primed = makePrimedDecl(idents, pc.factory);
-				final Predicate condition = pc.subParse(NO_TAG, PRED_PARSER, primed);
+				final Predicate condition = pc.subParse(PRED_PARSER, primed);
 				return pc.factory.makeBecomesSuchThat(idents, primed, condition, pc.getSourceLocation());
 			} else {
 				throw new SyntaxError("Unknown assignment operator: "

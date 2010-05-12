@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
+import static org.eventb.internal.core.parser.OperatorRegistry.GROUP0;
+
 import java.util.List;
 
 import org.eventb.core.ast.Formula;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 
 /**
@@ -21,30 +24,14 @@ import org.eventb.internal.core.parser.GenParser.SyntaxError;
  */
 public abstract class AbstractGrammar {
 
+	private static final String EOF_ID = "End of File";
+
 	static int _EOF;
 	static int _LPAR;
 	static int _RPAR;
 	static int _IDENT;
 	static int _INTLIT;
 	static int _COMMA;
-
-	protected static class SyntaxCompatibleError extends SyntaxError {
-
-		private static final long serialVersionUID = -6230478311681172354L;
-
-		public SyntaxCompatibleError(String reason) {
-			super(reason);
-		}
-	}
-
-	public static class OverrideException extends Exception {
-	
-		private static final long serialVersionUID = -1281802568424261959L;
-	
-		public OverrideException(String reason) {
-			super(reason);
-		}
-	}
 
 	protected final IndexedSet<String> tokens = new IndexedSet<String>();
 	
@@ -80,6 +67,8 @@ public abstract class AbstractGrammar {
 		_LPAR = tokens.getOrAdd("(");
 		_RPAR = tokens.getOrAdd(")");
 		_COMMA = tokens.getOrAdd(",");
+		
+		opRegistry.addOperator(_EOF, EOF_ID, GROUP0);
 		try {
 			_INTLIT = addReservedSubParser(Parsers.INTLIT_SUBPARSER);
 			_IDENT = addReservedSubParser(Parsers.IDENT_SUBPARSER);
@@ -99,24 +88,26 @@ public abstract class AbstractGrammar {
 		return subParsers.getLedParser(token);
 	}
 	
-	protected void addOperator(String token, int tag, String operatorId, String groupId,
-			INudParser<? extends Formula<?>> subParser) throws OverrideException {
-		opRegistry.addOperator(tag, operatorId, groupId);
+	protected void addOperator(String token, String operatorId, String groupId,
+			INudParser<? extends Formula<?>> subParser)
+			throws OverrideException {
 		final int kind = tokens.getOrAdd(token);
+		opRegistry.addOperator(kind, operatorId, groupId);
 		subParsers.addNud(kind, subParser);
 	}
 	
-	protected void addOperator(String token, int tag, String operatorId, String groupId,
-			ILedParser<? extends Formula<?>> subParser) throws OverrideException {
-		opRegistry.addOperator(tag, operatorId, groupId);
+	protected void addOperator(String token, String operatorId, String groupId,
+			ILedParser<? extends Formula<?>> subParser)
+			throws OverrideException {
 		final int kind = tokens.getOrAdd(token);
+		opRegistry.addOperator(kind, operatorId, groupId);
 		subParsers.addLed(kind, subParser);
 	}
 
-	protected void addOperator(int kind, int tag, String operatorId,
-			String groupId, INudParser<? extends Formula<?>> subParser)
+	protected void addOperator(int kind, String operatorId, String groupId,
+			INudParser<? extends Formula<?>> subParser)
 			throws OverrideException {
-		opRegistry.addOperator(tag, operatorId, groupId);
+		opRegistry.addOperator(kind, operatorId, groupId);
 		subParsers.addNud(kind, subParser);
 	}
 

@@ -12,11 +12,13 @@ package org.eventb.internal.core.parser;
 
 import java.util.Set;
 
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IFormulaExtension.ExtensionKind;
 import org.eventb.internal.core.ast.extension.CompatibilityMediator;
 import org.eventb.internal.core.ast.extension.PriorityMediator;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
 
 /**
  * @author Nicolas Beauger
@@ -40,7 +42,7 @@ public class ExtendedGrammar extends BMath {
 				final String operatorId = extension.getId();
 				final String groupId = extension.getGroupId();
 				final ExtensionKind kind = extension.getKind();
-				final ILedParser subParser;
+				final ILedParser<? extends Formula<?>> subParser;
 				switch (kind) {
 				case ASSOCIATIVE_INFIX_EXPRESSION:
 					subParser = new Parsers.ExtendedAssociativeExpressionInfix(
@@ -54,8 +56,8 @@ public class ExtendedGrammar extends BMath {
 					throw new IllegalStateException("Unknown extension kind: "
 							+ kind);
 				}
-				addOperator(extension.getSyntaxSymbol(), tag, operatorId,
-						groupId, subParser);
+				addOperator(extension.getSyntaxSymbol(), operatorId, groupId,
+						subParser);
 			}
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
