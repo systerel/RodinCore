@@ -116,7 +116,9 @@ public class GenParser {
 	private final Class<?> clazz;
 	private final FormulaFactory factory;
 	private final ParseResult result;
+	// FIXME take language version into account
 	private final LanguageVersion version;
+	// FIXME take predicate variables into account
 	private final boolean withPredVar;
 
 	
