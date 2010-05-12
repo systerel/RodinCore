@@ -94,6 +94,8 @@ public class GenParser {
 	
 	
 	static class ParserContext {
+		private static final Token INIT_TOKEN = new Token(IndexedSet.NOT_AN_INDEX, "", -1);
+
 		private final Scanner scanner;
 		protected final FormulaFactory factory;
 		private final AbstractGrammar grammar;
@@ -101,6 +103,7 @@ public class GenParser {
 		private final Stack<Integer> startPosStack = new Stack<Integer>();
 		private final Stack<Binding> bindingStack = new Stack<Binding>();
 		private int startPos = -1;
+		private int endPos = -1;
 		private Binding binding = new Binding();
 		private boolean parsingType;
 		protected Token t;    // last recognized token
@@ -112,22 +115,29 @@ public class GenParser {
 			this.grammar = factory.getGrammar();
 			this.result = result;
 		}
-		
-		// FIXME end position is wrong in some parsers
-		// where they have progressed after last token 
+
+		/**
+		 * Makes a source location starting from the position where the latest
+		 * call to a subparse() method occurred, ending at the end position of the
+		 * previous token (before current token t).
+		 * 
+		 * @return a source location
+		 */
 		public SourceLocation getSourceLocation() {
 			if (startPos < 0) {
 				throw new IllegalStateException("no start position set");
 			}
-			return new SourceLocation(startPos, t.getEnd(), result.getOrigin());
+			return new SourceLocation(startPos, endPos, result.getOrigin());
 		}
 		
 		public void init() {
+			t = INIT_TOKEN;
 			la = scanner.Scan();
 			progress();
 		}
 		
 		public void progress() {
+			endPos = t.getEnd();
 			t = la;
 			la = scanner.Scan();
 		}
@@ -361,11 +371,6 @@ public class GenParser {
 				} else if (clazz == Type.class) {
 					result.setParsedType((Type) res);
 				}
-				// FIXME parsing Type
-				//			else if (StartOf(1)) { 
-				//				Type type = Type();
-				//				result.setParsedType(type); 
-				//			}
 			}
 		} catch (SyntaxError e) {
 			result.addProblem(new ASTProblem(null, ProblemKind.SyntaxError, ProblemSeverities.Error, e.getMessage()));

@@ -257,6 +257,16 @@ public class TestGenParser extends AbstractTests {
 		assertEquals(new SourceLocation(6, 6), childFalse.getSourceLocation());
 	}
 	
+	public void testSourceLocation2() throws Exception {
+		final IParseResult result = ff.parsePredicate("⊤∧(⊥∨⊥        )",
+				LanguageVersion.V2, null);
+		final Predicate pred = result.getParsedPredicate();
+		assertNotNull(pred.getSourceLocation());
+		final Predicate childFalseOrFalse = ((AssociativePredicate) pred)
+				.getChildren()[1];
+		assertEquals(new SourceLocation(3, 5), childFalseOrFalse.getSourceLocation());
+	}
+	
 	private static final IExpressionExtension DIRECT_PRODUCT = new IExpressionExtension() {
 
 		public void toString(IToStringMediator mediator,

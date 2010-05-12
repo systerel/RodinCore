@@ -291,16 +291,15 @@ public class Parsers {
 		}
 
 		public Identifier nud(ParserContext pc) throws SyntaxError {
-			final Identifier ident = makeIdent(pc);
-			pc.progress();
-			return ident;
+			// Creates an identifier for the given token.
+			// Takes care of the bindings.
+			return makeIdent(pc);
 		}
 		
-		// Creates an identifier for the given token.
-		// Takes care of the bindings.
 		private Identifier makeIdent(ParserContext pc) throws SyntaxError {
 			final String name = pc.t.val;
 			final int index = pc.getBoundIndex(name);
+			pc.progress();
 			final SourceLocation loc = pc.getSourceLocation();
 			if (index == -1) {
 				final Type type;
@@ -401,9 +400,9 @@ public class Parsers {
 	
 		public AtomicExpression nud(ParserContext pc)
 				throws SyntaxError {
+			pc.progress();
 			final AtomicExpression atomExpr = pc.factory.makeAtomicExpression(
 					tag, pc.getSourceLocation());
-			pc.progress();
 			return atomExpr;
 		}
 
@@ -559,10 +558,8 @@ public class Parsers {
 		}
 
 		public LiteralPredicate nud(ParserContext pc) throws SyntaxError {
-			final LiteralPredicate litPred = pc.factory.makeLiteralPredicate(
-					tag, pc.getSourceLocation());
 			pc.progress();
-			return litPred;
+			return pc.factory.makeLiteralPredicate(tag, pc.getSourceLocation());
 		}
 	}
 
@@ -702,7 +699,7 @@ public class Parsers {
 	static final INudParser<SetExtension> SETEXT_PARSER = new DefaultNudParser<SetExtension>(SETEXT) {
 		
 		public SetExtension nud(ParserContext pc) throws SyntaxError {
-			pc.progress();
+			pc.progress(); // _LBRACE
 			final List<Expression> exprs = pc.subParse(EXPR_LIST_PARSER);
 			pc.progress(_RBRACE);
 			
@@ -713,7 +710,7 @@ public class Parsers {
 	static final INudParser<QuantifiedExpression> CSET_EXPLICIT = new DefaultNudParser<QuantifiedExpression>(CSET) {
 		
 		public QuantifiedExpression nud(ParserContext pc) throws SyntaxError {
-			pc.progress();
+			pc.progress();// _LBRACE
 			final List<FreeIdentifier> idents = pc.subParse(FREE_IDENT_LIST_PARSER);
 			pc.progress(_DOT);
 			final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, idents);
