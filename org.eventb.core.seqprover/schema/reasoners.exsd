@@ -53,6 +53,10 @@
             <annotation>
                <documentation>
                   the identifier for this reasoner (simple id token). The token cannot contain a dot (.) or whitespace.
+
+The id returned by the method getReasonerID in the reasoner class must correspond to this identifier prefixed by the declaring plugin id followed by a dot(.).
+For example :
+org.myplace.myplugin.reasonerid where reasonerid is the identifier of this reasoner.
                </documentation>
             </annotation>
          </attribute>

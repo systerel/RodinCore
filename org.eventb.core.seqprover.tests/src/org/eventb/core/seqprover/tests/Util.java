@@ -19,6 +19,11 @@ package org.eventb.core.seqprover.tests;
 public class Util {
 
 	/**
+	 * Prefix used to retrieve test reasoner descriptors.
+	 */
+	public static final String TEST_PLUGIN_ID = "org.eventb.core.seqprover.tests";
+	
+	/**
 	 * Generate a display string from the given String.
 	 * @param inputString the given input string
 	 *

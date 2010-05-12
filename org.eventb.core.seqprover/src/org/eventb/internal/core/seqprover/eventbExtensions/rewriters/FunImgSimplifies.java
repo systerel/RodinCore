@@ -37,7 +37,7 @@ public class FunImgSimplifies implements IVersionedReasoner {
 	private static final int VERSION = 0;
 
 	public static String REASONER_ID = SequentProver.PLUGIN_ID
-			+ ".FunImgSimplification";
+			+ ".funImgSimplifies";
 
 	private static final FormulaFactory ff = FormulaFactory.getDefault();
 
@@ -158,7 +158,7 @@ public class FunImgSimplifies implements IVersionedReasoner {
 			return new Input(position);
 		}
 		throw new SerializeException(new IllegalStateException(
-				"Expected first hyp action to be a forward hyp action!"));
+				"Expected a goal to apply simplification"));
 	}
 
 	public final void serializeInput(IReasonerInput input,

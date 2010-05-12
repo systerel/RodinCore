@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tests;
 
+import static org.eventb.core.seqprover.tests.Util.TEST_PLUGIN_ID;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -129,7 +131,7 @@ public class ProverChecksTests extends TestCase{
 		IAntecedent[] antecedents;
 		
 		final IReasonerDesc fakeDesc = SequentProver
-		.getReasonerRegistry().getReasonerDesc("noId");
+		.getReasonerRegistry().getReasonerDesc(TEST_PLUGIN_ID + ".noId");
 		IReasoner generatedBy =  fakeDesc.getInstance();
 		IReasonerInput generatedUsing = new EmptyInput();
 		

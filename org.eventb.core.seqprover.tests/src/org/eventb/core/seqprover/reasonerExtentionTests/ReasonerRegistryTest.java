@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,15 +8,19 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - moved part of tests to ReasonerDescTests
+ *     Systerel - added coherence test of reasoner declaration
  *******************************************************************************/
 package org.eventb.core.seqprover.reasonerExtentionTests;
 
+import static org.eventb.core.seqprover.tests.Util.TEST_PLUGIN_ID;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
 import org.eventb.core.seqprover.IReasoner;
+import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.IReasonerRegistry;
 import org.eventb.core.seqprover.SequentProver;
 import org.junit.Test;
@@ -35,7 +39,7 @@ public class ReasonerRegistryTest {
 	
 	// Each call returns a new dummy id, not used before.
 	public static String getDummyId() {
-		return "dummy_id_" + (++ count);
+		return TEST_PLUGIN_ID + ".dummy_id_" + (++ count);
 	}
 	
 	private static final IReasonerRegistry registry = SequentProver.getReasonerRegistry();
@@ -122,5 +126,30 @@ public class ReasonerRegistryTest {
 					id.contains("erroneous"));
 		}
 	}
-	
+
+	/**
+	 * Tests globally that reasoners have an ID which corresponds to the one
+	 * declared in their corresponding extension.
+	 */
+	@Test
+	public void testAllReasonersValidIds() {
+		String[] ids = registry.getRegisteredIDs();
+		for (String id : ids) {
+			final IReasonerDesc desc = registry.getReasonerDesc(id);
+			assertNotNull(desc);
+			final IReasoner reasoner = desc.getInstance();
+			final String reasID = reasoner.getReasonerID();
+			//Checks if reasoner has the same ID as its contribution
+			assertTrue("Contribution should have the same ID as its desc: "
+					+ desc.getId(), reasID.equals(id));
+			assertFalse("No dummy reasoner should appear!" + //
+					" Reasoner: " + reasID + " is dummy!", //
+					registry.isDummyReasoner(reasoner) && !isFromTest(reasID));
+		}
+	}
+
+	private Boolean isFromTest(String reasonerID) {
+		return reasonerID.startsWith(TEST_PLUGIN_ID);
+	}
+
 }

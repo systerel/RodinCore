@@ -11,6 +11,8 @@
 
 package org.eventb.core.seqprover.tests;
 
+import static org.eventb.core.seqprover.tests.Util.TEST_PLUGIN_ID;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -58,7 +60,7 @@ public class ProofRuleTests {
 	private final static Set<Predicate> NO_HYPS = Collections.emptySet();
 	
 	private static final IReasonerDesc fakeDesc = SequentProver
-			.getReasonerRegistry().getReasonerDesc("noId");
+			.getReasonerRegistry().getReasonerDesc(TEST_PLUGIN_ID + ".noId");
 	private static final IReasoner fakeReas = fakeDesc.getInstance();
 	private static final IReasonerInput emptyInput = new EmptyInput();
 	
@@ -395,7 +397,7 @@ public class ProofRuleTests {
 		final IReasoner original = new EmptyInputReasoner() {
 		
 			public String getReasonerID() {
-				return "testProofRuleReasoner_noId";
+				return TEST_PLUGIN_ID + ".testProofRuleReasoner_noId";
 			}
 		
 			public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,

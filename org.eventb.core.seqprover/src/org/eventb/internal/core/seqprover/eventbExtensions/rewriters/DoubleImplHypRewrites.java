@@ -14,7 +14,7 @@ import org.eventb.core.seqprover.SequentProver;
 public class DoubleImplHypRewrites extends AbstractManualRewrites {
 
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID
-			+ ".doubleImplGoalRewrites";
+			+ ".doubleImplHypRewrites";
 
 	public String getReasonerID() {
 		return REASONER_ID;
