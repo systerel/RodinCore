@@ -103,8 +103,7 @@ public class SubParserRegistry {
 			return null;
 		}
 		return parsers.getLedParsers().get(0); 
-		// FIXME
-		// when backtracking there will be several subparsers for one kind
+		// FIXME when backtracking there will be several subparsers for one kind
 	}
 	
 	public void addNud(int kind, INudParser<? extends Formula<?>> subParser) throws OverrideException {

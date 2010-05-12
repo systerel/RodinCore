@@ -147,16 +147,15 @@ public class OperatorRegistry {
 	
 	//	TODO refactor all these maps
 	private final Map<Integer, String> groupIds = new HashMap<Integer, String>();
-	private final Closure<String> groupPriority = new Closure<String>();
+	private final Map<String, Integer> tagFromId = new HashMap<String, Integer>();
+	private final Map<String, OperatorGroup> operatorGroups = new HashMap<String, OperatorGroup>();
 	
+	private final Closure<String> groupPriority = new Closure<String>();
 	// FIXME take group compatibility into account
 	private final Relation<String> groupCompatibility = new Relation<String>();
-	private final Map<String, OperatorGroup> operatorGroups = new HashMap<String, OperatorGroup>();
-	private final Map<String, Integer> operatorFromId = new HashMap<String, Integer>();
-	private final Map<Integer, Associativity> associativity = new HashMap<Integer, Associativity>();
 	
 	public void addOperator(int tag, String operatorId, String groupId) {
-		operatorFromId.put(operatorId, tag);
+		tagFromId.put(operatorId, tag);
 		OperatorGroup operatorGroup = operatorGroups.get(groupId);
 		if (operatorGroup == null) {
 			operatorGroup = new OperatorGroup(groupId);
@@ -167,8 +166,8 @@ public class OperatorRegistry {
 	}
 	
 	public void addCompatibility(String leftOpId, String rightOpId) {
-		final Integer leftTag = operatorFromId.get(leftOpId);
-		final Integer rightTag = operatorFromId.get(rightOpId);
+		final Integer leftTag = tagFromId.get(leftOpId);
+		final Integer rightTag = tagFromId.get(rightOpId);
 		final OperatorGroup group = getAndCheckSameGroup(leftTag, rightTag);
 		group.addCompatibility(leftTag, rightTag);
 	}
@@ -176,8 +175,8 @@ public class OperatorRegistry {
 	// lowOpId gets a lower priority than highOpId
 	public void addPriority(String lowOpId, String highOpId)
 			throws CycleError {
-		final Integer leftTag = operatorFromId.get(lowOpId);
-		final Integer rightTag = operatorFromId.get(highOpId);
+		final Integer leftTag = tagFromId.get(lowOpId);
+		final Integer rightTag = tagFromId.get(highOpId);
 		final OperatorGroup group = getAndCheckSameGroup(leftTag, rightTag);
 		group.addPriority(leftTag, rightTag);
 	}

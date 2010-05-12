@@ -172,6 +172,9 @@ public class FormulaFactory {
 		return null;
 	}
 
+	// TODO add methods to get operator and group ids,
+	// compatibility and priority relations
+	
 	/**
 	 * @since 2.0
 	 */
