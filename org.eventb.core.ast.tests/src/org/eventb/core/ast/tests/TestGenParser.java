@@ -115,7 +115,7 @@ public class TestGenParser extends AbstractTests {
 		actual.accept(slChecker);
 	}
 	
-	private void doExpressionTest(String formula, Formula<?> expected) {
+	private void doExpressionTest(String formula, Expression expected) {
 		doExpressionTest(formula, expected, ff);
 	}
 	
@@ -869,5 +869,35 @@ public class TestGenParser extends AbstractTests {
 				condition, null);
 		doAssignmentTest("a,b :∣  a'=b ∧ b'=a  ", expected);
 	}
+
+	public void testNot() throws Exception {
+		final Predicate expected = ff.makeUnaryPredicate(NOT,
+				LIT_BTRUE, null);
+		doPredicateTest("¬⊤", expected);
+	}
+	
+	public void testTotalFunction() throws Exception {
+		final Expression expected = ff.makeBinaryExpression(TFUN, FRID_S,
+				FRID_S, null);
+		doExpressionTest("S → S", expected);
+	}
+	
+	public void testUpTo() throws Exception {
+		final Expression expected = ff.makeBinaryExpression(UPTO, ZERO,
+				ONE, null);
+		doExpressionTest("0‥1", expected);
+	}
+	
+	public void testConverse() throws Exception {
+		final Expression expected = ff.makeUnaryExpression(CONVERSE, 
+				FRID_a, null);
+		doExpressionTest("a∼", expected);
+	}
+	
+	public void testKBool() throws Exception {
+		final Expression expected = ff.makeBoolExpression(LIT_BTRUE, null);
+		doExpressionTest("bool(⊤)", expected);
+	}
+	
 
 }

@@ -255,7 +255,6 @@ public class GenParser {
 			return binding.val.getBoundIndex(name);
 		}
 		
-		// TODO remove needless argument
 		public boolean canProgressRight() throws SyntaxError {
 			if (t.kind == _EOF) { // end of the formula
 				return false;
@@ -263,8 +262,7 @@ public class GenParser {
 			if (!grammar.isOperator(t)) {
 				return false;
 			}
-			final OperatorRegistry opRegistry = grammar.getOperatorRegistry();
-			return opRegistry.hasLessPriority(parentKind.val, t.kind);
+			return grammar.hasLessPriority(parentKind.val, t.kind);
 		}
 		
 		private void pushPos() {

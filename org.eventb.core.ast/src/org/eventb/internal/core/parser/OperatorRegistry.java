@@ -26,6 +26,8 @@ public class OperatorRegistry {
 
 	public static final String GROUP0 = "GROUP 0";
 
+	private static final OperatorGroup GROUP_0 = new OperatorGroup(GROUP0);
+	
 	private static class Relation<T> {
 		private final Map<T, Set<T>> maplets = new HashMap<T, Set<T>>();
 
@@ -148,9 +150,13 @@ public class OperatorRegistry {
 	private final Map<String, Integer> idKind = new HashMap<String, Integer>();
 	
 	
-	private final Closure<String> groupPriority = new Closure<String>();
+	private final Closure<OperatorGroup> groupPriority = new Closure<OperatorGroup>();
 	// FIXME take group compatibility into account
-	private final Relation<String> groupCompatibility = new Relation<String>();
+	private final Relation<OperatorGroup> groupCompatibility = new Relation<OperatorGroup>();
+	
+	public OperatorRegistry() {
+		idOpGroup.put(GROUP0, GROUP_0);
+	}
 	
 	public void addOperator(Integer kind, String operatorId, String groupId) {
 		idKind.put(operatorId, kind);
@@ -204,23 +210,20 @@ public class OperatorRegistry {
 		// TODO encapsulate access to opGroup, returning constant default group0 when none is found
 		final OperatorGroup leftGroup = kindOpGroup.get(leftKind);
 		final OperatorGroup rightGroup = kindOpGroup.get(rightKind);
-		//FIXME NPE
-		final String leftId = leftGroup.getId();
-		final String rightId = rightGroup.getId();
 		
 		// TODO have the  group0 constant available
 		// TODO compare group references instead of ids
 		// TODO group priority and compatibility should reference groups instead of their ids
-		if (leftId.equals(GROUP0) && rightId.equals(GROUP0)) {
+		if (leftGroup == GROUP_0 && rightGroup == GROUP_0) {
 			return false;
 		// Unknown groups have a priority greater than GROUP0
-		} else if (leftId.equals(GROUP0)) {
+		} else if (leftGroup == GROUP_0) {
 			return true;
-		} else if (rightId.equals(GROUP0)) {
+		} else if (rightGroup == GROUP_0) {
 			return false;
-		} else if (groupPriority.contains(leftId, rightId)) {
+		} else if (groupPriority.contains(leftGroup, rightGroup)) {
 			return true;
-		} else if (groupPriority.contains(rightId, leftId)) {
+		} else if (groupPriority.contains(rightGroup, leftGroup)) {
 			return false;
 		} else if (leftGroup == rightGroup) {
 			final OperatorGroup group = leftGroup;
@@ -237,14 +240,29 @@ public class OperatorRegistry {
 
 	}
 
+	private OperatorGroup getAndCheckExists(String groupId) {
+		final OperatorGroup group = idOpGroup.get(groupId);
+		if (group == null) {
+			throw new IllegalArgumentException("unknown group: "+groupId);
+		}
+		return group;
+	}
+	
 	// lowGroupId gets a lower priority than highGroupId
 	public void addGroupPriority(String lowGroupId, String highGroupId)
 			throws CycleError {
-		groupPriority.add(lowGroupId, highGroupId);
+		final OperatorGroup lowGroup = getAndCheckExists(lowGroupId);
+		final OperatorGroup highGroup = getAndCheckExists(highGroupId);
+		if (lowGroup == null || highGroup == null) {
+			throw new IllegalArgumentException("unknown group ");
+		}
+		groupPriority.add(lowGroup, highGroup);
 	}
 
 	public void addGroupCompatibility(String leftGroupId, String rightGroupId) {
-		groupCompatibility.add(leftGroupId, rightGroupId);
+		final OperatorGroup leftGroup = getAndCheckExists(leftGroupId);
+		final OperatorGroup rightGroup = getAndCheckExists(rightGroupId);
+		groupCompatibility.add(leftGroup, rightGroup);
 	}	
 
 	

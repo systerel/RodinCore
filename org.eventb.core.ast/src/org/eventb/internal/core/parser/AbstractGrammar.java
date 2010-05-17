@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
-import org.eventb.internal.core.parser.GenParser.SyntaxError;
+import org.eventb.internal.core.parser.GenParser.SyntaxCompatibleError;
 
 /**
  * @author Nicolas Beauger
@@ -38,10 +38,6 @@ public abstract class AbstractGrammar {
 	private final SubParserRegistry subParsers = new SubParserRegistry();
 	
 	protected final OperatorRegistry opRegistry = new OperatorRegistry();
-	
-	public OperatorRegistry getOperatorRegistry() {
-		return opRegistry;
-	}
 	
 	public boolean isOperator(Token token) {
 		return subParsers.isOperator(token);
@@ -125,6 +121,10 @@ public abstract class AbstractGrammar {
 		subParsers.addNud(kind, subParser);
 	}
 
+	public boolean hasLessPriority(int leftKind, int rightKind) throws SyntaxCompatibleError {
+		return opRegistry.hasLessPriority(leftKind, rightKind);
+	}
+	
 	public int getEOF() {
 		return _EOF;
 	}

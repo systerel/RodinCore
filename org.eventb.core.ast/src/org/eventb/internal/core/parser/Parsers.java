@@ -27,6 +27,7 @@ import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
+import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
@@ -45,6 +46,7 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
+import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.QuantifiedExpression.Form;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.internal.core.parser.GenParser.IMainParser;
@@ -533,6 +535,15 @@ public class Parsers {
 		}
 	}
 
+	static final INudParser<UnaryPredicate> NOT_PARSER = new DefaultNudParser<UnaryPredicate>(NOT) {
+
+		public UnaryPredicate nud(ParserContext pc) throws SyntaxError {
+			pc.progress();
+			final Predicate pred = pc.subParse(PRED_PARSER);
+			return pc.factory.makeUnaryPredicate(tag, pred, pc.getSourceLocation());
+		}
+	};
+
 	static class BinaryPredicateParser extends DefaultLedPredParser<BinaryPredicate> {
 
 		public BinaryPredicateParser(int tag) {
@@ -592,6 +603,34 @@ public class Parsers {
 		}
 
 	}
+
+	static final ILedParser<UnaryExpression> CONVERSE_PARSER = new DefaultLedExprParser<UnaryExpression>(CONVERSE) {
+
+		@Override
+		protected UnaryExpression led(Expression left, Expression right,
+				ParserContext pc) throws SyntaxError {
+			return pc.factory.makeUnaryExpression(tag, left, pc.getSourceLocation());
+		}
+		
+		@Override
+		protected Expression parseRight(ParserContext pc) throws SyntaxError {
+			// nothing to parse at right
+			return null;
+		}
+	};
+	
+	static final INudParser<BoolExpression> KBOOL_PARSER = new DefaultNudParser<BoolExpression>(KBOOL) {
+
+		public BoolExpression nud(ParserContext pc)
+				throws SyntaxError {
+			pc.progress();
+			pc.progressOpenParen();
+			final Predicate child = pc.subParse(PRED_PARSER);
+			pc.progressCloseParen();
+			return pc.factory.makeBoolExpression(child, pc.getSourceLocation());
+		}
+
+	};
 
 	static class PatternParser extends DefaultMainParser<Pattern> {
 		

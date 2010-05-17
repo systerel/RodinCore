@@ -86,6 +86,11 @@ public class BMath extends AbstractGrammar {
 	private static final String LAMBDA_ID = "Lambda";
 	private static final String LIMP_ID = "Logical Implication";
 	private static final String TRUE_ID = "True";
+	private static final String NOT_ID = "Not";
+	private static final String TFUN_ID = "Total Function";
+	private static final String UPTO_ID = "Up To";
+	private static final String CONVERSE_ID = "Converse";
+	private static final String KBOOL_ID = "To Bool";
 	
 	
 	/**
@@ -321,6 +326,11 @@ public class BMath extends AbstractGrammar {
 			addOperator("\u21a6", MAPSTO_ID, PAIR, new BinaryExpressionInfix(MAPSTO));
 			addOperator("\u21d2", LIMP_ID, INFIX_PRED, new BinaryPredicateParser(LIMP));
 			addOperator("TRUE", TRUE_ID, ATOMIC_EXPR, new AtomicExpressionParser(TRUE));
+			addOperator("\u00ac", NOT_ID, NOT_PRED, NOT_PARSER);
+			addOperator("\u2192", TFUN_ID, RELATION, new BinaryExpressionInfix(TFUN));
+			addOperator("\u2025", UPTO_ID, INTERVAL, new BinaryExpressionInfix(UPTO));
+			addOperator("\u223c", CONVERSE_ID, UNARY_RELATION, CONVERSE_PARSER);
+			addOperator("bool", KBOOL_ID, BOOL, KBOOL_PARSER);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -343,16 +353,13 @@ public class BMath extends AbstractGrammar {
 		try {
 			opRegistry.addPriority(PLUS_ID, MUL_ID);
 			
-			opRegistry.addGroupPriority(GROUP0, INFIX_SUBST);
-			opRegistry.addGroupPriority(INFIX_SUBST, IDENT_LIST);
-			opRegistry.addGroupPriority(INFIX_SUBST, IDENT_MAPLET_LIST);
 			opRegistry.addGroupPriority(QUANTIFIED_PRED, INFIX_PRED);
 			opRegistry.addGroupPriority(INFIX_PRED, LOGIC_PRED);
 			opRegistry.addGroupPriority(LOGIC_PRED, NOT_PRED);
 			opRegistry.addGroupPriority(NOT_PRED, ATOMIC_PRED);
 			opRegistry.addGroupPriority(ATOMIC_PRED, RELOP_PRED);
-			opRegistry.addGroupPriority(INFIX_SUBST, QUANTIFICATION);
-			opRegistry.addGroupPriority(INFIX_SUBST, QUANTIFIED_PRED);
+			opRegistry.addGroupPriority(GROUP0, QUANTIFICATION);
+			opRegistry.addGroupPriority(GROUP0, QUANTIFIED_PRED);
 			opRegistry.addGroupPriority(RELOP_PRED, PAIR);
 			opRegistry.addGroupPriority(QUANTIFICATION, RELOP_PRED);
 			opRegistry.addGroupPriority(GROUP0, QUANTIFICATION);// TODO remove: redundant
