@@ -33,9 +33,6 @@ public class BMath extends AbstractGrammar {
 		// singleton
 	}
 	
-	// FIXME try to get rid of this tag
-	static final int OFTYPE_TAG = NO_TAG - 1;
-	
 	private static final String RELOP_PRED = "Relational Operator Predicate";
 	private static final String QUANTIFICATION = "Quantification";
 	private static final String PAIR = "Pair";

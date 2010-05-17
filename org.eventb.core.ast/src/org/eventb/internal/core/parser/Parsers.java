@@ -376,8 +376,7 @@ public class Parsers {
 		}
 	};
 
-	// FIXME current design does not allow subparsers with no tag
-	static final DefaultLedExprParser<Expression> OFTYPE = new DefaultLedExprParser<Expression>(OFTYPE_TAG) {
+	static final DefaultLedExprParser<Expression> OFTYPE = new DefaultLedExprParser<Expression>(NO_TAG) {
 		
 		@Override
 		public Expression led(Expression left, Expression right, ParserContext pc)
@@ -792,7 +791,7 @@ public class Parsers {
 				return pc.factory.makeBecomesEqualTo(idents, values, pc.getSourceLocation());
 			} else if (assignKind == _BECMO) {
 				if (idents.size() != 1) {
-					throw new SyntaxError("\'Becomes Equal To\' applies to only one identifier");
+					throw new SyntaxError("\'Becomes Member Of\' applies to only one identifier");
 				}
 				final Expression expr = pc.subParse(EXPR_PARSER);
 				return pc.factory.makeBecomesMemberOf(idents.get(0), expr, pc.getSourceLocation());
