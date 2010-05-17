@@ -71,12 +71,60 @@ public class Parsers {
 		
 	}
 
-	private static abstract class DefaultNudParser<T> extends AbstractSubParser<T> implements INudParser<T> {
+	private static abstract class PrefixNudParser<T> extends AbstractSubParser<T> implements INudParser<T> {
 
-		protected DefaultNudParser(int tag) {
+		protected PrefixNudParser(int tag) {
 			super(tag);
 		}
-		// TODO could add a check that the parser is indeed called with the good kind
+		
+		public final T nud(ParserContext pc) throws SyntaxError {
+			pc.progress();
+			return parseRight(pc);
+		}
+		
+		/**
+		 * Current token is the one that immediately follows the one on which
+		 * nud() applies.
+		 * 
+		 * @param pc
+		 *            the parser context
+		 * @return the value to be returned by nud()
+		 * @throws SyntaxError
+		 */
+		protected abstract T parseRight(ParserContext pc) throws SyntaxError;
+	}
+
+	private static abstract class ValuedNudParser<T> extends AbstractSubParser<T> implements INudParser<T> {
+
+		protected ValuedNudParser(int tag) {
+			super(tag);
+		}
+		
+		public final T nud(ParserContext pc) throws SyntaxError {
+			final String tokenVal = pc.t.val;
+			pc.progress();
+			final SourceLocation loc = pc.getSourceLocation();
+			return makeValue(pc, tokenVal, loc);
+		}
+
+		/**
+		 * Makes the value to be returned by nud().
+		 * <p>
+		 * Current token is the one that immediately follows the given token
+		 * value.
+		 * </p>
+		 * 
+		 * @param pc
+		 *            a parser context
+		 * @param tokenVal
+		 *            the value of the token on which nud() applies
+		 * @param loc
+		 *            the location of the token on which nud() applies
+		 * @return the value to be returned by nud().
+		 * @throws SyntaxError 
+		 */
+		protected abstract T makeValue(ParserContext pc, String tokenVal, SourceLocation loc) throws SyntaxError;
+
 	}
 
 	private static abstract class DefaultLedExprParser<T> extends AbstractSubParser<T> implements ILedParser<T> {
@@ -137,7 +185,7 @@ public class Parsers {
 		return (Expression) formula;
 	}
 
-	private static abstract class DefaultMainParser<T> extends DefaultNudParser<T> implements IMainParser<T> {
+	private static abstract class DefaultMainParser<T> extends AbstractSubParser<T> implements IMainParser<T> {
 
 		protected DefaultMainParser() {
 			super(NO_TAG);
@@ -286,30 +334,30 @@ public class Parsers {
 	}
 
 	// Takes care of the bindings.
-	static final INudParser<Identifier> IDENT_SUBPARSER = new DefaultNudParser<Identifier>(NO_TAG) {
-		public Identifier nud(ParserContext pc) throws SyntaxError {
-			final String name = pc.t.val;
-			final int index = pc.getBoundIndex(name);
-			pc.progress();
-			final SourceLocation loc = pc.getSourceLocation();
+	static final INudParser<Identifier> IDENT_SUBPARSER = new ValuedNudParser<Identifier>(NO_TAG) {
+
+		@Override
+		protected Identifier makeValue(ParserContext pc, String tokenVal,
+				SourceLocation loc) {
+			final int index = pc.getBoundIndex(tokenVal);
 			if (index == -1) { // free identifier
 				final Type type;
 				if (pc.isParsingType()) {
-					type = pc.factory.makePowerSetType(pc.factory.makeGivenType(name));
+					type = pc.factory.makePowerSetType(pc.factory.makeGivenType(tokenVal));
 				} else {
 					type = null;
 				}
-				return pc.factory.makeFreeIdentifier(name, loc, type);
+				return pc.factory.makeFreeIdentifier(tokenVal, loc, type);
 			} else { // bound identifier
 				return pc.factory.makeBoundIdentifier(index, loc);
 			}
 		}
+		
 	};
 	
-	static final INudParser<FreeIdentifier> FREE_IDENT_SUBPARSER = new DefaultNudParser<FreeIdentifier>(
-			FREE_IDENT) {
+	static final IMainParser<FreeIdentifier> FREE_IDENT_SUBPARSER = new DefaultMainParser<FreeIdentifier>() {
 
-		public FreeIdentifier nud(ParserContext pc) throws SyntaxError {
+		public FreeIdentifier parse(ParserContext pc) throws SyntaxError {
 			final Identifier ident = IDENT_SUBPARSER.nud(pc);
 			if (!(ident instanceof FreeIdentifier)) {
 				throw new SyntaxError("expected a free identifier at position "
@@ -319,29 +367,28 @@ public class Parsers {
 		}
 	};
 
-	static final INudParser<IntegerLiteral> INTLIT_SUBPARSER = new DefaultNudParser<IntegerLiteral>(INTLIT) {
+	static final INudParser<IntegerLiteral> INTLIT_SUBPARSER = new ValuedNudParser<IntegerLiteral>(INTLIT) {
 	
-		public IntegerLiteral nud(ParserContext pc) throws SyntaxError {
-			final String numberStr = pc.t.val;
+		@Override
+		protected IntegerLiteral makeValue(ParserContext pc, String tokenVal,
+				SourceLocation loc) throws SyntaxError {
 			try {
 				final BigInteger value = BigInteger.valueOf((Integer
-						.valueOf(numberStr)));
-				pc.progress();
-				return pc.factory.makeIntegerLiteral(value, pc
-						.getSourceLocation());
+						.valueOf(tokenVal)));
+				return pc.factory.makeIntegerLiteral(value, loc);
 			} catch (NumberFormatException e) {
 				// TODO recover using ZERO ? add a problem instead (=> backtrack on problems)
 				throw new SyntaxError("Expected a number, but was: "
-						+ numberStr);
+						+ tokenVal);
 			}
 		}
 	};
 
 	// TODO verify that all parser calls are made with NO_TAG when parsing
 	// formulae inside parentheses
-	static final INudParser<Formula<?>> CLOSED_SUGAR = new DefaultNudParser<Formula<?>> (NO_TAG) {
+	static final IMainParser<Formula<?>> CLOSED_SUGAR = new DefaultMainParser<Formula<?>> () {
 
-		public Formula<?> nud(ParserContext pc) throws SyntaxError {
+		public Formula<?> parse(ParserContext pc) throws SyntaxError {
 			pc.progressOpenParen();
 			pc.pushParentKind(_EOF);
 			final Formula<?> formula = pc.subParse(FORMULA_PARSER);
@@ -372,18 +419,16 @@ public class Parsers {
 		}
 	};
 	
-	static class AtomicExpressionParser extends DefaultNudParser<AtomicExpression> {
+	static class AtomicExpressionParser extends PrefixNudParser<AtomicExpression> {
 	
 		protected AtomicExpressionParser(int tag) {
 			super(tag);
 		}
 	
-		public AtomicExpression nud(ParserContext pc)
+		@Override
+		protected AtomicExpression parseRight(ParserContext pc)
 				throws SyntaxError {
-			pc.progress();
-			final AtomicExpression atomExpr = pc.factory.makeAtomicExpression(
-					tag, pc.getSourceLocation());
-			return atomExpr;
+			return pc.factory.makeAtomicExpression(tag, pc.getSourceLocation());
 		}
 
 	}
@@ -536,22 +581,24 @@ public class Parsers {
 		
 	};
 
-	static class LiteralPredicateParser extends DefaultNudParser<LiteralPredicate> {
+	static class LiteralPredicateParser extends PrefixNudParser<LiteralPredicate> {
 
 		public LiteralPredicateParser(int tag) {
 			super(tag);
 		}
 
-		public LiteralPredicate nud(ParserContext pc) throws SyntaxError {
-			pc.progress();
+		@Override
+		protected LiteralPredicate parseRight(ParserContext pc)
+				throws SyntaxError {
 			return pc.factory.makeLiteralPredicate(tag, pc.getSourceLocation());
 		}
 	}
 
-	static final INudParser<UnaryPredicate> NOT_PARSER = new DefaultNudParser<UnaryPredicate>(NOT) {
+	static final INudParser<UnaryPredicate> NOT_PARSER = new PrefixNudParser<UnaryPredicate>(NOT) {
 
-		public UnaryPredicate nud(ParserContext pc) throws SyntaxError {
-			pc.progress();
+		@Override
+		protected UnaryPredicate parseRight(ParserContext pc)
+				throws SyntaxError {
 			final Predicate pred = pc.subParse(PRED_PARSER);
 			return pc.factory.makeUnaryPredicate(tag, pred, pc.getSourceLocation());
 		}
@@ -571,14 +618,14 @@ public class Parsers {
 		}
 	}
 
-	static class QuantifiedPredicateParser extends DefaultNudParser<QuantifiedPredicate> {
+	static class QuantifiedPredicateParser extends PrefixNudParser<QuantifiedPredicate> {
 
 		public QuantifiedPredicateParser(int tag) {
 			super(tag);
 		}
 
-		public QuantifiedPredicate nud(ParserContext pc) throws SyntaxError {
-			pc.progress();
+		@Override
+		public QuantifiedPredicate parseRight(ParserContext pc) throws SyntaxError {
 			final List<FreeIdentifier> identList = pc.subParse(FREE_IDENT_LIST_PARSER);
 			pc.progress(_DOT);
 			final List<BoundIdentDecl> boundIdentifiers = makeBoundIdentDeclList(
@@ -600,15 +647,15 @@ public class Parsers {
 		return boundIdentifiers;
 	}
 
-	static class UnaryExpressionParser extends DefaultNudParser<UnaryExpression> {
+	static class UnaryExpressionParser extends PrefixNudParser<UnaryExpression> {
 
 		public UnaryExpressionParser(int tag) {
 			super(tag);
 		}
 
-		public UnaryExpression nud(ParserContext pc)
+		@Override
+		public UnaryExpression parseRight(ParserContext pc)
 				throws SyntaxError {
-			pc.progress();
 			pc.progressOpenParen();
 			final Expression child = pc.subParse(EXPR_PARSER);
 			pc.progressCloseParen();
@@ -632,11 +679,11 @@ public class Parsers {
 		}
 	};
 	
-	static final INudParser<BoolExpression> KBOOL_PARSER = new DefaultNudParser<BoolExpression>(KBOOL) {
+	static final INudParser<BoolExpression> KBOOL_PARSER = new PrefixNudParser<BoolExpression>(KBOOL) {
 
-		public BoolExpression nud(ParserContext pc)
+		@Override
+		public BoolExpression parseRight(ParserContext pc)
 				throws SyntaxError {
-			pc.progress();
 			pc.progressOpenParen();
 			final Predicate child = pc.subParse(PRED_PARSER);
 			pc.progressCloseParen();
@@ -689,16 +736,15 @@ public class Parsers {
 		}
 	}
 
-	static class AbstListParser<T extends Expression> extends DefaultNudParser<List<T>> {
+	static class AbstListParser<T extends Expression> extends DefaultMainParser<List<T>> {
 	
 		private final INudParser<T> parser;
 		
 		public AbstListParser(INudParser<T> parser) {
-			super(NO_TAG);
 			this.parser = parser;
 		}
 
-		public List<T> nud(ParserContext pc) throws SyntaxError {
+		public List<T> parse(ParserContext pc) throws SyntaxError {
 			final List<T> list = new ArrayList<T>();
 			T next = pc.subParse(parser);
 			list.add(next);
@@ -718,10 +764,10 @@ public class Parsers {
 
 	static final AbstListParser<FreeIdentifier> FREE_IDENT_LIST_PARSER = new AbstListParser<FreeIdentifier>(FREE_IDENT_SUBPARSER);
 	
-	static final INudParser<SetExtension> SETEXT_PARSER = new DefaultNudParser<SetExtension>(SETEXT) {
+	static final INudParser<SetExtension> SETEXT_PARSER = new PrefixNudParser<SetExtension>(SETEXT) {
 		
-		public SetExtension nud(ParserContext pc) throws SyntaxError {
-			pc.progress(); // _LBRACE
+		@Override
+		public SetExtension parseRight(ParserContext pc) throws SyntaxError {
 			final List<Expression> exprs = pc.subParse(EXPR_LIST_PARSER);
 			pc.progress(_RBRACE);
 			
@@ -729,10 +775,10 @@ public class Parsers {
 		}
 	};
 	
-	static final INudParser<QuantifiedExpression> CSET_EXPLICIT = new DefaultNudParser<QuantifiedExpression>(CSET) {
+	static final INudParser<QuantifiedExpression> CSET_EXPLICIT = new PrefixNudParser<QuantifiedExpression>(CSET) {
 		
-		public QuantifiedExpression nud(ParserContext pc) throws SyntaxError {
-			pc.progress();// _LBRACE
+		@Override
+		public QuantifiedExpression parseRight(ParserContext pc) throws SyntaxError {
 			final List<FreeIdentifier> idents = pc.subParse(FREE_IDENT_LIST_PARSER);
 			pc.progress(_DOT);
 			final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, idents);
@@ -746,10 +792,10 @@ public class Parsers {
 		}
 	};
 	
-	static final INudParser<QuantifiedExpression> CSET_IMPLICIT = new DefaultNudParser<QuantifiedExpression>(CSET) {
+	static final INudParser<QuantifiedExpression> CSET_IMPLICIT = new PrefixNudParser<QuantifiedExpression>(CSET) {
 		
-		public QuantifiedExpression nud(ParserContext pc) throws SyntaxError {
-			pc.progress();
+		@Override
+		public QuantifiedExpression parseRight(ParserContext pc) throws SyntaxError {
 			final Expression expr = pc.subParse(EXPR_PARSER);
 			pc.progress(_MID);
 			final List<FreeIdentifier> idents = asList(expr.getFreeIdentifiers());
@@ -763,10 +809,10 @@ public class Parsers {
 		}
 	};
 	
-	static final INudParser<QuantifiedExpression> CSET_LAMBDA = new DefaultNudParser<QuantifiedExpression>(CSET) {
+	static final INudParser<QuantifiedExpression> CSET_LAMBDA = new PrefixNudParser<QuantifiedExpression>(CSET) {
 		
-		public QuantifiedExpression nud(ParserContext pc) throws SyntaxError {
-			pc.progress();
+		@Override
+		public QuantifiedExpression parseRight(ParserContext pc) throws SyntaxError {
 			final PatternParser pattParser = new PatternParser(pc.result);
 			final Pattern pattern = pc.subParse(pattParser);
 			pc.progress(_DOT);
