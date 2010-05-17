@@ -94,6 +94,26 @@ public class Parsers {
 		protected abstract T parseRight(ParserContext pc) throws SyntaxError;
 	}
 
+	private static abstract class ParenNudParser<T, U> extends PrefixNudParser<T> implements INudParser<T> {
+
+		private final INudParser<U> childParser;
+		
+		protected ParenNudParser(int tag, IMainParser<U> childParser) {
+			super(tag);
+			this.childParser = childParser;
+		}
+
+		@Override
+		protected final T parseRight(ParserContext pc) throws SyntaxError {
+			pc.progressOpenParen();
+			final U child = pc.subParse(childParser);
+			pc.progressCloseParen();
+			return makeValue(pc, child, pc.getSourceLocation());
+		}
+		
+		protected abstract T makeValue(ParserContext pc, U child, SourceLocation loc);
+	}
+	
 	private static abstract class ValuedNudParser<T> extends AbstractSubParser<T> implements INudParser<T> {
 
 		protected ValuedNudParser(int tag) {
@@ -647,18 +667,15 @@ public class Parsers {
 		return boundIdentifiers;
 	}
 
-	static class UnaryExpressionParser extends PrefixNudParser<UnaryExpression> {
+	static class UnaryExpressionParser extends ParenNudParser<UnaryExpression, Expression> {
 
 		public UnaryExpressionParser(int tag) {
-			super(tag);
+			super(tag, EXPR_PARSER);
 		}
 
 		@Override
-		public UnaryExpression parseRight(ParserContext pc)
-				throws SyntaxError {
-			pc.progressOpenParen();
-			final Expression child = pc.subParse(EXPR_PARSER);
-			pc.progressCloseParen();
+		protected UnaryExpression makeValue(ParserContext pc, Expression child,
+				SourceLocation loc) {
 			return pc.factory.makeUnaryExpression(tag, child, pc.getSourceLocation());
 		}
 
@@ -679,14 +696,11 @@ public class Parsers {
 		}
 	};
 	
-	static final INudParser<BoolExpression> KBOOL_PARSER = new PrefixNudParser<BoolExpression>(KBOOL) {
+	static final INudParser<BoolExpression> KBOOL_PARSER = new ParenNudParser<BoolExpression, Predicate>(KBOOL, PRED_PARSER) {
 
 		@Override
-		public BoolExpression parseRight(ParserContext pc)
-				throws SyntaxError {
-			pc.progressOpenParen();
-			final Predicate child = pc.subParse(PRED_PARSER);
-			pc.progressCloseParen();
+		protected BoolExpression makeValue(ParserContext pc, Predicate child,
+				SourceLocation loc) {
 			return pc.factory.makeBoolExpression(child, pc.getSourceLocation());
 		}
 
