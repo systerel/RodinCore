@@ -410,9 +410,7 @@ public class Parsers {
 
 		public Formula<?> parse(ParserContext pc) throws SyntaxError {
 			pc.progressOpenParen();
-			pc.pushParentKind(_EOF);
 			final Formula<?> formula = pc.subParse(FORMULA_PARSER);
-			pc.popParentKind();
 			pc.progressCloseParen();
 			return formula;
 		}
@@ -584,7 +582,6 @@ public class Parsers {
 
 		@Override
 		public BinaryExpression led(Expression left, Expression right, ParserContext pc) throws SyntaxError {
-			pc.progressCloseParen();
 			return pc.factory.makeBinaryExpression(tag, left,
 					right, pc.getSourceLocation());
 		}
@@ -596,6 +593,7 @@ public class Parsers {
 			pc.pushParentKind(_EOF);
 			final Expression right = pc.subParse(EXPR_PARSER);
 			pc.popParentKind();
+			pc.progress(_RPAR);
 			return right;
 		}
 		

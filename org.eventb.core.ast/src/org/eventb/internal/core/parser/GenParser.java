@@ -237,10 +237,12 @@ public class GenParser {
 		
 		public void progressOpenParen() throws SyntaxError {
 			progress(_LPAR);
+			pushParentKind(_EOF);
 		}
 		
 		public void progressCloseParen() throws SyntaxError {
 			progress(_RPAR);
+			popParentKind();
 		}
 		
 		public List<INudParser<? extends Formula<?>>> getNudParsers() {
