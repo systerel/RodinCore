@@ -13,6 +13,7 @@
 package org.eventb.core.seqprover.reasonerExtentionTests;
 
 import static org.eventb.core.seqprover.tests.Util.TEST_PLUGIN_ID;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -103,7 +104,8 @@ public class ReasonerRegistryTest {
 	}
 
 	/**
-	 * Test method for {@link IReasonerRegistry#isDummyReasoner(String)}.
+	 * Test method for
+	 * {@link IReasonerRegistry#isDummyReasoner(IReasoner reasoner)}.
 	 */
 	@Test
 	public void testIsDummyReasoner() {
@@ -135,16 +137,17 @@ public class ReasonerRegistryTest {
 	public void testAllReasonersValidIds() {
 		String[] ids = registry.getRegisteredIDs();
 		for (String id : ids) {
-			final IReasonerDesc desc = registry.getReasonerDesc(id);
+			final String expected = id;
+			final IReasonerDesc desc = registry.getReasonerDesc(expected);
 			assertNotNull(desc);
 			final IReasoner reasoner = desc.getInstance();
-			final String reasID = reasoner.getReasonerID();
+			final String actual = reasoner.getReasonerID();
 			//Checks if reasoner has the same ID as its contribution
-			assertTrue("Contribution should have the same ID as its desc: "
-					+ desc.getId(), reasID.equals(id));
+			assertEquals("Contribution should have the same ID as its desc: "
+					+ desc.getId(), expected, actual);
 			assertFalse("No dummy reasoner should appear!" + //
-					" Reasoner: " + reasID + " is dummy!", //
-					registry.isDummyReasoner(reasoner) && !isFromTest(reasID));
+					" Reasoner: " + actual + " is dummy!", //
+					registry.isDummyReasoner(reasoner) && !isFromTest(actual));
 		}
 	}
 
