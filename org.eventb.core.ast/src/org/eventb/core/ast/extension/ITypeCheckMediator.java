@@ -16,7 +16,6 @@ import org.eventb.core.ast.Type;
  * @author Nicolas Beauger
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
- * TODO add methods from TypeCheckReseult
  */
 public interface ITypeCheckMediator extends ITypeMediator {
 

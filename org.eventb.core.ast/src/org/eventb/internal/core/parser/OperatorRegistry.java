@@ -135,7 +135,7 @@ public class OperatorRegistry {
 			return operators.contains(a);
 		}
 
-		public boolean isAssociative(Integer a, Integer b) {
+		public boolean hasLessPriority(Integer a, Integer b) {
 			return operatorPriority.contains(a, b);
 		}
 		
@@ -144,10 +144,34 @@ public class OperatorRegistry {
 		}
 	}
 	
-	private final Map<String, OperatorGroup> idOpGroup = new HashMap<String, OperatorGroup>();
-	// refactored
-	private final Map<Integer, OperatorGroup> kindOpGroup = new HashMap<Integer, OperatorGroup>();
-	private final Map<String, Integer> idKind = new HashMap<String, Integer>();
+	private static class AllInOnceMap<K,V> {
+		
+		private final Map<K,V> map = new HashMap<K, V>();
+		
+		public V get(K key) {
+			final V value = map.get(key);
+			if (value == null) {
+				throw new IllegalArgumentException("no value set for key: " + key);
+			}
+			return value;
+		}
+		
+		public V getNoCheck(K key) {
+			return map.get(key);
+		}
+		
+		public void put(K key, V value) {
+			final V oldValue = map.put(key, value);
+			if (oldValue != null && oldValue != value) {
+				throw new IllegalArgumentException(
+						"trying to override value for: " + key);
+			}
+		}
+	}
+	
+	private final AllInOnceMap<String, OperatorGroup> idOpGroup = new AllInOnceMap<String, OperatorGroup>();
+	private final AllInOnceMap<Integer, OperatorGroup> kindOpGroup = new AllInOnceMap<Integer, OperatorGroup>();
+	private final AllInOnceMap<String, Integer> idKind = new AllInOnceMap<String, Integer>();
 	
 	
 	private final Closure<OperatorGroup> groupPriority = new Closure<OperatorGroup>();
@@ -161,19 +185,12 @@ public class OperatorRegistry {
 	public void addOperator(Integer kind, String operatorId, String groupId) {
 		idKind.put(operatorId, kind);
 		
-		OperatorGroup operatorGroup = idOpGroup.get(groupId);
+		OperatorGroup operatorGroup = idOpGroup.getNoCheck(groupId);
 		if (operatorGroup == null) {
 			operatorGroup = new OperatorGroup(groupId);
 			idOpGroup.put(groupId, operatorGroup);
 		}
-		final OperatorGroup oldGroup = kindOpGroup.put(kind, operatorGroup);
-		if (oldGroup != null && oldGroup != operatorGroup) {
-			kindOpGroup.put(kind, oldGroup);
-			throw new IllegalArgumentException("when attempting to add group "
-					+ groupId + " for token kind " + kind
-					+ ", found another group already set for this kind: "
-					+ oldGroup.getId());
-		}
+		kindOpGroup.put(kind, operatorGroup);
 	}
 	
 	public void addCompatibility(String leftOpId, String rightOpId) {
@@ -207,13 +224,9 @@ public class OperatorRegistry {
 	 */
 	public boolean hasLessPriority(int leftKind, int rightKind) throws SyntaxCompatibleError {
 		// TODO right associativity
-		// TODO encapsulate access to opGroup, returning constant default group0 when none is found
 		final OperatorGroup leftGroup = kindOpGroup.get(leftKind);
 		final OperatorGroup rightGroup = kindOpGroup.get(rightKind);
 		
-		// TODO have the  group0 constant available
-		// TODO compare group references instead of ids
-		// TODO group priority and compatibility should reference groups instead of their ids
 		if (leftGroup == GROUP_0 && rightGroup == GROUP_0) {
 			return false;
 		// Unknown groups have a priority greater than GROUP0
@@ -227,9 +240,9 @@ public class OperatorRegistry {
 			return false;
 		} else if (leftGroup == rightGroup) {
 			final OperatorGroup group = leftGroup;
-			if (group.isAssociative(leftKind, rightKind)) {
+			if (group.hasLessPriority(leftKind, rightKind)) {
 				return true;
-			} else if (group.isAssociative(rightKind, leftKind)) {
+			} else if (group.hasLessPriority(rightKind, leftKind)) {
 				return false;
 			} else if (group.isCompatible(leftKind, rightKind)) {
 				return false;
@@ -240,28 +253,17 @@ public class OperatorRegistry {
 
 	}
 
-	private OperatorGroup getAndCheckExists(String groupId) {
-		final OperatorGroup group = idOpGroup.get(groupId);
-		if (group == null) {
-			throw new IllegalArgumentException("unknown group: "+groupId);
-		}
-		return group;
-	}
-	
 	// lowGroupId gets a lower priority than highGroupId
 	public void addGroupPriority(String lowGroupId, String highGroupId)
 			throws CycleError {
-		final OperatorGroup lowGroup = getAndCheckExists(lowGroupId);
-		final OperatorGroup highGroup = getAndCheckExists(highGroupId);
-		if (lowGroup == null || highGroup == null) {
-			throw new IllegalArgumentException("unknown group ");
-		}
+		final OperatorGroup lowGroup = idOpGroup.get(lowGroupId);
+		final OperatorGroup highGroup = idOpGroup.get(highGroupId);
 		groupPriority.add(lowGroup, highGroup);
 	}
 
 	public void addGroupCompatibility(String leftGroupId, String rightGroupId) {
-		final OperatorGroup leftGroup = getAndCheckExists(leftGroupId);
-		final OperatorGroup rightGroup = getAndCheckExists(rightGroupId);
+		final OperatorGroup leftGroup = idOpGroup.get(leftGroupId);
+		final OperatorGroup rightGroup = idOpGroup.get(rightGroupId);
 		groupCompatibility.add(leftGroup, rightGroup);
 	}	
 

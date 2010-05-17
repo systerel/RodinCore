@@ -322,10 +322,18 @@ public class Parsers {
 	static final INudParser<IntegerLiteral> INTLIT_SUBPARSER = new DefaultNudParser<IntegerLiteral>(INTLIT) {
 	
 		public IntegerLiteral nud(ParserContext pc) throws SyntaxError {
-			final BigInteger value = BigInteger.valueOf((Integer // FIXME NumberFormatException
-					.valueOf(pc.t.val)));
-			pc.progress();
-			return pc.factory.makeIntegerLiteral(value, pc.getSourceLocation());
+			final String numberStr = pc.t.val;
+			try {
+				final BigInteger value = BigInteger.valueOf((Integer
+						.valueOf(numberStr)));
+				pc.progress();
+				return pc.factory.makeIntegerLiteral(value, pc
+						.getSourceLocation());
+			} catch (NumberFormatException e) {
+				// TODO recover using ZERO ? add a problem instead (=> backtrack on problems)
+				throw new SyntaxError("Expected a number, but was: "
+						+ numberStr);
+			}
 		}
 	};
 
