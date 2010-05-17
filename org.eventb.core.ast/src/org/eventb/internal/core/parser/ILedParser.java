@@ -18,7 +18,7 @@ import org.eventb.internal.core.parser.GenParser.SyntaxError;
  * @author Nicolas Beauger
  * 
  */
-public interface ILedParser<T> extends ISubParser<T> {
+public interface ILedParser<T> {
 
 	/**
 	 * Parses a left-denoted formula from the given parser context. Current

@@ -43,10 +43,6 @@ public abstract class AbstractGrammar {
 		return opRegistry;
 	}
 	
-	public int getOperatorTag(Token token) throws SyntaxError {
-		return subParsers.getOperatorTag(token);
-	}
-	
 	public boolean isOperator(Token token) {
 		return subParsers.isOperator(token);
 	}

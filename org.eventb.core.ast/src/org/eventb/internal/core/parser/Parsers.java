@@ -58,17 +58,13 @@ import org.eventb.internal.core.parser.GenParser.ParserContext.SavedContext;
  */
 public class Parsers {
 
-	private static abstract class AbstractSubParser<T> implements ISubParser<T> {
+	private static abstract class AbstractSubParser<T> {
 
 		// TODO move tag downwards to sub-classes that really require it
 		protected final int tag;
 
 		protected AbstractSubParser(int tag) {
 			this.tag = tag;
-		}
-		
-		public int getTag() {
-			return tag;
 		}
 		
 	}

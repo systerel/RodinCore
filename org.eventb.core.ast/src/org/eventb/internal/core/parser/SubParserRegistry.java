@@ -18,7 +18,6 @@ import java.util.Map;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
-import org.eventb.internal.core.parser.GenParser.SyntaxError;
 
 /**
  * @author Nicolas Beauger
@@ -61,28 +60,6 @@ public class SubParserRegistry {
 
 	private final Map<Integer, KindParsers> kindParsers = new HashMap<Integer, KindParsers>();
 	
-	// TODO move calls to subparser and remove method
-	public int getOperatorTag(Token token) throws SyntaxError {
-		return getFirstSubParser(token).getTag();
-	}
-
-	// FIXME remove
-	private ISubParser<? extends Formula<?>> getFirstSubParser(Token token) {
-		final KindParsers parsers = kindParsers.get(token.kind);
-		if (parsers == null) {
-			return null;
-		}
-		final List<ILedParser<? extends Formula<?>>> ledParsers = parsers.getLedParsers();
-		if (!ledParsers.isEmpty()) {
-			return ledParsers.get(0);
-		}
-		final List<INudParser<? extends Formula<?>>> nudParsers = parsers.getNudParsers();
-		if (!nudParsers.isEmpty()) {
-			return nudParsers.get(0);
-		}
-		return null;
-	}
-
 	public boolean isOperator(Token token) {
 		final KindParsers parsers = kindParsers.get(token.kind);
 		return parsers != null && !parsers.isEmpty();
