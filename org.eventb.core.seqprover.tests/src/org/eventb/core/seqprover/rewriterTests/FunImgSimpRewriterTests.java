@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
- *     Systerel - refactored using AbstractReasonerTests
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
@@ -42,7 +41,9 @@ public class FunImgSimpRewriterTests extends AbstractReasonerTests {
 	private static final String valids[] = { 
 			"⇸", // partial function
 			"→", // total function
+			"⤔", // partial injection
 			"↣", // total injection
+			"⤀", // partial sujection
 			"↠", // total surjection
 			"⤖", // total bijection
 	};
