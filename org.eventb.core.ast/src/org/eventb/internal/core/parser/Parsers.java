@@ -28,7 +28,6 @@ import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
-import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Formula;
@@ -288,24 +287,14 @@ public class Parsers {
 		return subParser;
 	}
 
-	static class IdentSubParser extends DefaultNudParser<Identifier> {
-
-		protected IdentSubParser(int tag) {
-			super(tag);
-		}
-
+	// Takes care of the bindings.
+	static final INudParser<Identifier> IDENT_SUBPARSER = new DefaultNudParser<Identifier>(NO_TAG) {
 		public Identifier nud(ParserContext pc) throws SyntaxError {
-			// Creates an identifier for the given token.
-			// Takes care of the bindings.
-			return makeIdent(pc);
-		}
-		
-		private Identifier makeIdent(ParserContext pc) throws SyntaxError {
 			final String name = pc.t.val;
 			final int index = pc.getBoundIndex(name);
 			pc.progress();
 			final SourceLocation loc = pc.getSourceLocation();
-			if (index == -1) {
+			if (index == -1) { // free identifier
 				final Type type;
 				if (pc.isParsingType()) {
 					type = pc.factory.makePowerSetType(pc.factory.makeGivenType(name));
@@ -313,31 +302,11 @@ public class Parsers {
 					type = null;
 				}
 				return pc.factory.makeFreeIdentifier(name, loc, type);
-			} else {
+			} else { // bound identifier
 				return pc.factory.makeBoundIdentifier(index, loc);
 			}
 		}
-
-		protected FreeIdentifier parseFreeIdent(ParserContext pc, String name,
-				SourceLocation loc) throws SyntaxError {
-			final Type type;
-			if (pc.isParsingType()) {
-				type = pc.factory.makePowerSetType(pc.factory
-						.makeGivenType(name));
-			} else {
-				type = null;
-			}
-			return pc.factory.makeFreeIdentifier(name, loc, type);
-		}
-
-		protected BoundIdentifier parseBoundIdent(ParserContext pc,
-				String name, int index, SourceLocation loc) throws SyntaxError {
-			return pc.factory.makeBoundIdentifier(index, loc);
-		}
-
-	}
-	
-	static final IdentSubParser IDENT_SUBPARSER = new IdentSubParser(NO_TAG);
+	};
 	
 	static final INudParser<FreeIdentifier> FREE_IDENT_SUBPARSER = new DefaultNudParser<FreeIdentifier>(
 			FREE_IDENT) {
