@@ -85,6 +85,10 @@ public class TestGenParser extends AbstractTests {
 	private static final FreeIdentifier FRID_a = ff.makeFreeIdentifier("a", null);
 	private static final FreeIdentifier FRID_b = ff.makeFreeIdentifier("b", null);
 	private static final FreeIdentifier FRID_c = ff.makeFreeIdentifier("c", null);
+	private static final FreeIdentifier FRID_A = ff.makeFreeIdentifier("A", null);
+	private static final FreeIdentifier FRID_B = ff.makeFreeIdentifier("B", null);
+	private static final FreeIdentifier FRID_C = ff.makeFreeIdentifier("C", null);
+	private static final FreeIdentifier FRID_f = ff.makeFreeIdentifier("f", null);
 	private static final AtomicExpression INT = ff.makeAtomicExpression(Formula.INTEGER, null);
 	private static final UnaryExpression POW_INT = ff.makeUnaryExpression(POW, INT, null);
 	private static final IntegerType INT_TYPE = ff.makeIntegerType();
@@ -213,32 +217,30 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testIdentDoubleParen() throws Exception {
-		final Expression expected = ff.makeFreeIdentifier("A", null);
+		final Expression expected = FRID_A;
 		doExpressionTest("((A))", expected);
 	}
 
 	public void testUnion() throws Exception {
 		final Expression expected = ff.makeAssociativeExpression(BUNION,
-				Arrays.<Expression> asList(ff.makeFreeIdentifier("A", null)
-						, ff.makeFreeIdentifier("B", null)), null);
+				Arrays.<Expression> asList(FRID_A, FRID_B), null);
 		doExpressionTest("A∪B", expected);
 	}
 
 	public void testInter() throws Exception {
 		final Expression expected = ff.makeAssociativeExpression(BINTER,
-				Arrays.<Expression> asList(ff.makeFreeIdentifier("A", null)
-						, ff.makeFreeIdentifier("B", null)), null);
+				Arrays.<Expression> asList(FRID_A, FRID_B), null);
 		doExpressionTest("A∩B", expected);
 	}
 
 	public void testUnionInter() throws Exception {
 		final Expression expected = ff
 				.makeAssociativeExpression(BINTER, Arrays.<Expression> asList(
-						ff.makeFreeIdentifier("A", null),
+						FRID_A,
 						ff.makeAssociativeExpression(BUNION, Arrays.<Expression> asList(
-								ff.makeFreeIdentifier("B", null),
-								ff.makeFreeIdentifier("C", null)),
-										null)), null);
+								FRID_B,
+								FRID_C),
+								null)), null);
 		doExpressionTest("A∩(B∪C)", expected);
 	}
 	
@@ -511,9 +513,9 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testEqual() throws Exception {
-		final Predicate expected = ff.makeRelationalPredicate(EQUAL, ff
-				.makeFreeIdentifier("A", null), ff
-				.makeFreeIdentifier("B", null), null);
+		final Predicate expected = ff.makeRelationalPredicate(EQUAL,
+				FRID_A,
+				FRID_B, null);
 		doPredicateTest("A=B", expected);
 	}
 	
@@ -558,23 +560,41 @@ public class TestGenParser extends AbstractTests {
 	
 	public void testGT() throws Exception {
 		final Predicate expected = ff.makeRelationalPredicate(GT,
-				ff.makeFreeIdentifier("x", null),
+				FRID_a,
 				ZERO, null);
-		doPredicateTest("x>0", expected);
+		doPredicateTest("a>0", expected);
 	}
 
 	public void testLE() throws Exception {
 		final Predicate expected = ff.makeRelationalPredicate(LE,
-				ff.makeFreeIdentifier("x", null),
+				FRID_a,
 				ZERO, null);
-		doPredicateTest("x≤0", expected);
+		doPredicateTest("a≤0", expected);
 	}
 
 	public void testFunImage() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(FUNIMAGE,
-				ff.makeFreeIdentifier("f", null),
+				FRID_f,
 				ZERO, null);
 		doExpressionTest("f(0)", expected);
+	}
+
+	public void testFunImageLeftAssociativity() throws Exception {
+		final Expression expected = ff.makeBinaryExpression(FUNIMAGE,
+				ff.makeBinaryExpression(FUNIMAGE,
+						FRID_f,
+						ZERO, null),
+					ONE, null);
+		doExpressionTest("f(0)(1)", expected);
+	}
+
+	public void testFunImageInner() throws Exception {
+		final Expression expected = ff.makeBinaryExpression(FUNIMAGE,
+				FRID_f,
+				ff.makeBinaryExpression(FUNIMAGE,
+						FRID_f,
+						ZERO, null), null);
+		doExpressionTest("f(f(0))", expected);
 	}
 
 	public void testCard() throws Exception {

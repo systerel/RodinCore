@@ -526,7 +526,12 @@ public class Parsers {
 		
 		@Override
 		protected Expression parseRight(ParserContext pc) throws SyntaxError {
-			return pc.subParse(EXPR_PARSER);
+			// parse inner expression without caring about the parent kind
+			// else f(f(a)) would be rejected as it is a right-associative AST
+			pc.pushParentKind(_EOF);
+			final Expression right = pc.subParse(EXPR_PARSER);
+			pc.popParentKind();
+			return right;
 		}
 		
 	};
