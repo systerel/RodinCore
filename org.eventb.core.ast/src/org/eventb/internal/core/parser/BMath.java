@@ -94,6 +94,9 @@ public class BMath extends AbstractGrammar {
 	private static final String KPARTITION_ID = "Partition";
 	private static final String KFINITE_ID = "Finite";
 	private static final String PRED_VAR_ID = "Predicate Variable";
+	private static final String KID_GEN_ID = "Identity";
+	private static final String KPRJ1_GEN_ID = "Projection 1";
+	private static final String KPRJ2_GEN_ID = "Projection 2";
 	
 	
 	/**
@@ -295,6 +298,7 @@ public class BMath extends AbstractGrammar {
 	static int _PREDVAR;
 
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void init() {
 		super.init();
@@ -318,6 +322,10 @@ public class BMath extends AbstractGrammar {
 			addOperator("card", KCARD_ID, FUNCTIONAL, new UnaryExpressionParser(KCARD));
 			addOperator("\u2208", IN_ID, RELOP_PRED, new RelationalPredicateInfix(IN));
 			addOperator("\u2205", EMPTYSET_ID, EMPTY_SET, new AtomicExpressionParser(EMPTYSET));
+			// FIXME is there a problem having the same group for V1 and V2 operators ?
+			addOperator("id", KID_GEN_ID, ATOMIC_EXPR, new GenExpressionParser(KID, KID_GEN));
+			addOperator("prj1", KPRJ1_GEN_ID, ATOMIC_EXPR, new GenExpressionParser(KPRJ1, KPRJ1_GEN));
+			addOperator("prj2", KPRJ2_GEN_ID, ATOMIC_EXPR, new GenExpressionParser(KPRJ2, KPRJ2_GEN));
 			addOperator("{", SETEXT_ID, BRACE_SETS, SETEXT_PARSER);
 			addOperator("{", CSET_ID, BRACE_SETS, CSET_EXPLICIT);
 			addOperator("{", CSET_ID, BRACE_SETS, CSET_IMPLICIT);

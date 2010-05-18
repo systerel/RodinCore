@@ -696,6 +696,29 @@ public class Parsers {
 
 	}
 
+	static class GenExpressionParser implements INudParser<Expression> {
+		
+		private final INudParser<UnaryExpression> parserV1;
+		private final INudParser<AtomicExpression> parserV2;
+		
+		public GenExpressionParser(int unaryTagV1, int atomicTagV2) {
+			this.parserV1 = new UnaryExpressionParser(unaryTagV1);
+			this.parserV2 = new AtomicExpressionParser(atomicTagV2);
+		}
+		
+		public Expression nud(ParserContext pc) throws SyntaxError {
+			switch (pc.version) {
+			case V1:
+				return parserV1.nud(pc);
+			case V2:
+				return parserV2.nud(pc);
+			default:
+				throw new IllegalArgumentException(
+						"Unsupported language version: " + pc.version);
+			}
+		}
+	}
+	
 	static final ILedParser<UnaryExpression> CONVERSE_PARSER = new DefaultLedExprParser<UnaryExpression>(CONVERSE) {
 
 		@Override

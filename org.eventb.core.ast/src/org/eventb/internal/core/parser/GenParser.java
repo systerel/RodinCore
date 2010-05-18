@@ -116,9 +116,7 @@ public class GenParser {
 	private final Class<?> clazz;
 	private final FormulaFactory factory;
 	private final ParseResult result;
-	// FIXME take language version into account
 	private final LanguageVersion version;
-	// FIXME take predicate variables into account
 	private final boolean withPredVar;
 
 	
@@ -131,6 +129,7 @@ public class GenParser {
 		private final AbstractGrammar grammar;
 		protected final ParseResult result;
 		protected final boolean withPredVar;
+		protected final LanguageVersion version;
 		private final StackedValue<Binding> binding = new StackedValue<Binding>(new Binding());
 		private final StackedValue<Integer> parentKind = new StackedValue<Integer>(_EOF); 
 		private final StackedValue<Integer> startPos = new StackedValue<Integer>(-1); 
@@ -139,12 +138,13 @@ public class GenParser {
 		protected Token t;    // last recognized token
 		protected Token la;   // lookahead token
 		
-		protected ParserContext(Scanner scanner, FormulaFactory factory, ParseResult result, boolean withPredVar) {
+		protected ParserContext(Scanner scanner, FormulaFactory factory, ParseResult result, boolean withPredVar, LanguageVersion version) {
 			this.scanner = scanner;
 			this.factory = factory;
 			this.grammar = factory.getGrammar();
 			this.result = result;
 			this.withPredVar = withPredVar;
+			this.version = version;
 		}
 
 		/**
@@ -372,7 +372,7 @@ public class GenParser {
 
 		try {
 			final ParserContext pc = new ParserContext(scanner, factory,
-					result, withPredVar);
+					result, withPredVar, version);
 			pc.init();
 			final Object res;
 			if (clazz == Type.class) {

@@ -106,10 +106,11 @@ public class TestGenParser extends AbstractTests {
 		assertTrue(problem.isError());
 		assertEquals(problemKind, problem.getMessage());
 	}
-
-	private void doExpressionTest(String formula, Formula<?> expected, FormulaFactory factory) {
+	
+	private static void doExpressionTest(String formula, Expression expected,
+			FormulaFactory factory, LanguageVersion version) {
 		final IParseResult result = factory.parseExpression(formula,
-				LanguageVersion.V2, null);
+				version, null);
 		if (result.hasProblem()) {
 			System.out.println(result.getProblems());
 		}
@@ -120,14 +121,21 @@ public class TestGenParser extends AbstractTests {
 		
 		actual.accept(slChecker);
 	}
-	
-	private void doExpressionTest(String formula, Expression expected) {
-		doExpressionTest(formula, expected, ff);
+
+	private static void doExpressionTest(String formula, Expression expected, FormulaFactory factory) {
+		doExpressionTest(formula, expected, factory, LanguageVersion.V2);
 	}
 	
-	private void doPredicateTest(String formula, Predicate expected) {
+	private static void doExpressionTest(String formula, Expression expected) {
+		doExpressionTest(formula, expected, ff);
+	}
+	private static void doPredicateTest(String formula, Predicate expected) {
+		doPredicateTest(formula, expected, LanguageVersion.V2);
+	}
+	
+	private static void doPredicateTest(String formula, Predicate expected, LanguageVersion version) {
 		final IParseResult result = ff.parsePredicate(formula,
-				LanguageVersion.V2, null);
+				version, null);
 		if (result.hasProblem()) {
 			System.out.println(result.getProblems());
 		}
@@ -139,7 +147,7 @@ public class TestGenParser extends AbstractTests {
 		actual.accept(slChecker);
 	}
 
-	private void doPredicatePatternTest(String formula, Predicate expected) {
+	private static void doPredicatePatternTest(String formula, Predicate expected) {
 		final IParseResult result = ff.parsePredicatePattern(formula,
 				LanguageVersion.V2, null);
 		if (result.hasProblem()) {
@@ -153,7 +161,7 @@ public class TestGenParser extends AbstractTests {
 		actual.accept(slChecker);
 	}
 
-	private void doTypeTest(String formula, Type expected) {
+	private static void doTypeTest(String formula, Type expected) {
 		final IParseResult result = ff.parseType(formula,
 				LanguageVersion.V2);
 		if (result.hasProblem()) {
@@ -165,7 +173,7 @@ public class TestGenParser extends AbstractTests {
 		assertEquals(expected, actual);
 	}
 	
-	private void doAssignmentTest(String formula, Assignment expected) {
+	private static void doAssignmentTest(String formula, Assignment expected) {
 		final IParseResult result = ff.parseAssignment(formula,
 				LanguageVersion.V2, null);
 		if (result.hasProblem()) {
@@ -177,6 +185,19 @@ public class TestGenParser extends AbstractTests {
 		assertEquals(expected, actual);
 	
 		actual.accept(slChecker);
+	}
+
+	private static void doTest(String formula, Formula<?> expected, LanguageVersion version) {
+		if (expected instanceof Expression) {
+			doExpressionTest(formula, (Expression) expected,ff, version);
+		} else if (expected instanceof Predicate) {
+			doPredicateTest(formula, (Predicate) expected, version);
+		}
+	}
+	
+	private static void doVersionTest(String formula, Formula<?> expectedV1, Formula<?> expectedV2) {
+		doTest(formula, expectedV1, LanguageVersion.V1);
+		doTest(formula, expectedV2, LanguageVersion.V2);
 	}
 
 	public void testIntegerLiteral() throws Exception {
@@ -981,4 +1002,39 @@ public class TestGenParser extends AbstractTests {
 				ProblemKind.SyntaxError);
 	}
 	
+	@SuppressWarnings("deprecation")
+	public void testIdV1V2() throws Exception {
+		final Expression expectedV1 = ff.makeUnaryExpression(KID, FRID_S, null);
+		final Expression expectedV2 = ff.makeBinaryExpression(FUNIMAGE,
+				ff.makeAtomicExpression(KID_GEN, null),
+				FRID_S, null);
+		doVersionTest("id(S)", expectedV1, expectedV2);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void testPrj1V1V2() throws Exception {
+		final Expression expectedV1 = ff.makeUnaryExpression(KPRJ1, FRID_f, null);
+		final Expression expectedV2 = ff.makeBinaryExpression(FUNIMAGE,
+				ff.makeAtomicExpression(KPRJ1_GEN, null),
+				FRID_f, null);
+		doVersionTest("prj1(f)", expectedV1, expectedV2);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void testPrj2V1V2() throws Exception {
+		final Expression expectedV1 = ff.makeUnaryExpression(KPRJ2, FRID_f, null);
+		final Expression expectedV2 = ff.makeBinaryExpression(FUNIMAGE,
+				ff.makeAtomicExpression(KPRJ2_GEN, null),
+				FRID_f, null);
+		doVersionTest("prj2(f)", expectedV1, expectedV2);
+	}
+	
+	public void testPartitionV1V2() throws Exception {
+		final Expression expectedV1 = ff.makeBinaryExpression(FUNIMAGE,
+				ff.makeFreeIdentifier("partition", null),
+				FRID_S, null);
+		final Predicate expectedV2 = ff.makeMultiplePredicate(KPARTITION,
+				Arrays.<Expression>asList(FRID_S), null);
+		doVersionTest("partition(S)", expectedV1, expectedV2);
+	}
 }
