@@ -130,6 +130,7 @@ public class GenParser {
 		protected final FormulaFactory factory;
 		private final AbstractGrammar grammar;
 		protected final ParseResult result;
+		protected final boolean withPredVar;
 		private final StackedValue<Binding> binding = new StackedValue<Binding>(new Binding());
 		private final StackedValue<Integer> parentKind = new StackedValue<Integer>(_EOF); 
 		private final StackedValue<Integer> startPos = new StackedValue<Integer>(-1); 
@@ -138,11 +139,12 @@ public class GenParser {
 		protected Token t;    // last recognized token
 		protected Token la;   // lookahead token
 		
-		protected ParserContext(Scanner scanner, FormulaFactory factory, ParseResult result) {
+		protected ParserContext(Scanner scanner, FormulaFactory factory, ParseResult result, boolean withPredVar) {
 			this.scanner = scanner;
 			this.factory = factory;
 			this.grammar = factory.getGrammar();
 			this.result = result;
+			this.withPredVar = withPredVar;
 		}
 
 		/**
@@ -369,7 +371,8 @@ public class GenParser {
 	public void parse() {
 
 		try {
-			final ParserContext pc = new ParserContext(scanner, factory, result);
+			final ParserContext pc = new ParserContext(scanner, factory,
+					result, withPredVar);
 			pc.init();
 			final Object res;
 			if (clazz == Type.class) {

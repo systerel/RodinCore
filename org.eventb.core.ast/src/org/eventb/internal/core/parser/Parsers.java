@@ -40,6 +40,7 @@ import org.eventb.core.ast.InvalidExpressionException;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -403,6 +404,20 @@ public class Parsers {
 				throw new SyntaxError("Expected a number, but was: "
 						+ tokenVal);
 			}
+		}
+	};
+
+	static final INudParser<PredicateVariable> PRED_VAR_SUBPARSER = new ValuedNudParser<PredicateVariable>(
+			PREDICATE_VARIABLE) {
+
+		@Override
+		protected PredicateVariable makeValue(ParserContext pc,
+				String tokenVal, SourceLocation loc) throws SyntaxError {
+			if (!pc.withPredVar) {
+				throw new SyntaxError(
+						"Predicate variables are forbidden in this context");
+			}
+			return pc.factory.makePredicateVariable(tokenVal, loc);
 		}
 	};
 

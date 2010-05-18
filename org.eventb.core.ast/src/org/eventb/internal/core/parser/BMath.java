@@ -93,6 +93,7 @@ public class BMath extends AbstractGrammar {
 	private static final String KBOOL_ID = "To Bool";
 	private static final String KPARTITION_ID = "Partition";
 	private static final String KFINITE_ID = "Finite";
+	private static final String PRED_VAR_ID = "Predicate Variable";
 	
 	
 	/**
@@ -335,6 +336,7 @@ public class BMath extends AbstractGrammar {
 			addOperator("bool", KBOOL_ID, BOOL, KBOOL_PARSER);
 			addOperator("partition", KPARTITION_ID, ATOMIC_PRED, PARTITION_PARSER);
 			addOperator("finite", KFINITE_ID, ATOMIC_PRED, FINITE_PARSER);
+			addOperator(_PREDVAR, PRED_VAR_ID, GROUP0, PRED_VAR_SUBPARSER);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

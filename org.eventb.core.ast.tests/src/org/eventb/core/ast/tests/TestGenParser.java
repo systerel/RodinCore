@@ -37,6 +37,7 @@ import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
@@ -89,6 +90,7 @@ public class TestGenParser extends AbstractTests {
 	private static final FreeIdentifier FRID_B = ff.makeFreeIdentifier("B", null);
 	private static final FreeIdentifier FRID_C = ff.makeFreeIdentifier("C", null);
 	private static final FreeIdentifier FRID_f = ff.makeFreeIdentifier("f", null);
+	private static final PredicateVariable PV_P = ff.makePredicateVariable("$P", null);
 	private static final AtomicExpression INT = ff.makeAtomicExpression(Formula.INTEGER, null);
 	private static final UnaryExpression POW_INT = ff.makeUnaryExpression(POW, INT, null);
 	private static final IntegerType INT_TYPE = ff.makeIntegerType();
@@ -125,6 +127,20 @@ public class TestGenParser extends AbstractTests {
 	
 	private void doPredicateTest(String formula, Predicate expected) {
 		final IParseResult result = ff.parsePredicate(formula,
+				LanguageVersion.V2, null);
+		if (result.hasProblem()) {
+			System.out.println(result.getProblems());
+		}
+		assertFalse(result.hasProblem());
+		final Predicate actual = result.getParsedPredicate();
+		System.out.println(actual);
+		assertEquals(expected, actual);
+	
+		actual.accept(slChecker);
+	}
+
+	private void doPredicatePatternTest(String formula, Predicate expected) {
+		final IParseResult result = ff.parsePredicatePattern(formula,
 				LanguageVersion.V2, null);
 		if (result.hasProblem()) {
 			System.out.println(result.getProblems());
@@ -944,6 +960,25 @@ public class TestGenParser extends AbstractTests {
 		final Predicate expected = ff
 				.makeSimplePredicate(KFINITE, FRID_S, null);
 		doPredicateTest("finite(S)", expected);
+	}
+	
+	public void testPredicateVariable() throws Exception {
+		final Predicate expected = PV_P;
+		doPredicatePatternTest("$P", expected);
+		
+	}
+	
+	public void testPredVarInner() throws Exception {
+		final Predicate expected = ff.makeAssociativePredicate(LAND, Arrays.<Predicate>asList(
+				LIT_BTRUE,
+				PV_P), null);
+		doPredicatePatternTest("⊤∧$P", expected);
+		doPredicatePatternTest("⊤∧($P)", expected);
+	}
+	
+	public void testPredVarRefused() throws Exception {
+		assertFailure(ff.parsePredicate("$P", LanguageVersion.V2, null),
+				ProblemKind.SyntaxError);
 	}
 	
 }
