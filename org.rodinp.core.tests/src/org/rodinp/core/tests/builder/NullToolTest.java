@@ -24,7 +24,7 @@ public class NullToolTest extends AbstractBuilderTest{
 	public void testLoadNullToolDescription() throws Exception {
 		final String name = "NullTool.id";
 		final ToolManager manager = ToolManager.getToolManager();
-		final ToolDescription desc = manager.getToolDescription("NullTool.id");
+		final ToolDescription desc = manager.getToolDescription(name);
 		assertTrue("The description " + desc.getId()
 				+ "is not a NullToolDescription",
 				desc instanceof NullToolDescription);

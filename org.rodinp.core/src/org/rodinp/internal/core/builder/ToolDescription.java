@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - added constructor for fake tool description
  *******************************************************************************/
 
 package org.rodinp.internal.core.builder;

@@ -136,7 +136,7 @@ public class ToolManager {
 		ToolDescription toolDesc = tools.get(id);
 		if (toolDesc == null) {
 			toolDesc = new NullToolDescription(id);
-			Util.log(null, "Null tool description created for id " + id);
+			Util.log(null, "Missing tool with id " + id);
 			tools.put(id, toolDesc);
 		}
 		return toolDesc;
