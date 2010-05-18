@@ -189,22 +189,15 @@ public class Parsers {
 		}
 	}
 	
-	private static abstract class DefaultLedPredParser<T> extends AbstractSubParser<T> implements ILedParser<T> {
+	private static abstract class DefaultLedPredParser<T> extends DefaultLedParser<T, Predicate, Predicate> implements ILedParser<T> {
 
 		protected DefaultLedPredParser(int tag) {
-			super(tag);
+			super(tag, PRED_PARSER);
 		}
 		
-		public final T led(Formula<?> left, ParserContext pc) throws SyntaxError {
-			final Predicate leftPred = asPredicate(left);
-			final Predicate right = parseRight(pc);
-			return led(leftPred, right, pc);
-		}
-		
-		protected abstract T led(Predicate left, Predicate right, ParserContext pc) throws SyntaxError;
-		
-		protected Predicate parseRight(ParserContext pc) throws SyntaxError {
-			return pc.subParse(PRED_PARSER);
+		@Override
+		protected Predicate asLeftType(Formula<?> left) throws SyntaxError {
+			return asPredicate(left);
 		}
 	}
 	
@@ -575,7 +568,8 @@ public class Parsers {
 		}
 
 		@Override
-		public AssociativePredicate led(Predicate left, Predicate right, ParserContext pc)
+		protected AssociativePredicate makeValue(ParserContext pc,
+				Predicate left, Predicate right, SourceLocation loc)
 				throws SyntaxError {
 			final List<Predicate> children = new ArrayList<Predicate>();
 			if (left.getTag() == tag) {
@@ -585,8 +579,7 @@ public class Parsers {
 				children.add(left);
 			}
 			children.add(right);
-			return pc.factory.makeAssociativePredicate(tag, children, pc
-					.getSourceLocation());
+			return pc.factory.makeAssociativePredicate(tag, children, loc);
 		}
 	}
 
@@ -654,10 +647,9 @@ public class Parsers {
 		}
 
 		@Override
-		public BinaryPredicate led(Predicate left, Predicate right, ParserContext pc)
-				throws SyntaxError {
-			return pc.factory.makeBinaryPredicate(tag, left,
-					right, pc.getSourceLocation());
+		protected BinaryPredicate makeValue(ParserContext pc, Predicate left,
+				Predicate right, SourceLocation loc) throws SyntaxError {
+			return pc.factory.makeBinaryPredicate(tag, left, right, loc);
 		}
 	}
 
