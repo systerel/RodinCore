@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,10 +26,12 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
 
 /**
- * AtomicExpression is the class for all atomic expressions in an event-B formula.
+ * AtomicExpression is the class for all atomic expressions in an event-B
+ * formula.
  * <p>
- * It is a terminal expression and therefore has no children.
- * It can only accept {INTEGER, NATURAL, NATURAL1, BOOL, TRUE, FALSE, EMPTYSET, KPRED, KSUCC}.
+ * It is a terminal expression and therefore has no children. It can only accept
+ * {INTEGER, NATURAL, NATURAL1, BOOL, TRUE, FALSE, EMPTYSET, KPRED, KSUCC,
+ * KPRJ1_GEN, KPRJ2_GEN, KID_GEN}.
  * </p>
  * 
  * @author François Terrier
@@ -49,8 +51,8 @@ public class AtomicExpression extends Expression {
 		"\u2205",  // EMPTYSET
 		"pred",    // KPRED
 		"succ",     // KSUCC
-		"prj1",		// PRJ1_GEN
-		"prj2",		// PRJ2_GEN
+		"prj1",		// KPRJ1_GEN
+		"prj2",		// KPRJ2_GEN
 		"id",		// KID_GEN
 	};
 	// For testing purposes
