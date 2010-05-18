@@ -14,6 +14,7 @@ import static org.eventb.core.ast.Formula.*;
 import static org.eventb.internal.core.parser.OperatorRegistry.GROUP0;
 import static org.eventb.internal.core.parser.Parsers.*;
 
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.extension.CycleError;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.Parsers.BinaryExpressionInfix;
@@ -97,6 +98,51 @@ public class BMath extends AbstractGrammar {
 	private static final String KID_GEN_ID = "Identity";
 	private static final String KPRJ1_GEN_ID = "Projection 1";
 	private static final String KPRJ2_GEN_ID = "Projection 2";
+	private static final String BCOMP_ID = "Backward Composition";
+	private static final String FCOMP_ID = "Forward Composition";
+	private static final String OVR_ID = "Overload";
+	private static final String LEQV_ID = "Equivalent";
+	private static final String NATURAL_ID = "Natural";
+	private static final String NATURAL1_ID = "Natural1";
+	private static final String BOOL_ID = "Bool Type";
+	private static final String FALSE_ID = "False";
+	private static final String KPRED_ID = "Predecessor";
+	private static final String KSUCC_ID = "Successor";
+	private static final String RELIMAGE_ID = "Relational Image";
+	private static final String REL_ID = "Relation";
+	private static final String TREL_ID = "Total Relation";
+	private static final String SREL_ID = "Surjective Relation";
+	private static final String STREL_ID = "Surjective Total Relation";
+	private static final String PFUN_ID = "Partial Function";
+	private static final String PINJ_ID = "Partial Injection";
+	private static final String TINJ_ID = "Total Injection";
+	private static final String PSUR_ID = "Partial Surjection";
+	private static final String TSUR_ID = "Total Surjection";
+	private static final String TBIJ_ID = "Total Bijection";
+	private static final String SETMINUS_ID = "Set Minus";
+	private static final String PPROD_ID = "Parallel Product";
+	private static final String DPROD_ID = "Direct Product";
+	private static final String DOMRES_ID = "Domain Restriction";
+	private static final String DOMSUB_ID = "Domain Subtraction";
+	private static final String RANRES_ID = "Range Restriction";
+	private static final String RANSUB_ID = "Range Subtraction";
+	private static final String MINUS_ID = "Minus";
+	private static final String DIV_ID = "Integer Division";
+	private static final String MOD_ID = "Modulo";
+	private static final String EXPN_ID = "Integer Exponentiation";
+	private static final String NOTEQUAL_ID = "Not Equal";
+	private static final String LT_ID = "Lower Than";
+	private static final String GE_ID = "Greater or Equal";
+	private static final String NOTIN_ID = "Not In";
+	private static final String SUBSET_ID = "Subset";
+	private static final String NOTSUBSET_ID = "Not Subset";
+	private static final String SUBSETEQ_ID = "Subset or Equal";
+	private static final String NOTSUBSETEQ_ID = "Not Subset or Equal";
+	private static final String POW1_ID = "Powerset 1";
+	private static final String KDOM_ID = "Domain";
+	private static final String KRAN_ID = "Range";
+	private static final String KMIN_ID = "Min";
+	private static final String KMAX_ID = "Max";
 	
 	
 	/**
@@ -308,30 +354,62 @@ public class BMath extends AbstractGrammar {
 			// AssociativeExpression
 			addOperator("\u222a", BUNION_ID, BINOP, new AssociativeExpressionInfix(BUNION));
 			addOperator("\u2229", BINTER_ID, BINOP, new AssociativeExpressionInfix(BINTER));
+			addOperator("\u2218", BCOMP_ID, BINOP, new AssociativeExpressionInfix(BCOMP));
+			addOperator("\u003b", FCOMP_ID, BINOP, new AssociativeExpressionInfix(FCOMP));
+			addOperator("\ue103", OVR_ID, BINOP, new AssociativeExpressionInfix(OVR));
 			addOperator("+", PLUS_ID, ARITHMETIC, new AssociativeExpressionInfix(PLUS));
 			addOperator("\u2217", MUL_ID, ARITHMETIC, new AssociativeExpressionInfix(MUL));
 			// AssociativePredicate
 			addOperator("\u2227", LAND_ID, LOGIC_PRED, new AssociativePredicateInfix(LAND));
 			addOperator("\u2228", LOR_ID, LOGIC_PRED, new AssociativePredicateInfix(LOR));
 			// AtomicExpression
-			addOperator("\u2205", EMPTYSET_ID, EMPTY_SET, new AtomicExpressionParser(EMPTYSET));
 			addOperator("\u2124", INTEGER_ID, ATOMIC_EXPR, new AtomicExpressionParser(INTEGER));
+			addOperator("\u2115", NATURAL_ID, ATOMIC_EXPR, new AtomicExpressionParser(NATURAL));
+			addOperator("\u21151", NATURAL1_ID, ATOMIC_EXPR, new AtomicExpressionParser(NATURAL1));
+			addOperator("BOOL", BOOL_ID, ATOMIC_EXPR, new AtomicExpressionParser(Formula.BOOL));
 			addOperator("TRUE", TRUE_ID, ATOMIC_EXPR, new AtomicExpressionParser(TRUE));
+			addOperator("FALSE", FALSE_ID, ATOMIC_EXPR, new AtomicExpressionParser(FALSE));
+			addOperator("\u2205", EMPTYSET_ID, EMPTY_SET, new AtomicExpressionParser(EMPTYSET));
+			addOperator("pred", KPRED_ID, ATOMIC_EXPR, new AtomicExpressionParser(KPRED));
+			addOperator("succ", KSUCC_ID, ATOMIC_EXPR, new AtomicExpressionParser(KSUCC));
 			// FIXME is there a problem having the same group for V1 and V2 operators ?
-			addOperator("id", KID_GEN_ID, ATOMIC_EXPR, new GenExpressionParser(KID, KID_GEN));
 			addOperator("prj1", KPRJ1_GEN_ID, ATOMIC_EXPR, new GenExpressionParser(KPRJ1, KPRJ1_GEN));
 			addOperator("prj2", KPRJ2_GEN_ID, ATOMIC_EXPR, new GenExpressionParser(KPRJ2, KPRJ2_GEN));
+			addOperator("id", KID_GEN_ID, ATOMIC_EXPR, new GenExpressionParser(KID, KID_GEN));
 			// BecomesEqualTo	ASSIGNMENT_PARSER is called from the top
 			// BecomesMemberOf	idem
 			// BecomesSuchThat	idem
 			// BinaryExpression
-			addOperator("\u00d7", CPROD_ID, BINOP, new BinaryExpressionInfix(CPROD));
 			addOperator("\u21a6", MAPSTO_ID, PAIR, new BinaryExpressionInfix(MAPSTO));
+			addOperator("\u2194", REL_ID, RELATION, new BinaryExpressionInfix(REL));
+			addOperator("\ue100", TREL_ID, RELATION, new BinaryExpressionInfix(TREL));
+			addOperator("\ue101", SREL_ID, RELATION, new BinaryExpressionInfix(SREL));
+			addOperator("\ue102", STREL_ID, RELATION, new BinaryExpressionInfix(STREL));
+			addOperator("\u21f8", PFUN_ID, RELATION, new BinaryExpressionInfix(PFUN));
 			addOperator("\u2192", TFUN_ID, RELATION, new BinaryExpressionInfix(TFUN));
+			addOperator("\u2914", PINJ_ID, RELATION, new BinaryExpressionInfix(PINJ));
+			addOperator("\u21a3", TINJ_ID, RELATION, new BinaryExpressionInfix(TINJ));
+			addOperator("\u2900", PSUR_ID, RELATION, new BinaryExpressionInfix(PSUR));
+			addOperator("\u21a0", TSUR_ID, RELATION, new BinaryExpressionInfix(TSUR));
+			addOperator("\u2916", TBIJ_ID, RELATION, new BinaryExpressionInfix(TBIJ));
+			addOperator("\u2216", SETMINUS_ID, BINOP, new BinaryExpressionInfix(SETMINUS));
+			addOperator("\u00d7", CPROD_ID, BINOP, new BinaryExpressionInfix(CPROD));
+			addOperator("\u2297", DPROD_ID, BINOP, new BinaryExpressionInfix(DPROD));
+			addOperator("\u2225", PPROD_ID, BINOP, new BinaryExpressionInfix(PPROD));
+			addOperator("\u25c1", DOMRES_ID, BINOP, new BinaryExpressionInfix(DOMRES));
+			addOperator("\u2a64", DOMSUB_ID, BINOP, new BinaryExpressionInfix(DOMSUB));
+			addOperator("\u25b7", RANRES_ID, BINOP, new BinaryExpressionInfix(RANRES));
+			addOperator("\u2a65", RANSUB_ID, BINOP, new BinaryExpressionInfix(RANSUB));
 			addOperator("\u2025", UPTO_ID, INTERVAL, new BinaryExpressionInfix(UPTO));
+			addOperator("−", MINUS_ID, ARITHMETIC, new BinaryExpressionInfix(MINUS));
+			addOperator("\u00f7", DIV_ID, ARITHMETIC, new BinaryExpressionInfix(DIV));
+			addOperator("mod", MOD_ID, ARITHMETIC, new BinaryExpressionInfix(MOD));
+			addOperator("\u005e", EXPN_ID, ARITHMETIC, new BinaryExpressionInfix(EXPN));
 			addOperator("(", FUNIMAGE_ID, FUNCTIONAL, FUN_IMAGE);
+			addOperator("[", RELIMAGE_ID, FUNCTIONAL, new BinaryExpressionInfix(RELIMAGE));
 			// BinaryPredicate
 			addOperator("\u21d2", LIMP_ID, INFIX_PRED, new BinaryPredicateParser(LIMP));
+			addOperator("\u21d4", LEQV_ID, INFIX_PRED, new BinaryPredicateParser(LEQV));
 			// BoolExpression
 			addOperator("bool", KBOOL_ID, BOOL, KBOOL_PARSER);
 			// BoundIdentDecl	parsed as identifier list, then processed by parsers
@@ -348,6 +426,7 @@ public class BMath extends AbstractGrammar {
 			// PredicateVariable
 			addOperator(_PREDVAR, PRED_VAR_ID, GROUP0, PRED_VAR_SUBPARSER);
 			// QuantifiedExpression
+			// TODO add QUNION, QINTER
 			addOperator("{", CSET_ID, BRACE_SETS, CSET_EXPLICIT);
 			addOperator("{", CSET_ID, BRACE_SETS, CSET_IMPLICIT);
 			addOperator("\u03bb", LAMBDA_ID, QUANTIFICATION, CSET_LAMBDA);
@@ -356,9 +435,17 @@ public class BMath extends AbstractGrammar {
 			addOperator("\u2203", EXISTS_ID, QUANTIFIED_PRED, new QuantifiedPredicateParser(EXISTS));
 			// RelationalPredicate
 			addOperator("=", EQUAL_ID, RELOP_PRED, new RelationalPredicateInfix(EQUAL));
+			addOperator("≠", NOTEQUAL_ID, RELOP_PRED, new RelationalPredicateInfix(NOTEQUAL));
+			addOperator("<", LT_ID, RELOP_PRED, new RelationalPredicateInfix(LT));
 			addOperator("≤", LE_ID, RELOP_PRED, new RelationalPredicateInfix(LE));
 			addOperator(">", GT_ID, RELOP_PRED, new RelationalPredicateInfix(GT));
+			addOperator("\u2265", GE_ID, RELOP_PRED, new RelationalPredicateInfix(GE));
 			addOperator("\u2208", IN_ID, RELOP_PRED, new RelationalPredicateInfix(IN));
+			addOperator("\u2209", NOTIN_ID, RELOP_PRED, new RelationalPredicateInfix(NOTIN));
+			addOperator("\u2282", SUBSET_ID, RELOP_PRED, new RelationalPredicateInfix(SUBSET));
+			addOperator("\u2284", NOTSUBSET_ID, RELOP_PRED, new RelationalPredicateInfix(NOTSUBSET));
+			addOperator("\u2286", SUBSETEQ_ID, RELOP_PRED, new RelationalPredicateInfix(SUBSETEQ));
+			addOperator("\u2288", NOTSUBSETEQ_ID, RELOP_PRED, new RelationalPredicateInfix(NOTSUBSETEQ));
 			// SetExtension
 			addOperator("{", SETEXT_ID, BRACE_SETS, SETEXT_PARSER);
 			// SimplePredicate
@@ -366,11 +453,18 @@ public class BMath extends AbstractGrammar {
 			// UnaryExpression
 			addOperator("card", KCARD_ID, FUNCTIONAL, new UnaryExpressionParser(KCARD));
 			addOperator("\u2119", POW_ID, BOUND_UNARY, new UnaryExpressionParser(POW));
+			addOperator("\u21191", POW1_ID, BOUND_UNARY, new UnaryExpressionParser(POW1));
+			// TODO add KUNION, KINTER
+			addOperator("dom", KDOM_ID, BOUND_UNARY, new UnaryExpressionParser(KDOM));
+			addOperator("ran", KRAN_ID, BOUND_UNARY, new UnaryExpressionParser(KRAN));
+			addOperator("min", KMIN_ID, BOUND_UNARY, new UnaryExpressionParser(KMIN));
+			addOperator("max", KMAX_ID, BOUND_UNARY, new UnaryExpressionParser(KMAX));
 			addOperator("\u223c", CONVERSE_ID, UNARY_RELATION, CONVERSE_PARSER);
+			// TODO add UNMINUS
 			// UnaryPredicate
 			addOperator("\u00ac", NOT_ID, NOT_PRED, NOT_PARSER);
 			
-			// Undefined Operator
+			// Undefined Operators
 			addOperator("\u2982", OFTYPE_ID, TYPED, OFTYPE);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
