@@ -92,6 +92,7 @@ public class BMath extends AbstractGrammar {
 	private static final String CONVERSE_ID = "Converse";
 	private static final String KBOOL_ID = "To Bool";
 	private static final String KPARTITION_ID = "Partition";
+	private static final String KFINITE_ID = "Finite";
 	
 	
 	/**
@@ -333,6 +334,7 @@ public class BMath extends AbstractGrammar {
 			addOperator("\u223c", CONVERSE_ID, UNARY_RELATION, CONVERSE_PARSER);
 			addOperator("bool", KBOOL_ID, BOOL, KBOOL_PARSER);
 			addOperator("partition", KPARTITION_ID, ATOMIC_PRED, PARTITION_PARSER);
+			addOperator("finite", KFINITE_ID, ATOMIC_PRED, FINITE_PARSER);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

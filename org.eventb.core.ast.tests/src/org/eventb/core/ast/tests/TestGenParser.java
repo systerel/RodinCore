@@ -940,5 +940,10 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("partition(S, A, B)", expected);
 	}
 	
-
+	public void testFinite() throws Exception {
+		final Predicate expected = ff
+				.makeSimplePredicate(KFINITE, FRID_S, null);
+		doPredicateTest("finite(S)", expected);
+	}
+	
 }

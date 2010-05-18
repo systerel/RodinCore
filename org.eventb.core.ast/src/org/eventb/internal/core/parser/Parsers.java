@@ -44,6 +44,7 @@ import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
+import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
@@ -889,6 +890,16 @@ public class Parsers {
 		protected MultiplePredicate makeValue(ParserContext pc,
 				List<Expression> child, SourceLocation loc) {
 			return pc.factory.makeMultiplePredicate(tag, child, loc);
+		}
+
+	};
+	
+	static final INudParser<SimplePredicate> FINITE_PARSER = new ParenNudParser<SimplePredicate, Expression>(KFINITE, EXPR_PARSER) {
+
+		@Override
+		protected SimplePredicate makeValue(ParserContext pc,
+				Expression child, SourceLocation loc) {
+			return pc.factory.makeSimplePredicate(tag, child, loc);
 		}
 
 	};
