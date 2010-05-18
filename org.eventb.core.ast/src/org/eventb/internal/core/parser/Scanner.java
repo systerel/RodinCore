@@ -1,12 +1,14 @@
-/*
- * Created on 03-may-2005
+/*******************************************************************************
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.core.parser;
-
-import static org.eventb.internal.core.parser.BMath.B_MATH;
 
 import java.util.List;
 import java.util.ListIterator;
@@ -39,14 +41,12 @@ public class Scanner {
 	 * Creates a new scanner that takes its input from <code>str</code>.
 	 * 
 	 * @param str
-	 *            the string to read from.
+	 *            string to read from.
 	 * @param result
-	 *            the result of this scan and parse
+	 *            result of this scan and parse
+	 * @param grammar
+	 *            grammar defining tokens to recognize
 	 */
-	public Scanner(String str, ParseResult result) {
-		this(str, result, B_MATH);
-	}
-
 	public Scanner(String str, ParseResult result, AbstractGrammar grammar) {
 		lexer = GenScan.getLexer(grammar);
 		lexer.parse(str);

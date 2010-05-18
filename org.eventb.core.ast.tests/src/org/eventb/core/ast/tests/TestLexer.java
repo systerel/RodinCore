@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,7 +79,7 @@ public class TestLexer extends AbstractTests {
 
 	private void testToken(String image, Integer kind, LanguageVersion version) {
 			ParseResult result = new ParseResult(ff, version, null);
-			Scanner scanner = new Scanner(image, result);
+			Scanner scanner = new Scanner(image, result, B_MATH);
 			Token t = scanner.Scan();
 			assertEquals(image, t.val);
 			final String msg = "for \"" + image + "\" with language " + version;
@@ -99,7 +99,7 @@ public class TestLexer extends AbstractTests {
 		private void testInvalidStrings(LanguageVersion version) {
 			for (String string : invalidStrings) {
     			final IParseResult result = new ParseResult(ff, version, null);
-    			Scanner scanner = new Scanner(string, (ParseResult) result);
+    			Scanner scanner = new Scanner(string, (ParseResult) result, B_MATH);
     			Token t = scanner.Scan();
     			assertTrue("Scanner should have succeeded", result.isSuccess());
     			assertTrue(t.kind == 0);	// _EOF
