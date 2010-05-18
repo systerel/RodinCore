@@ -150,6 +150,8 @@ public class Parsers {
 
 	}
 
+	// TODO try to do the same as nud parsers, with generic types for left and right
+	// TODO make assignment parser a led parser
 	private static abstract class DefaultLedExprParser<T> extends AbstractSubParser<T> implements ILedParser<T> {
 
 		protected DefaultLedExprParser(int tag) {
@@ -421,8 +423,8 @@ public class Parsers {
 		}
 	};
 
-	// TODO verify that all parser calls are made with NO_TAG when parsing
-	// formulae inside parentheses
+	// TODO verify that all formulae inside parentheses are parsed with a GROUP0
+	// parent kind
 	static final IMainParser<Formula<?>> CLOSED_SUGAR = new DefaultMainParser<Formula<?>> () {
 
 		public Formula<?> parse(ParserContext pc) throws SyntaxError {

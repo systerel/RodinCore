@@ -305,46 +305,73 @@ public class BMath extends AbstractGrammar {
 		initTokens();
 		
 		try {
+			// AssociativeExpression
 			addOperator("\u222a", BUNION_ID, BINOP, new AssociativeExpressionInfix(BUNION));
 			addOperator("\u2229", BINTER_ID, BINOP, new AssociativeExpressionInfix(BINTER));
 			addOperator("+", PLUS_ID, ARITHMETIC, new AssociativeExpressionInfix(PLUS));
 			addOperator("\u2217", MUL_ID, ARITHMETIC, new AssociativeExpressionInfix(MUL));
-			addOperator("\u22a4", BTRUE_ID, ATOMIC_PRED, new LiteralPredicateParser(BTRUE));
-			addOperator("\u22a5", BFALSE_ID, ATOMIC_PRED, new LiteralPredicateParser(BFALSE));
+			// AssociativePredicate
 			addOperator("\u2227", LAND_ID, LOGIC_PRED, new AssociativePredicateInfix(LAND));
 			addOperator("\u2228", LOR_ID, LOGIC_PRED, new AssociativePredicateInfix(LOR));
-			addOperator("\u2200", FORALL_ID, QUANTIFIED_PRED, new QuantifiedPredicateParser(FORALL));
-			addOperator("\u2203", EXISTS_ID, QUANTIFIED_PRED, new QuantifiedPredicateParser(EXISTS));
-			addOperator("=", EQUAL_ID, RELOP_PRED, new RelationalPredicateInfix(EQUAL));
-			addOperator(">", GT_ID, RELOP_PRED, new RelationalPredicateInfix(GT));
-			addOperator("≤", LE_ID, RELOP_PRED, new RelationalPredicateInfix(LE));
-			addOperator("(", FUNIMAGE_ID, FUNCTIONAL, FUN_IMAGE);
-			addOperator("card", KCARD_ID, FUNCTIONAL, new UnaryExpressionParser(KCARD));
-			addOperator("\u2208", IN_ID, RELOP_PRED, new RelationalPredicateInfix(IN));
+			// AtomicExpression
 			addOperator("\u2205", EMPTYSET_ID, EMPTY_SET, new AtomicExpressionParser(EMPTYSET));
+			addOperator("\u2124", INTEGER_ID, ATOMIC_EXPR, new AtomicExpressionParser(INTEGER));
+			addOperator("TRUE", TRUE_ID, ATOMIC_EXPR, new AtomicExpressionParser(TRUE));
 			// FIXME is there a problem having the same group for V1 and V2 operators ?
 			addOperator("id", KID_GEN_ID, ATOMIC_EXPR, new GenExpressionParser(KID, KID_GEN));
 			addOperator("prj1", KPRJ1_GEN_ID, ATOMIC_EXPR, new GenExpressionParser(KPRJ1, KPRJ1_GEN));
 			addOperator("prj2", KPRJ2_GEN_ID, ATOMIC_EXPR, new GenExpressionParser(KPRJ2, KPRJ2_GEN));
-			addOperator("{", SETEXT_ID, BRACE_SETS, SETEXT_PARSER);
+			// BecomesEqualTo	ASSIGNMENT_PARSER is called from the top
+			// BecomesMemberOf	idem
+			// BecomesSuchThat	idem
+			// BinaryExpression
+			addOperator("\u00d7", CPROD_ID, BINOP, new BinaryExpressionInfix(CPROD));
+			addOperator("\u21a6", MAPSTO_ID, PAIR, new BinaryExpressionInfix(MAPSTO));
+			addOperator("\u2192", TFUN_ID, RELATION, new BinaryExpressionInfix(TFUN));
+			addOperator("\u2025", UPTO_ID, INTERVAL, new BinaryExpressionInfix(UPTO));
+			addOperator("(", FUNIMAGE_ID, FUNCTIONAL, FUN_IMAGE);
+			// BinaryPredicate
+			addOperator("\u21d2", LIMP_ID, INFIX_PRED, new BinaryPredicateParser(LIMP));
+			// BoolExpression
+			addOperator("bool", KBOOL_ID, BOOL, KBOOL_PARSER);
+			// BoundIdentDecl	parsed as identifier list, then processed by parsers
+			// BoundIdentifier	processed in AbstractGrammar
+			// ExtendedExpression	processed in ExtendedGrammar
+			// ExtendedPredicate	idem
+			// FreeIdentifier	processed in AbstractGrammar
+			// IntegerLiteral	idem
+			// LiteralPredicate
+			addOperator("\u22a4", BTRUE_ID, ATOMIC_PRED, new LiteralPredicateParser(BTRUE));
+			addOperator("\u22a5", BFALSE_ID, ATOMIC_PRED, new LiteralPredicateParser(BFALSE));
+			// MultiplePredicate
+			addOperator("partition", KPARTITION_ID, ATOMIC_PRED, PARTITION_PARSER);
+			// PredicateVariable
+			addOperator(_PREDVAR, PRED_VAR_ID, GROUP0, PRED_VAR_SUBPARSER);
+			// QuantifiedExpression
 			addOperator("{", CSET_ID, BRACE_SETS, CSET_EXPLICIT);
 			addOperator("{", CSET_ID, BRACE_SETS, CSET_IMPLICIT);
 			addOperator("\u03bb", LAMBDA_ID, QUANTIFICATION, CSET_LAMBDA);
-			addOperator("\u2124", INTEGER_ID, ATOMIC_EXPR, new AtomicExpressionParser(INTEGER));
-			addOperator("\u2119", POW_ID, BOUND_UNARY, new UnaryExpressionParser(POW));
-			addOperator("\u00d7", CPROD_ID, BINOP, new BinaryExpressionInfix(CPROD));
-			addOperator("\u2982", OFTYPE_ID, TYPED, OFTYPE);
-			addOperator("\u21a6", MAPSTO_ID, PAIR, new BinaryExpressionInfix(MAPSTO));
-			addOperator("\u21d2", LIMP_ID, INFIX_PRED, new BinaryPredicateParser(LIMP));
-			addOperator("TRUE", TRUE_ID, ATOMIC_EXPR, new AtomicExpressionParser(TRUE));
-			addOperator("\u00ac", NOT_ID, NOT_PRED, NOT_PARSER);
-			addOperator("\u2192", TFUN_ID, RELATION, new BinaryExpressionInfix(TFUN));
-			addOperator("\u2025", UPTO_ID, INTERVAL, new BinaryExpressionInfix(UPTO));
-			addOperator("\u223c", CONVERSE_ID, UNARY_RELATION, CONVERSE_PARSER);
-			addOperator("bool", KBOOL_ID, BOOL, KBOOL_PARSER);
-			addOperator("partition", KPARTITION_ID, ATOMIC_PRED, PARTITION_PARSER);
+			// QuantifiedPredicate
+			addOperator("\u2200", FORALL_ID, QUANTIFIED_PRED, new QuantifiedPredicateParser(FORALL));
+			addOperator("\u2203", EXISTS_ID, QUANTIFIED_PRED, new QuantifiedPredicateParser(EXISTS));
+			// RelationalPredicate
+			addOperator("=", EQUAL_ID, RELOP_PRED, new RelationalPredicateInfix(EQUAL));
+			addOperator("≤", LE_ID, RELOP_PRED, new RelationalPredicateInfix(LE));
+			addOperator(">", GT_ID, RELOP_PRED, new RelationalPredicateInfix(GT));
+			addOperator("\u2208", IN_ID, RELOP_PRED, new RelationalPredicateInfix(IN));
+			// SetExtension
+			addOperator("{", SETEXT_ID, BRACE_SETS, SETEXT_PARSER);
+			// SimplePredicate
 			addOperator("finite", KFINITE_ID, ATOMIC_PRED, FINITE_PARSER);
-			addOperator(_PREDVAR, PRED_VAR_ID, GROUP0, PRED_VAR_SUBPARSER);
+			// UnaryExpression
+			addOperator("card", KCARD_ID, FUNCTIONAL, new UnaryExpressionParser(KCARD));
+			addOperator("\u2119", POW_ID, BOUND_UNARY, new UnaryExpressionParser(POW));
+			addOperator("\u223c", CONVERSE_ID, UNARY_RELATION, CONVERSE_PARSER);
+			// UnaryPredicate
+			addOperator("\u00ac", NOT_ID, NOT_PRED, NOT_PARSER);
+			
+			// Undefined Operator
+			addOperator("\u2982", OFTYPE_ID, TYPED, OFTYPE);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
