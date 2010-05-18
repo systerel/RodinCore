@@ -37,7 +37,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * event-B formula.
  * <p>
  * It can have several children which can only be Predicate objects. Can only
- * accept {LAND, LOR, LEQV}.
+ * accept {LAND, LOR}.
  * </p>
  * 
  * @author François Terrier
