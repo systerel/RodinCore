@@ -38,6 +38,7 @@ import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.InvalidExpressionException;
 import org.eventb.core.ast.LiteralPredicate;
+import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
@@ -880,6 +881,16 @@ public class Parsers {
 			}
 		}
 		
+	};
+	
+	static final INudParser<MultiplePredicate> PARTITION_PARSER = new ParenNudParser<MultiplePredicate, List<Expression>>(KPARTITION, EXPR_LIST_PARSER) {
+
+		@Override
+		protected MultiplePredicate makeValue(ParserContext pc,
+				List<Expression> child, SourceLocation loc) {
+			return pc.factory.makeMultiplePredicate(tag, child, loc);
+		}
+
 	};
 	
 }

@@ -45,6 +45,7 @@ public class BMath extends AbstractGrammar {
 	private static final String FUNCTIONAL = "Functional";
 	private static final String BRACE_SETS = "Brace Sets";
 	private static final String IDENT_LIST = "Identifier List";
+	private static final String IDENT_MAPLET_LIST = "Ident Maplet List";
 	private static final String INFIX_SUBST = "Infix Substitution";
 	private static final String QUANTIFIED_PRED = "Quantified";
 	private static final String LOGIC_PRED = "Logic Predicate";
@@ -75,7 +76,6 @@ public class BMath extends AbstractGrammar {
 	private static final String EMPTYSET_ID = "Empty Set";
 	private static final String BTRUE_ID = "B True";
 	private static final String BFALSE_ID = "B False";
-	private static final String IDENT_MAPLET_LIST = "Ident Maplet List";
 	private static final String SETEXT_ID = "Set Extension";
 	private static final String INTEGER_ID = "Integer";
 	private static final String POW_ID = "Power Set";
@@ -91,6 +91,7 @@ public class BMath extends AbstractGrammar {
 	private static final String UPTO_ID = "Up To";
 	private static final String CONVERSE_ID = "Converse";
 	private static final String KBOOL_ID = "To Bool";
+	private static final String KPARTITION_ID = "Partition";
 	
 	
 	/**
@@ -331,6 +332,7 @@ public class BMath extends AbstractGrammar {
 			addOperator("\u2025", UPTO_ID, INTERVAL, new BinaryExpressionInfix(UPTO));
 			addOperator("\u223c", CONVERSE_ID, UNARY_RELATION, CONVERSE_PARSER);
 			addOperator("bool", KBOOL_ID, BOOL, KBOOL_PARSER);
+			addOperator("partition", KPARTITION_ID, ATOMIC_PRED, PARTITION_PARSER);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

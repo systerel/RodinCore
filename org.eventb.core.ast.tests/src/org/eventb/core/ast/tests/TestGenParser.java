@@ -919,5 +919,26 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("bool(⊤)", expected);
 	}
 	
+	public void testPartitionEmpty() throws Exception {
+		final Predicate expected = ff.makeMultiplePredicate(KPARTITION,
+				Arrays.<Expression>asList(FRID_S), null);
+		doPredicateTest("partition(S)", expected);
+	}
+	
+	public void testPartitionSingleton() throws Exception {
+		final Predicate expected = ff.makeMultiplePredicate(KPARTITION,
+				Arrays.<Expression>asList(
+						FRID_S,
+						ff.makeSetExtension(FRID_a, null)), null);
+		doPredicateTest("partition(S, {a})", expected);
+	}
+	
+	public void testPartitionSeveral() throws Exception {
+		final Predicate expected = ff.makeMultiplePredicate(KPARTITION,
+				Arrays.<Expression>asList(
+						FRID_S,	FRID_A, FRID_B), null);
+		doPredicateTest("partition(S, A, B)", expected);
+	}
+	
 
 }
