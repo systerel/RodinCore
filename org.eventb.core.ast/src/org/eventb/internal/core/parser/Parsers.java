@@ -152,23 +152,40 @@ public class Parsers {
 
 	// TODO try to do the same as nud parsers, with generic types for left and right
 	// TODO make assignment parser a led parser
-	private static abstract class DefaultLedExprParser<T> extends AbstractSubParser<T> implements ILedParser<T> {
+	private static abstract class DefaultLedParser<T, Left, Right> extends AbstractSubParser<T> implements ILedParser<T> {
+
+		private final INudParser<Right> rightParser;
+		
+		protected DefaultLedParser(int tag, INudParser<Right> rightParser) {
+			super(tag);
+			this.rightParser = rightParser;
+		}
+		
+		protected Right parseRight(ParserContext pc) throws SyntaxError {
+			return pc.subParse(rightParser);
+		}
+
+		public final T led(Formula<?> left, ParserContext pc) throws SyntaxError {
+			final Left typedLeft = asLeftType(left);
+			final Right right = parseRight(pc);
+			return makeValue(pc, typedLeft, right, pc.getSourceLocation());
+		}
+
+		protected abstract Left asLeftType(Formula<?> left) throws SyntaxError;
+		
+		protected abstract T makeValue(ParserContext pc, Left left,
+				Right right, SourceLocation loc) throws SyntaxError;
+	}
+	
+	private static abstract class DefaultLedExprParser<T> extends DefaultLedParser<T, Expression, Expression> implements ILedParser<T> {
 
 		protected DefaultLedExprParser(int tag) {
-			super(tag);
+			super(tag, EXPR_PARSER);
 		}
 		
-		public final T led(Formula<?> left, ParserContext pc) throws SyntaxError {
-			final Expression leftExpr = asExpression(left);
-			final Expression right = parseRight(pc);
-			return led(leftExpr, right, pc);
-		}
-		
-		protected abstract T led(Expression left, Expression right,
-				ParserContext pc) throws SyntaxError;
-		
-		protected Expression parseRight(ParserContext pc) throws SyntaxError {
-			return pc.subParse(EXPR_PARSER);
+		@Override
+		protected final Expression asLeftType(Formula<?> left) throws SyntaxError {
+			return asExpression(left);
 		}
 	}
 	
@@ -435,24 +452,23 @@ public class Parsers {
 		}
 	};
 
-	static final DefaultLedExprParser<Expression> OFTYPE = new DefaultLedExprParser<Expression>(NO_TAG) {
+	static final DefaultLedParser<Expression, Expression, Type> OFTYPE = new DefaultLedParser<Expression, Expression, Type>(
+			NO_TAG, TYPE_PARSER) {
 		
 		@Override
-		public Expression led(Expression left, Expression right, ParserContext pc)
-				throws SyntaxError {
-			final Type type = pc.subParse(TYPE_PARSER);
+		protected Expression asLeftType(Formula<?> left) throws SyntaxError {
+			return asExpression(left);
+		}
+
+		@Override
+		protected Expression makeValue(ParserContext pc, Expression left,
+				Type right, SourceLocation loc) throws SyntaxError {
 			switch (left.getTag()) {
 			case Formula.EMPTYSET:
-				return pc.factory.makeEmptySet(type, pc.getSourceLocation());
+				return pc.factory.makeEmptySet(right, loc);
 			default:
 				throw new SyntaxError("Unexpected oftype");
 			}
-		}
-		
-		@Override
-		protected Expression parseRight(ParserContext pc) throws SyntaxError {
-			// do not parse right
-			return null;
 		}
 	};
 	
@@ -470,42 +486,33 @@ public class Parsers {
 
 	}
 
-	static class BinaryExpressionInfix extends DefaultLedExprParser<Expression> {
+	static class BinaryExpressionInfix extends DefaultLedExprParser<BinaryExpression> {
 
 		public BinaryExpressionInfix(int tag) {
 			super(tag);
 		}
 		
 		@Override
-		public Expression led(Expression left, Expression right, ParserContext pc)
-				throws SyntaxError {
-			final SourceLocation srcLoc = pc.getSourceLocation();
-			return makeResult(pc.factory, left,
-					right, srcLoc);
-		}
-		
-		protected Expression makeResult(FormulaFactory factory,
-				Expression left, Expression right, SourceLocation srcLoc) {
-			return factory.makeBinaryExpression(tag, left, right, srcLoc);
+		protected BinaryExpression makeValue(ParserContext pc, Expression left,
+				Expression right, SourceLocation loc) throws SyntaxError {
+			return pc.factory.makeBinaryExpression(tag, left, right, loc);
 		}
 
 	}
 	
-	static class ExtendedBinaryExpressionInfix extends BinaryExpressionInfix {
+	static class ExtendedBinaryExpressionInfix extends DefaultLedExprParser<ExtendedExpression> {
 
 		public ExtendedBinaryExpressionInfix(int tag) {
 			super(tag);
 		}
 
 		@Override
-		protected Expression makeResult(FormulaFactory factory,
-				Expression left, Expression right, SourceLocation srcLoc) {
-			final IExpressionExtension extension = (IExpressionExtension) factory
+		protected ExtendedExpression makeValue(ParserContext pc,
+				Expression left, Expression right, SourceLocation loc) throws SyntaxError {
+			final IExpressionExtension extension = (IExpressionExtension) pc.factory
 					.getExtension(tag);
-
-			return factory.makeExtendedExpression(extension,
-					asList(left, right), Collections.<Predicate> emptySet(),
-					srcLoc);
+			return pc.factory.makeExtendedExpression(extension, asList(left,
+					right), Collections.<Predicate> emptySet(), loc);
 		}
 
 	}
@@ -517,8 +524,8 @@ public class Parsers {
 		}
 
 		@Override
-		public Expression led(Expression left, Expression right, ParserContext pc)
-				throws SyntaxError {
+		protected Expression makeValue(ParserContext pc, Expression left,
+				Expression right, SourceLocation loc) throws SyntaxError {
 			final List<Expression> children = new ArrayList<Expression>();
 			if (left.getTag() == tag) {
 				children.addAll(asList(getChildren(left)));
@@ -526,8 +533,7 @@ public class Parsers {
 				children.add(left);
 			}
 			children.add(right);
-			final SourceLocation srcLoc = pc.getSourceLocation();
-			return makeResult(pc.factory, children, srcLoc);
+			return makeResult(pc.factory, children, loc);
 		}
 		
 		protected Expression[] getChildren(Formula<?> exprWithSameTag) {
@@ -535,8 +541,8 @@ public class Parsers {
 		}
 		
 		protected Expression makeResult(FormulaFactory factory,
-				List<Expression> children, SourceLocation srcLoc) {
-			return factory.makeAssociativeExpression(tag, children, srcLoc);
+				List<Expression> children, SourceLocation loc) {
+			return factory.makeAssociativeExpression(tag, children, loc);
 		}
 		
 	}
@@ -554,11 +560,11 @@ public class Parsers {
 		
 		@Override
 		protected ExtendedExpression makeResult(FormulaFactory factory,
-				List<Expression> children, SourceLocation srcLoc) {
+				List<Expression> children, SourceLocation loc) {
 			final IExpressionExtension extension = (IExpressionExtension) factory
 					.getExtension(tag);
 			return factory.makeExtendedExpression(extension, children, Collections
-					.<Predicate> emptyList(), srcLoc);
+					.<Predicate> emptyList(), loc);
 		}
 	}
 	
@@ -591,18 +597,18 @@ public class Parsers {
 		}
 
 		@Override
-		public RelationalPredicate led(Expression left, Expression right, ParserContext pc) throws SyntaxError {
-			return pc.factory.makeRelationalPredicate(tag, left,
-					right, pc.getSourceLocation());
+		protected RelationalPredicate makeValue(ParserContext pc,
+				Expression left, Expression right, SourceLocation loc) throws SyntaxError {
+			return pc.factory.makeRelationalPredicate(tag, left, right, loc);
 		}
 	}
 
 	static final ILedParser<BinaryExpression> FUN_IMAGE = new DefaultLedExprParser<BinaryExpression>(FUNIMAGE) {
 
 		@Override
-		public BinaryExpression led(Expression left, Expression right, ParserContext pc) throws SyntaxError {
-			return pc.factory.makeBinaryExpression(tag, left,
-					right, pc.getSourceLocation());
+		public BinaryExpression makeValue(ParserContext pc, Expression left,
+				Expression right, SourceLocation loc) throws SyntaxError {
+			return pc.factory.makeBinaryExpression(tag, left, right, loc);
 		}
 		
 		@Override
@@ -610,7 +616,7 @@ public class Parsers {
 			// parse inner expression without caring about the parent kind
 			// else f(f(a)) would be rejected as it is a right-associative AST
 			pc.pushParentKind(_EOF);
-			final Expression right = pc.subParse(EXPR_PARSER);
+			final Expression right = super.parseRight(pc);
 			pc.popParentKind();
 			pc.progress(_RPAR);
 			return right;
@@ -693,7 +699,7 @@ public class Parsers {
 		@Override
 		protected UnaryExpression makeValue(ParserContext pc, Expression child,
 				SourceLocation loc) {
-			return pc.factory.makeUnaryExpression(tag, child, pc.getSourceLocation());
+			return pc.factory.makeUnaryExpression(tag, child, loc);
 		}
 
 	}
@@ -724,9 +730,9 @@ public class Parsers {
 	static final ILedParser<UnaryExpression> CONVERSE_PARSER = new DefaultLedExprParser<UnaryExpression>(CONVERSE) {
 
 		@Override
-		protected UnaryExpression led(Expression left, Expression right,
-				ParserContext pc) throws SyntaxError {
-			return pc.factory.makeUnaryExpression(tag, left, pc.getSourceLocation());
+		protected UnaryExpression makeValue(ParserContext pc, Expression left,
+				Expression right, SourceLocation loc) throws SyntaxError {
+			return pc.factory.makeUnaryExpression(tag, left, loc);
 		}
 		
 		@Override
@@ -741,7 +747,7 @@ public class Parsers {
 		@Override
 		protected BoolExpression makeValue(ParserContext pc, Predicate child,
 				SourceLocation loc) {
-			return pc.factory.makeBoolExpression(child, pc.getSourceLocation());
+			return pc.factory.makeBoolExpression(child, loc);
 		}
 
 	};
