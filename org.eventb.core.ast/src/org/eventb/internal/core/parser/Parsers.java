@@ -101,7 +101,7 @@ public class Parsers {
 
 		private final INudParser<U> childParser;
 		
-		protected ParenNudParser(int tag, IMainParser<U> childParser) {
+		protected ParenNudParser(int tag, INudParser<U> childParser) {
 			super(tag);
 			this.childParser = childParser;
 		}
@@ -938,6 +938,17 @@ public class Parsers {
 		protected SimplePredicate makeValue(ParserContext pc,
 				Expression child, SourceLocation loc) {
 			return pc.factory.makeSimplePredicate(tag, child, loc);
+		}
+
+	};
+	
+	static final INudParser<UnaryExpression> UNMINUS_PARSER = new PrefixNudParser<UnaryExpression>(UNMINUS) {
+
+		@Override
+		protected UnaryExpression parseRight(ParserContext pc)
+				throws SyntaxError {
+			final Expression child = pc.subParse(EXPR_PARSER);
+			return pc.factory.makeUnaryExpression(UNMINUS, child, pc.getSourceLocation());
 		}
 
 	};

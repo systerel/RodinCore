@@ -143,6 +143,7 @@ public class BMath extends AbstractGrammar {
 	private static final String KRAN_ID = "Range";
 	private static final String KMIN_ID = "Min";
 	private static final String KMAX_ID = "Max";
+	private static final String UNMINUS_ID = "Unary Minus";
 	
 	
 	/**
@@ -401,7 +402,7 @@ public class BMath extends AbstractGrammar {
 			addOperator("\u25b7", RANRES_ID, BINOP, new BinaryExpressionInfix(RANRES));
 			addOperator("\u2a65", RANSUB_ID, BINOP, new BinaryExpressionInfix(RANSUB));
 			addOperator("\u2025", UPTO_ID, INTERVAL, new BinaryExpressionInfix(UPTO));
-			addOperator("−", MINUS_ID, ARITHMETIC, new BinaryExpressionInfix(MINUS));
+			addOperator("\u2212", MINUS_ID, ARITHMETIC, new BinaryExpressionInfix(MINUS));
 			addOperator("\u00f7", DIV_ID, ARITHMETIC, new BinaryExpressionInfix(DIV));
 			addOperator("mod", MOD_ID, ARITHMETIC, new BinaryExpressionInfix(MOD));
 			addOperator("\u005e", EXPN_ID, ARITHMETIC, new BinaryExpressionInfix(EXPN));
@@ -460,6 +461,7 @@ public class BMath extends AbstractGrammar {
 			addOperator("min", KMIN_ID, BOUND_UNARY, new UnaryExpressionParser(KMIN));
 			addOperator("max", KMAX_ID, BOUND_UNARY, new UnaryExpressionParser(KMAX));
 			addOperator("\u223c", CONVERSE_ID, UNARY_RELATION, CONVERSE_PARSER);
+			addOperator("\u2212", UNMINUS_ID, ARITHMETIC, UNMINUS_PARSER);
 			// TODO add UNMINUS
 			// UnaryPredicate
 			addOperator("\u00ac", NOT_ID, NOT_PRED, NOT_PARSER);

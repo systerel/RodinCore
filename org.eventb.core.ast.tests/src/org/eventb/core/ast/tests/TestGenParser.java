@@ -1037,4 +1037,17 @@ public class TestGenParser extends AbstractTests {
 				Arrays.<Expression>asList(FRID_S), null);
 		doVersionTest("partition(S)", expectedV1, expectedV2);
 	}
+	
+	public void testUnMinus() throws Exception {
+		final Expression expected = ff.makeUnaryExpression(UNMINUS, 
+				ONE, null);
+		doExpressionTest("−1", expected);
+
+	}
+	
+	public void testBinMinus() throws Exception {
+		final Expression expected = ff.makeBinaryExpression(MINUS, ZERO,
+				ONE, null);
+		doExpressionTest("0−1", expected);
+	}
 }
