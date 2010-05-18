@@ -19,7 +19,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.IPositionApplication;
@@ -29,17 +28,16 @@ import org.eventb.ui.prover.TacticProviderUtils;
 
 public class FunImgSimp implements ITacticProvider2 {
 
-	private static final String TACTIC_ID = "org.eventb.ui.funImgSimp";
+	private static final String GOAL_TACTIC_ID = "org.eventb.ui.funImgSimpGoal";
+	private static final String HYP_TACTIC_ID = "org.eventb.ui.funImgSimpHyp";
+	
 	private static final List<ITacticApplication> EMPTY_LIST = Collections
 			.emptyList();
 
 	public List<ITacticApplication> getPossibleApplications(
-			IProofTreeNode node, Predicate hyp, String globalInput) {
-		if (hyp != null) {
-			return EMPTY_LIST;
-		}
-		final IProverSequent seq = node.getSequent();
-		List<IPosition> positions = Tactics.funImgSimpGetPositions(seq);
+			IProofTreeNode node, final Predicate hyp, String globalInput) {
+		final List<IPosition> positions = Tactics.funImgSimpGetPositions(hyp,
+				node.getSequent());
 		if (positions.isEmpty()) {
 			return EMPTY_LIST;
 		}
@@ -58,11 +56,14 @@ public class FunImgSimp implements ITacticProvider2 {
 				}
 
 				public String getTacticID() {
-					return TACTIC_ID;
+					if (hyp == null) {
+						return GOAL_TACTIC_ID;
+					} else
+						return HYP_TACTIC_ID;
 				}
 
 				public ITactic getTactic(String[] inputs, String gInput) {
-					return Tactics.funImgSimplifies(p);
+					return Tactics.funImgSimplifies(hyp, p);
 				}
 			});
 		}

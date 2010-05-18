@@ -490,7 +490,12 @@ public class AutoTactics {
 	public static class FunImgSimpTac implements ITactic {
 
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			if (applyFunImgSimplifies(ptNode, null, pm))
+			boolean success = false;
+			for (Predicate shyp : ptNode.getSequent().visibleHypIterable()) {
+				success |= applyFunImgSimplifies(ptNode, shyp, pm);
+			}
+			success |= applyFunImgSimplifies(ptNode, null, pm);
+			if (success)
 				return null;
 			else
 				return "Tactic unapplicable";
@@ -499,16 +504,12 @@ public class AutoTactics {
 		private boolean applyFunImgSimplifies(IProofTreeNode ptNode,
 				Predicate hyp, IProofMonitor pm) {
 			boolean success = false;
-			if (hyp != null) {
-				return success;
-			}
 			final IProverSequent sequent = ptNode.getSequent();
-
 			final List<IPosition> positions = Tactics
-					.funImgSimpGetPositions(sequent);
+					.funImgSimpGetPositions(hyp, sequent);
 			for (IPosition position : positions) {
 				final ITactic fidsRewrites = Tactics
-						.funImgSimplifies(position);
+						.funImgSimplifies(hyp, position);
 				success |= (fidsRewrites.apply(ptNode, pm) == null);
 			}
 			return success;

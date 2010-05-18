@@ -14,6 +14,7 @@ package org.eventb.core.seqprover.tactics.tests;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.assertRulesApplied;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.disjE;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.empty;
+import static org.eventb.core.seqprover.tactics.tests.TreeShape.funImgSimp;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.funOvr;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -159,7 +160,8 @@ public class FunOvrHypTacTests {
 				l(hypStr), //
 				"⊥");
 		final Predicate hyp = parsePredicate(hypStr, pt);
-		assertSuccess(pt.getRoot(), funOvr(hyp, "0", empty, empty));
+		assertSuccess(pt.getRoot(), funOvr(hyp, "0", empty, funImgSimp("0",
+				empty)));
 	}
 
 	/**
@@ -201,8 +203,9 @@ public class FunOvrHypTacTests {
 		final Predicate hyp2 = parsePredicate(hyp2Str, pt);
 		final Predicate hyp3 = parsePredicate(hyp3Str, pt);
 		assertSuccess(pt.getRoot(), funOvr(hyp1, "0", //
-				funOvr(hyp2, "1", empty, empty), //
-				funOvr(hyp3, "1", empty, empty)));
+				funOvr(hyp2, "1", empty, funImgSimp("1", empty)), //
+				funOvr(hyp3, "1", funImgSimp("0", empty), funImgSimp("0",
+						funImgSimp("1", empty)))));
 	}
 
 	/**
@@ -225,7 +228,8 @@ public class FunOvrHypTacTests {
 		Tactics.disjE(hyp).apply(root, null);
 		final IProofTreeNode left = root.getChildNodes()[0];
 		final Predicate leftHyp = ((AssociativePredicate) hyp).getChildren()[0];
-		final TreeShape sub = funOvr(leftHyp, "0", empty, empty);
+		final TreeShape sub = funOvr(leftHyp, "0", empty,
+				funImgSimp("0", empty));
 		assertSuccess(left, sub);
 		assertRulesApplied(root, disjE(hyp, sub, empty));
 	}

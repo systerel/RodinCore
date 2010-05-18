@@ -69,6 +69,7 @@ import org.eventb.core.seqprover.reasoners.Hyp;
 import org.eventb.core.seqprover.reasoners.MngHyp;
 import org.eventb.core.seqprover.reasoners.Review;
 import org.eventb.core.seqprover.tactics.BasicTactics;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites.Input;
 import org.eventb.internal.core.seqprover.eventbExtensions.AbstrExpr;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllD;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllI;
@@ -3578,31 +3579,37 @@ public class Tactics {
 
 	/**
 	 * Returns the tactic "Functional Image Simplification" for a given position
-	 * where this tactic can apply. It is applicable to the goal of a sequent.
+	 * where this tactic can apply.
 	 * 
+	 * @param hyp
+	 *            the hypothesis to rewrite or <code>null</code> if the goal
+	 *            shall be rewritten
 	 * @param position
 	 *            a valid position of an expression in the goal
 	 * @return the tactic "Functional Image Simplification"
 	 * 
 	 * @since 1.3
 	 */
-	public static ITactic funImgSimplifies(IPosition position) {
+	public static ITactic funImgSimplifies(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new FunImgSimplifies(),
-				new FunImgSimplifies.Input(position));
+				new Input(hyp, position));
 	}
 
 	/**
 	 * Returns a set of positions where the rewriter funImgSimpRewrites can
 	 * apply.
 	 * 
+	 * @param hyp
+	 *            the hypothesis to rewrite or <code>null</code> if the goal
+	 *            shall be rewritten
 	 * @param sequent
-	 *            a sequent
+	 *            the current sequent
 	 * @return a set of positions (empty if the tactic is not applicable)
 	 * 
 	 * @since 1.3
 	 */
-	public static List<IPosition> funImgSimpGetPositions(IProverSequent sequent) {
-		final FunImgSimpImpl impl = new FunImgSimpImpl(sequent);
+	public static List<IPosition> funImgSimpGetPositions(Predicate hyp, IProverSequent sequent) {
+		final FunImgSimpImpl impl = new FunImgSimpImpl(hyp, sequent);
 		return impl.getApplicablePositions();
 	}
 

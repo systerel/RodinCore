@@ -1901,12 +1901,22 @@
       </tactic>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.funImgSimp"
+            id="org.eventb.ui.funImgSimpGoal"
             interrupt="true"
             name="%proofTactic.funImgSimp.name"
             priorty="5"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FunImgSimp"
             target="goal"
+            tooltip="%proofTactic.funImgSimp.tooltip">
+      </tactic>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.funImgSimpHyp"
+            interrupt="true"
+            name="%proofTactic.funImgSimp.name"
+            priorty="5"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FunImgSimp"
+            target="hypothesis"
             tooltip="%proofTactic.funImgSimp.tooltip">
       </tactic>
    </extension>

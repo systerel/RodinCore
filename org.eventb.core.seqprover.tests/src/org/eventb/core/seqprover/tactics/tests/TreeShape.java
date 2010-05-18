@@ -27,6 +27,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.Conj;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimplifies;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites.Input;
 
 /**
  * Common implementation for verifying rule applications to a proof subtree. The
@@ -152,7 +153,7 @@ public abstract class TreeShape {
 		
 		@Override
 		protected void checkInput(IReasonerInput input) {
-			FunImgSimplifies.Input i = (FunImgSimplifies.Input) input;
+			final Input i = (Input)input;
 			assertEquals(position, i.getPosition().toString());
 		}
 

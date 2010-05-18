@@ -62,8 +62,10 @@ public class FunImgSimpImpl {
 	}
 		
 	private final IProverSequent sequent;
-		
-	public FunImgSimpImpl(IProverSequent sequent) {
+	private final Predicate hyp;
+	
+	public FunImgSimpImpl(Predicate hyp, IProverSequent sequent) {
+		this.hyp = hyp;
 		this.sequent = sequent;
 	}
 	
@@ -72,10 +74,10 @@ public class FunImgSimpImpl {
 	}
 		
 	public Predicate searchFunction(Expression f) {
-		for (Predicate hyp : sequent.visibleHypIterable()) {
-			final Predicate pred = searchPFuncKind(f,hyp);
-			if (pred != null){
-				return pred;
+		for (Predicate hypo : sequent.visibleHypIterable()) {
+			final Predicate predicate = searchPFuncKind(f,hypo);
+			if (predicate != null){
+				return predicate;
 			}
 		}
 		return null;
@@ -86,7 +88,11 @@ public class FunImgSimpImpl {
 	}
 	
 	public List<IPosition> getApplicablePositions() {
-		return sequent.goal().getPositions(new FunImgSimpFilter(this));
+		final FunImgSimpFilter filter = new FunImgSimpFilter(this);
+		if (hyp == null){
+			return sequent.goal().getPositions(filter);
+		}
+		return hyp.getPositions(filter);
 	}
 
 	%include {FormulaV2.tom}

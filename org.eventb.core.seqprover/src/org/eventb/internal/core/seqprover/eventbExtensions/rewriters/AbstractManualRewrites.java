@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import java.util.Arrays;
@@ -34,11 +44,13 @@ public abstract class AbstractManualRewrites implements IReasoner {
 		IPosition position;
 
 		/**
-		 * The parameter is the hypothesis to rewrite. If <code>null</code>,
-		 * the rewriting will be applied to the goal.
+		 * The parameter is the hypothesis to rewrite. If <code>null</code>, the
+		 * rewriting will be applied to the goal.
 		 * 
 		 * @param pred
 		 *            hypothesis to rewrite or <code>null</code>
+		 * @param position
+		 *            the position where the reasoner can apply
 		 */
 		public Input(Predicate pred, IPosition position) {
 			this.pred = pred;
@@ -56,6 +68,10 @@ public abstract class AbstractManualRewrites implements IReasoner {
 
 		public boolean hasError() {
 			return false;
+		}
+		
+		public IPosition getPosition(){
+			return position;
 		}
 
 	}
