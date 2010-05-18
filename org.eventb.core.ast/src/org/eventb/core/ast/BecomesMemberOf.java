@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *     Systerel - added accept for ISimpleVisitor
  *     Systerel - added support for predicate variables
  *******************************************************************************/
-
 package org.eventb.core.ast;
 
 import java.util.LinkedHashSet;
@@ -27,6 +26,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * 
  * @author Laurent Voisin
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class BecomesMemberOf extends Assignment {
 

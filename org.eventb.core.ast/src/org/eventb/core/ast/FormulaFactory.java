@@ -48,8 +48,8 @@ import org.eventb.internal.core.upgrade.VersionUpgrader;
  *  
  * @author François Terrier
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
-
 public class FormulaFactory {
 
 	private static final FormulaFactory DEFAULT_INSTANCE = new FormulaFactory();

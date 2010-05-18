@@ -35,7 +35,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
 /**
  * @author "Nicolas Beauger"
  * @since 2.0
- *
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 

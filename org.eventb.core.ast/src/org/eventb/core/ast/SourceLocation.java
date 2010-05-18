@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *     Systerel - added origin
  *******************************************************************************/
 package org.eventb.core.ast;
-
 
 /**
  * Location of a formula in a string.
@@ -24,6 +23,7 @@ package org.eventb.core.ast;
  * 
  * @author Laurent Voisin
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class SourceLocation {
 

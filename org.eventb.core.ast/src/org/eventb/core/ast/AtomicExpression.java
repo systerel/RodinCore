@@ -36,6 +36,7 @@ import org.eventb.internal.core.typecheck.TypeVariable;
  * 
  * @author François Terrier
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class AtomicExpression extends Expression {
 	

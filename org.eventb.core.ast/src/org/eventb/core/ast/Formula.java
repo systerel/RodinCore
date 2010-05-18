@@ -54,6 +54,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * @param <T>
  *            TODO comment type parameter
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class Formula<T extends Formula<T>> {
 
