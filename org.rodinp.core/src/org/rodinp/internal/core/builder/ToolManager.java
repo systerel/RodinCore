@@ -134,8 +134,10 @@ public class ToolManager {
 	public ToolDescription getToolDescription(String id) {
 		computeToolList();
 		ToolDescription toolDesc = tools.get(id);
-		if (toolDesc == null){
-			return new NullToolDescription();
+		if (toolDesc == null) {
+			toolDesc = new NullToolDescription(id);
+			Util.log(null, "Null tool description created for id " + id);
+			tools.put(id, toolDesc);
 		}
 		return toolDesc;
 	}

@@ -1,9 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
 
 package org.rodinp.internal.core.builder;
@@ -40,7 +43,7 @@ public abstract class ExecutableExtensionDesc {
 	private Object instance;
 
 	/**
-	 * Creates a new executable extension decription.
+	 * Creates a new executable extension description.
 	 * 
 	 * @param configElement
 	 *            description of this executable extension in the Eclipse registry
@@ -53,12 +56,16 @@ public abstract class ExecutableExtensionDesc {
 	}
 
 	/**
-	 * Returns the name of the class implementing this executable extension.
+	 * Creates a new fake executable extension description.
 	 * 
-	 * @return Returns the class name for this executable extension.
+	 * @param name
+	 *            name of this executable extension
 	 */
-	public String getClassName() {
-		return className;
+	public ExecutableExtensionDesc(String name) {
+		this.bundleName = null;
+		this.configElement = null;
+		this.name = name;
+		this.className = null;
 	}
 
 	/**
@@ -82,19 +89,24 @@ public abstract class ExecutableExtensionDesc {
 	 * 
 	 * @return Returns an instance of this executable extension.
 	 */
-	protected Object getExecutableExtension() {
+	protected final Object getExecutableExtension() {
 		if (instance == null) {
-			try {
-				instance = configElement.createExecutableExtension("class");
-			} catch (InvalidRegistryObjectException iroe) {
-				// The registry has changed since creation of this tool
-				// description
-				// TODO implement dynamic registry update recovery
-			} catch (CoreException e) {
-				Util.log(e, "when loading executable extension " + className);
-			}
+			instance = createInstance();
 		}
 		return instance;
+	}
+
+	protected Object createInstance() {
+		try {
+			return configElement.createExecutableExtension("class");
+		} catch (InvalidRegistryObjectException iroe) {
+			// The registry has changed since creation of this tool
+			// description
+			// TODO implement dynamic registry update recovery
+		} catch (CoreException e) {
+			Util.log(e, "when loading executable extension " + className);
+		}
+		return null;
 	}
 
 }

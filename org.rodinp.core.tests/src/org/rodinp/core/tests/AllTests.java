@@ -6,6 +6,7 @@ import junit.framework.TestSuite;
 import org.rodinp.core.tests.builder.CBuilderTest;
 import org.rodinp.core.tests.builder.GraphBuilderTest;
 import org.rodinp.core.tests.builder.MBuilderTest;
+import org.rodinp.core.tests.builder.NullToolTest;
 import org.rodinp.core.tests.indexer.DeclarationTests;
 import org.rodinp.core.tests.indexer.DescriptorTests;
 import org.rodinp.core.tests.indexer.IndexManagerTests;
@@ -93,6 +94,8 @@ public class AllTests {
 		
 		suite.addTestSuite(LocationInclusionTests.class);
 		suite.addTestSuite(RodinLocationTests.class);
+		
+		suite.addTestSuite(NullToolTest.class);
 		// $JUnit-END$
 		return suite;
 	}
