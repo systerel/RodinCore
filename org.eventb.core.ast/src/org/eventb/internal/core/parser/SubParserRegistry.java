@@ -108,8 +108,4 @@ public class SubParserRegistry {
 		parsers.addNud(subParser);
 	}
 
-	public void addClosed(int openKind, INudParser<Formula<?>> subParser) throws OverrideException {
-		addNud(openKind, subParser);
-	}
-
 }

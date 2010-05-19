@@ -65,7 +65,7 @@ public abstract class AbstractGrammar {
 		try {
 			_INTLIT = addReservedSubParser(Parsers.INTLIT_SUBPARSER);
 			_IDENT = addReservedSubParser(Parsers.IDENT_SUBPARSER);
-			addClosedSugar(_LPAR, _RPAR);
+			subParsers.addNud(_LPAR, Parsers.CLOSED_SUGAR);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -109,11 +109,6 @@ public abstract class AbstractGrammar {
 		final int kind = tokens.reserved();
 		subParsers.addReserved(kind, subParser);
 		return kind;
-	}
-	
-	private void addClosedSugar(int openKind, int closeKind)
-			throws OverrideException {
-		subParsers.addClosed(_LPAR, Parsers.CLOSED_SUGAR);
 	}
 	
 	protected void addLiteralOperator(String token, int tag,
