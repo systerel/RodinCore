@@ -332,31 +332,17 @@ public class BMath extends AbstractGrammar {
 		try {
 			opRegistry.addPriority(PLUS_ID, MUL_ID);
 			
-			opRegistry.addGroupPriority(GROUP0, QUANTIFIED_PRED);
-			opRegistry.addGroupPriority(QUANTIFIED_PRED, INFIX_PRED);
-			opRegistry.addGroupPriority(INFIX_PRED, LOGIC_PRED);
-			opRegistry.addGroupPriority(LOGIC_PRED, NOT_PRED);
-			opRegistry.addGroupPriority(NOT_PRED, ATOMIC_PRED);
-			opRegistry.addGroupPriority(ATOMIC_PRED, RELOP_PRED);
-			opRegistry.addGroupPriority(RELOP_PRED, PAIR);
+			addGroupPrioritySequence(GROUP0, QUANTIFIED_PRED, INFIX_PRED,
+					LOGIC_PRED, NOT_PRED, ATOMIC_PRED, RELOP_PRED, PAIR);
 
-			opRegistry.addGroupPriority(GROUP0, QUANTIFICATION);
-			opRegistry.addGroupPriority(QUANTIFICATION, RELOP_PRED);
+			addGroupPrioritySequence(GROUP0, QUANTIFICATION, RELOP_PRED);
 			
-			opRegistry.addGroupPriority(GROUP0, TYPED);
-			opRegistry.addGroupPriority(TYPED, QUANTIFICATION);
+			addGroupPrioritySequence(GROUP0, TYPED, QUANTIFICATION);
 			
 			// start of excerpt from kernel language specification table 3.1
-			opRegistry.addGroupPriority(QUANTIFICATION, PAIR);
-			opRegistry.addGroupPriority(PAIR, RELATION);
-			opRegistry.addGroupPriority(RELATION, BINOP);
-			opRegistry.addGroupPriority(BINOP, INTERVAL);
-			opRegistry.addGroupPriority(INTERVAL, ARITHMETIC);
-			opRegistry.addGroupPriority(ARITHMETIC, FUNCTIONAL);
-			opRegistry.addGroupPriority(FUNCTIONAL, UNARY_RELATION);
-			opRegistry.addGroupPriority(UNARY_RELATION, BOUND_UNARY);
-			opRegistry.addGroupPriority(BOUND_UNARY, BOOL);
-			opRegistry.addGroupPriority(BOOL, BRACE_SETS);
+			addGroupPrioritySequence(QUANTIFICATION, PAIR, RELATION, BINOP,
+					INTERVAL, ARITHMETIC, FUNCTIONAL, UNARY_RELATION,
+					BOUND_UNARY, BOOL, BRACE_SETS);
 			// end of excerpt
 			
 		} catch (CycleError e) {

@@ -15,6 +15,7 @@ import static org.eventb.internal.core.parser.OperatorRegistry.GROUP0;
 import java.util.List;
 
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.extension.CycleError;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.GenParser.SyntaxCompatibleError;
 
@@ -121,6 +122,12 @@ public abstract class AbstractGrammar {
 		subParsers.addNud(kind, subParser);
 	}
 
+	protected void addGroupPrioritySequence(String... groupIds) throws CycleError {
+		for (int i = 0; i < groupIds.length - 1; i++) {
+			opRegistry.addGroupPriority(groupIds[i], groupIds[i+1]);
+		}
+	}
+	
 	public boolean hasLessPriority(int leftKind, int rightKind) throws SyntaxCompatibleError {
 		return opRegistry.hasLessPriority(leftKind, rightKind);
 	}
