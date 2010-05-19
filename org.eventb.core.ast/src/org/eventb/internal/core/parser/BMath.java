@@ -317,12 +317,50 @@ public class BMath extends AbstractGrammar {
 			e.printStackTrace();
 		}
 
+		opRegistry.addCompatibility(MAPSTO_ID, MAPSTO_ID);
+		
 		opRegistry.addCompatibility(BUNION_ID, BUNION_ID);
 		opRegistry.addCompatibility(BINTER_ID, BINTER_ID);
+		opRegistry.addCompatibility(BINTER_ID, SETMINUS_ID);
+		opRegistry.addCompatibility(BINTER_ID, RANRES_ID);
+		opRegistry.addCompatibility(BINTER_ID, RANSUB_ID);
+		opRegistry.addCompatibility(BCOMP_ID, BCOMP_ID);
+		opRegistry.addCompatibility(FCOMP_ID, FCOMP_ID);
+		opRegistry.addCompatibility(FCOMP_ID, RANRES_ID);
+		opRegistry.addCompatibility(FCOMP_ID, RANSUB_ID);
+		opRegistry.addCompatibility(OVR_ID, OVR_ID);
+		opRegistry.addCompatibility(DOMRES_ID, BINTER_ID);
+		opRegistry.addCompatibility(DOMRES_ID, SETMINUS_ID);
+		opRegistry.addCompatibility(DOMRES_ID, FCOMP_ID);
+		opRegistry.addCompatibility(DOMRES_ID, DPROD_ID);
+		opRegistry.addCompatibility(DOMRES_ID, RANRES_ID);
+		opRegistry.addCompatibility(DOMRES_ID, RANSUB_ID);
+		opRegistry.addCompatibility(RANSUB_ID, BINTER_ID);
+		opRegistry.addCompatibility(RANSUB_ID, SETMINUS_ID);
+		opRegistry.addCompatibility(RANSUB_ID, FCOMP_ID);
+		opRegistry.addCompatibility(RANSUB_ID, DPROD_ID);
+		opRegistry.addCompatibility(RANSUB_ID, RANRES_ID);
+		opRegistry.addCompatibility(RANSUB_ID, RANSUB_ID);
+		opRegistry.addCompatibility(CPROD_ID, CPROD_ID); // Exception of the table  3.2
+			
 		
+		opRegistry.addCompatibility(PLUS_ID, MINUS_ID);
+		opRegistry.addCompatibility(MINUS_ID, PLUS_ID);
 		opRegistry.addCompatibility(PLUS_ID, PLUS_ID);
+		opRegistry.addCompatibility(MINUS_ID, MINUS_ID);
+		opRegistry.addCompatibility(MUL_ID, DIV_ID);
+		opRegistry.addCompatibility(MUL_ID, MOD_ID);
 		opRegistry.addCompatibility(MUL_ID, MUL_ID);
+		opRegistry.addCompatibility(DIV_ID, MUL_ID);
+		opRegistry.addCompatibility(DIV_ID, MOD_ID);
+		opRegistry.addCompatibility(DIV_ID, DIV_ID);
+		opRegistry.addCompatibility(MOD_ID, DIV_ID);
+		opRegistry.addCompatibility(MOD_ID, MUL_ID);
+		opRegistry.addCompatibility(MOD_ID, MOD_ID);
+		
+		opRegistry.addCompatibility(CONVERSE_ID, CONVERSE_ID);
 
+		opRegistry.addCompatibility(RELIMAGE_ID, RELIMAGE_ID);
 		opRegistry.addCompatibility(FUNIMAGE_ID, FUNIMAGE_ID);
 		
 		opRegistry.addCompatibility(FORALL_ID, EXISTS_ID);
@@ -332,7 +370,17 @@ public class BMath extends AbstractGrammar {
 		opRegistry.addCompatibility(LOR_ID, LOR_ID);
 		
 		try {
+			opRegistry.addPriority(EXPN_ID, DIV_ID);
+			opRegistry.addPriority(EXPN_ID, MUL_ID);
+			opRegistry.addPriority(EXPN_ID, PLUS_ID);
+			opRegistry.addPriority(EXPN_ID, MINUS_ID);
+			opRegistry.addPriority(EXPN_ID, MOD_ID);
 			opRegistry.addPriority(PLUS_ID, MUL_ID);
+			opRegistry.addPriority(MINUS_ID, MUL_ID);
+			opRegistry.addPriority(PLUS_ID, DIV_ID);
+			opRegistry.addPriority(MINUS_ID, DIV_ID);
+			opRegistry.addPriority(PLUS_ID, MOD_ID);
+			opRegistry.addPriority(MINUS_ID, MOD_ID);
 			
 			addGroupPrioritySequence(GROUP0, QUANTIFIED_PRED, INFIX_PRED,
 					LOGIC_PRED, NOT_PRED, ATOMIC_PRED, RELOP_PRED, PAIR);

@@ -1169,4 +1169,11 @@ public class TestGenParser extends AbstractTests {
 				LIT_BTRUE), null);
 		doPredicateTest("S={0}∧⊤", expected );
 	}
+	
+	public void testCProdCProdCompatibility() throws Exception {
+		final Type expected = ff.makeProductType(
+				ff.makeProductType(S_TYPE, S_TYPE),
+				S_TYPE);
+		doTypeTest("S×S×S", expected);
+	}
 }
