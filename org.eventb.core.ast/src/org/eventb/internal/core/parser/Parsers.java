@@ -827,27 +827,47 @@ public class Parsers {
 		}
 	};
 	
-	static final INudParser<QuantifiedExpression> CSET_EXPLICIT = new PrefixNudParser<QuantifiedExpression>(CSET) {
+	static class ExplicitQuantExpr extends PrefixNudParser<QuantifiedExpression> {
 		
+		protected ExplicitQuantExpr(int tag) {
+			super(tag);
+		}
+
 		@Override
-		public QuantifiedExpression parseRight(ParserContext pc) throws SyntaxError {
+		protected QuantifiedExpression parseRight(ParserContext pc) throws SyntaxError {
 			final List<FreeIdentifier> idents = pc.subParse(FREE_IDENT_LIST_PARSER);
 			pc.progress(_DOT);
 			final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, idents);
 			final Predicate pred = pc.subParse(PRED_PARSER, boundIdents);
 			pc.progress(_MID);
 			final Expression expr = pc.subParse(EXPR_PARSER, boundIdents);
-			pc.progress(_RBRACE);
+			progressClose(pc);
 			
 			return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
 					expr, pc.getSourceLocation(), Form.Explicit);
 		}
+		
+		protected void progressClose(ParserContext pc) throws SyntaxError {
+			// do nothing by default
+		}
+	}
+	
+	static final ExplicitQuantExpr CSET_EXPLICIT = new ExplicitQuantExpr(CSET) {
+		@Override
+		protected void progressClose(ParserContext pc) throws SyntaxError {
+			pc.progress(_RBRACE);
+		}
 	};
 	
-	static final INudParser<QuantifiedExpression> CSET_IMPLICIT = new PrefixNudParser<QuantifiedExpression>(CSET) {
+	static class ImplicitQuantExpr extends PrefixNudParser<QuantifiedExpression> {
 		
+		protected ImplicitQuantExpr(int tag) {
+			super(tag);
+		}
+
 		@Override
-		public QuantifiedExpression parseRight(ParserContext pc) throws SyntaxError {
+		protected final QuantifiedExpression parseRight(ParserContext pc)
+				throws SyntaxError {
 			final Expression expr = pc.subParse(EXPR_PARSER);
 			pc.progress(_MID);
 			final List<FreeIdentifier> idents = asList(expr.getFreeIdentifiers());
@@ -855,9 +875,22 @@ public class Parsers {
 			final Expression boundExpr = expr.bindTheseIdents(idents, pc.factory);
 			
 			final Predicate pred = pc.subParse(PRED_PARSER, boundIdents);
-			pc.progress(_RBRACE);
+			progressClose(pc);
+			
 			return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
 					boundExpr, pc.getSourceLocation(), Form.Implicit);
+		}
+		
+		protected void progressClose(ParserContext pc) throws SyntaxError {
+			// do nothing by default
+		}
+		
+	}
+	
+	static final ImplicitQuantExpr CSET_IMPLICIT = new ImplicitQuantExpr(CSET) {
+		@Override
+		protected void progressClose(ParserContext pc) throws SyntaxError {
+			pc.progress(_RBRACE);
 		}
 	};
 	

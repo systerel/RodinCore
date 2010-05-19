@@ -1042,7 +1042,6 @@ public class TestGenParser extends AbstractTests {
 		final Expression expected = ff.makeUnaryExpression(UNMINUS, 
 				ONE, null);
 		doExpressionTest("−1", expected);
-
 	}
 	
 	public void testBinMinus() throws Exception {
@@ -1050,4 +1049,41 @@ public class TestGenParser extends AbstractTests {
 				ONE, null);
 		doExpressionTest("0−1", expected);
 	}
+	
+	public void testQUnion() throws Exception {
+		final Expression expected = ff.makeQuantifiedExpression(QUNION,
+				asList(BID_x),
+				ff.makeRelationalPredicate(GT,
+						BI_0,
+						ZERO, null),
+				ff.makeAssociativeExpression(MUL,
+						asList(ONE, BI_0), null),
+				null, Form.Explicit);
+		doExpressionTest("⋃x·x>0∣1∗x", expected);
+	}
+	
+	public void testQUnionSeveral() throws Exception {
+		final Expression expected = ff.makeQuantifiedExpression(QUNION,
+				asList(BID_x, BID_y),
+				ff.makeRelationalPredicate(GT,
+						BI_1,
+						BI_0, null),
+				ff.makeAssociativeExpression(MUL,
+						Arrays.<Expression>asList(BI_0, BI_1), null),
+				null, Form.Explicit);
+		doExpressionTest("⋃x,y·x>y∣y∗x", expected);
+	}
+	
+	public void testQUnionImplicit() throws Exception {
+		final Expression expected = ff.makeQuantifiedExpression(QUNION,
+				asList(BID_x),
+				ff.makeRelationalPredicate(GT,
+						BI_0,
+						ZERO, null),
+				ff.makeAssociativeExpression(MUL,
+						asList(ONE, BI_0), null),
+				null, Form.Implicit);
+		doExpressionTest("⋃ 1∗x∣x>0", expected);
+	}
+
 }

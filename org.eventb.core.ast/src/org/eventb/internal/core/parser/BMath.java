@@ -144,6 +144,7 @@ public class BMath extends AbstractGrammar {
 	private static final String KMIN_ID = "Min";
 	private static final String KMAX_ID = "Max";
 	private static final String UNMINUS_ID = "Unary Minus";
+	private static final String QUNION_ID = "Quantified Union";
 	
 	
 	/**
@@ -262,6 +263,8 @@ public class BMath extends AbstractGrammar {
 			// PredicateVariable
 			addOperator(_PREDVAR, PRED_VAR_ID, GROUP0, PRED_VAR_SUBPARSER);
 			// QuantifiedExpression
+			addOperator("\u22c3", QUNION_ID, QUANTIFICATION, new ExplicitQuantExpr(QUNION));
+			addOperator("\u22c3", QUNION_ID, QUANTIFICATION, new ImplicitQuantExpr(QUNION));
 			// TODO add QUNION, QINTER
 			addOperator("{", CSET_ID, BRACE_SETS, CSET_EXPLICIT);
 			addOperator("{", CSET_ID, BRACE_SETS, CSET_IMPLICIT);
