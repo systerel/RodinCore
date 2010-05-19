@@ -168,6 +168,12 @@ public class GenParser {
 		}
 		
 		public void progress() {
+			if(grammar.isOpen(t.kind)) {
+				pushParentKind(_EOF);
+			}
+			if (grammar.isClose(la.kind)) {
+				popParentKind();
+			}
 			endPos = t.getEnd();
 			t = la;
 			la = scanner.Scan();
@@ -239,12 +245,10 @@ public class GenParser {
 		
 		public void progressOpenParen() throws SyntaxError {
 			progress(_LPAR);
-			pushParentKind(_EOF);
 		}
 		
 		public void progressCloseParen() throws SyntaxError {
 			progress(_RPAR);
-			popParentKind();
 		}
 		
 		public List<INudParser<? extends Formula<?>>> getNudParsers() {

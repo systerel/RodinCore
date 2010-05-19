@@ -12,7 +12,9 @@ package org.eventb.internal.core.parser;
 
 import static org.eventb.internal.core.parser.OperatorRegistry.GROUP0;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.extension.CycleError;
@@ -40,6 +42,8 @@ public abstract class AbstractGrammar {
 	
 	protected final OperatorRegistry opRegistry = new OperatorRegistry();
 	
+	private final Map<Integer, Integer> closeOpenKinds = new HashMap<Integer, Integer>();
+	
 	public boolean isOperator(Token token) {
 		return subParsers.isOperator(token);
 	}
@@ -62,6 +66,7 @@ public abstract class AbstractGrammar {
 		_COMMA = tokens.getOrAdd(",");
 		
 		opRegistry.addOperator(_EOF, EOF_ID, GROUP0);
+		addOpenClose("(", ")");
 		try {
 			_INTLIT = addReservedSubParser(Parsers.INTLIT_SUBPARSER);
 			_IDENT = addReservedSubParser(Parsers.IDENT_SUBPARSER);
@@ -104,7 +109,21 @@ public abstract class AbstractGrammar {
 		subParsers.addNud(kind, subParser);
 	}
 
-	private int addReservedSubParser(INudParser<? extends Formula<?>>  subParser)
+	protected void addOpenClose(String open, String close) {
+		final int openKind = tokens.getOrAdd(open);
+		final int closeKind = tokens.getOrAdd(close);
+		closeOpenKinds.put(closeKind, openKind);
+	}
+
+	public boolean isOpen(int kind) {
+		return closeOpenKinds.containsValue(kind);
+	}
+
+	public boolean isClose(int kind) {
+		return closeOpenKinds.containsKey(kind);
+	}
+
+	private int addReservedSubParser(INudParser<? extends Formula<?>> subParser)
 			throws OverrideException {
 		final int kind = tokens.reserved();
 		subParsers.addReserved(kind, subParser);

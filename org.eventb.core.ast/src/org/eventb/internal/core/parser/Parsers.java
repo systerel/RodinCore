@@ -612,14 +612,9 @@ public class Parsers {
 		protected Expression parseRight(ParserContext pc) throws SyntaxError {
 			// parse inner expression without caring about the parent kind
 			// else f(f(a)) would be rejected as it is a right-associative AST
-			try {
-				pc.pushParentKind(_EOF);
-				final Expression right = super.parseRight(pc);
-				pc.progress(closeKind);
-				return right;
-			} finally {
-				pc.popParentKind();
-			}
+			final Expression right = super.parseRight(pc);
+			pc.progress(closeKind);
+			return right;
 		}
 		
 		@Override
@@ -833,14 +828,9 @@ public class Parsers {
 		
 		@Override
 		public SetExtension parseRight(ParserContext pc) throws SyntaxError {
-			pc.pushParentKind(_EOF);
-			try {
 			final List<Expression> exprs = pc.subParse(EXPR_LIST_PARSER);
 			pc.progress(_RBRACE);
 			return pc.factory.makeSetExtension(exprs, pc.getSourceLocation());
-			} finally { 
-				pc.popParentKind();
-			}
 		}
 	};
 	
@@ -852,29 +842,16 @@ public class Parsers {
 
 		@Override
 		protected QuantifiedExpression parseRight(ParserContext pc) throws SyntaxError {
-			try {
-				processOpen(pc);
-				final List<FreeIdentifier> idents = pc.subParse(FREE_IDENT_LIST_PARSER);
-				pc.progress(_DOT);
-				final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, idents);
-				final Predicate pred = pc.subParse(PRED_PARSER, boundIdents);
-				pc.progress(_MID);
-				final Expression expr = pc.subParse(EXPR_PARSER, boundIdents);
-				progressClose(pc);
+			final List<FreeIdentifier> idents = pc.subParse(FREE_IDENT_LIST_PARSER);
+			pc.progress(_DOT);
+			final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, idents);
+			final Predicate pred = pc.subParse(PRED_PARSER, boundIdents);
+			pc.progress(_MID);
+			final Expression expr = pc.subParse(EXPR_PARSER, boundIdents);
+			progressClose(pc);
 
-				return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
-						expr, pc.getSourceLocation(), Form.Explicit);
-			} finally {
-				processClose(pc);
-			}
-		}
-		
-		protected void processOpen(ParserContext pc) throws SyntaxError {
-			// do nothing by default
-		}
-		
-		protected void processClose(ParserContext pc) throws SyntaxError {
-			// do nothing by default
+			return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
+					expr, pc.getSourceLocation(), Form.Explicit);
 		}
 	
 		protected void progressClose(ParserContext pc) throws SyntaxError {
@@ -883,14 +860,6 @@ public class Parsers {
 	}
 	
 	static final ExplicitQuantExpr CSET_EXPLICIT = new ExplicitQuantExpr(CSET) {
-		@Override
-		protected void processOpen(ParserContext pc) throws SyntaxError {
-			pc.pushParentKind(_EOF);
-		}
-		@Override
-		protected void processClose(ParserContext pc) throws SyntaxError {
-			pc.popParentKind();
-		}
 		@Override
 		protected void progressClose(ParserContext pc) throws SyntaxError {
 			pc.progress(_RBRACE);
@@ -905,31 +874,18 @@ public class Parsers {
 
 		@Override
 		protected final QuantifiedExpression parseRight(ParserContext pc)
-				throws SyntaxError {
-			try {
-				processOpen(pc);
-				final Expression expr = pc.subParse(EXPR_PARSER);
-				pc.progress(_MID);
-				final List<FreeIdentifier> idents = asList(expr.getFreeIdentifiers());
-				final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, idents);
-				final Expression boundExpr = expr.bindTheseIdents(idents, pc.factory);
+		throws SyntaxError {
+			final Expression expr = pc.subParse(EXPR_PARSER);
+			pc.progress(_MID);
+			final List<FreeIdentifier> idents = asList(expr.getFreeIdentifiers());
+			final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, idents);
+			final Expression boundExpr = expr.bindTheseIdents(idents, pc.factory);
 
-				final Predicate pred = pc.subParse(PRED_PARSER, boundIdents);
-				progressClose(pc);
+			final Predicate pred = pc.subParse(PRED_PARSER, boundIdents);
+			progressClose(pc);
 
-				return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
-						boundExpr, pc.getSourceLocation(), Form.Implicit);
-			} finally {
-				processClose(pc);
-			}
-		}
-		
-		protected void processOpen(ParserContext pc) throws SyntaxError {
-			// do nothing by default
-		}
-		
-		protected void processClose(ParserContext pc) throws SyntaxError {
-			// do nothing by default
+			return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
+					boundExpr, pc.getSourceLocation(), Form.Implicit);
 		}
 		
 		protected void progressClose(ParserContext pc) throws SyntaxError {
@@ -939,14 +895,6 @@ public class Parsers {
 	}
 	
 	static final ImplicitQuantExpr CSET_IMPLICIT = new ImplicitQuantExpr(CSET) {
-		@Override
-		protected void processOpen(ParserContext pc) throws SyntaxError {
-			pc.pushParentKind(_EOF);
-		}
-		@Override
-		protected void processClose(ParserContext pc) throws SyntaxError {
-			pc.popParentKind();
-		}
 		@Override
 		protected void progressClose(ParserContext pc) throws SyntaxError {
 			pc.progress(_RBRACE);

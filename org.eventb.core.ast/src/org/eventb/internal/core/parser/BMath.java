@@ -190,6 +190,8 @@ public class BMath extends AbstractGrammar {
 		super.init();
 		initTokens();
 		
+		addOpenClose("{", "}");
+		addOpenClose("[", "]");
 		try {
 			// AssociativeExpression
 			addOperator("\u222a", BUNION_ID, BINOP, new AssociativeExpressionInfix(BUNION));
