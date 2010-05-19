@@ -935,7 +935,8 @@ public class Parsers {
 
 		public Assignment parse(ParserContext pc) throws SyntaxError {
 			final List<FreeIdentifier> idents = pc.subParse(FREE_IDENT_LIST_PARSER);
-			final int assignKind = pc.t.kind;
+			final Token assignToken = pc.t;
+			final int assignKind = assignToken.kind;
 			pc.progress();
 
 			if (assignKind == _BECEQ) {
@@ -956,7 +957,7 @@ public class Parsers {
 				return pc.factory.makeBecomesSuchThat(idents, primed, condition, pc.getSourceLocation());
 			} else {
 				throw new SyntaxError("Unknown assignment operator: "
-						+ assignKind);
+						+ assignToken.val);
 			}
 		}
 		
