@@ -1160,4 +1160,13 @@ public class TestGenParser extends AbstractTests {
 						null)), null);
 		doExpressionTest("fa[b↦c]", expected);		
 	}
+	
+	public void testLedBacktrack() throws Exception {
+		final Predicate expected = ff.makeAssociativePredicate(Formula.LAND,
+				Arrays.<Predicate> asList(
+						ff.makeRelationalPredicate(EQUAL, FRID_S, ff
+				.makeSetExtension(ZERO, null), null),
+				LIT_BTRUE), null);
+		doPredicateTest("S={0}∧⊤", expected );
+	}
 }

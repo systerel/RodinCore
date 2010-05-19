@@ -245,8 +245,11 @@ public class Parsers {
 				final ILedParser<? extends Formula<?>> ledParser = getLedParser(pc);
 				pc.pushParentKind(pc.t.kind);
 				pc.progress();
-				left = ledParser.led(left, pc);
-				pc.popParentKind();
+				try {
+					left = ledParser.led(left, pc);
+				} finally {
+					pc.popParentKind();
+				}
 			}
 			return left;
 		}
@@ -831,10 +834,13 @@ public class Parsers {
 		@Override
 		public SetExtension parseRight(ParserContext pc) throws SyntaxError {
 			pc.pushParentKind(_EOF);
+			try {
 			final List<Expression> exprs = pc.subParse(EXPR_LIST_PARSER);
 			pc.progress(_RBRACE);
-			pc.popParentKind();
 			return pc.factory.makeSetExtension(exprs, pc.getSourceLocation());
+			} finally { 
+				pc.popParentKind();
+			}
 		}
 	};
 	
