@@ -796,6 +796,7 @@ public class Parsers {
 		}
 	}
 
+	// parses a non empty list of T
 	static class AbstListParser<T extends Expression> extends DefaultMainParser<List<T>> {
 	
 		private final INudParser<T> parser;
@@ -820,15 +821,18 @@ public class Parsers {
 
 	static final AbstListParser<Expression> EXPR_LIST_PARSER = new AbstListParser<Expression>(EXPR_PARSER);
 	
-	static final AbstListParser<Identifier> IDENT_LIST_PARSER = new AbstListParser<Identifier>(IDENT_SUBPARSER);
-
 	static final AbstListParser<FreeIdentifier> FREE_IDENT_LIST_PARSER = new AbstListParser<FreeIdentifier>(FREE_IDENT_SUBPARSER);
 	
 	static final INudParser<SetExtension> SETEXT_PARSER = new PrefixNudParser<SetExtension>(SETEXT) {
 		
 		@Override
 		public SetExtension parseRight(ParserContext pc) throws SyntaxError {
-			final List<Expression> exprs = pc.subParse(EXPR_LIST_PARSER);
+			final List<Expression> exprs;
+			if (pc.t.kind == _RBRACE) { // only place where a list may be empty
+				exprs = Collections.emptyList();
+			} else {
+				exprs = pc.subParse(EXPR_LIST_PARSER);
+			}
 			pc.progress(_RBRACE);
 			return pc.factory.makeSetExtension(exprs, pc.getSourceLocation());
 		}

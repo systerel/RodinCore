@@ -671,6 +671,12 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("{0,1}", expected);		
 	}
 	
+	public void testSetExtensionEmpty() throws Exception {
+		final Expression expected = ff.makeSetExtension(Arrays
+				.<Expression> asList(), null);
+		doExpressionTest("{}", expected);
+	}
+	
 	// verifies that priority between Maplet and Ovr is not taken into account
 	// inside braces
 	public void testSetExtensionPriority() throws Exception {
