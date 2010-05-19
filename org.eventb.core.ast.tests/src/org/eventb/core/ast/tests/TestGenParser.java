@@ -671,6 +671,17 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("{0,1}", expected);		
 	}
 	
+	// verifies that priority between Maplet and Ovr is not taken into account
+	// inside braces
+	// FIXME same problem with []
+	public void testSetExtensionMapletOvr() throws Exception {
+		final Expression expected = ff.makeAssociativeExpression(OVR, Arrays.<Expression>asList(
+			FRID_f,
+			ff.makeSetExtension(
+				ff.makeBinaryExpression(MAPSTO, ZERO, ONE, null), null)), null);
+		doExpressionTest("f{0↦1}", expected);		
+	}
+	
 	public void testEmptySet() throws Exception {
 		final Predicate expected = ff.makeRelationalPredicate(IN,
 				ZERO,
@@ -708,6 +719,19 @@ public class TestGenParser extends AbstractTests {
 		final Expression expected = ff.makeQuantifiedExpression(CSET,
 				asList(BID_x), LIT_BTRUE, BI_0, null, Form.Implicit);
 		doExpressionTest("{x∣ ⊤}", expected);
+	}
+	
+	// verifies that priority between Maplet and Ovr is not taken into account
+	// inside braces
+	public void testCSetMapletOvr() throws Exception {
+		final Expression expected = ff.makeAssociativeExpression(OVR, Arrays.<Expression>asList(
+				FRID_f,
+				ff.makeQuantifiedExpression(CSET,
+						asList(BID_x),
+						LIT_BTRUE,
+						ff.makeBinaryExpression(MAPSTO, BI_0, BI_0, null),
+						null, Form.Implicit)), null);
+		doExpressionTest("f{x↦x ∣ ⊤}", expected);		
 	}
 	
 	public void testMapsto() throws Exception {

@@ -820,9 +820,10 @@ public class Parsers {
 		
 		@Override
 		public SetExtension parseRight(ParserContext pc) throws SyntaxError {
+			pc.pushParentKind(_EOF);
 			final List<Expression> exprs = pc.subParse(EXPR_LIST_PARSER);
 			pc.progress(_RBRACE);
-			
+			pc.popParentKind();
 			return pc.factory.makeSetExtension(exprs, pc.getSourceLocation());
 		}
 	};
@@ -835,24 +836,45 @@ public class Parsers {
 
 		@Override
 		protected QuantifiedExpression parseRight(ParserContext pc) throws SyntaxError {
-			final List<FreeIdentifier> idents = pc.subParse(FREE_IDENT_LIST_PARSER);
-			pc.progress(_DOT);
-			final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, idents);
-			final Predicate pred = pc.subParse(PRED_PARSER, boundIdents);
-			pc.progress(_MID);
-			final Expression expr = pc.subParse(EXPR_PARSER, boundIdents);
-			progressClose(pc);
-			
-			return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
-					expr, pc.getSourceLocation(), Form.Explicit);
+			try {
+				processOpen(pc);
+				final List<FreeIdentifier> idents = pc.subParse(FREE_IDENT_LIST_PARSER);
+				pc.progress(_DOT);
+				final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, idents);
+				final Predicate pred = pc.subParse(PRED_PARSER, boundIdents);
+				pc.progress(_MID);
+				final Expression expr = pc.subParse(EXPR_PARSER, boundIdents);
+				progressClose(pc);
+
+				return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
+						expr, pc.getSourceLocation(), Form.Explicit);
+			} finally {
+				processClose(pc);
+			}
 		}
 		
+		protected void processOpen(ParserContext pc) throws SyntaxError {
+			// do nothing by default
+		}
+		
+		protected void processClose(ParserContext pc) throws SyntaxError {
+			// do nothing by default
+		}
+	
 		protected void progressClose(ParserContext pc) throws SyntaxError {
 			// do nothing by default
 		}
 	}
 	
 	static final ExplicitQuantExpr CSET_EXPLICIT = new ExplicitQuantExpr(CSET) {
+		@Override
+		protected void processOpen(ParserContext pc) throws SyntaxError {
+			pc.pushParentKind(_EOF);
+		}
+		@Override
+		protected void processClose(ParserContext pc) throws SyntaxError {
+			pc.popParentKind();
+		}
 		@Override
 		protected void progressClose(ParserContext pc) throws SyntaxError {
 			pc.progress(_RBRACE);
@@ -868,17 +890,30 @@ public class Parsers {
 		@Override
 		protected final QuantifiedExpression parseRight(ParserContext pc)
 				throws SyntaxError {
-			final Expression expr = pc.subParse(EXPR_PARSER);
-			pc.progress(_MID);
-			final List<FreeIdentifier> idents = asList(expr.getFreeIdentifiers());
-			final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, idents);
-			final Expression boundExpr = expr.bindTheseIdents(idents, pc.factory);
-			
-			final Predicate pred = pc.subParse(PRED_PARSER, boundIdents);
-			progressClose(pc);
-			
-			return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
-					boundExpr, pc.getSourceLocation(), Form.Implicit);
+			try {
+				processOpen(pc);
+				final Expression expr = pc.subParse(EXPR_PARSER);
+				pc.progress(_MID);
+				final List<FreeIdentifier> idents = asList(expr.getFreeIdentifiers());
+				final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, idents);
+				final Expression boundExpr = expr.bindTheseIdents(idents, pc.factory);
+
+				final Predicate pred = pc.subParse(PRED_PARSER, boundIdents);
+				progressClose(pc);
+
+				return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
+						boundExpr, pc.getSourceLocation(), Form.Implicit);
+			} finally {
+				processClose(pc);
+			}
+		}
+		
+		protected void processOpen(ParserContext pc) throws SyntaxError {
+			// do nothing by default
+		}
+		
+		protected void processClose(ParserContext pc) throws SyntaxError {
+			// do nothing by default
 		}
 		
 		protected void progressClose(ParserContext pc) throws SyntaxError {
@@ -888,6 +923,14 @@ public class Parsers {
 	}
 	
 	static final ImplicitQuantExpr CSET_IMPLICIT = new ImplicitQuantExpr(CSET) {
+		@Override
+		protected void processOpen(ParserContext pc) throws SyntaxError {
+			pc.pushParentKind(_EOF);
+		}
+		@Override
+		protected void processClose(ParserContext pc) throws SyntaxError {
+			pc.popParentKind();
+		}
 		@Override
 		protected void progressClose(ParserContext pc) throws SyntaxError {
 			pc.progress(_RBRACE);
