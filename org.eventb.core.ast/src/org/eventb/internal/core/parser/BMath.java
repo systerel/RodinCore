@@ -60,8 +60,8 @@ public class BMath extends AbstractGrammar {
 
 	private static final String LOR_ID = "lor";
 	private static final String LAND_ID = "land";
-	private static final String BINTER_ID = "binter";
-	private static final String BUNION_ID = "bunion";
+	private static final String BINTER_ID = "Binary Intersection";
+	private static final String BUNION_ID = "Binary Union";
 	private static final String MUL_ID = "mul";
 	private static final String PLUS_ID = "plus";
 	private static final String FORALL_ID = "for all";
@@ -145,6 +145,9 @@ public class BMath extends AbstractGrammar {
 	private static final String KMAX_ID = "Max";
 	private static final String UNMINUS_ID = "Unary Minus";
 	private static final String QUNION_ID = "Quantified Union";
+	private static final String QINTER_ID = "Quantified Intersection";
+	private static final String KUNION_ID = "Unary Union";
+	private static final String KINTER_ID = "Unary Intersection";
 	
 	
 	/**
@@ -265,7 +268,8 @@ public class BMath extends AbstractGrammar {
 			// QuantifiedExpression
 			addOperator("\u22c3", QUNION_ID, QUANTIFICATION, new ExplicitQuantExpr(QUNION));
 			addOperator("\u22c3", QUNION_ID, QUANTIFICATION, new ImplicitQuantExpr(QUNION));
-			// TODO add QUNION, QINTER
+			addOperator("\u22c2", QINTER_ID, QUANTIFICATION, new ExplicitQuantExpr(QINTER));
+			addOperator("\u22c2", QINTER_ID, QUANTIFICATION, new ImplicitQuantExpr(QINTER));
 			addOperator("{", CSET_ID, BRACE_SETS, CSET_EXPLICIT);
 			addOperator("{", CSET_ID, BRACE_SETS, CSET_IMPLICIT);
 			addOperator("\u03bb", LAMBDA_ID, QUANTIFICATION, CSET_LAMBDA);
@@ -293,7 +297,8 @@ public class BMath extends AbstractGrammar {
 			addOperator("card", KCARD_ID, FUNCTIONAL, new UnaryExpressionParser(KCARD));
 			addOperator("\u2119", POW_ID, BOUND_UNARY, new UnaryExpressionParser(POW));
 			addOperator("\u21191", POW1_ID, BOUND_UNARY, new UnaryExpressionParser(POW1));
-			// TODO add KUNION, KINTER
+			addOperator("union", KUNION_ID, BOUND_UNARY, new UnaryExpressionParser(KUNION));
+			addOperator("inter", KINTER_ID, BOUND_UNARY, new UnaryExpressionParser(KINTER));
 			addOperator("dom", KDOM_ID, BOUND_UNARY, new UnaryExpressionParser(KDOM));
 			addOperator("ran", KRAN_ID, BOUND_UNARY, new UnaryExpressionParser(KRAN));
 			addOperator("min", KMIN_ID, BOUND_UNARY, new UnaryExpressionParser(KMIN));
