@@ -99,6 +99,11 @@ public class GenParser {
 			this.val = initVal;
 		}
 		
+		public StackedValue(StackedValue<T> toCopy) {
+			this.val = toCopy.val;
+			this.stack.addAll(toCopy.stack);
+		}
+		
 		public void push(T newVal) {
 			stack.push(val);
 			val = newVal;
@@ -130,8 +135,8 @@ public class GenParser {
 		protected final ParseResult result;
 		protected final boolean withPredVar;
 		protected final LanguageVersion version;
-		private final StackedValue<Binding> binding = new StackedValue<Binding>(new Binding());
-		private final StackedValue<Integer> parentKind = new StackedValue<Integer>(_EOF); 
+		private StackedValue<Binding> binding = new StackedValue<Binding>(new Binding());
+		private StackedValue<Integer> parentKind = new StackedValue<Integer>(_EOF); 
 		private final StackedValue<Integer> startPos = new StackedValue<Integer>(-1); 
 		private int endPos = -1;
 		private boolean parsingType;
@@ -188,7 +193,7 @@ public class GenParser {
 		}
 		
 		public SavedContext save() {
-			return new SavedContext(scanner.save(), t, la, parsingType);
+			return new SavedContext(scanner.save(), t, la, parsingType, binding, parentKind);
 		}
 		
 		public void restore(SavedContext sc) {
@@ -196,6 +201,8 @@ public class GenParser {
 			t = sc.t;
 			la = sc.la;
 			parsingType = sc.parsingType;
+			binding = sc.binding;
+			parentKind = sc.parentKind;
 		}
 		
 		static class SavedContext {
@@ -203,12 +210,16 @@ public class GenParser {
 			final Token t;
 			final Token la;
 			final boolean parsingType;
+			final StackedValue<Binding> binding;
+			final StackedValue<Integer> parentKind;
 			
-			SavedContext(ScanState scanState, Token t, Token la, boolean parsingType) {
+			SavedContext(ScanState scanState, Token t, Token la, boolean parsingType, StackedValue<Binding> binding, StackedValue<Integer> parentKind) {
 				this.scanState = scanState;
 				this.t = t;
 				this.la = la;
 				this.parsingType = parsingType;
+				this.binding = new StackedValue<Binding>(binding);
+				this.parentKind = new StackedValue<Integer>(parentKind);
 			}
 			
 		}
