@@ -673,8 +673,7 @@ public class TestGenParser extends AbstractTests {
 	
 	// verifies that priority between Maplet and Ovr is not taken into account
 	// inside braces
-	// FIXME same problem with []
-	public void testSetExtensionMapletOvr() throws Exception {
+	public void testSetExtensionPriority() throws Exception {
 		final Expression expected = ff.makeAssociativeExpression(OVR, Arrays.<Expression>asList(
 			FRID_f,
 			ff.makeSetExtension(
@@ -723,7 +722,7 @@ public class TestGenParser extends AbstractTests {
 	
 	// verifies that priority between Maplet and Ovr is not taken into account
 	// inside braces
-	public void testCSetMapletOvr() throws Exception {
+	public void testCSetPriority() throws Exception {
 		final Expression expected = ff.makeAssociativeExpression(OVR, Arrays.<Expression>asList(
 				FRID_f,
 				ff.makeQuantifiedExpression(CSET,
@@ -732,6 +731,37 @@ public class TestGenParser extends AbstractTests {
 						ff.makeBinaryExpression(MAPSTO, BI_0, BI_0, null),
 						null, Form.Implicit)), null);
 		doExpressionTest("f{x↦x ∣ ⊤}", expected);		
+	}
+	
+	public void testForallCSetPriority() throws Exception {
+		final Predicate expected = ff.makeQuantifiedPredicate(FORALL,
+				new BoundIdentDecl[] { BID_x },
+				ff.makeRelationalPredicate(NOTEQUAL,
+				ff.makeQuantifiedExpression(CSET,
+						asList(BID_y),
+						ff.makeRelationalPredicate(GT,
+								BI_1,
+								BI_0, null),
+								ff.makeBinaryExpression(MINUS, BI_1, BI_0, null),
+								null, Form.Explicit), EMPTY, null),
+				 null);
+
+		doPredicateTest("∀x·{y·x>y∣x−y}≠∅", expected);		
+	}
+	
+	public void testCSetForallPriority() throws Exception {
+						
+		final Expression expected =			
+				ff.makeQuantifiedExpression(CSET,
+						asList(BID_y),
+						ff.makeQuantifiedPredicate(FORALL,
+								new BoundIdentDecl[] { BID_x },
+								ff.makeRelationalPredicate(GT,
+										BI_0,
+										BI_1, null), null),
+						BI_0, null, Form.Implicit);
+
+		doExpressionTest("{y∣∀x·x>y}", expected);		
 	}
 	
 	public void testMapsto() throws Exception {
@@ -1109,5 +1139,25 @@ public class TestGenParser extends AbstractTests {
 				null, Form.Implicit);
 		doExpressionTest("⋃ 1∗x∣x>0", expected);
 	}
+	
+	public void testRelImage() throws Exception {
+		final Expression expected = 
+				ff.makeBinaryExpression(RELIMAGE,
+						FRID_f,
+						FRID_S,
+						null);
+		doExpressionTest("f[S]", expected);
+	}
 
+	// verifies that priority between Maplet and Ovr is not taken into account
+	// inside square brackets
+	public void testRelImagePriority() throws Exception {
+		final Expression expected = ff.makeAssociativeExpression(OVR, Arrays.<Expression>asList(
+				FRID_f,
+				ff.makeBinaryExpression(RELIMAGE,
+						FRID_a,
+						ff.makeBinaryExpression(MAPSTO, FRID_b, FRID_c, null),
+						null)), null);
+		doExpressionTest("fa[b↦c]", expected);		
+	}
 }

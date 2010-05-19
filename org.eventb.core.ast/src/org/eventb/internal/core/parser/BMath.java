@@ -157,7 +157,7 @@ public class BMath extends AbstractGrammar {
 	 */
 	private final void initTokens() {
 		_PREDVAR = tokens.reserved();
-		_LBRACE = tokens.getOrAdd("{");
+		_RBRACKET = tokens.getOrAdd("]");
 		_RBRACE = tokens.getOrAdd("}");
 		_LAMBDA = tokens.getOrAdd("\u03bb");
 		_MAPSTO = tokens.getOrAdd("\u21a6");
@@ -170,8 +170,8 @@ public class BMath extends AbstractGrammar {
 		_KPARTITION = tokens.getOrAdd("partition");
 	}
 
-	static int _LBRACE;
 	static int _RBRACE;
+	static int _RBRACKET;
 	static int _LAMBDA;
 	static int _MAPSTO;
 	static int _BECEQ;
@@ -245,8 +245,8 @@ public class BMath extends AbstractGrammar {
 			addOperator("\u00f7", DIV_ID, ARITHMETIC, new BinaryExpressionInfix(DIV));
 			addOperator("mod", MOD_ID, ARITHMETIC, new BinaryExpressionInfix(MOD));
 			addOperator("\u005e", EXPN_ID, ARITHMETIC, new BinaryExpressionInfix(EXPN));
-			addOperator("(", FUNIMAGE_ID, FUNCTIONAL, FUN_IMAGE);
-			addOperator("[", RELIMAGE_ID, FUNCTIONAL, new BinaryExpressionInfix(RELIMAGE));
+			addOperator("(", FUNIMAGE_ID, FUNCTIONAL, new LedImage(FUNIMAGE, _RPAR));
+			addOperator("[", RELIMAGE_ID, FUNCTIONAL, new LedImage(RELIMAGE, _RBRACKET));
 			// BinaryPredicate
 			addOperator("\u21d2", LIMP_ID, INFIX_PRED, new BinaryPredicateParser(LIMP));
 			addOperator("\u21d4", LEQV_ID, INFIX_PRED, new BinaryPredicateParser(LEQV));
@@ -332,31 +332,33 @@ public class BMath extends AbstractGrammar {
 		try {
 			opRegistry.addPriority(PLUS_ID, MUL_ID);
 			
+			opRegistry.addGroupPriority(GROUP0, QUANTIFIED_PRED);
 			opRegistry.addGroupPriority(QUANTIFIED_PRED, INFIX_PRED);
 			opRegistry.addGroupPriority(INFIX_PRED, LOGIC_PRED);
 			opRegistry.addGroupPriority(LOGIC_PRED, NOT_PRED);
 			opRegistry.addGroupPriority(NOT_PRED, ATOMIC_PRED);
 			opRegistry.addGroupPriority(ATOMIC_PRED, RELOP_PRED);
-			opRegistry.addGroupPriority(GROUP0, QUANTIFICATION);
-			opRegistry.addGroupPriority(GROUP0, QUANTIFIED_PRED);
 			opRegistry.addGroupPriority(RELOP_PRED, PAIR);
+
+			opRegistry.addGroupPriority(GROUP0, QUANTIFICATION);
 			opRegistry.addGroupPriority(QUANTIFICATION, RELOP_PRED);
-			opRegistry.addGroupPriority(GROUP0, QUANTIFICATION);// TODO remove: redundant
+			
 			opRegistry.addGroupPriority(GROUP0, TYPED);
 			opRegistry.addGroupPriority(TYPED, QUANTIFICATION);
+			
+			// start of excerpt from kernel language specification table 3.1
 			opRegistry.addGroupPriority(QUANTIFICATION, PAIR);
 			opRegistry.addGroupPriority(PAIR, RELATION);
 			opRegistry.addGroupPriority(RELATION, BINOP);
 			opRegistry.addGroupPriority(BINOP, INTERVAL);
 			opRegistry.addGroupPriority(INTERVAL, ARITHMETIC);
-			opRegistry.addGroupPriority(ARITHMETIC, UNARY_RELATION);
+			opRegistry.addGroupPriority(ARITHMETIC, FUNCTIONAL);
+			opRegistry.addGroupPriority(FUNCTIONAL, UNARY_RELATION);
 			opRegistry.addGroupPriority(UNARY_RELATION, BOUND_UNARY);
 			opRegistry.addGroupPriority(BOUND_UNARY, BOOL);
-			opRegistry.addGroupPriority(GROUP0, BRACE_SETS);
-			opRegistry.addGroupPriority(BRACE_SETS, QUANTIFICATION);
-			opRegistry.addGroupPriority(BRACE_SETS, QUANTIFIED_PRED);
-			opRegistry.addGroupPriority(GROUP0, FUNCTIONAL);
-			opRegistry.addGroupPriority(FUNCTIONAL, QUANTIFICATION);
+			opRegistry.addGroupPriority(BOOL, BRACE_SETS);
+			// end of excerpt
+			
 		} catch (CycleError e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

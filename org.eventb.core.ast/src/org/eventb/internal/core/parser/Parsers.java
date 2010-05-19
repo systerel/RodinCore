@@ -596,26 +596,36 @@ public class Parsers {
 		}
 	}
 
-	static final ILedParser<BinaryExpression> FUN_IMAGE = new DefaultLedExprParser<BinaryExpression>(FUNIMAGE) {
+	static class LedImage extends DefaultLedExprParser<BinaryExpression> {
 
-		@Override
-		public BinaryExpression makeValue(ParserContext pc, Expression left,
-				Expression right, SourceLocation loc) throws SyntaxError {
-			return pc.factory.makeBinaryExpression(tag, left, right, loc);
-		}
+		private final int closeKind;
 		
+		protected LedImage(int tag, int closeKind) {
+			super(tag);
+			this.closeKind = closeKind;
+		}
+
 		@Override
 		protected Expression parseRight(ParserContext pc) throws SyntaxError {
 			// parse inner expression without caring about the parent kind
 			// else f(f(a)) would be rejected as it is a right-associative AST
-			pc.pushParentKind(_EOF);
-			final Expression right = super.parseRight(pc);
-			pc.popParentKind();
-			pc.progress(_RPAR);
-			return right;
+			try {
+				pc.pushParentKind(_EOF);
+				final Expression right = super.parseRight(pc);
+				pc.progress(closeKind);
+				return right;
+			} finally {
+				pc.popParentKind();
+			}
 		}
 		
-	};
+		@Override
+		protected BinaryExpression makeValue(ParserContext pc, Expression left,
+				Expression right, SourceLocation loc) throws SyntaxError {
+			return pc.factory.makeBinaryExpression(tag, left, right, loc);
+		}
+		
+	}
 
 	static class LiteralPredicateParser extends PrefixNudParser<LiteralPredicate> {
 
