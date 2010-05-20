@@ -939,33 +939,53 @@ public class Parsers {
 
 		public Assignment parse(ParserContext pc) throws SyntaxError {
 			final List<FreeIdentifier> idents = pc.subParse(FREE_IDENT_LIST_PARSER);
-			final Token assignToken = pc.t;
-			final int assignKind = assignToken.kind;
+			final Token tokenAfterIdents = pc.t;
+			final int tokenKind = tokenAfterIdents.kind;
 			pc.progress();
 
-			if (assignKind == _BECEQ) {
+			if (tokenKind == _LPAR) { // FUNIMAGE assignment
+				if (idents.size() != 1) {
+					throw new SyntaxError("Assignment to function images applies to exactly one function.");
+				}
+				final FreeIdentifier ident = idents.get(0);
+				final Expression index = pc.subParse(EXPR_PARSER);
+				pc.progressCloseParen();
+				pc.progress(_BECEQ);
+				final Expression value = pc.subParse(EXPR_PARSER);
+				final Expression overriding = makeFunctionOverriding(ident, index, value, pc.factory);
+				return pc.factory.makeBecomesEqualTo(ident, overriding, pc.getSourceLocation());
+			} else if (tokenKind == _BECEQ) {
 				final List<Expression> values = pc.subParse(EXPR_LIST_PARSER);
 				if (idents.size() != values.size()) {
 					throw new SyntaxError("incompatible size of left and right parts of assignment");
 				}
 				return pc.factory.makeBecomesEqualTo(idents, values, pc.getSourceLocation());
-			} else if (assignKind == _BECMO) {
+			} else if (tokenKind == _BECMO) {
 				if (idents.size() != 1) {
 					throw new SyntaxError("\'Becomes Member Of\' applies to only one identifier");
 				}
 				final Expression expr = pc.subParse(EXPR_PARSER);
 				return pc.factory.makeBecomesMemberOf(idents.get(0), expr, pc.getSourceLocation());
-			} else if (assignKind == _BECST) {
+			} else if (tokenKind == _BECST) {
 				final List<BoundIdentDecl> primed = makePrimedDecl(idents, pc.factory);
 				final Predicate condition = pc.subParse(PRED_PARSER, primed);
 				return pc.factory.makeBecomesSuchThat(idents, primed, condition, pc.getSourceLocation());
 			} else {
 				throw new SyntaxError("Unknown assignment operator: "
-						+ assignToken.val);
+						+ tokenAfterIdents.val);
 			}
 		}
 		
 	};
+	
+	static Expression makeFunctionOverriding(FreeIdentifier ident,
+			Expression index, Expression value, FormulaFactory factory) {
+		
+		Expression pair = factory.makeBinaryExpression(Formula.MAPSTO, index, value, null);
+		Expression singletonSet = factory.makeSetExtension(pair, null);
+		return factory.makeAssociativeExpression(Formula.OVR, 
+				new Expression[] {ident, singletonSet}, null);
+	}
 	
 	static final INudParser<MultiplePredicate> PARTITION_PARSER = new ParenNudParser<MultiplePredicate, List<Expression>>(KPARTITION, EXPR_LIST_PARSER) {
 

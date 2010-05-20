@@ -936,18 +936,33 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("TRUE", expected);
 	}
 	
-	public void testAssignment() throws Exception {
+	public void testBecomesEqualTo() throws Exception {
 		final Assignment expected = ff.makeBecomesEqualTo(FRID_a, ZERO, null);
 		doAssignmentTest("a ≔ 0", expected);
 	}
 
-	public void testAssignmentList() throws Exception {
+	public void testBecomesEqualToList() throws Exception {
 		final Assignment expected = ff.makeBecomesEqualTo(
 				asList(FRID_a, FRID_b, FRID_c),
 				asList(ZERO, EMPTY, ATOM_TRUE), null);
 		doAssignmentTest("a,b,c ≔ 0,∅,TRUE", expected);
 	}
 	
+	public void testFunImageBecomesEqualTo() throws Exception {
+		final Expression overriding = makeFunctionOverriding(FRID_f, FRID_a, ZERO);
+		final Assignment expected = ff.makeBecomesEqualTo(FRID_f, overriding, null);
+		doAssignmentTest("f(a) ≔ 0", expected);
+	}
+	
+	private static Expression makeFunctionOverriding(FreeIdentifier ident,
+			Expression index, Expression value) {
+		Expression pair = ff.makeBinaryExpression(Formula.MAPSTO, index, value,
+				null);
+		Expression singletonSet = ff.makeSetExtension(pair, null);
+		return ff.makeAssociativeExpression(Formula.OVR, new Expression[] {
+				ident, singletonSet }, null);
+	}
+
 	public void testBecomesMemberOf() throws Exception {
 		final Assignment expected = ff.makeBecomesMemberOf(FRID_a, FRID_S, null);
 		doAssignmentTest("a :∈ S", expected);
