@@ -387,7 +387,9 @@ public class BMath extends AbstractGrammar {
 
 			addGroupPrioritySequence(GROUP0, QUANTIFICATION, RELOP_PRED);
 			
-			addGroupPrioritySequence(GROUP0, TYPED, QUANTIFICATION);
+			// for OFTYPE
+			addGroupPrioritySequence(QUANTIFICATION, PAIR, TYPED, BINOP,
+					BOUND_UNARY);
 			
 			// start of excerpt from kernel language specification table 3.1
 			addGroupPrioritySequence(QUANTIFICATION, PAIR, RELATION, BINOP,

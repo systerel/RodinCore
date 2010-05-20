@@ -408,11 +408,16 @@ public class Parsers {
 	static final IMainParser<BoundIdentDecl> BOUND_IDENT_DECL_SUBPARSER = new DefaultMainParser<BoundIdentDecl>() {
 
 		public BoundIdentDecl parse(ParserContext pc) throws SyntaxError {
-			final FreeIdentifier ident = FREE_IDENT_SUBPARSER.nud(pc);
+			final FreeIdentifier ident = pc.subParse(FREE_IDENT_SUBPARSER);
 			final FreeIdentifier typed;
 			if (pc.t.kind == _TYPING) {
 				pc.progress();
-				typed = (FreeIdentifier) OFTYPE.led(ident, pc);
+				pc.pushParentKind(_TYPING);
+				try {
+					typed = (FreeIdentifier) OFTYPE.led(ident, pc);
+				} finally {
+					pc.popParentKind();
+				}
 			} else {
 				typed = ident;
 			}
@@ -798,9 +803,9 @@ public class Parsers {
 					pc.subParse(parser);
 					pc.progressCloseParen();
 				} else {
-					final FreeIdentifier freeIdentifier = pc.subParse(
-							FREE_IDENT_SUBPARSER);
-					pattern.declParsed(freeIdentifier.asDecl(pc.factory));
+					final BoundIdentDecl boundIdent = pc
+							.subParse(BOUND_IDENT_DECL_SUBPARSER);
+					pattern.declParsed(boundIdent);
 				}
 				return null;
 			}

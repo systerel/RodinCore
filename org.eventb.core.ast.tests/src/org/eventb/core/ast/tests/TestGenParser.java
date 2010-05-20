@@ -797,6 +797,27 @@ public class TestGenParser extends AbstractTests {
 		doQuantExpressionTest("⋃x⦂ℤ·x>0∣1∗x", expected, INT_TYPE);
 	}
 	
+	public void testBoundIdentDeclLambdaOfType() throws Exception {
+		final BoundIdentDecl bid_x_INT = ff.makeBoundIdentDecl("x", null, INT_TYPE);
+		final BoundIdentDecl bid_y_S = ff.makeBoundIdentDecl("y", null, S_TYPE);
+		final BoundIdentifier bi1_INT = ff.makeBoundIdentifier(1, null, INT_TYPE);
+		final BoundIdentifier bi0_S = ff.makeBoundIdentifier(0, null, S_TYPE);
+		final QuantifiedExpression expected = ff.makeQuantifiedExpression(CSET,
+				asList(bid_x_INT,
+						bid_y_S),
+				ff.makeRelationalPredicate(GT,
+						BI_1,
+						BI_0, null),
+				ff.makeBinaryExpression(MAPSTO,
+						// FIXME why are bound identifiers typed here and not elsewhere ?
+						ff.makeBinaryExpression(MAPSTO,	bi1_INT, bi0_S, null),
+						ff.makeAssociativeExpression(PLUS, 
+								Arrays.<Expression> asList(BI_1, BI_0), null),
+						null),
+				null, Form.Lambda);
+		doQuantExpressionTest("λx⦂ℤ↦y⦂S·x>y∣ x+y", expected, INT_TYPE, S_TYPE);
+	}
+	
 	public void testCSetExplicit() throws Exception {
 		final Expression expected = ff.makeQuantifiedExpression(CSET,
 				asList(BID_x), LIT_BTRUE, BI_0, null, Form.Explicit);

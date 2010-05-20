@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.eventb.core.ast.extension.CycleError;
 import org.eventb.internal.core.parser.GenParser.SyntaxCompatibleError;
@@ -160,6 +161,16 @@ public class OperatorRegistry {
 			return map.get(key);
 		}
 		
+		public K getKey(V value) {
+			final Set<Entry<K, V>> entrySet = map.entrySet();
+			for (Entry<K, V> entry : entrySet) {
+				if (entry.getValue().equals(value)) {
+					return entry.getKey();
+				}
+			}
+			return null;
+		}
+		
 		public void put(K key, V value) {
 			final V oldValue = map.put(key, value);
 			if (oldValue != null && oldValue != value) {
@@ -246,7 +257,10 @@ public class OperatorRegistry {
 				return false;
 			} else if (group.isCompatible(leftKind, rightKind)) {
 				return false;
-			} else throw new SyntaxCompatibleError("Incompatible symbols: "+ leftKind +" with "+rightKind);
+			} else
+				throw new SyntaxCompatibleError("Incompatible symbols: "
+						+ idKind.getKey(leftKind) + " with "
+						+ idKind.getKey(rightKind));
 		} else {
 			return false;
 		}
