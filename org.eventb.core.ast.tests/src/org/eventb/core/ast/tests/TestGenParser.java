@@ -39,6 +39,7 @@ import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.ProblemKind;
+import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
@@ -107,7 +108,7 @@ public class TestGenParser extends AbstractTests {
 		assertEquals(problemKind, problem.getMessage());
 	}
 	
-	private static void doExpressionTest(String formula, Expression expected,
+	private static Expression doExpressionTest(String formula, Expression expected,
 			FormulaFactory factory, LanguageVersion version) {
 		final IParseResult result = factory.parseExpression(formula,
 				version, null);
@@ -120,20 +121,28 @@ public class TestGenParser extends AbstractTests {
 		assertEquals(expected, actual);
 		
 		actual.accept(slChecker);
+		return actual;
 	}
 
-	private static void doExpressionTest(String formula, Expression expected, FormulaFactory factory) {
-		doExpressionTest(formula, expected, factory, LanguageVersion.V2);
+	private static Expression doExpressionTest(String formula, Expression expected, FormulaFactory factory) {
+		return doExpressionTest(formula, expected, factory, LanguageVersion.V2);
 	}
 	
-	private static void doExpressionTest(String formula, Expression expected) {
-		doExpressionTest(formula, expected, ff);
-	}
-	private static void doPredicateTest(String formula, Predicate expected) {
-		doPredicateTest(formula, expected, LanguageVersion.V2);
+	private static Expression doExpressionTest(String formula, Expression expected, Type expectedType) {
+		final Expression actual = doExpressionTest(formula, expected);
+		assertEquals(expectedType, actual.getType());
+		return actual;
 	}
 	
-	private static void doPredicateTest(String formula, Predicate expected, LanguageVersion version) {
+	private static Expression doExpressionTest(String formula, Expression expected) {
+		return doExpressionTest(formula, expected, ff);
+	}
+	
+	private static Predicate doPredicateTest(String formula, Predicate expected) {
+		return doPredicateTest(formula, expected, LanguageVersion.V2);
+	}
+	
+	private static Predicate doPredicateTest(String formula, Predicate expected, LanguageVersion version) {
 		final IParseResult result = ff.parsePredicate(formula,
 				version, null);
 		if (result.hasProblem()) {
@@ -145,6 +154,7 @@ public class TestGenParser extends AbstractTests {
 		assertEquals(expected, actual);
 	
 		actual.accept(slChecker);
+		return actual;
 	}
 
 	private static void doPredicatePatternTest(String formula, Predicate expected) {
@@ -711,45 +721,60 @@ public class TestGenParser extends AbstractTests {
 	
 	public void testEmptySetOfType() throws Exception {
 		final Expression expected = ff.makeEmptySet(POW_INT_TYPE, null);
-		doExpressionTest("∅ ⦂ ℙ(ℤ)", expected);		
+		doExpressionTest("∅ ⦂ ℙ(ℤ)", expected, POW_INT_TYPE);
 	}
 	
 	public void testIdOfType() throws Exception {
 		final Expression expected = ff.makeAtomicExpression(KID_GEN, null, ff
 				.makeRelationalType(INT_TYPE, INT_TYPE));
-		doExpressionTest("id ⦂ ℙ(ℤ×ℤ)", expected);		
+		doExpressionTest("id ⦂ ℙ(ℤ×ℤ)", expected, ff.makePowerSetType(ff
+				.makeProductType(INT_TYPE, INT_TYPE)));
 	}
 	
 	public void testPrj1OfType() throws Exception {
-		final Expression expected = ff.makeAtomicExpression(KPRJ1_GEN, null, ff
+		final PowerSetType expectedType = ff
 				.makeRelationalType(ff.makeProductType(S_TYPE, INT_TYPE),
-						S_TYPE));
-		doExpressionTest("prj1 ⦂ ℙ(S×ℤ×S)", expected);		
+						S_TYPE);
+		final Expression expected = ff.makeAtomicExpression(KPRJ1_GEN, null, expectedType);
+		doExpressionTest("prj1 ⦂ ℙ(S×ℤ×S)", expected, expectedType);		
 	}
 	
 	public void testPrj2OfType() throws Exception {
-		final Expression expected = ff.makeAtomicExpression(KPRJ2_GEN, null, ff
+		final PowerSetType expectedType = ff
 				.makeRelationalType(ff.makeProductType(INT_TYPE, S_TYPE),
-						S_TYPE));
-		doExpressionTest("prj2 ⦂ ℙ(ℤ×S×S)", expected);		
+						S_TYPE);
+		final Expression expected = ff.makeAtomicExpression(KPRJ2_GEN, null, expectedType);
+		doExpressionTest("prj2 ⦂ ℙ(ℤ×S×S)", expected, expectedType);		
 	}
 	
-	// TODO add oftype tests for id, prj1, prj2 and verify it applies to no others
-	// TODO add oftype tests for bound identifier declarations
 	public void testBoundIdentDeclOfType() throws Exception {
-		final Predicate expected = ff.makeQuantifiedPredicate(FORALL,
+		final QuantifiedPredicate expected = ff.makeQuantifiedPredicate(FORALL,
 				asList( ff.makeBoundIdentDecl("x", null, INT_TYPE) ),
 				LIT_BFALSE, null);
-		doPredicateTest("∀x⦂ℤ·⊥", expected);
+		doQuantPredicateTest("∀x⦂ℤ·⊥", expected, INT_TYPE);
 	}
 	
 	public void testBoundIdentDeclSeveralOfType() throws Exception {
-		final Predicate expected = ff.makeQuantifiedPredicate(FORALL,
+		final QuantifiedPredicate expected = ff.makeQuantifiedPredicate(FORALL,
 				asList(ff.makeBoundIdentDecl("x", null, INT_TYPE),
 						ff.makeBoundIdentDecl("y", null),
-						ff.makeBoundIdentDecl("z", null, POW_INT_TYPE)),
+						ff.makeBoundIdentDecl("z", null, POW_S_TYPE)),
 				LIT_BFALSE, null);
-		doPredicateTest("∀x⦂ℤ,y,z⦂ℙ(ℤ)·⊥", expected);
+		doQuantPredicateTest("∀x⦂ℤ,y,z⦂ℙ(S)·⊥", expected, INT_TYPE, null, POW_S_TYPE);
+	}
+
+	private static void doQuantPredicateTest(String formula, QuantifiedPredicate expected, Type...types) {
+		final Predicate actual = doPredicateTest(formula, expected);
+		final QuantifiedPredicate quant = (QuantifiedPredicate) actual;
+		final BoundIdentDecl[] boundIdents = quant.getBoundIdentDecls();
+		assertBoundTypes(boundIdents, types);
+	}
+	
+	private static void assertBoundTypes(BoundIdentDecl[] boundIdents, Type...types) {
+		assertEquals(types.length, boundIdents.length);
+		for (int i = 0; i < types.length; i++) {
+			assertEquals(types[i], boundIdents[i].getType());
+		}
 	}
 	
 	public void testCSetExplicit() throws Exception {

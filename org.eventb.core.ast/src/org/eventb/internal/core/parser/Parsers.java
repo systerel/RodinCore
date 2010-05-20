@@ -405,6 +405,18 @@ public class Parsers {
 		}
 	};
 
+	static final IMainParser<BoundIdentDecl> BOUND_IDENT_DECL_SUBPARSER = new DefaultMainParser<BoundIdentDecl>() {
+
+		public BoundIdentDecl parse(ParserContext pc) throws SyntaxError {
+			final Expression ident = EXPR_PARSER.nud(pc); // stop on _COMMA, manage _OFTYPE
+			if (!(ident instanceof FreeIdentifier)) {
+				throw new SyntaxError("expected a non bound identifier at position "
+						+ pc.getSourceLocation());
+			}
+			return ((FreeIdentifier) ident).asDecl(pc.factory);
+		}
+	};
+
 	static final INudParser<IntegerLiteral> INTLIT_SUBPARSER = new ValuedNudParser<IntegerLiteral>(INTLIT) {
 	
 		@Override
@@ -460,6 +472,9 @@ public class Parsers {
 		protected Expression makeValue(ParserContext pc, Expression left,
 				Type right, SourceLocation loc) throws SyntaxError {
 			switch (left.getTag()) {
+			case Formula.FREE_IDENT: // FIXME authorizes Oftype to appear at more places than specified
+				final FreeIdentifier ident = (FreeIdentifier) left;
+				return pc.factory.makeFreeIdentifier(ident.getName(), loc, right);
 			case Formula.EMPTYSET:
 			case Formula.KID_GEN:
 			case Formula.KPRJ1_GEN:
@@ -673,10 +688,8 @@ public class Parsers {
 
 		@Override
 		public QuantifiedPredicate parseRight(ParserContext pc) throws SyntaxError {
-			final List<FreeIdentifier> identList = pc.subParse(FREE_IDENT_LIST_PARSER);
+			final List<BoundIdentDecl> boundIdentifiers = pc.subParse(BOUND_IDENT_DECL_LIST_PARSER);
 			pc.progress(_DOT);
-			final List<BoundIdentDecl> boundIdentifiers = makeBoundIdentDeclList(
-					pc.factory, identList);
 			final Predicate pred = pc.subParse(PRED_PARSER, boundIdentifiers);
 
 			return pc.factory.makeQuantifiedPredicate(tag, boundIdentifiers,
@@ -801,7 +814,7 @@ public class Parsers {
 	}
 
 	// parses a non empty list of T
-	static class AbstListParser<T extends Expression> extends DefaultMainParser<List<T>> {
+	static class AbstListParser<T> extends DefaultMainParser<List<T>> {
 	
 		private final INudParser<T> parser;
 		
@@ -826,6 +839,8 @@ public class Parsers {
 	static final AbstListParser<Expression> EXPR_LIST_PARSER = new AbstListParser<Expression>(EXPR_PARSER);
 	
 	static final AbstListParser<FreeIdentifier> FREE_IDENT_LIST_PARSER = new AbstListParser<FreeIdentifier>(FREE_IDENT_SUBPARSER);
+	
+	static final AbstListParser<BoundIdentDecl> BOUND_IDENT_DECL_LIST_PARSER = new AbstListParser<BoundIdentDecl>(BOUND_IDENT_DECL_SUBPARSER);
 	
 	static final INudParser<SetExtension> SETEXT_PARSER = new PrefixNudParser<SetExtension>(SETEXT) {
 		
