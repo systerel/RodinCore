@@ -39,6 +39,7 @@ import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.ProblemKind;
+import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
@@ -155,6 +156,27 @@ public class TestGenParser extends AbstractTests {
 	
 		actual.accept(slChecker);
 		return actual;
+	}
+	
+	private static void doQuantPredicateTest(String formula, QuantifiedPredicate expected, Type...types) {
+		final Predicate actual = doPredicateTest(formula, expected);
+		final QuantifiedPredicate quant = (QuantifiedPredicate) actual;
+		final BoundIdentDecl[] boundIdents = quant.getBoundIdentDecls();
+		assertBoundTypes(boundIdents, types);
+	}
+	
+	private static void doQuantExpressionTest(String formula, QuantifiedExpression expected, Type...types) {
+		final Expression actual = doExpressionTest(formula, expected);
+		final QuantifiedExpression quant = (QuantifiedExpression) actual;
+		final BoundIdentDecl[] boundIdents = quant.getBoundIdentDecls();
+		assertBoundTypes(boundIdents, types);
+	}
+	
+	private static void assertBoundTypes(BoundIdentDecl[] boundIdents, Type...types) {
+		assertEquals(types.length, boundIdents.length);
+		for (int i = 0; i < types.length; i++) {
+			assertEquals(types[i], boundIdents[i].getType());
+		}
 	}
 
 	private static void doPredicatePatternTest(String formula, Predicate expected) {
@@ -763,18 +785,16 @@ public class TestGenParser extends AbstractTests {
 		doQuantPredicateTest("∀x⦂ℤ,y,z⦂ℙ(S)·⊥", expected, INT_TYPE, null, POW_S_TYPE);
 	}
 
-	private static void doQuantPredicateTest(String formula, QuantifiedPredicate expected, Type...types) {
-		final Predicate actual = doPredicateTest(formula, expected);
-		final QuantifiedPredicate quant = (QuantifiedPredicate) actual;
-		final BoundIdentDecl[] boundIdents = quant.getBoundIdentDecls();
-		assertBoundTypes(boundIdents, types);
-	}
-	
-	private static void assertBoundTypes(BoundIdentDecl[] boundIdents, Type...types) {
-		assertEquals(types.length, boundIdents.length);
-		for (int i = 0; i < types.length; i++) {
-			assertEquals(types[i], boundIdents[i].getType());
-		}
+	public void testBoundIdentDeclExprOfType() throws Exception {
+		final QuantifiedExpression expected = ff.makeQuantifiedExpression(QUNION,
+				asList(BID_x),
+				ff.makeRelationalPredicate(GT,
+						BI_0,
+						ZERO, null),
+				ff.makeAssociativeExpression(MUL,
+						asList(ONE, BI_0), null),
+				null, Form.Explicit);
+		doQuantExpressionTest("⋃x⦂ℤ·x>0∣1∗x", expected, INT_TYPE);
 	}
 	
 	public void testCSetExplicit() throws Exception {
