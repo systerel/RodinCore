@@ -82,7 +82,7 @@ public class FunImgSimpImpl {
 
 	public static List<IPosition> getApplicablePositions(Predicate hyp,
 			IProverSequent sequent) {
-		final FunImgSimpFilter filter = new FunImgSimpFilter(hyp, sequent);
+		final FunImgSimpFilter filter = new FunImgSimpFilter(sequent);
 		final Predicate pred = hyp == null ? sequent.goal() : hyp;
 		return pred.getPositions(filter);
 	}
