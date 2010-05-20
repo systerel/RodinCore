@@ -714,6 +714,44 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("∅ ⦂ ℙ(ℤ)", expected);		
 	}
 	
+	public void testIdOfType() throws Exception {
+		final Expression expected = ff.makeAtomicExpression(KID_GEN, null, ff
+				.makeRelationalType(INT_TYPE, INT_TYPE));
+		doExpressionTest("id ⦂ ℙ(ℤ×ℤ)", expected);		
+	}
+	
+	public void testPrj1OfType() throws Exception {
+		final Expression expected = ff.makeAtomicExpression(KPRJ1_GEN, null, ff
+				.makeRelationalType(ff.makeProductType(S_TYPE, INT_TYPE),
+						S_TYPE));
+		doExpressionTest("prj1 ⦂ ℙ(S×ℤ×S)", expected);		
+	}
+	
+	public void testPrj2OfType() throws Exception {
+		final Expression expected = ff.makeAtomicExpression(KPRJ2_GEN, null, ff
+				.makeRelationalType(ff.makeProductType(INT_TYPE, S_TYPE),
+						S_TYPE));
+		doExpressionTest("prj2 ⦂ ℙ(ℤ×S×S)", expected);		
+	}
+	
+	// TODO add oftype tests for id, prj1, prj2 and verify it applies to no others
+	// TODO add oftype tests for bound identifier declarations
+	public void testBoundIdentDeclOfType() throws Exception {
+		final Predicate expected = ff.makeQuantifiedPredicate(FORALL,
+				asList( ff.makeBoundIdentDecl("x", null, INT_TYPE) ),
+				LIT_BFALSE, null);
+		doPredicateTest("∀x⦂ℤ·⊥", expected);
+	}
+	
+	public void testBoundIdentDeclSeveralOfType() throws Exception {
+		final Predicate expected = ff.makeQuantifiedPredicate(FORALL,
+				asList(ff.makeBoundIdentDecl("x", null, INT_TYPE),
+						ff.makeBoundIdentDecl("y", null),
+						ff.makeBoundIdentDecl("z", null, POW_INT_TYPE)),
+				LIT_BFALSE, null);
+		doPredicateTest("∀x⦂ℤ,y,z⦂ℙ(ℤ)·⊥", expected);
+	}
+	
 	public void testCSetExplicit() throws Exception {
 		final Expression expected = ff.makeQuantifiedExpression(CSET,
 				asList(BID_x), LIT_BTRUE, BI_0, null, Form.Explicit);

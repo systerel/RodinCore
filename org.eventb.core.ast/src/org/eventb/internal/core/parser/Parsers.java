@@ -461,7 +461,11 @@ public class Parsers {
 				Type right, SourceLocation loc) throws SyntaxError {
 			switch (left.getTag()) {
 			case Formula.EMPTYSET:
-				return pc.factory.makeEmptySet(right, loc);
+			case Formula.KID_GEN:
+			case Formula.KPRJ1_GEN:
+			case Formula.KPRJ2_GEN:
+				return pc.factory.makeAtomicExpression(left.getTag(), loc,
+						right);
 			default:
 				throw new SyntaxError("Unexpected oftype");
 			}
