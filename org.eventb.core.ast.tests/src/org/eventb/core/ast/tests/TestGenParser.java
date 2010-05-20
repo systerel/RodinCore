@@ -1301,4 +1301,22 @@ public class TestGenParser extends AbstractTests {
 				S_TYPE);
 		doTypeTest("S×S×S", expected);
 	}
+	
+	public void testDoubleBoundIdentifiers() throws Exception {
+		final Predicate expected = ff.makeQuantifiedPredicate(FORALL, asList(BID_x), ff.makeAssociativePredicate(Formula.LAND,
+				Arrays.<Predicate> asList(
+						ff.makeRelationalPredicate(IN, BI_0, FRID_A, null),
+						ff.makeQuantifiedPredicate(FORALL, asList(BID_x), 
+								ff.makeRelationalPredicate(IN, BI_0, FRID_B, null), null)
+						), null), null);
+		doPredicateTest("∀x·x ∈ A ∧ (∀x·x ∈ B)", expected);
+	}
+
+	// Some sub-parsers are triggered manually, ensure that it does not allow unacceptable formulae
+	public void testManualSubParsers() throws Exception {
+		// bound identifier name is an operator !
+		final IParseResult result = ff.parsePredicate("∀+·⊤", LanguageVersion.V2, null);
+		System.out.println(result.getParsedPredicate());
+		assertFailure(result, ProblemKind.SyntaxError);
+	}
 }

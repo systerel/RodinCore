@@ -408,20 +408,20 @@ public class Parsers {
 	static final IMainParser<BoundIdentDecl> BOUND_IDENT_DECL_SUBPARSER = new DefaultMainParser<BoundIdentDecl>() {
 
 		public BoundIdentDecl parse(ParserContext pc) throws SyntaxError {
-			final FreeIdentifier ident = pc.subParse(FREE_IDENT_SUBPARSER);
-			final FreeIdentifier typed;
+			final String name = pc.t.val;
+			pc.progress();
+			Type type = null;
 			if (pc.t.kind == _TYPING) {
+				// TODO not so much clean, does not use OFTYPE parser
 				pc.progress();
 				pc.pushParentKind(_TYPING);
 				try {
-					typed = (FreeIdentifier) OFTYPE.led(ident, pc);
+					type = pc.subParse(TYPE_PARSER);
 				} finally {
 					pc.popParentKind();
 				}
-			} else {
-				typed = ident;
 			}
-			return typed.asDecl(pc.factory);
+			return pc.factory.makeBoundIdentDecl(name, pc.getSourceLocation(), type);
 		}
 	};
 
@@ -468,7 +468,9 @@ public class Parsers {
 		}
 	};
 
-	// always returns an expression with the same tag as left
+	/**
+	 * Always returns an expression with the same tag as left
+	 */
 	static final DefaultLedParser<Expression, Expression, Type> OFTYPE = new DefaultLedParser<Expression, Expression, Type>(
 			NO_TAG, TYPE_PARSER) {
 		
