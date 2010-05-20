@@ -44,60 +44,52 @@ import org.eventb.core.seqprover.IProverSequent;
 public class FunImgSimpImpl {
 	
 	private static class FunImgSimpFilter extends DefaultFilter {
-		private final FunImgSimpImpl parent;
 
-		public FunImgSimpFilter(FunImgSimpImpl parent) {
-			this.parent = parent;
+		private final IProverSequent sequent;
+
+		public FunImgSimpFilter(IProverSequent sequent) {
+			this.sequent = sequent;
 		}
 
 		@Override
 		public boolean select(BinaryExpression expression) {
-
-		final Expression f = parent.getFunImgFunction(expression);
-			if (f == null){
+			final Expression f = getFunImgFunction(expression);
+			if (f == null) {
 				return false;
 			}
-			return parent.isApplicable(f);
+			return isApplicable(f, sequent);
 		}
 	}
-		
-	private final IProverSequent sequent;
-	private final Predicate hyp;
-	
-	public FunImgSimpImpl(Predicate hyp, IProverSequent sequent) {
-		this.hyp = hyp;
-		this.sequent = sequent;
+
+	public static Predicate getNeededHyp(Expression expression,
+			IProverSequent sequent) {
+		return searchFunction(expression, sequent);
 	}
-	
-	public Predicate getNeededHyp(Expression expression){
-		return searchFunction(expression);
-	}
-		
-	public Predicate searchFunction(Expression f) {
+
+	private static Predicate searchFunction(Expression f, IProverSequent sequent) {
 		for (Predicate hypo : sequent.visibleHypIterable()) {
-			final Predicate predicate = searchPFuncKind(f,hypo);
-			if (predicate != null){
+			final Predicate predicate = searchPFuncKind(f, hypo);
+			if (predicate != null) {
 				return predicate;
 			}
 		}
 		return null;
 	}
-	
-	public boolean isApplicable(Expression f){
-		return searchFunction(f) != null;
+
+	private static boolean isApplicable(Expression f, IProverSequent sequent) {
+		return searchFunction(f, sequent) != null;
 	}
-	
-	public List<IPosition> getApplicablePositions() {
-		final FunImgSimpFilter filter = new FunImgSimpFilter(this);
-		if (hyp == null){
-			return sequent.goal().getPositions(filter);
-		}
-		return hyp.getPositions(filter);
+
+	public static List<IPosition> getApplicablePositions(Predicate hyp,
+			IProverSequent sequent) {
+		final FunImgSimpFilter filter = new FunImgSimpFilter(hyp, sequent);
+		final Predicate pred = hyp == null ? sequent.goal() : hyp;
+		return pred.getPositions(filter);
 	}
 
 	%include {FormulaV2.tom}
 	
-	Expression getFunImgFunction(Expression expr){
+	private static Expression getFunImgFunction(Expression expr){
 	
 		%match (Expression expr) {
 			
@@ -110,7 +102,7 @@ public class FunImgSimpImpl {
 	}
 				 
 	// search a function if it is at least a partial function 
-	private Predicate searchPFuncKind(Expression f, Predicate predicate)
+	private static Predicate searchPFuncKind(Expression f, Predicate predicate)
 	{
 			%match (Predicate predicate) {
 			/**

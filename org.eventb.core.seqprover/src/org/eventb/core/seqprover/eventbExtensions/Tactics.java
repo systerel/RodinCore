@@ -3608,9 +3608,9 @@ public class Tactics {
 	 * 
 	 * @since 1.3
 	 */
-	public static List<IPosition> funImgSimpGetPositions(Predicate hyp, IProverSequent sequent) {
-		final FunImgSimpImpl impl = new FunImgSimpImpl(hyp, sequent);
-		return impl.getApplicablePositions();
+	public static List<IPosition> funImgSimpGetPositions(Predicate hyp,
+			IProverSequent sequent) {
+		return FunImgSimpImpl.getApplicablePositions(hyp, sequent);
 	}
 
 }

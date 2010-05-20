@@ -9,6 +9,7 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimpImpl.getNeededHyp;
 
 import java.util.Arrays;
 
@@ -54,19 +55,18 @@ public class FunImgSimplifies extends AbstractManualRewrites implements
 		final Input input = (Input) reasonerInput;
 		final Predicate hyp = input.pred;
 		final IPosition position = input.position;
-		final FunImgSimpImpl impl = new FunImgSimpImpl(hyp, seq);
 		if (hyp == null) {
 			final Predicate goal = seq.goal();
-			final Predicate neededHyp = impl.getNeededHyp(getFunction(goal,
-					position));
+			final Expression fExpr = getFunction(goal, position);
+			final Predicate neededHyp = getNeededHyp(fExpr, seq);
 			if (neededHyp == null) {
 				return ProverFactory.reasonerFailure(this, input, "Rewriter "
 						+ getReasonerID() + " is inapplicable for goal " //
 						+ goal + " at position " + position);
 			}
 		} else {
-			final Predicate neededHyp = impl.getNeededHyp(getFunction(hyp,
-					position));
+			final Expression fExpr = getFunction(hyp, position);
+			final Predicate neededHyp = getNeededHyp(fExpr, seq);
 			if (neededHyp == null) {
 				return ProverFactory.reasonerFailure(this, input, "Rewriter "
 						+ getReasonerID() + " is inapplicable for hypothesis "
