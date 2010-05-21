@@ -137,7 +137,7 @@ public class GenParser {
 		protected final LanguageVersion version;
 		private StackedValue<Binding> binding = new StackedValue<Binding>(new Binding());
 		private StackedValue<Integer> parentKind = new StackedValue<Integer>(_EOF); 
-		private final StackedValue<Integer> startPos = new StackedValue<Integer>(-1); 
+		private StackedValue<Integer> startPos = new StackedValue<Integer>(-1); 
 		private int endPos = -1;
 		private boolean parsingType;
 		protected Token t;    // last recognized token
@@ -193,7 +193,8 @@ public class GenParser {
 		}
 		
 		public SavedContext save() {
-			return new SavedContext(scanner.save(), t, la, parsingType, binding, parentKind);
+			return new SavedContext(scanner.save(), t, la, parsingType,
+					startPos, binding, parentKind);
 		}
 		
 		public void restore(SavedContext sc) {
@@ -201,6 +202,7 @@ public class GenParser {
 			t = sc.t;
 			la = sc.la;
 			parsingType = sc.parsingType;
+			startPos = sc.startPos;
 			binding = sc.binding;
 			parentKind = sc.parentKind;
 		}
@@ -210,14 +212,16 @@ public class GenParser {
 			final Token t;
 			final Token la;
 			final boolean parsingType;
+			final StackedValue<Integer> startPos;
 			final StackedValue<Binding> binding;
 			final StackedValue<Integer> parentKind;
 			
-			SavedContext(ScanState scanState, Token t, Token la, boolean parsingType, StackedValue<Binding> binding, StackedValue<Integer> parentKind) {
+			SavedContext(ScanState scanState, Token t, Token la, boolean parsingType, StackedValue<Integer> startPos, StackedValue<Binding> binding, StackedValue<Integer> parentKind) {
 				this.scanState = scanState;
 				this.t = t;
 				this.la = la;
 				this.parsingType = parsingType;
+				this.startPos = new StackedValue<Integer>(startPos);
 				this.binding = new StackedValue<Binding>(binding);
 				this.parentKind = new StackedValue<Integer>(parentKind);
 			}

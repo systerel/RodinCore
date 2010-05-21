@@ -1309,7 +1309,9 @@ public class TestGenParser extends AbstractTests {
 						ff.makeQuantifiedPredicate(FORALL, asList(BID_x), 
 								ff.makeRelationalPredicate(IN, BI_0, FRID_B, null), null)
 						), null), null);
-		doPredicateTest("∀x·x ∈ A ∧ (∀x·x ∈ B)", expected);
+		final Predicate actual = doPredicateTest("∀x·x ∈ A ∧ (∀x·x ∈ B)", expected);
+		final SourceLocation loc = actual.getSourceLocation();
+		assertNotNull(loc);
 	}
 
 	// Some sub-parsers are triggered manually, ensure that it does not allow unacceptable formulae

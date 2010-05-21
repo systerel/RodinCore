@@ -125,11 +125,13 @@ public class Parsers {
 		
 		public final T nud(ParserContext pc) throws SyntaxError {
 			final String tokenVal = pc.t.val;
-			pc.progress();
+			pc.progress(getKind());
 			final SourceLocation loc = pc.getSourceLocation();
 			return makeValue(pc, tokenVal, loc);
 		}
 
+		protected abstract int getKind();
+		
 		/**
 		 * Makes the value to be returned by nud().
 		 * <p>
@@ -390,6 +392,11 @@ public class Parsers {
 				return pc.factory.makeBoundIdentifier(index, loc);
 			}
 		}
+
+		@Override
+		protected int getKind() {
+			return B_MATH.getIDENT();
+		}
 		
 	};
 	
@@ -405,11 +412,11 @@ public class Parsers {
 		}
 	};
 
-	static final IMainParser<BoundIdentDecl> BOUND_IDENT_DECL_SUBPARSER = new DefaultMainParser<BoundIdentDecl>() {
+	static final INudParser<BoundIdentDecl> BOUND_IDENT_DECL_SUBPARSER = new ValuedNudParser<BoundIdentDecl>(NO_TAG) {
 
-		public BoundIdentDecl parse(ParserContext pc) throws SyntaxError {
-			final String name = pc.t.val;
-			pc.progress();
+		@Override
+		protected BoundIdentDecl makeValue(ParserContext pc, String tokenVal,
+				SourceLocation loc) throws SyntaxError {
 			Type type = null;
 			if (pc.t.kind == _TYPING) {
 				// TODO not so much clean, does not use OFTYPE parser
@@ -421,7 +428,12 @@ public class Parsers {
 					pc.popParentKind();
 				}
 			}
-			return pc.factory.makeBoundIdentDecl(name, pc.getSourceLocation(), type);
+			return pc.factory.makeBoundIdentDecl(tokenVal, pc.getSourceLocation(), type);
+		}
+
+		@Override
+		protected int getKind() {
+			return B_MATH.getIDENT();
 		}
 	};
 
@@ -440,6 +452,11 @@ public class Parsers {
 						+ tokenVal);
 			}
 		}
+
+		@Override
+		protected int getKind() {
+			return B_MATH.getINTLIT();
+		}
 	};
 
 	static final INudParser<PredicateVariable> PRED_VAR_SUBPARSER = new ValuedNudParser<PredicateVariable>(
@@ -453,6 +470,11 @@ public class Parsers {
 						"Predicate variables are forbidden in this context");
 			}
 			return pc.factory.makePredicateVariable(tokenVal, loc);
+		}
+
+		@Override
+		protected int getKind() {
+			return B_MATH.getPREDVAR();
 		}
 	};
 
@@ -704,7 +726,7 @@ public class Parsers {
 			final Predicate pred = pc.subParse(PRED_PARSER, boundIdentifiers);
 
 			return pc.factory.makeQuantifiedPredicate(tag, boundIdentifiers,
-					pred, null);
+					pred, pc.getSourceLocation());
 		}
 	}
 
