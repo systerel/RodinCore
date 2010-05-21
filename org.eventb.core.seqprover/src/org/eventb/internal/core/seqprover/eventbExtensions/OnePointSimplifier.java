@@ -7,8 +7,6 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
- *     Systerel - refactored to fix instantiation of the One Point Rule
- *     Systerel - added a static method to attempt One Point Rule rewriting
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
