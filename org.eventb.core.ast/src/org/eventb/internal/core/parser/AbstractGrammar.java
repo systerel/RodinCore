@@ -68,9 +68,9 @@ public abstract class AbstractGrammar {
 		opRegistry.addOperator(_EOF, EOF_ID, GROUP0);
 		addOpenClose("(", ")");
 		try {
-			_INTLIT = addReservedSubParser(Parsers.INTLIT_SUBPARSER);
-			_IDENT = addReservedSubParser(Parsers.IDENT_SUBPARSER);
-			subParsers.addNud(_LPAR, Parsers.CLOSED_SUGAR);
+			_INTLIT = addReservedSubParser(SubParsers.INTLIT_SUBPARSER);
+			_IDENT = addReservedSubParser(SubParsers.IDENT_SUBPARSER);
+			subParsers.addNud(_LPAR, MainParsers.CLOSED_SUGAR);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

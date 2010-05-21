@@ -12,12 +12,11 @@ package org.eventb.internal.core.parser;
 
 import static org.eventb.core.ast.Formula.*;
 import static org.eventb.internal.core.parser.OperatorRegistry.GROUP0;
-import static org.eventb.internal.core.parser.Parsers.*;
+import static org.eventb.internal.core.parser.SubParsers.*;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.extension.CycleError;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
-import org.eventb.internal.core.parser.Parsers.BinaryExpressionInfix;
 
 /**
  * @author Nicolas Beauger

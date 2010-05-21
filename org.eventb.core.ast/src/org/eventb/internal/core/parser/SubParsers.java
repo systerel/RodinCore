@@ -12,16 +12,14 @@ package org.eventb.internal.core.parser;
 
 import static java.util.Arrays.asList;
 import static org.eventb.core.ast.Formula.*;
-import static org.eventb.internal.core.parser.AbstractGrammar.*;
 import static org.eventb.internal.core.parser.BMath.*;
+import static org.eventb.internal.core.parser.MainParsers.*;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
-import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.AtomicExpression;
@@ -36,7 +34,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.IntegerLiteral;
-import org.eventb.core.ast.InvalidExpressionException;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
@@ -52,18 +49,19 @@ import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.QuantifiedExpression.Form;
 import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.internal.core.parser.GenParser.IMainParser;
 import org.eventb.internal.core.parser.GenParser.ParserContext;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
-import org.eventb.internal.core.parser.GenParser.ParserContext.SavedContext;
+import org.eventb.internal.core.parser.MainParsers.PatternParser;
 
 /**
+ * Sub-parsers are specialized parsers; they are usually bound to an operator.
+ * 
  * @author Nicolas Beauger
- *
+ * 
  */
-public class Parsers {
+public class SubParsers {
 
-	private static abstract class AbstractSubParser<T> {
+	static abstract class AbstractSubParser<T> {
 
 		// TODO move tag downwards to sub-classes that really require it
 		protected final int tag;
@@ -203,212 +201,6 @@ public class Parsers {
 		}
 	}
 	
-	private static String makeSynErrMessage(Formula<?> formula, Class<?> clazz) {
-		return "expected a " + clazz.getCanonicalName() + ", but was "
-				+ formula + " at position " + formula.getSourceLocation();
-	}
-
-	static Predicate asPredicate(Formula<?> formula) throws SyntaxError {
-		if (!(formula instanceof Predicate)) {
-			throw new SyntaxError(makeSynErrMessage(formula, Predicate.class));
-		}
-		return (Predicate) formula;
-	}
-
-	static Expression asExpression(Formula<?> formula) throws SyntaxError {
-		if (!(formula instanceof Expression)) {
-			throw new SyntaxError(makeSynErrMessage(formula, Expression.class));
-		}
-		return (Expression) formula;
-	}
-
-	private static abstract class DefaultMainParser<T> extends AbstractSubParser<T> implements IMainParser<T> {
-
-		protected DefaultMainParser() {
-			super(NO_TAG);
-		}
-
-		public final T nud(ParserContext pc) throws SyntaxError {
-			return parse(pc);
-		}
-	}
-	
-	private static abstract class ParserApplier<Parser> {
-		
-		public Formula<?> apply(ParserContext pc, Formula<?> left) throws SyntaxError {
-			final Parser parser = getParser(pc);
-			pc.pushParentKind();
-			try {
-				return apply(pc, parser, left);
-			} finally {
-				pc.popParentKind();
-			}
-		}
-		
-		protected abstract Parser getParser(ParserContext pc) throws SyntaxError;
-		protected abstract Formula<?> apply(ParserContext pc, Parser parser, Formula<?> left) throws SyntaxError;
-		
-
-		protected static void throwNoParserFoundFor(ParserContext pc) throws SyntaxError {
-			throw new SyntaxError("don't know how to parse: " + pc.t.val);
-		}
-
-		// errors must be non empty 
-		protected static SyntaxError newCompoundError(List<SyntaxError> errors) {
-			final StringBuilder reason = new StringBuilder(
-					"Parse failed because");
-			if (errors.size()>=2) {
-				reason.append(" either: ");
-			} else {
-				reason.append(": ");
-			}
-			final Iterator<SyntaxError> iter = errors.iterator();
-			while(iter.hasNext()) {
-			final SyntaxError syntaxError = iter.next();
-				reason.append(syntaxError.getMessage());
-				if (iter.hasNext()) {
-					reason.append(" OR ");
-				}
-			}
-			return new SyntaxError(reason.toString());
-		}
-
-	}
-	
-	static final ParserApplier<List<INudParser<? extends Formula<?>>>> NUD_APPLIER = new ParserApplier<List<INudParser<? extends Formula<?>>>>() {
-		
-		@Override
-		protected List<INudParser<? extends Formula<?>>> getParser(ParserContext pc)
-		throws SyntaxError {
-			final List<INudParser<? extends Formula<?>>> subParsers = pc.getNudParsers();
-			if (subParsers.isEmpty()) {
-				throwNoParserFoundFor(pc);
-			}
-			return subParsers;
-		}
-		
-		@Override
-		protected Formula<?> apply(ParserContext pc,
-				List<INudParser<? extends Formula<?>>> nudParsers,
-				Formula<?> left) throws SyntaxError {
-			final List<SyntaxError> errors = new ArrayList<SyntaxError>();
-			final Iterator<INudParser<? extends Formula<?>>> iter = nudParsers.iterator();
-			final SavedContext savedContext = pc.save();
-			while(iter.hasNext()) {
-				final INudParser<? extends Formula<?>> nudParser = iter.next();
-				try {
-					// FIXME the call to nud may add problems to pc.result
-					// without throwing an exception
-					return nudParser.nud(pc);
-				} catch (SyntaxError e) {
-					errors.add(e);
-					pc.restore(savedContext);
-				}
-			}
-			throw newCompoundError(errors);
-		}
-		
-	};
-
-	static final ParserApplier<ILedParser<? extends Formula<?>>> LED_APPLIER = new ParserApplier<ILedParser<? extends Formula<?>>>() {
-		
-		@Override
-		protected ILedParser<? extends Formula<?>> getParser(ParserContext pc)
-				throws SyntaxError {
-			final ILedParser<? extends Formula<?>> subParser = pc.getLedParser();
-			if (subParser == null) {
-				throwNoParserFoundFor(pc);
-			}
-			return subParser;
-		}
-		
-		@Override
-		protected Formula<?> apply(ParserContext pc,
-				ILedParser<? extends Formula<?>> parser, Formula<?> left)
-				throws SyntaxError {
-			// TODO implement backtracking for led parsers as well 
-			pc.progress();
-			return parser.led(left, pc);
-		}
-		
-	};
-	
-	// Core algorithm implementation
-	private static class FormulaParser extends DefaultMainParser<Formula<?>> {
-		
-		public FormulaParser() {
-			// void constructor
-		}
-		
-		public Formula<?> parse(ParserContext pc)
-				throws SyntaxError {
-		
-			Formula<?> left = NUD_APPLIER.apply(pc, null);
-
-			while (pc.canProgressRight()) {
-				left = LED_APPLIER.apply(pc, left);
-			}
-			
-			return left;
-		}
-	}
-
-	static final FormulaParser FORMULA_PARSER = new FormulaParser();
-
-	private static class TypeParser extends DefaultMainParser<Type> {
-		public TypeParser() {
-			// void constructor
-		}
-		
-		public Type parse(ParserContext pc) throws SyntaxError {
-			pc.startParsingType();
-			final Expression expression = pc.subParse(EXPR_PARSER);
-			if (!expression.isATypeExpression()) {
-				throw new SyntaxError(
-						"expected a type expression at position "
-								+ pc.getSourceLocation());
-			}
-			try {
-				return expression.toType(pc.factory);
-			} catch (InvalidExpressionException e) {
-				// TODO should not happen (already checked)
-				e.printStackTrace();
-				return null;
-			} finally {
-				pc.stopParsingType();
-			}
-		}
-	}
-
-	static final TypeParser TYPE_PARSER = new TypeParser();
-
-	private static class PredicateParser extends DefaultMainParser<Predicate> {
-		public PredicateParser() {
-			// void constructor
-		}
-		
-		public Predicate parse(ParserContext pc) throws SyntaxError {
-			final Formula<?> formula = FORMULA_PARSER.parse(pc);
-			return asPredicate(formula);
-		}
-	}
-
-	static final PredicateParser PRED_PARSER = new PredicateParser();
-
-	private static class ExpressionParser extends DefaultMainParser<Expression> {
-		
-		public ExpressionParser() {
-			// void constructor
-		}
-		
-		public Expression parse(ParserContext pc) throws SyntaxError {
-			final Formula<?> formula = FORMULA_PARSER.parse(pc);
-			return asExpression(formula);
-		}
-	}
-
-	static final ExpressionParser EXPR_PARSER = new ExpressionParser();
-
 	// Takes care of the bindings.
 	static final INudParser<Identifier> IDENT_SUBPARSER = new ValuedNudParser<Identifier>(NO_TAG) {
 
@@ -436,9 +228,9 @@ public class Parsers {
 		
 	};
 	
-	static final IMainParser<FreeIdentifier> FREE_IDENT_SUBPARSER = new DefaultMainParser<FreeIdentifier>() {
+	static final INudParser<FreeIdentifier> FREE_IDENT_SUBPARSER = new INudParser<FreeIdentifier>() {
 
-		public FreeIdentifier parse(ParserContext pc) throws SyntaxError {
+		public FreeIdentifier nud(ParserContext pc) throws SyntaxError {
 			final Identifier ident = IDENT_SUBPARSER.nud(pc);
 			if (!(ident instanceof FreeIdentifier)) {
 				throw new SyntaxError("expected a free identifier at position "
@@ -448,7 +240,7 @@ public class Parsers {
 		}
 	};
 
-	static final INudParser<BoundIdentDecl> BOUND_IDENT_DECL_SUBPARSER = new ValuedNudParser<BoundIdentDecl>(NO_TAG) {
+	static final INudParser<BoundIdentDecl> BOUND_IDENT_DECL_SUBPARSER = new ValuedNudParser<BoundIdentDecl>(BOUND_IDENT_DECL) {
 
 		@Override
 		protected BoundIdentDecl makeValue(ParserContext pc, String tokenVal,
@@ -511,18 +303,6 @@ public class Parsers {
 		@Override
 		protected int getKind() {
 			return B_MATH.getPREDVAR();
-		}
-	};
-
-	// TODO verify that all formulae inside parentheses are parsed with a GROUP0
-	// parent kind
-	static final IMainParser<Formula<?>> CLOSED_SUGAR = new DefaultMainParser<Formula<?>> () {
-
-		public Formula<?> parse(ParserContext pc) throws SyntaxError {
-			pc.progressOpenParen();
-			final Formula<?> formula = pc.subParse(FORMULA_PARSER);
-			pc.progressCloseParen();
-			return formula;
 		}
 	};
 
@@ -828,79 +608,6 @@ public class Parsers {
 
 	};
 
-	static class PatternParser extends DefaultMainParser<Pattern> {
-		
-		final Pattern pattern;
-		
-		public PatternParser(ParseResult result) {
-			this.pattern = new Pattern(result);
-		}
-
-		public Pattern parse(ParserContext pc) throws SyntaxError {
-			final PatternAtomParser atomParser = new PatternAtomParser(pattern, this);
-			pc.subParse(atomParser);
-			while (pc.t.kind == _MAPSTO) {
-				pc.progress();
-				pc.subParse(atomParser);
-				pattern.mapletParsed(pc.getSourceLocation());
-			}
-			return pattern;
-		}
-
-		private static class PatternAtomParser extends DefaultMainParser<Object> {
-
-			private final Pattern pattern;
-			private final PatternParser parser;
-			
-			public PatternAtomParser(Pattern pattern, PatternParser parser) {
-				this.pattern = pattern;
-				this.parser = parser;
-			}
-
-			public Object parse(ParserContext pc) throws SyntaxError {
-				if (pc.t.kind == _LPAR) {
-					pc.progressOpenParen();
-					pc.subParse(parser);
-					pc.progressCloseParen();
-				} else {
-					final BoundIdentDecl boundIdent = pc
-							.subParse(BOUND_IDENT_DECL_SUBPARSER);
-					pattern.declParsed(boundIdent);
-				}
-				return null;
-			}
-		}
-	}
-
-	// parses a non empty list of T
-	static class AbstListParser<T> extends DefaultMainParser<List<T>> {
-	
-		private final INudParser<T> parser;
-		
-		public AbstListParser(INudParser<T> parser) {
-			this.parser = parser;
-		}
-
-		public List<T> parse(ParserContext pc) throws SyntaxError {
-			final List<T> list = new ArrayList<T>();
-			T next = pc.subParse(parser);
-			list.add(next);
-			while (pc.t.kind == _COMMA) {
-				pc.progress();
-				next = pc.subParse(parser);
-				list.add(next);
-			}
-			return list;
-		}
-		
-	}
-
-	static final AbstListParser<Expression> EXPR_LIST_PARSER = new AbstListParser<Expression>(EXPR_PARSER);
-	
-	static final AbstListParser<FreeIdentifier> FREE_IDENT_LIST_PARSER = new AbstListParser<FreeIdentifier>(FREE_IDENT_SUBPARSER);
-	
-	static final AbstListParser<BoundIdentDecl> BOUND_IDENT_DECL_LIST_PARSER = new AbstListParser<BoundIdentDecl>(BOUND_IDENT_DECL_SUBPARSER);
-	
 	static final INudParser<SetExtension> SETEXT_PARSER = new PrefixNudParser<SetExtension>(SETEXT) {
 		
 		@Override
@@ -1011,69 +718,6 @@ public class Parsers {
 		}
 	};
 
-
-	static List<BoundIdentDecl> makePrimedDecl(List<FreeIdentifier> lhsList, FormulaFactory factory) {
-		final List<BoundIdentDecl> decls = new ArrayList<BoundIdentDecl>(lhsList.size());
-	    for (FreeIdentifier ident: lhsList) {
-			decls.add(ident.asPrimedDecl(factory));
-		}
-		return decls;
-	}
-
-	// used as a main parser; directly called by the general parser.
-	/** @see GenParser#parse() */
-	static final IMainParser<Assignment> ASSIGNMENT_PARSER = new DefaultMainParser<Assignment>() {
-
-		public Assignment parse(ParserContext pc) throws SyntaxError {
-			final List<FreeIdentifier> idents = pc.subParse(FREE_IDENT_LIST_PARSER);
-			final Token tokenAfterIdents = pc.t;
-			final int tokenKind = tokenAfterIdents.kind;
-			pc.progress();
-
-			if (tokenKind == _LPAR) { // FUNIMAGE assignment
-				if (idents.size() != 1) {
-					throw new SyntaxError("Assignment to function images applies to exactly one function.");
-				}
-				final FreeIdentifier ident = idents.get(0);
-				final Expression index = pc.subParse(EXPR_PARSER);
-				pc.progressCloseParen();
-				pc.progress(_BECEQ);
-				final Expression value = pc.subParse(EXPR_PARSER);
-				final Expression overriding = makeFunctionOverriding(ident, index, value, pc.factory);
-				return pc.factory.makeBecomesEqualTo(ident, overriding, pc.getSourceLocation());
-			} else if (tokenKind == _BECEQ) {
-				final List<Expression> values = pc.subParse(EXPR_LIST_PARSER);
-				if (idents.size() != values.size()) {
-					throw new SyntaxError("incompatible size of left and right parts of assignment");
-				}
-				return pc.factory.makeBecomesEqualTo(idents, values, pc.getSourceLocation());
-			} else if (tokenKind == _BECMO) {
-				if (idents.size() != 1) {
-					throw new SyntaxError("\'Becomes Member Of\' applies to only one identifier");
-				}
-				final Expression expr = pc.subParse(EXPR_PARSER);
-				return pc.factory.makeBecomesMemberOf(idents.get(0), expr, pc.getSourceLocation());
-			} else if (tokenKind == _BECST) {
-				final List<BoundIdentDecl> primed = makePrimedDecl(idents, pc.factory);
-				final Predicate condition = pc.subParse(PRED_PARSER, primed);
-				return pc.factory.makeBecomesSuchThat(idents, primed, condition, pc.getSourceLocation());
-			} else {
-				throw new SyntaxError("Unknown assignment operator: "
-						+ tokenAfterIdents.val);
-			}
-		}
-		
-	};
-	
-	static Expression makeFunctionOverriding(FreeIdentifier ident,
-			Expression index, Expression value, FormulaFactory factory) {
-		
-		Expression pair = factory.makeBinaryExpression(Formula.MAPSTO, index, value, null);
-		Expression singletonSet = factory.makeSetExtension(pair, null);
-		return factory.makeAssociativeExpression(Formula.OVR, 
-				new Expression[] {ident, singletonSet}, null);
-	}
-	
 	static final INudParser<MultiplePredicate> PARTITION_PARSER = new ParenNudParser<MultiplePredicate, List<Expression>>(KPARTITION, EXPR_LIST_PARSER) {
 
 		@Override

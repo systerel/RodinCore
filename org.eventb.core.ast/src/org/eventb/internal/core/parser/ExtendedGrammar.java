@@ -45,11 +45,11 @@ public class ExtendedGrammar extends BMath {
 				final ILedParser<? extends Formula<?>> subParser;
 				switch (kind) {
 				case ASSOCIATIVE_INFIX_EXPRESSION:
-					subParser = new Parsers.ExtendedAssociativeExpressionInfix(
+					subParser = new SubParsers.ExtendedAssociativeExpressionInfix(
 							tag);
 					break;
 				case BINARY_INFIX_EXPRESSION:
-					subParser = new Parsers.ExtendedBinaryExpressionInfix(tag);
+					subParser = new SubParsers.ExtendedBinaryExpressionInfix(tag);
 					break;
 				default:
 					// should not be ever possible

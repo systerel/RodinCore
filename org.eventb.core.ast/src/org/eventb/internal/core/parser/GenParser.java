@@ -12,8 +12,6 @@ package org.eventb.internal.core.parser;
 
 
 import static org.eventb.internal.core.parser.AbstractGrammar.*;
-import static org.eventb.internal.core.parser.AbstractGrammar._LPAR;
-import static org.eventb.internal.core.parser.AbstractGrammar._RPAR;
 
 import java.util.HashMap;
 import java.util.List;
@@ -307,30 +305,14 @@ public class GenParser {
 			return res;
 		}
 		
-		public <T> T subParse(IMainParser<T> parser, List<BoundIdentDecl> newBoundIdents) throws SyntaxError {
+		public <T> T subParse(INudParser<T> parser, List<BoundIdentDecl> newBoundIdents) throws SyntaxError {
 			pushPos();
 			binding.push(new Binding(binding.val, newBoundIdents));
-			final T res = parser.parse(this);
+			final T res = parser.nud(this);
 			binding.pop();
 			popPos();
 			return res;
 		}
-	}
-	
-	static interface IMainParser<T> extends INudParser<T> {
-
-		/**
-		 * Parses the given parser context. Starts from the current token. When
-		 * the method returns, the current token is the one that immediately
-		 * follows the last one that belongs to the parsed formula.
-		 * @param pc
-		 *            current parser context
-		 * 
-		 * @return a formula
-		 * @throws SyntaxError
-		 *             if a syntax error occurs while parsing
-		 */
-		T parse(ParserContext pc) throws SyntaxError;
 	}
 	
     private static class Binding {
@@ -399,16 +381,16 @@ public class GenParser {
 			pc.init();
 			final Object res;
 			if (clazz == Type.class) {
-				res = pc.subParse(Parsers.TYPE_PARSER);
+				res = pc.subParse(MainParsers.TYPE_PARSER);
 			} else if (clazz == Assignment.class) {
 				// FIXME particular case required because assignment lhs
 				// is not a terminal (not a formula, but a list of identifiers)
 				// other possibility: introduce a notion of non terminal
 				// returned by sub-parsers, then implement assignment parsing
 				// with led sub-parsers
-				res = pc.subParse(Parsers.ASSIGNMENT_PARSER);
+				res = pc.subParse(MainParsers.ASSIGNMENT_PARSER);
 			} else {
-				res = pc.subParse(Parsers.FORMULA_PARSER);
+				res = pc.subParse(MainParsers.FORMULA_PARSER);
 			}
 			if (pc.t.kind != _EOF) {
 				throw new UnmatchedToken("tokens have been ignored from: \""
