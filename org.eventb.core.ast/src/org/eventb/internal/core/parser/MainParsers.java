@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
-import static org.eventb.core.ast.Formula.NO_TAG;
 import static org.eventb.internal.core.parser.AbstractGrammar.*;
 import static org.eventb.internal.core.parser.BMath.*;
 import static org.eventb.internal.core.parser.SubParsers.BOUND_IDENT_DECL_SUBPARSER;
 import static org.eventb.internal.core.parser.SubParsers.FREE_IDENT_SUBPARSER;
-import static org.eventb.internal.core.parser.SubParsers.AbstractSubParser;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -34,30 +32,17 @@ import org.eventb.internal.core.parser.GenParser.SyntaxError;
 import org.eventb.internal.core.parser.GenParser.ParserContext.SavedContext;
 
 /**
- * Main parsers implement an algorithm for parsing a formula (or a part
- * of a formula) without being bound to any particular operator.
+ * Main parsers implement an algorithm for parsing a formula (or a part of a
+ * formula) without being bound to any particular operator.
+ * <p>
+ * As main parsers are null-denoted, they all implement {@link INudParser}.
+ * </p>
  * 
  * @author Nicolas Beauger
  * 
  */
 public class MainParsers {
 	
-	private static interface IMainParser<T> extends INudParser<T> {
-
-		/**
-		 * Parses the given parser context. Starts from the current token. When
-		 * the method returns, the current token is the one that immediately
-		 * follows the last one that belongs to the parsed formula.
-		 * @param pc
-		 *            current parser context
-		 * 
-		 * @return a formula
-		 * @throws SyntaxError
-		 *             if a syntax error occurs while parsing
-		 */
-		T parse(ParserContext pc) throws SyntaxError;
-	}
-
 	private static String makeSynErrMessage(Formula<?> formula, Class<?> clazz) {
 		return "expected a " + clazz.getCanonicalName() + ", but was "
 				+ formula + " at position " + formula.getSourceLocation();
@@ -77,17 +62,6 @@ public class MainParsers {
 		return (Expression) formula;
 	}
 
-	private static abstract class DefaultMainParser<T> extends AbstractSubParser<T> implements IMainParser<T> {
-
-		protected DefaultMainParser() {
-			super(NO_TAG);
-		}
-
-		public final T nud(ParserContext pc) throws SyntaxError {
-			return parse(pc);
-		}
-	}
-	
 	private static abstract class ParserApplier<Parser> {
 		
 		public ParserApplier() {
@@ -193,13 +167,13 @@ public class MainParsers {
 	};
 	
 	// Core algorithm implementation
-	private static class FormulaParser extends DefaultMainParser<Formula<?>> {
+	private static class FormulaParser implements INudParser<Formula<?>> {
 		
 		public FormulaParser() {
 			// void constructor
 		}
 		
-		public Formula<?> parse(ParserContext pc)
+		public Formula<?> nud(ParserContext pc)
 				throws SyntaxError {
 		
 			Formula<?> left = NUD_APPLIER.apply(pc, null);
@@ -214,12 +188,12 @@ public class MainParsers {
 
 	static final FormulaParser FORMULA_PARSER = new FormulaParser();
 
-	private static class TypeParser extends DefaultMainParser<Type> {
+	private static class TypeParser implements INudParser<Type> {
 		public TypeParser() {
 			// void constructor
 		}
 		
-		public Type parse(ParserContext pc) throws SyntaxError {
+		public Type nud(ParserContext pc) throws SyntaxError {
 			pc.startParsingType();
 			final Expression expression = pc.subParse(EXPR_PARSER);
 			if (!expression.isATypeExpression()) {
@@ -241,27 +215,27 @@ public class MainParsers {
 
 	static final TypeParser TYPE_PARSER = new TypeParser();
 
-	private static class PredicateParser extends DefaultMainParser<Predicate> {
+	private static class PredicateParser implements INudParser<Predicate> {
 		public PredicateParser() {
 			// void constructor
 		}
 		
-		public Predicate parse(ParserContext pc) throws SyntaxError {
-			final Formula<?> formula = FORMULA_PARSER.parse(pc);
+		public Predicate nud(ParserContext pc) throws SyntaxError {
+			final Formula<?> formula = FORMULA_PARSER.nud(pc);
 			return asPredicate(formula);
 		}
 	}
 
 	static final PredicateParser PRED_PARSER = new PredicateParser();
 
-	private static class ExpressionParser extends DefaultMainParser<Expression> {
+	private static class ExpressionParser implements INudParser<Expression> {
 		
 		public ExpressionParser() {
 			// void constructor
 		}
 		
-		public Expression parse(ParserContext pc) throws SyntaxError {
-			final Formula<?> formula = FORMULA_PARSER.parse(pc);
+		public Expression nud(ParserContext pc) throws SyntaxError {
+			final Formula<?> formula = FORMULA_PARSER.nud(pc);
 			return asExpression(formula);
 		}
 	}
@@ -270,9 +244,9 @@ public class MainParsers {
 
 	// TODO verify that all formulae inside parentheses are parsed with a GROUP0
 	// parent kind
-	static final IMainParser<Formula<?>> CLOSED_SUGAR = new DefaultMainParser<Formula<?>> () {
+	static final INudParser<Formula<?>> CLOSED_SUGAR = new INudParser<Formula<?>> () {
 
-		public Formula<?> parse(ParserContext pc) throws SyntaxError {
+		public Formula<?> nud(ParserContext pc) throws SyntaxError {
 			pc.progressOpenParen();
 			final Formula<?> formula = pc.subParse(FORMULA_PARSER);
 			pc.progressCloseParen();
@@ -280,7 +254,7 @@ public class MainParsers {
 		}
 	};
 
-	static class PatternParser extends DefaultMainParser<Pattern> {
+	static class PatternParser implements INudParser<Pattern> {
 		
 		final Pattern pattern;
 		
@@ -288,7 +262,7 @@ public class MainParsers {
 			this.pattern = new Pattern(result);
 		}
 
-		public Pattern parse(ParserContext pc) throws SyntaxError {
+		public Pattern nud(ParserContext pc) throws SyntaxError {
 			final PatternAtomParser atomParser = new PatternAtomParser(pattern, this);
 			pc.subParse(atomParser);
 			while (pc.t.kind == _MAPSTO) {
@@ -299,7 +273,7 @@ public class MainParsers {
 			return pattern;
 		}
 
-		private static class PatternAtomParser extends DefaultMainParser<Object> {
+		private static class PatternAtomParser implements INudParser<Object> {
 
 			private final Pattern pattern;
 			private final PatternParser parser;
@@ -309,7 +283,7 @@ public class MainParsers {
 				this.parser = parser;
 			}
 
-			public Object parse(ParserContext pc) throws SyntaxError {
+			public Object nud(ParserContext pc) throws SyntaxError {
 				if (pc.t.kind == _LPAR) {
 					pc.progressOpenParen();
 					pc.subParse(parser);
@@ -325,7 +299,7 @@ public class MainParsers {
 	}
 
 	// parses a non empty list of T
-	static class AbstListParser<T> extends DefaultMainParser<List<T>> {
+	static class AbstListParser<T> implements INudParser<List<T>> {
 	
 		private final INudParser<T> parser;
 		
@@ -333,7 +307,7 @@ public class MainParsers {
 			this.parser = parser;
 		}
 
-		public List<T> parse(ParserContext pc) throws SyntaxError {
+		public List<T> nud(ParserContext pc) throws SyntaxError {
 			final List<T> list = new ArrayList<T>();
 			T next = pc.subParse(parser);
 			list.add(next);
@@ -363,9 +337,9 @@ public class MainParsers {
 
 	// used as a main parser; directly called by the general parser.
 	/** @see GenParser#parse() */
-	static final IMainParser<Assignment> ASSIGNMENT_PARSER = new DefaultMainParser<Assignment>() {
+	static final INudParser<Assignment> ASSIGNMENT_PARSER = new INudParser<Assignment>() {
 
-		public Assignment parse(ParserContext pc) throws SyntaxError {
+		public Assignment nud(ParserContext pc) throws SyntaxError {
 			final List<FreeIdentifier> idents = pc.subParse(FREE_IDENT_LIST_PARSER);
 			final Token tokenAfterIdents = pc.t;
 			final int tokenKind = tokenAfterIdents.kind;

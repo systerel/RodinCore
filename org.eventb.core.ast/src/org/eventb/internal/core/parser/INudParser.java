@@ -14,15 +14,19 @@ import org.eventb.internal.core.parser.GenParser.ParserContext;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 
 /**
+ * Nud stands for 'null-denoted', in contrast to 'left-denoted' (led parsers).
+ * 
  * @author Nicolas Beauger
  * 
  */
 public interface INudParser<T> {
 
 	/**
-	 * Parses a null-denoted formula with the given parser context. The given
-	 * start position corresponds to the current token. The current token is
-	 * that of a symbol associated with this parser .
+	 * Parses a null-denoted formula with the given parser context.
+	 * <p>
+	 * The given start position corresponds to the current token. The current
+	 * token is that of a symbol associated with this parser.
+	 * </p>
 	 * <p>
 	 * When the method returns, current token is the one that immediately
 	 * follows parsed formula.
