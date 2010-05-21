@@ -233,52 +233,28 @@ public class Parsers {
 		}
 	}
 	
-	private static class FormulaParser extends DefaultMainParser<Formula<?>> {
-		public FormulaParser() {
-			// void constructor
-		}
+	private static abstract class ParserApplier<Parser> {
 		
-		public Formula<?> parse(ParserContext pc)
-				throws SyntaxError {
-		
-			final List<INudParser<? extends Formula<?>>> nudParsers = getNudParsers(pc);
-			Formula<?> left = nudParse(pc, nudParsers);
-			while (pc.canProgressRight()) {
-				final ILedParser<? extends Formula<?>> ledParser = getLedParser(pc);
-				pc.pushParentKind(pc.t.kind);
-				pc.progress();
-				try {
-					left = ledParser.led(left, pc);
-				} finally {
-					pc.popParentKind();
-				}
+		public Formula<?> apply(ParserContext pc, Formula<?> left) throws SyntaxError {
+			final Parser parser = getParser(pc);
+			pc.pushParentKind();
+			try {
+				return apply(pc, parser, left);
+			} finally {
+				pc.popParentKind();
 			}
-			return left;
 		}
 		
-		// TODO implement backtracking for led parsers as well 
-	
-		private static Formula<?> nudParse(ParserContext pc,
-				List<INudParser<? extends Formula<?>>> nudParsers) throws SyntaxError {
-			final List<SyntaxError> errors = new ArrayList<SyntaxError>();
-			final Iterator<INudParser<? extends Formula<?>>> iter = nudParsers.iterator();
-			final SavedContext savedContext = pc.save();
-			while(iter.hasNext()) {
-				final INudParser<? extends Formula<?>> nudParser = iter.next();
-				try {
-					// FIXME the call to nud may add problems to pc.result
-					// without throwing an exception
-					return nudParser.nud(pc);
-				} catch (SyntaxError e) {
-					errors.add(e);
-					pc.restore(savedContext);
-				}
-			}
-			throw newCompoundError(errors);
+		protected abstract Parser getParser(ParserContext pc) throws SyntaxError;
+		protected abstract Formula<?> apply(ParserContext pc, Parser parser, Formula<?> left) throws SyntaxError;
+		
+
+		protected static void throwNoParserFoundFor(ParserContext pc) throws SyntaxError {
+			throw new SyntaxError("don't know how to parse: " + pc.t.val);
 		}
-	
+
 		// errors must be non empty 
-		private static SyntaxError newCompoundError(List<SyntaxError> errors) {
+		protected static SyntaxError newCompoundError(List<SyntaxError> errors) {
 			final StringBuilder reason = new StringBuilder(
 					"Parse failed because");
 			if (errors.size()>=2) {
@@ -295,6 +271,85 @@ public class Parsers {
 				}
 			}
 			return new SyntaxError(reason.toString());
+		}
+
+	}
+	
+	static final ParserApplier<List<INudParser<? extends Formula<?>>>> NUD_APPLIER = new ParserApplier<List<INudParser<? extends Formula<?>>>>() {
+		
+		@Override
+		protected List<INudParser<? extends Formula<?>>> getParser(ParserContext pc)
+		throws SyntaxError {
+			final List<INudParser<? extends Formula<?>>> subParsers = pc.getNudParsers();
+			if (subParsers.isEmpty()) {
+				throwNoParserFoundFor(pc);
+			}
+			return subParsers;
+		}
+		
+		@Override
+		protected Formula<?> apply(ParserContext pc,
+				List<INudParser<? extends Formula<?>>> nudParsers,
+				Formula<?> left) throws SyntaxError {
+			final List<SyntaxError> errors = new ArrayList<SyntaxError>();
+			final Iterator<INudParser<? extends Formula<?>>> iter = nudParsers.iterator();
+			final SavedContext savedContext = pc.save();
+			while(iter.hasNext()) {
+				final INudParser<? extends Formula<?>> nudParser = iter.next();
+				try {
+					// FIXME the call to nud may add problems to pc.result
+					// without throwing an exception
+					return nudParser.nud(pc);
+				} catch (SyntaxError e) {
+					errors.add(e);
+					pc.restore(savedContext);
+				}
+			}
+			throw newCompoundError(errors);
+		}
+		
+	};
+
+	static final ParserApplier<ILedParser<? extends Formula<?>>> LED_APPLIER = new ParserApplier<ILedParser<? extends Formula<?>>>() {
+		
+		@Override
+		protected ILedParser<? extends Formula<?>> getParser(ParserContext pc)
+				throws SyntaxError {
+			final ILedParser<? extends Formula<?>> subParser = pc.getLedParser();
+			if (subParser == null) {
+				throwNoParserFoundFor(pc);
+			}
+			return subParser;
+		}
+		
+		@Override
+		protected Formula<?> apply(ParserContext pc,
+				ILedParser<? extends Formula<?>> parser, Formula<?> left)
+				throws SyntaxError {
+			// TODO implement backtracking for led parsers as well 
+			pc.progress();
+			return parser.led(left, pc);
+		}
+		
+	};
+	
+	// Core algorithm implementation
+	private static class FormulaParser extends DefaultMainParser<Formula<?>> {
+		
+		public FormulaParser() {
+			// void constructor
+		}
+		
+		public Formula<?> parse(ParserContext pc)
+				throws SyntaxError {
+		
+			Formula<?> left = NUD_APPLIER.apply(pc, null);
+
+			while (pc.canProgressRight()) {
+				left = LED_APPLIER.apply(pc, left);
+			}
+			
+			return left;
 		}
 	}
 
@@ -354,25 +409,6 @@ public class Parsers {
 
 	static final ExpressionParser EXPR_PARSER = new ExpressionParser();
 
-	// returns a non empty list
-	static List<INudParser<? extends Formula<?>>> getNudParsers(ParserContext pc)
-			throws SyntaxError {
-		final List<INudParser<? extends Formula<?>>> subParsers = pc.getNudParsers();
-		if (subParsers.isEmpty()) {
-			throw new SyntaxError("don't know how to parse: " + pc.t.val);
-		}
-		return subParsers;
-	}
-
-	static ILedParser<? extends Formula<?>> getLedParser(ParserContext pc)
-	throws SyntaxError {
-		final ILedParser<? extends Formula<?>> subParser = pc.getLedParser();
-		if (subParser == null) {
-			throw new SyntaxError("don't know how to parse: " + pc.t.val);
-		}
-		return subParser;
-	}
-
 	// Takes care of the bindings.
 	static final INudParser<Identifier> IDENT_SUBPARSER = new ValuedNudParser<Identifier>(NO_TAG) {
 
@@ -420,8 +456,8 @@ public class Parsers {
 			Type type = null;
 			if (pc.t.kind == _TYPING) {
 				// TODO not so much clean, does not use OFTYPE parser
+				pc.pushParentKind();
 				pc.progress();
-				pc.pushParentKind(_TYPING);
 				try {
 					type = pc.subParse(TYPE_PARSER);
 				} finally {

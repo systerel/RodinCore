@@ -34,9 +34,11 @@ public class SubParserRegistry {
 		}
 
 		public void addLed(ILedParser<? extends Formula<?>> subParser) {
-			if (!ledParsers.contains(subParser)) {
-				ledParsers.add(subParser);
+			if (!ledParsers.isEmpty()) {
+				throw new IllegalArgumentException(
+						"Cannot add several led parsers for one kind (led backtracking is not supported)");
 			}
+			ledParsers.add(subParser);
 		}
 
 		public void addNud(INudParser<? extends Formula<?>> subParser) {

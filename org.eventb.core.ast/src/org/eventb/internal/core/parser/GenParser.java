@@ -184,10 +184,14 @@ public class GenParser {
 			la = scanner.Scan();
 		}
 		
-		public void pushParentKind(int newParentKind) {
+		private void pushParentKind(int newParentKind) {
 			parentKind.push(newParentKind);
 		}
 		
+		public void pushParentKind() {
+			parentKind.push(t.kind);
+		}
+
 		public void popParentKind() {
 			parentKind.pop();
 		}

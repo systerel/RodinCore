@@ -1321,4 +1321,26 @@ public class TestGenParser extends AbstractTests {
 		System.out.println(result.getParsedPredicate());
 		assertFailure(result, ProblemKind.SyntaxError);
 	}
+	
+	public void testMinusPriority() throws Exception {
+		final Expression plusMinus =
+			ff.makeBinaryExpression(MINUS,
+					ff.makeAssociativeExpression(PLUS, Arrays.<Expression>asList(
+							ONE, ONE), null),
+							ONE,  null);
+		doExpressionTest("1+1−1", plusMinus);
+		
+		final Expression minusPlus =
+			ff.makeAssociativeExpression(PLUS, Arrays.<Expression>asList(
+					ff.makeBinaryExpression(MINUS,
+							ONE, ONE, null),
+					ONE), null);
+		doExpressionTest("1−1+1", minusPlus);
+		
+		final Expression expected = ff.makeAssociativeExpression(PLUS, asList(
+						ff.makeUnaryExpression(UNMINUS, ONE, null),
+						ONE), null);
+		doExpressionTest("−1+1", expected);
+		
+	}
 }

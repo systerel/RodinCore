@@ -143,7 +143,6 @@ public class BMath extends AbstractGrammar {
 	private static final String KRAN_ID = "Range";
 	private static final String KMIN_ID = "Min";
 	private static final String KMAX_ID = "Max";
-	private static final String UNMINUS_ID = "Unary Minus";
 	private static final String QUNION_ID = "Quantified Union";
 	private static final String QINTER_ID = "Quantified Intersection";
 	private static final String KUNION_ID = "Unary Union";
@@ -306,7 +305,7 @@ public class BMath extends AbstractGrammar {
 			addOperator("min", KMIN_ID, BOUND_UNARY, new UnaryExpressionParser(KMIN));
 			addOperator("max", KMAX_ID, BOUND_UNARY, new UnaryExpressionParser(KMAX));
 			addOperator("\u223c", CONVERSE_ID, UNARY_RELATION, CONVERSE_PARSER);
-			addOperator("\u2212", UNMINUS_ID, ARITHMETIC, UNMINUS_PARSER);
+			addOperator("\u2212", MINUS_ID, ARITHMETIC, UNMINUS_PARSER);
 			// UnaryPredicate
 			addOperator("\u00ac", NOT_ID, NOT_PRED, NOT_PARSER);
 			
