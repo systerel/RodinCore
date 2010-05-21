@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,6 +9,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - SIMP_IN_COMPSET, SIMP_SPECIAL_OVERL, SIMP_FUNIMAGE_LAMBDA
+ *     Systerel - added tests for SIMP_FUNIMAGE_LAMBDA
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
@@ -836,9 +837,16 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 		expressionTest(
 				"{m↦n∣m>5−3 ∧ n> (8−4)∗2}",
 				"(λ(x↦y)↦((a↦b)↦(c ⦂ ℤ ))·x∈ℤ∧y∈ℤ∧a∈ℤ∧b∈ℤ ∣{m↦n∣m>y−x ∧ n>(b−a)∗c})((3↦5)↦((4↦8)↦2))");
-		predicateTest("∀x·x=ℕ⇒x={m∣m>0+0}", "∀x·x=ℕ⇒x=(λa↦b·a∈ℕ∧b∈ℕ∣{m∣m>a+b})(0↦0)");
+		predicateTest("∀x·x=ℕ⇒x={m∣m>1+2}", "∀x·x=ℕ⇒x=(λa↦b·a∈ℕ∧b∈ℕ∣{m∣m>a+b})(1↦2)");
+		predicateTest("∀x·x=ℕ⇒x={m∣m>0}", "∀x·x=ℕ⇒x=(λa↦b·a∈ℕ∧b∈ℕ∣{m∣m>a+b})(0↦0)");
 		// verify that no exception is thrown when no rewrite occurs
 		expressionTest("(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(w)", "(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(w)", "w", "ℤ×ℤ");
+	}
+	
+	@Test
+	public void testBug2995930() {
+		expressionTest("(λx↦p·x∈s∧p⊆s∣p)", "(λs·s⊆S∣(λx↦p·x∈s∧p⊆s∣p))(s)", "s", "ℙ(S)");
+		expressionTest("(λz·z∈ℕ ∣ z+z)[{1,2,3}]", "(λx·x∈ℙ(ℕ) ∣ (λz·z∈ℕ ∣ z+z)[x])({1,2,3})");
 	}
 
 
