@@ -167,11 +167,7 @@ public class MainParsers {
 	};
 	
 	// Core algorithm implementation
-	private static class FormulaParser implements INudParser<Formula<?>> {
-		
-		public FormulaParser() {
-			// void constructor
-		}
+	static final INudParser<Formula<?>> FORMULA_PARSER = new INudParser<Formula<?>>() {
 		
 		public Formula<?> nud(ParserContext pc)
 				throws SyntaxError {
@@ -184,14 +180,9 @@ public class MainParsers {
 			
 			return left;
 		}
-	}
+	};
 
-	static final FormulaParser FORMULA_PARSER = new FormulaParser();
-
-	private static class TypeParser implements INudParser<Type> {
-		public TypeParser() {
-			// void constructor
-		}
+	static final INudParser<Type> TYPE_PARSER = new INudParser<Type>() {
 		
 		public Type nud(ParserContext pc) throws SyntaxError {
 			pc.startParsingType();
@@ -211,36 +202,23 @@ public class MainParsers {
 				pc.stopParsingType();
 			}
 		}
-	}
+	};
 
-	static final TypeParser TYPE_PARSER = new TypeParser();
-
-	private static class PredicateParser implements INudParser<Predicate> {
-		public PredicateParser() {
-			// void constructor
-		}
+	static final INudParser<Predicate> PRED_PARSER = new INudParser<Predicate>() {
 		
 		public Predicate nud(ParserContext pc) throws SyntaxError {
 			final Formula<?> formula = FORMULA_PARSER.nud(pc);
 			return asPredicate(formula);
 		}
-	}
+	};
 
-	static final PredicateParser PRED_PARSER = new PredicateParser();
-
-	private static class ExpressionParser implements INudParser<Expression> {
-		
-		public ExpressionParser() {
-			// void constructor
-		}
+	static final INudParser<Expression> EXPR_PARSER = new INudParser<Expression>() {
 		
 		public Expression nud(ParserContext pc) throws SyntaxError {
 			final Formula<?> formula = FORMULA_PARSER.nud(pc);
 			return asExpression(formula);
 		}
-	}
-
-	static final ExpressionParser EXPR_PARSER = new ExpressionParser();
+	};
 
 	// TODO verify that all formulae inside parentheses are parsed with a GROUP0
 	// parent kind
