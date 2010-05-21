@@ -1485,18 +1485,11 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * SIMP_FUNIMAGE_LAMBDA
              *
              */
-            funImg@FunImage(cSet@Cset(_,_,Mapsto(_,_)),_) -> {
-                final QuantifiedExpression cSet = (QuantifiedExpression) `cSet;
-                final BinaryExpression funImg = (BinaryExpression) `funImg;
-                final Expression left = funImg.getRight();
-                if (cSet.getForm() == QuantifiedExpression.Form.Lambda) {
-                    final LambdaComputer computer = new LambdaComputer(funImg, cSet, left);
-                    final Expression simplification = computer.rewrite();
-                    if (simplification != null) {
-                        result = simplification;
-    		    		trace(expression, result, "SIMP_FUNIMAGE_LAMBDA");
-    		    		return result;
-                    }
+            FunImage(Cset(_,_,Mapsto(_,_)),_) -> {
+                result = LambdaComputer.rewrite(expression, ff);
+                if (result != null) {
+                	trace(expression, result, "SIMP_FUNIMAGE_LAMBDA");
+                	return result;
                 }
             }
 		}

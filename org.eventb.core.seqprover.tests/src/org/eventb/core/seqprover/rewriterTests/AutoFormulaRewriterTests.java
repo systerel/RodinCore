@@ -830,22 +830,34 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 		// r <+ ... <+ {} <+ ... <+ s = r <+ ... <+ s
 		expressionTest("{1 ↦ 2}  {3 ↦ 4}", "{1 ↦ 2}  ∅  {3 ↦ 4}");
 		
-		// (%x . P | E)(y)
+		// (%x . P | E)(y) and similar
 		expressionTest("0", "(λx·x∈ℤ∣x)(0)");
+		expressionTest("1", "{x·x∈ℤ∣x↦x}(1)");
 		expressionTest("1+2", "(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(1↦2)");
 		expressionTest("prj1(1↦2)", "(λx·x∈ℤ×ℤ∣prj1(x))(1↦2)");
-		expressionTest(
-				"{m↦n∣m>5−3 ∧ n> (8−4)∗2}",
-				"(λ(x↦y)↦((a↦b)↦(c ⦂ ℤ ))·x∈ℤ∧y∈ℤ∧a∈ℤ∧b∈ℤ ∣{m↦n∣m>y−x ∧ n>(b−a)∗c})((3↦5)↦((4↦8)↦2))");
-		predicateTest("∀x·x=ℕ⇒x={m∣m>1+2}", "∀x·x=ℕ⇒x=(λa↦b·a∈ℕ∧b∈ℕ∣{m∣m>a+b})(1↦2)");
-		predicateTest("∀x·x=ℕ⇒x={m∣m>0}", "∀x·x=ℕ⇒x=(λa↦b·a∈ℕ∧b∈ℕ∣{m∣m>a+b})(0↦0)");
+		expressionTest(//
+				"{m↦n∣m>5−3 ∧ n> (8−4)∗2}",//
+				"(λ(x↦y)↦((a↦b)↦(c ⦂ ℤ ))·"//
+						+ "x∈ℤ∧y∈ℤ∧a∈ℤ∧b∈ℤ ∣"//
+						+ "{m↦n∣m>y−x ∧ n>(b−a)∗c})((3↦5)↦((4↦8)↦2))");
+		predicateTest("∀x·x=ℕ⇒x={m∣m>1+2}",
+				"∀x·x=ℕ⇒x=(λa↦b·a∈ℕ∧b∈ℕ∣{m∣m>a+b})(1↦2)");
+		predicateTest("∀x·x=ℕ⇒x={m∣m>0}",
+				"∀x·x=ℕ⇒x=(λa↦b·a∈ℕ∧b∈ℕ∣{m∣m>a+b})(0↦0)");
 		// verify that no exception is thrown when no rewrite occurs
-		expressionTest("(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(w)", "(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(w)", "w", "ℤ×ℤ");
+		expressionTest("(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(w)", "(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(w)",//
+				"w", "ℤ×ℤ");
+		// Rewriting fails as "x" is not a maplet
+		expressionTest("{x·x∈ℤ×ℤ∣x}(1)", "{x·x∈ℤ×ℤ∣x}(1)");
+		// Rewriting fails as "pair" is not an explicit maplet
+		expressionTest("(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(pair)", "(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(pair)");
 	}
 	
 	@Test
 	public void testBug2995930() {
+		// Checks that internal lambda is conserved, and De Bruijn index are correct
 		expressionTest("(λx↦p·x∈s∧p⊆s∣p)", "(λs·s⊆S∣(λx↦p·x∈s∧p⊆s∣p))(s)", "s", "ℙ(S)");
+		// Checks that external lambda disappear and x is instantiated
 		expressionTest("(λz·z∈ℕ ∣ z+z)[{1,2,3}]", "(λx·x∈ℙ(ℕ) ∣ (λz·z∈ℕ ∣ z+z)[x])({1,2,3})");
 	}
 

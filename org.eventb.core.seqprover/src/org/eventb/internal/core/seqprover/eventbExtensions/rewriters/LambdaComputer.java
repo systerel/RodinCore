@@ -11,8 +11,10 @@
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import static org.eventb.core.ast.Formula.BOUND_IDENT;
+import static org.eventb.core.ast.Formula.CSET;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.EXISTS;
+import static org.eventb.core.ast.Formula.FUNIMAGE;
 import static org.eventb.core.ast.Formula.MAPSTO;
 
 import org.eventb.core.ast.BinaryExpression;
@@ -26,62 +28,112 @@ import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointSimplifier;
 
 /**
- * Class that computes the functional image of a lambda expression
+ * Class used to simplify the functional image of a set in comprehension
+ * (especially a lambda).
+ * <p>
+ * The static method <code>rewrite(Expression expr, FormulaFactory ff)</code>
+ * first checks that the given expression <code>expr</code> is a functional
+ * image of a set in comprehension. Then, simplifies it or returns
+ * <code>null</code> if the result has not the expected form.
+ * </p>
+ * <p>
+ * In the simplification, from {x.P|E}(y), create formula #x.y|->A = x|->E where
+ * A is an artificially bound variable. By applying rewriters, we split maplets
+ * to get #x.y=x & A=E and apply the One Point Rule. If we obtain A = E then E
+ * is the simplification we expect.
+ * </p>
  */
 public class LambdaComputer {
-	
-	private static final FormulaFactory ff = FormulaFactory.getDefault();
-	
-	private final QuantifiedExpression lambda;
-	private final BinaryExpression funImg;
-	private final Expression arg;
-	
-	public LambdaComputer(BinaryExpression funImg, QuantifiedExpression lambda,
-			Expression arg) {
-		assert lambda.getTag() == Expression.CSET;
-		assert lambda.getForm() == QuantifiedExpression.Form.Lambda;
-		assert lambda.getExpression().getTag() == Expression.MAPSTO;
-		this.lambda = lambda;
-		this.funImg = funImg;
-		this.arg = arg;
+
+	/**
+	 * Returns the simplification of applying a comprehension set (especially a
+	 * lambda) to an expression.
+	 * 
+	 * @param expr
+	 *            the functional image
+	 * @param ff
+	 *            formula factory to use
+	 * @return the simplification of the given functional image or
+	 *         <code>null</code> in case of failure
+	 */
+	public static Expression rewrite(Expression expr, FormulaFactory ff) {
+		final LambdaComputer lc = new LambdaComputer(expr, ff);
+		if (!lc.verify()) {
+			return null;
+		}
+		return lc.simplify();
+	}
+
+	private final Expression expr;
+	private final FormulaFactory ff;
+
+	// Derived fields computed by verify()
+	private BinaryExpression funImg;
+	private QuantifiedExpression cset;
+	private Expression arg;
+
+	private LambdaComputer(Expression expr, FormulaFactory ff) {
+		this.expr = expr;
+		this.ff = ff;
+	}
+
+	private boolean verify() {
+		if (expr.getTag() != FUNIMAGE)
+			return false;
+		funImg = (BinaryExpression) expr;
+		final Expression fun = funImg.getLeft();
+		if (fun.getTag() != CSET)
+			return false;
+		cset = (QuantifiedExpression) fun;
+		arg = funImg.getRight();
+		return true;
 	}
 
 	/**
-	 * From (%x.P|E)(y), create formula #x.y|->A = x|->E and applies
-	 * successively the rewriter SIMP_IN_COMPSET, and the One Point Rule to get
-	 * a rewritten expression E which corresponds to the simplification of a
-	 * functional image of lambda expression.
+	 * From {x.P|E}(y), create formula #x.y|->A = x|->E where A is an
+	 * artificially bound variable. Then, apply repeatedly the auto-rewriter (to
+	 * split equalities between maplets) and the One Point Rule.
+	 * <p>
+	 * If these simplifications produce predicate A = E, then E is the result to
+	 * return. Otherwise the simplification fails.
+	 * </p>
 	 * 
 	 * @return the simplification of a functional image of lambda expression
 	 */
-	public Expression rewrite() {
-		final BoundIdentDecl[] decls = lambda.getBoundIdentDecls();
+	private Expression simplify() {
+		final BoundIdentDecl[] decls = cset.getBoundIdentDecls();
 		final BoundIdentifier AInExists = ff.makeBoundIdentifier(decls.length,
 				null, funImg.getType());
 		final Expression yMapstoA = ff.makeBinaryExpression(MAPSTO, arg,
 				AInExists, null);
 		final Predicate equals = ff.makeRelationalPredicate(EQUAL, yMapstoA,
-				lambda.getExpression(), null);
+				cset.getExpression(), null);
 		final Predicate exists = ff.makeQuantifiedPredicate(EXISTS, decls,
-				equals, null);	
+				equals, null);
 		final AutoRewriterImpl rewriter = new AutoRewriterImpl();
-		Predicate oldP = exists;
-		Predicate newP = exists;
-		do { 
-			oldP = newP;
-			newP = oldP.rewrite(rewriter);
-			newP = OnePointSimplifier.rewrite(newP);
-		} while (oldP != newP);
-		if (newP.getTag() == EQUAL) {
-			final RelationalPredicate resultEquals = (RelationalPredicate) newP;
-			final Expression left = resultEquals.getLeft();
-			final Expression right = resultEquals.getRight();
-			assert left.getTag() == BOUND_IDENT
-					&& ((BoundIdentifier) left).getBoundIndex() == 0;
-			return right;
+		boolean changed;
+		Predicate pred = exists;
+		do {
+			final Predicate old = pred;
+			pred = pred.rewrite(rewriter);
+			pred = OnePointSimplifier.rewrite(pred);
+			changed = old != pred;
+		} while (changed);
+		if (hasExpectedFinalForm(pred)) {
+			return ((RelationalPredicate) pred).getRight();
 		}
-		// Failed
 		return null;
 	}
-	
+
+	private boolean hasExpectedFinalForm(Predicate pred) {
+		if (pred.getTag() != EQUAL)
+			return false;
+		final Expression left = ((RelationalPredicate) pred).getLeft();
+		if (left.getTag() != BOUND_IDENT)
+			return false;
+		if (((BoundIdentifier) left).getBoundIndex() != 0)
+			return false;
+		return true;
+	}
+
 }
