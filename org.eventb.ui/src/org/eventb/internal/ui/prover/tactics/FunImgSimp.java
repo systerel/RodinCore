@@ -28,44 +28,55 @@ import org.eventb.ui.prover.TacticProviderUtils;
 
 public class FunImgSimp implements ITacticProvider2 {
 
-	private static final String GOAL_TACTIC_ID = "org.eventb.ui.funImgSimpGoal";
-	private static final String HYP_TACTIC_ID = "org.eventb.ui.funImgSimpHyp";
+	private static class FunImgSimpApplication implements IPositionApplication{
+	
+		private static final String GOAL_TACTIC_ID = "org.eventb.ui.funImgSimpGoal";
+		private static final String HYP_TACTIC_ID = "org.eventb.ui.funImgSimpHyp";
+		
+		private final Predicate hyp;
+		private final IPosition position;
+		
+		
+		public FunImgSimpApplication(Predicate hyp, IPosition position) {
+			this.hyp = hyp;
+			this.position = position;
+		}
+
+		public String getHyperlinkLabel() {
+			return null;
+		}
+		
+		public Point getHyperlinkBounds(String parsedString,
+				Predicate parsedPredicate) {
+			return TacticProviderUtils.getOperatorPosition(
+					parsedPredicate, parsedString, position.getFirstChild());
+		}
+		
+		public String getTacticID() {
+			if (hyp == null) {
+				return GOAL_TACTIC_ID;
+			} else
+				return HYP_TACTIC_ID;
+		}
+		
+		public ITactic getTactic(String[] inputs, String gInput) {
+			return Tactics.funImgSimplifies(hyp, position);
+		}
+	}
 	
 	private static final List<ITacticApplication> EMPTY_LIST = Collections
 			.emptyList();
 
 	public List<ITacticApplication> getPossibleApplications(
-			IProofTreeNode node, final Predicate hyp, String globalInput) {
+			IProofTreeNode node, Predicate hyp, String globalInput) {
 		final List<IPosition> positions = Tactics.funImgSimpGetPositions(hyp,
 				node.getSequent());
 		if (positions.isEmpty()) {
 			return EMPTY_LIST;
 		}
 		final List<ITacticApplication> tactics = new LinkedList<ITacticApplication>();
-		for (final IPosition p : positions) {
-			tactics.add(new IPositionApplication() {
-
-				public String getHyperlinkLabel() {
-					return null;
-				}
-
-				public Point getHyperlinkBounds(String parsedString,
-						Predicate parsedPredicate) {
-					return TacticProviderUtils.getOperatorPosition(
-							parsedPredicate, parsedString, p.getFirstChild());
-				}
-
-				public String getTacticID() {
-					if (hyp == null) {
-						return GOAL_TACTIC_ID;
-					} else
-						return HYP_TACTIC_ID;
-				}
-
-				public ITactic getTactic(String[] inputs, String gInput) {
-					return Tactics.funImgSimplifies(hyp, p);
-				}
-			});
+		for (IPosition p : positions) {
+			tactics.add(new FunImgSimpApplication(hyp, p));
 		}
 		return tactics;
 	}
