@@ -738,13 +738,21 @@ public class SubParsers {
 
 	};
 	
-	static final INudParser<UnaryExpression> UNMINUS_PARSER = new PrefixNudParser<UnaryExpression>(UNMINUS) {
+	static final INudParser<Expression> UNMINUS_PARSER = new INudParser<Expression>() {
 
-		@Override
-		protected UnaryExpression parseRight(ParserContext pc)
-				throws SyntaxError {
-			final Expression child = pc.subParse(EXPR_PARSER);
-			return pc.factory.makeUnaryExpression(UNMINUS, child, pc.getSourceLocation());
+		public Expression nud(ParserContext pc) throws SyntaxError {
+			final int minusPos = pc.t.pos;
+			pc.progress();
+			final Expression expr = pc.subParse(EXPR_PARSER);
+			final SourceLocation loc = pc.getSourceLocation();
+	        if (expr instanceof IntegerLiteral
+	        		&& expr.getSourceLocation().getStart() == minusPos + 1) {
+				// A unary minus followed by an integer literal, glued together,
+				// this is a negative integer literal
+	        	final IntegerLiteral lit = (IntegerLiteral) expr;
+	        	return pc.factory.makeIntegerLiteral(lit.getValue().negate(), loc);
+	        }
+	  		return pc.factory.makeUnaryExpression(UNMINUS, expr, loc);
 		}
 
 	};

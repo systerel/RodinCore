@@ -1218,9 +1218,11 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testUnMinus() throws Exception {
-		final Expression expected = ff.makeUnaryExpression(UNMINUS, 
-				ONE, null);
-		doExpressionTest("−1", expected);
+		final Expression detached = ff.makeUnaryExpression(UNMINUS, ONE, null);
+		doExpressionTest("− 1", detached);
+		
+		final Expression attached = ff.makeIntegerLiteral(ONE.getValue().negate(), null);
+		doExpressionTest("−1", attached);
 	}
 	
 	public void testBinMinus() throws Exception {
@@ -1340,7 +1342,7 @@ public class TestGenParser extends AbstractTests {
 		final Expression expected = ff.makeAssociativeExpression(PLUS, asList(
 						ff.makeUnaryExpression(UNMINUS, ONE, null),
 						ONE), null);
-		doExpressionTest("−1+1", expected);
+		doExpressionTest("− 1+1", expected);
 		
 	}
 }
