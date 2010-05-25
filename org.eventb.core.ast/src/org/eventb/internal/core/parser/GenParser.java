@@ -280,7 +280,7 @@ public class GenParser {
 			return binding.val.getBoundIndex(name);
 		}
 		
-		public boolean canProgressRight() throws SyntaxError {
+		public boolean canProgressRight() throws SyntaxCompatibleError {
 			if (t.kind == _EOF) { // end of the formula
 				return false;
 			}
@@ -300,18 +300,21 @@ public class GenParser {
 		
 		public <T> T subParse(INudParser<T> parser) throws SyntaxError {
 			pushPos();
-			final T res = parser.nud(this);
-			popPos();
-			return res;
+			try {
+				return parser.nud(this);
+			} finally {
+				popPos();
+			}
 		}
 		
-		public <T> T subParse(INudParser<T> parser, List<BoundIdentDecl> newBoundIdents) throws SyntaxError {
-			pushPos();
+		public <T> T subParse(INudParser<T> parser,
+				List<BoundIdentDecl> newBoundIdents) throws SyntaxError {
 			binding.push(new Binding(binding.val, newBoundIdents));
-			final T res = parser.nud(this);
-			binding.pop();
-			popPos();
-			return res;
+			try {
+				return subParse(parser);
+			} finally {
+				binding.pop();
+			}
 		}
 	}
 	

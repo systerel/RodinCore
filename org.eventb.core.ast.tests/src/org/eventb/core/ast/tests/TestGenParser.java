@@ -31,6 +31,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.LanguageVersion;
@@ -109,6 +110,29 @@ public class TestGenParser extends AbstractTests {
 		assertEquals(problemKind, problem.getMessage());
 	}
 	
+	private static void checkSourceLocation(Formula<?> formula, int length) {
+		for (int i = 0; i < length; i++) {
+			for (int j = i; j < length; j++) {
+				final SourceLocation sloc = new SourceLocation(i, j);
+				final IPosition pos = formula.getPosition(sloc);
+				assertNotNull("null position for location " + sloc
+						+ " in formula " + formula + " with location: "
+						+ formula.getSourceLocation(), pos);
+				final Formula<?> actual = formula.getSubFormula(pos);
+				assertTrue(actual.getSourceLocation().contains(sloc));
+			}
+		}
+	}
+	
+	private static <T extends Formula<T>> void checkParsedFormula(String formula,
+			T expected, T actual) {
+		System.out.println(actual);
+		assertEquals(expected, actual);
+		
+		actual.accept(slChecker);
+		checkSourceLocation(actual, formula.length());
+	}
+	
 	private static Expression doExpressionTest(String formula, Expression expected,
 			FormulaFactory factory, LanguageVersion version) {
 		final IParseResult result = factory.parseExpression(formula,
@@ -118,10 +142,7 @@ public class TestGenParser extends AbstractTests {
 		}
 		assertFalse(result.hasProblem());
 		final Expression actual = result.getParsedExpression();
-		System.out.println(actual);
-		assertEquals(expected, actual);
-		
-		actual.accept(slChecker);
+		checkParsedFormula(formula, expected, actual);
 		return actual;
 	}
 
@@ -151,10 +172,7 @@ public class TestGenParser extends AbstractTests {
 		}
 		assertFalse(result.hasProblem());
 		final Predicate actual = result.getParsedPredicate();
-		System.out.println(actual);
-		assertEquals(expected, actual);
-	
-		actual.accept(slChecker);
+		checkParsedFormula(formula, expected, actual);
 		return actual;
 	}
 	
@@ -187,10 +205,7 @@ public class TestGenParser extends AbstractTests {
 		}
 		assertFalse(result.hasProblem());
 		final Predicate actual = result.getParsedPredicate();
-		System.out.println(actual);
-		assertEquals(expected, actual);
-	
-		actual.accept(slChecker);
+		checkParsedFormula(formula, expected, actual);
 	}
 
 	private static void doTypeTest(String formula, Type expected) {
