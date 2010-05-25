@@ -266,12 +266,29 @@ public class TestGenParser extends AbstractTests {
 
 	public void testPlusAsso() throws Exception {
 		final Expression expected = ff
-				.makeAssociativeExpression(PLUS, Arrays
-						.<Expression> asList(
+				.makeAssociativeExpression(PLUS, Arrays.<Expression> asList(
 								ff.makeIntegerLiteral(BigInteger.valueOf(1), null),
 								ff.makeIntegerLiteral(BigInteger.valueOf(2), null),
 								ff.makeIntegerLiteral(BigInteger.valueOf(3), null)), null);
 		doExpressionTest("1+2+3", expected);
+	}
+
+	public void testPlusAssoWithParenLeft() throws Exception {
+		final Expression expected = ff.makeAssociativeExpression(PLUS, Arrays.<Expression> asList(
+								ff.makeAssociativeExpression(PLUS, Arrays.<Expression> asList(
+										ff.makeIntegerLiteral(BigInteger.valueOf(1), null),
+										ff.makeIntegerLiteral(BigInteger.valueOf(2), null)), null),
+								ff.makeIntegerLiteral(BigInteger.valueOf(3), null)), null);
+		doExpressionTest("(1+2)+3", expected);
+	}
+
+	public void testPlusAssoWithParenRight() throws Exception {
+		final Expression expected = ff.makeAssociativeExpression(PLUS, Arrays.<Expression> asList(
+								ff.makeIntegerLiteral(BigInteger.valueOf(1), null),
+								ff.makeAssociativeExpression(PLUS, Arrays.<Expression> asList(
+										ff.makeIntegerLiteral(BigInteger.valueOf(2), null),
+										ff.makeIntegerLiteral(BigInteger.valueOf(3), null)), null)), null);
+		doExpressionTest("1+(2+3)", expected);
 	}
 
 	public void testPlusMult() throws Exception {
@@ -342,6 +359,31 @@ public class TestGenParser extends AbstractTests {
 		final Predicate expected = ff.makeAssociativePredicate(Formula.LAND,
 				Arrays.<Predicate> asList(LIT_BTRUE, LIT_BFALSE), null);
 		doPredicateTest("⊤∧⊥", expected);
+	}
+	
+	public void testAndAsso() throws Exception {
+		final Predicate expected = ff.makeAssociativePredicate(Formula.LAND,
+				Arrays.<Predicate> asList(LIT_BTRUE, LIT_BTRUE, LIT_BTRUE), null);
+		doPredicateTest("⊤∧⊤∧⊤", expected);
+	}
+	
+	public void testAndAssoWithParenLeft() throws Exception {
+		final Predicate expected = ff.makeAssociativePredicate(Formula.LAND, 
+				Arrays.<Predicate> asList(
+						ff.makeAssociativePredicate(Formula.LAND,
+								Arrays.<Predicate> asList(LIT_BTRUE, LIT_BTRUE), null),
+						LIT_BTRUE), null);
+		doPredicateTest("(⊤∧⊤)∧⊤", expected);
+	}
+	
+	public void testAndAssoWithParenRight() throws Exception {
+		final Predicate expected = ff.makeAssociativePredicate(Formula.LAND, 
+				Arrays.<Predicate> asList(
+						LIT_BTRUE,
+						ff.makeAssociativePredicate(Formula.LAND,
+								Arrays.<Predicate> asList(LIT_BTRUE, LIT_BTRUE), null)
+						), null);
+		doPredicateTest("⊤∧(⊤∧⊤)", expected);
 	}
 	
 	public void testOrAnd() throws Exception {
