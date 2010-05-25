@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
+ *     Systerel - fixed source location test for locations outside the root
  *******************************************************************************/ 
 package org.eventb.core.ast.tests;
 
@@ -100,6 +101,10 @@ public class TestSourceLocation extends AbstractTests {
 			for (int j = i; j < max; ++j) {
 				final SourceLocation sloc = new SourceLocation(i, j);
 				final IPosition pos = formula.getPosition(sloc);
+				if (!formula.contains(sloc)) {
+					assertNull(pos);
+					break;
+				}
 				assertNotNull(pos);
 				final Formula<?> actual = formula.getSubFormula(pos);
 				assertTrue(actual.getSourceLocation().contains(sloc));
@@ -192,6 +197,8 @@ public class TestSourceLocation extends AbstractTests {
 		// FreeIdentifier
 		assertPositionsE("x", 0, 0, id_x);
 		assertPositionsE("foo");
+		assertPositionsE("(a)");
+		assertPositionsE(" a ");
 
 		// IntegerLiteral
 		assertPositionsE("1", 0, 0, mIntegerLiteral(1));
