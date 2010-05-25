@@ -115,6 +115,10 @@ public class TestGenParser extends AbstractTests {
 			for (int j = i; j < length; j++) {
 				final SourceLocation sloc = new SourceLocation(i, j);
 				final IPosition pos = formula.getPosition(sloc);
+				if (!formula.contains(sloc)) {
+					assertNull(pos);
+					break;
+				}
 				assertNotNull("null position for location " + sloc
 						+ " in formula " + formula + " with location: "
 						+ formula.getSourceLocation(), pos);
