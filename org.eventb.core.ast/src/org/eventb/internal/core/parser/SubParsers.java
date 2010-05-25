@@ -168,12 +168,12 @@ public class SubParsers {
 		public final T led(Formula<?> left, ParserContext pc) throws SyntaxError {
 			final Left typedLeft = asLeftType(left);
 			final Right right = parseRight(pc);
-			return makeValue(pc, typedLeft, right, pc.getSourceLocation());
+			return makeValue(pc.factory, typedLeft, right, pc.getSourceLocation());
 		}
 
 		protected abstract Left asLeftType(Formula<?> left) throws SyntaxError;
 		
-		protected abstract T makeValue(ParserContext pc, Left left,
+		protected abstract T makeValue(FormulaFactory factory, Left left,
 				Right right, SourceLocation loc) throws SyntaxError;
 	}
 	
@@ -318,17 +318,17 @@ public class SubParsers {
 		}
 
 		@Override
-		protected Expression makeValue(ParserContext pc, Expression left,
+		protected Expression makeValue(FormulaFactory factory, Expression left,
 				Type right, SourceLocation loc) throws SyntaxError {
 			switch (left.getTag()) {
 			case Formula.FREE_IDENT: // FIXME authorizes Oftype to appear at more places than specified
 				final FreeIdentifier ident = (FreeIdentifier) left;
-				return pc.factory.makeFreeIdentifier(ident.getName(), loc, right);
+				return factory.makeFreeIdentifier(ident.getName(), loc, right);
 			case Formula.EMPTYSET:
 			case Formula.KID_GEN:
 			case Formula.KPRJ1_GEN:
 			case Formula.KPRJ2_GEN:
-				return pc.factory.makeAtomicExpression(left.getTag(), loc,
+				return factory.makeAtomicExpression(left.getTag(), loc,
 						right);
 			default:
 				throw new SyntaxError("Unexpected oftype");
@@ -357,9 +357,9 @@ public class SubParsers {
 		}
 		
 		@Override
-		protected BinaryExpression makeValue(ParserContext pc, Expression left,
+		protected BinaryExpression makeValue(FormulaFactory factory, Expression left,
 				Expression right, SourceLocation loc) throws SyntaxError {
-			return pc.factory.makeBinaryExpression(tag, left, right, loc);
+			return factory.makeBinaryExpression(tag, left, right, loc);
 		}
 
 	}
@@ -371,9 +371,9 @@ public class SubParsers {
 		}
 
 		@Override
-		protected ExtendedExpression makeValue(ParserContext pc,
+		protected ExtendedExpression makeValue(FormulaFactory factory,
 				Expression left, Expression right, SourceLocation loc) throws SyntaxError {
-			return checkAndMakeExtendedExpr(pc.factory, tag, asList(left,
+			return checkAndMakeExtendedExpr(factory, tag, asList(left,
 					right), loc);
 		}
 
@@ -386,7 +386,7 @@ public class SubParsers {
 		}
 
 		@Override
-		protected Expression makeValue(ParserContext pc, Expression left,
+		protected Expression makeValue(FormulaFactory factory, Expression left,
 				Expression right, SourceLocation loc) throws SyntaxError {
 			final List<Expression> children = new ArrayList<Expression>();
 			if (left.getTag() == tag) {
@@ -395,7 +395,7 @@ public class SubParsers {
 				children.add(left);
 			}
 			children.add(right);
-			return makeResult(pc.factory, children, loc);
+			return makeResult(factory, children, loc);
 		}
 		
 		protected Expression[] getChildren(Formula<?> exprWithSameTag) {
@@ -434,7 +434,7 @@ public class SubParsers {
 		}
 
 		@Override
-		protected AssociativePredicate makeValue(ParserContext pc,
+		protected AssociativePredicate makeValue(FormulaFactory factory,
 				Predicate left, Predicate right, SourceLocation loc)
 				throws SyntaxError {
 			final List<Predicate> children = new ArrayList<Predicate>();
@@ -445,7 +445,7 @@ public class SubParsers {
 				children.add(left);
 			}
 			children.add(right);
-			return pc.factory.makeAssociativePredicate(tag, children, loc);
+			return factory.makeAssociativePredicate(tag, children, loc);
 		}
 	}
 
@@ -456,9 +456,9 @@ public class SubParsers {
 		}
 
 		@Override
-		protected RelationalPredicate makeValue(ParserContext pc,
+		protected RelationalPredicate makeValue(FormulaFactory factory,
 				Expression left, Expression right, SourceLocation loc) throws SyntaxError {
-			return pc.factory.makeRelationalPredicate(tag, left, right, loc);
+			return factory.makeRelationalPredicate(tag, left, right, loc);
 		}
 	}
 
@@ -481,9 +481,9 @@ public class SubParsers {
 		}
 		
 		@Override
-		protected BinaryExpression makeValue(ParserContext pc, Expression left,
+		protected BinaryExpression makeValue(FormulaFactory factory, Expression left,
 				Expression right, SourceLocation loc) throws SyntaxError {
-			return pc.factory.makeBinaryExpression(tag, left, right, loc);
+			return factory.makeBinaryExpression(tag, left, right, loc);
 		}
 		
 	}
@@ -518,9 +518,9 @@ public class SubParsers {
 		}
 
 		@Override
-		protected BinaryPredicate makeValue(ParserContext pc, Predicate left,
+		protected BinaryPredicate makeValue(FormulaFactory factory, Predicate left,
 				Predicate right, SourceLocation loc) throws SyntaxError {
-			return pc.factory.makeBinaryPredicate(tag, left, right, loc);
+			return factory.makeBinaryPredicate(tag, left, right, loc);
 		}
 	}
 
@@ -581,9 +581,9 @@ public class SubParsers {
 	static final ILedParser<UnaryExpression> CONVERSE_PARSER = new DefaultLedExprParser<UnaryExpression>(CONVERSE) {
 
 		@Override
-		protected UnaryExpression makeValue(ParserContext pc, Expression left,
+		protected UnaryExpression makeValue(FormulaFactory factory, Expression left,
 				Expression right, SourceLocation loc) throws SyntaxError {
-			return pc.factory.makeUnaryExpression(tag, left, loc);
+			return factory.makeUnaryExpression(tag, left, loc);
 		}
 		
 		@Override
