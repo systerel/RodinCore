@@ -60,7 +60,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	}
 
 	private void checkPreconditions() {
-		extension.checkPreconditions(childExpressions, childPredicates);
+		assert extension.checkPreconditions(childExpressions, childPredicates);
 	}
 
 	@Override

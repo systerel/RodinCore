@@ -60,7 +60,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	}
 
 	private void checkPreconditions() {
-		extension.checkPreconditions(childExpressions, childPredicates);
+		assert extension.checkPreconditions(childExpressions, childPredicates);
 	}
 
 	private Formula<?>[] getChildren() {

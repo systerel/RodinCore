@@ -396,10 +396,9 @@ public class TestGenParser extends AbstractTests {
 			return "§";
 		}
 
-		public void checkPreconditions(Expression[] expressions,
+		public boolean checkPreconditions(Expression[] expressions,
 				Predicate[] predicates) {
-			assertTrue(expressions.length == 2);
-			assertTrue(predicates.length == 0);
+			return expressions.length == 2 && predicates.length == 0;
 		}
 
 		public Type typeCheck(ITypeCheckMediator tcMediator,
@@ -514,10 +513,9 @@ public class TestGenParser extends AbstractTests {
 			}
 		}
 
-		public void checkPreconditions(Expression[] expressions,
+		public boolean checkPreconditions(Expression[] expressions,
 				Predicate[] predicates) {
-			assertTrue(expressions.length >= 2);
-			assertTrue(predicates.length == 0);
+			return expressions.length >= 2 && predicates.length == 0;
 		}
 
 		public Associativity getAssociativity() {
@@ -1404,10 +1402,9 @@ public class TestGenParser extends AbstractTests {
 			// no priority to add
 		}
 
-		public void checkPreconditions(Expression[] expressions,
+		public boolean checkPreconditions(Expression[] expressions,
 				Predicate[] predicates) {
-			assertTrue(expressions.length >= 2);
-			assertTrue(predicates.length == 0);
+			return expressions.length >= 2 && predicates.length == 0;
 		}
 
 		public Associativity getAssociativity() {

@@ -112,7 +112,7 @@ public class SubParsers {
 			return makeValue(pc.factory, child, pc.getSourceLocation());
 		}
 		
-		protected abstract T makeValue(FormulaFactory factory, U child, SourceLocation loc);
+		protected abstract T makeValue(FormulaFactory factory, U child, SourceLocation loc) throws SyntaxError;
 	}
 	
 	private static abstract class ValuedNudParser<T> extends AbstractSubParser<T> implements INudParser<T> {
@@ -373,10 +373,8 @@ public class SubParsers {
 		@Override
 		protected ExtendedExpression makeValue(ParserContext pc,
 				Expression left, Expression right, SourceLocation loc) throws SyntaxError {
-			final IExpressionExtension extension = (IExpressionExtension) pc.factory
-					.getExtension(tag);
-			return pc.factory.makeExtendedExpression(extension, asList(left,
-					right), Collections.<Predicate> emptySet(), loc);
+			return checkAndMakeExtendedExpr(pc.factory, tag, asList(left,
+					right), loc);
 		}
 
 	}
@@ -405,7 +403,7 @@ public class SubParsers {
 		}
 		
 		protected Expression makeResult(FormulaFactory factory,
-				List<Expression> children, SourceLocation loc) {
+				List<Expression> children, SourceLocation loc) throws SyntaxError {
 			return factory.makeAssociativeExpression(tag, children, loc);
 		}
 		
@@ -424,11 +422,8 @@ public class SubParsers {
 		
 		@Override
 		protected ExtendedExpression makeResult(FormulaFactory factory,
-				List<Expression> children, SourceLocation loc) {
-			final IExpressionExtension extension = (IExpressionExtension) factory
-					.getExtension(tag);
-			return factory.makeExtendedExpression(extension, children, Collections
-					.<Predicate> emptyList(), loc);
+				List<Expression> children, SourceLocation loc) throws SyntaxError {
+			return checkAndMakeExtendedExpr(factory, tag, children, loc);
 		}
 	}
 	
@@ -765,21 +760,23 @@ public class SubParsers {
 
 		@Override
 		protected ExtendedExpression makeValue(FormulaFactory factory,
-				List<Expression> children, SourceLocation loc) {
-			final IExpressionExtension extension = (IExpressionExtension) factory
-					.getExtension(tag);
-//			// TODO check preconditions everywhere an extended formula is built
-//			if (!extension
-//					.checkPreconditions(children
-//							.toArray(new Expression[children.size()]),
-//							new Predicate[0])) {
-//				throw new SyntaxError(
-//						"Preconditions are not fulfilled for operator "
-//								+ extension.getId());
-//			}
-			return factory.makeExtendedExpression(extension, children,
-					Collections.<Predicate> emptyList(), loc);
+				List<Expression> children, SourceLocation loc) throws SyntaxError {
+			return checkAndMakeExtendedExpr(factory, tag, children, loc);
 		}
-		
+
+	}
+	
+	static ExtendedExpression checkAndMakeExtendedExpr(FormulaFactory factory, int tag,
+			List<Expression> children, SourceLocation loc) throws SyntaxError {
+		final IExpressionExtension extension = (IExpressionExtension) factory
+				.getExtension(tag);
+		if (!extension.checkPreconditions(children
+				.toArray(new Expression[children.size()]), new Predicate[0])) {
+			throw new SyntaxError(
+					"Preconditions are not fulfilled for operator "
+							+ extension.getId());
+		}
+		return factory.makeExtendedExpression(extension, children, Collections
+				.<Predicate> emptyList(), loc);
 	}
 }

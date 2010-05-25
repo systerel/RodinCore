@@ -30,7 +30,7 @@ public interface IFormulaExtension {
 		RIGHT
 	}
 	
-	void checkPreconditions(Expression[] expressions, Predicate[] predicates);
+	boolean checkPreconditions(Expression[] expressions, Predicate[] predicates);
 
 	String getSyntaxSymbol();
 

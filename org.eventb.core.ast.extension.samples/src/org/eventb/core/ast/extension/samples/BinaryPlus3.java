@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.extension.samples;
 
-import org.eclipse.core.runtime.Assert;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Predicate;
@@ -52,10 +51,9 @@ public class BinaryPlus3 implements IExpressionExtension {
 		return resultType;
 	}
 
-	public void checkPreconditions(Expression[] expressions,
+	public boolean checkPreconditions(Expression[] expressions,
 			Predicate[] predicates) {
-		Assert.isTrue(expressions.length >= 2);
-		Assert.isTrue(predicates.length == 0);
+		return expressions.length >= 2 && predicates.length == 0;
 	}
 
 	public String getSyntaxSymbol() {
