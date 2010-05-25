@@ -739,7 +739,14 @@ public class TestGenParser extends AbstractTests {
 				ff.makeBinaryExpression(MAPSTO, ZERO, ONE, null), null)), null);
 		doExpressionTest("f{0↦1}", expected);		
 	}
-	
+
+	public void testSetExtensionEqual() throws Exception {
+		final Predicate expected = ff.makeRelationalPredicate(EQUAL,
+				ff.makeSetExtension(Arrays.<Expression> asList(ZERO, ONE), null),
+				FRID_f, null);
+		doPredicateTest("{0,1}=f", expected);
+	}
+
 	public void testEmptySet() throws Exception {
 		final Predicate expected = ff.makeRelationalPredicate(IN,
 				ZERO,

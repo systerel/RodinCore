@@ -110,6 +110,11 @@ public class GenParser {
 		public void pop() {
 			val = stack.pop();
 		}
+		
+		@Override
+		public String toString() {
+			return val.toString() + " " + stack.toString();
+		}
 	}
 	
 	private final Scanner scanner;
@@ -172,7 +177,7 @@ public class GenParser {
 		
 		public void progress() {
 			if(grammar.isOpen(t.kind)) {
-				pushParentKind(_EOF);
+				pushParentKind(_OPEN);
 			}
 			if (grammar.isClose(la.kind)) {
 				popParentKind();
@@ -204,9 +209,9 @@ public class GenParser {
 			t = sc.t;
 			la = sc.la;
 			parsingType = sc.parsingType;
-			startPos = sc.startPos;
-			binding = sc.binding;
-			parentKind = sc.parentKind;
+			startPos = new StackedValue<Integer>(sc.startPos);
+			binding = new StackedValue<Binding>(sc.binding);
+			parentKind = new StackedValue<Integer>(sc.parentKind);
 		}
 		
 		static class SavedContext {
@@ -398,6 +403,16 @@ public class GenParser {
 			if (pc.t.kind != _EOF) {
 				throw new UnmatchedToken("tokens have been ignored from: \""
 						+ pc.t.val + "\" at position " + pc.t.pos);
+			}
+			// TODO remove above debug check when stable
+			if (pc.parentKind.val != _EOF) {
+				throw new IllegalStateException("Improper parent stack: "
+						+ pc.parentKind
+						+ " with "
+						+ pc.parentKind.val
+						+ " = "
+						+ factory.getGrammar().getTokens().getValue(
+								pc.parentKind.val));
 			}
 			if (clazz.isInstance(res)) {
 				if (clazz == Predicate.class) {
