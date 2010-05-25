@@ -133,6 +133,7 @@ public class MainParsers {
 					// FIXME the call to nud may add problems to pc.result
 					// without throwing an exception
 					return nudParser.nud(pc);
+					// FIXME check for ambiguities (several succeeding parsers)
 				} catch (SyntaxError e) {
 					errors.add(e);
 					pc.restore(savedContext);
@@ -299,6 +300,7 @@ public class MainParsers {
 		
 	}
 
+	// FIXME some operators need to have at least a certain number of expressions in the list
 	static final AbstListParser<Expression> EXPR_LIST_PARSER = new AbstListParser<Expression>(EXPR_PARSER);
 	
 	static final AbstListParser<FreeIdentifier> FREE_IDENT_LIST_PARSER = new AbstListParser<FreeIdentifier>(FREE_IDENT_SUBPARSER);

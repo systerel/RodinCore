@@ -20,8 +20,9 @@ import org.eventb.core.ast.Predicate;
 public interface IFormulaExtension {
 
 	public static enum ExtensionKind {
-		BINARY_INFIX_EXPRESSION,
-		ASSOCIATIVE_INFIX_EXPRESSION
+		BINARY_INFIX_EXPRESSION, // a op b
+		ASSOCIATIVE_INFIX_EXPRESSION, // a op b op ... op c 
+		PARENTHESIZED_PREFIX_EXPRESSION // op(a, b, ..., c)
 	}
 	
 	public static enum Associativity {

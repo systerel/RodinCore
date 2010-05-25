@@ -560,7 +560,7 @@ public class TestGenParser extends AbstractTests {
 		}
 	};
 
-	// verify that the newly introduced symbol cannot be part of an identifier
+	// verify that the newly introduced symbol cannot be an identifier
 	public void testExtensionSymbol() throws Exception {
 		final String strAEuroB = "A€B";
 		
@@ -571,8 +571,11 @@ public class TestGenParser extends AbstractTests {
 				"€ symbol should be a valid part of identifier for default factory",
 				ff.isValidIdentifierName(strAEuroB));
 		assertTrue(
-				"€ symbol should not be a valid part of identifier for extended factory",
+				"€ symbol should be a valid part of identifier for extended factory",
 				extFac.isValidIdentifierName(strAEuroB));
+		assertFalse(
+				"€ symbol should not be a valid identifier for extended factory",
+				extFac.isValidIdentifierName("€"));
 		
 		final FreeIdentifier expectedDefault = ff.makeFreeIdentifier(strAEuroB, null);
 		doExpressionTest(strAEuroB, expectedDefault, ff);
@@ -580,6 +583,7 @@ public class TestGenParser extends AbstractTests {
 		final FreeIdentifier expectedExtended = extFac.makeFreeIdentifier(strAEuroB, null);
 		doExpressionTest(strAEuroB, expectedExtended, extFac);
 
+		// considered an operator only if surrounded with spaces
 		final Expression expectedExtendedSpaced = extFac.makeExtendedExpression(MONEY,
 				Arrays.<Expression> asList(
 						extFac.makeFreeIdentifier("A", null),
@@ -1364,4 +1368,130 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("− 1+1", expected);
 		
 	}
+	
+	private static final IExpressionExtension EMAX = new IExpressionExtension() {
+		private static final String SYNTAX_SYMBOL = "emax";
+		private static final String OPERATOR_ID = "Extension Maximum";
+		
+		public Type getType(ITypeMediator mediator,
+				ExtendedExpression expression) {
+			final Expression[] children = expression.getChildExpressions();
+			final Type resultType = children[0].getType();
+			for (Expression child: children) {
+				final Type childType = child.getType();
+				if (! (childType instanceof IntegerType)) {
+					return null;
+				}
+			}
+			return resultType;
+		}
+
+		public Type typeCheck(ITypeCheckMediator tcMediator,
+				ExtendedExpression expression) {
+			final Expression[] children = expression.getChildExpressions();
+			final Type resultType = tcMediator.makeIntegerType();
+			for (int i = 0; i < children.length; i++) {
+				tcMediator.sameType(children[i].getType(), resultType);
+			}
+			return resultType;
+		}
+
+		public void addCompatibilities(ICompatibilityMediator mediator) {
+			mediator.addCompatibility(getId(), getId());
+		}
+
+		public void addPriorities(IPriorityMediator mediator) {
+			// no priority to add
+		}
+
+		public void checkPreconditions(Expression[] expressions,
+				Predicate[] predicates) {
+			assertTrue(expressions.length >= 2);
+			assertTrue(predicates.length == 0);
+		}
+
+		public Associativity getAssociativity() {
+			return Associativity.LEFT;
+		}
+
+		public String getGroupId() {
+			return "Arithmetic";
+		}
+
+		public String getId() {
+			return OPERATOR_ID;
+		}
+
+		public ExtensionKind getKind() {
+			return ExtensionKind.PARENTHESIZED_PREFIX_EXPRESSION;
+		}
+
+		public String getSyntaxSymbol() {
+			return SYNTAX_SYMBOL;
+		}
+
+		public Predicate getWDPredicate(IWDMediator wdMediator,
+				IExtendedFormula formula) {
+			return wdMediator.makeChildWDConjunction(formula);
+		}
+
+		public boolean isFlattenable() {
+			return false;
+		}
+
+		public void toString(IToStringMediator mediator,
+				IExtendedFormula formula) {
+			mediator.append(getSyntaxSymbol());
+			mediator.append("(");
+			final Expression[] childExpressions = formula.getChildExpressions();
+			mediator.append(childExpressions[0], false);
+			for (int i = 1; i < childExpressions.length; i++) {
+				mediator.append(",");
+				mediator.append(childExpressions[i], true);
+			}
+			mediator.append(")");
+		}
+	};
+
+	// verify that the newly introduced symbol cannot be part of an identifier
+	public void testExtensionSymbolEMax() throws Exception {
+		final String emax = "emax";
+		
+		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
+				.<IFormulaExtension> singleton(EMAX));
+		
+		assertTrue(
+				"emax symbol should be a valid part of identifier for default factory",
+				ff.isValidIdentifierName(emax));
+		assertFalse(
+				"emax symbol should not be a valid part of identifier for extended factory",
+				extFac.isValidIdentifierName(emax));
+		
+		final FreeIdentifier expectedDefault = ff.makeFreeIdentifier(emax, null);
+		doExpressionTest(emax, expectedDefault, ff);
+	
+		final IParseResult result = extFac.parseExpression(emax,
+				LanguageVersion.V2, null);
+		assertFailure(result, ProblemKind.SyntaxError);
+	}
+	
+	public void testEMax() throws Exception {
+		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
+				.<IFormulaExtension> singleton(EMAX));
+		final Expression expected = extFac.makeExtendedExpression(EMAX,
+				Arrays.<Expression> asList(
+						extFac.makeFreeIdentifier("A", null),
+						extFac.makeFreeIdentifier("B", null),
+						extFac.makeFreeIdentifier("C", null)),
+				Collections.<Predicate> emptySet(), null);
+		doExpressionTest("emax(A, B, C)", expected, extFac);
+	}
+	
+	public void testEMaxInvalidNumberOfChildren() throws Exception {
+		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
+				.<IFormulaExtension> singleton(EMAX));
+		final IParseResult result = extFac.parseExpression("emax(a)", LanguageVersion.V2, null);
+		assertFailure(result, ProblemKind.SyntaxError);
+	}
+	
 }

@@ -42,22 +42,17 @@ public class ExtendedGrammar extends BMath {
 				final String operatorId = extension.getId();
 				final String groupId = extension.getGroupId();
 				final ExtensionKind kind = extension.getKind();
-				final ILedParser<? extends Formula<?>> subParser;
-				switch (kind) {
-				case ASSOCIATIVE_INFIX_EXPRESSION:
-					subParser = new SubParsers.ExtendedAssociativeExpressionInfix(
-							tag);
-					break;
-				case BINARY_INFIX_EXPRESSION:
-					subParser = new SubParsers.ExtendedBinaryExpressionInfix(tag);
-					break;
-				default:
-					// should not be ever possible
-					throw new IllegalStateException("Unknown extension kind: "
-							+ kind);
-				}
+				if (isLed(kind)) {
+				final ILedParser<? extends Formula<?>> subParser = makeLedParser(
+						kind, tag);
 				addOperator(extension.getSyntaxSymbol(), operatorId, groupId,
 						subParser);
+				} else {
+					final INudParser<? extends Formula<?>> subParser = makeNudParser(
+							kind, tag);
+					addOperator(extension.getSyntaxSymbol(), operatorId, groupId,
+							subParser);
+				}
 			}
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
@@ -68,6 +63,43 @@ public class ExtendedGrammar extends BMath {
 			extension.addPriorities(new PriorityMediator(opRegistry));
 
 		}
+	}
+
+	private static boolean isLed(ExtensionKind kind) {
+		return kind != ExtensionKind.PARENTHESIZED_PREFIX_EXPRESSION;
+	}
+
+	private static ILedParser<? extends Formula<?>> makeLedParser(
+			ExtensionKind kind, int tag) {
+		final ILedParser<? extends Formula<?>> subParser;
+		switch (kind) {
+		case ASSOCIATIVE_INFIX_EXPRESSION:
+			subParser = new SubParsers.ExtendedAssociativeExpressionInfix(
+					tag);
+			break;
+		case BINARY_INFIX_EXPRESSION:
+			subParser = new SubParsers.ExtendedBinaryExpressionInfix(tag);
+			break;
+		default:
+			// should not be ever possible
+			throw new IllegalStateException("Unknown extension kind: "
+					+ kind);
+		}
+		return subParser;
+	}
+
+	private static INudParser<? extends Formula<?>> makeNudParser(
+			ExtensionKind kind, int tag) {
+		final INudParser<? extends Formula<?>> subParser;
+		switch (kind) {
+		case PARENTHESIZED_PREFIX_EXPRESSION:
+			subParser = new SubParsers.ExtendedExprParen(tag);
+			break;
+		default:
+			// should not be ever possible
+			throw new IllegalStateException("Unknown extension kind: " + kind);
+		}
+		return subParser;
 	}
 
 }

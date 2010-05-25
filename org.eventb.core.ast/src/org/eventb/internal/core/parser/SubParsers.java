@@ -109,10 +109,10 @@ public class SubParsers {
 			pc.progressOpenParen();
 			final U child = pc.subParse(childParser);
 			pc.progressCloseParen();
-			return makeValue(pc, child, pc.getSourceLocation());
+			return makeValue(pc.factory, child, pc.getSourceLocation());
 		}
 		
-		protected abstract T makeValue(ParserContext pc, U child, SourceLocation loc);
+		protected abstract T makeValue(FormulaFactory factory, U child, SourceLocation loc);
 	}
 	
 	private static abstract class ValuedNudParser<T> extends AbstractSubParser<T> implements INudParser<T> {
@@ -553,9 +553,9 @@ public class SubParsers {
 		}
 
 		@Override
-		protected UnaryExpression makeValue(ParserContext pc, Expression child,
+		protected UnaryExpression makeValue(FormulaFactory factory, Expression child,
 				SourceLocation loc) {
-			return pc.factory.makeUnaryExpression(tag, child, loc);
+			return factory.makeUnaryExpression(tag, child, loc);
 		}
 
 	}
@@ -601,9 +601,9 @@ public class SubParsers {
 	static final INudParser<BoolExpression> KBOOL_PARSER = new ParenNudParser<BoolExpression, Predicate>(KBOOL, PRED_PARSER) {
 
 		@Override
-		protected BoolExpression makeValue(ParserContext pc, Predicate child,
+		protected BoolExpression makeValue(FormulaFactory factory, Predicate child,
 				SourceLocation loc) {
-			return pc.factory.makeBoolExpression(child, loc);
+			return factory.makeBoolExpression(child, loc);
 		}
 
 	};
@@ -721,9 +721,9 @@ public class SubParsers {
 	static final INudParser<MultiplePredicate> PARTITION_PARSER = new ParenNudParser<MultiplePredicate, List<Expression>>(KPARTITION, EXPR_LIST_PARSER) {
 
 		@Override
-		protected MultiplePredicate makeValue(ParserContext pc,
+		protected MultiplePredicate makeValue(FormulaFactory factory,
 				List<Expression> child, SourceLocation loc) {
-			return pc.factory.makeMultiplePredicate(tag, child, loc);
+			return factory.makeMultiplePredicate(tag, child, loc);
 		}
 
 	};
@@ -731,9 +731,9 @@ public class SubParsers {
 	static final INudParser<SimplePredicate> FINITE_PARSER = new ParenNudParser<SimplePredicate, Expression>(KFINITE, EXPR_PARSER) {
 
 		@Override
-		protected SimplePredicate makeValue(ParserContext pc,
+		protected SimplePredicate makeValue(FormulaFactory factory,
 				Expression child, SourceLocation loc) {
-			return pc.factory.makeSimplePredicate(tag, child, loc);
+			return factory.makeSimplePredicate(tag, child, loc);
 		}
 
 	};
@@ -757,4 +757,29 @@ public class SubParsers {
 
 	};
 	
+	static class ExtendedExprParen extends ParenNudParser<ExtendedExpression, List<Expression>> {
+
+		protected ExtendedExprParen(int tag) {
+			super(tag, EXPR_LIST_PARSER);
+		}
+
+		@Override
+		protected ExtendedExpression makeValue(FormulaFactory factory,
+				List<Expression> children, SourceLocation loc) {
+			final IExpressionExtension extension = (IExpressionExtension) factory
+					.getExtension(tag);
+//			// TODO check preconditions everywhere an extended formula is built
+//			if (!extension
+//					.checkPreconditions(children
+//							.toArray(new Expression[children.size()]),
+//							new Predicate[0])) {
+//				throw new SyntaxError(
+//						"Preconditions are not fulfilled for operator "
+//								+ extension.getId());
+//			}
+			return factory.makeExtendedExpression(extension, children,
+					Collections.<Predicate> emptyList(), loc);
+		}
+		
+	}
 }
