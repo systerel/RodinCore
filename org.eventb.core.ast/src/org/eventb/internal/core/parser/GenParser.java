@@ -323,6 +323,19 @@ public class GenParser {
 			}
 		}
 		
+		// use it to avoid parent operator comparison
+		// useful for parsing a predicate inside a non closed expression
+		// (or conversely), as these operators have no relative priority
+		public <T> T subParseNoParent(INudParser<T> parser,
+				List<BoundIdentDecl> newBoundIdents) throws SyntaxError {
+			pushParentKind(_NOOP);
+			try {
+				return subParse(parser, newBoundIdents);
+			} finally {
+				popParentKind();
+			}
+		}
+		
 		public <T> T subParseNoBinding(INudParser<T> parser) throws SyntaxError {
 			binding.push(new Binding());
 			try {

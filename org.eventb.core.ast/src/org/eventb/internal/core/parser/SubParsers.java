@@ -641,7 +641,7 @@ public class SubParsers {
 		protected QuantifiedExpression parseRight(ParserContext pc) throws SyntaxError {
 			final List<BoundIdentDecl> boundIdents = pc.subParseNoBinding(BOUND_IDENT_DECL_LIST_PARSER);
 			pc.progress(_DOT);
-			final Predicate pred = pc.subParse(PRED_PARSER, boundIdents);
+			final Predicate pred = pc.subParseNoParent(PRED_PARSER, boundIdents);
 			pc.progress(_MID);
 			final Expression expr = pc.subParse(EXPR_PARSER, boundIdents);
 			progressClose(pc);
@@ -676,7 +676,7 @@ public class SubParsers {
 			final List<BoundIdentDecl> boundIdents = new ArrayList<BoundIdentDecl>();
 			final Expression boundExpr = expr.bindAllFreeIdents(boundIdents, pc.factory);
 
-			final Predicate pred = pc.subParse(PRED_PARSER, boundIdents);
+			final Predicate pred = pc.subParseNoParent(PRED_PARSER, boundIdents);
 			progressClose(pc);
 
 			return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
@@ -704,7 +704,7 @@ public class SubParsers {
 			final Pattern pattern = pc.subParseNoBinding(pattParser);
 			pc.progress(_DOT);
 			final List<BoundIdentDecl> boundDecls = pattern.getDecls();
-			final Predicate pred = pc.subParse(PRED_PARSER, boundDecls);
+			final Predicate pred = pc.subParseNoParent(PRED_PARSER, boundDecls);
 			pc.progress(_MID);
 			final Expression expr = pc.subParse(EXPR_PARSER, boundDecls);
 			

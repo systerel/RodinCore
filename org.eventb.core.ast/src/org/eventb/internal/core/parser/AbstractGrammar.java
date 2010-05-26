@@ -28,9 +28,11 @@ import org.eventb.internal.core.parser.GenParser.SyntaxCompatibleError;
 public abstract class AbstractGrammar {
 
 	private static final String EOF_ID = "End of File";
+	private static final String NOOP_ID = "No Operator";
 	private static final String OPEN_ID = "Open";
 
 	static int _EOF;
+	static int _NOOP;
 	static int _OPEN;
 	static int _LPAR;
 	static int _RPAR;
@@ -63,12 +65,14 @@ public abstract class AbstractGrammar {
 	// TODO split into several init methods, one for each data (?)
 	public void init() {
 		_EOF = tokens.reserved();
+		_NOOP = tokens.reserved();
 		_OPEN = tokens.reserved();
 		_LPAR = tokens.getOrAdd("(");
 		_RPAR = tokens.getOrAdd(")");
 		_COMMA = tokens.getOrAdd(",");
 		
 		opRegistry.addOperator(_EOF, EOF_ID, GROUP0);
+		opRegistry.addOperator(_NOOP, NOOP_ID, GROUP0);
 		opRegistry.addOperator(_OPEN, OPEN_ID, GROUP0);
 		addOpenClose("(", ")");
 		try {
