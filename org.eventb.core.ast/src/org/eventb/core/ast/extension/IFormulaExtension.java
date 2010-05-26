@@ -34,6 +34,8 @@ public interface IFormulaExtension {
 
 	String getSyntaxSymbol();
 
+	// TODO the method is always the same for a given extension kind
+	// => implement once and for all, then remove this method
 	void toString(IToStringMediator mediator, IExtendedFormula formula);
 
 	Predicate getWDPredicate(IWDMediator wdMediator, IExtendedFormula formula);
