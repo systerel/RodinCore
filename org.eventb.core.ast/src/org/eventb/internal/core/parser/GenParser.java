@@ -410,18 +410,22 @@ public class GenParser {
 			final ParserContext pc = new ParserContext(scanner, factory,
 					result, withPredVar, version);
 			pc.init();
-			final Object res;
+			// separate parsed type in order to have
+			// errors in case of unexpected result type
 			if (clazz == Type.class) {
-				res = pc.subParse(MainParsers.TYPE_PARSER);
+				final Type res = pc.subParse(MainParsers.TYPE_PARSER);
+				result.setParsedType(res);
 			} else if (clazz == Assignment.class) {
-				// FIXME particular case required because assignment lhs
-				// is not a terminal (not a formula, but a list of identifiers)
-				// other possibility: introduce a notion of non terminal
-				// returned by sub-parsers, then implement assignment parsing
-				// with led sub-parsers
-				res = pc.subParse(MainParsers.ASSIGNMENT_PARSER);
+				final Assignment res = pc.subParse(MainParsers.ASSIGNMENT_PARSER);
+				result.setParsedAssignment(res); 
+			} else if (clazz == Predicate.class) {
+				final Predicate res = pc.subParse(MainParsers.PRED_PARSER);
+				result.setParsedPredicate(res); 
+			} else if (clazz == Expression.class) {
+				final Expression res = pc.subParse(MainParsers.EXPR_PARSER);
+				result.setParsedExpression(res); 
 			} else {
-				res = pc.subParse(MainParsers.FORMULA_PARSER);
+				throw new IllegalArgumentException("Can only parse one of: Predicate, Expression, Assignment or Type.");
 			}
 			if (pc.t.kind != _EOF) {
 				throw new UnmatchedToken("tokens have been ignored from: \""
@@ -436,17 +440,6 @@ public class GenParser {
 						+ " = "
 						+ factory.getGrammar().getTokens().getValue(
 								pc.parentKind.val));
-			}
-			if (clazz.isInstance(res)) {
-				if (clazz == Predicate.class) {
-					result.setParsedPredicate((Predicate) res); 
-				} else if (clazz == Expression.class) {
-					result.setParsedExpression((Expression) res); 
-				} else if (clazz == Assignment.class) {
-					result.setParsedAssignment((Assignment) res); 
-				} else if (clazz == Type.class) {
-					result.setParsedType((Type) res);
-				}
 			}
 		} catch (SyntaxError e) {
 			result.addProblem(new ASTProblem(null, ProblemKind.SyntaxError, ProblemSeverities.Error, e.getMessage()));

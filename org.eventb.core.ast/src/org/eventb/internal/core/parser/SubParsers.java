@@ -33,6 +33,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.IntegerLiteral;
+import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
@@ -94,7 +95,7 @@ public class SubParsers {
 		protected abstract T parseRight(ParserContext pc) throws SyntaxError;
 	}
 
-	private static abstract class ParenNudParser<T, U> extends PrefixNudParser<T> implements INudParser<T> {
+	private static abstract class ParenNudParser<T, U> extends PrefixNudParser<T> {
 
 		private final INudParser<U> childParser;
 		
@@ -147,6 +148,25 @@ public class SubParsers {
 		 */
 		protected abstract T makeValue(ParserContext pc, String tokenVal, SourceLocation loc) throws SyntaxError;
 
+	}
+
+	private static class VersionConditionalNudParser extends AbstractSubParser<Formula<?>> implements INudParser<Formula<?>> {
+
+		private final INudParser<? extends Formula<?>>[] parsers;
+		
+		protected VersionConditionalNudParser(INudParser<? extends Formula<?>>... parsers ) {
+			super(NO_TAG);
+			if (parsers.length != LanguageVersion.values().length) {
+				throw new IllegalArgumentException("A parser is required for every language version");
+			}
+			this.parsers = parsers;
+		}
+
+		public Formula<?> nud(ParserContext pc) throws SyntaxError {
+			final int versionIndex = pc.version.ordinal();
+			return parsers[versionIndex].nud(pc);
+		}
+		
 	}
 
 	// TODO make assignment parser a led parser
@@ -715,7 +735,7 @@ public class SubParsers {
 		}
 	};
 
-	static final INudParser<MultiplePredicate> PARTITION_PARSER = new ParenNudParser<MultiplePredicate, List<Expression>>(KPARTITION, EXPR_LIST_PARSER) {
+	private static final INudParser<MultiplePredicate> MULTIPLE_PREDICATE_PARSER = new ParenNudParser<MultiplePredicate, List<Expression>>(KPARTITION, EXPR_LIST_PARSER) {
 
 		@Override
 		protected MultiplePredicate makeValue(FormulaFactory factory,
@@ -725,6 +745,8 @@ public class SubParsers {
 
 	};
 	
+	static final INudParser<? extends Formula<?>> PARTITION_PARSER = new VersionConditionalNudParser(IDENT_SUBPARSER, MULTIPLE_PREDICATE_PARSER);
+
 	static final INudParser<SimplePredicate> FINITE_PARSER = new ParenNudParser<SimplePredicate, Expression>(KFINITE, EXPR_PARSER) {
 
 		@Override

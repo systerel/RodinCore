@@ -315,6 +315,11 @@ public class MainParsers {
 	}
 
 	// used as a main parser; directly called by the general parser.
+	// FIXME particular case required because assignment lhs
+	// is not a terminal (not a formula, but a list of identifiers)
+	// other possibility: introduce a notion of non terminal
+	// returned by sub-parsers, then implement assignment parsing
+	// with led sub-parsers
 	/** @see GenParser#parse() */
 	static final INudParser<Assignment> ASSIGNMENT_PARSER = new INudParser<Assignment>() {
 
