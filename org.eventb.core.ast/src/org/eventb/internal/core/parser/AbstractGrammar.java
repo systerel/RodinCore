@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.extension.CycleError;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.GenParser.SyntaxCompatibleError;
@@ -150,8 +151,8 @@ public abstract class AbstractGrammar {
 		}
 	}
 	
-	public boolean hasLessPriority(int leftKind, int rightKind) throws SyntaxCompatibleError {
-		return opRegistry.hasLessPriority(leftKind, rightKind);
+	public boolean hasLessPriority(int leftKind, int rightKind, LanguageVersion version) throws SyntaxCompatibleError {
+		return opRegistry.hasLessPriority(leftKind, rightKind, version);
 	}
 	
 	public int getEOF() {

@@ -15,6 +15,7 @@ import static org.eventb.internal.core.parser.OperatorRegistry.GROUP0;
 import static org.eventb.internal.core.parser.SubParsers.*;
 
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.extension.CycleError;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 
@@ -36,7 +37,7 @@ public class BMath extends AbstractGrammar {
 	private static final String RELOP_PRED = "Relational Operator Predicate";
 	private static final String QUANTIFICATION = "Quantification";
 	private static final String PAIR = "Pair";
-	private static final String RELATION = "Relation";
+	private static final String RELATION = "Set of Relations";
 	private static final String BINOP = "Binary Operator";
 	private static final String INTERVAL = "Interval";
 	private static final String ARITHMETIC = "Arithmetic";
@@ -366,6 +367,18 @@ public class BMath extends AbstractGrammar {
 		
 		opRegistry.addCompatibility(LAND_ID, LAND_ID);
 		opRegistry.addCompatibility(LOR_ID, LOR_ID);
+		
+		opRegistry.addCompatibility(REL_ID, REL_ID, LanguageVersion.V1);
+		opRegistry.addCompatibility(TREL_ID, TREL_ID, LanguageVersion.V1);
+		opRegistry.addCompatibility(SREL_ID, SREL_ID, LanguageVersion.V1);
+		opRegistry.addCompatibility(STREL_ID, STREL_ID, LanguageVersion.V1);
+		opRegistry.addCompatibility(PFUN_ID, PFUN_ID, LanguageVersion.V1);
+		opRegistry.addCompatibility(TFUN_ID, TFUN_ID, LanguageVersion.V1);
+		opRegistry.addCompatibility(PINJ_ID, PINJ_ID, LanguageVersion.V1);
+		opRegistry.addCompatibility(TINJ_ID, TINJ_ID, LanguageVersion.V1);
+		opRegistry.addCompatibility(PSUR_ID, PSUR_ID, LanguageVersion.V1);
+		opRegistry.addCompatibility(TSUR_ID, TSUR_ID, LanguageVersion.V1);
+		opRegistry.addCompatibility(TBIJ_ID, TBIJ_ID, LanguageVersion.V1);
 		
 		try {
 			opRegistry.addPriority(PLUS_ID, MUL_ID);

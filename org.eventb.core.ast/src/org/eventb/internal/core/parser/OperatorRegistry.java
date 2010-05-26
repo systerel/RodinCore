@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.extension.CycleError;
 import org.eventb.internal.core.parser.GenParser.SyntaxCompatibleError;
 
@@ -108,23 +110,53 @@ public class OperatorRegistry {
 	
 	private static class OperatorGroup {
 		private final Set<Integer> operators = new HashSet<Integer>();
-		private final Relation<Integer> compatibilityRelation = new Relation<Integer>();
+		private final EnumMap<LanguageVersion, Relation<Integer>> compatibilityRelation = new EnumMap<LanguageVersion, Relation<Integer>>(LanguageVersion.class);
 		private final Closure<Integer> operatorPriority = new Closure<Integer>();
 
 		private final String id;
 
 		public OperatorGroup(String id) {
 			this.id = id;
+			for (LanguageVersion version: LanguageVersion.values()) {
+				compatibilityRelation.put(version, new Relation<Integer>());
+			}
 		}
 
 		public String getId() {
 			return id;
 		}
 		
+		/**
+		 * Adds a compatibility between a and b for all language versions.
+		 * 
+		 * @param a
+		 *            an operator kind
+		 * @param b
+		 *            an operator kind
+		 */
 		public void addCompatibility(Integer a, Integer b) {
 			operators.add(a);
 			operators.add(b);
-			compatibilityRelation.add(a, b);
+			for(Relation<Integer> compat: compatibilityRelation.values()) {
+				compat.add(a, b);
+			}
+		}
+
+		/**
+		 * Adds a compatibility between a and b for a given language version
+		 * only.
+		 * 
+		 * @param a
+		 *            an operator kind
+		 * @param b
+		 *            an operator kind
+		 * @param version
+		 *            a language version
+		 */
+		public void addCompatibility(Integer a, Integer b, LanguageVersion version) {
+			operators.add(a);
+			operators.add(b);
+			compatibilityRelation.get(version).add(a, b);
 		}
 
 		public void addPriority(Integer a, Integer b)
@@ -140,8 +172,8 @@ public class OperatorRegistry {
 			return operatorPriority.contains(a, b);
 		}
 		
-		public boolean isCompatible(Integer a, Integer b) {
-			return compatibilityRelation.contains(a, b);
+		public boolean isCompatible(Integer a, Integer b, LanguageVersion version) {
+			return compatibilityRelation.get(version).contains(a, b);
 		}
 	}
 	
@@ -211,6 +243,13 @@ public class OperatorRegistry {
 		group.addCompatibility(leftKind, rightKind);
 	}
 
+	public void addCompatibility(String leftOpId, String rightOpId, LanguageVersion version) {
+		final Integer leftKind = idKind.get(leftOpId);
+		final Integer rightKind = idKind.get(rightOpId);
+		final OperatorGroup group = getAndCheckSameGroup(leftKind, rightKind);
+		group.addCompatibility(leftKind, rightKind, version);
+	}
+
 	// lowOpId gets a lower priority than highOpId
 	public void addPriority(String lowOpId, String highOpId)
 			throws CycleError {
@@ -231,9 +270,10 @@ public class OperatorRegistry {
 	}
 	
 	/**
-	 * <code>true</code> iff priority(tagLeft) < priority(tagRight) 
+	 * <code>true</code> iff priority(tagLeft) < priority(tagRight)
+	 * for the given language version
 	 */
-	public boolean hasLessPriority(int leftKind, int rightKind) throws SyntaxCompatibleError {
+	public boolean hasLessPriority(int leftKind, int rightKind, LanguageVersion version) throws SyntaxCompatibleError {
 		// TODO right associativity
 		final OperatorGroup leftGroup = kindOpGroup.get(leftKind);
 		final OperatorGroup rightGroup = kindOpGroup.get(rightKind);
@@ -255,7 +295,7 @@ public class OperatorRegistry {
 				return true;
 			} else if (group.hasLessPriority(rightKind, leftKind)) {
 				return false;
-			} else if (group.isCompatible(leftKind, rightKind)) {
+			} else if (group.isCompatible(leftKind, rightKind, version)) {
 				return false;
 			} else
 				throw new SyntaxCompatibleError("Incompatible symbols: "

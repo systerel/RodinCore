@@ -292,7 +292,7 @@ public class GenParser {
 			if (!grammar.isOperator(t)) {
 				return false;
 			}
-			return grammar.hasLessPriority(parentKind.val, t.kind);
+			return grammar.hasLessPriority(parentKind.val, t.kind, version);
 		}
 		
 		private void pushPos() {
