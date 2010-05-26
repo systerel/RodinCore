@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BinaryExpression;
@@ -150,7 +149,6 @@ public class SubParsers {
 
 	}
 
-	// TODO try to do the same as nud parsers, with generic types for left and right
 	// TODO make assignment parser a led parser
 	private static abstract class DefaultLedParser<T, Left, Right> extends AbstractSubParser<T> implements ILedParser<T> {
 
@@ -166,6 +164,7 @@ public class SubParsers {
 		}
 
 		public final T led(Formula<?> left, ParserContext pc) throws SyntaxError {
+			pc.progress();
 			final Left typedLeft = asLeftType(left);
 			final Right right = parseRight(pc);
 			return makeValue(pc.factory, typedLeft, right, pc.getSourceLocation());
@@ -177,7 +176,7 @@ public class SubParsers {
 				Right right, SourceLocation loc) throws SyntaxError;
 	}
 	
-	private static abstract class DefaultLedExprParser<T> extends DefaultLedParser<T, Expression, Expression> implements ILedParser<T> {
+	private static abstract class DefaultLedExprParser<T> extends DefaultLedParser<T, Expression, Expression> {
 
 		protected DefaultLedExprParser(int tag) {
 			super(tag, EXPR_PARSER);
@@ -189,7 +188,7 @@ public class SubParsers {
 		}
 	}
 	
-	private static abstract class DefaultLedPredParser<T> extends DefaultLedParser<T, Predicate, Predicate> implements ILedParser<T> {
+	private static abstract class DefaultLedPredParser<T> extends DefaultLedParser<T, Predicate, Predicate> {
 
 		protected DefaultLedPredParser(int tag) {
 			super(tag, PRED_PARSER);
@@ -201,6 +200,38 @@ public class SubParsers {
 		}
 	}
 	
+	private static abstract class AssociativeLedParser<T, Child> extends AbstractSubParser<T> implements ILedParser<T> {
+
+		private final INudParser<Child> childParser;
+		
+		protected AssociativeLedParser(int tag, INudParser<Child> childParser) {
+			super(tag);
+			this.childParser = childParser;
+		}
+
+		public T led(Formula<?> left, ParserContext pc) throws SyntaxError {
+			final Child typedLeft = asChildType(left);
+			
+			final List<Child> children = new ArrayList<Child>();
+			children.add(typedLeft);
+			
+			final int kind = pc.t.kind;
+			do {
+				pc.progress();
+				final Child next = pc.subParse(childParser);
+				children.add(next);
+			} while (pc.t.kind == kind);
+			
+			return makeResult(pc.factory, children, pc.getSourceLocation());
+		}
+		
+		protected abstract Child asChildType(Formula<?> left) throws SyntaxError;
+		
+		protected abstract T makeResult(FormulaFactory factory,
+				List<Child> children, SourceLocation loc) throws SyntaxError;
+
+	}
+
 	// Takes care of the bindings.
 	static final INudParser<Identifier> IDENT_SUBPARSER = new ValuedNudParser<Identifier>(NO_TAG) {
 
@@ -379,32 +410,22 @@ public class SubParsers {
 
 	}
 
-	static class AssociativeExpressionInfix extends DefaultLedExprParser<Expression> {
+	static class AssociativeExpressionInfix extends AssociativeLedParser<Expression, Expression> {
 
-		public AssociativeExpressionInfix(int tag) {
-			super(tag);
+
+		protected AssociativeExpressionInfix(int tag) {
+			super(tag, EXPR_PARSER);
 		}
 
 		@Override
-		protected Expression makeValue(FormulaFactory factory, Expression left,
-				Expression right, SourceLocation loc) throws SyntaxError {
-			final List<Expression> children = new ArrayList<Expression>();
-			if (left.getTag() == tag) {
-				children.addAll(asList(getChildren(left)));
-			} else {
-				children.add(left);
-			}
-			children.add(right);
-			return makeResult(factory, children, loc);
-		}
-		
-		protected Expression[] getChildren(Formula<?> exprWithSameTag) {
-			return ((AssociativeExpression) exprWithSameTag).getChildren();
-		}
-		
 		protected Expression makeResult(FormulaFactory factory,
 				List<Expression> children, SourceLocation loc) throws SyntaxError {
 			return factory.makeAssociativeExpression(tag, children, loc);
+		}
+
+		@Override
+		protected Expression asChildType(Formula<?> left) throws SyntaxError {
+			return asExpression(left);
 		}
 		
 	}
@@ -416,35 +437,27 @@ public class SubParsers {
 		}
 		
 		@Override
-		protected Expression[] getChildren(Formula<?> exprWithSameTag) {
-			return ((ExtendedExpression) exprWithSameTag).getChildExpressions();
-		}
-		
-		@Override
 		protected ExtendedExpression makeResult(FormulaFactory factory,
 				List<Expression> children, SourceLocation loc) throws SyntaxError {
 			return checkAndMakeExtendedExpr(factory, tag, children, loc);
 		}
 	}
 	
-	static class AssociativePredicateInfix extends DefaultLedPredParser<AssociativePredicate> {
+	static class AssociativePredicateInfix extends AssociativeLedParser<AssociativePredicate, Predicate> {
 
 		public AssociativePredicateInfix(int tag) {
-			super(tag);
+			super(tag, PRED_PARSER);
 		}
 
 		@Override
-		protected AssociativePredicate makeValue(FormulaFactory factory,
-				Predicate left, Predicate right, SourceLocation loc)
+		protected Predicate asChildType(Formula<?> left) throws SyntaxError {
+			return asPredicate(left);
+		}
+
+		@Override
+		protected AssociativePredicate makeResult(FormulaFactory factory,
+				List<Predicate> children, SourceLocation loc)
 				throws SyntaxError {
-			final List<Predicate> children = new ArrayList<Predicate>();
-			if (left.getTag() == tag) {
-				children.addAll(asList(((AssociativePredicate) left)
-						.getChildren()));
-			} else {
-				children.add(left);
-			}
-			children.add(right);
 			return factory.makeAssociativePredicate(tag, children, loc);
 		}
 	}

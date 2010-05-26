@@ -161,7 +161,6 @@ public class MainParsers {
 				ILedParser<? extends Formula<?>> parser, Formula<?> left)
 				throws SyntaxError {
 			// TODO implement backtracking for led parsers as well 
-			pc.progress();
 			return parser.led(left, pc);
 		}
 		

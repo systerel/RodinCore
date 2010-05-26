@@ -25,8 +25,8 @@ public interface ILedParser<T> {
 	/**
 	 * Parses a left-denoted formula from the given parser context.
 	 * <p>
-	 * Current token is that just after the operator symbol associated with this
-	 * parser (start of the right part).
+	 * Current token is that of the operator symbol associated with this
+	 * parser.
 	 * </p>
 	 * <p>
 	 * When the method returns, current token is the one that immediately
