@@ -18,6 +18,7 @@ import static org.eventb.internal.core.parser.MainParsers.*;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 
 import org.eventb.core.ast.AssociativePredicate;
@@ -152,19 +153,21 @@ public class SubParsers {
 
 	private static class VersionConditionalNudParser extends AbstractSubParser<Formula<?>> implements INudParser<Formula<?>> {
 
-		private final INudParser<? extends Formula<?>>[] parsers;
+		private final EnumMap<LanguageVersion, INudParser<? extends Formula<?>>> parsers = new EnumMap<LanguageVersion, INudParser<? extends Formula<?>>>(
+				LanguageVersion.class);
 		
 		protected VersionConditionalNudParser(INudParser<? extends Formula<?>>... parsers ) {
 			super(NO_TAG);
 			if (parsers.length != LanguageVersion.values().length) {
 				throw new IllegalArgumentException("A parser is required for every language version");
 			}
-			this.parsers = parsers;
+			for(LanguageVersion version: LanguageVersion.values()) {
+				this.parsers.put(version, parsers[version.ordinal()]);
+			}
 		}
 
 		public Formula<?> nud(ParserContext pc) throws SyntaxError {
-			final int versionIndex = pc.version.ordinal();
-			return parsers[versionIndex].nud(pc);
+			return parsers.get(pc.version).nud(pc);
 		}
 		
 	}
