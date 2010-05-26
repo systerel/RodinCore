@@ -944,6 +944,34 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("{y∣∀x·x>y}", expected);		
 	}
 	
+	public void testForallCSetExplicitBoundTwice() throws Exception {
+		final Predicate expected = 
+			ff.makeQuantifiedPredicate(FORALL,
+					new BoundIdentDecl[] { BID_x },
+					ff.makeSimplePredicate(KFINITE,
+							ff.makeAssociativeExpression(BUNION,
+									asList(BI_0,
+											ff.makeQuantifiedExpression(CSET,
+													asList(BID_x),
+													LIT_BTRUE, BI_0, null,
+													Form.Explicit)), null), null), null);
+		doPredicateTest("∀x·finite(x ∪ {x · ⊤ ∣ x})", expected);		
+	}
+	
+	public void testForallCSetImplicitBoundTwice() throws Exception {
+		final Predicate expected =
+			ff.makeQuantifiedPredicate(FORALL,
+					new BoundIdentDecl[] { BID_x },
+					ff.makeSimplePredicate(KFINITE,
+							ff.makeAssociativeExpression(BUNION,
+									asList(BI_0,			
+											ff.makeQuantifiedExpression(CSET,
+													asList(BID_x),
+													LIT_BTRUE, BI_0, null,
+													Form.Implicit)), null), null), null);
+		doPredicateTest("∀x·finite(x ∪ {x∣ ⊤})", expected);
+	}
+
 	public void testMapsto() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(MAPSTO, ZERO,
 				FRID_S, null);
@@ -1054,6 +1082,25 @@ public class TestGenParser extends AbstractTests {
 		final IParseResult result = ff.parseExpression("λx↦(y↦x)·x>y∣ x+y",
 				LanguageVersion.V2, null);
 		assertFailure(result, ProblemKind.SyntaxError);
+	}
+
+	public void testForallLambdaBoundTwice() throws Exception {
+		final Predicate expected =
+			ff.makeQuantifiedPredicate(FORALL,
+				new BoundIdentDecl[] { BID_x },
+				ff.makeSimplePredicate(KFINITE,
+						ff.makeAssociativeExpression(BUNION,
+								asList(BI_0,			
+										ff.makeQuantifiedExpression(CSET,
+												asList(BID_x, BID_y),
+												ff.makeRelationalPredicate(GT, BI_1, BI_0, null),
+												ff.makeBinaryExpression(MAPSTO,
+														ff.makeBinaryExpression(MAPSTO,	BI_1, BI_0, null),
+														ff.makeAssociativeExpression(PLUS, 
+																Arrays.<Expression> asList(BI_1, BI_0), null),
+																null),
+																null, Form.Lambda)), null), null), null);
+		doPredicateTest("∀x·finite(x ∪ (λx↦y·x>y∣ x+y))",expected);
 	}
 
 	public void testInnerBoundIdentsForall() throws Exception {

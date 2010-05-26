@@ -545,7 +545,7 @@ public class SubParsers {
 
 		@Override
 		public QuantifiedPredicate parseRight(ParserContext pc) throws SyntaxError {
-			final List<BoundIdentDecl> boundIdentifiers = pc.subParse(BOUND_IDENT_DECL_LIST_PARSER);
+			final List<BoundIdentDecl> boundIdentifiers = pc.subParseNoBinding(BOUND_IDENT_DECL_LIST_PARSER);
 			pc.progress(_DOT);
 			final Predicate pred = pc.subParse(PRED_PARSER, boundIdentifiers);
 
@@ -639,7 +639,7 @@ public class SubParsers {
 
 		@Override
 		protected QuantifiedExpression parseRight(ParserContext pc) throws SyntaxError {
-			final List<BoundIdentDecl> boundIdents = pc.subParse(BOUND_IDENT_DECL_LIST_PARSER);
+			final List<BoundIdentDecl> boundIdents = pc.subParseNoBinding(BOUND_IDENT_DECL_LIST_PARSER);
 			pc.progress(_DOT);
 			final Predicate pred = pc.subParse(PRED_PARSER, boundIdents);
 			pc.progress(_MID);
@@ -671,27 +671,16 @@ public class SubParsers {
 		@Override
 		protected final QuantifiedExpression parseRight(ParserContext pc)
 		throws SyntaxError {
-			final Expression expr = pc.subParse(EXPR_PARSER);
+			final Expression expr = pc.subParseNoBinding(EXPR_PARSER);
 			pc.progress(_MID);
-			final List<FreeIdentifier> idents = asList(expr.getFreeIdentifiers());
-			final List<BoundIdentDecl> boundIdents = makeBoundIdentDeclList(pc.factory, idents);
-			final Expression boundExpr = expr.bindTheseIdents(idents, pc.factory);
+			final List<BoundIdentDecl> boundIdents = new ArrayList<BoundIdentDecl>();
+			final Expression boundExpr = expr.bindAllFreeIdents(boundIdents, pc.factory);
 
 			final Predicate pred = pc.subParse(PRED_PARSER, boundIdents);
 			progressClose(pc);
 
 			return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
 					boundExpr, pc.getSourceLocation(), Form.Implicit);
-		}
-		
-		private static <T extends Identifier> List<BoundIdentDecl> makeBoundIdentDeclList(
-				FormulaFactory factory, List<FreeIdentifier> identList) {
-			final List<BoundIdentDecl> boundIdentifiers = new ArrayList<BoundIdentDecl>(
-					identList.size());
-			for (FreeIdentifier ident : identList) {
-				boundIdentifiers.add(ident.asDecl(factory));
-			}
-			return boundIdentifiers;
 		}
 		
 		protected void progressClose(ParserContext pc) throws SyntaxError {
@@ -712,7 +701,7 @@ public class SubParsers {
 		@Override
 		public QuantifiedExpression parseRight(ParserContext pc) throws SyntaxError {
 			final PatternParser pattParser = new PatternParser(pc.result);
-			final Pattern pattern = pc.subParse(pattParser);
+			final Pattern pattern = pc.subParseNoBinding(pattParser);
 			pc.progress(_DOT);
 			final List<BoundIdentDecl> boundDecls = pattern.getDecls();
 			final Predicate pred = pc.subParse(PRED_PARSER, boundDecls);

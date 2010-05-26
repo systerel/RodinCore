@@ -314,7 +314,17 @@ public class GenParser {
 		
 		public <T> T subParse(INudParser<T> parser,
 				List<BoundIdentDecl> newBoundIdents) throws SyntaxError {
+			// FIXME add a warning about identifiers bound twice
 			binding.push(new Binding(binding.val, newBoundIdents));
+			try {
+				return subParse(parser);
+			} finally {
+				binding.pop();
+			}
+		}
+		
+		public <T> T subParseNoBinding(INudParser<T> parser) throws SyntaxError {
+			binding.push(new Binding());
 			try {
 				return subParse(parser);
 			} finally {
