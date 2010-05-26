@@ -261,15 +261,13 @@ public class SubParsers {
 		@Override
 		protected Identifier makeValue(ParserContext pc, String tokenVal,
 				SourceLocation loc) {
+			if (pc.isParsingType()) { // make a type expression
+				final Type type = pc.factory.makePowerSetType(pc.factory.makeGivenType(tokenVal));
+				return pc.factory.makeFreeIdentifier(tokenVal, loc, type);
+			}
 			final int index = pc.getBoundIndex(tokenVal);
 			if (index == -1) { // free identifier
-				final Type type;
-				if (pc.isParsingType()) {
-					type = pc.factory.makePowerSetType(pc.factory.makeGivenType(tokenVal));
-				} else {
-					type = null;
-				}
-				return pc.factory.makeFreeIdentifier(tokenVal, loc, type);
+				return pc.factory.makeFreeIdentifier(tokenVal, loc);
 			} else { // bound identifier
 				return pc.factory.makeBoundIdentifier(index, loc);
 			}

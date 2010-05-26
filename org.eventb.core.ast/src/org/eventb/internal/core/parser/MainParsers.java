@@ -188,9 +188,8 @@ public class MainParsers {
 			pc.startParsingType();
 			final Expression expression = pc.subParse(EXPR_PARSER);
 			if (!expression.isATypeExpression()) {
-				throw new SyntaxError(
-						"expected a type expression at position "
-								+ pc.getSourceLocation());
+				throw new SyntaxError("expected a type expression at position "
+						+ pc.getSourceLocation() + " but was " + expression);
 			}
 			try {
 				return expression.toType(pc.factory);
