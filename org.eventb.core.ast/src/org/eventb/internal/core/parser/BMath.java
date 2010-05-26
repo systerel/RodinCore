@@ -333,12 +333,12 @@ public class BMath extends AbstractGrammar {
 		opRegistry.addCompatibility(DOMRES_ID, DPROD_ID);
 		opRegistry.addCompatibility(DOMRES_ID, RANRES_ID);
 		opRegistry.addCompatibility(DOMRES_ID, RANSUB_ID);
-		opRegistry.addCompatibility(RANSUB_ID, BINTER_ID);
-		opRegistry.addCompatibility(RANSUB_ID, SETMINUS_ID);
-		opRegistry.addCompatibility(RANSUB_ID, FCOMP_ID);
-		opRegistry.addCompatibility(RANSUB_ID, DPROD_ID);
-		opRegistry.addCompatibility(RANSUB_ID, RANRES_ID);
-		opRegistry.addCompatibility(RANSUB_ID, RANSUB_ID);
+		opRegistry.addCompatibility(DOMSUB_ID, BINTER_ID);
+		opRegistry.addCompatibility(DOMSUB_ID, SETMINUS_ID);
+		opRegistry.addCompatibility(DOMSUB_ID, FCOMP_ID);
+		opRegistry.addCompatibility(DOMSUB_ID, DPROD_ID);
+		opRegistry.addCompatibility(DOMSUB_ID, RANRES_ID);
+		opRegistry.addCompatibility(DOMSUB_ID, RANSUB_ID);
 		opRegistry.addCompatibility(CPROD_ID, CPROD_ID); // Exception of the table  3.2
 			
 		
@@ -368,17 +368,15 @@ public class BMath extends AbstractGrammar {
 		opRegistry.addCompatibility(LOR_ID, LOR_ID);
 		
 		try {
-			opRegistry.addPriority(EXPN_ID, DIV_ID);
-			opRegistry.addPriority(EXPN_ID, MUL_ID);
-			opRegistry.addPriority(EXPN_ID, PLUS_ID);
-			opRegistry.addPriority(EXPN_ID, MINUS_ID);
-			opRegistry.addPriority(EXPN_ID, MOD_ID);
 			opRegistry.addPriority(PLUS_ID, MUL_ID);
-			opRegistry.addPriority(MINUS_ID, MUL_ID);
 			opRegistry.addPriority(PLUS_ID, DIV_ID);
-			opRegistry.addPriority(MINUS_ID, DIV_ID);
 			opRegistry.addPriority(PLUS_ID, MOD_ID);
+			opRegistry.addPriority(MINUS_ID, MUL_ID);
+			opRegistry.addPriority(MINUS_ID, DIV_ID);
 			opRegistry.addPriority(MINUS_ID, MOD_ID);
+			opRegistry.addPriority(MUL_ID, EXPN_ID);
+			opRegistry.addPriority(DIV_ID, EXPN_ID);
+			opRegistry.addPriority(MOD_ID, EXPN_ID);
 			
 			addGroupPrioritySequence(GROUP0, QUANTIFIED_PRED, INFIX_PRED,
 					LOGIC_PRED, NOT_PRED, ATOMIC_PRED, RELOP_PRED, PAIR);
