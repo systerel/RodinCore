@@ -27,6 +27,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.InvalidExpressionException;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.GenParser.ParserContext;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 import org.eventb.internal.core.parser.GenParser.ParserContext.SavedContext;
@@ -132,6 +133,8 @@ public class MainParsers {
 				try {
 					// FIXME the call to nud may add problems to pc.result
 					// without throwing an exception
+					// => convention: exception + problem if not recoverable
+					//                problem only if recoverable
 					return nudParser.nud(pc);
 					// FIXME check for ambiguities (several succeeding parsers)
 				} catch (SyntaxError e) {

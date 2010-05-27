@@ -177,10 +177,10 @@ public class BMath extends AbstractGrammar {
 	static int _BECMO;
 	static int _BECST;
 	static int _MID;
-	static int _KPARTITION;
+	public static int _KPARTITION;
 	static int _DOT;
 	static int _TYPING;
-	static int _PREDVAR;
+	public static int _PREDVAR;
 
 
 	@SuppressWarnings("deprecation")

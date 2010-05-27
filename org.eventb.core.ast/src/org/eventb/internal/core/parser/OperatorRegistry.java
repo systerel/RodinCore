@@ -218,7 +218,8 @@ public class OperatorRegistry {
 	
 	
 	private final Closure<OperatorGroup> groupPriority = new Closure<OperatorGroup>();
-	// FIXME take group compatibility into account
+	// FIXME it seems like group compatibility is not needed for standard math language
+	// see if there are reasons to keep it for extensions
 	private final Relation<OperatorGroup> groupCompatibility = new Relation<OperatorGroup>();
 	
 	public OperatorRegistry() {

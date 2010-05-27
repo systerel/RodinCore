@@ -24,9 +24,9 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
+import org.eventb.internal.core.lexer.Scanner;
+import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.ParseResult;
-import org.eventb.internal.core.parser.Scanner;
-import org.eventb.internal.core.parser.Token;
 
 /**
  * This tests the lexical analyzer.

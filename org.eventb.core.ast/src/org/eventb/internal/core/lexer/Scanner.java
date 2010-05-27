@@ -8,7 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.core.parser;
+package org.eventb.internal.core.lexer;
 
 import java.util.List;
 import java.util.ListIterator;
@@ -16,7 +16,10 @@ import java.util.Vector;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.LanguageVersion;
-import org.eventb.internal.core.parser.GenScan.ScanState;
+import org.eventb.internal.core.lexer.GenScan.ScanState;
+import org.eventb.internal.core.parser.AbstractGrammar;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.ParseResult;
 
 /**
  * This class maps the JFlex lexer with the Coco/R scanner. Note that the lexer

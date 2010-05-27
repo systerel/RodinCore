@@ -30,7 +30,9 @@ import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
-import org.eventb.internal.core.parser.GenScan.ScanState;
+import org.eventb.internal.core.lexer.Scanner;
+import org.eventb.internal.core.lexer.Token;
+import org.eventb.internal.core.lexer.GenScan.ScanState;
 
 /**
  * @author Nicolas Beauger

@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.extension.CycleError;
+import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.GenParser.SyntaxCompatibleError;
 
@@ -32,13 +33,13 @@ public abstract class AbstractGrammar {
 	private static final String NOOP_ID = "No Operator";
 	private static final String OPEN_ID = "Open";
 
-	static int _EOF;
+	public static int _EOF;
 	static int _NOOP;
 	static int _OPEN;
 	static int _LPAR;
 	static int _RPAR;
-	static int _IDENT;
-	static int _INTLIT;
+	public static int _IDENT;
+	public static int _INTLIT;
 	static int _COMMA;
 
 	protected final IndexedSet<String> tokens = new IndexedSet<String>();

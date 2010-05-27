@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.core.parser;
+package org.eventb.internal.core.lexer;
 
 import static org.eventb.core.ast.LanguageVersion.V1;
 
@@ -19,6 +19,9 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.SourceLocation;
+import org.eventb.internal.core.parser.AbstractGrammar;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.ParseResult;
 
 /**
  * A parameterizable lexer.
@@ -386,7 +389,7 @@ public class GenScan {
 		this.curPosSaved = state.curPosSaved;
 	}
 	
-	static class ScanState {
+	public static class ScanState {
 		final int pos;
 		final int currentPos;
 		final int curPosSaved;

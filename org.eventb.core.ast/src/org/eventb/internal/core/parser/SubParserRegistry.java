@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eventb.core.ast.Formula;
+import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 
 /**
@@ -83,6 +84,7 @@ public class SubParserRegistry {
 		}
 		return parsers.getLedParsers().get(0); 
 		// FIXME when backtracking there will be several subparsers for one kind
+		// looks like backtracking is only required for nud parsers, could avoid it for led parsers.
 	}
 	
 	public void addNud(int kind, INudParser<? extends Formula<?>> subParser) throws OverrideException {
