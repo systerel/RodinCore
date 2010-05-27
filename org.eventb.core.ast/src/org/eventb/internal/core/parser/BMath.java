@@ -352,10 +352,8 @@ public class BMath extends AbstractGrammar {
 		opRegistry.addCompatibility(MUL_ID, MUL_ID);
 		opRegistry.addCompatibility(DIV_ID, MUL_ID);
 		opRegistry.addCompatibility(DIV_ID, MOD_ID);
-		opRegistry.addCompatibility(DIV_ID, DIV_ID);
 		opRegistry.addCompatibility(MOD_ID, DIV_ID);
 		opRegistry.addCompatibility(MOD_ID, MUL_ID);
-		opRegistry.addCompatibility(MOD_ID, MOD_ID);
 		
 		opRegistry.addCompatibility(CONVERSE_ID, CONVERSE_ID);
 
@@ -396,9 +394,9 @@ public class BMath extends AbstractGrammar {
 
 			addGroupPrioritySequence(GROUP0, QUANTIFICATION, RELOP_PRED);
 			
-			// for OFTYPE
-			addGroupPrioritySequence(QUANTIFICATION, PAIR, TYPED, BINOP,
-					BOUND_UNARY);
+//			// for OFTYPE
+//			addGroupPrioritySequence(QUANTIFICATION, PAIR, TYPED, BINOP,
+//					BOUND_UNARY);
 			
 			// start of excerpt from kernel language specification table 3.1
 			addGroupPrioritySequence(QUANTIFICATION, PAIR, RELATION, BINOP,
