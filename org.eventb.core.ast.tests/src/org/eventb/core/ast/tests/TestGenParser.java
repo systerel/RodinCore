@@ -1597,4 +1597,21 @@ public class TestGenParser extends AbstractTests {
 		assertFailure(result, ProblemKind.SyntaxError);
 	}
 	
+	public void testFunImageConverse() throws Exception {
+		final Expression expected = ff.makeBinaryExpression(FUNIMAGE,
+				ff.makeUnaryExpression(CONVERSE, FRID_f, null), FRID_a, null);
+		doExpressionTest("f∼(a)", expected);
+	}
+
+	public void testConverseFunImage() throws Exception {
+		final Expression expected = ff.makeUnaryExpression(CONVERSE,
+				ff.makeBinaryExpression(FUNIMAGE, FRID_f, FRID_a, null), null);
+		doExpressionTest("(f(a))∼", expected);
+	}
+
+	public void testConverseFunImageNoParen() throws Exception {
+		final IParseResult result = ff.parseExpression("f(a)∼", LanguageVersion.V2, null);
+		System.out.println(result.getParsedExpression());
+		assertFailure(result, ProblemKind.SyntaxError);
+	}
 }
