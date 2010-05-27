@@ -37,8 +37,10 @@ import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
+import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
+import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -373,22 +375,60 @@ public class SubParsers {
 			if (pc.t.kind != _RPAR) {
 				throw new SyntaxError("oftype should appear within parentheses");
 			}
-			return makeValue(pc.factory, typedLeft, right, pc.getEnclosingSourceLocation());
+			return checkAndMakeResult(pc.factory, typedLeft.getTag(), right, pc
+					.getEnclosingSourceLocation());
 		}
-		
-		private Expression makeValue(FormulaFactory factory, Expression left,
-				Type right, SourceLocation loc) throws SyntaxError {
-			switch (left.getTag()) {
+
+		private Expression checkAndMakeResult(FormulaFactory factory, int tag,
+				Type type, SourceLocation loc) throws SyntaxError {
+			switch (tag) {
 			case Formula.EMPTYSET:
 			case Formula.KID_GEN:
 			case Formula.KPRJ1_GEN:
 			case Formula.KPRJ2_GEN:
-				return factory.makeAtomicExpression(left.getTag(), loc,
-						right);
+				if (!isValidTypedGeneric(tag, type)) {
+					throw new SyntaxError("invalid type expression");
+				}
+				return factory.makeAtomicExpression(tag, loc, type);
 			default:
 				throw new SyntaxError("Unexpected oftype");
 			}
 		}
+
+		private boolean isValidTypedGeneric(int tag, Type type) {
+			switch(tag) {
+			case Formula.EMPTYSET:
+				return (type instanceof PowerSetType);
+			case Formula.KID_GEN:
+				final Type source = type.getSource();
+				return source != null && source.equals(type.getTarget());
+			case Formula.KPRJ1_GEN:
+				return isValidPrjType(type, true);
+			case Formula.KPRJ2_GEN:
+				return isValidPrjType(type, false);
+			default:
+				assert false;
+				return false;
+			}
+		}
+		
+		private boolean isValidPrjType(Type type, boolean left) {
+			final Type source = type.getSource();
+			final Type target = type.getTarget();
+			if (!(source instanceof ProductType)) {
+				return false;
+			}
+
+			final ProductType prodSource = (ProductType) source;
+			final Type child;
+			if (left) {
+				child = prodSource.getLeft();
+			} else {
+				child = prodSource.getRight();
+			}
+			return target.equals(child);
+		}
+
 	};
 	
 	static class AtomicExpressionParser extends PrefixNudParser<AtomicExpression> {
