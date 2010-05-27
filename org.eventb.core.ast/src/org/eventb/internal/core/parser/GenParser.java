@@ -314,9 +314,6 @@ public class GenParser {
 		}
 		
 		public boolean canProgressRight() throws SyntaxCompatibleError {
-			if (t.kind == _EOF) { // end of the formula
-				return false;
-			}
 			if (!grammar.isOperator(t.kind)) {
 				return false;
 			}
