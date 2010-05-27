@@ -136,7 +136,7 @@ public abstract class AbstractGrammar {
 	private int addReservedSubParser(INudParser<? extends Formula<?>> subParser)
 			throws OverrideException {
 		final int kind = tokens.reserved();
-		subParsers.addReserved(kind, subParser);
+		subParsers.addNud(kind, subParser);
 		return kind;
 	}
 	

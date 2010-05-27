@@ -106,10 +106,4 @@ public class SubParserRegistry {
 		return parsers;
 	}
 
-
-	public void addReserved(int kind, INudParser<? extends Formula<?>> subParser) {
-		final KindParsers parsers = fetchParsers(kind);
-		parsers.addNud(subParser);
-	}
-
 }
