@@ -189,12 +189,12 @@ public class MainParsers {
 		
 		public Type nud(ParserContext pc) throws SyntaxError {
 			pc.startParsingType();
-			final Expression expression = pc.subParse(EXPR_PARSER);
-			if (!expression.isATypeExpression()) {
-				throw new SyntaxError("expected a type expression at position "
-						+ pc.getSourceLocation() + " but was " + expression);
-			}
 			try {
+				final Expression expression = pc.subParse(EXPR_PARSER);
+				if (!expression.isATypeExpression()) {
+					throw new SyntaxError("expected a type expression at position "
+							+ pc.getSourceLocation() + " but was " + expression);
+				}
 				return expression.toType(pc.factory);
 			} catch (InvalidExpressionException e) {
 				// TODO should not happen (already checked)
