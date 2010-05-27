@@ -322,7 +322,7 @@ public class OperatorRegistry {
 		groupCompatibility.add(leftGroup, rightGroup);
 	}	
 
-	public boolean isOperator(int kind) {
+	public boolean hasGroup(int kind) {
 		return kindOpGroup.getNoCheck(kind) != null;
 	}	
 	

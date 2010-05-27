@@ -21,18 +21,11 @@ import java.util.Map.Entry;
  */
 public class IndexedSet<T> {
 
-	public static final int NOT_AN_INDEX = -1;
+	private static final int FIRST_INDEX = 0;
+	public static final int NOT_AN_INDEX = FIRST_INDEX - 1;
 
 	private final Map<T, Integer> map = new HashMap<T, Integer>();
-	private int nextIndex;
-
-	public IndexedSet() {
-		this(0);
-	}
-	
-	public IndexedSet(int firstIndex) {
-		nextIndex = firstIndex;
-	}
+	private int nextIndex = FIRST_INDEX;
 
 	public int getOrAdd(T key) {
 		final Integer current = map.get(key);
@@ -59,7 +52,7 @@ public class IndexedSet<T> {
 		return index;
 	}
 
-	public T getValue(int index) {
+	public T getKey(int index) {
 		for (Entry<T, Integer> entry : map.entrySet()) {
 			if (entry.getValue().equals(index)) {
 				return entry.getKey();
@@ -70,5 +63,10 @@ public class IndexedSet<T> {
 	
 	public Set<Entry<T, Integer>> entrySet() {
 		return map.entrySet();
+	}
+	
+	public boolean isReserved(int index) {
+		return index >= FIRST_INDEX && index < nextIndex
+				&& !map.containsValue(index);
 	}
 }

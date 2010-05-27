@@ -15,6 +15,7 @@ import static org.eventb.internal.core.parser.AbstractGrammar.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Stack;
 
@@ -112,6 +113,24 @@ public class GenParser {
 		public void pop() {
 			val = stack.pop();
 		}
+
+		/**
+		 * Returns an iterator on the stack starting from the end, intended to
+		 * be used in reverse order, with {@link ListIterator#hasPrevious()} and
+		 * {@link ListIterator#previous()}.
+		 * <p>
+		 * This way, items are delivered in LIFO order.
+		 * </p>
+		 * 
+		 * @return an iterator
+		 */
+		public ListIterator<T> stackIterator() {
+			return stack.listIterator(stack.size());
+		}
+
+		public T peekStack() {
+			return stack.peek();
+		}
 		
 		@Override
 		public String toString() {
@@ -169,6 +188,13 @@ public class GenParser {
 				throw new IllegalStateException("no start position set");
 			}
 			return new SourceLocation(startPos.val, endPos, result.getOrigin());
+		}
+		
+		public SourceLocation getEnclosingSourceLocation() {
+			if (startPos.val < 0) {
+				throw new IllegalStateException("no start position set");
+			}
+			return new SourceLocation(startPos.peekStack(), t.getEnd(), result.getOrigin());
 		}
 		
 		public void init() {
@@ -260,8 +286,8 @@ public class GenParser {
 		 */
 		public void progress(int expectedKind) throws SyntaxError {
 			if (t.kind != expectedKind) {
-				throw new SyntaxError("expected symbol \""
-						+ grammar.getTokens().getValue(expectedKind)
+				final String expected = grammar.getImage(expectedKind);
+				throw new SyntaxError("expected \"" + expected
 						+ "\" but was \"" + t.val + "\"");
 			}
 			progress();
@@ -291,7 +317,7 @@ public class GenParser {
 			if (t.kind == _EOF) { // end of the formula
 				return false;
 			}
-			if (!grammar.isOperator(t)) {
+			if (!grammar.isOperator(t.kind)) {
 				return false;
 			}
 			return grammar.hasLessPriority(parentKind.val, t.kind, version);
@@ -345,6 +371,20 @@ public class GenParser {
 			} finally {
 				binding.pop();
 			}
+		}
+		
+		public boolean isParenthesized() throws SyntaxError {
+			if (parentKind.val == _LPAR) {
+				return true;
+			}
+			final ListIterator<Integer> iter = parentKind.stackIterator();
+			while(iter.hasPrevious()) {
+				final int kind = iter.previous();
+				if (grammar.isOperator(kind)) {
+					return kind == _LPAR;
+				}
+			}
+			return false;
 		}
 	}
 	
@@ -440,7 +480,7 @@ public class GenParser {
 						+ " with "
 						+ pc.parentKind.val
 						+ " = "
-						+ factory.getGrammar().getTokens().getValue(
+						+ factory.getGrammar().getImage(
 								pc.parentKind.val));
 			}
 		} catch (SyntaxError e) {

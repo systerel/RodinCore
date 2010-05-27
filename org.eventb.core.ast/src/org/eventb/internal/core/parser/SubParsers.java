@@ -299,7 +299,6 @@ public class SubParsers {
 				SourceLocation loc) throws SyntaxError {
 			Type type = null;
 			if (pc.t.kind == _TYPING) {
-				// TODO not so much clean, does not use OFTYPE parser
 				pc.pushParentKind();
 				pc.progress();
 				try {
@@ -359,23 +358,27 @@ public class SubParsers {
 	};
 
 	/**
-	 * Always returns an expression with the same tag as left
+	 * Parses expressions outside bound identifier declarations. Always returns
+	 * an expression with the same tag as left.
 	 */
-	static final DefaultLedParser<Expression, Expression, Type> OFTYPE = new DefaultLedParser<Expression, Expression, Type>(
-			NO_TAG, TYPE_PARSER) {
+	static final ILedParser<Expression> OFTYPE = new ILedParser<Expression>() {
 		
-		@Override
-		protected Expression asLeftType(Formula<?> left) throws SyntaxError {
-			return asExpression(left);
+		public Expression led(Formula<?> left, ParserContext pc) throws SyntaxError {
+			if (!pc.isParenthesized()) {
+				throw new SyntaxError("oftype should appear within parentheses");
+			}
+			pc.progress();
+			final Expression typedLeft = asExpression(left);
+			final Type right = pc.subParse(TYPE_PARSER);
+			if (pc.t.kind != _RPAR) {
+				throw new SyntaxError("oftype should appear within parentheses");
+			}
+			return makeValue(pc.factory, typedLeft, right, pc.getEnclosingSourceLocation());
 		}
-
-		@Override
-		protected Expression makeValue(FormulaFactory factory, Expression left,
+		
+		private Expression makeValue(FormulaFactory factory, Expression left,
 				Type right, SourceLocation loc) throws SyntaxError {
 			switch (left.getTag()) {
-			case Formula.FREE_IDENT: // FIXME authorizes Oftype to appear at more places than specified
-				final FreeIdentifier ident = (FreeIdentifier) left;
-				return factory.makeFreeIdentifier(ident.getName(), loc, right);
 			case Formula.EMPTYSET:
 			case Formula.KID_GEN:
 			case Formula.KPRJ1_GEN:

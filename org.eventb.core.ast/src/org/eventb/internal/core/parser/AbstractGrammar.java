@@ -32,6 +32,8 @@ public abstract class AbstractGrammar {
 	private static final String EOF_ID = "End of File";
 	private static final String NOOP_ID = "No Operator";
 	private static final String OPEN_ID = "Open";
+	private static final String IDENT_IMAGE = "an identifier";
+	private static final String INTLIT_IMAGE = "an integer literal";
 
 	public static int _EOF;
 	static int _NOOP;
@@ -50,8 +52,10 @@ public abstract class AbstractGrammar {
 	
 	private final Map<Integer, Integer> closeOpenKinds = new HashMap<Integer, Integer>();
 	
-	public boolean isOperator(Token token) {
-		return opRegistry.isOperator(token.kind);
+	private final Map<Integer, String> reservedImages = new HashMap<Integer, String>();
+	
+	public boolean isOperator(int kind) {
+		return opRegistry.hasGroup(kind) && !tokens.isReserved(kind);
 	}
 	
 	public IndexedSet<String> getTokens() {
@@ -78,8 +82,8 @@ public abstract class AbstractGrammar {
 		opRegistry.addOperator(_OPEN, OPEN_ID, GROUP0);
 		addOpenClose("(", ")");
 		try {
-			_INTLIT = addReservedSubParser(SubParsers.INTLIT_SUBPARSER);
-			_IDENT = addReservedSubParser(SubParsers.IDENT_SUBPARSER);
+			_INTLIT = addReservedSubParser(SubParsers.INTLIT_SUBPARSER, INTLIT_IMAGE);
+			_IDENT = addReservedSubParser(SubParsers.IDENT_SUBPARSER, IDENT_IMAGE);
 			subParsers.addNud(_LPAR, MainParsers.CLOSED_SUGAR);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
@@ -133,9 +137,10 @@ public abstract class AbstractGrammar {
 		return closeOpenKinds.containsKey(kind);
 	}
 
-	private int addReservedSubParser(INudParser<? extends Formula<?>> subParser)
+	private int addReservedSubParser(INudParser<? extends Formula<?>> subParser, String image)
 			throws OverrideException {
 		final int kind = tokens.reserved();
+		reservedImages.put(kind, image);
 		subParsers.addNud(kind, subParser);
 		return kind;
 	}
@@ -168,5 +173,12 @@ public abstract class AbstractGrammar {
 		return _INTLIT;
 	}
 	
+	public String getImage(int kind) {
+		String image = tokens.getKey(kind);
+		if (image == null) {
+			image = reservedImages.get(kind);
+		}
+		return image;
+	}
 
 }

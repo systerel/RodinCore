@@ -813,13 +813,13 @@ public class TestGenParser extends AbstractTests {
 	
 	public void testEmptySetOfType() throws Exception {
 		final Expression expected = ff.makeEmptySet(POW_INT_TYPE, null);
-		doExpressionTest("∅ ⦂ ℙ(ℤ)", expected, POW_INT_TYPE);
+		doExpressionTest("(∅ ⦂ ℙ(ℤ))", expected, POW_INT_TYPE);
 	}
 	
 	public void testIdOfType() throws Exception {
 		final Expression expected = ff.makeAtomicExpression(KID_GEN, null, ff
 				.makeRelationalType(INT_TYPE, INT_TYPE));
-		doExpressionTest("id ⦂ ℙ(ℤ×ℤ)", expected, ff.makePowerSetType(ff
+		doExpressionTest("(id ⦂ ℙ(ℤ×ℤ))", expected, ff.makePowerSetType(ff
 				.makeProductType(INT_TYPE, INT_TYPE)));
 	}
 	
@@ -828,7 +828,7 @@ public class TestGenParser extends AbstractTests {
 				.makeRelationalType(ff.makeProductType(S_TYPE, INT_TYPE),
 						S_TYPE);
 		final Expression expected = ff.makeAtomicExpression(KPRJ1_GEN, null, expectedType);
-		doExpressionTest("prj1 ⦂ ℙ(S×ℤ×S)", expected, expectedType);		
+		doExpressionTest("(prj1 ⦂ ℙ(S×ℤ×S))", expected, expectedType);		
 	}
 	
 	public void testPrj2OfType() throws Exception {
@@ -836,7 +836,12 @@ public class TestGenParser extends AbstractTests {
 				.makeRelationalType(ff.makeProductType(INT_TYPE, S_TYPE),
 						S_TYPE);
 		final Expression expected = ff.makeAtomicExpression(KPRJ2_GEN, null, expectedType);
-		doExpressionTest("prj2 ⦂ ℙ(ℤ×S×S)", expected, expectedType);		
+		doExpressionTest("(prj2 ⦂ ℙ(ℤ×S×S))", expected, expectedType);		
+	}
+	
+	public void testIdentOfType() throws Exception {
+		final IParseResult result = ff.parseExpression("(x ⦂ ℙ(ℤ))", LanguageVersion.V2, null);
+		assertFailure(result, ProblemKind.SyntaxError);
 	}
 	
 	public void testBoundIdentDeclOfType() throws Exception {
@@ -898,6 +903,11 @@ public class TestGenParser extends AbstractTests {
 		final Expression expected = ff.makeQuantifiedExpression(CSET,
 				asList(BID_x), LIT_BTRUE, BI_0, null, Form.Implicit);
 		doExpressionTest("{x∣ ⊤}", expected);
+	}
+	
+	public void testCSetImplicitOftype() throws Exception {
+		assertFailure(ff.parseExpression("{(x⦂ℤ)∣ ⊤}", LanguageVersion.V2, null), ProblemKind.SyntaxError);
+		assertFailure(ff.parseExpression("{x⦂ℤ∣ ⊤}", LanguageVersion.V2, null), ProblemKind.SyntaxError);
 	}
 	
 	// verifies that priority between Maplet and Ovr is not taken into account
