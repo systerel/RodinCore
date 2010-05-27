@@ -372,7 +372,11 @@ public class GenParser {
 				binding.pop();
 			}
 		}
-		
+
+		/**
+		 * Returns true iff the operator being parsed has an open parenthesis as
+		 * parent kind .
+		 */
 		public boolean isParenthesized() throws SyntaxError {
 			if (parentKind.val == _LPAR) {
 				return true;
