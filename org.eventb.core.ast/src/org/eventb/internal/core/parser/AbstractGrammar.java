@@ -51,7 +51,7 @@ public abstract class AbstractGrammar {
 	private final Map<Integer, Integer> closeOpenKinds = new HashMap<Integer, Integer>();
 	
 	public boolean isOperator(Token token) {
-		return subParsers.isOperator(token);
+		return opRegistry.isOperator(token.kind);
 	}
 	
 	public IndexedSet<String> getTokens() {

@@ -63,12 +63,6 @@ public class SubParserRegistry {
 
 	private final Map<Integer, KindParsers> kindParsers = new HashMap<Integer, KindParsers>();
 	
-	public boolean isOperator(Token token) {
-		final KindParsers parsers = kindParsers.get(token.kind);
-		return parsers != null && !parsers.isEmpty();
-	}
-	
-	
 	public List<INudParser<? extends Formula<?>>> getNudParsers(Token token) {
 		final KindParsers parsers = kindParsers.get(token.kind);
 		if (parsers == null) {
