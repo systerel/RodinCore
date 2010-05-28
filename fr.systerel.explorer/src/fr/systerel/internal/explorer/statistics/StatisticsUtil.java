@@ -63,10 +63,10 @@ public class StatisticsUtil {
 		for (Object el : elements) {
 			if (el instanceof IProject) {
 				new_level = PROJECTS;
-				IRodinProject proj = RodinCore.valueOf((IProject) el);
+				final IRodinProject proj = RodinCore.valueOf((IProject) el);
 
 				if (proj.exists()) {
-					ModelProject modelproject = ModelController
+					final ModelProject modelproject = ModelController
 							.getProject(proj);
 					if (modelproject == null) {
 						return Messages.getString("statistics.expandAtLeastOnce"); //$NON-NLS-1$
@@ -79,7 +79,7 @@ public class StatisticsUtil {
 				new_level = MACH_CONT;
 				
 			} else if (el instanceof IElementNode) {
-				IInternalElementType<?> type = ((IElementNode) el)
+				final IInternalElementType<?> type = ((IElementNode) el)
 						.getChildrenType();
 				if (type == IVariable.ELEMENT_TYPE
 						|| type == ICarrierSet.ELEMENT_TYPE
@@ -99,7 +99,7 @@ public class StatisticsUtil {
 					|| el instanceof IAxiom) {
 				new_level = ELEMS;
 			} else
-				return "No statistics for this selection."; //$NON-NLS-1$
+				return Messages.getString("statistics.noStatisticsForThisSelection"); //$NON-NLS-1$
 			
 			// check the levels. all elements must be of the same level for the
 			// selection to be valid

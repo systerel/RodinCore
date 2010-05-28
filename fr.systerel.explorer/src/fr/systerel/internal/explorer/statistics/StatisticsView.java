@@ -95,18 +95,19 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 	
 	@Override
 	public void createPartControl(Composite parent) {
-		ISelectionService selectionService = getSite().getWorkbenchWindow().getSelectionService();
+		final ISelectionService selectionService = getSite()
+				.getWorkbenchWindow().getSelectionService();
 		selectionService.addSelectionListener(NAVIGATOR_ID, this);
 		ModelController.getInstance().addListener(this);
 
 		container = new Composite(parent, SWT.NONE);
-		FormLayout layout = new FormLayout();
+		final FormLayout layout = new FormLayout();
 		container.setLayout(layout);
 		createNoStatisticsLabel();
 		
 		createDetailsViewer();
 		
-		Point size = container.getSize();
+		final Point size = container.getSize();
 		container.pack();
 		container.setSize(size);
 		
@@ -115,17 +116,18 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 	}
 	
 	@Override
-	public void dispose(){
+	public void dispose() {
 		super.dispose();
 		ModelController.getInstance().removeListener(this);
-		ISelectionService selectionService = getSite().getWorkbenchWindow().getSelectionService();
+		final ISelectionService selectionService = getSite()
+				.getWorkbenchWindow().getSelectionService();
 		selectionService.removeSelectionListener(NAVIGATOR_ID, this);
-		
 	}
 		
 	void colorEvery2ndLine() {
 		boolean colored = false;
-		Color gray = viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_GRAY);
+		final Color gray = viewer.getControl().getDisplay().getSystemColor(
+				SWT.COLOR_GRAY);
 		final TableItem[] items = viewer.getTable().getItems();
 		for (TableItem item : items) { 	
 			setBoldFont(item);
@@ -151,15 +153,19 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 	 * @param element
 	 *            The element to show.
 	 */
-	void showInNavigator(Object element){
-		IWorkbenchPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(NAVIGATOR_ID);
+	void showInNavigator(Object element) {
+		final IWorkbenchPart part = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getActivePage().findView(
+						NAVIGATOR_ID);
 		if (part instanceof CommonNavigator) {
-			CommonNavigator navigator = (CommonNavigator) part;
+			final CommonNavigator navigator = (CommonNavigator) part;
 			if (element instanceof IElementNode) {
-				navigator.getCommonViewer().setSelection(new StructuredSelection(element), true);
-			}
-			else if (element instanceof IModelElement) {
-				navigator.getCommonViewer().setSelection(new StructuredSelection(((IModelElement)element).getInternalElement()), true);
+				navigator.getCommonViewer().setSelection(
+						new StructuredSelection(element), true);
+			} else if (element instanceof IModelElement) {
+				navigator.getCommonViewer().setSelection(
+						new StructuredSelection(((IModelElement) element)
+								.getInternalElement()), true);
 			}
 		}
 	}
@@ -167,15 +173,13 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 	/**
 	 * Adds a popupMenu to the viewers
 	 */
-	private void addPopUpMenu () {
+	private void addPopUpMenu() {
 
-	    MenuManager popupMenu = new MenuManager();
-	    IAction copyAction = new StatisticsCopyAction(viewer, true);
-	    popupMenu.add(copyAction);
-	    Menu menu = popupMenu.createContextMenu(viewer.getTable());
-	    viewer.getTable().setMenu(menu);
-	    
-
+		final MenuManager popupMenu = new MenuManager();
+		final IAction copyAction = new StatisticsCopyAction(viewer, true);
+		popupMenu.add(copyAction);
+		final Menu menu = popupMenu.createContextMenu(viewer.getTable());
+		viewer.getTable().setMenu(menu);
 	}
 
 	private void setUpDetailsColumn(StatisticsColumn column, StatisticsDetailsComparator comparator) {
@@ -184,22 +188,30 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 	}
 	
 	private void createDetailsViewer() {
-		viewer = new TableViewer(container,  SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		viewer = new TableViewer(container, SWT.MULTI | SWT.H_SCROLL
+				| SWT.V_SCROLL | SWT.FULL_SELECTION);
 		viewer.setContentProvider(statisticsContentProvider);
 		viewer.setLabelProvider(new StatisticsDetailsLabelProvider(this));
 		final Table table = viewer.getTable();
-		table.setLayout(new RowLayout (SWT.VERTICAL));
+		table.setLayout(new RowLayout(SWT.VERTICAL));
 		table.setHeaderVisible(true);
 		table.setVisible(false);
-		setUpDetailsColumn(new StatisticsColumn.NameColumn(table), StatisticsDetailsComparator.NAME);
-		setUpDetailsColumn(new StatisticsColumn.TotalColumn(table), StatisticsDetailsComparator.TOTAL);
-		setUpDetailsColumn(new StatisticsColumn.AutoColumn(table), StatisticsDetailsComparator.AUTO);
-		setUpDetailsColumn(new StatisticsColumn.ManualColumn(table), StatisticsDetailsComparator.MANUAL);
-		setUpDetailsColumn(new StatisticsColumn.ReviewedColumn(table), StatisticsDetailsComparator.REVIEWED);
-		setUpDetailsColumn(new StatisticsColumn.UndischargedColumn(table), StatisticsDetailsComparator.UNDISCHARGED);
-		setUpDetailsColumn(new StatisticsColumn.EmptyColumn(table), StatisticsDetailsComparator.EMPTY);
-		
-		FormData tableData = createFormData(0,100);
+		setUpDetailsColumn(new StatisticsColumn.NameColumn(table),
+				StatisticsDetailsComparator.NAME);
+		setUpDetailsColumn(new StatisticsColumn.TotalColumn(table),
+				StatisticsDetailsComparator.TOTAL);
+		setUpDetailsColumn(new StatisticsColumn.AutoColumn(table),
+				StatisticsDetailsComparator.AUTO);
+		setUpDetailsColumn(new StatisticsColumn.ManualColumn(table),
+				StatisticsDetailsComparator.MANUAL);
+		setUpDetailsColumn(new StatisticsColumn.ReviewedColumn(table),
+				StatisticsDetailsComparator.REVIEWED);
+		setUpDetailsColumn(new StatisticsColumn.UndischargedColumn(table),
+				StatisticsDetailsComparator.UNDISCHARGED);
+		setUpDetailsColumn(new StatisticsColumn.EmptyColumn(table),
+				StatisticsDetailsComparator.EMPTY);
+
+		FormData tableData = createFormData(0, 100);
 		viewer.getControl().setLayoutData(tableData);
 
 		//sort by name by default.
@@ -210,8 +222,10 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 
 			public void doubleClick(DoubleClickEvent event) {
 				if (event.getSelection() instanceof IStructuredSelection) {
-					if ( (((IStructuredSelection)event.getSelection()).getFirstElement()) instanceof Statistics) {
-						IStatistics stats = (Statistics)((IStructuredSelection)event.getSelection()).getFirstElement();
+					if ((((IStructuredSelection) event.getSelection())
+							.getFirstElement()) instanceof Statistics) {
+						final IStatistics stats = (Statistics) ((IStructuredSelection) event
+								.getSelection()).getFirstElement();
 						showInNavigator(stats.getParent());
 					}
 					
@@ -223,7 +237,8 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 
 	}
 
-	private void addSelectionListener(StatisticsColumn column, final StatisticsDetailsComparator comparator) {
+	private void addSelectionListener(StatisticsColumn column,
+			final StatisticsDetailsComparator comparator) {
 		// Add listener to column to sort when clicked on the header.
 		final TableViewer currentViewer = this.viewer;
 		column.getColumn().addSelectionListener(new SelectionAdapter() {
@@ -255,12 +270,12 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 	private void createNoStatisticsLabel() {
 		label =  new Label(container, SWT.SHADOW_NONE | SWT.LEFT | SWT.WRAP);
 		label.setText("No statistics available");
-		FormData data = createFormData(0, 100);
+		final FormData data = createFormData(0, 100);
 		label.setLayoutData(data);
 	}
 	
-	private FormData createFormData(int top, int bottom){
-		FormData data = new FormData();
+	private FormData createFormData(int top, int bottom) {
+		final FormData data = new FormData();
 		data.left = new FormAttachment(0);
 		data.right = new FormAttachment(100);
 		data.top = new FormAttachment(top);
@@ -288,7 +303,7 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 	}
 
 	private void resize() {
-		Point size = container.getSize();
+		final Point size = container.getSize();
 		container.pack();
 		container.setSize(size);
 	}
@@ -298,10 +313,11 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 		viewer.setInput(input);
 		viewer.setComparator(null);
 		final Table table = viewer.getTable();
-			if (table.getItems().length == 0){
-				refreshEmpty("No items to display");
-				return;
-			}
+		if (table.getItems().length == 0) {
+			refreshEmpty(Messages
+					.getString("statistics.noStatisticsForThisSelection"));
+			return;
+		}
 		table.setVisible(true);
 		colorEvery2ndLine();
 		resize();

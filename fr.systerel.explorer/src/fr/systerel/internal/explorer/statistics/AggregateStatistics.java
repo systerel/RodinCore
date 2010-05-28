@@ -86,7 +86,7 @@ public class AggregateStatistics implements IStatistics {
 			// special case for element nodes or invariants, theorems etc. there
 			// may be duplicate statistics
 			if (stat.getParent() instanceof IElementNode) {
-				IElementNode node = (IElementNode) stat.getParent();
+				final IElementNode node = (IElementNode) stat.getParent();
 				ModelPOContainer cont = null;
 				if (node.getParent() instanceof IContextRoot) {
 					cont = ModelController.getContext((IContextRoot) node
@@ -101,15 +101,15 @@ public class AggregateStatistics implements IStatistics {
 				}
 			}
 			if (stat.getParent() instanceof ModelAxiom) {
-				ModelAxiom axiom = (ModelAxiom) stat.getParent();
+				final ModelAxiom axiom = (ModelAxiom) stat.getParent();
 				addPOs((axiom.getProofObligations()));
 			}
 			if (stat.getParent() instanceof ModelInvariant) {
-				ModelInvariant inv = (ModelInvariant) stat.getParent();
+				final ModelInvariant inv = (ModelInvariant) stat.getParent();
 				addPOs((inv.getProofObligations()));
 			}
 			if (stat.getParent() instanceof ModelEvent) {
-				ModelEvent event = (ModelEvent) stat.getParent();
+				final ModelEvent event = (ModelEvent) stat.getParent();
 				addPOs((event.getProofObligations()));
 			}
 

@@ -32,7 +32,9 @@ public abstract class StatisticsDetailsComparator extends ViewerComparator {
 
 		@Override
 		public int compare(IStatistics stats1, IStatistics stats2) {
-			int ascending = stats1.getParentLabel().compareTo(stats2.getParentLabel());
+			final String parentLbl1 = stats1.getParentLabel();
+			final String parentLbl2 = stats2.getParentLabel();
+			final int ascending = parentLbl1.compareTo(parentLbl2);
 			if (order == ASCENDING) {
 				return ascending;
 			} else return -ascending;
@@ -44,7 +46,7 @@ public abstract class StatisticsDetailsComparator extends ViewerComparator {
 
 		@Override
 		public int compare(IStatistics stats1, IStatistics stats2) {
-			int ascending = stats1.getTotal() - stats2.getTotal();
+			final int ascending = stats1.getTotal() - stats2.getTotal();
 			if (order == ASCENDING) {
 				return ascending;
 			} else return -ascending;
@@ -56,7 +58,7 @@ public abstract class StatisticsDetailsComparator extends ViewerComparator {
 
 		@Override
 		public int compare(IStatistics stats1, IStatistics stats2) {
-			int ascending = stats1.getAuto() - stats2.getAuto();
+			final int ascending = stats1.getAuto() - stats2.getAuto();
 			if (order == ASCENDING) {
 				return ascending;
 			} else return -ascending;
@@ -68,7 +70,7 @@ public abstract class StatisticsDetailsComparator extends ViewerComparator {
 
 		@Override
 		public int compare(IStatistics stats1, IStatistics stats2) {
-			int ascending =  stats1.getManual() - stats2.getManual();
+			final int ascending =  stats1.getManual() - stats2.getManual();
 			if (order == ASCENDING) {
 				return ascending;
 			} else return -ascending;
@@ -80,7 +82,7 @@ public abstract class StatisticsDetailsComparator extends ViewerComparator {
 
 		@Override
 		public int compare(IStatistics stats1, IStatistics stats2) {
-			int ascending = stats1.getReviewed() - stats2.getReviewed();
+			final int ascending = stats1.getReviewed() - stats2.getReviewed();
 			if (order == ASCENDING) {
 				return ascending;
 			} else return -ascending;
@@ -92,7 +94,9 @@ public abstract class StatisticsDetailsComparator extends ViewerComparator {
 
 		@Override
 		public int compare(IStatistics stats1, IStatistics stats2) {
-			int ascending = stats1.getUndischargedRest() - stats2.getUndischargedRest();
+			final int undisRest1 = stats1.getUndischargedRest();
+			final int undisRest2 = stats2.getUndischargedRest();
+			final int ascending = undisRest1 - undisRest2;
 			if (order == ASCENDING) {
 				return ascending;
 			} else return -ascending;
@@ -112,8 +116,8 @@ public abstract class StatisticsDetailsComparator extends ViewerComparator {
 	@Override
 	public int compare(Viewer viewer, Object o1, Object o2) {
 		if (o1 instanceof Statistics && o2 instanceof Statistics) {
-			Statistics stats1 = (Statistics) o1;
-			Statistics stats2 = (Statistics) o2;
+			final Statistics stats1 = (Statistics) o1;
+			final Statistics stats2 = (Statistics) o2;
 			return compare(stats1, stats2);
 		}
 		return super.compare(viewer, o1, o2);

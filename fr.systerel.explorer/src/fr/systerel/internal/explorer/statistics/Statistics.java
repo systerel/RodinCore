@@ -45,21 +45,21 @@ public class Statistics implements IStatistics{
 	 */
 	public void calculate() {
 		if (parent instanceof ModelPOContainer) {
-			ModelPOContainer container = (ModelPOContainer) parent;
+			final ModelPOContainer container = (ModelPOContainer) parent;
 			total = container.getPOcount();
 			undischarged = container.getUndischargedPOcount();
 			manual = container.getManuallyDischargedPOcount();
 			reviewed = container.getReviewedPOcount();
 		}
 		if (parent instanceof ModelProject) {
-			ModelProject project = (ModelProject) parent;
+			final ModelProject project = (ModelProject) parent;
 			total = project.getPOcount();
 			undischarged = project.getUndischargedPOcount();
 			manual = project.getManuallyDischargedPOcount();
 			reviewed = project.getReviewedPOcount();
 		}
 		if (parent instanceof IElementNode) {
-			IElementNode node = (IElementNode) parent;
+			final IElementNode node = (IElementNode) parent;
 			ModelPOContainer cont =  null;
 			if (node.getParent() instanceof IContextRoot) {
 				cont = ModelController.getContext((IContextRoot) node.getParent());
