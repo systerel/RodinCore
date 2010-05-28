@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -17,15 +17,21 @@ import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IInvariant;
+import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.IVariable;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.IElementNode;
+import fr.systerel.internal.explorer.model.IModelElement;
 import fr.systerel.internal.explorer.model.ModelController;
 import fr.systerel.internal.explorer.model.ModelProject;
 
@@ -126,6 +132,52 @@ public class StatisticsUtil {
 			return true;
 		}
 
+		return false;
+	}
+
+	public static String getParentLabelOf(Object parent) {
+		Object internal_parent = null;
+		if (parent instanceof IElementNode) {
+			return ((IElementNode) parent).getLabel();
+		}
+		if (parent instanceof IModelElement) {
+			internal_parent = ((IModelElement) parent).getInternalElement();
+		}
+		if (internal_parent instanceof ILabeledElement) {
+			try {
+				return ((ILabeledElement) internal_parent).getLabel();
+			} catch (RodinDBException e) {
+				UIUtils.log(e, "when getting label for " +internal_parent);
+			}
+		}
+		if (internal_parent instanceof IEventBRoot) {
+			return ((IEventBRoot) internal_parent).getComponentName();
+		}
+		if (internal_parent instanceof IRodinElement) {
+			return ((IRodinElement) internal_parent).getElementName();
+		}
+		return parent.toString();
+	}
+	
+	/**
+	 * Indicates whether elements of the given type can possibly have proof obligations 
+	 * associated with them.
+	 * @param type The type of the elements
+	 * @return true, if they can have proof obligations, false otherwise.
+	 */
+	public static boolean canHavePOs(IInternalElementType<?> type) {
+		if (type == IInvariant.ELEMENT_TYPE) {
+			return true;
+		}
+		if (type == IAxiom.ELEMENT_TYPE) {
+			return true;
+		}
+		if (type == IEvent.ELEMENT_TYPE) {
+			return true;
+		}
+		if (type == IPSStatus.ELEMENT_TYPE) {
+			return true;
+		}
 		return false;
 	}
 

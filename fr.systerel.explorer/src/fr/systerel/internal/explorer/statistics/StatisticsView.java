@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - merged overview and details satistics in the same viewer
   *******************************************************************************/
 
 
@@ -32,13 +33,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
@@ -66,16 +68,11 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 		IModelListener {
 	private Label label;
 	private TableViewer viewer;
-	TableViewer detailsViewer;
 	private Composite container;
-	private HashMap<Integer, StatisticsColumn> detailColumns = new HashMap<Integer, StatisticsColumn>();
-	private HashMap<Integer, StatisticsColumn> overviewColumns = new HashMap<Integer, StatisticsColumn>();
+	private HashMap<Integer, StatisticsColumn> columns = new HashMap<Integer, StatisticsColumn>();
 	
 	private IStructuredContentProvider statisticsContentProvider =
-		new StatisticsContentProvider();
-	private IStructuredContentProvider statisticsDetailsContentProvider =
 		new StatisticsDetailsContentProvider();
-
 	private static final Object[] EMPTY_SELECTION = new Object[0];
 	protected Object[] currentSelection = EMPTY_SELECTION;
 	
@@ -107,7 +104,6 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 		container.setLayout(layout);
 		createNoStatisticsLabel();
 		
-		createOverviewViewer();
 		createDetailsViewer();
 		
 		Point size = container.getSize();
@@ -127,19 +123,28 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 		
 	}
 		
-
 	void colorEvery2ndLine() {
 		boolean colored = false;
-		Color gray = detailsViewer.getControl().getDisplay().getSystemColor(SWT.COLOR_GRAY);
-		for (TableItem item : detailsViewer.getTable().getItems()) {
+		Color gray = viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_GRAY);
+		final TableItem[] items = viewer.getTable().getItems();
+		for (TableItem item : items) { 	
+			setBoldFont(item);
 			if (colored) {
 				item.setBackground(gray);
-
 			}
 			colored = !colored;
 		}
 	}
 	
+	private static void setBoldFont(TableItem item) {
+		if (item.getData() instanceof AggregateStatistics) {
+			final Font font = item.getFont();
+			final FontData fd = font.getFontData()[0];
+			fd.setStyle(SWT.BOLD);
+			item.setFont(new Font(item.getDisplay(), fd));
+		}
+	}
+
 	/**
 	 * Shows a given element in the Navigator, if it can be shown. 
 	 * 
@@ -165,72 +170,42 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 	private void addPopUpMenu () {
 
 	    MenuManager popupMenu = new MenuManager();
-	    IAction copyAction = new StatisticsCopyAction(detailsViewer, true);
+	    IAction copyAction = new StatisticsCopyAction(viewer, true);
 	    popupMenu.add(copyAction);
-	    Menu menu = popupMenu.createContextMenu(detailsViewer.getTable());
-	    detailsViewer.getTable().setMenu(menu);
-	    
-
-	    popupMenu = new MenuManager();
-	    copyAction = new StatisticsCopyAction(viewer, false);
-	    popupMenu.add(copyAction);
-	    menu = popupMenu.createContextMenu(viewer.getTable());
+	    Menu menu = popupMenu.createContextMenu(viewer.getTable());
 	    viewer.getTable().setMenu(menu);
 	    
-	}
-	
-	
-	private void createOverviewViewer(){
-		viewer = new TableViewer(container,  SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		Table table =viewer.getTable();
-		table.setHeaderVisible(true);
-		
-		addOverviewColumn(new StatisticsColumn.TotalColumn(table));
-		addOverviewColumn(new StatisticsColumn.AutoColumn(table));
-		addOverviewColumn(new StatisticsColumn.ManualColumn(table));
-		addOverviewColumn(new StatisticsColumn.ReviewedColumn(table));
-		addOverviewColumn(new StatisticsColumn.UndischargedColumn(table));
-		
-		viewer.setContentProvider(statisticsContentProvider);
-		viewer.setLabelProvider(new StatisticsLabelProvider(this));
-		viewer.getTable().setLayout(new RowLayout (SWT.VERTICAL));
-		FormData data = createFormData(0, -1);
-		viewer.getControl().setLayoutData(data);
-	}
-	
-	private void addOverviewColumn(StatisticsColumn column) {
-		overviewColumns.put(new Integer(column.getIndex()), column);
-		
+
 	}
 
 	private void setUpDetailsColumn(StatisticsColumn column, StatisticsDetailsComparator comparator) {
-		detailColumns.put(new Integer(column.getIndex()), column);
+		columns.put(new Integer(column.getIndex()), column);
 		addSelectionListener(column, comparator);
 	}
 	
 	private void createDetailsViewer() {
-		detailsViewer = new TableViewer(container,  SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
-		detailsViewer.setContentProvider(statisticsDetailsContentProvider);
-		detailsViewer.setLabelProvider(new StatisticsDetailsLabelProvider(this));
-		detailsViewer.getTable().setHeaderVisible(true);
-		detailsViewer.getTable().setVisible(false);
-		Table table = detailsViewer.getTable();
-		
+		viewer = new TableViewer(container,  SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		viewer.setContentProvider(statisticsContentProvider);
+		viewer.setLabelProvider(new StatisticsDetailsLabelProvider(this));
+		final Table table = viewer.getTable();
+		table.setLayout(new RowLayout (SWT.VERTICAL));
+		table.setHeaderVisible(true);
+		table.setVisible(false);
 		setUpDetailsColumn(new StatisticsColumn.NameColumn(table), StatisticsDetailsComparator.NAME);
 		setUpDetailsColumn(new StatisticsColumn.TotalColumn(table), StatisticsDetailsComparator.TOTAL);
 		setUpDetailsColumn(new StatisticsColumn.AutoColumn(table), StatisticsDetailsComparator.AUTO);
 		setUpDetailsColumn(new StatisticsColumn.ManualColumn(table), StatisticsDetailsComparator.MANUAL);
 		setUpDetailsColumn(new StatisticsColumn.ReviewedColumn(table), StatisticsDetailsComparator.REVIEWED);
 		setUpDetailsColumn(new StatisticsColumn.UndischargedColumn(table), StatisticsDetailsComparator.UNDISCHARGED);
-		
-		FormData tableData = createFormData(viewer.getControl());
-		detailsViewer.getControl().setLayoutData(tableData);
+
+		FormData tableData = createFormData(0,100);
+		viewer.getControl().setLayoutData(tableData);
 
 		//sort by name by default.
-		detailsViewer.setComparator(StatisticsDetailsComparator.NAME);
+		viewer.setComparator(StatisticsDetailsComparator.NAME);
 		
 		// on double click show the node in the navigator
-		detailsViewer.addDoubleClickListener(new IDoubleClickListener() {
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
 
 			public void doubleClick(DoubleClickEvent event) {
 				if (event.getSelection() instanceof IStructuredSelection) {
@@ -249,21 +224,22 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 
 	private void addSelectionListener(StatisticsColumn column, final StatisticsDetailsComparator comparator) {
 		// Add listener to column to sort when clicked on the header.
+		final TableViewer currentViewer = this.viewer;
 		column.getColumn().addSelectionListener(new SelectionAdapter() {
        	
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// already sorting with this column's comparator: toggle order.
-				if (detailsViewer.getComparator() == comparator) {
+				if (currentViewer.getComparator() == comparator) {
 					comparator.setOrder(!comparator.getOrder());
 					
 				//sort with this column's comparator.
 				} else {
 					comparator.setOrder(StatisticsDetailsComparator.ASCENDING);
-					detailsViewer.setComparator(comparator);
+					currentViewer.setComparator(comparator);
 				}
 			
-				detailsViewer.refresh(false);
+				currentViewer.refresh(false);
 				colorEvery2ndLine();
 				
 			}
@@ -271,11 +247,7 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 	}
 	
 	public StatisticsColumn getDetailColumn(int index){
-		return detailColumns.get(new Integer(index));
-	}
-
-	public StatisticsColumn getOverviewColumn(int index){
-		return overviewColumns.get(new Integer(index));
+		return columns.get(new Integer(index));
 	}
 	
 
@@ -296,16 +268,6 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 		}
 		return data;
 	}
-
-	private FormData createFormData(Control top){
-		FormData data = new FormData();
-		data.left = new FormAttachment(0);
-		data.right = new FormAttachment(100);
-		data.top = new FormAttachment(top);
-		data.bottom = new FormAttachment(100);
-		return data;
-	}
-	
 
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		if (selection.isEmpty())
@@ -331,13 +293,15 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 	}
 	
 	protected void refreshValid(Object[] input) {
-		viewer.setInput(input);
-		viewer.getTable().setVisible(true);
 		label.setVisible(false);
-		detailsViewer.setInput(input);
-		detailsViewer.getTable().setVisible(
-				StatisticsUtil.detailsRequired((input)));
-
+		viewer.setInput(input);
+		viewer.setComparator(null);
+		final Table table = viewer.getTable();
+			if (table.getItems().length == 0){
+				refreshEmpty("No items to display");
+				return;
+			}
+		table.setVisible(true);
 		colorEvery2ndLine();
 		resize();
 	}
@@ -347,7 +311,6 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 		viewer.getTable().setVisible(false);
 		label.setText("No statistics available: " + message);
 		label.setVisible(true);
-		detailsViewer.getTable().setVisible(false);
 		resize();
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,11 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - added parent to apply on overview statistics
  *******************************************************************************/
 
 package fr.systerel.internal.explorer.statistics;
+import static fr.systerel.internal.explorer.statistics.StatisticsUtil.getParentLabelOf;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,13 +32,13 @@ import fr.systerel.internal.explorer.model.ModelPOContainer;
 import fr.systerel.internal.explorer.model.ModelProofObligation;
 
 /**
- * This is a statistics that is composed of several <code>IStatistics</code>.
- * This means that it doesn't have parent and therefore no ParentLabel.
- * 
+ * This is a statistics that is composed of one or several <code>IStatistics</code>.
+ * This is used to represent overview statistics on selection. 
  */
 public class AggregateStatistics implements IStatistics {
 
 	private IStatistics[] internal_statistics;
+	private final Object parent;
 	private int total;
 	private int undischarged;
 	private int manual;
@@ -44,6 +46,11 @@ public class AggregateStatistics implements IStatistics {
 	private ArrayList<ModelProofObligation> pos = new ArrayList<ModelProofObligation>();
 
 	public AggregateStatistics(IStatistics[] statistics) {
+		if (statistics.length == 1 && statistics[0]!= null) {
+			this.parent = statistics[0].getParent();
+		} else {
+			this.parent = null;
+		}
 		internal_statistics = statistics;
 		calculate();
 
@@ -122,7 +129,9 @@ public class AggregateStatistics implements IStatistics {
 	 * Aggregate statistics don't have a parentLabel.
 	 */
 	public String getParentLabel() {
-		return null;
+		if (parent == null)
+			return ("Total");
+		return getParentLabelOf(parent);
 	}
 
 	public int getReviewed() {

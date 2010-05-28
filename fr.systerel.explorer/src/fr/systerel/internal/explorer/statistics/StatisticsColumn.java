@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -44,7 +44,7 @@ public abstract class StatisticsColumn {
 	public static class NameColumn extends StatisticsColumn {
 		
 		public NameColumn(Table table){
-			createTableColumn(table, "Component Name");
+			createTableColumn(table, "Element Name");
 		}
 
 		@Override
@@ -68,7 +68,7 @@ public abstract class StatisticsColumn {
 	public static class AutoColumn extends StatisticsColumn {
 		
 		public AutoColumn(Table table){
-			createTableColumn(table, "Auto.");
+			createTableColumn(table, "Auto");
 		}
 
 		@Override
@@ -80,7 +80,7 @@ public abstract class StatisticsColumn {
 	public static class ManualColumn extends StatisticsColumn {
 		
 		public ManualColumn(Table table){
-			createTableColumn(table, "Manual.");
+			createTableColumn(table, "Manual");
 		}
 
 		@Override

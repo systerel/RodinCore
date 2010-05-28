@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
-  *******************************************************************************/
+ *******************************************************************************/
 
 package fr.systerel.explorer.tests.statistics;
 
@@ -16,6 +16,7 @@ import static junit.framework.Assert.assertNotNull;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
@@ -36,6 +37,10 @@ import fr.systerel.internal.explorer.model.ModelController;
 import fr.systerel.internal.explorer.model.ModelEvent;
 import fr.systerel.internal.explorer.model.ModelInvariant;
 import fr.systerel.internal.explorer.model.ModelMachine;
+import fr.systerel.internal.explorer.model.ModelPOContainer;
+import fr.systerel.internal.explorer.model.ModelProject;
+import fr.systerel.internal.explorer.statistics.AggregateStatistics;
+import fr.systerel.internal.explorer.statistics.IStatistics;
 import fr.systerel.internal.explorer.statistics.Statistics;
 import fr.systerel.internal.explorer.statistics.StatisticsDetailsContentProvider;
 
@@ -106,132 +111,201 @@ public class StatisticsDetailsContentProviderTest extends ExplorerTest {
 
 	@Test
 	public void getElementsProject() {
-		Object[] input ={ rodinProject.getProject() };
-		Object[] output = contentProvider.getElements(input);
-		ModelMachine mach =  ModelController.getMachine(m0);
-		ModelContext ctx =  ModelController.getContext(c0);
+		final Object[] input = { rodinProject.getProject() };
+		final Object[] output = contentProvider.getElements(input);
+		final ModelMachine mach = ModelController.getMachine(m0);
+		final ModelContext ctx = ModelController.getContext(c0);
+		final ModelProject prj = ModelController.getProject(rodinProject);
 
-		assertArray(output, new Statistics(ctx), new Statistics(mach));
-		
+		final Statistics s1 = new Statistics(prj);
+		final Statistics s2 = new Statistics(ctx);
+		final Statistics s3 = new Statistics(mach);
+		final Statistics[] agg = { s1 };
+
+		assertArray(output, new AggregateStatistics(agg), s2, s3);
+
 	}
 
 	@Test
 	public void getElementsMachine() {
-		Object[] input = { m0 };
-		Object[] output = contentProvider.getElements(input);
-		ModelInvariant i1 = ModelController.getInvariant(inv1);
-		ModelInvariant i2 = ModelController.getInvariant(inv2);
-		ModelEvent e1 = ModelController.getEvent(event1);
-		ModelEvent e2 = ModelController.getEvent(event2);
+		processRoot(m0);
+		final Object[] input = { m0 };
+		final Object[] output = contentProvider.getElements(input);
+		final ModelMachine mm0 = ModelController.getMachine(m0);
+		final ModelInvariant i1 = ModelController.getInvariant(inv1);
+		final ModelInvariant i2 = ModelController.getInvariant(inv2);
+		final ModelEvent e1 = ModelController.getEvent(event1);
+		final ModelEvent e2 = ModelController.getEvent(event2);
 
-		assertArray(output, new Statistics(i1), new Statistics(i2), new Statistics(e1),
-				new Statistics(e2));
+		final Statistics s1 = new Statistics(mm0);
+		final Statistics s2 = new Statistics(i1);
+		final Statistics s3 = new Statistics(i2);
+		final Statistics s4 = new Statistics(e1);
+		final Statistics s5 = new Statistics(e2);
+
+		final IStatistics[] agg = { s1 };
+		assertArray(output, new AggregateStatistics(agg), s2, s3, s4, s5);
 	}
 
 	@Test
 	public void getElementsContext() {
-		Object[] input = { c0 };
-		Object[] output = contentProvider.getElements(input);
-		ModelAxiom a1 = ModelController.getAxiom(axiom1);
-		assertArray(output, new Statistics(a1));
-		
+		processRoot(c0);
+		final Object[] input = { c0 };
+		final Object[] output = contentProvider.getElements(input);
+		final ModelContext mc0 = ModelController.getContext(c0);
+		final ModelAxiom a1 = ModelController.getAxiom(axiom1);
+
+		final Statistics s1 = new Statistics(mc0);
+		final Statistics s2 = new Statistics(a1);
+		final Statistics[] agg = { s1 };
+
+		assertArray(output, new AggregateStatistics(agg), s2);
+
 	}
 	
 	@Test
 	public void getElementsPOnodeMachine() {
-		Object[] input = { po_node_mach };
-		Object[] output = contentProvider.getElements(input);
-		ModelInvariant i1 = ModelController.getInvariant(inv1);
-		ModelInvariant i2 = ModelController.getInvariant(inv2);
-		ModelEvent e1 = ModelController.getEvent(event1);
-		ModelEvent e2 = ModelController.getEvent(event2);
+		processRoot(m0);
+		final Object[] input = { po_node_mach };
+		final Object[] output = contentProvider.getElements(input);
+		final ModelInvariant i1 = ModelController.getInvariant(inv1);
+		final ModelInvariant i2 = ModelController.getInvariant(inv2);
+		final ModelEvent e1 = ModelController.getEvent(event1);
+		final ModelEvent e2 = ModelController.getEvent(event2);
 
-		assertArray(output, new Statistics(i1), new Statistics(i2), new Statistics(e1),
-				new Statistics(e2));
+		final Statistics s1 = new Statistics(po_node_mach);
+		final Statistics s2 = new Statistics(i1);
+		final Statistics s3 = new Statistics(i2);
+		final Statistics s4 = new Statistics(e1);
+		final Statistics s5 = new Statistics(e2);
+
+		final Statistics[] agg = { s1 };
+		assertArray(output, new AggregateStatistics(agg), s2, s3, s4, s5);
 	}
 
 	@Test
 	public void getElementsPOnodeContext() {
-		Object[] input ={ po_node_ctx };
-		Object[] output = contentProvider.getElements(input);
-		ModelAxiom a1 = ModelController.getAxiom(axiom1);
-		assertArray(output, new Statistics(a1));
-		
+		processRoot(c0);
+		final Object[] input = { po_node_ctx };
+		final Object[] output = contentProvider.getElements(input);
+		final ModelAxiom a1 = ModelController.getAxiom(axiom1);
+		final Statistics s1 = new Statistics(po_node_ctx);
+		final Statistics s2 = new Statistics(a1);
+
+		final Statistics[] agg = { s1 };
+		assertArray(output, new AggregateStatistics(agg), s2);
+
 	}
 	
 	@Test
 	public void getElementsEventNode() {
-		ModelController.getMachine(m0).processPORoot();
-		ModelController.getMachine(m0).processPSRoot();
-		Object[] input = {event_node };
-		Object[] output = contentProvider.getElements(input);
-		ModelEvent e1 = ModelController.getEvent(event1);
-		ModelEvent e2 = ModelController.getEvent(event2);
+		processRoot(m0);
+		final Object[] input = { event_node };
+		final Object[] output = contentProvider.getElements(input);
+		final ModelEvent e1 = ModelController.getEvent(event1);
+		final ModelEvent e2 = ModelController.getEvent(event2);
 
-		assertArray(output, new Statistics(e1), new Statistics(e2));
-		
+		final Statistics s1 = new Statistics(event_node);
+		final Statistics s2 = new Statistics(e1);
+		final Statistics s3 = new Statistics(e2);
+
+		final Statistics[] agg = { s1 };
+		assertArray(output, new AggregateStatistics(agg), s2, s3);
+
 	}
 
 
 	@Test
 	public void getElementsInvariantNode() {
-		ModelController.getMachine(m0).processPORoot();
-		ModelController.getMachine(m0).processPSRoot();
-		Object[] input = { inv_node };
-		Object[] output = contentProvider.getElements(input);
-		ModelInvariant i1 = ModelController.getInvariant(inv1);
-		ModelInvariant i2 = ModelController.getInvariant(inv2);
+		processRoot(m0);
+		final Object[] input = { inv_node };
+		final Object[] output = contentProvider.getElements(input);
+		final ModelInvariant i1 = ModelController.getInvariant(inv1);
+		final ModelInvariant i2 = ModelController.getInvariant(inv2);
 
-		assertArray(output, new Statistics(i1), new Statistics(i2));
-		
+		final Statistics s1 = new Statistics(inv_node);
+		final Statistics s2 = new Statistics(i1);
+		final Statistics s3 = new Statistics(i2);
+
+		final Statistics[] agg = { s1 };
+		assertArray(output, new AggregateStatistics(agg), s2, s3);
+
 	}
 
 	@Test
 	public void getElementsAxiomNode() {
-		//get statistics for an axiom node
-		ModelController.getContext(c0).processPORoot();
-		ModelController.getContext(c0).processPSRoot();
-		Object[] input ={ axiom_node };
-		Object[] output = contentProvider.getElements(input);
-		ModelAxiom a1 = ModelController.getAxiom(axiom1);
-		assertArray(output, new Statistics(a1));
-		
+		// get statistics for an axiom node
+		processRoot(c0);
+		final Object[] input = { axiom_node };
+		final Object[] output = contentProvider.getElements(input);
+		final ModelAxiom a1 = ModelController.getAxiom(axiom1);
+		final Statistics s1 = new Statistics(axiom_node);
+		final Statistics s2 = new Statistics(a1);
+
+		final Statistics[] agg = { s1 };
+		assertArray(output, new AggregateStatistics(agg), s2);
+
 	}
 
 
 	@Test
 	public void getElementsComboNodes() {
-		//get statistics for two nodes
-		ModelController.getMachine(m0).processPORoot();
-		ModelController.getMachine(m0).processPSRoot();
-		Object[] input = { inv_node, event_node };
-		Object[] output = contentProvider.getElements(input);
-		assertArray(output, new Statistics(inv_node), new Statistics(event_node));
-		
+		processRoot(m0);
+		final Object[] input = { inv_node, event_node };
+		final Statistics is1 = new Statistics(inv_node);
+		final Statistics es1 = new Statistics(event_node);
+		final IStatistics[] agg = { is1, es1 };
+		final Object[] output = contentProvider.getElements(input);
+		assertArray(output, new AggregateStatistics(agg), is1, es1);
+
 	}
 
 	@Test
 	public void getElementsComboInvariantEvent() {
-		//get statistics for an invariant and an event
-		ModelController.getMachine(m0).processPORoot();
-		ModelController.getMachine(m0).processPSRoot();
-		Object[] input = { inv1, event2};
-		Object[] output = contentProvider.getElements(input);
-		ModelInvariant i1 = ModelController.getInvariant(inv1);
-		ModelEvent e2 = ModelController.getEvent(event2);
+		// get statistics for an invariant and an event
+		processRoot(m0);
+		final Object[] input = { inv1, event2 };
+		final Object[] output = contentProvider.getElements(input);
+		final ModelInvariant i1 = ModelController.getInvariant(inv1);
+		final ModelEvent e2 = ModelController.getEvent(event2);
 
-		assertArray(output, new Statistics(i1), new Statistics(e2));
-		
+		final Statistics s1 = new Statistics(i1);
+		final Statistics s2 = new Statistics(e2);
+		final IStatistics[] agg = { s1, s2 };
+
+		assertArray(output, new AggregateStatistics(agg), s1, s2);
+
+	}
+
+	private void processRoot(IEventBRoot root) {
+		if (root instanceof IMachineRoot) {
+			final IMachineRoot ebMachine = (IMachineRoot) root;
+			final ModelMachine machine = ModelController.getMachine(ebMachine);
+			machine.processPORoot();
+			machine.processPSRoot();
+		}
+		if (root instanceof IContextRoot) {
+			final IContextRoot ebContext = (IContextRoot) root;
+			final ModelContext context = ModelController.getContext(ebContext);
+			context.processPORoot();
+			context.processPSRoot();
+		}
 	}
 
 	@Test
 	public void getElementsComboMachinecontext() {
-		//get statistics for a machine and a context
-		Object[] input = {c0, m0};
-		Object[] output = contentProvider.getElements(input);
-		ModelContext cont0= (ModelController.getContext(c0));
-		ModelMachine mach0= (ModelController.getMachine(m0));
-		assertArray(output, new Statistics(cont0), new Statistics(mach0));
+		// get statistics for a machine and a context
+		final Object[] input = { c0, m0 };
+		final Object[] output = contentProvider.getElements(input);
+		final ModelContext cont0 = (ModelController.getContext(c0));
+		final ModelMachine mach0 = (ModelController.getMachine(m0));
+
+		final Statistics s1 = new Statistics(cont0);
+		final Statistics s2 = new Statistics(mach0);
+		final IStatistics[] agg = { s1, s2 };
+		final AggregateStatistics aggregate = new AggregateStatistics(agg);
+
+		assertArray(output, aggregate, s1, s2);
 	}
 	
 

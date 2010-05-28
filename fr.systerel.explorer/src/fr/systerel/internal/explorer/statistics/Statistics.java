@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -11,17 +11,12 @@
 
 
 package fr.systerel.internal.explorer.statistics;
+import static fr.systerel.internal.explorer.statistics.StatisticsUtil.getParentLabelOf;
 
 import org.eventb.core.IContextRoot;
-import org.eventb.core.IEventBRoot;
-import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineRoot;
-import org.eventb.internal.ui.UIUtils;
-import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.IElementNode;
-import fr.systerel.internal.explorer.model.IModelElement;
 import fr.systerel.internal.explorer.model.ModelController;
 import fr.systerel.internal.explorer.model.ModelPOContainer;
 import fr.systerel.internal.explorer.model.ModelProject;
@@ -110,27 +105,7 @@ public class Statistics implements IStatistics{
 	}
 	
 	public String getParentLabel() {
-		Object internal_parent = null;
-		if (parent instanceof IElementNode) {
-			return ((IElementNode) parent).getLabel();
-		}
-		if (parent instanceof IModelElement) {
-			internal_parent = ((IModelElement) parent).getInternalElement();
-		}
-		if (internal_parent instanceof ILabeledElement) {
-			try {
-				return ((ILabeledElement) internal_parent).getLabel();
-			} catch (RodinDBException e) {
-				UIUtils.log(e, "when getting label for " +internal_parent);
-			}
-		}
-		if (internal_parent instanceof IEventBRoot) {
-			return ((IEventBRoot) internal_parent).getComponentName();
-		}
-		if (internal_parent instanceof IRodinElement) {
-			return ((IRodinElement) internal_parent).getElementName();
-		}
-		return parent.toString();
+		return getParentLabelOf(parent);
 	}
 
 	public boolean isAggregate() {
