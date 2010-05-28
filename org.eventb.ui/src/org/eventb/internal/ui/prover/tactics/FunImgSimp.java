@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.swt.graphics.Point;
@@ -28,15 +28,14 @@ import org.eventb.ui.prover.TacticProviderUtils;
 
 public class FunImgSimp implements ITacticProvider2 {
 
-	private static class FunImgSimpApplication implements IPositionApplication{
-	
+	private static class FunImgSimpApplication implements IPositionApplication {
+
 		private static final String GOAL_TACTIC_ID = "org.eventb.ui.funImgSimpGoal";
 		private static final String HYP_TACTIC_ID = "org.eventb.ui.funImgSimpHyp";
-		
+
 		private final Predicate hyp;
 		private final IPosition position;
-		
-		
+
 		public FunImgSimpApplication(Predicate hyp, IPosition position) {
 			this.hyp = hyp;
 			this.position = position;
@@ -45,25 +44,22 @@ public class FunImgSimp implements ITacticProvider2 {
 		public String getHyperlinkLabel() {
 			return null;
 		}
-		
+
 		public Point getHyperlinkBounds(String parsedString,
 				Predicate parsedPredicate) {
-			return TacticProviderUtils.getOperatorPosition(
-					parsedPredicate, parsedString, position.getFirstChild());
+			return TacticProviderUtils.getOperatorPosition(parsedPredicate,
+					parsedString, position.getFirstChild());
 		}
-		
+
 		public String getTacticID() {
-			if (hyp == null) {
-				return GOAL_TACTIC_ID;
-			} else
-				return HYP_TACTIC_ID;
+			return hyp == null ? GOAL_TACTIC_ID : HYP_TACTIC_ID;
 		}
-		
+
 		public ITactic getTactic(String[] inputs, String gInput) {
 			return Tactics.funImgSimplifies(hyp, position);
 		}
 	}
-	
+
 	private static final List<ITacticApplication> EMPTY_LIST = Collections
 			.emptyList();
 
@@ -74,7 +70,8 @@ public class FunImgSimp implements ITacticProvider2 {
 		if (positions.isEmpty()) {
 			return EMPTY_LIST;
 		}
-		final List<ITacticApplication> tactics = new LinkedList<ITacticApplication>();
+		final List<ITacticApplication> tactics = new ArrayList<ITacticApplication>(
+				positions.size());
 		for (IPosition p : positions) {
 			tactics.add(new FunImgSimpApplication(hyp, p));
 		}
