@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1125,7 +1125,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * </pre>
 	 * </p>
 	 * <p>
-	 * Similarily, the following formulas are considered equal (as they are
+	 * Similarly, the following formulas are considered equal (as they are
 	 * various forms of the same quantified expression);
 	 * <pre>
 	 *       λx·x ∈ ℕ | x + 1
@@ -1150,9 +1150,9 @@ public abstract class Formula<T extends Formula<T>> {
 	 * For instance, two copies of the formula <code>x = ∅</code> are considered
 	 * as equal when they are not typed.  However, if one is typed (where
 	 * <code>x</code> is a set of booleans) and not the other, they're not equal
-	 * anymore.  Similarily, if one has been typechecked with <code>x</code> being
+	 * anymore.  Similarly, if one has been type-checked with <code>x</code> being
 	 * a set of booleans and the other with <code>x</code> being a set of integers,
-	 * there not equal.
+	 * they are not equal.
 	 * </p>
 	 * 
 	 * @param obj
