@@ -28,25 +28,31 @@ import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointSimplifier;
 
 /**
- * Class used to simplify the functional image of a set in comprehension
- * (especially a lambda).
+ * Implements simplification of functional images through a set in comprehension
+ * (typically a lambda).
  * <p>
  * The static method <code>rewrite(Expression expr, FormulaFactory ff)</code>
  * first checks that the given expression <code>expr</code> is a functional
- * image of a set in comprehension. Then, simplifies it or returns
- * <code>null</code> if the result has not the expected form.
+ * image through a set in comprehension. Then, simplifies it or returns
+ * <code>null</code> if simplification is not possible. The latter case can
+ * happen when the comprehension set expression has not the same form as the
+ * argument to the function.
  * </p>
  * <p>
- * In the simplification, from {x.P|E}(y), create formula #x.y|->A = x|->E where
- * A is an artificially bound variable. By applying rewriters, we split maplets
- * to get #x.y=x & A=E and apply the One Point Rule. If we obtain A = E then E
- * is the simplification we expect.
+ * The algorithm used for simplifying expression {x.P|E}(y) is
+ * <ol>
+ * <li>Create formula #x.y|->A = x|->E where A is an artificially bound
+ * variable.</li>
+ * <li>Apply the AutoRewriter to split maplets to get #x.y=x & A=E and apply the
+ * One Point Rule until no rewriting occurs.</li>
+ * <li>If we obtain A = E then E is the simplification we expect.</li>
+ * </ol>
  * </p>
  */
 public class LambdaComputer {
 
 	/**
-	 * Returns the simplification of applying a comprehension set (especially a
+	 * Returns the simplification of applying a comprehension set (typically a
 	 * lambda) to an expression.
 	 * 
 	 * @param expr
@@ -89,17 +95,6 @@ public class LambdaComputer {
 		return true;
 	}
 
-	/**
-	 * From {x.P|E}(y), create formula #x.y|->A = x|->E where A is an
-	 * artificially bound variable. Then, apply repeatedly the auto-rewriter (to
-	 * split equalities between maplets) and the One Point Rule.
-	 * <p>
-	 * If these simplifications produce predicate A = E, then E is the result to
-	 * return. Otherwise the simplification fails.
-	 * </p>
-	 * 
-	 * @return the simplification of a functional image of lambda expression
-	 */
 	private Expression simplify() {
 		final BoundIdentDecl[] decls = cset.getBoundIdentDecls();
 		final BoundIdentifier AInExists = ff.makeBoundIdentifier(decls.length,
