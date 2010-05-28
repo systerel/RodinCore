@@ -197,7 +197,8 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 		setUpDetailsColumn(new StatisticsColumn.ManualColumn(table), StatisticsDetailsComparator.MANUAL);
 		setUpDetailsColumn(new StatisticsColumn.ReviewedColumn(table), StatisticsDetailsComparator.REVIEWED);
 		setUpDetailsColumn(new StatisticsColumn.UndischargedColumn(table), StatisticsDetailsComparator.UNDISCHARGED);
-
+		setUpDetailsColumn(new StatisticsColumn.EmptyColumn(table), StatisticsDetailsComparator.EMPTY);
+		
 		FormData tableData = createFormData(0,100);
 		viewer.getControl().setLayoutData(tableData);
 

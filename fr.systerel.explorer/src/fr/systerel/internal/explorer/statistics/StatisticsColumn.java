@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - added EmptyColumn and right alignment method
   *******************************************************************************/
 
 
@@ -28,6 +29,12 @@ public abstract class StatisticsColumn {
 	
 	}
 	
+	protected void createTableColumn(Table table) {
+		column = new TableColumn(table, SWT.NONE);
+		column.pack();
+	}
+	
+	
 	public abstract String getLabel(IStatistics statistics);
 
 
@@ -37,6 +44,10 @@ public abstract class StatisticsColumn {
 
 	public TableColumn getColumn() {
 		return column;
+	}
+	
+	public void setAlignRight() {
+		column.setAlignment(SWT.RIGHT);
 	}
 
 
@@ -57,6 +68,7 @@ public abstract class StatisticsColumn {
 		
 		public TotalColumn(Table table){
 			createTableColumn(table, "Total");
+			setAlignRight();
 		}
 
 		@Override
@@ -69,6 +81,7 @@ public abstract class StatisticsColumn {
 		
 		public AutoColumn(Table table){
 			createTableColumn(table, "Auto");
+			setAlignRight();
 		}
 
 		@Override
@@ -81,6 +94,7 @@ public abstract class StatisticsColumn {
 		
 		public ManualColumn(Table table){
 			createTableColumn(table, "Manual");
+			setAlignRight();
 		}
 
 		@Override
@@ -93,6 +107,7 @@ public abstract class StatisticsColumn {
 		
 		public ReviewedColumn(Table table){
 			createTableColumn(table, "Reviewed");
+			setAlignRight();
 		}
 
 		@Override
@@ -105,12 +120,26 @@ public abstract class StatisticsColumn {
 		
 		public UndischargedColumn(Table table){
 			createTableColumn(table, "Undischarged");
+			setAlignRight();
 		}
 
 		@Override
 		public String getLabel(IStatistics statistics) {
 			return Integer.toString(statistics.getUndischargedRest());
 		}
+	}
+	
+	public static class EmptyColumn extends StatisticsColumn {
+
+		public EmptyColumn(Table table) {
+			createTableColumn(table);			
+		}
+		
+		@Override
+		public String getLabel(IStatistics statistics) {
+			return "";
+		}
+		
 	}
 	
 }

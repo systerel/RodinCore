@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - added comparator for an empty column
  *******************************************************************************/
 
 package fr.systerel.internal.explorer.statistics;
@@ -98,7 +99,16 @@ public abstract class StatisticsDetailsComparator extends ViewerComparator {
 		}
 
 	};
+	
+	public final static StatisticsDetailsComparator EMPTY = new StatisticsDetailsComparator() {
 
+		@Override
+		public int compare(IStatistics stats1, IStatistics stats2) {
+			return 0;
+		}
+
+	};
+	
 	@Override
 	public int compare(Viewer viewer, Object o1, Object o2) {
 		if (o1 instanceof Statistics && o2 instanceof Statistics) {
