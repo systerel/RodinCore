@@ -103,15 +103,15 @@ public class TestSourceLocation extends AbstractTests {
 				final IPosition pos = formula.getPosition(sloc);
 				if (!formula.contains(sloc)) {
 					assertNull(pos);
-					break;
+				} else {
+					assertNotNull(pos);
+					final Formula<?> actual = formula.getSubFormula(pos);
+					assertTrue(actual.getSourceLocation().contains(sloc));
+					Formula<?> expected = children.get(sloc);
+					if (expected == null) expected = formula;
+					assertEquals("Wrong sub-formula",
+							expected, actual);
 				}
-				assertNotNull(pos);
-				final Formula<?> actual = formula.getSubFormula(pos);
-				assertTrue(actual.getSourceLocation().contains(sloc));
-				Formula<?> expected = children.get(sloc);
-				if (expected == null) expected = formula;
-				assertEquals("Wrong sub-formula",
-						expected, actual);
 			}
 		}
 		// Some locations outside the formula
@@ -197,8 +197,6 @@ public class TestSourceLocation extends AbstractTests {
 		// FreeIdentifier
 		assertPositionsE("x", 0, 0, id_x);
 		assertPositionsE("foo");
-		assertPositionsE("(a)");
-		assertPositionsE(" a ");
 
 		// IntegerLiteral
 		assertPositionsE("1", 0, 0, mIntegerLiteral(1));
@@ -249,6 +247,10 @@ public class TestSourceLocation extends AbstractTests {
 
 		// UnaryPredicate
 		assertPositionsP("¬⊤", 1,1, btrue);
+		
+		// Tests with additional characters before or after the formula
+		assertPositionsE("(a)");
+		assertPositionsE(" a ");
 	}
 
 }
