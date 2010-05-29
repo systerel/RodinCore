@@ -1,139 +1,98 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added new localized methods for Eclipse 3.6
  *******************************************************************************/
 package org.eventb.core.tests.tool;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eventb.core.IContextRoot;
 
 /**
- * This is a dummy implementation of configuration elements.
- * All contents should be ignored in tests!
+ * This is a dummy implementation of configuration elements. All contents should
+ * be ignored in tests!
  * 
  * @author Stefan Hallerstede
- *
  */
 public class DummyConfigurationElement implements IConfigurationElement {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IConfigurationElement#createExecutableExtension(java.lang.String)
-	 */
-	public Object createExecutableExtension(String propertyName)
-			throws CoreException {
+	private static final IConfigurationElement[] NO_ELEMENTS = new IConfigurationElement[0];
+
+	public Object createExecutableExtension(String propertyName) {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IConfigurationElement#getAttribute(java.lang.String)
-	 */
-	public String getAttribute(String name)
-			throws InvalidRegistryObjectException {
+	public String getAttribute(String name) {
 		if (name.equals("input"))
 			return IContextRoot.ELEMENT_TYPE.getId();
 		else
 			return name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IConfigurationElement#getAttributeAsIs(java.lang.String)
-	 */
-	public String getAttributeAsIs(String name)
-			throws InvalidRegistryObjectException {
+	public String getAttribute(String attrName, String locale) {
+		return getAttribute(attrName);
+	}
+
+	public String getAttributeAsIs(String name) {
 		return name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IConfigurationElement#getAttributeNames()
-	 */
-	public String[] getAttributeNames() throws InvalidRegistryObjectException {
+	public String[] getAttributeNames() {
 		return new String[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IConfigurationElement#getChildren()
-	 */
-	public IConfigurationElement[] getChildren()
-			throws InvalidRegistryObjectException {
-		return new IConfigurationElement[0];
+	public IConfigurationElement[] getChildren() {
+		return NO_ELEMENTS;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IConfigurationElement#getChildren(java.lang.String)
-	 */
-	public IConfigurationElement[] getChildren(String name)
-			throws InvalidRegistryObjectException {
-		return new IConfigurationElement[0];
+	public IConfigurationElement[] getChildren(String name) {
+		return NO_ELEMENTS;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IConfigurationElement#getContributor()
-	 */
-	public IContributor getContributor() throws InvalidRegistryObjectException {
+	public IContributor getContributor() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IConfigurationElement#getDeclaringExtension()
-	 */
-	public IExtension getDeclaringExtension()
-			throws InvalidRegistryObjectException {
+	public IExtension getDeclaringExtension() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IConfigurationElement#getName()
-	 */
-	public String getName() throws InvalidRegistryObjectException {
+	public String getName() {
 		return "name";
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IConfigurationElement#getNamespace()
-	 */
-	public String getNamespace() throws InvalidRegistryObjectException {
+	public String getNamespace() {
 		return "org.name.bin";
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IConfigurationElement#getNamespaceIdentifier()
-	 */
-	public String getNamespaceIdentifier()
-			throws InvalidRegistryObjectException {
+	public String getNamespaceIdentifier() {
 		return "org.name.bin";
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IConfigurationElement#getParent()
-	 */
-	public Object getParent() throws InvalidRegistryObjectException {
+	public Object getParent() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IConfigurationElement#getValue()
-	 */
-	public String getValue() throws InvalidRegistryObjectException {
+	public String getValue() {
 		return "value";
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IConfigurationElement#getValueAsIs()
-	 */
-	public String getValueAsIs() throws InvalidRegistryObjectException {
+	public String getValue(String locale) {
+		return getValue();
+	}
+
+	public String getValueAsIs() {
 		return "value";
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IConfigurationElement#isValid()
-	 */
 	public boolean isValid() {
 		return true;
 	}

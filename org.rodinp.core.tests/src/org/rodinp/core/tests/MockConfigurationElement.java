@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,6 +65,10 @@ public class MockConfigurationElement implements IConfigurationElement {
 		return attributes.get(name);
 	}
 
+	public String getAttribute(String attrName, String locale) {
+		return getAttribute(attrName);
+	}
+
 	public String getAttributeAsIs(String name) {
 		return attributes.get(name);
 	}
@@ -110,6 +114,10 @@ public class MockConfigurationElement implements IConfigurationElement {
 
 	public String getValue() throws InvalidRegistryObjectException {
 		throw newRuntimeException();
+	}
+
+	public String getValue(String locale) {
+		return getValue();
 	}
 
 	public String getValueAsIs() throws InvalidRegistryObjectException {
