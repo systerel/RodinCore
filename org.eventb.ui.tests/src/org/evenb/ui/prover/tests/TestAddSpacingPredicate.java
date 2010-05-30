@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,27 +8,30 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - refactored to use StringBuilder instead of String concat
  *******************************************************************************/
 package org.evenb.ui.prover.tests;
 
 import static org.eventb.core.ast.LanguageVersion.V2;
+import static org.eventb.internal.ui.prover.PredicateUtil.appendPredicate;
 import junit.framework.TestCase;
 
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
-import org.eventb.internal.ui.prover.PredicateUtil;
 
 public class TestAddSpacingPredicate extends TestCase {
 	private void addSpacingTest(String msg, String predString,
 			String expectedPrettyPrint) {
-		IParseResult parseResult = Lib.ff.parsePredicate(predString, V2, null);
-		assertFalse("Parse Successful", parseResult.hasProblem());
-		Predicate parsedPred = parseResult.getParsedPredicate();
-
-		String prettyPrint = PredicateUtil.addSpacing(predString, parsedPred);
-
-		assertEquals(msg + ": ", expectedPrettyPrint, prettyPrint);
+		final IParseResult parseResult = Lib.ff.parsePredicate(predString, V2, null);
+		if (parseResult.hasProblem()) {
+			System.out.println(parseResult.getProblems());
+			fail("Parse failed");
+		}
+		final Predicate parsedPred = parseResult.getParsedPredicate();
+		final StringBuilder sb = new StringBuilder();
+		appendPredicate(sb, predString, parsedPred);
+		assertEquals(msg + ": ", expectedPrettyPrint, sb.toString());
 	}
 
 	public void testAssociativePredicate() {
