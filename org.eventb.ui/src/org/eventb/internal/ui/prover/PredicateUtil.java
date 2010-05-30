@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,11 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language V2
+ *     Systerel - extracted computation of predicate height
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
+
+import static org.eventb.internal.ui.utils.PredicateHeightComputer.getHeight;
 
 import java.util.ArrayList;
 
@@ -391,48 +394,6 @@ public class PredicateUtil {
 		for (int i = 0; i < indent; i++)
 			builder.append(' ');
 		return builder.toString();
-	}
-
-	private static int getHeight(Predicate pred) {
-		if (pred instanceof AssociativePredicate) {
-			int maxHeight = 0;
-			AssociativePredicate associativePred = (AssociativePredicate) pred;
-			for (Predicate child : associativePred.getChildren()) {
-				int height = getHeight(child);
-				maxHeight = height > maxHeight ? height : maxHeight;
-			}
-			return maxHeight + 1;
-		}
-
-		if (pred instanceof BinaryPredicate) {
-			int leftHeight = getHeight(((BinaryPredicate) pred).getLeft());
-			int rightHeight = getHeight(((BinaryPredicate) pred).getRight());
-			return leftHeight > rightHeight ? leftHeight + 1 : rightHeight + 1;
-		}
-
-		if (pred instanceof LiteralPredicate) {
-			return 0;
-		}
-
-		if (pred instanceof QuantifiedPredicate) {
-			return getHeight(((QuantifiedPredicate) pred).getPredicate());
-		}
-
-		if (pred instanceof RelationalPredicate) {
-			// TODO Get the height of the expression?
-			return 0;
-		}
-
-		if (pred instanceof SimplePredicate) {
-			// TODO Get the height of the expression?
-			return 0;
-		}
-
-		if (pred instanceof UnaryPredicate) {
-			return getHeight(((UnaryPredicate) pred).getChild()) + 1;
-		}
-
-		return 0;
 	}
 
 }
