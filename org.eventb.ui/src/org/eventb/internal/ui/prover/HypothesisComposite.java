@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,8 @@ import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.internal.ui.EventBSharedColor;
+import org.eventb.internal.ui.searchhypothesis.SearchHypothesisComposite;
+import org.eventb.internal.ui.searchhypothesis.SearchHypothesisUtils;
 
 /**
  * @author htson
@@ -284,12 +286,25 @@ public abstract class HypothesisComposite implements
 	 * hypothesis rows. This must be called within the UI Threads.
 	 */
 	protected void refresh() {
-		IProofState ps = userSupport.getCurrentPO();
+		final boolean traced = SearchHypothesisUtils.DEBUG
+				&& (this instanceof SearchHypothesisComposite);
+		long start = 0;
+		if (traced) {
+			SearchHypothesisUtils.debug("Start refreshing view");
+			start = System.currentTimeMillis();
+		}
 
-		IProverSequent sequent = getProverSequent(ps);
-		Iterable<Predicate> hyps = getHypotheses(ps);
-		boolean enabled = isEnabled(ps);
+		final IProofState ps = userSupport.getCurrentPO();
+		final IProverSequent sequent = getProverSequent(ps);
+		final Iterable<Predicate> hyps = getHypotheses(ps);
+		final boolean enabled = isEnabled(ps);
 		reinitialise(hyps, sequent, enabled);
+
+		if (traced) {
+			final long elapsed = System.currentTimeMillis() - start;
+			SearchHypothesisUtils.debug("Refreshing view took " + elapsed
+					+ " ms.");
+		}
 	}
 
 	/**
@@ -314,11 +329,24 @@ public abstract class HypothesisComposite implements
 	 */
 	private void reinitialise(Iterable<Predicate> hyps, IProverSequent sequent,
 			boolean enabled) {
+
+		final boolean traced = SearchHypothesisUtils.DEBUG
+				&& (this instanceof SearchHypothesisComposite);
+		long start = 0;
+		if (traced) {
+			start = System.currentTimeMillis();
+		}		
 		// Remove all the existing hypothesis rows.
 		for (HypothesisRow row : rows) {
 			row.dispose();
 		}
 		rows.clear();
+		if (traced) {
+			final long elapsed = System.currentTimeMillis() - start;
+			SearchHypothesisUtils.debug("clearing rows took " + elapsed
+					+ " ms.");
+			start = System.currentTimeMillis();
+		}		
 
 		// Recreating the hypothesis rows according to the input.
 		int i = 0;
@@ -329,10 +357,20 @@ public abstract class HypothesisComposite implements
 			rows.add(row);
 			i++;
 		}
+		if (traced) {
+			final long elapsed = System.currentTimeMillis() - start;
+			SearchHypothesisUtils.debug("adding rows took " + elapsed + " ms.");
+			start = System.currentTimeMillis();
+		}		
 
 		// Reflow the scrolled form and update the status of the tool bar items.
 		scrolledForm.reflow(true);
 		updateToolbarItems();
+		if (traced) {
+			final long elapsed = System.currentTimeMillis() - start;
+			SearchHypothesisUtils.debug("reflow + toolbars took " + elapsed
+					+ " ms.");
+		}		
 	}
 
 	/*
