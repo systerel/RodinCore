@@ -93,7 +93,27 @@ public class FunImgSimpImpl {
 	
 		%match (Expression expr) {
 			
-			FunImage(DomSub((SetExtension|Dom)(_),fun),_)->
+			FunImage(DomSub(_,fun),_)->
+			{
+				return `fun;
+			}
+			
+			FunImage(DomRes(_,fun),_)->
+			{
+				return `fun;
+			}
+			
+			FunImage(RanRes(fun,_),_)->
+			{
+				return `fun;
+			}
+			
+			FunImage(RanSub(fun,_),_)->
+			{
+				return `fun;
+			}
+			
+			FunImage(SetMinus(fun,_),_)->
 			{
 				return `fun;
 			}

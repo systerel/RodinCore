@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,7 +146,7 @@ public class ProverChecksTests extends TestCase{
 		
 		// A discharging rule
 		antecedents = new IAntecedent[]{};
-		rule = ProverFactory.makeProofRule(generatedBy, generatedUsing, p1, null, "", antecedents);
+		rule = ProverFactory.makeProofRule(generatedBy, generatedUsing, p1, (Predicate)null, "", antecedents);
 		justifications = ProverChecks.genRuleJustifications(rule);
 		
 		assertEquals("[{}[][][] |- 1=1]", justifications.toString());

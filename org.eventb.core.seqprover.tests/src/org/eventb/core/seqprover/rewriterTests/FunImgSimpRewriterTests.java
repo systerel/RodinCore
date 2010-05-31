@@ -33,10 +33,10 @@ public class FunImgSimpRewriterTests extends AbstractReasonerTests {
 
 	private static final IPosition FIRST_CHILD = IPosition.ROOT.getFirstChild();
 	private static final IReasoner rewriter = new FunImgSimplifies();
-	private static final IReasonerInput input = new Input(null,
-			FIRST_CHILD);
+	private static final IReasonerInput input = new Input(null, FIRST_CHILD);
+	private static final String typeEnvString = "S=ℙ(S), F=ℙ(S×T), T=ℙ(T)";
 	private static final ITypeEnvironment typeEnv = TestLib
-			.genTypeEnv("g=ℤ↔ℤ,f=ℤ↔ℤ");
+			.genTypeEnv(typeEnvString);
 	
 	private static final FormulaFactory ff = FormulaFactory.getDefault();
 
@@ -49,6 +49,18 @@ public class FunImgSimpRewriterTests extends AbstractReasonerTests {
 			"↠", // total surjection
 			"⤖", // total bijection
 	};
+	
+	private static final String domSymbols[] = {
+			"◁", // domain restriction
+			"⩤", // domain substraction	
+	};
+
+	
+	private static final String ranSymbols[] = {
+			"▷", // range restriction
+			"⩥", // range substraction
+	};
+	
 
 	private static final String invalids[] = { 
 			"↔", // relation
@@ -65,21 +77,22 @@ public class FunImgSimpRewriterTests extends AbstractReasonerTests {
 		final Input input = new Input(null, ff.makePosition("0"));
 		final List<SuccessfullReasonerApplication> result = new ArrayList<SuccessfullReasonerApplication>();
 		for (String arrow : valids) {
-			final String resultString1 = "{g=ℤ↔ℤ,f=ℤ↔ℤ}[][][g={1↦3} ;; f∈ℕ"
-					+ arrow + "ℕ] |- f(5)=6";
-			final String resultString2 = "{g=ℤ↔ℤ,f=ℤ↔ℤ}[][][f∈ℕ" + arrow
-					+ "ℕ] |- f(5)=6";
-			final IProverSequent seq = TestLib.genFullSeq(typeEnv, "", "",
-					"g={1↦3} ;; f∈ℕ" + arrow + "ℕ", "(dom(g)⩤f)(5)=6");
-			final IProverSequent seq2 = TestLib.genFullSeq(typeEnv, "", "",
-					"f∈ℕ" + arrow + "ℕ", "({1}⩤f)(5)=6");
-			result.add(new SuccessfullReasonerApplication(seq, input,
-					resultString1));
-			result.add(new SuccessfullReasonerApplication(seq2, input,
-					resultString2));
+			for (String symbol : domSymbols) {
+				final String resultDom = "{"+typeEnvString+"}[][][E⊆S ;; F∈S"+ arrow + "T ;; G∈dom(E "+ symbol + " F)] |- F(G)=F(G)";
+				final IProverSequent seq = TestLib.genFullSeq(typeEnv, "", "", "E⊆S;; G∈dom(E " + symbol + " F) ;; F∈S"+ arrow +"T", "(E " + symbol + " F)(G)=F(G)");
+				result.add(new SuccessfullReasonerApplication(seq, input, resultDom));
+			}
+			for (String symbol : ranSymbols) {
+				final String resultRan = "{S=ℙ(S), F=ℙ(S×T), T=ℙ(T)}[][][E⊆T ;; F∈S"+ arrow + "T ;; G∈dom(F" + symbol + "E)] |- F(G)=F(G)";
+				final IProverSequent seq = TestLib.genFullSeq(typeEnv, "", "", "E⊆T;; G∈dom(F" + symbol + "E) ;; F∈S" + arrow + "T", "(F" + symbol + "E)(G)=F(G)");
+				result.add(new SuccessfullReasonerApplication(seq, input, resultRan));
+			}
+
+			final String resultSetMinus = "{"+typeEnvString+"}[][][E∈S↔T ;; F∈S"+ arrow + "T ;; G∈dom(F ∖ E)] |- F(G)=F(G)";
+			final IProverSequent seq = TestLib.genFullSeq(typeEnv, "", "", "E∈S↔T;; G∈dom( F ∖ E ) ;; F∈S" + arrow + "T", "( F ∖ E )(G)=F(G)");
+			result.add(new SuccessfullReasonerApplication(seq, input, resultSetMinus));
 		}
-		return result
-				.toArray(new SuccessfullReasonerApplication[result.size()]);
+		return result.toArray(new SuccessfullReasonerApplication[result.size()]);
 	}
 
 	/**
@@ -90,25 +103,31 @@ public class FunImgSimpRewriterTests extends AbstractReasonerTests {
 		final Input input = new Input(null, ff.makePosition("0"));
 		final List<UnsuccessfullReasonerApplication> result = new ArrayList<UnsuccessfullReasonerApplication>();
 		for (String arrow : invalids) {
-			final String goal1 = "(dom(g) ⩤ f)(5)=6";
-			final String resultString1 = "Rewriter org.eventb.core.seqprover."
-					+ "funImgSimplifies is inapplicable for goal " + goal1
+			for (String symbol : domSymbols) {
+				final String goal1 = "(E " + symbol + " F)(G)=F(G)";
+				final String resultString1 = "Rewriter org.eventb.core.seqprover."
+					    + "funImgSimplifies is inapplicable for goal "
+						+ goal1
+						+ " at position 0";
+				final IProverSequent seq = TestLib.genFullSeq(typeEnv, "", "", "E⊆S;; G∈dom(E " + symbol + " F) ;; F∈S" + arrow + "T", "(E " + symbol + " F)(G)=F(G)");
+				result.add(new UnsuccessfullReasonerApplication(seq, input,	resultString1));
+			}
+			for (String symbol : ranSymbols) {
+				final String goal2 = "(F " + symbol + " E)(G)=F(G)";
+				final String resultString2 = "Rewriter org.eventb.core.seqprover."+ "funImgSimplifies is inapplicable for goal "
+						+ goal2
+						+ " at position 0";
+				final IProverSequent seq = TestLib.genFullSeq(typeEnv, "", "", "E⊆T;; G∈dom(F" + symbol + "E) ;; F∈S" + arrow + "T",	"(F" + symbol + "E)(G)=F(G)");
+				result.add(new UnsuccessfullReasonerApplication(seq, input,	resultString2));
+			}
+			final String goal3 = "(F ∖ E)(G)=F(G)";
+			final String resultString3 = "Rewriter org.eventb.core.seqprover."
+					+ "funImgSimplifies is inapplicable for goal " + goal3
 					+ " at position 0";
-			final String goal2 = "({1} ⩤ f)(5)=6";
-			final String resultString2 = "Rewriter org.eventb.core.seqprover."
-					+ "funImgSimplifies is inapplicable for goal " + goal2
-					+ " at position 0";
-			final IProverSequent seq = TestLib.genFullSeq(typeEnv, "", "",
-					"g={1↦3} ;; f∈ℕ" + arrow + "ℕ", goal1);
-			final IProverSequent seq2 = TestLib.genFullSeq(typeEnv, "", "",
-					"f∈ℕ" + arrow + "ℕ", "({1}⩤f)(5)=6");
-			result.add(new UnsuccessfullReasonerApplication(seq, input,
-					resultString1));
-			result.add(new UnsuccessfullReasonerApplication(seq2, input,
-					resultString2));
+			final IProverSequent seq = TestLib.genFullSeq(typeEnv, "", "", "E∈S↔T;; G∈dom( F ∖ E ) ;; F∈S" + arrow + "T", "( F ∖ E )(G)=F(G)");
+			result.add(new UnsuccessfullReasonerApplication(seq, input,	resultString3));
 		}
-		return result.toArray(new UnsuccessfullReasonerApplication[result
-				.size()]);
+		return result.toArray(new UnsuccessfullReasonerApplication[result.size()]);
 	}
 
 	private static void assertInvalid(IProverSequent seq) {

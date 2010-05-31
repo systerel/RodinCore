@@ -12,24 +12,28 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimpImpl.getNeededHyp;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.seqprover.IHypAction;
-import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 
-@ProverRule( { "FUNIMG_SET_DOMSUB", "FUNIMG_DOMSUB" })
+@ProverRule( { "SIMP_FUNIMAGE_DOMRES", "SIMP_FUNIMAGE_DOMSUB",
+		"SIMP_FUNIMAGE_RANRES", "SIMP_FUNIMAGE_RANSUB",
+		"SIMP_FUNIMAGE_SETMINUS" })
 public class FunImgSimplifies extends AbstractManualRewrites implements
 		IVersionedReasoner {
 
@@ -49,31 +53,47 @@ public class FunImgSimplifies extends AbstractManualRewrites implements
 	}
 
 	@Override
-	public IReasonerOutput apply(IProverSequent seq,
-			IReasonerInput reasonerInput, IProofMonitor pm) {
-
-		final Input input = (Input) reasonerInput;
-		final Predicate hyp = input.pred;
-		final IPosition position = input.position;
-		if (hyp == null) {
-			final Predicate goal = seq.goal();
-			final Expression fExpr = getFunction(goal, position);
-			final Predicate neededHyp = getNeededHyp(fExpr, seq);
-			if (neededHyp == null) {
-				return ProverFactory.reasonerFailure(this, input, "Rewriter "
-						+ getReasonerID() + " is inapplicable for goal " //
-						+ goal + " at position " + position);
-			}
-		} else {
-			final Expression fExpr = getFunction(hyp, position);
-			final Predicate neededHyp = getNeededHyp(fExpr, seq);
-			if (neededHyp == null) {
-				return ProverFactory.reasonerFailure(this, input, "Rewriter "
-						+ getReasonerID() + " is inapplicable for hypothesis "
-						+ hyp + " at position " + position);
-			}
+	public Set<Predicate> getNeededHyps(IProverSequent seq, Predicate pred,
+			IPosition position) {
+		final Expression fExpr = getFunction(pred, position);
+		if (fExpr == null) {
+			return null;
 		}
-		return super.apply(seq, reasonerInput, pm);
+		final Predicate neededHyp = getNeededHyp(fExpr, seq);
+		if (neededHyp == null){
+			return null;
+		}
+		return Collections.singleton(neededHyp);
+	}
+
+	/*
+	 * retrieve F out of (E op F)(G) where op ∈ {◁, ⩤, ▷, ⩥} 
+	 * or F out of (F ∖ E)(G)
+	 */
+	private Expression getFunction(Predicate pred, IPosition position) {
+		if (position == null) {
+			return null;
+		}
+		final Formula<?> subFormula = pred.getSubFormula(position);
+		if (subFormula == null || subFormula.getTag() != Expression.FUNIMAGE) {
+			return null;
+		}
+		final BinaryExpression funImageExpr = (BinaryExpression) subFormula;
+		final Expression left = funImageExpr.getLeft();
+		final int tag = left.getTag();
+		return extractRestrictedFunction(left, tag);
+	}
+
+	private Expression extractRestrictedFunction(final Expression fun,
+			final int tag) {
+		if (tag == Expression.DOMRES || tag == Expression.DOMSUB) {
+			return ((BinaryExpression) fun).getRight();
+		}
+		if (tag == Expression.RANRES || tag == Expression.RANSUB
+		|| tag == Expression.SETMINUS) {
+			return ((BinaryExpression) fun).getLeft();
+		}
+		return null;
 	}
 
 	@Override
@@ -87,22 +107,6 @@ public class FunImgSimplifies extends AbstractManualRewrites implements
 		final Expression replacement = ff.makeBinaryExpression(
 				Expression.FUNIMAGE, getFunction(pred, position), G, null);
 		return pred.rewriteSubFormula(position, replacement, ff);
-	}
-
-	private Expression getFunction(Predicate pred, IPosition position) {
-		if (position == null) {
-			return null;
-		}
-		final Formula<?> subFormula = pred.getSubFormula(position);
-		if (subFormula == null || subFormula.getTag() != Expression.FUNIMAGE) {
-			return null;
-		}
-		final BinaryExpression funImage = (BinaryExpression) subFormula;
-		if (funImage.getLeft().getTag() != Expression.DOMSUB) {
-			return null;
-		}
-		final BinaryExpression domSub = (BinaryExpression) funImage.getLeft();
-		return domSub.getRight();
 	}
 
 	@Override

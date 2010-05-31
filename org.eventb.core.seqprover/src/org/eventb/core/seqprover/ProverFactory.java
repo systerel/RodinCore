@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added makeProofRule(IReasonerDesc, ...)
+ *     Systerel - added makeProofRule with needed hypotheses
  *******************************************************************************/
 package org.eventb.core.seqprover;
 
@@ -196,6 +197,73 @@ public final class ProverFactory {
 				goal, neededHyps,
 				null, display,
 				antecedents);
+	}
+	
+	/**
+	 * Returns a new proof rule with a list of needed hypotheses and the maximum
+	 * confidence
+	 * 
+	 * @param generatedBy
+	 * 		The reasoner used
+	 * @param generatedUsing
+	 * 		The reasoner input used
+	 * @param goal
+	 * 		The goal of the proof rule, or <code>null</code> iff the 
+	 * 		proof rule is applicable to a sequent with any goal
+	 * @param neededHyps
+	 * 		The hypotheses needed for the proof rule to be applicable
+	 * @param display
+	 * 		The display string for the proof rule, or <code>null</code> iff the reasoner id is to be used
+	 * @param antecedents
+	 * 		The antecedents of the proof rule, or <code>null</code> iff this rule has no antecedents
+	 * @return
+	 * 		A new proof rule with the given information.
+	 */
+	public static IProofRule makeProofRule (
+			IReasoner generatedBy,
+			IReasonerInput generatedUsing,
+			Predicate goal,
+			Set<Predicate> neededHyps,
+			String display,
+			IAntecedent... antecedents) {
+		
+		return makeProofRule(
+				generatedBy, generatedUsing,
+				goal, neededHyps,
+				null, display,
+				antecedents);
+	}
+
+	/**
+	 * Returns a new proof rule with needed hypotheses that only contains
+	 * hypothesis actions and the maximum confidence
+	 * 
+	 * <p>
+	 * This factory method returns a goal independent rule with one antecedent
+	 * containing the given hypothesis actions.
+	 * </p>
+	 * 
+	 * @param generatedBy
+	 *            The reasoner used
+	 * @param generatedUsing
+	 *            The reasoner input used
+	 * @param hypActions
+	 *            The hypothesis actions contained in the rule, or
+	 *            <code>null</code> iff there are no hypothesis actions.
+	 * @return A new proof rule with the given information.
+	 */
+	public static IProofRule makeProofRule (
+			IReasoner generatedBy,
+			IReasonerInput generatedUsing,
+			Set<Predicate> neededHyps,
+			String display,
+			List<IHypAction> hypActions) {
+		
+		IAntecedent antecedent = makeAntecedent(null, null, null, hypActions);
+		return makeProofRule(
+				generatedBy,generatedUsing,
+				null,neededHyps,null,
+				display,new IAntecedent[]{antecedent});
 	}
 	
 	/**

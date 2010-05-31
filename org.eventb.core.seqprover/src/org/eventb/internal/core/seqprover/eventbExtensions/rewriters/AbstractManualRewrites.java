@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - added support for rewriting with needed hypotheses 
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
@@ -14,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
@@ -85,22 +87,25 @@ public abstract class AbstractManualRewrites implements IReasoner {
 		final Predicate goal = seq.goal();
 		if (hyp == null) {
 			// Goal rewriting
-			Predicate newGoal = rewrite(goal, position);
-			
-			if (newGoal == null) {
-				return ProverFactory.reasonerFailure(this, input, "Rewriter "
-						+ getReasonerID() + " is inapplicable for goal " + goal
-						+ " at position " + position);
+			final Set<Predicate> neededHyps = getNeededHyps(seq, goal, position);
+	
+			if (neededHyps == null) {
+				return goalReasonerFailure(input, position, goal);
 			}
-			Collection<Predicate> newGoals = Lib.breakPossibleConjunct(newGoal);
+			
+			final Predicate newGoal = rewrite(goal, position);
+			if (newGoal == null) {
+				return goalReasonerFailure(input, position, goal);
+			}
+			final Collection<Predicate> newGoals = Lib.breakPossibleConjunct(newGoal);
 			final int length = newGoals.size();
-			IAntecedent[] antecedents = new IAntecedent[length];
+			final IAntecedent[] antecedents = new IAntecedent[length];
 			int i = 0;
 			for (Predicate pred : newGoals) {
 				antecedents[i] = ProverFactory.makeAntecedent(pred);
 				++i;
 			}
-			return ProverFactory.makeProofRule(this, input, goal,
+			return ProverFactory.makeProofRule(this, input, goal, neededHyps,
 					getDisplayName(hyp, position), antecedents);
 		} else {
 			// Hypothesis rewriting
@@ -108,22 +113,23 @@ public abstract class AbstractManualRewrites implements IReasoner {
 				return ProverFactory.reasonerFailure(this, input,
 						"Nonexistent hypothesis: " + hyp);
 			}
-
-			Predicate inferredHyp = rewrite(hyp, position);
+			final Set<Predicate> neededHyps = getNeededHyps(seq, hyp, position);
+			if (neededHyps == null) {
+				return hypReasonerFailure(input, position, hyp);
+			}
+			final Predicate inferredHyp = rewrite(hyp, position);
 			if (inferredHyp == null) {
-				return ProverFactory.reasonerFailure(this, input, "Rewriter "
-						+ getReasonerID() + " is inapplicable for hypothesis "
-						+ hyp + " at position " + position);
+				return hypReasonerFailure(input, position, hyp);
 			}
 			
-			Collection<Predicate> inferredHyps = Lib
+			final Collection<Predicate> inferredHyps = Lib
 				.breakPossibleConjunct(inferredHyp);
 			// Check if rewriting generated something interesting
 			inferredHyps.remove(Lib.True);
-			List<IHypAction> hypActions;
+			final List<IHypAction> hypActions;
 			// make the forward inference action
 			if (!inferredHyps.isEmpty()) {
-				IHypAction forwardInf = ProverFactory
+				final IHypAction forwardInf = ProverFactory
 					.makeForwardInfHypAction(Collections.singleton(hyp),
 							inferredHyps);
 				hypActions = Arrays.asList(forwardInf,
@@ -134,9 +140,45 @@ public abstract class AbstractManualRewrites implements IReasoner {
 				hypActions = Arrays.asList(getHypAction(hyp, position),
 						ProverFactory.makeSelectHypAction(inferredHyps));				
 			}
-			return ProverFactory.makeProofRule(this, input, getDisplayName(hyp,
-					position), hypActions);
+			return ProverFactory.makeProofRule(this, input, neededHyps,
+					getDisplayName(hyp, position), hypActions);
 		}
+	}
+
+
+
+	private IReasonerOutput hypReasonerFailure(Input input, IPosition position,
+			Predicate hyp) {
+		return ProverFactory.reasonerFailure(this, input, "Rewriter "
+				+ getReasonerID() + " is inapplicable for hypothesis "
+				+ hyp + " at position " + position);
+	}
+
+
+
+	private IReasonerOutput goalReasonerFailure(final Input input,
+			final IPosition position, final Predicate goal) {
+		return ProverFactory.reasonerFailure(this, input, "Rewriter "
+				+ getReasonerID() + " is inapplicable for goal " + goal
+				+ " at position " + position);
+	}
+
+	/**
+	 * Returns the list of hypotheses needed to perform rewriting.
+	 * 
+	 * @param seq
+	 *            seq the sequent to which this reasoner is applied
+	 * @param goal
+	 *            the predicate to be rewriten
+	 * @param position
+	 *            the position of the predicate in the formula tree
+	 * @return the needed hypotheses to apply the rewriting, an empty set if no
+	 *         hypotheses are needed, or <code>null</code> if the rewriting can
+	 *         not be applied.
+	 */
+	protected Set<Predicate> getNeededHyps(IProverSequent seq, Predicate pred,
+			IPosition position) {
+			return Collections.emptySet();
 	}
 
 	/**
