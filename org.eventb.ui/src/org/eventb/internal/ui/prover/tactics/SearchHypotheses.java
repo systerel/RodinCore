@@ -30,11 +30,12 @@ public class SearchHypotheses implements IProofCommand {
 		// TODO should have been fixed at the root (the text widget) rather than here
 		final String input = RodinKeyboardPlugin.getDefault().translate(
 				inputs[0]);
-		us.searchHyps(input);
+		final String searched = input.replaceAll("\r", "").replaceAll("\n", "");
+		us.searchHyps(searched);
 		// Trying to show the Search View
 		final IViewPart view = UIUtils.showView(SearchHypothesis.VIEW_ID);
 		if (view != null && view instanceof SearchHypothesis){
-			((SearchHypothesis) view).setSearchedHyp(input);
+			((SearchHypothesis) view).setSearchedHyp(searched);
 		}
 	}
 
