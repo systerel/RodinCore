@@ -33,7 +33,7 @@ import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
 /**
- * AssociativePredicate is the AST class for the associative expressions in an
+ * AssociativePredicate is the AST class for the associative predicates in an
  * event-B formula.
  * <p>
  * It can have several children which can only be Predicate objects. Can only
