@@ -73,12 +73,18 @@ public class SubParserRegistry {
 	
 	public ILedParser<? extends Formula<?>> getLedParser(Token token) {
 		final KindParsers parsers = kindParsers.get(token.kind);
-		if (parsers == null || parsers.isEmpty()) {
+		if (parsers == null) {
 			return null;
 		}
-		return parsers.getLedParsers().get(0); 
+		final List<ILedParser<? extends Formula<?>>> ledParsers = parsers
+				.getLedParsers();
+		if (ledParsers.isEmpty()) {
+			return null;
+		}
+		return ledParsers.get(0);
 		// FIXME when backtracking there will be several subparsers for one kind
-		// looks like backtracking is only required for nud parsers, could avoid it for led parsers.
+		// looks like backtracking is only required for nud parsers, could avoid
+		// it for led parsers.
 	}
 	
 	public void addNud(int kind, INudParser<? extends Formula<?>> subParser) throws OverrideException {

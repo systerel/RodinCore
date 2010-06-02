@@ -735,6 +735,18 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("card(S)", expected);
 	}
 	
+	public void testNudNoLed() throws Exception {
+		assertFailure(
+				ff.parseExpression("0 card(x)", LanguageVersion.V2, null),
+				ProblemKind.SyntaxError);
+	}
+	
+	public void testLedNoNud() throws Exception {
+		assertFailure(
+				ff.parseExpression("x += 2", LanguageVersion.V2, null),
+				ProblemKind.SyntaxError);
+	}
+	
 	public void testIn() throws Exception {
 		final Predicate expected = ff.makeRelationalPredicate(IN, ZERO, FRID_S, null);
 		doPredicateTest("0 ∈ S", expected);		
@@ -1613,5 +1625,32 @@ public class TestGenParser extends AbstractTests {
 		final IParseResult result = ff.parseExpression("f(a)∼", LanguageVersion.V2, null);
 		System.out.println(result.getParsedExpression());
 		assertFailure(result, ProblemKind.SyntaxError);
+	}
+	
+	public void testConversePriority() throws Exception {
+		final Expression expected = ff.makeBinaryExpression(MAPSTO,
+				ONE,
+				ff.makeUnaryExpression(CONVERSE,
+						ff.makeBinaryExpression(FUNIMAGE, FRID_f, FRID_a, null), null), null);
+		doExpressionTest("1↦(f(a))∼", expected);
+		
+	}
+	
+	public void testConversePriority2() throws Exception {
+		final Expression expected = 
+			ff.makeUnaryExpression(CONVERSE,
+					ff.makeBinaryExpression(MAPSTO,
+							ONE,
+							ff.makeBinaryExpression(FUNIMAGE, FRID_f, FRID_a, null), null), null);
+		doExpressionTest("(1↦f(a))∼", expected);
+	}
+	
+	public void testConversePriority3() throws Exception {
+		final Expression expected = ff.makeBinaryExpression(FUNIMAGE,
+				ff.makeUnaryExpression(CONVERSE,
+						ff.makeBinaryExpression(MAPSTO,
+								ONE, ZERO, null), null),
+				ZERO, null);
+		doExpressionTest("(1↦0)∼(0)", expected);
 	}
 }
