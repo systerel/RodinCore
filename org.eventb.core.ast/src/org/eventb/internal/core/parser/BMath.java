@@ -295,7 +295,7 @@ public class BMath extends AbstractGrammar {
 			// SimplePredicate
 			addOperator("finite", KFINITE_ID, ATOMIC_PRED, FINITE_PARSER);
 			// UnaryExpression
-			addOperator("card", KCARD_ID, FUNCTIONAL, new UnaryExpressionParser(KCARD));
+			addOperator("card", KCARD_ID, BOUND_UNARY, new UnaryExpressionParser(KCARD));
 			addOperator("\u2119", POW_ID, BOUND_UNARY, new UnaryExpressionParser(POW));
 			addOperator("\u21191", POW1_ID, BOUND_UNARY, new UnaryExpressionParser(POW1));
 			addOperator("union", KUNION_ID, BOUND_UNARY, new UnaryExpressionParser(KUNION));
