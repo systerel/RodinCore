@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,7 +64,7 @@ public class FormulaFactory {
 	 * @param children
 	 *            the children of the associative expression
 	 * @param location
-	 *            the location of the assocative expression
+	 *            the location of the associative expression
 	 * 
 	 * @return a new associative expression
 	 */
@@ -83,7 +83,7 @@ public class FormulaFactory {
 	 * @param children
 	 *            the children of the associative expression
 	 * @param location
-	 *            the location of the assocative expression
+	 *            the location of the associative expression
 	 * 
 	 * @return a new associative expression
 	 */
@@ -100,7 +100,7 @@ public class FormulaFactory {
 	 * @param tag
 	 *            the tag of the associative predicate
 	 * @param predicates
-	 *            the children of the asswociative predicate
+	 *            the children of the associative predicate
 	 * @param location
 	 *            the location of the associative predicate
 	 * 
@@ -119,7 +119,7 @@ public class FormulaFactory {
 	 * @param tag
 	 *            the tag of the associative predicate
 	 * @param predicates
-	 *            the children of the asswociative predicate
+	 *            the children of the associative predicate
 	 * @param location
 	 *            the location of the associative predicate
 	 * 
