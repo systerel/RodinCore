@@ -1163,23 +1163,6 @@ public class TestParser extends AbstractTests {
 			
 	};
 	
-	String[] invalidExprs = new String[]{
-			"x/x/x", 
-			"x mod x mod x", 
-			"x domsub y + z", 
-			"x setminus y inter z", 
-			"x\u2225y\u2225z",
-			"(\u2205\u2982x\u21a6y)",	// rhs is not a type 
-			"(\u2205\u2982\u2124)",		// type is not a set type
-			"f(x)∼",
-			// Duplicate idents in lambda pattern
-			"\u03bb x\u21a6x\u00b7\u22a5\u2223x", 
-			"\u03bb x\u21a6y\u21a6x\u00b7\u22a5\u2223x+y", 
-			"\u03bb x\u21a6 (x \u2982 \u2124) \u00b7\u22a4\u2223x", 
-			"\u03bb(x \u2982 BOOL) \u21a6 x \u00b7\u22a4\u2223x", 
-			"\u03bb(x \u2982 BOOL) \u21a6 (x \u2982 \u2124) \u00b7\u22a4\u2223x", 
-	};
-
 	AssignmentTestPair[] assigns = new AssignmentTestPair[] {
 			new AssignmentTestPair(
 					"x ≔ y",
@@ -1230,9 +1213,27 @@ public class TestParser extends AbstractTests {
 		testList(preds);
 		testList(exprs);
 		testList(assigns);
-		
-		for (String input: invalidExprs) {
-			new ExprTestPair(input, (Expression) null).verify();
-		}
+	}
+	
+	public void testInvalidExprs() throws Exception {
+				doTestInvalidExpr("x/x/x");
+				doTestInvalidExpr("x mod x mod x");
+				doTestInvalidExpr("x domsub y + z");
+				doTestInvalidExpr("x setminus y inter z");
+				doTestInvalidExpr("x\u2225y\u2225z");
+				doTestInvalidExpr("(\u2205\u2982x\u21a6y)");	// rhs is not a type 
+				doTestInvalidExpr("(\u2205\u2982\u2124)");		// type is not a set type
+				doTestInvalidExpr("f(x)∼");
+				// Duplicate idents in lambda pattern
+				doTestInvalidExpr("\u03bb x\u21a6x\u00b7\u22a5\u2223x");
+				doTestInvalidExpr("\u03bb x\u21a6y\u21a6x\u00b7\u22a5\u2223x+y");
+				doTestInvalidExpr("\u03bb x\u21a6 (x \u2982 \u2124) \u00b7\u22a4\u2223x");
+				doTestInvalidExpr("\u03bb(x \u2982 BOOL) \u21a6 x \u00b7\u22a4\u2223x");
+				doTestInvalidExpr("\u03bb(x \u2982 BOOL) \u21a6 (x \u2982 \u2124) \u00b7\u22a4\u2223x");
+
+	}
+
+	private void doTestInvalidExpr(String input) {
+		new ExprTestPair(input, (Expression) null).verify();
 	}
 }
