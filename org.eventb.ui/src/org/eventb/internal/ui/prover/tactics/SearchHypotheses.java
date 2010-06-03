@@ -34,7 +34,7 @@ public class SearchHypotheses implements IProofCommand {
 		us.searchHyps(searched);
 		// Trying to show the Search View
 		final IViewPart view = UIUtils.showView(SearchHypothesis.VIEW_ID);
-		if (view != null && view instanceof SearchHypothesis){
+		if (view instanceof SearchHypothesis){
 			((SearchHypothesis) view).setSearchedHyp(searched);
 		}
 	}
