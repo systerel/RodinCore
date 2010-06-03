@@ -218,6 +218,8 @@ public final class ProverFactory {
 	 * 		The antecedents of the proof rule, or <code>null</code> iff this rule has no antecedents
 	 * @return
 	 * 		A new proof rule with the given information.
+	 * 
+	 * @since 1.4
 	 */
 	public static IProofRule makeProofRule (
 			IReasoner generatedBy,
@@ -247,10 +249,17 @@ public final class ProverFactory {
 	 *            The reasoner used
 	 * @param generatedUsing
 	 *            The reasoner input used
+	 * @param neededHyps
+	 *            A set of hypotheses needed by this rule to apply
+	 * @param display
+	 *            The display string for the proof rule, or <code>null</code>
+	 *            iff the reasoner id is to be used
 	 * @param hypActions
 	 *            The hypothesis actions contained in the rule, or
 	 *            <code>null</code> iff there are no hypothesis actions.
 	 * @return A new proof rule with the given information.
+	 * 
+	 * @since 1.4
 	 */
 	public static IProofRule makeProofRule (
 			IReasoner generatedBy,
@@ -307,6 +316,9 @@ public final class ProverFactory {
 	 * 		The reasoner used.
 	 * @param generatedUsing
 	 * 		The reasoner input used.
+	 * @param display
+	 * 		The display string for the proof rule, or <code>null</code> iff 
+	 * 		the reasoner id is to be used.
 	 * @param hypActions
 	 * 		The hypothesis actions contained in the rule, or <code>null</code> iff 
 	 * 		there are no hypothesis actions.

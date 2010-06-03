@@ -3579,22 +3579,50 @@ public class Tactics {
 
 	/**
 	 * Returns the tactic "Functional Image Simplification" for a given position
-	 * where this tactic can apply.
+	 * where this tactic can apply on a goal.
 	 * 
-	 * @param hyp
-	 *            the hypothesis to rewrite or <code>null</code> if the goal
-	 *            shall be rewritten
 	 * @param position
 	 *            a valid position of an expression in the goal
 	 * @return the tactic "Functional Image Simplification"
 	 * 
 	 * @since 1.3
 	 */
+	public static ITactic funImgSimplifies(IPosition position) {
+		return BasicTactics.reasonerTac(new FunImgSimplifies(),
+				new Input(null, position));
+	}
+	
+	/**
+	 * Returns the tactic "Functional Image Simplification" for a given position
+	 * where this tactic can apply.
+	 * 
+	 * @param hyp
+	 *            the hypothesis to rewrite or <code>null</code> if the goal
+	 *            shall be rewritten
+	 * @param position
+	 *            a valid position of an expression in the goal or hypothesis
+	 * @return the tactic "Functional Image Simplification"
+	 * @since 1.4
+	 */
 	public static ITactic funImgSimplifies(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new FunImgSimplifies(),
 				new Input(hyp, position));
 	}
 
+	/**
+	 * Returns a set of positions where the rewriter funImgSimpRewrites can
+	 * apply on a sequent goal.
+	 * 
+	 * @param sequent
+	 *            the current sequent
+	 * @return a set of positions (empty if the tactic is not applicable)
+	 *
+ 	 * @since 1.3
+	 */
+	public static List<IPosition> funImgSimpGetPositions(IProverSequent sequent) {
+		return FunImgSimpImpl.getApplicablePositions(null, sequent);
+	}
+	
 	/**
 	 * Returns a set of positions where the rewriter funImgSimpRewrites can
 	 * apply.
@@ -3606,7 +3634,7 @@ public class Tactics {
 	 *            the current sequent
 	 * @return a set of positions (empty if the tactic is not applicable)
 	 * 
-	 * @since 1.3
+ 	 * @since 1.4
 	 */
 	public static List<IPosition> funImgSimpGetPositions(Predicate hyp,
 			IProverSequent sequent) {
