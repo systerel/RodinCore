@@ -109,6 +109,8 @@ public class SubParsers {
 
 		@Override
 		protected final T parseRight(ParserContext pc) throws SyntaxError {
+			// FIXME parsing this way prevents priority and compatibility checks
+			// with operators that follow the closing parenthesis
 			pc.progressOpenParen();
 			final U child = pc.subParse(childParser);
 			pc.progressCloseParen();
@@ -550,8 +552,8 @@ public class SubParsers {
 
 		@Override
 		protected Expression parseRight(ParserContext pc) throws SyntaxError {
-			// parse inner expression without caring about the parent kind
-			// else f(f(a)) would be rejected as it is a right-associative AST
+			// FIXME parsing this way prevents priority and compatibility checks
+			// with operators that follow the closing parenthesis
 			final Expression right = super.parseRight(pc);
 			pc.progress(closeKind);
 			return right;

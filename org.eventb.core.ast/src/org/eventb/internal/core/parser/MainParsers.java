@@ -222,8 +222,6 @@ public class MainParsers {
 		}
 	};
 
-	// TODO verify that all formulae inside parentheses are parsed with a GROUP0
-	// parent kind
 	static final INudParser<Formula<?>> CLOSED_SUGAR = new INudParser<Formula<?>> () {
 
 		public Formula<?> nud(ParserContext pc) throws SyntaxError {
