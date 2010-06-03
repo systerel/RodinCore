@@ -84,6 +84,7 @@ public class OriginTest extends EventBPOTest {
 		assertEquals("The PO hyp should be the Axiom", hypExpected, hypIterator
 				.next().getSourceLocation().getOrigin());
 		assertFalse("The PO should have only one hyp", hypIterator.hasNext());
+		us.dispose();
 	}
 
 	private IAxiom createTheorem(String thmLabel, String thmString,

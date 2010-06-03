@@ -78,6 +78,7 @@ public class ProofRebuilderTests extends EventBPOTest {
 		}
 		us.doSave(us.getUnsavedPOs(), null);
 		assertTrue(po.isClosed());
+		us.dispose();
 	}
 
 	public void testRebuild() throws Exception {

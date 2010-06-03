@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,12 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - added cleanup of attempted proofs
  *******************************************************************************/
 package org.eventb.core.tests;
+
+import static org.eventb.core.EventBPlugin.getProofManager;
+import static org.eventb.core.EventBPlugin.getUserSupportManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +37,8 @@ import org.eventb.core.IPORoot;
 import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.pm.IProofAttempt;
+import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
@@ -158,6 +164,19 @@ public abstract class BuilderTest extends TestCase {
 		EventBPlugin.getAutoTacticPreference().setEnabled(false);
 	}
 
+	/**
+	 * Deletes all user supports and proof attempts that where created and not
+	 * cleaned up.
+	 */
+	protected static void deleteAllProofAttempts() {
+		for (final IUserSupport us : getUserSupportManager().getUserSupports()) {
+			us.dispose();
+		}
+		for (final IProofAttempt pa : getProofManager().getProofAttempts()) {
+			pa.dispose();
+		}
+	}
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -196,6 +215,8 @@ public abstract class BuilderTest extends TestCase {
 		for (IRodinProject rp: rodinDB.getRodinProjects()) {
 			rp.getProject().delete(true, true, null);
 		}
+		
+		deleteAllProofAttempts();
 		
 		super.tearDown();
 	}

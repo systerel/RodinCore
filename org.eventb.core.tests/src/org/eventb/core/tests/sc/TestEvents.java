@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - ensure that all AST problems are reported
  *     University of Dusseldorf - added theorem attribute
+ *     Systerel - added a test for extended initialization repairing
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -895,4 +896,46 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 
 		hasMarker(witness, null, GraphProblem.EmptyLabelError);
 	}
+
+	/**
+	 * creation of default initialization extending default abstraction;
+	 * checking that we have markers for each initialization
+	 * 
+	 * @throws Exception
+	 */
+	public void testEvents_32_initialisationDefaultAssignments()
+			throws Exception {
+		final ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		typeEnvironment.addName("x", factory.makeIntegerType());
+		typeEnvironment.addName("y", factory.makeIntegerType());
+
+		final IMachineRoot mac = createMachine("mac");
+		addVariables(mac, "x");
+		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"), true);
+		final IEvent e = addEvent(mac, IEvent.INITIALISATION, makeSList(),
+				makeSList(), makeSList(), makeSList(), makeSList());
+		saveRodinFileOf(mac);
+
+		final IMachineRoot mac2 = createMachine("mac2");
+		addVariables(mac2, "x");
+		addVariables(mac2, "y");
+		addInvariants(mac2, makeSList("I2"), makeSList("y∈ℕ"), true);
+		final IEvent e2 = addEvent(mac2, IEvent.INITIALISATION, makeSList(),
+				makeSList(), makeSList(), makeSList(), makeSList());
+		e2.setExtended(true, null);
+		addMachineRefines(mac2, mac.getElementName());
+		saveRodinFileOf(mac2);
+
+		runBuilder();
+
+		final ISCMachineRoot file2 = mac2.getSCMachineRoot();
+		final ISCEvent[] scEvents2 = getSCEvents(file2, IEvent.INITIALISATION);
+		final String[] actionsLabels = { "GEN", "GEN1" };
+		final String[] actionsPredicates = { "x :∣ ⊤", "y :∣ ⊤" };
+		containsActions(scEvents2[0], typeEnvironment, actionsLabels,
+				actionsPredicates);
+		hasMarker(e);
+		hasMarker(e2);
+	}
+	
 }
