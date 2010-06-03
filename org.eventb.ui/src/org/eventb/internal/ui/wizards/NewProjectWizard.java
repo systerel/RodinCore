@@ -8,21 +8,23 @@
  *
  * Contributors:
  *     ETH Zurich - Initial API and implementation
+ *     Systerel - Added working sets
  *     Systerel - redirected dialog opening
  ******************************************************************************/
-
 package org.eventb.internal.ui.wizards;
 
-import static org.eventb.internal.ui.utils.Messages.title_error;
+import static org.eclipse.ui.wizards.newresource.BasicNewResourceWizard.selectAndReveal;
 
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -33,6 +35,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkingSet;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IRodinProject;
@@ -40,10 +43,9 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
- * @author htson
- *         <p>
- *         This is the new wizard for creating new Event-B projects,
+ * Wizard for creating new Event-B Projects and adding them to Working Sets.
  * 
+ * @author htson
  */
 public class NewProjectWizard extends Wizard implements INewWizard {
 
@@ -57,8 +59,10 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 	// The wizard page.
 	private NewProjectWizardPage page;
 
-	// The selection when the wizard is launched (this is not used for this
-	// wizard).
+	// The workbench when the wizard is launched
+	private IWorkbench workbench;
+	
+	// The current selection when the wizard is launched.
 	private ISelection selection;
 
 	/**
@@ -69,11 +73,6 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 		setNeedsProgressMonitor(true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.IWizard#addPages()
-	 */
 	@Override
 	public void addPages() {
 		page = new NewProjectWizardPage(selection);
@@ -90,13 +89,13 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 	@Override
 	public boolean performFinish() {
 		final String projectName = page.getProjectName();
-		IRunnableWithProgress op = new IRunnableWithProgress() {
+		final IWorkingSet[] workingSets = page.getWorkingSets();
+		final IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException {
 				try {
-					doFinish(projectName, monitor);
+					doFinish(projectName, workingSets, monitor);
 				} catch (CoreException e) {
-					e.printStackTrace();
 					throw new InvocationTargetException(e);
 				} finally {
 					monitor.done();
@@ -108,10 +107,14 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {
-			Throwable realException = e.getTargetException();
-			UIUtils.showError(title_error, realException.getMessage());
+			UIUtils.showUnexpectedError(e.getTargetException(),
+					"when creating project " + projectName);
 			return false;
 		}
+
+		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		final IProject newProject = root.getProject(projectName);
+		selectAndReveal(newProject, workbench.getActiveWorkbenchWindow());
 		return true;
 	}
 
@@ -127,7 +130,7 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 	 * @throws RodinDBException
 	 *             a core exception throws when creating a new project
 	 */
-	void doFinish(String projectName, IProgressMonitor monitor)
+	void doFinish(String projectName, final IWorkingSet[] workingSets, IProgressMonitor monitor)
 			throws CoreException {
 		// create an empty Rodin project
 		monitor.beginTask("Creating " + projectName, 1);
@@ -140,9 +143,9 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 			return;
 		}
 
+		final IRodinProject rodinProject = EventBUIPlugin.getRodinDatabase()
+		.getRodinProject(projectName);
 		try {
-			final IRodinProject rodinProject = EventBUIPlugin.getRodinDatabase()
-					.getRodinProject(projectName);
 
 			RodinCore.run(new IWorkspaceRunnable() {
 
@@ -153,15 +156,14 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 					project.open(null);
 					IProjectDescription description = project.getDescription();
 					description.setNatureIds(new String[] { RodinCore.NATURE_ID });
-					project.setDescription(description, null);					
+					project.setDescription(description, null);		
+					addToWorkingSets(project, workingSets);
 				}
 				
 			}, monitor);
 			
+		} finally {
 			monitor.worked(1);
-		} catch (RodinDBException e) {
-			e.printStackTrace();
-			throw e;
 		}
 	}
 
@@ -175,7 +177,7 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 	 *             a Core exception with the status contains the input message
 	 */
 	private void throwCoreException(String message) throws CoreException {
-		IStatus status = new Status(IStatus.ERROR, "org.eventb.internal.ui",
+		IStatus status = new Status(IStatus.ERROR, EventBUIPlugin.PLUGIN_ID,
 				IStatus.OK, message, null);
 		throw new CoreException(status);
 	}
@@ -188,7 +190,28 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench,
 	 *      org.eclipse.jface.viewers.IStructuredSelection)
 	 */
-	public void init(IWorkbench workbench, IStructuredSelection sel) {
+	public void init(IWorkbench wb, IStructuredSelection sel) {
+		this.workbench = wb;
 		this.selection = sel;
 	}
+	
+	/**
+	 * Adds a given project (i.e. all its resources) to some given working set.
+	 * 
+	 * @param project
+	 *            The project to add
+	 * @param workingSets
+	 *            The working sets the project should be added to
+	 */
+	void addToWorkingSets(IProject project, IWorkingSet[] workingSets) {
+		for (IWorkingSet workingSet : workingSets) {
+			IAdaptable[] oldElements = workingSet.getElements();
+			final int oldLength = oldElements.length;
+			IAdaptable[] newElements = new IAdaptable[oldLength + 1];
+			System.arraycopy(oldElements, 0, newElements, 0, oldLength);
+			newElements[oldLength] = project;
+			workingSet.setElements(workingSet.adaptElements(newElements));
+		}
+	}
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,17 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - replaced childTypes by childRelationships
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.elementdesc;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -30,6 +33,8 @@ import org.eventb.internal.ui.eventbeditor.manipulation.AbstractBooleanManipulat
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.ui.EventBUIPlugin;
+import org.eventb.ui.IImplicitChildProvider;
+import org.eventb.ui.prettyprint.IElementPrettyPrinter;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
@@ -59,6 +64,8 @@ public class ElementDescRegistry implements IElementDescRegistry {
 
 	private static final String ATTR_ELEMENT_IMAGE_PROVIDER = "imageProvider";
 	private static final String ATTR_ELEMENT_IMAGE_PATH = "imagePath";
+	private static final String ATTR_ELEMENT_PRETTYPRINTER = "prettyPrinter";
+	private static final String ATTR_ELEMENT_IMPLICIT_CHILD_PROVIDER = "implicitChildProvider";
 
 	static final IElementDesc nullElement = new NullElementDesc();
 	static final IAttributeDesc nullAttribute = new NullAttributeDesc();
@@ -142,10 +149,15 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		return getElementDesc(type).getChildTypes();
 	}
 
+	public IElementRelationship[] getChildRelationships(IElementType<?> type) {
+		return getElementDesc(type).getChildRelationships();
+	}
+
 	private boolean isLastChild(IElementDesc parent, IElementType<?> child) {
-		final IElementType<?>[] types = parent.getChildTypes();
-		final int len = types.length;
-		return len != 0 && types[len - 1] == child;
+		final IElementRelationship[] relationship = parent
+				.getChildRelationships();
+		final int len = relationship.length;
+		return len != 0 && relationship[len - 1].getChildType() == child;
 	}
 
 	public int getPriority(Object object) {
@@ -156,7 +168,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		final IElementDesc parentDesc = getElementDesc(element.getParent());
 
 		int count = LOWEST_PRIORITY;
-		for (IElementType<?> type : parentDesc.getChildTypes()) {
+		for (IElementRelationship type : parentDesc.getChildRelationships()) {
 			if (type == element.getElementType()) {
 				return count;
 			}
@@ -189,7 +201,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	private void computeAttributeDesc() {
 		final List<IConfigurationElement> elementFromExt = new ArrayList<IConfigurationElement>();
 		final AttributeMap attributeDescs = new AttributeMap();
-		final ChildRelationMap childRelation = new ChildRelationMap();
+		final Set<IElementRelationship> childRelationships = new HashSet<IElementRelationship>();
 		final AutoNamingMap autoNaming = new AutoNamingMap();
 		final AttributeRelationMap attributeRelation = new AttributeRelationMap();
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
@@ -205,7 +217,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 					|| name.equals("toggleAttribute")) {
 				attributeDescs.put(element);
 			} else if (name.equals("childRelation")) {
-				childRelation.put(element);
+				childRelationships.addAll(getElementRelationShips(element));
 			} else if (name.equals("autoNaming")) {
 				autoNaming.put(element);
 			} else if (name.equals("attributeRelation")) {
@@ -214,10 +226,57 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		}
 
 		elementDescs = new ElementMap(attributeDescs, attributeRelation,
-				childRelation, autoNaming);
+				childRelationships, autoNaming);
 		elementDescs.put(elementFromExt);
 	}
+	
+	
+	private static Set<IElementRelationship> getElementRelationShips(IConfigurationElement element) {
+		final IElementType<?> parent = RodinCore.getElementType(element
+				.getAttribute("parentTypeId"));
+		Set<IElementRelationship> result = new HashSet<IElementRelationship>();
+		for (IConfigurationElement child : element.getChildren("childType")) {
+			final String type = child.getAttribute("typeId");
+			final IInternalElementType<?> elementType = RodinCore.getInternalElementType(type);
+			final int priority = parseInt(child.getAttribute("priority"));
+			result.add(new ElementDescRelationship(parent, elementType, priority, getImplicitChildProvider(child)));
+		}
+		return result;
+	}
+	
+	private static IImplicitChildProvider getImplicitChildProvider(
+			IConfigurationElement element) {
+		if (element.getAttribute(ATTR_ELEMENT_IMPLICIT_CHILD_PROVIDER) != null) {
+			Object obj;
+			try {
+				obj = element.createExecutableExtension(ATTR_ELEMENT_IMPLICIT_CHILD_PROVIDER);
+				return (IImplicitChildProvider) obj;
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
 
+	private static int parseInt(String s) {
+		if (s == null) {
+			return HIGHEST_PRIORITY;
+		}
+		try {
+			final int priority = Integer.parseInt(s);
+			if (priority < LOWEST_PRIORITY) {
+				return LOWEST_PRIORITY;
+			} else if (HIGHEST_PRIORITY < priority) {
+				return HIGHEST_PRIORITY;
+			} else {
+				return priority;
+			}
+		} catch (NumberFormatException e) {
+			UIUtils.log(e, "Priority attribute is not a number");
+			return HIGHEST_PRIORITY;
+		}
+	}
+	
 	abstract static class ItemMap {
 		/**
 		 * Returns the value of a string attribute with the given name, or an
@@ -240,79 +299,6 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		}
 
 		public abstract void put(IConfigurationElement element);
-	}
-
-	static class ChildRelationMap extends ItemMap {
-
-		static class ChildElement implements Comparable<ChildElement> {
-			final IElementType<?> type;
-			final int priority;
-
-			public ChildElement(IConfigurationElement element) {
-				this.type = RodinCore.getElementType(element
-						.getAttribute("typeId"));
-				this.priority = parseInt(element.getAttribute("priority"));
-			}
-
-			private static int parseInt(String s) {
-				if (s == null) {
-					return HIGHEST_PRIORITY;
-				}
-				try {
-					final int priority = Integer.parseInt(s);
-					if (priority < LOWEST_PRIORITY) {
-						return LOWEST_PRIORITY;
-					} else if (HIGHEST_PRIORITY < priority) {
-						return HIGHEST_PRIORITY;
-					} else {
-						return priority;
-					}
-				} catch (NumberFormatException e) {
-					UIUtils.log(e, "Priority attribute is not a number");
-					return HIGHEST_PRIORITY;
-				}
-			}
-
-			public int compareTo(ChildElement element) {
-				if (type == element.type)
-					return 0;
-				final int diff = priority - element.priority;
-				if (diff != 0) {
-					return diff;
-				}
-				return type.getName().compareTo(element.type.getName());
-			}
-		}
-
-		final HashMap<IElementType<?>, SortedSet<ChildElement>> map = new HashMap<IElementType<?>, SortedSet<ChildElement>>();
-
-		final IElementType<?>[] noChildren = new IElementType<?>[0];
-
-		@Override
-		public void put(IConfigurationElement element) {
-			final IElementType<?> parent = RodinCore.getElementType(element
-					.getAttribute("parentTypeId"));
-			SortedSet<ChildElement> children = map.get(parent);
-			if (children == null) {
-				children = new TreeSet<ChildElement>();
-				map.put(parent, children);
-			}
-			for (IConfigurationElement child : element.getChildren("childType")) {
-				children.add(new ChildElement(child));
-			}
-		}
-
-		public IElementType<?>[] get(IElementType<?> parent) {
-			final SortedSet<ChildElement> children = map.get(parent);
-			if (children == null || children.size() == 0)
-				return noChildren;
-			
-			final List<IElementType<?>> result = new ArrayList<IElementType<?>>();
-			for (ChildElement childElement : children) {
-				result.add(childElement.type);
-			}
-			return result.toArray(new IElementType<?>[result.size()]);
-		}
 	}
 
 	static class AutoNamingMap extends ItemMap {
@@ -455,15 +441,16 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	static class ElementMap extends ItemMap {
 		final HashMap<IElementType<?>, ElementDesc> elementMap = new HashMap<IElementType<?>, ElementDesc>();
 		final AttributeMap attributeMap;
-		final ChildRelationMap childRelationMap;
+		final Set<IElementRelationship> childRelationships;
 		final AutoNamingMap autoNamingMap;
 		final AttributeRelationMap attributeRelationMap;
 
 		public ElementMap(AttributeMap attributeMap,
 				AttributeRelationMap attributeRelationMap,
-				ChildRelationMap childRelationMap, AutoNamingMap autoNamingMap) {
+				Set<IElementRelationship> childRelationships,
+				AutoNamingMap autoNamingMap) {
 			this.attributeMap = attributeMap;
-			this.childRelationMap = childRelationMap;
+			this.childRelationships = childRelationships;
 			this.autoNamingMap = autoNamingMap;
 			this.attributeRelationMap = attributeRelationMap;
 		}
@@ -490,8 +477,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 			final int defaultColumn = getDefaultColumn(element);
 			final IElementType<?> elementType = getElementType(element);
 
-			final IElementType<?>[] childrenType = childRelationMap
-					.get(elementType);
+			final IElementRelationship[] childrenRelationships = retrieveElementChildRelationships(elementType);
 
 			final List<IAttributeDesc> attributesList = new ArrayList<IAttributeDesc>();
 			final List<IAttributeDesc> atColumnList = new ArrayList<IAttributeDesc>();
@@ -503,14 +489,36 @@ public class ElementDescRegistry implements IElementDescRegistry {
 					.get(elementType);
 			final String autoNamePrefix = getAutoNamingPrefix(autoNamingConfig);
 			final IAttributeDesc autoNameAttribute = getAutoNamingAttribute(autoNamingConfig);
-
+			final IElementPrettyPrinter prettyPrinter;
+			try {
+				prettyPrinter = getPrettyPrinter(element);
+			} catch (CoreException e) {
+				final String message = "Cannot get the pretty printer";
+				UIUtils.log(e, message);
+				return;
+			}
+			
+			
 			final ElementDesc elementDesc = new ElementDesc(prefix,
 					childrenSuffix, imgProvider, attributeDesc, atColumn,
-					childrenType, autoNamePrefix, autoNameAttribute,
-					defaultColumn);
+					childrenRelationships, autoNamePrefix, autoNameAttribute,
+					defaultColumn, prettyPrinter);
 
 			elementMap.put(elementType, elementDesc);
 		}
+		
+		private IElementRelationship[] retrieveElementChildRelationships(
+				IElementType<?> elementType) {
+			final List<IElementRelationship> l = new LinkedList<IElementRelationship>();
+			for (IElementRelationship rel : childRelationships) {
+				if (elementType == rel.getParentType()) {
+					l.add(rel);
+				}
+			}
+			Collections.sort(l);
+			return l.toArray(new IElementRelationship[l.size()]);
+		}
+		
 
 		private IImageProvider getImageProvider(IConfigurationElement element)
 				throws CoreException {
@@ -527,7 +535,18 @@ public class ElementDescRegistry implements IElementDescRegistry {
 				return new DefaultImageProvider(imageDesc);
 			}
 		}
-
+		
+		private IElementPrettyPrinter getPrettyPrinter(
+				IConfigurationElement element) throws CoreException {
+			if (element.getAttribute(ATTR_ELEMENT_PRETTYPRINTER) != null) {
+				final Object obj = element
+						.createExecutableExtension(ATTR_ELEMENT_PRETTYPRINTER);
+				return (IElementPrettyPrinter) obj;
+			} else {
+				return null;
+			}
+		}
+		
 		private IAttributeDesc[] getArray(List<IAttributeDesc> list) {
 			return list.toArray(new IAttributeDesc[list.size()]);
 		}

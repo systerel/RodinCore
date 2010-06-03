@@ -209,7 +209,15 @@ public class UIUtils {
 		}
 		return maxFinder.getAvailable();
 	}
-
+	
+	public static <T extends IInternalElement> List<T> getImplicitChildrenOfType(
+			IInternalElement parent, IInternalElementType<T> type)
+			throws RodinDBException {
+		final List<T> result = new ArrayList<T>();
+		addImplicitChildrenOfType(result, parent, type);
+		return result;
+	}
+	
 	public static <T extends IInternalElement> List<T> getVisibleChildrenOfType(
 			IInternalElement parent, IInternalElementType<T> type)
 			throws RodinDBException {

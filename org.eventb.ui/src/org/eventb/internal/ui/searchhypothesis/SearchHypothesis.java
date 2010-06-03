@@ -101,6 +101,10 @@ public class SearchHypothesis extends ProverContentOutline implements
 			searchHypothesis.updateView();
 			setFocus();
 		}
+		
+		public void setSearchedText(String searched) {
+			text.setText(searched);
+		}
 
 	}
 
@@ -181,6 +185,7 @@ public class SearchHypothesis extends ProverContentOutline implements
 	 */
 	public void setSearchedHyp(String input) {
 		searchedHyp = input;
+		searchBox.setSearchedText(input);
 	}
 
 	/**

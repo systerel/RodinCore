@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,9 +7,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - Initial API and implementation
+ *     Systerel - Added working sets
  ******************************************************************************/
-
 package org.eventb.internal.ui.wizards;
 
 import org.eclipse.core.resources.IResource;
@@ -25,16 +25,22 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkingSet;
 
 /**
+ * This is the unique page of the NewProjec wizard. It allows the user to enter
+ * a name for the project and add it to working sets.
+ * 
  * @author htson
- *         <p>
- *         The "New" wizard page allows setting the container (project) name
  */
 public class NewProjectWizardPage extends WizardPage {
 
-	// A Text area for input
+	// A Text area for entering the project name
 	private Text projectText;
+	
+	// A control for specifying the working sets to which this project shall be
+	// added
+	private WorkingSetControl workingSetControl;
 
 	/**
 	 * Constructor for NewProjectWizardPage.
@@ -48,11 +54,6 @@ public class NewProjectWizardPage extends WizardPage {
 		setDescription("This wizard creates a new (empty) Event-B Project in the current Workspace");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -70,6 +71,7 @@ public class NewProjectWizardPage extends WizardPage {
 				dialogChanged();
 			}
 		});
+		workingSetControl = new WorkingSetControl(container, parent.getShell());
 		initialize();
 		dialogChanged();
 		setControl(container);
@@ -123,6 +125,16 @@ public class NewProjectWizardPage extends WizardPage {
 	 */
 	public String getProjectName() {
 		return projectText.getText();
+	}
+
+	/**
+	 * Get the working sets that the new project should belong to
+	 * <p>
+	 * 
+	 * @return The working sets of the new project
+	 */
+	public IWorkingSet[] getWorkingSets() {
+		return workingSetControl.getSelection();
 	}
 
 }

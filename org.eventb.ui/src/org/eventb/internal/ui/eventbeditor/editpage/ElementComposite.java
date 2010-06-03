@@ -12,6 +12,7 @@
  *     Systerel - used ElementDescRegistry
  *     Systerel - optimized tree traversal
  *     Systerel - fixed expanding
+ *     Systerel - refactored using IElementRelationship
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
@@ -32,12 +33,11 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
-import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRelationship;
+import org.eventb.internal.ui.eventbeditor.elementdesc.IElementRelationship;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 
 public class ElementComposite implements IElementComposite {
@@ -161,19 +161,17 @@ public class ElementComposite implements IElementComposite {
 	protected void createSectionComposites() {
 		final ElementDescRegistry registry = ElementDescRegistry.getInstance();
 
-		final IElementType<?>[] rels = registry.getChildTypes(rElement
-				.getElementType());
+		final IElementRelationship[] rels = registry
+				.getChildRelationships(rElement.getElementType());
 		sectionComps = new ArrayList<ISectionComposite>(rels.length);
 		mapComps = new HashMap<IElementType<?>, ISectionComposite>();
-		 for (IElementType<?> type : rels) {
+		for (IElementRelationship rel : rels) {
 			// Create the section composite
-			 final ElementDescRelationship rel = new ElementDescRelationship(
-					rElement.getElementType(), (IInternalElementType<?>) type);
-			 final ISectionComposite comp = new SectionComposite(page, toolkit,
+			final ISectionComposite comp = new SectionComposite(page, toolkit,
 					form, mainSectionComposite, (IInternalElement) rElement,
 					rel, level + 1);
 			sectionComps.add(comp);
-			mapComps.put(type, comp);
+			mapComps.put(rel.getChildType(), comp);
 		}
 	}
 
@@ -192,8 +190,8 @@ public class ElementComposite implements IElementComposite {
 			// Refresh sub section composite as well?
 			final ElementDescRegistry registry = ElementDescRegistry
 					.getInstance();
-			final IElementType<?>[] rels = registry.getChildTypes(element
-					.getElementType());
+			final IElementRelationship[] rels = registry
+					.getChildRelationships(element.getElementType());
 
 			boolean recreate = false;
 			if (rels.length != sectionComps.size()) {
@@ -350,15 +348,16 @@ public class ElementComposite implements IElementComposite {
 
 			// Refresh sub section composite as well?
 			final ElementDescRegistry registry = ElementDescRegistry.getInstance();
-			final IElementType<?>[] rels = registry.getChildTypes(element
-					.getElementType());
+			final IElementRelationship[] rels = registry
+					.getChildRelationships(element.getElementType());
 
 			boolean recreate = false;
 			if (rels.length != sectionComps.size()) {
 				recreate = true;
 			} else {
 				for (int i = 0; i < rels.length; ++i) {
-					if (sectionComps.get(i).getElementType() != rels[i]) {
+					if (sectionComps.get(i).getElementType() != rels[i]
+							.getChildType()) {
 						recreate = true;
 						break;
 					}

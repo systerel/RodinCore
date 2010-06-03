@@ -49,6 +49,7 @@ public class NewComponentWizardPage extends WizardPage {
 
 	// Some text areas.
 	private Text projectText;
+	EventBProjectValidator projectValidator;
 
 	private Text componentText;
 
@@ -90,13 +91,11 @@ public class NewComponentWizardPage extends WizardPage {
 		label.setText("&Project:");
 
 		projectText = new Text(composite, SWT.BORDER | SWT.SINGLE);
+		projectValidator = new EventBProjectValidator();
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		projectText.setLayoutData(gd);
-		projectText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				dialogChanged();
-			}
-		});
+		final TextModifyListener listener = new TextModifyListener();
+		projectText.addModifyListener(listener);
 
 		Button button = new Button(composite, SWT.PUSH);
 		button.setText("Browse...");
@@ -112,11 +111,7 @@ public class NewComponentWizardPage extends WizardPage {
 		componentText = new Text(composite, SWT.BORDER | SWT.SINGLE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		componentText.setLayoutData(gd);
-		componentText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				dialogChanged();
-			}
-		});
+		componentText.addModifyListener(listener);
 
 		createComposite(composite, 1); // ignore the next cell
 
@@ -136,9 +131,34 @@ public class NewComponentWizardPage extends WizardPage {
 		contextButton = createRadioButton(composite_radioButton, "Context"); //$NON-NLS-1$
 
 		initialize();
-		dialogChanged();
 		setControl(composite);
 	}
+
+	/**
+	 * If we want to focus on a control different from the first one, we need to
+	 * post the focus event for future processing because the wizard dialog
+	 * always focuses on the first control, whatever was done by the page
+	 * itself.
+	 */
+    @Override
+	public void setVisible(boolean visible) {
+    	super.setVisible(visible);
+		if (!visible) {
+			return;
+		}
+		if (projectValidator.hasError()) {
+			// Focus on project field
+			setFocusAndSelectAll(projectText);
+		} else {
+			// Project is valid, focus on component control
+			setFocusAndSelectAll(componentText);
+		}
+	}
+    
+    private void setFocusAndSelectAll(Text text) {
+		text.selectAll();
+		text.setFocus();
+    }
 
 	/**
 	 * Creates composite control and sets the default layout data.
@@ -217,15 +237,7 @@ public class NewComponentWizardPage extends WizardPage {
 		
 		if (project != null) {
 			projectText.setText(project.getElementName());
-			final Text cTextComp = componentText;
-			UIUtils.asyncPostRunnable(new Runnable() {
-				public void run() {
-					cTextComp.setFocus();
-				}
-			}, cTextComp);
 			componentText.selectAll();
-		} else {
-			projectText.setFocus();
 		}
 	}
 
@@ -267,52 +279,41 @@ public class NewComponentWizardPage extends WizardPage {
 		}
 	}
 
-	/**
-	 * Ensures that both text fields are set correctly.
-	 */
-	void dialogChanged() {
-		final String projectName = getProjectName();
-		final String componentName = getComponentName();
+	class TextModifyListener implements ModifyListener {
 		
-		if (projectName.length() == 0) {
-			updateStatus("Project must be specified");
-			return;
+		/**
+		 * Ensures that both text fields are set correctly.
+		 */
+		public void modifyText(ModifyEvent e) {
+			projectValidator.validate(getProjectName());
+			if (projectValidator.hasError()) {
+				updateStatus(projectValidator.getErrorMessage());
+				return;
+			}
+			
+			final IEventBProject evbProject = projectValidator.getEventBProject();
+			final String componentName = getComponentName();
+			if (componentName.length() == 0) {
+				updateStatus("Component name must be specified");
+				return;
+			}
+			
+			final IRodinFile machineFile = evbProject.getMachineFile(componentName);
+			final IRodinFile contextFile = evbProject.getContextFile(componentName);
+			if (machineFile == null || contextFile == null) {
+				updateStatus("Component name must be valid");
+				return;
+			}
+			if (machineFile.exists()) {
+				updateStatus("There is already a machine with this name");
+				return;
+			}
+			if (contextFile.exists()) {
+				updateStatus("There is already a context with this name");
+				return;
+			}
+			updateStatus(null);
 		}
-		
-		IRodinProject rodinProject = EventBUIPlugin.getRodinDatabase()
-				.getRodinProject(projectName);
-		if (!rodinProject.exists()) {
-			updateStatus("Project name must be valid");
-			return;
-		}
-
-		if (rodinProject.isReadOnly()) {
-			updateStatus("Project must be writable");
-			return;
-		}
-
-		if (componentName.length() == 0) {
-			updateStatus("Component name must be specified");
-			return;
-		}
-		
-		final IEventBProject evbProject = (IEventBProject) rodinProject
-				.getAdapter(IEventBProject.class);
-		final IRodinFile machineFile = evbProject.getMachineFile(componentName);
-		final IRodinFile contextFile = evbProject.getContextFile(componentName);
-		if (machineFile == null || contextFile == null) {
-			updateStatus("Component name must be valid");
-			return;
-		}
-		if (machineFile.exists()) {
-			updateStatus("There is already a machine with this name");
-			return;
-		}
-		if (contextFile.exists()) {
-			updateStatus("There is already a context with this name");
-			return;
-		}
-		updateStatus(null);
 	}
 
 	/**
@@ -322,7 +323,7 @@ public class NewComponentWizardPage extends WizardPage {
 	 * @param message
 	 *            A string message
 	 */
-	private void updateStatus(String message) {
+	void updateStatus(String message) {
 		setErrorMessage(message);
 		setPageComplete(message == null);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,11 +7,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - Initial API and implementation
+ *     Systerel - added methods to retrieve priority and implicitChildProvider
  ******************************************************************************/
 
 package org.eventb.internal.ui.eventbeditor.elementdesc;
 
+import org.eventb.ui.IImplicitChildProvider;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElementType;
 
@@ -27,11 +29,10 @@ import org.rodinp.core.IInternalElementType;
  *         changes.
  *         </p>
  */
-public interface IElementRelationship {
+public interface IElementRelationship extends Comparable<IElementRelationship> {
 
 	/**
 	 * Return the unique id which can be used to identify the relationship
-	 * <p>
 	 * 
 	 * @return The unique string id of the relationship
 	 */
@@ -39,7 +40,6 @@ public interface IElementRelationship {
 
 	/**
 	 * Return the parent element type of the relationship.
-	 * <p>
 	 * 
 	 * @return an element type
 	 */
@@ -47,10 +47,25 @@ public interface IElementRelationship {
 
 	/**
 	 * Return the child element type of the relationship.
-	 * <p>
 	 * 
 	 * @return an element type
 	 */
 	public abstract IInternalElementType<?> getChildType();
+
+	
+	/**
+	 * Return the provider of implicit children elements of the relationship.
+	 * 
+	 * @return an implicit child provider
+	 */
+	public abstract IImplicitChildProvider getImplicitChildProvider();
+	
+	
+	/**
+	 * Return the priority associated to this relationship.
+	 * 
+	 * @return the priority of this relationship
+	 */
+	public abstract int getPriority();
 
 }
