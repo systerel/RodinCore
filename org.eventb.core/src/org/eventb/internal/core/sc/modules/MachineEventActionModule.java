@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - fixed bug #2997671 using labels instead of fixed prefix
  *     Systerel - got factory from repository
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
@@ -64,7 +65,6 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	}
 
 	private static String ACTION_NAME_PREFIX = "ACT";
-	private static String ACTION_REPAIR_PREFIX = "GEN";
 	private static String ACTION_REPAIR_LABEL = "GEN";
 
 	private IConcreteEventInfo concreteEventInfo;
@@ -175,11 +175,10 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 		return error;
 	}
 
-	private void saveAction(ISCEvent target, String dbName, String label,
-			Assignment assignment, IRodinElement source,
-			IProgressMonitor monitor) throws RodinDBException {
-		ISCAction scAction = target.getSCAction(dbName);
-		scAction.create(null, monitor);
+	private void saveAction(ISCEvent target, String label, Assignment assignment,
+			IRodinElement source, IProgressMonitor monitor) throws RodinDBException {
+		ISCAction scAction = target.createChild(ISCAction.ELEMENT_TYPE, null,
+				monitor);
 		scAction.setLabel(label, monitor);
 		scAction.setAssignment(assignment, null);
 		scAction.setSource(source, monitor);
@@ -220,8 +219,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 			Assignment assignment = factory.makeBecomesSuchThat(patchLHS,
 					patchBound, btrue, null);
 			String label = createFreshLabel();
-			saveAction(target, ACTION_REPAIR_PREFIX, label, assignment, event,
-					monitor);
+			saveAction(target, label, assignment, event, monitor);
 		}
 	}
 

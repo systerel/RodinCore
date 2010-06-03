@@ -43,8 +43,6 @@ import org.rodinp.core.RodinDBException;
  */
 public class ProofComponent implements IProofComponent {
 
-	static final ProofAttempt[] NO_PROOF_ATTEMPTS = new ProofAttempt[0];
-
 	// Known proof attempts that are still alive (not yet disposed)
 	// Accesses must be synchronized
 	private final Map<String, Map<String, ProofAttempt>> known;
@@ -84,11 +82,12 @@ public class ProofComponent implements IProofComponent {
 	public ProofAttempt[] getProofAttempts() {
 		final Collection<ProofAttempt> res = new ArrayList<ProofAttempt>();
 		addAllAttempts(res);
-		return res.toArray(NO_PROOF_ATTEMPTS);
+		return res.toArray(new ProofAttempt[res.size()]);
 	}
 
 	public ProofAttempt[] getProofAttempts(String poName) {
-		return values(poName).toArray(NO_PROOF_ATTEMPTS);
+		final Collection<ProofAttempt> res = values(poName);
+		return res.toArray(new ProofAttempt[res.size()]);
 	}
 
 	public IPSRoot getPSRoot() {
