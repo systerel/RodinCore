@@ -51,6 +51,10 @@ public class OperatorRegistry {
 			return set.contains(b);
 		}
 
+		@Override
+		public String toString() {
+			return maplets.toString();
+		}
 	}
 	
 	private static class Closure<T> {// TODO extends Relation<T> ?
@@ -105,6 +109,11 @@ public class OperatorRegistry {
 
 		private static <T> boolean contains(Map<T, Set<T>> map, T a, T b) {
 			return get(map, a).contains(b);
+		}
+		
+		@Override
+		public String toString() {
+			return reachable.toString();
 		}
 	}
 	
@@ -174,6 +183,11 @@ public class OperatorRegistry {
 		
 		public boolean isCompatible(Integer a, Integer b, LanguageVersion version) {
 			return compatibilityRelation.get(version).contains(a, b);
+		}
+		
+		@Override
+		public String toString() {
+			return id;
 		}
 	}
 	
