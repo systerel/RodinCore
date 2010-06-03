@@ -198,7 +198,7 @@ public class FormulaFactory {
 	 * @param children
 	 *            the children of the associative expression
 	 * @param location
-	 *            the location of the assocative expression
+	 *            the location of the associative expression
 	 * 
 	 * @return a new associative expression
 	 */
@@ -217,7 +217,7 @@ public class FormulaFactory {
 	 * @param children
 	 *            the children of the associative expression
 	 * @param location
-	 *            the location of the assocative expression
+	 *            the location of the associative expression
 	 * 
 	 * @return a new associative expression
 	 */
@@ -234,7 +234,7 @@ public class FormulaFactory {
 	 * @param tag
 	 *            the tag of the associative predicate
 	 * @param predicates
-	 *            the children of the asswociative predicate
+	 *            the children of the associative predicate
 	 * @param location
 	 *            the location of the associative predicate
 	 * 
@@ -253,7 +253,7 @@ public class FormulaFactory {
 	 * @param tag
 	 *            the tag of the associative predicate
 	 * @param predicates
-	 *            the children of the asswociative predicate
+	 *            the children of the associative predicate
 	 * @param location
 	 *            the location of the associative predicate
 	 * 
