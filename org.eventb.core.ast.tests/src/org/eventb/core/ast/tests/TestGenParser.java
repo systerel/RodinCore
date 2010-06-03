@@ -1618,16 +1618,15 @@ public class TestGenParser extends AbstractTests {
 	public void testConverseFunImage() throws Exception {
 		final Expression expected = ff.makeUnaryExpression(CONVERSE,
 				ff.makeBinaryExpression(FUNIMAGE, FRID_f, FRID_a, null), null);
-		doExpressionTest("(f(a))∼", expected);
+		doExpressionTest("(f(a))∼", expected); // parentheses are mandatory for non generic parser
+		doExpressionTest("f(a)∼", expected); // parentheses are not required for generic parser
 	}
 
-	public void testConverseFunImageNoParen() throws Exception {
-		assertFailure(ff.parseExpression("f(a)∼", LanguageVersion.V2, null), ProblemKind.SyntaxError);
-	}
-	
-	public void testConverseRelImageNoParen() throws Exception {
-		assertFailure(ff.parseExpression("f[a]∼", LanguageVersion.V2, null),
-				ProblemKind.SyntaxError);
+	public void testConverseRelImage() throws Exception {
+		final Expression expected = ff.makeUnaryExpression(CONVERSE,
+				ff.makeBinaryExpression(RELIMAGE, FRID_f, FRID_a, null), null);
+		doExpressionTest("(f[a])∼", expected); // parentheses are mandatory for non generic parser
+		doExpressionTest("f[a]∼", expected); // parentheses are not required for generic parser
 	}
 	
 	public void testMapstoConverseRelImage() throws Exception {
@@ -1637,12 +1636,6 @@ public class TestGenParser extends AbstractTests {
 						ff.makeBinaryExpression(RELIMAGE, FRID_f, FRID_a, null),
 						null), null);
 		doExpressionTest("1↦(f[a])∼", expected);
-	}
-	
-	public void testMapstoConverseRelImageOuterParen() throws Exception {
-		assertFailure(
-				ff.parseExpression("1↦(f[a]∼)", LanguageVersion.V2, null),
-				ProblemKind.SyntaxError);
 	}
 	
 	public void testMapstoConverseFunImage() throws Exception {
