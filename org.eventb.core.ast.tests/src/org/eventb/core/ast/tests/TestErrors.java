@@ -74,79 +74,36 @@ public class TestErrors extends AbstractTests {
 		}
 	}
 	
-	private final TestItem[] lexTestItems = new TestItem[] {
-			new PredTestItem(
-					"\ueeee\u22a5",
-					new ASTProblem(new SourceLocation(0, 0), LexerError,
-							Warning, "\ueeee")),
-			new PredTestItem(
-					"\u22a5\ueeee",
-					new ASTProblem(new SourceLocation(1, 1), LexerError,
-							Warning, "\ueeee")),
-			new PredTestItem(
-					"finite(\u03bb x\u21a6(\ueeeey\u21a6s)\u00b7\u22a5\u2223z)",
-					new ASTProblem(new SourceLocation(12, 12), LexerError,
-							Warning, "\ueeee")),
-			new PredTestItem(
-			// From bug #2689872 Illegal character not reported
-					"0/=1",
-					new ASTProblem(new SourceLocation(1, 1), LexerError,
-							Warning, "/")),
-			new PredPatternTestItem(
-					"$P'",
-					new ASTProblem(new SourceLocation(2, 2), LexerError,
-							Warning, "'")),
-	};
-
-	private final TestItem[] parseTestItems = new TestItem[] {
-			new PredTestItem(
-					"finite(\u03bb x\u21a6(y\u21a6s)\u00b7\u22a5\u2223z",
-					new ASTProblem(new SourceLocation(20, 20), SyntaxError,
-							Error, "RPAR expected")),
-			new PredTestItem(
-					"\u03bb x\u21a6(y\u21a6s)\u00b7\u22a5\u2223z",
-					new ASTProblem(new SourceLocation(0, 1), SyntaxError,
-							Error, "invalid SimpleExpr")),
-			new PredTestItem(
-					"finite(\u03bb x\u21a6y\u21a6s)\u00b7\u22a5\u2223z)",
-					new ASTProblem(new SourceLocation(14, 15), SyntaxError,
-							Error, "QDOT expected")),
-			new PredTestItem(
-					"∀(x)·x∈ℤ",
-					new ASTProblem(new SourceLocation(1, 1), UnexpectedLPARInDeclList,
-							Error)),
-			new PredTestItem(
-					"∀(x,y)·x∈ℤ ∧ y∈ℤ",
-					new ASTProblem(new SourceLocation(1, 1), UnexpectedLPARInDeclList,
-							Error)),
-			new PredTestItem(
-					"s ∈ (∅ \u2982 S)",
-					new ASTProblem(new SourceLocation(9, 9), InvalidTypeExpression,
-							Error)),
-			new PredTestItem(
-					"x∈$P",
-					new ASTProblem(new SourceLocation(2, 4), SyntaxError,
-							Error, "invalid SimpleExpr")),
-			new PredTestItem(
-					"$P",
-					new ASTProblem(new SourceLocation(0, 1), PredicateVariableNotAllowed,
-							Error, "$P")),
-// TODO check how it could be extended to quantified expressions
-//							"finite(⋃(x)·(x⊆ℤ ∣ x))",
-//							new ASTProblem(new SourceLocation(5,5), ProblemKind.UnexpectedLPARInDeclList, ProblemSeverities.Error),
-//							"finite(⋃(x,y)·(x⊆ℤ ∧ y⊆ℤ ∣ x∩y))",
-//							new ASTProblem(new SourceLocation(5,5), ProblemKind.UnexpectedLPARInDeclList, ProblemSeverities.Error),
-	};
-	
-	
 	/**
 	 * Test of lexical errors
 	 */
 	public void testLexErrors() {
-		for (TestItem testItem : lexTestItems) {
-			final IParseResult result = testItem.parse();
-			assertLexProblem(result, testItem.problem);
-		}
+				doLexTest(new PredTestItem(
+						"\ueeee\u22a5",
+						new ASTProblem(new SourceLocation(0, 0), LexerError,
+								Warning, "\ueeee")));
+				doLexTest(new PredTestItem(
+						"\u22a5\ueeee",
+						new ASTProblem(new SourceLocation(1, 1), LexerError,
+								Warning, "\ueeee")));
+				doLexTest(new PredTestItem(
+						"finite(\u03bb x\u21a6(\ueeeey\u21a6s)\u00b7\u22a5\u2223z)",
+						new ASTProblem(new SourceLocation(12, 12), LexerError,
+								Warning, "\ueeee")));
+				doLexTest(new PredTestItem(
+				// From bug #2689872 Illegal character not reported
+						"0/=1",
+						new ASTProblem(new SourceLocation(1, 1), LexerError,
+								Warning, "/")));
+				doLexTest(new PredPatternTestItem(
+						"$P'",
+						new ASTProblem(new SourceLocation(2, 2), LexerError,
+								Warning, "'")));
+	}
+
+	private void doLexTest(TestItem testItem) {
+		final IParseResult result = testItem.parse();
+		assertLexProblem(result, testItem.problem);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -163,10 +120,49 @@ public class TestErrors extends AbstractTests {
 	 * Test of syntactic errors
 	 */
 	public void testParseErrors() {
-		for (TestItem testItem : parseTestItems) {
-			final IParseResult result = testItem.parse();
-			assertParseProblem(testItem, result);
-		}
+				doParseTest(new PredTestItem(
+						"finite(\u03bb x\u21a6(y\u21a6s)\u00b7\u22a5\u2223z",
+						new ASTProblem(new SourceLocation(20, 20), SyntaxError,
+								Error, "RPAR expected")));
+				doParseTest(new PredTestItem(
+						"\u03bb x\u21a6(y\u21a6s)\u00b7\u22a5\u2223z",
+						new ASTProblem(new SourceLocation(0, 1), SyntaxError,
+								Error, "invalid SimpleExpr")));
+				doParseTest(new PredTestItem(
+						"finite(\u03bb x\u21a6y\u21a6s)\u00b7\u22a5\u2223z)",
+						new ASTProblem(new SourceLocation(14, 15), SyntaxError,
+								Error, "QDOT expected")));
+				doParseTest(new PredTestItem(
+						"∀(x)·x∈ℤ",
+						new ASTProblem(new SourceLocation(1, 1), UnexpectedLPARInDeclList,
+								Error)));
+				doParseTest(new PredTestItem(
+						"∀(x,y)·x∈ℤ ∧ y∈ℤ",
+						new ASTProblem(new SourceLocation(1, 1), UnexpectedLPARInDeclList,
+								Error)));
+				doParseTest(new PredTestItem(
+						"s ∈ (∅ \u2982 S)",
+						new ASTProblem(new SourceLocation(9, 9), InvalidTypeExpression,
+								Error)));
+				doParseTest(new PredTestItem(
+						"x∈$P",
+						new ASTProblem(new SourceLocation(2, 4), SyntaxError,
+								Error, "invalid SimpleExpr")));
+				doParseTest(new PredTestItem(
+						"$P",
+						new ASTProblem(new SourceLocation(0, 1), PredicateVariableNotAllowed,
+								Error, "$P")));
+	// TODO check how it could be extended to quantified expressions
+//								"finite(⋃(x)·(x⊆ℤ ∣ x))",
+//								new ASTProblem(new SourceLocation(5,5), ProblemKind.UnexpectedLPARInDeclList, ProblemSeverities.Error),
+//								"finite(⋃(x,y)·(x⊆ℤ ∧ y⊆ℤ ∣ x∩y))",
+//								new ASTProblem(new SourceLocation(5,5), ProblemKind.UnexpectedLPARInDeclList, ProblemSeverities.Error),
+		
+	}
+
+	private void doParseTest(TestItem testItem) {
+		final IParseResult result = testItem.parse();
+		assertParseProblem(testItem, result);
 	}
 
 	private void assertParseProblem(TestItem testItem, IParseResult result) {
