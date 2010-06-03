@@ -1622,12 +1622,30 @@ public class TestGenParser extends AbstractTests {
 	}
 
 	public void testConverseFunImageNoParen() throws Exception {
-		final IParseResult result = ff.parseExpression("f(a)∼", LanguageVersion.V2, null);
-		System.out.println(result.getParsedExpression());
-		assertFailure(result, ProblemKind.SyntaxError);
+		assertFailure(ff.parseExpression("f(a)∼", LanguageVersion.V2, null), ProblemKind.SyntaxError);
 	}
 	
-	public void testConversePriority() throws Exception {
+	public void testConverseRelImageNoParen() throws Exception {
+		assertFailure(ff.parseExpression("f[a]∼", LanguageVersion.V2, null),
+				ProblemKind.SyntaxError);
+	}
+	
+	public void testMapstoConverseRelImage() throws Exception {
+		final Expression expected = ff.makeBinaryExpression(MAPSTO,
+				ONE,
+				ff.makeUnaryExpression(CONVERSE,
+						ff.makeBinaryExpression(RELIMAGE, FRID_f, FRID_a, null),
+						null), null);
+		doExpressionTest("1↦(f[a])∼", expected);
+	}
+	
+	public void testMapstoConverseRelImageOuterParen() throws Exception {
+		assertFailure(
+				ff.parseExpression("1↦(f[a]∼)", LanguageVersion.V2, null),
+				ProblemKind.SyntaxError);
+	}
+	
+	public void testMapstoConverseFunImage() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(MAPSTO,
 				ONE,
 				ff.makeUnaryExpression(CONVERSE,
@@ -1636,7 +1654,7 @@ public class TestGenParser extends AbstractTests {
 		
 	}
 	
-	public void testConversePriority2() throws Exception {
+	public void testConverseMapsto() throws Exception {
 		final Expression expected = 
 			ff.makeUnaryExpression(CONVERSE,
 					ff.makeBinaryExpression(MAPSTO,
@@ -1645,7 +1663,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("(1↦f(a))∼", expected);
 	}
 	
-	public void testConversePriority3() throws Exception {
+	public void testFunImageConverseMapsto() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(FUNIMAGE,
 				ff.makeUnaryExpression(CONVERSE,
 						ff.makeBinaryExpression(MAPSTO,
