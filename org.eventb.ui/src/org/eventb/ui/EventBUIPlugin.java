@@ -170,15 +170,21 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	 * currently available.
 	 */
 	private void loadFont() {
-		Display display = this.getWorkbench().getDisplay();
-		FontData[] fontList = display.getFontList("Brave Sans Mono", true);
+		final Display display = this.getWorkbench().getDisplay();
+		final FontData[] fontList = display.getFontList("Brave Sans Mono", true);
 		if (fontList.length == 0) {
 			// The font is not available, try to load the font
-			Bundle bundle = EventBUIPlugin.getDefault().getBundle();
-			IPath path = new Path("fonts/bravesansmono_roman.ttf");
-			IPath absolutePath = BundledFileExtractor.extractFile(bundle, path);
+			final Bundle bundle = EventBUIPlugin.getDefault().getBundle();
+			final IPath path = new Path("fonts/bravesansmono_roman.ttf");
+			final IPath absolutePath = BundledFileExtractor.extractFile(bundle, path);
 			Assert.isNotNull(absolutePath, "The Brave Sans Mono font should be included with the distribution");
-			display.loadFont(absolutePath.toString());
+			display.asyncExec(new Runnable() {
+				
+				public void run() {
+					display.loadFont(absolutePath.toString());
+				}
+			
+			});	
 		}
 	}
 
