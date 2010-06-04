@@ -243,9 +243,12 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		super.stop(context);
-		ColorManager.getDefault().dispose();
-		plugin = null;
+		try {
+			ColorManager.getDefault().dispose();
+			plugin = null;
+		} finally {
+			super.stop(context);
+		}		
 	}
 
 	/**
