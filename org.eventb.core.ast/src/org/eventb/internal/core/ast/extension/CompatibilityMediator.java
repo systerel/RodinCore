@@ -29,8 +29,4 @@ public class CompatibilityMediator implements ICompatibilityMediator {
 		registry.addCompatibility(leftOpId, rightOpId);
 	}
 
-	public void addGroupCompatibility(String leftGroupId, String rightGroupId) {
-		registry.addGroupCompatibility(leftGroupId, rightGroupId);
-	}
-
 }

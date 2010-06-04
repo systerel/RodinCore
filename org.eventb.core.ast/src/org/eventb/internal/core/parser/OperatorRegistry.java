@@ -232,9 +232,6 @@ public class OperatorRegistry {
 	
 	
 	private final Closure<OperatorGroup> groupPriority = new Closure<OperatorGroup>();
-	// FIXME it seems like group compatibility is not needed for standard math language
-	// see if there are reasons to keep it for extensions
-	private final Relation<OperatorGroup> groupCompatibility = new Relation<OperatorGroup>();
 	
 	public OperatorRegistry() {
 		idOpGroup.put(GROUP0, GROUP_0);
@@ -329,12 +326,6 @@ public class OperatorRegistry {
 		final OperatorGroup highGroup = idOpGroup.get(highGroupId);
 		groupPriority.add(lowGroup, highGroup);
 	}
-
-	public void addGroupCompatibility(String leftGroupId, String rightGroupId) {
-		final OperatorGroup leftGroup = idOpGroup.get(leftGroupId);
-		final OperatorGroup rightGroup = idOpGroup.get(rightGroupId);
-		groupCompatibility.add(leftGroup, rightGroup);
-	}	
 
 	public boolean hasGroup(int kind) {
 		return kindOpGroup.getNoCheck(kind) != null;
