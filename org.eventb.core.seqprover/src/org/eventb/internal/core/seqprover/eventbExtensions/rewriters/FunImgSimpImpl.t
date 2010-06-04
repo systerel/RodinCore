@@ -89,7 +89,7 @@ public class FunImgSimpImpl {
 
 	%include {FormulaV2.tom}
 	
-	private static Expression getFunImgFunction(Expression expr){
+	public static Expression getFunImgFunction(Expression expr){
 	
 		%match (Expression expr) {
 			
