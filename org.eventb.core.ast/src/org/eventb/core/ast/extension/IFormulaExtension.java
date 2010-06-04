@@ -25,11 +25,6 @@ public interface IFormulaExtension {
 		PARENTHESIZED_PREFIX_EXPRESSION // op(a, b, ..., c)
 	}
 	
-	public static enum Associativity {
-		LEFT,
-		RIGHT
-	}
-	
 	boolean checkPreconditions(Expression[] expressions, Predicate[] predicates);
 
 	String getSyntaxSymbol();
@@ -52,5 +47,4 @@ public interface IFormulaExtension {
 
 	void addPriorities(IPriorityMediator mediator);
 
-	Associativity getAssociativity();
 }

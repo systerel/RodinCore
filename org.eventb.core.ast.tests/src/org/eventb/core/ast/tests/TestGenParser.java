@@ -499,9 +499,6 @@ public class TestGenParser extends AbstractTests {
 			// no priority
 		}
 
-		public Associativity getAssociativity() {
-			return Associativity.LEFT;
-		}
 	};
 
 	public void testExtensionDirectProduct() throws Exception {
@@ -558,10 +555,6 @@ public class TestGenParser extends AbstractTests {
 		public boolean checkPreconditions(Expression[] expressions,
 				Predicate[] predicates) {
 			return expressions.length >= 2 && predicates.length == 0;
-		}
-
-		public Associativity getAssociativity() {
-			return Associativity.LEFT;
 		}
 
 		public String getGroupId() {
@@ -1523,10 +1516,6 @@ public class TestGenParser extends AbstractTests {
 		public boolean checkPreconditions(Expression[] expressions,
 				Predicate[] predicates) {
 			return expressions.length >= 2 && predicates.length == 0;
-		}
-
-		public Associativity getAssociativity() {
-			return Associativity.LEFT;
 		}
 
 		public String getGroupId() {

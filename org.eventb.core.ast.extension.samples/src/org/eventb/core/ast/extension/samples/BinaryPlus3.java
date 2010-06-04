@@ -96,8 +96,4 @@ public class BinaryPlus3 implements IExpressionExtension {
 		return ExtensionKind.BINARY_INFIX_EXPRESSION;
 	}
 
-	public Associativity getAssociativity() {
-		return Associativity.LEFT;
-	}
-
 }
