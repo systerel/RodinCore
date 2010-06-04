@@ -23,18 +23,23 @@ public interface IFormulaExtension {
 		BINARY_INFIX_EXPRESSION, // a op b
 		ASSOCIATIVE_INFIX_EXPRESSION, // a op b op ... op c 
 		PARENTHESIZED_PREFIX_EXPRESSION // op(a, b, ..., c)
+		// TODO PARENTHESIZED_PREFIX_PREDICATE
 	}
 	
+	// TODO the method is always the same for a given extension kind
+	// => implement for every extension kind, then remove this method
 	boolean checkPreconditions(Expression[] expressions, Predicate[] predicates);
 
 	String getSyntaxSymbol();
 
 	// TODO the method is always the same for a given extension kind
-	// => implement once and for all, then remove this method
+	// => implement for every extension kind, then remove this method
 	void toString(IToStringMediator mediator, IExtendedFormula formula);
 
 	Predicate getWDPredicate(IWDMediator wdMediator, IExtendedFormula formula);
 
+	// TODO the method is always the same for a given extension kind
+	// => implement for every extension kind, then remove this method
 	boolean isFlattenable();
 
 	String getId();

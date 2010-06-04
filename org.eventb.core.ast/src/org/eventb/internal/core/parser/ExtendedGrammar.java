@@ -50,6 +50,8 @@ public class ExtendedGrammar extends BMath {
 				} else {
 					final INudParser<? extends Formula<?>> subParser = makeNudParser(
 							kind, tag);
+					// FIXME the syntax symbol must not already exist as an
+					// operator (an extension shall not add backtracking)
 					addOperator(extension.getSyntaxSymbol(), operatorId, groupId,
 							subParser);
 				}
