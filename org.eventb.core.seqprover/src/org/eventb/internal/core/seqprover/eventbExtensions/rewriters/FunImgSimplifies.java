@@ -75,25 +75,10 @@ public class FunImgSimplifies extends AbstractManualRewrites implements
 			return null;
 		}
 		final Formula<?> subFormula = pred.getSubFormula(position);
-		if (subFormula == null || subFormula.getTag() != Expression.FUNIMAGE) {
+		if (!(subFormula instanceof Expression)) {
 			return null;
 		}
-		final BinaryExpression funImageExpr = (BinaryExpression) subFormula;
-		final Expression left = funImageExpr.getLeft();
-		final int tag = left.getTag();
-		return extractRestrictedFunction(left, tag);
-	}
-
-	private Expression extractRestrictedFunction(final Expression fun,
-			final int tag) {
-		if (tag == Expression.DOMRES || tag == Expression.DOMSUB) {
-			return ((BinaryExpression) fun).getRight();
-		}
-		if (tag == Expression.RANRES || tag == Expression.RANSUB
-		|| tag == Expression.SETMINUS) {
-			return ((BinaryExpression) fun).getLeft();
-		}
-		return null;
+		return FunImgSimpImpl.getFunImgFunction((Expression) subFormula);
 	}
 
 	@Override
@@ -113,8 +98,7 @@ public class FunImgSimplifies extends AbstractManualRewrites implements
 	protected String getDisplayName(Predicate hyp, IPosition position) {
 		if (hyp == null)
 			return "Functional image simplification in goal";
-		return "Functional image simplification in hyp ("
-				+ hyp.getSubFormula(position) + ")";
+		return "Functional image simplification in hyp";
 	}
 
 	@Override
