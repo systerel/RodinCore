@@ -41,16 +41,8 @@ import org.eventb.internal.core.lexer.GenScan.ScanState;
  */
 public class GenParser {
 
+	private static final boolean DEBUG = false;
 	
-	protected static class SyntaxCompatibleError extends SyntaxError {
-
-		private static final long serialVersionUID = -6230478311681172354L;
-
-		public SyntaxCompatibleError(String reason) {
-			super(reason);
-		}
-	}
-
 	public static class OverrideException extends Exception {
 	
 		private static final long serialVersionUID = -1281802568424261959L;
@@ -64,30 +56,14 @@ public class GenParser {
 
 		private static final long serialVersionUID = -8349775303104088736L;
 
-		public SyntaxError(String reason) {
-			super(reason);
+		private final ASTProblem problem;
+		
+		public SyntaxError(ASTProblem problem) {
+			this.problem = problem;
 		}
 
-	}
-
-	private static class CycleError extends Exception {
-		public CycleError(String reason) {
-			super(reason);
-		}
-	}
-
-	private static class SyntaxUnexpectedSymbol extends SyntaxError {
-
-		public SyntaxUnexpectedSymbol(String reason) {
-			super(reason);
-		}
-
-	}
-
-	private static class UnmatchedToken extends SyntaxError {
-
-		public UnmatchedToken(String reason) {
-			super(reason);
+		public ASTProblem getProblem() {
+			return problem;
 		}
 
 	}
@@ -196,7 +172,17 @@ public class GenParser {
 			}
 			return new SourceLocation(startPos.peekStack(), t.getEnd(), result.getOrigin());
 		}
-		
+
+		public SourceLocation makeSourceLocation(Token token) {
+			final int start;
+			if (token.pos > token.getEnd()) {
+				start = 0;
+			} else {
+				start = token.pos;
+			}
+			return new SourceLocation(start, token.getEnd(), result.getOrigin());
+		}
+
 		public void init() {
 			t = INIT_TOKEN;
 			la = scanner.Scan();
@@ -287,8 +273,9 @@ public class GenParser {
 		public void progress(int expectedKind) throws SyntaxError {
 			if (t.kind != expectedKind) {
 				final String expected = grammar.getImage(expectedKind);
-				throw new SyntaxError("expected \"" + expected
-						+ "\" but was \"" + t.val + "\"");
+				throw new SyntaxError(new ASTProblem(makeSourceLocation(t),
+						ProblemKind.UnexpectedSymbol, ProblemSeverities.Error,
+						expected, grammar.getImage(t.kind)));
 			}
 			progress();
 		}
@@ -312,12 +299,36 @@ public class GenParser {
 		public int getBoundIndex(String name) {
 			return binding.val.getBoundIndex(name);
 		}
-		
-		public boolean canProgressRight() throws SyntaxCompatibleError {
-			if (!grammar.isOperator(t.kind)) {
+
+		/**
+		 * Returns whether the current token allows to progress right in the
+		 * parsing.
+		 * <p>
+		 * It is <code>true</code> iff the current token:
+		 * <li>is an operator</li>
+		 * <li>is compatible with the current parent operator</li>
+		 * <li>has a higher priority than the current parent operator</li>
+		 * </p>
+		 * 
+		 * @return <code>true</code> if right progressing is allowed by the
+		 *         grammar.
+		 * @throws SyntaxError
+		 *             if current operator is incompatible with current parent
+		 *             operator
+		 */
+		public boolean canProgressRight() throws SyntaxError {
+			final int leftKind = parentKind.val;
+			final int rightKind = t.kind;
+			if (!grammar.isOperator(rightKind)) {
 				return false;
 			}
-			return grammar.hasLessPriority(parentKind.val, t.kind, version);
+			if (!grammar.isCompatible(leftKind, rightKind, version)) {
+				throw new SyntaxError(new ASTProblem(makeSourceLocation(t),
+						ProblemKind.IncompatibleOperators,
+						ProblemSeverities.Error, grammar.getImage(leftKind),
+						grammar.getImage(rightKind)));
+			}
+			return grammar.hasLessPriority(leftKind, rightKind, version);
 		}
 		
 		private void pushPos() {
@@ -471,27 +482,37 @@ public class GenParser {
 				throw new IllegalArgumentException("Can only parse one of: Predicate, Expression, Assignment or Type.");
 			}
 			if (pc.t.kind != _EOF) {
-				throw new UnmatchedToken("tokens have been ignored from: \""
-						+ pc.t.val + "\" at position " + pc.t.pos);
+				final int startPos = pc.t.pos;
+				do {
+					pc.progress();
+				} while (pc.t.kind != _EOF);
+				processFailure(new ASTProblem(new SourceLocation(startPos,
+						pc.t.pos, result.getOrigin()),
+						ProblemKind.UnmatchedTokens, ProblemSeverities.Error));
 			}
 			// TODO remove above debug check when stable
-			if (pc.parentKind.val != _EOF) {
-				throw new IllegalStateException("Improper parent stack: "
-						+ pc.parentKind
-						+ " with "
-						+ pc.parentKind.val
-						+ " = "
-						+ factory.getGrammar().getImage(
-								pc.parentKind.val));
+			if (DEBUG) {
+				if (pc.parentKind.val != _EOF) {
+					throw new IllegalStateException("Improper parent stack: "
+							+ pc.parentKind
+							+ " with "
+							+ pc.parentKind.val
+							+ " = "
+							+ factory.getGrammar().getImage(
+									pc.parentKind.val));
+				}
 			}
 		} catch (SyntaxError e) {
-			result.addProblem(new ASTProblem(null, ProblemKind.SyntaxError, ProblemSeverities.Error, e.getMessage()));
-			// TODO Auto-generated catch block
-			result.resetParsedFormula();
+			processFailure(e.getProblem());
 		}
 
 	}
 
+	private void processFailure(ASTProblem problem) {
+		result.addProblem(problem);
+		result.resetParsedFormula();
+	}
+	
 	/**
 	 * Returns the current parsing result.
 	 *

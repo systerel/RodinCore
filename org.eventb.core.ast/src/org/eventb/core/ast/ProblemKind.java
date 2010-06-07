@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 /**
  * This enum contains all the problems that can be encountered by the various
  * checkers.
@@ -75,10 +78,123 @@ public enum ProblemKind {
 	 */
 	TypesDoNotMatch ("Type: %1$s does not match type: %2$s."),
 	
+	
+	// 2.0 problem kinds
+	
+	/**
+	 * Argument 0 is the name of the expected sub-formula kind, argument 1 is the name of the actual sub-formula kind.
+	 * @since 2.0
+	 */
+	UnexpectedSubFormulaKind ("Unexpected sub-formula, expected: %1$s but was: %2$s."),
+	
+	/**
+	 * Argument 0 is the image of the expected symbol, argument 1 is the name of the actual symbol.
+	 * @since 2.0
+	 */
+	UnexpectedSymbol ("Expected: %1$s but was: %2$s."),
+	
+	/**
+	 * Argument 0 is the image of the unknown operator.
+	 * @since 2.0
+	 */
+	UnknownOperator ("Unknown operator: %1$s."),
+	
+	/**
+	 * No argument.
+	 * @since 2.0
+	 */
+	UnmatchedTokens ("Tokens have been ignored"),
+	
+	/**
+	 * Argument 0 is the image of the expected symbol, argument 1 is the name of the actual symbol.
+	 * @since 2.0
+	 */
+	IncompatibleOperators ("Operator: %1$s is not compatible with: %2$s, parentheses are required."),
+	
 	/**
 	 * No argument.
 	 */
 	Circularity ("Types do not match."),
+	
+	/**
+	 * Argument 0 is the image of the misplaced operator.
+	 * @since 2.0
+	 */
+	MisplacedNudOperator ("Operator: %1$s should appear at the beginning of a sub-formula."),
+	
+	/**
+	 * Argument 0 is the image of the misplaced operator.
+	 * @since 2.0
+	 */
+	MisplacedLedOperator ("Operator: %1$s should appear with a sub-formula on its left."),
+
+	/**
+	 * Argument 0 is the compound message with all errors.
+	 * 
+	 * @since 2.0
+	 */
+	VariousPossibleErrors ("Parse failed because either:\n%1$s"),
+	
+	/**
+	 * No argument.
+	 * @since 2.0
+	 */
+	InvalidAssignmentToImage ("Assignment to function image applies to exactly one function."),
+	
+	/**
+	 * Argument 0 is the number of assigned identifiers, argument 1 is the numbers of expressions.
+	 * @since 2.0
+	 * 
+	 */
+	IncompatibleIdentExprNumbers ("Incompatible number of arguments: %1$s identifiers and %2$s expressions"),
+	
+	/**
+	 * No argument.
+	 * @since 2.0
+	 */
+	BECMOAppliesToOneIdent("\'Becomes Member Of\' applies to only one identifier"),
+	
+	/**
+	 * No argument.
+	 * @since 2.0
+	 */
+	FreeIdentifierExpected ("Expected a free identifier"),
+
+	/**
+	 * No argument.
+	 * @since 2.0
+	 */
+	IntegerLiteralExpected ("Expected an integer literal"),
+
+	/**
+	 * No argument.
+	 * @since 2.0
+	 */
+	OftypeMissingParentheses ("Oftype should appear within parentheses here"),
+
+	/**
+	 * Argument 0 is the expected type for the generic operator.
+	 * @since 2.0
+	 */
+	InvalidGenericType("Invalid type for generic operator, expected %1$s"),
+
+	/**
+	 * No argument.
+	 * @since 2.0
+	 */
+	UnexpectedOftype("Oftype is not expected here"),
+
+	/**
+	 * No argument.
+	 * @since 2.0
+	 */
+	ExtensionPreconditionError("Preconditions for this extended operator are not fulfilled"),
+	
+	/**
+	 * Argument 0 is the name of the duplicate identifier.
+	 * @since 2.0
+	 */
+	DuplicateIdentifierInPattern("Duplicate identifier in pattern: %1$s"),
 	
 	/**
 	 * No argument.
@@ -114,9 +230,36 @@ public enum ProblemKind {
 	 * Argument 0 is the illegal predicate variable.
 	 * @since 1.2
 	 */
-	PredicateVariableNotAllowed("Predicate variable %1$s is not allowed here."),
+	PredicateVariableNotAllowed("Predicate variable %1$s is not allowed here."), 
 	;
-		
+
+	/**
+	 * Returns a compound message from the given list of messages, indented with
+	 * 2 spaces.
+	 * 
+	 * @param problems
+	 *            a list of messages
+	 * @return a string
+	 * @since 2.0
+	 */
+	public static String makeCompoundMessage(Collection<ASTProblem> problems) {
+		if (problems.size() < 2) {
+			throw new IllegalArgumentException(
+					"expected at least 2 error messages, but was " + problems);
+		}
+		final String spaces = "  ";
+		final StringBuilder compound = new StringBuilder();
+		final Iterator<ASTProblem> problem = problems.iterator();
+		compound.append(spaces);
+		compound.append(problem.next());
+		while(problem.hasNext()) {
+			compound.append("\n");
+			compound.append(spaces);
+			compound.append(problem.next());
+		}
+		return compound.toString();
+	}
+
 	private String message;
 	private ProblemKind(String message) {
 		this.message = message;

@@ -40,6 +40,7 @@ import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.ProblemKind;
+import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
@@ -100,14 +101,13 @@ public class TestGenParser extends AbstractTests {
 	private static final PowerSetType POW_INT_TYPE = ff.makePowerSetType(INT_TYPE);
 	private static final SourceLocationChecker slChecker = new SourceLocationChecker();
 
-	private static void assertFailure(IParseResult result, ProblemKind problemKind) {
+	private static void assertFailure(IParseResult result, ASTProblem expected) {
 		assertTrue(result.hasProblem());
 		final List<ASTProblem> problems = result.getProblems();
 		System.out.println(problems);
 		assertEquals(1, problems.size());
-		final ASTProblem problem = problems.get(0);
-		assertTrue(problem.isError());
-		assertEquals(problemKind, problem.getMessage());
+		final ASTProblem actual = problems.get(0);
+		assertEquals("wrong problem", expected, actual);
 	}
 	
 	private static void checkSourceLocation(Formula<?> formula, int length) {
@@ -141,10 +141,8 @@ public class TestGenParser extends AbstractTests {
 			FormulaFactory factory, LanguageVersion version) {
 		final IParseResult result = factory.parseExpression(formula,
 				version, null);
-		if (result.hasProblem()) {
-			System.out.println(result.getProblems());
-		}
-		assertFalse(result.hasProblem());
+		assertFalse("unexpected problem(s): " + result.getProblems(), result
+				.hasProblem());
 		final Expression actual = result.getParsedExpression();
 		checkParsedFormula(formula, expected, actual);
 		return actual;
@@ -352,7 +350,9 @@ public class TestGenParser extends AbstractTests {
 	public void testUnionInterNoParen() throws Exception {
 		final IParseResult result = ff.parseExpression("A∩B∪C",
 				LanguageVersion.V2, null);
-		assertFailure(result, ProblemKind.SyntaxError);
+		assertFailure(result, new ASTProblem(new SourceLocation(3, 3),
+				ProblemKind.IncompatibleOperators, ProblemSeverities.Error, "∩",
+				"∪"));
 	}
 
 	public void testAnd() throws Exception {
@@ -731,13 +731,17 @@ public class TestGenParser extends AbstractTests {
 	public void testNudNoLed() throws Exception {
 		assertFailure(
 				ff.parseExpression("0 card(x)", LanguageVersion.V2, null),
-				ProblemKind.SyntaxError);
+				new ASTProblem(new SourceLocation(2, 5),
+						ProblemKind.MisplacedNudOperator,
+						ProblemSeverities.Error, "card"));
 	}
 	
 	public void testLedNoNud() throws Exception {
 		assertFailure(
 				ff.parseExpression("x += 2", LanguageVersion.V2, null),
-				ProblemKind.SyntaxError);
+				new ASTProblem(new SourceLocation(3, 3),
+						ProblemKind.MisplacedLedOperator,
+						ProblemSeverities.Error, "="));
 	}
 	
 	public void testIn() throws Exception {
@@ -846,7 +850,8 @@ public class TestGenParser extends AbstractTests {
 	
 	public void testIdentOfType() throws Exception {
 		final IParseResult result = ff.parseExpression("(x ⦂ ℙ(ℤ))", LanguageVersion.V2, null);
-		assertFailure(result, ProblemKind.SyntaxError);
+		assertFailure(result, new ASTProblem(new SourceLocation(3, 3),
+				ProblemKind.UnexpectedOftype, ProblemSeverities.Error));
 	}
 	
 	public void testBoundIdentDeclOfType() throws Exception {
@@ -911,8 +916,28 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testCSetImplicitOftype() throws Exception {
-		assertFailure(ff.parseExpression("{(x⦂ℤ)∣ ⊤}", LanguageVersion.V2, null), ProblemKind.SyntaxError);
-		assertFailure(ff.parseExpression("{x⦂ℤ∣ ⊤}", LanguageVersion.V2, null), ProblemKind.SyntaxError);
+		final ASTProblem identExpected = new ASTProblem(new SourceLocation(1, 1),
+				ProblemKind.UnexpectedSymbol, ProblemSeverities.Error, "an identifier", "(");
+		
+		final ASTProblem errorOftype = new ASTProblem(new SourceLocation(2, 2),
+				ProblemKind.UnexpectedOftype, ProblemSeverities.Error);
+
+		final ASTProblem dotExpected = new ASTProblem(new SourceLocation(4, 4),
+				ProblemKind.UnexpectedSymbol, ProblemSeverities.Error, "·", "∣");
+
+		final ASTProblem identOrOftype = new ASTProblem(
+				new SourceLocation(0, 0), ProblemKind.VariousPossibleErrors,
+				ProblemSeverities.Error,
+				ProblemKind.makeCompoundMessage(asList(identExpected,
+						errorOftype)));
+		
+		final ASTProblem dotOrOftype = new ASTProblem(
+				new SourceLocation(0, 0), ProblemKind.VariousPossibleErrors,
+				ProblemSeverities.Error,
+				ProblemKind.makeCompoundMessage(asList(dotExpected,
+						errorOftype)));
+		assertFailure(ff.parseExpression("{(x⦂ℤ)∣ ⊤}", LanguageVersion.V2, null), identOrOftype);
+		assertFailure(ff.parseExpression("{x⦂ℤ∣ ⊤}", LanguageVersion.V2, null), dotOrOftype);
 	}
 	
 	// verifies that priority between Maplet and Ovr is not taken into account
@@ -1096,7 +1121,8 @@ public class TestGenParser extends AbstractTests {
 	public void testLambdaDuplicateIdents() throws Exception {
 		final IParseResult result = ff.parseExpression("λx↦(y↦x)·x>y∣ x+y",
 				LanguageVersion.V2, null);
-		assertFailure(result, ProblemKind.SyntaxError);
+		assertFailure(result, new ASTProblem(new SourceLocation(6, 6),
+				ProblemKind.DuplicateIdentifierInPattern, ProblemSeverities.Error, "x"));
 	}
 
 	public void testForallLambdaBoundTwice() throws Exception {
@@ -1205,10 +1231,12 @@ public class TestGenParser extends AbstractTests {
 	}
 
 	public void testBecomesMemberOfList() throws Exception {
+		final ASTProblem becmoError = new ASTProblem(new SourceLocation(4, 5),
+				ProblemKind.BECMOAppliesToOneIdent, ProblemSeverities.Error);
 		assertFailure(ff.parseAssignment("a,b :∈ S", LanguageVersion.V2, null),
-				ProblemKind.SyntaxError);
+				becmoError);
 		assertFailure(ff.parseAssignment("a,b :∈ S,S", LanguageVersion.V2, null),
-				ProblemKind.SyntaxError);
+				becmoError);
 	}
 
 	public void testBecomesSuchThat() throws Exception {
@@ -1310,7 +1338,8 @@ public class TestGenParser extends AbstractTests {
 	
 	public void testPredVarRefused() throws Exception {
 		assertFailure(ff.parsePredicate("$P", LanguageVersion.V2, null),
-				ProblemKind.SyntaxError);
+				new ASTProblem(new SourceLocation(0, 1),
+						ProblemKind.PredicateVariableNotAllowed, ProblemSeverities.Error, "$P"));
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -1453,7 +1482,8 @@ public class TestGenParser extends AbstractTests {
 		// bound identifier name is an operator !
 		final IParseResult result = ff.parsePredicate("∀+·⊤", LanguageVersion.V2, null);
 		System.out.println(result.getParsedPredicate());
-		assertFailure(result, ProblemKind.SyntaxError);
+		assertFailure(result, new ASTProblem(new SourceLocation(1, 1),
+				ProblemKind.UnexpectedSymbol, ProblemSeverities.Error, "an identifier", "+"));
 	}
 	
 	public void testMinusPriority() throws Exception {
@@ -1576,7 +1606,8 @@ public class TestGenParser extends AbstractTests {
 	
 		final IParseResult result = extFac.parseExpression(emax,
 				LanguageVersion.V2, null);
-		assertFailure(result, ProblemKind.SyntaxError);
+		assertFailure(result, new ASTProblem(new SourceLocation(0, 3),
+				ProblemKind.UnexpectedSymbol, ProblemSeverities.Error, "(", "End Of Formula"));
 	}
 	
 	public void testEMax() throws Exception {
@@ -1595,7 +1626,8 @@ public class TestGenParser extends AbstractTests {
 		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
 				.<IFormulaExtension> singleton(EMAX));
 		final IParseResult result = extFac.parseExpression("emax(a)", LanguageVersion.V2, null);
-		assertFailure(result, ProblemKind.SyntaxError);
+		assertFailure(result, new ASTProblem(new SourceLocation(0, 6),
+				ProblemKind.ExtensionPreconditionError, ProblemSeverities.Error));
 	}
 	
 	public void testFunImageConverse() throws Exception {
@@ -1652,5 +1684,29 @@ public class TestGenParser extends AbstractTests {
 								ONE, ZERO, null), null),
 				ZERO, null);
 		doExpressionTest("(1↦0)∼(0)", expected);
+	}
+	
+	public void testGroupCompatibility() throws Exception {
+		final Expression expected = ff.makeBinaryExpression(SETMINUS, FRID_A,
+				ff.makeBinaryExpression(DIV, FRID_B, FRID_c, null), null);
+		doExpressionTest("A ∖ B ÷ c", expected);
+	}
+	
+	public void testIncompatibleEXPN() throws Exception {
+		final ASTProblem expected = new ASTProblem(new SourceLocation(3, 3),
+				ProblemKind.IncompatibleOperators, ProblemSeverities.Error,
+				"^", "^");
+		final IParseResult result = ff.parseExpression("a^b^c", LanguageVersion.V2, null);
+		assertFailure(result, expected);
+		
+	}
+
+	public void testUnexpectedSubFormula() throws Exception {
+		final IParseResult result = ff.parseExpression("a − b ⇒ c",
+				LanguageVersion.V2, null);
+		final ASTProblem expected = new ASTProblem(new SourceLocation(0, 4),
+				ProblemKind.UnexpectedSubFormulaKind, ProblemSeverities.Error,
+				"a predicate", "an expression");
+		assertFailure(result, expected);
 	}
 }

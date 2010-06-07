@@ -19,7 +19,6 @@ import java.util.Map.Entry;
 
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.extension.CycleError;
-import org.eventb.internal.core.parser.GenParser.SyntaxCompatibleError;
 
 /**
  * @author Nicolas Beauger
@@ -182,7 +181,9 @@ public class OperatorRegistry {
 		}
 		
 		public boolean isCompatible(Integer a, Integer b, LanguageVersion version) {
-			return compatibilityRelation.get(version).contains(a, b);
+			return compatibilityRelation.get(version).contains(a, b)
+					|| operatorPriority.contains(a, b)
+					|| operatorPriority.contains(b, a);
 		}
 		
 		@Override
@@ -271,21 +272,38 @@ public class OperatorRegistry {
 		group.addPriority(leftKind, rightKind);
 	}
 
-	private OperatorGroup getAndCheckSameGroup(Integer leftTag, Integer rightTag) {
-		final OperatorGroup leftGroup = kindOpGroup.get(leftTag);
-		final OperatorGroup rightGroup = kindOpGroup.get(rightTag);
+	// FIXME public operations that call this method should throw a caught exception
+	private OperatorGroup getAndCheckSameGroup(Integer leftKind, Integer rightKind) {
+		final OperatorGroup leftGroup = kindOpGroup.get(leftKind);
+		final OperatorGroup rightGroup = kindOpGroup.get(rightKind);
 		if (leftGroup != rightGroup) {
-			throw new IllegalArgumentException("Operators " + leftTag + " and "
-					+ rightTag + " do not belong to the same group");
+			throw new IllegalArgumentException("Operators " + leftKind + " and "
+					+ rightKind + " do not belong to the same group");
 		}
 		return leftGroup;
 	}
 	
 	/**
-	 * <code>true</code> iff priority(tagLeft) < priority(tagRight)
+	 * <code>true</code> iff leftKind and rightKind are incompatible.
+	 */
+	public boolean isCompatible(int leftKind, int rightKind, LanguageVersion version) {
+		final OperatorGroup leftGroup = kindOpGroup.get(leftKind);
+		final OperatorGroup rightGroup = kindOpGroup.get(rightKind);
+		if (leftGroup != rightGroup) {
+			return true;
+		}
+		if (leftGroup == GROUP_0) {
+			// Group0 operators are all compatible with each other
+			return true;
+		}
+		return leftGroup.isCompatible(leftKind, rightKind, version);
+	}
+	
+	/**
+	 * <code>true</code> iff priority(leftKind) < priority(rightKind)
 	 * for the given language version
 	 */
-	public boolean hasLessPriority(int leftKind, int rightKind, LanguageVersion version) throws SyntaxCompatibleError {
+	public boolean hasLessPriority(int leftKind, int rightKind, LanguageVersion version) {
 		// TODO right associativity
 		final OperatorGroup leftGroup = kindOpGroup.get(leftKind);
 		final OperatorGroup rightGroup = kindOpGroup.get(rightKind);
@@ -308,11 +326,13 @@ public class OperatorRegistry {
 			} else if (group.hasLessPriority(rightKind, leftKind)) {
 				return false;
 			} else if (group.isCompatible(leftKind, rightKind, version)) {
-				return false;
-			} else
-				throw new SyntaxCompatibleError("Incompatible symbols: "
-						+ idKind.getKey(leftKind) + " with "
-						+ idKind.getKey(rightKind));
+				return false; // left associativity
+			} else {
+				throw new IllegalArgumentException(
+						"symbols must be checked to be compatible before calling this method: "
+								+ idKind.getKey(leftKind) + " with "
+								+ idKind.getKey(rightKind));
+			}
 		} else {
 			return false;
 		}

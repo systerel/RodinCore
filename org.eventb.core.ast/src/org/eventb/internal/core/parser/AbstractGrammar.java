@@ -21,7 +21,6 @@ import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.extension.CycleError;
 import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
-import org.eventb.internal.core.parser.GenParser.SyntaxCompatibleError;
 
 /**
  * @author Nicolas Beauger
@@ -77,6 +76,7 @@ public abstract class AbstractGrammar {
 		_RPAR = tokens.getOrAdd(")");
 		_COMMA = tokens.getOrAdd(",");
 		
+		reservedImages.put(_EOF, "End Of Formula");
 		opRegistry.addOperator(_EOF, EOF_ID, GROUP0);
 		opRegistry.addOperator(_NOOP, NOOP_ID, GROUP0);
 		opRegistry.addOperator(_OPEN, OPEN_ID, GROUP0);
@@ -157,8 +157,12 @@ public abstract class AbstractGrammar {
 		}
 	}
 	
-	public boolean hasLessPriority(int leftKind, int rightKind, LanguageVersion version) throws SyntaxCompatibleError {
+	public boolean hasLessPriority(int leftKind, int rightKind, LanguageVersion version) {
 		return opRegistry.hasLessPriority(leftKind, rightKind, version);
+	}
+	
+	public boolean isCompatible(int leftKind, int rightKind, LanguageVersion version) {
+		return opRegistry.isCompatible(leftKind, rightKind, version);
 	}
 	
 	public int getEOF() {

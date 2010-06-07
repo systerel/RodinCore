@@ -208,6 +208,7 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 				objects = NO_OBJECT;
 				break;
 
+				// TODO adapt to generic parser problem kinds
 			default:
 
 				problem = ParseProblem.InternalError;

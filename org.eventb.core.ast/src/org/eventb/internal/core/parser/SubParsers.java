@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 
+import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BinaryExpression;
@@ -40,6 +41,8 @@ import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
+import org.eventb.core.ast.ProblemKind;
+import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
@@ -176,7 +179,6 @@ public class SubParsers {
 		
 	}
 
-	// TODO make assignment parser a led parser
 	private static abstract class DefaultLedParser<T, Left, Right> extends AbstractSubParser<T> implements ILedParser<T> {
 
 		private final INudParser<Right> rightParser;
@@ -259,6 +261,7 @@ public class SubParsers {
 
 	}
 
+	// TODO move ident parsers to MainParsers as they are imported there
 	// Takes care of the bindings.
 	static final INudParser<Identifier> IDENT_SUBPARSER = new ValuedNudParser<Identifier>(NO_TAG) {
 
@@ -289,8 +292,9 @@ public class SubParsers {
 		public FreeIdentifier nud(ParserContext pc) throws SyntaxError {
 			final Identifier ident = IDENT_SUBPARSER.nud(pc);
 			if (!(ident instanceof FreeIdentifier)) {
-				throw new SyntaxError("expected a free identifier at position "
-						+ pc.getSourceLocation());
+				throw new SyntaxError(new ASTProblem(ident.getSourceLocation(),
+						ProblemKind.FreeIdentifierExpected,
+						ProblemSeverities.Error));
 			}
 			return (FreeIdentifier) ident;
 		}
@@ -331,8 +335,9 @@ public class SubParsers {
 				return pc.factory.makeIntegerLiteral(value, loc);
 			} catch (NumberFormatException e) {
 				// TODO recover using ZERO ? add a problem instead (=> backtrack on problems)
-				throw new SyntaxError("Expected a number, but was: "
-						+ tokenVal);
+				throw new SyntaxError(new ASTProblem(loc,
+						ProblemKind.IntegerLiteralExpected,
+						ProblemSeverities.Error));
 			}
 		}
 
@@ -349,8 +354,9 @@ public class SubParsers {
 		protected PredicateVariable makeValue(ParserContext pc,
 				String tokenVal, SourceLocation loc) throws SyntaxError {
 			if (!pc.withPredVar) {
-				throw new SyntaxError(
-						"Predicate variables are forbidden in this context");
+				throw new SyntaxError(new ASTProblem(loc,
+						ProblemKind.PredicateVariableNotAllowed,
+						ProblemSeverities.Error, tokenVal));
 			}
 			return pc.factory.makePredicateVariable(tokenVal, loc);
 		}
@@ -367,51 +373,90 @@ public class SubParsers {
 	 */
 	static final ILedParser<Expression> OFTYPE = new ILedParser<Expression>() {
 		
+		private static final String POW_ALPHA = "\u2119(alpha)";
+		private static final String POW_ALPHA_ALPHA = "\u2119(alpha \u00d7 alpha)";
+		private static final String POW_ALPHA_BETA_ALPHA = "\u2119(alpha \u00d7 beta \u00d7 alpha)";
+		private static final String POW_ALPHA_BETA_BETA = "\u2119(alpha \u00d7 beta \u00d7 beta)";
+		
 		public Expression led(Formula<?> left, ParserContext pc) throws SyntaxError {
+			final int tag = left.getTag();
+			if (!isTypedGeneric(tag)) {
+				throw newUnexpectedOftype(pc);
+			}
 			if (!pc.isParenthesized()) {
-				throw new SyntaxError("oftype should appear within parentheses");
+				throw newMissingParenError(pc);
 			}
 			pc.progress();
-			final Expression typedLeft = asExpression(left);
+			
 			final Type right = pc.subParse(TYPE_PARSER);
+			final SourceLocation typeLoc = pc.getSourceLocation();
 			if (pc.t.kind != _RPAR) {
-				throw new SyntaxError("oftype should appear within parentheses");
+				throw newMissingParenError(pc);
 			}
-			return checkAndMakeResult(pc.factory, typedLeft.getTag(), right, pc
-					.getEnclosingSourceLocation());
+			checkValidTypedGeneric(tag, right, typeLoc);
+			return pc.factory.makeAtomicExpression(tag, pc
+					.getEnclosingSourceLocation(), right);
 		}
 
-		private Expression checkAndMakeResult(FormulaFactory factory, int tag,
-				Type type, SourceLocation loc) throws SyntaxError {
+		private boolean isTypedGeneric(int tag) {
 			switch (tag) {
 			case Formula.EMPTYSET:
 			case Formula.KID_GEN:
 			case Formula.KPRJ1_GEN:
 			case Formula.KPRJ2_GEN:
-				if (!isValidTypedGeneric(tag, type)) {
-					throw new SyntaxError("invalid type expression");
-				}
-				return factory.makeAtomicExpression(tag, loc, type);
+				return true;
 			default:
-				throw new SyntaxError("Unexpected oftype");
+				return false;
+			}
+		}
+		
+		private SyntaxError newUnexpectedOftype(ParserContext pc) {
+			return new SyntaxError(new ASTProblem(pc.makeSourceLocation(pc.t),
+					ProblemKind.UnexpectedOftype, ProblemSeverities.Error));
+		}
+		
+		private SyntaxError newMissingParenError(ParserContext pc) {
+			return new SyntaxError(new ASTProblem(pc.makeSourceLocation(pc.t),
+					ProblemKind.OftypeMissingParentheses,
+					ProblemSeverities.Error));
+		}
+
+		
+		private void checkValidTypedGeneric(int tag, Type type,
+				SourceLocation typeLoc) throws SyntaxError {
+			switch (tag) {
+			case Formula.EMPTYSET:
+				if (!(type instanceof PowerSetType)) {
+					throw newInvalidGenType(typeLoc, POW_ALPHA);
+				}
+				break;
+			case Formula.KID_GEN:
+				final Type source = type.getSource();
+				if (!(source != null && source.equals(type.getTarget()))) {
+					throw newInvalidGenType(typeLoc, POW_ALPHA_ALPHA);
+				}
+				break;
+			case Formula.KPRJ1_GEN:
+				if (!isValidPrjType(type, true)) {
+					throw newInvalidGenType(typeLoc, POW_ALPHA_BETA_ALPHA);
+				}
+				break;
+			case Formula.KPRJ2_GEN:
+				if (!isValidPrjType(type, false)) {
+					throw newInvalidGenType(typeLoc, POW_ALPHA_BETA_BETA);
+				}
+				break;
+			default:
+				// tag has already been checked
+				assert false;
 			}
 		}
 
-		private boolean isValidTypedGeneric(int tag, Type type) {
-			switch(tag) {
-			case Formula.EMPTYSET:
-				return (type instanceof PowerSetType);
-			case Formula.KID_GEN:
-				final Type source = type.getSource();
-				return source != null && source.equals(type.getTarget());
-			case Formula.KPRJ1_GEN:
-				return isValidPrjType(type, true);
-			case Formula.KPRJ2_GEN:
-				return isValidPrjType(type, false);
-			default:
-				assert false;
-				return false;
-			}
+		private SyntaxError newInvalidGenType(SourceLocation loc, String expected) {
+			return new SyntaxError(new ASTProblem(loc,
+					ProblemKind.InvalidGenericType,
+					ProblemSeverities.Error,
+					expected));
 		}
 		
 		private boolean isValidPrjType(Type type, boolean left) {
@@ -842,9 +887,9 @@ public class SubParsers {
 				.getExtension(tag);
 		if (!extension.checkPreconditions(children
 				.toArray(new Expression[children.size()]), new Predicate[0])) {
-			throw new SyntaxError(
-					"Preconditions are not fulfilled for operator "
-							+ extension.getId());
+			throw new SyntaxError(new ASTProblem(loc,
+					ProblemKind.ExtensionPreconditionError,
+					ProblemSeverities.Error));
 		}
 		return factory.makeExtendedExpression(extension, children, Collections
 				.<Predicate> emptyList(), loc);
