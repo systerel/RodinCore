@@ -202,7 +202,7 @@ def html_remove_image_history(doc, config):
   doc = re.sub(r'<h2>Image links</h2>[\s\S]+?</ul>', r'', doc)
   return doc
 
-def gen_xml_toc(doc, config, one_page=False,  doc_filename=None):
+def gen_xml_toc(doc, config, one_page=False, doc_filename=None):
     """
     Generate XML toc for eclipse documentation plugin
 
@@ -218,7 +218,8 @@ def gen_xml_toc(doc, config, one_page=False,  doc_filename=None):
     if not out_dir_base:
         out_dir_base = os.path.basename(config.outdir[:-1])
 
-    if 'class="topic"' in doc:
+    # Force one_page for page having no ''topic'' elements
+    if not 'class="topic"' in doc:
         one_page = True
 
     logging.debug("one_page : %s, doc_filename: %s\n" % (one_page,
@@ -237,8 +238,8 @@ def gen_xml_toc(doc, config, one_page=False,  doc_filename=None):
 
     title = re.search(r'<title>%s</title>' % title_extract_re,
             doc).group(1)
-    filename = path_to_filename("", title+".xml",config)
-    logging.info("Writting %s\n"%filename)
+    filename = os.path.splitext(doc_filename)[0] + '.xml'
+    logging.info("Writing %s\n"%filename)
 
 
     logging.info("Generate %s file" % filename)
@@ -261,7 +262,8 @@ def gen_xml_toc(doc, config, one_page=False,  doc_filename=None):
         toc += '%s<topic label="%s" href="%s%s">\n' % (' ' * l,
                 m.group(3).strip(), where_base,  m.group(1))
         if not one_page:
-            toc += '<link toc="%s.xml" />' % os.path.splitext(m.group(1))[0]
+            toc += '%s<link toc="%s.xml" />' % (' ' * (l+1),
+                    os.path.splitext(m.group(1))[0] )
         level = l
 
     for l in range(level, first_level-1, -1):
@@ -814,7 +816,8 @@ def run(config, out=sys.stdout):
     else: 
         one_page = True
 
-    #if url.endswith(".html"): #TODO prendre aussi les pages sans extension
+    
+    # Generate XML TOC only for textual pages.
     if not "/skins/" in url and not '/images/' in url:
         gen_xml_toc(doc, config, one_page, filename)
 
