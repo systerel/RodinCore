@@ -55,10 +55,14 @@ public class FunOvr extends AbstractManualInference implements IVersionedReasone
 			predicate = seq.goal();
 
 		final Formula<?> subFormula = predicate.getSubFormula(position);
-		
+		if (subFormula == null) {
+			return null; // reasoner failure
+		}
+
 		// "subFormula" should have the form (f <+ ... <+ g)(G)
-		if (!isApplicable(subFormula))
+		if (!Tactics.isFunOvrApp(subFormula)) {
 			return null;
+		}
 		
 		// There will be 2 antecidents
 		final IAntecedent[] antecidents = new IAntecedent[2];
@@ -93,14 +97,6 @@ public class FunOvr extends AbstractManualInference implements IVersionedReasone
 		}
 		
 		return antecidents;
-	}
-
-	@Override
-	protected boolean isExpressionApplicable(Expression expression) {
-		if (expression == null){
-			return false;
-		}
-		return Tactics.isFunOvrApp(expression);
 	}
 
 	private IAntecedent createNotInDomAntecident(Predicate sourcePred,
