@@ -1,12 +1,30 @@
 = HOWTO generate documentation =
 
-== Rodin User Manual =
-python mw2html.py  -f -r"Rodin_User_Manual" -R'Index \(([^<]*)\) - Event-B'  "http://wiki.event-b.org/index.php/Index_(Rodin_User_Manual)" /home/clabaut/workspace/org.eventb.doc.user/html/ 
-== Rodin Tutorial =
-python mw2html.py  -f -r"Rodin_Tutorial" -R'Index \(([^<]*)\) - Event-B'  "http://wiki.event-b.org/index.php/Index_(Rodin_Tutorial)" /home/clabaut/workspace/org.eventb.doc.user/html/
+Eclipse help files may be generated either from a set of page and a content
+page or from a single page.
+
+== For Manuals Made of Several Pages ==
+Those pages are made with ''Navigation'' and ''Topic'' templates on event-b mediawiki. The
+topic template is mandatory and is used to elaborate the TOC xml file.
+
+=== Rodin User Manual Example ===
+python mw2html.py  -f -r"Rodin_User_Manual" -R'Index \(([^<]*)\) - Event-B' "http://wiki.event-b.org/index.php/Index_(Rodin_User_Manual)" $HOME/workspace/org.eventb.doc.user/html/ 
+
+=== Rodin Tutorial Example ===
+python mw2html.py  -f -r"Rodin_Tutorial" -R'Index \(([^<]*)\) - Event-B' "http://wiki.event-b.org/index.php/Index_(Rodin_Tutorial)" $HOME/workspace/org.eventb.doc.user/html/
+
+== For Manuals Made of a Single Pages ==
+The --one-page option shall be passed to the script which will infer the
+TOC xml file from the <h2> and <h3> html tags.
+
 
 = HOWTO write documentation =
-TODO
+See example on
+http://wiki.event-b.org/index.php?title=Index_(Rodin_User_Manual)&action=edit
+or http://wiki.event-b.org/index.php/Index_(Rodin_Tutorial)&action=edit
+
+See also template pages on http://wiki.event-b.org/index.php/Template:Topic and
+http://wiki.event-b.org/index.php/Template:Navigation.
 
 = mw2html help =
 
@@ -31,11 +49,15 @@ WARNING: This is a recursive robot that ignores robots.txt.  Use with care.
   --no-remove-history  - Retain image history and links to information.
   --no-images          - Do not fetch images.
   --no-image-dir       - Store image in the same directory tha html.
+  --one-page           - Only treat one page
   -l, --left=a.html    - Paste HTML fragment file into left sidebar.
   -t, --top=a.html     - Paste HTML fragment file into top horiz bar.
   -b, --bottom=a.html  - Paste HTML fragment file into footer horiz bar.
   -i, --index=filename - Move given filename in outdir to index.html.
-  -r, --url-regex=re   - Only follow url matching the regex.
+  -r, --title-regex=re - Only follow url matching the regex.
+  -R, --title-extract-re
+                         - regex used to extract TOC titles from <title> elmt.
+                           Default to '([^<]*) - Event-B'
   -v, --verbose        - Show more informations.
   -d, --debug          - Show debugging informations.
   -q, --quiet          - Only show critical errors.

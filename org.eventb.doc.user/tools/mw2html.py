@@ -49,14 +49,16 @@ class Config:
   """
   Instances contain all options passed at the command line.
   """
+  default_title_extract_re = r'([^<]*) - Event-B'
   def __init__(self, rooturl, outdir,
                flatten=True, lower=True, index=None, clean=True,
                sidebar=None, hack_skin=True, fetch_images=True,
                made_by=True, overwrite=False, footer=None,
                skin=MONOBOOK_SKIN, move_href=True, image_dir = True,
+               one_page=False,
                remove_png=True, remove_history=True,url_regex=None,
                verbose=logging.WARNING,
-               title_extract_re = r'([^<]*) - Event-B'
+               title_extract_re = None
                ):
     self.rooturl         = rooturl
     self.outdir          = os.path.abspath(outdir)
@@ -72,16 +74,21 @@ class Config:
     self.skin            = skin
     self.move_href       = move_href
     self.url_regex       = url_regex
-    self.title_extract_re = title_extract_re
+    if title_extract_re:
+        self.title_extract_re = title_extract_re
+    else:
+        self.title_extract_re = self.default_title_extract_re
+
     if self.sidebar is not None:
-      self.sidebar       = os.path.abspath(self.sidebar)
+        self.sidebar       = os.path.abspath(self.sidebar)
     if self.footer is not None:
-      self.footer        = os.path.abspath(self.footer)
+        self.footer        = os.path.abspath(self.footer)
     self.remove_png      = remove_png
     self.remove_history  = remove_history
     self.verbose         = verbose
     self.fetch_images    = fetch_images
     self.image_dir       = image_dir
+    self.one_page        = one_page
 
 
 def post_filename_transform(filename, config):
@@ -195,27 +202,71 @@ def html_remove_image_history(doc, config):
   doc = re.sub(r'<h2>Image links</h2>[\s\S]+?</ul>', r'', doc)
   return doc
 
-def gen_xml_toc(doc,config):
+def gen_xml_toc(doc, config, one_page=False,  doc_filename=None):
     """
     Generate XML toc for eclipse documentation plugin
+
+    :one_page: says if the TOC shall be build by the page headers. If false
+               the TOC is built from the *topic* class elements.
+    :doc_filename: is the file name in which *doc* will be saved.
     """
+
     toc ="""<?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
 """
+    out_dir_base = os.path.basename(config.outdir)
+    if not out_dir_base:
+        out_dir_base = os.path.basename(config.outdir[:-1])
 
-    #title=re.search(r'<title>Index \(([^<]*)\) - Event-B</title>',doc).group(1)
-    title=re.search(r'<title>%s</title>' % config.title_extract_re,
+    if 'class="topic"' in doc:
+        one_page = True
+
+    logging.debug("one_page : %s, doc_filename: %s\n" % (one_page,
+        doc_filename))
+    # Some set up depending on one_page
+    if one_page:
+        topic=re.compile(r'<a name="([^"]*)"></a><h([2-9])>\s*<span class="mw-headline">([^<]*)</span></h[2-9]>',re.UNICODE)
+        where_base = "%s/%s#" % (out_dir_base, os.path.basename(doc_filename))
+        title_extract_re = config.default_title_extract_re
+    else:
+        topic=re.compile(r'<div class="topic" style="display:inline;"><a href="([^"]*)"(0*)[^>]*>([^<]*)</a></div>',re.UNICODE)
+        where_base = "%s/" % out_dir_base
+        title_extract_re = config.title_extract_re
+
+
+
+    title = re.search(r'<title>%s</title>' % title_extract_re,
             doc).group(1)
-    filename=path_to_filename("", title+".xml",config)
+    filename = path_to_filename("", title+".xml",config)
+    logging.info("Writting %s\n"%filename)
+
 
     logging.info("Generate %s file" % filename)
+
+
     toc += '<toc label="'+title+'">\n'
-    topic=re.compile(r'<div class="topic" style="display:inline;"><a href="([^"]*)"[^>]*>([^<]*)</a></div>',re.UNICODE)
+
+    # we expect a first heading level for h2
+    first_level = 2
+    level = first_level - 1
 
     for m in topic.finditer(doc):
-      logging.debug("Found topic %s : %s" % (m.group(2),m.group(1)))
-      toc+='  <topic label="'+ m.group(2) +'" href="html/'+ m.group(1) + '">'
-      toc+='</topic>\n'
+        logging.debug("Found topic <h%s> %s : %s" % (m.group(2), m.group(3),m.group(1)))
+        try:
+            l = int(m.group(2))
+        except:
+            l = 2
+        if l <= level:
+            toc += '%s</topic>\n' % (' '*l)
+        toc += '%s<topic label="%s" href="%s%s">\n' % (' ' * l,
+                m.group(3).strip(), where_base,  m.group(1))
+        if not one_page:
+            toc += '<link toc="%s.xml" />' % os.path.splitext(m.group(1))[0]
+        level = l
+
+    for l in range(level, first_level-1, -1):
+        toc+='%s</topic>\n' % (' '*l)
+
     toc += "</toc>\n"
 
     f = open(filename, 'w')
@@ -758,8 +809,14 @@ def run(config, out=sys.stdout):
     f.write(doc)
     f.close()
 
-    if url is config.rooturl:
-        gen_xml_toc(doc,config)
+    if url is config.rooturl and not config.one_page:
+        one_page = False
+    else: 
+        one_page = True
+
+    #if url.endswith(".html"): #TODO prendre aussi les pages sans extension
+    if not "/skins/" in url and not '/images/' in url:
+        gen_xml_toc(doc, config, one_page, filename)
 
     out.write(url + '\n => ' + filename + '\n\n')
     n += 1
@@ -793,6 +850,7 @@ def usage():
     --no-remove-history  - Retain image history and links to information.
     --no-images          - Do not fetch images.
     --no-image-dir       - Store image in the same directory tha html.
+    --one-page           - Only treat one page
     -l, --left=a.html    - Paste HTML fragment file into left sidebar.
     -t, --top=a.html     - Paste HTML fragment file into top horiz bar.
     -b, --bottom=a.html  - Paste HTML fragment file into footer horiz bar.
@@ -838,6 +896,7 @@ def main():
                     'top=', 'bottom=', 'index=', 'no-move-href',
                     'no-remove-png', 'no-images', 'no-remove-history',
                     'title-regex=', 'no-image-dir', 'title-extract-re=',
+                    'one-page',
                     'verbose', 'debug', 'quiet'])
   except getopt.GetoptError:
     usage()
@@ -867,6 +926,8 @@ def main():
       config.fetch_images   = False
     if opt in ['--no-image-dir']:
       config.image_dir   = False
+    if opt in ['--one-page']:
+      config.one_page   = True
     if opt in ['--no-move-href']:
       config.move_href      = False
     if opt in ['--no-remove-png']:
@@ -893,6 +954,8 @@ def main():
     if opt in ['-q', '--quiet']:
       config.verbose          = logging.CRITICAL
 
+  if config.one_page:
+      config.url_regex = config.rooturl
   loggerInit(config)
   # Run program
   run(config)
