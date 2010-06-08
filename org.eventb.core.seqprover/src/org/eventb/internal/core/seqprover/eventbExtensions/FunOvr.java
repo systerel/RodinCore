@@ -56,7 +56,7 @@ public class FunOvr extends AbstractManualInference implements IVersionedReasone
 
 		final Formula<?> subFormula = predicate.getSubFormula(position);
 		if (subFormula == null) {
-			return null; // reasoner failure
+			return null; // invalid position: reasoner failure
 		}
 
 		// "subFormula" should have the form (f <+ ... <+ g)(G)
