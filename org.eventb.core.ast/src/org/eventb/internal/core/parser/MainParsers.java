@@ -331,7 +331,11 @@ public class MainParsers {
 	static List<BoundIdentDecl> makePrimedDecl(List<FreeIdentifier> lhsList, FormulaFactory factory) {
 		final List<BoundIdentDecl> decls = new ArrayList<BoundIdentDecl>(lhsList.size());
 	    for (FreeIdentifier ident: lhsList) {
-			decls.add(ident.asPrimedDecl(factory));
+			if (ident.isPrimed()) {
+				decls.add(ident.asDecl(factory));
+			} else {
+				decls.add(ident.asPrimedDecl(factory));
+			}
 		}
 		return decls;
 	}
