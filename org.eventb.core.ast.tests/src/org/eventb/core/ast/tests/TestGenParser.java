@@ -1606,7 +1606,7 @@ public class TestGenParser extends AbstractTests {
 	
 		final IParseResult result = extFac.parseExpression(emax,
 				LanguageVersion.V2, null);
-		assertFailure(result, new ASTProblem(new SourceLocation(0, 3),
+		assertFailure(result, new ASTProblem(new SourceLocation(3, 3),
 				ProblemKind.UnexpectedSymbol, ProblemSeverities.Error, "(", "End Of Formula"));
 	}
 	
@@ -1709,4 +1709,21 @@ public class TestGenParser extends AbstractTests {
 				"a predicate", "an expression");
 		assertFailure(result, expected);
 	}
+	
+	public void testEmptyFormula() throws Exception {
+		final IParseResult result = ff.parseExpression("",
+				LanguageVersion.V2, null);
+		final ASTProblem expected = new ASTProblem(new SourceLocation(0, 0),
+				ProblemKind.PrematureEOF, ProblemSeverities.Error);
+		assertFailure(result, expected);
+	}
+	
+	public void testPrematureEOF() throws Exception {
+		final IParseResult result = ff.parseExpression("1+",
+				LanguageVersion.V2, null);
+		final ASTProblem expected = new ASTProblem(new SourceLocation(1, 1),
+				ProblemKind.PrematureEOF, ProblemSeverities.Error);
+		assertFailure(result, expected);
+	}
+	
 }
