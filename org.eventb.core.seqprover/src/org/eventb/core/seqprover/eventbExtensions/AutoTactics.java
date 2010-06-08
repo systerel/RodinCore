@@ -479,10 +479,10 @@ public class AutoTactics {
 			return success;
 		}
 	}
-	
+
 	/**
-	 * Simplifies goals of the form 'A <<| f(C)' where f is of type 'partial
-	 * function'.
+	 * Simplifies expressions of form '(A <<| f)(C)' and similar, where f is
+	 * known as a partial function.
 	 * 
 	 * @author Thomas Muller
 	 * @since 1.3
