@@ -3586,7 +3586,9 @@ public class Tactics {
 	 * @return the tactic "Functional Image Simplification"
 	 * 
 	 * @since 1.3
+	 * @deprecated Use other method with same name
 	 */
+	@Deprecated
 	public static ITactic funImgSimplifies(IPosition position) {
 		return BasicTactics.reasonerTac(new FunImgSimplifies(),
 				new Input(null, position));
@@ -3618,7 +3620,9 @@ public class Tactics {
 	 * @return a set of positions (empty if the tactic is not applicable)
 	 *
  	 * @since 1.3
+	 * @deprecated Use other method with same name
 	 */
+	@Deprecated
 	public static List<IPosition> funImgSimpGetPositions(IProverSequent sequent) {
 		return FunImgSimpImpl.getApplicablePositions(null, sequent);
 	}
