@@ -21,7 +21,7 @@ public class PrefixComputerTests extends EventBUITest {
 
 	private void doPrefixTest(String toComplete, int position,
 			String expectedPrefix) {
-		final PrefixComputer pc = new PrefixComputer(toComplete, position);
+		final PrefixComputer pc = new PrefixComputer(toComplete, position, ff);
 		final String prefix = pc.getPrefix();
 		assertEquals("bad prefix", expectedPrefix, prefix);
 	}

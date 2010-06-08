@@ -29,7 +29,6 @@ import org.eventb.core.IPOStampedElement;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPRRoot;
 import org.eventb.core.IPSRoot;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.ui.proofpurger.ProofPurger;
 import org.eventb.ui.tests.utils.EventBUITest;
@@ -45,7 +44,6 @@ public class ProofPurgerTests extends EventBUITest {
 
 	private static final String EMPTY = "empty";
 
-	private static final FormulaFactory ff = FormulaFactory.getDefault();
 	private static final Predicate GOAL = ff.makeLiteralPredicate(BTRUE, null);
 
 	private static final String PO1 = "PO1";
