@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,10 @@ public class ProofComponentTests extends AbstractProofTests {
 
 	protected static final String NO_PO = "NO_PO"; //$NON-NLS-1$
 
+	private static final String[] PO_NAMES = new String[] { PO1, PO2, PO3,
+			NO_PO };
+	private static final String[] OWNERS = new String[] { TEST, OTHER };
+
 	private IMachineRoot mchroot;
 	private ISCMachineRoot scRoot;
 	private IPORoot poRoot;
@@ -62,6 +66,12 @@ public class ProofComponentTests extends AbstractProofTests {
 			final String name = pa.getName();
 			assertEquals(filter(expSet, name), pc.getProofAttempts(name));
 		}
+		for (final String poName : PO_NAMES) {
+			for (final String owner : OWNERS) {
+				assertEquals(filter(expSet, poName, owner),//
+						pc.getProofAttempt(poName, owner));
+			}
+		}
 	}
 
 	private void createPOFile() throws RodinDBException {
@@ -80,6 +90,15 @@ public class ProofComponentTests extends AbstractProofTests {
 			}
 		}
 		return res;
+	}
+
+	private IProofAttempt filter(Set<IProofAttempt> set, String poName,
+			String owner) {
+		for (final IProofAttempt pa : set) {
+			if (poName.equals(pa.getName()) && owner.equals(pa.getOwner()))
+				return pa;
+		}
+		return null;
 	}
 
 	@Override

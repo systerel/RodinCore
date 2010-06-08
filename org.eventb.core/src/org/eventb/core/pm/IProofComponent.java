@@ -128,6 +128,21 @@ public interface IProofComponent {
 	IProofAttempt[] getProofAttempts(String poName);
 
 	/**
+	 * Returns the proof attempt that has been created for the given proof
+	 * obligation and owner, and not disposed so far. No attempt is made to
+	 * check whether the given proof obligation actually exists.
+	 * 
+	 * @param poName
+	 *            name of a proof obligation of this component
+	 * @param owner
+	 *            name of the owner of the proof attempt to retrieve
+	 * 
+	 * @return the live proof attempt for the given proof obligation and owner,
+	 *         or <code>null</code> if no such proof attempt exists
+	 */
+	IProofAttempt getProofAttempt(String poName, String owner);
+
+	/**
 	 * Returns the proof corresponding to the given proof obligation as a proof
 	 * skeleton. The result is read from the proof file of this component.
 	 * <p>
