@@ -14,11 +14,7 @@
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.LanguageVersion.LATEST;
-import static org.eventb.core.ast.ProblemKind.InvalidTypeExpression;
-import static org.eventb.core.ast.ProblemKind.LexerError;
-import static org.eventb.core.ast.ProblemKind.PredicateVariableNotAllowed;
-import static org.eventb.core.ast.ProblemKind.SyntaxError;
-import static org.eventb.core.ast.ProblemKind.UnexpectedLPARInDeclList;
+import static org.eventb.core.ast.ProblemKind.*;
 import static org.eventb.core.ast.ProblemSeverities.Error;
 import static org.eventb.core.ast.ProblemSeverities.Warning;
 
@@ -122,36 +118,37 @@ public class TestErrors extends AbstractTests {
 	public void testParseErrors() {
 				doParseTest(new PredTestItem(
 						"finite(\u03bb x\u21a6(y\u21a6s)\u00b7\u22a5\u2223z",
-						new ASTProblem(new SourceLocation(20, 20), SyntaxError,
-								Error, "RPAR expected")));
+						new ASTProblem(new SourceLocation(0, 19), UnexpectedSymbol,
+								Error, ")", "End Of Formula")));
 				doParseTest(new PredTestItem(
 						"\u03bb x\u21a6(y\u21a6s)\u00b7\u22a5\u2223z",
-						new ASTProblem(new SourceLocation(0, 1), SyntaxError,
-								Error, "invalid SimpleExpr")));
+						new ASTProblem(new SourceLocation(0, 12), UnexpectedSubFormulaKind,
+								Error, "a predicate", "an expression")));
 				doParseTest(new PredTestItem(
 						"finite(\u03bb x\u21a6y\u21a6s)\u00b7\u22a5\u2223z)",
-						new ASTProblem(new SourceLocation(14, 15), SyntaxError,
-								Error, "QDOT expected")));
+						new ASTProblem(new SourceLocation(14, 14), UnexpectedSymbol,
+								Error, "·", ")")));
 				doParseTest(new PredTestItem(
 						"∀(x)·x∈ℤ",
-						new ASTProblem(new SourceLocation(1, 1), UnexpectedLPARInDeclList,
-								Error)));
+						new ASTProblem(new SourceLocation(1, 1), UnexpectedSymbol,
+								Error, "an identifier", "(")));
 				doParseTest(new PredTestItem(
 						"∀(x,y)·x∈ℤ ∧ y∈ℤ",
-						new ASTProblem(new SourceLocation(1, 1), UnexpectedLPARInDeclList,
-								Error)));
+						new ASTProblem(new SourceLocation(1, 1), UnexpectedSymbol,
+								Error, "an identifier", "(")));
 				doParseTest(new PredTestItem(
 						"s ∈ (∅ \u2982 S)",
-						new ASTProblem(new SourceLocation(9, 9), InvalidTypeExpression,
-								Error)));
+						new ASTProblem(new SourceLocation(5, 9), InvalidGenericType,
+								Error, "ℙ(alpha)")));
 				doParseTest(new PredTestItem(
 						"x∈$P",
-						new ASTProblem(new SourceLocation(2, 4), SyntaxError,
-								Error, "invalid SimpleExpr")));
+						new ASTProblem(new SourceLocation(2, 3), PredicateVariableNotAllowed,
+								Error, "$P")));
 				doParseTest(new PredTestItem(
 						"$P",
 						new ASTProblem(new SourceLocation(0, 1), PredicateVariableNotAllowed,
 								Error, "$P")));
+				// FIXME test other errors
 	// TODO check how it could be extended to quantified expressions
 //								"finite(⋃(x)·(x⊆ℤ ∣ x))",
 //								new ASTProblem(new SourceLocation(5,5), ProblemKind.UnexpectedLPARInDeclList, ProblemSeverities.Error),
