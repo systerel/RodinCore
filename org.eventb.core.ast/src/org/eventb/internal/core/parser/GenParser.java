@@ -163,24 +163,30 @@ public class GenParser {
 			if (startPos.val < 0) {
 				throw new IllegalStateException("no start position set");
 			}
-			return new SourceLocation(startPos.val, endPos, result.getOrigin());
+			return makeSourceLocation(startPos.val, endPos);
 		}
 		
 		public SourceLocation getEnclosingSourceLocation() {
 			if (startPos.val < 0) {
 				throw new IllegalStateException("no start position set");
 			}
-			return new SourceLocation(startPos.peekStack(), t.getEnd(), result.getOrigin());
+			return makeSourceLocation(startPos.peekStack(), t.getEnd());
 		}
 
 		public SourceLocation makeSourceLocation(Token token) {
-			final int start;
-			if (token.pos > token.getEnd()) {
-				start = 0;
-			} else {
-				start = token.pos;
-			}
-			return new SourceLocation(start, token.getEnd(), result.getOrigin());
+			return makeSourceLocation(token.pos, token.getEnd());
+		}
+
+		private SourceLocation makeSourceLocation(int start, int end) {
+			// a source location may occur at the very beginning of the formula
+			// (empty formula for instance would be 0:-1)
+			end = Math.max(0, end);
+			
+			// a source location may occur at the very end of the formula
+			// (EOF for instance would be fml.length:fml.length-1)
+			start = Math.min(end, start);
+			
+			return new SourceLocation(start, end, result.getOrigin());
 		}
 
 		public void init() {
