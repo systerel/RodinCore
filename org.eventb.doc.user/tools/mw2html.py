@@ -609,14 +609,7 @@ def rewrite_external_url(url, config):
 
   To not rewrite any external URLs, simply return url.
   """
-  # If could not be stored locally, but in same domain, and not in the
-  # selected URLS return ''.
-  if get_domain(url) == get_domain(config.rooturl):
-    if config.url_regex != None:
-        r = re.compile(r'%s' % config.url_regex, re.UNICODE|re.M)
-        if r.search(url):
-            return url
-    return ''
+  # Do not nullify other URL inside the fetched domain
   return url
 
 
