@@ -10,6 +10,7 @@
  *     Systerel - ensure that all AST problems are reported
  *     Systerel - ensure that all AST problems are reported
  *     Systerel - got factory from repository
+ *     Systerel - adapted to parser 2.0 problem kinds
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -139,12 +140,6 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 				objects = new Object[] { args[0] };
 				break;
 
-			case BoundIdentifierIndexOutOfBounds:
-				// internal error
-				problem = ParseProblem.InternalError;
-				objects = NO_OBJECT;
-				break;
-
 			case Circularity:
 				problem = ParseProblem.CircularityError;
 				objects = NO_OBJECT;
@@ -158,28 +153,6 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 
 			case LexerError:
 				problem = ParseProblem.LexerError;
-				objects = new Object[] { args[0] };
-				break;
-
-			case LexerException:
-				// internal error
-				problem = ParseProblem.InternalError;
-				objects = NO_OBJECT;
-				break;
-
-			case ParserException:
-				// internal error
-				problem = ParseProblem.InternalError;
-				objects = NO_OBJECT;
-				break;
-
-			case SyntaxError:
-
-				// TODO: prepare detailed error messages "args[0]" obtained from
-				// the parser for
-				// internationalisation
-
-				problem = ParseProblem.SyntaxError;
 				objects = new Object[] { args[0] };
 				break;
 

@@ -394,9 +394,9 @@ public class MainParsers {
 			} else {
 				throw new SyntaxError(new ASTProblem(pc
 						.makeSourceLocation(tokenAfterIdents),
-						ProblemKind.SyntaxError,
-						ProblemSeverities.Error,
-						"unknown assignment operator")); // FIXME when switching to led parsing, this disappears
+						ProblemKind.UnknownOperator, ProblemSeverities.Error,
+						tokenAfterIdents + " (as assignment operator)"));
+				// FIXME when switching to led parsing, this disappears
 			}
 		}
 		

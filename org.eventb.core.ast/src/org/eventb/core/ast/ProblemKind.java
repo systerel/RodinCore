@@ -42,36 +42,11 @@ public enum ProblemKind {
 	 * Argument 0 is the name of the variable.
 	 */
 	BoundIdentifierIsAlreadyBound ("%1$s is bound twice"),
-	/**
-	 * No argument.
-	 */
-	BoundIdentifierIndexOutOfBounds ("Bound ident has no corresponding quantifier"),
-	
-	
-	/**
-	 * Argument 0 is the name of the variable.
-	 */
-	SyntaxError ("Syntax error: %1$s"),
-	/**
-	 * No argument.
-	 */
-	UnexpectedLPARInDeclList("Unexpected left parenthesis "
-			+ "in bound identifier declaration"),	
-	/**
-	 * Argument 0 is the name of the variable.
-	 */
-	ParserException ("Parser exception: %1$s"),
 	
 	/**
 	 * Argument 0 is the contents of the token.
 	 */
 	LexerError ("Lexer error, character '%1$s' has been ignored."),
-	
-	/**
-	 * No argument.
-	 */
-	LexerException ("Lexer exception"),
-	
 	
 	/**
 	 * Argument 0 is the name of the first type, argument 1 is the name of the second type.
@@ -234,8 +209,8 @@ public enum ProblemKind {
 	;
 
 	/**
-	 * Returns a compound message from the given list of messages, indented with
-	 * 2 spaces.
+	 * Returns a compound message from the given list of messages. Every single
+	 * message is placed on a new line, indented with 2 spaces.
 	 * 
 	 * @param problems
 	 *            a list of messages
