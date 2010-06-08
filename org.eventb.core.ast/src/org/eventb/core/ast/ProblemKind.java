@@ -166,6 +166,12 @@ public enum ProblemKind {
 	ExtensionPreconditionError("Preconditions for this extended operator are not fulfilled"),
 	
 	/**
+	 * No argument.
+	 * @since 2.0
+	 */
+	PrematureEOF("Premature End Of Formula"),
+	
+	/**
 	 * Argument 0 is the name of the duplicate identifier.
 	 * @since 2.0
 	 */

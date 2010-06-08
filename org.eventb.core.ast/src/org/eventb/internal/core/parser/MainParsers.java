@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
+import static org.eventb.core.ast.ProblemKind.PrematureEOF;
 import static org.eventb.internal.core.parser.AbstractGrammar.*;
 import static org.eventb.internal.core.parser.BMath.*;
 import static org.eventb.internal.core.parser.SubParsers.BOUND_IDENT_DECL_SUBPARSER;
@@ -96,8 +97,13 @@ public class MainParsers {
 		
 		protected static SyntaxError newOperatorError(ParserContext pc,
 				ProblemKind problemKind) {
-			return new SyntaxError(new ASTProblem(pc.makeSourceLocation(pc.t),
-					problemKind, ProblemSeverities.Error, pc.t.val));
+			final SourceLocation srcLoc = pc.makeSourceLocation(pc.t);
+			if (pc.t.kind == _EOF) {
+				return new SyntaxError(new ASTProblem(srcLoc, PrematureEOF,
+						ProblemSeverities.Error));
+			}
+			return new SyntaxError(new ASTProblem(srcLoc, problemKind,
+					ProblemSeverities.Error, pc.t.val));
 		}
 
 		// errors must be non empty 
