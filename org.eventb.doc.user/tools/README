@@ -17,6 +17,10 @@ python mw2html.py  -f -r"Rodin_Tutorial" -R'Index \(([^<]*)\) - Event-B' "http:/
 The --one-page option shall be passed to the script which will infer the
 TOC xml file from the <h2> and <h3> html tags.
 
+For example:
+
+   python mw2html.py  --one-page -f "http://wiki.event-b.org/index.php/Decomposition_Plug-in_User_Guide" $HOME/workspace/org.eventb.doc.user/html/
+
 
 = HOWTO write documentation =
 See example on
