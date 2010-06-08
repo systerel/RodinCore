@@ -1726,4 +1726,12 @@ public class TestGenParser extends AbstractTests {
 		assertFailure(result, expected);
 	}
 	
+	public void testUnmatchedTokens() throws Exception {
+		final IParseResult result = ff.parseExpression("1+2 abc",
+				LanguageVersion.V2, null);
+		final ASTProblem expected = new ASTProblem(new SourceLocation(4, 6),
+				ProblemKind.UnmatchedTokens, ProblemSeverities.Error);
+		assertFailure(result, expected);
+	}
+	
 }
