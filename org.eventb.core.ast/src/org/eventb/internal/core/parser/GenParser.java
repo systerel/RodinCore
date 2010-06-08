@@ -177,7 +177,7 @@ public class GenParser {
 			return makeSourceLocation(token.pos, token.getEnd());
 		}
 
-		private SourceLocation makeSourceLocation(int start, int end) {
+		public SourceLocation makeSourceLocation(int start, int end) {
 			// a source location may occur at the very beginning of the formula
 			// (empty formula for instance would be 0:-1)
 			end = Math.max(0, end);
@@ -488,13 +488,7 @@ public class GenParser {
 				throw new IllegalArgumentException("Can only parse one of: Predicate, Expression, Assignment or Type.");
 			}
 			if (pc.t.kind != _EOF) {
-				final int startPos = pc.t.pos;
-				do {
-					pc.progress();
-				} while (pc.t.kind != _EOF);
-				processFailure(new ASTProblem(new SourceLocation(startPos,
-						pc.t.pos, result.getOrigin()),
-						ProblemKind.UnmatchedTokens, ProblemSeverities.Error));
+				failUnmatchedTokens(pc);
 			}
 			// TODO remove above debug check when stable
 			if (DEBUG) {
@@ -512,6 +506,16 @@ public class GenParser {
 			processFailure(e.getProblem());
 		}
 
+	}
+
+	private void failUnmatchedTokens(ParserContext pc) {
+		final int startPos = pc.t.pos;
+		while (pc.la.kind != _EOF) {
+			pc.progress();
+		}
+		processFailure(new ASTProblem(pc.makeSourceLocation(startPos, pc.t
+				.getEnd()), ProblemKind.UnmatchedTokens,
+				ProblemSeverities.Error));
 	}
 
 	private void processFailure(ASTProblem problem) {
