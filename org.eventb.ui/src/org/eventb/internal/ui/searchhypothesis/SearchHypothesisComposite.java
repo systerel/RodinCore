@@ -68,12 +68,7 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 	 */
 	public SearchHypothesisComposite(IUserSupport userSupport,
 			ProverUI proverUI) {
-		// Create a hypothesis composite which listens to the changes for:
-		// Current Proof Tree Node, changes in the Proof Tree itself and changes
-		// for the search.
-		super(userSupport, IProofStateDelta.F_NODE
-				| IProofStateDelta.F_PROOFTREE | IProofStateDelta.F_SEARCH,
-				proverUI);
+		super(userSupport, IProofStateDelta.F_SEARCH, proverUI);
 	}
 
 	/*
