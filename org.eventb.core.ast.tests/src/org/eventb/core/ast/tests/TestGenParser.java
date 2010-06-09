@@ -925,6 +925,9 @@ public class TestGenParser extends AbstractTests {
 		final ASTProblem dotExpected = new ASTProblem(new SourceLocation(4, 4),
 				ProblemKind.UnexpectedSymbol, ProblemSeverities.Error, "·", "∣");
 
+		final ASTProblem oftypeParen = new ASTProblem(new SourceLocation(2, 2),
+				ProblemKind.OftypeMissingParentheses, ProblemSeverities.Error);
+
 		final ASTProblem identOrOftype = new ASTProblem(
 				new SourceLocation(0, 0), ProblemKind.VariousPossibleErrors,
 				ProblemSeverities.Error,
@@ -935,7 +938,7 @@ public class TestGenParser extends AbstractTests {
 				new SourceLocation(0, 0), ProblemKind.VariousPossibleErrors,
 				ProblemSeverities.Error,
 				ProblemKind.makeCompoundMessage(asList(dotExpected,
-						errorOftype)));
+						oftypeParen)));
 		assertFailure(ff.parseExpression("{(x⦂ℤ)∣ ⊤}", LanguageVersion.V2, null), identOrOftype);
 		assertFailure(ff.parseExpression("{x⦂ℤ∣ ⊤}", LanguageVersion.V2, null), dotOrOftype);
 	}
