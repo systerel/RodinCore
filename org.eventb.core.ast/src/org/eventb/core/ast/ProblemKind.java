@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added upgrade to mathematical language v2
  *     Systerel - added support for predicate variables
+ *     Systerel - added kinds related to parser 2.0
  *******************************************************************************/
 package org.eventb.core.ast;
 
