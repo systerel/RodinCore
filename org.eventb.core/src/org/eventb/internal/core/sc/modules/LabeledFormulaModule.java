@@ -115,12 +115,12 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 
 		boolean errorIssued = false;
 		for (ASTProblem parserProblem : result.getProblems()) {
-			SourceLocation location = parserProblem.getSourceLocation();
-			ProblemKind problemKind = parserProblem.getMessage();
-			Object[] args = parserProblem.getArgs();
+			final SourceLocation location = parserProblem.getSourceLocation();
+			final ProblemKind problemKind = parserProblem.getMessage();
+			final Object[] args = parserProblem.getArgs();
 
-			IRodinProblem problem;
-			Object[] objects; // parameters for the marker
+			final IRodinProblem problem;
+			final Object[] objects; // parameters for the marker
 
 			switch (problemKind) {
 
@@ -181,7 +181,33 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 				objects = NO_OBJECT;
 				break;
 
-				// TODO adapt to generic parser problem kinds
+			// syntax errors
+			case BECMOAppliesToOneIdent:
+			case DuplicateIdentifierInPattern:
+			case ExtensionPreconditionError:
+			case FreeIdentifierExpected:
+			case IncompatibleIdentExprNumbers:
+			case IncompatibleOperators:
+			case IntegerLiteralExpected:
+			case InvalidAssignmentToImage:
+			case InvalidGenericType:
+			case MisplacedLedOperator:
+			case MisplacedNudOperator:
+			case NotUpgradableError:
+			case OftypeMissingParentheses:
+			case PredicateVariableNotAllowed:
+			case PrematureEOF:
+			case UnexpectedOftype:
+			case UnexpectedSubFormulaKind:
+			case UnexpectedSymbol:
+			case UnknownOperator:
+			case UnmatchedTokens:
+			case VariousPossibleErrors:
+
+				problem = ParseProblem.SyntaxError;
+				
+				objects = new Object[] { parserProblem.toString() };
+				break;
 			default:
 
 				problem = ParseProblem.InternalError;
