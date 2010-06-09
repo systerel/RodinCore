@@ -380,11 +380,11 @@ public class SubParsers {
 		
 		public Expression led(Formula<?> left, ParserContext pc) throws SyntaxError {
 			final int tag = left.getTag();
-			if (!isTypedGeneric(tag)) {
-				throw newUnexpectedOftype(pc);
-			}
 			if (!pc.isParenthesized()) {
 				throw newMissingParenError(pc);
+			}
+			if (!isTypedGeneric(tag)) {
+				throw newUnexpectedOftype(pc);
 			}
 			pc.progress();
 			
