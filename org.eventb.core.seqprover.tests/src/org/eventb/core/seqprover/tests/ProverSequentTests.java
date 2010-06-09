@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,13 +9,16 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - moved all type-checking code to class TypeChecker
  *     Systerel - added checks about predicate variables
+ *     Systerel - added tests for hypotheses search
  *******************************************************************************/
-
 package org.eventb.core.seqprover.tests;
+
+import static org.eventb.core.seqprover.tests.TestLib.*;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -28,11 +31,13 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.ProverLib;
 import org.eventb.internal.core.seqprover.IInternalProverSequent;
 import org.junit.Test;
 
 /**
- * Unit tests for Proover Sequents
+ * Unit tests for Prover Sequents
  *
  * 
  * @author Farhad Mehta
@@ -303,4 +308,42 @@ public class ProverSequentTests extends TestCase{
 				Collections.singleton(pv_P));
 		assertNull(newSeq);
 	}
+	
+	private Set<Predicate> mSet(Predicate...preds) {
+		return new LinkedHashSet<Predicate>(Arrays.asList(preds));
+	}
+	
+	/**
+	 * Tests for textual search in hypotheses.
+	 */
+	@Test
+	public void testHypsTextSearch() {
+		final ITypeEnvironment env = genTypeEnv("");
+
+		// Global hyps contain 9
+		final Predicate gx = genPred("10=9+1");
+		final Predicate gy = genPred("9=10−1");
+		// Hidden hyps contain 5
+		final Predicate hx = genPred("10=5+5");
+		final Predicate hy = genPred("5=10−5");
+		// Selected hyps contain 3
+		final Predicate sx = genPred("10=3+7");
+		final Predicate sy = genPred("3=10−7");
+
+		final Predicate goal = genPred("⊥");
+
+		final Set<Predicate> allHyps = mSet(gx, hx, sx, gy, hy, sy);
+		final Set<Predicate> hidden = mSet(hx, hy);
+		final Set<Predicate> selected = mSet(sx, sy);
+		final IProverSequent seq = ProverFactory.makeSequent(env, allHyps,
+				hidden, selected, goal);
+
+		assertEquals(allHyps, ProverLib.hypsTextSearch(seq, "10"));
+		assertEquals(mSet(gy, hy, sy), ProverLib.hypsTextSearch(seq, "=10"));
+
+		assertEquals(mSet(gx, gy, sx, sy), ProverLib.hypsTextSearch(seq, "10",
+				false));
+		assertEquals(mSet(gy, sy), ProverLib.hypsTextSearch(seq, "=10", false));
+	}
+
 }

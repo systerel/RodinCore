@@ -321,10 +321,48 @@ public class ProverLib {
 				&& isVersionCompatible(proofSkeleton);
 	}
 	
-	public static Set<Predicate> hypsTextSearch(IProverSequent sequent, String token) {
-		Set<Predicate> result = new LinkedHashSet<Predicate>();
-		for (Predicate hypothesis : sequent.hypIterable()){
-			if (hypothesis.toString().contains(token)) result.add(hypothesis);
+	/**
+	 * Returns a set of all hypotheses whose string image contains the given
+	 * pattern. Hidden hypotheses are considered during this search.
+	 * 
+	 * @param sequent
+	 *            sequent containing the hypotheses to search among
+	 * @param pattern
+	 *            pattern to search in hypotheses
+	 * @return a set of all hypotheses matching the given criteria
+	 */
+	public static Set<Predicate> hypsTextSearch(IProverSequent sequent,
+			String pattern) {
+		return hypsTextSearch(sequent, pattern, true);
+	}
+
+	/**
+	 * Returns a set of all hypotheses whose string image contains the given
+	 * pattern. Depending on the third parameter, hidden hypotheses might be
+	 * considered during this search.
+	 * 
+	 * @param sequent
+	 *            sequent containing the hypotheses to search among
+	 * @param pattern
+	 *            pattern to search in hypotheses
+	 * @param withHidden
+	 *            also consider hidden hypotheses when <code>true</code>
+	 * @return a set of all hypotheses matching the given criteria
+	 * @since 1.4
+	 */
+	public static Set<Predicate> hypsTextSearch(IProverSequent sequent,
+			String pattern, boolean withHidden) {
+		final Set<Predicate> result = new LinkedHashSet<Predicate>();
+		final Iterable<Predicate> iterable;
+		if (withHidden) {
+			iterable = sequent.hypIterable();
+		} else {
+			iterable = sequent.visibleHypIterable();
+		}
+		for (final Predicate hypothesis : iterable) {
+			if (hypothesis.toString().contains(pattern)) {
+				result.add(hypothesis);
+			}
 		}
 		return result;
 	}
