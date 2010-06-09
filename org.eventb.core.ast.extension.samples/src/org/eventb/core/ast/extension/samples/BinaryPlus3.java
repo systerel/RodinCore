@@ -59,10 +59,6 @@ public class BinaryPlus3 implements IExpressionExtension {
 		return mediator.makeChildWDConjunction(formula);
 	}
 
-	public boolean isFlattenable() {
-		return false;
-	}
-
 	public void addCompatibilities(ICompatibilityMediator mediator) {
 		mediator.addCompatibility(getId(), getId());
 	}

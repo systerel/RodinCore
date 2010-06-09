@@ -27,22 +27,27 @@ public interface IFormulaExtension {
 
 	public static enum ExtensionKind {
 		// a op b
-		BINARY_INFIX_EXPRESSION(new PrecondChecker(2, 2, 0, 0), BINARY_INFIX_EXPR_PRINTER),
+		BINARY_INFIX_EXPRESSION(new PrecondChecker(2, 2, 0, 0),
+				BINARY_INFIX_EXPR_PRINTER, false),
 
 		// a op b op ... op c
-		ASSOCIATIVE_INFIX_EXPRESSION(new PrecondChecker(2, NO_LIMIT, 0, 0), ASSOC_INFIX_EXPR_PRINTER),
+		ASSOCIATIVE_INFIX_EXPRESSION(new PrecondChecker(2, NO_LIMIT, 0, 0),
+				ASSOC_INFIX_EXPR_PRINTER, true),
 
 		// op(a, b, ..., c)
-		PARENTHESIZED_PREFIX_EXPRESSION(new PrecondChecker(2, NO_LIMIT, 0, 0), PAREN_PREFIX_EXPR_PRINTER);
+		PARENTHESIZED_PREFIX_EXPRESSION(new PrecondChecker(2, NO_LIMIT, 0, 0),
+				PAREN_PREFIX_EXPR_PRINTER, false);
 
 		// TODO PARENTHESIZED_PREFIX_PREDICATE
 
 		private final PrecondChecker precondChecker;
 		private final IExtensionPrinter printer;
+		private final boolean flattenable;
 		
-		private ExtensionKind(PrecondChecker precondChecker, IExtensionPrinter printer) {
+		private ExtensionKind(PrecondChecker precondChecker, IExtensionPrinter printer, boolean flattenable) {
 			this.precondChecker = precondChecker;
 			this.printer = printer;
+			this.flattenable = flattenable;
 		}
 		
 		public PrecondChecker getPrecondChecker() {
@@ -52,15 +57,15 @@ public interface IFormulaExtension {
 		public IExtensionPrinter getPrinter() {
 			return printer;
 		}
+		
+		public boolean isFlattenable() {
+			return flattenable;
+		}
 	}
 
 	String getSyntaxSymbol();
 
 	Predicate getWDPredicate(IWDMediator wdMediator, IExtendedFormula formula);
-
-	// TODO the method is always the same for a given extension kind
-	// => implement for every extension kind, then remove this method
-	boolean isFlattenable();
 
 	String getId();
 

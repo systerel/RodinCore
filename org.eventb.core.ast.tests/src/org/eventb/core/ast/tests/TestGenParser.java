@@ -416,10 +416,6 @@ public class TestGenParser extends AbstractTests {
 	
 	private static final IExpressionExtension DIRECT_PRODUCT = new IExpressionExtension() {
 
-		public boolean isFlattenable() {
-			return false;
-		}
-
 		public Predicate getWDPredicate(IWDMediator wdMediator,
 				IExtendedFormula formula) {
 			return wdMediator.makeChildWDConjunction(formula);
@@ -557,10 +553,6 @@ public class TestGenParser extends AbstractTests {
 		public Predicate getWDPredicate(IWDMediator wdMediator,
 				IExtendedFormula formula) {
 			return wdMediator.makeChildWDConjunction(formula);
-		}
-
-		public boolean isFlattenable() {
-			return true;
 		}
 
 	};
@@ -1537,10 +1529,6 @@ public class TestGenParser extends AbstractTests {
 		public Predicate getWDPredicate(IWDMediator wdMediator,
 				IExtendedFormula formula) {
 			return wdMediator.makeChildWDConjunction(formula);
-		}
-
-		public boolean isFlattenable() {
-			return false;
 		}
 
 	};
