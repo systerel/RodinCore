@@ -102,6 +102,10 @@ public class SearchHypothesis extends ProverContentOutline implements
 			setFocus();
 		}
 		
+		public String getSearchedText() {
+			return text.getText();
+		}
+
 		public void setSearchedText(String searched) {
 			text.setText(searched);
 		}
@@ -117,8 +121,6 @@ public class SearchHypothesis extends ProverContentOutline implements
 	private Action search;
 
 	private Action refresh;
-
-	private String searchedHyp = "";
 
 	private SearchBox searchBox;
 
@@ -184,7 +186,6 @@ public class SearchHypothesis extends ProverContentOutline implements
 	 * Set the current searched hypothesis string
 	 */
 	public void setSearchedHyp(String input) {
-		searchedHyp = input;
 		searchBox.setSearchedText(input);
 	}
 
@@ -192,7 +193,7 @@ public class SearchHypothesis extends ProverContentOutline implements
 	 * Returns the currently searched hypothesis.
 	 */
 	public String getSearchedHyp() {
-		return searchedHyp;
+		return searchBox.getSearchedText();
 	}
 
 	/**
@@ -278,7 +279,7 @@ public class SearchHypothesis extends ProverContentOutline implements
 	public void updateView() {
 		final IUserSupport userSupport = getCurrentUserSupport();
 		if (userSupport != null && userSupport.getCurrentPO() != null) {
-			userSupport.searchHyps(searchedHyp);
+			userSupport.searchHyps(getSearchedHyp());
 		}
 	}
 
