@@ -75,7 +75,11 @@ public class TestLexer extends AbstractTests {
         	testToken("001", B_MATH.getINTLIT(), version);
         	testToken("$P", B_MATH.getPREDVAR(), version);
         	testToken("$_toto", B_MATH.getPREDVAR(), version);
-       }
+        	testToken("p'", B_MATH.getIDENT(), version);
+        	testToken("prj'", B_MATH.getIDENT(), version);
+        	//TODO Be sure that this is allowed
+        	testToken("partition'", B_MATH.getIDENT(), version);
+        }
 
 	private void testToken(String image, Integer kind, LanguageVersion version) {
 			ParseResult result = new ParseResult(ff, version, null);
@@ -126,5 +130,6 @@ public class TestLexer extends AbstractTests {
 			assertFalse(ff.isValidIdentifierName("    "));
 			assertFalse(ff.isValidIdentifierName("$P"));
 			assertFalse(ff.isValidIdentifierName("l$"));
+			assertFalse(ff.isValidIdentifierName("prj'p"));
 		}
 }
