@@ -42,6 +42,11 @@ public class GenScan {
 	private static final char META = '$';
 
 	/**
+	 * The prime character for primed identifiers.
+	 */
+	private static final char PRIME = '\'';
+	
+	/**
 	 * Retrieves an instance of the parameterizable lexer, and initialize it
 	 * with the given keywords map.
 	 */
@@ -184,7 +189,7 @@ public class GenScan {
 				break;
 			}
 		}
-		if (currentPos < length && '\'' == toParse.charAt(currentPos)) {
+		if (currentPos < length && PRIME == toParse.charAt(currentPos)) {
 			goForward();
 		}
 		symbol(BMath._IDENT);

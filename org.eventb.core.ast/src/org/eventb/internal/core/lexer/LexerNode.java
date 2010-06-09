@@ -184,7 +184,9 @@ public class LexerNode extends AbstractLexerNode {
 					// Check if we can recognize an identifier (i.e. if all
 					// characters of the token correspond to an identifier,
 					// we continue the recognition.
-					if (l == indIdent && genScan.extendIdent(charAt)) { // TODO
+					if (l == indIdent
+							&& (genScan.extendIdent(charAt) || '\'' == charAt)) {
+						// TODO
 						// check if
 						// we can
 						// avoid the
