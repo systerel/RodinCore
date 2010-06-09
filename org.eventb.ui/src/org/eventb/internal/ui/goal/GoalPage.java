@@ -287,13 +287,11 @@ public class GoalPage extends Page implements IGoalPage {
 		} else {
 			Predicate goal = node.getSequent().goal();
 			final String tmpString = goal.toString();
-			final Predicate tmpPred = ProverUIUtils.getParsed(
-					tmpString);
+			final Predicate tmpPred = ProverUIUtils.getParsed(tmpString);
 
 			int [] indexes = new int[0];
 
-			if (node.isOpen() && tmpPred instanceof QuantifiedPredicate
-					&& tmpPred.getTag() == Formula.EXISTS) {
+			if (node.isOpen() && tmpPred.getTag() == Formula.EXISTS) {
 				indexes = getIndexesString(tmpPred, tmpString);
 			} else {
 				actualString = PredicateUtil.prettyPrint(max_length, tmpString,
