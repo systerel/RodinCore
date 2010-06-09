@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
+import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.*;
+
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,6 +30,10 @@ public class OperatorRegistry {
 
 	public static final String GROUP0 = "GROUP 0";
 
+	public static enum OperatorRelationship {
+		LEFT_PRIORITY, RIGHT_PRIORITY, COMPATIBLE, INCOMPATIBLE
+	}
+	
 	private static final OperatorGroup GROUP_0 = new OperatorGroup(GROUP0);
 	
 	private static class Relation<T> {
@@ -284,57 +290,48 @@ public class OperatorRegistry {
 	}
 	
 	/**
-	 * <code>true</code> iff leftKind and rightKind are incompatible.
+	 * Computes operator relationship between given operator kinds.
+	 * <p>
+	 * Given kinds MUST be checked to be operators before calling this method.
+	 * </p>
+	 * 
+	 * @param leftKind
+	 *            the kind of the left operator
+	 * @param rightKind
+	 *            the kind of the right operator
+	 * @param version
+	 *            the language version for current parsing
+	 * @return an operator relationship
 	 */
-	public boolean isCompatible(int leftKind, int rightKind, LanguageVersion version) {
-		final OperatorGroup leftGroup = kindOpGroup.get(leftKind);
-		final OperatorGroup rightGroup = kindOpGroup.get(rightKind);
-		if (leftGroup != rightGroup) {
-			return true;
-		}
-		if (leftGroup == GROUP_0) {
-			// Group0 operators are all compatible with each other
-			return true;
-		}
-		return leftGroup.isCompatible(leftKind, rightKind, version);
-	}
-	
-	/**
-	 * <code>true</code> iff priority(leftKind) < priority(rightKind)
-	 * for the given language version
-	 */
-	public boolean hasLessPriority(int leftKind, int rightKind, LanguageVersion version) {
+	public OperatorRelationship getOperatorRelationship(int leftKind, int rightKind, LanguageVersion version) {
 		// TODO right associativity
 		final OperatorGroup leftGroup = kindOpGroup.get(leftKind);
 		final OperatorGroup rightGroup = kindOpGroup.get(rightKind);
 		
 		if (leftGroup == GROUP_0 && rightGroup == GROUP_0) {
-			return false;
+			return LEFT_PRIORITY;
 		// Unknown groups have a priority greater than GROUP0
 		} else if (leftGroup == GROUP_0) {
-			return true;
+			return RIGHT_PRIORITY;
 		} else if (rightGroup == GROUP_0) {
-			return false;
+			return LEFT_PRIORITY;
 		} else if (groupPriority.contains(leftGroup, rightGroup)) {
-			return true;
+			return RIGHT_PRIORITY;
 		} else if (groupPriority.contains(rightGroup, leftGroup)) {
-			return false;
+			return LEFT_PRIORITY;
 		} else if (leftGroup == rightGroup) {
 			final OperatorGroup group = leftGroup;
 			if (group.hasLessPriority(leftKind, rightKind)) {
-				return true;
+				return RIGHT_PRIORITY;
 			} else if (group.hasLessPriority(rightKind, leftKind)) {
-				return false;
+				return LEFT_PRIORITY;
 			} else if (group.isCompatible(leftKind, rightKind, version)) {
-				return false; // left associativity
+				return COMPATIBLE;
 			} else {
-				throw new IllegalArgumentException(
-						"symbols must be checked to be compatible before calling this method: "
-								+ idKind.getKey(leftKind) + " with "
-								+ idKind.getKey(rightKind));
+				return INCOMPATIBLE;
 			}
 		} else {
-			return false;
+			return LEFT_PRIORITY;
 		}
 
 	}

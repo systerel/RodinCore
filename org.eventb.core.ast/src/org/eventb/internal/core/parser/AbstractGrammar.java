@@ -21,6 +21,7 @@ import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.extension.CycleError;
 import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship;
 
 /**
  * @author Nicolas Beauger
@@ -157,12 +158,9 @@ public abstract class AbstractGrammar {
 		}
 	}
 	
-	public boolean hasLessPriority(int leftKind, int rightKind, LanguageVersion version) {
-		return opRegistry.hasLessPriority(leftKind, rightKind, version);
-	}
-	
-	public boolean isCompatible(int leftKind, int rightKind, LanguageVersion version) {
-		return opRegistry.isCompatible(leftKind, rightKind, version);
+	public OperatorRelationship getOperatorRelationship(int leftKind,
+			int rightKind, LanguageVersion version) {
+		return opRegistry.getOperatorRelationship(leftKind, rightKind, version);
 	}
 	
 	public int getEOF() {

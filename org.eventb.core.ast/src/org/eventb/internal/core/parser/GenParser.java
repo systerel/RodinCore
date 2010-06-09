@@ -34,6 +34,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.internal.core.lexer.Scanner;
 import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.lexer.GenScan.ScanState;
+import org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship;
 
 /**
  * @author Nicolas Beauger
@@ -328,13 +329,21 @@ public class GenParser {
 			if (!grammar.isOperator(rightKind)) {
 				return false;
 			}
-			if (!grammar.isCompatible(leftKind, rightKind, version)) {
+			final OperatorRelationship opRel = grammar.getOperatorRelationship(leftKind, rightKind, version);
+			switch(opRel) {
+			case INCOMPATIBLE:
 				throw new SyntaxError(new ASTProblem(makeSourceLocation(t),
 						ProblemKind.IncompatibleOperators,
 						ProblemSeverities.Error, grammar.getImage(leftKind),
 						grammar.getImage(rightKind)));
+			case RIGHT_PRIORITY:
+				return true;
+			case COMPATIBLE:
+				// process as left associative
+			case LEFT_PRIORITY:
+				return false;
 			}
-			return grammar.hasLessPriority(leftKind, rightKind, version);
+			return false;
 		}
 		
 		private void pushPos() {
@@ -387,8 +396,8 @@ public class GenParser {
 		}
 
 		/**
-		 * Returns true iff the operator being parsed has an open parenthesis as
-		 * parent kind .
+		 * Returns <code>true</code> iff the operator being parsed has an open
+		 * parenthesis as parent kind.
 		 */
 		public boolean isParenthesized() throws SyntaxError {
 			if (parentKind.val == _LPAR) {
