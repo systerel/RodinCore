@@ -328,7 +328,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		runBuilder();
 
 		hasMarker(mac.getVariants()[0], EventBAttributes.EXPRESSION_ATTRIBUTE,
-				ParseProblem.SyntaxError, "invalid Expression");
+				ParseProblem.SyntaxError, "Premature End Of Formula");
 	}
 
 }
