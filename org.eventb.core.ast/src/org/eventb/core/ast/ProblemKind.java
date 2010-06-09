@@ -29,6 +29,7 @@ import java.util.Iterator;
  * @since 1.0
  */
 public enum ProblemKind {
+	// TODO externalize strings
 	
 	/**
 	 * Argument 0 is the name of the variable.
@@ -46,33 +47,30 @@ public enum ProblemKind {
 	/**
 	 * Argument 0 is the contents of the token.
 	 */
-	LexerError ("Lexer error, character '%1$s' has been ignored."),
+	LexerError ("Lexer error, character '%1$s' has been ignored"),
 	
 	/**
 	 * Argument 0 is the name of the first type, argument 1 is the name of the second type.
 	 */
-	TypesDoNotMatch ("Type: %1$s does not match type: %2$s."),
-	
-	
-	// 2.0 problem kinds
+	TypesDoNotMatch ("Type: %1$s does not match type: %2$s"),
 	
 	/**
 	 * Argument 0 is the name of the expected sub-formula kind, argument 1 is the name of the actual sub-formula kind.
 	 * @since 2.0
 	 */
-	UnexpectedSubFormulaKind ("Unexpected sub-formula, expected: %1$s but was: %2$s."),
+	UnexpectedSubFormulaKind ("Unexpected sub-formula, expected: %1$s but was: %2$s"),
 	
 	/**
 	 * Argument 0 is the image of the expected symbol, argument 1 is the name of the actual symbol.
 	 * @since 2.0
 	 */
-	UnexpectedSymbol ("Expected: %1$s but was: %2$s."),
+	UnexpectedSymbol ("Expected: %1$s but was: %2$s"),
 	
 	/**
 	 * Argument 0 is the image of the unknown operator.
 	 * @since 2.0
 	 */
-	UnknownOperator ("Unknown operator: %1$s."),
+	UnknownOperator ("Unknown operator: %1$s"),
 	
 	/**
 	 * No argument.
@@ -84,28 +82,27 @@ public enum ProblemKind {
 	 * Argument 0 is the image of the expected symbol, argument 1 is the name of the actual symbol.
 	 * @since 2.0
 	 */
-	IncompatibleOperators ("Operator: %1$s is not compatible with: %2$s, parentheses are required."),
+	IncompatibleOperators ("Operator: %1$s is not compatible with: %2$s, parentheses are required"),
 	
 	/**
 	 * No argument.
 	 */
-	Circularity ("Types do not match."),
+	Circularity ("Types do not match"),
 	
 	/**
 	 * Argument 0 is the image of the misplaced operator.
 	 * @since 2.0
 	 */
-	MisplacedNudOperator ("Operator: %1$s should appear at the beginning of a sub-formula."),
+	MisplacedNudOperator ("Operator: %1$s should appear at the beginning of a sub-formula"),
 	
 	/**
 	 * Argument 0 is the image of the misplaced operator.
 	 * @since 2.0
 	 */
-	MisplacedLedOperator ("Operator: %1$s should appear with a sub-formula on its left."),
+	MisplacedLedOperator ("Operator: %1$s should appear with a sub-formula on its left"),
 
 	/**
 	 * Argument 0 is the compound message with all errors.
-	 * 
 	 * @since 2.0
 	 */
 	VariousPossibleErrors ("Parse failed because either:\n%1$s"),
@@ -114,7 +111,7 @@ public enum ProblemKind {
 	 * No argument.
 	 * @since 2.0
 	 */
-	InvalidAssignmentToImage ("Assignment to function image applies to exactly one function."),
+	InvalidAssignmentToImage ("Assignment to function image applies to exactly one function"),
 	
 	/**
 	 * Argument 0 is the number of assigned identifiers, argument 1 is the numbers of expressions.
@@ -195,23 +192,23 @@ public enum ProblemKind {
 	/**
 	 * No argument.
 	 */
-	MinusAppliedToSet ("Arithmetic subtraction applied to a set expression."),
+	MinusAppliedToSet ("Arithmetic subtraction applied to a set expression"),
 	
 	/**
 	 * No argument.
 	 */
-	MulAppliedToSet ("Arithmetic multiplication applied to a set expression."),
+	MulAppliedToSet ("Arithmetic multiplication applied to a set expression"),
 
 	/**
 	 * No argument.
 	 */
-	NotUpgradableError ("Formula cannot be upgraded."),
+	NotUpgradableError ("Formula cannot be upgraded"),
 	
 	/**
 	 * Argument 0 is the illegal predicate variable.
 	 * @since 1.2
 	 */
-	PredicateVariableNotAllowed("Predicate variable %1$s is not allowed here."), 
+	PredicateVariableNotAllowed("Predicate variable %1$s is not allowed here"), 
 	;
 
 	/**
