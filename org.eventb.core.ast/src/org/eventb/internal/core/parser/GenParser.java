@@ -356,7 +356,6 @@ public class GenParser {
 		
 		public <T> T subParse(INudParser<T> parser,
 				List<BoundIdentDecl> newBoundIdents) throws SyntaxError {
-			// FIXME add a warning about identifiers bound twice
 			binding.push(new Binding(binding.val, newBoundIdents));
 			try {
 				return subParse(parser);
@@ -415,14 +414,6 @@ public class GenParser {
         	binders = new HashMap<String, Integer>();
         }
     	
-        // Creates a new binding based on <code>base</code> and extended
-        // with <code>ident</code>
-		Binding(Binding base, BoundIdentDecl ident) {
-        	binders = new HashMap<String, Integer>(base.binders);
-			maxCount = base.maxCount;
-    		binders.put(ident.getName(), ++ maxCount);
-    	}
-
         // Creates a new binding based on <code>base</code> and extended
         // with <code>idents</code>
 		Binding(Binding base, List<BoundIdentDecl> idents) {
