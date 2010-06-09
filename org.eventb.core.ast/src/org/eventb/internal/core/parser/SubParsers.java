@@ -55,6 +55,7 @@ import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.QuantifiedExpression.Form;
 import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.internal.core.ast.extension.PrecondChecker;
 import org.eventb.internal.core.parser.GenParser.ParserContext;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 import org.eventb.internal.core.parser.MainParsers.PatternParser;
@@ -885,7 +886,8 @@ public class SubParsers {
 			List<Expression> children, SourceLocation loc) throws SyntaxError {
 		final IExpressionExtension extension = (IExpressionExtension) factory
 				.getExtension(tag);
-		if (!extension.checkPreconditions(children
+		final PrecondChecker precond = extension.getKind().getPrecondChecker();
+		if (!precond.checkPreconditions(children
 				.toArray(new Expression[children.size()]), new Predicate[0])) {
 			throw new SyntaxError(new ASTProblem(loc,
 					ProblemKind.ExtensionPreconditionError,

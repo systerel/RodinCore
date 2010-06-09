@@ -51,11 +51,6 @@ public class BinaryPlus3 implements IExpressionExtension {
 		return resultType;
 	}
 
-	public boolean checkPreconditions(Expression[] expressions,
-			Predicate[] predicates) {
-		return expressions.length >= 2 && predicates.length == 0;
-	}
-
 	public String getSyntaxSymbol() {
 		return "+";
 	}

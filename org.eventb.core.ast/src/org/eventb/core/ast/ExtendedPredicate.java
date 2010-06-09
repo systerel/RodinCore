@@ -28,6 +28,7 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.PrecondChecker;
 import org.eventb.internal.core.ast.extension.TypeCheckMediator;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
@@ -60,7 +61,8 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	}
 
 	private void checkPreconditions() {
-		assert extension.checkPreconditions(childExpressions, childPredicates);
+		final PrecondChecker precond = extension.getKind().getPrecondChecker();
+		assert precond.checkPreconditions(childExpressions, childPredicates);
 	}
 
 	@Override

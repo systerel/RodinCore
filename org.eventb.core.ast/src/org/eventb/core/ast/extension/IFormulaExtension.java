@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eventb.core.ast.extension;
 
-import org.eventb.core.ast.Expression;
+import static org.eventb.internal.core.ast.extension.PrecondChecker.NO_LIMIT;
+
 import org.eventb.core.ast.Predicate;
+import org.eventb.internal.core.ast.extension.PrecondChecker;
 
 /**
  * @author "Nicolas Beauger"
@@ -20,15 +22,27 @@ import org.eventb.core.ast.Predicate;
 public interface IFormulaExtension {
 
 	public static enum ExtensionKind {
-		BINARY_INFIX_EXPRESSION, // a op b
-		ASSOCIATIVE_INFIX_EXPRESSION, // a op b op ... op c 
-		PARENTHESIZED_PREFIX_EXPRESSION // op(a, b, ..., c)
+		// a op b
+		BINARY_INFIX_EXPRESSION(new PrecondChecker(2, 2, 0, 0)),
+
+		// a op b op ... op c
+		ASSOCIATIVE_INFIX_EXPRESSION(new PrecondChecker(2, NO_LIMIT, 0, 0)),
+
+		// op(a, b, ..., c)
+		PARENTHESIZED_PREFIX_EXPRESSION(new PrecondChecker(2, NO_LIMIT, 0, 0));
+
 		// TODO PARENTHESIZED_PREFIX_PREDICATE
+
+		private final PrecondChecker precondChecker;
+		
+		private ExtensionKind(PrecondChecker precondChecker) {
+			this.precondChecker = precondChecker;
+		}
+		
+		public PrecondChecker getPrecondChecker() {
+			return precondChecker;
+		}
 	}
-	
-	// TODO the method is always the same for a given extension kind
-	// => implement for every extension kind, then remove this method
-	boolean checkPreconditions(Expression[] expressions, Predicate[] predicates);
 
 	String getSyntaxSymbol();
 

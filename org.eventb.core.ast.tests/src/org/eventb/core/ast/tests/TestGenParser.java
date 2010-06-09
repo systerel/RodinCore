@@ -438,11 +438,6 @@ public class TestGenParser extends AbstractTests {
 			return "§";
 		}
 
-		public boolean checkPreconditions(Expression[] expressions,
-				Predicate[] predicates) {
-			return expressions.length == 2 && predicates.length == 0;
-		}
-
 		public Type typeCheck(ITypeCheckMediator tcMediator,
 				ExtendedExpression expression) {
 			final Type alpha = tcMediator.newTypeVariable();
@@ -550,11 +545,6 @@ public class TestGenParser extends AbstractTests {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
-
-		public boolean checkPreconditions(Expression[] expressions,
-				Predicate[] predicates) {
-			return expressions.length >= 2 && predicates.length == 0;
 		}
 
 		public String getGroupId() {
@@ -1544,11 +1534,6 @@ public class TestGenParser extends AbstractTests {
 
 		public void addPriorities(IPriorityMediator mediator) {
 			// no priority to add
-		}
-
-		public boolean checkPreconditions(Expression[] expressions,
-				Predicate[] predicates) {
-			return expressions.length >= 2 && predicates.length == 0;
 		}
 
 		public String getGroupId() {
