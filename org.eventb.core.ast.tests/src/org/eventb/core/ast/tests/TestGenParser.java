@@ -1734,4 +1734,30 @@ public class TestGenParser extends AbstractTests {
 		assertFailure(result, expected);
 	}
 	
+	public void testPrimedIdent() throws Exception {
+		doExpressionTest("x'", ff.makeFreeIdentifier("x'", null));
+		
+		// start of partition, pred, prj1, prj2
+		doExpressionTest("p", ff.makeFreeIdentifier("p", null));
+		doExpressionTest("prj'", ff.makeFreeIdentifier("prj'", null));
+		doExpressionTest("p'", ff.makeFreeIdentifier("p'", null));
+		doExpressionTest("pp'", ff.makeFreeIdentifier("pp'", null));
+		doExpressionTest("pa'", ff.makeFreeIdentifier("pa'", null));
+		doExpressionTest("p'−1", ff.makeBinaryExpression(MINUS, ff.makeFreeIdentifier("p'", null), ONE, null));
+		
+		// start of mod, min, max
+		doExpressionTest("m", ff.makeFreeIdentifier("m", null));
+		doExpressionTest("m'", ff.makeFreeIdentifier("m'", null));
+		doExpressionTest("ma'", ff.makeFreeIdentifier("ma'", null));
+		
+	}
+	
+	public void testCloseParenMatch() throws Exception {
+		final IParseResult result = ff.parseExpression("(a}",
+				LanguageVersion.V2, null);
+		final ASTProblem expected = new ASTProblem(new SourceLocation(2, 2),
+				ProblemKind.UnexpectedSymbol, ProblemSeverities.Error, ")", "}");
+		assertFailure(result, expected);
+	}
+
 }
