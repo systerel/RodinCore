@@ -304,7 +304,6 @@ public class OperatorRegistry {
 	 * @return an operator relationship
 	 */
 	public OperatorRelationship getOperatorRelationship(int leftKind, int rightKind, LanguageVersion version) {
-		// TODO right associativity
 		final OperatorGroup leftGroup = kindOpGroup.get(leftKind);
 		final OperatorGroup rightGroup = kindOpGroup.get(rightKind);
 		

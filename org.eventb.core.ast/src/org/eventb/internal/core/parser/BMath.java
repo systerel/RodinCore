@@ -213,7 +213,6 @@ public class BMath extends AbstractGrammar {
 			addOperator("\u2205", EMPTYSET_ID, EMPTY_SET, new AtomicExpressionParser(EMPTYSET));
 			addOperator("pred", KPRED_ID, ATOMIC_EXPR, new AtomicExpressionParser(KPRED));
 			addOperator("succ", KSUCC_ID, ATOMIC_EXPR, new AtomicExpressionParser(KSUCC));
-			// FIXME is there a problem having the same group for V1 and V2 operators ?
 			addOperator("prj1", KPRJ1_GEN_ID, ATOMIC_EXPR, new GenExpressionParser(KPRJ1, KPRJ1_GEN));
 			addOperator("prj2", KPRJ2_GEN_ID, ATOMIC_EXPR, new GenExpressionParser(KPRJ2, KPRJ2_GEN));
 			addOperator("id", KID_GEN_ID, ATOMIC_EXPR, new GenExpressionParser(KID, KID_GEN));

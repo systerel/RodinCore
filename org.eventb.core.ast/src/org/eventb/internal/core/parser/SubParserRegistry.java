@@ -82,9 +82,6 @@ public class SubParserRegistry {
 			return null;
 		}
 		return ledParsers.get(0);
-		// FIXME when backtracking there will be several subparsers for one kind
-		// looks like backtracking is only required for nud parsers, could avoid
-		// it for led parsers.
 	}
 	
 	public void addNud(int kind, INudParser<? extends Formula<?>> subParser) throws OverrideException {

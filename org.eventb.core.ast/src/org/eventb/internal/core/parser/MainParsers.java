@@ -187,7 +187,6 @@ public class MainParsers {
 		protected Formula<?> apply(ParserContext pc,
 				ILedParser<? extends Formula<?>> parser, Formula<?> left)
 				throws SyntaxError {
-			// TODO implement backtracking for led parsers as well 
 			return parser.led(left, pc);
 		}
 		
@@ -327,7 +326,6 @@ public class MainParsers {
 		
 	}
 
-	// FIXME some operators need to have at least a certain number of expressions in the list
 	static final AbstListParser<Expression> EXPR_LIST_PARSER = new AbstListParser<Expression>(EXPR_PARSER);
 	
 	static final AbstListParser<FreeIdentifier> FREE_IDENT_LIST_PARSER = new AbstListParser<FreeIdentifier>(FREE_IDENT_SUBPARSER);

@@ -69,7 +69,6 @@ public class SubParsers {
 
 	static abstract class AbstractSubParser<T> {
 
-		// TODO move tag downwards to sub-classes that really require it
 		protected final int tag;
 
 		protected AbstractSubParser(int tag) {
@@ -334,7 +333,8 @@ public class SubParsers {
 						.valueOf(tokenVal)));
 				return pc.factory.makeIntegerLiteral(value, loc);
 			} catch (NumberFormatException e) {
-				// TODO recover using ZERO ? add a problem instead (=> backtrack on problems)
+				// FIXME this is rather a problem with the lexer: it should
+				// never have returned a _INTLIT token kind
 				throw new SyntaxError(new ASTProblem(loc,
 						ProblemKind.IntegerLiteralExpected,
 						ProblemSeverities.Error));
