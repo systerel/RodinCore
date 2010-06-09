@@ -31,6 +31,7 @@ import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.PrecondChecker;
 import org.eventb.internal.core.ast.extension.TypeCheckMediator;
 import org.eventb.internal.core.ast.extension.TypeMediator;
+import org.eventb.internal.core.ast.extension.ExtensionPrinters.IExtensionPrinter;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -175,8 +176,11 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	@Override
 	protected void toStringFullyParenthesized(StringBuilder builder,
 			String[] boundNames) {
-		extension.toString(new ToStringFullParenMediator(builder, boundNames),
-				this);
+		final IExtensionPrinter printer = extension.getKind().getPrinter();
+		final ToStringFullParenMediator mediator = new ToStringFullParenMediator(
+				builder, boundNames, extension.getSyntaxSymbol());
+
+		printer.toString(mediator, this);
 	}
 
 	@Override

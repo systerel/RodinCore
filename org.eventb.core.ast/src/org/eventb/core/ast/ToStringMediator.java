@@ -21,9 +21,9 @@ package org.eventb.core.ast;
 	private final int tag;
 	private final boolean withTypes;
 
-	public ToStringMediator(StringBuilder builder, int tag,
-			String[] boundNames, boolean withTypes) {
-		super(builder, boundNames);
+	public ToStringMediator(StringBuilder builder, String[] boundNames,
+			String operator, int tag, boolean withTypes) {
+		super(builder, boundNames, operator);
 		this.tag = tag;
 		this.withTypes = withTypes;
 	}

@@ -1,12 +1,20 @@
-/*
- * Created on 11-may-2005
- *
- */
+/*******************************************************************************
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added helper method for extensions 
+ *******************************************************************************/
 package org.eventb.core.ast;
 
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.internal.core.ast.LegibilityResult;
+import org.eventb.internal.core.ast.extension.ExtensionPrinters.IExtensionPrinter;
 
 
 /**
@@ -73,9 +81,10 @@ import org.eventb.internal.core.ast.LegibilityResult;
 			IFormulaExtension extension, IExtendedFormula formula) {
 		if (needsParen)
 			builder.append('(');
-		final ToStringMediator strMed = new ToStringMediator(builder, tag,
-				boundNames, withTypes);
-		extension.toString(strMed, formula);
+		final ToStringMediator strMed = new ToStringMediator(builder,
+				boundNames, extension.getSyntaxSymbol(), tag, withTypes);
+		final IExtensionPrinter printer = extension.getKind().getPrinter();
+		printer.toString(strMed, formula);
 		if (needsParen)
 			builder.append(')');
 	}

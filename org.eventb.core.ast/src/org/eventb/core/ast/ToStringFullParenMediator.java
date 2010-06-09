@@ -19,10 +19,12 @@ import org.eventb.core.ast.extension.IToStringMediator;
 
 	protected final StringBuilder builder;
 	protected final String[] boundNames;
+	protected final String operator;
 
-	public ToStringFullParenMediator(StringBuilder builder, String[] boundNames) {
+	public ToStringFullParenMediator(StringBuilder builder, String[] boundNames, String operator) {
 		this.builder = builder;
 		this.boundNames = boundNames;
+		this.operator = operator;
 	}
 
 	public void append(String string) {
@@ -33,6 +35,10 @@ import org.eventb.core.ast.extension.IToStringMediator;
 		builder.append('(');
 		child.toStringFullyParenthesized(builder, boundNames);
 		builder.append(')');
+	}
+
+	public void appendOperator() {
+		builder.append(operator);
 	}
 
 }

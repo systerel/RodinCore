@@ -53,7 +53,6 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IPriorityMediator;
-import org.eventb.core.ast.extension.IToStringMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
@@ -417,14 +416,6 @@ public class TestGenParser extends AbstractTests {
 	
 	private static final IExpressionExtension DIRECT_PRODUCT = new IExpressionExtension() {
 
-		public void toString(IToStringMediator mediator,
-				IExtendedFormula formula) {
-			final Expression[] childExpressions = formula.getChildExpressions();
-			mediator.append(childExpressions[0], false);
-			mediator.append(getSyntaxSymbol());
-			mediator.append(childExpressions[1], true);
-		}
-
 		public boolean isFlattenable() {
 			return false;
 		}
@@ -572,15 +563,6 @@ public class TestGenParser extends AbstractTests {
 			return true;
 		}
 
-		public void toString(IToStringMediator mediator,
-				IExtendedFormula formula) {
-			final Expression[] childExpressions = formula.getChildExpressions();
-			mediator.append(childExpressions[0], false);
-			for (int i = 1; i < childExpressions.length; i++) {
-				mediator.append(getSyntaxSymbol());
-				mediator.append(childExpressions[i], true);
-			}
-		}
 	};
 
 	// verify that the newly introduced symbol cannot be an identifier
@@ -1561,18 +1543,6 @@ public class TestGenParser extends AbstractTests {
 			return false;
 		}
 
-		public void toString(IToStringMediator mediator,
-				IExtendedFormula formula) {
-			mediator.append(getSyntaxSymbol());
-			mediator.append("(");
-			final Expression[] childExpressions = formula.getChildExpressions();
-			mediator.append(childExpressions[0], false);
-			for (int i = 1; i < childExpressions.length; i++) {
-				mediator.append(",");
-				mediator.append(childExpressions[i], true);
-			}
-			mediator.append(")");
-		}
 	};
 
 	// verify that the newly introduced symbol cannot be part of an identifier

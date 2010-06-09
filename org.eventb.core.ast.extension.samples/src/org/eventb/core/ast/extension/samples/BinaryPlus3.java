@@ -18,7 +18,6 @@ import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IPriorityMediator;
-import org.eventb.core.ast.extension.IToStringMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
@@ -58,13 +57,6 @@ public class BinaryPlus3 implements IExpressionExtension {
 	public Predicate getWDPredicate(IWDMediator mediator,
 			IExtendedFormula formula) {
 		return mediator.makeChildWDConjunction(formula);
-	}
-
-	public void toString(IToStringMediator mediator, IExtendedFormula formula) {
-		final Expression[] childExpressions = formula.getChildExpressions();
-		mediator.append(childExpressions[0], false);
-		mediator.append(getSyntaxSymbol());
-		mediator.append(childExpressions[1], true);
 	}
 
 	public boolean isFlattenable() {

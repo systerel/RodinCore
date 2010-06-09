@@ -24,4 +24,5 @@ public interface IToStringMediator {
 
 	void append(Formula<?> child, boolean isRight);
 	
+	void appendOperator();
 }
