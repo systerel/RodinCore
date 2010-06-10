@@ -482,17 +482,16 @@ public class ProverUIUtils {
 
 		final TacticUIRegistry registry = TacticUIRegistry.getDefault();
 		final List<ITacticApplication> applications;
-		
-		// Non type-checked predicate containing source location used here to
-		// get hyperlinks
-		final Predicate parsedPred;
 
 		if (isHypothesis) {
 			applications = registry.getTacticApplicationsToHypothesis(us, pred);		
 		} else {
 			applications = registry.getTacticApplicationsToGoal(us);
 		}
-		parsedPred = getParsed(str);
+
+		// Non type-checked predicate containing source location used here to
+		// get hyperlinks
+		final Predicate parsedPred = getParsed(str);
 
 		for (ITacticApplication application : applications) {
 			if (application instanceof IPositionApplication) {
