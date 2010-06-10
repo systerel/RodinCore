@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@
 package org.eventb.internal.ui.proofSkeletonView;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.JFaceResources;
@@ -155,9 +153,8 @@ public class SequentDetailsPage implements IDetailsPage {
 	static String[] sequentToStrings(IProverSequent sequent) {
 		ArrayList<String> seqElements = new ArrayList<String>();
 
-		Iterator<Predicate> iter = sequent.hypIterable().iterator();
-		while (iter.hasNext()) {
-			seqElements.add(iter.next().toString());
+		for (Predicate predicate : sequent.hypIterable()) {
+			seqElements.add(predicate.toString());
 		}
 		seqElements.add("\u22A2");
 		seqElements.add(sequent.goal().toString());
