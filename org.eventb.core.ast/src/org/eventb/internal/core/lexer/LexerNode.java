@@ -173,6 +173,11 @@ public class LexerNode extends AbstractLexerNode {
 			// Check if we can continue the recognition
 			if (curPos < genScan.getLength()) {
 				final char charAt = genScan.getStringToParse().charAt(curPos);
+				if (term && charAt == '\'') {
+					// we try to add a prime to a reserved word
+					// we return the reserved word
+					return;
+				}
 				LexerNode n = null;
 				if (nodes != null) {
 					n = nodes.get(charAt);

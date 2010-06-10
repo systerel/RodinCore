@@ -77,8 +77,6 @@ public class TestLexer extends AbstractTests {
         	testToken("$_toto", B_MATH.getPREDVAR(), version);
         	testToken("p'", B_MATH.getIDENT(), version);
         	testToken("prj'", B_MATH.getIDENT(), version);
-        	//TODO Be sure that this is allowed
-        	testToken("partition'", B_MATH.getIDENT(), version);
         }
 
 	private void testToken(String image, Integer kind, LanguageVersion version) {
@@ -126,10 +124,14 @@ public class TestLexer extends AbstractTests {
 			assertFalse(ff.isValidIdentifierName("foo	bar"));
 			assertFalse(ff.isValidIdentifierName("foo'bar"));
 			assertFalse(ff.isValidIdentifierName("'"));
+			assertFalse(ff.isValidIdentifierName("'foo"));
+			assertFalse(ff.isValidIdentifierName("prj1"));
 			assertFalse(ff.isValidIdentifierName(""));
 			assertFalse(ff.isValidIdentifierName("    "));
 			assertFalse(ff.isValidIdentifierName("$P"));
 			assertFalse(ff.isValidIdentifierName("l$"));
+			assertFalse(ff.isValidIdentifierName("prj1'"));
 			assertFalse(ff.isValidIdentifierName("prj'p"));
+			assertFalse(ff.isValidIdentifierName("partition'"));
 		}
 }
