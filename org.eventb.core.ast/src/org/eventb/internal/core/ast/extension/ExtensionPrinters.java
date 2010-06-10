@@ -12,7 +12,6 @@ package org.eventb.internal.core.ast.extension;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.extension.IExtendedFormula;
-import org.eventb.core.ast.extension.IToStringMediator;
 
 /**
  * @author Nicolas Beauger

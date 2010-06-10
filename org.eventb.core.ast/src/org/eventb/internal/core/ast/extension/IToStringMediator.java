@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.core.ast.extension;
+package org.eventb.internal.core.ast.extension;
 
 import org.eventb.core.ast.Formula;
 

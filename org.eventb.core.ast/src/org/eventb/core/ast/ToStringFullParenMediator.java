@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
-import org.eventb.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
 
 /**
  * @author Nicolas Beauger
