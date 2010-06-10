@@ -11,14 +11,16 @@
 package org.eventb.internal.ui.searchhypothesis;
 
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.part.IPage;
 import org.eventb.internal.ui.prover.ProverContentOutline;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 
 /**
+ * Implementation of the Search Hypothesis View. This view is implemented as a
+ * page book containing one page for each open proving editor.
+ * 
  * @author htson
- *         <p>
- *         Implementation of the Search Hypothesis View.
  */
 public class SearchHypothesis extends ProverContentOutline {
 
@@ -28,8 +30,6 @@ public class SearchHypothesis extends ProverContentOutline {
 	 */
 	public static final String VIEW_ID = EventBUIPlugin.PLUGIN_ID
 			+ ".views.SearchHypothesis"; // $NON-NLS-1$
-
-	private ISearchHypothesisPage mainPage;
 
 	public SearchHypothesis() {
 		super(Messages.searchedHypothesis_defaultMessage);
@@ -43,7 +43,6 @@ public class SearchHypothesis extends ProverContentOutline {
 			final ISearchHypothesisPage page = (ISearchHypothesisPage) obj;
 			initPage(page);
 			page.createControl(getPageBook());
-			mainPage = page;
 			return new PageRec(part, page);
 		}
 		// There is no Search Hypotheses Page
@@ -51,8 +50,9 @@ public class SearchHypothesis extends ProverContentOutline {
 	}
 
 	public void setSearchedHyp(String pattern) {
-		if (mainPage != null) {
-			mainPage.setPattern(pattern);
+		final IPage page = getCurrentPage();
+		if (page instanceof ISearchHypothesisPage) {
+			((ISearchHypothesisPage) page).setPattern(pattern);
 		}
 	}
 
