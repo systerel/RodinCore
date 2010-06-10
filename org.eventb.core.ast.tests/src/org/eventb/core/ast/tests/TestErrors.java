@@ -140,10 +140,10 @@ public class TestErrors extends AbstractTests {
 						"s ∈ (∅ \u2982 S)",
 						new ASTProblem(new SourceLocation(5, 9), InvalidGenericType,
 								Error, "ℙ(alpha)")));
-				doParseTest(new PredTestItem(
+				doParseTest(new PredPatternTestItem(
 						"x∈$P",
-						new ASTProblem(new SourceLocation(2, 3), PredicateVariableNotAllowed,
-								Error, "$P")));
+						new ASTProblem(new SourceLocation(2, 3), UnexpectedSubFormulaKind,
+								Error, "an expression", "a predicate")));
 				doParseTest(new PredTestItem(
 						"$P",
 						new ASTProblem(new SourceLocation(0, 1), PredicateVariableNotAllowed,

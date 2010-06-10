@@ -40,7 +40,6 @@ import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.ProductType;
@@ -348,16 +347,17 @@ public class SubParsers {
 		}
 	};
 
-	static final INudParser<PredicateVariable> PRED_VAR_SUBPARSER = new ValuedNudParser<PredicateVariable>(
+	static final INudParser<Predicate> PRED_VAR_SUBPARSER = new ValuedNudParser<Predicate>(
 			PREDICATE_VARIABLE) {
 
 		@Override
-		protected PredicateVariable makeValue(ParserContext pc,
+		protected Predicate makeValue(ParserContext pc,
 				String tokenVal, SourceLocation loc) throws SyntaxError {
 			if (!pc.withPredVar) {
-				throw new SyntaxError(new ASTProblem(loc,
+				pc.result.addProblem(new ASTProblem(loc,
 						ProblemKind.PredicateVariableNotAllowed,
 						ProblemSeverities.Error, tokenVal));
+				return pc.factory.makeLiteralPredicate(Formula.BTRUE, loc);
 			}
 			return pc.factory.makePredicateVariable(tokenVal, loc);
 		}
