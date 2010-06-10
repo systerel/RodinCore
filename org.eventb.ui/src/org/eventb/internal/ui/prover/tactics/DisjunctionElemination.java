@@ -9,7 +9,6 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.DefaultTacticProvider;
 
@@ -36,11 +35,9 @@ public class DisjunctionElemination extends DefaultTacticProvider {
 	@Override
 	public Point getOperatorPosition(Predicate predicate, String predStr,
 			IPosition position) {
-		assert Lib.isDisj((Predicate) predicate.getSubFormula(position));
 		AssociativePredicate subFormula = (AssociativePredicate) predicate
 				.getSubFormula(position);
 		Predicate[] children = subFormula.getChildren();
-		assert children.length >= 2;
 		Predicate first = children[0];
 		Predicate second = children[1];
 		// Return the operator between the first and second child

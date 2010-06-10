@@ -41,8 +41,6 @@ public class FunOvrGoal extends DefaultTacticProvider {
 	public Point getOperatorPosition(Predicate predicate, String predStr,
 			IPosition position) {
 		final Formula<?> subFormula = predicate.getSubFormula(position);
-		assert subFormula != null;
-		assert Tactics.isFunOvrApp(subFormula);
 		Expression left = ((BinaryExpression) subFormula).getLeft();
 		Expression[] children = ((AssociativeExpression) left)
 				.getChildren();

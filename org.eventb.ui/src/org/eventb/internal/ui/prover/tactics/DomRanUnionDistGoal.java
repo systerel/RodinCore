@@ -40,7 +40,6 @@ public class DomRanUnionDistGoal extends DefaultTacticProvider {
 	public Point getOperatorPosition(Predicate predicate, String predStr,
 			IPosition position) {
 		Formula<?> subFormula = predicate.getSubFormula(position);
-		assert subFormula instanceof UnaryExpression;
 		Expression child = ((UnaryExpression) subFormula).getChild();
 		Expression[] children = ((AssociativeExpression) child).getChildren();
 		Expression first = children[0];

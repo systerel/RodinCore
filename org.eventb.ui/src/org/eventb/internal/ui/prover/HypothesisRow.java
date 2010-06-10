@@ -19,13 +19,12 @@ package org.eventb.internal.ui.prover;
 import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyCommand;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyTactic;
-import static org.eventb.internal.ui.prover.ProverUIUtils.checkRange;
+import static org.eventb.internal.ui.prover.ProverUIUtils.getHyperlinks;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getParsed;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,10 +53,8 @@ import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.IEventBSharedImages;
-import org.eventb.ui.prover.IPositionApplication;
 import org.eventb.ui.prover.IPredicateApplication;
 import org.eventb.ui.prover.ITacticApplication;
 
@@ -225,64 +222,25 @@ public class HypothesisRow {
 
 			string += str;
 
-			
-			// Get the list of applicable tactic on the parsed but 
-			// not type-checked pretty printed string.
-			// For each tactic, get the applicable positions.
-			Predicate parsedPred = getParsed(string);
-			
-			final Map<Point, List<ITacticApplication>> links = getLinksToApplications(
-					userSupport, string, parsedPred);
+			final Map<Point, List<ITacticApplication>> links = getHyperlinks(
+					userSupport, true, string, hyp);
 					hypothesisText.setText(string, userSupport, hyp, indexes, links);
 		} else {
 			String str = PredicateUtil.prettyPrint(max_length, parsedString,
 					parsedPredicate);
-
-			Predicate parsedPred = getParsed(str);
 
 			int[] indexes = new int[0];
 
 			final Map<Point, List<ITacticApplication>> links;
 
 			if (enable) {
-				links = getLinksToApplications(userSupport, str, parsedPred);
+				links = getHyperlinks(userSupport, true, str, hyp);
 			} else {
 				links = Collections.emptyMap();
 			}
 			hypothesisText.setText(str, userSupport, hyp, indexes, links);
 		}
 		toolkit.paintBordersFor(hypothesisComposite);
-	}
-
-	private  Map<Point, List<ITacticApplication>> getLinksToApplications(
-			IUserSupport us, String string, Predicate parsedStr) {
-		final Map<Point, List<ITacticApplication>> links = new HashMap<Point, List<ITacticApplication>>();
-
-		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
-
-		final List<ITacticApplication> tactics = tacticUIRegistry
-				.getTacticApplicationsToHypothesis(us, hyp);
-
-		for (final ITacticApplication tacticAppli : tactics) {
-			if (tacticAppli instanceof IPositionApplication) {
-				final Point pt = ((IPositionApplication) tacticAppli)
-						.getHyperlinkBounds(string, parsedStr);
-				if (!checkRange(pt, string)) {
-					UIUtils.log(null, "invalid hyperlink bounds ("
-							+ pt.toString() + ") for tactic "
-							+ tacticAppli.getTacticID()
-							+ ". Application abandoned.");
-					continue;
-				}
-				List<ITacticApplication> tacticApplications = links.get(pt);
-				if (tacticApplications == null) {
-					tacticApplications = new ArrayList<ITacticApplication>();
-					links.put(pt, tacticApplications);
-				}
-				tacticApplications.add(tacticAppli);
-			}
-		}
-		return links;
 	}
 
 	/*

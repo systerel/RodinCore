@@ -36,7 +36,6 @@ public class FunCompImgHyp extends DefaultTacticProvider {
 	@Override
 	public Point getOperatorPosition(Predicate predicate, String predStr,
 			IPosition position) {
-		assert !position.isFirstChild();
 		Formula<?> right = predicate.getSubFormula(position);
 		IPosition prevPosition = position.getPreviousSibling();
 		Formula<?> left = predicate.getSubFormula(prevPosition);

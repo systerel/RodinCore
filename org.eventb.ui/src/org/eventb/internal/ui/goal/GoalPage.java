@@ -15,17 +15,14 @@
  *     Systerel - fixed Hyperlink.setImage() calls
  ******************************************************************************/
 package org.eventb.internal.ui.goal;
-
 import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyCommand;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyTactic;
-import static org.eventb.internal.ui.prover.ProverUIUtils.checkRange;
+import static org.eventb.internal.ui.prover.ProverUIUtils.getHyperlinks;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getIcon;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getTooltip;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -67,7 +64,6 @@ import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.internal.ui.prover.EventBPredicateText;
 import org.eventb.internal.ui.prover.ICommandApplication;
@@ -77,7 +73,6 @@ import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
 import org.eventb.ui.IEventBSharedImages;
-import org.eventb.ui.prover.IPositionApplication;
 import org.eventb.ui.prover.IPredicateApplication;
 import org.eventb.ui.prover.ITacticApplication;
 
@@ -102,8 +97,6 @@ public class GoalPage extends Page implements IGoalPage {
 	private Composite goalComposite;
 
 	EventBPredicateText goalText;
-
-	private Predicate parsedPred;
 
 	private String actualString;
 
@@ -297,16 +290,15 @@ public class GoalPage extends Page implements IGoalPage {
 				actualString = PredicateUtil.prettyPrint(max_length, tmpString,
 						tmpPred);
 			}
-			parsedPred = parseActualString(actualString);
 
 			final Map<Point, List<ITacticApplication>> links;
 			if (node.isOpen()) {
-				links = getHyperlinks(userSupport, actualString, parsedPred);
+				final String withoutBox = getParseableString(actualString);
+				links = getHyperlinks(userSupport, false, withoutBox, goal);
 			} else {
 				links = Collections.emptyMap();
 			}
-			goalText.setText(actualString, userSupport, goal,
-					indexes, links);
+			goalText.setText(actualString, userSupport, goal, indexes, links);
 
 			if (!node.isOpen()) {
 				styledText.setBackground(color);
@@ -316,9 +308,12 @@ public class GoalPage extends Page implements IGoalPage {
 		toolkit.paintBordersFor(goalComposite);
 	}
 
-	private static Predicate parseActualString(String predicateString) {
-		final String parseable = predicateString.replace('\uFFFC', ' ');
-		return ProverUIUtils.getParsed(parseable);
+	/**
+	 * Remove the quantifying boxes out of a predicate string to make it
+	 * parseable.
+	 */
+	private static String getParseableString(String predicateString) {
+		return predicateString.replace('\uFFFC', ' ');
 	}
 
 	void apply(ICommandApplication commandAppli) {
@@ -337,37 +332,6 @@ public class GoalPage extends Page implements IGoalPage {
 		
 		applyTactic(tacticAppli.getTactic(inputs, globalInput),
 				userSupport, null, skipPostTactic, new NullProgressMonitor());
-	}
-
-	private static Map<Point, List<ITacticApplication>> getHyperlinks(
-			IUserSupport us, String parsedString, Predicate parsedPredicate) {
-		Map<Point, List<ITacticApplication>> links = new HashMap<Point, List<ITacticApplication>>();
-
-		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
-
-		List<ITacticApplication> applications = tacticUIRegistry
-				.getTacticApplicationsToGoal(us);
-
-		for (ITacticApplication application : applications) {
-			if (application instanceof IPositionApplication) {
-				Point pt = ((IPositionApplication) application)
-						.getHyperlinkBounds(parsedString, parsedPredicate);
-				if (!checkRange(pt, parsedString)) {
-					UIUtils.log(null, "invalid hyperlink bounds ("
-							+ pt.toString() + ") for tactic "
-							+ application.getTacticID()
-							+ ". Application abandoned.");
-					continue;
-				}
-				List<ITacticApplication> applicationList = links.get(pt);
-				if (applicationList == null) {
-					applicationList = new ArrayList<ITacticApplication>();
-					links.put(pt, applicationList);
-				}
-				applicationList.add(application);
-			}
-		}
-		return links;
 	}
 	
 	private int [] getIndexesString(Predicate pred,
