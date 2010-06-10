@@ -60,6 +60,8 @@ import org.rodinp.core.RodinDBException;
  * @see IProofManager#getProofComponent(IEventBRoot)
  * @see IProofAttempt
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IProofComponent {
 
@@ -139,6 +141,7 @@ public interface IProofComponent {
 	 * 
 	 * @return the live proof attempt for the given proof obligation and owner,
 	 *         or <code>null</code> if no such proof attempt exists
+	 * @since 1.4
 	 */
 	IProofAttempt getProofAttempt(String poName, String owner);
 
