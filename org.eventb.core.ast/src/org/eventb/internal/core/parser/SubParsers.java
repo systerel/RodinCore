@@ -389,14 +389,16 @@ public class SubParsers {
 			}
 			pc.progress();
 			
-			final Type right = pc.subParse(TYPE_PARSER);
+			Type type = pc.subParse(TYPE_PARSER);
 			final SourceLocation typeLoc = pc.getSourceLocation();
 			if (pc.t.kind != _RPAR) {
 				throw newMissingParenError(pc);
 			}
-			checkValidTypedGeneric(tag, right, typeLoc);
+			if (!checkValidTypedGeneric(tag, type, typeLoc, pc.result)) {
+				type = null;
+			}
 			return pc.factory.makeAtomicExpression(tag, pc
-					.getEnclosingSourceLocation(), right);
+					.getEnclosingSourceLocation(), type);
 		}
 
 		private boolean isTypedGeneric(int tag) {
@@ -423,41 +425,46 @@ public class SubParsers {
 		}
 
 		
-		private void checkValidTypedGeneric(int tag, Type type,
-				SourceLocation typeLoc) throws SyntaxError {
+		private boolean checkValidTypedGeneric(int tag, Type type,
+				SourceLocation typeLoc, ParseResult result) throws SyntaxError {
 			switch (tag) {
 			case Formula.EMPTYSET:
 				if (!(type instanceof PowerSetType)) {
-					throw newInvalidGenType(typeLoc, POW_ALPHA);
+					result.addProblem(newInvalidGenType(typeLoc, POW_ALPHA));
+					return false;
 				}
 				break;
 			case Formula.KID_GEN:
 				final Type source = type.getSource();
 				if (!(source != null && source.equals(type.getTarget()))) {
-					throw newInvalidGenType(typeLoc, POW_ALPHA_ALPHA);
+					result.addProblem(newInvalidGenType(typeLoc, POW_ALPHA_ALPHA));
+					return false;
 				}
 				break;
 			case Formula.KPRJ1_GEN:
 				if (!isValidPrjType(type, true)) {
-					throw newInvalidGenType(typeLoc, POW_ALPHA_BETA_ALPHA);
+					result.addProblem(newInvalidGenType(typeLoc, POW_ALPHA_BETA_ALPHA));
+					return false;
 				}
 				break;
 			case Formula.KPRJ2_GEN:
 				if (!isValidPrjType(type, false)) {
-					throw newInvalidGenType(typeLoc, POW_ALPHA_BETA_BETA);
+					result.addProblem(newInvalidGenType(typeLoc, POW_ALPHA_BETA_BETA));
+					return false;
 				}
 				break;
 			default:
 				// tag has already been checked
 				assert false;
 			}
+			return true;
 		}
 
-		private SyntaxError newInvalidGenType(SourceLocation loc, String expected) {
-			return new SyntaxError(new ASTProblem(loc,
+		private ASTProblem newInvalidGenType(SourceLocation loc, String expected) {
+			return new ASTProblem(loc,
 					ProblemKind.InvalidGenericType,
 					ProblemSeverities.Error,
-					expected));
+					expected);
 		}
 		
 		private boolean isValidPrjType(Type type, boolean left) {
