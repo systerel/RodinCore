@@ -16,11 +16,16 @@
  ******************************************************************************/
 package org.eventb.internal.ui.goal;
 import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
+import static org.eventb.internal.ui.prover.ProverUIUtils.addHyperlink;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyCommand;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyTactic;
+import static org.eventb.internal.ui.prover.ProverUIUtils.debug;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getHyperlinks;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getIcon;
+import static org.eventb.internal.ui.prover.ProverUIUtils.getParsed;
+import static org.eventb.internal.ui.prover.ProverUIUtils.getProofStateDelta;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getTooltip;
+import static org.eventb.internal.ui.prover.ProverUIUtils.getUserSupportDelta;
 
 import java.util.Collections;
 import java.util.List;
@@ -191,7 +196,7 @@ public class GoalPage extends Page implements IGoalPage {
 	}
 
 	private void createNullHyperlinks() {
-		ProverUIUtils.debug("Create Null Image");
+		debug("Create Null Image");
 		ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
 				SWT.CENTER);
 		hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -241,7 +246,7 @@ public class GoalPage extends Page implements IGoalPage {
 				}
 
 			};
-			ProverUIUtils.addHyperlink(buttonComposite, toolkit, SWT.FILL, getIcon(predAppli),
+			addHyperlink(buttonComposite, toolkit, SWT.FILL, getIcon(predAppli),
 					getTooltip(predAppli), listener, enable);
 		}
 
@@ -261,7 +266,7 @@ public class GoalPage extends Page implements IGoalPage {
 				}
 
 			};
-			ProverUIUtils.addHyperlink(buttonComposite, toolkit, SWT.FILL, commandAppli
+			addHyperlink(buttonComposite, toolkit, SWT.FILL, commandAppli
 					.getIcon(), commandAppli.getTooltip(), listener, enable);
 		}
 	}
@@ -280,7 +285,7 @@ public class GoalPage extends Page implements IGoalPage {
 		} else {
 			Predicate goal = node.getSequent().goal();
 			final String tmpString = goal.toString();
-			final Predicate tmpPred = ProverUIUtils.getParsed(tmpString);
+			final Predicate tmpPred = getParsed(tmpString);
 
 			int [] indexes = new int[0];
 
@@ -326,7 +331,7 @@ public class GoalPage extends Page implements IGoalPage {
 		String[] inputs = goalText.getResults();
 		if (ProverUIUtils.DEBUG)
 			for (String input : inputs)
-				ProverUIUtils.debug("Input: \"" + input + "\"");
+				debug("Input: \"" + input + "\"");
 
 		final String globalInput = this.proverUI.getProofControl().getInput();
 		
@@ -426,8 +431,7 @@ public class GoalPage extends Page implements IGoalPage {
 			return;
 
 		// Trying to get the changes for the current user support.
-		final IUserSupportDelta affectedUserSupport = ProverUIUtils
-				.getUserSupportDelta(delta, userSupport);
+		final IUserSupportDelta affectedUserSupport = getUserSupportDelta(delta, userSupport);
 
 		// Do nothing if there is no change for this current user support.
 		if (affectedUserSupport == null)
@@ -443,8 +447,7 @@ public class GoalPage extends Page implements IGoalPage {
 		// This case should NOT happened.
 		if (kind == IUserSupportDelta.ADDED) {
 			if (ProverUIUtils.DEBUG)
-				ProverUIUtils
-						.debug("Error: Delta said that the user Support is added");
+				debug("Error: Delta said that the user Support is added");
 			return; // Do nothing
 		}
 
@@ -480,9 +483,8 @@ public class GoalPage extends Page implements IGoalPage {
 						// If the changes occurs in some proof states.	
 						IProofState proofState = userSupport.getCurrentPO();
 						// Trying to get the change for the current proof state. 
-						final IProofStateDelta affectedProofState = ProverUIUtils
-								.getProofStateDelta(affectedUserSupport,
-										proofState);
+						final IProofStateDelta affectedProofState = getProofStateDelta(
+								affectedUserSupport, proofState);
 						if (affectedProofState != null) {
 							// If there are some changes
 							int psKind = affectedProofState.getKind();

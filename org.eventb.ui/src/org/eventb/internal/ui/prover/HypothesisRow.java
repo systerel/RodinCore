@@ -17,10 +17,14 @@
 package org.eventb.internal.ui.prover;
 
 import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
+import static org.eventb.internal.ui.prover.ProverUIUtils.addHyperlink;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyCommand;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyTactic;
+import static org.eventb.internal.ui.prover.ProverUIUtils.debug;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getHyperlinks;
+import static org.eventb.internal.ui.prover.ProverUIUtils.getIcon;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getParsed;
+import static org.eventb.internal.ui.prover.ProverUIUtils.getTooltip;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -205,7 +209,7 @@ public class HypothesisRow {
 				SourceLocation loc = ident.getSourceLocation();
 				String image = parsedString.substring(loc.getStart(), loc
 						.getEnd() + 1);
-				ProverUIUtils.debug("Ident: " + image);
+				debug("Ident: " + image);
 				string += " " + image + " ";
 				int x = string.length();
 				string += " ";
@@ -247,7 +251,7 @@ public class HypothesisRow {
 	 * Creating a null hyperlink
 	 */
 	private void createNullHyperlinks() {
-		ProverUIUtils.debug("Create Null Image");
+		debug("Create Null Image");
 		ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
 				SWT.CENTER);
 		hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -297,9 +301,9 @@ public class HypothesisRow {
 				}
 			};
 			final IPredicateApplication predAppli = (IPredicateApplication) tacticAppli;
-			final Image icon = ProverUIUtils.getIcon(predAppli);
-			final String tooltip = ProverUIUtils.getTooltip(predAppli);
-			ProverUIUtils.addHyperlink(buttonComposite, toolkit, SWT.BEGINNING,
+			final Image icon = getIcon(predAppli);
+			final String tooltip = getTooltip(predAppli);
+			addHyperlink(buttonComposite, toolkit, SWT.BEGINNING,
 					icon, tooltip, hlListener, enable);
 		}
 		
@@ -319,7 +323,7 @@ public class HypothesisRow {
 				}
 
 			};
-			ProverUIUtils.addHyperlink(buttonComposite, toolkit, SWT.FILL, commandAppli
+			addHyperlink(buttonComposite, toolkit, SWT.FILL, commandAppli
 					.getIcon(), commandAppli.getTooltip(), hlListener, enable);
 		}
 
@@ -367,7 +371,7 @@ public class HypothesisRow {
 		final String[] inputs = hypothesisText.getResults();
 		if (ProverUIUtils.DEBUG)
 			for (String input : inputs)
-				ProverUIUtils.debug("Input: \"" + input + "\"");
+				debug("Input: \"" + input + "\"");
 
 		final String globalInput = this.proverUI.getProofControl().getInput();
 		final Set<Predicate> hypSet = Collections.singleton(hyp);
