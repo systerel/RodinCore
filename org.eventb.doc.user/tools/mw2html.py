@@ -248,8 +248,7 @@ def gen_xml_toc(doc, config, one_page=False, doc_filename=None):
     toc += '<toc label="'+title+'">\n'
 
     # we expect a first heading level for h2
-    first_level = 2
-    level = first_level - 1
+    first_level = None
 
     for m in topic.finditer(doc):
         logging.debug("Found topic <h%s> %s : %s" % (m.group(2), m.group(3),m.group(1)))
@@ -257,8 +256,12 @@ def gen_xml_toc(doc, config, one_page=False, doc_filename=None):
             l = int(m.group(2))
         except:
             l = 2
-        if l <= level:
-            toc += '%s</topic>\n' % (' '*l)
+        if first_level is None:
+            first_level = l
+            level = l
+        else:
+            for l in range(level, l-1, -1):
+                toc+='%s</topic>\n' % (' '*l)
         toc += '%s<topic label="%s" href="%s%s">\n' % (' ' * l,
                 m.group(3).strip(), where_base,  m.group(1))
         if not one_page:
