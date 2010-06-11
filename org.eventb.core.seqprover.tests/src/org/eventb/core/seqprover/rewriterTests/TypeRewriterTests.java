@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added tests for SIMP_TYPE_SUBSETEQ and SIMP_TYPE_SUBSET_L
  ******************************************************************************/
 
 package org.eventb.core.seqprover.rewriterTests;
@@ -37,25 +38,44 @@ public class TypeRewriterTests extends AbstractFormulaRewriterTests {
 		super(rewriter);
 	}
 
-	/**
-	 * Testing the trivial type writes.
-	 */
 	@Test
-	public void testTypeRewrites() {
+	public void test_SIMP_TYPE_EQUAL_EMPTY_Left() throws Exception {
 		// Typ = {} == false (where Typ is a type expression)
 		predicateTest("⊥", "ℤ = ∅");
 		predicateTest("⊥", "ℙ(ℤ) = ∅");
+		predicateTest("ℕ = ∅", "ℕ = ∅");
+	}
 
-		
+	@Test
+	public void test_SIMP_TYPE_EQUAL_EMPTY_Right() throws Exception {
 		// {} = Typ == false (where Typ is a type expression)
 		predicateTest("⊥", "∅ = ℤ");
 		predicateTest("⊥", "∅ = ℙ(ℤ)");
-		
+		predicateTest("∅ = ℕ", "∅ = ℕ");
+	}
 
+	@Test
+	public void test_SIMP_TYPE_IN() throws Exception {
 		// E : Typ == true (where Typ is a type expression)
 		predicateTest("⊤", "E ∈ ℤ");
 		predicateTest("⊤", "E ∈ ℙ(ℤ)");
-
+		predicateTest("E ∈ ℕ", "E ∈ ℕ");
+	}
+	
+	@Test
+	public void test_SIMP_TYPE_SUBSETEQ() throws Exception {
+		// S <: Typ == true (where Typ is a type expression)
+		predicateTest("⊤", "S ⊆ ℤ");
+		predicateTest("⊤", "S ⊆ ℙ(ℤ)");
+		predicateTest("S ⊆ ℕ", "S ⊆ ℕ");
+	}
+	
+	@Test
+	public void test_SIMP_TYPE_SUBSET_L() throws Exception {
+		// S <<: Typ == S /= Typ (where Typ is a type expression)
+		predicateTest("S ≠ ℤ", "S ⊂ ℤ");
+		predicateTest("S ≠ ℙ(ℤ)", "S ⊂ ℙ(ℤ)");
+		predicateTest("S ⊂ ℕ", "S ⊂ ℕ");
 	}
 
 }

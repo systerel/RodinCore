@@ -53,7 +53,8 @@ public class TypeRewriterImpl extends DefaultRewriter {
 		
 	%include {FormulaV2.tom}
 	
-    @ProverRule( { "SIMP_TYPE_IN", "SIMP_TYPE_EQUAL_EMPTY" })
+    @ProverRule( { "SIMP_TYPE_IN", "SIMP_TYPE_EQUAL_EMPTY",
+            "SIMP_TYPE_SUBSETEQ", "SIMP_TYPE_SUBSET_L" })
 	@Override
 	public Predicate rewrite(RelationalPredicate predicate) {
 	    %match (Predicate predicate) {
@@ -85,6 +86,24 @@ public class TypeRewriterImpl extends DefaultRewriter {
 				return predicate;
 			}
 
+	        /**
+             * SIMP_TYPE_SUBSETEQ: S ⊆ Typ == ⊤ (where Typ is a type expression)
+             */
+            SubsetEq(_, Typ) -> {
+                if (`Typ.isATypeExpression())
+                    return Lib.True;
+                return predicate;
+            }
+            
+            /**
+             * SIMP_TYPE_SUBSET_L: S ⊂ Typ == S ≠ Typ (where Typ is a type expression)
+             */
+            Subset(S, Typ) -> {
+                if (`Typ.isATypeExpression())
+                    return Lib.makeNotEq(`S, `Typ);
+                return predicate;
+            }
+            
 	    }
 	    return predicate;
 	}
