@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language V2
  *     Systerel - various cleanup
+ *     Systerel - added applyTypeSimplification()
  ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
@@ -56,6 +57,8 @@ import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewriterImpl;
 
 /**
  * This is a collection of static constants and methods that are used often in
@@ -1149,6 +1152,42 @@ public final class Lib {
 	
 	public static boolean isPartition(Predicate p) {
 		return p.getTag() == Formula.KPARTITION;
+	}
+
+	/**
+	 * Applies type rewrite then auto simplification to the given predicate.
+	 * 
+	 * @param predicate
+	 *            a predicate to rewrite
+	 * @return the rewritten predicate
+	 * @since 1.4
+	 */
+	public static Predicate applyTypeSimplification(Predicate predicate) {
+		final IFormulaRewriter typeRewriter = new TypeRewriterImpl();
+		final Predicate typeRewritten = predicate.rewrite(typeRewriter);
+		
+		final IFormulaRewriter autoRewriter = new AutoRewriterImpl();
+		return recursiveRewrite(typeRewritten, autoRewriter);
+	}
+
+	/**
+	 * Recursively apply the given rewriter to the given predicate.
+	 * 
+	 * @param predicate
+	 *            a predicate to rewrite
+	 * @param rewriter
+	 *            the rewriter to apply
+	 * @return the rewritten predicate
+	 */
+	private static Predicate recursiveRewrite(Predicate predicate,
+			IFormulaRewriter rewriter) {
+		Predicate resultPred;
+		resultPred = predicate.rewrite(rewriter);
+		while (resultPred != predicate) {
+			predicate = resultPred;
+			resultPred = predicate.rewrite(rewriter);
+		}
+		return resultPred;
 	}
 
 }
