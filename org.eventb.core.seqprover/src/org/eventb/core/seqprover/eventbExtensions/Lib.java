@@ -865,9 +865,9 @@ public final class Lib {
 	 * Test if the formula is a set intersection "S ∩ ... ∩ T".
 	 * <p>
 	 * 
-	 * @param formula
-	 *            any formula
-	 * @return <code>true</code> if the input formula is a set intersection.
+	 * @param expression
+	 *            any expression
+	 * @return <code>true</code> if the given expression is a set intersection.
 	 *         Return <code>false</code> otherwise.
 	 * @author htson
 	 */
@@ -880,9 +880,9 @@ public final class Lib {
 	 * Test if the formula is a set union "S ∪ ... ∪ T".
 	 * <p>
 	 * 
-	 * @param formula
-	 *            any formula
-	 * @return <code>true</code> if the input formula is a set union. Return
+	 * @param expression
+	 *            any expression
+	 * @return <code>true</code> if the given expression is a set union. Return
 	 *         <code>false</code> otherwise.
 	 * @author htson
 	 */
@@ -921,10 +921,10 @@ public final class Lib {
 	 * Test if the formula is a singleton set "{E}".
 	 * <p>
 	 * 
-	 * @param formula
-	 *            any formula
-	 * @return <code>true</code> if the input formula is a singleton set. Return
-	 *         <code>false</code> otherwise.
+	 * @param expression
+	 *            any expression
+	 * @return <code>true</code> if the given expression is a singleton set.
+	 *         Return <code>false</code> otherwise.
 	 * @author htson
 	 */
 	public static boolean isSingletonSet(Expression expression) {
