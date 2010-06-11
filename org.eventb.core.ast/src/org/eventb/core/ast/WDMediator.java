@@ -25,12 +25,23 @@ import org.eventb.core.ast.extension.IWDMediator;
 		this.formulaFactory = formulaFactory;
 	}
 
-	public Predicate makeChildWDConjunction(IExtendedFormula formula) {
+	public Predicate addChildrenWD(Predicate initialWD,
+			IExtendedFormula formula) {
 		final Predicate exprWD = Formula.getWDConjunction(formulaFactory,
 				formula.getChildExpressions());
 		final Predicate predWD = Formula.getWDConjunction(formulaFactory,
 				formula.getChildPredicates());
-		return Formula.getWDSimplifyC(formulaFactory, exprWD, predWD);
+		final Predicate childWD = Formula.getWDSimplifyC(formulaFactory,
+				exprWD, predWD);
+		return Formula.getWDSimplifyC(formulaFactory, initialWD, childWD);
+	}
+
+	public Predicate makeTrueWD() {
+		return formulaFactory.makeLiteralPredicate(Formula.BTRUE, null);
+	}
+
+	public FormulaFactory getFormulaFactory() {
+		return formulaFactory;
 	}
 
 }

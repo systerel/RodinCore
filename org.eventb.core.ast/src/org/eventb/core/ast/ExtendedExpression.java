@@ -170,7 +170,9 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	@Override
 	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
 		final WDMediator wdMed = new WDMediator(formulaFactory);
-		return extension.getWDPredicate(wdMed, this);
+		final Predicate extensionWD = extension.getWDPredicate(wdMed, this);
+		
+		return wdMed.addChildrenWD(extensionWD, this);
 	}
 
 	@Override

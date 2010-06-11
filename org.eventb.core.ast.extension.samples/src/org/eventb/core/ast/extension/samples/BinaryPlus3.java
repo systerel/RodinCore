@@ -56,7 +56,7 @@ public class BinaryPlus3 implements IExpressionExtension {
 
 	public Predicate getWDPredicate(IWDMediator mediator,
 			IExtendedFormula formula) {
-		return mediator.makeChildWDConjunction(formula);
+		return mediator.makeTrueWD();
 	}
 
 	public void addCompatibilities(ICompatibilityMediator mediator) {

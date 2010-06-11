@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.extension;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 
 
@@ -20,6 +21,7 @@ import org.eventb.core.ast.Predicate;
  */
 public interface IWDMediator {
 
-	Predicate makeChildWDConjunction(IExtendedFormula formula);
+	Predicate makeTrueWD();
 
+	FormulaFactory getFormulaFactory();
 }

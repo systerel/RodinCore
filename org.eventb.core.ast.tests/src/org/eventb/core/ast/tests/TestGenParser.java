@@ -418,7 +418,7 @@ public class TestGenParser extends AbstractTests {
 
 		public Predicate getWDPredicate(IWDMediator wdMediator,
 				IExtendedFormula formula) {
-			return wdMediator.makeChildWDConjunction(formula);
+			return wdMediator.makeTrueWD();
 		}
 
 		public String getSyntaxSymbol() {
@@ -552,7 +552,7 @@ public class TestGenParser extends AbstractTests {
 
 		public Predicate getWDPredicate(IWDMediator wdMediator,
 				IExtendedFormula formula) {
-			return wdMediator.makeChildWDConjunction(formula);
+			return wdMediator.makeTrueWD();
 		}
 
 	};
@@ -1528,7 +1528,7 @@ public class TestGenParser extends AbstractTests {
 
 		public Predicate getWDPredicate(IWDMediator wdMediator,
 				IExtendedFormula formula) {
-			return wdMediator.makeChildWDConjunction(formula);
+			return wdMediator.makeTrueWD();
 		}
 
 	};
