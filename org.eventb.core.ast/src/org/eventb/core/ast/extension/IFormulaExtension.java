@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.extension;
 
-import static org.eventb.internal.core.ast.extension.ExtensionPrinters.ASSOC_INFIX_EXPR_PRINTER;
-import static org.eventb.internal.core.ast.extension.ExtensionPrinters.BINARY_INFIX_EXPR_PRINTER;
+import static org.eventb.internal.core.ast.extension.ExtensionPrinters.INFIX_EXPR_PRINTER;
 import static org.eventb.internal.core.ast.extension.ExtensionPrinters.PAREN_PREFIX_EXPR_PRINTER;
 import static org.eventb.internal.core.ast.extension.PrecondChecker.NO_LIMIT;
 
@@ -28,11 +27,11 @@ public interface IFormulaExtension {
 	public static enum ExtensionKind {
 		// a op b
 		BINARY_INFIX_EXPRESSION(new PrecondChecker(2, 2, 0, 0),
-				BINARY_INFIX_EXPR_PRINTER, false),
+				INFIX_EXPR_PRINTER, false),
 
 		// a op b op ... op c
 		ASSOCIATIVE_INFIX_EXPRESSION(new PrecondChecker(2, NO_LIMIT, 0, 0),
-				ASSOC_INFIX_EXPR_PRINTER, true),
+				INFIX_EXPR_PRINTER, true),
 
 		// op(a, b, ..., c)
 		PARENTHESIZED_PREFIX_EXPRESSION(new PrecondChecker(2, NO_LIMIT, 0, 0),

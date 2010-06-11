@@ -23,18 +23,7 @@ public class ExtensionPrinters {
 		void toString(IToStringMediator mediator, IExtendedFormula formula);
 	}
 
-	public static final IExtensionPrinter BINARY_INFIX_EXPR_PRINTER = new IExtensionPrinter() {
-		public void toString(IToStringMediator mediator,
-				IExtendedFormula formula) {
-			final Expression[] childExpressions = formula.getChildExpressions();
-			mediator.append(childExpressions[0], false);
-			mediator.appendOperator();
-			mediator.append(childExpressions[1], true);
-		}
-
-	};
-
-	public static final IExtensionPrinter ASSOC_INFIX_EXPR_PRINTER = new IExtensionPrinter() {
+	public static final IExtensionPrinter INFIX_EXPR_PRINTER = new IExtensionPrinter() {
 
 		public void toString(IToStringMediator mediator,
 				IExtendedFormula formula) {
