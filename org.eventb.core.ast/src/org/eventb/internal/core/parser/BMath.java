@@ -45,9 +45,6 @@ public class BMath extends AbstractGrammar {
 	private static final String TYPED = "Typed";
 	private static final String FUNCTIONAL = "Functional";
 	private static final String BRACE_SETS = "Brace Sets";
-	private static final String IDENT_LIST = "Identifier List";
-	private static final String IDENT_MAPLET_LIST = "Ident Maplet List";
-	private static final String INFIX_SUBST = "Infix Substitution";
 	private static final String QUANTIFIED_PRED = "Quantified";
 	private static final String LOGIC_PRED = "Logic Predicate";
 	private static final String INFIX_PRED = "Infix Predicate";
