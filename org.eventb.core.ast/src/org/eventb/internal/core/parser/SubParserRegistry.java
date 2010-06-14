@@ -55,10 +55,6 @@ public class SubParserRegistry {
 		public List<INudParser<? extends Formula<?>>> getNudParsers() {
 			return nudParsers;
 		}
-
-		public boolean isEmpty() {
-			return ledParsers.isEmpty() && nudParsers.isEmpty();
-		}
 	}
 
 	private final Map<Integer, KindParsers> kindParsers = new HashMap<Integer, KindParsers>();

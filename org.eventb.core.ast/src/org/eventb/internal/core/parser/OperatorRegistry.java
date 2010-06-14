@@ -39,6 +39,10 @@ public class OperatorRegistry {
 	private static class Relation<T> {
 		private final Map<T, Set<T>> maplets = new HashMap<T, Set<T>>();
 
+		public Relation() {
+			// avoid synthetic accessor emulation
+		}
+		
 		public void add(T a, T b) {
 			Set<T> set = maplets.get(a);
 			if (set == null) {
@@ -66,6 +70,10 @@ public class OperatorRegistry {
 		private final Map<T, Set<T>> reachable = new HashMap<T, Set<T>>();
 		private final Map<T, Set<T>> reachableReverse = new HashMap<T, Set<T>>();
 
+		public Closure() {
+			// avoid synthetic accessor emulation
+		}
+		
 		public boolean contains(T a, T b) {
 			return contains(reachable, a, b);
 		}
@@ -136,6 +144,7 @@ public class OperatorRegistry {
 			}
 		}
 
+		// will be needed to display current grammar to extension creator
 		public String getId() {
 			return id;
 		}
@@ -178,10 +187,6 @@ public class OperatorRegistry {
 			operatorPriority.add(a, b);
 		}
 
-		public boolean contains(Integer a) {
-			return operators.contains(a);
-		}
-
 		public boolean hasLessPriority(Integer a, Integer b) {
 			return operatorPriority.contains(a, b);
 		}
@@ -202,6 +207,10 @@ public class OperatorRegistry {
 		
 		private final Map<K,V> map = new HashMap<K, V>();
 		
+		public AllInOnceMap() {
+			// avoid synthetic accessor emulation
+		}
+		
 		public V get(K key) {
 			final V value = map.get(key);
 			if (value == null) {
@@ -212,16 +221,6 @@ public class OperatorRegistry {
 		
 		public V getNoCheck(K key) {
 			return map.get(key);
-		}
-		
-		public K getKey(V value) {
-			final Set<Entry<K, V>> entrySet = map.entrySet();
-			for (Entry<K, V> entry : entrySet) {
-				if (entry.getValue().equals(value)) {
-					return entry.getKey();
-				}
-			}
-			return null;
 		}
 		
 		public void put(K key, V value) {
