@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.5"?>
+
+<product name="%productName" uid="org.rodinp.platform.product" id="org.rodinp.platform.product" application="org.eclipse.ui.ide.workbench" version="1.3.0.qualifier" useFeatures="true" includeLaunchers="true">
+
+   <aboutInfo>
+      <image path="/org.rodinp.platform/icons/about.gif"/>
+      <text>
+         %aboutText
+      </text>
+   </aboutInfo>
+
+   <configIni use="default">
+   </configIni>
+
+   <launcherArgs>
+      <vmArgs>-Xmx512m</vmArgs>
+   </launcherArgs>
+
+   <windowImages i16="/org.rodinp.platform/icons/rodin16.gif" i32="/org.rodinp.platform/icons/rodin32.gif" i48="/org.rodinp.platform/icons/rodin48.gif" i64="/org.rodinp.platform/icons/rodin64.gif" i128="/org.rodinp.platform/icons/rodin128.gif"/>
+
+   <splash
+      location="org.rodinp.platform"
+      startupProgressRect="5,200,445,15"
+      startupMessageRect="7,177,445,20"
+      startupForegroundColor="000000" />
+   <launcher name="rodin">
+      <linux icon="/org.rodinp.platform/rodin32.xpm"/>
+      <macosx icon="/org.rodinp.platform/rodin.icns"/>
+      <solaris/>
+      <win useIco="true">
+         <ico path="/org.rodinp.platform/rodin.ico"/>
+         <bmp/>
+      </win>
+   </launcher>
+
+   <intro introId="org.rodinp.platform.intro"/>
+
+   <vm>
+   </vm>
+
+
+   <plugins>
+   </plugins>
+
+   <features>
+      <feature id="org.rodinp.platform" version="0.0.0"/>
+      <feature id="org.eventb.ide" version="0.0.0"/>
+   </features>
+
+
+</product>

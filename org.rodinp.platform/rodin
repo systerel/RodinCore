@@ -1,0 +1,9 @@
+#!/bin/sh
+GDK_NATIVE_WINDOWS=1
+export GDK_NATIVE_WINDOWS
+
+SCRIPT_PATH=$(readlink -f $0)
+RODIN_DIR=$(dirname $SCRIPT_PATH)
+RODIN_CMD=$RODIN_DIR/rodin-bin
+
+$RODIN_CMD "$@"
