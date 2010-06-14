@@ -371,8 +371,8 @@
       </reasoner>
       <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimplifies"
-            id="FunImgDomSub"
-            name="%funImgDomSubName">
+            id="funImgSimplifies"
+            name="%funImgSimplifiesName">
       </reasoner>
    </extension>
    <extension

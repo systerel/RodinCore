@@ -68,7 +68,7 @@ public abstract class SimpleRewriter extends AbstractRewriter {
 	@Deprecated
 	public static class TypePred extends SimpleRewriter {
 		public static final String REASONER_ID =
-			SequentProver.PLUGIN_ID + ".trivial";
+			SequentProver.PLUGIN_ID + ".typePred";
 		private static final Rewriter REWRITER = new TypePredRewriter();
 		public TypePred() {
 			super(REWRITER);
