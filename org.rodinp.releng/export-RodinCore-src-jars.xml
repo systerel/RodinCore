@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="plugin_export" name="build">
+	<!-- These two properties should be set through the run configuration -->
+	<property name="SVNrev" value="some number" />
+	<property name="destination" value="some path" />
+
+
+	<target name="plugin_export">
+		<pde.exportPlugins
+			destination="${destination}"
+			exportSource="true"
+			exportType="directory"
+			plugins="ch.ethz.eventb.keyboard.latex,
+			         fr.systerel.explorer,
+			         org.eventb.core,
+			         org.eventb.core.ast,
+			         org.eventb.core.seqprover,
+			         org.eventb.eventBKeyboard,
+			         org.eventb.ide,
+			         org.eventb.keyboard,
+			         org.eventb.pp,
+			         org.eventb.pp.ui,
+			         org.eventb.pptrans,
+			         org.eventb.ui,
+			         org.eventb.ui.symboltable,
+			         org.rodinp,
+			         org.rodinp.core,
+			         org.rodinp.keyboard,
+			         org.rodinp.platform"
+			qualifier="r${SVNrev}"
+			useJARFormat="true"/>
+		
+	</target>
+
+</project>
