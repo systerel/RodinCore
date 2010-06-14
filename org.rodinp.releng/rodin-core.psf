@@ -6,7 +6,6 @@
 <project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/org.eventb.core,org.eventb.core"/>
 <project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/org.eventb.core.ast,org.eventb.core.ast"/>
 <project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/org.eventb.core.seqprover,org.eventb.core.seqprover"/>
-<project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/org.eventb.eventBKeyboard,org.eventb.eventBKeyboard"/>
 <project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/org.eventb.ide,org.eventb.ide"/>
 <project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/org.eventb.ide-feature,org.eventb.ide-feature"/>
 <project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/org.eventb.keyboard,org.eventb.keyboard"/>

@@ -14,8 +14,7 @@ Require-Bundle: org.eclipse.ui;visibility:=reexport,
  org.eclipse.ui.views.properties.tabbed;visibility:=reexport,
  org.eclipse.ui.editors;visibility:=reexport,
  org.eventb.keyboard;visibility:=reexport,
- org.rodinp.keyboard,
- org.eventb.eventBKeyboard
+ org.rodinp.keyboard
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eventb.internal.ui;x-friends:="org.eventb.ui.tests,fr.systerel.explorer",
  org.eventb.internal.ui.autocompletion;x-friends:="org.eventb.ui.tests",

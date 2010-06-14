@@ -9,8 +9,8 @@ rodin
 in Windows.
 
 In the windows version it may be necessary to extract the
-font Brave Sans Mono Roman contained in the jar file
-org.eventb.eventBKeyboard_* in the plugins directory.
+font Brave Sans Mono Roman contained in the directory "fonts"
+of the jar file org.eventb.ui located in the plugins directory.
 
 Make sure you are running the Java virtual machine 1.5 or later
 from Sun.

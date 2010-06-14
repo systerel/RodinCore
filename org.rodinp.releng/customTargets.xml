@@ -125,9 +125,6 @@
 	        <copy todir="${buildDirectory}/plugins/org.eventb.ui.symboltable">
     	        <fileset dir="${builder}/../org.eventb.ui.symboltable" />
         	</copy>
-	        <copy todir="${buildDirectory}/plugins/org.eventb.eventBKeyboard">
-	            <fileset dir="${builder}/../org.eventb.eventBKeyboard" />
-	        </copy>
 	        <copy todir="${buildDirectory}/plugins/org.eventb.ide">
 	            <fileset dir="${builder}/../org.eventb.ide" />
 	        </copy>
