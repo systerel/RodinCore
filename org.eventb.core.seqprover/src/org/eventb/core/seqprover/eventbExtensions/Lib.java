@@ -1179,6 +1179,10 @@ public final class Lib {
 	 *            the rewriter to apply
 	 * @return the rewritten predicate
 	 */
+	// TODO Rodin 2.0 make this method public but non API and call it from AbstractAutoRewrites
+	// In Rodin 2.0, this class will need instantiation for passing
+	// the formula factory to use (not hard-coded anymore) and we will have the
+	// possibility to hide some method using an interface.
 	private static Predicate recursiveRewrite(Predicate predicate,
 			IFormulaRewriter rewriter) {
 		Predicate resultPred;
