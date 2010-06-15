@@ -54,11 +54,16 @@ public class FunOvr extends AbstractManualInference implements IVersionedReasone
 		if (predicate == null)
 			predicate = seq.goal();
 
-		Formula<?> subFormula = predicate.getSubFormula(position);
-
+		final Formula<?> subFormula = predicate.getSubFormula(position);
+		
 		// "subFormula" should have the form (f <+ ... <+ g)(G)
-		if (!Tactics.isFunOvrApp(subFormula))
+		if (subFormula == null) {
 			return null;
+		}
+		
+		if (!Tactics.isFunOvrApp(subFormula)) {
+			return null;
+	    }
 		
 		// There will be 2 antecidents
 		final IAntecedent[] antecidents = new IAntecedent[2];
