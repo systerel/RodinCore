@@ -7,13 +7,13 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
- *     Systerel - refactored to fix instantiation of the One Point Rule
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointFilterUtils.Replacement;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointFilterUtils.ToProcessStruct;
 
@@ -102,4 +102,25 @@ public class OnePointSimplifier {
 		successfullyApplied = true;
 	}
 
+	/**
+	 * Applies the one point simplification to the given predicate.
+	 * 
+	 * @param predicate
+	 *            the predicate to which the one point simplification is applied
+	 * @return the simplified predicate or <code>predicate</code> if the one
+	 *         point simplification could not apply on it
+	 */
+	public static Predicate rewrite(Predicate predicate) {
+		if(!(predicate instanceof QuantifiedPredicate)){
+			return predicate;
+		}
+		final FormulaFactory ff = FormulaFactory.getDefault();
+		final OnePointSimplifier s = new OnePointSimplifier(predicate, ff);
+		s.matchAndApply();
+		if (s.wasSuccessfullyApplied()) {
+			return s.getProcessedPredicate();
+		}
+		return predicate;
+	}
+	
 }
