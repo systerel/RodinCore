@@ -27,7 +27,7 @@ import org.eventb.internal.core.ast.extension.ExtensionPrinters.IExtensionPrinte
  * @author Nicolas Beauger
  *
  */
-public class ParserBuilders  {
+public class ParserInfos  {
 
 	public static enum ExtendedParsers implements IParserInfo {
 
@@ -53,7 +53,6 @@ public class ParserBuilders  {
 			}
 		},
 		
-		// FIXME cannot chose other cardinality => do not fix it here
 		PARENTHESIZED_EXPRESSION_1(makeOperProps(PREFIX, EXPRESSION, MULTARY_1, EXPRESSION), PAREN_PREFIX_EXPR_PRINTER, true) {
 
 			public IParserPrinter makeParser(int tag) {

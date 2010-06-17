@@ -180,6 +180,8 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 			String[] boundNames) {
 		final IOperatorProperties properties = extension.getKind().getProperties();
 		final IExtensionPrinter printer = ff.getGrammar().getPrinter(properties, true);
+		// FIXME NPE: printer can be null
+		
 		final ToStringFullParenMediator mediator = new ToStringFullParenMediator(
 				builder, boundNames, extension.getSyntaxSymbol());
 
