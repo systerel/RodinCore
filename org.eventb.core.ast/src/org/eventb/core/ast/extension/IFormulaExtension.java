@@ -50,6 +50,7 @@ public interface IFormulaExtension {
 		PARENTHESIZED_EXPRESSION_1(PREFIX, EXPRESSION, MULTARY_1, EXPRESSION,
 				PAREN_PREFIX_EXPR_PRINTER, false),
 
+		// op(a, b, ..., c) with 2 or more arguments
 		PARENTHESIZED_EXPRESSION_2(PREFIX, EXPRESSION, MULTARY_2, EXPRESSION,
 				PAREN_PREFIX_EXPR_PRINTER, false),
 
@@ -69,7 +70,7 @@ public interface IFormulaExtension {
 			this.flattenable = flattenable;
 		}
 
-		public IOperatorProperties getOperatorProperties() {
+		public IOperatorProperties getProperties() {
 			return operProps;
 		}
 

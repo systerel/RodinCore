@@ -80,7 +80,7 @@ public class ParserBuilders  {
 			this.isExtension = isExtension;
 		}
 		
-		public IOperatorProperties getOperatorProperties() {
+		public IOperatorProperties getProperties() {
 			return operProps;
 		}
 

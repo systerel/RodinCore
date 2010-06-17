@@ -45,8 +45,8 @@ public class ExtendedGrammar extends BMath {
 				final String operatorId = extension.getId();
 				final String groupId = extension.getGroupId();
 				final IExtensionKind kind = extension.getKind();
-				final IParserPrinter parser = getParser(kind
-						.getOperatorProperties(), true, tag);
+				final IParserPrinter parser = getParser(kind.getProperties(),
+						true, tag);
 				// FIXME the syntax symbol must not already exist as an
 				// operator (an extension shall not add backtracking)
 				if (parser instanceof INudParser<?>) {

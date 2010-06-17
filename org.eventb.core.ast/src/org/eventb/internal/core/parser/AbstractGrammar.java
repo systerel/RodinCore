@@ -109,12 +109,14 @@ public abstract class AbstractGrammar {
 		return subParsers.getLedParser(token);
 	}
 	
-	public IParserPrinter getParser(IOperatorProperties operProps, boolean isExtension, int tag) {
+	public IParserPrinter getParser(IOperatorProperties operProps,
+			boolean isExtension, int tag) {
 		return propParsers.getParser(operProps, isExtension, tag);
 	}
 
-	public IExtensionPrinter getPrinter(IExtensionKind kind, boolean isExtension) {
-		return propParsers.getPrinter(kind.getOperatorProperties(), isExtension);
+	public IExtensionPrinter getPrinter(IOperatorProperties operProps,
+			boolean isExtension) {
+		return propParsers.getPrinter(operProps, isExtension);
 	}
 
 	protected void addParser(IParserBuilder parserBuilder) throws OverrideException {

@@ -19,7 +19,7 @@ public interface IParserBuilder {
 	
 	IExtensionPrinter getPrinter();
 	
-	IOperatorProperties getOperatorProperties();
+	IOperatorProperties getProperties();
 	
 	boolean isExtension();
 	

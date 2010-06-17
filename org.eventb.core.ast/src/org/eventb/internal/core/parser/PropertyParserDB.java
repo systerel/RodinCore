@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eventb.core.ast.extension.IOperatorProperties;
+import org.eventb.core.ast.extension.IOperatorProperties.*;
 import org.eventb.internal.core.ast.extension.ExtensionPrinters.IExtensionPrinter;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 
@@ -25,14 +26,14 @@ public class PropertyParserDB {
 
 	private static final class Properties {
 		
-		private final IOperatorProperties.Notation notation;
-		private final IOperatorProperties.FormulaType formulaType;
-		private final IOperatorProperties.Arity arity;
-		private final IOperatorProperties.FormulaType argumentType;
+		private final Notation notation;
+		private final FormulaType formulaType;
+		private final Arity arity;
+		private final FormulaType argumentType;
 		private final boolean isExtension;
 		
-		public Properties(IOperatorProperties.Notation notation, IOperatorProperties.FormulaType formulaType, IOperatorProperties.Arity arity,
-				IOperatorProperties.FormulaType argumentType, boolean isExtension) {
+		public Properties(Notation notation, FormulaType formulaType, Arity arity,
+				FormulaType argumentType, boolean isExtension) {
 			this.notation = notation;
 			this.formulaType = formulaType;
 			this.arity = arity;
@@ -114,7 +115,7 @@ public class PropertyParserDB {
 
 	public void add(IParserBuilder parserBuilder)
 			throws OverrideException {
-		final Properties prop = makeProp(parserBuilder.getOperatorProperties(), parserBuilder.isExtension());
+		final Properties prop = makeProp(parserBuilder.getProperties(), parserBuilder.isExtension());
 
 		final IParserBuilder old = map.put(prop, parserBuilder);
 		if (old != null) {

@@ -9,7 +9,7 @@ import org.eventb.core.ast.Predicate;
  */
 public interface IExtensionKind {
 
-	IOperatorProperties getOperatorProperties();
+	IOperatorProperties getProperties();
 	
 	boolean checkPreconditions(Expression[] childExprs, Predicate[] childPreds);
 
