@@ -37,7 +37,7 @@ public class ExtendedGrammar extends BMath {
 	public void init() {
 		super.init();
 		try {
-			for (IParserBuilder parserBuilder: ParserBuilders.ExtendedParsers.values()) {
+			for (IParserInfo parserBuilder: ParserBuilders.ExtendedParsers.values()) {
 				addParser(parserBuilder);
 			}
 			for (IFormulaExtension extension : extensions) {

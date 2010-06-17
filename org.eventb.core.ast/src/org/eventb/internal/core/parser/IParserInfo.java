@@ -13,7 +13,7 @@ package org.eventb.internal.core.parser;
 import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.internal.core.ast.extension.ExtensionPrinters.IExtensionPrinter;
 
-public interface IParserBuilder {
+public interface IParserInfo {
 	
 	IParserPrinter makeParser(int tag);
 	

@@ -29,7 +29,7 @@ import org.eventb.internal.core.ast.extension.ExtensionPrinters.IExtensionPrinte
  */
 public class ParserBuilders  {
 
-	public static enum ExtendedParsers implements IParserBuilder {
+	public static enum ExtendedParsers implements IParserInfo {
 
 		EXTENDED_ATOMIC_EXPRESSION(makeOperProps(PREFIX, EXPRESSION, NULLARY, EXPRESSION), ATOMIC_EXPR_PRINTER, true) {
 

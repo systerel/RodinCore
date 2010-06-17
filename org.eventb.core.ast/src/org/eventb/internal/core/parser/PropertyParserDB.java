@@ -111,13 +111,13 @@ public class PropertyParserDB {
 						.getArgumentType(), isExtension);
 	}
 	
-	private final Map<Properties, IParserBuilder> map = new HashMap<Properties, IParserBuilder>();
+	private final Map<Properties, IParserInfo> map = new HashMap<Properties, IParserInfo>();
 
-	public void add(IParserBuilder parserBuilder)
+	public void add(IParserInfo parserBuilder)
 			throws OverrideException {
 		final Properties prop = makeProp(parserBuilder.getProperties(), parserBuilder.isExtension());
 
-		final IParserBuilder old = map.put(prop, parserBuilder);
+		final IParserInfo old = map.put(prop, parserBuilder);
 		if (old != null) {
 			map.put(prop, old);
 			throw new GenParser.OverrideException("overriding a parser");
@@ -128,7 +128,7 @@ public class PropertyParserDB {
 	public IParserPrinter getParser(IOperatorProperties operProps,
 			boolean isExtension, int tag) {
 		final Properties prop = makeProp(operProps, isExtension);
-		final IParserBuilder parserBuilder = map.get(prop);
+		final IParserInfo parserBuilder = map.get(prop);
 		if (parserBuilder == null) {
 			return null;
 		}
@@ -138,7 +138,7 @@ public class PropertyParserDB {
 	public IExtensionPrinter getPrinter(IOperatorProperties operProps,
 			boolean isExtension) {
 		final Properties prop = makeProp(operProps, isExtension);
-		final IParserBuilder parserBuilder = map.get(prop);
+		final IParserInfo parserBuilder = map.get(prop);
 		if (parserBuilder == null) {
 			return null;
 		}

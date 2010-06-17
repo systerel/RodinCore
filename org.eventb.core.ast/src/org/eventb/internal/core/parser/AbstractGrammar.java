@@ -119,7 +119,7 @@ public abstract class AbstractGrammar {
 		return propParsers.getPrinter(operProps, isExtension);
 	}
 
-	protected void addParser(IParserBuilder parserBuilder) throws OverrideException {
+	protected void addParser(IParserInfo parserBuilder) throws OverrideException {
 		propParsers.add(parserBuilder);
 	}
 	
