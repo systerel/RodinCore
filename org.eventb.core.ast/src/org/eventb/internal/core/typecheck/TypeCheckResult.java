@@ -9,6 +9,7 @@ import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.GenericType;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -19,6 +20,7 @@ import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.internal.core.ast.AbstractResult;
 
 /**
@@ -114,6 +116,11 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 		return factory.makeBooleanType();
 	}
 	
+	public GenericType makeGenericType(List<Type> typePrms,
+			IExpressionExtension exprExt) {
+		return factory.makeGenericType(typePrms, exprExt);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ast.TypeFactory#makeGivenType(java.lang.String)
 	 */

@@ -1,12 +1,16 @@
 package org.eventb.internal.core.ast.extension;
 
+import java.util.List;
+
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.GenericType;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.ITypeMediator;
 
 public class TypeMediator implements ITypeMediator {
@@ -19,6 +23,11 @@ public class TypeMediator implements ITypeMediator {
 
 	public BooleanType makeBooleanType() {
 		return factory.makeBooleanType();
+	}
+	
+	public GenericType makeGenericType(List<Type> typePrms,
+			IExpressionExtension exprExt) {
+		return factory.makeGenericType(typePrms, exprExt);
 	}
 
 	public GivenType makeGivenType(String name) {
