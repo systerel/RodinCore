@@ -20,7 +20,7 @@ import org.eventb.internal.core.parser.GenParser.SyntaxError;
  * @author Nicolas Beauger
  * 
  */
-public interface ILedParser<T> {
+public interface ILedParser<T> extends IParserPrinter {
 
 	/**
 	 * Parses a left-denoted formula from the given parser context.

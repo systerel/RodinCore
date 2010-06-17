@@ -10,12 +10,19 @@
  *******************************************************************************/
 package org.eventb.core.ast.extension;
 
+import static org.eventb.core.ast.extension.IOperatorProperties.Arity.*;
+import static org.eventb.core.ast.extension.IOperatorProperties.Notation.*;
+import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.*;
+import static org.eventb.internal.core.ast.extension.ExtensionPrinters.ATOMIC_EXPR_PRINTER;
 import static org.eventb.internal.core.ast.extension.ExtensionPrinters.INFIX_EXPR_PRINTER;
 import static org.eventb.internal.core.ast.extension.ExtensionPrinters.PAREN_PREFIX_EXPR_PRINTER;
-import static org.eventb.internal.core.ast.extension.PrecondChecker.NO_LIMIT;
+import static org.eventb.internal.core.ast.extension.OperatorProperties.makeOperProps;
 
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
-import org.eventb.internal.core.ast.extension.PrecondChecker;
+import org.eventb.core.ast.extension.IOperatorProperties.Arity;
+import org.eventb.core.ast.extension.IOperatorProperties.Notation;
+import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.internal.core.ast.extension.ExtensionPrinters.IExtensionPrinter;
 
 /**
@@ -24,41 +31,68 @@ import org.eventb.internal.core.ast.extension.ExtensionPrinters.IExtensionPrinte
  */
 public interface IFormulaExtension {
 
-	public static enum ExtensionKind {
+	/**
+	 * Standard supported extension kinds.
+	 */
+	public static enum ExtensionKind implements IExtensionKind {
+		ATOMIC_EXPRESSION(PREFIX, EXPRESSION, NULLARY, EXPRESSION,
+				ATOMIC_EXPR_PRINTER, false),
+
 		// a op b
-		BINARY_INFIX_EXPRESSION(new PrecondChecker(2, 2, 0, 0),
+		BINARY_INFIX_EXPRESSION(INFIX, EXPRESSION, BINARY, EXPRESSION,
 				INFIX_EXPR_PRINTER, false),
 
 		// a op b op ... op c
-		ASSOCIATIVE_INFIX_EXPRESSION(new PrecondChecker(2, NO_LIMIT, 0, 0),
+		ASSOCIATIVE_INFIX_EXPRESSION(INFIX, EXPRESSION, MULTARY_2, EXPRESSION,
 				INFIX_EXPR_PRINTER, true),
 
-		// op(a, b, ..., c)
-		PARENTHESIZED_PREFIX_EXPRESSION(new PrecondChecker(2, NO_LIMIT, 0, 0),
-				PAREN_PREFIX_EXPR_PRINTER, false);
+		// op(a, b, ..., c) with 1 or more arguments
+		PARENTHESIZED_EXPRESSION_1(PREFIX, EXPRESSION, MULTARY_1, EXPRESSION,
+				PAREN_PREFIX_EXPR_PRINTER, false),
 
-		// TODO PARENTHESIZED_PREFIX_PREDICATE
+		PARENTHESIZED_EXPRESSION_2(PREFIX, EXPRESSION, MULTARY_2, EXPRESSION,
+				PAREN_PREFIX_EXPR_PRINTER, false),
 
-		private final PrecondChecker precondChecker;
+		// TODO PARENTHESIZED_PREDICATE
+		;
+
+
+		private final IOperatorProperties operProps;
 		private final IExtensionPrinter printer;
 		private final boolean flattenable;
 		
-		private ExtensionKind(PrecondChecker precondChecker, IExtensionPrinter printer, boolean flattenable) {
-			this.precondChecker = precondChecker;
+		private ExtensionKind(Notation notation,
+				FormulaType formulaType, Arity arity, FormulaType argumentType,
+				IExtensionPrinter printer, boolean flattenable) {
+			this.operProps = makeOperProps(notation, formulaType, arity, argumentType);
 			this.printer = printer;
 			this.flattenable = flattenable;
 		}
-		
-		public PrecondChecker getPrecondChecker() {
-			return precondChecker;
+
+		public IOperatorProperties getOperatorProperties() {
+			return operProps;
 		}
-		
+
 		public IExtensionPrinter getPrinter() {
 			return printer;
 		}
 		
 		public boolean isFlattenable() {
 			return flattenable;
+		}
+
+		public boolean checkPreconditions(Expression[] childExprs,
+				Predicate[] childPreds) {
+			final int children;
+			final int alien;
+			if (operProps.getArgumentType() == EXPRESSION) {
+				children = childExprs.length;
+				alien = childPreds.length;
+			} else {
+				children = childPreds.length;
+				alien = childExprs.length;
+			}
+			return operProps.getArity().check(children) && alien == 0;
 		}
 	}
 
@@ -70,7 +104,7 @@ public interface IFormulaExtension {
 
 	String getGroupId();
 
-	ExtensionKind getKind();
+	IExtensionKind getKind();
 
 	void addCompatibilities(ICompatibilityMediator mediator);
 

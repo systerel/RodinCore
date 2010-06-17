@@ -24,7 +24,7 @@ import org.eventb.internal.core.parser.GenParser.OverrideException;
  * @author Nicolas Beauger
  *
  */
-public class SubParserRegistry {
+public class LexKindParserDB {
 
 	private static class KindParsers {
 		private final List<ILedParser<? extends Formula<?>>> ledParsers = new ArrayList<ILedParser<? extends Formula<?>>>();

@@ -23,12 +23,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.IExtendedFormula;
+import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
-import org.eventb.internal.core.ast.extension.PrecondChecker;
 import org.eventb.internal.core.ast.extension.TypeCheckMediator;
 import org.eventb.internal.core.ast.extension.ExtensionPrinters.IExtensionPrinter;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -62,8 +62,8 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	}
 
 	private void checkPreconditions() {
-		final PrecondChecker precond = extension.getKind().getPrecondChecker();
-		assert precond.checkPreconditions(childExpressions, childPredicates);
+		assert extension.getKind().checkPreconditions(childExpressions,
+				childPredicates);
 	}
 
 	@Override
@@ -106,7 +106,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 		final boolean needsParen = ff.needsParentheses(isRightChild, getTag(),
 				parentTag);
 		toStringHelper(builder, boundNames, needsParen, withTypes, getTag(),
-				extension, this);
+				extension, this, ff);
 	}
 
 	@Override
@@ -154,7 +154,8 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	@Override
 	protected void toStringFullyParenthesized(StringBuilder builder,
 			String[] boundNames) {
-		final IExtensionPrinter printer = extension.getKind().getPrinter();
+		final IExtensionKind kind = extension.getKind();
+		final IExtensionPrinter printer = ff.getGrammar().getPrinter(kind, true);
 		final ToStringFullParenMediator mediator = new ToStringFullParenMediator(
 				builder, boundNames, extension.getSyntaxSymbol());
 		printer.toString(mediator, this);

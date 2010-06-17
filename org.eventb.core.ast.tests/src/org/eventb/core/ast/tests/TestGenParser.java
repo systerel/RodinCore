@@ -16,7 +16,10 @@ import static org.eventb.core.ast.Formula.*;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Assignment;
@@ -29,6 +32,7 @@ import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.GenericType;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IPosition;
@@ -51,11 +55,17 @@ import org.eventb.core.ast.extension.CycleError;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
+import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
+import org.eventb.core.ast.extension.datatype.IConstructorMediator;
+import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
+import org.eventb.core.ast.extension.datatype.IDestructorMediator;
+import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
+import org.eventb.core.ast.extension.datatype.ITypeParameter;
 
 /**
  * This test class aims at supporting generic parser development. It is not part
@@ -469,7 +479,7 @@ public class TestGenParser extends AbstractTests {
 			return "direct product extension";
 		}
 
-		public ExtensionKind getKind() {
+		public IExtensionKind getKind() {
 			return ExtensionKind.BINARY_INFIX_EXPRESSION;
 		}
 
@@ -542,7 +552,7 @@ public class TestGenParser extends AbstractTests {
 			return OPERATOR_ID;
 		}
 
-		public ExtensionKind getKind() {
+		public IExtensionKind getKind() {
 			return ExtensionKind.ASSOCIATIVE_INFIX_EXPRESSION;
 		}
 
@@ -1518,8 +1528,8 @@ public class TestGenParser extends AbstractTests {
 			return OPERATOR_ID;
 		}
 
-		public ExtensionKind getKind() {
-			return ExtensionKind.PARENTHESIZED_PREFIX_EXPRESSION;
+		public IExtensionKind getKind() {
+			return ExtensionKind.PARENTHESIZED_EXPRESSION_2;
 		}
 
 		public String getSyntaxSymbol() {
@@ -1706,4 +1716,90 @@ public class TestGenParser extends AbstractTests {
 		assertFailure(result, expected);
 	}
 
+	private static final IDatatypeExtension LIST_TYPE = new IDatatypeExtension() {
+
+		private static final String TYPE_NAME = "List";
+		private static final String TYPE_IDENTIFIER = "List Id";
+		private static final String GROUP_IDENTIFIER = "List Group";
+		
+		
+		public String getTypeName() {
+			return TYPE_NAME;
+		}
+
+		public String getId() {
+			return TYPE_IDENTIFIER;
+		}
+		
+		public String getGroupId() {
+			return GROUP_IDENTIFIER;
+		}
+
+		public void addTypeParameters(ITypeConstructorMediator mediator) {
+			mediator.addTypeParam("S");			
+		}
+
+		public void addConstructors(IConstructorMediator mediator) {
+			mediator.addConstructor("nil", "NIL", GROUP_IDENTIFIER);
+			final ITypeParameter typeS = mediator.getTypeParameter("S");
+			final ITypeParameter listS = mediator.newTypeConstructor(typeS);
+			mediator.addConstructor("cons", "CONS", GROUP_IDENTIFIER, Arrays
+					.asList(typeS, listS));
+		}
+
+		public void addDestructors(IDestructorMediator mediator) {
+			final ITypeParameter typeS = mediator.getTypeParameter("S");
+			mediator.addDestructor("head", "HEAD", typeS);
+			final ITypeParameter listS = mediator.newTypeConstructor(typeS);
+			mediator.addDestructor("tail", "TAIL", listS);
+		}
+
+	};
+
+	public void testDatatypeType() throws Exception {
+		final Map<String, IExpressionExtension> extensions = FormulaFactory.getExtensions(LIST_TYPE);
+		final Set<IFormulaExtension> setExtns = new HashSet<IFormulaExtension>(extensions.values());
+		final FormulaFactory extFac = FormulaFactory.getInstance(setExtns);
+		
+		final IExpressionExtension extList = extensions.get(LIST_TYPE.getId());
+		assertNotNull("List type constructor not found", extList);
+		
+		final ExtendedExpression list = extFac.makeExtendedExpression(extList,
+				Collections.<Expression> singleton(INT), Collections
+						.<Predicate> emptyList(), null);
+
+		final Expression expr = doExpressionTest("List(ℤ)", list, extFac);
+		
+		final GenericType listIntType = extFac.makeGenericType(Collections.<Type>singletonList(INT_TYPE), extList);
+		final PowerSetType powListIntType = extFac.makePowerSetType(listIntType);
+		assertEquals("unexpected type", powListIntType, expr.getType());
+		
+		assertTrue("expected a type expression", expr.isATypeExpression());
+		assertEquals("unexpected toType", listIntType, expr.toType(extFac));
+
+		// TODO
+//		doTypeTest("List(ℤ)", expected, extFac);
+	}
+
+	public void testDatatypeNil() throws Exception {
+		final Map<String, IExpressionExtension> extensions = FormulaFactory.getExtensions(LIST_TYPE);
+		final Set<IFormulaExtension> setExtns = new HashSet<IFormulaExtension>(extensions.values());
+		final FormulaFactory extFac = FormulaFactory.getInstance(setExtns);
+		
+		final IExpressionExtension extNil = extensions.get("NIL");
+		assertNotNull("nil constructor not found", extNil);
+		
+		final ExtendedExpression nil = extFac.makeExtendedExpression(extNil,
+				Collections.<Expression> emptyList(), Collections
+						.<Predicate> emptyList(), null);
+
+		doExpressionTest("nil", nil, extFac);
+		
+		//TODO
+//		final IFormulaExtension extList = extensions.get("List");
+//		assertNotNull("List type constructor not found", extList);
+//
+//		doExpressionTest("(nil ⦂ List(ℤ)", typedNil, extFac);
+
+	}
 }

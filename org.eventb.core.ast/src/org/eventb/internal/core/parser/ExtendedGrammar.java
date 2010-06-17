@@ -14,8 +14,8 @@ import java.util.Set;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.IFormulaExtension.ExtensionKind;
 import org.eventb.internal.core.ast.extension.CompatibilityMediator;
 import org.eventb.internal.core.ast.extension.PriorityMediator;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
@@ -37,23 +37,29 @@ public class ExtendedGrammar extends BMath {
 	public void init() {
 		super.init();
 		try {
+			for (IParserBuilder parserBuilder: ParserBuilders.ExtendedParsers.values()) {
+				addParser(parserBuilder);
+			}
 			for (IFormulaExtension extension : extensions) {
 				final int tag = FormulaFactory.getTag(extension);
 				final String operatorId = extension.getId();
 				final String groupId = extension.getGroupId();
-				final ExtensionKind kind = extension.getKind();
-				if (isLed(kind)) {
-				final ILedParser<? extends Formula<?>> subParser = makeLedParser(
-						kind, tag);
+				final IExtensionKind kind = extension.getKind();
+				final IParserPrinter parser = getParser(kind
+						.getOperatorProperties(), true, tag);
+				// FIXME the syntax symbol must not already exist as an
+				// operator (an extension shall not add backtracking)
+				if (parser instanceof INudParser<?>) {
 				addOperator(extension.getSyntaxSymbol(), operatorId, groupId,
-						subParser);
-				} else {
-					final INudParser<? extends Formula<?>> subParser = makeNudParser(
-							kind, tag);
-					// FIXME the syntax symbol must not already exist as an
-					// operator (an extension shall not add backtracking)
+						(INudParser<? extends Formula<?>>) parser);
+				} else if (parser instanceof ILedParser<?>) {
 					addOperator(extension.getSyntaxSymbol(), operatorId, groupId,
-							subParser);
+							(ILedParser<? extends Formula<?>>) parser);
+				} else {
+					// should not be ever possible
+					throw new IllegalStateException("Unparseable extension kind: "
+							+ kind);
+					
 				}
 			}
 		} catch (OverrideException e) {
@@ -65,43 +71,6 @@ public class ExtendedGrammar extends BMath {
 			extension.addPriorities(new PriorityMediator(opRegistry));
 
 		}
-	}
-
-	private static boolean isLed(ExtensionKind kind) {
-		return kind != ExtensionKind.PARENTHESIZED_PREFIX_EXPRESSION;
-	}
-
-	private static ILedParser<? extends Formula<?>> makeLedParser(
-			ExtensionKind kind, int tag) {
-		final ILedParser<? extends Formula<?>> subParser;
-		switch (kind) {
-		case ASSOCIATIVE_INFIX_EXPRESSION:
-			subParser = new SubParsers.ExtendedAssociativeExpressionInfix(
-					tag);
-			break;
-		case BINARY_INFIX_EXPRESSION:
-			subParser = new SubParsers.ExtendedBinaryExpressionInfix(tag);
-			break;
-		default:
-			// should not be ever possible
-			throw new IllegalStateException("Unknown extension kind: "
-					+ kind);
-		}
-		return subParser;
-	}
-
-	private static INudParser<? extends Formula<?>> makeNudParser(
-			ExtensionKind kind, int tag) {
-		final INudParser<? extends Formula<?>> subParser;
-		switch (kind) {
-		case PARENTHESIZED_PREFIX_EXPRESSION:
-			subParser = new SubParsers.ExtendedExprParen(tag);
-			break;
-		default:
-			// should not be ever possible
-			throw new IllegalStateException("Unknown extension kind: " + kind);
-		}
-		return subParser;
 	}
 
 }

@@ -23,6 +23,15 @@ public class ExtensionPrinters {
 		void toString(IToStringMediator mediator, IExtendedFormula formula);
 	}
 
+	public static final IExtensionPrinter ATOMIC_EXPR_PRINTER = new IExtensionPrinter() {
+
+		public void toString(IToStringMediator mediator,
+				IExtendedFormula formula) {
+			mediator.appendOperator();
+		}
+
+	};
+	
 	public static final IExtensionPrinter INFIX_EXPR_PRINTER = new IExtensionPrinter() {
 
 		public void toString(IToStringMediator mediator,

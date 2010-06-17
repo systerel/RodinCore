@@ -21,13 +21,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IPredicateExtension;
+import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.datatype.DatatypeExtensionComputer;
 import org.eventb.internal.core.lexer.Scanner;
 import org.eventb.internal.core.parser.AbstractGrammar;
 import org.eventb.internal.core.parser.BMath;
@@ -82,6 +85,7 @@ public class FormulaFactory {
 			for (IFormulaExtension extension : extensions) {
 				Integer tag = ALL_EXTENSIONS.get(extension);
 				if (tag == null) {
+					// FIXME add conflict checks
 					tag = nextExtensionTag;
 					nextExtensionTag++;
 					ALL_EXTENSIONS.put(extension, tag);
@@ -90,6 +94,14 @@ public class FormulaFactory {
 			}
 		}
 		return new FormulaFactory(extMap);
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public static Map<String, IExpressionExtension> getExtensions(
+			IDatatypeExtension extension) {
+		return new DatatypeExtensionComputer(extension).compute();
 	}
 	
 	protected FormulaFactory() {
@@ -117,12 +129,9 @@ public class FormulaFactory {
 		return grammar;
 	}
 	
-	/**
-	 * @since 2.0
-	 */
-	public ExtendedExpression makeExtendedExpression(
+	private ExtendedExpression makeExtendedExpression(
 			IExpressionExtension extension, Expression[] expressions,
-			Predicate[] predicates, SourceLocation location) {
+			Predicate[] predicates, SourceLocation location, Type type) {
 		if (!extensions.containsValue(extension)) {
 			throw new IllegalArgumentException(
 					"the extension is not supported by this factory: "
@@ -130,7 +139,31 @@ public class FormulaFactory {
 		}
 		final int tag = ALL_EXTENSIONS.get(extension);
 		return new ExtendedExpression(tag, expressions, predicates, location,
-				this, extension);
+				this, extension, type);
+	}
+	
+	/**
+	 * @since 2.0
+	 */
+	public ExtendedExpression makeExtendedExpression(
+			IExpressionExtension extension, Expression[] expressions,
+			Predicate[] predicates, SourceLocation location) {
+		return makeExtendedExpression(extension, expressions, predicates,
+				location, null);
+	}
+	
+	// TODO consider adding a makeExtendedExpression() with a given type argument
+	
+	/**
+	 * @since 2.0
+	 */
+	public ExtendedExpression makeExtendedGenExpression(
+			IExpressionExtension extension, SourceLocation sourceLocation,
+			Type type) {
+		final Expression[] expr = new Expression[0];// TODO make constants
+		final Predicate[] pred = new Predicate[0];
+		return makeExtendedExpression(extension, expr, pred, sourceLocation,
+				type);
 	}
 	
 	/**
@@ -1216,6 +1249,14 @@ public class FormulaFactory {
 	public FreeIdentifier[] makeFreshIdentifiers(BoundIdentDecl[] boundIdents,
 			ITypeEnvironment environment) {
 		return QuantifiedUtil.resolveIdents(boundIdents, environment, this);
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public GenericType makeGenericType(List<Type> typePrms,
+			IExpressionExtension exprExt) {
+		return new GenericType(typePrms, exprExt);
 	}
 
 	/**

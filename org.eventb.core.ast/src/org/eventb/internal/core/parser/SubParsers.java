@@ -54,7 +54,6 @@ import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.QuantifiedExpression.Form;
 import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.internal.core.ast.extension.PrecondChecker;
 import org.eventb.internal.core.parser.GenParser.ParserContext;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 import org.eventb.internal.core.parser.MainParsers.PatternParser;
@@ -66,6 +65,8 @@ import org.eventb.internal.core.parser.MainParsers.PatternParser;
  * 
  */
 public class SubParsers {
+
+	private static final Predicate[] NO_PRED = new Predicate[0];
 
 	static abstract class AbstractSubParser<T> {
 
@@ -500,6 +501,21 @@ public class SubParsers {
 
 	}
 
+	static class ExtendedAtomicExpressionParser extends PrefixNudParser<ExtendedExpression> {
+		
+		protected ExtendedAtomicExpressionParser(int tag) {
+			super(tag);
+		}
+	
+		@Override
+		protected ExtendedExpression parseRight(ParserContext pc)
+				throws SyntaxError {
+			return checkAndMakeExtendedExpr(pc.factory, tag, Collections
+					.<Expression> emptyList(), pc.getSourceLocation());
+		}
+
+	}
+
 	static class BinaryExpressionInfix extends DefaultLedExprParser<BinaryExpression> {
 
 		public BinaryExpressionInfix(int tag) {
@@ -893,9 +909,8 @@ public class SubParsers {
 			List<Expression> children, SourceLocation loc) throws SyntaxError {
 		final IExpressionExtension extension = (IExpressionExtension) factory
 				.getExtension(tag);
-		final PrecondChecker precond = extension.getKind().getPrecondChecker();
-		if (!precond.checkPreconditions(children
-				.toArray(new Expression[children.size()]), new Predicate[0])) {
+		if (!extension.getKind().checkPreconditions(
+				children.toArray(new Expression[children.size()]), NO_PRED)) {
 			throw new SyntaxError(new ASTProblem(loc,
 					ProblemKind.ExtensionPreconditionError,
 					ProblemSeverities.Error));

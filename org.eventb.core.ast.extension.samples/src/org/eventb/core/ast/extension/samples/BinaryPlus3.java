@@ -17,6 +17,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
+import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
@@ -75,7 +76,7 @@ public class BinaryPlus3 implements IExpressionExtension {
 		return "binary plus 3";
 	}
 
-	public ExtensionKind getKind() {
+	public IExtensionKind getKind() {
 		return ExtensionKind.BINARY_INFIX_EXPRESSION;
 	}
 

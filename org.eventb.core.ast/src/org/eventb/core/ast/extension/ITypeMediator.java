@@ -1,6 +1,9 @@
 package org.eventb.core.ast.extension;
 
+import java.util.List;
+
 import org.eventb.core.ast.BooleanType;
+import org.eventb.core.ast.GenericType;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.PowerSetType;
@@ -17,6 +20,9 @@ import org.eventb.core.ast.Type;
 public interface ITypeMediator {
 
 	BooleanType makeBooleanType();
+
+	GenericType makeGenericType(List<Type> typePrms,
+			IExpressionExtension iExpressionExtension);
 
 	GivenType makeGivenType(String name);
 

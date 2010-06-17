@@ -76,14 +76,16 @@ import org.eventb.internal.core.ast.extension.ExtensionPrinters.IExtensionPrinte
 		if (needsParen) builder.append(')');
 	}
 	
+	// TODO too many arguments
 	protected static void toStringHelper(StringBuilder builder,
-			String[] boundNames, boolean needsParen, boolean withTypes, int tag,
-			IFormulaExtension extension, IExtendedFormula formula) {
+			String[] boundNames, boolean needsParen, boolean withTypes,
+			int tag, IFormulaExtension extension, IExtendedFormula formula,
+			FormulaFactory ff) {
 		if (needsParen)
 			builder.append('(');
 		final ToStringMediator strMed = new ToStringMediator(builder,
 				boundNames, extension.getSyntaxSymbol(), tag, withTypes);
-		final IExtensionPrinter printer = extension.getKind().getPrinter();
+		final IExtensionPrinter printer = ff.getGrammar().getPrinter(extension.getKind(), true);
 		printer.toString(strMed, formula);
 		if (needsParen)
 			builder.append(')');

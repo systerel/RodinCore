@@ -19,6 +19,9 @@ import java.util.Map;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.extension.CycleError;
+import org.eventb.core.ast.extension.IExtensionKind;
+import org.eventb.core.ast.extension.IOperatorProperties;
+import org.eventb.internal.core.ast.extension.ExtensionPrinters.IExtensionPrinter;
 import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship;
@@ -46,9 +49,14 @@ public abstract class AbstractGrammar {
 
 	protected final IndexedSet<String> tokens = new IndexedSet<String>();
 	
-	private final SubParserRegistry subParsers = new SubParserRegistry();
+	private final LexKindParserDB subParsers = new LexKindParserDB();
 	
 	protected final OperatorRegistry opRegistry = new OperatorRegistry();
+	
+	// used by extended grammar to fetch appropriate parser
+	// and by extended formulae to fetch appropriate printers
+	// TODO try to generalise to standard language operators
+	private final PropertyParserDB propParsers = new PropertyParserDB();
 	
 	private final Map<Integer, Integer> closeOpenKinds = new HashMap<Integer, Integer>();
 	
@@ -99,6 +107,18 @@ public abstract class AbstractGrammar {
 	
 	public ILedParser<? extends Formula<?>> getLedParser(Token token) {
 		return subParsers.getLedParser(token);
+	}
+	
+	public IParserPrinter getParser(IOperatorProperties operProps, boolean isExtension, int tag) {
+		return propParsers.getParser(operProps, isExtension, tag);
+	}
+
+	public IExtensionPrinter getPrinter(IExtensionKind kind, boolean isExtension) {
+		return propParsers.getPrinter(kind.getOperatorProperties(), isExtension);
+	}
+
+	protected void addParser(IParserBuilder parserBuilder) throws OverrideException {
+		propParsers.add(parserBuilder);
 	}
 	
 	protected void addOperator(String token, String operatorId, String groupId,

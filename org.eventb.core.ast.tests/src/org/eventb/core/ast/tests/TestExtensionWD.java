@@ -29,6 +29,7 @@ import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
+import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
@@ -103,8 +104,8 @@ public class TestExtensionWD extends AbstractTests {
 			return OPERATOR_ID;
 		}
 
-		public ExtensionKind getKind() {
-			return ExtensionKind.PARENTHESIZED_PREFIX_EXPRESSION;
+		public IExtensionKind getKind() {
+			return ExtensionKind.PARENTHESIZED_EXPRESSION_1;
 		}
 
 		public String getSyntaxSymbol() {

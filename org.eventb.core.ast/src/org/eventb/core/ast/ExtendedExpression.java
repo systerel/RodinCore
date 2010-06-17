@@ -24,11 +24,11 @@ import java.util.Set;
 
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
+import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
-import org.eventb.internal.core.ast.extension.PrecondChecker;
 import org.eventb.internal.core.ast.extension.TypeCheckMediator;
 import org.eventb.internal.core.ast.extension.TypeMediator;
 import org.eventb.internal.core.ast.extension.ExtensionPrinters.IExtensionPrinter;
@@ -49,7 +49,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 
 	protected ExtendedExpression(int tag, Expression[] expressions,
 			Predicate[] predicates, SourceLocation location,
-			FormulaFactory ff, IExpressionExtension extension) {
+			FormulaFactory ff, IExpressionExtension extension, Type type) {
 		super(tag, location, combineHashCodes(combineHashCodes(expressions),
 				combineHashCodes(predicates)));
 		this.childExpressions = expressions.clone();
@@ -62,8 +62,8 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	}
 
 	private void checkPreconditions() {
-		final PrecondChecker precond = extension.getKind().getPrecondChecker();
-		assert precond.checkPreconditions(childExpressions, childPredicates);
+		assert extension.getKind().checkPreconditions(childExpressions,
+				childPredicates);
 	}
 
 	private Formula<?>[] getChildren() {
@@ -121,7 +121,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		final boolean needsParen = ff.needsParentheses(isRightChild, getTag(),
 				parentTag);
 		toStringHelper(builder, boundNames, needsParen, withTypes, getTag(),
-				extension, this);
+				extension, this, ff);
 	}
 
 	@Override
@@ -178,7 +178,8 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	@Override
 	protected void toStringFullyParenthesized(StringBuilder builder,
 			String[] boundNames) {
-		final IExtensionPrinter printer = extension.getKind().getPrinter();
+		final IExtensionKind kind = extension.getKind();
+		final IExtensionPrinter printer = ff.getGrammar().getPrinter(kind, true);
 		final ToStringFullParenMediator mediator = new ToStringFullParenMediator(
 				builder, boundNames, extension.getSyntaxSymbol());
 
@@ -359,4 +360,17 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		}
 	}
 
+	@Override
+	public boolean isATypeExpression() {
+		// TODO Auto-generated method stub
+		return super.isATypeExpression();
+	}
+	
+	@Override
+	public Type toType(FormulaFactory factory)
+			throws InvalidExpressionException {
+		// TODO Auto-generated method stub
+		return super.toType(factory);
+	}
+	
 }
