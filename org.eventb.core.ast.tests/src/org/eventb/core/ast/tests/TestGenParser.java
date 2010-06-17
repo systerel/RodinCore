@@ -108,6 +108,7 @@ public class TestGenParser extends AbstractTests {
 	private static final UnaryExpression POW_INT = ff.makeUnaryExpression(POW, INT, null);
 	private static final IntegerType INT_TYPE = ff.makeIntegerType();
 	private static final PowerSetType POW_INT_TYPE = ff.makePowerSetType(INT_TYPE);
+	private static final PowerSetType REL_INT_INT = ff.makeRelationalType(INT_TYPE, INT_TYPE);
 	private static final SourceLocationChecker slChecker = new SourceLocationChecker();
 
 	private static void assertFailure(IParseResult result, ASTProblem expected) {
@@ -785,7 +786,7 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testParseTypeRelational() throws Exception {
-		final Type expected = ff.makeRelationalType(INT_TYPE, INT_TYPE);
+		final Type expected = REL_INT_INT;
 		doTypeTest("ℙ(ℤ×ℤ)", expected);
 	}
 
@@ -793,6 +794,12 @@ public class TestGenParser extends AbstractTests {
 		final Type expected = S_TYPE;
 		doTypeTest("S", expected);
 	}
+	
+	public void testParseRelationalType() throws Exception {
+		final Type expected = REL_INT_INT;
+		doTypeTest("ℤ↔ℤ", expected);
+	}
+
 	
 	public void testEmptySetOfType() throws Exception {
 		final Expression expected = ff.makeEmptySet(POW_INT_TYPE, null);
@@ -802,8 +809,13 @@ public class TestGenParser extends AbstractTests {
 	public void testIdOfType() throws Exception {
 		final Expression expected = ff.makeAtomicExpression(KID_GEN, null, ff
 				.makeRelationalType(INT_TYPE, INT_TYPE));
-		doExpressionTest("(id ⦂ ℙ(ℤ×ℤ))", expected, ff.makePowerSetType(ff
-				.makeProductType(INT_TYPE, INT_TYPE)));
+		doExpressionTest("(id ⦂ ℙ(ℤ×ℤ))", expected, REL_INT_INT);
+	}
+	
+	public void testIdOfTypeRel() throws Exception {
+		final Expression expected = ff.makeAtomicExpression(KID_GEN, null, ff
+				.makeRelationalType(INT_TYPE, INT_TYPE));
+		doExpressionTest("(id ⦂ ℤ↔ℤ)", expected, REL_INT_INT);
 	}
 	
 	public void testPrj1OfType() throws Exception {

@@ -396,6 +396,9 @@ public class BMath extends AbstractGrammar {
 					BOUND_UNARY, BOOL, BRACE_SETS);
 			// end of excerpt
 			
+			// for OFTYPE
+			addGroupPrioritySequence(PAIR, TYPED, RELATION);
+			
 		} catch (CycleError e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
