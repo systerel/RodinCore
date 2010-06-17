@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added accept for ISimpleVisitor
  *     Systerel - added support for predicate variables
+ *     Systerel - generalised getPositions() into inspect()
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -16,10 +17,10 @@ import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
@@ -312,19 +313,14 @@ public class SetExtension extends Expression {
 	}
 
 	@Override
-	protected void getPositions(IFormulaFilter filter, IntStack indexes,
-			List<IPosition> positions) {
-		
-		if (filter.select(this)) {
-			positions.add(new Position(indexes));
-		}
-
-		indexes.push(0);
+	protected final <F> void inspect(FindingAccumulator<F> acc) {
+		acc.inspect(this);
+		acc.enterChildren();
 		for (Expression member: members) {
-			member.getPositions(filter, indexes, positions);
-			indexes.incrementTop();
+			member.inspect(acc);
+			acc.nextChild();
 		}
-		indexes.pop();
+		acc.leaveChildren();
 	}
 
 	@Override

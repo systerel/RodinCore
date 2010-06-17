@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,16 +10,17 @@
  *     Systerel - added accept for ISimpleVisitor
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
+ *     Systerel - generalised getPositions() into inspect()
  *******************************************************************************/
 package org.eventb.core.ast;
 
 import java.math.BigInteger;
 import java.util.BitSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
@@ -647,16 +648,11 @@ public class UnaryExpression extends Expression {
 	}
 
 	@Override
-	protected void getPositions(IFormulaFilter filter, IntStack indexes,
-			List<IPosition> positions) {
-		
-		if (filter.select(this)) {
-			positions.add(new Position(indexes));
-		}
-
-		indexes.push(0);
-		child.getPositions(filter, indexes, positions);
-		indexes.pop();
+	protected final <F> void inspect(FindingAccumulator<F> acc) {
+		acc.inspect(this);
+		acc.enterChildren();
+		child.inspect(acc);
+		acc.leaveChildren();
 	}
 
 	@Override

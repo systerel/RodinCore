@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,15 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - generalised getPositions() into inspect()
  *******************************************************************************/
 package org.eventb.core.ast;
 
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
@@ -141,15 +142,8 @@ public class PredicateVariable extends Predicate {
 	}
 
 	@Override
-	protected void getPositions(IFormulaFilter filter, IntStack indexes,
-			List<IPosition> positions) {
-		if (!(filter instanceof IFormulaFilter2)) {
-			throw new IllegalArgumentException(
-					"The given filter shall support predicate variables");
-		}
-		if (((IFormulaFilter2) filter).select(this)) {
-			positions.add(new Position(indexes));
-		}
+	protected final <F> void inspect(FindingAccumulator<F> acc) {
+		acc.inspect(this);
 	}
 
 	@Override

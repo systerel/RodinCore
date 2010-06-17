@@ -11,6 +11,7 @@
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
  *     Systerel - added form filtering
+ *     Systerel - generalised getPositions() into inspect()
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -26,10 +27,10 @@ import java.util.BitSet;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
@@ -839,22 +840,17 @@ public class QuantifiedExpression extends Expression {
 	// TODO add instantiation of subexpression
 
 	@Override
-	protected void getPositions(IFormulaFilter filter, IntStack indexes,
-			List<IPosition> positions) {
-		
-		if (filter.select(this)) {
-			positions.add(new Position(indexes));
-		}
-
-		indexes.push(0);
+	protected final <F> void inspect(FindingAccumulator<F> acc) {
+		acc.inspect(this);
+		acc.enterChildren();
 		for (BoundIdentDecl decl: quantifiedIdentifiers) {
-			decl.getPositions(filter, indexes, positions);
-			indexes.incrementTop();
+			decl.inspect(acc);
+			acc.nextChild();
 		}
-		pred.getPositions(filter, indexes, positions);
-		indexes.incrementTop();
-		expr.getPositions(filter, indexes, positions);
-		indexes.pop();
+		pred.inspect(acc);
+		acc.nextChild();
+		expr.inspect(acc);
+		acc.leaveChildren();
 	}
 	
 	@Override

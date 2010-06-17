@@ -1,18 +1,22 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 ETH Zurich.
+ * Copyright (c) 2005, 2010 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *  
+ * Contributors: 
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - generalised getPositions() into inspect()
  *******************************************************************************/
 
 package org.eventb.core.ast;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
+import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -201,8 +205,7 @@ public abstract class Assignment extends Formula<Assignment> {
 	protected abstract void synthesizeType(FormulaFactory ff);
 
 	@Override
-	protected final void getPositions(IFormulaFilter filter, IntStack indexes,
-			List<IPosition> positions) {
+	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		throw new UnsupportedOperationException(
 				"Assignments cannot be rewritten");
 	}
