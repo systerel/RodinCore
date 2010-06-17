@@ -85,7 +85,7 @@ import org.eventb.internal.core.ast.extension.ExtensionPrinters.IExtensionPrinte
 			builder.append('(');
 		final ToStringMediator strMed = new ToStringMediator(builder,
 				boundNames, extension.getSyntaxSymbol(), tag, withTypes);
-		final IExtensionPrinter printer = ff.getGrammar().getPrinter(extension.getKind(), true);
+		final IExtensionPrinter printer = ff.getGrammar().getPrinter(extension.getKind().getProperties(), true);
 		printer.toString(strMed, formula);
 		if (needsParen)
 			builder.append(')');

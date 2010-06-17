@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.IExtendedFormula;
-import org.eventb.core.ast.extension.IExtensionKind;
+import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
@@ -154,8 +154,8 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	@Override
 	protected void toStringFullyParenthesized(StringBuilder builder,
 			String[] boundNames) {
-		final IExtensionKind kind = extension.getKind();
-		final IExtensionPrinter printer = ff.getGrammar().getPrinter(kind, true);
+		final IOperatorProperties properties = extension.getKind().getProperties();
+		final IExtensionPrinter printer = ff.getGrammar().getPrinter(properties, true);
 		final ToStringFullParenMediator mediator = new ToStringFullParenMediator(
 				builder, boundNames, extension.getSyntaxSymbol());
 		printer.toString(mediator, this);
