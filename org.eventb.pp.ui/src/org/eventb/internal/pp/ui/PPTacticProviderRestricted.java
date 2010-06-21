@@ -19,10 +19,8 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.pp.PPCore;
 import org.eventb.ui.prover.DefaultTacticProvider;
-import org.eventb.ui.prover.ITacticProvider;
 
-public class PPTacticProviderRestricted extends DefaultTacticProvider implements
-		ITacticProvider {
+public class PPTacticProviderRestricted extends DefaultTacticProvider {
 
 	@Override
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
