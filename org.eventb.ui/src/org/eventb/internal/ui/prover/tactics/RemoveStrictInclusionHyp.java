@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,10 +18,8 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.DefaultTacticProvider;
-import org.eventb.ui.prover.ITacticProvider;
 
-public class RemoveStrictInclusionHyp extends DefaultTacticProvider implements
-		ITacticProvider {
+public class RemoveStrictInclusionHyp extends DefaultTacticProvider {
 
 	@Override
 	@Deprecated
