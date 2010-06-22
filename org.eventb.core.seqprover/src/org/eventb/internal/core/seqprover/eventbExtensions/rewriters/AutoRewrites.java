@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - fixed NPE in SIMP_FUNIMAGE_LAMBDA (ver 0)
  *     Systerel - incremented to version 1 after OnePointRule v2 fix
+ *     Systerel - incremented to version 2 after SIMP_FUNIMAGE_LAMBDA fix
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
@@ -19,7 +20,7 @@ import org.eventb.core.seqprover.SequentProver;
 public class AutoRewrites extends AbstractAutoRewrites implements
 		IVersionedReasoner {
 
-	private static final int REASONER_VERSION = 1;
+	private static final int REASONER_VERSION = 2;
 	private static final IFormulaRewriter rewriter = new AutoRewriterImpl();
 
 	public AutoRewrites() {
