@@ -557,7 +557,7 @@ public class AutoTactics {
 			if (pm != null && pm.isCanceled()) {
 				return "Canceled";
 			}
-			return Tactics.funOvrGoal(pos.get(0)).apply(ptNode, pm);
+			return Tactics.funOvr(null, pos.get(0)).apply(ptNode, pm);
 		}
 
 	}
@@ -596,7 +596,7 @@ public class AutoTactics {
 					return "Canceled";
 				}
 				if (pos.size() != 0) {
-					return Tactics.funOvrHyp(shyp, pos.get(0)).apply(ptNode, pm);
+					return Tactics.funOvr(shyp, pos.get(0)).apply(ptNode, pm);
 				}
 			}
 			return "Tactic unapplicable";

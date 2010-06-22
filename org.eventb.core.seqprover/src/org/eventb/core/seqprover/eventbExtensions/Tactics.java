@@ -982,13 +982,8 @@ public class Tactics {
 		positions.removeAll(toBeRemoved);
 		return positions;
 	}
-
-	public static ITactic funOvrGoal(IPosition position) {
-		return BasicTactics.reasonerTac(new FunOvr(), new FunOvr.Input(null,
-				position));
-	}
-
-	public static ITactic funOvrHyp(Predicate hyp, IPosition position) {
+	
+	public static ITactic funOvr(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new FunOvr(), new FunOvr.Input(hyp,
 				position));
 	}
