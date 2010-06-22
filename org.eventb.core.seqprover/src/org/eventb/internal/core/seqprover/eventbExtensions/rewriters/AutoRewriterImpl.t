@@ -1161,7 +1161,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_MULTI_FUNIMAGE_OVERL_SETENUM",
 			"SIMP_FUNIMAGE_FUNIMAGE_CONVERSE_SETENUM",
 			"SIMP_SPECIAL_RELIMAGE_R", "SIMP_SPECIAL_RELIMAGE_L",
-			"SIMP_FUNIMAGE_CPROD" })
+			"SIMP_FUNIMAGE_CPROD", "SIMP_FUNIMAGE_LAMBDA" })
 	@Override
 	public Expression rewrite(BinaryExpression expression) {
 		final Expression result;
