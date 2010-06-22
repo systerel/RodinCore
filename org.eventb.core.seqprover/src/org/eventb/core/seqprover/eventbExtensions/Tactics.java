@@ -544,12 +544,6 @@ public class Tactics {
 //		return (new SimpleRewriter.RemoveNegation()).isApplicable(goal);
 //	}
 	
-	public static ITactic removeNegGoal(IPosition position) {
-		return BasicTactics.reasonerTac(new RemoveNegation(),
-				new RemoveNegation.Input(null, position));
-	}
-
-	
 //	/**
 //	 * @deprecated use {@link DisjunctionToImplicationRewriter} instead
 //	 */
@@ -771,7 +765,7 @@ public class Tactics {
 //		return (new SimpleRewriter.RemoveNegation()).isApplicable(hyp);
 //	}
 
-	public static ITactic removeNegHyp(Predicate hyp, IPosition position) {
+	public static ITactic removeNeg(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new RemoveNegation(),
 				new RemoveNegation.Input(hyp, position));
 	}
