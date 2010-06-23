@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,8 @@ public class TacticUIRegistry {
 	// <code>"org.eventb.ui.proofTactics"</code>).
 	private final static String PROOFTACTICS_ID = EventBUIPlugin.PLUGIN_ID
 			+ ".proofTactics";
+	
+	public static final String TARGET_ANY = "any";
 
 	public static final String TARGET_GOAL = "goal";
 
@@ -66,6 +68,9 @@ public class TacticUIRegistry {
 	private Map<String, TacticProviderInfo> hypothesisTacticRegistry = null;
 	private Map<String, ProofCommandInfo> hypothesisCommandRegistry = null;
 
+	private Map<String, TacticProviderInfo> anyTacticRegistry = null;
+	private Map<String, ProofCommandInfo> anyCommandRegistry = null;
+	
 	Map<String, TacticUIInfo> globalRegistry = null;
 
 	private Map<String, ToolbarInfo> toolbarRegistry = null;
@@ -633,6 +638,8 @@ public class TacticUIRegistry {
 		if (info != null) return info;
 		info = findInTacticRegistry(id, TARGET_HYPOTHESIS);
 		if (info != null) return info;
+		info = findInTacticRegistry(id, TARGET_ANY);
+		if (info != null) return info;
 		return findInTacticRegistry(id, TARGET_GLOBAL);
 	}
 	
@@ -652,6 +659,13 @@ public class TacticUIRegistry {
 			if (info != null) return info;
 			return hypothesisCommandRegistry.get(id);
 		}
+		
+		if(target.equals(TARGET_ANY)) {
+			info = anyCommandRegistry.get(id);
+			if (info != null) return info;
+			return anyCommandRegistry.get(id);
+		}
+		
 		return globalRegistry.get(id);
 	}
 	
@@ -659,18 +673,25 @@ public class TacticUIRegistry {
 	private void putInRegistry(TacticUIInfo info, String target) {
 		final String id = info.getID();
 		boolean error = false;
-		if (target.equals("goal")) {
+		if (target.equals(TARGET_GOAL)) {
 			if (info instanceof TacticProviderInfo) {
 				goalTacticRegistry.put(id, (TacticProviderInfo) info);
 			} else if (info instanceof ProofCommandInfo) {
 				goalCommandRegistry.put(id, (ProofCommandInfo) info);
 			} else
 				error = true;
-		} else if (target.equals("hypothesis")) {
+		} else if (target.equals(TARGET_HYPOTHESIS)) {
 			if (info instanceof TacticProviderInfo) {
 				hypothesisTacticRegistry.put(id, (TacticProviderInfo) info);
 			} else if (info instanceof ProofCommandInfo) {
 				hypothesisCommandRegistry.put(id, (ProofCommandInfo) info);
+			} else
+				error = true;
+		} else if (target.equals(TARGET_ANY)) {
+			if (info instanceof TacticProviderInfo) {
+				anyTacticRegistry.put(id, (TacticProviderInfo) info);
+			} else if (info instanceof ProofCommandInfo) {
+				anyCommandRegistry.put(id, (ProofCommandInfo) info);
 			} else
 				error = true;
 		} else {
@@ -698,6 +719,8 @@ public class TacticUIRegistry {
 		goalCommandRegistry = new LinkedHashMap<String, ProofCommandInfo>();
 		hypothesisTacticRegistry = new LinkedHashMap<String, TacticProviderInfo>();
 		hypothesisCommandRegistry = new LinkedHashMap<String, ProofCommandInfo>();
+		anyTacticRegistry = new LinkedHashMap<String, TacticProviderInfo>();
+		anyCommandRegistry = new LinkedHashMap<String, ProofCommandInfo>();
 		globalRegistry = new LinkedHashMap<String, TacticUIInfo>();
 		toolbarRegistry = new LinkedHashMap<String, ToolbarInfo>();
 		dropdownRegistry = new LinkedHashMap<String, DropdownInfo>();
@@ -769,7 +792,7 @@ public class TacticUIRegistry {
 	}
 
 	public synchronized List<ITacticApplication> getTacticApplicationsToGoal(IUserSupport us) {
-		if (goalTacticRegistry == null) {
+		if ((goalTacticRegistry == null) || (anyTacticRegistry == null)) {
 			loadRegistry();
 		}
 
@@ -780,11 +803,16 @@ public class TacticUIRegistry {
 					.getApplicationsToGoal(us);
 			result.addAll(applications);
 		}
+		for (TacticProviderInfo info : anyTacticRegistry.values()) {
+			final List<ITacticApplication> applications = info
+					.getApplicationsToGoal(us);
+			result.addAll(applications);
+		}
 		return result;
 	}
 
 	public synchronized List<ICommandApplication> getCommandApplicationsToGoal(IUserSupport us) {
-		if (goalCommandRegistry == null) {
+		if ((goalTacticRegistry == null) || (anyTacticRegistry == null)) {
 			loadRegistry();
 		}
 
@@ -795,16 +823,27 @@ public class TacticUIRegistry {
 				result.add(info.getCommandApplication());
 			}
 		}
+		for (ProofCommandInfo info : anyCommandRegistry.values()) {
+			if (info.isApplicable(us, null, null)) {
+				result.add(info.getCommandApplication());
+			}
+		}
 		return result;
 	}
 
 	public synchronized List<ITacticApplication> getTacticApplicationsToHypothesis(IUserSupport us, Predicate hyp) {
-		if (hypothesisTacticRegistry == null)
+		if ((hypothesisTacticRegistry == null) || (anyTacticRegistry == null)) {
 			loadRegistry();
+		}
 		
 		final List<ITacticApplication> result = new ArrayList<ITacticApplication>();
 		
 		for (TacticProviderInfo info : hypothesisTacticRegistry.values()) {
+			final List<ITacticApplication> applications = info
+					.getApplicationsToHypothesis(us, hyp);
+			result.addAll(applications);
+		}
+		for (TacticProviderInfo info : anyTacticRegistry.values()) {
 			final List<ITacticApplication> applications = info
 					.getApplicationsToHypothesis(us, hyp);
 			result.addAll(applications);
@@ -815,13 +854,19 @@ public class TacticUIRegistry {
 	
 	public synchronized List<ICommandApplication> getCommandApplicationsToHypothesis(
 			IUserSupport us, Predicate hyp) {
-		if (hypothesisCommandRegistry == null) {
+		if ((hypothesisTacticRegistry == null) || (anyTacticRegistry == null)) {
 			loadRegistry();
 		}
 
 		final List<ICommandApplication> result = new ArrayList<ICommandApplication>();
 
 		for (ProofCommandInfo info : hypothesisCommandRegistry.values()) {
+			if (info.isApplicable(us, null, null)) {
+				result.add(info.getCommandApplication());
+
+			}
+		}
+		for (ProofCommandInfo info : anyCommandRegistry.values()) {
 			if (info.isApplicable(us, null, null)) {
 				result.add(info.getCommandApplication());
 

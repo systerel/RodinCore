@@ -1058,22 +1058,13 @@
             tooltip="%proofTactics.contImplHyp.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.funOvrGoal"
+            id="org.eventb.ui.funOvr"
             interrupt="false"
-            name="%proofTactics.funOvrGoal.name"
+            name="%proofTactics.funOvr.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.FunOvrGoal"
-            target="goal"
-            tooltip="%proofTactics.funOvrGoal.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.funOvrHyp"
-            interrupt="false"
-            name="%proofTactics.funOvrHyp.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.FunOvrHyp"
-            target="hypothesis"
-            tooltip="%proofTactics.funOvrHyp.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FunOvr"
+            target="any"
+            tooltip="%proofTactics.funOvr.tooltip"/>
       <tactic
             icon="icons/pending.gif"
             id="org.eventb.ui.he"
@@ -1094,94 +1085,49 @@
             tooltip="%proofTactics.mt.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.rmHyp"
+            id="org.eventb.ui.rm"
             interrupt="false"
-            name="%proofTactics.rmHyp.name"
+            name="%proofTactics.rm.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveMembershipHyp"
-            target="hypothesis"
-            tooltip="%proofTactics.rmHyp.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveMembership"
+            target="any"
+            tooltip="%proofTactics.rm.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.rmGoal"
+            id="org.eventb.ui.ri"
             interrupt="false"
-            name="%proofTactics.rmGoal.name"
+            name="%proofTactics.ri.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveMembershipGoal"
-            target="goal"
-            tooltip="%proofTactics.rmGoal.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveInclusion"
+            target="any"
+            tooltip="%proofTactics.ri.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.riHyp"
+            id="org.eventb.ui.sir"
             interrupt="false"
-            name="%proofTactics.riHyp.name"
+            name="%proofTactics.sir.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveInclusionHyp"
-            target="hypothesis"
-            tooltip="%proofTactics.riHyp.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveStrictInclusion"
+            target="any"
+            tooltip="%proofTactics.sir.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.riGoal"
+            id="org.eventb.ui.inclusionSetMinusRight"
             interrupt="false"
-            name="%proofTactics.riGoal.name"
+            name="%proofTactics.inclusionSetMinusRight.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveInclusionGoal"
-            target="goal"
-            tooltip="%proofTactics.riGoal.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.InclusionSetMinusRight"
+            target="any"
+            tooltip="%proofTactics.inclusionSetMinusRight.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.sirHyp"
+            id="org.eventb.ui.riUniv"
             interrupt="false"
-            name="%proofTactics.sirHyp.name"
+            name="%proofTactics.riUniv.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveStrictInclusionHyp"
-            target="hypothesis"
-            tooltip="%proofTactics.sirHyp.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.sirGoal"
-            interrupt="false"
-            name="%proofTactics.sirGoal.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveStrictInclusionGoal"
-            target="goal"
-            tooltip="%proofTactics.sirGoal.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.inclusionSetMinusRightHyp"
-            interrupt="false"
-            name="%proofTactics.inclusionSetMinusRightHyp.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.InclusionSetMinusRightHyp"
-            target="hypothesis"
-            tooltip="%proofTactics.inclusionSetMinusRightHyp.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.inclusionSetMinusRightGoal"
-            interrupt="false"
-            name="%proofTactics.inclusionSetMinusRightGoal.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.InclusionSetMinusRightGoal"
-            target="goal"
-            tooltip="%proofTactics.inclusionSetMinusRightGoal.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.riUnivHyp"
-            interrupt="false"
-            name="%proofTactics.riUnivHyp.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveInclusionUniversalHyp"
-            target="hypothesis"
-            tooltip="%proofTactics.riUnivHyp.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.riUnivGoal"
-            interrupt="false"
-            name="%proofTactics.riUnivGoal.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveInclusionUniversalGoal"
-            target="goal"
-            tooltip="%proofTactics.riUnivGoal.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveInclusionUniversal"
+            target="any"
+            tooltip="%proofTactics.riUniv.tooltip"/>
       <tactic
             icon="icons/full/ctool16/impI_prover.gif"
             id="org.eventb.ui.impI"
@@ -1193,22 +1139,13 @@
             tooltip="%proofTactics.impI.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.disjToImplGoal"
+            id="org.eventb.ui.disjToImpl"
             interrupt="false"
-            name="%proofTactics.disjToImplGoal.name"
+            name="%proofTactics.disjToImpl.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.DisjToImplGoal"
-            target="goal"
-            tooltip="%proofTactics.disjToImplGoal.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.disjToImplHyp"
-            interrupt="false"
-            name="%proofTactics.disjToImplHyp.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.DisjToImplHyp"
-            target="hypothesis"
-            tooltip="%proofTactics.disjToImplHyp.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.DisjToImpl"
+            target="any"
+            tooltip="%proofTactics.disjToImpl.tooltip"/>
       <tactic
             icon="icons/pending.gif"
             id="org.eventb.ui.allmpD"
@@ -1240,436 +1177,211 @@
             tooltip="%proofTactics.nextReview.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.impAndHyp"
+            id="org.eventb.ui.impAnd"
             interrupt="false"
-            name="%proofTactic.impAndHyp.name"
+            name="%proofTactic.impAnd.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.ImpAndHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.impAndHyp.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.ImpAnd"
+            target="any"
+            tooltip="%proofTactic.impAnd.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.impAndGoal"
+            id="org.eventb.ui.impOr"
             interrupt="false"
-            name="%proofTactic.impAndGoal.name"
+            name="%proofTactic.impOr.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.ImpAndGoal"
-            target="goal"
-            tooltip="%proofTactic.impAndGoal.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.ImpOr"
+            target="any"
+            tooltip="%proofTactic.impOr.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.impOrHyp"
+            id="org.eventb.ui.relImgUnionRight"
             interrupt="false"
-            name="%proofTactic.impOrHyp.name"
+            name="%proofTactic.relImgUnionRight.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.ImpOrHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.impOrHyp.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RelImgUnionRight"
+            target="any"
+            tooltip="%proofTactic.relImgUnionRight.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.impOrGoal"
+            id="org.eventb.ui.relImgUnionLeft"
             interrupt="false"
-            name="%proofTactic.impOrGoal.name"
+            name="%proofTactic.relImgUnionLeft.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.ImpOrGoal"
-            target="goal"
-            tooltip="%proofTactic.impOrGoal.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RelImgUnionLeft"
+            target="any"
+            tooltip="%proofTactic.relImgUnionLeft.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.relImgUnionRightHyp"
+            id="org.eventb.ui.setEql"
             interrupt="false"
-            name="%proofTactic.relImgUnionRightHyp.name"
+            name="%proofTactic.setEql.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.RelImgUnionRightHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.relImgUnionRightHyp.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.SetEql"
+            target="any"
+            tooltip="%proofTactic.setEql.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.relImgUnionRightGoal"
+            id="org.eventb.ui.eqv"
             interrupt="false"
-            name="%proofTactic.relImgUnionRightGoal.name"
+            name="%proofTactic.eqv.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.RelImgUnionRightGoal"
-            target="goal"
-            tooltip="%proofTactic.relImgUnionRightGoal.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.Eqv"
+            target="any"
+            tooltip="%proofTactic.eqv.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.relImgUnionLeftHyp"
+            id="org.eventb.ui.funSetMinusImg"
             interrupt="false"
-            name="%proofTactic.relImgUnionLeftHyp.name"
+            name="%proofTactic.funSetMinusImg.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.RelImgUnionLeftHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.relImgUnionLeftHyp.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FunSetMinusImg"
+            target="any"
+            tooltip="%proofTactic.funSetMinusImg.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.relImgUnionLeftGoal"
+            id="org.eventb.ui.funSingletonImg"
             interrupt="false"
-            name="%proofTactic.relImgUnionLeftGoal.name"
+            name="%proofTactic.funSingletonImg.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.RelImgUnionLeftGoal"
-            target="goal"
-            tooltip="%proofTactic.relImgUnionLeftGoal.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FunSingletonImg"
+            target="any"
+            tooltip="%proofTactic.funSingletonImg.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.setEqlHyp"
+            id="org.eventb.ui.conv"
             interrupt="false"
-            name="%proofTactic.setEqlHyp.name"
+            name="%proofTactic.conv.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.SetEqlHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.setEqlHyp.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.Conv"
+            target="any"
+            tooltip="%proofTactic.conv.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.setEqlGoal"
+            id="org.eventb.ui.domDistLeft"
             interrupt="false"
-            name="%proofTactic.setEqlGoal.name"
+            name="%proofTactic.domDistLeft.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.SetEqlGoal"
-            target="goal"
-            tooltip="%proofTactic.setEqlGoal.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.DomDistLeft"
+            target="any"
+            tooltip="%proofTactic.domDistLeft.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.eqvHyp"
+            id="org.eventb.ui.domDistRight"
             interrupt="false"
-            name="%proofTactic.eqvHyp.name"
+            name="%proofTactic.domDistRight.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.EqvHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.eqvHyp.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.DomDistRight"
+            target="any"
+            tooltip="%proofTactic.domDistRight.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.eqvGoal"
+            id="org.eventb.ui.ranDistLeft"
             interrupt="false"
-            name="%proofTactic.eqvGoal.name"
+            name="%proofTactic.ranDistLeft.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.EqvGoal"
-            target="goal"
-            tooltip="%proofTactic.eqvGoal.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RanDistLeft"
+            target="any"
+            tooltip="%proofTactic.ranDistLeft.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.funInterImgHyp"
+            id="org.eventb.ui.ranDistRight"
             interrupt="false"
-            name="%proofTactic.funInterImgHyp.name"
+            name="%proofTactic.ranDistRight.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.FunInterImgHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.funInterImgHyp.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RanDistRight"
+            target="any"
+            tooltip="%proofTactic.ranDistRight.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.funInterImgGoal"
+            id="org.eventb.ui.setMinus"
             interrupt="false"
-            name="%proofTactic.funInterImgGoal.name"
+            name="%proofTactic.setMinus.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.FunInterImgGoal"
-            target="goal"
-            tooltip="%proofTactic.funInterImgGoal.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.SetMinus"
+            target="any"
+            tooltip="%proofTactic.setMinus.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.funSetMinusImgHyp"
+            id="org.eventb.ui.andOrDist"
             interrupt="false"
-            name="%proofTactic.funSetMinusImgHyp.name"
+            name="%proofTactic.andOrDist.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.FunSetMinusImgHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.funSetMinusImgHyp.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.AndOrDist"
+            target="any"
+            tooltip="%proofTactic.andOrDist.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.funSetMinusImgGoal"
+            id="org.eventb.ui.unionInterDist"
             interrupt="false"
-            name="%proofTactic.funSetMinusImgGoal.name"
+            name="%proofTactic.unionInterDist.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.FunSetMinusImgGoal"
-            target="goal"
-            tooltip="%proofTactic.funSetMinusImgGoal.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.UnionInterDist"
+            target="any"
+            tooltip="%proofTactic.unionInterDist.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.funSingletonImgHyp"
+            id="org.eventb.ui.compUnionDist"
             interrupt="false"
-            name="%proofTactic.funSingletonImgHyp.name"
+            name="%proofTactic.compUnionDist.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.FunSingletonImgHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.funSingletonImgHyp.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.CompUnionDist"
+            target="any"
+            tooltip="%proofTactic.compUnionDist.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.funSingletonImgGoal"
+            id="org.eventb.ui.domRanUnionDist"
             interrupt="false"
-            name="%proofTactic.funSingletonImgGoal.name"
+            name="%proofTactic.domRanUnionDist.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.FunSingletonImgGoal"
-            target="goal"
-            tooltip="%proofTactic.funSingletonImgGoal.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.DomRanUnionDist"
+            target="any"
+            tooltip="%proofTactic.domRanUnionDist.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.convHyp"
+            id="org.eventb.ui.relOvr"
             interrupt="false"
-            name="%proofTactic.convHyp.name"
+            name="%proofTactic.relOvr.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.ConvHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.convHyp.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RelOvr"
+            target="any"
+            tooltip="%proofTactic.relOvr.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.convGoal"
+            id="org.eventb.ui.compImg"
             interrupt="false"
-            name="%proofTactic.convGoal.name"
+            name="%proofTactic.compImg.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.ConvGoal"
-            target="goal"
-            tooltip="%proofTactic.convGoal.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.CompImg"
+            target="any"
+            tooltip="%proofTactic.compImg.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.domDistLeftHyp"
+            id="org.eventb.ui.domComp"
             interrupt="false"
-            name="%proofTactic.domDistLeftHyp.name"
+            name="%proofTactic.domComp.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.DomDistLeftHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.domDistLeftHyp.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.DomComp"
+            target="any"
+            tooltip="%proofTactic.domComp.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.domDistLeftGoal"
+            id="org.eventb.ui.ranComp"
             interrupt="false"
-            name="%proofTactic.domDistLeftGoal.name"
+            name="%proofTactic.ranComp.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.DomDistLeftGoal"
-            target="goal"
-            tooltip="%proofTactic.domDistLeftGoal.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RanComp"
+            target="any"
+            tooltip="%proofTactic.ranComp.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.domDistRightHyp"
+            id="org.eventb.ui.funCompImg"
             interrupt="false"
-            name="%proofTactic.domDistRightHyp.name"
+            name="%proofTactic.funCompImg.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.DomDistRightHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.domDistRightHyp.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.domDistRightGoal"
-            interrupt="false"
-            name="%proofTactic.domDistRightGoal.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.DomDistRightGoal"
-            target="goal"
-            tooltip="%proofTactic.domDistRightGoal.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.ranDistLeftHyp"
-            interrupt="false"
-            name="%proofTactic.ranDistLeftHyp.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.RanDistLeftHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.ranDistLeftHyp.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.ranDistLeftGoal"
-            interrupt="false"
-            name="%proofTactic.ranDistLeftGoal.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.RanDistLeftGoal"
-            target="goal"
-            tooltip="%proofTactic.ranDistLeftGoal.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.ranDistRightHyp"
-            interrupt="false"
-            name="%proofTactic.ranDistRightHyp.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.RanDistRightHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.ranDistRightHyp.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.ranDistRightGoal"
-            interrupt="false"
-            name="%proofTactic.ranDistRightGoal.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.RanDistRightGoal"
-            target="goal"
-            tooltip="%proofTactic.ranDistRightGoal.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.setMinusHyp"
-            interrupt="false"
-            name="%proofTactic.setMinusHyp.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.SetMinusHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.setMinusHyp.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.setMinusGoal"
-            interrupt="false"
-            name="%proofTactic.setMinusGoal.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.SetMinusGoal"
-            target="goal"
-            tooltip="%proofTactic.setMinusGoal.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.andOrDistHyp"
-            interrupt="false"
-            name="%proofTactic.andOrDistHyp.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.AndOrDistHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.andOrDistHyp.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.andOrDistGoal"
-            interrupt="false"
-            name="%proofTactic.andOrDistGoal.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.AndOrDistGoal"
-            target="goal"
-            tooltip="%proofTactic.andOrDistGoal.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.unionInterDistHyp"
-            interrupt="false"
-            name="%proofTactic.unionInterDistHyp.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.UnionInterDistHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.unionInterDistHyp.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.unionInterDistGoal"
-            interrupt="false"
-            name="%proofTactic.unionInterDistGoal.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.UnionInterDistGoal"
-            target="goal"
-            tooltip="%proofTactic.unionInterDistGoal.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.compUnionDistHyp"
-            interrupt="false"
-            name="%proofTactic.compUnionDistHyp.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.CompUnionDistHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.compUnionDistHyp.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.compUnionDistGoal"
-            interrupt="false"
-            name="%proofTactic.compUnionDistGoal.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.CompUnionDistGoal"
-            target="goal"
-            tooltip="%proofTactic.compUnionDistGoal.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.domRanUnionDistHyp"
-            interrupt="false"
-            name="%proofTactic.domRanUnionDistHyp.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.DomRanUnionDistHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.domRanUnionDistHyp.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.domRanUnionDistGoal"
-            interrupt="false"
-            name="%proofTactic.domRanUnionDistGoal.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.DomRanUnionDistGoal"
-            target="goal"
-            tooltip="%proofTactic.domRanUnionDistGoal.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.relOvrHyp"
-            interrupt="false"
-            name="%proofTactic.relOvrHyp.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.RelOvrHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.relOvrHyp.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.relOvrGoal"
-            interrupt="false"
-            name="%proofTactic.relOvrGoal.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.RelOvrGoal"
-            target="goal"
-            tooltip="%proofTactic.relOvrGoal.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.compImgHyp"
-            interrupt="false"
-            name="%proofTactic.compImgHyp.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.CompImgHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.compImgHyp.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.compImgGoal"
-            interrupt="false"
-            name="%proofTactic.compImgGoal.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.CompImgGoal"
-            target="goal"
-            tooltip="%proofTactic.compImgGoal.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.domCompHyp"
-            interrupt="false"
-            name="%proofTactic.domCompHyp.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.DomCompHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.domCompHyp.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.domCompGoal"
-            interrupt="false"
-            name="%proofTactic.domCompGoal.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.DomCompGoal"
-            target="goal"
-            tooltip="%proofTactic.domCompGoal.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.ranCompHyp"
-            interrupt="false"
-            name="%proofTactic.ranCompHyp.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.RanCompHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.ranCompHyp.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.ranCompGoal"
-            interrupt="false"
-            name="%proofTactic.ranCompGoal.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.RanCompGoal"
-            target="goal"
-            tooltip="%proofTactic.ranCompGoal.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.funCompImgHyp"
-            interrupt="false"
-            name="%proofTactic.funCompImgHyp.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.FunCompImgHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.funCompImgHyp.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.funCompImgGoal"
-            interrupt="false"
-            name="%proofTactic.funCompImgGoal.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.FunCompImgGoal"
-            target="goal"
-            tooltip="%proofTactic.funCompImgGoal.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FunCompImg"
+            target="any"
+            tooltip="%proofTactic.funCompImg.tooltip"/>
       <tactic
             icon="icons/pending.gif"
             id="org.eventb.ui.finiteSetGoal"
@@ -1825,98 +1537,50 @@
             tooltip="%proofTactic.cardComparisonGoal.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.cardUpToHyp"
+            id="org.eventb.ui.cardUpTo"
             interrupt="false"
-            name="%proofTactic.cardUpToHyp.name"
+            name="%proofTactic.cardUpTo.name"
             priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.CardUpToHyp"
-            target="hypothesis"
-            tooltip="%proofTactic.cardUpToHyp.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.CardUpTo"
+            target="any"
+            tooltip="%proofTactic.cardUpTo.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.cardUpToGoal"
-            interrupt="false"
-            name="%proofTactic.cardUpToGoal.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.CardUpToGoal"
-            target="goal"
-            tooltip="%proofTactic.cardUpToGoal.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.partitionRewritesGoal"
+            id="org.eventb.ui.partitionRewrites"
             interrupt="true"
             name="%proofTactic.partitionRewrites.name"
             priorty="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.PartitionRewrites"
-            target="goal"
+            target="any"
             tooltip="%proofTactic.partitionRewrites.tooltip"/>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.partitionRewritesHyp"
-            interrupt="true"
-            name="%proofTactic.partitionRewrites.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.PartitionRewrites"
-            target="hypothesis"
-            tooltip="%proofTactic.partitionRewrites.tooltip"/>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.arithRewritesHyp"
+            id="org.eventb.ui.arithRewrites"
             interrupt="true"
             name="%proofTactic.arithRewrites.name"
             priorty="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.Arith"
-            target="hypothesis"
+            target="any"
             tooltip="%proofTactic.arithRewrites.tooltip">
       </tactic>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.arithRewritesGoal"
+            id="org.eventb.ui.totalDom"
             interrupt="true"
-            name="%proofTactic.arithRewrites.name"
-            priorty="9"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.Arith"
-            target="goal"
-            tooltip="%proofTactic.arithRewrites.tooltip">
-      </tactic>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.totalDomHyp"
-            interrupt="true"
-            name="%proofTactic.totalDomHyp.name"
+            name="%proofTactic.totalDom.name"
             priorty="5"
             tacticProvider="org.eventb.internal.ui.prover.tactics.TotalDomainSubstitution"
-            target="hypothesis"
+            target="any"
             tooltip="%proofTactic.totalDom.tooltip">
       </tactic>
       <tactic
             icon="icons/pending.gif"
-            id="org.eventb.ui.totalDomGoal"
-            interrupt="true"
-            name="%proofTactic.totalDomGoal.name"
-            priorty="5"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.TotalDomainSubstitution"
-            target="goal"
-            tooltip="%proofTactic.totalDom.tooltip">
-      </tactic>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.funImgSimpGoal"
+            id="org.eventb.ui.funImgSimp"
             interrupt="true"
             name="%proofTactic.funImgSimp.name"
             priorty="5"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FunImgSimp"
-            target="goal"
-            tooltip="%proofTactic.funImgSimp.tooltip">
-      </tactic>
-      <tactic
-            icon="icons/pending.gif"
-            id="org.eventb.ui.funImgSimpHyp"
-            interrupt="true"
-            name="%proofTactic.funImgSimp.name"
-            priorty="5"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.FunImgSimp"
-            target="hypothesis"
+            target="any"
             tooltip="%proofTactic.funImgSimp.tooltip">
       </tactic>
    </extension>
