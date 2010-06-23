@@ -39,6 +39,7 @@ import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.goal.GoalUtils;
 import org.eventb.internal.ui.preferences.UIPreferenceObserver;
 import org.eventb.internal.ui.preferences.ToggleAutoTacticPreference;
+import org.eventb.internal.ui.proofSkeletonView.ProofSkeletonView;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.internal.ui.proofinformation.ProofInformationUtils;
 import org.eventb.internal.ui.prooftreeui.ProofTreeUIUtils;
@@ -112,6 +113,9 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 
 	private static final String GOAL_TRACE = PLUGIN_ID
 			+ "/debug/goal"; //$NON-NLS-1$
+
+	private static final String PROOFSKELETON_DEBUG = PLUGIN_ID
+	+ "/debug/proofskeleton"; //$NON-NLS-1$
 
 	/**
 	 * Default values for creating RODIN Elements
@@ -237,6 +241,10 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 			option = Platform.getDebugOption(GOAL_TRACE);
 			if (option != null)
 				GoalUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+
+			option = Platform.getDebugOption(PROOFSKELETON_DEBUG);
+			if (option != null)
+				ProofSkeletonView.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 	}
 

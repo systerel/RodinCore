@@ -8,3 +8,4 @@ org.eventb.ui/debug/searchhypothesis = false
 org.eventb.ui/debug/cachedhypothesis = false
 org.eventb.ui/debug/goal = false
 org.eventb.ui/debug/elementRegistry = false
+org.eventb.ui/debug/proofskeleton = false
