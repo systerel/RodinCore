@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -64,15 +64,15 @@ public class Extends implements IObjectActionDelegate {
 	
 	public void run(IAction action) {
 		final IRodinFile abs = getSelectedContext();
-		final IContextRoot absRoot = (IContextRoot) abs.getRoot();
 		if (abs == null) {
 			return;
 		}
+		final IContextRoot absRoot = (IContextRoot) abs.getRoot();
 		final IRodinFile con = askRefinementContextFor(abs);
-		final IContextRoot conRoot = (IContextRoot) con.getRoot();
 		if (con == null) {
 			return;
 		}
+		final IContextRoot conRoot = (IContextRoot) con.getRoot();
 		final CreateRefinement op = new CreateRefinement(absRoot, conRoot);
 		try {
 			RodinCore.run(op, null);
