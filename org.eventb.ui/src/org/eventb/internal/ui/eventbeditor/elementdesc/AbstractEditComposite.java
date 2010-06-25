@@ -131,7 +131,7 @@ public abstract class AbstractEditComposite implements IEditComposite {
 		prefixLabel = toolkit.createLabel(parent, prefix);
 		GridData gridData = new GridData();
 		gridData.verticalAlignment = SWT.CENTER;
-		if (prefix == "")
+		if (prefix.length() == 0)
 			gridData.widthHint = 0;
 		
 		prefixLabel.setLayoutData(gridData);
