@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,6 +91,7 @@ public class TestElement extends TestCase {
 		return sees;
 	}
 
+	@SuppressWarnings("unused")
 	private void assertNotEquals(Element expected, Element actual) {
 		final String message = "element :\n " + expected.toString()
 				+ "\nand element :\n" + actual.toString() + "\nshould differ.";
