@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -131,7 +131,7 @@ public abstract class AbstractEditComposite implements IEditComposite {
 		prefixLabel = toolkit.createLabel(parent, prefix);
 		GridData gridData = new GridData();
 		gridData.verticalAlignment = SWT.CENTER;
-		if (prefix == null)
+		if (prefix == "")
 			gridData.widthHint = 0;
 		
 		prefixLabel.setLayoutData(gridData);
