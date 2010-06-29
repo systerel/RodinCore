@@ -13,8 +13,8 @@
 package org.eventb.internal.ui.prover;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -89,7 +88,7 @@ public abstract class HypothesisComposite implements
 	private ScrolledForm scrolledForm;
 
 	// The collection of hypothesis rows.
-	private Collection<HypothesisRow> rows;
+	private List<HypothesisRow> rows;
 
 	// The form toolkit used to create different widgets within this composite.
 	private FormToolkit toolkit;
@@ -563,10 +562,11 @@ public abstract class HypothesisComposite implements
 	 * Scroll to the bottom of the list of hypothesis rows.
 	 */
 	public void scrollToBottom() {
-		ScrollBar verticalBar = scrolledForm.getVerticalBar();
-		if (verticalBar != null)
-			verticalBar.setSelection(verticalBar.getMaximum()
-					- verticalBar.getThumb());
+		final int size = rows.size();
+		if (size > 0) {
+			final HypothesisRow lastHyp = rows.get(size-1);
+			lastHyp.revealHypothesisRow();
+		}
 	}
 	
 	/**

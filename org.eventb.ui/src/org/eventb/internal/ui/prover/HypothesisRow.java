@@ -388,4 +388,14 @@ public class HypothesisRow {
 		checkBox.setSelection(selected);
 	}
 
+	/**
+	 * Ensures that the current hypothesis text is visible when
+	 * ScrolledComposite is somewhere in the parent chain. If scroll bars are
+	 * visible and the control is clipped, the client of the scrolled composite
+	 * will be scrolled to reveal the control.
+	 */
+	public void revealHypothesisRow() {
+		FormToolkit.ensureVisible(hypothesisText.getMainTextWidget());
+	}
+
 }
