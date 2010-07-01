@@ -40,7 +40,6 @@ public class RanDistRightHyp extends DefaultTacticProvider {
 	public Point getOperatorPosition(Predicate predicate, String predStr,
 			IPosition position) {
 		Formula<?> subFormula = predicate.getSubFormula(position);
-		assert subFormula instanceof BinaryExpression;
 		Expression right = ((BinaryExpression) subFormula).getRight();
 		Expression[] children = ((AssociativeExpression) right).getChildren();
 		Expression first = children[0];

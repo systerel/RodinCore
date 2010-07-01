@@ -40,7 +40,6 @@ public class RelImgUnionLeftHyp extends DefaultTacticProvider {
 	public Point getOperatorPosition(Predicate predicate, String predStr,
 			IPosition position) {
 		Formula<?> subFormula = predicate.getSubFormula(position);
-		assert subFormula instanceof BinaryExpression;
 		Expression left = ((BinaryExpression) subFormula).getLeft();
 		Expression[] children = ((AssociativeExpression) left).getChildren();
 		Expression first = children[0];

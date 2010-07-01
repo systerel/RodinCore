@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -138,7 +138,7 @@ public abstract class HypothesisPage extends Page implements
 	 * @param manager
 	 *            the menu manager
 	 */
-	private void fillLocalPullDown(IMenuManager manager) {
+	protected void fillLocalPullDown(IMenuManager manager) {
 		manager.add(new Separator());
 	}
 
@@ -148,7 +148,7 @@ public abstract class HypothesisPage extends Page implements
 	 * @param manager
 	 *            the menu manager
 	 */
-	private void fillContextMenu(IMenuManager manager) {
+	protected void fillContextMenu(IMenuManager manager) {
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -160,7 +160,7 @@ public abstract class HypothesisPage extends Page implements
 	 * @param manager
 	 *            the toolbar manager
 	 */
-	private void fillLocalToolBar(IToolBarManager manager) {
+	protected void fillLocalToolBar(IToolBarManager manager) {
 		// Do nothing
 	}
 

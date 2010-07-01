@@ -17,15 +17,18 @@
 package org.eventb.internal.ui.prover;
 
 import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
+import static org.eventb.internal.ui.prover.ProverUIUtils.addHyperlink;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyCommand;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyTactic;
-import static org.eventb.internal.ui.prover.ProverUIUtils.checkRange;
+import static org.eventb.internal.ui.prover.ProverUIUtils.debug;
+import static org.eventb.internal.ui.prover.ProverUIUtils.getHyperlinks;
+import static org.eventb.internal.ui.prover.ProverUIUtils.getIcon;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getParsed;
+import static org.eventb.internal.ui.prover.ProverUIUtils.getTooltip;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,10 +57,8 @@ import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.IEventBSharedImages;
-import org.eventb.ui.prover.IPositionApplication;
 import org.eventb.ui.prover.IPredicateApplication;
 import org.eventb.ui.prover.ITacticApplication;
 
@@ -208,7 +209,7 @@ public class HypothesisRow {
 				SourceLocation loc = ident.getSourceLocation();
 				String image = parsedString.substring(loc.getStart(), loc
 						.getEnd() + 1);
-				ProverUIUtils.debug("Ident: " + image);
+				debug("Ident: " + image);
 				string += " " + image + " ";
 				int x = string.length();
 				string += " ";
@@ -225,27 +226,19 @@ public class HypothesisRow {
 
 			string += str;
 
-			
-			// Get the list of applicable tactic on the parsed but 
-			// not type-checked pretty printed string.
-			// For each tactic, get the applicable positions.
-			Predicate parsedPred = getParsed(string);
-			
-			final Map<Point, List<ITacticApplication>> links = getLinksToApplications(
-					userSupport, string, parsedPred);
+			final Map<Point, List<ITacticApplication>> links = getHyperlinks(
+					userSupport, true, string, hyp);
 					hypothesisText.setText(string, userSupport, hyp, indexes, links);
 		} else {
 			String str = PredicateUtil.prettyPrint(max_length, parsedString,
 					parsedPredicate);
-
-			Predicate parsedPred = getParsed(str);
 
 			int[] indexes = new int[0];
 
 			final Map<Point, List<ITacticApplication>> links;
 
 			if (enable) {
-				links = getLinksToApplications(userSupport, str, parsedPred);
+				links = getHyperlinks(userSupport, true, str, hyp);
 			} else {
 				links = Collections.emptyMap();
 			}
@@ -254,42 +247,11 @@ public class HypothesisRow {
 		toolkit.paintBordersFor(hypothesisComposite);
 	}
 
-	private  Map<Point, List<ITacticApplication>> getLinksToApplications(
-			IUserSupport us, String string, Predicate parsedStr) {
-		final Map<Point, List<ITacticApplication>> links = new HashMap<Point, List<ITacticApplication>>();
-
-		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
-
-		final List<ITacticApplication> tactics = tacticUIRegistry
-				.getTacticApplicationsToHypothesis(us, hyp);
-
-		for (final ITacticApplication tacticAppli : tactics) {
-			if (tacticAppli instanceof IPositionApplication) {
-				final Point pt = ((IPositionApplication) tacticAppli)
-						.getHyperlinkBounds(string, parsedStr);
-				if (!checkRange(pt, string)) {
-					UIUtils.log(null, "invalid hyperlink bounds ("
-							+ pt.toString() + ") for tactic "
-							+ tacticAppli.getTacticID()
-							+ ". Application abandoned.");
-					continue;
-				}
-				List<ITacticApplication> tacticApplications = links.get(pt);
-				if (tacticApplications == null) {
-					tacticApplications = new ArrayList<ITacticApplication>();
-					links.put(pt, tacticApplications);
-				}
-				tacticApplications.add(tacticAppli);
-			}
-		}
-		return links;
-	}
-
 	/*
 	 * Creating a null hyperlink
 	 */
 	private void createNullHyperlinks() {
-		ProverUIUtils.debug("Create Null Image");
+		debug("Create Null Image");
 		ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
 				SWT.CENTER);
 		hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -339,9 +301,9 @@ public class HypothesisRow {
 				}
 			};
 			final IPredicateApplication predAppli = (IPredicateApplication) tacticAppli;
-			final Image icon = ProverUIUtils.getIcon(predAppli);
-			final String tooltip = ProverUIUtils.getTooltip(predAppli);
-			ProverUIUtils.addHyperlink(buttonComposite, toolkit, SWT.BEGINNING,
+			final Image icon = getIcon(predAppli);
+			final String tooltip = getTooltip(predAppli);
+			addHyperlink(buttonComposite, toolkit, SWT.BEGINNING,
 					icon, tooltip, hlListener, enable);
 		}
 		
@@ -361,7 +323,7 @@ public class HypothesisRow {
 				}
 
 			};
-			ProverUIUtils.addHyperlink(buttonComposite, toolkit, SWT.FILL, commandAppli
+			addHyperlink(buttonComposite, toolkit, SWT.FILL, commandAppli
 					.getIcon(), commandAppli.getTooltip(), hlListener, enable);
 		}
 
@@ -409,7 +371,7 @@ public class HypothesisRow {
 		final String[] inputs = hypothesisText.getResults();
 		if (ProverUIUtils.DEBUG)
 			for (String input : inputs)
-				ProverUIUtils.debug("Input: \"" + input + "\"");
+				debug("Input: \"" + input + "\"");
 
 		final String globalInput = this.proverUI.getProofControl().getInput();
 		final Set<Predicate> hypSet = Collections.singleton(hyp);

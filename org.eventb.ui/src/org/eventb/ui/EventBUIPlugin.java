@@ -171,16 +171,21 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	 * currently available.
 	 */
 	private void loadFont() {
-		Display display = this.getWorkbench().getDisplay();
-		FontData[] fontList = display.getFontList("Brave Sans Mono", true);
-		if (fontList.length == 0) {
-			// The font is not available, try to load the font
-			Bundle bundle = EventBUIPlugin.getDefault().getBundle();
-			IPath path = new Path("fonts/bravesansmono_roman.ttf");
-			IPath absolutePath = BundledFileExtractor.extractFile(bundle, path);
-			Assert.isNotNull(absolutePath, "The Brave Sans Mono font should be included with the distribution");
-			display.loadFont(absolutePath.toString());
-		}
+		final Display display = this.getWorkbench().getDisplay();
+		display.asyncExec(new Runnable() {
+			public void run() {
+				final FontData[] fontList = display.getFontList("Brave Sans Mono", true);
+				if (fontList.length != 0) {
+					return;
+				}
+				// The font is not available, try to load the font
+				final Bundle bundle = EventBUIPlugin.getDefault().getBundle();
+				final IPath path = new Path("fonts/bravesansmono_roman.ttf");
+				final IPath absolutePath = BundledFileExtractor.extractFile(bundle, path);
+				Assert.isNotNull(absolutePath, "The Brave Sans Mono font should be included with the distribution");
+				display.loadFont(absolutePath.toString());
+			}
+		});
 	}
 
 	/**
@@ -238,9 +243,12 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		super.stop(context);
-		ColorManager.getDefault().dispose();
-		plugin = null;
+		try {
+			ColorManager.getDefault().dispose();
+			plugin = null;
+		} finally {
+			super.stop(context);
+		}		
 	}
 
 	/**

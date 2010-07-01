@@ -40,7 +40,6 @@ public class SetMinusHyp extends DefaultTacticProvider {
 	public Point getOperatorPosition(Predicate predicate, String predStr,
 			IPosition position) {
 		Formula<?> subFormula = predicate.getSubFormula(position);
-		assert subFormula instanceof BinaryExpression;
 		Expression right = ((BinaryExpression) subFormula).getRight();
 		if (right instanceof AssociativeExpression) {
 			Expression[] children = ((AssociativeExpression) right)

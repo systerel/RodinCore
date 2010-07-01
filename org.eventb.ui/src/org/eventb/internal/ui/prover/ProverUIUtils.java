@@ -18,10 +18,15 @@ import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -53,6 +58,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.prover.IPositionApplication;
 import org.eventb.ui.prover.IPredicateApplication;
 import org.eventb.ui.prover.IProofCommand;
+import org.eventb.ui.prover.ITacticApplication;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -448,6 +454,107 @@ public class ProverUIUtils {
 	 */
 	public static boolean checkRange(Point pt, String string) {
 		return pt.x >= 0 && pt.y <= string.length() && pt.x < pt.y;
+	}
+
+	/**
+	 * Returns a map associating tactic applications with their corresponding
+	 * application points (i.e. hyperlink bounds) for a predicate and its
+	 * corresponding string representation.
+	 * 
+	 * @param us
+	 *            the current user support
+	 * @param isHypothesis
+	 *            <code>true</code>if application points are searched for an
+	 *            hypothesis predicate, <code>false</code> for goal tactic
+	 *            applications
+	 * @param str
+	 *            the string representation of the given predicate
+	 * @param pred
+	 *            the predicate tactic application points are searched
+	 *            for
+	 * @return a map associating points and tactic applications for the given
+	 *         predicate <code>pred</code> and its string representation
+	 *         <code>str</code>
+	 */
+	public static Map<Point, List<ITacticApplication>> getHyperlinks(
+			IUserSupport us, boolean isHypothesis, String str, Predicate pred) {
+
+		final Map<Point, List<ITacticApplication>> links;
+		links = new HashMap<Point, List<ITacticApplication>>();
+
+		final TacticUIRegistry registry = TacticUIRegistry.getDefault();
+		final List<ITacticApplication> applications;
+
+		if (isHypothesis) {
+			applications = registry.getTacticApplicationsToHypothesis(us, pred);		
+		} else {
+			applications = registry.getTacticApplicationsToGoal(us);
+		}
+
+		// Non type-checked predicate containing source location used here to
+		// get hyperlinks
+		final Predicate parsedPred = getParsed(str);
+
+		for (ITacticApplication application : applications) {
+			if (application instanceof IPositionApplication) {
+				final Point pt = safeGetHyperlinkBounds(
+						(IPositionApplication) application, str, parsedPred);
+				if (pt == null) {
+					// client error has already been reported
+					continue;
+				}
+				if (!checkRange(pt, str)) {
+					UIUtils.log(null, "invalid hyperlink bounds ("
+							+ pt.toString() + ") for tactic "
+							+ application.getTacticID()
+							+ ". Application abandoned.");
+					continue;
+				}
+				List<ITacticApplication> applicationList = links.get(pt);
+				if (applicationList == null) {
+					applicationList = new ArrayList<ITacticApplication>();
+					links.put(pt, applicationList);
+				}
+				applicationList.add(application);
+			}
+		}
+		return links;
+	}
+	
+	/**
+	 * Safely encapsulates calls to
+	 * <code>IPositionApplication.getHyperlinkBounds(String, Predicate)</code>
+	 * which is client provided code.
+	 */
+	public static final class ApplicationBoundGetter extends SafeRunnable {
+		private final IPositionApplication application;
+		private final String string;
+		private final Predicate predicate;
+		private Point result;
+
+		public ApplicationBoundGetter(IPositionApplication application,
+				String string, Predicate predicate) {
+			this.application = application;
+			this.string = string;
+			this.predicate = predicate;
+		}
+
+		public void run() throws Exception {
+			result = application.getHyperlinkBounds(string, predicate);
+		}
+
+		public Point getResult() {
+			return result;
+		}
+		
+	}
+
+	public static Point safeGetHyperlinkBounds(
+			IPositionApplication application, String string, Predicate predicate) {
+		final ApplicationBoundGetter getter = new ApplicationBoundGetter(
+				application, string, predicate);
+		SafeRunner.run(getter);
+		return getter.getResult();
 	}
 
 }

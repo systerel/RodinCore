@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ ******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 
 import java.util.List;
@@ -20,8 +30,7 @@ public class FunOvrGoal extends DefaultTacticProvider {
 	@Deprecated
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
-		// Do not need to pass the sequent
-		return Tactics.funOvrGoal(position);
+		return Tactics.funOvr(null, position);
 	}
 
 	@Override
@@ -41,8 +50,6 @@ public class FunOvrGoal extends DefaultTacticProvider {
 	public Point getOperatorPosition(Predicate predicate, String predStr,
 			IPosition position) {
 		final Formula<?> subFormula = predicate.getSubFormula(position);
-		assert subFormula != null;
-		assert Tactics.isFunOvrApp(subFormula);
 		Expression left = ((BinaryExpression) subFormula).getLeft();
 		Expression[] children = ((AssociativeExpression) left)
 				.getChildren();

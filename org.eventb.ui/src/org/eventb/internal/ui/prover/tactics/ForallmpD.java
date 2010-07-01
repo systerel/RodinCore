@@ -38,9 +38,7 @@ public class ForallmpD extends DefaultTacticProvider {
 	public Point getOperatorPosition(Predicate predicate, String predStr,
 			IPosition position) {
 		Formula<?> subFormula = predicate.getSubFormula(position);
-		assert subFormula instanceof Predicate;
 		Predicate pred = (Predicate) subFormula;
-		assert Tactics.allD_applicable(pred);
 		QuantifiedPredicate qPred = (QuantifiedPredicate) pred;
 		BinaryPredicate impPred = (BinaryPredicate) qPred.getPredicate();
 		
