@@ -78,7 +78,7 @@ The Event-B Proving User Interface is used for interactively discharging proof o
          <attribute name="target" use="required">
             <annotation>
                <documentation>
-                  A required attribute to specify whether the tactic is &lt;samp&gt;global&lt;/samp&gt; or applicable to &lt;samp&gt;hypothesis&lt;/samp&gt; or &lt;samp&gt;goal&lt;/samp&gt;.
+                  A required attribute to specify whether the tactic is &lt;samp&gt;global&lt;/samp&gt; (e.g. applicable on the whole proof tree node) or applicable to &lt;samp&gt;hypothesis&lt;/samp&gt; or &lt;samp&gt;goal&lt;/samp&gt;, or to &lt;samp&gt;any&lt;/samp&gt;predicate among hypotheses or the goal.
                </documentation>
             </annotation>
             <simpleType>
@@ -88,6 +88,8 @@ The Event-B Proving User Interface is used for interactively discharging proof o
                   <enumeration value="goal">
                   </enumeration>
                   <enumeration value="global">
+                  </enumeration>
+                  <enumeration value="any">
                   </enumeration>
                </restriction>
             </simpleType>

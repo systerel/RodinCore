@@ -10,45 +10,42 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.swt.graphics.Point;
+import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.ui.prover.DefaultTacticProvider;
 
-public class He extends DefaultTacticProvider {
-
-	private List<IPosition> positions = null;
+public class DisjToImpl extends AbstractHypGoalTacticProvider {
 
 	@Override
 	@Deprecated
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
-		return Tactics.he(hyp);
+		return Tactics.disjToImpl(hyp, position);
 	}
 
 	@Override
-	public List<IPosition> getApplicablePositions(IProofTreeNode node,
-			Predicate hyp, String input) {
-		if (node == null)
-			return null;
-
-		internalGetPositions(hyp);
-		if (positions.size() == 0)
-			return null;
-		return positions;
+	public List<IPosition> retrievePositions(Predicate pred) {
+		return Tactics.disjToImplGetPositions(pred);
 	}
 
-
-	private void internalGetPositions(Predicate hyp) {
-		positions = new ArrayList<IPosition>();
-		if (Tactics.eqE_applicable(hyp)) {
-			positions.add(IPosition.ROOT);
-		}
+	@Override
+	public Point getOperatorPosition(Predicate predicate, String predStr,
+			IPosition position) {
+		final AssociativePredicate subFormula = (AssociativePredicate) predicate
+				.getSubFormula(position);
+		final Predicate[] children = subFormula.getChildren();
+		final Predicate first = children[0];
+		final Predicate second = children[1];
+		// Return the operator between the first and second child
+		return getOperatorPosition(predStr,
+				first.getSourceLocation().getEnd() + 1, second
+						.getSourceLocation().getStart());
 	}
-
+	
 }

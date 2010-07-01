@@ -437,8 +437,7 @@ public class ProverUIUtils {
 	public static Predicate getParsed(String predString) {
 		final IParseResult parseResult = formulaFactory.parsePredicate(predString, LanguageVersion.LATEST, null);
 		assert !parseResult.hasProblem();
-		final Predicate parsedPred = parseResult.getParsedPredicate();
-		return parsedPred;
+		return parseResult.getParsedPredicate();
 	}
 
 	/**

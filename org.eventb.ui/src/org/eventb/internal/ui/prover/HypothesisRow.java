@@ -35,6 +35,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -44,6 +45,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -386,6 +388,36 @@ public class HypothesisRow {
 
 	public void setSelected(boolean selected) {
 		checkBox.setSelection(selected);
+	}
+
+	/**
+	 * Ensures that the current hypothesis text is visible when
+	 * ScrolledComposite is somewhere in the parent chain. If scroll bars are
+	 * visible and the control is clipped, the client of the scrolled composite
+	 * will be scrolled vertically to reveal the control.
+	 */
+	public void revealHypothesisRow() {
+		final Control control = hypothesisText.getMainTextWidget();
+		final Point locControl = getControlLocation(scrolledForm, control);
+		final Point locToReveal = new Point(0, locControl.y);
+		scrolledForm.setOrigin(locToReveal);
+	}
+	
+	private static Point getControlLocation(ScrolledComposite scomp,
+			Control control) {
+		int x = 0;
+		int y = 0;
+		final Control content = scomp.getContent();
+		Control currentControl = control;
+		for (;;) {
+			if (currentControl == content)
+				break;
+			final Point location = currentControl.getLocation();
+			x += location.x;
+			y += location.y;
+			currentControl = currentControl.getParent();
+		}
+		return new Point(x, y);
 	}
 
 }

@@ -24,6 +24,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.internal.ui.utils.Messages;
 import org.rodinp.core.ElementChangedEvent;
@@ -143,6 +147,9 @@ public class InputManager implements IPartListener2, ISelectionListener {
 			try {
 				final IProofTree prTree = proof.getProofTree(null);
 				if (prTree == null) {
+					if (ProofSkeletonView.DEBUG) {
+						printProofSkeleton(proof);
+					}
 					return new ProofErrorInput(proof,
 							Messages.proofskeleton_buildfailed);
 				}
@@ -276,6 +283,33 @@ public class InputManager implements IPartListener2, ISelectionListener {
 					: activePage.getActivePart();
 			this.selectionChanged(activePart, selection);
 		}
+	}
+
+	public static void printProofSkeleton(IPRProof proof) throws RodinDBException {
+		final FormulaFactory ff = FormulaFactory.getDefault();
+		final IProofSkeleton skeleton = proof.getSkeleton(ff, null);
+		System.out.println("***********************************");
+		System.out.println("Skeleton for proof " + proof.toString());
+		printSkeleton(skeleton, "");
+		System.out.println("***********************************");
+	}
+
+	private static void printSkeleton(IProofSkeleton skeleton, String indent) {
+		final IProofRule rule = skeleton.getRule();
+		System.out.println(indent + rule.getDisplayName());
+		printSequent(rule, indent + "| ");
+		final String childIndent = indent + "  ";
+		for (final IProofSkeleton child: skeleton.getChildNodes()) {
+			printSkeleton(child, childIndent);
+		}
+	}
+
+	private static void printSequent(IProofRule rule, String prefix) {
+		for (final Predicate hyp: rule.getNeededHyps()) {
+			System.out.println(prefix + hyp);
+		}
+		final Predicate goal = rule.getGoal();
+		System.out.println(prefix + "|- " + (goal == null ? "\u22a5" : goal));
 	}
 
 }

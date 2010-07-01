@@ -10,45 +10,42 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.swt.graphics.Point;
+import org.eventb.core.ast.BinaryExpression;
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.ui.prover.DefaultTacticProvider;
 
-public class He extends DefaultTacticProvider {
-
-	private List<IPosition> positions = null;
+public class InclusionSetMinusRight extends AbstractHypGoalTacticProvider {
 
 	@Override
 	@Deprecated
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
-		return Tactics.he(hyp);
+		return Tactics.inclusionSetMinusRightRewrites(hyp, position);
 	}
 
 	@Override
-	public List<IPosition> getApplicablePositions(IProofTreeNode node,
-			Predicate hyp, String input) {
-		if (node == null)
-			return null;
-
-		internalGetPositions(hyp);
-		if (positions.size() == 0)
-			return null;
-		return positions;
+	public List<IPosition> retrievePositions(Predicate pred) {
+		return Tactics.inclusionSetMinusRightRewritesGetPositions(pred);
 	}
 
-
-	private void internalGetPositions(Predicate hyp) {
-		positions = new ArrayList<IPosition>();
-		if (Tactics.eqE_applicable(hyp)) {
-			positions.add(IPosition.ROOT);
-		}
+	@Override
+	public Point getOperatorPosition(Predicate predicate, String predStr,
+			IPosition position) {
+		final Formula<?> subFormula = predicate.getSubFormula(position);
+		final Expression right = ((RelationalPredicate) subFormula).getRight();
+		final BinaryExpression bExp = (BinaryExpression) right;
+		return getOperatorPosition(predStr, bExp.getLeft().getSourceLocation()
+				.getEnd() + 1, bExp.getRight().getSourceLocation().getStart());
 	}
+
 
 }

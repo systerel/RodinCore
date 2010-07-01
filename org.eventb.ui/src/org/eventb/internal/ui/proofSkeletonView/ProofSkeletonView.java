@@ -29,7 +29,8 @@ import org.eclipse.ui.part.ViewPart;
  */
 public class ProofSkeletonView extends ViewPart {
 
-
+	public static boolean DEBUG;
+	
 	protected PrfSklMasterDetailsBlock masterDetailsBlock;
 	private InputManager selManager;
 	private IManagedForm managedForm;
