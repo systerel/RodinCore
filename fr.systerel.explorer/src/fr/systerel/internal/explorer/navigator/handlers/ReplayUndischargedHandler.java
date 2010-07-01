@@ -11,17 +11,15 @@
 package fr.systerel.internal.explorer.navigator.handlers;
 
 import static fr.systerel.explorer.ExplorerPlugin.getSelectedStatuses;
-import static fr.systerel.internal.explorer.navigator.ExplorerUtils.runWithProgress;
 import static org.eventb.core.EventBPlugin.rebuildProof;
 
 import java.util.Set;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSStatus;
@@ -36,38 +34,40 @@ import fr.systerel.internal.explorer.navigator.actionProviders.Messages;
 /**
  * Handler for the 'Replay Proofs of Undischarged POs' command.
  */
-public class ReplayUndischargedHandler extends AbstractHandler {
+public class ReplayUndischargedHandler extends AbstractJobHandler {
 
 	private static final FormulaFactory factory = FormulaFactory.getDefault();
 
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	private static class ReplayJob extends WorkspaceJob {
+		
+		public ReplayJob(String name) {
+			super(name);
+		}
 
-		final IWorkspaceRunnable op = new IWorkspaceRunnable() {
-
-			public void run(IProgressMonitor monitor) throws CoreException {
-				try {
-					final SubMonitor subMonitor = SubMonitor.convert(monitor,
-							Messages.dialogs_replayingProofs, 10);
-					final Set<IPSStatus> statuses = getSelectedStatuses(true,
-							subMonitor.newChild(1));
-					
-					// rebuild proofs of gathered POs
-					rebuildProofs(statuses, subMonitor
-							.newChild(9));
-				} catch (InterruptedException e) {
-					// canceled: return as soon as possible 
-				} finally {
-					if (monitor != null) {
-						monitor.done();
-					}
-				}
+		@Override
+		public IStatus runInWorkspace(IProgressMonitor monitor)
+				throws CoreException {
+			try {
+				final SubMonitor subMonitor = SubMonitor.convert(monitor,
+						Messages.dialogs_replayingProofs, 10);
+				final Set<IPSStatus> statuses = getSelectedStatuses(true,
+						subMonitor.newChild(1));
+				// rebuild proofs of gathered POs
+				rebuildProofs(statuses, subMonitor.newChild(9));
+			} catch (InterruptedException e) {
+				// set and propagate the interrupt status above
+				Thread.currentThread().interrupt();
+				setJobMonitorDone(monitor);
+				// canceled: return as soon as possible
+				return Status.CANCEL_STATUS;
+			} finally {
+				setJobMonitorDone(monitor);
 			}
-		};
-		runWithProgress(op);
-		return null;
+			return Status.OK_STATUS;
+		}
 	}
 
-	void rebuildProofs(Set<IPSStatus> statuses, IProgressMonitor monitor)
+	static void rebuildProofs(Set<IPSStatus> statuses, IProgressMonitor monitor)
 			throws InterruptedException {
 		final SubMonitor subMonitor = SubMonitor.convert(monitor, statuses
 				.size());
@@ -81,6 +81,11 @@ public class ReplayUndischargedHandler extends AbstractHandler {
 						UserAwareness.INFORM);
 			}
 		}
+	}
+
+	@Override
+	WorkspaceJob getWorkspaceJob() {
+		return new ReplayJob(Messages.dialogs_replayingProofs);
 	}
 
 }

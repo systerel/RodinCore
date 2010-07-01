@@ -11,16 +11,14 @@
 package fr.systerel.internal.explorer.navigator.handlers;
 
 import static fr.systerel.explorer.ExplorerPlugin.getSelectedStatuses;
-import static fr.systerel.internal.explorer.navigator.ExplorerUtils.runWithProgress;
 
 import java.util.Set;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eventb.core.IPSStatus;
 import org.eventb.internal.core.pom.RecalculateAutoStatus;
@@ -33,32 +31,42 @@ import fr.systerel.internal.explorer.navigator.actionProviders.Messages;
 /**
  * Handler for the 'Recalculate Auto Status' command.
  */
-public class RecalculateAutoStatusHandler extends AbstractHandler {
+public class RecalculateAutoStatusHandler extends AbstractJobHandler {
 
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final IWorkspaceRunnable op = new IWorkspaceRunnable() {
+	private static class RecalculateAuto extends WorkspaceJob {
 
-			public void run(IProgressMonitor monitor) throws CoreException {
-				try {
-					final SubMonitor subMonitor = SubMonitor.convert(monitor,
-							Messages.dialogs_recalculatingAutoStatus, 10);
-					final Set<IPSStatus> statuses = getSelectedStatuses(false,
-							subMonitor.newChild(1));
-					RecalculateAutoStatus.run(statuses, subMonitor.newChild(9));
-				} catch (RodinDBException e) {
-					EventBUIExceptionHandler.handleRodinException(e,
-							UserAwareness.INFORM);
-				} catch (InterruptedException e) {
-					// canceled: return as soon as possible 
-				} finally {
-					if (monitor != null) {
-						monitor.done();
-					}
-				}
+		public RecalculateAuto(String name) {
+			super(name);
+		}
+
+		@Override
+		public IStatus runInWorkspace(IProgressMonitor monitor)
+				throws CoreException {
+			try {
+				final SubMonitor subMonitor = SubMonitor.convert(monitor,
+						Messages.dialogs_recalculatingAutoStatus, 10);
+				final Set<IPSStatus> statuses = getSelectedStatuses(false,
+						subMonitor.newChild(1));
+				RecalculateAutoStatus.run(statuses, subMonitor.newChild(9));
+			} catch (RodinDBException e) {
+				EventBUIExceptionHandler.handleRodinException(e,
+						UserAwareness.INFORM);
+			} catch (InterruptedException e) {
+				// set and propagate the interrupt status above
+				Thread.currentThread().interrupt();
+				setJobMonitorDone(monitor);
+				// canceled: return as soon as possible
+				return Status.CANCEL_STATUS;
+			} finally {
+				setJobMonitorDone(monitor);
 			}
-		};
-		runWithProgress(op);
-		return null;
+			return Status.OK_STATUS;
+		}
+	}
+
+	@Override
+	WorkspaceJob getWorkspaceJob() {
+		return new RecalculateAuto(Messages.dialogs_recalculatingAutoStatus);
 	}
 
 }
