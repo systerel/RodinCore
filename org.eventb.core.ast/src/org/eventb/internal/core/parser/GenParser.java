@@ -12,6 +12,7 @@ package org.eventb.internal.core.parser;
 
 
 import static org.eventb.internal.core.parser.AbstractGrammar.*;
+import static org.eventb.internal.core.parser.GenParser.ProgressDirection.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -126,6 +127,9 @@ public class GenParser {
 	private final boolean withPredVar;
 
 	
+	static enum ProgressDirection {
+		LEFT, RIGHT
+	}
 	
 	static class ParserContext {
 		private static final Token INIT_TOKEN = new Token(IndexedSet.NOT_AN_INDEX, "", -1);
@@ -323,27 +327,29 @@ public class GenParser {
 		 *             if current operator is incompatible with current parent
 		 *             operator
 		 */
-		public boolean canProgressRight() throws SyntaxError {
+		public ProgressDirection giveProgressDirection() throws SyntaxError {
 			final int leftKind = parentKind.val;
 			final int rightKind = t.kind;
 			if (!grammar.isOperator(rightKind)) {
-				return false;
+				return LEFT;
 			}
-			final OperatorRelationship opRel = grammar.getOperatorRelationship(leftKind, rightKind, version);
-			switch(opRel) {
+			final OperatorRelationship opRel = grammar.getOperatorRelationship(
+					leftKind, rightKind, version);
+			switch (opRel) {
 			case INCOMPATIBLE:
 				throw new SyntaxError(new ASTProblem(makeSourceLocation(t),
 						ProblemKind.IncompatibleOperators,
 						ProblemSeverities.Error, grammar.getImage(leftKind),
 						grammar.getImage(rightKind)));
 			case RIGHT_PRIORITY:
-				return true;
+				return RIGHT;
 			case COMPATIBLE:
 				// process as left associative
 			case LEFT_PRIORITY:
-				return false;
+				return LEFT;
+			default:
+				return LEFT;
 			}
-			return false;
 		}
 		
 		private void pushPos() {
@@ -400,17 +406,20 @@ public class GenParser {
 		 * parenthesis as parent kind.
 		 */
 		public boolean isParenthesized() throws SyntaxError {
-			if (parentKind.val == _LPAR) {
-				return true;
-			}
+			// FIXME _LPAR is an operator only because of FUNIMAGE
+			return getParentOperator() == _LPAR;
+		}
+		
+		private int getParentOperator() {
+			// skip current operator (parentKind.val)
 			final ListIterator<Integer> iter = parentKind.stackIterator();
 			while(iter.hasPrevious()) {
 				final int kind = iter.previous();
 				if (grammar.isOperator(kind)) {
-					return kind == _LPAR;
+					return kind;
 				}
 			}
-			return false;
+			return _EOF;
 		}
 	}
 	
@@ -510,12 +519,16 @@ public class GenParser {
 
 	private void failUnmatchedTokens(ParserContext pc) {
 		final int startPos = pc.t.pos;
-		while (pc.la.kind != _EOF) {
+		scanUntilEOF(pc);
+		final int endPos = pc.t.pos - 1;
+		processFailure(new ASTProblem(pc.makeSourceLocation(startPos, endPos),
+				ProblemKind.UnmatchedTokens, ProblemSeverities.Error));
+	}
+
+	private static void scanUntilEOF(ParserContext pc) {
+		while (pc.t.kind != _EOF) {
 			pc.progress();
 		}
-		processFailure(new ASTProblem(pc.makeSourceLocation(startPos, pc.t
-				.getEnd()), ProblemKind.UnmatchedTokens,
-				ProblemSeverities.Error));
 	}
 
 	private void processFailure(ASTProblem problem) {

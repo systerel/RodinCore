@@ -15,6 +15,7 @@ import static org.eventb.core.ast.Formula.*;
 import static org.eventb.core.ast.ProblemKind.PrematureEOF;
 import static org.eventb.internal.core.parser.AbstractGrammar.*;
 import static org.eventb.internal.core.parser.BMath.*;
+import static org.eventb.internal.core.parser.GenParser.ProgressDirection.RIGHT;
 import static org.eventb.internal.core.parser.SubParsers.BOUND_IDENT_DECL_SUBPARSER;
 import static org.eventb.internal.core.parser.SubParsers.FREE_IDENT_SUBPARSER;
 import java.util.ArrayList;
@@ -220,7 +221,7 @@ public class MainParsers {
 		
 			Formula<?> left = NUD_APPLIER.apply(pc, null);
 
-			while (pc.canProgressRight()) {
+			while (pc.giveProgressDirection() == RIGHT) {
 				left = LED_APPLIER.apply(pc, left);
 			}
 			
@@ -370,11 +371,11 @@ public class MainParsers {
 
 		public List<T> nud(ParserContext pc) throws SyntaxError {
 			final List<T> list = new ArrayList<T>();
-			T next = pc.subParse(parser);
-			list.add(next);
+			final T first = pc.subParse(parser);
+			list.add(first);
 			while (pc.t.kind == _COMMA) {
-				pc.progress();
-				next = pc.subParse(parser);
+				pc.progress(_COMMA);
+				final T next = pc.subParse(parser);
 				list.add(next);
 			}
 			return list;
@@ -383,11 +384,11 @@ public class MainParsers {
 		public void toString(IToStringMediator mediator,
 				List<T> toPrint) {
 			final Iterator<T> iter = toPrint.iterator();
-			T next = iter.next();
-			parser.toString(mediator, next);
+			final T first = iter.next();
+			parser.toString(mediator, first);
 			while(iter.hasNext()) {
 				mediator.append(",");
-				next = iter.next();
+				final T next = iter.next();
 				parser.toString(mediator, next);
 			}
 		}
