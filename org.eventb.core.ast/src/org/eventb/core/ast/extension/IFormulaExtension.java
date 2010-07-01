@@ -31,6 +31,8 @@ public interface IFormulaExtension {
 	 * Standard supported extension kinds.
 	 */
 	public static enum ExtensionKind implements IExtensionKind {
+		
+		// op
 		ATOMIC_EXPRESSION(PREFIX, EXPRESSION, NULLARY, EXPRESSION,
 				false),
 

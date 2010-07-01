@@ -14,9 +14,11 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
 
 /**
+ * Common protocol for operator properties.
+ * 
  * @author Nicolas Beauger
  * @since 2.0
- *
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IOperatorProperties {
 
@@ -60,6 +62,7 @@ public interface IOperatorProperties {
 	
 	FormulaType getFormulaType();
 	
+	// TODO move elsewhere (not a static property)
 	Arity getArity();
 	
 	FormulaType getArgumentType();

@@ -6,6 +6,7 @@ import org.eventb.core.ast.Predicate;
 /**
  * @since 2.0
  * @author Nicolas Beauger
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IExtensionKind {
 
@@ -13,6 +14,7 @@ public interface IExtensionKind {
 	
 	boolean checkPreconditions(Expression[] childExprs, Predicate[] childPreds);
 
+	// TODO move to IOperatorProperties
 	boolean isFlattenable();
 
 }
