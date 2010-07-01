@@ -147,19 +147,72 @@ public class TestGenParser extends AbstractTests {
 		checkSourceLocation(actual, formula.length());
 	}
 	
-	private static Expression doExpressionTest(String formula, Expression expected,
+	private static Expression parseAndCheck(String formula, Expression expected,
 			FormulaFactory factory, LanguageVersion version) {
-		final IParseResult result = factory.parseExpression(formula,
-				version, null);
-		assertFalse("unexpected problem(s): " + result.getProblems(), result
-				.hasProblem());
-		final Expression actual = result.getParsedExpression();
+		final Expression actual = parseExpr(formula, factory, version);
 		checkParsedFormula(formula, expected, actual);
+		
 		return actual;
 	}
 
+	private static Expression doParseUnparseTest(String formula, Expression expected) {
+		final Expression actual = parseExpr(formula);
+		checkParsedFormula(formula, expected, actual);
+		
+		final String actToStr = actual.toString();
+		final Expression reparsed = parseExpr(actToStr);
+		assertEquals("bad reparsed", expected, reparsed);
+	
+		return actual;
+	}
+
+	private static Predicate doParseUnparseTest(String formula, Predicate expected) {
+		final Predicate actual = parsePred(formula);
+		checkParsedFormula(formula, expected, actual);
+		
+		final String actToStr = actual.toString();
+		final Predicate reparsed = parsePred(actToStr);
+		assertEquals("bad reparsed", expected, reparsed);
+	
+		return actual;
+	}
+
+	private static Expression parseExpr(String formula, FormulaFactory factory,
+			LanguageVersion version) {
+		final IParseResult result = parseExprRes(formula, factory, version);
+		assertFalse("unexpected problem(s): " + result.getProblems(), result
+				.hasProblem());
+		final Expression actual = result.getParsedExpression();
+		return actual;
+	}
+
+	private static Predicate parsePred(String formula,
+			LanguageVersion version) {
+		final IParseResult result = parsePredRes(formula, version);
+		assertFalse("unexpected problem(s): " + result.getProblems(), result
+				.hasProblem());
+		final Predicate actual = result.getParsedPredicate();
+		return actual;
+	}
+
+	private static Expression parseExpr(String formula) {
+		return parseExpr(formula, ff, LanguageVersion.LATEST);
+	}
+
+	private static Predicate parsePred(String formula) {
+		return parsePred(formula, LanguageVersion.LATEST);
+	}
+
+	private static IParseResult parseExprRes(String formula,
+			FormulaFactory factory, LanguageVersion version) {
+		return factory.parseExpression(formula,
+				version, null);
+	}
+	private static IParseResult parseExprRes(String formula) {
+		return parseExprRes(formula, ff, LanguageVersion.LATEST);
+	}
 	private static Expression doExpressionTest(String formula, Expression expected, FormulaFactory factory) {
-		return doExpressionTest(formula, expected, factory, LanguageVersion.V2);
+		return parseAndCheck(formula, expected, factory, LanguageVersion.V2);
 	}
 	
 	private static Expression doExpressionTest(String formula, Expression expected, Type expectedType) {
@@ -177,17 +230,30 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	private static Predicate doPredicateTest(String formula, Predicate expected, LanguageVersion version) {
-		final IParseResult result = ff.parsePredicate(formula,
-				version, null);
-		if (result.hasProblem()) {
-			System.out.println(result.getProblems());
-		}
+		final IParseResult result = parsePredRes(formula, version);
 		assertFalse(result.hasProblem());
 		final Predicate actual = result.getParsedPredicate();
 		checkParsedFormula(formula, expected, actual);
+
+//		final String actToStr = actual.toStringWithTypes();
+//		final IParseResult resToStr = parsePredRes(actToStr, version);
+//		assertFalse(result.hasProblem());
+//		final Predicate reparsed = resToStr.getParsedPredicate();
+//		checkParsedFormula(actToStr, expected, reparsed);
+		
 		return actual;
 	}
+
+	private static IParseResult parsePredRes(String formula,
+			LanguageVersion version) {
+		final IParseResult result = ff.parsePredicate(formula, version, null);
+		return result;
+	}
 	
+	private static IParseResult parsePredRes(String formula) {
+		return parsePredRes(formula, LanguageVersion.LATEST);
+	}
+
 	private static void doQuantPredicateTest(String formula, QuantifiedPredicate expected, Type...types) {
 		final Predicate actual = doPredicateTest(formula, expected);
 		final QuantifiedPredicate quant = (QuantifiedPredicate) actual;
@@ -248,7 +314,7 @@ public class TestGenParser extends AbstractTests {
 
 	private static void doTest(String formula, Formula<?> expected, LanguageVersion version) {
 		if (expected instanceof Expression) {
-			doExpressionTest(formula, (Expression) expected,ff, version);
+			parseAndCheck(formula, (Expression) expected,ff, version);
 		} else if (expected instanceof Predicate) {
 			doPredicateTest(formula, (Predicate) expected, version);
 		}
@@ -358,8 +424,7 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testUnionInterNoParen() throws Exception {
-		final IParseResult result = ff.parseExpression("A∩B∪C",
-				LanguageVersion.V2, null);
+		final IParseResult result = parseExprRes("A∩B∪C");
 		assertFailure(result, new ASTProblem(new SourceLocation(3, 3),
 				ProblemKind.IncompatibleOperators, ProblemSeverities.Error, "∩",
 				"∪"));
@@ -406,8 +471,7 @@ public class TestGenParser extends AbstractTests {
 	}	
 	
 	public void testSourceLocation() throws Exception {
-		final IParseResult result = ff.parsePredicate("(⊤∧⊥)∨⊥",
-				LanguageVersion.V2, null);
+		final IParseResult result = parsePredRes("(⊤∧⊥)∨⊥");
 		final Predicate pred = result.getParsedPredicate();
 		assertNotNull(pred.getSourceLocation());
 		final Predicate childFalse = ((AssociativePredicate) pred)
@@ -416,8 +480,7 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testSourceLocation2() throws Exception {
-		final IParseResult result = ff.parsePredicate("⊤∧(⊥∨⊥        )",
-				LanguageVersion.V2, null);
+		final IParseResult result = parsePredRes("⊤∧(⊥∨⊥        )");
 		final Predicate pred = result.getParsedPredicate();
 		assertNotNull(pred.getSourceLocation());
 		final Predicate childFalseOrFalse = ((AssociativePredicate) pred)
@@ -705,7 +768,7 @@ public class TestGenParser extends AbstractTests {
 	
 	public void testNudNoLed() throws Exception {
 		assertFailure(
-				ff.parseExpression("0 card(x)", LanguageVersion.V2, null),
+				parseExprRes("0 card(x)"),
 				new ASTProblem(new SourceLocation(2, 5),
 						ProblemKind.MisplacedNudOperator,
 						ProblemSeverities.Error, "card"));
@@ -713,7 +776,7 @@ public class TestGenParser extends AbstractTests {
 	
 	public void testLedNoNud() throws Exception {
 		assertFailure(
-				ff.parseExpression("x += 2", LanguageVersion.V2, null),
+				parseExprRes("x += 2"),
 				new ASTProblem(new SourceLocation(3, 3),
 						ProblemKind.MisplacedLedOperator,
 						ProblemSeverities.Error, "="));
@@ -835,7 +898,7 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testIdentOfType() throws Exception {
-		final IParseResult result = ff.parseExpression("(x ⦂ ℙ(ℤ))", LanguageVersion.V2, null);
+		final IParseResult result = parseExprRes("(x ⦂ ℙ(ℤ))");
 		assertFailure(result, new ASTProblem(new SourceLocation(3, 3),
 				ProblemKind.UnexpectedOftype, ProblemSeverities.Error));
 	}
@@ -925,8 +988,8 @@ public class TestGenParser extends AbstractTests {
 				ProblemSeverities.Error,
 				ProblemKind.makeCompoundMessage(asList(dotExpected,
 						oftypeParen)));
-		assertFailure(ff.parseExpression("{(x⦂ℤ)∣ ⊤}", LanguageVersion.V2, null), identOrOftype);
-		assertFailure(ff.parseExpression("{x⦂ℤ∣ ⊤}", LanguageVersion.V2, null), dotOrOftype);
+		assertFailure(parseExprRes("{(x⦂ℤ)∣ ⊤}"), identOrOftype);
+		assertFailure(parseExprRes("{x⦂ℤ∣ ⊤}"), dotOrOftype);
 	}
 	
 	// verifies that priority between Maplet and Ovr is not taken into account
@@ -1108,8 +1171,7 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testLambdaDuplicateIdents() throws Exception {
-		final IParseResult result = ff.parseExpression("λx↦(y↦x)·x>y∣ x+y",
-				LanguageVersion.V2, null);
+		final IParseResult result = parseExprRes("λx↦(y↦x)·x>y∣ x+y");
 		assertFailure(result, new ASTProblem(new SourceLocation(6, 6),
 				ProblemKind.DuplicateIdentifierInPattern, ProblemSeverities.Error, "x"));
 	}
@@ -1326,7 +1388,7 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testPredVarRefused() throws Exception {
-		assertFailure(ff.parsePredicate("$P", LanguageVersion.V2, null),
+		assertFailure(parsePredRes("$P"),
 				new ASTProblem(new SourceLocation(0, 1),
 						ProblemKind.PredicateVariableNotAllowed, ProblemSeverities.Error, "$P"));
 	}
@@ -1469,7 +1531,7 @@ public class TestGenParser extends AbstractTests {
 	// Some sub-parsers are triggered manually, ensure that it does not allow unacceptable formulae
 	public void testManualSubParsers() throws Exception {
 		// bound identifier name is an operator !
-		final IParseResult result = ff.parsePredicate("∀+·⊤", LanguageVersion.V2, null);
+		final IParseResult result = parsePredRes("∀+·⊤");
 		System.out.println(result.getParsedPredicate());
 		assertFailure(result, new ASTProblem(new SourceLocation(1, 1),
 				ProblemKind.UnexpectedSymbol, ProblemSeverities.Error, "an identifier", "+"));
@@ -1572,8 +1634,8 @@ public class TestGenParser extends AbstractTests {
 		final FreeIdentifier expectedDefault = ff.makeFreeIdentifier(emax, null);
 		doExpressionTest(emax, expectedDefault, ff);
 	
-		final IParseResult result = extFac.parseExpression(emax,
-				LanguageVersion.V2, null);
+		final IParseResult result = parseExprRes(emax, extFac,
+				LanguageVersion.LATEST);
 		assertFailure(result, new ASTProblem(new SourceLocation(3, 3),
 				ProblemKind.UnexpectedSymbol, ProblemSeverities.Error, "(", "End Of Formula"));
 	}
@@ -1593,7 +1655,8 @@ public class TestGenParser extends AbstractTests {
 	public void testEMaxInvalidNumberOfChildren() throws Exception {
 		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
 				.<IFormulaExtension> singleton(EMAX));
-		final IParseResult result = extFac.parseExpression("emax(a)", LanguageVersion.V2, null);
+		final IParseResult result = parseExprRes("emax(a)", extFac,
+				LanguageVersion.LATEST);
 		assertFailure(result, new ASTProblem(new SourceLocation(0, 6),
 				ProblemKind.ExtensionPreconditionError, ProblemSeverities.Error));
 	}
@@ -1664,14 +1727,13 @@ public class TestGenParser extends AbstractTests {
 		final ASTProblem expected = new ASTProblem(new SourceLocation(3, 3),
 				ProblemKind.IncompatibleOperators, ProblemSeverities.Error,
 				"^", "^");
-		final IParseResult result = ff.parseExpression("a^b^c", LanguageVersion.V2, null);
+		final IParseResult result = parseExprRes("a^b^c");
 		assertFailure(result, expected);
 		
 	}
 
 	public void testUnexpectedSubFormula() throws Exception {
-		final IParseResult result = ff.parseExpression("a − b ⇒ c",
-				LanguageVersion.V2, null);
+		final IParseResult result = parseExprRes("a − b ⇒ c");
 		final ASTProblem expected = new ASTProblem(new SourceLocation(0, 4),
 				ProblemKind.UnexpectedSubFormulaKind, ProblemSeverities.Error,
 				"a predicate", "an expression");
@@ -1679,24 +1741,21 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testEmptyFormula() throws Exception {
-		final IParseResult result = ff.parseExpression("",
-				LanguageVersion.V2, null);
+		final IParseResult result = parseExprRes("");
 		final ASTProblem expected = new ASTProblem(new SourceLocation(0, 0),
 				ProblemKind.PrematureEOF, ProblemSeverities.Error);
 		assertFailure(result, expected);
 	}
 	
 	public void testPrematureEOF() throws Exception {
-		final IParseResult result = ff.parseExpression("1+",
-				LanguageVersion.V2, null);
+		final IParseResult result = parseExprRes("1+");
 		final ASTProblem expected = new ASTProblem(new SourceLocation(1, 1),
 				ProblemKind.PrematureEOF, ProblemSeverities.Error);
 		assertFailure(result, expected);
 	}
 	
 	public void testUnmatchedTokens() throws Exception {
-		final IParseResult result = ff.parseExpression("1+2 abc",
-				LanguageVersion.V2, null);
+		final IParseResult result = parseExprRes("1+2 abc");
 		final ASTProblem expected = new ASTProblem(new SourceLocation(4, 6),
 				ProblemKind.UnmatchedTokens, ProblemSeverities.Error);
 		assertFailure(result, expected);
@@ -1721,8 +1780,7 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testCloseParenMatch() throws Exception {
-		final IParseResult result = ff.parseExpression("(a}",
-				LanguageVersion.V2, null);
+		final IParseResult result = parseExprRes("(a}");
 		final ASTProblem expected = new ASTProblem(new SourceLocation(2, 2),
 				ProblemKind.UnexpectedSymbol, ProblemSeverities.Error, ")", "}");
 		assertFailure(result, expected);
@@ -1812,6 +1870,20 @@ public class TestGenParser extends AbstractTests {
 //		assertNotNull("List type constructor not found", extList);
 //
 //		doExpressionTest("(nil ⦂ List(ℤ)", typedNil, extFac);
+
+	}
+	
+	public void testMinusPU() throws Exception {
+		final Expression expected = ff.makeBinaryExpression(MINUS, ONE, ZERO, null);
+		doParseUnparseTest("1−0", expected);
+	}
+		
+	public void testToStringAndExists() throws Exception {
+		final Predicate expected = ff.makeAssociativePredicate(Formula.LAND,
+				Arrays.<Predicate> asList(
+						ff.makeQuantifiedPredicate(EXISTS, asList(BID_x), LIT_BFALSE, null),
+				LIT_BTRUE), null);
+		doParseUnparseTest("(∃x·⊥)∧⊤", expected);
 
 	}
 }

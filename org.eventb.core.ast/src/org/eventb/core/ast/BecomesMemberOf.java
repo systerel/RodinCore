@@ -151,25 +151,6 @@ public class BecomesMemberOf extends Assignment {
 	}
 
 	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-
-		appendAssignedIdents(builder);
-		builder.append(" :\u2208 ");
-		setExpr.toString(builder, false, NO_TAG, boundNames, withTypes);
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-		
-		appendAssignedIdents(builder);
-		builder.append(" :\u2208 (");
-		setExpr.toStringFullyParenthesized(builder, boundNames);
-		builder.append(')');
-	}
-
-	@Override
 	public boolean accept(IVisitor visitor) {
 		boolean goOn = visitor.enterBECOMES_MEMBER_OF(this);
 

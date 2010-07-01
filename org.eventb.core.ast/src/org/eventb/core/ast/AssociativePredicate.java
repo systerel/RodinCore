@@ -13,8 +13,6 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
-import static org.eventb.core.ast.AssociativeHelper.toStringFullyParenthesizedHelper;
-import static org.eventb.core.ast.AssociativeHelper.toStringHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -134,18 +132,6 @@ public class AssociativePredicate extends Predicate {
 		return children.clone();
 	}
 	
-	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-
-		toStringHelper(builder, boundNames, needsParenthesis(parentTag),
-				children, getTagOperator(), getTag(), withTypes);
-	}
-
-	private boolean needsParenthesis(int parentTag) {
-		return parenthesesMap[getTag() - firstTag].get(parentTag);
-	}
-
 	protected String getTagOperator() {
 		return tags[getTag()-firstTag];
 	}
@@ -185,13 +171,6 @@ public class AssociativePredicate extends Predicate {
 	@Override
 	protected void isLegible(LegibilityResult result, BoundIdentDecl[] quantifiedIdents) {
 		AssociativeHelper.isLegibleList(children, result, quantifiedIdents);
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-		
-		toStringFullyParenthesizedHelper(builder, boundNames, children, getTagOperator());
 	}
 
 	@Override

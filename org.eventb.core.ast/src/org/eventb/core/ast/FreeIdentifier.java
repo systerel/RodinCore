@@ -176,20 +176,6 @@ public class FreeIdentifier extends Identifier {
 	}
 
 	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-
-		builder.append(name);
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-
-		builder.append(name);
-	}
-
-	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		final String typeName = getType()!=null?" [type: "+getType().toString()+"]":"";
 		return tabs + this.getClass().getSimpleName() + " [name: " + name + "]" 

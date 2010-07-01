@@ -69,49 +69,6 @@ public class IntegerLiteral extends Expression {
 	}
 	
 	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-
-		final boolean bracketed;
-		if (literal.signum() < 0) {
-			// A negative literal behaves like a unary minus.
-			bracketed = UnaryExpression.needsParentheses(UNMINUS, isRightChild,
-					parentTag);
-		} else {
-			bracketed = parentTag == UNMINUS;
-		}
-		
-		if (bracketed) {
-			builder.append('(');
-		}
-		toStringInternal(builder);
-		if (bracketed) {
-			builder.append(')');
-		}
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-
-		toStringInternal(builder);
-	}
-
-	/**
-	 * Change the minus sign if any, so that it conforms to the mathematical
-	 * language: \u2212 (minus sign) instead of \u002d (hyphen-minus).
-	 */
-	private void toStringInternal(StringBuilder builder) {
-		final String image = literal.toString();
-		if (image.charAt(0) == '-') {
-			builder.append('\u2212');
-			builder.append(image, 1, image.length());
-		} else {
-			builder.append(image);
-		}
-	}
-
-	@Override
 	protected void isLegible(LegibilityResult result, BoundIdentDecl[] quantifiedIdents) {
 		return;
 	}

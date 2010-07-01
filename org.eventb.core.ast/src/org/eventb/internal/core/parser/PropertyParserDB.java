@@ -13,9 +13,11 @@ package org.eventb.internal.core.parser;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.extension.IOperatorProperties;
-import org.eventb.core.ast.extension.IOperatorProperties.*;
-import org.eventb.internal.core.ast.extension.ExtensionPrinters.IExtensionPrinter;
+import org.eventb.core.ast.extension.IOperatorProperties.Arity;
+import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
+import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 
 /**
@@ -30,15 +32,13 @@ public class PropertyParserDB {
 		private final FormulaType formulaType;
 		private final Arity arity;
 		private final FormulaType argumentType;
-		private final boolean isExtension;
 		
 		public Properties(Notation notation, FormulaType formulaType, Arity arity,
-				FormulaType argumentType, boolean isExtension) {
+				FormulaType argumentType) {
 			this.notation = notation;
 			this.formulaType = formulaType;
 			this.arity = arity;
 			this.argumentType = argumentType;
-			this.isExtension = isExtension;
 		}
 
 		@Override
@@ -50,7 +50,6 @@ public class PropertyParserDB {
 			result = prime * result + ((arity == null) ? 0 : arity.hashCode());
 			result = prime * result
 					+ ((formulaType == null) ? 0 : formulaType.hashCode());
-			result = prime * result + (isExtension ? 1231 : 1237);
 			result = prime * result
 					+ ((notation == null) ? 0 : notation.hashCode());
 			return result;
@@ -89,9 +88,6 @@ public class PropertyParserDB {
 			} else if (!formulaType.equals(other.formulaType)) {
 				return false;
 			}
-			if (isExtension != other.isExtension) {
-				return false;
-			}
 			if (notation == null) {
 				if (other.notation != null) {
 					return false;
@@ -104,20 +100,19 @@ public class PropertyParserDB {
 		
 	}
 	
-	private static Properties makeProp(IOperatorProperties operProps,
-			boolean isExtension) {
+	private static Properties makeProp(IOperatorProperties operProps) {
 		return new Properties(operProps.getNotation(),
 				operProps.getFormulaType(), operProps.getArity(), operProps
-						.getArgumentType(), isExtension);
+						.getArgumentType());
 	}
 	
-	private final Map<Properties, IParserInfo> map = new HashMap<Properties, IParserInfo>();
+	private final Map<Properties, IParserInfo<? extends Formula<?>>> map = new HashMap<Properties, IParserInfo<? extends Formula<?>>>();
 
-	public void add(IParserInfo parserBuilder)
+	public void add(IParserInfo<? extends Formula<?>> parserBuilder)
 			throws OverrideException {
-		final Properties prop = makeProp(parserBuilder.getProperties(), parserBuilder.isExtension());
+		final Properties prop = makeProp(parserBuilder.getProperties());
 
-		final IParserInfo old = map.put(prop, parserBuilder);
+		final IParserInfo<? extends Formula<?>> old = map.put(prop, parserBuilder);
 		if (old != null) {
 			map.put(prop, old);
 			throw new GenParser.OverrideException("overriding a parser");
@@ -125,24 +120,14 @@ public class PropertyParserDB {
 
 	}
 
-	public IParserPrinter getParser(IOperatorProperties operProps,
-			boolean isExtension, int tag) {
-		final Properties prop = makeProp(operProps, isExtension);
-		final IParserInfo parserBuilder = map.get(prop);
+	public IParserPrinter<? extends Formula<?>> getParser(IOperatorProperties operProps,
+			int tag) {
+		final Properties prop = makeProp(operProps);
+		final IParserInfo<? extends Formula<?>> parserBuilder = map.get(prop);
 		if (parserBuilder == null) {
 			return null;
 		}
 		return parserBuilder.makeParser(tag);
-	}
-
-	public IExtensionPrinter getPrinter(IOperatorProperties operProps,
-			boolean isExtension) {
-		final Properties prop = makeProp(operProps, isExtension);
-		final IParserInfo parserBuilder = map.get(prop);
-		if (parserBuilder == null) {
-			return null;
-		}
-		return parserBuilder.getPrinter();
 	}
 
 }

@@ -127,41 +127,6 @@ public class SetExtension extends Expression {
 	}
 
 	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-
-		// Might be a typed empty set
-		if (withTypes && members.length == 0 && isTypeChecked()) {
-			builder.append("(\u2205 \u2982 ");
-			builder.append(getType());
-			builder.append(')');
-		} else {
-			builder.append('{');
-			String sep = "";
-			for (Expression member : members) {
-				builder.append(sep);
-				sep = ",";
-				member.toString(builder, false, getTag(), boundNames, withTypes);
-			}
-			builder.append('}');
-		}
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-
-		builder.append('{');
-		String sep = "";
-		for (Expression member : members) {
-			builder.append(sep);
-			sep = ",";
-			member.toStringFullyParenthesized(builder, boundNames);
-		}
-		builder.append('}');
-	}
-
-	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		StringBuffer str = new StringBuffer();
 		final String typeName = getType()!=null?" [type: "+getType().toString()+"]":"";

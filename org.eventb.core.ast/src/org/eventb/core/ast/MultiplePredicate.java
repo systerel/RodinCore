@@ -116,33 +116,6 @@ public class MultiplePredicate extends Predicate {
 	}
 
 	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-		builder.append(tags[getTag()-firstTag]);
-		builder.append('(');
-		String sep = "";
-		for (Expression child : children) {
-			builder.append(sep);
-			sep = ",";
-			child.toString(builder, false, getTag(), boundNames, withTypes);
-		}
-		builder.append(')');
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder, String[] boundNames) {
-		builder.append(tags[getTag()-firstTag]);
-		builder.append('(');
-		String sep = "";
-		for (Expression child : children) {
-			builder.append(sep);
-			sep = ",";
-			child.toStringFullyParenthesized(builder, boundNames);
-		}
-		builder.append(')');
-	}
-
-	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		return getSyntaxTreeHelper(boundNames, tabs, children,
 				tags[getTag()-firstTag], "", this.getClass().getSimpleName());

@@ -16,8 +16,6 @@ package org.eventb.core.ast;
 
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
-import static org.eventb.core.ast.AssociativeHelper.toStringFullyParenthesizedHelper;
-import static org.eventb.core.ast.AssociativeHelper.toStringHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -196,6 +194,7 @@ public class AssociativeExpression extends Expression {
 		setFinalType(resultType, givenType);
 	}
 	
+	// TODO remove
 	// indicates when the toString method should put parentheses
 	private final static BitSet[] leftNoParenthesesMap = new BitSet[tags.length];
 	private final static BitSet[] rightNoParenthesesMap = new BitSet[tags.length];
@@ -335,26 +334,10 @@ public class AssociativeExpression extends Expression {
 		return children.clone();
 	}
 
-	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-
-		toStringHelper(builder, boundNames, needsParenthesis(isRightChild,
-				parentTag), children, getTagOperator(), getTag(), withTypes);
-	}
-
 	protected String getTagOperator() {
 		return tags[getTag()-firstTag];
 	}
 
-	private boolean needsParenthesis(boolean isRightChild, int parentTag) {
-		final int relativeTag = getTag() - firstTag;
-		if (isRightChild) {
-			return ! rightNoParenthesesMap[relativeTag].get(parentTag);
-		}
-		return ! leftNoParenthesesMap[relativeTag].get(parentTag);
-	}
-	
 	@Override
 	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
 		if (this.getTag() != other.getTag()) {
@@ -440,13 +423,6 @@ public class AssociativeExpression extends Expression {
 	@Override
 	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
 		return getWDConjunction(formulaFactory, children);
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-		
-		toStringFullyParenthesizedHelper(builder, boundNames, children, getTagOperator());
 	}
 
 	@Override

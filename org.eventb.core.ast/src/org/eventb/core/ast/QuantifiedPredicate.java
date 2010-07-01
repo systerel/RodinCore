@@ -13,14 +13,12 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.QuantifiedHelper.addUsedBoundIdentifiers;
-import static org.eventb.core.ast.QuantifiedHelper.appendBoundIdentifiersString;
 import static org.eventb.core.ast.QuantifiedHelper.areAllUsed;
 import static org.eventb.core.ast.QuantifiedHelper.areEqualQuantifiers;
 import static org.eventb.core.ast.QuantifiedHelper.checkBoundIdentTypes;
 import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
-import static org.eventb.core.ast.QuantifiedUtil.resolveIdents;
 
 import java.util.BitSet;
 import java.util.Collection;
@@ -145,44 +143,6 @@ public class QuantifiedPredicate extends Predicate {
 	 */
 	public Predicate getPredicate() {
 		return pred;
-	}
-	
-	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-
-		String[] localNames = resolveIdentsPred(boundNames);
-		String[] newBoundNames = catenateBoundIdentLists(boundNames, localNames);
-		final boolean needsParen = parenthesesMap.get(parentTag);
-
-		if (needsParen) builder.append('(');
-		builder.append(tags[getTag() - firstTag]);
-		appendBoundIdentifiersString(builder, localNames,
-				quantifiedIdentifiers, withTypes);
-		builder.append("\u00b7");
-		pred.toString(builder, false, getTag(), newBoundNames, withTypes);
-		if (needsParen) builder.append(')');
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-
-		String[] localNames = resolveIdentsPred(boundNames);
-		String[] newBoundNames = catenateBoundIdentLists(boundNames, localNames);
-
-		builder.append(tags[getTag() - firstTag]);
-		appendBoundIdentifiersString(builder, localNames,
-				quantifiedIdentifiers, false);
-		builder.append("\u00b7(");
-		pred.toStringFullyParenthesized(builder, newBoundNames);
-		builder.append(")");
-	}
-
-	private String[] resolveIdentsPred(String[] boundNames) {
-		HashSet<String> usedNames = new HashSet<String>();
-		pred.collectNamesAbove(usedNames, boundNames, quantifiedIdentifiers.length);
-		return resolveIdents(quantifiedIdentifiers, usedNames);
 	}
 	
 	@Override

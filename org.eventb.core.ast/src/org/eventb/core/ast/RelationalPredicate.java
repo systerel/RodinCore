@@ -158,28 +158,6 @@ public class RelationalPredicate extends Predicate {
 	}
 
 	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-
-		left.toString(builder, false, getTag(), boundNames, withTypes);
-		builder.append(tags[getTag() - firstTag]);
-		right.toString(builder, true, getTag(), boundNames, withTypes);
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-
-		builder.append('(');
-		left.toStringFullyParenthesized(builder, boundNames);
-		builder.append(')');
-		builder.append(tags[getTag() - firstTag]);
-		builder.append('(');
-		right.toStringFullyParenthesized(builder, boundNames);
-		builder.append(')');
-	}
-
-	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		return tabs + this.getClass().getSimpleName() + " ["
 				+ tags[getTag() - firstTag] + "]\n"

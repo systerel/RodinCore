@@ -13,9 +13,6 @@ package org.eventb.core.ast.extension;
 import static org.eventb.core.ast.extension.IOperatorProperties.Arity.*;
 import static org.eventb.core.ast.extension.IOperatorProperties.Notation.*;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.*;
-import static org.eventb.internal.core.ast.extension.ExtensionPrinters.ATOMIC_EXPR_PRINTER;
-import static org.eventb.internal.core.ast.extension.ExtensionPrinters.INFIX_EXPR_PRINTER;
-import static org.eventb.internal.core.ast.extension.ExtensionPrinters.PAREN_PREFIX_EXPR_PRINTER;
 import static org.eventb.internal.core.ast.extension.OperatorProperties.makeOperProps;
 
 import org.eventb.core.ast.Expression;
@@ -23,7 +20,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IOperatorProperties.Arity;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
-import org.eventb.internal.core.ast.extension.ExtensionPrinters.IExtensionPrinter;
 
 /**
  * @author "Nicolas Beauger"
@@ -36,37 +32,34 @@ public interface IFormulaExtension {
 	 */
 	public static enum ExtensionKind implements IExtensionKind {
 		ATOMIC_EXPRESSION(PREFIX, EXPRESSION, NULLARY, EXPRESSION,
-				ATOMIC_EXPR_PRINTER, false),
+				false),
 
 		// a op b
 		BINARY_INFIX_EXPRESSION(INFIX, EXPRESSION, BINARY, EXPRESSION,
-				INFIX_EXPR_PRINTER, false),
+				false),
 
 		// a op b op ... op c
 		ASSOCIATIVE_INFIX_EXPRESSION(INFIX, EXPRESSION, MULTARY_2, EXPRESSION,
-				INFIX_EXPR_PRINTER, true),
+				true),
 
 		// op(a, b, ..., c) with 1 or more arguments
 		PARENTHESIZED_EXPRESSION_1(PREFIX, EXPRESSION, MULTARY_1, EXPRESSION,
-				PAREN_PREFIX_EXPR_PRINTER, false),
+				false),
 
 		// op(a, b, ..., c) with 2 or more arguments
 		PARENTHESIZED_EXPRESSION_2(PREFIX, EXPRESSION, MULTARY_2, EXPRESSION,
-				PAREN_PREFIX_EXPR_PRINTER, false),
+				false),
 
 		// TODO PARENTHESIZED_PREDICATE
 		;
 
 
 		private final IOperatorProperties operProps;
-		private final IExtensionPrinter printer;
 		private final boolean flattenable;
 		
-		private ExtensionKind(Notation notation,
-				FormulaType formulaType, Arity arity, FormulaType argumentType,
-				IExtensionPrinter printer, boolean flattenable) {
-			this.operProps = makeOperProps(notation, formulaType, arity, argumentType);
-			this.printer = printer;
+		private ExtensionKind(Notation notation, FormulaType formulaType,
+				Arity arity, FormulaType argumentType, boolean flattenable) {
+		this.operProps = makeOperProps(notation, formulaType, arity, argumentType);
 			this.flattenable = flattenable;
 		}
 
@@ -74,10 +67,6 @@ public interface IFormulaExtension {
 			return operProps;
 		}
 
-		public IExtensionPrinter getPrinter() {
-			return printer;
-		}
-		
 		public boolean isFlattenable() {
 			return flattenable;
 		}

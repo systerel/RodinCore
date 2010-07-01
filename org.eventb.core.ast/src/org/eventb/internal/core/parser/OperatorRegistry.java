@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.extension.CycleError;
@@ -203,35 +202,6 @@ public class OperatorRegistry {
 		}
 	}
 	
-	private static class AllInOnceMap<K,V> {
-		
-		private final Map<K,V> map = new HashMap<K, V>();
-		
-		public AllInOnceMap() {
-			// avoid synthetic accessor emulation
-		}
-		
-		public V get(K key) {
-			final V value = map.get(key);
-			if (value == null) {
-				throw new IllegalArgumentException("no value set for key: " + key);
-			}
-			return value;
-		}
-		
-		public V getNoCheck(K key) {
-			return map.get(key);
-		}
-		
-		public void put(K key, V value) {
-			final V oldValue = map.put(key, value);
-			if (oldValue != null && oldValue != value) {
-				throw new IllegalArgumentException(
-						"trying to override value for: " + key);
-			}
-		}
-	}
-	
 	private final AllInOnceMap<String, OperatorGroup> idOpGroup = new AllInOnceMap<String, OperatorGroup>();
 	private final AllInOnceMap<Integer, OperatorGroup> kindOpGroup = new AllInOnceMap<Integer, OperatorGroup>();
 	private final AllInOnceMap<String, Integer> idKind = new AllInOnceMap<String, Integer>();
@@ -302,7 +272,8 @@ public class OperatorRegistry {
 	 *            the language version for current parsing
 	 * @return an operator relationship
 	 */
-	public OperatorRelationship getOperatorRelationship(int leftKind, int rightKind, LanguageVersion version) {
+	public OperatorRelationship getOperatorRelationship(int leftKind,
+			int rightKind, LanguageVersion version) {
 		final OperatorGroup leftGroup = kindOpGroup.get(leftKind);
 		final OperatorGroup rightGroup = kindOpGroup.get(rightKind);
 		
@@ -343,7 +314,7 @@ public class OperatorRegistry {
 	}
 
 	public boolean hasGroup(int kind) {
-		return kindOpGroup.getNoCheck(kind) != null;
+		return kindOpGroup.containsKey(kind);
 	}	
 	
 }

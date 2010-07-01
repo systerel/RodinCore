@@ -15,30 +15,23 @@ import org.eventb.internal.core.ast.extension.IToStringMediator;
 /**
  * @author Nicolas Beauger
  */
-/* package */class ToStringFullParenMediator implements IToStringMediator {
+/* package */class ToStringFullParenMediator extends ToStringMediator  {
 
-	protected final StringBuilder builder;
-	protected final String[] boundNames;
-	protected final String operator;
 
-	public ToStringFullParenMediator(StringBuilder builder, String[] boundNames, String operator) {
-		this.builder = builder;
-		this.boundNames = boundNames;
-		this.operator = operator;
+	public ToStringFullParenMediator(FormulaFactory factory, int tag,
+			StringBuilder builder, String[] boundNames, boolean isRight) {
+		super(factory, builder, boundNames, tag, false, isRight);
 	}
 
-	public void append(String string) {
-		builder.append(string);
+	@Override
+	protected <T extends Formula<?>> IToStringMediator makeInstance(T child,
+			boolean isRightOvr, boolean withTypes, final String[] newBoundNames) {
+		return new ToStringFullParenMediator(factory, child.getTag(), builder,
+				newBoundNames, isRightOvr);
 	}
 
-	public void append(Formula<?> child, boolean isRight) {
-		builder.append('(');
-		child.toStringFullyParenthesized(builder, boundNames);
-		builder.append(')');
+	@Override
+	protected boolean needsParentheses(Formula<?> child, boolean isRightOvr) {
+		return true;
 	}
-
-	public void appendOperator() {
-		builder.append(operator);
-	}
-
 }

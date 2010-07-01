@@ -69,24 +69,6 @@ public class BoolExpression extends Expression {
 	public Predicate getPredicate() {
 		return child;
 	}
-	
-	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-
-		builder.append("bool(");
-		child.toString(builder, false, getTag(), boundNames, withTypes);
-		builder.append(')');
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-
-		builder.append("bool(");
-		child.toStringFullyParenthesized(builder, boundNames);
-		builder.append(')');
-	}
 
 	@Override
 	protected void isLegible(LegibilityResult result, BoundIdentDecl[] quantifiedIdents) {

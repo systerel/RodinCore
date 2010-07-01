@@ -887,6 +887,9 @@ public abstract class Formula<T extends Formula<T>> {
 	protected final static String[] NO_STRING = new String[0];
 
 	// Internal constructor for derived classes (with location).
+	/**
+	 * @since 2.0
+	 */
 	protected Formula(int tag, SourceLocation location, int hashCode) {
 		this.tag = tag;
 		this.location = location;
@@ -1087,8 +1090,11 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @return a string representation of this formula.
 	 */
 	public final String toStringFullyParenthesized() {
-		StringBuilder builder = new StringBuilder();
-		toStringFullyParenthesized(builder, NO_STRING);
+		final StringBuilder builder = new StringBuilder();
+		final ToStringFullParenMediator strMed = new ToStringFullParenMediator(
+				getFactory(), tag, builder, NO_STRING, false);
+		strMed.printFormula(getTypedThis(), false, NO_BOUND_IDENT_DECL, false,
+				false, null);
 		return builder.toString();
 	}
 
@@ -1107,8 +1113,11 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	@Override
 	public final String toString() {
-		StringBuilder builder = new StringBuilder();
-		toString(builder, false, NO_TAG, NO_STRING, false);
+		final StringBuilder builder = new StringBuilder();
+		final ToStringMediator strMed = new ToStringMediator(getFactory(),
+				builder, NO_STRING, NO_TAG, false, false);
+		strMed.printFormula(getTypedThis(), false, NO_BOUND_IDENT_DECL, false,
+				false, null);
 		return builder.toString();
 	}
 
@@ -1125,11 +1134,21 @@ public abstract class Formula<T extends Formula<T>> {
 	 *         information.
 	 */
 	public final String toStringWithTypes() {
-		StringBuilder builder = new StringBuilder();
-		toString(builder, false, NO_TAG, NO_STRING, true);
+		final StringBuilder builder = new StringBuilder();
+		final ToStringMediator strMed = new ToStringMediator(getFactory(),
+				builder, NO_STRING, tag, true, false);
+		strMed.printFormula(getTypedThis(), false, NO_BOUND_IDENT_DECL, true,
+				false, null);
 		return builder.toString();
 	}
-
+	
+	/**
+	 * @since 2.0
+	 */
+	protected FormulaFactory getFactory() {
+		return FormulaFactory.getDefault();
+	}
+	
 	/**
 	 * Indicates whether some other formula is identical to this one.
 	 * <p>
@@ -1955,55 +1974,6 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @return whether it was successful
 	 */
 	protected abstract boolean solveType(TypeUnifier unifier);
-
-	/**
-	 * Internal method that returns the string representation of the formula.
-	 * <p>
-	 * The string contains a minimum number of parenthesis, that is only
-	 * parenthesis that are needed for the formula to be parsed again into the
-	 * same AST. Method {@link Formula#toString()} calls this method with false,
-	 * Formula.STARTTAG, and an empty array.
-	 * 
-	 * @param builder
-	 *            string builder containing the result
-	 * @param isRightChild
-	 *            <code>true</code> if this node is the right child of its
-	 *            parent node, <code>false</code> if it is the left child or a
-	 *            unique child
-	 * @param parentTag
-	 *            the tag of the parent node
-	 * @param boundNames
-	 *            the identifiers that are bound in the path from the root node
-	 *            to the current node. Should not be null, can be an empty
-	 *            array.
-	 * @param withTypes
-	 *            <code>true</code> iff type information should be output for
-	 *            atomic expressions.
-	 * 
-	 * @see java.lang.Object#toString()
-	 * @see #toStringFullyParenthesized()
-	 */
-	protected abstract void toString(StringBuilder builder, boolean isRightChild, int parentTag,
-			String[] boundNames, boolean withTypes);
-
-	/**
-	 * Internal method that returns the string representation of the formula
-	 * <p>
-	 * The string contains as many parenthesis as possible. Method
-	 * {@link Formula#toStringFullyParenthesized()} in fact calls this method
-	 * with an empty Identifier array.
-	 * 
-	 * @param builder
-	 *            string builder containing the result
-	 * @param boundNames
-	 *            the identifiers that are bound in the path from the root node
-	 *            to the current node. Should not be null, can be an empty
-	 *            array.
-	 * 
-	 * @see #toStringFullyParenthesized()
-	 */
-	protected abstract void toStringFullyParenthesized(
-			StringBuilder builder, String[] boundNames);
 
 	/**
 	 * Traverses this formula with the given visitor. In this complex version,

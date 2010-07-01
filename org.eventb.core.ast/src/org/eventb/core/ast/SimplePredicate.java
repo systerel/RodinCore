@@ -84,24 +84,6 @@ public class SimplePredicate extends Predicate {
 	}
 
 	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild, int parentTag,
-			String[] boundNames, boolean withTypes) {
-
-		builder.append(tags[getTag()-firstTag]);
-		builder.append('(');
-		child.toString(builder, false, getTag(), boundNames, withTypes);
-		builder.append(')');
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder, String[] boundNames) {
-		builder.append(tags[getTag()-firstTag]);
-		builder.append('(');
-		child.toStringFullyParenthesized(builder, boundNames);
-		builder.append(')');
-	}
-
-	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		return tabs + this.getClass().getSimpleName() + " ["
 				+ tags[getTag() - firstTag] + "]\n"

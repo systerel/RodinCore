@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -24,35 +25,46 @@ public class IndexedSet<T> {
 	private static final int FIRST_INDEX = 0;
 	public static final int NOT_AN_INDEX = FIRST_INDEX - 1;
 
-	private final Map<T, Integer> map = new HashMap<T, Integer>();
+	private final Map<T, Integer> set = new HashMap<T, Integer>();
+	private final Map<T, Integer> reserved = new HashMap<T, Integer>();
 	private int nextIndex = FIRST_INDEX;
 
 	public int getOrAdd(T key) {
-		final Integer current = map.get(key);
+		return getOrAdd(key, set);
+	}
+	
+	public int reserved(T key) {
+		return getOrAdd(key, reserved);
+	}
+
+	private int getOrAdd(T key, Map<T, Integer> addTo) {
+		final Integer current = addTo.get(key);
 		if (current != null) {
 			return current;
 		}
 		final int index = nextIndex;
-		map.put(key, index);
-		nextIndex++;
-		return index;
-	}
-
-	public int reserved() {
-		final int index = nextIndex;
+		addTo.put(key, index);
 		nextIndex++;
 		return index;
 	}
 	
 	public int getIndex(T key) {
-		final Integer index = map.get(key);
+		final Integer index = set.get(key);
 		if (index == null) {
 			return NOT_AN_INDEX;
 		}
 		return index;
 	}
 
-	public T getKey(int index) {
+	public T getElem(int index) {
+		final T elem = getElem(index, set);
+		if (elem != null) {
+			return elem;
+		}
+		return getElem(index, reserved);
+	}
+	
+	private static <T> T getElem(int index, Map<T, Integer> map) {
 		for (Entry<T, Integer> entry : map.entrySet()) {
 			if (entry.getValue().equals(index)) {
 				return entry.getKey();
@@ -62,11 +74,11 @@ public class IndexedSet<T> {
 	}
 	
 	public Set<Entry<T, Integer>> entrySet() {
-		return map.entrySet();
+		return Collections.unmodifiableSet(set.entrySet());
 	}
 	
 	public boolean isReserved(int index) {
 		return index >= FIRST_INDEX && index < nextIndex
-				&& !map.containsValue(index);
+				&& !set.containsValue(index);
 	}
 }

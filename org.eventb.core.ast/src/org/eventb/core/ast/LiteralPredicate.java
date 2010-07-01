@@ -62,20 +62,6 @@ public class LiteralPredicate extends Predicate {
 	}
 
 	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-
-		builder.append(tags[getTag() - firstTag]);
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-
-		builder.append(tags[getTag() - firstTag]);
-	}
-
-	@Override
 	protected void isLegible(LegibilityResult result, BoundIdentDecl[] quantifiedIdents) {
 		// Nothing to do, this subformula is always well-formed.
 	}

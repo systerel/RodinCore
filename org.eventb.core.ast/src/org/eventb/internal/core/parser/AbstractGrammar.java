@@ -11,6 +11,7 @@
 package org.eventb.internal.core.parser;
 
 import static org.eventb.internal.core.parser.OperatorRegistry.GROUP0;
+import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.INCOMPATIBLE;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,9 +20,7 @@ import java.util.Map;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.extension.CycleError;
-import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IOperatorProperties;
-import org.eventb.internal.core.ast.extension.ExtensionPrinters.IExtensionPrinter;
 import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship;
@@ -32,6 +31,7 @@ import org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship;
  */
 public abstract class AbstractGrammar {
 
+	private static final String EMPTY_STRING = "";
 	private static final String EOF_ID = "End of File";
 	private static final String NOOP_ID = "No Operator";
 	private static final String OPEN_ID = "Open";
@@ -60,9 +60,11 @@ public abstract class AbstractGrammar {
 	
 	private final Map<Integer, Integer> closeOpenKinds = new HashMap<Integer, Integer>();
 	
-	private final Map<Integer, String> reservedImages = new HashMap<Integer, String>();
+	private final AllInOnceMap<Integer, IParserPrinter<? extends Formula<?>>> tagParsers = new AllInOnceMap<Integer, IParserPrinter<? extends Formula<?>>>();
+	private final AllInOnceMap<Integer, Integer> tagKind = new AllInOnceMap<Integer, Integer>();
 	
 	public boolean isOperator(int kind) {
+		// TODO could be replaced by 'there exists a tag for the given kind'
 		return opRegistry.hasGroup(kind) && !tokens.isReserved(kind);
 	}
 	
@@ -78,14 +80,13 @@ public abstract class AbstractGrammar {
 	 */
 	// TODO split into several init methods, one for each data (?)
 	public void init() {
-		_EOF = tokens.reserved();
-		_NOOP = tokens.reserved();
-		_OPEN = tokens.reserved();
+		_EOF = tokens.reserved("End Of Formula");
+		_NOOP = tokens.reserved("No Operator");
+		_OPEN = tokens.reserved("Open");
 		_LPAR = tokens.getOrAdd("(");
 		_RPAR = tokens.getOrAdd(")");
 		_COMMA = tokens.getOrAdd(",");
 		
-		reservedImages.put(_EOF, "End Of Formula");
 		opRegistry.addOperator(_EOF, EOF_ID, GROUP0);
 		opRegistry.addOperator(_NOOP, NOOP_ID, GROUP0);
 		opRegistry.addOperator(_OPEN, OPEN_ID, GROUP0);
@@ -93,6 +94,8 @@ public abstract class AbstractGrammar {
 		try {
 			_INTLIT = addReservedSubParser(SubParsers.INTLIT_SUBPARSER, INTLIT_IMAGE);
 			_IDENT = addReservedSubParser(SubParsers.IDENT_SUBPARSER, IDENT_IMAGE);
+			addTagKindParser(SubParsers.FREE_IDENT_SUBPARSER, _IDENT);
+			addTagKindParser(SubParsers.BOUND_IDENT_DECL_SUBPARSER, _IDENT);
 			subParsers.addNud(_LPAR, MainParsers.CLOSED_SUGAR);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
@@ -109,17 +112,12 @@ public abstract class AbstractGrammar {
 		return subParsers.getLedParser(token);
 	}
 	
-	public IParserPrinter getParser(IOperatorProperties operProps,
-			boolean isExtension, int tag) {
-		return propParsers.getParser(operProps, isExtension, tag);
+	public IParserPrinter<? extends Formula<?>> getParser(IOperatorProperties operProps,
+			int tag) {
+		return propParsers.getParser(operProps, tag);
 	}
 
-	public IExtensionPrinter getPrinter(IOperatorProperties operProps,
-			boolean isExtension) {
-		return propParsers.getPrinter(operProps, isExtension);
-	}
-
-	protected void addParser(IParserInfo parserBuilder) throws OverrideException {
+	protected void addParser(IParserInfo<? extends Formula<?>> parserBuilder) throws OverrideException {
 		propParsers.add(parserBuilder);
 	}
 	
@@ -129,14 +127,26 @@ public abstract class AbstractGrammar {
 		final int kind = tokens.getOrAdd(token);
 		opRegistry.addOperator(kind, operatorId, groupId);
 		subParsers.addNud(kind, subParser);
+		addTagKindParser(subParser, kind);
 	}
-	
+
+	// FIXME remove method after correctly refactoring so as not to need it
+	protected void addOperator(String token, int tag, String operatorId,
+			String groupId, INudParser<? extends Formula<?>> subParser)
+			throws OverrideException {
+		final int kind = tokens.getOrAdd(token);
+		opRegistry.addOperator(kind, operatorId, groupId);
+		subParsers.addNud(kind, subParser);
+		addTagKindParser(subParser, kind, tag);
+	}
+
 	protected void addOperator(String token, String operatorId, String groupId,
 			ILedParser<? extends Formula<?>> subParser)
 			throws OverrideException {
 		final int kind = tokens.getOrAdd(token);
 		opRegistry.addOperator(kind, operatorId, groupId);
 		subParsers.addLed(kind, subParser);
+		addTagKindParser(subParser, kind);
 	}
 
 	protected void addOperator(int kind, String operatorId, String groupId,
@@ -144,6 +154,7 @@ public abstract class AbstractGrammar {
 			throws OverrideException {
 		opRegistry.addOperator(kind, operatorId, groupId);
 		subParsers.addNud(kind, subParser);
+		addTagKindParser(subParser, kind);
 	}
 
 	protected void addOpenClose(String open, String close) {
@@ -162,18 +173,12 @@ public abstract class AbstractGrammar {
 
 	private int addReservedSubParser(INudParser<? extends Formula<?>> subParser, String image)
 			throws OverrideException {
-		final int kind = tokens.reserved();
-		reservedImages.put(kind, image);
+		final int kind = tokens.reserved(image);
 		subParsers.addNud(kind, subParser);
+		addTagKindParser(subParser, kind);
 		return kind;
 	}
 	
-	protected void addLiteralOperator(String token, int tag,
-			INudParser<? extends Formula<?>> subParser) throws OverrideException {
-		final int kind = tokens.getOrAdd(token);
-		subParsers.addNud(kind, subParser);
-	}
-
 	protected void addGroupPrioritySequence(String... groupIds) throws CycleError {
 		for (int i = 0; i < groupIds.length - 1; i++) {
 			opRegistry.addGroupPriority(groupIds[i], groupIds[i+1]);
@@ -198,11 +203,70 @@ public abstract class AbstractGrammar {
 	}
 	
 	public String getImage(int kind) {
-		String image = tokens.getKey(kind);
-		if (image == null) {
-			image = reservedImages.get(kind);
+		return tokens.getElem(kind);
+	}
+
+	public String getTagImage(int tag) {
+		final Integer kind = tagKind.get(tag);
+		if (kind == null) {
+			return EMPTY_STRING;
 		}
-		return image;
+		return getImage(kind);
+	}
+
+	private void addTagKindParser(IParserPrinter<? extends Formula<?>> parser,
+			int kind, int tag) {
+		if (tag == Formula.NO_TAG) {
+			return;
+		}
+		if (!tagKind.containsKey(tag)) {
+			// FIXME should remove !tagKind.containsKey(tag) but
+			// problem with Lambda (same tag for kinds 'lambda' and '{')
+			tagKind.put(tag, kind);
+		}
+		if (!tagParsers.containsKey(tag)) {
+			tagParsers.put(tag, parser);
+		}
+	}
+
+	// FIXME should be private
+	private void addTagKindParser(IParserPrinter<? extends Formula<?>> parser,
+			int kind) {
+		for (int tag : parser.getTags()) {
+			addTagKindParser(parser, kind, tag);
+		}
+	}
+
+	public <T extends Formula<?>> IParserPrinter<T> getParser(T formula) {
+		return (IParserPrinter<T>) tagParsers.get(formula.getTag());
+	}
+
+	/**
+	 * Returns whether parentheses are needed around a formula tag when it
+	 * appears as a child of formula parentTag.
+	 * 
+	 * @param isRightChild
+	 *            <code>true</code> if tag node is the right child parentTag,
+	 *            <code>false</code> if it is the left child or a unique child
+	 * @param childTag
+	 * @param parentTag
+	 * @param version
+	 * @return <code>true</code> iff parentheses are needed
+	 * @since 2.0
+	 */
+	public boolean needsParentheses(boolean isRightChild, int childTag, int parentTag, LanguageVersion version) {
+		final Integer childKind = tagKind.getNoCheck(childTag);
+		final Integer parentKind = tagKind.getNoCheck(parentTag);
+		if (childKind == null || parentKind == null) { // EOF for instance
+			return false;
+		}
+		if (!isOperator(parentKind) || !isOperator(childKind)) {
+			return false; // IDENT for instance
+		}
+		final OperatorRelationship opRel = getOperatorRelationship(parentKind,
+				childKind, version);
+		
+		return opRel == INCOMPATIBLE;
 	}
 
 }

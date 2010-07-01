@@ -142,41 +142,6 @@ public class AtomicExpression extends Expression {
 	}
 
 	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-		
-		final String image = tags[getTag()-firstTag];
-		if (withTypes && isTypeChecked() && isGeneric()) {
-			builder.append('(');
-			builder.append(image);
-			builder.append(" \u2982 ");
-			builder.append(getType());
-			builder.append(')');
-		} else {
-			builder.append(image);
-		}
-	}
-
-	private boolean isGeneric() {
-		switch (getTag()) {
-		case EMPTYSET:
-		case KPRJ1_GEN:
-		case KPRJ2_GEN:
-		case KID_GEN:
-			return true;
-		default:
-			return false;
-		}
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-		
-		builder.append(tags[getTag()-firstTag]);
-	}
-
-	@Override
 	protected void isLegible(LegibilityResult result, BoundIdentDecl[] quantifiedIdents) {
 		return;
 	}

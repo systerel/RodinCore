@@ -10,26 +10,161 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static java.util.Arrays.asList;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.parser.AbstractGrammar;
+import org.eventb.internal.core.parser.IParserPrinter;
+
 /**
  * TODO instead of encapsulating children, pass the parent node as argument to
  * extension methods
  * 
  * @author Nicolas Beauger
  */
-/* package */class ToStringMediator extends ToStringFullParenMediator {
+/* package */class ToStringMediator implements IToStringMediator {
 
-	private final int tag;
+	private static final BoundIdentDecl[] NO_DECL = new BoundIdentDecl[0];
+
+	protected final FormulaFactory factory;
+	protected final int tag;
+	protected final StringBuilder builder;
+	protected final String[] boundNames;
+	protected final boolean isRight;
 	private final boolean withTypes;
 
-	public ToStringMediator(StringBuilder builder, String[] boundNames,
-			String operator, int tag, boolean withTypes) {
-		super(builder, boundNames, operator);
+	public ToStringMediator(FormulaFactory factory, StringBuilder builder,
+			String[] boundNames, int tag, boolean withTypes, boolean isRight) {
+		this.factory = factory;
 		this.tag = tag;
+		this.builder = builder;
+		this.boundNames = boundNames;
+		this.isRight = isRight;
 		this.withTypes = withTypes;
 	}
 
-	@Override
-	public void append(Formula<?> child, boolean isRight) {
-		child.toString(builder, isRight, tag, boundNames, withTypes);
+	public void append(String string) {
+		builder.append(string);
+	}
+
+	public <T extends Formula<?>> void subPrint(T child, boolean isRightOvr) {
+		subPrint(child, isRightOvr, NO_DECL);
+	}
+
+	public <T extends Formula<?>> void subPrint(T child, boolean isRightOvr,
+			BoundIdentDecl[] boundDecls) {
+		subPrint(child, isRightOvr, boundDecls, null);
+	}
+
+	public <T extends Formula<?>> void subPrint(T child, boolean isRightOvr,
+			BoundIdentDecl[] boundDecls, IParserPrinter<T> parser) {
+		printChild(child, isRightOvr, boundDecls, withTypes, parser);
+	}
+
+	private <T extends Formula<?>> void printChild(T child, boolean isRightOvr,
+			BoundIdentDecl[] boundDecls, boolean withTypesOvr, IParserPrinter<T> parser) {
+		final boolean needsParen = needsParentheses(child, isRightOvr);
+		printFormula(child, isRightOvr, boundDecls, withTypesOvr, needsParen, parser);
+	}
+
+	protected boolean needsParentheses(Formula<?> child, boolean isRightOvr) {
+		// FIXME can only print with latest language version
+		final AbstractGrammar grammar = factory.getGrammar();
+		return grammar.needsParentheses(isRightOvr, child.getTag(), tag,
+				LanguageVersion.LATEST);
+	}
+
+	protected final <T extends Formula<?>> void printFormula(T formula,
+			boolean isRightOvr, BoundIdentDecl[] boundDecls,
+			boolean withTypesOvr, boolean withParen, IParserPrinter<T> parser) {
+		if (withParen) {
+			builder.append('(');
+		}
+		printFormula(formula, isRightOvr, boundDecls, withTypesOvr, parser);
+		if (withParen) {
+			builder.append(')');
+		}
+	}
+
+	public <T extends Formula<?>> void forward(T formula) {
+		forward(formula, withTypes);
+	}
+
+	public <T extends Formula<?>> void forward(T formula, boolean withTypesOvr) {
+		printFormula(formula, isRight, NO_DECL, withTypesOvr, false, null);
+	}
+
+	private String[] addBound(BoundIdentDecl[] addedBoundNames) {
+		if (addedBoundNames.length == 0) {
+			return boundNames;
+		}
+		final List<String> newBound = new ArrayList<String>(asList(boundNames));
+		for (BoundIdentDecl decl : addedBoundNames) {
+			newBound.add(decl.getName());
+		}
+		final String[] newBoundNames = newBound.toArray(new String[newBound
+				.size()]);
+		return newBoundNames;
+	}
+
+	private <T extends Formula<?>> void printFormula(T formula,
+			boolean isRightOvr, BoundIdentDecl[] boundDecls,
+			boolean withTypesOvr, IParserPrinter<T> parser) {
+		if (parser == null) {
+			parser = factory.getGrammar().getParser(formula);
+			// FIXME NPE: printer can be null
+		}
+
+		final String[] newBoundNames = addBound(boundDecls);
+		final IToStringMediator childMed = makeInstance(formula, isRightOvr,
+				withTypesOvr, newBoundNames);
+		parser.toString(childMed, formula);
+	}
+
+	protected <T extends Formula<?>> IToStringMediator makeInstance(T child,
+			boolean isRightOvr, boolean withTypesOvr,
+			final String[] newBoundNames) {
+		return new ToStringMediator(factory, builder, newBoundNames, child
+				.getTag(), withTypesOvr, isRightOvr);
+	}
+
+	public FormulaFactory getFactory() {
+		return factory;
+	}
+
+	public void appendOperator() {
+		final String opImage = factory.getGrammar().getTagImage(tag);
+		builder.append(opImage);
+	}
+
+	public void appendImage(int kind) {
+		final String image = factory.getGrammar().getImage(kind);
+		builder.append(image);
+	}
+
+	public void appendBoundIdent(int boundIndex) {
+		String image = resolveIndex(boundIndex, boundNames);
+		if (image == null) {
+			// Fallback default in case this can not be resolved.
+			builder.append("[[");
+			builder.append(boundIndex);
+			builder.append("]]");
+		} else {
+			builder.append(image);
+		}
+	}
+
+	private static String resolveIndex(int index, String[] boundIdents) {
+		if (index < boundIdents.length) {
+			return boundIdents[boundIdents.length - index - 1];
+		}
+		return null;
+	}
+
+	public boolean isWithTypes() {
+		return withTypes;
 	}
 }

@@ -19,7 +19,7 @@ import org.eventb.internal.core.parser.GenParser.SyntaxError;
  * @author Nicolas Beauger
  * 
  */
-public interface INudParser<T> extends IParserPrinter {
+public interface INudParser<T> extends IParserPrinter<T> {
 
 	/**
 	 * Parses a null-denoted formula with the given parser context.

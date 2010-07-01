@@ -32,21 +32,21 @@ public class ExtendedGrammar extends BMath {
 		this.extensions = extensions;
 	}
 	
-
+	// TODO associate tag to parser to fetch printers
 	@Override
 	public void init() {
 		super.init();
 		try {
-			for (IParserInfo parserBuilder: ParserInfos.ExtendedParsers.values()) {
-				addParser(parserBuilder);
+			for (IParserInfo<? extends Formula<?>> parserInfo: ParserInfos.ExtendedParsers.values()) {
+				addParser(parserInfo);
 			}
 			for (IFormulaExtension extension : extensions) {
 				final int tag = FormulaFactory.getTag(extension);
 				final String operatorId = extension.getId();
 				final String groupId = extension.getGroupId();
 				final IExtensionKind kind = extension.getKind();
-				final IParserPrinter parser = getParser(kind.getProperties(),
-						true, tag);
+				final IParserPrinter<? extends Formula<?>> parser = getParser(kind.getProperties(),
+						tag);
 				// FIXME the syntax symbol must not already exist as an
 				// operator (an extension shall not add backtracking)
 				if (parser instanceof INudParser<?>) {

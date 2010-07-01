@@ -11,10 +11,7 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
-import org.eventb.core.ast.extension.IExtendedFormula;
-import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.extension.ExtensionPrinters.IExtensionPrinter;
 
 
 /**
@@ -58,54 +55,6 @@ import org.eventb.internal.core.ast.extension.ExtensionPrinters.IExtensionPrinte
 			str.append(child.getSyntaxTree(boundNames, childIndent));
 		}
 		return str.toString();
-	}
-
-	protected static void toStringHelper(StringBuilder builder,
-			String[] boundNames, boolean needsParen, Formula<?>[] children,
-			String tagOperator, int tag, boolean withTypes) {
-
-		if (needsParen)  builder.append('(');
-		boolean isRight = false;
-		String sep = "";
-		for (Formula<?> child: children) {
-			builder.append(sep);
-			sep = tagOperator;
-			child.toString(builder, isRight, tag, boundNames, withTypes);
-			isRight = true;
-		}
-		if (needsParen) builder.append(')');
-	}
-	
-	// TODO too many arguments
-	protected static void toStringHelper(StringBuilder builder,
-			String[] boundNames, boolean needsParen, boolean withTypes,
-			int tag, IFormulaExtension extension, IExtendedFormula formula,
-			FormulaFactory ff) {
-		if (needsParen)
-			builder.append('(');
-		final ToStringMediator strMed = new ToStringMediator(builder,
-				boundNames, extension.getSyntaxSymbol(), tag, withTypes);
-		final IExtensionPrinter printer = ff.getGrammar().getPrinter(
-				extension.getKind().getProperties(), true);
-		// FIXME NPE: printer can be null
-		
-		printer.toString(strMed, formula);
-		if (needsParen)
-			builder.append(')');
-	}
-
-	protected static void toStringFullyParenthesizedHelper(
-			StringBuilder builder, String[] boundNames,
-			Formula<?>[] children, String tagOperator) {
-		
-		String sep = "";
-		for (Formula<?> child : children) {
-			builder.append(sep);
-			sep = tagOperator;
-			builder.append('(');
-			child.toStringFullyParenthesized(builder, boundNames);
-			builder.append(')');
-		}
 	}
 
 	// Disable default constructor.

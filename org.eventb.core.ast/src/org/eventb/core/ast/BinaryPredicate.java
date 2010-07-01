@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
-import java.util.BitSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -86,35 +85,6 @@ public class BinaryPredicate extends Predicate {
 		}
 	}
 
-	// indicates when toString should put itself inside parentheses
-	private static final BitSet[] parenthesesMap = new BitSet[tags.length];
-	
-	static {
-		assert parenthesesMap.length == tags.length;
-		
-		for (int i = 0; i < parenthesesMap.length; i++) {
-			parenthesesMap[i] = new BitSet();
-			parenthesesMap[i].set(Formula.LEQV);
-			parenthesesMap[i].set(Formula.LIMP);
-			parenthesesMap[i].set(Formula.NOT);
-			parenthesesMap[i].set(Formula.LAND);
-			parenthesesMap[i].set(Formula.LOR);
-		}
-	}
-
-	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild, int parentTag,
-			String[] boundNames, boolean withTypes) {
-
-		final boolean needsParen = 
-			parenthesesMap[getTag()-firstTag].get(parentTag);
-		if (needsParen) builder.append('(');
-		left.toString(builder, false, getTag(), boundNames, withTypes);
-		builder.append(getTagOperator());
-		right.toString(builder, true, getTag(), boundNames, withTypes);
-		if (needsParen) builder.append(')');
-	}
-
 	// Tag operator.
 	protected String getTagOperator() {
 		return tags[getTag()-firstTag];
@@ -154,19 +124,6 @@ public class BinaryPredicate extends Predicate {
 		if (result.isSuccess()) {
 			right.isLegible(result, quantifiedIdents);
 		}
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-		
-		builder.append('(');
-		left.toStringFullyParenthesized(builder, boundNames);
-		builder.append(')');
-		builder.append(getTagOperator());
-		builder.append('(');
-		right.toStringFullyParenthesized(builder, boundNames);
-		builder.append(')');
 	}
 
 	/**

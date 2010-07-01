@@ -33,6 +33,7 @@ public interface IOperatorProperties {
 	 * {@link IExtensionKind#checkPreconditions(Expression[], Predicate[])} to
 	 * check the arity for the desired n.
 	 * </p>
+	 * FIXME except associative formulae, all are N_ARY (fixed n) 
 	 */
 	public static enum Arity {
 		NULLARY(0, 0), UNARY(1, 1), BINARY(2, 2),

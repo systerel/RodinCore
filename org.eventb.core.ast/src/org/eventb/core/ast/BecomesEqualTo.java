@@ -200,36 +200,6 @@ public class BecomesEqualTo extends Assignment {
 	}
 
 	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-		
-		appendAssignedIdents(builder);
-		builder.append(" \u2254 ");
-		String comma = "";
-		for (Expression value: values) {
-			builder.append(comma);
-			value.toString(builder, false, NO_TAG, boundNames, withTypes);
-			comma = ", ";
-		}
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-		
-		appendAssignedIdents(builder);
-		builder.append(" \u2254 ");
-		boolean comma = false;
-		for (Expression value: values) {
-			if (comma) builder.append(", ");
-			builder.append('(');
-			value.toStringFullyParenthesized(builder, boundNames);
-			builder.append(')');
-			comma = true;
-		}
-	}
-
-	@Override
 	public boolean accept(IVisitor visitor) {
 		boolean goOn = visitor.enterBECOMES_EQUAL_TO(this);
 

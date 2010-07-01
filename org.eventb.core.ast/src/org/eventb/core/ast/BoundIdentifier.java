@@ -95,15 +95,7 @@ public class BoundIdentifier extends Identifier {
 		return null;
 	}
 	
-	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-
-		toStringFullyParenthesized(builder, boundNames);
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
+	private void toStringFullyParenthesized(StringBuilder builder,
 			String[] boundNames) {
 		
 		String image = resolveIndex(boundIndex, boundNames);

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
+import static java.util.Arrays.asList;
+import static org.eventb.core.ast.Formula.*;
 import static org.eventb.core.ast.ProblemKind.PrematureEOF;
 import static org.eventb.internal.core.parser.AbstractGrammar.*;
 import static org.eventb.internal.core.parser.BMath.*;
@@ -23,6 +25,9 @@ import java.util.Set;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Assignment;
+import org.eventb.core.ast.BecomesEqualTo;
+import org.eventb.core.ast.BecomesMemberOf;
+import org.eventb.core.ast.BecomesSuchThat;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
@@ -34,10 +39,12 @@ import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.GenParser.ParserContext;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 import org.eventb.internal.core.parser.GenParser.ParserContext.SavedContext;
+import org.eventb.internal.core.parser.SubParsers.AbstractNudParser;
 
 /**
  * Main parsers implement an algorithm for parsing a formula (or a part of a
@@ -192,8 +199,21 @@ public class MainParsers {
 		
 	};
 	
+	static final int[] NO_TAGS = new int[0];
+	
+	private static abstract class AbstractMainParser<T> implements INudParser<T> {
+		public AbstractMainParser() {
+			// avoid synthetic accessors
+		}
+		
+		public int[] getTags() {
+			return NO_TAGS;
+		}
+		
+	}
+	
 	// Core algorithm implementation
-	static final INudParser<Formula<?>> FORMULA_PARSER = new INudParser<Formula<?>>() {
+	static final INudParser<Formula<?>> FORMULA_PARSER = new AbstractMainParser<Formula<?>>() {
 		
 		public Formula<?> nud(ParserContext pc)
 				throws SyntaxError {
@@ -206,9 +226,14 @@ public class MainParsers {
 			
 			return left;
 		}
+
+		public void toString(IToStringMediator mediator, Formula<?> toPrint) {
+			mediator.forward(toPrint);			
+		}
+
 	};
 
-	static final INudParser<Type> TYPE_PARSER = new INudParser<Type>() {
+	static final INudParser<Type> TYPE_PARSER = new AbstractMainParser<Type>() {
 		
 		public Type nud(ParserContext pc) throws SyntaxError {
 			pc.startParsingType();
@@ -231,25 +256,38 @@ public class MainParsers {
 		private SyntaxError newInvalidTypeExpr(ParserContext pc) {
 			return new SyntaxError(new ASTProblem(pc.getSourceLocation(), ProblemKind.InvalidTypeExpression, ProblemSeverities.Error));
 		}
+
+		public void toString(IToStringMediator mediator, Type toPrint) {
+			final Expression expression = toPrint.toExpression(mediator.getFactory());
+			mediator.forward(expression);
+		}
 	};
 
-	static final INudParser<Predicate> PRED_PARSER = new INudParser<Predicate>() {
+	static final INudParser<Predicate> PRED_PARSER = new AbstractMainParser<Predicate>() {
 		
 		public Predicate nud(ParserContext pc) throws SyntaxError {
 			final Formula<?> formula = FORMULA_PARSER.nud(pc);
 			return asPredicate(formula);
 		}
+
+		public void toString(IToStringMediator mediator, Predicate toPrint) {
+			mediator.forward(toPrint);
+		}
 	};
 
-	static final INudParser<Expression> EXPR_PARSER = new INudParser<Expression>() {
+	static final INudParser<Expression> EXPR_PARSER = new AbstractMainParser<Expression>() {
 		
 		public Expression nud(ParserContext pc) throws SyntaxError {
 			final Formula<?> formula = FORMULA_PARSER.nud(pc);
 			return asExpression(formula);
 		}
+		
+		public void toString(IToStringMediator mediator, Expression toPrint) {
+			mediator.forward(toPrint);
+		}
 	};
 
-	static final INudParser<Formula<?>> CLOSED_SUGAR = new INudParser<Formula<?>> () {
+	static final INudParser<Formula<?>> CLOSED_SUGAR = new AbstractMainParser<Formula<?>> () {
 
 		public Formula<?> nud(ParserContext pc) throws SyntaxError {
 			pc.progressOpenParen();
@@ -257,9 +295,15 @@ public class MainParsers {
 			pc.progressCloseParen();
 			return formula;
 		}
+
+		public void toString(IToStringMediator mediator, Formula<?> toPrint) {
+			// should never be called
+			assert false;
+		}
+		
 	};
 
-	static class PatternParser implements INudParser<Pattern> {
+	static class PatternParser extends AbstractMainParser<Pattern> {
 		
 		final Pattern pattern;
 		
@@ -278,7 +322,7 @@ public class MainParsers {
 			return pattern;
 		}
 
-		private static class PatternAtomParser implements INudParser<Object> {
+		private static class PatternAtomParser extends AbstractMainParser<Object> {
 
 			private final Pattern pattern;
 			private final PatternParser parser;
@@ -300,11 +344,23 @@ public class MainParsers {
 				}
 				return null;
 			}
+
+			public void toString(IToStringMediator mediator,
+					Object toPrint) {
+				// should never happen
+				assert false;
+			}
+		}
+
+		public void toString(IToStringMediator mediator,
+				Pattern toPrint) {
+			// should never happen
+			assert false;
 		}
 	}
 
 	// parses a non empty list of T
-	static class AbstListParser<T> implements INudParser<List<T>> {
+	static class AbstListParser<T extends Formula<?>> extends AbstractMainParser<List<T>> {
 	
 		private final INudParser<T> parser;
 		
@@ -322,6 +378,18 @@ public class MainParsers {
 				list.add(next);
 			}
 			return list;
+		}
+
+		public void toString(IToStringMediator mediator,
+				List<T> toPrint) {
+			final Iterator<T> iter = toPrint.iterator();
+			T next = iter.next();
+			parser.toString(mediator, next);
+			while(iter.hasNext()) {
+				mediator.append(",");
+				next = iter.next();
+				parser.toString(mediator, next);
+			}
 		}
 		
 	}
@@ -351,7 +419,7 @@ public class MainParsers {
 	// returned by sub-parsers, then implement assignment parsing
 	// with led sub-parsers
 	/** @see GenParser#parse() */
-	static final INudParser<Assignment> ASSIGNMENT_PARSER = new INudParser<Assignment>() {
+	static final INudParser<Assignment> ASSIGNMENT_PARSER = new AbstractNudParser<Assignment>(BECOMES_EQUAL_TO, BECOMES_MEMBER_OF, BECOMES_SUCH_THAT) {
 
 		public Assignment nud(ParserContext pc) throws SyntaxError {
 			final List<FreeIdentifier> idents = pc.subParse(FREE_IDENT_LIST_PARSER);
@@ -407,7 +475,32 @@ public class MainParsers {
 				// FIXME when switching to led parsing, this disappears
 			}
 		}
-		
+
+		public void toString(IToStringMediator mediator, Assignment toPrint) {
+			final FreeIdentifier[] idents = toPrint.getAssignedIdentifiers();
+			FREE_IDENT_LIST_PARSER.toString(mediator, asList(idents));
+			mediator.appendOperator();
+			switch (toPrint.getTag()) {
+			case BECOMES_EQUAL_TO:
+				final BecomesEqualTo bet = (BecomesEqualTo) toPrint;
+				final Expression[] expressions = bet.getExpressions();
+				EXPR_LIST_PARSER.toString(mediator, asList(expressions));
+				break;
+			case BECOMES_MEMBER_OF:
+				final BecomesMemberOf bmo = (BecomesMemberOf) toPrint;
+				final Expression set = bmo.getSet();
+				EXPR_PARSER.toString(mediator, set);
+				break;
+			case BECOMES_SUCH_THAT:
+				final BecomesSuchThat bst = (BecomesSuchThat) toPrint;
+				final Predicate condition = bst.getCondition();
+				PRED_PARSER.toString(mediator, condition);
+				break;
+			default:
+				assert false;
+			}
+		}
+
 	};
 	
 	static Expression makeFunctionOverriding(FreeIdentifier ident,

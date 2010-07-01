@@ -1429,21 +1429,4 @@ public class FormulaFactory {
 		return result;
 	}
 
-	/**
-	 * Returns whether parentheses are needed around a formula tag when it
-	 * appears as a child of formula parentTag.
-	 * 
-	 * @param isRightChild
-	 *            <code>true</code> if tag node is the right child parentTag,
-	 *            <code>false</code> if it is the left child or a unique child
-	 * @param tag
-	 * @param parentTag
-	 * @return <code>true</code> iff parentheses are needed
-	 * @since 2.0
-	 */
-	public boolean needsParentheses(boolean isRightChild, int tag, int parentTag) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 }

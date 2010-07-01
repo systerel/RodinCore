@@ -13,7 +13,6 @@ package org.eventb.core.ast;
 //FIXME should not use AssociativeHelper (else rename Associative into ...)
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
-import static org.eventb.core.ast.AssociativeHelper.toStringHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,14 +22,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.IExtendedFormula;
-import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.TypeCheckMediator;
-import org.eventb.internal.core.ast.extension.ExtensionPrinters.IExtensionPrinter;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -101,15 +98,6 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	}
 
 	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-		final boolean needsParen = ff.needsParentheses(isRightChild, getTag(),
-				parentTag);
-		toStringHelper(builder, boundNames, needsParen, withTypes, getTag(),
-				extension, this, ff);
-	}
-
-	@Override
 	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
 		if (this.getTag() != other.getTag()) {
 			return false;
@@ -152,15 +140,8 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	}
 
 	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-		final IOperatorProperties properties = extension.getKind().getProperties();
-		final IExtensionPrinter printer = ff.getGrammar().getPrinter(properties, true);
-		// FIXME NPE: printer can be null
-		
-		final ToStringFullParenMediator mediator = new ToStringFullParenMediator(
-				builder, boundNames, extension.getSyntaxSymbol());
-		printer.toString(mediator, this);
+	protected FormulaFactory getFactory() {
+		return ff;
 	}
 
 	@Override

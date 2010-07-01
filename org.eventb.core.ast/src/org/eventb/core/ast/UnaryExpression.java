@@ -14,7 +14,6 @@
 package org.eventb.core.ast;
 
 import java.math.BigInteger;
-import java.util.BitSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -65,44 +64,6 @@ public class UnaryExpression extends Expression {
 	// For testing purposes
 	public static final int TAGS_LENGTH = tags.length;
 
-	// indicates whether the corresponding operator has to be
-	// written before or after the operand
-	private static final boolean[] isPrefix = {
-		true, // KCARD
-		true, // POW
-		true, // POW1
-		true, // KUNION
-		true, // KINTER
-		true, // KDOM
-		true, // KRAN
-		true, // KPRJ1
-		true, // KPRJ2
-		true, // KID
-		true, // KMIN
-		true, // KMAX
-		false,// CONVERSE
-		true  // UNMINUS
-	};
-	
-	// indicates when the operand has to be parenthesized
-	// this is used by method toString
-	private static final boolean[] alwaysParenthesized = {
-		true, // KCARD
-		true, // POW
-		true, // POW1
-		true, // KUNION
-		true, // KINTER
-		true, // KDOM
-		true, // KRAN
-		true, // KPRJ1
-		true, // KPRJ2
-		true, // KID
-		true, // KMIN
-		true, // KMAX
-		false,// CONVERSE
-		false // UNMINUS
-	};
-	                             
 	protected UnaryExpression(Expression child, int tag, SourceLocation location,
 			FormulaFactory factory) {
 		
@@ -239,49 +200,6 @@ public class UnaryExpression extends Expression {
 		setFinalType(resultType, givenType);
 	}
 
-	// for the operands that do not always need to be parenthesized,
-	// indicates when parentheses should be output in the toString method
-	private static BitSet[] leftParenthesesMap = new BitSet[tags.length];
-	private static BitSet[] rightParenthesesMap = new BitSet[tags.length];
-	
-	
-	static {
-		assert isPrefix.length == tags.length;
-		assert alwaysParenthesized.length == tags.length;
-		assert leftParenthesesMap.length == tags.length;
-		assert rightParenthesesMap.length == tags.length;
-
-		for (int i=0; i<tags.length; i++) {
-			leftParenthesesMap[i] = new BitSet();
-			rightParenthesesMap[i] = new BitSet();
-		}
-
-		leftParenthesesMap[UNMINUS-firstTag].set(UNMINUS);
-		leftParenthesesMap[UNMINUS-firstTag].set(MUL);
-		leftParenthesesMap[UNMINUS-firstTag].set(DIV);
-		leftParenthesesMap[UNMINUS-firstTag].set(MOD);
-		leftParenthesesMap[UNMINUS-firstTag].set(CONVERSE);
-		leftParenthesesMap[UNMINUS-firstTag].set(EXPN);
-		leftParenthesesMap[UNMINUS-firstTag].set(FUNIMAGE);
-		leftParenthesesMap[UNMINUS-firstTag].set(RELIMAGE);
-		
-		rightParenthesesMap[UNMINUS-firstTag].set(UNMINUS);
-		rightParenthesesMap[UNMINUS-firstTag].set(PLUS);
-		rightParenthesesMap[UNMINUS-firstTag].set(MINUS);
-		rightParenthesesMap[UNMINUS-firstTag].set(MUL);
-		rightParenthesesMap[UNMINUS-firstTag].set(DIV);
-		rightParenthesesMap[UNMINUS-firstTag].set(MOD);
-		rightParenthesesMap[UNMINUS-firstTag].set(CONVERSE);
-		rightParenthesesMap[UNMINUS-firstTag].set(EXPN);
-	}
-	
-	protected static boolean needsParentheses(int tag, boolean isRightChild,
-			int parentTag) {
-		if (isRightChild) {
-			return rightParenthesesMap[tag - firstTag].get(parentTag);
-		}
-		return leftParenthesesMap[tag - firstTag].get(parentTag);
-	}
 
 	/**
 	 * Returns the unique child of this node.
@@ -292,61 +210,10 @@ public class UnaryExpression extends Expression {
 		return child;
 	}
 	
-	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-
-		if (isPrefix()) {
-			if (isAlwaysParenthesized()) {
-				builder.append(getTagOperator());
-				builder.append('(');
-				child.toString(builder, false, getTag(), boundNames, withTypes);
-				builder.append(')');
-			} else if (needsParentheses(isRightChild, parentTag)) {
-				builder.append('(');
-				builder.append(getTagOperator());
-				child.toString(builder, false, getTag(), boundNames, withTypes);
-				builder.append(')');
-			} else {
-				builder.append(getTagOperator());
-				child.toString(builder, false, getTag(), boundNames, withTypes);
-			}
-		} else {
-			if (isAlwaysParenthesized()) {
-				// for now this is never the case
-				builder.append('(');
-				child.toString(builder, false, getTag(), boundNames, withTypes);
-				builder.append(')');
-				builder.append(getTagOperator());
-			} else if (needsParentheses(isRightChild, parentTag)) {
-				builder.append('(');
-				child.toString(builder, false, getTag(), boundNames, withTypes);
-				builder.append(getTagOperator());
-				builder.append(')');
-			} else {
-				child.toString(builder, false, getTag(), boundNames, withTypes);
-				builder.append(getTagOperator());
-			}
-		}
-	}
-
-	private boolean isPrefix() {
-		return isPrefix[getTag() - firstTag];
-	}
-
-	private boolean needsParentheses(boolean isRightChild, int parentTag) {
-		return needsParentheses(getTag(), isRightChild, parentTag);
-	}
-
 	protected String getTagOperator() {
 		return tags[getTag()-firstTag];
 	}
 	
-	// true if always needs parentheses
-	protected boolean isAlwaysParenthesized() {
-		return alwaysParenthesized[getTag()-firstTag];
-	}
-
 	@Override
 	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
 		if (this.getTag() != other.getTag()) {
@@ -449,23 +316,6 @@ public class UnaryExpression extends Expression {
 	@Override
 	protected void isLegible(LegibilityResult result, BoundIdentDecl[] quantifiedIdents) {
 		child.isLegible(result, quantifiedIdents);
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-
-		if (isPrefix()) {
-			builder.append(getTagOperator());
-			builder.append('(');
-			child.toStringFullyParenthesized(builder, boundNames);
-			builder.append(')');
-		} else {
-			builder.append('(');
-			child.toStringFullyParenthesized(builder, boundNames);
-			builder.append(')');
-			builder.append(getTagOperator());
-		}
 	}
 
 	@Override

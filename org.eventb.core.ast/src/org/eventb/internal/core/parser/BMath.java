@@ -11,6 +11,7 @@
 package org.eventb.internal.core.parser;
 
 import static org.eventb.core.ast.Formula.*;
+import static org.eventb.internal.core.parser.MainParsers.ASSIGNMENT_PARSER;
 import static org.eventb.internal.core.parser.OperatorRegistry.GROUP0;
 import static org.eventb.internal.core.parser.SubParsers.*;
 
@@ -54,7 +55,8 @@ public class BMath extends AbstractGrammar {
 	private static final String EMPTY_SET = "Empty Set";
 	private static final String BOUND_UNARY = "Bound Unary";
 	private static final String BOOL = "Bool";
-
+	private static final String INFIX_SUBST = "Infix Substitution";
+	
 	private static final String LOR_ID = "lor";
 	private static final String LAND_ID = "land";
 	private static final String BINTER_ID = "Binary Intersection";
@@ -144,7 +146,9 @@ public class BMath extends AbstractGrammar {
 	private static final String QINTER_ID = "Quantified Intersection";
 	private static final String KUNION_ID = "Unary Union";
 	private static final String KINTER_ID = "Unary Intersection";
-	
+	private static final String BECEQ_ID = "Becomes Equal To";
+	private static final String BECMO_ID = "Becomes Member Of";
+	private static final String BECST_ID = "Becomes Such That";
 	
 	/**
 	 * Configuration table used to parameterize the scanner, with Rodin
@@ -152,7 +156,7 @@ public class BMath extends AbstractGrammar {
 	 * 
 	 */
 	private final void initTokens() {
-		_PREDVAR = tokens.reserved();
+		_PREDVAR = tokens.reserved("Predicate Variable");
 		_RBRACKET = tokens.getOrAdd("]");
 		_RBRACE = tokens.getOrAdd("}");
 		_LAMBDA = tokens.getOrAdd("\u03bb");
@@ -214,8 +218,15 @@ public class BMath extends AbstractGrammar {
 			addOperator("prj2", KPRJ2_GEN_ID, ATOMIC_EXPR, new GenExpressionParser(KPRJ2, KPRJ2_GEN));
 			addOperator("id", KID_GEN_ID, ATOMIC_EXPR, new GenExpressionParser(KID, KID_GEN));
 			// BecomesEqualTo	ASSIGNMENT_PARSER is called from the top
+			addOperator("\u2254", BECOMES_EQUAL_TO, BECEQ_ID, INFIX_SUBST, ASSIGNMENT_PARSER);
+			// TODO replace with normal addition of led subparsers
+//			addTagKindParser(MainParsers.BECEQ_PARSER, _BECEQ);
 			// BecomesMemberOf	idem
+			addOperator(":\u2208", BECOMES_MEMBER_OF, BECMO_ID, INFIX_SUBST, ASSIGNMENT_PARSER);
+//			addTagKindParser(MainParsers.BECMO_PARSER, _BECMO);
 			// BecomesSuchThat	idem
+			addOperator(":\u2223", BECOMES_SUCH_THAT, BECST_ID, INFIX_SUBST, ASSIGNMENT_PARSER);
+//			addTagKindParser(MainParsers.BECST_PARSER, _BECST);
 			// BinaryExpression
 			addOperator("\u21a6", MAPSTO_ID, PAIR, new BinaryExpressionInfix(MAPSTO));
 			addOperator("\u2194", REL_ID, RELATION, new BinaryExpressionInfix(REL));

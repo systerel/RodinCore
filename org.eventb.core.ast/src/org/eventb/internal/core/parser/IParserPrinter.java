@@ -10,17 +10,16 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
-import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 
 /**
  * @author Nicolas Beauger
  *
  */
-public interface IParserPrinter {
+public interface IParserPrinter<T> {
 	
+	int[] getTags();
 	// no parse methods, as they are led/nud specific
 	
-	// TODO
-//	void toString(IToStringMediator mediator, IExtendedFormula formula);
+	void toString(IToStringMediator mediator, T toPrint);
 }

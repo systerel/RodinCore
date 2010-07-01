@@ -240,42 +240,6 @@ public class BecomesSuchThat extends Assignment {
 	}
 
 	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-
-		appendAssignedIdents(builder);
-		builder.append(" :\u2223 ");
-		
-		final String[] newBoundNames = 
-			catenateBoundIdentLists(boundNames, getLocalNames());
-		condition.toString(builder, false, NO_TAG, newBoundNames, withTypes);
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-		
-		appendAssignedIdents(builder);
-		builder.append(" :\u2223 (");
-
-		final String[] newBoundNames = 
-			catenateBoundIdentLists(boundNames, getLocalNames());
-		condition.toStringFullyParenthesized(builder, newBoundNames);
-		
-		builder.append(')');
-	}
-
-	// TODO check for other uses of primed variables.
-	private String[] getLocalNames() {
-		final int length = primedIdents.length;
-		String[] result = new String[length];
-		for (int i = 0; i < length; i++) {
-			result[i] = primedIdents[i].getName();
-		}
-		return result;
-	}
-
-	@Override
 	public boolean accept(IVisitor visitor) {
 		boolean goOn = visitor.enterBECOMES_SUCH_THAT(this);
 
