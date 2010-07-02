@@ -559,13 +559,13 @@ public abstract class HypothesisComposite implements
 	}
 
 	/**
-	 * Scroll to the bottom of the list of hypothesis rows.
+	 * Scroll to the bottom of the list of hypothesis rows. This is implemented
+	 * by showing the leftmost control of the last hypothesis.
 	 */
 	public void scrollToBottom() {
-		final int size = rows.size();
-		if (size > 0) {
-			final HypothesisRow lastHyp = rows.get(size-1);
-			lastHyp.revealHypothesisRow();
+		if (!rows.isEmpty()) {
+			final HypothesisRow lastRow = rows.get(rows.size() - 1);
+			scrolledForm.showControl(lastRow.getLeftmostControl());
 		}
 	}
 	
