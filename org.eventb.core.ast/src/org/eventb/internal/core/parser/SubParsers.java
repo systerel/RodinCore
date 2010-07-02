@@ -483,7 +483,7 @@ public class SubParsers {
 		
 	};
 
-	static final INudParser<Predicate> PRED_VAR_SUBPARSER = new ValuedNudParser<Predicate>(
+	public static final INudParser<Predicate> PRED_VAR_SUBPARSER = new ValuedNudParser<Predicate>(
 			PREDICATE_VARIABLE) {
 
 		@Override
@@ -636,9 +636,9 @@ public class SubParsers {
 
 	};
 	
-	static class AtomicExpressionParser extends PrefixNudParser<AtomicExpression> {
+	public static class AtomicExpressionParser extends PrefixNudParser<AtomicExpression> {
 	
-		protected AtomicExpressionParser(int tag) {
+		public AtomicExpressionParser(int tag) {
 			super(tag);
 		}
 	
@@ -689,7 +689,7 @@ public class SubParsers {
 
 	}
 
-	static class BinaryExpressionInfix extends DefaultLedExprParser<BinaryExpression> {
+	public static class BinaryExpressionInfix extends DefaultLedExprParser<BinaryExpression> {
 
 		public BinaryExpressionInfix(int tag) {
 			super(tag);
@@ -738,10 +738,10 @@ public class SubParsers {
 
 	}
 
-	static class AssociativeExpressionInfix extends AssociativeLedParser<AssociativeExpression, Expression> {
+	public static class AssociativeExpressionInfix extends AssociativeLedParser<AssociativeExpression, Expression> {
 
 
-		protected AssociativeExpressionInfix(int tag) {
+		public AssociativeExpressionInfix(int tag) {
 			super(tag, EXPR_PARSER);
 		}
 
@@ -786,7 +786,7 @@ public class SubParsers {
 		}
 	}
 	
-	static class AssociativePredicateInfix extends AssociativeLedParser<AssociativePredicate, Predicate> {
+	public static class AssociativePredicateInfix extends AssociativeLedParser<AssociativePredicate, Predicate> {
 
 		public AssociativePredicateInfix(int tag) {
 			super(tag, PRED_PARSER);
@@ -810,7 +810,7 @@ public class SubParsers {
 		}
 	}
 
-	static class RelationalPredicateInfix extends DefaultLedExprParser<RelationalPredicate> {
+	public static class RelationalPredicateInfix extends DefaultLedExprParser<RelationalPredicate> {
 
 		public RelationalPredicateInfix(int tag) {
 			super(tag);
@@ -833,11 +833,11 @@ public class SubParsers {
 		}
 	}
 
-	static class LedImage extends DefaultLedExprParser<BinaryExpression> {
+	public static class LedImage extends DefaultLedExprParser<BinaryExpression> {
 
 		private final int closeKind;
 		
-		protected LedImage(int tag, int closeKind) {
+		public LedImage(int tag, int closeKind) {
 			super(tag);
 			this.closeKind = closeKind;
 		}
@@ -869,7 +869,7 @@ public class SubParsers {
 		
 	}
 
-	static class LiteralPredicateParser extends PrefixNudParser<LiteralPredicate> {
+	public static class LiteralPredicateParser extends PrefixNudParser<LiteralPredicate> {
 
 		public LiteralPredicateParser(int tag) {
 			super(tag);
@@ -883,7 +883,7 @@ public class SubParsers {
 
 	}
 
-	static final INudParser<UnaryPredicate> NOT_PARSER = new PrefixNudParser<UnaryPredicate>(NOT) {
+	public static final INudParser<UnaryPredicate> NOT_PARSER = new PrefixNudParser<UnaryPredicate>(NOT) {
 
 		@Override
 		protected UnaryPredicate parseRight(ParserContext pc)
@@ -900,7 +900,7 @@ public class SubParsers {
 		}
 	};
 
-	static class BinaryPredicateParser extends DefaultLedPredParser<BinaryPredicate> {
+	public static class BinaryPredicateParser extends DefaultLedPredParser<BinaryPredicate> {
 
 		public BinaryPredicateParser(int tag) {
 			super(tag);
@@ -923,7 +923,7 @@ public class SubParsers {
 		}
 	}
 
-	static class QuantifiedPredicateParser extends PrefixNudParser<QuantifiedPredicate> {
+	public static class QuantifiedPredicateParser extends PrefixNudParser<QuantifiedPredicate> {
 
 		public QuantifiedPredicateParser(int tag) {
 			super(tag);
@@ -950,7 +950,7 @@ public class SubParsers {
 		}
 	}
 
-	static class UnaryExpressionParser extends ParenNudParser<UnaryExpression, Expression> {
+	public static class UnaryExpressionParser extends ParenNudParser<UnaryExpression, Expression> {
 
 		public UnaryExpressionParser(int tag) {
 			super(tag, EXPR_PARSER);
@@ -969,7 +969,7 @@ public class SubParsers {
 
 	}
 
-	static class GenExpressionParser extends AbstractNudParser<Expression> {
+	public static class GenExpressionParser extends AbstractNudParser<Expression> {
 		
 		private final INudParser<UnaryExpression> parserV1;
 		private final INudParser<AtomicExpression> parserV2;
@@ -1009,7 +1009,7 @@ public class SubParsers {
 
 	}
 	
-	static final ILedParser<UnaryExpression> CONVERSE_PARSER = new DefaultLedExprParser<UnaryExpression>(CONVERSE) {
+	public static final ILedParser<UnaryExpression> CONVERSE_PARSER = new DefaultLedExprParser<UnaryExpression>(CONVERSE) {
 
 		@Override
 		protected UnaryExpression makeValue(FormulaFactory factory, Expression left,
@@ -1034,7 +1034,7 @@ public class SubParsers {
 		}
 	};
 	
-	static final INudParser<BoolExpression> KBOOL_PARSER = new ParenNudParser<BoolExpression, Predicate>(KBOOL, PRED_PARSER) {
+	public static final INudParser<BoolExpression> KBOOL_PARSER = new ParenNudParser<BoolExpression, Predicate>(KBOOL, PRED_PARSER) {
 
 		@Override
 		protected BoolExpression makeValue(FormulaFactory factory, Predicate child,
@@ -1049,7 +1049,7 @@ public class SubParsers {
 
 	};
 
-	static final INudParser<SetExtension> SETEXT_PARSER = new PrefixNudParser<SetExtension>(SETEXT) {
+	public static final INudParser<SetExtension> SETEXT_PARSER = new PrefixNudParser<SetExtension>(SETEXT) {
 		
 		@Override
 		public SetExtension parseRight(ParserContext pc) throws SyntaxError {
@@ -1074,9 +1074,9 @@ public class SubParsers {
 		}
 	};
 	
-	static class ExplicitQuantExpr extends PrefixNudParser<QuantifiedExpression> {
+	public static class ExplicitQuantExpr extends PrefixNudParser<QuantifiedExpression> {
 		
-		protected ExplicitQuantExpr(int tag) {
+		public ExplicitQuantExpr(int tag) {
 			super(tag);
 		}
 
@@ -1110,7 +1110,7 @@ public class SubParsers {
 		}
 	}
 	
-	static final ExplicitQuantExpr CSET_EXPLICIT = new ExplicitQuantExpr(CSET) {
+	public static final ExplicitQuantExpr CSET_EXPLICIT = new ExplicitQuantExpr(CSET) {
 		
 		@Override
 		protected void progressClose(ParserContext pc) throws SyntaxError {
@@ -1124,9 +1124,9 @@ public class SubParsers {
 		}
 	};
 	
-	static class ImplicitQuantExpr extends PrefixNudParser<QuantifiedExpression> {
+	public static class ImplicitQuantExpr extends PrefixNudParser<QuantifiedExpression> {
 		
-		protected ImplicitQuantExpr(int tag) {
+		public ImplicitQuantExpr(int tag) {
 			super(tag);
 		}
 
@@ -1162,7 +1162,7 @@ public class SubParsers {
 		
 	}
 	
-	static final ImplicitQuantExpr CSET_IMPLICIT = new ImplicitQuantExpr(CSET) {
+	public static final ImplicitQuantExpr CSET_IMPLICIT = new ImplicitQuantExpr(CSET) {
 
 		@Override
 		protected void progressClose(ParserContext pc) throws SyntaxError {
@@ -1176,7 +1176,7 @@ public class SubParsers {
 		}
 	};
 	
-	static final INudParser<QuantifiedExpression> CSET_LAMBDA = new PrefixNudParser<QuantifiedExpression>(CSET) {
+	public static final INudParser<QuantifiedExpression> CSET_LAMBDA = new PrefixNudParser<QuantifiedExpression>(CSET) {
 		
 		@Override
 		public QuantifiedExpression parseRight(ParserContext pc) throws SyntaxError {
@@ -1392,7 +1392,7 @@ public class SubParsers {
 
 	};
 	
-	static final INudParser<? extends Formula<?>> PARTITION_PARSER = new AbstractNudParser<Formula<?>>(KPARTITION) {
+	public static final INudParser<? extends Formula<?>> PARTITION_PARSER = new AbstractNudParser<Formula<?>>(KPARTITION) {
 
 		public Formula<?> nud(ParserContext pc) throws SyntaxError {
 			switch(pc.version) {
@@ -1413,7 +1413,7 @@ public class SubParsers {
 
 	};
 
-	static final INudParser<SimplePredicate> FINITE_PARSER = new ParenNudParser<SimplePredicate, Expression>(KFINITE, EXPR_PARSER) {
+	public static final INudParser<SimplePredicate> FINITE_PARSER = new ParenNudParser<SimplePredicate, Expression>(KFINITE, EXPR_PARSER) {
 
 		@Override
 		protected SimplePredicate makeValue(FormulaFactory factory,
@@ -1428,7 +1428,7 @@ public class SubParsers {
 
 	};
 	
-	static final INudParser<Expression> UNMINUS_PARSER = new AbstractNudParser<Expression>(UNMINUS) {
+	public static final INudParser<Expression> UNMINUS_PARSER = new AbstractNudParser<Expression>(UNMINUS) {
 
 		public Expression nud(ParserContext pc) throws SyntaxError {
 			final int minusPos = pc.t.pos;

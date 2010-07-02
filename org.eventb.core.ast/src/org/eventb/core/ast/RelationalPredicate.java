@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.BMath.RELOP_PRED;
+
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +23,9 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.SubParsers.RelationalPredicateInfix;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -60,6 +65,42 @@ public class RelationalPredicate extends Predicate {
 	};
 	// For testing purposes
 	public static final int TAGS_LENGTH = tags.length;
+
+	private static final String EQUAL_ID = "equal";
+	private static final String GT_ID = "greater than";
+	private static final String LE_ID = "lower or equal";
+	private static final String IN_ID = "In";
+	private static final String NOTEQUAL_ID = "Not Equal";
+	private static final String LT_ID = "Lower Than";
+	private static final String GE_ID = "Greater or Equal";
+	private static final String NOTIN_ID = "Not In";
+	private static final String SUBSET_ID = "Subset";
+	private static final String NOTSUBSET_ID = "Not Subset";
+	private static final String SUBSETEQ_ID = "Subset or Equal";
+	private static final String NOTSUBSETEQ_ID = "Not Subset or Equal";
+	
+	/**
+	 * @since 2.0
+	 */
+	public static void init(BMath grammar) {
+		try {		
+			grammar.addOperator("=", EQUAL_ID, RELOP_PRED, new RelationalPredicateInfix(EQUAL));
+			grammar.addOperator("≠", NOTEQUAL_ID, RELOP_PRED, new RelationalPredicateInfix(NOTEQUAL));
+			grammar.addOperator("<", LT_ID, RELOP_PRED, new RelationalPredicateInfix(LT));
+			grammar.addOperator("≤", LE_ID, RELOP_PRED, new RelationalPredicateInfix(LE));
+			grammar.addOperator(">", GT_ID, RELOP_PRED, new RelationalPredicateInfix(GT));
+			grammar.addOperator("\u2265", GE_ID, RELOP_PRED, new RelationalPredicateInfix(GE));
+			grammar.addOperator("\u2208", IN_ID, RELOP_PRED, new RelationalPredicateInfix(IN));
+			grammar.addOperator("\u2209", NOTIN_ID, RELOP_PRED, new RelationalPredicateInfix(NOTIN));
+			grammar.addOperator("\u2282", SUBSET_ID, RELOP_PRED, new RelationalPredicateInfix(SUBSET));
+			grammar.addOperator("\u2284", NOTSUBSET_ID, RELOP_PRED, new RelationalPredicateInfix(NOTSUBSET));
+			grammar.addOperator("\u2286", SUBSETEQ_ID, RELOP_PRED, new RelationalPredicateInfix(SUBSETEQ));
+			grammar.addOperator("\u2288", NOTSUBSETEQ_ID, RELOP_PRED, new RelationalPredicateInfix(NOTSUBSETEQ));
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	protected RelationalPredicate(Expression left, Expression right,
 			int tag, SourceLocation location, FormulaFactory ff) {

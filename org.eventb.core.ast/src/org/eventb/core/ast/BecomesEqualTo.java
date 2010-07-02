@@ -12,12 +12,16 @@
  *******************************************************************************/ 
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.MainParsers.ASSIGNMENT_PARSER;
+
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -31,6 +35,19 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  */
 public class BecomesEqualTo extends Assignment {
 
+	private static final String BECEQ_ID = "Becomes Equal To";
+	/**
+	 * @since 2.0
+	 */
+	public static void init(BMath grammar) {
+		try {		
+			grammar.addOperator("\u2254", BECOMES_EQUAL_TO, BECEQ_ID, BMath.INFIX_SUBST, ASSIGNMENT_PARSER);
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	private final Expression[] values;
 	
 	protected BecomesEqualTo(FreeIdentifier assignedIdent, Expression value,

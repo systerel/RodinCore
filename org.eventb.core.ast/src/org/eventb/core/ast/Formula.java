@@ -87,7 +87,7 @@ public abstract class Formula<T extends Formula<T>> {
 	// information is either inexistant (pure syntactical formula) or transitory
 	// (during type-check).
 	protected boolean typeChecked;
-	
+
 	/**
 	 * <code>NO_TAG</code> is used as a placeholder when one needs to indicate
 	 * that a tag value is invalid or absent. It is different from all valid
@@ -1442,6 +1442,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @return Returns the printable syntax tree.
 	 */
 	public final String getSyntaxTree() {
+		// TODO use a mediator instead
 		return getSyntaxTree(NO_STRING, "");
 	}
 

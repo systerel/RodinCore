@@ -13,6 +13,13 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.BMath.ARITHMETIC;
+import static org.eventb.internal.core.parser.BMath.BINOP;
+import static org.eventb.internal.core.parser.BMath.FUNCTIONAL;
+import static org.eventb.internal.core.parser.BMath.INTERVAL;
+import static org.eventb.internal.core.parser.BMath.PAIR;
+import static org.eventb.internal.core.parser.BMath.RELATION;
+
 import java.math.BigInteger;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -23,6 +30,10 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.SubParsers.BinaryExpressionInfix;
+import org.eventb.internal.core.parser.SubParsers.LedImage;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -81,6 +92,155 @@ public class BinaryExpression extends Expression {
 	// For testing purposes
 	public static final int TAGS_LENGTH = tags.length;
 
+	/**
+	 * @since 2.0
+	 */
+	public static final String PPROD_ID = "Parallel Product";
+	/**
+	 * @since 2.0
+	 */
+	public static final String REL_ID = "Relation";
+	/**
+	 * @since 2.0
+	 */
+	public static final String TREL_ID = "Total Relation";
+	/**
+	 * @since 2.0
+	 */
+	public static final String SREL_ID = "Surjective Relation";
+	/**
+	 * @since 2.0
+	 */
+	public static final String STREL_ID = "Surjective Total Relation";
+	/**
+	 * @since 2.0
+	 */
+	public static final String PFUN_ID = "Partial Function";
+	/**
+	 * @since 2.0
+	 */
+	public static final String PINJ_ID = "Partial Injection";
+	/**
+	 * @since 2.0
+	 */
+	public static final String TINJ_ID = "Total Injection";
+	/**
+	 * @since 2.0
+	 */
+	public static final String PSUR_ID = "Partial Surjection";
+	/**
+	 * @since 2.0
+	 */
+	public static final String TSUR_ID = "Total Surjection";
+	/**
+	 * @since 2.0
+	 */
+	public static final String TBIJ_ID = "Total Bijection";
+	/**
+	 * @since 2.0
+	 */
+	public static final String SETMINUS_ID = "Set Minus";
+	/**
+	 * @since 2.0
+	 */
+	public static final String DPROD_ID = "Direct Product";
+	/**
+	 * @since 2.0
+	 */
+	public static final String DOMRES_ID = "Domain Restriction";
+	/**
+	 * @since 2.0
+	 */
+	public static final String DOMSUB_ID = "Domain Subtraction";
+	/**
+	 * @since 2.0
+	 */
+	public static final String RANRES_ID = "Range Restriction";
+	/**
+	 * @since 2.0
+	 */
+	public static final String RANSUB_ID = "Range Subtraction";
+	/**
+	 * @since 2.0
+	 */
+	public static final String MINUS_ID = "Minus";
+	/**
+	 * @since 2.0
+	 */
+	public static final String DIV_ID = "Integer Division";
+	/**
+	 * @since 2.0
+	 */
+	public static final String MOD_ID = "Modulo";
+	/**
+	 * @since 2.0
+	 */
+	public static final String EXPN_ID = "Integer Exponentiation";
+	/**
+	 * @since 2.0
+	 */
+	public static final String TFUN_ID = "Total Function";
+	/**
+	 * @since 2.0
+	 */
+	public static final String UPTO_ID = "Up To";
+	/**
+	 * @since 2.0
+	 */
+	public static final String MAPSTO_ID = "Maps to";
+	/**
+	 * @since 2.0
+	 */
+	public static final String CPROD_ID = "Cartesian Product";
+	/**
+	 * @since 2.0
+	 */
+	public static final String FUNIMAGE_ID = "Fun Image";
+	/**
+	 * @since 2.0
+	 */
+	public static final String RELIMAGE_ID = "Relational Image";
+
+	/**
+	 * @since 2.0
+	 */
+	public static void init(BMath grammar) {
+		try {
+			grammar.addOperator("\u21a6", MAPSTO_ID, PAIR, new BinaryExpressionInfix(MAPSTO));
+			grammar.addOperator("\u2194", REL_ID, RELATION, new BinaryExpressionInfix(REL));
+			grammar.addOperator("\ue100", TREL_ID, RELATION, new BinaryExpressionInfix(TREL));
+			grammar.addOperator("\ue101", SREL_ID, RELATION, new BinaryExpressionInfix(SREL));
+			grammar.addOperator("\ue102", STREL_ID, RELATION, new BinaryExpressionInfix(STREL));
+			grammar.addOperator("\u21f8", PFUN_ID, RELATION, new BinaryExpressionInfix(PFUN));
+			grammar.addOperator("\u2192", TFUN_ID, RELATION, new BinaryExpressionInfix(TFUN));
+			grammar.addOperator("\u2914", PINJ_ID, RELATION, new BinaryExpressionInfix(PINJ));
+			grammar.addOperator("\u21a3", TINJ_ID, RELATION, new BinaryExpressionInfix(TINJ));
+			grammar.addOperator("\u2900", PSUR_ID, RELATION, new BinaryExpressionInfix(PSUR));
+			grammar.addOperator("\u21a0", TSUR_ID, RELATION, new BinaryExpressionInfix(TSUR));
+			grammar.addOperator("\u2916", TBIJ_ID, RELATION, new BinaryExpressionInfix(TBIJ));
+			grammar.addOperator("\u2216", SETMINUS_ID, BINOP, new BinaryExpressionInfix(SETMINUS));
+			grammar.addOperator("\u00d7", CPROD_ID, BINOP, new BinaryExpressionInfix(CPROD));
+			grammar.addOperator("\u2297", DPROD_ID, BINOP, new BinaryExpressionInfix(DPROD));
+			grammar.addOperator("\u2225", PPROD_ID, BINOP, new BinaryExpressionInfix(PPROD));
+			grammar.addOperator("\u25c1", DOMRES_ID, BINOP, new BinaryExpressionInfix(DOMRES));
+			grammar.addOperator("\u2a64", DOMSUB_ID, BINOP, new BinaryExpressionInfix(DOMSUB));
+			grammar.addOperator("\u25b7", RANRES_ID, BINOP, new BinaryExpressionInfix(RANRES));
+			grammar.addOperator("\u2a65", RANSUB_ID, BINOP, new BinaryExpressionInfix(RANSUB));
+			grammar.addOperator("\u2025", UPTO_ID, INTERVAL, new BinaryExpressionInfix(UPTO));
+			grammar.addOperator("\u2212", MINUS_ID, ARITHMETIC, new BinaryExpressionInfix(MINUS));
+			grammar.addOperator("\u00f7", DIV_ID, ARITHMETIC, new BinaryExpressionInfix(DIV));
+			grammar.addOperator("mod", MOD_ID, ARITHMETIC, new BinaryExpressionInfix(MOD));
+			grammar.addOperator("\u005e", EXPN_ID, ARITHMETIC, new BinaryExpressionInfix(EXPN));
+			grammar.addOperator("(", FUNIMAGE_ID, FUNCTIONAL, new LedImage(FUNIMAGE, BMath._RPAR));
+			grammar.addOperator("[", RELIMAGE_ID, FUNCTIONAL, new LedImage(RELIMAGE, BMath._RBRACKET));
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+
+	
 	protected BinaryExpression(Expression left, Expression right, int tag,
 			SourceLocation location, FormulaFactory factory) {
 		super (tag, location, 

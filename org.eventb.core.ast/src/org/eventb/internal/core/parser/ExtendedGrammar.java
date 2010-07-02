@@ -32,7 +32,6 @@ public class ExtendedGrammar extends BMath {
 		this.extensions = extensions;
 	}
 	
-	// TODO associate tag to parser to fetch printers
 	@Override
 	public void init() {
 		super.init();
@@ -67,8 +66,8 @@ public class ExtendedGrammar extends BMath {
 			e.printStackTrace();
 		}
 		for (IFormulaExtension extension : extensions) {
-			extension.addCompatibilities(new CompatibilityMediator(opRegistry));
-			extension.addPriorities(new PriorityMediator(opRegistry));
+			extension.addCompatibilities(new CompatibilityMediator(this));
+			extension.addPriorities(new PriorityMediator(this));
 
 		}
 	}

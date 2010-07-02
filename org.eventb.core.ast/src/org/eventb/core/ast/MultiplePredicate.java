@@ -25,6 +25,9 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.SubParsers;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -54,6 +57,19 @@ public class MultiplePredicate extends Predicate {
 	};
 	// For testing purposes
 	public static final int TAGS_LENGTH = tags.length;
+
+	private static final String KPARTITION_ID = "Partition";
+	/**
+	 * @since 2.0
+	 */
+	public static void init(BMath grammar) {
+		try {
+			grammar.addOperator("partition", KPARTITION_ID, BMath.ATOMIC_PRED, SubParsers.PARTITION_PARSER);
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	protected MultiplePredicate(Expression[] children, int tag,
 			SourceLocation location, FormulaFactory factory) {

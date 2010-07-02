@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.SubParsers.KBOOL_PARSER;
+
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +22,8 @@ import java.util.Set;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -34,7 +38,22 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class BoolExpression extends Expression {
+	
+	private static final String KBOOL_ID = "To Bool";
 
+	/**
+	 * @since 2.0
+	 */
+	public static void init(BMath grammar) {
+		try {
+			grammar.addOperator("bool", KBOOL_ID, BMath.BOOL_EXPR, KBOOL_PARSER);
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
 	// child
 	private final Predicate child;
 	

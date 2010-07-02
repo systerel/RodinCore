@@ -42,7 +42,7 @@ public abstract class AbstractGrammar {
 	static int _NOOP;
 	static int _OPEN;
 	static int _LPAR;
-	static int _RPAR;
+	public static int _RPAR;
 	public static int _IDENT;
 	public static int _INTLIT;
 	static int _COMMA;
@@ -51,7 +51,7 @@ public abstract class AbstractGrammar {
 	
 	private final LexKindParserDB subParsers = new LexKindParserDB();
 	
-	protected final OperatorRegistry opRegistry = new OperatorRegistry();
+	private final OperatorRegistry opRegistry = new OperatorRegistry();
 	
 	// used by extended grammar to fetch appropriate parser
 	// and by extended formulae to fetch appropriate printers
@@ -104,6 +104,22 @@ public abstract class AbstractGrammar {
 
 	}
 
+	public void addCompatibility(String leftOpId, String rightOpId) {
+		opRegistry.addCompatibility(leftOpId, rightOpId);
+	}
+	
+	public void addCompatibility(String leftOpId, String rightOpId, LanguageVersion version) {
+		opRegistry.addCompatibility(leftOpId, rightOpId, version);
+	}
+	
+	public void addPriority(String lowOpId, String highOpId) throws CycleError {
+		opRegistry.addPriority(lowOpId, highOpId);
+	}
+	
+	public void addGroupPriority(String lowGroupId, String highGroupId) throws CycleError {
+		opRegistry.addGroupPriority(lowGroupId, highGroupId);
+	}
+
 	public List<INudParser<? extends Formula<?>>> getNudParsers(Token token) {
 		return subParsers.getNudParsers(token);
 	}
@@ -121,7 +137,7 @@ public abstract class AbstractGrammar {
 		propParsers.add(parserBuilder);
 	}
 	
-	protected void addOperator(String token, String operatorId, String groupId,
+	public void addOperator(String token, String operatorId, String groupId,
 			INudParser<? extends Formula<?>> subParser)
 			throws OverrideException {
 		final int kind = tokens.getOrAdd(token);
@@ -131,7 +147,7 @@ public abstract class AbstractGrammar {
 	}
 
 	// FIXME remove method after correctly refactoring so as not to need it
-	protected void addOperator(String token, int tag, String operatorId,
+	public void addOperator(String token, int tag, String operatorId,
 			String groupId, INudParser<? extends Formula<?>> subParser)
 			throws OverrideException {
 		final int kind = tokens.getOrAdd(token);
@@ -140,7 +156,7 @@ public abstract class AbstractGrammar {
 		addTagKindParser(subParser, kind, tag);
 	}
 
-	protected void addOperator(String token, String operatorId, String groupId,
+	public void addOperator(String token, String operatorId, String groupId,
 			ILedParser<? extends Formula<?>> subParser)
 			throws OverrideException {
 		final int kind = tokens.getOrAdd(token);
@@ -149,7 +165,7 @@ public abstract class AbstractGrammar {
 		addTagKindParser(subParser, kind);
 	}
 
-	protected void addOperator(int kind, String operatorId, String groupId,
+	public void addOperator(int kind, String operatorId, String groupId,
 			INudParser<? extends Formula<?>> subParser)
 			throws OverrideException {
 		opRegistry.addOperator(kind, operatorId, groupId);

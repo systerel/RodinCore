@@ -13,6 +13,13 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.core.ast.BinaryExpression.MINUS_ID;
+import static org.eventb.internal.core.parser.BMath.ARITHMETIC;
+import static org.eventb.internal.core.parser.BMath.BOUND_UNARY;
+import static org.eventb.internal.core.parser.BMath.UNARY_RELATION;
+import static org.eventb.internal.core.parser.SubParsers.CONVERSE_PARSER;
+import static org.eventb.internal.core.parser.SubParsers.UNMINUS_PARSER;
+
 import java.math.BigInteger;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -22,6 +29,9 @@ import java.util.Set;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.SubParsers.UnaryExpressionParser;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -63,6 +73,42 @@ public class UnaryExpression extends Expression {
 	};
 	// For testing purposes
 	public static final int TAGS_LENGTH = tags.length;
+
+	private static final String KCARD_ID = "Cardinal";
+	private static final String POW_ID = "Power Set";
+	private static final String POW1_ID = "Powerset 1";
+	private static final String KDOM_ID = "Domain";
+	private static final String KRAN_ID = "Range";
+	private static final String KMIN_ID = "Min";
+	private static final String KMAX_ID = "Max";
+	private static final String KUNION_ID = "Unary Union";
+	private static final String KINTER_ID = "Unary Intersection";
+	/**
+	 * @since 2.0
+	 */
+	public static final String CONVERSE_ID = "Converse";
+
+	/**
+	 * @since 2.0
+	 */
+	public static void init(BMath grammar) {
+		try {		
+			grammar.addOperator("card", KCARD_ID, BOUND_UNARY, new UnaryExpressionParser(KCARD));
+			grammar.addOperator("\u2119", POW_ID, BOUND_UNARY, new UnaryExpressionParser(POW));
+			grammar.addOperator("\u21191", POW1_ID, BOUND_UNARY, new UnaryExpressionParser(POW1));
+			grammar.addOperator("union", KUNION_ID, BOUND_UNARY, new UnaryExpressionParser(KUNION));
+			grammar.addOperator("inter", KINTER_ID, BOUND_UNARY, new UnaryExpressionParser(KINTER));
+			grammar.addOperator("dom", KDOM_ID, BOUND_UNARY, new UnaryExpressionParser(KDOM));
+			grammar.addOperator("ran", KRAN_ID, BOUND_UNARY, new UnaryExpressionParser(KRAN));
+			grammar.addOperator("min", KMIN_ID, BOUND_UNARY, new UnaryExpressionParser(KMIN));
+			grammar.addOperator("max", KMAX_ID, BOUND_UNARY, new UnaryExpressionParser(KMAX));
+			grammar.addOperator("\u223c", CONVERSE_ID, UNARY_RELATION, CONVERSE_PARSER);
+			grammar.addOperator("\u2212", MINUS_ID, ARITHMETIC, UNMINUS_PARSER);
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	protected UnaryExpression(Expression child, int tag, SourceLocation location,
 			FormulaFactory factory) {

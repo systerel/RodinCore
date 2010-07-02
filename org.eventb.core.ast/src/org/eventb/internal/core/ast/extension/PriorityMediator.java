@@ -12,7 +12,7 @@ package org.eventb.internal.core.ast.extension;
 
 import org.eventb.core.ast.extension.CycleError;
 import org.eventb.core.ast.extension.IPriorityMediator;
-import org.eventb.internal.core.parser.OperatorRegistry;
+import org.eventb.internal.core.parser.AbstractGrammar;
 
 /**
  * @author Nicolas Beauger
@@ -20,19 +20,19 @@ import org.eventb.internal.core.parser.OperatorRegistry;
  */
 public class PriorityMediator implements IPriorityMediator {
 
-	private final OperatorRegistry registry;
+	private final AbstractGrammar grammar;
 	
-	public PriorityMediator(OperatorRegistry registry) {
-		this.registry = registry;
+	public PriorityMediator(AbstractGrammar grammar) {
+		this.grammar = grammar;
 	}
 
-	public void addPriority(String leftOpId, String rightOpId) throws CycleError {
-		registry.addPriority(leftOpId, rightOpId);
+	public void addPriority(String lowOpId, String highOpId) throws CycleError {
+		grammar.addPriority(lowOpId, highOpId);
 	}
 
-	public void addGroupPriority(String leftGroupId, String rightGroupId)
+	public void addGroupPriority(String lowGroupId, String highGroupId)
 			throws CycleError {
-		registry.addGroupPriority(leftGroupId, rightGroupId);
+		grammar.addGroupPriority(lowGroupId, highGroupId);
 	}
 
 }

@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.BMath.NOT_PRED;
+import static org.eventb.internal.core.parser.SubParsers.NOT_PARSER;
+
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +23,8 @@ import java.util.Set;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -44,6 +49,20 @@ public class UnaryPredicate extends Predicate {
 	};
 	// For testing purposes
 	public static final int TAGS_LENGTH = tags.length;
+
+	private static final String NOT_ID = "Not";
+
+	/**
+	 * @since 2.0
+	 */
+	public static void init(BMath grammar) {
+		try {		
+			grammar.addOperator("\u00ac", NOT_ID, NOT_PRED, NOT_PARSER);
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	protected UnaryPredicate(Predicate child, int tag, SourceLocation location,
 			FormulaFactory ff) {

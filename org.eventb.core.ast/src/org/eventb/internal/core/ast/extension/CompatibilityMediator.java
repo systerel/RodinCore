@@ -11,7 +11,7 @@
 package org.eventb.internal.core.ast.extension;
 
 import org.eventb.core.ast.extension.ICompatibilityMediator;
-import org.eventb.internal.core.parser.OperatorRegistry;
+import org.eventb.internal.core.parser.AbstractGrammar;
 
 /**
  * @author Nicolas Beauger
@@ -19,14 +19,14 @@ import org.eventb.internal.core.parser.OperatorRegistry;
  */
 public class CompatibilityMediator implements ICompatibilityMediator {
 
-	final OperatorRegistry registry;
+	final AbstractGrammar grammar;
 	
-	public CompatibilityMediator(OperatorRegistry registry) {
-		this.registry = registry;
+	public CompatibilityMediator(AbstractGrammar grammar) {
+		this.grammar = grammar;
 	}
 
 	public void addCompatibility(String leftOpId, String rightOpId) {
-		registry.addCompatibility(leftOpId, rightOpId);
+		grammar.addCompatibility(leftOpId, rightOpId);
 	}
 
 }

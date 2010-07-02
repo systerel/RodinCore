@@ -13,6 +13,9 @@
  *******************************************************************************/ 
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.BMath.ATOMIC_EXPR;
+import static org.eventb.internal.core.parser.BMath.EMPTY_SET;
+
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +24,10 @@ import java.util.Set;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.SubParsers.AtomicExpressionParser;
+import org.eventb.internal.core.parser.SubParsers.GenExpressionParser;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -58,6 +65,43 @@ public class AtomicExpression extends Expression {
 	};
 	// For testing purposes
 	public static final int TAGS_LENGTH = tags.length;
+	private static final String EMPTYSET_ID = "Empty Set";
+	private static final String INTEGER_ID = "Integer";
+	private static final String TRUE_ID = "True";
+	private static final String KID_GEN_ID = "Identity";
+	private static final String KPRJ1_GEN_ID = "Projection 1";
+	private static final String KPRJ2_GEN_ID = "Projection 2";
+	private static final String NATURAL_ID = "Natural";
+	private static final String NATURAL1_ID = "Natural1";
+	private static final String BOOL_ID = "Bool Type";
+	private static final String FALSE_ID = "False";
+	private static final String KPRED_ID = "Predecessor";
+	private static final String KSUCC_ID = "Successor";
+
+	// TODO separate initV1 and initV2, do not use GenExpressionParser anymore
+	/**
+	 * @since 2.0
+	 */
+	@SuppressWarnings("deprecation")
+	public static void init(BMath grammar) {
+		try {
+			grammar.addOperator("\u2124", INTEGER_ID, ATOMIC_EXPR, new AtomicExpressionParser(INTEGER));
+			grammar.addOperator("\u2115", NATURAL_ID, ATOMIC_EXPR, new AtomicExpressionParser(NATURAL));
+			grammar.addOperator("\u21151", NATURAL1_ID, ATOMIC_EXPR, new AtomicExpressionParser(NATURAL1));
+			grammar.addOperator("BOOL", BOOL_ID, ATOMIC_EXPR, new AtomicExpressionParser(Formula.BOOL));
+			grammar.addOperator("TRUE", TRUE_ID, ATOMIC_EXPR, new AtomicExpressionParser(TRUE));
+			grammar.addOperator("FALSE", FALSE_ID, ATOMIC_EXPR, new AtomicExpressionParser(FALSE));
+			grammar.addOperator("\u2205", EMPTYSET_ID, EMPTY_SET, new AtomicExpressionParser(EMPTYSET));
+			grammar.addOperator("pred", KPRED_ID, ATOMIC_EXPR, new AtomicExpressionParser(KPRED));
+			grammar.addOperator("succ", KSUCC_ID, ATOMIC_EXPR, new AtomicExpressionParser(KSUCC));
+			grammar.addOperator("prj1", KPRJ1_GEN_ID, ATOMIC_EXPR, new GenExpressionParser(KPRJ1, KPRJ1_GEN));
+			grammar.addOperator("prj2", KPRJ2_GEN_ID, ATOMIC_EXPR, new GenExpressionParser(KPRJ2, KPRJ2_GEN));
+			grammar.addOperator("id", KID_GEN_ID, ATOMIC_EXPR, new GenExpressionParser(KID, KID_GEN));
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	protected AtomicExpression(int tag, SourceLocation location, Type type,
 			FormulaFactory factory) {

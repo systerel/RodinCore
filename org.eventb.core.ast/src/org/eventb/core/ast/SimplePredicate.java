@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.BMath.ATOMIC_PRED;
+import static org.eventb.internal.core.parser.SubParsers.FINITE_PARSER;
+
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +24,8 @@ import java.util.Set;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -47,6 +52,20 @@ public class SimplePredicate extends Predicate {
 		"finite" // KFINITE
 	};
 	
+	private static final String KFINITE_ID = "Finite";
+
+	/**
+	 * @since 2.0
+	 */
+	public static void init(BMath grammar) {
+		try {		
+			grammar.addOperator("finite", KFINITE_ID, ATOMIC_PRED, FINITE_PARSER);
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	protected SimplePredicate(Expression child, int tag,
 			SourceLocation location, FormulaFactory ff) {
 		

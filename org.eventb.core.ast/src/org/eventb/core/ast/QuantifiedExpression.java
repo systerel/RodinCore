@@ -14,13 +14,16 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
-import static org.eventb.core.ast.QuantifiedHelper.appendBoundIdentifiersString;
 import static org.eventb.core.ast.QuantifiedHelper.areEqualQuantifiers;
 import static org.eventb.core.ast.QuantifiedHelper.checkBoundIdentTypes;
 import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
-import static org.eventb.core.ast.QuantifiedUtil.resolveIdents;
+import static org.eventb.internal.core.parser.BMath.BRACE_SETS;
+import static org.eventb.internal.core.parser.BMath.QUANTIFICATION;
+import static org.eventb.internal.core.parser.SubParsers.CSET_EXPLICIT;
+import static org.eventb.internal.core.parser.SubParsers.CSET_IMPLICIT;
+import static org.eventb.internal.core.parser.SubParsers.CSET_LAMBDA;
 
 import java.util.BitSet;
 import java.util.Collection;
@@ -34,6 +37,10 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.SubParsers.ExplicitQuantExpr;
+import org.eventb.internal.core.parser.SubParsers.ImplicitQuantExpr;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -128,6 +135,29 @@ public class QuantifiedExpression extends Expression {
 	};
 	// For testing purposes
 	public static final int TAGS_LENGTH = tags.length;
+
+	private static final String CSET_ID = "Comprehension Set";
+	private static final String LAMBDA_ID = "Lambda";
+	private static final String QUNION_ID = "Quantified Union";
+	private static final String QINTER_ID = "Quantified Intersection";
+
+	/**
+	 * @since 2.0
+	 */
+	public static void init(BMath grammar) {
+		try {
+			grammar.addOperator("\u22c3", QUNION_ID, QUANTIFICATION, new ExplicitQuantExpr(QUNION));
+			grammar.addOperator("\u22c3", QUNION_ID, QUANTIFICATION, new ImplicitQuantExpr(QUNION));
+			grammar.addOperator("\u22c2", QINTER_ID, QUANTIFICATION, new ExplicitQuantExpr(QINTER));
+			grammar.addOperator("\u22c2", QINTER_ID, QUANTIFICATION, new ImplicitQuantExpr(QINTER));
+			grammar.addOperator("{", CSET_ID, BRACE_SETS, CSET_EXPLICIT);
+			grammar.addOperator("{", CSET_ID, BRACE_SETS, CSET_IMPLICIT);
+			grammar.addOperator("\u03bb", LAMBDA_ID, QUANTIFICATION, CSET_LAMBDA);
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * @param expr the expression in the quantified expression. Must not be <code>null</code>

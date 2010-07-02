@@ -13,6 +13,7 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
+import static org.eventb.internal.core.parser.BMath.LOGIC_PRED;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +28,9 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.SubParsers.AssociativePredicateInfix;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -56,6 +60,29 @@ public class AssociativePredicate extends Predicate {
 	};
 	// For testing purposes
 	public static final int TAGS_LENGTH = tags.length;
+	
+	/**
+	 * @since 2.0
+	 */
+	public static final String LOR_ID = "lor";
+	/**
+	 * @since 2.0
+	 */
+	public static final String LAND_ID = "land";
+
+	
+	/**
+	 * @since 2.0
+	 */
+	public static void init(BMath grammar) {
+		try {
+			grammar.addOperator("\u2227", LAND_ID, LOGIC_PRED, new AssociativePredicateInfix(LAND));
+			grammar.addOperator("\u2228", LOR_ID, LOGIC_PRED, new AssociativePredicateInfix(LOR));
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	protected AssociativePredicate(Predicate[] children, int tag,
 			SourceLocation location, FormulaFactory ff) {

@@ -420,7 +420,7 @@ public class MainParsers {
 	// returned by sub-parsers, then implement assignment parsing
 	// with led sub-parsers
 	/** @see GenParser#parse() */
-	static final INudParser<Assignment> ASSIGNMENT_PARSER = new AbstractNudParser<Assignment>(BECOMES_EQUAL_TO, BECOMES_MEMBER_OF, BECOMES_SUCH_THAT) {
+	public static final INudParser<Assignment> ASSIGNMENT_PARSER = new AbstractNudParser<Assignment>(BECOMES_EQUAL_TO, BECOMES_MEMBER_OF, BECOMES_SUCH_THAT) {
 
 		public Assignment nud(ParserContext pc) throws SyntaxError {
 			final List<FreeIdentifier> idents = pc.subParse(FREE_IDENT_LIST_PARSER);

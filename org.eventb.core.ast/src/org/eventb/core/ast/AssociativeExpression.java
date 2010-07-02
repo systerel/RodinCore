@@ -16,6 +16,7 @@ package org.eventb.core.ast;
 
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
+import static org.eventb.internal.core.parser.BMath.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +30,9 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.SubParsers.AssociativeExpressionInfix;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -49,6 +53,8 @@ public class AssociativeExpression extends Expression {
 
 	// offset of the corresponding tag-interval in Formula
 	protected static final int firstTag = Formula.FIRST_ASSOCIATIVE_EXPRESSION;
+	
+	// TODO remove when no more used (syntax tree) 
 	protected static final String[] tags = {
 		"\u222a", // BUNION
 		"\u2229", // BINTER
@@ -60,6 +66,54 @@ public class AssociativeExpression extends Expression {
 	};
 	// For testing purposes
 	public static final int TAGS_LENGTH = tags.length;
+	
+	/**
+	 * @since 2.0
+	 */
+	public static final String BINTER_ID = "Binary Intersection";
+	/**
+	 * @since 2.0
+	 */
+	public static final String BUNION_ID = "Binary Union";
+	/**
+	 * @since 2.0
+	 */
+	public static final String BCOMP_ID = "Backward Composition";
+	/**
+	 * @since 2.0
+	 */
+	public static final String FCOMP_ID = "Forward Composition";
+	/**
+	 * @since 2.0
+	 */
+	public static final String OVR_ID = "Overload";
+	/**
+	 * @since 2.0
+	 */
+	public static final String MUL_ID = "mul";
+	/**
+	 * @since 2.0
+	 */
+	public static final String PLUS_ID = "plus";
+	/**
+	 * @since 2.0
+	 */
+	// FIXME just before merging the branch back to trunk, make this class an
+	// interface then move this code to a non published area
+	public static void init(BMath grammar) {
+		try {
+			grammar.addOperator("\u222a", BUNION_ID, BINOP, new AssociativeExpressionInfix(BUNION));
+			grammar.addOperator("\u2229", BINTER_ID, BINOP, new AssociativeExpressionInfix(BINTER));
+			grammar.addOperator("\u2218", BCOMP_ID, BINOP, new AssociativeExpressionInfix(BCOMP));
+			grammar.addOperator("\u003b", FCOMP_ID, BINOP, new AssociativeExpressionInfix(FCOMP));
+			grammar.addOperator("\ue103", OVR_ID, BINOP, new AssociativeExpressionInfix(OVR));
+			grammar.addOperator("+", PLUS_ID, ARITHMETIC, new AssociativeExpressionInfix(PLUS));
+			grammar.addOperator("\u2217", MUL_ID, ARITHMETIC, new AssociativeExpressionInfix(MUL));
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	// The children of this associative expression.
 	// Is never null and contains at least two elements by construction.
