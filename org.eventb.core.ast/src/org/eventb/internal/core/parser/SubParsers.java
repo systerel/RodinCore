@@ -181,7 +181,7 @@ public class SubParsers {
 			return makeValue(pc.factory, child, pc.getSourceLocation());
 		}
 		
-		protected abstract U getChild(T t);
+		protected abstract U getChild(T parent);
 		
 		@Override
 		public void toString(IToStringMediator mediator, T toPrint) {
@@ -249,21 +249,21 @@ public class SubParsers {
 		/**
 		 * Returns the left child (or first child) of the given formula node.
 		 * 
-		 * @param t
+		 * @param parent
 		 *            a formula node
 		 * @return a left node
 		 */
-		protected abstract Child getLeft(T t);
+		protected abstract Child getLeft(T parent);
 
 		/**
 		 * Return the right child of the given node, or <code>null</code> if
 		 * none.
 		 * 
-		 * @param t
+		 * @param parent
 		 *            a formula node
 		 * @return a right node or <code>null</code>
 		 */
-		protected abstract Child getRight(T t);
+		protected abstract Child getRight(T parent);
 		
 		public final T led(Formula<?> left, ParserContext pc) throws SyntaxError {
 			pc.progress();
@@ -339,7 +339,7 @@ public class SubParsers {
 			return makeResult(pc.factory, children, pc.getSourceLocation());
 		}
 		
-		protected abstract Child[] getChildren(T t);
+		protected abstract Child[] getChildren(T parent);
 		
 		public void toString(IToStringMediator mediator, T toPrint) {
 			final Child[] children = getChildren(toPrint);
@@ -702,13 +702,13 @@ public class SubParsers {
 		}
 		
 		@Override
-		protected Expression getLeft(BinaryExpression t) {
-			return t.getLeft();
+		protected Expression getLeft(BinaryExpression parent) {
+			return parent.getLeft();
 		}
 
 		@Override
-		protected Expression getRight(BinaryExpression t) {
-			return t.getRight();
+		protected Expression getRight(BinaryExpression parent) {
+			return parent.getRight();
 		}
 
 	}
@@ -727,13 +727,13 @@ public class SubParsers {
 		}
 		
 		@Override
-		protected Expression getLeft(ExtendedExpression t) {
-			return t.getChildExpressions()[0];
+		protected Expression getLeft(ExtendedExpression parent) {
+			return parent.getChildExpressions()[0];
 		}
 
 		@Override
-		protected Expression getRight(ExtendedExpression t) {
-			return t.getChildExpressions()[1];
+		protected Expression getRight(ExtendedExpression parent) {
+			return parent.getChildExpressions()[1];
 		}
 
 	}
@@ -757,8 +757,8 @@ public class SubParsers {
 		}
 
 		@Override
-		protected Expression[] getChildren(AssociativeExpression t) {
-			return t.getChildren();
+		protected Expression[] getChildren(AssociativeExpression parent) {
+			return parent.getChildren();
 		}
 		
 	}
@@ -781,8 +781,8 @@ public class SubParsers {
 		}
 
 		@Override
-		protected Expression[] getChildren(ExtendedExpression t) {
-			return t.getChildExpressions();
+		protected Expression[] getChildren(ExtendedExpression parent) {
+			return parent.getChildExpressions();
 		}
 	}
 	
@@ -805,8 +805,8 @@ public class SubParsers {
 		}
 
 		@Override
-		protected Predicate[] getChildren(AssociativePredicate t) {
-			return t.getChildren();
+		protected Predicate[] getChildren(AssociativePredicate parent) {
+			return parent.getChildren();
 		}
 	}
 
@@ -823,13 +823,13 @@ public class SubParsers {
 		}
 		
 		@Override
-		protected Expression getLeft(RelationalPredicate t) {
-			return t.getLeft();
+		protected Expression getLeft(RelationalPredicate parent) {
+			return parent.getLeft();
 		}
 
 		@Override
-		protected Expression getRight(RelationalPredicate t) {
-			return t.getRight();
+		protected Expression getRight(RelationalPredicate parent) {
+			return parent.getRight();
 		}
 	}
 
@@ -858,13 +858,13 @@ public class SubParsers {
 		}
 
 		@Override
-		protected Expression getRight(BinaryExpression t) {
-			return t.getRight();
+		protected Expression getRight(BinaryExpression parent) {
+			return parent.getRight();
 		}
 
 		@Override
-		protected Expression getLeft(BinaryExpression t) {
-			return t.getLeft();
+		protected Expression getLeft(BinaryExpression parent) {
+			return parent.getLeft();
 		}
 		
 	}
@@ -913,13 +913,13 @@ public class SubParsers {
 		}
 		
 		@Override
-		protected Predicate getLeft(BinaryPredicate t) {
-			return t.getLeft();
+		protected Predicate getLeft(BinaryPredicate parent) {
+			return parent.getLeft();
 		}
 
 		@Override
-		protected Predicate getRight(BinaryPredicate t) {
-			return t.getRight();
+		protected Predicate getRight(BinaryPredicate parent) {
+			return parent.getRight();
 		}
 	}
 
@@ -963,8 +963,8 @@ public class SubParsers {
 		}
 
 		@Override
-		protected Expression getChild(UnaryExpression t) {
-			return t.getChild();
+		protected Expression getChild(UnaryExpression parent) {
+			return parent.getChild();
 		}
 
 	}
@@ -1024,12 +1024,12 @@ public class SubParsers {
 		}
 		
 		@Override
-		protected Expression getLeft(UnaryExpression t) {
-			return t.getChild();
+		protected Expression getLeft(UnaryExpression parent) {
+			return parent.getChild();
 		}
 
 		@Override
-		protected Expression getRight(UnaryExpression t) {
+		protected Expression getRight(UnaryExpression parent) {
 			return null;
 		}
 	};
@@ -1043,8 +1043,8 @@ public class SubParsers {
 		}
 
 		@Override
-		protected Predicate getChild(BoolExpression t) {
-			return t.getPredicate();
+		protected Predicate getChild(BoolExpression parent) {
+			return parent.getPredicate();
 		}
 
 	};
@@ -1386,8 +1386,8 @@ public class SubParsers {
 		}
 
 		@Override
-		protected List<Expression> getChild(MultiplePredicate t) {
-			return Arrays.asList(t.getChildren());
+		protected List<Expression> getChild(MultiplePredicate parent) {
+			return Arrays.asList(parent.getChildren());
 		}
 
 	};
@@ -1422,8 +1422,8 @@ public class SubParsers {
 		}
 
 		@Override
-		protected Expression getChild(SimplePredicate t) {
-			return t.getExpression();
+		protected Expression getChild(SimplePredicate parent) {
+			return parent.getExpression();
 		}
 
 	};
@@ -1475,8 +1475,8 @@ public class SubParsers {
 		}
 
 		@Override
-		protected List<Expression> getChild(ExtendedExpression t) {
-			return Arrays.asList(t.getChildExpressions());
+		protected List<Expression> getChild(ExtendedExpression parent) {
+			return Arrays.asList(parent.getChildExpressions());
 		}
 
 	}
