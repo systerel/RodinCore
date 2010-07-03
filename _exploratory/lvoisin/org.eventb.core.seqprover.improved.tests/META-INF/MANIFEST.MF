@@ -8,4 +8,8 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: org.junit4,
  org.eventb.core.ast,
  org.eventb.core.seqprover,
- org.eventb.core.seqprover.improved
+ org.eventb.core.seqprover.improved,
+ org.rodinp.core,
+ org.eclipse.core.runtime,
+ org.eventb.core.tests,
+ org.eventb.core
