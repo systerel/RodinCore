@@ -80,6 +80,8 @@ public class FormulaFactory {
 	 * @since 2.0
 	 */
 	public static FormulaFactory getInstance(Set<IFormulaExtension> extensions) {
+		// TODO implement a cache that returns the same instance 
+		// if the same set is given
 		final Map<Integer, IFormulaExtension> extMap = new HashMap<Integer, IFormulaExtension>();
 		synchronized (ALL_EXTENSIONS) {
 			for (IFormulaExtension extension : extensions) {

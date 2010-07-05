@@ -32,7 +32,6 @@ import org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship;
  */
 public abstract class AbstractGrammar {
 
-	private static final String EMPTY_STRING = "";
 	private static final String EOF_ID = "End of File";
 	private static final String NOOP_ID = "No Operator";
 	private static final String OPEN_ID = "Open";
@@ -60,9 +59,6 @@ public abstract class AbstractGrammar {
 	private final PropertyParserDB propParsers = new PropertyParserDB();
 	
 	private final Map<Integer, Integer> closeOpenKinds = new HashMap<Integer, Integer>();
-	
-	private final AllInOnceMap<Integer, IParserPrinter<? extends Formula<?>>> tagParsers = new AllInOnceMap<Integer, IParserPrinter<? extends Formula<?>>>();
-	private final AllInOnceMap<Integer, Integer> tagKind = new AllInOnceMap<Integer, Integer>();
 	
 	public boolean isOperator(int kind) {
 		// TODO could be replaced by 'there exists a tag for the given kind'
@@ -95,8 +91,6 @@ public abstract class AbstractGrammar {
 		try {
 			_INTLIT = addReservedSubParser(SubParsers.INTLIT_SUBPARSER, INTLIT_IMAGE);
 			_IDENT = addReservedSubParser(SubParsers.IDENT_SUBPARSER, IDENT_IMAGE);
-			addTagKindParser(SubParsers.FREE_IDENT_SUBPARSER, _IDENT);
-			addTagKindParser(SubParsers.BOUND_IDENT_DECL_SUBPARSER, _IDENT);
 			subParsers.addNud(_LPAR, MainParsers.CLOSED_SUGAR);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
@@ -144,7 +138,6 @@ public abstract class AbstractGrammar {
 		final int kind = tokens.getOrAdd(token);
 		opRegistry.addOperator(kind, operatorId, groupId);
 		subParsers.addNud(kind, subParser);
-		addTagKindParser(subParser, kind);
 	}
 
 	// FIXME remove method after correctly refactoring so as not to need it
@@ -154,7 +147,6 @@ public abstract class AbstractGrammar {
 		final int kind = tokens.getOrAdd(token);
 		opRegistry.addOperator(kind, operatorId, groupId);
 		subParsers.addNud(kind, subParser);
-		addTagKindParser(subParser, kind, tag);
 	}
 
 	public void addOperator(String token, String operatorId, String groupId,
@@ -163,7 +155,6 @@ public abstract class AbstractGrammar {
 		final int kind = tokens.getOrAdd(token);
 		opRegistry.addOperator(kind, operatorId, groupId);
 		subParsers.addLed(kind, subParser);
-		addTagKindParser(subParser, kind);
 	}
 
 	public void addOperator(int kind, String operatorId, String groupId,
@@ -171,7 +162,6 @@ public abstract class AbstractGrammar {
 			throws OverrideException {
 		opRegistry.addOperator(kind, operatorId, groupId);
 		subParsers.addNud(kind, subParser);
-		addTagKindParser(subParser, kind);
 	}
 
 	protected void addOpenClose(String open, String close) {
@@ -192,7 +182,6 @@ public abstract class AbstractGrammar {
 			throws OverrideException {
 		final int kind = tokens.reserved(image);
 		subParsers.addNud(kind, subParser);
-		addTagKindParser(subParser, kind);
 		return kind;
 	}
 	
@@ -223,37 +212,6 @@ public abstract class AbstractGrammar {
 		return tokens.getElem(kind);
 	}
 
-	public String getTagImage(int tag) {
-		final Integer kind = tagKind.get(tag);
-		if (kind == null) {
-			return EMPTY_STRING;
-		}
-		return getImage(kind);
-	}
-
-	private void addTagKindParser(IParserPrinter<? extends Formula<?>> parser,
-			int kind, int tag) {
-		if (tag == Formula.NO_TAG) {
-			return;
-		}
-		if (!tagKind.containsKey(tag)) {
-			// FIXME should remove !tagKind.containsKey(tag) but
-			// problem with Lambda (same tag for kinds 'lambda' and '{')
-			tagKind.put(tag, kind);
-		}
-		if (!tagParsers.containsKey(tag)) {
-			tagParsers.put(tag, parser);
-		}
-	}
-
-	// FIXME should be private
-	private void addTagKindParser(IParserPrinter<? extends Formula<?>> parser,
-			int kind) {
-		for (int tag : parser.getTags()) {
-			addTagKindParser(parser, kind, tag);
-		}
-	}
-
 	/**
 	 * Returns whether parentheses are needed around a formula tag when it
 	 * appears as a child of formula parentTag.
@@ -261,21 +219,20 @@ public abstract class AbstractGrammar {
 	 * @param isRightChild
 	 *            <code>true</code> if tag node is the right child parentTag,
 	 *            <code>false</code> if it is the left child or a unique child
-	 * @param childTag
-	 * @param parentTag
+	 * @param childKind
+	 * @param parentKind
 	 * @param version
 	 * @return <code>true</code> iff parentheses are needed
 	 * @since 2.0
 	 */
-	public boolean needsParentheses(boolean isRightChild, int childTag, int parentTag, LanguageVersion version) {
-		if (childTag == parentTag) {
+	public boolean needsParentheses(boolean isRightChild, int childKind,
+			int parentKind, LanguageVersion version) {
+		if (childKind == parentKind) {
 			// FIXME false for maplets
 			// FIXME missing case for 1 + - 2 (PLUS UNMINUS)
 			return true;
 		}
-		final Integer childKind = tagKind.getNoCheck(childTag);
-		final Integer parentKind = tagKind.getNoCheck(parentTag);
-		if (childKind == null || parentKind == null) { // EOF for instance
+		if (parentKind == _EOF) { // TODO maybe not needed
 			return false;
 		}
 		if (!isOperator(parentKind) || !isOperator(childKind)) {

@@ -62,7 +62,7 @@ import org.eventb.internal.core.parser.AbstractGrammar;
 		// FIXME can only print with latest language version
 		final AbstractGrammar grammar = factory.getGrammar();
 		return grammar.needsParentheses(isRightOvr, child.getTag(), tag,
-				LanguageVersion.LATEST);
+				LanguageVersion.LATEST); // FIXME kind
 	}
 
 	protected final void printFormula(
@@ -114,7 +114,7 @@ import org.eventb.internal.core.parser.AbstractGrammar;
 	}
 
 	public void appendOperator() {
-		final String opImage = factory.getGrammar().getTagImage(tag);
+		final String opImage = factory.getGrammar().getImage(tag); // FIXME kind
 		builder.append(opImage);
 	}
 
