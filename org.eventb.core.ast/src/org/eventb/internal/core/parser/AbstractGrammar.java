@@ -12,6 +12,7 @@ package org.eventb.internal.core.parser;
 
 import static org.eventb.internal.core.parser.OperatorRegistry.GROUP0;
 import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.INCOMPATIBLE;
+import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.LEFT_PRIORITY;
 
 import java.util.HashMap;
 import java.util.List;
@@ -267,6 +268,11 @@ public abstract class AbstractGrammar {
 	 * @since 2.0
 	 */
 	public boolean needsParentheses(boolean isRightChild, int childTag, int parentTag, LanguageVersion version) {
+		if (childTag == parentTag) {
+			// FIXME false for maplets
+			// FIXME missing case for 1 + - 2 (PLUS UNMINUS)
+			return true;
+		}
 		final Integer childKind = tagKind.getNoCheck(childTag);
 		final Integer parentKind = tagKind.getNoCheck(parentTag);
 		if (childKind == null || parentKind == null) { // EOF for instance
@@ -277,8 +283,8 @@ public abstract class AbstractGrammar {
 		}
 		final OperatorRelationship opRel = getOperatorRelationship(parentKind,
 				childKind, version);
-		
-		return opRel == INCOMPATIBLE;
+		// FIXME wrong rule: take isRightChild into account
+		return (opRel == LEFT_PRIORITY || opRel == INCOMPATIBLE);
 	}
 
 }

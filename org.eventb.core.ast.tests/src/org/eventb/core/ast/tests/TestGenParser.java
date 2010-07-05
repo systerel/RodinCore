@@ -1878,7 +1878,7 @@ public class TestGenParser extends AbstractTests {
 		doParseUnparseTest("1−0", expected);
 	}
 		
-	public void testToStringAndExists() throws Exception {
+	public void testToStringAndExistsL() throws Exception {
 		final Predicate expected = ff.makeAssociativePredicate(Formula.LAND,
 				Arrays.<Predicate> asList(
 						ff.makeQuantifiedPredicate(EXISTS, asList(BID_x), LIT_BFALSE, null),
@@ -1886,4 +1886,21 @@ public class TestGenParser extends AbstractTests {
 		doParseUnparseTest("(∃x·⊥)∧⊤", expected);
 
 	}
+	
+	public void testToStringAndExistsR() throws Exception {
+		final Predicate expected = ff.makeAssociativePredicate(Formula.LAND,
+				Arrays.<Predicate> asList(
+						LIT_BTRUE,
+						ff.makeQuantifiedPredicate(EXISTS, asList(BID_x), LIT_BFALSE, null)
+				), null);
+		doParseUnparseTest("⊤∧(∃x·⊥)", expected);
+	}
+	
+	public void testToStringAndExistsNoPar() throws Exception {
+		final IParseResult result = parsePredRes("⊤∧∃x·⊥");
+		assertFailure(result, new ASTProblem(new SourceLocation(2, 2),
+				ProblemKind.IncompatibleOperators, ProblemSeverities.Error,
+				"∧", "∃"));
+	}
+	
 }

@@ -627,11 +627,9 @@ public class SubParsers {
 
 		public void toString(IToStringMediator mediator, Expression toPrint) {
 			// FIXME parentheses might not always be needed
-			mediator.append("(");
 			mediator.forward(toPrint, false);
-			mediator.append("\u2982");
+			mediator.append(" \u2982 ");
 			TYPE_PARSER.toString(mediator, toPrint.getType());
-			mediator.append(")");
 		}
 
 	};
@@ -1154,7 +1152,6 @@ public class SubParsers {
 				QuantifiedExpression toPrint) {
 			super.toString(mediator, toPrint);
 			final BoundIdentDecl[] boundDecls = toPrint.getBoundIdentDecls();
-			BOUND_IDENT_DECL_LIST_PARSER.toString(mediator, asList(boundDecls));
 			mediator.subPrint(toPrint.getExpression(), false, boundDecls);
 			mediator.appendImage(_MID);
 			mediator.subPrint(toPrint.getPredicate(), false, boundDecls);
@@ -1197,6 +1194,7 @@ public class SubParsers {
 		@Override
 		public void toString(IToStringMediator mediator,
 				QuantifiedExpression toPrint) {
+			// FIXME appends a '{' linked to the tag instead of a lambda
 			super.toString(mediator, toPrint);
 			final Expression chile = toPrint.getExpression();
 			assert chile.getTag() == MAPSTO;
