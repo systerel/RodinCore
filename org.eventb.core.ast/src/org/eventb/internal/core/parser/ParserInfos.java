@@ -28,13 +28,8 @@ import org.eventb.core.ast.extension.IOperatorProperties;
  */
 public class ParserInfos  {
 
-	// TODO consider moving printer info to IParserPrinter
-	// in order to have parse/print code closer to each other
-	// the problem is that it requires to make an instance of the parser with an
-	// unneeded tag just to do something a static method would do
-	// but as the syntax symbol is different for each one, the printing is also
-	// an instance behaviour
-	public static enum ExtendedParsers implements IParserInfo<ExtendedExpression> {
+	public static enum ExtendedExpressionParsers implements
+			IParserInfo<ExtendedExpression> {
 
 		EXTENDED_ATOMIC_EXPRESSION(makeOperProps(PREFIX, EXPRESSION, NULLARY, EXPRESSION), true) {
 
@@ -76,7 +71,7 @@ public class ParserInfos  {
 		private final IOperatorProperties operProps;
 		private final boolean isExtension;
 		
-		private ExtendedParsers(IOperatorProperties operProps,
+		private ExtendedExpressionParsers(IOperatorProperties operProps,
 				boolean isExtension) {
 			this.operProps = operProps;
 			this.isExtension = isExtension;

@@ -34,6 +34,7 @@ import org.eventb.internal.core.ast.BoundIdentSubstitution;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.SubParsers.QuantifiedPredicateParser;
@@ -143,16 +144,6 @@ public class QuantifiedPredicate extends Predicate {
 		typeChecked = true;
 	}
 	
-	// indicates when the toString method should put parentheses
-	private final static BitSet parenthesesMap = new BitSet();
-	static {
-		parenthesesMap.set(Formula.NOT);
-		parenthesesMap.set(Formula.LIMP);
-		parenthesesMap.set(Formula.LEQV);
-		parenthesesMap.set(Formula.LAND);
-		parenthesesMap.set(Formula.LOR);
-	}
-	
 	/**
 	 * Returns the list of the identifiers which are bound by this formula.
 	 * 
@@ -171,6 +162,11 @@ public class QuantifiedPredicate extends Predicate {
 		return pred;
 	}
 	
+	@Override
+	protected void toString(IToStringMediator mediator) {
+		new QuantifiedPredicateParser(getTag()).toString(mediator, this);
+	}
+
 	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		String[] boundNamesBelow = catenateBoundIdentLists(boundNames, quantifiedIdentifiers);

@@ -22,12 +22,16 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.IExtendedFormula;
+import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.TypeCheckMediator;
+import org.eventb.internal.core.parser.ExtendedGrammar;
+import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -37,6 +41,22 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ExtendedPredicate extends Predicate implements IExtendedFormula {
+
+	/**
+	 * @since 2.0
+	 */
+	public static void init(ExtendedGrammar grammar) {
+	// TODO
+//		try {
+//			for (IParserInfo<? extends Formula<?>> parserInfo : ExtendedPredicateParsers
+//					.values()) {
+//				grammar.addParser(parserInfo);
+//			}
+//		} catch (OverrideException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+	}
 
 	private final Expression[] childExpressions;
 	private final Predicate[] childPredicates;
@@ -123,6 +143,17 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	protected boolean solveChildrenTypes(TypeUnifier unifier) {
 		return ExtensionHelper.solveTypes(unifier, childExpressions,
 				childPredicates);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected void toString(IToStringMediator mediator) {
+		final IOperatorProperties properties = extension.getKind()
+				.getProperties();
+		final IParserPrinter<? extends Formula<?>> parser = ff.getGrammar()
+				.getParser(properties, getTag());
+		final IParserPrinter<ExtendedPredicate> extParser = (IParserPrinter<ExtendedPredicate>) parser;
+		extParser.toString(mediator, this);
 	}
 
 	@Override

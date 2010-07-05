@@ -36,6 +36,7 @@ import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.SimpleSubstitution;
 import org.eventb.internal.core.ast.Substitution;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -1093,8 +1094,7 @@ public abstract class Formula<T extends Formula<T>> {
 		final StringBuilder builder = new StringBuilder();
 		final ToStringFullParenMediator strMed = new ToStringFullParenMediator(
 				getFactory(), tag, builder, NO_STRING, false);
-		strMed.printFormula(getTypedThis(), false, NO_BOUND_IDENT_DECL, false,
-				false, null);
+		toString(strMed);
 		return builder.toString();
 	}
 
@@ -1115,9 +1115,8 @@ public abstract class Formula<T extends Formula<T>> {
 	public final String toString() {
 		final StringBuilder builder = new StringBuilder();
 		final ToStringMediator strMed = new ToStringMediator(getFactory(),
-				builder, NO_STRING, NO_TAG, false, false);
-		strMed.printFormula(getTypedThis(), false, NO_BOUND_IDENT_DECL, false,
-				false, null);
+				builder, NO_STRING, tag, false, false);
+		toString(strMed);
 		return builder.toString();
 	}
 
@@ -1137,11 +1136,15 @@ public abstract class Formula<T extends Formula<T>> {
 		final StringBuilder builder = new StringBuilder();
 		final ToStringMediator strMed = new ToStringMediator(getFactory(),
 				builder, NO_STRING, tag, true, false);
-		strMed.printFormula(getTypedThis(), false, NO_BOUND_IDENT_DECL, true,
-				false, null);
+		toString(strMed);
 		return builder.toString();
 	}
 	
+	/**
+	 * @since 2.0
+	 */
+	protected abstract void toString(IToStringMediator mediator);
+
 	/**
 	 * @since 2.0
 	 */

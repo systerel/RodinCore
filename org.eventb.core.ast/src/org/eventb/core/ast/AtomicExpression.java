@@ -24,6 +24,7 @@ import java.util.Set;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.SubParsers.AtomicExpressionParser;
@@ -257,6 +258,11 @@ public class AtomicExpression extends Expression {
 	@Override
 	protected boolean solveChildrenTypes(TypeUnifier unifier) {
 		return true;
+	}
+
+	@Override
+	protected void toString(IToStringMediator mediator) {
+		new AtomicExpressionParser(getTag()).toString(mediator, this);
 	}
 
 	@Override

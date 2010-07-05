@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -142,6 +143,11 @@ public class BecomesEqualTo extends Assignment {
 		for (Expression value: values) {
 			value.collectNamesAbove(names, boundNames, offset);
 		}
+	}
+
+	@Override
+	protected void toString(IToStringMediator mediator) {
+		ASSIGNMENT_PARSER.toString(mediator, this);
 	}
 
 	/* (non-Javadoc)

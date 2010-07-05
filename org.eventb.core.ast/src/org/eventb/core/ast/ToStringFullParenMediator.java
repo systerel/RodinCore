@@ -24,8 +24,8 @@ import org.eventb.internal.core.ast.extension.IToStringMediator;
 	}
 
 	@Override
-	protected <T extends Formula<?>> IToStringMediator makeInstance(T child,
-			boolean isRightOvr, boolean withTypes, final String[] newBoundNames) {
+	protected IToStringMediator makeInstance(Formula<?> child,
+			boolean isRightOvr, boolean withTypes, String[] newBoundNames) {
 		return new ToStringFullParenMediator(factory, child.getTag(), builder,
 				newBoundNames, isRightOvr);
 	}

@@ -13,7 +13,6 @@ package org.eventb.internal.core.ast.extension;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.internal.core.parser.IParserPrinter;
 
 
 /**
@@ -27,16 +26,14 @@ public interface IToStringMediator {
 	
 	void appendImage(int kind);
 
-	<T extends Formula<?>> void subPrint(T child, boolean isRight);
+	void subPrint(Formula<?> child, boolean isRight);
 
-	<T extends Formula<?>> void forward(T child, boolean withTypes);
+	void forward(Formula<?> child, boolean withTypes);
 
-	<T extends Formula<?>> void subPrint(T child, boolean isRight, BoundIdentDecl[] boundDecls);
+	void subPrint(Formula<?> child, boolean isRightOvr,
+			BoundIdentDecl[] boundDecls);
 	
-	<T extends Formula<?>> void subPrint(T child, boolean isRightOvr,
-			BoundIdentDecl[] boundDecls, IParserPrinter<T> parser);
-	
-	<T extends Formula<?>> void forward(T child);
+	void forward(Formula<?> child);
 	
 	FormulaFactory getFactory();
 

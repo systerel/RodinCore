@@ -23,6 +23,7 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.SubParsers.RelationalPredicateInfix;
@@ -196,6 +197,11 @@ public class RelationalPredicate extends Predicate {
 	 */
 	public Expression getRight() {
 		return right;
+	}
+
+	@Override
+	protected void toString(IToStringMediator mediator) {
+		new RelationalPredicateInfix(getTag()).toString(mediator, this);
 	}
 
 	@Override

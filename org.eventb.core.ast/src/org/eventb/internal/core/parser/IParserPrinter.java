@@ -18,6 +18,7 @@ import org.eventb.internal.core.ast.extension.IToStringMediator;
  */
 public interface IParserPrinter<T> {
 	
+	// TODO remove
 	int[] getTags();
 	// no parse methods, as they are led/nud specific
 	

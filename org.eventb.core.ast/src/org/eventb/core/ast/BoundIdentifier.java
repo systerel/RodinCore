@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.SubParsers.IDENT_SUBPARSER;
+
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +22,7 @@ import java.util.Set;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -86,6 +89,11 @@ public class BoundIdentifier extends Identifier {
 	 */
 	public BoundIdentDecl getDeclaration(BoundIdentDecl[] boundIdentDecls) {
 		return boundIdentDecls[boundIdentDecls.length - boundIndex - 1];
+	}
+
+	@Override
+	protected void toString(IToStringMediator mediator) {
+		IDENT_SUBPARSER.toString(mediator, this);
 	}
 
 	private static String resolveIndex(int index, String[] boundIdents) {

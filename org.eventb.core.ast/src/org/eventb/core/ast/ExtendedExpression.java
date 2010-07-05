@@ -23,12 +23,19 @@ import java.util.Set;
 
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
+import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.TypeCheckMediator;
 import org.eventb.internal.core.ast.extension.TypeMediator;
+import org.eventb.internal.core.parser.ExtendedGrammar;
+import org.eventb.internal.core.parser.IParserInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.ParserInfos.ExtendedExpressionParsers;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -38,6 +45,21 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ExtendedExpression extends Expression implements IExtendedFormula {
+
+	/**
+	 * @since 2.0
+	 */
+	public static void init(ExtendedGrammar grammar) {
+		try {
+			for (IParserInfo<? extends Formula<?>> parserInfo : ExtendedExpressionParsers
+					.values()) {
+				grammar.addParser(parserInfo);
+			}
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	private final Expression[] childExpressions;
 	private final Predicate[] childPredicates;
@@ -166,6 +188,17 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	@Override
 	protected FormulaFactory getFactory() {
 		return ff;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected void toString(IToStringMediator mediator) {
+		final IOperatorProperties properties = extension.getKind()
+				.getProperties();
+		final IParserPrinter<? extends Formula<?>> parser = ff.getGrammar()
+				.getParser(properties, getTag());
+		final IParserPrinter<ExtendedExpression> extParser = (IParserPrinter<ExtendedExpression>) parser;
+		extParser.toString(mediator, this);
 	}
 
 	@Override

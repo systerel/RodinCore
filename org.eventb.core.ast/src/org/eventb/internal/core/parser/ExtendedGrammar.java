@@ -12,6 +12,8 @@ package org.eventb.internal.core.parser;
 
 import java.util.Set;
 
+import org.eventb.core.ast.ExtendedExpression;
+import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IExtensionKind;
@@ -35,10 +37,9 @@ public class ExtendedGrammar extends BMath {
 	@Override
 	public void init() {
 		super.init();
+		ExtendedExpression.init(this);
+		ExtendedPredicate.init(this);
 		try {
-			for (IParserInfo<? extends Formula<?>> parserInfo: ParserInfos.ExtendedParsers.values()) {
-				addParser(parserInfo);
-			}
 			for (IFormulaExtension extension : extensions) {
 				final int tag = FormulaFactory.getTag(extension);
 				final String operatorId = extension.getId();

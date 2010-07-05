@@ -14,6 +14,7 @@ package org.eventb.core.ast;
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
 import static org.eventb.core.ast.AssociativeHelper.isLegibleList;
+import static org.eventb.internal.core.parser.SubParsers.MULTIPLE_PREDICATE_PARSER;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -25,6 +26,7 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.SubParsers;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
@@ -59,12 +61,14 @@ public class MultiplePredicate extends Predicate {
 	public static final int TAGS_LENGTH = tags.length;
 
 	private static final String KPARTITION_ID = "Partition";
+
 	/**
 	 * @since 2.0
 	 */
-	public static void init(BMath grammar) {
+	public static void initV2(BMath grammar) {
 		try {
-			grammar.addOperator("partition", KPARTITION_ID, BMath.ATOMIC_PRED, SubParsers.PARTITION_PARSER);
+			grammar.addOperator("partition", KPARTITION_ID, BMath.ATOMIC_PRED,
+					MULTIPLE_PREDICATE_PARSER);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -129,6 +133,11 @@ public class MultiplePredicate extends Predicate {
 	 */
 	public Expression[] getChildren() {
 		return children.clone();
+	}
+
+	@Override
+	protected void toString(IToStringMediator mediator) {
+		SubParsers.MULTIPLE_PREDICATE_PARSER.toString(mediator, this);
 	}
 
 	@Override

@@ -29,6 +29,7 @@ import java.util.Set;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.SubParsers.UnaryExpressionParser;
@@ -350,6 +351,20 @@ public class UnaryExpression extends Expression {
 	@Override
 	protected boolean solveChildrenTypes(TypeUnifier unifier) {
 		return child.solveType(unifier);
+	}
+
+	@Override
+	protected void toString(IToStringMediator mediator) {
+		switch (getTag()) {
+		case CONVERSE:
+			CONVERSE_PARSER.toString(mediator, this);
+			break;
+		case UNMINUS:
+			UNMINUS_PARSER.toString(mediator, this);
+			break;
+		default:
+			new UnaryExpressionParser(getTag()).toString(mediator,	this);
+		}
 	}
 
 	@Override

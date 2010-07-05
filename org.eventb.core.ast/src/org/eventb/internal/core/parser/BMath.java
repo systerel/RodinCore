@@ -181,7 +181,8 @@ public class BMath extends AbstractGrammar {
 			// LiteralPredicate
 			LiteralPredicate.init(this);
 			// MultiplePredicate
-			MultiplePredicate.init(this);
+			// FIXME move to V2 specific grammar
+			MultiplePredicate.initV2(this);
 			// PredicateVariable
 			PredicateVariable.init(this);
 			// QuantifiedExpression

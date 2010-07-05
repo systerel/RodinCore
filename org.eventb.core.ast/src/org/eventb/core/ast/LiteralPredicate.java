@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.SubParsers.LiteralPredicateParser;
@@ -102,6 +103,11 @@ public class LiteralPredicate extends Predicate {
 		return true;
 	}
 	
+	@Override
+	protected void toString(IToStringMediator mediator) {
+		new LiteralPredicateParser(getTag()).toString(mediator, this);
+	}
+
 	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		return tabs + this.getClass().getSimpleName() + " ["+tags[getTag()-firstTag] + "]" + "\n";

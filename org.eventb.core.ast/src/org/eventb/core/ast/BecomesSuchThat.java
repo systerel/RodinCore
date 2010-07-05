@@ -25,6 +25,7 @@ import org.eventb.internal.core.ast.BoundIdentSubstitution;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Substitution;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -185,6 +186,11 @@ public class BecomesSuchThat extends Assignment {
 		}
 		final int newOffset = offset + primedIdents.length;
 		condition.collectNamesAbove(names, boundNames, newOffset);
+	}
+
+	@Override
+	protected void toString(IToStringMediator mediator) {
+		ASSIGNMENT_PARSER.toString(mediator, this);
 	}
 
 	@Override

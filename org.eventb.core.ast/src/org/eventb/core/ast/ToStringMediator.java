@@ -10,19 +10,12 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
-import static java.util.Arrays.asList;
-
-import java.util.ArrayList;
-import java.util.List;
+import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
 
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.AbstractGrammar;
-import org.eventb.internal.core.parser.IParserPrinter;
 
 /**
- * TODO instead of encapsulating children, pass the parent node as argument to
- * extension methods
- * 
  * @author Nicolas Beauger
  */
 /* package */class ToStringMediator implements IToStringMediator {
@@ -50,24 +43,19 @@ import org.eventb.internal.core.parser.IParserPrinter;
 		builder.append(string);
 	}
 
-	public <T extends Formula<?>> void subPrint(T child, boolean isRightOvr) {
+	public void subPrint(Formula<?> child, boolean isRightOvr) {
 		subPrint(child, isRightOvr, NO_DECL);
 	}
 
-	public <T extends Formula<?>> void subPrint(T child, boolean isRightOvr,
+	public void subPrint(Formula<?> child, boolean isRightOvr,
 			BoundIdentDecl[] boundDecls) {
-		subPrint(child, isRightOvr, boundDecls, null);
+		printChild(child, isRightOvr, boundDecls, withTypes);
 	}
 
-	public <T extends Formula<?>> void subPrint(T child, boolean isRightOvr,
-			BoundIdentDecl[] boundDecls, IParserPrinter<T> parser) {
-		printChild(child, isRightOvr, boundDecls, withTypes, parser);
-	}
-
-	private <T extends Formula<?>> void printChild(T child, boolean isRightOvr,
-			BoundIdentDecl[] boundDecls, boolean withTypesOvr, IParserPrinter<T> parser) {
+	private void printChild(Formula<?> child, boolean isRightOvr,
+			BoundIdentDecl[] boundDecls, boolean withTypesOvr) {
 		final boolean needsParen = needsParentheses(child, isRightOvr);
-		printFormula(child, isRightOvr, boundDecls, withTypesOvr, needsParen, parser);
+		printFormula(child, isRightOvr, boundDecls, withTypesOvr, needsParen);
 	}
 
 	protected boolean needsParentheses(Formula<?> child, boolean isRightOvr) {
@@ -77,54 +65,44 @@ import org.eventb.internal.core.parser.IParserPrinter;
 				LanguageVersion.LATEST);
 	}
 
-	protected final <T extends Formula<?>> void printFormula(T formula,
-			boolean isRightOvr, BoundIdentDecl[] boundDecls,
-			boolean withTypesOvr, boolean withParen, IParserPrinter<T> parser) {
+	protected final void printFormula(
+			Formula<?> formula, boolean isRightOvr, BoundIdentDecl[] boundDecls,
+			boolean withTypesOvr, boolean withParen) {
 		if (withParen) {
 			builder.append('(');
 		}
-		printFormula(formula, isRightOvr, boundDecls, withTypesOvr, parser);
+		printFormula(formula, isRightOvr, boundDecls, withTypesOvr);
 		if (withParen) {
 			builder.append(')');
 		}
 	}
 
-	public <T extends Formula<?>> void forward(T formula) {
+	public void forward(Formula<?> formula) {
 		forward(formula, withTypes);
 	}
 
-	public <T extends Formula<?>> void forward(T formula, boolean withTypesOvr) {
-		printFormula(formula, isRight, NO_DECL, withTypesOvr, false, null);
+	public void forward(Formula<?> formula, boolean withTypesOvr) {
+		printFormula(formula, isRight, NO_DECL, withTypesOvr);
 	}
 
 	private String[] addBound(BoundIdentDecl[] addedBoundNames) {
 		if (addedBoundNames.length == 0) {
 			return boundNames;
 		}
-		final List<String> newBound = new ArrayList<String>(asList(boundNames));
-		for (BoundIdentDecl decl : addedBoundNames) {
-			newBound.add(decl.getName());
-		}
-		final String[] newBoundNames = newBound.toArray(new String[newBound
-				.size()]);
-		return newBoundNames;
+		return catenateBoundIdentLists(boundNames, addedBoundNames);
 	}
 
-	private <T extends Formula<?>> void printFormula(T formula,
+	private void printFormula(Formula<?> formula,
 			boolean isRightOvr, BoundIdentDecl[] boundDecls,
-			boolean withTypesOvr, IParserPrinter<T> parser) {
-		if (parser == null) {
-			parser = factory.getGrammar().getParser(formula);
-			// FIXME NPE: printer can be null
-		}
+			boolean withTypesOvr) {
 
 		final String[] newBoundNames = addBound(boundDecls);
 		final IToStringMediator childMed = makeInstance(formula, isRightOvr,
 				withTypesOvr, newBoundNames);
-		parser.toString(childMed, formula);
+		formula.toString(childMed);
 	}
 
-	protected <T extends Formula<?>> IToStringMediator makeInstance(T child,
+	protected IToStringMediator makeInstance(Formula<?> child,
 			boolean isRightOvr, boolean withTypesOvr,
 			final String[] newBoundNames) {
 		return new ToStringMediator(factory, builder, newBoundNames, child

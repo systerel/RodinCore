@@ -30,7 +30,9 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.SubParsers.BinaryExpressionInfix;
 import org.eventb.internal.core.parser.SubParsers.LedImage;
@@ -238,8 +240,6 @@ public class BinaryExpression extends Expression {
 			e.printStackTrace();
 		}
 	}
-	
-
 	
 	protected BinaryExpression(Expression left, Expression right, int tag,
 			SourceLocation location, FormulaFactory factory) {
@@ -539,6 +539,23 @@ public class BinaryExpression extends Expression {
 	@Override
 	protected boolean solveChildrenTypes(TypeUnifier unifier) {
 		return left.solveType(unifier) & right.solveType(unifier);
+	}
+
+	@Override
+	protected void toString(IToStringMediator mediator) {
+		final IParserPrinter<BinaryExpression> parser;
+		switch (getTag()) {
+		case FUNIMAGE:
+			parser = new LedImage(getTag(), BMath._RPAR);
+			break;
+		case RELIMAGE:
+			parser = new LedImage(getTag(), BMath._RBRACKET);
+			break;
+		default:
+			parser = new BinaryExpressionInfix(getTag());
+			break;
+		}
+		parser.toString(mediator, this);
 	}
 
 	@Override

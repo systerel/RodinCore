@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.SubParsers.BOUND_IDENT_DECL_SUBPARSER;
+
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +22,7 @@ import java.util.Set;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -78,6 +81,11 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	 */
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	protected void toString(IToStringMediator mediator) {
+		BOUND_IDENT_DECL_SUBPARSER.toString(mediator, this);
 	}
 
 	@Override

@@ -133,7 +133,7 @@ public abstract class AbstractGrammar {
 		return propParsers.getParser(operProps, tag);
 	}
 
-	protected void addParser(IParserInfo<? extends Formula<?>> parserBuilder) throws OverrideException {
+	public void addParser(IParserInfo<? extends Formula<?>> parserBuilder) throws OverrideException {
 		propParsers.add(parserBuilder);
 	}
 	
@@ -251,10 +251,6 @@ public abstract class AbstractGrammar {
 		for (int tag : parser.getTags()) {
 			addTagKindParser(parser, kind, tag);
 		}
-	}
-
-	public <T extends Formula<?>> IParserPrinter<T> getParser(T formula) {
-		return (IParserPrinter<T>) tagParsers.get(formula.getTag());
 	}
 
 	/**

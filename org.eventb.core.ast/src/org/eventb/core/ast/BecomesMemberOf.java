@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -110,6 +111,11 @@ public class BecomesMemberOf extends Assignment {
 			ident.collectNamesAbove(names, boundNames, offset);
 		}
 		setExpr.collectNamesAbove(names, boundNames, offset);
+	}
+
+	@Override
+	protected void toString(IToStringMediator mediator) {
+		ASSIGNMENT_PARSER.toString(mediator, this);
 	}
 
 	@Override

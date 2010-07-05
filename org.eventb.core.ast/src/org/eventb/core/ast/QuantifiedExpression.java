@@ -37,7 +37,9 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.SubParsers.ExplicitQuantExpr;
 import org.eventb.internal.core.parser.SubParsers.ImplicitQuantExpr;
@@ -159,6 +161,49 @@ public class QuantifiedExpression extends Expression {
 		}
 	}
 
+	@Override
+	protected void toString(IToStringMediator mediator) {
+		final IParserPrinter<QuantifiedExpression> parser;
+		switch (getTag()) {
+		case CSET:
+			switch (form) {
+			case Explicit:
+				parser = CSET_EXPLICIT;
+				break;
+			case Implicit:
+				parser = CSET_IMPLICIT;
+				break;
+			case Lambda:
+				parser = CSET_LAMBDA;
+				break;
+			default:
+				throw newIllegalForm(form);
+			}
+			break;
+		case QUNION:
+		case QINTER:
+			switch (form) {
+			case Explicit:
+				parser = new ExplicitQuantExpr(getTag());
+				break;
+			case Implicit:
+				parser = new ImplicitQuantExpr(getTag());
+				break;
+			default:
+				throw newIllegalForm(form);
+			}
+			break;
+		default:
+			throw newIllegalForm(form);
+		}
+		parser.toString(mediator, this);
+	}
+
+	private static IllegalStateException newIllegalForm(Form form) {
+		return new IllegalStateException(
+				"Illegal form for quantified expression: " + form);
+	}
+	
 	/**
 	 * @param expr the expression in the quantified expression. Must not be <code>null</code>
 	 * @param pred the predicate in the quantified expression. Must not be <code>null</code>

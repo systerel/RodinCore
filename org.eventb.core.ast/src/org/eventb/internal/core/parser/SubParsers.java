@@ -344,10 +344,10 @@ public class SubParsers {
 		public void toString(IToStringMediator mediator, T toPrint) {
 			final Child[] children = getChildren(toPrint);
 			// TODO remove all calls to parser.toString, use subPrint instead
-			mediator.subPrint(children[0], false, NO_DECL, childParser);
+			mediator.subPrint(children[0], false);
 			for (int i = 1; i < children.length; i++) {
 				mediator.appendOperator();
-				mediator.subPrint(children[i], true, NO_DECL, childParser);
+				mediator.subPrint(children[i], true);
 			}
 		}
 		
@@ -360,7 +360,7 @@ public class SubParsers {
 
 	// TODO move ident parsers to MainParsers as they are imported there
 	// Takes care of the bindings.
-	static final INudParser<Identifier> IDENT_SUBPARSER = new ValuedNudParser<Identifier>(FREE_IDENT, BOUND_IDENT) {
+	public static final INudParser<Identifier> IDENT_SUBPARSER = new ValuedNudParser<Identifier>(FREE_IDENT, BOUND_IDENT) {
 
 		@Override
 		protected Identifier makeValue(ParserContext pc, String tokenVal,
@@ -414,7 +414,7 @@ public class SubParsers {
 
 	};
 
-	static final INudParser<BoundIdentDecl> BOUND_IDENT_DECL_SUBPARSER = new ValuedNudParser<BoundIdentDecl>(BOUND_IDENT_DECL) {
+	public static final INudParser<BoundIdentDecl> BOUND_IDENT_DECL_SUBPARSER = new ValuedNudParser<BoundIdentDecl>(BOUND_IDENT_DECL) {
 
 		@Override
 		protected BoundIdentDecl makeValue(ParserContext pc, String tokenVal,
@@ -446,7 +446,7 @@ public class SubParsers {
 		}
 	};
 
-	static final INudParser<IntegerLiteral> INTLIT_SUBPARSER = new ValuedNudParser<IntegerLiteral>(INTLIT) {
+	public static final INudParser<IntegerLiteral> INTLIT_SUBPARSER = new ValuedNudParser<IntegerLiteral>(INTLIT) {
 	
 		@Override
 		protected IntegerLiteral makeValue(ParserContext pc, String tokenVal,
@@ -1377,7 +1377,7 @@ public class SubParsers {
 //	}
 //	
 
-	static final INudParser<MultiplePredicate> MULTIPLE_PREDICATE_PARSER = new ParenNudParser<MultiplePredicate, List<Expression>>(KPARTITION, EXPR_LIST_PARSER) {
+	public static final INudParser<MultiplePredicate> MULTIPLE_PREDICATE_PARSER = new ParenNudParser<MultiplePredicate, List<Expression>>(KPARTITION, EXPR_LIST_PARSER) {
 
 		@Override
 		protected MultiplePredicate makeValue(FormulaFactory factory,
@@ -1388,27 +1388,6 @@ public class SubParsers {
 		@Override
 		protected List<Expression> getChild(MultiplePredicate parent) {
 			return Arrays.asList(parent.getChildren());
-		}
-
-	};
-	
-	public static final INudParser<? extends Formula<?>> PARTITION_PARSER = new AbstractNudParser<Formula<?>>(KPARTITION) {
-
-		public Formula<?> nud(ParserContext pc) throws SyntaxError {
-			switch(pc.version) {
-			case V1:
-				return IDENT_SUBPARSER.nud(pc);
-			case V2:
-				return MULTIPLE_PREDICATE_PARSER.nud(pc);
-			default:
-				assert false;
-				return null;
-			}
-		}
-
-		public void toString(IToStringMediator mediator, Formula<?> toPrint) {
-			assert toPrint.getTag() == KPARTITION;
-			MULTIPLE_PREDICATE_PARSER.toString(mediator, (MultiplePredicate) toPrint);
 		}
 
 	};

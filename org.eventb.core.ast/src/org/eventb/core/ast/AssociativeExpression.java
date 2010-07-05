@@ -16,7 +16,8 @@ package org.eventb.core.ast;
 
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
-import static org.eventb.internal.core.parser.BMath.*;
+import static org.eventb.internal.core.parser.BMath.ARITHMETIC;
+import static org.eventb.internal.core.parser.BMath.BINOP;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +31,7 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.SubParsers.AssociativeExpressionInfix;
@@ -346,6 +348,11 @@ public class AssociativeExpression extends Expression {
 	@Override
 	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
 		return getWDConjunction(formulaFactory, children);
+	}
+
+	@Override
+	protected void toString(IToStringMediator mediator) {
+		new AssociativeExpressionInfix(getTag()).toString(mediator, this);
 	}
 
 	@Override
