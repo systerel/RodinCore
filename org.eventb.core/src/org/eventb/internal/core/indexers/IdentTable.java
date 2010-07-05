@@ -19,18 +19,17 @@ import org.rodinp.core.indexer.IDeclaration;
 
 public class IdentTable {
 
-	// FIXME FF: factory is different for every indexed file
-	public static final FormulaFactory ff = FormulaFactory.getDefault();
-
 	private final Map<FreeIdentifier, IDeclaration> table;
+	private final FormulaFactory ff;
 
-	public IdentTable() {
+	public IdentTable(FormulaFactory ff) {
 		this.table = new HashMap<FreeIdentifier, IDeclaration>();
+		this.ff = ff;
 	}
 
 	public void addIdents(FreeIdentifier[] idents, SymbolTable symbolTable) {
 		for (FreeIdentifier ident : idents) {
-			final FreeIdentifier unprimed = getUnprimed(ident);
+			final FreeIdentifier unprimed = getUnprimed(ident, ff);
 			final String name = unprimed.getName();
 			final IDeclaration declaration = symbolTable.lookup(name);
 			if (declaration != null) {
@@ -39,16 +38,16 @@ public class IdentTable {
 		}
 	}
 
-	private static FreeIdentifier getUnprimed(FreeIdentifier ident) {
+	private static FreeIdentifier getUnprimed(FreeIdentifier ident, FormulaFactory formulaFactory) {
 		if (ident.isPrimed()) {
-			return ident.withoutPrime(ff);
+			return ident.withoutPrime(formulaFactory);
 		}
 		return ident;
 	}
 
-	private static FreeIdentifier getPrimed(FreeIdentifier ident) {
+	private static FreeIdentifier getPrimed(FreeIdentifier ident, FormulaFactory formulaFactory) {
 		if (!ident.isPrimed()) {
-			return ident.withPrime(ff);
+			return ident.withPrime(formulaFactory);
 		}
 		return ident;
 	}
@@ -58,18 +57,18 @@ public class IdentTable {
 	}
 
 	// the name argument must not be empty
-	public static String getUnprimedName(String name) {
-		final FreeIdentifier ident = ff.makeFreeIdentifier(name, null);
-		return getUnprimed(ident).getName();
+	public static String getUnprimedName(String name, FormulaFactory formulaFactory) {
+		final FreeIdentifier ident = formulaFactory.makeFreeIdentifier(name, null);
+		return getUnprimed(ident, formulaFactory).getName();
 	}
 	
-	public static String getPrimedName(String name) {
-		final FreeIdentifier ident = ff.makeFreeIdentifier(name, null);
-		return getPrimed(ident).getName();
+	public static String getPrimedName(String name, FormulaFactory formulaFactory) {
+		final FreeIdentifier ident = formulaFactory.makeFreeIdentifier(name, null);
+		return getPrimed(ident, formulaFactory).getName();
 	}
 	
 	public IDeclaration get(FreeIdentifier ident) {
-		final FreeIdentifier unprimed = getUnprimed(ident);
+		final FreeIdentifier unprimed = getUnprimed(ident, ff);
 		return table.get(unprimed);
 	}
 

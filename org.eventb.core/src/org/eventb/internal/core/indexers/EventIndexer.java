@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,6 @@ import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
 import static org.eventb.core.EventBPlugin.DECLARATION;
 import static org.eventb.core.EventBPlugin.REDECLARATION;
 import static org.eventb.core.EventBPlugin.REFERENCE;
-import static org.eventb.internal.core.indexers.EventBIndexer.getIdentifierName;
-import static org.eventb.internal.core.indexers.EventBIndexer.isValidIdentifierName;
 import static org.eventb.internal.core.indexers.IdentTable.getUnprimedName;
 import static org.rodinp.core.RodinCore.getInternalLocation;
 
@@ -25,6 +23,7 @@ import java.util.Map;
 
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IParameter;
@@ -51,6 +50,7 @@ public class EventIndexer extends Cancellable {
 	private final SymbolTable eventST;
 	private final SymbolTable declImportST;
 	private final IIndexingBridge bridge;
+	private final MachineIndexer indexer;
 
 	/**
 	 * Constructor.
@@ -69,12 +69,13 @@ public class EventIndexer extends Cancellable {
 	 */
 	public EventIndexer(IEvent event, Map<IEvent, SymbolTable> absParamTables,
 			SymbolTable eventST, SymbolTable declImportST,
-			IIndexingBridge bridge) {
+			IIndexingBridge bridge, MachineIndexer indexer) {
 		this.declImportST = declImportST;
 		this.event = event;
 		this.absParamTables = absParamTables;
 		this.eventST = eventST;
 		this.bridge = bridge;
+		this.indexer = indexer;
 	}
 
 	public void process() throws RodinDBException {
@@ -185,10 +186,12 @@ public class EventIndexer extends Cancellable {
 		for (IWitness witness : witnesses) {
 			if (witness.hasLabel()) {
 				final String label = witness.getLabel();
-				if (!isValidIdentifierName(label)) {
+				if (!indexer.isValidIdentifierName(label)) {
 					continue;
 				}
-				final String name = getUnprimedName(label);
+				final IEventBRoot root = (IEventBRoot) bridge.getRootToIndex();
+				final String name = getUnprimedName(label,
+						root.getFormulaFactory());
 				final IDeclaration declAbs = totalST.lookUpper(name);
 
 				if (declAbs != null) {
@@ -207,7 +210,7 @@ public class EventIndexer extends Cancellable {
 	private void processParameters(IParameter[] parameters, SymbolTable totalST)
 			throws RodinDBException {
 		for (IParameter parameter : parameters) {
-			final String name = getIdentifierName(parameter);
+			final String name = indexer.getIdentifierName(parameter);
 			if (name != null) {
 				IDeclaration declaration = bridge.declare(parameter, name);
 				addIdentOcc(declaration, DECLARATION, parameter);

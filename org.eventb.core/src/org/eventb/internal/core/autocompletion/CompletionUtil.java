@@ -21,6 +21,7 @@ import java.util.Set;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IParameter;
 import org.eventb.core.IVariable;
 import org.eventb.core.ast.Assignment;
@@ -175,9 +176,11 @@ public class CompletionUtil {
 			}
 			try {
 				final String assign = ((IAction) locElem).getAssignmentString();
-				// FIXME FF: either avoid ff or get it as @param or compute it
-				final IParseResult result = FormulaFactory.getDefault()
-						.parseAssignment(assign, LanguageVersion.LATEST, assign);
+				// Retrieve root to get the associated formula factory
+				final IEventBRoot root = (IEventBRoot) locElem.getRoot();
+				final FormulaFactory ff = root.getFormulaFactory();
+				final IParseResult result = ff.parseAssignment(assign,
+						LanguageVersion.LATEST, assign);
 				if (result.hasProblem()) {
 					continue;
 				}

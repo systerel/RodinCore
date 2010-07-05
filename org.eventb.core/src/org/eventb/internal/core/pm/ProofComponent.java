@@ -185,8 +185,7 @@ public class ProofComponent implements IProofComponent {
 
 	public FormulaFactory getFormulaFactory(String poName,
 			IProgressMonitor monitor) {
-		// FIXME FF: read from proof file
-		return FormulaFactory.getDefault();
+		return psRoot.getFormulaFactory();
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import static org.eventb.core.EventBPlugin.MODIFICATION;
 import static org.eventb.core.EventBPlugin.REFERENCE;
 import static org.rodinp.core.RodinCore.getInternalLocation;
 
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.BecomesMemberOf;
@@ -119,9 +120,10 @@ public class FormulaIndexer extends DefaultVisitor {
 	@Override
 	public boolean exitBECOMES_SUCH_THAT(BecomesSuchThat assign) {
 		indexAssignedIdents(assign);
+		IEventBRoot root = (IEventBRoot) bridge.getRootToIndex();
 		// change primed bound identifiers into free identifiers
 		final BoundRewriter primedRewriter = new BoundRewriter(assign
-				.getPrimedIdents(), IdentTable.ff);
+				.getPrimedIdents(), root.getFormulaFactory());
 		final Predicate rewrittenCondition = assign.getCondition().rewrite(
 				primedRewriter);
 

@@ -14,6 +14,7 @@ package org.eventb.internal.core.tool.state;
 import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.tool.IStateRepository;
@@ -41,11 +42,11 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 	
 	private FormulaFactory factory;
 	
-	public StateRepository() {
+	public StateRepository(IEventBRoot root) {
 		if (DEBUG)
 			System.out.println("NEW STATE REPOSITORY ##################");
-		// init with default factory
-		factory = FormulaFactory.getDefault();
+		// init with root factory
+		factory = root.getFormulaFactory();
 		environment = factory.makeTypeEnvironment();
 		repository = new Hashtable<IStateType<?>, I>(REPOSITORY_SIZE);
 		exception = null;

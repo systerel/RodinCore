@@ -46,9 +46,6 @@ import org.rodinp.core.RodinDBException;
  */
 public class PSUpdater {
 
-	// FIXME FF: compute factories from PO file and proof file
-	private static FormulaFactory ff = FormulaFactory.getDefault();
-	
 	// access to the proof files
 	final IProofComponent pc;
 	
@@ -188,6 +185,7 @@ public class PSUpdater {
 			throws RodinDBException {
 
 		final IPOSequent poSequent = status.getPOSequent();
+		final FormulaFactory ff = psRoot.getFormulaFactory();
 		final IProverSequent seq = POLoader.readPO(poSequent, ff);
 		final IPRProof prProof = status.getProof();
 		final boolean broken;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,9 @@ package org.eventb.internal.core.indexers;
 
 import static org.rodinp.core.RodinCore.getInternalLocation;
 
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.LanguageVersion;
 import org.rodinp.core.IAttributeType;
@@ -24,7 +26,9 @@ import org.rodinp.core.location.IAttributeLocation;
 public abstract class ElementIndexer extends Cancellable {
 	
 	protected static final LanguageVersion version = LanguageVersion.V2;
-
+	
+	protected final FormulaFactory ff;
+	
 	private final IInternalElement element;
 	private final SymbolTable symbolTable;
 	private final IIndexingBridge bridge;
@@ -34,9 +38,14 @@ public abstract class ElementIndexer extends Cancellable {
 			IAttributeType.String attrType, SymbolTable symbolTable,
 			IIndexingBridge bridge) {
 		this.element = element;
+		this.ff = getFormulaFactory();
 		this.attrType = attrType;
 		this.symbolTable = symbolTable;
 		this.bridge = bridge;
+	}
+
+	private FormulaFactory getFormulaFactory() {
+		return ((IEventBRoot)element.getRoot()).getFormulaFactory();
 	}
 
 	/**
@@ -72,7 +81,7 @@ public abstract class ElementIndexer extends Cancellable {
 		// Then visit the formula and make an occurrence for each identifier
 		// that belongs to the map.
 
-		final IdentTable identTable = new IdentTable();
+		final IdentTable identTable = new IdentTable(ff);
 		identTable.addIdents(formula.getFreeIdentifiers(), symbolTable);
 		if (identTable.isEmpty()) {
 			// Nothing to index
