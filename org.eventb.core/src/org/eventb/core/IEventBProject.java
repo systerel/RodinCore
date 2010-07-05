@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eventb.core.ast.FormulaFactory;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 
@@ -236,5 +237,12 @@ public interface IEventBProject extends IAdaptable {
 	 * @return the underlying Rodin project
 	 */
 	IRodinProject getRodinProject();
+	
+	/**
+	 * Returns the formula factory associated to this project.
+	 * 
+	 * @return the associated formula factory
+	 */
+	FormulaFactory getFormulaFactory();
 
 }

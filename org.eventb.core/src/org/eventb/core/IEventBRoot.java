@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.rodinp.core.IInternalElement;
 
 /**
@@ -142,5 +143,12 @@ public interface IEventBRoot extends IInternalElement, IGeneratedElement {
 	 * @return a handle to the proof status file of this component
 	 */
 	IPSRoot getPSRoot();
+	
+	/**
+	 * Returns the formula factory associated to this component.
+	 * 
+	 * @return the associated formula factory
+	 */
+	FormulaFactory getFormulaFactory();
 
 }
