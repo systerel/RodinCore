@@ -29,21 +29,10 @@ import static org.eventb.core.ast.BinaryExpression.FUNIMAGE_ID;
 import static org.eventb.core.ast.BinaryExpression.MAPSTO_ID;
 import static org.eventb.core.ast.BinaryExpression.MINUS_ID;
 import static org.eventb.core.ast.BinaryExpression.MOD_ID;
-import static org.eventb.core.ast.BinaryExpression.PFUN_ID;
-import static org.eventb.core.ast.BinaryExpression.PINJ_ID;
-import static org.eventb.core.ast.BinaryExpression.PSUR_ID;
 import static org.eventb.core.ast.BinaryExpression.RANRES_ID;
 import static org.eventb.core.ast.BinaryExpression.RANSUB_ID;
 import static org.eventb.core.ast.BinaryExpression.RELIMAGE_ID;
-import static org.eventb.core.ast.BinaryExpression.REL_ID;
 import static org.eventb.core.ast.BinaryExpression.SETMINUS_ID;
-import static org.eventb.core.ast.BinaryExpression.SREL_ID;
-import static org.eventb.core.ast.BinaryExpression.STREL_ID;
-import static org.eventb.core.ast.BinaryExpression.TBIJ_ID;
-import static org.eventb.core.ast.BinaryExpression.TFUN_ID;
-import static org.eventb.core.ast.BinaryExpression.TINJ_ID;
-import static org.eventb.core.ast.BinaryExpression.TREL_ID;
-import static org.eventb.core.ast.BinaryExpression.TSUR_ID;
 import static org.eventb.core.ast.QuantifiedPredicate.EXISTS_ID;
 import static org.eventb.core.ast.QuantifiedPredicate.FORALL_ID;
 import static org.eventb.core.ast.UnaryExpression.CONVERSE_ID;
@@ -52,7 +41,6 @@ import static org.eventb.internal.core.parser.SubParsers.OFTYPE;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
-import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.BecomesMemberOf;
 import org.eventb.core.ast.BecomesSuchThat;
@@ -61,31 +49,29 @@ import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.LiteralPredicate;
-import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
-import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.extension.CycleError;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 
 /**
  * @author Nicolas Beauger
- * TODO needs refactorings
  */
-public class BMath extends AbstractGrammar {
+public abstract class BMath extends AbstractGrammar {
 	
-	public static final BMath B_MATH = new BMath();
-	static {
-		B_MATH.init();
+	private final LanguageVersion version;
+	
+	protected BMath(LanguageVersion version) {
+		this.version = version;
 	}
 	
-	protected BMath() {
-		// singleton
+	public LanguageVersion getVersion() {
+		return version;
 	}
 	
 	public static final String RELOP_PRED = "Relational Operator Predicate";
@@ -147,8 +133,7 @@ public class BMath extends AbstractGrammar {
 
 
 	@Override
-	public void init() {
-		super.init();
+	protected void addOperators() {
 		initTokens();
 		
 		addOpenClose("{", "}");
@@ -158,8 +143,7 @@ public class BMath extends AbstractGrammar {
 			AssociativeExpression.init(this);
 			// AssociativePredicate
 			AssociativePredicate.init(this);
-			// AtomicExpression
-			AtomicExpression.init(this);
+			// AtomicExpression is version specific
 			// BecomesEqualTo
 			BecomesEqualTo.init(this);
 			// BecomesMemberOf
@@ -180,9 +164,7 @@ public class BMath extends AbstractGrammar {
 			// IntegerLiteral	idem
 			// LiteralPredicate
 			LiteralPredicate.init(this);
-			// MultiplePredicate
-			// FIXME move to V2 specific grammar
-			MultiplePredicate.initV2(this);
+			// MultiplePredicate is V2 specific
 			// PredicateVariable
 			PredicateVariable.init(this);
 			// QuantifiedExpression
@@ -195,8 +177,7 @@ public class BMath extends AbstractGrammar {
 			SetExtension.init(this);
 			// SimplePredicate
 			SimplePredicate.init(this);
-			// UnaryExpression
-			UnaryExpression.init(this);
+			// UnaryExpression is version specific
 			// UnaryPredicate
 			UnaryPredicate.init(this);
 			
@@ -207,6 +188,10 @@ public class BMath extends AbstractGrammar {
 			e.printStackTrace();
 		}
 
+	}
+	
+	@Override
+	protected void addOperatorRelationships() {
 		addCompatibility(MAPSTO_ID, MAPSTO_ID);
 		
 		addCompatibility(BUNION_ID, BUNION_ID);
@@ -256,18 +241,6 @@ public class BMath extends AbstractGrammar {
 		
 		addCompatibility(LAND_ID, LAND_ID);
 		addCompatibility(LOR_ID, LOR_ID);
-		
-		addCompatibility(REL_ID, REL_ID, LanguageVersion.V1);
-		addCompatibility(TREL_ID, TREL_ID, LanguageVersion.V1);
-		addCompatibility(SREL_ID, SREL_ID, LanguageVersion.V1);
-		addCompatibility(STREL_ID, STREL_ID, LanguageVersion.V1);
-		addCompatibility(PFUN_ID, PFUN_ID, LanguageVersion.V1);
-		addCompatibility(TFUN_ID, TFUN_ID, LanguageVersion.V1);
-		addCompatibility(PINJ_ID, PINJ_ID, LanguageVersion.V1);
-		addCompatibility(TINJ_ID, TINJ_ID, LanguageVersion.V1);
-		addCompatibility(PSUR_ID, PSUR_ID, LanguageVersion.V1);
-		addCompatibility(TSUR_ID, TSUR_ID, LanguageVersion.V1);
-		addCompatibility(TBIJ_ID, TBIJ_ID, LanguageVersion.V1);
 		
 		try {
 			addPriority(PLUS_ID, MUL_ID);

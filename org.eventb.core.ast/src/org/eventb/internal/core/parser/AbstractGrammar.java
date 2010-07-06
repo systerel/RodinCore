@@ -76,7 +76,7 @@ public abstract class AbstractGrammar {
 	 * </p>
 	 */
 	// TODO split into several init methods, one for each data (?)
-	public void init() {
+	public final void init() {
 		_EOF = tokens.reserved("End Of Formula");
 		_NOOP = tokens.reserved("No Operator");
 		_OPEN = tokens.reserved("Open");
@@ -96,9 +96,13 @@ public abstract class AbstractGrammar {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		addOperators();
+		addOperatorRelationships();
 	}
 
+	protected abstract void addOperators();
+	protected abstract void addOperatorRelationships();
+	
 	public void addCompatibility(String leftOpId, String rightOpId) {
 		opRegistry.addCompatibility(leftOpId, rightOpId);
 	}

@@ -31,7 +31,7 @@ import static org.eventb.core.ast.Formula.PREDICATE_VARIABLE;
 import static org.eventb.core.ast.Formula.SETEXT;
 import static org.eventb.core.ast.Formula.UNMINUS;
 import static org.eventb.internal.core.parser.AbstractGrammar._RPAR;
-import static org.eventb.internal.core.parser.BMath.B_MATH;
+import static org.eventb.internal.core.parser.BMathV2.B_MATH_V2;
 import static org.eventb.internal.core.parser.BMath._DOT;
 import static org.eventb.internal.core.parser.BMath._MID;
 import static org.eventb.internal.core.parser.BMath._RBRACE;
@@ -379,7 +379,7 @@ public class SubParsers {
 
 		@Override
 		protected int getKind() {
-			return B_MATH.getIDENT();
+			return B_MATH_V2.getIDENT();
 		}
 
 		public void toString(IToStringMediator mediator, Identifier toPrint) {
@@ -434,7 +434,7 @@ public class SubParsers {
 
 		@Override
 		protected int getKind() {
-			return B_MATH.getIDENT();
+			return B_MATH_V2.getIDENT();
 		}
 
 		public void toString(IToStringMediator mediator, BoundIdentDecl toPrint) {
@@ -466,7 +466,7 @@ public class SubParsers {
 
 		@Override
 		protected int getKind() {
-			return B_MATH.getINTLIT();
+			return B_MATH_V2.getINTLIT();
 		}
 
 		// Change the minus sign if any, so that it conforms to the mathematical
@@ -500,7 +500,7 @@ public class SubParsers {
 
 		@Override
 		protected int getKind() {
-			return B_MATH.getPREDVAR();
+			return B_MATH_V2.getPREDVAR();
 		}
 
 		public void toString(IToStringMediator mediator, Predicate toPrint) {
@@ -659,6 +659,7 @@ public class SubParsers {
 
 	}
 
+	// TODO mode to Atomic
 	static boolean mustPrintTypes(IToStringMediator mediator, Expression toPrint) {
 		switch (toPrint.getTag()) {
 		case EMPTYSET:

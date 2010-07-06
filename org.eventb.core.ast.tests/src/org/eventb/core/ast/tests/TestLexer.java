@@ -14,7 +14,7 @@
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.LanguageVersion.V1;
-import static org.eventb.internal.core.parser.BMath.B_MATH;
+import static org.eventb.internal.core.parser.BMathV2.B_MATH_V2;
 
 import java.util.List;
 import java.util.Map.Entry;
@@ -45,8 +45,8 @@ public class TestLexer extends AbstractTests {
         };
         
         private static int getExpectedKind(int kind, LanguageVersion version) {
-        	if (kind == B_MATH.getPARTITION() && version == V1)
-        		return B_MATH.getIDENT();
+        	if (kind == B_MATH_V2.getPARTITION() && version == V1)
+        		return B_MATH_V2.getIDENT();
         	return kind;
         }
 
@@ -62,26 +62,26 @@ public class TestLexer extends AbstractTests {
 
         // Check each token string through the lexical analyzer.
         private void testAllTokens(LanguageVersion version) {
-        	for (Entry<String, Integer> token : B_MATH.getTokens().entrySet()) {
+        	for (Entry<String, Integer> token : B_MATH_V2.getTokens().entrySet()) {
         		final String image = token.getKey();
         		final Integer kind = token.getValue();
         		testToken(image, kind, version);
 			}
-        	testToken("", B_MATH.getEOF(), version);
-           	testToken("x", B_MATH.getIDENT(), version);
-           	testToken("_toto", B_MATH.getIDENT(), version);
-          	testToken("x'", B_MATH.getIDENT(), version);
-        	testToken("2", B_MATH.getINTLIT(), version);
-        	testToken("001", B_MATH.getINTLIT(), version);
-        	testToken("$P", B_MATH.getPREDVAR(), version);
-        	testToken("$_toto", B_MATH.getPREDVAR(), version);
-        	testToken("p'", B_MATH.getIDENT(), version);
-        	testToken("prj'", B_MATH.getIDENT(), version);
+        	testToken("", B_MATH_V2.getEOF(), version);
+           	testToken("x", B_MATH_V2.getIDENT(), version);
+           	testToken("_toto", B_MATH_V2.getIDENT(), version);
+          	testToken("x'", B_MATH_V2.getIDENT(), version);
+        	testToken("2", B_MATH_V2.getINTLIT(), version);
+        	testToken("001", B_MATH_V2.getINTLIT(), version);
+        	testToken("$P", B_MATH_V2.getPREDVAR(), version);
+        	testToken("$_toto", B_MATH_V2.getPREDVAR(), version);
+        	testToken("p'", B_MATH_V2.getIDENT(), version);
+        	testToken("prj'", B_MATH_V2.getIDENT(), version);
         }
 
 	private void testToken(String image, Integer kind, LanguageVersion version) {
 			ParseResult result = new ParseResult(ff, version, null);
-			Scanner scanner = new Scanner(image, result, B_MATH);
+			Scanner scanner = new Scanner(image, result, B_MATH_V2);
 			Token t = scanner.Scan();
 			assertEquals(image, t.val);
 			final String msg = "for \"" + image + "\" with language " + version;
@@ -101,7 +101,7 @@ public class TestLexer extends AbstractTests {
 		private void testInvalidStrings(LanguageVersion version) {
 			for (String string : invalidStrings) {
     			final IParseResult result = new ParseResult(ff, version, null);
-    			Scanner scanner = new Scanner(string, (ParseResult) result, B_MATH);
+    			Scanner scanner = new Scanner(string, (ParseResult) result, B_MATH_V2);
     			Token t = scanner.Scan();
     			assertTrue("Scanner should have succeeded", result.isSuccess());
     			assertTrue(t.kind == 0);	// _EOF

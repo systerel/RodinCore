@@ -26,7 +26,7 @@ import org.eventb.internal.core.parser.GenParser.OverrideException;
  * @author Nicolas Beauger
  *
  */
-public class ExtendedGrammar extends BMath {
+public class ExtendedGrammar extends BMathV2 {
 
 	private final Set<IFormulaExtension> extensions;
 
@@ -35,8 +35,9 @@ public class ExtendedGrammar extends BMath {
 	}
 	
 	@Override
-	public void init() {
-		super.init();
+	protected void addOperators() {
+		super.addOperators();
+	
 		ExtendedExpression.init(this);
 		ExtendedPredicate.init(this);
 		try {
@@ -66,6 +67,12 @@ public class ExtendedGrammar extends BMath {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	protected void addOperatorRelationships() {
+		super.addOperatorRelationships();
+
 		for (IFormulaExtension extension : extensions) {
 			extension.addCompatibilities(new CompatibilityMediator(this));
 			extension.addPriorities(new PriorityMediator(this));

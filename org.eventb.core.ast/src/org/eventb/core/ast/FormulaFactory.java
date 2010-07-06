@@ -34,6 +34,8 @@ import org.eventb.internal.core.ast.extension.datatype.DatatypeExtensionComputer
 import org.eventb.internal.core.lexer.Scanner;
 import org.eventb.internal.core.parser.AbstractGrammar;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.BMathV1;
+import org.eventb.internal.core.parser.BMathV2;
 import org.eventb.internal.core.parser.ExtendedGrammar;
 import org.eventb.internal.core.parser.GenParser;
 import org.eventb.internal.core.parser.ParseResult;
@@ -65,7 +67,7 @@ public class FormulaFactory {
 	// tags of extensions managed by this formula factory
 	private final Map<Integer, IFormulaExtension> extensions;
 	
-	private final AbstractGrammar grammar;
+	private final BMath grammar;
 	
 	/**
 	 * Returns the default instance of the type factory.
@@ -110,13 +112,18 @@ public class FormulaFactory {
 		this(Collections.<Integer, IFormulaExtension>emptyMap());
 	}
 
+	private FormulaFactory(BMath grammar) {
+		this.extensions = Collections.<Integer, IFormulaExtension>emptyMap();
+		this.grammar = grammar;
+	}
+	
 	/**
 	 * @since 2.0
 	 */
 	protected FormulaFactory(Map<Integer, IFormulaExtension> extMap) {
 		this.extensions = extMap;
 		if (extMap.isEmpty()) {
-			this.grammar = BMath.B_MATH;
+			this.grammar = BMathV2.B_MATH_V2;
 		} else {
 			this.grammar = new ExtendedGrammar(new HashSet<IFormulaExtension>(
 					extMap.values()));
@@ -1208,11 +1215,31 @@ public class FormulaFactory {
 	private final <T> IParseResult parseGeneric(String formula,
 			LanguageVersion version, Object origin, Class<T> clazz,
 			boolean withPredVars) {
-		final ParseResult result = new ParseResult(this, version, origin);
-		final Scanner scanner = new Scanner(formula, result, grammar);
+		// TODO consider removing version argument and publishing instance
+		// construction methods with a version parameter
+		final FormulaFactory factory;
+		if (grammar.getVersion() == version) {
+			factory = this;
+		} else {
+			factory = new FormulaFactory(getGrammar(version));
+		}
+		final ParseResult result = new ParseResult(factory, version, origin);
+		final Scanner scanner = new Scanner(formula, result, factory.getGrammar());
 		final GenParser parser = new GenParser(clazz, scanner, result, withPredVars);
 		parser.parse();
 		return parser.getResult();
+	}
+
+	private static BMath getGrammar(LanguageVersion version) {
+		switch (version) {
+		case V1:
+			return BMathV1.B_MATH_V1;
+		case V2:
+			return BMathV2.B_MATH_V2;
+		default:
+			throw new IllegalArgumentException("unknown language version: "
+					+ version);
+		}
 	}
 
 	/**

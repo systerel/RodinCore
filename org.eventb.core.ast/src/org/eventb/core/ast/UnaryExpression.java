@@ -84,15 +84,16 @@ public class UnaryExpression extends Expression {
 	private static final String KMAX_ID = "Max";
 	private static final String KUNION_ID = "Unary Union";
 	private static final String KINTER_ID = "Unary Intersection";
+	private static final String KID_ID = "Old Identity";
+	private static final String KPRJ1_ID = "Old Projection 1";
+	private static final String KPRJ2_ID = "Old Projection 2";
+
 	/**
 	 * @since 2.0
 	 */
 	public static final String CONVERSE_ID = "Converse";
 
-	/**
-	 * @since 2.0
-	 */
-	public static void init(BMath grammar) {
+	private static void initCommon(BMath grammar) {
 		try {		
 			grammar.addOperator("card", KCARD_ID, BOUND_UNARY, new UnaryExpressionParser(KCARD));
 			grammar.addOperator("\u2119", POW_ID, BOUND_UNARY, new UnaryExpressionParser(POW));
@@ -109,6 +110,29 @@ public class UnaryExpression extends Expression {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	@SuppressWarnings("deprecation")
+	public static void initV1(BMath grammar) {
+		try {		
+			initCommon(grammar);
+			grammar.addOperator("prj1", KPRJ1_ID, BOUND_UNARY, new UnaryExpressionParser(KPRJ1));
+			grammar.addOperator("prj2", KPRJ2_ID, BOUND_UNARY, new UnaryExpressionParser(KPRJ2));
+			grammar.addOperator("id", KID_ID, BOUND_UNARY, new UnaryExpressionParser(KID));
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public static void initV2(BMath grammar) {
+		initCommon(grammar);
 	}
 
 	protected UnaryExpression(Expression child, int tag, SourceLocation location,

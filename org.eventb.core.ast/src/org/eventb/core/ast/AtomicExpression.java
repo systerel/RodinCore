@@ -28,7 +28,6 @@ import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.SubParsers.AtomicExpressionParser;
-import org.eventb.internal.core.parser.SubParsers.GenExpressionParser;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -79,12 +78,11 @@ public class AtomicExpression extends Expression {
 	private static final String KPRED_ID = "Predecessor";
 	private static final String KSUCC_ID = "Successor";
 
-	// TODO separate initV1 and initV2, do not use GenExpressionParser anymore
+	
 	/**
 	 * @since 2.0
 	 */
-	@SuppressWarnings("deprecation")
-	public static void init(BMath grammar) {
+	public static void initV1(BMath grammar) {
 		try {
 			grammar.addOperator("\u2124", INTEGER_ID, ATOMIC_EXPR, new AtomicExpressionParser(INTEGER));
 			grammar.addOperator("\u2115", NATURAL_ID, ATOMIC_EXPR, new AtomicExpressionParser(NATURAL));
@@ -95,9 +93,22 @@ public class AtomicExpression extends Expression {
 			grammar.addOperator("\u2205", EMPTYSET_ID, EMPTY_SET, new AtomicExpressionParser(EMPTYSET));
 			grammar.addOperator("pred", KPRED_ID, ATOMIC_EXPR, new AtomicExpressionParser(KPRED));
 			grammar.addOperator("succ", KSUCC_ID, ATOMIC_EXPR, new AtomicExpressionParser(KSUCC));
-			grammar.addOperator("prj1", KPRJ1_GEN_ID, ATOMIC_EXPR, new GenExpressionParser(KPRJ1, KPRJ1_GEN));
-			grammar.addOperator("prj2", KPRJ2_GEN_ID, ATOMIC_EXPR, new GenExpressionParser(KPRJ2, KPRJ2_GEN));
-			grammar.addOperator("id", KID_GEN_ID, ATOMIC_EXPR, new GenExpressionParser(KID, KID_GEN));
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	// TODO separate initV1 and initV2, do not use GenExpressionParser anymore
+	/**
+	 * @since 2.0
+	 */
+	public static void initV2(BMath grammar) {
+		try {
+			initV1(grammar);
+			grammar.addOperator("prj1", KPRJ1_GEN_ID, ATOMIC_EXPR, new AtomicExpressionParser(KPRJ1_GEN));
+			grammar.addOperator("prj2", KPRJ2_GEN_ID, ATOMIC_EXPR, new AtomicExpressionParser(KPRJ2_GEN));
+			grammar.addOperator("id", KID_GEN_ID, ATOMIC_EXPR, new AtomicExpressionParser(KID_GEN));
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
