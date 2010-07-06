@@ -14,9 +14,6 @@ import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.LIMP;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.AtomicExpression;
@@ -55,12 +52,6 @@ public class WDImprover extends DefaultSimpleVisitor {
 	private final FormulaBuilder fb;
 
 	/**
-	 * Set of isolated predicates (predicates which are not part of an
-	 * implication)
-	 */
-	private Set<Predicate> leafs;
-
-	/**
 	 * Result of last visit. This field must never be read directly, but through
 	 * method <code>nodeFor()</code>. Moreover, every <code>visitXXX()</code>
 	 * method must set this variable (or raise an exception).
@@ -69,11 +60,10 @@ public class WDImprover extends DefaultSimpleVisitor {
 
 	public WDImprover(FormulaFactory formulaFactory) {
 		this.fb = new FormulaBuilder(formulaFactory);
-		this.leafs = new HashSet<Predicate>();
 	}
 
 	/**
-	 * Simplify the given formula
+	 * Simplifies the given formula
 	 * 
 	 * @param formula
 	 *            a formula to simplify
@@ -82,26 +72,10 @@ public class WDImprover extends DefaultSimpleVisitor {
 
 	public Predicate improve(Predicate formula) {
 
-		// Build a new tree
+		// Build a new tree while visiting the AST
 		final Node root = nodeFor(formula);
-
-		// Find and classify quantifiers according to their depth
-		int depthmax = root.depth();
-
-		// Shift boundidentifiers according to their depth
-		root.quantifierShifter(depthmax, fb.ff);
-
-		// Simplify redundant predicates from the new tree
-
-		root.simplifyIsolatedPredicates(leafs);
-
-		root.simplifyImplications(leafs);
-
-		// Unshift boundidentifiers according to their depth
-		root.quantifierUnShifter(depthmax, fb.ff);
-
-		// Build a new AST
-		return root.asPredicate(fb).flatten(fb.ff);
+		// Simplifies the tree and obtains a new AST
+		return root.simplifyTree(fb);
 	}
 
 	private Node nodeFor(Predicate pred) {

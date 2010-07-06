@@ -17,7 +17,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 
 /**
- * NodeLand represents an implication
+ * Implementation of the implication
  */
 
 public class NodeLimp extends Node {
@@ -31,40 +31,47 @@ public class NodeLimp extends Node {
 	}
 
 	@Override
-	public int depth() {
-		return Math.max(left.depth(), right.depth());
+	protected int maxBindingDepth() {
+		return Math.max(left.maxBindingDepth(), right.maxBindingDepth());
 	}
 
 	@Override
-	public void quantifierShifter(int offset, FormulaFactory ff) {
-		left.quantifierShifter(offset, ff);
-		right.quantifierShifter(offset, ff);
+	protected void boundIdentifiersEqualizer(int offset, FormulaFactory ff) {
+		left.boundIdentifiersEqualizer(offset, ff);
+		right.boundIdentifiersEqualizer(offset, ff);
 	}
 
 	@Override
-	public void quantifierUnShifter(int offset, FormulaFactory ff) {
-		left.quantifierUnShifter(offset, ff);
-		right.quantifierUnShifter(offset, ff);
+	protected Predicate internalAsPredicate(FormulaBuilder fb, boolean original) {
+		return fb.limp(left.asPredicate(fb, original), right.asPredicate(fb,
+				original));
 	}
 
 	@Override
-	public Predicate asPredicate(FormulaBuilder fb) {
-		return fb.limp(left.asPredicate(fb), right.asPredicate(fb));
+	protected void collectAntecedents(Set<Predicate> antecedents,
+			FormulaBuilder fb) {
+		addPredicateToSet(antecedents, fb);
 	}
 
 	@Override
-	public void simplifyImplications(Set<Predicate> knownPredicates) {
-		Set<Predicate> localKnownPredicates = new HashSet<Predicate>();
-		localKnownPredicates.addAll(knownPredicates);
-		left.simplifyIsolatedPredicates(localKnownPredicates);
-		left.simplifyImplications(localKnownPredicates);
-		right.simplifyIsolatedPredicates(localKnownPredicates);
-		right.simplifyImplications(localKnownPredicates);
+	protected void internalSimplify(Set<Lemma> knownLemmas,
+			Set<Predicate> antecedents, FormulaBuilder fb) {
+		final Set<Predicate> leftAntes = new HashSet<Predicate>();
+		final Set<Lemma> leftLemmas = new HashSet<Lemma>(knownLemmas);
+		left.simplify(leftLemmas, leftAntes, fb);
+		// Collect the antecedents from the left side of the implication to
+		// simplify the right side
+		final Set<Predicate> rightAntes = new HashSet<Predicate>(antecedents);
+		left.collectAntecedents(rightAntes, fb);
+		right.simplify(knownLemmas, rightAntes, fb);
 	}
 
 	@Override
-	public void simplifyIsolatedPredicates(Set<Predicate> knownPredicates) {
-		// Do nothing and skip traversal of children
+	protected void internalToString(StringBuilder sb, String indent) {
+		sb.append("LIMP\n");
+		final String childIndent = indent + "  ";
+		left.toString(sb, childIndent);
+		right.toString(sb, childIndent);
 	}
 
 }

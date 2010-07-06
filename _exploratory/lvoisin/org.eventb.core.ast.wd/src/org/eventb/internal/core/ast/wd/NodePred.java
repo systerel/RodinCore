@@ -20,50 +20,51 @@ import org.eventb.core.ast.Predicate;
  */
 public class NodePred extends Node {
 
-	private Predicate predicate;
-	private boolean used;
+	private final Predicate predicate;
+	private Predicate normalized;
 
 	public NodePred(Predicate pred) {
 		this.predicate = pred;
-		this.used = true; 
 	}
 
 	@Override
-	public int depth() {
+	protected int maxBindingDepth() {
 		return 0;
 	}
 
 	@Override
-	public void quantifierShifter(int offset, FormulaFactory ff) {
-		predicate = predicate.shiftBoundIdentifiers(offset, ff);
+	protected void boundIdentifiersEqualizer(int offset, FormulaFactory ff) {
+		normalized = predicate.shiftBoundIdentifiers(offset, ff);
 	}
 
 	@Override
-	public void quantifierUnShifter(int offset, FormulaFactory ff) {
-		predicate = predicate.shiftBoundIdentifiers(-offset, ff);
+	protected Predicate internalAsPredicate(FormulaBuilder fb, boolean original) {
+		return original ? predicate : normalized;
 	}
 
 	@Override
-	public Predicate asPredicate(FormulaBuilder fb) {
-		if (used)
-			return predicate;
-		else
-			return fb.btrue;
+	protected void collectAntecedents(Set<Predicate> antecedents,
+			FormulaBuilder fb) {
+		addPredicateToSet(antecedents, fb);
 	}
 
 	@Override
-	public String toString() {
-		return predicate.toString();
+	protected void internalSimplify(Set<Lemma> knownLemmas,
+			Set<Predicate> antecedents, FormulaBuilder fb) {
+		if (antecedents.contains(normalized)) {
+			setNodeSubsumed();
+			return;
+		}
+
+		final Lemma lemma = new Lemma(antecedents, normalized, this);
+		lemma.addToSet(knownLemmas);
 	}
 
 	@Override
-	public void simplifyImplications(Set<Predicate> knownPredicates) {
-		// Do nothing
+	protected void internalToString(StringBuilder sb, String indent) {
+		sb.append(normalized);
+		sb.append('\n');
+
 	}
 
-	@Override
-	public void simplifyIsolatedPredicates(Set<Predicate> knownPredicates) {
-		if (!knownPredicates.add(predicate))
-			used = false;
-	}
 }

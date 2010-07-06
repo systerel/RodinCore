@@ -16,7 +16,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 
 /**
- * NodeLand represents a conjunction.
+ * Implementation of the conjunction
  */
 
 public class NodeLand extends Node {
@@ -28,49 +28,52 @@ public class NodeLand extends Node {
 	}
 
 	@Override
-	public int depth() {
+	protected int maxBindingDepth() {
 		int depth = 0;
 		for (Node child : children) {
-			depth = Math.max(depth, child.depth());
+			depth = Math.max(depth, child.maxBindingDepth());
 		}
 		return depth;
 	}
 
 	@Override
-	public void quantifierShifter(int offset, FormulaFactory ff) {
+	protected void boundIdentifiersEqualizer(int offset, FormulaFactory ff) {
 		for (Node child : children) {
-			child.quantifierShifter(offset, ff);
+			child.boundIdentifiersEqualizer(offset, ff);
 		}
 	}
 
 	@Override
-	public void quantifierUnShifter(int offset, FormulaFactory ff) {
-		for (Node child : children) {
-			child.quantifierUnShifter(offset, ff);
-		}
-	}
-
-	@Override
-	public Predicate asPredicate(FormulaBuilder fb) {
+	protected Predicate internalAsPredicate(FormulaBuilder fb, boolean original) {
 		final int length = children.length;
 		final Predicate[] childPreds = new Predicate[length];
 		for (int i = 0; i < length; i++) {
-			childPreds[i] = children[i].asPredicate(fb);
+			childPreds[i] = children[i].asPredicate(fb, original);
 		}
 		return fb.land(childPreds);
 	}
 
 	@Override
-	public void simplifyImplications(Set<Predicate> knownPredicates) {
+	protected void collectAntecedents(Set<Predicate> antecedents,
+			FormulaBuilder fb) {
 		for (Node child : children) {
-			child.simplifyImplications(knownPredicates);
+			child.collectAntecedents(antecedents, fb);
 		}
 	}
 
 	@Override
-	public void simplifyIsolatedPredicates(Set<Predicate> knownPredicates) {
+	protected void internalSimplify(Set<Lemma> knownLemmas,
+			Set<Predicate> antecedents, FormulaBuilder fb) {
 		for (Node child : children) {
-			child.simplifyIsolatedPredicates(knownPredicates);
+			child.simplify(knownLemmas, antecedents, fb);
+		}
+	}
+
+	@Override
+	protected void internalToString(StringBuilder sb, String indent) {
+		sb.append("LAND\n");
+		for (Node child : children) {
+			child.toString(sb, indent + "  ");
 		}
 	}
 

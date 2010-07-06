@@ -17,7 +17,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 
 /**
- * NodeForAll represents a quantifier "for all".
+ * Implementation of the universal quantifier.
  */
 public class NodeForAll extends Node {
 
@@ -30,35 +30,40 @@ public class NodeForAll extends Node {
 	}
 
 	@Override
-	public int depth() {
-		return child.depth() + decls.length;
+	protected int maxBindingDepth() {
+		return child.maxBindingDepth() + decls.length;
 	}
 
 	@Override
-	public void quantifierShifter(int offset, FormulaFactory ff) {
+	protected void boundIdentifiersEqualizer(int offset, FormulaFactory ff) {
 		assert offset >= 0;
-		child.quantifierShifter(offset - decls.length, ff);
+		child.boundIdentifiersEqualizer(offset - decls.length, ff);
 	}
 
 	@Override
-	public void quantifierUnShifter(int offset, FormulaFactory ff) {
-		assert offset >= 0;
-		child.quantifierUnShifter(offset - decls.length, ff);
+	protected Predicate internalAsPredicate(FormulaBuilder fb, boolean original) {
+		if(original){
+		return fb.forall(decls, child.asPredicate(fb, original));
+		}else{
+			return child.asPredicate(fb, original);
+		}
 	}
 
 	@Override
-	public Predicate asPredicate(FormulaBuilder fb) {
-		return fb.forall(decls, child.asPredicate(fb));
+	protected void collectAntecedents(Set<Predicate> antecedents, FormulaBuilder fb) {
+		child.collectAntecedents(antecedents, fb);
 	}
 
 	@Override
-	public void simplifyImplications(Set<Predicate> knownPredicates) {
-		child.simplifyImplications(knownPredicates);
+	protected void internalSimplify(Set<Lemma> knownLemmas,
+			Set<Predicate> antecedents, FormulaBuilder fb) {
+		child.simplify(knownLemmas, antecedents, fb);
 	}
 
 	@Override
-	public void simplifyIsolatedPredicates(Set<Predicate> knownPredicates) {
-		child.simplifyIsolatedPredicates(knownPredicates);
+	protected void internalToString(StringBuilder sb, String indent) {
+		sb.append("FORALL\n");
+		child.toString(sb, indent + "  ");
 	}
 
 }
