@@ -697,8 +697,22 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 		expressionTest("(λx↦p·x∈s∧p⊆s∣p)", "(λs·s⊆S∣(λx↦p·x∈s∧p⊆s∣p))(s)", "s", "ℙ(S)");
 		// Checks that external lambda disappear and x is instantiated
 		expressionTest("(λz·z∈ℕ ∣ z+z)[{1,2,3}]", "(λx·x∈ℙ(ℕ) ∣ (λz·z∈ℕ ∣ z+z)[x])({1,2,3})");
+		// Real example from Bug 2995930 with an argument containing a bound identifier.
+		predicateTest("∀t⦂ℙ(S)·(λx↦p·x∈t∧p⊆t∣p) = ∅",
+				"∀t⦂ℙ(S)·(λs·s⊆S∣(λx↦p·x∈s∧p⊆s∣p))(t) = ∅", "S", "ℙ(S)");
 	}
 
+	/**
+	 * Ensures that bug 3025836: Rodin 1.3.1 prover is still unsound is fixed.
+	 * Also adds similar test cases for completeness.
+	 */
+	@Test
+	public void testBug3025836() {
+		predicateTest("∀x,y,z·x∈ℤ ∧ y∈BOOL ∧ z∈BOOL ⇒ x=0",
+				"∀x,y,z·x∈ℤ ∧ y∈BOOL ∧ z∈BOOL ⇒ (λa·a∈ℤ ∣ a)(x)=0");
+		predicateTest("∀x⦂ℤ,y⦂ℙ(ℤ)·y∪{x}=∅",
+				"∀x⦂ℤ,y⦂ℙ(ℤ)·(λa·a∈ℤ∣y∪{a})(x)=∅");
+	}
 
 	/**
 	 * Tests for rewriting arithmetic formulas. 
