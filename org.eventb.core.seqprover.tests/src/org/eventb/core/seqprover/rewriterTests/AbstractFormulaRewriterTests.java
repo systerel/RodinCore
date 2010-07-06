@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.eclipse.core.runtime.Assert;
 import org.eventb.core.ast.Expression;
@@ -41,6 +42,8 @@ public abstract class AbstractFormulaRewriterTests {
 	 * The formula factory used to create different formulas for testing.
 	 */
 	protected static final FormulaFactory ff = FormulaFactory.getDefault();
+
+	private static final String[] NO_ENV = new String[0];
 	
 	/**
 	 * The rewriter under test.
@@ -58,50 +61,30 @@ public abstract class AbstractFormulaRewriterTests {
 	protected AbstractFormulaRewriterTests(IFormulaRewriter r) {
 		this.r = r;
 	}
-	
-	/**
-	 * Utility method for making an input predicate from its string image. This
-	 * method will make the test failed if the string image does not correspond
-	 * to an well-defined and well-typed predicate.
-	 * 
-	 * @param inputImage
-	 *            the string image of a predicate.
-	 * @return a predicate corresponding to the string image.
-	 */
-	protected Predicate makeInputPredicate(String inputImage) {
-		Predicate input = Lib.parsePredicate(inputImage);
-		if (input == null)
-			Assert.isTrue(false, "Input predicate: \n\t" + inputImage
-					+ "\n\tcannot be parsed");
-		ITypeCheckResult typeCheck = input.typeCheck(ff.makeTypeEnvironment());
-		if (!typeCheck.isSuccess())
-			Assert.isTrue(false, "Input predicate: \n\t" + inputImage
-					+ "\n\tcannot be type checked");
-		return input;
-	}
-	
 
 	/**
-	 * Utility method for making an expected predicate from its string image. This
-	 * method will make the test failed if the string image does not correspond
-	 * to an well-defined and well-typed predicate.
+	 * Utility method for making a predicate from its string image. This method
+	 * will fail if the string image does not correspond to a well-defined and
+	 * well-typed predicate. The type environment is enriched as a side-effect
+	 * of type-checking the resulting predicate.
 	 * 
-	 * @param expectedImage
-	 *            the string image of a predicate.
-	 * @return a predicate corresponding to the string image.
+	 * @param image
+	 *            the string image of a predicate
+	 * @param typenv
+	 *            typing environment to use for type-check (will be enriched)
+	 * @return a predicate corresponding to the string image
 	 */
-	protected Predicate makeExpectedPredicate(String expectedImage) {
-		Predicate expected = Lib.parsePredicate(expectedImage);
-		if (expected == null)
-			Assert.isTrue(false, "Expected predicate: \n\t" + expectedImage
-					+ "\n\tcannot be parsed");
-		ITypeCheckResult typeCheck = expected.typeCheck(ff.makeTypeEnvironment());
-		if (!typeCheck.isSuccess())
-			Assert.isTrue(false, "Expected predicate: \n\t" + expectedImage
-					+ "\n\tcannot be type checked");
-		return expected;
+	protected Predicate makePredicate(String image, ITypeEnvironment typenv) {
+		final Predicate pred = Lib.parsePredicate(image);
+		if (pred == null)
+			fail("Predicate: \n\t" + image + "\n\tcannot be parsed");
+		final ITypeCheckResult typeCheck = pred.typeCheck(typenv);
+		if (typeCheck.hasProblem())
+			fail("Input predicate: \n\t" + image + "\n\tcannot be type checked");
+		typenv.addAll(typeCheck.getInferredEnvironment());
+		return pred;
 	}
-	
+
 	/**
 	 * Test the rewriter for rewriting from an input predicate (represented by
 	 * its string image) to an expected predicate (represented by its string
@@ -112,10 +95,35 @@ public abstract class AbstractFormulaRewriterTests {
 	 * @param inputImage
 	 *            the string image of the input predicate.
 	 */
-	protected void predicateTest(String expectedImage,
-			String inputImage) {
-		Predicate input = makeInputPredicate(inputImage);
-		Predicate expected = makeExpectedPredicate(expectedImage);
+	protected void predicateTest(String expectedImage, String inputImage) {
+		predicateTest(expectedImage, inputImage, NO_ENV);
+	}
+
+	/**
+	 * Test the rewriter for rewriting from an input predicate (represented by
+	 * its string image) to an expected predicate (represented by its string
+	 * image).
+	 * <p>
+	 * The type environment is described by a list of strings which must contain
+	 * an even number of elements. It contains alternatively names and types to
+	 * assign to them in the environment. For instance, to describe a type
+	 * environment where <code>S</code> is a given set and <code>x</code> is an
+	 * integer, one would pass the strings <code>"S", "ℙ(S)", "x", "ℤ"</code>.
+	 * </p>
+	 * 
+	 * @param expectedImage
+	 *            the string image of the expected predicate
+	 * @param inputImage
+	 *            the string image of the input predicate
+	 * @param env
+	 *            a list of strings describing the type environment to use for
+	 *            type-checking
+	 */
+	protected void predicateTest(String expectedImage, String inputImage,
+			String... env) {
+		final ITypeEnvironment typenv = makeTypeEnvironment(env);
+		final Predicate input = makePredicate(inputImage, typenv);
+		final Predicate expected = makePredicate(expectedImage, typenv);
 		predicateTest(expected, input);
 	}
 
@@ -128,39 +136,12 @@ public abstract class AbstractFormulaRewriterTests {
 	 * @param input
 	 *            the input predicate.
 	 */
-	protected void predicateTest(Predicate expected,
-			Predicate input) {
-		assertEquals("Input expression should be type checked ", true, input
-				.isTypeChecked());
-		assertEquals("Expected expression should be type checked ", true,
+	protected void predicateTest(Predicate expected, Predicate input) {
+		assertTrue("Input expression should be type checked ",
+				input.isTypeChecked());
+		assertTrue("Expected expression should be type checked ",
 				expected.isTypeChecked());
 		assertEquals(input + " --> " + expected, expected, input.rewrite(r));
-	}
-
-	/**
-	 * Utility method for making an input expression from its string image. This
-	 * method will make the test failed if the string image does not correspond
-	 * to an well-defined and well-typed expression.
-	 * 
-	 * @param inputImage
-	 *            the string image of an expression.
-	 * @return an expression corresponding to the string image.
-	 */
-	protected Expression makeInputExpression(String inputImage) {
-		return makeExpression(inputImage, ff.makeTypeEnvironment());
-	}
-
-	/**
-	 * Utility method for making an expected expression from its string image. This
-	 * method will make the test failed if the string image does not correspond
-	 * to an well-defined and well-typed expression.
-	 * 
-	 * @param expectedImage
-	 *            the string image of an expression.
-	 * @return an expression corresponding to the string image.
-	 */
-	protected Expression makeExpectedExpression(String expectedImage) {
-		return makeExpression(expectedImage, ff.makeTypeEnvironment());
 	}
 
 	/**
@@ -187,28 +168,6 @@ public abstract class AbstractFormulaRewriterTests {
 	}
 
 	/**
-	 * Test the rewriter for rewriting from an input expression to an expected
-	 * expression.
-	 * 
-	 * @param expected
-	 *            the expected expression.
-	 * @param input
-	 *            the input expression.
-	 */
-	protected void expressionTest(Expression expected,
-			Expression input) {
-		Assert.isTrue(input.isTypeChecked(),
-				"Input expression " + input + " should be type checked");
-		Assert.isTrue(expected.isTypeChecked(),
-				"Expected expression " + expected + " should be type checked");
-		assertEquals("Expected expression: " + expected
-				+ " and input expression: " + input
-				+ " should be of the same type ", expected.getType(), input
-				.getType());
-		assertEquals(input + " --> " + expected, expected, input.rewrite(r));
-	}
-
-	/**
 	 * Test the rewriter for rewriting from an input expression (represented by
 	 * its string image) to an expected expression (represented by its string
 	 * image).
@@ -218,11 +177,8 @@ public abstract class AbstractFormulaRewriterTests {
 	 * @param inputImage
 	 *            the string image of the input expression.
 	 */
-	protected void expressionTest(String expectedImage,
-			String inputImage) {
-		Expression input = makeInputExpression(inputImage);
-		Expression expected = makeExpectedExpression(expectedImage);
-		expressionTest(expected, input);
+	protected void expressionTest(String expectedImage, String inputImage) {
+		expressionTest(expectedImage, inputImage, NO_ENV);
 	}
 	
 	/**
@@ -247,10 +203,32 @@ public abstract class AbstractFormulaRewriterTests {
 	 */
 	protected void expressionTest(String expectedImage,
 			String inputImage, String... env) {
-		ITypeEnvironment typenv = makeTypeEnvironment(env);
-		Expression input = makeExpression(inputImage, typenv);
-		Expression expected = makeExpression(expectedImage, typenv);
+		final ITypeEnvironment typenv = makeTypeEnvironment(env);
+		final Expression input = makeExpression(inputImage, typenv);
+		final Expression expected = makeExpression(expectedImage, typenv);
 		expressionTest(expected, input);
+	}
+
+	/**
+	 * Test the rewriter for rewriting from an input expression to an expected
+	 * expression.
+	 * 
+	 * @param expected
+	 *            the expected expression.
+	 * @param input
+	 *            the input expression.
+	 */
+	protected void expressionTest(Expression expected,
+			Expression input) {
+		Assert.isTrue(input.isTypeChecked(),
+				"Input expression " + input + " should be type checked");
+		Assert.isTrue(expected.isTypeChecked(),
+				"Expected expression " + expected + " should be type checked");
+		assertEquals("Expected expression: " + expected
+				+ " and input expression: " + input
+				+ " should be of the same type ", expected.getType(), input
+				.getType());
+		assertEquals(input + " --> " + expected, expected, input.rewrite(r));
 	}
 
 	private ITypeEnvironment makeTypeEnvironment(String... env) {
