@@ -13,12 +13,14 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.AbstractGrammar._RPAR;
 import static org.eventb.internal.core.parser.BMath.ARITHMETIC;
 import static org.eventb.internal.core.parser.BMath.BINOP;
 import static org.eventb.internal.core.parser.BMath.FUNCTIONAL;
 import static org.eventb.internal.core.parser.BMath.INTERVAL;
 import static org.eventb.internal.core.parser.BMath.PAIR;
 import static org.eventb.internal.core.parser.BMath.RELATION;
+import static org.eventb.internal.core.parser.BMath._RBRACKET;
 
 import java.math.BigInteger;
 import java.util.LinkedHashSet;
@@ -233,13 +235,13 @@ public class BinaryExpression extends Expression {
 		OP_FUNIMAGE("(", FUNIMAGE_ID, FUNCTIONAL, FUNIMAGE) {
 			@Override
 			public IParserPrinter<BinaryExpression> makeParser(int kind) {
-				return new LedImage(kind, FUNIMAGE, BMath._RPAR);
+				return new LedImage(kind, FUNIMAGE, _RPAR);
 			}
 		},
 		OP_RELIMAGE("[", RELIMAGE_ID, FUNCTIONAL, RELIMAGE) {
 			@Override
 			public IParserPrinter<BinaryExpression> makeParser(int kind) {
-				return new LedImage(kind, RELIMAGE, BMath._RBRACKET);
+				return new LedImage(kind, RELIMAGE, _RBRACKET);
 			}
 		},
 		;

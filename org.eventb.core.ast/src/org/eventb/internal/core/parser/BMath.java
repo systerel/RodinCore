@@ -106,12 +106,8 @@ public abstract class BMath extends AbstractGrammar {
 	private final void initTokens() {
 		_RBRACKET = tokens.getOrAdd("]");
 		_RBRACE = tokens.getOrAdd("}");
-		_LAMBDA = tokens.getOrAdd("\u03bb");
 		_MAPSTO = tokens.getOrAdd("\u21a6");
 		_MID = tokens.getOrAdd("\u2223");
-		_BECEQ = tokens.getOrAdd("\u2254");
-		_BECMO = tokens.getOrAdd(":\u2208");
-		_BECST = tokens.getOrAdd(":\u2223");
 		_DOT = tokens.getOrAdd("\u00b7");
 		_TYPING = tokens.getOrAdd("\u2982");
 		_KPARTITION = tokens.getOrAdd("partition");
@@ -119,17 +115,13 @@ public abstract class BMath extends AbstractGrammar {
 
 	static int _RBRACE;
 	public static int _RBRACKET;
-	static int _LAMBDA;
 	static int _MAPSTO;
-	static int _BECEQ;
-	static int _BECMO;
-	static int _BECST;
 	static int _MID;
 	public static int _KPARTITION;
 	static int _DOT;
 	static int _TYPING;
 	
-	public static final int _PREDVAR = reservedTokens.reserved("Predicate Variable");
+	public static final int _PREDVAR = publicTokens.reserved("Predicate Variable");
 
 
 	@Override

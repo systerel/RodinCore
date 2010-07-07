@@ -40,19 +40,20 @@ public abstract class AbstractGrammar {
 	private static final String IDENT_IMAGE = "an identifier";
 	private static final String INTLIT_IMAGE = "an integer literal";
 
-	protected static final IndexedSet<String> reservedTokens = new IndexedSet<String>();
+	// FIXME make private
+	protected static final IndexedSet<String> publicTokens = new IndexedSet<String>();
 	
 	
-	public static final int _EOF = reservedTokens.reserved("End Of Formula");
-	static final int _NOOP = reservedTokens.reserved("No Operator");
-	static final int _OPEN = reservedTokens.reserved("Open");
-	static int _LPAR;
-	public static int _RPAR;
-	public static final int _IDENT = reservedTokens.reserved(IDENT_IMAGE);
-	public static final int _INTLIT = reservedTokens.reserved(INTLIT_IMAGE);
-	static int _COMMA;
+	public static final int _EOF = publicTokens.reserved("End Of Formula");
+	public static final int _NOOP = publicTokens.reserved("No Operator");
+	public static final int _OPEN = publicTokens.reserved("Open");
+	public static final int _IDENT = publicTokens.reserved(IDENT_IMAGE);
+	public static final int _INTLIT = publicTokens.reserved(INTLIT_IMAGE);
+	public static final int _LPAR = publicTokens.getOrAdd("(");
+	public static final int _RPAR = publicTokens.getOrAdd(")");
+	public static final int _COMMA = publicTokens.getOrAdd(",");
 
-	protected final IndexedSet<String> tokens = new IndexedSet<String>(reservedTokens);
+	protected final IndexedSet<String> tokens = new IndexedSet<String>(publicTokens);
 	
 	private final LexKindParserDB subParsers = new LexKindParserDB();
 	
@@ -82,9 +83,6 @@ public abstract class AbstractGrammar {
 	 */
 	public final void init() {
 		
-		_LPAR = tokens.getOrAdd("(");
-		_RPAR = tokens.getOrAdd(")");
-		_COMMA = tokens.getOrAdd(",");
 		opRegistry.addOperator(_EOF, EOF_ID, GROUP0);
 		opRegistry.addOperator(_NOOP, NOOP_ID, GROUP0);
 		opRegistry.addOperator(_OPEN, OPEN_ID, GROUP0);

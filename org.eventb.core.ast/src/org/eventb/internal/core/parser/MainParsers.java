@@ -21,7 +21,6 @@ import static org.eventb.core.ast.ProblemKind.PrematureEOF;
 import static org.eventb.internal.core.parser.AbstractGrammar._COMMA;
 import static org.eventb.internal.core.parser.AbstractGrammar._EOF;
 import static org.eventb.internal.core.parser.AbstractGrammar._LPAR;
-import static org.eventb.internal.core.parser.BMath._BECEQ;
 import static org.eventb.internal.core.parser.BMath._MAPSTO;
 import static org.eventb.internal.core.parser.GenParser.ProgressDirection.RIGHT;
 import static org.eventb.internal.core.parser.SubParsers.BOUND_IDENT_DECL_SUBPARSER;
@@ -443,11 +442,11 @@ public class MainParsers {
 				final FreeIdentifier ident = idents.get(0);
 				final Expression index = pc.subParse(EXPR_PARSER);
 				pc.progressCloseParen();
-				pc.progress(_BECEQ);
+				pc.progress(kind);
 				final Expression value = pc.subParse(EXPR_PARSER);
 				final Expression overriding = makeFunctionOverriding(ident, index, value, pc.factory);
 				return pc.factory.makeBecomesEqualTo(ident, overriding, pc.getSourceLocation());
-			} else if (tokenKind == _BECEQ) {
+			} else if (tokenKind == kind) {
 				final List<Expression> values = pc.subParse(EXPR_LIST_PARSER);
 				if (idents.size() != values.size()) {
 					throw new SyntaxError(new ASTProblem(
