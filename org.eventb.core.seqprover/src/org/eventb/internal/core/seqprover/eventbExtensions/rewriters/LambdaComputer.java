@@ -32,21 +32,30 @@ import org.eventb.internal.core.seqprover.eventbExtensions.OnePointSimplifier;
  * (typically a lambda).
  * <p>
  * The static method <code>rewrite(Expression expr, FormulaFactory ff)</code>
- * first checks that the given expression <code>expr</code> is a functional
- * image through a set in comprehension. Then, simplifies it or returns
- * <code>null</code> if simplification is not possible. The latter case can
- * happen when the comprehension set expression has not the same form as the
- * argument to the function.
+ * first checks that the given expression is a functional image through a set in
+ * comprehension. Then, simplifies it or returns <code>null</code> if
+ * simplification is not possible. The latter case can happen when the
+ * comprehension set expression has not the same pattern as the argument of the
+ * function.
  * </p>
  * <p>
- * The algorithm used for simplifying expression {x.P|E}(y) is
+ * The algorithm used for simplifying expression <code>{x.P|E}(y)</code> is
  * <ol>
- * <li>Create formula #x.y|->A = x|->E where A is an artificially bound
- * variable.</li>
- * <li>Apply the AutoRewriter to split maplets to get #x.y=x & A=E and apply the
- * One Point Rule until no rewriting occurs.</li>
- * <li>If we obtain A = E then E is the simplification we expect.</li>
+ * <li>Create formula <code>y↦A ∈ {x.P|E}</code> where <code>A</code> is a fresh
+ * intermediate variable.</li>
+ * <li>Rewrite the previous formula to <code>∃x.y↦A = E</code>.</li>
+ * <li>Apply the AutoRewriter to split maplets and apply the one point rule
+ * until reaching a fixpoint.</li>
+ * <li>If we obtain <code>A = E</code> then <code>E</code> is the simplification
+ * we expect.</li>
  * </ol>
+ * As intermediate variable <code>A</code> is introduced as a bound identifier,
+ * great care must be taken to shift bound identifiers appropriately in formulas
+ * <code>y</code> and <code>{x.P|E}</code>
+ * </p>
+ * <p>
+ * It is OK to use the auto-rewriter for simplifying maplets, as this
+ * computation is currently performed as part of the auto-rewriter itself.
  * </p>
  */
 public class LambdaComputer {
@@ -97,12 +106,25 @@ public class LambdaComputer {
 
 	private Expression simplify() {
 		final BoundIdentDecl[] decls = cset.getBoundIdentDecls();
+
+		// Intermediate variable A is bound just outside the existential
 		final BoundIdentifier AInExists = ff.makeBoundIdentifier(decls.length,
 				null, funImg.getType());
-		final Expression yMapstoA = ff.makeBinaryExpression(MAPSTO, arg,
+
+		// The argument needs to be pushed through A and the bound declaration.
+		final Expression innerArg = arg.shiftBoundIdentifiers(1 + decls.length,
+				ff);
+		final Expression yMapstoA = ff.makeBinaryExpression(MAPSTO, innerArg,
 				AInExists, null);
+
+		// The expression must be pushed through A, but in the context of the
+		// comprehension set. Do not attempt to simplify the following lines!
+		final QuantifiedExpression innerCset = (QuantifiedExpression) cset
+				.shiftBoundIdentifiers(1, ff);
+		final Expression innerExpr = innerCset.getExpression();
+
 		final Predicate equals = ff.makeRelationalPredicate(EQUAL, yMapstoA,
-				cset.getExpression(), null);
+				innerExpr, null);
 		final Predicate exists = ff.makeQuantifiedPredicate(EXISTS, decls,
 				equals, null);
 		final AutoRewriterImpl rewriter = new AutoRewriterImpl();
@@ -115,7 +137,9 @@ public class LambdaComputer {
 			changed = old != pred;
 		} while (changed);
 		if (hasExpectedFinalForm(pred)) {
-			return ((RelationalPredicate) pred).getRight();
+			final Expression right = ((RelationalPredicate) pred).getRight();
+			// Remove implicit quantification on A
+			return right.shiftBoundIdentifiers(-1, ff);
 		}
 		return null;
 	}
