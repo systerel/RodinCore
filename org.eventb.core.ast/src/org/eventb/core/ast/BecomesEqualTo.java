@@ -41,12 +41,12 @@ public class BecomesEqualTo extends Assignment {
 	 * @since 2.0
 	 */
 	public static void init(BMath grammar) {
-		try {		
-			grammar.addOperator("\u2254", BECOMES_EQUAL_TO, BECEQ_ID, BMath.INFIX_SUBST, ASSIGNMENT_PARSER);
-		} catch (OverrideException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {		
+//			grammar.addOperator("\u2254", BECOMES_EQUAL_TO, BECEQ_ID, BMath.INFIX_SUBST, ASSIGNMENT_PARSER);
+//		} catch (OverrideException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	
 	private final Expression[] values;

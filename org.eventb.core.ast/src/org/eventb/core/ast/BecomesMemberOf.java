@@ -41,12 +41,12 @@ public class BecomesMemberOf extends Assignment {
 	 * @since 2.0
 	 */
 	public static void init(BMath grammar) {
-		try {		
-			grammar.addOperator(":\u2208", BECOMES_MEMBER_OF, BECMO_ID, INFIX_SUBST, ASSIGNMENT_PARSER);
-		} catch (OverrideException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {		
+//			grammar.addOperator(":\u2208", BECOMES_MEMBER_OF, BECMO_ID, INFIX_SUBST, ASSIGNMENT_PARSER);
+//		} catch (OverrideException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	
 	private final Expression setExpr;

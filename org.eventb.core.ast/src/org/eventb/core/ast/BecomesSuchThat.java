@@ -61,12 +61,12 @@ public class BecomesSuchThat extends Assignment {
 	 * @since 2.0
 	 */
 	public static void init(BMath grammar) {
-		try {
-			grammar.addOperator(":\u2223", BECOMES_SUCH_THAT, BECST_ID, BMath.INFIX_SUBST, ASSIGNMENT_PARSER);
-		} catch (OverrideException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			grammar.addOperator(":\u2223", BECOMES_SUCH_THAT, BECST_ID, BMath.INFIX_SUBST, ASSIGNMENT_PARSER);
+//		} catch (OverrideException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	
 	// Quantified primed identifiers
