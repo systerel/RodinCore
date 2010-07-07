@@ -17,8 +17,6 @@ import static org.eventb.core.ast.BinaryExpression.MINUS_ID;
 import static org.eventb.internal.core.parser.BMath.ARITHMETIC;
 import static org.eventb.internal.core.parser.BMath.BOUND_UNARY;
 import static org.eventb.internal.core.parser.BMath.UNARY_RELATION;
-import static org.eventb.internal.core.parser.SubParsers.CONVERSE_PARSER;
-import static org.eventb.internal.core.parser.SubParsers.UNMINUS_PARSER;
 
 import java.math.BigInteger;
 import java.util.LinkedHashSet;
@@ -31,7 +29,11 @@ import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
+import org.eventb.internal.core.parser.SubParsers;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.SubParsers.ConverseParser;
 import org.eventb.internal.core.parser.SubParsers.UnaryExpressionParser;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
@@ -55,57 +57,112 @@ public class UnaryExpression extends Expression {
 	protected final Expression child;
 
 	// offset in the corresponding tag interval
-	protected static final int firstTag = FIRST_UNARY_EXPRESSION;
-	protected static final String[] tags = {
-		"card",   // KCARD
-		"\u2119", // POW
-		"\u21191",// POW1
-		"union",  // KUNION
-		"inter",  // KINTER
-		"dom",    // KDOM
-		"ran",    // KRAN
-		"prj1",   // KPRJ1
-		"prj2",   // KPRJ2
-		"id",     // KID
-		"min",    // KMIN
-		"max",    // KMAX
-		"\u223c", // CONVERSE
-		"\u2212"  // UNMINUS
-	};
-	// For testing purposes
-	public static final int TAGS_LENGTH = tags.length;
-
+	private static final int FIRST_TAG = FIRST_UNARY_EXPRESSION;
+	
 	private static final String KCARD_ID = "Cardinal";
 	private static final String POW_ID = "Power Set";
 	private static final String POW1_ID = "Powerset 1";
-	private static final String KDOM_ID = "Domain";
-	private static final String KRAN_ID = "Range";
-	private static final String KMIN_ID = "Min";
-	private static final String KMAX_ID = "Max";
 	private static final String KUNION_ID = "Unary Union";
 	private static final String KINTER_ID = "Unary Intersection";
-	private static final String KID_ID = "Old Identity";
+	private static final String KDOM_ID = "Domain";
+	private static final String KRAN_ID = "Range";
 	private static final String KPRJ1_ID = "Old Projection 1";
 	private static final String KPRJ2_ID = "Old Projection 2";
+	private static final String KID_ID = "Old Identity";
+	private static final String KMIN_ID = "Min";
+	private static final String KMAX_ID = "Max";
 
 	/**
 	 * @since 2.0
 	 */
 	public static final String CONVERSE_ID = "Converse";
 
+	@SuppressWarnings("deprecation")
+	private static enum Operators implements IOperatorInfo<UnaryExpression> {
+		OP_KCARD("card", KCARD_ID, BOUND_UNARY, KCARD),
+		OP_POW("\u2119", POW_ID, BOUND_UNARY, POW),
+		OP_POW1("\u21191", POW1_ID, BOUND_UNARY, POW1),
+		OP_KUNION("union", KUNION_ID, BOUND_UNARY, KUNION),
+		OP_KINTER("inter", KINTER_ID, BOUND_UNARY, KINTER),
+		OP_KDOM("dom", KDOM_ID, BOUND_UNARY, KDOM),
+		OP_KRAN("ran", KRAN_ID, BOUND_UNARY, KRAN),
+		OP_KPRJ1("prj1", KPRJ1_ID, BOUND_UNARY, KPRJ1),
+		OP_KPRJ2("prj2", KPRJ2_ID, BOUND_UNARY, KPRJ2),
+		OP_KID("id", KID_ID, BOUND_UNARY, KID),
+		OP_KMIN("min", KMIN_ID, BOUND_UNARY, KMIN),
+		OP_KMAX("max", KMAX_ID, BOUND_UNARY, KMAX),
+		OP_CONVERSE("\u223c", CONVERSE_ID, UNARY_RELATION, CONVERSE) {
+			@Override
+			public IParserPrinter<UnaryExpression> makeParser(int kind) {
+				return new ConverseParser(kind);
+			}
+		},
+		;
+		
+		private final String image;
+		private final String id;
+		private final String groupId;
+		private final int tag;
+		
+		private Operators(String image, String id, String groupId, int tag) {
+			this.image = image;
+			this.id = id;
+			this.groupId = groupId;
+			this.tag = tag;
+		}
+
+		public String getImage() {
+			return image;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getGroupId() {
+			return groupId;
+		}
+
+		public IParserPrinter<UnaryExpression> makeParser(int kind) {
+			return new UnaryExpressionParser(kind, tag);
+		}
+	}
+
+	private static final IOperatorInfo<Expression> OP_MINUS = new IOperatorInfo<Expression>() {
+		
+		public IParserPrinter<Expression> makeParser(int kind) {
+			return new SubParsers.UNMINUS_PARSER(kind);
+		}
+
+		public String getImage() {
+			return "\u2212";
+		}
+		
+		public String getId() {
+			return MINUS_ID;
+		}
+		
+		public String getGroupId() {
+			return ARITHMETIC;
+		}
+	};
+	
+	// For testing purposes
+	public static final int TAGS_LENGTH = Operators.values().length + 1;
+
 	private static void initCommon(BMath grammar) {
-		try {		
-			grammar.addOperator("card", KCARD_ID, BOUND_UNARY, new UnaryExpressionParser(KCARD));
-			grammar.addOperator("\u2119", POW_ID, BOUND_UNARY, new UnaryExpressionParser(POW));
-			grammar.addOperator("\u21191", POW1_ID, BOUND_UNARY, new UnaryExpressionParser(POW1));
-			grammar.addOperator("union", KUNION_ID, BOUND_UNARY, new UnaryExpressionParser(KUNION));
-			grammar.addOperator("inter", KINTER_ID, BOUND_UNARY, new UnaryExpressionParser(KINTER));
-			grammar.addOperator("dom", KDOM_ID, BOUND_UNARY, new UnaryExpressionParser(KDOM));
-			grammar.addOperator("ran", KRAN_ID, BOUND_UNARY, new UnaryExpressionParser(KRAN));
-			grammar.addOperator("min", KMIN_ID, BOUND_UNARY, new UnaryExpressionParser(KMIN));
-			grammar.addOperator("max", KMAX_ID, BOUND_UNARY, new UnaryExpressionParser(KMAX));
-			grammar.addOperator("\u223c", CONVERSE_ID, UNARY_RELATION, CONVERSE_PARSER);
-			grammar.addOperator("\u2212", MINUS_ID, ARITHMETIC, UNMINUS_PARSER);
+		try {
+			grammar.addOperator(Operators.OP_KCARD);
+			grammar.addOperator(Operators.OP_POW);
+			grammar.addOperator(Operators.OP_POW1);
+			grammar.addOperator(Operators.OP_KUNION);
+			grammar.addOperator(Operators.OP_KINTER);
+			grammar.addOperator(Operators.OP_KDOM);
+			grammar.addOperator(Operators.OP_KRAN);
+			grammar.addOperator(Operators.OP_KMIN);
+			grammar.addOperator(Operators.OP_KMAX);
+			grammar.addOperator(Operators.OP_CONVERSE);
+			grammar.addOperator(OP_MINUS);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -115,13 +172,12 @@ public class UnaryExpression extends Expression {
 	/**
 	 * @since 2.0
 	 */
-	@SuppressWarnings("deprecation")
 	public static void initV1(BMath grammar) {
 		try {		
 			initCommon(grammar);
-			grammar.addOperator("prj1", KPRJ1_ID, BOUND_UNARY, new UnaryExpressionParser(KPRJ1));
-			grammar.addOperator("prj2", KPRJ2_ID, BOUND_UNARY, new UnaryExpressionParser(KPRJ2));
-			grammar.addOperator("id", KID_ID, BOUND_UNARY, new UnaryExpressionParser(KID));
+			grammar.addOperator(Operators.OP_KPRJ1);
+			grammar.addOperator(Operators.OP_KPRJ2);
+			grammar.addOperator(Operators.OP_KID);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -141,7 +197,7 @@ public class UnaryExpression extends Expression {
 		super(tag, location, child.hashCode());
 		this.child = child;
 
-		assert tag >= firstTag && tag < firstTag+tags.length;
+		assert tag >= FIRST_TAG && tag < FIRST_TAG+TAGS_LENGTH;
 		assert child != null;
 		
 		setPredicateVariableCache(this.child);
@@ -281,10 +337,6 @@ public class UnaryExpression extends Expression {
 		return child;
 	}
 	
-	protected String getTagOperator() {
-		return tags[getTag()-firstTag];
-	}
-	
 	@Override
 	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
 		if (this.getTag() != other.getTag()) {
@@ -376,24 +428,34 @@ public class UnaryExpression extends Expression {
 	protected boolean solveChildrenTypes(TypeUnifier unifier) {
 		return child.solveType(unifier);
 	}
+	
+	private String getOperatorImage() {
+		if (getTag() == UNMINUS) {
+			return OP_MINUS.getImage();
+		}
+		return getOperator().getImage();
+	}
+
+	private Operators getOperator() {
+		assert	getTag() != UNMINUS;
+		return Operators.values()[getTag() - FIRST_TAG];
+	}
 
 	@Override
 	protected void toString(IToStringMediator mediator) {
-		switch (getTag()) {
-		case CONVERSE:
-			CONVERSE_PARSER.toString(mediator, this);
-			break;
-		case UNMINUS:
-			UNMINUS_PARSER.toString(mediator, this);
-			break;
-		default:
-			new UnaryExpressionParser(getTag()).toString(mediator,	this);
+		if (getTag() == UNMINUS) {
+			final int kind = mediator.getKind(OP_MINUS.getImage());
+			OP_MINUS.makeParser(kind).toString(mediator, this);
+			return;
 		}
+		final Operators operator = getOperator();
+		final int kind = mediator.getKind(operator.getImage());
+		operator.makeParser(kind).toString(mediator, this);
 	}
 
 	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
-		return tabs + this.getClass().getSimpleName() + " [" + getTagOperator()
+		return tabs + this.getClass().getSimpleName() + " [" + getOperatorImage()
 				+ "]" + getTypeName() + "\n"
 				+ child.getSyntaxTree(boundNames, tabs + "\t");
 	}

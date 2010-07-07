@@ -24,6 +24,8 @@ import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.parser.AbstractGrammar;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -40,6 +42,18 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  */
 public class IntegerLiteral extends Expression {
 	
+	/**
+	 * @since 2.0
+	 */
+	public static void init(AbstractGrammar grammar, int identKind) {
+		try {
+			grammar.addReservedSubParser(identKind, INTLIT_SUBPARSER);
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	// This literal value.  Can never be null.
 	private final BigInteger literal;
 	
@@ -96,7 +110,7 @@ public class IntegerLiteral extends Expression {
 	}
 	
 	@Override
-	protected void toString(IToStringMediator mediator) {
+	protected final void toString(IToStringMediator mediator) {
 		INTLIT_SUBPARSER.toString(mediator, this);
 	}
 

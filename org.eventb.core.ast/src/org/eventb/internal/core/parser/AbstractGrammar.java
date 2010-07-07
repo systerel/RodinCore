@@ -13,6 +13,8 @@ package org.eventb.internal.core.parser;
 import static org.eventb.internal.core.parser.OperatorRegistry.GROUP0;
 import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.INCOMPATIBLE;
 import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.LEFT_PRIORITY;
+import static org.eventb.internal.core.parser.SubParsers.IDENT_SUBPARSER;
+import static org.eventb.internal.core.parser.SubParsers.INTLIT_SUBPARSER;
 
 import java.util.HashMap;
 import java.util.List;
@@ -38,16 +40,19 @@ public abstract class AbstractGrammar {
 	private static final String IDENT_IMAGE = "an identifier";
 	private static final String INTLIT_IMAGE = "an integer literal";
 
-	public static int _EOF;
-	static int _NOOP;
-	static int _OPEN;
+	protected static final IndexedSet<String> reservedTokens = new IndexedSet<String>();
+	
+	
+	public static final int _EOF = reservedTokens.reserved("End Of Formula");
+	static final int _NOOP = reservedTokens.reserved("No Operator");
+	static final int _OPEN = reservedTokens.reserved("Open");
 	static int _LPAR;
 	public static int _RPAR;
-	public static int _IDENT;
-	public static int _INTLIT;
+	public static final int _IDENT = reservedTokens.reserved(IDENT_IMAGE);
+	public static final int _INTLIT = reservedTokens.reserved(INTLIT_IMAGE);
 	static int _COMMA;
 
-	protected final IndexedSet<String> tokens = new IndexedSet<String>();
+	protected final IndexedSet<String> tokens = new IndexedSet<String>(reservedTokens);
 	
 	private final LexKindParserDB subParsers = new LexKindParserDB();
 	
@@ -77,20 +82,17 @@ public abstract class AbstractGrammar {
 	 */
 	// TODO split into several init methods, one for each data (?)
 	public final void init() {
-		_EOF = tokens.reserved("End Of Formula");
-		_NOOP = tokens.reserved("No Operator");
-		_OPEN = tokens.reserved("Open");
+		
 		_LPAR = tokens.getOrAdd("(");
 		_RPAR = tokens.getOrAdd(")");
 		_COMMA = tokens.getOrAdd(",");
-		
 		opRegistry.addOperator(_EOF, EOF_ID, GROUP0);
 		opRegistry.addOperator(_NOOP, NOOP_ID, GROUP0);
 		opRegistry.addOperator(_OPEN, OPEN_ID, GROUP0);
 		addOpenClose("(", ")");
 		try {
-			_INTLIT = addReservedSubParser(SubParsers.INTLIT_SUBPARSER, INTLIT_IMAGE);
-			_IDENT = addReservedSubParser(SubParsers.IDENT_SUBPARSER, IDENT_IMAGE);
+			subParsers.addNud(_INTLIT, INTLIT_SUBPARSER);
+			subParsers.addNud(_IDENT, IDENT_SUBPARSER);
 			subParsers.addNud(_LPAR, MainParsers.CLOSED_SUGAR);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
@@ -127,13 +129,27 @@ public abstract class AbstractGrammar {
 		return subParsers.getLedParser(token);
 	}
 	
-	public IParserPrinter<? extends Formula<?>> getParser(IOperatorProperties operProps,
+	public IParserPrinter<? extends Formula<?>> getParser(IOperatorProperties operProps, int kind,
 			int tag) {
-		return propParsers.getParser(operProps, tag);
+		return propParsers.getParser(operProps, kind, tag);
 	}
 
-	public void addParser(IParserInfo<? extends Formula<?>> parserBuilder) throws OverrideException {
-		propParsers.add(parserBuilder);
+	public void addParser(IPropertyParserInfo<? extends Formula<?>> parserInfo)
+			throws OverrideException {
+		propParsers.add(parserInfo);
+	}
+	
+	// TODO remove all other addOperator() methods
+	public void addOperator(IOperatorInfo<? extends Formula<?>> operInfo)
+			throws OverrideException {
+		final int kind = tokens.getOrAdd(operInfo.getImage());
+		opRegistry.addOperator(kind, operInfo.getId(), operInfo.getGroupId());
+		final IParserPrinter<? extends Formula<?>> parser = operInfo.makeParser(kind);
+		if (parser instanceof INudParser<?>) {
+			subParsers.addNud(kind, (INudParser<? extends Formula<?>>) parser);
+		} else {
+			subParsers.addLed(kind, (ILedParser<? extends Formula<?>>) parser);
+		}
 	}
 	
 	public void addOperator(String token, String operatorId, String groupId,
@@ -182,11 +198,10 @@ public abstract class AbstractGrammar {
 		return closeOpenKinds.containsKey(kind);
 	}
 
-	private int addReservedSubParser(INudParser<? extends Formula<?>> subParser, String image)
+	public void addReservedSubParser(int reservedKind,
+			INudParser<? extends Formula<?>> subParser)
 			throws OverrideException {
-		final int kind = tokens.reserved(image);
-		subParsers.addNud(kind, subParser);
-		return kind;
+		subParsers.addNud(reservedKind, subParser);
 	}
 	
 	protected void addGroupPrioritySequence(String... groupIds) throws CycleError {
@@ -214,6 +229,10 @@ public abstract class AbstractGrammar {
 	
 	public String getImage(int kind) {
 		return tokens.getElem(kind);
+	}
+
+	public int getKind(String image) {
+		return tokens.getIndex(image);
 	}
 
 	/**

@@ -145,4 +145,8 @@ import org.eventb.internal.core.parser.AbstractGrammar;
 	public boolean isWithTypes() {
 		return withTypes;
 	}
+
+	public int getKind(String operator) {
+		return factory.getGrammar().getKind(operator);
+	}
 }

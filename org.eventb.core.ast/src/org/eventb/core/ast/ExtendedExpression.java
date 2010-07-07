@@ -32,8 +32,8 @@ import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.TypeCheckMediator;
 import org.eventb.internal.core.ast.extension.TypeMediator;
 import org.eventb.internal.core.parser.ExtendedGrammar;
-import org.eventb.internal.core.parser.IParserInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
+import org.eventb.internal.core.parser.IPropertyParserInfo;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.ParserInfos.ExtendedExpressionParsers;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -51,7 +51,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	 */
 	public static void init(ExtendedGrammar grammar) {
 		try {
-			for (IParserInfo<? extends Formula<?>> parserInfo : ExtendedExpressionParsers
+			for (IPropertyParserInfo<? extends Formula<?>> parserInfo : ExtendedExpressionParsers
 					.values()) {
 				grammar.addParser(parserInfo);
 			}
@@ -196,7 +196,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		final IOperatorProperties properties = extension.getKind()
 				.getProperties();
 		final IParserPrinter<? extends Formula<?>> parser = ff.getGrammar()
-				.getParser(properties, getTag());
+				.getParser(properties, mediator.getKind(extension.getSyntaxSymbol()), getTag());
 		final IParserPrinter<ExtendedExpression> extParser = (IParserPrinter<ExtendedExpression>) parser;
 		extParser.toString(mediator, this);
 	}

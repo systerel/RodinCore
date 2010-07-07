@@ -149,9 +149,9 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	@Override
 	protected void toString(IToStringMediator mediator) {
 		final IOperatorProperties properties = extension.getKind()
-				.getProperties();
+		.getProperties();
 		final IParserPrinter<? extends Formula<?>> parser = ff.getGrammar()
-				.getParser(properties, getTag());
+				.getParser(properties, mediator.getKind(extension.getSyntaxSymbol()), getTag());
 		final IParserPrinter<ExtendedPredicate> extParser = (IParserPrinter<ExtendedPredicate>) parser;
 		extParser.toString(mediator, this);
 	}

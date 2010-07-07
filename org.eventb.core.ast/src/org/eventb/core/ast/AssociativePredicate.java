@@ -17,7 +17,6 @@ import static org.eventb.internal.core.parser.BMath.LOGIC_PRED;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -30,6 +29,8 @@ import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.SubParsers.AssociativePredicateInfix;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -54,31 +55,64 @@ public class AssociativePredicate extends Predicate {
 	private final Predicate[] children;
 	
 	// offset of the corresponding interval in Formula
-	protected static int firstTag = FIRST_ASSOCIATIVE_PREDICATE;
-	protected static String[] tags = {
-		"\u2227", // LAND
-		"\u2228"  // LOR
-	};
-	// For testing purposes
-	public static final int TAGS_LENGTH = tags.length;
-	
+	private static int FIRST_TAG = FIRST_ASSOCIATIVE_PREDICATE;
+
 	/**
 	 * @since 2.0
 	 */
 	public static final String LOR_ID = "lor";
+
 	/**
 	 * @since 2.0
 	 */
 	public static final String LAND_ID = "land";
 
+	private static enum Operators implements IOperatorInfo<AssociativePredicate> {
+		OP_LAND("\u2227", LAND_ID, LOGIC_PRED, LAND),
+		OP_LOR("\u2228", LOR_ID, LOGIC_PRED, LOR),
+		;
+		
+		private final String image;
+		private final String id;
+		private final String groupId;
+		private final int tag;
+		
+		private Operators(String image, String id, String groupId, int tag) {
+			this.image = image;
+			this.id = id;
+			this.groupId = groupId;
+			this.tag = tag;
+		}
+
+		public String getImage() {
+			return image;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getGroupId() {
+			return groupId;
+		}
+
+		public IParserPrinter<AssociativePredicate> makeParser(int kind) {
+			return new AssociativePredicateInfix(kind, tag);
+		}
+
+	}
+
+	// For testing purposes
+	public static final int TAGS_LENGTH = Operators.values().length;
 	
 	/**
 	 * @since 2.0
 	 */
 	public static void init(BMath grammar) {
 		try {
-			grammar.addOperator("\u2227", LAND_ID, LOGIC_PRED, new AssociativePredicateInfix(LAND));
-			grammar.addOperator("\u2228", LOR_ID, LOGIC_PRED, new AssociativePredicateInfix(LOR));
+			for(Operators operInfo: Operators.values()) {
+				grammar.addOperator(operInfo);
+			}
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -110,7 +144,7 @@ public class AssociativePredicate extends Predicate {
 
 	// Common initialization.
 	private void checkPreconditions() {
-		assert getTag() >= firstTag && getTag() < firstTag+tags.length;
+		assert getTag() >= FIRST_TAG && getTag() < FIRST_TAG+TAGS_LENGTH;
 		assert children != null;
 		assert children.length >= 2;
 	}
@@ -136,20 +170,6 @@ public class AssociativePredicate extends Predicate {
 		typeChecked = true;
 	}
 	
-	// indicates when the toString method should put parentheses
-	private static final BitSet[] parenthesesMap = new BitSet[tags.length];
-
-	static {
-		assert parenthesesMap.length == tags.length;
-		
-		for (int i = 0; i < parenthesesMap.length; i++) {
-			parenthesesMap[i] = new BitSet();
-			parenthesesMap[i].set(Formula.LOR);
-			parenthesesMap[i].set(Formula.LAND);
-			parenthesesMap[i].set(Formula.NOT);
-		}
-	}
-	
 	/**
 	 * Returns the children of this node.
 	 * 
@@ -159,9 +179,13 @@ public class AssociativePredicate extends Predicate {
 	public Predicate[] getChildren() {
 		return children.clone();
 	}
-	
-	protected String getTagOperator() {
-		return tags[getTag()-firstTag];
+
+	private Operators getOperator() {
+		return Operators.values()[getTag()-FIRST_TAG];
+	}
+
+	private String getOperatorImage() {
+		return getOperator().getImage();
 	}
 
 	@Override
@@ -191,14 +215,17 @@ public class AssociativePredicate extends Predicate {
 
 	@Override
 	protected void toString(IToStringMediator mediator) {
-		new AssociativePredicateInfix(getTag()).toString(mediator, this);
+		final Operators operator = getOperator();
+		final int kind = mediator.getKind(operator.getImage());
+		
+		operator.makeParser(kind).toString(mediator, this);
 	}
 
 	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		return AssociativeHelper
 				.getSyntaxTreeHelper(boundNames, tabs, children,
-						getTagOperator(), "", this.getClass().getSimpleName());
+						getOperatorImage(), "", this.getClass().getSimpleName());
 	}
 
 	@Override

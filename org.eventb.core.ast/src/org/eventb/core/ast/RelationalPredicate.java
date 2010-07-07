@@ -25,6 +25,8 @@ import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.SubParsers.RelationalPredicateInfix;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -49,54 +51,76 @@ public class RelationalPredicate extends Predicate {
 	private final Expression right;
 	
 	// offset in the corresponding tag interval
-	protected final static int firstTag = FIRST_RELATIONAL_PREDICATE;
-	protected final static String[] tags = {
-		"=",      // EQUAL
-		"\u2260", // NOTEQUAL
-		"<",      // LT
-		"\u2264", // LE
-		">",      // GT
-		"\u2265", // GE
-		"\u2208", // IN
-		"\u2209", // NOTIN
-		"\u2282", // SUBSET
-		"\u2284", // NOTSUBSET
-		"\u2286", // SUBSETEQ
-		"\u2288"  // NOTSUBSETEQ
-	};
-	// For testing purposes
-	public static final int TAGS_LENGTH = tags.length;
-
+	private final static int FIRST_TAG = FIRST_RELATIONAL_PREDICATE;
+	
 	private static final String EQUAL_ID = "equal";
-	private static final String GT_ID = "greater than";
-	private static final String LE_ID = "lower or equal";
-	private static final String IN_ID = "In";
 	private static final String NOTEQUAL_ID = "Not Equal";
 	private static final String LT_ID = "Lower Than";
+	private static final String LE_ID = "lower or equal";
+	private static final String GT_ID = "greater than";
 	private static final String GE_ID = "Greater or Equal";
+	private static final String IN_ID = "In";
 	private static final String NOTIN_ID = "Not In";
 	private static final String SUBSET_ID = "Subset";
 	private static final String NOTSUBSET_ID = "Not Subset";
 	private static final String SUBSETEQ_ID = "Subset or Equal";
 	private static final String NOTSUBSETEQ_ID = "Not Subset or Equal";
 	
+	private static enum Operators implements IOperatorInfo<RelationalPredicate> {
+		OP_EQUAL("=", EQUAL_ID, RELOP_PRED, EQUAL),
+		OP_NOTEQUAL("≠", NOTEQUAL_ID, RELOP_PRED, NOTEQUAL),
+		OP_LT("<", LT_ID, RELOP_PRED, LT),
+		OP_LE("≤", LE_ID, RELOP_PRED, LE),
+		OP_GT(">", GT_ID, RELOP_PRED, GT),
+		OP_GE("\u2265", GE_ID, RELOP_PRED, GE),
+		OP_IN("\u2208", IN_ID, RELOP_PRED, IN),
+		OP_NOTIN("\u2209", NOTIN_ID, RELOP_PRED, NOTIN),
+		OP_SUBSET("\u2282", SUBSET_ID, RELOP_PRED, SUBSET),
+		OP_NOTSUBSET("\u2284", NOTSUBSET_ID, RELOP_PRED, NOTSUBSET),
+		OP_SUBSETEQ("\u2286", SUBSETEQ_ID, RELOP_PRED, SUBSETEQ),
+		OP_NOTSUBSETEQ("\u2288", NOTSUBSETEQ_ID, RELOP_PRED, NOTSUBSETEQ),
+		;
+		
+		private final String image;
+		private final String id;
+		private final String groupId;
+		private final int tag;
+		
+		private Operators(String image, String id, String groupId, int tag) {
+			this.image = image;
+			this.id = id;
+			this.groupId = groupId;
+			this.tag = tag;
+		}
+
+		public String getImage() {
+			return image;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getGroupId() {
+			return groupId;
+		}
+
+		public IParserPrinter<RelationalPredicate> makeParser(int kind) {
+			return new RelationalPredicateInfix(kind, tag);
+		}
+	}
+	
+	// For testing purposes
+	public static final int TAGS_LENGTH = Operators.values().length;
+	
 	/**
 	 * @since 2.0
 	 */
 	public static void init(BMath grammar) {
 		try {		
-			grammar.addOperator("=", EQUAL_ID, RELOP_PRED, new RelationalPredicateInfix(EQUAL));
-			grammar.addOperator("≠", NOTEQUAL_ID, RELOP_PRED, new RelationalPredicateInfix(NOTEQUAL));
-			grammar.addOperator("<", LT_ID, RELOP_PRED, new RelationalPredicateInfix(LT));
-			grammar.addOperator("≤", LE_ID, RELOP_PRED, new RelationalPredicateInfix(LE));
-			grammar.addOperator(">", GT_ID, RELOP_PRED, new RelationalPredicateInfix(GT));
-			grammar.addOperator("\u2265", GE_ID, RELOP_PRED, new RelationalPredicateInfix(GE));
-			grammar.addOperator("\u2208", IN_ID, RELOP_PRED, new RelationalPredicateInfix(IN));
-			grammar.addOperator("\u2209", NOTIN_ID, RELOP_PRED, new RelationalPredicateInfix(NOTIN));
-			grammar.addOperator("\u2282", SUBSET_ID, RELOP_PRED, new RelationalPredicateInfix(SUBSET));
-			grammar.addOperator("\u2284", NOTSUBSET_ID, RELOP_PRED, new RelationalPredicateInfix(NOTSUBSET));
-			grammar.addOperator("\u2286", SUBSETEQ_ID, RELOP_PRED, new RelationalPredicateInfix(SUBSETEQ));
-			grammar.addOperator("\u2288", NOTSUBSETEQ_ID, RELOP_PRED, new RelationalPredicateInfix(NOTSUBSETEQ));
+			for(Operators operInfo: Operators.values()) {
+				grammar.addOperator(operInfo);
+			}
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -110,7 +134,7 @@ public class RelationalPredicate extends Predicate {
 		this.left = left;
 		this.right = right;
 
-		assert tag >= firstTag && tag < firstTag+tags.length;
+		assert tag >= FIRST_TAG && tag < FIRST_TAG+TAGS_LENGTH;
 		assert left != null;
 		assert right != null;
 		
@@ -199,15 +223,26 @@ public class RelationalPredicate extends Predicate {
 		return right;
 	}
 
+	private String getOperatorImage() {
+		return getOperator().getImage();
+	}
+
+	private Operators getOperator() {
+		return Operators.values()[getTag()-FIRST_TAG];
+	}
+
 	@Override
 	protected void toString(IToStringMediator mediator) {
-		new RelationalPredicateInfix(getTag()).toString(mediator, this);
+		final Operators operator = getOperator();
+		final int kind = mediator.getKind(operator.getImage());
+		
+		operator.makeParser(kind).toString(mediator, this);
 	}
 
 	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		return tabs + this.getClass().getSimpleName() + " ["
-				+ tags[getTag() - firstTag] + "]\n"
+				+ getOperatorImage() + "]\n"
 				+ left.getSyntaxTree(boundNames, tabs + "\t")
 				+ right.getSyntaxTree(boundNames, tabs + "\t");
 	}

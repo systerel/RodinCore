@@ -29,6 +29,16 @@ public class IndexedSet<T> {
 	private final Map<T, Integer> reserved = new HashMap<T, Integer>();
 	private int nextIndex = FIRST_INDEX;
 
+	public IndexedSet() {
+		// nothing to do
+	}
+	
+	public IndexedSet(IndexedSet<T> other) {
+		this.set.putAll(other.set);
+		this.reserved.putAll(other.reserved);
+		this.nextIndex = other.nextIndex;
+	}
+	
 	public int getOrAdd(T key) {
 		return getOrAdd(key, set);
 	}
@@ -81,4 +91,5 @@ public class IndexedSet<T> {
 		return index >= FIRST_INDEX && index < nextIndex
 				&& !set.containsValue(index);
 	}
+
 }

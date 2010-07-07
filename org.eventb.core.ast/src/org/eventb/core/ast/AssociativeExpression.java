@@ -33,6 +33,8 @@ import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.SubParsers.AssociativeExpressionInfix;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -54,20 +56,7 @@ import org.eventb.internal.core.typecheck.TypeVariable;
 public class AssociativeExpression extends Expression {
 
 	// offset of the corresponding tag-interval in Formula
-	protected static final int firstTag = Formula.FIRST_ASSOCIATIVE_EXPRESSION;
-	
-	// TODO remove when no more used (syntax tree) 
-	protected static final String[] tags = {
-		"\u222a", // BUNION
-		"\u2229", // BINTER
-		"\u2218", // BCOMP
-		";",      // FCOMP
-		"\ue103", // OVR
-		"+",      // PLUS
-		"\u2217"  // MUL
-	};
-	// For testing purposes
-	public static final int TAGS_LENGTH = tags.length;
+	private static final int FIRST_TAG = Formula.FIRST_ASSOCIATIVE_EXPRESSION;
 	
 	/**
 	 * @since 2.0
@@ -97,6 +86,50 @@ public class AssociativeExpression extends Expression {
 	 * @since 2.0
 	 */
 	public static final String PLUS_ID = "plus";
+
+	private static enum Operators implements IOperatorInfo<AssociativeExpression> {
+		OP_BUNION("\u222a", BUNION_ID, BINOP, BUNION),
+		OP_BINTER("\u2229", BINTER_ID, BINOP, BINTER),
+		OP_BCOMP("\u2218", BCOMP_ID, BINOP, BCOMP),
+		OP_FCOMP(";", FCOMP_ID, BINOP, FCOMP), 
+		OP_OVR("\ue103", OVR_ID, BINOP, OVR), 
+		OP_PLUS("+", PLUS_ID, ARITHMETIC, PLUS), 
+		OP_MUL("\u2217", MUL_ID, ARITHMETIC, MUL), 
+		;
+		
+		private final String image;
+		private final String id;
+		private final String groupId;
+		private final int tag;
+		
+		private Operators(String image, String id, String groupId, int tag) {
+			this.image = image;
+			this.id = id;
+			this.groupId = groupId;
+			this.tag = tag;
+		}
+
+		public String getImage() {
+			return image;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getGroupId() {
+			return groupId;
+		}
+
+		public IParserPrinter<AssociativeExpression> makeParser(int kind) {
+			return new AssociativeExpressionInfix(kind, tag);
+		}
+
+	}
+	
+	// For testing purposes
+	public static final int TAGS_LENGTH = Operators.values().length;
+	
 	/**
 	 * @since 2.0
 	 */
@@ -104,13 +137,9 @@ public class AssociativeExpression extends Expression {
 	// interface then move this code to a non published area
 	public static void init(BMath grammar) {
 		try {
-			grammar.addOperator("\u222a", BUNION_ID, BINOP, new AssociativeExpressionInfix(BUNION));
-			grammar.addOperator("\u2229", BINTER_ID, BINOP, new AssociativeExpressionInfix(BINTER));
-			grammar.addOperator("\u2218", BCOMP_ID, BINOP, new AssociativeExpressionInfix(BCOMP));
-			grammar.addOperator("\u003b", FCOMP_ID, BINOP, new AssociativeExpressionInfix(FCOMP));
-			grammar.addOperator("\ue103", OVR_ID, BINOP, new AssociativeExpressionInfix(OVR));
-			grammar.addOperator("+", PLUS_ID, ARITHMETIC, new AssociativeExpressionInfix(PLUS));
-			grammar.addOperator("\u2217", MUL_ID, ARITHMETIC, new AssociativeExpressionInfix(MUL));
+			for(Operators operInfo: Operators.values()) {
+				grammar.addOperator(operInfo);
+			}
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -143,7 +172,7 @@ public class AssociativeExpression extends Expression {
 	}
 
 	private void checkPreconditions() {
-		assert getTag() >= firstTag && getTag() < firstTag+tags.length;
+		assert getTag() >= FIRST_TAG && getTag() < FIRST_TAG+TAGS_LENGTH;
 		assert children != null;
 		assert children.length >= 2;
 	}
@@ -259,8 +288,12 @@ public class AssociativeExpression extends Expression {
 		return children.clone();
 	}
 
-	protected String getTagOperator() {
-		return tags[getTag()-firstTag];
+	private String getOperatorImage() {
+		return getOperator().getImage();
+	}
+
+	private Operators getOperator() {
+		return Operators.values()[getTag()-FIRST_TAG];
 	}
 
 	@Override
@@ -352,13 +385,16 @@ public class AssociativeExpression extends Expression {
 
 	@Override
 	protected void toString(IToStringMediator mediator) {
-		new AssociativeExpressionInfix(getTag()).toString(mediator, this);
+		final Operators operator = getOperator();
+		final int kind = mediator.getKind(operator.getImage());
+		
+		operator.makeParser(kind).toString(mediator, this);
 	}
 
 	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		return getSyntaxTreeHelper(boundNames, tabs,
-				children, getTagOperator(), getTypeName(), this.getClass()
+				children, getOperatorImage(), getTypeName(), this.getClass()
 						.getSimpleName());
 	}
 

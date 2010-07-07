@@ -19,6 +19,7 @@ import org.eventb.core.ast.extension.IOperatorProperties.Arity;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.IParserPrinter;
 
 /**
  * @author Nicolas Beauger
@@ -106,13 +107,13 @@ public class PropertyParserDB {
 						.getArgumentType());
 	}
 	
-	private final Map<Properties, IParserInfo<? extends Formula<?>>> map = new HashMap<Properties, IParserInfo<? extends Formula<?>>>();
+	private final Map<Properties, IPropertyParserInfo<? extends Formula<?>>> map = new HashMap<Properties, IPropertyParserInfo<? extends Formula<?>>>();
 
-	public void add(IParserInfo<? extends Formula<?>> parserBuilder)
+	public void add(IPropertyParserInfo<? extends Formula<?>> parserBuilder)
 			throws OverrideException {
 		final Properties prop = makeProp(parserBuilder.getProperties());
 
-		final IParserInfo<? extends Formula<?>> old = map.put(prop, parserBuilder);
+		final IPropertyParserInfo<? extends Formula<?>> old = map.put(prop, parserBuilder);
 		if (old != null) {
 			map.put(prop, old);
 			throw new GenParser.OverrideException("overriding a parser");
@@ -120,14 +121,14 @@ public class PropertyParserDB {
 
 	}
 
-	public IParserPrinter<? extends Formula<?>> getParser(IOperatorProperties operProps,
+	public IParserPrinter<? extends Formula<?>> getParser(IOperatorProperties operProps, int kind,
 			int tag) {
 		final Properties prop = makeProp(operProps);
-		final IParserInfo<? extends Formula<?>> parserBuilder = map.get(prop);
+		final IPropertyParserInfo<? extends Formula<?>> parserBuilder = map.get(prop);
 		if (parserBuilder == null) {
 			return null;
 		}
-		return parserBuilder.makeParser(tag);
+		return parserBuilder.makeParser(kind, tag);
 	}
 
 }

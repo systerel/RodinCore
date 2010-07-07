@@ -14,7 +14,6 @@ package org.eventb.core.ast;
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
 import static org.eventb.core.ast.AssociativeHelper.isLegibleList;
-import static org.eventb.internal.core.parser.SubParsers.MULTIPLE_PREDICATE_PARSER;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -28,8 +27,10 @@ import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
-import org.eventb.internal.core.parser.SubParsers;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.SubParsers.MULTIPLE_PREDICATE_PARSER;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -53,12 +54,42 @@ public class MultiplePredicate extends Predicate {
 	protected final Expression[] children;
 
 	// offset of the corresponding interval in Formula
-	protected static final int firstTag = FIRST_MULTIPLE_PREDICATE;
-	protected static String[] tags = {
-		"partition" // KPARTITION
-	};
+	private static final int FIRST_TAG = FIRST_MULTIPLE_PREDICATE;
+
+	private static enum Operators implements IOperatorInfo<MultiplePredicate> {
+		OP_KPARTITION("partition", KPARTITION_ID, BMath.ATOMIC_PRED),
+		;
+		
+		private final String image;
+		private final String id;
+		private final String groupId;
+		
+		private Operators(String image, String id, String groupId) {
+			this.image = image;
+			this.id = id;
+			this.groupId = groupId;
+		}
+
+		public String getImage() {
+			return image;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getGroupId() {
+			return groupId;
+		}
+
+		public IParserPrinter<MultiplePredicate> makeParser(int kind) {
+			return new MULTIPLE_PREDICATE_PARSER(kind);
+		}
+
+	}
+
 	// For testing purposes
-	public static final int TAGS_LENGTH = tags.length;
+	public static final int TAGS_LENGTH = Operators.values().length;
 
 	private static final String KPARTITION_ID = "Partition";
 
@@ -67,8 +98,9 @@ public class MultiplePredicate extends Predicate {
 	 */
 	public static void initV2(BMath grammar) {
 		try {
-			grammar.addOperator("partition", KPARTITION_ID, BMath.ATOMIC_PRED,
-					MULTIPLE_PREDICATE_PARSER);
+			for(Operators operInfo: Operators.values()) {
+				grammar.addOperator(operInfo);
+			}
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -137,13 +169,24 @@ public class MultiplePredicate extends Predicate {
 
 	@Override
 	protected void toString(IToStringMediator mediator) {
-		SubParsers.MULTIPLE_PREDICATE_PARSER.toString(mediator, this);
+		final Operators operator = getOperator();
+		final int kind = mediator.getKind(operator.getImage());
+		
+		operator.makeParser(kind).toString(mediator, this);
+	}
+	
+	private String getOperatorImage() {
+		return getOperator().getImage();
 	}
 
+	private Operators getOperator() {
+		return Operators.values()[getTag()-FIRST_TAG];
+	}
+	
 	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		return getSyntaxTreeHelper(boundNames, tabs, children,
-				tags[getTag()-firstTag], "", this.getClass().getSimpleName());
+				getOperatorImage(), "", this.getClass().getSimpleName());
 	}
 
 	@Override

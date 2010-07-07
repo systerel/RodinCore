@@ -13,7 +13,6 @@
 package org.eventb.core.ast;
 
 import static org.eventb.internal.core.parser.BMath.NOT_PRED;
-import static org.eventb.internal.core.parser.SubParsers.NOT_PARSER;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -25,7 +24,10 @@ import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.SubParsers.UnaryPredicateParser;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -41,29 +43,61 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  */
 public class UnaryPredicate extends Predicate {
 	
-	protected final Predicate child;
-
 	// offset in the corresponding tag interval
-	protected static final int firstTag = FIRST_UNARY_PREDICATE;
-	protected static final String[] tags = {
-		"\u00ac" // NOT
-	};
-	// For testing purposes
-	public static final int TAGS_LENGTH = tags.length;
-
+	private static final int firstTag = FIRST_UNARY_PREDICATE;
+	
 	private static final String NOT_ID = "Not";
+
+	private static enum Operators implements IOperatorInfo<UnaryPredicate> {
+		OP_NOT("\u00ac", NOT_ID, NOT_PRED, NOT);
+		
+		private final String image;
+		private final String id;
+		private final String groupId;
+		private final int tag;
+		
+		private Operators(String image, String id, String groupId, int tag) {
+			this.image = image;
+			this.id = id;
+			this.groupId = groupId;
+			this.tag = tag;
+		}
+
+		public String getImage() {
+			return image;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getGroupId() {
+			return groupId;
+		}
+
+		public IParserPrinter<UnaryPredicate> makeParser(int kind) {
+			return new UnaryPredicateParser(kind, tag);
+		}
+	}
+	
+	// For testing purposes
+	public static final int TAGS_LENGTH = Operators.values().length;
 
 	/**
 	 * @since 2.0
 	 */
 	public static void init(BMath grammar) {
-		try {		
-			grammar.addOperator("\u00ac", NOT_ID, NOT_PRED, NOT_PARSER);
+		try {
+			for(Operators operInfo: Operators.values()) {
+				grammar.addOperator(operInfo);
+			}
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+
+	protected final Predicate child;
 
 	protected UnaryPredicate(Predicate child, int tag, SourceLocation location,
 			FormulaFactory ff) {
@@ -71,7 +105,7 @@ public class UnaryPredicate extends Predicate {
 		super(tag, location, child.hashCode());
 		this.child = child;
 		
-		assert tag >= firstTag && tag < firstTag+tags.length;
+		assert tag >= firstTag && tag < firstTag + TAGS_LENGTH;
 		assert child != null;
 		
 		setPredicateVariableCache(this.child);
@@ -97,8 +131,12 @@ public class UnaryPredicate extends Predicate {
 		return child;
 	}
 	
-	protected String getTagOperator() {
-		return tags[getTag()-firstTag];
+	private String getOperatorImage() {
+		return getOperator().getImage();
+	}
+
+	private Operators getOperator() {
+		return Operators.values()[getTag()-firstTag];
 	}
 	
 	@Override
@@ -122,12 +160,15 @@ public class UnaryPredicate extends Predicate {
 
 	@Override
 	protected void toString(IToStringMediator mediator) {
-		NOT_PARSER.toString(mediator, this);
+		final Operators operator = getOperator();
+		final int kind = mediator.getKind(operator.getImage());
+		
+		operator.makeParser(kind).toString(mediator, this);
 	}
 
 	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
-		return tabs + this.getClass().getSimpleName() + " [" + getTagOperator()	+ "]\n"
+		return tabs + this.getClass().getSimpleName() + " [" + getOperatorImage()	+ "]\n"
 		+ child.getSyntaxTree(boundNames, tabs + "\t");
 	}
 

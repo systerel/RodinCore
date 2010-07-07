@@ -39,6 +39,7 @@ import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.SubParsers.ExplicitQuantExpr;
@@ -129,74 +130,139 @@ public class QuantifiedExpression extends Expression {
 	}
 	
 	// offset of the tag interval in Formula
-	protected final static int firstTag = FIRST_QUANTIFIED_EXPRESSION;
-	protected final static String[] tags = {
-		"\u22c3", // QUNION
-		"\u22c2", // QINTER
-		"CSET"    // CSET
-	};
-	// For testing purposes
-	public static final int TAGS_LENGTH = tags.length;
-
+	private static final int FIRST_TAG = FIRST_QUANTIFIED_EXPRESSION;
+	
 	private static final String CSET_ID = "Comprehension Set";
 	private static final String LAMBDA_ID = "Lambda";
 	private static final String QUNION_ID = "Quantified Union";
 	private static final String QINTER_ID = "Quantified Intersection";
+
+	private static enum Operators implements IOperatorInfo<QuantifiedExpression> {
+		OP_QUNION_EXPL("\u22c3", QUNION_ID, QUANTIFICATION) {
+			public IParserPrinter<QuantifiedExpression> makeParser(int kind) {
+				return new ExplicitQuantExpr(kind, QUNION);
+			}
+		},
+		OP_QUNION_IMPL("\u22c3", QUNION_ID, QUANTIFICATION) {
+			public IParserPrinter<QuantifiedExpression> makeParser(int kind) {
+				return new ImplicitQuantExpr(kind, QUNION);
+			}
+		},
+		OP_QINTER_EXPL("\u22c2", QINTER_ID, QUANTIFICATION) {
+			public IParserPrinter<QuantifiedExpression> makeParser(int kind) {
+				return new ExplicitQuantExpr(kind, QINTER);
+			}
+		},
+		OP_QINTER_IMPL("\u22c2", QINTER_ID, QUANTIFICATION) {
+			public IParserPrinter<QuantifiedExpression> makeParser(int kind) {
+				return new ImplicitQuantExpr(kind, QINTER);
+			}
+		},
+		OP_CSET_EXPL("{", CSET_ID, BRACE_SETS) {
+			public IParserPrinter<QuantifiedExpression> makeParser(int kind) {
+				return new CSET_EXPLICIT(kind);
+			}
+		},
+		OP_CSET_IMPL("{", CSET_ID, BRACE_SETS) {
+			public IParserPrinter<QuantifiedExpression> makeParser(int kind) {
+				return new CSET_IMPLICIT(kind);
+			}
+		},
+		OP_CSET_LAMBDA("\u03bb", LAMBDA_ID, QUANTIFICATION) {
+			public IParserPrinter<QuantifiedExpression> makeParser(int kind) {
+				return new CSET_LAMBDA(kind);
+			}
+		},
+		;
+		
+		private final String image;
+		private final String id;
+		private final String groupId;
+		
+		private Operators(String image, String id, String groupId) {
+			this.image = image;
+			this.id = id;
+			this.groupId = groupId;
+		}
+
+		public String getImage() {
+			return image;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getGroupId() {
+			return groupId;
+		}
+
+	}
+
+	// For testing purposes
+	public static final int TAGS_LENGTH = 3; // FIXME cannot be (easily) computed from Operators
 
 	/**
 	 * @since 2.0
 	 */
 	public static void init(BMath grammar) {
 		try {
-			grammar.addOperator("\u22c3", QUNION_ID, QUANTIFICATION, new ExplicitQuantExpr(QUNION));
-			grammar.addOperator("\u22c3", QUNION_ID, QUANTIFICATION, new ImplicitQuantExpr(QUNION));
-			grammar.addOperator("\u22c2", QINTER_ID, QUANTIFICATION, new ExplicitQuantExpr(QINTER));
-			grammar.addOperator("\u22c2", QINTER_ID, QUANTIFICATION, new ImplicitQuantExpr(QINTER));
-			grammar.addOperator("{", CSET_ID, BRACE_SETS, CSET_EXPLICIT);
-			grammar.addOperator("{", CSET_ID, BRACE_SETS, CSET_IMPLICIT);
-			grammar.addOperator("\u03bb", LAMBDA_ID, QUANTIFICATION, CSET_LAMBDA);
+			for(Operators operInfo: Operators.values()) {
+				grammar.addOperator(operInfo);
+			}
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+	
+	private String getOperatorImage() {
+		return getOperator().getImage();
+	}
 
-	@Override
-	protected void toString(IToStringMediator mediator) {
-		final IParserPrinter<QuantifiedExpression> parser;
+	private Operators getOperator() {
 		switch (getTag()) {
 		case CSET:
 			switch (form) {
 			case Explicit:
-				parser = CSET_EXPLICIT;
-				break;
+				return Operators.OP_CSET_EXPL;
 			case Implicit:
-				parser = CSET_IMPLICIT;
-				break;
+				return Operators.OP_CSET_IMPL;
 			case Lambda:
-				parser = CSET_LAMBDA;
-				break;
+				return Operators.OP_CSET_LAMBDA;
 			default:
 				throw newIllegalForm(form);
 			}
-			break;
 		case QUNION:
+			switch (form) {
+			case Explicit:
+				return Operators.OP_QUNION_EXPL;
+			case Implicit:
+				return Operators.OP_QUNION_IMPL;
+			default:
+				throw newIllegalForm(form);
+			}
 		case QINTER:
 			switch (form) {
 			case Explicit:
-				parser = new ExplicitQuantExpr(getTag());
-				break;
+				return Operators.OP_QINTER_EXPL;
 			case Implicit:
-				parser = new ImplicitQuantExpr(getTag());
-				break;
+				return Operators.OP_QINTER_IMPL;
 			default:
 				throw newIllegalForm(form);
 			}
-			break;
 		default:
 			throw newIllegalForm(form);
 		}
-		parser.toString(mediator, this);
+
+	}
+
+	@Override
+	protected void toString(IToStringMediator mediator) {
+		final Operators operator = getOperator();
+		final int kind = mediator.getKind(operator.getImage());
+		
+		operator.makeParser(kind).toString(mediator, this);
 	}
 
 	private static IllegalStateException newIllegalForm(Form form) {
@@ -259,7 +325,7 @@ public class QuantifiedExpression extends Expression {
 	
 	// Common initialization.
 	private void checkPreconditions(Form inputForm) {
-		assert getTag() >= firstTag && getTag() < firstTag+tags.length;
+		assert getTag() >= FIRST_TAG && getTag() < FIRST_TAG+TAGS_LENGTH;
 		assert quantifiedIdentifiers != null;
 		assert 1 <= quantifiedIdentifiers.length;
 		assert pred != null;
@@ -465,7 +531,7 @@ public class QuantifiedExpression extends Expression {
 	public Predicate getPredicate() {
 		return pred;
 	}
-	
+
 	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		final String typeName = getType()!=null?" [type: "+getType().toString()+"]":"";
@@ -474,7 +540,7 @@ public class QuantifiedExpression extends Expression {
 		return tabs
 				+ this.getClass().getSimpleName()
 				+ " ["
-				+ tags[getTag() - firstTag] 
+				+ getOperatorImage() 
 				+ ", " + form.toString()
 				+ "]" 
 				+ typeName

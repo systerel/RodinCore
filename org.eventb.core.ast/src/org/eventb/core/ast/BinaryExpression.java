@@ -32,6 +32,7 @@ import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.SubParsers.BinaryExpressionInfix;
@@ -61,7 +62,7 @@ public class BinaryExpression extends Expression {
 	private final Expression right;
 	
 	// offset of the corresponding tag-interval in Formula
-	protected final static int firstTag = FIRST_BINARY_EXPRESSION;
+	private final static int FIRST_TAG = FIRST_BINARY_EXPRESSION;
 	protected final static String[] tags = {
 		"\u21a6",  // MAPSTO
 		"\u2194",  // REL
@@ -203,38 +204,86 @@ public class BinaryExpression extends Expression {
 	 */
 	public static final String RELIMAGE_ID = "Relational Image";
 
+	private static enum Operators implements IOperatorInfo<BinaryExpression> {
+		OP_MAPSTO("\u21a6", MAPSTO_ID, PAIR, MAPSTO),
+		OP_REL("\u2194", REL_ID, RELATION, REL),
+		OP_TREL("\ue100", TREL_ID, RELATION, TREL),
+		OP_SREL("\ue101", SREL_ID, RELATION, SREL),
+		OP_STREL("\ue102", STREL_ID, RELATION, STREL),
+		OP_PFUN("\u21f8", PFUN_ID, RELATION, PFUN),
+		OP_TFUN("\u2192", TFUN_ID, RELATION, TFUN),
+		OP_PINJ("\u2914", PINJ_ID, RELATION, PINJ),
+		OP_TINJ("\u21a3", TINJ_ID, RELATION, TINJ),
+		OP_PSUR("\u2900", PSUR_ID, RELATION, PSUR),
+		OP_TSUR("\u21a0", TSUR_ID, RELATION, TSUR),
+		OP_TBIJ("\u2916", TBIJ_ID, RELATION, TBIJ),
+		OP_SETMINUS("\u2216", SETMINUS_ID, BINOP, SETMINUS),
+		OP_CPROD("\u00d7", CPROD_ID, BINOP, CPROD),
+		OP_DPROD("\u2297", DPROD_ID, BINOP, DPROD),
+		OP_PPROD("\u2225", PPROD_ID, BINOP, PPROD),
+		OP_DOMRES("\u25c1", DOMRES_ID, BINOP, DOMRES),
+		OP_DOMSUB("\u2a64", DOMSUB_ID, BINOP, DOMSUB),
+		OP_RANRES("\u25b7", RANRES_ID, BINOP, RANRES),
+		OP_RANSUB("\u2a65", RANSUB_ID, BINOP, RANSUB),
+		OP_UPTO("\u2025", UPTO_ID, INTERVAL, UPTO),
+		OP_MINUS("\u2212", MINUS_ID, ARITHMETIC, MINUS),
+		OP_DIV("\u00f7", DIV_ID, ARITHMETIC, DIV),
+		OP_MOD("mod", MOD_ID, ARITHMETIC, MOD),
+		OP_EXPN("\u005e", EXPN_ID, ARITHMETIC, EXPN),
+		OP_FUNIMAGE("(", FUNIMAGE_ID, FUNCTIONAL, FUNIMAGE) {
+			@Override
+			public IParserPrinter<BinaryExpression> makeParser(int kind) {
+				return new LedImage(kind, FUNIMAGE, BMath._RPAR);
+			}
+		},
+		OP_RELIMAGE("[", RELIMAGE_ID, FUNCTIONAL, RELIMAGE) {
+			@Override
+			public IParserPrinter<BinaryExpression> makeParser(int kind) {
+				return new LedImage(kind, RELIMAGE, BMath._RBRACKET);
+			}
+		},
+		;
+
+		private final String image;
+		private final String id;
+		private final String groupId;
+		private final int tag;
+		
+		private Operators(String image, String id, String groupId, int tag) {
+			this.image = image;
+			this.id = id;
+			this.groupId = groupId;
+			this.tag = tag;
+		}
+
+		public String getImage() {
+			return image;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getGroupId() {
+			return groupId;
+		}
+
+		public IParserPrinter<BinaryExpression> makeParser(int kind) {
+			return new BinaryExpressionInfix(kind, tag);
+		}
+
+	}
+
+	
+	
 	/**
 	 * @since 2.0
 	 */
 	public static void init(BMath grammar) {
 		try {
-			grammar.addOperator("\u21a6", MAPSTO_ID, PAIR, new BinaryExpressionInfix(MAPSTO));
-			grammar.addOperator("\u2194", REL_ID, RELATION, new BinaryExpressionInfix(REL));
-			grammar.addOperator("\ue100", TREL_ID, RELATION, new BinaryExpressionInfix(TREL));
-			grammar.addOperator("\ue101", SREL_ID, RELATION, new BinaryExpressionInfix(SREL));
-			grammar.addOperator("\ue102", STREL_ID, RELATION, new BinaryExpressionInfix(STREL));
-			grammar.addOperator("\u21f8", PFUN_ID, RELATION, new BinaryExpressionInfix(PFUN));
-			grammar.addOperator("\u2192", TFUN_ID, RELATION, new BinaryExpressionInfix(TFUN));
-			grammar.addOperator("\u2914", PINJ_ID, RELATION, new BinaryExpressionInfix(PINJ));
-			grammar.addOperator("\u21a3", TINJ_ID, RELATION, new BinaryExpressionInfix(TINJ));
-			grammar.addOperator("\u2900", PSUR_ID, RELATION, new BinaryExpressionInfix(PSUR));
-			grammar.addOperator("\u21a0", TSUR_ID, RELATION, new BinaryExpressionInfix(TSUR));
-			grammar.addOperator("\u2916", TBIJ_ID, RELATION, new BinaryExpressionInfix(TBIJ));
-			grammar.addOperator("\u2216", SETMINUS_ID, BINOP, new BinaryExpressionInfix(SETMINUS));
-			grammar.addOperator("\u00d7", CPROD_ID, BINOP, new BinaryExpressionInfix(CPROD));
-			grammar.addOperator("\u2297", DPROD_ID, BINOP, new BinaryExpressionInfix(DPROD));
-			grammar.addOperator("\u2225", PPROD_ID, BINOP, new BinaryExpressionInfix(PPROD));
-			grammar.addOperator("\u25c1", DOMRES_ID, BINOP, new BinaryExpressionInfix(DOMRES));
-			grammar.addOperator("\u2a64", DOMSUB_ID, BINOP, new BinaryExpressionInfix(DOMSUB));
-			grammar.addOperator("\u25b7", RANRES_ID, BINOP, new BinaryExpressionInfix(RANRES));
-			grammar.addOperator("\u2a65", RANSUB_ID, BINOP, new BinaryExpressionInfix(RANSUB));
-			grammar.addOperator("\u2025", UPTO_ID, INTERVAL, new BinaryExpressionInfix(UPTO));
-			grammar.addOperator("\u2212", MINUS_ID, ARITHMETIC, new BinaryExpressionInfix(MINUS));
-			grammar.addOperator("\u00f7", DIV_ID, ARITHMETIC, new BinaryExpressionInfix(DIV));
-			grammar.addOperator("mod", MOD_ID, ARITHMETIC, new BinaryExpressionInfix(MOD));
-			grammar.addOperator("\u005e", EXPN_ID, ARITHMETIC, new BinaryExpressionInfix(EXPN));
-			grammar.addOperator("(", FUNIMAGE_ID, FUNCTIONAL, new LedImage(FUNIMAGE, BMath._RPAR));
-			grammar.addOperator("[", RELIMAGE_ID, FUNCTIONAL, new LedImage(RELIMAGE, BMath._RBRACKET));
+			for(Operators operInfo: Operators.values()) {
+				grammar.addOperator(operInfo);
+			}
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -248,7 +297,7 @@ public class BinaryExpression extends Expression {
 		this.left = left;
 		this.right = right;
 		
-		assert tag >= firstTag && tag < firstTag+tags.length;
+		assert tag >= FIRST_TAG && tag < FIRST_TAG+tags.length;
 		assert left != null;
 		assert right != null;
 		
@@ -410,9 +459,12 @@ public class BinaryExpression extends Expression {
 		setFinalType(resultType, givenType);
 	}
 	
-	// Tag operator
-	protected String getTagOperator() {
-		return tags[getTag()-firstTag];
+	private Operators getOperator() {
+		return Operators.values()[getTag()-FIRST_TAG];
+	}
+
+	private String getOperatorImage() {
+		return getOperator().getImage();
 	}
 
 	@Override
@@ -543,24 +595,15 @@ public class BinaryExpression extends Expression {
 
 	@Override
 	protected void toString(IToStringMediator mediator) {
-		final IParserPrinter<BinaryExpression> parser;
-		switch (getTag()) {
-		case FUNIMAGE:
-			parser = new LedImage(getTag(), BMath._RPAR);
-			break;
-		case RELIMAGE:
-			parser = new LedImage(getTag(), BMath._RBRACKET);
-			break;
-		default:
-			parser = new BinaryExpressionInfix(getTag());
-			break;
-		}
-		parser.toString(mediator, this);
+		final Operators operator = getOperator();
+		final int kind = mediator.getKind(operator.getImage());
+		
+		operator.makeParser(kind).toString(mediator, this);
 	}
 
 	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
-		return tabs + this.getClass().getSimpleName() + " [" + getTagOperator() + "]" 
+		return tabs + this.getClass().getSimpleName() + " [" + getOperatorImage() + "]" 
 				+ getTypeName() + "\n"
 				+ left.getSyntaxTree(boundNames, tabs + "\t")
 				+ right.getSyntaxTree(boundNames, tabs + "\t");

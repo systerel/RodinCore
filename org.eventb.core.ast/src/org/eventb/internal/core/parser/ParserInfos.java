@@ -24,46 +24,46 @@ import org.eventb.core.ast.extension.IOperatorProperties;
 
 /**
  * @author Nicolas Beauger
- *
+ * TODO implement for all parsers then move to appropriate classes
  */
 public class ParserInfos  {
 
 	public static enum ExtendedExpressionParsers implements
-			IParserInfo<ExtendedExpression> {
+			IPropertyParserInfo<ExtendedExpression> {
 
 		EXTENDED_ATOMIC_EXPRESSION(makeOperProps(PREFIX, EXPRESSION, NULLARY, EXPRESSION), true) {
 
-			public IParserPrinter<ExtendedExpression> makeParser(int tag) {
-				return new SubParsers.ExtendedAtomicExpressionParser(tag);
+			public IParserPrinter<ExtendedExpression> makeParser(int kind, int tag) {
+				return new SubParsers.ExtendedAtomicExpressionParser(kind, tag);
 			}
 
 		},
 
 		EXTENDED_BINARY_EXPRESSION(makeOperProps(INFIX, EXPRESSION, BINARY, EXPRESSION), true) {
 
-			public IParserPrinter<ExtendedExpression> makeParser(int tag) {
-				return new SubParsers.ExtendedBinaryExpressionInfix(tag);
+			public IParserPrinter<ExtendedExpression> makeParser(int kind, int tag) {
+				return new SubParsers.ExtendedBinaryExpressionInfix(kind, tag);
 			}
 		},
 
 		EXTENDED_ASSOCIATIVE_EXPRESSION(makeOperProps(INFIX, EXPRESSION, MULTARY_2, EXPRESSION), true) {
 
-			public IParserPrinter<ExtendedExpression> makeParser(int tag) {
-				return new SubParsers.ExtendedAssociativeExpressionInfix(tag);
+			public IParserPrinter<ExtendedExpression> makeParser(int kind, int tag) {
+				return new SubParsers.ExtendedAssociativeExpressionInfix(kind, tag);
 			}
 		},
 		
 		PARENTHESIZED_EXPRESSION_1(makeOperProps(PREFIX, EXPRESSION, MULTARY_1, EXPRESSION), true) {
 
-			public IParserPrinter<ExtendedExpression> makeParser(int tag) {
-				return new SubParsers.ExtendedExprParen(tag);
+			public IParserPrinter<ExtendedExpression> makeParser(int kind, int tag) {
+				return new SubParsers.ExtendedExprParen(kind, tag);
 			}
 		},
 		
 		PARENTHESIZED_EXPRESSION_2(makeOperProps(PREFIX, EXPRESSION, MULTARY_2, EXPRESSION), true) {
 
-			public IParserPrinter<ExtendedExpression> makeParser(int tag) {
-				return new SubParsers.ExtendedExprParen(tag);
+			public IParserPrinter<ExtendedExpression> makeParser(int kind, int tag) {
+				return new SubParsers.ExtendedExprParen(kind, tag);
 			}
 		},
 		;
@@ -85,5 +85,6 @@ public class ParserInfos  {
 			return isExtension;
 		}
 
+		
 	}
 }

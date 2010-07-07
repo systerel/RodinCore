@@ -132,6 +132,7 @@ public class FormulaFactory {
 	}
 
 	/**
+	 * FIXME should either not be published, or return an interface
 	 * @since 2.0
 	 */
 	public AbstractGrammar getGrammar() {

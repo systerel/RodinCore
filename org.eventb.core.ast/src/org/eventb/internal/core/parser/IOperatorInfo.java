@@ -10,15 +10,16 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
-import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.core.ast.Formula;
 
-/**
- * @author Nicolas Beauger
- *
- */
-public interface IParserPrinter<T> {
+public interface IOperatorInfo<T extends Formula<?>> {
 	
-	// no parse methods, as they are led/nud specific
+	IParserPrinter<T> makeParser(int kind);
+
+	String getImage();
 	
-	void toString(IToStringMediator mediator, T toPrint);
+	String getId();
+	
+	String getGroupId();
+	
 }

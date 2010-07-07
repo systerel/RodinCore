@@ -21,11 +21,14 @@ import org.eventb.core.ast.FormulaFactory;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IToStringMediator {
+	// TODO remove unused methods
 
 	void append(String string);
 	
 	void appendImage(int kind);
 
+	int getKind(String operator);
+	
 	void subPrint(Formula<?> child, boolean isRight);
 
 	void forward(Formula<?> child, boolean withTypes);

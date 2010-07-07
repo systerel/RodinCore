@@ -25,6 +25,8 @@ import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.SubParsers.BinaryPredicateParser;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -45,13 +47,49 @@ public class BinaryPredicate extends Predicate {
 	
 	private static final String LIMP_ID = "Logical Implication";
 	private static final String LEQV_ID = "Equivalent";
+	
+	private static enum Operators implements IOperatorInfo<BinaryPredicate> {
+		OP_LIMP("\u21d2", LIMP_ID, INFIX_PRED, LIMP),
+		OP_LEQV("\u21d4", LEQV_ID, INFIX_PRED, LEQV),
+		;
+		
+		private final String image;
+		private final String id;
+		private final String groupId;
+		private final int tag;
+		
+		private Operators(String image, String id, String groupId, int tag) {
+			this.image = image;
+			this.id = id;
+			this.groupId = groupId;
+			this.tag = tag;
+		}
+
+		public String getImage() {
+			return image;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getGroupId() {
+			return groupId;
+		}
+
+		public IParserPrinter<BinaryPredicate> makeParser(int kind) {
+			return new BinaryPredicateParser(kind, tag);
+		}
+	}
+
 	/**
 	 * @since 2.0
 	 */
 	public static void init(BMath grammar) {
 		try {
-			grammar.addOperator("\u21d2", LIMP_ID, INFIX_PRED, new BinaryPredicateParser(LIMP));
-			grammar.addOperator("\u21d4", LEQV_ID, INFIX_PRED, new BinaryPredicateParser(LEQV));
+			for(Operators operInfo: Operators.values()) {
+				grammar.addOperator(operInfo);
+			}
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -106,9 +144,12 @@ public class BinaryPredicate extends Predicate {
 		}
 	}
 
-	// Tag operator.
-	protected String getTagOperator() {
-		return tags[getTag()-firstTag];
+	private String getOperatorImage() {
+		return getOperator().getImage();
+	}
+
+	private Operators getOperator() {
+		return Operators.values()[getTag()-firstTag];
 	}
 	
 	@Override
@@ -134,12 +175,15 @@ public class BinaryPredicate extends Predicate {
 
 	@Override
 	protected void toString(IToStringMediator mediator) {
-		new BinaryPredicateParser(getTag()).toString(mediator, this);
+		final Operators operator = getOperator();
+		final int kind = mediator.getKind(operator.getImage());
+		
+		operator.makeParser(kind).toString(mediator, this);
 	}
 
 	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
-		return tabs + this.getClass().getSimpleName() + " [" + getTagOperator() + "]\n"
+		return tabs + this.getClass().getSimpleName() + " [" + getOperatorImage() + "]\n"
 				+ left.getSyntaxTree(boundNames, tabs + "\t")
 				+ right.getSyntaxTree(boundNames, tabs + "\t");
 	}

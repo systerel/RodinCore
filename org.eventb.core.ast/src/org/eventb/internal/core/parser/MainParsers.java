@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
-import static java.util.Arrays.asList;
-import static org.eventb.core.ast.Formula.*;
 import static org.eventb.core.ast.ProblemKind.PrematureEOF;
-import static org.eventb.internal.core.parser.AbstractGrammar.*;
-import static org.eventb.internal.core.parser.BMath.*;
+import static org.eventb.internal.core.parser.AbstractGrammar._COMMA;
+import static org.eventb.internal.core.parser.AbstractGrammar._EOF;
+import static org.eventb.internal.core.parser.AbstractGrammar._LPAR;
+import static org.eventb.internal.core.parser.BMath._MAPSTO;
 import static org.eventb.internal.core.parser.GenParser.ProgressDirection.RIGHT;
 import static org.eventb.internal.core.parser.SubParsers.BOUND_IDENT_DECL_SUBPARSER;
 import static org.eventb.internal.core.parser.SubParsers.FREE_IDENT_SUBPARSER;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -26,9 +27,6 @@ import java.util.Set;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Assignment;
-import org.eventb.core.ast.BecomesEqualTo;
-import org.eventb.core.ast.BecomesMemberOf;
-import org.eventb.core.ast.BecomesSuchThat;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
@@ -41,11 +39,9 @@ import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
-import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.GenParser.ParserContext;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 import org.eventb.internal.core.parser.GenParser.ParserContext.SavedContext;
-import org.eventb.internal.core.parser.SubParsers.AbstractNudParser;
 
 /**
  * Main parsers implement an algorithm for parsing a formula (or a part of a
@@ -205,10 +201,6 @@ public class MainParsers {
 	private static abstract class AbstractMainParser<T> implements INudParser<T> {
 		public AbstractMainParser() {
 			// avoid synthetic accessors
-		}
-		
-		public int[] getTags() {
-			return NO_TAGS;
 		}
 		
 	}
@@ -420,89 +412,104 @@ public class MainParsers {
 	// returned by sub-parsers, then implement assignment parsing
 	// with led sub-parsers
 	/** @see GenParser#parse() */
-	public static final INudParser<Assignment> ASSIGNMENT_PARSER = new AbstractNudParser<Assignment>(BECOMES_EQUAL_TO, BECOMES_MEMBER_OF, BECOMES_SUCH_THAT) {
-
-		public Assignment nud(ParserContext pc) throws SyntaxError {
-			final List<FreeIdentifier> idents = pc.subParse(FREE_IDENT_LIST_PARSER);
-			// the list is guaranteed to be non empty
-			assert !idents.isEmpty();
-			
-			final Token tokenAfterIdents = pc.t;
-			final int tokenKind = tokenAfterIdents.kind;
-			pc.progress();
-
-			if (tokenKind == _LPAR) { // FUNIMAGE assignment
-				if (idents.size() != 1) {
-					throw new SyntaxError(new ASTProblem(
-							pc.getSourceLocation(),
-							ProblemKind.InvalidAssignmentToImage,
-							ProblemSeverities.Error));
-				}
-				final FreeIdentifier ident = idents.get(0);
-				final Expression index = pc.subParse(EXPR_PARSER);
-				pc.progressCloseParen();
-				pc.progress(_BECEQ);
-				final Expression value = pc.subParse(EXPR_PARSER);
-				final Expression overriding = makeFunctionOverriding(ident, index, value, pc.factory);
-				return pc.factory.makeBecomesEqualTo(ident, overriding, pc.getSourceLocation());
-			} else if (tokenKind == _BECEQ) {
-				final List<Expression> values = pc.subParse(EXPR_LIST_PARSER);
-				if (idents.size() != values.size()) {
-					throw new SyntaxError(new ASTProblem(
-							pc.makeSourceLocation(tokenAfterIdents),
-							ProblemKind.IncompatibleIdentExprNumbers,
-							ProblemSeverities.Error, idents.size(), values
-									.size()));
-				}
-				return pc.factory.makeBecomesEqualTo(idents, values, pc.getSourceLocation());
-			} else if (tokenKind == _BECMO) {
-				if (idents.size() != 1) {
-					throw new SyntaxError(new ASTProblem(pc
-							.makeSourceLocation(tokenAfterIdents),
-							ProblemKind.BECMOAppliesToOneIdent,
-							ProblemSeverities.Error));
-				}
-				final Expression expr = pc.subParse(EXPR_PARSER);
-				return pc.factory.makeBecomesMemberOf(idents.get(0), expr, pc.getSourceLocation());
-			} else if (tokenKind == _BECST) {
-				final List<BoundIdentDecl> primed = makePrimedDecl(idents, pc.factory);
-				final Predicate condition = pc.subParse(PRED_PARSER, primed);
-				return pc.factory.makeBecomesSuchThat(idents, primed, condition, pc.getSourceLocation());
-			} else {
-				throw new SyntaxError(new ASTProblem(pc
-						.makeSourceLocation(tokenAfterIdents),
-						ProblemKind.UnknownOperator, ProblemSeverities.Error,
-						tokenAfterIdents + " (as assignment operator)"));
-				// FIXME when switching to led parsing, this disappears
-			}
-		}
-
+	public static final INudParser<Assignment> ASSIGNMENT_PARSER = new INudParser<Assignment>() {
+		
 		public void toString(IToStringMediator mediator, Assignment toPrint) {
-			final FreeIdentifier[] idents = toPrint.getAssignedIdentifiers();
-			FREE_IDENT_LIST_PARSER.toString(mediator, asList(idents));
-			mediator.appendOperator();
-			switch (toPrint.getTag()) {
-			case BECOMES_EQUAL_TO:
-				final BecomesEqualTo bet = (BecomesEqualTo) toPrint;
-				final Expression[] expressions = bet.getExpressions();
-				EXPR_LIST_PARSER.toString(mediator, asList(expressions));
-				break;
-			case BECOMES_MEMBER_OF:
-				final BecomesMemberOf bmo = (BecomesMemberOf) toPrint;
-				final Expression set = bmo.getSet();
-				EXPR_PARSER.toString(mediator, set);
-				break;
-			case BECOMES_SUCH_THAT:
-				final BecomesSuchThat bst = (BecomesSuchThat) toPrint;
-				final Predicate condition = bst.getCondition();
-				PRED_PARSER.toString(mediator, condition);
-				break;
-			default:
-				assert false;
-			}
+			// TODO Auto-generated method stub
+			
 		}
-
-	};
+		
+		public Assignment nud(ParserContext pc) throws SyntaxError {
+			// TODO Auto-generated method stub
+			return null;
+		}
+	}; 
+		
+		
+		
+//		new AbstractNudParser<Assignment>(BECOMES_EQUAL_TO, BECOMES_MEMBER_OF, BECOMES_SUCH_THAT) {
+//
+//		public Assignment nud(ParserContext pc) throws SyntaxError {
+//			final List<FreeIdentifier> idents = pc.subParse(FREE_IDENT_LIST_PARSER);
+//			// the list is guaranteed to be non empty
+//			assert !idents.isEmpty();
+//			
+//			final Token tokenAfterIdents = pc.t;
+//			final int tokenKind = tokenAfterIdents.kind;
+//			pc.progress();
+//
+//			if (tokenKind == _LPAR) { // FUNIMAGE assignment
+//				if (idents.size() != 1) {
+//					throw new SyntaxError(new ASTProblem(
+//							pc.getSourceLocation(),
+//							ProblemKind.InvalidAssignmentToImage,
+//							ProblemSeverities.Error));
+//				}
+//				final FreeIdentifier ident = idents.get(0);
+//				final Expression index = pc.subParse(EXPR_PARSER);
+//				pc.progressCloseParen();
+//				pc.progress(_BECEQ);
+//				final Expression value = pc.subParse(EXPR_PARSER);
+//				final Expression overriding = makeFunctionOverriding(ident, index, value, pc.factory);
+//				return pc.factory.makeBecomesEqualTo(ident, overriding, pc.getSourceLocation());
+//			} else if (tokenKind == _BECEQ) {
+//				final List<Expression> values = pc.subParse(EXPR_LIST_PARSER);
+//				if (idents.size() != values.size()) {
+//					throw new SyntaxError(new ASTProblem(
+//							pc.makeSourceLocation(tokenAfterIdents),
+//							ProblemKind.IncompatibleIdentExprNumbers,
+//							ProblemSeverities.Error, idents.size(), values
+//									.size()));
+//				}
+//				return pc.factory.makeBecomesEqualTo(idents, values, pc.getSourceLocation());
+//			} else if (tokenKind == _BECMO) {
+//				if (idents.size() != 1) {
+//					throw new SyntaxError(new ASTProblem(pc
+//							.makeSourceLocation(tokenAfterIdents),
+//							ProblemKind.BECMOAppliesToOneIdent,
+//							ProblemSeverities.Error));
+//				}
+//				final Expression expr = pc.subParse(EXPR_PARSER);
+//				return pc.factory.makeBecomesMemberOf(idents.get(0), expr, pc.getSourceLocation());
+//			} else if (tokenKind == _BECST) {
+//				final List<BoundIdentDecl> primed = makePrimedDecl(idents, pc.factory);
+//				final Predicate condition = pc.subParse(PRED_PARSER, primed);
+//				return pc.factory.makeBecomesSuchThat(idents, primed, condition, pc.getSourceLocation());
+//			} else {
+//				throw new SyntaxError(new ASTProblem(pc
+//						.makeSourceLocation(tokenAfterIdents),
+//						ProblemKind.UnknownOperator, ProblemSeverities.Error,
+//						tokenAfterIdents + " (as assignment operator)"));
+//				// FIXME when switching to led parsing, this disappears
+//			}
+//		}
+//
+//		public void toString(IToStringMediator mediator, Assignment toPrint) {
+//			final FreeIdentifier[] idents = toPrint.getAssignedIdentifiers();
+//			FREE_IDENT_LIST_PARSER.toString(mediator, asList(idents));
+//			mediator.appendOperator();
+//			switch (toPrint.getTag()) {
+//			case BECOMES_EQUAL_TO:
+//				final BecomesEqualTo bet = (BecomesEqualTo) toPrint;
+//				final Expression[] expressions = bet.getExpressions();
+//				EXPR_LIST_PARSER.toString(mediator, asList(expressions));
+//				break;
+//			case BECOMES_MEMBER_OF:
+//				final BecomesMemberOf bmo = (BecomesMemberOf) toPrint;
+//				final Expression set = bmo.getSet();
+//				EXPR_PARSER.toString(mediator, set);
+//				break;
+//			case BECOMES_SUCH_THAT:
+//				final BecomesSuchThat bst = (BecomesSuchThat) toPrint;
+//				final Predicate condition = bst.getCondition();
+//				PRED_PARSER.toString(mediator, condition);
+//				break;
+//			default:
+//				assert false;
+//			}
+//		}
+//
+//	};
 	
 	static Expression makeFunctionOverriding(FreeIdentifier ident,
 			Expression index, Expression value, FormulaFactory factory) {

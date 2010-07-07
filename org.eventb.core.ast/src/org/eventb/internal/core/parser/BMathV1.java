@@ -36,7 +36,7 @@ public class BMathV1 extends BMath {
 		super(LanguageVersion.V1);
 	}
 
-	public static final BMath B_MATH_V1 = new BMathV2();
+	public static final BMath B_MATH_V1 = new BMathV1();
 	static {
 		B_MATH_V1.init();
 	}

@@ -35,6 +35,8 @@ import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.SubParsers.QuantifiedPredicateParser;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -59,13 +61,7 @@ public class QuantifiedPredicate extends Predicate {
 	private final Predicate pred;
 	
 	// offset in the corresponding tag interval
-	protected final static int firstTag = FIRST_QUANTIFIED_PREDICATE;
-	protected final static String[] tags = {
-		"\u2200", // FORALL
-		"\u2203"  // EXISTS
-	};
-	// For testing purposes
-	public static final int TAGS_LENGTH = tags.length;
+	private final static int FIRST_TAG = FIRST_QUANTIFIED_PREDICATE;
 	
 	/**
 	 * @since 2.0
@@ -76,13 +72,51 @@ public class QuantifiedPredicate extends Predicate {
 	 */
 	public static final String EXISTS_ID = "exists";
 
+	private static enum Operators implements IOperatorInfo<QuantifiedPredicate> {
+		OP_FORALL("\u2200", FORALL_ID, QUANTIFIED_PRED, FORALL),
+		OP_EXISTS("\u2203", EXISTS_ID, QUANTIFIED_PRED, EXISTS),
+		;
+		
+		private final String image;
+		private final String id;
+		private final String groupId;
+		private final int tag;
+		
+		private Operators(String image, String id, String groupId, int tag) {
+			this.image = image;
+			this.id = id;
+			this.groupId = groupId;
+			this.tag = tag;
+		}
+
+		public String getImage() {
+			return image;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getGroupId() {
+			return groupId;
+		}
+
+		public IParserPrinter<QuantifiedPredicate> makeParser(int kind) {
+			return new QuantifiedPredicateParser(kind, tag);
+		}
+	}
+
+	// For testing purposes
+	public static final int TAGS_LENGTH = Operators.values().length;
+
 	/**
 	 * @since 2.0
 	 */
 	public static void init(BMath grammar) {
 		try {		
-			grammar.addOperator("\u2200", FORALL_ID, QUANTIFIED_PRED, new QuantifiedPredicateParser(FORALL));
-			grammar.addOperator("\u2203", EXISTS_ID, QUANTIFIED_PRED, new QuantifiedPredicateParser(EXISTS));
+			for(Operators operInfo: Operators.values()) {
+				grammar.addOperator(operInfo);
+			}
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -118,7 +152,7 @@ public class QuantifiedPredicate extends Predicate {
 	}
 
 	private void checkPreconditions() {
-		assert getTag() >= firstTag && getTag() < firstTag+tags.length;
+		assert getTag() >= FIRST_TAG && getTag() < FIRST_TAG+TAGS_LENGTH;
 		assert quantifiedIdentifiers != null;
 		assert 1 <= quantifiedIdentifiers.length;
 		assert pred != null;
@@ -161,9 +195,20 @@ public class QuantifiedPredicate extends Predicate {
 		return pred;
 	}
 	
+	private String getOperatorImage() {
+		return getOperator().getImage();
+	}
+
+	private Operators getOperator() {
+		return Operators.values()[getTag()-FIRST_TAG];
+	}
+
 	@Override
 	protected void toString(IToStringMediator mediator) {
-		new QuantifiedPredicateParser(getTag()).toString(mediator, this);
+		final Operators operator = getOperator();
+		final int kind = mediator.getKind(operator.getImage());
+		
+		operator.makeParser(kind).toString(mediator, this);
 	}
 
 	@Override
@@ -172,7 +217,7 @@ public class QuantifiedPredicate extends Predicate {
 		return tabs
 				+ this.getClass().getSimpleName()
 				+ " ["
-				+ tags[getTag() - firstTag]
+				+ getOperatorImage()
 				+ "]\n"
 				+ getSyntaxTreeQuantifiers(boundNamesBelow,tabs + "\t",quantifiedIdentifiers)
 				+ pred.getSyntaxTree(boundNamesBelow,tabs + "\t");

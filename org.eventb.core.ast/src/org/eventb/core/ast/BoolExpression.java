@@ -24,6 +24,8 @@ import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
@@ -42,12 +44,46 @@ public class BoolExpression extends Expression {
 	
 	private static final String KBOOL_ID = "To Bool";
 
+	private static enum Operators implements IOperatorInfo<BoolExpression> {
+		OP_KBOOL("bool", KBOOL_ID, BMath.BOOL_EXPR),
+		;
+		
+		private final String image;
+		private final String id;
+		private final String groupId;
+		
+		private Operators(String image, String id, String groupId) {
+			this.image = image;
+			this.id = id;
+			this.groupId = groupId;
+		}
+
+		public String getImage() {
+			return image;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getGroupId() {
+			return groupId;
+		}
+
+		public IParserPrinter<BoolExpression> makeParser(int kind) {
+			return new KBOOL_PARSER(kind);
+		}
+
+	}
+
 	/**
 	 * @since 2.0
 	 */
 	public static void init(BMath grammar) {
 		try {
-			grammar.addOperator("bool", KBOOL_ID, BMath.BOOL_EXPR, KBOOL_PARSER);
+			for(Operators operInfo: Operators.values()) {
+				grammar.addOperator(operInfo);
+			}
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -114,10 +150,13 @@ public class BoolExpression extends Expression {
 	protected boolean solveChildrenTypes(TypeUnifier unifier) {
 		return child.solveType(unifier);
 	}
-	
+
 	@Override
 	protected void toString(IToStringMediator mediator) {
-		KBOOL_PARSER.toString(mediator, this);
+		final Operators operator = Operators.OP_KBOOL;
+		final int kind = mediator.getKind(operator.getImage());
+		
+		operator.makeParser(kind).toString(mediator, this);
 	}
 
 	@Override

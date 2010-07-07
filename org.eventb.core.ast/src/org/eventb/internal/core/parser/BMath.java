@@ -104,7 +104,6 @@ public abstract class BMath extends AbstractGrammar {
 	 * 
 	 */
 	private final void initTokens() {
-		_PREDVAR = tokens.reserved("Predicate Variable");
 		_RBRACKET = tokens.getOrAdd("]");
 		_RBRACE = tokens.getOrAdd("}");
 		_LAMBDA = tokens.getOrAdd("\u03bb");
@@ -129,7 +128,8 @@ public abstract class BMath extends AbstractGrammar {
 	public static int _KPARTITION;
 	static int _DOT;
 	static int _TYPING;
-	public static int _PREDVAR;
+	
+	public static final int _PREDVAR = reservedTokens.reserved("Predicate Variable");
 
 
 	@Override

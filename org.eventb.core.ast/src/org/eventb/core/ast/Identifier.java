@@ -10,10 +10,15 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.SubParsers.IDENT_SUBPARSER;
+
 import java.util.Set;
 
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.parser.AbstractGrammar;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
 
 /**
  * This is the base class for all identifiers in an event-B formula.
@@ -25,6 +30,18 @@ import org.eventb.internal.core.ast.Position;
  */
 public abstract class Identifier extends Expression {
 	
+	/**
+	 * @since 2.0
+	 */
+	public static void init(AbstractGrammar grammar, int identKind) {
+		try {
+			grammar.addReservedSubParser(identKind, IDENT_SUBPARSER);
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	protected Identifier(int tag, SourceLocation location, int hashCode) {
 		super(tag, location, hashCode);
 	}
@@ -51,4 +68,8 @@ public abstract class Identifier extends Expression {
 		throw new IllegalArgumentException("Position is outside the formula");
 	}
 
+	@Override
+	protected final void toString(IToStringMediator mediator) {
+		IDENT_SUBPARSER.toString(mediator, this);
+	}
 }
