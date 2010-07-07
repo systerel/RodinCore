@@ -74,6 +74,10 @@ public class IndexedSet<T> {
 		return getElem(index, reserved);
 	}
 	
+	public boolean contains(T key) {
+		return getIndex(key) != NOT_AN_INDEX;
+	}
+	
 	private static <T> T getElem(int index, Map<T, Integer> map) {
 		for (Entry<T, Integer> entry : map.entrySet()) {
 			if (entry.getValue().equals(index)) {
@@ -88,6 +92,7 @@ public class IndexedSet<T> {
 	}
 	
 	public boolean isReserved(int index) {
+		// TODO reserved.containsValue(index) ?
 		return index >= FIRST_INDEX && index < nextIndex
 				&& !set.containsValue(index);
 	}

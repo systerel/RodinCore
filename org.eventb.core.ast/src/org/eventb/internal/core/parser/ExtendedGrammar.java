@@ -42,13 +42,16 @@ public class ExtendedGrammar extends BMathV2 {
 		ExtendedPredicate.init(this);
 		try {
 			for (IFormulaExtension extension : extensions) {
+				
+				final IExtensionKind extKind = extension.getKind();
+				final int kind = tokens.getOrAdd(extension.getSyntaxSymbol());
 				final int tag = FormulaFactory.getTag(extension);
+				final IParserPrinter<? extends Formula<?>> parser = getParser(
+						extKind.getProperties(), kind, tag);
+
 				final String operatorId = extension.getId();
 				final String groupId = extension.getGroupId();
-				final IExtensionKind kind = extension.getKind();
-				final IParserPrinter<? extends Formula<?>> parser = getParser(
-						kind.getProperties(), getKind(extension
-								.getSyntaxSymbol()), tag);
+
 				// FIXME the syntax symbol must not already exist as an
 				// operator (an extension shall not add backtracking)
 				if (parser instanceof INudParser<?>) {
@@ -60,7 +63,7 @@ public class ExtendedGrammar extends BMathV2 {
 				} else {
 					// should not be ever possible
 					throw new IllegalStateException("Unparseable extension kind: "
-							+ kind);
+							+ extKind);
 					
 				}
 			}

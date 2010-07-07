@@ -232,7 +232,11 @@ public abstract class AbstractGrammar {
 	}
 
 	public int getKind(String image) {
-		return tokens.getIndex(image);
+		final int kind = tokens.getIndex(image);
+		if (kind == IndexedSet.NOT_AN_INDEX) {
+			throw new IllegalArgumentException("No such token: " + image);
+		}
+		return kind;
 	}
 
 	/**
