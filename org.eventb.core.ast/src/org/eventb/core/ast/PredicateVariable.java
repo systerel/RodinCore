@@ -11,6 +11,7 @@
 package org.eventb.core.ast;
 
 import static org.eventb.internal.core.parser.OperatorRegistry.GROUP0;
+import static org.eventb.internal.core.parser.SubParsers.PRED_VAR_SUBPARSER;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -23,7 +24,6 @@ import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
-import org.eventb.internal.core.parser.SubParsers.PRED_VAR_SUBPARSER;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -59,15 +59,11 @@ public class PredicateVariable extends Predicate {
 	 */
 	public static void init(BMath grammar) {
 		try {
-			grammar.addOperator(BMath._PREDVAR, PRED_VAR_ID, GROUP0, makeParser());
+			grammar.addOperator(BMath._PREDVAR, PRED_VAR_ID, GROUP0, PRED_VAR_SUBPARSER);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	private static PRED_VAR_SUBPARSER makeParser() {
-		return new PRED_VAR_SUBPARSER(BMath._PREDVAR);
 	}
 
 	// The name of the PredicateVariable including the leading symbol '$'
@@ -116,7 +112,7 @@ public class PredicateVariable extends Predicate {
 
 	@Override
 	protected void toString(IToStringMediator mediator) {
-		makeParser().toString(mediator, getTypedThis());
+		PRED_VAR_SUBPARSER.toString(mediator, getTypedThis());
 	}
 
 	@Override

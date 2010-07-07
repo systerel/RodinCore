@@ -440,11 +440,7 @@ public class SubParsers {
 		
 	};
 
-	public static class PRED_VAR_SUBPARSER extends ValuedNudParser<Predicate> {
-
-		public PRED_VAR_SUBPARSER(int kind) {
-			super(kind);
-		}
+	public static final INudParser<Predicate> PRED_VAR_SUBPARSER = new ValuedNudParser<Predicate>(_PREDVAR) {
 
 		@Override
 		protected Predicate makeValue(ParserContext pc,
@@ -956,9 +952,9 @@ public class SubParsers {
 		}
 	}
 	
-	public static class KBOOL_PARSER extends ParenNudParser<BoolExpression, Predicate> {
+	public static class KBoolParser extends ParenNudParser<BoolExpression, Predicate> {
 
-		public KBOOL_PARSER(int kind) {
+		public KBoolParser(int kind) {
 			super(kind, KBOOL, PRED_PARSER);
 		}
 
@@ -975,9 +971,9 @@ public class SubParsers {
 
 	}
 
-	public static final class SETEXT_PARSER extends PrefixNudParser<SetExtension> {
+	public static final class SetExtParser extends PrefixNudParser<SetExtension> {
 		
-		public SETEXT_PARSER(int kind) {
+		public SetExtParser(int kind) {
 			super(kind, SETEXT);
 		}
 
@@ -1040,9 +1036,9 @@ public class SubParsers {
 		}
 	}
 	
-	public static class CSET_EXPLICIT extends ExplicitQuantExpr {
+	public static class CSetExplicit extends ExplicitQuantExpr {
 		
-		public CSET_EXPLICIT(int kind) {
+		public CSetExplicit(int kind) {
 			super(kind, CSET);
 		}
 
@@ -1095,9 +1091,9 @@ public class SubParsers {
 		
 	}
 	
-	public static class CSET_IMPLICIT extends ImplicitQuantExpr {
+	public static class CSetImplicit extends ImplicitQuantExpr {
 
-		public CSET_IMPLICIT(int kind) {
+		public CSetImplicit(int kind) {
 			super(kind, CSET);
 		}
 
@@ -1113,9 +1109,9 @@ public class SubParsers {
 		}
 	}
 	
-	public static class CSET_LAMBDA extends PrefixNudParser<QuantifiedExpression> {
+	public static class CSetLambda extends PrefixNudParser<QuantifiedExpression> {
 		
-		public CSET_LAMBDA(int kind) {
+		public CSetLambda(int kind) {
 			super(kind, CSET);
 		}
 
@@ -1319,9 +1315,9 @@ public class SubParsers {
 //	}
 //	
 
-	public static class MULTIPLE_PREDICATE_PARSER extends ParenNudParser<MultiplePredicate, List<Expression>> {
+	public static class MultiplePredicateParser extends ParenNudParser<MultiplePredicate, List<Expression>> {
 
-		public MULTIPLE_PREDICATE_PARSER(int kind) {
+		public MultiplePredicateParser(int kind) {
 			super(kind, KPARTITION, EXPR_LIST_PARSER);
 		}
 
@@ -1338,9 +1334,9 @@ public class SubParsers {
 
 	}
 
-	public static class FINITE_PARSER extends ParenNudParser<SimplePredicate, Expression> {
+	public static class FiniteParser extends ParenNudParser<SimplePredicate, Expression> {
 
-		public FINITE_PARSER(int kind) {
+		public FiniteParser(int kind) {
 			super(kind, KFINITE, EXPR_PARSER);
 		}
 
@@ -1357,9 +1353,9 @@ public class SubParsers {
 
 	}
 	
-	public static class UNMINUS_PARSER extends AbstractNudParser<Expression> {
+	public static class UnminusParser extends AbstractNudParser<Expression> {
 
-		public UNMINUS_PARSER(int kind) {
+		public UnminusParser(int kind) {
 			super(kind, UNMINUS);
 		}
 

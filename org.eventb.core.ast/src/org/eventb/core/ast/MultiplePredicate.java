@@ -30,7 +30,7 @@ import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
-import org.eventb.internal.core.parser.SubParsers.MULTIPLE_PREDICATE_PARSER;
+import org.eventb.internal.core.parser.SubParsers.MultiplePredicateParser;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -83,7 +83,7 @@ public class MultiplePredicate extends Predicate {
 		}
 
 		public IParserPrinter<MultiplePredicate> makeParser(int kind) {
-			return new MULTIPLE_PREDICATE_PARSER(kind);
+			return new MultiplePredicateParser(kind);
 		}
 
 	}

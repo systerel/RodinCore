@@ -28,7 +28,7 @@ import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
-import org.eventb.internal.core.parser.SubParsers.FINITE_PARSER;
+import org.eventb.internal.core.parser.SubParsers.FiniteParser;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -73,7 +73,7 @@ public class SimplePredicate extends Predicate {
 		}
 
 		public IParserPrinter<SimplePredicate> makeParser(int kind) {
-			return new FINITE_PARSER(kind);
+			return new FiniteParser(kind);
 		}
 
 	}

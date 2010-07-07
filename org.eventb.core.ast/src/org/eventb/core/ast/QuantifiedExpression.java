@@ -21,9 +21,6 @@ import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
 import static org.eventb.internal.core.parser.BMath.BRACE_SETS;
 import static org.eventb.internal.core.parser.BMath.QUANTIFICATION;
-import static org.eventb.internal.core.parser.SubParsers.CSET_EXPLICIT;
-import static org.eventb.internal.core.parser.SubParsers.CSET_IMPLICIT;
-import static org.eventb.internal.core.parser.SubParsers.CSET_LAMBDA;
 
 import java.util.BitSet;
 import java.util.Collection;
@@ -42,6 +39,9 @@ import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.SubParsers.CSetExplicit;
+import org.eventb.internal.core.parser.SubParsers.CSetImplicit;
+import org.eventb.internal.core.parser.SubParsers.CSetLambda;
 import org.eventb.internal.core.parser.SubParsers.ExplicitQuantExpr;
 import org.eventb.internal.core.parser.SubParsers.ImplicitQuantExpr;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -160,17 +160,17 @@ public class QuantifiedExpression extends Expression {
 		},
 		OP_CSET_EXPL("{", CSET_ID, BRACE_SETS) {
 			public IParserPrinter<QuantifiedExpression> makeParser(int kind) {
-				return new CSET_EXPLICIT(kind);
+				return new CSetExplicit(kind);
 			}
 		},
 		OP_CSET_IMPL("{", CSET_ID, BRACE_SETS) {
 			public IParserPrinter<QuantifiedExpression> makeParser(int kind) {
-				return new CSET_IMPLICIT(kind);
+				return new CSetImplicit(kind);
 			}
 		},
 		OP_CSET_LAMBDA("\u03bb", LAMBDA_ID, QUANTIFICATION) {
 			public IParserPrinter<QuantifiedExpression> makeParser(int kind) {
-				return new CSET_LAMBDA(kind);
+				return new CSetLambda(kind);
 			}
 		},
 		;

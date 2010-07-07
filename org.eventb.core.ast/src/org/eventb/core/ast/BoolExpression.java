@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
-import static org.eventb.internal.core.parser.SubParsers.KBOOL_PARSER;
-
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +25,7 @@ import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.SubParsers.KBoolParser;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -71,7 +70,7 @@ public class BoolExpression extends Expression {
 		}
 
 		public IParserPrinter<BoolExpression> makeParser(int kind) {
-			return new KBOOL_PARSER(kind);
+			return new KBoolParser(kind);
 		}
 
 	}

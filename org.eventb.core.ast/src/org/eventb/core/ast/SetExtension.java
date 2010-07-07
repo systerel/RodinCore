@@ -29,7 +29,7 @@ import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
-import org.eventb.internal.core.parser.SubParsers.SETEXT_PARSER;
+import org.eventb.internal.core.parser.SubParsers.SetExtParser;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -74,7 +74,7 @@ public class SetExtension extends Expression {
 		}
 
 		public IParserPrinter<SetExtension> makeParser(int kind) {
-			return new SETEXT_PARSER(kind);
+			return new SetExtParser(kind);
 		}
 
 	}

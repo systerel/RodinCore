@@ -131,7 +131,7 @@ public class UnaryExpression extends Expression {
 	private static final IOperatorInfo<Expression> OP_MINUS = new IOperatorInfo<Expression>() {
 		
 		public IParserPrinter<Expression> makeParser(int kind) {
-			return new SubParsers.UNMINUS_PARSER(kind);
+			return new SubParsers.UnminusParser(kind);
 		}
 
 		public String getImage() {
