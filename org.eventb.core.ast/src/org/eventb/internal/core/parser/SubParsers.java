@@ -817,6 +817,12 @@ public class SubParsers {
 			return parent.getLeft();
 		}
 		
+		@Override
+		public void toString(IToStringMediator mediator,
+				BinaryExpression toPrint) {
+			super.toString(mediator, toPrint);
+			mediator.appendImage(closeKind);
+		}
 	}
 
 	public static class LiteralPredicateParser extends PrefixNudParser<LiteralPredicate> {
