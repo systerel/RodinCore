@@ -34,9 +34,9 @@ public class LexKindParserDB {
 			// nothing to do
 		}
 
-		public void addLed(ILedParser<? extends Formula<?>> subParser) {
+		public void addLed(ILedParser<? extends Formula<?>> subParser) throws OverrideException {
 			if (!ledParsers.isEmpty()) {
-				throw new IllegalArgumentException(
+				throw new OverrideException(
 						"Cannot add several led parsers for one kind (led backtracking is not supported)");
 			}
 			ledParsers.add(subParser);
@@ -80,7 +80,7 @@ public class LexKindParserDB {
 		return ledParsers.get(0);
 	}
 	
-	public void addNud(int kind, INudParser<? extends Formula<?>> subParser) throws OverrideException {
+	public void addNud(int kind, INudParser<? extends Formula<?>> subParser) {
 		final KindParsers parsers = fetchParsers(kind);
 		parsers.addNud(subParser);
 	}

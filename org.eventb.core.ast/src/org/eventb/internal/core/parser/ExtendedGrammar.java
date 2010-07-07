@@ -43,8 +43,17 @@ public class ExtendedGrammar extends BMathV2 {
 		try {
 			for (IFormulaExtension extension : extensions) {
 				
+				final String operatorImage = extension.getSyntaxSymbol();
+				final int kind = tokens.getOrAdd(operatorImage);
+				// the syntax symbol must not already exist as an
+				// operator (an extension shall not add backtracking)
+				if (isOperator(kind)) {
+					throw new OverrideException("extension "
+							+ extension.getId() + " is overriding operator "
+							+ operatorImage);
+				}
+
 				final IExtensionKind extKind = extension.getKind();
-				final int kind = tokens.getOrAdd(extension.getSyntaxSymbol());
 				final int tag = FormulaFactory.getTag(extension);
 				final IParserPrinter<? extends Formula<?>> parser = getParser(
 						extKind.getProperties(), kind, tag);
@@ -52,13 +61,11 @@ public class ExtendedGrammar extends BMathV2 {
 				final String operatorId = extension.getId();
 				final String groupId = extension.getGroupId();
 
-				// FIXME the syntax symbol must not already exist as an
-				// operator (an extension shall not add backtracking)
 				if (parser instanceof INudParser<?>) {
-				addOperator(extension.getSyntaxSymbol(), operatorId, groupId,
-						(INudParser<? extends Formula<?>>) parser);
+					addOperator(operatorImage, operatorId, groupId,
+							(INudParser<? extends Formula<?>>) parser);
 				} else if (parser instanceof ILedParser<?>) {
-					addOperator(extension.getSyntaxSymbol(), operatorId, groupId,
+					addOperator(operatorImage, operatorId, groupId,
 							(ILedParser<? extends Formula<?>>) parser);
 				} else {
 					// should not be ever possible
@@ -68,7 +75,7 @@ public class ExtendedGrammar extends BMathV2 {
 				}
 			}
 		} catch (OverrideException e) {
-			// TODO Auto-generated catch block
+			// FIXME do not hide the exception
 			e.printStackTrace();
 		}
 	}

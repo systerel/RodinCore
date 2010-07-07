@@ -80,7 +80,6 @@ public abstract class AbstractGrammar {
 	 * Subclasses are expected to override and call this method first.
 	 * </p>
 	 */
-	// TODO split into several init methods, one for each data (?)
 	public final void init() {
 		
 		_LPAR = tokens.getOrAdd("(");
@@ -90,14 +89,9 @@ public abstract class AbstractGrammar {
 		opRegistry.addOperator(_NOOP, NOOP_ID, GROUP0);
 		opRegistry.addOperator(_OPEN, OPEN_ID, GROUP0);
 		addOpenClose("(", ")");
-		try {
-			subParsers.addNud(_INTLIT, INTLIT_SUBPARSER);
-			subParsers.addNud(_IDENT, IDENT_SUBPARSER);
-			subParsers.addNud(_LPAR, MainParsers.CLOSED_SUGAR);
-		} catch (OverrideException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		subParsers.addNud(_INTLIT, INTLIT_SUBPARSER);
+		subParsers.addNud(_IDENT, IDENT_SUBPARSER);
+		subParsers.addNud(_LPAR, MainParsers.CLOSED_SUGAR);
 		addOperators();
 		addOperatorRelationships();
 	}
@@ -153,17 +147,7 @@ public abstract class AbstractGrammar {
 	}
 	
 	public void addOperator(String token, String operatorId, String groupId,
-			INudParser<? extends Formula<?>> subParser)
-			throws OverrideException {
-		final int kind = tokens.getOrAdd(token);
-		opRegistry.addOperator(kind, operatorId, groupId);
-		subParsers.addNud(kind, subParser);
-	}
-
-	// FIXME remove method after correctly refactoring so as not to need it
-	public void addOperator(String token, int tag, String operatorId,
-			String groupId, INudParser<? extends Formula<?>> subParser)
-			throws OverrideException {
+			INudParser<? extends Formula<?>> subParser) {
 		final int kind = tokens.getOrAdd(token);
 		opRegistry.addOperator(kind, operatorId, groupId);
 		subParsers.addNud(kind, subParser);
