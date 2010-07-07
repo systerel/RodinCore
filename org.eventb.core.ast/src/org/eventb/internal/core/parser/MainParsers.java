@@ -11,6 +11,9 @@
 package org.eventb.internal.core.parser;
 
 import static java.util.Arrays.asList;
+import static org.eventb.core.ast.BecomesEqualTo.OP_BECEQ;
+import static org.eventb.core.ast.BecomesMemberOf.OP_BECMO;
+import static org.eventb.core.ast.BecomesSuchThat.OP_BECST;
 import static org.eventb.core.ast.Formula.BECOMES_EQUAL_TO;
 import static org.eventb.core.ast.Formula.BECOMES_MEMBER_OF;
 import static org.eventb.core.ast.Formula.BECOMES_SUCH_THAT;
@@ -19,8 +22,6 @@ import static org.eventb.internal.core.parser.AbstractGrammar._COMMA;
 import static org.eventb.internal.core.parser.AbstractGrammar._EOF;
 import static org.eventb.internal.core.parser.AbstractGrammar._LPAR;
 import static org.eventb.internal.core.parser.BMath._BECEQ;
-import static org.eventb.internal.core.parser.BMath._BECMO;
-import static org.eventb.internal.core.parser.BMath._BECST;
 import static org.eventb.internal.core.parser.BMath._MAPSTO;
 import static org.eventb.internal.core.parser.GenParser.ProgressDirection.RIGHT;
 import static org.eventb.internal.core.parser.SubParsers.BOUND_IDENT_DECL_SUBPARSER;
@@ -53,6 +54,7 @@ import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.GenParser.ParserContext;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 import org.eventb.internal.core.parser.GenParser.ParserContext.SavedContext;
+import org.eventb.internal.core.parser.SubParsers.AbstractNudParser;
 
 /**
  * Main parsers implement an algorithm for parsing a formula (or a part of a
@@ -415,18 +417,14 @@ public class MainParsers {
 		}
 		return decls;
 	}
+	
+	public static class BecomesEqualToParser extends AbstractNudParser<BecomesEqualTo> {
 
-	// used as a main parser; directly called by the general parser.
-	// FIXME particular case required because assignment lhs
-	// is not a terminal (not a formula, but a list of identifiers)
-	// other possibility: introduce a notion of non terminal
-	// returned by sub-parsers, then implement assignment parsing
-	// with led sub-parsers
-	/** @see GenParser#parse() */
-	public static final INudParser<Assignment> ASSIGNMENT_PARSER = 
-		new INudParser<Assignment>() {
+		public BecomesEqualToParser(int kind) {
+			super(kind, BECOMES_EQUAL_TO);
+		}
 
-		public Assignment nud(ParserContext pc) throws SyntaxError {
+		public BecomesEqualTo nud(ParserContext pc) throws SyntaxError {
 			final List<FreeIdentifier> idents = pc.subParse(FREE_IDENT_LIST_PARSER);
 			// the list is guaranteed to be non empty
 			assert !idents.isEmpty();
@@ -459,19 +457,6 @@ public class MainParsers {
 									.size()));
 				}
 				return pc.factory.makeBecomesEqualTo(idents, values, pc.getSourceLocation());
-			} else if (tokenKind == _BECMO) {
-				if (idents.size() != 1) {
-					throw new SyntaxError(new ASTProblem(pc
-							.makeSourceLocation(tokenAfterIdents),
-							ProblemKind.BECMOAppliesToOneIdent,
-							ProblemSeverities.Error));
-				}
-				final Expression expr = pc.subParse(EXPR_PARSER);
-				return pc.factory.makeBecomesMemberOf(idents.get(0), expr, pc.getSourceLocation());
-			} else if (tokenKind == _BECST) {
-				final List<BoundIdentDecl> primed = makePrimedDecl(idents, pc.factory);
-				final Predicate condition = pc.subParse(PRED_PARSER, primed);
-				return pc.factory.makeBecomesSuchThat(idents, primed, condition, pc.getSourceLocation());
 			} else {
 				throw new SyntaxError(new ASTProblem(pc
 						.makeSourceLocation(tokenAfterIdents),
@@ -481,29 +466,108 @@ public class MainParsers {
 			}
 		}
 
-		public void toString(IToStringMediator mediator, Assignment toPrint) {
+		public void toString(IToStringMediator mediator, BecomesEqualTo toPrint) {
 			final FreeIdentifier[] idents = toPrint.getAssignedIdentifiers();
 			FREE_IDENT_LIST_PARSER.toString(mediator, asList(idents));
 			mediator.appendOperator();
-			switch (toPrint.getTag()) {
-			case BECOMES_EQUAL_TO:
-				final BecomesEqualTo bet = (BecomesEqualTo) toPrint;
-				final Expression[] expressions = bet.getExpressions();
-				EXPR_LIST_PARSER.toString(mediator, asList(expressions));
-				break;
-			case BECOMES_MEMBER_OF:
-				final BecomesMemberOf bmo = (BecomesMemberOf) toPrint;
-				final Expression set = bmo.getSet();
-				EXPR_PARSER.toString(mediator, set);
-				break;
-			case BECOMES_SUCH_THAT:
-				final BecomesSuchThat bst = (BecomesSuchThat) toPrint;
-				final Predicate condition = bst.getCondition();
-				PRED_PARSER.toString(mediator, condition);
-				break;
-			default:
-				assert false;
+			final Expression[] expressions = toPrint.getExpressions();
+			EXPR_LIST_PARSER.toString(mediator, asList(expressions));
+		}
+		
+	}
+
+	public static class BecomesMemberOfParser extends AbstractNudParser<BecomesMemberOf> {
+
+		public BecomesMemberOfParser(int kind) {
+			super(kind, BECOMES_MEMBER_OF);
+		}
+
+		public BecomesMemberOf nud(ParserContext pc) throws SyntaxError {
+			final FreeIdentifier ident = pc.subParse(FREE_IDENT_SUBPARSER);
+			pc.progress(kind);
+			final Expression expr = pc.subParse(EXPR_PARSER);
+			return pc.factory.makeBecomesMemberOf(ident, expr, pc.getSourceLocation());
+		}
+
+		public void toString(IToStringMediator mediator, BecomesMemberOf toPrint) {
+			final FreeIdentifier[] idents = toPrint.getAssignedIdentifiers();
+			FREE_IDENT_LIST_PARSER.toString(mediator, asList(idents));
+			mediator.appendOperator();
+			final Expression set = toPrint.getSet();
+			EXPR_PARSER.toString(mediator, set);
+		}
+
+	}
+
+	public static class BecomesSuchThatParser extends AbstractNudParser<BecomesSuchThat> {
+
+		public BecomesSuchThatParser(int kind) {
+			super(kind, BECOMES_SUCH_THAT);
+		}
+
+		public BecomesSuchThat nud(ParserContext pc) throws SyntaxError {
+			final List<FreeIdentifier> idents = pc.subParse(FREE_IDENT_LIST_PARSER);
+			// the list is guaranteed to be non empty
+			assert !idents.isEmpty();
+			
+			final Token tokenAfterIdents = pc.t;
+			final int tokenKind = tokenAfterIdents.kind;
+			pc.progress(tokenKind);
+			
+			final List<BoundIdentDecl> primed = makePrimedDecl(idents, pc.factory);
+			final Predicate condition = pc.subParse(PRED_PARSER, primed);
+			return pc.factory.makeBecomesSuchThat(idents, primed, condition, pc.getSourceLocation());
+		}
+
+		public void toString(IToStringMediator mediator, BecomesSuchThat toPrint) {
+			final FreeIdentifier[] idents = toPrint.getAssignedIdentifiers();
+			FREE_IDENT_LIST_PARSER.toString(mediator, asList(idents));
+			mediator.appendOperator();
+		
+			final Predicate condition = toPrint.getCondition();
+			PRED_PARSER.toString(mediator, condition);
+		}
+		
+	}
+
+	// used as a main parser; directly called by the general parser.
+	// FIXME particular case required because assignment lhs
+	// is not a terminal (not a formula, but a list of identifiers)
+	// other possibility: introduce a notion of non terminal
+	// returned by sub-parsers, then implement assignment parsing
+	// with led sub-parsers
+	/** @see GenParser#parse() */
+	public static final INudParser<Assignment> ASSIGNMENT_PARSER = 
+		new AbstractMainParser<Assignment>() {
+
+		public Assignment nud(ParserContext pc) throws SyntaxError {
+			final INudParser<? extends Assignment> parser = getAssignmentParser(pc);
+			return pc.subParse(parser);
+		}
+
+		private INudParser<? extends Assignment> getAssignmentParser(ParserContext pc) throws SyntaxError {
+			final int becEqKind = pc.getKind(OP_BECEQ.getImage());
+			if (pc.lookAheadFor(becEqKind)) {
+				return new BecomesEqualToParser(becEqKind);
 			}
+			final int becMoKind = pc.getKind(OP_BECMO.getImage());
+			if (pc.lookAheadFor(becMoKind)) {
+				return new BecomesMemberOfParser(becMoKind);
+			}
+			final int becStKind = pc.getKind(OP_BECST.getImage());
+			if (pc.lookAheadFor(becStKind)) {
+				return new BecomesSuchThatParser(becStKind);
+			}
+
+			// FIXME when switching to led parsing, this disappears
+			throw new SyntaxError(new ASTProblem(pc
+					.getEnclosingSourceLocation(),
+					ProblemKind.UnknownOperator, ProblemSeverities.Error,
+					" (expected to find an assignment operator)"));
+		}
+
+		public void toString(IToStringMediator mediator, Assignment toPrint) {
+			mediator.forward(toPrint);
 		}
 
 	};

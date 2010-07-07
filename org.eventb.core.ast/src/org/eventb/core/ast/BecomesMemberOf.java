@@ -12,9 +12,6 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
-import static org.eventb.internal.core.parser.BMath.INFIX_SUBST;
-import static org.eventb.internal.core.parser.MainParsers.ASSIGNMENT_PARSER;
-
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -22,6 +19,9 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
+import org.eventb.internal.core.parser.MainParsers;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
@@ -37,16 +37,39 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
 public class BecomesMemberOf extends Assignment {
 
 	private static final String BECMO_ID = "Becomes Member Of";
+
+	/**
+	 * @since 2.0
+	 */
+	public static final IOperatorInfo<BecomesMemberOf> OP_BECMO = new IOperatorInfo<BecomesMemberOf>() {
+		
+		public IParserPrinter<BecomesMemberOf> makeParser(int kind) {
+			return new MainParsers.BecomesMemberOfParser(kind);
+		}
+
+		public String getImage() {
+			return ":\u2208";
+		}
+		
+		public String getId() {
+			return BECMO_ID;
+		}
+		
+		public String getGroupId() {
+			return BMath.INFIX_SUBST;
+		}
+	};
+
 	/**
 	 * @since 2.0
 	 */
 	public static void init(BMath grammar) {
-//		try {		
-//			grammar.addOperator(":\u2208", BECOMES_MEMBER_OF, BECMO_ID, INFIX_SUBST, ASSIGNMENT_PARSER);
-//		} catch (OverrideException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		try {		
+			grammar.addOperator(OP_BECMO);
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private final Expression setExpr;
@@ -115,7 +138,8 @@ public class BecomesMemberOf extends Assignment {
 
 	@Override
 	protected void toString(IToStringMediator mediator) {
-		ASSIGNMENT_PARSER.toString(mediator, this);
+		final int kind = mediator.getKind(OP_BECMO.getImage());
+		OP_BECMO.makeParser(kind).toString(mediator, this);
 	}
 
 	@Override

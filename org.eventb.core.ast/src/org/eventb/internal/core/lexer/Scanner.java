@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eventb.internal.core.lexer;
 
+import static org.eventb.internal.core.parser.AbstractGrammar._EOF;
+import static org.eventb.internal.core.parser.AbstractGrammar._IDENT;
+
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Vector;
@@ -18,7 +21,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.internal.core.lexer.GenScan.ScanState;
 import org.eventb.internal.core.parser.AbstractGrammar;
-import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.ParseResult;
 
 /**
@@ -106,7 +108,7 @@ public class Scanner {
 
 		final Token token = scanner.Peek();
 		return (!result.hasProblem() && token != null
-				&& token.kind == BMath._IDENT && token.val.equals(name));
+				&& token.kind == _IDENT && token.val.equals(name));
 	}
 
 	public ScanState save() {
@@ -115,5 +117,17 @@ public class Scanner {
 	
 	public void restore(ScanState state) {
 		lexer.restore(state);
+	}
+
+	public boolean lookAheadFor(int searchedKind) {
+		ResetPeek();
+		Token peek = Peek();
+		while (peek.kind != _EOF) {
+			if (peek.kind == searchedKind) {
+				return true;
+			}
+			peek = Peek();
+		}
+		return false;
 	}
 }

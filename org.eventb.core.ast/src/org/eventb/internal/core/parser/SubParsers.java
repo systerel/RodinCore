@@ -366,7 +366,7 @@ public class SubParsers {
 	static final INudParser<FreeIdentifier> FREE_IDENT_SUBPARSER = new INudParser<FreeIdentifier>() {
 
 		public FreeIdentifier nud(ParserContext pc) throws SyntaxError {
-			final Expression ident = pc.subParse(EXPR_PARSER);
+			final Identifier ident = pc.subParse(IDENT_SUBPARSER);
 			if (!(ident instanceof FreeIdentifier)) {
 				throw new SyntaxError(new ASTProblem(ident.getSourceLocation(),
 						ProblemKind.FreeIdentifierExpected,

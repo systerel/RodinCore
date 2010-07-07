@@ -421,6 +421,17 @@ public class GenParser {
 			}
 			return _EOF;
 		}
+		
+		public int getKind(String operatorImage) {
+			return grammar.getKind(operatorImage);
+		}
+		
+		public boolean lookAheadFor(int searchedKind) {
+			if (la.kind == searchedKind) {
+				return true;
+			}
+			return scanner.lookAheadFor(searchedKind);
+		}
 	}
 	
     private static class Binding {

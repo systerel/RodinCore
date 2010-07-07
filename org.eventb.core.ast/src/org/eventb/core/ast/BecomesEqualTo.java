@@ -12,8 +12,6 @@
  *******************************************************************************/ 
 package org.eventb.core.ast;
 
-import static org.eventb.internal.core.parser.MainParsers.ASSIGNMENT_PARSER;
-
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -22,6 +20,9 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
+import org.eventb.internal.core.parser.MainParsers;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
@@ -37,16 +38,39 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
 public class BecomesEqualTo extends Assignment {
 
 	private static final String BECEQ_ID = "Becomes Equal To";
+	
+	/**
+	 * @since 2.0
+	 */
+	public static final IOperatorInfo<BecomesEqualTo> OP_BECEQ = new IOperatorInfo<BecomesEqualTo>() {
+		
+		public IParserPrinter<BecomesEqualTo> makeParser(int kind) {
+			return new MainParsers.BecomesEqualToParser(kind);
+		}
+
+		public String getImage() {
+			return "\u2254";
+		}
+		
+		public String getId() {
+			return BECEQ_ID;
+		}
+		
+		public String getGroupId() {
+			return BMath.INFIX_SUBST;
+		}
+	};
+
 	/**
 	 * @since 2.0
 	 */
 	public static void init(BMath grammar) {
-//		try {		
-//			grammar.addOperator("\u2254", BECOMES_EQUAL_TO, BECEQ_ID, BMath.INFIX_SUBST, ASSIGNMENT_PARSER);
-//		} catch (OverrideException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		try {		
+			grammar.addOperator(OP_BECEQ);
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private final Expression[] values;
@@ -147,7 +171,8 @@ public class BecomesEqualTo extends Assignment {
 
 	@Override
 	protected void toString(IToStringMediator mediator) {
-		ASSIGNMENT_PARSER.toString(mediator, this);
+		final int kind = mediator.getKind(OP_BECEQ.getImage());
+		OP_BECEQ.makeParser(kind).toString(mediator, this);
 	}
 
 	/* (non-Javadoc)

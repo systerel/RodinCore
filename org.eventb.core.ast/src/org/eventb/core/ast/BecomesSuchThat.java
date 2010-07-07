@@ -15,7 +15,6 @@ package org.eventb.core.ast;
 import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
-import static org.eventb.internal.core.parser.MainParsers.ASSIGNMENT_PARSER;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -27,6 +26,9 @@ import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
+import org.eventb.internal.core.parser.MainParsers;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
@@ -57,16 +59,39 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
 public class BecomesSuchThat extends Assignment {
 
 	private static final String BECST_ID = "Becomes Such That";
+	
+	/**
+	 * @since 2.0
+	 */
+	public static final IOperatorInfo<BecomesSuchThat> OP_BECST = new IOperatorInfo<BecomesSuchThat>() {
+		
+		public IParserPrinter<BecomesSuchThat> makeParser(int kind) {
+			return new MainParsers.BecomesSuchThatParser(kind);
+		}
+
+		public String getImage() {
+			return ":\u2223";
+		}
+		
+		public String getId() {
+			return BECST_ID;
+		}
+		
+		public String getGroupId() {
+			return BMath.INFIX_SUBST;
+		}
+	};
+
 	/**
 	 * @since 2.0
 	 */
 	public static void init(BMath grammar) {
-//		try {
-//			grammar.addOperator(":\u2223", BECOMES_SUCH_THAT, BECST_ID, BMath.INFIX_SUBST, ASSIGNMENT_PARSER);
-//		} catch (OverrideException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		try {
+			grammar.addOperator(OP_BECST);
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	// Quantified primed identifiers
@@ -190,7 +215,8 @@ public class BecomesSuchThat extends Assignment {
 
 	@Override
 	protected void toString(IToStringMediator mediator) {
-		ASSIGNMENT_PARSER.toString(mediator, this);
+		final int kind = mediator.getKind(OP_BECST.getImage());
+		OP_BECST.makeParser(kind).toString(mediator, this);
 	}
 
 	@Override
