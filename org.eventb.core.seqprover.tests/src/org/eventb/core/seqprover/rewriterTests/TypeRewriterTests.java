@@ -17,6 +17,7 @@ package org.eventb.core.seqprover.rewriterTests;
 import org.junit.Assert;
 
 import org.eventb.core.ast.IFormulaRewriter;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewriterImpl;
@@ -85,8 +86,9 @@ public class TypeRewriterTests extends AbstractFormulaRewriterTests {
 
 	@Test
 	public void testApplyTypeSimplification() throws Exception {
-		final Predicate pred = makeInputPredicate("S ⊆ T ∧ S≠(∅⦂ℙ(T))");
-		final Predicate expected = makeExpectedPredicate("¬S=(∅⦂ℙ(T))");
+		final ITypeEnvironment typenv = ff.makeTypeEnvironment();
+		final Predicate pred = makePredicate("S ⊆ T ∧ S≠(∅⦂ℙ(T))", typenv);
+		final Predicate expected = makePredicate("¬S=(∅⦂ℙ(T))", typenv);
 		
 		final Predicate actual = Lib.applyTypeSimplification(pred);
 		Assert.assertEquals(expected, actual);

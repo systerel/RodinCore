@@ -13,15 +13,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
-import org.eclipse.core.runtime.Assert;
-import org.eventb.core.ast.AtomicExpression;
-import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.IFormulaRewriter;
-import org.eventb.core.ast.ITypeCheckResult;
-import org.eventb.core.ast.IntegerType;
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.Type;
-import org.eventb.core.ast.UnaryExpression;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
 import org.junit.Test;
 
@@ -341,40 +333,16 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 	 */
 	@Test
 	public void testSetTheory() {
-		IntegerType intType = ff.makeIntegerType();
-		Expression emptySetInteger = ff.makeEmptySet(ff
-				.makePowerSetType(intType), null);
-		ITypeCheckResult typeCheck = emptySetInteger.typeCheck(ff.makeTypeEnvironment());
-		Assert.isTrue(typeCheck.isSuccess(), "Expected expression: \n\t"
-				+ emptySetInteger + "\n\tcannot be type checked");
-		
 		// S /\ ... /\ {} /\ ... /\ T == {}
-		Expression inputExp = makeInputExpression("{x ∣ x > 0} ∩ ∅");
-		expressionTest(emptySetInteger, inputExp);
-		
-		inputExp = makeInputExpression("∅ ∩ {x ∣ x > 0}");
-		expressionTest(emptySetInteger, inputExp);
-		
-		inputExp = makeInputExpression("∅ ∩ {x ∣ x > 0} ∩ S ∩ T");
-		expressionTest(emptySetInteger, inputExp);
-
-		inputExp = makeInputExpression("{x ∣ x > 0} ∩ S ∩ ∅ ∩ T");
-		expressionTest(emptySetInteger, inputExp);
-		
-		inputExp = makeInputExpression("{x ∣ x > 0} ∩ S ∩ T ∩ ∅");
-		expressionTest(emptySetInteger, inputExp);
-
-		inputExp = makeInputExpression("∅ ∩ {x ∣ x > 0} ∩ ∅ ∩ S ∩ T");
-		expressionTest(emptySetInteger, inputExp);
-				
-		inputExp = makeInputExpression("∅ ∩ {x ∣ x > 0} ∩ S ∩ T ∩ ∅");
-		expressionTest(emptySetInteger, inputExp);
-		
-		inputExp = makeInputExpression("{x ∣ x > 0} ∩ ∅ ∩ S ∩ T ∩ ∅");
-		expressionTest(emptySetInteger, inputExp);
-		
-		inputExp = makeInputExpression("∅ ∩ {x ∣ x > 0} ∩ ∅ ∩ S ∩ T ∩ ∅");
-		expressionTest(emptySetInteger, inputExp);
+		expressionTest("(∅ ⦂ ℙ(ℤ))", "{x ∣ x > 0} ∩ ∅");
+		expressionTest("(∅ ⦂ ℙ(ℤ))", "∅ ∩ {x ∣ x > 0}");
+		expressionTest("(∅ ⦂ ℙ(ℤ))", "∅ ∩ {x ∣ x > 0} ∩ S ∩ T");
+		expressionTest("(∅ ⦂ ℙ(ℤ))", "{x ∣ x > 0} ∩ S ∩ ∅ ∩ T");
+		expressionTest("(∅ ⦂ ℙ(ℤ))", "{x ∣ x > 0} ∩ S ∩ T ∩ ∅");
+		expressionTest("(∅ ⦂ ℙ(ℤ))", "∅ ∩ {x ∣ x > 0} ∩ ∅ ∩ S ∩ T");
+		expressionTest("(∅ ⦂ ℙ(ℤ))", "∅ ∩ {x ∣ x > 0} ∩ S ∩ T ∩ ∅");
+		expressionTest("(∅ ⦂ ℙ(ℤ))", "{x ∣ x > 0} ∩ ∅ ∩ S ∩ T ∩ ∅");
+		expressionTest("(∅ ⦂ ℙ(ℤ))", "∅ ∩ {x ∣ x > 0} ∩ ∅ ∩ S ∩ T ∩ ∅");
 		
 		// Test with empty and type
 		expressionTest("(∅ ⦂ ℙ(S))", "(∅ ⦂ ℙ(S)) ∩ ∅");
@@ -507,25 +475,27 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 		
 		// F : {x,y . P(x,y) | E(x,y) == #x,y . P(x,y) & E(x,y) = F
 		predicateTest("∃x,y· (x≥ 0 ∧ y≥ 0) ∧ x+y = n", "n ∈ {x,y·x≥0∧y≥0∣x+y}");
-		predicateTest("∀n·n≥0 ⇒ (∃x,y· (x≥ 0 ∧ y≥ 0) ∧ x+y = n)", "∀n·n≥0 ⇒ n ∈ {x,y·x≥0∧y≥0∣x+y}");
+		predicateTest("∀n·n≥0 ⇒ (∃x,y· (x≥ 0 ∧ y≥ 0) ∧ x+y = n)",
+				"∀n·n≥0 ⇒ n ∈ {x,y·x≥0∧y≥0∣x+y}");
 		// One Point Rule applies
-		predicateTest("∀n·n≥0 ⇒ (∃y· (n ≥ 0 ∧ y≥ 0))", "∀n·n≥0 ⇒ n ∈ {x,y·x≥0∧y≥0∣x}");
-		predicateTest("∀n,m·n≥0 ⇒ (∃y· (n ≥ 0 ∧ y≥ m))", "∀n,m·n≥0 ⇒ n ∈ {x,y·x≥0∧y≥m∣x}");
+		predicateTest("∀n·n≥0 ⇒ (∃y· (n ≥ 0 ∧ y≥ 0))",
+				"∀n·n≥0 ⇒ n ∈ {x,y·x≥0∧y≥0∣x}");
+		predicateTest("∀n,m·n≥0 ⇒ (∃y· (n ≥ 0 ∧ y≥ m))",
+				"∀n,m·n≥0 ⇒ n ∈ {x,y·x≥0∧y≥m∣x}");
 		// One Point Rule applies replacement on expression ('x=n' here)
 		predicateTest("n=0", "n ∈ {x·x=0∣x}");
 		// One Point Rule does not apply replacement on guard ('x=0' here)
 		predicateTest("∃x· x=0 ∧ x+1 = n", "n ∈ {x·x=0∣x+1}");
 		// Jean-Raymond Abrial's bug
-		predicateTest("∃z·(∃x,y·(x>0∧y>0)∧g(x+y)−g(x)−g(y)=l)∧l=z", "∃z·(l∈ {x,y·x>0 ∧ y>0 ∣ g(x+y)−g(x)−g(y)})∧l=z");
+		predicateTest("∃z·(∃x,y·(x>0∧y>0)∧g(x+y)−g(x)−g(y)=l)∧l=z",
+				"∃z·(l∈ {x,y·x>0 ∧ y>0 ∣ g(x+y)−g(x)−g(y)})∧l=z");
 		
 		// S \ S == {}
-		inputExp = makeInputExpression("{y ∣ y > 0} ∖ {y ∣ y > 0}");
-		expressionTest(emptySetInteger, inputExp);
+		expressionTest("(∅ ⦂ ℙ(ℤ))", "{y ∣ y > 0} ∖ {y ∣ y > 0}");
 		
 
 		// {} \ S == {}
-		inputExp = makeInputExpression("∅ ∖ {y ∣ y > 0}");
-		expressionTest(emptySetInteger, inputExp);
+		expressionTest("(∅ ⦂ ℙ(ℤ))", "∅ ∖ {y ∣ y > 0}");
 
 
 		// S \ {} == S
@@ -603,160 +573,41 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 		
 
 		// p;...;{};...;q == {}
-		Expression emptySetFunction = ff.makeEmptySet(ff.makePowerSetType(ff
-				.makeProductType(intType, intType)), null);
-		typeCheck = emptySetFunction.typeCheck(ff.makeTypeEnvironment());
-		Assert.isTrue(typeCheck.isSuccess(), "Expected expression: \n\t"
-				+ emptySetFunction + "\n\tcannot be type checked");
-		inputExp = makeInputExpression("{x + 2 ↦ 3}");
-		inputExp = ff.makeAssociativeExpression(Expression.FCOMP,
-				new Expression[] { inputExp, emptySetFunction }, null);
-		typeCheck = inputExp.typeCheck(ff.makeTypeEnvironment());
-		Assert.isTrue(typeCheck.isSuccess(), "Input expression: \n\t"
-				+ inputExp + "\n\tcannot be type checked");
-		expressionTest(emptySetFunction, inputExp);
-		
-		inputExp = makeInputExpression("{x + 2 ↦ 3}");
-		inputExp = ff.makeAssociativeExpression(Expression.FCOMP,
-				new Expression[] { emptySetFunction, inputExp }, null);
-		typeCheck = inputExp.typeCheck(ff.makeTypeEnvironment());
-		Assert.isTrue(typeCheck.isSuccess(), "Input expression: \n\t"
-				+ inputExp + "\n\tcannot be type checked");
-		expressionTest(emptySetFunction, inputExp);
-		
-		Expression inputExp1 = makeInputExpression("{x + 2 ↦ 3}");
-		Expression inputExp2 = makeInputExpression("{x + 4 ↦ FALSE}");
-		Expression inputExp3 = makeInputExpression("{FALSE ↦ y+ 2}");
-		inputExp = ff.makeAssociativeExpression(Expression.FCOMP,
-				new Expression[] { emptySetFunction, inputExp1, inputExp2,
-						inputExp3 }, null);
-		typeCheck = inputExp.typeCheck(ff.makeTypeEnvironment());
-		Assert.isTrue(typeCheck.isSuccess(), "Input expression: \n\t"
-				+ inputExp + "\n\tcannot be type checked");
-		expressionTest(emptySetFunction, inputExp);
-
-		inputExp = ff.makeAssociativeExpression(Expression.FCOMP,
-				new Expression[] { inputExp1, emptySetFunction, inputExp2,
-						inputExp3 }, null);
-		typeCheck = inputExp.typeCheck(ff.makeTypeEnvironment());
-		Assert.isTrue(typeCheck.isSuccess(), "Input expression: \n\t"
-				+ inputExp + "\n\tcannot be type checked");
-		expressionTest(emptySetFunction, inputExp);
-
-		inputExp = ff.makeAssociativeExpression(Expression.FCOMP,
-				new Expression[] { inputExp1, inputExp2, inputExp3,
-						emptySetFunction }, null);
-		typeCheck = inputExp.typeCheck(ff.makeTypeEnvironment());
-		Assert.isTrue(typeCheck.isSuccess(), "Input expression: \n\t"
-				+ inputExp + "\n\tcannot be type checked");
-		expressionTest(emptySetFunction, inputExp);
-
-		inputExp = ff.makeAssociativeExpression(Expression.FCOMP,
-				new Expression[] { emptySetFunction, inputExp1,
-						emptySetFunction, inputExp2, inputExp3 }, null);
-		typeCheck = inputExp.typeCheck(ff.makeTypeEnvironment());
-		Assert.isTrue(typeCheck.isSuccess(), "Input expression: \n\t"
-				+ inputExp + "\n\tcannot be type checked");
-		expressionTest(emptySetFunction, inputExp);
-
-		inputExp = ff.makeAssociativeExpression(Expression.FCOMP,
-				new Expression[] { emptySetFunction, inputExp1, inputExp2,
-						inputExp3, emptySetFunction }, null);
-		typeCheck = inputExp.typeCheck(ff.makeTypeEnvironment());
-		Assert.isTrue(typeCheck.isSuccess(), "Input expression: \n\t"
-				+ inputExp + "\n\tcannot be type checked");
-		expressionTest(emptySetFunction, inputExp);
-
-		inputExp = ff.makeAssociativeExpression(Expression.FCOMP,
-				new Expression[] { inputExp1, emptySetFunction, inputExp2,
-						inputExp3, emptySetFunction }, null);
-		typeCheck = inputExp.typeCheck(ff.makeTypeEnvironment());
-		Assert.isTrue(typeCheck.isSuccess(), "Input expression: \n\t"
-				+ inputExp + "\n\tcannot be type checked");
-		expressionTest(emptySetFunction, inputExp);
-
-		inputExp = ff.makeAssociativeExpression(Expression.FCOMP,
-				new Expression[] { emptySetFunction, inputExp1,
-						emptySetFunction, inputExp2, inputExp3,
-						emptySetFunction }, null);
-		typeCheck = inputExp.typeCheck(ff.makeTypeEnvironment());
-		Assert.isTrue(typeCheck.isSuccess(), "Input expression: \n\t"
-				+ inputExp + "\n\tcannot be type checked");
-		expressionTest(emptySetFunction, inputExp);
+		expressionTest("(∅⦂S↔U)", "f;(∅⦂T↔U)", "f", "S↔T");
+		expressionTest("(∅⦂S↔U)", "(∅⦂S↔T);f", "f", "T↔U");
+		expressionTest("(∅⦂S↔W)", "(∅⦂S↔T);f;g;h",//
+				"f", "T↔U", "g", "U↔V", "h", "V↔W");
+		expressionTest("(∅⦂S↔W)", "f;(∅⦂T↔U);g;h",//
+				"f", "S↔T", "g", "U↔V", "h", "V↔W");
+		expressionTest("(∅⦂S↔W)", "f;g;h;(∅⦂V↔W)",//
+				"f", "S↔T", "g", "T↔U", "h", "U↔V");
+		expressionTest("(∅⦂S↔X)", "(∅⦂S↔T);f;(∅⦂U↔V);g;h",//
+				"f", "T↔U", "g", "V↔W", "h", "W↔X");
+		expressionTest("(∅⦂S↔X)", "(∅⦂S↔T);f;g;h;(∅⦂W↔X)",//
+				"f", "T↔U", "g", "U↔V", "h", "V↔W");
+		expressionTest("(∅⦂S↔X)", "f;(∅⦂T↔U);g;h;(∅⦂W↔X)",//
+				"f", "S↔T", "g", "U↔V", "h", "V↔W");
+		expressionTest("(∅⦂S↔Y)", "(∅⦂S↔T);f;(∅⦂U↔V);g;h;(∅⦂X↔Y)",//
+				"f", "T↔U", "g", "V↔W", "h", "W↔X");
 
 
 		// p circ ... circ {} circ ... circ q == {}
-		inputExp = makeInputExpression("{x + 2 ↦ 3}");
-		inputExp = ff.makeAssociativeExpression(Expression.BCOMP,
-				new Expression[] { inputExp, emptySetFunction }, null);
-		typeCheck = inputExp.typeCheck(ff.makeTypeEnvironment());
-		Assert.isTrue(typeCheck.isSuccess(), "Input expression: \n\t"
-				+ inputExp + "\n\tcannot be type checked");
-		expressionTest(emptySetFunction, inputExp);
-		
-		inputExp = makeInputExpression("{x + 2 ↦ 3}");
-		inputExp = ff.makeAssociativeExpression(Expression.BCOMP,
-				new Expression[] { emptySetFunction, inputExp }, null);
-		typeCheck = inputExp.typeCheck(ff.makeTypeEnvironment());
-		Assert.isTrue(typeCheck.isSuccess(), "Input expression: \n\t"
-				+ inputExp + "\n\tcannot be type checked");
-		expressionTest(emptySetFunction, inputExp);
-		
-		inputExp = ff.makeAssociativeExpression(Expression.BCOMP,
-				new Expression[] { emptySetFunction, inputExp3, inputExp2,
-						inputExp1 }, null);
-		typeCheck = inputExp.typeCheck(ff.makeTypeEnvironment());
-		Assert.isTrue(typeCheck.isSuccess(), "Input expression: \n\t"
-				+ inputExp + "\n\tcannot be type checked");
-		expressionTest(emptySetFunction, inputExp);
-
-		inputExp = ff.makeAssociativeExpression(Expression.BCOMP,
-				new Expression[] { inputExp3, inputExp2, emptySetFunction,
-						inputExp1 }, null);
-		typeCheck = inputExp.typeCheck(ff.makeTypeEnvironment());
-		Assert.isTrue(typeCheck.isSuccess(), "Input expression: \n\t"
-				+ inputExp + "\n\tcannot be type checked");
-		expressionTest(emptySetFunction, inputExp);
-
-		inputExp = ff.makeAssociativeExpression(Expression.BCOMP,
-				new Expression[] { inputExp3, inputExp2, inputExp1,
-						emptySetFunction }, null);
-		typeCheck = inputExp.typeCheck(ff.makeTypeEnvironment());
-		Assert.isTrue(typeCheck.isSuccess(), "Input expression: \n\t"
-				+ inputExp + "\n\tcannot be type checked");
-		expressionTest(emptySetFunction, inputExp);
-
-		inputExp = ff.makeAssociativeExpression(Expression.BCOMP,
-				new Expression[] { emptySetFunction, inputExp3, inputExp2,
-						emptySetFunction, inputExp1 }, null);
-		typeCheck = inputExp.typeCheck(ff.makeTypeEnvironment());
-		Assert.isTrue(typeCheck.isSuccess(), "Input expression: \n\t"
-				+ inputExp + "\n\tcannot be type checked");
-		expressionTest(emptySetFunction, inputExp);
-
-		inputExp = ff.makeAssociativeExpression(Expression.BCOMP,
-				new Expression[] { emptySetFunction, inputExp3, inputExp2,
-						inputExp1, emptySetFunction }, null);
-		typeCheck = inputExp.typeCheck(ff.makeTypeEnvironment());
-		Assert.isTrue(typeCheck.isSuccess(), "Input expression: \n\t"
-				+ inputExp + "\n\tcannot be type checked");
-		expressionTest(emptySetFunction, inputExp);
-
-		inputExp = ff.makeAssociativeExpression(Expression.BCOMP,
-				new Expression[] { inputExp3, inputExp2, emptySetFunction,
-						inputExp1, emptySetFunction }, null);
-		typeCheck = inputExp.typeCheck(ff.makeTypeEnvironment());
-		Assert.isTrue(typeCheck.isSuccess(), "Input expression: \n\t"
-				+ inputExp + "\n\tcannot be type checked");
-		expressionTest(emptySetFunction, inputExp);
-
-		inputExp = ff.makeAssociativeExpression(Expression.BCOMP,
-				new Expression[] { emptySetFunction, inputExp3, inputExp2,
-						emptySetFunction, inputExp1, emptySetFunction }, null);
-		typeCheck = inputExp.typeCheck(ff.makeTypeEnvironment());
-		Assert.isTrue(typeCheck.isSuccess(), "Input expression: \n\t"
-				+ inputExp + "\n\tcannot be type checked");
-		expressionTest(emptySetFunction, inputExp);
+		expressionTest("(∅⦂S↔U)", "f∘(∅⦂S↔T)", "f", "T↔U");
+		expressionTest("(∅⦂S↔U)", "(∅⦂T↔U)∘f", "f", "S↔T");
+		expressionTest("(∅⦂S↔W)", "(∅⦂V↔W)∘h∘g∘f",//
+				"f", "S↔T", "g", "T↔U", "h", "U↔V");
+		expressionTest("(∅⦂S↔W)", "h∘g∘(∅⦂T↔U)∘f",//
+				"f", "S↔T", "g", "U↔V", "h", "V↔W");
+		expressionTest("(∅⦂S↔W)", "h∘g∘f∘(∅⦂S↔T)",//
+				"f", "T↔U", "g", "U↔V", "h", "V↔W");
+		expressionTest("(∅⦂S↔X)", "(∅⦂W↔X)∘h∘g∘(∅⦂T↔U)∘f",//
+				"f", "S↔T", "g", "U↔V", "h", "V↔W");
+		expressionTest("(∅⦂S↔X)", "h∘g∘(∅⦂U↔V)∘f∘(∅⦂S↔T)",//
+				"f", "T↔U", "g", "V↔W", "h", "W↔X");
+		expressionTest("(∅⦂S↔X)", "(∅⦂W↔X)∘h∘g∘f∘(∅⦂S↔T)",//
+				"f", "T↔U", "g", "U↔V", "h", "V↔W");
+		expressionTest("(∅⦂S↔Y)", "(∅⦂X↔Y)∘h∘g∘(∅⦂U↔V)∘f∘(∅⦂S↔T)",//
+				"f", "T↔U", "g", "V↔W", "h", "W↔X");
 
 
 		// U \ (U \ S) == S
@@ -765,10 +616,8 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 		
 		
 		// S \ U == {}
-		inputExp = makeInputExpression("S ∖ ℤ");
-		expressionTest(emptySetInteger, inputExp);
-		inputExp = makeInputExpression("S ∖ (ℤ × ℤ)");
-		expressionTest(emptySetFunction, inputExp);
+		expressionTest("(∅ ⦂ ℙ(ℤ))", "S ∖ ℤ");
+		expressionTest("(∅ ⦂ ℙ(ℤ×ℤ))", "S ∖ (ℤ × ℤ)");
 
 		
 		// S \/ ... \/ U \/ ... \/ T == U
@@ -807,21 +656,10 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 		expressionTest("(∅ ⦂ ℙ(T))", "(∅ ⦂ ℙ(S×T))[A]", "A", "ℙ(S)");
 		
 		// dom({}) == {}
-		Type domainType = intType;
-		Type rangeType = ff.makeBooleanType();
-		Type relType = ff.makeRelationalType(domainType, rangeType);
-		AtomicExpression r = ff.makeEmptySet(relType, null);
-		UnaryExpression domExp = ff.makeUnaryExpression(Expression.KDOM, r, null);
-		expressionTest(emptySetInteger, domExp);
-
+		expressionTest("(∅ ⦂ ℙ(S))", "dom((∅ ⦂ ℙ(S×T)))");
 		
 		// ran({}) == {}
-		UnaryExpression ranExp = ff.makeUnaryExpression(Expression.KRAN, r,
-				null);
-		AtomicExpression emptySetBoolean = ff.makeEmptySet(ff
-				.makePowerSetType(rangeType), null);
-		expressionTest(emptySetBoolean, ranExp);
-		
+		expressionTest("(∅ ⦂ ℙ(T))", "ran((∅ ⦂ ℙ(S×T)))");
 
 		// (S ** {E})(x) == E
 		expressionTest("TRUE", "(ℕ × {TRUE})(1)");
@@ -859,8 +697,22 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 		expressionTest("(λx↦p·x∈s∧p⊆s∣p)", "(λs·s⊆S∣(λx↦p·x∈s∧p⊆s∣p))(s)", "s", "ℙ(S)");
 		// Checks that external lambda disappear and x is instantiated
 		expressionTest("(λz·z∈ℕ ∣ z+z)[{1,2,3}]", "(λx·x∈ℙ(ℕ) ∣ (λz·z∈ℕ ∣ z+z)[x])({1,2,3})");
+		// Real example from Bug 2995930 with an argument containing a bound identifier.
+		predicateTest("∀t⦂ℙ(S)·(λx↦p·x∈t∧p⊆t∣p) = ∅",
+				"∀t⦂ℙ(S)·(λs·s⊆S∣(λx↦p·x∈s∧p⊆s∣p))(t) = ∅", "S", "ℙ(S)");
 	}
 
+	/**
+	 * Ensures that bug 3025836: Rodin 1.3.1 prover is still unsound is fixed.
+	 * Also adds similar test cases for completeness.
+	 */
+	@Test
+	public void testBug3025836() {
+		predicateTest("∀x,y,z·x∈ℤ ∧ y∈BOOL ∧ z∈BOOL ⇒ x=0",
+				"∀x,y,z·x∈ℤ ∧ y∈BOOL ∧ z∈BOOL ⇒ (λa·a∈ℤ ∣ a)(x)=0");
+		predicateTest("∀x⦂ℤ,y⦂ℙ(ℤ)·y∪{x}=∅",
+				"∀x⦂ℤ,y⦂ℙ(ℤ)·(λa·a∈ℤ∣y∪{a})(x)=∅");
+	}
 
 	/**
 	 * Tests for rewriting arithmetic formulas. 
@@ -1072,15 +924,7 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 	@Test
 	public void testFinite() {
 		// finite({}) == true
-		Expression emptySet = ff.makeEmptySet(ff.makePowerSetType(ff
-				.makeIntegerType()), null);
-		Predicate finite = ff.makeSimplePredicate(Expression.KFINITE, emptySet,
-				null);
-		ITypeCheckResult typeCheck = finite.typeCheck(ff.makeTypeEnvironment());
-		Assert.isTrue(typeCheck.isSuccess(), "Input expression: \n\t" + finite
-				+ "\n\tcannot be type checked");
-		Predicate truePred = makeExpectedPredicate("⊤");
-		predicateTest(truePred, finite);
+		predicateTest("⊤", "finite((∅ ⦂ ℙ(ℤ)))");
 
 		
 		// finite({a, ..., b}) == true
@@ -1124,15 +968,7 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 	@Test
 	public void testCardinality() {
 		// card({}) == 0
-		Expression emptySet = ff.makeEmptySet(ff.makePowerSetType(ff
-				.makeIntegerType()), null);
-		Expression card = ff.makeUnaryExpression(Expression.KCARD, emptySet,
-				null);
-		ITypeCheckResult typeCheck = card.typeCheck(ff.makeTypeEnvironment());
-		Assert.isTrue(typeCheck.isSuccess(), "Input expression: \n\t" + card
-				+ "\n\tcannot be type checked");
-		Expression number0 = makeExpectedExpression("0");
-		expressionTest(number0, card);
+		expressionTest("0", "card((∅ ⦂ ℙ(S)))");
 
 		
 		// card({E}) == 1
