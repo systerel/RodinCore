@@ -469,7 +469,7 @@ public class MainParsers {
 		public void toString(IToStringMediator mediator, BecomesEqualTo toPrint) {
 			final FreeIdentifier[] idents = toPrint.getAssignedIdentifiers();
 			FREE_IDENT_LIST_PARSER.toString(mediator, asList(idents));
-			mediator.appendOperator();
+			mediator.appendImage(kind);
 			final Expression[] expressions = toPrint.getExpressions();
 			EXPR_LIST_PARSER.toString(mediator, asList(expressions));
 		}
@@ -492,7 +492,7 @@ public class MainParsers {
 		public void toString(IToStringMediator mediator, BecomesMemberOf toPrint) {
 			final FreeIdentifier[] idents = toPrint.getAssignedIdentifiers();
 			FREE_IDENT_LIST_PARSER.toString(mediator, asList(idents));
-			mediator.appendOperator();
+			mediator.appendImage(kind);
 			final Expression set = toPrint.getSet();
 			EXPR_PARSER.toString(mediator, set);
 		}
@@ -522,7 +522,7 @@ public class MainParsers {
 		public void toString(IToStringMediator mediator, BecomesSuchThat toPrint) {
 			final FreeIdentifier[] idents = toPrint.getAssignedIdentifiers();
 			FREE_IDENT_LIST_PARSER.toString(mediator, asList(idents));
-			mediator.appendOperator();
+			mediator.appendImage(kind);
 		
 			final Predicate condition = toPrint.getCondition();
 			PRED_PARSER.toString(mediator, condition);

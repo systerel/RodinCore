@@ -40,8 +40,6 @@ public interface IToStringMediator {
 	
 	FormulaFactory getFactory();
 
-	void appendOperator();
-
 	void appendBoundIdent(int boundIndex);
 	
 	boolean isWithTypes();

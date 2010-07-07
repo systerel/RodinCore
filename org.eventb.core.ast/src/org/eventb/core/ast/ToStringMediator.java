@@ -113,11 +113,6 @@ import org.eventb.internal.core.parser.AbstractGrammar;
 		return factory;
 	}
 
-	public void appendOperator() {
-		final String opImage = factory.getGrammar().getImage(tag); // FIXME kind
-		builder.append(opImage);
-	}
-
 	public void appendImage(int kind) {
 		final String image = factory.getGrammar().getImage(kind);
 		builder.append(image);
