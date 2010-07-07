@@ -321,7 +321,7 @@ public class MainParsers {
 			final PatternAtomParser atomParser = new PatternAtomParser(pattern, this);
 			pc.subParse(atomParser);
 			while (pc.t.kind == _MAPSTO) {
-				pc.progress();
+				pc.progress(_MAPSTO);
 				pc.subParse(atomParser);
 				pattern.mapletParsed(pc.getSourceLocation());
 			}

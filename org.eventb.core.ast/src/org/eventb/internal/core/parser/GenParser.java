@@ -200,7 +200,7 @@ public class GenParser {
 			progress();
 		}
 		
-		public void progress() {
+		private void progress() {
 			if(grammar.isOpen(t.kind)) {
 				pushParentKind(_OPEN);
 			}
@@ -297,6 +297,12 @@ public class GenParser {
 		
 		public void progressCloseParen() throws SyntaxError {
 			progress(_RPAR);
+		}
+		
+		void scanUntilEOF() {
+			while (t.kind != _EOF) {
+				progress();
+			}
 		}
 		
 		public List<INudParser<? extends Formula<?>>> getNudParsers() {
@@ -530,16 +536,10 @@ public class GenParser {
 
 	private void failUnmatchedTokens(ParserContext pc) {
 		final int startPos = pc.t.pos;
-		scanUntilEOF(pc);
+		pc.scanUntilEOF();
 		final int endPos = pc.t.pos - 1;
 		processFailure(new ASTProblem(pc.makeSourceLocation(startPos, endPos),
 				ProblemKind.UnmatchedTokens, ProblemSeverities.Error));
-	}
-
-	private static void scanUntilEOF(ParserContext pc) {
-		while (pc.t.kind != _EOF) {
-			pc.progress();
-		}
 	}
 
 	private void processFailure(ASTProblem problem) {

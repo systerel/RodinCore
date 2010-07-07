@@ -240,7 +240,7 @@ public class SubParsers {
 		protected abstract Child getRight(T parent);
 		
 		public final T led(Formula<?> left, ParserContext pc) throws SyntaxError {
-			pc.progress();
+			pc.progress(kind);
 			final Child typedLeft = asLeftType(left);
 			final Child right = parseRight(pc);
 			return makeValue(pc.factory, typedLeft, right, pc.getSourceLocation());
@@ -389,7 +389,7 @@ public class SubParsers {
 			Type type = null;
 			if (pc.t.kind == _TYPING) {
 				pc.pushParentKind();
-				pc.progress();
+				pc.progress(_TYPING);
 				try {
 					type = pc.subParse(TYPE_PARSER);
 				} finally {
@@ -479,7 +479,7 @@ public class SubParsers {
 			if (!isTypedGeneric(childTag)) {
 				throw newUnexpectedOftype(pc);
 			}
-			pc.progress();
+			pc.progress(_TYPING);
 			
 			Type type = pc.subParse(TYPE_PARSER);
 			final SourceLocation typeLoc = pc.getSourceLocation();
@@ -1361,7 +1361,7 @@ public class SubParsers {
 
 		public Expression nud(ParserContext pc) throws SyntaxError {
 			final int minusPos = pc.t.pos;
-			pc.progress();
+			pc.progress(kind);
 			final Expression expr = pc.subParse(EXPR_PARSER);
 			final SourceLocation loc = pc.getSourceLocation();
 	        if (expr instanceof IntegerLiteral
