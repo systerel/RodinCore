@@ -18,20 +18,25 @@ import org.eventb.internal.core.ast.extension.IToStringMediator;
 /* package */class ToStringFullParenMediator extends ToStringMediator  {
 
 
-	public ToStringFullParenMediator(FormulaFactory factory, int tag,
+	public ToStringFullParenMediator(Formula<?> formula, FormulaFactory factory,
 			StringBuilder builder, String[] boundNames, boolean isRight) {
-		super(factory, builder, boundNames, tag, false, isRight);
+		super(formula, factory, builder, boundNames, false, isRight);
+	}
+
+	public ToStringFullParenMediator(int formulaKind, FormulaFactory factory,
+			StringBuilder builder, String[] boundNames, boolean isRight) {
+		super(formulaKind, factory, builder, boundNames, false, isRight);
 	}
 
 	@Override
-	protected IToStringMediator makeInstance(Formula<?> child,
+	protected IToStringMediator makeInstance(int formulaKind,
 			boolean isRightOvr, boolean withTypes, String[] newBoundNames) {
-		return new ToStringFullParenMediator(factory, child.getTag(), builder,
+		return new ToStringFullParenMediator(formulaKind, factory, builder,
 				newBoundNames, isRightOvr);
 	}
 
 	@Override
-	protected boolean needsParentheses(Formula<?> child, boolean isRightOvr) {
+	protected boolean needsParentheses(int childKind, boolean isRightOvr) {
 		return true;
 	}
 }

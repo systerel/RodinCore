@@ -112,7 +112,7 @@ public class TestGenParser extends AbstractTests {
 	private static final SourceLocationChecker slChecker = new SourceLocationChecker();
 
 	private static void assertFailure(IParseResult result, ASTProblem expected) {
-		assertTrue(result.hasProblem());
+		assertTrue("expected parsing to fail", result.hasProblem());
 		final List<ASTProblem> problems = result.getProblems();
 		System.out.println(problems);
 		assertEquals(1, problems.size());
@@ -1901,6 +1901,62 @@ public class TestGenParser extends AbstractTests {
 		assertFailure(result, new ASTProblem(new SourceLocation(2, 2),
 				ProblemKind.IncompatibleOperators, ProblemSeverities.Error,
 				"∧", "∃"));
+	}
+	
+	public void testToStringMaplet() throws Exception {
+		final Expression expected = ff.makeBinaryExpression(MAPSTO, ff
+				.makeBinaryExpression(MAPSTO, FRID_A, FRID_B, null), FRID_C,
+				null);
+		doParseUnparseTest("A↦B↦C", expected);
+	}
+	
+	public void testToStringCProd() throws Exception {
+		final Expression expected = ff.makeBinaryExpression(CPROD, ff
+				.makeBinaryExpression(CPROD, FRID_A, FRID_B, null), FRID_C,
+				null);
+		doParseUnparseTest("A×B×C", expected);
+	}
+	
+	public void testToStringInterSetMinusNoPar() throws Exception {
+		final Expression expected = ff.makeAssociativeExpression(BINTER,
+				asList(FRID_A, ff.makeBinaryExpression(SETMINUS, FRID_B,
+						FRID_C, null)), null);
+		doParseUnparseTest("A∩B∖C", expected);
+	}
+	
+	public void testToStringInterSetMinusWithParL() throws Exception {
+		final Expression expected = ff.makeAssociativeExpression(BINTER,
+				asList(FRID_A, ff.makeBinaryExpression(SETMINUS, FRID_B,
+						FRID_C, null)), null);
+		doParseUnparseTest("(A∩B)∖C", expected);
+	}
+	
+	public void testToStringInterSetMinusWithParR() throws Exception {
+		final Expression expected = ff.makeAssociativeExpression(BINTER,
+				asList(FRID_A, ff.makeBinaryExpression(SETMINUS, FRID_B,
+						FRID_C, null)), null);
+		doParseUnparseTest("A∩(B∖C)", expected);
+	}
+	
+	public void testToStringSetMinusInterNoPar() throws Exception {
+		final IParseResult result = parseExprRes("A∖B∩C");
+		assertFailure(result, new ASTProblem(new SourceLocation(3, 3),
+				ProblemKind.IncompatibleOperators, ProblemSeverities.Error,
+				"∖", "∩"));
+	}
+	
+	public void testToStringSetMinusInterWithParL() throws Exception {
+		final Expression expected = ff.makeAssociativeExpression(BINTER,
+				asList(ff.makeBinaryExpression(SETMINUS, FRID_A, FRID_B, null),
+						FRID_C), null);
+		doParseUnparseTest("(A∖B)∩C", expected);
+	}
+	
+	public void testToStringSetMinusInterWithParR() throws Exception {
+		final Expression expected = ff.makeAssociativeExpression(BINTER,
+				asList(ff.makeBinaryExpression(SETMINUS, FRID_A, FRID_B, null),
+						FRID_C), null);
+		doParseUnparseTest("A∖(B∩C)", expected);
 	}
 	
 }

@@ -19,6 +19,7 @@ import java.util.Set;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
@@ -168,11 +169,20 @@ public class BecomesEqualTo extends Assignment {
 			value.collectNamesAbove(names, boundNames, offset);
 		}
 	}
+	
+	private String getOperatorImage() {
+		return OP_BECEQ.getImage();
+	}
 
 	@Override
 	protected void toString(IToStringMediator mediator) {
-		final int kind = mediator.getKind(OP_BECEQ.getImage());
+		final int kind = mediator.getKind();
 		OP_BECEQ.makeParser(kind).toString(mediator, this);
+	}
+
+	@Override
+	protected int getKind(KindMediator mediator) {
+		return mediator.getKind(getOperatorImage());
 	}
 
 	/* (non-Javadoc)

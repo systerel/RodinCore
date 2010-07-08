@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.AbstractGrammar._INTLIT;
 import static org.eventb.internal.core.parser.SubParsers.INTLIT_SUBPARSER;
 
 import java.math.BigInteger;
@@ -24,8 +25,8 @@ import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.AbstractGrammar;
-import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -45,13 +46,8 @@ public class IntegerLiteral extends Expression {
 	/**
 	 * @since 2.0
 	 */
-	public static void init(AbstractGrammar grammar, int identKind) {
-		try {
-			grammar.addReservedSubParser(identKind, INTLIT_SUBPARSER);
-		} catch (OverrideException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public static void init(AbstractGrammar grammar) {
+		grammar.addReservedSubParser(_INTLIT, INTLIT_SUBPARSER);
 	}
 
 	// This literal value.  Can never be null.
@@ -112,6 +108,11 @@ public class IntegerLiteral extends Expression {
 	@Override
 	protected final void toString(IToStringMediator mediator) {
 		INTLIT_SUBPARSER.toString(mediator, this);
+	}
+
+	@Override
+	protected final int getKind(KindMediator mediator) {
+		return _INTLIT;
 	}
 
 	@Override

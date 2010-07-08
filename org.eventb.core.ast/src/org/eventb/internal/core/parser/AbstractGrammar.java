@@ -87,6 +87,8 @@ public abstract class AbstractGrammar {
 		opRegistry.addOperator(_NOOP, NOOP_ID, GROUP0);
 		opRegistry.addOperator(_OPEN, OPEN_ID, GROUP0);
 		addOpenClose("(", ")");
+		
+		// TODO call IntegerLiteral.init() and Identifier.init()
 		subParsers.addNud(_INTLIT, INTLIT_SUBPARSER);
 		subParsers.addNud(_IDENT, IDENT_SUBPARSER);
 		subParsers.addNud(_LPAR, MainParsers.CLOSED_SUGAR);
@@ -181,8 +183,7 @@ public abstract class AbstractGrammar {
 	}
 
 	public void addReservedSubParser(int reservedKind,
-			INudParser<? extends Formula<?>> subParser)
-			throws OverrideException {
+			INudParser<? extends Formula<?>> subParser) {
 		subParsers.addNud(reservedKind, subParser);
 	}
 	
@@ -216,6 +217,7 @@ public abstract class AbstractGrammar {
 	public int getKind(String image) {
 		final int kind = tokens.getIndex(image);
 		if (kind == IndexedSet.NOT_AN_INDEX) {
+			// TODO consider throwing a caught exception (for extensions to manage)
 			throw new IllegalArgumentException("No such token: " + image);
 		}
 		return kind;

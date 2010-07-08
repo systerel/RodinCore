@@ -29,6 +29,7 @@ import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.ast.extension.TypeCheckMediator;
 import org.eventb.internal.core.ast.extension.TypeMediator;
 import org.eventb.internal.core.parser.ExtendedGrammar;
@@ -196,9 +197,14 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		final IOperatorProperties properties = extension.getKind()
 				.getProperties();
 		final IParserPrinter<? extends Formula<?>> parser = ff.getGrammar()
-				.getParser(properties, mediator.getKind(extension.getSyntaxSymbol()), getTag());
+				.getParser(properties, mediator.getKind(), getTag());
 		final IParserPrinter<ExtendedExpression> extParser = (IParserPrinter<ExtendedExpression>) parser;
 		extParser.toString(mediator, this);
+	}
+
+	@Override
+	protected int getKind(KindMediator mediator) {
+		return mediator.getKind(extension.getSyntaxSymbol());
 	}
 
 	@Override

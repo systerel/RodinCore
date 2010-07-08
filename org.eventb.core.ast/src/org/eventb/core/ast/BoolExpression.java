@@ -21,6 +21,7 @@ import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
@@ -153,16 +154,26 @@ public class BoolExpression extends Expression {
 	@Override
 	protected void toString(IToStringMediator mediator) {
 		final Operators operator = Operators.OP_KBOOL;
-		final int kind = mediator.getKind(operator.getImage());
+		final int kind = mediator.getKind();
 		
 		operator.makeParser(kind).toString(mediator, this);
 	}
 
 	@Override
+	protected int getKind(KindMediator mediator) {
+		return mediator.getKind(getOperatorImage());
+	}
+
+	private String getOperatorImage() {
+		return Operators.OP_KBOOL.getImage();
+	}
+
+	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		final String typeName = getType()!=null?" [type: "+getType().toString()+"]":"";
-		return tabs + this.getClass().getSimpleName() + " [bool]" + typeName
-				+ "\n" + child.getSyntaxTree(boundNames, tabs + "\t");
+		return tabs + this.getClass().getSimpleName() + " ["
+				+ getOperatorImage() + "]" + typeName + "\n"
+				+ child.getSyntaxTree(boundNames, tabs + "\t");
 	}
 
 	@Override

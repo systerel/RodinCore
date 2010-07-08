@@ -28,6 +28,7 @@ import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
@@ -443,14 +444,18 @@ public class UnaryExpression extends Expression {
 
 	@Override
 	protected void toString(IToStringMediator mediator) {
+		final int kind = mediator.getKind();
 		if (getTag() == UNMINUS) {
-			final int kind = mediator.getKind(OP_MINUS.getImage());
 			OP_MINUS.makeParser(kind).toString(mediator, this);
 			return;
 		}
 		final Operators operator = getOperator();
-		final int kind = mediator.getKind(operator.getImage());
 		operator.makeParser(kind).toString(mediator, this);
+	}
+
+	@Override
+	protected int getKind(KindMediator mediator) {
+		return mediator.getKind(getOperatorImage());
 	}
 
 	@Override

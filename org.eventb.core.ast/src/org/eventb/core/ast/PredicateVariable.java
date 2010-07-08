@@ -22,6 +22,7 @@ import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -113,6 +114,11 @@ public class PredicateVariable extends Predicate {
 	@Override
 	protected void toString(IToStringMediator mediator) {
 		PRED_VAR_SUBPARSER.toString(mediator, getTypedThis());
+	}
+
+	@Override
+	protected int getKind(KindMediator mediator) {
+		return BMath._PREDVAR;
 	}
 
 	@Override

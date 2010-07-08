@@ -37,6 +37,7 @@ import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.SimpleSubstitution;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -1092,8 +1093,8 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public final String toStringFullyParenthesized() {
 		final StringBuilder builder = new StringBuilder();
-		final ToStringFullParenMediator strMed = new ToStringFullParenMediator(
-				getFactory(), tag, builder, NO_STRING, false);
+		final ToStringFullParenMediator strMed = new ToStringFullParenMediator(this, 
+				getFactory(), builder, NO_STRING, false);
 		toString(strMed);
 		return builder.toString();
 	}
@@ -1114,8 +1115,8 @@ public abstract class Formula<T extends Formula<T>> {
 	@Override
 	public final String toString() {
 		final StringBuilder builder = new StringBuilder();
-		final ToStringMediator strMed = new ToStringMediator(getFactory(),
-				builder, NO_STRING, tag, false, false);
+		final ToStringMediator strMed = new ToStringMediator(this, getFactory(),
+				builder, NO_STRING, false, false);
 		toString(strMed);
 		return builder.toString();
 	}
@@ -1134,8 +1135,8 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public final String toStringWithTypes() {
 		final StringBuilder builder = new StringBuilder();
-		final ToStringMediator strMed = new ToStringMediator(getFactory(),
-				builder, NO_STRING, tag, true, false);
+		final ToStringMediator strMed = new ToStringMediator(this, getFactory(),
+				builder, NO_STRING, true, false);
 		toString(strMed);
 		return builder.toString();
 	}
@@ -1145,6 +1146,11 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	protected abstract void toString(IToStringMediator mediator);
 
+	/**
+	 * @since 2.0
+	 */
+	protected abstract int getKind(KindMediator mediator);
+	
 	/**
 	 * @since 2.0
 	 */

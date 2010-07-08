@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.AbstractGrammar._IDENT;
 import static org.eventb.internal.core.parser.SubParsers.IDENT_SUBPARSER;
 
 import java.util.Set;
@@ -17,8 +18,8 @@ import java.util.Set;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.AbstractGrammar;
-import org.eventb.internal.core.parser.GenParser.OverrideException;
 
 /**
  * This is the base class for all identifiers in an event-B formula.
@@ -33,13 +34,8 @@ public abstract class Identifier extends Expression {
 	/**
 	 * @since 2.0
 	 */
-	public static void init(AbstractGrammar grammar, int identKind) {
-		try {
-			grammar.addReservedSubParser(identKind, IDENT_SUBPARSER);
-		} catch (OverrideException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public static void init(AbstractGrammar grammar) {
+		grammar.addReservedSubParser(_IDENT, IDENT_SUBPARSER);
 	}
 
 	protected Identifier(int tag, SourceLocation location, int hashCode) {
@@ -72,4 +68,10 @@ public abstract class Identifier extends Expression {
 	protected final void toString(IToStringMediator mediator) {
 		IDENT_SUBPARSER.toString(mediator, this);
 	}
+
+	@Override
+	protected final int getKind(KindMediator mediator) {
+		return _IDENT;
+	}
+
 }

@@ -27,7 +27,7 @@ public interface IToStringMediator {
 	
 	void appendImage(int kind);
 
-	int getKind(String operator);
+	int getKind();
 	
 	void subPrint(Formula<?> child, boolean isRight);
 

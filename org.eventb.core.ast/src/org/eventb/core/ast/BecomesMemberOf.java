@@ -18,6 +18,7 @@ import java.util.Set;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
@@ -138,8 +139,13 @@ public class BecomesMemberOf extends Assignment {
 
 	@Override
 	protected void toString(IToStringMediator mediator) {
-		final int kind = mediator.getKind(OP_BECMO.getImage());
+		final int kind = mediator.getKind();
 		OP_BECMO.makeParser(kind).toString(mediator, this);
+	}
+
+	@Override
+	protected int getKind(KindMediator mediator) {
+		return mediator.getKind(OP_BECMO.getImage());
 	}
 
 	@Override

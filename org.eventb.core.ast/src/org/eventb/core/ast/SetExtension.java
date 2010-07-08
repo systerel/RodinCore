@@ -25,6 +25,7 @@ import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
@@ -181,12 +182,21 @@ public class SetExtension extends Expression {
 		return Operators.OP_SETEXT;
 	}
 
+	private String getOperatorImage() {
+		return getOperator().getImage();
+	}
+
 	@Override
 	protected void toString(IToStringMediator mediator) {
 		final Operators operator = getOperator();
-		final int kind = mediator.getKind(operator.getImage());
+		final int kind = mediator.getKind();
 		
 		operator.makeParser(kind).toString(mediator, this);
+	}
+
+	@Override
+	protected int getKind(KindMediator mediator) {
+		return mediator.getKind(getOperatorImage());
 	}
 
 	@Override
