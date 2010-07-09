@@ -15,12 +15,8 @@ package org.eventb.core.seqprover.proofBuilder;
 
 import static org.eventb.core.seqprover.ProverLib.isRuleReusable;
 
-import java.util.List;
-
-import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
@@ -28,8 +24,6 @@ import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.tactics.BasicTactics;
-import org.eventb.internal.core.seqprover.IInternalHypAction;
-import org.eventb.internal.core.seqprover.IInternalProverSequent;
 import org.eventb.internal.core.seqprover.ProofTreeNode;
 
 /**
@@ -313,37 +307,14 @@ public class ProofBuilder {
 
 	/**
 	 * Tells whether a rule would really modify the proof tree, rather than just
-	 * producing exactly the same sequent as a subgoal. If the test succeed,
+	 * producing exactly the same sequent as a subgoal. If the test succeeds,
 	 * then the rule has exactly one antecedent and can safely be skipped.
 	 */
 	private static boolean ruleIsSkip(IProofTreeNode node, IProofRule rule) {
-		final IAntecedent[] antes = rule.getAntecedents();
-		return antes.length == 1 && antecedentIsSkip(node, antes[0]);
-	}
-
-	private static boolean antecedentIsSkip(IProofTreeNode node,
-			IAntecedent ante) {
-		if (ante.getAddedFreeIdents().length != 0) {
-			return false;
-		}
-		if (!ante.getAddedHyps().isEmpty()) {
-			return false;
-		}
-		if (ante.getGoal() != null) {
-			return false;
-		}
-
-		final IInternalProverSequent seq = (IInternalProverSequent) node
-				.getSequent();
-		final List<IHypAction> actions = ante.getHypActions();
-		for (final IHypAction action : actions) {
-			final IInternalHypAction iAction = (IInternalHypAction) action;
-			if (seq != iAction.perform(seq)) {
-				// The action would modify the sequent
-				return false;
-			}
-		}
-		return true;
+		final IProverSequent sequent = node.getSequent();
+		final IProverSequent[] newSequents = rule.apply(sequent);
+		return newSequents != null && newSequents.length == 1
+				&& newSequents[0] == sequent;
 	}
 
 	/**
