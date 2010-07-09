@@ -624,8 +624,9 @@ public class AutoTactics {
 	 * Applies automatically the <code>OnePointGoal</code> tactic to the goal.
 	 * 
 	 * @author Nicolas Beauger
+	 * @since 1.1
 	 */
-	private static class OnePointGoalOnceTac implements ITactic {
+	public static class OnePointGoalTac implements ITactic {
 
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			if (pm != null && pm.isCanceled()) {
@@ -644,30 +645,13 @@ public class AutoTactics {
 	}
 
 	/**
-	 * Applies automatically, repeatedly and recursively the
-	 * <code>OnePointGoalOnceTac</code> to the proof subtree rooted at the given
-	 * node.
-	 * 
-	 * @author Nicolas Beauger
-	 * @since 1.1
-	 */
-	public static class OnePointGoalTac extends AbsractLazilyConstrTactic {
-
-		@Override
-		protected ITactic getSingInstance() {
-			return loopOnAllPending(new OnePointGoalOnceTac());
-		}
-
-	}
-
-	/**
 	 * Applies automatically the <code>OnePointHyp</code> tactic to the selected
 	 * hypotheses.
 	 * 
 	 * @author Nicolas Beauger
 	 * @since 1.1
 	 */
-	private static class OnePointHypOnceTac implements ITactic {
+	public static class OnePointHypTac implements ITactic {
 
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			if (pm != null && pm.isCanceled()) {
@@ -682,23 +666,6 @@ public class AutoTactics {
 				}
 			}
 			return "Tactic unapplicable";
-		}
-
-	}
-
-	/**
-	 * Applies automatically, repeatedly and recursively the
-	 * <code>OnePointHypOnceTac</code> to the proof subtree rooted at the given
-	 * node.
-	 * 
-	 * @author Nicolas Beauger
-	 * @since 1.1
-	 */
-	public static class OnePointHypTac extends AbsractLazilyConstrTactic {
-
-		@Override
-		protected ITactic getSingInstance() {
-			return loopOnAllPending(new OnePointHypOnceTac());
 		}
 
 	}
