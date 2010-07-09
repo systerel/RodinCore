@@ -154,6 +154,16 @@ public abstract class AbstractProofTreeTests implements IProofTreeChangedListene
 	}
 
 	/**
+	 * Checks that the given tree is discharged, using all available methods.
+	 * 
+	 * @param tree
+	 *            the proof tree to test
+	 */
+	public void assertTreeDischarged(IProofTree tree) {
+		assertNodeDischarged(tree.getRoot());
+	}
+
+	/**
 	 * Checks that the given node is open, using all available methods.
 	 * 
 	 * @param node
