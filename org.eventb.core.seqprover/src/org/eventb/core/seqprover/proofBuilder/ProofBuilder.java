@@ -15,8 +15,12 @@ package org.eventb.core.seqprover.proofBuilder;
 
 import static org.eventb.core.seqprover.ProverLib.isRuleReusable;
 
+import java.util.List;
+
+import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
@@ -24,6 +28,8 @@ import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.tactics.BasicTactics;
+import org.eventb.internal.core.seqprover.IInternalHypAction;
+import org.eventb.internal.core.seqprover.IInternalProverSequent;
 import org.eventb.internal.core.seqprover.ProofTreeNode;
 
 /**
@@ -273,10 +279,18 @@ public class ProofBuilder {
 			}
 		}	
 
-		// Check if rebuild for this node was successful
-		if (!(reuseSuccessfull || replaySuccessfull)) return false;
 		IProofSkeleton[] skelChildren = skeleton.getChildNodes();
 		IProofTreeNode[] nodeChildren = node.getChildNodes();
+
+		// Check if rebuild for this node was successful
+		if (!(reuseSuccessfull || replaySuccessfull)) {
+			if (ruleIsSkip(node, reuseProofRule)) {
+				// Actually the rule was doing nothing, can be by-passed.
+				return rebuild(node, skelChildren[0], replayHints, proofMonitor);
+			}
+			// We don't know what to do for this node.
+			return false;
+		}
 
 		// Maybe check if the node has the same number of children as the prNode
 		// it may be smart to replay anyway, but generate a warning.
@@ -295,6 +309,41 @@ public class ProofBuilder {
 			combinedResult &= rebuild(nodeChildren[i],skelChildren[i],newReplayHints, proofMonitor);
 		}
 		return combinedResult;
+	}
+
+	/**
+	 * Tells whether a rule would really modify the proof tree, rather than just
+	 * producing exactly the same sequent as a subgoal. If the test succeed,
+	 * then the rule has exactly one antecedent and can safely be skipped.
+	 */
+	private static boolean ruleIsSkip(IProofTreeNode node, IProofRule rule) {
+		final IAntecedent[] antes = rule.getAntecedents();
+		return antes.length == 1 && antecedentIsSkip(node, antes[0]);
+	}
+
+	private static boolean antecedentIsSkip(IProofTreeNode node,
+			IAntecedent ante) {
+		if (ante.getAddedFreeIdents().length != 0) {
+			return false;
+		}
+		if (!ante.getAddedHyps().isEmpty()) {
+			return false;
+		}
+		if (ante.getGoal() != null) {
+			return false;
+		}
+
+		final IInternalProverSequent seq = (IInternalProverSequent) node
+				.getSequent();
+		final List<IHypAction> actions = ante.getHypActions();
+		for (final IHypAction action : actions) {
+			final IInternalHypAction iAction = (IInternalHypAction) action;
+			if (seq != iAction.perform(seq)) {
+				// The action would modify the sequent
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
