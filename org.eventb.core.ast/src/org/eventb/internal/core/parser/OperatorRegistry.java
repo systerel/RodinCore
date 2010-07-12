@@ -140,6 +140,7 @@ public class OperatorRegistry {
 	private static class OperatorGroup {
 		private final Relation<Integer> compatibilityRelation = new Relation<Integer>();
 		private final Closure<Integer> operatorPriority = new Closure<Integer>();
+		private final Set<Integer> associativeOperators = new HashSet<Integer>();
 
 		private final String id;
 
@@ -153,7 +154,7 @@ public class OperatorRegistry {
 		}
 		
 		/**
-		 * Adds a compatibility between a and b for all language versions.
+		 * Adds a compatibility between a and b.
 		 * 
 		 * @param a
 		 *            an operator kind
@@ -162,6 +163,18 @@ public class OperatorRegistry {
 		 */
 		public void addCompatibility(Integer a, Integer b) {
 			compatibilityRelation.add(a, b);
+		}
+
+		/**
+		 * Adds a self compatibility for the given operator and records it as
+		 * associative.
+		 * 
+		 * @param a
+		 *            an operator kind
+		 */
+		public void addAssociativity(Integer a) {
+			compatibilityRelation.add(a, a);
+			associativeOperators.add(a);
 		}
 
 		public void addPriority(Integer a, Integer b)
@@ -177,6 +190,10 @@ public class OperatorRegistry {
 			return compatibilityRelation.contains(a, b)
 					|| operatorPriority.contains(a, b)
 					|| operatorPriority.contains(b, a);
+		}
+		
+		public boolean isAssociative(Integer a) {
+			return associativeOperators.contains(a);
 		}
 		
 		@Override
@@ -212,6 +229,12 @@ public class OperatorRegistry {
 		final Integer rightKind = idKind.get(rightOpId);
 		final OperatorGroup group = getAndCheckSameGroup(leftKind, rightKind);
 		group.addCompatibility(leftKind, rightKind);
+	}
+
+	public void addAssociativity(String opId) {
+		final Integer opKind = idKind.get(opId);
+		final OperatorGroup group = kindOpGroup.get(opKind);
+		group.addAssociativity(opKind);
 	}
 
 	// lowOpId gets a lower priority than highOpId
@@ -289,6 +312,11 @@ public class OperatorRegistry {
 
 	public boolean hasGroup(int kind) {
 		return kindOpGroup.containsKey(kind);
+	}
+
+	public boolean isAssociative(int kind) {
+		final OperatorGroup group = kindOpGroup.get(kind);
+		return group.isAssociative(kind);
 	}	
 	
 }

@@ -103,6 +103,10 @@ public abstract class AbstractGrammar {
 		opRegistry.addCompatibility(leftOpId, rightOpId);
 	}
 	
+	public void addAssociativity(String opId) {
+		opRegistry.addAssociativity(opId);
+	}
+	
 	public void addPriority(String lowOpId, String highOpId) throws CycleError {
 		opRegistry.addPriority(lowOpId, highOpId);
 	}
@@ -246,6 +250,9 @@ public abstract class AbstractGrammar {
 		if (!isOperator(parentKind) || !isOperator(childKind)) {
 			return false; // IDENT for instance
 		}
+		if (childKind == parentKind && opRegistry.isAssociative(parentKind)) {
+			return true;
+		}
 		final OperatorRelationship relParentChild = getOperatorRelationship(parentKind,
 				childKind);
 		if (relParentChild == LEFT_PRIORITY) {
@@ -266,8 +273,6 @@ public abstract class AbstractGrammar {
 			// child on the left, parent on the right
 			// Rule 4: compatible left child => no parentheses
 			return false;
-			
-			// FIXME if (childKind == parentKind && isFlattenable(parentKind)) return true;
 		}
 		return true; // Other cases => parentheses
 	}

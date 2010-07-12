@@ -183,18 +183,22 @@ public abstract class BMath extends AbstractGrammar {
 	
 	@Override
 	protected void addOperatorRelationships() {
+		// MAPSTO is compatible with itself but not associative 
+		// => no parentheses are required for printing (a |-> b) |-> c
 		addCompatibility(MAPSTO_ID, MAPSTO_ID);
 		
-		addCompatibility(BUNION_ID, BUNION_ID);
-		addCompatibility(BINTER_ID, BINTER_ID);
+		// BUNION is compatible with itself and associative (as others below)
+		// => parentheses are required for printing (a \/ b) \/ c
+		addAssociativity(BUNION_ID);
+		addAssociativity(BINTER_ID);
 		addCompatibility(BINTER_ID, SETMINUS_ID);
 		addCompatibility(BINTER_ID, RANRES_ID);
 		addCompatibility(BINTER_ID, RANSUB_ID);
-		addCompatibility(BCOMP_ID, BCOMP_ID);
-		addCompatibility(FCOMP_ID, FCOMP_ID);
+		addAssociativity(BCOMP_ID);
+		addAssociativity(FCOMP_ID);
 		addCompatibility(FCOMP_ID, RANRES_ID);
 		addCompatibility(FCOMP_ID, RANSUB_ID);
-		addCompatibility(OVR_ID, OVR_ID);
+		addAssociativity(OVR_ID);
 		addCompatibility(DOMRES_ID, BINTER_ID);
 		addCompatibility(DOMRES_ID, SETMINUS_ID);
 		addCompatibility(DOMRES_ID, FCOMP_ID);
@@ -208,30 +212,33 @@ public abstract class BMath extends AbstractGrammar {
 		addCompatibility(DOMSUB_ID, RANRES_ID);
 		addCompatibility(DOMSUB_ID, RANSUB_ID);
 		addCompatibility(CPROD_ID, CPROD_ID); // Exception of the table  3.2
-			
+		// CPROD has the same properties as MAPSTO, defined above
 		
 		addCompatibility(PLUS_ID, MINUS_ID);
 		addCompatibility(MINUS_ID, PLUS_ID);
-		addCompatibility(PLUS_ID, PLUS_ID);
+		addAssociativity(PLUS_ID);
 		addCompatibility(MINUS_ID, MINUS_ID);
 		addCompatibility(MUL_ID, DIV_ID);
 		addCompatibility(MUL_ID, MOD_ID);
-		addCompatibility(MUL_ID, MUL_ID);
+		addAssociativity(MUL_ID);
 		addCompatibility(DIV_ID, MUL_ID);
 		addCompatibility(DIV_ID, MOD_ID);
 		addCompatibility(MOD_ID, DIV_ID);
 		addCompatibility(MOD_ID, MUL_ID);
 		
+		// CONVERSE is compatible with itself but not associative (meaningless)
+		// => parentheses are required for printing r~~
 		addCompatibility(CONVERSE_ID, CONVERSE_ID);
 
+		// same as CONVERSE (prevents over parenthesizing)
 		addCompatibility(RELIMAGE_ID, RELIMAGE_ID);
 		addCompatibility(FUNIMAGE_ID, FUNIMAGE_ID);
 		
 		addCompatibility(FORALL_ID, EXISTS_ID);
 		addCompatibility(EXISTS_ID, FORALL_ID);
 		
-		addCompatibility(LAND_ID, LAND_ID);
-		addCompatibility(LOR_ID, LOR_ID);
+		addAssociativity(LAND_ID);
+		addAssociativity(LOR_ID);
 		
 		try {
 			addPriority(PLUS_ID, MUL_ID);
