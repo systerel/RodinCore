@@ -132,7 +132,7 @@ public class FiniteHypBoundedGoal extends EmptyInputReasoner {
         if (boundedSet == null) {
             return null;
         }
-        for (Predicate shyp : seq.selectedHypIterable()) {
+        for (Predicate shyp : seq.visibleHypIterable()) {
             if (isFiniteBoundSetHyp(shyp, boundedSet)) {
                 return shyp;
             }
