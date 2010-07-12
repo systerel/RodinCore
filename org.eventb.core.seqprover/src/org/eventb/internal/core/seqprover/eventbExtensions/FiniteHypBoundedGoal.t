@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,15 +66,11 @@ public class FiniteHypBoundedGoal extends EmptyInputReasoner {
 	    	 * FIN_L_LOWER_BOUND_L
 	    	 * Set Theory: ∃n·(∀x·x ∈ S ⇒ n ≤ x)
 	    	 */
-			Exists(in, ForAll(ix, Limp(In(x, S), Le(n, x)))) -> {
-				if (`in.length == 1 && `ix.length == 1) {
-					if (Lib.isBoundIdentifier(`x) && Lib.isBoundIdentifier(`n)) {
-                        if (((BoundIdentifier) `x).getBoundIndex() == 0 && 
-                                ((BoundIdentifier) `n).getBoundIndex() == 1 &&
-                                `S.getBoundIdentifiers().length == 0) {
-                            return `S;
-                        }
-					}
+			Exists(in, ForAll(ix, Limp(In(BoundIdentifier(0), S),
+			        Le(BoundIdentifier(1), BoundIdentifier(0))))) -> {
+				if (`in.length == 1 && `ix.length == 1 &&
+                        `S.getBoundIdentifiers().length == 0) {
+                    return `S;
 				}
 			}
 
@@ -82,15 +78,11 @@ public class FiniteHypBoundedGoal extends EmptyInputReasoner {
 	    	 * FIN_L_LOWER_BOUND_R
              * Set Theory: ∃n·(∀x·x ∈ S ⇒ x ≥ n)
 	    	 */
-			Exists(in, ForAll(ix, Limp(In(x, S), Ge(x, n)))) -> {
-				if (`in.length == 1 && `ix.length == 1) {
-					if (Lib.isBoundIdentifier(`x) && Lib.isBoundIdentifier(`n)) {
-                        if (((BoundIdentifier) `x).getBoundIndex() == 0 && 
-                                ((BoundIdentifier) `n).getBoundIndex() == 1 &&
-                                `S.getBoundIdentifiers().length == 0) {
-                            return `S;
-                        }
-					}
+			Exists(in, ForAll(ix, Limp(In(BoundIdentifier(0), S),
+			        Ge(BoundIdentifier(0), BoundIdentifier(1))))) -> {
+				if (`in.length == 1 && `ix.length == 1 &&
+                        `S.getBoundIdentifiers().length == 0) {
+                    return `S;
 				}
 			}
 			
@@ -98,32 +90,24 @@ public class FiniteHypBoundedGoal extends EmptyInputReasoner {
              * FIN_L_UPPER_BOUND_R
              * Set Theory: ∃n·(∀x·x ∈ S ⇒ x ≤ n)
              */
-            Exists(in, ForAll(ix, Limp(In(x, S), Le(x, n)))) -> {
-                if (`in.length == 1 && `ix.length == 1) {
-                    if (Lib.isBoundIdentifier(`x) && Lib.isBoundIdentifier(`n)) {
-                        if (((BoundIdentifier) `x).getBoundIndex() == 0 && 
-                                ((BoundIdentifier) `n).getBoundIndex() == 1 &&
-                                `S.getBoundIdentifiers().length == 0) {
-                            return `S;
-                        }
-                    }
-                }
+            Exists(in, ForAll(ix, Limp(In(BoundIdentifier(0), S),
+                    Le(BoundIdentifier(0), BoundIdentifier(1))))) -> {
+				if (`in.length == 1 && `ix.length == 1 &&
+                        `S.getBoundIdentifiers().length == 0) {
+                    return `S;
+				}
             }
 
             /**
              * FIN_L_UPPER_BOUND_L
              * Set Theory: ∃n·(∀x·x ∈ S ⇒ n ≥ x)
              */
-            Exists(in, ForAll(ix, Limp(In(x, S), Ge(n, x)))) -> {
-                if (`in.length == 1 && `ix.length == 1) {
-                    if (Lib.isBoundIdentifier(`x) && Lib.isBoundIdentifier(`n)) {
-                        if (((BoundIdentifier) `x).getBoundIndex() == 0 && 
-                                ((BoundIdentifier) `n).getBoundIndex() == 1 &&
-                                `S.getBoundIdentifiers().length == 0) {
-                            return `S;
-                        }
-                    }
-                }
+            Exists(in, ForAll(ix, Limp(In(BoundIdentifier(0), S),
+                    Ge(BoundIdentifier(1), BoundIdentifier(0))))) -> {
+				if (`in.length == 1 && `ix.length == 1 &&
+                        `S.getBoundIdentifiers().length == 0) {
+                    return `S;
+				}
             }
 			
 	    }
