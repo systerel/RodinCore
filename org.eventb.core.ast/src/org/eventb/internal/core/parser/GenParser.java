@@ -35,6 +35,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.internal.core.lexer.Scanner;
 import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.lexer.GenScan.ScanState;
+import org.eventb.internal.core.parser.IParserPrinter.SubParseResult;
 import org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship;
 
 /**
@@ -365,8 +366,31 @@ public class GenParser {
 		private void popPos() {
 			startPos.pop();
 		}
+
+		public <T> SubParseResult<T> subParseRes(INudParser<T> parser, boolean isRightChild) throws SyntaxError {
+			final boolean isParenthesized = grammar.isOpen(t.kind);
+			final SubParseResult<T> parseRes = subParseNoCheckRes(parser);
+			if (!isParenthesized) {
+				final int childKind = parseRes.getKind();
+				if (grammar.needsParentheses(isRightChild, childKind, parentKind.val, version)) {
+					throw new SyntaxError(new ASTProblem(
+							getSourceLocation(),
+							ProblemKind.IncompatibleOperators,
+							ProblemSeverities.Error, grammar
+							.getImage(parentKind.val), grammar
+							.getImage(childKind)));
+					
+				}
+			}
+			return parseRes;
+		}
 		
-		public <T> T subParse(INudParser<T> parser) throws SyntaxError {
+		public <T> T subParse(INudParser<T> parser, boolean isRightChild) throws SyntaxError {
+			return subParseRes(parser, isRightChild).getParsed();
+		}
+		
+		public <T> SubParseResult<T> subParseNoCheckRes(INudParser<T> parser)
+				throws SyntaxError {
 			pushPos();
 			try {
 				return parser.nud(this);
@@ -375,38 +399,86 @@ public class GenParser {
 			}
 		}
 		
-		public <T> T subParse(INudParser<T> parser,
+		public <T> T subParseNoCheck(INudParser<T> parser)
+				throws SyntaxError {
+			return subParseNoCheckRes(parser).getParsed();
+		}
+
+		public <T> T subParseNoCheck(INudParser<T> parser,
 				List<BoundIdentDecl> newBoundIdents) throws SyntaxError {
+			return subParse(parser, newBoundIdents, false, true);
+		}
+		
+		public <T> T subParse(INudParser<T> parser,
+				List<BoundIdentDecl> newBoundIdents, boolean isRightChild) throws SyntaxError {
+			return subParse(parser, newBoundIdents, isRightChild, false);
+		}
+		
+		private <T> T subParse(INudParser<T> parser,
+				List<BoundIdentDecl> newBoundIdents, boolean isRightChild, boolean noCheck) throws SyntaxError {
 			binding.push(new Binding(binding.val, newBoundIdents));
 			try {
-				return subParse(parser);
+				if (noCheck) {
+					return subParseNoCheck(parser);
+				} else {
+					return subParse(parser, isRightChild);
+				}
 			} finally {
 				binding.pop();
 			}
+		}
+		
+		public <T> T subParseNoParent(INudParser<T> parser,List<BoundIdentDecl> newBoundIdents) throws SyntaxError {
+			return subParseNoParent(parser, newBoundIdents, false);
 		}
 		
 		// use it to avoid parent operator comparison
 		// useful for parsing a predicate inside a non closed expression
 		// (or conversely), as these operators have no relative priority
-		public <T> T subParseNoParent(INudParser<T> parser,
-				List<BoundIdentDecl> newBoundIdents) throws SyntaxError {
+		private <T> T subParseNoParent(INudParser<T> parser,
+				List<BoundIdentDecl> newBoundIdents, boolean noCheck) throws SyntaxError {
 			pushParentKind(_NOOP);
 			try {
-				return subParse(parser, newBoundIdents);
+				if (noCheck) {
+					return subParseNoCheck(parser, newBoundIdents);
+				} else {
+					return subParse(parser, newBoundIdents, false); // TODO verify that false is always appropriate
+				}
 			} finally {
 				popParentKind();
 			}
 		}
 		
-		public <T> T subParseNoBinding(INudParser<T> parser) throws SyntaxError {
-			binding.push(new Binding());
+		public <T> T subParseNoParentNoCheck(INudParser<T> parser,
+				List<BoundIdentDecl> newBoundIdents) throws SyntaxError {
+			return subParseNoParent(parser, newBoundIdents, true);
+		}
+
+		private <T> T subParseSpecial(INudParser<T> parser, boolean noBinding, boolean noCheck) throws SyntaxError {
+			if (noBinding) {
+				binding.push(new Binding());
+			}
 			try {
-				return subParse(parser);
+				if (noCheck) {
+					return subParseNoCheck(parser);
+				} else {
+					return subParse(parser, false); // TODO verify that false is always appropriate
+				}
 			} finally {
-				binding.pop();
+				if (noBinding) {
+					binding.pop();
+				}
 			}
 		}
 
+		public <T> T subParseNoBinding(INudParser<T> parser) throws SyntaxError {
+			return subParseSpecial(parser, true, false);
+		}
+		
+		public <T> T subParseNoBindingNoCheck(INudParser<T> parser) throws SyntaxError {
+			return subParseSpecial(parser, true, true);
+		}
+	
 		/**
 		 * Returns <code>true</code> iff the operator being parsed has an open
 		 * parenthesis as parent kind.
@@ -499,16 +571,16 @@ public class GenParser {
 			// separate parsed type in order to have
 			// errors in case of unexpected result type
 			if (clazz == Type.class) {
-				final Type res = pc.subParse(MainParsers.TYPE_PARSER);
+				final Type res = pc.subParse(MainParsers.TYPE_PARSER, false);
 				result.setParsedType(res);
 			} else if (clazz == Assignment.class) {
-				final Assignment res = pc.subParse(MainParsers.ASSIGNMENT_PARSER);
+				final Assignment res = pc.subParse(MainParsers.ASSIGNMENT_PARSER, false);
 				result.setParsedAssignment(res); 
 			} else if (clazz == Predicate.class) {
-				final Predicate res = pc.subParse(MainParsers.PRED_PARSER);
+				final Predicate res = pc.subParse(MainParsers.PRED_PARSER, false);
 				result.setParsedPredicate(res); 
 			} else if (clazz == Expression.class) {
-				final Expression res = pc.subParse(MainParsers.EXPR_PARSER);
+				final Expression res = pc.subParse(MainParsers.EXPR_PARSER, false);
 				result.setParsedExpression(res); 
 			} else {
 				throw new IllegalArgumentException("Can only parse one of: Predicate, Expression, Assignment or Type.");

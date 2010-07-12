@@ -21,6 +21,7 @@ import static org.eventb.core.ast.ProblemKind.PrematureEOF;
 import static org.eventb.internal.core.parser.AbstractGrammar._COMMA;
 import static org.eventb.internal.core.parser.AbstractGrammar._EOF;
 import static org.eventb.internal.core.parser.AbstractGrammar._LPAR;
+import static org.eventb.internal.core.parser.AbstractGrammar._NOOP;
 import static org.eventb.internal.core.parser.BMath._MAPSTO;
 import static org.eventb.internal.core.parser.GenParser.ProgressDirection.RIGHT;
 import static org.eventb.internal.core.parser.SubParsers.BOUND_IDENT_DECL_SUBPARSER;
@@ -53,6 +54,7 @@ import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.GenParser.ParserContext;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 import org.eventb.internal.core.parser.GenParser.ParserContext.SavedContext;
+import org.eventb.internal.core.parser.IParserPrinter.SubParseResult;
 import org.eventb.internal.core.parser.SubParsers.AbstractNudParser;
 
 /**
@@ -98,7 +100,7 @@ public class MainParsers {
 			// avoid synthetic accessor method emulation
 		}
 		
-		public Formula<?> apply(ParserContext pc, Formula<?> left) throws SyntaxError {
+		public SubParseResult<Formula<?>> apply(ParserContext pc, Formula<?> left) throws SyntaxError {
 			final Parser parser = getParser(pc);
 			pc.pushParentKind();
 			try {
@@ -109,7 +111,7 @@ public class MainParsers {
 		}
 		
 		protected abstract Parser getParser(ParserContext pc) throws SyntaxError;
-		protected abstract Formula<?> apply(ParserContext pc, Parser parser, Formula<?> left) throws SyntaxError;
+		protected abstract SubParseResult<Formula<?>> apply(ParserContext pc, Parser parser, Formula<?> left) throws SyntaxError;
 		
 		protected static SyntaxError newOperatorError(ParserContext pc,
 				ProblemKind problemKind) {
@@ -153,7 +155,7 @@ public class MainParsers {
 		}
 		
 		@Override
-		protected Formula<?> apply(ParserContext pc,
+		protected SubParseResult<Formula<?>> apply(ParserContext pc,
 				List<INudParser<? extends Formula<?>>> nudParsers,
 				Formula<?> left) throws SyntaxError {
 			final Set<ASTProblem> errors = new LinkedHashSet<ASTProblem>();
@@ -166,7 +168,11 @@ public class MainParsers {
 					// without throwing an exception
 					// => convention: exception + problem if not recoverable
 					//                problem only if recoverable
-					return nudParser.nud(pc);
+					final SubParseResult<? extends Formula<?>> nudResult = nudParser
+							.nud(pc);
+
+					return new SubParseResult<Formula<?>>(
+							nudResult.getParsed(), nudResult.getKind());
 					// FIXME check for ambiguities (several succeeding parsers)
 				} catch (SyntaxError e) {
 					errors.add(e.getProblem());
@@ -200,10 +206,12 @@ public class MainParsers {
 		}
 		
 		@Override
-		protected Formula<?> apply(ParserContext pc,
+		protected SubParseResult<Formula<?>> apply(ParserContext pc,
 				ILedParser<? extends Formula<?>> parser, Formula<?> left)
 				throws SyntaxError {
-			return parser.led(left, pc);
+			final SubParseResult<? extends Formula<?>> ledResult = parser.led(left, pc);
+			return new SubParseResult<Formula<?>>(
+					ledResult.getParsed(), ledResult.getKind());
 		}
 		
 	};
@@ -218,15 +226,15 @@ public class MainParsers {
 	}
 	
 	// Core algorithm implementation
-	static final INudParser<Formula<?>> FORMULA_PARSER = new AbstractMainParser<Formula<?>>() {
+	static final INudParser<? extends Formula<?>> FORMULA_PARSER = new AbstractMainParser<Formula<?>>() {
 		
-		public Formula<?> nud(ParserContext pc)
+		public SubParseResult<Formula<?>> nud(ParserContext pc)
 				throws SyntaxError {
 		
-			Formula<?> left = NUD_APPLIER.apply(pc, null);
+			SubParseResult<Formula<?>> left = NUD_APPLIER.apply(pc, null);
 
 			while (pc.giveProgressDirection() == RIGHT) {
-				left = LED_APPLIER.apply(pc, left);
+				left = LED_APPLIER.apply(pc, left.getParsed());
 			}
 			
 			return left;
@@ -240,14 +248,16 @@ public class MainParsers {
 
 	static final INudParser<Type> TYPE_PARSER = new AbstractMainParser<Type>() {
 		
-		public Type nud(ParserContext pc) throws SyntaxError {
+		public SubParseResult<Type> nud(ParserContext pc) throws SyntaxError {
 			pc.startParsingType();
 			try {
-				final Expression expression = pc.subParse(EXPR_PARSER);
+				final SubParseResult<Expression> exprResult = pc.subParseRes(EXPR_PARSER, false);
+				final Expression expression = exprResult.getParsed();
 				if (!expression.isATypeExpression()) {
 					throw newInvalidTypeExpr(pc);
 				}
-				return expression.toType(pc.factory);
+				final Type type = expression.toType(pc.factory);
+				return new SubParseResult<Type>(type, exprResult.getKind());
 			} catch (InvalidExpressionException e) {
 				// cannot happen (already checked)
 				throw new IllegalStateException(
@@ -270,9 +280,10 @@ public class MainParsers {
 
 	static final INudParser<Predicate> PRED_PARSER = new AbstractMainParser<Predicate>() {
 		
-		public Predicate nud(ParserContext pc) throws SyntaxError {
-			final Formula<?> formula = FORMULA_PARSER.nud(pc);
-			return asPredicate(formula);
+		public SubParseResult<Predicate> nud(ParserContext pc) throws SyntaxError {
+			final SubParseResult<? extends Formula<?>> formulaResult = FORMULA_PARSER.nud(pc);
+			final Predicate predicate = asPredicate(formulaResult.getParsed());
+			return new SubParseResult<Predicate>(predicate, formulaResult.getKind());
 		}
 
 		public void toString(IToStringMediator mediator, Predicate toPrint) {
@@ -282,9 +293,10 @@ public class MainParsers {
 
 	static final INudParser<Expression> EXPR_PARSER = new AbstractMainParser<Expression>() {
 		
-		public Expression nud(ParserContext pc) throws SyntaxError {
-			final Formula<?> formula = FORMULA_PARSER.nud(pc);
-			return asExpression(formula);
+		public SubParseResult<Expression> nud(ParserContext pc) throws SyntaxError {
+			final SubParseResult<? extends Formula<?>> formulaResult = FORMULA_PARSER.nud(pc);
+			final Expression expression = asExpression(formulaResult.getParsed());
+			return new SubParseResult<Expression>(expression, formulaResult.getKind());
 		}
 		
 		public void toString(IToStringMediator mediator, Expression toPrint) {
@@ -294,11 +306,11 @@ public class MainParsers {
 
 	static final INudParser<Formula<?>> CLOSED_SUGAR = new AbstractMainParser<Formula<?>> () {
 
-		public Formula<?> nud(ParserContext pc) throws SyntaxError {
+		public SubParseResult<Formula<?>> nud(ParserContext pc) throws SyntaxError {
 			pc.progressOpenParen();
-			final Formula<?> formula = pc.subParse(FORMULA_PARSER);
+			final SubParseResult<? extends Formula<?>> formula = pc.subParseNoCheckRes(FORMULA_PARSER);
 			pc.progressCloseParen();
-			return formula;
+			return new SubParseResult<Formula<?>>(formula.getParsed(), formula.getKind());
 		}
 
 		public void toString(IToStringMediator mediator, Formula<?> toPrint) {
@@ -316,19 +328,22 @@ public class MainParsers {
 			this.pattern = new Pattern(result);
 		}
 
-		public Pattern nud(ParserContext pc) throws SyntaxError {
+		public SubParseResult<Pattern> nud(ParserContext pc) throws SyntaxError {
 			final PatternAtomParser atomParser = new PatternAtomParser(pattern, this);
-			pc.subParse(atomParser);
+			pc.subParseNoCheck(atomParser);
 			while (pc.t.kind == _MAPSTO) {
 				pc.progress(_MAPSTO);
-				pc.subParse(atomParser);
+				pc.subParseNoCheck(atomParser);
 				pattern.mapletParsed(pc.getSourceLocation());
 			}
-			return pattern;
+			return new SubParseResult<Pattern>(pattern, _MAPSTO);
 		}
 
+		// needed as a parser in order to be passed to pc.subParse
+		// so as to get correct source locations
 		private static class PatternAtomParser extends AbstractMainParser<Object> {
 
+			private static final SubParseResult<Object> NULL_SUB_PARSE_RESULT = new SubParseResult<Object>(null, _NOOP);
 			private final Pattern pattern;
 			private final PatternParser parser;
 			
@@ -337,17 +352,17 @@ public class MainParsers {
 				this.parser = parser;
 			}
 
-			public Object nud(ParserContext pc) throws SyntaxError {
+			public SubParseResult<Object> nud(ParserContext pc) throws SyntaxError {
 				if (pc.t.kind == _LPAR) {
 					pc.progressOpenParen();
-					pc.subParse(parser);
+					pc.subParse(parser, false);
 					pc.progressCloseParen();
 				} else {
 					final BoundIdentDecl boundIdent = pc
-							.subParse(BOUND_IDENT_DECL_SUBPARSER);
+							.subParse(BOUND_IDENT_DECL_SUBPARSER, false);
 					pattern.declParsed(boundIdent);
 				}
-				return null;
+				return NULL_SUB_PARSE_RESULT;
 			}
 
 			public void toString(IToStringMediator mediator,
@@ -373,16 +388,17 @@ public class MainParsers {
 			this.parser = parser;
 		}
 
-		public List<T> nud(ParserContext pc) throws SyntaxError {
+		public SubParseResult<List<T>> nud(ParserContext pc) throws SyntaxError {
 			final List<T> list = new ArrayList<T>();
-			final T first = pc.subParse(parser);
+			final T first = pc.subParseNoCheck(parser);
 			list.add(first);
 			while (pc.t.kind == _COMMA) {
 				pc.progress(_COMMA);
-				final T next = pc.subParse(parser);
+				final T next = pc.subParseNoCheck(parser);
 				list.add(next);
 			}
-			return list;
+			// FIXME not an operator kind => must be called with compatibility checks disabled
+			return new SubParseResult<List<T>>(list, _NOOP); 
 		}
 
 		public void toString(IToStringMediator mediator,
@@ -423,8 +439,8 @@ public class MainParsers {
 			super(kind, BECOMES_EQUAL_TO);
 		}
 
-		public BecomesEqualTo nud(ParserContext pc) throws SyntaxError {
-			final List<FreeIdentifier> idents = pc.subParse(FREE_IDENT_LIST_PARSER);
+		public SubParseResult<BecomesEqualTo> nud(ParserContext pc) throws SyntaxError {
+			final List<FreeIdentifier> idents = pc.subParseNoCheck(FREE_IDENT_LIST_PARSER);
 			// the list is guaranteed to be non empty
 			assert !idents.isEmpty();
 			
@@ -440,14 +456,15 @@ public class MainParsers {
 							ProblemSeverities.Error));
 				}
 				final FreeIdentifier ident = idents.get(0);
-				final Expression index = pc.subParse(EXPR_PARSER);
+				final Expression index = pc.subParse(EXPR_PARSER, false);
 				pc.progressCloseParen();
 				pc.progress(kind);
-				final Expression value = pc.subParse(EXPR_PARSER);
+				final Expression value = pc.subParse(EXPR_PARSER, true);
 				final Expression overriding = makeFunctionOverriding(ident, index, value, pc.factory);
-				return pc.factory.makeBecomesEqualTo(ident, overriding, pc.getSourceLocation());
+				final BecomesEqualTo bet = pc.factory.makeBecomesEqualTo(ident, overriding, pc.getSourceLocation());
+				return new SubParseResult<BecomesEqualTo>(bet, kind);
 			} else if (tokenKind == kind) {
-				final List<Expression> values = pc.subParse(EXPR_LIST_PARSER);
+				final List<Expression> values = pc.subParseNoCheck(EXPR_LIST_PARSER);
 				if (idents.size() != values.size()) {
 					throw new SyntaxError(new ASTProblem(
 							pc.makeSourceLocation(tokenAfterIdents),
@@ -455,7 +472,8 @@ public class MainParsers {
 							ProblemSeverities.Error, idents.size(), values
 									.size()));
 				}
-				return pc.factory.makeBecomesEqualTo(idents, values, pc.getSourceLocation());
+				final BecomesEqualTo bet = pc.factory.makeBecomesEqualTo(idents, values, pc.getSourceLocation());
+				return new SubParseResult<BecomesEqualTo>(bet, kind);
 			} else {
 				throw new SyntaxError(new ASTProblem(pc
 						.makeSourceLocation(tokenAfterIdents),
@@ -481,11 +499,12 @@ public class MainParsers {
 			super(kind, BECOMES_MEMBER_OF);
 		}
 
-		public BecomesMemberOf nud(ParserContext pc) throws SyntaxError {
-			final FreeIdentifier ident = pc.subParse(FREE_IDENT_SUBPARSER);
+		public SubParseResult<BecomesMemberOf> nud(ParserContext pc) throws SyntaxError {
+			final FreeIdentifier ident = pc.subParse(FREE_IDENT_SUBPARSER, false);
 			pc.progress(kind);
-			final Expression expr = pc.subParse(EXPR_PARSER);
-			return pc.factory.makeBecomesMemberOf(ident, expr, pc.getSourceLocation());
+			final Expression expr = pc.subParse(EXPR_PARSER, true);
+			final BecomesMemberOf bmo = pc.factory.makeBecomesMemberOf(ident, expr, pc.getSourceLocation());
+			return new SubParseResult<BecomesMemberOf>(bmo, kind);
 		}
 
 		public void toString(IToStringMediator mediator, BecomesMemberOf toPrint) {
@@ -504,18 +523,17 @@ public class MainParsers {
 			super(kind, BECOMES_SUCH_THAT);
 		}
 
-		public BecomesSuchThat nud(ParserContext pc) throws SyntaxError {
-			final List<FreeIdentifier> idents = pc.subParse(FREE_IDENT_LIST_PARSER);
+		public SubParseResult<BecomesSuchThat> nud(ParserContext pc) throws SyntaxError {
+			final List<FreeIdentifier> idents = pc.subParseNoCheck(FREE_IDENT_LIST_PARSER);
 			// the list is guaranteed to be non empty
 			assert !idents.isEmpty();
 			
-			final Token tokenAfterIdents = pc.t;
-			final int tokenKind = tokenAfterIdents.kind;
-			pc.progress(tokenKind);
+			pc.progress(kind);
 			
 			final List<BoundIdentDecl> primed = makePrimedDecl(idents, pc.factory);
-			final Predicate condition = pc.subParse(PRED_PARSER, primed);
-			return pc.factory.makeBecomesSuchThat(idents, primed, condition, pc.getSourceLocation());
+			final Predicate condition = pc.subParse(PRED_PARSER, primed, true);
+			final BecomesSuchThat bst = pc.factory.makeBecomesSuchThat(idents, primed, condition, pc.getSourceLocation());
+			return new SubParseResult<BecomesSuchThat>(bst, kind);
 		}
 
 		public void toString(IToStringMediator mediator, BecomesSuchThat toPrint) {
@@ -539,9 +557,11 @@ public class MainParsers {
 	public static final INudParser<Assignment> ASSIGNMENT_PARSER = 
 		new AbstractMainParser<Assignment>() {
 
-		public Assignment nud(ParserContext pc) throws SyntaxError {
+		public SubParseResult<Assignment> nud(ParserContext pc) throws SyntaxError {
 			final INudParser<? extends Assignment> parser = getAssignmentParser(pc);
-			return pc.subParse(parser);
+			final SubParseResult<? extends Assignment> assignResult = pc.subParseRes(parser, false);
+			return new SubParseResult<Assignment>(assignResult.getParsed(),
+					assignResult.getKind());
 		}
 
 		private INudParser<? extends Assignment> getAssignmentParser(ParserContext pc) throws SyntaxError {

@@ -232,17 +232,19 @@ public abstract class AbstractGrammar {
 	 *            <code>false</code> if it is the left child or a unique child
 	 * @param childKind
 	 * @param parentKind
+	 * FIXME remove version argument, each grammar should answer separately
 	 * @param version
 	 * @return <code>true</code> iff parentheses are needed
 	 * @since 2.0
 	 */
 	public boolean needsParentheses(boolean isRightChild, int childKind,
 			int parentKind, LanguageVersion version) {
-		if (childKind == parentKind) {
-			// FIXME false for maplets
-			// FIXME missing case for 1 + - 2 (PLUS UNMINUS)
-			return true;
-		}
+//		if (childKind == parentKind) {
+//			// FIXME false for maplets
+//			// FIXME missing case for 1 + - 2 (PLUS UNMINUS)
+//			// FIXME false for FUNIMAGE
+//			return true;
+//		}
 		if (parentKind == _EOF) { // TODO maybe not needed
 			return false;
 		}

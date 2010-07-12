@@ -231,7 +231,7 @@ public class TestGenParser extends AbstractTests {
 	
 	private static Predicate doPredicateTest(String formula, Predicate expected, LanguageVersion version) {
 		final IParseResult result = parsePredRes(formula, version);
-		assertFalse(result.hasProblem());
+		assertFalse("unexpected problem(s): " + result.getProblems(), result.hasProblem());
 		final Predicate actual = result.getParsedPredicate();
 		checkParsedFormula(formula, expected, actual);
 
@@ -292,7 +292,8 @@ public class TestGenParser extends AbstractTests {
 		if (result.hasProblem()) {
 			System.out.println(result.getProblems());
 		}
-		assertFalse(result.hasProblem());
+		assertFalse("unexpected problems " + result.getProblems(),
+				result.hasProblem());
 		final Type actual = result.getParsedType();
 		System.out.println(actual);
 		assertEquals(expected, actual);
@@ -471,8 +472,7 @@ public class TestGenParser extends AbstractTests {
 	}	
 	
 	public void testSourceLocation() throws Exception {
-		final IParseResult result = parsePredRes("(⊤∧⊥)∨⊥");
-		final Predicate pred = result.getParsedPredicate();
+		final Predicate pred = parsePred("(⊤∧⊥)∨⊥");
 		assertNotNull(pred.getSourceLocation());
 		final Predicate childFalse = ((AssociativePredicate) pred)
 				.getChildren()[1];
@@ -480,8 +480,7 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testSourceLocation2() throws Exception {
-		final IParseResult result = parsePredRes("⊤∧(⊥∨⊥        )");
-		final Predicate pred = result.getParsedPredicate();
+		final Predicate pred = parsePred("⊤∧(⊥∨⊥        )");
 		assertNotNull(pred.getSourceLocation());
 		final Predicate childFalseOrFalse = ((AssociativePredicate) pred)
 				.getChildren()[1];
@@ -1898,7 +1897,7 @@ public class TestGenParser extends AbstractTests {
 	
 	public void testToStringAndExistsNoPar() throws Exception {
 		final IParseResult result = parsePredRes("⊤∧∃x·⊥");
-		assertFailure(result, new ASTProblem(new SourceLocation(2, 2),
+		assertFailure(result, new ASTProblem(new SourceLocation(0, 5),
 				ProblemKind.IncompatibleOperators, ProblemSeverities.Error,
 				"∧", "∃"));
 	}

@@ -18,6 +18,24 @@ import org.eventb.internal.core.ast.extension.IToStringMediator;
  */
 public interface IParserPrinter<T> {
 	
+	public static class SubParseResult<T> {
+		private final T parsed;
+		private final int parsedKind;
+		
+		 public SubParseResult(T parsed, int parsedKind) {
+			this.parsed = parsed;
+			this.parsedKind = parsedKind;
+		}
+
+		public T getParsed() {
+			return parsed;
+		}
+		
+		public int getKind() {
+			return parsedKind;
+		}
+	}
+
 	// no parse methods, as they are led/nud specific
 	
 	void toString(IToStringMediator mediator, T toPrint);

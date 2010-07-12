@@ -38,6 +38,6 @@ public interface INudParser<T> extends IParserPrinter<T> {
 	 * @throws SyntaxError
 	 *             if the there is a syntax error
 	 */
-	T nud(ParserContext pc) throws SyntaxError;
+	SubParseResult<T> nud(ParserContext pc) throws SyntaxError;
 
 }

@@ -42,7 +42,7 @@ public interface ILedParser<T> extends IParserPrinter<T> {
 	 * @throws SyntaxError
 	 *             if the there is a syntax error
 	 */
-	T led(Formula<?> left, ParserContext pc)
+	SubParseResult<T> led(Formula<?> left, ParserContext pc)
 			throws SyntaxError;
 
 }
