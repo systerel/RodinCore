@@ -12,8 +12,8 @@ package org.eventb.internal.core.parser;
 
 import static org.eventb.internal.core.parser.OperatorRegistry.GROUP0;
 import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.COMPATIBLE;
-import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.INCOMPATIBLE;
 import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.LEFT_PRIORITY;
+import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.RIGHT_PRIORITY;
 import static org.eventb.internal.core.parser.SubParsers.IDENT_SUBPARSER;
 import static org.eventb.internal.core.parser.SubParsers.INTLIT_SUBPARSER;
 
@@ -246,12 +246,26 @@ public abstract class AbstractGrammar {
 		if (!isOperator(parentKind) || !isOperator(childKind)) {
 			return false; // IDENT for instance
 		}
-		final OperatorRelationship opRel = getOperatorRelationship(parentKind,
+		final OperatorRelationship relParentChild = getOperatorRelationship(parentKind,
 				childKind);
-		return opRel == LEFT_PRIORITY
-		|| opRel == INCOMPATIBLE 
-		|| (isRightChild && opRel == COMPATIBLE);
-// FIXME || (childKind == parentKind && isFlattenable(parentKind));
+		if (relParentChild == LEFT_PRIORITY) { // Rule 1: parent priority => parentheses
+			return true;
+		}
+		if (relParentChild == RIGHT_PRIORITY) { // Rule 2: child priority => no parentheses
+			return false;
+		}
+		// no priority is defined, now it is only a matter of compatibility
+		if (isRightChild && relParentChild == COMPATIBLE) { // Rule 3: compatible right child => parentheses
+			return true;
+		}
+		if (!isRightChild
+				&& getOperatorRelationship(childKind, parentKind) == COMPATIBLE) {
+			// Rule 4: compatible left child => no parentheses
+			
+			// FIXME if (childKind == parentKind && isFlattenable(parentKind)) return true;
+			return false;
+		}
+		return true; // Other cases => parentheses
 	}
 
 }
