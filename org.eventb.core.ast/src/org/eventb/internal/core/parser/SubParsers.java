@@ -256,7 +256,7 @@ public class SubParsers {
 			mediator.appendImage(kind);
 			final Child right = getRight(toPrint);
 			if (right != null) {
-				mediator.subPrint(right, false);
+				mediator.subPrint(right, true);
 			}
 		}
 
@@ -900,7 +900,7 @@ public class SubParsers {
 		public QuantifiedPredicate parseRight(ParserContext pc) throws SyntaxError {
 			final List<BoundIdentDecl> boundIdentifiers = pc.subParseNoBindingNoCheck(BOUND_IDENT_DECL_LIST_PARSER);
 			pc.progress(_DOT);
-			final Predicate pred = pc.subParse(PRED_PARSER, boundIdentifiers, true);
+			final Predicate pred = pc.subParseNoCheck(PRED_PARSER, boundIdentifiers);
 
 			return pc.factory.makeQuantifiedPredicate(tag, boundIdentifiers,
 					pred, pc.getSourceLocation());
@@ -1392,7 +1392,7 @@ public class SubParsers {
 		public void toString(IToStringMediator mediator, Expression toPrint) {
 			mediator.appendImage(kind);
 			final Expression child = ((UnaryExpression) toPrint).getChild();
-			mediator.subPrint(child, false);
+			mediator.subPrint(child, true);
 		}
 	}
 	
