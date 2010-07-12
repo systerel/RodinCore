@@ -26,7 +26,6 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
@@ -124,7 +123,6 @@ public class GenParser {
 	private final Class<?> clazz;
 	private final FormulaFactory factory;
 	private final ParseResult result;
-	private final LanguageVersion version;
 	private final boolean withPredVar;
 
 	
@@ -140,7 +138,6 @@ public class GenParser {
 		private final AbstractGrammar grammar;
 		protected final ParseResult result;
 		protected final boolean withPredVar;
-		protected final LanguageVersion version;
 		private StackedValue<Binding> binding = new StackedValue<Binding>(new Binding());
 		private StackedValue<Integer> parentKind = new StackedValue<Integer>(_EOF); 
 		private StackedValue<Integer> startPos = new StackedValue<Integer>(-1); 
@@ -149,13 +146,12 @@ public class GenParser {
 		protected Token t;    // last recognized token
 		protected Token la;   // lookahead token
 		
-		protected ParserContext(Scanner scanner, FormulaFactory factory, ParseResult result, boolean withPredVar, LanguageVersion version) {
+		protected ParserContext(Scanner scanner, FormulaFactory factory, ParseResult result, boolean withPredVar) {
 			this.scanner = scanner;
 			this.factory = factory;
 			this.grammar = factory.getGrammar();
 			this.result = result;
 			this.withPredVar = withPredVar;
-			this.version = version;
 		}
 
 		/**
@@ -341,7 +337,7 @@ public class GenParser {
 				return LEFT;
 			}
 			final OperatorRelationship opRel = grammar.getOperatorRelationship(
-					leftKind, rightKind, version);
+					leftKind, rightKind);
 			switch (opRel) {
 			case INCOMPATIBLE:
 				throw new SyntaxError(new ASTProblem(makeSourceLocation(t),
@@ -371,14 +367,13 @@ public class GenParser {
 			final SubParseResult<T> parseRes = subParseNoCheckRes(parser);
 			if (!parseRes.isClosed()) {
 				final int childKind = parseRes.getKind();
-				if (grammar.needsParentheses(isRightChild, childKind, parentKind.val, version)) {
+				if (grammar.needsParentheses(isRightChild, childKind, parentKind.val)) {
 					throw new SyntaxError(new ASTProblem(
 							getSourceLocation(),
 							ProblemKind.IncompatibleOperators,
 							ProblemSeverities.Error, grammar
 							.getImage(parentKind.val), grammar
 							.getImage(childKind)));
-					
 				}
 			}
 			return parseRes;
@@ -551,7 +546,6 @@ public class GenParser {
 		this.clazz = clazz;
 		this.result = result;
 		this.factory = result.factory;
-		this.version = result.version;
 		this.withPredVar = withPredVar;
 	}
 
@@ -565,7 +559,7 @@ public class GenParser {
 
 		try {
 			final ParserContext pc = new ParserContext(scanner, factory,
-					result, withPredVar, version);
+					result, withPredVar);
 			pc.init();
 			// separate parsed type in order to have
 			// errors in case of unexpected result type

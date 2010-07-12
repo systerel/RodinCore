@@ -55,17 +55,17 @@ public class BMathV1 extends BMath {
 	protected void addOperatorRelationships() {
 		super.addOperatorRelationships();
 	
-		addCompatibility(REL_ID, REL_ID, LanguageVersion.V1);
-		addCompatibility(TREL_ID, TREL_ID, LanguageVersion.V1);
-		addCompatibility(SREL_ID, SREL_ID, LanguageVersion.V1);
-		addCompatibility(STREL_ID, STREL_ID, LanguageVersion.V1);
-		addCompatibility(PFUN_ID, PFUN_ID, LanguageVersion.V1);
-		addCompatibility(TFUN_ID, TFUN_ID, LanguageVersion.V1);
-		addCompatibility(PINJ_ID, PINJ_ID, LanguageVersion.V1);
-		addCompatibility(TINJ_ID, TINJ_ID, LanguageVersion.V1);
-		addCompatibility(PSUR_ID, PSUR_ID, LanguageVersion.V1);
-		addCompatibility(TSUR_ID, TSUR_ID, LanguageVersion.V1);
-		addCompatibility(TBIJ_ID, TBIJ_ID, LanguageVersion.V1);
+		addCompatibility(REL_ID, REL_ID);
+		addCompatibility(TREL_ID, TREL_ID);
+		addCompatibility(SREL_ID, SREL_ID);
+		addCompatibility(STREL_ID, STREL_ID);
+		addCompatibility(PFUN_ID, PFUN_ID);
+		addCompatibility(TFUN_ID, TFUN_ID);
+		addCompatibility(PINJ_ID, PINJ_ID);
+		addCompatibility(TINJ_ID, TINJ_ID);
+		addCompatibility(PSUR_ID, PSUR_ID);
+		addCompatibility(TSUR_ID, TSUR_ID);
+		addCompatibility(TBIJ_ID, TBIJ_ID);
 		
 	}
 

@@ -10,15 +10,16 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
-import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.*;
+import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.COMPATIBLE;
+import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.INCOMPATIBLE;
+import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.LEFT_PRIORITY;
+import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.RIGHT_PRIORITY;
 
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.extension.CycleError;
 
 /**
@@ -130,17 +131,13 @@ public class OperatorRegistry {
 	}
 	
 	private static class OperatorGroup {
-		private final Set<Integer> operators = new HashSet<Integer>();
-		private final EnumMap<LanguageVersion, Relation<Integer>> compatibilityRelation = new EnumMap<LanguageVersion, Relation<Integer>>(LanguageVersion.class);
+		private final Relation<Integer> compatibilityRelation = new Relation<Integer>();
 		private final Closure<Integer> operatorPriority = new Closure<Integer>();
 
 		private final String id;
 
 		public OperatorGroup(String id) {
 			this.id = id;
-			for (LanguageVersion version: LanguageVersion.values()) {
-				compatibilityRelation.put(version, new Relation<Integer>());
-			}
 		}
 
 		// will be needed to display current grammar to extension creator
@@ -157,28 +154,7 @@ public class OperatorRegistry {
 		 *            an operator kind
 		 */
 		public void addCompatibility(Integer a, Integer b) {
-			operators.add(a);
-			operators.add(b);
-			for(Relation<Integer> compat: compatibilityRelation.values()) {
-				compat.add(a, b);
-			}
-		}
-
-		/**
-		 * Adds a compatibility between a and b for a given language version
-		 * only.
-		 * 
-		 * @param a
-		 *            an operator kind
-		 * @param b
-		 *            an operator kind
-		 * @param version
-		 *            a language version
-		 */
-		public void addCompatibility(Integer a, Integer b, LanguageVersion version) {
-			operators.add(a);
-			operators.add(b);
-			compatibilityRelation.get(version).add(a, b);
+			compatibilityRelation.add(a, b);
 		}
 
 		public void addPriority(Integer a, Integer b)
@@ -190,8 +166,8 @@ public class OperatorRegistry {
 			return operatorPriority.contains(a, b);
 		}
 		
-		public boolean isCompatible(Integer a, Integer b, LanguageVersion version) {
-			return compatibilityRelation.get(version).contains(a, b)
+		public boolean isCompatible(Integer a, Integer b) {
+			return compatibilityRelation.contains(a, b)
 					|| operatorPriority.contains(a, b)
 					|| operatorPriority.contains(b, a);
 		}
@@ -231,13 +207,6 @@ public class OperatorRegistry {
 		group.addCompatibility(leftKind, rightKind);
 	}
 
-	public void addCompatibility(String leftOpId, String rightOpId, LanguageVersion version) {
-		final Integer leftKind = idKind.get(leftOpId);
-		final Integer rightKind = idKind.get(rightOpId);
-		final OperatorGroup group = getAndCheckSameGroup(leftKind, rightKind);
-		group.addCompatibility(leftKind, rightKind, version);
-	}
-
 	// lowOpId gets a lower priority than highOpId
 	public void addPriority(String lowOpId, String highOpId)
 			throws CycleError {
@@ -268,12 +237,10 @@ public class OperatorRegistry {
 	 *            the kind of the left operator
 	 * @param rightKind
 	 *            the kind of the right operator
-	 * @param version
-	 *            the language version for current parsing
 	 * @return an operator relationship
 	 */
 	public OperatorRelationship getOperatorRelationship(int leftKind,
-			int rightKind, LanguageVersion version) {
+			int rightKind) {
 		final OperatorGroup leftGroup = kindOpGroup.get(leftKind);
 		final OperatorGroup rightGroup = kindOpGroup.get(rightKind);
 		
@@ -294,7 +261,7 @@ public class OperatorRegistry {
 				return RIGHT_PRIORITY;
 			} else if (group.hasLessPriority(rightKind, leftKind)) {
 				return LEFT_PRIORITY;
-			} else if (group.isCompatible(leftKind, rightKind, version)) {
+			} else if (group.isCompatible(leftKind, rightKind)) {
 				return COMPATIBLE;
 			} else {
 				return INCOMPATIBLE;

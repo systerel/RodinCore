@@ -11,6 +11,7 @@
 package org.eventb.internal.core.parser;
 
 import static org.eventb.internal.core.parser.OperatorRegistry.GROUP0;
+import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.COMPATIBLE;
 import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.INCOMPATIBLE;
 import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.LEFT_PRIORITY;
 import static org.eventb.internal.core.parser.SubParsers.IDENT_SUBPARSER;
@@ -21,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.extension.CycleError;
 import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.internal.core.lexer.Token;
@@ -101,10 +101,6 @@ public abstract class AbstractGrammar {
 	
 	public void addCompatibility(String leftOpId, String rightOpId) {
 		opRegistry.addCompatibility(leftOpId, rightOpId);
-	}
-	
-	public void addCompatibility(String leftOpId, String rightOpId, LanguageVersion version) {
-		opRegistry.addCompatibility(leftOpId, rightOpId, version);
 	}
 	
 	public void addPriority(String lowOpId, String highOpId) throws CycleError {
@@ -194,8 +190,8 @@ public abstract class AbstractGrammar {
 	}
 	
 	public OperatorRelationship getOperatorRelationship(int leftKind,
-			int rightKind, LanguageVersion version) {
-		return opRegistry.getOperatorRelationship(leftKind, rightKind, version);
+			int rightKind) {
+		return opRegistry.getOperatorRelationship(leftKind, rightKind);
 	}
 	
 	public int getEOF() {
@@ -233,12 +229,11 @@ public abstract class AbstractGrammar {
 	 * @param childKind
 	 * @param parentKind
 	 * FIXME remove version argument, each grammar should answer separately
-	 * @param version
 	 * @return <code>true</code> iff parentheses are needed
 	 * @since 2.0
 	 */
 	public boolean needsParentheses(boolean isRightChild, int childKind,
-			int parentKind, LanguageVersion version) {
+			int parentKind) {
 //		if (childKind == parentKind) {
 //			// FIXME false for maplets
 //			// FIXME missing case for 1 + - 2 (PLUS UNMINUS)
@@ -252,9 +247,11 @@ public abstract class AbstractGrammar {
 			return false; // IDENT for instance
 		}
 		final OperatorRelationship opRel = getOperatorRelationship(parentKind,
-				childKind, version);
-		// FIXME wrong rule: take isRightChild into account
-		return (opRel == LEFT_PRIORITY || opRel == INCOMPATIBLE);
+				childKind);
+		return opRel == LEFT_PRIORITY
+		|| opRel == INCOMPATIBLE 
+		|| (isRightChild && opRel == COMPATIBLE);
+// FIXME || (childKind == parentKind && isFlattenable(parentKind));
 	}
 
 }

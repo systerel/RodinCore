@@ -66,6 +66,8 @@ import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.IDestructorMediator;
 import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
+import org.eventb.internal.core.parser.AbstractGrammar;
+import org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship;
 
 /**
  * This test class aims at supporting generic parser development. It is not part
@@ -1960,17 +1962,23 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testToStringSetMinusInterWithParR() throws Exception {
-		final Expression expected = ff.makeAssociativeExpression(BINTER,
-				asList(ff.makeBinaryExpression(SETMINUS, FRID_A, FRID_B, null),
-						FRID_C), null);
+		final Expression expected = 
+			ff.makeBinaryExpression(SETMINUS,
+					FRID_A,
+			ff.makeAssociativeExpression(BINTER, Arrays.<Expression>asList(
+								FRID_B,
+								FRID_C),
+								null),
+						null);
 		doParseUnparseTest("A∖(B∩C)", expected);
 	}
 	
 	public void testToStringPlusPlusL() throws Exception {
 		final Expression expected = ff.makeAssociativeExpression(PLUS,
-				asList(FRID_A,
+				asList(
 						ff.makeAssociativeExpression(PLUS,
-								Arrays.<Expression>asList(FRID_B, FRID_C), null)),
+								Arrays.<Expression>asList(FRID_A, FRID_B), null),
+						FRID_C),
 						null);
 		doParseUnparseTest("(A+B)+C", expected);
 	}
@@ -2021,5 +2029,15 @@ public class TestGenParser extends AbstractTests {
 						null), null);
 		doParseUnparseTest("A−(B÷C)", expected);
 	}
-	
+
+	public void testInterSetMinusCompatibility() throws Exception {
+		
+		final AbstractGrammar grammar = ff.getGrammar();
+		final int setMinusKind = grammar.getKind("∖");
+		final int interKind = grammar.getKind("∩");
+		final OperatorRelationship relInterMinus = grammar.getOperatorRelationship(interKind, setMinusKind);
+		assertEquals(OperatorRelationship.COMPATIBLE, relInterMinus);
+		final OperatorRelationship relMinusInter = grammar.getOperatorRelationship(setMinusKind, interKind);
+		assertEquals(OperatorRelationship.INCOMPATIBLE, relMinusInter);
+	}
 }

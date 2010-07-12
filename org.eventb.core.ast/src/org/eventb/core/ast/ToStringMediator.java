@@ -66,10 +66,8 @@ import org.eventb.internal.core.parser.AbstractGrammar;
 	}
 
 	protected boolean needsParentheses(int childKind, boolean isRightOvr) {
-		// FIXME can only print with latest language version
 		final AbstractGrammar grammar = factory.getGrammar();
-		return grammar.needsParentheses(isRightOvr, childKind, kind,
-				LanguageVersion.LATEST);
+		return grammar.needsParentheses(isRightOvr, childKind, kind);
 	}
 
 	private final void printFormula(Formula<?> formula, int formulaKind, boolean isRightOvr,
