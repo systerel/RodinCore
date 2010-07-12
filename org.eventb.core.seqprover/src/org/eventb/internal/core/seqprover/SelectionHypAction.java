@@ -1,20 +1,28 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
-
 
 public class SelectionHypAction implements IInternalHypAction, ISelectionHypAction {
 
 	private final String actionType;
 	private final Collection<Predicate> hyps;
 
-	private static final Set<Predicate> NO_HYPS = Collections.unmodifiableSet(new HashSet<Predicate>());
+	private static final Set<Predicate> NO_HYPS = Collections.emptySet();
 	
 	/**
 	 * @param actionType
