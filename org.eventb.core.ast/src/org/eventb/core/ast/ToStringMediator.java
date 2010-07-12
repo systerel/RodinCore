@@ -22,7 +22,8 @@ import org.eventb.internal.core.parser.AbstractGrammar;
 /* package */class ToStringMediator implements IToStringMediator {
 
 	private static final BoundIdentDecl[] NO_DECL = new BoundIdentDecl[0];
-
+	private static final char SPACE = ' ';
+	
 	private final int kind;
 	protected final FormulaFactory factory;
 	protected final StringBuilder builder;
@@ -47,6 +48,10 @@ import org.eventb.internal.core.parser.AbstractGrammar;
 
 	public void append(String string) {
 		builder.append(string);
+	}
+
+	public void appendSpace() {
+		builder.append(SPACE);
 	}
 
 	public void subPrint(Formula<?> child, boolean isRightOvr) {
@@ -119,6 +124,7 @@ import org.eventb.internal.core.parser.AbstractGrammar;
 	}
 
 	public void appendImage(int operatorKind) {
+		// TODO make a cache or compute image of this.kind and check if ==
 		final String image = factory.getGrammar().getImage(operatorKind);
 		builder.append(image);
 	}

@@ -38,4 +38,31 @@ public interface ICompatibilityMediator {
 	 */
 	void addCompatibility(String leftOpId, String rightOpId);
 
+	/**
+	 * Adds self compatibility for the given operator and records it as
+	 * associative.
+	 * <p>
+	 * Associative operators have special treatments in various places:
+	 * <li>parsing: "a op b op c" is allowed without parentheses; a, b and c are
+	 * direct children of op</li>
+	 * <li>printing: a formula "(a op b) op c" is printed with these parentheses
+	 * </li>
+	 * <li>rewriting: flattening becomes possible</li>
+	 * </p>
+	 * <p>
+	 * It is different from calling <code>addCompatibility(opId, opId)</code>,
+	 * which has the following consequences:
+	 * <li>parsing: "a op b op c" is allowed without parentheses and produces
+	 * either "(a op b) op c" (if the extension is declared binary) or
+	 * "a op b op c" with a, b and c as direct children of op (if the extension
+	 * is declared multary)</li>
+	 * <li>printing: a formula "(a op b) op c" will be printed without
+	 * parentheses</li>
+	 * <li>rewriting: flattening is not performed</li>
+	 * </p>
+	 * 
+	 * @param opId
+	 *            an operator id
+	 */
+	void addAssociativity(String opId);
 }

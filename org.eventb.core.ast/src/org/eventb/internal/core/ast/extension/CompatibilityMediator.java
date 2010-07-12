@@ -29,4 +29,8 @@ public class CompatibilityMediator implements ICompatibilityMediator {
 		grammar.addCompatibility(leftOpId, rightOpId);
 	}
 
+	public void addAssociativity(String opId) {
+		grammar.addAssociativity(opId);
+	}
+
 }

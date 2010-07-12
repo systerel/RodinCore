@@ -168,6 +168,17 @@ public class TestGenParser extends AbstractTests {
 		return actual;
 	}
 
+	private static Expression doParseUnparseTest(String formula, Expression expected, FormulaFactory factory) {
+		final Expression actual = parseExpr(formula, factory, LanguageVersion.LATEST);
+		checkParsedFormula(formula, expected, actual);
+		
+		final String actToStr = actual.toString();
+		final Expression reparsed = parseExpr(actToStr, factory, LanguageVersion.LATEST);
+		assertEquals("bad reparsed", expected, reparsed);
+	
+		return actual;
+	}
+
 	private static Predicate doParseUnparseTest(String formula, Predicate expected) {
 		final Predicate actual = parsePred(formula);
 		checkParsedFormula(formula, expected, actual);
@@ -597,7 +608,7 @@ public class TestGenParser extends AbstractTests {
 		}
 
 		public void addCompatibilities(ICompatibilityMediator mediator) {
-			mediator.addCompatibility(getId(), getId());
+			mediator.addAssociativity(getId());
 		}
 
 		public void addPriorities(IPriorityMediator mediator) {
@@ -673,7 +684,35 @@ public class TestGenParser extends AbstractTests {
 						extFac.makeFreeIdentifier("B", null),
 						extFac.makeFreeIdentifier("C", null)),
 				Collections.<Predicate> emptySet(), null);
-		doExpressionTest("A € B € C", expected, extFac);
+		doParseUnparseTest("A € B € C", expected, extFac);
+	}
+	
+	public void testAssociativeExtensionUnparseL() throws Exception {
+		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
+				.<IFormulaExtension> singleton(MONEY));
+		final Expression expected = extFac.makeExtendedExpression(MONEY,
+				Arrays.<Expression> asList(
+						extFac.makeExtendedExpression(MONEY,
+								Arrays.<Expression> asList(
+										extFac.makeFreeIdentifier("A", null),
+										extFac.makeFreeIdentifier("B", null)), Collections.<Predicate> emptySet(), null),
+										extFac.makeFreeIdentifier("C", null)),
+				Collections.<Predicate> emptySet(), null);
+		doParseUnparseTest("(A € B) € C", expected, extFac);
+	}
+	
+	public void testAssociativeExtensionUnparseR() throws Exception {
+		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
+				.<IFormulaExtension> singleton(MONEY));
+		final Expression expected = extFac.makeExtendedExpression(MONEY,
+				Arrays.<Expression> asList(
+						extFac.makeFreeIdentifier("A", null),
+						extFac.makeExtendedExpression(MONEY,
+								Arrays.<Expression> asList(
+										extFac.makeFreeIdentifier("B", null),
+										extFac.makeFreeIdentifier("C", null)), Collections.<Predicate> emptySet(), null)),
+				Collections.<Predicate> emptySet(), null);
+		doParseUnparseTest("A € (B € C)", expected, extFac);
 	}
 	
 	public void testEqual() throws Exception {

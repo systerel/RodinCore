@@ -253,9 +253,11 @@ public class SubParsers {
 		public void toString(IToStringMediator mediator, T toPrint) {
 			final Child left = getLeft(toPrint);
 			mediator.subPrint(left, false);
+			mediator.appendSpace();
 			mediator.appendImage(kind);
 			final Child right = getRight(toPrint);
 			if (right != null) {
+				mediator.appendSpace();
 				mediator.subPrint(right, true);
 			}
 		}
@@ -324,7 +326,9 @@ public class SubParsers {
 			// TODO remove all calls to parser.toString, use subPrint instead
 			mediator.subPrint(children[0], false);
 			for (int i = 1; i < children.length; i++) {
+				mediator.appendSpace();
 				mediator.appendImage(kind);
+				mediator.appendSpace();
 				mediator.subPrint(children[i], true);
 			}
 		}

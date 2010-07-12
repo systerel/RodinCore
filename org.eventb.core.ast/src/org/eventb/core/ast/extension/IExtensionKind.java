@@ -14,7 +14,8 @@ public interface IExtensionKind {
 	
 	boolean checkPreconditions(Expression[] childExprs, Predicate[] childPreds);
 
-	// TODO move to IOperatorProperties
+	// FIXME clarify relation with the associativity property, set through
+	// addCompatibilities; maybe remove this method
 	boolean isFlattenable();
 
 }
