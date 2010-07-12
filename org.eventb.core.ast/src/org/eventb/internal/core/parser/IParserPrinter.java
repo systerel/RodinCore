@@ -21,10 +21,16 @@ public interface IParserPrinter<T> {
 	public static class SubParseResult<T> {
 		private final T parsed;
 		private final int parsedKind;
+		private final boolean isClosed;
 		
-		 public SubParseResult(T parsed, int parsedKind) {
+		public SubParseResult(T parsed, int parsedKind) {
+			this(parsed, parsedKind, false);
+		}
+		
+		public SubParseResult(T parsed, int parsedKind, boolean isParenthesized) {
 			this.parsed = parsed;
 			this.parsedKind = parsedKind;
+			this.isClosed = isParenthesized;
 		}
 
 		public T getParsed() {
@@ -33,6 +39,10 @@ public interface IParserPrinter<T> {
 		
 		public int getKind() {
 			return parsedKind;
+		}
+		
+		public boolean isClosed() {
+			return isClosed;
 		}
 	}
 

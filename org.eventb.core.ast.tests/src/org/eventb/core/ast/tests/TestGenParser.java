@@ -1017,7 +1017,7 @@ public class TestGenParser extends AbstractTests {
 								null, Form.Explicit), EMPTY, null),
 				 null);
 
-		doPredicateTest("∀x·{y·x>y∣x−y}≠∅", expected);		
+		doPredicateTest("∀x·{y·x>y∣x−y}≠∅", expected);
 	}
 	
 	public void testCSetForallPriority() throws Exception {
@@ -1917,16 +1917,24 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testToStringInterSetMinusNoPar() throws Exception {
-		final Expression expected = ff.makeAssociativeExpression(BINTER,
-				asList(FRID_A, ff.makeBinaryExpression(SETMINUS, FRID_B,
-						FRID_C, null)), null);
+		final Expression expected =
+			ff.makeBinaryExpression(SETMINUS,
+					ff.makeAssociativeExpression(BINTER,
+							Arrays.<Expression>asList(
+							FRID_A,
+							FRID_B), null),
+						FRID_C, null);
 		doParseUnparseTest("A∩B∖C", expected);
 	}
 	
 	public void testToStringInterSetMinusWithParL() throws Exception {
-		final Expression expected = ff.makeAssociativeExpression(BINTER,
-				asList(FRID_A, ff.makeBinaryExpression(SETMINUS, FRID_B,
-						FRID_C, null)), null);
+		final Expression expected =
+			ff.makeBinaryExpression(SETMINUS,
+					ff.makeAssociativeExpression(BINTER,
+							Arrays.<Expression>asList(
+							FRID_A,
+							FRID_B), null),
+						FRID_C, null);
 		doParseUnparseTest("(A∩B)∖C", expected);
 	}
 	
@@ -1956,6 +1964,62 @@ public class TestGenParser extends AbstractTests {
 				asList(ff.makeBinaryExpression(SETMINUS, FRID_A, FRID_B, null),
 						FRID_C), null);
 		doParseUnparseTest("A∖(B∩C)", expected);
+	}
+	
+	public void testToStringPlusPlusL() throws Exception {
+		final Expression expected = ff.makeAssociativeExpression(PLUS,
+				asList(FRID_A,
+						ff.makeAssociativeExpression(PLUS,
+								Arrays.<Expression>asList(FRID_B, FRID_C), null)),
+						null);
+		doParseUnparseTest("(A+B)+C", expected);
+	}
+	
+	public void testToStringPlusPlusR() throws Exception {
+		final Expression expected = ff.makeAssociativeExpression(PLUS,
+				asList(FRID_A,
+						ff.makeAssociativeExpression(PLUS,
+								Arrays.<Expression>asList(FRID_B, FRID_C), null)),
+						null);
+		doParseUnparseTest("A+(B+C)", expected);
+	}
+	
+	public void testToStringDivMinusL() throws Exception {
+		final Expression expected = ff.makeBinaryExpression(MINUS,
+				ff.makeBinaryExpression(DIV, 
+						FRID_A, 
+						FRID_B, null),
+						FRID_C
+						, null);
+		doParseUnparseTest("(A÷B)−C", expected);
+	}
+	
+	public void testToStringDivMinusR() throws Exception {
+		final Expression expected = ff.makeBinaryExpression(DIV,
+				FRID_A, 
+				ff.makeBinaryExpression(MINUS, 
+						FRID_B,
+						FRID_C,	null), null);
+		doParseUnparseTest("A÷(B−C)", expected);
+	}
+	
+	public void testToStringMinusDivL() throws Exception {
+		final Expression expected = ff.makeBinaryExpression(DIV,
+				ff.makeBinaryExpression(MINUS, 
+						FRID_A, 
+						FRID_B,	null),
+				FRID_C,	null);
+		doParseUnparseTest("(A−B)÷C", expected);
+	}
+	
+	public void testToStringMinusDivR() throws Exception {
+		final Expression expected = ff.makeBinaryExpression(MINUS,
+				FRID_A, 
+				ff.makeBinaryExpression(DIV, 
+						FRID_B,
+						FRID_C,
+						null), null);
+		doParseUnparseTest("A−(B÷C)", expected);
 	}
 	
 }

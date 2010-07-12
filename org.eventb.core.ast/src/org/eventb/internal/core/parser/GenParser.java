@@ -368,9 +368,8 @@ public class GenParser {
 		}
 
 		public <T> SubParseResult<T> subParseRes(INudParser<T> parser, boolean isRightChild) throws SyntaxError {
-			final boolean isParenthesized = grammar.isOpen(t.kind);
 			final SubParseResult<T> parseRes = subParseNoCheckRes(parser);
-			if (!isParenthesized) {
+			if (!parseRes.isClosed()) {
 				final int childKind = parseRes.getKind();
 				if (grammar.needsParentheses(isRightChild, childKind, parentKind.val, version)) {
 					throw new SyntaxError(new ASTProblem(

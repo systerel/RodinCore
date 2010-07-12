@@ -172,7 +172,8 @@ public class MainParsers {
 							.nud(pc);
 
 					return new SubParseResult<Formula<?>>(
-							nudResult.getParsed(), nudResult.getKind());
+							nudResult.getParsed(), nudResult.getKind(),
+							nudResult.isClosed());
 					// FIXME check for ambiguities (several succeeding parsers)
 				} catch (SyntaxError e) {
 					errors.add(e.getProblem());
@@ -210,8 +211,8 @@ public class MainParsers {
 				ILedParser<? extends Formula<?>> parser, Formula<?> left)
 				throws SyntaxError {
 			final SubParseResult<? extends Formula<?>> ledResult = parser.led(left, pc);
-			return new SubParseResult<Formula<?>>(
-					ledResult.getParsed(), ledResult.getKind());
+			return new SubParseResult<Formula<?>>(ledResult.getParsed(),
+					ledResult.getKind(), ledResult.isClosed());
 		}
 		
 	};
@@ -257,7 +258,8 @@ public class MainParsers {
 					throw newInvalidTypeExpr(pc);
 				}
 				final Type type = expression.toType(pc.factory);
-				return new SubParseResult<Type>(type, exprResult.getKind());
+				return new SubParseResult<Type>(type, exprResult.getKind(),
+						exprResult.isClosed());
 			} catch (InvalidExpressionException e) {
 				// cannot happen (already checked)
 				throw new IllegalStateException(
@@ -283,7 +285,8 @@ public class MainParsers {
 		public SubParseResult<Predicate> nud(ParserContext pc) throws SyntaxError {
 			final SubParseResult<? extends Formula<?>> formulaResult = FORMULA_PARSER.nud(pc);
 			final Predicate predicate = asPredicate(formulaResult.getParsed());
-			return new SubParseResult<Predicate>(predicate, formulaResult.getKind());
+			return new SubParseResult<Predicate>(predicate, formulaResult
+					.getKind(), formulaResult.isClosed());
 		}
 
 		public void toString(IToStringMediator mediator, Predicate toPrint) {
@@ -296,7 +299,8 @@ public class MainParsers {
 		public SubParseResult<Expression> nud(ParserContext pc) throws SyntaxError {
 			final SubParseResult<? extends Formula<?>> formulaResult = FORMULA_PARSER.nud(pc);
 			final Expression expression = asExpression(formulaResult.getParsed());
-			return new SubParseResult<Expression>(expression, formulaResult.getKind());
+			return new SubParseResult<Expression>(expression, formulaResult
+					.getKind(), formulaResult.isClosed());
 		}
 		
 		public void toString(IToStringMediator mediator, Expression toPrint) {
@@ -310,7 +314,8 @@ public class MainParsers {
 			pc.progressOpenParen();
 			final SubParseResult<? extends Formula<?>> formula = pc.subParseNoCheckRes(FORMULA_PARSER);
 			pc.progressCloseParen();
-			return new SubParseResult<Formula<?>>(formula.getParsed(), formula.getKind());
+			return new SubParseResult<Formula<?>>(formula.getParsed(), formula
+					.getKind(), true);
 		}
 
 		public void toString(IToStringMediator mediator, Formula<?> toPrint) {
