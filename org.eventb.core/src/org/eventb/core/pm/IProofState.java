@@ -1,14 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007 ETH Zurich.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributor
- *        Rodin @ ETH-Zurich
- *******************************************************************************/
-
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ ******************************************************************************/
 package org.eventb.core.pm;
 
 import java.util.Collection;
@@ -26,14 +25,14 @@ import org.eventb.internal.core.ProofMonitor;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * Common protocol for proof states that correspond to proofs of an obligation.
+ * This contains the proof tree, the set of cached hypotheses, the set of
+ * searched hypotheses.
+ * 
  * @author htson
- *         <p>
- *         This is the interface for a proof state that corresponding to a proof
- *         of an obligation. This contains the proof tree, the set of cached
- *         hypotheses, the set of searched hypotheses.
- *         <p>
- *         This interface is NOT supposed to be implemented by clients.
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IProofState extends IProofTreeChangedListener {
 
