@@ -30,8 +30,15 @@ public class OperatorRegistry {
 
 	public static final String GROUP0 = "GROUP 0";
 
+	/**
+	 * Describes the relationship between two operators: left (on the left) and
+	 * right (on the right).
+	 */
 	public static enum OperatorRelationship {
-		LEFT_PRIORITY, RIGHT_PRIORITY, COMPATIBLE, INCOMPATIBLE
+		LEFT_PRIORITY,       // priority(left)  > priority(right)
+		RIGHT_PRIORITY,      // priority(right) > priority(left)
+		COMPATIBLE,          // left then right is allowed w/o parentheses
+		INCOMPATIBLE,        // no combination is allowed
 	}
 	
 	private static final OperatorGroup GROUP_0 = new OperatorGroup(GROUP0);

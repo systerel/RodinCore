@@ -248,22 +248,26 @@ public abstract class AbstractGrammar {
 		}
 		final OperatorRelationship relParentChild = getOperatorRelationship(parentKind,
 				childKind);
-		if (relParentChild == LEFT_PRIORITY) { // Rule 1: parent priority => parentheses
+		if (relParentChild == LEFT_PRIORITY) {
+			// Rule 1: parent priority => parentheses
 			return true;
 		}
-		if (relParentChild == RIGHT_PRIORITY) { // Rule 2: child priority => no parentheses
+		if (relParentChild == RIGHT_PRIORITY) {
+			// Rule 2: child priority => no parentheses
 			return false;
 		}
-		// no priority is defined, now it is only a matter of compatibility
-		if (isRightChild && relParentChild == COMPATIBLE) { // Rule 3: compatible right child => parentheses
+		// no priority is defined, now it is only a matter of left/right compatibility
+		if (isRightChild && relParentChild == COMPATIBLE) {
+			// parent on the left, child on the right
+			// Rule 3: compatible right child => parentheses
 			return true;
 		}
-		if (!isRightChild
-				&& getOperatorRelationship(childKind, parentKind) == COMPATIBLE) {
+		if (!isRightChild && getOperatorRelationship(childKind, parentKind) == COMPATIBLE) {
+			// child on the left, parent on the right
 			// Rule 4: compatible left child => no parentheses
+			return false;
 			
 			// FIXME if (childKind == parentKind && isFlattenable(parentKind)) return true;
-			return false;
 		}
 		return true; // Other cases => parentheses
 	}
