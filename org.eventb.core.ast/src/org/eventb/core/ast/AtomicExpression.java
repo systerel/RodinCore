@@ -14,7 +14,6 @@
 package org.eventb.core.ast;
 
 import static org.eventb.internal.core.parser.BMath.ATOMIC_EXPR;
-import static org.eventb.internal.core.parser.BMath.EMPTY_SET;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -76,7 +75,7 @@ public class AtomicExpression extends Expression {
 		OP_BOOL("BOOL", BOOL_ID, ATOMIC_EXPR, BOOL),
 		OP_TRUE("TRUE", TRUE_ID, ATOMIC_EXPR, TRUE),
 		OP_FALSE("FALSE", FALSE_ID, ATOMIC_EXPR, FALSE),
-		OP_EMPTYSET("\u2205", EMPTYSET_ID, EMPTY_SET, EMPTYSET),
+		OP_EMPTYSET("\u2205", EMPTYSET_ID, ATOMIC_EXPR, EMPTYSET),
 		OP_KPRED("pred", KPRED_ID, ATOMIC_EXPR, KPRED),
 		OP_KSUCC("succ", KSUCC_ID, ATOMIC_EXPR, KSUCC),
 		OP_KPRJ1_GEN("prj1", KPRJ1_GEN_ID, ATOMIC_EXPR, KPRJ1_GEN),

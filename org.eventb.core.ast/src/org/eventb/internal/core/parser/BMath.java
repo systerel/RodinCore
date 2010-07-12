@@ -91,7 +91,6 @@ public abstract class BMath extends AbstractGrammar {
 	public static final String NOT_PRED = "Not Predicate";
 	public static final String ATOMIC_PRED = "Atomic Predicate";
 	public static final String ATOMIC_EXPR = "Atomic Expression";
-	public static final String EMPTY_SET = "Empty Set";
 	public static final String BOUND_UNARY = "Bound Unary";
 	public static final String BOOL_EXPR = "Bool";
 	public static final String INFIX_SUBST = "Infix Substitution";
@@ -255,6 +254,10 @@ public abstract class BMath extends AbstractGrammar {
 					INTERVAL, ARITHMETIC, FUNCTIONAL, UNARY_RELATION,
 					BOUND_UNARY, BOOL_EXPR, BRACE_SETS);
 			// end of excerpt
+			
+			// ATOMIC_EXPR has the highest priority
+			addGroupPrioritySequence(PAIR, ATOMIC_EXPR);
+			addGroupPrioritySequence(BRACE_SETS, ATOMIC_EXPR);
 			
 			// for OFTYPE
 			addGroupPrioritySequence(PAIR, TYPED, RELATION);
