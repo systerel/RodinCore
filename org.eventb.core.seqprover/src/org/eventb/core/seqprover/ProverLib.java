@@ -92,7 +92,7 @@ public class ProverLib {
 		return true;
 	}
 
-	private static boolean deepEquals(IProofRule r1, IProofRule r2) {
+	public static boolean deepEquals(IProofRule r1, IProofRule r2) {
 		if (r1 == r2) return true;
 		final IReasonerDesc desc1 = r1.getReasonerDesc();
 		final IReasonerDesc desc2 = r2.getReasonerDesc();
