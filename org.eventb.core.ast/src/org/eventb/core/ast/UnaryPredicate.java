@@ -47,7 +47,10 @@ public class UnaryPredicate extends Predicate {
 	// offset in the corresponding tag interval
 	private static final int firstTag = FIRST_UNARY_PREDICATE;
 	
-	private static final String NOT_ID = "Not";
+	/**
+	 * @since 2.0
+	 */
+	public static final String NOT_ID = "Not";
 
 	private static enum Operators implements IOperatorInfo<UnaryPredicate> {
 		OP_NOT("\u00ac", NOT_ID, NOT_PRED, NOT);

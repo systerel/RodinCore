@@ -36,6 +36,7 @@ import static org.eventb.core.ast.BinaryExpression.SETMINUS_ID;
 import static org.eventb.core.ast.QuantifiedPredicate.EXISTS_ID;
 import static org.eventb.core.ast.QuantifiedPredicate.FORALL_ID;
 import static org.eventb.core.ast.UnaryExpression.CONVERSE_ID;
+import static org.eventb.core.ast.UnaryPredicate.NOT_ID;
 import static org.eventb.internal.core.parser.OperatorRegistry.GROUP0;
 import static org.eventb.internal.core.parser.SubParsers.OFTYPE;
 
@@ -239,6 +240,8 @@ public abstract class BMath extends AbstractGrammar {
 		
 		addAssociativity(LAND_ID);
 		addAssociativity(LOR_ID);
+		
+		addCompatibility(NOT_ID, NOT_ID);
 		
 		try {
 			addPriority(PLUS_ID, MUL_ID);

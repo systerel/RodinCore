@@ -2079,4 +2079,10 @@ public class TestGenParser extends AbstractTests {
 		final OperatorRelationship relMinusInter = grammar.getOperatorRelationship(setMinusKind, interKind);
 		assertEquals(OperatorRelationship.INCOMPATIBLE, relMinusInter);
 	}
+	
+	public void testNotNot() throws Exception {
+		final Predicate expected = ff.makeUnaryPredicate(NOT,
+				ff.makeUnaryPredicate(NOT, LIT_BFALSE, null), null);
+		doPredicateTest("\u00ac\u00ac\u22a5", expected);
+	}
 }

@@ -851,7 +851,7 @@ public class SubParsers {
 		@Override
 		protected UnaryPredicate parseRight(ParserContext pc)
 				throws SyntaxError {
-			final Predicate pred = pc.subParse(PRED_PARSER, true);
+			final Predicate pred = pc.subParse(PRED_PARSER, false);
 			return pc.factory.makeUnaryPredicate(tag, pred, pc.getSourceLocation());
 		}
 
@@ -859,7 +859,7 @@ public class SubParsers {
 		public void toString(IToStringMediator mediator, UnaryPredicate toPrint) {
 			super.toString(mediator, toPrint);
 			final Predicate child = toPrint.getChild();
-			mediator.subPrint(child, true);
+			mediator.subPrint(child, false);
 		}
 	}
 
