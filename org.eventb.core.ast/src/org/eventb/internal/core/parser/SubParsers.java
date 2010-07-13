@@ -1143,7 +1143,6 @@ public class SubParsers {
 		@Override
 		public void toString(IToStringMediator mediator,
 				QuantifiedExpression toPrint) {
-			// FIXME appends a '{' linked to the tag instead of a lambda
 			super.toString(mediator, toPrint);
 			final Expression chile = toPrint.getExpression();
 			assert chile.getTag() == MAPSTO;
@@ -1152,7 +1151,7 @@ public class SubParsers {
 			final BoundIdentDecl[] boundDecls = toPrint.getBoundIdentDecls();
 			mediator.subPrint(pattern, false, boundDecls);
 			mediator.appendImage(_DOT);
-			mediator.subPrint(toPrint.getPredicate(), false, boundDecls);
+			mediator.subPrintNoPar(toPrint.getPredicate(), false, boundDecls);
 			mediator.appendImage(_MID);
 			mediator.subPrint(pair.getRight(), false, boundDecls);
 		}

@@ -70,9 +70,20 @@ import org.eventb.internal.core.parser.SubParsers;
 		printChild(child, isRightOvr, boundDecls, withTypes);
 	}
 
+	public void subPrintNoPar(Formula<?> child, boolean isRightOvr,
+			BoundIdentDecl[] boundDecls) {
+		subPrintNoPar(child, isRightOvr, boundDecls, withTypes);
+	}
+
 	public void subPrint(Formula<?> child, boolean isRightOvr,
 			BoundIdentDecl[] boundDecls, boolean withTypesOvr) {
 		printChild(child, isRightOvr, boundDecls, withTypesOvr);
+	}
+
+	private void subPrintNoPar(Formula<?> child, boolean isRightOvr,
+			BoundIdentDecl[] boundDecls, boolean withTypesOvr) {
+		final int childKind = getKind(child, factory);
+		printFormula(child, childKind, isRightOvr, boundDecls, withTypesOvr, false);
 	}
 
 	private void printChild(Formula<?> child, boolean isRightOvr,

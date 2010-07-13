@@ -36,6 +36,9 @@ public interface IToStringMediator {
 	void subPrint(Formula<?> child, boolean isRightOvr,
 			BoundIdentDecl[] boundDecls);
 	
+	void subPrintNoPar(Formula<?> child, boolean isRightOvr,
+			BoundIdentDecl[] boundDecls);
+	
 	void subPrint(Formula<?> child, boolean isRightOvr,
 			BoundIdentDecl[] boundDecls, boolean withTypesOvr);
 	
