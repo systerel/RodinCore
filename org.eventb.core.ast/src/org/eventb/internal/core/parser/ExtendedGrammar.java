@@ -61,12 +61,13 @@ public class ExtendedGrammar extends BMathV2 {
 				final String operatorId = extension.getId();
 				final String groupId = extension.getGroupId();
 
+				// TODO publish isSpaced customization
 				if (parser instanceof INudParser<?>) {
 					addOperator(operatorImage, operatorId, groupId,
-							(INudParser<? extends Formula<?>>) parser);
+							(INudParser<? extends Formula<?>>) parser, false);
 				} else if (parser instanceof ILedParser<?>) {
 					addOperator(operatorImage, operatorId, groupId,
-							(ILedParser<? extends Formula<?>>) parser);
+							(ILedParser<? extends Formula<?>>) parser, true);
 				} else {
 					// should not be ever possible
 					throw new IllegalStateException("Unparseable extension kind: "

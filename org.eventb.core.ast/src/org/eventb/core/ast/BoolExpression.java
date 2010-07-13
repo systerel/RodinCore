@@ -74,6 +74,10 @@ public class BoolExpression extends Expression {
 			return new KBoolParser(kind);
 		}
 
+		public boolean isSpaced() {
+			return false;
+		}
+
 	}
 
 	/**

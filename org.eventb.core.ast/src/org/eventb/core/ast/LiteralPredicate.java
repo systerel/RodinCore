@@ -83,6 +83,10 @@ public class LiteralPredicate extends Predicate {
 		public IParserPrinter<LiteralPredicate> makeParser(int kind) {
 			return new LiteralPredicateParser(kind, tag);
 		}
+
+		public boolean isSpaced() {
+			return false;
+		}
 	}
 
 	// For testing purposes

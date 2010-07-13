@@ -81,6 +81,10 @@ public class BecomesSuchThat extends Assignment {
 		public String getGroupId() {
 			return BMath.INFIX_SUBST;
 		}
+
+		public boolean isSpaced() {
+			return true;
+		}
 	};
 
 	/**

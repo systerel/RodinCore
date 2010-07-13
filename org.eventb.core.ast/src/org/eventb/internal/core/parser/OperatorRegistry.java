@@ -141,6 +141,7 @@ public class OperatorRegistry {
 		private final Relation<Integer> compatibilityRelation = new Relation<Integer>();
 		private final Closure<Integer> operatorPriority = new Closure<Integer>();
 		private final Set<Integer> associativeOperators = new HashSet<Integer>();
+		private final Set<Integer> spacedOperators = new HashSet<Integer>();
 
 		private final String id;
 
@@ -200,6 +201,14 @@ public class OperatorRegistry {
 		public String toString() {
 			return id;
 		}
+
+		public void setSpaced(Integer kind) {
+			spacedOperators.add(kind);
+		}
+		
+		public boolean isSpaced(Integer kind) {
+			return spacedOperators.contains(kind);
+		}
 	}
 	
 	private final AllInOnceMap<String, OperatorGroup> idOpGroup = new AllInOnceMap<String, OperatorGroup>();
@@ -213,7 +222,7 @@ public class OperatorRegistry {
 		idOpGroup.put(GROUP0, GROUP_0);
 	}
 	
-	public void addOperator(Integer kind, String operatorId, String groupId) {
+	public void addOperator(Integer kind, String operatorId, String groupId, boolean isSpaced) {
 		idKind.put(operatorId, kind);
 		
 		OperatorGroup operatorGroup = idOpGroup.getNoCheck(groupId);
@@ -222,6 +231,10 @@ public class OperatorRegistry {
 			idOpGroup.put(groupId, operatorGroup);
 		}
 		kindOpGroup.put(kind, operatorGroup);
+		
+		if (isSpaced) {
+			operatorGroup.setSpaced(kind);
+		}
 	}
 	
 	public void addCompatibility(String leftOpId, String rightOpId) {
@@ -317,6 +330,11 @@ public class OperatorRegistry {
 	public boolean isAssociative(int kind) {
 		final OperatorGroup group = kindOpGroup.get(kind);
 		return group.isAssociative(kind);
+	}	
+	
+	public boolean isSpaced(int kind) {
+		final OperatorGroup group = kindOpGroup.get(kind);
+		return group.isSpaced(kind);
 	}	
 	
 }

@@ -77,6 +77,10 @@ public class SimplePredicate extends Predicate {
 			return new FiniteParser(kind);
 		}
 
+		public boolean isSpaced() {
+			return false;
+		}
+
 	}
 
 	// child

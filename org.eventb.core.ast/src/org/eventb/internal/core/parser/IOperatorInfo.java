@@ -22,4 +22,5 @@ public interface IOperatorInfo<T extends Formula<?>> {
 	
 	String getGroupId();
 	
+	boolean isSpaced();
 }

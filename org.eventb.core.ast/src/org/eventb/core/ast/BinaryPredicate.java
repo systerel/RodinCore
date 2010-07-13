@@ -81,6 +81,10 @@ public class BinaryPredicate extends Predicate {
 		public IParserPrinter<BinaryPredicate> makeParser(int kind) {
 			return new BinaryPredicateParser(kind, tag);
 		}
+
+		public boolean isSpaced() {
+			return false;
+		}
 	}
 
 	/**

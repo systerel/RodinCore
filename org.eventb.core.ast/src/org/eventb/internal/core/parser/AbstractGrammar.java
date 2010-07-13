@@ -83,9 +83,9 @@ public abstract class AbstractGrammar {
 	 */
 	public final void init() {
 		
-		opRegistry.addOperator(_EOF, EOF_ID, GROUP0);
-		opRegistry.addOperator(_NOOP, NOOP_ID, GROUP0);
-		opRegistry.addOperator(_OPEN, OPEN_ID, GROUP0);
+		opRegistry.addOperator(_EOF, EOF_ID, GROUP0, false);
+		opRegistry.addOperator(_NOOP, NOOP_ID, GROUP0, false);
+		opRegistry.addOperator(_OPEN, OPEN_ID, GROUP0, false);
 		addOpenClose("(", ")");
 		
 		// TODO call IntegerLiteral.init() and Identifier.init()
@@ -137,7 +137,7 @@ public abstract class AbstractGrammar {
 	public void addOperator(IOperatorInfo<? extends Formula<?>> operInfo)
 			throws OverrideException {
 		final int kind = tokens.getOrAdd(operInfo.getImage());
-		opRegistry.addOperator(kind, operInfo.getId(), operInfo.getGroupId());
+		opRegistry.addOperator(kind, operInfo.getId(), operInfo.getGroupId(), operInfo.isSpaced());
 		final IParserPrinter<? extends Formula<?>> parser = operInfo.makeParser(kind);
 		if (parser instanceof INudParser<?>) {
 			subParsers.addNud(kind, (INudParser<? extends Formula<?>>) parser);
@@ -146,25 +146,25 @@ public abstract class AbstractGrammar {
 		}
 	}
 	
-	public void addOperator(String token, String operatorId, String groupId,
-			INudParser<? extends Formula<?>> subParser) {
+	protected void addOperator(String token, String operatorId, String groupId,
+			INudParser<? extends Formula<?>> subParser, boolean isSpaced) {
 		final int kind = tokens.getOrAdd(token);
-		opRegistry.addOperator(kind, operatorId, groupId);
+		opRegistry.addOperator(kind, operatorId, groupId, isSpaced);
 		subParsers.addNud(kind, subParser);
 	}
 
-	public void addOperator(String token, String operatorId, String groupId,
-			ILedParser<? extends Formula<?>> subParser)
+	protected void addOperator(String token, String operatorId, String groupId,
+			ILedParser<? extends Formula<?>> subParser, boolean isSpaced)
 			throws OverrideException {
 		final int kind = tokens.getOrAdd(token);
-		opRegistry.addOperator(kind, operatorId, groupId);
+		opRegistry.addOperator(kind, operatorId, groupId, isSpaced);
 		subParsers.addLed(kind, subParser);
 	}
 
 	public void addOperator(int kind, String operatorId, String groupId,
-			INudParser<? extends Formula<?>> subParser)
+			INudParser<? extends Formula<?>> subParser, boolean isSpaced)
 			throws OverrideException {
-		opRegistry.addOperator(kind, operatorId, groupId);
+		opRegistry.addOperator(kind, operatorId, groupId, isSpaced);
 		subParsers.addNud(kind, subParser);
 	}
 
@@ -277,4 +277,7 @@ public abstract class AbstractGrammar {
 		return true; // Other cases => parentheses
 	}
 
+	public boolean isSpaced(int kind)	 {
+		return opRegistry.isSpaced(kind);
+	}
 }

@@ -125,7 +125,10 @@ public class AssociativeExpression extends Expression {
 		public IParserPrinter<AssociativeExpression> makeParser(int kind) {
 			return new AssociativeExpressionInfix(kind, tag);
 		}
-
+		
+		public boolean isSpaced() {
+			return false;
+		}
 	}
 	
 	// For testing purposes

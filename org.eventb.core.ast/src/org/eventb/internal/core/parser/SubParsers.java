@@ -253,17 +253,15 @@ public class SubParsers {
 		public void toString(IToStringMediator mediator, T toPrint) {
 			final Child left = getLeft(toPrint);
 			mediator.subPrint(left, false);
-			appendSpacing(mediator);
 			mediator.appendImage(kind);
 			final Child right = getRight(toPrint);
 			if (right != null) {
-				appendSpacing(mediator);
-				mediator.subPrint(right, true);
+				subPrintRight(mediator, right);
 			}
 		}
 
-		protected void appendSpacing(IToStringMediator mediator) {
-			// default is no spacing
+		protected void subPrintRight(IToStringMediator mediator, Child right) {
+			mediator.subPrint(right, true);
 		}
 		
 		protected abstract Child asLeftType(Formula<?> left) throws SyntaxError;
@@ -329,15 +327,9 @@ public class SubParsers {
 			final Child[] children = getChildren(toPrint);
 			mediator.subPrint(children[0], false);
 			for (int i = 1; i < children.length; i++) {
-				appendSpacing(mediator);
 				mediator.appendImage(kind);
-				appendSpacing(mediator);
 				mediator.subPrint(children[i], true);
 			}
-		}
-		
-		protected void appendSpacing(IToStringMediator mediator) {
-			// default is no spacing
 		}
 		
 		protected abstract Child asChildType(Formula<?> left) throws SyntaxError;
@@ -596,10 +588,8 @@ public class SubParsers {
 
 		public void toString(IToStringMediator mediator, Expression toPrint) {
 			mediator.subPrint(toPrint, false, NO_DECL, false);
-			mediator.appendSpace();
 			mediator.appendImage(_TYPING);
-			mediator.appendSpace();
-			mediator.subPrint(toPrint.getType().toExpression(mediator.getFactory()), true);
+			mediator.append(toPrint.getType().toString());
 		}
 
 	};
@@ -680,10 +670,6 @@ public class SubParsers {
 			return parent.getChildExpressions()[1];
 		}
 
-		@Override
-		protected void appendSpacing(IToStringMediator mediator) {
-			mediator.appendSpace();
-		}
 	}
 
 	public static class AssociativeExpressionInfix extends AssociativeLedParser<AssociativeExpression, Expression> {
@@ -733,10 +719,6 @@ public class SubParsers {
 			return parent.getChildExpressions();
 		}
 		
-		@Override
-		protected void appendSpacing(IToStringMediator mediator) {
-			mediator.appendSpace();
-		}
 	}
 	
 	public static class AssociativePredicateInfix extends AssociativeLedParser<AssociativePredicate, Predicate> {
@@ -818,6 +800,12 @@ public class SubParsers {
 		@Override
 		protected Expression getLeft(BinaryExpression parent) {
 			return parent.getLeft();
+		}
+		
+		@Override
+		protected void subPrintRight(IToStringMediator mediator,
+				Expression right) {
+			mediator.subPrintNoPar(right, false, NO_DECL);
 		}
 		
 		@Override

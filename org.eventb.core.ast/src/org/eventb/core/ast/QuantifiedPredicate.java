@@ -105,6 +105,10 @@ public class QuantifiedPredicate extends Predicate {
 		public IParserPrinter<QuantifiedPredicate> makeParser(int kind) {
 			return new QuantifiedPredicateParser(kind, tag);
 		}
+
+		public boolean isSpaced() {
+			return false;
+		}
 	}
 
 	// For testing purposes

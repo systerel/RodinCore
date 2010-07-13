@@ -127,6 +127,10 @@ public class UnaryExpression extends Expression {
 		public IParserPrinter<UnaryExpression> makeParser(int kind) {
 			return new UnaryExpressionParser(kind, tag);
 		}
+
+		public boolean isSpaced() {
+			return false;
+		}
 	}
 
 	private static final IOperatorInfo<Expression> OP_MINUS = new IOperatorInfo<Expression>() {
@@ -145,6 +149,10 @@ public class UnaryExpression extends Expression {
 		
 		public String getGroupId() {
 			return ARITHMETIC;
+		}
+
+		public boolean isSpaced() {
+			return false;
 		}
 	};
 	

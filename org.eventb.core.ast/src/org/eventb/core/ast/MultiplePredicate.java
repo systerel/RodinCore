@@ -87,6 +87,10 @@ public class MultiplePredicate extends Predicate {
 			return new MultiplePredicateParser(kind);
 		}
 
+		public boolean isSpaced() {
+			return false;
+		}
+
 	}
 
 	// For testing purposes

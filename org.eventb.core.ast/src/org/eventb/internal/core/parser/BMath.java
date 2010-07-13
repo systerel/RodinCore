@@ -174,7 +174,7 @@ public abstract class BMath extends AbstractGrammar {
 			UnaryPredicate.init(this);
 			
 			// Undefined Operators
-			addOperator("\u2982", OFTYPE_ID, TYPED, OFTYPE);
+			addOperator("\u2982", OFTYPE_ID, TYPED, OFTYPE, true);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -111,6 +111,9 @@ public class AtomicExpression extends Expression {
 			return new AtomicExpressionParser(kind, tag);
 		}
 
+		public boolean isSpaced() {
+			return false;
+		}
 	}
 	
 	/**

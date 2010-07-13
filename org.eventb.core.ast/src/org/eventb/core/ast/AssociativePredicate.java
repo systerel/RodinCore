@@ -101,6 +101,9 @@ public class AssociativePredicate extends Predicate {
 			return new AssociativePredicateInfix(kind, tag);
 		}
 
+		public boolean isSpaced() {
+			return false;
+		}
 	}
 
 	// For testing purposes

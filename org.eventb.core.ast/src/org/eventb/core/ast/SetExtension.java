@@ -78,6 +78,10 @@ public class SetExtension extends Expression {
 			return new SetExtParser(kind);
 		}
 
+		public boolean isSpaced() {
+			return false;
+		}
+
 	}
 
 	/**

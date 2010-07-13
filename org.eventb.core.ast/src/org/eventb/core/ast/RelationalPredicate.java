@@ -109,6 +109,10 @@ public class RelationalPredicate extends Predicate {
 		public IParserPrinter<RelationalPredicate> makeParser(int kind) {
 			return new RelationalPredicateInfix(kind, tag);
 		}
+
+		public boolean isSpaced() {
+			return false;
+		}
 	}
 	
 	// For testing purposes

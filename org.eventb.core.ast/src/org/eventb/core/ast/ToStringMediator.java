@@ -57,10 +57,6 @@ import org.eventb.internal.core.parser.SubParsers;
 		builder.append(string);
 	}
 
-	public void appendSpace() {
-		builder.append(SPACE);
-	}
-
 	public void subPrint(Formula<?> child, boolean isRightOvr) {
 		subPrint(child, isRightOvr, NO_DECL);
 	}
@@ -152,10 +148,24 @@ import org.eventb.internal.core.parser.SubParsers;
 		return factory;
 	}
 
-	public void appendImage(int operatorKind) {
+	public void appendImage(int lexKind) {
+		final AbstractGrammar grammar = factory.getGrammar();
+		final boolean spaced = grammar.isOperator(lexKind)
+				&& grammar.isSpaced(lexKind);
+		appendImage(lexKind, spaced);
+	}
+	
+	private void appendImage(int lexKind, boolean withSpaces) {
 		// TODO make a cache or compute image of this.kind and check if ==
-		final String image = factory.getGrammar().getImage(operatorKind);
+		final AbstractGrammar grammar = factory.getGrammar();
+		final String image = grammar.getImage(lexKind);
+		if (withSpaces) {
+			builder.append(SPACE);
+		}
 		builder.append(image);
+		if (withSpaces) {
+			builder.append(SPACE);
+		}
 	}
 
 	public void appendBoundIdent(int boundIndex) {
@@ -201,7 +211,7 @@ import org.eventb.internal.core.parser.SubParsers;
 		case KPRJ1_GEN:
 		case KPRJ2_GEN:
 		case BOUND_IDENT_DECL:
-			return true;
+			return toPrint.isTypeChecked();
 		default:
 			return false;
 		}

@@ -185,7 +185,8 @@ public class TestGenParser extends AbstractTests {
 		
 		final String actToStr = actual.toString();
 		final Predicate reparsed = parsePred(actToStr);
-		assertEquals("bad reparsed", expected, reparsed);
+		assertEquals("bad reparsed, unparser produced " + actToStr + "\n",
+				expected, reparsed);
 	
 		return actual;
 	}
@@ -202,8 +203,8 @@ public class TestGenParser extends AbstractTests {
 	private static Predicate parsePred(String formula,
 			LanguageVersion version) {
 		final IParseResult result = parsePredRes(formula, version);
-		assertFalse("unexpected problem(s): " + result.getProblems(), result
-				.hasProblem());
+		assertFalse("unexpected problem(s) for " + formula + ": "
+				+ result.getProblems(), result.hasProblem());
 		final Predicate actual = result.getParsedPredicate();
 		return actual;
 	}

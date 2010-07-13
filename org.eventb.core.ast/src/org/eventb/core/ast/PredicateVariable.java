@@ -60,7 +60,7 @@ public class PredicateVariable extends Predicate {
 	 */
 	public static void init(BMath grammar) {
 		try {
-			grammar.addOperator(BMath._PREDVAR, PRED_VAR_ID, GROUP0, PRED_VAR_SUBPARSER);
+			grammar.addOperator(BMath._PREDVAR, PRED_VAR_ID, GROUP0, PRED_VAR_SUBPARSER, false);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

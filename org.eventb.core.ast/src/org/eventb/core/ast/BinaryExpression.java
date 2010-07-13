@@ -199,13 +199,13 @@ public class BinaryExpression extends Expression {
 		OP_DIV("\u00f7", DIV_ID, ARITHMETIC, DIV),
 		OP_MOD("mod", MOD_ID, ARITHMETIC, MOD),
 		OP_EXPN("\u005e", EXPN_ID, ARITHMETIC, EXPN),
-		OP_FUNIMAGE("(", FUNIMAGE_ID, FUNCTIONAL, FUNIMAGE) {
+		OP_FUNIMAGE("(", FUNIMAGE_ID, FUNCTIONAL, FUNIMAGE, false) {
 			@Override
 			public IParserPrinter<BinaryExpression> makeParser(int kind) {
 				return new LedImage(kind, FUNIMAGE, _RPAR);
 			}
 		},
-		OP_RELIMAGE("[", RELIMAGE_ID, FUNCTIONAL, RELIMAGE) {
+		OP_RELIMAGE("[", RELIMAGE_ID, FUNCTIONAL, RELIMAGE, false) {
 			@Override
 			public IParserPrinter<BinaryExpression> makeParser(int kind) {
 				return new LedImage(kind, RELIMAGE, _RBRACKET);
@@ -217,12 +217,19 @@ public class BinaryExpression extends Expression {
 		private final String id;
 		private final String groupId;
 		private final int tag;
+		private final boolean isSpaced;
 		
 		private Operators(String image, String id, String groupId, int tag) {
+			this(image, id, groupId, tag, true);
+		}
+
+		private Operators(String image, String id, String groupId, int tag,
+				boolean isSpaced) {
 			this.image = image;
 			this.id = id;
 			this.groupId = groupId;
 			this.tag = tag;
+			this.isSpaced = isSpaced;
 		}
 
 		public String getImage() {
@@ -241,6 +248,9 @@ public class BinaryExpression extends Expression {
 			return new BinaryExpressionInfix(kind, tag);
 		}
 
+		public boolean isSpaced() {
+			return isSpaced;
+		}
 	}
 
 	// offset of the corresponding tag-interval in Formula

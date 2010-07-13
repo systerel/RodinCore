@@ -198,6 +198,9 @@ public class QuantifiedExpression extends Expression {
 			return groupId;
 		}
 
+		public boolean isSpaced() {
+			return false;
+		}
 	}
 
 	// For testing purposes

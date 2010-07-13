@@ -82,6 +82,10 @@ public class UnaryPredicate extends Predicate {
 		public IParserPrinter<UnaryPredicate> makeParser(int kind) {
 			return new UnaryPredicateParser(kind, tag);
 		}
+
+		public boolean isSpaced() {
+			return false;
+		}
 	}
 	
 	// For testing purposes
