@@ -2086,4 +2086,11 @@ public class TestGenParser extends AbstractTests {
 				ff.makeUnaryPredicate(NOT, LIT_BFALSE, null), null);
 		doPredicateTest("\u00ac\u00ac\u22a5", expected);
 	}
+	
+	public void testMinusConverse() throws Exception {
+		final Expression expected = ff.makeUnaryExpression(CONVERSE,
+				ff.makeIntegerLiteral(BigInteger.ONE.negate(), null), null);
+		doParseUnparseTest("(−1)∼", expected);
+
+	}
 }

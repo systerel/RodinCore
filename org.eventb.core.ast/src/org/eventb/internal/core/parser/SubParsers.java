@@ -435,10 +435,24 @@ public class SubParsers {
 			}
 		}
 
+		public void toString(IToStringMediator mediator, IntegerLiteral toPrint) {
+			final BigInteger literal = toPrint.getValue();			
+			
+			final boolean bracketed = literal.signum() < 0;
+			if (bracketed) {
+				mediator.append("(");
+			}
+			toStringInternal(mediator, literal);
+			
+			if (bracketed) {
+				mediator.append(")");
+			}
+		}
+
 		// Change the minus sign if any, so that it conforms to the mathematical
 		// language: \u2212 (minus sign) instead of \u002d (hyphen-minus).
-		public void toString(IToStringMediator mediator, IntegerLiteral toPrint) {
-			final String image = toPrint.getValue().toString();
+		private void toStringInternal(IToStringMediator mediator, BigInteger literal) {
+			final String image = literal.toString();
 			if (image.charAt(0) == '-') {
 				mediator.append("\u2212");
 				mediator.append(image.substring(1));
