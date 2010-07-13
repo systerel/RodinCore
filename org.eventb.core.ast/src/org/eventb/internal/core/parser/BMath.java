@@ -118,7 +118,7 @@ public abstract class BMath extends AbstractGrammar {
 	static int _MID;
 	public static int _KPARTITION;
 	static int _DOT;
-	static int _TYPING;
+	public static int _TYPING;
 	
 	public static final int _PREDVAR = publicTokens.reserved("Predicate Variable");
 

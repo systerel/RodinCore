@@ -253,15 +253,19 @@ public class SubParsers {
 		public void toString(IToStringMediator mediator, T toPrint) {
 			final Child left = getLeft(toPrint);
 			mediator.subPrint(left, false);
-			mediator.appendSpace();
+			appendSpacing(mediator);
 			mediator.appendImage(kind);
 			final Child right = getRight(toPrint);
 			if (right != null) {
-				mediator.appendSpace();
+				appendSpacing(mediator);
 				mediator.subPrint(right, true);
 			}
 		}
 
+		protected void appendSpacing(IToStringMediator mediator) {
+			// default is no spacing
+		}
+		
 		protected abstract Child asLeftType(Formula<?> left) throws SyntaxError;
 		
 		protected abstract T makeValue(FormulaFactory factory, Child left,
@@ -323,14 +327,17 @@ public class SubParsers {
 		
 		public void toString(IToStringMediator mediator, T toPrint) {
 			final Child[] children = getChildren(toPrint);
-			// TODO remove all calls to parser.toString, use subPrint instead
 			mediator.subPrint(children[0], false);
 			for (int i = 1; i < children.length; i++) {
-				mediator.appendSpace();
+				appendSpacing(mediator);
 				mediator.appendImage(kind);
-				mediator.appendSpace();
+				appendSpacing(mediator);
 				mediator.subPrint(children[i], true);
 			}
+		}
+		
+		protected void appendSpacing(IToStringMediator mediator) {
+			// default is no spacing
 		}
 		
 		protected abstract Child asChildType(Formula<?> left) throws SyntaxError;
@@ -474,7 +481,7 @@ public class SubParsers {
 	 * Parses expressions outside bound identifier declarations. Always returns
 	 * an expression with the same tag as left.
 	 */
-	static final ILedParser<Expression> OFTYPE = new AbstractLedParser<Expression>(BMath._TYPING, NO_TAG) {
+	public static final ILedParser<Expression> OFTYPE = new AbstractLedParser<Expression>(BMath._TYPING, NO_TAG) {
 		
 		private static final String POW_ALPHA = "\u2119(alpha)";
 		private static final String POW_ALPHA_ALPHA = "\u2119(alpha \u00d7 alpha)";
@@ -588,10 +595,11 @@ public class SubParsers {
 		}
 
 		public void toString(IToStringMediator mediator, Expression toPrint) {
-			// FIXME parentheses might not always be needed
-			mediator.forward(toPrint, false);
-			mediator.append(" \u2982 ");
-			TYPE_PARSER.toString(mediator, toPrint.getType());
+			mediator.subPrint(toPrint, false, NO_DECL, false);
+			mediator.appendSpace();
+			mediator.appendImage(_TYPING);
+			mediator.appendSpace();
+			mediator.subPrint(toPrint.getType().toExpression(mediator.getFactory()), true);
 		}
 
 	};
@@ -608,31 +616,6 @@ public class SubParsers {
 			return pc.factory.makeAtomicExpression(tag, pc.getSourceLocation());
 		}
 
-		@Override
-		public void toString(IToStringMediator mediator,
-				AtomicExpression toPrint) {
-			if (mustPrintTypes(mediator, toPrint)) {
-				OFTYPE.toString(mediator, toPrint);
-			} else {
-				super.toString(mediator, toPrint);
-			}
-			
-		}
-
-	}
-
-	// TODO mode to Atomic
-	static boolean mustPrintTypes(IToStringMediator mediator, Expression toPrint) {
-		switch (toPrint.getTag()) {
-		case EMPTYSET:
-		case KID_GEN:
-		case KPRJ1_GEN:
-		case KPRJ2_GEN:
-		case BOUND_IDENT_DECL:
-			return mediator.isWithTypes();
-		default:
-			return false;
-		}
 	}
 
 	static class ExtendedAtomicExpressionParser extends PrefixNudParser<ExtendedExpression> {
@@ -697,6 +680,10 @@ public class SubParsers {
 			return parent.getChildExpressions()[1];
 		}
 
+		@Override
+		protected void appendSpacing(IToStringMediator mediator) {
+			mediator.appendSpace();
+		}
 	}
 
 	public static class AssociativeExpressionInfix extends AssociativeLedParser<AssociativeExpression, Expression> {
@@ -744,6 +731,11 @@ public class SubParsers {
 		@Override
 		protected Expression[] getChildren(ExtendedExpression parent) {
 			return parent.getChildExpressions();
+		}
+		
+		@Override
+		protected void appendSpacing(IToStringMediator mediator) {
+			mediator.appendSpace();
 		}
 	}
 	

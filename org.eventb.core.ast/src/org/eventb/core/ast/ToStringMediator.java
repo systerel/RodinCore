@@ -10,11 +10,18 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.core.ast.Formula.BOUND_IDENT_DECL;
+import static org.eventb.core.ast.Formula.EMPTYSET;
+import static org.eventb.core.ast.Formula.KID_GEN;
+import static org.eventb.core.ast.Formula.KPRJ1_GEN;
+import static org.eventb.core.ast.Formula.KPRJ2_GEN;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
 
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.AbstractGrammar;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.SubParsers;
 
 /**
  * @author Nicolas Beauger
@@ -43,7 +50,7 @@ import org.eventb.internal.core.parser.AbstractGrammar;
 
 	public ToStringMediator(Formula<?> formula, FormulaFactory factory, StringBuilder builder,
 			String[] boundNames, boolean withTypes, boolean isRight) {
-		this(getKind(formula, factory), factory, builder, boundNames, isRight, withTypes);
+		this(getKind(formula, factory), factory, builder, boundNames, withTypes, isRight);
 	}
 
 	public void append(String string) {
@@ -63,10 +70,20 @@ import org.eventb.internal.core.parser.AbstractGrammar;
 		printChild(child, isRightOvr, boundDecls, withTypes);
 	}
 
+	public void subPrint(Formula<?> child, boolean isRightOvr,
+			BoundIdentDecl[] boundDecls, boolean withTypesOvr) {
+		printChild(child, isRightOvr, boundDecls, withTypesOvr);
+	}
+
 	private void printChild(Formula<?> child, boolean isRightOvr,
 			BoundIdentDecl[] boundDecls, boolean withTypesOvr) {
 		final int childKind = getKind(child, factory);
-		final boolean needsParen = needsParentheses(childKind, isRightOvr);
+		final boolean needsParen;
+		if (withTypesOvr && isTypePrintable(child)) {
+			needsParen = true;
+		} else {
+			needsParen = needsParentheses(childKind, isRightOvr);
+		}
 		printFormula(child, childKind, isRightOvr, boundDecls, withTypesOvr, needsParen);
 	}
 
@@ -86,14 +103,10 @@ import org.eventb.internal.core.parser.AbstractGrammar;
 		}
 	}
 
-	public void forward(Formula<?> formula) {
-		forward(formula, withTypes);
-	}
-
 	// FIXME same formula => remove argument and avoid recomputing kind
-	public void forward(Formula<?> formula, boolean withTypesOvr) {
+	public void forward(Formula<?> formula) {
 		final int formulaKind = getKind(formula, factory);
-		printFormula(formula, formulaKind, isRight, NO_DECL, withTypesOvr);
+		printFormula(formula, formulaKind, isRight, NO_DECL, withTypes);
 	}
 
 	private String[] addBound(BoundIdentDecl[] addedBoundNames) {
@@ -105,11 +118,16 @@ import org.eventb.internal.core.parser.AbstractGrammar;
 
 	private void printFormula(Formula<?> formula, int formulaKind, boolean isRightOvr,
 			BoundIdentDecl[] boundDecls, boolean withTypesOvr) {
-
 		final String[] newBoundNames = addBound(boundDecls);
-		final IToStringMediator childMed = makeInstance(formulaKind,
+		if (withTypesOvr && isTypePrintable(formula)) {
+			final IToStringMediator mediator = makeInstance(BMath._TYPING,
+					isRightOvr, withTypesOvr, newBoundNames);
+			SubParsers.OFTYPE.toString(mediator, (Expression) formula);
+			return;
+		}
+		final IToStringMediator mediator = makeInstance(formulaKind,
 				isRightOvr, withTypesOvr, newBoundNames);
-		formula.toString(childMed);
+		formula.toString(mediator);
 	}
 
 	protected IToStringMediator makeInstance(int formulaKind,
@@ -162,4 +180,20 @@ import org.eventb.internal.core.parser.AbstractGrammar;
 	public int getKind() {
 		return kind;
 	}
+	
+	// FIXME hard coded tags
+	// TODO implement a 'printWithType' option for extensions as well
+	private static boolean isTypePrintable(Formula<?> toPrint) {
+		switch (toPrint.getTag()) {
+		case EMPTYSET:
+		case KID_GEN:
+		case KPRJ1_GEN:
+		case KPRJ2_GEN:
+		case BOUND_IDENT_DECL:
+			return true;
+		default:
+			return false;
+		}
+	}
+
 }

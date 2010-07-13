@@ -31,12 +31,13 @@ public interface IToStringMediator {
 
 	int getKind();
 	
-	void subPrint(Formula<?> child, boolean isRight);
-
-	void forward(Formula<?> child, boolean withTypes);
+	void subPrint(Formula<?> child, boolean isRightOvr);
 
 	void subPrint(Formula<?> child, boolean isRightOvr,
 			BoundIdentDecl[] boundDecls);
+	
+	void subPrint(Formula<?> child, boolean isRightOvr,
+			BoundIdentDecl[] boundDecls, boolean withTypesOvr);
 	
 	void forward(Formula<?> child);
 	
