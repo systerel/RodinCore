@@ -64,40 +64,6 @@ public class BinaryExpression extends Expression {
 	private final Expression left;
 	private final Expression right;
 	
-	// offset of the corresponding tag-interval in Formula
-	private final static int FIRST_TAG = FIRST_BINARY_EXPRESSION;
-	protected final static String[] tags = {
-		"\u21a6",  // MAPSTO
-		"\u2194",  // REL
-		"\ue100",  // TREL
-		"\ue101",  // SREL
-		"\ue102",  // STREL
-		"\u21f8",  // PFUN
-		"\u2192",  // TFUN
-		"\u2914",  // PINJ
-		"\u21a3",  // TINJ
-		"\u2900",  // PSUR
-		"\u21a0",  // TSUR
-		"\u2916",  // TBIJ
-		"\u2216",  // SETMINUS
-		"\u00d7",  // CPROD
-		"\u2297",  // DPROD
-		"\u2225",  // PPROD
-		"\u25c1",  // DOMRES
-		"\u2a64",  // DOMSUB
-		"\u25b7",  // RANRES
-		"\u2a65",  // RANSUB
-		"\u2025",  // UPTO
-		"\u2212",  // MINUS
-		"\u00f7",  // DIV
-		"mod",     // MOD
-		"\u005e",  // EXPN
-		"FUNIMAGE",// FUNIMAGE
-		"RELIMAGE" // RELIMAGE
-	};
-	// For testing purposes
-	public static final int TAGS_LENGTH = tags.length;
-
 	/**
 	 * @since 2.0
 	 */
@@ -277,8 +243,11 @@ public class BinaryExpression extends Expression {
 
 	}
 
-	
-	
+	// offset of the corresponding tag-interval in Formula
+	private final static int FIRST_TAG = FIRST_BINARY_EXPRESSION;
+	// For testing purposes
+	public static final int TAGS_LENGTH = Operators.values().length;
+
 	/**
 	 * @since 2.0
 	 */
@@ -300,7 +269,7 @@ public class BinaryExpression extends Expression {
 		this.left = left;
 		this.right = right;
 		
-		assert tag >= FIRST_TAG && tag < FIRST_TAG+tags.length;
+		assert tag >= FIRST_TAG && tag < FIRST_TAG+TAGS_LENGTH;
 		assert left != null;
 		assert right != null;
 		
