@@ -15,6 +15,9 @@ import static org.eventb.internal.pp.core.elements.terms.Util.d1A;
 import static org.eventb.internal.pp.core.elements.terms.Util.d1AA;
 import static org.eventb.internal.pp.core.elements.terms.Util.d2A;
 import static org.eventb.internal.pp.core.elements.terms.Util.d3A;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;

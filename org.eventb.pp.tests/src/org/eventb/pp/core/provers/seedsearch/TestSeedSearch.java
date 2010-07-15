@@ -10,6 +10,7 @@ import static org.eventb.internal.pp.core.elements.terms.Util.d0AAA;
 import static org.eventb.internal.pp.core.elements.terms.Util.d1AA;
 import static org.eventb.internal.pp.core.elements.terms.Util.d2A;
 import static org.eventb.internal.pp.core.elements.terms.Util.mList;
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 

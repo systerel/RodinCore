@@ -1,6 +1,8 @@
 package org.eventb.pp.loader;
 
 import static org.eventb.internal.pp.core.elements.terms.Util.mSort;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;

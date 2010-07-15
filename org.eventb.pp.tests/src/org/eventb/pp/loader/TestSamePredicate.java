@@ -1,6 +1,6 @@
 package org.eventb.pp.loader;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -22,7 +22,7 @@ import org.junit.Test;
  * @author François Terrier
  *
  */
-public class TestSamePredicate extends TestCase {
+public class TestSamePredicate {
 	static FormulaFactory ff = FormulaFactory.getDefault();
 	
 	static ITypeEnvironment env = ff.makeTypeEnvironment();

@@ -5,11 +5,12 @@ import static org.eventb.internal.pp.core.elements.terms.Util.cELocVar;
 import static org.eventb.internal.pp.core.elements.terms.Util.cFLocVar;
 import static org.eventb.internal.pp.core.elements.terms.Util.cIntCons;
 import static org.eventb.internal.pp.core.elements.terms.Util.cVar;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.TestCase;
+import java.util.Set;
 
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.FormulaFactory;
@@ -23,7 +24,7 @@ import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.Sort;
 
-public abstract class AbstractPPTest extends TestCase {
+public abstract class AbstractPPTest {
 
 	public List<EqualityLiteral> EMPTY = new ArrayList<EqualityLiteral>(); 
 
@@ -150,14 +151,16 @@ public abstract class AbstractPPTest extends TestCase {
 	public static Clause TRUE = Util.TRUE(Level.BASE);
 	public static Clause FALSE = Util.FALSE(Level.BASE);
 	
-	public static void assertFalse(ProverResult result) {
-		assertEquals(result.getGeneratedClauses().size(), 1);
-		assertTrue(result.getGeneratedClauses().iterator().next().isFalse());
+	public static void assertFalseClause(ProverResult result) {
+		final Set<Clause> clauses = result.getGeneratedClauses();
+		assertEquals(clauses.size(), 1);
+		assertTrue(clauses.iterator().next().isFalse());
 	}
 	
-	public static void assertTrue(ProverResult result) {
-		assertEquals(result.getGeneratedClauses().size(), 1);
-		assertTrue(result.getGeneratedClauses().iterator().next().isTrue());
+	public static void assertTrueClause(ProverResult result) {
+		final Set<Clause> clauses = result.getGeneratedClauses();
+		assertEquals(clauses.size(), 1);
+		assertTrue(clauses.iterator().next().isTrue());
 	}
 
 }

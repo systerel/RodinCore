@@ -1,6 +1,8 @@
 package org.eventb.pp.core.provers.seedsearch;
 
 import static org.eventb.internal.pp.core.elements.terms.Util.mSet;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -123,7 +125,6 @@ public class TestSeedSearchSolver extends AbstractPPTest {
 	private SeedSearchSolver solver;
 	
     @Before
-	@Override
 	public void setUp() throws Exception {
 		solver = new SeedSearchSolver();
 		

@@ -1,5 +1,7 @@
 package org.eventb.pp.loader;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;

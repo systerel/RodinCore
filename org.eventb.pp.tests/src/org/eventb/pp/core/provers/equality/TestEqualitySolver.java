@@ -1,6 +1,11 @@
 package org.eventb.pp.core.provers.equality;
 
 import static org.eventb.internal.pp.core.elements.terms.Util.mSet;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -15,9 +20,9 @@ import org.eventb.internal.pp.core.provers.equality.unionfind.InstantiationResul
 import org.eventb.internal.pp.core.provers.equality.unionfind.Node;
 import org.eventb.internal.pp.core.provers.equality.unionfind.QueryResult;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source;
-import org.eventb.internal.pp.core.provers.equality.unionfind.SourceTable;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.FactSource;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.QuerySource;
+import org.eventb.internal.pp.core.provers.equality.unionfind.SourceTable;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -166,7 +171,6 @@ public class TestEqualitySolver extends AbstractPPTest {
 	
 	
     @Before
-	@Override
 	public void setUp() throws Exception {
 		// init solver
 		init();

@@ -37,6 +37,9 @@ import static org.eventb.internal.pp.core.elements.terms.Util.d1A;
 import static org.eventb.internal.pp.core.elements.terms.Util.d2A;
 import static org.eventb.internal.pp.core.elements.terms.Util.descriptor;
 import static org.eventb.internal.pp.core.elements.terms.Util.mList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigInteger;
 import java.util.Collection;

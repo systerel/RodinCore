@@ -1,5 +1,9 @@
 package org.eventb.pp.core.search;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.junit.Test;

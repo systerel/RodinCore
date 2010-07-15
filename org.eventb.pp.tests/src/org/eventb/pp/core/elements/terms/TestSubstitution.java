@@ -1,6 +1,7 @@
 package org.eventb.pp.core.elements.terms;
 
 import static org.eventb.internal.pp.core.elements.terms.Util.cPlus;
+import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
 

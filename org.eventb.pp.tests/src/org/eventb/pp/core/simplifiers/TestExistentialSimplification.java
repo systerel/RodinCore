@@ -8,6 +8,7 @@ import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
 import static org.eventb.internal.pp.core.elements.terms.Util.d0A;
 import static org.eventb.internal.pp.core.elements.terms.Util.d0AA;
 import static org.eventb.internal.pp.core.elements.terms.Util.d1A;
+import static org.junit.Assert.assertEquals;
 
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.Sort;

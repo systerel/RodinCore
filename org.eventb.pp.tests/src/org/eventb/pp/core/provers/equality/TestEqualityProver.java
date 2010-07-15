@@ -5,6 +5,8 @@ import static org.eventb.internal.pp.core.elements.terms.Util.cEqual;
 import static org.eventb.internal.pp.core.elements.terms.Util.cNEqual;
 import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
 import static org.eventb.internal.pp.core.elements.terms.Util.mSet;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.eventb.internal.pp.core.ProverResult;
 import org.eventb.internal.pp.core.elements.Clause;
@@ -19,7 +21,6 @@ public class TestEqualityProver extends AbstractPPTest {
 	private EqualityProver prover;
 	
     @Before
-	@Override
 	public void setUp() {
 		prover = new EqualityProver(new VariableContext());
 	}
@@ -55,7 +56,7 @@ public class TestEqualityProver extends AbstractPPTest {
 		prover.addClauseAndDetectContradiction(cClause(cEqual(a, b)));
 		ProverResult result = prover.addClauseAndDetectContradiction(cClause(cNEqual(a, b)));
 		
-		assertFalse(result);
+		assertFalseClause(result);
 	}
 	
     @Test
@@ -64,7 +65,7 @@ public class TestEqualityProver extends AbstractPPTest {
 		prover.addClauseAndDetectContradiction(c1);
 		ProverResult result = prover.addClauseAndDetectContradiction(cClause(cEqual(a,b)));
 		
-		assertTrue(result);
+		assertTrueClause(result);
 		assertEquals(result.getSubsumedClauses(),mSet(c1));
 	}
 	
@@ -74,7 +75,7 @@ public class TestEqualityProver extends AbstractPPTest {
 		prover.addClauseAndDetectContradiction(c1);
 		ProverResult result = prover.addClauseAndDetectContradiction(cClause(cEqual(a,b)));
 		
-		assertTrue(result);
+		assertTrueClause(result);
 		assertEquals(result.getSubsumedClauses(),mSet(c1));
 	}
 	
@@ -84,7 +85,7 @@ public class TestEqualityProver extends AbstractPPTest {
 		prover.addClauseAndDetectContradiction(c1);
 		ProverResult result = prover.addClauseAndDetectContradiction(cClause(ONE,cEqual(a,b)));
 		
-		assertTrue(result);
+		assertTrueClause(result);
 		assertTrue(result.getSubsumedClauses().isEmpty());
 	}
 }

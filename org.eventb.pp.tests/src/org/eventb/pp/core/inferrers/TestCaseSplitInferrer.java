@@ -11,6 +11,9 @@ import static org.eventb.internal.pp.core.elements.terms.Util.d0A;
 import static org.eventb.internal.pp.core.elements.terms.Util.d1A;
 import static org.eventb.internal.pp.core.elements.terms.Util.d1AA;
 import static org.eventb.internal.pp.core.elements.terms.Util.mSet;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Set;
 

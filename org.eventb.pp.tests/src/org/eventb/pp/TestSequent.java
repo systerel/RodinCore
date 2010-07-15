@@ -13,10 +13,10 @@
 package org.eventb.pp;
 
 import static org.eventb.core.ast.LanguageVersion.V2;
-
 import static org.eventb.internal.pp.core.elements.terms.AbstractPPTest.ff;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;

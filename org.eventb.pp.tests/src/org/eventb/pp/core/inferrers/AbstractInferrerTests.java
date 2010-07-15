@@ -1,5 +1,7 @@
 package org.eventb.pp.core.inferrers;
 
+import static org.junit.Assert.assertFalse;
+
 import java.util.HashSet;
 import java.util.Set;
 

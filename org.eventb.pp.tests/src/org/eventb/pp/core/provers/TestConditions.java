@@ -19,6 +19,7 @@ import static org.eventb.internal.pp.core.elements.terms.Util.d0A;
 import static org.eventb.internal.pp.core.elements.terms.Util.d1A;
 import static org.eventb.internal.pp.core.elements.terms.Util.d2A;
 import static org.eventb.internal.pp.core.elements.terms.Util.mList;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 

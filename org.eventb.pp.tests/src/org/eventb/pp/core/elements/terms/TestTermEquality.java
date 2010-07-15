@@ -10,6 +10,9 @@ import static org.eventb.internal.pp.core.elements.terms.Util.cPlus;
 import static org.eventb.internal.pp.core.elements.terms.Util.cTimes;
 import static org.eventb.internal.pp.core.elements.terms.Util.cUnMin;
 import static org.eventb.internal.pp.core.elements.terms.Util.cVar;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 

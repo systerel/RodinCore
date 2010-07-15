@@ -5,10 +5,9 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-
 package org.eventb.pp.loader;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -30,7 +29,7 @@ import org.junit.Test;
  * @author François Terrier
  *
  */
-public class TestExpectedLiterals extends TestCase {
+public class TestExpectedLiterals {
 
 	private static FormulaFactory ff = FormulaFactory.getDefault();
 	

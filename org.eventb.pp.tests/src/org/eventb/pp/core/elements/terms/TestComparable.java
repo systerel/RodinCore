@@ -1,5 +1,8 @@
 package org.eventb.pp.core.elements.terms;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.junit.Test;

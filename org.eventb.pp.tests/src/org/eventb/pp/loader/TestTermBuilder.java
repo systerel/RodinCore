@@ -13,7 +13,6 @@ import static org.eventb.internal.pp.core.elements.terms.Util.mPlus;
 import static org.eventb.internal.pp.core.elements.terms.Util.mTimes;
 import static org.eventb.internal.pp.core.elements.terms.Util.mUnaryMinus;
 import static org.eventb.internal.pp.core.elements.terms.Util.mVariable;
-import junit.framework.Assert;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
@@ -26,6 +25,7 @@ import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.loader.formula.terms.TermSignature;
 import org.eventb.internal.pp.loader.predicate.AbstractContext;
 import org.eventb.internal.pp.loader.predicate.TermBuilder;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class TestTermBuilder extends AbstractPPTest {
@@ -48,8 +48,8 @@ public class TestTermBuilder extends AbstractPPTest {
 	private static void assertEquals(TermSignature expected,
 			TermSignature actual) {
 		Assert.assertEquals(expected, actual);
-		assertEquals(expected.hashCode(), actual.hashCode());
-		assertEquals(expected.toString(), actual.toString());
+		Assert.assertEquals(expected.hashCode(), actual.hashCode());
+		Assert.assertEquals(expected.toString(), actual.toString());
 	}
 
 	public static void doTest(Expression expr, TermSignature expected,

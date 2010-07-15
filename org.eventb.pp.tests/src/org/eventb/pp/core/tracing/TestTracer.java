@@ -1,6 +1,9 @@
 package org.eventb.pp.core.tracing;
 
 import static org.eventb.internal.pp.core.elements.terms.Util.mSet;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Set;
 

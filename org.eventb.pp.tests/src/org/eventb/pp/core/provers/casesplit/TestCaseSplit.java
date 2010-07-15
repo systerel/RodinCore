@@ -3,6 +3,7 @@ package org.eventb.pp.core.provers.casesplit;
 import static org.eventb.internal.pp.core.elements.terms.Util.cClause;
 import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
 import static org.eventb.internal.pp.core.elements.terms.Util.mSet;
+import static org.junit.Assert.assertTrue;
 
 import org.eventb.internal.pp.core.ILevelController;
 import org.eventb.internal.pp.core.Level;

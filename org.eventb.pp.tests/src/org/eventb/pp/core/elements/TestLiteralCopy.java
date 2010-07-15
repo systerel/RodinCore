@@ -2,6 +2,7 @@ package org.eventb.pp.core.elements;
 
 import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.d1AA;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 

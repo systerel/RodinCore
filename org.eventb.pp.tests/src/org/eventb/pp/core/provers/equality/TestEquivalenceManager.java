@@ -3,6 +3,11 @@ package org.eventb.pp.core.provers.equality;
 import static org.eventb.internal.pp.core.elements.terms.Util.cClause;
 import static org.eventb.internal.pp.core.elements.terms.Util.cProp;
 import static org.eventb.internal.pp.core.elements.terms.Util.mSet;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -20,7 +25,6 @@ public class TestEquivalenceManager extends AbstractPPTest {
 	private EquivalenceManager manager;
 	
     @Before
-	@Override
 	public void setUp() throws Exception {
 		// init solver
 		manager = new EquivalenceManager();

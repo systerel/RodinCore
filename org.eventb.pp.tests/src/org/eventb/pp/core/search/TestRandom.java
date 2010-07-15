@@ -1,16 +1,20 @@
 package org.eventb.pp.core.search;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import junit.framework.TestCase;
 
 import org.eventb.internal.pp.core.search.IRandomAccessList;
 import org.eventb.internal.pp.core.search.RandomAccessList;
 import org.eventb.internal.pp.core.search.ResetIterator;
 import org.junit.Test;
 
-public class TestRandom extends TestCase {
+public class TestRandom {
 
 	private Object a = new Object();
 	private Object b = new Object();

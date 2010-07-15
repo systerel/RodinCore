@@ -1,10 +1,11 @@
 package org.eventb.pp.core.elements.terms;
 
 import static org.eventb.internal.pp.core.elements.terms.Util.cPlus;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.junit.Test;
-
 
 public class TestQuantifierBooleans extends AbstractPPTest {
 

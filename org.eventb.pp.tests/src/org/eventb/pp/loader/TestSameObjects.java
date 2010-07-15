@@ -5,6 +5,7 @@ import static org.eventb.internal.pp.core.elements.terms.Util.cCons;
 import static org.eventb.internal.pp.core.elements.terms.Util.cPred;
 import static org.eventb.internal.pp.core.elements.terms.Util.cVar;
 import static org.eventb.internal.pp.core.elements.terms.Util.descriptor;
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 

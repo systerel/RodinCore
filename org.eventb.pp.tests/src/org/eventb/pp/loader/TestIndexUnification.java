@@ -1,7 +1,7 @@
 package org.eventb.pp.loader;
 
-
 import static org.eventb.internal.pp.core.elements.terms.Util.mIR;
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 

@@ -9,6 +9,7 @@ import static org.eventb.internal.pp.core.elements.terms.Util.mImp;
 import static org.eventb.internal.pp.core.elements.terms.Util.mIn;
 import static org.eventb.internal.pp.core.elements.terms.Util.mNot;
 import static org.eventb.internal.pp.core.elements.terms.Util.mOr;
+import static org.junit.Assert.assertEquals;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.FreeIdentifier;

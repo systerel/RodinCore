@@ -1,16 +1,18 @@
 package org.eventb.pp.core.search;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import junit.framework.TestCase;
-
 import org.eventb.internal.pp.core.search.ConditionIterator;
 import org.junit.Test;
 
-public class TestIterator extends TestCase {
+public class TestIterator {
 
 	private class NiceIterator extends ConditionIterator<Object> {
 
