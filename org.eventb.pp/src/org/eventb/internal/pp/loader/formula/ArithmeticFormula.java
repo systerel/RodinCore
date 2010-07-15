@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eventb.internal.pp.core.elements.ArithmeticLiteral;
+import org.eventb.internal.pp.core.elements.ArithmeticLiteral.AType;
 import org.eventb.internal.pp.core.elements.EqualityLiteral;
 import org.eventb.internal.pp.core.elements.Literal;
-import org.eventb.internal.pp.core.elements.ArithmeticLiteral.AType;
 import org.eventb.internal.pp.core.elements.terms.SimpleTerm;
 import org.eventb.internal.pp.core.elements.terms.Term;
 import org.eventb.internal.pp.loader.formula.descriptor.ArithmeticDescriptor;

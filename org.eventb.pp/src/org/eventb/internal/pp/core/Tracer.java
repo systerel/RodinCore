@@ -14,8 +14,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.core.tracing.IOrigin;

@@ -14,8 +14,8 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.FactSource;

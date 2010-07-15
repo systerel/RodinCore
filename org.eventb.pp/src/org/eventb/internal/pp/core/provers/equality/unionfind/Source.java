@@ -12,8 +12,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.Clause;

@@ -14,8 +14,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.elements.Clause;
@@ -30,9 +30,9 @@ import org.eventb.internal.pp.core.provers.equality.unionfind.InstantiationResul
 import org.eventb.internal.pp.core.provers.equality.unionfind.Node;
 import org.eventb.internal.pp.core.provers.equality.unionfind.QueryResult;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source;
-import org.eventb.internal.pp.core.provers.equality.unionfind.SourceTable;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.FactSource;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.QuerySource;
+import org.eventb.internal.pp.core.provers.equality.unionfind.SourceTable;
 
 /**
  * Implementation of {@link IEquivalenceManager}.

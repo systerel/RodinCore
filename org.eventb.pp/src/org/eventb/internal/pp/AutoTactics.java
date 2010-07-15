@@ -11,8 +11,8 @@
 package org.eventb.internal.pp;
 
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics.AbsractLazilyConstrTactic;
+import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.pp.PPCore;
 
 /**

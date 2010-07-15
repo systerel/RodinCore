@@ -10,8 +10,8 @@ package org.eventb.internal.pp.core.provers.equality.unionfind;
 
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.provers.equality.unionfind.Source.FactSource;
