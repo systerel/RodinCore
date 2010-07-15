@@ -1225,4 +1225,9 @@ public class RodinTests extends AbstractRodinTest {
 				"p ∈ dom(prj1)", //
 				true);
 	}
+
+	@Test
+	public void bug3029910() {
+		doTest(mList("a", "S", "b", "S"), mSet("{a,b} = ∅"), "⊥", true);
+	}
 }

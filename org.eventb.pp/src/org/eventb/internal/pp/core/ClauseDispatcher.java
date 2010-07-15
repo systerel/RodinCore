@@ -220,6 +220,7 @@ public final class ClauseDispatcher  {
 			clause = simplifier.run(clause);
 			if (clause.isFalse()) internalContradiction(clause.getOrigin());
 			else if (!clause.isTrue()) addNonDispatchedClause(clause);
+			if (terminated) break;
 		}
 	}
 	
