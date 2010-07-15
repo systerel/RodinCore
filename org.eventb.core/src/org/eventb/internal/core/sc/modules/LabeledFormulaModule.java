@@ -194,7 +194,6 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 			case MisplacedLedOperator:
 			case MisplacedNudOperator:
 			case NotUpgradableError:
-			case OftypeMissingParentheses:
 			case PredicateVariableNotAllowed:
 			case PrematureEOF:
 			case UnexpectedOftype:

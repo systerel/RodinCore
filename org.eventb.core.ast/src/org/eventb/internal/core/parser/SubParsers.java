@@ -76,6 +76,7 @@ import org.eventb.internal.core.parser.MainParsers.PatternParser;
  */
 public class SubParsers {
 
+	private static final String SPACE = " ";
 	private static final Predicate[] NO_PRED = new Predicate[0];
 	static final BoundIdentDecl[] NO_DECL = new BoundIdentDecl[0];
 
@@ -529,9 +530,6 @@ public class SubParsers {
 		
 		public SubParseResult<Expression> led(Formula<?> left, ParserContext pc) throws SyntaxError {
 			final int childTag = left.getTag();
-			if (!pc.isParenthesized()) {
-				throw newMissingParenError(pc);
-			}
 			if (!isTypedGeneric(childTag)) {
 				throw newUnexpectedOftype(pc);
 			}
@@ -539,9 +537,6 @@ public class SubParsers {
 			
 			Type type = pc.subParse(TYPE_PARSER, true);
 			final SourceLocation typeLoc = pc.getSourceLocation();
-			if (pc.t.kind != _RPAR) {
-				throw newMissingParenError(pc);
-			}
 			if (!checkValidTypedGeneric(childTag, type, typeLoc, pc.result)) {
 				type = null;
 			}
@@ -566,13 +561,6 @@ public class SubParsers {
 			return new SyntaxError(new ASTProblem(pc.makeSourceLocation(pc.t),
 					ProblemKind.UnexpectedOftype, ProblemSeverities.Error));
 		}
-		
-		private SyntaxError newMissingParenError(ParserContext pc) {
-			return new SyntaxError(new ASTProblem(pc.makeSourceLocation(pc.t),
-					ProblemKind.OftypeMissingParentheses,
-					ProblemSeverities.Error));
-		}
-
 		
 		private boolean checkValidTypedGeneric(int tag, Type type,
 				SourceLocation typeLoc, ParseResult result) throws SyntaxError {
@@ -944,7 +932,7 @@ public class SubParsers {
 			final BoundIdentDecl[] boundDecls = toPrint.getBoundIdentDecls();
 			BOUND_IDENT_DECL_LIST_PARSER.toString(mediator, asList(boundDecls));
 			mediator.appendImage(_DOT);
-			mediator.subPrint(toPrint.getPredicate(), false, boundDecls);
+			mediator.subPrintNoPar(toPrint.getPredicate(), false, boundDecls);
 		}
 	}
 
@@ -1044,6 +1032,12 @@ public class SubParsers {
 		}
 	}
 	
+	static void printMid(IToStringMediator mediator) {
+		mediator.append(SPACE);
+		mediator.appendImage(_MID);
+		mediator.append(SPACE);
+	}
+
 	public static class ExplicitQuantExpr extends PrefixNudParser<QuantifiedExpression> {
 		
 		public ExplicitQuantExpr(int kind, int tag) {
@@ -1074,9 +1068,9 @@ public class SubParsers {
 			final BoundIdentDecl[] boundDecls = toPrint.getBoundIdentDecls();
 			BOUND_IDENT_DECL_LIST_PARSER.toString(mediator, asList(boundDecls));
 			mediator.appendImage(_DOT);
-			mediator.subPrint(toPrint.getPredicate(), false, boundDecls);
-			mediator.appendImage(_MID);
-			mediator.subPrint(toPrint.getExpression(), false, boundDecls);
+			mediator.subPrintNoPar(toPrint.getPredicate(), false, boundDecls);
+			printMid(mediator);
+			mediator.subPrintNoPar(toPrint.getExpression(), false, boundDecls);
 		}
 	}
 	
@@ -1128,9 +1122,9 @@ public class SubParsers {
 				QuantifiedExpression toPrint) {
 			super.toString(mediator, toPrint);
 			final BoundIdentDecl[] boundDecls = toPrint.getBoundIdentDecls();
-			mediator.subPrint(toPrint.getExpression(), false, boundDecls);
-			mediator.appendImage(_MID);
-			mediator.subPrint(toPrint.getPredicate(), false, boundDecls);
+			mediator.subPrintNoPar(toPrint.getExpression(), false, boundDecls);
+			printMid(mediator);
+			mediator.subPrintNoPar(toPrint.getPredicate(), false, boundDecls);
 		}
 		
 	}
@@ -1187,8 +1181,8 @@ public class SubParsers {
 			mediator.subPrint(pattern, false, boundDecls);
 			mediator.appendImage(_DOT);
 			mediator.subPrintNoPar(toPrint.getPredicate(), false, boundDecls);
-			mediator.appendImage(_MID);
-			mediator.subPrint(pair.getRight(), false, boundDecls);
+			printMid(mediator);
+			mediator.subPrintNoPar(pair.getRight(), false, boundDecls);
 		}
 	}
 

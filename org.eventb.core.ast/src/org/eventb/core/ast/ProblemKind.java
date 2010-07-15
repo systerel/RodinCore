@@ -140,12 +140,6 @@ public enum ProblemKind {
 	IntegerLiteralExpected ("Expected an integer literal"),
 
 	/**
-	 * No argument.
-	 * @since 2.0
-	 */
-	OftypeMissingParentheses ("Oftype should appear within parentheses here"),
-
-	/**
 	 * Argument 0 is the expected type for the generic operator.
 	 * @since 2.0
 	 */
