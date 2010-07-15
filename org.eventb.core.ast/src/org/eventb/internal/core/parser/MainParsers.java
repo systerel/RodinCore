@@ -547,7 +547,8 @@ public class MainParsers {
 			mediator.appendImage(kind);
 		
 			final Predicate condition = toPrint.getCondition();
-			PRED_PARSER.toString(mediator, condition);
+			final BoundIdentDecl[] primedIdents = toPrint.getPrimedIdents();
+			mediator.subPrintNoPar(condition, true, primedIdents);
 		}
 		
 	}

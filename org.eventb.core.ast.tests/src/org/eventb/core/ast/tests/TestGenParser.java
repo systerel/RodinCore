@@ -191,6 +191,13 @@ public class TestGenParser extends AbstractTests {
 		return actual;
 	}
 
+	private static Assignment doParseUnparseTest(String formula, Assignment expected) {
+		final Assignment actual = doAssignmentTest(formula, expected);
+		final String actToStr = actual.toString();
+		doAssignmentTest(actToStr, expected);
+		return actual;
+	}
+
 	private static Expression parseExpr(String formula, FormulaFactory factory,
 			LanguageVersion version) {
 		final IParseResult result = parseExprRes(formula, factory, version);
@@ -313,18 +320,20 @@ public class TestGenParser extends AbstractTests {
 		assertEquals(expected, actual);
 	}
 	
-	private static void doAssignmentTest(String formula, Assignment expected) {
+	private static Assignment doAssignmentTest(String formula, Assignment expected) {
 		final IParseResult result = ff.parseAssignment(formula,
 				LanguageVersion.V2, null);
 		if (result.hasProblem()) {
 			System.out.println(result.getProblems());
 		}
-		assertFalse(result.hasProblem());
+		assertFalse("parse failed for " + formula + ", problems: "
+				+ result.getProblems(), result.hasProblem());
 		final Assignment actual = result.getParsedAssignment();
 		System.out.println(actual);
 		assertEquals(expected, actual);
 	
 		actual.accept(slChecker);
+		return actual;
 	}
 
 	private static void doTest(String formula, Formula<?> expected, LanguageVersion version) {
@@ -1352,7 +1361,7 @@ public class TestGenParser extends AbstractTests {
 				ff.makeRelationalPredicate(EQUAL, BI_0, FRID_a, null)), null);
 		final Assignment expected = ff.makeBecomesSuchThat(idents, primed,
 				condition, null);
-		doAssignmentTest("a,b :∣  a'=b ∧ b'=a  ", expected);
+		doParseUnparseTest("a,b :∣  a'=b ∧ b'=a  ", expected);
 	}
 
 	public void testNot() throws Exception {
