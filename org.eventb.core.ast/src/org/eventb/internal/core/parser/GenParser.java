@@ -472,27 +472,6 @@ public class GenParser {
 		public <T> T subParseNoBindingNoCheck(INudParser<T> parser) throws SyntaxError {
 			return subParseSpecial(parser, true, true);
 		}
-	
-		/**
-		 * Returns <code>true</code> iff the operator being parsed has an open
-		 * parenthesis as parent kind.
-		 */
-		public boolean isParenthesized() throws SyntaxError {
-			// FIXME _LPAR is an operator only because of FUNIMAGE
-			return getParentOperator() == _LPAR;
-		}
-		
-		private int getParentOperator() {
-			// skip current operator (parentKind.val)
-			final ListIterator<Integer> iter = parentKind.stackIterator();
-			while(iter.hasPrevious()) {
-				final int kind = iter.previous();
-				if (grammar.isOperator(kind)) {
-					return kind;
-				}
-			}
-			return _EOF;
-		}
 		
 		public int getKind(String operatorImage) {
 			return grammar.getKind(operatorImage);
