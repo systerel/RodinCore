@@ -251,10 +251,6 @@ public class Util {
 			return false;
 		}
 
-		public void getDependencies(Stack<Level> dependencies) {
-			// skip
-		}
-
 		public boolean isDefinition() {
 			return false;
 		}
