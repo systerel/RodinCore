@@ -1137,7 +1137,7 @@ public abstract class Formula<T extends Formula<T>> {
 		final StringBuilder builder = new StringBuilder();
 		final ToStringMediator strMed = new ToStringMediator(this, getFactory(),
 				builder, NO_STRING, true, false);
-		toString(strMed);
+		strMed.forward(getTypedThis());
 		return builder.toString();
 	}
 	
