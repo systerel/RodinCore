@@ -19,7 +19,7 @@ import org.eventb.internal.pp.PPInput;
 
 public class ReasonerExtensionTests extends AbstractReasonerTests {
 
-	private static final IReasonerInput input = new PPInput(true,3000,1000);
+	private static final IReasonerInput input = new PPInput(false,3000,1000);
 
 	@Override
 	public String getReasonerID() {
