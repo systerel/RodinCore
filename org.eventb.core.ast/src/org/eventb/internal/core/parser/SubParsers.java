@@ -413,7 +413,11 @@ public class SubParsers {
 
 	};
 
-	public static final INudParser<BoundIdentDecl> BOUND_IDENT_DECL_SUBPARSER = new ValuedNudParser<BoundIdentDecl>(BMath._IDENT) {
+	public static class BoundIdentDeclSubParser extends ValuedNudParser<BoundIdentDecl> {
+
+		protected BoundIdentDeclSubParser() {
+			super(BMath._IDENT);
+		}
 
 		@Override
 		protected BoundIdentDecl makeValue(ParserContext pc, String tokenVal,
@@ -432,13 +436,19 @@ public class SubParsers {
 		}
 
 		public void toString(IToStringMediator mediator, BoundIdentDecl toPrint) {
+			// bound name renaming has to be performed with knowledge of
+			// bound predicate where this bound declaration occurs;
+			// hence the printing has to be performed from upper containers;
+			// this method only manages the case where the printed declaration
+			// is the root formula (practically, concerns tests only).
 			mediator.append(toPrint.getName());
-			if (mediator.isWithTypes()) {
-				mediator.append("\u2982");
-				TYPE_PARSER.toString(mediator, toPrint.getType());
+			if (mediator.isWithTypes() && toPrint.isTypeChecked()) {
+				OftypeParser.appendOftype(mediator, toPrint.getType());
 			}
 		}
-	};
+	}
+	
+	public static final BoundIdentDeclSubParser BOUND_IDENT_DECL_SUBPARSER = new BoundIdentDeclSubParser();
 
 	public static class IntLitSubParser extends ValuedNudParser<IntegerLiteral> {
 
@@ -517,12 +527,11 @@ public class SubParsers {
 		}
 	};
 
-	/**
-	 * Parses expressions outside bound identifier declarations. Always returns
-	 * an expression with the same tag as left.
-	 */
-	public static final ILedParser<Expression> OFTYPE = new AbstractLedParser<Expression>(BMath._TYPING, NO_TAG) {
-		
+	public static class OftypeParser extends AbstractLedParser<Expression> {
+
+		protected OftypeParser() {
+			super(BMath._TYPING, NO_TAG);
+		}
 		private static final String POW_ALPHA = "\u2119(alpha)";
 		private static final String POW_ALPHA_ALPHA = "\u2119(alpha \u00d7 alpha)";
 		private static final String POW_ALPHA_BETA_ALPHA = "\u2119(alpha \u00d7 beta \u00d7 alpha)";
@@ -623,11 +632,21 @@ public class SubParsers {
 
 		public void toString(IToStringMediator mediator, Expression toPrint) {
 			mediator.subPrint(toPrint, false, NO_DECL, false);
-			mediator.appendImage(_TYPING);
-			mediator.append(toPrint.getType().toString());
+			appendOftype(mediator, toPrint.getType());
 		}
 
-	};
+		public static void appendOftype(IToStringMediator mediator, Type type) {
+			mediator.appendImage(_TYPING);
+			mediator.append(type.toString());
+		}
+
+	}
+	
+	/**
+	 * Parses expressions outside bound identifier declarations. Always returns
+	 * an expression with the same tag as left.
+	 */
+	public static final ILedParser<Expression> OFTYPE = new OftypeParser();
 	
 	public static class AtomicExpressionParser extends PrefixNudParser<AtomicExpression> {
 	
@@ -930,7 +949,9 @@ public class SubParsers {
 				QuantifiedPredicate toPrint) {
 			super.toString(mediator, toPrint);
 			final BoundIdentDecl[] boundDecls = toPrint.getBoundIdentDecls();
-			BOUND_IDENT_DECL_LIST_PARSER.toString(mediator, asList(boundDecls));
+			BOUND_IDENT_DECL_LIST_PARSER.toString(mediator, asList(boundDecls),
+					Collections.<Formula<?>> singletonList(toPrint
+							.getPredicate()));
 			mediator.appendImage(_DOT);
 			mediator.subPrintNoPar(toPrint.getPredicate(), false, boundDecls);
 		}
@@ -1066,7 +1087,10 @@ public class SubParsers {
 				QuantifiedExpression toPrint) {
 			super.toString(mediator, toPrint);
 			final BoundIdentDecl[] boundDecls = toPrint.getBoundIdentDecls();
-			BOUND_IDENT_DECL_LIST_PARSER.toString(mediator, asList(boundDecls));
+			// FIXME rename bound ident decls in other classes.
+			BOUND_IDENT_DECL_LIST_PARSER.toString(mediator, asList(boundDecls),
+					Arrays.<Formula<?>> asList(toPrint.getPredicate(), toPrint
+							.getExpression()));
 			mediator.appendImage(_DOT);
 			mediator.subPrintNoPar(toPrint.getPredicate(), false, boundDecls);
 			printMid(mediator);

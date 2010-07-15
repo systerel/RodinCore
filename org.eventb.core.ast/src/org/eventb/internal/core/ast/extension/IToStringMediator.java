@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension;
 
+import java.util.List;
+
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
@@ -47,4 +49,7 @@ public interface IToStringMediator {
 	void appendBoundIdent(int boundIndex);
 	
 	boolean isWithTypes();
+
+	String[] resolveIdents(BoundIdentDecl[] addedBoundNames,
+			List<Formula<?>> boundFormulae);
 }

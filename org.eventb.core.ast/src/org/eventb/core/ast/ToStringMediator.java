@@ -10,12 +10,16 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
-import static org.eventb.core.ast.Formula.BOUND_IDENT_DECL;
 import static org.eventb.core.ast.Formula.EMPTYSET;
 import static org.eventb.core.ast.Formula.KID_GEN;
 import static org.eventb.core.ast.Formula.KPRJ1_GEN;
 import static org.eventb.core.ast.Formula.KPRJ2_GEN;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
@@ -116,16 +120,37 @@ import org.eventb.internal.core.parser.SubParsers;
 		printFormula(formula, formulaKind, isRight, NO_DECL, withTypes);
 	}
 
-	private String[] addBound(BoundIdentDecl[] addedBoundNames) {
+	private String[] addBound(Formula<?> formula, BoundIdentDecl[] addedBoundNames) {
 		if (addedBoundNames.length == 0) {
 			return boundNames;
 		}
-		return catenateBoundIdentLists(boundNames, addedBoundNames);
+		final String[] resolvedIdents = resolveIdentsOf(formula, addedBoundNames);
+		return catenateBoundIdentLists(boundNames, resolvedIdents);
+	}
+	
+	private String[] resolveIdentsOf(Formula<?> formula, BoundIdentDecl[] addedBoundNames) {
+		return resolveIdents(addedBoundNames, Collections.<Formula<?>>singletonList(formula));
 	}
 
+	public String[] resolveIdents(BoundIdentDecl[] addedBoundNames,
+			List<Formula<?>> boundFormulae) {
+		final Set<String> usedNames = new HashSet<String>();
+		for(Formula<?> formula: boundFormulae) {
+			formula.collectNamesAbove(usedNames, boundNames, addedBoundNames.length);
+		}
+		return QuantifiedUtil.resolveIdents(addedBoundNames, usedNames);
+	}
+	
 	private void printFormula(Formula<?> formula, int formulaKind, boolean isRightOvr,
 			BoundIdentDecl[] boundDecls, boolean withTypesOvr) {
-		final String[] newBoundNames = addBound(boundDecls);
+		final String[] newBoundNames = addBound(formula, boundDecls);
+		printWithBinding(formula, formulaKind, isRightOvr, withTypesOvr,
+				newBoundNames);
+	}
+
+	private void printWithBinding(Formula<?> formula, int formulaKind,
+			boolean isRightOvr, boolean withTypesOvr,
+			final String[] newBoundNames) {
 		if (withTypesOvr && isTypePrintable(formula)) {
 			final IToStringMediator mediator = makeInstance(BMath._TYPING,
 					isRightOvr, withTypesOvr, newBoundNames);
@@ -210,7 +235,6 @@ import org.eventb.internal.core.parser.SubParsers;
 		case KID_GEN:
 		case KPRJ1_GEN:
 		case KPRJ2_GEN:
-		case BOUND_IDENT_DECL:
 			return toPrint.isTypeChecked();
 		default:
 			return false;

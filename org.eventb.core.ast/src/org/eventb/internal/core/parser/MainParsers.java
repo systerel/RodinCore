@@ -26,6 +26,7 @@ import static org.eventb.internal.core.parser.BMath._MAPSTO;
 import static org.eventb.internal.core.parser.GenParser.ProgressDirection.RIGHT;
 import static org.eventb.internal.core.parser.SubParsers.BOUND_IDENT_DECL_SUBPARSER;
 import static org.eventb.internal.core.parser.SubParsers.FREE_IDENT_SUBPARSER;
+import static org.eventb.internal.core.parser.SubParsers.NO_DECL;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -56,6 +57,7 @@ import org.eventb.internal.core.parser.GenParser.SyntaxError;
 import org.eventb.internal.core.parser.GenParser.ParserContext.SavedContext;
 import org.eventb.internal.core.parser.IParserPrinter.SubParseResult;
 import org.eventb.internal.core.parser.SubParsers.AbstractNudParser;
+import org.eventb.internal.core.parser.SubParsers.OftypeParser;
 
 /**
  * Main parsers implement an algorithm for parsing a formula (or a part of a
@@ -410,11 +412,11 @@ public class MainParsers {
 				List<T> toPrint) {
 			final Iterator<T> iter = toPrint.iterator();
 			final T first = iter.next();
-			parser.toString(mediator, first);
+			mediator.subPrintNoPar(first, false, NO_DECL);
 			while(iter.hasNext()) {
 				mediator.append(",");
 				final T next = iter.next();
-				parser.toString(mediator, next);
+				mediator.subPrintNoPar(next, false, NO_DECL);
 			}
 		}
 		
@@ -423,8 +425,35 @@ public class MainParsers {
 	static final AbstListParser<Expression> EXPR_LIST_PARSER = new AbstListParser<Expression>(EXPR_PARSER);
 	
 	static final AbstListParser<FreeIdentifier> FREE_IDENT_LIST_PARSER = new AbstListParser<FreeIdentifier>(FREE_IDENT_SUBPARSER);
+
+	public static class BoundIdentDeclListParser extends AbstListParser<BoundIdentDecl> {
+
+		public BoundIdentDeclListParser() {
+			super(BOUND_IDENT_DECL_SUBPARSER);
+		}
+		
+		public void toString(IToStringMediator mediator, List<BoundIdentDecl> toPrint, List<Formula<?>> boundPreds) {
+			final BoundIdentDecl[] decls = toPrint.toArray(new BoundIdentDecl[toPrint.size()]);
+			final String[] resolvedIdents = mediator.resolveIdents(decls, boundPreds);
+			printIdent(mediator, decls, resolvedIdents, 0);
+			for(int i=1;i<resolvedIdents.length;i++) {
+				mediator.append(",");
+				printIdent(mediator, decls, resolvedIdents, i);			
+			}
+		}
+
+		private static void printIdent(IToStringMediator mediator,
+				final BoundIdentDecl[] decls, final String[] resolvedIdents,
+				int index) {
+			mediator.append(resolvedIdents[index]);
+			if (mediator.isWithTypes() && decls[index].isTypeChecked()) {
+				OftypeParser.appendOftype(mediator, decls[index].getType());
+			}
+		}
+		
+	}
 	
-	static final AbstListParser<BoundIdentDecl> BOUND_IDENT_DECL_LIST_PARSER = new AbstListParser<BoundIdentDecl>(BOUND_IDENT_DECL_SUBPARSER);
+	static final BoundIdentDeclListParser BOUND_IDENT_DECL_LIST_PARSER = new BoundIdentDeclListParser();
 	
 	static List<BoundIdentDecl> makePrimedDecl(List<FreeIdentifier> lhsList, FormulaFactory factory) {
 		final List<BoundIdentDecl> decls = new ArrayList<BoundIdentDecl>(lhsList.size());

@@ -98,6 +98,7 @@ public class TestGenParser extends AbstractTests {
 	private static final FreeIdentifier FRID_S = ff.makeFreeIdentifier("S", null);
 	private static final GivenType S_TYPE = ff.makeGivenType("S");
 	private static final PowerSetType POW_S_TYPE = ff.makePowerSetType(S_TYPE);
+	private static final FreeIdentifier FRID_x = ff.makeFreeIdentifier("x", null);
 	private static final FreeIdentifier FRID_a = ff.makeFreeIdentifier("a", null);
 	private static final FreeIdentifier FRID_b = ff.makeFreeIdentifier("b", null);
 	private static final FreeIdentifier FRID_c = ff.makeFreeIdentifier("c", null);
@@ -2098,5 +2099,34 @@ public class TestGenParser extends AbstractTests {
 				ff.makeIntegerLiteral(BigInteger.ONE.negate(), null), null);
 		doParseUnparseTest("(−1)∼", expected);
 
+	}
+	
+	public void testBoundIdentRenamingPred() throws Exception {
+		final Predicate expected = ff.makeQuantifiedPredicate(FORALL,
+				asList(BID_x),
+				ff.makeRelationalPredicate(EQUAL,
+						FRID_x,
+						BI_0, null), null);
+		final String predStr = expected.toString();
+		doPredicateTest(predStr, expected);
+	}
+	
+	public void testBoundIdentRenamingExpr() throws Exception {
+		final QuantifiedExpression expected = ff.makeQuantifiedExpression(QUNION,
+				asList(BID_x),
+				LIT_BTRUE,
+				ff.makeAssociativeExpression(MUL,
+						Arrays.<Expression>asList(FRID_x, BI_0), null),
+				null, Form.Explicit);
+		final String predStr = expected.toString();
+		doExpressionTest(predStr, expected);
+	}
+	
+	public void testTypedBoundDecl() throws Exception {
+		final Predicate expected = ff.makeQuantifiedPredicate(FORALL,
+				asList(ff.makeBoundIdentDecl("x", null, INT_TYPE)),
+				LIT_BTRUE, null);
+		final String predStr = expected.toStringWithTypes();
+		assertEquals("∀x ⦂ ℤ·⊤", predStr);
 	}
 }
