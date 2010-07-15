@@ -165,12 +165,34 @@ public class SubParsers {
 			super.toString(mediator, toPrint);
 			mediator.append("(");
 			// FIXME should forbid direct calls to toString,
-			// replace with subPrint to have the correct tag
-			childParser.toString(mediator, getChild(toPrint));
+			// replace with subPrint
+			U child = getChild(toPrint);
+			printChild(mediator, child);
 			mediator.append(")");
+		}
+
+		protected void printChild(IToStringMediator mediator, U child) {
+			childParser.toString(mediator, child);
 		}
 		
 		protected abstract T makeValue(FormulaFactory factory, U child, SourceLocation loc) throws SyntaxError;
+	}
+	
+	private static abstract class ParenNudFormulaChildParser<T, U extends Formula<?>> extends ParenNudParser<T, U> {
+
+		protected ParenNudFormulaChildParser(int kind, int tag,
+				INudParser<U> childParser) {
+			super(kind, tag, childParser);
+		}
+		
+		@Override
+		protected void printChild(IToStringMediator mediator, U child) {
+			if (child.getTag() == INTLIT) {
+				INTLIT_SUBPARSER.toStringNoParen(mediator, (IntegerLiteral) child);
+				return;
+			}
+			mediator.subPrintNoPar(child, true, NO_DECL);
+		}
 	}
 	
 	private static abstract class ValuedNudParser<T> extends AbstractNudParser<T> {
@@ -417,8 +439,12 @@ public class SubParsers {
 		}
 	};
 
-	public static final INudParser<IntegerLiteral> INTLIT_SUBPARSER = new ValuedNudParser<IntegerLiteral>(BMath._INTLIT) {
-	
+	public static class IntLitSubParser extends ValuedNudParser<IntegerLiteral> {
+
+		protected IntLitSubParser() {
+			super(BMath._INTLIT);
+		}
+
 		@Override
 		protected IntegerLiteral makeValue(ParserContext pc, String tokenVal,
 				SourceLocation loc) throws SyntaxError {
@@ -434,7 +460,7 @@ public class SubParsers {
 						ProblemSeverities.Error));
 			}
 		}
-
+		
 		public void toString(IToStringMediator mediator, IntegerLiteral toPrint) {
 			final BigInteger literal = toPrint.getValue();			
 			
@@ -448,7 +474,12 @@ public class SubParsers {
 				mediator.append(")");
 			}
 		}
-
+		
+		public void toStringNoParen(IToStringMediator mediator, IntegerLiteral toPrint) {
+			final BigInteger literal = toPrint.getValue();
+			toStringInternal(mediator, literal);
+		}
+		
 		// Change the minus sign if any, so that it conforms to the mathematical
 		// language: \u2212 (minus sign) instead of \u002d (hyphen-minus).
 		private void toStringInternal(IToStringMediator mediator, BigInteger literal) {
@@ -461,8 +492,10 @@ public class SubParsers {
 			}
 		}
 		
-	};
-
+	}
+	
+	public static final IntLitSubParser INTLIT_SUBPARSER = new IntLitSubParser();
+	
 	public static final INudParser<Predicate> PRED_VAR_SUBPARSER = new ValuedNudParser<Predicate>(_PREDVAR) {
 
 		@Override
@@ -915,7 +948,7 @@ public class SubParsers {
 		}
 	}
 
-	public static class UnaryExpressionParser extends ParenNudParser<UnaryExpression, Expression> {
+	public static class UnaryExpressionParser extends ParenNudFormulaChildParser<UnaryExpression, Expression> {
 
 		public UnaryExpressionParser(int kind, int tag) {
 			super(kind, tag, EXPR_PARSER);
@@ -963,7 +996,7 @@ public class SubParsers {
 		}
 	}
 	
-	public static class KBoolParser extends ParenNudParser<BoolExpression, Predicate> {
+	public static class KBoolParser extends ParenNudFormulaChildParser<BoolExpression, Predicate> {
 
 		public KBoolParser(int kind) {
 			super(kind, KBOOL, PRED_PARSER);
@@ -1344,7 +1377,7 @@ public class SubParsers {
 
 	}
 
-	public static class FiniteParser extends ParenNudParser<SimplePredicate, Expression> {
+	public static class FiniteParser extends ParenNudFormulaChildParser<SimplePredicate, Expression> {
 
 		public FiniteParser(int kind) {
 			super(kind, KFINITE, EXPR_PARSER);
