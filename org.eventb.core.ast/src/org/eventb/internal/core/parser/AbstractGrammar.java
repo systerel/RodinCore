@@ -68,7 +68,7 @@ public abstract class AbstractGrammar {
 	
 	public boolean isOperator(int kind) {
 		// TODO could be replaced by 'there exists a tag for the given kind'
-		return opRegistry.hasGroup(kind) && !tokens.isReserved(kind);
+		return opRegistry.hasGroup(kind) && (!tokens.isReserved(kind) || kind == BMath._NEGLIT);
 	}
 	
 	public IndexedSet<String> getTokens() {

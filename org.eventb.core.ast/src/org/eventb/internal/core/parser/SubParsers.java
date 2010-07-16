@@ -189,10 +189,6 @@ public class SubParsers {
 		
 		@Override
 		protected void printChild(IToStringMediator mediator, U child) {
-			if (child.getTag() == INTLIT) {
-				INTLIT_SUBPARSER.toStringNoParen(mediator, (IntegerLiteral) child);
-				return;
-			}
 			mediator.subPrintNoPar(child, true, NO_DECL);
 		}
 	}
@@ -487,20 +483,8 @@ public class SubParsers {
 		public void toString(IToStringMediator mediator, IntegerLiteral toPrint) {
 			final BigInteger literal = toPrint.getValue();			
 			
-			final boolean bracketed = literal.signum() < 0;
-			if (bracketed) {
-				mediator.append("(");
-			}
 			toStringInternal(mediator, literal);
 			
-			if (bracketed) {
-				mediator.append(")");
-			}
-		}
-		
-		public void toStringNoParen(IToStringMediator mediator, IntegerLiteral toPrint) {
-			final BigInteger literal = toPrint.getValue();
-			toStringInternal(mediator, literal);
 		}
 		
 		// Change the minus sign if any, so that it conforms to the mathematical

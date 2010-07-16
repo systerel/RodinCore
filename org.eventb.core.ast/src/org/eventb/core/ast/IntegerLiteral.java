@@ -13,6 +13,7 @@
 package org.eventb.core.ast;
 
 import static org.eventb.internal.core.parser.AbstractGrammar._INTLIT;
+import static org.eventb.internal.core.parser.BMath._NEGLIT;
 import static org.eventb.internal.core.parser.SubParsers.INTLIT_SUBPARSER;
 
 import java.math.BigInteger;
@@ -112,7 +113,11 @@ public class IntegerLiteral extends Expression {
 
 	@Override
 	protected final int getKind(KindMediator mediator) {
-		return _INTLIT;
+		if (literal.signum() == -1) {
+			return _NEGLIT;
+		} else {
+			return _INTLIT;
+		}
 	}
 
 	@Override

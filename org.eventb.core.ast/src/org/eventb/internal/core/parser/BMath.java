@@ -74,6 +74,8 @@ public abstract class BMath extends AbstractGrammar {
 	public LanguageVersion getVersion() {
 		return version;
 	}
+
+	private static final String NEGLIT_IMAGE = "a negative integer literal";
 	
 	public static final String RELOP_PRED = "Relational Operator Predicate";
 	public static final String QUANTIFICATION = "Quantification";
@@ -97,6 +99,7 @@ public abstract class BMath extends AbstractGrammar {
 	public static final String INFIX_SUBST = "Infix Substitution";
 	
 	private static final String OFTYPE_ID = "Oftype";
+	private static final String NEGLIT_ID = "Negative Literal";
 	
 	/**
 	 * Configuration table used to parameterize the scanner, with Rodin
@@ -113,6 +116,7 @@ public abstract class BMath extends AbstractGrammar {
 		_KPARTITION = tokens.getOrAdd("partition");
 	}
 
+	public static final int _NEGLIT = publicTokens.reserved(NEGLIT_IMAGE);
 	static int _RBRACE;
 	public static int _RBRACKET;
 	static int _MAPSTO;
@@ -175,6 +179,9 @@ public abstract class BMath extends AbstractGrammar {
 			
 			// Undefined Operators
 			addOperator("\u2982", OFTYPE_ID, TYPED, OFTYPE, true);
+			
+			addOperator(_NEGLIT, NEGLIT_ID, BMath.ARITHMETIC, null, false);
+
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -226,6 +233,8 @@ public abstract class BMath extends AbstractGrammar {
 		addCompatibility(DIV_ID, MOD_ID);
 		addCompatibility(MOD_ID, DIV_ID);
 		addCompatibility(MOD_ID, MUL_ID);
+		addCompatibility(NEGLIT_ID, PLUS_ID);
+		addCompatibility(NEGLIT_ID, MINUS_ID);
 		
 		// CONVERSE is compatible with itself but not associative (meaningless)
 		// => parentheses are required for printing r~~
