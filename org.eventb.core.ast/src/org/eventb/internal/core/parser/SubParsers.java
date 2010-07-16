@@ -443,7 +443,7 @@ public class SubParsers {
 			// is the root formula (practically, concerns tests only).
 			mediator.append(toPrint.getName());
 			if (mediator.isWithTypes() && toPrint.isTypeChecked()) {
-				OftypeParser.appendOftype(mediator, toPrint.getType());
+				OftypeParser.appendOftype(mediator, toPrint.getType(), false);
 			}
 		}
 	}
@@ -632,11 +632,11 @@ public class SubParsers {
 
 		public void toString(IToStringMediator mediator, Expression toPrint) {
 			mediator.subPrint(toPrint, false, NO_DECL, false);
-			appendOftype(mediator, toPrint.getType());
+			appendOftype(mediator, toPrint.getType(), true);
 		}
 
-		public static void appendOftype(IToStringMediator mediator, Type type) {
-			mediator.appendImage(_TYPING);
+		public static void appendOftype(IToStringMediator mediator, Type type, boolean withSpaces) {
+			mediator.appendImage(_TYPING, withSpaces);
 			mediator.append(type.toString());
 		}
 

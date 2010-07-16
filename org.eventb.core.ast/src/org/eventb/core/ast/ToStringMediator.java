@@ -166,7 +166,7 @@ import org.eventb.internal.core.parser.SubParsers;
 		appendImage(lexKind, spaced);
 	}
 	
-	private void appendImage(int lexKind, boolean withSpaces) {
+	public void appendImage(int lexKind, boolean withSpaces) {
 		// TODO make a cache or compute image of this.kind and check if ==
 		final AbstractGrammar grammar = factory.getGrammar();
 		final String image = grammar.getImage(lexKind);

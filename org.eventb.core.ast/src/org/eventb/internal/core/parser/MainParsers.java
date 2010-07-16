@@ -446,7 +446,7 @@ public class MainParsers {
 				int index) {
 			mediator.append(resolvedIdents[index]);
 			if (mediator.isWithTypes() && decls[index].isTypeChecked()) {
-				OftypeParser.appendOftype(mediator, decls[index].getType());
+				OftypeParser.appendOftype(mediator, decls[index].getType(), false);
 			}
 		}
 		

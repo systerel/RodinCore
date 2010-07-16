@@ -84,41 +84,41 @@ import org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship;
  */
 public class TestGenParser extends AbstractTests {
 
-	private static final BoundIdentifier BI_0 = ff.makeBoundIdentifier(0, null);
-	private static final BoundIdentifier BI_1 = ff.makeBoundIdentifier(1, null);
-	private static final BoundIdentifier BI_2 = ff.makeBoundIdentifier(2, null);
-	private static final BoundIdentifier BI_3 = ff.makeBoundIdentifier(3, null);
-	private static final BoundIdentDecl BID_u = ff.makeBoundIdentDecl("u", null);
-	private static final BoundIdentDecl BID_x = ff.makeBoundIdentDecl("x", null);
-	private static final BoundIdentDecl BID_y = ff.makeBoundIdentDecl("y", null);
-	private static final BoundIdentDecl BID_z = ff.makeBoundIdentDecl("z", null);
-	private static final LiteralPredicate LIT_BFALSE = ff.makeLiteralPredicate(
+	protected static final BoundIdentifier BI_0 = ff.makeBoundIdentifier(0, null);
+	protected static final BoundIdentifier BI_1 = ff.makeBoundIdentifier(1, null);
+	protected static final BoundIdentifier BI_2 = ff.makeBoundIdentifier(2, null);
+	protected static final BoundIdentifier BI_3 = ff.makeBoundIdentifier(3, null);
+	protected static final BoundIdentDecl BID_u = ff.makeBoundIdentDecl("u", null);
+	protected static final BoundIdentDecl BID_x = ff.makeBoundIdentDecl("x", null);
+	protected static final BoundIdentDecl BID_y = ff.makeBoundIdentDecl("y", null);
+	protected static final BoundIdentDecl BID_z = ff.makeBoundIdentDecl("z", null);
+	protected static final LiteralPredicate LIT_BFALSE = ff.makeLiteralPredicate(
 							Formula.BFALSE, null);
-	private static final LiteralPredicate LIT_BTRUE = ff.makeLiteralPredicate(
+	protected static final LiteralPredicate LIT_BTRUE = ff.makeLiteralPredicate(
 							Formula.BTRUE, null);
-	private static final AtomicExpression ATOM_TRUE = ff.makeAtomicExpression(TRUE, null);
-	private static final IntegerLiteral ZERO = ff.makeIntegerLiteral(BigInteger.ZERO, null);
-	private static final IntegerLiteral ONE = ff.makeIntegerLiteral(BigInteger.ONE, null);
-	private static final AtomicExpression EMPTY = ff.makeEmptySet(null, null);
-	private static final FreeIdentifier FRID_S = ff.makeFreeIdentifier("S", null);
-	private static final GivenType S_TYPE = ff.makeGivenType("S");
-	private static final PowerSetType POW_S_TYPE = ff.makePowerSetType(S_TYPE);
-	private static final FreeIdentifier FRID_x = ff.makeFreeIdentifier("x", null);
-	private static final FreeIdentifier FRID_y = ff.makeFreeIdentifier("y", null);
-	private static final FreeIdentifier FRID_a = ff.makeFreeIdentifier("a", null);
-	private static final FreeIdentifier FRID_b = ff.makeFreeIdentifier("b", null);
-	private static final FreeIdentifier FRID_c = ff.makeFreeIdentifier("c", null);
-	private static final FreeIdentifier FRID_A = ff.makeFreeIdentifier("A", null);
-	private static final FreeIdentifier FRID_B = ff.makeFreeIdentifier("B", null);
-	private static final FreeIdentifier FRID_C = ff.makeFreeIdentifier("C", null);
-	private static final FreeIdentifier FRID_f = ff.makeFreeIdentifier("f", null);
-	private static final PredicateVariable PV_P = ff.makePredicateVariable("$P", null);
-	private static final AtomicExpression INT = ff.makeAtomicExpression(Formula.INTEGER, null);
-	private static final UnaryExpression POW_INT = ff.makeUnaryExpression(POW, INT, null);
-	private static final IntegerType INT_TYPE = ff.makeIntegerType();
-	private static final PowerSetType POW_INT_TYPE = ff.makePowerSetType(INT_TYPE);
-	private static final PowerSetType REL_INT_INT = ff.makeRelationalType(INT_TYPE, INT_TYPE);
-	private static final SourceLocationChecker slChecker = new SourceLocationChecker();
+	protected static final AtomicExpression ATOM_TRUE = ff.makeAtomicExpression(TRUE, null);
+	protected static final IntegerLiteral ZERO = ff.makeIntegerLiteral(BigInteger.ZERO, null);
+	protected static final IntegerLiteral ONE = ff.makeIntegerLiteral(BigInteger.ONE, null);
+	protected static final AtomicExpression EMPTY = ff.makeEmptySet(null, null);
+	protected static final FreeIdentifier FRID_S = ff.makeFreeIdentifier("S", null);
+	protected static final GivenType S_TYPE = ff.makeGivenType("S");
+	protected static final PowerSetType POW_S_TYPE = ff.makePowerSetType(S_TYPE);
+	protected static final FreeIdentifier FRID_x = ff.makeFreeIdentifier("x", null);
+	protected static final FreeIdentifier FRID_y = ff.makeFreeIdentifier("y", null);
+	protected static final FreeIdentifier FRID_a = ff.makeFreeIdentifier("a", null);
+	protected static final FreeIdentifier FRID_b = ff.makeFreeIdentifier("b", null);
+	protected static final FreeIdentifier FRID_c = ff.makeFreeIdentifier("c", null);
+	protected static final FreeIdentifier FRID_A = ff.makeFreeIdentifier("A", null);
+	protected static final FreeIdentifier FRID_B = ff.makeFreeIdentifier("B", null);
+	protected static final FreeIdentifier FRID_C = ff.makeFreeIdentifier("C", null);
+	protected static final FreeIdentifier FRID_f = ff.makeFreeIdentifier("f", null);
+	protected static final PredicateVariable PV_P = ff.makePredicateVariable("$P", null);
+	protected static final AtomicExpression INT = ff.makeAtomicExpression(Formula.INTEGER, null);
+	protected static final UnaryExpression POW_INT = ff.makeUnaryExpression(POW, INT, null);
+	protected static final IntegerType INT_TYPE = ff.makeIntegerType();
+	protected static final PowerSetType POW_INT_TYPE = ff.makePowerSetType(INT_TYPE);
+	protected static final PowerSetType REL_INT_INT = ff.makeRelationalType(INT_TYPE, INT_TYPE);
+	protected static final SourceLocationChecker slChecker = new SourceLocationChecker();
 
 	private static void assertFailure(IParseResult result, ASTProblem expected) {
 		assertTrue("expected parsing to fail", result.hasProblem());
@@ -2206,6 +2206,6 @@ public class TestGenParser extends AbstractTests {
 				asList(ff.makeBoundIdentDecl("x", null, INT_TYPE)),
 				LIT_BTRUE, null);
 		final String predStr = expected.toStringWithTypes();
-		assertEquals("∀x ⦂ ℤ·⊤", predStr);
+		assertEquals("∀x⦂ℤ·⊤", predStr);
 	}
 }
