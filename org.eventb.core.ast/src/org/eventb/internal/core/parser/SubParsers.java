@@ -76,7 +76,7 @@ import org.eventb.internal.core.parser.MainParsers.PatternParser;
  */
 public class SubParsers {
 
-	private static final String SPACE = " ";
+	static final String SPACE = " ";
 	private static final Predicate[] NO_PRED = new Predicate[0];
 	static final String[] NO_DECL = new String[0];
 

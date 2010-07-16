@@ -415,15 +415,27 @@ public class MainParsers {
 			final T first = iter.next();
 			mediator.subPrintNoPar(first, false, NO_DECL);
 			while(iter.hasNext()) {
-				mediator.append(",");
+				appendSeparator(mediator);
 				final T next = iter.next();
 				mediator.subPrintNoPar(next, false, NO_DECL);
 			}
+		}
+
+		protected void appendSeparator(IToStringMediator mediator) {
+			mediator.append(",");
 		}
 		
 	}
 
 	static final AbstListParser<Expression> EXPR_LIST_PARSER = new AbstListParser<Expression>(EXPR_PARSER);
+	
+	static final AbstListParser<Expression> SPACED_EXPR_LIST_PARSER = new AbstListParser<Expression>(EXPR_PARSER) {
+		@Override
+		protected void appendSeparator(IToStringMediator mediator) {
+			super.appendSeparator(mediator);
+			mediator.append(SubParsers.SPACE);
+		}
+	};
 	
 	static final AbstListParser<FreeIdentifier> FREE_IDENT_LIST_PARSER = new AbstListParser<FreeIdentifier>(FREE_IDENT_SUBPARSER);
 
@@ -521,7 +533,7 @@ public class MainParsers {
 			FREE_IDENT_LIST_PARSER.toString(mediator, asList(idents));
 			mediator.appendImage(kind);
 			final Expression[] expressions = toPrint.getExpressions();
-			EXPR_LIST_PARSER.toString(mediator, asList(expressions));
+			SPACED_EXPR_LIST_PARSER.toString(mediator, asList(expressions));
 		}
 		
 	}
