@@ -359,7 +359,7 @@ public class MainParsers {
 				final Expression left = maplet.getLeft();
 				final Expression right = maplet.getRight();
 				appendPattern(mediator, left, identDecls, boundNames);
-				mediator.appendImage(_MAPSTO, false);
+				mediator.appendImage(_MAPSTO);
 				final boolean needsParen = right.getTag() == MAPSTO;
 				if (needsParen) mediator.append("(");
 				appendPattern(mediator, right, identDecls, boundNames);
