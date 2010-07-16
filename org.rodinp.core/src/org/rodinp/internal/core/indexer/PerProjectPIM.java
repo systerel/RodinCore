@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.rodinp.internal.core.indexer;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,7 +26,7 @@ public class PerProjectPIM {
 	private final Map<IRodinProject, ProjectIndexManager> pims;
 
 	public PerProjectPIM() {
-		this.pims = new HashMap<IRodinProject, ProjectIndexManager>();
+		this.pims = new LinkedHashMap<IRodinProject, ProjectIndexManager>();
 	}
 
 	public Set<IRodinProject> projects() {
