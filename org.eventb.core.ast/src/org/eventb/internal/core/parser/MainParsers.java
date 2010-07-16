@@ -569,6 +569,12 @@ public class MainParsers {
 
 		public SubParseResult<BecomesMemberOf> nud(ParserContext pc) throws SyntaxError {
 			final FreeIdentifier ident = pc.subParse(FREE_IDENT_SUBPARSER, false);
+			if (pc.t.kind == _COMMA) {
+				throw new SyntaxError(new ASTProblem(pc
+						.makeSourceLocation(pc.t),
+						ProblemKind.BECMOAppliesToOneIdent,
+						ProblemSeverities.Error));
+			}
 			pc.progress(kind);
 			final Expression expr = pc.subParseNoParentNoCheck(EXPR_PARSER, Collections.<BoundIdentDecl>emptyList());
 			final BecomesMemberOf bmo = pc.factory.makeBecomesMemberOf(ident, expr, pc.getSourceLocation());

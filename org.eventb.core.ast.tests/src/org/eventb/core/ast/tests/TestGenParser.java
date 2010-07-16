@@ -1336,7 +1336,7 @@ public class TestGenParser extends AbstractTests {
 	}
 
 	public void testBecomesMemberOfList() throws Exception {
-		final ASTProblem becmoError = new ASTProblem(new SourceLocation(4, 5),
+		final ASTProblem becmoError = new ASTProblem(new SourceLocation(1, 1),
 				ProblemKind.BECMOAppliesToOneIdent, ProblemSeverities.Error);
 		assertFailure(ff.parseAssignment("a,b :∈ S", LanguageVersion.V2, null),
 				becmoError);
