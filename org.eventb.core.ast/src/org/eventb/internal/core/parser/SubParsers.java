@@ -66,6 +66,7 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.GenParser.ParserContext;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
+import org.eventb.internal.core.parser.MainParsers.BoundIdentDeclListParser;
 import org.eventb.internal.core.parser.MainParsers.PatternParser;
 
 /**
@@ -438,7 +439,8 @@ public class SubParsers {
 		public void toString(IToStringMediator mediator, BoundIdentDecl toPrint) {
 			// bound name renaming has to be performed with knowledge of
 			// bound predicate where this bound declaration occurs;
-			// hence the printing has to be performed from upper containers;
+			// hence the printing has to be performed from upper containers,
+			// using the static method below;
 			// this method only manages the case where the printed declaration
 			// is the root formula (practically, concerns tests only).
 			mediator.append(toPrint.getName());
@@ -446,6 +448,16 @@ public class SubParsers {
 				OftypeParser.appendOftype(mediator, toPrint.getType(), false);
 			}
 		}
+		
+		public static void printIdent(IToStringMediator mediator,
+				final BoundIdentDecl[] decls, final String[] resolvedIdents,
+				int index) {
+			mediator.append(resolvedIdents[index]);
+			if (mediator.isWithTypes() && decls[index].isTypeChecked()) {
+				OftypeParser.appendOftype(mediator, decls[index].getType(), false);
+			}
+		}
+		
 	}
 	
 	public static final BoundIdentDeclSubParser BOUND_IDENT_DECL_SUBPARSER = new BoundIdentDeclSubParser();
@@ -554,7 +566,7 @@ public class SubParsers {
 			return new SubParseResult<Expression>(result, kind);
 		}
 
-		private boolean isTypedGeneric(int tag) {
+		private static boolean isTypedGeneric(int tag) {
 			switch (tag) {
 			case Formula.EMPTYSET:
 			case Formula.KID_GEN:
@@ -571,7 +583,7 @@ public class SubParsers {
 					ProblemKind.UnexpectedOftype, ProblemSeverities.Error));
 		}
 		
-		private boolean checkValidTypedGeneric(int tag, Type type,
+		private static boolean checkValidTypedGeneric(int tag, Type type,
 				SourceLocation typeLoc, ParseResult result) throws SyntaxError {
 			switch (tag) {
 			case Formula.EMPTYSET:
@@ -606,14 +618,14 @@ public class SubParsers {
 			return true;
 		}
 
-		private ASTProblem newInvalidGenType(SourceLocation loc, String expected) {
+		private static ASTProblem newInvalidGenType(SourceLocation loc, String expected) {
 			return new ASTProblem(loc,
 					ProblemKind.InvalidGenericType,
 					ProblemSeverities.Error,
 					expected);
 		}
 		
-		private boolean isValidPrjType(Type type, boolean left) {
+		private static boolean isValidPrjType(Type type, boolean left) {
 			final Type source = type.getSource();
 			final Type target = type.getTarget();
 			if (!(source instanceof ProductType)) {
@@ -1078,7 +1090,7 @@ public class SubParsers {
 		}
 		
 		protected void printBoundIdentDecls(IToStringMediator mediator, BoundIdentDecl[] boundDecls) {
-			BOUND_IDENT_DECL_LIST_PARSER.toString(mediator, boundDecls, getLocalNames());
+			BoundIdentDeclListParser.toString(mediator, boundDecls, getLocalNames());
 		}
 	}
 	
@@ -1216,11 +1228,13 @@ public class SubParsers {
 		public void toString(IToStringMediator mediator,
 				QuantifiedExpression toPrint) {
 			super.toString(mediator, toPrint);
-			final Expression chile = toPrint.getExpression();
-			assert chile.getTag() == MAPSTO;
-			final BinaryExpression pair = (BinaryExpression)chile;
+			final Expression child = toPrint.getExpression();
+			assert child.getTag() == MAPSTO;
+			final BinaryExpression pair = (BinaryExpression) child;
 			final Expression pattern = pair.getLeft();
-			mediator.subPrint(pattern, false, getLocalNames());
+			
+			PatternParser.appendPattern(mediator, pattern, toPrint.getBoundIdentDecls(), getLocalNames());
+			
 			mediator.appendImage(_DOT);
 			mediator.subPrintNoPar(toPrint.getPredicate(), false, getLocalNames());
 			printMid(mediator);

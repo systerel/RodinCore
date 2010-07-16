@@ -2197,7 +2197,7 @@ public class TestGenParser extends AbstractTests {
 				null, Form.Lambda);
 		// TODO
 		final String implStr = expected.toString();
-		assertEquals("bad toString", "λx0 ↦ y0·x0>y ∣ x+y0", implStr);
+		assertEquals("bad toString", "λx0↦y0·x0>y ∣ x+y0", implStr);
 		doExpressionTest(implStr, expected);
 	}
 	

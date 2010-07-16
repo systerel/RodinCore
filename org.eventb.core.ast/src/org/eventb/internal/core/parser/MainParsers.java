@@ -17,6 +17,8 @@ import static org.eventb.core.ast.BecomesSuchThat.OP_BECST;
 import static org.eventb.core.ast.Formula.BECOMES_EQUAL_TO;
 import static org.eventb.core.ast.Formula.BECOMES_MEMBER_OF;
 import static org.eventb.core.ast.Formula.BECOMES_SUCH_THAT;
+import static org.eventb.core.ast.Formula.BOUND_IDENT;
+import static org.eventb.core.ast.Formula.MAPSTO;
 import static org.eventb.core.ast.ProblemKind.PrematureEOF;
 import static org.eventb.internal.core.parser.AbstractGrammar._COMMA;
 import static org.eventb.internal.core.parser.AbstractGrammar._EOF;
@@ -27,6 +29,7 @@ import static org.eventb.internal.core.parser.GenParser.ProgressDirection.RIGHT;
 import static org.eventb.internal.core.parser.SubParsers.BOUND_IDENT_DECL_SUBPARSER;
 import static org.eventb.internal.core.parser.SubParsers.FREE_IDENT_SUBPARSER;
 import static org.eventb.internal.core.parser.SubParsers.NO_DECL;
+import static org.eventb.internal.core.parser.SubParsers.BoundIdentDeclSubParser.printIdent;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,7 +43,9 @@ import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.BecomesMemberOf;
 import org.eventb.core.ast.BecomesSuchThat;
+import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
@@ -58,7 +63,6 @@ import org.eventb.internal.core.parser.GenParser.SyntaxError;
 import org.eventb.internal.core.parser.GenParser.ParserContext.SavedContext;
 import org.eventb.internal.core.parser.IParserPrinter.SubParseResult;
 import org.eventb.internal.core.parser.SubParsers.AbstractNudParser;
-import org.eventb.internal.core.parser.SubParsers.OftypeParser;
 
 /**
  * Main parsers implement an algorithm for parsing a formula (or a part of a
@@ -347,6 +351,33 @@ public class MainParsers {
 			return new SubParseResult<Pattern>(pattern, _MAPSTO);
 		}
 
+		public static void appendPattern(IToStringMediator mediator, Expression pattern,
+				BoundIdentDecl[] identDecls, String[] boundNames) {
+			switch (pattern.getTag()) {
+			case MAPSTO:
+				final BinaryExpression maplet = (BinaryExpression) pattern;
+				final Expression left = maplet.getLeft();
+				final Expression right = maplet.getRight();
+				appendPattern(mediator, left, identDecls, boundNames);
+				mediator.appendImage(_MAPSTO, false);
+				final boolean needsParen = right.getTag() == MAPSTO;
+				if (needsParen) mediator.append("(");
+				appendPattern(mediator, right, identDecls, boundNames);
+				if (needsParen) mediator.append(")");
+				break;
+			case BOUND_IDENT:
+				final BoundIdentifier ident = (BoundIdentifier) pattern;
+				final int length = identDecls.length;
+				final int idx = length - ident.getBoundIndex() - 1;
+				printIdent(mediator, identDecls, boundNames, idx);
+				break;
+			default:
+				assert false;
+				break;
+			}
+
+		}
+		
 		// needed as a parser in order to be passed to pc.subParse
 		// so as to get correct source locations
 		private static class PatternAtomParser extends AbstractMainParser<Object> {
@@ -445,23 +476,15 @@ public class MainParsers {
 			super(BOUND_IDENT_DECL_SUBPARSER);
 		}
 		
-		public void toString(IToStringMediator mediator, BoundIdentDecl[] decls, String[] localNames) {
+		public static void toString(IToStringMediator mediator, BoundIdentDecl[] decls, String[] localNames) {
+			assert decls.length == localNames.length;
 			printIdent(mediator, decls, localNames, 0);
-			for(int i=1;i<localNames.length;i++) {
+			for (int i = 1; i < decls.length; i++) {
 				mediator.append(",");
-				printIdent(mediator, decls, localNames, i);			
+				printIdent(mediator, decls, localNames, i);
 			}
 		}
 
-		private static void printIdent(IToStringMediator mediator,
-				final BoundIdentDecl[] decls, final String[] resolvedIdents,
-				int index) {
-			mediator.append(resolvedIdents[index]);
-			if (mediator.isWithTypes() && decls[index].isTypeChecked()) {
-				OftypeParser.appendOftype(mediator, decls[index].getType(), false);
-			}
-		}
-		
 	}
 	
 	static final BoundIdentDeclListParser BOUND_IDENT_DECL_LIST_PARSER = new BoundIdentDeclListParser();
