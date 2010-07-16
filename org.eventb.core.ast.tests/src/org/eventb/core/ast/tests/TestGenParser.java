@@ -23,10 +23,14 @@ import java.util.Set;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Assignment;
+import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.AtomicExpression;
+import org.eventb.core.ast.BecomesEqualTo;
+import org.eventb.core.ast.BecomesMemberOf;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
+import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Formula;
@@ -47,6 +51,7 @@ import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
+import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
@@ -99,6 +104,7 @@ public class TestGenParser extends AbstractTests {
 	private static final GivenType S_TYPE = ff.makeGivenType("S");
 	private static final PowerSetType POW_S_TYPE = ff.makePowerSetType(S_TYPE);
 	private static final FreeIdentifier FRID_x = ff.makeFreeIdentifier("x", null);
+	private static final FreeIdentifier FRID_y = ff.makeFreeIdentifier("y", null);
 	private static final FreeIdentifier FRID_a = ff.makeFreeIdentifier("a", null);
 	private static final FreeIdentifier FRID_b = ff.makeFreeIdentifier("b", null);
 	private static final FreeIdentifier FRID_c = ff.makeFreeIdentifier("c", null);
@@ -2098,7 +2104,26 @@ public class TestGenParser extends AbstractTests {
 		final Expression expected = ff.makeUnaryExpression(CONVERSE,
 				ff.makeIntegerLiteral(BigInteger.ONE.negate(), null), null);
 		doParseUnparseTest("(−1)∼", expected);
+	}
+	
+	public void testUnionSetExt() throws Exception {
+		final Expression expected = ff.makeAssociativeExpression(BUNION,
+				Arrays.<Expression> asList(
+						ff.makeSetExtension(FRID_a, null),
+						ff.makeSetExtension(Arrays.<Expression>asList(FRID_b, FRID_c), null)
+						), null);
 
+		doExpressionTest("{a} ∪ {b,c}", expected);
+	}
+	
+	public void testBecMoSetExt() throws Exception {
+		final BecomesMemberOf expected = ff.makeBecomesMemberOf(FRID_a, ff.makeSetExtension(Arrays.<Expression>asList(FRID_b, FRID_c), null), null);
+		doAssignmentTest("a :∈ {b,c}", expected);
+	}
+	
+	public void testBecEqSetExt() throws Exception {
+		final BecomesEqualTo expected = ff.makeBecomesEqualTo(FRID_a, ff.makeSetExtension(Arrays.<Expression>asList(FRID_b, FRID_c), null), null);
+		doAssignmentTest("a ≔ {b,c}", expected);
 	}
 	
 	public void testBoundIdentRenamingPred() throws Exception {
@@ -2111,15 +2136,69 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest(predStr, expected);
 	}
 	
-	public void testBoundIdentRenamingExpr() throws Exception {
+	public void testBoundIdentRenamingExprExplicit() throws Exception {
 		final QuantifiedExpression expected = ff.makeQuantifiedExpression(QUNION,
-				asList(BID_x),
-				LIT_BTRUE,
+				asList(BID_x, BID_y),
+				ff.makeRelationalPredicate(EQUAL,
+						FRID_x,
+						ZERO, null),
 				ff.makeAssociativeExpression(MUL,
-						Arrays.<Expression>asList(FRID_x, BI_0), null),
+						Arrays.<Expression>asList(FRID_y, ONE), null),
 				null, Form.Explicit);
 		final String predStr = expected.toString();
+		assertEquals("bad renaming", "⋃x0,y0·x=0 ∣ y∗1", predStr);
 		doExpressionTest(predStr, expected);
+	}
+	
+	public void testBoundIdentRenamingExprImplicit() throws Exception {
+		final QuantifiedExpression expected = ff.makeQuantifiedExpression(QUNION,
+				asList(BID_x, BID_y),
+				ff.makeRelationalPredicate(LT,
+						BI_1,
+						BI_0, null),
+				ff.makeAssociativeExpression(MUL,
+						Arrays.<Expression>asList(BI_1, BI_0), null),
+				null, Form.Implicit);
+		final String implStr = expected.toString();
+		assertEquals("bad toString", "⋃x∗y ∣ x<y", implStr);
+		doExpressionTest(implStr, expected);
+		
+		final Expression exprFreeIdents = expected.rewrite(new DefaultRewriter(false, ff) {
+			@Override
+			public Expression rewrite(AssociativeExpression expression) {
+				// rewrite x*y  with free x
+				return ff.makeAssociativeExpression(MUL,
+						Arrays.<Expression>asList(FRID_x, BI_0), null);
+			}
+			@Override
+			public Predicate rewrite(RelationalPredicate predicate) {
+				// rewrite x<y with free y
+				return ff.makeRelationalPredicate(LT,
+						BI_1,
+						FRID_y, null);
+			}
+		});
+		
+		final String exprStr = exprFreeIdents.toString();
+		// explicit form because of the presence of free identifiers
+		assertEquals("bad renaming", "⋃x0,y0·x0<y ∣ x∗y0", exprStr);
+		doExpressionTest(exprStr, exprFreeIdents);
+	}
+	
+	public void testBoundIdentRenamingExprLambda() throws Exception {
+		final Expression expected = ff.makeQuantifiedExpression(CSET,
+				asList(BID_x, BID_y),
+				ff.makeRelationalPredicate(GT, BI_1, FRID_y, null),
+				ff.makeBinaryExpression(MAPSTO,
+						ff.makeBinaryExpression(MAPSTO,	BI_1, BI_0, null),
+						ff.makeAssociativeExpression(PLUS, 
+								Arrays.<Expression> asList(FRID_x, BI_0), null),
+						null),
+				null, Form.Lambda);
+		// TODO
+		final String implStr = expected.toString();
+		assertEquals("bad toString", "λx0 ↦ y0·x0>y ∣ x+y0", implStr);
+		doExpressionTest(implStr, expected);
 	}
 	
 	public void testTypedBoundDecl() throws Exception {

@@ -16,11 +16,6 @@ import static org.eventb.core.ast.Formula.KPRJ1_GEN;
 import static org.eventb.core.ast.Formula.KPRJ2_GEN;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.AbstractGrammar;
@@ -32,9 +27,10 @@ import org.eventb.internal.core.parser.SubParsers;
  */
 /* package */class ToStringMediator implements IToStringMediator {
 
-	private static final BoundIdentDecl[] NO_DECL = new BoundIdentDecl[0];
 	private static final char SPACE = ' ';
 	
+	private static final String[] NO_NAME = new String[0];
+
 	private final int kind;
 	protected final FormulaFactory factory;
 	protected final StringBuilder builder;
@@ -62,32 +58,32 @@ import org.eventb.internal.core.parser.SubParsers;
 	}
 
 	public void subPrint(Formula<?> child, boolean isRightOvr) {
-		subPrint(child, isRightOvr, NO_DECL);
+		subPrint(child, isRightOvr, NO_NAME);
 	}
 
 	public void subPrint(Formula<?> child, boolean isRightOvr,
-			BoundIdentDecl[] boundDecls) {
-		printChild(child, isRightOvr, boundDecls, withTypes);
+			String[] addedBoundNames) {
+		printChild(child, isRightOvr, addedBoundNames, withTypes);
 	}
 
 	public void subPrintNoPar(Formula<?> child, boolean isRightOvr,
-			BoundIdentDecl[] boundDecls) {
-		subPrintNoPar(child, isRightOvr, boundDecls, withTypes);
+			String[] addedBoundNames ) {
+		subPrintNoPar(child, isRightOvr, addedBoundNames, withTypes);
 	}
 
 	public void subPrint(Formula<?> child, boolean isRightOvr,
-			BoundIdentDecl[] boundDecls, boolean withTypesOvr) {
-		printChild(child, isRightOvr, boundDecls, withTypesOvr);
+			String[] addedBoundNames, boolean withTypesOvr) {
+		printChild(child, isRightOvr, addedBoundNames, withTypesOvr);
 	}
 
 	private void subPrintNoPar(Formula<?> child, boolean isRightOvr,
-			BoundIdentDecl[] boundDecls, boolean withTypesOvr) {
+			String[] addedBoundNames, boolean withTypesOvr) {
 		final int childKind = getKind(child, factory);
-		printFormula(child, childKind, isRightOvr, boundDecls, withTypesOvr, false);
+		printFormula(child, childKind, isRightOvr, addedBoundNames, withTypesOvr, false);
 	}
 
 	private void printChild(Formula<?> child, boolean isRightOvr,
-			BoundIdentDecl[] boundDecls, boolean withTypesOvr) {
+			String[] addedBoundNames, boolean withTypesOvr) {
 		final int childKind = getKind(child, factory);
 		final boolean needsParen;
 		if (withTypesOvr && isTypePrintable(child)) {
@@ -95,7 +91,7 @@ import org.eventb.internal.core.parser.SubParsers;
 		} else {
 			needsParen = needsParentheses(childKind, isRightOvr);
 		}
-		printFormula(child, childKind, isRightOvr, boundDecls, withTypesOvr, needsParen);
+		printFormula(child, childKind, isRightOvr, addedBoundNames, withTypesOvr, needsParen);
 	}
 
 	protected boolean needsParentheses(int childKind, boolean isRightOvr) {
@@ -104,11 +100,11 @@ import org.eventb.internal.core.parser.SubParsers;
 	}
 
 	private final void printFormula(Formula<?> formula, int formulaKind, boolean isRightOvr,
-			BoundIdentDecl[] boundDecls, boolean withTypesOvr, boolean withParen) {
+			String[] addedBoundNames, boolean withTypesOvr, boolean withParen) {
 		if (withParen) {
 			builder.append('(');
 		}
-		printFormula(formula, formulaKind, isRightOvr, boundDecls, withTypesOvr);
+		printFormula(formula, formulaKind, isRightOvr, addedBoundNames, withTypesOvr);
 		if (withParen) {
 			builder.append(')');
 		}
@@ -117,33 +113,23 @@ import org.eventb.internal.core.parser.SubParsers;
 	// FIXME same formula => remove argument and avoid recomputing kind
 	public void forward(Formula<?> formula) {
 		final int formulaKind = getKind(formula, factory);
-		printFormula(formula, formulaKind, isRight, NO_DECL, withTypes);
+		printFormula(formula, formulaKind, isRight, NO_NAME, withTypes);
 	}
 
-	private String[] addBound(Formula<?> formula, BoundIdentDecl[] addedBoundNames) {
+	private String[] addBound(String[] addedBoundNames) {
 		if (addedBoundNames.length == 0) {
 			return boundNames;
 		}
-		final String[] resolvedIdents = resolveIdentsOf(formula, addedBoundNames);
-		return catenateBoundIdentLists(boundNames, resolvedIdents);
+		return catenateBoundIdentLists(boundNames, addedBoundNames);
 	}
 	
-	private String[] resolveIdentsOf(Formula<?> formula, BoundIdentDecl[] addedBoundNames) {
-		return resolveIdents(addedBoundNames, Collections.<Formula<?>>singletonList(formula));
+	public String[] getBoundNames() {
+		return boundNames.clone();
 	}
 
-	public String[] resolveIdents(BoundIdentDecl[] addedBoundNames,
-			List<Formula<?>> boundFormulae) {
-		final Set<String> usedNames = new HashSet<String>();
-		for(Formula<?> formula: boundFormulae) {
-			formula.collectNamesAbove(usedNames, boundNames, addedBoundNames.length);
-		}
-		return QuantifiedUtil.resolveIdents(addedBoundNames, usedNames);
-	}
-	
 	private void printFormula(Formula<?> formula, int formulaKind, boolean isRightOvr,
-			BoundIdentDecl[] boundDecls, boolean withTypesOvr) {
-		final String[] newBoundNames = addBound(formula, boundDecls);
+			String[] addedBoundNames, boolean withTypesOvr) {
+		final String[] newBoundNames = addBound(addedBoundNames);
 		printWithBinding(formula, formulaKind, isRightOvr, withTypesOvr,
 				newBoundNames);
 	}

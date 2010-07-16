@@ -29,6 +29,7 @@ import static org.eventb.internal.core.parser.SubParsers.FREE_IDENT_SUBPARSER;
 import static org.eventb.internal.core.parser.SubParsers.NO_DECL;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -432,13 +433,11 @@ public class MainParsers {
 			super(BOUND_IDENT_DECL_SUBPARSER);
 		}
 		
-		public void toString(IToStringMediator mediator, List<BoundIdentDecl> toPrint, List<Formula<?>> boundPreds) {
-			final BoundIdentDecl[] decls = toPrint.toArray(new BoundIdentDecl[toPrint.size()]);
-			final String[] resolvedIdents = mediator.resolveIdents(decls, boundPreds);
-			printIdent(mediator, decls, resolvedIdents, 0);
-			for(int i=1;i<resolvedIdents.length;i++) {
+		public void toString(IToStringMediator mediator, BoundIdentDecl[] decls, String[] localNames) {
+			printIdent(mediator, decls, localNames, 0);
+			for(int i=1;i<localNames.length;i++) {
 				mediator.append(",");
-				printIdent(mediator, decls, resolvedIdents, i);			
+				printIdent(mediator, decls, localNames, i);			
 			}
 		}
 
@@ -536,7 +535,7 @@ public class MainParsers {
 		public SubParseResult<BecomesMemberOf> nud(ParserContext pc) throws SyntaxError {
 			final FreeIdentifier ident = pc.subParse(FREE_IDENT_SUBPARSER, false);
 			pc.progress(kind);
-			final Expression expr = pc.subParse(EXPR_PARSER, true);
+			final Expression expr = pc.subParseNoParentNoCheck(EXPR_PARSER, Collections.<BoundIdentDecl>emptyList());
 			final BecomesMemberOf bmo = pc.factory.makeBecomesMemberOf(ident, expr, pc.getSourceLocation());
 			return new SubParseResult<BecomesMemberOf>(bmo, kind);
 		}
@@ -577,9 +576,18 @@ public class MainParsers {
 		
 			final Predicate condition = toPrint.getCondition();
 			final BoundIdentDecl[] primedIdents = toPrint.getPrimedIdents();
-			mediator.subPrintNoPar(condition, true, primedIdents);
+			
+			mediator.subPrintNoPar(condition, true, toNames(primedIdents));
 		}
-		
+
+		private static String[] toNames(BoundIdentDecl[] idents) {
+			final String[] names = new String[idents.length];
+			for (int i = 0; i < idents.length; i++) {
+				names[i] = idents[i].getName();
+			}
+			return names;
+		}
+
 	}
 
 	// used as a main parser; directly called by the general parser.

@@ -39,6 +39,7 @@ import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.SubParsers.IQuantifiedParser;
 import org.eventb.internal.core.parser.SubParsers.QuantifiedPredicateParser;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
@@ -104,6 +105,13 @@ public class QuantifiedPredicate extends Predicate {
 
 		public IParserPrinter<QuantifiedPredicate> makeParser(int kind) {
 			return new QuantifiedPredicateParser(kind, tag);
+		}
+		
+		public IParserPrinter<QuantifiedPredicate> makeParser(int kind,
+				String[] localNames) {
+			final IParserPrinter<QuantifiedPredicate> parser = makeParser(kind);
+			((IQuantifiedParser<QuantifiedPredicate>) parser).setLocalNames(localNames);
+			return parser;
 		}
 
 		public boolean isSpaced() {
@@ -210,10 +218,20 @@ public class QuantifiedPredicate extends Predicate {
 
 	@Override
 	protected void toString(IToStringMediator mediator) {
+		// Collect names used in subformulas and not locally bound
+		final Set<String> usedNames = new HashSet<String>();
+		final String[] boundNames = mediator.getBoundNames();
+		pred.collectNamesAbove(usedNames, boundNames ,
+				quantifiedIdentifiers.length);
+		pred.collectNamesAbove(usedNames, boundNames,
+				quantifiedIdentifiers.length);
+
+		final String[] localNames = QuantifiedUtil.resolveIdents(quantifiedIdentifiers, usedNames);
+
 		final Operators operator = getOperator();
 		final int kind = mediator.getKind();
 		
-		operator.makeParser(kind).toString(mediator, this);
+		operator.makeParser(kind, localNames).toString(mediator, this);
 	}
 
 	@Override

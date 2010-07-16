@@ -78,7 +78,7 @@ public class SubParsers {
 
 	private static final String SPACE = " ";
 	private static final Predicate[] NO_PRED = new Predicate[0];
-	static final BoundIdentDecl[] NO_DECL = new BoundIdentDecl[0];
+	static final String[] NO_DECL = new String[0];
 
 	static abstract class AbstractSubParser<T> {
 
@@ -928,7 +928,7 @@ public class SubParsers {
 		}
 	}
 
-	public static class QuantifiedPredicateParser extends PrefixNudParser<QuantifiedPredicate> {
+	public static class QuantifiedPredicateParser extends QuantifiedParser<QuantifiedPredicate> {
 
 		public QuantifiedPredicateParser(int kind, int tag) {
 			super(kind, tag);
@@ -949,11 +949,9 @@ public class SubParsers {
 				QuantifiedPredicate toPrint) {
 			super.toString(mediator, toPrint);
 			final BoundIdentDecl[] boundDecls = toPrint.getBoundIdentDecls();
-			BOUND_IDENT_DECL_LIST_PARSER.toString(mediator, asList(boundDecls),
-					Collections.<Formula<?>> singletonList(toPrint
-							.getPredicate()));
+			printBoundIdentDecls(mediator, boundDecls);
 			mediator.appendImage(_DOT);
-			mediator.subPrintNoPar(toPrint.getPredicate(), false, boundDecls);
+			mediator.subPrintNoPar(toPrint.getPredicate(), false, getLocalNames());
 		}
 	}
 
@@ -1059,7 +1057,32 @@ public class SubParsers {
 		mediator.append(SPACE);
 	}
 
-	public static class ExplicitQuantExpr extends PrefixNudParser<QuantifiedExpression> {
+	public static interface IQuantifiedParser<T> extends INudParser<T> {
+		void setLocalNames(String[] localNames);
+	}
+	
+	static abstract class QuantifiedParser<T> extends PrefixNudParser<T> implements IQuantifiedParser<T> {
+		protected QuantifiedParser(int kind, int tag) {
+			super(kind, tag);
+		}
+
+		private String[] localNames = null;
+
+		public void setLocalNames(String[] localNames) {
+			this.localNames = localNames;
+		}
+
+		protected String[] getLocalNames() {
+			assert localNames != null;
+			return localNames;
+		}
+		
+		protected void printBoundIdentDecls(IToStringMediator mediator, BoundIdentDecl[] boundDecls) {
+			BOUND_IDENT_DECL_LIST_PARSER.toString(mediator, boundDecls, getLocalNames());
+		}
+	}
+	
+	public static class ExplicitQuantExpr extends QuantifiedParser<QuantifiedExpression> {
 		
 		public ExplicitQuantExpr(int kind, int tag) {
 			super(kind, tag);
@@ -1087,14 +1110,11 @@ public class SubParsers {
 				QuantifiedExpression toPrint) {
 			super.toString(mediator, toPrint);
 			final BoundIdentDecl[] boundDecls = toPrint.getBoundIdentDecls();
-			// FIXME rename bound ident decls in other classes.
-			BOUND_IDENT_DECL_LIST_PARSER.toString(mediator, asList(boundDecls),
-					Arrays.<Formula<?>> asList(toPrint.getPredicate(), toPrint
-							.getExpression()));
+			printBoundIdentDecls(mediator, boundDecls);
 			mediator.appendImage(_DOT);
-			mediator.subPrintNoPar(toPrint.getPredicate(), false, boundDecls);
+			mediator.subPrintNoPar(toPrint.getPredicate(), false, getLocalNames());
 			printMid(mediator);
-			mediator.subPrintNoPar(toPrint.getExpression(), false, boundDecls);
+			mediator.subPrintNoPar(toPrint.getExpression(), false, getLocalNames());
 		}
 	}
 	
@@ -1116,7 +1136,7 @@ public class SubParsers {
 		}
 	}
 	
-	public static class ImplicitQuantExpr extends PrefixNudParser<QuantifiedExpression> {
+	public static class ImplicitQuantExpr extends QuantifiedParser<QuantifiedExpression> {
 		
 		public ImplicitQuantExpr(int kind, int tag) {
 			super(kind, tag);
@@ -1145,10 +1165,9 @@ public class SubParsers {
 		public void toString(IToStringMediator mediator,
 				QuantifiedExpression toPrint) {
 			super.toString(mediator, toPrint);
-			final BoundIdentDecl[] boundDecls = toPrint.getBoundIdentDecls();
-			mediator.subPrintNoPar(toPrint.getExpression(), false, boundDecls);
+			mediator.subPrintNoPar(toPrint.getExpression(), false, getLocalNames());
 			printMid(mediator);
-			mediator.subPrintNoPar(toPrint.getPredicate(), false, boundDecls);
+			mediator.subPrintNoPar(toPrint.getPredicate(), false, getLocalNames());
 		}
 		
 	}
@@ -1171,7 +1190,7 @@ public class SubParsers {
 		}
 	}
 	
-	public static class CSetLambda extends PrefixNudParser<QuantifiedExpression> {
+	public static class CSetLambda extends QuantifiedParser<QuantifiedExpression> {
 		
 		public CSetLambda(int kind) {
 			super(kind, CSET);
@@ -1201,25 +1220,15 @@ public class SubParsers {
 			assert chile.getTag() == MAPSTO;
 			final BinaryExpression pair = (BinaryExpression)chile;
 			final Expression pattern = pair.getLeft();
-			final BoundIdentDecl[] boundDecls = toPrint.getBoundIdentDecls();
-			mediator.subPrint(pattern, false, boundDecls);
+			mediator.subPrint(pattern, false, getLocalNames());
 			mediator.appendImage(_DOT);
-			mediator.subPrintNoPar(toPrint.getPredicate(), false, boundDecls);
+			mediator.subPrintNoPar(toPrint.getPredicate(), false, getLocalNames());
 			printMid(mediator);
-			mediator.subPrintNoPar(pair.getRight(), false, boundDecls);
+			mediator.subPrintNoPar(pair.getRight(), false, getLocalNames());
 		}
 	}
 
 	// TODO extract from above code for printing quantified expressions
-//	@Override
-//	protected void toStringFullyParenthesized(StringBuilder builder, String[] existingBoundIdents) {
-//		toStringHelper(builder, existingBoundIdents, true, false);
-//	}
-//	
-//	/*
-//	 * avoid having to write almost twice the same for methods 
-//	 * toString and method toStringFully parenthesized
-//	 */ 
 //	private void toStringHelper(StringBuilder builder, String[] boundNames,
 //			boolean parenthesized, boolean withTypes) {
 //

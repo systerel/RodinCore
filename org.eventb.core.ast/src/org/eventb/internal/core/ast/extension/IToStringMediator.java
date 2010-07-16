@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension;
 
-import java.util.List;
-
-import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 
@@ -34,13 +31,13 @@ public interface IToStringMediator {
 	void subPrint(Formula<?> child, boolean isRightOvr);
 
 	void subPrint(Formula<?> child, boolean isRightOvr,
-			BoundIdentDecl[] boundDecls);
+			String[] addedBoundNames);
 	
 	void subPrintNoPar(Formula<?> child, boolean isRightOvr,
-			BoundIdentDecl[] boundDecls);
+			String[] addedBoundNames);
 	
 	void subPrint(Formula<?> child, boolean isRightOvr,
-			BoundIdentDecl[] boundDecls, boolean withTypesOvr);
+			String[] addedBoundNames, boolean withTypesOvr);
 	
 	void forward(Formula<?> child);
 	
@@ -50,6 +47,5 @@ public interface IToStringMediator {
 	
 	boolean isWithTypes();
 
-	String[] resolveIdents(BoundIdentDecl[] addedBoundNames,
-			List<Formula<?>> boundFormulae);
+	String[] getBoundNames();
 }
