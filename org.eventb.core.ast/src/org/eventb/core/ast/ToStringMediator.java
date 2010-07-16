@@ -81,7 +81,12 @@ import org.eventb.internal.core.parser.SubParsers;
 		final int childKind = getKind(child, factory);
 		printFormula(child, childKind, isRightOvr, addedBoundNames, withTypesOvr, false);
 	}
-
+	
+	public void subPrintWithPar(Formula<?> child) {
+		final int childKind = getKind(child, factory);
+		printFormula(child, childKind, false, NO_NAME, withTypes, true);
+	}
+	
 	private void printChild(Formula<?> child, boolean isRightOvr,
 			String[] addedBoundNames, boolean withTypesOvr) {
 		final int childKind = getKind(child, factory);

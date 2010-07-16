@@ -41,6 +41,8 @@ public interface IToStringMediator {
 	void subPrint(Formula<?> child, boolean isRightOvr,
 			String[] addedBoundNames, boolean withTypesOvr);
 	
+	void subPrintWithPar(Formula<?> child);
+
 	void forward(Formula<?> child);
 	
 	FormulaFactory getFactory();

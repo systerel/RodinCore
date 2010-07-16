@@ -1447,9 +1447,14 @@ public class SubParsers {
 		}
 
 		public void toString(IToStringMediator mediator, Expression toPrint) {
-			mediator.appendImage(kind);
+			mediator.appendImage(kind, false);
 			final Expression child = ((UnaryExpression) toPrint).getChild();
-			mediator.subPrint(child, true);
+			final boolean parenthesize = child.getTag() == INTLIT;
+			if (parenthesize) {
+				mediator.subPrintWithPar(child);
+			} else {
+				mediator.subPrint(child, true);
+			}
 		}
 	}
 	
