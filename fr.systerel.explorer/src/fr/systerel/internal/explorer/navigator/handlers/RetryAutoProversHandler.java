@@ -10,19 +10,13 @@
  *******************************************************************************/
 package fr.systerel.internal.explorer.navigator.handlers;
 
-import static fr.systerel.explorer.ExplorerPlugin.getSelectedStatuses;
-
 import java.util.Set;
 
 import org.eclipse.core.resources.WorkspaceJob;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eventb.core.IPSStatus;
 import org.eventb.internal.core.pom.AutoProver;
-import org.eventb.internal.ui.EventBUIExceptionHandler;
-import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.internal.explorer.navigator.actionProviders.Messages;
@@ -32,41 +26,18 @@ import fr.systerel.internal.explorer.navigator.actionProviders.Messages;
  */
 public class RetryAutoProversHandler extends AbstractJobHandler {
 
-	public static class RetryJob extends WorkspaceJob {
+	@Override
+	protected WorkspaceJob getWorkspaceJob(IStructuredSelection sel) {
+		return new ProofStatusJob(Messages.dialogs_replayingProofs, true, sel) {
 
-		public RetryJob(String name) {
-			super(name);
-		}
-
-		@Override
-		public IStatus runInWorkspace(IProgressMonitor monitor) {
-			try {
-				final SubMonitor subMonitor = SubMonitor.convert(monitor,
-						Messages.dialogs_replayingProofs, 10);
-				final Set<IPSStatus> statuses = getSelectedStatuses(true,
-						subMonitor.newChild(1));
+			@Override
+			protected void perform(Set<IPSStatus> statuses,
+					SubMonitor subMonitor) throws RodinDBException,
+					InterruptedException {
 				AutoProver.run(
 						statuses.toArray(new IPSStatus[statuses.size()]),
-						monitor);
-			} catch (RodinDBException e) {
-				EventBUIExceptionHandler.handleRodinException(e,
-						UserAwareness.IGNORE);
-			} catch (InterruptedException e) {
-				// set and propagate the interrupt status above
-				Thread.currentThread().interrupt();
-				setJobMonitorDone(monitor);
-				// canceled: return as soon as possible
-				return Status.CANCEL_STATUS;
-			} finally {
-				setJobMonitorDone(monitor);
+						subMonitor);
 			}
-			return Status.OK_STATUS;
-		}
+		};
 	}
-
-	@Override
-	WorkspaceJob getWorkspaceJob() {
-		return new RetryJob(Messages.dialogs_replayingProofs);
-	}
-
 }

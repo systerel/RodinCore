@@ -90,7 +90,9 @@ public class ExplorerPlugin extends AbstractUIPlugin {
 	 * @return a set of statuses
 	 * @throws InterruptedException
 	 * @since 1.3
+	 * @deprecated to remove in Rodin 2.0
 	 */
+	@Deprecated
 	public static Set<IPSStatus> getSelectedStatuses(boolean pendingOnly,
 			IProgressMonitor monitor) throws InterruptedException {
 		final Object[] objects = getExplorerSelection();
