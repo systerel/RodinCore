@@ -661,7 +661,7 @@ public class TacticUIRegistry {
 		}
 		
 		if(target.equals(TARGET_ANY)) {
-			info = anyCommandRegistry.get(id);
+			info = anyTacticRegistry.get(id);
 			if (info != null) return info;
 			return anyCommandRegistry.get(id);
 		}
