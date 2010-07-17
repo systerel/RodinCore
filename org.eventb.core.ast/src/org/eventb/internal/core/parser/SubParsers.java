@@ -295,9 +295,9 @@ public class SubParsers {
 				C right, SourceLocation loc) throws SyntaxError;
 	}
 	
-	private static abstract class DefaultLedExprParser<R> extends BinaryLedParser<R, Expression> {
+	private static abstract class BinaryLedExprParser<R> extends BinaryLedParser<R, Expression> {
 
-		protected DefaultLedExprParser(int kind, int tag) {
+		protected BinaryLedExprParser(int kind, int tag) {
 			super(kind, tag, EXPR_PARSER);
 		}
 		
@@ -308,9 +308,9 @@ public class SubParsers {
 		
 	}
 	
-	private static abstract class DefaultLedPredParser<R> extends BinaryLedParser<R, Predicate> {
+	private static abstract class BinaryLedPredParser<R> extends BinaryLedParser<R, Predicate> {
 
-		protected DefaultLedPredParser(int kind, int tag) {
+		protected BinaryLedPredParser(int kind, int tag) {
 			super(kind, tag, PRED_PARSER);
 		}
 		
@@ -678,7 +678,7 @@ public class SubParsers {
 
 	}
 
-	public static class BinaryExpressionInfix extends DefaultLedExprParser<BinaryExpression> {
+	public static class BinaryExpressionInfix extends BinaryLedExprParser<BinaryExpression> {
 
 		public BinaryExpressionInfix(int kind, int tag) {
 			super(kind, tag);
@@ -702,7 +702,7 @@ public class SubParsers {
 
 	}
 	
-	static class ExtendedBinaryExpressionInfix extends DefaultLedExprParser<ExtendedExpression> {
+	static class ExtendedBinaryExpressionInfix extends BinaryLedExprParser<ExtendedExpression> {
 
 		public ExtendedBinaryExpressionInfix(int kind, int tag) {
 			super(kind, tag);
@@ -800,7 +800,7 @@ public class SubParsers {
 		}
 	}
 
-	public static class RelationalPredicateInfix extends DefaultLedExprParser<RelationalPredicate> {
+	public static class RelationalPredicateInfix extends BinaryLedExprParser<RelationalPredicate> {
 
 		public RelationalPredicateInfix(int kind, int tag) {
 			super(kind, tag);
@@ -823,7 +823,7 @@ public class SubParsers {
 		}
 	}
 
-	public static class LedImage extends DefaultLedExprParser<BinaryExpression> {
+	public static class LedImage extends BinaryLedExprParser<BinaryExpression> {
 
 		private final int closeKind;
 		
@@ -906,7 +906,7 @@ public class SubParsers {
 		}
 	}
 
-	public static class BinaryPredicateParser extends DefaultLedPredParser<BinaryPredicate> {
+	public static class BinaryPredicateParser extends BinaryLedPredParser<BinaryPredicate> {
 
 		public BinaryPredicateParser(int kind, int tag) {
 			super(kind, tag);
@@ -975,7 +975,7 @@ public class SubParsers {
 
 	}
 	
-	public static class ConverseParser extends DefaultLedExprParser<UnaryExpression> {
+	public static class ConverseParser extends BinaryLedExprParser<UnaryExpression> {
 
 		public ConverseParser(int kind) {
 			super(kind, CONVERSE);
