@@ -17,10 +17,11 @@ import org.eventb.internal.core.parser.GenParser.SyntaxError;
 /**
  * Led stands for 'left-denoted', in contrast to 'null-denoted' (nud parsers).
  * 
+ * @param <R>
+ *            type of the parsed object.
  * @author Nicolas Beauger
- * 
  */
-public interface ILedParser<T> extends IParserPrinter<T> {
+public interface ILedParser<R> extends IParserPrinter<R> {
 
 	/**
 	 * Parses a left-denoted formula from the given parser context.
@@ -42,7 +43,7 @@ public interface ILedParser<T> extends IParserPrinter<T> {
 	 * @throws SyntaxError
 	 *             if the there is a syntax error
 	 */
-	SubParseResult<T> led(Formula<?> left, ParserContext pc)
+	SubParseResult<R> led(Formula<?> left, ParserContext pc)
 			throws SyntaxError;
 
 }

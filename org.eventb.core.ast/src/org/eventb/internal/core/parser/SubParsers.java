@@ -71,6 +71,11 @@ import org.eventb.internal.core.parser.MainParsers.PatternParser;
 
 /**
  * Sub-parsers are specialized parsers; they are usually bound to an operator.
+ * <p>
+ * Type parameters of sub parsers are conventionally named R and C. R is the
+ * result type of the (sub)parsing, i.e the type of the parsed object. C is the
+ * type of the children of the parsed object.
+ * </p>
  * 
  * @author Nicolas Beauger
  * 
@@ -81,7 +86,7 @@ public class SubParsers {
 	private static final Predicate[] NO_PRED = new Predicate[0];
 	static final String[] NO_DECL = new String[0];
 
-	static abstract class AbstractSubParser<T> {
+	static abstract class AbstractSubParser {
 
 		protected final int kind;
 		protected final int tag;
@@ -96,7 +101,7 @@ public class SubParsers {
 		}
 	}
 
-	static abstract class AbstractNudParser<T> extends AbstractSubParser<T> implements INudParser<T> {
+	static abstract class AbstractNudParser<R> extends AbstractSubParser implements INudParser<R> {
 
 		protected AbstractNudParser(int kind, int tag) {
 			super(kind, tag);
@@ -104,7 +109,7 @@ public class SubParsers {
 
 	}
 
-	private static abstract class AbstractLedParser<T> extends AbstractSubParser<T> implements ILedParser<T> {
+	private static abstract class AbstractLedParser<R> extends AbstractSubParser implements ILedParser<R> {
 
 		protected AbstractLedParser(int kind, int tag) {
 			super(kind, tag);
@@ -113,16 +118,16 @@ public class SubParsers {
 	}
 
 	
-	private static abstract class PrefixNudParser<T> extends AbstractNudParser<T> {
+	private static abstract class PrefixNudParser<R> extends AbstractNudParser<R> {
 		
 		protected PrefixNudParser(int kind, int tag) {
 			super(kind, tag);
 		}
 		
-		public final SubParseResult<T> nud(ParserContext pc) throws SyntaxError {
+		public final SubParseResult<R> nud(ParserContext pc) throws SyntaxError {
 			pc.progress(kind);
-			final T right = parseRight(pc);
-			return new SubParseResult<T>(right, kind);
+			final R right = parseRight(pc);
+			return new SubParseResult<R>(right, kind);
 		}
 		
 		/**
@@ -134,77 +139,77 @@ public class SubParsers {
 		 * @return the value to be returned by nud()
 		 * @throws SyntaxError
 		 */
-		protected abstract T parseRight(ParserContext pc) throws SyntaxError;
+		protected abstract R parseRight(ParserContext pc) throws SyntaxError;
 		
-		public void toString(IToStringMediator mediator, T toPrint) {
+		public void toString(IToStringMediator mediator, R toPrint) {
 			mediator.appendImage(kind);
 		}
 	}
 
-	private static abstract class ParenNudParser<T, U> extends PrefixNudParser<T> {
+	private static abstract class ParenNudParser<R, C> extends PrefixNudParser<R> {
 
-		private final INudParser<U> childParser;
+		private final INudParser<C> childParser;
 		
-		protected ParenNudParser(int kind, int tag, INudParser<U> childParser) {
+		protected ParenNudParser(int kind, int tag, INudParser<C> childParser) {
 			super(kind, tag);
 			this.childParser = childParser;
 		}
 
 		@Override
-		protected final T parseRight(ParserContext pc) throws SyntaxError {
+		protected final R parseRight(ParserContext pc) throws SyntaxError {
 			// FIXME parsing this way prevents priority and compatibility checks
 			// with operators that follow the closing parenthesis
 			pc.progressOpenParen();
-			final U child = pc.subParseNoCheck(childParser);
+			final C child = pc.subParseNoCheck(childParser);
 			pc.progressCloseParen();
 			return makeValue(pc.factory, child, pc.getSourceLocation());
 		}
 		
-		protected abstract U getChild(T parent);
+		protected abstract C getChild(R parent);
 		
 		@Override
-		public void toString(IToStringMediator mediator, T toPrint) {
+		public void toString(IToStringMediator mediator, R toPrint) {
 			super.toString(mediator, toPrint);
 			mediator.append("(");
 			// FIXME should forbid direct calls to toString,
 			// replace with subPrint
-			U child = getChild(toPrint);
+			C child = getChild(toPrint);
 			printChild(mediator, child);
 			mediator.append(")");
 		}
 
-		protected void printChild(IToStringMediator mediator, U child) {
+		protected void printChild(IToStringMediator mediator, C child) {
 			childParser.toString(mediator, child);
 		}
 		
-		protected abstract T makeValue(FormulaFactory factory, U child, SourceLocation loc) throws SyntaxError;
+		protected abstract R makeValue(FormulaFactory factory, C child, SourceLocation loc) throws SyntaxError;
 	}
 	
-	private static abstract class ParenNudFormulaChildParser<T, U extends Formula<?>> extends ParenNudParser<T, U> {
+	private static abstract class ParenNudFormulaChildParser<R, C extends Formula<?>> extends ParenNudParser<R, C> {
 
 		protected ParenNudFormulaChildParser(int kind, int tag,
-				INudParser<U> childParser) {
+				INudParser<C> childParser) {
 			super(kind, tag, childParser);
 		}
 		
 		@Override
-		protected void printChild(IToStringMediator mediator, U child) {
+		protected void printChild(IToStringMediator mediator, C child) {
 			mediator.subPrintNoPar(child, true, NO_DECL);
 		}
 	}
 	
-	private static abstract class ValuedNudParser<T> extends AbstractNudParser<T> {
+	private static abstract class ValuedNudParser<R> extends AbstractNudParser<R> {
 
 		protected ValuedNudParser(int kind) {
 			super(kind, NO_TAG);
 		}
 		
-		public final SubParseResult<T> nud(ParserContext pc) throws SyntaxError {
+		public final SubParseResult<R> nud(ParserContext pc) throws SyntaxError {
 			final String tokenVal = pc.t.val;
 			pc.progress(kind);
 			final SourceLocation loc = pc.getSourceLocation();
-			final T value = makeValue(pc, tokenVal, loc);
-			return new SubParseResult<T>(value, kind);
+			final R value = makeValue(pc, tokenVal, loc);
+			return new SubParseResult<R>(value, kind);
 		}
 
 		/**
@@ -223,23 +228,23 @@ public class SubParsers {
 		 * @return the value to be returned by nud().
 		 * @throws SyntaxError 
 		 */
-		protected abstract T makeValue(ParserContext pc, String tokenVal, SourceLocation loc) throws SyntaxError;
+		protected abstract R makeValue(ParserContext pc, String tokenVal, SourceLocation loc) throws SyntaxError;
 
 	}
 
 	// TODO use the possibility to have Left different from Right to make
 	// assignment parser extend this class
-	private static abstract class BinaryLedParser<T, Child extends Formula<Child>>
-			extends AbstractLedParser<T> {
+	private static abstract class BinaryLedParser<R, C extends Formula<?>>
+			extends AbstractLedParser<R> {
 
-		protected final INudParser<Child> childParser;
+		protected final INudParser<C> childParser;
 		
-		protected BinaryLedParser(int kind, int tag, INudParser<Child> rightParser) {
+		protected BinaryLedParser(int kind, int tag, INudParser<C> rightParser) {
 			super(kind, tag);
 			this.childParser = rightParser;
 		}
 		
-		protected Child parseRight(ParserContext pc) throws SyntaxError {
+		protected C parseRight(ParserContext pc) throws SyntaxError {
 			return pc.subParse(childParser, true);
 		}
 
@@ -250,7 +255,7 @@ public class SubParsers {
 		 *            a formula node
 		 * @return a left node
 		 */
-		protected abstract Child getLeft(T parent);
+		protected abstract C getLeft(R parent);
 
 		/**
 		 * Return the right child of the given node, or <code>null</code> if
@@ -260,37 +265,37 @@ public class SubParsers {
 		 *            a formula node
 		 * @return a right node or <code>null</code>
 		 */
-		protected abstract Child getRight(T parent);
+		protected abstract C getRight(R parent);
 		
-		public final SubParseResult<T> led(Formula<?> left, ParserContext pc) throws SyntaxError {
+		public final SubParseResult<R> led(Formula<?> left, ParserContext pc) throws SyntaxError {
 			pc.progress(kind);
-			final Child typedLeft = asLeftType(left);
-			final Child right = parseRight(pc);
-			final T value = makeValue(pc.factory, typedLeft, right, pc.getSourceLocation());
-			return new SubParseResult<T>(value, kind);
+			final C typedLeft = asLeftType(left);
+			final C right = parseRight(pc);
+			final R value = makeValue(pc.factory, typedLeft, right, pc.getSourceLocation());
+			return new SubParseResult<R>(value, kind);
 		}
 
-		public void toString(IToStringMediator mediator, T toPrint) {
-			final Child left = getLeft(toPrint);
+		public void toString(IToStringMediator mediator, R toPrint) {
+			final C left = getLeft(toPrint);
 			mediator.subPrint(left, false);
 			mediator.appendImage(kind);
-			final Child right = getRight(toPrint);
+			final C right = getRight(toPrint);
 			if (right != null) {
 				subPrintRight(mediator, right);
 			}
 		}
 
-		protected void subPrintRight(IToStringMediator mediator, Child right) {
+		protected void subPrintRight(IToStringMediator mediator, C right) {
 			mediator.subPrint(right, true);
 		}
 		
-		protected abstract Child asLeftType(Formula<?> left) throws SyntaxError;
+		protected abstract C asLeftType(Formula<?> left) throws SyntaxError;
 		
-		protected abstract T makeValue(FormulaFactory factory, Child left,
-				Child right, SourceLocation loc) throws SyntaxError;
+		protected abstract R makeValue(FormulaFactory factory, C left,
+				C right, SourceLocation loc) throws SyntaxError;
 	}
 	
-	private static abstract class DefaultLedExprParser<T> extends BinaryLedParser<T, Expression> {
+	private static abstract class DefaultLedExprParser<R> extends BinaryLedParser<R, Expression> {
 
 		protected DefaultLedExprParser(int kind, int tag) {
 			super(kind, tag, EXPR_PARSER);
@@ -303,7 +308,7 @@ public class SubParsers {
 		
 	}
 	
-	private static abstract class DefaultLedPredParser<T> extends BinaryLedParser<T, Predicate> {
+	private static abstract class DefaultLedPredParser<R> extends BinaryLedParser<R, Predicate> {
 
 		protected DefaultLedPredParser(int kind, int tag) {
 			super(kind, tag, PRED_PARSER);
@@ -316,35 +321,35 @@ public class SubParsers {
 
 	}
 	
-	private static abstract class AssociativeLedParser<T, Child extends Formula<?>> extends AbstractLedParser<T> {
+	private static abstract class AssociativeLedParser<R, C extends Formula<?>> extends AbstractLedParser<R> {
 
-		private final INudParser<Child> childParser;
+		private final INudParser<C> childParser;
 		
-		protected AssociativeLedParser(int kind, int tag, INudParser<Child> childParser) {
+		protected AssociativeLedParser(int kind, int tag, INudParser<C> childParser) {
 			super(kind, tag);
 			this.childParser = childParser;
 		}
 
-		public SubParseResult<T> led(Formula<?> left, ParserContext pc) throws SyntaxError {
-			final Child typedLeft = asChildType(left);
+		public SubParseResult<R> led(Formula<?> left, ParserContext pc) throws SyntaxError {
+			final C typedLeft = asChildType(left);
 			
-			final List<Child> children = new ArrayList<Child>();
+			final List<C> children = new ArrayList<C>();
 			children.add(typedLeft);
 			
 			do {
 				pc.progress(kind);
-				final Child next = pc.subParse(childParser, true);
+				final C next = pc.subParse(childParser, true);
 				children.add(next);
 			} while (pc.t.kind == kind);
 			
-			final T result = makeResult(pc.factory, children, pc.getSourceLocation());
-			return new SubParseResult<T>(result, kind);
+			final R result = makeResult(pc.factory, children, pc.getSourceLocation());
+			return new SubParseResult<R>(result, kind);
 		}
 		
-		protected abstract Child[] getChildren(T parent);
+		protected abstract C[] getChildren(R parent);
 		
-		public void toString(IToStringMediator mediator, T toPrint) {
-			final Child[] children = getChildren(toPrint);
+		public void toString(IToStringMediator mediator, R toPrint) {
+			final C[] children = getChildren(toPrint);
 			mediator.subPrint(children[0], false);
 			for (int i = 1; i < children.length; i++) {
 				mediator.appendImage(kind);
@@ -352,10 +357,10 @@ public class SubParsers {
 			}
 		}
 		
-		protected abstract Child asChildType(Formula<?> left) throws SyntaxError;
+		protected abstract C asChildType(Formula<?> left) throws SyntaxError;
 		
-		protected abstract T makeResult(FormulaFactory factory,
-				List<Child> children, SourceLocation loc) throws SyntaxError;
+		protected abstract R makeResult(FormulaFactory factory,
+				List<C> children, SourceLocation loc) throws SyntaxError;
 
 	}
 
@@ -1053,11 +1058,11 @@ public class SubParsers {
 		mediator.append(SPACE);
 	}
 
-	public static interface IQuantifiedParser<T> extends INudParser<T> {
+	public static interface IQuantifiedParser<R> extends INudParser<R> {
 		void setLocalNames(String[] localNames);
 	}
 	
-	static abstract class QuantifiedParser<T> extends PrefixNudParser<T> implements IQuantifiedParser<T> {
+	static abstract class QuantifiedParser<R> extends PrefixNudParser<R> implements IQuantifiedParser<R> {
 		protected QuantifiedParser(int kind, int tag) {
 			super(kind, tag);
 		}

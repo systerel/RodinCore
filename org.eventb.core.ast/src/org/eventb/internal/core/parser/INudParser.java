@@ -16,10 +16,11 @@ import org.eventb.internal.core.parser.GenParser.SyntaxError;
 /**
  * Nud stands for 'null-denoted', in contrast to 'left-denoted' (led parsers).
  * 
+ * @param <R>
+ *            type of the parsed object.
  * @author Nicolas Beauger
- * 
  */
-public interface INudParser<T> extends IParserPrinter<T> {
+public interface INudParser<R> extends IParserPrinter<R> {
 
 	/**
 	 * Parses a null-denoted formula with the given parser context.
@@ -38,6 +39,6 @@ public interface INudParser<T> extends IParserPrinter<T> {
 	 * @throws SyntaxError
 	 *             if the there is a syntax error
 	 */
-	SubParseResult<T> nud(ParserContext pc) throws SyntaxError;
+	SubParseResult<R> nud(ParserContext pc) throws SyntaxError;
 
 }

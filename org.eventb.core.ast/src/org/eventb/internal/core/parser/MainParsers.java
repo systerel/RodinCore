@@ -101,14 +101,20 @@ public class MainParsers {
 		return (Expression) formula;
 	}
 
-	private static abstract class ParserApplier<Parser> {
+	/**
+	 * Abstract class for parser appliers.
+	 * 
+	 * @param <P>
+	 *            type of the parser (or parser container) to apply
+	 */
+	private static abstract class ParserApplier<P> {
 		
 		public ParserApplier() {
 			// avoid synthetic accessor method emulation
 		}
 		
 		public SubParseResult<Formula<?>> apply(ParserContext pc, Formula<?> left) throws SyntaxError {
-			final Parser parser = getParser(pc);
+			final P parser = getParser(pc);
 			pc.pushParentKind();
 			try {
 				return apply(pc, parser, left);
@@ -117,8 +123,8 @@ public class MainParsers {
 			}
 		}
 		
-		protected abstract Parser getParser(ParserContext pc) throws SyntaxError;
-		protected abstract SubParseResult<Formula<?>> apply(ParserContext pc, Parser parser, Formula<?> left) throws SyntaxError;
+		protected abstract P getParser(ParserContext pc) throws SyntaxError;
+		protected abstract SubParseResult<Formula<?>> apply(ParserContext pc, P parser, Formula<?> left) throws SyntaxError;
 		
 		protected static SyntaxError newOperatorError(ParserContext pc,
 				ProblemKind problemKind) {
@@ -226,15 +232,8 @@ public class MainParsers {
 	
 	static final int[] NO_TAGS = new int[0];
 	
-	private static abstract class AbstractMainParser<T> implements INudParser<T> {
-		public AbstractMainParser() {
-			// avoid synthetic accessors
-		}
-		
-	}
-	
 	// Core algorithm implementation
-	static final INudParser<? extends Formula<?>> FORMULA_PARSER = new AbstractMainParser<Formula<?>>() {
+	static final INudParser<? extends Formula<?>> FORMULA_PARSER = new INudParser<Formula<?>>() {
 		
 		public SubParseResult<Formula<?>> nud(ParserContext pc)
 				throws SyntaxError {
@@ -254,7 +253,7 @@ public class MainParsers {
 
 	};
 
-	static final INudParser<Type> TYPE_PARSER = new AbstractMainParser<Type>() {
+	static final INudParser<Type> TYPE_PARSER = new INudParser<Type>() {
 		
 		public SubParseResult<Type> nud(ParserContext pc) throws SyntaxError {
 			pc.startParsingType();
@@ -287,7 +286,7 @@ public class MainParsers {
 		}
 	};
 
-	static final INudParser<Predicate> PRED_PARSER = new AbstractMainParser<Predicate>() {
+	static final INudParser<Predicate> PRED_PARSER = new INudParser<Predicate>() {
 		
 		public SubParseResult<Predicate> nud(ParserContext pc) throws SyntaxError {
 			final SubParseResult<? extends Formula<?>> formulaResult = FORMULA_PARSER.nud(pc);
@@ -301,7 +300,7 @@ public class MainParsers {
 		}
 	};
 
-	static final INudParser<Expression> EXPR_PARSER = new AbstractMainParser<Expression>() {
+	static final INudParser<Expression> EXPR_PARSER = new INudParser<Expression>() {
 		
 		public SubParseResult<Expression> nud(ParserContext pc) throws SyntaxError {
 			final SubParseResult<? extends Formula<?>> formulaResult = FORMULA_PARSER.nud(pc);
@@ -315,7 +314,7 @@ public class MainParsers {
 		}
 	};
 
-	static final INudParser<Formula<?>> CLOSED_SUGAR = new AbstractMainParser<Formula<?>> () {
+	static final INudParser<Formula<?>> CLOSED_SUGAR = new INudParser<Formula<?>> () {
 
 		public SubParseResult<Formula<?>> nud(ParserContext pc) throws SyntaxError {
 			pc.progressOpenParen();
@@ -332,7 +331,7 @@ public class MainParsers {
 		
 	};
 
-	static class PatternParser extends AbstractMainParser<Pattern> {
+	static class PatternParser implements INudParser<Pattern> {
 		
 		final Pattern pattern;
 		
@@ -380,7 +379,7 @@ public class MainParsers {
 		
 		// needed as a parser in order to be passed to pc.subParse
 		// so as to get correct source locations
-		private static class PatternAtomParser extends AbstractMainParser<Object> {
+		private static class PatternAtomParser implements INudParser<Object> {
 
 			private static final SubParseResult<Object> NULL_SUB_PARSE_RESULT = new SubParseResult<Object>(null, _NOOP);
 			private final Pattern pattern;
@@ -418,8 +417,15 @@ public class MainParsers {
 		}
 	}
 
-	// parses a non empty list of T
-	static class AbstListParser<T extends Formula<?>> extends AbstractMainParser<List<T>> {
+	/**
+	 * Abstract class for list parsers.
+	 * <p>
+	 * Returned list is guaranteed to be non empty.
+	 * </p>
+	 * @param <T>
+	 *            type of the items of the list
+	 */
+	static class AbstListParser<T extends Formula<?>> implements INudParser<List<T>> {
 	
 		private final INudParser<T> parser;
 		
@@ -639,7 +645,7 @@ public class MainParsers {
 	// with led sub-parsers
 	/** @see GenParser#parse() */
 	public static final INudParser<Assignment> ASSIGNMENT_PARSER = 
-		new AbstractMainParser<Assignment>() {
+		new INudParser<Assignment>() {
 
 		public SubParseResult<Assignment> nud(ParserContext pc) throws SyntaxError {
 			final INudParser<? extends Assignment> parser = getAssignmentParser(pc);

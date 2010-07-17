@@ -17,23 +17,29 @@ import org.eventb.internal.core.ast.extension.IToStringMediator;
  *
  */
 public interface IParserPrinter<T> {
-	
-	public static class SubParseResult<T> {
-		private final T parsed;
+
+	/**
+	 * Result of a subparsing.
+	 * 
+	 * @param <R>
+	 *            type of the parsed formula.
+	 */
+	public static class SubParseResult<R> {
+		private final R parsed;
 		private final int parsedKind;
 		private final boolean isClosed;
 		
-		public SubParseResult(T parsed, int parsedKind) {
+		public SubParseResult(R parsed, int parsedKind) {
 			this(parsed, parsedKind, false);
 		}
 		
-		public SubParseResult(T parsed, int parsedKind, boolean isParenthesized) {
+		public SubParseResult(R parsed, int parsedKind, boolean isParenthesized) {
 			this.parsed = parsed;
 			this.parsedKind = parsedKind;
 			this.isClosed = isParenthesized;
 		}
 
-		public T getParsed() {
+		public R getParsed() {
 			return parsed;
 		}
 		
