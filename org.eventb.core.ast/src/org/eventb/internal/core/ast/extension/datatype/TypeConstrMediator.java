@@ -22,7 +22,6 @@ import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
-import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IPriorityMediator;
@@ -54,13 +53,13 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 		return Collections.unmodifiableList(typeParams);
 	}
 
-	public IExpressionExtension getTypeConstructor() {
+	public ITypeExpressionExtension getTypeConstructor() {
 		final String typeName = datatype.getTypeName();
 		final String id = datatype.getId();
 		final String groupId = datatype.getGroupId();
 		final IExtensionKind kind = computeKind();
 		
-		return new IExpressionExtension() {
+		return new ITypeExpressionExtension() {
 			// FIXME specify precondition of number of arguments = typeParams.size()
 			
 			public Predicate getWDPredicate(IWDMediator wdMediator,

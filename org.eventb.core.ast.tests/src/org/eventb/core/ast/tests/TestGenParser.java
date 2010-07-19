@@ -315,7 +315,11 @@ public class TestGenParser extends AbstractTests {
 	}
 
 	private static void doTypeTest(String formula, Type expected) {
-		final IParseResult result = ff.parseType(formula,
+		doTypeTest(formula, expected, ff);
+	}
+	
+	private static void doTypeTest(String formula, Type expected, FormulaFactory factory) {
+		final IParseResult result = factory.parseType(formula,
 				LanguageVersion.V2);
 		if (result.hasProblem()) {
 			System.out.println(result.getProblems());
@@ -1901,8 +1905,7 @@ public class TestGenParser extends AbstractTests {
 		assertTrue("expected a type expression", expr.isATypeExpression());
 		assertEquals("unexpected toType", listIntType, expr.toType(extFac));
 
-		// TODO
-//		doTypeTest("List(ℤ)", expected, extFac);
+		doTypeTest("List(ℤ)", listIntType, extFac);
 	}
 
 	public void testDatatypeNil() throws Exception {
@@ -2195,7 +2198,6 @@ public class TestGenParser extends AbstractTests {
 								Arrays.<Expression> asList(FRID_x, BI_0), null),
 						null),
 				null, Form.Lambda);
-		// TODO
 		final String implStr = expected.toString();
 		assertEquals("bad toString", "λx0 ↦ y0·x0>y ∣ x+y0", implStr);
 		doExpressionTest(implStr, expected);

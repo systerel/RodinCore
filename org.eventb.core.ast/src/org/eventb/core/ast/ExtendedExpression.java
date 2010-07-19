@@ -17,6 +17,7 @@ import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,6 +32,7 @@ import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.ast.extension.TypeCheckMediator;
 import org.eventb.internal.core.ast.extension.TypeMediator;
+import org.eventb.internal.core.ast.extension.datatype.ITypeExpressionExtension;
 import org.eventb.internal.core.parser.ExtendedGrammar;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.IParserPrinter;
@@ -377,15 +379,28 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 
 	@Override
 	public boolean isATypeExpression() {
-		// TODO Auto-generated method stub
-		return super.isATypeExpression();
+		if (!(extension instanceof ITypeExpressionExtension)) {
+			return false;
+		}
+		if (childPredicates.length != 0) {
+			return false;
+		}
+		for (Expression child : childExpressions) {
+			if (!child.isATypeExpression()) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	@Override
 	public Type toType(FormulaFactory factory)
 			throws InvalidExpressionException {
-		// TODO Auto-generated method stub
-		return super.toType(factory);
+		final List<Type> typeParams = new ArrayList<Type>();
+		for(Expression child : childExpressions) {
+			typeParams.add(child.toType(factory));
+		}
+		return ff.makeGenericType(typeParams, extension);
 	}
 	
 }
