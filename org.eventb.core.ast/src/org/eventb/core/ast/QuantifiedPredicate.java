@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added accept for ISimpleVisitor
  *     Systerel - added support for predicate variables
+ *     Systerel - generalised getPositions() into inspect()
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -30,15 +31,16 @@ import java.util.Set;
 
 import org.eventb.internal.core.ast.BoundIdentDeclRemover;
 import org.eventb.internal.core.ast.BoundIdentSubstitution;
+import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
-import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.SubParsers.IQuantifiedParser;
 import org.eventb.internal.core.parser.SubParsers.QuantifiedPredicateParser;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -482,20 +484,16 @@ public class QuantifiedPredicate extends Predicate {
 	}
 
 	@Override
-	protected void getPositions(IFormulaFilter filter, IntStack indexes,
-			List<IPosition> positions) {
-		
-		if (filter.select(this)) {
-			positions.add(new Position(indexes));
-		}
+	protected final <F> void inspect(FindingAccumulator<F> acc) {
+		acc.inspect(this);
 
-		indexes.push(0);
+		acc.enterChildren();
 		for (BoundIdentDecl decl: quantifiedIdentifiers) {
-			decl.getPositions(filter, indexes, positions);
-			indexes.incrementTop();
+			decl.inspect(acc);
+			acc.nextChild();
 		}
-		pred.getPositions(filter, indexes, positions);
-		indexes.pop();
+		pred.inspect(acc);
+		acc.leaveChildren();
 	}
 
 	@Override

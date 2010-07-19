@@ -10,6 +10,7 @@
  *     Systerel - added abstract accept method for ISimpleVisitor
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
+ *     Systerel - generalised getPositions() into inspect()
  *     Systerel - added support for mathematical extensions
  *******************************************************************************/
 package org.eventb.core.ast;
@@ -30,6 +31,8 @@ import java.util.Set;
 import org.eventb.internal.core.ast.BindingSubstitution;
 import org.eventb.internal.core.ast.BoundIdentDeclRemover;
 import org.eventb.internal.core.ast.BoundIdentifierShifter;
+import org.eventb.internal.core.ast.FilteringInspector;
+import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
@@ -2122,14 +2125,39 @@ public abstract class Formula<T extends Formula<T>> {
 	 *         given criterion
 	 */
 	public final List<IPosition> getPositions(IFormulaFilter filter) {
-		assert !(this instanceof Assignment);
-		List<IPosition> positions = new ArrayList<IPosition>();
-		getPositions(filter, new IntStack(), positions);
-		return positions;
+		return inspect(new FilteringInspector(filter));
+	}
+
+	/**
+	 * Returns the findings for all sub-formulas of this formula that are
+	 * reported by the given inspector.
+	 * <p>
+	 * The findings are obtained by calling the inspector on each node of the
+	 * formula tree, traversed in pre-order.
+	 * <p>
+	 * This method is not applicable to assignments.
+	 * </p>
+	 * 
+	 * @param <F>
+	 *            type of the findings to report
+	 * @param inspector
+	 *            the inspector used for analyzing sub-formulas
+	 * 
+	 * @return a list of all the findings reported by the inspector during
+	 *         traversal
+	 * @since 1.3
+	 */
+	public final <F> List<F> inspect(IFormulaInspector<F> inspector) {
+		if (this instanceof Assignment) {
+			throw new IllegalArgumentException(
+					"Inspection not available for assignments.");
+		}
+		final FindingAccumulator<F> acc = new FindingAccumulator<F>(inspector);
+		inspect(acc);
+		return acc.getFindings();
 	}
 	
-	protected abstract void getPositions(IFormulaFilter filter,
-			IntStack indexes, List<IPosition> positions);
+	protected abstract <F> void inspect(FindingAccumulator<F> acc);
 	
 	/**
 	 * Returns the position of the deepest sub-formula of this formula that

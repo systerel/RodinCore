@@ -10,6 +10,7 @@
  *     Systerel - added accept for ISimpleVisitor
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
+ *     Systerel - generalised getPositions() into inspect()
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -24,10 +25,10 @@ import static org.eventb.internal.core.parser.BMath._RBRACKET;
 
 import java.math.BigInteger;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
@@ -35,9 +36,9 @@ import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
-import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.SubParsers.BinaryExpressionInfix;
 import org.eventb.internal.core.parser.SubParsers.LedImage;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -865,18 +866,13 @@ public class BinaryExpression extends Expression {
 	}
 
 	@Override
-	protected void getPositions(IFormulaFilter filter, IntStack indexes,
-			List<IPosition> positions) {
-		
-		if (filter.select(this)) {
-			positions.add(new Position(indexes));
-		}
-
-		indexes.push(0);
-		left.getPositions(filter, indexes, positions);
-		indexes.incrementTop();
-		right.getPositions(filter, indexes, positions);
-		indexes.pop();
+	protected final <F> void inspect(FindingAccumulator<F> acc) {
+		acc.inspect(this);
+		acc.enterChildren();
+		left.inspect(acc);
+		acc.nextChild();
+		right.inspect(acc);
+		acc.leaveChildren();
 	}
 
 	@Override

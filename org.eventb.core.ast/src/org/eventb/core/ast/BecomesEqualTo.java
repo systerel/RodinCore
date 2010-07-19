@@ -21,10 +21,10 @@ import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.parser.MainParsers;
-import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 

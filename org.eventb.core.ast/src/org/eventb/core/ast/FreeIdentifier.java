@@ -9,17 +9,16 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added accept for ISimpleVisitor
  *     Systerel - added support for predicate variables
+ *     Systerel - generalised getPositions() into inspect()
  *******************************************************************************/
 package org.eventb.core.ast;
 
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eventb.internal.core.ast.IntStack;
+import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -284,12 +283,8 @@ public class FreeIdentifier extends Identifier {
 	}
 
 	@Override
-	protected void getPositions(IFormulaFilter filter, IntStack indexes,
-			List<IPosition> positions) {
-
-		if (filter.select(this)) {
-			positions.add(new Position(indexes));
-		}
+	protected final <F> void inspect(FindingAccumulator<F> acc) {
+		acc.inspect(this);
 	}
 
 }

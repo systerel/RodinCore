@@ -17,25 +17,24 @@ import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IOperatorProperties;
+import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.ast.extension.TypeCheckMediator;
 import org.eventb.internal.core.ast.extension.TypeMediator;
 import org.eventb.internal.core.parser.ExtendedGrammar;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.parser.IPropertyParserInfo;
-import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.ParserInfos.ExtendedExpressionParsers;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
@@ -326,23 +325,18 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 
 	// FIXME duplicate code with ExtendedPredicate; problem: filter.select(this)
 	@Override
-	protected void getPositions(IFormulaFilter filter, IntStack indexes,
-			List<IPosition> positions) {
-
-		if (filter.select(this)) {
-			positions.add(new Position(indexes));
+	protected final <F> void inspect(FindingAccumulator<F> acc) {
+		acc.inspect(this);
+		acc.enterChildren();
+		for (Expression child: childExpressions) {
+			child.inspect(acc);
+			acc.nextChild();
 		}
-
-		indexes.push(0);
-		for (Expression child : childExpressions) {
-			child.getPositions(filter, indexes, positions);
-			indexes.incrementTop();
+		for (Predicate child: childPredicates) {
+			child.inspect(acc);
+			acc.nextChild();
 		}
-		for (Predicate child : childPredicates) {
-			child.getPositions(filter, indexes, positions);
-			indexes.incrementTop();
-		}
-		indexes.pop();
+		acc.leaveChildren();
 	}
 
 	@Override
