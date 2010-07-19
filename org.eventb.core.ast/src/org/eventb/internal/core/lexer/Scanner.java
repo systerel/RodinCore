@@ -13,9 +13,9 @@ package org.eventb.internal.core.lexer;
 import static org.eventb.internal.core.parser.AbstractGrammar._EOF;
 import static org.eventb.internal.core.parser.AbstractGrammar._IDENT;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Vector;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.LanguageVersion;
@@ -35,7 +35,7 @@ import org.eventb.internal.core.parser.ParseResult;
 public class Scanner {
 	
 	// list of the tokens which were looked-ahead
-	private final List<Token> list = new Vector<Token>();
+	private final List<Token> list = new ArrayList<Token>();
 
 	// iterator on the look-ahead list
 	private ListIterator<Token> iterator = list.listIterator();
@@ -111,12 +111,33 @@ public class Scanner {
 				&& token.kind == _IDENT && token.val.equals(name));
 	}
 
-	public ScanState save() {
-		return lexer.save();
+	public static class ScannerState {
+
+		final ScanState lexState;
+		final List<Token> lookedAhead;
+
+		public ScannerState(ScanState lexState, List<Token> lookedAhead) {
+			this.lexState = lexState;
+			this.lookedAhead = new ArrayList<Token>(lookedAhead);
+		}
+		
 	}
 	
-	public void restore(ScanState state) {
-		lexer.restore(state);
+	public ScannerState save() {
+		return new ScannerState(lexer.save(), list);
+	}
+	
+	public void restore(ScannerState state) {
+		lexer.restore(state.lexState);
+		list.clear();
+		// FIXME if Peek() has been called after the call to save() that
+		// produced the given ScannerSate.lookedAhead, then peeked tokens will
+		// be forgotten ! Moreover, if they have been peeked and consumed, they
+		// are completely lost, because they are no more in the current list !
+		// => either memorize all peeked tokens without ever erasing them (not
+		// part of the saved/restored data), then save the current index
+		// => or enforce a constraint not to call lookAheadFor more than once
+		list.addAll(new ArrayList<Token>(state.lookedAhead));
 	}
 
 	public boolean lookAheadFor(int searchedKind) {

@@ -32,7 +32,7 @@ import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.core.lexer.Scanner;
 import org.eventb.internal.core.lexer.Token;
-import org.eventb.internal.core.lexer.GenScan.ScanState;
+import org.eventb.internal.core.lexer.Scanner.ScannerState;
 import org.eventb.internal.core.parser.IParserPrinter.SubParseResult;
 import org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship;
 
@@ -222,7 +222,7 @@ public class GenParser {
 		}
 		
 		static class SavedContext {
-			final ScanState scanState;
+			final ScannerState scanState;
 			final Token t;
 			final Token la;
 			final boolean parsingType;
@@ -230,7 +230,10 @@ public class GenParser {
 			final StackedValue<Binding> binding;
 			final StackedValue<Integer> parentKind;
 			
-			SavedContext(ScanState scanState, Token t, Token la, boolean parsingType, StackedValue<Integer> startPos, StackedValue<Binding> binding, StackedValue<Integer> parentKind) {
+			SavedContext(ScannerState scanState, Token t, Token la,
+					boolean parsingType, StackedValue<Integer> startPos,
+					StackedValue<Binding> binding,
+					StackedValue<Integer> parentKind) {
 				this.scanState = scanState;
 				this.t = t;
 				this.la = la;
