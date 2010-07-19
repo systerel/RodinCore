@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
-
 import static org.eventb.internal.core.parser.AbstractGrammar.*;
 import static org.eventb.internal.core.parser.GenParser.ProgressDirection.*;
 
@@ -141,8 +140,8 @@ public class GenParser {
 
 		/**
 		 * Makes a source location starting from the position where the latest
-		 * call to a subparse() method occurred, ending at the end position of the
-		 * previous token (before current token t).
+		 * call to a subparse() method occurred, ending at the end position of
+		 * the previous token (before current token t).
 		 * 
 		 * @return a source location
 		 */
@@ -183,7 +182,7 @@ public class GenParser {
 		}
 		
 		private void accept() {
-			if(grammar.isOpen(t.kind)) {
+			if (grammar.isOpen(t.kind)) {
 				pushParentKind(_OPEN);
 			}
 			if (grammar.isClose(la.kind)) {
@@ -464,7 +463,19 @@ public class GenParser {
 		public int getKind(String operatorImage) {
 			return grammar.getKind(operatorImage);
 		}
-		
+
+		/**
+		 * Looks ahead for the given kind.
+		 * <p>
+		 * FIXME current implementation is not compatible with backtracking.
+		 * MUST NOT be called after a call to {@link ParserContext#save()};
+		 * @see Scanner#restore(ScannerState)
+		 * </p>
+		 * 
+		 * @param searchedKind
+		 *            a kind
+		 * @return <code>true</code> iff the given kind has been found ahead
+		 */
 		public boolean lookAheadFor(int searchedKind) {
 			if (la.kind == searchedKind) {
 				return true;
@@ -499,8 +510,7 @@ public class GenParser {
 			Integer index = binders.get(name);
 			if (index == null) {
 				return -1;
-			}
-			else {
+			} else {
 				return maxCount - index;
 			}
 		}
@@ -543,7 +553,8 @@ public class GenParser {
 				final Expression res = pc.subParse(MainParsers.EXPR_PARSER, false);
 				result.setParsedExpression(res); 
 			} else {
-				throw new IllegalArgumentException("Can only parse one of: Predicate, Expression, Assignment or Type.");
+				throw new IllegalArgumentException(
+						"Can only parse one of: Predicate, Expression, Assignment or Type.");
 			}
 			if (pc.t.kind != _EOF) {
 				failUnmatchedTokens(pc);
@@ -552,12 +563,9 @@ public class GenParser {
 			if (DEBUG) {
 				if (pc.parentKind.val != _EOF) {
 					throw new IllegalStateException("Improper parent stack: "
-							+ pc.parentKind
-							+ " with "
-							+ pc.parentKind.val
+							+ pc.parentKind + " with " + pc.parentKind.val
 							+ " = "
-							+ factory.getGrammar().getImage(
-									pc.parentKind.val));
+							+ factory.getGrammar().getImage(pc.parentKind.val));
 				}
 			}
 		} catch (SyntaxError e) {
