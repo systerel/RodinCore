@@ -284,7 +284,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 		if (!changed) {
 			before = this;
 		} else {
-			before = rewriter.getFactory().makeExtendedPredicate(getTag(),
+			before = rewriter.getFactory().makeExtendedPredicate(extension,
 					newChildExpressions, newChildPredicates,
 					getSourceLocation());
 		}

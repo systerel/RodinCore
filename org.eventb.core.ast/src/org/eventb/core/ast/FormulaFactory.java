@@ -105,6 +105,7 @@ public class FormulaFactory {
 	 */
 	public static Map<String, IExpressionExtension> getExtensions(
 			IDatatypeExtension extension) {
+		// FIXME returned extensions should be unique
 		return new DatatypeExtensionComputer(extension).compute();
 	}
 	
@@ -207,12 +208,13 @@ public class FormulaFactory {
 	/**
 	 * @since 2.0
 	 */
-	public ExtendedPredicate makeExtendedPredicate(int tag,
+	public ExtendedPredicate makeExtendedPredicate(IPredicateExtension extension,
 			Collection<Expression> expressions,
 			Collection<Predicate> predicates,
-			SourceLocation sourceLocation) {
-		// TODO Auto-generated method stub
-		return null;
+			SourceLocation location) {
+		final Expression[] exprs = expressions.toArray(new Expression[expressions.size()]);
+		final Predicate[] preds = predicates.toArray(new Predicate[predicates.size()]);
+		return makeExtendedPredicate(extension, exprs, preds, location);
 	}
 
 	// TODO add methods to get operator and group ids,
