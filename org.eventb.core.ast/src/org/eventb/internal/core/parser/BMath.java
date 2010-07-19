@@ -127,7 +127,11 @@ public abstract class BMath extends AbstractGrammar {
 	
 	public static final int _PREDVAR = publicTokens.reserved("Predicate Variable");
 
-
+	@Override
+	public boolean isOperator(int kind) {
+		return kind == _NEGLIT || super.isOperator(kind);
+	}
+	
 	@Override
 	protected void addOperators() {
 		initTokens();
