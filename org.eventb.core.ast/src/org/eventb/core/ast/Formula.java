@@ -2145,7 +2145,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * 
 	 * @return a list of all the findings reported by the inspector during
 	 *         traversal
-	 * @since 1.3
+	 * @since 2.0
 	 */
 	public final <F> List<F> inspect(IFormulaInspector<F> inspector) {
 		if (this instanceof Assignment) {
@@ -2157,6 +2157,9 @@ public abstract class Formula<T extends Formula<T>> {
 		return acc.getFindings();
 	}
 	
+	/**
+	 * @since 2.0
+	 */
 	protected abstract <F> void inspect(FindingAccumulator<F> acc);
 	
 	/**

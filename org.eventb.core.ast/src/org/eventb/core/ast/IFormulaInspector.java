@@ -29,7 +29,7 @@ package org.eventb.core.ast;
  * @see IAccumulator
  * 
  * @author Laurent Voisin
- * @since 1.3
+ * @since 2.0
  */
 public interface IFormulaInspector<F> {
 
