@@ -961,8 +961,13 @@ public class UIUtils {
 	private static String[] getValues(IAttributeManipulation manipulation,
 			IInternalElement element, boolean required) {
 		final String[] values = manipulation.getPossibleValues(element, null);
-		if (required) {
-			return values;
+		try {
+			//see bug #3005230
+			if (required && manipulation.hasValue(element, null)) {
+				return values;
+			}
+		} catch (RodinDBException e) {
+			e.printStackTrace();
 		}
 		final String[] temp = new String[values.length + 1];
 		temp[0] = COMBO_VALUE_UNDEFINED;
