@@ -125,7 +125,7 @@ public class SubParsers {
 		}
 		
 		public final SubParseResult<R> nud(ParserContext pc) throws SyntaxError {
-			pc.progress(kind);
+			pc.accept(kind);
 			final R right = parseRight(pc);
 			return new SubParseResult<R>(right, kind);
 		}
@@ -159,9 +159,9 @@ public class SubParsers {
 		protected final R parseRight(ParserContext pc) throws SyntaxError {
 			// FIXME parsing this way prevents priority and compatibility checks
 			// with operators that follow the closing parenthesis
-			pc.progressOpenParen();
+			pc.acceptOpenParen();
 			final C child = pc.subParseNoCheck(childParser);
-			pc.progressCloseParen();
+			pc.acceptCloseParen();
 			return makeValue(pc.factory, child, pc.getSourceLocation());
 		}
 		
@@ -206,7 +206,7 @@ public class SubParsers {
 		
 		public final SubParseResult<R> nud(ParserContext pc) throws SyntaxError {
 			final String tokenVal = pc.t.val;
-			pc.progress(kind);
+			pc.accept(kind);
 			final SourceLocation loc = pc.getSourceLocation();
 			final R value = makeValue(pc, tokenVal, loc);
 			return new SubParseResult<R>(value, kind);
@@ -268,7 +268,7 @@ public class SubParsers {
 		protected abstract C getRight(R parent);
 		
 		public final SubParseResult<R> led(Formula<?> left, ParserContext pc) throws SyntaxError {
-			pc.progress(kind);
+			pc.accept(kind);
 			final C typedLeft = asLeftType(left);
 			final C right = parseRight(pc);
 			final R value = makeValue(pc.factory, typedLeft, right, pc.getSourceLocation());
@@ -337,7 +337,7 @@ public class SubParsers {
 			children.add(typedLeft);
 			
 			do {
-				pc.progress(kind);
+				pc.accept(kind);
 				final C next = pc.subParse(childParser, true);
 				children.add(next);
 			} while (pc.t.kind == kind);
@@ -427,7 +427,7 @@ public class SubParsers {
 			Type type = null;
 			if (pc.t.kind == _TYPING) {
 				pc.pushParentKind();
-				pc.progress(_TYPING);
+				pc.accept(_TYPING);
 				try {
 					type = pc.subParse(TYPE_PARSER, true);
 				} finally {
@@ -543,7 +543,7 @@ public class SubParsers {
 			if (!isTypedGeneric(childTag)) {
 				throw newUnexpectedOftype(pc);
 			}
-			pc.progress(_TYPING);
+			pc.accept(_TYPING);
 			
 			Type type = pc.subParse(TYPE_PARSER, true);
 			final SourceLocation typeLoc = pc.getSourceLocation();
@@ -837,7 +837,7 @@ public class SubParsers {
 			// FIXME parsing this way prevents priority and compatibility checks
 			// with operators that follow the closing parenthesis
 			final Expression right = pc.subParseNoCheck(childParser);
-			pc.progress(closeKind);
+			pc.accept(closeKind);
 			return right;
 		}
 		
@@ -938,7 +938,7 @@ public class SubParsers {
 		@Override
 		public QuantifiedPredicate parseRight(ParserContext pc) throws SyntaxError {
 			final List<BoundIdentDecl> boundIdentifiers = pc.subParseNoBindingNoCheck(BOUND_IDENT_DECL_LIST_PARSER);
-			pc.progress(_DOT);
+			pc.accept(_DOT);
 			final Predicate pred = pc.subParseNoCheck(PRED_PARSER, boundIdentifiers);
 
 			return pc.factory.makeQuantifiedPredicate(tag, boundIdentifiers,
@@ -1037,7 +1037,7 @@ public class SubParsers {
 			} else {
 				exprs = pc.subParseNoCheck(EXPR_LIST_PARSER);
 			}
-			pc.progress(_RBRACE);
+			pc.accept(_RBRACE);
 			return pc.factory.makeSetExtension(exprs, pc.getSourceLocation());
 		}
 
@@ -1092,17 +1092,17 @@ public class SubParsers {
 		@Override
 		protected QuantifiedExpression parseRight(ParserContext pc) throws SyntaxError {
 			final List<BoundIdentDecl> boundIdents = pc.subParseNoBindingNoCheck(BOUND_IDENT_DECL_LIST_PARSER);
-			pc.progress(_DOT);
+			pc.accept(_DOT);
 			final Predicate pred = pc.subParseNoParentNoCheck(PRED_PARSER, boundIdents);
-			pc.progress(_MID);
+			pc.accept(_MID);
 			final Expression expr = pc.subParseNoCheck(EXPR_PARSER, boundIdents);
-			progressClose(pc);
+			acceptClose(pc);
 
 			return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
 					expr, pc.getSourceLocation(), Form.Explicit);
 		}
 	
-		protected void progressClose(ParserContext pc) throws SyntaxError {
+		protected void acceptClose(ParserContext pc) throws SyntaxError {
 			// do nothing by default
 		}
 
@@ -1126,8 +1126,8 @@ public class SubParsers {
 		}
 
 		@Override
-		protected void progressClose(ParserContext pc) throws SyntaxError {
-			pc.progress(_RBRACE);
+		protected void acceptClose(ParserContext pc) throws SyntaxError {
+			pc.accept(_RBRACE);
 		}
 		
 		@Override
@@ -1147,18 +1147,18 @@ public class SubParsers {
 		protected final QuantifiedExpression parseRight(ParserContext pc)
 		throws SyntaxError {
 			final Expression expr = pc.subParseNoBindingNoCheck(EXPR_PARSER);
-			pc.progress(_MID);
+			pc.accept(_MID);
 			final List<BoundIdentDecl> boundIdents = new ArrayList<BoundIdentDecl>();
 			final Expression boundExpr = expr.bindAllFreeIdents(boundIdents, pc.factory);
 
 			final Predicate pred = pc.subParseNoParentNoCheck(PRED_PARSER, boundIdents);
-			progressClose(pc);
+			acceptClose(pc);
 
 			return pc.factory.makeQuantifiedExpression(tag, boundIdents, pred,
 					boundExpr, pc.getSourceLocation(), Form.Implicit);
 		}
 		
-		protected void progressClose(ParserContext pc) throws SyntaxError {
+		protected void acceptClose(ParserContext pc) throws SyntaxError {
 			// do nothing by default
 		}
 
@@ -1180,8 +1180,8 @@ public class SubParsers {
 		}
 
 		@Override
-		protected void progressClose(ParserContext pc) throws SyntaxError {
-			pc.progress(_RBRACE);
+		protected void acceptClose(ParserContext pc) throws SyntaxError {
+			pc.accept(_RBRACE);
 		}
 		
 		@Override
@@ -1201,10 +1201,10 @@ public class SubParsers {
 		public QuantifiedExpression parseRight(ParserContext pc) throws SyntaxError {
 			final PatternParser pattParser = new PatternParser(pc.result);
 			final Pattern pattern = pc.subParseNoBindingNoCheck(pattParser);
-			pc.progress(_DOT);
+			pc.accept(_DOT);
 			final List<BoundIdentDecl> boundDecls = pattern.getDecls();
 			final Predicate pred = pc.subParseNoParentNoCheck(PRED_PARSER, boundDecls);
-			pc.progress(_MID);
+			pc.accept(_MID);
 			final Expression expr = pc.subParseNoCheck(EXPR_PARSER, boundDecls);
 			
 			final Expression pair = pc.factory.makeBinaryExpression(MAPSTO,
@@ -1434,7 +1434,7 @@ public class SubParsers {
 
 		public SubParseResult<Expression> nud(ParserContext pc) throws SyntaxError {
 			final int minusPos = pc.t.pos;
-			pc.progress(kind);
+			pc.accept(kind);
 			final Expression expr = pc.subParse(EXPR_PARSER, true);
 			final SourceLocation loc = pc.getSourceLocation();
 	        if (expr instanceof IntegerLiteral

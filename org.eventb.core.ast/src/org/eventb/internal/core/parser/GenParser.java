@@ -16,7 +16,6 @@ import static org.eventb.internal.core.parser.GenParser.ProgressDirection.*;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Stack;
 
@@ -90,20 +89,6 @@ public class GenParser {
 
 		public void pop() {
 			val = stack.pop();
-		}
-
-		/**
-		 * Returns an iterator on the stack starting from the end, intended to
-		 * be used in reverse order, with {@link ListIterator#hasPrevious()} and
-		 * {@link ListIterator#previous()}.
-		 * <p>
-		 * This way, items are delivered in LIFO order.
-		 * </p>
-		 * 
-		 * @return an iterator
-		 */
-		public ListIterator<T> stackIterator() {
-			return stack.listIterator(stack.size());
 		}
 
 		public T peekStack() {
@@ -194,10 +179,10 @@ public class GenParser {
 		public void init() {
 			t = INIT_TOKEN;
 			la = scanner.Scan();
-			progress();
+			accept();
 		}
 		
-		private void progress() {
+		private void accept() {
 			if(grammar.isOpen(t.kind)) {
 				pushParentKind(_OPEN);
 			}
@@ -278,27 +263,27 @@ public class GenParser {
 		 * @throws SyntaxError
 		 *             in case an unexpected token is ahead
 		 */
-		public void progress(int expectedKind) throws SyntaxError {
+		public void accept(int expectedKind) throws SyntaxError {
 			if (t.kind != expectedKind) {
 				final String expected = grammar.getImage(expectedKind);
 				throw new SyntaxError(new ASTProblem(makeSourceLocation(t),
 						ProblemKind.UnexpectedSymbol, ProblemSeverities.Error,
 						expected, grammar.getImage(t.kind)));
 			}
-			progress();
+			accept();
 		}
 		
-		public void progressOpenParen() throws SyntaxError {
-			progress(_LPAR);
+		public void acceptOpenParen() throws SyntaxError {
+			accept(_LPAR);
 		}
 		
-		public void progressCloseParen() throws SyntaxError {
-			progress(_RPAR);
+		public void acceptCloseParen() throws SyntaxError {
+			accept(_RPAR);
 		}
 		
 		void scanUntilEOF() {
 			while (t.kind != _EOF) {
-				progress();
+				accept();
 			}
 		}
 		

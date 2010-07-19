@@ -317,9 +317,9 @@ public class MainParsers {
 	static final INudParser<Formula<?>> CLOSED_SUGAR = new INudParser<Formula<?>> () {
 
 		public SubParseResult<Formula<?>> nud(ParserContext pc) throws SyntaxError {
-			pc.progressOpenParen();
+			pc.acceptOpenParen();
 			final SubParseResult<? extends Formula<?>> formula = pc.subParseNoCheckRes(FORMULA_PARSER);
-			pc.progressCloseParen();
+			pc.acceptCloseParen();
 			return new SubParseResult<Formula<?>>(formula.getParsed(), formula
 					.getKind(), true);
 		}
@@ -343,7 +343,7 @@ public class MainParsers {
 			final PatternAtomParser atomParser = new PatternAtomParser(pattern, this);
 			pc.subParseNoCheck(atomParser);
 			while (pc.t.kind == _MAPSTO) {
-				pc.progress(_MAPSTO);
+				pc.accept(_MAPSTO);
 				pc.subParseNoCheck(atomParser);
 				pattern.mapletParsed(pc.getSourceLocation());
 			}
@@ -392,9 +392,9 @@ public class MainParsers {
 
 			public SubParseResult<Object> nud(ParserContext pc) throws SyntaxError {
 				if (pc.t.kind == _LPAR) {
-					pc.progressOpenParen();
+					pc.acceptOpenParen();
 					pc.subParse(parser, false);
-					pc.progressCloseParen();
+					pc.acceptCloseParen();
 				} else {
 					final BoundIdentDecl boundIdent = pc
 							.subParse(BOUND_IDENT_DECL_SUBPARSER, false);
@@ -438,7 +438,7 @@ public class MainParsers {
 			final T first = pc.subParseNoCheck(parser);
 			list.add(first);
 			while (pc.t.kind == _COMMA) {
-				pc.progress(_COMMA);
+				pc.accept(_COMMA);
 				final T next = pc.subParseNoCheck(parser);
 				list.add(next);
 			}
@@ -520,7 +520,7 @@ public class MainParsers {
 			
 			final Token tokenAfterIdents = pc.t;
 			final int tokenKind = tokenAfterIdents.kind;
-			pc.progress(tokenKind);
+			pc.accept(tokenKind);
 
 			if (tokenKind == _LPAR) { // FUNIMAGE assignment
 				if (idents.size() != 1) {
@@ -531,8 +531,8 @@ public class MainParsers {
 				}
 				final FreeIdentifier ident = idents.get(0);
 				final Expression index = pc.subParse(EXPR_PARSER, false);
-				pc.progressCloseParen();
-				pc.progress(kind);
+				pc.acceptCloseParen();
+				pc.accept(kind);
 				final Expression value = pc.subParse(EXPR_PARSER, true);
 				final Expression overriding = makeFunctionOverriding(ident, index, value, pc.factory);
 				final BecomesEqualTo bet = pc.factory.makeBecomesEqualTo(ident, overriding, pc.getSourceLocation());
@@ -581,7 +581,7 @@ public class MainParsers {
 						ProblemKind.BECMOAppliesToOneIdent,
 						ProblemSeverities.Error));
 			}
-			pc.progress(kind);
+			pc.accept(kind);
 			final Expression expr = pc.subParseNoParentNoCheck(EXPR_PARSER, Collections.<BoundIdentDecl>emptyList());
 			final BecomesMemberOf bmo = pc.factory.makeBecomesMemberOf(ident, expr, pc.getSourceLocation());
 			return new SubParseResult<BecomesMemberOf>(bmo, kind);
@@ -608,7 +608,7 @@ public class MainParsers {
 			// the list is guaranteed to be non empty
 			assert !idents.isEmpty();
 			
-			pc.progress(kind);
+			pc.accept(kind);
 			
 			final List<BoundIdentDecl> primed = makePrimedDecl(idents, pc.factory);
 			final Predicate condition = pc.subParse(PRED_PARSER, primed, true);
