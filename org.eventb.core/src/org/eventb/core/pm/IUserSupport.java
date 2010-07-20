@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,9 +27,9 @@ import org.rodinp.core.RodinDBException;
 /**
  * Common protocol for manipulating the state of a proof and its proof tree.
  * <p>
- * A user support instance is associated to a Proof Status file, which is set
+ * A user support instance is associated with a Proof Status file, which is set
  * with the {@link #setInput(IRodinFile)} method. This method
- * should be called only once, and prior to any other method call (except
+ * should be called only once, and prior to any other method call (except for
  * {@link #dispose()} which can be called at any time).
  * </p>
  * <p>
@@ -51,6 +51,8 @@ import org.rodinp.core.RodinDBException;
  * @author Thai Son Hoang
  * @author Laurent Voisin
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IUserSupport extends IElementChangedListener {
 
