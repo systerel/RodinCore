@@ -44,6 +44,7 @@ import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
 import org.eventb.internal.ui.eventbeditor.EventBMachineEditor;
@@ -67,6 +68,7 @@ import org.rodinp.internal.core.debug.DebugHelpers;
  */
 public abstract class EventBUITest extends TestCase {
 	
+	public static final FormulaFactory ff = FormulaFactory.getDefault();
 
 	/**
 	 * The pointer to the test Rodin project.
