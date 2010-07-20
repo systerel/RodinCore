@@ -13,7 +13,6 @@ package org.eventb.internal.core.parser;
 import static org.eventb.core.ast.extension.IOperatorProperties.BINARY;
 import static org.eventb.core.ast.extension.IOperatorProperties.MULTARY_2;
 import static org.eventb.core.ast.extension.IOperatorProperties.NULLARY;
-import static org.eventb.core.ast.extension.IOperatorProperties.UNARY;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 import static org.eventb.core.ast.extension.IOperatorProperties.Notation.INFIX;
 import static org.eventb.core.ast.extension.IOperatorProperties.Notation.PREFIX;
@@ -21,6 +20,7 @@ import static org.eventb.internal.core.ast.extension.OperatorProperties.makeOper
 
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.extension.IOperatorProperties;
+import org.eventb.core.ast.extension.IOperatorProperties.Arity;
 
 /**
  * @author Nicolas Beauger
@@ -31,7 +31,7 @@ public class ParserInfos  {
 	public static enum ExtendedExpressionParsers implements
 			IPropertyParserInfo<ExtendedExpression> {
 
-		EXTENDED_ATOMIC_EXPRESSION(makeOperProps(PREFIX, EXPRESSION, NULLARY, EXPRESSION), true) {
+		EXTENDED_ATOMIC_EXPRESSION(makeOperProps(PREFIX, EXPRESSION, NULLARY, EXPRESSION, false), true) {
 
 			public IParserPrinter<ExtendedExpression> makeParser(int kind, int tag) {
 				return new SubParsers.ExtendedAtomicExpressionParser(kind, tag);
@@ -39,33 +39,29 @@ public class ParserInfos  {
 
 		},
 
-		EXTENDED_BINARY_EXPRESSION(makeOperProps(INFIX, EXPRESSION, BINARY, EXPRESSION), true) {
+		EXTENDED_BINARY_EXPRESSION(makeOperProps(INFIX, EXPRESSION, BINARY, EXPRESSION, false), true) {
 
 			public IParserPrinter<ExtendedExpression> makeParser(int kind, int tag) {
 				return new SubParsers.ExtendedBinaryExpressionInfix(kind, tag);
 			}
 		},
 
-		EXTENDED_ASSOCIATIVE_EXPRESSION(makeOperProps(INFIX, EXPRESSION, MULTARY_2, EXPRESSION), true) {
+		EXTENDED_ASSOCIATIVE_EXPRESSION(makeOperProps(INFIX, EXPRESSION, MULTARY_2, EXPRESSION, true), true) {
 
 			public IParserPrinter<ExtendedExpression> makeParser(int kind, int tag) {
 				return new SubParsers.ExtendedAssociativeExpressionInfix(kind, tag);
 			}
 		},
 		
-		PARENTHESIZED_UNARY_EXPRESSION(makeOperProps(PREFIX, EXPRESSION, UNARY, EXPRESSION), true) {
+		// the arity given here stands for 'any fixed arity in 1 .. MAX_ARITY'
+		PARENTHESIZED_EXPRESSION(makeOperProps(PREFIX, EXPRESSION, new Arity(1,
+				IOperatorProperties.MAX_ARITY), EXPRESSION, false), true) {
 
 			public IParserPrinter<ExtendedExpression> makeParser(int kind, int tag) {
 				return new SubParsers.ExtendedExprParen(kind, tag);
 			}
 		},
-		
-		PARENTHESIZED_BINARY_EXPRESSION(makeOperProps(PREFIX, EXPRESSION, BINARY, EXPRESSION), true) {
-
-			public IParserPrinter<ExtendedExpression> makeParser(int kind, int tag) {
-				return new SubParsers.ExtendedExprParen(kind, tag);
-			}
-		},
+	
 		;
 		
 		private final IOperatorProperties operProps;

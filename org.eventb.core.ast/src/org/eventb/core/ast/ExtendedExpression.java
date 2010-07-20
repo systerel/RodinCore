@@ -290,7 +290,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		boolean changed = false;
 		for (Expression child : childExpressions) {
 			Expression newChild = child.rewrite(rewriter);
-			if (flatten && extension.getKind().isFlattenable()
+			if (flatten && extension.getKind().getProperties().isAssociative()
 					&& getTag() == newChild.getTag()) {
 				final Expression[] grandChildren = ((ExtendedExpression) newChild).childExpressions;
 				newChildExpressions.addAll(Arrays.asList(grandChildren));

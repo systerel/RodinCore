@@ -30,21 +30,15 @@ public interface IFormulaExtension {
 	public static class ExtensionKind implements IExtensionKind {
 
 		private final IOperatorProperties operProps;
-		private final boolean flattenable;
 		
 		public ExtensionKind(Notation notation, FormulaType formulaType,
-				Arity arity, FormulaType argumentType, boolean flattenable) {
+				Arity arity, FormulaType argumentType, boolean isAssociative) {
 			this.operProps = makeOperProps(notation, formulaType, arity,
-					argumentType);
-			this.flattenable = flattenable;
+					argumentType, isAssociative);
 		}
 
 		public IOperatorProperties getProperties() {
 			return operProps;
-		}
-
-		public boolean isFlattenable() {
-			return flattenable;
 		}
 
 		public boolean checkPreconditions(Expression[] childExprs,

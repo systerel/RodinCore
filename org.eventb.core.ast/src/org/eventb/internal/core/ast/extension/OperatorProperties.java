@@ -22,15 +22,17 @@ public class OperatorProperties implements IOperatorProperties {
 	private final FormulaType formulaType;
 	private final Arity arity;
 	private final FormulaType argumentType;
+	private  final boolean isAssociative;
 
 	private OperatorProperties(Notation notation, FormulaType formulaType,
-			Arity arity, FormulaType argumentType) {
+			Arity arity, FormulaType argumentType, boolean isAssociative) {
 		this.notation = notation;
 		this.formulaType = formulaType;
 		this.arity = arity;
 		this.argumentType = argumentType;
+		this.isAssociative = isAssociative;
 	}
-	
+
 	public Notation getNotation() {
 		return notation;
 	}
@@ -46,10 +48,14 @@ public class OperatorProperties implements IOperatorProperties {
 	public FormulaType getArgumentType() {
 		return argumentType;
 	}
+	
+	public boolean isAssociative() {
+		return isAssociative;
+	}
 
 	public static IOperatorProperties makeOperProps(Notation notation,
-			FormulaType formulaType, Arity arity, FormulaType argumentType) {
+			FormulaType formulaType, Arity arity, FormulaType argumentType, boolean isAssociative) {
 		return new OperatorProperties(notation, formulaType, arity,
-				argumentType);
+				argumentType, isAssociative);
 	}
 }

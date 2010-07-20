@@ -270,7 +270,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 				childPredicates.length + 11);
 		for (Predicate child : childPredicates) {
 			Predicate newChild = child.rewrite(rewriter);
-			if (flatten && extension.getKind().isFlattenable()
+			if (flatten && extension.getKind().getProperties().isAssociative()
 					&& getTag() == newChild.getTag()) {
 				final Predicate[] grandChildren = ((ExtendedPredicate) newChild).childPredicates;
 				newChildPredicates.addAll(Arrays.asList(grandChildren));

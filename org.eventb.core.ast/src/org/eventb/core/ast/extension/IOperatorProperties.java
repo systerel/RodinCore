@@ -27,7 +27,7 @@ public interface IOperatorProperties {
 		PREFIX, INFIX, POSTFIX
 	}
 	
-	static final int UNBOUNDED = Integer.MAX_VALUE;
+	public static final int MAX_ARITY = Integer.MAX_VALUE;
 
 	/**
 	 * Arity of an operator.
@@ -45,11 +45,30 @@ public interface IOperatorProperties {
 			this.min = min;
 			this.max = max;
 		}
+
+		public int getMin() {
+			return min;
+		}
+		
+		public int getMax() {
+			return max;
+		}
 		
 		public boolean check(int nbArgs) {
 			return min <= nbArgs && nbArgs <= max;
 		}
 
+		// TODO move to Arity
+		public boolean isDistinct(Arity other) {
+			return getMin() > other.getMax()
+					|| other.getMin() > getMax();
+		}
+		
+		public boolean contains(Arity other) {
+			return getMin() <= other.getMin()
+					&& other.getMax() <= getMax();
+		}
+		
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -86,7 +105,7 @@ public interface IOperatorProperties {
 	public static final Arity NULLARY = new FixedArity(0);
 	public static final Arity UNARY = new FixedArity(1);
 	public static final Arity BINARY = new FixedArity(2);
-	public static final Arity MULTARY_2 = new Arity(2, UNBOUNDED);
+	public static final Arity MULTARY_2 = new Arity(2, MAX_ARITY);
 	
 	public static enum FormulaType {
 		EXPRESSION, PREDICATE
@@ -100,5 +119,9 @@ public interface IOperatorProperties {
 	Arity getArity();
 	
 	FormulaType getArgumentType();
+
+	// FIXME clarify relation with the associativity property, set through
+	// addCompatibilities; maybe remove this method
+	boolean isAssociative();
 
 }

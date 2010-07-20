@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eventb.core.ast.Formula;
@@ -30,15 +32,15 @@ public class PropertyParserDB {
 		
 		private final Notation notation;
 		private final FormulaType formulaType;
-		private final Arity arity;
 		private final FormulaType argumentType;
+		private final boolean isAssociative;
 		
-		public Properties(Notation notation, FormulaType formulaType, Arity arity,
-				FormulaType argumentType) {
+		public Properties(Notation notation, FormulaType formulaType,
+				FormulaType argumentType, boolean isAssociative) {
 			this.notation = notation;
 			this.formulaType = formulaType;
-			this.arity = arity;
 			this.argumentType = argumentType;
+			this.isAssociative = isAssociative;
 		}
 
 		@Override
@@ -47,9 +49,9 @@ public class PropertyParserDB {
 			int result = 1;
 			result = prime * result
 					+ ((argumentType == null) ? 0 : argumentType.hashCode());
-			result = prime * result + ((arity == null) ? 0 : arity.hashCode());
 			result = prime * result
 					+ ((formulaType == null) ? 0 : formulaType.hashCode());
+			result = prime * result + (isAssociative ? 1231 : 1237);
 			result = prime * result
 					+ ((notation == null) ? 0 : notation.hashCode());
 			return result;
@@ -67,67 +69,66 @@ public class PropertyParserDB {
 				return false;
 			}
 			Properties other = (Properties) obj;
-			if (argumentType == null) {
-				if (other.argumentType != null) {
-					return false;
-				}
-			} else if (!argumentType.equals(other.argumentType)) {
+			if (argumentType != other.argumentType) {
 				return false;
 			}
-			if (arity == null) {
-				if (other.arity != null) {
-					return false;
-				}
-			} else if (!arity.equals(other.arity)) {
+			if (formulaType != other.formulaType) {
 				return false;
 			}
-			if (formulaType == null) {
-				if (other.formulaType != null) {
-					return false;
-				}
-			} else if (!formulaType.equals(other.formulaType)) {
+			if (isAssociative != other.isAssociative) {
 				return false;
 			}
-			if (notation == null) {
-				if (other.notation != null) {
-					return false;
-				}
-			} else if (!notation.equals(other.notation)) {
+			if (notation != other.notation) {
 				return false;
 			}
 			return true;
 		}
-		
+
+
 	}
 	
 	private static Properties makeProp(IOperatorProperties operProps) {
 		return new Properties(operProps.getNotation(),
-				operProps.getFormulaType(), operProps.getArity(), operProps
-						.getArgumentType());
+				operProps.getFormulaType(), operProps
+						.getArgumentType(), operProps.isAssociative());
 	}
 	
-	private final Map<Properties, IPropertyParserInfo<? extends Formula<?>>> map = new HashMap<Properties, IPropertyParserInfo<? extends Formula<?>>>();
+	private final Map<Properties, List<IPropertyParserInfo<? extends Formula<?>>>> map = new HashMap<Properties, List<IPropertyParserInfo<? extends Formula<?>>>>();
 
-	public void add(IPropertyParserInfo<? extends Formula<?>> parserBuilder)
+	public void add(IPropertyParserInfo<? extends Formula<?>> newParser)
 			throws OverrideException {
-		final Properties prop = makeProp(parserBuilder.getProperties());
+		final Properties newProp = makeProp(newParser.getProperties());
 
-		final IPropertyParserInfo<? extends Formula<?>> old = map.put(prop, parserBuilder);
-		if (old != null) {
-			map.put(prop, old);
-			throw new GenParser.OverrideException("overriding a parser");
+		List<IPropertyParserInfo<? extends Formula<?>>> list = map.get(newProp);
+		if (list == null) {
+			list = new ArrayList<IPropertyParserInfo<? extends Formula<?>>>();
+			map.put(newProp, list);
 		}
-
+		final Arity newArity = newParser.getProperties().getArity();
+		for (IPropertyParserInfo<? extends Formula<?>> parser : list) {
+			final Arity arity = parser.getProperties().getArity();
+			if(!newArity.isDistinct(arity)) {
+				throw new GenParser.OverrideException("overriding a parser");
+			}
+		}
+		list.add(newParser);
 	}
 
 	public IParserPrinter<? extends Formula<?>> getParser(IOperatorProperties operProps, int kind,
 			int tag) {
 		final Properties prop = makeProp(operProps);
-		final IPropertyParserInfo<? extends Formula<?>> parserBuilder = map.get(prop);
-		if (parserBuilder == null) {
+		final List<IPropertyParserInfo<? extends Formula<?>>> list = map.get(prop);
+		if (list == null) {
 			return null;
 		}
-		return parserBuilder.makeParser(kind, tag);
+		final Arity desiredArity = operProps.getArity();
+		for (IPropertyParserInfo<? extends Formula<?>> parserInfo : list) {
+			final Arity arity = parserInfo.getProperties().getArity();
+			if(arity.contains(desiredArity)) {
+				return parserInfo.makeParser(kind, tag);
+			}
+		}
+		return null;
 	}
 
 }
