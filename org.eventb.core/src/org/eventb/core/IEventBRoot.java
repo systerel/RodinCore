@@ -145,7 +145,7 @@ public interface IEventBRoot extends IInternalElement, IGeneratedElement {
 	IPSRoot getPSRoot();
 	
 	/**
-	 * Returns the formula factory associated to this component.
+	 * Returns the formula factory associated with this component.
 	 * 
 	 * @return the associated formula factory
 	 */

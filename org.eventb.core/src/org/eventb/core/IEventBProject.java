@@ -239,7 +239,7 @@ public interface IEventBProject extends IAdaptable {
 	IRodinProject getRodinProject();
 	
 	/**
-	 * Returns the formula factory associated to this project.
+	 * Returns the formula factory associated with this project.
 	 * 
 	 * @return the associated formula factory
 	 */
