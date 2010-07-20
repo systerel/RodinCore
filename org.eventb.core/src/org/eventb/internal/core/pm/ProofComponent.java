@@ -90,6 +90,10 @@ public class ProofComponent implements IProofComponent {
 		return res.toArray(new ProofAttempt[res.size()]);
 	}
 
+	public ProofAttempt getProofAttempt(String poName, String owner) {
+		return get(poName, owner);
+	}
+
 	public IPSRoot getPSRoot() {
 		return psRoot;
 	}
