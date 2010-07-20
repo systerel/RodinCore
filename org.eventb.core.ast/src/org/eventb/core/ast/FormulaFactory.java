@@ -140,7 +140,10 @@ public class FormulaFactory {
 		return grammar;
 	}
 	
-	private ExtendedExpression makeExtendedExpression(
+	/**
+	 * @since 2.0
+	 */
+	public ExtendedExpression makeExtendedExpression(
 			IExpressionExtension extension, Expression[] expressions,
 			Predicate[] predicates, SourceLocation location, Type type) {
 		if (!extensions.containsValue(extension)) {
@@ -164,18 +167,6 @@ public class FormulaFactory {
 	}
 	
 	// TODO consider adding a makeExtendedExpression() with a given type argument
-	
-	/**
-	 * @since 2.0
-	 */
-	public ExtendedExpression makeExtendedGenExpression(
-			IExpressionExtension extension, SourceLocation sourceLocation,
-			Type type) {
-		final Expression[] expr = new Expression[0];// TODO make constants
-		final Predicate[] pred = new Predicate[0];
-		return makeExtendedExpression(extension, expr, pred, sourceLocation,
-				type);
-	}
 	
 	/**
 	 * @since 2.0

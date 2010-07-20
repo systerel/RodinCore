@@ -44,6 +44,7 @@ public interface IFormulaExtension {
 		ASSOCIATIVE_INFIX_EXPRESSION(INFIX, EXPRESSION, MULTARY_2, EXPRESSION,
 				true),
 
+		// FIXME arity should be fixed
 		// op(a, b, ..., c) with 1 or more arguments
 		PARENTHESIZED_EXPRESSION_1(PREFIX, EXPRESSION, MULTARY_1, EXPRESSION,
 				false),

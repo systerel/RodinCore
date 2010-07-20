@@ -125,6 +125,7 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 		if (typeParams.isEmpty()) {
 			return ATOMIC_EXPRESSION;
 		}
+		// FIXME N_ARY
 		return PARENTHESIZED_EXPRESSION_1;
 	}
 }

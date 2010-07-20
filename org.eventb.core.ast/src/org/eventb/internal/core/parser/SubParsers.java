@@ -556,6 +556,7 @@ public class SubParsers {
 		}
 
 		private static boolean isTypedGeneric(int tag) {
+			// TODO add support for typed generic extensions (nil) 
 			switch (tag) {
 			case Formula.EMPTYSET:
 			case Formula.KID_GEN:

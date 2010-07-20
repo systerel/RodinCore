@@ -35,6 +35,9 @@ import org.eventb.core.ast.extension.datatype.ITypeParameter;
  */
 public class ConstructorMediator extends DatatypeMediator implements IConstructorMediator {
 
+	// FIXME we may wish to have priorities and custom type check methods, thus
+	// fully implementing methods from IExpressionExtension
+	
 	public ConstructorMediator(String typeName,
 			Map<String, ITypeParameter> typeParams) {
 		super(typeName, typeParams);
@@ -86,9 +89,54 @@ public class ConstructorMediator extends DatatypeMediator implements IConstructo
 		extensions.add(constructor);
 	}
 
-	public void addConstructor(String name, String id, String groupId, List<ITypeParameter> argumentTypes) {
-		// TODO Auto-generated method stub
-
+	public void addConstructor(final String name, final String id, final String groupId, List<ITypeParameter> argumentTypes) {
+		if (argumentTypes.isEmpty()) {
+			addConstructor(name, id, groupId);
+			return;
+		}
+		final IExpressionExtension constructor = new IExpressionExtension() {
+			
+			public Predicate getWDPredicate(IWDMediator wdMediator,
+					IExtendedFormula formula) {
+				return wdMediator.makeTrueWD();
+			}
+			
+			public String getSyntaxSymbol() {
+				return name;
+			}
+			
+			public IExtensionKind getKind() {
+				return ExtensionKind.PARENTHESIZED_EXPRESSION_1;
+			}
+			
+			public String getId() {
+				return id;
+			}
+			
+			public String getGroupId() {
+				return groupId;
+			}
+			
+			public void addPriorities(IPriorityMediator mediator) {
+				// no priority
+			}
+			
+			public void addCompatibilities(ICompatibilityMediator mediator) {
+				// no compatibility				
+			}
+			
+			public Type typeCheck(ITypeCheckMediator tcMediator,
+					ExtendedExpression expression) {
+				// TODO unification and return the datatype type
+				return null;
+			}
+			
+			public Type getType(ITypeMediator mediator, ExtendedExpression expression) {
+				// TODO return the datatype type
+				return null;
+			}
+		};
+		extensions.add(constructor);
 	}
 
 }

@@ -28,6 +28,7 @@ import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.BecomesMemberOf;
+import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.DefaultRewriter;
@@ -84,6 +85,8 @@ import org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship;
  */
 public class TestGenParser extends AbstractTests {
 
+	private static final Predicate[] NO_PRED = new Predicate[0];
+	private static final Expression[] NO_EXPR = new Expression[0];
 	protected static final BoundIdentifier BI_0 = ff.makeBoundIdentifier(0, null);
 	protected static final BoundIdentifier BI_1 = ff.makeBoundIdentifier(1, null);
 	protected static final BoundIdentifier BI_2 = ff.makeBoundIdentifier(2, null);
@@ -116,6 +119,7 @@ public class TestGenParser extends AbstractTests {
 	protected static final AtomicExpression INT = ff.makeAtomicExpression(Formula.INTEGER, null);
 	protected static final UnaryExpression POW_INT = ff.makeUnaryExpression(POW, INT, null);
 	protected static final IntegerType INT_TYPE = ff.makeIntegerType();
+	protected static final BooleanType BOOL_TYPE = ff.makeBooleanType();
 	protected static final PowerSetType POW_INT_TYPE = ff.makePowerSetType(INT_TYPE);
 	protected static final PowerSetType REL_INT_INT = ff.makeRelationalType(INT_TYPE, INT_TYPE);
 	protected static final SourceLocationChecker slChecker = new SourceLocationChecker();
@@ -314,11 +318,11 @@ public class TestGenParser extends AbstractTests {
 		checkParsedFormula(formula, expected, actual);
 	}
 
-	private static void doTypeTest(String formula, Type expected) {
-		doTypeTest(formula, expected, ff);
+	private static Type doTypeTest(String formula, Type expected) {
+		return doTypeTest(formula, expected, ff);
 	}
 	
-	private static void doTypeTest(String formula, Type expected, FormulaFactory factory) {
+	private static Type doTypeTest(String formula, Type expected, FormulaFactory factory) {
 		final IParseResult result = factory.parseType(formula,
 				LanguageVersion.V2);
 		if (result.hasProblem()) {
@@ -329,6 +333,7 @@ public class TestGenParser extends AbstractTests {
 		final Type actual = result.getParsedType();
 		System.out.println(actual);
 		assertEquals(expected, actual);
+		return actual;
 	}
 	
 	private static Assignment doAssignmentTest(String formula, Assignment expected) {
@@ -1922,12 +1927,58 @@ public class TestGenParser extends AbstractTests {
 
 		doExpressionTest("nil", nil, extFac);
 		
-		//TODO
-//		final IFormulaExtension extList = extensions.get("List");
-//		assertNotNull("List type constructor not found", extList);
-//
-//		doExpressionTest("(nil ⦂ List(ℤ)", typedNil, extFac);
+		final IExpressionExtension extList = extensions.get(LIST_TYPE.getId());
+		assertNotNull("List type constructor not found", extList);
+		
+		final GenericType listIntType = extFac.makeGenericType(Collections.<Type>singletonList(INT_TYPE), extList);
+		final ExtendedExpression nilInt = extFac.makeExtendedExpression(extNil,
+				NO_EXPR, NO_PRED, null, listIntType);
 
+		doExpressionTest("(nil ⦂ List(ℤ))", nilInt, extFac);
+
+		final GenericType listBoolBoolType = extFac.makeGenericType(Collections
+				.<Type> singletonList(extFac.makeProductType(BOOL_TYPE,
+						BOOL_TYPE)), extList);
+		final ExtendedExpression nilBoolBool = extFac.makeExtendedExpression(
+				extNil, NO_EXPR, NO_PRED, null, listBoolBoolType);
+
+		doExpressionTest("(nil ⦂ List(BOOL×BOOL))", nilBoolBool, extFac);
+		
+		assertFalse(nil.equals(nilInt));
+		assertFalse(nil.equals(nilBoolBool));
+		assertFalse(nilBoolBool.equals(nilInt));
+	}
+	
+	public void testDatatypeConstructor() throws Exception {
+		final Map<String, IExpressionExtension> extensions = FormulaFactory.getExtensions(LIST_TYPE);
+		final Set<IFormulaExtension> setExtns = new HashSet<IFormulaExtension>(extensions.values());
+		final FormulaFactory extFac = FormulaFactory.getInstance(setExtns);
+
+		final IExpressionExtension extNil = extensions.get("NIL");
+		assertNotNull("nil constructor not found", extNil);
+
+		final ExtendedExpression nil = extFac.makeExtendedExpression(extNil,
+				Collections.<Expression> emptyList(), Collections
+						.<Predicate> emptyList(), null);
+
+		final IExpressionExtension extCons = extensions.get("CONS");
+		assertNotNull(extCons);
+		
+		final ExtendedExpression list1 = extFac.makeExtendedExpression(extCons,
+				Arrays.asList(ONE, nil), Collections
+						.<Predicate> emptyList(), null);
+		
+		doExpressionTest("cons(1, nil)", list1, extFac);
+
+		final ExtendedExpression list01 = extFac.makeExtendedExpression(
+				extCons, Arrays.asList(ZERO,
+						extFac.makeExtendedExpression(
+								extCons, Arrays.asList(ONE,
+										nil),
+										Collections.<Predicate> emptyList(), null)),
+										Collections.<Predicate> emptyList(), null);
+
+		doExpressionTest("cons(0, cons(1, nil))", list01, extFac);
 	}
 	
 	public void testMinusPU() throws Exception {
