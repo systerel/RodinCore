@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,6 +67,7 @@ public abstract class EventBDialog extends Dialog {
 
 	private final int MAX_HEIGHT = 500;
 
+	// FIXME FF: make a non-static member field
 	protected static final FormulaFactory ff = FormulaFactory.getDefault();
 	
 	protected static final int ADD_ID = CLIENT_ID + 1;

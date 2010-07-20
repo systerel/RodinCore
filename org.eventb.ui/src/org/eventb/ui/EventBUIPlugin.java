@@ -119,6 +119,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Default values for creating RODIN Elements
+	 * Default factory is sufficient for making a true predicate
 	 */
 	public static final String PRD_DEFAULT = FormulaFactory.getDefault()
 			.makeLiteralPredicate(Formula.BTRUE, null).toString();

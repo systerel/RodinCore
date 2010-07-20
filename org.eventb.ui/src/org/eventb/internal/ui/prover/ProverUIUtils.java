@@ -391,6 +391,8 @@ public class ProverUIUtils {
 		return TacticUIRegistry.getDefault().getTip(predAppli.getTacticID());
 	}
 	
+	// FIXME FF: pass as parameter to parse methods or
+	// add a parameter that makes it possible to compute the factory
 	private static final FormulaFactory formulaFactory = FormulaFactory
 	.getDefault();
 
