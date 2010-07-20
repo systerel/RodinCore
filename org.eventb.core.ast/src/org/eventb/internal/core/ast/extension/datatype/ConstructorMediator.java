@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension.datatype;
 
-import static org.eventb.core.ast.extension.IFormulaExtension.ExtensionKind.ATOMIC_EXPRESSION;
+import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 
 import java.util.List;
 import java.util.Map;
@@ -22,6 +22,7 @@ import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
+import org.eventb.core.ast.extension.IFormulaExtension.PrefixKind;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
@@ -95,6 +96,8 @@ public class ConstructorMediator extends DatatypeMediator implements IConstructo
 			addConstructor(name, id);
 			return;
 		}
+		final IExtensionKind kind = new PrefixKind(EXPRESSION,
+				argumentTypes.size(), EXPRESSION);
 		final IExpressionExtension constructor = new IExpressionExtension() {
 			
 			public Predicate getWDPredicate(IWDMediator wdMediator,
@@ -107,7 +110,7 @@ public class ConstructorMediator extends DatatypeMediator implements IConstructo
 			}
 			
 			public IExtensionKind getKind() {
-				return ExtensionKind.PARENTHESIZED_EXPRESSION_1;
+				return kind;
 			}
 			
 			public String getId() {

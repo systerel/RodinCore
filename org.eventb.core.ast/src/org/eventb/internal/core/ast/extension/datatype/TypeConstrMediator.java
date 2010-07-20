@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension.datatype;
 
-import static org.eventb.core.ast.extension.IFormulaExtension.ExtensionKind.ATOMIC_EXPRESSION;
-import static org.eventb.core.ast.extension.IFormulaExtension.ExtensionKind.PARENTHESIZED_EXPRESSION_1;
+import static org.eventb.core.ast.extension.IFormulaExtension.ATOMIC_EXPRESSION;
+import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,6 +24,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
+import org.eventb.core.ast.extension.IFormulaExtension.PrefixKind;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
@@ -60,7 +61,6 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 		final IExtensionKind kind = computeKind();
 		
 		return new ITypeExpressionExtension() {
-			// FIXME specify precondition of number of arguments = typeParams.size()
 			
 			public Predicate getWDPredicate(IWDMediator wdMediator,
 					IExtendedFormula formula) {
@@ -93,7 +93,6 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 			
 			public Type typeCheck(ITypeCheckMediator tcMediator,
 					ExtendedExpression expression) {
-				assert typeParams.size() == expression.getChildExpressions().length;
 				final List<Type> typePrms = new ArrayList<Type>();
 				for (Expression child:expression.getChildExpressions()) {
 					final Type alpha = tcMediator.newTypeVariable();
@@ -104,7 +103,6 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 			}
 			
 			public Type getType(ITypeMediator mediator, ExtendedExpression expression) {
-				assert typeParams.size() == expression.getChildExpressions().length;
 				final List<Type> typePrms = new ArrayList<Type>();
 				for (Expression child:expression.getChildExpressions()) {
 					if (!child.isTypeChecked()) {
@@ -125,7 +123,6 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 		if (typeParams.isEmpty()) {
 			return ATOMIC_EXPRESSION;
 		}
-		// FIXME N_ARY
-		return PARENTHESIZED_EXPRESSION_1;
+		return new PrefixKind(EXPRESSION, typeParams.size(), EXPRESSION);
 	}
 }

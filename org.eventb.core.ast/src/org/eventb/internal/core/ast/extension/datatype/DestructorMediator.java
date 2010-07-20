@@ -52,7 +52,7 @@ public class DestructorMediator extends DatatypeMediator implements IDestructorM
 			}
 			
 			public IExtensionKind getKind() {
-				return ExtensionKind.PARENTHESIZED_EXPRESSION_1;
+				return PARENTHESIZED_UNARY_EXPRESSION;
 			}
 			
 			public String getId() {

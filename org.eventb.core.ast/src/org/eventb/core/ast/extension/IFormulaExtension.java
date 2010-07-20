@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.extension;
 
-import static org.eventb.core.ast.extension.IOperatorProperties.Arity.*;
+import static org.eventb.core.ast.extension.IOperatorProperties.*;
 import static org.eventb.core.ast.extension.IOperatorProperties.Notation.*;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.*;
 import static org.eventb.internal.core.ast.extension.OperatorProperties.makeOperProps;
@@ -27,42 +27,15 @@ import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
  */
 public interface IFormulaExtension {
 
-	/**
-	 * Standard supported extension kinds.
-	 */
-	public static enum ExtensionKind implements IExtensionKind {
-		
-		// op
-		ATOMIC_EXPRESSION(PREFIX, EXPRESSION, NULLARY, EXPRESSION,
-				false),
-
-		// a op b
-		BINARY_INFIX_EXPRESSION(INFIX, EXPRESSION, BINARY, EXPRESSION,
-				false),
-
-		// a op b op ... op c
-		ASSOCIATIVE_INFIX_EXPRESSION(INFIX, EXPRESSION, MULTARY_2, EXPRESSION,
-				true),
-
-		// FIXME arity should be fixed
-		// op(a, b, ..., c) with 1 or more arguments
-		PARENTHESIZED_EXPRESSION_1(PREFIX, EXPRESSION, MULTARY_1, EXPRESSION,
-				false),
-
-		// op(a, b, ..., c) with 2 or more arguments
-		PARENTHESIZED_EXPRESSION_2(PREFIX, EXPRESSION, MULTARY_2, EXPRESSION,
-				false),
-
-		// TODO PARENTHESIZED_PREDICATE
-		;
-
+	public static class ExtensionKind implements IExtensionKind {
 
 		private final IOperatorProperties operProps;
 		private final boolean flattenable;
 		
-		private ExtensionKind(Notation notation, FormulaType formulaType,
+		public ExtensionKind(Notation notation, FormulaType formulaType,
 				Arity arity, FormulaType argumentType, boolean flattenable) {
-		this.operProps = makeOperProps(notation, formulaType, arity, argumentType);
+			this.operProps = makeOperProps(notation, formulaType, arity,
+					argumentType);
 			this.flattenable = flattenable;
 		}
 
@@ -88,6 +61,42 @@ public interface IFormulaExtension {
 			return operProps.getArity().check(children) && alien == 0;
 		}
 	}
+
+	public static class PrefixKind extends ExtensionKind {
+
+		public PrefixKind(FormulaType formulaType, int arity,
+				FormulaType argumentType) {
+			super(PREFIX, formulaType, new FixedArity(
+					arity), argumentType, false);
+		}
+		
+	}
+	
+	 // Standard supported extension kinds.
+
+	// op
+	public static final IExtensionKind ATOMIC_EXPRESSION = new PrefixKind(EXPRESSION, 0, EXPRESSION);
+
+	// a op b
+	public static final IExtensionKind BINARY_INFIX_EXPRESSION = new ExtensionKind(INFIX, EXPRESSION, BINARY, EXPRESSION,
+			false);
+
+	// a op b op ... op c
+	public static final IExtensionKind ASSOCIATIVE_INFIX_EXPRESSION = new ExtensionKind(INFIX, EXPRESSION, MULTARY_2, EXPRESSION,
+			true);
+
+	// FIXME arity should be fixed
+	// op(a, b, ..., c) with 1 or more arguments
+	public static final IExtensionKind PARENTHESIZED_UNARY_EXPRESSION= new PrefixKind(EXPRESSION, 1, EXPRESSION);
+
+	// op(a, b, ..., c) with 2 or more arguments
+	public static final IExtensionKind PARENTHESIZED_BINARY_EXPRESSION= new PrefixKind(EXPRESSION, 2, EXPRESSION);
+
+	// TODO PARENTHESIZED_PREDICATE
+
+	// Parenthesized n-ary is obtained by instantiating PrefixKind with the desired arity
+	// FIXME non standard instantiations are not parseable.
+
 
 	String getSyntaxSymbol();
 

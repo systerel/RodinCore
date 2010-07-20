@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
@@ -19,6 +20,7 @@ import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.PowerSetType;
@@ -56,8 +58,8 @@ public class TestExtensionWD extends AbstractTests {
 	private static final FreeIdentifier FRID_S = ff.makeFreeIdentifier("S", null, POW_S_TYPE);
 	private static final UnaryExpression CARD_S = ff.makeUnaryExpression(Formula.KCARD, FRID_S, null);
 	private static final SimplePredicate FINITE_S = ff.makeSimplePredicate(Formula.KFINITE, FRID_S, null);
+	protected static final IntegerLiteral ZERO = ff.makeIntegerLiteral(BigInteger.ZERO, null);
 	private static final IntegerType INT_TYPE = ff.makeIntegerType();
-	private static final FreeIdentifier FRID_C = ff.makeFreeIdentifier("C", null, INT_TYPE);
 	private static final FreeIdentifier FRID_B = ff.makeFreeIdentifier("B", null, INT_TYPE);
 	private static final FreeIdentifier FRID_A = ff.makeFreeIdentifier("A", null,	INT_TYPE);
 	
@@ -105,20 +107,22 @@ public class TestExtensionWD extends AbstractTests {
 		}
 
 		public IExtensionKind getKind() {
-			return ExtensionKind.PARENTHESIZED_EXPRESSION_1;
+			return PARENTHESIZED_BINARY_EXPRESSION;
+//			return new PrefixKind(EXPRESSION, 3, EXPRESSION);
 		}
 
 		public String getSyntaxSymbol() {
 			return SYNTAX_SYMBOL;
 		}
 
-		// BTRUE if the number of children is even
-		// BFALSE if it is odd
+		// BTRUE if the first child is an integer literal
+		// else BFALSE 
 		public Predicate getWDPredicate(IWDMediator wdMediator,
 				IExtendedFormula formula) {
-			final int nbChildren = formula.getChildExpressions().length;
+			final Expression firstChild = formula.getChildExpressions()[0];
+			
 			final FormulaFactory factory = wdMediator.getFormulaFactory();
-			if (nbChildren % 2 == 0) {
+			if (firstChild.getTag() == Formula.INTLIT) {
 				return factory.makeLiteralPredicate(Formula.BTRUE, null);
 			} else {
 				return factory.makeLiteralPredicate(Formula.BFALSE, null);
@@ -134,10 +138,9 @@ public class TestExtensionWD extends AbstractTests {
 				.<IFormulaExtension> singleton(EMAX));
 		final Expression emax = extFac.makeExtendedExpression(EMAX, Arrays
 				.<Expression> asList(
-						// odd number of children => WD = false
+						// first child is an identifier => WD = false
 						FRID_A,
-						FRID_B,
-						FRID_C),
+						FRID_B),
 				NO_PREDICATE, null);
 
 		final Predicate actualWD = emax.getWDPredicate(extFac);
@@ -152,10 +155,9 @@ public class TestExtensionWD extends AbstractTests {
 				.<IFormulaExtension> singleton(EMAX));
 		final Expression emax = extFac.makeExtendedExpression(EMAX, Arrays
 				.<Expression> asList(
-						// odd number of children => WD = false
+						// first child is an identifier => WD = false
 						FRID_A,
-						CARD_S, 
-						FRID_C),
+						CARD_S),
 				NO_PREDICATE, null);
 
 		final Predicate actualWD = emax.getWDPredicate(extFac);
@@ -169,8 +171,8 @@ public class TestExtensionWD extends AbstractTests {
 				.<IFormulaExtension> singleton(EMAX));
 		final Expression emax = extFac.makeExtendedExpression(EMAX, Arrays
 				.<Expression> asList(
-						// even number of children => WD = true
-						FRID_A,
+						// first child is an integer literal => WD = true
+						ZERO,
 						CARD_S),
 				NO_PREDICATE, null);
 

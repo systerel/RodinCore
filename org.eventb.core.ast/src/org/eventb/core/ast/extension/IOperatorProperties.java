@@ -22,6 +22,7 @@ import org.eventb.core.ast.Predicate;
  */
 public interface IOperatorProperties {
 
+
 	public static enum Notation {
 		PREFIX, INFIX, POSTFIX
 	}
@@ -35,16 +36,12 @@ public interface IOperatorProperties {
 	 * {@link IExtensionKind#checkPreconditions(Expression[], Predicate[])} to
 	 * check the arity for the desired n.
 	 * </p>
-	 * FIXME except associative formulae, all are N_ARY (fixed n) 
 	 */
-	public static enum Arity {
-		NULLARY(0, 0), UNARY(1, 1), BINARY(2, 2),
-		MULTARY_1(1, UNBOUNDED), MULTARY_2(2, UNBOUNDED);
-		
+	public static class Arity {
 		private final int min;
 		private final int max;
 		
-		private Arity(int min, int max) {
+		public Arity(int min, int max) {
 			this.min = min;
 			this.max = max;
 		}
@@ -52,8 +49,45 @@ public interface IOperatorProperties {
 		public boolean check(int nbArgs) {
 			return min <= nbArgs && nbArgs <= max;
 		}
-	}
 
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = prime + max;
+			result = prime * result + min;
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof Arity)) {
+				return false;
+			}
+			Arity other = (Arity) obj;
+			if (max != other.max) {
+				return false;
+			}
+			if (min != other.min) {
+				return false;
+			}
+			return true;
+		}
+	}
+	
+	public static class FixedArity extends Arity {
+		public FixedArity(int arity) {
+			super(arity, arity);
+		}
+	}
+	
+	public static final Arity NULLARY = new FixedArity(0);
+	public static final Arity UNARY = new FixedArity(1);
+	public static final Arity BINARY = new FixedArity(2);
+	public static final Arity MULTARY_2 = new Arity(2, UNBOUNDED);
+	
 	public static enum FormulaType {
 		EXPRESSION, PREDICATE
 	}

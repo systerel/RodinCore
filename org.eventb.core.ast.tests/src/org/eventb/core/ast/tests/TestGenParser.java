@@ -12,6 +12,7 @@ package org.eventb.core.ast.tests;
 
 import static java.util.Arrays.asList;
 import static org.eventb.core.ast.Formula.*;
+import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -581,7 +582,7 @@ public class TestGenParser extends AbstractTests {
 		}
 
 		public IExtensionKind getKind() {
-			return ExtensionKind.BINARY_INFIX_EXPRESSION;
+			return BINARY_INFIX_EXPRESSION;
 		}
 
 		public void addCompatibilities(ICompatibilityMediator mediator) {
@@ -654,7 +655,7 @@ public class TestGenParser extends AbstractTests {
 		}
 
 		public IExtensionKind getKind() {
-			return ExtensionKind.ASSOCIATIVE_INFIX_EXPRESSION;
+			return ASSOCIATIVE_INFIX_EXPRESSION;
 		}
 
 		public String getSyntaxSymbol() {
@@ -1665,7 +1666,7 @@ public class TestGenParser extends AbstractTests {
 		}
 
 		public IExtensionKind getKind() {
-			return ExtensionKind.PARENTHESIZED_EXPRESSION_2;
+			return new IFormulaExtension.PrefixKind(EXPRESSION, 3, EXPRESSION);
 		}
 
 		public String getSyntaxSymbol() {

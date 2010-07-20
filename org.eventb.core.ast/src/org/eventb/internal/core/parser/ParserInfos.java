@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
-import static org.eventb.core.ast.extension.IOperatorProperties.Arity.BINARY;
-import static org.eventb.core.ast.extension.IOperatorProperties.Arity.MULTARY_1;
-import static org.eventb.core.ast.extension.IOperatorProperties.Arity.MULTARY_2;
-import static org.eventb.core.ast.extension.IOperatorProperties.Arity.NULLARY;
+import static org.eventb.core.ast.extension.IOperatorProperties.BINARY;
+import static org.eventb.core.ast.extension.IOperatorProperties.MULTARY_2;
+import static org.eventb.core.ast.extension.IOperatorProperties.NULLARY;
+import static org.eventb.core.ast.extension.IOperatorProperties.UNARY;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 import static org.eventb.core.ast.extension.IOperatorProperties.Notation.INFIX;
 import static org.eventb.core.ast.extension.IOperatorProperties.Notation.PREFIX;
@@ -53,14 +53,14 @@ public class ParserInfos  {
 			}
 		},
 		
-		PARENTHESIZED_EXPRESSION_1(makeOperProps(PREFIX, EXPRESSION, MULTARY_1, EXPRESSION), true) {
+		PARENTHESIZED_UNARY_EXPRESSION(makeOperProps(PREFIX, EXPRESSION, UNARY, EXPRESSION), true) {
 
 			public IParserPrinter<ExtendedExpression> makeParser(int kind, int tag) {
 				return new SubParsers.ExtendedExprParen(kind, tag);
 			}
 		},
 		
-		PARENTHESIZED_EXPRESSION_2(makeOperProps(PREFIX, EXPRESSION, MULTARY_2, EXPRESSION), true) {
+		PARENTHESIZED_BINARY_EXPRESSION(makeOperProps(PREFIX, EXPRESSION, BINARY, EXPRESSION), true) {
 
 			public IParserPrinter<ExtendedExpression> makeParser(int kind, int tag) {
 				return new SubParsers.ExtendedExprParen(kind, tag);

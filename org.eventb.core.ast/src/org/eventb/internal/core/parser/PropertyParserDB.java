@@ -15,11 +15,10 @@ import java.util.Map;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.extension.IOperatorProperties;
-import org.eventb.core.ast.extension.IOperatorProperties.Arity;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
+import org.eventb.core.ast.extension.IOperatorProperties.Arity;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
-import org.eventb.internal.core.parser.IParserPrinter;
 
 /**
  * @author Nicolas Beauger
