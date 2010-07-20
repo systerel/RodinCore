@@ -14,6 +14,8 @@
  *******************************************************************************/ 
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.BMath.ATOMIC_EXPR;
+
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -22,45 +24,139 @@ import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
+import org.eventb.internal.core.parser.SubParsers.AtomicExpressionParser;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
 
 /**
- * AtomicExpression is the class for all atomic expressions in an event-B formula.
+ * AtomicExpression is the class for all atomic expressions in an event-B
+ * formula.
  * <p>
- * It is a terminal expression and therefore has no children.
- * It can only accept {INTEGER, NATURAL, NATURAL1, BOOL, TRUE, FALSE, EMPTYSET, KPRED, KSUCC}.
+ * It is a terminal expression and therefore has no children. It can only accept
+ * {INTEGER, NATURAL, NATURAL1, BOOL, TRUE, FALSE, EMPTYSET, KPRED, KSUCC,
+ * KPRJ1_GEN, KPRJ2_GEN, KID_GEN}.
  * </p>
  * 
  * @author François Terrier
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class AtomicExpression extends Expression {
 	
 	// offset of the corresponding tag-interval in Formula
-	protected static final int firstTag = FIRST_ATOMIC_EXPRESSION;
-	protected static final String tags[] = {
-		"\u2124",  // INTEGER
-		"\u2115",  // NATURAL
-		"\u21151", // NATURAL1
-		"BOOL",    // BOOL
-		"TRUE",    // TRUE
-		"FALSE",   // FALSE
-		"\u2205",  // EMPTYSET
-		"pred",    // KPRED
-		"succ",     // KSUCC
-		"prj1",		// PRJ1_GEN
-		"prj2",		// PRJ2_GEN
-		"id",		// KID_GEN
-	};
+	private static final int FIRST_TAG = FIRST_ATOMIC_EXPRESSION;
+	
 	// For testing purposes
-	public static final int TAGS_LENGTH = tags.length;
+	public static final int TAGS_LENGTH = Operators.values().length;
+	
+	private static final String INTEGER_ID = "Integer";
+	private static final String NATURAL_ID = "Natural";
+	private static final String NATURAL1_ID = "Natural1";
+	private static final String BOOL_ID = "Bool Type";
+	private static final String TRUE_ID = "True";
+	private static final String FALSE_ID = "False";
+	private static final String EMPTYSET_ID = "Empty Set";
+	private static final String KPRED_ID = "Predecessor";
+	private static final String KSUCC_ID = "Successor";
+	private static final String KPRJ1_GEN_ID = "Projection 1";
+	private static final String KPRJ2_GEN_ID = "Projection 2";
+	private static final String KID_GEN_ID = "Identity";
+
+	private static enum Operators implements IOperatorInfo<AtomicExpression> {
+		OP_INTEGER("\u2124", INTEGER_ID, ATOMIC_EXPR, INTEGER),
+		OP_NATURAL("\u2115", NATURAL_ID, ATOMIC_EXPR, NATURAL),
+		OP_NATURAL1("\u21151", NATURAL1_ID, ATOMIC_EXPR, NATURAL1),
+		OP_BOOL("BOOL", BOOL_ID, ATOMIC_EXPR, BOOL),
+		OP_TRUE("TRUE", TRUE_ID, ATOMIC_EXPR, TRUE),
+		OP_FALSE("FALSE", FALSE_ID, ATOMIC_EXPR, FALSE),
+		OP_EMPTYSET("\u2205", EMPTYSET_ID, ATOMIC_EXPR, EMPTYSET),
+		OP_KPRED("pred", KPRED_ID, ATOMIC_EXPR, KPRED),
+		OP_KSUCC("succ", KSUCC_ID, ATOMIC_EXPR, KSUCC),
+		OP_KPRJ1_GEN("prj1", KPRJ1_GEN_ID, ATOMIC_EXPR, KPRJ1_GEN),
+		OP_KPRJ2_GEN("prj2", KPRJ2_GEN_ID, ATOMIC_EXPR, KPRJ2_GEN),
+		OP_KID_GEN("id", KID_GEN_ID, ATOMIC_EXPR, KID_GEN),
+		;
+		
+		private final String image;
+		private final String id;
+		private final String groupId;
+		private final int tag;
+		
+		private Operators(String image, String id, String groupId, int tag) {
+			this.image = image;
+			this.id = id;
+			this.groupId = groupId;
+			this.tag = tag;
+		}
+
+		public String getImage() {
+			return image;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getGroupId() {
+			return groupId;
+		}
+
+		public IParserPrinter<AtomicExpression> makeParser(int kind) {
+			return new AtomicExpressionParser(kind, tag);
+		}
+
+		public boolean isSpaced() {
+			return false;
+		}
+	}
+	
+	/**
+	 * @since 2.0
+	 */
+	public static void initV1(BMath grammar) {
+		try {
+			grammar.addOperator(Operators.OP_INTEGER);
+			grammar.addOperator(Operators.OP_NATURAL);
+			grammar.addOperator(Operators.OP_NATURAL1);
+			grammar.addOperator(Operators.OP_BOOL);
+			grammar.addOperator(Operators.OP_TRUE);
+			grammar.addOperator(Operators.OP_FALSE);
+			grammar.addOperator(Operators.OP_EMPTYSET);
+			grammar.addOperator(Operators.OP_KPRED);
+			grammar.addOperator(Operators.OP_KSUCC);
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public static void initV2(BMath grammar) {
+		try {
+			initV1(grammar);
+			grammar.addOperator(Operators.OP_KPRJ1_GEN);
+			grammar.addOperator(Operators.OP_KPRJ2_GEN);
+			grammar.addOperator(Operators.OP_KID_GEN);
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	protected AtomicExpression(int tag, SourceLocation location, Type type,
 			FormulaFactory factory) {
 		super(tag, location, 0);
-		assert tag >= firstTag && tag < firstTag+tags.length;
+		assert tag >= FIRST_TAG && tag < FIRST_TAG+TAGS_LENGTH;
 
 		setPredicateVariableCache();
 		synthesizeType(factory, type);
@@ -140,41 +236,6 @@ public class AtomicExpression extends Expression {
 	}
 
 	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-		
-		final String image = tags[getTag()-firstTag];
-		if (withTypes && isTypeChecked() && isGeneric()) {
-			builder.append('(');
-			builder.append(image);
-			builder.append(" \u2982 ");
-			builder.append(getType());
-			builder.append(')');
-		} else {
-			builder.append(image);
-		}
-	}
-
-	private boolean isGeneric() {
-		switch (getTag()) {
-		case EMPTYSET:
-		case KPRJ1_GEN:
-		case KPRJ2_GEN:
-		case KID_GEN:
-			return true;
-		default:
-			return false;
-		}
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-		
-		builder.append(tags[getTag()-firstTag]);
-	}
-
-	@Override
 	protected void isLegible(LegibilityResult result, BoundIdentDecl[] quantifiedIdents) {
 		return;
 	}
@@ -249,10 +310,31 @@ public class AtomicExpression extends Expression {
 	}
 
 	@Override
+	protected void toString(IToStringMediator mediator) {
+		final Operators operator = getOperator();
+		final int kind = mediator.getKind();
+		
+		operator.makeParser(kind).toString(mediator, this);
+	}
+
+	@Override
+	protected int getKind(KindMediator mediator) {
+		return mediator.getKind(getOperatorImage());
+	}
+
+	private String getOperatorImage() {
+		return getOperator().getImage();
+	}
+
+	private Operators getOperator() {
+		return Operators.values()[getTag()-FIRST_TAG];
+	}
+
+	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		final String typeName = getType()!=null?" [type: "+getType().toString()+"]":"";
 		return tabs + this.getClass().getSimpleName() + " ["
-				+ tags[getTag() - firstTag] + "]"  + typeName + "\n";
+				+ getOperatorImage() + "]"  + typeName + "\n";
 	}
 
 	@Override

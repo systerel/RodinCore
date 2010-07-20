@@ -14,8 +14,12 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.core.ast.BinaryExpression.MINUS_ID;
+import static org.eventb.internal.core.parser.BMath.ARITHMETIC;
+import static org.eventb.internal.core.parser.BMath.BOUND_UNARY;
+import static org.eventb.internal.core.parser.BMath.UNARY_RELATION;
+
 import java.math.BigInteger;
-import java.util.BitSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -24,6 +28,15 @@ import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
+import org.eventb.internal.core.parser.SubParsers;
+import org.eventb.internal.core.parser.SubParsers.ConverseParser;
+import org.eventb.internal.core.parser.SubParsers.UnaryExpressionParser;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -38,6 +51,7 @@ import org.eventb.internal.core.typecheck.TypeVariable;
  * 
  * @author François Terrier
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class UnaryExpression extends Expression {
 
@@ -45,71 +59,155 @@ public class UnaryExpression extends Expression {
 	protected final Expression child;
 
 	// offset in the corresponding tag interval
-	protected static final int firstTag = FIRST_UNARY_EXPRESSION;
-	protected static final String[] tags = {
-		"card",   // KCARD
-		"\u2119", // POW
-		"\u21191",// POW1
-		"union",  // KUNION
-		"inter",  // KINTER
-		"dom",    // KDOM
-		"ran",    // KRAN
-		"prj1",   // KPRJ1
-		"prj2",   // KPRJ2
-		"id",     // KID
-		"min",    // KMIN
-		"max",    // KMAX
-		"\u223c", // CONVERSE
-		"\u2212"  // UNMINUS
-	};
-	// For testing purposes
-	public static final int TAGS_LENGTH = tags.length;
+	private static final int FIRST_TAG = FIRST_UNARY_EXPRESSION;
+	
+	private static final String KCARD_ID = "Cardinal";
+	private static final String POW_ID = "Power Set";
+	private static final String POW1_ID = "Powerset 1";
+	private static final String KUNION_ID = "Unary Union";
+	private static final String KINTER_ID = "Unary Intersection";
+	private static final String KDOM_ID = "Domain";
+	private static final String KRAN_ID = "Range";
+	private static final String KPRJ1_ID = "Old Projection 1";
+	private static final String KPRJ2_ID = "Old Projection 2";
+	private static final String KID_ID = "Old Identity";
+	private static final String KMIN_ID = "Min";
+	private static final String KMAX_ID = "Max";
 
-	// indicates whether the corresponding operator has to be
-	// written before or after the operand
-	private static final boolean[] isPrefix = {
-		true, // KCARD
-		true, // POW
-		true, // POW1
-		true, // KUNION
-		true, // KINTER
-		true, // KDOM
-		true, // KRAN
-		true, // KPRJ1
-		true, // KPRJ2
-		true, // KID
-		true, // KMIN
-		true, // KMAX
-		false,// CONVERSE
-		true  // UNMINUS
+	/**
+	 * @since 2.0
+	 */
+	public static final String CONVERSE_ID = "Converse";
+
+	@SuppressWarnings("deprecation")
+	private static enum Operators implements IOperatorInfo<UnaryExpression> {
+		OP_KCARD("card", KCARD_ID, BOUND_UNARY, KCARD),
+		OP_POW("\u2119", POW_ID, BOUND_UNARY, POW),
+		OP_POW1("\u21191", POW1_ID, BOUND_UNARY, POW1),
+		OP_KUNION("union", KUNION_ID, BOUND_UNARY, KUNION),
+		OP_KINTER("inter", KINTER_ID, BOUND_UNARY, KINTER),
+		OP_KDOM("dom", KDOM_ID, BOUND_UNARY, KDOM),
+		OP_KRAN("ran", KRAN_ID, BOUND_UNARY, KRAN),
+		OP_KPRJ1("prj1", KPRJ1_ID, BOUND_UNARY, KPRJ1),
+		OP_KPRJ2("prj2", KPRJ2_ID, BOUND_UNARY, KPRJ2),
+		OP_KID("id", KID_ID, BOUND_UNARY, KID),
+		OP_KMIN("min", KMIN_ID, BOUND_UNARY, KMIN),
+		OP_KMAX("max", KMAX_ID, BOUND_UNARY, KMAX),
+		OP_CONVERSE("\u223c", CONVERSE_ID, UNARY_RELATION, CONVERSE) {
+			@Override
+			public IParserPrinter<UnaryExpression> makeParser(int kind) {
+				return new ConverseParser(kind);
+			}
+		},
+		;
+		
+		private final String image;
+		private final String id;
+		private final String groupId;
+		private final int tag;
+		
+		private Operators(String image, String id, String groupId, int tag) {
+			this.image = image;
+			this.id = id;
+			this.groupId = groupId;
+			this.tag = tag;
+		}
+
+		public String getImage() {
+			return image;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getGroupId() {
+			return groupId;
+		}
+
+		public IParserPrinter<UnaryExpression> makeParser(int kind) {
+			return new UnaryExpressionParser(kind, tag);
+		}
+
+		public boolean isSpaced() {
+			return false;
+		}
+	}
+
+	private static final IOperatorInfo<Expression> OP_MINUS = new IOperatorInfo<Expression>() {
+		
+		public IParserPrinter<Expression> makeParser(int kind) {
+			return new SubParsers.UnminusParser(kind);
+		}
+
+		public String getImage() {
+			return "\u2212";
+		}
+		
+		public String getId() {
+			return MINUS_ID;
+		}
+		
+		public String getGroupId() {
+			return ARITHMETIC;
+		}
+
+		public boolean isSpaced() {
+			return false;
+		}
 	};
 	
-	// indicates when the operand has to be parenthesized
-	// this is used by method toString
-	private static final boolean[] alwaysParenthesized = {
-		true, // KCARD
-		true, // POW
-		true, // POW1
-		true, // KUNION
-		true, // KINTER
-		true, // KDOM
-		true, // KRAN
-		true, // KPRJ1
-		true, // KPRJ2
-		true, // KID
-		true, // KMIN
-		true, // KMAX
-		false,// CONVERSE
-		false // UNMINUS
-	};
-	                             
+	// For testing purposes
+	public static final int TAGS_LENGTH = Operators.values().length + 1;
+
+	private static void initCommon(BMath grammar) {
+		try {
+			grammar.addOperator(Operators.OP_KCARD);
+			grammar.addOperator(Operators.OP_POW);
+			grammar.addOperator(Operators.OP_POW1);
+			grammar.addOperator(Operators.OP_KUNION);
+			grammar.addOperator(Operators.OP_KINTER);
+			grammar.addOperator(Operators.OP_KDOM);
+			grammar.addOperator(Operators.OP_KRAN);
+			grammar.addOperator(Operators.OP_KMIN);
+			grammar.addOperator(Operators.OP_KMAX);
+			grammar.addOperator(Operators.OP_CONVERSE);
+			grammar.addOperator(OP_MINUS);
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public static void initV1(BMath grammar) {
+		try {		
+			initCommon(grammar);
+			grammar.addOperator(Operators.OP_KPRJ1);
+			grammar.addOperator(Operators.OP_KPRJ2);
+			grammar.addOperator(Operators.OP_KID);
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public static void initV2(BMath grammar) {
+		initCommon(grammar);
+	}
+
 	protected UnaryExpression(Expression child, int tag, SourceLocation location,
 			FormulaFactory factory) {
 		
 		super(tag, location, child.hashCode());
 		this.child = child;
 
-		assert tag >= firstTag && tag < firstTag+tags.length;
+		assert tag >= FIRST_TAG && tag < FIRST_TAG+TAGS_LENGTH;
 		assert child != null;
 		
 		setPredicateVariableCache(this.child);
@@ -239,49 +337,6 @@ public class UnaryExpression extends Expression {
 		setFinalType(resultType, givenType);
 	}
 
-	// for the operands that do not always need to be parenthesized,
-	// indicates when parentheses should be output in the toString method
-	private static BitSet[] leftParenthesesMap = new BitSet[tags.length];
-	private static BitSet[] rightParenthesesMap = new BitSet[tags.length];
-	
-	
-	static {
-		assert isPrefix.length == tags.length;
-		assert alwaysParenthesized.length == tags.length;
-		assert leftParenthesesMap.length == tags.length;
-		assert rightParenthesesMap.length == tags.length;
-
-		for (int i=0; i<tags.length; i++) {
-			leftParenthesesMap[i] = new BitSet();
-			rightParenthesesMap[i] = new BitSet();
-		}
-
-		leftParenthesesMap[UNMINUS-firstTag].set(UNMINUS);
-		leftParenthesesMap[UNMINUS-firstTag].set(MUL);
-		leftParenthesesMap[UNMINUS-firstTag].set(DIV);
-		leftParenthesesMap[UNMINUS-firstTag].set(MOD);
-		leftParenthesesMap[UNMINUS-firstTag].set(CONVERSE);
-		leftParenthesesMap[UNMINUS-firstTag].set(EXPN);
-		leftParenthesesMap[UNMINUS-firstTag].set(FUNIMAGE);
-		leftParenthesesMap[UNMINUS-firstTag].set(RELIMAGE);
-		
-		rightParenthesesMap[UNMINUS-firstTag].set(UNMINUS);
-		rightParenthesesMap[UNMINUS-firstTag].set(PLUS);
-		rightParenthesesMap[UNMINUS-firstTag].set(MINUS);
-		rightParenthesesMap[UNMINUS-firstTag].set(MUL);
-		rightParenthesesMap[UNMINUS-firstTag].set(DIV);
-		rightParenthesesMap[UNMINUS-firstTag].set(MOD);
-		rightParenthesesMap[UNMINUS-firstTag].set(CONVERSE);
-		rightParenthesesMap[UNMINUS-firstTag].set(EXPN);
-	}
-	
-	protected static boolean needsParentheses(int tag, boolean isRightChild,
-			int parentTag) {
-		if (isRightChild) {
-			return rightParenthesesMap[tag - firstTag].get(parentTag);
-		}
-		return leftParenthesesMap[tag - firstTag].get(parentTag);
-	}
 
 	/**
 	 * Returns the unique child of this node.
@@ -292,61 +347,6 @@ public class UnaryExpression extends Expression {
 		return child;
 	}
 	
-	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-
-		if (isPrefix()) {
-			if (isAlwaysParenthesized()) {
-				builder.append(getTagOperator());
-				builder.append('(');
-				child.toString(builder, false, getTag(), boundNames, withTypes);
-				builder.append(')');
-			} else if (needsParentheses(isRightChild, parentTag)) {
-				builder.append('(');
-				builder.append(getTagOperator());
-				child.toString(builder, false, getTag(), boundNames, withTypes);
-				builder.append(')');
-			} else {
-				builder.append(getTagOperator());
-				child.toString(builder, false, getTag(), boundNames, withTypes);
-			}
-		} else {
-			if (isAlwaysParenthesized()) {
-				// for now this is never the case
-				builder.append('(');
-				child.toString(builder, false, getTag(), boundNames, withTypes);
-				builder.append(')');
-				builder.append(getTagOperator());
-			} else if (needsParentheses(isRightChild, parentTag)) {
-				builder.append('(');
-				child.toString(builder, false, getTag(), boundNames, withTypes);
-				builder.append(getTagOperator());
-				builder.append(')');
-			} else {
-				child.toString(builder, false, getTag(), boundNames, withTypes);
-				builder.append(getTagOperator());
-			}
-		}
-	}
-
-	private boolean isPrefix() {
-		return isPrefix[getTag() - firstTag];
-	}
-
-	private boolean needsParentheses(boolean isRightChild, int parentTag) {
-		return needsParentheses(getTag(), isRightChild, parentTag);
-	}
-
-	protected String getTagOperator() {
-		return tags[getTag()-firstTag];
-	}
-	
-	// true if always needs parentheses
-	protected boolean isAlwaysParenthesized() {
-		return alwaysParenthesized[getTag()-firstTag];
-	}
-
 	@Override
 	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
 		if (this.getTag() != other.getTag()) {
@@ -438,10 +438,38 @@ public class UnaryExpression extends Expression {
 	protected boolean solveChildrenTypes(TypeUnifier unifier) {
 		return child.solveType(unifier);
 	}
+	
+	private String getOperatorImage() {
+		if (getTag() == UNMINUS) {
+			return OP_MINUS.getImage();
+		}
+		return getOperator().getImage();
+	}
+
+	private Operators getOperator() {
+		assert	getTag() != UNMINUS;
+		return Operators.values()[getTag() - FIRST_TAG];
+	}
+
+	@Override
+	protected void toString(IToStringMediator mediator) {
+		final int kind = mediator.getKind();
+		if (getTag() == UNMINUS) {
+			OP_MINUS.makeParser(kind).toString(mediator, this);
+			return;
+		}
+		final Operators operator = getOperator();
+		operator.makeParser(kind).toString(mediator, this);
+	}
+
+	@Override
+	protected int getKind(KindMediator mediator) {
+		return mediator.getKind(getOperatorImage());
+	}
 
 	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
-		return tabs + this.getClass().getSimpleName() + " [" + getTagOperator()
+		return tabs + this.getClass().getSimpleName() + " [" + getOperatorImage()
 				+ "]" + getTypeName() + "\n"
 				+ child.getSyntaxTree(boundNames, tabs + "\t");
 	}
@@ -449,23 +477,6 @@ public class UnaryExpression extends Expression {
 	@Override
 	protected void isLegible(LegibilityResult result, BoundIdentDecl[] quantifiedIdents) {
 		child.isLegible(result, quantifiedIdents);
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-
-		if (isPrefix()) {
-			builder.append(getTagOperator());
-			builder.append('(');
-			child.toStringFullyParenthesized(builder, boundNames);
-			builder.append(')');
-		} else {
-			builder.append('(');
-			child.toStringFullyParenthesized(builder, boundNames);
-			builder.append(')');
-			builder.append(getTagOperator());
-		}
 	}
 
 	@Override

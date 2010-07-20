@@ -8,17 +8,22 @@
 
 package org.eventb.internal.core.typecheck;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.BooleanType;
+import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.GenericType;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.ProductType;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.extension.IExpressionExtension;
 
 /**
  * This class is used to solve unknown variables in formula's type. 
@@ -170,6 +175,20 @@ public class TypeUnifier {
 					return intype;
 				}
 				return result.makeProductType(newLeft, newRight);
+			}
+			GenType(children) -> {
+				final List<Type> newTypePrms = new ArrayList<Type>();
+				boolean same = true;
+				for (Type type: `children) {
+					final Type newTypePrm = solve(type);
+					same &= newTypePrm == type;
+					newTypePrms.add(newTypePrm);
+				}
+				if (same) {
+					return intype;
+				}
+				final IExpressionExtension exprExt = ((GenericType) intype).getExprExtension();
+				return result.makeGenericType(newTypePrms, exprExt);
 			}
 			_ -> {
 				return intype;

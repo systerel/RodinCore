@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *     Systerel - added support for predicate variables
+ *     Systerel - added support for mathematical extensions
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -114,6 +115,20 @@ public class DefaultSimpleVisitor implements ISimpleVisitor2 {
 	}
 
 	public void visitUnaryPredicate(UnaryPredicate predicate) {
+		// Do nothing
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public void visitExtendedExpression(ExtendedExpression expression) {
+		// Do nothing
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public void visitExtendedPredicate(ExtendedPredicate predicate) {
 		// Do nothing
 	}
 

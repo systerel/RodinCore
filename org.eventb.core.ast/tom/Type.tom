@@ -16,7 +16,20 @@
 	equals(t1,t2) { t1.equals(t2) }
 }
 
-/* Type constructors: power set and cartesian product. */
+%typeterm TypeList {
+	implement { Type[] }
+	equals(t1,t2) { t1.equals(t2) }  /* Check if appropriate. */
+}
+
+%oparray TypeList tList (Type*) {
+	is_fsym(t) { true }
+    get_size(t)      { t.length }
+    get_element(t,n) { t[n-1] }
+	make_empty(t) { null }
+	make_append(e, t) { null }
+}
+
+/* Type constructors: power set, cartesian product and generic type. */
 
 %op Type PowSet (child : Type) {
 	is_fsym(t) { t instanceof PowerSetType }
@@ -27,6 +40,11 @@
 	is_fsym(t) { t instanceof ProductType }
 	get_slot(left,t) { ((ProductType) t).getLeft() }
 	get_slot(right,t) { ((ProductType) t).getRight() }
+}
+
+%op Type GenType (children : TypeList) {
+	is_fsym(t) { t instanceof GenericType }
+	get_slot(children,t) { ((GenericType) t).getTypeParameters() }
 }
 
 /* Atomic types: carrier set, integer and boolean. */

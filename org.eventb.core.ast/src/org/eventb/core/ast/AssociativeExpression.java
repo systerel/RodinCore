@@ -17,12 +17,11 @@ package org.eventb.core.ast;
 
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
-import static org.eventb.core.ast.AssociativeHelper.toStringFullyParenthesizedHelper;
-import static org.eventb.core.ast.AssociativeHelper.toStringHelper;
+import static org.eventb.internal.core.parser.BMath.ARITHMETIC;
+import static org.eventb.internal.core.parser.BMath.BINOP;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -33,6 +32,13 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
+import org.eventb.internal.core.parser.SubParsers.AssociativeExpressionInfix;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -47,22 +53,103 @@ import org.eventb.internal.core.typecheck.TypeVariable;
  * 
  * @author François Terrier
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class AssociativeExpression extends Expression {
 
 	// offset of the corresponding tag-interval in Formula
-	protected static final int firstTag = Formula.FIRST_ASSOCIATIVE_EXPRESSION;
-	protected static final String[] tags = {
-		"\u222a", // BUNION
-		"\u2229", // BINTER
-		"\u2218", // BCOMP
-		";",      // FCOMP
-		"\ue103", // OVR
-		"+",      // PLUS
-		"\u2217"  // MUL
-	};
+	private static final int FIRST_TAG = Formula.FIRST_ASSOCIATIVE_EXPRESSION;
+	
+	/**
+	 * @since 2.0
+	 */
+	public static final String BINTER_ID = "Binary Intersection";
+	/**
+	 * @since 2.0
+	 */
+	public static final String BUNION_ID = "Binary Union";
+	/**
+	 * @since 2.0
+	 */
+	public static final String BCOMP_ID = "Backward Composition";
+	/**
+	 * @since 2.0
+	 */
+	public static final String FCOMP_ID = "Forward Composition";
+	/**
+	 * @since 2.0
+	 */
+	public static final String OVR_ID = "Overload";
+	/**
+	 * @since 2.0
+	 */
+	public static final String MUL_ID = "mul";
+	/**
+	 * @since 2.0
+	 */
+	public static final String PLUS_ID = "plus";
+
+	private static enum Operators implements IOperatorInfo<AssociativeExpression> {
+		OP_BUNION("\u222a", BUNION_ID, BINOP, BUNION),
+		OP_BINTER("\u2229", BINTER_ID, BINOP, BINTER),
+		OP_BCOMP("\u2218", BCOMP_ID, BINOP, BCOMP),
+		OP_FCOMP(";", FCOMP_ID, BINOP, FCOMP), 
+		OP_OVR("\ue103", OVR_ID, BINOP, OVR), 
+		OP_PLUS("+", PLUS_ID, ARITHMETIC, PLUS), 
+		OP_MUL("\u2217", MUL_ID, ARITHMETIC, MUL), 
+		;
+		
+		private final String image;
+		private final String id;
+		private final String groupId;
+		private final int tag;
+		
+		private Operators(String image, String id, String groupId, int tag) {
+			this.image = image;
+			this.id = id;
+			this.groupId = groupId;
+			this.tag = tag;
+		}
+
+		public String getImage() {
+			return image;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getGroupId() {
+			return groupId;
+		}
+
+		public IParserPrinter<AssociativeExpression> makeParser(int kind) {
+			return new AssociativeExpressionInfix(kind, tag);
+		}
+		
+		public boolean isSpaced() {
+			return false;
+		}
+	}
+	
 	// For testing purposes
-	public static final int TAGS_LENGTH = tags.length;
+	public static final int TAGS_LENGTH = Operators.values().length;
+	
+	/**
+	 * @since 2.0
+	 */
+	// FIXME just before merging the branch back to trunk, make this class an
+	// interface then move this code to a non published area
+	public static void init(BMath grammar) {
+		try {
+			for(Operators operInfo: Operators.values()) {
+				grammar.addOperator(operInfo);
+			}
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	// The children of this associative expression.
 	// Is never null and contains at least two elements by construction.
@@ -90,7 +177,7 @@ public class AssociativeExpression extends Expression {
 	}
 
 	private void checkPreconditions() {
-		assert getTag() >= firstTag && getTag() < firstTag+tags.length;
+		assert getTag() >= FIRST_TAG && getTag() < FIRST_TAG+TAGS_LENGTH;
 		assert children != null;
 		assert children.length >= 2;
 	}
@@ -196,135 +283,6 @@ public class AssociativeExpression extends Expression {
 		setFinalType(resultType, givenType);
 	}
 	
-	// indicates when the toString method should put parentheses
-	private final static BitSet[] leftNoParenthesesMap = new BitSet[tags.length];
-	private final static BitSet[] rightNoParenthesesMap = new BitSet[tags.length];
-
-	// fills the parentheses maps 
-	static {
-		assert tags.length == leftNoParenthesesMap.length;
-		assert tags.length == rightNoParenthesesMap.length;
-
-		final BitSet propagateLeft = new BitSet();
-		final BitSet commonTempLeft, commonTempRight;
-		BitSet temp;
-		
-		propagateLeft.set(Formula.NO_TAG);
-
-		propagateLeft.set(Formula.CSET);
-		propagateLeft.set(Formula.QUNION);
-		propagateLeft.set(Formula.QINTER);
-		propagateLeft.set(Formula.SETEXT);
-		// is not below but reachable without parentheses
-		propagateLeft.set(Formula.KBOOL);
-		propagateLeft.set(Formula.KCARD);
-		propagateLeft.set(Formula.KFINITE);
-		propagateLeft.set(Formula.POW);
-		propagateLeft.set(Formula.POW1);
-		propagateLeft.set(Formula.KUNION);
-		propagateLeft.set(Formula.KINTER);
-		propagateLeft.set(Formula.KDOM);
-		propagateLeft.set(Formula.KRAN);
-		addDeprecatedUnaryTags(propagateLeft);
-		propagateLeft.set(Formula.KMIN);
-		propagateLeft.set(Formula.KMAX);
-		// is a relop
-		propagateLeft.set(Formula.EQUAL);
-		propagateLeft.set(Formula.NOTEQUAL);
-		propagateLeft.set(Formula.IN);
-		propagateLeft.set(Formula.NOTIN);
-		propagateLeft.set(Formula.SUBSET);
-		propagateLeft.set(Formula.NOTSUBSET);
-		propagateLeft.set(Formula.SUBSETEQ);
-		propagateLeft.set(Formula.NOTSUBSETEQ);
-		propagateLeft.set(Formula.LT);
-		propagateLeft.set(Formula.LE);
-		propagateLeft.set(Formula.GT);
-		propagateLeft.set(Formula.GE);
-		propagateLeft.set(Formula.REL);
-		// is below
-		propagateLeft.set(Formula.TREL);
-		propagateLeft.set(Formula.SREL);
-		propagateLeft.set(Formula.STREL);
-		propagateLeft.set(Formula.PFUN);
-		propagateLeft.set(Formula.TFUN);
-		propagateLeft.set(Formula.PINJ);
-		propagateLeft.set(Formula.TINJ);
-		propagateLeft.set(Formula.PSUR);
-		propagateLeft.set(Formula.TSUR);
-		propagateLeft.set(Formula.TBIJ);
-		propagateLeft.set(Formula.MAPSTO);
-		
-		final BitSet propagateRight = (BitSet)propagateLeft.clone();
-		// is not below but reachable without parentheses only right child
-		propagateRight.set(Formula.FUNIMAGE);
-		propagateRight.set(Formula.RELIMAGE);
-		
-		// associative set-expr
-		// BUNION BCOMP OVR
-		temp = new BitSet();
-		temp.set(Formula.BUNION);
-		temp.set(Formula.BCOMP);
-		temp.set(Formula.OVR);
-		for(int i=temp.nextSetBit(0); i>=0; i=temp.nextSetBit(i+1)) {
-			leftNoParenthesesMap[i-firstTag] = (BitSet)propagateLeft.clone();
-			rightNoParenthesesMap[i-firstTag] = (BitSet)propagateRight.clone();
-		}
-		
-		// relation-expr
-		// FCOMP
-		commonTempRight = (BitSet)propagateRight.clone();
-		rightNoParenthesesMap[Formula.FCOMP-firstTag] = commonTempRight;
-		rightNoParenthesesMap[Formula.BINTER-firstTag] = commonTempRight;
-		commonTempLeft = (BitSet)propagateLeft.clone();
-		commonTempLeft.set(Formula.RANRES);
-		commonTempLeft.set(Formula.RANSUB);
-		leftNoParenthesesMap[Formula.FCOMP-firstTag] = commonTempLeft;
-		leftNoParenthesesMap[Formula.BINTER-firstTag] = (BitSet)commonTempLeft.clone();
-		leftNoParenthesesMap[Formula.BINTER-firstTag].set(Formula.SETMINUS);
-		
-		// interval-expr
-		temp = new BitSet();
-		temp.set(Formula.BUNION);
-		temp.set(Formula.BCOMP);
-		temp.set(Formula.OVR);
-		temp.set(Formula.CPROD);
-		temp.set(Formula.PPROD);
-		temp.set(Formula.SETMINUS);
-		temp.set(Formula.CPROD);
-		temp.set(Formula.FCOMP);
-		temp.set(Formula.BINTER);
-		temp.set(Formula.DOMRES);
-		temp.set(Formula.DOMSUB);
-		temp.set(Formula.RANRES);
-		temp.set(Formula.RANSUB);
-		temp.set(Formula.UPTO);
-		propagateLeft.or(temp);
-		propagateRight.or(temp);
-		
-		// arithmetic-expr
-		leftNoParenthesesMap[Formula.PLUS-firstTag] = (BitSet)propagateLeft.clone();
-		leftNoParenthesesMap[Formula.PLUS-firstTag].set(Formula.MINUS);
-		rightNoParenthesesMap[Formula.PLUS-firstTag] = (BitSet)propagateRight.clone();
-		
-		// term
-		propagateLeft.set(Formula.PLUS);
-		propagateRight.set(Formula.PLUS);
-		propagateLeft.set(Formula.MINUS);
-		propagateRight.set(Formula.MINUS);
-		propagateLeft.set(Formula.UNMINUS);
-		propagateRight.set(Formula.UNMINUS);
-		leftNoParenthesesMap[Formula.MUL-firstTag] = (BitSet)propagateLeft.clone();
-		rightNoParenthesesMap[Formula.MUL-firstTag] = (BitSet)propagateRight.clone();
-	}
-
-	@SuppressWarnings("deprecation")
-	private static void addDeprecatedUnaryTags(final BitSet bitset) {
-		bitset.set(Formula.KPRJ1);
-		bitset.set(Formula.KPRJ2);
-		bitset.set(Formula.KID);
-	}
-	
 	/**
 	 * Returns the children of this node.
 	 * 
@@ -335,26 +293,14 @@ public class AssociativeExpression extends Expression {
 		return children.clone();
 	}
 
-	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-
-		toStringHelper(builder, boundNames, needsParenthesis(isRightChild,
-				parentTag), children, getTagOperator(), getTag(), withTypes);
+	private String getOperatorImage() {
+		return getOperator().getImage();
 	}
 
-	protected String getTagOperator() {
-		return tags[getTag()-firstTag];
+	private Operators getOperator() {
+		return Operators.values()[getTag()-FIRST_TAG];
 	}
 
-	private boolean needsParenthesis(boolean isRightChild, int parentTag) {
-		final int relativeTag = getTag() - firstTag;
-		if (isRightChild) {
-			return ! rightNoParenthesesMap[relativeTag].get(parentTag);
-		}
-		return ! leftNoParenthesesMap[relativeTag].get(parentTag);
-	}
-	
 	@Override
 	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
 		if (this.getTag() != other.getTag()) {
@@ -443,16 +389,22 @@ public class AssociativeExpression extends Expression {
 	}
 
 	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
+	protected void toString(IToStringMediator mediator) {
+		final Operators operator = getOperator();
+		final int kind = mediator.getKind();
 		
-		toStringFullyParenthesizedHelper(builder, boundNames, children, getTagOperator());
+		operator.makeParser(kind).toString(mediator, this);
 	}
 
 	@Override
+	protected int getKind(KindMediator mediator) {
+		return mediator.getKind(getOperatorImage());
+	}
+	
+	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		return getSyntaxTreeHelper(boundNames, tabs,
-				children, getTagOperator(), getTypeName(), this.getClass()
+				children, getOperatorImage(), getTypeName(), this.getClass()
 						.getSimpleName());
 	}
 

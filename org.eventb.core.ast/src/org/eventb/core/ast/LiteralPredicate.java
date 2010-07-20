@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.BMath.ATOMIC_PRED;
+
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +23,13 @@ import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
+import org.eventb.internal.core.parser.SubParsers.LiteralPredicateParser;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -32,23 +41,77 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * 
  * @author François Terrier
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class LiteralPredicate extends Predicate {
 
 	// offset of the corresponding tag-interval in Formula
-	protected static final int firstTag = FIRST_LITERAL_PREDICATE;
-	protected static final String[] tags = {
-		"\u22a4", // BTRUE
-		"\u22a5"  // BFALSE
-	};
+	private static final int FIRST_TAG = FIRST_LITERAL_PREDICATE;
+	
+	private static final String BTRUE_ID = "B True";
+
+	private static final String BFALSE_ID = "B False";
+
+	private static enum Operators implements IOperatorInfo<LiteralPredicate> {
+		OP_BTRUE("\u22a4", BTRUE_ID, ATOMIC_PRED, BTRUE),
+		OP_BFALSE("\u22a5", BFALSE_ID, ATOMIC_PRED, BFALSE),
+		;
+		
+		private final String image;
+		private final String id;
+		private final String groupId;
+		private final int tag;
+		
+		private Operators(String image, String id, String groupId, int tag) {
+			this.image = image;
+			this.id = id;
+			this.groupId = groupId;
+			this.tag = tag;
+		}
+
+		public String getImage() {
+			return image;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getGroupId() {
+			return groupId;
+		}
+
+		public IParserPrinter<LiteralPredicate> makeParser(int kind) {
+			return new LiteralPredicateParser(kind, tag);
+		}
+
+		public boolean isSpaced() {
+			return false;
+		}
+	}
+
 	// For testing purposes
-	public static final int TAGS_LENGTH = tags.length;
+	public static final int TAGS_LENGTH = Operators.values().length;
+	
+	/**
+	 * @since 2.0
+	 */
+	public static void init(BMath grammar) {
+		try {
+			for(Operators operInfo: Operators.values()) {
+				grammar.addOperator(operInfo);
+			}
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	protected LiteralPredicate(int tag, SourceLocation location,
 			FormulaFactory ff) {
 		
 		super(tag, location, 0);
-		assert tag >= firstTag && tag < firstTag+tags.length;
+		assert tag >= FIRST_TAG && tag < FIRST_TAG+TAGS_LENGTH;
 		
 		setPredicateVariableCache();
 		synthesizeType(ff);
@@ -59,20 +122,6 @@ public class LiteralPredicate extends Predicate {
 		this.freeIdents = NO_FREE_IDENT;
 		this.boundIdents = NO_BOUND_IDENT;
 		typeChecked = true;
-	}
-
-	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-
-		builder.append(tags[getTag() - firstTag]);
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-
-		builder.append(tags[getTag() - firstTag]);
 	}
 
 	@Override
@@ -95,9 +144,30 @@ public class LiteralPredicate extends Predicate {
 		return true;
 	}
 	
+	private String getOperatorImage() {
+		return getOperator().getImage();
+	}
+
+	private Operators getOperator() {
+		return Operators.values()[getTag()-FIRST_TAG];
+	}
+
+	@Override
+	protected int getKind(KindMediator mediator) {
+		return mediator.getKind(getOperatorImage());
+	}
+
+	@Override
+	protected void toString(IToStringMediator mediator) {
+		final Operators operator = getOperator();
+		final int kind = mediator.getKind();
+		
+		operator.makeParser(kind).toString(mediator, this);
+	}
+
 	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
-		return tabs + this.getClass().getSimpleName() + " ["+tags[getTag()-firstTag] + "]" + "\n";
+		return tabs + this.getClass().getSimpleName() + " ["+ getOperatorImage() + "]" + "\n";
 	}
 
 	@Override

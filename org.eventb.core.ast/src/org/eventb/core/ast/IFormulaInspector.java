@@ -29,7 +29,7 @@ package org.eventb.core.ast;
  * @see IAccumulator
  * 
  * @author Laurent Voisin
- * @since 1.3
+ * @since 2.0
  */
 public interface IFormulaInspector<F> {
 
@@ -120,6 +120,28 @@ public interface IFormulaInspector<F> {
 	 *            accumulator for reporting findings
 	 */
 	void inspect(BoundIdentifier identifier, IAccumulator<F> accumulator);
+
+	/**
+	 * Inspects the given extended expression and reports any finding to the
+	 * given accumulator.
+	 * 
+	 * @param expression
+	 *            extended expression to inspect
+	 * @param accumulator
+	 *            accumulator for reporting findings
+	 */
+	void inspect(ExtendedExpression expression, IAccumulator<F> accumulator);
+
+	/**
+	 * Inspects the given extended predicate and reports any finding to the
+	 * given accumulator.
+	 * 
+	 * @param predicate
+	 *            extended predicate to inspect
+	 * @param accumulator
+	 *            accumulator for reporting findings
+	 */
+	void inspect(ExtendedPredicate predicate, IAccumulator<F> accumulator);
 
 	/**
 	 * Inspects the given free identifier and reports any finding to the given

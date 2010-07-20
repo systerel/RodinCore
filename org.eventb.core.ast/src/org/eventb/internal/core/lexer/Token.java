@@ -4,7 +4,7 @@
  * To change the template for this generated file go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-package org.eventb.internal.core.parser;
+package org.eventb.internal.core.lexer;
 
 /**
  * Tokens of Event-B mathematical language.
@@ -16,9 +16,9 @@ package org.eventb.internal.core.parser;
 public class Token {
 	public final int kind;   // token code
 	public final String val; // token value
-	protected int pos;    // position in source stream
+	public int pos;    // position in source stream
 	
-	protected Token(int kind, String val, int pos) {
+	public Token(int kind, String val, int pos) {
 		this.kind = kind;
 		this.val = val;
 		this.pos = pos;

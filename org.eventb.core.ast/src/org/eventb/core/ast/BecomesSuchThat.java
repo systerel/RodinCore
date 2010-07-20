@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,13 @@ import org.eventb.internal.core.ast.BoundIdentSubstitution;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Substitution;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
+import org.eventb.internal.core.parser.MainParsers;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -48,9 +55,50 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * 
  * @author Laurent Voisin
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class BecomesSuchThat extends Assignment {
 
+	private static final String BECST_ID = "Becomes Such That";
+	
+	/**
+	 * @since 2.0
+	 */
+	public static final IOperatorInfo<BecomesSuchThat> OP_BECST = new IOperatorInfo<BecomesSuchThat>() {
+		
+		public IParserPrinter<BecomesSuchThat> makeParser(int kind) {
+			return new MainParsers.BecomesSuchThatParser(kind);
+		}
+
+		public String getImage() {
+			return ":\u2223";
+		}
+		
+		public String getId() {
+			return BECST_ID;
+		}
+		
+		public String getGroupId() {
+			return BMath.INFIX_SUBST;
+		}
+
+		public boolean isSpaced() {
+			return true;
+		}
+	};
+
+	/**
+	 * @since 2.0
+	 */
+	public static void init(BMath grammar) {
+		try {
+			grammar.addOperator(OP_BECST);
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	// Quantified primed identifiers
 	private BoundIdentDecl[] primedIdents;
 	
@@ -171,6 +219,17 @@ public class BecomesSuchThat extends Assignment {
 	}
 
 	@Override
+	protected void toString(IToStringMediator mediator) {
+		final int kind = mediator.getKind();
+		OP_BECST.makeParser(kind).toString(mediator, this);
+	}
+
+	@Override
+	protected int getKind(KindMediator mediator) {
+		return mediator.getKind(OP_BECST.getImage());
+	}
+
+	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		final String childTabs = tabs + '\t';
 		final String[] boundNamesBelow = catenateBoundIdentLists(boundNames, primedIdents);
@@ -236,42 +295,6 @@ public class BecomesSuchThat extends Assignment {
 		}
 		success &= condition.solveType(unifier);
 		return success;
-	}
-
-	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-
-		appendAssignedIdents(builder);
-		builder.append(" :\u2223 ");
-		
-		final String[] newBoundNames = 
-			catenateBoundIdentLists(boundNames, getLocalNames());
-		condition.toString(builder, false, NO_TAG, newBoundNames, withTypes);
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-		
-		appendAssignedIdents(builder);
-		builder.append(" :\u2223 (");
-
-		final String[] newBoundNames = 
-			catenateBoundIdentLists(boundNames, getLocalNames());
-		condition.toStringFullyParenthesized(builder, newBoundNames);
-		
-		builder.append(')');
-	}
-
-	// TODO check for other uses of primed variables.
-	private String[] getLocalNames() {
-		final int length = primedIdents.length;
-		String[] result = new String[length];
-		for (int i = 0; i < length; i++) {
-			result[i] = primedIdents[i].getName();
-		}
-		return result;
 	}
 
 	@Override

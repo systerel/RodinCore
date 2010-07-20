@@ -14,12 +14,10 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
-import static org.eventb.core.ast.AssociativeHelper.toStringFullyParenthesizedHelper;
-import static org.eventb.core.ast.AssociativeHelper.toStringHelper;
+import static org.eventb.internal.core.parser.BMath.LOGIC_PRED;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -30,6 +28,13 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
+import org.eventb.internal.core.parser.SubParsers.AssociativePredicateInfix;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -43,6 +48,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * 
  * @author François Terrier
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class AssociativePredicate extends Predicate {
 	
@@ -51,13 +57,72 @@ public class AssociativePredicate extends Predicate {
 	private final Predicate[] children;
 	
 	// offset of the corresponding interval in Formula
-	protected static int firstTag = FIRST_ASSOCIATIVE_PREDICATE;
-	protected static String[] tags = {
-		"\u2227", // LAND
-		"\u2228"  // LOR
-	};
+	private static int FIRST_TAG = FIRST_ASSOCIATIVE_PREDICATE;
+
+	/**
+	 * @since 2.0
+	 */
+	public static final String LOR_ID = "lor";
+
+	/**
+	 * @since 2.0
+	 */
+	public static final String LAND_ID = "land";
+
+	private static enum Operators implements IOperatorInfo<AssociativePredicate> {
+		OP_LAND("\u2227", LAND_ID, LOGIC_PRED, LAND),
+		OP_LOR("\u2228", LOR_ID, LOGIC_PRED, LOR),
+		;
+		
+		private final String image;
+		private final String id;
+		private final String groupId;
+		private final int tag;
+		
+		private Operators(String image, String id, String groupId, int tag) {
+			this.image = image;
+			this.id = id;
+			this.groupId = groupId;
+			this.tag = tag;
+		}
+
+		public String getImage() {
+			return image;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getGroupId() {
+			return groupId;
+		}
+
+		public IParserPrinter<AssociativePredicate> makeParser(int kind) {
+			return new AssociativePredicateInfix(kind, tag);
+		}
+
+		public boolean isSpaced() {
+			return false;
+		}
+	}
+
 	// For testing purposes
-	public static final int TAGS_LENGTH = tags.length;
+	public static final int TAGS_LENGTH = Operators.values().length;
+	
+	/**
+	 * @since 2.0
+	 */
+	public static void init(BMath grammar) {
+		try {
+			for(Operators operInfo: Operators.values()) {
+				grammar.addOperator(operInfo);
+			}
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	protected AssociativePredicate(Predicate[] children, int tag,
 			SourceLocation location, FormulaFactory ff) {
@@ -84,7 +149,7 @@ public class AssociativePredicate extends Predicate {
 
 	// Common initialization.
 	private void checkPreconditions() {
-		assert getTag() >= firstTag && getTag() < firstTag+tags.length;
+		assert getTag() >= FIRST_TAG && getTag() < FIRST_TAG+TAGS_LENGTH;
 		assert children != null;
 		assert children.length >= 2;
 	}
@@ -110,20 +175,6 @@ public class AssociativePredicate extends Predicate {
 		typeChecked = true;
 	}
 	
-	// indicates when the toString method should put parentheses
-	private static final BitSet[] parenthesesMap = new BitSet[tags.length];
-
-	static {
-		assert parenthesesMap.length == tags.length;
-		
-		for (int i = 0; i < parenthesesMap.length; i++) {
-			parenthesesMap[i] = new BitSet();
-			parenthesesMap[i].set(Formula.LOR);
-			parenthesesMap[i].set(Formula.LAND);
-			parenthesesMap[i].set(Formula.NOT);
-		}
-	}
-	
 	/**
 	 * Returns the children of this node.
 	 * 
@@ -133,21 +184,13 @@ public class AssociativePredicate extends Predicate {
 	public Predicate[] getChildren() {
 		return children.clone();
 	}
-	
-	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
 
-		toStringHelper(builder, boundNames, needsParenthesis(parentTag),
-				children, getTagOperator(), getTag(), withTypes);
+	private Operators getOperator() {
+		return Operators.values()[getTag()-FIRST_TAG];
 	}
 
-	private boolean needsParenthesis(int parentTag) {
-		return parenthesesMap[getTag() - firstTag].get(parentTag);
-	}
-
-	protected String getTagOperator() {
-		return tags[getTag()-firstTag];
+	private String getOperatorImage() {
+		return getOperator().getImage();
 	}
 
 	@Override
@@ -176,22 +219,28 @@ public class AssociativePredicate extends Predicate {
 	}
 
 	@Override
+	protected void toString(IToStringMediator mediator) {
+		final Operators operator = getOperator();
+		final int kind = mediator.getKind();
+		
+		operator.makeParser(kind).toString(mediator, this);
+	}
+
+	@Override
+	protected int getKind(KindMediator mediator) {
+		return mediator.getKind(getOperatorImage());
+	}
+
+	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		return AssociativeHelper
 				.getSyntaxTreeHelper(boundNames, tabs, children,
-						getTagOperator(), "", this.getClass().getSimpleName());
+						getOperatorImage(), "", this.getClass().getSimpleName());
 	}
 
 	@Override
 	protected void isLegible(LegibilityResult result, BoundIdentDecl[] quantifiedIdents) {
 		AssociativeHelper.isLegibleList(children, result, quantifiedIdents);
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-		
-		toStringFullyParenthesizedHelper(builder, boundNames, children, getTagOperator());
 	}
 
 	@Override

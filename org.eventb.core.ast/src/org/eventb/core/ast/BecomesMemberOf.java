@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *     Systerel - added accept for ISimpleVisitor
  *     Systerel - added support for predicate variables
  *******************************************************************************/
-
 package org.eventb.core.ast;
 
 import java.util.LinkedHashSet;
@@ -18,6 +17,13 @@ import java.util.Set;
 
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
+import org.eventb.internal.core.parser.MainParsers;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -27,9 +33,50 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * 
  * @author Laurent Voisin
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class BecomesMemberOf extends Assignment {
 
+	private static final String BECMO_ID = "Becomes Member Of";
+
+	/**
+	 * @since 2.0
+	 */
+	public static final IOperatorInfo<BecomesMemberOf> OP_BECMO = new IOperatorInfo<BecomesMemberOf>() {
+		
+		public IParserPrinter<BecomesMemberOf> makeParser(int kind) {
+			return new MainParsers.BecomesMemberOfParser(kind);
+		}
+
+		public String getImage() {
+			return ":\u2208";
+		}
+		
+		public String getId() {
+			return BECMO_ID;
+		}
+		
+		public String getGroupId() {
+			return BMath.INFIX_SUBST;
+		}
+
+		public boolean isSpaced() {
+			return true;
+		}
+	};
+
+	/**
+	 * @since 2.0
+	 */
+	public static void init(BMath grammar) {
+		try {		
+			grammar.addOperator(OP_BECMO);
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	private final Expression setExpr;
 	
 	protected BecomesMemberOf(FreeIdentifier assignedIdent, Expression setExpr,
@@ -95,6 +142,17 @@ public class BecomesMemberOf extends Assignment {
 	}
 
 	@Override
+	protected void toString(IToStringMediator mediator) {
+		final int kind = mediator.getKind();
+		OP_BECMO.makeParser(kind).toString(mediator, this);
+	}
+
+	@Override
+	protected int getKind(KindMediator mediator) {
+		return mediator.getKind(OP_BECMO.getImage());
+	}
+
+	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		final String childTabs = tabs + '\t';
 		
@@ -148,25 +206,6 @@ public class BecomesMemberOf extends Assignment {
 	@Override
 	protected boolean solveChildrenTypes(TypeUnifier unifier) {
 		return setExpr.solveType(unifier);
-	}
-
-	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-
-		appendAssignedIdents(builder);
-		builder.append(" :\u2208 ");
-		setExpr.toString(builder, false, NO_TAG, boundNames, withTypes);
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-		
-		appendAssignedIdents(builder);
-		builder.append(" :\u2208 (");
-		setExpr.toStringFullyParenthesized(builder, boundNames);
-		builder.append(')');
 	}
 
 	@Override

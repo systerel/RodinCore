@@ -4,8 +4,8 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *  
- * Contributors: 
+ *
+ * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - generalised getPositions() into inspect()
  *******************************************************************************/
@@ -35,6 +35,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * 
  * @author Laurent Voisin
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class Assignment extends Formula<Assignment> {
 

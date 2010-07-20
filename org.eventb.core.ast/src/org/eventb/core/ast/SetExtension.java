@@ -25,6 +25,13 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
+import org.eventb.internal.core.parser.SubParsers.SetExtParser;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -37,8 +44,58 @@ import org.eventb.internal.core.typecheck.TypeVariable;
  * 
  * @author François Terrier
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class SetExtension extends Expression {
+
+	private static final String SETEXT_ID = "Set Extension";
+	private static enum Operators implements IOperatorInfo<SetExtension> {
+		OP_SETEXT("{", SETEXT_ID, BMath.BRACE_SETS),
+		;
+		
+		private final String image;
+		private final String id;
+		private final String groupId;
+		
+		private Operators(String image, String id, String groupId) {
+			this.image = image;
+			this.id = id;
+			this.groupId = groupId;
+		}
+
+		public String getImage() {
+			return image;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getGroupId() {
+			return groupId;
+		}
+
+		public IParserPrinter<SetExtension> makeParser(int kind) {
+			return new SetExtParser(kind);
+		}
+
+		public boolean isSpaced() {
+			return false;
+		}
+
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public static void init(BMath grammar) {
+		try {		
+			grammar.addOperator(Operators.OP_SETEXT);
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	// children
 	private final Expression[] members;
@@ -126,39 +183,25 @@ public class SetExtension extends Expression {
 		return members.clone();
 	}
 
-	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
+	private Operators getOperator() {
+		return Operators.OP_SETEXT;
+	}
 
-		// Might be a typed empty set
-		if (withTypes && members.length == 0 && isTypeChecked()) {
-			builder.append("(\u2205 \u2982 ");
-			builder.append(getType());
-			builder.append(')');
-		} else {
-			builder.append('{');
-			String sep = "";
-			for (Expression member : members) {
-				builder.append(sep);
-				sep = ",";
-				member.toString(builder, false, getTag(), boundNames, withTypes);
-			}
-			builder.append('}');
-		}
+	private String getOperatorImage() {
+		return getOperator().getImage();
 	}
 
 	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
+	protected void toString(IToStringMediator mediator) {
+		final Operators operator = getOperator();
+		final int kind = mediator.getKind();
+		
+		operator.makeParser(kind).toString(mediator, this);
+	}
 
-		builder.append('{');
-		String sep = "";
-		for (Expression member : members) {
-			builder.append(sep);
-			sep = ",";
-			member.toStringFullyParenthesized(builder, boundNames);
-		}
-		builder.append('}');
+	@Override
+	protected int getKind(KindMediator mediator) {
+		return mediator.getKind(getOperatorImage());
 	}
 
 	@Override

@@ -15,15 +15,15 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
-import static org.eventb.core.ast.QuantifiedHelper.appendBoundIdentifiersString;
+import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
 import static org.eventb.core.ast.QuantifiedHelper.areEqualQuantifiers;
 import static org.eventb.core.ast.QuantifiedHelper.checkBoundIdentTypes;
 import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
-import static org.eventb.core.ast.QuantifiedUtil.resolveIdents;
+import static org.eventb.internal.core.parser.BMath.BRACE_SETS;
+import static org.eventb.internal.core.parser.BMath.QUANTIFICATION;
 
-import java.util.BitSet;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -35,6 +35,18 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
+import org.eventb.internal.core.parser.SubParsers.CSetExplicit;
+import org.eventb.internal.core.parser.SubParsers.CSetImplicit;
+import org.eventb.internal.core.parser.SubParsers.CSetLambda;
+import org.eventb.internal.core.parser.SubParsers.ExplicitQuantExpr;
+import org.eventb.internal.core.parser.SubParsers.IQuantifiedParser;
+import org.eventb.internal.core.parser.SubParsers.ImplicitQuantExpr;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -49,6 +61,7 @@ import org.eventb.internal.core.typecheck.TypeVariable;
  * 
  * @author François Terrier
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class QuantifiedExpression extends Expression {
 	
@@ -120,15 +133,197 @@ public class QuantifiedExpression extends Expression {
 	}
 	
 	// offset of the tag interval in Formula
-	protected final static int firstTag = FIRST_QUANTIFIED_EXPRESSION;
-	protected final static String[] tags = {
-		"\u22c3", // QUNION
-		"\u22c2", // QINTER
-		"CSET"    // CSET
-	};
-	// For testing purposes
-	public static final int TAGS_LENGTH = tags.length;
+	private static final int FIRST_TAG = FIRST_QUANTIFIED_EXPRESSION;
+	
+	private static final String CSET_ID = "Comprehension Set";
+	private static final String LAMBDA_ID = "Lambda";
+	private static final String QUNION_ID = "Quantified Union";
+	private static final String QINTER_ID = "Quantified Intersection";
 
+	private static enum Operators implements IOperatorInfo<QuantifiedExpression> {
+		OP_QUNION_EXPL("\u22c3", QUNION_ID, QUANTIFICATION) {
+			public IQuantifiedParser<QuantifiedExpression> makeParser(int kind) {
+				return new ExplicitQuantExpr(kind, QUNION);
+			}
+		},
+		OP_QUNION_IMPL("\u22c3", QUNION_ID, QUANTIFICATION) {
+			public IQuantifiedParser<QuantifiedExpression> makeParser(int kind) {
+				return new ImplicitQuantExpr(kind, QUNION);
+			}
+		},
+		OP_QINTER_EXPL("\u22c2", QINTER_ID, QUANTIFICATION) {
+			public IQuantifiedParser<QuantifiedExpression> makeParser(int kind) {
+				return new ExplicitQuantExpr(kind, QINTER);
+			}
+		},
+		OP_QINTER_IMPL("\u22c2", QINTER_ID, QUANTIFICATION) {
+			public IQuantifiedParser<QuantifiedExpression> makeParser(int kind) {
+				return new ImplicitQuantExpr(kind, QINTER);
+			}
+		},
+		OP_CSET_EXPL("{", CSET_ID, BRACE_SETS) {
+			public IQuantifiedParser<QuantifiedExpression> makeParser(int kind) {
+				return new CSetExplicit(kind);
+			}
+		},
+		OP_CSET_IMPL("{", CSET_ID, BRACE_SETS) {
+			public IQuantifiedParser<QuantifiedExpression> makeParser(int kind) {
+				return new CSetImplicit(kind);
+			}
+		},
+		OP_CSET_LAMBDA("\u03bb", LAMBDA_ID, QUANTIFICATION) {
+			public IQuantifiedParser<QuantifiedExpression> makeParser(int kind) {
+				return new CSetLambda(kind);
+			}
+		},
+		;
+		
+		private final String image;
+		private final String id;
+		private final String groupId;
+		
+		private Operators(String image, String id, String groupId) {
+			this.image = image;
+			this.id = id;
+			this.groupId = groupId;
+		}
+
+		public String getImage() {
+			return image;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getGroupId() {
+			return groupId;
+		}
+
+		public boolean isSpaced() {
+			return false;
+		}
+		
+		public IParserPrinter<QuantifiedExpression> makeParser(int kind,
+				String[] localNames) {
+			final IParserPrinter<QuantifiedExpression> parser = makeParser(kind);
+			((IQuantifiedParser<QuantifiedExpression>) parser).setLocalNames(localNames);
+			return parser;
+		}
+	}
+
+	// For testing purposes
+	public static final int TAGS_LENGTH = 3; // FIXME cannot be (easily) computed from Operators
+
+	/**
+	 * @since 2.0
+	 */
+	public static void init(BMath grammar) {
+		try {
+			for(Operators operInfo: Operators.values()) {
+				grammar.addOperator(operInfo);
+			}
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private String getOperatorImage() {
+		return getOperator().getImage();
+	}
+
+	private Operators getOperator() {
+		return getOperator(getTag(), form);
+	}
+
+	private static Operators getOperator(int tagOvr, Form formOvr) {
+		switch (tagOvr) {
+		case CSET:
+			switch (formOvr) {
+			case Explicit:
+				return Operators.OP_CSET_EXPL;
+			case Implicit:
+				return Operators.OP_CSET_IMPL;
+			case Lambda:
+				return Operators.OP_CSET_LAMBDA;
+			default:
+				throw newIllegalForm(formOvr);
+			}
+		case QUNION:
+			switch (formOvr) {
+			case Explicit:
+				return Operators.OP_QUNION_EXPL;
+			case Implicit:
+				return Operators.OP_QUNION_IMPL;
+			default:
+				throw newIllegalForm(formOvr);
+			}
+		case QINTER:
+			switch (formOvr) {
+			case Explicit:
+				return Operators.OP_QINTER_EXPL;
+			case Implicit:
+				return Operators.OP_QINTER_IMPL;
+			default:
+				throw newIllegalForm(formOvr);
+			}
+		default:
+			throw newIllegalForm(formOvr);
+		}
+
+	}
+
+	@Override
+	protected void toString(IToStringMediator mediator) {
+		// Collect names used in subformulas and not locally bound
+		final Set<String> usedNames = new HashSet<String>();
+		final String[] boundNames = mediator.getBoundNames();
+		expr.collectNamesAbove(usedNames, boundNames ,
+				quantifiedIdentifiers.length);
+		final boolean exprIsClosed = usedNames.size() == 0;
+		pred.collectNamesAbove(usedNames, boundNames,
+				quantifiedIdentifiers.length);
+
+		final String[] localNames = QuantifiedUtil.resolveIdents(quantifiedIdentifiers, usedNames);
+
+		final Operators operator;
+		switch (form) {
+		case Lambda:
+			operator = getOperator();
+			break;
+		case Implicit:
+			if (exprIsClosed && !mediator.isWithTypes()) {
+				// Still OK to use implicit form.
+				operator = getOperator();
+			} else {
+				operator = getOperator(getTag(), Explicit);
+			}
+			break;
+		case Explicit:
+			operator = getOperator(getTag(), Explicit);
+			break;
+		default:
+			assert false;
+			operator = null;
+			break;
+		}
+		
+		final int kind = mediator.getKind();
+		
+		operator.makeParser(kind, localNames).toString(mediator, this);
+	}
+
+	@Override
+	protected int getKind(KindMediator mediator) {
+		return mediator.getKind(getOperatorImage());
+	}
+
+	private static IllegalStateException newIllegalForm(Form form) {
+		return new IllegalStateException(
+				"Illegal form for quantified expression: " + form);
+	}
+	
 	/**
 	 * @param expr the expression in the quantified expression. Must not be <code>null</code>
 	 * @param pred the predicate in the quantified expression. Must not be <code>null</code>
@@ -184,7 +379,7 @@ public class QuantifiedExpression extends Expression {
 	
 	// Common initialization.
 	private void checkPreconditions(Form inputForm) {
-		assert getTag() >= firstTag && getTag() < firstTag+tags.length;
+		assert getTag() >= FIRST_TAG && getTag() < FIRST_TAG+TAGS_LENGTH;
 		assert quantifiedIdentifiers != null;
 		assert 1 <= quantifiedIdentifiers.length;
 		assert pred != null;
@@ -269,97 +464,6 @@ public class QuantifiedExpression extends Expression {
 		return Form.Explicit;
 	}
 	
-	// indicates when the toString method should put parentheses
-	private static BitSet noParenthesesMap;
-	private static BitSet rightNoParenthesesMap;
-	private static BitSet csetImplicitNoParenthesesMap;
-	
-	// fills the parentheses maps
-	static {
-		BitSet propagate = new BitSet();
-		BitSet propagateRight = new BitSet();
-		
-		propagate.set(Formula.NO_TAG);
-
-		propagate.set(Formula.CSET);
-		propagate.set(Formula.QUNION);
-		propagate.set(Formula.QINTER);
-		propagate.set(Formula.SETEXT);
-		propagate.set(Formula.KBOOL);
-		propagate.set(Formula.KCARD);
-		propagate.set(Formula.POW);
-		propagate.set(Formula.POW1);
-		propagate.set(Formula.KUNION);
-		propagate.set(Formula.KFINITE);
-		propagate.set(Formula.KINTER);
-		propagate.set(Formula.KDOM);
-		propagate.set(Formula.KRAN);
-		addDeprecatedUnaryTags(propagate);
-		propagate.set(Formula.KMIN);
-		propagate.set(Formula.KMAX);
-		propagateRight.set(Formula.FUNIMAGE);
-		propagateRight.set(Formula.RELIMAGE);
-		
-		noParenthesesMap = (BitSet)propagate.clone();
-		rightNoParenthesesMap = (BitSet)propagateRight.clone();
-		
-		propagate.set(Formula.EQUAL);
-		propagate.set(Formula.NOTEQUAL);
-		propagate.set(Formula.IN);
-		propagate.set(Formula.NOTIN);
-		propagate.set(Formula.SUBSET);
-		propagate.set(Formula.NOTSUBSET);
-		propagate.set(Formula.SUBSETEQ);
-		propagate.set(Formula.NOTSUBSETEQ);
-		propagate.set(Formula.LT);
-		propagate.set(Formula.LE);
-		propagate.set(Formula.GT);
-		propagate.set(Formula.GE);
-		propagate.set(Formula.FUNIMAGE);
-		propagate.set(Formula.RELIMAGE);
-		propagate.set(Formula.MAPSTO);
-		propagate.set(Formula.REL);
-		propagate.set(Formula.TREL);
-		propagate.set(Formula.SREL);
-		propagate.set(Formula.STREL);
-		propagate.set(Formula.PFUN);
-		propagate.set(Formula.TFUN);
-		propagate.set(Formula.PINJ);
-		propagate.set(Formula.TINJ);
-		propagate.set(Formula.PSUR);
-		propagate.set(Formula.TSUR);
-		propagate.set(Formula.TBIJ);
-		propagate.set(Formula.BUNION);
-		propagate.set(Formula.BCOMP);
-		propagate.set(Formula.OVR);
-		propagate.set(Formula.CPROD);
-		propagate.set(Formula.PPROD);
-		propagate.set(Formula.SETMINUS);
-		propagate.set(Formula.CPROD);
-		propagate.set(Formula.FCOMP);
-		propagate.set(Formula.BINTER);
-		propagate.set(Formula.DOMRES);
-		propagate.set(Formula.DOMSUB);
-		propagate.set(Formula.RANRES);
-		propagate.set(Formula.RANSUB);
-		propagate.set(Formula.UPTO);
-		propagate.set(Formula.PLUS);
-		propagate.set(Formula.MINUS);
-		propagate.set(Formula.UNMINUS);
-		propagate.set(Formula.DIV);
-		propagate.set(Formula.MOD);
-		propagate.set(Formula.EXPN);
-		
-		csetImplicitNoParenthesesMap = (BitSet)propagate.clone();
-	}
-
-	@SuppressWarnings("deprecation")
-	private static void addDeprecatedUnaryTags(BitSet bitset) {
-		bitset.set(Formula.KPRJ1);
-		bitset.set(Formula.KPRJ2);
-		bitset.set(Formula.KID);
-	}
-
 	/**
 	 * Returns the form of this expression. This form corresponds to the way the
 	 * expression was initially parsed. It doesn't have any impact on the
@@ -398,192 +502,7 @@ public class QuantifiedExpression extends Expression {
 	public Predicate getPredicate() {
 		return pred;
 	}
-	
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder, String[] existingBoundIdents) {
-		toStringHelper(builder, existingBoundIdents, true, false);
-	}
-	
-	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
 
-		final boolean needParenthesis;
-		if (noParenthesesMap.get(parentTag)) {
-			needParenthesis = false;
-		} else if (isRightChild && rightNoParenthesesMap.get(parentTag)) {
-			needParenthesis = false;
-		} else if (form != Form.Lambda && getTag() == Formula.CSET
-				&& csetImplicitNoParenthesesMap.get(parentTag)) {
-			needParenthesis = false;
-		} else {
-			needParenthesis = true;
-		}
-
-		if (needParenthesis) builder.append('(');
-		toStringHelper(builder, boundNames, false, withTypes);
-		if (needParenthesis) builder.append(')');
-	}
-
-	/*
-	 * avoid having to write almost twice the same for methods 
-	 * toString and method toStringFully parenthesized
-	 */ 
-	private void toStringHelper(StringBuilder builder, String[] boundNames,
-			boolean parenthesized, boolean withTypes) {
-
-		// Collect names used in subformulas and not locally bound
-		HashSet<String> usedNames = new HashSet<String>();
-		expr.collectNamesAbove(usedNames, boundNames,
-				quantifiedIdentifiers.length);
-		boolean exprIsClosed = usedNames.size() == 0;
-		pred.collectNamesAbove(usedNames, boundNames,
-				quantifiedIdentifiers.length);
-
-		String[] localNames = resolveIdents(quantifiedIdentifiers, usedNames);
-		String[] newBoundNames = catenateBoundIdentLists(boundNames, localNames);
-
-		switch (form) {
-		case Lambda:
-			toStringLambda(builder, parenthesized, newBoundNames, withTypes);
-			break;
-		case Implicit:
-			if (exprIsClosed && ! withTypes) {
-				// Still OK to use implicit form.
-				toStringImplicit(builder, parenthesized, localNames,
-						newBoundNames, withTypes);
-			} else {
-				toStringExplicit(builder, parenthesized, localNames,
-						newBoundNames, withTypes);
-			}
-			break;
-		case Explicit:
-			toStringExplicit(builder, parenthesized, localNames, newBoundNames,
-					withTypes);
-			break;
-		default:
-			assert false;
-			break;
-		}
-	}
-
-	private void toStringLambda(StringBuilder builder, boolean parenthesized,
-			String[] boundNames, boolean withTypes) {
-
-		// Extract left and right subexpressions
-		assert expr.getTag() == MAPSTO;
-		final BinaryExpression binExpr = (BinaryExpression) this.expr;
-		final Expression leftExpr = binExpr.getLeft();
-		final Expression rightExpr = binExpr.getRight();
-
-		builder.append("\u03bb");
-		if (parenthesized) {
-			leftExpr.toStringFullyParenthesized(builder, boundNames);
-		} else if (withTypes) {
-			appendTypedPattern(builder, leftExpr, boundNames);
-		} else {
-			leftExpr.toString(builder, false, MAPSTO, boundNames, withTypes);
-		}
-		builder.append("\u00b7");
-		appendPredString(builder, parenthesized, boundNames, withTypes);
-		builder.append(" \u2223 ");
-		if (parenthesized) {
-			rightExpr.toStringFullyParenthesized(builder, boundNames);
-		} else {
-			rightExpr.toString(builder, true, MAPSTO, boundNames, withTypes);
-		}
-	}
-
-	private void appendTypedPattern(StringBuilder builder, Expression pattern,
-			String[] boundNames) {
-		
-		switch (pattern.getTag()) {
-		case MAPSTO:
-			final BinaryExpression maplet = (BinaryExpression) pattern;
-			final Expression left = maplet.getLeft();
-			final Expression right = maplet.getRight();
-			appendTypedPattern(builder, left, boundNames);
-			builder.append("\u21a6");
-			final boolean needsParen = right.getTag() == MAPSTO;
-			if (needsParen) builder.append("(");
-			appendTypedPattern(builder, right, boundNames);
-			if (needsParen) builder.append(")");
-			break;
-		case BOUND_IDENT:
-			final BoundIdentifier ident = (BoundIdentifier) pattern;
-			ident.toStringFullyParenthesized(builder, boundNames);
-			builder.append("\u2982");
-			final int length = quantifiedIdentifiers.length;
-			final int idx = length - ident.getBoundIndex() - 1;
-			builder.append(quantifiedIdentifiers[idx].getType());
-			break;
-		default:
-			assert false;
-			break;
-		}
-	}
-
-	private void toStringImplicit(StringBuilder builder, boolean parenthesized,
-			String[] localNames, String[] boundNames, boolean withTypes) {
-
-		if (getTag() == Formula.CSET) {
-			builder.append("{");
-		}
-		else {
-			builder.append(tags[getTag()-firstTag]);
-		}
-		appendExprString(builder, parenthesized, boundNames, withTypes);
-		builder.append(" \u2223 ");
-		appendPredString(builder, parenthesized, boundNames, withTypes);
-		if (getTag() == Formula.CSET) {
-			builder.append("}");
-		}
-	}
-
-	private void toStringExplicit(StringBuilder builder, boolean parenthesized,
-			String[] localNames, String[] boundNames, boolean withTypes) {
-		
-		if (getTag() == Formula.CSET) { 
-			builder.append("{");
-		}
-		else {
-			builder.append(tags[getTag()-firstTag]);
-		}
-		appendBoundIdentifiersString(builder, localNames,
-				quantifiedIdentifiers, withTypes);
-		builder.append("\u00b7");
-		appendPredString(builder, parenthesized, boundNames, withTypes);
-		builder.append(" \u2223 ");
-		appendExprString(builder, parenthesized, boundNames, withTypes);
-		if (getTag() == Formula.CSET) {
-			builder.append("}");
-		}
-	}
-
-	private void appendPredString(StringBuilder builder, boolean parenthesized,
-			String[] boundNames, boolean withTypes) {
-
-		if (parenthesized) {
-			builder.append('(');
-			pred.toStringFullyParenthesized(builder, boundNames);
-			builder.append(')');
-		} else {
-			pred.toString(builder, false, getTag(), boundNames, withTypes);
-		}
-	}
-
-	private void appendExprString(StringBuilder builder, boolean parenthesized,
-			String[] boundNames, boolean withTypes) {
-
-		if (parenthesized) {
-			builder.append('(');
-			expr.toStringFullyParenthesized(builder, boundNames);
-			builder.append(')');
-		} else {
-			expr.toString(builder, false, getTag(), boundNames, withTypes);
-		}
-	}
-	
 	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		final String typeName = getType()!=null?" [type: "+getType().toString()+"]":"";
@@ -592,7 +511,7 @@ public class QuantifiedExpression extends Expression {
 		return tabs
 				+ this.getClass().getSimpleName()
 				+ " ["
-				+ tags[getTag() - firstTag] 
+				+ getOperatorImage() 
 				+ ", " + form.toString()
 				+ "]" 
 				+ typeName

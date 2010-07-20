@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.BMath.ATOMIC_PRED;
+
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -22,6 +24,13 @@ import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
+import org.eventb.internal.core.parser.SubParsers.FiniteParser;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -35,25 +44,75 @@ import org.eventb.internal.core.typecheck.TypeVariable;
  * 
  * @author François Terrier
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class SimplePredicate extends Predicate {
 	
+	private static enum Operators implements IOperatorInfo<SimplePredicate> {
+		OP_KFINITE("finite", KFINITE_ID, ATOMIC_PRED),
+		;
+		
+		private final String image;
+		private final String id;
+		private final String groupId;
+		
+		private Operators(String image, String id, String groupId) {
+			this.image = image;
+			this.id = id;
+			this.groupId = groupId;
+		}
+
+		public String getImage() {
+			return image;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getGroupId() {
+			return groupId;
+		}
+
+		public IParserPrinter<SimplePredicate> makeParser(int kind) {
+			return new FiniteParser(kind);
+		}
+
+		public boolean isSpaced() {
+			return false;
+		}
+
+	}
+
 	// child
 	private final Expression child;
 	
 	// offset in the corresponding tag interval
-	private static final int firstTag = FIRST_SIMPLE_PREDICATE;
-	private static final String[] tags = {
-		"finite" // KFINITE
-	};
+	private static final int FIRST_TAG = FIRST_SIMPLE_PREDICATE;
 	
+	private static final String KFINITE_ID = "Finite";
+
+	private static final int TAGS_LENGTH = Operators.values().length;
+
+	/**
+	 * @since 2.0
+	 */
+	public static void init(BMath grammar) {
+		try {		
+			grammar.addOperator(Operators.OP_KFINITE);
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	protected SimplePredicate(Expression child, int tag,
 			SourceLocation location, FormulaFactory ff) {
 		
 		super(tag, location, child.hashCode());
 		this.child = child;
 		
-		assert tag >= firstTag && tag < firstTag+tags.length;
+		assert tag >= FIRST_TAG && tag < FIRST_TAG+TAGS_LENGTH;
 		
 		setPredicateVariableCache(this.child);
 		synthesizeType(ff);
@@ -83,28 +142,31 @@ public class SimplePredicate extends Predicate {
 		return child;
 	}
 
-	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild, int parentTag,
-			String[] boundNames, boolean withTypes) {
+	private String getOperatorImage() {
+		return getOperator().getImage();
+	}
 
-		builder.append(tags[getTag()-firstTag]);
-		builder.append('(');
-		child.toString(builder, false, getTag(), boundNames, withTypes);
-		builder.append(')');
+	private Operators getOperator() {
+		return Operators.OP_KFINITE;
 	}
 
 	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder, String[] boundNames) {
-		builder.append(tags[getTag()-firstTag]);
-		builder.append('(');
-		child.toStringFullyParenthesized(builder, boundNames);
-		builder.append(')');
+	protected void toString(IToStringMediator mediator) {
+		final Operators operator = getOperator();
+		final int kind = mediator.getKind();
+		
+		operator.makeParser(kind).toString(mediator, this);
+	}
+
+	@Override
+	protected int getKind(KindMediator mediator) {
+		return mediator.getKind(getOperatorImage());
 	}
 
 	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		return tabs + this.getClass().getSimpleName() + " ["
-				+ tags[getTag() - firstTag] + "]\n"
+				+ getOperatorImage() + "]\n"
 				+ child.getSyntaxTree(boundNames, tabs + "\t");
 	}
 

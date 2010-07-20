@@ -14,16 +14,14 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.QuantifiedHelper.addUsedBoundIdentifiers;
-import static org.eventb.core.ast.QuantifiedHelper.appendBoundIdentifiersString;
 import static org.eventb.core.ast.QuantifiedHelper.areAllUsed;
 import static org.eventb.core.ast.QuantifiedHelper.areEqualQuantifiers;
 import static org.eventb.core.ast.QuantifiedHelper.checkBoundIdentTypes;
 import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
-import static org.eventb.core.ast.QuantifiedUtil.resolveIdents;
+import static org.eventb.internal.core.parser.BMath.QUANTIFIED_PRED;
 
-import java.util.BitSet;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -37,6 +35,14 @@ import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
+import org.eventb.internal.core.parser.SubParsers.IQuantifiedParser;
+import org.eventb.internal.core.parser.SubParsers.QuantifiedPredicateParser;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -50,6 +56,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * 
  * @author François Terrier
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class QuantifiedPredicate extends Predicate {
 	
@@ -58,13 +65,78 @@ public class QuantifiedPredicate extends Predicate {
 	private final Predicate pred;
 	
 	// offset in the corresponding tag interval
-	protected final static int firstTag = FIRST_QUANTIFIED_PREDICATE;
-	protected final static String[] tags = {
-		"\u2200", // FORALL
-		"\u2203"  // EXISTS
-	};
+	private final static int FIRST_TAG = FIRST_QUANTIFIED_PREDICATE;
+	
+	/**
+	 * @since 2.0
+	 */
+	public static final String FORALL_ID = "for all";
+	/**
+	 * @since 2.0
+	 */
+	public static final String EXISTS_ID = "exists";
+
+	private static enum Operators implements IOperatorInfo<QuantifiedPredicate> {
+		OP_FORALL("\u2200", FORALL_ID, QUANTIFIED_PRED, FORALL),
+		OP_EXISTS("\u2203", EXISTS_ID, QUANTIFIED_PRED, EXISTS),
+		;
+		
+		private final String image;
+		private final String id;
+		private final String groupId;
+		private final int tag;
+		
+		private Operators(String image, String id, String groupId, int tag) {
+			this.image = image;
+			this.id = id;
+			this.groupId = groupId;
+			this.tag = tag;
+		}
+
+		public String getImage() {
+			return image;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getGroupId() {
+			return groupId;
+		}
+
+		public IParserPrinter<QuantifiedPredicate> makeParser(int kind) {
+			return new QuantifiedPredicateParser(kind, tag);
+		}
+		
+		public IParserPrinter<QuantifiedPredicate> makeParser(int kind,
+				String[] localNames) {
+			final IParserPrinter<QuantifiedPredicate> parser = makeParser(kind);
+			((IQuantifiedParser<QuantifiedPredicate>) parser).setLocalNames(localNames);
+			return parser;
+		}
+
+		public boolean isSpaced() {
+			return false;
+		}
+	}
+
 	// For testing purposes
-	public static final int TAGS_LENGTH = tags.length;
+	public static final int TAGS_LENGTH = Operators.values().length;
+
+	/**
+	 * @since 2.0
+	 */
+	public static void init(BMath grammar) {
+		try {		
+			for(Operators operInfo: Operators.values()) {
+				grammar.addOperator(operInfo);
+			}
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	protected QuantifiedPredicate(Predicate pred, BoundIdentDecl[] boundIdentifiers, int tag,
 			SourceLocation location, FormulaFactory ff) {
@@ -95,7 +167,7 @@ public class QuantifiedPredicate extends Predicate {
 	}
 
 	private void checkPreconditions() {
-		assert getTag() >= firstTag && getTag() < firstTag+tags.length;
+		assert getTag() >= FIRST_TAG && getTag() < FIRST_TAG+TAGS_LENGTH;
 		assert quantifiedIdentifiers != null;
 		assert 1 <= quantifiedIdentifiers.length;
 		assert pred != null;
@@ -120,16 +192,6 @@ public class QuantifiedPredicate extends Predicate {
 		typeChecked = true;
 	}
 	
-	// indicates when the toString method should put parentheses
-	private final static BitSet parenthesesMap = new BitSet();
-	static {
-		parenthesesMap.set(Formula.NOT);
-		parenthesesMap.set(Formula.LIMP);
-		parenthesesMap.set(Formula.LEQV);
-		parenthesesMap.set(Formula.LAND);
-		parenthesesMap.set(Formula.LOR);
-	}
-	
 	/**
 	 * Returns the list of the identifiers which are bound by this formula.
 	 * 
@@ -148,51 +210,44 @@ public class QuantifiedPredicate extends Predicate {
 		return pred;
 	}
 	
-	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
+	private String getOperatorImage() {
+		return getOperator().getImage();
+	}
 
-		String[] localNames = resolveIdentsPred(boundNames);
-		String[] newBoundNames = catenateBoundIdentLists(boundNames, localNames);
-		final boolean needsParen = parenthesesMap.get(parentTag);
-
-		if (needsParen) builder.append('(');
-		builder.append(tags[getTag() - firstTag]);
-		appendBoundIdentifiersString(builder, localNames,
-				quantifiedIdentifiers, withTypes);
-		builder.append("\u00b7");
-		pred.toString(builder, false, getTag(), newBoundNames, withTypes);
-		if (needsParen) builder.append(')');
+	private Operators getOperator() {
+		return Operators.values()[getTag()-FIRST_TAG];
 	}
 
 	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
+	protected void toString(IToStringMediator mediator) {
+		// Collect names used in subformulas and not locally bound
+		final Set<String> usedNames = new HashSet<String>();
+		final String[] boundNames = mediator.getBoundNames();
+		pred.collectNamesAbove(usedNames, boundNames ,
+				quantifiedIdentifiers.length);
+		pred.collectNamesAbove(usedNames, boundNames,
+				quantifiedIdentifiers.length);
 
-		String[] localNames = resolveIdentsPred(boundNames);
-		String[] newBoundNames = catenateBoundIdentLists(boundNames, localNames);
+		final String[] localNames = QuantifiedUtil.resolveIdents(quantifiedIdentifiers, usedNames);
 
-		builder.append(tags[getTag() - firstTag]);
-		appendBoundIdentifiersString(builder, localNames,
-				quantifiedIdentifiers, false);
-		builder.append("\u00b7(");
-		pred.toStringFullyParenthesized(builder, newBoundNames);
-		builder.append(")");
+		final Operators operator = getOperator();
+		final int kind = mediator.getKind();
+		
+		operator.makeParser(kind, localNames).toString(mediator, this);
 	}
 
-	private String[] resolveIdentsPred(String[] boundNames) {
-		HashSet<String> usedNames = new HashSet<String>();
-		pred.collectNamesAbove(usedNames, boundNames, quantifiedIdentifiers.length);
-		return resolveIdents(quantifiedIdentifiers, usedNames);
+	@Override
+	protected int getKind(KindMediator mediator) {
+		return mediator.getKind(getOperatorImage());
 	}
-	
+
 	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		String[] boundNamesBelow = catenateBoundIdentLists(boundNames, quantifiedIdentifiers);
 		return tabs
 				+ this.getClass().getSimpleName()
 				+ " ["
-				+ tags[getTag() - firstTag]
+				+ getOperatorImage()
 				+ "]\n"
 				+ getSyntaxTreeQuantifiers(boundNamesBelow,tabs + "\t",quantifiedIdentifiers)
 				+ pred.getSyntaxTree(boundNamesBelow,tabs + "\t");

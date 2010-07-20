@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,13 @@ import java.util.Set;
 
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
+import org.eventb.internal.core.parser.MainParsers;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -27,9 +34,50 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * 
  * @author Laurent Voisin
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class BecomesEqualTo extends Assignment {
 
+	private static final String BECEQ_ID = "Becomes Equal To";
+	
+	/**
+	 * @since 2.0
+	 */
+	public static final IOperatorInfo<BecomesEqualTo> OP_BECEQ = new IOperatorInfo<BecomesEqualTo>() {
+		
+		public IParserPrinter<BecomesEqualTo> makeParser(int kind) {
+			return new MainParsers.BecomesEqualToParser(kind);
+		}
+
+		public String getImage() {
+			return "\u2254";
+		}
+		
+		public String getId() {
+			return BECEQ_ID;
+		}
+		
+		public String getGroupId() {
+			return BMath.INFIX_SUBST;
+		}
+		
+		public boolean isSpaced() {
+			return true;
+		}
+	};
+
+	/**
+	 * @since 2.0
+	 */
+	public static void init(BMath grammar) {
+		try {		
+			grammar.addOperator(OP_BECEQ);
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	private final Expression[] values;
 	
 	protected BecomesEqualTo(FreeIdentifier assignedIdent, Expression value,
@@ -125,6 +173,21 @@ public class BecomesEqualTo extends Assignment {
 			value.collectNamesAbove(names, boundNames, offset);
 		}
 	}
+	
+	private String getOperatorImage() {
+		return OP_BECEQ.getImage();
+	}
+
+	@Override
+	protected void toString(IToStringMediator mediator) {
+		final int kind = mediator.getKind();
+		OP_BECEQ.makeParser(kind).toString(mediator, this);
+	}
+
+	@Override
+	protected int getKind(KindMediator mediator) {
+		return mediator.getKind(getOperatorImage());
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ast.Formula#getSyntaxTree(java.lang.String[], java.lang.String)
@@ -196,36 +259,6 @@ public class BecomesEqualTo extends Assignment {
 			success &= value.solveType(unifier);
 		}
 		return success;
-	}
-
-	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-		
-		appendAssignedIdents(builder);
-		builder.append(" \u2254 ");
-		String comma = "";
-		for (Expression value: values) {
-			builder.append(comma);
-			value.toString(builder, false, NO_TAG, boundNames, withTypes);
-			comma = ", ";
-		}
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-		
-		appendAssignedIdents(builder);
-		builder.append(" \u2254 ");
-		boolean comma = false;
-		for (Expression value: values) {
-			if (comma) builder.append(", ");
-			builder.append('(');
-			value.toStringFullyParenthesized(builder, boundNames);
-			builder.append(')');
-			comma = true;
-		}
 	}
 
 	@Override

@@ -18,6 +18,8 @@ import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
+import org.eventb.core.ast.ExtendedExpression;
+import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IAccumulator;
@@ -103,6 +105,18 @@ public class FilteringInspector implements IFormulaInspector<IPosition> {
 		}
 	}
 
+	public void inspect(ExtendedExpression expr, IAccumulator<IPosition> acc) {
+		if (filter.select(expr)) {
+			addCurrentPosition(acc);
+		}
+	}
+
+	public void inspect(ExtendedPredicate predicate, IAccumulator<IPosition> acc) {
+		if (filter.select(predicate)) {
+			addCurrentPosition(acc);
+		}
+	}
+
 	public void inspect(FreeIdentifier identifier, IAccumulator<IPosition> acc) {
 		if (filter.select(identifier)) {
 			addCurrentPosition(acc);
@@ -180,4 +194,5 @@ public class FilteringInspector implements IFormulaInspector<IPosition> {
 			addCurrentPosition(acc);
 		}
 	}
+
 }

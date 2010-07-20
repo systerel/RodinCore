@@ -22,6 +22,8 @@ import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
+import org.eventb.core.ast.ExtendedExpression;
+import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IAccumulator;
@@ -126,6 +128,14 @@ public class FindingAccumulator<F> implements IAccumulator<F> {
 
 	public void inspect(IntegerLiteral literal) {
 		inspector.inspect(literal, this);
+	}
+
+	public void inspect(ExtendedPredicate predicate) {
+		inspector.inspect(predicate, this);
+	}
+
+	public void inspect(ExtendedExpression expression) {
+		inspector.inspect(expression, this);
 	}
 
 	public void inspect(FreeIdentifier identifier) {

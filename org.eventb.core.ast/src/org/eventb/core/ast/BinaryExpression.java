@@ -14,8 +14,16 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.AbstractGrammar._RPAR;
+import static org.eventb.internal.core.parser.BMath.ARITHMETIC;
+import static org.eventb.internal.core.parser.BMath.BINOP;
+import static org.eventb.internal.core.parser.BMath.FUNCTIONAL;
+import static org.eventb.internal.core.parser.BMath.INTERVAL;
+import static org.eventb.internal.core.parser.BMath.PAIR;
+import static org.eventb.internal.core.parser.BMath.RELATION;
+import static org.eventb.internal.core.parser.BMath._RBRACKET;
+
 import java.math.BigInteger;
-import java.util.BitSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +33,14 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
+import org.eventb.internal.core.parser.SubParsers.BinaryExpressionInfix;
+import org.eventb.internal.core.parser.SubParsers.LedImage;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -40,6 +56,7 @@ import org.eventb.internal.core.typecheck.TypeVariable;
  * 
  * @author François Terrier
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class BinaryExpression extends Expression {
 
@@ -48,40 +65,214 @@ public class BinaryExpression extends Expression {
 	private final Expression left;
 	private final Expression right;
 	
-	// offset of the corresponding tag-interval in Formula
-	protected final static int firstTag = FIRST_BINARY_EXPRESSION;
-	protected final static String[] tags = {
-		"\u21a6",  // MAPSTO
-		"\u2194",  // REL
-		"\ue100",  // TREL
-		"\ue101",  // SREL
-		"\ue102",  // STREL
-		"\u21f8",  // PFUN
-		"\u2192",  // TFUN
-		"\u2914",  // PINJ
-		"\u21a3",  // TINJ
-		"\u2900",  // PSUR
-		"\u21a0",  // TSUR
-		"\u2916",  // TBIJ
-		"\u2216",  // SETMINUS
-		"\u00d7",  // CPROD
-		"\u2297",  // DPROD
-		"\u2225",  // PPROD
-		"\u25c1",  // DOMRES
-		"\u2a64",  // DOMSUB
-		"\u25b7",  // RANRES
-		"\u2a65",  // RANSUB
-		"\u2025",  // UPTO
-		"\u2212",  // MINUS
-		"\u00f7",  // DIV
-		"mod",     // MOD
-		"\u005e",  // EXPN
-		"FUNIMAGE",// FUNIMAGE
-		"RELIMAGE" // RELIMAGE
-	};
-	// For testing purposes
-	public static final int TAGS_LENGTH = tags.length;
+	/**
+	 * @since 2.0
+	 */
+	public static final String PPROD_ID = "Parallel Product";
+	/**
+	 * @since 2.0
+	 */
+	public static final String REL_ID = "Relation";
+	/**
+	 * @since 2.0
+	 */
+	public static final String TREL_ID = "Total Relation";
+	/**
+	 * @since 2.0
+	 */
+	public static final String SREL_ID = "Surjective Relation";
+	/**
+	 * @since 2.0
+	 */
+	public static final String STREL_ID = "Surjective Total Relation";
+	/**
+	 * @since 2.0
+	 */
+	public static final String PFUN_ID = "Partial Function";
+	/**
+	 * @since 2.0
+	 */
+	public static final String PINJ_ID = "Partial Injection";
+	/**
+	 * @since 2.0
+	 */
+	public static final String TINJ_ID = "Total Injection";
+	/**
+	 * @since 2.0
+	 */
+	public static final String PSUR_ID = "Partial Surjection";
+	/**
+	 * @since 2.0
+	 */
+	public static final String TSUR_ID = "Total Surjection";
+	/**
+	 * @since 2.0
+	 */
+	public static final String TBIJ_ID = "Total Bijection";
+	/**
+	 * @since 2.0
+	 */
+	public static final String SETMINUS_ID = "Set Minus";
+	/**
+	 * @since 2.0
+	 */
+	public static final String DPROD_ID = "Direct Product";
+	/**
+	 * @since 2.0
+	 */
+	public static final String DOMRES_ID = "Domain Restriction";
+	/**
+	 * @since 2.0
+	 */
+	public static final String DOMSUB_ID = "Domain Subtraction";
+	/**
+	 * @since 2.0
+	 */
+	public static final String RANRES_ID = "Range Restriction";
+	/**
+	 * @since 2.0
+	 */
+	public static final String RANSUB_ID = "Range Subtraction";
+	/**
+	 * @since 2.0
+	 */
+	public static final String MINUS_ID = "Minus";
+	/**
+	 * @since 2.0
+	 */
+	public static final String DIV_ID = "Integer Division";
+	/**
+	 * @since 2.0
+	 */
+	public static final String MOD_ID = "Modulo";
+	/**
+	 * @since 2.0
+	 */
+	public static final String EXPN_ID = "Integer Exponentiation";
+	/**
+	 * @since 2.0
+	 */
+	public static final String TFUN_ID = "Total Function";
+	/**
+	 * @since 2.0
+	 */
+	public static final String UPTO_ID = "Up To";
+	/**
+	 * @since 2.0
+	 */
+	public static final String MAPSTO_ID = "Maps to";
+	/**
+	 * @since 2.0
+	 */
+	public static final String CPROD_ID = "Cartesian Product";
+	/**
+	 * @since 2.0
+	 */
+	public static final String FUNIMAGE_ID = "Fun Image";
+	/**
+	 * @since 2.0
+	 */
+	public static final String RELIMAGE_ID = "Relational Image";
 
+	private static enum Operators implements IOperatorInfo<BinaryExpression> {
+		OP_MAPSTO("\u21a6", MAPSTO_ID, PAIR, MAPSTO),
+		OP_REL("\u2194", REL_ID, RELATION, REL),
+		OP_TREL("\ue100", TREL_ID, RELATION, TREL),
+		OP_SREL("\ue101", SREL_ID, RELATION, SREL),
+		OP_STREL("\ue102", STREL_ID, RELATION, STREL),
+		OP_PFUN("\u21f8", PFUN_ID, RELATION, PFUN),
+		OP_TFUN("\u2192", TFUN_ID, RELATION, TFUN),
+		OP_PINJ("\u2914", PINJ_ID, RELATION, PINJ),
+		OP_TINJ("\u21a3", TINJ_ID, RELATION, TINJ),
+		OP_PSUR("\u2900", PSUR_ID, RELATION, PSUR),
+		OP_TSUR("\u21a0", TSUR_ID, RELATION, TSUR),
+		OP_TBIJ("\u2916", TBIJ_ID, RELATION, TBIJ),
+		OP_SETMINUS("\u2216", SETMINUS_ID, BINOP, SETMINUS),
+		OP_CPROD("\u00d7", CPROD_ID, BINOP, CPROD),
+		OP_DPROD("\u2297", DPROD_ID, BINOP, DPROD),
+		OP_PPROD("\u2225", PPROD_ID, BINOP, PPROD),
+		OP_DOMRES("\u25c1", DOMRES_ID, BINOP, DOMRES),
+		OP_DOMSUB("\u2a64", DOMSUB_ID, BINOP, DOMSUB),
+		OP_RANRES("\u25b7", RANRES_ID, BINOP, RANRES),
+		OP_RANSUB("\u2a65", RANSUB_ID, BINOP, RANSUB),
+		OP_UPTO("\u2025", UPTO_ID, INTERVAL, UPTO),
+		OP_MINUS("\u2212", MINUS_ID, ARITHMETIC, MINUS),
+		OP_DIV("\u00f7", DIV_ID, ARITHMETIC, DIV),
+		OP_MOD("mod", MOD_ID, ARITHMETIC, MOD),
+		OP_EXPN("\u005e", EXPN_ID, ARITHMETIC, EXPN),
+		OP_FUNIMAGE("(", FUNIMAGE_ID, FUNCTIONAL, FUNIMAGE, false) {
+			@Override
+			public IParserPrinter<BinaryExpression> makeParser(int kind) {
+				return new LedImage(kind, FUNIMAGE, _RPAR);
+			}
+		},
+		OP_RELIMAGE("[", RELIMAGE_ID, FUNCTIONAL, RELIMAGE, false) {
+			@Override
+			public IParserPrinter<BinaryExpression> makeParser(int kind) {
+				return new LedImage(kind, RELIMAGE, _RBRACKET);
+			}
+		},
+		;
+
+		private final String image;
+		private final String id;
+		private final String groupId;
+		private final int tag;
+		private final boolean isSpaced;
+		
+		private Operators(String image, String id, String groupId, int tag) {
+			this(image, id, groupId, tag, true);
+		}
+
+		private Operators(String image, String id, String groupId, int tag,
+				boolean isSpaced) {
+			this.image = image;
+			this.id = id;
+			this.groupId = groupId;
+			this.tag = tag;
+			this.isSpaced = isSpaced;
+		}
+
+		public String getImage() {
+			return image;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getGroupId() {
+			return groupId;
+		}
+
+		public IParserPrinter<BinaryExpression> makeParser(int kind) {
+			return new BinaryExpressionInfix(kind, tag);
+		}
+
+		public boolean isSpaced() {
+			return isSpaced;
+		}
+	}
+
+	// offset of the corresponding tag-interval in Formula
+	private final static int FIRST_TAG = FIRST_BINARY_EXPRESSION;
+	// For testing purposes
+	public static final int TAGS_LENGTH = Operators.values().length;
+
+	/**
+	 * @since 2.0
+	 */
+	public static void init(BMath grammar) {
+		try {
+			for(Operators operInfo: Operators.values()) {
+				grammar.addOperator(operInfo);
+			}
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	protected BinaryExpression(Expression left, Expression right, int tag,
 			SourceLocation location, FormulaFactory factory) {
 		super (tag, location, 
@@ -89,7 +280,7 @@ public class BinaryExpression extends Expression {
 		this.left = left;
 		this.right = right;
 		
-		assert tag >= firstTag && tag < firstTag+tags.length;
+		assert tag >= FIRST_TAG && tag < FIRST_TAG+TAGS_LENGTH;
 		assert left != null;
 		assert right != null;
 		
@@ -251,237 +442,19 @@ public class BinaryExpression extends Expression {
 		setFinalType(resultType, givenType);
 	}
 	
-	
-	// indicates when the toString method should put parentheses
-	private static final BitSet[] leftNoParenthesesMap = new BitSet[tags.length];
-	private static final BitSet[] rightNoParenthesesMap = new BitSet[tags.length];
-	
-	// fills the parentheses map
-	static {
-		assert tags.length == leftNoParenthesesMap.length;
-		assert tags.length == rightNoParenthesesMap.length;
-		
-		BitSet propagateLeft = new BitSet();
-		BitSet propagateRight = new BitSet();
-		BitSet commonTempLeft, commonTempRight;
-		BitSet temp;
-		
-		propagateLeft.set(Formula.NO_TAG);
-
-		propagateLeft.set(Formula.CSET);
-		propagateLeft.set(Formula.QUNION);
-		propagateLeft.set(Formula.QINTER);
-		propagateLeft.set(Formula.SETEXT);
-		// is not below but reachable without parentheses
-		propagateLeft.set(Formula.KBOOL);
-		propagateLeft.set(Formula.KCARD);
-		propagateLeft.set(Formula.KFINITE);
-		propagateLeft.set(Formula.POW);
-		propagateLeft.set(Formula.POW1);
-		propagateLeft.set(Formula.KUNION);
-		propagateLeft.set(Formula.KINTER);
-		propagateLeft.set(Formula.KDOM);
-		propagateLeft.set(Formula.KRAN);
-		addDeprecatedUnaryTags(propagateLeft);
-		propagateLeft.set(Formula.KMIN);
-		propagateLeft.set(Formula.KMAX);
-		// is a relop
-		propagateLeft.set(Formula.EQUAL);
-		propagateLeft.set(Formula.NOTEQUAL);
-		propagateLeft.set(Formula.IN);
-		propagateLeft.set(Formula.NOTIN);
-		propagateLeft.set(Formula.SUBSET);
-		propagateLeft.set(Formula.NOTSUBSET);
-		propagateLeft.set(Formula.SUBSETEQ);
-		propagateLeft.set(Formula.NOTSUBSETEQ);
-		propagateLeft.set(Formula.LT);
-		propagateLeft.set(Formula.LE);
-		propagateLeft.set(Formula.GT);
-		propagateLeft.set(Formula.GE);
-		propagateRight = (BitSet)propagateLeft.clone();
-		// is not below but reachable without parentheses only right child
-		propagateRight.set(Formula.FUNIMAGE);
-		propagateRight.set(Formula.RELIMAGE);
-		
-		// pair-expression
-		leftNoParenthesesMap[Formula.MAPSTO-firstTag] = (BitSet)propagateLeft.clone();
-		rightNoParenthesesMap[Formula.MAPSTO-firstTag] = (BitSet)propagateRight.clone();
-		leftNoParenthesesMap[Formula.MAPSTO-firstTag].set(Formula.MAPSTO);
-		
-		// relation-set-expr
-		// REL,TREL,SREL,STREL,PFUN,TFUN,PINJ,TINJ,PSUR,TSUR,TBIJ
-		propagateLeft.set(Formula.MAPSTO);
-		propagateRight.set(Formula.MAPSTO);
-		temp = new BitSet();
-		temp.set(Formula.REL);
-		temp.set(Formula.TREL);
-		temp.set(Formula.SREL);
-		temp.set(Formula.STREL);
-		temp.set(Formula.PFUN);
-		temp.set(Formula.TFUN);
-		temp.set(Formula.PINJ);
-		temp.set(Formula.TINJ);
-		temp.set(Formula.PSUR);
-		temp.set(Formula.TSUR);
-		temp.set(Formula.TBIJ);
-		commonTempRight = (BitSet)propagateRight.clone();
-		commonTempLeft = (BitSet)propagateLeft.clone();
-		
-		for(int i=temp.nextSetBit(0); i>=0; i=temp.nextSetBit(i+1)) {
-			leftNoParenthesesMap[i-firstTag] = commonTempLeft;
-			rightNoParenthesesMap[i-firstTag] = commonTempRight;
-		}
-		
-		// set-expr
-		// BUNION,CPROD,OVR,BCOMP,PPROD
-		propagateLeft.or(temp);
-		propagateRight.or(temp);
-		// PPROD
-		leftNoParenthesesMap[Formula.PPROD-firstTag] = (BitSet)propagateLeft.clone();
-		rightNoParenthesesMap[Formula.PPROD-firstTag] = (BitSet)propagateRight.clone();
-		// CPROD
-		leftNoParenthesesMap[Formula.CPROD-firstTag] = (BitSet)propagateLeft.clone();
-		leftNoParenthesesMap[Formula.CPROD-firstTag].set(Formula.CPROD);
-		rightNoParenthesesMap[Formula.CPROD-firstTag] = (BitSet)propagateRight.clone();
-		
-		// domain-modifier
-		leftNoParenthesesMap[Formula.DOMRES-firstTag] = (BitSet)propagateLeft.clone();
-		leftNoParenthesesMap[Formula.DOMRES-firstTag].set(Formula.SETMINUS);
-		leftNoParenthesesMap[Formula.DOMRES-firstTag].set(Formula.DPROD);
-		leftNoParenthesesMap[Formula.DOMRES-firstTag].set(Formula.FCOMP);
-		leftNoParenthesesMap[Formula.DOMRES-firstTag].set(Formula.RANRES);
-		leftNoParenthesesMap[Formula.DOMRES-firstTag].set(Formula.RANSUB);
-		leftNoParenthesesMap[Formula.DOMRES-firstTag].set(Formula.BINTER);
-		rightNoParenthesesMap[Formula.DOMRES-firstTag] = (BitSet)propagateRight.clone();
-		
-		leftNoParenthesesMap[Formula.DOMSUB-firstTag] = leftNoParenthesesMap[Formula.DOMRES-firstTag];
-		rightNoParenthesesMap[Formula.DOMSUB-firstTag] = rightNoParenthesesMap[Formula.DOMRES-firstTag];
-		
-		// relation-expr
-		commonTempRight = (BitSet)propagateRight.clone();
-		commonTempRight.set(Formula.DOMRES);
-		commonTempRight.set(Formula.DOMSUB);
-		commonTempLeft = (BitSet)propagateLeft.clone();
-		// SETMINUS, CPROD, RANRES, RANSUB
-		leftNoParenthesesMap[Formula.DPROD-firstTag] = commonTempLeft;
-		rightNoParenthesesMap[Formula.DPROD-firstTag] = commonTempRight;
-		leftNoParenthesesMap[Formula.SETMINUS-firstTag] = commonTempLeft;
-		rightNoParenthesesMap[Formula.SETMINUS-firstTag] = commonTempRight;
-		rightNoParenthesesMap[Formula.SETMINUS-firstTag].clear(Formula.DOMRES);
-		rightNoParenthesesMap[Formula.SETMINUS-firstTag].clear(Formula.DOMSUB);
-		leftNoParenthesesMap[Formula.RANRES-firstTag] = commonTempLeft;
-		rightNoParenthesesMap[Formula.RANRES-firstTag] = commonTempRight;
-		leftNoParenthesesMap[Formula.RANSUB-firstTag] = commonTempLeft;
-		rightNoParenthesesMap[Formula.RANSUB-firstTag] = commonTempRight;
-
-		// interval-expr
-		temp = new BitSet();
-		temp.set(Formula.BUNION);
-		temp.set(Formula.BCOMP);
-		temp.set(Formula.OVR);
-		temp.set(Formula.CPROD);
-		temp.set(Formula.PPROD);
-		temp.set(Formula.SETMINUS);
-		temp.set(Formula.CPROD);
-		temp.set(Formula.FCOMP);
-		temp.set(Formula.BINTER);
-		temp.set(Formula.DOMRES);
-		temp.set(Formula.DOMSUB);
-		temp.set(Formula.RANRES);
-		temp.set(Formula.RANSUB);
-		propagateLeft.or(temp);
-		propagateRight.or(temp);
-		leftNoParenthesesMap[Formula.UPTO-firstTag] = (BitSet)propagateLeft.clone();
-		rightNoParenthesesMap[Formula.UPTO-firstTag] = (BitSet)propagateRight.clone();
-		
-		// arithmetic-expr
-		leftNoParenthesesMap[Formula.MINUS-firstTag] = (BitSet)propagateLeft.clone();
-		leftNoParenthesesMap[Formula.MINUS-firstTag].set(Formula.MINUS);
-		leftNoParenthesesMap[Formula.MINUS-firstTag].set(Formula.PLUS);
-		rightNoParenthesesMap[Formula.MINUS-firstTag] = (BitSet)propagateRight.clone();
-		
-		// term
-		propagateLeft.set(Formula.PLUS);
-		propagateRight.set(Formula.PLUS);
-		propagateLeft.set(Formula.MINUS);
-		propagateRight.set(Formula.MINUS);
-		propagateLeft.set(Formula.UNMINUS);
-		propagateRight.set(Formula.UNMINUS);
-		temp = new BitSet();
-		temp.set(Formula.DIV);
-		temp.set(Formula.MOD);
-		commonTempRight = (BitSet)propagateRight.clone();
-		for(int i=temp.nextSetBit(0); i>=0; i=temp.nextSetBit(i+1)) {
-			leftNoParenthesesMap[i-firstTag] = (BitSet)propagateLeft.clone();
-			rightNoParenthesesMap[i-firstTag] = commonTempRight;
-		}
-
-		// factor
-		propagateLeft.or(temp);
-		propagateRight.or(temp);
-		leftNoParenthesesMap[Formula.EXPN-firstTag] = (BitSet)propagateLeft.clone();
-		rightNoParenthesesMap[Formula.EXPN-firstTag] = (BitSet)propagateRight.clone();
-		
-		// image
-		propagateLeft.set(Formula.EXPN);
-		propagateRight.set(Formula.EXPN);
-		leftNoParenthesesMap[Formula.RELIMAGE-firstTag] = (BitSet)propagateLeft.clone();
-		rightNoParenthesesMap[Formula.RELIMAGE-firstTag] = (BitSet)propagateRight.clone();
-		leftNoParenthesesMap[Formula.FUNIMAGE-firstTag] = (BitSet)propagateLeft.clone();
-		rightNoParenthesesMap[Formula.FUNIMAGE-firstTag] = (BitSet)propagateRight.clone();
-		
+	private Operators getOperator() {
+		return Operators.values()[getTag()-FIRST_TAG];
 	}
 
-	@SuppressWarnings("deprecation")
-	private static void addDeprecatedUnaryTags(BitSet bitset) {
-		bitset.set(Formula.KPRJ1);
-		bitset.set(Formula.KPRJ2);
-		bitset.set(Formula.KID);
+	private String getOperatorImage() {
+		return getOperator().getImage();
 	}
-	
+
 	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-
-		final boolean needsParen = needsParenthesis(isRightChild, parentTag);
-		if (needsParen) builder.append('(');
-		switch (getTag()) {
-			case FUNIMAGE:
-				left.toString(builder, false, getTag(), boundNames, withTypes);
-				builder.append('(');
-				right.toString(builder, true, getTag(), boundNames, withTypes);
-				builder.append(')');
-				break;
-			case RELIMAGE:
-				left.toString(builder, false, getTag(), boundNames, withTypes);
-				builder.append('[');
-				right.toString(builder, true, getTag(), boundNames, withTypes);
-				builder.append(']');
-				break;
-			default:
-				left.toString(builder, false, getTag(), boundNames, withTypes);
-				builder.append(' ');
-				builder.append(getTagOperator());
-				builder.append(' ');
-				right.toString(builder, true, getTag(), boundNames, withTypes);
-				break;
-		}
-		if (needsParen) builder.append(')');
+	protected int getKind(KindMediator mediator) {
+		return mediator.getKind(getOperatorImage());
 	}
 
-	// Tag operator
-	protected String getTagOperator() {
-		return tags[getTag()-firstTag];
-	}
-
-	private boolean needsParenthesis(boolean isRightChild, int parentTag) {
-		final int relativeTag = getTag() - firstTag;
-		if (isRightChild) {
-			return ! rightNoParenthesesMap[relativeTag].get(parentTag);
-		}
-		return ! leftNoParenthesesMap[relativeTag].get(parentTag);
-	}
-	
 	@Override
 	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
 		if (this.getTag() != other.getTag()) {
@@ -609,8 +582,16 @@ public class BinaryExpression extends Expression {
 	}
 
 	@Override
+	protected void toString(IToStringMediator mediator) {
+		final Operators operator = getOperator();
+		final int kind = mediator.getKind();
+		
+		operator.makeParser(kind).toString(mediator, this);
+	}
+
+	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
-		return tabs + this.getClass().getSimpleName() + " [" + getTagOperator() + "]" 
+		return tabs + this.getClass().getSimpleName() + " [" + getOperatorImage() + "]" 
 				+ getTypeName() + "\n"
 				+ left.getSyntaxTree(boundNames, tabs + "\t")
 				+ right.getSyntaxTree(boundNames, tabs + "\t");
@@ -621,37 +602,6 @@ public class BinaryExpression extends Expression {
 		left.isLegible(result, quantifiedIdents);
 		if (result.isSuccess()) {
 			right.isLegible(result, quantifiedIdents);
-		}
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-		
-		switch (getTag()) {
-		case Formula.FUNIMAGE:
-			builder.append('(');
-			left.toStringFullyParenthesized(builder, boundNames);
-			builder.append(")(");
-			right.toStringFullyParenthesized(builder, boundNames);
-			builder.append(')');
-			break;
-		case Formula.RELIMAGE:
-			builder.append('(');
-			left.toStringFullyParenthesized(builder, boundNames);
-			builder.append(")[");
-			right.toStringFullyParenthesized(builder, boundNames);
-			builder.append(']');
-			break;
-		default:
-			builder.append('(');
-			left.toStringFullyParenthesized(builder, boundNames);
-			builder.append(')');
-			builder.append(getTagOperator());
-			builder.append('(');
-			right.toStringFullyParenthesized(builder, boundNames);
-			builder.append(')');
-			break;
 		}
 	}
 

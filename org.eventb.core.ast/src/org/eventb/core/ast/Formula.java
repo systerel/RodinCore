@@ -10,7 +10,8 @@
  *     Systerel - added abstract accept method for ISimpleVisitor
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
- *     Systerel - generalised getPositions() into inspect() 
+ *     Systerel - generalised getPositions() into inspect()
+ *     Systerel - added support for mathematical extensions
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -38,6 +39,8 @@ import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.SimpleSubstitution;
 import org.eventb.internal.core.ast.Substitution;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -56,6 +59,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * @param <T>
  *            TODO comment type parameter
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class Formula<T extends Formula<T>> {
 
@@ -88,7 +92,7 @@ public abstract class Formula<T extends Formula<T>> {
 	// information is either inexistant (pure syntactical formula) or transitory
 	// (during type-check).
 	protected boolean typeChecked;
-	
+
 	/**
 	 * <code>NO_TAG</code> is used as a placeholder when one needs to indicate
 	 * that a tag value is invalid or absent. It is different from all valid
@@ -864,6 +868,15 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public final static int KPARTITION = FIRST_MULTIPLE_PREDICATE + 0;
 
+	/**
+	 * First tag for extended formulae.
+	 * 
+	 * @see ExtendedPredicate
+	 * @see ExtendedExpression
+	 * @since 2.0
+	 */
+	public static final int FIRST_EXTENSION_TAG = 1000;
+
 	protected final static BoundIdentDecl[] NO_BOUND_IDENT_DECL =
 		new BoundIdentDecl[0];
 	
@@ -879,6 +892,9 @@ public abstract class Formula<T extends Formula<T>> {
 	protected final static String[] NO_STRING = new String[0];
 
 	// Internal constructor for derived classes (with location).
+	/**
+	 * @since 2.0
+	 */
 	protected Formula(int tag, SourceLocation location, int hashCode) {
 		this.tag = tag;
 		this.location = location;
@@ -944,6 +960,18 @@ public abstract class Formula<T extends Formula<T>> {
 		return result;
 	}
 	
+	private static <S extends Formula<?>> ArrayList<FreeIdentifier[]> getFreeIdentifiers(
+			S... formulas) {
+		final ArrayList<FreeIdentifier[]> lists = new ArrayList<FreeIdentifier[]>(
+				formulas.length);
+		for (Formula<?> formula : formulas) {
+			final FreeIdentifier[] freeIdents = formula.freeIdents;
+			if (freeIdents.length != 0)
+				lists.add(freeIdents);
+		}
+		return lists;
+	}
+
 	/**
 	 * Merges the list of free identifiers of the given formulas.
 	 * 
@@ -955,18 +983,24 @@ public abstract class Formula<T extends Formula<T>> {
 	protected static <S extends Formula<?>> IdentListMerger mergeFreeIdentifiers(
 			S... formulas) {
 		
-		ArrayList<FreeIdentifier[]> lists = 
-			new ArrayList<FreeIdentifier[]>(formulas.length);
-		for (Formula<?> formula : formulas) {
-			final FreeIdentifier[] freeIdents = formula.freeIdents;
-			if (freeIdents.length != 0)
-				lists.add(freeIdents);
-		}
+		ArrayList<FreeIdentifier[]> lists = getFreeIdentifiers(formulas);
 		// Ensure the list is not empty.
 		if (lists.size() == 0) {
 			lists.add(NO_FREE_IDENT);
 		}
 		return IdentListMerger.makeMerger(lists);
+	}
+
+	private static <S extends Formula<?>> ArrayList<BoundIdentifier[]> getBoundIdentifiers(
+			S[] formulas) {
+		ArrayList<BoundIdentifier[]> lists = new ArrayList<BoundIdentifier[]>(
+				formulas.length);
+		for (Formula<?> formula : formulas) {
+			final BoundIdentifier[] boundIdents = formula.boundIdents;
+			if (boundIdents.length != 0)
+				lists.add(boundIdents);
+		}
+		return lists;
 	}
 
 	/**
@@ -979,13 +1013,7 @@ public abstract class Formula<T extends Formula<T>> {
 	protected static <S extends Formula<?>> IdentListMerger mergeBoundIdentifiers(
 			S[] formulas) {
 		
-		ArrayList<BoundIdentifier[]> lists = 
-			new ArrayList<BoundIdentifier[]>(formulas.length);
-		for (Formula<?> formula : formulas) {
-			final BoundIdentifier[] boundIdents = formula.boundIdents;
-			if (boundIdents.length != 0)
-				lists.add(boundIdents);
-		}
+		ArrayList<BoundIdentifier[]> lists = getBoundIdentifiers(formulas);
 		// Ensure the list is not empty.
 		if (lists.size() == 0) {
 			lists.add(NO_BOUND_IDENT);
@@ -1067,8 +1095,10 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @return a string representation of this formula.
 	 */
 	public final String toStringFullyParenthesized() {
-		StringBuilder builder = new StringBuilder();
-		toStringFullyParenthesized(builder, NO_STRING);
+		final StringBuilder builder = new StringBuilder();
+		final ToStringFullParenMediator strMed = new ToStringFullParenMediator(this, 
+				getFactory(), builder, NO_STRING, false);
+		strMed.forward(getTypedThis());
 		return builder.toString();
 	}
 
@@ -1087,8 +1117,10 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	@Override
 	public final String toString() {
-		StringBuilder builder = new StringBuilder();
-		toString(builder, false, NO_TAG, NO_STRING, false);
+		final StringBuilder builder = new StringBuilder();
+		final ToStringMediator strMed = new ToStringMediator(this, getFactory(),
+				builder, NO_STRING, false, false);
+		strMed.forward(getTypedThis());
 		return builder.toString();
 	}
 
@@ -1105,11 +1137,30 @@ public abstract class Formula<T extends Formula<T>> {
 	 *         information.
 	 */
 	public final String toStringWithTypes() {
-		StringBuilder builder = new StringBuilder();
-		toString(builder, false, NO_TAG, NO_STRING, true);
+		final StringBuilder builder = new StringBuilder();
+		final ToStringMediator strMed = new ToStringMediator(this, getFactory(),
+				builder, NO_STRING, true, false);
+		strMed.forward(getTypedThis());
 		return builder.toString();
 	}
+	
+	/**
+	 * @since 2.0
+	 */
+	protected abstract void toString(IToStringMediator mediator);
 
+	/**
+	 * @since 2.0
+	 */
+	protected abstract int getKind(KindMediator mediator);
+	
+	/**
+	 * @since 2.0
+	 */
+	protected FormulaFactory getFactory() {
+		return FormulaFactory.getDefault();
+	}
+	
 	/**
 	 * Indicates whether some other formula is identical to this one.
 	 * <p>
@@ -1403,6 +1454,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @return Returns the printable syntax tree.
 	 */
 	public final String getSyntaxTree() {
+		// TODO use a mediator instead
 		return getSyntaxTree(NO_STRING, "");
 	}
 
@@ -1937,55 +1989,6 @@ public abstract class Formula<T extends Formula<T>> {
 	protected abstract boolean solveType(TypeUnifier unifier);
 
 	/**
-	 * Internal method that returns the string representation of the formula.
-	 * <p>
-	 * The string contains a minimum number of parenthesis, that is only
-	 * parenthesis that are needed for the formula to be parsed again into the
-	 * same AST. Method {@link Formula#toString()} calls this method with false,
-	 * Formula.STARTTAG, and an empty array.
-	 * 
-	 * @param builder
-	 *            string builder containing the result
-	 * @param isRightChild
-	 *            <code>true</code> if this node is the right child of its
-	 *            parent node, <code>false</code> if it is the left child or a
-	 *            unique child
-	 * @param parentTag
-	 *            the tag of the parent node
-	 * @param boundNames
-	 *            the identifiers that are bound in the path from the root node
-	 *            to the current node. Should not be null, can be an empty
-	 *            array.
-	 * @param withTypes
-	 *            <code>true</code> iff type information should be output for
-	 *            atomic expressions.
-	 * 
-	 * @see java.lang.Object#toString()
-	 * @see #toStringFullyParenthesized()
-	 */
-	protected abstract void toString(StringBuilder builder, boolean isRightChild, int parentTag,
-			String[] boundNames, boolean withTypes);
-
-	/**
-	 * Internal method that returns the string representation of the formula
-	 * <p>
-	 * The string contains as many parenthesis as possible. Method
-	 * {@link Formula#toStringFullyParenthesized()} in fact calls this method
-	 * with an empty Identifier array.
-	 * 
-	 * @param builder
-	 *            string builder containing the result
-	 * @param boundNames
-	 *            the identifiers that are bound in the path from the root node
-	 *            to the current node. Should not be null, can be an empty
-	 *            array.
-	 * 
-	 * @see #toStringFullyParenthesized()
-	 */
-	protected abstract void toStringFullyParenthesized(
-			StringBuilder builder, String[] boundNames);
-
-	/**
 	 * Traverses this formula with the given visitor. In this complex version,
 	 * the accept method also manages stepping through AST children nodes.
 	 * 
@@ -2142,7 +2145,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * 
 	 * @return a list of all the findings reported by the inspector during
 	 *         traversal
-	 * @since 1.3
+	 * @since 2.0
 	 */
 	public final <F> List<F> inspect(IFormulaInspector<F> inspector) {
 		if (this instanceof Assignment) {
@@ -2154,6 +2157,9 @@ public abstract class Formula<T extends Formula<T>> {
 		return acc.getFindings();
 	}
 	
+	/**
+	 * @since 2.0
+	 */
 	protected abstract <F> void inspect(FindingAccumulator<F> acc);
 	
 	/**

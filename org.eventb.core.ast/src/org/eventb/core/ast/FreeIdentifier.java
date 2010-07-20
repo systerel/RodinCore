@@ -32,6 +32,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * 
  * @author François Terrier
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class FreeIdentifier extends Identifier {
 
@@ -171,20 +172,6 @@ public class FreeIdentifier extends Identifier {
 	 */
 	public boolean isPrimed() {
 		return name.endsWith(primeSuffix);
-	}
-
-	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-
-		builder.append(name);
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-
-		builder.append(name);
 	}
 
 	@Override

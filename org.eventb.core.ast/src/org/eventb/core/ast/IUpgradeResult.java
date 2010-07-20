@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-
 package org.eventb.core.ast;
 
 /**
@@ -20,6 +19,8 @@ package org.eventb.core.ast;
  * 
  * @author Nicolas Beauger
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IUpgradeResult<T extends Formula<T>> extends IResult {
 

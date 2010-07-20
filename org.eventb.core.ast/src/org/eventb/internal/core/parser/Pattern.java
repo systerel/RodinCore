@@ -112,8 +112,8 @@ public class Pattern {
 
 	private ASTProblem duplicateNameInPattern(BoundIdentDecl decl) {
 		return new ASTProblem(decl.getSourceLocation(),
-				ProblemKind.SyntaxError, ProblemSeverities.Error,
-				"Duplicate identifier in pattern: " + decl.getName());
+				ProblemKind.DuplicateIdentifierInPattern, ProblemSeverities.Error,
+				decl.getName());
 	}
 
 }

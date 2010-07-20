@@ -21,6 +21,13 @@ import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
+import org.eventb.internal.core.parser.SubParsers.KBoolParser;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -32,9 +39,63 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * 
  * @author François Terrier
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class BoolExpression extends Expression {
+	
+	private static final String KBOOL_ID = "To Bool";
 
+	private static enum Operators implements IOperatorInfo<BoolExpression> {
+		OP_KBOOL("bool", KBOOL_ID, BMath.BOOL_EXPR),
+		;
+		
+		private final String image;
+		private final String id;
+		private final String groupId;
+		
+		private Operators(String image, String id, String groupId) {
+			this.image = image;
+			this.id = id;
+			this.groupId = groupId;
+		}
+
+		public String getImage() {
+			return image;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getGroupId() {
+			return groupId;
+		}
+
+		public IParserPrinter<BoolExpression> makeParser(int kind) {
+			return new KBoolParser(kind);
+		}
+
+		public boolean isSpaced() {
+			return false;
+		}
+
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public static void init(BMath grammar) {
+		try {
+			for(Operators operInfo: Operators.values()) {
+				grammar.addOperator(operInfo);
+			}
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
 	// child
 	private final Predicate child;
 	
@@ -69,24 +130,6 @@ public class BoolExpression extends Expression {
 	public Predicate getPredicate() {
 		return child;
 	}
-	
-	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-
-		builder.append("bool(");
-		child.toString(builder, false, getTag(), boundNames, withTypes);
-		builder.append(')');
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-
-		builder.append("bool(");
-		child.toStringFullyParenthesized(builder, boundNames);
-		builder.append(')');
-	}
 
 	@Override
 	protected void isLegible(LegibilityResult result, BoundIdentDecl[] quantifiedIdents) {
@@ -112,12 +155,30 @@ public class BoolExpression extends Expression {
 	protected boolean solveChildrenTypes(TypeUnifier unifier) {
 		return child.solveType(unifier);
 	}
-	
+
+	@Override
+	protected void toString(IToStringMediator mediator) {
+		final Operators operator = Operators.OP_KBOOL;
+		final int kind = mediator.getKind();
+		
+		operator.makeParser(kind).toString(mediator, this);
+	}
+
+	@Override
+	protected int getKind(KindMediator mediator) {
+		return mediator.getKind(getOperatorImage());
+	}
+
+	private String getOperatorImage() {
+		return Operators.OP_KBOOL.getImage();
+	}
+
 	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		final String typeName = getType()!=null?" [type: "+getType().toString()+"]":"";
-		return tabs + this.getClass().getSimpleName() + " [bool]" + typeName
-				+ "\n" + child.getSyntaxTree(boundNames, tabs + "\t");
+		return tabs + this.getClass().getSimpleName() + " ["
+				+ getOperatorImage() + "]" + typeName + "\n"
+				+ child.getSyntaxTree(boundNames, tabs + "\t");
 	}
 
 	@Override

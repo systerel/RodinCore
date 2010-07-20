@@ -10,6 +10,7 @@
  *     Systerel - added origin
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
+ *     Systerel - added support for mathematical extensions
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -17,11 +18,27 @@ import static org.eventb.core.ast.LanguageVersion.V1;
 
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.extension.IPredicateExtension;
+import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.datatype.DatatypeExtensionComputer;
+import org.eventb.internal.core.lexer.Scanner;
+import org.eventb.internal.core.parser.AbstractGrammar;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.BMathV1;
+import org.eventb.internal.core.parser.BMathV2;
+import org.eventb.internal.core.parser.ExtendedGrammar;
+import org.eventb.internal.core.parser.GenParser;
 import org.eventb.internal.core.parser.ParseResult;
-import org.eventb.internal.core.parser.Parser;
-import org.eventb.internal.core.parser.Scanner;
 import org.eventb.internal.core.typecheck.TypeEnvironment;
 import org.eventb.internal.core.upgrade.UpgradeResult;
 import org.eventb.internal.core.upgrade.UpgraderFactory;
@@ -36,12 +53,22 @@ import org.eventb.internal.core.upgrade.VersionUpgrader;
  *  
  * @author François Terrier
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
-
 public class FormulaFactory {
 
-	static FormulaFactory DEFAULT_INSTANCE = new FormulaFactory();
+	private static final FormulaFactory DEFAULT_INSTANCE = new FormulaFactory();
 
+	private static final Map<IFormulaExtension, Integer> ALL_EXTENSIONS = Collections
+			.synchronizedMap(new HashMap<IFormulaExtension, Integer>());
+	
+	private static volatile int nextExtensionTag = Formula.FIRST_EXTENSION_TAG;
+	
+	// tags of extensions managed by this formula factory
+	private final Map<Integer, IFormulaExtension> extensions;
+	
+	private final BMath grammar;
+	
 	/**
 	 * Returns the default instance of the type factory.
 	 * 
@@ -51,10 +78,153 @@ public class FormulaFactory {
 		return DEFAULT_INSTANCE;
 	}
 
-	protected FormulaFactory() {
-		// Nothing to do
+	/**
+	 * @since 2.0
+	 */
+	public static FormulaFactory getInstance(Set<IFormulaExtension> extensions) {
+		// TODO implement a cache that returns the same instance 
+		// if the same set is given
+		final Map<Integer, IFormulaExtension> extMap = new HashMap<Integer, IFormulaExtension>();
+		synchronized (ALL_EXTENSIONS) {
+			for (IFormulaExtension extension : extensions) {
+				Integer tag = ALL_EXTENSIONS.get(extension);
+				if (tag == null) {
+					// FIXME add conflict checks
+					tag = nextExtensionTag;
+					nextExtensionTag++;
+					ALL_EXTENSIONS.put(extension, tag);
+				}
+				extMap.put(tag, extension);
+			}
+		}
+		return new FormulaFactory(extMap);
 	}
 
+	/**
+	 * @since 2.0
+	 */
+	public static Map<String, IExpressionExtension> getExtensions(
+			IDatatypeExtension extension) {
+		// FIXME returned extensions should be unique
+		return new DatatypeExtensionComputer(extension).compute();
+	}
+	
+	protected FormulaFactory() {
+		this(Collections.<Integer, IFormulaExtension>emptyMap());
+	}
+
+	private FormulaFactory(BMath grammar) {
+		this.extensions = Collections.<Integer, IFormulaExtension>emptyMap();
+		this.grammar = grammar;
+	}
+	
+	/**
+	 * @since 2.0
+	 */
+	protected FormulaFactory(Map<Integer, IFormulaExtension> extMap) {
+		this.extensions = extMap;
+		if (extMap.isEmpty()) {
+			this.grammar = BMathV2.B_MATH_V2;
+		} else {
+			this.grammar = new ExtendedGrammar(new HashSet<IFormulaExtension>(
+					extMap.values()));
+			this.grammar.init();
+		}
+	}
+
+	/**
+	 * FIXME should either not be published, or return an interface
+	 * @since 2.0
+	 */
+	public AbstractGrammar getGrammar() {
+		return grammar;
+	}
+	
+	/**
+	 * @since 2.0
+	 */
+	public ExtendedExpression makeExtendedExpression(
+			IExpressionExtension extension, Expression[] expressions,
+			Predicate[] predicates, SourceLocation location, Type type) {
+		if (!extensions.containsValue(extension)) {
+			throw new IllegalArgumentException(
+					"the extension is not supported by this factory: "
+							+ extension.getSyntaxSymbol());
+		}
+		final int tag = ALL_EXTENSIONS.get(extension);
+		return new ExtendedExpression(tag, expressions, predicates, location,
+				this, extension, type);
+	}
+	
+	/**
+	 * @since 2.0
+	 */
+	public ExtendedExpression makeExtendedExpression(
+			IExpressionExtension extension, Expression[] expressions,
+			Predicate[] predicates, SourceLocation location) {
+		return makeExtendedExpression(extension, expressions, predicates,
+				location, null);
+	}
+	
+	// TODO consider adding a makeExtendedExpression() with a given type argument
+	
+	/**
+	 * @since 2.0
+	 */
+	public ExtendedExpression makeExtendedExpression(IExpressionExtension extension,
+			Collection<Expression> expressions,
+			Collection<Predicate> predicates,
+			SourceLocation sourceLocation) {
+		final Expression[] expr = expressions.toArray(new Expression[expressions.size()]);
+		final Predicate[] pred = predicates.toArray(new Predicate[predicates.size()]);
+		return makeExtendedExpression(extension, expr, pred, sourceLocation);
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public ExtendedPredicate makeExtendedPredicate(
+			IPredicateExtension extension, Expression[] expressions,
+			Predicate[] predicates, SourceLocation location) {
+		if (!extensions.containsValue(extension)) {
+			throw new IllegalArgumentException(
+					"the extension is not supported by this factory: "
+							+ extension.getSyntaxSymbol());
+		}
+		final int tag = ALL_EXTENSIONS.get(extension);
+		return new ExtendedPredicate(tag, expressions, predicates, location,
+				this, extension);
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public ExtendedPredicate makeExtendedPredicate(IPredicateExtension extension,
+			Collection<Expression> expressions,
+			Collection<Predicate> predicates,
+			SourceLocation location) {
+		final Expression[] exprs = expressions.toArray(new Expression[expressions.size()]);
+		final Predicate[] preds = predicates.toArray(new Predicate[predicates.size()]);
+		return makeExtendedPredicate(extension, exprs, preds, location);
+	}
+
+	// TODO add methods to get operator and group ids,
+	// compatibility and priority relations
+	
+	/**
+	 * @since 2.0
+	 */
+	public static int getTag(IFormulaExtension extension) {
+		return ALL_EXTENSIONS.get(extension);
+	}
+	
+	/**
+	 * @since 2.0
+	 */
+	public IFormulaExtension getExtension(int tag) {
+		return extensions.get(tag);
+	}
+	
 	/**
 	 * Returns a new associative expression
 	 * <p>
@@ -1039,11 +1209,31 @@ public class FormulaFactory {
 	private final <T> IParseResult parseGeneric(String formula,
 			LanguageVersion version, Object origin, Class<T> clazz,
 			boolean withPredVars) {
-		final ParseResult result = new ParseResult(this, version, origin);
-		final Scanner scanner = new Scanner(formula, result);
-		final Parser parser = new Parser(clazz, scanner, result, withPredVars);
-		parser.Parse();
+		// TODO consider removing version argument and publishing instance
+		// construction methods with a version parameter
+		final FormulaFactory factory;
+		if (grammar.getVersion() == version) {
+			factory = this;
+		} else {
+			factory = new FormulaFactory(getGrammar(version));
+		}
+		final ParseResult result = new ParseResult(factory, version, origin);
+		final Scanner scanner = new Scanner(formula, result, factory.getGrammar());
+		final GenParser parser = new GenParser(clazz, scanner, result, withPredVars);
+		parser.parse();
 		return parser.getResult();
+	}
+
+	private static BMath getGrammar(LanguageVersion version) {
+		switch (version) {
+		case V1:
+			return BMathV1.B_MATH_V1;
+		case V2:
+			return BMathV2.B_MATH_V2;
+		default:
+			throw new IllegalArgumentException("unknown language version: "
+					+ version);
+		}
 	}
 
 	/**
@@ -1082,6 +1272,14 @@ public class FormulaFactory {
 	public FreeIdentifier[] makeFreshIdentifiers(BoundIdentDecl[] boundIdents,
 			ITypeEnvironment environment) {
 		return QuantifiedUtil.resolveIdents(boundIdents, environment, this);
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public GenericType makeGenericType(List<Type> typePrms,
+			IExpressionExtension exprExt) {
+		return new GenericType(typePrms, exprExt);
 	}
 
 	/**

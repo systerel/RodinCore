@@ -24,6 +24,13 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
+import org.eventb.internal.core.parser.SubParsers.MultiplePredicateParser;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
@@ -38,6 +45,7 @@ import org.eventb.internal.core.typecheck.TypeVariable;
  * 
  * @author Nicolas Beauger
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class MultiplePredicate extends Predicate {
 
@@ -46,12 +54,62 @@ public class MultiplePredicate extends Predicate {
 	protected final Expression[] children;
 
 	// offset of the corresponding interval in Formula
-	protected static final int firstTag = FIRST_MULTIPLE_PREDICATE;
-	protected static String[] tags = {
-		"partition" // KPARTITION
-	};
+	private static final int FIRST_TAG = FIRST_MULTIPLE_PREDICATE;
+
+	private static enum Operators implements IOperatorInfo<MultiplePredicate> {
+		OP_KPARTITION("partition", KPARTITION_ID, BMath.ATOMIC_PRED),
+		;
+		
+		private final String image;
+		private final String id;
+		private final String groupId;
+		
+		private Operators(String image, String id, String groupId) {
+			this.image = image;
+			this.id = id;
+			this.groupId = groupId;
+		}
+
+		public String getImage() {
+			return image;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getGroupId() {
+			return groupId;
+		}
+
+		public IParserPrinter<MultiplePredicate> makeParser(int kind) {
+			return new MultiplePredicateParser(kind);
+		}
+
+		public boolean isSpaced() {
+			return false;
+		}
+
+	}
+
 	// For testing purposes
-	public static final int TAGS_LENGTH = tags.length;
+	public static final int TAGS_LENGTH = Operators.values().length;
+
+	private static final String KPARTITION_ID = "Partition";
+
+	/**
+	 * @since 2.0
+	 */
+	public static void initV2(BMath grammar) {
+		try {
+			for(Operators operInfo: Operators.values()) {
+				grammar.addOperator(operInfo);
+			}
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	protected MultiplePredicate(Expression[] children, int tag,
 			SourceLocation location, FormulaFactory factory) {
@@ -114,36 +172,30 @@ public class MultiplePredicate extends Predicate {
 	}
 
 	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-		builder.append(tags[getTag()-firstTag]);
-		builder.append('(');
-		String sep = "";
-		for (Expression child : children) {
-			builder.append(sep);
-			sep = ",";
-			child.toString(builder, false, getTag(), boundNames, withTypes);
-		}
-		builder.append(')');
+	protected void toString(IToStringMediator mediator) {
+		final Operators operator = getOperator();
+		final int kind = mediator.getKind();
+		
+		operator.makeParser(kind).toString(mediator, this);
 	}
 
 	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder, String[] boundNames) {
-		builder.append(tags[getTag()-firstTag]);
-		builder.append('(');
-		String sep = "";
-		for (Expression child : children) {
-			builder.append(sep);
-			sep = ",";
-			child.toStringFullyParenthesized(builder, boundNames);
-		}
-		builder.append(')');
+	protected int getKind(KindMediator mediator) {
+		return mediator.getKind(getOperatorImage());
+	}
+	
+	private String getOperatorImage() {
+		return getOperator().getImage();
 	}
 
+	private Operators getOperator() {
+		return Operators.values()[getTag()-FIRST_TAG];
+	}
+	
 	@Override
 	protected String getSyntaxTree(String[] boundNames, String tabs) {
 		return getSyntaxTreeHelper(boundNames, tabs, children,
-				tags[getTag()-firstTag], "", this.getClass().getSimpleName());
+				getOperatorImage(), "", this.getClass().getSimpleName());
 	}
 
 	@Override

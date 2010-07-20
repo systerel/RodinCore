@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.OperatorRegistry.GROUP0;
+import static org.eventb.internal.core.parser.SubParsers.PRED_VAR_SUBPARSER;
+
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -19,6 +22,10 @@ import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.ast.extension.KindMediator;
+import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -30,6 +37,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  * 
  * @author Thomas Muller
  * @since 1.2
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class PredicateVariable extends Predicate {
 
@@ -45,6 +53,20 @@ public class PredicateVariable extends Predicate {
 	 * predicates and expressions.
 	 */
 	public static final String LEADING_SYMBOL = "$";
+
+	private static final String PRED_VAR_ID = "Predicate Variable";
+
+	/**
+	 * @since 2.0
+	 */
+	public static void init(BMath grammar) {
+		try {
+			grammar.addOperator(BMath._PREDVAR, PRED_VAR_ID, GROUP0, PRED_VAR_SUBPARSER, false);
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	// The name of the PredicateVariable including the leading symbol '$'
 	private final String name;
@@ -71,18 +93,6 @@ public class PredicateVariable extends Predicate {
 	}
 
 	@Override
-	protected void toString(StringBuilder builder, boolean isRightChild,
-			int parentTag, String[] boundNames, boolean withTypes) {
-		builder.append(this.name);
-	}
-
-	@Override
-	protected void toStringFullyParenthesized(StringBuilder builder,
-			String[] boundNames) {
-		builder.append(this.name);
-	}
-
-	@Override
 	protected void isLegible(LegibilityResult result,
 			BoundIdentDecl[] quantifiedIdents) {
 		// Nothing to do, this sub-formula is always legible.
@@ -100,6 +110,16 @@ public class PredicateVariable extends Predicate {
 	protected void typeCheck(TypeCheckResult result,
 			BoundIdentDecl[] quantifiedIdentifiers) {
 		// Always well-typed
+	}
+
+	@Override
+	protected void toString(IToStringMediator mediator) {
+		PRED_VAR_SUBPARSER.toString(mediator, getTypedThis());
+	}
+
+	@Override
+	protected int getKind(KindMediator mediator) {
+		return BMath._PREDVAR;
 	}
 
 	@Override
