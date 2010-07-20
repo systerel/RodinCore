@@ -92,9 +92,11 @@ public final class RecalculateAutoStatus {
 			SubMonitor pm) throws RodinDBException {
 		
 		final String poName = status.getElementName();
-		if (pc.getProofAttempts(poName).length != 0) {
-			// other attempts exist: don't process this PO
-			return;
+		for (IProofAttempt pa : pc.getProofAttempts(poName)) {
+			if (pa.getOwner().equals(REC_AUTO)) {
+				// another attempt for REC_AUTO exists: don't process this PO
+				return;
+			}
 		}
 
 		pm.beginTask(poName + ":", 10); //$NON-NLS-1$
