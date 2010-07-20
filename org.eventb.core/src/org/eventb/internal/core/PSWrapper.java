@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSRoot;
@@ -55,11 +56,8 @@ public class PSWrapper implements IPSWrapper {
 		}
 	}
 
-	private static FormulaFactory ff = FormulaFactory.getDefault();
-
 	final IRodinFile psFile;
 
-//	final IPRFile prFile;
 	final IRodinFile prFile;
 	
 	final Map<IPSStatus, StampedProofTree> loadedTrees;
@@ -87,7 +85,9 @@ public class PSWrapper implements IPSWrapper {
 	private IProofTree createFreshProofTree(IPSStatus psStatus)
 			throws RodinDBException {
 		final IPOSequent poSequent = psStatus.getPOSequent();
-		final IProverSequent rootSeq = POLoader.readPO(poSequent);
+		final IEventBRoot psRoot = (IEventBRoot) psFile.getRoot();
+		final IProverSequent rootSeq = POLoader.readPO(poSequent,
+				psRoot.getFormulaFactory());
 		final IProofTree pt = ProverFactory.makeProofTree(rootSeq, poSequent);
 		final long poStamp = poSequent.getPOStamp(); 
 		loadedTrees.put(psStatus, new StampedProofTree(poStamp, pt));
@@ -102,9 +102,10 @@ public class PSWrapper implements IPSWrapper {
 	public IProofSkeleton getProofSkeleton(IPSStatus status,
 			IProgressMonitor monitor) throws RodinDBException {
 		final IPRProof prProof = status.getProof();
+		final IEventBRoot psRoot = (IEventBRoot) psFile.getRoot();
 		if (prProof.exists()) {
 			final IProofSkeleton proofSkeleton = prProof.getSkeleton(
-					ff, monitor);
+					psRoot.getFormulaFactory(), monitor);
 			return proofSkeleton;
 		}
 		return null;
@@ -184,6 +185,7 @@ public class PSWrapper implements IPSWrapper {
 
 		final IPSStatus psHandle = (IPSStatus) psStatus.getMutableCopy();
 		final IPRProof proof = psStatus.getProof();
+		final IEventBRoot psRoot = (IEventBRoot) psFile.getRoot();
 		final IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor pm) throws RodinDBException {
 				try {
@@ -192,7 +194,8 @@ public class PSWrapper implements IPSWrapper {
 					proof.setProofTree(spt.tree, new SubProgressMonitor(pm, 1));
 					proof.setHasManualProof(hasManualProof,
 							new SubProgressMonitor(pm, 1));
-					updateStatus(psHandle, new SubProgressMonitor(pm, 1));
+					updateStatus(psHandle, new SubProgressMonitor(pm, 1),
+							psRoot.getFormulaFactory());
 					psHandle.setPOStamp(spt.poStamp, new SubProgressMonitor(pm,
 							1));
 				} finally {
@@ -206,11 +209,11 @@ public class PSWrapper implements IPSWrapper {
 	}
 
 	//	 lock po & pr files before calling this method
-	public static void updateStatus(IPSStatus status, IProgressMonitor pm)
-			throws RodinDBException {
+	public static void updateStatus(IPSStatus status, IProgressMonitor pm,
+			FormulaFactory ff) throws RodinDBException {
 
 		final IPOSequent poSequent = status.getPOSequent();
-		final IProverSequent seq =  POLoader.readPO(poSequent);
+		final IProverSequent seq =  POLoader.readPO(poSequent, ff);
 		final IPRProof prProof = status.getProof();
 		final boolean broken;
 		if (prProof.exists()) {

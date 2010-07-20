@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eventb.core.IPRRoot;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCMachineRoot;
+import org.eventb.core.ast.FormulaFactory;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -86,6 +87,10 @@ public abstract class EventBRoot extends EventBElement implements IEventBRoot,
 		return getEventBProject().getPSRoot(getElementName());
 	}
 	
+	public final FormulaFactory getFormulaFactory() {
+		return getEventBProject().getFormulaFactory();
+	}
+
 	public void setConfiguration(String configuration, IProgressMonitor monitor) throws RodinDBException {
 		setAttributeValue(EventBAttributes.CONFIGURATION_ATTRIBUTE, configuration, monitor);
 	}

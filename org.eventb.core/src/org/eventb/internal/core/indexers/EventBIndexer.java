@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 
 	private static final IRodinFile[] NO_DEPENDENCIES = new IRodinFile[0];
 
-	protected static String getIdentifierName(IIdentifierElement ident)
+	protected String getIdentifierName(IIdentifierElement ident)
 			throws RodinDBException {
 		if (ident.hasIdentifierString()) {
 			final String name = ident.getIdentifierString();
@@ -46,13 +46,14 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 		return null;
 	}
 
-	protected static boolean isValidIdentifierName(String name) {
-		return IdentTable.ff.isValidIdentifierName(name);
+	protected boolean isValidIdentifierName(String name) {
+		final IEventBRoot root = (IEventBRoot) currentBridge.getRootToIndex();
+		return root.getFormulaFactory().isValidIdentifierName(name);
 	}
 	
 	protected IIndexingBridge currentBridge;
 
-	public boolean index(IIndexingBridge bridge) {
+	public final boolean index(IIndexingBridge bridge) {
 		this.currentBridge = bridge;
 		final IInternalElement root = bridge.getRootToIndex();
 

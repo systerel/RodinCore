@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - got factory from repository
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -60,7 +61,7 @@ public class MachineEventWitnessFreeIdentsModule extends
 	public void initModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		super.initModule(repository, monitor);
-		factory = FormulaFactory.getDefault();
+		factory = repository.getFormulaFactory();
 		concreteEventInfo = (IConcreteEventInfo) repository
 				.getState(IConcreteEventInfo.STATE_TYPE);
 		isInitialisation = concreteEventInfo.isInitialisation();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eventb.core.IPRRoot;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCMachineRoot;
+import org.eventb.core.ast.FormulaFactory;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 
@@ -33,11 +34,14 @@ public class EventBProject extends PlatformObject implements IEventBProject {
 	
 	private final IRodinProject rodinProject;
 	
+	private final FormulaFactory formulaFactory;
+	
 	public EventBProject(IRodinProject rodinProject) {
 		if (rodinProject == null) {
 			throw new NullPointerException();
 		}
 		this.rodinProject = rodinProject;
+		this.formulaFactory = FormulaFactory.getDefault();
 	}
 
 	@Override
@@ -126,6 +130,10 @@ public class EventBProject extends PlatformObject implements IEventBProject {
 
 	public IPSRoot getPSRoot(String componentName) {
 		return (IPSRoot) getPSFile(componentName).getRoot();
+	}
+
+	public FormulaFactory getFormulaFactory() {
+		return formulaFactory;
 	}
 
 }

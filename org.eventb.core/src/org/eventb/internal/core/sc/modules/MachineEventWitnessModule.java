@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  * 	   Systerel - added check on primed identifiers
+ *     Systerel - got factory from repository
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -243,7 +244,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.initModule(element, repository, monitor);
-		factory = FormulaFactory.getDefault();
+		factory = repository.getFormulaFactory();
 		btrue = factory.makeLiteralPredicate(Formula.BTRUE, null);
 		concreteEventInfo = (IConcreteEventInfo) repository
 				.getState(IConcreteEventInfo.STATE_TYPE);

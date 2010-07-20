@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - added getFormulaFactory()
  *******************************************************************************/
 package org.eventb.core.pm;
 
@@ -61,7 +62,6 @@ import org.rodinp.core.RodinDBException;
  * @see IProofAttempt
  * @since 1.0
  * @noimplement This interface is not intended to be implemented by clients.
- * @noextend This interface is not intended to be extended by clients.
  */
 public interface IProofComponent {
 
@@ -141,7 +141,6 @@ public interface IProofComponent {
 	 * 
 	 * @return the live proof attempt for the given proof obligation and owner,
 	 *         or <code>null</code> if no such proof attempt exists
-	 * @since 1.4
 	 */
 	IProofAttempt getProofAttempt(String poName, String owner);
 
@@ -168,6 +167,20 @@ public interface IProofComponent {
 	 */
 	IProofSkeleton getProofSkeleton(String poName, FormulaFactory factory,
 			IProgressMonitor monitor) throws RodinDBException;
+
+	/**
+	 * Returns the formula factory corresponding to the given proof obligation.
+	 * The result is read from the proof file of this component.
+	 * 
+	 * @param poName
+	 *            name of a proof obligation
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress reporting
+	 *            is not desired
+	 * @return a formula factory
+	 * @since 1.3
+	 */
+	FormulaFactory getFormulaFactory(String poName, IProgressMonitor monitor);
 
 	/**
 	 * Returns the Rodin root associated with this proof component and

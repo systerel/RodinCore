@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - got formula factory from proof component
  *******************************************************************************/
 package org.eventb.internal.core;
 
@@ -40,10 +41,6 @@ import org.rodinp.core.RodinDBException;
  */
 public class ProofSkeletonBuilder {
 
-	private static final FormulaFactory ff = FormulaFactory.getDefault();
-	private static final LiteralPredicate bfalseGoal = ff.makeLiteralPredicate(
-			Formula.BFALSE, null);
-
 	/**
 	 * Computes the root sequent of the given proof.
 	 * 
@@ -52,8 +49,11 @@ public class ProofSkeletonBuilder {
 	 * @return the IProverSequent that is the root node of the proof tree.
 	 * @throws RodinDBException
 	 */
-	private static IProverSequent buildRootSequent(IPRProof pr)
+	private static IProverSequent buildRootSequent(IPRProof pr, FormulaFactory ff)
 			throws RodinDBException {
+		final LiteralPredicate bfalseGoal = ff.makeLiteralPredicate(
+				Formula.BFALSE, null);
+
 		final ITypeEnvironment env;
 		final Collection<Predicate> hyps;
 		final Predicate goal;
@@ -102,8 +102,11 @@ public class ProofSkeletonBuilder {
 	 */
 	public static IProofTree buildProofTree(IPRProof pr, IProofMonitor monitor)
 			throws RodinDBException {
-
-		final IProverSequent rootSequent = buildRootSequent(pr);
+		final IProofComponent pc = getProofComponent(pr);
+		final FormulaFactory ff = pc.getFormulaFactory(pr.getElementName(),
+				null);
+	
+		final IProverSequent rootSequent = buildRootSequent(pr, ff);
 		if (rootSequent == null) {
 			logIllFormedProof(pr);
 			return null;
@@ -113,7 +116,6 @@ public class ProofSkeletonBuilder {
 			return null;
 		}
 		
-		final IProofComponent pc = getProofComponent(pr);
 		final IProofSkeleton skel = pc.getProofSkeleton(pr.getElementName(),
 				ff, null);
 		final IProofTree prTree = ProverFactory.makeProofTree(rootSequent, null);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - added getFormulaFactory()
  *******************************************************************************/
 package org.eventb.internal.core.pm;
 
@@ -16,6 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSStatus;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProverSequent;
@@ -41,6 +43,8 @@ public class ProofAttempt implements IProofAttempt, IElementChangedListener {
 
 	private final String owner;
 
+	private final FormulaFactory ff;
+	
 	private final IProofTree proofTree;
 
 	private final Long poStamp;
@@ -49,11 +53,11 @@ public class ProofAttempt implements IProofAttempt, IElementChangedListener {
 
 	private boolean disposed;
 
-	ProofAttempt(ProofComponent component, String name, String owner)
-			throws RodinDBException {
+	ProofAttempt(ProofComponent component, String name, String owner) throws RodinDBException {
 		this.component = component;
 		this.name = name;
 		this.owner = owner;
+		this.ff = component.getFormulaFactory(name, null);
 		final IPOSequent poSequent = getPOSequent();
 		this.proofTree = createProofTree(poSequent);
 		if (poSequent.hasPOStamp()) {
@@ -66,7 +70,7 @@ public class ProofAttempt implements IProofAttempt, IElementChangedListener {
 
 	private IProofTree createProofTree(final IPOSequent poSequent)
 			throws RodinDBException {
-		final IProverSequent sequent = POLoader.readPO(poSequent);
+		final IProverSequent sequent = POLoader.readPO(poSequent, ff);
 		return ProverFactory.makeProofTree(sequent, this);
 	}
 
@@ -86,6 +90,10 @@ public class ProofAttempt implements IProofAttempt, IElementChangedListener {
 		return component;
 	}
 
+	public FormulaFactory getFormulaFactory() {
+		return ff;
+	}
+	
 	public synchronized void dispose() {
 		if (!disposed) {
 			RodinCore.removeElementChangedListener(this);

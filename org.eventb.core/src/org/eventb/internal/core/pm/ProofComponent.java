@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - added getFormulaFactory()
  *******************************************************************************/
 package org.eventb.internal.core.pm;
 
@@ -184,6 +185,11 @@ public class ProofComponent implements IProofComponent {
 		final IWorkspaceRunnable op = new SaveProofComponentOperation(this,
 				force);
 		RodinCore.run(op, getSchedulingRule(), monitor);
+	}
+
+	public FormulaFactory getFormulaFactory(String poName,
+			IProgressMonitor monitor) {
+		return psRoot.getFormulaFactory();
 	}
 
 }

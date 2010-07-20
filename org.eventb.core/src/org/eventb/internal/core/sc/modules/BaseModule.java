@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - got factory from repository
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -43,7 +44,7 @@ public abstract class BaseModule extends SCProcessorModule {
 			throws CoreException {
 
 		final IdentifierSymbolTable identifierSymbolTable = new IdentifierSymbolTable(
-				IDENT_SYMTAB_SIZE);
+				IDENT_SYMTAB_SIZE, repository.getFormulaFactory());
 
 		final IContextTable contextTable = new ContextTable(CONTEXT_TABLE_SIZE);
 

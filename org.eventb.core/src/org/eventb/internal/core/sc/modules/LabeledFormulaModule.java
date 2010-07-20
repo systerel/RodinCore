@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - ensure that all AST problems are reported
  *     Systerel - ensure that all AST problems are reported
+ *     Systerel - got factory from repository
+ *     Systerel - adapted to parser 2.0 problem kinds
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
@@ -113,12 +115,12 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 
 		boolean errorIssued = false;
 		for (ASTProblem parserProblem : result.getProblems()) {
-			SourceLocation location = parserProblem.getSourceLocation();
-			ProblemKind problemKind = parserProblem.getMessage();
-			Object[] args = parserProblem.getArgs();
+			final SourceLocation location = parserProblem.getSourceLocation();
+			final ProblemKind problemKind = parserProblem.getMessage();
+			final Object[] args = parserProblem.getArgs();
 
-			IRodinProblem problem;
-			Object[] objects; // parameters for the marker
+			final IRodinProblem problem;
+			final Object[] objects; // parameters for the marker
 
 			switch (problemKind) {
 
@@ -138,12 +140,6 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 				objects = new Object[] { args[0] };
 				break;
 
-			case BoundIdentifierIndexOutOfBounds:
-				// internal error
-				problem = ParseProblem.InternalError;
-				objects = NO_OBJECT;
-				break;
-
 			case Circularity:
 				problem = ParseProblem.CircularityError;
 				objects = NO_OBJECT;
@@ -157,28 +153,6 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 
 			case LexerError:
 				problem = ParseProblem.LexerError;
-				objects = new Object[] { args[0] };
-				break;
-
-			case LexerException:
-				// internal error
-				problem = ParseProblem.InternalError;
-				objects = NO_OBJECT;
-				break;
-
-			case ParserException:
-				// internal error
-				problem = ParseProblem.InternalError;
-				objects = NO_OBJECT;
-				break;
-
-			case SyntaxError:
-
-				// TODO: prepare detailed error messages "args[0]" obtained from
-				// the parser for
-				// internationalisation
-
-				problem = ParseProblem.SyntaxError;
 				objects = new Object[] { args[0] };
 				break;
 
@@ -207,6 +181,32 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 				objects = NO_OBJECT;
 				break;
 
+			// syntax errors
+			case BECMOAppliesToOneIdent:
+			case DuplicateIdentifierInPattern:
+			case ExtensionPreconditionError:
+			case FreeIdentifierExpected:
+			case IncompatibleIdentExprNumbers:
+			case IncompatibleOperators:
+			case IntegerLiteralExpected:
+			case InvalidAssignmentToImage:
+			case InvalidGenericType:
+			case MisplacedLedOperator:
+			case MisplacedNudOperator:
+			case NotUpgradableError:
+			case PredicateVariableNotAllowed:
+			case PrematureEOF:
+			case UnexpectedOftype:
+			case UnexpectedSubFormulaKind:
+			case UnexpectedSymbol:
+			case UnknownOperator:
+			case UnmatchedTokens:
+			case VariousPossibleErrors:
+
+				problem = ParseProblem.SyntaxError;
+				
+				objects = new Object[] { parserProblem.toString() };
+				break;
 			default:
 
 				problem = ParseProblem.InternalError;
@@ -303,7 +303,7 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 
-		final FormulaFactory factory = FormulaFactory.getDefault();
+		final FormulaFactory factory = repository.getFormulaFactory();
 
 		final ITypeEnvironment typeEnvironment = repository
 				.getTypeEnvironment();

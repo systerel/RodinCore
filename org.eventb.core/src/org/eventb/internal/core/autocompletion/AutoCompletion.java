@@ -27,8 +27,10 @@ import java.util.Set;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
 import org.eventb.core.IEvent;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -193,7 +195,8 @@ public class AutoCompletion {
 	
 	private static Set<String> getPrimedDisapVarNames(IEvent event) {
 		final Set<String> disapNames = getDisapVarNames(event);
-		return getPrimedNames(disapNames);
+		final IEventBRoot root = (IEventBRoot) event.getRoot();
+		return getPrimedNames(disapNames, root.getFormulaFactory());
 	}
 
 	private static void removeDeterministicallyAssigned(Set<IDeclaration> vars,
@@ -217,10 +220,11 @@ public class AutoCompletion {
 		return attType == LABEL_ATTRIBUTE;
 	}
 
-	private static Set<String> getPrimedNames(Set<String> names) {
+	private static Set<String> getPrimedNames(Set<String> names,
+			FormulaFactory ff) {
 		final Set<String> primed = new LinkedHashSet<String>();
 		for (String name : names) {
-			primed.add(getPrimedName(name));
+			primed.add(getPrimedName(name, ff));
 		}
 		return primed;
 	}
