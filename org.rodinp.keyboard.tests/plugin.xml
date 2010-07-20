@@ -27,6 +27,9 @@
             name="Duplicate Combo"
             translation="dupCombo2">
       </symbol>
+      <symbolProvider
+            class="org.rodinp.keyboard.tests.registry.TestSymbolProvider">
+      </symbolProvider>
    </extension>
 
 </plugin>
