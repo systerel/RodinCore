@@ -28,6 +28,7 @@ import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.core.ast.extension.datatype.IConstructorMediator;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
+import org.eventb.internal.core.parser.BMath;
 
 /**
  * @author Nicolas Beauger
@@ -43,7 +44,7 @@ public class ConstructorMediator extends DatatypeMediator implements IConstructo
 		super(typeName, typeParams);
 	}
 
-	public void addConstructor(final String name, final String id, final String groupId) {
+	public void addConstructor(final String name, final String id) {
 		final IExpressionExtension constructor = new IExpressionExtension() {
 			
 			public Predicate getWDPredicate(IWDMediator wdMediator,
@@ -64,7 +65,7 @@ public class ConstructorMediator extends DatatypeMediator implements IConstructo
 			}
 			
 			public String getGroupId() {
-				return groupId;
+				return BMath.BOUND_UNARY;
 			}
 			
 			public void addPriorities(IPriorityMediator mediator) {
@@ -89,9 +90,9 @@ public class ConstructorMediator extends DatatypeMediator implements IConstructo
 		extensions.add(constructor);
 	}
 
-	public void addConstructor(final String name, final String id, final String groupId, List<ITypeParameter> argumentTypes) {
+	public void addConstructor(final String name, final String id, List<ITypeParameter> argumentTypes) {
 		if (argumentTypes.isEmpty()) {
-			addConstructor(name, id, groupId);
+			addConstructor(name, id);
 			return;
 		}
 		final IExpressionExtension constructor = new IExpressionExtension() {
@@ -114,7 +115,7 @@ public class ConstructorMediator extends DatatypeMediator implements IConstructo
 			}
 			
 			public String getGroupId() {
-				return groupId;
+				return BMath.BOUND_UNARY;
 			}
 			
 			public void addPriorities(IPriorityMediator mediator) {

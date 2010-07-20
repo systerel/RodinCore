@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Assignment;
@@ -1873,11 +1872,10 @@ public class TestGenParser extends AbstractTests {
 		}
 
 		public void addConstructors(IConstructorMediator mediator) {
-			mediator.addConstructor("nil", "NIL", GROUP_IDENTIFIER);
+			mediator.addConstructor("nil", "NIL");
 			final ITypeParameter typeS = mediator.getTypeParameter("S");
 			final ITypeParameter listS = mediator.newTypeConstructor(typeS);
-			mediator.addConstructor("cons", "CONS", GROUP_IDENTIFIER, Arrays
-					.asList(typeS, listS));
+			mediator.addConstructor("cons", "CONS", Arrays.asList(typeS, listS));
 		}
 
 		public void addDestructors(IDestructorMediator mediator) {
@@ -1889,60 +1887,58 @@ public class TestGenParser extends AbstractTests {
 
 	};
 
+	private static final Map<String, IExpressionExtension> LIST_EXTNS = FormulaFactory
+			.getExtensions(LIST_TYPE);
+	private static final FormulaFactory LIST_FAC = FormulaFactory
+			.getInstance(new HashSet<IFormulaExtension>(LIST_EXTNS.values()));	
+	
 	public void testDatatypeType() throws Exception {
-		final Map<String, IExpressionExtension> extensions = FormulaFactory.getExtensions(LIST_TYPE);
-		final Set<IFormulaExtension> setExtns = new HashSet<IFormulaExtension>(extensions.values());
-		final FormulaFactory extFac = FormulaFactory.getInstance(setExtns);
 		
-		final IExpressionExtension extList = extensions.get(LIST_TYPE.getId());
+		final IExpressionExtension extList = LIST_EXTNS.get(LIST_TYPE.getId());
 		assertNotNull("List type constructor not found", extList);
 		
-		final ExtendedExpression list = extFac.makeExtendedExpression(extList,
+		final ExtendedExpression list = LIST_FAC.makeExtendedExpression(extList,
 				Collections.<Expression> singleton(INT), Collections
 						.<Predicate> emptyList(), null);
 
-		final Expression expr = doExpressionTest("List(ℤ)", list, extFac);
+		final Expression expr = doExpressionTest("List(ℤ)", list, LIST_FAC);
 		
-		final GenericType listIntType = extFac.makeGenericType(Collections.<Type>singletonList(INT_TYPE), extList);
-		final PowerSetType powListIntType = extFac.makePowerSetType(listIntType);
+		final GenericType listIntType = LIST_FAC.makeGenericType(Collections.<Type>singletonList(INT_TYPE), extList);
+		final PowerSetType powListIntType = LIST_FAC.makePowerSetType(listIntType);
 		assertEquals("unexpected type", powListIntType, expr.getType());
 		
 		assertTrue("expected a type expression", expr.isATypeExpression());
-		assertEquals("unexpected toType", listIntType, expr.toType(extFac));
+		assertEquals("unexpected toType", listIntType, expr.toType(LIST_FAC));
 
-		doTypeTest("List(ℤ)", listIntType, extFac);
+		doTypeTest("List(ℤ)", listIntType, LIST_FAC);
 	}
 
 	public void testDatatypeNil() throws Exception {
-		final Map<String, IExpressionExtension> extensions = FormulaFactory.getExtensions(LIST_TYPE);
-		final Set<IFormulaExtension> setExtns = new HashSet<IFormulaExtension>(extensions.values());
-		final FormulaFactory extFac = FormulaFactory.getInstance(setExtns);
-		
-		final IExpressionExtension extNil = extensions.get("NIL");
+		final IExpressionExtension extNil = LIST_EXTNS.get("NIL");
 		assertNotNull("nil constructor not found", extNil);
 		
-		final ExtendedExpression nil = extFac.makeExtendedExpression(extNil,
+		final ExtendedExpression nil = LIST_FAC.makeExtendedExpression(extNil,
 				Collections.<Expression> emptyList(), Collections
 						.<Predicate> emptyList(), null);
 
-		doExpressionTest("nil", nil, extFac);
+		doExpressionTest("nil", nil, LIST_FAC);
 		
-		final IExpressionExtension extList = extensions.get(LIST_TYPE.getId());
+		final IExpressionExtension extList = LIST_EXTNS.get(LIST_TYPE.getId());
 		assertNotNull("List type constructor not found", extList);
 		
-		final GenericType listIntType = extFac.makeGenericType(Collections.<Type>singletonList(INT_TYPE), extList);
-		final ExtendedExpression nilInt = extFac.makeExtendedExpression(extNil,
+		final GenericType listIntType = LIST_FAC.makeGenericType(Collections.<Type>singletonList(INT_TYPE), extList);
+		final ExtendedExpression nilInt = LIST_FAC.makeExtendedExpression(extNil,
 				NO_EXPR, NO_PRED, null, listIntType);
 
-		doExpressionTest("(nil ⦂ List(ℤ))", nilInt, extFac);
+		doExpressionTest("(nil ⦂ List(ℤ))", nilInt, LIST_FAC);
 
-		final GenericType listBoolBoolType = extFac.makeGenericType(Collections
-				.<Type> singletonList(extFac.makeProductType(BOOL_TYPE,
+		final GenericType listBoolBoolType = LIST_FAC.makeGenericType(Collections
+				.<Type> singletonList(LIST_FAC.makeProductType(BOOL_TYPE,
 						BOOL_TYPE)), extList);
-		final ExtendedExpression nilBoolBool = extFac.makeExtendedExpression(
+		final ExtendedExpression nilBoolBool = LIST_FAC.makeExtendedExpression(
 				extNil, NO_EXPR, NO_PRED, null, listBoolBoolType);
 
-		doExpressionTest("(nil ⦂ List(BOOL×BOOL))", nilBoolBool, extFac);
+		doExpressionTest("(nil ⦂ List(BOOL×BOOL))", nilBoolBool, LIST_FAC);
 		
 		assertFalse(nil.equals(nilInt));
 		assertFalse(nil.equals(nilBoolBool));
@@ -1950,35 +1946,51 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testDatatypeConstructor() throws Exception {
-		final Map<String, IExpressionExtension> extensions = FormulaFactory.getExtensions(LIST_TYPE);
-		final Set<IFormulaExtension> setExtns = new HashSet<IFormulaExtension>(extensions.values());
-		final FormulaFactory extFac = FormulaFactory.getInstance(setExtns);
-
-		final IExpressionExtension extNil = extensions.get("NIL");
+		final IExpressionExtension extNil = LIST_EXTNS.get("NIL");
 		assertNotNull("nil constructor not found", extNil);
 
-		final ExtendedExpression nil = extFac.makeExtendedExpression(extNil,
+		final ExtendedExpression nil = LIST_FAC.makeExtendedExpression(extNil,
 				Collections.<Expression> emptyList(), Collections
 						.<Predicate> emptyList(), null);
 
-		final IExpressionExtension extCons = extensions.get("CONS");
+		final IExpressionExtension extCons = LIST_EXTNS.get("CONS");
 		assertNotNull(extCons);
 		
-		final ExtendedExpression list1 = extFac.makeExtendedExpression(extCons,
+		final ExtendedExpression list1 = LIST_FAC.makeExtendedExpression(extCons,
 				Arrays.asList(ONE, nil), Collections
 						.<Predicate> emptyList(), null);
 		
-		doExpressionTest("cons(1, nil)", list1, extFac);
+		doExpressionTest("cons(1, nil)", list1, LIST_FAC);
 
-		final ExtendedExpression list01 = extFac.makeExtendedExpression(
+		final ExtendedExpression list01 = LIST_FAC.makeExtendedExpression(
 				extCons, Arrays.asList(ZERO,
-						extFac.makeExtendedExpression(
+						LIST_FAC.makeExtendedExpression(
 								extCons, Arrays.asList(ONE,
 										nil),
 										Collections.<Predicate> emptyList(), null)),
 										Collections.<Predicate> emptyList(), null);
 
-		doExpressionTest("cons(0, cons(1, nil))", list01, extFac);
+		doExpressionTest("cons(0, cons(1, nil))", list01, LIST_FAC);
+	}
+	
+	public void testDatatypeDestructors() throws Exception {
+		final IExpressionExtension extHead = LIST_EXTNS.get("HEAD");
+		assertNotNull("head destructor not found", extHead);
+
+		final IExpressionExtension extTail = LIST_EXTNS.get("TAIL");
+		assertNotNull("tail destructor not found", extTail);
+		
+		final ExtendedExpression head = LIST_FAC.makeExtendedExpression(
+				extHead, Arrays.<Expression> asList(FRID_x),
+				Collections.<Predicate> emptyList(), null);
+
+		doExpressionTest("head(x)", head, LIST_FAC);
+
+		final ExtendedExpression tail = LIST_FAC.makeExtendedExpression(
+				extTail, Arrays.<Expression> asList(FRID_x),
+				Collections.<Predicate> emptyList(), null);
+
+		doExpressionTest("tail(x)", tail, LIST_FAC);
 	}
 	
 	public void testMinusPU() throws Exception {

@@ -22,14 +22,14 @@ public interface IConstructorMediator extends IDatatypeMediator {
 	/**
 	 * Instance with no arguments.
 	 * <p>
-	 * Same as calling {@link #addConstructor(String, String, String, List)}
+	 * Same as calling {@link #addConstructor(String, String, List)}
 	 * with an empty list.
 	 * </p>
 	 * 
 	 * @param name
 	 *            the name of the constructor
 	 */
-	void addConstructor(String name, String id, String groupId);
+	void addConstructor(String name, String id);
 
 	/**
 	 * Instance with arguments, whose types are given.
@@ -39,10 +39,9 @@ public interface IConstructorMediator extends IDatatypeMediator {
 	 * 
 	 * @param name
 	 *            the name of the constructor
-	 * @param argumentTypes
+	 * @param argTypes
 	 *            a list of types
 	 */
-	void addConstructor(String name, String id, String groupId,
-			List<ITypeParameter> argumentTypes);
+	void addConstructor(String name, String id, List<ITypeParameter> argTypes);
 
 }
