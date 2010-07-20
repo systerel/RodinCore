@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - published method getFormulaFactory()
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -240,4 +241,12 @@ public interface ITypeEnvironment {
 	 */
 	boolean isEmpty();
 
+	/**
+	 * Returns the formula factory associated with this type environment.
+	 * 
+	 * @return the associated formula factory
+	 * @since 2.0
+	 */
+	FormulaFactory getFormulaFactory();
+	
 }
