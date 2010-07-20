@@ -21,6 +21,8 @@ import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
+import org.eventb.core.ast.ExtendedExpression;
+import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ISimpleVisitor2;
 import org.eventb.core.ast.IntegerLiteral;
@@ -172,6 +174,14 @@ public class PredicateHeightComputer implements ISimpleVisitor2 {
 	}
 
 	public void visitUnaryExpression(UnaryExpression expression) {
+		commonVisit();
+	}
+
+	public void visitExtendedExpression(ExtendedExpression expression) {
+		commonVisit();
+	}
+
+	public void visitExtendedPredicate(ExtendedPredicate predicate) {
 		commonVisit();
 	}
 
