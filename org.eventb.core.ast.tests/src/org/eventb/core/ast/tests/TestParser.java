@@ -1147,13 +1147,19 @@ public class TestParser extends AbstractTests {
 									id_f),
 							id_x)
 			), new ExprTestPair(
+					"f(x)∼",
+					mUnaryExpression(Formula.CONVERSE,
+							mBinaryExpression(Formula.FUNIMAGE,
+									id_f,
+									id_x))
+			), new ExprTestPair(
 					"f∼[x]", 
 					mBinaryExpression(Formula.RELIMAGE,
 							mUnaryExpression(Formula.CONVERSE,
 									id_f),
 							id_x)
 			), new ExprTestPair(
-					"(f(x))∼[y]", 
+					"f(x)∼[y]", 
 					mBinaryExpression(Formula.RELIMAGE,
 							mUnaryExpression(Formula.CONVERSE,
 									mBinaryExpression(Formula.FUNIMAGE,
@@ -1223,7 +1229,6 @@ public class TestParser extends AbstractTests {
 				doTestInvalidExpr("x\u2225y\u2225z");
 				doTestInvalidExpr("(\u2205\u2982x\u21a6y)");	// rhs is not a type 
 				doTestInvalidExpr("(\u2205\u2982\u2124)");		// type is not a set type
-				doTestInvalidExpr("f(x)∼");
 				// Duplicate idents in lambda pattern
 				doTestInvalidExpr("\u03bb x\u21a6x\u00b7\u22a5\u2223x");
 				doTestInvalidExpr("\u03bb x\u21a6y\u21a6x\u00b7\u22a5\u2223x+y");

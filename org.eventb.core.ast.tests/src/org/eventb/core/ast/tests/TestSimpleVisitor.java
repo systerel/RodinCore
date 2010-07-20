@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,8 @@ import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.ExtendedExpression;
+import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -142,6 +144,14 @@ public class TestSimpleVisitor extends TestCase {
 		}
 
 		public void visitMultiplePredicate(MultiplePredicate predicate) {
+			b.append(predicate.getClass());
+		}
+
+		public void visitExtendedExpression(ExtendedExpression expression) {
+			b.append(expression.getClass());
+		}
+
+		public void visitExtendedPredicate(ExtendedPredicate predicate) {
 			b.append(predicate.getClass());
 		}
 	}

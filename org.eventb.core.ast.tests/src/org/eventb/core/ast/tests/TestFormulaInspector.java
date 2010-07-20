@@ -27,6 +27,8 @@ import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
+import org.eventb.core.ast.ExtendedExpression;
+import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IAccumulator;
@@ -92,6 +94,16 @@ public class TestFormulaInspector extends TestCase {
 			accumulator.add(asList("a", "b", "c"));
 		}
 
+		public void inspect(ExtendedExpression expression,
+				IAccumulator<String> accumulator) {
+			// do nothing
+		}
+
+		public void inspect(ExtendedPredicate predicate,
+				IAccumulator<String> accumulator) {
+			// do nothing
+		}
+
 		public void inspect(FreeIdentifier identifier,
 				IAccumulator<String> accumulator) {
 			// do nothing
@@ -151,6 +163,7 @@ public class TestFormulaInspector extends TestCase {
 				IAccumulator<String> accumulator) {
 			// do nothing
 		}
+
 	};
 
 	private static void assertFindings(Formula<?> formula, String... expected) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language v2
+ *     Systerel - added support for mathematical extensions
  *******************************************************************************/ 
 package org.eventb.core.ast.tests;
 
@@ -27,6 +28,8 @@ import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
+import org.eventb.core.ast.ExtendedExpression;
+import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -1154,6 +1157,31 @@ public class IdentsChecker implements IVisitor {
 
 	public boolean visitKPRJ2_GEN(AtomicExpression expr) {
 		return standardVisit(expr);
+	}
+
+	public boolean enterExtendedExpression(ExtendedExpression expr) {
+		return standardEnter(expr);
+	}
+
+	public boolean continueExtendedExpression(
+			ExtendedExpression expr) {
+		return success;
+	}
+
+	public boolean exitExtendedExpression(ExtendedExpression expr) {
+		return standardExit(expr);
+	}
+
+	public boolean enterExtendedPredicate(ExtendedPredicate pred) {
+		return standardEnter(pred);
+	}
+
+	public boolean continueExtendedPredicate(ExtendedPredicate pred) {
+		return success;
+	}
+
+	public boolean exitExtendedPredicate(ExtendedPredicate pred) {
+		return standardExit(pred);
 	}
 	
 }

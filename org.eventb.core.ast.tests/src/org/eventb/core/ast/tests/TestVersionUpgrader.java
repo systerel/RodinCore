@@ -33,7 +33,7 @@ import static org.eventb.core.ast.Formula.TSUR;
 import static org.eventb.core.ast.FormulaFactory.isEventBWhiteSpace;
 import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.core.ast.ProblemKind.NotUpgradableError;
-import static org.eventb.core.ast.ProblemKind.UnexpectedLPARInDeclList;
+import static org.eventb.core.ast.ProblemKind.UnexpectedSymbol;
 import static org.eventb.core.ast.ProblemSeverities.Error;
 import static org.eventb.core.ast.tests.FastFactory.mAtomicExpression;
 import static org.eventb.core.ast.tests.FastFactory.mBecomesEqualTo;
@@ -383,7 +383,7 @@ public class TestVersionUpgrader extends AbstractTests {
 		final String pred = "∀(x)·⊤";
 		final UpgradeResultChecker<Predicate> checker = new UpgradeResultChecker<Predicate>(
 				new ASTProblem(new SourceLocation(1, 1),
-						UnexpectedLPARInDeclList, Error));
+						UnexpectedSymbol, Error, "an identifier", "("));
 		final TestItem<?> ti = new TestItemPred(pred, V2, checker);
 		ti.verifyUpgrade();
 	}

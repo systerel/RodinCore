@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
+ *     Systerel - added support for mathematical extensions
  *******************************************************************************/ 
 package org.eventb.core.ast.tests;
 
@@ -35,6 +36,8 @@ import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.ExtendedExpression;
+import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -1245,6 +1248,36 @@ public class TestVisitor extends TestCase {
 		}
 
 		public boolean visitKPRJ2_GEN(AtomicExpression expr) {
+			++ count;
+			return true;
+		}
+
+		public boolean continueExtendedExpression(ExtendedExpression expr) {
+			++ count;
+			return true;
+		}
+
+		public boolean continueExtendedPredicate(ExtendedPredicate pred) {
+			++ count;
+			return true;
+		}
+
+		public boolean enterExtendedExpression(ExtendedExpression expr) {
+			++ count;
+			return true;
+		}
+
+		public boolean enterExtendedPredicate(ExtendedPredicate pred) {
+			++ count;
+			return true;
+		}
+
+		public boolean exitExtendedExpression(ExtendedExpression expr) {
+			++ count;
+			return true;
+		}
+
+		public boolean exitExtendedPredicate(ExtendedPredicate pred) {
 			++ count;
 			return true;
 		}
