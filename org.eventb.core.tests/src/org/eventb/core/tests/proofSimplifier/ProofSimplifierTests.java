@@ -74,7 +74,7 @@ public class ProofSimplifierTests extends BuilderTest {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
 			"<org.eventb.core.prFile version=\"1\">" +
 			"	<org.eventb.core.prProof name=\"axm1/THM\" org.eventb.core.confidence=\"1000\" org.eventb.core.prFresh=\"\" org.eventb.core.prGoal=\"p0\" org.eventb.core.prHyps=\"p0\" org.eventb.core.psManual=\"true\">" +
-			"		<org.eventb.core.prRule name=\"org.eventb.core.seqprover.autoRewrites:1\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"simplification rewrites\" org.eventb.core.prHyps=\"\">" +
+			"		<org.eventb.core.prRule name=\"org.eventb.core.seqprover.autoRewrites:3\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"simplification rewrites\" org.eventb.core.prHyps=\"\">" +
 			"			<org.eventb.core.prAnte name=\"0\">" +
 			"				<org.eventb.core.prHypAction name=\"FORWARD_INF0\" org.eventb.core.prHyps=\"p1\" org.eventb.core.prInfHyps=\"p2\"/>" +
 			"				<org.eventb.core.prHypAction name=\"HIDE1\" org.eventb.core.prHyps=\"p1\"/>" +
