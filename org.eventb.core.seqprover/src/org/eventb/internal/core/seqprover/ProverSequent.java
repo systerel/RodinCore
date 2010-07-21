@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,8 +73,6 @@ public final class ProverSequent implements IInternalProverSequent{
 	private static final LinkedHashSet<Predicate> NO_HYPS =
 		new LinkedHashSet<Predicate>();
 	
-	private static final FormulaFactory FORMULA_FACTORY = FormulaFactory.getDefault();
-
 	/* (non-Javadoc)
 	 * @see org.eventb.core.seqprover.IProverSequent#typeEnvironment()
 	 */
@@ -110,8 +108,7 @@ public final class ProverSequent implements IInternalProverSequent{
 	 * </p>
 	 * 
 	 * @param typeEnv
-	 * 		The type environment for the sequent, or <code>null</code> iff the empty
-	 * 		type environment is to be used.
+	 * 		The type environment for the sequent. This parameter must not be <code>null</code>.
 	 * 		It should be ensured that all predicates can be type checked using this
 	 * 		type environment. 
 	 * @param globalHypotheses
@@ -124,7 +121,7 @@ public final class ProverSequent implements IInternalProverSequent{
 	 * 		The goal. This parameter must not be <code>null</code>.
 	 */
 	public ProverSequent(ITypeEnvironment typeEnvironment,Collection<Predicate> globalHypotheses, Collection<Predicate> selectedHypotheses,Predicate goal){
-		this.typeEnvironment = typeEnvironment == null ? FORMULA_FACTORY.makeTypeEnvironment() : typeEnvironment.clone();
+		this.typeEnvironment = typeEnvironment.clone();
 		this.globalHypotheses = globalHypotheses == null ? NO_HYPS : new LinkedHashSet<Predicate>(globalHypotheses);
 		this.localHypotheses = NO_HYPS;
 		this.hiddenHypotheses = NO_HYPS;
@@ -152,8 +149,7 @@ public final class ProverSequent implements IInternalProverSequent{
 	 * </p>
 	 * 
 	 * @param typeEnv
-	 * 		The type environment for the sequent, or <code>null</code> iff the empty
-	 * 		type environment is to be used.
+	 * 		The type environment for the sequent. This parameter must not be <code>null</code>.
 	 * 		It should be ensured that all predicates can be type checked using this
 	 * 		type environment. 
 	 * @param globalHypotheses
@@ -163,7 +159,7 @@ public final class ProverSequent implements IInternalProverSequent{
 	 * 		The goal. This parameter must not be <code>null</code>.
 	 */
 	public ProverSequent(ITypeEnvironment typeEnvironment,Collection<Predicate> globalHypotheses,Predicate goal){
-		this.typeEnvironment = typeEnvironment == null ? FORMULA_FACTORY.makeTypeEnvironment() : typeEnvironment.clone();
+		this.typeEnvironment = typeEnvironment.clone();
 		this.globalHypotheses = globalHypotheses == null ? NO_HYPS : new LinkedHashSet<Predicate>(globalHypotheses);
 		this.localHypotheses = NO_HYPS;
 		this.hiddenHypotheses = NO_HYPS;
@@ -217,11 +213,47 @@ public final class ProverSequent implements IInternalProverSequent{
 		else this.goal = goal;
 	}
 	
-
+	/**
+	 * Constructs a new sequent with the given parameters.
+	 * 
+	 * <p>
+	 * Note : <br>
+	 * The parameters provided to construct the sequent must be consistent in
+	 * order to construct a proper sequent. In particular:
+	 * <ul>
+	 * <li>The formulaFactory must be able to parse all predicates of this
+	 * sequent.
+	 * <li>All predicates (i.e. all hypotheses and the goal) must be type
+	 * checked.
+	 * <li>The type environment provided should contain all free identifiers and
+	 * carrier sets appearing in the predicates of the sequent and can be used
+	 * to successfully type check them.
+	 * </ul>
+	 * These checks need to be done before calling this method. The behaviour of
+	 * the sequent prover is undefined if these checks are not done.
+	 * </p>
+	 * 
+	 * @param formulaFactory 
+	 * 				The formula factory to be used
+	 * @param typeEnv
+	 *            The type environment for the sequent. This parameter must
+	 *            not be <code>null</code>. It should be ensured that all 
+	 *            predicates can be type checked using this type environment
+	 * @param globalHypotheses
+	 *            The set of hypotheses, or <code>null</code> iff this set is
+	 *            intended to be empty
+	 * @param hiddenHypSet
+	 *            The set of hypotheses to hide
+	 * @param selectedHypSet
+	 *            The set of hypotheses to select. The set of hypotheses to
+	 *            select should be contained in the set of initial hypotheses
+	 * @param goal
+	 *            The goal. This parameter must not be <code>null</code>
+	 */
 	public ProverSequent(ITypeEnvironment typeEnv, Collection<Predicate> globalHypSet,
 			Collection<Predicate> hiddenHypSet, Collection<Predicate> selectedHypSet,
 			Predicate goal) {
-		this.typeEnvironment = typeEnv == null ? FORMULA_FACTORY.makeTypeEnvironment() : typeEnv.clone();
+		this.typeEnvironment = typeEnv.clone();
 		this.globalHypotheses = globalHypSet == null ? NO_HYPS : new LinkedHashSet<Predicate>(globalHypSet);
 		this.localHypotheses = NO_HYPS;
 		this.hiddenHypotheses = hiddenHypSet== null ? NO_HYPS : new LinkedHashSet<Predicate>(hiddenHypSet);;
@@ -518,6 +550,11 @@ public final class ProverSequent implements IInternalProverSequent{
 			}
 		};
 	}
+
+	public FormulaFactory getFormulaFactory() {
+		return typeEnvironment.getFormulaFactory();
+	}
+	
 }
 
 

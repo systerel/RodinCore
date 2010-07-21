@@ -15,10 +15,10 @@ import static org.eventb.core.ast.Formula.CONVERSE;
 import static org.eventb.core.ast.Formula.IN;
 import static org.eventb.core.ast.Formula.KFINITE;
 import static org.eventb.core.seqprover.ProverFactory.reasonerFailure;
-import static org.eventb.core.seqprover.eventbExtensions.Lib.ff;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isDom;
 
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.seqprover.IReasonerFailure;
@@ -61,8 +61,9 @@ public class FiniteFunDom extends PFunSetInputReasoner {
 	}
 
 	@Override
-	protected IReasonerFailure verifyInput(Predicate goal, PFunSetInput input) {
-		final Expression fConverse = getFunctionConverse(goal);
+	protected IReasonerFailure verifyInput(Predicate goal, PFunSetInput input,
+			FormulaFactory ff) {
+		final Expression fConverse = getFunctionConverse(goal, ff);
 		final Expression expr = input.getExpression();
 
 		if (!fConverse.getType().equals(expr.getType().getBaseType())) {
@@ -73,8 +74,9 @@ public class FiniteFunDom extends PFunSetInputReasoner {
 	}
 
 	@Override
-	protected Predicate[] getSubgoals(Predicate goal, PFunSetInput input) {
-		final Expression fConverse = getFunctionConverse(goal);
+	protected Predicate[] getSubgoals(Predicate goal, PFunSetInput input,
+			FormulaFactory ff) {
+		final Expression fConverse = getFunctionConverse(goal, ff);
 		final Expression expr = input.getExpression();
 		final Expression S = input.getLeft();
 		return new Predicate[] {
@@ -89,7 +91,7 @@ public class FiniteFunDom extends PFunSetInputReasoner {
 		};
 	}
 
-	private Expression getFunctionConverse(Predicate goal) {
+	private Expression getFunctionConverse(Predicate goal, FormulaFactory ff) {
 		final Expression f = ((UnaryExpression) getFiniteExpression(goal))
 				.getChild();
 		return ff.makeUnaryExpression(CONVERSE, f, null);

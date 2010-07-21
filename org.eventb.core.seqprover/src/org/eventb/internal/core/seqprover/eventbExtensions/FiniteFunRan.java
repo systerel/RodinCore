@@ -14,10 +14,10 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 import static org.eventb.core.ast.Formula.IN;
 import static org.eventb.core.ast.Formula.KFINITE;
 import static org.eventb.core.seqprover.ProverFactory.reasonerFailure;
-import static org.eventb.core.seqprover.eventbExtensions.Lib.ff;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isRan;
 
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.seqprover.IReasonerFailure;
@@ -60,7 +60,8 @@ public class FiniteFunRan extends PFunSetInputReasoner {
 	}
 
 	@Override
-	protected IReasonerFailure verifyInput(Predicate goal, PFunSetInput input) {
+	protected IReasonerFailure verifyInput(Predicate goal, PFunSetInput input,
+			FormulaFactory ff) {
 		final Expression ranF = getFiniteExpression(goal);
 		Expression f = ((UnaryExpression) ranF).getChild();
 		final PFunSetInput pFunInput = (PFunSetInput) input;
@@ -73,7 +74,8 @@ public class FiniteFunRan extends PFunSetInputReasoner {
 	}
 
 	@Override
-	protected Predicate[] getSubgoals(Predicate goal, PFunSetInput input) {
+	protected Predicate[] getSubgoals(Predicate goal, PFunSetInput input,
+			FormulaFactory ff) {
 		final Expression ranF = getFiniteExpression(goal);
 		final Expression f = ((UnaryExpression) ranF).getChild();
 		final Expression expr = input.getExpression();

@@ -26,6 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
@@ -563,6 +564,10 @@ public abstract class AbstractReasonerTests {
 			this.predicates = new HashMap<String, Predicate[]>();
 			this.expressions = new HashMap<String, Expression[]>();
 			this.strings = new HashMap<String, String>();
+		}
+		
+		public FormulaFactory getFormulaFactory() {
+			return FormulaFactory.getDefault();
 		}
 
 		public IAntecedent[] getAntecedents() {

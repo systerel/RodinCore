@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.IntegerLiteral;
@@ -44,8 +45,8 @@ import org.eventb.core.seqprover.ProverRule;
 @SuppressWarnings("unused")
 public class RemoveNegationRewriterImpl extends AutoRewriterImpl {
 
-	public RemoveNegationRewriterImpl() {
-		super();
+	public RemoveNegationRewriterImpl(FormulaFactory ff) {
+		super(ff);
 	}
 
 	%include {FormulaV2.tom}
@@ -65,7 +66,7 @@ public class RemoveNegationRewriterImpl extends AutoRewriterImpl {
 			 * Negation: ¬(S = ∅) == ∃x·x ∈ S
 			 */
 			Not(Equal(S, EmptySet())) -> {
-				return FormulaUnfold.makeExistantial(`S);
+				return new FormulaUnfold(ff).makeExistantial(`S);
 			}
 			
 			/**
@@ -73,7 +74,7 @@ public class RemoveNegationRewriterImpl extends AutoRewriterImpl {
 			 * Negation: ¬(∅ = S) == ∃x·x ∈ S
 			 */
 			Not(Equal(EmptySet(), S)) -> {
-				return FormulaUnfold.makeExistantial(`S);
+				return new FormulaUnfold(ff).makeExistantial(`S);
 			}
 			
 			/**
@@ -81,7 +82,7 @@ public class RemoveNegationRewriterImpl extends AutoRewriterImpl {
 			 * Negation: ¬(P ∧ ... ∧ Q) == ¬P ⋁ ... ⋁ ¬Q
 			 */
 			Not(Land(children)) -> {
-				return FormulaUnfold.deMorgan(Formula.LOR, `children);
+				return new FormulaUnfold(ff).deMorgan(Formula.LOR, `children);
 			}
 			
 			/**
@@ -89,7 +90,7 @@ public class RemoveNegationRewriterImpl extends AutoRewriterImpl {
 			 * Negation: ¬(P ⋁ ... ⋁ Q) == ¬P ∧ ... ∧ ¬Q
 			 */
 			Not(Lor(children)) -> {
-				return FormulaUnfold.deMorgan(Formula.LAND, `children);
+				return new FormulaUnfold(ff).deMorgan(Formula.LAND, `children);
 			}
 			
 			/**
@@ -97,7 +98,7 @@ public class RemoveNegationRewriterImpl extends AutoRewriterImpl {
 			 * Negation: ¬(P ⇒ Q) == P ∧ ¬Q
 			 */
 			Not(Limp(P, Q)) -> {
-				return FormulaUnfold.negImp(`P, `Q);
+				return new FormulaUnfold(ff).negImp(`P, `Q);
 			}
 			
 			/**
@@ -105,7 +106,7 @@ public class RemoveNegationRewriterImpl extends AutoRewriterImpl {
 			 * Negation: ¬(∀x·P) == ∃x·¬P
 			 */
 			Not(ForAll(idents, P)) -> {
-				return FormulaUnfold.negQuant(Formula.EXISTS, `idents, `P);
+				return new FormulaUnfold(ff).negQuant(Formula.EXISTS, `idents, `P);
 			}
 			
 			/**
@@ -113,7 +114,7 @@ public class RemoveNegationRewriterImpl extends AutoRewriterImpl {
 			 * Negation: ¬(∃x·P) == ∀x·¬P
 			 */
 			Not(Exists(idents, P)) -> {
-				return FormulaUnfold.negQuant(Formula.FORALL, `idents, `P);
+				return new FormulaUnfold(ff).negQuant(Formula.FORALL, `idents, `P);
 			}
 	    }
 	    return predicate;

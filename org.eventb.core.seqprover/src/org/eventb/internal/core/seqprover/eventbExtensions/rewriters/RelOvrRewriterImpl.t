@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,8 +50,8 @@ public class RelOvrRewriterImpl extends DefaultRewriter {
 
 	private Expression subExp;
 
-	public RelOvrRewriterImpl(Expression subExp) {
-		super(true, FormulaFactory.getDefault());
+	public RelOvrRewriterImpl(Expression subExp, FormulaFactory ff) {
+		super(true, ff);
 		this.subExp = subExp;
 	}
 		
@@ -69,7 +69,6 @@ public class RelOvrRewriterImpl extends DefaultRewriter {
 			Ovr(children) -> {
 				Collection<Expression> pToQ = new ArrayList<Expression>();
 				Collection<Expression> rToS = new ArrayList<Expression>();
-				FormulaFactory ff = FormulaFactory.getDefault();
 				boolean found = false;				
 				for (Expression child : `children) {
 					if (found)

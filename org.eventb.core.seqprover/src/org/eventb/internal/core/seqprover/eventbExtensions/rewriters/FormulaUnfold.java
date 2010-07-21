@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import static org.eventb.core.ast.Formula.*;
@@ -20,9 +30,13 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 public class FormulaUnfold {
 
-	static FormulaFactory ff = FormulaFactory.getDefault();
+	private FormulaFactory ff;
 
-	public static Predicate makeExistantial(Expression S) {
+	public FormulaUnfold(FormulaFactory ff){
+		this.ff = ff;
+	}
+
+	public Predicate makeExistantial(Expression S) {
 		Type type = S.getType();
 		assert type instanceof PowerSetType;
 		Type baseType = type.getBaseType();
@@ -38,7 +52,7 @@ public class FormulaUnfold {
 		return qPred;
 	}
 
-	private static Expression getExpression(int i, Type type) {
+	private  Expression getExpression(int i, Type type) {
 
 		if (type instanceof ProductType) {
 			Type left = ((ProductType) type).getLeft();
@@ -55,7 +69,7 @@ public class FormulaUnfold {
 		}
 	}
 
-	private static BoundIdentDecl[] getBoundIdentDecls(Type type) {
+	private  BoundIdentDecl[] getBoundIdentDecls(Type type) {
 		if (type instanceof ProductType) {
 			Type left = ((ProductType) type).getLeft();
 			Type right = ((ProductType) type).getRight();
@@ -74,7 +88,7 @@ public class FormulaUnfold {
 		}
 	}
 
-	public static Predicate deMorgan(int tag, Predicate[] children) {
+	public Predicate deMorgan(int tag, Predicate[] children) {
 		Predicate[] newChildren = new Predicate[children.length];
 		for (int i = 0; i < children.length; ++i) {
 			newChildren[i] = ff.makeUnaryPredicate(Predicate.NOT, children[i],
@@ -83,20 +97,20 @@ public class FormulaUnfold {
 		return ff.makeAssociativePredicate(tag, newChildren, null);
 	}
 
-	public static Predicate negImp(Predicate P, Predicate Q) {
+	public Predicate negImp(Predicate P, Predicate Q) {
 		Predicate notQ = ff.makeUnaryPredicate(Predicate.NOT, Q, null);
 
 		return ff.makeAssociativePredicate(Predicate.LAND, new Predicate[] { P,
 				notQ }, null);
 	}
 
-	public static Predicate negQuant(int tag, BoundIdentDecl[] idents,
+	public Predicate negQuant(int tag, BoundIdentDecl[] idents,
 			Predicate P) {
 		Predicate notP = ff.makeUnaryPredicate(Predicate.NOT, P, null);
 		return ff.makeQuantifiedPredicate(tag, idents, notP, null);
 	}
 
-	public static Predicate inMap(Expression E, Expression F, Expression S,
+	public Predicate inMap(Expression E, Expression F, Expression S,
 			Expression T) {
 		Predicate P = ff.makeRelationalPredicate(Predicate.IN, E, S, null);
 		Predicate Q = ff.makeRelationalPredicate(Predicate.IN, F, T, null);
@@ -104,11 +118,11 @@ public class FormulaUnfold {
 				Q }, null);
 	}
 
-	public static Predicate inPow(Expression E, Expression S) {
+	public Predicate inPow(Expression E, Expression S) {
 		return ff.makeRelationalPredicate(Predicate.SUBSETEQ, E, S, null);
 	}
 
-	public static Predicate inAssociative(int tag, Expression E,
+	public Predicate inAssociative(int tag, Expression E,
 			Expression[] children) {
 		Predicate[] preds = new Predicate[children.length];
 		for (int i = 0; i < children.length; ++i) {
@@ -118,7 +132,7 @@ public class FormulaUnfold {
 		return ff.makeAssociativePredicate(tag, preds, null);
 	}
 
-	public static Predicate inSetMinus(Expression E, Expression S, Expression T) {
+	public Predicate inSetMinus(Expression E, Expression S, Expression T) {
 		Predicate P = ff.makeRelationalPredicate(Predicate.IN, E, S, null);
 		Predicate Q = ff.makeRelationalPredicate(Predicate.IN, E, T, null);
 		Predicate notQ = ff.makeUnaryPredicate(Predicate.NOT, Q, null);
@@ -126,7 +140,7 @@ public class FormulaUnfold {
 				notQ }, null);
 	}
 
-	public static Predicate inSetExtention(Expression E, Expression[] members) {
+	public Predicate inSetExtention(Expression E, Expression[] members) {
 		Predicate[] predicates = new Predicate[members.length];
 		for (int i = 0; i < members.length; ++i) {
 			Expression member = members[i];
@@ -143,7 +157,7 @@ public class FormulaUnfold {
 		return ff.makeAssociativePredicate(Predicate.LOR, predicates, null);
 	}
 
-	public static Predicate inGeneralised(int tag, Expression E, Expression S) {
+	public Predicate inGeneralised(int tag, Expression E, Expression S) {
 		Type type = S.getType();
 		Type baseType = type.getBaseType();
 		assert (baseType != null);
@@ -167,7 +181,7 @@ public class FormulaUnfold {
 		}
 	}
 
-	public static Predicate inQuantified(int tag, Expression E,
+	public Predicate inQuantified(int tag, Expression E,
 			BoundIdentDecl[] boundIdentDecls, Predicate P, Expression T) {
 		Predicate Q = ff.makeRelationalPredicate(Predicate.IN, E
 				.shiftBoundIdentifiers(boundIdentDecls.length, ff), T, null);
@@ -181,7 +195,7 @@ public class FormulaUnfold {
 		}
 	}
 
-	public static Predicate inDom(Expression E, Expression r) {
+	public Predicate inDom(Expression E, Expression r) {
 		Type type = r.getType();
 
 		Type baseType = type.getBaseType();
@@ -198,7 +212,7 @@ public class FormulaUnfold {
 				boundIdentDecls, pred, null);
 	}
 
-	public static Predicate inRan(Expression F, Expression r) {
+	public Predicate inRan(Expression F, Expression r) {
 		Type type = r.getType();
 
 		Type baseType = type.getBaseType();
@@ -216,12 +230,12 @@ public class FormulaUnfold {
 				boundIdentDecls, pred, null);
 	}
 
-	public static Predicate inConverse(Expression E, Expression F, Expression r) {
+	public Predicate inConverse(Expression E, Expression F, Expression r) {
 		Expression map = ff.makeBinaryExpression(Expression.MAPSTO, F, E, null);
 		return ff.makeRelationalPredicate(Predicate.IN, map, r, null);
 	}
 
-	public static Predicate inDomManipulation(boolean restricted, Expression E,
+	public Predicate inDomManipulation(boolean restricted, Expression E,
 			Expression F, Expression S, Expression r) {
 		Predicate P;
 		if (restricted) {
@@ -236,7 +250,7 @@ public class FormulaUnfold {
 				Q }, null);
 	}
 
-	public static Predicate inRanManipulation(boolean restricted, Expression E,
+	public Predicate inRanManipulation(boolean restricted, Expression E,
 			Expression F, Expression r, Expression T) {
 
 		Predicate P = ff.makeRelationalPredicate(Predicate.IN, ff
@@ -253,7 +267,7 @@ public class FormulaUnfold {
 				Q }, null);
 	}
 
-	public static Predicate subsetEq(Expression S, Expression T) {
+	public Predicate subsetEq(Expression S, Expression T) {
 		Type type = S.getType();
 		assert type instanceof PowerSetType;
 		Type baseType = type.getBaseType();
@@ -270,7 +284,7 @@ public class FormulaUnfold {
 				.makeBinaryPredicate(Predicate.LIMP, P, Q, null), null);
 	}
 
-	public static Predicate subset(Expression S, Expression T) {
+	public Predicate subset(Expression S, Expression T) {
 		Predicate incl = ff.makeRelationalPredicate(SUBSETEQ, S, T, null);
 		Predicate eq = ff.makeRelationalPredicate(EQUAL, S, T, null);
 		Predicate neq = ff.makeUnaryPredicate(NOT, eq, null);
@@ -278,7 +292,7 @@ public class FormulaUnfold {
 				null);
 	}
 
-	public static Predicate inRelImage(Expression F, Expression r, Expression S) {
+	public Predicate inRelImage(Expression F, Expression r, Expression S) {
 		Type type = S.getType();
 		assert type instanceof PowerSetType;
 		Type baseType = type.getBaseType();
@@ -306,7 +320,7 @@ public class FormulaUnfold {
 		return qPred;
 	}
 
-	public static Predicate inForwardComposition(Expression E, Expression F,
+	public Predicate inForwardComposition(Expression E, Expression F,
 			Expression[] rels) {
 		// Create the bound identifiers
 		Collection<BoundIdentDecl> identDecls = new ArrayList<BoundIdentDecl>();
@@ -359,7 +373,7 @@ public class FormulaUnfold {
 		return qPred;
 	}
 
-	public static Predicate inPfun(Expression f, Expression S, Expression T) {
+	public Predicate inPfun(Expression f, Expression S, Expression T) {
 		Expression pfun = ff.makeBinaryExpression(Expression.REL, S, T, null);
 		Predicate pred = ff
 				.makeRelationalPredicate(Predicate.IN, f, pfun, null);
@@ -410,7 +424,7 @@ public class FormulaUnfold {
 	}
 
 
-	public static Predicate makeExistSingletonSet(Expression S) {
+	public Predicate makeExistSingletonSet(Expression S) {
 		Type type = S.getType();
 		assert type instanceof PowerSetType;
 		Type baseType = type.getBaseType();

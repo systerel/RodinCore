@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,10 @@ import org.eventb.core.seqprover.ProverRule;
 @SuppressWarnings("unused")
 public class StrictInclusionRewriterImpl extends AutoRewriterImpl {
 
+	public StrictInclusionRewriterImpl(FormulaFactory ff) {
+		super(ff);
+	}
+	
 	%include {FormulaV2.tom}
 	
 	@ProverRule("DEF_SUBSET")
@@ -36,7 +40,7 @@ public class StrictInclusionRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: A ⊂ B == A ⊆ B ∧ ¬ A = B
 	    	 */
 	    	Subset(S, T) -> {
-	    		return FormulaUnfold.subset(`S, `T);
+	    		return new FormulaUnfold(ff).subset(`S, `T);
 	    	}
 	    }
 	    return predicate;

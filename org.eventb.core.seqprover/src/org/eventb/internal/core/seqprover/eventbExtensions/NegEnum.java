@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import java.util.ArrayList;
@@ -100,11 +110,11 @@ public class NegEnum extends MultiplePredInputReasoner implements IReasoner {
 				Set<Predicate> hyps = new HashSet<Predicate>(2);
 				hyps.add(pred0);
 				hyps.add(pred1);
-				SetExtension setExtension = FormulaFactory.getDefault()
-						.makeSetExtension(newMembers, null);
-				Predicate inferredHyp = FormulaFactory.getDefault()
-						.makeRelationalPredicate(Predicate.IN, E, setExtension,
-								null);
+				final FormulaFactory ff = seq.getFormulaFactory();
+				SetExtension setExtension = ff.makeSetExtension(newMembers,
+						null);
+				Predicate inferredHyp = ff.makeRelationalPredicate(
+						Predicate.IN, E, setExtension, null);
 				hypActions.add(ProverFactory.makeForwardInfHypAction(hyps,
 						Collections.singleton(inferredHyp)));
 				hypActions.add(ProverFactory.makeDeselectHypAction(hyps));

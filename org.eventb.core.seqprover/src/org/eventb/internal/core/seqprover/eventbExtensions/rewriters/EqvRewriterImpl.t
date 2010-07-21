@@ -46,8 +46,8 @@ import org.eventb.core.seqprover.ProverRule;
 @SuppressWarnings("unused")
 public class EqvRewriterImpl extends DefaultRewriter {
 
-	public EqvRewriterImpl() {
-		super(true, FormulaFactory.getDefault());
+	public EqvRewriterImpl(FormulaFactory ff) {
+		super(true, ff);
 	}
 		
 	%include {FormulaV2.tom}

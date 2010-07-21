@@ -93,7 +93,7 @@ public abstract class AbstractManualRewrites implements IReasoner {
 				return goalReasonerFailure(input, position, goal);
 			}
 			
-			final Predicate newGoal = rewrite(goal, position);
+			final Predicate newGoal = rewrite(goal, position, seq.getFormulaFactory());
 			if (newGoal == null) {
 				return goalReasonerFailure(input, position, goal);
 			}
@@ -117,7 +117,7 @@ public abstract class AbstractManualRewrites implements IReasoner {
 			if (neededHyps == null) {
 				return hypReasonerFailure(input, position, hyp);
 			}
-			final Predicate inferredHyp = rewrite(hyp, position);
+			final Predicate inferredHyp = rewrite(hyp, position, seq.getFormulaFactory());
 			if (inferredHyp == null) {
 				return hypReasonerFailure(input, position, hyp);
 			}
@@ -186,9 +186,10 @@ public abstract class AbstractManualRewrites implements IReasoner {
 	 * 
 	 * @param pred
 	 *            predicate to rewrite
+	 * @param ff TODO
 	 * @return the predicate which is the result of rewriting
 	 */
-	protected abstract Predicate rewrite(Predicate pred, IPosition position);
+	protected abstract Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff);
 
 	/**
 	 * Returns the name to display in the generated rule.
@@ -213,7 +214,7 @@ public abstract class AbstractManualRewrites implements IReasoner {
 	public final IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
 		
-		final FormulaFactory ff = FormulaFactory.getDefault();
+		final FormulaFactory ff = reader.getFormulaFactory();
 		final String posString = reader.getString(POSITION_KEY);
 		final IPosition position = ff.makePosition(posString);
 		

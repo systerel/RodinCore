@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
@@ -29,29 +30,22 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
 public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 
-	private IFormulaRewriter rewriter;
-
 	private boolean hideOriginal;
 	
-	protected AbstractAutoRewrites(IFormulaRewriter rewriter,
-			boolean hideOriginal) {
-		this.rewriter = rewriter;
+	protected AbstractAutoRewrites(boolean hideOriginal) {
 		this.hideOriginal = hideOriginal;
 	}
 	
-	public void reset_rewriter(IFormulaRewriter a_rewriter)
-	{
-		rewriter=a_rewriter;
-	}
-
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
+		
+		final IFormulaRewriter rewriter = getRewriter(seq.getFormulaFactory());
 		
 		final List<IHypAction> hypActions = new ArrayList<IHypAction>();
 		for (Predicate hyp : seq.visibleHypIterable()) {
 			
 			// Rewrite the hypothesis
-			Predicate inferredHyp = recursiveRewrite(hyp);
+			Predicate inferredHyp = recursiveRewrite(hyp, rewriter);
 
 			Collection<Predicate> inferredHyps = Lib
 					.breakPossibleConjunct(inferredHyp);
@@ -94,7 +88,7 @@ public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 		}
 
 		Predicate goal = seq.goal();
-		Predicate newGoal = recursiveRewrite(goal);
+		Predicate newGoal = recursiveRewrite(goal, rewriter);
 
 		if (newGoal != goal) {
 			IAntecedent[] antecedent = new IAntecedent[] { ProverFactory
@@ -126,7 +120,7 @@ public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 	 *            the input predicate
 	 * @return the resulting predicate after rewrite.
 	 */
-	private Predicate recursiveRewrite(Predicate pred) {
+	private Predicate recursiveRewrite(Predicate pred, IFormulaRewriter rewriter) {
 		Predicate resultPred;
 		resultPred = pred.rewrite(rewriter);
 		while (resultPred != pred) {
@@ -135,6 +129,9 @@ public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 		}
 		return resultPred;
 	}
+	
+	
+	protected abstract IFormulaRewriter getRewriter(FormulaFactory formulaFactory);
 	
 	protected abstract String getDisplayName();
 

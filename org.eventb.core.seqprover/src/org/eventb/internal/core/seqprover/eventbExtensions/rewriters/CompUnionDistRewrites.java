@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import java.util.Arrays;
@@ -38,7 +48,7 @@ public class CompUnionDistRewrites extends AbstractManualRewrites {
 	}
 
 	@Override
-	protected Predicate rewrite(Predicate pred, IPosition position) {
+	protected Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
 		Formula<?> subFormula = pred.getSubFormula(position);
 		if (!(subFormula instanceof AssociativeExpression))
 			return null;
@@ -49,7 +59,7 @@ public class CompUnionDistRewrites extends AbstractManualRewrites {
 				&& formula.getTag() == Expression.FCOMP) {
 
 			IFormulaRewriter rewriter = new CompUnionDistRewriterImpl(
-					(AssociativeExpression) subFormula);
+					(AssociativeExpression) subFormula, ff);
 
 			Formula<?> newSubFormula = rewriter
 					.rewrite((AssociativeExpression) formula);
@@ -58,7 +68,7 @@ public class CompUnionDistRewrites extends AbstractManualRewrites {
 				return null;
 
 			return pred.rewriteSubFormula(position.getParent(), newSubFormula,
-					FormulaFactory.getDefault());
+					ff);
 		}
 		return null;
 	}

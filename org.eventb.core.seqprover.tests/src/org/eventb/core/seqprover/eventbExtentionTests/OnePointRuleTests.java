@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,9 +114,10 @@ public class OnePointRuleTests extends AbstractReasonerTests {
 				// Forall with conjunction
 				newFailureGoal("∀x· x=0 ∧ x=1"),
 
+				
 				// Matching substitution bound identifier is declared outside
 				new UnsuccessfullReasonerApplication(ProverFactory.makeSequent(
-						null, null, boundOutside), goalInput),
+						TestLib.genTypeEnv(""), null, boundOutside), goalInput),
 				
 				// Self-referring expressions (x=x+x, x=x*x) are not applicable
 				newFailureGoal("∀x· x=x+x ∧ x=x∗x ⇒ x=0"),

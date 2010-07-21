@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import java.util.Arrays;
@@ -39,7 +49,7 @@ public class RanCompRewrites extends AbstractManualRewrites {
 	}
 
 	@Override
-	protected Predicate rewrite(Predicate pred, IPosition position) {
+	protected Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
 		Formula<?> subFormula = pred.getSubFormula(position);
 		if (!(subFormula instanceof BinaryExpression))
 			return null;
@@ -49,7 +59,7 @@ public class RanCompRewrites extends AbstractManualRewrites {
 		
 		if (formula != null && formula.getTag() == Expression.FCOMP) {
 			IFormulaRewriter rewriter = new RanCompRewriterImpl(
-					(BinaryExpression) subFormula);
+					(BinaryExpression) subFormula, ff);
 
 			Formula<?> newSubFormula = rewriter
 					.rewrite((AssociativeExpression) formula);
@@ -57,8 +67,7 @@ public class RanCompRewrites extends AbstractManualRewrites {
 			if (newSubFormula == formula) // No rewrite occurs
 				return null;
 
-			return pred.rewriteSubFormula(parentPos, newSubFormula,
-					FormulaFactory.getDefault());
+			return pred.rewriteSubFormula(parentPos, newSubFormula, ff);
 		}
 		return null;
 	}

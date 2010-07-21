@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,8 +50,8 @@ public class UnionInterDistRewriterImpl extends DefaultRewriter {
 
 	private AssociativeExpression subExp;
 
-	public UnionInterDistRewriterImpl(AssociativeExpression subExp) {
-		super(true, FormulaFactory.getDefault());
+	public UnionInterDistRewriterImpl(AssociativeExpression subExp, FormulaFactory ff) {
+		super(true, ff);
 		this.subExp = subExp;
 	}
 		
@@ -73,7 +73,6 @@ public class UnionInterDistRewriterImpl extends DefaultRewriter {
 			(BUnion | BInter)(children) -> {
 				Collection<Expression> newChildren = new ArrayList<Expression>(
 						subExp.getChildren().length);
-				FormulaFactory ff = FormulaFactory.getDefault();
 				
 				for (Expression toDistribute : subExp.getChildren()) {
 					Expression [] subChildren = new Expression[`children.length];

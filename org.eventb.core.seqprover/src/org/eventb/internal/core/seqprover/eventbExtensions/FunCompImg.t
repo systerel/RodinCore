@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Identifier;
@@ -154,17 +155,17 @@ public class FunCompImg extends AbstractManualInference {
 	    }
 		if (firstHalf.size() == 0 || secondHalf.size() == 0)
 			return null;
-		
+		final FormulaFactory ff = seq.getFormulaFactory();
 		// There will be 2 antecidents
 		IAntecedent[] antecidents = new IAntecedent[2];
 
 		// (f;...;g)(E)
-		Expression fToGComp = makeCompIfNeccessary(firstHalf);
+		Expression fToGComp = makeCompIfNeccessary(firstHalf, ff);
 		Expression funImg = ff.makeBinaryExpression(Expression.FUNIMAGE,
 				fToGComp, E, null);
 		
 		// (h;...;l)((f;...;g)(E))
-		Expression hToLComp = makeCompIfNeccessary(secondHalf);
+		Expression hToLComp = makeCompIfNeccessary(secondHalf, ff);
 		Expression funImg2 = ff.makeBinaryExpression(Expression.FUNIMAGE,
 				hToLComp, funImg, null);
 

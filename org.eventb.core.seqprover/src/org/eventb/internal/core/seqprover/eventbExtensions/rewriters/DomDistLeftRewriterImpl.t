@@ -47,8 +47,8 @@ import org.eventb.core.seqprover.ProverRule;
 @SuppressWarnings("unused")
 public class DomDistLeftRewriterImpl extends DefaultRewriter {
 
-	public DomDistLeftRewriterImpl() {
-		super(true, FormulaFactory.getDefault());
+	public DomDistLeftRewriterImpl(FormulaFactory ff) {
+		super(true, ff);
 	}
 		
 	%include {FormulaV2.tom}

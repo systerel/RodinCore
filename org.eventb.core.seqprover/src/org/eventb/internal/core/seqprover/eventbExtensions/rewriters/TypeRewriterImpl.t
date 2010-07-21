@@ -48,8 +48,8 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 @SuppressWarnings("unused")
 public class TypeRewriterImpl extends DefaultRewriter {
 
-	public TypeRewriterImpl() {
-		super(true, FormulaFactory.getDefault());
+	public TypeRewriterImpl(FormulaFactory ff) {
+		super(true, ff);
 	}
 		
 	%include {FormulaV2.tom}

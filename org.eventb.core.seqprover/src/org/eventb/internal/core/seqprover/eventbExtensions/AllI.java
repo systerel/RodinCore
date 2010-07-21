@@ -1,6 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.QuantifiedPredicate;
@@ -48,12 +59,13 @@ public class AllI extends EmptyInputReasoner{
 		// given type environment
 		// TODO : Change implementation
 		ITypeEnvironment newITypeEnvironment = seq.typeEnvironment().clone();
-		FreeIdentifier[] freeIdents = (Lib.ff).makeFreshIdentifiers(boundIdentDecls,newITypeEnvironment);		
+		final FormulaFactory ff = seq.getFormulaFactory();
+		FreeIdentifier[] freeIdents = ff.makeFreshIdentifiers(boundIdentDecls,newITypeEnvironment);		
 		assert boundIdentDecls.length == freeIdents.length;
 		
 		IAntecedent[] anticidents = new IAntecedent[1];
 		anticidents[0] = ProverFactory.makeAntecedent(
-				UnivQ.instantiate(freeIdents,Lib.ff),
+				UnivQ.instantiate(freeIdents,ff),
 				null,
 				freeIdents,
 				null);

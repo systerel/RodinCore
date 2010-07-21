@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.IntegerLiteral;
@@ -45,8 +46,8 @@ import org.eventb.core.seqprover.ProverRule;
 @SuppressWarnings("unused")
 public class RemoveInclusionUniversalRewriterImpl extends AutoRewriterImpl {
 
-	public RemoveInclusionUniversalRewriterImpl() {
-		super();
+	public RemoveInclusionUniversalRewriterImpl(FormulaFactory ff) {
+		super(ff);
 	}
 
 	%include {FormulaV2.tom}

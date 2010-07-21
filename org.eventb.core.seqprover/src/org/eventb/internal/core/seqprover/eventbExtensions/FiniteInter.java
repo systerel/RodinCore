@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ ******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import org.eventb.core.ast.AssociativeExpression;
@@ -19,8 +29,6 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 public class FiniteInter extends EmptyInputReasoner {
 
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".finiteInter";
-
-	private static FormulaFactory ff = FormulaFactory.getDefault();
 	
 	public String getReasonerID() {
 		return REASONER_ID;
@@ -46,6 +54,7 @@ public class FiniteInter extends EmptyInputReasoner {
 		Expression[] children = aExp.getChildren();
 		Predicate [] newChildren = new Predicate[children.length];
 		
+		final FormulaFactory ff = seq.getFormulaFactory();
 		for (int i = 0; i < children.length; ++i) {
 			newChildren[i] = ff.makeSimplePredicate(Predicate.KFINITE,
 					children[i], null);

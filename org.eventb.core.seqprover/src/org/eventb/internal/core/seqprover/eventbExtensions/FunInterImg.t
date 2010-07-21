@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Identifier;
@@ -108,12 +109,12 @@ public class FunInterImg extends AbstractManualInference {
 	    }
 		if (f == null)
 			return null;
-		
+		final FormulaFactory ff = seq.getFormulaFactory();
 		// There will be 2 antecidents
 		IAntecedent[] antecidents = new IAntecedent[2];
 
 		// f~ : A +-> B (from type of f)
-		antecidents[0] = makeFunctionalAntecident(f, true, Expression.PFUN);
+		antecidents[0] = makeFunctionalAntecident(f, true, Expression.PFUN, ff);
 		
 		// f[S] /\ ... /\ f[T]
 		Expression [] newChildren = new Expression[children.length];

@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ ******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import org.eventb.core.ast.Expression;
@@ -19,8 +29,6 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 public class FiniteDom extends EmptyInputReasoner {
 
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".finiteDom";
-
-	private static FormulaFactory ff = FormulaFactory.getDefault();
 	
 	public String getReasonerID() {
 		return REASONER_ID;
@@ -45,6 +53,7 @@ public class FiniteDom extends EmptyInputReasoner {
 		Expression r = expression.getChild();
 		
 		// finite(r)
+		final FormulaFactory ff = seq.getFormulaFactory();
 		Predicate newGoal = ff.makeSimplePredicate(Predicate.KFINITE, r, null);
 		antecidents[0] = ProverFactory.makeAntecedent(newGoal);
 

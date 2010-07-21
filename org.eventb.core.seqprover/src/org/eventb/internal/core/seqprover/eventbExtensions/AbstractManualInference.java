@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,8 +63,6 @@ import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 public abstract class AbstractManualInference implements IReasoner {
 
 	private final static String POSITION_KEY = "pos";
-	
-	protected FormulaFactory ff = FormulaFactory.getDefault();
 
 	public static class Input implements IReasonerInput {
 
@@ -145,7 +143,7 @@ public abstract class AbstractManualInference implements IReasoner {
 
 		Set<Predicate> neededHyps = reader.getNeededHyps();
 		String image = reader.getString(POSITION_KEY);
-		IPosition position = FormulaFactory.getDefault().makePosition(image);
+		IPosition position = reader.getFormulaFactory().makePosition(image);
 
 		final int length = neededHyps.size();
 		if (length == 0) {
@@ -342,7 +340,7 @@ public abstract class AbstractManualInference implements IReasoner {
 
 
 	protected IAntecedent makeFunctionalAntecident(Expression f,
-			boolean converse, int tag) {
+			boolean converse, int tag, FormulaFactory ff) {
 		Type type = f.getType();
 		assert type instanceof PowerSetType;
 		PowerSetType powerType = (PowerSetType) type;
@@ -379,7 +377,7 @@ public abstract class AbstractManualInference implements IReasoner {
 		return ProverFactory.makeAntecedent(Lib.WD(pred));
 	}
 
-	protected Expression makeCompIfNeccessary(Collection<Expression> children) {
+	protected Expression makeCompIfNeccessary(Collection<Expression> children, FormulaFactory ff) {
 		if (children.size() == 1)
 			return children.iterator().next();
 		else

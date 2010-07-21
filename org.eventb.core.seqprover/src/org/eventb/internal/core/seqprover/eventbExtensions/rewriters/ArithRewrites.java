@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,8 +27,6 @@ import org.eventb.core.seqprover.SequentProver;
 
 public class ArithRewrites extends AbstractManualRewrites implements IVersionedReasoner {
 
-	private static final IFormulaRewriter rewriter = new ArithRewriterImpl();
-
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".arithRewrites";
 	private static final int REASONER_VERSION = 1;
@@ -54,9 +52,10 @@ public class ArithRewrites extends AbstractManualRewrites implements IVersionedR
 	}
 
 	@Override
-	protected Predicate rewrite(Predicate pred, IPosition position) {
+	protected Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
 		Formula<?> subFormula = pred.getSubFormula(position);
 		final Formula<?> newSubFormula;
+		final IFormulaRewriter rewriter = new ArithRewriterImpl(ff);
 		if (subFormula instanceof BinaryExpression) {
 			newSubFormula = rewriter.rewrite((BinaryExpression) subFormula);
 		} else if (subFormula instanceof AssociativeExpression) {

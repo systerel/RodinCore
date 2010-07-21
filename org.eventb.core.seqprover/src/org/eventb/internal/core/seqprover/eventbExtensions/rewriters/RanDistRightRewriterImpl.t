@@ -47,8 +47,8 @@ import org.eventb.core.seqprover.ProverRule;
 @SuppressWarnings("unused")
 public class RanDistRightRewriterImpl extends DefaultRewriter {
 
-	public RanDistRightRewriterImpl() {
-		super(true, FormulaFactory.getDefault());
+	public RanDistRightRewriterImpl(FormulaFactory ff) {
+		super(true, ff);
 	}
 		
 	%include {FormulaV2.tom}

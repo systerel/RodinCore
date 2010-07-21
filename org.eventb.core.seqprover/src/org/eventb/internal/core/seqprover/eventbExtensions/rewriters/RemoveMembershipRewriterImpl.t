@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.IntegerLiteral;
@@ -45,8 +46,8 @@ import org.eventb.core.seqprover.ProverRule;
 @SuppressWarnings("unused")
 public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 
-	public RemoveMembershipRewriterImpl() {
-		super();
+	public RemoveMembershipRewriterImpl(FormulaFactory ff) {
+		super(ff);
 	}
 
 	%include {FormulaV2.tom}
@@ -80,7 +81,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
              * Set Theory: E ∈ {A, ..., B} == E = A ⋁ ... ⋁ E = B
 	    	 */
 	    	In(E, SetExtension(members)) -> {
-	    		return FormulaUnfold.inSetExtention(`E, `members);
+	    		return new FormulaUnfold(ff).inSetExtention(`E, `members);
 	    	}
 
 	    	/**
@@ -88,7 +89,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
              * Set Theory: E ↦ F ∈ S × T == E ∈ S ∧ F ∈ T
 	    	 */
 	    	In(Mapsto(E, F), Cprod(S, T)) -> {
-	    		return FormulaUnfold.inMap(`E, `F, `S, `T);
+	    		return new FormulaUnfold(ff).inMap(`E, `F, `S, `T);
 	    	}
 	    	
 	    	/**
@@ -96,7 +97,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ∈ ℙ(S) == E ⊆ S
 	    	 */
 	    	In(E, Pow(S)) -> {
-	    		return FormulaUnfold.inPow(`E, `S);
+	    		return new FormulaUnfold(ff).inPow(`E, `S);
 	    	}
 	    	
 	    	/**
@@ -104,7 +105,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ∈ S ∪ ... ∪ T == E ∈ S ⋁ ... ⋁ E ∈ T
 	    	 */
 	    	In(E, BUnion(children)) -> {
-	    		return FormulaUnfold.inAssociative(Formula.LOR, `E, `children);
+	    		return new FormulaUnfold(ff).inAssociative(Formula.LOR, `E, `children);
 	    	}
 	    	
 	    	/**
@@ -112,7 +113,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ∈ S ∩ ... ∩ T == E ∈ S ∧ ... ∧ E ∈ T
 	    	 */
 	    	In(E, BInter(children)) -> {
-	    		return FormulaUnfold.inAssociative(Formula.LAND, `E, `children);
+	    		return new FormulaUnfold(ff).inAssociative(Formula.LAND, `E, `children);
 	    	}
 	    	
 	    	/**
@@ -120,7 +121,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ∈ S ∖ T == E ∈ S ∧ ¬(E ∈ T)
 	    	 */
 	    	In(E, SetMinus(S, T)) -> {
-	    		return FormulaUnfold.inSetMinus(`E, `S, `T);
+	    		return new FormulaUnfold(ff).inSetMinus(`E, `S, `T);
 	    	}
 	    	
 	    	/**
@@ -128,7 +129,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ∈ union(S) == ∃s·s ∈ S ∧ E ∈ s
 	    	 */
 	    	In(E, Union(S)) -> {
-	    		return FormulaUnfold.inGeneralised(Formula.EXISTS, `E, `S);
+	    		return new FormulaUnfold(ff).inGeneralised(Formula.EXISTS, `E, `S);
 	    	}
 	    	
 	    	/**
@@ -136,7 +137,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ∈ inter(S) == ∀s·s ∈ S ⇒ E ∈ s
 	    	 */
 	    	In(E, Inter(S)) -> {
-	    		return FormulaUnfold.inGeneralised(Formula.FORALL, `E, `S);
+	    		return new FormulaUnfold(ff).inGeneralised(Formula.FORALL, `E, `S);
 	    	}
 	    	
 	    	/**
@@ -144,7 +145,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ∈ (⋃x·P|T) == ∃x·P ∧ E ∈ T
 	    	 */
 	    	In(E, Qunion(x,P,T)) -> {
-	    		return FormulaUnfold.inQuantified(Formula.EXISTS, `E, `x, `P, `T);
+	    		return new FormulaUnfold(ff).inQuantified(Formula.EXISTS, `E, `x, `P, `T);
 	    	}
 
 	    	/**
@@ -152,7 +153,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ∈ (⋂x·P|T) == ∀x·P ⇒ E ∈ T
 	    	 */
 	    	In(E, Qinter(x,P,T)) -> {
-	    		return FormulaUnfold.inQuantified(Formula.FORALL, `E, `x, `P, `T);
+	    		return new FormulaUnfold(ff).inQuantified(Formula.FORALL, `E, `x, `P, `T);
 	    	}
 
 	    	/**
@@ -160,7 +161,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ∈ dom(r) == ∃y·E ↦ y ∈ r
 	    	 */
 	    	In(E, Dom(r)) -> {
-	    		return FormulaUnfold.inDom(`E, `r);
+	    		return new FormulaUnfold(ff).inDom(`E, `r);
 	    	}
 
 	    	/**
@@ -168,7 +169,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: F ∈ ran(r) == ∃x·x ↦ F ∈ r
 	    	 */
 	    	In(F, Ran(r)) -> {
-	    		return FormulaUnfold.inRan(`F, `r);
+	    		return new FormulaUnfold(ff).inRan(`F, `r);
 	    	}
 	    	
 	    	/**
@@ -176,7 +177,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ↦ F ∈ r∼ == F ↦ E ∈ r
 	    	 */
 	    	In(Mapsto(E, F), Converse(r)) -> {
-	    		return FormulaUnfold.inConverse(`E, `F, `r);
+	    		return new FormulaUnfold(ff).inConverse(`E, `F, `r);
 	    	}
 	    	
 	    	/**
@@ -184,7 +185,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ↦ F ∈ S ◁ r == E ∈ S ∧ E ↦ F ∈ r
 	    	 */
 	    	In(Mapsto(E, F), DomRes(S, r)) -> {
-	    		return FormulaUnfold.inDomManipulation(true, `E, `F, `S, `r);
+	    		return new FormulaUnfold(ff).inDomManipulation(true, `E, `F, `S, `r);
 	    	}
 	    	
 	    	/**
@@ -192,7 +193,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ↦ F ∈ S ⩤ r == E ∉ S ∧ E ↦ F ∈ r
 	    	 */
 	    	In(Mapsto(E, F), DomSub(S, r)) -> {
-	    		return FormulaUnfold.inDomManipulation(false, `E, `F, `S, `r);
+	    		return new FormulaUnfold(ff).inDomManipulation(false, `E, `F, `S, `r);
 	    	}
 	    	
 	    	/**
@@ -200,7 +201,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ↦ F ∈ r ▷ T  == E ↦ F ∈ r ∧ F ∈ T
 	    	 */
 	    	In(Mapsto(E, F), RanRes(r, T)) -> {
-	    		return FormulaUnfold.inRanManipulation(true, `E, `F, `r, `T);
+	    		return new FormulaUnfold(ff).inRanManipulation(true, `E, `F, `r, `T);
 	    	}
 
 	    	/**
@@ -208,7 +209,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ↦ F ∈ r ⩥ T  == E ↦ F ∈ r ∧ F ∉ T
 	    	 */
 	    	In(Mapsto(E, F), RanSub(r, T)) -> {
-	    		return FormulaUnfold.inRanManipulation(false, `E, `F, `r, `T);
+	    		return new FormulaUnfold(ff).inRanManipulation(false, `E, `F, `r, `T);
 	    	}
 	    	
 	    	/**
@@ -216,7 +217,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: F ∈ r[S] == (∃x·x ∈ S ∧ x ↦ F ∈ r)
 	    	 */
 	    	In(F, RelImage(r, S)) -> {
-	    		return FormulaUnfold.inRelImage(`F, `r, `S);
+	    		return new FormulaUnfold(ff).inRelImage(`F, `r, `S);
 	    	}
 	    	 
 	    	/**
@@ -228,7 +229,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 *                        x_(n−1) ↦ F ∈ p_n
 	    	 */
 	    	In(Mapsto(E, F), Fcomp(children)) -> {
-				return FormulaUnfold.inForwardComposition(`E, `F, `children);
+				return new FormulaUnfold(ff).inForwardComposition(`E, `F, `children);
 	    	}
 
 	    	/**
@@ -282,7 +283,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: f ∈ S ⇸ T == f ∈ S ↔ T ∧ ∀x,y,z·x ↦ y ∈ f ∧ x ↦ z ∈ f ⇒ y = z
 	    	 */
 	    	In(f, Pfun(S, T)) -> {
-	    		return FormulaUnfold.inPfun(`f, `S, `T);
+	    		return new FormulaUnfold(ff).inPfun(`f, `S, `T);
 	    	}
 
 	    	/**

@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.SequentProver;
@@ -22,10 +23,9 @@ public class AutoRewrites extends AbstractAutoRewrites implements
 		IVersionedReasoner {
 
 	private static final int REASONER_VERSION = 3;
-	private static final IFormulaRewriter rewriter = new AutoRewriterImpl();
 
 	public AutoRewrites() {
-		super(rewriter, true);
+		super(true);
 	}
 
 	public static String REASONER_ID = SequentProver.PLUGIN_ID
@@ -42,6 +42,11 @@ public class AutoRewrites extends AbstractAutoRewrites implements
 
 	public int getVersion() {
 		return REASONER_VERSION;
+	}
+
+	@Override
+	public IFormulaRewriter getRewriter(FormulaFactory ff) {
+		return new AutoRewriterImpl(ff);
 	}
 
 }

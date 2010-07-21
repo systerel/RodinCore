@@ -15,6 +15,7 @@ import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
 import static org.eventb.core.seqprover.ProverFactory.reasonerFailure;
 
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.seqprover.IProofMonitor;
@@ -55,12 +56,13 @@ public abstract class PFunSetInputReasoner extends SingleExprInputReasoner {
 			return reasonerFailure(this, input,
 					"Expected a set of all partial functions S ⇸ T");
 		final PFunSetInput pInput = (PFunSetInput) input;
-		final IReasonerFailure inputFailure = verifyInput(goal, pInput);
+		final FormulaFactory ff = seq.getFormulaFactory();
+		final IReasonerFailure inputFailure = verifyInput(goal, pInput, ff);
 		if (inputFailure != null) {
 			return inputFailure;
 		}
-
-		final IAntecedent[] antes = makeAntecedents(getSubgoals(goal, pInput));
+		final IAntecedent[] antes = makeAntecedents(getSubgoals(goal, pInput,
+				ff));
 		return makeProofRule(this, input, goal, getReasonerDesc(), antes);
 	}
 
@@ -85,27 +87,31 @@ public abstract class PFunSetInputReasoner extends SingleExprInputReasoner {
 	 * type check occured, or null if type check succeeded.
 	 * 
 	 * @param goal
-	 *            The predicate enclosing the function f
+	 *            the predicate enclosing the function f
 	 * @param input
-	 *            The set of partial functions given by the user, to type check
+	 *            the set of partial functions given by the user, to type check
 	 *            the function
+	 * @param ff 
+	 * 			  the formula factory to use
 	 * @return an IReasonerFailure if type check failed, null otherwise
 	 */
 	abstract protected IReasonerFailure verifyInput(Predicate goal,
-			PFunSetInput input);
+			PFunSetInput input, FormulaFactory ff);
 
 	/**
 	 * Computes an array of subgoals that constitute the antecedents of the rule
 	 * implemented by this reasoner.
 	 * 
 	 * @param goal
-	 *            The predicate enclosing the function f
+	 *            the predicate enclosing the function f
 	 * @param input
-	 *            The input given by the user
+	 *            the input given by the user
+	 * @param ff
+	 * 			  the formula factory to use
 	 * @return an array of subgoals to build the ProofRule
 	 */
 	abstract protected Predicate[] getSubgoals(Predicate goal,
-			PFunSetInput input);
+			PFunSetInput input, FormulaFactory ff);
 
 	/**
 	 * Assuming the goal to be of form <code>finite(E)</code>, returns

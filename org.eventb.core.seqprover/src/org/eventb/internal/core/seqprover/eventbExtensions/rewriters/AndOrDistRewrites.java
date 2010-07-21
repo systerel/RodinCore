@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import java.util.Arrays;
@@ -37,7 +47,7 @@ public class AndOrDistRewrites extends AbstractManualRewrites {
 	}
 
 	@Override
-	protected Predicate rewrite(Predicate pred, IPosition position) {
+	protected Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
 		Formula<?> subFormula = pred.getSubFormula(position);
 		if (!(subFormula instanceof AssociativePredicate))
 			return null;
@@ -47,7 +57,7 @@ public class AndOrDistRewrites extends AbstractManualRewrites {
 				|| (subFormula.getTag() == Predicate.LOR && formula.getTag() == Predicate.LAND)) {
 
 			IFormulaRewriter rewriter = new AndOrDistRewriterImpl(
-					(AssociativePredicate) subFormula);
+					(AssociativePredicate) subFormula, ff);
 
 			Formula<?> newSubFormula = rewriter
 					.rewrite((AssociativePredicate) formula);
@@ -56,7 +66,7 @@ public class AndOrDistRewrites extends AbstractManualRewrites {
 				return null;
 
 			return pred.rewriteSubFormula(position.getParent(), newSubFormula,
-					FormulaFactory.getDefault());
+					ff);
 		}
 		return null;
 	}

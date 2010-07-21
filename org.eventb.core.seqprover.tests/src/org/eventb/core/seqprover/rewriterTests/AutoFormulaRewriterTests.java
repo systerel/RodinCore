@@ -27,7 +27,7 @@ import org.junit.Test;
 public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 	
 	// The automatic rewriter for testing.
-	private static final IFormulaRewriter rewriter = new AutoRewriterImpl();
+	private static final IFormulaRewriter rewriter = new AutoRewriterImpl(ff);
 	
 	/**
 	 * Constructor.

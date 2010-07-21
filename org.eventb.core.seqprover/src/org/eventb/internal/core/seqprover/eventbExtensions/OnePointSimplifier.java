@@ -107,14 +107,15 @@ public class OnePointSimplifier {
 	 * 
 	 * @param predicate
 	 *            the predicate to which the one point simplification is applied
+	 * @param ff 
+	 * 			  the formula factory to use
 	 * @return the simplified predicate or <code>predicate</code> if the one
 	 *         point simplification could not apply on it
 	 */
-	public static Predicate rewrite(Predicate predicate) {
+	public static Predicate rewrite(Predicate predicate, FormulaFactory ff) {
 		if(!(predicate instanceof QuantifiedPredicate)){
 			return predicate;
 		}
-		final FormulaFactory ff = FormulaFactory.getDefault();
 		final OnePointSimplifier s = new OnePointSimplifier(predicate, ff);
 		s.matchAndApply();
 		if (s.wasSuccessfullyApplied()) {

@@ -25,10 +25,14 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.UnaryPredicate;
 
 public class FormulaSimplification {
+	
+	private FormulaFactory factory;
+	
+	public FormulaSimplification(FormulaFactory factory) {
+		this.factory = factory;
+	}
 
-	private static FormulaFactory ff = FormulaFactory.getDefault();
-
-	private static <T extends Formula<T>> Collection<T> simplifiedAssociativeFormula(
+	private <T extends Formula<T>> Collection<T> simplifiedAssociativeFormula(
 			T[] children, T neutral, T determinant, boolean eliminateDuplicate) {
 		Collection<T> formulas;
 		if (eliminateDuplicate)
@@ -51,7 +55,7 @@ public class FormulaSimplification {
 							&& pred.getTag() == Predicate.NOT) {
 						negation = ((UnaryPredicate) pred).getChild();
 					} else {
-						negation = ff.makeUnaryPredicate(Predicate.NOT,
+						negation = factory.makeUnaryPredicate(Predicate.NOT,
 								pred, null);
 					}
 					if (formulas.contains(negation)) {
@@ -69,7 +73,7 @@ public class FormulaSimplification {
 		return formulas;
 	}
 
-	public static Predicate simplifyAssociativePredicate(
+	public Predicate simplifyAssociativePredicate(
 			AssociativePredicate predicate, Predicate[] children,
 			Predicate neutral, Predicate determinant) {
 
@@ -82,29 +86,29 @@ public class FormulaSimplification {
 			if (predicates.size() == 1)
 				return predicates.iterator().next();
 
-			AssociativePredicate newPred = ff.makeAssociativePredicate(
+			AssociativePredicate newPred = factory.makeAssociativePredicate(
 					predicate.getTag(), predicates, null);
 			return newPred;
 		}
 		return predicate;
 	}
 
-	public static Expression simplifyAssociativeExpression(
+	public Expression simplifyAssociativeExpression(
 			AssociativeExpression expression, Expression[] children) {
 		int tag = expression.getTag();
 
 		final Expression neutral;
 		final Expression determinant;
-		final Expression number0 = ff.makeIntegerLiteral(BigInteger.ZERO, null);
-		final Expression number1 = ff.makeIntegerLiteral(BigInteger.ONE, null);
+		final Expression number0 = factory.makeIntegerLiteral(BigInteger.ZERO, null);
+		final Expression number1 = factory.makeIntegerLiteral(BigInteger.ONE, null);
 		switch (tag) {
 		case Expression.BUNION:
-			neutral = ff.makeEmptySet(expression.getType(), null);
-			determinant = expression.getType().getBaseType().toExpression(ff);
+			neutral = factory.makeEmptySet(expression.getType(), null);
+			determinant = expression.getType().getBaseType().toExpression(factory);
 			break;
 		case Expression.BINTER:
-			neutral = expression.getType().getBaseType().toExpression(ff);
-			determinant = ff.makeEmptySet(expression.getType(), null);
+			neutral = expression.getType().getBaseType().toExpression(factory);
+			determinant = factory.makeEmptySet(expression.getType(), null);
 			break;
 		case Expression.PLUS:
 			neutral = number0;
@@ -115,7 +119,7 @@ public class FormulaSimplification {
 			determinant = number0;
 			break;
 		case Expression.OVR:
-			neutral = ff.makeEmptySet(expression.getType(), null);
+			neutral = factory.makeEmptySet(expression.getType(), null);
 			determinant = null;
 			break;
 		default:
@@ -134,53 +138,53 @@ public class FormulaSimplification {
 			if (expressions.size() == 1)
 				return expressions.iterator().next();
 
-			AssociativeExpression newExpression = ff.makeAssociativeExpression(
+			AssociativeExpression newExpression = factory.makeAssociativeExpression(
 					tag, expressions, null);
 			return newExpression;
 		}
 		return expression;
 	}
 
-	public static Expression getFaction(Expression E, Expression F) {
-		return ff.makeBinaryExpression(Expression.DIV, E, F, null);
+	public Expression getFaction(Expression E, Expression F) {
+		return factory.makeBinaryExpression(Expression.DIV, E, F, null);
 	}
 
-	public static Expression getFaction(Expression expression, BigInteger E,
+	public Expression getFaction(Expression expression, BigInteger E,
 			Expression F) {
 		switch (E.signum()) {
 		case -1:
-			final Expression minusE = ff.makeIntegerLiteral(E.negate(), null);
-			return ff.makeBinaryExpression(Expression.DIV, minusE, F, null);
+			final Expression minusE = factory.makeIntegerLiteral(E.negate(), null);
+			return factory.makeBinaryExpression(Expression.DIV, minusE, F, null);
 		case 0:
-			return ff.makeIntegerLiteral(E, null);
+			return factory.makeIntegerLiteral(E, null);
 		default:
 			return expression;
 		}
 	}
 
-	public static Expression getFaction(Expression expression, 
+	public Expression getFaction(Expression expression, 
 			Expression E, BigInteger F) {
 		if (F.signum() < 0) {
-			final Expression minusF = ff.makeIntegerLiteral(F.negate(), null);
-			return ff.makeBinaryExpression(Expression.DIV, E, minusF, null);
+			final Expression minusF = factory.makeIntegerLiteral(F.negate(), null);
+			return factory.makeBinaryExpression(Expression.DIV, E, minusF, null);
 		}
 		if (F.equals(BigInteger.ONE) ) {
-			return ff.makeUnaryExpression(Expression.UNMINUS, E, null);
+			return factory.makeUnaryExpression(Expression.UNMINUS, E, null);
 		}
 		return expression;
 	}
 
-	public static Expression getFaction(Expression expression, 
+	public Expression getFaction(Expression expression, 
 			BigInteger E, BigInteger F) {
 		if (E.signum() == 0)
-			return ff.makeIntegerLiteral(BigInteger.ZERO, null);
+			return factory.makeIntegerLiteral(BigInteger.ZERO, null);
 		if (F.equals(BigInteger.ONE)) {
-			return ff.makeIntegerLiteral(E, null);
+			return factory.makeIntegerLiteral(E, null);
 		}
 		if (E.signum() < 0 && F.signum() < 0) {
-			final Expression minusE = ff.makeIntegerLiteral(E.negate(), null);
-			final Expression minusF = ff.makeIntegerLiteral(F.negate(), null);
-			return ff.makeBinaryExpression(Expression.DIV, minusE, minusF, null);
+			final Expression minusE = factory.makeIntegerLiteral(E.negate(), null);
+			final Expression minusF = factory.makeIntegerLiteral(F.negate(), null);
+			return factory.makeBinaryExpression(Expression.DIV, minusE, minusF, null);
 		}
 		return expression;
 	}

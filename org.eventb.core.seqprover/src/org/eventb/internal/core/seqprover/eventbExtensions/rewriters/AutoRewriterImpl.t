@@ -58,14 +58,17 @@ public class AutoRewriterImpl extends DefaultRewriter {
 
 	public static boolean DEBUG;
 
+	private final FormulaSimplification fs;
+	
 	private final IntegerLiteral number0 = ff.makeIntegerLiteral(BigInteger.ZERO, null);
 	
 	private final IntegerLiteral number1 = ff.makeIntegerLiteral(BigInteger.ONE, null);
 
 	private final IntegerLiteral number2 = ff.makeIntegerLiteral(new BigInteger("2"), null);
 
-	public AutoRewriterImpl() {
-		super(true, FormulaFactory.getDefault());
+	public AutoRewriterImpl(FormulaFactory ff) {
+		super(true, ff);
+		fs = new FormulaSimplification(ff);
 	}
 
 	protected UnaryPredicate makeUnaryPredicate(int tag, Predicate child) {
@@ -250,7 +253,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Conjunction 2: P ∧ ... ∧ ⊥ ∧ ... ∧ Q  == ⊥
 	    	 */
 	    	Land(children) -> {
-				result = FormulaSimplification.simplifyAssociativePredicate(predicate, `children, Lib.True,
+				result = fs.simplifyAssociativePredicate(predicate, `children, Lib.True,
     				Lib.False);
 				trace(predicate, result, "SIMP_SPECIAL_AND_BTRUE", "SIMP_SPECIAL_AND_BFALSE");
 				return result;
@@ -263,7 +266,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Disjunction 2: P ⋁ ... ⋁ ⊥ ⋁ ... ⋁ Q  == P ⋁ ... ⋁ Q
 	    	 */
 	    	Lor(children) -> {
-				result = FormulaSimplification.simplifyAssociativePredicate(predicate, `children, Lib.False,
+				result = fs.simplifyAssociativePredicate(predicate, `children, Lib.False,
     				Lib.True);
 				trace(predicate, result, "SIMP_SPECIAL_OR_BTRUE", "SIMP_SPECIAL_OR_BFALSE");
 				return result;
@@ -946,7 +949,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    			return result;
 	    		}
 	    		else if (`E.equals(number1)) {
-	    			result = FormulaUnfold.makeExistSingletonSet(`S);
+	    			result = new FormulaUnfold(ff).makeExistSingletonSet(`S);
 	    			trace(predicate, result, "SIMP_LIT_EQUAL_CARD_1");
 	    			return result;
 	    		}
@@ -967,7 +970,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    			return result;
 	    		}
 	    		else if (`E.equals(number1)) {
-	    			result = FormulaUnfold.makeExistSingletonSet(`S);
+	    			result = new FormulaUnfold(ff).makeExistSingletonSet(`S);
 	    			trace(predicate, result, "SIMP_LIT_EQUAL_CARD_1");
 	    			return result;
 	    		}
@@ -1064,7 +1067,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Set Theory: S ∩ ... ∩ T ∩ T ∩ ... ∩ V == S ∩ ... ∩ T ∩ ... ∩ V
 	    	 */
 	    	BInter(children) -> {
-	    		result = FormulaSimplification.simplifyAssociativeExpression(expression, `children);
+	    		result = fs.simplifyAssociativeExpression(expression, `children);
 	    		trace(expression, result, "SIMP_SPECIAL_BINTER", "SIMP_TYPE_BINTER", "SIMP_MULTI_BINTER");
 				return result;
 	    	}
@@ -1078,7 +1081,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Set Theory: S ∪ ... ∪ T ∪ T ∪ ... ∪ V == S ∪ ... ∪ T ∪ ... ∪ V
 	    	 */
 	    	BUnion(children) -> {
-	    		result = FormulaSimplification.simplifyAssociativeExpression(expression, `children);
+	    		result = fs.simplifyAssociativeExpression(expression, `children);
 	    		trace(expression, result, "SIMP_SPECIAL_BUNION", "SIMP_TYPE_BUNION", "SIMP_MULTI_BUNION");
 				return result;
 	    	}
@@ -1088,7 +1091,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Arithmetic 1: E + ... + 0 + ... + F == E + ... + ... + F
 	    	 */
 	    	Plus (children) -> {
-	    		result = FormulaSimplification.simplifyAssociativeExpression(expression, `children);
+	    		result = fs.simplifyAssociativeExpression(expression, `children);
 	    		trace(expression, result, "SIMP_SPECIAL_PLUS");
 				return result;
 	    	}
@@ -1142,7 +1145,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * Set theory: r  ...  ∅  ...  s  ==  r  ...  s
 			 */
 	    	Ovr(children) -> {
-	    		result = FormulaSimplification.simplifyAssociativeExpression(expression, `children);
+	    		result = fs.simplifyAssociativeExpression(expression, `children);
 	    		trace(expression, result, "SIMP_SPECIAL_OVERL");
 				return result;
      		}
@@ -1315,7 +1318,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Arithmetic: (−E) ÷ (−F) == E ÷ F
 	    	 */
 	    	Div(UnMinus(E), UnMinus(F)) -> {
-	    		result = FormulaSimplification.getFaction(`E, `F);
+	    		result = fs.getFaction(`E, `F);
 	    		trace(expression, result, "SIMP_DIV_MINUS");
 	    		return result;
 	    	}
@@ -1325,7 +1328,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Arithmetic: (−E) ÷ (−F) == E ÷ F
 	    	 */
 	    	Div(UnMinus(E), IntegerLiteral(F)) -> {
-	    		result = FormulaSimplification.getFaction(`expression, `E, `F);
+	    		result = fs.getFaction(`expression, `E, `F);
 	    		trace(expression, result, "SIMP_DIV_MINUS");
 	    		return result;
 	    	}
@@ -1335,7 +1338,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Arithmetic 10: (−E) ÷ (−F) == E ÷ F
 	    	 */
 	    	Div(IntegerLiteral(E), UnMinus(F)) -> {
-	    		result = FormulaSimplification.getFaction(`expression, `E, `F);
+	    		result = fs.getFaction(`expression, `E, `F);
 	    		trace(expression, result, "SIMP_DIV_MINUS");
 	    		return result;
 	    	}
@@ -1349,7 +1352,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Arithmetic: (−E) ÷ (−F) == E ÷ F
 	    	 */
 	    	Div(IntegerLiteral(E), IntegerLiteral(F)) -> {
-	    		result = FormulaSimplification.getFaction(`expression, `E, `F);
+	    		result = fs.getFaction(`expression, `E, `F);
 	    		trace(expression, result, "SIMP_SPECIAL_DIV_1", "SIMP_SPECIAL_DIV_0", "SIMP_DIV_MINUS");
 	    		return result;
 	    	}

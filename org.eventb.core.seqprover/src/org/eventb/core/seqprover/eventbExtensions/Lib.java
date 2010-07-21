@@ -1162,11 +1162,11 @@ public final class Lib {
 	 * @return the rewritten predicate
 	 * @since 1.4
 	 */
-	public static Predicate applyTypeSimplification(Predicate predicate) {
-		final IFormulaRewriter typeRewriter = new TypeRewriterImpl();
+	public static Predicate applyTypeSimplification(Predicate predicate, FormulaFactory ff) {
+		final IFormulaRewriter typeRewriter = new TypeRewriterImpl(ff);
 		final Predicate typeRewritten = predicate.rewrite(typeRewriter);
 		
-		final IFormulaRewriter autoRewriter = new AutoRewriterImpl();
+		final IFormulaRewriter autoRewriter = new AutoRewriterImpl(ff);
 		return recursiveRewrite(typeRewritten, autoRewriter);
 	}
 

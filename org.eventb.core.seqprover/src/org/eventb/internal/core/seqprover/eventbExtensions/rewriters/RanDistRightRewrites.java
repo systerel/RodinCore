@@ -56,10 +56,8 @@ public class RanDistRightRewrites extends AbstractManualRewrites implements IVer
 	}
 
 	@Override
-	protected Predicate rewrite(Predicate pred, IPosition position) {
-		IFormulaRewriter rewriter = new RanDistRightRewriterImpl();
-		
-		FormulaFactory ff = FormulaFactory.getDefault();
+	protected Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
+		IFormulaRewriter rewriter = new RanDistRightRewriterImpl(ff);
 		Formula<?> subFormula = pred.getSubFormula(position);
 		
 		Formula<?> newSubFormula = null;

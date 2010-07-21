@@ -127,13 +127,13 @@ public class LambdaComputer {
 				innerExpr, null);
 		final Predicate exists = ff.makeQuantifiedPredicate(EXISTS, decls,
 				equals, null);
-		final AutoRewriterImpl rewriter = new AutoRewriterImpl();
+		final AutoRewriterImpl rewriter = new AutoRewriterImpl(ff);
 		boolean changed;
 		Predicate pred = exists;
 		do {
 			final Predicate old = pred;
 			pred = pred.rewrite(rewriter);
-			pred = OnePointSimplifier.rewrite(pred);
+			pred = OnePointSimplifier.rewrite(pred, ff);
 			changed = old != pred;
 		} while (changed);
 		if (hasExpectedFinalForm(pred)) {

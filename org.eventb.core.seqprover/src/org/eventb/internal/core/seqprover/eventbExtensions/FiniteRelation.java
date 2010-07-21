@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import static org.eventb.core.ast.Formula.IN;
@@ -5,23 +15,23 @@ import static org.eventb.core.ast.Formula.KFINITE;
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
 import static org.eventb.core.seqprover.ProverFactory.reasonerFailure;
-import static org.eventb.core.seqprover.eventbExtensions.Lib.ff;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isFinite;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isRelation;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isSetOfRelation;
 
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.reasonerInputs.SingleExprInput;
 import org.eventb.core.seqprover.reasonerInputs.SingleExprInputReasoner;
 
@@ -69,6 +79,7 @@ public class FiniteRelation extends SingleExprInputReasoner implements
 					+ "∈" + relSet);
 		}
 		
+		final FormulaFactory ff = seq.getFormulaFactory();
 		final IAntecedent[] antecedents = new IAntecedent[] { //
 				makeAntecedent(relSet.getWDPredicate(ff)), //
 				makeAntecedent(ff.makeRelationalPredicate(IN, r, relSet, null)), //

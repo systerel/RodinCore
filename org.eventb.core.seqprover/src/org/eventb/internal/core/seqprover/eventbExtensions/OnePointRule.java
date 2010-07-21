@@ -15,16 +15,18 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static org.eventb.core.seqprover.ProverFactory.makeForwardInfHypAction;
 import static org.eventb.core.seqprover.ProverFactory.makeHideHypAction;
-import static org.eventb.core.seqprover.eventbExtensions.Lib.ff;
 
 import java.util.Collections;
 import java.util.Set;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
+import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
@@ -35,8 +37,6 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.SerializeException;
-import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
@@ -91,7 +91,7 @@ public class OnePointRule implements IVersionedReasoner {
 		return REASONER_ID;
 	}
 
-	public static boolean isApplicable(Formula<?> formula) {
+	public static boolean isApplicable(Formula<?> formula, FormulaFactory ff) {
 		if (!(formula instanceof QuantifiedPredicate)) {
 			return false;
 		}
@@ -109,7 +109,8 @@ public class OnePointRule implements IVersionedReasoner {
 
 		final boolean isGoal = pred == null;
 		final Predicate applyTo = isGoal ? seq.goal() : pred;
-		IAntecedent[] antecedents = getAntecedents(applyTo, isGoal);
+		IAntecedent[] antecedents = getAntecedents(applyTo, isGoal,
+				seq.getFormulaFactory());
 		if (antecedents == null) {
 			return ProverFactory.reasonerFailure(this, pInput, "Inference "
 					+ getReasonerID() + " is not applicable for "
@@ -129,7 +130,8 @@ public class OnePointRule implements IVersionedReasoner {
 		return "One Point Rule in " + (pred == null ? "goal" : pred);
 	}
 
-	private IAntecedent[] getAntecedents(Predicate pred, boolean isGoal) {
+	private IAntecedent[] getAntecedents(Predicate pred, boolean isGoal,
+			FormulaFactory ff) {
 
 		final OnePointSimplifier onePoint = new OnePointSimplifier(pred, ff);
 		onePoint.matchAndApply();

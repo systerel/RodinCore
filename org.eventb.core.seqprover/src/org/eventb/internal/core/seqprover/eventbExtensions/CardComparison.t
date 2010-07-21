@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 ETH Zurich and others.
+ * Copyright (c) 2008, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Identifier;
@@ -137,6 +138,8 @@ public class CardComparison extends AbstractManualInference {
 		if (!pos.isRoot() || ! isPredicateApplicable(goal))
 			return null;
 		
+		final FormulaFactory ff = seq.getFormulaFactory();
+		
 	    %match (Predicate goal) {
 
 			/**
@@ -144,7 +147,7 @@ public class CardComparison extends AbstractManualInference {
 	    	 */
 			Equal(Card(S), Card(T)) -> {
 				if (haveSameType(`S, `T))
-					return makeAntecedents(EQUAL, `S, `T);
+					return makeAntecedents(EQUAL, `S, `T, ff);
 			}
 
 			/**
@@ -152,7 +155,7 @@ public class CardComparison extends AbstractManualInference {
 	    	 */
 			Le(Card(S), Card(T)) -> {
 				if (haveSameType(`S, `T))
-					return makeAntecedents(SUBSETEQ, `S, `T);
+					return makeAntecedents(SUBSETEQ, `S, `T, ff);
 			}
 
 			/**
@@ -160,7 +163,7 @@ public class CardComparison extends AbstractManualInference {
 	    	 */
 			Lt(Card(S), Card(T)) -> {
 				if (haveSameType(`S, `T))
-					return makeAntecedents(SUBSET, `S, `T);
+					return makeAntecedents(SUBSET, `S, `T, ff);
 			}
 
 			/**
@@ -168,7 +171,7 @@ public class CardComparison extends AbstractManualInference {
 	    	 */
 			Ge(Card(S), Card(T)) -> {
 				if (haveSameType(`S, `T))
-					return makeAntecedents(SUBSETEQ, `T, `S);
+					return makeAntecedents(SUBSETEQ, `T, `S, ff);
 			}
 
 			/**
@@ -176,14 +179,14 @@ public class CardComparison extends AbstractManualInference {
 	    	 */
 			Gt(Card(S), Card(T)) -> {
 				if (haveSameType(`S, `T))
-					return makeAntecedents(SUBSET, `T, `S);
+					return makeAntecedents(SUBSET, `T, `S, ff);
 			}
 			
 	    }
 		return null;
 	}
 	
-	private IAntecedent[] makeAntecedents(int tag, Expression l, Expression r) {
+	private IAntecedent[] makeAntecedents(int tag, Expression l, Expression r, FormulaFactory ff) {
 		final Predicate newPred = ff.makeRelationalPredicate(tag, l, r, null);
 		return new IAntecedent[] { makeAntecedent(null, newPred) };
 	}

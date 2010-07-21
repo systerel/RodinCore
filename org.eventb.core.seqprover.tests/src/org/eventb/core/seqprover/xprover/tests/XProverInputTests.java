@@ -17,11 +17,12 @@ import java.util.HashMap;
 import java.util.Set;
 
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.SerializeException;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.xprover.XProverInput;
 import org.eventb.core.seqprover.xprover.XProverReasoner;
 import org.junit.Test;
@@ -37,6 +38,10 @@ public class XProverInputTests extends XProverTests {
 		
 		HashMap<String, String> stringMap = new HashMap<String, String>();
 
+		public FormulaFactory getFormulaFactory() {
+			return FormulaFactory.getDefault();
+		}
+		
 		public IAntecedent[] getAntecedents() {
 			// Ignore
 			return null;

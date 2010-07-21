@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
 import org.eventb.core.ast.DefaultRewriter;
@@ -42,18 +52,19 @@ public class HideOriginalRewrites extends AbstractAutoRewrites implements
 		}
 		
 	}
-	
-	private final static FormulaFactory ff = FormulaFactory.getDefault();
 
-	private final static IFormulaRewriter rewriter = new HideOriginalRewriter(true, ff);
-	
 	public HideOriginalRewrites() {
-		super(rewriter, true);
+		super(true);
 	}
 
 	@Override
 	protected String getDisplayName() {
 		return "Test hide original rewrites";
+	}
+
+	@Override
+	protected IFormulaRewriter getRewriter(FormulaFactory formulaFactory) {
+		return new HideOriginalRewriter(true, formulaFactory);
 	}
 
 	public String getReasonerID() {

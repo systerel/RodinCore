@@ -33,7 +33,7 @@ import org.junit.Test;
 public class TypeRewriterTests extends AbstractFormulaRewriterTests {
 
 	// The type rewriter for testing.
-	private static final IFormulaRewriter rewriter = new TypeRewriterImpl();
+	private static final IFormulaRewriter rewriter = new TypeRewriterImpl(ff);
 	
 	/**
 	 * Constructor.
@@ -90,7 +90,7 @@ public class TypeRewriterTests extends AbstractFormulaRewriterTests {
 		final Predicate pred = makePredicate("S ⊆ T ∧ S≠(∅⦂ℙ(T))", typenv);
 		final Predicate expected = makePredicate("¬S=(∅⦂ℙ(T))", typenv);
 		
-		final Predicate actual = Lib.applyTypeSimplification(pred);
+		final Predicate actual = Lib.applyTypeSimplification(pred, ff);
 		Assert.assertEquals(expected, actual);
 	}
 }

@@ -14,11 +14,11 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 import static org.eventb.core.ast.Formula.IN;
 import static org.eventb.core.ast.Formula.KFINITE;
 import static org.eventb.core.seqprover.ProverFactory.reasonerFailure;
-import static org.eventb.core.seqprover.eventbExtensions.Lib.ff;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isRelImg;
 
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasonerFailure;
 import org.eventb.core.seqprover.IReasonerInput;
@@ -61,7 +61,8 @@ public class FiniteFunRelImg extends PFunSetInputReasoner {
 	}
 
 	@Override
-	protected IReasonerFailure verifyInput(Predicate goal, PFunSetInput input) {
+	protected IReasonerFailure verifyInput(Predicate goal, PFunSetInput input,
+			FormulaFactory ff) {
 		// f[s]
 		final BinaryExpression img = (BinaryExpression) getFiniteExpression(goal);
 		final Expression f = img.getLeft();
@@ -75,7 +76,8 @@ public class FiniteFunRelImg extends PFunSetInputReasoner {
 	}
 
 	@Override
-	protected Predicate[] getSubgoals(Predicate goal, PFunSetInput input) {
+	protected Predicate[] getSubgoals(Predicate goal, PFunSetInput input,
+			FormulaFactory ff) {
 		final BinaryExpression img = (BinaryExpression) getFiniteExpression(goal);
 		final Expression f = img.getLeft();
 		final Expression s = img.getRight();

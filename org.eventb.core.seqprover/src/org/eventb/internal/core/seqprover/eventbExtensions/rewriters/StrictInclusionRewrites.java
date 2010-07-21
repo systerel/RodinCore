@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,10 +44,8 @@ public class StrictInclusionRewrites extends AbstractManualRewrites implements
 	}
 
 	@Override
-	protected Predicate rewrite(Predicate pred, IPosition position) {
-		IFormulaRewriter rewriter = new StrictInclusionRewriterImpl();
-
-		FormulaFactory ff = FormulaFactory.getDefault();
+	protected Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
+		IFormulaRewriter rewriter = new StrictInclusionRewriterImpl(ff);
 		Formula<?> predicate = pred.getSubFormula(position);
 
 		Formula<?> newSubPredicate = null;

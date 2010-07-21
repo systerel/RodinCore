@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -632,8 +633,10 @@ public class AutoTactics {
 			if (pm != null && pm.isCanceled()) {
 				return "Canceled";
 			}
-			final Predicate goal = ptNode.getSequent().goal();
-			if (!Tactics.isOnePointApplicable(goal)) {
+			final IProverSequent sequent = ptNode.getSequent();
+			final Predicate goal = sequent.goal();
+			final FormulaFactory ff = sequent.getFormulaFactory();
+			if (!Tactics.isOnePointApplicable(goal, ff)) {
 				return "Tactic unapplicable";
 			}
 			if (pm != null && pm.isCanceled()) {
@@ -657,8 +660,10 @@ public class AutoTactics {
 			if (pm != null && pm.isCanceled()) {
 				return "Canceled";
 			}
-			for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
-				if (Tactics.isOnePointApplicable(shyp)) {
+			final IProverSequent sequent = ptNode.getSequent();
+			final FormulaFactory formulaFactory = sequent.getFormulaFactory();
+			for (Predicate shyp : sequent.selectedHypIterable()) {
+				if (Tactics.isOnePointApplicable(shyp, formulaFactory)) {
 					return Tactics.onePointHyp(shyp).apply(ptNode, pm);
 				}
 				if (pm != null && pm.isCanceled()) {

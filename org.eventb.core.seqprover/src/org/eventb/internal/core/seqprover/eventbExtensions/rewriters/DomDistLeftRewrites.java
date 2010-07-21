@@ -56,10 +56,9 @@ public class DomDistLeftRewrites extends AbstractManualRewrites implements IVers
 	}
 
 	@Override
-	protected Predicate rewrite(Predicate pred, IPosition position) {
-		IFormulaRewriter rewriter = new DomDistLeftRewriterImpl();
+	protected Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
+		IFormulaRewriter rewriter = new DomDistLeftRewriterImpl(ff);
 		
-		FormulaFactory ff = FormulaFactory.getDefault();
 		Formula<?> subFormula = pred.getSubFormula(position);
 		
 		Formula<?> newSubFormula = null;

@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ ******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import org.eventb.core.ast.BinaryPredicate;
@@ -24,8 +34,6 @@ public class FinitePositive extends EmptyInputReasoner {
 
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".finitePositive";
 
-	private static FormulaFactory ff = FormulaFactory.getDefault();
-
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
@@ -47,6 +55,7 @@ public class FinitePositive extends EmptyInputReasoner {
 		Expression S = sPred.getExpression();
 
 		// #n.(!x.x : S => x <= n)
+		final FormulaFactory ff = seq.getFormulaFactory();
 		BoundIdentDecl nDecl = ff.makeBoundIdentDecl("n", null);
 		BoundIdentDecl xDecl = ff.makeBoundIdentDecl("x", null);
 		BoundIdentifier n = ff.makeBoundIdentifier(1, null);

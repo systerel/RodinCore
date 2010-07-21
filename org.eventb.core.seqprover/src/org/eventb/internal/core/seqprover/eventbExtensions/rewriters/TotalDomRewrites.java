@@ -49,8 +49,6 @@ public class TotalDomRewrites implements IVersionedReasoner {
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".totalDom";
 	private static final int VERSION = 2;
 	
-	private static final FormulaFactory ff = FormulaFactory.getDefault();
-
 	public static class Input implements IReasonerInput {
 		public static final String POSITION_KEY = "pos";
 		public static final String SUBSTITUTE_KEY = "subst";
@@ -123,7 +121,8 @@ public class TotalDomRewrites implements IVersionedReasoner {
 		if (function == null) {
 			return failure(input, toRewrite);
 		}
-		final Predicate rewritten = rewrite(toRewrite, input, function, substitutions);
+		final FormulaFactory ff = seq.getFormulaFactory();
+		final Predicate rewritten = rewrite(toRewrite, input, function, substitutions, ff);
 		if (rewritten == null) {
 			return failure(input, toRewrite);
 		}
@@ -185,7 +184,7 @@ public class TotalDomRewrites implements IVersionedReasoner {
 	}
 
 	protected Predicate rewrite(Predicate pred, Input input, Expression function,
-			TotalDomSubstitutions substitutions) {
+			TotalDomSubstitutions substitutions, FormulaFactory ff) {
 
 		final Set<Expression> substitutes = substitutions.get(function);
 		if (!substitutes.contains(input.substitute)) {
@@ -200,6 +199,7 @@ public class TotalDomRewrites implements IVersionedReasoner {
 			throws SerializeException {
 
 		final String posString = reader.getString(Input.POSITION_KEY);
+		final FormulaFactory ff = reader.getFormulaFactory();
 		final IPosition position = ff.makePosition(posString);
 		final Expression[] substitutes = reader.getExpressions(Input.SUBSTITUTE_KEY);
 		

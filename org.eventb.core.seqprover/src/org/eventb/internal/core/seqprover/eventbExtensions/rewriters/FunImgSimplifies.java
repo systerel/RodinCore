@@ -39,8 +39,6 @@ public class FunImgSimplifies extends AbstractManualRewrites implements
 	public static String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".funImgSimplifies";
 
-	private static final FormulaFactory ff = FormulaFactory.getDefault();
-
 	public int getVersion() {
 		return VERSION;
 	}
@@ -79,7 +77,7 @@ public class FunImgSimplifies extends AbstractManualRewrites implements
 	}
 
 	@Override
-	protected Predicate rewrite(Predicate pred, IPosition position) {
+	protected Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
 		final Formula<?> subFormula = pred.getSubFormula(position);
 		if (subFormula == null || subFormula.getTag() != Expression.FUNIMAGE) {
 			return null;

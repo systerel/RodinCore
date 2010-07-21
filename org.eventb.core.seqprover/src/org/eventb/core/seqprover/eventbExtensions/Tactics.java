@@ -1335,7 +1335,7 @@ public class Tactics {
 	 * conjunction rewrites" {@link ImpAndRewrites} to a predicate.
 	 * <p>
 	 * 
-	 * @param predicate
+	 * @param pred
 	 *            a predicate
 	 * @return a list of applicable positions
 	 * @author htson
@@ -1380,7 +1380,7 @@ public class Tactics {
 	 * disjunction rewrites" {@link ImpOrRewrites} to a predicate.
 	 * <p>
 	 * 
-	 * @param predicate
+	 * @param pred
 	 *            a predicate
 	 * @return a list of applicable positions
 	 * @author htson
@@ -3045,8 +3045,7 @@ public class Tactics {
 		return new ITactic() {
 
 			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-				final Predicate goal = ptNode.getSequent().goal();
-				final PFunSetInput input = computeInput(goal);
+				final PFunSetInput input = computeInput(ptNode);
 				if (input == null) {
 					return "Tactic inapplicable";
 				}
@@ -3054,7 +3053,8 @@ public class Tactics {
 						.apply(ptNode, pm);
 			}
 
-			private PFunSetInput computeInput(final Predicate goal) {
+			private PFunSetInput computeInput(final IProofTreeNode ptNode) {
+				final Predicate goal = ptNode.getSequent().goal();
 				if (!Lib.isFinite(goal)) {
 					return null;
 				}
@@ -3064,9 +3064,10 @@ public class Tactics {
 				}
 				final Expression f = ((BinaryExpression) img).getLeft();
 				final Type type = f.getType();
-				final Expression S = type.getSource().toExpression(Lib.ff);
-				final Expression T = type.getTarget().toExpression(Lib.ff);
-				final BinaryExpression set = Lib.ff.makeBinaryExpression(
+				final FormulaFactory ff = ptNode.getFormulaFactory();
+				final Expression S = type.getSource().toExpression(ff);
+				final Expression T = type.getTarget().toExpression(ff);
+				final BinaryExpression set = ff.makeBinaryExpression(
 						Expression.PFUN, S, T, null);
 				final PFunSetInput input = new PFunSetInput(set);
 				return input;
@@ -3454,11 +3455,13 @@ public class Tactics {
 	 * 
 	 * @param predicate
 	 *            a predicate
+	 * @param ff
+	 *            the currently used formula factory
 	 * @return a list of applicable positions
 	 * @since 1.1
 	 */
-	public static List<IPosition> arithGetPositions(Predicate predicate) {
-		final IFormulaRewriter rewriter = new ArithRewriterImpl();
+	public static List<IPosition> arithGetPositions(Predicate predicate, FormulaFactory ff) {
+		final IFormulaRewriter rewriter = new ArithRewriterImpl(ff);
 		return predicate.getPositions(new DefaultFilter() {
 			@Override
 			public boolean select(BinaryExpression expr) {
@@ -3499,12 +3502,16 @@ public class Tactics {
 	 * 
 	 * @param predicate
 	 *            a predicate to check
+	 * @param ff
+	 *            the formula factory used by the sequent owning the given
+	 *            predicate
 	 * @return <code>true</code> iff one-point rules is applicable to the given
 	 *         predicate
 	 * @since 1.1
 	 */
-	public static boolean isOnePointApplicable(Predicate predicate) {
-		return OnePointRule.isApplicable(predicate);
+	public static boolean isOnePointApplicable(Predicate predicate,
+			FormulaFactory ff) {
+		return OnePointRule.isApplicable(predicate, ff);
 	}
 
 	/**

@@ -1,9 +1,20 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import java.util.Arrays;
 import java.util.Collections;
 
 import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -50,12 +61,13 @@ public class ExE extends HypothesisReasoner{
 		// The type environment is cloned since makeFresh.. adds directly to the
 		// given type environment
 		// TODO : Change implementation
-		final ITypeEnvironment newTypenv = Lib.ff.makeTypeEnvironment();
+		final FormulaFactory ff = sequent.getFormulaFactory();
+		final ITypeEnvironment newTypenv = ff.makeTypeEnvironment();
 		newTypenv.addAll(sequent.typeEnvironment());
-		final FreeIdentifier[] freeIdents = 
-			Lib.ff.makeFreshIdentifiers(boundIdentDecls, newTypenv);
+		final FreeIdentifier[] freeIdents = ff.makeFreshIdentifiers(
+				boundIdentDecls, newTypenv);
 		
-		Predicate instantiatedEx = ExQ.instantiate(freeIdents, Lib.ff);
+		Predicate instantiatedEx = ExQ.instantiate(freeIdents, ff);
 		assert instantiatedEx.isTypeChecked();
 		
 		final IHypAction action = ProverFactory.makeDeselectHypAction(Arrays.asList(pred));
