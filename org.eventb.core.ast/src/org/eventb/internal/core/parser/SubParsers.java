@@ -664,9 +664,9 @@ public class SubParsers {
 
 	}
 
-	static class ExtendedAtomicExpressionParser extends PrefixNudParser<ExtendedExpression> {
+	public static class ExtendedAtomicExpressionParser extends PrefixNudParser<ExtendedExpression> {
 		
-		protected ExtendedAtomicExpressionParser(int kind, int tag) {
+		public ExtendedAtomicExpressionParser(int kind, int tag) {
 			super(kind, tag);
 		}
 	
@@ -703,7 +703,7 @@ public class SubParsers {
 
 	}
 	
-	static class ExtendedBinaryExpressionInfix extends BinaryLedExprParser<ExtendedExpression> {
+	public static class ExtendedBinaryExpressionInfix extends BinaryLedExprParser<ExtendedExpression> {
 
 		public ExtendedBinaryExpressionInfix(int kind, int tag) {
 			super(kind, tag);
@@ -753,7 +753,7 @@ public class SubParsers {
 		
 	}
 
-	static class ExtendedAssociativeExpressionInfix extends AssociativeLedParser<ExtendedExpression, Expression> {
+	public static class ExtendedAssociativeExpressionInfix extends AssociativeLedParser<ExtendedExpression, Expression> {
 
 		public ExtendedAssociativeExpressionInfix(int kind, int tag) {
 			super(kind, tag, EXPR_PARSER);
@@ -1462,9 +1462,9 @@ public class SubParsers {
 		}
 	}
 	
-	static class ExtendedExprParen extends ParenNudParser<ExtendedExpression, List<Expression>> {
+	public static class ExtendedExprParen extends ParenNudParser<ExtendedExpression, List<Expression>> {
 
-		protected ExtendedExprParen(int kind, int tag) {
+		public ExtendedExprParen(int kind, int tag) {
 			super(kind, tag, EXPR_LIST_PARSER);
 		}
 

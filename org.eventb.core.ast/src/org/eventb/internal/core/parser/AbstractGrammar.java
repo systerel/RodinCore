@@ -123,8 +123,9 @@ public abstract class AbstractGrammar {
 		return subParsers.getLedParser(token);
 	}
 	
-	public IParserPrinter<? extends Formula<?>> getParser(IOperatorProperties operProps, int kind,
-			int tag) {
+	// for now, used only for extension parsers
+	public IParserPrinter<? extends Formula<?>> getParser(
+			IOperatorProperties operProps, int kind, int tag) {
 		return propParsers.getParser(operProps, kind, tag);
 	}
 
