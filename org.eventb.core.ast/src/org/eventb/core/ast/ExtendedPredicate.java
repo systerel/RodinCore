@@ -117,7 +117,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	}
 
 	@Override
-	protected void synthesizeType(FormulaFactory ff) {
+	protected void synthesizeType(FormulaFactory factory) {
 		final Formula<?>[] children = getChildren();
 		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(children);
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();

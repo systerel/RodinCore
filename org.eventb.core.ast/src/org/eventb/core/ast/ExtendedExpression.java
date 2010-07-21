@@ -167,7 +167,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	}
 
 	@Override
-	protected void synthesizeType(FormulaFactory ff, Type givenType) {
+	protected void synthesizeType(FormulaFactory factory, Type givenType) {
 		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(getChildren());
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();
 
@@ -185,7 +185,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 			return;
 		}
 
-		Type resultType = extension.getType(new TypeMediator(ff), this);
+		Type resultType = extension.getType(new TypeMediator(factory), this);
 		if (resultType == null) {
 			return;
 		}
