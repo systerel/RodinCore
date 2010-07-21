@@ -58,7 +58,6 @@ public interface IOperatorProperties {
 			return min <= nbArgs && nbArgs <= max;
 		}
 
-		// TODO move to Arity
 		public boolean isDistinct(Arity other) {
 			return getMin() > other.getMax()
 					|| other.getMin() > getMax();
