@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
@@ -286,7 +287,8 @@ public class InputManager implements IPartListener2, ISelectionListener {
 	}
 
 	public static void printProofSkeleton(IPRProof proof) throws RodinDBException {
-		final FormulaFactory ff = FormulaFactory.getDefault();
+		final IEventBRoot root = (IEventBRoot) proof.getRoot();
+		final FormulaFactory ff = root.getFormulaFactory();
 		final IProofSkeleton skeleton = proof.getSkeleton(ff, null);
 		System.out.println("***********************************");
 		System.out.println("Skeleton for proof " + proof.toString());

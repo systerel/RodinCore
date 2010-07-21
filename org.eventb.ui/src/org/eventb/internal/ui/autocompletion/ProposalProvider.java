@@ -52,27 +52,19 @@ public class ProposalProvider implements IContentProposalProvider {
 	}
 
 	private final IAttributeLocation location;
-	private FormulaFactory ff;
+	private FormulaFactory factory;
 
-	public ProposalProvider(IAttributeLocation location) {
+	public ProposalProvider(IAttributeLocation location, FormulaFactory factory) {
 		this.location = location;
-		this.ff = null;
+		this.factory = null;
 	}
 
 	public IContentProposal[] getProposals(String contents, int position) {
-		if (ff == null) {
-			ff = initFactory();
-		}
-		final PrefixComputer pc = new PrefixComputer(contents, position, ff);
+		final PrefixComputer pc = new PrefixComputer(contents, position, factory);
 		final String prefix = pc.getPrefix();
 		final List<String> completions = EventBPlugin.getCompletions(location,
 				prefix);
 		return makeProposals(contents, position, prefix, completions);
-	}
-
-	private FormulaFactory initFactory() {
-		// FIXME FF: compute from location
-		return FormulaFactory.getDefault();
 	}
 
 	private IContentProposal[] makeProposals(String contents, int position,

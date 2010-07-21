@@ -16,6 +16,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -33,7 +34,7 @@ public class InclusionSetMinusRight extends AbstractHypGoalTacticProvider {
 	}
 
 	@Override
-	public List<IPosition> retrievePositions(Predicate pred) {
+	public List<IPosition> retrievePositions(Predicate pred, FormulaFactory ff) {
 		return Tactics.inclusionSetMinusRightRewritesGetPositions(pred);
 	}
 

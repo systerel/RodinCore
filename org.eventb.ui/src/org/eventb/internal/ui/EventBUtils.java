@@ -31,6 +31,7 @@ import org.eventb.core.IAction;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IEventBProject;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IExtendsContext;
 import org.eventb.core.IGuard;
 import org.eventb.core.ILabeledElement;
@@ -38,6 +39,7 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.IRefinesMachine;
+import org.eventb.core.ast.FormulaFactory;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -342,6 +344,18 @@ public class EventBUtils {
 		hyperlink.setEnabled(false);
 		hyperlink.setImage(image);
 		hyperlink.setEnabled(enabled);
+	}
+
+	/**
+	 * Returns the formula factory used by the root element of the element given
+	 * as parameter.
+	 * 
+	 * @param element
+	 *            the element considered
+	 * @return the factory associated to the EventBRoot owning the given element
+	 */
+	public static FormulaFactory getFormulaFactory(IInternalElement element) {
+		return ((IEventBRoot) element.getRoot()).getFormulaFactory();
 	}
 
 }

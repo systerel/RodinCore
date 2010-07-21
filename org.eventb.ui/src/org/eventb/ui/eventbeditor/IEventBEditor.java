@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,13 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - extended with getFormulaFactory()
  *******************************************************************************/
 package org.eventb.ui.eventbeditor;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ide.IGotoMarker;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.ui.eventbeditor.IStatusChangedListener;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
@@ -123,4 +125,11 @@ public interface IEventBEditor<R extends IInternalElement> extends IEditorPart,
 	 * @return the unique string ID for the editor.
 	 */
 	public String getEditorId();
+	
+	/**
+	 * Returns the formula factory used by the root input of this editor.
+	 * 
+	 * @return the formula factory used
+	 */
+	public FormulaFactory getFormulaFactory();
 }

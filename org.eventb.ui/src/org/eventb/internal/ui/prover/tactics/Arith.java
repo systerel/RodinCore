@@ -14,6 +14,7 @@ package org.eventb.internal.ui.prover.tactics;
 
 import java.util.List;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -34,7 +35,7 @@ public class Arith extends AbstractHypGoalTacticProvider {
 	}
 
 	@Override
-	public List<IPosition> retrievePositions(Predicate pred) {
-		return Tactics.arithGetPositions(pred);
+	public List<IPosition> retrievePositions(Predicate pred, FormulaFactory ff) {
+		return Tactics.arithGetPositions(pred, ff);
 	}
 }

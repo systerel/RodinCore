@@ -90,19 +90,22 @@ public class NewEventDialog extends EventBDialog {
 	private final String guardPrefix;
 
 	private final String actPrefix;
-	
+
 	/**
 	 * Constructor.
-	 * <p>
 	 * 
+	 * @param editor
+	 *            the editor that called this dialog
+	 * @param root
+	 *            the root element to which events will be added
 	 * @param parentShell
 	 *            the parent shell of the dialog
 	 * @param title
 	 *            the title of the dialog
 	 */
-	public NewEventDialog(IEventBEditor<IMachineRoot> editor, Shell parentShell,
+	public NewEventDialog(IEventBEditor<IMachineRoot> editor, IMachineRoot root, Shell parentShell,
 			String title) {
-		super(parentShell, title);
+		super(parentShell, root, title);
 		this.editor = editor;
 		initValue();
 		dirtyTexts = new HashSet<Text>();
@@ -150,7 +153,6 @@ public class NewEventDialog extends EventBDialog {
 	}
 
 	private String getFreeEventLabel() {
-		final IMachineRoot root = editor.getRodinInput();
 		return UIUtils.getFreeElementLabel(root, IEvent.ELEMENT_TYPE);
 	}
 
@@ -358,7 +360,7 @@ public class NewEventDialog extends EventBDialog {
 
 		final List<String> names = new ArrayList<String>(parsResult);
 		names.add(labelResult);
-		if (!checkNewIdentifiers(names, true)) {
+		if (!checkNewIdentifiers(names, true, root.getFormulaFactory())) {
 			labelResult = null;
 			parsResult.clear();
 			return false;

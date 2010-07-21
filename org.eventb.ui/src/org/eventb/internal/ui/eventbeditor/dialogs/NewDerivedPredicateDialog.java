@@ -26,12 +26,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.ILabeledElement;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.preferences.PreferenceUtils;
-import org.rodinp.core.IInternalElement;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElementType;
 
 /**
@@ -58,22 +59,23 @@ public class NewDerivedPredicateDialog<T extends ILabeledElement> extends
 
 	/**
 	 * Constructor.
-	 * <p>
 	 * 
-	 * @param parentShell
-	 *            The parent shell of the dialog
-	 * @param title
-	 *            The title of the dialog
+	 * @param editor
+	 *            the editor that called this dialog
 	 * @param root
-	 *            The root element of the editor
+	 *            the root element of the editor
+	 * @param parentShell
+	 *            the parent shell of the dialog
+	 * @param title
+	 *            the title of the dialog
 	 * @param type
-	 *            The element type for wizard
+	 *            the element type for wizard
 	 */
-	public NewDerivedPredicateDialog(Shell parentShell, String title,
-			IInternalElement root, IInternalElementType<?> type) {
-		super(parentShell, title);
-		results = new ArrayList<Triplet<String,String,Boolean>>();
-		texts = new ArrayList<Triplet<IEventBInputText,IEventBInputText,Button>>();
+	public NewDerivedPredicateDialog(IEventBEditor<?> editor, IEventBRoot root,
+			Shell parentShell, String title, IInternalElementType<?> type) {
+		super(parentShell, root, title);
+		results = new ArrayList<Triplet<String, String, Boolean>>();
+		texts = new ArrayList<Triplet<IEventBInputText, IEventBInputText, Button>>();
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 
 		prefix = PreferenceUtils.getAutoNamePrefix(root, type);

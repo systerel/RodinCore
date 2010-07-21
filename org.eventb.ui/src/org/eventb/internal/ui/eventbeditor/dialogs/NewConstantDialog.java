@@ -61,22 +61,24 @@ public class NewConstantDialog extends EventBDialog {
 	
 	/**
 	 * Constructor.
-	 * <p>
 	 * 
+	 * @param editor
+	 *            the editor that called this dialog
+	 * @param root
+	 *            the context root to which constants will be added
 	 * @param parentShell
 	 *            the parent shell of the dialog
 	 * @param title
 	 *            the title of the dialog
 	 */
-	public NewConstantDialog(IEventBEditor<IContextRoot> editor,
+	public NewConstantDialog(IEventBEditor<IContextRoot> editor, IContextRoot root,
 			Shell parentShell, String title) {
-		super(parentShell, title);
+		super(parentShell, root, title);
 		this.editor = editor;
 		axmPrefix = getAxiomPrefix();
 	}
 
 	private String getAxiomPrefix() {
-		final IContextRoot root = editor.getRodinInput();
 		return PreferenceUtils.getAutoNamePrefix(root, IAxiom.ELEMENT_TYPE);
 	}
 	
@@ -105,7 +107,6 @@ public class NewConstantDialog extends EventBDialog {
 	}
 
 	private void createDialogContents(Composite parent) {
-		final IContextRoot root = editor.getRodinInput();
 		composite = toolkit.createComposite(parent);
 		setDebugBackgroundColor();
 
@@ -187,7 +188,7 @@ public class NewConstantDialog extends EventBDialog {
 	private boolean checkAndSetFieldValues() {
 		identifierResult = identifierText.getTextWidget().getText();
 		axmResults.clear();
-		if (!checkNewIdentifiers(singletonList(identifierResult), true)) {
+		if (!checkNewIdentifiers(singletonList(identifierResult), true, root.getFormulaFactory())) {
 			identifierResult = null;
 			return false;
 		}

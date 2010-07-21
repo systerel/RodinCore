@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,10 @@ import java.util.List;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eventb.core.IContextRoot;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 
 /**
  * @author htson
@@ -46,20 +48,24 @@ public class NewCarrierSetDialog extends EventBDialog {
 
 	/**
 	 * Constructor.
-	 * <p>
-	 * 
+	 *
+	 * @param editor
+	 * 			the editor that made the call to this method
+	 * @param root
+	 * 			the root element to which a carrier set will be added
 	 * @param parentShell
-	 *            The parent shell of the dialog
+	 *            the parent shell of the dialog
 	 * @param title
-	 *            The title of the dialog
+	 *            the title of the dialog
 	 * @param message
-	 *            The text message of the dialog
+	 *            the text message of the dialog
 	 * @param defaultPrefix
-	 *            The default prefix of for the attributes
+	 *            the default prefix of for the attributes
 	 */
-	public NewCarrierSetDialog(Shell parentShell, String title,
-			String message, String defaultPrefix) {
-		super(parentShell, title);
+	public NewCarrierSetDialog(IEventBEditor<IContextRoot> editor,
+			IContextRoot root, Shell parentShell, String title, String message,
+			String defaultPrefix) {
+		super(parentShell, root, title);
 		this.message = message;
 		this.defaultPrefix = defaultPrefix;
 		namesTexts = new ArrayList<IEventBInputText>();
@@ -133,7 +139,7 @@ public class NewCarrierSetDialog extends EventBDialog {
 
 	private boolean checkAndSetFieldValues() {
 		fillResult(namesTexts, namesResults);
-		if (!checkNewIdentifiers(namesResults, true)) {
+		if (!checkNewIdentifiers(namesResults, true, root.getFormulaFactory())) {
 			namesResults.clear();
 			return false;
 		}

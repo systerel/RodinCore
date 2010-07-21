@@ -37,8 +37,8 @@ import org.eventb.internal.ui.cachehypothesis.CacheHypothesisUtils;
 import org.eventb.internal.ui.eventbeditor.EditorManager;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.goal.GoalUtils;
-import org.eventb.internal.ui.preferences.UIPreferenceObserver;
 import org.eventb.internal.ui.preferences.ToggleAutoTacticPreference;
+import org.eventb.internal.ui.preferences.UIPreferenceObserver;
 import org.eventb.internal.ui.proofSkeletonView.ProofSkeletonView;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.internal.ui.proofinformation.ProofInformationUtils;
@@ -117,22 +117,30 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	private static final String PROOFSKELETON_DEBUG = PLUGIN_ID
 	+ "/debug/proofskeleton"; //$NON-NLS-1$
 
-	/**
-	 * Default values for creating RODIN Elements
-	 * Default factory is sufficient for making a true predicate
-	 */
-	public static final String PRD_DEFAULT = FormulaFactory.getDefault()
-			.makeLiteralPredicate(Formula.BTRUE, null).toString();
+	//Helpers for the creation of element default values
+	public static String getPrd_Default(FormulaFactory ff) {
+		return ff.makeLiteralPredicate(Formula.BTRUE, null).toString();
+	}
 
-	public static final String INV_DEFAULT = PRD_DEFAULT;
+	public static String getInv_Default(FormulaFactory ff){
+		return getPrd_Default(ff);
+	}
 
-	public static final String AXM_DEFAULT = PRD_DEFAULT;
+	public static String getAxm_Default(FormulaFactory ff) {
+		return getPrd_Default(ff);
+	}
 
-	public static final String THM_DEFAULT = PRD_DEFAULT;
+	public static String getThm_Default(FormulaFactory ff) {
+		return getPrd_Default(ff);
+	}
 
-	public static final String GRD_DEFAULT = PRD_DEFAULT;
+	public static String getGrd_Default(FormulaFactory ff) {
+		return getGrd_Default(ff);
+	}
 
-	public static final String SUB_DEFAULT = "";
+	public static String getSub_Default(FormulaFactory ff) {
+		return "";
+	}
 
 	// The shared instance.
 	private static EventBUIPlugin plugin;

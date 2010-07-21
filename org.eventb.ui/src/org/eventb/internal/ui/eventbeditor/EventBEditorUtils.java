@@ -22,12 +22,12 @@ package org.eventb.internal.ui.eventbeditor;
 import static org.eventb.internal.ui.EventBUtils.isReadOnly;
 import static org.eventb.internal.ui.UIUtils.showInfo;
 import static org.eventb.internal.ui.utils.Messages.dialogs_readOnlyElement;
+import static org.eventb.ui.EventBUIPlugin.getAxm_Default;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -60,6 +60,7 @@ import org.eventb.core.ISeesContext;
 import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
@@ -302,8 +303,9 @@ public class EventBEditorUtils {
 			public void run() {
 				final IInternalElement event = getEvent(viewer);
 				if (event != null) {
+					final FormulaFactory ff = editor.getFormulaFactory();
 					AtomicOperation operation = OperationFactory.createAction(
-							event, null, EventBUIPlugin.SUB_DEFAULT, null);
+							event, null, EventBUIPlugin.getSub_Default(ff), null);
 					History.getInstance().addOperation(operation);
 					displayInSynthesis(viewer, event, operation
 							.getCreatedElement());
@@ -356,6 +358,7 @@ public class EventBEditorUtils {
 	 */
 	public static void addWitness(final IEventBEditor<IMachineRoot> editor,
 			final TreeViewer viewer) {
+		final FormulaFactory ff = editor.getFormulaFactory();
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			@SuppressWarnings("synthetic-access")
 			public void run() {
@@ -364,7 +367,7 @@ public class EventBEditorUtils {
 					AtomicOperation op = OperationFactory.createElement(event,
 							IWitness.ELEMENT_TYPE,
 							EventBAttributes.PREDICATE_ATTRIBUTE,
-							EventBUIPlugin.PRD_DEFAULT);
+							EventBUIPlugin.getPrd_Default(ff));
 					History.getInstance().addOperation(op);
 					displayInSynthesis(viewer, event, op.getCreatedElement());
 				}
@@ -383,13 +386,14 @@ public class EventBEditorUtils {
 	 */
 	public static void addGuard(final IEventBEditor<IMachineRoot> editor,
 			final TreeViewer viewer) {
+		final FormulaFactory ff = editor.getFormulaFactory();
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			@SuppressWarnings("synthetic-access")
 			public void run() {
 				final IInternalElement event = getEvent(viewer);
 				if (event != null) {
 					AtomicOperation operation = OperationFactory.createGuard(
-							event, null, EventBUIPlugin.GRD_DEFAULT, null);
+							event, null, EventBUIPlugin.getGrd_Default(ff), null);
 					History.getInstance().addOperation(operation);
 					displayInSynthesis(viewer, event, operation.getCreatedElement());
 				}
@@ -456,8 +460,10 @@ public class EventBEditorUtils {
 	 */
 	public static void addInvariant(final IEventBEditor<IMachineRoot> editor,
 			final TreeViewer viewer) {
-		AtomicOperation op = OperationFactory.createInvariantWizard(editor
-				.getRodinInput(), null, EventBUIPlugin.INV_DEFAULT, false);
+		final FormulaFactory ff = editor.getFormulaFactory();
+		final AtomicOperation op = OperationFactory.createInvariantWizard(
+				editor.getRodinInput(), null,
+				EventBUIPlugin.getInv_Default(ff), false);
 		addOperationToHistory(op, editor, viewer);
 	}
 
@@ -475,16 +481,17 @@ public class EventBEditorUtils {
 
 		final String name = null ;
 		
+		final FormulaFactory ff = editor.getFormulaFactory();
 		final String[] varNames = defaultArray(3, null);
 		final String[] grdNames = defaultArray(3, null);
 		final String[] grdPredicates = defaultArray(3,
-				EventBUIPlugin.PRD_DEFAULT);
+				EventBUIPlugin.getPrd_Default(ff));
 		final String[] actNames = defaultArray(3, null);
 		final String[] actSubstitutions = defaultArray(3,
-				EventBUIPlugin.SUB_DEFAULT);
-		final AtomicOperation op = OperationFactory.createEvent(editor
-				.getRodinInput(), name, varNames, grdNames, grdPredicates,
-				actNames, actSubstitutions);
+				EventBUIPlugin.getSub_Default(ff));
+		final AtomicOperation op = OperationFactory.createEvent(
+				editor.getRodinInput(), name, varNames, grdNames,
+				grdPredicates, actNames, actSubstitutions);
 		History.getInstance().addOperation(op);
 		IInternalElement event = op.getCreatedElement();
 		displayInSynthesis(viewer, event, event);
@@ -586,8 +593,10 @@ public class EventBEditorUtils {
 	 */
 	public static void addAxiom(final IEventBEditor<IContextRoot> editor,
 			final TreeViewer viewer) {
-		AtomicOperation op = OperationFactory.createAxiomWizard(editor
-				.getRodinInput(), null, EventBUIPlugin.AXM_DEFAULT, false);
+		final IContextRoot input = editor.getRodinInput();
+		final FormulaFactory ff = input.getFormulaFactory();
+		final AtomicOperation op = OperationFactory.createAxiomWizard(input,
+				null, getAxm_Default(ff), false);
 		addOperationToHistory(op, editor, viewer);
 	}
 
@@ -674,10 +683,9 @@ public class EventBEditorUtils {
 	/**
 	 * Utility method to create a variable with its type invariant and
 	 * initialization using a modal dialog.
-	 * <p>
 	 * 
 	 * @param editor
-	 *            the editor that made the call to this method.
+	 *            the editor that made the call to this method
 	 * @param root
 	 *            the root element that the variable and its invariant,
 	 *            initialization will be created in
@@ -689,7 +697,7 @@ public class EventBEditorUtils {
 				IInvariant.ELEMENT_TYPE);
 
 		final NewVariableDialog dialog = new NewVariableDialog(
-				editor, Display.getCurrent().getActiveShell(), "New Variable",
+				editor, root, Display.getCurrent().getActiveShell(), "New Variable",
 				prefix);
 
 		dialog.open();
@@ -735,16 +743,17 @@ public class EventBEditorUtils {
 	/**
 	 * Utility method to create a constant with its type axiom using a modal
 	 * dialog.
-	 * <p>
 	 * 
 	 * @param editor
-	 *            the editor that made the call to this method.
+	 *            the editor that made the call to this method
+	 * @param root
+	 *            the root element to which new constants will be added
 	 */
 	public static void intelligentNewConstant(
-			final IEventBEditor<IContextRoot> editor) {
+			final IEventBEditor<IContextRoot> editor, IContextRoot root) {
 
-		final NewConstantDialog dialog = new NewConstantDialog(
-				editor, Display.getCurrent().getActiveShell(), "New Constant");
+		final NewConstantDialog dialog = new NewConstantDialog(editor, root,
+				Display.getCurrent().getActiveShell(), "New Constant");
 
 		dialog.open();
 
@@ -780,22 +789,21 @@ public class EventBEditorUtils {
 
 	/**
 	 * Utility method to create new invariants using a modal dialog.
-	 * <p>
 	 * 
 	 * @param editor
-	 *            the editor that made the call to this method.
+	 *            the editor that made the call to this method
+	 * @param root
+	 *            the root element to which new invariants will be added
 	 */
-	public static void newInvariants(final IEventBEditor<IMachineRoot> editor) {
-		final IMachineRoot root = editor.getRodinInput();
+	public static void newInvariants(final IEventBEditor<IMachineRoot> editor,
+			IMachineRoot root) {
 		final NewDerivedPredicateDialog<IInvariant> dialog = new NewDerivedPredicateDialog<IInvariant>(
-				Display.getCurrent().getActiveShell(), "New Invariants", root,
-				IInvariant.ELEMENT_TYPE);
+				editor, root, Display.getCurrent().getActiveShell(),
+				"New Invariants", IInvariant.ELEMENT_TYPE);
 
 		dialog.open();
-
 		if (dialog.getReturnCode() == InputDialog.CANCEL)
 			return; // Cancel
-
 		final String[] names = dialog.getNewNames();
 		final String[] contents = dialog.getNewContents();
 		final boolean[] isTheorem = dialog.getIsTheorem();
@@ -806,36 +814,40 @@ public class EventBEditorUtils {
 
 	/**
 	 * Utility method to create a new variant using a modal dialog.
-	 * <p>
 	 * 
 	 * @param editor
-	 *            the editor that made the call to this method.
+	 *            the editor that made the call to this method
+	 * @param root
+	 *            the root element to which new variants will be added
 	 */
-	public static void newVariant(final IEventBEditor<IMachineRoot> editor) {
-		final NewVariantDialog dialog = new NewVariantDialog(Display
-				.getCurrent().getActiveShell(), "New Variant", "Expression");
+	public static void newVariant(final IEventBEditor<IMachineRoot> editor,
+			IMachineRoot root) {
+		final NewVariantDialog dialog = new NewVariantDialog(editor, root,
+				Display.getCurrent().getActiveShell(), "New Variant",
+				"Expression");
 		dialog.open();
 		if (dialog.getReturnCode() == InputDialog.CANCEL)
 			return; // Cancel
 
 		final String expression = dialog.getExpression();
 		final AtomicOperation operation = OperationFactory.createVariantWizard(
-				editor.getRodinInput(), expression);
+				root, expression);
 		addOperationToHistory(operation, editor);
 	}
 
 	/**
-	 * Utility method to create an event with its parameters, guards and
-	 * actions using a modal dialog.
-	 * <p>
+	 * Utility method to create an event with its parameters, guards and actions
+	 * using a modal dialog.
 	 * 
 	 * @param editor
-	 *            the editor that made the call to this method.
+	 *            the editor that made the call to this method
+	 * @param root
+	 *            the root element to which new events will be added
 	 */
 	public static void newEvent(IEventBEditor<IMachineRoot> editor,
-			IProgressMonitor monitor) {
+			IMachineRoot root) {
 
-		final NewEventDialog dialog = new NewEventDialog(editor,
+		final NewEventDialog dialog = new NewEventDialog(editor, root,
 				Display.getCurrent().getActiveShell(), "New Events");
 
 		dialog.open();
@@ -870,20 +882,19 @@ public class EventBEditorUtils {
 
 	/**
 	 * Utility method to create new carrier sets using a modal dialog.
-	 * <p>
 	 * 
 	 * @param editor
-	 *            the editor that made the call to this method.
+	 *            the editor that made the call to this method
+	 * @param root
+	 *            the root element to which new carrier sets will be added
 	 */
 	public static void newCarrierSets(IEventBEditor<IContextRoot> editor,
-			IProgressMonitor monitor) {
-
-		final IContextRoot ctxRoot = editor.getRodinInput();
-		final String identifier = UIUtils.getFreeElementIdentifier(ctxRoot,
+			IContextRoot root) {
+		final String identifier = UIUtils.getFreeElementIdentifier(root,
 				ICarrierSet.ELEMENT_TYPE);
-		final NewCarrierSetDialog dialog = new NewCarrierSetDialog(
-				Display.getCurrent().getActiveShell(), "New Carrier Sets",
-				"Identifier", identifier);
+		final NewCarrierSetDialog dialog = new NewCarrierSetDialog(editor,
+				root, Display.getCurrent().getActiveShell(),
+				"New Carrier Sets", "Identifier", identifier);
 
 		dialog.open();
 		if (dialog.getReturnCode() == InputDialog.CANCEL)
@@ -892,49 +903,49 @@ public class EventBEditorUtils {
 		final String[] names = attributes
 				.toArray(new String[attributes.size()]);
 		final AtomicOperation operation = OperationFactory
-				.createCarrierSetWizard(editor.getRodinInput(), names);
+				.createCarrierSetWizard(root, names);
 		addOperationToHistory(operation, editor);
 	}
 
 	/**
 	 * Utility method to create new carrier sets using a modal dialog.
-	 * <p>
 	 * 
 	 * @param editor
 	 *            the editor that made the call to this method.
+	 * @param root
+	 *            the root element to which new enumerated sets will be added
 	 */
 	public static void newEnumeratedSet(IEventBEditor<IContextRoot> editor,
-			IProgressMonitor monitor) {
-		final IContextRoot ctxRoot = editor.getRodinInput();
-		final String identifier = UIUtils.getFreeElementIdentifier(ctxRoot,
+			IContextRoot root) {
+		final String identifier = UIUtils.getFreeElementIdentifier(root,
 				ICarrierSet.ELEMENT_TYPE);
 		final NewEnumeratedSetDialog dialog = new NewEnumeratedSetDialog(
-				Display.getCurrent().getActiveShell(), "New Enumerated Set",
-				identifier);
+				editor, root, Display.getCurrent().getActiveShell(),
+				"New Enumerated Set", identifier);
 
 		dialog.open();
 		final String name = dialog.getName();
 		final String[] elements = dialog.getElements();
 		if (name != null) {
 			final AtomicOperation operation = OperationFactory
-					.createEnumeratedSetWizard(editor.getRodinInput(), name,
-							elements);
+					.createEnumeratedSetWizard(root, name, elements);
 			addOperationToHistory(operation, editor);
 		}
 	}
 
 	/**
 	 * Utility method to create new axioms using a modal dialog.
-	 * <p>
 	 * 
 	 * @param editor
-	 *            the editor that made the call to this method.
+	 *            the editor that made the call to this method
+	 * @param root
+	 *            the root element to which new axioms will be added
 	 */
-	public static void newAxioms(final IEventBEditor<IContextRoot> editor) {
-		final IContextRoot root = editor.getRodinInput();
+	public static void newAxioms(final IEventBEditor<IContextRoot> editor,
+			IContextRoot root) {
 		final NewDerivedPredicateDialog<IAxiom> dialog = new NewDerivedPredicateDialog<IAxiom>(
-				Display.getCurrent().getActiveShell(), "New Axioms", root,
-				IAxiom.ELEMENT_TYPE);
+				editor, root, Display.getCurrent().getActiveShell(),
+				"New Axioms", IAxiom.ELEMENT_TYPE);
 		dialog.open();
 		if (dialog.getReturnCode() == InputDialog.CANCEL)
 			return; // Cancel

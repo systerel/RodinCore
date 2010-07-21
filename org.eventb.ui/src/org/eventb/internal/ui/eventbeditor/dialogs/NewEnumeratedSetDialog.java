@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,9 @@ import java.util.List;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eventb.core.IContextRoot;
 import org.eventb.internal.ui.IEventBInputText;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 
 /**
  * @author htson
@@ -45,8 +47,11 @@ public class NewEnumeratedSetDialog extends EventBDialog {
 
 	/**
 	 * Constructor.
-	 * <p>
 	 * 
+	 * @param editor
+	 *            the editor that called the dialog
+	 * @param root
+	 *            the root element to which enumerated sets will be added
 	 * @param parentShell
 	 *            the parent shell of the dialog
 	 * @param title
@@ -54,9 +59,10 @@ public class NewEnumeratedSetDialog extends EventBDialog {
 	 * @param defaultName
 	 *            the default set name
 	 */
-	public NewEnumeratedSetDialog(Shell parentShell,
-			String title, String defaultName) {
-		super(parentShell, title);
+	public NewEnumeratedSetDialog(IEventBEditor<IContextRoot> editor,
+			IContextRoot root, Shell parentShell, String title,
+			String defaultName) {
+		super(parentShell, root, title);
 		this.defaultName = defaultName;
 		elementTexts = new ArrayList<IEventBInputText>();
 	}
@@ -120,7 +126,7 @@ public class NewEnumeratedSetDialog extends EventBDialog {
 		final List<String> allNames = new ArrayList<String>(elements);
 		allNames.add(name);
 		
-		if (!checkNewIdentifiers(allNames, true)) {
+		if (!checkNewIdentifiers(allNames, true, root.getFormulaFactory())) {
 			name = null;
 			elements.clear();
 			return false;

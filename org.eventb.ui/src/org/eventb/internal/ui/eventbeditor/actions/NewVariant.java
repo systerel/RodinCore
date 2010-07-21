@@ -28,8 +28,8 @@ public class NewVariant extends AbstractNewActionDelegate<IMachineRoot> {
 
 	@Override
 	public void runAction(IAction action) {
-		IMachineRoot root = editor.getRodinInput();
-		int length;
+		final IMachineRoot root = editor.getRodinInput();
+		final int length;
 		try {
 			length = root.getChildrenOfType(IVariant.ELEMENT_TYPE).length;
 		} catch (RodinDBException e) {
@@ -41,7 +41,7 @@ public class NewVariant extends AbstractNewActionDelegate<IMachineRoot> {
 					.showError(title_variantExists,
 							dialogs_variantAlreadyExists);
 		else
-			EventBEditorUtils.newVariant(editor);
+			EventBEditorUtils.newVariant(editor, root);
 	}
 
 }

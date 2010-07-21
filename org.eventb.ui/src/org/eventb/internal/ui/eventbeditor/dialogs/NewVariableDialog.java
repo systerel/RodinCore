@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,17 +69,20 @@ public class NewVariableDialog extends EventBDialog {
 
 	/**
 	 * Constructor.
-	 * <p>
 	 * 
+	 * @param editor
+	 *            the editor that made the call to this method
+	 * @param root
+	 *            the root element to which variable will be added
 	 * @param parentShell
 	 *            the parent shell of the dialog
 	 * @param title
 	 *            the title of the dialog
 	 */
 	public NewVariableDialog(IEventBEditor<IMachineRoot> editor,
-			Shell parentShell, String title,
+			IMachineRoot root, Shell parentShell, String title,
 			String invPrefix) {
-		super(parentShell, title);
+		super(parentShell, root, title);
 		this.editor = editor;
 		this.invPrefix = invPrefix;
 		this.invIndex = getInvariantFirstIndex();
@@ -224,7 +227,8 @@ public class NewVariableDialog extends EventBDialog {
 	private boolean checkAndSetFieldValues() {
 		identifierResult = getText(identifierText);
 
-		if (!checkNewIdentifiers(singletonList(identifierResult), true)) {
+		if (!checkNewIdentifiers(singletonList(identifierResult), true,
+				root.getFormulaFactory())) {
 			identifierResult = null;
 			return false;
 		}

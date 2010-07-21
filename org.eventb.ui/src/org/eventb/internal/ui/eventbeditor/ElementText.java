@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -13,6 +13,8 @@
  *     ETH Zurich - adapted to org.rodinp.keyboard
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
+
+import static org.eventb.internal.ui.EventBUtils.getFormulaFactory;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
@@ -228,9 +230,11 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 		final IAttributeDesc attrDesc = registry.getElementDesc(elem).atColumn(
 				col);
 		final IAttributeType attrType = attrDesc.getAttributeType();
+		final IInternalElement element = (IInternalElement) elem;
 		final IAttributeLocation location = RodinCore.getInternalLocation(
-				(IInternalElement) elem, attrType);
-		return ContentProposalFactory.getContentProposal(location, txt);
+				element, attrType);
+		return ContentProposalFactory.getContentProposal(location, txt,
+				getFormulaFactory(element));
 	}
 
 	/*

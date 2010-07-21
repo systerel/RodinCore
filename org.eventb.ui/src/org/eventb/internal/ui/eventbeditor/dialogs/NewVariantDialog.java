@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,9 @@ import static org.eclipse.jface.dialogs.IDialogConstants.OK_LABEL;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.IEventBInputText;
+import org.eventb.ui.eventbeditor.IEventBEditor;
 
 /**
  * @author htson
@@ -37,8 +39,11 @@ public class NewVariantDialog extends EventBDialog {
 
 	/**
 	 * Constructor.
-	 * <p>
 	 * 
+	 * @param editor
+	 *            the editor that made the call to this dialog
+	 * @param root
+	 *            the root element to which variants will be added
 	 * @param parentShell
 	 *            The parent shell of the dialog
 	 * @param title
@@ -46,9 +51,9 @@ public class NewVariantDialog extends EventBDialog {
 	 * @param message
 	 *            The text message of the dialog
 	 */
-	public NewVariantDialog(Shell parentShell, String title,
-			String message) {
-		super(parentShell, title);
+	public NewVariantDialog(IEventBEditor<IMachineRoot> editor,
+			IMachineRoot root, Shell parentShell, String title, String message) {
+		super(parentShell, root, title);
 		this.message = message;
 		expressionText = null;
 		expressionResult = null;

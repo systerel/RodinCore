@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBSharedColor;
@@ -66,9 +67,6 @@ public abstract class EventBDialog extends Dialog {
 	private final int MAX_WIDTH = 800;
 
 	private final int MAX_HEIGHT = 500;
-
-	// FIXME FF: make a non-static member field
-	protected static final FormulaFactory ff = FormulaFactory.getDefault();
 	
 	protected static final int ADD_ID = CLIENT_ID + 1;
 	protected static final int MORE_PARAMETER_ID = CLIENT_ID + 2;
@@ -89,19 +87,23 @@ public abstract class EventBDialog extends Dialog {
 	protected static final String ADD_LABEL = "&Add";
 	protected static final String EMPTY = "";
 
+	protected final IEventBRoot root;
+
 	private final int FORM_SPACING = 10;
 
 	/**
-	 * Constructor.
-	 * <p>
+	 * Constructor
 	 * 
 	 * @param parentShell
 	 *            the parent shell of the dialog
+	 * @param root
+	 *            the root element that the elements will be added in
 	 * @param title
 	 *            the title of the dialog
 	 */
-	public EventBDialog(Shell parentShell, String title) {
+	public EventBDialog(Shell parentShell, IEventBRoot root, String title) {
 		super(parentShell);
+		this.root = root;
 		this.title = title;
 		dirtyTexts = new HashSet<Text>();
 		setShellStyle(getShellStyle() | SWT.RESIZE);
@@ -418,8 +420,9 @@ public abstract class EventBDialog extends Dialog {
 	}
 	
 	protected static boolean checkNewIdentifiers(List<String> names,
-			boolean showInfoOnProblem) {
-		final Collection<String> invalidIdentifiers = getInvalidIdentifiers(names);
+			boolean showInfoOnProblem, FormulaFactory ff) {
+		final Collection<String> invalidIdentifiers = getInvalidIdentifiers(
+				names, ff);
 		if (!invalidIdentifiers.isEmpty()) {
 			if (showInfoOnProblem) {
 				UIUtils.showInfo(Messages.dialogs_invalidIdentifiers + ":\n"
@@ -439,7 +442,7 @@ public abstract class EventBDialog extends Dialog {
 	}
 
 	private static Collection<String> getInvalidIdentifiers(
-			Collection<String> names) {
+			Collection<String> names, FormulaFactory ff) {
 		final List<String> invalidIdentifiers = new ArrayList<String>();
 		for (String name : names) {
 			if (!ff.isValidIdentifierName(name)) {

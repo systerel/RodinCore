@@ -60,7 +60,9 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eventb.core.IContextRoot;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.actions.HistoryAction;
 import org.eventb.internal.ui.eventbeditor.actions.HistoryActionFactory;
@@ -597,6 +599,9 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 		return rodinRoot;
 	}
 
+	public FormulaFactory getFormulaFactory() {
+		return ((IEventBRoot)rodinRoot).getFormulaFactory();
+	}
 	
 	/*
 	 * (non-Javadoc)

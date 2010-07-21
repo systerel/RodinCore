@@ -12,6 +12,7 @@ package org.eventb.internal.ui.prover.tactics;
 
 import java.util.List;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -31,13 +32,13 @@ public abstract class AbstractHypGoalTacticProvider extends DefaultTacticProvide
 		} else {
 			predicate = node.getSequent().goal();
 		}
-		return getPositions(predicate);
+		return getPositions(predicate, node.getFormulaFactory());
 	}
 	
-	public abstract List<IPosition> retrievePositions(Predicate pred);
-
-	private List<IPosition> getPositions(Predicate pred) {
-		final List<IPosition> positions = retrievePositions(pred);
+	public abstract List<IPosition> retrievePositions(Predicate pred, FormulaFactory ff);
+	
+	private List<IPosition> getPositions(Predicate pred, FormulaFactory ff) {
+		final List<IPosition> positions = retrievePositions(pred, ff);
 		if (positions.size() == 0) {
 			return null;
 		}

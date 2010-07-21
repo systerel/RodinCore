@@ -45,9 +45,6 @@ import org.rodinp.core.RodinDBException;
  */
 public class ProofSimplifyAction implements IObjectActionDelegate {
 
-	// FIXME FF: see EventBPlugin.simplifyProof()
-	static final FormulaFactory ff = FormulaFactory.getDefault();
-	
 	private static class Simplify implements IRunnableWithProgress {
 
 		final IPRProof[] proofs;
@@ -65,6 +62,9 @@ public class ProofSimplifyAction implements IObjectActionDelegate {
 								proofs.length);
 						subMonitor.setTaskName(Messages.proofSimplification_symplifyingProofs);
 						for (IPRProof proof : proofs) {
+							final IEventBRoot root = (IEventBRoot) proof
+									.getRoot();
+							final FormulaFactory ff = root.getFormulaFactory();
 							try {
 								EventBPlugin.simplifyProof(proof, ff,
 										subMonitor.newChild(1));

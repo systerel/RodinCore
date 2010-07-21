@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,8 @@ public class NewEnumeratedSet extends AbstractNewActionDelegate<IContextRoot> {
 
 	@Override
 	public void runAction(IAction action) {
-		EventBEditorUtils.newEnumeratedSet(editor, null);
+		final IContextRoot root = editor.getRodinInput();
+		EventBEditorUtils.newEnumeratedSet(editor, root);
 	}
 	
 }
