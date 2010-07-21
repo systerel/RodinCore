@@ -248,7 +248,11 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		final WDMediator wdMed = new WDMediator(formulaFactory);
 		final Predicate extensionWD = extension.getWDPredicate(wdMed, this);
 		
-		return wdMed.addChildrenWD(extensionWD, this);
+		if (extension.conjoinChildrenWD()) {
+			return wdMed.addChildrenWD(extensionWD, this);
+		} else {
+			return extensionWD;
+		}
 	}
 
 	@Override

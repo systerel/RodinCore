@@ -81,6 +81,10 @@ public class DestructorMediator extends DatatypeMediator implements IDestructorM
 				// TODO return the datatype type
 				return null;
 			}
+
+			public boolean conjoinChildrenWD() {
+				return true;
+			}
 		};
 		extensions.add(destructor);
 	}

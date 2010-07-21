@@ -52,6 +52,10 @@ public class ConstructorMediator extends DatatypeMediator implements IConstructo
 					IExtendedFormula formula) {
 				return wdMediator.makeTrueWD();
 			}
+
+			public boolean conjoinChildrenWD() {
+				return true;
+			}
 			
 			public String getSyntaxSymbol() {
 				return name;
@@ -138,6 +142,10 @@ public class ConstructorMediator extends DatatypeMediator implements IConstructo
 			public Type getType(ITypeMediator mediator, ExtendedExpression expression) {
 				// TODO return the datatype type
 				return null;
+			}
+
+			public boolean conjoinChildrenWD() {
+				return true;
 			}
 		};
 		extensions.add(constructor);

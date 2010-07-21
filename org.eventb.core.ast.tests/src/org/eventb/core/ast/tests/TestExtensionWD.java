@@ -63,9 +63,14 @@ public class TestExtensionWD extends AbstractTests {
 	private static final FreeIdentifier FRID_B = ff.makeFreeIdentifier("B", null, INT_TYPE);
 	private static final FreeIdentifier FRID_A = ff.makeFreeIdentifier("A", null,	INT_TYPE);
 	
-	private static final IExpressionExtension EMAX = new IExpressionExtension() {
+	private static class Emax implements IExpressionExtension {
 		private static final String SYNTAX_SYMBOL = "emax";
 		private static final String OPERATOR_ID = "Extension Maximum";
+		private final boolean conjoinChildrenWD;
+
+		public Emax(boolean conjoinChildrenWD) {
+			this.conjoinChildrenWD = conjoinChildrenWD;
+		}
 
 		public Type getType(ITypeMediator mediator,
 				ExtendedExpression expression) {
@@ -108,7 +113,6 @@ public class TestExtensionWD extends AbstractTests {
 
 		public IExtensionKind getKind() {
 			return PARENTHESIZED_BINARY_EXPRESSION;
-//			return new PrefixKind(EXPRESSION, 3, EXPRESSION);
 		}
 
 		public String getSyntaxSymbol() {
@@ -129,8 +133,14 @@ public class TestExtensionWD extends AbstractTests {
 			}
 		}
 
-	};
+		public boolean conjoinChildrenWD() {
+			return conjoinChildrenWD;
+		}
 
+	}
+
+	private static final IExpressionExtension EMAX = new Emax(true);
+	
 	public void testSimpleWD() throws Exception {
 		final Predicate expectedWD = LIT_BFALSE;
 
@@ -178,5 +188,22 @@ public class TestExtensionWD extends AbstractTests {
 
 		final Predicate actualWD = emax.getWDPredicate(extFac);
 		assertEquals("unexpected WD predicate", expectedWD, actualWD);
+	}
+	
+	private static final IExpressionExtension EMAX_NO_CONJ = new Emax(false);
+
+	public void testNoConjChildrenWD() throws Exception {
+		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
+				.<IFormulaExtension> singleton(EMAX_NO_CONJ));
+		final Expression emax = extFac.makeExtendedExpression(EMAX_NO_CONJ, Arrays
+				.<Expression> asList(
+						// first child is an identifier => WD = false
+						FRID_A,
+						CARD_S),
+				NO_PREDICATE, null);
+
+		final Predicate actualWD = emax.getWDPredicate(extFac);
+		// conjoin children WD is disabled => no finite(S)
+		assertEquals("unexpected WD predicate", LIT_BFALSE, actualWD);
 	}
 }

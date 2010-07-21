@@ -116,6 +116,10 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 				}
 				return mediator.makePowerSetType(mediator.makeGenericType(typePrms, this));
 			}
+
+			public boolean conjoinChildrenWD() {
+				return true;
+			}
 		};
 	}
 	

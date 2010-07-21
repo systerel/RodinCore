@@ -119,6 +119,23 @@ public interface IFormulaExtension {
 
 	Predicate getWDPredicate(IWDMediator wdMediator, IExtendedFormula formula);
 
+	/**
+	 * Whether or not children WD is conjoined to the returned WD predicate.
+	 * <p>
+	 * If <code>true</code>, the resulting WD is 'getWDPredicate() and
+	 * WD(children)'. If <code>false</code>, the resulting WD is just
+	 * 'getWDPredicate()'.
+	 * </p>
+	 * <p>
+	 * In most cases, children WD shall be conjoined. Reasons not to do so
+	 * include the case where a WD of the form 'P and ( P => WD(children) )' is
+	 * desired.
+	 * </p>
+	 * 
+	 * @return <code>true</code> iff children WD is conjoined.
+	 */
+	boolean conjoinChildrenWD();
+	
 	String getId();
 
 	String getGroupId();

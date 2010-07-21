@@ -608,6 +608,10 @@ public class TestGenParser extends AbstractTests {
 			// no priority
 		}
 
+		public boolean conjoinChildrenWD() {
+			return true;
+		}
+
 	};
 
 	public void testExtensionDirectProduct() throws Exception {
@@ -680,6 +684,10 @@ public class TestGenParser extends AbstractTests {
 		public Predicate getWDPredicate(IWDMediator wdMediator,
 				IExtendedFormula formula) {
 			return wdMediator.makeTrueWD();
+		}
+
+		public boolean conjoinChildrenWD() {
+			return true;
 		}
 
 	};
@@ -1693,6 +1701,10 @@ public class TestGenParser extends AbstractTests {
 			return wdMediator.makeTrueWD();
 		}
 
+		public boolean conjoinChildrenWD() {
+			return true;
+		}
+
 	};
 
 	// verify that the newly introduced symbol cannot be part of an identifier
@@ -2328,6 +2340,10 @@ public class TestGenParser extends AbstractTests {
 			final Expression child = predicate.getChildExpressions()[0];
 			final Type childType = tcMediator.makePowerSetType(tcMediator.makeIntegerType());
 			tcMediator.sameType(child.getType(), childType);
+		}
+
+		public boolean conjoinChildrenWD() {
+			return true;
 		}
 	};
 
