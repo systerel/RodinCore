@@ -22,6 +22,28 @@ import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 
 /**
+ * Common protocol for formula extensions.
+ * <p>
+ * Standard supported extension kinds are provided as constants. Additionally,
+ * instances of {@link PrefixKind} are supported as well, which makes it
+ * possible to customize the arity of a parenthesized formula.
+ * </p>
+ * <p>
+ * For instance, an implementation of {@link #getKind()} could be:
+ * 
+ * <pre>
+ * public IExtensionKind getKind() {
+ * 	return new IFormulaExtension.PrefixKind(EXPRESSION, 3, EXPRESSION);
+ * }
+ * </pre>
+ * 
+ * which produces an expression extension of kind 'op(a,b,c)'.
+ * </p>
+ * <p>
+ * In contrast, not all instances of {@link ExtensionKind} are supported, hence
+ * the default visibility of the constructor.
+ * </p>
+ * 
  * @author "Nicolas Beauger"
  * @since 2.0
  */
@@ -31,7 +53,7 @@ public interface IFormulaExtension {
 
 		private final IOperatorProperties operProps;
 		
-		public ExtensionKind(Notation notation, FormulaType formulaType,
+		ExtensionKind(Notation notation, FormulaType formulaType,
 				Arity arity, FormulaType argumentType, boolean isAssociative) {
 			this.operProps = makeOperProps(notation, formulaType, arity,
 					argumentType, isAssociative);
@@ -56,6 +78,7 @@ public interface IFormulaExtension {
 		}
 	}
 
+	// FIXME for now, only EXPRESSION children are supported.
 	public static class PrefixKind extends ExtensionKind {
 
 		public PrefixKind(FormulaType formulaType, int arity,
@@ -66,7 +89,7 @@ public interface IFormulaExtension {
 		
 	}
 	
-	 // Standard supported extension kinds.
+	// Standard supported extension kinds.
 
 	// op
 	public static final IExtensionKind ATOMIC_EXPRESSION = new PrefixKind(EXPRESSION, 0, EXPRESSION);
@@ -79,17 +102,17 @@ public interface IFormulaExtension {
 	public static final IExtensionKind ASSOCIATIVE_INFIX_EXPRESSION = new ExtensionKind(INFIX, EXPRESSION, MULTARY_2, EXPRESSION,
 			true);
 
-	// FIXME arity should be fixed
-	// op(a, b, ..., c) with 1 or more arguments
-	public static final IExtensionKind PARENTHESIZED_UNARY_EXPRESSION= new PrefixKind(EXPRESSION, 1, EXPRESSION);
+	// op(a)
+	public static final IExtensionKind PARENTHESIZED_UNARY_EXPRESSION = new PrefixKind(EXPRESSION, 1, EXPRESSION);
 
-	// op(a, b, ..., c) with 2 or more arguments
-	public static final IExtensionKind PARENTHESIZED_BINARY_EXPRESSION= new PrefixKind(EXPRESSION, 2, EXPRESSION);
+	// op(a, b)
+	public static final IExtensionKind PARENTHESIZED_BINARY_EXPRESSION = new PrefixKind(EXPRESSION, 2, EXPRESSION);
 
-	// TODO PARENTHESIZED_PREDICATE
+	// op(a)
+	public static final IExtensionKind PARENTHESIZED_UNARY_PREDICATE = new PrefixKind(PREDICATE, 1, EXPRESSION);
 
-	// Parenthesized n-ary is obtained by instantiating PrefixKind with the desired arity
-	// FIXME non standard instantiations are not parseable.
+	// op(a, b)
+	public static final IExtensionKind PARENTHESIZED_BINARY_PREDICATE = new PrefixKind(PREDICATE, 2, EXPRESSION);
 
 
 	String getSyntaxSymbol();
@@ -100,6 +123,9 @@ public interface IFormulaExtension {
 
 	String getGroupId();
 
+	// FIXME redundancy between formula type provided through the kind and the
+	// choice to implement IExpressionExtension or IPredicateExtension requires
+	// to enforce a compatibility constraint.
 	IExtensionKind getKind();
 
 	void addCompatibilities(ICompatibilityMediator mediator);

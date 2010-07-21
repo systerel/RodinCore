@@ -13,6 +13,10 @@ package org.eventb.core.ast;
 //FIXME should not use AssociativeHelper (else rename Associative into ...)
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
+import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
+import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.PREDICATE;
+import static org.eventb.core.ast.extension.IOperatorProperties.Notation.PREFIX;
+import static org.eventb.internal.core.ast.extension.OperatorProperties.makeOperProps;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +26,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IOperatorProperties;
+import org.eventb.core.ast.extension.IOperatorProperties.Arity;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IdentListMerger;
@@ -31,7 +36,10 @@ import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.ast.extension.TypeCheckMediator;
 import org.eventb.internal.core.parser.ExtendedGrammar;
+import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.IParserPrinter;
+import org.eventb.internal.core.parser.IPropertyParserInfo;
+import org.eventb.internal.core.parser.SubParsers;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -42,20 +50,45 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  */
 public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 
+	private static enum ExtendedPredicateParsers implements
+	IPropertyParserInfo<ExtendedPredicate> {
+
+		// the arity given here stands for 'any fixed arity in 1 .. MAX_ARITY'
+		PARENTHESIZED_PREDICATE(makeOperProps(PREFIX, PREDICATE, new Arity(1,
+				IOperatorProperties.MAX_ARITY), EXPRESSION, false)) {
+
+			public IParserPrinter<ExtendedPredicate> makeParser(int kind,
+					int tag) {
+				return new SubParsers.ExtendedPredParen(kind, tag);
+			}
+
+		},
+		;
+
+		private final IOperatorProperties operProps;
+
+		private ExtendedPredicateParsers(IOperatorProperties operProps) {
+			this.operProps = operProps;
+		}
+
+		public IOperatorProperties getProperties() {
+			return operProps;
+		}
+
+	}
 	/**
 	 * @since 2.0
 	 */
 	public static void init(ExtendedGrammar grammar) {
-	// TODO
-//		try {
-//			for (IParserInfo<? extends Formula<?>> parserInfo : ExtendedPredicateParsers
-//					.values()) {
-//				grammar.addParser(parserInfo);
-//			}
-//		} catch (OverrideException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		try {
+			for (IPropertyParserInfo<? extends Formula<?>> parserInfo : ExtendedPredicateParsers
+					.values()) {
+				grammar.addParser(parserInfo);
+			}
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private final Expression[] childExpressions;

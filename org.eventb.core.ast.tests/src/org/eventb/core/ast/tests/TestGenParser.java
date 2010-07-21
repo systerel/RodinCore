@@ -34,6 +34,7 @@ import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
+import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -63,6 +64,7 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
@@ -73,6 +75,7 @@ import org.eventb.core.ast.extension.datatype.IDestructorMediator;
 import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
 import org.eventb.internal.core.parser.AbstractGrammar;
+import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship;
 
 /**
@@ -261,25 +264,37 @@ public class TestGenParser extends AbstractTests {
 		return doPredicateTest(formula, expected, LanguageVersion.V2);
 	}
 	
-	private static Predicate doPredicateTest(String formula, Predicate expected, LanguageVersion version) {
-		final IParseResult result = parsePredRes(formula, version);
+	private static Predicate doPredicateTest(String formula, Predicate expected, LanguageVersion version, FormulaFactory factory) {
+		final IParseResult result = parsePredRes(formula, version, factory);
 		assertFalse("unexpected problem(s): " + result.getProblems(), result.hasProblem());
 		final Predicate actual = result.getParsedPredicate();
 		checkParsedFormula(formula, expected, actual);
-
+		return actual;
+	}
+	
+	private static Predicate doPredicateTest(String formula, Predicate expected, FormulaFactory factory) {
+		return doPredicateTest(formula, expected, LanguageVersion.LATEST, factory);
+	}
+	
+	private static Predicate doPredicateTest(String formula, Predicate expected, LanguageVersion version) {
+		return doPredicateTest(formula, expected, version, ff);
+		
 //		final String actToStr = actual.toStringWithTypes();
 //		final IParseResult resToStr = parsePredRes(actToStr, version);
 //		assertFalse(result.hasProblem());
 //		final Predicate reparsed = resToStr.getParsedPredicate();
 //		checkParsedFormula(actToStr, expected, reparsed);
 		
-		return actual;
 	}
 
 	private static IParseResult parsePredRes(String formula,
+			LanguageVersion version, FormulaFactory factory) {
+		return factory.parsePredicate(formula, version, null);
+	}
+	
+	private static IParseResult parsePredRes(String formula,
 			LanguageVersion version) {
-		final IParseResult result = ff.parsePredicate(formula, version, null);
-		return result;
+		return parsePredRes(formula, version, ff);
 	}
 	
 	private static IParseResult parsePredRes(String formula) {
@@ -2273,5 +2288,56 @@ public class TestGenParser extends AbstractTests {
 				LIT_BTRUE, null);
 		final String predStr = expected.toStringWithTypes();
 		assertEquals("∀x⦂ℤ·⊤", predStr);
+	}
+	
+	private static final IPredicateExtension EXT_PRIME = new IPredicateExtension() {
+		private static final String SYMBOL = "prime";
+		private static final String ID = "Ext Prime";
+		
+		public Predicate getWDPredicate(IWDMediator wdMediator,
+				IExtendedFormula formula) {
+			return wdMediator.makeTrueWD();
+		}
+		
+		public String getSyntaxSymbol() {
+			return SYMBOL;
+		}
+		
+		public IExtensionKind getKind() {
+			return PARENTHESIZED_UNARY_PREDICATE;
+		}
+		
+		public String getId() {
+			return ID;
+		}
+		
+		public String getGroupId() {
+			return BMath.ATOMIC_PRED;
+		}
+		
+		public void addPriorities(IPriorityMediator mediator) {
+			// no priority
+		}
+		
+		public void addCompatibilities(ICompatibilityMediator mediator) {
+			// no compatibility			
+		}
+		
+		public void typeCheck(ITypeCheckMediator tcMediator,
+				ExtendedPredicate predicate) {
+			final Expression child = predicate.getChildExpressions()[0];
+			final Type childType = tcMediator.makePowerSetType(tcMediator.makeIntegerType());
+			tcMediator.sameType(child.getType(), childType);
+		}
+	};
+
+	private static final FormulaFactory PRIME_FAC = FormulaFactory
+			.getInstance(Collections.<IFormulaExtension> singleton(EXT_PRIME));
+
+	public void testPredicateExtension() throws Exception {
+		final ExtendedPredicate expected = PRIME_FAC.makeExtendedPredicate(
+				EXT_PRIME, Arrays.<Expression> asList(ONE),
+				Collections.<Predicate> emptySet(), null);
+		doPredicateTest("prime(1)", expected, PRIME_FAC);
 	}
 }

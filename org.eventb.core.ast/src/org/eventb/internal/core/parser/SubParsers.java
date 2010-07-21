@@ -39,6 +39,7 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
+import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -63,6 +64,9 @@ import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.QuantifiedExpression.Form;
 import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.IExtendedFormula;
+import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.parser.GenParser.ParserContext;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
@@ -83,7 +87,7 @@ import org.eventb.internal.core.parser.MainParsers.PatternParser;
 public class SubParsers {
 
 	static final String SPACE = " ";
-	private static final Predicate[] NO_PRED = new Predicate[0];
+	static final Predicate[] NO_PRED = new Predicate[0];
 	static final String[] NO_DECL = new String[0];
 
 	static abstract class AbstractSubParser {
@@ -673,7 +677,7 @@ public class SubParsers {
 		@Override
 		protected ExtendedExpression parseRight(ParserContext pc)
 				throws SyntaxError {
-			return checkAndMakeExtendedExpr(pc.factory, tag, Collections
+			return EXTENDED_EXPR.checkAndMake(pc.factory, tag, Collections
 					.<Expression> emptyList(), pc.getSourceLocation());
 		}
 
@@ -712,7 +716,7 @@ public class SubParsers {
 		@Override
 		protected ExtendedExpression makeValue(FormulaFactory factory,
 				Expression left, Expression right, SourceLocation loc) throws SyntaxError {
-			return checkAndMakeExtendedExpr(factory, tag, asList(left,
+			return EXTENDED_EXPR.checkAndMake(factory, tag, asList(left,
 					right), loc);
 		}
 		
@@ -762,7 +766,7 @@ public class SubParsers {
 		@Override
 		protected ExtendedExpression makeResult(FormulaFactory factory,
 				List<Expression> children, SourceLocation loc) throws SyntaxError {
-			return checkAndMakeExtendedExpr(factory, tag, children, loc);
+			return EXTENDED_EXPR.checkAndMake(factory, tag, children, loc);
 		}
 
 		@Override
@@ -1471,7 +1475,7 @@ public class SubParsers {
 		@Override
 		protected ExtendedExpression makeValue(FormulaFactory factory,
 				List<Expression> children, SourceLocation loc) throws SyntaxError {
-			return checkAndMakeExtendedExpr(factory, tag, children, loc);
+			return EXTENDED_EXPR.checkAndMake(factory, tag, children, loc);
 		}
 
 		@Override
@@ -1481,17 +1485,76 @@ public class SubParsers {
 
 	}
 	
-	static ExtendedExpression checkAndMakeExtendedExpr(FormulaFactory factory, int tag,
-			List<Expression> children, SourceLocation loc) throws SyntaxError {
-		final IExpressionExtension extension = (IExpressionExtension) factory
-				.getExtension(tag);
-		if (!extension.getKind().checkPreconditions(
-				children.toArray(new Expression[children.size()]), NO_PRED)) {
-			throw new SyntaxError(new ASTProblem(loc,
-					ProblemKind.ExtensionPreconditionError,
-					ProblemSeverities.Error));
+	public static class ExtendedPredParen extends ParenNudParser<ExtendedPredicate, List<Expression>> {
+
+		public ExtendedPredParen(int kind, int tag) {
+			super(kind, tag, EXPR_LIST_PARSER);
 		}
-		return factory.makeExtendedExpression(extension, children, Collections
-				.<Predicate> emptyList(), loc);
+
+		@Override
+		protected ExtendedPredicate makeValue(FormulaFactory factory,
+				List<Expression> children, SourceLocation loc) throws SyntaxError {
+			return EXTENDED_PRED.checkAndMake(factory, tag, children, loc);
+		}
+
+		@Override
+		protected List<Expression> getChild(ExtendedPredicate parent) {
+			return Arrays.asList(parent.getChildExpressions());
+		}
+
 	}
+	
+	private static abstract class ExtensionCheckMaker<T extends IExtendedFormula> {
+
+		public ExtensionCheckMaker() {
+			// avoid synthetic accessor methods
+		}
+		
+		public final T checkAndMake(FormulaFactory factory, int tag,
+				List<Expression> children, SourceLocation loc) throws SyntaxError {
+			final IFormulaExtension extension = factory
+					.getExtension(tag);
+			if (!extension.getKind().checkPreconditions(
+					children.toArray(new Expression[children.size()]), NO_PRED)) {
+				throw new SyntaxError(new ASTProblem(loc,
+						ProblemKind.ExtensionPreconditionError,
+						ProblemSeverities.Error));
+			}
+			return make(factory, extension, children, loc);
+
+		}
+
+		protected abstract T make(FormulaFactory factory,
+				final IFormulaExtension extension, List<Expression> children,
+				SourceLocation loc);
+
+	}
+	
+	static final ExtensionCheckMaker<ExtendedExpression> EXTENDED_EXPR = new ExtensionCheckMaker<ExtendedExpression>() {
+
+		@Override
+		protected ExtendedExpression make(FormulaFactory factory,
+				IFormulaExtension extension, List<Expression> children,
+				SourceLocation loc) {
+			return factory.makeExtendedExpression(
+					(IExpressionExtension) extension, children,
+					Collections.<Predicate> emptyList(), loc);
+		}
+
+	};
+
+	static final ExtensionCheckMaker<ExtendedPredicate> EXTENDED_PRED = new ExtensionCheckMaker<ExtendedPredicate>() {
+
+		@Override
+		protected ExtendedPredicate make(FormulaFactory factory,
+				IFormulaExtension extension, List<Expression> children,
+				SourceLocation loc) {
+			return factory.makeExtendedPredicate(
+					(IPredicateExtension) extension, children,
+					Collections.<Predicate> emptyList(), loc);
+		}
+
+	};
+	
+	
 }

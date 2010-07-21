@@ -118,6 +118,7 @@ public interface IOperatorProperties {
 	// TODO move elsewhere (not a static property)
 	Arity getArity();
 	
+	// TODO support arguments of mixed types
 	FormulaType getArgumentType();
 
 	// FIXME clarify relation with the associativity property, set through
