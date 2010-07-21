@@ -178,7 +178,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 			throws CoreException {
 		

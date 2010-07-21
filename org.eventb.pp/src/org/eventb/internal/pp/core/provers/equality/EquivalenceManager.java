@@ -1,11 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
-
 package org.eventb.internal.pp.core.provers.equality;
 
 import java.util.HashMap;
@@ -260,7 +262,7 @@ public final class EquivalenceManager implements IEquivalenceManager {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private <T extends Source> Equality<T> addEquality(EqualityLiteral equality, Node node1, Node node2, Hashtable<EqualityLiteral, Equality<T>> table, boolean fact) {
 		assert !table.containsKey(equality);
 		

@@ -1,7 +1,13 @@
-/*
- * Created on 07-jul-2005
- *
- */
+/*******************************************************************************
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.Formula.BFALSE;
@@ -637,7 +643,7 @@ public class TestLegibility extends TestCase {
 	/**
 	 * Main test routine.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void testLegibility() {
 		for (TestItem item : testItems) {
 			boolean result = item.formula.isLegible(null).isSuccess();

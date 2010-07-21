@@ -1,9 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
 package org.eventb.core.pog;
 
@@ -30,7 +33,7 @@ public final class POGCore {
 	 * @throws IllegalArgumentException
 	 *             if no such tool state type has been contributed
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T extends IState> IStateType<T> getToolStateType(
 			final String id) {
 		final POGStateTypeManager manager = POGStateTypeManager.getInstance();
@@ -50,7 +53,7 @@ public final class POGCore {
 	 * @throws IllegalArgumentException
 	 *             if no such module type has been contributed
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T extends IModule> IModuleType<T> getModuleType(
 			final String id) {
 		final POGModuleManager manager = POGModuleManager.getInstance();

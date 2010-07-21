@@ -506,7 +506,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 	 * @return an adapter for the required type or <code>null</code>
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class required) {
 		if (IContentOutlinePage.class.equals(required)) {
 			if (fOutlinePage == null) {
