@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="symbols" name="Keyboard symbols" schema="schema/symbols.exsd"/>
+   <extension-point id="symbols" name="%rodinSymbolsName" schema="schema/symbols.exsd"/>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
@@ -30,7 +30,7 @@
             class="org.rodinp.internal.keyboard.views.KeyboardView"
             icon="icons/keyboard.gif"
             id="org.rodinp.keyboard.views.KeyboardView"
-            name="%RODINKeyboardViewName">
+            name="%rodinKeyboardViewName">
       </view>
    </extension>
    <extension
