@@ -14,24 +14,27 @@ import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Type;
 
 /**
+ * Common protocol for expression extensions.
+ * 
  * @author "Nicolas Beauger"
  * @since 2.0
- * 
  */
 public interface IExpressionExtension extends IFormulaExtension {
 
 	/**
-	 * Returns the type of the given expression assuming that the preconditions
-	 * are fulfilled.
+	 * Returns the type of the given expression.
 	 * 
 	 * @param expression
 	 *            the AST node
-	 * @return a type
+	 * @return the type of the given expression or <code>null</code> if it is
+	 *         ill-typed or if its type cannot be determined
 	 */
+	// FIXME change prototype to
+	// Type synthesizeType(ExtendedExpression expression, Type proposedType, ITypeMediator mediator);
 	Type getType(ITypeMediator mediator, ExtendedExpression expression);
 
 	// TODO these 2 methods can be mixed into 1 with 2 mediator implementations
-	
+
 	Type typeCheck(ITypeCheckMediator tcMediator, ExtendedExpression expression);
 	// BoundIdentDecl[] quantifiedIdentifiers,
 	// Expression[] childExpressions, Predicate[] childPredicates,

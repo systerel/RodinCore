@@ -464,6 +464,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	@Override
 	public Type toType(FormulaFactory factory)
 			throws InvalidExpressionException {
+		// FIXME check this expression tag is a type constructor
 		final List<Type> typeParams = new ArrayList<Type>();
 		for(Expression child : childExpressions) {
 			typeParams.add(child.toType(factory));

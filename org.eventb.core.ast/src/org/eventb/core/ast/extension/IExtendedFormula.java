@@ -14,9 +14,13 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
 
 /**
+ * Common protocol for extended formulas. This interface declares methods common
+ * to extended expressions and predicates.
+ * 
  * @author Nicolas Beauger
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IExtendedFormula {
 

@@ -39,22 +39,19 @@ import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
  * 
  * which produces an expression extension of kind 'op(a,b,c)'.
  * </p>
- * <p>
- * In contrast, not all instances of {@link ExtensionKind} are supported, hence
- * the default visibility of the constructor.
- * </p>
  * 
  * @author "Nicolas Beauger"
  * @since 2.0
  */
 public interface IFormulaExtension {
 
+	// FIXME move this class to a non-API package
 	public static class ExtensionKind implements IExtensionKind {
 
 		private final IOperatorProperties operProps;
-		
-		ExtensionKind(Notation notation, FormulaType formulaType,
-				Arity arity, FormulaType argumentType, boolean isAssociative) {
+
+		ExtensionKind(Notation notation, FormulaType formulaType, Arity arity,
+				FormulaType argumentType, boolean isAssociative) {
 			this.operProps = makeOperProps(notation, formulaType, arity,
 					argumentType, isAssociative);
 		}
@@ -79,41 +76,77 @@ public interface IFormulaExtension {
 	}
 
 	// FIXME for now, only EXPRESSION children are supported.
+	// FIXME should rather be available through a factory
 	public static class PrefixKind extends ExtensionKind {
 
 		public PrefixKind(FormulaType formulaType, int arity,
 				FormulaType argumentType) {
-			super(PREFIX, formulaType, new FixedArity(
-					arity), argumentType, false);
+			super(PREFIX, formulaType, new FixedArity(arity), argumentType,
+					false);
 		}
-		
+
 	}
-	
+
 	// Standard supported extension kinds.
 
-	// op
-	public static final IExtensionKind ATOMIC_EXPRESSION = new PrefixKind(EXPRESSION, 0, EXPRESSION);
+	/**
+	 * Kind for atomic expressions. An atomic expression is an extended
+	 * expression that takes no parameter, such as <code>"pred"</code> in the
+	 * core language.
+	 */
+	IExtensionKind ATOMIC_EXPRESSION = new PrefixKind(EXPRESSION, 0, EXPRESSION);
 
-	// a op b
-	public static final IExtensionKind BINARY_INFIX_EXPRESSION = new ExtensionKind(INFIX, EXPRESSION, BINARY, EXPRESSION,
-			false);
+	/**
+	 * Kind for binary infix expressions. A binary infix expression is an
+	 * extended expression that takes two expressions as parameter, such as
+	 * <code>"-"</code>" in the core language.
+	 */
+	IExtensionKind BINARY_INFIX_EXPRESSION = new ExtensionKind(INFIX,
+			EXPRESSION, BINARY, EXPRESSION, false);
 
-	// a op b op ... op c
-	public static final IExtensionKind ASSOCIATIVE_INFIX_EXPRESSION = new ExtensionKind(INFIX, EXPRESSION, MULTARY_2, EXPRESSION,
-			true);
+	/**
+	 * Kind for associative infix expressions. An associative infix expression
+	 * is an extended expression that takes at least two expressions as
+	 * parameters, such as "<code>+</code>" in the core language.
+	 */
+	IExtensionKind ASSOCIATIVE_INFIX_EXPRESSION = new ExtensionKind(INFIX,
+			EXPRESSION, MULTARY_2, EXPRESSION, true);
 
-	// op(a)
-	public static final IExtensionKind PARENTHESIZED_UNARY_EXPRESSION = new PrefixKind(EXPRESSION, 1, EXPRESSION);
+	/**
+	 * Kind for unary prefix expressions. A unary prefix expression is an
+	 * extended expression that takes one expression as parameter, such as
+	 * <code>"max"</code>" in the core language. In the concrete syntax, the
+	 * parameter must be bracketed with parentheses.
+	 */
+	IExtensionKind PARENTHESIZED_UNARY_EXPRESSION = new PrefixKind(EXPRESSION,
+			1, EXPRESSION);
 
-	// op(a, b)
-	public static final IExtensionKind PARENTHESIZED_BINARY_EXPRESSION = new PrefixKind(EXPRESSION, 2, EXPRESSION);
+	/**
+	 * Kind for binary prefix expressions. A binary prefix expression is an
+	 * extended expression that takes two expressions as parameters. In the
+	 * concrete syntax, the parameters must be bracketed with parentheses and
+	 * separated with a comma.
+	 */
+	IExtensionKind PARENTHESIZED_BINARY_EXPRESSION = new PrefixKind(EXPRESSION,
+			2, EXPRESSION);
 
-	// op(a)
-	public static final IExtensionKind PARENTHESIZED_UNARY_PREDICATE = new PrefixKind(PREDICATE, 1, EXPRESSION);
+	/**
+	 * Kind for unary prefix predicates. A unary prefix predicate is an extended
+	 * predicate that takes one expression as parameter, such as
+	 * <code>"finite"</code>" in the core language. In the concrete syntax, the
+	 * parameter must be bracketed with parentheses.
+	 */
+	IExtensionKind PARENTHESIZED_UNARY_PREDICATE = new PrefixKind(PREDICATE, 1,
+			EXPRESSION);
 
-	// op(a, b)
-	public static final IExtensionKind PARENTHESIZED_BINARY_PREDICATE = new PrefixKind(PREDICATE, 2, EXPRESSION);
-
+	/**
+	 * Kind for binary prefix predicates. A binary prefix predicate is an
+	 * extended predicate that takes two expressions as parameters. In the
+	 * concrete syntax, the parameters must be bracketed with parentheses and
+	 * separated with a comma.
+	 */
+	IExtensionKind PARENTHESIZED_BINARY_PREDICATE = new PrefixKind(PREDICATE,
+			2, EXPRESSION);
 
 	String getSyntaxSymbol();
 
@@ -129,13 +162,15 @@ public interface IFormulaExtension {
 	 * <p>
 	 * In most cases, children WD shall be conjoined. Reasons not to do so
 	 * include the case where a WD of the form 'P and ( P => WD(children) )' is
-	 * desired.
+	 * desired. In the latter case, it is the responsibility of
+	 * {@link #getWDPredicate(IWDMediator, IExtendedFormula)} to explicitly
+	 * embed the WD conditions for children in the returned predicate.
 	 * </p>
 	 * 
 	 * @return <code>true</code> iff children WD is conjoined.
 	 */
 	boolean conjoinChildrenWD();
-	
+
 	String getId();
 
 	String getGroupId();
