@@ -1,4 +1,5 @@
 org.eventb.pp/debug = true
+org.eventb.pp/debug/reasoner = false
 org.eventb.pp/debug/loader = false
 org.eventb.pp/debug/loader/phase1 = false
 org.eventb.pp/debug/loader/phase2 = false
@@ -9,3 +10,4 @@ org.eventb.pp/debug/prover/simplification = true
 org.eventb.pp/debug/prover/casesplit = true
 org.eventb.pp/debug/prover/dumping = true
 org.eventb.pp/debug/prover/seedsearch = true
+org.eventb.pp/debug/prover/equality = true

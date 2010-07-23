@@ -23,6 +23,7 @@ import org.eventb.internal.pp.core.ClauseDispatcher;
 import org.eventb.internal.pp.core.ClauseSimplifier;
 import org.eventb.internal.pp.core.Dumper;
 import org.eventb.internal.pp.core.provers.casesplit.CaseSplitter;
+import org.eventb.internal.pp.core.provers.equality.EqualityProver;
 import org.eventb.internal.pp.core.provers.predicate.PredicateProver;
 import org.eventb.internal.pp.core.provers.seedsearch.SeedSearchProver;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
@@ -39,9 +40,10 @@ public class PPCore extends Plugin {
 	/**
 	 * debugging/tracing option names
 	 */
-//	private static final String LOADER_TRACE = PLUGIN_ID + "/debug/loader"; //$NON-NLS-1$
+	private static final String REASONER_TRACE = PLUGIN_ID + "/debug/reasoner"; //$NON-NLS-1$
+
 	private static final String LOADER_PHASE1_TRACE = PLUGIN_ID + "/debug/loader/phase1"; //$NON-NLS-1$
-	private static final String lOADER_PHASE2_TRACE = PLUGIN_ID + "/debug/loader/phase2"; //$NON-NLS-1$
+	private static final String LOADER_PHASE2_TRACE = PLUGIN_ID + "/debug/loader/phase2"; //$NON-NLS-1$
 	
 	private static final String PROVER_TRACE = PLUGIN_ID + "/debug/prover"; //$NON-NLS-1$
 	private static final String PROVER_STRATEGY_TRACE = PLUGIN_ID + "/debug/prover/strategy"; //$NON-NLS-1$
@@ -50,7 +52,8 @@ public class PPCore extends Plugin {
 	private static final String PROVER_SIMPLIFICATION_TRACE = PLUGIN_ID + "/debug/prover/simplification"; //$NON-NLS-1$
 	private static final String PROVER_DUMPING_TRACE = PLUGIN_ID + "/debug/prover/dumping"; //$NON-NLS-1$
 	private static final String PROVER_SEEDSEARCH_TRACE = PLUGIN_ID + "/debug/prover/seedsearch"; //$NON-NLS-1$
-	
+	private static final String PROVER_EQUALITY_TRACE = PLUGIN_ID + "/debug/prover/equality"; //$NON-NLS-1$
+
 	/**
 	 * The shared instance.
 	 */
@@ -80,40 +83,23 @@ public class PPCore extends Plugin {
 	 */
 	private void configureDebugOptions() {
 		if (isDebugging()) {
-			String option;
-//			option = Platform.getDebugOption(LOADER_TRACE);
-//			if (option != null)
-//				PredicateBuilder.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(LOADER_PHASE1_TRACE);
-			if (option != null)
-				AbstractContext.setDebugFlag(option.equalsIgnoreCase("true")); //$NON-NLS-1$
-			option = Platform.getDebugOption(lOADER_PHASE2_TRACE);
-			if (option != null)
-				ClauseBuilder.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(PROVER_TRACE);
-			if (option != null)
-				PPProof.DEBUG = option.equalsIgnoreCase("true");
-			option = Platform.getDebugOption(PROVER_STRATEGY_TRACE);
-			if (option != null)
-				ClauseDispatcher.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(PROVER_INFERENCE_TRACE);
-			if (option != null) {
-				PredicateProver.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(PROVER_CASESPLIT_TRACE);
-			if (option != null)
-				CaseSplitter.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(PROVER_DUMPING_TRACE);
-			if (option != null)
-				Dumper.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(PROVER_SIMPLIFICATION_TRACE);
-			if (option != null)
-				ClauseSimplifier.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(PROVER_SEEDSEARCH_TRACE);
-			if (option != null)
-				SeedSearchProver.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			
-			}
+			PPReasoner.DEBUG = parseOption(REASONER_TRACE);
+			AbstractContext.setDebugFlag(parseOption(LOADER_PHASE1_TRACE));
+			ClauseBuilder.DEBUG = parseOption(LOADER_PHASE2_TRACE);
+			PPProof.DEBUG = parseOption(PROVER_TRACE);
+			ClauseDispatcher.DEBUG = parseOption(PROVER_STRATEGY_TRACE);
+			PredicateProver.DEBUG = parseOption(PROVER_INFERENCE_TRACE);
+			CaseSplitter.DEBUG = parseOption(PROVER_CASESPLIT_TRACE);
+			Dumper.DEBUG = parseOption(PROVER_DUMPING_TRACE);
+			ClauseSimplifier.DEBUG = parseOption(PROVER_SIMPLIFICATION_TRACE);
+			SeedSearchProver.DEBUG = parseOption(PROVER_SEEDSEARCH_TRACE);
+			EqualityProver.DEBUG = parseOption(PROVER_EQUALITY_TRACE);
 		}
+	}
+
+	private static boolean parseOption(String key) {
+		final String option = Platform.getDebugOption(key);
+		return "true".equalsIgnoreCase(option); //$NON-NLS-1$
 	}
 
 	/**
