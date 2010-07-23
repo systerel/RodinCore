@@ -23,62 +23,77 @@ package org.eventb.core.ast;
  */
 public class DefaultSimpleVisitor implements ISimpleVisitor2 {
 
+	@Override
 	public void visitAssociativeExpression(AssociativeExpression expression) {
 		// Do nothing
 	}
 
+	@Override
 	public void visitAssociativePredicate(AssociativePredicate predicate) {
 		// Do nothing
 	}
 
+	@Override
 	public void visitAtomicExpression(AtomicExpression expression) {
 		// Do nothing
 	}
 
+	@Override
 	public void visitBecomesEqualTo(BecomesEqualTo assignment) {
 		// Do nothing
 	}
 
+	@Override
 	public void visitBecomesMemberOf(BecomesMemberOf assignment) {
 		// Do nothing
 	}
 
+	@Override
 	public void visitBecomesSuchThat(BecomesSuchThat assignment) {
 		// Do nothing
 	}
 
+	@Override
 	public void visitBinaryExpression(BinaryExpression expression) {
 		// Do nothing
 	}
 
+	@Override
 	public void visitBinaryPredicate(BinaryPredicate predicate) {
 		// Do nothing
 	}
 
+	@Override
 	public void visitBoolExpression(BoolExpression expression) {
 		// Do nothing
 	}
 
+	@Override
 	public void visitBoundIdentDecl(BoundIdentDecl boundIdentDecl) {
 		// Do nothing
 	}
 
+	@Override
 	public void visitBoundIdentifier(BoundIdentifier identifierExpression) {
 		// Do nothing
 	}
 
+	@Override
 	public void visitFreeIdentifier(FreeIdentifier identifierExpression) {
 		// Do nothing
 	}
 
+	@Override
 	public void visitIntegerLiteral(IntegerLiteral expression) {
 		// Do nothing
 	}
 
+	@Override
 	public void visitLiteralPredicate(LiteralPredicate predicate) {
 		// Do nothing
 	}
 
+	@Override
 	public void visitMultiplePredicate(MultiplePredicate predicate) {
 		// Do nothing
 	}
@@ -86,34 +101,42 @@ public class DefaultSimpleVisitor implements ISimpleVisitor2 {
 	/**
 	 * @since 1.2
 	 */
+	@Override
 	public void visitPredicateVariable(PredicateVariable predVar) {
 		// Do nothing
 	}
 
+	@Override
 	public void visitQuantifiedExpression(QuantifiedExpression expression) {
 		// Do nothing
 	}
 
+	@Override
 	public void visitQuantifiedPredicate(QuantifiedPredicate predicate) {
 		// Do nothing
 	}
 
+	@Override
 	public void visitRelationalPredicate(RelationalPredicate predicate) {
 		// Do nothing
 	}
 
+	@Override
 	public void visitSetExtension(SetExtension expression) {
 		// Do nothing
 	}
 
+	@Override
 	public void visitSimplePredicate(SimplePredicate predicate) {
 		// Do nothing
 	}
 
+	@Override
 	public void visitUnaryExpression(UnaryExpression expression) {
 		// Do nothing
 	}
 
+	@Override
 	public void visitUnaryPredicate(UnaryPredicate predicate) {
 		// Do nothing
 	}
@@ -121,6 +144,7 @@ public class DefaultSimpleVisitor implements ISimpleVisitor2 {
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public void visitExtendedExpression(ExtendedExpression expression) {
 		// Do nothing
 	}
@@ -128,6 +152,7 @@ public class DefaultSimpleVisitor implements ISimpleVisitor2 {
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public void visitExtendedPredicate(ExtendedPredicate predicate) {
 		// Do nothing
 	}

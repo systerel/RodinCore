@@ -32,6 +32,7 @@ public class ClauseOrigin extends AbstractInferrenceOrigin {
 
 	Level level = null;
 	
+	@Override
 	public Level getLevel() {
 		if (level != null) return level;
 		

@@ -32,15 +32,18 @@ public class ConcreteEventTable extends State implements IConcreteEventTable {
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.tool.types.IState#getStateType()
 	 */
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 
+	@Override
 	public IConcreteEventInfo getConcreteEventInfo(String symbol)
 			throws CoreException {
 		return table.get(symbol);
 	}
 
+	@Override
 	public void addConcreteEventInfo(IConcreteEventInfo info)
 			throws CoreException {
 		assertMutable();
@@ -48,6 +51,7 @@ public class ConcreteEventTable extends State implements IConcreteEventTable {
 		table.put(info.getEventLabel(), info);
 	}
 
+	@Override
 	public Iterator<IConcreteEventInfo> iterator() {
 		return table.values().iterator();
 	}

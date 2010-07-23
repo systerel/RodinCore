@@ -49,6 +49,7 @@ public class FwdMachineEventWitnessModule extends MachineEventActionUtilityModul
 	public static final IModuleType<FwdMachineEventWitnessModule> MODULE_TYPE = 
 		POGCore.getModuleType(EventBPlugin.PLUGIN_ID + ".fwdMachineEventWitnessModule"); //$NON-NLS-1$
 	
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
@@ -56,6 +57,7 @@ public class FwdMachineEventWitnessModule extends MachineEventActionUtilityModul
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.state.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void process(
 			IRodinElement element, 
 			IPOGStateRepository repository,

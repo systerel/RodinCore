@@ -88,10 +88,12 @@ public class ProofTreeUIToolTip {
 				.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		tipShell.addKeyListener(new KeyListener() {
 
+			@Override
 			public void keyPressed(KeyEvent e) {
 				// Do nothing
 			}
 
+			@Override
 			public void keyReleased(KeyEvent e) {
 				if (e.keyCode == SWT.F2) {
 					IProofTreeNode node = null;
@@ -202,6 +204,7 @@ public class ProofTreeUIToolTip {
 			 * 
 			 * @see java.lang.Runnable#run()
 			 */
+			@Override
 			public void run() {
 				if (lastModify == time) {
 					Text textWidget = text.getTextWidget();
@@ -223,6 +226,7 @@ public class ProofTreeUIToolTip {
 			original = node.getComment();
 		}
 
+		@Override
 		public void handleEvent(Event event) {
 			// TODO Auto-generated method stub
 			switch (event.type) {
@@ -252,6 +256,7 @@ public class ProofTreeUIToolTip {
 			}
 		}
 
+		@Override
 		public void modifyText(ModifyEvent e) {
 			lastModify = e.time;
 			text.getTextWidget().getDisplay().timerExec(1000, new TimeRunnable(e.time));

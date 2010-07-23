@@ -377,6 +377,7 @@ public abstract class HypothesisComposite implements
 	 * 
 	 * @see org.eventb.core.pm.IProofStateChangedListener#proofStateChanged(org.eventb.core.pm.IProofStateDelta)
 	 */
+	@Override
 	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
 
 		if (ProverUIUtils.DEBUG)
@@ -463,6 +464,7 @@ public abstract class HypothesisComposite implements
 			Display display = scrolledForm.getDisplay();
 
 			display.syncExec(new Runnable() {
+				@Override
 				public void run() {
 					if (!control.isDisposed())
 						refresh();

@@ -42,10 +42,12 @@ public class PSRoot extends EventBRoot implements IPSRoot{
 		return ELEMENT_TYPE;
 	}
 
+	@Override
 	public IPSStatus[] getStatuses() throws RodinDBException {
 		return getChildrenOfType(PSStatus.ELEMENT_TYPE);
 	}
 
+	@Override
 	public IPSStatus getStatus(String name) {
 		return getInternalElement(IPSStatus.ELEMENT_TYPE, name);
 	}

@@ -64,6 +64,7 @@ public abstract class RodinElement extends PlatformObject implements
 			this.element = element;
 		}
 
+		@Override
 		public boolean contains(ISchedulingRule rule) {
 			if (rule instanceof NoResourceSchedulingRule) {
 				final NoResourceSchedulingRule otherRule =
@@ -74,6 +75,7 @@ public abstract class RodinElement extends PlatformObject implements
 			return false;
 		}
 
+		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			if (rule instanceof NoResourceSchedulingRule) {
 				final NoResourceSchedulingRule otherRule =
@@ -167,6 +169,7 @@ public abstract class RodinElement extends PlatformObject implements
 	 */
 	protected abstract RodinElementInfo createElementInfo();
 
+	@Override
 	public void createProblemMarker(IRodinProblem problem, Object... args)
 			throws RodinDBException {
 
@@ -220,11 +223,13 @@ public abstract class RodinElement extends PlatformObject implements
 		}
 	}
 
+	@Override
 	public abstract boolean exists();
 
 	/**
 	 * @see IRodinElement
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends IRodinElement> T getAncestor(IElementType<T> ancestorType) {
 		IRodinElement element = this;
@@ -291,11 +296,13 @@ public abstract class RodinElement extends PlatformObject implements
 	/**
 	 * @see IRodinElement
 	 */
+	@Override
 	public abstract String getElementName();
 
 	/**
 	 * @see IRodinElement
 	 */
+	@Override
 	public abstract IElementType<? extends IRodinElement> getElementType();
 
 	/*
@@ -320,6 +327,7 @@ public abstract class RodinElement extends PlatformObject implements
 	/*
 	 * @see IRodinElement
 	 */
+	@Override
 	public String getHandleIdentifier() {
 		return getHandleMemento();
 	}
@@ -348,6 +356,7 @@ public abstract class RodinElement extends PlatformObject implements
 	/**
 	 * @see IRodinElement
 	 */
+	@Override
 	public IRodinDB getRodinDB() {
 		IRodinElement current = this;
 		do {
@@ -360,6 +369,7 @@ public abstract class RodinElement extends PlatformObject implements
 	/**
 	 * @see IRodinElement
 	 */
+	@Override
 	public IRodinProject getRodinProject() {
 		IRodinElement current = this;
 		do {
@@ -369,11 +379,13 @@ public abstract class RodinElement extends PlatformObject implements
 		return null;
 	}
 
+	@Override
 	public abstract Openable getOpenable();
 
 	/**
 	 * @see IRodinElement
 	 */
+	@Override
 	public RodinElement getParent() {
 		return this.parent;
 	}
@@ -398,6 +410,7 @@ public abstract class RodinElement extends PlatformObject implements
 	 * 
 	 * @see org.rodinp.core.IRodinElement#getSchedulingRule()
 	 */
+	@Override
 	public ISchedulingRule getSchedulingRule() {
 		final IResource resource = getResource();
 		if (resource != null) {
@@ -428,6 +441,7 @@ public abstract class RodinElement extends PlatformObject implements
 	 * Returns true if this element is an ancestor of the given element,
 	 * otherwise false.
 	 */
+	@Override
 	public boolean isAncestorOf(IRodinElement e) {
 		IRodinElement ancestor = e.getParent();
 		while (ancestor != null && !ancestor.equals(this)) {
@@ -436,10 +450,12 @@ public abstract class RodinElement extends PlatformObject implements
 		return ancestor != null;
 	}
 
+	@Override
 	public boolean isReadOnly() {
 		return false;
 	}
 
+	@Override
 	public final boolean isRoot() {
 		return this instanceof IInternalElement
 				&& !(parent instanceof IInternalElement);

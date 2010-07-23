@@ -110,6 +110,7 @@ public class Node<T> implements Iterable<Node<T>> {
 		count--;
 	}
 	
+	@Override
 	public Iterator<Node<T>> iterator() {
 		return succ.iterator();
 	}

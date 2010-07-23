@@ -30,10 +30,12 @@ public class StatisticsDetailsLabelProvider implements ITableLabelProvider {
 		this.view = view;
 	}
 
+	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
 		return null;
 	}
 
+	@Override
 	public String getColumnText(Object element, int columnIndex) {
 		if (element instanceof IStatistics) {
 			IStatistics stats = (IStatistics) element;
@@ -45,20 +47,24 @@ public class StatisticsDetailsLabelProvider implements ITableLabelProvider {
 		return null;
 	}
 
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 		// do nothing
 
 	}
 
+	@Override
 	public void dispose() {
 		// do nothing
 
 	}
 
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return false;
 	}
 
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 		// do nothing
 

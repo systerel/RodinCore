@@ -49,10 +49,12 @@ public class ConcreteEventInfo extends AccuracyInfo implements IConcreteEventInf
 	 * 
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 
+	@Override
 	public List<IAbstractEventInfo> getAbstractEventInfos()
 			throws CoreException {
 		return abstractInfos;
@@ -67,6 +69,7 @@ public class ConcreteEventInfo extends AccuracyInfo implements IConcreteEventInf
 		refEvents = new LinkedList<IRefinesEvent>();
 	}
 
+	@Override
 	public boolean eventIsNew() throws CoreException {
 		return abstractInfos.size() == 0 && refEvents.size() == 0;
 	}
@@ -78,6 +81,7 @@ public class ConcreteEventInfo extends AccuracyInfo implements IConcreteEventInf
 		abstractInfos.add(info);
 	}
 
+	@Override
 	public List<IRefinesEvent> getRefinesClauses() throws CoreException {
 		return refEvents;
 	}
@@ -89,18 +93,22 @@ public class ConcreteEventInfo extends AccuracyInfo implements IConcreteEventInf
 		refEvents.add(refinesEvent);
 	}
 
+	@Override
 	public ILabelSymbolInfo getSymbolInfo() {
 		return symbolInfo;
 	}
 
+	@Override
 	public IEvent getEvent() {
 		return event;
 	}
 
+	@Override
 	public String getEventLabel() {
 		return eventLabel;
 	}
 
+	@Override
 	public boolean isInitialisation() {
 		return isInit;
 	}

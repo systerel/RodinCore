@@ -37,7 +37,6 @@ import fr.systerel.internal.explorer.model.ModelController;
 import fr.systerel.internal.explorer.model.ModelEvent;
 import fr.systerel.internal.explorer.model.ModelInvariant;
 import fr.systerel.internal.explorer.model.ModelMachine;
-import fr.systerel.internal.explorer.model.ModelPOContainer;
 import fr.systerel.internal.explorer.model.ModelProject;
 import fr.systerel.internal.explorer.statistics.AggregateStatistics;
 import fr.systerel.internal.explorer.statistics.IStatistics;

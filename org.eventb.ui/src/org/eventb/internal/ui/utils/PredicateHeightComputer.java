@@ -69,6 +69,7 @@ public class PredicateHeightComputer implements ISimpleVisitor2 {
 		this.height = 0;
 	}
 
+	@Override
 	public void visitAssociativePredicate(AssociativePredicate predicate) {
 		int maxChildHeight = 0;
 		for (Predicate child : predicate.getChildren()) {
@@ -80,6 +81,7 @@ public class PredicateHeightComputer implements ISimpleVisitor2 {
 		height = maxChildHeight + 1;
 	}
 
+	@Override
 	public void visitBinaryPredicate(BinaryPredicate predicate) {
 		predicate.getLeft().accept(this);
 		final int leftHeight = height;
@@ -87,11 +89,13 @@ public class PredicateHeightComputer implements ISimpleVisitor2 {
 		height = height > leftHeight ? height + 1 : leftHeight + 1;
 	}
 
+	@Override
 	public void visitQuantifiedPredicate(QuantifiedPredicate predicate) {
 		predicate.getPredicate().accept(this);
 		// No height change through this node
 	}
 
+	@Override
 	public void visitUnaryPredicate(UnaryPredicate predicate) {
 		predicate.getChild().accept(this);
 		++height;
@@ -101,86 +105,107 @@ public class PredicateHeightComputer implements ISimpleVisitor2 {
 		height = 0;
 	}
 
+	@Override
 	public void visitPredicateVariable(PredicateVariable predVar) {
 		commonVisit();
 	}
 
+	@Override
 	public void visitAssociativeExpression(AssociativeExpression expression) {
 		commonVisit();
 	}
 
+	@Override
 	public void visitAtomicExpression(AtomicExpression expression) {
 		commonVisit();
 	}
 
+	@Override
 	public void visitBecomesEqualTo(BecomesEqualTo assignment) {
 		commonVisit();
 	}
 
+	@Override
 	public void visitBecomesMemberOf(BecomesMemberOf assignment) {
 		commonVisit();
 	}
 
+	@Override
 	public void visitBecomesSuchThat(BecomesSuchThat assignment) {
 		commonVisit();
 	}
 
+	@Override
 	public void visitBinaryExpression(BinaryExpression expression) {
 		commonVisit();
 	}
 
+	@Override
 	public void visitBoolExpression(BoolExpression expression) {
 		commonVisit();
 	}
 
+	@Override
 	public void visitBoundIdentDecl(BoundIdentDecl boundIdentDecl) {
 		commonVisit();
 	}
 
+	@Override
 	public void visitBoundIdentifier(BoundIdentifier identifierExpression) {
 		commonVisit();
 	}
 
+	@Override
 	public void visitFreeIdentifier(FreeIdentifier identifierExpression) {
 		commonVisit();
 	}
 
+	@Override
 	public void visitIntegerLiteral(IntegerLiteral expression) {
 		commonVisit();
 	}
 
+	@Override
 	public void visitLiteralPredicate(LiteralPredicate predicate) {
 		commonVisit();
 	}
 
+	@Override
 	public void visitMultiplePredicate(MultiplePredicate predicate) {
 		commonVisit();
 	}
 
+	@Override
 	public void visitQuantifiedExpression(QuantifiedExpression expression) {
 		commonVisit();
 	}
 
+	@Override
 	public void visitRelationalPredicate(RelationalPredicate predicate) {
 		commonVisit();
 	}
 
+	@Override
 	public void visitSetExtension(SetExtension expression) {
 		commonVisit();
 	}
 
+	@Override
 	public void visitSimplePredicate(SimplePredicate predicate) {
 		commonVisit();
 	}
 
+	@Override
 	public void visitUnaryExpression(UnaryExpression expression) {
 		commonVisit();
 	}
 
+	@Override
 	public void visitExtendedExpression(ExtendedExpression expression) {
 		commonVisit();
 	}
 
+	@Override
 	public void visitExtendedPredicate(ExtendedPredicate predicate) {
 		commonVisit();
 	}

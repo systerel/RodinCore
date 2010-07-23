@@ -24,6 +24,7 @@ public class ContextCommitHypothesesModule extends CommitHypothesesModule {
 	public static final IModuleType<ContextCommitHypothesesModule> MODULE_TYPE = 
 		POGCore.getModuleType(EventBPlugin.PLUGIN_ID + ".contextCommitHypothesesModule"); //$NON-NLS-1$
 	
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

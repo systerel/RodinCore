@@ -33,14 +33,17 @@ public class DoubleClickStyledTextListener extends AbstractDoubleClickListener {
 			this.text = text;
 		}
 
+		@Override
 		public Point getSelection() {
 			return text.getSelection();
 		}
 
+		@Override
 		public String getText() {
 			return text.getText();
 		}
 
+		@Override
 		public void setSelection(Point p) {
 			text.setSelection(p);
 		}

@@ -156,6 +156,7 @@ public class ProverUIUtils {
 			final IUserSupport userSupport, final ITactic tactic,
 			final boolean applyPostTactic) {
 		UIUtils.runWithProgressDialog(shell, new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
 				try {
@@ -538,6 +539,7 @@ public class ProverUIUtils {
 			this.predicate = predicate;
 		}
 
+		@Override
 		public void run() throws Exception {
 			result = application.getHyperlinkBounds(string, predicate);
 		}

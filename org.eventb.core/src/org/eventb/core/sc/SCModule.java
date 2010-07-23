@@ -33,6 +33,7 @@ public abstract class SCModule extends Module implements IModule, IMarkerDisplay
 	
 	public static boolean DEBUG_MODULE = false;
 	
+	@Override
 	public void createProblemMarker(
 			IRodinElement element, 
 			IRodinProblem problem, 
@@ -41,6 +42,7 @@ public abstract class SCModule extends Module implements IModule, IMarkerDisplay
 		SCUtil.createProblemMarker(element, problem, args);
 	}
 	
+	@Override
 	public void createProblemMarker(IInternalElement element,
 			IAttributeType attributeType, IRodinProblem problem,
 			Object... args) throws RodinDBException {
@@ -50,6 +52,7 @@ public abstract class SCModule extends Module implements IModule, IMarkerDisplay
 		element.createProblemMarker(attributeType, problem, args);
 	}
 
+	@Override
 	public void createProblemMarker(IInternalElement element,
 			IAttributeType.String attributeType, int charStart, int charEnd,
 			IRodinProblem problem, Object... args) throws RodinDBException {

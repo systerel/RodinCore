@@ -43,6 +43,7 @@ public abstract class SCFilterModule extends SCModule implements ISCFilterModule
 	 * 
 	 * @see IFilterModule
 	 */
+	@Override
 	public void initModule(
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
@@ -54,6 +55,7 @@ public abstract class SCFilterModule extends SCModule implements ISCFilterModule
 	 * 
 	 * @see IFilterModule
 	 */
+	@Override
 	public void endModule(
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {

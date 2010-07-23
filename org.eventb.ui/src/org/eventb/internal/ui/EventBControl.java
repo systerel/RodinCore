@@ -52,6 +52,7 @@ public class EventBControl implements IEventBControl, IPropertyChangeListener {
 	 * 
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
 			Font font = JFaceResources
@@ -65,6 +66,7 @@ public class EventBControl implements IEventBControl, IPropertyChangeListener {
 	 * 
 	 * @see org.eventb.internal.ui.IEventBControl#getControl()
 	 */
+	@Override
 	public Control getControl() {
 		return control;
 	}
@@ -74,6 +76,7 @@ public class EventBControl implements IEventBControl, IPropertyChangeListener {
 	 * 
 	 * @see org.eventb.internal.ui.IEventBControl#dispose()
 	 */
+	@Override
 	public void dispose() {
 		JFaceResources.getFontRegistry().removeListener(this);
 		control.dispose();

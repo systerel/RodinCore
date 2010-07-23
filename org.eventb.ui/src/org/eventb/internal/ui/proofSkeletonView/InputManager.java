@@ -93,6 +93,7 @@ public class InputManager implements IPartListener2, ISelectionListener {
 		}
 		
 		private final IElementChangedListener statusListener = new IElementChangedListener() {
+			@Override
 			public void elementChanged(ElementChangedEvent event) {
 				reloadIfInputChanged(event.getDelta());
 			}
@@ -187,6 +188,7 @@ public class InputManager implements IPartListener2, ISelectionListener {
 		this.selectionService = workbenchWindow.getSelectionService();
 	}
 
+	@Override
 	public void selectionChanged(IWorkbenchPart sourcepart, ISelection selection) {
 		filterAndProcessNewSelection(sourcepart, selection);
 	}
@@ -225,6 +227,7 @@ public class InputManager implements IPartListener2, ISelectionListener {
 	void setViewInput(final InputMaker<?> maker) {
 		final Display display = PlatformUI.getWorkbench().getDisplay();
 		display.asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				if (currentInputMaker != null) {
 					currentInputMaker.removeInputChangedListener();
@@ -237,6 +240,7 @@ public class InputManager implements IPartListener2, ISelectionListener {
 		});
 	}
 
+	@Override
 	public void partVisible(IWorkbenchPartReference partRef) {
 		if (partRef.getId().equals(partId)) {
 			selectionService.addSelectionListener(this);
@@ -244,34 +248,41 @@ public class InputManager implements IPartListener2, ISelectionListener {
 		}
 	}
 
+	@Override
 	public void partHidden(IWorkbenchPartReference partRef) {
 		if (partRef.getId().equals(partId)) {
 			selectionService.removeSelectionListener(this);
 		}
 	}
 
+	@Override
 	public void partActivated(IWorkbenchPartReference partRef) {
 		// do nothing
 	}
 
+	@Override
 	public void partDeactivated(IWorkbenchPartReference partRef) {
 		// do nothing
 	}
 
+	@Override
 	public void partBroughtToTop(IWorkbenchPartReference partRef) {
 		// do nothing
 	}
 
+	@Override
 	public void partClosed(IWorkbenchPartReference partRef) {
 		if (partRef.getId().equals(partId) && currentInputMaker != null) {
 			currentInputMaker.removeInputChangedListener();
 		}
 	}
 
+	@Override
 	public void partInputChanged(IWorkbenchPartReference partRef) {
 		// do nothing
 	}
 
+	@Override
 	public void partOpened(IWorkbenchPartReference partRef) {
 		// do nothing
 	}

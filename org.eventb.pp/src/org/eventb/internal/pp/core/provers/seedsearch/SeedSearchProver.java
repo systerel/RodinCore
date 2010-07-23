@@ -55,6 +55,7 @@ public class SeedSearchProver implements IProverModule {
 	
 	private Vector<Set<Clause>> generatedClausesStack = new Vector<Set<Clause>>();
 	
+	@Override
 	public ProverResult addClauseAndDetectContradiction(Clause clause) {
 		if (accept(clause)) {
 			List<SeedSearchResult> results = addArbitraryClause(clause);
@@ -217,6 +218,7 @@ public class SeedSearchProver implements IProverModule {
 		return result;
 	}
 	
+	@Override
 	public ProverResult contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies) {
 		// do nothing, we let the removeClause() do the job
 		for (Iterator<Set<Clause>> iter = generatedClausesStack.iterator(); iter.hasNext();) {
@@ -281,6 +283,7 @@ public class SeedSearchProver implements IProverModule {
 		}
 	}
 	
+	@Override
 	public ProverResult next(boolean force) {
 		if (!force && !isNextAvailable()) return ProverResult.EMPTY_RESULT; 
 		
@@ -297,10 +300,12 @@ public class SeedSearchProver implements IProverModule {
 		return result;
 	}
 
+	@Override
 	public void registerDumper(Dumper dumper) {
 		dumper.addObject("SeedSearch table", manager);
 	}
 
+	@Override
 	public void removeClause(Clause clause) {
 		manager.removeClause(clause);
 		

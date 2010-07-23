@@ -31,6 +31,7 @@ public abstract class ElementSpec implements IElementSpec {
 		this.valueSpecs = valueSpecs;
 	}
 
+	@Override
 	public IElementType<? extends IRodinElement> getElementType() {
 		// TODO Auto-generated method stub
 		return null;
@@ -40,18 +41,21 @@ public abstract class ElementSpec implements IElementSpec {
 
 	public abstract boolean isVacuumable();
 
+	@Override
 	public void repair(IRodinElement element, boolean recursive, IProgressMonitor monitor) 
 	throws RodinDBException {
 		// TODO Auto-generated method stub
 		
 	}
 
+	@Override
 	public void vacuum(IRodinElement element, boolean recursive, IProgressMonitor monitor) 
 	throws RodinDBException {
 		// TODO Auto-generated method stub
 		
 	}
 
+	@Override
 	public List<SpecProblem> verify(IRodinElement element, boolean recursive) 
 	throws RodinDBException {
 		// TODO Auto-generated method stub

@@ -35,10 +35,12 @@ public class MachineCommitIdentsModule extends SCProcessorModule {
 			.getModuleType(EventBPlugin.PLUGIN_ID
 					+ ".machineCommitIdentsModule"); //$NON-NLS-1$
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
 
+	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {

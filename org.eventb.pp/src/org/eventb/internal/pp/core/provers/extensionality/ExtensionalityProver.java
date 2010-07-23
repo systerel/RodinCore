@@ -43,6 +43,7 @@ public class ExtensionalityProver implements IProverModule {
 		this.variableContext = variableContext;
 	}
 	
+	@Override
 	public ProverResult addClauseAndDetectContradiction(Clause clause) {
 		Clause derivedClause = null;
 		if (clause.getOrigin() instanceof ExtensionalityOrigin) return ProverResult.EMPTY_RESULT;
@@ -213,19 +214,23 @@ public class ExtensionalityProver implements IProverModule {
 		return clause.getEqualityLiteral(0);
 	}
 
+	@Override
 	public ProverResult contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies) {
 		// do nothing
 		return ProverResult.EMPTY_RESULT;
 	}
 
+	@Override
 	public ProverResult next(boolean force) {
 		return ProverResult.EMPTY_RESULT;
 	}
 
+	@Override
 	public void registerDumper(Dumper dumper) {
 		// do nothing
 	}
 
+	@Override
 	public void removeClause(Clause clause) {
 		// do nothing
 	}

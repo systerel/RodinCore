@@ -190,6 +190,7 @@ public class HTMLPage extends EventBEditorPage implements
 			final Display display = this.getEditorSite().getShell()
 					.getDisplay();
 			display.syncExec(new Runnable() {
+				@Override
 				public void run() {
 					// Reset the content string of the form text
 					setFormText(new NullProgressMonitor());
@@ -240,6 +241,7 @@ public class HTMLPage extends EventBEditorPage implements
 		return false;
 	}
 	
+	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		final IRodinElementDelta delta = event.getDelta();
 		processDelta(delta);

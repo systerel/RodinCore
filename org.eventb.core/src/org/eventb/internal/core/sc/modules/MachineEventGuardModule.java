@@ -52,12 +52,14 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 	public static final IModuleType<MachineEventGuardModule> MODULE_TYPE = SCCore
 			.getModuleType(EventBPlugin.PLUGIN_ID + ".machineEventGuardModule"); //$NON-NLS-1$
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
 
 	private static String GUARD_NAME_PREFIX = "GRD";
 
+	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {

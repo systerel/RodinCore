@@ -46,6 +46,7 @@ public class FwdMachineEventActionFrameSimModule extends MachineEventRefinementM
 	public static final IModuleType<FwdMachineEventActionFrameSimModule> MODULE_TYPE = 
 		POGCore.getModuleType(EventBPlugin.PLUGIN_ID + ".fwdMachineEventActionFrameSimModule"); //$NON-NLS-1$
 	
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
@@ -53,6 +54,7 @@ public class FwdMachineEventActionFrameSimModule extends MachineEventRefinementM
 	protected ISCEvent abstractEvent;
 	protected IMachineVariableTable machineVariableTable;
 	
+	@Override
 	public void process(
 			IRodinElement element, 
 			IPOGStateRepository repository, 

@@ -26,6 +26,7 @@ public class CommentAttributeManipulation extends AbstractAttributeManipulation 
 		return (ICommentedElement) element;
 	}
 
+	@Override
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		final ICommentedElement commented = asCommented(element);
@@ -35,21 +36,25 @@ public class CommentAttributeManipulation extends AbstractAttributeManipulation 
 			return "";
 	}
 
+	@Override
 	public void setValue(IRodinElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
 		asCommented(element).setComment(newValue, monitor);
 	}
 
+	@Override
 	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		//
 	}
 
+	@Override
 	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		asCommented(element).removeAttribute(COMMENT_ATTRIBUTE, monitor);
 	}
 
+	@Override
 	public String[] getPossibleValues(IRodinElement element,
 			IProgressMonitor monitor) {
 		// Not applicable for Commented Element.
@@ -57,6 +62,7 @@ public class CommentAttributeManipulation extends AbstractAttributeManipulation 
 		return null;
 	}
 
+	@Override
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		if (element == null)

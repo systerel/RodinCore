@@ -474,6 +474,7 @@ public class TestResolution extends AbstractInferrerTests {
 			this.list.add(clause);
 		}
 		
+		@Override
 		public Iterator<Clause> iterator(PredicateLiteralDescriptor predicate, boolean isPositive) {
 			return list.iterator();
 		}

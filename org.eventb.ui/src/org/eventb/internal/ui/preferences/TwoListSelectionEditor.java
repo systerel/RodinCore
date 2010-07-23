@@ -526,6 +526,7 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
 		buttonBox.setLayout(layout);
 		createButtons(buttonBox);
 		buttonBox.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent event) {
 				addButton = null;
 				removeButton = null;

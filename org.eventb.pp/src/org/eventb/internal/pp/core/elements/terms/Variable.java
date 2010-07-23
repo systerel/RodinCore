@@ -91,6 +91,7 @@ public final class Variable extends SimpleTerm {
 		return;
 	}
 	
+	@Override
 	public int compareTo(Term o) {
 		if (equals(0)) return 0;
 		else if (getPriority() == o.getPriority()) return index - ((Variable)o).index;

@@ -38,6 +38,7 @@ public class PrfSklMasterPart implements IFormPart {
 	// listener to the tree selection
 	private final ISelectionChangedListener treeListener = new ISelectionChangedListener() {
 
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			fireSelectionChanged(event);
 		}
@@ -63,6 +64,7 @@ public class PrfSklMasterPart implements IFormPart {
 		viewer.addSelectionChangedListener(treeListener);
 	}
 
+	@Override
 	public boolean setFormInput(Object input) {
 		if (input == null) {
 			return false;
@@ -83,32 +85,39 @@ public class PrfSklMasterPart implements IFormPart {
 		}
 	}
 
+	@Override
 	public void setFocus() {
 		// Do nothing
 	}
 
+	@Override
 	public void refresh() {
 		viewer.refresh();
 	}
 
+	@Override
 	public boolean isStale() {
 		return false;
 	}
 
+	@Override
 	public boolean isDirty() {
 		return false;
 	}
 
+	@Override
 	public void initialize(IManagedForm form) {
 		this.managedForm = form;
 	}
 
+	@Override
 	public void dispose() {
 		viewer.removeSelectionChangedListener(treeListener);
 		viewer.getTree().dispose();
 		viewer.getControl().dispose();
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		// Do nothing
 	}

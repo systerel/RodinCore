@@ -217,10 +217,12 @@ public class TestCaseSplit extends AbstractPPTest {
 	static class MyDispatcher implements ILevelController {
 		private Level level = BASE;
 
+		@Override
 		public Level getCurrentLevel() {
 			return level;
 		}
 
+		@Override
 		public void nextLevel() {
 			this.level = nextLevel;
 		}

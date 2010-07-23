@@ -48,6 +48,7 @@ public class HyperlinkStyledTextTest {
 		text.setText("Link here\n and also here");
 		text.addListener(SWT.MouseDown, new Listener() {
 
+			@Override
 			public void handleEvent(Event e) {
 				mouseDown(new Point(e.x, e.y));
 			}

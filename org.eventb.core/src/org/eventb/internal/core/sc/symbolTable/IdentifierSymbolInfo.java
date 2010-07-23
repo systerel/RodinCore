@@ -57,6 +57,7 @@ public class IdentifierSymbolInfo
 	 * 
 	 * @see org.eventb.core.sc.IIdentifierSymbolInfo#getType()
 	 */
+	@Override
 	public final Type getType() {
 		return type;
 	}
@@ -68,6 +69,7 @@ public class IdentifierSymbolInfo
 	 * org.eventb.core.sc.IIdentifierSymbolInfo#setType(org.eventb.core.ast.
 	 * Type)
 	 */
+	@Override
 	public final void setType(Type type) throws CoreException {
 		assertMutable();
 		this.type = type;
@@ -80,6 +82,7 @@ public class IdentifierSymbolInfo
 	 * org.eventb.core.sc.IIdentifierSymbolInfo#issueUntypedErrorMarker(org.
 	 * eventb.core.sc.IMarkerDisplay)
 	 */
+	@Override
 	public final void createUntypedErrorMarker(IMarkerDisplay markerDisplay)
 			throws CoreException {
 
@@ -89,6 +92,7 @@ public class IdentifierSymbolInfo
 
 	}
 
+	@Override
 	public ISCIdentifierElement createSCElement(IInternalElement parent,
 			IProgressMonitor monitor) throws CoreException {
 		checkPersistence();

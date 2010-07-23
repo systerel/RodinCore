@@ -27,6 +27,7 @@ public class ContextContentProvider extends AbstractRootContentProvider {
 		super(IContextRoot.ELEMENT_TYPE);
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		if (element instanceof IContextRoot) {
 			return ((IContextRoot) element).getParent().getParent();

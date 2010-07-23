@@ -98,6 +98,7 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 				.setToolTipText(Messages.cachedHypothesis_toolItem_add_toolTipText);
 		addItem.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				IUserSupport userSupport = CacheHypothesisComposite.this
 						.getUserSupport();
@@ -116,6 +117,7 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 				}
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				widgetDefaultSelected(e);
 			}
@@ -130,6 +132,7 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 				.setToolTipText(Messages.cachedHypothesis_toolItem_remove_toolTipText);
 		removeItem.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				IUserSupport userSupport = CacheHypothesisComposite.this
 						.getUserSupport();
@@ -140,6 +143,7 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 				userSupport.removeCachedHypotheses(deselected);
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				widgetDefaultSelected(e);
 			}
@@ -154,10 +158,12 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 				.setToolTipText(Messages.cachedHypothesis_toolItem_selectAll_toolTipText);
 		selectAll.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				CacheHypothesisComposite.this.selectAllHyps();
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				widgetDefaultSelected(e);
 			}
@@ -172,10 +178,12 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 				.setToolTipText(Messages.cachedHypothesis_toolItem_inverseSelection_toolTipText);
 		inverseSelection.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				CacheHypothesisComposite.this.inverseSelectedHyps();
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				widgetDefaultSelected(e);
 			}
@@ -190,10 +198,12 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 				.setToolTipText(Messages.cachedHypothesis_toolItem_selectNone_toolTipText);
 		selectNone.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				CacheHypothesisComposite.this.deselectAllHyps();
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				widgetDefaultSelected(e);
 			}
@@ -242,6 +252,7 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 	 * 
 	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
+	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
 		// Update the status of the toolbar items.
 		updateToolbarItems();
@@ -252,6 +263,7 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 	 * 
 	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
+	@Override
 	public void widgetSelected(SelectionEvent e) {
 		// Behave as the default selected.
 		widgetDefaultSelected(e);

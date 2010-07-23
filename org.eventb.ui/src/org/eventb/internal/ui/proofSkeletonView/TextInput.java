@@ -21,10 +21,12 @@ public abstract class TextInput implements IViewerInput {
 
 	abstract String getText();
 
+	@Override
 	public Object[] getElements() {
 		return new Object[] { getText() };
 	}
 
+	@Override
 	public String getTitleTooltip() {
 		// clear title tooltip (all needed info are in the displayed text)
 		return null;

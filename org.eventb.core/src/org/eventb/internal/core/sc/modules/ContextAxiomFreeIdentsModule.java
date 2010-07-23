@@ -23,6 +23,7 @@ public class ContextAxiomFreeIdentsModule extends FormulaFreeIdentsModule {
 			.getModuleType(EventBPlugin.PLUGIN_ID
 					+ ".contextAxiomFreeIdentsModule"); //$NON-NLS-1$
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

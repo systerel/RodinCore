@@ -47,6 +47,7 @@ public class LabelSymbolInfo
 				problemAttributeType, component, conflictProblem);
 	}
 
+	@Override
 	public ILabeledElement createSCElement(IInternalElement parent,
 			String elementName, IProgressMonitor monitor) throws CoreException {
 		checkPersistence();

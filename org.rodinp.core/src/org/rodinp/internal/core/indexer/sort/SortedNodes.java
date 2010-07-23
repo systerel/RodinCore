@@ -93,12 +93,14 @@ public class SortedNodes<T> implements Iterator<T> {
 		iterated.clear();
 	}
 
+	@Override
 	public boolean hasNext() {
 		updateIter();
 
 		return moreToIter();
 	}
 
+	@Override
 	public T next() {
 		updateIter();
 
@@ -113,6 +115,7 @@ public class SortedNodes<T> implements Iterator<T> {
 		return label;
 	}
 
+	@Override
 	public void remove() {
 		iter.remove();
 	}

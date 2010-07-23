@@ -107,10 +107,12 @@ public abstract class HyperlinkManager {
 			final int j = i;
 			item.addSelectionListener(new SelectionListener() {
 
+				@Override
 				public void widgetDefaultSelected(SelectionEvent se) {
 					widgetSelected(se);
 				}
 
+				@Override
 				public void widgetSelected(SelectionEvent se) {
 					System.out.println("Select " + j);
 					enableListeners();

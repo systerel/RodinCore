@@ -56,6 +56,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 			this.us = us;
 		}
 
+		@Override
 		public void run() {
 			try {
 				for (IPSStatus psStatus : us.getStatuses()) {
@@ -95,6 +96,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		deltaProcessor.newUserSupport(this);
 	}
 
+	@Override
 	public void setInput(final IRodinFile psFile) {
 		IPSRoot root = (IPSRoot) psFile.getRoot();
 		pc = EventBPlugin.getProofManager().getProofComponent(root);
@@ -106,6 +108,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		}
 	}
 
+	@Override
 	public void loadProofStates() throws RodinDBException {
 		final ProofStateLoader loader = new ProofStateLoader(this);
 		proofStates = new LinkedHashSet<IProofState>();
@@ -113,6 +116,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		loader.checkNestedException();
 	}
 
+	@Override
 	public void dispose() {
 		RodinCore.removeElementChangedListener(this);
 		manager.removeUserSupport(this);
@@ -123,12 +127,14 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 			}
 		}
 	}
+	@Override
 	public IRodinFile getInput() {
 		if (pc != null)
 			return pc.getPSRoot().getRodinFile();
 		return null;
 	}
 
+	@Override
 	public void nextUndischargedPO(final boolean force,
 			final IProgressMonitor monitor) throws RodinDBException {
 		loadProofStatesIfNeeded();
@@ -163,6 +169,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 		manager.run(new Runnable() {
 
+			@Override
 			public void run() {
 				try {
 					if (proofState != null)
@@ -185,6 +192,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		});
 	}
 
+	@Override
 	public void prevUndischargedPO(final boolean force,
 			final IProgressMonitor monitor) throws RodinDBException {
 		loadProofStatesIfNeeded();
@@ -217,6 +225,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 		manager.run(new Runnable() {
 
+			@Override
 			public void run() {
 				try {
 					if (proofState != null)
@@ -244,6 +253,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 * 
 	 * @see org.eventb.core.pm.IUserSupport#getCurrentPO()
 	 */
+	@Override
 	public IProofState getCurrentPO() {
 		return currentPS;
 	}
@@ -254,6 +264,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 * @see org.eventb.core.pm.IUserSupport#setCurrentPO(org.eventb.core.IPSstatus,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void setCurrentPO(IPSStatus psStatus, IProgressMonitor monitor)
 			throws RodinDBException {
 		loadProofStatesIfNeeded();
@@ -285,6 +296,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		
 		manager.run(new Runnable() {
 
+			@Override
 			public void run() {
 				if (UserSupportUtils.DEBUG)
 					UserSupportUtils.debug("New Proof Sequent: " + proofState);
@@ -313,6 +325,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 * 
 	 * @see org.eventb.core.pm.IUserSupport#getPOs()
 	 */
+	@Override
 	public IProofState[] getPOs() {
 		if (proofStates == null) {
 			return NO_PROOF_STATES;
@@ -325,6 +338,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 * 
 	 * @see org.eventb.core.pm.IUserSupport#hasUnsavedChanges()
 	 */
+	@Override
 	public boolean hasUnsavedChanges() {
 		if (proofStates == null) {
 			return false;
@@ -341,6 +355,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 * 
 	 * @see org.eventb.core.pm.IUserSupport#getUnsavedPOs()
 	 */
+	@Override
 	public IProofState[] getUnsavedPOs() {
 		if (proofStates == null) {
 			return NO_PROOF_STATES;
@@ -356,6 +371,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pm.IUserSupport#getInformation()
 	 */
+	@Override
 	@Deprecated
 	public Object[] getInformation() {
 		return new Object[0];
@@ -366,10 +382,12 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	 * 
 	 * @see org.eventb.core.pm.IUserSupport#removeCachedHypotheses(java.util.Collection)
 	 */
+	@Override
 	public void removeCachedHypotheses(final Collection<Predicate> hyps) {
 		checkCurrentPS();
 		manager.run(new Runnable() {
 
+			@Override
 			public void run() {
 				currentPS.removeAllFromCached(hyps);
 			}
@@ -384,6 +402,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		}
 	}
 
+	@Override
 	public void searchHyps(String token) {
 		checkCurrentPS();
 		token = token.trim();
@@ -394,6 +413,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 			removeHiddenHyps(hyps, sequent);
 		}
 		manager.run(new Runnable() {
+			@Override
 			public void run() {
 				currentPS.setSearched(hyps);
 				deltaProcessor.informationChanged(UserSupport.this,
@@ -414,15 +434,18 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		}
 	}
 
+	@Override
 	public void removeSearchedHypotheses(final Collection<Predicate> hyps) {
 		checkCurrentPS();
 		manager.run(new Runnable() {
+			@Override
 			public void run() {
 				currentPS.removeAllFromSearched(hyps);
 			}
 		});
 	}
 
+	@Override
 	public void selectNode(IProofTreeNode node) throws RodinDBException {
 		checkCurrentPS();
 		currentPS.setCurrentNode(node);
@@ -432,12 +455,14 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		currentPS.addAllToCached(hyps);
 	}
 
+	@Override
 	@Deprecated
 	public void applyTactic(final ITactic t, final IProgressMonitor monitor)
 			throws RodinDBException {
 		applyTactic(t, true, monitor);
 	}
 
+	@Override
 	public void applyTactic(ITactic t, boolean applyPostTactic,
 			IProgressMonitor monitor) throws RodinDBException {
 		checkCurrentPS();
@@ -445,12 +470,14 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		currentPS.applyTactic(t, node, applyPostTactic, monitor);
 	}
 	
+	@Override
 	@Deprecated
 	public void applyTacticToHypotheses(ITactic t, Set<Predicate> hyps,
 			IProgressMonitor monitor) throws RodinDBException {
 		applyTacticToHypotheses(t, hyps, true, monitor);
 	}
 
+	@Override
 	public void applyTacticToHypotheses(ITactic t, Set<Predicate> hyps,
 			boolean applyPostTactic, IProgressMonitor monitor)
 			throws RodinDBException {
@@ -463,6 +490,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		assert proofStates != null;
 		manager.run(new Runnable() {
 
+			@Override
 			public void run() {
 
 				LinkedHashSet<IProofState> newProofStates;
@@ -502,11 +530,13 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		});
 	}
 
+	@Override
 	public void back(IProgressMonitor monitor) throws RodinDBException {
 		checkCurrentPS();
 		currentPS.back(currentPS.getCurrentNode(), monitor);
 	}
 
+	@Override
 	public void setComment(String text, IProofTreeNode node)
 			throws RodinDBException {
 		checkCurrentPS();
@@ -517,6 +547,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 	private boolean saving = false;
 	
+	@Override
 	public void elementChanged(final ElementChangedEvent event) {
 		final IProgressMonitor monitor = new NullProgressMonitor();
 		usDeltaProcessor = new UserSupportDeltaProcessor(this);
@@ -531,6 +562,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		
 		manager.run(new Runnable() {
 
+			@Override
 			public void run() {
 				// Process trashed proofs first
 
@@ -577,6 +609,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 	}
 
+	@Override
 	public void doSave(final IProofState[] states, IProgressMonitor monitor)
 			throws RodinDBException {
 		if (proofStates == null) {
@@ -585,6 +618,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		saving = true;
 		try {
 			RodinCore.run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor pm) throws RodinDBException {
 					for (IProofState state : states) {
 						state.setProofTree(pm);
@@ -629,6 +663,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		return null;
 	}
 
+	@Override
 	public boolean selectNextSubgoal(boolean rootIncluded,
 			IProofTreeNodeFilter filter) throws RodinDBException {
 		if (currentPS == null)

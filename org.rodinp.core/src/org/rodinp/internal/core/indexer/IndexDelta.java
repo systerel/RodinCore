@@ -41,10 +41,12 @@ public class IndexDelta implements IIndexDelta {
 		}
 	}
 
+	@Override
 	public IRodinElement getElement() {
 		return element;
 	}
 
+	@Override
 	public Kind getKind() {
 		return kind;
 	}

@@ -144,6 +144,7 @@ public abstract class EventBPartWithButtons extends SectionPart implements
 				buttonLabels);
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				managedForm.fireSelectionChanged(EventBPartWithButtons.this,
 						event.getSelection());
@@ -249,10 +250,12 @@ public abstract class EventBPartWithButtons extends SectionPart implements
 	 *         A private class for selection listener of the buttons.
 	 */
 	class SelectionHandler implements SelectionListener {
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			buttonSelected(e);
 		}
 
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 			buttonSelected(e);
 		}

@@ -40,10 +40,12 @@ public abstract class AbstractProofTreeAction implements IObjectActionDelegate {
 		this.enabledOnOpenNode = canBeOpen;
 	}
 
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		this.shell = targetPart.getSite().getShell();
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection sel) {
 		this.selection = sel;
 		action.setEnabled(isEnabled(action, selection));

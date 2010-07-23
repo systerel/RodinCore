@@ -76,18 +76,21 @@ public class WorkingSetControl {
 
 		  workingsetComboViewer = new ComboViewer(workingsetCombo);
 		  workingsetComboViewer.setContentProvider(new IStructuredContentProvider() {
-		      public Object[] getElements(Object input) {
+		      @Override
+			public Object[] getElements(Object input) {
 		    	  if(input instanceof WorkingSetSelection[]) {
 		    		  return (WorkingSetSelection[]) input;
 		    	  }
 		    	  return new WorkingSetSelection[0];
 		      }
 	      
-	      public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+	      @Override
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	    	  //do nothing
 	      }
 
-	      public void dispose() {
+	      @Override
+		public void dispose() {
 	    	  //do nothing
 	      }
 		  });

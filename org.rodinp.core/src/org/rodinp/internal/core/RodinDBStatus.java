@@ -196,6 +196,7 @@ public class RodinDBStatus extends Status implements IRodinDBStatus,
 	/**
 	 * @see IRodinDBStatus
 	 */
+	@Override
 	public IRodinElement[] getElements() {
 		return elements;
 	}
@@ -382,6 +383,7 @@ public class RodinDBStatus extends Status implements IRodinDBStatus,
 	/**
 	 * @see IRodinDBStatus#getPath()
 	 */
+	@Override
 	public IPath getPath() {
 		return path;
 	}
@@ -406,6 +408,7 @@ public class RodinDBStatus extends Status implements IRodinDBStatus,
 	/**
 	 * @see IRodinDBStatus#isDoesNotExist()
 	 */
+	@Override
 	public boolean isDoesNotExist() {
 		return getCode() == ELEMENT_DOES_NOT_EXIST;
 	}

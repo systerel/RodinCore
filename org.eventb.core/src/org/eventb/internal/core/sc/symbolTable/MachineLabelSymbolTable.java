@@ -26,6 +26,7 @@ public class MachineLabelSymbolTable
 		super(size);
 	}
 
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}

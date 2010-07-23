@@ -63,6 +63,7 @@ public abstract class AbstractComplexContentProvider extends
 
 	protected abstract IEventBRoot[] convertToElementType(ModelProject project);
 
+	@Override
 	public Object getParent(Object element) {
 		IModelElement model = ModelController.getModelElement(element);
 		if (model != null) {

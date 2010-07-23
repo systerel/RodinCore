@@ -162,6 +162,7 @@ class CreateIdenticalElement extends OperationLeaf {
 		}
 	}
 
+	@Override
 	public void setParent(IInternalElement element) {
 		// TODO Auto-generated method stub
 		

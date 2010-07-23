@@ -37,6 +37,7 @@ public class ContextConstantModule extends IdentifierModule {
 	public static final IModuleType<ContextConstantModule> MODULE_TYPE = SCCore
 			.getModuleType(EventBPlugin.PLUGIN_ID + ".contextConstantModule"); //$NON-NLS-1$
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
@@ -49,6 +50,7 @@ public class ContextConstantModule extends IdentifierModule {
 	 * , org.rodinp.core.IInternalElement, org.eventb.core.sc.IStateRepository,
 	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {

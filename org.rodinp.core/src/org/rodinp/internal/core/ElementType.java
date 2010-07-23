@@ -101,10 +101,12 @@ public abstract class ElementType<T extends IRodinElement> implements IElementTy
 		register(id, this);
 	}
 
+	@Override
 	public final String getId() {
 		return id;
 	}
 
+	@Override
 	public final String getName() {
 		return name;
 	}

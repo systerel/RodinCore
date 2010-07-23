@@ -142,36 +142,43 @@ public class QuantifiedExpression extends Expression {
 
 	private static enum Operators implements IOperatorInfo<QuantifiedExpression> {
 		OP_QUNION_EXPL("\u22c3", QUNION_ID, QUANTIFICATION) {
+			@Override
 			public IQuantifiedParser<QuantifiedExpression> makeParser(int kind) {
 				return new ExplicitQuantExpr(kind, QUNION);
 			}
 		},
 		OP_QUNION_IMPL("\u22c3", QUNION_ID, QUANTIFICATION) {
+			@Override
 			public IQuantifiedParser<QuantifiedExpression> makeParser(int kind) {
 				return new ImplicitQuantExpr(kind, QUNION);
 			}
 		},
 		OP_QINTER_EXPL("\u22c2", QINTER_ID, QUANTIFICATION) {
+			@Override
 			public IQuantifiedParser<QuantifiedExpression> makeParser(int kind) {
 				return new ExplicitQuantExpr(kind, QINTER);
 			}
 		},
 		OP_QINTER_IMPL("\u22c2", QINTER_ID, QUANTIFICATION) {
+			@Override
 			public IQuantifiedParser<QuantifiedExpression> makeParser(int kind) {
 				return new ImplicitQuantExpr(kind, QINTER);
 			}
 		},
 		OP_CSET_EXPL("{", CSET_ID, BRACE_SETS) {
+			@Override
 			public IQuantifiedParser<QuantifiedExpression> makeParser(int kind) {
 				return new CSetExplicit(kind);
 			}
 		},
 		OP_CSET_IMPL("{", CSET_ID, BRACE_SETS) {
+			@Override
 			public IQuantifiedParser<QuantifiedExpression> makeParser(int kind) {
 				return new CSetImplicit(kind);
 			}
 		},
 		OP_CSET_LAMBDA("\u03bb", LAMBDA_ID, QUANTIFICATION) {
+			@Override
 			public IQuantifiedParser<QuantifiedExpression> makeParser(int kind) {
 				return new CSetLambda(kind);
 			}
@@ -188,18 +195,22 @@ public class QuantifiedExpression extends Expression {
 			this.groupId = groupId;
 		}
 
+		@Override
 		public String getImage() {
 			return image;
 		}
 		
+		@Override
 		public String getId() {
 			return id;
 		}
 		
+		@Override
 		public String getGroupId() {
 			return groupId;
 		}
 
+		@Override
 		public boolean isSpaced() {
 			return false;
 		}

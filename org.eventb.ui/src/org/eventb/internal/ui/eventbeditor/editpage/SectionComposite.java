@@ -227,6 +227,7 @@ public class SectionComposite implements ISectionComposite {
 
 		folding.addMouseTrackListener(new MouseTrackListener() {
 
+			@Override
 			public void mouseEnter(final MouseEvent e) {
 				if (isExpanded()) {
 					setHyperlinkImage(folding, EventBImage
@@ -237,10 +238,12 @@ public class SectionComposite implements ISectionComposite {
 				}
 			}
 
+			@Override
 			public void mouseExit(final MouseEvent e) {
 				updateExpandStatus();
 			}
 
+			@Override
 			public void mouseHover(final MouseEvent e) {
 				// Do nothing
 			}
@@ -267,6 +270,7 @@ public class SectionComposite implements ISectionComposite {
 		setExpand(!isExpanded, false);
 	}
 
+	@Override
 	public void setExpand(final boolean isExpanded, boolean recursive) {
 		long beforeTime = System.currentTimeMillis();
 		form.setRedraw(false);
@@ -349,10 +353,12 @@ public class SectionComposite implements ISectionComposite {
 		afterHyperlinkComposite.setHeightHint(SWT.DEFAULT);
 	}
 
+	@Override
 	public void dispose() {
 		composite.dispose();
 	}
 
+	@Override
 	public void refresh(final IRodinElement element) {
 		final IElementComposite comp = getCompositeTowards(element);
 		if (comp != null) {
@@ -360,10 +366,12 @@ public class SectionComposite implements ISectionComposite {
 		}
 	}
 
+	@Override
 	public IElementType<?> getElementType() {
 		return rel.getChildType();
 	}
 
+	@Override
 	public void elementRemoved(final IRodinElement element) {
 		if (elementComps == null) {
 			return;
@@ -397,6 +405,7 @@ public class SectionComposite implements ISectionComposite {
 		}
 	}
 
+	@Override
 	public void elementAdded(final IRodinElement element) {
 		if (elementComps == null) {
 			return;
@@ -422,6 +431,7 @@ public class SectionComposite implements ISectionComposite {
 		updateHyperlink();
 	}
 
+	@Override
 	public void childrenChanged(final IRodinElement element,
 			final IElementType<?> childrenType) {
 		if (elementComps == null) {
@@ -487,6 +497,7 @@ public class SectionComposite implements ISectionComposite {
 		return -1;
 	}
 
+	@Override
 	public boolean select(final IRodinElement element, final boolean selected) {
 		final IRodinElement child = getChildTowards(element);
 		if (child == null) {
@@ -503,6 +514,7 @@ public class SectionComposite implements ISectionComposite {
 		return comp.select(element, selected);
 	}
 
+	@Override
 	public void recursiveExpand(final IRodinElement element) {
 		if (parent.equals(element) || element.isAncestorOf(parent)) {
 			setExpand(true, true);
@@ -522,6 +534,7 @@ public class SectionComposite implements ISectionComposite {
 		}
 	}
 
+	@Override
 	public void edit(final IInternalElement element,
 			final IAttributeType attributeType, final int charStart,
 			final int charEnd) {
@@ -539,6 +552,7 @@ public class SectionComposite implements ISectionComposite {
 		}
 	}
 
+	@Override
 	public void refresh(final IRodinElement element,
 			final Set<IAttributeType> set) {
 		final IElementComposite comp = getCompositeTowards(element);
@@ -548,6 +562,7 @@ public class SectionComposite implements ISectionComposite {
 	}
 
 	// refresh only if necessary
+	@Override
 	public void refreshPrefixMarker() {
 		Color RED = EventBSharedColor.getSystemColor(SWT.COLOR_RED);
 		Color YELLOW = EventBSharedColor.getSystemColor(SWT.COLOR_YELLOW);

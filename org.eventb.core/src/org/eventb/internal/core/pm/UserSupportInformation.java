@@ -27,6 +27,7 @@ public class UserSupportInformation implements IUserSupportInformation {
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.pm.IUserSupportInformation#getInformation()
 	 */
+	@Override
 	public Object getInformation() {
 		return information;
 	}
@@ -34,6 +35,7 @@ public class UserSupportInformation implements IUserSupportInformation {
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.pm.IUserSupportInformation#getPriority()
 	 */
+	@Override
 	public int getPriority() {
 		return priority;
 	}

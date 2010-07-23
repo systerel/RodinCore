@@ -36,6 +36,7 @@ public abstract class BaseModule extends POGProcessorModule {
 		initProcessorModules(element, repository, monitor);
 	}
 
+	@Override
 	public void process(
 			IRodinElement element, 
 			IPOGStateRepository repository, 

@@ -59,12 +59,14 @@ class OperationNode extends AbstractEventBOperation implements OperationTree,
 		}
 	}
 
+	@Override
 	public void setParent(IInternalElement element) {
 		for (OperationTree child : children) {
 			child.setParent(element);
 		}
 	}
 
+	@Override
 	public Collection<IInternalElement> getCreatedElements() {
 		ArrayList<IInternalElement> result = new ArrayList<IInternalElement>();
 		for (OperationTree child : children) {
@@ -73,6 +75,7 @@ class OperationNode extends AbstractEventBOperation implements OperationTree,
 		return result;
 	}
 
+	@Override
 	public IInternalElement getCreatedElement() {
 		if (children.size() > 0) {
 			return children.get(0).getCreatedElement();
@@ -81,6 +84,7 @@ class OperationNode extends AbstractEventBOperation implements OperationTree,
 		}
 	}
 
+	@Override
 	public Iterator<OperationTree> iterator() {
 		return children.iterator();
 	}

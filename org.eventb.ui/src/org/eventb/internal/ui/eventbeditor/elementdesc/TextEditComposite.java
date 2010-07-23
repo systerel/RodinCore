@@ -82,10 +82,12 @@ public class TextEditComposite extends AbstractEditComposite {
 			this.part = part;
 		}
 
+		@Override
 		public void focusGained(FocusEvent e) {
 			deactivationKey = getContextService().activateContext(CONTEXT_ID);
 		}
 
+		@Override
 		public void focusLost(FocusEvent e) {
 			if (deactivationKey != null) {
 				getContextService().deactivateContext(deactivationKey);
@@ -152,6 +154,7 @@ public class TextEditComposite extends AbstractEditComposite {
 			final IAttributeLocation location = RodinCore.getInternalLocation(element, attType);
 			adapter = ContentProposalFactory.getContentProposal(location, text, getFormulaFactory(element));
 			text.addVerifyKeyListener(new VerifyKeyListener() {
+				@Override
 				public void verifyKey(VerifyEvent event) {
 					if (adapter.isProposalPopupOpen()
 							&& event.character == SWT.CR)
@@ -164,6 +167,7 @@ public class TextEditComposite extends AbstractEditComposite {
 			text.addFocusListener(new ContextActivator(fEditor));
 			text.addModifyListener(new ModifyListener() {
 
+				@Override
 				public void modifyText(ModifyEvent e) {
 					text.setStyleRange(null);
 				}
@@ -277,10 +281,12 @@ public class TextEditComposite extends AbstractEditComposite {
 				.createButton(composite, "UNDEFINED", SWT.PUSH);
 		undefinedButton.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setDefaultValue();
 			}
@@ -311,6 +317,7 @@ public class TextEditComposite extends AbstractEditComposite {
 		}
 	}
 
+	@Override
 	public void edit(int charStart, int charEnd) {
 		if (text == null) {
 			return;

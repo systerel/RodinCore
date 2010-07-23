@@ -73,14 +73,17 @@ public class ConcreteEventActionTable extends EventActionTable implements
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 
+	@Override
 	public BecomesEqualTo getXiUnprime() {
 		return xiUnprime;
 	}
 
+	@Override
 	public BecomesEqualTo getDeltaPrime() {
 		return deltaPrime;
 	}

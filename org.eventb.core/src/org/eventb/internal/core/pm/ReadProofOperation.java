@@ -34,6 +34,7 @@ class ReadProofOperation implements IWorkspaceRunnable {
 		return result;
 	}
 
+	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
 		result = pc.getProof(poName).getSkeleton(ff, monitor);
 	}

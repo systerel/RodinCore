@@ -23,27 +23,33 @@ import org.eventb.internal.pp.core.Tracer;
  */
 public class TypingOrigin implements IOrigin {
 	
+	@Override
 	public boolean dependsOnGoal() {
 		return false;
 	}
 
+	@Override
 	public void addDependenciesTo(Set<Level> dependencies) {
 		if (!dependencies.contains(getLevel()))
 			dependencies.add(getLevel());
 	}
 
+	@Override
 	public Level getLevel() {
 		return Level.BASE;
 	}
 
+	@Override
 	public boolean isDefinition() {
 		return false;
 	}
 
+	@Override
 	public void trace(Tracer tracer) {
 		// do nothing
 	}
 
+	@Override
 	public int getDepth() {
 		return 0;
 	}

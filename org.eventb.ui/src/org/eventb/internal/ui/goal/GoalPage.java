@@ -232,14 +232,17 @@ public class GoalPage extends Page implements IGoalPage {
 			
 			final IHyperlinkListener listener = new IHyperlinkListener() {
 
+				@Override
 				public void linkEntered(HyperlinkEvent e) {
 					return;
 				}
 
+				@Override
 				public void linkExited(HyperlinkEvent e) {
 					return;
 				}
 
+				@Override
 				public void linkActivated(HyperlinkEvent e) {
 					apply(tacticAppli, tacticUIRegistry
 							.isSkipPostTactic(tacticAppli.getTacticID()));
@@ -253,14 +256,17 @@ public class GoalPage extends Page implements IGoalPage {
 		for (final ICommandApplication commandAppli : commands) {
 			final IHyperlinkListener listener = new IHyperlinkListener() {
 
+				@Override
 				public void linkEntered(HyperlinkEvent e) {
 					return;
 				}
 
+				@Override
 				public void linkExited(HyperlinkEvent e) {
 					return;
 				}
 
+				@Override
 				public void linkActivated(HyperlinkEvent e) {
 					apply(commandAppli);
 				}
@@ -421,6 +427,7 @@ public class GoalPage extends Page implements IGoalPage {
 		scrolledForm.setFocus();
 	}
 
+	@Override
 	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
 		if (GoalUtils.DEBUG)
 			GoalUtils.debug("Begin User Support Manager Changed");
@@ -454,6 +461,7 @@ public class GoalPage extends Page implements IGoalPage {
 		Display display = control.getDisplay();
 		
 		display.syncExec(new Runnable() {
+			@Override
 			public void run() {
 				if (control.isDisposed())
 					return;

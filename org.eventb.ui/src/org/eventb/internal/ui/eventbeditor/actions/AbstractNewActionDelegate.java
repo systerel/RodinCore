@@ -31,12 +31,14 @@ public abstract class AbstractNewActionDelegate<T extends IEventBRoot>
 
 	protected abstract void runAction(IAction action);
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		if (targetEditor instanceof IEventBEditor)
 			editor = (IEventBEditor<T>) targetEditor;
 	}
 
+	@Override
 	public void run(IAction action) {
 		if (checkAndShowReadOnly(editor.getRodinInput())) {
 			return;
@@ -44,6 +46,7 @@ public abstract class AbstractNewActionDelegate<T extends IEventBRoot>
 		runAction(action);
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		return; // Do nothing
 	}

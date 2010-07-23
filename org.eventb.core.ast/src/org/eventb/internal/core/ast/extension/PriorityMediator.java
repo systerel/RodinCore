@@ -26,10 +26,12 @@ public class PriorityMediator implements IPriorityMediator {
 		this.grammar = grammar;
 	}
 
+	@Override
 	public void addPriority(String lowOpId, String highOpId) throws CycleError {
 		grammar.addPriority(lowOpId, highOpId);
 	}
 
+	@Override
 	public void addGroupPriority(String lowGroupId, String highGroupId)
 			throws CycleError {
 		grammar.addGroupPriority(lowGroupId, highGroupId);

@@ -27,6 +27,7 @@ public class MachineEventGuardTheoremModule extends TheoremModule {
 			.getModuleType(EventBPlugin.PLUGIN_ID
 					+ ".machineEventGuardTheoremModule"); //$NON-NLS-1$
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

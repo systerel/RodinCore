@@ -35,6 +35,7 @@ public class ConvergenceAttributeManipulation extends
 		return (IConvergenceElement) element;
 	}
 
+	@Override
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		final Convergence convergence = asConvergence(element)
@@ -48,6 +49,7 @@ public class ConvergenceAttributeManipulation extends
 		return ORDINARY;
 	}
 
+	@Override
 	public void setValue(IRodinElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
 		final Convergence convergence;
@@ -62,21 +64,25 @@ public class ConvergenceAttributeManipulation extends
 		asConvergence(element).setConvergence(convergence, null);
 	}
 
+	@Override
 	public String[] getPossibleValues(IRodinElement element,
 			IProgressMonitor monitor) {
 		return new String[] { ORDINARY, CONVERGENT, ANTICIPATED };
 	}
 
+	@Override
 	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		asConvergence(element).removeAttribute(CONVERGENCE_ATTRIBUTE, null);
 	}
 
+	@Override
 	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		asConvergence(element).setConvergence(Convergence.ORDINARY, monitor);
 	}
 
+	@Override
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asConvergence(element).hasConvergence();

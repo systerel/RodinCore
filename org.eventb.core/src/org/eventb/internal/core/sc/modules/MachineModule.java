@@ -56,6 +56,7 @@ public class MachineModule extends BaseModule {
 	public static final IModuleType<MachineModule> MODULE_TYPE = SCCore
 			.getModuleType(EventBPlugin.PLUGIN_ID + ".machineModule"); //$NON-NLS-1$
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

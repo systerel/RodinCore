@@ -29,11 +29,13 @@ public class ProofTreeInput implements IViewerInput {
 	}
 
 
+	@Override
 	public Object[] getElements() {
 		return new Object[] {proofTree.getRoot()};
 	}
 
 
+	@Override
 	public String getTitleTooltip() {
 		return tooltip;
 	}

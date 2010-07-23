@@ -27,6 +27,7 @@ import org.eventb.internal.pp.loader.formula.SignedFormula;
  */
 public class LiteralOrderer implements Comparator<SignedFormula<?>> {
 
+	@Override
 	public int compare(SignedFormula<?> o1, SignedFormula<?> o2) {
 //		if (o1.equals(o2)) return 0;
 			

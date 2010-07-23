@@ -61,6 +61,7 @@ public abstract class Openable extends RodinElement implements IOpenable {
 	/*
 	 * @see IOpenable
 	 */
+	@Override
 	public void close() throws RodinDBException {
 		RodinDBManager.getRodinDBManager().removeInfoAndChildren(this);
 	}
@@ -142,6 +143,7 @@ public abstract class Openable extends RodinElement implements IOpenable {
 	 * 
 	 * @see IRodinElement
 	 */
+	@Override
 	public IResource getCorrespondingResource() {
 		return getUnderlyingResource();
 	}
@@ -194,6 +196,7 @@ public abstract class Openable extends RodinElement implements IOpenable {
 	/**
 	 * @see IOpenable
 	 */
+	@Override
 	public boolean hasUnsavedChanges() {
 		if (isReadOnly()) {
 			return false;
@@ -208,6 +211,7 @@ public abstract class Openable extends RodinElement implements IOpenable {
 	 * 
 	 * @see IOpenable
 	 */
+	@Override
 	public boolean isConsistent() {
 		return true;
 	}
@@ -216,6 +220,7 @@ public abstract class Openable extends RodinElement implements IOpenable {
 	 * 
 	 * @see IOpenable
 	 */
+	@Override
 	public boolean isOpen() {
 		return RodinDBManager.getRodinDBManager().getInfo(this) != null;
 	}
@@ -261,6 +266,7 @@ public abstract class Openable extends RodinElement implements IOpenable {
 	/**
 	 * @see IOpenable
 	 */
+	@Override
 	public void makeConsistent(IProgressMonitor monitor)
 			throws RodinDBException {
 		if (isConsistent())
@@ -275,6 +281,7 @@ public abstract class Openable extends RodinElement implements IOpenable {
 	/**
 	 * @see IOpenable
 	 */
+	@Override
 	public void open(IProgressMonitor pm) throws RodinDBException {
 		getElementInfo(pm);
 	}
@@ -346,6 +353,7 @@ public abstract class Openable extends RodinElement implements IOpenable {
 				.makeRelative(), true) != null;
 	}
 
+	@Override
 	public void save(IProgressMonitor progress, boolean force)
 			throws RodinDBException {
 		if (isReadOnly()) {
@@ -354,6 +362,7 @@ public abstract class Openable extends RodinElement implements IOpenable {
 		}
 	}
 
+	@Override
 	public void save(IProgressMonitor progress, boolean force,
 			boolean keepHistory) throws RodinDBException {
 		if (isReadOnly()) {

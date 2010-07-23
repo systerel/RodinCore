@@ -24,6 +24,7 @@ import org.rodinp.core.RodinDBException;
 public class IdentifierAttributeManipulation extends
 		AbstractAttributeManipulation {
 
+	@Override
 	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		final IIdentifierElement identifierElement = asIdentifier(element);
@@ -33,21 +34,25 @@ public class IdentifierAttributeManipulation extends
 		identifierElement.setIdentifierString(identifier, monitor);
 	}
 
+	@Override
 	public void setValue(IRodinElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
 		asIdentifier(element).setIdentifierString(newValue, null);
 	}
 
+	@Override
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asIdentifier(element).getIdentifierString();
 	}
 
+	@Override
 	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		logCantRemove(IDENTIFIER_ATTRIBUTE);
 	}
 
+	@Override
 	public String[] getPossibleValues(IRodinElement element,
 			IProgressMonitor monitor) {
 		// Not applicable to Identifier Elements
@@ -55,6 +60,7 @@ public class IdentifierAttributeManipulation extends
 		return null;
 	}
 
+	@Override
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asIdentifier(element).hasIdentifierString();

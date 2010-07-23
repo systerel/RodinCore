@@ -271,6 +271,7 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 	/**
 	 * Receives the object that owns the properties shown in this property page.
 	 */
+	@Override
 	public void setElement(IAdaptable element) {
 		if (element instanceof IProject)
 			this.project = ((IProject) element);
@@ -281,6 +282,7 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchPropertyPage#getElement()
 	 */
+	@Override
 	public IAdaptable getElement() {
 		return project;
 	}
@@ -444,6 +446,7 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 		final PreferenceDialog dialog = new PreferenceDialog(getControl()
 				.getShell(), manager);
 		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				dialog.create();
 				dialog.getShell().setText(getPropertyPageTitle(prj));

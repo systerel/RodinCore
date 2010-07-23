@@ -25,6 +25,7 @@ import org.rodinp.keyboard.RodinKeyboardPlugin;
 
 public class SearchHypotheses implements IProofCommand {
 
+	@Override
 	public void apply(IUserSupport us, Predicate hyp, String[] inputs,
 			IProgressMonitor monitor) throws RodinDBException {
 		// TODO should have been fixed at the root (the text widget) rather than here
@@ -39,6 +40,7 @@ public class SearchHypotheses implements IProofCommand {
 		}
 	}
 
+	@Override
 	public boolean isApplicable(IUserSupport us, Predicate hyp, String input) {
 		return (us.getCurrentPO() != null && us.getCurrentPO().getCurrentNode() != null);
 	}

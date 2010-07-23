@@ -36,10 +36,12 @@ public class DefaultRewriter implements IFormulaRewriter2 {
 		this.ff = ff;
 	}
 
+	@Override
 	public final boolean autoFlatteningMode() {
 		return autoFlattening;
 	}
 
+	@Override
 	public final void enteringQuantifier(int nbOfDeclarations) {
 		bindingDepth += nbOfDeclarations;
 	}
@@ -54,54 +56,67 @@ public class DefaultRewriter implements IFormulaRewriter2 {
 		return bindingDepth;
 	}
 	
+	@Override
 	public final FormulaFactory getFactory() {
 		return ff;
 	}
 
+	@Override
 	public final void leavingQuantifier(int nbOfDeclarations) {
 		bindingDepth -= nbOfDeclarations;
 	}
 
+	@Override
 	public Expression rewrite(AssociativeExpression expression) {
 		return expression;
 	}
 
+	@Override
 	public Predicate rewrite(AssociativePredicate predicate) {
 		return predicate;
 	}
 
+	@Override
 	public Expression rewrite(AtomicExpression expression) {
 		return expression;
 	}
 
+	@Override
 	public Expression rewrite(BinaryExpression expression) {
 		return expression;
 	}
 
+	@Override
 	public Predicate rewrite(BinaryPredicate predicate) {
 		return predicate;
 	}
 
+	@Override
 	public Expression rewrite(BoolExpression expression) {
 		return expression;
 	}
 
+	@Override
 	public Expression rewrite(BoundIdentifier identifier) {
 		return identifier;
 	}
 
+	@Override
 	public Expression rewrite(FreeIdentifier identifier) {
 		return identifier;
 	}
 
+	@Override
 	public Expression rewrite(IntegerLiteral literal) {
 		return literal;
 	}
 
+	@Override
 	public Predicate rewrite(LiteralPredicate predicate) {
 		return predicate;
 	}
 
+	@Override
 	public Predicate rewrite(MultiplePredicate predicate) {
 		return predicate;
 	}
@@ -109,34 +124,42 @@ public class DefaultRewriter implements IFormulaRewriter2 {
 	/**
 	 * @since 1.2
 	 */
+	@Override
 	public Predicate rewrite(PredicateVariable predVar) {
 		return predVar;
 	}
 
+	@Override
 	public Expression rewrite(QuantifiedExpression expression) {
 		return expression;
 	}
 
+	@Override
 	public Predicate rewrite(QuantifiedPredicate predicate) {
 		return predicate;
 	}
 
+	@Override
 	public Predicate rewrite(RelationalPredicate predicate) {
 		return predicate;
 	}
 
+	@Override
 	public Expression rewrite(SetExtension expression) {
 		return expression;
 	}
 
+	@Override
 	public Predicate rewrite(SimplePredicate predicate) {
 		return predicate;
 	}
 
+	@Override
 	public Expression rewrite(UnaryExpression expression) {
 		return expression;
 	}
 
+	@Override
 	public Predicate rewrite(UnaryPredicate predicate) {
 		return predicate;
 	}
@@ -144,6 +167,7 @@ public class DefaultRewriter implements IFormulaRewriter2 {
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public Expression rewrite(ExtendedExpression expression) {
 		return expression;
 	}
@@ -151,6 +175,7 @@ public class DefaultRewriter implements IFormulaRewriter2 {
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public Predicate rewrite(ExtendedPredicate predicate) {
 		return predicate;
 	}

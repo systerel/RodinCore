@@ -169,6 +169,7 @@ public interface IInternalElement extends IRodinElement, IElementManipulation,
 			int charEnd, IRodinProblem problem, Object... args)
 			throws RodinDBException;
 
+	@Override
 	IInternalElementType<? extends IInternalElement> getElementType();
 	
 	/**
@@ -609,11 +610,16 @@ public interface IInternalElement extends IRodinElement, IElementManipulation,
 			throws RodinDBException;
 
 	// Methods with specialized return types
+	@Override
 	IInternalElement getSnapshot();
+	@Override
 	IInternalElement getMutableCopy();
 	
+	@Override
 	IRodinFile getOpenable();
+	@Override
 	IFile getResource();
+	@Override
 	IFile getUnderlyingResource();
 
 }

@@ -89,6 +89,7 @@ public interface IPRProof extends IInternalElement, IPRProofInfoElement {
 	 * 
 	 * @throws RodinDBException
 	 */
+	@Override
 	int getConfidence() throws RodinDBException;
 
 	/**
@@ -107,6 +108,7 @@ public interface IPRProof extends IInternalElement, IPRProofInfoElement {
 	 * @throws RodinDBException
 	 * @see #setHasManualProof(boolean, IProgressMonitor)
 	 */
+	@Override
 	boolean getHasManualProof() throws RodinDBException;
 
 	/**
@@ -122,6 +124,7 @@ public interface IPRProof extends IInternalElement, IPRProofInfoElement {
 	 * @throws RodinDBException
 	 * @see #getHasManualProof()
 	 */
+	@Override
 	void setHasManualProof(boolean value, IProgressMonitor monitor)
 			throws RodinDBException;
 

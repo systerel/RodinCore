@@ -56,6 +56,7 @@ public class PSStatus extends EventBProofElement implements IPSStatus {
 	}
 	
 	
+	@Override
 	public IPRProof getProof(){
 		final IPSRoot psRoot = (IPSRoot) getRoot();
 		final IPRRoot prRoot = psRoot.getPRRoot();
@@ -63,10 +64,12 @@ public class PSStatus extends EventBProofElement implements IPSStatus {
 	}
 
 
+	@Override
 	public boolean isBroken() throws RodinDBException {
 		return isAttributeTrue(PROOF_BROKEN_ATTRIBUTE);
 	}
 
+	@Override
 	public void setBroken(boolean value, IProgressMonitor monitor)
 			throws RodinDBException {
 
@@ -74,11 +77,13 @@ public class PSStatus extends EventBProofElement implements IPSStatus {
 	}
 	
 	
+	@Override
 	@Deprecated
 	public int getProofConfidence() throws RodinDBException {
 		return getConfidence();
 	}
 	
+	@Override
 	@Deprecated
 	public void setProofConfidence(IProgressMonitor monitor) throws RodinDBException {
 		IPRProof proof = getProof();
@@ -89,6 +94,7 @@ public class PSStatus extends EventBProofElement implements IPSStatus {
 		}
 	}
 	
+	@Override
 	public void copyProofInfo(IProgressMonitor monitor) throws RodinDBException {
 		IPRProof proof = getProof();
 		if (proof.exists()) {
@@ -100,16 +106,19 @@ public class PSStatus extends EventBProofElement implements IPSStatus {
 		}
 	}
 	
+	@Override
 	public IPOSequent getPOSequent() {
 		final IPSRoot psRoot = (IPSRoot) getRoot();
 		return psRoot.getPORoot().getSequent(getElementName());
 	}
 
+	@Override
 	@Deprecated
 	public boolean hasManualProof() throws RodinDBException {
 		return getHasManualProof();
 	}
 
+	@Override
 	@Deprecated
 	public void setManualProof(boolean value, IProgressMonitor monitor)
 			throws RodinDBException {

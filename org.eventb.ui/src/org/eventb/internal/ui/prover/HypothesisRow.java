@@ -288,14 +288,17 @@ public class HypothesisRow {
 			
 			final IHyperlinkListener hlListener = new IHyperlinkListener() {
 
+				@Override
 				public void linkEntered(HyperlinkEvent e) {
 					return;
 				}
 
+				@Override
 				public void linkExited(HyperlinkEvent e) {
 					return;
 				}
 
+				@Override
 				public void linkActivated(HyperlinkEvent e) {
 					apply(tacticAppli, tacticUIRegistry
 							.isSkipPostTactic(tacticAppli.getTacticID()));
@@ -311,14 +314,17 @@ public class HypothesisRow {
 		for (final ICommandApplication commandAppli : commands) {
 			final IHyperlinkListener hlListener = new IHyperlinkListener() {
 
+				@Override
 				public void linkEntered(HyperlinkEvent e) {
 					return;
 				}
 
+				@Override
 				public void linkExited(HyperlinkEvent e) {
 					return;
 				}
 
+				@Override
 				public void linkActivated(HyperlinkEvent e) {
 					apply(commandAppli);
 				}

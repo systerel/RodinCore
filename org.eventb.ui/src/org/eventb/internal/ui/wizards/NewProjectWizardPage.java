@@ -54,6 +54,7 @@ public class NewProjectWizardPage extends WizardPage {
 		setDescription("This wizard creates a new (empty) Event-B Project in the current Workspace");
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -67,6 +68,7 @@ public class NewProjectWizardPage extends WizardPage {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		projectText.setLayoutData(gd);
 		projectText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				dialogChanged();
 			}

@@ -28,6 +28,7 @@ abstract class OperationLeaf extends AbstractEventBOperation implements Operatio
 	/**
 	 * @return Empty Collection
 	 */
+	@Override
 	public Collection<IInternalElement> getCreatedElements() {
 		return createdElements;
 	}
@@ -35,6 +36,7 @@ abstract class OperationLeaf extends AbstractEventBOperation implements Operatio
 	/**
 	 * @return null
 	 */
+	@Override
 	public IInternalElement getCreatedElement() {
 		return null;
 	}

@@ -59,98 +59,122 @@ public class TestSimpleVisitor extends TestCase {
 			return b.toString();
 		}
 		
+		@Override
 		public void visitAssociativeExpression(AssociativeExpression expression) {
 			b.append(expression.getClass());
 		}
 
+		@Override
 		public void visitAssociativePredicate(AssociativePredicate predicate) {
 			b.append(predicate.getClass());
 		}
 
+		@Override
 		public void visitAtomicExpression(AtomicExpression expression) {
 			b.append(expression.getClass());
 		}
 
+		@Override
 		public void visitBecomesEqualTo(BecomesEqualTo assignment) {
 			b.append(assignment.getClass());
 		}
 
+		@Override
 		public void visitBecomesMemberOf(BecomesMemberOf assignment) {
 			b.append(assignment.getClass());
 		}
 
+		@Override
 		public void visitBecomesSuchThat(BecomesSuchThat assignment) {
 			b.append(assignment.getClass());
 		}
 
+		@Override
 		public void visitBinaryExpression(BinaryExpression expression) {
 			b.append(expression.getClass());
 		}
 
+		@Override
 		public void visitBinaryPredicate(BinaryPredicate predicate) {
 			b.append(predicate.getClass());
 		}
 
+		@Override
 		public void visitBoolExpression(BoolExpression expression) {
 			b.append(expression.getClass());
 		}
 
+		@Override
 		public void visitBoundIdentDecl(BoundIdentDecl boundIdentDecl) {
 			b.append(boundIdentDecl.getClass());
 		}
 
+		@Override
 		public void visitBoundIdentifier(BoundIdentifier expression) {
 			b.append(expression.getClass());
 		}
 
+		@Override
 		public void visitFreeIdentifier(FreeIdentifier expression) {
 			b.append(expression.getClass());
 		}
 
+		@Override
 		public void visitIntegerLiteral(IntegerLiteral expression) {
 			b.append(expression.getClass());
 		}
 
+		@Override
 		public void visitLiteralPredicate(LiteralPredicate predicate) {
 			b.append(predicate.getClass());
 		}
 
+		@Override
 		public void visitQuantifiedExpression(QuantifiedExpression expression) {
 			b.append(expression.getClass());
 		}
 
+		@Override
 		public void visitQuantifiedPredicate(QuantifiedPredicate predicate) {
 			b.append(predicate.getClass());
 		}
 
+		@Override
 		public void visitRelationalPredicate(RelationalPredicate predicate) {
 			b.append(predicate.getClass());
 		}
 
+		@Override
 		public void visitSetExtension(SetExtension expression) {
 			b.append(expression.getClass());
 		}
 
+		@Override
 		public void visitSimplePredicate(SimplePredicate predicate) {
 			b.append(predicate.getClass());
 		}
 
+		@Override
 		public void visitUnaryExpression(UnaryExpression expression) {
 			b.append(expression.getClass());
 		}
 
+		@Override
 		public void visitUnaryPredicate(UnaryPredicate predicate) {
 			b.append(predicate.getClass());
 		}
 
+		@Override
 		public void visitMultiplePredicate(MultiplePredicate predicate) {
 			b.append(predicate.getClass());
 		}
 
+		@Override
 		public void visitExtendedExpression(ExtendedExpression expression) {
 			b.append(expression.getClass());
 		}
 
+		@Override
 		public void visitExtendedPredicate(ExtendedPredicate predicate) {
 			b.append(predicate.getClass());
 		}
@@ -158,6 +182,7 @@ public class TestSimpleVisitor extends TestCase {
 
 	static class TestVisitor2 extends TestVisitor implements ISimpleVisitor2 {
 
+		@Override
 		public void visitPredicateVariable(PredicateVariable predVar) {
 			b.append(predVar.getClass());
 		}

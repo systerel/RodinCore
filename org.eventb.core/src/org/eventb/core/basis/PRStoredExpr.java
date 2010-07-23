@@ -47,6 +47,7 @@ public class PRStoredExpr extends SCExpressionElement implements IPRStoredExpr {
 		return super.getExpression(factory, typenv);
 	}
 
+	@Override
 	public void setExpression(Expression predicate,
 			ITypeEnvironment baseTypenv, IProgressMonitor monitor)
 			throws RodinDBException {

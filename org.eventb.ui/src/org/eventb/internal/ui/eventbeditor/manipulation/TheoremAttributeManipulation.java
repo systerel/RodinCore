@@ -30,6 +30,7 @@ public class TheoremAttributeManipulation extends AbstractBooleanManipulation {
 		return (IDerivedPredicateElement) element;
 	}
 
+	@Override
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		final IDerivedPredicateElement derived = asDerivedPredicate(element);
@@ -37,6 +38,7 @@ public class TheoremAttributeManipulation extends AbstractBooleanManipulation {
 		return getText(isSelected);
 	}
 
+	@Override
 	public void setValue(IRodinElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
 		if (newValue.equals(TRUE)) {
@@ -48,16 +50,19 @@ public class TheoremAttributeManipulation extends AbstractBooleanManipulation {
 		}
 	}
 
+	@Override
 	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		asDerivedPredicate(element).setTheorem(false, monitor);
 	}
 
+	@Override
 	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		asDerivedPredicate(element).removeAttribute(THEOREM_ATTRIBUTE, monitor);
 	}
 
+	@Override
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		if (element == null)

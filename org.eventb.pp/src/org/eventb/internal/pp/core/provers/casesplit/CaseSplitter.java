@@ -62,6 +62,7 @@ public class CaseSplitter implements IProverModule {
 		this.splits = new Stack<SplitPair>();
 	}
 	
+	@Override
 	public ProverResult contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies) {
 		return backtrack(oldLevel, newLevel, dependencies);
 	}
@@ -82,6 +83,7 @@ public class CaseSplitter implements IProverModule {
 	// this returns the next clause produced by a case split.
 	// if the preceding branch was closed, it returns the next case.
 	// it it is not the case it does a new case split
+	@Override
 	public ProverResult next(boolean force) {
 //		assert splits.size() == dispatcher.getCurrentLevel().getHeight();
 		if (!force && !isNextAvailable()) return ProverResult.EMPTY_RESULT;
@@ -201,6 +203,7 @@ public class CaseSplitter implements IProverModule {
 		return new ProverResult(putBackList, new HashSet<Clause>());
 	}
 	
+	@Override
 	public void registerDumper(Dumper dumper) {
 		dumper.addObject("CaseSplitter", candidates);
 	} 
@@ -209,6 +212,7 @@ public class CaseSplitter implements IProverModule {
 		return inferrer.canInfer(clause);
 	}
 
+	@Override
 	public ProverResult addClauseAndDetectContradiction(Clause clause) {
 		assert !candidates.contains(clause);
 		assert !dispatcher.getCurrentLevel().isAncestorOf(clause.getLevel());
@@ -217,6 +221,7 @@ public class CaseSplitter implements IProverModule {
 		return ProverResult.EMPTY_RESULT;
 	}
 
+	@Override
 	public void removeClause(Clause clause) {
 		for (Iterator<Clause> iter = candidates.iterator(); iter.hasNext();) {
 			Clause existingClause = iter.next();

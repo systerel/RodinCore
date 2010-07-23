@@ -31,6 +31,7 @@ public class NormalizedFormula implements Comparable<NormalizedFormula>,
 		this.origin = origin;
 	}
 
+	@Override
 	public int compareTo(NormalizedFormula o) {
 		return orderer.compare(signature, o.signature);
 	}
@@ -63,14 +64,17 @@ public class NormalizedFormula implements Comparable<NormalizedFormula>,
 		return result;
 	}
 
+	@Override
 	public SignedFormula<?> getSignature() {
 		return signature;
 	}
 
+	@Override
 	public IOrigin getOrigin() {
 		return origin;
 	}
 
+	@Override
 	public List<TermSignature> getTerms() {
 		return result.getTerms();
 	}

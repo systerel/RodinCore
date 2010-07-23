@@ -102,6 +102,7 @@ public abstract class AbstractEditComposite implements IEditComposite {
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.ui.eventbeditor.editpage.IEditComposite#setForm(org.eclipse.ui.forms.widgets.ScrolledForm)
 	 */
+	@Override
 	public void setForm(ScrolledForm form) {
 		this.form = form;
 	}
@@ -110,16 +111,19 @@ public abstract class AbstractEditComposite implements IEditComposite {
 		return toolkit;
 	}
 	
+	@Override
 	public void refresh(boolean refreshMarker) {
 		initialise(refreshMarker);
 		setReadOnly(isReadOnly(element)); 
 		internalPack();
 	}
 
+	@Override
 	public void setElement(IInternalElement element) {
 		this.element = element;
 	}
 
+	@Override
 	public void createComposite(IEventBEditor<?> editor, FormToolkit tk,
 			Composite parent) {
 		this.fEditor = editor;
@@ -168,6 +172,7 @@ public abstract class AbstractEditComposite implements IEditComposite {
 		internalPack(composite);
 	}
 
+	@Override
 	public void setSelected(boolean selection) {
 		if (selection) {
 			postfixLabel.setBackground(EventBSharedColor
@@ -213,10 +218,12 @@ public abstract class AbstractEditComposite implements IEditComposite {
 		}
 	}
 
+	@Override
 	public IAttributeType getAttributeType() {
 		return attrDesc.getAttributeType();
 	}
 
+	@Override
 	public void refresh(Set<IAttributeType> set) {
 		if (set.size() == 0
 				|| set.contains(attrDesc.getAttributeType())) {

@@ -36,10 +36,12 @@ import org.eventb.core.ast.extension.IWDMediator;
 		return Formula.getWDSimplifyC(formulaFactory, initialWD, childWD);
 	}
 
+	@Override
 	public Predicate makeTrueWD() {
 		return formulaFactory.makeLiteralPredicate(Formula.BTRUE, null);
 	}
 
+	@Override
 	public FormulaFactory getFormulaFactory() {
 		return formulaFactory;
 	}

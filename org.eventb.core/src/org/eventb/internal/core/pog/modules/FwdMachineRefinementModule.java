@@ -36,6 +36,7 @@ public class FwdMachineRefinementModule extends POGProcessorModule {
 	public static final IModuleType<FwdMachineRefinementModule> MODULE_TYPE = 
 		POGCore.getModuleType(EventBPlugin.PLUGIN_ID + ".fwdMachineRefinementModule"); //$NON-NLS-1$
 	
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
@@ -76,6 +77,7 @@ public class FwdMachineRefinementModule extends POGProcessorModule {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IPOGProcessorModule#process(org.rodinp.core.IRodinElement, org.eventb.core.pog.state.IPOGStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void process(IRodinElement element, IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		// do nothing nothing

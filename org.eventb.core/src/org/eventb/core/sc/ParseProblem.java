@@ -86,14 +86,17 @@ public enum ParseProblem implements IRodinProblem {
 		this.errorCode = EventBPlugin.PLUGIN_ID + "." + name();
 	}
 
+	@Override
 	public int getSeverity() {
 		return severity;
 	}
 
+	@Override
 	public String getErrorCode() {
 		return errorCode;
 	}
 
+	@Override
 	public String getLocalizedMessage(Object[] args) {
 		return MessageFormat.format(message, args);
 	}

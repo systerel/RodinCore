@@ -212,6 +212,7 @@ public final class Node implements Comparable<Node> {
 		return new ArrayList<Instantiation>(rootInstantiations);
 	}
 	
+	@Override
 	public int compareTo(Node o) {
 		return constant.compareTo(o.constant);
 	}

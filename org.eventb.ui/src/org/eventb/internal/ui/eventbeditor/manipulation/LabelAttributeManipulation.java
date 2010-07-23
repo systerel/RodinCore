@@ -23,6 +23,7 @@ import org.rodinp.core.RodinDBException;
 
 public class LabelAttributeManipulation extends AbstractAttributeManipulation {
 
+	@Override
 	public void setDefaultValue(IRodinElement element,
 			IProgressMonitor monitor) throws RodinDBException {
 		final ILabeledElement labeledElement = asLabeled(element);
@@ -32,21 +33,25 @@ public class LabelAttributeManipulation extends AbstractAttributeManipulation {
 		labeledElement.setLabel(label, monitor);
 	}
 
+	@Override
 	public void setValue(IRodinElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
 		asLabeled(element).setLabel(newValue, monitor);
 	}
 
+	@Override
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asLabeled(element).getLabel();
 	}
 
+	@Override
 	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		logCantRemove(LABEL_ATTRIBUTE);
 	}
 
+	@Override
 	public String[] getPossibleValues(IRodinElement element,
 			IProgressMonitor monitor) {
 		// Not applicable for Labeled Element
@@ -54,6 +59,7 @@ public class LabelAttributeManipulation extends AbstractAttributeManipulation {
 		return null;
 	}
 
+	@Override
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asLabeled(element).hasLabel();

@@ -31,6 +31,7 @@ import org.eventb.internal.pp.core.elements.terms.Variable;
  */
 public class OnePointRule extends AbstractSimplifier {
 
+	@Override
 	public Clause simplifyDisjunctiveClause(DisjunctiveClause clause) {
 		init(clause);
 		
@@ -44,6 +45,7 @@ public class OnePointRule extends AbstractSimplifier {
 		else return cf.makeDisjunctiveClause(clause.getOrigin(),predicates,equalities,arithmetic,conditions);
 	}
 
+	@Override
 	public Clause simplifyEquivalenceClause(EquivalenceClause clause) {
 		init(clause);
 		onePointLoop(conditions);
@@ -143,6 +145,7 @@ public class OnePointRule extends AbstractSimplifier {
 		return false;
 	}
 
+	@Override
 	public boolean canSimplify(Clause clause) {
 		return !clause.isFalse();
 	}

@@ -35,6 +35,7 @@ public class ParsedFormula extends State implements IParsedFormula {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IParsedFormula#getFormula()
 	 */
+	@Override
 	public Formula<?> getFormula() {
 		return formula;
 	}
@@ -42,6 +43,7 @@ public class ParsedFormula extends State implements IParsedFormula {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}

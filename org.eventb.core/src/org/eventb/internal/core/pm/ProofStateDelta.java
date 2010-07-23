@@ -37,6 +37,7 @@ public class ProofStateDelta implements IProofStateDelta {
 	 * 
 	 * @see org.eventb.core.pm.IProofStateDelta#getProofState()
 	 */
+	@Override
 	public IProofState getProofState() {
 		return ps;
 	}
@@ -44,6 +45,7 @@ public class ProofStateDelta implements IProofStateDelta {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pm.IProofStateDelta#getKind()
 	 */
+	@Override
 	public int getKind() {
 		return kind;
 	}
@@ -52,6 +54,7 @@ public class ProofStateDelta implements IProofStateDelta {
 		this.kind = type;
 	}
 
+	@Override
 	public int getFlags() {
 		return flags;
 	}
@@ -60,10 +63,12 @@ public class ProofStateDelta implements IProofStateDelta {
 		this.flags = flags;
 	}
 
+	@Override
 	public IProofTreeDelta getProofTreeDelta() {
 		return proofTreeDelta;
 	}
 
+	@Override
 	public void setProofTreeDelta(IProofTreeDelta proofTreeDelta) {
 		this.proofTreeDelta = proofTreeDelta;
 	}

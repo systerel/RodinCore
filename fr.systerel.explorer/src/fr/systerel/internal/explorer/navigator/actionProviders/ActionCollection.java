@@ -101,6 +101,7 @@ public class ActionCollection {
 					IProject resource = project.getProject();
 					try {
 						IInputValidator validator= new IInputValidator() {
+							@Override
 							public String isValid(String string) {
 									IResource container = ResourcesPlugin.getWorkspace().getRoot()
 									.findMember(new Path(string));
@@ -154,6 +155,7 @@ public class ActionCollection {
 					IProject resource = project.getProject();
 					try {
 						IInputValidator validator= new IInputValidator() {
+							@Override
 							public String isValid(String string) {
 									IResource container = ResourcesPlugin.getWorkspace().getRoot()
 									.findMember(new Path(string));

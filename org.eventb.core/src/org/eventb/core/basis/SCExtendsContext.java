@@ -56,6 +56,7 @@ public class SCExtendsContext extends EventBElement implements
 		return getAttributeValue(EventBAttributes.SCTARGET_ATTRIBUTE);
 	}
 
+	@Override
 	public ISCContextRoot getAbstractSCContext() throws RodinDBException {
 		IRodinElement target = getAbstractSCContextHandle();
 		if (!(target instanceof ISCContextRoot)) {
@@ -65,6 +66,7 @@ public class SCExtendsContext extends EventBElement implements
 		return (ISCContextRoot) target;
 	}
 
+	@Override
 	public void setAbstractSCContext(ISCContextRoot abstractSCContext,
 			IProgressMonitor monitor) throws RodinDBException {
 

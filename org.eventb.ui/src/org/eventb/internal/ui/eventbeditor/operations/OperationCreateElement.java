@@ -59,6 +59,7 @@ public class OperationCreateElement extends AbstractEventBOperation implements
 	/**
 	 * Set parent for creation of the element
 	 */
+	@Override
 	public void setParent(IInternalElement element) {
 		operationCreate.setParent(element);
 	}
@@ -69,6 +70,7 @@ public class OperationCreateElement extends AbstractEventBOperation implements
 	 *         event with action, getCreatedElements().get(0) is the event.
 	 * 
 	 */
+	@Override
 	public Collection<IInternalElement> getCreatedElements() {
 		return operationCreate.getCreatedElements();
 	}
@@ -78,6 +80,7 @@ public class OperationCreateElement extends AbstractEventBOperation implements
 	 *         event with action, getCreatedElement() is the event.
 	 * 
 	 */
+	@Override
 	public IInternalElement getCreatedElement() {
 		return operationCreate.getCreatedElement();
 	}

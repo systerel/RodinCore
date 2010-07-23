@@ -31,6 +31,7 @@ public class MachineEventGuardFreeIdentsModule extends
 			.getModuleType(EventBPlugin.PLUGIN_ID
 					+ ".machineEventGuardFreeIdentsModule"); //$NON-NLS-1$
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

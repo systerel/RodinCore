@@ -77,6 +77,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 		 * 
 		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 		 */
+		@Override
 		public void handleEvent(Event event) {
 			Text textWidget = text.getTextWidget();
 			final String contents = textWidget.getText();

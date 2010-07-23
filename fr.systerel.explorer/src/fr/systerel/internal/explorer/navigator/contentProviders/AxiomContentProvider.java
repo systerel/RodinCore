@@ -26,6 +26,7 @@ public class AxiomContentProvider extends AbstractContentProvider {
 		super(IAxiom.ELEMENT_TYPE);
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		IModelElement model = ModelController.getModelElement(element);
 		if (model != null) {

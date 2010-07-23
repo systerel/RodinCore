@@ -40,6 +40,7 @@ public class PRHypAction extends EventBProofElement implements IPRHypAction {
 		return ELEMENT_TYPE;
 	}
 
+	@Override
 	public IHypAction getAction(IProofStoreReader store) throws RodinDBException {
 	
 		// read in the action type
@@ -64,6 +65,7 @@ public class PRHypAction extends EventBProofElement implements IPRHypAction {
 		return null;
 	}
 
+	@Override
 	public void setAction(IHypAction a,  IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {
 		
 		String actionType = a.getActionType();

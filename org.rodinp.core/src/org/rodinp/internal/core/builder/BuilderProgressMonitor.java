@@ -23,6 +23,7 @@ public class BuilderProgressMonitor implements IProgressMonitor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String, int)
 	 */
+	@Override
 	public void beginTask(String name, int totalWork) {
 		monitor.beginTask(name, totalWork);
 	}
@@ -30,6 +31,7 @@ public class BuilderProgressMonitor implements IProgressMonitor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IProgressMonitor#done()
 	 */
+	@Override
 	public void done() {
 		monitor.done();
 	}
@@ -37,6 +39,7 @@ public class BuilderProgressMonitor implements IProgressMonitor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
 	 */
+	@Override
 	public void internalWorked(double work) {
 		monitor.internalWorked(work);
 	}
@@ -44,6 +47,7 @@ public class BuilderProgressMonitor implements IProgressMonitor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
 	 */
+	@Override
 	public boolean isCanceled() {
 		return monitor.isCanceled() || builder.isInterrupted();
 	}
@@ -51,6 +55,7 @@ public class BuilderProgressMonitor implements IProgressMonitor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
 	 */
+	@Override
 	public void setCanceled(boolean value) {
 		monitor.setCanceled(value);
 	}
@@ -58,6 +63,7 @@ public class BuilderProgressMonitor implements IProgressMonitor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
 	 */
+	@Override
 	public void setTaskName(String name) {
 		monitor.setTaskName(name);
 	}
@@ -65,6 +71,7 @@ public class BuilderProgressMonitor implements IProgressMonitor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
 	 */
+	@Override
 	public void subTask(String name) {
 		monitor.subTask(name);
 	}
@@ -72,6 +79,7 @@ public class BuilderProgressMonitor implements IProgressMonitor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
 	 */
+	@Override
 	public void worked(int work) {
 		monitor.worked(work);
 	}

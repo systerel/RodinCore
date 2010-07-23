@@ -24,6 +24,7 @@ public class RodinFileInputValidator implements IInputValidator {
 		this.prj = (IEventBProject) prj.getAdapter(IEventBProject.class);
 	}
 
+	@Override
 	public String isValid(String newText) {
 		if (newText.equals(""))
 			return "Name must not be empty.";

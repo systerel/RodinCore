@@ -363,6 +363,7 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IProcessorModule#initModule(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void initModule(
 			IRodinElement element, 
 			IPOGStateRepository repository, 
@@ -375,6 +376,7 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IProcessorModule#endModule(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void endModule(
 			IRodinElement element, 
 			IPOGStateRepository repository, 

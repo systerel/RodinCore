@@ -40,6 +40,7 @@ public class ReverseResolutionResolver implements IResolver {
 	private Clause currentUnit;
 	private Iterator<Clause> currentMatchIterator;
 	
+	@Override
 	public ResolutionResult next() {
 		if (setUnit()) return doMatch();
 		while (setNonUnit()) {
@@ -51,12 +52,14 @@ public class ReverseResolutionResolver implements IResolver {
 		return null;
 	}
 	
+	@Override
 	public void initialize(Clause nonUnitClause) {
 		this.currentNonUnit = nonUnitClause;
 		currentPosition = -1;
 		currentMatchIterator = null;
 	}
 	
+	@Override
 	public boolean isInitialized() {
 		return currentNonUnit != null;
 	}

@@ -38,6 +38,7 @@ public class IdentifierPropagator implements IPropagator {
 
 	// Assumption : an identifier redeclaration occurs in an attribute
 	// of the redeclaring identifier
+	@Override
 	public IDeclaration getRelativeDeclaration(IOccurrence occurrence,
 			IIndexQuery query) {
 		ensureIdentifierDeclaration(occurrence);

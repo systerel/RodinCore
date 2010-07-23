@@ -319,6 +319,7 @@ public class UIUtils {
 			if (obj instanceof IPSStatus)
 				UIUtils.runWithProgressDialog(editor.getSite().getShell(),
 						new IRunnableWithProgress() {
+							@Override
 							public void run(IProgressMonitor monitor)
 									throws InvocationTargetException,
 									InterruptedException {
@@ -522,6 +523,7 @@ public class UIUtils {
 	 */
 	public static void asyncPostRunnable(final Runnable r, Control ctrl) {
 		final Runnable trackedRunnable = new Runnable() {
+			@Override
 			public void run() {
 				try {
 					r.run();
@@ -552,6 +554,7 @@ public class UIUtils {
 	 */
 	public static void syncPostRunnable(final Runnable r, Control ctrl) {
 		final Runnable trackedRunnable = new Runnable() {
+			@Override
 			public void run() {
 				try {
 					r.run();
@@ -832,6 +835,7 @@ public class UIUtils {
 	 */
 	public static void showInfo(final String title, final String message) {
 		syncExec(new Runnable() {
+			@Override
 			public void run() {
 				MessageDialog.openInformation(getShell(), title, message);
 			}
@@ -849,6 +853,7 @@ public class UIUtils {
 		class Question implements Runnable {
 			private boolean response;
 
+			@Override
 			public void run() {
 				response = MessageDialog
 						.openQuestion(getShell(), null, message);
@@ -872,6 +877,7 @@ public class UIUtils {
 	 */
 	public static void showError(final String title, final String message) {
 		syncExec(new Runnable() {
+			@Override
 			public void run() {
 				MessageDialog.openError(getShell(), title, message);
 			}
@@ -889,6 +895,7 @@ public class UIUtils {
 	 */
 	public static void showWarning(final String title, final String message) {
 		syncExec(new Runnable() {
+			@Override
 			public void run() {
 				MessageDialog.openWarning(getShell(), title, message);
 			}
@@ -916,6 +923,7 @@ public class UIUtils {
 			status = new Status(IStatus.ERROR, PLUGIN_ID, msg, exc);
 		}
 		syncExec(new Runnable() {
+			@Override
 			public void run() {
 				ErrorDialog.openError(getShell(), null,
 						Messages.uiUtils_unexpectedError, status);

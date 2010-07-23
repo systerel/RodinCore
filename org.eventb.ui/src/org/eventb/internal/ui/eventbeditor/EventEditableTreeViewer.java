@@ -49,6 +49,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		 * 
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
+		@Override
 		public Object getParent(Object child) {
 			if (child instanceof IRodinElement)
 				return ((IRodinElement) child).getParent();
@@ -60,6 +61,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		 * 
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
+		@Override
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof IMachineRoot) {
 				IMachineRoot root = (IMachineRoot) parent;
@@ -87,6 +89,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		 * 
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 		 */
+		@Override
 		public boolean hasChildren(Object parent) {
 			return getChildren(parent).length > 0;
 		}
@@ -96,6 +99,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		 * 
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IMachineRoot) {
 				if (invisibleRoot == null) {
@@ -111,6 +115,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		 * 
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 			// Do nothing
 		}
@@ -121,6 +126,7 @@ public class EventEditableTreeViewer extends EventBEditableTreeViewer {
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 		 *      java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			invisibleRoot = null;
 		}

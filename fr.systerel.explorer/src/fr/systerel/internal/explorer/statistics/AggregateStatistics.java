@@ -117,10 +117,12 @@ public class AggregateStatistics implements IStatistics {
 
 	}
 
+	@Override
 	public int getAuto() {
 		return total - undischarged - manual;
 	}
 
+	@Override
 	public int getManual() {
 		return manual;
 	}
@@ -128,28 +130,34 @@ public class AggregateStatistics implements IStatistics {
 	/**
 	 * Aggregate statistics don't have a parentLabel.
 	 */
+	@Override
 	public String getParentLabel() {
 		if (parent == null)
 			return ("Total");
 		return getParentLabelOf(parent);
 	}
 
+	@Override
 	public int getReviewed() {
 		return reviewed;
 	}
 
+	@Override
 	public int getTotal() {
 		return total;
 	}
 
+	@Override
 	public int getUndischarged() {
 		return undischarged;
 	}
 
+	@Override
 	public int getUndischargedRest() {
 		return undischarged - reviewed;
 	}
 
+	@Override
 	public boolean isAggregate() {
 		return true;
 	}
@@ -157,6 +165,7 @@ public class AggregateStatistics implements IStatistics {
 	/**
 	 * Aggregates have no parent.
 	 */
+	@Override
 	public Object getParent() {
 		return null;
 	}
@@ -272,6 +281,7 @@ public class AggregateStatistics implements IStatistics {
 		}
 	}
 
+	@Override
 	public void buildCopyString(StringBuilder builder, boolean copyLabel, Character separator) {
 		if (copyLabel) {
 			builder.append(getParentLabel()) ;

@@ -49,14 +49,17 @@ public class ModelElementNode implements IModelElement, IElementNode{
 	private ModelPOContainer parent;
 	private IEventBRoot parentRoot;	
 
+	@Override
 	public ModelPOContainer getModelParent() {
 		return parent;
 	}
 
+	@Override
 	public IInternalElementType<?> getChildrenType() {
 		return type;
 	}
 
+	@Override
 	public String getLabel() {
 		if (type.equals(IInvariant.ELEMENT_TYPE)) {
 			return INVARIANT_TYPE;
@@ -93,6 +96,7 @@ public class ModelElementNode implements IModelElement, IElementNode{
 	private static String PO_TYPE = "Proof Obligations";
 
 
+	@Override
 	public IEventBRoot getParent() {
 		return parentRoot;
 	}
@@ -100,15 +104,18 @@ public class ModelElementNode implements IModelElement, IElementNode{
 	/**
 	 * does not have an internal element
 	 */
+	@Override
 	public IRodinElement getInternalElement() {
 		return null;
 	}
 
+	@Override
 	public Object getParent(boolean complex) {
 		return parentRoot;
 	}
 
 
+	@Override
 	public Object[] getChildren(IInternalElementType<?> element_type, boolean complex) {
 		
 		if (type != element_type) {

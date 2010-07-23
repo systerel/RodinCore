@@ -53,10 +53,12 @@ public class ProofSimplifyAction implements IObjectActionDelegate {
 			this.proofs = proofs;
 		}
 
+		@Override
 		public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
 			try {
 				RodinCore.run(new IWorkspaceRunnable() {
+					@Override
 					public void run(IProgressMonitor pm) throws CoreException {
 						final SubMonitor subMonitor = SubMonitor.convert(pm,
 								proofs.length);
@@ -94,6 +96,7 @@ public class ProofSimplifyAction implements IObjectActionDelegate {
 			this.proofContainers = proofContainers;
 		}
 
+		@Override
 		public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
 			try {
@@ -170,10 +173,12 @@ public class ProofSimplifyAction implements IObjectActionDelegate {
 	private IWorkbenchPartSite site;
 	private IStructuredSelection selection;
 
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		site = targetPart.getSite();
 	}
 
+	@Override
 	public void run(IAction action) {
 		if (selection == null) {
 			UIUtils.showInfo(Messages.proofSimplification_invalidSelection);
@@ -205,6 +210,7 @@ public class ProofSimplifyAction implements IObjectActionDelegate {
 		}
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection s) {
 		if (s instanceof IStructuredSelection) {
 			selection = (IStructuredSelection) s;

@@ -117,6 +117,7 @@ public class ContextIndexer extends EventBIndexer {
 		return deps.toArray(new IRodinFile[deps.size()]);
 	}
 
+	@Override
 	public String getId() {
 		return ID;
 	}

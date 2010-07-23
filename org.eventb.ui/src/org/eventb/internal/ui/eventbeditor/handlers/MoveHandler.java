@@ -32,6 +32,7 @@ import org.rodinp.core.RodinDBException;
 
 public abstract class MoveHandler extends AbstractHandler implements IHandler {
 
+	@Override
 	public Object execute(ExecutionEvent arg0) throws ExecutionException {
 		// Get the selection from the current active page.
 		ISelection selection = EventBUIPlugin.getActivePage().getSelection();

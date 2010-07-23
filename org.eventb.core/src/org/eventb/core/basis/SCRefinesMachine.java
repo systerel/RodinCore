@@ -57,6 +57,7 @@ public class SCRefinesMachine extends EventBElement implements
 		return getAttributeValue(EventBAttributes.SCTARGET_ATTRIBUTE);
 	}
 
+	@Override
 	public IRodinFile getAbstractSCMachine() throws RodinDBException {
 		IRodinElement target = getAbstractSCMachineHandle();
 		if (target instanceof IRodinFile) {
@@ -69,11 +70,13 @@ public class SCRefinesMachine extends EventBElement implements
 				Messages.database_SCRefinesMachineTypeFailure, this);
 	}
 
+	@Override
 	public void setAbstractSCMachine(IRodinFile abstractSCMachine, IProgressMonitor monitor) 
 	throws RodinDBException {
 		setAttributeValue(EventBAttributes.SCTARGET_ATTRIBUTE, abstractSCMachine, monitor);
 	}
 
+	@Override
 	@Deprecated
 	public void setAbstractSCMachine(IRodinFile abstractSCMachine) throws RodinDBException {
 		setAbstractSCMachine(abstractSCMachine, null);

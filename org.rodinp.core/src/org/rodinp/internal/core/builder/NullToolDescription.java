@@ -45,12 +45,14 @@ public class NullToolDescription extends ToolDescription {
 			// Does nothing
 		}
 
+		@Override
 		public void clean(IFile source, IFile target, IProgressMonitor monitor)
 				throws CoreException {
 			// Does nothing
 
 		}
 
+		@Override
 		public boolean run(IFile source, IFile target, IProgressMonitor monitor)
 				throws CoreException {
 			// Does nothing and return false, as file has not changed

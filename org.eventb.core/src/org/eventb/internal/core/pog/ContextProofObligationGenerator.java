@@ -30,6 +30,7 @@ public class ContextProofObligationGenerator extends ProofObligationGenerator {
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IExtractor#extract(org.eclipse.core.resources.IFile, org.rodinp.core.builder.IGraph)
 	 */
+	@Override
 	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {
 		IRodinFile source = RodinCore.valueOf(file);
 		ISCContextRoot sourceRoot = (ISCContextRoot) source.getRoot();

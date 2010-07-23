@@ -29,6 +29,7 @@ public class MachineInvariantTheoremModule extends TheoremModule {
 	public static final IModuleType<MachineInvariantTheoremModule> MODULE_TYPE = SCCore
 			.getModuleType(EventBPlugin.PLUGIN_ID + ".machineInvariantTheoremModule"); //$NON-NLS-1$
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

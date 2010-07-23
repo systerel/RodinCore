@@ -46,44 +46,54 @@ public class ContextRoot extends EventBRoot implements IContextRoot{
 		return ELEMENT_TYPE;
 	}
 
+	@Override
 	public ICarrierSet getCarrierSet(String elementName) {
 		return getInternalElement(ICarrierSet.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public ICarrierSet[] getCarrierSets() throws RodinDBException {
 		return getChildrenOfType(ICarrierSet.ELEMENT_TYPE); 
 	}
 	
+	@Override
 	public IConstant getConstant(String elementName) {
 		return getInternalElement(IConstant.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public IConstant[] getConstants() throws RodinDBException {
 		return getChildrenOfType(IConstant.ELEMENT_TYPE); 
 	}
 	
+	@Override
 	public IAxiom getAxiom(String elementName) {
 		return getInternalElement(IAxiom.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public IAxiom[] getAxioms() throws RodinDBException {
 		return getChildrenOfType(IAxiom.ELEMENT_TYPE); 
 	}
 	
+	@Override
 	@Deprecated
 	public org.eventb.core.ITheorem getTheorem(String elementName) {
 		return getInternalElement(org.eventb.core.ITheorem.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	@Deprecated
 	public org.eventb.core.ITheorem[] getTheorems() throws RodinDBException {
 		return getChildrenOfType(org.eventb.core.ITheorem.ELEMENT_TYPE); 
 	}
 
+	@Override
 	public IExtendsContext getExtendsClause(String elementName) {
 		return getInternalElement(IExtendsContext.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public IExtendsContext[] getExtendsClauses() throws RodinDBException {
 		return getChildrenOfType(IExtendsContext.ELEMENT_TYPE); 
 	}

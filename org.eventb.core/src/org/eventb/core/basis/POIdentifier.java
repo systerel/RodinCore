@@ -42,6 +42,7 @@ public class POIdentifier extends SCIdentifierElement implements IPOIdentifier {
 		return ELEMENT_TYPE;
 	}
 	
+	@Override
 	@Deprecated
 	public String getName() {
 		return getElementName();

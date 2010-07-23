@@ -52,20 +52,24 @@ public class TotalDomainSubstitution implements ITacticProvider2 {
 			this.hyperlinkLabel = hyperlinkLabel;
 		}
 
+		@Override
 		public String getHyperlinkLabel() {
 			return hyperlinkLabel;
 		}
 
+		@Override
 		public Point getHyperlinkBounds(String actualString,
 				Predicate parsedPredicate) {
 			return TacticProviderUtils.getOperatorPosition(parsedPredicate,
 					actualString, position);
 		}
 
+		@Override
 		public ITactic getTactic(String[] inputs, String globalInput) {
 			return Tactics.totalDomRewrites(hyp, position, substitute);
 		}
 
+		@Override
 		public String getTacticID() {
 			if (hyp == null) {
 				return GOAL_TACTIC_ID;
@@ -126,6 +130,7 @@ public class TotalDomainSubstitution implements ITacticProvider2 {
 		
 	}
 
+	@Override
 	public List<ITacticApplication> getPossibleApplications(
 			IProofTreeNode node, Predicate hyp, String globalInput) {
 		final IProverSequent sequent = node.getSequent();

@@ -50,6 +50,7 @@ public class MachineEventCopyParametersModule extends SCProcessorModule {
 	private IIdentifierSymbolTable identifierSymbolTable;
 	private ITypeEnvironment typeEnvironment;
 
+	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
@@ -100,6 +101,7 @@ public class MachineEventCopyParametersModule extends SCProcessorModule {
 	 * 
 	 * @see org.eventb.internal.core.tool.types.IModule#getModuleType()
 	 */
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

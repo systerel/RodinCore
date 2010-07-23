@@ -53,6 +53,7 @@ public class SequentDetailsPage implements IDetailsPage {
 	private static final IStructuredContentProvider sequentContentProvider =
 		new IStructuredContentProvider() {
 		
+		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof IProverSequent) {
 				return sequentToStrings((IProverSequent) inputElement);
@@ -61,10 +62,12 @@ public class SequentDetailsPage implements IDetailsPage {
 			}
 		}
 
+		@Override
 		public void dispose() {
 			// Do nothing
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			// Do nothing
 		}
@@ -81,6 +84,7 @@ public class SequentDetailsPage implements IDetailsPage {
 		return instance;
 	}
 	
+	@Override
 	public void createContents(Composite parent) {
 		parent.setLayout(new FillLayout());
 		viewer = new ListViewer(parent);
@@ -99,35 +103,43 @@ public class SequentDetailsPage implements IDetailsPage {
 		viewer.getList().setMenu(menu);
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		// Do nothing
 	}
 
+	@Override
 	public void dispose() {
 		viewer.getList().dispose();
 		viewer.getControl().dispose();
 	}
 
+	@Override
 	public void initialize(IManagedForm form) {
 		// Do nothing
 	}
 
+	@Override
 	public boolean isDirty() {
 		return false;
 	}
 
+	@Override
 	public boolean isStale() {
 		return false;
 	}
 
+	@Override
 	public void refresh() {
 		viewer.refresh();
 	}
 
+	@Override
 	public void setFocus() {
 		// Do nothing
 	}
 
+	@Override
 	public boolean setFormInput(Object input) {
 		if (input instanceof IProofTreeNode) {
 			viewer.setInput(((IProofTreeNode) input).getSequent());
@@ -137,6 +149,7 @@ public class SequentDetailsPage implements IDetailsPage {
 		return true;
 	}
 
+	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		if (selection.isEmpty())
 			return;

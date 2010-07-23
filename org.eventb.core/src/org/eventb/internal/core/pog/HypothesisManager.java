@@ -42,6 +42,7 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 		return getStateType().toString() + "[" + parentElement.getElementName() + "]";
 	}
 
+	@Override
 	public Iterator<FreeIdentifier> iterator() {
 		return identifiers.iterator();
 	}
@@ -75,6 +76,7 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 	private final HashSet<FreeIdentifier> identifiers;
 	protected final boolean accurate;
 
+	@Override
 	public IRodinElement getParentElement() {
 		return parentElement;
 	}
@@ -119,6 +121,7 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 		return hypothesisNames[index];
 	}
 
+	@Override
 	public IPOPredicateSet makeHypothesis(ISCPredicateElement element) throws CoreException {
 		assertMutable();
 		Integer index = predicateMap.get(element.getElementName());
@@ -128,6 +131,7 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 	}
 
 	// anticipate the predicate set in which the predicate will be located
+	@Override
 	public IPOPredicate getPredicate(ISCPredicateElement element) throws CoreException {
 		if (!isImmutable())
 			throw Util.newCoreException(Messages.pog_mutableHypothesisViolation);
@@ -206,10 +210,12 @@ public abstract class HypothesisManager extends State implements IHypothesisMana
 		return set;
 	}
 	
+	@Override
 	public IPOPredicateSet getFullHypothesis() {
 		return target.getPredicateSet(allHypName);
 	}
 
+	@Override
 	public IPOPredicateSet getRootHypothesis() {
 		return target.getPredicateSet(rootHypName);
 	}

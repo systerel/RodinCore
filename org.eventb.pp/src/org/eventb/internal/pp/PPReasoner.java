@@ -44,6 +44,7 @@ public class PPReasoner extends XProverReasoner {
 		return new PPProverCall((XProverInput)input,hypotheses,goal,pm);
 	}
 
+	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}

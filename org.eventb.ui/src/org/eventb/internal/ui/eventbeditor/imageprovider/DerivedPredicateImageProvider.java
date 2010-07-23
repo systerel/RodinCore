@@ -30,6 +30,7 @@ public abstract class DerivedPredicateImageProvider implements IImageProvider {
 		this.defaultImagePath = defaultImagePath;
 	}
 
+	@Override
 	public ImageDescriptor getImageDescriptor(IRodinElement element) {
 		assert element instanceof IDerivedPredicateElement;
 

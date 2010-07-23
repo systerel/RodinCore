@@ -147,810 +147,1012 @@ public class IdentsChecker implements IVisitor {
 		this.factory = factory;
 	}
 	
+	@Override
 	public boolean continueBCOMP(AssociativeExpression expr) {
 		return success;
 	}
 	
+	@Override
 	public boolean continueBINTER(AssociativeExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueBUNION(AssociativeExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueCPROD(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueCSET(QuantifiedExpression expr) {
 		return success;
 	}
 	
+	@Override
 	public boolean continueDIV(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueDOMRES(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueDOMSUB(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueDPROD(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueEQUAL(RelationalPredicate pred) {
 		return success;
 	}
 
+	@Override
 	public boolean continueEXISTS(QuantifiedPredicate pred) {
 		return success;
 	}
 
+	@Override
 	public boolean continueEXPN(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueFCOMP(AssociativeExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueFORALL(QuantifiedPredicate pred) {
 		return success;
 	}
 
+	@Override
 	public boolean continueFUNIMAGE(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueGE(RelationalPredicate pred) {
 		return success;
 	}
 
+	@Override
 	public boolean continueGT(RelationalPredicate pred) {
 		return success;
 	}
 
+	@Override
 	public boolean continueIN(RelationalPredicate pred) {
 		return success;
 	}
 
+	@Override
 	public boolean continueLAND(AssociativePredicate pred) {
 		return success;
 	}
 
+	@Override
 	public boolean continueLE(RelationalPredicate pred) {
 		return success;
 	}
 
+	@Override
 	public boolean continueLEQV(BinaryPredicate pred) {
 		return success;
 	}
 
+	@Override
 	public boolean continueLIMP(BinaryPredicate pred) {
 		return success;
 	}
 
+	@Override
 	public boolean continueLOR(AssociativePredicate pred) {
 		return success;
 	}
 
+	@Override
 	public boolean continueLT(RelationalPredicate pred) {
 		return success;
 	}
 
+	@Override
 	public boolean continueMAPSTO(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueMINUS(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueMOD(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueMUL(AssociativeExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueNOTEQUAL(RelationalPredicate pred) {
 		return success;
 	}
 
+	@Override
 	public boolean continueNOTIN(RelationalPredicate pred) {
 		return success;
 	}
 
+	@Override
 	public boolean continueNOTSUBSET(RelationalPredicate pred) {
 		return success;
 	}
 
+	@Override
 	public boolean continueNOTSUBSETEQ(RelationalPredicate pred) {
 		return success;
 	}
 
+	@Override
 	public boolean continueOVR(AssociativeExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continuePFUN(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continuePINJ(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continuePLUS(AssociativeExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continuePPROD(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continuePSUR(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueQINTER(QuantifiedExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueQUNION(QuantifiedExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueRANRES(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueRANSUB(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueREL(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueRELIMAGE(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueSETEXT(SetExtension set) {
 		return success;
 	}
 
+	@Override
 	public boolean continueSETMINUS(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueSREL(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueSTREL(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueSUBSET(RelationalPredicate pred) {
 		return success;
 	}
 
+	@Override
 	public boolean continueSUBSETEQ(RelationalPredicate pred) {
 		return success;
 	}
 
+	@Override
 	public boolean continueTBIJ(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueTFUN(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueTINJ(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueTREL(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueTSUR(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean continueUPTO(BinaryExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean enterBCOMP(AssociativeExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterBINTER(AssociativeExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterBUNION(AssociativeExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterCONVERSE(UnaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterCPROD(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterCSET(QuantifiedExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterDIV(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterDOMRES(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterDOMSUB(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterDPROD(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterEQUAL(RelationalPredicate pred) {
 		return standardEnter(pred);
 	}
 
+	@Override
 	public boolean enterEXISTS(QuantifiedPredicate pred) {
 		return standardEnter(pred);
 	}
 
+	@Override
 	public boolean enterEXPN(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterFCOMP(AssociativeExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterFORALL(QuantifiedPredicate pred) {
 		return standardEnter(pred);
 	}
 
+	@Override
 	public boolean enterFUNIMAGE(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterGE(RelationalPredicate pred) {
 		return standardEnter(pred);
 	}
 
+	@Override
 	public boolean enterGT(RelationalPredicate pred) {
 		return standardEnter(pred);
 	}
 
+	@Override
 	public boolean enterIN(RelationalPredicate pred) {
 		return standardEnter(pred);
 	}
 
+	@Override
 	public boolean enterKBOOL(BoolExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterKCARD(UnaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterKDOM(UnaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterKFINITE(SimplePredicate pred) {
 		return standardEnter(pred);
 	}
 
+	@Override
 	public boolean enterKID(UnaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterKINTER(UnaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterKMAX(UnaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterKMIN(UnaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterKPRJ1(UnaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterKPRJ2(UnaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterKRAN(UnaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterKUNION(UnaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterLAND(AssociativePredicate pred) {
 		return standardEnter(pred);
 	}
 
+	@Override
 	public boolean enterLE(RelationalPredicate pred) {
 		return standardEnter(pred);
 	}
 
+	@Override
 	public boolean enterLEQV(BinaryPredicate pred) {
 		return standardEnter(pred);
 	}
 
+	@Override
 	public boolean enterLIMP(BinaryPredicate pred) {
 		return standardEnter(pred);
 	}
 
+	@Override
 	public boolean enterLOR(AssociativePredicate pred) {
 		return standardEnter(pred);
 	}
 
+	@Override
 	public boolean enterLT(RelationalPredicate pred) {
 		return standardEnter(pred);
 	}
 
+	@Override
 	public boolean enterMAPSTO(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterMINUS(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterMOD(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterMUL(AssociativeExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterNOT(UnaryPredicate pred) {
 		return standardEnter(pred);
 	}
 
+	@Override
 	public boolean enterNOTEQUAL(RelationalPredicate pred) {
 		return standardEnter(pred);
 	}
 
+	@Override
 	public boolean enterNOTIN(RelationalPredicate pred) {
 		return standardEnter(pred);
 	}
 
+	@Override
 	public boolean enterNOTSUBSET(RelationalPredicate pred) {
 		return standardEnter(pred);
 	}
 
+	@Override
 	public boolean enterNOTSUBSETEQ(RelationalPredicate pred) {
 		return standardEnter(pred);
 	}
 
+	@Override
 	public boolean enterOVR(AssociativeExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterPFUN(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterPINJ(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterPLUS(AssociativeExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterPOW(UnaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterPOW1(UnaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterPPROD(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterPSUR(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterQINTER(QuantifiedExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterQUNION(QuantifiedExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterRANRES(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterRANSUB(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterREL(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterRELIMAGE(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterSETEXT(SetExtension set) {
 		return standardEnter(set);
 	}
 
+	@Override
 	public boolean enterSETMINUS(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterSREL(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterSTREL(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterSUBSET(RelationalPredicate pred) {
 		return standardEnter(pred);
 	}
 
+	@Override
 	public boolean enterSUBSETEQ(RelationalPredicate pred) {
 		return standardEnter(pred);
 	}
 
+	@Override
 	public boolean enterTBIJ(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterTFUN(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterTINJ(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterTREL(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterTSUR(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterUNMINUS(UnaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean enterUPTO(BinaryExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean exitBCOMP(AssociativeExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitBINTER(AssociativeExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitBUNION(AssociativeExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitCONVERSE(UnaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitCPROD(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitCSET(QuantifiedExpression expr) {
 		return quantifiedExit(expr, expr.getBoundIdentDecls().length);
 	}
 
+	@Override
 	public boolean exitDIV(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitDOMRES(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitDOMSUB(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitDPROD(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitEQUAL(RelationalPredicate pred) {
 		return standardExit(pred);
 	}
 
+	@Override
 	public boolean exitEXISTS(QuantifiedPredicate pred) {
 		return quantifiedExit(pred, pred.getBoundIdentDecls().length);
 	}
 
+	@Override
 	public boolean exitEXPN(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitFCOMP(AssociativeExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitFORALL(QuantifiedPredicate pred) {
 		return quantifiedExit(pred, pred.getBoundIdentDecls().length);
 	}
 
+	@Override
 	public boolean exitFUNIMAGE(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitGE(RelationalPredicate pred) {
 		return standardExit(pred);
 	}
 
+	@Override
 	public boolean exitGT(RelationalPredicate pred) {
 		return standardExit(pred);
 	}
 
+	@Override
 	public boolean exitIN(RelationalPredicate pred) {
 		return standardExit(pred);
 	}
 
+	@Override
 	public boolean exitKBOOL(BoolExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitKCARD(UnaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitKDOM(UnaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitKFINITE(SimplePredicate pred) {
 		return standardExit(pred);
 	}
 
+	@Override
 	public boolean exitKID(UnaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitKINTER(UnaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitKMAX(UnaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitKMIN(UnaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitKPRJ1(UnaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitKPRJ2(UnaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitKRAN(UnaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitKUNION(UnaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitLAND(AssociativePredicate pred) {
 		return standardExit(pred);
 	}
 
+	@Override
 	public boolean exitLE(RelationalPredicate pred) {
 		return standardExit(pred);
 	}
 
+	@Override
 	public boolean exitLEQV(BinaryPredicate pred) {
 		return standardExit(pred);
 	}
 
+	@Override
 	public boolean exitLIMP(BinaryPredicate pred) {
 		return standardExit(pred);
 	}
 
+	@Override
 	public boolean exitLOR(AssociativePredicate pred) {
 		return standardExit(pred);
 	}
 
+	@Override
 	public boolean exitLT(RelationalPredicate pred) {
 		return standardExit(pred);
 	}
 
+	@Override
 	public boolean exitMAPSTO(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitMINUS(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitMOD(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitMUL(AssociativeExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitNOT(UnaryPredicate pred) {
 		return standardExit(pred);
 	}
 
+	@Override
 	public boolean exitNOTEQUAL(RelationalPredicate pred) {
 		return standardExit(pred);
 	}
 
+	@Override
 	public boolean exitNOTIN(RelationalPredicate pred) {
 		return standardExit(pred);
 	}
 
+	@Override
 	public boolean exitNOTSUBSET(RelationalPredicate pred) {
 		return standardExit(pred);
 	}
 
+	@Override
 	public boolean exitNOTSUBSETEQ(RelationalPredicate pred) {
 		return standardExit(pred);
 	}
 
+	@Override
 	public boolean exitOVR(AssociativeExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitPFUN(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitPINJ(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitPLUS(AssociativeExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitPOW(UnaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitPOW1(UnaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitPPROD(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitPSUR(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitQINTER(QuantifiedExpression expr) {
 		return quantifiedExit(expr, expr.getBoundIdentDecls().length);
 	}
 
+	@Override
 	public boolean exitQUNION(QuantifiedExpression expr) {
 		return quantifiedExit(expr, expr.getBoundIdentDecls().length);
 	}
 
+	@Override
 	public boolean exitRANRES(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitRANSUB(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitREL(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitRELIMAGE(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitSETEXT(SetExtension set) {
 		return standardExit(set);
 	}
 
+	@Override
 	public boolean exitSETMINUS(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitSREL(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitSTREL(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitSUBSET(RelationalPredicate pred) {
 		return standardExit(pred);
 	}
 
+	@Override
 	public boolean exitSUBSETEQ(RelationalPredicate pred) {
 		return standardExit(pred);
 	}
 
+	@Override
 	public boolean exitTBIJ(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitTFUN(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitTINJ(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitTREL(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitTSUR(BinaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitUNMINUS(UnaryExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean exitUPTO(BinaryExpression expr) {
 		return standardExit(expr);
 	}
@@ -1029,14 +1231,17 @@ public class IdentsChecker implements IVisitor {
 				&& isEmpty(formula.getBoundIdentifiers());
 	}
 
+	@Override
 	public boolean visitBFALSE(LiteralPredicate pred) {
 		return standardVisit(pred);
 	}
 
+	@Override
 	public boolean visitBOOL(AtomicExpression expr) {
 		return standardVisit(expr);
 	}
 
+	@Override
 	public boolean visitBOUND_IDENT(BoundIdentifier ident) {
 		if (! success) {
 			return false;
@@ -1046,22 +1251,27 @@ public class IdentsChecker implements IVisitor {
 				&& isSingleton(ident.getBoundIdentifiers(), ident);
 	}
 
+	@Override
 	public boolean visitBOUND_IDENT_DECL(BoundIdentDecl ident) {
 		return standardVisit(ident);
 	}
 
+	@Override
 	public boolean visitBTRUE(LiteralPredicate pred) {
 		return standardVisit(pred);
 	}
 
+	@Override
 	public boolean visitEMPTYSET(AtomicExpression expr) {
 		return standardVisit(expr);
 	}
 
+	@Override
 	public boolean visitFALSE(AtomicExpression expr) {
 		return standardVisit(expr);
 	}
 
+	@Override
 	public boolean visitFREE_IDENT(FreeIdentifier ident) {
 		if (! success) {
 			return false;
@@ -1071,115 +1281,143 @@ public class IdentsChecker implements IVisitor {
 				&& isEmpty(ident.getBoundIdentifiers());
 	}
 
+	@Override
 	public boolean visitINTEGER(AtomicExpression expr) {
 		return standardVisit(expr);
 	}
 
+	@Override
 	public boolean visitINTLIT(IntegerLiteral lit) {
 		return standardVisit(lit);
 	}
 
+	@Override
 	public boolean visitKPRED(AtomicExpression expr) {
 		return standardVisit(expr);
 	}
 
+	@Override
 	public boolean visitKSUCC(AtomicExpression expr) {
 		return standardVisit(expr);
 	}
 
+	@Override
 	public boolean visitNATURAL(AtomicExpression expr) {
 		return standardVisit(expr);
 	}
 
+	@Override
 	public boolean visitNATURAL1(AtomicExpression expr) {
 		return standardVisit(expr);
 	}
 
+	@Override
 	public boolean visitTRUE(AtomicExpression expr) {
 		return standardVisit(expr);
 	}
 
+	@Override
 	public boolean enterBECOMES_EQUAL_TO(BecomesEqualTo assign) {
 		return standardEnter(assign);
 	}
 
+	@Override
 	public boolean continueBECOMES_EQUAL_TO(BecomesEqualTo assign) {
 		return success;
 	}
 
+	@Override
 	public boolean exitBECOMES_EQUAL_TO(BecomesEqualTo assign) {
 		return standardExit(assign);
 	}
 
+	@Override
 	public boolean enterBECOMES_MEMBER_OF(BecomesMemberOf assign) {
 		return standardEnter(assign);
 	}
 
+	@Override
 	public boolean continueBECOMES_MEMBER_OF(BecomesMemberOf assign) {
 		return success;
 	}
 
+	@Override
 	public boolean exitBECOMES_MEMBER_OF(BecomesMemberOf assign) {
 		return standardExit(assign);
 	}
 
+	@Override
 	public boolean enterBECOMES_SUCH_THAT(BecomesSuchThat assign) {
 		return standardEnter(assign);
 	}
 
+	@Override
 	public boolean continueBECOMES_SUCH_THAT(BecomesSuchThat assign) {
 		return success;
 	}
 
+	@Override
 	public boolean exitBECOMES_SUCH_THAT(BecomesSuchThat assign) {
 		return quantifiedExit(assign, assign.getPrimedIdents().length);
 	}
 
+	@Override
 	public boolean enterKPARTITION(MultiplePredicate pred) {
 		return standardEnter(pred);
 	}
 
+	@Override
 	public boolean continueKPARTITION(MultiplePredicate pred) {
 		return success;
 	}
 
+	@Override
 	public boolean exitKPARTITION(MultiplePredicate pred) {
 		return standardExit(pred);
 	}
 
+	@Override
 	public boolean visitKID_GEN(AtomicExpression expr) {
 		return standardVisit(expr);
 	}
 
+	@Override
 	public boolean visitKPRJ1_GEN(AtomicExpression expr) {
 		return standardVisit(expr);
 	}
 
+	@Override
 	public boolean visitKPRJ2_GEN(AtomicExpression expr) {
 		return standardVisit(expr);
 	}
 
+	@Override
 	public boolean enterExtendedExpression(ExtendedExpression expr) {
 		return standardEnter(expr);
 	}
 
+	@Override
 	public boolean continueExtendedExpression(
 			ExtendedExpression expr) {
 		return success;
 	}
 
+	@Override
 	public boolean exitExtendedExpression(ExtendedExpression expr) {
 		return standardExit(expr);
 	}
 
+	@Override
 	public boolean enterExtendedPredicate(ExtendedPredicate pred) {
 		return standardEnter(pred);
 	}
 
+	@Override
 	public boolean continueExtendedPredicate(ExtendedPredicate pred) {
 		return success;
 	}
 
+	@Override
 	public boolean exitExtendedPredicate(ExtendedPredicate pred) {
 		return standardExit(pred);
 	}

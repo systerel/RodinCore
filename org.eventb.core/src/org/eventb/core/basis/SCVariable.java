@@ -42,40 +42,48 @@ public class SCVariable extends SCIdentifierElement implements ISCVariable {
 		return ISCVariable.ELEMENT_TYPE;
 	}
 
+	@Override
 	public boolean isAbstract() throws RodinDBException {
 		return getAttributeValue(EventBAttributes.ABSTRACT_ATTRIBUTE);
 	}
 
+	@Override
 	public boolean isConcrete() throws RodinDBException {
 		return getAttributeValue(EventBAttributes.CONCRETE_ATTRIBUTE);
 	}
 
+	@Override
 	public void setAbstract(boolean value, IProgressMonitor monitor)
 			throws RodinDBException {
 		setAttributeValue(EventBAttributes.ABSTRACT_ATTRIBUTE, value, monitor);
 	}
 
+	@Override
 	public void setConcrete(boolean value, IProgressMonitor monitor)
 			throws RodinDBException {
 		setAttributeValue(EventBAttributes.CONCRETE_ATTRIBUTE, value, monitor);
 	}
 
+	@Override
 	@Deprecated
 	public void setForbidden(boolean value, IProgressMonitor monitor) throws RodinDBException {
 		setConcrete(!value, monitor);
 	}
 
+	@Override
 	@Deprecated
 	public boolean isForbidden() throws RodinDBException {
 		return !isConcrete();
 	}
 
+	@Override
 	@Deprecated
 	public void setPreserved(boolean value, IProgressMonitor monitor) throws RodinDBException {
 		setAbstract(value, monitor);
 		setConcrete(value, null);
 	}
 
+	@Override
 	@Deprecated
 	public boolean isPreserved() throws RodinDBException {
 		return isAbstract() && isConcrete();

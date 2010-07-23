@@ -40,6 +40,7 @@ public class ResolutionResolver implements IResolver {
 	private Iterator<Clause> currentMatchedIterator;
 	private int currentPosition;
 
+	@Override
 	public ResolutionResult next() {
 		if (!isInitialized()) throw new IllegalStateException();
 		
@@ -52,10 +53,12 @@ public class ResolutionResolver implements IResolver {
 		return null;
 	}
 	
+	@Override
 	public boolean isInitialized() {
 		return currentMatchedIterator != null;
 	}
 	
+	@Override
 	public void initialize(Clause matcher) {
 		assert matcher.isUnit();
 		

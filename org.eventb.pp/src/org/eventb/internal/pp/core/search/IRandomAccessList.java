@@ -82,6 +82,7 @@ public interface IRandomAccessList<T extends Object> extends Iterable<T> {
 	 * @return a reset iterator of the elements in this list (in proper
      * sequence)
 	 */
+	@Override
 	ResetIterator<T> iterator();
 	
     /**

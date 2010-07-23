@@ -31,6 +31,7 @@ public class EventLabelSymbolTable
 	 * 
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}

@@ -56,10 +56,12 @@ public interface IFormulaExtension {
 					argumentType, isAssociative);
 		}
 
+		@Override
 		public IOperatorProperties getProperties() {
 			return operProps;
 		}
 
+		@Override
 		public boolean checkPreconditions(Expression[] childExprs,
 				Predicate[] childPreds) {
 			final int children;

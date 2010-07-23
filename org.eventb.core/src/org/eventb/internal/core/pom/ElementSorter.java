@@ -39,6 +39,7 @@ public class ElementSorter<T extends IInternalElement> {
 			this.element = element;
 		}
 
+		@Override
 		public int compareTo(Item<T> o) {
 			return this.key - o.key;
 		}

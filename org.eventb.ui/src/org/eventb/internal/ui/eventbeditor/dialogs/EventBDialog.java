@@ -154,6 +154,7 @@ public abstract class EventBDialog extends Dialog {
 			this.textWidget = textWidget;
 		}
 
+		@Override
 		public void modifyText(ModifyEvent e) {
 			final Text varText = (Text) e.widget;
 			if (!dirtyTexts.contains(textWidget)) {
@@ -192,6 +193,7 @@ public abstract class EventBDialog extends Dialog {
 
 	protected class DirtyStateListener implements ModifyListener {
 
+		@Override
 		public void modifyText(ModifyEvent e) {
 			final Text text = (Text) e.widget;
 			if (EventBEditorUtils.DEBUG)

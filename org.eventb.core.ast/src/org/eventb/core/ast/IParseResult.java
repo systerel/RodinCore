@@ -39,6 +39,7 @@ public interface IParseResult extends IResult {
 	 * @see #hasProblem()
 	 * @deprecated Use <code>!hasProblem()</code> instead
 	 */
+	@Override
 	@Deprecated
 	boolean isSuccess();
 	

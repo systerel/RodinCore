@@ -61,6 +61,7 @@ public class ParseResult extends AbstractResult implements IParseResult {
 	 * (non-Javadoc)
 	 * @see org.eventb.internal.core.ast.IParseResult#getParsedAssignment()
 	 */
+	@Override
 	public Assignment getParsedAssignment() {
 		if (!isSuccess())
 			return null;
@@ -71,6 +72,7 @@ public class ParseResult extends AbstractResult implements IParseResult {
 	 * (non-Javadoc)
 	 * @see org.eventb.internal.core.ast.IParseResult#getParsedExpression()
 	 */
+	@Override
 	public Expression getParsedExpression() {
 		if (!isSuccess())
 			return null;
@@ -81,6 +83,7 @@ public class ParseResult extends AbstractResult implements IParseResult {
 	 * (non-Javadoc)
 	 * @see org.eventb.internal.core.ast.IParseResult#getParsedPredicate()
 	 */
+	@Override
 	public Predicate getParsedPredicate() {
 		if (!isSuccess())
 			return null;
@@ -91,12 +94,14 @@ public class ParseResult extends AbstractResult implements IParseResult {
 	 * (non-Javadoc)
 	 * @see org.eventb.internal.core.ast.IParseResult#getParsedType()
 	 */
+	@Override
 	public Type getParsedType() {
 		if (!isSuccess())
 			return null;
 		return type;
 	}
 
+	@Override
 	public LanguageVersion getLanguageVersion() {
 		return version;
 	}

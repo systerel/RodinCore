@@ -57,6 +57,7 @@ public class SCEvent extends EventBElement implements ISCEvent {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ISCEvent#getSCRefinesClauses()
 	 */
+	@Override
 	public ISCRefinesEvent[] getSCRefinesClauses() throws RodinDBException {
 		return getChildrenOfType(ISCRefinesEvent.ELEMENT_TYPE); 
 	}
@@ -64,6 +65,7 @@ public class SCEvent extends EventBElement implements ISCEvent {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ISCEvent#getAbstractSCEvents()
 	 */
+	@Override
 	public ISCEvent[] getAbstractSCEvents() throws RodinDBException {
 		final ISCRefinesEvent[] refinesClauses =
 			getChildrenOfType(ISCRefinesEvent.ELEMENT_TYPE);
@@ -77,11 +79,13 @@ public class SCEvent extends EventBElement implements ISCEvent {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ISCEvent#getSCVariables()
 	 */
+	@Override
 	@Deprecated
 	public ISCVariable[] getSCVariables() throws RodinDBException {
 		return getChildrenOfType(ISCVariable.ELEMENT_TYPE); 
 	}
 
+	@Override
 	public ISCParameter[] getSCParameters() throws RodinDBException {
 		return getChildrenOfType(ISCParameter.ELEMENT_TYPE); 
 	}
@@ -89,6 +93,7 @@ public class SCEvent extends EventBElement implements ISCEvent {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ISCEvent#getSCWitnesses()
 	 */
+	@Override
 	public ISCWitness[] getSCWitnesses() throws RodinDBException {
 		return getChildrenOfType(ISCWitness.ELEMENT_TYPE);
 	}
@@ -96,6 +101,7 @@ public class SCEvent extends EventBElement implements ISCEvent {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ISCEvent#getSCGuards()
 	 */
+	@Override
 	public ISCGuard[] getSCGuards() throws RodinDBException {
 		return getChildrenOfType(ISCGuard.ELEMENT_TYPE); 
 	}
@@ -103,35 +109,43 @@ public class SCEvent extends EventBElement implements ISCEvent {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ISCEvent#getSCActions()
 	 */
+	@Override
 	public ISCAction[] getSCActions() throws RodinDBException {
 		return getChildrenOfType(ISCAction.ELEMENT_TYPE); 
 	}
 
+	@Override
 	public ISCAction getSCAction(String elementName) {
 		return getInternalElement(ISCAction.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public ISCGuard getSCGuard(String elementName) {
 		return getInternalElement(ISCGuard.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public ISCRefinesEvent getSCRefinesClause(String elementName) {
 		return getInternalElement(ISCRefinesEvent.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	@Deprecated
 	public ISCVariable getSCVariable(String elementName) {
 		return getInternalElement(ISCVariable.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public ISCParameter getSCParameter(String elementName) {
 		return getInternalElement(ISCParameter.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public ISCWitness getSCWitness(String elementName) {
 		return getInternalElement(ISCWitness.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public ITypeEnvironment getTypeEnvironment(ITypeEnvironment mchTypenv,
 			FormulaFactory factory) throws RodinDBException {
 
@@ -143,16 +157,19 @@ public class SCEvent extends EventBElement implements ISCEvent {
 		return typenv;
 	}
 
+	@Override
 	@Deprecated
 	public boolean isForbidden() throws RodinDBException {
 		return false;
 	}
 
+	@Override
 	@Deprecated
 	public void setForbidden(boolean value) throws RodinDBException {
 		// do nothing
 	}
 
+	@Override
 	@Deprecated
 	public void setForbidden(boolean value, IProgressMonitor monitor)
 			throws RodinDBException {

@@ -164,6 +164,7 @@ public class ModelProofObligation implements Comparable<ModelProofObligation> {
 	/**
 	 * Compare according to the <code>position</code> of the proof obligations
 	 */
+	@Override
 	public int compareTo(ModelProofObligation o) {
 		return getPosition() - o.getPosition();
 	}

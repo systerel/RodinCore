@@ -93,18 +93,22 @@ public class QuantifiedPredicate extends Predicate {
 			this.tag = tag;
 		}
 
+		@Override
 		public String getImage() {
 			return image;
 		}
 		
+		@Override
 		public String getId() {
 			return id;
 		}
 		
+		@Override
 		public String getGroupId() {
 			return groupId;
 		}
 
+		@Override
 		public IParserPrinter<QuantifiedPredicate> makeParser(int kind) {
 			return new QuantifiedPredicateParser(kind, tag);
 		}
@@ -116,6 +120,7 @@ public class QuantifiedPredicate extends Predicate {
 			return parser;
 		}
 
+		@Override
 		public boolean isSpaced() {
 			return false;
 		}

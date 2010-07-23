@@ -34,6 +34,7 @@ public class POPredicate extends SCPredicateElement implements IPOPredicate {
 		super(name, parent);
 	}
 	
+	@Override
 	@Deprecated
 	public String getName() {
 		return getElementName();
@@ -44,6 +45,7 @@ public class POPredicate extends SCPredicateElement implements IPOPredicate {
 		return ELEMENT_TYPE;
 	}
 
+	@Override
 	@Deprecated
 	public String getPredicate() throws RodinDBException {
 		return getPredicateString();

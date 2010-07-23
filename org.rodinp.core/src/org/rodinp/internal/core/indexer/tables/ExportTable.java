@@ -27,6 +27,7 @@ public class ExportTable implements IExportTable, Cloneable {
 		table = new HashMap<IRodinFile, Set<IDeclaration>>();
 	}
 
+	@Override
 	public Set<IDeclaration> get(IRodinFile file) {
 		final Set<IDeclaration> declarations = table.get(file);
 		if (declarations == null) {
@@ -54,6 +55,7 @@ public class ExportTable implements IExportTable, Cloneable {
 		table.clear();
 	}
 
+	@Override
 	public Set<IRodinFile> files() {
 		return Collections.unmodifiableSet(table.keySet());
 	}

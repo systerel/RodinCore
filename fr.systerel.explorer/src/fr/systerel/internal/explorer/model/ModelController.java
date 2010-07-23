@@ -330,6 +330,7 @@ public class ModelController implements IElementChangedListener {
 	 * React to changes in the database.
 	 *
 	 */
+	@Override
 	public void elementChanged(ElementChangedEvent event) {	
 		
 		DeltaProcessor processor =  new DeltaProcessor(event.getDelta());

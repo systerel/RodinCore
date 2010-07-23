@@ -45,10 +45,12 @@ public class RefinesMachine extends EventBElement implements IRefinesMachine {
 		super(name, parent);
 	}
 	
+	@Override
 	public boolean hasAbstractMachineName() throws RodinDBException {
 		return hasAttribute(EventBAttributes.TARGET_ATTRIBUTE);
 	}
 
+	@Override
 	public String getAbstractMachineName() throws RodinDBException {
 		return getAttributeValue(EventBAttributes.TARGET_ATTRIBUTE);
 	}
@@ -58,28 +60,34 @@ public class RefinesMachine extends EventBElement implements IRefinesMachine {
 		return ELEMENT_TYPE;
 	}
 
+	@Override
 	public IRodinFile getAbstractMachine() throws RodinDBException {
 		return getAbstractMachineRoot().getRodinFile();
 	}
 
+	@Override
 	public IMachineRoot getAbstractMachineRoot() throws RodinDBException {
 		final String bareName = getAbstractMachineName();
 		return getEventBProject().getMachineRoot(bareName);
 	}
 
+	@Override
 	public IRodinFile getAbstractSCMachine() throws RodinDBException {
 		return getAbstractSCMachineRoot().getRodinFile();
 	}
 
+	@Override
 	public ISCMachineRoot getAbstractSCMachineRoot() throws RodinDBException {
 		final String bareName = getAbstractMachineName();
 		return getEventBProject().getSCMachineRoot(bareName);
 	}
 
+	@Override
 	public void setAbstractMachineName(String name, IProgressMonitor monitor) throws RodinDBException {
 		setAttributeValue(EventBAttributes.TARGET_ATTRIBUTE, name, monitor);
 	}
 
+	@Override
 	@Deprecated
 	public void setAbstractMachineName(String name) throws RodinDBException {
 		setAbstractMachineName(name, null);

@@ -46,10 +46,12 @@ public class POPredicateSet extends EventBPOElement implements IPOPredicateSet {
 		return ELEMENT_TYPE;
 	}
 	
+	@Override
 	public IPOPredicate[] getPredicates() throws RodinDBException {
 		return getChildrenOfType(IPOPredicate.ELEMENT_TYPE);
 	}
 	
+	@Override
 	@Deprecated
 	public String getParentPredicateSetName() 
 	throws RodinDBException {
@@ -59,6 +61,7 @@ public class POPredicateSet extends EventBPOElement implements IPOPredicateSet {
 			return null;
 	}
 	
+	@Override
 	public IPOPredicateSet getParentPredicateSet() 
 	throws RodinDBException {
 		if (hasAttribute(EventBAttributes.PARENT_SET_ATTRIBUTE))
@@ -67,24 +70,29 @@ public class POPredicateSet extends EventBPOElement implements IPOPredicateSet {
 			return null;
 	}
 
+	@Override
 	@Deprecated
 	public void setParentPredicateSetName(String setName, IProgressMonitor monitor) 
 	throws RodinDBException {
 //		setAttributeValue(EventBAttributes.PARENT_SET_ATTRIBUTE, setName, monitor);
 	}
 
+	@Override
 	public IPOIdentifier[] getIdentifiers() throws RodinDBException {
 		return getChildrenOfType(IPOIdentifier.ELEMENT_TYPE);
 	}
 
+	@Override
 	public IPOIdentifier getIdentifier(String elementName) {
 		return getInternalElement(IPOIdentifier.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public IPOPredicate getPredicate(String elementName) {
 		return getInternalElement(IPOPredicate.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public void setParentPredicateSet(IPOPredicateSet predicateSet, IProgressMonitor monitor) 
 	throws RodinDBException {
 		if (predicateSet == null)

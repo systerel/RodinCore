@@ -67,6 +67,7 @@ public final class EquivalenceManager implements IEquivalenceManager {
 		this.solver = new EqualitySolver(table);
 	}
 
+	@Override
 	public void removeInstantiation(EqualityLiteral equality, Clause clause) {
 		assert !clause.isUnit() && !clause.isFalse();
 		
@@ -82,6 +83,7 @@ public final class EquivalenceManager implements IEquivalenceManager {
 		}
 	}
 	
+	@Override
 	public void removeQueryEquality(EqualityLiteral equality, Clause clause) {
 		// for queries only, facts are handled differently
 		// facts are never removed without being put back with a different level
@@ -109,6 +111,7 @@ public final class EquivalenceManager implements IEquivalenceManager {
 		}
 	}
 	
+	@Override
 	public FactResult addFactEquality(EqualityLiteral equality, Clause clause) {
 		assert equality.getTerm(0) instanceof Constant && equality.getTerm(1) instanceof Constant;
 		
@@ -143,6 +146,7 @@ public final class EquivalenceManager implements IEquivalenceManager {
 		return result;
 	}
 	
+	@Override
 	public QueryResult addQueryEquality(EqualityLiteral equality, Clause clause) {
 		assert equality.getTerm(0) instanceof Constant && equality.getTerm(1) instanceof Constant;
 		
@@ -175,6 +179,7 @@ public final class EquivalenceManager implements IEquivalenceManager {
 	}
 	
 	
+	@Override
 	public List<InstantiationResult> addInstantiationEquality(EqualityLiteral equality, Clause clause) {
 		assert !equality.isPositive()?clause.isEquivalence():true;
 		assert !clause.isUnit();
@@ -211,6 +216,7 @@ public final class EquivalenceManager implements IEquivalenceManager {
 	}
 
 	
+	@Override
 	public void backtrack(Level level) {
 		// TODO lazy backtrack
 		

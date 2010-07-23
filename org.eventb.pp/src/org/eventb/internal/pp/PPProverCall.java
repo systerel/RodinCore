@@ -103,6 +103,7 @@ public class PPProverCall extends XProverCall implements IPPMonitor {
 		return new HashSet<Predicate>(result.getTracer().getNeededHypotheses());
 	}
 
+	@Override
 	public boolean isCanceled() {
 		return isCancelled();
 	}

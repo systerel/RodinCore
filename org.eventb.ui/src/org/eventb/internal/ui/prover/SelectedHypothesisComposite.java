@@ -88,6 +88,7 @@ public class SelectedHypothesisComposite extends HypothesisComposite {
 				.setToolTipText(Messages.selectedHypothesis_toolItem_remove_toolTipText);
 		removeItem.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				assert userSupport != null;
 				Set<Predicate> deselected = SelectedHypothesisComposite.this
@@ -103,6 +104,7 @@ public class SelectedHypothesisComposite extends HypothesisComposite {
 				}
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				widgetDefaultSelected(e);
 			}
@@ -117,10 +119,12 @@ public class SelectedHypothesisComposite extends HypothesisComposite {
 				.setToolTipText(Messages.selectedHypothesis_toolItem_selectAll_toolTipText);
 		selectAll.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				SelectedHypothesisComposite.this.selectAllHyps();
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				widgetDefaultSelected(e);
 			}
@@ -135,11 +139,13 @@ public class SelectedHypothesisComposite extends HypothesisComposite {
 				.setToolTipText(Messages.selectedHypothesis_toolItem_inverseSelection_toolTipText);
 		inverseSelection.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				assert userSupport != null;
 				SelectedHypothesisComposite.this.inverseSelectedHyps();
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				widgetDefaultSelected(e);
 			}
@@ -154,10 +160,12 @@ public class SelectedHypothesisComposite extends HypothesisComposite {
 				.setToolTipText(Messages.selectedHypothesis_toolItem_selectNone_toolTipText);
 		selectNone.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				SelectedHypothesisComposite.this.deselectAllHyps();
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				widgetDefaultSelected(e);
 			}
@@ -196,6 +204,7 @@ public class SelectedHypothesisComposite extends HypothesisComposite {
 	 * 
 	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
+	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
 		// Update the status of the toolbar items.
 		updateToolbarItems();
@@ -206,6 +215,7 @@ public class SelectedHypothesisComposite extends HypothesisComposite {
 	 * 
 	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
+	@Override
 	public void widgetSelected(SelectionEvent e) {
 		// Behave as the default selected.
 		widgetDefaultSelected(e);

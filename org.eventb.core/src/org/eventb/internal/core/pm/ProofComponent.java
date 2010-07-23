@@ -55,6 +55,7 @@ public class ProofComponent implements IProofComponent {
 		this.known = new HashMap<String, Map<String, ProofAttempt>>();
 	}
 
+	@Override
 	public IProofAttempt createProofAttempt(String poName, String owner,
 			IProgressMonitor pm) throws RodinDBException {
 		final CreateProofAttemptOperation cpa = new CreateProofAttemptOperation(
@@ -71,33 +72,40 @@ public class ProofComponent implements IProofComponent {
 		return map.get(owner);
 	}
 
+	@Override
 	public IPORoot getPORoot() {
 		return psRoot.getPORoot();
 	}
 
+	@Override
 	public IPRRoot getPRRoot() {
 		return psRoot.getPRRoot();
 	}
 
+	@Override
 	public ProofAttempt[] getProofAttempts() {
 		final Collection<ProofAttempt> res = new ArrayList<ProofAttempt>();
 		addAllAttempts(res);
 		return res.toArray(new ProofAttempt[res.size()]);
 	}
 
+	@Override
 	public ProofAttempt[] getProofAttempts(String poName) {
 		final Collection<ProofAttempt> res = values(poName);
 		return res.toArray(new ProofAttempt[res.size()]);
 	}
 
+	@Override
 	public ProofAttempt getProofAttempt(String poName, String owner) {
 		return get(poName, owner);
 	}
 
+	@Override
 	public IPSRoot getPSRoot() {
 		return psRoot;
 	}
 
+	@Override
 	public ISchedulingRule getSchedulingRule() {
 		final ISchedulingRule[] rules = new ISchedulingRule[] {
 				getPORoot().getSchedulingRule(),
@@ -154,6 +162,7 @@ public class ProofComponent implements IProofComponent {
 		return map.values();
 	}
 
+	@Override
 	public IProofSkeleton getProofSkeleton(String poName, FormulaFactory ff,
 			IProgressMonitor pm) throws RodinDBException {
 		final ReadProofOperation rp = new ReadProofOperation(this, poName, ff);
@@ -165,21 +174,25 @@ public class ProofComponent implements IProofComponent {
 		return getPRRoot().getProof(name);
 	}
 
+	@Override
 	public IPSStatus getStatus(String poName) {
 		return getPSRoot().getStatus(poName);
 	}
 
+	@Override
 	public boolean hasUnsavedChanges() throws RodinDBException {
 		return getPRRoot().getRodinFile().hasUnsavedChanges()
 				|| getPSRoot().getRodinFile().hasUnsavedChanges();
 	}
 
+	@Override
 	public void makeConsistent(IProgressMonitor monitor)
 			throws RodinDBException {
 		final IWorkspaceRunnable op = new RevertProofComponentOperation(this);
 		RodinCore.run(op, getSchedulingRule(), monitor);
 	}
 
+	@Override
 	public void save(IProgressMonitor monitor, boolean force)
 			throws RodinDBException {
 		final IWorkspaceRunnable op = new SaveProofComponentOperation(this,
@@ -187,6 +200,7 @@ public class ProofComponent implements IProofComponent {
 		RodinCore.run(op, getSchedulingRule(), monitor);
 	}
 
+	@Override
 	public FormulaFactory getFormulaFactory(String poName,
 			IProgressMonitor monitor) {
 		return psRoot.getFormulaFactory();

@@ -42,6 +42,7 @@ import fr.systerel.internal.explorer.navigator.ExplorerUtils;
  */
 public class StatisticsDetailsContentProvider implements IStructuredContentProvider {
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 		final List<Object> children = new ArrayList<Object>();
 		if (inputElement instanceof Object[]) {
@@ -140,11 +141,13 @@ public class StatisticsDetailsContentProvider implements IStructuredContentProvi
 		return null;
 	}
 
+	@Override
 	public void dispose() {
 		// do nothing
 		
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		// do nothing
 		

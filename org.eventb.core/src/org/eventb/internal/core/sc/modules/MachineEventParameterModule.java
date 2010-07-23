@@ -40,6 +40,7 @@ public class MachineEventParameterModule extends IdentifierModule {
 			.getModuleType(EventBPlugin.PLUGIN_ID
 					+ ".machineEventParameterModule"); //$NON-NLS-1$
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
@@ -47,6 +48,7 @@ public class MachineEventParameterModule extends IdentifierModule {
 	protected IConcreteEventInfo concreteEventInfo;
 	protected boolean isInitialisation;
 
+	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {

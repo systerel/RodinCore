@@ -45,14 +45,17 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 			this.current = null;
 		}
 		
+		@Override
 		public boolean hasNext() {
 			return iterator.hasNext();
 		}
 
+		@Override
 		public void advance() throws NoSuchElementException {
 			current = iterator.next();
 		}
 
+		@Override
 		public String getName() throws NoSuchElementException {
 			if (current == null) {
 				throw new NoSuchElementException();
@@ -60,6 +63,7 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 			return current.getKey();
 		}
 
+		@Override
 		public Type getType() throws NoSuchElementException {
 			if (current == null) {
 				throw new NoSuchElementException();
@@ -67,6 +71,7 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 			return current.getValue();
 		}
 
+		@Override
 		public boolean isGivenSet() throws NoSuchElementException {
 			final Type baseType = getType().getBaseType();
 			if (baseType instanceof GivenType) {
@@ -101,6 +106,7 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 		this.map = new HashMap<String, Type>(typenv.map);
 	}
 
+	@Override
 	public void add(FreeIdentifier freeIdent) {
 		addName(freeIdent.getName(), freeIdent.getType());
 	}
@@ -108,6 +114,7 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ast.ITypeEnvironment#addAll(org.eventb.core.ast.ITypeEnvironment)
 	 */
+	@Override
 	public void addAll(ITypeEnvironment other) {
 		Map<String, Type> otherMap = ((TypeEnvironment) other).map;
 		// Use addName() to check for duplicates.
@@ -120,6 +127,7 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ast.ITypeEnvironment#addAll(org.eventb.core.ast.FreeIdentifier[])
 	 */
+	@Override
 	public void addAll(FreeIdentifier[] freeIdents) {
 		for (FreeIdentifier freeIdent: freeIdents) {
 			add(freeIdent);
@@ -129,6 +137,7 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ast.ITypeEnvironment#addGivenSet(java.lang.String)
 	 */
+	@Override
 	public void addGivenSet(String name) {
 		addName(name, ff.makePowerSetType(ff.makeGivenType(name)));
 	}
@@ -136,6 +145,7 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ast.ITypeEnvironment#addName(java.lang.String, org.eventb.core.ast.Type)
 	 */
+	@Override
 	public void addName(String name, Type type) {
 		assert name != null && type != null;
 		Type oldType = map.get(name);
@@ -155,6 +165,7 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ast.ITypeEnvironment#contains(java.lang.String)
 	 */
+	@Override
 	public boolean contains(String name) {
 		return map.containsKey(name);
 	}
@@ -162,6 +173,7 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ast.ITypeEnvironment#containsAll(org.eventb.internal.core.typecheck.TypeEnvironment)
 	 */
+	@Override
 	public boolean containsAll(ITypeEnvironment typenv){
 		if (this == typenv)
 			return true;
@@ -192,6 +204,7 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ast.ITypeEnvironment#getIterator()
 	 */
+	@Override
 	public IIterator getIterator() {
 		return new InternalIterator(map.entrySet().iterator());
 	}
@@ -199,6 +212,7 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ast.ITypeEnvironment#getNames()
 	 */
+	@Override
 	public Set<String> getNames(){
 		return map.keySet();
 	}
@@ -206,6 +220,7 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ast.ITypeEnvironment#getType(java.lang.String)
 	 */
+	@Override
 	public Type getType(String name) {
 		return map.get(name);
 	}
@@ -222,6 +237,7 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ast.ITypeEnvironment#isEmpty()
 	 */
+	@Override
 	public boolean isEmpty() {
 		return map.isEmpty();
 	}
@@ -242,6 +258,7 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 		return map.toString();
 	}
 
+	@Override
 	public FormulaFactory getFormulaFactory() {
 		return ff;
 	}

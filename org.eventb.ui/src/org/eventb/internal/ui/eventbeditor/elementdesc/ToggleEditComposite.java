@@ -32,6 +32,7 @@ public class ToggleEditComposite extends AbstractEditComposite {
 			displayMarkers();
 	}
 
+	@Override
 	public void edit(int charStart, int charEnd) {
 		// do nothing
 	}

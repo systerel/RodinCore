@@ -61,6 +61,7 @@ public static void main (String [] args) {
 		
 	};
 	enterListener = new Listener() {
+		@Override
 		public void handleEvent(Event e) {
 //			System.out.println("Mouse Enter");
 			Point location = new Point(e.x, e.y);
@@ -70,6 +71,7 @@ public static void main (String [] args) {
 	text.addListener(SWT.MouseEnter, enterListener);
 	
 	exitListener = new Listener() {
+		@Override
 		public void handleEvent(Event event) {
 //			System.out.println("Mouse Exit");
 			manager.disposeMenu();
@@ -79,6 +81,7 @@ public static void main (String [] args) {
 	text.addListener(SWT.MouseExit, exitListener);
 	
 	moveListener = new Listener() {
+		@Override
 		public void handleEvent(Event e) {
 //			System.out.println("Mouse Move");
 			manager.disposeMenu();
@@ -89,6 +92,7 @@ public static void main (String [] args) {
 	text.addListener(SWT.Move, moveListener);
 	
 	downListener = new Listener() {
+		@Override
 		public void handleEvent(Event e) {
 //			System.out.println("Mouse Down");
 			manager.mouseDown(new Point(e.x, e.y));
@@ -97,6 +101,7 @@ public static void main (String [] args) {
 	text.addListener(SWT.DOWN, downListener);
 	
 	hoverListener = new Listener() {
+		@Override
 		public void handleEvent(Event e) {
 //			System.out.println("Mouse Hover");
 			manager.showToolTip(new Point(e.x, e.y));

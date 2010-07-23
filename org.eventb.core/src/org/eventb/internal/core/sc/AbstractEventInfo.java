@@ -55,6 +55,7 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getEventLabel()
 	 */
+	@Override
 	public String getEventLabel() {
 		return label;
 	}
@@ -62,6 +63,7 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getIdentifier(java.lang.String)
 	 */
+	@Override
 	public FreeIdentifier getParameter(String name) throws CoreException {
 		if (table == null) {
 			table = new Hashtable<String,FreeIdentifier>(idents.size() * 4 / 3 + 1);
@@ -75,6 +77,7 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getIdentifiers()
 	 */
+	@Override
 	public List<FreeIdentifier> getParameters() throws CoreException {
 		return idents;
 	}
@@ -82,6 +85,7 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getGuards()
 	 */
+	@Override
 	public List<Predicate> getGuards() throws CoreException {
 		return guards;
 	}
@@ -89,6 +93,7 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getActions()
 	 */
+	@Override
 	public List<Assignment> getActions() throws CoreException {
 		return actions;
 	}
@@ -118,6 +123,7 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 		return label.hashCode();
 	}
 
+	@Override
 	public int compareTo(IAbstractEventInfo info) {
 		return label.compareTo(info.getEventLabel());
 	}
@@ -130,18 +136,22 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 			&& label.equals(((IAbstractEventInfo) obj).getEventLabel());
 	}
 
+	@Override
 	public ISCEvent getEvent() {
 		return event;
 	}
 
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 
+	@Override
 	public List<IConcreteEventInfo> getMergers() {
 		return mergers;
 	}
 
+	@Override
 	public List<IConcreteEventInfo> getSplitters() {
 		return splitters;
 	}

@@ -101,6 +101,7 @@ public final class LocalVariable extends SimpleTerm {
 		return inverseCache;
 	}
 	
+	@Override
 	public int compareTo(Term o) {
 		if (equals(0)) return 0;
 		else if (getPriority() == o.getPriority()) {

@@ -108,10 +108,12 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 			JFaceResources.getFontRegistry().addListener(this);
 		}
 
+		@Override
 		public Font getFont(Object element) {
 			return JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
 		}
 
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			if (event.getProperty()
 					.equals(PreferenceConstants.RODIN_MATH_FONT)) {
@@ -261,6 +263,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				groupActionSet.setContext(new ActionContext(viewer
 						.getSelection()));
@@ -321,6 +324,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	@SuppressWarnings("unused")
 	private void hookDoubleClickAction() {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				ISelection sel = viewer.getSelection();
 				if (sel instanceof IStructuredSelection) {
@@ -434,6 +438,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	 * 
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
+	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		viewer.addSelectionChangedListener(listener);
 	}
@@ -443,6 +448,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	 * 
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
 	 */
+	@Override
 	public ISelection getSelection() {
 		if (viewer == null)
 			return StructuredSelection.EMPTY;
@@ -454,6 +460,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	 * 
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
+	@Override
 	public void removeSelectionChangedListener(
 			ISelectionChangedListener listener) {
 		viewer.removeSelectionChangedListener(listener);
@@ -464,6 +471,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	 * 
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void setSelection(ISelection selection) {
 		if (viewer != null)
 			viewer.setSelection(selection);
@@ -479,6 +487,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	 * 
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		if (ProofTreeUIUtils.DEBUG)
 			ProofTreeUIUtils.debug("Selection Changed 1");
@@ -573,6 +582,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		return userSupport;
 	}
 
+	@Override
 	public void userSupportManagerChanged(final IUserSupportManagerDelta delta) {
 		if (ProofTreeUIUtils.DEBUG)
 			ProofTreeUIUtils.debug("Begin User Support Manager Changed");
@@ -612,6 +622,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		}
 		Display display = control.getDisplay();
 		display.syncExec(new Runnable() {
+			@Override
 			public void run() {
 
 				// Do nothing if the control has been disposed

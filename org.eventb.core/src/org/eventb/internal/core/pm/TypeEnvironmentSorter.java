@@ -33,6 +33,7 @@ public class TypeEnvironmentSorter {
 			this.type = type;
 		}
 
+		@Override
 		public int compareTo(Entry o) {
 			return name.compareTo(o.name);
 		}

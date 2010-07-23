@@ -39,6 +39,7 @@ public class EqualitySimplifier extends AbstractSimplifier {
 		this.context = context;
 	}
 	
+	@Override
 	public Clause simplifyDisjunctiveClause(DisjunctiveClause clause) {
 		init(clause);
 		if (simplifyEqualityDisj(equalities)) return cf.makeTRUE(clause.getOrigin());
@@ -48,6 +49,7 @@ public class EqualitySimplifier extends AbstractSimplifier {
 		else return cf.makeDisjunctiveClause(clause.getOrigin(),predicates,equalities,arithmetic,conditions);
 	}
 
+	@Override
 	public Clause simplifyEquivalenceClause(EquivalenceClause clause) {
 		init(clause);
 		
@@ -87,6 +89,7 @@ public class EqualitySimplifier extends AbstractSimplifier {
 		return equality.getTerm(0).equals(equality.getTerm(1));
 	}
 
+	@Override
 	public boolean canSimplify(Clause clause) {
 		return clause.getEqualityLiteralsSize() > 0 || clause.getConditionsSize() > 0;
 	}

@@ -106,6 +106,7 @@ public class CopyElement extends OperationLeaf {
 		}
 	}
 
+	@Override
 	public void setParent(IInternalElement element) {
 		source = element;
 	}

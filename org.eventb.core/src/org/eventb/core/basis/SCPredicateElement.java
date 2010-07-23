@@ -53,6 +53,7 @@ implements ISCPredicateElement {
 		super(name, parent);
 	}
 
+	@Override
 	@Deprecated
 	public Predicate getPredicate(FormulaFactory factory) throws RodinDBException {
 		String contents = getPredicateString();
@@ -73,6 +74,7 @@ implements ISCPredicateElement {
 		return result;
 	}
 
+	@Override
 	public Predicate getPredicate(
 			FormulaFactory factory, ITypeEnvironment typenv) throws RodinDBException {
 		
@@ -88,10 +90,12 @@ implements ISCPredicateElement {
 		return result;
 	}
 	
+	@Override
 	public void setPredicate(Predicate predicate, IProgressMonitor monitor) throws RodinDBException {
 		setPredicateString(predicate.toStringWithTypes(), monitor);
 	}
 	
+	@Override
 	@Deprecated
 	public void setPredicate(Predicate predicate) throws RodinDBException {
 		setPredicate(predicate, null);

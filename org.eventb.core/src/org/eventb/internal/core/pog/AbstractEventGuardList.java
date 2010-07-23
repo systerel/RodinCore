@@ -36,6 +36,7 @@ public class AbstractEventGuardList extends State implements IAbstractEventGuard
 	/* (non-Javadoc)
 	 * @see org.eventb.core.state.IState#getStateType()
 	 */
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
@@ -58,18 +59,22 @@ public class AbstractEventGuardList extends State implements IAbstractEventGuard
 			refinementType = MERGE;
 	}
 
+	@Override
 	public List<IAbstractEventGuardTable> getAbstractEventGuardTables() {
 		return abstractEventGuardTables;
 	}
 
+	@Override
 	public int getRefinementType() {
 		return refinementType;
 	}
 	
+	@Override
 	public List<ISCEvent> getAbstractEvents() {
 		return abstractEvents;
 	}
 
+	@Override
 	public ISCEvent getFirstAbstractEvent() {
 		if (abstractEvents.size() == 0)
 			return null;
@@ -77,6 +82,7 @@ public class AbstractEventGuardList extends State implements IAbstractEventGuard
 		return abstractEvents.get(0);
 	}
 
+	@Override
 	public IAbstractEventGuardTable getFirstAbstractEventGuardTable() {
 		if (abstractEventGuardTables.size() == 0)
 			return null;

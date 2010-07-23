@@ -33,6 +33,7 @@ public class IntermediateResult implements IIntermediateResult {
 		this.terms = list.toArray(new TermSignature[list.size()]);
 	}
 
+	@Override
 	public List<TermSignature> getTerms() {
 		return new ArrayList<TermSignature>(Arrays.asList(terms));
 	}
@@ -47,6 +48,7 @@ public class IntermediateResult implements IIntermediateResult {
 		return Arrays.equals(this.terms, other.terms);
 	}
 
+	@Override
 	public List<IIntermediateResult> getResultList() {
 		final List<IIntermediateResult> result = new ArrayList<IIntermediateResult>();
 		result.add(this);

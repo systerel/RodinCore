@@ -37,6 +37,7 @@ public class VariantInfo extends State implements IVariantInfo {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IVariantInfo#getExpression()
 	 */
+	@Override
 	public Expression getExpression() throws CoreException {
 		assertImmutable();
 		return expression;
@@ -45,6 +46,7 @@ public class VariantInfo extends State implements IVariantInfo {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}

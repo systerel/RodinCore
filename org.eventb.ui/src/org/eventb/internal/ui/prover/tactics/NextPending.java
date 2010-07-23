@@ -12,10 +12,12 @@ import org.rodinp.core.RodinDBException;
 
 public class NextPending implements IProofCommand {
 
+	@Override
 	public void apply(IUserSupport us, Predicate hyp, String[] inputs,
 			IProgressMonitor monitor) throws RodinDBException {
 		us.selectNextSubgoal(false, new IProofTreeNodeFilter() {
 
+			@Override
 			public boolean select(IProofTreeNode node) {
 				return node.isOpen();
 			}
@@ -23,6 +25,7 @@ public class NextPending implements IProofCommand {
 		});
 	}
 
+	@Override
 	public boolean isApplicable(IUserSupport us, Predicate hyp, String input) {
 		IProofState currentPO = us.getCurrentPO();
 		try {

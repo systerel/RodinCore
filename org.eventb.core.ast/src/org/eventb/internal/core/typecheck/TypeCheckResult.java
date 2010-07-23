@@ -88,6 +88,7 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ast.ITypeCheckResult#getInferredEnvironment()
 	 */
+	@Override
 	public final ITypeEnvironment getInferredEnvironment() {
 		if (! isSuccess()) return null;
 		return inferredTypeEnvironment;
@@ -96,6 +97,7 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 	/* (non-Javadoc)
 	 * @see org.eventb.core.ast.ITypeCheckResult#getInitialTypeEnvironment()
 	 */
+	@Override
 	public final ITypeEnvironment getInitialTypeEnvironment() {
 		return initialTypeEnvironment;
 	}

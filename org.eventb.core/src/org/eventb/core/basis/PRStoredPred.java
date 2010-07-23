@@ -47,6 +47,7 @@ public class PRStoredPred extends SCPredicateElement implements IPRStoredPred {
 		return super.getPredicate(factory, typenv);
 	}
 
+	@Override
 	public void setPredicate(Predicate predicate, ITypeEnvironment baseTypenv,
 			IProgressMonitor monitor) throws RodinDBException {
 		setPRIdentifiers(this, predicate, baseTypenv, monitor);

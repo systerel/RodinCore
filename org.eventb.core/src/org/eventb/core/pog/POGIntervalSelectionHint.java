@@ -56,6 +56,7 @@ class POGIntervalSelectionHint implements IPOGHint {
 		return start;
 	}
 
+	@Override
 	public void create(IPOSequent sequent, String name, IProgressMonitor monitor) 
 	throws RodinDBException {
 		IPOSelectionHint selectionHint = sequent.getSelectionHint(name);

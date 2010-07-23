@@ -29,6 +29,7 @@ public class EventsImplicitChildProviders {
 	public static class GuardsImplicitChildProvider implements
 			IImplicitChildProvider {
 
+		@Override
 		public List<? extends IInternalElement> getImplicitChildren(
 				IInternalElement elt) {
 			try {
@@ -46,6 +47,7 @@ public class EventsImplicitChildProviders {
 	public static class ActionsImplicitChildProvider implements
 			IImplicitChildProvider {
 
+		@Override
 		public List<? extends IInternalElement> getImplicitChildren(
 				IInternalElement elt) {
 			try {
@@ -63,6 +65,7 @@ public class EventsImplicitChildProviders {
 	public static class ParametersImplicitChildProvider implements
 			IImplicitChildProvider {
 
+		@Override
 		public List<? extends IInternalElement> getImplicitChildren(
 				IInternalElement elt) {
 			try {

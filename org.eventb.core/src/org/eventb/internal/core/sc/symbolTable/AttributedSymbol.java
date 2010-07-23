@@ -68,6 +68,7 @@ public class AttributedSymbol implements IAttributedSymbol {
 	 * 
 	 * @see org.eventb.core.sc.symbolTable.IAttributedSymbol#getAttributeTypes()
 	 */
+	@Override
 	public IAttributeType[] getAttributeTypes() {
 		return types.toArray(new IAttributeType[types.size()]);
 	}
@@ -88,6 +89,7 @@ public class AttributedSymbol implements IAttributedSymbol {
 	 * org.eventb.core.sc.symbolTable.IAttributedSymbol#getAttributeValue(org
 	 * .rodinp.core.IAttributeType.Boolean)
 	 */
+	@Override
 	public boolean getAttributeValue(IAttributeType.Boolean type) {
 		return (Boolean) values.get(find(type));
 	}
@@ -99,6 +101,7 @@ public class AttributedSymbol implements IAttributedSymbol {
 	 * org.eventb.core.sc.symbolTable.IAttributedSymbol#getAttributeValue(org
 	 * .rodinp.core.IAttributeType.Handle)
 	 */
+	@Override
 	public IRodinElement getAttributeValue(IAttributeType.Handle type) {
 		return (IRodinElement) values.get(find(type));
 	}
@@ -110,6 +113,7 @@ public class AttributedSymbol implements IAttributedSymbol {
 	 * org.eventb.core.sc.symbolTable.IAttributedSymbol#getAttributeValue(org
 	 * .rodinp.core.IAttributeType.Integer)
 	 */
+	@Override
 	public int getAttributeValue(IAttributeType.Integer type) {
 		return (java.lang.Integer) values.get(find(type));
 	}
@@ -121,6 +125,7 @@ public class AttributedSymbol implements IAttributedSymbol {
 	 * org.eventb.core.sc.symbolTable.IAttributedSymbol#getAttributeValue(org
 	 * .rodinp.core.IAttributeType.Long)
 	 */
+	@Override
 	public long getAttributeValue(IAttributeType.Long type) {
 		return (java.lang.Long) values.get(find(type));
 	}
@@ -132,6 +137,7 @@ public class AttributedSymbol implements IAttributedSymbol {
 	 * org.eventb.core.sc.symbolTable.IAttributedSymbol#getAttributeValue(org
 	 * .rodinp.core.IAttributeType.String)
 	 */
+	@Override
 	public String getAttributeValue(IAttributeType.String type) {
 		return (String) values.get(find(type));
 	}
@@ -143,6 +149,7 @@ public class AttributedSymbol implements IAttributedSymbol {
 	 * org.eventb.core.sc.symbolTable.IAttributedSymbol#hasAttribute(org.rodinp
 	 * .core.IAttributeType)
 	 */
+	@Override
 	public boolean hasAttribute(IAttributeType type) {
 		return types.contains(type);
 	}
@@ -164,6 +171,7 @@ public class AttributedSymbol implements IAttributedSymbol {
 	 * org.eventb.core.sc.symbolTable.IAttributedSymbol#setAttributeValue(org
 	 * .rodinp.core.IAttributeType.Boolean, boolean)
 	 */
+	@Override
 	public void setAttributeValue(IAttributeType.Boolean type, boolean newValue) {
 		put(type, newValue);
 	}
@@ -175,6 +183,7 @@ public class AttributedSymbol implements IAttributedSymbol {
 	 * org.eventb.core.sc.symbolTable.IAttributedSymbol#setAttributeValue(org
 	 * .rodinp.core.IAttributeType.Handle, org.rodinp.core.IRodinElement)
 	 */
+	@Override
 	public void setAttributeValue(IAttributeType.Handle type,
 			IRodinElement newValue) {
 		put(type, newValue);
@@ -187,6 +196,7 @@ public class AttributedSymbol implements IAttributedSymbol {
 	 * org.eventb.core.sc.symbolTable.IAttributedSymbol#setAttributeValue(org
 	 * .rodinp.core.IAttributeType.Integer, int)
 	 */
+	@Override
 	public void setAttributeValue(IAttributeType.Integer type, int newValue) {
 		put(type, newValue);
 	}
@@ -198,6 +208,7 @@ public class AttributedSymbol implements IAttributedSymbol {
 	 * org.eventb.core.sc.symbolTable.IAttributedSymbol#setAttributeValue(org
 	 * .rodinp.core.IAttributeType.Long, long)
 	 */
+	@Override
 	public void setAttributeValue(IAttributeType.Long type, long newValue) {
 		put(type, newValue);
 	}
@@ -209,6 +220,7 @@ public class AttributedSymbol implements IAttributedSymbol {
 	 * org.eventb.core.sc.symbolTable.IAttributedSymbol#setAttributeValue(org
 	 * .rodinp.core.IAttributeType.String, java.lang.String)
 	 */
+	@Override
 	public void setAttributeValue(IAttributeType.String type, String newValue) {
 		put(type, newValue);
 	}

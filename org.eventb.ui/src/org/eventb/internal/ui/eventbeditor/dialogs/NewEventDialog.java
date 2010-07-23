@@ -322,6 +322,7 @@ public class NewEventDialog extends EventBDialog {
 		try {
 			RodinCore.run(new IWorkspaceRunnable() {
 
+				@Override
 				public void run(IProgressMonitor pm) throws RodinDBException {
 
 					final String[] grdNames = getGrdLabels();

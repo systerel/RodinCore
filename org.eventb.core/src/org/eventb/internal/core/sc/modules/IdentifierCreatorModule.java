@@ -33,6 +33,7 @@ public abstract class IdentifierCreatorModule extends SCProcessorModule {
 
 	protected IIdentifierSymbolInfoCreator importedCarrierSetCreator = new IIdentifierSymbolInfoCreator() {
 
+		@Override
 		public IIdentifierSymbolInfo createIdentifierSymbolInfo(String symbol,
 				ISCIdentifierElement element, IInternalElement pointerElement) {
 			ISCContext context = (ISCContext) element.getParent();
@@ -45,6 +46,7 @@ public abstract class IdentifierCreatorModule extends SCProcessorModule {
 
 	protected IIdentifierSymbolInfoCreator importedConstantCreator = new IIdentifierSymbolInfoCreator() {
 
+		@Override
 		public IIdentifierSymbolInfo createIdentifierSymbolInfo(String symbol,
 				ISCIdentifierElement element, IInternalElement pointerElement) {
 			ISCContext context = (ISCContext) element.getParent();
@@ -57,6 +59,7 @@ public abstract class IdentifierCreatorModule extends SCProcessorModule {
 
 	protected IIdentifierSymbolInfoCreator importedVariableCreator = new IIdentifierSymbolInfoCreator() {
 
+		@Override
 		public IIdentifierSymbolInfo createIdentifierSymbolInfo(String symbol,
 				ISCIdentifierElement element, IInternalElement pointerElement) {
 			IEventBRoot file = (IEventBRoot) element.getParent();

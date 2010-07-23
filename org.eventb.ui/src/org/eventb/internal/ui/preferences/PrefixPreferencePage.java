@@ -39,6 +39,7 @@ public class PrefixPreferencePage extends
 		super(GRID, PAGE_ID);
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 		setDescription(preferencepage_prefixSettings_description);
 	}

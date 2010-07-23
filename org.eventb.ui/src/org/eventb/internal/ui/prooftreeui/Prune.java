@@ -31,6 +31,7 @@ public class Prune extends AbstractProofTreeAction implements
 		setUserSupport(targetPart);
 	}
 
+	@Override
 	public void run(IAction action) {
 		final IStructuredSelection ssel = extractStructuredSelection();
 		assertIsProofTreeNode(ssel);

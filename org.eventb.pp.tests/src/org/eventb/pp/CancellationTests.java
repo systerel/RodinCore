@@ -45,14 +45,17 @@ public class CancellationTests {
 
 		private boolean canceled;
 
+		@Override
 		public boolean isCanceled() {
 			return canceled;
 		}
 
+		@Override
 		public void setCanceled(boolean value) {
 			canceled = value;
 		}
 
+		@Override
 		public void setTask(String name) {
 			// Ignore
 		}
@@ -64,6 +67,7 @@ public class CancellationTests {
 	IProofMonitor monitor = new ProofMonitor();
 
 	private Runnable canceller = new Runnable() {
+		@Override
 		public void run() {
 			monitor.setCanceled(true);
 		}

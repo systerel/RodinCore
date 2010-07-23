@@ -43,6 +43,7 @@ public class UserSupportManager implements IUserSupportManager {
 		return instance;
 	}
 
+	@Override
 	public IUserSupport newUserSupport() {
 		return new UserSupport();
 	}
@@ -50,6 +51,7 @@ public class UserSupportManager implements IUserSupportManager {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pm.IUserSupportManager#getUserSupports()
 	 */
+	@Override
 	public Collection<IUserSupport> getUserSupports() {
 		return userSupports;
 	}
@@ -57,6 +59,7 @@ public class UserSupportManager implements IUserSupportManager {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.prover.IProofTree#addChangeListener(org.eventb.core.prover.IProofTreeChangedListener)
 	 */
+	@Override
 	public void addChangeListener(IUserSupportManagerChangedListener listener) {
 		deltaProcessor.addChangeListener(listener);
 	}
@@ -64,6 +67,7 @@ public class UserSupportManager implements IUserSupportManager {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.prover.IProofTree#addChangeListener(org.eventb.core.prover.IProofTreeChangedListener)
 	 */
+	@Override
 	public void removeChangeListener(IUserSupportManagerChangedListener listener) {
 		deltaProcessor.removeChangeListener(listener);
 	}
@@ -71,6 +75,7 @@ public class UserSupportManager implements IUserSupportManager {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pm.IUserSupportManager#getProvingMode()
 	 */
+	@Override
 	@Deprecated
 	public org.eventb.core.pm.IProvingMode getProvingMode() {
 		if (provingMode == null)
@@ -99,6 +104,7 @@ public class UserSupportManager implements IUserSupportManager {
 		}
 	}
 
+	@Override
 	public void run(Runnable op) {
 		boolean wasEnable = deltaProcessor.isEnable();
 		try {
@@ -113,6 +119,7 @@ public class UserSupportManager implements IUserSupportManager {
 		deltaProcessor.fireDeltas();
 	}
 
+	@Override
 	public void setConsiderHiddenHypotheses(boolean value) {
 		this.considerHiddenHypotheses  = value;
 	}

@@ -34,6 +34,7 @@ public class ContextAxiomModule extends PredicateModule<ISCAxiom> {
 	public static final IModuleType<ContextAxiomModule> MODULE_TYPE = 
 		POGCore.getModuleType(EventBPlugin.PLUGIN_ID + ".contextAxiomModule"); //$NON-NLS-1$
 	
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

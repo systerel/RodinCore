@@ -611,6 +611,7 @@ public class Graph implements Serializable, Iterable<Node> {
 		return instable;
 	}
 
+	@Override
 	public Iterator<Node> iterator() {
 		return nodes.values().iterator();
 	}

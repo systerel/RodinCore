@@ -43,10 +43,12 @@ public class SmartFactory implements ISmartFactory {
 		this.ff = ff;
 	}
 
+	@Override
 	public FormulaFactory getFormulaFactory() {
 		return ff;
 	}
 
+	@Override
 	public Predicate disjoint(Expression left, Expression right) {
 		final Expression leftMember = getSingletonMember(left);
 		if (leftMember != null) {
@@ -60,6 +62,7 @@ public class SmartFactory implements ISmartFactory {
 		return equals(inter(type, left, right), emptySet(type));
 	}
 
+	@Override
 	public Expression getSingletonMember(Expression expr) {
 		if (expr.getTag() != SETEXT)
 			return null;
@@ -69,14 +72,17 @@ public class SmartFactory implements ISmartFactory {
 		return members[0];
 	}
 
+	@Override
 	public Expression emptySet(Type type) {
 		return ff.makeEmptySet(type, null);
 	}
 
+	@Override
 	public Predicate equals(Expression left, Expression right) {
 		return ff.makeRelationalPredicate(EQUAL, left, right, null);
 	}
 
+	@Override
 	public Expression inter(Type type, Expression... exprs) {
 		switch (exprs.length) {
 		case 0:
@@ -88,6 +94,7 @@ public class SmartFactory implements ISmartFactory {
 		}
 	}
 
+	@Override
 	public Predicate in(Expression member, Expression set) {
 		switch (set.getTag()) {
 		case SETEXT:
@@ -108,6 +115,7 @@ public class SmartFactory implements ISmartFactory {
 		return ff.makeRelationalPredicate(IN, member, set, null);
 	}
 
+	@Override
 	public Predicate land(List<Predicate> preds) {
 		switch (preds.size()) {
 		case 0:
@@ -119,6 +127,7 @@ public class SmartFactory implements ISmartFactory {
 		}
 	}
 
+	@Override
 	public Predicate lor(List<Predicate> preds) {
 		switch (preds.size()) {
 		case 0:
@@ -130,6 +139,7 @@ public class SmartFactory implements ISmartFactory {
 		}
 	}
 
+	@Override
 	public Predicate not(Predicate pred) {
 		if (pred.getTag() == NOT) {
 			return ((UnaryPredicate) pred).getChild();
@@ -137,6 +147,7 @@ public class SmartFactory implements ISmartFactory {
 		return ff.makeUnaryPredicate(NOT, pred, null);
 	}
 
+	@Override
 	public Expression union(Type type, Expression... exprs) {
 		switch (exprs.length) {
 		case 0:

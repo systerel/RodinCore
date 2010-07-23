@@ -55,6 +55,7 @@ public class MachineEventCopyActionsModule extends
 	 * 
 	 * @see org.eventb.internal.core.tool.types.IModule#getModuleType()
 	 */
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

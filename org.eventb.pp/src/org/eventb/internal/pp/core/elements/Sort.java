@@ -61,6 +61,7 @@ public final class Sort implements Comparable<Sort> {
 		return type.toString();
 	}
 
+	@Override
 	public int compareTo(Sort o) {
 		return type.toString().compareTo(o.type.toString());
 	}

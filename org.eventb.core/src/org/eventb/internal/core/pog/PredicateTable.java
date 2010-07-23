@@ -49,6 +49,7 @@ extends State implements IPredicateTable<PE> {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IPredicateTable#getElements()
 	 */
+	@Override
 	public List<PE> getElements() {
 		return predicateElements;
 	}
@@ -56,10 +57,12 @@ extends State implements IPredicateTable<PE> {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IPredicateTable#getPredicates()
 	 */
+	@Override
 	public List<Predicate> getPredicates() {
 		return predicates;
 	}
 
+	@Override
 	public int indexOfPredicate(Predicate predicate) {
 		return predicates.indexOf(predicate);
 	}

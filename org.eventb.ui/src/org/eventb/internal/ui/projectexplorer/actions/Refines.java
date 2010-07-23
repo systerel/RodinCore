@@ -57,6 +57,7 @@ public class Refines implements IObjectActionDelegate {
 			this.con = con;
 		}
 
+		@Override
 		public void run(IProgressMonitor monitor) throws RodinDBException {
 			con.getRodinFile().create(false, monitor);
 			con.setConfiguration(abs.getConfiguration(), null);
@@ -165,10 +166,12 @@ public class Refines implements IObjectActionDelegate {
 		super();
 	}
 
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		part = targetPart;
 	}
 
+	@Override
 	public void run(IAction action) {
 		final IRodinFile abs = getSelectedMachine();
 		if (abs == null) {
@@ -192,6 +195,7 @@ public class Refines implements IObjectActionDelegate {
 		UIUtils.linkToEventBEditor(con);
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection sel) {
 		this.selection = sel;
 	}

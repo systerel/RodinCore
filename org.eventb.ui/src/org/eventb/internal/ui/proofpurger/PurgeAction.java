@@ -75,6 +75,7 @@ public class PurgeAction implements IObjectActionDelegate {
 			this.unusedFiles = new ArrayList<IPRRoot>();
 		}
 
+		@Override
 		public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
 			try {
@@ -119,6 +120,7 @@ public class PurgeAction implements IObjectActionDelegate {
 			this.files = files;
 		}
 
+		@Override
 		public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
 			try {
@@ -141,6 +143,7 @@ public class PurgeAction implements IObjectActionDelegate {
 		}
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection s) {
 		if (s instanceof IStructuredSelection) {
 			selection = (IStructuredSelection) s;
@@ -149,10 +152,12 @@ public class PurgeAction implements IObjectActionDelegate {
 		}
 	}
 
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		site = targetPart.getSite();
 	}
 
+	@Override
 	public void run(IAction action) {
 		IRodinElement[] input = getSelectedElements();
 		if (input == null) {

@@ -78,14 +78,17 @@ public class Buffer {
 	
 	protected static class XMLErrorHandler implements ErrorHandler {
 		
+		@Override
 		public void error(SAXParseException exception) throws SAXException {
 			throw exception;
 		}
 
+		@Override
 		public void fatalError(SAXParseException exception) throws SAXException {
 			throw exception;
 		}
 
+		@Override
 		public void warning(SAXParseException exception) throws SAXException {
 			// ignore warnings
 		}
@@ -94,14 +97,17 @@ public class Buffer {
 
 	protected static class XMLErrorListener implements ErrorListener {
 		
+		@Override
 		public void error(TransformerException e) throws TransformerException {
 			throw e;
 		}
 
+		@Override
 		public void fatalError(TransformerException e) throws TransformerException {
 			throw e;
 		}
 
+		@Override
 		public void warning(TransformerException e) throws TransformerException {
 			// ignore warnings
 		}
@@ -553,6 +559,7 @@ public class Buffer {
 			final ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
 			final IFile file = owner.getResource();
 			final IWorkspaceRunnable action = new IWorkspaceRunnable() {
+				@Override
 				@SuppressWarnings("synthetic-access")
 				public void run(IProgressMonitor monitor) throws CoreException {
 					file.setContents(stream, force, keepHistory, monitor);

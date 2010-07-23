@@ -76,22 +76,27 @@ public class Statistics implements IStatistics{
 		}
 	}
 	
+	@Override
 	public int getTotal(){
 		return total;
 	}
 
+	@Override
 	public int getUndischarged(){
 		return undischarged;
 	}
 	
+	@Override
 	public int getManual(){
 		return manual;
 	}
 
+	@Override
 	public int getAuto(){
 		return total - undischarged -manual;
 	}
 	
+	@Override
 	public int getReviewed(){
 		return reviewed;
 	}
@@ -100,18 +105,22 @@ public class Statistics implements IStatistics{
 	 * 
 	 * @return the number of Proof Obligations that are undischarged but not reviewed
 	 */
+	@Override
 	public int getUndischargedRest() {
 		return undischarged- reviewed;
 	}
 	
+	@Override
 	public String getParentLabel() {
 		return getParentLabelOf(parent);
 	}
 
+	@Override
 	public boolean isAggregate() {
 		return false;
 	}
 
+	@Override
 	public Object getParent() {
 		return parent;
 	}
@@ -154,6 +163,7 @@ public class Statistics implements IStatistics{
 	}
 
 
+	@Override
 	public void buildCopyString(StringBuilder builder, boolean copyLabel,
 			Character separator) {
 		if (copyLabel) {

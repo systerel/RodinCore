@@ -27,26 +27,31 @@ public class PredicateAttributeManipulation extends
 		return (IPredicateElement) element;
 	}
 	
+	@Override
 	public void setValue(IRodinElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
 		asPredicate(element).setPredicateString(newValue, null);
 	}
 
+	@Override
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asPredicate(element).getPredicateString();
 	}
 
+	@Override
 	public void setDefaultValue(IRodinElement element,
 			IProgressMonitor monitor) throws RodinDBException {
 		asPredicate(element).setPredicateString("\u22a4", monitor);
 	}
 
+	@Override
 	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		logCantRemove(PREDICATE_ATTRIBUTE);
 	}
 
+	@Override
 	public String[] getPossibleValues(IRodinElement element,
 			IProgressMonitor monitor) {
 		// Not applicable for Predicate Element.
@@ -54,6 +59,7 @@ public class PredicateAttributeManipulation extends
 		return null;
 	}
 
+	@Override
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asPredicate(element).hasPredicateString();

@@ -41,14 +41,17 @@ public abstract class AbstractResult implements IResult {
 		problems.add(problem);
 	}
 
+	@Override
 	public boolean hasProblem() {
 		return !problems.isEmpty();
 	}
 	
+	@Override
 	public List<ASTProblem> getProblems() {
 		return problems;
 	}
 	
+	@Override
 	public boolean isSuccess() {
 		return success;
 	}

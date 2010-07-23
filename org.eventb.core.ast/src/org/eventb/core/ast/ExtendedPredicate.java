@@ -57,6 +57,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 		PARENTHESIZED_PREDICATE(makeOperProps(PREFIX, PREDICATE, new Arity(1,
 				IOperatorProperties.MAX_ARITY), EXPRESSION, false)) {
 
+			@Override
 			public IParserPrinter<ExtendedPredicate> makeParser(int kind,
 					int tag) {
 				return new SubParsers.ExtendedPredParen(kind, tag);
@@ -71,6 +72,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 			this.operProps = operProps;
 		}
 
+		@Override
 		public IOperatorProperties getProperties() {
 			return operProps;
 		}
@@ -138,10 +140,12 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 		typeChecked = true;
 	}
 
+	@Override
 	public Expression[] getChildExpressions() {
 		return childExpressions;
 	}
 
+	@Override
 	public Predicate[] getChildPredicates() {
 		return childPredicates;
 	}

@@ -103,6 +103,7 @@ public class DeltaProcessingState implements IResourceChangeListener {
 		}
 	}
 
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		boolean isPostChange = event.getType() == IResourceChangeEvent.POST_CHANGE;
 		try {

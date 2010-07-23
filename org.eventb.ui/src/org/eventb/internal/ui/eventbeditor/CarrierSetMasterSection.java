@@ -159,8 +159,10 @@ public class CarrierSetMasterSection extends EventBTreePartWithButtons {
 	 * 
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
+	@Override
 	public void elementChanged(final ElementChangedEvent event) {
 		syncExec(new Runnable() {
+			@Override
 			public void run() {
 				if (CarrierSetMasterSection.this.getViewer().getControl().isDisposed())
 					return;

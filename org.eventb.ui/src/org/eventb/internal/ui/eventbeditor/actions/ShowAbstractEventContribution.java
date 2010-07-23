@@ -96,6 +96,7 @@ public class ShowAbstractEventContribution extends ContributionItem {
 		// If the menu item is selected, then open the Event-B Editor for
 		// editing the abstract event.
 		Listener listener = new Listener() {
+			@Override
 			public void handleEvent(Event ev) {
 				switch (ev.type) {
 				case SWT.Selection:

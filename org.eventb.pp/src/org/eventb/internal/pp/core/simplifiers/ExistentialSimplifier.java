@@ -38,6 +38,7 @@ public class ExistentialSimplifier extends AbstractSimplifier {
 		this.context = context;
 	}
 	
+	@Override
 	public Clause simplifyDisjunctiveClause(DisjunctiveClause clause) {
 		init(clause);
 		simplifyExistentialHelper(predicates);
@@ -48,6 +49,7 @@ public class ExistentialSimplifier extends AbstractSimplifier {
 		return result;
 	}
 
+	@Override
 	public Clause simplifyEquivalenceClause(EquivalenceClause clause) {
 		init(clause);
 		simplifyExistentialHelper(conditions);
@@ -79,6 +81,7 @@ public class ExistentialSimplifier extends AbstractSimplifier {
 		list.addAll(tmp1);
 	}
 
+	@Override
 	public boolean canSimplify(Clause clause) {
 		return true;
 	}

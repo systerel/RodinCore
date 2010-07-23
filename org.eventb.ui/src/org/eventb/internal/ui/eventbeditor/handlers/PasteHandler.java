@@ -52,6 +52,7 @@ import org.rodinp.core.IRodinElement;
  */
 public class PasteHandler extends AbstractHandler implements IHandler {
 
+	@Override
 	public Object execute(ExecutionEvent arg0) throws ExecutionException {
 
 		// Get the current selection from the active page.

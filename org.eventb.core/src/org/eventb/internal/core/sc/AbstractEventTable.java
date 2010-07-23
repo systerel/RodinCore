@@ -45,6 +45,7 @@ public class AbstractEventTable extends State implements IAbstractEventTable {
 		localVariables = new HashSet<String>(31);
 	}
 
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
@@ -63,6 +64,7 @@ public class AbstractEventTable extends State implements IAbstractEventTable {
 		
 	}
 
+	@Override
 	public AbstractEventInfo getAbstractEventInfo(String label) throws CoreException {
 		assertImmutable();
 		int index = getIndexForLabel(label);
@@ -76,11 +78,13 @@ public class AbstractEventTable extends State implements IAbstractEventTable {
 		return index;
 	}
 
+	@Override
 	public boolean isParameter(String name) throws CoreException {
 		assertImmutable();
 		return localVariables.contains(name);
 	}
 	
+	@Override
 	public List<AbstractEventInfo> getAbstractEventInfos() throws CoreException {
 		assertImmutable();
 		return table;

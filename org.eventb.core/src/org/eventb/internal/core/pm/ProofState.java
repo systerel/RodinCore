@@ -104,10 +104,12 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#loadProofTree(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void loadProofTree(final IProgressMonitor monitor)
 			throws RodinDBException {
 		usm.run(new Runnable() {
 
+			@Override
 			public void run() {
 				createFreshProofAttempt(monitor);
 
@@ -191,6 +193,7 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#isClosed()
 	 */
+	@Override
 	public boolean isClosed() throws RodinDBException {
 		if (pt != null)
 			return pt.isClosed();
@@ -203,6 +206,7 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#getPRSequent()
 	 */
+	@Override
 	public IPSStatus getPSStatus() {
 		return status;
 	}
@@ -212,6 +216,7 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#getProofTree()
 	 */
+	@Override
 	public IProofTree getProofTree() {
 		return pt;
 	}
@@ -221,6 +226,7 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#getCurrentNode()
 	 */
+	@Override
 	public IProofTreeNode getCurrentNode() {
 		if (pt != null)
 			return current;
@@ -232,11 +238,13 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#setCurrentNode(org.eventb.core.seqprover.IProofTreeNode)
 	 */
+	@Override
 	public void setCurrentNode(final IProofTreeNode newNode) {
 		if (newNode.getProofTree() != pt)
 			return;
 
 		usm.run(new Runnable() {
+			@Override
 			public void run() {
 				if (current != newNode) {
 					current = newNode;
@@ -261,11 +269,13 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#getNextPendingSubgoal(org.eventb.core.seqprover.IProofTreeNode)
 	 */
+	@Override
 	public IProofTreeNode getNextPendingSubgoal(IProofTreeNode node) {
 		if (node.getProofTree() != pt) {
 			node = pt.getRoot();
 		}
 		return node.getNextNode(true, new IProofTreeNodeFilter() {
+			@Override
 			public boolean select(IProofTreeNode n) {
 				return n.isOpen();
 			}
@@ -288,6 +298,7 @@ public class ProofState implements IProofState {
 			node = pt.getRoot();
 		}
 		return node.getNextNode(true, new IProofTreeNodeFilter() {
+			@Override
 			public boolean select(IProofTreeNode n) {
 				int confidence = n.getConfidence();
 				return (confidence > IConfidence.PENDING && confidence <= IConfidence.REVIEWED_MAX);
@@ -310,6 +321,7 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#addAllToCached(java.util.Collection)
 	 */
+	@Override
 	public void addAllToCached(Collection<Predicate> hyps) {
 		cached.addAll(hyps);
 		deltaProcessor.cacheChanged(userSupport, this);
@@ -330,6 +342,7 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#removeAllFromCached(java.util.Collection)
 	 */
+	@Override
 	public void removeAllFromCached(Collection<Predicate> hyps) {
 		cached.removeAll(hyps);
 		deltaProcessor.cacheChanged(userSupport, this);
@@ -344,6 +357,7 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#getCached()
 	 */
+	@Override
 	public Collection<Predicate> getCached() {
 		return cached;
 	}
@@ -353,6 +367,7 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#removeAllFromSearched(java.util.Collection)
 	 */
+	@Override
 	public void removeAllFromSearched(Collection<Predicate> hyps) {
 		searched.removeAll(hyps);
 		deltaProcessor.searchChanged(userSupport, this);
@@ -367,6 +382,7 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#getSearched()
 	 */
+	@Override
 	public Collection<Predicate> getSearched() {
 		return searched;
 	}
@@ -376,6 +392,7 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#setSearched(java.util.Collection)
 	 */
+	@Override
 	public void setSearched(Collection<Predicate> searched) {
 		this.searched = searched;
 		deltaProcessor.searchChanged(userSupport, this);
@@ -386,6 +403,7 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		return dirty;
 	}
@@ -395,6 +413,7 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void setProofTree(IProgressMonitor monitor) throws RodinDBException {
 		if (UserSupportUtils.DEBUG)
 			UserSupportUtils.debug("Saving: " + pa.getName());
@@ -407,6 +426,7 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#setDirty(boolean)
 	 */
+	@Override
 	public void setDirty(boolean dirty) {
 		if (this.dirty != dirty)
 			this.dirty = dirty;
@@ -436,6 +456,7 @@ public class ProofState implements IProofState {
 	 * Not currently used : Used before for supporting copy&paste. This is now
 	 * supported using proofSkeletons & rebuildTac()
 	 */
+	@Override
 	public void proofReuse(IProofMonitor monitor) throws RodinDBException {
 		IProofSkeleton proofSkeleton = pt.getRoot().copyProofSkeleton();
 		createFreshProofAttempt(null);	//TODO add monitor here.
@@ -457,6 +478,7 @@ public class ProofState implements IProofState {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pm.IProofState#proofRebuilt(org.eventb.internal.core.ProofMonitor)
 	 */
+	@Override
 	public void proofRebuilt(ProofMonitor monitor) throws RodinDBException {
 		final IProofSkeleton proofSkeleton = pt.getRoot().copyProofSkeleton();
 		createFreshProofAttempt(null); //TODO add monitor here.
@@ -471,6 +493,7 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#isUninitialised()
 	 */
+	@Override
 	public boolean isUninitialised() {
 		return (pt == null);
 	}
@@ -480,6 +503,7 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#isSequentDischarged()
 	 */
+	@Override
 	public boolean isSequentDischarged() throws RodinDBException {
 		final IPRProof prProof = status.getProof();
 		return (!status.isBroken() && prProof.exists() && (prProof
@@ -491,6 +515,7 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#isProofReusable()
 	 */
+	@Override
 	public boolean isProofReusable() throws RodinDBException {
 		final IProverSequent seq = POLoader.readPO(status.getPOSequent(), pa
 				.getFormulaFactory());
@@ -502,6 +527,7 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#reloadProofTree()
 	 */
+	@Override
 	@Deprecated
 	public void reloadProofTree() throws RodinDBException {
 		createFreshProofAttempt(null);
@@ -517,6 +543,7 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IProofState#unloadProofTree()
 	 */
+	@Override
 	public void unloadProofTree() {
 		if (pa != null) {
 			pt.removeChangeListener(this);
@@ -552,6 +579,7 @@ public class ProofState implements IProofState {
 		return buffer.toString();
 	}
 
+	@Override
 	@Deprecated
 	public void applyTactic(ITactic t, IProofTreeNode node,
 			IProgressMonitor monitor) throws RodinDBException {
@@ -564,6 +592,7 @@ public class ProofState implements IProofState {
 			throws RodinDBException {
 		usm.run(new Runnable() {
 
+			@Override
 			public void run() {
 				if (internalApplyTactic(t, node, new ProofMonitor(monitor),
 						applyPostTactic)) {
@@ -575,6 +604,7 @@ public class ProofState implements IProofState {
 
 	}
 
+	@Override
 	@Deprecated
 	public void applyTacticToHypotheses(ITactic t, IProofTreeNode node,
 			Set<Predicate> hyps, IProgressMonitor monitor)
@@ -588,6 +618,7 @@ public class ProofState implements IProofState {
 			throws RodinDBException {
 		usm.run(new Runnable() {
 
+			@Override
 			public void run() {
 				ProofState.this.addAllToCached(hyps);
 				if (internalApplyTactic(t, node, new ProofMonitor(monitor),
@@ -660,6 +691,7 @@ public class ProofState implements IProofState {
 	 * 
 	 * @see org.eventb.core.pm.IUserSupport#proofTreeChanged(org.eventb.core.seqprover.IProofTreeDelta)
 	 */
+	@Override
 	public void proofTreeChanged(IProofTreeDelta proofTreeDelta) {
 		if (UserSupportUtils.DEBUG)
 			UserSupportUtils.debug("UserSupport - Proof Tree Changed: "
@@ -668,6 +700,7 @@ public class ProofState implements IProofState {
 		setDirty(true);
 	}
 
+	@Override
 	public void back(IProofTreeNode node, final IProgressMonitor monitor)
 			throws RodinDBException {
 		if (node == null)
@@ -677,6 +710,7 @@ public class ProofState implements IProofState {
 		if (node.isOpen() && parent != null) {
 			usm.run(new Runnable() {
 
+				@Override
 				public void run() {
 					try {
 						applyTactic(Tactics.prune(), parent, false, monitor);
@@ -691,6 +725,7 @@ public class ProofState implements IProofState {
 		}
 	}
 
+	@Override
 	public void setComment(final String text, final IProofTreeNode node)
 			throws RodinDBException {
 		node.setComment(text);

@@ -117,10 +117,12 @@ public class DeltaProcessor {
 		// wrap callback with Safe runnable for subsequent listeners
 		// to be called when some are causing grief
 		SafeRunner.run(new ISafeRunnable() {
+			@Override
 			public void handleException(Throwable exception) {
 				Util.log(exception, 
 						"Exception within user support manager change notification"); //$NON-NLS-1$
 			}
+			@Override
 			public void run() throws Exception {
 				listener.userSupportManagerChanged(delta);
 			}

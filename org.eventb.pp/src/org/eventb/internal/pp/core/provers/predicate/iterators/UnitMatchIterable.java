@@ -54,6 +54,7 @@ public class UnitMatchIterable implements IMatchIterable {
 	 * @return 
 	 * @see org.eventb.internal.pp.core.provers.predicate.iterators.IMatchIterable#iterator(org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor)
 	 */
+	@Override
 	public Iterator<Clause> iterator(PredicateLiteralDescriptor predicate, boolean isPositive) {
 		ResetIterator<Clause> iterator = getMatchingUnitIterator(predicate, isPositive);
 		iterator.reset();

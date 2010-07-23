@@ -30,23 +30,28 @@ public abstract class AttributeDesc extends ItemDesc implements IAttributeDesc {
 	private final String suffix;
 	private final IAttributeType attrType;
 
+	@Override
 	public String getSuffix() {
 		return suffix;
 	}
 
+	@Override
 	public abstract IEditComposite createWidget();
 
 	/**
 	 * This indicates that the editing area should expand horizontally.
 	 */
+	@Override
 	public boolean isHorizontalExpand() {
 		return isHorizontalExpand;
 	}
 
+	@Override
 	public IAttributeManipulation getManipulation() {
 		return factory;
 	}
 
+	@Override
 	public IAttributeType getAttributeType() {
 		return attrType;
 	}

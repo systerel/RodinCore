@@ -66,6 +66,7 @@ public class NavigatorController {
 			this.viewer = viewer;
 		}
 
+		@Override
 		public void refresh(final List<IRodinElement> toRefresh) {
 			final Display display = PlatformUI.getWorkbench().getDisplay();
 			if (display.isDisposed()) {
@@ -73,6 +74,7 @@ public class NavigatorController {
 			}
 			try {
 				display.asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						refreshViewer(toRefresh);
 					}
@@ -190,6 +192,7 @@ public class NavigatorController {
 		final Text filterText = new Text(cool, SWT.SINGLE | SWT.BORDER);
 		filterText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (filter != null) {
 					filter.setText(filterText.getText());
@@ -216,6 +219,7 @@ public class NavigatorController {
 		discharge.setImage(registry.get(IEventBSharedImages.IMG_DISCHARGED));
 		discharge.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (filter != null) {
 					filter.setActive(discharge.getSelection());
@@ -223,6 +227,7 @@ public class NavigatorController {
 				}
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);
 			}

@@ -46,6 +46,7 @@ public class FwdMachineEventGuardModule extends PredicateModule<ISCGuard> {
 	public static final IModuleType<FwdMachineEventGuardModule> MODULE_TYPE = 
 		POGCore.getModuleType(EventBPlugin.PLUGIN_ID + ".fwdMachineEventGuardModule"); //$NON-NLS-1$
 	
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

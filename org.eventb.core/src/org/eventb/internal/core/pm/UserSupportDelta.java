@@ -42,6 +42,7 @@ public class UserSupportDelta implements IUserSupportDelta {
 	 * 
 	 * @see org.eventb.core.pm.IUserSupportDelta#getUserSupport()
 	 */
+	@Override
 	public IUserSupport getUserSupport() {
 		return userSupport;
 	}
@@ -51,6 +52,7 @@ public class UserSupportDelta implements IUserSupportDelta {
 	 * 
 	 * @see org.eventb.core.pm.IUserSupportDelta#getKind()
 	 */
+	@Override
 	public int getKind() {
 		return kind;
 	}
@@ -72,6 +74,7 @@ public class UserSupportDelta implements IUserSupportDelta {
 	 * 
 	 * @see org.eventb.core.pm.IUserSupportDelta#getFlags()
 	 */
+	@Override
 	public int getFlags() {
 		return flags;
 	}
@@ -87,14 +90,17 @@ public class UserSupportDelta implements IUserSupportDelta {
 		this.flags = flags;
 	}
 
+	@Override
 	public IProofStateDelta[] getAddedProofStates() {
 		return getStatesOfType(IProofStateDelta.ADDED);
 	}
 
+	@Override
 	public IProofStateDelta[] getRemovedProofStates() {
 		return getStatesOfType(IProofStateDelta.REMOVED);
 	}
 
+	@Override
 	public IProofStateDelta[] getChangedProofStates() {
 		return getStatesOfType(IProofStateDelta.CHANGED);
 	}
@@ -119,6 +125,7 @@ public class UserSupportDelta implements IUserSupportDelta {
 		return childrenOfType;
 	}
 
+	@Override
 	public IProofStateDelta[] getAffectedProofStates() {
 		return affectedStates;
 	}
@@ -322,6 +329,7 @@ public class UserSupportDelta implements IUserSupportDelta {
 		information = new ArrayList<IUserSupportInformation>();
 	}
 
+	@Override
 	public IUserSupportInformation[] getInformation() {
 		return information.toArray(new IUserSupportInformation[information
 				.size()]);

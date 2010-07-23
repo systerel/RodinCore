@@ -45,6 +45,7 @@ public class ContextExtendsModule extends ContextPointerModule {
 
 	private static final String EXTENDS_NAME_PREFIX = "EXTENDS";
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
@@ -110,6 +111,7 @@ public class ContextExtendsModule extends ContextPointerModule {
 		accuracyInfo = null;
 	}
 
+	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {

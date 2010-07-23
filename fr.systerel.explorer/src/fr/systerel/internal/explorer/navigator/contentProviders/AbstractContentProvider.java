@@ -27,6 +27,7 @@ public abstract class AbstractContentProvider implements ITreeContentProvider {
 		this.type = type;
 	}
 	
+	@Override
 	public Object[] getChildren(Object element) {
 		IModelElement model = ModelController.getModelElement(element);
 		if (model != null) {
@@ -35,19 +36,23 @@ public abstract class AbstractContentProvider implements ITreeContentProvider {
 		return NO_OBJECT;
 	}
 
+	@Override
 	public boolean hasChildren(Object element) {
 		return getChildren(element).length > 0;
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
 	}
 
+	@Override
 	public void dispose() {
 		// ignore
 	
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		// ignore
 	}

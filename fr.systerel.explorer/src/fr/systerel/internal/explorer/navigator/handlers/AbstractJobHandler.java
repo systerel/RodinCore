@@ -22,6 +22,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 public abstract class AbstractJobHandler extends AbstractHandler {
 
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		final ISelection sel = getSelection(event);
 		if (!(sel instanceof IStructuredSelection)) {

@@ -23,6 +23,7 @@ public class ProofStatusLineManager {
 		Display display = Display.getCurrent();
 		display.syncExec(new Runnable() {
 
+			@Override
 			public void run() {
 				slManager.setMessage(information);
 			}

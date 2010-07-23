@@ -23,6 +23,7 @@ public class Correspondence<C extends Object> implements ICorrespondence {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.state.ICorrespondence#getIndexOfCorrespondingAbstract(int)
 	 */
+	@Override
 	public int getIndexOfCorrespondingAbstract(int index) {
 		return indexOfAbstract[index];
 	}
@@ -30,6 +31,7 @@ public class Correspondence<C extends Object> implements ICorrespondence {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.state.ICorrespondence#getIndexOfCorrespondingConcrete(int)
 	 */
+	@Override
 	public int getIndexOfCorrespondingConcrete(int index) {
 		return indexOfConcrete[index];
 	}

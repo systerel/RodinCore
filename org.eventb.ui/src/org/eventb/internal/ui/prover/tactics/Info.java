@@ -10,12 +10,14 @@ import org.rodinp.core.RodinDBException;
 
 public class Info implements IProofCommand {
 
+	@Override
 	public void apply(IUserSupport us, Predicate hyp, String[] inputs,
 			IProgressMonitor monitor) throws RodinDBException {
 		// Show the Proof Information View
 		UIUtils.showView(ProofInformation.VIEW_ID);
 	}
 
+	@Override
 	public boolean isApplicable(IUserSupport us, Predicate hyp, String input) {
 		return (us.getCurrentPO() != null);
 	}

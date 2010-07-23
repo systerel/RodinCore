@@ -57,6 +57,7 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IStateRepository#getState(java.lang.String)
 	 */
+	@Override
 	public final I getState(IStateType<? extends I> stateType) throws CoreException {
 		if (exception != null)
 			throw exception;
@@ -75,12 +76,14 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 		return state;
 	}
 
+	@Override
 	public final ITypeEnvironment getTypeEnvironment() throws CoreException {
 		if (exception != null)
 			throw exception;
 		return environment;
 	}
 
+	@Override
 	public final void setTypeEnvironment(ITypeEnvironment environment) throws CoreException {
 		if (exception != null)
 			throw exception;
@@ -89,12 +92,14 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 		this.environment = environment;
 	}
 
+	@Override
 	public FormulaFactory getFormulaFactory() throws CoreException {
 		if (exception != null)
 			throw exception;
 		return factory;
 	}
 	
+	@Override
 	public void setFormulaFactory(FormulaFactory factory) throws CoreException {
 		if (exception != null)
 			throw exception;
@@ -103,6 +108,7 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 		this.factory = factory;
 	}
 	
+	@Override
 	public final void setState(I state) throws CoreException {
 		if (DEBUG)
 			System.out.println("SET STATE: " + state.getStateType());
@@ -113,6 +119,7 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 		repository.put(state.getStateType(), state);
 	}
 
+	@Override
 	public final void removeState(IStateType<? extends I> stateType) throws CoreException {
 		if (exception != null)
 			throw exception;

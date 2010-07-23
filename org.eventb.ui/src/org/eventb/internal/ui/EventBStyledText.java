@@ -45,11 +45,13 @@ public class EventBStyledText extends EventBControl implements IEventBInputText 
 		if (isMath) {
 			text.addModifyListener(KEYBOARD_PLUGIN.createRodinModifyListener());
 			text.addFocusListener(new FocusListener() {
+				@Override
 				public void focusGained(FocusEvent e) {
 					if (translate()) {
 						commit();
 					}
 				}
+				@Override
 				public void focusLost(FocusEvent e) {
 					translate();
 					commit();
@@ -91,6 +93,7 @@ public class EventBStyledText extends EventBControl implements IEventBInputText 
 	 * 
 	 * @see org.eventb.internal.ui.IEventBInputText#getTextWidget()
 	 */
+	@Override
 	public Text getTextWidget() {
 		return (Text) getControl();
 	}

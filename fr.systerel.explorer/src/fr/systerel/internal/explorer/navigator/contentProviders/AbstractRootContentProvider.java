@@ -43,6 +43,7 @@ public abstract class AbstractRootContentProvider implements
 	protected abstract IEventBRoot[] getRootChildren(IRodinProject project)
 			throws RodinDBException;
 
+	@Override
 	public Object[] getChildren(Object element) {
 		if (element instanceof IProject) {
 			IRodinProject proj = RodinCore.valueOf((IProject) element);
@@ -59,6 +60,7 @@ public abstract class AbstractRootContentProvider implements
 		return NO_OBJECT;
 	}
 
+	@Override
 	public boolean hasChildren(Object element) {
 		if (element instanceof IProject) {
 			IRodinProject proj = RodinCore.valueOf((IProject) element);
@@ -73,14 +75,17 @@ public abstract class AbstractRootContentProvider implements
 		return false;
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
 	}
 
+	@Override
 	public void dispose() {
 		// ignore
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (viewer instanceof CommonViewer) {
 			NavigatorController.setUpNavigator((CommonViewer) viewer);

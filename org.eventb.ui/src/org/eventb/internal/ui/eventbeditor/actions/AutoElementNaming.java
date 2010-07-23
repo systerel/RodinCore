@@ -38,15 +38,18 @@ public abstract class AutoElementNaming implements IEditorActionDelegate {
 		this.type = type;
 	}
 
+	@Override
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		if (targetEditor instanceof IEventBEditor<?>)
 			editor = (IEventBEditor<?>) targetEditor;
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		return; // Do nothing
 	}
 
+	@Override
 	public void run(IAction action) {
 		final IInternalElement root = editor.getRodinInput();
 

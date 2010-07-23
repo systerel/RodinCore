@@ -44,12 +44,14 @@ public class MachineInvariantModule extends
 	public static final IModuleType<MachineInvariantModule> MODULE_TYPE = SCCore
 			.getModuleType(EventBPlugin.PLUGIN_ID + ".machineInvariantModule"); //$NON-NLS-1$
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
 
 	private static String INVARIANT_NAME_PREFIX = "INV";
 
+	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {

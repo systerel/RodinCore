@@ -51,6 +51,7 @@ class DeleteElementLeaf extends OperationLeaf {
 		createTree.doExecute(monitor, info);
 	}
 
+	@Override
 	public void setParent(IInternalElement element) {
 		// do nothing
 	}

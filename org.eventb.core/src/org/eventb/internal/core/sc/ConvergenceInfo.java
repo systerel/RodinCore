@@ -25,6 +25,7 @@ public abstract class ConvergenceInfo extends State implements IConvergenceInfo 
 		this.convergence = convergence;
 	}
 	
+	@Override
 	public Convergence getConvergence() {
 		return convergence;
 	}

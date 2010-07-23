@@ -113,22 +113,27 @@ public class UnaryExpression extends Expression {
 			this.tag = tag;
 		}
 
+		@Override
 		public String getImage() {
 			return image;
 		}
 		
+		@Override
 		public String getId() {
 			return id;
 		}
 		
+		@Override
 		public String getGroupId() {
 			return groupId;
 		}
 
+		@Override
 		public IParserPrinter<UnaryExpression> makeParser(int kind) {
 			return new UnaryExpressionParser(kind, tag);
 		}
 
+		@Override
 		public boolean isSpaced() {
 			return false;
 		}
@@ -136,22 +141,27 @@ public class UnaryExpression extends Expression {
 
 	private static final IOperatorInfo<Expression> OP_MINUS = new IOperatorInfo<Expression>() {
 		
+		@Override
 		public IParserPrinter<Expression> makeParser(int kind) {
 			return new SubParsers.UnminusParser(kind);
 		}
 
+		@Override
 		public String getImage() {
 			return "\u2212";
 		}
 		
+		@Override
 		public String getId() {
 			return MINUS_ID;
 		}
 		
+		@Override
 		public String getGroupId() {
 			return ARITHMETIC;
 		}
 
+		@Override
 		public boolean isSpaced() {
 			return false;
 		}

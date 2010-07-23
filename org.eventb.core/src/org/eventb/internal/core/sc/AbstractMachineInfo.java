@@ -44,6 +44,7 @@ public class AbstractMachineInfo extends State implements
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.state.IAbstractMachineInfo#getAbstractMachine()
 	 */
+	@Override
 	public ISCMachineRoot getAbstractMachine() {
 		return machineFile;
 	}
@@ -51,10 +52,12 @@ public class AbstractMachineInfo extends State implements
 	/* (non-Javadoc)
 	 * @see org.eventb.core.tool.state.IToolState#getStateType()
 	 */
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 
+	@Override
 	public IRefinesMachine getRefinesClause() {
 		return refinesMachine;
 	}

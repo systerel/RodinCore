@@ -45,10 +45,12 @@ public class EventHypothesisManager extends HypothesisManager implements IEventH
 				IDENTIFIER_TABLE_SIZE);
 	}
 
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 
+	@Override
 	public boolean eventIsAccurate() {
 		return accurate;
 	}

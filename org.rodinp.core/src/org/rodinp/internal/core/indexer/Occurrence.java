@@ -38,18 +38,22 @@ public class Occurrence implements IOccurrence {
 		this.declaration = declaration;
 	}
 
+	@Override
 	public IOccurrenceKind getKind() {
 		return kind;
 	}
 
+	@Override
 	public IInternalLocation getLocation() {
 		return location;
 	}
 
+	@Override
 	public IRodinFile getRodinFile() {
 		return location.getRodinFile();
 	}
 
+	@Override
 	public IDeclaration getDeclaration() {
 		return declaration;
 	}

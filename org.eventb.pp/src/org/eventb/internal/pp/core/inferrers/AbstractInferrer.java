@@ -86,6 +86,7 @@ public abstract class AbstractInferrer implements IInferrer {
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.pp.core.inferrers.IInferrer#inferFromDisjunctiveClause(org.eventb.internal.pp.core.elements.DisjunctiveClause)
 	 */
+	@Override
 	public final void inferFromDisjunctiveClause(DisjunctiveClause clause) {
 		init(clause);
 		inferFromDisjunctiveClauseHelper(clause);
@@ -95,6 +96,7 @@ public abstract class AbstractInferrer implements IInferrer {
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.pp.core.inferrers.IInferrer#inferFromEquivalenceClause(org.eventb.internal.pp.core.elements.EquivalenceClause)
 	 */
+	@Override
 	public final void inferFromEquivalenceClause(EquivalenceClause clause) {
 		init(clause);
 		inferFromEquivalenceClauseHelper(clause);

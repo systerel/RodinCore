@@ -26,15 +26,18 @@ public class ProofSkeletonCollapseAllAction implements IViewActionDelegate {
 
 	private ProofSkeletonView prfSklView;
 	
+	@Override
 	public void init(IViewPart view) {
 		assert view instanceof ProofSkeletonView;
 		this.prfSklView = (ProofSkeletonView) view;
 	}
 
+	@Override
 	public void run(IAction action) {
 		prfSklView.changeExpansionState(false);
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		// Do nothing
 	}

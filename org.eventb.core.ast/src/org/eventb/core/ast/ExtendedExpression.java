@@ -62,6 +62,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		EXTENDED_ATOMIC_EXPRESSION(makeOperProps(PREFIX, EXPRESSION, NULLARY,
 				EXPRESSION, false)) {
 
+			@Override
 			public IParserPrinter<ExtendedExpression> makeParser(int kind,
 					int tag) {
 				return new SubParsers.ExtendedAtomicExpressionParser(kind, tag);
@@ -72,6 +73,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		EXTENDED_BINARY_EXPRESSION(makeOperProps(INFIX, EXPRESSION, BINARY,
 				EXPRESSION, false)) {
 
+			@Override
 			public IParserPrinter<ExtendedExpression> makeParser(int kind,
 					int tag) {
 				return new SubParsers.ExtendedBinaryExpressionInfix(kind, tag);
@@ -81,6 +83,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		EXTENDED_ASSOCIATIVE_EXPRESSION(makeOperProps(INFIX, EXPRESSION,
 				MULTARY_2, EXPRESSION, true)) {
 
+			@Override
 			public IParserPrinter<ExtendedExpression> makeParser(int kind,
 					int tag) {
 				return new SubParsers.ExtendedAssociativeExpressionInfix(kind,
@@ -92,6 +95,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		PARENTHESIZED_EXPRESSION(makeOperProps(PREFIX, EXPRESSION, new Arity(1,
 				IOperatorProperties.MAX_ARITY), EXPRESSION, false)) {
 
+			@Override
 			public IParserPrinter<ExtendedExpression> makeParser(int kind,
 					int tag) {
 				return new SubParsers.ExtendedExprParen(kind, tag);
@@ -106,6 +110,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 			this.operProps = operProps;
 		}
 
+		@Override
 		public IOperatorProperties getProperties() {
 			return operProps;
 		}
@@ -192,10 +197,12 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		setFinalType(resultType, givenType);
 	}
 
+	@Override
 	public Expression[] getChildExpressions() {
 		return childExpressions.clone();
 	}
 
+	@Override
 	public Predicate[] getChildPredicates() {
 		return childPredicates.clone();
 	}

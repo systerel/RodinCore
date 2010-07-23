@@ -98,6 +98,7 @@ public abstract class AbstractContextsSection<R extends IInternalElement, E exte
 	protected final void addClauseInRunnable(final String contextName) {
 		try {
 			RodinCore.run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws RodinDBException {
 					addClause(contextName);
 				}
@@ -145,14 +146,17 @@ public abstract class AbstractContextsSection<R extends IInternalElement, E exte
 
 		viewer = new TableViewer(comp);
 		viewer.setContentProvider(new IStructuredContentProvider() {
+			@Override
 			public void dispose() {
 				// TODO Empty default
 			}
 
+			@Override
 			public Object[] getElements(Object inputElement) {
 				return getClauses();
 			}
 
+			@Override
 			public void inputChanged(Viewer viewer1, Object oldInput,
 					Object newInput) {
 				// TODO Empty default
@@ -173,10 +177,12 @@ public abstract class AbstractContextsSection<R extends IInternalElement, E exte
 
 		contextCombo.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				addClauseInRunnable(contextCombo.getText());
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				int index = contextCombo.getSelectionIndex();
 				if (index != -1) {
@@ -188,6 +194,7 @@ public abstract class AbstractContextsSection<R extends IInternalElement, E exte
 
 		contextCombo.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updateButtons();
 			}
@@ -246,6 +253,7 @@ public abstract class AbstractContextsSection<R extends IInternalElement, E exte
 		super.dispose();
 	}
 
+	@Override
 	public final void elementChanged(ElementChangedEvent event) {
 		Control control = viewer.getControl();
 		if (control.isDisposed())
@@ -253,6 +261,7 @@ public abstract class AbstractContextsSection<R extends IInternalElement, E exte
 		Display display = control.getDisplay();
 		display.syncExec(new Runnable() {
 
+			@Override
 			public void run() {
 				viewer.setInput(rodinRoot);
 				initContextCombo();
@@ -333,6 +342,7 @@ public abstract class AbstractContextsSection<R extends IInternalElement, E exte
 		return getManipulation().getPossibleValues(getFreeElementContext(), null);
 	}
 
+	@Override
 	public final void selectionChanged(SelectionChangedEvent event) {
 		updateButtons();
 	}

@@ -43,6 +43,7 @@ public class UnusedPurger  implements IWorkspaceRunnable {
 		this.filesToPurge = files;
 	}
 	
+	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
 		progress.beginTask(Messages.proofpurger_deletingselectedproofs, 100);

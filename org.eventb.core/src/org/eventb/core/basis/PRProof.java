@@ -64,6 +64,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 //	}
 	
 	// TODO fix usage of monitor.
+	@Override
 	public void setProofTree(IProofTree pt, IProgressMonitor monitor) throws RodinDBException {
 		
 		clear(false, monitor);
@@ -92,6 +93,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		store.writeOut(this, monitor);
 	}
 
+	@Override
 	public IProofDependencies getProofDependencies(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException{
 		if (getConfidence() <= IConfidence.UNATTEMPTED) return unattemptedProofDeps;
 		IProofStoreReader store = new ProofStoreReader(this, factory);
@@ -127,6 +129,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 	}
 	
 	
+	@Override
 	public IProofSkeleton getSkeleton(FormulaFactory factory,
 			IProgressMonitor monitor) throws RodinDBException {
 		
@@ -174,43 +177,53 @@ public class PRProof extends EventBProofElement implements IPRProof {
 	private static final IProofSkeleton unattemptedProofSkel = new IProofSkeleton()
 	{
 
+		@Override
 		public IProofSkeleton[] getChildNodes() {
 			return NO_CHILDREN;
 		}
 
+		@Override
 		public String getComment() {
 			return "";
 		}
 
+		@Override
 		public IProofRule getRule() {
 			return null;
 		}
 	};
 		
+	@Override
 	public IPRStoredExpr getExpression(String name) {
 		return getInternalElement(IPRStoredExpr.ELEMENT_TYPE, name);
 	}
 
+	@Override
 	public IPRStoredExpr[] getExpressions() throws RodinDBException {
 		return getChildrenOfType(IPRStoredExpr.ELEMENT_TYPE);
 	}
 
+	@Override
 	public IPRIdentifier getIdentifier(String name) {
 		return getInternalElement(IPRIdentifier.ELEMENT_TYPE, name);
 	}
 
+	@Override
 	public IPRIdentifier[] getIdentifiers() throws RodinDBException {
 		return getChildrenOfType(IPRIdentifier.ELEMENT_TYPE);
 	}
 
+	@Override
 	public IPRStoredPred getPredicate(String name) {
 		return getInternalElement(IPRStoredPred.ELEMENT_TYPE, name);
 	}
 
+	@Override
 	public IPRStoredPred[] getPredicates() throws RodinDBException {
 		return getChildrenOfType(IPRStoredPred.ELEMENT_TYPE);
 	}
 
+	@Override
 	public String[] getSets() throws RodinDBException {
 		if (hasAttribute(PR_SETS_ATTRIBUTE)) {
 			String value = getAttributeValue(PR_SETS_ATTRIBUTE);
@@ -219,6 +232,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		return NO_STRINGS;
 	}
 
+	@Override
 	public void setSets(String[] sets, IProgressMonitor monitor) throws RodinDBException {
 		final int length = sets.length;
 		if (length == 0) {
@@ -239,6 +253,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		setAttributeValue(PR_SETS_ATTRIBUTE, builder.toString(), monitor);
 	}
 
+	@Override
 	public IProofTree getProofTree(IProgressMonitor monitor)
 			throws RodinDBException {
 		return ProofSkeletonBuilder.buildProofTree(this, new ProofMonitor(

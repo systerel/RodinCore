@@ -22,26 +22,31 @@ public class MarkerUIRegistry implements IMarkerUIRegistry {
 		return instance;
 	}
 	
+	@Override
 	public IMarker[] getMarkers(IRodinElement element) throws CoreException {
 		return MarkerRegistry.getDefault().getMarkers(element);
 	}
 
+	@Override
 	public int getMaxMarkerSeverity(IRodinElement element) throws CoreException {
 		return MarkerRegistry.getDefault().getMaxMarkerSeverity(element);
 	}
 
+	@Override
 	public int getMaxMarkerSeverity(IRodinElement element,
 			IAttributeType attributeType) throws CoreException {
 		return MarkerRegistry.getDefault().getMaxMarkerSeverity(element,
 				attributeType);
 	}
 
+	@Override
 	public IMarker[] getAttributeMarkers(IRodinElement element,
 			IAttributeType attributeType) throws CoreException {
 		return MarkerRegistry.getDefault().getAttributeMarkers(element,
 				attributeType);
 	}
 
+	@Override
 	public int getMaxMarkerSeverity(IParent parent, IElementType<?> childType)
 			throws CoreException {
 		IRodinElement[] elements = parent.getChildrenOfType(childType);

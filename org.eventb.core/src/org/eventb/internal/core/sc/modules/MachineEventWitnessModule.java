@@ -60,6 +60,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 			.getModuleType(EventBPlugin.PLUGIN_ID
 					+ ".machineEventWitnessModule"); //$NON-NLS-1$
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
@@ -72,6 +73,7 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 
 	private static int WITNESS_HASH_TABLE_SIZE = 31;
 
+	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {

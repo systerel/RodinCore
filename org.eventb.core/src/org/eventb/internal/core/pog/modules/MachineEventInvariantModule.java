@@ -39,6 +39,7 @@ public abstract class MachineEventInvariantModule extends MachineEventRefinement
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void process(
 			IRodinElement element, 
 			IPOGStateRepository repository,

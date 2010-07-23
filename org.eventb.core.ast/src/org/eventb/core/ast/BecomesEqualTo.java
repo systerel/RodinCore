@@ -45,22 +45,27 @@ public class BecomesEqualTo extends Assignment {
 	 */
 	public static final IOperatorInfo<BecomesEqualTo> OP_BECEQ = new IOperatorInfo<BecomesEqualTo>() {
 		
+		@Override
 		public IParserPrinter<BecomesEqualTo> makeParser(int kind) {
 			return new MainParsers.BecomesEqualToParser(kind);
 		}
 
+		@Override
 		public String getImage() {
 			return "\u2254";
 		}
 		
+		@Override
 		public String getId() {
 			return BECEQ_ID;
 		}
 		
+		@Override
 		public String getGroupId() {
 			return BMath.INFIX_SUBST;
 		}
 		
+		@Override
 		public boolean isSpaced() {
 			return true;
 		}

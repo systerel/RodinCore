@@ -110,10 +110,12 @@ public class TestSeedSearch extends AbstractPPTest {
 	private SeedSearchProver getProver() {
 		final VariableContext context = new VariableContext();
 		final SeedSearchProver prover = new SeedSearchProver(context, new ILevelController(){
+			@Override
 			public Level getCurrentLevel() {
 				return BASE;
 			}
 
+			@Override
 			public void nextLevel() {
 				// nothing
 			}

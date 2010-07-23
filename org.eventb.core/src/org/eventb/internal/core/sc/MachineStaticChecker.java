@@ -31,6 +31,7 @@ public class MachineStaticChecker extends StaticChecker {
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IExtractor#extract(org.eclipse.core.resources.IFile, org.rodinp.core.builder.IGraph)
 	 */
+	@Override
 	public void extract(IFile file, IGraph graph, IProgressMonitor monitor) throws CoreException {
 		
 		try {

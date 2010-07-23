@@ -44,6 +44,7 @@ public class GraphTransaction implements IGraph {
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IGraph#putUserDependency(IFile, IFile, IFile, String, boolean)
 	 */
+	@Override
 	public void addUserDependency(
 			IFile origin, 
 			IFile source, 
@@ -68,6 +69,7 @@ public class GraphTransaction implements IGraph {
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IGraph#putToolDependency(IFile, IFile, String, boolean)
 	 */
+	@Override
 	public void addToolDependency(
 			IFile source, 
 			IFile target, 
@@ -90,6 +92,7 @@ public class GraphTransaction implements IGraph {
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IGraph#addNode(org.eclipse.core.resources.IFile, java.lang.String)
 	 */
+	@Override
 	public void addTarget(IFile file) throws CoreException {
 		if (!opened)
 			throw makeGraphTransactionError();

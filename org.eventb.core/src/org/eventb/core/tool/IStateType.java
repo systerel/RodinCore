@@ -39,6 +39,7 @@ public interface IStateType<T extends IState> {
 	 * 
 	 * @return the unique identifier of this state type
 	 */
+	@Override
 	String toString();
 
 }

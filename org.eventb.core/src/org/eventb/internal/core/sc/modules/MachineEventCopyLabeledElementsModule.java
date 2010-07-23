@@ -39,6 +39,7 @@ public abstract class MachineEventCopyLabeledElementsModule extends
 	protected IConcreteEventInfo concreteEventInfo;
 	private IEventLabelSymbolTable labelSymbolTable;
 
+	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {

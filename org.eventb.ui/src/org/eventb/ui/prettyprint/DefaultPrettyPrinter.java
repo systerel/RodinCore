@@ -28,6 +28,7 @@ public class DefaultPrettyPrinter implements IElementPrettyPrinter {
 	/**
 	 * This method appends nothing to the pretty print stream.
 	 */
+	@Override
 	public void prettyPrint(IInternalElement elt, IInternalElement parent,
 			IPrettyPrintStream ps) {
 		// The default pretty printer does nothing
@@ -37,6 +38,7 @@ public class DefaultPrettyPrinter implements IElementPrettyPrinter {
 	 * This method does not append a special prefix to the string builder and
 	 * returns false to let the default prefix be used.
 	 */
+	@Override
 	public boolean appendSpecialPrefix(IInternalElement parent,
 			String defaultKeyword, IPrettyPrintStream ps, boolean empty) {
 		// return false to let the default prefix be used
@@ -46,6 +48,7 @@ public class DefaultPrettyPrinter implements IElementPrettyPrinter {
 	/**
 	 * This method does not append beginning details for the given element.
 	 */
+	@Override
 	public void appendBeginningDetails(IInternalElement elt,
 			IPrettyPrintStream ps) {
 		// nothing to do here
@@ -54,6 +57,7 @@ public class DefaultPrettyPrinter implements IElementPrettyPrinter {
 	/**
 	 * This method does not append ending details for the given element.
 	 */
+	@Override
 	public void appendEndingDetails(IInternalElement elt, IPrettyPrintStream ps) {
 		// nothing to do here
 	}

@@ -127,20 +127,24 @@ public class RefinesSection extends SectionPart implements
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		machineCombo.setLayoutData(gd);
 		machineCombo.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setRefinedMachine();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				setRefinedMachine();
 			}
 		});
 
 		machineCombo.addFocusListener(new FocusListener() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				updateCombo();
 			}
 
+			@Override
 			public void focusLost(FocusEvent e) {
 				setRefinedMachine();
 			}
@@ -176,12 +180,14 @@ public class RefinesSection extends SectionPart implements
 		}
 	}
 
+	@Override
 	public void elementChanged(final ElementChangedEvent event) {
 		if (machineCombo.isDisposed())
 			return;
 		Display display = machineCombo.getDisplay();
 		display.syncExec(new Runnable() {
 
+			@Override
 			public void run() {
 				if (EventBEditorUtils.DEBUG)
 					EventBEditorUtils.debug("Refine Section: Element change");

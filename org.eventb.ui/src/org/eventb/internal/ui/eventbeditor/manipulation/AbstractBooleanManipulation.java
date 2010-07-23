@@ -30,6 +30,7 @@ public abstract class AbstractBooleanManipulation extends
 		return (value) ? TRUE : FALSE;
 	}
 
+	@Override
 	public final String[] getPossibleValues(IRodinElement element,
 			IProgressMonitor monitor) {
 		return possiblesValues.clone();

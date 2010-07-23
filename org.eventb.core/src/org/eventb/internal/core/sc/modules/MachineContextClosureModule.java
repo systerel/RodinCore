@@ -46,6 +46,7 @@ public class MachineContextClosureModule extends SCProcessorModule {
 
 	private static final String CSEES_NAME_PREFIX = "CSEES";
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
@@ -60,6 +61,7 @@ public class MachineContextClosureModule extends SCProcessorModule {
 	 * , org.rodinp.core.IInternalElement, org.eventb.core.sc.IStateRepository,
 	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {

@@ -30,10 +30,12 @@ public class TypeParam implements ITypeParameter {
 		this.typeVars = new ArrayList<ITypeParameter>(typeVars);
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 	
+	@Override
 	public List<ITypeParameter> getChildParameters() {
 		return Collections.unmodifiableList(typeVars);
 	}

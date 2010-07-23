@@ -100,6 +100,7 @@ public class TacticUIRegistry {
 			this.tip = tip;
 		}
 
+		@Override
 		public ITactic getTactic(String[] inputs, String globalInput) {
 			if (!globalInput.equals(latestGlobalInput) || !Arrays.equals(inputs, latestInputs)) {
 				latestGlobalInput = globalInput;
@@ -109,6 +110,7 @@ public class TacticUIRegistry {
 			return latestTactic;
 		}
 		
+		@Override
 		public String getTacticID() {
 			return tacticID;
 		}
@@ -122,10 +124,12 @@ public class TacticUIRegistry {
 			super(provider, tacticID, node, hyp, position, globalInput, tip);
 		}
 
+		@Override
 		public Point getHyperlinkBounds(String actualString, Predicate parsedPredicate) {
 			return provider.getOperatorPosition(parsedPredicate, actualString, position);
 		}
 		
+		@Override
 		public String getHyperlinkLabel() {
 			return tip;
 		}
@@ -143,6 +147,7 @@ public class TacticUIRegistry {
 			this.iconDesc = iconDesc;
 		}
 
+		@Override
 		public Image getIcon() {
 			if (lazyIcon == null) {
 				lazyIcon = EventBImage.getImage(iconDesc, 0);
@@ -150,6 +155,7 @@ public class TacticUIRegistry {
 			return lazyIcon;
 		}
 
+		@Override
 		public String getTooltip() {
 			return tip;
 		}
@@ -179,6 +185,7 @@ public class TacticUIRegistry {
 			this.iconDesc = iconDesc;
 		}
 
+		@Override
 		public List<ITacticApplication> getPossibleApplications(
 				IProofTreeNode node, Predicate hyp, String globalInput) {
 			final List<IPosition> appPos = provider.getApplicablePositions(
@@ -210,6 +217,7 @@ public class TacticUIRegistry {
 			this.provider = provider;
 		}
 
+		@Override
 		public List<ITacticApplication> getPossibleApplications(
 				IProofTreeNode node, Predicate hyp, String globalInput) {
 			return provider.getPossibleApplications(node, hyp, globalInput);
@@ -496,6 +504,7 @@ public class TacticUIRegistry {
 			this.command = command;
 		}
 
+		@Override
 		public Image getIcon() {
 			if (lazyIcon == null) {
 				lazyIcon = EventBImage.getImage(iconDesc, 0);
@@ -503,10 +512,12 @@ public class TacticUIRegistry {
 			return lazyIcon;
 		}
 
+		@Override
 		public IProofCommand getProofCommand() {
 			return command;
 		}
 
+		@Override
 		public String getTooltip() {
 			return tooltip;
 		}

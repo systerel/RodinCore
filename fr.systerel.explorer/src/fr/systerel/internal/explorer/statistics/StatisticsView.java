@@ -220,6 +220,7 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 		// on double click show the node in the navigator
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				if (event.getSelection() instanceof IStructuredSelection) {
 					if ((((IStructuredSelection) event.getSelection())
@@ -285,6 +286,7 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 		return data;
 	}
 
+	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		if (selection.isEmpty())
 			return;
@@ -331,10 +333,12 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 		resize();
 	}
 
+	@Override
 	public void refresh(final List<IRodinElement> elements) {
 		if (currentSelection == null)
 			return;
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				doRefresh(elements);
 			}

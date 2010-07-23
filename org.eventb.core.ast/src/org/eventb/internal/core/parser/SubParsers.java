@@ -128,6 +128,7 @@ public class SubParsers {
 			super(kind, tag);
 		}
 		
+		@Override
 		public final SubParseResult<R> nud(ParserContext pc) throws SyntaxError {
 			pc.accept(kind);
 			final R right = parseRight(pc);
@@ -145,6 +146,7 @@ public class SubParsers {
 		 */
 		protected abstract R parseRight(ParserContext pc) throws SyntaxError;
 		
+		@Override
 		public void toString(IToStringMediator mediator, R toPrint) {
 			mediator.appendImage(kind);
 		}
@@ -208,6 +210,7 @@ public class SubParsers {
 			super(kind, NO_TAG);
 		}
 		
+		@Override
 		public final SubParseResult<R> nud(ParserContext pc) throws SyntaxError {
 			final String tokenVal = pc.t.val;
 			pc.accept(kind);
@@ -271,6 +274,7 @@ public class SubParsers {
 		 */
 		protected abstract C getRight(R parent);
 		
+		@Override
 		public final SubParseResult<R> led(Formula<?> left, ParserContext pc) throws SyntaxError {
 			pc.accept(kind);
 			final C typedLeft = asLeftType(left);
@@ -279,6 +283,7 @@ public class SubParsers {
 			return new SubParseResult<R>(value, kind);
 		}
 
+		@Override
 		public void toString(IToStringMediator mediator, R toPrint) {
 			final C left = getLeft(toPrint);
 			mediator.subPrint(left, false);
@@ -334,6 +339,7 @@ public class SubParsers {
 			this.childParser = childParser;
 		}
 
+		@Override
 		public SubParseResult<R> led(Formula<?> left, ParserContext pc) throws SyntaxError {
 			final C typedLeft = asChildType(left);
 			
@@ -352,6 +358,7 @@ public class SubParsers {
 		
 		protected abstract C[] getChildren(R parent);
 		
+		@Override
 		public void toString(IToStringMediator mediator, R toPrint) {
 			final C[] children = getChildren(toPrint);
 			mediator.subPrint(children[0], false);
@@ -387,6 +394,7 @@ public class SubParsers {
 			}
 		}
 
+		@Override
 		public void toString(IToStringMediator mediator, Identifier toPrint) {
 			switch(toPrint.getTag()) {
 			case FREE_IDENT:
@@ -402,6 +410,7 @@ public class SubParsers {
 	
 	static final INudParser<FreeIdentifier> FREE_IDENT_SUBPARSER = new INudParser<FreeIdentifier>() {
 
+		@Override
 		public SubParseResult<FreeIdentifier> nud(ParserContext pc) throws SyntaxError {
 			final Identifier ident = pc.subParse(IDENT_SUBPARSER, false);
 			if (!(ident instanceof FreeIdentifier)) {
@@ -413,6 +422,7 @@ public class SubParsers {
 			return new SubParseResult<FreeIdentifier>(freeIdent, _IDENT);
 		}
 
+		@Override
 		public void toString(IToStringMediator mediator, FreeIdentifier toPrint) {
 			mediator.append(toPrint.getName());
 		}
@@ -441,6 +451,7 @@ public class SubParsers {
 			return pc.factory.makeBoundIdentDecl(tokenVal, pc.getSourceLocation(), type);
 		}
 
+		@Override
 		public void toString(IToStringMediator mediator, BoundIdentDecl toPrint) {
 			// bound name renaming has to be performed with knowledge of
 			// bound predicate where this bound declaration occurs;
@@ -489,6 +500,7 @@ public class SubParsers {
 			}
 		}
 		
+		@Override
 		public void toString(IToStringMediator mediator, IntegerLiteral toPrint) {
 			final BigInteger literal = toPrint.getValue();			
 			
@@ -526,6 +538,7 @@ public class SubParsers {
 			return pc.factory.makePredicateVariable(tokenVal, loc);
 		}
 
+		@Override
 		public void toString(IToStringMediator mediator, Predicate toPrint) {
 			final String name = ((PredicateVariable) toPrint).getName();
 			mediator.append(name);
@@ -542,6 +555,7 @@ public class SubParsers {
 		private static final String POW_ALPHA_BETA_ALPHA = "\u2119(alpha \u00d7 beta \u00d7 alpha)";
 		private static final String POW_ALPHA_BETA_BETA = "\u2119(alpha \u00d7 beta \u00d7 beta)";
 		
+		@Override
 		public SubParseResult<Expression> led(Formula<?> left, ParserContext pc) throws SyntaxError {
 			final int childTag = left.getTag();
 			if (!isTypedGeneric(childTag)) {
@@ -636,6 +650,7 @@ public class SubParsers {
 			return target.equals(child);
 		}
 
+		@Override
 		public void toString(IToStringMediator mediator, Expression toPrint) {
 			mediator.subPrint(toPrint, false, NO_DECL, false);
 			appendOftype(mediator, toPrint.getType(), true);
@@ -1074,6 +1089,7 @@ public class SubParsers {
 
 		private String[] localNames = null;
 
+		@Override
 		public void setLocalNames(String[] localNames) {
 			this.localNames = localNames;
 		}
@@ -1437,6 +1453,7 @@ public class SubParsers {
 			super(kind, UNMINUS);
 		}
 
+		@Override
 		public SubParseResult<Expression> nud(ParserContext pc) throws SyntaxError {
 			final int minusPos = pc.t.pos;
 			pc.accept(kind);
@@ -1454,6 +1471,7 @@ public class SubParsers {
 			return new SubParseResult<Expression>(result, kind);
 		}
 
+		@Override
 		public void toString(IToStringMediator mediator, Expression toPrint) {
 			mediator.appendImage(kind, false);
 			final Expression child = ((UnaryExpression) toPrint).getChild();

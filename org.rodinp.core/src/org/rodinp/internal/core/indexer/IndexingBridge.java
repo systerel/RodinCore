@@ -59,6 +59,7 @@ public class IndexingBridge implements IIndexingBridge {
 		this.monitor = monitor;
 	}
 
+	@Override
 	public IDeclaration[] getDeclarations() {
 		// must not return declColl nor
 		// Collections.unmodifiableCollection(declColl)
@@ -68,6 +69,7 @@ public class IndexingBridge implements IIndexingBridge {
 		return declColl.toArray(new IDeclaration[declColl.size()]);
 	}
 
+	@Override
 	public IDeclaration declare(IInternalElement element, String name) {
 
 		if (element == null) {
@@ -99,6 +101,7 @@ public class IndexingBridge implements IIndexingBridge {
 		return declaration;
 	}
 
+	@Override
 	public void addOccurrence(IDeclaration declaration, IOccurrenceKind kind,
 			IInternalLocation location) {
 		final IInternalElement element = declaration.getElement();
@@ -113,6 +116,7 @@ public class IndexingBridge implements IIndexingBridge {
 		result.addOccurrence(element, occurrence);
 	}
 
+	@Override
 	public void export(IDeclaration declaration) {
 
 		final IInternalElement element = declaration.getElement();
@@ -129,10 +133,12 @@ public class IndexingBridge implements IIndexingBridge {
 		return file;
 	}
 
+	@Override
 	public IInternalElement getRootToIndex() {
 		return file.getRoot();
 	}
 
+	@Override
 	public IDeclaration[] getImports() {
 		return imports.values().toArray(new IDeclaration[imports.size()]);
 	}
@@ -155,6 +161,7 @@ public class IndexingBridge implements IIndexingBridge {
 		return isLocal(element) || isImported(element);
 	}
 
+	@Override
 	public boolean isCancelled() {
 		if (monitor == null) {
 			return false;

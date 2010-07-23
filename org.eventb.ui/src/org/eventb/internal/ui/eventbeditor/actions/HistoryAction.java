@@ -134,6 +134,7 @@ public abstract class HistoryAction extends Action implements
 		}
 	}
 
+	@Override
 	public void historyNotification(OperationHistoryEvent event) {
 		refresh();
 	}

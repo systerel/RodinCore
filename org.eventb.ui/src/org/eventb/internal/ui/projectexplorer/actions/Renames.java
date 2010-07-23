@@ -53,6 +53,7 @@ public class Renames implements IObjectActionDelegate {
 	/**
 	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
 	 */
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		part = targetPart;
 	}
@@ -60,6 +61,7 @@ public class Renames implements IObjectActionDelegate {
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
@@ -94,6 +96,7 @@ public class Renames implements IObjectActionDelegate {
 				try {
 					RodinCore.run(new IWorkspaceRunnable() {
 
+						@Override
 						public void run(IProgressMonitor monitor)
 								throws RodinDBException {
 							String newName = null;
@@ -140,6 +143,7 @@ public class Renames implements IObjectActionDelegate {
 	/**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection sel) {
 		this.selection = sel;
 	}

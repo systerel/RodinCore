@@ -40,6 +40,7 @@ public class PRRuleAntecedent extends EventBProofElement implements IPRRuleAntec
 		return ELEMENT_TYPE;
 	}
 	
+	@Override
 	public IAntecedent getAntecedent(IProofStoreReader store) throws RodinDBException {
 
 		Predicate goal = null;
@@ -69,6 +70,7 @@ public class PRRuleAntecedent extends EventBProofElement implements IPRRuleAntec
 	}
 
 
+	@Override
 	public void setAntecedent(IAntecedent antecedent,
 			IProofStoreCollector store, IProgressMonitor monitor)
 			throws RodinDBException {

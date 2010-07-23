@@ -40,6 +40,7 @@ public final class FactResult implements IFactResult {
 		this.queries = queries;
 	}
 	
+	@Override
 	public List<Clause> getContradictionOrigin() {
 		List<Clause> result = new ArrayList<Clause>();
 		for (FactSource s : source) {
@@ -48,10 +49,12 @@ public final class FactResult implements IFactResult {
 		return result;
 	}
 
+	@Override
 	public List<QueryResult> getSolvedQueries() {
 		return queries;
 	}
 
+	@Override
 	public boolean hasContradiction() {
 		return source != null;
 	}
@@ -60,10 +63,12 @@ public final class FactResult implements IFactResult {
 		return source;
 	}
 
+	@Override
 	public Level getContradictionLevel() {
 		return Source.getLevel(source);
 	}
 
+	@Override
 	public List<InstantiationResult> getSolvedInstantiations() {
 		return instantiations;
 	}

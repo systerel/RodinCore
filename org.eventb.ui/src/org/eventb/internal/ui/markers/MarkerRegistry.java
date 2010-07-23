@@ -43,6 +43,7 @@ public class MarkerRegistry implements IMarkerRegistry {
 		return instance;
 	}
 	
+	@Override
 	public IMarker[] getMarkers(IRodinElement element) throws CoreException {
 		assert element != null;
 		ArrayList<IMarker> list = new ArrayList<IMarker>();
@@ -64,6 +65,7 @@ public class MarkerRegistry implements IMarkerRegistry {
 		return list.toArray(new IMarker[list.size()]);
 	}
 
+	@Override
 	public int getMaxMarkerSeverity(IRodinElement element) throws CoreException {
 		assert element != null;
 		int severity = -1;
@@ -91,6 +93,7 @@ public class MarkerRegistry implements IMarkerRegistry {
 		return severity;
 	}
 
+	@Override
 	public int getMaxMarkerSeverity(IRodinElement element,
 			IAttributeType attributeType) throws CoreException {
 		assert element != null;
@@ -123,6 +126,7 @@ public class MarkerRegistry implements IMarkerRegistry {
 		return severity;
 	}
 
+	@Override
 	public IMarker[] getAttributeMarkers(IRodinElement element,
 			IAttributeType attributeType) throws CoreException {
 		assert element != null;

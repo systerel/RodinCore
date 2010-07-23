@@ -87,10 +87,12 @@ public class ElementLabelProvider extends LabelProvider implements
 		return null;
 	}
 
+	@Override
 	public Font getFont(Object element) {
 		return JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
 	}
 
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
 			if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
@@ -106,6 +108,7 @@ public class ElementLabelProvider extends LabelProvider implements
 		super.dispose();
 	}
 
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		IMarkerDelta[] rodinProblemMakerDeltas = event.findMarkerDeltas(
 				RodinMarkerUtil.RODIN_PROBLEM_MARKER, true);
@@ -134,6 +137,7 @@ public class ElementLabelProvider extends LabelProvider implements
 				Display display = viewer.getControl().getDisplay();
 				display.syncExec(new Runnable() {
 
+					@Override
 					public void run() {
 						for (Object element : elements) {
 							((StructuredViewer) viewer)
@@ -149,6 +153,7 @@ public class ElementLabelProvider extends LabelProvider implements
 				Display display = viewer.getControl().getDisplay();
 				display.syncExec(new Runnable() {
 
+					@Override
 					public void run() {
 						viewer.refresh();
 					}

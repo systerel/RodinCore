@@ -30,6 +30,7 @@ public class QueryResult implements IQueryResult {
 		this.value = value;
 	}
 	
+	@Override
 	public List<Clause> getSolvedValueOrigin() {
 		List<Clause> result = new ArrayList<Clause>();
 		for (FactSource source : factSource) {
@@ -38,10 +39,12 @@ public class QueryResult implements IQueryResult {
 		return result;
 	}
 
+	@Override
 	public Set<Clause> getSolvedClauses() {
 		return querySource.getClauses();
 	}
 	
+	@Override
 	public boolean getValue() {
 		return value;
 	}
@@ -54,6 +57,7 @@ public class QueryResult implements IQueryResult {
 		return querySource;
 	}
 
+	@Override
 	public EqualityLiteral getEquality() {
 		return querySource.getEquality();
 	}

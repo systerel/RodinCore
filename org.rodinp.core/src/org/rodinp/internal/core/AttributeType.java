@@ -96,6 +96,7 @@ public abstract class AttributeType<V> implements IAttributeType {
 			super(Kind.BOOLEAN, id, name);
 		}
 
+		@Override
 		public AttributeValue.Boolean makeValue(boolean value) {
 			return new AttributeValue.Boolean(this, value);
 		}
@@ -130,6 +131,7 @@ public abstract class AttributeType<V> implements IAttributeType {
 			super(Kind.HANDLE, id, name);
 		}
 
+		@Override
 		public AttributeValue.Handle makeValue(IRodinElement value) {
 			if (value == null) {
 				throw new NullPointerException("null value");
@@ -174,6 +176,7 @@ public abstract class AttributeType<V> implements IAttributeType {
 			super(Kind.INTEGER, id, name);
 		}
 
+		@Override
 		public AttributeValue.Integer makeValue(int value) {
 			return new AttributeValue.Integer(this, value);
 		}
@@ -215,6 +218,7 @@ public abstract class AttributeType<V> implements IAttributeType {
 			super(Kind.LONG, id, name);
 		}
 
+		@Override
 		public AttributeValue.Long makeValue(long value) {
 			return new AttributeValue.Long(this, value);
 		}
@@ -256,6 +260,7 @@ public abstract class AttributeType<V> implements IAttributeType {
 			super(Kind.STRING, id, name);
 		}
 
+		@Override
 		public AttributeValue.String makeValue(java.lang.String value) {
 			if (value == null) {
 				throw new NullPointerException("null value");
@@ -365,6 +370,7 @@ public abstract class AttributeType<V> implements IAttributeType {
 		throw newInvalidKindException();
 	}
 
+	@Override
 	public final java.lang.String getId() {
 		return id;
 	}
@@ -383,6 +389,7 @@ public abstract class AttributeType<V> implements IAttributeType {
 		throw newInvalidKindException();
 	}
 
+	@Override
 	public final java.lang.String getName() {
 		return name;
 	}

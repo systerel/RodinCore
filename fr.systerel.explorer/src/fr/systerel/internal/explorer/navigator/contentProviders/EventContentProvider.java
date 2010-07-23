@@ -26,6 +26,7 @@ public class EventContentProvider extends AbstractContentProvider {
 		super(IEvent.ELEMENT_TYPE);
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		IModelElement model = ModelController.getModelElement(element);
 		if (model != null) {

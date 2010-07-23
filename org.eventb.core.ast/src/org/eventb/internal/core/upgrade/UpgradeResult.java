@@ -31,11 +31,13 @@ public class UpgradeResult<T extends Formula<T>> extends AbstractResult
 		this.factory = factory;
 	}
 
+	@Override
 	public T getUpgradedFormula() {
 		return upgradedFormula;
 	}
 
 	// returns whether the input string needs upgrade
+	@Override
 	public boolean upgradeNeeded() {
 		return upgradeNeeded;
 	}

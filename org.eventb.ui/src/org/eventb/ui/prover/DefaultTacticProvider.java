@@ -53,6 +53,7 @@ public class DefaultTacticProvider implements ITacticProvider {
 	/* (non-Javadoc)
 	 * @see org.eventb.ui.prover.ITacticProvider#getApplicablePositions(org.eventb.core.seqprover.IProofTreeNode, org.eventb.core.ast.Predicate, java.lang.String)
 	 */
+	@Override
 	public List<IPosition> getApplicablePositions(IProofTreeNode node,
 			Predicate hyp, String input) {
 		if (isApplicable(node, hyp, input))
@@ -63,6 +64,7 @@ public class DefaultTacticProvider implements ITacticProvider {
 	/* (non-Javadoc)
 	 * @see org.eventb.ui.prover.ITacticProvider#getTactic(org.eventb.core.seqprover.IProofTreeNode, org.eventb.core.ast.Predicate, org.eventb.core.ast.IPosition, java.lang.String[])
 	 */
+	@Override
 	@Deprecated
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs) {
@@ -78,6 +80,7 @@ public class DefaultTacticProvider implements ITacticProvider {
 	 * @see org.eventb.ui.prover.ITacticProvider#getTactic(IProofTreeNode,
 	 *      Predicate, IPosition, String[], String)
 	 */
+	@Override
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
 			IPosition position, String[] inputs, String globalInput) {
 		return getTactic(node, hyp, position, inputs);
@@ -88,6 +91,7 @@ public class DefaultTacticProvider implements ITacticProvider {
 	 *             {@link #getApplicablePositions(IProofTreeNode,Predicate,String)}
 	 *             instead
 	 */
+	@Override
 	@Deprecated
 	public boolean isApplicable(IProofTreeNode node, Predicate hyp, String input) {
 		return false;
@@ -102,6 +106,7 @@ public class DefaultTacticProvider implements ITacticProvider {
 	 * @see org.eventb.ui.prover.ITacticProvider#getOperatorPosition(org.eventb.core.ast.Predicate,
 	 *      java.lang.String, org.eventb.core.ast.IPosition)
 	 */
+	@Override
 	public Point getOperatorPosition(Predicate predicate, String predStr,
 			IPosition position) {
 		Formula<?> subFormula = predicate.getSubFormula(position);

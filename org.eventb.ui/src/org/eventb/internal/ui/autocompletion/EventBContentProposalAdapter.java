@@ -46,10 +46,12 @@ public class EventBContentProposalAdapter implements IContentProposalListener2 {
 		return proposalPopupOpen;
 	}
 
+	@Override
 	public void proposalPopupClosed(ContentProposalAdapter a) {
 		proposalPopupOpen = false;
 	}
 
+	@Override
 	public void proposalPopupOpened(ContentProposalAdapter a) {
 		proposalPopupOpen = true;
 	}

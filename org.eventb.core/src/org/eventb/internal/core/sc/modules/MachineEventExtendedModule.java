@@ -46,6 +46,7 @@ public class MachineEventExtendedModule extends SCFilterModule {
 			.getModuleType(EventBPlugin.PLUGIN_ID
 					+ ".machineEventExtendedModule"); //$NON-NLS-1$
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
@@ -62,6 +63,7 @@ public class MachineEventExtendedModule extends SCFilterModule {
 	 * org.eventb.core.state.IStateRepository,
 	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public boolean accept(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 

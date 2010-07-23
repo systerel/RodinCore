@@ -33,11 +33,13 @@ public class SeesContextNameAttributeManipulation extends AbstractContextManipul
 		return (ISeesContext) element;
 	}
 	
+	@Override
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asContextClause(element).getSeenContextName();
 	}
 
+	@Override
 	public void setValue(IRodinElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
 		asContextClause(element).setSeenContextName(newValue, monitor);
@@ -54,11 +56,13 @@ public class SeesContextNameAttributeManipulation extends AbstractContextManipul
 		}
 	}
 
+	@Override
 	public void removeAttribute(IRodinElement element,
 			IProgressMonitor monitor) throws RodinDBException {
 		asContextClause(element).removeAttribute(TARGET_ATTRIBUTE, monitor);
 	}
 
+	@Override
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asContextClause(element).hasSeenContextName();

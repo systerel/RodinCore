@@ -47,14 +47,17 @@ public class MachineHypothesisManager extends HypothesisManager implements IMach
 				IDENTIFIER_TABLE_SIZE);
 	}
 
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 	
+	@Override
 	public IPOPredicateSet getContextHypothesis() {
 		return target.getPredicateSet(CTX_HYP_NAME);
 	}
 
+	@Override
 	public boolean machineIsAccurate() {
 		return accurate;
 	}

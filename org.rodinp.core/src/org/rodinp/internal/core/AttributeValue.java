@@ -80,6 +80,7 @@ public abstract class AttributeValue<T extends AttributeType<V>, V> implements
 		this.value = value;
 	}
 
+	@Override
 	public final T getType() {
 		return type;
 	}
@@ -88,6 +89,7 @@ public abstract class AttributeValue<T extends AttributeType<V>, V> implements
 		return type.getId();
 	}
 
+	@Override
 	public final V getValue() {
 		return value;
 	}

@@ -53,24 +53,29 @@ import org.eventb.internal.core.parser.SubParsers;
 		this(getKind(formula, factory), factory, builder, boundNames, withTypes, isRight);
 	}
 
+	@Override
 	public void append(String string) {
 		builder.append(string);
 	}
 
+	@Override
 	public void subPrint(Formula<?> child, boolean isRightOvr) {
 		subPrint(child, isRightOvr, NO_NAME);
 	}
 
+	@Override
 	public void subPrint(Formula<?> child, boolean isRightOvr,
 			String[] addedBoundNames) {
 		printChild(child, isRightOvr, addedBoundNames, withTypes);
 	}
 
+	@Override
 	public void subPrintNoPar(Formula<?> child, boolean isRightOvr,
 			String[] addedBoundNames ) {
 		subPrintNoPar(child, isRightOvr, addedBoundNames, withTypes);
 	}
 
+	@Override
 	public void subPrint(Formula<?> child, boolean isRightOvr,
 			String[] addedBoundNames, boolean withTypesOvr) {
 		printChild(child, isRightOvr, addedBoundNames, withTypesOvr);
@@ -82,6 +87,7 @@ import org.eventb.internal.core.parser.SubParsers;
 		printFormula(child, childKind, isRightOvr, addedBoundNames, withTypesOvr, false);
 	}
 	
+	@Override
 	public void subPrintWithPar(Formula<?> child) {
 		final int childKind = getKind(child, factory);
 		printFormula(child, childKind, false, NO_NAME, withTypes, true);
@@ -116,6 +122,7 @@ import org.eventb.internal.core.parser.SubParsers;
 	}
 
 	// FIXME same formula => remove argument and avoid recomputing kind
+	@Override
 	public void forward(Formula<?> formula) {
 		final int formulaKind = getKind(formula, factory);
 		printFormula(formula, formulaKind, isRight, NO_NAME, withTypes);
@@ -128,6 +135,7 @@ import org.eventb.internal.core.parser.SubParsers;
 		return catenateBoundIdentLists(boundNames, addedBoundNames);
 	}
 	
+	@Override
 	public String[] getBoundNames() {
 		return boundNames.clone();
 	}
@@ -160,10 +168,12 @@ import org.eventb.internal.core.parser.SubParsers;
 				newBoundNames, withTypesOvr, isRightOvr);
 	}
 
+	@Override
 	public FormulaFactory getFactory() {
 		return factory;
 	}
 
+	@Override
 	public void appendImage(int lexKind) {
 		final AbstractGrammar grammar = factory.getGrammar();
 		final boolean spaced = grammar.isOperator(lexKind)
@@ -171,6 +181,7 @@ import org.eventb.internal.core.parser.SubParsers;
 		appendImage(lexKind, spaced);
 	}
 	
+	@Override
 	public void appendImage(int lexKind, boolean withSpaces) {
 		// TODO make a cache or compute image of this.kind and check if ==
 		final AbstractGrammar grammar = factory.getGrammar();
@@ -184,6 +195,7 @@ import org.eventb.internal.core.parser.SubParsers;
 		}
 	}
 
+	@Override
 	public void appendBoundIdent(int boundIndex) {
 		String image = resolveIndex(boundIndex, boundNames);
 		if (image == null) {
@@ -203,6 +215,7 @@ import org.eventb.internal.core.parser.SubParsers;
 		return null;
 	}
 
+	@Override
 	public boolean isWithTypes() {
 		return withTypes;
 	}
@@ -214,6 +227,7 @@ import org.eventb.internal.core.parser.SubParsers;
 	}
 
 	// TODO rename method, document it must be called systematically before parser.toString()
+	@Override
 	public int getKind() {
 		return kind;
 	}

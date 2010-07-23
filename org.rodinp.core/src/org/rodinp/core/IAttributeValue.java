@@ -81,8 +81,10 @@ public interface IAttributeValue {
 	 */
 	interface Boolean extends IAttributeValue {
 
+		@Override
 		IAttributeType.Boolean getType();
 
+		@Override
 		java.lang.Boolean getValue();
 
 	}
@@ -95,8 +97,10 @@ public interface IAttributeValue {
 	 */
 	interface Handle extends IAttributeValue {
 
+		@Override
 		IAttributeType.Handle getType();
 
+		@Override
 		IRodinElement getValue();
 
 	}
@@ -109,8 +113,10 @@ public interface IAttributeValue {
 	 */
 	interface Integer extends IAttributeValue {
 
+		@Override
 		IAttributeType.Integer getType();
 
+		@Override
 		java.lang.Integer getValue();
 
 	}
@@ -123,8 +129,10 @@ public interface IAttributeValue {
 	 */
 	interface Long extends IAttributeValue {
 
+		@Override
 		IAttributeType.Long getType();
 
+		@Override
 		java.lang.Long getValue();
 
 	}
@@ -137,8 +145,10 @@ public interface IAttributeValue {
 	 */
 	interface String extends IAttributeValue {
 
+		@Override
 		IAttributeType.String getType();
 
+		@Override
 		java.lang.String getValue();
 
 	}
@@ -170,6 +180,7 @@ public interface IAttributeValue {
 	 *         attribute values
 	 * @see Object#equals(Object)
 	 */
+	@Override
 	boolean equals(Object obj);
 
 	/**
@@ -178,6 +189,7 @@ public interface IAttributeValue {
 	 * 
 	 * @return a hash code value for this attribute value
 	 */
+	@Override
 	int hashCode();
 
 }

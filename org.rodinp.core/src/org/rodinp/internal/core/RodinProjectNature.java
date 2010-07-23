@@ -52,6 +52,7 @@ public class RodinProjectNature implements IProjectNature {
 	/**
 	 * Configure the project with Rodin nature.
 	 */
+	@Override
 	public void configure() throws CoreException {
 		// register Rodin builder
 		addToBuildSpec(RodinCore.BUILDER_ID);
@@ -60,11 +61,13 @@ public class RodinProjectNature implements IProjectNature {
 	/**
 	 * Removes the Rodin nature from the project.
 	 */
+	@Override
 	public void deconfigure() throws CoreException {
 		// deregister Rodin builder
 		removeFromBuildSpec(RodinCore.BUILDER_ID);
 	}
 
+	@Override
 	public IProject getProject() {
 		return this.project;
 	}
@@ -89,6 +92,7 @@ public class RodinProjectNature implements IProjectNature {
 		}
 	}
 	
+	@Override
 	public void setProject(IProject project) {
 		this.project = project;
 	}

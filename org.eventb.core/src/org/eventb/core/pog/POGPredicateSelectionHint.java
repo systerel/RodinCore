@@ -43,6 +43,7 @@ class POGPredicateSelectionHint implements IPOGHint {
 		return predicate;
 	}
 
+	@Override
 	public void create(IPOSequent sequent, String name, IProgressMonitor monitor) 
 	throws RodinDBException {
 		IPOSelectionHint selectionHint = sequent.getSelectionHint(name);

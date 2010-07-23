@@ -84,6 +84,7 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 		createToolBarActions(managedForm);
 		this.getViewer().addSelectionChangedListener(
 				new ISelectionChangedListener() {
+					@Override
 					public void selectionChanged(SelectionChangedEvent event) {
 						updateToolbars();
 					}
@@ -322,8 +323,10 @@ public class SyntheticMachineViewSection extends EventBTreePartWithButtons {
 	 * 
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
+	@Override
 	public void elementChanged(final ElementChangedEvent event) {
 		syncExec(new Runnable() {
+			@Override
 			public void run() {
 				if (SyntheticMachineViewSection.this.getViewer().getControl()
 						.isDisposed())

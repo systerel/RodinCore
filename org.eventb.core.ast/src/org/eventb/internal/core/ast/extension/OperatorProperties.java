@@ -33,22 +33,27 @@ public class OperatorProperties implements IOperatorProperties {
 		this.isAssociative = isAssociative;
 	}
 
+	@Override
 	public Notation getNotation() {
 		return notation;
 	}
 	
+	@Override
 	public FormulaType getFormulaType() {
 		return formulaType;
 	}
 
+	@Override
 	public Arity getArity() {
 		return arity;
 	}
 	
+	@Override
 	public FormulaType getArgumentType() {
 		return argumentType;
 	}
 	
+	@Override
 	public boolean isAssociative() {
 		return isAssociative;
 	}

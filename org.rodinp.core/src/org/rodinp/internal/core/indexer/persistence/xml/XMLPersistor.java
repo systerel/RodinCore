@@ -30,6 +30,7 @@ import org.w3c.dom.Element;
  */
 public class XMLPersistor implements IPersistor {
 
+	@Override
 	public boolean restore(File file, PersistentIndexManager data) {
 		if (IndexManager.VERBOSE) {
 			System.out
@@ -57,6 +58,7 @@ public class XMLPersistor implements IPersistor {
 		}
 	}
 
+	@Override
 	public boolean save(PersistentIndexManager persistIM, File file) {
 		try {
 			Document doc = getDocument();
@@ -80,6 +82,7 @@ public class XMLPersistor implements IPersistor {
 		}
 	}
 
+	@Override
 	public boolean saveProject(PersistentPIM pim, File file) {
 		try {
 			Document doc = getDocument();
@@ -99,6 +102,7 @@ public class XMLPersistor implements IPersistor {
 		}
 	}
 
+	@Override
 	public boolean restoreProject(File file, PerProjectPIM pppim) {
 		try {
 			final Element pimNode = getRoot(file);

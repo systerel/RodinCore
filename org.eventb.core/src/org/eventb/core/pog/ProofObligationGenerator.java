@@ -243,6 +243,7 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.builder.IAutomaticTool#clean(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public final void clean(IFile source, IFile file, IProgressMonitor monitor)
 			throws CoreException {
 		
@@ -323,6 +324,7 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 		}
 	}
 
+	@Override
 	public final boolean run(IFile source, IFile target, IProgressMonitor monitor)
 			throws CoreException {
 				

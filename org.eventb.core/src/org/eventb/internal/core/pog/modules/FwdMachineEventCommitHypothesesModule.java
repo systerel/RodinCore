@@ -24,6 +24,7 @@ public class FwdMachineEventCommitHypothesesModule extends CommitHypothesesModul
 	public static final IModuleType<FwdMachineEventCommitHypothesesModule> MODULE_TYPE = 
 		POGCore.getModuleType(EventBPlugin.PLUGIN_ID + ".fwdMachineEventCommitHypothesesModule"); //$NON-NLS-1$
 	
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

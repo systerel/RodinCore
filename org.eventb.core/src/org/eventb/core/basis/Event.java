@@ -54,84 +54,103 @@ public class Event extends EventBElement implements IEvent {
 		return ELEMENT_TYPE;
 	}
 	
+	@Override
 	public IRefinesEvent[] getRefinesClauses() throws RodinDBException {
 		return getChildrenOfType(IRefinesEvent.ELEMENT_TYPE); 
 	}
 
+	@Override
 	@Deprecated
 	public IVariable[] getVariables() throws RodinDBException {
 		return getChildrenOfType(IVariable.ELEMENT_TYPE); 
 	}
 
+	@Override
 	public IParameter[] getParameters() throws RodinDBException {
 		return getChildrenOfType(IParameter.ELEMENT_TYPE); 
 	}
 
+	@Override
 	public IWitness[] getWitnesses() throws RodinDBException {
 		return getChildrenOfType(IWitness.ELEMENT_TYPE); 
 	}
 	
+	@Override
 	public IGuard[] getGuards() throws RodinDBException {
 		return getChildrenOfType(IGuard.ELEMENT_TYPE); 
 	}
 	
+	@Override
 	public IAction[] getActions() throws RodinDBException {
 		return getChildrenOfType(IAction.ELEMENT_TYPE); 
 	}
 	
+	@Override
 	@Deprecated
 	public boolean hasInherited() throws RodinDBException {
 		return hasAttribute(EventBAttributes.INHERITED_ATTRIBUTE);
 	}
 
+	@Override
 	@Deprecated
 	public boolean isInherited() throws RodinDBException {
 		return getAttributeValue(EventBAttributes.INHERITED_ATTRIBUTE);
 	}
 
+	@Override
 	@Deprecated
 	public void setInherited(boolean inherited, IProgressMonitor monitor) throws RodinDBException {
 		setAttributeValue(EventBAttributes.INHERITED_ATTRIBUTE, inherited, monitor);
 	}
 
+	@Override
 	public IAction getAction(String elementName) {
 		return getInternalElement(IAction.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public IGuard getGuard(String elementName) {
 		return getInternalElement(IGuard.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public IRefinesEvent getRefinesClause(String elementName) {
 		return getInternalElement(IRefinesEvent.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	@Deprecated
 	public IVariable getVariable(String elementName) {
 		return getInternalElement(IVariable.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public IParameter getParameter(String elementName) {
 		return getInternalElement(IParameter.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public IWitness getWitness(String elementName) {
 		return getInternalElement(IWitness.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public boolean hasExtended() throws RodinDBException {
 		return hasAttribute(EventBAttributes.EXTENDED_ATTRIBUTE);
 	}
 
+	@Override
 	public boolean isExtended() throws RodinDBException {
 		return getAttributeValue(EventBAttributes.EXTENDED_ATTRIBUTE);
 	}
 
+	@Override
 	public void setExtended(boolean extended, IProgressMonitor monitor)
 			throws RodinDBException {
 		setAttributeValue(EventBAttributes.EXTENDED_ATTRIBUTE, extended, monitor);
 	}
 
+	@Override
 	public boolean isInitialisation() throws RodinDBException {
 		return IEvent.INITIALISATION.equals(getLabel());
 	}

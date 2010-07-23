@@ -85,6 +85,7 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 				.setToolTipText(Messages.searchedHypothesis_toolItem_add_toolTipText);
 		addItem.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				IUserSupport userSupport = SearchHypothesisComposite.this
 						.getUserSupport();
@@ -103,6 +104,7 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 				}
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				widgetDefaultSelected(e);
 			}
@@ -117,6 +119,7 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 				.setToolTipText(Messages.searchedHypothesis_toolItem_remove_toolTipText);
 		removeItem.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				IUserSupport userSupport = SearchHypothesisComposite.this
 						.getUserSupport();
@@ -127,6 +130,7 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 				userSupport.removeSearchedHypotheses(deselected);
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				widgetDefaultSelected(e);
 			}
@@ -141,10 +145,12 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 				.setToolTipText(Messages.searchedHypothesis_toolItem_selectAll_toolTipText);
 		selectAll.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				SearchHypothesisComposite.this.selectAllHyps();
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				widgetDefaultSelected(e);
 			}
@@ -158,10 +164,12 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 				.setToolTipText(Messages.searchedHypothesis_toolItem_inverseSelection_toolTipText);
 		inverseSelection.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				SearchHypothesisComposite.this.inverseSelectedHyps();
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				widgetDefaultSelected(e);
 			}
@@ -176,10 +184,12 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 				.setToolTipText(Messages.searchedHypothesis_toolItem_selectNone_toolTipText);
 		selectNone.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				SearchHypothesisComposite.this.deselectAllHyps();
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				widgetDefaultSelected(e);
 			}
@@ -228,6 +238,7 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 	 * 
 	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
+	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
 		// Update the status of the toolbar items.
 		updateToolbarItems();
@@ -238,6 +249,7 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 	 * 
 	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
+	@Override
 	public void widgetSelected(SelectionEvent e) {
 		// Behave as the default selected.
 		widgetDefaultSelected(e);

@@ -52,14 +52,17 @@ public class ProofPurgerContentProvider implements ITreeContentProvider {
 		updateWithFiles(files);
 	}
 
+	@Override
 	public void dispose() {
 		// Do nothing
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		// Do nothing
 	}
 
+	@Override
 	public Object[] getChildren(Object parent) {
 		if (parent instanceof IRodinDB) {
 			final Set<IRodinProject> projects = mapProjectFiles.keySet();
@@ -82,6 +85,7 @@ public class ProofPurgerContentProvider implements ITreeContentProvider {
 		return NO_OBJECTS;
 	}
 
+	@Override
 	public boolean hasChildren(Object element) {
 		if (element instanceof IRodinDB) {
 			return true;
@@ -95,6 +99,7 @@ public class ProofPurgerContentProvider implements ITreeContentProvider {
 		return false;
 	}
 
+	@Override
 	public Object getParent(Object child) {
 		if (child instanceof IRodinProject) {
 			return ((IRodinProject) child).getRodinDB();
@@ -108,6 +113,7 @@ public class ProofPurgerContentProvider implements ITreeContentProvider {
 		return null;
 	}
 	
+	@Override
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
 	}

@@ -58,7 +58,8 @@ public interface ResetIterator<T> extends Iterator<T> {
      * @return <tt>true</tt> if the iterator has more elements, <tt>false</tt> otherwise
      * @throws IllegalStateException if the iterator has been invalidated
      */
-    boolean hasNext();
+    @Override
+	boolean hasNext();
 
     /**
      * Returns the next element in the iteration. Returns <code>null</code> if
@@ -68,5 +69,6 @@ public interface ResetIterator<T> extends Iterator<T> {
      * @return the next element in the iteration.
      * @throws IllegalStateException if the iterator has been invalidated
      */
-    T next();
+    @Override
+	T next();
 }

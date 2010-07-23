@@ -37,6 +37,7 @@ public class ExtensionalityOrigin extends AbstractInferrenceOrigin {
 		this.level = parent1.getLevel().isAncestorOf(parent2.getLevel())?parent2.getLevel():parent1.getLevel();
 	}
 
+	@Override
 	public Level getLevel() {
 		return level;
 	}

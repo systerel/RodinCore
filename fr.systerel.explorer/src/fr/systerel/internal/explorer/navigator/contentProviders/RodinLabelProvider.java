@@ -49,6 +49,7 @@ import fr.systerel.internal.explorer.statistics.Statistics;
  */
 public class RodinLabelProvider implements ILabelProvider {
 
+	@Override
 	public Image getImage(Object element) {
 		final Image image = getIcon(element);
 		if (image == null)
@@ -124,6 +125,7 @@ public class RodinLabelProvider implements ILabelProvider {
 		return null;
 	}
 
+	@Override
 	public String getText(Object obj) {
 		if (obj instanceof ILabeledElement) {
 			try {
@@ -193,20 +195,24 @@ public class RodinLabelProvider implements ILabelProvider {
 		return null;
 	}
 
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 		// do nothing
 
 	}
 
+	@Override
 	public void dispose() {
 		// do nothing
 
 	}
 
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return false;
 	}
 
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 		// do nothing
 

@@ -56,6 +56,7 @@ public class MachineEventModule extends LabeledElementModule {
 	public static final IModuleType<MachineEventModule> MODULE_TYPE = SCCore
 			.getModuleType(EventBPlugin.PLUGIN_ID + ".machineEventModule"); //$NON-NLS-1$
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
@@ -73,6 +74,7 @@ public class MachineEventModule extends LabeledElementModule {
 
 	private IConcreteEventTable concreteEventTable;
 
+	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {

@@ -65,73 +65,89 @@ public class EventBProject extends PlatformObject implements IEventBProject {
 		return rodinProject.toString();
 	}
 
+	@Override
 	public IRodinProject getRodinProject() {
 		return rodinProject;
 	}
 	
+	@Override
 	public IRodinFile getContextFile(String bareName) {
 		String name = EventBPlugin.getContextFileName(bareName);
 		return getRodinProject().getRodinFile(name);
 	}
 
+	@Override
 	public IContextRoot getContextRoot(String componentName) {
 		return (IContextRoot) getContextFile(componentName).getRoot();
 	}
 
+	@Override
 	public IRodinFile getMachineFile(String bareName) {
 		String name = EventBPlugin.getMachineFileName(bareName);
 		return getRodinProject().getRodinFile(name);
 	}
 
+	@Override
 	public IMachineRoot getMachineRoot(String componentName) {
 		return (IMachineRoot) getMachineFile(componentName).getRoot();
 	}
 
+	@Override
 	public IRodinFile getPRFile(String bareName) {
 		String name = EventBPlugin.getPRFileName(bareName);
 		return getRodinProject().getRodinFile(name);
 	}
 
+	@Override
 	public IPRRoot getPRRoot(String componentName) {
 		return (IPRRoot) getPRFile(componentName).getRoot();
 	}
 
+	@Override
 	public IRodinFile getSCContextFile(String bareName) {
 		String name = EventBPlugin.getSCContextFileName(bareName);
 		return getRodinProject().getRodinFile(name);
 	}
 
+	@Override
 	public ISCContextRoot getSCContextRoot(String componentName) {
 		return (ISCContextRoot) getSCContextFile(componentName).getRoot();
 	}
 
+	@Override
 	public IRodinFile getSCMachineFile(String bareName) {
 		String name = EventBPlugin.getSCMachineFileName(bareName);
 		return getRodinProject().getRodinFile(name);
 	}
 
+	@Override
 	public ISCMachineRoot getSCMachineRoot(String componentName) {
 		return (ISCMachineRoot) getSCMachineFile(componentName).getRoot();
 	}
 
+	@Override
 	public IRodinFile getPOFile(String bareName) {
 		String name = EventBPlugin.getPOFileName(bareName);
 		return getRodinProject().getRodinFile(name);
 	}
 
+	@Override
 	public IPORoot getPORoot(String componentName) {
 		return (IPORoot) getPOFile(componentName).getRoot();
 	}
 
+	@Override
 	public IRodinFile getPSFile(String bareName) {
 		String name = EventBPlugin.getPSFileName(bareName);
 		return getRodinProject().getRodinFile(name);
 	}
 
+	@Override
 	public IPSRoot getPSRoot(String componentName) {
 		return (IPSRoot) getPSFile(componentName).getRoot();
 	}
 
+	@Override
 	public FormulaFactory getFormulaFactory() {
 		return formulaFactory;
 	}

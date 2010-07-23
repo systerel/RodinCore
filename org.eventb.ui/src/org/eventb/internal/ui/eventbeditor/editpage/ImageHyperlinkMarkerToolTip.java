@@ -61,10 +61,12 @@ public class ImageHyperlinkMarkerToolTip {
 			item.setText(marker.getAttribute(IMarker.MESSAGE, ""));
 			item.addSelectionListener(new SelectionListener() {
 
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 					widgetSelected(e);
 				}
 
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					editor.gotoMarker(marker);
 				}

@@ -28,14 +28,17 @@ public class MachineVariantInfo extends State implements IMachineVariantInfo {
 	
 	private final ISCVariant variant;
 	
+	@Override
 	public Expression getExpression() {
 		return varExpression;
 	}
 	
+	@Override
 	public ISCVariant getVariant() {
 		return variant;
 	}
 
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
@@ -45,6 +48,7 @@ public class MachineVariantInfo extends State implements IMachineVariantInfo {
 		this.variant = variant;
 	}
 
+	@Override
 	public boolean machineHasVariant() {
 		return varExpression != null;
 	}

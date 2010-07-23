@@ -41,20 +41,24 @@ public class FunImgSimp implements ITacticProvider2 {
 			this.position = position;
 		}
 
+		@Override
 		public String getHyperlinkLabel() {
 			return null;
 		}
 
+		@Override
 		public Point getHyperlinkBounds(String parsedString,
 				Predicate parsedPredicate) {
 			return TacticProviderUtils.getOperatorPosition(parsedPredicate,
 					parsedString, position.getFirstChild());
 		}
 
+		@Override
 		public String getTacticID() {
 			return hyp == null ? GOAL_TACTIC_ID : HYP_TACTIC_ID;
 		}
 
+		@Override
 		public ITactic getTactic(String[] inputs, String gInput) {
 			return Tactics.funImgSimplifies(hyp, position);
 		}
@@ -63,6 +67,7 @@ public class FunImgSimp implements ITacticProvider2 {
 	private static final List<ITacticApplication> EMPTY_LIST = Collections
 			.emptyList();
 
+	@Override
 	public List<ITacticApplication> getPossibleApplications(
 			IProofTreeNode node, Predicate hyp, String globalInput) {
 		final List<IPosition> positions = Tactics.funImgSimpGetPositions(hyp,

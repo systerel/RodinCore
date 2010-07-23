@@ -55,6 +55,7 @@ public class ContextModule extends BaseModule {
 	public static final IModuleType<ContextModule> MODULE_TYPE = SCCore
 			.getModuleType(EventBPlugin.PLUGIN_ID + ".contextModule"); //$NON-NLS-1$
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

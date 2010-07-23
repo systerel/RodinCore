@@ -35,6 +35,7 @@ public class MachinePreviousEventLabelModule extends SCFilterModule {
 			.getModuleType(EventBPlugin.PLUGIN_ID
 					+ ".machinePreviousEventLabelModule"); //$NON-NLS-1$
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
@@ -56,6 +57,7 @@ public class MachinePreviousEventLabelModule extends SCFilterModule {
 	 * org.rodinp.core.IInternalElement, org.eventb.core.sc.IStateRepository,
 	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public boolean accept(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		ILabeledElement labeledElement = (ILabeledElement) element;

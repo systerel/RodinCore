@@ -62,6 +62,7 @@ public final class RodinFile extends Openable implements IRodinFile {
 		rootType = association.getRootElementType();
 	}
 	
+	@Override
 	public final IRodinElement[] findElements(IRodinElement element) {
 		// TODO implement findElements().
 		return NO_ELEMENTS;
@@ -80,6 +81,7 @@ public final class RodinFile extends Openable implements IRodinFile {
 		return fileInfo.parseFile(pm, this);
 	}
 
+	@Override
 	public void clear(boolean force, IProgressMonitor monitor)
 			throws RodinDBException {
 		new ClearElementsOperation(this, force).runOperation(monitor);
@@ -102,6 +104,7 @@ public final class RodinFile extends Openable implements IRodinFile {
 		super.closing(info);
 	}
 
+	@Override
 	public final void copy(IRodinElement container, IRodinElement sibling,
 			String rename, boolean replace, IProgressMonitor monitor)
 			throws RodinDBException {
@@ -113,6 +116,7 @@ public final class RodinFile extends Openable implements IRodinFile {
 				sibling, rename, monitor);
 	}
 
+	@Override
 	public void create(boolean force, IProgressMonitor monitor) throws RodinDBException {
 		CreateRodinFileOperation op = new CreateRodinFileOperation(this, force);
 		op.runOperation(monitor);
@@ -127,6 +131,7 @@ public final class RodinFile extends Openable implements IRodinFile {
 		return new RodinFile(file, getParent());
 	}
 
+	@Override
 	public final void delete(boolean force, IProgressMonitor monitor) throws RodinDBException {
 		new DeleteResourceElementsOperation(this, force).runOperation(monitor);
 	}
@@ -148,6 +153,7 @@ public final class RodinFile extends Openable implements IRodinFile {
 		return super.exists();
 	}
 
+	@Override
 	public String getBareName() {
 		String name = getElementName();
 		int lastDot = name.lastIndexOf('.');
@@ -181,6 +187,7 @@ public final class RodinFile extends Openable implements IRodinFile {
 		return REM_EXTERNAL;
 	}
 
+	@Override
 	public final IRodinFile getMutableCopy() {
 		if (! isSnapshot()) {
 			return this;
@@ -188,14 +195,17 @@ public final class RodinFile extends Openable implements IRodinFile {
 		return createNewHandle();
 	}
 	
+	@Override
 	public final IPath getPath() {
 		return file.getFullPath();
 	}
 
+	@Override
 	public final IFile getResource() {
 		return file;
 	}
 	
+	@Override
 	public final IRodinFile getSnapshot() {
 		if (isSnapshot()) {
 			return this;
@@ -209,6 +219,7 @@ public final class RodinFile extends Openable implements IRodinFile {
 		return newFile;
 	}
 
+	@Override
 	public final IFile getUnderlyingResource() {
 		return file;
 	}
@@ -233,6 +244,7 @@ public final class RodinFile extends Openable implements IRodinFile {
 		return isSnapshot() || super.isReadOnly();
 	}
 
+	@Override
 	public final boolean isSnapshot() {
 		return snapshot;
 	}
@@ -243,6 +255,7 @@ public final class RodinFile extends Openable implements IRodinFile {
 		super.makeConsistent(monitor);
 	}
 
+	@Override
 	public final void move(IRodinElement container, IRodinElement sibling,
 			String rename, boolean replace, IProgressMonitor monitor)
 			throws RodinDBException {
@@ -254,10 +267,12 @@ public final class RodinFile extends Openable implements IRodinFile {
 				sibling, rename, monitor);
 	}
 
+	@Override
 	public final void rename(String name, boolean replace, IProgressMonitor monitor) throws RodinDBException {
 		new RenameResourceElementsOperation(this, name, replace).runOperation(monitor);
 	}
 
+	@Override
 	public final void revert() throws RodinDBException {
 		RodinDBManager.getRodinDBManager().removeBuffer(this, true);
 		close();
@@ -294,11 +309,13 @@ public final class RodinFile extends Openable implements IRodinFile {
 		}
 	}
 
+	@Override
 	public IInternalElement getRoot() {
 		final String name = getBareName();
 		return rootType.createInstance(name, this);
 	}
 
+	@Override
 	public IInternalElementType<?> getRootElementType() {
 		return rootType;
 	}

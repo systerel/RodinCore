@@ -61,10 +61,12 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 	/**
 	 * The suffix for the last child of the element
 	 */
+	@Override
 	public String getChildrenSuffix() {
 		return childrenSuffix;
 	}
 
+	@Override
 	public IImageProvider getImageProvider() {
 		return imgProvider;
 	}
@@ -76,26 +78,31 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 	 *         <code>null</code>.
 	 * 
 	 */
+	@Override
 	public IAttributeDesc[] getAttributeDescription() {
 		return attributeDesc;
 	}
 
+	@Override
 	public IAttributeDesc atColumn(int column) {
 		if (column < 0 || atColumn.length <= column)
 			return null;
 		return atColumn[column];
 	}
 
+	@Override
 	public int getDefaultColumn() {
 		return defaultColumn;
 	}
 
+	@Override
 	public boolean isSelectable(int i) {
 		if (!(0 <= i && i < atColumn.length))
 			return false;
 		return !atColumn[i].equals(noAttribute);
 	}
 
+	@Override
 	public IElementType<?>[] getChildTypes() {
 		final int childrenLength = childRelationships.length;
 		IElementType<?>[] result = new IElementType<?>[childrenLength];
@@ -105,14 +112,17 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 		return result;
 	}
 
+	@Override
 	public IElementRelationship[] getChildRelationships() {
 		return childRelationships;
 	}
 
+	@Override
 	public String getAutoNamePrefix() {
 		return autoNamePrefix;
 	}
 
+	@Override
 	public IAttributeDesc getAutoNameAttribute() {
 		return autoNameAttribute;
 	}
@@ -121,6 +131,7 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 	 * Returns the pretty printer associated with this ElementDesc, 
 	 * or <code>null</code> if none.
 	 */
+	@Override
 	public IElementPrettyPrinter getPrettyPrinter() {
 		return prettyPrinter;
 	}

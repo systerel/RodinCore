@@ -53,6 +53,7 @@ public class ProofStoreCollector implements IProofStoreCollector {
 		this.exprCount = 0;
 	}
 	
+	@Override
 	public String putPredicate(Predicate pred) throws RodinDBException {
 		if (pred == null) 
 			Util.log(new IllegalArgumentException(), "Trying to serialise a null Predicate");
@@ -66,6 +67,7 @@ public class ProofStoreCollector implements IProofStoreCollector {
 		return ref;
 	}
 	
+	@Override
 	public String putExpression(Expression expr) throws RodinDBException {
 		String ref = expressions.get(expr);
 		if (ref == null)
@@ -77,6 +79,7 @@ public class ProofStoreCollector implements IProofStoreCollector {
 		return ref;
 	}
 
+	@Override
 	public void writeOut(IPRProof prProof, IProgressMonitor monitor)
 			throws RodinDBException {
 
@@ -124,6 +127,7 @@ public class ProofStoreCollector implements IProofStoreCollector {
 			this.monitor= monitor;
 		}
 		
+		@Override
 		public void putExpressions(String key, Expression... exprs) throws SerializeException {
 			try {
 				IPRExprRef prRef = prProofRule.getPRExprRef(key);
@@ -134,6 +138,7 @@ public class ProofStoreCollector implements IProofStoreCollector {
 			}
 		}
 
+		@Override
 		public void putPredicates(String key, Predicate... preds) throws SerializeException {
 			try {
 				IPRPredRef prRef = prProofRule.getPRPredRef(key);
@@ -144,6 +149,7 @@ public class ProofStoreCollector implements IProofStoreCollector {
 			}
 		}
 
+		@Override
 		public void putString(String key, String string) throws SerializeException {
 			try {
 				IPRStringInput prStrInp = prProofRule.getPRStringInput(key);

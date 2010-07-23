@@ -82,6 +82,7 @@ public class ConversionEntry implements IEntry {
 		}
 	}
 
+	@Override
 	public IRodinFile getFile() {
 		return file;
 	}
@@ -92,18 +93,22 @@ public class ConversionEntry implements IEntry {
 		return fileBuffer.getVersion();
 	}
 
+	@Override
 	public String getMessage() {
 		return message;
 	}
 
+	@Override
 	public long getSourceVersion() {
 		return version;
 	}
 
+	@Override
 	public long getTargetVersion() {
 		return reqVersion;
 	}
 
+	@Override
 	public boolean success() {
 		return status.isOK();
 	}

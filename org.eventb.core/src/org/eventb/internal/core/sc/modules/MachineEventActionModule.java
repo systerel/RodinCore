@@ -60,6 +60,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	public static final IModuleType<MachineEventActionModule> MODULE_TYPE = SCCore
 			.getModuleType(EventBPlugin.PLUGIN_ID + ".machineEventActionModule"); //$NON-NLS-1$
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
@@ -71,6 +72,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 	private boolean isInitialisation;
 	private FormulaFactory factory;
 
+	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {

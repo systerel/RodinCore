@@ -22,14 +22,17 @@ import org.eclipse.swt.widgets.Control;
  * {@link TextContentAdapter}
  */
 public class StyledTextContentAdapter implements IControlContentAdapter {
+	@Override
 	public String getControlContents(Control control) {
 		return ((StyledText) control).getText();
 	}
 
+	@Override
 	public int getCursorPosition(Control control) {
 		return ((StyledText) control).getCaretOffset();
 	}
 
+	@Override
 	public Rectangle getInsertionBounds(Control control) {
 		StyledText text = (StyledText) control;
 		Point caretOrigin = text.getCaret().getLocation();
@@ -38,6 +41,7 @@ public class StyledTextContentAdapter implements IControlContentAdapter {
 				caretOrigin.y + text.getClientArea().y, 1, text.getLineHeight());
 	}
 
+	@Override
 	public void insertControlContents(Control control, String contents,
 			int cursorPosition) {
 		final StyledText text = (StyledText) control;
@@ -50,6 +54,7 @@ public class StyledTextContentAdapter implements IControlContentAdapter {
 	 * cursorPosition is ignored. The cursor is placed at the end of inserted
 	 * text
 	 */
+	@Override
 	public void setControlContents(Control control, String contents,
 			int cursorPosition) {
 		final StyledText text = ((StyledText) control);
@@ -57,6 +62,7 @@ public class StyledTextContentAdapter implements IControlContentAdapter {
 		text.setCaretOffset(cursorPosition);
 	}
 
+	@Override
 	public void setCursorPosition(Control control, int index) {
 		((StyledText) control).setCaretOffset(index);
 	}

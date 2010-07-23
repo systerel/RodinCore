@@ -44,6 +44,7 @@ public final class Tracer implements ITracer, ILevelController {
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.pp.core.ILevelController#getCurrentLevel()
 	 */
+	@Override
 	public Level getCurrentLevel() {
 		return currentLevel;
 	}
@@ -51,6 +52,7 @@ public final class Tracer implements ITracer, ILevelController {
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.pp.core.ILevelController#nextLevel()
 	 */
+	@Override
 	public void nextLevel() {
 		if (lastClosedLevel!=null && currentLevel.getLeftBranch().equals(lastClosedLevel)) {
 			currentLevel = currentLevel.getRightBranch();
@@ -160,6 +162,7 @@ public final class Tracer implements ITracer, ILevelController {
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.pp.core.tracing.ITracer#getOriginalPredicates()
 	 */
+	@Override
 	public List<Predicate> getNeededHypotheses() {
 		if (originalPredicates==null) calculateOriginalPredicates();
 		return new ArrayList<Predicate>(originalPredicates);
@@ -184,6 +187,7 @@ public final class Tracer implements ITracer, ILevelController {
 	/* (non-Javadoc)
 	 * @see org.eventb.pp.ITracer#isGoalNeeded()
 	 */
+	@Override
 	public boolean isGoalNeeded() {
 		if (originalPredicates == null) calculateOriginalPredicates();
 		return goalNeeded;

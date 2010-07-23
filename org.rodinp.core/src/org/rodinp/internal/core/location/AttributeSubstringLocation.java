@@ -36,10 +36,12 @@ public class AttributeSubstringLocation extends AttributeLocation implements
 		this.charEnd = charEnd;
 	}
 
+	@Override
 	public int getCharStart() {
 		return charStart;
 	}
 
+	@Override
 	public int getCharEnd() {
 		return charEnd;
 	}

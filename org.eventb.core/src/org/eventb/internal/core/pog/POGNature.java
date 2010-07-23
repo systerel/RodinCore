@@ -29,6 +29,7 @@ import org.eventb.core.pog.IPOGNature;
 		this.description = description;
 	}
 
+	@Override
 	public String getDescription() {
 		return description;
 	}

@@ -76,6 +76,7 @@ public class Constant extends SimpleTerm {
 		return false;
 	}
 
+	@Override
 	public int compareTo(Term o) {
 		if (equals(o)) return 0;
 		else if (o.getClass().equals(Constant.class)) return name.compareTo(((Constant)o).name);

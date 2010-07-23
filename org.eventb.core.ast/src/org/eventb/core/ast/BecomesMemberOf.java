@@ -44,22 +44,27 @@ public class BecomesMemberOf extends Assignment {
 	 */
 	public static final IOperatorInfo<BecomesMemberOf> OP_BECMO = new IOperatorInfo<BecomesMemberOf>() {
 		
+		@Override
 		public IParserPrinter<BecomesMemberOf> makeParser(int kind) {
 			return new MainParsers.BecomesMemberOfParser(kind);
 		}
 
+		@Override
 		public String getImage() {
 			return ":\u2208";
 		}
 		
+		@Override
 		public String getId() {
 			return BECMO_ID;
 		}
 		
+		@Override
 		public String getGroupId() {
 			return BMath.INFIX_SUBST;
 		}
 
+		@Override
 		public boolean isSpaced() {
 			return true;
 		}

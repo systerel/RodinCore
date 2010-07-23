@@ -40,10 +40,12 @@ public abstract class EventBRoot extends EventBElement implements IEventBRoot,
 		super(name, parent);
 	}
 
+	@Override
 	public final String getComponentName() {
 		return getElementName();
 	}
 
+	@Override
 	public final IContextRoot getContextRoot() {
 		if (this instanceof IContextRoot) {
 			return (IContextRoot) this.getMutableCopy();
@@ -51,6 +53,7 @@ public abstract class EventBRoot extends EventBElement implements IEventBRoot,
 		return getEventBProject().getContextRoot(getElementName());
 	}
 
+	@Override
 	public final IMachineRoot getMachineRoot() {
 		if (this instanceof IMachineRoot) {
 			return (IMachineRoot) this.getMutableCopy();
@@ -58,6 +61,7 @@ public abstract class EventBRoot extends EventBElement implements IEventBRoot,
 		return getEventBProject().getMachineRoot(getElementName());
 	}
 
+	@Override
 	public final IPRRoot getPRRoot() {
 		if (this instanceof IPRRoot) {
 			return (IPRRoot) this.getMutableCopy();
@@ -65,21 +69,25 @@ public abstract class EventBRoot extends EventBElement implements IEventBRoot,
 		return getEventBProject().getPRRoot(getElementName());
 	}
 
+	@Override
 	public final ISCContextRoot getSCContextRoot() {
 		// Do not optimize here due to temporary files.
 		return getEventBProject().getSCContextRoot(getElementName());
 	}
 
+	@Override
 	public final ISCMachineRoot getSCMachineRoot() {
 		// Do not optimize here due to temporary files.
 		return getEventBProject().getSCMachineRoot(getElementName());
 	}
 
+	@Override
 	public final IPORoot getPORoot() {
 		// Do not optimize here due to temporary files.
 		return getEventBProject().getPORoot(getElementName());
 	}
 
+	@Override
 	public final IPSRoot getPSRoot() {
 		if (this instanceof IPSRoot) {
 			return (IPSRoot) this.getMutableCopy();
@@ -87,6 +95,7 @@ public abstract class EventBRoot extends EventBElement implements IEventBRoot,
 		return getEventBProject().getPSRoot(getElementName());
 	}
 	
+	@Override
 	public final FormulaFactory getFormulaFactory() {
 		return getEventBProject().getFormulaFactory();
 	}

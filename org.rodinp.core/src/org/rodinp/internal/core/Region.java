@@ -39,6 +39,7 @@ public class Region implements IRegion {
 	/**
 	 * @see IRegion#add(IRodinElement)
 	 */
+	@Override
 	public void add(IRodinElement element) {
 		if (! contains(element)) {
 			// "new" element added to region
@@ -51,6 +52,7 @@ public class Region implements IRegion {
 	/**
 	 * @see IRegion
 	 */
+	@Override
 	public boolean contains(IRodinElement element) {
 		for (IRodinElement root : rootElements) {
 			if (root.equals(element) || root.isAncestorOf(element)) {
@@ -63,6 +65,7 @@ public class Region implements IRegion {
 	/**
 	 * @see IRegion
 	 */
+	@Override
 	public IRodinElement[] getElements() {
 		IRodinElement[] result = new IRodinElement[rootElements.size()];
 		return rootElements.toArray(result);
@@ -71,6 +74,7 @@ public class Region implements IRegion {
 	/**
 	 * @see IRegion#remove(IRodinElement)
 	 */
+	@Override
 	public boolean remove(IRodinElement element) {
 		removeAllChildren(element);
 		return rootElements.remove(element);

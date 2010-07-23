@@ -20,10 +20,12 @@ class RodinFileUndoContext implements IUndoContext {
 		this.rodinFile = rodinFile;
 	}
 
+	@Override
 	public String getLabel() {
 		return rodinFile.getBareName();
 	}
 
+	@Override
 	public boolean matches(IUndoContext context) {
 		if (!(context instanceof RodinFileUndoContext))
 			return false;

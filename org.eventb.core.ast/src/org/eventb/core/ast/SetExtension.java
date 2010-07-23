@@ -63,22 +63,27 @@ public class SetExtension extends Expression {
 			this.groupId = groupId;
 		}
 
+		@Override
 		public String getImage() {
 			return image;
 		}
 		
+		@Override
 		public String getId() {
 			return id;
 		}
 		
+		@Override
 		public String getGroupId() {
 			return groupId;
 		}
 
+		@Override
 		public IParserPrinter<SetExtension> makeParser(int kind) {
 			return new SetExtParser(kind);
 		}
 
+		@Override
 		public boolean isSpaced() {
 			return false;
 		}

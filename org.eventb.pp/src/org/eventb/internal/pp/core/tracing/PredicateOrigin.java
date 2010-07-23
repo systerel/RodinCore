@@ -33,24 +33,29 @@ public class PredicateOrigin implements IOrigin {
 		this.isGoal = isGoal;
 	}
 
+	@Override
 	public void addDependenciesTo(Set<Level> dependencies) {
 		if (!dependencies.contains(getLevel()))
 			dependencies.add(getLevel());
 	}
 
+	@Override
 	public void trace(Tracer tracer) {
 		if (isGoal) tracer.setGoalNeeded(isGoal);
 		else tracer.addNeededHypothesis(predicate);
 	}
 
+	@Override
 	public boolean dependsOnGoal() {
 		return isGoal;
 	}
 
+	@Override
 	public boolean isDefinition() {
 		return false;
 	}
 
+	@Override
 	public Level getLevel() {
 		return Level.BASE;
 	}
@@ -60,6 +65,7 @@ public class PredicateOrigin implements IOrigin {
 		return getLevel().toString();
 	}
 
+	@Override
 	public int getDepth() {
 		return 0;
 	}

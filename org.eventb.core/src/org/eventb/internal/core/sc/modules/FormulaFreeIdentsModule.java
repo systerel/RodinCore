@@ -53,6 +53,7 @@ public abstract class FormulaFreeIdentsModule extends SCFilterModule {
 	 * org.eventb.core.sc.IStateRepository,
 	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public boolean accept(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 

@@ -27,6 +27,7 @@ public class MachineContentProvider extends AbstractRootContentProvider {
 		super(IMachineRoot.ELEMENT_TYPE);
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		if (element instanceof IMachineRoot) {
 			return ((IMachineRoot) element).getParent().getParent();

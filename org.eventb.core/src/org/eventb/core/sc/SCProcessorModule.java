@@ -219,6 +219,7 @@ public abstract class SCProcessorModule extends SCModule implements ISCProcessor
 	 * 
 	 * @see IProcessorModule
 	 */
+	@Override
 	public void initModule(
 			IRodinElement element,
 			ISCStateRepository repository, 
@@ -231,6 +232,7 @@ public abstract class SCProcessorModule extends SCModule implements ISCProcessor
 	 * 
 	 * @see IProcessorModule
 	 */
+	@Override
 	public void endModule(
 			IRodinElement element,
 			ISCStateRepository repository, 

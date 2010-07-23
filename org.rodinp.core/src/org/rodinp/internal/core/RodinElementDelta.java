@@ -334,6 +334,7 @@ public class RodinElementDelta extends SimpleDelta implements
 	/**
 	 * @see IRodinElementDelta
 	 */
+	@Override
 	public IRodinElementDelta[] getAddedChildren() {
 		return getChildrenOfType(ADDED);
 	}
@@ -341,6 +342,7 @@ public class RodinElementDelta extends SimpleDelta implements
 	/**
 	 * @see IRodinElementDelta
 	 */
+	@Override
 	public IRodinElementDelta[] getAffectedChildren() {
 		return fAffectedChildren;
 	}
@@ -371,6 +373,7 @@ public class RodinElementDelta extends SimpleDelta implements
 	/**
 	 * @see IRodinElementDelta
 	 */
+	@Override
 	public IRodinElementDelta[] getChangedChildren() {
 		return getChildrenOfType(CHANGED);
 	}
@@ -426,6 +429,7 @@ public class RodinElementDelta extends SimpleDelta implements
 	/**
 	 * @see IRodinElementDelta
 	 */
+	@Override
 	public IRodinElement getElement() {
 		return this.changedElement;
 	}
@@ -433,6 +437,7 @@ public class RodinElementDelta extends SimpleDelta implements
 	/**
 	 * @see IRodinElementDelta
 	 */
+	@Override
 	public IRodinElement getMovedFromElement() {
 		return fMovedFromHandle;
 	}
@@ -440,6 +445,7 @@ public class RodinElementDelta extends SimpleDelta implements
 	/**
 	 * @see IRodinElementDelta
 	 */
+	@Override
 	public IRodinElement getMovedToElement() {
 		return fMovedToHandle;
 	}
@@ -447,6 +453,7 @@ public class RodinElementDelta extends SimpleDelta implements
 	/**
 	 * @see IRodinElementDelta
 	 */
+	@Override
 	public IRodinElementDelta[] getRemovedChildren() {
 		return getChildrenOfType(REMOVED);
 	}
@@ -454,6 +461,7 @@ public class RodinElementDelta extends SimpleDelta implements
 	/**
 	 * Return the collection of resource deltas. Return null if none.
 	 */
+	@Override
 	public IResourceDelta[] getResourceDeltas() {
 		if (resourceDeltas == null)
 			return null;

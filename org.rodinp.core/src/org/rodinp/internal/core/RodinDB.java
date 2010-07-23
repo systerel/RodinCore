@@ -79,6 +79,7 @@ public class RodinDB extends Openable implements IRodinDB {
 	/*
 	 * @see IRodinDB
 	 */
+	@Override
 	public boolean contains(IResource resource) {
 		switch (resource.getType()) {
 		case IResource.ROOT:
@@ -103,6 +104,7 @@ public class RodinDB extends Openable implements IRodinDB {
 	/*
 	 * @see IRodinDB
 	 */
+	@Override
 	public void copy(IRodinElement[] elements, IRodinElement[] containers,
 			IRodinElement[] siblings, String[] renamings, boolean force,
 			IProgressMonitor monitor) throws RodinDBException {
@@ -129,6 +131,7 @@ public class RodinDB extends Openable implements IRodinDB {
 	/*
 	 * @see IRodinDB
 	 */
+	@Override
 	public void delete(IRodinElement[] elements, boolean force,
 			IProgressMonitor monitor) throws RodinDBException {
 		
@@ -219,6 +222,7 @@ public class RodinDB extends Openable implements IRodinDB {
 	/*
 	 * @see IRodinDB
 	 */
+	@Override
 	public IRodinProject getRodinProject(String projectName) {
 		return new RodinProject(ResourcesPlugin.getWorkspace().getRoot()
 				.getProject(projectName), this);
@@ -249,6 +253,7 @@ public class RodinDB extends Openable implements IRodinDB {
 	/*
 	 * @see IRodinDB
 	 */
+	@Override
 	public IRodinProject[] getRodinProjects() throws RodinDBException {
 		return getChildrenOfType(IRodinProject.ELEMENT_TYPE);
 
@@ -257,6 +262,7 @@ public class RodinDB extends Openable implements IRodinDB {
 	/*
 	 * @see IRodinDB
 	 */
+	@Override
 	public IResource[] getNonRodinResources() throws RodinDBException {
 		return ((RodinDBInfo) getElementInfo()).getNonRodinResources();
 	}
@@ -264,6 +270,7 @@ public class RodinDB extends Openable implements IRodinDB {
 	/*
 	 * @see IRodinElement
 	 */
+	@Override
 	public IPath getPath() {
 		return Path.ROOT;
 	}
@@ -271,6 +278,7 @@ public class RodinDB extends Openable implements IRodinDB {
 	/*
 	 * @see IRodinElement
 	 */
+	@Override
 	public IResource getResource() {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
@@ -278,6 +286,7 @@ public class RodinDB extends Openable implements IRodinDB {
 	/*
 	 * @see IOpenable
 	 */
+	@Override
 	public IWorkspaceRoot getUnderlyingResource() {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
@@ -285,6 +294,7 @@ public class RodinDB extends Openable implements IRodinDB {
 	/**
 	 * Returns the workspace associated with this object.
 	 */
+	@Override
 	public IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
@@ -292,6 +302,7 @@ public class RodinDB extends Openable implements IRodinDB {
 	/**
 	 * Returns the workspace root associated with this object.
 	 */
+	@Override
 	public IWorkspaceRoot getWorkspaceRoot() {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
@@ -354,6 +365,7 @@ public class RodinDB extends Openable implements IRodinDB {
 	/*
 	 * @see IRodinDB
 	 */
+	@Override
 	public void move(IRodinElement[] elements, IRodinElement[] containers,
 			IRodinElement[] siblings, String[] renamings, boolean force,
 			IProgressMonitor monitor) throws RodinDBException {
@@ -372,6 +384,7 @@ public class RodinDB extends Openable implements IRodinDB {
 	/*
 	 * @see IRodinDB
 	 */
+	@Override
 	public void rename(IRodinElement[] elements, String[] names, boolean replace, IProgressMonitor monitor) throws RodinDBException {
 		MultiOperation op;
 		if (elements != null && elements.length > 0 && elements[0] != null

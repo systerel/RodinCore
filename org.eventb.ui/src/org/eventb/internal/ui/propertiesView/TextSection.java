@@ -168,6 +168,7 @@ public abstract class TextSection extends AbstractPropertySection implements
 		refresh();
 	}
 
+	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		// TODO Filter out the delta first
 		if (textWidget.isDisposed())
@@ -175,6 +176,7 @@ public abstract class TextSection extends AbstractPropertySection implements
 		Display display = textWidget.getDisplay();
 		display.asyncExec(new Runnable() {
 
+			@Override
 			public void run() {
 				refresh();
 			}

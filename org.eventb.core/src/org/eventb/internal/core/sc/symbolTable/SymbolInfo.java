@@ -60,10 +60,12 @@ public abstract class SymbolInfo<E extends IInternalElement, T extends IInternal
 		return conflictProblem;
 	}
 
+	@Override
 	public T getSymbolType() {
 		return elementType;
 	}
 
+	@Override
 	public boolean isPersistent() {
 		return persistent;
 	}
@@ -73,6 +75,7 @@ public abstract class SymbolInfo<E extends IInternalElement, T extends IInternal
 	 * 
 	 * @see org.eventb.core.sc.ISymbolInfo#hasError()
 	 */
+	@Override
 	public final boolean hasError() {
 		return error;
 	}
@@ -89,6 +92,7 @@ public abstract class SymbolInfo<E extends IInternalElement, T extends IInternal
 	 * 
 	 * @see org.eventb.core.sc.ISymbolInfo#setError()
 	 */
+	@Override
 	public final void setError() throws CoreException {
 		assertMutable();
 		error = true;
@@ -99,6 +103,7 @@ public abstract class SymbolInfo<E extends IInternalElement, T extends IInternal
 	 * 
 	 * @see org.eventb.core.sc.ISymbolInfo#isMutable()
 	 */
+	@Override
 	public final boolean isMutable() {
 		return mutable;
 	}
@@ -106,6 +111,7 @@ public abstract class SymbolInfo<E extends IInternalElement, T extends IInternal
 	/**
 	 * Make this symbol info immutable. It cannot be made mutable again.
 	 */
+	@Override
 	public final void makeImmutable() {
 		mutable = false;
 	}
@@ -115,6 +121,7 @@ public abstract class SymbolInfo<E extends IInternalElement, T extends IInternal
 	 * 
 	 * @see org.eventb.core.sc.ISymbolInfo#getSymbol()
 	 */
+	@Override
 	public final String getSymbol() {
 		return symbol;
 	}
@@ -124,6 +131,7 @@ public abstract class SymbolInfo<E extends IInternalElement, T extends IInternal
 	 * 
 	 * @see java.lang.Comparable#compareTo(T)
 	 */
+	@Override
 	public final int compareTo(ISymbolInfo<?, ?> that) {
 		return this.symbol.compareTo(that.getSymbol());
 	}
@@ -139,6 +147,7 @@ public abstract class SymbolInfo<E extends IInternalElement, T extends IInternal
 		return symbol.hashCode();
 	}
 
+	@Override
 	public final String getComponentName() {
 		return component;
 	}
@@ -158,10 +167,12 @@ public abstract class SymbolInfo<E extends IInternalElement, T extends IInternal
 	 * 
 	 * @see org.eventb.core.sc.symbolTable.ISymbolInfo#getSourceElement()
 	 */
+	@Override
 	public final IInternalElement getProblemElement() {
 		return problemElement;
 	}
 
+	@Override
 	public final void createConflictMarker(IMarkerDisplay markerDisplay)
 			throws RodinDBException {
 		if (isMutable())
@@ -170,6 +181,7 @@ public abstract class SymbolInfo<E extends IInternalElement, T extends IInternal
 			conflictProblem.createConflictWarning(this, markerDisplay);
 	}
 
+	@Override
 	public final IAttributeType getProblemAttributeType() {
 		return problemAttributeType;
 	}

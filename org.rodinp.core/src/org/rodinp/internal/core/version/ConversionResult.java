@@ -54,14 +54,17 @@ public class ConversionResult implements IConversionResult {
 		}
 	}
 
+	@Override
 	public IEntry[] getEntries() {
 		return entries.clone();
 	}
 
+	@Override
 	public IRodinProject getProject() {
 		return project;
 	}
 
+	@Override
 	public void accept(boolean force, boolean keepHistory,
 			IProgressMonitor monitor) throws RodinDBException {
 		try {

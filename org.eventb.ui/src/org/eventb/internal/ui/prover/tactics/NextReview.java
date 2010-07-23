@@ -29,14 +29,17 @@ public class NextReview implements IProofCommand {
 	private static final IUserSupportManager USM = EventBPlugin
 			.getUserSupportManager();
 
+	@Override
 	public void apply(final IUserSupport us, Predicate hyp, String[] inputs,
 			final IProgressMonitor monitor) throws RodinDBException {
 		USM.run(new Runnable() {
 
+			@Override
 			public void run() {
 				try {
 					boolean b = us.selectNextSubgoal(false, new IProofTreeNodeFilter() {
 
+						@Override
 						public boolean select(IProofTreeNode node) {
 							int confidence = node.getConfidence();
 							return !node.isOpen() && !node.hasChildren()
@@ -57,6 +60,7 @@ public class NextReview implements IProofCommand {
 		
 	}
 
+	@Override
 	public boolean isApplicable(IUserSupport us, Predicate hyp, String input) {
 		IProofState currentPO = us.getCurrentPO();
 		return (currentPO != null);

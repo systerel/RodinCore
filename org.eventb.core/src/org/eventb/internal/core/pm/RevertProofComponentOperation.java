@@ -23,6 +23,7 @@ class RevertProofComponentOperation implements IWorkspaceRunnable {
 		this.pc = pc;
 	}
 
+	@Override
 	public void run(IProgressMonitor pm) throws CoreException {
 		try {
 			pm.beginTask("Saving proof files", 2);

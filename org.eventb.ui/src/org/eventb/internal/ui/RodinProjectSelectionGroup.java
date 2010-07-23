@@ -294,6 +294,7 @@ public class RodinProjectSelectionGroup extends Composite {
 		treeViewer.setSorter(new ViewerSorter());
 		treeViewer.setUseHashlookup(true);
 		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event
 						.getSelection();
@@ -302,6 +303,7 @@ public class RodinProjectSelectionGroup extends Composite {
 			}
 		});
 		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				ISelection selection = event.getSelection();
 				if (selection instanceof IStructuredSelection) {

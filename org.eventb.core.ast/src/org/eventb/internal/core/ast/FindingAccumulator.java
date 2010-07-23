@@ -68,20 +68,24 @@ public class FindingAccumulator<F> implements IAccumulator<F> {
 		this.inspector = inspector;
 	}
 
+	@Override
 	public void add(F item) {
 		findings.add(item);
 	}
 
+	@Override
 	public void add(F... items) {
 		for (F item : items) {
 			findings.add(item);
 		}
 	}
 
+	@Override
 	public void add(Collection<F> items) {
 		findings.addAll(items);
 	}
 
+	@Override
 	public IPosition getCurrentPosition() {
 		return new Position(indexes);
 	}

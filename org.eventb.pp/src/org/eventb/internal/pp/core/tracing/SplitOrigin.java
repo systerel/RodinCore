@@ -31,6 +31,7 @@ public class SplitOrigin extends AbstractInferrenceOrigin {
 		if (depth>0) depth--;
 	}
 
+	@Override
 	public Level getLevel() {
 		return level;
 	}

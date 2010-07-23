@@ -217,6 +217,7 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 		description.setLayoutData(data);
 		fCheckBoxList
 				.addSelectionChangedListener(new ISelectionChangedListener() {
+					@Override
 					public void selectionChanged(SelectionChangedEvent event) {
 						ISelection selection = event.getSelection();
 						if (selection instanceof IStructuredSelection) {
@@ -231,6 +232,7 @@ public class ProofTreeUIFiltersDialog extends SelectionDialog {
 			/*
 			 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
 			 */
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				Object element = event.getElement();
 				if (element instanceof ViewerFilter) {

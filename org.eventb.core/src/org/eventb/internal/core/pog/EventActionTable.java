@@ -104,18 +104,22 @@ public abstract class EventActionTable extends State implements IEventActionTabl
 		primedDetAssn = Collections.unmodifiableList(primedDetAssn);
 	}
 
+	@Override
 	public Collection<FreeIdentifier> getAssignedVariables() {
 		return assignedVars;
 	}
 
+	@Override
 	public boolean containsAssignedVariable(FreeIdentifier variable) {
 		return assignedVars.contains(variable);
 	}
 
+	@Override
 	public List<Assignment> getAssignments() {
 		return assignments;
 	}
 
+	@Override
 	public List<BecomesEqualTo> getDetAssignments() {
 		return detAssn;
 	}
@@ -135,6 +139,7 @@ public abstract class EventActionTable extends State implements IEventActionTabl
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IAssignmentTable#getPrimedDetAssignments()
 	 */
+	@Override
 	public List<BecomesEqualTo> getPrimedDetAssignments() {
 		return primedDetAssn;
 	}
@@ -147,10 +152,12 @@ public abstract class EventActionTable extends State implements IEventActionTabl
 			assignedIdents.add(identifier);
 	}
 
+	@Override
 	public List<Assignment> getNondetAssignments() {
 		return nondetAssn;
 	}
 
+	@Override
 	public List<Predicate> getNondetPredicates() {
 		return nondetPred;
 	}
@@ -158,14 +165,17 @@ public abstract class EventActionTable extends State implements IEventActionTabl
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IEventActionTable#getActions()
 	 */
+	@Override
 	public List<ISCAction> getActions() {
 		return actions;
 	}
 	
+	@Override
 	public List<ISCAction> getNondetActions() {
 		return nondetActions;
 	}
 	
+	@Override
 	public List<ISCAction> getDetActions() {
 		return detActions;
 	}

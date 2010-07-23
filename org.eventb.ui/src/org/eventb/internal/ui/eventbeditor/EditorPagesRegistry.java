@@ -339,6 +339,7 @@ public class EditorPagesRegistry implements IEditorPagesRegistry {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.IEditorPagesRegistry#createPages(java.lang.String)
 	 */
+	@Override
 	public synchronized EventBEditorPage[] createAllPages(String editorID) {
 		if (registry == null)
 			loadRegistry();
@@ -427,6 +428,7 @@ public class EditorPagesRegistry implements IEditorPagesRegistry {
 	 * @see org.eventb.internal.ui.eventbeditor.IEditorPagesRegistry#isValid(java.lang.String,
 	 *      java.lang.String)
 	 */
+	@Override
 	public synchronized boolean isValid(String editorID, String pageID) {
 		if (registry == null)
 			loadRegistry();
@@ -443,6 +445,7 @@ public class EditorPagesRegistry implements IEditorPagesRegistry {
 	 * @see org.eventb.internal.ui.eventbeditor.IEditorPagesRegistry#createPage(java.lang.String,
 	 *      java.lang.String)
 	 */
+	@Override
 	public synchronized EventBEditorPage createPage(String editorID, String pageID) {
 		if (registry == null)
 			loadRegistry();
@@ -459,6 +462,7 @@ public class EditorPagesRegistry implements IEditorPagesRegistry {
 	 * @see org.eventb.internal.ui.eventbeditor.IEditorPagesRegistry#getPageName(java.lang.String,
 	 *      java.lang.String)
 	 */
+	@Override
 	public synchronized String getPageName(String editorID, String pageID) {
 		if (registry == null)
 			loadRegistry();
@@ -474,6 +478,7 @@ public class EditorPagesRegistry implements IEditorPagesRegistry {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.IEditorPagesRegistry#getPageIDs(java.lang.String)
 	 */
+	@Override
 	public synchronized List<String> getAllPageIDs(String editorID) {
 		if (registry == null)
 			loadRegistry();
@@ -489,6 +494,7 @@ public class EditorPagesRegistry implements IEditorPagesRegistry {
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.IEditorPagesRegistry#getDefaultPageIDs(java.lang.String)
 	 */
+	@Override
 	public List<String> getDefaultPageIDs(String editorID) {
 		if (registry == null)
 			loadRegistry();

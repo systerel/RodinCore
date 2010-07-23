@@ -69,6 +69,7 @@ public class MachineEventRefinesModule extends SCFilterModule {
 	 * .core.IRodinElement, org.eventb.core.sc.state.ISCStateRepository,
 	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public boolean accept(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		IEvent event = (IEvent) element;
@@ -309,6 +310,7 @@ public class MachineEventRefinesModule extends SCFilterModule {
 	 * 
 	 * @see org.eventb.internal.core.tool.types.IModule#getModuleType()
 	 */
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

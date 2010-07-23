@@ -47,6 +47,7 @@ public abstract class SCExpressionElement extends EventBElement
 		super(name, parent);
 	}
 
+	@Override
 	@Deprecated
 	public Expression getExpression(FormulaFactory factory) throws RodinDBException {
 		
@@ -62,6 +63,7 @@ public abstract class SCExpressionElement extends EventBElement
 		return result;
 	}
 
+	@Override
 	public Expression getExpression(FormulaFactory factory,
 			ITypeEnvironment typenv) throws RodinDBException {
 		
@@ -77,11 +79,13 @@ public abstract class SCExpressionElement extends EventBElement
 		return result;
 	}
 
+	@Override
 	public void setExpression(Expression expression, IProgressMonitor monitor) 
 	throws RodinDBException {
 		setExpressionString(expression.toStringWithTypes(), monitor);	
 	}
 	
+	@Override
 	@Deprecated
 	public void setExpression(Expression expression) 
 	throws RodinDBException {

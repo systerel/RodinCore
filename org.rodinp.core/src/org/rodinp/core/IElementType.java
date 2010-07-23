@@ -63,6 +63,7 @@ public interface IElementType<T extends IRodinElement> {
 	 * 
 	 * @return the unique identifier of this element type
 	 */
+	@Override
 	String toString();
 
 }

@@ -18,6 +18,7 @@ public abstract class ItemDesc implements IItemDesc {
 		this.prefix = prefix;
 	}
 
+	@Override
 	public String getPrefix() {
 		return prefix;
 	}

@@ -39,6 +39,7 @@ public interface ISCPredicateElement extends IPredicateElement {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
+	@Override
 	String getPredicateString()
 			throws RodinDBException;
 

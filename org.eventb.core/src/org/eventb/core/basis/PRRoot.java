@@ -43,10 +43,12 @@ public class PRRoot extends EventBRoot implements IPRRoot{
 	}
 
 	
+	@Override
 	public IPRProof[] getProofs() throws RodinDBException {
 		return getChildrenOfType(IPRProof.ELEMENT_TYPE);
 	}
 
+	@Override
 	public IPRProof getProof(String name) {
 		return getInternalElement(IPRProof.ELEMENT_TYPE,name);
 	}

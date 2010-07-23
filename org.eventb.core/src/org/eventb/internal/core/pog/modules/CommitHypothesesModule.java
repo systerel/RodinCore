@@ -25,6 +25,7 @@ public abstract class CommitHypothesesModule extends POGProcessorModule {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.state.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void process(IRodinElement element, IPOGStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {

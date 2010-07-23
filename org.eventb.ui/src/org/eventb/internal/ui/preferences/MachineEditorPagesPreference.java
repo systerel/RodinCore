@@ -52,6 +52,7 @@ public class MachineEditorPagesPreference extends EditorPagesPreference {
 	 * 
 	 * @see org.eventb.internal.ui.preferences.IEditorPagesPreference#getEditorID()
 	 */
+	@Override
 	public String getEditorID() {
 		return EventBMachineEditor.EDITOR_ID;
 	}

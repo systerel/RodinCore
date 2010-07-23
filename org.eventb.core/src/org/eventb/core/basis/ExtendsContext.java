@@ -50,31 +50,37 @@ public class ExtendsContext extends EventBElement implements IExtendsContext {
 		return ELEMENT_TYPE;
 	}
 	
+	@Override
 	public boolean hasAbstractContextName() 
 	throws RodinDBException {
 		return hasAttribute(EventBAttributes.TARGET_ATTRIBUTE);
 	}
 
+	@Override
 	public String getAbstractContextName() 
 	throws RodinDBException {
 		return getAttributeValue(EventBAttributes.TARGET_ATTRIBUTE);
 	}
 
+	@Override
 	public ISCContextRoot getAbstractSCContext() throws RodinDBException {
 		final String bareName = getAbstractContextName();
 		return getEventBProject().getSCContextRoot(bareName);
 	}
 
+	@Override
 	public IContextRoot getAbstractContextRoot() throws RodinDBException {
 		final String bareName = getAbstractContextName();
 		return getEventBProject().getContextRoot(bareName);
 	}
 
+	@Override
 	public void setAbstractContextName(String name, IProgressMonitor monitor) 
 	throws RodinDBException {
 		setAttributeValue(EventBAttributes.TARGET_ATTRIBUTE, name, monitor);
 	}
 	
+	@Override
 	@Deprecated
 	public void setAbstractContextName(String name) 
 	throws RodinDBException {

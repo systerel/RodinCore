@@ -75,6 +75,7 @@ class ChangeAttribute extends OperationLeaf {
 		}
 	}
 
+	@Override
 	public void setParent(IInternalElement element) {
 		this.element = element;
 	}

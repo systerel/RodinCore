@@ -36,6 +36,7 @@ public class RefinesEventAbstractEventLabelAttributeManipulation extends
 		return (IRefinesEvent) element;
 	}
 	
+	@Override
 	public void setDefaultValue(IRodinElement element,
 			IProgressMonitor monitor) throws RodinDBException {
 		IEvent event = (IEvent) element.getParent();
@@ -43,17 +44,20 @@ public class RefinesEventAbstractEventLabelAttributeManipulation extends
 				monitor);
 	}
 
+	@Override
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asRefinesEvent(element).getAbstractEventLabel();
 	}
 
+	@Override
 	public void setValue(IRodinElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
 		asRefinesEvent(element).setAbstractEventLabel(newValue,
 				new NullProgressMonitor());
 	}
 
+	@Override
 	public String[] getPossibleValues(IRodinElement element,
 			IProgressMonitor monitor) {
 		List<String> results = new ArrayList<String>();
@@ -78,11 +82,13 @@ public class RefinesEventAbstractEventLabelAttributeManipulation extends
 		}
 	}
 
+	@Override
 	public void removeAttribute(IRodinElement element,
 			IProgressMonitor monitor) throws RodinDBException {
 		asRefinesEvent(element).removeAttribute(TARGET_ATTRIBUTE, monitor);
 	}
 
+	@Override
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asRefinesEvent(element).hasAbstractEventLabel();

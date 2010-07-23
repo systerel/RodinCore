@@ -38,12 +38,14 @@ public class ToggleAutoTacticPreference extends AbstractHandler implements
 	public static final String COMMAND_ID = "org.eventb.ui.project.autoTactic";
 
 	// Toggles the auto-tactic enablement preference
+	@Override
 	public Object execute(ExecutionEvent event) {
 		final boolean oldValue = getAutoTacticPreference();
 		setAutoTacticPreference(!oldValue);
 		return null;
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public void updateElement(UIElement uiElement, Map parameters) {
 		final boolean enabled = getAutoTacticPreference();
@@ -66,6 +68,7 @@ public class ToggleAutoTacticPreference extends AbstractHandler implements
 
 	static class ChangeListener implements IPropertyChangeListener {
 
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			if (P_AUTOTACTIC_ENABLE.equals(event.getProperty())) {
 				getCommandService().refreshElements(COMMAND_ID, EMPTY_MAP);

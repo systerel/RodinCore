@@ -36,14 +36,17 @@ public class DatatypeMediator implements IDatatypeMediator {
 		this.typeParams = typeParams;
 	}
 
+	@Override
 	public ITypeParameter getTypeParameter(String name) {
 		return typeParams.get(name);
 	}
 
+	@Override
 	public ITypeParameter newTypeConstructor(ITypeParameter type) {
 		return new TypeParam(typeName, Collections.singletonList(type));
 	}
 
+	@Override
 	public ITypeParameter newTypeConstructor(List<ITypeParameter> types) {
 		return new TypeParam(typeName, types);
 	}

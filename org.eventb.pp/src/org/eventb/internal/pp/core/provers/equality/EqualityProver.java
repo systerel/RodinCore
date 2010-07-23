@@ -73,6 +73,7 @@ public final class EqualityProver implements IProverModule {
 		this.nonDispatchedClauses = new Vector<Set<Clause>>();
 	}
 	
+	@Override
 	public ProverResult contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies) {
 		manager.backtrack(newLevel);
 		backtrackClauses(newLevel);
@@ -106,6 +107,7 @@ public final class EqualityProver implements IProverModule {
 		}
 	}
 	
+	@Override
 	public ProverResult next(boolean force) {
 		if (!force && !isNextAvailable()) return ProverResult.EMPTY_RESULT;
 		// return equality instantiations here, if not, it loops
@@ -115,6 +117,7 @@ public final class EqualityProver implements IProverModule {
 		return new ProverResult(result, new HashSet<Clause>());
 	}
 
+	@Override
 	public void registerDumper(Dumper dumper) {
 		dumper.addObject("EqualityFormula table", manager);
 	}
@@ -128,6 +131,7 @@ public final class EqualityProver implements IProverModule {
 	 * 
 	 * @see org.eventb.internal.pp.core.IProverModule#addClauseAndDetectContradiction(org.eventb.internal.pp.core.elements.Clause)
 	 */
+	@Override
 	public ProverResult addClauseAndDetectContradiction(Clause clause) {
 		Set<Clause> generatedClauses = new HashSet<Clause>();
 		Set<Clause> subsumedClauses = new HashSet<Clause>();
@@ -155,6 +159,7 @@ public final class EqualityProver implements IProverModule {
 		if (!clauses.isEmpty()) nonDispatchedClauses.add(clauses);
 	}
 	
+	@Override
 	public void removeClause(Clause clause) {
 		if (clause.isUnit()) return;
 		

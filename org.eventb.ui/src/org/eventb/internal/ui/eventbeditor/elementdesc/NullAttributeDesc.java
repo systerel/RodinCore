@@ -33,10 +33,12 @@ public class NullAttributeDesc extends AttributeDesc {
 	private static IAttributeType getTypeInstance() {
 		return new IAttributeType() {
 
+			@Override
 			public java.lang.String getId() {
 				return "";
 			}
 
+			@Override
 			public java.lang.String getName() {
 				return "";
 			}

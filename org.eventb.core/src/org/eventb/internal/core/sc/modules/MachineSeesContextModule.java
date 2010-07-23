@@ -105,10 +105,12 @@ public class MachineSeesContextModule extends ContextPointerModule {
 
 	public static final String SEES_NAME_PREFIX = "SEES";
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
 
+	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {

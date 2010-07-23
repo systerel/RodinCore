@@ -71,6 +71,7 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 		return reasonerRegistry.getReasonerDesc(this.getReasonerID());
 	}
 
+	@Override
 	public IProofSkeleton getProofSkeleton(IProofStoreReader store,
 			final String comment) throws RodinDBException {
 
@@ -111,14 +112,17 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 		
 		IProofSkeleton skeleton = new IProofSkeleton() {
 
+				@Override
 				public IProofSkeleton[] getChildNodes() {
 					return children;
 				}
 
+				@Override
 				public IProofRule getRule() {
 					return proofRule;
 				}
 
+				@Override
 				public String getComment() {
 					return comment;
 				}
@@ -127,6 +131,7 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 		return skeleton;
 	}
 
+	@Override
 	public void setProofRule(IProofSkeleton skel, IProofStoreCollector store,IProgressMonitor monitor) throws RodinDBException {
 
 		final IProofRule proofRule = skel.getRule();
@@ -174,22 +179,27 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 		setAttributeValue(EventBAttributes.RULE_DISPLAY_ATTRIBUTE, display, monitor);
 	}
 
+	@Override
 	public IPRRuleAntecedent getAntecedent(String name) {
 		return getInternalElement(IPRRuleAntecedent.ELEMENT_TYPE, name);
 	}
 
+	@Override
 	public IPRRuleAntecedent[] getAntecedents() throws RodinDBException {
 		return getChildrenOfType(IPRRuleAntecedent.ELEMENT_TYPE);
 	}
 
+	@Override
 	public IPRExprRef getPRExprRef(String key) {
 		return getInternalElement(IPRExprRef.ELEMENT_TYPE, "." + key);
 	}
 
+	@Override
 	public IPRPredRef getPRPredRef(String key) {
 		return getInternalElement(IPRPredRef.ELEMENT_TYPE, "." + key);
 	}
 
+	@Override
 	public IPRStringInput getPRStringInput(String key) {
 		return getInternalElement(IPRStringInput.ELEMENT_TYPE, "." + key);
 	}

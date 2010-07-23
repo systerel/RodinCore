@@ -36,22 +36,27 @@ public class ElementDescRelationship implements IElementRelationship, Comparable
 		id = parentType.getId() + childType.getId();
 	}
 
+	@Override
 	public IInternalElementType<?> getChildType() {
 		return childType;
 	}
 
+	@Override
 	public String getID() {
 		return id;
 	}
 
+	@Override
 	public IElementType<?> getParentType() {
 		return parentType;
 	}
 	
+	@Override
 	public int getPriority() {
 		return priority;
 	}
 
+	@Override
 	public IImplicitChildProvider getImplicitChildProvider() {
 		return childProvider;
 	}
@@ -65,6 +70,7 @@ public class ElementDescRelationship implements IElementRelationship, Comparable
 				&& childType == rel.getChildType();
 	}
 
+	@Override
 	public int compareTo(IElementRelationship rs) {
 		if (childType == rs.getChildType() && parentType == rs.getParentType())
 			return 0;

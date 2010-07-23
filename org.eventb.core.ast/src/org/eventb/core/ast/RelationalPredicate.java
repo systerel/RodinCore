@@ -95,22 +95,27 @@ public class RelationalPredicate extends Predicate {
 			this.tag = tag;
 		}
 
+		@Override
 		public String getImage() {
 			return image;
 		}
 		
+		@Override
 		public String getId() {
 			return id;
 		}
 		
+		@Override
 		public String getGroupId() {
 			return groupId;
 		}
 
+		@Override
 		public IParserPrinter<RelationalPredicate> makeParser(int kind) {
 			return new RelationalPredicateInfix(kind, tag);
 		}
 
+		@Override
 		public boolean isSpaced() {
 			return false;
 		}

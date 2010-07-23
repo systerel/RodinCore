@@ -54,6 +54,7 @@ public abstract class ConditionIterator<T extends Object> implements Iterator<T>
 	 */
 	public abstract boolean isSelected(T element);
 
+	@Override
 	public boolean hasNext() {
 		if (cache == null) {
 			nextObject();
@@ -61,6 +62,7 @@ public abstract class ConditionIterator<T extends Object> implements Iterator<T>
 		return cache != null;
 	}
 	
+	@Override
 	public T next() {
 		T result;
 		if (cache == null) {
@@ -89,6 +91,7 @@ public abstract class ConditionIterator<T extends Object> implements Iterator<T>
 		}
 	}
 	
+	@Override
 	public void remove() {
 		throw new UnsupportedOperationException();
 	}

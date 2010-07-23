@@ -56,6 +56,7 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 		 * 
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
+		@Override
 		public Object getParent(Object child) {
 			if (child instanceof IRodinElement)
 				return ((IRodinElement) child).getParent();
@@ -67,6 +68,7 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 		 * 
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
+		@Override
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof IEventBRoot) {
 				try {
@@ -94,6 +96,7 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 		 * 
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 		 */
+		@Override
 		public boolean hasChildren(Object parent) {
 			return getChildren(parent).length > 0;
 		}
@@ -103,6 +106,7 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 		 * 
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IEventBRoot) {
 				if (invisibleRoot == null) {
@@ -118,6 +122,7 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 		 * 
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 			// Do nothing
 		}
@@ -128,6 +133,7 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 		 *      java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			invisibleRoot = null;
 		}
@@ -175,6 +181,7 @@ public class SyntheticEditableTreeViewer extends EventBEditableTreeViewer {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				ActionContext context = new ActionContext(
 						SyntheticEditableTreeViewer.this.getSelection());

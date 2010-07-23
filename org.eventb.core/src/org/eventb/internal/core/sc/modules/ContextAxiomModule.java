@@ -40,6 +40,7 @@ public class ContextAxiomModule extends PredicateWithTypingModule<IAxiom> {
 	public static final IModuleType<ContextAxiomModule> MODULE_TYPE = SCCore
 			.getModuleType(EventBPlugin.PLUGIN_ID + ".contextAxiomModule"); //$NON-NLS-1$
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
@@ -54,6 +55,7 @@ public class ContextAxiomModule extends PredicateWithTypingModule<IAxiom> {
 	 * , org.rodinp.core.IInternalElement, org.eventb.core.sc.IStateRepository,
 	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {

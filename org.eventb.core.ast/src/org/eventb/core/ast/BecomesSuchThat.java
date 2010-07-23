@@ -66,22 +66,27 @@ public class BecomesSuchThat extends Assignment {
 	 */
 	public static final IOperatorInfo<BecomesSuchThat> OP_BECST = new IOperatorInfo<BecomesSuchThat>() {
 		
+		@Override
 		public IParserPrinter<BecomesSuchThat> makeParser(int kind) {
 			return new MainParsers.BecomesSuchThatParser(kind);
 		}
 
+		@Override
 		public String getImage() {
 			return ":\u2223";
 		}
 		
+		@Override
 		public String getId() {
 			return BECST_ID;
 		}
 		
+		@Override
 		public String getGroupId() {
 			return BMath.INFIX_SUBST;
 		}
 
+		@Override
 		public boolean isSpaced() {
 			return true;
 		}

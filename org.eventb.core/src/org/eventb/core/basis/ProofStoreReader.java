@@ -45,6 +45,7 @@ public class ProofStoreReader implements IProofStoreReader {
 	private Map<String, Predicate> predicates;
 	private Map<String, Expression> expressions;
 	
+	@Override
 	public FormulaFactory getFormulaFactory() {
 		return factory;
 	}
@@ -57,6 +58,7 @@ public class ProofStoreReader implements IProofStoreReader {
 		this.expressions = new HashMap<String, Expression>();
 	}
 	
+	@Override
 	public ITypeEnvironment getBaseTypeEnv() throws RodinDBException {
 		if (baseTypEnv == null) {
 			baseTypEnv = factory.makeTypeEnvironment();
@@ -70,6 +72,7 @@ public class ProofStoreReader implements IProofStoreReader {
 		return baseTypEnv;
 	}
 
+	@Override
 	public Predicate getPredicate(String ref) throws RodinDBException {
 		Predicate pred = predicates.get(ref);
 		if (pred == null) {
@@ -81,6 +84,7 @@ public class ProofStoreReader implements IProofStoreReader {
 		return pred;
 	}
 
+	@Override
 	public Expression getExpression(String ref) throws RodinDBException {
 		Expression expr = expressions.get(ref);
 		if (expr == null) {
@@ -116,6 +120,7 @@ public class ProofStoreReader implements IProofStoreReader {
 			this.antecedents = antecedents;
 		}
 
+		@Override
 		public Expression[] getExpressions(String key) throws SerializeException {
 			try {
 				final IPRExprRef prExprRef = prProofRule.getPRExprRef(key);
@@ -125,6 +130,7 @@ public class ProofStoreReader implements IProofStoreReader {
 			}
 		}
 
+		@Override
 		public Predicate[] getPredicates(String key) throws SerializeException {
 			try {
 				final IPRPredRef prPredRef = prProofRule.getPRPredRef(key);
@@ -134,6 +140,7 @@ public class ProofStoreReader implements IProofStoreReader {
 			}
 		}
 
+		@Override
 		public String getString(String key) throws SerializeException {
 			try {
 				final IPRStringInput prStringInput =
@@ -144,26 +151,32 @@ public class ProofStoreReader implements IProofStoreReader {
 			}
 		}
 
+		@Override
 		public IAntecedent[] getAntecedents() {
 			return antecedents;
 		}
 
+		@Override
 		public int getConfidence() {
 			return confidence;
 		}
 
+		@Override
 		public String getDisplayName() {
 			return displayName;
 		}
 
+		@Override
 		public Predicate getGoal() {
 			return goal;
 		}
 
+		@Override
 		public Set<Predicate> getNeededHyps() {
 			return neededHyps;
 		}
 		
+		@Override
 		public FormulaFactory getFormulaFactory() {
 			return store.getFormulaFactory();
 		}

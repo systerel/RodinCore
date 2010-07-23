@@ -25,6 +25,7 @@ public abstract class AccuracyInfo extends State implements IAccuracyInfo {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.state.IAccuracyInfo#isAccurate()
 	 */
+	@Override
 	public boolean isAccurate() {
 		return accurate;
 	}
@@ -32,6 +33,7 @@ public abstract class AccuracyInfo extends State implements IAccuracyInfo {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.state.IAccuracyInfo#setNotAccurate()
 	 */
+	@Override
 	public void setNotAccurate() {
 		accurate = false;
 	}

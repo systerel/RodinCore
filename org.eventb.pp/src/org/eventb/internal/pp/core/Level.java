@@ -180,6 +180,7 @@ public final class Level implements Comparable<Level> {
 		return level.toString();
 	}
 	
+	@Override
 	public int compareTo(Level o) {
 		return level.compareTo(o.level);
 	}

@@ -110,10 +110,12 @@ public class ElementComposite implements IElementComposite {
 		setExpand(false, false);
 	}
 
+	@Override
 	public void folding() {
 		setExpand(!isExpanded, false);
 	}
 
+	@Override
 	public void setExpand(boolean isExpanded, boolean recursive) {
 		long beforeTime = 0;
 		if (EventBEditorUtils.DEBUG)
@@ -175,10 +177,12 @@ public class ElementComposite implements IElementComposite {
 		}
 	}
 
+	@Override
 	public EditPage getPage() {
 		return page;
 	}
 
+	@Override
 	public void refresh(IRodinElement element) {
 		if (!rElement.exists())
 			return;
@@ -220,6 +224,7 @@ public class ElementComposite implements IElementComposite {
 		}
 	}
 
+	@Override
 	public void elementRemoved(IRodinElement element) {
 		if (!rElement.exists())
 			return;
@@ -229,6 +234,7 @@ public class ElementComposite implements IElementComposite {
 			comp.elementRemoved(element);
 	}
 
+	@Override
 	public void elementAdded(IRodinElement element) {
 		if (!rElement.exists())
 			return;
@@ -237,18 +243,22 @@ public class ElementComposite implements IElementComposite {
 			comp.elementAdded(element);
 	}
 
+	@Override
 	public void dispose() {
 		composite.dispose();
 	}
 
+	@Override
 	public IRodinElement getElement() {
 		return rElement;
 	}
 
+	@Override
 	public boolean isExpanded() {
 		return isExpanded;
 	}
 
+	@Override
 	public void childrenChanged(IRodinElement element,
 			IElementType<?> childrenType) {
 		if (!rElement.exists())
@@ -273,10 +283,12 @@ public class ElementComposite implements IElementComposite {
 		}
 	}
 
+	@Override
 	public Composite getComposite() {
 		return composite;
 	}
 
+	@Override
 	public boolean select(IRodinElement element, boolean selected) {
 		if (!rElement.exists())
 			return false;
@@ -299,6 +311,7 @@ public class ElementComposite implements IElementComposite {
 		return comp.select(element, selected);
 	}
 
+	@Override
 	public void recursiveExpand(IRodinElement element) {
 		if (!rElement.exists())
 			return;
@@ -318,6 +331,7 @@ public class ElementComposite implements IElementComposite {
 		}
 	}
 
+	@Override
 	public void edit(IInternalElement element, IAttributeType attributeType,
 			int charStart, int charEnd) {
 		if (!rElement.exists())
@@ -339,6 +353,7 @@ public class ElementComposite implements IElementComposite {
 		}
 	}
 
+	@Override
 	public void refresh(IRodinElement element, Set<IAttributeType> set) {
 		if (!rElement.exists())
 			return;

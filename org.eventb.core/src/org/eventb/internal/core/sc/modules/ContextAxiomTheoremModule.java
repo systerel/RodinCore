@@ -29,6 +29,7 @@ public class ContextAxiomTheoremModule extends TheoremModule {
 	public static final IModuleType<ContextAxiomTheoremModule> MODULE_TYPE = SCCore
 			.getModuleType(EventBPlugin.PLUGIN_ID + ".contextAxiomTheoremModule"); //$NON-NLS-1$
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

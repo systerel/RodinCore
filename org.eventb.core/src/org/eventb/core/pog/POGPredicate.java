@@ -40,6 +40,7 @@ class POGPredicate implements IPOGPredicate {
 	 * @return the source reference for the predicate
 	 * @throws RodinDBException if there was a problem accessing the source reference
 	 */
+	@Override
 	public IRodinElement getSource() throws RodinDBException {
 		return source;
 	}
@@ -49,6 +50,7 @@ class POGPredicate implements IPOGPredicate {
 	 * 
 	 * @return the predicate
 	 */
+	@Override
 	public Predicate getPredicate() {
 		return predicate;
 	}

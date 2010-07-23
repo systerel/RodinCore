@@ -47,6 +47,7 @@ public class FwdMachineHypothesesModule extends GlobalHypothesesModule {
 	public static final IModuleType<FwdMachineHypothesesModule> MODULE_TYPE = 
 		POGCore.getModuleType(EventBPlugin.PLUGIN_ID + ".fwdMachineHypothesesModule"); //$NON-NLS-1$
 	
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

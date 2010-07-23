@@ -109,6 +109,7 @@ public interface IRodinFile extends IRodinElement, IOpenable, IParent,
 	 */
 	String getBareName();
 		
+	@Override
 	IFile getResource();
 
 	/**
@@ -143,7 +144,9 @@ public interface IRodinFile extends IRodinElement, IOpenable, IParent,
 	IInternalElementType<?> getRootElementType();
 
 	// Methods from ISnapshotable with specialized return types
+	@Override
 	IRodinFile getSnapshot();
+	@Override
 	IRodinFile getMutableCopy();
 
 }

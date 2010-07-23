@@ -28,6 +28,7 @@ public class PrfSklContentProvider implements ITreeContentProvider {
 		// Do nothing
 	}
 	
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof IProofTreeNode) {
 			return ((IProofTreeNode) parentElement).getChildNodes();
@@ -35,6 +36,7 @@ public class PrfSklContentProvider implements ITreeContentProvider {
 		return NO_OBJECTS;
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		if (element instanceof IProofTreeNode) {
 			return ((IProofTreeNode) element).getParent();
@@ -42,6 +44,7 @@ public class PrfSklContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
+	@Override
 	public boolean hasChildren(Object element) {
 		if (element instanceof IProofTreeNode) {
 			return ((IProofTreeNode) element).hasChildren();
@@ -49,6 +52,7 @@ public class PrfSklContentProvider implements ITreeContentProvider {
 		return false;
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 		if (!(inputElement instanceof IViewerInput)) {
 			return NO_OBJECTS;
@@ -57,10 +61,12 @@ public class PrfSklContentProvider implements ITreeContentProvider {
 		return input.getElements();
 	}
 
+	@Override
 	public void dispose() {
 		// Do nothing
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		// Do nothing
 	}

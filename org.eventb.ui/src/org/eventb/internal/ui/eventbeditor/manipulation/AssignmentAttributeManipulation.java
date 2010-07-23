@@ -27,32 +27,38 @@ public class AssignmentAttributeManipulation extends
 		return (IAssignmentElement) element;
 	}
 
+	@Override
 	public void setValue(IRodinElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
 		asAssignment(element).setAssignmentString(newValue, monitor);
 	}
 
+	@Override
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asAssignment(element).getAssignmentString();
 	}
 
+	@Override
 	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		asAssignment(element).setAssignmentString("", monitor);
 	}
 
+	@Override
 	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		logCantRemove(ASSIGNMENT_ATTRIBUTE);
 	}
 
+	@Override
 	public String[] getPossibleValues(IRodinElement element,
 			IProgressMonitor monitor) {
 		logCantGetPossibleValues(ASSIGNMENT_ATTRIBUTE);
 		return null;
 	}
 
+	@Override
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asAssignment(element).hasAssignmentString();

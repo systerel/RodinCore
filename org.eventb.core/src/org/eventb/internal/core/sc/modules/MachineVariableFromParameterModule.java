@@ -35,6 +35,7 @@ public class MachineVariableFromParameterModule extends SCFilterModule {
 			.getModuleType(EventBPlugin.PLUGIN_ID
 					+ ".machineVariableFromParameterModule"); //$NON-NLS-1$
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
@@ -66,6 +67,7 @@ public class MachineVariableFromParameterModule extends SCFilterModule {
 	 * org.eventb.core.sc.IStateRepository,
 	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public boolean accept(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 

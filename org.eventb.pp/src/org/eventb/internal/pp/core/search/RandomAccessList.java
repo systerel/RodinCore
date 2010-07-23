@@ -30,11 +30,13 @@ public final class RandomAccessList<T extends Object> implements IRandomAccessLi
 		// nothing
 	}
 	
+	@Override
 	public T remove(T object) {
 		updateIterators(object);
 		return internalRemove(object);
 	}
 
+	@Override
 	public void add(T object) {
 		if (list.containsKey(object)) return;
 		
@@ -51,10 +53,12 @@ public final class RandomAccessList<T extends Object> implements IRandomAccessLi
 		list.put(object, link);
 	}
 	
+	@Override
 	public boolean contains(T object) {
 		return list.containsKey(object);
 	}
 	
+	@Override
 	public T get(T object) {
 		return list.get(object).object;
 	}
@@ -68,10 +72,12 @@ public final class RandomAccessList<T extends Object> implements IRandomAccessLi
 //		last = null;
 //	}
 	
+	@Override
 	public int size() {
 		return list.size();
 	}
 	
+	@Override
 	public ResetIterator<T> iterator() {
 		NiceIterator it = new NiceIterator();
 		iterators.add(it);
@@ -112,21 +118,25 @@ public final class RandomAccessList<T extends Object> implements IRandomAccessLi
 			// nothing
 		}
 		
+		@Override
 		public void invalidate() {
 			iterators.remove(this);
 			invalid = true;
 		}
 		
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
 		
+		@Override
 		public boolean hasNext() {
 			if (invalid) throw new IllegalStateException("Iterator has been invalidated");
 			boolean hasNext = current != last;
 			return hasNext;
 		}
 
+		@Override
 		public T next() {
 			if (invalid) throw new IllegalStateException("Iterator has been invalidated");
 			if (current == last) throw new NoSuchElementException();
@@ -142,6 +152,7 @@ public final class RandomAccessList<T extends Object> implements IRandomAccessLi
 			}
 		}
 
+		@Override
 		public void reset() {
 			if (invalid) throw new IllegalStateException("Iterator has been invalidated");
 			current = null;
@@ -165,6 +176,7 @@ public final class RandomAccessList<T extends Object> implements IRandomAccessLi
 	}
 
 
+	@Override
 	public boolean isEmpty() {
 		return list.isEmpty();
 	}

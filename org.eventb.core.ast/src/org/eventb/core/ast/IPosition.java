@@ -45,6 +45,7 @@ public interface IPosition extends Comparable<IPosition> {
 	 * @return a negative integer, zero, or a positive integer as this position
 	 *         is less than, equal to, or greater than the specified position.
 	 */
+	@Override
 	int compareTo(IPosition other);
 
 	/**
@@ -123,6 +124,7 @@ public interface IPosition extends Comparable<IPosition> {
 	 * 
 	 * @see FormulaFactory#makePosition(String)
 	 */
+	@Override
 	String toString();
 
 }

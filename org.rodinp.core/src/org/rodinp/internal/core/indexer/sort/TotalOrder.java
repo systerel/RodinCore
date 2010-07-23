@@ -52,6 +52,7 @@ public class TotalOrder<T> implements Iterator<T> {
 	boolean isSorted;
 
 	private final IGraphChangedListener listener = new IGraphChangedListener() {
+		@Override
 		public void graphChanged() {
 			isSorted = false;
 		}
@@ -83,18 +84,21 @@ public class TotalOrder<T> implements Iterator<T> {
 		isSorted = false;
 	}
 
+	@Override
 	public boolean hasNext() {
 		updateSort();
 
 		return sortedNodes.hasNext();
 	}
 
+	@Override
 	public T next() {
 		updateSort();
 
 		return sortedNodes.next();
 	}
 
+	@Override
 	public void remove() {
 		updateSort();
 

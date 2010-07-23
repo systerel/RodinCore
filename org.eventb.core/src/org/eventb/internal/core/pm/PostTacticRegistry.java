@@ -87,6 +87,7 @@ public class PostTacticRegistry implements IPostTacticRegistry {
 		}
 	}
 
+	@Override
 	public boolean isDeclared(String tacticID) {
 		if (tacticIDs == null)
 			loadRegistry();
@@ -94,6 +95,7 @@ public class PostTacticRegistry implements IPostTacticRegistry {
 		return tacticIDs.contains(tacticID);
 	}
 
+	@Override
 	public String[] getTacticIDs() {
 		if (tacticIDs == null)
 			loadRegistry();

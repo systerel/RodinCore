@@ -134,6 +134,7 @@ public interface IPSStatus extends IInternalElement, IPRProofInfoElement,
 	 * @see #isBroken()
 	 * @see #setProofConfidence(IProgressMonitor)
 	 */
+	@Override
 	int getConfidence() throws RodinDBException;
 
 	/**
@@ -154,6 +155,7 @@ public interface IPSStatus extends IInternalElement, IPRProofInfoElement,
 	 * 
 	 * @throws RodinDBException
 	 */
+	@Override
 	boolean getHasManualProof() throws RodinDBException;
 
 	/**

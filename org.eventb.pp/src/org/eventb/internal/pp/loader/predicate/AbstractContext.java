@@ -49,6 +49,7 @@ public class AbstractContext implements IContext {
 
 	protected final List<INormalizedFormula> results = new ArrayList<INormalizedFormula>();
 
+	@Override
 	public void load(Predicate predicate, Predicate originalPredicate,
 			boolean isGoal) {
 		final PredicateLoader loader = getPredicateLoader(predicate,
@@ -62,6 +63,7 @@ public class AbstractContext implements IContext {
 		return new PredicateLoader(this, predicate, originalPredicate, isGoal);
 	}
 
+	@Override
 	public void load(Predicate predicate, boolean isGoal) {
 		load(predicate, predicate, isGoal);
 	}
@@ -90,10 +92,12 @@ public class AbstractContext implements IContext {
 		return arithmeticTable;
 	}
 
+	@Override
 	public List<INormalizedFormula> getResults() {
 		return results;
 	}
 
+	@Override
 	public INormalizedFormula getLastResult() {
 		final int size = results.size();
 		assert 0 < size;
@@ -112,6 +116,7 @@ public class AbstractContext implements IContext {
 		return false;
 	}
 
+	@Override
 	public Collection<LiteralDescriptor> getAllDescriptors() {
 		Collection<LiteralDescriptor> result = new ArrayList<LiteralDescriptor>();
 		result.addAll(predicateTable.getAllLiterals());
@@ -122,12 +127,14 @@ public class AbstractContext implements IContext {
 		return result;
 	}
 
+	@Override
 	public Collection<PredicateDescriptor> getAllPredicateDescriptors() {
 		return predicateTable.getAllLiterals();
 	}
 
 	private int nextIdentifier = 0;
 
+	@Override
 	public int getNextLiteralIdentifier() {
 		return nextIdentifier++;
 	}
@@ -135,6 +142,7 @@ public class AbstractContext implements IContext {
 	// Number of variables used in this context so far
 	private int numberOfVariables = 0;
 
+	@Override
 	public int getFreshVariableIndex() {
 		return numberOfVariables++;
 	}

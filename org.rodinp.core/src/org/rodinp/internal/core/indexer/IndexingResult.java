@@ -99,23 +99,28 @@ public class IndexingResult implements IIndexingResult, Cloneable {
 		}
 	}
 	
+	@Override
 	public Collection<IDeclaration> getDeclarations() {
 		final Collection<IDeclaration> decls = declarations.values();
 		return Collections.unmodifiableCollection(decls);
 	}
 
+	@Override
 	public Set<IDeclaration> getExports() {
 		return exports;
 	}
 
+	@Override
 	public Map<IInternalElement, Set<IOccurrence>> getOccurrences() {
 		return occurrences;
 	}
 
+	@Override
 	public IRodinFile getFile() {
 		return file;
 	}
 
+	@Override
 	public boolean isSuccess() {
 		return success;
 	}

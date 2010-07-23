@@ -38,10 +38,12 @@ public class MachineVariableTable extends State implements IMachineVariableTable
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 
+	@Override
 	public boolean contains(FreeIdentifier variable) throws CoreException {
 		assertImmutable();
 		return cache.contains(variable);
@@ -55,6 +57,7 @@ public class MachineVariableTable extends State implements IMachineVariableTable
 		cache.add(variable);
 	}
 	
+	@Override
 	public List<FreeIdentifier> getPreservedVariables() throws CoreException {
 		assertImmutable();
 		return preservedVariables;
@@ -67,6 +70,7 @@ public class MachineVariableTable extends State implements IMachineVariableTable
 		super.makeImmutable();
 	}
 
+	@Override
 	public List<FreeIdentifier> getVariables() throws CoreException {
 		assertImmutable();
 		return variables;

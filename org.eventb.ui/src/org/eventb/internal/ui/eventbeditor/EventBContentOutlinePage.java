@@ -66,6 +66,7 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 		 *      java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 			if (oldInput == null && newInput != null)
 				RodinCore.addElementChangedListener(this);
@@ -82,6 +83,7 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 		 * 
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IRodinFile) {
 				if (invisibleRoot == null)
@@ -96,6 +98,7 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 		 * 
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
+		@Override
 		public Object getParent(Object child) {
 			if (child instanceof IRodinElement) {
 				return ((IRodinElement) child).getParent();
@@ -108,6 +111,7 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 		 * 
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
+		@Override
 		public Object[] getChildren(Object obj) {
 			if (obj instanceof IParent) {
 				final IParent parent = (IParent) obj;
@@ -128,6 +132,7 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 		 * 
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 		 */
+		@Override
 		public boolean hasChildren(Object obj) {
 			if (obj instanceof IParent) {
 				final IParent parent = (IParent) obj;
@@ -149,6 +154,7 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 		 * 
 		 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 		 */
+		@Override
 		public void elementChanged(ElementChangedEvent event) {
 			// TODO Process the delta increamentally, see
 			// ObligationExplorerContentProvider
@@ -168,6 +174,7 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 					 * 
 					 * @see java.lang.Runnable#run()
 					 */
+					@Override
 					public void run() {
 						update();
 					}
@@ -175,6 +182,7 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 			}
 		}
 
+		@Override
 		public void dispose() {
 			// TODO Auto-generated method stub
 			

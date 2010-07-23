@@ -383,6 +383,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	}
 
 
+	@Override
 	public IRodinElement getInternalElement() {
 		return machineRoot;
 	}
@@ -428,6 +429,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 	 * machine. If none exist or in the non-complex version this returns the
 	 * containing project.
 	 */
+	@Override
 	public Object getParent(boolean complex) {
 		if (complex) {
 			if (refinesMachines.size() > 0) {
@@ -437,6 +439,7 @@ public class ModelMachine extends ModelPOContainer implements IModelElement {
 		return machineRoot.getRodinProject();
 	}
 
+	@Override
 	public Object[] getChildren(IInternalElementType<?> type, boolean complex) {
 		if (type == IContextRoot.ELEMENT_TYPE) {
     		return ModelController.convertToIContext(getSeesContexts()).toArray();

@@ -36,6 +36,7 @@ public interface IModuleType<T extends IModule> {
 	 * 
 	 * @return the unique identifier of this module type
 	 */
+	@Override
 	String toString();
 
 }

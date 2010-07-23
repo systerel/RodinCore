@@ -22,10 +22,12 @@ public class PRStringInput extends InternalElement implements IPRStringInput{
 		return ELEMENT_TYPE;
 	}
 
+	@Override
 	public String getString() throws RodinDBException {
 		return getAttributeValue(EventBAttributes.STRING_VALUE_ATTRIBUTE);
 	}
 
+	@Override
 	public void setString(String value,IProgressMonitor monitor) throws RodinDBException {
 		setAttributeValue(EventBAttributes.STRING_VALUE_ATTRIBUTE, value , monitor);
 	}

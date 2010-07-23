@@ -72,6 +72,7 @@ public abstract class ModelPOContainer implements IModelElement {
 		return statuses.toArray(results);
 	}
 
+	@Override
 	public IModelElement getModelParent() {
 		return parent;
 	}

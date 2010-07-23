@@ -79,11 +79,13 @@ public abstract class InternalElement extends RodinElement implements
 			throw new IllegalArgumentException();
 	}
 
+	@Override
 	public void clear(boolean force, IProgressMonitor monitor)
 			throws RodinDBException {
 		new ClearElementsOperation(this, force).runOperation(monitor);
 	}
 
+	@Override
 	public void copy(IRodinElement container, IRodinElement sibling,
 			String rename, boolean replace, IProgressMonitor monitor)
 			throws RodinDBException {
@@ -95,12 +97,14 @@ public abstract class InternalElement extends RodinElement implements
 				sibling, rename, monitor);
 	}
 
+	@Override
 	public void create(IInternalElement nextSibling, IProgressMonitor monitor)
 			throws RodinDBException {
 		new CreateInternalElementOperation(this, nextSibling)
 				.runOperation(monitor);
 	}
 
+	@Override
 	public final <T extends IInternalElement> T createChild(
 			IInternalElementType<T> type, IInternalElement nextSibling,
 			IProgressMonitor monitor) throws RodinDBException {
@@ -115,6 +119,7 @@ public abstract class InternalElement extends RodinElement implements
 		return new InternalElementInfo();
 	}
 	
+	@Override
 	public void createProblemMarker(IAttributeType.String attributeType,
 			int charStart, int charEnd, IRodinProblem problem, Object... args)
 			throws RodinDBException {
@@ -123,6 +128,7 @@ public abstract class InternalElement extends RodinElement implements
 				charStart, charEnd).runOperation(null);
 	}
 
+	@Override
 	public void createProblemMarker(IAttributeType attributeType, IRodinProblem problem,
 			Object... args) throws RodinDBException {
 
@@ -130,6 +136,7 @@ public abstract class InternalElement extends RodinElement implements
 				-1).runOperation(null);
 	}
 
+	@Override
 	public void delete(boolean force, IProgressMonitor monitor) throws RodinDBException {
 		new DeleteElementsOperation(this, force).runOperation(monitor);
 	}
@@ -150,51 +157,60 @@ public abstract class InternalElement extends RodinElement implements
 		}
 	}
 
+	@Override
 	public IAttributeType[] getAttributeTypes()
 			throws RodinDBException {
 		return getFileInfo(null).getAttributeTypes(this);
 	}
 	
+	@Override
 	public final IAttributeValue[] getAttributeValues() throws RodinDBException {
 		return getFileInfo(null).getAttributeValues(this);
 	}
 
+	@Override
 	public final IAttributeValue getAttributeValue(IAttributeType attrType)
 			throws RodinDBException {
 		return getFileInfo(null).getAttributeValue(this,
 				(AttributeType<?>) attrType);
 	}
 
+	@Override
 	public boolean getAttributeValue(IAttributeType.Boolean attrType)
 			throws RodinDBException {
 		return getFileInfo(null).getAttributeValue(this,
 				(AttributeType.Boolean) attrType);
 	}
 
+	@Override
 	public IRodinElement getAttributeValue(IAttributeType.Handle attrType)
 			throws RodinDBException {
 		return getFileInfo(null).getAttributeValue(this,
 				(AttributeType.Handle) attrType);
 	}
 
+	@Override
 	public int getAttributeValue(IAttributeType.Integer attrType)
 			throws RodinDBException {
 		return getFileInfo(null).getAttributeValue(this,
 				(AttributeType.Integer) attrType);
 	}
 
+	@Override
 	public long getAttributeValue(IAttributeType.Long attrType)
 			throws RodinDBException {
 		return getFileInfo(null).getAttributeValue(this,
 				(AttributeType.Long) attrType);
 	}
 
+	@Override
 	public String getAttributeValue(IAttributeType.String attrType)
 			throws RodinDBException {
 		return getFileInfo(null).getAttributeValue(this,
 				(AttributeType.String) attrType);
 	}
 
+	@Override
 	public IResource getCorrespondingResource() {
 		return null;
 	}
@@ -247,6 +263,7 @@ public abstract class InternalElement extends RodinElement implements
 		return REM_INTERNAL;
 	}
 	
+	@Override
 	public <T extends IInternalElement> T getInternalElement(
 			IInternalElementType<T> childType,
 			String childName) {
@@ -254,6 +271,7 @@ public abstract class InternalElement extends RodinElement implements
 		return ((InternalElementType<T>) childType).createInstance(childName, this);
 	}
 
+	@Override
 	public final InternalElement getMutableCopy() {
 		final RodinFile file = getRodinFile();
 		if (! file.isSnapshot()) {
@@ -265,6 +283,7 @@ public abstract class InternalElement extends RodinElement implements
 		return (InternalElement) getSimilarElement(newFile);
 	}
 
+	@Override
 	public final IInternalElement getNextSibling() throws RodinDBException {
 		final RodinElement[] siblings = getParent().getChildren();
 		final int len = siblings.length;
@@ -284,14 +303,17 @@ public abstract class InternalElement extends RodinElement implements
 		return getRodinFile();
 	}
 
+	@Override
 	public IPath getPath() {
 		return getRodinFile().getPath();
 	}
 
+	@Override
 	public IFile getResource() {
 		return getUnderlyingResource();
 	}
 
+	@Override
 	public RodinFile getRodinFile() {
 		RodinElement ancestor = parent;
 		while (ancestor != null) {
@@ -304,6 +326,7 @@ public abstract class InternalElement extends RodinElement implements
 		return null;
 	}
 
+	@Override
 	public final InternalElement getRoot() {
 		InternalElement elem = this;
 		while (!elem.isRoot()) {
@@ -312,6 +335,7 @@ public abstract class InternalElement extends RodinElement implements
 		return elem;
 	}
 	
+	@Override
 	public final InternalElement getSnapshot() {
 		final RodinFile file = getRodinFile();
 		if (file.isSnapshot()) {
@@ -323,6 +347,7 @@ public abstract class InternalElement extends RodinElement implements
 		return (InternalElement) getSimilarElement(newFile);
 	}
 
+	@Override
 	public final IInternalElement getSimilarElement(IRodinFile newFile) {
 		// Special case for root element
 		if (parent instanceof IRodinFile) {
@@ -336,10 +361,12 @@ public abstract class InternalElement extends RodinElement implements
 		return newParent.getInternalElement(newType, newName);
 	}
 
+	@Override
 	public IFile getUnderlyingResource() {
 		return getRodinFile().getResource();
 	}
 
+	@Override
 	public boolean hasAttribute(IAttributeType type) throws RodinDBException {
 		return getFileInfo(null).hasAttribute(this, type);
 	}
@@ -349,16 +376,19 @@ public abstract class InternalElement extends RodinElement implements
 		return getChildren().length > 0;
 	}
 
+	@Override
 	public boolean hasSameAttributes(IInternalElement other)
 			throws RodinDBException {
 		return ElementComparer.hasSameAttributes(this, (InternalElement) other);
 	}
 
+	@Override
 	public boolean hasSameChildren(IInternalElement other)
 			throws RodinDBException {
 		return ElementComparer.hasSameChildren(this, (InternalElement) other);
 	}
 
+	@Override
 	public boolean hasSameContents(IInternalElement other)
 			throws RodinDBException {
 		return ElementComparer.hasSameContents(this, (InternalElement) other);
@@ -369,10 +399,12 @@ public abstract class InternalElement extends RodinElement implements
 		return getRodinFile().isReadOnly();
 	}
 
+	@Override
 	public final boolean isSnapshot() {
 		return getRodinFile().isSnapshot();
 	}
 
+	@Override
 	public void move(IRodinElement container, IRodinElement sibling,
 			String rename, boolean replace, IProgressMonitor monitor)
 			throws RodinDBException {
@@ -385,15 +417,18 @@ public abstract class InternalElement extends RodinElement implements
 		
 	}
 	
+	@Override
 	public void removeAttribute(IAttributeType attrType, IProgressMonitor monitor)
 			throws RodinDBException {
 		new RemoveElementAttributeOperation(this, attrType).runOperation(monitor);
 	}
 	
+	@Override
 	public void rename(String newName, boolean replace, IProgressMonitor monitor) throws RodinDBException {
 		new RenameElementsOperation(this, newName, replace).runOperation(monitor);
 	}
 
+	@Override
 	public void setAttributeValue(IAttributeType.Boolean attrType,
 			boolean newValue, IProgressMonitor monitor) throws RodinDBException {
 		final AttributeType.Boolean iType = (AttributeType.Boolean) attrType;
@@ -402,6 +437,7 @@ public abstract class InternalElement extends RodinElement implements
 				.runOperation(monitor);
 	}
 
+	@Override
 	public final void setAttributeValue(IAttributeType.Handle attrType,
 			IRodinElement newValue, IProgressMonitor monitor)
 			throws RodinDBException {
@@ -414,6 +450,7 @@ public abstract class InternalElement extends RodinElement implements
 				.runOperation(monitor);
 	}
 
+	@Override
 	public final void setAttributeValue(IAttributeType.Integer attrType,
 			int newValue, IProgressMonitor monitor) throws RodinDBException {
 		final AttributeType.Integer iType = (AttributeType.Integer) attrType;
@@ -422,6 +459,7 @@ public abstract class InternalElement extends RodinElement implements
 				.runOperation(monitor);
 	}
 
+	@Override
 	public final void setAttributeValue(IAttributeType.Long attrType, long newValue,
 			IProgressMonitor monitor) throws RodinDBException {
 		final AttributeType.Long iType = (AttributeType.Long) attrType;
@@ -430,6 +468,7 @@ public abstract class InternalElement extends RodinElement implements
 				.runOperation(monitor);
 	}
 
+	@Override
 	public final void setAttributeValue(IAttributeType.String attrType,
 			String newValue, IProgressMonitor monitor) throws RodinDBException {
 		if (newValue == null) {
@@ -441,6 +480,7 @@ public abstract class InternalElement extends RodinElement implements
 				.runOperation(monitor);
 	}
 
+	@Override
 	public void setAttributeValue(IAttributeValue newValue,
 			IProgressMonitor monitor) throws RodinDBException {
 		if (newValue == null) {

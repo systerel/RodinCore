@@ -37,11 +37,13 @@ public class ExtendsContextAbstractContextNameAttributeManipulation extends
 		return (IExtendsContext) element;
 	}
 	
+	@Override
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asContextClause(element).getAbstractContextName();
 	}
 
+	@Override
 	public void setValue(IRodinElement element, String str,
 			IProgressMonitor monitor) throws RodinDBException {
 		asContextClause(element).setAbstractContextName(str, null);
@@ -58,11 +60,13 @@ public class ExtendsContextAbstractContextNameAttributeManipulation extends
 		}
 	}
 
+	@Override
 	public void removeAttribute(IRodinElement element,
 			IProgressMonitor monitor) throws RodinDBException {
 		asContextClause(element).removeAttribute(TARGET_ATTRIBUTE, monitor);
 	}
 
+	@Override
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asContextClause(element).hasAbstractContextName();

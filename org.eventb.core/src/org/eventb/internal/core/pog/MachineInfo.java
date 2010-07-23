@@ -34,6 +34,7 @@ public class MachineInfo extends State implements IMachineInfo {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.state.IMachineInfo#getAbstractMachine()
 	 */
+	@Override
 	public IRodinFile getAbstractMachine() {
 		return abstractMachine;
 	}
@@ -41,6 +42,7 @@ public class MachineInfo extends State implements IMachineInfo {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.state.IMachineInfo#isInitialMachine()
 	 */
+	@Override
 	public boolean isInitialMachine() {
 		return abstractMachine == null;
 	}
@@ -48,6 +50,7 @@ public class MachineInfo extends State implements IMachineInfo {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.tool.state.IState#getStateType()
 	 */
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}

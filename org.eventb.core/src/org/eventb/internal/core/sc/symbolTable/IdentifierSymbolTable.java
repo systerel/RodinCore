@@ -44,14 +44,17 @@ public class IdentifierSymbolTable
 		freeIdentifiers = new HashSet<FreeIdentifier>(identSize);
 	}
 
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 
+	@Override
 	public Collection<FreeIdentifier> getFreeIdentifiers() {
 		return freeIdentifiers;
 	}
 
+	@Override
 	public IIdentifierSymbolTable getParentTable() {
 		return null;
 	}
@@ -64,10 +67,12 @@ public class IdentifierSymbolTable
 				null));
 	}
 
+	@Override
 	public IIdentifierSymbolInfo getSymbolInfoFromTop(String symbol) {
 		return getSymbolInfo(symbol);
 	}
 
+	@Override
 	public Collection<IIdentifierSymbolInfo> getSymbolInfosFromTop() {
 		return Collections.unmodifiableSet(tableValues);
 	}

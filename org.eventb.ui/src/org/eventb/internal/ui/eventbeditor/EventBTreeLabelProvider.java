@@ -88,6 +88,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object,
 	 *      int)
 	 */
+	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
 		if (columnIndex != 0)
 			return null;
@@ -102,6 +103,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object,
 	 *      int)
 	 */
+	@Override
 	public String getColumnText(Object element, int columnIndex) {
 		if (!(element instanceof IInternalElement))
 			return element.toString();
@@ -115,6 +117,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 * 
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 		// Do nothing
 	}
@@ -124,6 +127,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 * 
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		JFaceResources.getFontRegistry().removeListener(this);
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
@@ -135,6 +139,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object,
 	 *      java.lang.String)
 	 */
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		if (property.equals(RODIN_PROBLEM_MARKER))
 			return true;
@@ -146,6 +151,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 * 
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 		// Do nothing
 	}
@@ -156,6 +162,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 * @see org.eclipse.jface.viewers.ITableColorProvider#getBackground(java.lang.Object,
 	 *      int)
 	 */
+	@Override
 	public Color getBackground(Object element, int columnIndex) {
 		if (element instanceof IRodinElement) {
 			if (editor.isNewElement((IRodinElement) element))
@@ -170,6 +177,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 * @see org.eclipse.jface.viewers.ITableColorProvider#getForeground(java.lang.Object,
 	 *      int)
 	 */
+	@Override
 	public Color getForeground(Object element, int columnIndex) {
 		if (element instanceof IRodinElement) {
 			if (editor.isNewElement((IRodinElement) element))
@@ -184,6 +192,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	 * @see org.eclipse.jface.viewers.ITableFontProvider#getFont(java.lang.Object,
 	 *      int)
 	 */
+	@Override
 	public Font getFont(Object element, int columnIndex) {
 		if (font == null) {
 			font = JFaceResources.getFont(RODIN_MATH_FONT);
@@ -191,11 +200,13 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 		return font;
 	}
 
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		font = JFaceResources.getFont(RODIN_MATH_FONT);
 		viewer.refresh();
 	}
 
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		final TreeLabelUpdater tlu = new TreeLabelUpdater(event, viewer);
 		tlu.performUpdate();
@@ -252,6 +263,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 			viewer.getControl().getDisplay().syncExec(this);
 		}
 
+		@Override
 		public void run() {
 			for (final Object element : elementsToUpdate) {
 				viewer.update(element, PROPERTIES);

@@ -24,6 +24,7 @@ import org.rodinp.core.RodinDBException;
 public abstract class AbstractContextManipulation<E extends IInternalElement>
 		extends AbstractAttributeManipulation {
 
+	@Override
 	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		// do nothing
@@ -33,6 +34,7 @@ public abstract class AbstractContextManipulation<E extends IInternalElement>
 		return element.getRoot().getElementName();
 	}
 	
+	@Override
 	public final String[] getPossibleValues(IRodinElement element,
 			IProgressMonitor monitor) {
 		final E contextElement = asContextClause(element);

@@ -61,10 +61,12 @@ public class PrettyPrintStream implements IPrettyPrintStream {
 		this.currentLevel = currentLevel;
 	}
 	
+	@Override
 	public void incrementLevel(){
 		this.currentLevel = currentLevel + 1;
 	}
 	
+	@Override
 	public void decrementLevel(){
 		this.currentLevel = currentLevel -1 ;
 	}
@@ -118,6 +120,7 @@ public class PrettyPrintStream implements IPrettyPrintStream {
 	 * @param endSeparator
 	 *            the separator ending to be appended
 	 */
+	@Override
 	public void appendString(String s, String begin,
 			String end, String beginSeparator, String endSeparator) {
 		StringTokenizer stringTokenizer = new StringTokenizer(s, "\n");
@@ -165,6 +168,7 @@ public class PrettyPrintStream implements IPrettyPrintStream {
 	 * Method that appends to the given string builder the end of indentation of
 	 * a given level.
 	 */
+	@Override
 	public void appendLevelEnd() {
 		switch (currentLevel) {
 		case 0:
@@ -189,6 +193,7 @@ public class PrettyPrintStream implements IPrettyPrintStream {
 	 * Method that appends to the given string builder the beginning of
 	 * indentation at a given level.
 	 */
+	@Override
 	public void appendLevelBegin() {
 		incrementLevel();
 		switch (currentLevel) {
@@ -210,6 +215,7 @@ public class PrettyPrintStream implements IPrettyPrintStream {
 		}
 	}
 
+	@Override
 	public void appendKeyword(String str) {
 		switch (currentLevel) {
 		case 0:
@@ -236,6 +242,7 @@ public class PrettyPrintStream implements IPrettyPrintStream {
 	 * Appends an empty line to the given stream hold by the given string
 	 * builder.
 	 */
+	@Override
 	public void appendEmptyLine() {
 		stringBuilder.append(AstConverter.EMPTY_LINE);
 	}

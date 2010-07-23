@@ -43,18 +43,22 @@ public class PORoot extends EventBRoot implements IPORoot{
 		return ELEMENT_TYPE;
 	}
 
+	@Override
 	public IPOPredicateSet getPredicateSet(String elementName) {
 		return getInternalElement(IPOPredicateSet.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public IPOSequent[] getSequents() throws RodinDBException {
 		return getChildrenOfType(IPOSequent.ELEMENT_TYPE); 
 	}
 
+	@Override
 	public IPOPredicateSet[] getPredicateSets() throws RodinDBException {
 		return getChildrenOfType(POPredicateSet.ELEMENT_TYPE);
 	}
 
+	@Override
 	public IPOSequent getSequent(String elementName) {
 		return getInternalElement(IPOSequent.ELEMENT_TYPE, elementName);
 	}

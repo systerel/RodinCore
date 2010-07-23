@@ -25,6 +25,7 @@ class SaveProofComponentOperation implements IWorkspaceRunnable {
 		this.force = force;
 	}
 
+	@Override
 	public void run(IProgressMonitor pm) throws CoreException {
 		try {
 			pm.beginTask("Saving proof files", 2);

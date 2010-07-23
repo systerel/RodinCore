@@ -51,6 +51,7 @@ public class EventBFormText extends EventBControl implements IEventBFormText {
 	 * 
 	 * @see org.eventb.internal.ui.IEventBFormText#getFormText()
 	 */
+	@Override
 	public FormText getFormText() {
 		return (FormText) getControl();
 	}

@@ -46,6 +46,7 @@ public class UnusedComputer implements IWorkspaceRunnable {
 		this.unusedFiles = unusedProofFiles;
 	}
 	
+	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
 		progress.beginTask(Messages.proofpurger_computingunusedproofs, 100);

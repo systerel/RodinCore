@@ -143,6 +143,7 @@ public class SearchHypothesisPage extends HypothesisPage implements
 	/**
 	 * Set the current searched hypothesis string
 	 */
+	@Override
 	public void setPattern(String input) {
 		searchBox.setSearchedText(input);
 	}
@@ -154,6 +155,7 @@ public class SearchHypothesisPage extends HypothesisPage implements
 		return searchBox.getSearchedText();
 	}
 
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(P_CONSIDER_HIDDEN_HYPOTHESES)) {
 			final Object newValue = event.getNewValue();

@@ -56,6 +56,7 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 	public static final IModuleType<MachineVariantModule> MODULE_TYPE = SCCore
 			.getModuleType(EventBPlugin.PLUGIN_ID + ".machineVariantModule"); //$NON-NLS-1$
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
@@ -140,6 +141,7 @@ public class MachineVariantModule extends ExpressionModule<IVariant> {
 	 * , org.rodinp.core.IInternalElement, org.eventb.core.sc.IStateRepository,
 	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {

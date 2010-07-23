@@ -41,6 +41,7 @@ public abstract class State implements IState {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.state.IState#isImmutable()
 	 */
+	@Override
 	public final boolean isImmutable() {
 		return immutable;
 	}
@@ -48,6 +49,7 @@ public abstract class State implements IState {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.state.IState#makeImmutable()
 	 */
+	@Override
 	public void makeImmutable() {
 		immutable = true;
 	}

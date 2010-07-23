@@ -49,57 +49,70 @@ public class SCContextRoot extends EventBRoot implements ISCContextRoot{
 	}
 
 
+	@Override
 	public ISCCarrierSet[] getSCCarrierSets() 
 	throws RodinDBException {
 		return getChildrenOfType(ISCCarrierSet.ELEMENT_TYPE); 
 	}
 	
+	@Override
 	public ISCConstant[] getSCConstants() throws RodinDBException {
 		return getChildrenOfType(ISCConstant.ELEMENT_TYPE); 
 	}
 
+	@Override
 	public ISCAxiom[] getSCAxioms() throws RodinDBException {
 		return getChildrenOfType(ISCAxiom.ELEMENT_TYPE); 
 	}
 
+	@Override
 	@Deprecated
 	public org.eventb.core.ISCTheorem[] getSCTheorems() throws RodinDBException {
 		return getChildrenOfType(org.eventb.core.ISCTheorem.ELEMENT_TYPE); 
 	}
 
+	@Override
 	public ISCInternalContext[] getAbstractSCContexts() throws RodinDBException {
 		return getChildrenOfType(ISCInternalContext.ELEMENT_TYPE); 
 	}
 	
+	@Override
 	public ISCExtendsContext getSCExtendsClause(String elementName) {
 		return getInternalElement(ISCExtendsContext.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public ISCExtendsContext[] getSCExtendsClauses() throws RodinDBException {
 		return getChildrenOfType(ISCExtendsContext.ELEMENT_TYPE); 
 	}
 
+	@Override
 	public ISCInternalContext getSCInternalContext(String elementName) {
 		return getInternalElement(ISCInternalContext.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public ISCAxiom getSCAxiom(String elementName) {
 		return getInternalElement(ISCAxiom.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public ISCCarrierSet getSCCarrierSet(String elementName) {
 		return getInternalElement(ISCCarrierSet.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public ISCConstant getSCConstant(String elementName) {
 		return getInternalElement(ISCConstant.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	@Deprecated
 	public org.eventb.core.ISCTheorem getSCTheorem(String elementName) {
 		return getInternalElement(org.eventb.core.ISCTheorem.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public ITypeEnvironment getTypeEnvironment(FormulaFactory factory)
 			throws RodinDBException {
 		

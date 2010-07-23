@@ -123,10 +123,12 @@ public class CComboEditComposite extends AbstractEditComposite {
 			
 			combo.addSelectionListener(new SelectionListener() {
 
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 					widgetSelected(e);
 				}
 
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					commit();
 					resetCComboValues(combo, manipulation, element, required);
@@ -156,6 +158,7 @@ public class CComboEditComposite extends AbstractEditComposite {
 		}
 	}
 
+	@Override
 	public void edit(int charStart, int charEnd) {
 		combo.setFocus();
 		if (charStart != -1 && charEnd != -1)

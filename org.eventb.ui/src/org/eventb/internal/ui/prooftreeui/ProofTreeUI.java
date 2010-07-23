@@ -123,6 +123,7 @@ public class ProofTreeUI extends PageBookView implements ISelectionProvider,
 	 * 
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
+	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		getSelectionProvider().addSelectionChangedListener(listener);
 	}
@@ -132,6 +133,7 @@ public class ProofTreeUI extends PageBookView implements ISelectionProvider,
 	 * 
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
 	 */
+	@Override
 	public ISelection getSelection() {
 		// get the selection from the selection provider
 		return getSelectionProvider().getSelection();
@@ -142,6 +144,7 @@ public class ProofTreeUI extends PageBookView implements ISelectionProvider,
 	 * 
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
+	@Override
 	public void removeSelectionChangedListener(
 			ISelectionChangedListener listener) {
 		getSelectionProvider().removeSelectionChangedListener(listener);
@@ -152,6 +155,7 @@ public class ProofTreeUI extends PageBookView implements ISelectionProvider,
 	 * 
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void setSelection(ISelection selection) {
 		getSelectionProvider().setSelection(selection);
 	}
@@ -161,6 +165,7 @@ public class ProofTreeUI extends PageBookView implements ISelectionProvider,
 	 * 
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		getSelectionProvider().selectionChanged(event);
 	}

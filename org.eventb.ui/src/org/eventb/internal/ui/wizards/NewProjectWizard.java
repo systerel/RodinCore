@@ -91,6 +91,7 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 		final String projectName = page.getProjectName();
 		final IWorkingSet[] workingSets = page.getWorkingSets();
 		final IRunnableWithProgress op = new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException {
 				try {
@@ -149,6 +150,7 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 
 			RodinCore.run(new IWorkspaceRunnable() {
 
+				@Override
 				public void run(IProgressMonitor pMonitor) throws CoreException {
 					IProject project = rodinProject.getProject();
 					if (!project.exists())
@@ -190,6 +192,7 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench,
 	 *      org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void init(IWorkbench wb, IStructuredSelection sel) {
 		this.workbench = wb;
 		this.selection = sel;

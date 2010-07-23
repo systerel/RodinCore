@@ -51,6 +51,7 @@ public abstract class SCIdentifierElement extends EventBElement
 		return getElementName();
 	}
 
+	@Override
 	@Deprecated
 	public String getIdentifierName() throws RodinDBException {
 		return getElementName();
@@ -59,6 +60,7 @@ public abstract class SCIdentifierElement extends EventBElement
 		super(name, parent);
 	}
 	
+	@Override
 	public Type getType(FormulaFactory factory) 
 	throws RodinDBException {
 		String contents = getAttributeValue(EventBAttributes.TYPE_ATTRIBUTE);
@@ -72,15 +74,18 @@ public abstract class SCIdentifierElement extends EventBElement
 		return parserResult.getParsedType();
 	}
 
+	@Override
 	public void setType(Type type, IProgressMonitor monitor) throws RodinDBException {
 		setAttributeValue(EventBAttributes.TYPE_ATTRIBUTE, type.toString(), monitor);
 	}
 
+	@Override
 	@Deprecated
 	public void setType(Type type) throws RodinDBException {
 		setType(type, null);
 	}
 
+	@Override
 	public FreeIdentifier getIdentifier(FormulaFactory factory)
 			throws RodinDBException {
 

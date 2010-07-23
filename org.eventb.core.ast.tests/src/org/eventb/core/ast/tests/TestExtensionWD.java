@@ -72,6 +72,7 @@ public class TestExtensionWD extends AbstractTests {
 			this.conjoinChildrenWD = conjoinChildrenWD;
 		}
 
+		@Override
 		public Type getType(ITypeMediator mediator,
 				ExtendedExpression expression) {
 			final Expression[] children = expression.getChildExpressions();
@@ -85,6 +86,7 @@ public class TestExtensionWD extends AbstractTests {
 			return resultType;
 		}
 
+		@Override
 		public Type typeCheck(ITypeCheckMediator tcMediator,
 				ExtendedExpression expression) {
 			final Expression[] children = expression.getChildExpressions();
@@ -95,32 +97,39 @@ public class TestExtensionWD extends AbstractTests {
 			return resultType;
 		}
 
+		@Override
 		public void addCompatibilities(ICompatibilityMediator mediator) {
 			mediator.addCompatibility(getId(), getId());
 		}
 
+		@Override
 		public void addPriorities(IPriorityMediator mediator) {
 			// no priority to add
 		}
 
+		@Override
 		public String getGroupId() {
 			return "Arithmetic";
 		}
 
+		@Override
 		public String getId() {
 			return OPERATOR_ID;
 		}
 
+		@Override
 		public IExtensionKind getKind() {
 			return PARENTHESIZED_BINARY_EXPRESSION;
 		}
 
+		@Override
 		public String getSyntaxSymbol() {
 			return SYNTAX_SYMBOL;
 		}
 
 		// BTRUE if the first child is an integer literal
 		// else BFALSE 
+		@Override
 		public Predicate getWDPredicate(IWDMediator wdMediator,
 				IExtendedFormula formula) {
 			final Expression firstChild = formula.getChildExpressions()[0];
@@ -133,6 +142,7 @@ public class TestExtensionWD extends AbstractTests {
 			}
 		}
 
+		@Override
 		public boolean conjoinChildrenWD() {
 			return conjoinChildrenWD;
 		}

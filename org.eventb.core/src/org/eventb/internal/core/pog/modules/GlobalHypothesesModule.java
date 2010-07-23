@@ -112,6 +112,7 @@ public abstract class GlobalHypothesesModule extends UtilityModule {
 		predicate.setSource(((ITraceableElement) element).getSource(), monitor);
 	}
 
+	@Override
 	public void process(
 			IRodinElement element, 
 			IPOGStateRepository repository,

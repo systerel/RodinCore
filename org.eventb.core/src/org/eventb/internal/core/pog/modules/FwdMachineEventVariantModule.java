@@ -49,10 +49,12 @@ public class FwdMachineEventVariantModule extends MachineEventActionUtilityModul
 	public static final IModuleType<FwdMachineEventVariantModule> MODULE_TYPE = 
 		POGCore.getModuleType(EventBPlugin.PLUGIN_ID + ".fwdMachineEventVariantModule"); //$NON-NLS-1$
 	
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
 
+	@Override
 	public void process(IRodinElement element, IPOGStateRepository repository,
 			IProgressMonitor monitor)
 			throws CoreException {

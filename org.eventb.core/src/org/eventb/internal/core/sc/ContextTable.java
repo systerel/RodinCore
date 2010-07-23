@@ -35,6 +35,7 @@ public class ContextTable extends State implements IContextTable {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
@@ -42,6 +43,7 @@ public class ContextTable extends State implements IContextTable {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IContextTable#addContext(java.lang.String, org.eventb.core.ISCContext)
 	 */
+	@Override
 	public void addContext(String name, ISCContext context) throws CoreException {
 		assertMutable();
 		contexts.put(name, context);
@@ -50,6 +52,7 @@ public class ContextTable extends State implements IContextTable {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IContextTable#containsContext(java.lang.String)
 	 */
+	@Override
 	public boolean containsContext(String name) {
 		return contexts.containsKey(name);
 	}
@@ -57,10 +60,12 @@ public class ContextTable extends State implements IContextTable {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IContextTable#getContext(java.lang.String)
 	 */
+	@Override
 	public ISCContext getContext(String name) {
 		return contexts.get(name);
 	}
 
+	@Override
 	public int size() {
 		return contexts.size();
 	}

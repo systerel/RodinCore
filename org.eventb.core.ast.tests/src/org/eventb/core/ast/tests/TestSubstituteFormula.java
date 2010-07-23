@@ -322,21 +322,25 @@ public class TestSubstituteFormula extends AbstractTests {
 	
 	PredicateBuilder[] spa = new PredicateBuilder[] {
 			new PredicateBuilder() {
+				@Override
 				public Predicate build(Predicate child) {
 					return child;
 				}
 			},
 			new PredicateBuilder() {
+				@Override
 				public Predicate build(Predicate child) {
 					return forall(BDI("w"), limp(in(bdi(0), INTEGER), child));
 				}
 			},
 			new PredicateBuilder() {
+				@Override
 				public Predicate build(Predicate child) {
 					return exists(BDI("e", "f"), limp(eq(plus(bdi(1),bdi(0)),num(1)), child));
 				}
 			},
 			new PredicateBuilder() {
+				@Override
 				public Predicate build(Predicate child) {
 					return exists(BDI("e", "f"), limp(eq(plus(bdi(1),bdi(0)),num(1)), child));
 				}

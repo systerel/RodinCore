@@ -25,6 +25,7 @@ public class DefaultImageProvider implements IImageProvider {
 		this.img = img;
 	}
 
+	@Override
 	public ImageDescriptor getImageDescriptor(IRodinElement element) {
 		return img;
 	}

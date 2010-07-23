@@ -80,6 +80,7 @@ public class ProofTreeUIActionGroup extends ActionGroup {
 			final IUserSupport us = proofTreeUI.getUserSupport();
 			final Shell shell = proofTreeUI.getControl().getShell();
 			UIUtils.runWithProgressDialog(shell, new IRunnableWithProgress() {
+				@Override
 				public void run(IProgressMonitor monitor)
 						throws InvocationTargetException {
 					try {

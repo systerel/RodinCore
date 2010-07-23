@@ -87,6 +87,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	 * 
 	 * @return the descriptor for the given element type
 	 */
+	@Override
 	public IElementDesc getElementDesc(IElementType<?> type) {
 		return elementDescs.get(type);
 	}
@@ -99,10 +100,12 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	 * 
 	 * @return the descriptor for the given element
 	 */
+	@Override
 	public IElementDesc getElementDesc(IRodinElement element) {
 		return getElementDesc(element.getElementType());
 	}
 
+	@Override
 	public String getValueAtColumn(IRodinElement element, Column column) {
 		final IElementDesc desc = getElementDesc(element);
 		if (desc == null)

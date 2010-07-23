@@ -31,6 +31,7 @@ extends PredicateTable<ISCInvariant> implements IMachineInvariantTable {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}

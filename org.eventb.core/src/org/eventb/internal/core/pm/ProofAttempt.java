@@ -78,22 +78,27 @@ public class ProofAttempt implements IProofAttempt, IElementChangedListener {
 		return component.getPORoot().getSequent(name);
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public String getOwner() {
 		return owner;
 	}
 
+	@Override
 	public ProofComponent getComponent() {
 		return component;
 	}
 
+	@Override
 	public FormulaFactory getFormulaFactory() {
 		return ff;
 	}
 	
+	@Override
 	public synchronized void dispose() {
 		if (!disposed) {
 			RodinCore.removeElementChangedListener(this);
@@ -107,19 +112,23 @@ public class ProofAttempt implements IProofAttempt, IElementChangedListener {
 		return "ProofAttempt(" + component + "|" + name + "|" + owner + ")";
 	}
 
+	@Override
 	public boolean isDisposed() {
 		return disposed;
 	}
 
+	@Override
 	public IProofTree getProofTree() {
 		return proofTree;
 	}
 
+	@Override
 	public void commit(boolean manual, IProgressMonitor monitor)
 			throws RodinDBException {
 		commit(manual, false, monitor);
 	}
 
+	@Override
 	public void commit(boolean manual, boolean simplify,
 			IProgressMonitor monitor) throws RodinDBException {
 		if (isDisposed()) {
@@ -134,10 +143,12 @@ public class ProofAttempt implements IProofAttempt, IElementChangedListener {
 		return getComponent().getProof(name);
 	}
 
+	@Override
 	public IPSStatus getStatus() {
 		return getComponent().getStatus(name);
 	}
 
+	@Override
 	public boolean isBroken() throws RodinDBException {
 		if (!broken) {
 			broken |= checkBroken();
@@ -159,6 +170,7 @@ public class ProofAttempt implements IProofAttempt, IElementChangedListener {
 		}
 	}
 
+	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		final IPOSequent poSequent = getPOSequent();
 		final IRodinElementDelta delta = event.getDelta();

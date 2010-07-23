@@ -84,7 +84,8 @@ public class RodinProjectSelectionDialog extends SelectionDialog {
         Composite area = (Composite) super.createDialogArea(parent);
 
         Listener listener = new Listener() {
-            public void handleEvent(Event event) {
+            @Override
+			public void handleEvent(Event event) {
                 if (statusMessage != null && validator != null) {
                     String errorMsg = validator.isValid(group
                             .getProject());

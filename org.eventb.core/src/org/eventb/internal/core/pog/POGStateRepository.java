@@ -32,6 +32,7 @@ public class POGStateRepository extends StateRepository<IPOGState> implements IP
 		this.target = target;
 	}
 
+	@Override
 	public IPORoot getTarget() {
 		return target;
 	}

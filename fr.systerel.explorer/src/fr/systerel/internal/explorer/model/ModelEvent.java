@@ -36,10 +36,12 @@ public class ModelEvent extends ModelPOContainer {
 		return internalEvent;
 	}
 
+	@Override
 	public IRodinElement getInternalElement() {
 		return internalEvent;
 	}
 
+	@Override
 	public Object getParent(boolean complex) {
 		if (parent instanceof ModelMachine ) {
 			return ((ModelMachine) parent).event_node;
@@ -48,6 +50,7 @@ public class ModelEvent extends ModelPOContainer {
 	}
 
 
+	@Override
 	public Object[] getChildren(IInternalElementType<?> type, boolean complex) {
 		if (type != IPSStatus.ELEMENT_TYPE) {
 			if (ExplorerUtils.DEBUG) {

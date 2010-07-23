@@ -37,10 +37,12 @@ public abstract class SymbolTable<E extends IInternalElement, T extends IInterna
 		tableValues = new TreeSet<I>();
 	}
 
+	@Override
 	public boolean containsKey(String symbol) {
 		return table.containsKey(symbol);
 	}
 
+	@Override
 	public I getSymbolInfo(String symbol) {
 		return table.get(symbol);
 	}
@@ -50,6 +52,7 @@ public abstract class SymbolTable<E extends IInternalElement, T extends IInterna
 				.newCoreException("Attempt to insert symbol into symbol table more than once");
 	}
 
+	@Override
 	public void putSymbolInfo(I symbolInfo) throws CoreException {
 
 		String key = symbolInfo.getSymbol();

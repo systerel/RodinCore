@@ -43,6 +43,7 @@ import org.rodinp.core.IRodinProject;
  */
 public class EditorManager implements IElementChangedListener {
 
+	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		handleDelta(event.getDelta());
 	}
@@ -146,6 +147,7 @@ public class EditorManager implements IElementChangedListener {
 				final IEditorReference[] array = new IEditorReference[size];
 				editorsToClose.toArray(array);
 				display.asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						page.closeEditors(array, false);
 					}

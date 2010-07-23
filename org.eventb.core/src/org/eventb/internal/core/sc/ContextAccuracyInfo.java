@@ -20,6 +20,7 @@ public class ContextAccuracyInfo extends AccuracyInfo implements
 	/* (non-Javadoc)
 	 * @see org.eventb.core.tool.state.IState#getStateType()
 	 */
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}

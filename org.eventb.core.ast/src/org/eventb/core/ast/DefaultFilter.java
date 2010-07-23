@@ -25,50 +25,62 @@ package org.eventb.core.ast;
  */
 public class DefaultFilter implements IFormulaFilter2 {
 
+	@Override
 	public boolean select(AssociativeExpression expression) {
 		return false;
 	}
 
+	@Override
 	public boolean select(AssociativePredicate predicate) {
 		return false;
 	}
 
+	@Override
 	public boolean select(AtomicExpression expression) {
 		return false;
 	}
 
+	@Override
 	public boolean select(BinaryExpression expression) {
 		return false;
 	}
 
+	@Override
 	public boolean select(BinaryPredicate predicate) {
 		return false;
 	}
 
+	@Override
 	public boolean select(BoolExpression expression) {
 		return false;
 	}
 
+	@Override
 	public boolean select(BoundIdentDecl decl) {
 		return false;
 	}
 
+	@Override
 	public boolean select(BoundIdentifier identifier) {
 		return false;
 	}
 
+	@Override
 	public boolean select(FreeIdentifier identifier) {
 		return false;
 	}
 
+	@Override
 	public boolean select(IntegerLiteral literal) {
 		return false;
 	}
 
+	@Override
 	public boolean select(LiteralPredicate predicate) {
 		return false;
 	}
 
+	@Override
 	public boolean select(MultiplePredicate predicate) {
 		return false;
 	}
@@ -76,34 +88,42 @@ public class DefaultFilter implements IFormulaFilter2 {
 	/**
 	 * @since 1.2
 	 */
+	@Override
 	public boolean select(PredicateVariable predVar) {
 		return false;
 	}
 
+	@Override
 	public boolean select(QuantifiedExpression expression) {
 		return false;
 	}
 
+	@Override
 	public boolean select(QuantifiedPredicate predicate) {
 		return false;
 	}
 
+	@Override
 	public boolean select(RelationalPredicate predicate) {
 		return false;
 	}
 
+	@Override
 	public boolean select(SetExtension expression) {
 		return false;
 	}
 
+	@Override
 	public boolean select(SimplePredicate predicate) {
 		return false;
 	}
 
+	@Override
 	public boolean select(UnaryExpression expression) {
 		return false;
 	}
 
+	@Override
 	public boolean select(UnaryPredicate predicate) {
 		return false;
 	}
@@ -111,6 +131,7 @@ public class DefaultFilter implements IFormulaFilter2 {
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public boolean select(ExtendedExpression extendedExpression) {
 		return false;
 	}
@@ -118,6 +139,7 @@ public class DefaultFilter implements IFormulaFilter2 {
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public boolean select(ExtendedPredicate extendedPredicate) {
 		return false;
 	}

@@ -205,6 +205,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	/**
 	 * @see IProgressMonitor
 	 */
+	@Override
 	public void beginTask(String name, int totalWork) {
 		if (progressMonitor != null) {
 			progressMonitor.beginTask(name, totalWork);
@@ -323,6 +324,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	/**
 	 * @see IProgressMonitor
 	 */
+	@Override
 	public void done() {
 		if (progressMonitor != null) {
 			progressMonitor.done();
@@ -507,6 +509,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 		return this.modifiesResources() && this.getAttribute(HAS_MODIFIED_RESOURCE_ATTR) == TRUE; 
 	}
 	
+	@Override
 	public void internalWorked(double work) {
 		if (progressMonitor != null) {
 			progressMonitor.internalWorked(work);
@@ -516,6 +519,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	/**
 	 * @see IProgressMonitor
 	 */
+	@Override
 	public boolean isCanceled() {
 		if (progressMonitor != null) {
 			return progressMonitor.isCanceled();
@@ -690,6 +694,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	 * @see IWorkspaceRunnable
 	 * @exception RodinDBException if the operation fails
 	 */
+	@Override
 	public void run(IProgressMonitor monitor) throws RodinDBException {
 		RodinDBManager manager = RodinDBManager.getRodinDBManager();
 		DeltaProcessor deltaProcessor = manager.getDeltaProcessor();
@@ -794,6 +799,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	/**
 	 * @see IProgressMonitor
 	 */
+	@Override
 	public void setCanceled(boolean b) {
 		if (progressMonitor != null) {
 			progressMonitor.setCanceled(b);
@@ -808,6 +814,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	/**
 	 * @see IProgressMonitor
 	 */
+	@Override
 	public void setTaskName(String name) {
 		if (progressMonitor != null) {
 			progressMonitor.setTaskName(name);
@@ -816,6 +823,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	/**
 	 * @see IProgressMonitor
 	 */
+	@Override
 	public void subTask(String name) {
 		if (progressMonitor != null) {
 			progressMonitor.subTask(name);
@@ -838,6 +846,7 @@ public abstract class RodinDBOperation implements IWorkspaceRunnable, IProgressM
 	/**
 	 * @see IProgressMonitor
 	 */
+	@Override
 	public void worked(int work) {
 		if (progressMonitor != null) {
 			progressMonitor.worked(work);

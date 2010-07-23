@@ -48,6 +48,7 @@ public class ProofTreeUIContentProvider implements ITreeContentProvider,
 	 * 
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		// Do nothing
 
@@ -59,6 +60,7 @@ public class ProofTreeUIContentProvider implements ITreeContentProvider,
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 	 *      java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (oldInput != null && oldInput instanceof IProofTree) {
 			((IProofTree) oldInput).removeChangeListener(this);
@@ -75,6 +77,7 @@ public class ProofTreeUIContentProvider implements ITreeContentProvider,
 	 * 
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		IProofTree invisibleRoot = page.getInvisibleRoot();
 		IProofTreeNode root = page.getRoot();
@@ -103,6 +106,7 @@ public class ProofTreeUIContentProvider implements ITreeContentProvider,
 	 * 
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
+	@Override
 	public Object getParent(Object element) {
 		if (element instanceof IProofTreeNode) {
 			return ((IProofTreeNode) element).getParent();
@@ -115,6 +119,7 @@ public class ProofTreeUIContentProvider implements ITreeContentProvider,
 	 * 
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
+	@Override
 	public boolean hasChildren(Object element) {
 		return (getChildren(element).length != 0);
 	}
@@ -124,6 +129,7 @@ public class ProofTreeUIContentProvider implements ITreeContentProvider,
 	 * 
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
+	@Override
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof IProofTree) {
 			if (page.getInvisibleRoot() == null)
@@ -173,6 +179,7 @@ public class ProofTreeUIContentProvider implements ITreeContentProvider,
 	 * 
 	 * @see org.eventb.core.prover.IProofTreeChangedListener#proofTreeChanged(org.eventb.core.prover.IProofTreeDelta)
 	 */
+	@Override
 	public void proofTreeChanged(IProofTreeDelta delta) {
 		// TODO Auto-generated method stub
 //		ProofTreeUI.debug("Proof Tree Changed");

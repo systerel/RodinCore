@@ -137,6 +137,7 @@ public abstract class AssociativeTerm extends Term {
 		return false;
 	}
 
+	@Override
 	public int compareTo(Term o) {
 		if (equals(o))
 			return 0;

@@ -301,29 +301,35 @@ public class EditPage extends EventBEditorPage implements
 		
 		// Expand/Collapse all button
 		final IHyperlinkListener expandAllListener = new IHyperlinkListener() {
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				assert sectionComps != null;
 				for (ISectionComposite sectionComp : sectionComps) {
 					sectionComp.setExpand(true, true);
 				}
 			}
+			@Override
 			public void linkEntered(HyperlinkEvent e) {
 				// Do nothing
 			}
+			@Override
 			public void linkExited(HyperlinkEvent e) {
 				// Do nothing
 			}
 		};
 		final IHyperlinkListener collapseAllListener = new IHyperlinkListener() {
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				assert sectionComps != null;
 				for (ISectionComposite sectionComp : sectionComps) {
 					sectionComp.setExpand(false, true);
 				}
 			}
+			@Override
 			public void linkEntered(HyperlinkEvent e) {
 				// Do nothing
 			}
+			@Override
 			public void linkExited(HyperlinkEvent e) {
 				// Do nothing
 			}
@@ -434,6 +440,7 @@ public class EditPage extends EventBEditorPage implements
 	 * 
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
+	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		// Record the starting time.
 		long beforeTime = System.currentTimeMillis();
@@ -506,6 +513,7 @@ public class EditPage extends EventBEditorPage implements
 		Display display = form.getDisplay();
 		display.syncExec(new Runnable() {
 
+			@Override
 			public void run() {
 				// Do not redraw the page.
 				form.getBody().setRedraw(false);
@@ -789,6 +797,7 @@ public class EditPage extends EventBEditorPage implements
 		}
 	}
 	
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		Map<IRodinElement, Set<IAttributeType>> map = new HashMap<IRodinElement, Set<IAttributeType>>();
 		IFile file = getRodinInput().getResource();
@@ -858,6 +867,7 @@ public class EditPage extends EventBEditorPage implements
 		}
 		try {
 			display.syncExec(new Runnable() {
+				@Override
 				public void run() {
 					toRefreshPrefixMarker = new HashSet<ISectionComposite>();
 					for (Entry<IRodinElement, Set<IAttributeType>> entry : map

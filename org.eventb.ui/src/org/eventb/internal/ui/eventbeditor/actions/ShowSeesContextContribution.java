@@ -70,6 +70,7 @@ public class ShowSeesContextContribution extends ContributionItem {
 		menuItem.setImage(EventBImage.getImage(IEventBSharedImages.IMG_CONTEXT));
 
 		final Listener listener = new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				UIUtils.linkToEventBEditor(contextFile);
 			}

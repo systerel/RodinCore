@@ -34,10 +34,12 @@ public class ContextCommitIdentsModule extends SCProcessorModule {
 			.getModuleType(EventBPlugin.PLUGIN_ID
 					+ ".contextCommitIdentsModule"); //$NON-NLS-1$
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
 
+	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {

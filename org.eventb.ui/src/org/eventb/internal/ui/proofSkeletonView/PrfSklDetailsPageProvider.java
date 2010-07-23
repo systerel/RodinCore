@@ -38,6 +38,7 @@ public class PrfSklDetailsPageProvider implements IDetailsPageProvider {
 		return instance;
 	}
 
+	@Override
 	public Object getPageKey(Object object) {
 		if (object instanceof IProofTreeNode) {
 			return IProofTreeNode.class;
@@ -45,6 +46,7 @@ public class PrfSklDetailsPageProvider implements IDetailsPageProvider {
 		return null;
 	}
 
+	@Override
 	public IDetailsPage getPage(Object key) {
 		if (key == IProofTreeNode.class) {
 			return SequentDetailsPage.getDefault();

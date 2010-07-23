@@ -130,6 +130,7 @@ public class PSUpdater {
 	public void cleanup(IProgressMonitor ipm) throws RodinDBException {
 		final IProgressMonitor pm = definedProgressMonitor(ipm);
 		final ElementSorter.Mover<IPSStatus> mover = new ElementSorter.Mover<IPSStatus>() {
+			@Override
 			public void move(IPSStatus element, IPSStatus nextSibling)
 					throws RodinDBException {
 				final IProgressMonitor spm = new SubProgressMonitor(pm, 1);

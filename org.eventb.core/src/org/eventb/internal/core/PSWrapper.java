@@ -69,14 +69,17 @@ public class PSWrapper implements IPSWrapper {
 		this.loadedTrees = new HashMap<IPSStatus, StampedProofTree>();
 	}
 
+	@Override
 	public IRodinFile getPRFile() {
 		return prFile;
 	}
 
+	@Override
 	public IRodinFile getPSFile() {
 		return psFile;
 	}
 
+	@Override
 	public IPSStatus[] getPSStatuses() throws RodinDBException {
 		IPSRoot root = (IPSRoot) psFile.getRoot();
 		return root.getStatuses();
@@ -94,11 +97,13 @@ public class PSWrapper implements IPSWrapper {
 		return pt;
 	}
 	
+	@Override
 	public IProofTree getFreshProofTree(IPSStatus psStatus)
 			throws RodinDBException {
 		return createFreshProofTree(psStatus);
 	}
 
+	@Override
 	public IProofSkeleton getProofSkeleton(IPSStatus status,
 			IProgressMonitor monitor) throws RodinDBException {
 		final IPRProof prProof = status.getProof();
@@ -111,12 +116,14 @@ public class PSWrapper implements IPSWrapper {
 		return null;
 	}
 
+	@Override
 	@Deprecated
 	public void setProofTree(final IPSStatus status, final IProofTree pt,
 			IProgressMonitor monitor) throws RodinDBException {
 			setProofTree(status, pt, true, monitor);
 		}
 
+	@Override
 	@Deprecated
 	public void setProofTree(final IPSStatus status, final IProofTree pt,
 			final boolean hasManualProof, IProgressMonitor monitor)
@@ -155,6 +162,7 @@ public class PSWrapper implements IPSWrapper {
 		psFile.makeConsistent(null);
 	}
 
+	@Override
 	public void save(IProgressMonitor monitor, boolean force)
 			throws RodinDBException {
 		if (monitor == null) {
@@ -169,11 +177,13 @@ public class PSWrapper implements IPSWrapper {
 		}
 	}
 
+	@Override
 	public IPSStatus getPSStatus(String name) {
 		IPSRoot root = (IPSRoot) psFile.getRoot();
 		return root.getStatus(name);
 	}
 
+	@Override
 	public void updateStatus(final IPSStatus psStatus,
 			final boolean hasManualProof, final IProgressMonitor monitor)
 			throws RodinDBException {
@@ -187,6 +197,7 @@ public class PSWrapper implements IPSWrapper {
 		final IPRProof proof = psStatus.getProof();
 		final IEventBRoot psRoot = (IEventBRoot) psFile.getRoot();
 		final IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor pm) throws RodinDBException {
 				try {
 					pm.beginTask("Saving Proof", 4);

@@ -24,10 +24,12 @@ class POGSource implements IPOGSource {
 		this.source = source;
 	}
 	
+	@Override
 	public String getRole() {
 		return role;
 	}
 	
+	@Override
 	public IRodinElement getSource() {
 		return source;
 	}

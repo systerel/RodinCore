@@ -24,6 +24,7 @@ public class POContentProvider extends AbstractContentProvider {
 	}
 
 	// proof obligations can have multiple parents. return none at all.
+	@Override
 	public Object getParent(Object element) {
 		return null;
 	}

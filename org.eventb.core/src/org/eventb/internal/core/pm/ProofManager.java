@@ -54,6 +54,7 @@ public class ProofManager implements IProofManager {
 		known = new HashMap<IPSRoot, Reference<ProofComponent>>();
 	}
 
+	@Override
 	public synchronized IProofAttempt[] getProofAttempts() {
 		final List<ProofAttempt> res = new ArrayList<ProofAttempt>();
 		for (final Reference<ProofComponent> ref: known.values()) {
@@ -65,6 +66,7 @@ public class ProofManager implements IProofManager {
 		return res.toArray(new ProofAttempt[res.size()]);
 	}
 
+	@Override
 	public IProofComponent getProofComponent(IEventBRoot file) {
 		return internalGet(file.getPSRoot());
 	}

@@ -331,6 +331,7 @@ public class ProofInformationPage extends Page implements
 		return scrolledForm;
 	}
 
+	@Override
 	public void userSupportManagerChanged(final IUserSupportManagerDelta delta) {
 		if (ProofInformationUtils.DEBUG)
 			ProofInformationUtils.debug("Begin User Support Manager Changed");
@@ -365,6 +366,7 @@ public class ProofInformationPage extends Page implements
 		Display display = scrolledForm.getDisplay();
 		
 		display.syncExec(new Runnable() {
+			@Override
 			public void run() {
 				
 				if (scrolledForm.isDisposed())

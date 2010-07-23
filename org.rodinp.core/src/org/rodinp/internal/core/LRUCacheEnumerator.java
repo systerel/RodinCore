@@ -57,6 +57,7 @@ public class LRUCacheEnumerator<V> implements Enumeration<V> {
 	/**
 	 * Returns true if more elements exist.
 	 */
+	@Override
 	public boolean hasMoreElements() {
 		return fElementQueue != null;
 	}
@@ -64,6 +65,7 @@ public class LRUCacheEnumerator<V> implements Enumeration<V> {
 	/**
 	 * Returns the next element.
 	 */
+	@Override
 	public V nextElement() {
 		V temp = fElementQueue.fValue;
 		fElementQueue = fElementQueue.fNext;

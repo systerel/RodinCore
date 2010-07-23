@@ -25,10 +25,12 @@ import org.eventb.internal.ui.preferences.PreferenceConstants;
  */
 public class ShowPrefixPreferencePage implements IEditorActionDelegate {
 
+	@Override
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		// nothing to do
 	}
 
+	@Override
 	public void run(IAction action) {
 		final String pageId = PreferenceConstants.PREFIX_PREFERENCE_PAGE_ID;
 		final String[] displayedIds = new String[] { PREFIX_PREFERENCE_PAGE_ID };
@@ -37,6 +39,7 @@ public class ShowPrefixPreferencePage implements IEditorActionDelegate {
 		dialog.open();
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		return; // Do nothing
 	}

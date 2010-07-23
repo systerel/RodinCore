@@ -29,6 +29,7 @@ public class AtomicOperation extends AbstractEventBOperation {
 		void run(IProgressMonitor monitor, final IAdaptable info)
 				throws RodinDBException {
 			RodinCore.run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor m) throws RodinDBException {
 					doRun(m, info);
 				}

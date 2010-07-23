@@ -56,6 +56,7 @@ public class PredicateTable implements Iterable<PredicateLiteralDescriptor> {
 		return map.get(sort);
 	}
 
+	@Override
 	public Iterator<PredicateLiteralDescriptor> iterator() {
 		final Collection<PredicateLiteralDescriptor> vs = integerMap.values();
 		return Collections.unmodifiableCollection(vs).iterator();

@@ -66,6 +66,7 @@ public class EventBMath extends EventBControl implements IEventBInputText {
 		// intended behaviour.
 	}
 
+	@Override
 	public Text getTextWidget() {
 		return (Text) getControl();
 	}

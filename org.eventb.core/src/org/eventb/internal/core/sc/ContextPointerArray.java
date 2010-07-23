@@ -107,6 +107,7 @@ public class ContextPointerArray extends State implements IContextPointerArray {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IContextPointerArray#hasError(java.lang.String)
 	 */
+	@Override
 	public boolean hasError(int index) {
 		return error[index];
 	}
@@ -114,26 +115,32 @@ public class ContextPointerArray extends State implements IContextPointerArray {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 
+	@Override
 	public int size() {
 		return arraySize;
 	}
 
+	@Override
 	public int getPointerIndex(final String pointer) {
 		return indexMap.indexOf(pointer);
 	}
 
+	@Override
 	public IInternalElement getContextPointer(final int index) {
 		return contextPointers[index];
 	}
 
+	@Override
 	public IRodinFile getSCContextFile(final int index) {
 		return contextFiles[index];
 	}
 
+	@Override
 	public PointerType getContextPointerType() {
 		return pointerType;
 	}

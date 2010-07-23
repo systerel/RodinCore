@@ -36,16 +36,19 @@ public class RefinesMachineAbstractMachineNameAttributeManipulation extends
 		return (IRefinesMachine) element;
 	}
 
+	@Override
 	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		// do nothing
 	}
 
+	@Override
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asRefinesMachine(element).getAbstractMachineName();
 	}
 
+	@Override
 	public void setValue(IRodinElement element, String str,
 			IProgressMonitor monitor) throws RodinDBException {
 		IRefinesMachine ref = asRefinesMachine(element);
@@ -64,6 +67,7 @@ public class RefinesMachineAbstractMachineNameAttributeManipulation extends
 		}
 	}
 
+	@Override
 	public String[] getPossibleValues(IRodinElement element,
 			IProgressMonitor monitor) {
 		final IRefinesMachine refines = asRefinesMachine(element);
@@ -109,11 +113,13 @@ public class RefinesMachineAbstractMachineNameAttributeManipulation extends
 		}
 	}
 
+	@Override
 	public void removeAttribute(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		asRefinesMachine(element).removeAttribute(TARGET_ATTRIBUTE, monitor);
 	}
 
+	@Override
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asRefinesMachine(element).hasAbstractMachineName();

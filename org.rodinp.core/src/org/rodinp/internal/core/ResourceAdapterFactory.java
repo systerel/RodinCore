@@ -28,6 +28,7 @@ public class ResourceAdapterFactory implements IAdapterFactory {
 		IRodinElement.class,
 	};
 	
+	@Override
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (IRodinElement.class.equals(adapterType)) {
 			return RodinCore.valueOf((IResource) adaptableObject);
@@ -35,6 +36,7 @@ public class ResourceAdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public Class<IAdaptable>[] getAdapterList() {
 		return ADAPTERS;

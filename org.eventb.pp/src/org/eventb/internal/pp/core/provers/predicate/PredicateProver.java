@@ -107,6 +107,7 @@ public class PredicateProver implements IProverModule {
 		return nextClause;
 	}
 	
+	@Override
 	public ProverResult next(boolean force) {
 		if (!force && !isNextAvailable()) return ProverResult.EMPTY_RESULT; 
 		if (!initializeNonUnitResolver()) return ProverResult.EMPTY_RESULT;
@@ -156,6 +157,7 @@ public class PredicateProver implements IProverModule {
 				&& !clause.hasConditions();
 	}
 	
+	@Override
 	public ProverResult addClauseAndDetectContradiction(Clause clause) {
 		if (isAcceptedUnitClause(clause)) {
 			unitClauses.add(clause);
@@ -170,6 +172,7 @@ public class PredicateProver implements IProverModule {
 		return ProverResult.EMPTY_RESULT;
 	}
 
+	@Override
 	public void removeClause(Clause clause) {
 		if (isAcceptedUnitClause(clause)) {
 			unitClauses.remove(clause);
@@ -205,11 +208,13 @@ public class PredicateProver implements IProverModule {
 		return false;
 	}
 
+	@Override
 	public ProverResult contradiction(Level oldLevel, Level newLevel, Set<Level> dependencies) {
 		// do nothing
 		return ProverResult.EMPTY_RESULT;
 	}
 
+	@Override
 	public void registerDumper(Dumper dumper) {
 		dumper.addDataStructure("PredicateFormula unit clauses", unitClauses.iterator());
 //		dumper.addObject("Current unit clause", new Object(){

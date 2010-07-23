@@ -49,23 +49,28 @@ public class MachineRoot extends EventBRoot implements IMachineRoot{
 		return ELEMENT_TYPE;
 	}
 
+	@Override
 	public IVariable[] getVariables() throws RodinDBException {
 		return getChildrenOfType(IVariable.ELEMENT_TYPE);
 	}
 	
+	@Override
 	@Deprecated
 	public org.eventb.core.ITheorem[] getTheorems() throws RodinDBException {
 		return getChildrenOfType(org.eventb.core.ITheorem.ELEMENT_TYPE);
 	}
 	
+	@Override
 	public IInvariant[] getInvariants() throws RodinDBException {
 		return getChildrenOfType(IInvariant.ELEMENT_TYPE);
 	}
 	
+	@Override
 	public IEvent[] getEvents() throws RodinDBException {
 		return getChildrenOfType(IEvent.ELEMENT_TYPE); 
 	}
 	
+	@Override
 	public ISeesContext[] getSeesClauses() throws RodinDBException {
 		return getChildrenOfType(ISeesContext.ELEMENT_TYPE); 
 	}
@@ -76,50 +81,61 @@ public class MachineRoot extends EventBRoot implements IMachineRoot{
 				Messages.database_MachineMultipleRefinesFailure);
 	}
 
+	@Override
 	@Deprecated
 	public IRefinesMachine getRefinesClause() throws RodinDBException {
 		return getRefinesClause( (IProgressMonitor) null);
 	}
 
+	@Override
 	@Deprecated
 	public IVariant getVariant() throws RodinDBException {
 		return getSingletonChild(IVariant.ELEMENT_TYPE,
 				Messages.database_MachineMultipleVariantFailure);
 	}
 
+	@Override
 	public IRefinesMachine[] getRefinesClauses() throws RodinDBException {
 		return getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
 	}
 
+	@Override
 	public IVariant[] getVariants() throws RodinDBException {
 		return getChildrenOfType(IVariant.ELEMENT_TYPE);
 	}
 
+	@Override
 	public IEvent getEvent(String elementName) {
 		return getInternalElement(IEvent.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public IInvariant getInvariant(String elementName) {
 		return getInternalElement(IInvariant.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public IRefinesMachine getRefinesClause(String elementName) {
 		return getInternalElement(IRefinesMachine.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public ISeesContext getSeesClause(String elementName) {
 		return getInternalElement(ISeesContext.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	@Deprecated
 	public org.eventb.core.ITheorem getTheorem(String elementName) {
 		return getInternalElement(org.eventb.core.ITheorem.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public IVariable getVariable(String elementName) {
 		return getInternalElement(IVariable.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public IVariant getVariant(String elementName) {
 		return getInternalElement(IVariant.ELEMENT_TYPE, elementName);
 	}

@@ -57,90 +57,105 @@ public class FilteringInspector implements IFormulaInspector<IPosition> {
 		acc.add(acc.getCurrentPosition());
 	}
 
+	@Override
 	public void inspect(AssociativeExpression expression, IAccumulator<IPosition> acc) {
 		if (filter.select(expression)) {
 			addCurrentPosition(acc);
 		}
 	}
 
+	@Override
 	public void inspect(AssociativePredicate predicate, IAccumulator<IPosition> acc) {
 		if (filter.select(predicate)) {
 			addCurrentPosition(acc);
 		}
 	}
 
+	@Override
 	public void inspect(AtomicExpression expression, IAccumulator<IPosition> acc) {
 		if (filter.select(expression)) {
 			addCurrentPosition(acc);
 		}
 	}
 
+	@Override
 	public void inspect(BinaryExpression expression, IAccumulator<IPosition> acc) {
 		if (filter.select(expression)) {
 			addCurrentPosition(acc);
 		}
 	}
 
+	@Override
 	public void inspect(BinaryPredicate predicate, IAccumulator<IPosition> acc) {
 		if (filter.select(predicate)) {
 			addCurrentPosition(acc);
 		}
 	}
 
+	@Override
 	public void inspect(BoolExpression expression, IAccumulator<IPosition> acc) {
 		if (filter.select(expression)) {
 			addCurrentPosition(acc);
 		}
 	}
 
+	@Override
 	public void inspect(BoundIdentDecl decl, IAccumulator<IPosition> acc) {
 		if (filter.select(decl)) {
 			addCurrentPosition(acc);
 		}
 	}
 
+	@Override
 	public void inspect(BoundIdentifier identifier, IAccumulator<IPosition> acc) {
 		if (filter.select(identifier)) {
 			addCurrentPosition(acc);
 		}
 	}
 
+	@Override
 	public void inspect(ExtendedExpression expr, IAccumulator<IPosition> acc) {
 		if (filter.select(expr)) {
 			addCurrentPosition(acc);
 		}
 	}
 
+	@Override
 	public void inspect(ExtendedPredicate predicate, IAccumulator<IPosition> acc) {
 		if (filter.select(predicate)) {
 			addCurrentPosition(acc);
 		}
 	}
 
+	@Override
 	public void inspect(FreeIdentifier identifier, IAccumulator<IPosition> acc) {
 		if (filter.select(identifier)) {
 			addCurrentPosition(acc);
 		}
 	}
 
+	@Override
 	public void inspect(IntegerLiteral literal, IAccumulator<IPosition> acc) {
 		if (filter.select(literal)) {
 			addCurrentPosition(acc);
 		}
 	}
 
+	@Override
 	public void inspect(LiteralPredicate predicate, IAccumulator<IPosition> acc) {
 		if (filter.select(predicate)) {
 			addCurrentPosition(acc);
 		}
 	}
 
+	@Override
 	public void inspect(MultiplePredicate predicate, IAccumulator<IPosition> acc) {
 		if (filter.select(predicate)) {
 			addCurrentPosition(acc);
 		}
 	}
 
+	@Override
 	public void inspect(PredicateVariable predicate, IAccumulator<IPosition> acc) {
 		if (filter instanceof IFormulaFilter2) {
 			final IFormulaFilter2 filter2 = (IFormulaFilter2) filter;
@@ -153,42 +168,49 @@ public class FilteringInspector implements IFormulaInspector<IPosition> {
 		}
 	}
 
+	@Override
 	public void inspect(QuantifiedExpression expression, IAccumulator<IPosition> acc) {
 		if (filter.select(expression)) {
 			addCurrentPosition(acc);
 		}
 	}
 
+	@Override
 	public void inspect(QuantifiedPredicate predicate, IAccumulator<IPosition> acc) {
 		if (filter.select(predicate)) {
 			addCurrentPosition(acc);
 		}
 	}
 
+	@Override
 	public void inspect(RelationalPredicate predicate, IAccumulator<IPosition> acc) {
 		if (filter.select(predicate)) {
 			addCurrentPosition(acc);
 		}
 	}
 
+	@Override
 	public void inspect(SetExtension expression, IAccumulator<IPosition> acc) {
 		if (filter.select(expression)) {
 			addCurrentPosition(acc);
 		}
 	}
 
+	@Override
 	public void inspect(SimplePredicate predicate, IAccumulator<IPosition> acc) {
 		if (filter.select(predicate)) {
 			addCurrentPosition(acc);
 		}
 	}
 
+	@Override
 	public void inspect(UnaryExpression expression, IAccumulator<IPosition> acc) {
 		if (filter.select(expression)) {
 			addCurrentPosition(acc);
 		}
 	}
 
+	@Override
 	public void inspect(UnaryPredicate predicate, IAccumulator<IPosition> acc) {
 		if (filter.select(predicate)) {
 			addCurrentPosition(acc);

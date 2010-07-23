@@ -29,6 +29,7 @@ public class UpgraderV1V2 {
 			// avoid synthetic accessor emulation
 		}
 
+		@Override
 		public String getNewValue(String formulaString) {
 			final IUpgradeResult<?> result = getUpgraded(formulaString);
 			if (!result.upgradeNeeded() || result.hasProblem()) {

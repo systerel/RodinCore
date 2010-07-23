@@ -38,6 +38,7 @@ public class EventPropagator implements IPropagator {
 
 	// Assumption: an event redeclaration occurs in a descendant of the concrete
 	// event
+	@Override
 	public IDeclaration getRelativeDeclaration(IOccurrence occurrence,
 			IIndexQuery query) {
 		ensureEventDeclaration(occurrence);

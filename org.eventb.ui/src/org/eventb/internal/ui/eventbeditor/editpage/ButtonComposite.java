@@ -93,6 +93,7 @@ public class ButtonComposite {
 
 		foldingHyperlink.addMouseTrackListener(new MouseTrackListener() {
 
+			@Override
 			public void mouseEnter(MouseEvent e) {
 				if (elementComp.isExpanded()) {
 					setHyperlinkImage(foldingHyperlink, EventBImage
@@ -103,10 +104,12 @@ public class ButtonComposite {
 				}
 			}
 
+			@Override
 			public void mouseExit(MouseEvent e) {
 				updateExpandStatus();
 			}
 
+			@Override
 			public void mouseHover(MouseEvent e) {
 				// Do nothing
 			}

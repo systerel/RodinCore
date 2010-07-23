@@ -83,11 +83,13 @@ public class ModuleFactory implements IModuleFactory {
 	IFilterModule[] NO_FILTERS = new IFilterModule[0];
 	IProcessorModule[] NO_PROCESSORS = new IProcessorModule[0];
 
+	@Override
 	public IFilterModule[] getFilterModules(IModuleType<?> parent) {
 		List<IFilterModule> list = getModules(filterMap, parent, "filter");
 		return list.toArray(NO_FILTERS);
 	}
 
+	@Override
 	public IProcessorModule[] getProcessorModules(IModuleType<?> parent) {
 		List<IProcessorModule> list = getModules(processorMap, parent, "processor");
 		return list.toArray(NO_PROCESSORS);
@@ -123,6 +125,7 @@ public class ModuleFactory implements IModuleFactory {
 		}
 	}
 
+	@Override
 	public IProcessorModule getRootModule(IInternalElementType<?> type) {
 		ModuleDesc<?> desc = rootMap.get(type);
 		if (desc == null)
@@ -163,6 +166,7 @@ public class ModuleFactory implements IModuleFactory {
 	}
 	
 	// debugging support
+	@Override
 	public String printModuleTree(IInternalElementType<?> type) {
 		StringBuffer buffer = new StringBuffer();
 		ModuleDesc<?> desc = rootMap.get(type);

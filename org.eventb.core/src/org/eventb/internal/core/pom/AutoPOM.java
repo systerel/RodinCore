@@ -60,6 +60,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 	
 	private static final IProofManager manager = EventBPlugin.getProofManager();
 	
+	@Override
 	public boolean run(IFile source, IFile target, IProgressMonitor pm)
 			throws RodinDBException {
 		
@@ -154,6 +155,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		}
 	}
 	
+	@Override
 	public void clean(IFile source, IFile target, IProgressMonitor monitor)
 			throws RodinDBException {
 		final IRodinFile psFile = RodinCore.valueOf(target);
@@ -163,6 +165,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		// Don't delete the PR file, it contains user proofs.
 	}
 
+	@Override
 	public void extract(IFile source, IGraph graph, IProgressMonitor monitor)
 			throws CoreException {
 		try {

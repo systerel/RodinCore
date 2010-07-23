@@ -51,6 +51,7 @@ public class MachineEventConvergenceModule extends SCFilterModule {
 	private IConvergenceElement.Convergence concreteCvg;
 	private IConvergenceElement.Convergence abstractCvg;
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
@@ -63,6 +64,7 @@ public class MachineEventConvergenceModule extends SCFilterModule {
 	 * org.eventb.core.sc.state.ISCStateRepository,
 	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public boolean accept(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 		IEvent event = (IEvent) element;

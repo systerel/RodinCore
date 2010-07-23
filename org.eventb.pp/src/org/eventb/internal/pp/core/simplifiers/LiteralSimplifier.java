@@ -43,11 +43,13 @@ public class LiteralSimplifier extends AbstractSimplifier {
 		this.context = context;
 	}
 	
+	@Override
 	public boolean canSimplify(Clause clause) {
 		if (!clause.isUnit()) return true;
 		return false;
 	}
 	
+	@Override
 	public Clause simplifyDisjunctiveClause(DisjunctiveClause clause) {
 		init(clause);
 		
@@ -63,6 +65,7 @@ public class LiteralSimplifier extends AbstractSimplifier {
 		else return cf.makeDisjunctiveClause(clause.getOrigin(),predicates,equalities,arithmetic,conditions);
 	}
 
+	@Override
 	public Clause simplifyEquivalenceClause(EquivalenceClause clause) {
 		init(clause);
 		

@@ -33,18 +33,22 @@ public class ProposalProvider implements IContentProposalProvider {
 			this.label = label;
 		}
 
+		@Override
 		public String getContent() {
 			return content;
 		}
 
+		@Override
 		public int getCursorPosition() {
 			return cursorPosition;
 		}
 
+		@Override
 		public String getDescription() {
 			return null;
 		}
 
+		@Override
 		public String getLabel() {
 			return label;
 		}
@@ -59,6 +63,7 @@ public class ProposalProvider implements IContentProposalProvider {
 		this.factory = null;
 	}
 
+	@Override
 	public IContentProposal[] getProposals(String contents, int position) {
 		final PrefixComputer pc = new PrefixComputer(contents, position, factory);
 		final String prefix = pc.getPrefix();

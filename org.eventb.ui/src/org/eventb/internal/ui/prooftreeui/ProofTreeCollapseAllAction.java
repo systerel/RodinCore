@@ -28,6 +28,7 @@ public class ProofTreeCollapseAllAction implements IViewActionDelegate {
 	 * 
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 		assert view instanceof ProofTreeUI;
 		fView = (ProofTreeUI) view;
@@ -38,6 +39,7 @@ public class ProofTreeCollapseAllAction implements IViewActionDelegate {
 	 * 
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		IPage currentPage = fView.getCurrentPage();
 		if (currentPage != null && currentPage instanceof ProofTreeUIPage) {
@@ -51,6 +53,7 @@ public class ProofTreeCollapseAllAction implements IViewActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
 	 *      org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		// Do nothing
 	}

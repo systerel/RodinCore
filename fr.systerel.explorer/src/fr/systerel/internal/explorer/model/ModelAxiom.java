@@ -36,10 +36,12 @@ public class ModelAxiom extends ModelPOContainer {
 		return internalAxiom;
 	}
 
+	@Override
 	public IRodinElement getInternalElement() {
 		return internalAxiom;
 	}
 
+	@Override
 	public Object getParent(boolean complex) {
 		if (parent instanceof ModelContext ) {
 			return ((ModelContext) parent).axiom_node;
@@ -48,6 +50,7 @@ public class ModelAxiom extends ModelPOContainer {
 	}
 
 
+	@Override
 	public Object[] getChildren(IInternalElementType<?> type, boolean complex) {
 		if (type != IPSStatus.ELEMENT_TYPE) {
 			if (ExplorerUtils.DEBUG) {

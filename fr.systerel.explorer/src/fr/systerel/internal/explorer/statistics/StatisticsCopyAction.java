@@ -69,6 +69,7 @@ public class StatisticsCopyAction extends Action implements ISelectionChangedLis
 		}
 	}
 
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		//disable the action for empty selections
 		if (event.getSelection().isEmpty()) {

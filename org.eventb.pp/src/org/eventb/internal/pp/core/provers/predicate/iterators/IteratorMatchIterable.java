@@ -32,6 +32,7 @@ public class IteratorMatchIterable implements IMatchIterable {
 	}
 
 	// returns the same instance all the time
+	@Override
 	public Iterator<Clause> iterator(PredicateLiteralDescriptor predicate, boolean isPositive) {
 		nonUnitClausesIterator.reset();
 		return new NiceIterator(predicate, isPositive, nonUnitClausesIterator);

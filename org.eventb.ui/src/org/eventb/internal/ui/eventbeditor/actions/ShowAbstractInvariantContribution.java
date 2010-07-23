@@ -100,6 +100,7 @@ public class ShowAbstractInvariantContribution extends ContributionItem {
 		else
 			inv = null;
 		Listener listener = new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				switch (event.type) {
 				case SWT.Selection:

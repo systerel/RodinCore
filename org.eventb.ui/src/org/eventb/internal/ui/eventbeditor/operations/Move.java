@@ -67,6 +67,7 @@ public class Move extends OperationLeaf {
 		move(newParent, newSibling, monitor);
 	}
 
+	@Override
 	public void setParent(IInternalElement element) {
 		// do nothing
 	}

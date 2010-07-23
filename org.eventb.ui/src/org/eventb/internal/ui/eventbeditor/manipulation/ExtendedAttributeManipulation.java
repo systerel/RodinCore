@@ -46,6 +46,7 @@ public class ExtendedAttributeManipulation extends
 			this.event = event;
 		}
 
+		@Override
 		public void run(IProgressMonitor pMonitor) throws RodinDBException {
 			event.setExtended(true, pMonitor);
 			final IInternalElement[] implicitChildren = getImplicitChildren(event);
@@ -84,6 +85,7 @@ public class ExtendedAttributeManipulation extends
 			this.event = event;
 		}
 
+		@Override
 		public void run(IProgressMonitor pMonitor) throws RodinDBException {
 			final IInternalElement[] implicitChildren = getImplicitChildren(event);
 			event.setExtended(false, pMonitor);
@@ -139,6 +141,7 @@ public class ExtendedAttributeManipulation extends
 		return (IEvent) element;
 	}
 	
+	@Override
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		final IEvent event = asEvent(element);
@@ -162,6 +165,7 @@ public class ExtendedAttributeManipulation extends
 	 * event.</li>
 	 * </ul>
 	 */
+	@Override
 	public void setValue(IRodinElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
 		final boolean extended = newValue.equals(TRUE);
@@ -175,10 +179,12 @@ public class ExtendedAttributeManipulation extends
 		}
 	}
 
+	@Override
 	public String[] getPossibleValues(IRodinElement element, IProgressMonitor monitor) {
 		return new String[] { FALSE, TRUE };
 	}
 
+	@Override
 	public void removeAttribute(IRodinElement element,
 			IProgressMonitor monitor) throws RodinDBException {
 		asEvent(element).removeAttribute(EXTENDED_ATTRIBUTE, monitor);
@@ -188,11 +194,13 @@ public class ExtendedAttributeManipulation extends
 	 * Default value for extended attribute is <code>false</code>, i.e.
 	 * non-extended.
 	 */
+	@Override
 	public void setDefaultValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		asEvent(element).setExtended(false, monitor);
 	}
 
+	@Override
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asEvent(element).hasExtended();

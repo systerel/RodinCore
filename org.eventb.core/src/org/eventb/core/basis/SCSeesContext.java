@@ -57,6 +57,7 @@ public class SCSeesContext extends EventBElement implements
 		return getAttributeValue(EventBAttributes.SCTARGET_ATTRIBUTE);
 	}
 
+	@Override
 	public ISCContextRoot getSeenSCContext() throws RodinDBException {
 		IRodinElement target = getSeenSCContextHandle();
 		if (target instanceof IRodinFile) {
@@ -69,6 +70,7 @@ public class SCSeesContext extends EventBElement implements
 				Messages.database_SCSeesContextTypeFailure, this);
 	}
 
+	@Override
 	public void setSeenSCContext(IRodinFile seenSCContext,
 			IProgressMonitor monitor) throws RodinDBException {
 

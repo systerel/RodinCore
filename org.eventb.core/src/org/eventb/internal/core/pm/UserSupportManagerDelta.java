@@ -16,14 +16,17 @@ public class UserSupportManagerDelta implements IUserSupportManagerDelta {
 	 */
 	protected static IUserSupportDelta[] emptyUserSupports = new IUserSupportDelta[] {};
 
+	@Override
 	public IUserSupportDelta[] getAddedUserSupports() {
 		return getUserSupportDeltaOfType(IUserSupportDelta.ADDED);
 	}
 
+	@Override
 	public IUserSupportDelta[] getRemovedUserSupports() {
 		return getUserSupportDeltaOfType(IUserSupportDelta.REMOVED);
 	}
 
+	@Override
 	public IUserSupportDelta[] getChangedUserSupports() {
 		return getUserSupportDeltaOfType(IUserSupportDelta.CHANGED);
 	}
@@ -48,6 +51,7 @@ public class UserSupportManagerDelta implements IUserSupportManagerDelta {
 		return childrenOfType;
 	}
 
+	@Override
 	public IUserSupportDelta[] getAffectedUserSupports() {
 		return affectedUserSupports;
 	}

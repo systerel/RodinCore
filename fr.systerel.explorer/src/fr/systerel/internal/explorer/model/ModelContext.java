@@ -395,6 +395,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	}
 	
 
+	@Override
 	public IRodinElement getInternalElement() {
 		return contextRoot;
 	}
@@ -433,6 +434,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	 * context. If none exist or in the non-complex version this returns the
 	 * containing project.
 	 */
+	@Override
 	public Object getParent(boolean complex) {
 		if (complex) {
 			if (extendsContexts.size() > 0) {
@@ -443,6 +445,7 @@ public class ModelContext extends ModelPOContainer implements IModelElement{
 	}
 
 
+	@Override
 	public Object[] getChildren(IInternalElementType<?> type, boolean complex) {
 
 		if (type == IContextRoot.ELEMENT_TYPE) {

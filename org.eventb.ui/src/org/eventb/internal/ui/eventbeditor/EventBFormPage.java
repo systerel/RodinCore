@@ -137,19 +137,23 @@ public abstract class EventBFormPage extends EventBEditorPage implements
 		part.setSelection(element);
 	}
 
+	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		getPart().getViewer().addSelectionChangedListener(listener);
 	}
 
+	@Override
 	public ISelection getSelection() {
 		return getPart().getViewer().getSelection();
 	}
 
+	@Override
 	public void removeSelectionChangedListener(
 			ISelectionChangedListener listener) {
 		getPart().getViewer().removeSelectionChangedListener(listener);
 	}
 
+	@Override
 	public void setSelection(ISelection selection) {
 		getPart().getViewer().setSelection(selection);
 	}	

@@ -175,6 +175,7 @@ public enum GraphProblem implements IRodinProblem {
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.IRodinProblem#getSeverity()
 	 */
+	@Override
 	public int getSeverity() {
 		return severity;
 	}
@@ -197,6 +198,7 @@ public enum GraphProblem implements IRodinProblem {
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.IRodinProblem#getErrorCode()
 	 */
+	@Override
 	public String getErrorCode() {
 		return errorCode;
 	}
@@ -204,6 +206,7 @@ public enum GraphProblem implements IRodinProblem {
 	/* (non-Javadoc)
 	 * @see org.rodinp.core.IRodinProblem#getLocalizedMessage(java.lang.Object[])
 	 */
+	@Override
 	public String getLocalizedMessage(Object[] args) {
 		return MessageFormat.format(message, args);
 	}

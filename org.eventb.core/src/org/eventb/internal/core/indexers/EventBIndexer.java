@@ -53,6 +53,7 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 	
 	protected IIndexingBridge currentBridge;
 
+	@Override
 	public final boolean index(IIndexingBridge bridge) {
 		this.currentBridge = bridge;
 		final IInternalElement root = bridge.getRootToIndex();
@@ -76,6 +77,7 @@ public abstract class EventBIndexer extends Cancellable implements IIndexer {
 	protected abstract void index(IInternalElement root)
 			throws RodinDBException;
 
+	@Override
 	public IRodinFile[] getDependencies(IInternalElement root) {
 		try {
 			return getDeps(root);

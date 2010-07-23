@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Text;
  */
 public class InsertHandler extends AbstractHandler {
 
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		final String insertText = event
 				.getParameter("org.eventb.ui.edit.insert.text");

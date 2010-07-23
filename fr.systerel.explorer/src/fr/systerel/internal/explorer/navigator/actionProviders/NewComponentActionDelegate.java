@@ -33,12 +33,15 @@ public class NewComponentActionDelegate implements IViewActionDelegate {
 
 	IViewPart view;
 	
+	@Override
 	public void init(IViewPart viewPart) {
 		this.view = viewPart;
 	}
 
+	@Override
 	public void run(IAction action) {
 		BusyIndicator.showWhile(view.getViewSite().getShell().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				IStructuredSelection sel = (IStructuredSelection) view.getViewSite().getSelectionProvider().getSelection();
 				//The wizard uses IRodinProjects not IProjects
@@ -61,6 +64,7 @@ public class NewComponentActionDelegate implements IViewActionDelegate {
 
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		// do nothing
 

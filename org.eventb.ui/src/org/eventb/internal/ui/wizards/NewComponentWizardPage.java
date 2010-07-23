@@ -81,6 +81,7 @@ public class NewComponentWizardPage extends WizardPage {
 	 * 
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -284,6 +285,7 @@ public class NewComponentWizardPage extends WizardPage {
 		/**
 		 * Ensures that both text fields are set correctly.
 		 */
+		@Override
 		public void modifyText(ModifyEvent e) {
 			projectValidator.validate(getProjectName());
 			if (projectValidator.hasError()) {

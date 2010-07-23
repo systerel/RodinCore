@@ -135,26 +135,32 @@ public class AbstractEventActionTable extends EventActionTable implements
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 
+	@Override
 	public List<BecomesEqualTo> getDisappearingWitnesses() {
 		return disappearingWitnesses;
 	}
 
+	@Override
 	public List<Assignment> getSimAssignments() {
 		return simAssignments;
 	}
 
+	@Override
 	public List<ISCAction> getSimActions() {
 		return simActions;
 	}
 
+	@Override
 	public int getIndexOfCorrespondingAbstract(int index) {
 		return correspondence.getIndexOfCorrespondingAbstract(index);
 	}
 
+	@Override
 	public int getIndexOfCorrespondingConcrete(int index) {
 		return correspondence.getIndexOfCorrespondingConcrete(index);
 	}

@@ -38,10 +38,12 @@ public class SimpleTracer implements ITracer {
 		}
 	}
 
+	@Override
 	public List<Predicate> getNeededHypotheses() {
 		return hypotheses;
 	}
 
+	@Override
 	public boolean isGoalNeeded() {
 		return goalNeeded;
 	}

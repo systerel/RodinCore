@@ -370,6 +370,7 @@ public class ModelProject implements IModelElement {
 	}
 	
 	
+	@Override
 	public IModelElement getModelParent() {
 		//The Project doesn't have a ModelElement parent
 		return null;
@@ -433,6 +434,7 @@ public class ModelProject implements IModelElement {
 		
 	}
 
+	@Override
 	public IRodinElement getInternalElement() {
 		return internalProject;
 	}
@@ -533,11 +535,13 @@ public class ModelProject implements IModelElement {
 	 * Always returns <code>null</code> since projects don't have a parent in
 	 * the model.
 	 */
+	@Override
 	public IModelElement getParent(boolean complex) {
 		return null;
 	}
 
 	
+	@Override
 	public Object[] getChildren(IInternalElementType<?> type, boolean complex) {
 		if (!complex) {
 			try {

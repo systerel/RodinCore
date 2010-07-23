@@ -200,6 +200,7 @@ public abstract class HypothesisPage extends Page implements
 	 * 
 	 * @see org.eventb.core.pm.IProofStateChangedListener#proofStateChanged(org.eventb.core.pm.IProofStateDelta)
 	 */
+	@Override
 	public void userSupportManagerChanged(final IUserSupportManagerDelta delta) {
 
 		if (ProverUIUtils.DEBUG)
@@ -231,6 +232,7 @@ public abstract class HypothesisPage extends Page implements
 		Display display = this.getSite().getShell().getDisplay();
 
 		display.syncExec(new Runnable() {
+			@Override
 			public void run() {
 
 				// Handle the case where the user support has changed.

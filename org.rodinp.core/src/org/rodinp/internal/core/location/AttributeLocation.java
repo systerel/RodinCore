@@ -30,6 +30,7 @@ public class AttributeLocation extends InternalLocation implements
 		this.attributeType = attributeType;
 	}
 
+	@Override
 	public IAttributeType getAttributeType() {
 		return attributeType;
 	}

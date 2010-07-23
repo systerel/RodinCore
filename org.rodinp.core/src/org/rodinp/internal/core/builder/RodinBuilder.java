@@ -87,6 +87,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 		 * 
 		 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
 		 */
+		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			final IResource resource = delta.getResource();
 			if (!doVisit(resource))
@@ -161,6 +162,7 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 		
 		final ProgressManager manager;
 		
+		@Override
 		public boolean visit(IResource resource) {
 			if (!doVisit(resource))
 				return false;

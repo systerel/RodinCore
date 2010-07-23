@@ -25,10 +25,12 @@ public class CompatibilityMediator implements ICompatibilityMediator {
 		this.grammar = grammar;
 	}
 
+	@Override
 	public void addCompatibility(String leftOpId, String rightOpId) {
 		grammar.addCompatibility(leftOpId, rightOpId);
 	}
 
+	@Override
 	public void addAssociativity(String opId) {
 		grammar.addAssociativity(opId);
 	}

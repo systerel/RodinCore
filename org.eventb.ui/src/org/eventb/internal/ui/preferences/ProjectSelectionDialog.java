@@ -119,6 +119,7 @@ public class ProjectSelectionDialog extends SelectionDialog {
 		projectViewer
 				.addSelectionChangedListener(new ISelectionChangedListener() {
 
+					@Override
 					public void selectionChanged(SelectionChangedEvent event) {
 						final ISelection sel = event.getSelection();
 						if (sel != null) {
@@ -190,14 +191,17 @@ public class ProjectSelectionDialog extends SelectionDialog {
 	public static class ProjectContentProvider implements
 			IStructuredContentProvider {
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return RodinCore.getRodinDB().getWorkspaceRoot().getProjects();
 		}
 
+		@Override
 		public void dispose() {
 			// nothing to do
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			// nothing to do
 		}

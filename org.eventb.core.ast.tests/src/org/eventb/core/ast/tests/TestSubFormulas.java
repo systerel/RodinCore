@@ -105,86 +105,107 @@ public class TestSubFormulas extends TestCase {
 			this.replacement = replacement;
 		}
 
+		@Override
 		public boolean select(AssociativeExpression expression) {
 			return searched.equals(expression);
 		}
 
+		@Override
 		public boolean select(AssociativePredicate predicate) {
 			return searched.equals(predicate);
 		}
 
+		@Override
 		public boolean select(AtomicExpression expression) {
 			return searched.equals(expression);
 		}
 
+		@Override
 		public boolean select(BinaryExpression expression) {
 			return searched.equals(expression);
 		}
 
+		@Override
 		public boolean select(BinaryPredicate predicate) {
 			return searched.equals(predicate);
 		}
 
+		@Override
 		public boolean select(BoolExpression expression) {
 			return searched.equals(expression);
 		}
 
+		@Override
 		public boolean select(BoundIdentDecl decl) {
 			return searched.equals(decl);
 		}
 
+		@Override
 		public boolean select(BoundIdentifier identifier) {
 			return searched.equals(identifier);
 		}
 
+		@Override
 		public boolean select(FreeIdentifier identifier) {
 			return searched.equals(identifier);
 		}
 
+		@Override
 		public boolean select(IntegerLiteral literal) {
 			return searched.equals(literal);
 		}
 
+		@Override
 		public boolean select(LiteralPredicate predicate) {
 			return searched.equals(predicate);
 		}
 
+		@Override
 		public boolean select(MultiplePredicate predicate) {
 			return searched.equals(predicate);
 		}
 
+		@Override
 		public boolean select(QuantifiedExpression expression) {
 			return searched.equals(expression);
 		}
 
+		@Override
 		public boolean select(QuantifiedPredicate predicate) {
 			return searched.equals(predicate);
 		}
 
+		@Override
 		public boolean select(RelationalPredicate predicate) {
 			return searched.equals(predicate);
 		}
 
+		@Override
 		public boolean select(SetExtension expression) {
 			return searched.equals(expression);
 		}
 
+		@Override
 		public boolean select(SimplePredicate predicate) {
 			return searched.equals(predicate);
 		}
 
+		@Override
 		public boolean select(UnaryExpression expression) {
 			return searched.equals(expression);
 		}
 
+		@Override
 		public boolean select(UnaryPredicate predicate) {
 			return searched.equals(predicate);
 		}
 
+		@Override
 		public boolean select(ExtendedExpression expression) {
 			return searched.equals(expression);
 		}
 
+		@Override
 		public boolean select(ExtendedPredicate predicate) {
 			return searched.equals(predicate);
 		}
@@ -198,6 +219,7 @@ public class TestSubFormulas extends TestCase {
 			super(searched, replacement);
 		}
 
+		@Override
 		public boolean select(PredicateVariable predVar) {
 			return searched.equals(predVar);
 		}
@@ -324,98 +346,122 @@ public class TestSubFormulas extends TestCase {
 			super();
 		}
 
+		@Override
 		public boolean autoFlatteningMode() {
 			return false;
 		}
 
+		@Override
 		public void enteringQuantifier(int nbOfDeclarations) {
 			// nothing to do
 		}
 
+		@Override
 		public FormulaFactory getFactory() {
 			return ff;
 		}
 
+		@Override
 		public void leavingQuantifier(int nbOfDeclarations) {
 			// nothing to do
 		}
 
+		@Override
 		public Expression rewrite(AssociativeExpression expression) {
 			return null;
 		}
 
+		@Override
 		public Predicate rewrite(AssociativePredicate predicate) {
 			return null;
 		}
 
+		@Override
 		public Expression rewrite(AtomicExpression expression) {
 			return null;
 		}
 
+		@Override
 		public Expression rewrite(BinaryExpression expression) {
 			return null;
 		}
 
+		@Override
 		public Predicate rewrite(BinaryPredicate predicate) {
 			return null;
 		}
 
+		@Override
 		public Expression rewrite(BoolExpression expression) {
 			return null;
 		}
 
+		@Override
 		public Expression rewrite(BoundIdentifier identifier) {
 			return null;
 		}
 
+		@Override
 		public Expression rewrite(FreeIdentifier identifier) {
 			return null;
 		}
 
+		@Override
 		public Expression rewrite(IntegerLiteral literal) {
 			return null;
 		}
 
+		@Override
 		public Predicate rewrite(LiteralPredicate predicate) {
 			return null;
 		}
 
+		@Override
 		public Predicate rewrite(MultiplePredicate predicate) {
 			return null;
 		}
 
+		@Override
 		public Expression rewrite(QuantifiedExpression expression) {
 			return null;
 		}
 
+		@Override
 		public Predicate rewrite(QuantifiedPredicate predicate) {
 			return null;
 		}
 
+		@Override
 		public Predicate rewrite(RelationalPredicate predicate) {
 			return null;
 		}
 
+		@Override
 		public Expression rewrite(SetExtension expression) {
 			return null;
 		}
 
+		@Override
 		public Predicate rewrite(SimplePredicate predicate) {
 			return null;
 		}
 
+		@Override
 		public Expression rewrite(UnaryExpression expression) {
 			return null;
 		}
 
+		@Override
 		public Predicate rewrite(UnaryPredicate predicate) {
 			return null;
 		}
 
+		@Override
 		public Expression rewrite(ExtendedExpression expression) {
 			return null;
 		}
 
+		@Override
 		public Predicate rewrite(ExtendedPredicate predicate) {
 			return null;
 		}

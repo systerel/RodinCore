@@ -53,14 +53,17 @@ public class SCMachineRoot extends EventBRoot implements ISCMachineRoot {
 		return ELEMENT_TYPE;
 	}
 
+	@Override
 	public ISCVariable[] getSCVariables() throws RodinDBException {
 		return getChildrenOfType(ISCVariable.ELEMENT_TYPE);
 	}
 
+	@Override
 	public ISCEvent[] getSCEvents() throws RodinDBException {
 		return getChildrenOfType(ISCEvent.ELEMENT_TYPE);
 	}
 
+	@Override
 	@Deprecated
 	public IRodinFile getAbstractSCMachine() throws RodinDBException {
 		ISCRefinesMachine machine = getRefinesClause();
@@ -70,31 +73,37 @@ public class SCMachineRoot extends EventBRoot implements ISCMachineRoot {
 			return machine.getAbstractSCMachine();
 	}
 
+	@Override
 	public ISCInternalContext[] getSCSeenContexts() throws RodinDBException {
 		return getChildrenOfType(ISCInternalContext.ELEMENT_TYPE);
 	}
 
+	@Override
 	public ISCInvariant[] getSCInvariants() throws RodinDBException {
 		return getChildrenOfType(ISCInvariant.ELEMENT_TYPE);
 	}
 
+	@Override
 	@Deprecated
 	public org.eventb.core.ISCTheorem[] getSCTheorems() throws RodinDBException {
 		return getChildrenOfType(org.eventb.core.ISCTheorem.ELEMENT_TYPE);
 	}
 
+	@Override
 	@Deprecated
 	public ISCRefinesMachine getRefinesClause() throws RodinDBException {
 		return getSingletonChild(ISCRefinesMachine.ELEMENT_TYPE,
 				Messages.database_SCMachineMultipleRefinesFailure);
 	}
 
+	@Override
 	@Deprecated
 	public ISCVariant getSCVariant() throws RodinDBException {
 		return getSingletonChild(ISCVariant.ELEMENT_TYPE,
 				Messages.database_SCMachineMultipleVariantFailure);
 	}
 
+	@Override
 	public IRodinFile[] getAbstractSCMachines() throws RodinDBException {
 		ISCRefinesMachine[] refinesMachines = getSCRefinesClauses();
 		final int length = refinesMachines.length;
@@ -105,51 +114,63 @@ public class SCMachineRoot extends EventBRoot implements ISCMachineRoot {
 		return machineFiles;
 	}
 
+	@Override
 	public ISCRefinesMachine[] getSCRefinesClauses() throws RodinDBException {
 		return getChildrenOfType(ISCRefinesMachine.ELEMENT_TYPE);
 	}
 
+	@Override
 	public ISCSeesContext[] getSCSeesClauses() throws RodinDBException {
 		return getChildrenOfType(ISCSeesContext.ELEMENT_TYPE);
 	}
 
+	@Override
 	public ISCVariant[] getSCVariants() throws RodinDBException {
 		return getChildrenOfType(ISCVariant.ELEMENT_TYPE);
 	}
 
+	@Override
 	public ISCEvent getSCEvent(String elementName) {
 		return getInternalElement(ISCEvent.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public ISCInvariant getSCInvariant(String elementName) {
 		return getInternalElement(ISCInvariant.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public ISCRefinesMachine getSCRefinesClause(String elementName) {
 		return getInternalElement(ISCRefinesMachine.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public ISCSeesContext getSCSeesClause(String elementName) {
 		return getInternalElement(ISCSeesContext.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	@Deprecated
 	public org.eventb.core.ISCTheorem getSCTheorem(String elementName) {
 		return getInternalElement(org.eventb.core.ISCTheorem.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public ISCVariable getSCVariable(String elementName) {
 		return getInternalElement(ISCVariable.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public ISCVariant getSCVariant(String elementName) {
 		return getInternalElement(ISCVariant.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public ISCInternalContext getSCSeenContext(String elementName) {
 		return getInternalElement(ISCInternalContext.ELEMENT_TYPE, elementName);
 	}
 
+	@Override
 	public ITypeEnvironment getTypeEnvironment(FormulaFactory factory)
 			throws RodinDBException {
 

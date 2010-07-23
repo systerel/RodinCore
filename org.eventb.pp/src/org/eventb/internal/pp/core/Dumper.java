@@ -73,10 +73,12 @@ public final class Dumper {
 			this.object = object;
 		}
 		
+		@Override
 		public String getName() {
 			return name;
 		}
 
+		@Override
 		public void output() {
 			debug(object.toString());
 		}
@@ -91,6 +93,7 @@ public final class Dumper {
 			this.iterator = iterator;
 		}
 		
+		@Override
 		public void output() {
 			iterator.reset();
 			while (iterator.hasNext()) {
@@ -98,6 +101,7 @@ public final class Dumper {
 			}
 		}
 
+		@Override
 		public String getName() {
 			return name;
 		}

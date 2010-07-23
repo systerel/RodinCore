@@ -33,15 +33,18 @@ public class NewProjectActionDelegate implements IViewActionDelegate {
 	private IViewPart view;
 	IStructuredSelection ssel;
 	
+	@Override
 	public void init(IViewPart viewPart) {
 		this.view = viewPart;
 	}
 
+	@Override
 	public void run(IAction action) {
 		final IViewSite site = view.getViewSite();
 		final Shell shell = site.getShell();
 		final IWorkbench workbench = site.getWorkbenchWindow().getWorkbench();
 		BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				NewProjectWizard wizard = new NewProjectWizard();
 				wizard.init(workbench, ssel);
@@ -52,6 +55,7 @@ public class NewProjectActionDelegate implements IViewActionDelegate {
 		});
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection sel) {
 		if (sel instanceof IStructuredSelection) {
 			this.ssel = (IStructuredSelection) sel;

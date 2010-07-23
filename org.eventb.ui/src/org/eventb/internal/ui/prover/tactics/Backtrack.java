@@ -10,11 +10,13 @@ import org.rodinp.core.RodinDBException;
 
 public class Backtrack implements IProofCommand {
 
+	@Override
 	public void apply(IUserSupport us, Predicate hyp, String[] inputs,
 			IProgressMonitor monitor) throws RodinDBException {
 		us.back(monitor);
 	}
 
+	@Override
 	public boolean isApplicable(IUserSupport us, Predicate hyp, String input) {
 		IProofState currentPO = us.getCurrentPO();
 		if (currentPO == null)

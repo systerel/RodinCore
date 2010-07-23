@@ -26,6 +26,7 @@ public class PRExprRef extends InternalElement implements IPRExprRef{
 		return ELEMENT_TYPE;
 	}
 
+	@Override
 	public Expression[] getExpressions(IProofStoreReader store)
 			throws RodinDBException {
 
@@ -44,6 +45,7 @@ public class PRExprRef extends InternalElement implements IPRExprRef{
 		return exprs;
 	}
 
+	@Override
 	public void setExpressions(Expression[] exprs, IProofStoreCollector store,
 			IProgressMonitor monitor) throws RodinDBException {
 		

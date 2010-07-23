@@ -27,6 +27,7 @@ import org.rodinp.core.builder.IGraph;
  */
 public class ContextStaticChecker extends StaticChecker {
 
+	@Override
 	public void extract(IFile file, IGraph graph, IProgressMonitor monitor)
 			throws CoreException {
 

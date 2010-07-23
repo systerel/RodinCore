@@ -42,16 +42,19 @@ public class StackedCollection<T> extends AbstractCollection<T> {
 			private final Iterator<T> supIterator = supCollection.iterator();
 			private final Iterator<T> infIterator = infCollection.iterator();
 
+			@Override
 			public boolean hasNext() {
 				return sup ? supIterator.hasNext() : infIterator.hasNext();
 			}
 
+			@Override
 			public T next() {
 				if (sup && !supIterator.hasNext())
 					sup = false;
 				return sup ? supIterator.next() : infIterator.next();
 			}
 
+			@Override
 			public void remove() {
 				if (sup)
 					supIterator.remove();

@@ -56,12 +56,14 @@ public abstract class AbstractInferrenceOrigin implements IOrigin {
 		return parents;
 	}
 
+	@Override
 	public void trace(Tracer tracer) {
 		for (Clause clause : parents) {
 			clause.getOrigin().trace(tracer);
 		}
 	}
 
+	@Override
 	public void addDependenciesTo(Set<Level> dependencies) {
 		dependencies.add(getLevel());
 		for (Clause clause : parents) {
@@ -69,10 +71,12 @@ public abstract class AbstractInferrenceOrigin implements IOrigin {
 		}
 	}
 
+	@Override
 	public boolean dependsOnGoal() {
 		return dependsOnGoal;
 	}
 
+	@Override
 	public boolean isDefinition() {
 		return false;
 	}
@@ -82,6 +86,7 @@ public abstract class AbstractInferrenceOrigin implements IOrigin {
 		return getLevel().toString();
 	}
 	
+	@Override
 	public int getDepth() {
 		return depth;
 	}

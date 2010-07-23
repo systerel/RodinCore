@@ -54,6 +54,7 @@ public class DeltaQueuer implements IElementChangedListener,
 		return RodinCore.valueOf(project);
 	}
 
+	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		enqueueAffectedElements(event.getDelta());
 	}
@@ -112,6 +113,7 @@ public class DeltaQueuer implements IElementChangedListener,
 		enqueueDelta(indexDelta, false);
 	}
 
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		switch(event.getType()) {
 		case IResourceChangeEvent.POST_BUILD:
@@ -187,6 +189,7 @@ public class DeltaQueuer implements IElementChangedListener,
 			this.deltas = new ArrayList<IIndexDelta>();
 		}
 	
+		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource resource = delta.getResource();
 			final IRodinProject project = getRodinProject(resource);

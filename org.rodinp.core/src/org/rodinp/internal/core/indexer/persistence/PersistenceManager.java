@@ -49,18 +49,22 @@ public class PersistenceManager implements ISaveParticipant {
 		return instance;
 	}
 
+	@Override
 	public void doneSaving(ISaveContext context) {
 		// nothing to do
 	}
 
+	@Override
 	public void prepareToSave(ISaveContext context) throws CoreException {
 		// nothing to do
 	}
 
+	@Override
 	public void rollback(ISaveContext context) {
 		// nothing to do
 	}
 
+	@Override
 	public void saving(ISaveContext context) throws CoreException {
 
 		final IPath stateLocation = plugin.getStateLocation();

@@ -77,10 +77,12 @@ public class TwoStateControl {
 						: notSelectedValue);
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				UIUtils.setStringAttribute(element, manipulation, getText(),
 						null);

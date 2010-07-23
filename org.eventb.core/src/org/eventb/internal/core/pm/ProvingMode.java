@@ -22,20 +22,24 @@ public class ProvingMode implements IProvingMode {
 		setPostTactics(postTacticRegistry.getTacticIDs());
 	}
 	
+	@Override
 	@Deprecated
 	public boolean isExpertMode() {
 		return (getPostTactic() == null);
 	}
 
+	@Override
 	@Deprecated
 	public void setExpertMode(boolean mode) {
 		setPostTacticEnable(mode);
 	}
 
+	@Override
 	public void setPostTacticEnable(boolean enable) {
 		postTacticEnabled = enable;
 	}
 
+	@Override
 	public ITactic getPostTactic() {
 		if (postTacticEnabled)
 			return postTactic;
@@ -47,6 +51,7 @@ public class ProvingMode implements IProvingMode {
 		return loopOnAllPending(list);
 	}
 
+	@Override
 	public void setPostTactics(String ... tacticIDs) {
 		IAutoTacticRegistry tacticRegistry = SequentProver.getAutoTacticRegistry();
 		int size = tacticIDs.length;

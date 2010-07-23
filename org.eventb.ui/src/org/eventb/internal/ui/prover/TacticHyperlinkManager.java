@@ -125,10 +125,12 @@ public abstract class TacticHyperlinkManager {
 				item.setText(linkLabel);
 				item.addSelectionListener(new SelectionListener() {
 
+					@Override
 					public void widgetDefaultSelected(SelectionEvent se) {
 						widgetSelected(se);
 					}
 
+					@Override
 					public void widgetSelected(SelectionEvent se) {
 						applyTactic(tacticPosition);
 						enableListeners();
@@ -144,10 +146,12 @@ public abstract class TacticHyperlinkManager {
 		text.setCursor(arrowCursor);
 		tipMenu.addMenuListener(new MenuListener() {
 
+			@Override
 			public void menuHidden(MenuEvent e) {
 				enableListeners();
 			}
 
+			@Override
 			public void menuShown(MenuEvent e) {
 				disableListeners();
 			}

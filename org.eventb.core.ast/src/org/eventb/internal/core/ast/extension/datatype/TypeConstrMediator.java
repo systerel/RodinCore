@@ -46,6 +46,7 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 		this.datatype = datatype;
 	}
 
+	@Override
 	public void addTypeParam(String name) {
 		typeParams.add(new TypeParam(name));
 	}
@@ -62,35 +63,43 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 		
 		return new ITypeExpressionExtension() {
 			
+			@Override
 			public Predicate getWDPredicate(IWDMediator wdMediator,
 					IExtendedFormula formula) {
 				return wdMediator.makeTrueWD();
 			}
 			
+			@Override
 			public String getSyntaxSymbol() {
 				return typeName;
 			}
 			
+			@Override
 			public IExtensionKind getKind() {
 				return kind;
 			}
 			
+			@Override
 			public String getId() {
 				return id;
 			}
 			
+			@Override
 			public String getGroupId() {
 				return groupId;
 			}
 			
+			@Override
 			public void addPriorities(IPriorityMediator mediator) {
 				// no priority
 			}
 			
+			@Override
 			public void addCompatibilities(ICompatibilityMediator mediator) {
 				// no priority
 			}
 			
+			@Override
 			public Type typeCheck(ITypeCheckMediator tcMediator,
 					ExtendedExpression expression) {
 				final List<Type> typePrms = new ArrayList<Type>();
@@ -102,6 +111,7 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 				return tcMediator.makePowerSetType(tcMediator.makeGenericType(typePrms, this));
 			}
 			
+			@Override
 			public Type getType(ITypeMediator mediator, ExtendedExpression expression) {
 				final List<Type> typePrms = new ArrayList<Type>();
 				for (Expression child:expression.getChildExpressions()) {
@@ -117,6 +127,7 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 				return mediator.makePowerSetType(mediator.makeGenericType(typePrms, this));
 			}
 
+			@Override
 			public boolean conjoinChildrenWD() {
 				return true;
 			}

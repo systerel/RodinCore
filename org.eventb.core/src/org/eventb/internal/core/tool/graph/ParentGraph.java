@@ -37,16 +37,19 @@ public class ParentGraph extends Graph<ModuleDesc<? extends IModule>> implements
 			index = sorted.size();
 		}
 
+		@Override
 		public boolean hasNext() {
 			return index > 0;
 		}
 
+		@Override
 		public String next() {
 			index--;
 			String id = sorted.get(index).getId();
 			return id;
 		}
 
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
@@ -76,6 +79,7 @@ public class ParentGraph extends Graph<ModuleDesc<? extends IModule>> implements
 	}
 
 	// returns the ids of all nodes from leafs down to the roots
+	@Override
 	public Iterator<String> iterator() {
 		return new PGIterator(getSorted());
 	}

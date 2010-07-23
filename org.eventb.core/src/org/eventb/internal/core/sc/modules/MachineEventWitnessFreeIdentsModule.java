@@ -40,6 +40,7 @@ public class MachineEventWitnessFreeIdentsModule extends
 			.getModuleType(EventBPlugin.PLUGIN_ID
 					+ ".machineEventWitnessFreeIdentsModule"); //$NON-NLS-1$
 
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

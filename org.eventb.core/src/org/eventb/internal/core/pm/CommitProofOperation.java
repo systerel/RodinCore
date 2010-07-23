@@ -35,6 +35,7 @@ class CommitProofOperation implements IWorkspaceRunnable {
 		this.simplify = simplify;
 	}
 
+	@Override
 	public void run(IProgressMonitor pm) throws CoreException {
 		try {
 			pm.beginTask("Committing proof", 1 + 3 + 3);

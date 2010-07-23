@@ -139,6 +139,7 @@ public class EventBEditorUtils {
 	 */
 	public static void deleteElements(final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				IStructuredSelection ssel = (IStructuredSelection) viewer
 						.getSelection();
@@ -163,6 +164,7 @@ public class EventBEditorUtils {
 	 */
 	public static void handleUp(final IEventBEditor<?> editor, final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				handleGeneric(editor, viewer, true);
 				return;
@@ -180,6 +182,7 @@ public class EventBEditorUtils {
 	 */
 	public static void handleDown(final IEventBEditor<?> editor,final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				handleGeneric(editor, viewer, false);
 				return;
@@ -299,6 +302,7 @@ public class EventBEditorUtils {
 	public static void addAction(final IEventBEditor<IMachineRoot> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
+			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run() {
 				final IInternalElement event = getEvent(viewer);
@@ -326,6 +330,7 @@ public class EventBEditorUtils {
 	public static void addRefinesEvent(final IEventBEditor<IMachineRoot> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
+			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run() {
 				final IInternalElement event = getEvent(viewer);
@@ -360,6 +365,7 @@ public class EventBEditorUtils {
 			final TreeViewer viewer) {
 		final FormulaFactory ff = editor.getFormulaFactory();
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
+			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run() {
 				final IInternalElement event = getEvent(viewer);
@@ -388,6 +394,7 @@ public class EventBEditorUtils {
 			final TreeViewer viewer) {
 		final FormulaFactory ff = editor.getFormulaFactory();
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
+			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run() {
 				final IInternalElement event = getEvent(viewer);
@@ -413,6 +420,7 @@ public class EventBEditorUtils {
 	public static void addParameter(final IEventBEditor<IMachineRoot> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
+			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run() {
 				final IInternalElement event = getEvent(viewer);
@@ -439,6 +447,7 @@ public class EventBEditorUtils {
 	public static void addVariable(final IEventBEditor<IMachineRoot> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
+			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run() {
 				AtomicOperation op = OperationFactory.createElementGeneric(
@@ -526,6 +535,7 @@ public class EventBEditorUtils {
 	public static void addRefinesMachine(
 			final IEventBEditor<IMachineRoot> editor, final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
+			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run() {
 				AtomicOperation op = OperationFactory.createElementGeneric(
@@ -550,6 +560,7 @@ public class EventBEditorUtils {
 	public static void addSeesContext(final IEventBEditor<IMachineRoot> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
+			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run() {
 				AtomicOperation op = OperationFactory
@@ -644,6 +655,7 @@ public class EventBEditorUtils {
 	public static void addExtendsContext(final IEventBEditor<IContextRoot> editor,
 			final TreeViewer viewer) {
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
+			@Override
 			@SuppressWarnings("synthetic-access")
 			public void run() {
 				AtomicOperation op = OperationFactory
@@ -1116,6 +1128,7 @@ public class EventBEditorUtils {
 			this.parent = parent;
 		}
 
+		@Override
 		public void widgetDisposed(DisposeEvent e) {
 			parent.setFocus();
 		}

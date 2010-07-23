@@ -70,22 +70,27 @@ public class MultiplePredicate extends Predicate {
 			this.groupId = groupId;
 		}
 
+		@Override
 		public String getImage() {
 			return image;
 		}
 		
+		@Override
 		public String getId() {
 			return id;
 		}
 		
+		@Override
 		public String getGroupId() {
 			return groupId;
 		}
 
+		@Override
 		public IParserPrinter<MultiplePredicate> makeParser(int kind) {
 			return new MultiplePredicateParser(kind);
 		}
 
+		@Override
 		public boolean isSpaced() {
 			return false;
 		}

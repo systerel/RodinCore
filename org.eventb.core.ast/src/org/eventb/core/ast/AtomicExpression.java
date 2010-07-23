@@ -96,22 +96,27 @@ public class AtomicExpression extends Expression {
 			this.tag = tag;
 		}
 
+		@Override
 		public String getImage() {
 			return image;
 		}
 		
+		@Override
 		public String getId() {
 			return id;
 		}
 		
+		@Override
 		public String getGroupId() {
 			return groupId;
 		}
 
+		@Override
 		public IParserPrinter<AtomicExpression> makeParser(int kind) {
 			return new AtomicExpressionParser(kind, tag);
 		}
 
+		@Override
 		public boolean isSpaced() {
 			return false;
 		}

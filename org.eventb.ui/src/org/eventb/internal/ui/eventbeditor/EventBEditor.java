@@ -130,6 +130,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 		 * 
 		 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
 		 */
+		@Override
 		public ISelection getSelection() {
 			IFormPage activePage = formEditor.getActivePageInstance();
 			if (activePage != null) {
@@ -144,6 +145,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 		 * 
 		 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
 		 */
+		@Override
 		public void setSelection(ISelection selection) {
 			// Pass the selection to Edit Page
 			formEditor.setActivePage(EditPage.PAGE_ID);
@@ -169,6 +171,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 			for (int i = 0; i < listeners.length; ++i) {
 				final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
 				SafeRunner.run(new SafeRunnable() {
+					@Override
 					public void run() {
 						l.selectionChanged(event);
 					}
@@ -181,6 +184,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 		 * 
 		 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 		 */
+		@Override
 		public void addSelectionChangedListener(
 				ISelectionChangedListener listener) {
 			listenerList.add(listener);
@@ -191,6 +195,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 		 * 
 		 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 		 */
+		@Override
 		public void removeSelectionChangedListener(
 				ISelectionChangedListener listener) {
 			listenerList.remove(listener);
@@ -220,6 +225,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#addNewElement(org.rodinp.core.IRodinElement)
 	 */
+	@Override
 	public void addNewElement(IRodinElement element) {
 		newElements.add(element);
 		notifyStatusChanged(element);
@@ -237,6 +243,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#addStatusListener(org.eventb.internal.ui.eventbeditor.IStatusChangedListener)
 	 */
+	@Override
 	public void addStatusListener(IStatusChangedListener listener) {
 		statusListeners.add(listener);
 	}
@@ -246,6 +253,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#removeStatusListener(org.eventb.internal.ui.eventbeditor.IStatusChangedListener)
 	 */
+	@Override
 	public void removeStatusListener(IStatusChangedListener listener) {
 		statusListeners.remove(listener);
 	}
@@ -255,6 +263,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#isNewElement(org.rodinp.core.IRodinElement)
 	 */
+	@Override
 	public boolean isNewElement(IRodinElement element) {
 		return newElements.contains(element);
 	}
@@ -275,6 +284,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#addElementChangedListener(org.rodinp.core.IElementChangedListener)
 	 */
+	@Override
 	public void addElementChangedListener(IElementChangedListener listener) {
 		synchronized (listeners) {
 			if (!listeners.contains(listener))
@@ -288,6 +298,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 	 * @seeorg.eventb.internal.ui.eventbeditor.IEventBEditor#
 	 * removeElementChangedListener(org.rodinp.core.IElementChangedListener)
 	 */
+	@Override
 	public void removeElementChangedListener(IElementChangedListener listener) {
 		synchronized (listeners) {
 			if (listeners.contains(listener))
@@ -311,10 +322,12 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 		}
 		for (final IElementChangedListener listener : safeCopy) {
 			SafeRunner.run(new ISafeRunnable() {
+				@Override
 				public void handleException(Throwable exception) {
 					// do nothing, will be logged by the platform
 				}
 
+				@Override
 				public void run() throws Exception {
 					listener.elementChanged(new ElementChangedEvent(delta,
 							ElementChangedEvent.POST_CHANGE));
@@ -577,6 +590,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#edit(java.lang.Object)
 	 */
+	@Override
 	@Deprecated
 	public void edit(Object ssel) {
 		this.getSite().getSelectionProvider().setSelection(
@@ -592,6 +606,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 		return rodinFile;
 	}
 
+	@Override
 	public R getRodinInput() {
 		if (rodinRoot == null)
 			throw new IllegalStateException(
@@ -599,6 +614,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 		return rodinRoot;
 	}
 
+	@Override
 	public FormulaFactory getFormulaFactory() {
 		return ((IEventBRoot)rodinRoot).getFormulaFactory();
 	}
@@ -608,6 +624,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 	 * 
 	 * @see org.rodinp.core.IElementChangedListener#elementChanged(org.rodinp.core.ElementChangedEvent)
 	 */
+	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		IRodinElementDelta delta = event.getDelta();
 		processDelta(delta);
@@ -650,6 +667,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 			notifyElementChangedListeners(delta);
 			Display display = PlatformUI.getWorkbench().getDisplay();
 			display.syncExec(new Runnable() {
+				@Override
 				public void run() {
 					editorDirtyStateChanged();
 				}
@@ -676,6 +694,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#setSelection(org.rodinp.core.IInternalElement)
 	 */
+	@Override
 	@Deprecated
 	public void setSelection(IInternalElement element) {
 		this.setActivePage(EditPage.PAGE_ID);
@@ -691,6 +710,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 	 * 
 	 * @see org.eclipse.ui.ide.IGotoMarker#gotoMarker(org.eclipse.core.resources.IMarker)
 	 */
+	@Override
 	public void gotoMarker(IMarker marker) {
 		IInternalElement element;
 		try {
@@ -740,6 +760,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 	 * 
 	 * @see org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor#getContributorId()
 	 */
+	@Override
 	public String getContributorId() {
 		return this.getSite().getId(); // Return the ID of the editor
 	}
@@ -749,6 +770,7 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 	 * 
 	 * @see org.eventb.ui.eventbeditor.IEventBEditor#getEditorId()
 	 */
+	@Override
 	abstract public String getEditorId();
 
 	/**
@@ -779,22 +801,27 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 			}
 		}
 
+		@Override
 		public void partActivated(IWorkbenchPart part) {
 			refreshUndoRedoAction();
 		}
 
+		@Override
 		public void partBroughtToTop(IWorkbenchPart part) {
 			// do nothing
 		}
 
+		@Override
 		public void partClosed(IWorkbenchPart part) {
 			// do nothing
 		}
 
+		@Override
 		public void partDeactivated(IWorkbenchPart part) {
 			// do nothing
 		}
 
+		@Override
 		public void partOpened(IWorkbenchPart part) {
 			// do nothing
 		}

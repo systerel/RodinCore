@@ -91,10 +91,12 @@ public abstract class CComboSection extends AbstractPropertySection implements
 		
 		comboWidget.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setText();
 			}
 			
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);
 			}
@@ -166,6 +168,7 @@ public abstract class CComboSection extends AbstractPropertySection implements
 	
 	public abstract int getColumn();
 	
+	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		// TODO Filter out the delta first
 		if (comboWidget.isDisposed())
@@ -173,6 +176,7 @@ public abstract class CComboSection extends AbstractPropertySection implements
 		Display display = comboWidget.getDisplay();
 		display.asyncExec(new Runnable() {
 
+			@Override
 			public void run() {
 				refresh();
 			}

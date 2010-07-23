@@ -26,6 +26,7 @@ public class PRPredRef extends InternalElement implements IPRPredRef{
 		return ELEMENT_TYPE;
 	}
 
+	@Override
 	public Predicate[] getPredicates(IProofStoreReader store)
 			throws RodinDBException {
 
@@ -44,6 +45,7 @@ public class PRPredRef extends InternalElement implements IPRPredRef{
 		return preds;
 	}
 
+	@Override
 	public void setPredicates(Predicate[] preds, IProofStoreCollector store,
 			IProgressMonitor monitor) throws RodinDBException {
 

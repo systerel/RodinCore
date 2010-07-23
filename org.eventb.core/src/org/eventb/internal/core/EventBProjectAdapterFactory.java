@@ -26,6 +26,7 @@ public class EventBProjectAdapterFactory implements IAdapterFactory {
 		IEventBProject.class,
 	};
 	
+	@Override
 	public IEventBProject getAdapter(Object adaptableObject, Class adapterType) {
 		if (IEventBProject.class.equals(adapterType)) {
 			return new EventBProject((IRodinProject) adaptableObject);
@@ -33,6 +34,7 @@ public class EventBProjectAdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
+	@Override
 	public Class[] getAdapterList() {
 		return ADAPTERS;
 	}

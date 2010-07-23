@@ -39,6 +39,7 @@ public abstract class TheoremModule extends SCFilterModule {
 		labelSymbolTable = getLabelSymbolTable(repository);
 	}
 
+	@Override
 	public boolean accept(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 	

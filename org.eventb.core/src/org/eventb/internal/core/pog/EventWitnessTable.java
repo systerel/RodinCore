@@ -158,58 +158,72 @@ public class EventWitnessTable extends State implements IEventWitnessTable {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IState#getStateType()
 	 */
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 
+	@Override
 	public BecomesEqualTo getPrimeSubstitution() {
 		return primeSubstitution;
 	}
 
+	@Override
 	public List<ISCWitness> getWitnesses() {
 		return witnesses;
 	}
 
+	@Override
 	public List<ISCWitness> getMachineDetWitnesses() {
 		return machineDetWitnesses;
 	}
 
+	@Override
 	public List<BecomesEqualTo> getMachineDetAssignments() {
 		return machineDetermist;
 	}
 
+	@Override
 	public List<BecomesEqualTo> getMachinePrimedDetAssignments() {
 		return machinePrimedDetermist;
 	}
 
+	@Override
 	public List<ISCWitness> getEventDetWitnesses() {
 		return eventDetWitnesses;
 	}
 
+	@Override
 	public List<BecomesEqualTo> getEventDetAssignments() {
 		return eventDetermist;
 	}
 
+	@Override
 	public List<Predicate> getNondetPredicates() {
 		return nondetPredicates;
 	}
 
+	@Override
 	public List<FreeIdentifier> getVariables() {
 		return witnessedVars;
 	}
 
+	@Override
 	public List<ISCWitness> getNondetWitnesses() {
 		return nondetWitnesses;
 	}
 
+	@Override
 	public List<FreeIdentifier> getNondetVariables() {
 		return nondetIdentifiers;
 	}
 
+	@Override
 	public List<Predicate> getPredicates() {
 		return witnessPredicates;
 	}
 
+	@Override
 	public boolean isDeterministic(int index) {
 		return deterministic[index];
 	}

@@ -82,6 +82,7 @@ public abstract class RodinElementStructuredLabelProvider extends LabelProvider 
 		return null;
 	}
 
+	@Override
 	public Font getFont(Object element) {
 		return JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
 	}
@@ -89,6 +90,7 @@ public abstract class RodinElementStructuredLabelProvider extends LabelProvider 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
 			if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
@@ -104,6 +106,7 @@ public abstract class RodinElementStructuredLabelProvider extends LabelProvider 
 		super.dispose();
 	}
 
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		final Set<Object> elements = getRefreshElements(event);
 
@@ -112,6 +115,7 @@ public abstract class RodinElementStructuredLabelProvider extends LabelProvider 
 			Display display = viewer.getControl().getDisplay();
 			display.syncExec(new Runnable() {
 
+				@Override
 				public void run() {
 					for (Object element : elements) {
 						viewer.update(element, properties);

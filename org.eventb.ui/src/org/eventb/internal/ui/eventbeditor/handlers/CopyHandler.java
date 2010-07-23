@@ -42,6 +42,7 @@ import org.rodinp.core.IRodinProject;
 
 public class CopyHandler extends AbstractHandler implements IHandler {
 
+	@Override
 	public Object execute(ExecutionEvent arg0) throws ExecutionException {
 		// Get the selection from the current active page.
 		ISelection selection = EventBUIPlugin.getActivePage().getSelection();

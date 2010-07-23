@@ -24,14 +24,17 @@ public class ProofMonitor implements IProofMonitor {
 		this.pm = pm;
 	}
 	
+	@Override
 	public boolean isCanceled() {
 		return pm != null && pm.isCanceled();
 	}
 
+	@Override
 	public void setCanceled(boolean value) {
 		assert false : "Should never be called";
 	}
 
+	@Override
 	public void setTask(String name) {
 		if (pm != null) {
 			pm.subTask(name);

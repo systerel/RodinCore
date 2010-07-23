@@ -213,6 +213,7 @@ public class RodinProject extends Openable implements IRodinProject {
 	/**
 	 * Returns an array of non-Rodin resources contained in the receiver.
 	 */
+	@Override
 	public IResource[] getNonRodinResources() throws RodinDBException {
 
 		return ((RodinProjectElementInfo) getElementInfo()).getNonRodinResources(this);
@@ -287,6 +288,7 @@ public class RodinProject extends Openable implements IRodinProject {
 //		return projectOptions;
 //	}
 
+	@Override
 	public IPath getPath() {
 		return this.project.getFullPath();
 	}
@@ -302,6 +304,7 @@ public class RodinProject extends Openable implements IRodinProject {
 	/*
 	 * @see IRodinProject#getProject()
 	 */
+	@Override
 	public IProject getProject() {
 		return this.project;
 	}
@@ -309,6 +312,7 @@ public class RodinProject extends Openable implements IRodinProject {
 	/*
 	 * @see IRodinElement
 	 */
+	@Override
 	public IResource getResource() {
 		return this.project;
 	}
@@ -316,6 +320,7 @@ public class RodinProject extends Openable implements IRodinProject {
 	/*
 	 * @see IRodinElement
 	 */
+	@Override
 	public IResource getUnderlyingResource() {
 		return this.project;
 	}
@@ -323,6 +328,7 @@ public class RodinProject extends Openable implements IRodinProject {
 	/**
 	 * @see IRodinProject
 	 */
+	@Override
 	public boolean hasBuildState() {
 
 		return RodinDBManager.getRodinDBManager().getLastBuiltState(this.project, null) != null;
@@ -360,6 +366,7 @@ public class RodinProject extends Openable implements IRodinProject {
 	/**
 	 * @see IRodinProject
 	 */
+	@Override
 	public RodinFile getRodinFile(String fileName) {
 		final IFile file = project.getProject().getFile(fileName);
 		final ElementTypeManager manager = ElementTypeManager.getInstance();
@@ -370,6 +377,7 @@ public class RodinProject extends Openable implements IRodinProject {
 		return new RodinFile(file, this);
 	}
 
+	@Override
 	public IRodinFile[] getRodinFiles() throws RodinDBException {
 		IRodinElement[] children = getChildren();
 		IRodinFile[] result = new IRodinFile[children.length];
@@ -395,6 +403,7 @@ public class RodinProject extends Openable implements IRodinProject {
 		}
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends IInternalElement> T[] getRootElementsOfType(
 			IInternalElementType<T> type) throws RodinDBException {

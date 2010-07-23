@@ -83,6 +83,7 @@ public class CommentToolTip {
 
 		// Implement a "fake" tooltip
 		labelListener = new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				Label label = (Label) event.widget;
 				Shell shell = label.getShell();
@@ -125,6 +126,7 @@ public class CommentToolTip {
 			}
 		}
 
+		@Override
 		public void handleEvent(Event event) {
 			switch (event.type) {
 			case SWT.FocusOut:
@@ -221,6 +223,7 @@ public class CommentToolTip {
 
 		control.addMouseMoveListener(new MouseMoveListener() {
 
+			@Override
 			public void mouseMove(MouseEvent e) {
 				if (tipShell != null) {
 					tipShell.dispose();

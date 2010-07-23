@@ -41,6 +41,7 @@ public class GoalComposite extends HypothesisComposite {
 		addItem.setToolTipText("Add to selected");
 		addItem.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				IUserSupport userSupport = GoalComposite.this.getUserSupport();
 				assert userSupport != null;
@@ -56,6 +57,7 @@ public class GoalComposite extends HypothesisComposite {
 				}
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				widgetDefaultSelected(e);
 			}
@@ -67,6 +69,7 @@ public class GoalComposite extends HypothesisComposite {
 		removeItem.setToolTipText("Remove from cached");
 		removeItem.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				IUserSupport userSupport = GoalComposite.this.getUserSupport();
 				assert userSupport != null;
@@ -75,6 +78,7 @@ public class GoalComposite extends HypothesisComposite {
 				userSupport.removeCachedHypotheses(deselected);
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				widgetDefaultSelected(e);
 			}
@@ -97,10 +101,12 @@ public class GoalComposite extends HypothesisComposite {
 		removeItem.setEnabled(!this.getSelectedHyps().isEmpty());
 	}
 
+	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
 		updateToolbarItems();
 	}
 
+	@Override
 	public void widgetSelected(SelectionEvent e) {
 		widgetDefaultSelected(e);
 	}

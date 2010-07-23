@@ -66,6 +66,7 @@ public final class Position implements IPosition {
 		}
 	}
 
+	@Override
 	public int compareTo(IPosition position) {
 		final Position other = (Position) position;
 		final int leftLen = this.indexes.length;
@@ -92,6 +93,7 @@ public final class Position implements IPosition {
 		return Arrays.equals(indexes, other.indexes);
 	}
 	
+	@Override
 	public IPosition getParent() {
 		final int parentLength = indexes.length - 1;
 		if (parentLength < 0)
@@ -106,6 +108,7 @@ public final class Position implements IPosition {
 		return Arrays.hashCode(indexes);
 	}
 
+	@Override
 	public boolean isRoot() {
 		return indexes.length == 0;
 	}
@@ -129,6 +132,7 @@ public final class Position implements IPosition {
 		return result.toString();
 	}
 
+	@Override
 	public Position getFirstChild() {
 		final int length = indexes.length;
 		final int[] childIndexes = new int[length + 1];
@@ -137,6 +141,7 @@ public final class Position implements IPosition {
 		return new Position(childIndexes);
 	}
 
+	@Override
 	public Position getNextSibling() {
 		final int lastIdx = indexes.length - 1;
 		if (lastIdx < 0)
@@ -146,6 +151,7 @@ public final class Position implements IPosition {
 		return new Position(newIndexes);
 	}
 
+	@Override
 	public Position getPreviousSibling() {
 		final int lastIdx = indexes.length - 1;
 		if (lastIdx < 0)
@@ -158,6 +164,7 @@ public final class Position implements IPosition {
 		return new Position(newIndexes);
 	}
 
+	@Override
 	public boolean isFirstChild() {
 		final int lastIdx = indexes.length - 1;
 		if (lastIdx < 0)

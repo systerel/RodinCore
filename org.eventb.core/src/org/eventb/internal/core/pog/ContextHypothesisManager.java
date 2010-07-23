@@ -47,10 +47,12 @@ public class ContextHypothesisManager extends HypothesisManager implements
 	/* (non-Javadoc)
 	 * @see org.eventb.core.state.IState#getStateType()
 	 */
+	@Override
 	public IStateType<?> getStateType() {
 		return STATE_TYPE;
 	}
 
+	@Override
 	public boolean contextIsAccurate() {
 		return accurate;
 	}

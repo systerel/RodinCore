@@ -46,6 +46,7 @@ public interface IInternalLocation extends IRodinLocation {
 	 * 
 	 * @return the element containing this location
 	 */
+	@Override
 	IInternalElement getElement();
 
 }

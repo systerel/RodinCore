@@ -59,22 +59,27 @@ public class BoolExpression extends Expression {
 			this.groupId = groupId;
 		}
 
+		@Override
 		public String getImage() {
 			return image;
 		}
 		
+		@Override
 		public String getId() {
 			return id;
 		}
 		
+		@Override
 		public String getGroupId() {
 			return groupId;
 		}
 
+		@Override
 		public IParserPrinter<BoolExpression> makeParser(int kind) {
 			return new KBoolParser(kind);
 		}
 
+		@Override
 		public boolean isSpaced() {
 			return false;
 		}

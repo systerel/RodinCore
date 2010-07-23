@@ -139,6 +139,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		manager.setHyperlinks(links);
 		// reposition widgets on paint event and draw a box around the widgets.
 		styledText.addPaintObjectListener(new PaintObjectListener() {
+			@Override
 			public void paintObject(PaintObjectEvent event) {
 				event.gc.setForeground(EventBSharedColor.getSystemColor(
 						SWT.COLOR_RED));
@@ -177,6 +178,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			
 			text.addModifyListener(new ModifyListener() {
 
+				@Override
 				public void modifyText(ModifyEvent e) {
 					resizeControl(text, offset);
 				}
@@ -214,6 +216,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 	 * 
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
 			Font font = JFaceResources
@@ -252,6 +255,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		
 	class MouseDownListener implements Listener {
 
+		@Override
 		public void handleEvent(Event e) {
 			manager.mouseDown(new Point(e.x, e.y));
 		}
@@ -260,6 +264,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 	class MouseMoveListener implements Listener {
 
+		@Override
 		public void handleEvent(Event e) {
 			manager.hideMenu();
 			final Point location = new Point(e.x, e.y);
@@ -269,6 +274,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 	class MouseEnterListener implements Listener {
 
+		@Override
 		public void handleEvent(Event e) {
 			if (ProverUIUtils.DEBUG)
 				ProverUIUtils.debug("Enter ");
@@ -279,6 +285,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 	class MouseHoverListener implements Listener {
 
+		@Override
 		public void handleEvent(Event e) {
 			manager.showToolTip(new Point(e.x, e.y));
 		}
@@ -286,6 +293,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 
 	class MouseExitListener implements Listener {
 
+		@Override
 		public void handleEvent(Event event) {
 			if (ProverUIUtils.DEBUG)
 				ProverUIUtils.debug("Exit ");

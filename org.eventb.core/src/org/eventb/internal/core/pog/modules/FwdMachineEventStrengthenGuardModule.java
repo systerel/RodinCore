@@ -47,6 +47,7 @@ public class FwdMachineEventStrengthenGuardModule extends MachineEventRefinement
 	public static final IModuleType<FwdMachineEventStrengthenGuardModule> MODULE_TYPE = 
 		POGCore.getModuleType(EventBPlugin.PLUGIN_ID + ".fwdMachineEventStrengthenGuardModule"); //$NON-NLS-1$
 	
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
@@ -56,6 +57,7 @@ public class FwdMachineEventStrengthenGuardModule extends MachineEventRefinement
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IProcessorModule#process(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void process(
 			IRodinElement element, 
 			IPOGStateRepository repository,

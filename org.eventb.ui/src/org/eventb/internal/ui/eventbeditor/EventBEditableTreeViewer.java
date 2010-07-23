@@ -233,10 +233,12 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 
 		keyListener = new KeyListener() {
 
+			@Override
 			public void keyPressed(KeyEvent e) {
 				// Do nothing
 			}
 
+			@Override
 			public void keyReleased(KeyEvent e) {
 				if (e.keyCode == SWT.F2) {
 					handler.openEditing();
@@ -351,6 +353,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 
 		final int inset = isCarbon ? 0 : 1;
 		composite.addListener(SWT.Resize, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				Rectangle rect = composite.getClientArea();
 				text.setBounds(rect.x + inset, rect.y + inset, rect.width
@@ -456,6 +459,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 			final boolean updateLabels) {
 		final TreeViewer viewer = this;
 		UIUtils.syncPostRunnable(new Runnable() {
+			@Override
 			public void run() {
 				Control ctrl = viewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()) {
@@ -473,6 +477,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 	public void statusChanged(final IRodinElement element) {
 		final TreeViewer viewer = this;
 		UIUtils.syncPostRunnable(new Runnable() {
+			@Override
 			public void run() {
 				Control ctrl = viewer.getControl();
 				if (ctrl != null && !ctrl.isDisposed()) {
@@ -502,6 +507,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 		return DEFAULT_COLUMN;
 	}
 
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		((EventBEditor<?>) editor).pageSelectionChanged(event);
 		disposeOpenedEditor();

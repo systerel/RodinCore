@@ -238,6 +238,7 @@ public class MachineIndexer extends EventBIndexer {
 		return dependFiles.toArray(new IRodinFile[dependFiles.size()]);
 	}
 
+	@Override
 	public String getId() {
 		return ID;
 	}

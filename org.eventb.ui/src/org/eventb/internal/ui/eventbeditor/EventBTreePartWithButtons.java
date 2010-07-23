@@ -149,10 +149,12 @@ public abstract class EventBTreePartWithButtons extends EventBPartWithButtons
 	 * 
 	 * @see org.eventb.internal.ui.eventbeditor.IStatusChangedListener#statusChanged(java.util.Collection)
 	 */
+	@Override
 	public void statusChanged(final IRodinElement element) {
 		Display display = this.getViewer().getControl().getDisplay();
 		display.syncExec(new Runnable() {
 
+			@Override
 			public void run() {
 				((EventBEditableTreeViewer) EventBTreePartWithButtons.this.getViewer()).statusChanged(element);
 				updateButtons();
@@ -168,6 +170,7 @@ public abstract class EventBTreePartWithButtons extends EventBPartWithButtons
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				groupActionSet.setContext(new ActionContext(
 						((StructuredViewer) getViewer()).getSelection()));

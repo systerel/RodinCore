@@ -23,10 +23,12 @@ public class Declaration implements IDeclaration {
 		this.name = name;
 	}
 
+	@Override
 	public IInternalElement getElement() {
 		return element;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}

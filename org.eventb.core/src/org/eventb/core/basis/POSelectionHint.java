@@ -38,6 +38,7 @@ public class POSelectionHint extends EventBPOElement implements IPOSelectionHint
 		return ELEMENT_TYPE;
 	}
 
+	@Override
 	public IPOPredicateSet getEnd() throws RodinDBException {
 		if (hasAttribute(EventBAttributes.POSELHINT_SND_ATTRIBUTE))
 			return (IPOPredicateSet) getTranslatedAttributeValue(EventBAttributes.POSELHINT_SND_ATTRIBUTE);
@@ -45,6 +46,7 @@ public class POSelectionHint extends EventBPOElement implements IPOSelectionHint
 			return null;
 	}
 
+	@Override
 	public IPOPredicate getPredicate() throws RodinDBException {
 		IRodinElement element = getTranslatedAttributeValue(EventBAttributes.POSELHINT_FST_ATTRIBUTE);
 		if (element instanceof IPOPredicate)
@@ -53,6 +55,7 @@ public class POSelectionHint extends EventBPOElement implements IPOSelectionHint
 			throw Util.newRodinDBException(Messages.database_POPredicateSelectionHintFailure);
 	}
 
+	@Override
 	public IPOPredicateSet getStart() throws RodinDBException {
 		IRodinElement element = getTranslatedAttributeValue(EventBAttributes.POSELHINT_FST_ATTRIBUTE);
 		if (element instanceof IPOPredicateSet)
@@ -61,12 +64,14 @@ public class POSelectionHint extends EventBPOElement implements IPOSelectionHint
 			throw Util.newRodinDBException(Messages.database_POIntervalSelectionHintFailure);
 	}
 
+	@Override
 	public void setInterval(IPOPredicateSet start, IPOPredicateSet end, IProgressMonitor monitor) 
 	throws RodinDBException{
 		setTranslatedAttributeValue(EventBAttributes.POSELHINT_FST_ATTRIBUTE, start, monitor);
 		setTranslatedAttributeValue(EventBAttributes.POSELHINT_SND_ATTRIBUTE, end, null);
 	}
 
+	@Override
 	public void setPredicate(IPOPredicate predicate, IProgressMonitor monitor) throws RodinDBException {
 		setTranslatedAttributeValue(EventBAttributes.POSELHINT_FST_ATTRIBUTE, predicate, monitor);
 		removeAttribute(EventBAttributes.POSELHINT_SND_ATTRIBUTE, null);

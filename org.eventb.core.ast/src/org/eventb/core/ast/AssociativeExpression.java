@@ -111,22 +111,27 @@ public class AssociativeExpression extends Expression {
 			this.tag = tag;
 		}
 
+		@Override
 		public String getImage() {
 			return image;
 		}
 		
+		@Override
 		public String getId() {
 			return id;
 		}
 		
+		@Override
 		public String getGroupId() {
 			return groupId;
 		}
 
+		@Override
 		public IParserPrinter<AssociativeExpression> makeParser(int kind) {
 			return new AssociativeExpressionInfix(kind, tag);
 		}
 		
+		@Override
 		public boolean isSpaced() {
 			return false;
 		}

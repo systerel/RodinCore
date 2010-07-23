@@ -53,6 +53,7 @@ public abstract class EditorPagesPreference implements IEditorPagesPreference,
 	 * 
 	 * @see org.eventb.internal.ui.preferences.IEditorPagesPreference#createPages()
 	 */
+	@Override
 	public synchronized EventBEditorPage[] createPages() {
 		if (validPageIDs == null)
 			validPageIDs = getSelectedPageIDs();
@@ -101,6 +102,7 @@ public abstract class EditorPagesPreference implements IEditorPagesPreference,
 	 * 
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		String property = event.getProperty();
 		if (property.equals(getPreferenceName())) {
@@ -113,6 +115,7 @@ public abstract class EditorPagesPreference implements IEditorPagesPreference,
 	 * 
 	 * @see org.eventb.internal.ui.preferences.IEditorPagesPreference#setDefault()
 	 */
+	@Override
 	public void setDefault() {
 		List<String> defaultMachineEditorPages = registry
 				.getDefaultPageIDs(getEditorID());
@@ -126,6 +129,7 @@ public abstract class EditorPagesPreference implements IEditorPagesPreference,
 		validPageIDs = null;
 	}
 
+	@Override
 	public void setToDefault() {
 		pStore.setToDefault(getPreferenceName());
 		assert validPageIDs == null;

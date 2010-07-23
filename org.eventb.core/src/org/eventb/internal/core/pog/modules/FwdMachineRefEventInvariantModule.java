@@ -41,6 +41,7 @@ public class FwdMachineRefEventInvariantModule extends MachineEventInvariantModu
 	public static final IModuleType<FwdMachineRefEventInvariantModule> MODULE_TYPE = 
 		POGCore.getModuleType(EventBPlugin.PLUGIN_ID + ".fwdMachineRefEventInvariantModule"); //$NON-NLS-1$
 	
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

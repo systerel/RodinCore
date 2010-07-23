@@ -47,6 +47,7 @@ public abstract class SCAssignmentElement extends EventBElement
 		super(name, parent);
 	}
 
+	@Override
 	@Deprecated
 	public Assignment getAssignment(FormulaFactory factory) 
 	throws RodinDBException {
@@ -63,6 +64,7 @@ public abstract class SCAssignmentElement extends EventBElement
 		return result;
 	}
 
+	@Override
 	public Assignment getAssignment(
 			FormulaFactory factory,
 			ITypeEnvironment typenv) throws RodinDBException {
@@ -79,11 +81,13 @@ public abstract class SCAssignmentElement extends EventBElement
 		return result;
 	}
 
+	@Override
 	public void setAssignment(Assignment assignment, IProgressMonitor monitor) 
 	throws RodinDBException {
 		setAssignmentString(assignment.toStringWithTypes(), monitor);
 	}
 
+	@Override
 	@Deprecated
 	public void setAssignment(Assignment assignment) 
 	throws RodinDBException {

@@ -48,6 +48,7 @@ public abstract class TimerText implements ModifyListener {
 		 * 
 		 * @see java.lang.Runnable#run()
 		 */
+		@Override
 		public void run() {
 			// TODO Auto-generated method stub
 			if (lastModify == time) {
@@ -81,6 +82,7 @@ public abstract class TimerText implements ModifyListener {
 	 * 
 	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
 	 */
+	@Override
 	public void modifyText(ModifyEvent e) {
 		if (text.getEditable()) {
 			lastModify = e.time;

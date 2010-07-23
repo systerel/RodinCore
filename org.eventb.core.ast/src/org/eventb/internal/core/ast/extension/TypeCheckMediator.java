@@ -37,10 +37,12 @@ public class TypeCheckMediator extends TypeMediator implements
 		this.location = isTypedTerminal ? formula.getSourceLocation() : null;
 	}
 
+	@Override
 	public Type newTypeVariable() {
 		return result.newFreshVariable(location);
 	}
 
+	@Override
 	public void sameType(Type left, Type right) {
 		result.unify(left, right, formula);
 	}

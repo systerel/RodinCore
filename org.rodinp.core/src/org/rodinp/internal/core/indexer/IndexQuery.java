@@ -32,26 +32,32 @@ import org.rodinp.core.location.IInternalLocation;
  */
 public class IndexQuery implements IIndexQuery {
 
+	@Override
 	public void waitUpToDate() throws InterruptedException {
 		IndexManager.getDefault().waitUpToDate();
 	}
 
+	@Override
 	public IDeclaration getDeclaration(IInternalElement element) {
 		return IndexManager.getDefault().getDeclaration(element);
 	}
 
+	@Override
 	public Set<IDeclaration> getDeclarations(IRodinFile file) {
 		return IndexManager.getDefault().getDeclarations(file);
 	}
 
+	@Override
 	public Set<IDeclaration> getVisibleDeclarations(IRodinFile file) {
 		return IndexManager.getDefault().getVisibleDeclarations(file);
 	}
 
+	@Override
 	public Set<IDeclaration> getDeclarations(IRodinProject project, String name) {
 		return IndexManager.getDefault().getDeclarations(project, name);
 	}
 
+	@Override
 	public Set<IOccurrence> getOccurrences(IDeclaration declaration) {
 		return IndexManager.getDefault().getOccurrences(declaration);
 	}
@@ -71,6 +77,7 @@ public class IndexQuery implements IIndexQuery {
 		}
 	}
 
+	@Override
 	public Set<IOccurrence> getOccurrences(IDeclaration declaration,
 			IPropagator propagator) {
 		final Set<IOccurrence> result = new LinkedHashSet<IOccurrence>();
@@ -78,6 +85,7 @@ public class IndexQuery implements IIndexQuery {
 		return result;
 	}
 
+	@Override
 	public Set<IOccurrence> getOccurrences(Collection<IDeclaration> declarations) {
 		final Set<IOccurrence> result = new LinkedHashSet<IOccurrence>();
 		for (IDeclaration declaration : declarations) {
@@ -86,6 +94,7 @@ public class IndexQuery implements IIndexQuery {
 		return result;
 	}
 
+	@Override
 	public Set<IDeclaration> getDeclarations(Collection<IOccurrence> occurrences) {
 		final Set<IDeclaration> result = new LinkedHashSet<IDeclaration>();
 		for (IOccurrence occurrence : occurrences) {
@@ -94,23 +103,28 @@ public class IndexQuery implements IIndexQuery {
 		return result;
 	}
 
+	@Override
 	public void filterName(Set<IDeclaration> declarations, String name) {
 		new NameFilter(name).filter(declarations);
 	}
 
+	@Override
 	public void filterType(Set<IDeclaration> declarations,
 			IInternalElementType<?> type) {
 		new TypeFilter(type).filter(declarations);
 	}
 
+	@Override
 	public void filterFile(Set<IOccurrence> occurrences, IRodinFile file) {
 		new FileFilter(file).filter(occurrences);
 	}
 
+	@Override
 	public void filterKind(Set<IOccurrence> occurrences, IOccurrenceKind kind) {
 		new KindFilter(kind).filter(occurrences);
 	}
 
+	@Override
 	public void filterLocation(Set<IOccurrence> occurrences,
 			IInternalLocation location) {
 		new LocationFilter(location).filter(occurrences);

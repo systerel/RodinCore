@@ -357,6 +357,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		final String[] inputs = { currentInput };
 		if (interruptable) {
 			applyTacticWithProgress(new IRunnableWithProgress() {
+				@Override
 				public void run(IProgressMonitor pm)
 						throws InvocationTargetException {
 					applyCommand(command.getProofCommand(), userSupport, null,
@@ -378,6 +379,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		final ITactic tactic = provider.getTactic(null, currentInput);
 		if (interruptable) {
 			applyTacticWithProgress(new IRunnableWithProgress() {
+				@Override
 				public void run(IProgressMonitor pm)
 						throws InvocationTargetException {
 					applyTactic(tactic, userSupport, null, skipPostTactic, pm);
@@ -441,6 +443,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			return found;
 		}
 
+		@Override
 		public void dragEnter(DropTargetEvent event) {
 
 			Point pt = new Point(event.x, event.y);
@@ -472,6 +475,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			}
 		}
 
+		@Override
 		public void dragOver(DropTargetEvent event) {
 			// Determine which button are there
 
@@ -496,6 +500,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 		}
 
+		@Override
 		public void dragOperationChanged(DropTargetEvent event) {
 			if (event.detail == DND.DROP_DEFAULT) {
 				if ((event.operations & DND.DROP_COPY) != 0) {
@@ -512,14 +517,17 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			}
 		}
 
+		@Override
 		public void dragLeave(DropTargetEvent event) {
 			updateToolItems(editor.getUserSupport());
 		}
 
+		@Override
 		public void dropAccept(DropTargetEvent event) {
 			// Do nothing
 		}
 
+		@Override
 		public void drop(DropTargetEvent event) {
 			if (textTransfer.isSupportedType(event.currentDataType)) {
 				if (ProofControlUtils.DEBUG)
@@ -606,6 +614,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		if (ProofControlUtils.DEBUG) {
 			textWidget.addModifyListener(new ModifyListener() {
 
+				@Override
 				public void modifyText(ModifyEvent e) {
 					ProofControlUtils.debug("File: "
 							+ ProofControlPage.this.editor.getRodinInputFile()
@@ -620,6 +629,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		gd.widthHint = 200;
 		textWidget.setLayoutData(gd);
 		textWidget.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				currentInput = textWidget.getText();
 				updateToolItems(editor.getUserSupport());
@@ -631,10 +641,12 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		historyCombo = new Combo(body, SWT.DROP_DOWN | SWT.READ_ONLY);
 		historyCombo.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				textWidget.setText(historyCombo.getText());
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);
 			}
@@ -708,6 +720,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				ProofControlPage.this.fillContextMenu(manager);
 			}
@@ -844,6 +857,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 * 
 	 * @see org.eventb.core.pm.IProofStateChangedListener#proofStateChanged(org.eventb.core.pm.IProofStateDelta)
 	 */
+	@Override
 	public void userSupportManagerChanged(final IUserSupportManagerDelta delta) {
 
 		if (ProofControlUtils.DEBUG)
@@ -881,6 +895,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		Display display = scrolledForm.getDisplay();
 
 		display.syncExec(new Runnable() {
+			@Override
 			public void run() {
 				// Do nothing if the form is disposed.
 				if (scrolledForm.isDisposed())
@@ -967,6 +982,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		statusManager.setProofInformation(information);
 	}
 
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(
 				PreferenceConstants.P_POSTTACTIC_ENABLE)) {
@@ -984,6 +1000,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	}
 
+	@Override
 	public String getInput() {
 		return textWidget.getText();
 	}

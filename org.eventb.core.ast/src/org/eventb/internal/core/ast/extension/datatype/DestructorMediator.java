@@ -39,49 +39,60 @@ public class DestructorMediator extends DatatypeMediator implements IDestructorM
 		super(typeName, typeParams);
 	}
 
+	@Override
 	public void addDestructor(final String name, final String id, ITypeParameter returnType) {
 		final IExpressionExtension destructor = new IExpressionExtension() {
 			
+			@Override
 			public Predicate getWDPredicate(IWDMediator wdMediator,
 					IExtendedFormula formula) {
 				return wdMediator.makeTrueWD();
 			}
 			
+			@Override
 			public String getSyntaxSymbol() {
 				return name;
 			}
 			
+			@Override
 			public IExtensionKind getKind() {
 				return PARENTHESIZED_UNARY_EXPRESSION;
 			}
 			
+			@Override
 			public String getId() {
 				return id;
 			}
 			
+			@Override
 			public String getGroupId() {
 				return BMath.BOUND_UNARY;
 			}
 			
+			@Override
 			public void addPriorities(IPriorityMediator mediator) {
 				// no priority
 			}
 			
+			@Override
 			public void addCompatibilities(ICompatibilityMediator mediator) {
 				// no compatibility				
 			}
 			
+			@Override
 			public Type typeCheck(ITypeCheckMediator tcMediator,
 					ExtendedExpression expression) {
 				// TODO unification and return the datatype type
 				return null;
 			}
 			
+			@Override
 			public Type getType(ITypeMediator mediator, ExtendedExpression expression) {
 				// TODO return the datatype type
 				return null;
 			}
 
+			@Override
 			public boolean conjoinChildrenWD() {
 				return true;
 			}

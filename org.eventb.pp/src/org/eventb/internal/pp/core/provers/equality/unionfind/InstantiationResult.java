@@ -35,18 +35,22 @@ public final class InstantiationResult implements IInstantiationResult {
 		return Source.getLevel(solvedSource);
 	}
 
+	@Override
 	public EqualityLiteral getEquality() {
 		return source.getEquality();
 	}
 
+	@Override
 	public Constant getInstantiationValue() {
 		return proposedValue.getConstant();
 	}
 
+	@Override
 	public Set<Clause> getSolvedClauses() {
 		return source.getClauses();
 	}
 
+	@Override
 	public Set<Clause> getSolvedValueOrigin() {
 		Set<Clause> result = new HashSet<Clause>();
 		for (FactSource source : solvedSource) {

@@ -15,8 +15,6 @@ package org.eventb.core.tests.pog;
 
 import static org.eventb.core.ast.LanguageVersion.V2;
 
-import java.util.List;
-
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;

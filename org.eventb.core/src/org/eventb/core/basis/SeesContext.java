@@ -50,29 +50,35 @@ public class SeesContext extends EventBElement implements ISeesContext {
 		return ELEMENT_TYPE;
 	}
 
+	@Override
 	public IRodinFile getSeenSCContext() throws RodinDBException {
 		final String bareName = getSeenContextName();
 		return getEventBProject().getSCContextFile(bareName);
 	}
 	
+	@Override
 	public IContextRoot getSeenContextRoot() throws RodinDBException {
 		final String bareName = getSeenContextName();
 		return getEventBProject().getContextRoot(bareName);
 	}
 	
+	@Override
 	public boolean hasSeenContextName() throws RodinDBException {
 		return hasAttribute(EventBAttributes.TARGET_ATTRIBUTE);
 	}
 
+	@Override
 	public String getSeenContextName() throws RodinDBException {
 		return getAttributeValue(EventBAttributes.TARGET_ATTRIBUTE);
 	}
 
+	@Override
 	public void setSeenContextName(String name, IProgressMonitor monitor) 
 	throws RodinDBException {
 		setAttributeValue(EventBAttributes.TARGET_ATTRIBUTE, name, monitor);
 	}
 
+	@Override
 	@Deprecated
 	public void setSeenContextName(String name) throws RodinDBException {
 		setSeenContextName(name, null);

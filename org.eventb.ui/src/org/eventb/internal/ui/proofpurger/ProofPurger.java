@@ -44,6 +44,7 @@ public class ProofPurger implements IProofPurger {
 		return instance;
 	}
 
+	@Override
 	public void computeUnused(IRodinElement[] projectsOrFiles,
 			IProgressMonitor monitor, List<IPRProof> unusedProofs,
 			List<IPRRoot> unusedFiles) throws RodinDBException {
@@ -54,6 +55,7 @@ public class ProofPurger implements IProofPurger {
 		RodinCore.run(action, monitor);
 	}
 
+	@Override
 	public void purgeUnused(List<IPRProof> proofs,
 			List<IPRRoot> files, IProgressMonitor monitor)
 			throws IllegalArgumentException, RodinDBException {

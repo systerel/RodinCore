@@ -45,10 +45,12 @@ public class FwdMachineVariantModule extends UtilityModule {
 	public static final IModuleType<FwdMachineVariantModule> MODULE_TYPE = 
 		POGCore.getModuleType(EventBPlugin.PLUGIN_ID + ".fwdMachineVariantModule"); //$NON-NLS-1$
 	
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}
 
+	@Override
 	public void process(
 			IRodinElement element, 
 			IPOGStateRepository repository, 

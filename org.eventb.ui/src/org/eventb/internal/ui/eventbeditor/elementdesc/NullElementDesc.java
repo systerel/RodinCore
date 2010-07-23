@@ -21,6 +21,7 @@ import org.rodinp.core.IRodinElement;
 class NullElementDesc implements IElementDesc {
 
 	private static final IImageProvider nullImgProvider = new IImageProvider() {
+		@Override
 		public ImageDescriptor getImageDescriptor(IRodinElement element) {
 			return null;
 		}
@@ -33,50 +34,62 @@ class NullElementDesc implements IElementDesc {
 	private final IElementRelationship[] nullRelationships = new IElementRelationship[0];
 	private final IElementType<?>[] nullChildren = new IElementType<?>[0];
 
+	@Override
 	public AttributeDesc atColumn(int i) {
 		return (AttributeDesc) nullAttribute;
 	}
 
+	@Override
 	public IImageProvider getImageProvider() {
 		return nullImgProvider;
 	}
 
+	@Override
 	public AttributeDesc[] getAttributeDescription() {
 		return nullAttributes;
 	}
 
+	@Override
 	public String getChildrenSuffix() {
 		return "";
 	}
 
+	@Override
 	public IElementRelationship[] getChildRelationships() {
 		return nullRelationships;
 	}
 
+	@Override
 	public int getDefaultColumn() {
 		return -1;
 	}
 
+	@Override
 	public boolean isSelectable(int i) {
 		return false;
 	}
 
+	@Override
 	public String getPrefix() {
 		return "";
 	}
 
+	@Override
 	public String getAutoNamePrefix() {
 		return "";
 	}
 
+	@Override
 	public IAttributeDesc getAutoNameAttribute() {
 		return nullAttribute;
 	}
 
+	@Override
 	public IElementPrettyPrinter getPrettyPrinter() {
 		return nullPrettyPrinter;
 	}
 
+	@Override
 	public IElementType<?>[] getChildTypes() {
 		return nullChildren;
 	}

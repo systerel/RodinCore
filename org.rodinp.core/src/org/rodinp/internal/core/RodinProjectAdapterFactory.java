@@ -26,6 +26,7 @@ public class RodinProjectAdapterFactory implements IAdapterFactory {
 		IProject.class,
 	};
 	
+	@Override
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (IProject.class.equals(adapterType)) {
 			return ((IRodinProject) adaptableObject).getProject();
@@ -33,6 +34,7 @@ public class RodinProjectAdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
+	@Override
 	public Class[] getAdapterList() {
 		return ADAPTERS;
 	}

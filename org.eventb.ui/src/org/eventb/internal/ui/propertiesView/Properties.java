@@ -20,6 +20,7 @@ public class Properties implements IObjectActionDelegate {
 	/**
 	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
 	 */
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		// Do nothing
 	}
@@ -27,6 +28,7 @@ public class Properties implements IObjectActionDelegate {
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		UIUtils.showView(IPageLayout.ID_PROP_SHEET);
 	}
@@ -34,6 +36,7 @@ public class Properties implements IObjectActionDelegate {
 	/**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection sel) {
 		// Do nothing
 	}

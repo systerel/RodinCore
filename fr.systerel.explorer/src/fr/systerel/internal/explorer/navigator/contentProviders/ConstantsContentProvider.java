@@ -27,6 +27,7 @@ public class ConstantsContentProvider extends AbstractContentProvider {
 		super(IConstant.ELEMENT_TYPE);
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		// there is no ModelElement for constants.
 		if (element instanceof IConstant) {

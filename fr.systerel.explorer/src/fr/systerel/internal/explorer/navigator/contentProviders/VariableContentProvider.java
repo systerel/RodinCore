@@ -27,6 +27,7 @@ public class VariableContentProvider extends AbstractContentProvider {
 		super(IVariable.ELEMENT_TYPE);
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		// there is no ModelElement for variables.
 		if (element instanceof IVariable) {

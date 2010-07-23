@@ -337,6 +337,7 @@ public class RodinDBManager implements ISaveParticipant {
 	/**
 	 * @see ISaveParticipant
 	 */
+	@Override
 	public void doneSaving(ISaveContext context){
 		// nothing to do for the Rodin platform
 	}
@@ -541,6 +542,7 @@ public class RodinDBManager implements ISaveParticipant {
 	/**
 	 * @see ISaveParticipant
 	 */
+	@Override
 	public void prepareToSave(ISaveContext context) /*throws CoreException*/ {
 		// nothing to do
 	}
@@ -703,6 +705,7 @@ public class RodinDBManager implements ISaveParticipant {
 	/**
 	 * @see ISaveParticipant
 	 */
+	@Override
 	public void rollback(ISaveContext context){
 		// nothing to do
 	}
@@ -767,6 +770,7 @@ public class RodinDBManager implements ISaveParticipant {
 	/**
 	 * @see ISaveParticipant
 	 */
+	@Override
 	public void saving(ISaveContext context) throws CoreException {
 		
 		RodinIndexer.saving(context);
@@ -895,6 +899,7 @@ public class RodinDBManager implements ISaveParticipant {
 				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=59937
 				workspace.run(
 					new IWorkspaceRunnable() {
+						@Override
 						public void run(IProgressMonitor progress) throws CoreException {
 							savedState = workspace.addSaveParticipant(RodinCore.getRodinCore(), dbManager);
 							if (savedState != null) {
@@ -903,6 +908,7 @@ public class RodinDBManager implements ISaveParticipant {
 								dbManager.deltaState.getDeltaProcessor().overridenEventType = IResourceChangeEvent.POST_CHANGE;
 								savedState
 								.processResourceChangeEvents(new IResourceChangeListener() {
+									@Override
 									public void resourceChanged(
 											IResourceChangeEvent event) {
 										dbManager.deltaState

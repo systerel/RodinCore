@@ -257,15 +257,18 @@ public class LRUCache<K, V> implements Cloneable {
 
 			LRUCacheEntry<K, V> fEntry;
 
+			@Override
 			public boolean hasMoreElements() {
 				return fValues.hasMoreElements();
 			}
 
+			@Override
 			public K nextElement() {
 				fEntry = fValues.nextElement();
 				return fEntry._fKey;
 			}
 
+			@Override
 			public V getValue() {
 				if (fEntry == null) {
 					throw new java.util.NoSuchElementException();
@@ -507,6 +510,7 @@ public class LRUCache<K, V> implements Cloneable {
 			this.value = value;
 		}
 
+		@Override
 		public final int compareTo(ComparableEntry other) {
 			return name.compareTo(other.name);
 		}

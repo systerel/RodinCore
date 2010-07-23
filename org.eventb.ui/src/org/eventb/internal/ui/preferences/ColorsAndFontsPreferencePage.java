@@ -34,6 +34,7 @@ public class ColorsAndFontsPreferencePage extends FieldEditorPreferencePage impl
 	}
 
 
+	@Override
 	public void init(IWorkbench workbench) {
 		// Do nothing
 	}

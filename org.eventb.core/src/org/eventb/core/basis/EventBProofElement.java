@@ -80,6 +80,7 @@ public abstract class EventBProofElement extends InternalElement implements
 		return "";
 	}
 
+	@Override
 	public void setConfidence(int confidence, IProgressMonitor monitor) throws RodinDBException {
 		if (confidence != IConfidence.UNATTEMPTED) {
 			setAttributeValue(CONFIDENCE_ATTRIBUTE, confidence, monitor);
@@ -88,6 +89,7 @@ public abstract class EventBProofElement extends InternalElement implements
 		}
 	}
 	
+	@Override
 	public int getConfidence() throws RodinDBException {
 		if (!hasConfidence()) return IConfidence.UNATTEMPTED;
 		return getAttributeValue(EventBAttributes.CONFIDENCE_ATTRIBUTE);
@@ -97,10 +99,12 @@ public abstract class EventBProofElement extends InternalElement implements
 		return hasAttribute(CONFIDENCE_ATTRIBUTE);
 	}
 	
+	@Override
 	public boolean getHasManualProof() throws RodinDBException {
 		return isAttributeTrue(MANUAL_PROOF_ATTRIBUTE);
 	}
 	
+	@Override
 	public void setHasManualProof(boolean value, IProgressMonitor monitor)
 			throws RodinDBException {
 
@@ -145,14 +149,17 @@ public abstract class EventBProofElement extends InternalElement implements
 		}
 	}
 	
+	@Override
 	public boolean hasPOStamp() throws RodinDBException {
 		return hasAttribute(EventBAttributes.POSTAMP_ATTRIBUTE);
 	}
 	
+	@Override
 	public long getPOStamp() throws RodinDBException {
 		return getAttributeValue(EventBAttributes.POSTAMP_ATTRIBUTE);
 	}
 	
+	@Override
 	public void setPOStamp(long stamp, IProgressMonitor monitor) throws RodinDBException {
 		setAttributeValue(EventBAttributes.POSTAMP_ATTRIBUTE, stamp, monitor);
 	}
@@ -263,12 +270,15 @@ public abstract class EventBProofElement extends InternalElement implements
 		IPRProofRule[] rules = getProofRules();
 		if (rules.length == 0) {
 			return new IProofSkeleton() {
+				@Override
 				public IProofSkeleton[] getChildNodes() {
 					return NO_CHILDREN;
 				}
+				@Override
 				public String getComment() {
 					return comment;
 				}
+				@Override
 				public IProofRule getRule() {
 					return null;
 				}

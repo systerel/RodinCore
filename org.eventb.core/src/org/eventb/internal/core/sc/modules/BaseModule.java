@@ -54,6 +54,7 @@ public abstract class BaseModule extends SCProcessorModule {
 		initProcessorModules(element, repository, monitor);
 	}
 
+	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {

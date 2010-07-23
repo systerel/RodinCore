@@ -247,26 +247,32 @@ public class Util {
 			this.level = level;
 		}
 		
+		@Override
 		public boolean dependsOnGoal() {
 			return false;
 		}
 
+		@Override
 		public boolean isDefinition() {
 			return false;
 		}
 
+		@Override
 		public void trace(Tracer tracer) {
 			// skip
 		}
 
+		@Override
 		public Level getLevel() {
 			return level;
 		}
 
+		@Override
 		public void addDependenciesTo(Set<Level> dependencies) {
 			// skip
 		}
 
+		@Override
 		public int getDepth() {
 			// TODO Auto-generated method stub
 			return 0;

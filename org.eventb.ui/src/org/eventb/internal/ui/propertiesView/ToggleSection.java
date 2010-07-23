@@ -117,6 +117,7 @@ public abstract class ToggleSection extends AbstractPropertySection implements
 		super.aboutToBeShown();
 	}
 
+	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		final Button button = control.getButton();
 		if (button.isDisposed())
@@ -124,6 +125,7 @@ public abstract class ToggleSection extends AbstractPropertySection implements
 		final Display display = button.getDisplay();
 		display.asyncExec(new Runnable() {
 
+			@Override
 			public void run() {
 				refresh();
 			}

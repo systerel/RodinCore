@@ -31,6 +31,7 @@ public class IntermediateResultList implements IIntermediateResult {
 	/* (non-Javadoc)
 	 * @see org.eventb.pptrans.loader.IIntermediateResult#getTerms()
 	 */
+	@Override
 	public List<TermSignature> getTerms() {
 		List<TermSignature> indexes = new ArrayList<TermSignature>();
 		for (IIntermediateResult res : list) {
@@ -48,6 +49,7 @@ public class IntermediateResultList implements IIntermediateResult {
 		return false;
 	}
 
+	@Override
 	public List<IIntermediateResult> getResultList() {
 		return list;
 	}

@@ -8,11 +8,13 @@ import org.rodinp.core.RodinDBException;
 
 public class Previous implements IProofCommand {
 
+	@Override
 	public void apply(IUserSupport us, Predicate hyp, String[] inputs,
 			IProgressMonitor monitor) throws RodinDBException {
 		us.prevUndischargedPO(false, monitor);
 	}
 
+	@Override
 	public boolean isApplicable(IUserSupport us, Predicate hyp, String input) {
 		return true;
 	}

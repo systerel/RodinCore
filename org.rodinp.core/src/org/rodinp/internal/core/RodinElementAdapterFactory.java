@@ -26,6 +26,7 @@ public class RodinElementAdapterFactory implements IAdapterFactory {
 		IResource.class,
 	};
 	
+	@Override
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (IResource.class.equals(adapterType)) {
 			return ((IRodinElement) adaptableObject).getCorrespondingResource();
@@ -33,6 +34,7 @@ public class RodinElementAdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
+	@Override
 	public Class[] getAdapterList() {
 		return ADAPTERS;
 	}

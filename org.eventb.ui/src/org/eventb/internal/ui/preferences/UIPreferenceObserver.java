@@ -190,6 +190,7 @@ public class UIPreferenceObserver implements IPropertyChangeListener {
 		}
 	}
 	
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		final Object newValue = event.getNewValue();
 		final String property = event.getProperty();

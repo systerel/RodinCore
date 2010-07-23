@@ -32,6 +32,7 @@ class CreateProofAttemptOperation implements IWorkspaceRunnable {
 		return pa;
 	}
 
+	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
 		pa = pc.get(poName, owner);
 		if (pa != null) {

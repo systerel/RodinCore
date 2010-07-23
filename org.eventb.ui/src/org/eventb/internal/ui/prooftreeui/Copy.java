@@ -24,6 +24,7 @@ public class Copy extends AbstractProofTreeAction implements
 		super(false);
 	}
 
+	@Override
 	public void run(IAction action) {
 		final IStructuredSelection ssel = extractStructuredSelection();
 		assertIsProofTreeNode(ssel);

@@ -28,24 +28,29 @@ public class TestTracer extends AbstractPPTest {
 			this.dependencies = dependencies;
 		}
 		
+		@Override
 		public boolean dependsOnGoal() {
 			// not tested
 			return false;
 		}
 
+		@Override
 		public void addDependenciesTo(Set<Level> dependencies) {
 			dependencies.addAll(this.dependencies);
 		}
 
+		@Override
 		public Level getLevel() {
 			return level;
 		}
 
+		@Override
 		public boolean isDefinition() {
 			// not tested
 			return false;
 		}
 
+		@Override
 		public void trace(Tracer tracer) {
 			// not tested
 		}
@@ -55,6 +60,7 @@ public class TestTracer extends AbstractPPTest {
 			return level+"";
 		}
 
+		@Override
 		public int getDepth() {
 			// TODO Auto-generated method stub
 			return 0;

@@ -239,6 +239,7 @@ public class ProofsPage extends FormPage implements
 		layouting = false;
 	}
 
+	@Override
 	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
 		if (ProverUIUtils.DEBUG)
 			ProverUIUtils.debug("Begin User Support Manager Changed");
@@ -274,6 +275,7 @@ public class ProofsPage extends FormPage implements
 		Display display = scrolledForm.getDisplay();
 
 		display.syncExec(new Runnable() {
+			@Override
 			public void run() {
 				// Do nothing if the managed form is disposed.
 				if (scrolledForm.isDisposed())

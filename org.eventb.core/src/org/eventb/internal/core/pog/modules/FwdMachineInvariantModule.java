@@ -34,6 +34,7 @@ public class FwdMachineInvariantModule extends PredicateModule<ISCInvariant> {
 	public static final IModuleType<FwdMachineInvariantModule> MODULE_TYPE = 
 		POGCore.getModuleType(EventBPlugin.PLUGIN_ID + ".fwdMachineInvariantModule"); //$NON-NLS-1$
 	
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

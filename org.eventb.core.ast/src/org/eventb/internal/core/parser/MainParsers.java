@@ -235,6 +235,7 @@ public class MainParsers {
 	// Core algorithm implementation
 	static final INudParser<? extends Formula<?>> FORMULA_PARSER = new INudParser<Formula<?>>() {
 		
+		@Override
 		public SubParseResult<Formula<?>> nud(ParserContext pc)
 				throws SyntaxError {
 		
@@ -247,6 +248,7 @@ public class MainParsers {
 			return left;
 		}
 
+		@Override
 		public void toString(IToStringMediator mediator, Formula<?> toPrint) {
 			mediator.forward(toPrint);			
 		}
@@ -255,6 +257,7 @@ public class MainParsers {
 
 	static final INudParser<Type> TYPE_PARSER = new INudParser<Type>() {
 		
+		@Override
 		public SubParseResult<Type> nud(ParserContext pc) throws SyntaxError {
 			pc.startParsingType();
 			try {
@@ -280,6 +283,7 @@ public class MainParsers {
 			return new SyntaxError(new ASTProblem(pc.getSourceLocation(), ProblemKind.InvalidTypeExpression, ProblemSeverities.Error));
 		}
 
+		@Override
 		public void toString(IToStringMediator mediator, Type toPrint) {
 			final Expression expression = toPrint.toExpression(mediator.getFactory());
 			mediator.forward(expression);
@@ -288,6 +292,7 @@ public class MainParsers {
 
 	static final INudParser<Predicate> PRED_PARSER = new INudParser<Predicate>() {
 		
+		@Override
 		public SubParseResult<Predicate> nud(ParserContext pc) throws SyntaxError {
 			final SubParseResult<? extends Formula<?>> formulaResult = FORMULA_PARSER.nud(pc);
 			final Predicate predicate = asPredicate(formulaResult.getParsed());
@@ -295,6 +300,7 @@ public class MainParsers {
 					.getKind(), formulaResult.isClosed());
 		}
 
+		@Override
 		public void toString(IToStringMediator mediator, Predicate toPrint) {
 			mediator.forward(toPrint);
 		}
@@ -302,6 +308,7 @@ public class MainParsers {
 
 	static final INudParser<Expression> EXPR_PARSER = new INudParser<Expression>() {
 		
+		@Override
 		public SubParseResult<Expression> nud(ParserContext pc) throws SyntaxError {
 			final SubParseResult<? extends Formula<?>> formulaResult = FORMULA_PARSER.nud(pc);
 			final Expression expression = asExpression(formulaResult.getParsed());
@@ -309,6 +316,7 @@ public class MainParsers {
 					.getKind(), formulaResult.isClosed());
 		}
 		
+		@Override
 		public void toString(IToStringMediator mediator, Expression toPrint) {
 			mediator.forward(toPrint);
 		}
@@ -316,6 +324,7 @@ public class MainParsers {
 
 	static final INudParser<Formula<?>> CLOSED_SUGAR = new INudParser<Formula<?>> () {
 
+		@Override
 		public SubParseResult<Formula<?>> nud(ParserContext pc) throws SyntaxError {
 			pc.acceptOpenParen();
 			final SubParseResult<? extends Formula<?>> formula = pc.subParseNoCheckRes(FORMULA_PARSER);
@@ -324,6 +333,7 @@ public class MainParsers {
 					.getKind(), true);
 		}
 
+		@Override
 		public void toString(IToStringMediator mediator, Formula<?> toPrint) {
 			// should never be called
 			assert false;
@@ -339,6 +349,7 @@ public class MainParsers {
 			this.pattern = new Pattern(result);
 		}
 
+		@Override
 		public SubParseResult<Pattern> nud(ParserContext pc) throws SyntaxError {
 			final PatternAtomParser atomParser = new PatternAtomParser(pattern, this);
 			pc.subParseNoCheck(atomParser);
@@ -390,6 +401,7 @@ public class MainParsers {
 				this.parser = parser;
 			}
 
+			@Override
 			public SubParseResult<Object> nud(ParserContext pc) throws SyntaxError {
 				if (pc.t.kind == _LPAR) {
 					pc.acceptOpenParen();
@@ -403,6 +415,7 @@ public class MainParsers {
 				return NULL_SUB_PARSE_RESULT;
 			}
 
+			@Override
 			public void toString(IToStringMediator mediator,
 					Object toPrint) {
 				// should never happen
@@ -410,6 +423,7 @@ public class MainParsers {
 			}
 		}
 
+		@Override
 		public void toString(IToStringMediator mediator,
 				Pattern toPrint) {
 			// should never happen
@@ -433,6 +447,7 @@ public class MainParsers {
 			this.parser = parser;
 		}
 
+		@Override
 		public SubParseResult<List<T>> nud(ParserContext pc) throws SyntaxError {
 			final List<T> list = new ArrayList<T>();
 			final T first = pc.subParseNoCheck(parser);
@@ -446,6 +461,7 @@ public class MainParsers {
 			return new SubParseResult<List<T>>(list, _NOOP); 
 		}
 
+		@Override
 		public void toString(IToStringMediator mediator,
 				List<T> toPrint) {
 			final Iterator<T> iter = toPrint.iterator();
@@ -513,6 +529,7 @@ public class MainParsers {
 			super(kind, BECOMES_EQUAL_TO);
 		}
 
+		@Override
 		public SubParseResult<BecomesEqualTo> nud(ParserContext pc) throws SyntaxError {
 			final List<FreeIdentifier> idents = pc.subParseNoCheck(FREE_IDENT_LIST_PARSER);
 			// the list is guaranteed to be non empty
@@ -557,6 +574,7 @@ public class MainParsers {
 			}
 		}
 
+		@Override
 		public void toString(IToStringMediator mediator, BecomesEqualTo toPrint) {
 			final FreeIdentifier[] idents = toPrint.getAssignedIdentifiers();
 			FREE_IDENT_LIST_PARSER.toString(mediator, asList(idents));
@@ -573,6 +591,7 @@ public class MainParsers {
 			super(kind, BECOMES_MEMBER_OF);
 		}
 
+		@Override
 		public SubParseResult<BecomesMemberOf> nud(ParserContext pc) throws SyntaxError {
 			final FreeIdentifier ident = pc.subParse(FREE_IDENT_SUBPARSER, false);
 			if (pc.t.kind == _COMMA) {
@@ -587,6 +606,7 @@ public class MainParsers {
 			return new SubParseResult<BecomesMemberOf>(bmo, kind);
 		}
 
+		@Override
 		public void toString(IToStringMediator mediator, BecomesMemberOf toPrint) {
 			final FreeIdentifier[] idents = toPrint.getAssignedIdentifiers();
 			FREE_IDENT_LIST_PARSER.toString(mediator, asList(idents));
@@ -603,6 +623,7 @@ public class MainParsers {
 			super(kind, BECOMES_SUCH_THAT);
 		}
 
+		@Override
 		public SubParseResult<BecomesSuchThat> nud(ParserContext pc) throws SyntaxError {
 			final List<FreeIdentifier> idents = pc.subParseNoCheck(FREE_IDENT_LIST_PARSER);
 			// the list is guaranteed to be non empty
@@ -616,6 +637,7 @@ public class MainParsers {
 			return new SubParseResult<BecomesSuchThat>(bst, kind);
 		}
 
+		@Override
 		public void toString(IToStringMediator mediator, BecomesSuchThat toPrint) {
 			final FreeIdentifier[] idents = toPrint.getAssignedIdentifiers();
 			FREE_IDENT_LIST_PARSER.toString(mediator, asList(idents));
@@ -647,6 +669,7 @@ public class MainParsers {
 	public static final INudParser<Assignment> ASSIGNMENT_PARSER = 
 		new INudParser<Assignment>() {
 
+		@Override
 		public SubParseResult<Assignment> nud(ParserContext pc) throws SyntaxError {
 			final INudParser<? extends Assignment> parser = getAssignmentParser(pc);
 			final SubParseResult<? extends Assignment> assignResult = pc.subParseRes(parser, false);
@@ -675,6 +698,7 @@ public class MainParsers {
 					" (expected to find an assignment operator)"));
 		}
 
+		@Override
 		public void toString(IToStringMediator mediator, Assignment toPrint) {
 			mediator.forward(toPrint);
 		}

@@ -23,6 +23,7 @@ public class Proves implements IObjectActionDelegate {
 		super();
 	}
 
+	@Override
 	public void run(IAction action) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
@@ -43,10 +44,12 @@ public class Proves implements IObjectActionDelegate {
 	/**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection sel) {
 		this.selection = sel;
 	}
 
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		// Do nothing
 	}

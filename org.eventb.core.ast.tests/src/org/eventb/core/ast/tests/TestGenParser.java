@@ -543,15 +543,18 @@ public class TestGenParser extends AbstractTests {
 	
 	private static final IExpressionExtension DIRECT_PRODUCT = new IExpressionExtension() {
 
+		@Override
 		public Predicate getWDPredicate(IWDMediator wdMediator,
 				IExtendedFormula formula) {
 			return wdMediator.makeTrueWD();
 		}
 
+		@Override
 		public String getSyntaxSymbol() {
 			return "§";
 		}
 
+		@Override
 		public Type typeCheck(ITypeCheckMediator tcMediator,
 				ExtendedExpression expression) {
 			final Type alpha = tcMediator.newTypeVariable();
@@ -569,6 +572,7 @@ public class TestGenParser extends AbstractTests {
 			return resultType;
 		}
 
+		@Override
 		public Type getType(ITypeMediator mediator,
 				ExtendedExpression expression) {
 
@@ -588,26 +592,32 @@ public class TestGenParser extends AbstractTests {
 			}
 		}
 
+		@Override
 		public String getGroupId() {
 			return "My own group";
 		}
 
+		@Override
 		public String getId() {
 			return "direct product extension";
 		}
 
+		@Override
 		public IExtensionKind getKind() {
 			return BINARY_INFIX_EXPRESSION;
 		}
 
+		@Override
 		public void addCompatibilities(ICompatibilityMediator mediator) {
 			// no compatibility
 		}
 
+		@Override
 		public void addPriorities(IPriorityMediator mediator) {
 			// no priority
 		}
 
+		@Override
 		public boolean conjoinChildrenWD() {
 			return true;
 		}
@@ -629,6 +639,7 @@ public class TestGenParser extends AbstractTests {
 		private static final String SYNTAX_SYMBOL = "€";
 		private static final String OPERATOR_ID = "Money";
 		
+		@Override
 		public Type getType(ITypeMediator mediator,
 				ExtendedExpression expression) {
 			final Expression[] children = expression.getChildExpressions();
@@ -642,6 +653,7 @@ public class TestGenParser extends AbstractTests {
 			return resultType;
 		}
 
+		@Override
 		public Type typeCheck(ITypeCheckMediator tcMediator,
 				ExtendedExpression expression) {
 			final Expression[] children = expression.getChildExpressions();
@@ -652,10 +664,12 @@ public class TestGenParser extends AbstractTests {
 			return resultType;
 		}
 
+		@Override
 		public void addCompatibilities(ICompatibilityMediator mediator) {
 			mediator.addAssociativity(getId());
 		}
 
+		@Override
 		public void addPriorities(IPriorityMediator mediator) {
 			try {
 				mediator.addPriority(getId(), "plus");
@@ -665,27 +679,33 @@ public class TestGenParser extends AbstractTests {
 			}
 		}
 
+		@Override
 		public String getGroupId() {
 			return "Arithmetic";
 		}
 
+		@Override
 		public String getId() {
 			return OPERATOR_ID;
 		}
 
+		@Override
 		public IExtensionKind getKind() {
 			return ASSOCIATIVE_INFIX_EXPRESSION;
 		}
 
+		@Override
 		public String getSyntaxSymbol() {
 			return SYNTAX_SYMBOL;
 		}
 
+		@Override
 		public Predicate getWDPredicate(IWDMediator wdMediator,
 				IExtendedFormula formula) {
 			return wdMediator.makeTrueWD();
 		}
 
+		@Override
 		public boolean conjoinChildrenWD() {
 			return true;
 		}
@@ -1649,6 +1669,7 @@ public class TestGenParser extends AbstractTests {
 		private static final String SYNTAX_SYMBOL = "emax";
 		private static final String OPERATOR_ID = "Extension Maximum";
 		
+		@Override
 		public Type getType(ITypeMediator mediator,
 				ExtendedExpression expression) {
 			final Expression[] children = expression.getChildExpressions();
@@ -1662,6 +1683,7 @@ public class TestGenParser extends AbstractTests {
 			return resultType;
 		}
 
+		@Override
 		public Type typeCheck(ITypeCheckMediator tcMediator,
 				ExtendedExpression expression) {
 			final Expression[] children = expression.getChildExpressions();
@@ -1672,35 +1694,43 @@ public class TestGenParser extends AbstractTests {
 			return resultType;
 		}
 
+		@Override
 		public void addCompatibilities(ICompatibilityMediator mediator) {
 			mediator.addCompatibility(getId(), getId());
 		}
 
+		@Override
 		public void addPriorities(IPriorityMediator mediator) {
 			// no priority to add
 		}
 
+		@Override
 		public String getGroupId() {
 			return "Arithmetic";
 		}
 
+		@Override
 		public String getId() {
 			return OPERATOR_ID;
 		}
 
+		@Override
 		public IExtensionKind getKind() {
 			return new IFormulaExtension.PrefixKind(EXPRESSION, 3, EXPRESSION);
 		}
 
+		@Override
 		public String getSyntaxSymbol() {
 			return SYNTAX_SYMBOL;
 		}
 
+		@Override
 		public Predicate getWDPredicate(IWDMediator wdMediator,
 				IExtendedFormula formula) {
 			return wdMediator.makeTrueWD();
 		}
 
+		@Override
 		public boolean conjoinChildrenWD() {
 			return true;
 		}
@@ -1883,22 +1913,27 @@ public class TestGenParser extends AbstractTests {
 		private static final String GROUP_IDENTIFIER = "List Group";
 		
 		
+		@Override
 		public String getTypeName() {
 			return TYPE_NAME;
 		}
 
+		@Override
 		public String getId() {
 			return TYPE_IDENTIFIER;
 		}
 		
+		@Override
 		public String getGroupId() {
 			return GROUP_IDENTIFIER;
 		}
 
+		@Override
 		public void addTypeParameters(ITypeConstructorMediator mediator) {
 			mediator.addTypeParam("S");			
 		}
 
+		@Override
 		public void addConstructors(IConstructorMediator mediator) {
 			mediator.addConstructor("nil", "NIL");
 			final ITypeParameter typeS = mediator.getTypeParameter("S");
@@ -1906,6 +1941,7 @@ public class TestGenParser extends AbstractTests {
 			mediator.addConstructor("cons", "CONS", Arrays.asList(typeS, listS));
 		}
 
+		@Override
 		public void addDestructors(IDestructorMediator mediator) {
 			final ITypeParameter typeS = mediator.getTypeParameter("S");
 			mediator.addDestructor("head", "HEAD", typeS);
@@ -2306,35 +2342,43 @@ public class TestGenParser extends AbstractTests {
 		private static final String SYMBOL = "prime";
 		private static final String ID = "Ext Prime";
 		
+		@Override
 		public Predicate getWDPredicate(IWDMediator wdMediator,
 				IExtendedFormula formula) {
 			return wdMediator.makeTrueWD();
 		}
 		
+		@Override
 		public String getSyntaxSymbol() {
 			return SYMBOL;
 		}
 		
+		@Override
 		public IExtensionKind getKind() {
 			return PARENTHESIZED_UNARY_PREDICATE;
 		}
 		
+		@Override
 		public String getId() {
 			return ID;
 		}
 		
+		@Override
 		public String getGroupId() {
 			return BMath.ATOMIC_PRED;
 		}
 		
+		@Override
 		public void addPriorities(IPriorityMediator mediator) {
 			// no priority
 		}
 		
+		@Override
 		public void addCompatibilities(ICompatibilityMediator mediator) {
 			// no compatibility			
 		}
 		
+		@Override
 		public void typeCheck(ITypeCheckMediator tcMediator,
 				ExtendedPredicate predicate) {
 			final Expression child = predicate.getChildExpressions()[0];
@@ -2342,6 +2386,7 @@ public class TestGenParser extends AbstractTests {
 			tcMediator.sameType(child.getType(), childType);
 		}
 
+		@Override
 		public boolean conjoinChildrenWD() {
 			return true;
 		}

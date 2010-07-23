@@ -27,26 +27,31 @@ public class ExpressionAttributeManipulation extends
 		return (IExpressionElement) element;
 	}
 	
+	@Override
 	public String getValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asExpression(element).getExpressionString();
 	}
 
+	@Override
 	public void setValue(IRodinElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
 		asExpression(element).setExpressionString(newValue, monitor);
 	}
 
+	@Override
 	public void setDefaultValue(IRodinElement element,
 			IProgressMonitor monitor) throws RodinDBException {
 		asExpression(element).setExpressionString("", monitor);
 	}
 
+	@Override
 	public void removeAttribute(IRodinElement element,
 			IProgressMonitor monitor) throws RodinDBException {
 		logCantRemove(EXPRESSION_ATTRIBUTE);
 	}
 
+	@Override
 	public String[] getPossibleValues(IRodinElement element,
 			IProgressMonitor monitor) {
 		// Not applicable for Expression Element.
@@ -54,6 +59,7 @@ public class ExpressionAttributeManipulation extends
 		return null;
 	}
 
+	@Override
 	public boolean hasValue(IRodinElement element, IProgressMonitor monitor)
 			throws RodinDBException {
 		return asExpression(element).hasExpressionString();

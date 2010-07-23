@@ -36,10 +36,12 @@ public final class RodinIndex implements IRodinIndex {
 	 *         does not exist.
 	 * @see #makeDescriptor(IDeclaration)
 	 */
+	@Override
 	public Descriptor getDescriptor(IInternalElement element) {
 		return map.get(element);
 	}
 
+	@Override
 	public Collection<Descriptor> getDescriptors() {
 		final Collection<Descriptor> descriptors = map.values();
 		return Collections.unmodifiableCollection(descriptors);

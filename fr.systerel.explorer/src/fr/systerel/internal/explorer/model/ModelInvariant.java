@@ -36,11 +36,13 @@ public class ModelInvariant extends ModelPOContainer{
 	}
 
 
+	@Override
 	public IRodinElement getInternalElement() {
 		return internalInvariant;
 	}
 
 
+	@Override
 	public Object getParent(boolean complex) {
 		if (parent instanceof ModelMachine ) {
 			return ((ModelMachine) parent).invariant_node;
@@ -49,6 +51,7 @@ public class ModelInvariant extends ModelPOContainer{
 	}
 
 
+	@Override
 	public Object[] getChildren(IInternalElementType<?> type, boolean complex) {
 		if (type != IPSStatus.ELEMENT_TYPE) {
 			if (ExplorerUtils.DEBUG) {

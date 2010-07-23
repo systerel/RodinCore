@@ -39,6 +39,7 @@ public class EventBText extends EventBControl implements IEventBInputText {
 	 * 
 	 * @see org.eventb.internal.ui.IEventBInputText#getTextWidget()
 	 */
+	@Override
 	public Text getTextWidget() {
 		return (Text) getControl();
 	}

@@ -21,23 +21,28 @@ import org.eventb.internal.pp.core.Tracer;
  */
 public class DefinitionOrigin implements IOrigin {
 
+	@Override
 	public void addDependenciesTo(Set<Level> dependencies) {
 		if (!dependencies.contains(getLevel()))
 			dependencies.add(getLevel());
 	}
 
+	@Override
 	public void trace(Tracer tracer) {
 		// do nothing
 	}
 
+	@Override
 	public boolean dependsOnGoal() {
 		return false;
 	}
 
+	@Override
 	public boolean isDefinition() {
 		return true;
 	}
 
+	@Override
 	public Level getLevel() {
 		return Level.BASE;
 	}
@@ -47,6 +52,7 @@ public class DefinitionOrigin implements IOrigin {
 		return getLevel().toString();
 	}
 
+	@Override
 	public int getDepth() {
 		return 0;
 	}

@@ -40,6 +40,7 @@ public class History {
 		contexts = new HashSet<IUndoContext>();
 		EditorsUI.getPreferenceStore().addPropertyChangeListener(
 				new IPropertyChangeListener() {
+					@Override
 					public void propertyChange(PropertyChangeEvent event) {
 						if (PROPERTY_NAME.equals(event.getProperty())) {
 							setLimit(getPreferencesLimit());
