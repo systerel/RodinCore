@@ -9,6 +9,5 @@ Require-Bundle: org.eventb.core.seqprover,
  org.eventb.ui
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-Activator: org.eventb.internal.pp.ui.PPUIPlugin
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eventb.internal.pp.ui;x-friends:="org.eventb.pp.tests"
