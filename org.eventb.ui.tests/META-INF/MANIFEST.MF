@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eventb.ui.tests;singleton:=true
 Bundle-Version: 1.3.0.qualifier
 Require-Bundle: org.junit4,
  org.eventb.ui
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %providerName
 Bundle-Activator: org.eventb.ui.tests.EventBUITestsPlugin
 Bundle-ActivationPolicy: lazy

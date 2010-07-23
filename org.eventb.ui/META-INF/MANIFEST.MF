@@ -37,4 +37,4 @@ Export-Package: org.eventb.internal.ui;x-friends:="org.eventb.ui.tests,fr.syster
  org.eventb.ui.eventbeditor,
  org.eventb.ui.prettyprint,
  org.eventb.ui.prover
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

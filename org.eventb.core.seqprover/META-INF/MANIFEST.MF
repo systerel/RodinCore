@@ -21,4 +21,4 @@ Export-Package: org.eventb.core.seqprover,
  org.eventb.internal.core.seqprover.eventbExtensions;x-friends:="org.eventb.core.seqprover.tests",
  org.eventb.internal.core.seqprover.eventbExtensions.rewriters;x-friends:="org.eventb.core.seqprover.tests",
  org.eventb.internal.core.seqprover.reasonerInputs;x-friends:="org.eventb.core.seqprover.tests"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

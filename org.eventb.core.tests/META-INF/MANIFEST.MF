@@ -9,4 +9,4 @@ Require-Bundle: org.eventb.core,
  org.eventb.core.seqprover,
  org.junit
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

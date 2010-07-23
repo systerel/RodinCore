@@ -7,4 +7,4 @@ Bundle-Vendor: ETH Zurich
 Require-Bundle: org.eventb.core.ast,
  org.junit
 Export-Package: org.eventb.core.ast.tests
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

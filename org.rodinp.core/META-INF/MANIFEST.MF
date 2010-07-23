@@ -26,4 +26,4 @@ Export-Package: org.rodinp.core,
  org.rodinp.internal.core.location;x-friends:="org.rodinp.core.tests",
  org.rodinp.internal.core.util;x-friends:="org.rodinp.core.tests",
  org.rodinp.internal.core.version;x-friends:="org.rodinp.core.tests"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

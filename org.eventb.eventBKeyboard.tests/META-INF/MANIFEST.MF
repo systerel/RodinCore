@@ -8,4 +8,4 @@ Require-Bundle: org.eventb.eventBKeyboard,
  org.junit,
  org.eclipse.ui,
  org.eclipse.core.runtime
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

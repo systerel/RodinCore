@@ -35,4 +35,4 @@ Export-Package: org.eventb.internal.pp;x-friends:="org.eventb.pp.tests",
  org.eventb.pp
 Bundle-Activator: org.eventb.pp.PPCore
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

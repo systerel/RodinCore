@@ -1,6 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Predicate Calculus Front-end
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-SymbolicName: org.eventb.rubin
 Bundle-Version: 0.0.0
 Bundle-Vendor: ETH Zurich

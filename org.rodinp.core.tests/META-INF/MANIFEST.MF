@@ -11,4 +11,4 @@ Require-Bundle: org.junit,
 Export-Package: org.rodinp.core.tests,
  org.rodinp.core.tests.basis,
  org.rodinp.core.tests.util
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
