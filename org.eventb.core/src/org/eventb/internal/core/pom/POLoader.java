@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eventb.internal.core.pom;
 
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.breakPossibleConjunct;
+
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -26,7 +29,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.RodinDBException;
 
@@ -202,8 +204,8 @@ public final class POLoader {
 	private static void addWDpredicates(Predicate pred, Set<Predicate> predSet,
 			FormulaFactory ff) {
 		if (! shouldWDpredBeAdded(pred)) return;
-		Set<Predicate> toAdd = Lib.breakPossibleConjunct(pred.getWDPredicate(ff));
-		toAdd.remove(Lib.True);
+		Set<Predicate> toAdd = breakPossibleConjunct(pred.getWDPredicate(ff));
+		toAdd.remove(mDLib(ff).True());
 		predSet.addAll(toAdd);
 	}
 	

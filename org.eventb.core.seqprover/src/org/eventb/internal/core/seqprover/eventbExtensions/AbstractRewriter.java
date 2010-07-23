@@ -16,9 +16,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
@@ -27,7 +29,6 @@ import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SerializeException;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 /**
@@ -83,9 +84,10 @@ public abstract class AbstractRewriter implements IReasoner {
 		final Predicate hyp = input.pred;
 
 		final Predicate goal = seq.goal();
+		final FormulaFactory ff = seq.getFormulaFactory();
 		if (hyp == null) {
 			// Goal rewriting
-			final Predicate[] newGoals = rewrite(goal);
+			final Predicate[] newGoals = rewrite(goal, ff);
 			if (newGoals == null) {
 				return ProverFactory.reasonerFailure(this, input, "Rewriter "
 						+ getReasonerID() + " inapplicable for goal "
@@ -106,7 +108,7 @@ public abstract class AbstractRewriter implements IReasoner {
 						"Nonexistent hypothesis: " + hyp);
 			}
 			
-			final Predicate[] rewriteOutput = rewrite(hyp);
+			final Predicate[] rewriteOutput = rewrite(hyp, ff);
 			if (rewriteOutput == null) {
 				return ProverFactory.reasonerFailure(this, input, "Rewriter "
 						+ getReasonerID() + " inapplicable for hypothesis "
@@ -197,7 +199,7 @@ public abstract class AbstractRewriter implements IReasoner {
 	 *     predicate to rewrite
 	 * @return an array of predicates which are the result of rewriting
 	 */
-	protected abstract Predicate[] rewrite(Predicate pred);
+	protected abstract Predicate[] rewrite(Predicate pred, FormulaFactory ff);
 	
 	/**
 	 * Returns the action to perform on hypotheses.

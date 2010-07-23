@@ -1,17 +1,26 @@
-/**
+/*******************************************************************************
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- */
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover;
+
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 /**
  * This is a mutable implementation of {@link IProofDependencies} to be used with
@@ -80,12 +89,12 @@ public class ProofDependenciesBuilder {
 	 * 
 	 * @return The {@link IProofDependencies} collected by this {@link ProofDependenciesBuilder}.
 	 */
-	public final IProofDependencies finished(){
+	public final IProofDependencies finished(FormulaFactory ff){
 		boolean hasDeps = (goal != null ||
 				! usedHypotheses.isEmpty() ||
 				! usedFreeIdents.isEmpty() ||
 				! introducedFreeIdents.isEmpty()); 
-		ITypeEnvironment usedTypEnv = Lib.makeTypeEnvironment();
+		ITypeEnvironment usedTypEnv = mDLib(ff).makeTypeEnvironment();
 		for (FreeIdentifier freeIdent : usedFreeIdents) {
 			usedTypEnv.add(freeIdent);
 		}

@@ -19,13 +19,13 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
-import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.SingleExprInput;
 import org.eventb.core.seqprover.reasonerInputs.SingleExprInputReasoner;
@@ -60,21 +60,22 @@ public class AbstrExpr extends SingleExprInputReasoner {
 		// We can now assume that lemma has been properly parsed and typed.
 		
 		// Generate the well definedness condition for the lemma
-		Predicate exprWD = Lib.WD(expr);
+		final DLib lib = DLib.mDLib(seq.getFormulaFactory());
+		final Predicate exprWD = lib.WD(expr);
 		final Set<Predicate> exprWDs = Lib.breakPossibleConjunct(exprWD);
-		Lib.removeTrue(exprWDs);
+		lib.removeTrue(exprWDs);
 		
 		// Generate a fresh free identifier
 		final FormulaFactory ff = seq.getFormulaFactory();
-		FreeIdentifier freeIdent = ff.makeFreeIdentifier(
+		final FreeIdentifier freeIdent = ff.makeFreeIdentifier(
 				genFreshFreeIdentName(seq.typeEnvironment()),
 				null, expr.getType());
 		
 		// Generate the equality predicate
-		Predicate aeEq = Lib.makeEq(freeIdent, expr);
+		final Predicate aeEq = lib.makeEq(freeIdent, expr);
 		
 		// Generate the anticidents
-		IAntecedent[] anticidents = new IAntecedent[2];
+		final IAntecedent[] anticidents = new IAntecedent[2];
 		
 		// Well definedness condition
 		anticidents[0] = ProverFactory.makeAntecedent(exprWD);
@@ -89,13 +90,8 @@ public class AbstrExpr extends SingleExprInputReasoner {
 				new FreeIdentifier[] {freeIdent}, null);
 		
 		// Generate the proof rule
-		IProofRule reasonerOutput = ProverFactory.makeProofRule(
-				this,input,
-				null,
-				"ae ("+expr.toString()+")",
-				anticidents);
-				
-		return reasonerOutput;
+		return ProverFactory.makeProofRule(this, input, null,
+				"ae (" + expr.toString() + ")", anticidents);
 	}
 	
 

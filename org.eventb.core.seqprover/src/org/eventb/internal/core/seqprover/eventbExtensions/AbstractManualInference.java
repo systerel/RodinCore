@@ -11,6 +11,8 @@
  ******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -47,6 +49,7 @@ import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
@@ -55,8 +58,6 @@ import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SerializeException;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
@@ -373,8 +374,8 @@ public abstract class AbstractManualInference implements IReasoner {
 		return ProverFactory.makeAntecedent(pred);
 	}
 
-	protected IAntecedent makeWD(Predicate pred) {
-		return ProverFactory.makeAntecedent(Lib.WD(pred));
+	protected IAntecedent makeWD(FormulaFactory ff, Predicate pred) {
+		return ProverFactory.makeAntecedent(mDLib(ff).WD(pred));
 	}
 
 	protected Expression makeCompIfNeccessary(Collection<Expression> children, FormulaFactory ff) {

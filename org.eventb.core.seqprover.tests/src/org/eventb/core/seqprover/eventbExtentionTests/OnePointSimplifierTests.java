@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
-import static org.eventb.core.seqprover.eventbExtensions.Lib.ff;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointSimplifier;
@@ -28,6 +28,8 @@ import org.junit.Test;
  */
 public class OnePointSimplifierTests {
 
+	private static final FormulaFactory ff = FormulaFactory.getDefault();
+	
 	private static void assertFailure(String input, String eqPosStr) {
 		final Predicate pred = genPred(input);
 		final Predicate eq = eqPosStr == null ? null : //

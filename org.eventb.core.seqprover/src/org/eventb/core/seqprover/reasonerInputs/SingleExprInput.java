@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.reasonerInputs;
 
-import org.eventb.core.ast.ITypeEnvironment;
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
+
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
@@ -31,7 +34,8 @@ public class SingleExprInput implements IReasonerInput{
 	
 	public SingleExprInput(String exprString, ITypeEnvironment typeEnv){
 		
-		expression = Lib.parseExpression(exprString);
+		final FormulaFactory ff = typeEnv.getFormulaFactory();
+		expression = mDLib(ff).parseExpression(exprString);
 		if (expression == null)
 		{
 			setError("Parse error for expression: " + exprString);

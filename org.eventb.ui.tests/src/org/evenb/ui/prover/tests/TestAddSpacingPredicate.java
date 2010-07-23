@@ -16,14 +16,15 @@ import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.internal.ui.prover.PredicateUtil.appendPredicate;
 import junit.framework.TestCase;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 public class TestAddSpacingPredicate extends TestCase {
 	private void addSpacingTest(String msg, String predString,
 			String expectedPrettyPrint) {
-		final IParseResult parseResult = Lib.ff.parsePredicate(predString, V2, null);
+		final FormulaFactory ff = FormulaFactory.getDefault();
+		final IParseResult parseResult = ff.parsePredicate(predString, V2, null);
 		if (parseResult.hasProblem()) {
 			System.out.println(parseResult.getProblems());
 			fail("Parse failed");

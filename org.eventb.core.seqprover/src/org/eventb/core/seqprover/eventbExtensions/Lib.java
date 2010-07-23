@@ -15,14 +15,9 @@ package org.eventb.core.seqprover.eventbExtensions;
 
 import static org.eventb.core.ast.LanguageVersion.V2;
 
-import java.math.BigInteger;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.Assignment;
@@ -82,21 +77,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrite
  */
 public final class Lib {
 
-	private static final LanguageVersion LANGUAGE_VERSION = V2;
-
-	public final static FormulaFactory ff = FormulaFactory.getDefault();
-
-	public final static Predicate True = ff.makeLiteralPredicate(Formula.BTRUE,
-			null);
-
-	public final static Predicate False = ff.makeLiteralPredicate(
-			Formula.BFALSE, null);
-
-	public final static Expression TRUE = ff.makeAtomicExpression(
-			Expression.TRUE, null);
-
-	public final static Expression FALSE = ff.makeAtomicExpression(
-			Expression.FALSE, null);
+	static final LanguageVersion LANGUAGE_VERSION = V2;
+	static final FormulaFactory ff = FormulaFactory.getDefault();
 
 	public static boolean isTrue(Predicate P) {
 		return P.getTag() == Formula.BTRUE;
@@ -180,10 +162,6 @@ public final class Lib {
 		return new LinkedHashSet<Predicate>(list);
 	}
 	
-	public static boolean removeTrue(Set<Predicate> preds){
-		return preds.remove(True);
-	}
-
 	public static Predicate[] disjuncts(Predicate P) {
 		if (!isDisj(P))
 			return null;
@@ -262,124 +240,8 @@ public final class Lib {
 		return ((RelationalPredicate) P).getLeft();
 	}
 
-	private static void postConstructionCheck(Formula<?> f) {
+	public static void postConstructionCheck(Formula<?> f) {
 		assert f.isTypeChecked();
-	}
-
-	public static Predicate makeNeg(Predicate P) {
-		// If the predicate is already negated, remove the negation.
-		if (isNeg(P))
-			return negPred(P);
-
-		Predicate result = ff.makeUnaryPredicate(Formula.NOT, P, null);
-		postConstructionCheck(result);
-		return result;
-	}
-
-	public static Predicate[] makeNeg(Predicate[] Ps) {
-		Predicate[] result = new Predicate[Ps.length];
-		for (int i = 0; i < Ps.length; i++)
-			result[i] = makeNeg(Ps[i]);
-		return result;
-	}
-
-	public static Predicate makeConj(Predicate... conjuncts) {
-		if (conjuncts.length == 0)
-			return True;
-		if (conjuncts.length == 1)
-			return conjuncts[0];
-		Predicate result = ff.makeAssociativePredicate(Formula.LAND, conjuncts,
-				null);
-		postConstructionCheck(result);
-		return result;
-	}
-
-	public static Predicate makeDisj(Predicate... disjuncts) {
-		if (disjuncts.length == 0)
-			return False;
-		if (disjuncts.length == 1)
-			return disjuncts[0];
-		Predicate result = ff.makeAssociativePredicate(Formula.LOR, disjuncts,
-				null);
-		postConstructionCheck(result);
-		return result;
-	}
-
-	public static Predicate makeConj(Collection<Predicate> conjuncts) {
-		Predicate[] conjunctsArray = new Predicate[conjuncts.size()];
-		conjuncts.toArray(conjunctsArray);
-		return makeConj(conjunctsArray);
-	}
-
-	public static Predicate makeImp(Predicate left, Predicate right) {
-		Predicate result = ff.makeBinaryPredicate(Formula.LIMP, left, right,
-				null);
-		postConstructionCheck(result);
-		return result;
-	}
-	
-	/**
-	 * Makes an implication from a collection of predicates and a predicate.
-	 * 
-	 * <p>
-	 * The left hand side of the implication is the conjunction of the predicates in the given collection. 
-	 * In case the collection is empty, the given rignt hand side predicate is simply returned. 
-	 * </p>
-	 * 
-	 * @param left
-	 * 		the collection of predicates to use for the left hannd side of the
-	 * 		inplications
-	 * @param right
-	 * 		the predicate to use for the right hand side of the implication
-	 * @return
-	 * 		the resulting implication
-	 */
-	public static Predicate makeImpl(Collection<Predicate> left, Predicate right){
-		if (left.isEmpty()){
-			return right;
-		}
-		else{
-			return Lib.makeImp(makeConj(left), right);
-		}	
-	}
-
-
-	public static Predicate makeEq(Expression left, Expression right) {
-		Predicate result = ff.makeRelationalPredicate(Formula.EQUAL, left,
-				right, null);
-		postConstructionCheck(result);
-		return result;
-	}
-
-	public static Predicate makeNotEq(Expression left, Expression right) {
-		Predicate result = ff.makeRelationalPredicate(Formula.NOTEQUAL, left,
-				right, null);
-		postConstructionCheck(result);
-		return result;
-	}
-
-	public static Predicate makeInclusion(Expression element, Expression set) {
-		Predicate result = ff.makeRelationalPredicate(Formula.IN, element, set,
-				null);
-		postConstructionCheck(result);
-		return result;
-	}
-
-	public static Predicate makeNotInclusion(Expression element, Expression set) {
-		Predicate result = ff.makeRelationalPredicate(Formula.NOTIN, element,
-				set, null);
-		postConstructionCheck(result);
-		return result;
-	}
-
-	public static Predicate instantiateBoundIdents(Predicate P,
-			Expression[] instantiations) {
-		if (!(P instanceof QuantifiedPredicate))
-			return null;
-		QuantifiedPredicate qP = (QuantifiedPredicate) P;
-		Predicate result = qP.instantiate(instantiations, ff);
-		postConstructionCheck(result);
-		return result;
 	}
 
 	public static BoundIdentDecl[] getBoundIdents(Predicate P) {
@@ -394,172 +256,39 @@ public final class Lib {
 	public static Predicate getBoundPredicate(Predicate P) {
 		if (!(P instanceof QuantifiedPredicate))
 			return null;
-		QuantifiedPredicate qP = (QuantifiedPredicate) P;
+		final QuantifiedPredicate qP = (QuantifiedPredicate) P;
 		return qP.getPredicate();
 	}
-
-	public static Predicate makeUnivQuant(BoundIdentDecl[] boundIdents,
-			Predicate boundPred) {
-		Predicate result = ff.makeQuantifiedPredicate(Formula.FORALL,
-				boundIdents, boundPred, null);
-		postConstructionCheck(result);
-		return result;
-	}
 	
-	
-	/**
-	 * Constructs a universally quantified predicate form a given predicate
-	 * by binding the free identifiers provided.
-	 * 
-	 * <p>
-	 * If no free identifiers are provided (<code>null</code> or an array of length 0) then
-	 * the identical predicate is returned.
-	 * </p>
-	 * 
-	 * @param freeIdents
-	 * 			the free identifiers to bind
-	 * @param pred
-	 * 			the predicate to quantify over
-	 * @return
-	 * 			the quantified predicate
-	 */
-	public static Predicate makeUnivQuant(FreeIdentifier[] freeIdents,
-			Predicate pred) {
-		
-		if (freeIdents == null || freeIdents.length == 0)
-			return pred;
-		
-		// Bind the given free identifiers 
-		Predicate boundPred = pred.bindTheseIdents(Arrays.asList(freeIdents), ff);
-		// Generate bound identifier declarations.
-		BoundIdentDecl[] boundIdentDecls = new BoundIdentDecl[freeIdents.length];
-		for (int i = 0; i < freeIdents.length; i++) {
-			FreeIdentifier freeIdent = freeIdents[i];
-			boundIdentDecls[i] = ff.makeBoundIdentDecl(freeIdent.getName(), null, freeIdent.getType());
-		}
-	
-		return makeUnivQuant(boundIdentDecls, boundPred);
-	}	
-
-	public static Predicate makeExQuant(BoundIdentDecl[] boundIdents,
-			Predicate boundPred) {
-		Predicate result = ff.makeQuantifiedPredicate(Formula.EXISTS,
-				boundIdents, boundPred, null);
-		postConstructionCheck(result);
-		return result;
-
-	}
-	
-	/**
-	 * Constructs an existentially quantified predicate form a given predicate
-	 * by binding the free identifiers provided.
-	 * 
-	 * <p>
-	 * If no free identifiers are provided (<code>null</code> or an array of length 0) then
-	 * the identical predicate is returned.
-	 * </p>
-	 * 
-	 * @param freeIdents
-	 * 			the free identifiers to bind
-	 * @param pred
-	 * 			the predicate to quantify over
-	 * @return
-	 * 			the quantified predicate
-	 */
-	public static Predicate makeExQuant(FreeIdentifier[] freeIdents,
-			Predicate pred) {
-		
-		if (freeIdents == null || freeIdents.length == 0)
-			return pred;
-		
-		// Bind the given free identifiers 
-		Predicate boundPred = pred.bindTheseIdents(Arrays.asList(freeIdents), ff);
-		// Generate bound identifier declarations.
-		BoundIdentDecl[] boundIdentDecls = new BoundIdentDecl[freeIdents.length];
-		for (int i = 0; i < freeIdents.length; i++) {
-			FreeIdentifier freeIdent = freeIdents[i];
-			boundIdentDecls[i] = ff.makeBoundIdentDecl(freeIdent.getName(), null, freeIdent.getType());
-		}
-	
-		return makeExQuant(boundIdentDecls, boundPred);
-	}
-
-	public static Predicate WD(Formula<?> f) {
-		Predicate result = f.getWDPredicate(ff);
-		postConstructionCheck(result);
-		return result;
-	}
-
-	public static Predicate WD(Collection<Formula<?>> formulae) {
-		Set<Predicate> WD = new HashSet<Predicate>(formulae.size());
-		for (Formula<?> formula : formulae) {
-			WD.add(WD(formula));
-		}
-		return makeConj(WD);
-	}
-
-	public static Predicate WD(Formula<?>[] formulae) {
-		Set<Predicate> WD = new HashSet<Predicate>(formulae.length);
-		for (Formula<?> formula : formulae) {
-			if (formula != null)
-				WD.add(WD(formula));
-		}
-		return makeConj(WD);
-	}
-
+	@Deprecated
 	public static Expression parseExpression(String str) {
-		IParseResult plr = ff.parseExpression(str, LANGUAGE_VERSION, null);
+		final IParseResult plr = ff.parseExpression(str, LANGUAGE_VERSION, null);
 		if (plr.hasProblem())
 			return null;
 		return plr.getParsedExpression();
 	}
-
-	public static Type parseType(String str) {
-		IParseResult plr = ff.parseType(str, LANGUAGE_VERSION);
-		if (plr.hasProblem())
-			return null;
-		return plr.getParsedType();
-	}
-
-	public static Expression typeToExpression(Type type) {
-		Expression result = type.toExpression(ff);
-		postConstructionCheck(result);
-		return result;
-	}
-
+    
+	@Deprecated
 	public static Assignment parseAssignment(String str) {
-		IParseResult plr = ff.parseAssignment(str, LANGUAGE_VERSION, null);
+		final IParseResult plr = ff.parseAssignment(str, LANGUAGE_VERSION, null);
 		if (plr.hasProblem())
 			return null;
 		return plr.getParsedAssignment();
 	}
 
+	@Deprecated
 	public static Predicate parsePredicate(String str) {
-		IParseResult plr = ff.parsePredicate(str, LANGUAGE_VERSION, null);
+		final IParseResult plr = ff.parsePredicate(str, LANGUAGE_VERSION, null);
 		if (plr.hasProblem())
 			return null;
 		return plr.getParsedPredicate();
 	}
 
-	@Deprecated
-	public static Predicate rewrite(Predicate P, FreeIdentifier from,
-			Expression to) {
-		if (!Arrays.asList(P.getFreeIdentifiers()).contains(from))
-			return P;
-		Map<FreeIdentifier, Expression> subst = new HashMap<FreeIdentifier, Expression>();
-		subst.put(from, to);
-		return P.substituteFreeIdents(subst, ff);
-	}
+	static class EqualityRewriter extends FixedRewriter<Expression> {
 
-	public static Predicate rewrite(Predicate P, Expression from, Expression to) {
-		IFormulaRewriter rewriter = new EqualityRewriter(from, to);
-		return P.rewrite(rewriter);
-	}
-
-	private static class EqualityRewriter extends FixedRewriter<Expression> {
-
-		public EqualityRewriter(Expression from, Expression to) {
-			super(from, to);
+		public EqualityRewriter(Expression from, Expression to,
+				FormulaFactory ff) {
+			super(from, to, ff);
 		}
 
 		@Override
@@ -615,8 +344,8 @@ public final class Lib {
 
 		// TODO add check of compatibility between from and to
 		// rather than breaking later when the rewriting is done.
-		public FixedRewriter(T from, T to) {
-			super(true, Lib.ff);
+		public FixedRewriter(T from, T to, FormulaFactory ff) {
+			super(true, ff);
 			this.from = from;
 			this.to = to;
 		}
@@ -750,29 +479,6 @@ public final class Lib {
 			return tcr.getInferredEnvironment().isEmpty();
 		}
 		return false;
-	}
-
-	/**
-	 * Type checks a formula assuming all typing information can be infered from
-	 * the formula itself.
-	 * 
-	 * @param formula
-	 *            The formula to type check
-	 * @return
-	 * 
-	 * @deprecated use {@link #typeCheckClosed(Formula, ITypeEnvironment)} with an
-	 * empty type environment, or the AST methods directly instead.
-	 */
-	@Deprecated
-	public static ITypeEnvironment typeCheck(Formula<?> formula) {
-		ITypeCheckResult tcr = formula.typeCheck(ff.makeTypeEnvironment());
-		if (!tcr.isSuccess())
-			return null;
-		return tcr.getInferredEnvironment();
-	}
-
-	public static ITypeEnvironment makeTypeEnvironment() {
-		return ff.makeTypeEnvironment();
 	}
 
 	public static boolean isFunApp(Formula<?> formula) {
@@ -963,20 +669,6 @@ public final class Lib {
 	public static boolean isParallelProduct(Formula<?> formula) {
 		return formula.getTag() == Expression.PPROD;
 	}
-
-	/**
-	 * Contruct an integer literal ({@link IntegerLiteral} from an integer.
-	 * <p>
-	 * 
-	 * @param n
-	 *            an integer to construct the integer literal
-	 * @return the literal with the value the same as the integer input. 
-	 * @author htson
-	 */
-	public static IntegerLiteral makeIntegerLiteral(int n) {
-		return ff.makeIntegerLiteral(BigInteger.valueOf(n), null);
-	}
-
 
 	/**
 	 * Test if the formula is a finiteness "finite(S)".

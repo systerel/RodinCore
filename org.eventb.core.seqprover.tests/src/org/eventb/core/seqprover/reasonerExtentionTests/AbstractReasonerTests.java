@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.reasonerExtentionTests;
 
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -45,7 +46,7 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.SerializeException;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.IInternalHypAction;
 import org.eventb.internal.core.seqprover.ProverChecks;
@@ -123,6 +124,8 @@ public abstract class AbstractReasonerTests {
 	}
 	
 	private IReasoner reasoner;
+	
+	protected static final DLib lib = mDLib(FormulaFactory.getDefault());
 	
 	@Before
 	public void setUp() throws Exception {
@@ -280,7 +283,7 @@ public abstract class AbstractReasonerTests {
 	private IProverSequent makeSequent(ReasonerApplication app,
 			IProofRule rule, boolean minimal) {
 		final ITypeEnvironment typenv = app.getSequent().typeEnvironment();
-		final Predicate goal = getGoal(rule);
+		final Predicate goal = getGoal(rule, typenv.getFormulaFactory());
 		final Set<Predicate> hyps = new LinkedHashSet<Predicate>();
 		hyps.addAll(rule.getNeededHyps());
 		if (minimal) {
@@ -290,9 +293,9 @@ public abstract class AbstractReasonerTests {
 		return ProverFactory.makeSequent(typenv, hyps, null, hyps, goal);
 	}
 
-	private Predicate getGoal(IProofRule rule) {
+	private Predicate getGoal(IProofRule rule, FormulaFactory ff) {
 		final Predicate goal = rule.getGoal();
-		return goal == null ? Lib.False : goal;
+		return goal == null ? mDLib(ff).False() : goal;
 	}
 
 	/**
@@ -353,8 +356,9 @@ public abstract class AbstractReasonerTests {
 		if (tactic == null) {
 			return;
 		}
+		final FormulaFactory ff = reasonerApp.getSequent().getFormulaFactory();
 		final List<IProverSequent> justifications = ProverChecks
-		.genRuleJustifications(rule);
+		.genRuleJustifications(rule, ff);
 		for (final IProverSequent j : justifications) {
 			final IProofTree proofTree = ProverFactory.makeProofTree(j, null);
 			tactic.apply(proofTree.getRoot(), null);

@@ -1,9 +1,20 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import java.util.Arrays;
 
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.ProverFactory;
@@ -38,7 +49,7 @@ public class Conj extends AbstractRewriter {
 
 	@ProverRule({"AND_L", "AND_R"})
 	@Override
-	protected Predicate[] rewrite(Predicate pred) {
+	protected Predicate[] rewrite(Predicate pred, FormulaFactory ff) {
 		// TODO optimize for duplicate sub-formulas
 		if (pred.getTag() == Formula.LAND) {
 			return ((AssociativePredicate) pred).getChildren();

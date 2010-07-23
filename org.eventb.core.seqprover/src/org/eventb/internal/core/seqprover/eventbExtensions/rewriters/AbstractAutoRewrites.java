@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,11 +22,11 @@ import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
@@ -39,7 +41,8 @@ public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
 		
-		final IFormulaRewriter rewriter = getRewriter(seq.getFormulaFactory());
+		final FormulaFactory ff = seq.getFormulaFactory();
+		final IFormulaRewriter rewriter = getRewriter(ff);
 		
 		final List<IHypAction> hypActions = new ArrayList<IHypAction>();
 		for (Predicate hyp : seq.visibleHypIterable()) {
@@ -55,7 +58,7 @@ public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 				continue;
 
 			// Check if rewriting generated something interesting
-			inferredHyps.remove(Lib.True);
+			inferredHyps.remove(mDLib(ff).True());
 
 			Collection<Predicate> originalHyps = Collections.singleton(hyp);
 

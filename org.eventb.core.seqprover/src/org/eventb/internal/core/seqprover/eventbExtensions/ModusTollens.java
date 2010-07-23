@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 import static java.util.Collections.singleton;
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 import static org.eventb.core.seqprover.ProverFactory.makeHideHypAction;
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
 import java.util.Set;
 
@@ -26,6 +27,7 @@ import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 
@@ -61,9 +63,9 @@ public class ModusTollens extends HypothesisReasoner implements IVersionedReason
 			throw new IllegalArgumentException(
 					"Hypothesis is not an implication: " + pred);
 		}
-
-		final Predicate notImpRight = Lib.makeNeg(Lib.impRight(pred));
-		final Predicate notImpLeft = Lib.makeNeg(Lib.impLeft(pred));
+		final DLib lib = mDLib(sequent.getFormulaFactory());
+		final Predicate notImpRight = lib.makeNeg(Lib.impRight(pred));
+		final Predicate notImpLeft = lib.makeNeg(Lib.impLeft(pred));
 		final Set<Predicate> addedHyps = Lib.breakPossibleConjunct(notImpLeft);
 		final IHypAction hideHypAction = makeHideHypAction(singleton(pred));
 

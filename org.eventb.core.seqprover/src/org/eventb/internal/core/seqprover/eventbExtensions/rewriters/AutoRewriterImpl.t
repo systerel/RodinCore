@@ -47,6 +47,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.ProverRule;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointSimplifier;
 
@@ -60,6 +61,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 
 	private final FormulaSimplification fs;
 	
+	private final DLib dLib;
+	
 	private final IntegerLiteral number0 = ff.makeIntegerLiteral(BigInteger.ZERO, null);
 	
 	private final IntegerLiteral number1 = ff.makeIntegerLiteral(BigInteger.ONE, null);
@@ -69,6 +72,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	public AutoRewriterImpl(FormulaFactory ff) {
 		super(true, ff);
 		fs = new FormulaSimplification(ff);
+		dLib = DLib.mDLib(ff);
 	}
 
 	protected UnaryPredicate makeUnaryPredicate(int tag, Predicate child) {
@@ -156,7 +160,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Finite: finite(∅) = ⊤
 	    	 */
 			Finite(EmptySet()) -> {
-				result = Lib.True;
+				result = dLib.True();
 				trace(predicate, result, "SIMP_SPECIAL_FINITE");
 				return result;
 			}
@@ -166,7 +170,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Finite: finite({a, ..., b}) = ⊤
 	    	 */
 			Finite(SetExtension(_)) -> {
-				result = Lib.True;
+				result = dLib.True();
 				trace(predicate, result, "SIMP_FINITE_SETENUM");
 				return result;
 			}
@@ -231,7 +235,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Finite: finite(a‥b) == ⊤
 	    	 */
 			Finite(UpTo(_,_)) -> {
-				result = Lib.True;
+				result = dLib.True();
 				trace(predicate, result, "SIMP_FINITE_UPTO");
 				return result;
 			}
@@ -253,8 +257,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Conjunction 2: P ∧ ... ∧ ⊥ ∧ ... ∧ Q  == ⊥
 	    	 */
 	    	Land(children) -> {
-				result = fs.simplifyAssociativePredicate(predicate, `children, Lib.True,
-    				Lib.False);
+				result = fs.simplifyAssociativePredicate(predicate, `children, dLib.True(),
+    				dLib.False());
 				trace(predicate, result, "SIMP_SPECIAL_AND_BTRUE", "SIMP_SPECIAL_AND_BFALSE");
 				return result;
 			}
@@ -266,8 +270,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Disjunction 2: P ⋁ ... ⋁ ⊥ ⋁ ... ⋁ Q  == P ⋁ ... ⋁ Q
 	    	 */
 	    	Lor(children) -> {
-				result = fs.simplifyAssociativePredicate(predicate, `children, Lib.False,
-    				Lib.True);
+				result = fs.simplifyAssociativePredicate(predicate, `children, dLib.False(),
+    				dLib.True());
 				trace(predicate, result, "SIMP_SPECIAL_OR_BTRUE", "SIMP_SPECIAL_OR_BFALSE");
 				return result;
 			}
@@ -298,7 +302,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Implication 2: ⊥ ⇒ P == ⊤
 	    	 */
 	    	Limp(BFALSE(), _) -> {
-	    		result = Lib.True;
+	    		result = dLib.True();
 	    		trace(predicate, result, "SIMP_SPECIAL_IMP_BFALSE_L");
 				return result;
  	    	}
@@ -318,7 +322,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Implication 4: P ⇒ ⊥ == ¬P
 	    	 */
 	    	Limp(P, BFALSE()) -> {
-	    		result = Lib.makeNeg(`P);
+	    		result = dLib.makeNeg(`P);
 	    		trace(predicate, result, "SIMP_SPECIAL_IMP_BFALSE_R");
 				return result;
  	    	}
@@ -328,7 +332,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Implication 5: P ⇒ P == ⊤
 	    	 */
 	    	Limp(P, P) -> {
-	    		result = Lib.True;
+	    		result = dLib.True();
 	    		trace(predicate, result, "SIMP_MULTI_IMP");
 				return result;
  	    	}
@@ -338,7 +342,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Equivalent 5: P ⇔ P == ⊤
 	    	 */
 	    	Leqv(P, P) -> {
-	    		result = Lib.True;
+	    		result = dLib.True();
 	    		trace(predicate, result, "SIMP_MULTI_EQV");
 				return result;
  	    	}
@@ -368,7 +372,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Equivalent 3: P ⇔ ⊥ = ¬P
 	    	 */
 	    	Leqv(P, BFALSE()) -> {
-	    		result = Lib.makeNeg(`P);
+	    		result = dLib.makeNeg(`P);
 	    		trace(predicate, result, "SIMP_SPECIAL_EQV_BFALSE");
 				return result;
  	    	}
@@ -378,7 +382,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Equivalent 4: ⊥ ⇔ P == ¬P
 	    	 */
 	    	Leqv(BFALSE(), P) -> {
-	    		result = Lib.makeNeg(`P);
+	    		result = dLib.makeNeg(`P);
 	    		trace(predicate, result, "SIMP_SPECIAL_EQV_BFALSE");
 				return result;
  	    	}
@@ -402,7 +406,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Negation 1: ¬⊤ == ⊥
 	    	 */
 	    	Not(BTRUE()) -> {
-	    		result = Lib.False;
+	    		result = dLib.False();
 	    		trace(predicate, result, "SIMP_SPECIAL_NOT_BTRUE");
 				return result;
 			}
@@ -412,7 +416,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Negation 2: ¬⊥ == ⊤
 	    	 */
 			Not(BFALSE()) -> {
-				result =  Lib.True;
+				result =  dLib.True();
 	    		trace(predicate, result, "SIMP_SPECIAL_NOT_BFALSE");
 				return result;
 			}
@@ -472,7 +476,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Negation 12: ¬ (E = FALSE) == E = TRUE
 	    	 */
 			Not(Equal(E, FALSE())) -> {
-				result =  makeRelationalPredicate(Predicate.EQUAL, `E, Lib.TRUE);
+				result =  makeRelationalPredicate(Predicate.EQUAL, `E, dLib.TRUE());
 	    		trace(predicate, result, "SIMP_SPECIAL_NOT_EQUAL_FALSE_R");
 				return result;
 			}
@@ -482,7 +486,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Negation 13: ¬ (E = TRUE) == E = FALSE
 	    	 */
 			Not(Equal(E, TRUE())) -> {
-				result =  makeRelationalPredicate(Predicate.EQUAL, `E, Lib.FALSE);
+				result =  makeRelationalPredicate(Predicate.EQUAL, `E, dLib.FALSE());
 	    		trace(predicate, result, "SIMP_SPECIAL_NOT_EQUAL_TRUE_R");
 				return result;
 			}
@@ -492,7 +496,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Negation 14: ¬ (FALSE = E) == TRUE = E
 	    	 */
 			Not(Equal(FALSE(), E)) -> {
-				result =  makeRelationalPredicate(Predicate.EQUAL, Lib.TRUE, `E);
+				result =  makeRelationalPredicate(Predicate.EQUAL, dLib.TRUE(), `E);
 	    		trace(predicate, result, "SIMP_SPECIAL_NOT_EQUAL_FALSE_L");
 				return result;
 			}
@@ -502,7 +506,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Negation 15: ¬ (TRUE = E) == FALSE = E
 	    	 */
 			Not(Equal(TRUE(), E)) -> {
-				result =  makeRelationalPredicate(Predicate.EQUAL, Lib.FALSE, `E);
+				result =  makeRelationalPredicate(Predicate.EQUAL, dLib.FALSE(), `E);
 	    		trace(predicate, result, "SIMP_SPECIAL_NOT_EQUAL_TRUE_L");
 				return result;
 			}
@@ -577,7 +581,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Equality: E = E == ⊤
 	    	 */
 	    	Equal(E, E) -> {
-	    		result = Lib.True;
+	    		result = dLib.True();
 	    		trace(predicate, result, "SIMP_MULTI_EQUAL");
 				return result;
 	    	}
@@ -587,7 +591,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Equality: E ≠ E == ⊥
 	    	 */
 	    	NotEqual(E, E) -> {
-	    		result = Lib.False;
+	    		result = dLib.False();
 	    		trace(predicate, result, "SIMP_MULTI_NOTEQUAL");
 				return result;
 	    	}
@@ -597,7 +601,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Arithmetic: E ≤ E == ⊤
 	    	 */
 	    	Le(E, E) -> {
-				result = Lib.True;
+				result = dLib.True();
 	    		trace(predicate, result, "SIMP_MULTI_LE");
 				return result;
 	    	}
@@ -607,7 +611,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Arithmetic: E ≥ E == ⊤
 	    	 */
 	    	Ge(E, E) -> {
-				result = Lib.True;
+				result = dLib.True();
 	    		trace(predicate, result, "SIMP_MULTI_GE");
 				return result;
 	    	}
@@ -617,7 +621,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Arithmetic: E < E == ⊥
 	    	 */
 	    	Lt(E, E) -> {
-				result = Lib.False;
+				result = dLib.False();
 	    		trace(predicate, result, "SIMP_MULTI_LT");
 				return result;
 	    	}
@@ -627,7 +631,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Arithmetic: E > E == ⊥
 	    	 */
 	    	Gt(E, E) -> {
-				result = Lib.False;
+				result = dLib.False();
 	    		trace(predicate, result, "SIMP_MULTI_GE");
 				return result;
 	    	}
@@ -650,7 +654,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Equality 4: TRUE = FALSE == ⊥
 	    	 */
 	    	Equal(TRUE(), FALSE()) -> {
-	    		result = Lib.False;
+	    		result = dLib.False();
 	    		trace(predicate, result, "SIMP_SPECIAL_EQUAL_TRUE");
 				return result;
 	    	}
@@ -660,7 +664,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Equality 5: FALSE = TRUE == ⊥
 	    	 */
 	    	Equal(FALSE(), TRUE()) -> {
-	    		result = Lib.False;
+	    		result = dLib.False();
 	    		trace(predicate, result, "SIMP_SPECIAL_EQUAL_TRUE");
 				return result;
 	    	}
@@ -715,7 +719,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Set Theory 5: ∅ ⊆ S == ⊤
 	    	 */
 	    	SubsetEq(EmptySet(), _) -> {
-	    		result = Lib.True;
+	    		result = dLib.True();
 	    		trace(predicate, result, "SIMP_SPECIAL_SUBSETEQ");
 				return result;
 	    	}
@@ -725,7 +729,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Set Theory: S ⊆ S == ⊤
 	    	 */
 	    	SubsetEq(S, S) -> {
-	    		result = Lib.True;
+	    		result = dLib.True();
 	    		trace(predicate, result, "SIMP_MULTI_SUBSETEQ");
 				return result;
 	    	}
@@ -752,7 +756,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	SubsetEq(S, BUnion(children)) -> {
 	    		for (Expression child : `children) {
 	    			if (child.equals(`S)) {
-	    				result = Lib.True;
+	    				result = dLib.True();
 	    				trace(predicate, result, "SIMP_SUBSETEQ_BUNION");
 	    				return result;
 	    			}
@@ -766,7 +770,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	SubsetEq(BInter(children), S) -> {
 	    		for (Expression child : `children) {
 	    			if (child.equals(`S)) {
-	    				result = Lib.True;
+	    				result = dLib.True();
 	    				trace(predicate, result, "SIMP_SUBSETEQ_BINTER");
 	    				return result;
 	    			}
@@ -808,7 +812,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Set Theory 7: E ∈ ∅ == ⊥
 	    	 */
 	    	In(_, EmptySet()) -> {
-	    		result = Lib.False;
+	    		result = dLib.False();
 	    		trace(predicate, result, "SIMP_SPECIAL_IN");
 				return result;
 	    	}	    	
@@ -824,7 +828,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	In(E, SetExtension(members)) -> {
 	    		for (Expression member : `members) {
 					if (`member.equals(`E)) {
-						result = Lib.True;
+						result = dLib.True();
 						trace(predicate, result, "SIMP_MULTI_IN");
 						return result;
 					}
@@ -889,7 +893,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Arithmetic 16: i = j == ⊤  or  i = j == ⊥ (by computation)
 	    	 */
 	    	Equal(IntegerLiteral(i), IntegerLiteral(j)) -> {
-	    		result = `i.equals(`j) ? Lib.True : Lib.False;
+	    		result = `i.equals(`j) ? dLib.True() : dLib.False();
 	    		trace(predicate, result, "SIMP_LIT_EQUAL");
 				return result;
 	    	}
@@ -899,7 +903,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Arithmetic 17: i ≤ j == ⊤  or  i ≤ j == ⊥ (by computation)
 	    	 */
 	    	Le(IntegerLiteral(i), IntegerLiteral(j)) -> {
-	    		result = `i.compareTo(`j) <= 0 ? Lib.True : Lib.False;
+	    		result = `i.compareTo(`j) <= 0 ? dLib.True() : dLib.False();
 	    		trace(predicate, result, "SIMP_LIT_LE");
 				return result;
 	    	}
@@ -909,7 +913,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Arithmetic 18: i < j == ⊤  or  i < j == ⊥ (by computation)
 	    	 */
 	    	Lt(IntegerLiteral(i), IntegerLiteral(j)) -> {
-	    		result = `i.compareTo(`j) < 0 ? Lib.True : Lib.False;
+	    		result = `i.compareTo(`j) < 0 ? dLib.True() : dLib.False();
 	    		trace(predicate, result, "SIMP_LIT_LT");
 				return result;
 	    	}
@@ -919,7 +923,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Arithmetic 19: i ≥ j == ⊤  or  i ≥ j == ⊥ (by computation)
 	    	 */
 	    	Ge(IntegerLiteral(i), IntegerLiteral(j)) -> {
-	    		result = `i.compareTo(`j) >= 0 ? Lib.True : Lib.False;
+	    		result = `i.compareTo(`j) >= 0 ? dLib.True() : dLib.False();
 	    		trace(predicate, result, "SIMP_LIT_GE");
 				return result;
 	    	}
@@ -929,7 +933,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Arithmetic 20: i > j == ⊤  or  i > j == ⊥ (by computation)
 	    	 */
 	    	Gt(IntegerLiteral(i), IntegerLiteral(j)) -> {
-	    		result = `i.compareTo(`j) > 0 ? Lib.True : Lib.False;
+	    		result = `i.compareTo(`j) > 0 ? dLib.True() : dLib.False();
 	    		trace(predicate, result, "SIMP_LIT_GT");
 				return result;
 	    	}
@@ -1257,7 +1261,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Arithmetic: E ÷ E = 1
 	    	 */
 	    	Div(E, E) -> {
-	    		result = Lib.makeIntegerLiteral(1);
+	    		result = dLib.makeIntegerLiteral(1);
 	    		trace(expression, result, "SIMP_MULTI_DIV");
 	    		return result;
 	    	}

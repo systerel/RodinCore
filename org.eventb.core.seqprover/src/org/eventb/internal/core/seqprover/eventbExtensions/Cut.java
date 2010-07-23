@@ -1,18 +1,20 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
@@ -59,11 +61,10 @@ public class Cut extends SinglePredInputReasoner {
 		
 		// We can now assume that lemma has been properly parsed and typed.
 		
-		// Generate the well definedness condition for the lemma
-		final Predicate lemmaWD = Lib.WD(lemma);
+		final Predicate lemmaWD = mDLib(seq.getFormulaFactory()).WD(lemma);
 		
 		final Set<Predicate> lemmaWDs = Lib.breakPossibleConjunct(lemmaWD);
-		Lib.removeTrue(lemmaWDs);
+		mDLib(seq.getFormulaFactory()).removeTrue(lemmaWDs);
 		// final ISelectionHypAction deselectWDpreds = ProverFactory.makeDeselectHypAction(lemmaWDs);
 		
 		

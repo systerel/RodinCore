@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,6 +24,7 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
@@ -30,7 +33,6 @@ import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SerializeException;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 import org.eventb.internal.core.seqprover.ForwardInfHypAction;
@@ -125,7 +127,7 @@ public abstract class AbstractManualRewrites implements IReasoner {
 			final Collection<Predicate> inferredHyps = Lib
 				.breakPossibleConjunct(inferredHyp);
 			// Check if rewriting generated something interesting
-			inferredHyps.remove(Lib.True);
+			inferredHyps.remove(mDLib(seq.getFormulaFactory()).True());
 			final List<IHypAction> hypActions;
 			// make the forward inference action
 			if (!inferredHyps.isEmpty()) {

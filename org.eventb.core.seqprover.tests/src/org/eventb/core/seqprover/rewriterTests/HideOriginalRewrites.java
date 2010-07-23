@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
+
 import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
@@ -18,7 +20,7 @@ import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.seqprover.IReasoner;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractAutoRewrites;
 
 public class HideOriginalRewrites extends AbstractAutoRewrites implements
@@ -26,12 +28,17 @@ public class HideOriginalRewrites extends AbstractAutoRewrites implements
 
 	private static class HideOriginalRewriter extends DefaultRewriter {
 
-		private Expression number0 = Lib.parseExpression("0");
-		private Expression number1 = Lib.parseExpression("1");
-		private Expression number2 = Lib.parseExpression("2");
+		private final Expression number0;
+		private final Expression number1;
+		private final Expression number2;
+		private final DLib lib;
 		
 		public HideOriginalRewriter(boolean autoFlattening, FormulaFactory ff) {
 			super(autoFlattening, ff);
+			lib = mDLib(ff);
+			number0 = lib.parseExpression("0");
+			number1 = lib.parseExpression("1");
+			number2 = lib.parseExpression("2");
 			number0.typeCheck(ff.makeTypeEnvironment());
 			number1.typeCheck(ff.makeTypeEnvironment());
 			number2.typeCheck(ff.makeTypeEnvironment());
@@ -48,7 +55,7 @@ public class HideOriginalRewrites extends AbstractAutoRewrites implements
 
 		@Override
 		public Predicate rewrite(SimplePredicate predicate) {
-			return Lib.True;
+			return lib.True();
 		}
 		
 	}

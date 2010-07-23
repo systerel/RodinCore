@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
 
@@ -51,7 +50,7 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 	protected Collection<SuccessfullReasonerApplication> makeSuccessfullReasonerApplication(
 			String predicateImage, String positionImage, String [] results) {
 		final List<SuccessfullReasonerApplication> apps = new ArrayList<SuccessfullReasonerApplication>();		
-		final ITypeEnvironment typenv = Lib.makeTypeEnvironment();
+		final ITypeEnvironment typenv = lib.makeTypeEnvironment();
 		final Predicate predicate = TestLib.genPred(typenv, predicateImage);
 
 		// Successful in goal

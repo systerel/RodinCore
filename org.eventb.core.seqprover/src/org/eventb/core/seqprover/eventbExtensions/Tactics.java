@@ -16,6 +16,8 @@
  ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -457,10 +459,11 @@ public class Tactics {
 
 	public static boolean contradictGoal_applicable(IProofTreeNode node) {
 		Predicate goal = node.getSequent().goal();
-		if (goal.equals(Lib.False))
+		final DLib lib = mDLib(node.getFormulaFactory());
+		if (goal.equals(lib.False()))
 			return false;
-		Predicate negGoal = Lib.makeNeg(goal);
-		if (negGoal.equals(Lib.True))
+		Predicate negGoal = lib.makeNeg(goal);
+		if (negGoal.equals(lib.True()))
 			return false;
 		// if (Predicate.containsPredicate(
 		// node.getSequent().selectedHypotheses(),
@@ -776,7 +779,7 @@ public class Tactics {
 
 	public static boolean falsifyHyp_applicable(Predicate hyp,
 			IProverSequent seq) {
-		return (!seq.goal().equals(Lib.makeNeg(hyp)));
+		return (!seq.goal().equals(mDLib(seq.getFormulaFactory()).makeNeg(hyp)));
 	}
 	
 	/**
@@ -1011,7 +1014,7 @@ public class Tactics {
 		return true;
 	}
 
-	public static List<IPosition> rnGetPositions(Predicate pred) {
+	public static List<IPosition> rnGetPositions(Predicate pred, final FormulaFactory ff) {
 		return pred.getPositions(new DefaultFilter() {
 			@Override
 			public boolean select(UnaryPredicate predicate) {
@@ -1037,7 +1040,8 @@ public class Tactics {
 					if (child instanceof AssociativePredicate) {
 						return true;
 					}
-					if (child.equals(Lib.True) || child.equals(Lib.False)) {
+					final DLib lib = mDLib(ff);
+					if (child.equals(lib.True()) || child.equals(lib.False())) {
 						return true;
 					}
 					if (Lib.isNeg(child)) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 import static org.junit.Assert.fail;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.core.seqprover.tests.Util;
@@ -35,6 +37,7 @@ public abstract class AbstractManualReasonerTests extends AbstractReasonerTests 
 
 	// The default formula factory instance
 	protected static final FormulaFactory ff = FormulaFactory.getDefault();
+	protected static final DLib lib = mDLib(ff);
 
 	/**
 	 * Test the get applicable position for the reasoner.

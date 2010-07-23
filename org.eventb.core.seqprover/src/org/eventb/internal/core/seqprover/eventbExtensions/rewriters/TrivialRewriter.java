@@ -1,12 +1,25 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.*;
 
 /**
@@ -45,22 +58,23 @@ public class TrivialRewriter implements Rewriter{
 		return false;
 	}
 
-	public Predicate apply(Predicate p) {
+	public Predicate apply(Predicate p, FormulaFactory ff) {
+		final DLib lib = mDLib(ff);
 		// not not P == P
 		if ((isNeg(p)) && (isNeg(negPred(p)))) 
 			return  negPred(negPred(p));
 		// a=a  == T
 		if (isEq(p) && eqLeft(p).equals(eqRight(p)))
-			return True;
+			return lib.True();
 		// a/=a == F
 		if (isNotEq(p) && notEqLeft(p).equals(notEqRight(p)))
-			return False;
+			return lib.False();
 		// a : {} == F
 		if (isInclusion(p) && isEmptySet(getSet(p)))
-			return False;
+			return lib.False();
 		// a /: {} == T
 		if (isNotInclusion(p) && isEmptySet(getSet(p)))
-			return True;
+			return lib.True();
 		// A /= {} <OR> {} /= A   ==   (#e. e:A)
 		if (isNotEq(p) && (isEmptySet(notEqRight(p)) || isEmptySet(notEqLeft(p))))
 		{
@@ -76,7 +90,7 @@ public class TrivialRewriter implements Rewriter{
 			BoundIdentDecl[] boundIdentDecls = {ff.makeBoundIdentDecl(varName,null,type)};
 			BoundIdentifier boundIdent = ff.makeBoundIdentifier(0,null,type);
 			Predicate pred = ff.makeRelationalPredicate(RelationalPredicate.IN,boundIdent,nonEmptySet,null);
-			Predicate exPred = makeExQuant(boundIdentDecls,pred);
+			Predicate exPred = lib.makeExQuant(boundIdentDecls,pred);
 			// next lines commented out since type synthesis is now implemented
 			// typeCheck(exPred);
 			// assert exPred.isTypeChecked();

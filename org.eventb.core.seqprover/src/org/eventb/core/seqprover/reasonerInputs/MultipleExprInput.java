@@ -1,7 +1,20 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.core.seqprover.reasonerInputs;
+
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
@@ -21,13 +34,14 @@ public class MultipleExprInput implements IReasonerInput{
 	public MultipleExprInput(String[] exprsString,BoundIdentDecl[] boundIdentDecls, ITypeEnvironment typeEnv){
 		//	Parse and typecheck input
 		expressions = new Expression[boundIdentDecls.length];
-		Expression expression;
 		for (int i = 0; i < boundIdentDecls.length; i++) {
 			if ( i< exprsString.length &&
 					exprsString[i] != null && 
 					exprsString[i].trim().length() != 0)
 			{
-				expression = Lib.parseExpression(exprsString[i]);
+				final FormulaFactory ff = typeEnv.getFormulaFactory();
+				final Expression expression = mDLib(ff).parseExpression(
+						exprsString[i]);
 				if (expression == null)
 				{
 					error = "Parse error for expression " + exprsString[i];

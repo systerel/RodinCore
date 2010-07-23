@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,6 +21,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -28,7 +31,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 
 /**
  * This class contains a collection of static methods that clients can use to check that the input they provide to
@@ -156,23 +159,25 @@ public class ProverChecks {
 	 * 
 	 * @param rule
 	 * 			the proof rule for which justifications to be generated.
+	 * @param ff
+	 * 			the formula factory to use
 	 * @return
 	 * 			the generated justifications.
 	 * TODO : Generate WD justifications too. This required that the weaker well definedness operator 'D' is
 	 * 			implemented in the AST.
 	 * TODO : Maybe choose a better structure for returning justifications 
 	 */
-	public static List<IProverSequent> genRuleJustifications(IProofRule rule){
+	public static List<IProverSequent> genRuleJustifications(IProofRule rule, FormulaFactory ff){
 
 		List<IProverSequent> justifications = new ArrayList<IProverSequent>();
-
-		final ITypeEnvironment typeEnv = Lib.makeTypeEnvironment();
+		final DLib lib = mDLib(ff);
+		final ITypeEnvironment typeEnv = lib.makeTypeEnvironment();
 
 		// Get G_r and H_r
 		Predicate g_r = rule.getGoal();
 		boolean goalIndependent = (rule.getGoal() == null);
 		if (goalIndependent){
-			g_r = Lib.False;
+			g_r = lib.False();
 		}
 
 		Set<Predicate> h_r = rule.getNeededHyps();
@@ -192,7 +197,7 @@ public class ProverChecks {
 			Predicate g_a = antecedents[i].getGoal();
 			if (g_a == null){
 				if (goalIndependent){
-					g_a = Lib.False;
+					g_a = lib.False();
 				}
 				else
 				{
@@ -200,7 +205,7 @@ public class ProverChecks {
 				}
 			}
 
-			antecedentParts[i] = Lib.makeUnivQuant(i_a, Lib.makeImpl(h_a, g_a));
+			antecedentParts[i] = lib.makeUnivQuant(i_a, lib.makeImpl(h_a, g_a));
 			typeEnv.addAll(antecedentParts[i].getFreeIdentifiers());
 
 			// Compute the forward inference justifications
@@ -212,8 +217,8 @@ public class ProverChecks {
 					Set<Predicate> hyps = new LinkedHashSet<Predicate>(h_r);
 					hyps.addAll(h_a);
 					hyps.addAll(fwdInf.getHyps());
-					Predicate goal = Lib.makeExQuant(fwdInf.getAddedFreeIdents(), Lib.makeConj(fwdInf.getInferredHyps()));
-					ITypeEnvironment localTypeEnv = Lib.makeTypeEnvironment();
+					Predicate goal = lib.makeExQuant(fwdInf.getAddedFreeIdents(), lib.makeConj(fwdInf.getInferredHyps()));
+					ITypeEnvironment localTypeEnv = lib.makeTypeEnvironment();
 					for (Predicate hyp : h_r) {
 						localTypeEnv.addAll(hyp.getFreeIdentifiers());
 					}
@@ -223,7 +228,7 @@ public class ProverChecks {
 			}
 		}
 
-		Predicate goal = Lib.makeImpl(Arrays.asList(antecedentParts), g_r);
+		Predicate goal = lib.makeImpl(Arrays.asList(antecedentParts), g_r);
 
 		typeEnv.addAll(goal.getFreeIdentifiers());
 

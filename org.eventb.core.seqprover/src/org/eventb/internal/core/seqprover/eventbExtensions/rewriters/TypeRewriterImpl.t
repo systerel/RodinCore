@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
+
 import java.math.BigInteger;
 
 import org.eventb.core.ast.AssociativeExpression;
@@ -40,7 +42,7 @@ import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.ProverRule;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 
 /**
  * Basic automated rewriter for the Event-B sequent prover.
@@ -58,14 +60,15 @@ public class TypeRewriterImpl extends DefaultRewriter {
             "SIMP_TYPE_SUBSETEQ", "SIMP_TYPE_SUBSET_L" })
 	@Override
 	public Predicate rewrite(RelationalPredicate predicate) {
-	    %match (Predicate predicate) {
+	    final DLib lib = mDLib(ff);
+    	%match (Predicate predicate) {
 
 			/**
 	    	 * Set Theory 23: E ∈ Typ == ⊤ (where Typ is a type expression)
 	    	 */
 			In(_, Typ) -> {
 				if (`Typ.isATypeExpression())
-					return Lib.True;
+					return lib.True();
 				return predicate;			
 			}
 			
@@ -74,7 +77,7 @@ public class TypeRewriterImpl extends DefaultRewriter {
 			 */
 			Equal(Typ, EmptySet()) -> {
 				if (`Typ.isATypeExpression())
-					return Lib.False;
+					return lib.False();
 				return predicate;
 			}
 
@@ -83,7 +86,7 @@ public class TypeRewriterImpl extends DefaultRewriter {
 			 */
 			Equal(EmptySet(), Typ) -> {
 				if (`Typ.isATypeExpression())
-					return Lib.False;
+					return lib.False();
 				return predicate;
 			}
 
@@ -92,7 +95,7 @@ public class TypeRewriterImpl extends DefaultRewriter {
              */
             SubsetEq(_, Typ) -> {
                 if (`Typ.isATypeExpression())
-                    return Lib.True;
+                    return lib.True();
                 return predicate;
             }
             
@@ -101,7 +104,7 @@ public class TypeRewriterImpl extends DefaultRewriter {
              */
             Subset(S, Typ) -> {
                 if (`Typ.isATypeExpression())
-                    return Lib.makeNotEq(`S, `Typ);
+                    return lib.makeNotEq(`S, `Typ);
                 return predicate;
             }
             

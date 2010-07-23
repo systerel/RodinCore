@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import java.util.Set;
@@ -7,6 +17,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
@@ -17,7 +28,7 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.SerializeException;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
 
@@ -74,12 +85,13 @@ public class ExI implements IReasoner {
 		
 		
 		// Generate the well definedness predicate for the witnesses
-		final Predicate WDpred = Lib.WD(instantiations);
+		final DLib lib = DLib.mDLib(seq.getFormulaFactory());
+		final Predicate WDpred = lib.WD(instantiations);
 		final Set<Predicate> WDpreds = Lib.breakPossibleConjunct(WDpred);
-		Lib.removeTrue(WDpreds);
+		lib.removeTrue(WDpreds);
 		
 		// Generate the instantiated predicate
-		Predicate instantiatedPred = Lib.instantiateBoundIdents(seq.goal(),instantiations);
+		Predicate instantiatedPred = lib.instantiateBoundIdents(seq.goal(),instantiations);
 		assert instantiatedPred != null;
 		
 		// Generate the anticidents

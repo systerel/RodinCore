@@ -11,17 +11,21 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
+
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
@@ -32,7 +36,7 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.SerializeException;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
@@ -175,13 +179,16 @@ public class AllD implements IReasoner {
 		
 		
 		// Generate the well definedness predicate for the instantiations
-		final Predicate WDpred = Lib.WD(instantiations);
+		final FormulaFactory factory = seq.getFormulaFactory();
+		final DLib lib = mDLib(factory);
+		final Predicate WDpred = lib.WD(instantiations);
 		final Set<Predicate> WDpreds = Lib.breakPossibleConjunct(WDpred);
-		Lib.removeTrue(WDpreds);
+		lib.removeTrue(WDpreds);
 		
 		// Generate the instantiated predicate
-		Predicate instantiatedPred = Lib.instantiateBoundIdents(univHyp,instantiations);
-		assert instantiatedPred != null;
+		Predicate instantiatedPred = lib.instantiateBoundIdents(univHyp,
+				instantiations);
+	    assert instantiatedPred != null;
 		
 		// Generate the successful reasoner output
 		
@@ -189,7 +196,7 @@ public class AllD implements IReasoner {
 		IAntecedent[] anticidents = new IAntecedent[2];
 
 		// Well definedness condition
-		anticidents[0] = ProverFactory.makeAntecedent(Lib.makeConj(WDpreds));
+		anticidents[0] = ProverFactory.makeAntecedent(lib.makeConj(WDpreds));
 		
 		
 		// The instantiated goal

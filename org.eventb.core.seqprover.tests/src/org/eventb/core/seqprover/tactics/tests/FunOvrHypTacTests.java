@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tactics.tests;
 
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.assertRulesApplied;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.disjE;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.empty;
@@ -34,7 +35,7 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.junit.Test;
@@ -95,7 +96,8 @@ public class FunOvrHypTacTests {
 	}
 
 	private static Predicate parsePredicate(String predStr, IProofTree pt) {
-		final Predicate pred = Lib.parsePredicate(predStr);
+		final DLib lib = mDLib(pt.getRoot().getFormulaFactory());
+		final Predicate pred = lib.parsePredicate(predStr);
 		final IProverSequent sequent = pt.getSequent();
 		final ITypeEnvironment typeEnvironment = sequent.typeEnvironment();
 		final ITypeCheckResult tcResult = pred.typeCheck(typeEnvironment);

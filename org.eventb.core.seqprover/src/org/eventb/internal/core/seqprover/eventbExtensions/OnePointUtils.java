@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import static org.eventb.internal.core.seqprover.eventbExtensions.OnePointFilterUtils.*;
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
+import static org.eventb.internal.core.seqprover.eventbExtensions.OnePointFilterUtils.getReplacement;
 
 import java.util.List;
 
@@ -20,7 +21,6 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointFilterUtils.Replacement;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointFilterUtils.ToProcessStruct;
 
@@ -53,7 +53,7 @@ public class OnePointUtils {
 			innerPred = makeInnerPred(struct.conjuncts, struct.impRight, ff);
 		}
 		if (innerPred == null) {
-			return Lib.True;
+			return mDLib(ff).True();
 		} else {
 			return makePredicateWithReplacement(tag, replacement,
 					struct.identDecls, innerPred, ff);

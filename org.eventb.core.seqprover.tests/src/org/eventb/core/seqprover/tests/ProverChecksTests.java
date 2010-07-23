@@ -140,14 +140,14 @@ public class ProverChecksTests extends TestCase{
 				ProverFactory.makeAntecedent(null)
 		};
 		rule = ProverFactory.makeProofRule(generatedBy, generatedUsing, null, "", antecedents);
-		justifications = ProverChecks.genRuleJustifications(rule);
+		justifications = ProverChecks.genRuleJustifications(rule, factory);
 		
 		assertEquals("[{}[][][] |- ⊥⇒⊥]", justifications.toString());
 		
 		// A discharging rule
 		antecedents = new IAntecedent[]{};
 		rule = ProverFactory.makeProofRule(generatedBy, generatedUsing, p1, (Predicate)null, "", antecedents);
-		justifications = ProverChecks.genRuleJustifications(rule);
+		justifications = ProverChecks.genRuleJustifications(rule, factory);
 		
 		assertEquals("[{}[][][] |- 1=1]", justifications.toString());
 		
@@ -157,7 +157,7 @@ public class ProverChecksTests extends TestCase{
 				ProverFactory.makeAntecedent(null, null, new FreeIdentifier[] {x_int}, null),
 		};
 		rule = ProverFactory.makeProofRule(generatedBy, generatedUsing, null, "", antecedents);
-		justifications = ProverChecks.genRuleJustifications(rule);
+		justifications = ProverChecks.genRuleJustifications(rule, factory);
 		
 		assertEquals("[{}[][][] |- (∀x·⊥)∧(∀x·⊥)⇒⊥]", justifications.toString());
 		
@@ -166,7 +166,7 @@ public class ProverChecksTests extends TestCase{
 		hypActions.add(ProverFactory.makeForwardInfHypAction(Collections.singleton(p1), new FreeIdentifier[] {x_int}, Collections.singleton(px_int)));
 		hypActions.add(ProverFactory.makeForwardInfHypAction(Collections.singleton(p1), new FreeIdentifier[] {y_int}, Collections.singleton(py_int)));
 		rule = ProverFactory.makeProofRule(generatedBy, generatedUsing, "", hypActions);
-		justifications = ProverChecks.genRuleJustifications(rule);
+		justifications = ProverChecks.genRuleJustifications(rule, factory);
 		
 		assertEquals("[{}[][][] |- ⊥⇒⊥, {}[][][1=1] |- ∃x·x=1, {}[][][1=1] |- ∃y·y=1]", justifications.toString());
 		

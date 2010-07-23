@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import java.util.ArrayList;
@@ -18,6 +28,7 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
@@ -60,9 +71,10 @@ public class Eq extends SinglePredInputReasoner{
 		// Set<Predicate> toSelect = new LinkedHashSet<Predicate>();
 		// toDeselect.add(eqHyp);
 		
+		final DLib lib = DLib.mDLib(seq.getFormulaFactory());
 		for (Predicate shyp : seq.selectedHypIterable()){
 			if (!shyp.equals(eqHyp)) {
-				Predicate rewritten = (Lib.rewrite(shyp,from,to));
+				Predicate rewritten = (lib.rewrite(shyp,from,to));
 //				if (rewritten != shyp)
 				if (! seq.containsHypothesis(rewritten))	
 				{
@@ -75,7 +87,7 @@ public class Eq extends SinglePredInputReasoner{
 			}
 		}
 
-		Predicate rewrittenGoal = Lib.rewrite(seq.goal(),from,to);
+		Predicate rewrittenGoal = lib.rewrite(seq.goal(),from,to);
 		
 		if (rewrittenGoal == seq.goal() && rewrites.isEmpty())
 			return ProverFactory.reasonerFailure(this,input,

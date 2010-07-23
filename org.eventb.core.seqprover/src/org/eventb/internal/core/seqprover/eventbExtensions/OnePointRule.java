@@ -15,6 +15,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static org.eventb.core.seqprover.ProverFactory.makeForwardInfHypAction;
 import static org.eventb.core.seqprover.ProverFactory.makeHideHypAction;
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
 import java.util.Collections;
 import java.util.Set;
@@ -37,7 +38,6 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.SerializeException;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 /**
@@ -143,7 +143,7 @@ public class OnePointRule implements IVersionedReasoner {
 		final Predicate simplified = onePoint.getProcessedPredicate();
 
 		final Expression replacement = onePoint.getReplacement();
-		final Predicate replacementWD = Lib.WD(replacement);
+		final Predicate replacementWD = mDLib(ff).WD(replacement);
 
 		// There will be 2 antecedents
 		IAntecedent[] antecedents = new IAntecedent[2];

@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
-import static org.eventb.core.seqprover.eventbExtensions.Lib.ff;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -28,6 +27,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
@@ -49,6 +49,8 @@ import org.junit.Test;
 
 public class TotalDomRewriterTests {
 
+	private static final FormulaFactory ff = FormulaFactory.getDefault();
+	
 	private static final IntegerLiteral ZERO = ff.makeIntegerLiteral(
 			BigInteger.ZERO, null);
 	private static final IntegerLiteral ONE = ff.makeIntegerLiteral(

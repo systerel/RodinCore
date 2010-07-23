@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 
+import static org.eventb.core.seqprover.eventbExtensions.Tactics.rnGetPositions;
+
 import java.util.List;
 
 import org.eventb.core.ast.IPosition;
@@ -32,8 +34,9 @@ public class RemoveNegationGoal extends DefaultTacticProvider {
 	public List<IPosition> getApplicablePositions(IProofTreeNode node,
 			Predicate hyp, String input) {
 		if (node != null) {
-			List<IPosition> positions = Tactics.rnGetPositions(node
-					.getSequent().goal());
+			final Predicate goal = node.getSequent().goal();
+			final List<IPosition> positions = rnGetPositions(goal,
+					node.getFormulaFactory());
 			if (positions.size() == 0) {
 				return null;
 			}

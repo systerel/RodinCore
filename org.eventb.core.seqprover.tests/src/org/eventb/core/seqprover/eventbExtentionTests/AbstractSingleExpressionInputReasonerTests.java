@@ -18,7 +18,6 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.SingleExprInput;
 import org.eventb.core.seqprover.reasonerInputs.SingleExprInputReasoner;
 import org.eventb.core.seqprover.tests.TestLib;
@@ -92,7 +91,7 @@ public abstract class AbstractSingleExpressionInputReasonerTests extends Abstrac
 			predicate = TestLib.genPred(predicateImage);
 			predicate.typeCheck(ff.makeTypeEnvironment());
 		}
-		IReasonerInput input = makeInput(Lib.parseExpression(expressionImage));
+		IReasonerInput input = makeInput(lib.parseExpression(expressionImage));
 		
 		IProverSequent sequent = TestLib.genSeq(sequentImage);
 		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(

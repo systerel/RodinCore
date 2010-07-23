@@ -13,16 +13,17 @@ package org.evenb.ui.prover.tests;
 import static org.eventb.core.ast.LanguageVersion.V2;
 import junit.framework.TestCase;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.internal.ui.prover.PredicateUtil;
 
 public class TestPrettyPrintPredicate extends TestCase {
 
 	private void predTest(String msg, String predString,
 			String expectedPrettyPrint) {
-		IParseResult parseResult = Lib.ff.parsePredicate(predString, V2, null);
+		final FormulaFactory ff = FormulaFactory.getDefault();
+		IParseResult parseResult = ff.parsePredicate(predString, V2, null);
 		if (parseResult.hasProblem()) {
 			System.out.println(parseResult.getProblems());
 			fail("Parse failed");

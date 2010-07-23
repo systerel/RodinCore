@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eventb.core.seqprover.eventbExtentionTests;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllD;
@@ -41,7 +40,7 @@ public class AllDTests extends AbstractReasonerTests {
 		return new SuccessfullReasonerApplication[]{
 				// hyp not univ quantified implication, but still univ quantified
 				new SuccessfullReasonerApplication(TestLib.genSeq(" ∀x· x=0 |- ⊥ "), 
-						new AllD.Input(TestLib.genPred("∀x· x=0"), Lib.makeTypeEnvironment(),new String[]{"0"}),
+						new AllD.Input(TestLib.genPred("∀x· x=0"), lib.makeTypeEnvironment(),new String[]{"0"}),
 						"{}[][][∀x·x=0] |- ⊤",
 						"{}[][∀x·x=0][0=0] |- ⊥"
 				),
@@ -89,12 +88,12 @@ public class AllDTests extends AbstractReasonerTests {
 				// hyp not present
 				new UnsuccessfullReasonerApplication(
 						TestLib.genSeq(" ⊤ |- ⊥ "),
-						new AllD.Input(hyp, Lib.makeTypeEnvironment(),new String[]{})
+						new AllD.Input(hyp, lib.makeTypeEnvironment(),new String[]{})
 				),
 				// hyp not univ quantified
 				new UnsuccessfullReasonerApplication(
 						TestLib.genSeq(" ⊤ |- ⊥ "),
-						new AllD.Input(Lib.True, Lib.makeTypeEnvironment(),new String[]{})
+						new AllD.Input(lib.True(), lib.makeTypeEnvironment(),new String[]{})
 				),	
 		};
 	}

@@ -1,4 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.core.tests.pom;
+
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -13,7 +25,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 
 /**
  * This is a collection of static methods for conveniently constructing objects used for
@@ -26,7 +38,7 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
  *
  */public class TestLib {
 
-	public final static FormulaFactory ff = Lib.ff;
+	public final static FormulaFactory ff = FormulaFactory.getDefault();
 	
 	/**
 	 * Constructs a simple sequent (only with selected hypotheses and a goal) from
@@ -54,12 +66,13 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 		String goalStr = sequentAsString.split("\\|-")[1];
 		
 		// Parsing
+		final DLib lib = mDLib(ff);
 		Predicate[] hyps = new Predicate[hypsStr.length];
 		for (int i=0;i<hypsStr.length;i++){
-			hyps[i] = Lib.parsePredicate(hypsStr[i]);
+			hyps[i] = lib.parsePredicate(hypsStr[i]);
 			if (hyps[i] == null) return null;
 		}
-		Predicate goal = Lib.parsePredicate(goalStr);
+		Predicate goal = lib.parsePredicate(goalStr);
 		if (goal == null) return null;
 		
 		// Type check
@@ -87,10 +100,11 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 	}
 		
 	public static ITypeEnvironment genTypeEnv(String... strs){
-		ITypeEnvironment typeEnv = Lib.makeTypeEnvironment();
+		final DLib lib = mDLib(ff);
+		ITypeEnvironment typeEnv = lib.makeTypeEnvironment();
 		assert strs.length % 2 == 0;
 		for (int i = 0; i+1 < strs.length; i=i+2) {
-			Type type = Lib.parseType(strs[i+1]);
+			Type type = lib.parseType(strs[i+1]);
 			assert type != null;
 			typeEnv.addName(strs[i],type);
 		}
@@ -110,7 +124,7 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 	 * 		of type checking error. 
 	 */
 	public static Predicate genPred(String str){
-		Predicate result = Lib.parsePredicate(str);
+		Predicate result = mDLib(ff).parsePredicate(str);
 		if (result == null) return null;
 		ITypeCheckResult tcResult =  result.typeCheck(ff.makeTypeEnvironment());
 		if (! tcResult.isSuccess()) return null;

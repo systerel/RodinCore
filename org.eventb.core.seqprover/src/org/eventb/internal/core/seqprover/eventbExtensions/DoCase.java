@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import java.util.Collections;
@@ -5,14 +15,14 @@ import java.util.Collections;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
 
@@ -59,7 +69,8 @@ public class DoCase extends SinglePredInputReasoner{
 		// We can now assume that the true case has been properly parsed and typed.
 		
 		// Generate the well definedness condition for the true case
-		Predicate trueCaseWD = Lib.WD(trueCase);
+		final DLib lib = DLib.mDLib(seq.getFormulaFactory());
+		final Predicate trueCaseWD = lib.WD(trueCase);
 		
 		// Generate the anticidents
 		IAntecedent[] anticidents = new IAntecedent[3];
@@ -76,7 +87,7 @@ public class DoCase extends SinglePredInputReasoner{
 		// The goal with the false case
 		anticidents[2] = ProverFactory.makeAntecedent(
 				null,
-				Collections.singleton(Lib.makeNeg(trueCase)),
+				Collections.singleton(lib.makeNeg(trueCase)),
 				null);
 		
 		// Generate the successful reasoner output

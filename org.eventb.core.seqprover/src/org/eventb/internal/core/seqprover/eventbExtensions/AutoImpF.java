@@ -1,4 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
+
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,6 +27,7 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
@@ -69,7 +82,8 @@ public class AutoImpF extends EmptyInputReasoner {
 			if (newLhs.size() == 0){
 				inferredHyps = Lib.breakPossibleConjunct(Lib.impRight(hyp));
 			} else {
-				inferredHyps = Collections.singleton(Lib.makeImp(Lib.makeConj(newLhs), Lib.impRight(hyp)));
+				final DLib lib = mDLib(seq.getFormulaFactory());
+				inferredHyps = Collections.singleton(lib.makeImp(lib.makeConj(newLhs), Lib.impRight(hyp)));
 			}
 			
 			// Check if rewriting made a change

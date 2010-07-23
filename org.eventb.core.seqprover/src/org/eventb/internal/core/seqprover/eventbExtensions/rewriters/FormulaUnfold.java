@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
-import static org.eventb.core.ast.Formula.*;
+import static org.eventb.core.ast.Formula.EQUAL;
+import static org.eventb.core.ast.Formula.LAND;
+import static org.eventb.core.ast.Formula.NOT;
+import static org.eventb.core.ast.Formula.SUBSETEQ;
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,7 +30,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.Type;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 public class FormulaUnfold {
 
@@ -145,7 +148,7 @@ public class FormulaUnfold {
 		for (int i = 0; i < members.length; ++i) {
 			Expression member = members[i];
 			if (member.equals(E)) {
-				return Lib.True;
+				return mDLib(ff).True();
 			} else {
 				predicates[i] = ff.makeRelationalPredicate(Predicate.EQUAL, E,
 						member, null);

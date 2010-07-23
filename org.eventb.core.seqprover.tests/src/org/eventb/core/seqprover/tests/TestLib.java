@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
  ******************************************************************************/
 package org.eventb.core.seqprover.tests;
 
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
+
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -18,6 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -26,7 +29,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 
 /**
  * This is a collection of static methods for conveniently constructing objects used for
@@ -39,6 +42,9 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
  *
  */
 public class TestLib {
+	
+	private static final FormulaFactory ff = FormulaFactory.getDefault();
+	
 
 	/**
 	 * Constructs a simple sequent (only with selected hypotheses and a goal) from
@@ -97,7 +103,7 @@ public class TestLib {
 	 * @author htson
 	 */
 	public static IProverSequent genFullSeq(String sequentAsString) {
-		final ITypeEnvironment typenv = Lib.makeTypeEnvironment();
+		final ITypeEnvironment typenv = mDLib(ff).makeTypeEnvironment();
 		final Matcher m = fullSequentPattern.matcher(sequentAsString);
 		if (!m.matches()) {
 			throw new IllegalArgumentException("Invalid sequent: "
@@ -215,7 +221,8 @@ public class TestLib {
 	 * @return the type environment described by the given string
 	 */
 	public static ITypeEnvironment genTypeEnv(String typeEnvImage) {
-		final ITypeEnvironment result = Lib.makeTypeEnvironment();
+		final DLib lib = mDLib(ff);
+		final ITypeEnvironment result = lib.makeTypeEnvironment();
 		if (typeEnvImage.length() == 0) {
 			return result;
 		}
@@ -225,12 +232,12 @@ public class TestLib {
 				throw new IllegalArgumentException(
 						"Invalid type environment pair: " + pairImage);
 			}
-			final Expression expr = Lib.parseExpression(m.group(1));
+			final Expression expr = lib.parseExpression(m.group(1));
 			if (!(expr instanceof FreeIdentifier)) {
 				throw new IllegalArgumentException(
 						"Invalid type environment pair: " + pairImage);
 			}
-			final Type type = Lib.parseType(m.group(2));
+			final Type type = lib.parseType(m.group(2));
 			result.addName(expr.toString(), type);
 		}
 		return result;
@@ -257,7 +264,7 @@ public class TestLib {
 	 * 		of type checking error. 
 	 */
 	public static Predicate genPred(String str){
-		return genPred(Lib.makeTypeEnvironment(), str);
+		return genPred(mDLib(ff).makeTypeEnvironment(), str);
 	}
 
 	/**
@@ -272,7 +279,7 @@ public class TestLib {
 	 * @return The type checked predicate
 	 */
 	public static Predicate genPred(ITypeEnvironment typeEnv, String str) {
-		final Predicate result = Lib.parsePredicate(str);
+		final Predicate result = mDLib(ff).parsePredicate(str);
 		if (result == null)
 			throw new IllegalArgumentException("Invalid predicate: " + str);
 		final ITypeCheckResult tcResult = result.typeCheck(typeEnv);
@@ -290,7 +297,7 @@ public class TestLib {
 	 * @return
 	 */
 	public static Set<Predicate> genPreds(String... strs){
-		return genPreds(Lib.makeTypeEnvironment(), strs);
+		return genPreds(mDLib(ff).makeTypeEnvironment(), strs);
 	}
 
 	
@@ -320,7 +327,7 @@ public class TestLib {
 	 * @return The type checked expression
 	 */
 	public static Expression genExpr(ITypeEnvironment typeEnv, String str) {
-		final Expression result = Lib.parseExpression(str);
+		final Expression result = mDLib(ff).parseExpression(str);
 		if (result == null)
 			throw new IllegalArgumentException("Invalid expression: " + str);
 		final ITypeCheckResult tcResult = result.typeCheck(typeEnv);

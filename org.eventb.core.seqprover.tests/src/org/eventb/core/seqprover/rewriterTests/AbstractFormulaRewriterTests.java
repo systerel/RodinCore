@@ -13,6 +13,7 @@
 package org.eventb.core.seqprover.rewriterTests;
 
 import static org.eventb.core.ast.LanguageVersion.V2;
+import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -26,7 +27,7 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 
 /**
  * @author htson
@@ -42,6 +43,8 @@ public abstract class AbstractFormulaRewriterTests {
 	 * The formula factory used to create different formulas for testing.
 	 */
 	protected static final FormulaFactory ff = FormulaFactory.getDefault();
+	
+	protected static final DLib lib = mDLib(ff);
 
 	private static final String[] NO_ENV = new String[0];
 	
@@ -75,7 +78,7 @@ public abstract class AbstractFormulaRewriterTests {
 	 * @return a predicate corresponding to the string image
 	 */
 	protected Predicate makePredicate(String image, ITypeEnvironment typenv) {
-		final Predicate pred = Lib.parsePredicate(image);
+		final Predicate pred = lib.parsePredicate(image);
 		if (pred == null)
 			fail("Predicate: \n\t" + image + "\n\tcannot be parsed");
 		final ITypeCheckResult typeCheck = pred.typeCheck(typenv);
@@ -156,7 +159,7 @@ public abstract class AbstractFormulaRewriterTests {
 	 * @return an expression corresponding to the string image.
 	 */
 	protected Expression makeExpression(String image, ITypeEnvironment typenv) {
-		Expression input = Lib.parseExpression(image);
+		Expression input = lib.parseExpression(image);
 		if (input == null)
 			Assert.isTrue(false, "Expression: \n\t" + image
 					+ "\n\tcannot be parsed");
