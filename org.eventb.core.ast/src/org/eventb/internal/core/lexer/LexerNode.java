@@ -148,13 +148,13 @@ public class LexerNode extends AbstractLexerNode {
 		int i;
 		int curPos = genScan.getCurrentPos();
 		// We try to recognize the characters that this state can recognize
-		for (i = 0; i < l && curPos < genScan.getLength(); i++) {
-			curPos = genScan.getCurrentPos();
+ 		for (i = 0; i < l && curPos < genScan.getLength(); i++) {
 			if (genScan.getStringToParse().charAt(curPos) == chars[i]) {
 				genScan.goForward();
 			} else {
 				break;
 			}
+			curPos = genScan.getCurrentPos();
 		}
 		if (i <= indIdent) {
 			// An identifier has been recognized
