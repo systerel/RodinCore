@@ -439,7 +439,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		solver.addFactEquality(E(b, c, R2L0));
 		assertEquals(mSet(
 				"a,b[R1]",
-				"a,c[R1, R2]",
+				"a,c[R2, R1]",
 				"b,c[R2]"
 		),solver.getSourceTable().dump());
 	}
@@ -453,7 +453,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 				"a,b[R1]",
 				"c,d[R2]",
 				"b,d[R3]",
-				"a,c[R1, R2, R3]"
+				"a,c[R2, R3, R1]"
 		),solver.getSourceTable().dump());
 	}
 	
@@ -736,7 +736,7 @@ public class TestEqualitySolver extends AbstractPPTest {
 		solver.addFactEquality(E(a, c, R3L1));
 		assertEquals(mSet(
 				"a,b[R1]",
-				"a,c[R1, R2]",
+				"a,c[R2, R1]",
 				"b,c[R2]"
 		),solver.getSourceTable().dump());
 	}

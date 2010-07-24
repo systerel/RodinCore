@@ -561,13 +561,13 @@ public class TestClauseBuilder extends AbstractPPTest {
 ////		cClause(cNotPred(1,xInt),cPred(0,xInt, cPlus(yInt,n,one))),
 ////		cClause(cPred(1,xInt),cNotPred(0,xInt, cPlus(cELocVar(1,INT),n,one)))
 //		)
-		doTestP(
-				mList("∃y·∀x·x ∈ S ⇔ x = y"),
-				mList(cClause(cPred(d2S,cELocVar(0, Ssort))),
-						cEqClause(cPred(d1SS, xS, yS), cPred(d0S, xS), cEqual(xS, yS)),
-						cClause(cNotPred(d2S, xS), cPred(d1SS, yS, xS))),
-				"S",S
-		);
+//		doTestP(
+//				mList("∃y·∀x·x ∈ S ⇔ x = y"),
+//				mList(cClause(cPred(d2S,cELocVar(0, Ssort))),
+//						cEqClause(cPred(d1SS, xS, yS), cPred(d0S, xS), cEqual(xS, yS)),
+//						cClause(cNotPred(d2S, xS), cPred(d1SS, yS, xS))),
+//				"S",S
+//		);
 
 		doTestP(
 				mList("∀x·x ∈ N ⇒ (∀y·y ∈ N ⇔ ¬x ↦ y ∈ T)"),
