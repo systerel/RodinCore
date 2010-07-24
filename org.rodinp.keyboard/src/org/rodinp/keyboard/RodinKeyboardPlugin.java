@@ -56,27 +56,22 @@ public class RodinKeyboardPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		configureDebugOptions();
+		if (isDebugging())
+			configureDebugOptions();
 	}
 
 	/**
 	 * Process debugging/tracing options coming from Eclipse.
 	 */
 	private void configureDebugOptions() {
-		if (isDebugging()) {
-			String option = Platform.getDebugOption(TRACE);
-			if (option != null)
-				KeyboardUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+		KeyboardUtils.DEBUG = parseOption(TRACE);
+		KeyboardUtils.TEXT_DEBUG = parseOption(TEXT_TRACE);
+		KeyboardUtils.MATH_DEBUG = parseOption(MATH_TRACE);
+	}
 
-			option = Platform.getDebugOption(TEXT_TRACE);
-			if (option != null)
-				KeyboardUtils.TEXT_DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-
-			option = Platform.getDebugOption(MATH_TRACE);
-			if (option != null)
-				KeyboardUtils.MATH_DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-
-		}
+	private static boolean parseOption(String key) {
+		final String option = Platform.getDebugOption(key);
+		return "true".equalsIgnoreCase(option); //$NON-NLS-1$
 	}
 
 	/*

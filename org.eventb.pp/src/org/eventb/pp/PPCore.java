@@ -68,7 +68,8 @@ public class PPCore extends Plugin {
 		plugin = this;
 		
 		enableAssertions();
-		configureDebugOptions();
+		if (isDebugging())
+			configureDebugOptions();
 	}
 
 	/**
@@ -82,19 +83,17 @@ public class PPCore extends Plugin {
 	 * Process debugging/tracing options coming from Eclipse.
 	 */
 	private void configureDebugOptions() {
-		if (isDebugging()) {
-			PPReasoner.DEBUG = parseOption(REASONER_TRACE);
-			AbstractContext.setDebugFlag(parseOption(LOADER_PHASE1_TRACE));
-			ClauseBuilder.DEBUG = parseOption(LOADER_PHASE2_TRACE);
-			PPProof.DEBUG = parseOption(PROVER_TRACE);
-			ClauseDispatcher.DEBUG = parseOption(PROVER_STRATEGY_TRACE);
-			PredicateProver.DEBUG = parseOption(PROVER_INFERENCE_TRACE);
-			CaseSplitter.DEBUG = parseOption(PROVER_CASESPLIT_TRACE);
-			Dumper.DEBUG = parseOption(PROVER_DUMPING_TRACE);
-			ClauseSimplifier.DEBUG = parseOption(PROVER_SIMPLIFICATION_TRACE);
-			SeedSearchProver.DEBUG = parseOption(PROVER_SEEDSEARCH_TRACE);
-			EqualityProver.DEBUG = parseOption(PROVER_EQUALITY_TRACE);
-		}
+		PPReasoner.DEBUG = parseOption(REASONER_TRACE);
+		AbstractContext.setDebugFlag(parseOption(LOADER_PHASE1_TRACE));
+		ClauseBuilder.DEBUG = parseOption(LOADER_PHASE2_TRACE);
+		PPProof.DEBUG = parseOption(PROVER_TRACE);
+		ClauseDispatcher.DEBUG = parseOption(PROVER_STRATEGY_TRACE);
+		PredicateProver.DEBUG = parseOption(PROVER_INFERENCE_TRACE);
+		CaseSplitter.DEBUG = parseOption(PROVER_CASESPLIT_TRACE);
+		Dumper.DEBUG = parseOption(PROVER_DUMPING_TRACE);
+		ClauseSimplifier.DEBUG = parseOption(PROVER_SIMPLIFICATION_TRACE);
+		SeedSearchProver.DEBUG = parseOption(PROVER_SEEDSEARCH_TRACE);
+		EqualityProver.DEBUG = parseOption(PROVER_EQUALITY_TRACE);
 	}
 
 	private static boolean parseOption(String key) {

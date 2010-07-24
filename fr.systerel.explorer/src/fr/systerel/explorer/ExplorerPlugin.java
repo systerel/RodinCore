@@ -45,7 +45,8 @@ public class ExplorerPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		configureDebugOptions();
+		if (isDebugging())
+			configureDebugOptions();
 	}
 
 	@Override
@@ -67,10 +68,8 @@ public class ExplorerPlugin extends AbstractUIPlugin {
 	 * Process debugging/tracing options coming from Eclipse.
 	 */
 	private void configureDebugOptions() {
-		if (isDebugging()) {
-			String option = Platform.getDebugOption(DEBUG_NAVIGATOR);
-			ExplorerUtils.DEBUG = "true".equalsIgnoreCase(option); //$NON-NLS-1$
-		}
+		final String option = Platform.getDebugOption(DEBUG_NAVIGATOR);
+		ExplorerUtils.DEBUG = "true".equalsIgnoreCase(option); //$NON-NLS-1$
 	}
 	
 	/**

@@ -167,7 +167,8 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 
-		configureDebugOptions();
+		if (isDebugging())
+			configureDebugOptions();
 		
 		initializePreferences();
 		
@@ -215,47 +216,21 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	 * Process debugging/tracing options coming from Eclipse.
 	 */
 	private void configureDebugOptions() {
-		if (isDebugging()) {
-			String option = Platform.getDebugOption(GLOBAL_TRACE);
-			if (option != null)
-				UIUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
+		UIUtils.DEBUG = parseOption(GLOBAL_TRACE);
+		EventBEditorUtils.DEBUG = parseOption(EVENTBEDITOR_TRACE);
+		ProverUIUtils.DEBUG = parseOption(PROVERUI_TRACE);
+		ProofControlUtils.DEBUG = parseOption(PROOFCONTROL_TRACE);
+		ProofTreeUIUtils.DEBUG = parseOption(PROOFTREEUI_TRACE);
+		ProofInformationUtils.DEBUG = parseOption(PROOFINFORMATION_TRACE);
+		SearchHypothesisUtils.DEBUG = parseOption(SEARCHHYPOTHESIS_TRACE);
+		CacheHypothesisUtils.DEBUG = parseOption(CACHEDHYPOTHESIS_TRACE);
+		GoalUtils.DEBUG = parseOption(GOAL_TRACE);
+		ProofSkeletonView.DEBUG = parseOption(PROOFSKELETON_DEBUG);
+	}
 
-			option = Platform.getDebugOption(EVENTBEDITOR_TRACE);
-			if (option != null)
-				EventBEditorUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-
-			option = Platform.getDebugOption(PROVERUI_TRACE);
-			if (option != null)
-				ProverUIUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-
-			option = Platform.getDebugOption(PROOFCONTROL_TRACE);
-			if (option != null)
-				ProofControlUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-
-			option = Platform.getDebugOption(PROOFTREEUI_TRACE);
-			if (option != null)
-				ProofTreeUIUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-
-			option = Platform.getDebugOption(PROOFINFORMATION_TRACE);
-			if (option != null)
-				ProofInformationUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-
-			option = Platform.getDebugOption(SEARCHHYPOTHESIS_TRACE);
-			if (option != null)
-				SearchHypothesisUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-
-			option = Platform.getDebugOption(CACHEDHYPOTHESIS_TRACE);
-			if (option != null)
-				CacheHypothesisUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-
-			option = Platform.getDebugOption(GOAL_TRACE);
-			if (option != null)
-				GoalUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-
-			option = Platform.getDebugOption(PROOFSKELETON_DEBUG);
-			if (option != null)
-				ProofSkeletonView.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-		}
+	private static boolean parseOption(String key) {
+		final String option = Platform.getDebugOption(key);
+		return "true".equalsIgnoreCase(option); //$NON-NLS-1$
 	}
 
 	@Override

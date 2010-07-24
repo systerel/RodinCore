@@ -72,7 +72,7 @@ import org.rodinp.internal.core.version.ConversionResult;
 public class RodinCore extends Plugin {
 
 	// The shared instance.
-	private static RodinCore PLUGIN;
+	private static RodinCore plugin;
 
 	/**
 	 * The plug-in identifier of the Rodin core support (value
@@ -96,18 +96,6 @@ public class RodinCore extends Plugin {
 	 */
 	public static final String NATURE_ID = PLUGIN_ID + ".rodinnature" ; //$NON-NLS-1$
 
-	/**
-	 * Creates the Rodin core plug-in.
-	 * <p>
-	 * The plug-in instance is created automatically by the Eclipse platform.
-	 * Clients must not call.
-	 * </p>
-	 */
-	public RodinCore() {
-		super();
-		PLUGIN = this;
-	}
-	
 	/**
 	 * Adds the given listener for changes to Rodin elements.
 	 * Has no effect if an identical listener is already registered.
@@ -307,7 +295,7 @@ public class RodinCore extends Plugin {
 	 * @return the single instance of the Rodin core plug-in runtime class
 	 */
 	public static RodinCore getRodinCore() {
-		return PLUGIN;
+		return plugin;
 	}
 
 	/**
@@ -316,7 +304,7 @@ public class RodinCore extends Plugin {
 	 * @return the single instance of the Rodin core plug-in runtime class
 	 */
 	public static Plugin getPlugin() {
-		return PLUGIN;
+		return plugin;
 	}
 
 	/**
@@ -432,6 +420,7 @@ public class RodinCore extends Plugin {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		plugin = this;
 		RodinDBManager.getRodinDBManager().startup();
 	}
 
@@ -441,7 +430,7 @@ public class RodinCore extends Plugin {
 			RodinDBManager.getRodinDBManager().shutdown();
 		} finally {
 			super.stop(context);
-			PLUGIN = null;
+			plugin = null;
 		}
 	}
 

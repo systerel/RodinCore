@@ -200,23 +200,13 @@ public class EventBPlugin extends Plugin {
 		return bareName + ".bcm";
 	}
 
-	/**
-	 * Creates the Event-B core plug-in.
-	 * <p>
-	 * The plug-in instance is created automatically by the Eclipse platform.
-	 * Clients must not call.
-	 * </p>
-	 */
-	public EventBPlugin() {
-		plugin = this;
-	}
-
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		
+		plugin = this;
 		enableAssertions();
-		configureDebugOptions();
+		if (isDebugging())
+			configureDebugOptions();
 	}
 
 	@Override
@@ -236,62 +226,32 @@ public class EventBPlugin extends Plugin {
 	 * Process debugging/tracing options coming from Eclipse.
 	 */
 	private void configureDebugOptions() {
-		if (isDebugging()) {
-			String option;
-			option = Platform.getDebugOption(SC_TRACE);
-			if (option != null)
-				SCUtil.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(SC_TRACE_STATE);
-			if (option != null)
-				SCUtil.DEBUG_STATE = 
-					SCUtil.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(SC_TRACE_MODULECONF);
-			if (option != null)
-				SCUtil.DEBUG_MODULECONF = 
-					SCUtil.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(SC_TRACE_MODULES);
-			if (option != null)
-				SCModule.DEBUG_MODULE = 
-					SCUtil.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(SC_TRACE_MARKERS);
-			if (option != null)
-				SCUtil.DEBUG_MARKERS = 
-					SCUtil.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(POG_TRACE);
-			if (option != null)
-				POGUtil.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(POG_TRACE_STATE);
-			if (option != null)
-				POGUtil.DEBUG_STATE = 
-					POGUtil.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(POG_TRACE_MODULECONF);
-			if (option != null)
-				POGUtil.DEBUG_MODULECONF = 
-					POGUtil.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(POG_TRACE_MODULES);
-			if (option != null)
-				POGModule.DEBUG_MODULE = 
-					POGUtil.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(POG_TRACE_TRIVIAL);
-			if (option != null)
-				UtilityModule.DEBUG_TRIVIAL = 
-					POGUtil.DEBUG && option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(POM_TRACE);
-			if (option != null)
-				AutoPOM.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(POM_TRACE_RECALCULATE);
-			if (option != null)
-				RecalculateAutoStatus.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(PO_LOADER_TRACE);
-			if (option != null)
-				POLoader.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(PM_TRACE);
-			if (option != null)
-				UserSupportUtils.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(PERF_POM_PROOFREUSE_TRACE);
-			if (option != null)
-				AutoPOM.PERF_PROOFREUSE = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-		}
+		SCUtil.DEBUG = parseOption(SC_TRACE);
+		SCUtil.DEBUG_STATE = SCUtil.DEBUG && parseOption(SC_TRACE_STATE);
+		SCUtil.DEBUG_MODULECONF = SCUtil.DEBUG
+				&& parseOption(SC_TRACE_MODULECONF);
+		SCModule.DEBUG_MODULE = SCUtil.DEBUG && parseOption(SC_TRACE_MODULES);
+		SCUtil.DEBUG_MARKERS = SCUtil.DEBUG && parseOption(SC_TRACE_MARKERS);
+
+		POGUtil.DEBUG = parseOption(POG_TRACE);
+		POGUtil.DEBUG_STATE = POGUtil.DEBUG && parseOption(POG_TRACE_STATE);
+		POGUtil.DEBUG_MODULECONF = POGUtil.DEBUG
+				&& parseOption(POG_TRACE_MODULECONF);
+		POGModule.DEBUG_MODULE = POGUtil.DEBUG
+				&& parseOption(POG_TRACE_MODULES);
+		UtilityModule.DEBUG_TRIVIAL = POGUtil.DEBUG
+				&& parseOption(POG_TRACE_TRIVIAL);
+
+		AutoPOM.DEBUG = parseOption(POM_TRACE);
+		RecalculateAutoStatus.DEBUG = parseOption(POM_TRACE_RECALCULATE);
+		POLoader.DEBUG = parseOption(PO_LOADER_TRACE);
+		UserSupportUtils.DEBUG = parseOption(PM_TRACE);
+		AutoPOM.PERF_PROOFREUSE = parseOption(PERF_POM_PROOFREUSE_TRACE);
+	}
+
+	private static boolean parseOption(String key) {
+		final String option = Platform.getDebugOption(key);
+		return "true".equalsIgnoreCase(option); //$NON-NLS-1$
 	}
 
 	/**

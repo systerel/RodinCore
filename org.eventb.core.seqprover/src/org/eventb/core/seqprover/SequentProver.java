@@ -54,25 +54,14 @@ public class SequentProver extends Plugin {
 	private static boolean DEBUG;
 
 	/**
-	 * Creates the Sequent Prover plug-in.
-	 * <p>
-	 * The plug-in instance is created automatically by the Eclipse platform.
-	 * Clients must not call.
-	 * </p>
-	 */
-	public SequentProver() {
-		super();
-		plugin = this;
-	}
-
-	/**
 	 * This method is called upon plug-in activation
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-
+		plugin = this;
 		enableAssertions();
-		configureDebugOptions();
+		if (isDebugging())
+			configureDebugOptions();
 	}
 
 	/**
@@ -86,27 +75,17 @@ public class SequentProver extends Plugin {
 	 * Process debugging/tracing options coming from Eclipse.
 	 */
 	private void configureDebugOptions() {
-		if (isDebugging()) {
-			String option;
-			option = Platform.getDebugOption(SEQPROVER_TRACE);
-			if (option != null)
-				SequentProver.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(PROVER_CHECKS_TRACE);
-			if (option != null)
-				ProverChecks.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(REASONER_REGISTRY_TRACE);
-			if (option != null)
-				ReasonerRegistry.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(TACTIC_REGISTRY_TRACE);
-			if (option != null)
-				AutoTacticRegistry.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(XPROVER_TRACE);
-			if (option != null)
-				XProverReasoner.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-			option = Platform.getDebugOption(AUTO_REWRITER_TRACE);
-			if (option != null)
-				AutoRewriterImpl.DEBUG = option.equalsIgnoreCase("true"); //$NON-NLS-1$
-		}
+		SequentProver.DEBUG = parseOption(SEQPROVER_TRACE);
+		ProverChecks.DEBUG = parseOption(PROVER_CHECKS_TRACE);
+		ReasonerRegistry.DEBUG = parseOption(REASONER_REGISTRY_TRACE);
+		AutoTacticRegistry.DEBUG = parseOption(TACTIC_REGISTRY_TRACE);
+		XProverReasoner.DEBUG = parseOption(XPROVER_TRACE);
+		AutoRewriterImpl.DEBUG = parseOption(AUTO_REWRITER_TRACE);
+	}
+
+	private static boolean parseOption(String key) {
+		final String option = Platform.getDebugOption(key);
+		return "true".equalsIgnoreCase(option); //$NON-NLS-1$
 	}
 
 	/**
