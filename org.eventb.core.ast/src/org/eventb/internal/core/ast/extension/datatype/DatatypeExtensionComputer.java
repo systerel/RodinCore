@@ -36,17 +36,19 @@ public class DatatypeExtensionComputer {
 		final String typeName = extension.getTypeName();
 		final TypeConstrMediator typeMed = new TypeConstrMediator(extension);
 		extension.addTypeParameters(typeMed);
-		addExtension(result, typeMed.getTypeConstructor());
+		final IExpressionExtension typeConstructor = typeMed.getTypeConstructor();
+		assert typeConstructor.isATypeConstructor();
+		addExtension(result, typeConstructor);
 		List<ITypeParameter> typePrmList = typeMed.getTypeParams();
 		final Map<String, ITypeParameter> typeParams = makeMap(typePrmList);
 
 		final ConstructorMediator consMed = new ConstructorMediator(typeName,
-				typeParams);
+				typeParams, typeConstructor);
 		extension.addConstructors(consMed);
 		addExtensions(result, consMed.getExtensions());
 
 		final DestructorMediator destMed = new DestructorMediator(typeName,
-				typeParams);
+				typeParams, typeConstructor);
 		extension.addDestructors(destMed);
 		addExtensions(result, destMed.getExtensions());
 

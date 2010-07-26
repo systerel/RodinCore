@@ -392,6 +392,7 @@ public class AtomicExpression extends Expression {
 		return tag == INTEGER || tag == BOOL;
 	}
 
+	@Deprecated
 	@Override
 	public Type toType(FormulaFactory factory) throws InvalidExpressionException {
 		switch (getTag()) {
@@ -404,6 +405,11 @@ public class AtomicExpression extends Expression {
 		}
 	}
 
+	@Override
+	public Type toType() throws InvalidExpressionException {
+		return toType(getFactory());
+	}
+	
 	@Override
 	protected void addGivenTypes(Set<GivenType> set) {
 		getType().addGivenTypes(set);

@@ -87,6 +87,36 @@ public class TypeUnifier {
 				}
 				return result.makeProductType(newLeft, newRight);
 			}
+			gt1@GenType(children1), gt2@GenType(children2) -> {
+				final GenericType genType1 = (GenericType) `gt1;
+				final GenericType genType2 = (GenericType) `gt2;
+				if (genType1.getExprExtension() != genType2.getExprExtension()) {
+					return null;
+				}
+				assert `children1.length == `children2.length;
+				final int length = `children1.length;
+				final List<Type> newTypePrms = new ArrayList<Type>(length);
+				boolean all1 = true;
+				boolean all2 = true;
+				for (int i = 0; i < length; i++) {
+					final Type child1 = `children1[i];
+					final Type child2 = `children2[i];
+					final Type newChild = unify(child1, child2, origin);
+					if (newChild == null) {
+						return null;
+					}
+					all1 &= newChild == child1;
+					all2 &= newChild == child2;
+					newTypePrms.add(newChild);
+				}
+				if (all1) {
+					return left;
+				}
+				if (all2) {
+					return right;
+				}
+				return result.makeGenericType(newTypePrms, genType1.getExprExtension());
+			}
 			Int(), Int() -> {
 				return left;
 			}

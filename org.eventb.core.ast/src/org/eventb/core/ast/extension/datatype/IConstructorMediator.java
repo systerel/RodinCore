@@ -42,6 +42,6 @@ public interface IConstructorMediator extends IDatatypeMediator {
 	 * @param argTypes
 	 *            a list of types
 	 */
-	void addConstructor(String name, String id, List<ITypeParameter> argTypes);
+	void addConstructor(String name, String id, List<IArgumentType> argTypes);
 
 }

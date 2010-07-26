@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.datatype.IArgumentType;
 import org.eventb.core.ast.extension.datatype.IDatatypeMediator;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
 
@@ -26,13 +27,10 @@ import org.eventb.core.ast.extension.datatype.ITypeParameter;
  */
 public class DatatypeMediator implements IDatatypeMediator {
 
-	private final String typeName;
-	private final Map<String, ITypeParameter> typeParams;
+	protected final Map<String, ITypeParameter> typeParams;
 	protected final Set<IExpressionExtension> extensions = new HashSet<IExpressionExtension>();
 
-	public DatatypeMediator(String typeName,
-			Map<String, ITypeParameter> typeParams) {
-		this.typeName = typeName;
+	public DatatypeMediator(Map<String, ITypeParameter> typeParams) {
 		this.typeParams = typeParams;
 	}
 
@@ -42,13 +40,13 @@ public class DatatypeMediator implements IDatatypeMediator {
 	}
 
 	@Override
-	public ITypeParameter newTypeConstructor(ITypeParameter type) {
-		return new TypeParam(typeName, Collections.singletonList(type));
+	public IArgumentType newArgumentType(ITypeParameter type) {
+		return new ArgTypeParamRef(type);
 	}
 
 	@Override
-	public ITypeParameter newTypeConstructor(List<ITypeParameter> types) {
-		return new TypeParam(typeName, types);
+	public IArgumentType newArgumentTypeConstr(List<IArgumentType> types) {
+		return new ArgGenTypeRef(types);
 	}
 
 	public Set<IExpressionExtension> getExtensions() {

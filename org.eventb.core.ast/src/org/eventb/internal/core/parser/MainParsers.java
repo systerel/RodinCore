@@ -266,7 +266,7 @@ public class MainParsers {
 				if (!expression.isATypeExpression()) {
 					throw newInvalidTypeExpr(pc);
 				}
-				final Type type = expression.toType(pc.factory);
+				final Type type = expression.toType();
 				return new SubParseResult<Type>(type, exprResult.getKind(),
 						exprResult.isClosed());
 			} catch (InvalidExpressionException e) {

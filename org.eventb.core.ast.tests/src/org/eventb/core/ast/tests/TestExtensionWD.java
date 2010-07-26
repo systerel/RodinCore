@@ -73,8 +73,8 @@ public class TestExtensionWD extends AbstractTests {
 		}
 
 		@Override
-		public Type getType(ITypeMediator mediator,
-				ExtendedExpression expression) {
+		public Type getType(ExtendedExpression expression,
+				Type proposedType, ITypeMediator mediator) {
 			final Expression[] children = expression.getChildExpressions();
 			final Type resultType = children[0].getType();
 			for (Expression child : children) {
@@ -145,6 +145,11 @@ public class TestExtensionWD extends AbstractTests {
 		@Override
 		public boolean conjoinChildrenWD() {
 			return conjoinChildrenWD;
+		}
+
+		@Override
+		public boolean isATypeConstructor() {
+			return false;
 		}
 
 	}

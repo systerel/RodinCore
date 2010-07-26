@@ -42,6 +42,7 @@ import org.eventb.core.ast.GenericType;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IPosition;
+import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.LanguageVersion;
@@ -69,6 +70,7 @@ import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
+import org.eventb.core.ast.extension.datatype.IArgumentType;
 import org.eventb.core.ast.extension.datatype.IConstructorMediator;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.IDestructorMediator;
@@ -243,15 +245,27 @@ public class TestGenParser extends AbstractTests {
 		return factory.parseExpression(formula,
 				version, null);
 	}
+	
 	private static IParseResult parseExprRes(String formula) {
 		return parseExprRes(formula, ff, LanguageVersion.LATEST);
 	}
+	
 	private static Expression doExpressionTest(String formula, Expression expected, FormulaFactory factory) {
 		return parseAndCheck(formula, expected, factory, LanguageVersion.V2);
 	}
 	
-	private static Expression doExpressionTest(String formula, Expression expected, Type expectedType) {
-		final Expression actual = doExpressionTest(formula, expected);
+	private static Expression doExpressionTest(String formula, Expression expected, Type expectedType, boolean typeCheck) {
+		return doExpressionTest(formula, expected, expectedType, ff, typeCheck);
+	}	
+
+	private static Expression doExpressionTest(String formula, Expression expected, Type expectedType, FormulaFactory factory, boolean typeCheck) {
+		final Expression actual = doExpressionTest(formula, expected, factory);
+		if (typeCheck) {
+			final ITypeCheckResult result = actual.typeCheck(factory.makeTypeEnvironment());
+			assertFalse(
+					"unexpected type check problems " + result.getProblems(),
+					result.hasProblem());
+		}
 		assertEquals(expectedType, actual.getType());
 		return actual;
 	}
@@ -573,8 +587,8 @@ public class TestGenParser extends AbstractTests {
 		}
 
 		@Override
-		public Type getType(ITypeMediator mediator,
-				ExtendedExpression expression) {
+		public Type getType(ExtendedExpression expression,
+				Type proposedType, ITypeMediator mediator) {
 
 			final Expression[] children = expression.getChildExpressions();
 			Type leftType = children[0].getType();
@@ -622,6 +636,11 @@ public class TestGenParser extends AbstractTests {
 			return true;
 		}
 
+		@Override
+		public boolean isATypeConstructor() {
+			return false;
+		}
+
 	};
 
 	public void testExtensionDirectProduct() throws Exception {
@@ -640,8 +659,8 @@ public class TestGenParser extends AbstractTests {
 		private static final String OPERATOR_ID = "Money";
 		
 		@Override
-		public Type getType(ITypeMediator mediator,
-				ExtendedExpression expression) {
+		public Type getType(ExtendedExpression expression,
+				Type proposedType, ITypeMediator mediator) {
 			final Expression[] children = expression.getChildExpressions();
 			final Type resultType = children[0].getType();
 			for (Expression child: children) {
@@ -708,6 +727,11 @@ public class TestGenParser extends AbstractTests {
 		@Override
 		public boolean conjoinChildrenWD() {
 			return true;
+		}
+
+		@Override
+		public boolean isATypeConstructor() {
+			return false;
 		}
 
 	};
@@ -975,19 +999,19 @@ public class TestGenParser extends AbstractTests {
 	
 	public void testEmptySetOfType() throws Exception {
 		final Expression expected = ff.makeEmptySet(POW_INT_TYPE, null);
-		doExpressionTest("(∅ ⦂ ℙ(ℤ))", expected, POW_INT_TYPE);
+		doExpressionTest("(∅ ⦂ ℙ(ℤ))", expected, POW_INT_TYPE, false);
 	}
 	
 	public void testIdOfType() throws Exception {
 		final Expression expected = ff.makeAtomicExpression(KID_GEN, null, ff
 				.makeRelationalType(INT_TYPE, INT_TYPE));
-		doExpressionTest("(id ⦂ ℙ(ℤ×ℤ))", expected, REL_INT_INT);
+		doExpressionTest("(id ⦂ ℙ(ℤ×ℤ))", expected, REL_INT_INT, false);
 	}
 	
 	public void testIdOfTypeRel() throws Exception {
 		final Expression expected = ff.makeAtomicExpression(KID_GEN, null, ff
 				.makeRelationalType(INT_TYPE, INT_TYPE));
-		doExpressionTest("(id ⦂ ℤ↔ℤ)", expected, REL_INT_INT);
+		doExpressionTest("(id ⦂ ℤ↔ℤ)", expected, REL_INT_INT, false);
 	}
 	
 	public void testPrj1OfType() throws Exception {
@@ -995,7 +1019,7 @@ public class TestGenParser extends AbstractTests {
 				.makeRelationalType(ff.makeProductType(S_TYPE, INT_TYPE),
 						S_TYPE);
 		final Expression expected = ff.makeAtomicExpression(KPRJ1_GEN, null, expectedType);
-		doExpressionTest("(prj1 ⦂ ℙ(S×ℤ×S))", expected, expectedType);		
+		doExpressionTest("(prj1 ⦂ ℙ(S×ℤ×S))", expected, expectedType, false);		
 	}
 	
 	public void testPrj2OfType() throws Exception {
@@ -1003,7 +1027,7 @@ public class TestGenParser extends AbstractTests {
 				.makeRelationalType(ff.makeProductType(INT_TYPE, S_TYPE),
 						S_TYPE);
 		final Expression expected = ff.makeAtomicExpression(KPRJ2_GEN, null, expectedType);
-		doExpressionTest("(prj2 ⦂ ℙ(ℤ×S×S))", expected, expectedType);		
+		doExpressionTest("(prj2 ⦂ ℙ(ℤ×S×S))", expected, expectedType, false);		
 	}
 	
 	public void testIdentOfType() throws Exception {
@@ -1670,8 +1694,8 @@ public class TestGenParser extends AbstractTests {
 		private static final String OPERATOR_ID = "Extension Maximum";
 		
 		@Override
-		public Type getType(ITypeMediator mediator,
-				ExtendedExpression expression) {
+		public Type getType(ExtendedExpression expression,
+				Type proposedType, ITypeMediator mediator) {
 			final Expression[] children = expression.getChildExpressions();
 			final Type resultType = children[0].getType();
 			for (Expression child: children) {
@@ -1733,6 +1757,11 @@ public class TestGenParser extends AbstractTests {
 		@Override
 		public boolean conjoinChildrenWD() {
 			return true;
+		}
+
+		@Override
+		public boolean isATypeConstructor() {
+			return false;
 		}
 
 	};
@@ -1937,15 +1966,18 @@ public class TestGenParser extends AbstractTests {
 		public void addConstructors(IConstructorMediator mediator) {
 			mediator.addConstructor("nil", "NIL");
 			final ITypeParameter typeS = mediator.getTypeParameter("S");
-			final ITypeParameter listS = mediator.newTypeConstructor(typeS);
-			mediator.addConstructor("cons", "CONS", Arrays.asList(typeS, listS));
+			
+			final IArgumentType refS = mediator.newArgumentType(typeS);
+			final IArgumentType listS = mediator.newArgumentTypeConstr(Collections.singletonList(refS));
+			mediator.addConstructor("cons", "CONS", Arrays.asList(refS, listS));
 		}
 
 		@Override
 		public void addDestructors(IDestructorMediator mediator) {
 			final ITypeParameter typeS = mediator.getTypeParameter("S");
-			mediator.addDestructor("head", "HEAD", typeS);
-			final ITypeParameter listS = mediator.newTypeConstructor(typeS);
+			final IArgumentType refS = mediator.newArgumentType(typeS);
+			mediator.addDestructor("head", "HEAD", refS);
+			final IArgumentType listS = mediator.newArgumentTypeConstr(Collections.singletonList(refS));
 			mediator.addDestructor("tail", "TAIL", listS);
 		}
 
@@ -1955,52 +1987,54 @@ public class TestGenParser extends AbstractTests {
 			.getExtensions(LIST_TYPE);
 	private static final FormulaFactory LIST_FAC = FormulaFactory
 			.getInstance(new HashSet<IFormulaExtension>(LIST_EXTNS.values()));	
+	private static final IExpressionExtension EXT_LIST = LIST_EXTNS.get(LIST_TYPE.getId());
+	private static final GenericType LIST_INT_TYPE = LIST_FAC.makeGenericType(
+			Collections.<Type> singletonList(INT_TYPE), EXT_LIST);
+	private static final IExpressionExtension EXT_NIL = LIST_EXTNS.get("NIL");
+	private static final IExpressionExtension EXT_CONS = LIST_EXTNS.get("CONS");
+	private static final IExpressionExtension extHead = LIST_EXTNS.get("HEAD");
+	private static final IExpressionExtension extTail = LIST_EXTNS.get("TAIL");
 	
 	public void testDatatypeType() throws Exception {
 		
-		final IExpressionExtension extList = LIST_EXTNS.get(LIST_TYPE.getId());
-		assertNotNull("List type constructor not found", extList);
-		
-		final ExtendedExpression list = LIST_FAC.makeExtendedExpression(extList,
+		final ExtendedExpression list = LIST_FAC.makeExtendedExpression(EXT_LIST,
 				Collections.<Expression> singleton(INT), Collections
 						.<Predicate> emptyList(), null);
 
 		final Expression expr = doExpressionTest("List(ℤ)", list, LIST_FAC);
 		
-		final GenericType listIntType = LIST_FAC.makeGenericType(Collections.<Type>singletonList(INT_TYPE), extList);
-		final PowerSetType powListIntType = LIST_FAC.makePowerSetType(listIntType);
+		final PowerSetType powListIntType = LIST_FAC.makePowerSetType(LIST_INT_TYPE);
 		assertEquals("unexpected type", powListIntType, expr.getType());
 		
 		assertTrue("expected a type expression", expr.isATypeExpression());
-		assertEquals("unexpected toType", listIntType, expr.toType(LIST_FAC));
+		assertEquals("unexpected toType", LIST_INT_TYPE, expr.toType());
 
-		doTypeTest("List(ℤ)", listIntType, LIST_FAC);
+		doTypeTest("List(ℤ)", LIST_INT_TYPE, LIST_FAC);
+		
+		final GenericType listBoolType = LIST_FAC.makeGenericType(
+				Collections.<Type> singletonList(BOOL_TYPE), EXT_LIST);
+		assertFalse(listBoolType.equals(LIST_INT_TYPE));
 	}
 
 	public void testDatatypeNil() throws Exception {
-		final IExpressionExtension extNil = LIST_EXTNS.get("NIL");
-		assertNotNull("nil constructor not found", extNil);
+		assertNotNull("nil constructor not found", EXT_NIL);
 		
-		final ExtendedExpression nil = LIST_FAC.makeExtendedExpression(extNil,
+		final ExtendedExpression nil = LIST_FAC.makeExtendedExpression(EXT_NIL,
 				Collections.<Expression> emptyList(), Collections
 						.<Predicate> emptyList(), null);
 
 		doExpressionTest("nil", nil, LIST_FAC);
 		
-		final IExpressionExtension extList = LIST_EXTNS.get(LIST_TYPE.getId());
-		assertNotNull("List type constructor not found", extList);
-		
-		final GenericType listIntType = LIST_FAC.makeGenericType(Collections.<Type>singletonList(INT_TYPE), extList);
-		final ExtendedExpression nilInt = LIST_FAC.makeExtendedExpression(extNil,
-				NO_EXPR, NO_PRED, null, listIntType);
+		final ExtendedExpression nilInt = LIST_FAC.makeExtendedExpression(EXT_NIL,
+				NO_EXPR, NO_PRED, null, LIST_INT_TYPE);
 
 		doExpressionTest("(nil ⦂ List(ℤ))", nilInt, LIST_FAC);
 
 		final GenericType listBoolBoolType = LIST_FAC.makeGenericType(Collections
 				.<Type> singletonList(LIST_FAC.makeProductType(BOOL_TYPE,
-						BOOL_TYPE)), extList);
+						BOOL_TYPE)), EXT_LIST);
 		final ExtendedExpression nilBoolBool = LIST_FAC.makeExtendedExpression(
-				extNil, NO_EXPR, NO_PRED, null, listBoolBoolType);
+				EXT_NIL, NO_EXPR, NO_PRED, null, listBoolBoolType);
 
 		doExpressionTest("(nil ⦂ List(BOOL×BOOL))", nilBoolBool, LIST_FAC);
 		
@@ -2010,38 +2044,32 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testDatatypeConstructor() throws Exception {
-		final IExpressionExtension extNil = LIST_EXTNS.get("NIL");
-		assertNotNull("nil constructor not found", extNil);
 
-		final ExtendedExpression nil = LIST_FAC.makeExtendedExpression(extNil,
-				Collections.<Expression> emptyList(), Collections
-						.<Predicate> emptyList(), null);
+		final ExtendedExpression nil = LIST_FAC.makeExtendedExpression(EXT_NIL,
+				NO_EXPR, NO_PRED, null, LIST_INT_TYPE);
 
-		final IExpressionExtension extCons = LIST_EXTNS.get("CONS");
-		assertNotNull(extCons);
-		
-		final ExtendedExpression list1 = LIST_FAC.makeExtendedExpression(extCons,
+		final ExtendedExpression list1 = LIST_FAC.makeExtendedExpression(EXT_CONS,
 				Arrays.asList(ONE, nil), Collections
 						.<Predicate> emptyList(), null);
 		
-		doExpressionTest("cons(1, nil)", list1, LIST_FAC);
+		doExpressionTest("cons(1, nil)", list1, LIST_INT_TYPE, LIST_FAC, true);
 
 		final ExtendedExpression list01 = LIST_FAC.makeExtendedExpression(
-				extCons, Arrays.asList(ZERO,
+				EXT_CONS, Arrays.asList(ZERO,
 						LIST_FAC.makeExtendedExpression(
-								extCons, Arrays.asList(ONE,
+								EXT_CONS, Arrays.asList(ONE,
 										nil),
 										Collections.<Predicate> emptyList(), null)),
 										Collections.<Predicate> emptyList(), null);
 
-		doExpressionTest("cons(0, cons(1, nil))", list01, LIST_FAC);
+		doExpressionTest("cons(0, cons(1, nil))", list01, LIST_INT_TYPE, LIST_FAC, true);
+		
+		assertFalse(list1.equals(list01));
 	}
 	
 	public void testDatatypeDestructors() throws Exception {
-		final IExpressionExtension extHead = LIST_EXTNS.get("HEAD");
 		assertNotNull("head destructor not found", extHead);
 
-		final IExpressionExtension extTail = LIST_EXTNS.get("TAIL");
 		assertNotNull("tail destructor not found", extTail);
 		
 		final ExtendedExpression head = LIST_FAC.makeExtendedExpression(
@@ -2055,6 +2083,30 @@ public class TestGenParser extends AbstractTests {
 				Collections.<Predicate> emptyList(), null);
 
 		doExpressionTest("tail(x)", tail, LIST_FAC);
+	}
+	
+	
+	public void testDatatypeDestructorsTyping() throws Exception {
+		
+		final ExtendedExpression nil = LIST_FAC.makeExtendedExpression(EXT_NIL,
+				Collections.<Expression> emptyList(), Collections
+						.<Predicate> emptyList(), null);
+
+		final ExtendedExpression list1 = LIST_FAC.makeExtendedExpression(EXT_CONS,
+				Arrays.asList(ONE, nil), Collections
+						.<Predicate> emptyList(), null);
+
+		final ExtendedExpression headList1 = LIST_FAC.makeExtendedExpression(
+				extHead, Arrays.<Expression> asList(list1),
+				Collections.<Predicate> emptyList(), null);
+
+		doExpressionTest("head(cons(1, nil))", headList1, INT_TYPE, LIST_FAC, true);
+
+		final ExtendedExpression tail = LIST_FAC.makeExtendedExpression(
+				extTail, Arrays.<Expression> asList(list1),
+				Collections.<Predicate> emptyList(), null);
+
+		doExpressionTest("tail(cons(1, nil))", tail, LIST_INT_TYPE, LIST_FAC, true);
 	}
 	
 	public void testMinusPU() throws Exception {

@@ -21,8 +21,8 @@ public interface IDatatypeMediator {
 
 	ITypeParameter getTypeParameter(String name);
 
-	ITypeParameter newTypeConstructor(ITypeParameter type);
+	IArgumentType newArgumentType(ITypeParameter type);
 
-	ITypeParameter newTypeConstructor(List<ITypeParameter> types);
+	IArgumentType newArgumentTypeConstr(List<IArgumentType> types);
 
 }

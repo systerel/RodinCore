@@ -655,14 +655,20 @@ public class UnaryExpression extends Expression {
 		return getTag() == POW && child.isATypeExpression();
 	}
 
+	@Deprecated
 	@Override
 	public Type toType(FormulaFactory factory) throws InvalidExpressionException {
 		if (getTag() != POW)
 			throw new InvalidExpressionException();
-		Type childAsType = child.toType(factory);
+		Type childAsType = child.toType();
 		return factory.makePowerSetType(childAsType);
 	}
 
+	@Override
+	public Type toType() throws InvalidExpressionException {
+		return toType(getFactory());
+	}
+	
 	@Override
 	protected void addGivenTypes(Set<GivenType> set) {
 		child.addGivenTypes(set);

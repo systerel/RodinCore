@@ -10,12 +10,27 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension.datatype;
 
+import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.ITypeMediator;
+import org.eventb.core.ast.extension.datatype.IArgumentType;
+import org.eventb.core.ast.extension.datatype.ITypeParameter;
 
 /**
  * @author Nicolas Beauger
  *
  */
-public interface ITypeExpressionExtension extends IExpressionExtension {
-	// no more methods for now
+public class ArgTypeParamRef implements IArgumentType {
+
+	private final ITypeParameter typeParam;
+
+	public ArgTypeParamRef(ITypeParameter type) {
+		this.typeParam = type;
+	}
+
+	@Override
+	public Type toType(ITypeMediator mediator, IExpressionExtension typeExtn, TypeParamInst instantiation) {
+		return instantiation.get(typeParam);
+	}
+	
 }

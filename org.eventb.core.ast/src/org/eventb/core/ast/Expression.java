@@ -116,8 +116,17 @@ public abstract class Expression extends Formula<Expression> {
 	 *             when this expression doesn't denote a type
 	 * @see Type#toExpression(FormulaFactory)
 	 * @see #isATypeExpression()
+	 * @deprecated use {@link #toType()} instead
 	 */
+	@Deprecated
 	public Type toType(FormulaFactory factory) throws InvalidExpressionException {
+		throw new InvalidExpressionException();
+	}
+	
+	/**
+	 * @since 2.0
+	 */
+	public Type toType() throws InvalidExpressionException {
 		throw new InvalidExpressionException();
 	}
 	

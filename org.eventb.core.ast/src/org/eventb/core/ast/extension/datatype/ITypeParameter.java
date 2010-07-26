@@ -10,17 +10,14 @@
  *******************************************************************************/
 package org.eventb.core.ast.extension.datatype;
 
-import java.util.List;
 
 /**
  * @author Nicolas Beauger
  * @since 2.0
- *
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ITypeParameter {
 
 	String getName();
-	
-	List<ITypeParameter> getChildParameters();
 	
 }

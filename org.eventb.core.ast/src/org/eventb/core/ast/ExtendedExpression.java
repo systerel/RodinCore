@@ -40,7 +40,6 @@ import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.ast.extension.TypeCheckMediator;
 import org.eventb.internal.core.ast.extension.TypeMediator;
-import org.eventb.internal.core.ast.extension.datatype.ITypeExpressionExtension;
 import org.eventb.internal.core.parser.ExtendedGrammar;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.IParserPrinter;
@@ -190,7 +189,8 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 			return;
 		}
 
-		Type resultType = extension.getType(new TypeMediator(factory), this);
+		final Type resultType = extension.getType(this,
+				givenType, new TypeMediator(factory));
 		if (resultType == null) {
 			return;
 		}
@@ -228,12 +228,12 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 			child.typeCheck(result, quantifiedIdentifiers);
 		}
 		final TypeCheckMediator mediator = new TypeCheckMediator(result, this,
-				isTerminalNode());
+				isAtomic());
 		final Type resultType = extension.typeCheck(mediator, this);
 		setTemporaryType(resultType, result);
 	}
 
-	private boolean isTerminalNode() {
+	public boolean isAtomic() {
 		return childExpressions.length == 0 && childPredicates.length == 0;
 	}
 
@@ -454,7 +454,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 
 	@Override
 	public boolean isATypeExpression() {
-		if (!(extension instanceof ITypeExpressionExtension)) {
+		if (!extension.isATypeConstructor()) {
 			return false;
 		}
 		if (childPredicates.length != 0) {
@@ -468,15 +468,22 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		return true;
 	}
 	
+	@Deprecated
 	@Override
 	public Type toType(FormulaFactory factory)
 			throws InvalidExpressionException {
-		// FIXME check this expression tag is a type constructor
+		if (!extension.isATypeConstructor()) {
+			throw new InvalidExpressionException();
+		}
 		final List<Type> typeParams = new ArrayList<Type>();
 		for(Expression child : childExpressions) {
-			typeParams.add(child.toType(factory));
+			typeParams.add(child.toType());
 		}
-		return ff.makeGenericType(typeParams, extension);
+		return factory.makeGenericType(typeParams, extension);
 	}
 	
+	@Override
+	public Type toType() throws InvalidExpressionException {
+		return toType(getFactory());
+	}
 }

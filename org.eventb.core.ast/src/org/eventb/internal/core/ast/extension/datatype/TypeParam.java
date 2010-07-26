@@ -10,34 +10,19 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension.datatype;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
 
 public class TypeParam implements ITypeParameter {
 
-	private final List<ITypeParameter> typeVars;
 	private final String name;
 
 	public TypeParam(String name) {
-		this(name, Collections.<ITypeParameter> emptyList());
-	}
-
-	public TypeParam(String name, List<ITypeParameter> typeVars) {
 		this.name = name;
-		this.typeVars = new ArrayList<ITypeParameter>(typeVars);
 	}
 
 	@Override
 	public String getName() {
 		return name;
-	}
-	
-	@Override
-	public List<ITypeParameter> getChildParameters() {
-		return Collections.unmodifiableList(typeVars);
 	}
 
 }
