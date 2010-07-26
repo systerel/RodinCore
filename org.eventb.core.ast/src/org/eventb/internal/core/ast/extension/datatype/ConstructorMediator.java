@@ -132,9 +132,13 @@ public class ConstructorMediator extends DatatypeMediator implements
 			if (proposedType == null) {
 				return null;
 			}
-			assert proposedType instanceof GenericType;
+			if (!(proposedType instanceof GenericType)) {
+				return null;
+			}
 			final GenericType genType = (GenericType) proposedType;
-			assert genType.getExprExtension() == typeCons;
+			if (genType.getExprExtension() != typeCons)  {
+				return null;
+			}
 
 			final TypeParamInst instantiation = new TypeParamInst();
 

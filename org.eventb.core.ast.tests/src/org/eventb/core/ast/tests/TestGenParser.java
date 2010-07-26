@@ -2017,36 +2017,50 @@ public class TestGenParser extends AbstractTests {
 	}
 
 	public void testDatatypeNil() throws Exception {
-		assertNotNull("nil constructor not found", EXT_NIL);
-		
+
 		final ExtendedExpression nil = LIST_FAC.makeExtendedExpression(EXT_NIL,
-				Collections.<Expression> emptyList(), Collections
-						.<Predicate> emptyList(), null);
+				Collections.<Expression> emptyList(),
+				Collections.<Predicate> emptyList(), null);
 
 		doExpressionTest("nil", nil, LIST_FAC);
-		
-		final ExtendedExpression nilInt = LIST_FAC.makeExtendedExpression(EXT_NIL,
-				NO_EXPR, NO_PRED, null, LIST_INT_TYPE);
 
-		doExpressionTest("(nil ⦂ List(ℤ))", nilInt, LIST_FAC);
+		final ExtendedExpression nilInt = LIST_FAC.makeExtendedExpression(
+				EXT_NIL, NO_EXPR, NO_PRED, null, LIST_INT_TYPE);
 
-		final GenericType listBoolBoolType = LIST_FAC.makeGenericType(Collections
-				.<Type> singletonList(LIST_FAC.makeProductType(BOOL_TYPE,
-						BOOL_TYPE)), EXT_LIST);
+		doExpressionTest("(nil ⦂ List(ℤ))", nilInt, LIST_INT_TYPE, LIST_FAC,
+				false);
+
+		final GenericType listBoolBoolType = LIST_FAC.makeGenericType(
+				Collections.<Type> singletonList(LIST_FAC.makeProductType(
+						BOOL_TYPE, BOOL_TYPE)), EXT_LIST);
 		final ExtendedExpression nilBoolBool = LIST_FAC.makeExtendedExpression(
 				EXT_NIL, NO_EXPR, NO_PRED, null, listBoolBoolType);
 
-		doExpressionTest("(nil ⦂ List(BOOL×BOOL))", nilBoolBool, LIST_FAC);
-		
+		doExpressionTest("(nil ⦂ List(BOOL×BOOL))", nilBoolBool,
+				listBoolBoolType, LIST_FAC, false);
+
 		assertFalse(nil.equals(nilInt));
 		assertFalse(nil.equals(nilBoolBool));
 		assertFalse(nilBoolBool.equals(nilInt));
 	}
 	
+	public void testDatatypeNilInvalidType() throws Exception {
+
+		final ExtendedExpression nilNoType = LIST_FAC.makeExtendedExpression(
+				EXT_NIL, NO_EXPR, NO_PRED, null, null);
+
+		// null type
+		doExpressionTest("(nil ⦂ ℤ)", nilNoType, null, LIST_FAC, false);
+		// FIXME we may prefer the same behaviour as for empty sets:
+//		final IParseResult result = parseExprRes("(nil ⦂ ℤ)", LIST_FAC, LanguageVersion.LATEST);
+//		assertFailure(result, new ASTProblem(new SourceLocation(1, 7),
+//				InvalidGenericType, Error, "List(alpha)"));
+	}
+	
 	public void testDatatypeConstructor() throws Exception {
 
 		final ExtendedExpression nil = LIST_FAC.makeExtendedExpression(EXT_NIL,
-				NO_EXPR, NO_PRED, null, LIST_INT_TYPE);
+				NO_EXPR, NO_PRED, null);
 
 		final ExtendedExpression list1 = LIST_FAC.makeExtendedExpression(EXT_CONS,
 				Arrays.asList(ONE, nil), Collections

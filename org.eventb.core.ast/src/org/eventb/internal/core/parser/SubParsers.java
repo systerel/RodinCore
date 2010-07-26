@@ -557,40 +557,53 @@ public class SubParsers {
 		
 		@Override
 		public SubParseResult<Expression> led(Formula<?> left, ParserContext pc) throws SyntaxError {
-			final int childTag = left.getTag();
-			if (!isTypedGeneric(childTag)) {
+			if (!isTypedGeneric(left)) {
 				throw newUnexpectedOftype(pc);
 			}
 			pc.accept(_TYPING);
 			
 			Type type = pc.subParse(TYPE_PARSER, true);
 			final SourceLocation typeLoc = pc.getSourceLocation();
-			if (!checkValidTypedGeneric(childTag, type, typeLoc, pc.result)) {
+			if (!checkValidTypedGeneric(left.getTag(), type, typeLoc, pc.result)) {
 				type = null;
 			}
-			final AtomicExpression result = pc.factory.makeAtomicExpression(childTag, pc
-					.getEnclosingSourceLocation(), type);
+			final SourceLocation sourceLoc = pc.getEnclosingSourceLocation();
+			final Expression result;
+			if (left instanceof ExtendedExpression) {
+				final ExtendedExpression extExpr = (ExtendedExpression) left;
+				// TODO ExtendedExpression.getExtension()
+				final IExpressionExtension extension = (IExpressionExtension) pc.factory
+						.getExtension(left.getTag());
+				result = pc.factory.makeExtendedExpression(extension,
+						extExpr.getChildExpressions(),
+						extExpr.getChildPredicates(), sourceLoc, type);
+			} else {
+				result = pc.factory.makeAtomicExpression(left.getTag(),
+						sourceLoc, type);
+			}
 			return new SubParseResult<Expression>(result, kind);
 		}
 
-		private static boolean isTypedGeneric(int tag) {
-			// TODO add support for typed generic extensions (nil) 
-			switch (tag) {
+		private static boolean isTypedGeneric(Formula<?> formula) {
+			switch (formula.getTag()) {
 			case Formula.EMPTYSET:
 			case Formula.KID_GEN:
 			case Formula.KPRJ1_GEN:
 			case Formula.KPRJ2_GEN:
 				return true;
-			default:
-				return false;
 			}
+			if (formula instanceof ExtendedExpression) {
+				return ((ExtendedExpression) formula).isAtomic();
+			}
+			return false;
 		}
-		
+
 		private SyntaxError newUnexpectedOftype(ParserContext pc) {
 			return new SyntaxError(new ASTProblem(pc.makeSourceLocation(pc.t),
 					ProblemKind.UnexpectedOftype, ProblemSeverities.Error));
 		}
 		
+		// FIXME duplicate checks with AtomicExpression => factorize
 		private static boolean checkValidTypedGeneric(int tag, Type type,
 				SourceLocation typeLoc, ParseResult result) throws SyntaxError {
 			switch (tag) {
@@ -619,9 +632,6 @@ public class SubParsers {
 					return false;
 				}
 				break;
-			default:
-				// tag has already been checked
-				assert false;
 			}
 			return true;
 		}

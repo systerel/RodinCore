@@ -147,7 +147,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		this.ff = ff;
 		checkPreconditions();
 		setPredicateVariableCache(getChildren());
-		synthesizeType(ff, null);
+		synthesizeType(ff, type);
 	}
 
 	private void checkPreconditions() {
