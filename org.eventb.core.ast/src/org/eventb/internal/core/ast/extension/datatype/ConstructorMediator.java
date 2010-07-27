@@ -127,7 +127,7 @@ public class ConstructorMediator extends DatatypeMediator implements
 		}
 
 		@Override
-		public Type getType(ExtendedExpression expression, Type proposedType,
+		public Type synthesizeType(ExtendedExpression expression, Type proposedType,
 				ITypeMediator mediator) {
 			if (proposedType == null) {
 				return null;

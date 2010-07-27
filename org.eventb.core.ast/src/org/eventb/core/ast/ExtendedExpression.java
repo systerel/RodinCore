@@ -189,7 +189,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 			return;
 		}
 
-		final Type resultType = extension.getType(this,
+		final Type resultType = extension.synthesizeType(this,
 				givenType, new TypeMediator(factory));
 		if (resultType == null) {
 			return;

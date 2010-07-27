@@ -113,7 +113,7 @@ public class DestructorMediator extends DatatypeMediator implements
 		}
 
 		@Override
-		public Type getType(ExtendedExpression expression, Type proposedType,
+		public Type synthesizeType(ExtendedExpression expression, Type proposedType,
 				ITypeMediator mediator) {
 			final Expression[] children = expression.getChildExpressions();
 			assert children.length == 1;

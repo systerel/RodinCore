@@ -73,7 +73,7 @@ public class TestExtensionWD extends AbstractTests {
 		}
 
 		@Override
-		public Type getType(ExtendedExpression expression,
+		public Type synthesizeType(ExtendedExpression expression,
 				Type proposedType, ITypeMediator mediator) {
 			final Expression[] children = expression.getChildExpressions();
 			final Type resultType = children[0].getType();

@@ -107,7 +107,7 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 		}
 
 		@Override
-		public Type getType(ExtendedExpression expression, Type proposedType, ITypeMediator mediator) {
+		public Type synthesizeType(ExtendedExpression expression, Type proposedType, ITypeMediator mediator) {
 			final Type resultType = computeType(expression, mediator);
 			if (resultType == null) {
 				return null;

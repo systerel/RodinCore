@@ -587,7 +587,7 @@ public class TestGenParser extends AbstractTests {
 		}
 
 		@Override
-		public Type getType(ExtendedExpression expression,
+		public Type synthesizeType(ExtendedExpression expression,
 				Type proposedType, ITypeMediator mediator) {
 
 			final Expression[] children = expression.getChildExpressions();
@@ -659,7 +659,7 @@ public class TestGenParser extends AbstractTests {
 		private static final String OPERATOR_ID = "Money";
 		
 		@Override
-		public Type getType(ExtendedExpression expression,
+		public Type synthesizeType(ExtendedExpression expression,
 				Type proposedType, ITypeMediator mediator) {
 			final Expression[] children = expression.getChildExpressions();
 			final Type resultType = children[0].getType();
@@ -1694,7 +1694,7 @@ public class TestGenParser extends AbstractTests {
 		private static final String OPERATOR_ID = "Extension Maximum";
 		
 		@Override
-		public Type getType(ExtendedExpression expression,
+		public Type synthesizeType(ExtendedExpression expression,
 				Type proposedType, ITypeMediator mediator) {
 			final Expression[] children = expression.getChildExpressions();
 			final Type resultType = children[0].getType();
