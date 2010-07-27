@@ -10,16 +10,14 @@
  *******************************************************************************/
 package org.eventb.core.ast.extension;
 
+import static org.eventb.core.ast.extension.ExtensionKindFactory.makePrefixKind;
 import static org.eventb.core.ast.extension.IOperatorProperties.*;
 import static org.eventb.core.ast.extension.IOperatorProperties.Notation.*;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.*;
-import static org.eventb.internal.core.ast.extension.OperatorProperties.makeOperProps;
 
-import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.extension.IOperatorProperties.Arity;
-import org.eventb.core.ast.extension.IOperatorProperties.Notation;
-import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
+import org.eventb.internal.core.ast.extension.ExtensionKind;
+import org.eventb.internal.core.ast.extension.PrefixKind;
 
 /**
  * Common protocol for formula extensions.
@@ -45,58 +43,12 @@ import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
  */
 public interface IFormulaExtension {
 
-	// FIXME move this class to a non-API package
-	public static class ExtensionKind implements IExtensionKind {
-
-		private final IOperatorProperties operProps;
-
-		ExtensionKind(Notation notation, FormulaType formulaType, Arity arity,
-				FormulaType argumentType, boolean isAssociative) {
-			this.operProps = makeOperProps(notation, formulaType, arity,
-					argumentType, isAssociative);
-		}
-
-		@Override
-		public IOperatorProperties getProperties() {
-			return operProps;
-		}
-
-		@Override
-		public boolean checkPreconditions(Expression[] childExprs,
-				Predicate[] childPreds) {
-			final int children;
-			final int alien;
-			if (operProps.getArgumentType() == EXPRESSION) {
-				children = childExprs.length;
-				alien = childPreds.length;
-			} else {
-				children = childPreds.length;
-				alien = childExprs.length;
-			}
-			return operProps.getArity().check(children) && alien == 0;
-		}
-	}
-
-	// FIXME for now, only EXPRESSION children are supported.
-	// FIXME should rather be available through a factory
-	public static class PrefixKind extends ExtensionKind {
-
-		public PrefixKind(FormulaType formulaType, int arity,
-				FormulaType argumentType) {
-			super(PREFIX, formulaType, new FixedArity(arity), argumentType,
-					false);
-		}
-
-	}
-
-	// Standard supported extension kinds.
-
 	/**
 	 * Kind for atomic expressions. An atomic expression is an extended
 	 * expression that takes no parameter, such as <code>"pred"</code> in the
 	 * core language.
 	 */
-	IExtensionKind ATOMIC_EXPRESSION = new PrefixKind(EXPRESSION, 0, EXPRESSION);
+	IExtensionKind ATOMIC_EXPRESSION = makePrefixKind(EXPRESSION, 0, EXPRESSION);
 
 	/**
 	 * Kind for binary infix expressions. A binary infix expression is an
@@ -120,7 +72,7 @@ public interface IFormulaExtension {
 	 * <code>"max"</code>" in the core language. In the concrete syntax, the
 	 * parameter must be bracketed with parentheses.
 	 */
-	IExtensionKind PARENTHESIZED_UNARY_EXPRESSION = new PrefixKind(EXPRESSION,
+	IExtensionKind PARENTHESIZED_UNARY_EXPRESSION = makePrefixKind(EXPRESSION,
 			1, EXPRESSION);
 
 	/**
@@ -129,7 +81,7 @@ public interface IFormulaExtension {
 	 * concrete syntax, the parameters must be bracketed with parentheses and
 	 * separated with a comma.
 	 */
-	IExtensionKind PARENTHESIZED_BINARY_EXPRESSION = new PrefixKind(EXPRESSION,
+	IExtensionKind PARENTHESIZED_BINARY_EXPRESSION = makePrefixKind(EXPRESSION,
 			2, EXPRESSION);
 
 	/**
@@ -138,7 +90,7 @@ public interface IFormulaExtension {
 	 * <code>"finite"</code>" in the core language. In the concrete syntax, the
 	 * parameter must be bracketed with parentheses.
 	 */
-	IExtensionKind PARENTHESIZED_UNARY_PREDICATE = new PrefixKind(PREDICATE, 1,
+	IExtensionKind PARENTHESIZED_UNARY_PREDICATE = makePrefixKind(PREDICATE, 1,
 			EXPRESSION);
 
 	/**
@@ -147,9 +99,11 @@ public interface IFormulaExtension {
 	 * concrete syntax, the parameters must be bracketed with parentheses and
 	 * separated with a comma.
 	 */
-	IExtensionKind PARENTHESIZED_BINARY_PREDICATE = new PrefixKind(PREDICATE,
+	IExtensionKind PARENTHESIZED_BINARY_PREDICATE = makePrefixKind(PREDICATE,
 			2, EXPRESSION);
 
+	
+	
 	String getSyntaxSymbol();
 
 	Predicate getWDPredicate(IExtendedFormula formula, IWDMediator wdMediator);

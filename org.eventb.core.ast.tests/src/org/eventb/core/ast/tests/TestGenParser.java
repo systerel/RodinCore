@@ -11,9 +11,50 @@
 package org.eventb.core.ast.tests;
 
 import static java.util.Arrays.asList;
-import static org.eventb.core.ast.Formula.*;
+import static org.eventb.core.ast.Formula.BINTER;
+import static org.eventb.core.ast.Formula.BUNION;
+import static org.eventb.core.ast.Formula.CONVERSE;
+import static org.eventb.core.ast.Formula.CPROD;
+import static org.eventb.core.ast.Formula.CSET;
+import static org.eventb.core.ast.Formula.DIV;
+import static org.eventb.core.ast.Formula.EQUAL;
+import static org.eventb.core.ast.Formula.EXISTS;
+import static org.eventb.core.ast.Formula.FORALL;
+import static org.eventb.core.ast.Formula.FUNIMAGE;
+import static org.eventb.core.ast.Formula.GT;
+import static org.eventb.core.ast.Formula.IN;
+import static org.eventb.core.ast.Formula.KCARD;
+import static org.eventb.core.ast.Formula.KFINITE;
+import static org.eventb.core.ast.Formula.KID;
+import static org.eventb.core.ast.Formula.KID_GEN;
+import static org.eventb.core.ast.Formula.KPARTITION;
+import static org.eventb.core.ast.Formula.KPRJ1;
+import static org.eventb.core.ast.Formula.KPRJ1_GEN;
+import static org.eventb.core.ast.Formula.KPRJ2;
+import static org.eventb.core.ast.Formula.KPRJ2_GEN;
+import static org.eventb.core.ast.Formula.LAND;
+import static org.eventb.core.ast.Formula.LE;
+import static org.eventb.core.ast.Formula.LIMP;
+import static org.eventb.core.ast.Formula.LOR;
+import static org.eventb.core.ast.Formula.LT;
+import static org.eventb.core.ast.Formula.MAPSTO;
+import static org.eventb.core.ast.Formula.MINUS;
+import static org.eventb.core.ast.Formula.MUL;
+import static org.eventb.core.ast.Formula.NOT;
+import static org.eventb.core.ast.Formula.NOTEQUAL;
+import static org.eventb.core.ast.Formula.OVR;
+import static org.eventb.core.ast.Formula.PLUS;
+import static org.eventb.core.ast.Formula.POW;
+import static org.eventb.core.ast.Formula.QUNION;
+import static org.eventb.core.ast.Formula.RELIMAGE;
+import static org.eventb.core.ast.Formula.SETMINUS;
+import static org.eventb.core.ast.Formula.TFUN;
+import static org.eventb.core.ast.Formula.TRUE;
+import static org.eventb.core.ast.Formula.UNMINUS;
+import static org.eventb.core.ast.Formula.UPTO;
 import static org.eventb.core.ast.ProblemKind.InvalidGenericType;
 import static org.eventb.core.ast.ProblemSeverities.Error;
+import static org.eventb.core.ast.extension.ExtensionKindFactory.makePrefixKind;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 
 import java.math.BigInteger;
@@ -40,7 +81,6 @@ import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IPosition;
@@ -49,6 +89,7 @@ import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.LiteralPredicate;
+import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
@@ -56,12 +97,12 @@ import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedExpression;
+import org.eventb.core.ast.QuantifiedExpression.Form;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
-import org.eventb.core.ast.QuantifiedExpression.Form;
 import org.eventb.core.ast.extension.CycleError;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
@@ -1763,7 +1804,7 @@ public class TestGenParser extends AbstractTests {
 
 		@Override
 		public IExtensionKind getKind() {
-			return new IFormulaExtension.PrefixKind(EXPRESSION, 3, EXPRESSION);
+			return makePrefixKind(EXPRESSION, 3, EXPRESSION);
 		}
 
 		@Override

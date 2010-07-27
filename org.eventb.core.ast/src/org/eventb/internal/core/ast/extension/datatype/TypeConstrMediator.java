@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension.datatype;
 
+import static org.eventb.core.ast.extension.ExtensionKindFactory.makePrefixKind;
 import static org.eventb.core.ast.extension.IFormulaExtension.ATOMIC_EXPRESSION;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 
@@ -27,7 +28,6 @@ import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
-import org.eventb.core.ast.extension.IFormulaExtension.PrefixKind;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
@@ -192,6 +192,6 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 		if (nbArgs == 0) {
 			return ATOMIC_EXPRESSION;
 		}
-		return new PrefixKind(EXPRESSION, nbArgs, EXPRESSION);
+		return makePrefixKind(EXPRESSION, nbArgs, EXPRESSION);
 	}
 }

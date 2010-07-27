@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension.datatype;
 
+import static org.eventb.core.ast.extension.ExtensionKindFactory.makePrefixKind;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 
 import java.util.ArrayList;
@@ -26,7 +27,6 @@ import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
-import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
@@ -79,8 +79,7 @@ public class ConstructorMediator extends DatatypeMediator implements
 
 		@Override
 		public IExtensionKind getKind() {
-			return new IFormulaExtension.PrefixKind(EXPRESSION,
-					argumentTypes.size(), EXPRESSION);
+			return makePrefixKind(EXPRESSION, argumentTypes.size(), EXPRESSION);
 		}
 
 		@Override
