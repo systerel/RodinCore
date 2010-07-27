@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.GenericType;
+import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.PowerSetType;
@@ -27,9 +27,9 @@ public class TypeMediator implements ITypeMediator {
 	}
 	
 	@Override
-	public GenericType makeGenericType(List<Type> typePrms,
+	public ParametricType makeParametricType(List<Type> typePrms,
 			IExpressionExtension exprExt) {
-		return factory.makeGenericType(typePrms, exprExt);
+		return factory.makeParametricType(typePrms, exprExt);
 	}
 
 	@Override

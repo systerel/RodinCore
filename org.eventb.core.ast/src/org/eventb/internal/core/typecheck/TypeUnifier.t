@@ -15,9 +15,9 @@ import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.GenericType;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IntegerType;
+import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
@@ -88,8 +88,8 @@ public class TypeUnifier {
 				return result.makeProductType(newLeft, newRight);
 			}
 			gt1@GenType(children1), gt2@GenType(children2) -> {
-				final GenericType genType1 = (GenericType) `gt1;
-				final GenericType genType2 = (GenericType) `gt2;
+				final ParametricType genType1 = (ParametricType) `gt1;
+				final ParametricType genType2 = (ParametricType) `gt2;
 				if (genType1.getExprExtension() != genType2.getExprExtension()) {
 					return null;
 				}
@@ -115,7 +115,7 @@ public class TypeUnifier {
 				if (all2) {
 					return right;
 				}
-				return result.makeGenericType(newTypePrms, genType1.getExprExtension());
+				return result.makeParametricType(newTypePrms, genType1.getExprExtension());
 			}
 			Int(), Int() -> {
 				return left;
@@ -217,8 +217,8 @@ public class TypeUnifier {
 				if (same) {
 					return intype;
 				}
-				final IExpressionExtension exprExt = ((GenericType) intype).getExprExtension();
-				return result.makeGenericType(newTypePrms, exprExt);
+				final IExpressionExtension exprExt = ((ParametricType) intype).getExprExtension();
+				return result.makeParametricType(newTypePrms, exprExt);
 			}
 			_ -> {
 				return intype;

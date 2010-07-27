@@ -50,8 +50,8 @@ public interface IExpressionExtension extends IFormulaExtension {
 	 * Can be <code>true</code> only if this extension is a type constructor,
 	 * which implies, as a contract for maintaining inner coherence, that the
 	 * {@link #synthesizeType(Expression[], Predicate[], ITypeMediator)} method
-	 * returns a powerset of the generic type instantiated with this extension
-	 * and the base type of its children if any.
+	 * returns a powerset of the parametric type instantiated with this
+	 * extension and the base type of its children if any.
 	 * </p>
 	 * 
 	 * @return <code>true</code> iff this extension is a type constructor

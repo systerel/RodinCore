@@ -13,7 +13,7 @@ package org.eventb.internal.core.ast.extension.datatype;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.core.ast.GenericType;
+import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.datatype.IArgumentType;
@@ -37,15 +37,15 @@ public class ArgGenTypeRef implements IArgumentType {
 			final Type argType = arg.toType(mediator, instantiation);
 			argTypesInst.add(argType);
 		}
-		return mediator.makeGenericType(argTypesInst, instantiation.getTypeExtn());
+		return mediator.makeParametricType(argTypesInst, instantiation.getTypeExtn());
 	}
 
 	@Override
 	public boolean verifyType(Type proposedType, TypeInstantiation instantiation) {
-		if (!(proposedType instanceof GenericType)) {
+		if (!(proposedType instanceof ParametricType)) {
 			return false;
 		}
-		final GenericType genType = (GenericType) proposedType;
+		final ParametricType genType = (ParametricType) proposedType;
 		if (genType.getExprExtension() != instantiation.getTypeExtn()) {
 			return false;
 		}

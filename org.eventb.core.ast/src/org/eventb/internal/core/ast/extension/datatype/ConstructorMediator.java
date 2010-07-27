@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
-import org.eventb.core.ast.GenericType;
+import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
@@ -130,10 +130,10 @@ public class ConstructorMediator extends DatatypeMediator implements
 		}
 
 		private TypeInstantiation checkAndGetInst(Type proposedType) {
-			if (!(proposedType instanceof GenericType)) {
+			if (!(proposedType instanceof ParametricType)) {
 				return null;
 			}
-			final GenericType genType = (GenericType) proposedType;
+			final ParametricType genType = (ParametricType) proposedType;
 			if (genType.getExprExtension() != typeCons) {
 				return null;
 			}
@@ -170,7 +170,7 @@ public class ConstructorMediator extends DatatypeMediator implements
 				final Type type = argType.toType(tcMediator, instantiation);
 				tcMediator.sameType(childType, type);
 			}
-			return tcMediator.makeGenericType(typeParamVars, typeCons);
+			return tcMediator.makeParametricType(typeParamVars, typeCons);
 		}
 
 		@Override

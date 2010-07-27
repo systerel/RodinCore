@@ -23,7 +23,7 @@ import org.eventb.core.ast.extension.IExpressionExtension;
  * @since 2.0
  *
  */
-public class GenericType extends Type {
+public class ParametricType extends Type {
 	
 	private static boolean isSolved(List<Type> typeParameters) {
 		for (Type type : typeParameters) {
@@ -47,7 +47,7 @@ public class GenericType extends Type {
 	private final List<Type> typeParameters;
 	private final IExpressionExtension exprExtension;
 
-	protected GenericType(List<Type> typeParameters,
+	protected ParametricType(List<Type> typeParameters,
 			IExpressionExtension exprExtension) {
 		super(isSolved(typeParameters));
 		assert exprExtension.isATypeConstructor();
@@ -100,9 +100,9 @@ public class GenericType extends Type {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!(obj instanceof GenericType))
+		if (!(obj instanceof ParametricType))
 			return false;
-		final GenericType other = (GenericType) obj;
+		final ParametricType other = (ParametricType) obj;
 		return exprExtension.equals(other.exprExtension)
 				&& typeParameters.equals(other.typeParameters);
 	}

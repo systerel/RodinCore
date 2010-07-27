@@ -16,7 +16,7 @@ import java.util.Map;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
-import org.eventb.core.ast.GenericType;
+import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
@@ -117,10 +117,10 @@ public class DestructorMediator extends DatatypeMediator implements
 			final Expression[] children = childExprs;
 			assert children.length == 1;
 			final Type childType = children[0].getType();
-			if (!(childType instanceof GenericType)) {
+			if (!(childType instanceof ParametricType)) {
 				return null;
 			}
-			final GenericType genChildType = (GenericType) childType;
+			final ParametricType genChildType = (ParametricType) childType;
 			if (genChildType.getExprExtension() != typeConstructor) {
 				return null;
 			}
@@ -146,7 +146,7 @@ public class DestructorMediator extends DatatypeMediator implements
 				instantiation.put(prm, alpha);
 				typePrmVars.add(alpha);
 			}
-			final Type argType = tcMediator.makeGenericType(typePrmVars,
+			final Type argType = tcMediator.makeParametricType(typePrmVars,
 					typeConstructor);
 			final Expression[] children = expression.getChildExpressions();
 			assert children.length == 1;

@@ -29,7 +29,7 @@
 	make_append(e, t) { null }
 }
 
-/* Type constructors: power set, cartesian product and generic type. */
+/* Type constructors: power set, cartesian product and parametric type. */
 
 %op Type PowSet (child : Type) {
 	is_fsym(t) { t instanceof PowerSetType }
@@ -43,8 +43,8 @@
 }
 
 %op Type GenType (children : TypeList) {
-	is_fsym(t) { t instanceof GenericType }
-	get_slot(children,t) { ((GenericType) t).getTypeParameters() }
+	is_fsym(t) { t instanceof ParametricType }
+	get_slot(children,t) { ((ParametricType) t).getTypeParameters() }
 }
 
 /* Atomic types: carrier set, integer and boolean. */

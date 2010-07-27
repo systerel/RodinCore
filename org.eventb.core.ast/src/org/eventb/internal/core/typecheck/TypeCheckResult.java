@@ -9,7 +9,7 @@ import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.GenericType;
+import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -118,9 +118,9 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 		return factory.makeBooleanType();
 	}
 	
-	public GenericType makeGenericType(List<Type> typePrms,
+	public ParametricType makeParametricType(List<Type> typePrms,
 			IExpressionExtension exprExt) {
-		return factory.makeGenericType(typePrms, exprExt);
+		return factory.makeParametricType(typePrms, exprExt);
 	}
 
 	/* (non-Javadoc)

@@ -489,7 +489,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		for(Expression child : childExpressions) {
 			typeParams.add(child.toType());
 		}
-		return factory.makeGenericType(typeParams, extension);
+		return factory.makeParametricType(typeParams, extension);
 	}
 	
 	@Override

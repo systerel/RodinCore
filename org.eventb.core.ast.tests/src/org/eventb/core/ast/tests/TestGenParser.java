@@ -40,7 +40,7 @@ import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.GenericType;
+import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IPosition;
@@ -2011,7 +2011,7 @@ public class TestGenParser extends AbstractTests {
 	private static final FormulaFactory LIST_FAC = FormulaFactory
 			.getInstance(new HashSet<IFormulaExtension>(LIST_EXTNS.values()));	
 	private static final IExpressionExtension EXT_LIST = LIST_EXTNS.get(LIST_TYPE.getId());
-	private static final GenericType LIST_INT_TYPE = LIST_FAC.makeGenericType(
+	private static final ParametricType LIST_INT_TYPE = LIST_FAC.makeParametricType(
 			Collections.<Type> singletonList(INT_TYPE), EXT_LIST);
 	private static final IExpressionExtension EXT_NIL = LIST_EXTNS.get("NIL");
 	private static final IExpressionExtension EXT_CONS = LIST_EXTNS.get("CONS");
@@ -2034,7 +2034,7 @@ public class TestGenParser extends AbstractTests {
 
 		doTypeTest("List(ℤ)", LIST_INT_TYPE, LIST_FAC);
 		
-		final GenericType listBoolType = LIST_FAC.makeGenericType(
+		final ParametricType listBoolType = LIST_FAC.makeParametricType(
 				Collections.<Type> singletonList(BOOL_TYPE), EXT_LIST);
 		assertFalse(listBoolType.equals(LIST_INT_TYPE));
 	}
@@ -2053,7 +2053,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("(nil ⦂ List(ℤ))", nilInt, LIST_INT_TYPE, LIST_FAC,
 				false);
 
-		final GenericType listBoolBoolType = LIST_FAC.makeGenericType(
+		final ParametricType listBoolBoolType = LIST_FAC.makeParametricType(
 				Collections.<Type> singletonList(LIST_FAC.makeProductType(
 						BOOL_TYPE, BOOL_TYPE)), EXT_LIST);
 		final ExtendedExpression nilBoolBool = LIST_FAC.makeExtendedExpression(
@@ -2172,7 +2172,7 @@ public class TestGenParser extends AbstractTests {
 						Arrays.<Expression> asList(consCons1),
 						Collections.<Predicate> emptyList(), null);
 
-		final GenericType LIST_LIST_INT_TYPE = LIST_FAC.makeGenericType(
+		final ParametricType LIST_LIST_INT_TYPE = LIST_FAC.makeParametricType(
 				Arrays.<Type> asList(LIST_INT_TYPE), EXT_LIST);
 
 		doExpressionTest("tail(cons(cons(1, nil), nil))", tailConsCons1,

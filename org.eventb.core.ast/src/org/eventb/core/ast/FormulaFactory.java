@@ -1277,9 +1277,9 @@ public class FormulaFactory {
 	/**
 	 * @since 2.0
 	 */
-	public GenericType makeGenericType(List<Type> typePrms,
+	public ParametricType makeParametricType(List<Type> typePrms,
 			IExpressionExtension exprExt) {
-		return new GenericType(typePrms, exprExt);
+		return new ParametricType(typePrms, exprExt);
 	}
 
 	/**

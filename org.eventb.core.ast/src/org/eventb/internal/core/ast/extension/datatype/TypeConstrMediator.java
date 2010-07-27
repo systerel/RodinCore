@@ -19,7 +19,7 @@ import java.util.List;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
-import org.eventb.core.ast.GenericType;
+import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
@@ -103,7 +103,7 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 				tcMediator.sameType(prmType, child.getType());
 				prmTypes.add(prmType);
 			}
-			return tcMediator.makePowerSetType(tcMediator.makeGenericType(
+			return tcMediator.makePowerSetType(tcMediator.makeParametricType(
 					prmTypes, this));
 		}
 
@@ -122,7 +122,7 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 				}
 				childTypes.add(baseType);
 			}
-			return mediator.makePowerSetType(mediator.makeGenericType(
+			return mediator.makePowerSetType(mediator.makeParametricType(
 					childTypes, this));
 		}
 
@@ -133,10 +133,10 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 			if (baseType == null) {
 				return false;
 			}
-			if (!(baseType instanceof GenericType)) {
+			if (!(baseType instanceof ParametricType)) {
 				return false;
 			}
-			final GenericType genType = (GenericType) baseType;
+			final ParametricType genType = (ParametricType) baseType;
 			if (genType.getExprExtension() != this) {
 				return false;
 			}
