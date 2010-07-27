@@ -572,12 +572,11 @@ public class TestGenParser extends AbstractTests {
 		}
 
 		@Override
-		public Type synthesizeType(ExtendedExpression expression,
-				ITypeMediator mediator) {
+		public Type synthesizeType(Expression[] childExprs,
+				Predicate[] childPreds, ITypeMediator mediator) {
 
-			final Expression[] children = expression.getChildExpressions();
-			Type leftType = children[0].getType();
-			Type rightType = children[1].getType();
+			Type leftType = childExprs[0].getType();
+			Type rightType = childExprs[1].getType();
 
 			final Type alpha = leftType.getSource();
 			final Type beta = leftType.getTarget();
@@ -592,7 +591,7 @@ public class TestGenParser extends AbstractTests {
 
 		@Override
 		public boolean verifyType(Type proposedType,
-				ExtendedExpression expression) {
+				Expression[] childExprs, Predicate[] childPreds) {
 			final Type alphaP = proposedType.getSource();
 			if (alphaP == null) {
 				return false;
@@ -675,16 +674,15 @@ public class TestGenParser extends AbstractTests {
 		private static final String OPERATOR_ID = "Money";
 		
 		@Override
-		public Type synthesizeType(ExtendedExpression expression,
-				ITypeMediator mediator) {
-			final Expression[] children = expression.getChildExpressions();
-			return children[0].getType();
+		public Type synthesizeType(Expression[] childExprs,
+				Predicate[] childPreds, ITypeMediator mediator) {
+			return childExprs[0].getType();
 		}
 
 		@Override
-		public boolean verifyType(Type proposedType, ExtendedExpression expression) {
-			final Expression[] children = expression.getChildExpressions();
-			for (Expression child : children) {
+		public boolean verifyType(Type proposedType, Expression[] childExprs,
+				Predicate[] childPreds) {
+			for (Expression child : childExprs) {
 				final Type childType = child.getType();
 				if (!(childType instanceof IntegerType)) {
 					return false;
@@ -1715,16 +1713,15 @@ public class TestGenParser extends AbstractTests {
 		private static final String OPERATOR_ID = "Extension Maximum";
 		
 		@Override
-		public Type synthesizeType(ExtendedExpression expression,
-				ITypeMediator mediator) {
-			final Expression[] children = expression.getChildExpressions();
-			return children[0].getType();
+		public Type synthesizeType(Expression[] childExprs,
+				Predicate[] childPreds, ITypeMediator mediator) {
+			return childExprs[0].getType();
 		}
 
 		@Override
-		public boolean verifyType(Type proposedType, ExtendedExpression expression) {
-			final Expression[] children = expression.getChildExpressions();
-			for (Expression child : children) {
+		public boolean verifyType(Type proposedType, Expression[] childExprs,
+				Predicate[] childPreds) {
+			for (Expression child : childExprs) {
 				final Type childType = child.getType();
 				if (!(childType instanceof IntegerType)) {
 					return false;

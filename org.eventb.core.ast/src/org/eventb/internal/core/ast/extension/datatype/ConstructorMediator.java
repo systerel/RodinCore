@@ -104,24 +104,23 @@ public class ConstructorMediator extends DatatypeMediator implements
 		}
 
 		@Override
-		public Type synthesizeType(ExtendedExpression expression, ITypeMediator mediator) {
+		public Type synthesizeType(Expression[] childExprs,
+				Predicate[] childPreds, ITypeMediator mediator) {
 			// either a proposed type or typechecking is required
 			return null;
 		}
 
 		@Override
-		public boolean verifyType(Type proposedType,
-				ExtendedExpression expression) {
+		public boolean verifyType(Type proposedType, Expression[] childExprs,
+				Predicate[] childPreds) {
 			final TypeInstantiation instantiation = checkAndGetInst(proposedType);
 			if (instantiation == null) {
 				return false;
 			}
 
-			// verify child type compatibility (potentially no child)
-			final Expression[] children = expression.getChildExpressions();
-			assert children.length == argumentTypes.size();
-			for (int i = 0; i < children.length; i++) {
-				final Type childType = children[i].getType();
+			assert childExprs.length == argumentTypes.size();
+			for (int i = 0; i < childExprs.length; i++) {
+				final Type childType = childExprs[i].getType();
 				final IArgumentType argType = argumentTypes.get(i);
 				if (!argType.verifyType(childType, instantiation)) {
 					return false;
@@ -135,11 +134,12 @@ public class ConstructorMediator extends DatatypeMediator implements
 				return null;
 			}
 			final GenericType genType = (GenericType) proposedType;
-			if (genType.getExprExtension() != typeCons)  {
+			if (genType.getExprExtension() != typeCons) {
 				return null;
 			}
 
-			final TypeInstantiation instantiation = new TypeInstantiation(typeCons);
+			final TypeInstantiation instantiation = new TypeInstantiation(
+					typeCons);
 
 			// instantiate type parameters with those of proposed type
 			final Type[] actualTypePrms = genType.getTypeParameters();
@@ -149,12 +149,13 @@ public class ConstructorMediator extends DatatypeMediator implements
 			}
 			return instantiation;
 		}
-		
+
 		@Override
 		public Type typeCheck(ExtendedExpression expression,
 				ITypeCheckMediator tcMediator) {
-			final TypeInstantiation instantiation = new TypeInstantiation(typeCons);
-		
+			final TypeInstantiation instantiation = new TypeInstantiation(
+					typeCons);
+
 			final List<Type> typeParamVars = new ArrayList<Type>();
 			for (ITypeParameter prm : typeParams) {
 				final Type alpha = tcMediator.newTypeVariable();

@@ -94,9 +94,9 @@ public class DestructorMediator extends DatatypeMediator implements
 		}
 
 		@Override
-		public Type synthesizeType(ExtendedExpression expression,
-				ITypeMediator mediator) {
-			final TypeInstantiation instantiation = checkAndGetInst(expression);
+		public Type synthesizeType(Expression[] childExprs,
+				Predicate[] childPreds, ITypeMediator mediator) {
+			final TypeInstantiation instantiation = checkAndGetInst(childExprs);
 			if(instantiation == null) {
 				return null;
 			}
@@ -105,16 +105,16 @@ public class DestructorMediator extends DatatypeMediator implements
 
 		@Override
 		public boolean verifyType(Type proposedType,
-				ExtendedExpression expression) {
-			final TypeInstantiation instantiation = checkAndGetInst(expression);
-			if(instantiation == null) {
+				Expression[] childExprs, Predicate[] childPreds) {
+			final TypeInstantiation instantiation = checkAndGetInst(childExprs);
+			if (instantiation == null) {
 				return false;
 			}
 			return returnType.verifyType(proposedType, instantiation);
 		}
 
-		private TypeInstantiation checkAndGetInst(ExtendedExpression expression) {
-			final Expression[] children = expression.getChildExpressions();
+		private TypeInstantiation checkAndGetInst(Expression[] childExprs) {
+			final Expression[] children = childExprs;
 			assert children.length == 1;
 			final Type childType = children[0].getType();
 			if (!(childType instanceof GenericType)) {

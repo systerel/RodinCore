@@ -189,25 +189,22 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 			return;
 		}
 
-		// FIXME this is being constructed !!! do not use below !!!
 		final Type resultType;
 		if (givenType == null) {
-			resultType = extension.synthesizeType(this, new TypeMediator(
-					factory));
-			if (resultType == null) {
-				return;
-			}
+			resultType = extension.synthesizeType(childExpressions,
+					childPredicates, new TypeMediator(factory));
 		} else {
 			resultType = givenType;
 		}
-		if (!isValidType(resultType)) {
+		if (resultType == null || !isValidType(resultType)) {
 			return;
 		}
 		setFinalType(resultType, givenType);
 	}
 
 	public boolean isValidType(Type proposedType) {
-		return extension.verifyType(proposedType, this);
+		return extension.verifyType(proposedType, childExpressions,
+				childPredicates);
 	}
 
 	@Override

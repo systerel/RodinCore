@@ -56,38 +56,38 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 			this.id = id;
 			this.groupId = groupId;
 		}
-		
+
 		@Override
 		public Predicate getWDPredicate(IExtendedFormula formula,
 				IWDMediator wdMediator) {
 			return wdMediator.makeTrueWD();
 		}
-		
+
 		@Override
 		public String getSyntaxSymbol() {
 			return typeName;
 		}
-		
+
 		@Override
 		public IExtensionKind getKind() {
 			return kind;
 		}
-		
+
 		@Override
 		public String getId() {
 			return id;
 		}
-		
+
 		@Override
 		public String getGroupId() {
 			return groupId;
 		}
-		
+
 		@Override
 		public void addPriorities(IPriorityMediator mediator) {
 			// no priority
 		}
-		
+
 		@Override
 		public void addCompatibilities(ICompatibilityMediator mediator) {
 			// no priority
@@ -108,15 +108,16 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 		}
 
 		@Override
-		public Type synthesizeType(ExtendedExpression expression, ITypeMediator mediator) {
+		public Type synthesizeType(Expression[] childExprs,
+				Predicate[] childPreds, ITypeMediator mediator) {
 			final List<Type> childTypes = new ArrayList<Type>();
-			for (Expression child : expression.getChildExpressions()) {
+			for (Expression child : childExprs) {
 				final Type childType = child.getType();
 				if (childType == null) {
 					return null;
 				}
 				final Type baseType = childType.getBaseType();
-				if(baseType == null) {
+				if (baseType == null) {
 					return null;
 				}
 				childTypes.add(baseType);
@@ -126,8 +127,8 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 		}
 
 		@Override
-		public boolean verifyType(Type proposedType,
-				ExtendedExpression expression) {
+		public boolean verifyType(Type proposedType, Expression[] childExprs,
+				Predicate[] childPreds) {
 			final Type baseType = proposedType.getBaseType();
 			if (baseType == null) {
 				return false;
@@ -140,10 +141,9 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 				return false;
 			}
 			final Type[] typeParameters = genType.getTypeParameters();
-			final Expression[] children = expression.getChildExpressions();
-			assert children.length == typeParameters.length;
-			for (int i = 0; i < children.length; i++) {
-				final Type childType = children[i].getType();
+			assert childExprs.length == typeParameters.length;
+			for (int i = 0; i < childExprs.length; i++) {
+				final Type childType = childExprs[i].getType();
 				if (!typeParameters[i].equals(childType.getBaseType())) {
 					return false;
 				}
@@ -162,7 +162,7 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 		}
 
 	}
-	
+
 	private final List<ITypeParameter> typeParams = new ArrayList<ITypeParameter>();
 	private final IDatatypeExtension datatype;
 
@@ -184,10 +184,10 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 		final String id = datatype.getId();
 		final String groupId = datatype.getGroupId();
 		final IExtensionKind kind = computeKind(typeParams.size());
-		
-		return new TypeConstructor(typeName,kind,id,groupId);
+
+		return new TypeConstructor(typeName, kind, id, groupId);
 	}
-	
+
 	private static IExtensionKind computeKind(int nbArgs) {
 		if (nbArgs == 0) {
 			return ATOMIC_EXPRESSION;
