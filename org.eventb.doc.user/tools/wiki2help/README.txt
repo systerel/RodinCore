@@ -1,29 +1,26 @@
-To build the Eclipse Help from the MediaWiki source, 
+To build the HTML pages from the MediaWiki source, 
 run the build_eclipse_help Ant script from 
 another ant script that sets the following properties:
 
   dest.dir - where generated docs will be placed
-  wiki.domain - the wiki domain (ex:"http://wiki.event-b.org")
-  wiki.page - the wiki page (such as url = wiki.domain/wiki.page)
-  help.title - the title of the generated html document
+  wiki.url - the wiki url (ex:"http://wiki.event-b.org/index.php/Decomposition_Plug-in_User_Guide")
 
 As an example, one may adapt his own script from the following one, extracted from
-the decomposition plug-in (ch.ethz.eventb.decomposition/doc/tool/build_eclipse_help.xml)
-
+the decomposition plug-in (ch.ethz.eventb.decomposition.documentation/eclipsehelp/build_eclipse_help.xml)
 
 <project name="decomposition-help" default="decomposition-help.generate">
-    
-    <dirname property="tool.dir" file="${ant.file.decomposition-help}"/>
-
+	
      <target name="decomposition-help.generate">
-        <ant dir="../../../org.eventb.doc.user/tools/wiki2help/"
-             antfile="build_eclipse_help.xml" target="generate-help"
-             inheritAll="false">
-           <property name="dest.dir" value="${tool.dir}/.."/>
-           <property name="wiki.domain" value="http://wiki.event-b.org"/>
-           <property name="wiki.page" value="Decomposition_Plug-in_User_Guide"/>
-           <property name="help.title" value="Decomposition Plug-in User's Guide"/>
-        </ant>
+        <ant dir="../../org.eventb.doc.user/tools/wiki2help/"
+        	 antfile="build_eclipse_help.xml" target="generate"
+        	 inheritAll="false">
+           <property name="dest.dir" value="${ant.file.decomposition-help}/../contents"/>
+           <property name="wiki.url" value="http://wiki.event-b.org/index.php/Decomposition_Plug-in_User_Guide"/>
+     	</ant>
+     	
+     	<replaceregexp match="href=&quot;contents" replace="href=&quot;eclipsehelp/contents" flags="g">
+     		<fileset dir="${ant.file.decomposition-help}/../contents" includes="decomposition_plug_in_user_guide.xml"/>
+     	</replaceregexp>
     </target>
 
 </project>

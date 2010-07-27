@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<toc label="Sequent Prover Developer Guide">
+  <topic label="Sequents" href="doc/contents/sequent_prover_developer_guide.html#Sequents">
+  </topic>
+  <topic label="Proof Rules" href="doc/contents/sequent_prover_developer_guide.html#Proof_Rules">
+  </topic>
+  <topic label="Proof Trees" href="doc/contents/sequent_prover_developer_guide.html#Proof_Trees">
+  </topic>
+  <topic label="Reasoners" href="doc/contents/sequent_prover_developer_guide.html#Reasoners">
+   <topic label="Concepts" href="doc/contents/sequent_prover_developer_guide.html#Concepts">
+   </topic>
+   <topic label="Adding a reasoner" href="doc/contents/sequent_prover_developer_guide.html#Adding_a_reasoner">
+   </topic>
+   <topic label="Automatic Rewriting Reasoners" href="doc/contents/sequent_prover_developer_guide.html#Automatic_Rewriting_Reasoners">
+    <topic label="Concepts" href="doc/contents/sequent_prover_developer_guide.html#Concepts_2">
+    </topic>
+    <topic label="Implementation" href="doc/contents/sequent_prover_developer_guide.html#Implementation">
+    </topic>
+    <topic label="Testing" href="doc/contents/sequent_prover_developer_guide.html#Testing">
+     <topic label="Testing the reasoner ID" href="doc/contents/sequent_prover_developer_guide.html#Testing_the_reasoner_ID">
+     </topic>
+     <topic label="Testing the formula rewriter" href="doc/contents/sequent_prover_developer_guide.html#Testing_the_formula_rewriter">
+     </topic>
+    </topic>
+   </topic>
+   <topic label="Automatic Inference Reasoners" href="doc/contents/sequent_prover_developer_guide.html#Automatic_Inference_Reasoners">
+    <topic label="Concepts" href="doc/contents/sequent_prover_developer_guide.html#Concepts_3">
+    </topic>
+    <topic label="Implementation" href="doc/contents/sequent_prover_developer_guide.html#Implementation_2">
+    </topic>
+    <topic label="Testing" href="doc/contents/sequent_prover_developer_guide.html#Testing_2">
+    </topic>
+   </topic>
+   <topic label="Manual Rewriting Reasoners" href="doc/contents/sequent_prover_developer_guide.html#Manual_Rewriting_Reasoners">
+    <topic label="Concepts" href="doc/contents/sequent_prover_developer_guide.html#Concepts_4">
+    </topic>
+    <topic label="Implementation" href="doc/contents/sequent_prover_developer_guide.html#Implementation_3">
+    </topic>
+    <topic label="Testing" href="doc/contents/sequent_prover_developer_guide.html#Testing_3">
+    </topic>
+   </topic>
+   <topic label="Manual Inference Reasoners" href="doc/contents/sequent_prover_developer_guide.html#Manual_Inference_Reasoners">
+    <topic label="Concepts" href="doc/contents/sequent_prover_developer_guide.html#Concepts_5">
+    </topic>
+    <topic label="Implementation" href="doc/contents/sequent_prover_developer_guide.html#Implementation_4">
+    </topic>
+    <topic label="Testing" href="doc/contents/sequent_prover_developer_guide.html#Testing_4">
+    </topic>
+   </topic>
+   <topic label="General Reasoners" href="doc/contents/sequent_prover_developer_guide.html#General_Reasoners">
+    <topic label="Concepts" href="doc/contents/sequent_prover_developer_guide.html#Concepts_6">
+    </topic>
+    <topic label="Implementation" href="doc/contents/sequent_prover_developer_guide.html#Implementation_5">
+    </topic>
+    <topic label="Testing" href="doc/contents/sequent_prover_developer_guide.html#Testing_5">
+    </topic>
+   </topic>
+  </topic>
+  <topic label="Tactics" href="doc/contents/sequent_prover_developer_guide.html#Tactics">
+   <topic label="Concepts" href="doc/contents/sequent_prover_developer_guide.html#Concepts_7">
+    <topic label="Adding a tactic" href="doc/contents/sequent_prover_developer_guide.html#Adding_a_tactic">
+     <topic label="Automatic Tactics" href="doc/contents/sequent_prover_developer_guide.html#Automatic_Tactics">
+     </topic>
+     <topic label="Manual Tactics" href="doc/contents/sequent_prover_developer_guide.html#Manual_Tactics">
+     </topic>
+    </topic>
+   </topic>
+  </topic>
+  <topic label="Adding a POM Tactic" href="doc/contents/sequent_prover_developer_guide.html#Adding_a_POM_Tactic">
+  </topic>
+  <topic label="Adding a Post Tactic" href="doc/contents/sequent_prover_developer_guide.html#Adding_a_Post_Tactic">
+  </topic>
+</toc>

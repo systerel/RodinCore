@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <project name="welcome" default="welcome.generate">
-	
-	<dirname property="tool.dir" file="${ant.file.welcome}"/>
 
      <target name="welcome.generate">
         <ant dir="../../org.eventb.doc.user/tools/wiki2help/"
-        	 antfile="build_eclipse_help.xml" target="generate-html"
+        	 antfile="build_eclipse_help.xml" target="generate"
         	 inheritAll="false">
-           <property name="dest.dir" value="${tool.dir}"/>
-           <property name="wiki.domain" value="http://wiki.event-b.org"/>
-           <property name="wiki.page" value="Rodin_Platform_Welcome_Page"/>
-           <property name="help.title" value="root2"/>
+           <property name="dest.dir" value="${ant.file.welcome}/../contents"/>
+           <property name="wiki.url" value="http://wiki.event-b.org/index.php/Rodin_Platform_Welcome_Page"/>
      	</ant>
     </target>
 

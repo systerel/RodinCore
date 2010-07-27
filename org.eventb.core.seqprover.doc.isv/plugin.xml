@@ -5,35 +5,8 @@
    <extension
          point="org.eclipse.help.toc">
       <toc
-            file="toc.xml"
+            file="doc/contents/sequent_prover_developer_guide.xml"
             primary="true">
-      </toc>
-   </extension>
-   <extension
-         point="org.eclipse.help.toc">
-      <toc
-            file="tocGuide.xml">
-      </toc>
-      <toc
-            file="tocReasoners.xml">
-      </toc>
-      <toc
-            file="tocReference.xml">
-      </toc>
-      <toc
-            file="tocSamples.xml">
-      </toc>
-      <toc
-            file="tocQuestions.xml">
-      </toc>
-      <toc
-            file="tocCore.xml">
-      </toc>
-      <toc
-            file="tocUI.xml">
-      </toc>
-      <toc
-            file="tocEventBTactics.xml">
       </toc>
    </extension>
 

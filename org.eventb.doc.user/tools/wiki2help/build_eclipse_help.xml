@@ -1,81 +1,30 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<project name="deploy" default="generate-help">
+<project name="deploy-help" default="generate">
 	
-	<dirname property="tool.dir" file="${ant.file.deploy}"/>
+	<dirname property="tool.dir" file="${ant.file.deploy-help}"/>
 
-	<path id="classpath">
-		<fileset dir="${tool.dir}">
-			<include name="org.eclipse.mylyn.wikitext.*core*.jar"/>
-			<include name="pyAntTasks-1.2.jar"/>
-		</fileset>
-	</path>
+	<taskdef resource="pyAntTasks.properties">
+		<classpath>
+		    <pathelement location="${tool.dir}/pyAntTasks-1.2.jar"/>
+		</classpath>
+	</taskdef>
 
-	<taskdef classpathref="classpath" resource="pyAntTasks.properties"/>
-	<taskdef classpathref="classpath" resource="org/eclipse/mylyn/wikitext/core/util/anttask/tasks.properties" />
+    <!-- ========================================================================= -->
+    <!-- The following properties must be set:                                     -->
+    <!-- dest.dir - where generated docs will be placed                            -->
+	<!-- wiki.url - the wiki url                                                   -->
+	<!-- (ex:"http://wiki.event-b.org/index.php/Decomposition_Plug-in_User_Guide") -->
+    <!-- ========================================================================= -->
 
-    <!-- ===================================================================== -->
-    <!-- The following properties must be set:                                 -->
-    <!-- dest.dir - where generated docs will be placed                        -->
-	<!-- wiki.domain - the wiki domain (ex:"http://wiki.event-b.org")          -->
-	<!-- wiki.page - the wiki page (such as url = wiki.domain/wiki.page )      -->
-	<!-- help.title - the title of the generated Eclipse Help page             -->
-    <!-- ===================================================================== -->
-	<target name="generate-help" depends="get-mediawiki" description="Generate Eclipse help from MediaWiki source">
-		<wikitext-to-eclipse-help markupLanguage="MediaWiki"
-			overwrite="true"
-			multipleOutputFiles="true"
-			formatOutput="true"
-			navigationImages="true"
-			helpPrefix="doc"
-			prependImagePrefix="images">
-			<fileset dir="${dest.dir}">
-				<include name="${wiki.page}.mediawiki"/>
-			</fileset>
-		</wikitext-to-eclipse-help>
-		
-		<replaceregexp match="&lt;toc topic=&quot;doc/${wiki.page}.html&quot; label=&quot;${wiki.page}&quot;&gt;" replace="&lt;toc topic=&quot;doc/${wiki.page}.html&quot; label=&quot;${help.title}&quot;&gt;">
-			<fileset dir="${dest.dir}" includes="${wiki.page}-toc.xml"/>
-		</replaceregexp>
-		
-		<replaceregexp match="&lt;a href=&quot;/wiki" replace="&lt;a href=&quot;${wiki.domain}/index.php" flags="g">
-			<fileset dir="${dest.dir}" includes="${wiki.page}.html"/>
-		</replaceregexp>
-
-		<replaceregexp match="\{\{TOC(.*?)\}\}" replace="" flags="g">
-			<fileset dir="${dest.dir}" includes="${wiki.page}.html"/>
-		</replaceregexp>
-	</target>
-	
-	<target name="generate-html" depends="get-mediawiki" description="Generate HTML from MediaWiki source">
-			<wikitext-to-html markupLanguage="MediaWiki"
-				overwrite="true"
-				multipleOutputFiles="true"
-				formatOutput="true"
-				navigationImages="true"
-				prependImagePrefix="images">
-				<fileset dir="${dest.dir}">
-					<include name="${wiki.page}.mediawiki"/>
-				</fileset>
-			</wikitext-to-html>
-			
-			<replaceregexp match="&lt;a href=&quot;/wiki" replace="&lt;a href=&quot;${wiki.domain}/index.php" flags="g">
-				<fileset dir="${dest.dir}" includes="${wiki.page}.html"/>
-			</replaceregexp>
-
-			<replaceregexp match="\{\{TOC(.*?)\}\}" replace="" flags="g">
-				<fileset dir="${dest.dir}" includes="${wiki.page}.html"/>
-			</replaceregexp>
-	</target>
-
-	<target name="get-mediawiki" description="Get the MediaWiki source">
-		<py-run script="Main.py" pythonpath="${tool.dir}" optimize="0">
-			<arg value="-o"/>
+	<target name="generate" description="Generate HTML from the MediaWiki source">
+		<py-run script="${tool.dir}/../mw2html.py" optimize="0">
+			<arg value="--force"/>
+			<arg value="--one-page"/>
+			<arg value="${wiki.url}"/>
 			<arg value="${dest.dir}"/>
-			<arg value="-d"/>
-			<arg value="${wiki.domain}"/>
-			<arg value="${wiki.page}"/>
 		</py-run>
+
 	</target>
 
 </project>

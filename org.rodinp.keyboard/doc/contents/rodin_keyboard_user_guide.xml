@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<toc label="Rodin Keyboard User Guide">
+  <topic label="Introduction" href="doc/contents/rodin_keyboard_user_guide.html#Introduction">
+  </topic>
+  <topic label="Getting Started" href="doc/contents/rodin_keyboard_user_guide.html#Getting_Started">
+   <topic label="Overview" href="doc/contents/rodin_keyboard_user_guide.html#Overview">
+   </topic>
+   <topic label="Special Combos" href="doc/contents/rodin_keyboard_user_guide.html#Special_Combos">
+   </topic>
+  </topic>
+  <topic label="Concepts" href="doc/contents/rodin_keyboard_user_guide.html#Concepts">
+   <topic label="Rodin Keyboard View" href="doc/contents/rodin_keyboard_user_guide.html#Rodin_Keyboard_View">
+   </topic>
+  </topic>
+  <topic label="Tasks" href="doc/contents/rodin_keyboard_user_guide.html#Tasks">
+   <topic label="Entering a Mathematical Formula" href="doc/contents/rodin_keyboard_user_guide.html#Entering_a_Mathematical_Formula">
+   </topic>
+   <topic label="Changing the Font" href="doc/contents/rodin_keyboard_user_guide.html#Changing_the_Font">
+   </topic>
+   <topic label="Extending the Keyboard" href="doc/contents/rodin_keyboard_user_guide.html#Extending_the_Keyboard">
+   </topic>
+  </topic>
+  <topic label="Reference" href="doc/contents/rodin_keyboard_user_guide.html#Reference">
+   <topic label="Release Notes" href="doc/contents/rodin_keyboard_user_guide.html#Release_Notes">
+   </topic>
+   <topic label="Preferences" href="doc/contents/rodin_keyboard_user_guide.html#Preferences">
+   </topic>
+  </topic>
+  <topic label="Samples" href="doc/contents/rodin_keyboard_user_guide.html#Samples">
+   <topic label="Expression" href="doc/contents/rodin_keyboard_user_guide.html#Expression">
+   </topic>
+   <topic label="Jumping" href="doc/contents/rodin_keyboard_user_guide.html#Jumping">
+   </topic>
+  </topic>
+</toc>

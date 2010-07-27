@@ -62,7 +62,7 @@
    <extension
          point="org.eclipse.help.toc">
       <toc
-            file="doc/Rodin_Keyboard_User_Guide-toc.xml"
+            file="doc/contents/rodin_keyboard_user_guide.xml"
             primary="true">
       </toc>
    </extension>
