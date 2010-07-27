@@ -2015,8 +2015,8 @@ public class TestGenParser extends AbstractTests {
 			Collections.<Type> singletonList(INT_TYPE), EXT_LIST);
 	private static final IExpressionExtension EXT_NIL = LIST_EXTNS.get("NIL");
 	private static final IExpressionExtension EXT_CONS = LIST_EXTNS.get("CONS");
-	private static final IExpressionExtension extHead = LIST_EXTNS.get("HEAD");
-	private static final IExpressionExtension extTail = LIST_EXTNS.get("TAIL");
+	private static final IExpressionExtension EXT_HEAD = LIST_EXTNS.get("HEAD");
+	private static final IExpressionExtension EXT_TAIL = LIST_EXTNS.get("TAIL");
 	
 	public void testDatatypeType() throws Exception {
 		
@@ -2099,18 +2099,18 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testDatatypeDestructors() throws Exception {
-		assertNotNull("head destructor not found", extHead);
+		assertNotNull("head destructor not found", EXT_HEAD);
 
-		assertNotNull("tail destructor not found", extTail);
+		assertNotNull("tail destructor not found", EXT_TAIL);
 		
 		final ExtendedExpression head = LIST_FAC.makeExtendedExpression(
-				extHead, Arrays.<Expression> asList(FRID_x),
+				EXT_HEAD, Arrays.<Expression> asList(FRID_x),
 				Collections.<Predicate> emptyList(), null);
 
 		doExpressionTest("head(x)", head, LIST_FAC);
 
 		final ExtendedExpression tail = LIST_FAC.makeExtendedExpression(
-				extTail, Arrays.<Expression> asList(FRID_x),
+				EXT_TAIL, Arrays.<Expression> asList(FRID_x),
 				Collections.<Predicate> emptyList(), null);
 
 		doExpressionTest("tail(x)", tail, LIST_FAC);
@@ -2128,16 +2128,55 @@ public class TestGenParser extends AbstractTests {
 						.<Predicate> emptyList(), null);
 
 		final ExtendedExpression headList1 = LIST_FAC.makeExtendedExpression(
-				extHead, Arrays.<Expression> asList(list1),
+				EXT_HEAD, Arrays.<Expression> asList(list1),
 				Collections.<Predicate> emptyList(), null);
 
 		doExpressionTest("head(cons(1, nil))", headList1, INT_TYPE, LIST_FAC, true);
 
 		final ExtendedExpression tail = LIST_FAC.makeExtendedExpression(
-				extTail, Arrays.<Expression> asList(list1),
+				EXT_TAIL, Arrays.<Expression> asList(list1),
 				Collections.<Predicate> emptyList(), null);
 
 		doExpressionTest("tail(cons(1, nil))", tail, LIST_INT_TYPE, LIST_FAC, true);
+	}
+	
+	public void testListOfLists() throws Exception {
+		final ExtendedExpression nil = LIST_FAC.makeExtendedExpression(EXT_NIL,
+				Collections.<Expression> emptyList(),
+				Collections.<Predicate> emptyList(), null);
+
+		final ExtendedExpression nilInt = LIST_FAC.makeExtendedExpression(
+				EXT_NIL, NO_EXPR, NO_PRED, null, LIST_INT_TYPE);
+
+		final ExtendedExpression listNilNil = LIST_FAC.makeExtendedExpression(
+				EXT_CONS, Arrays.<Expression> asList(nilInt, nil),
+				Collections.<Predicate> emptyList(), null);
+
+		final ExtendedExpression headListNil = LIST_FAC.makeExtendedExpression(
+				EXT_HEAD, Arrays.<Expression> asList(listNilNil),
+				Collections.<Predicate> emptyList(), null);
+
+		doExpressionTest("head(cons((nil ⦂ List(ℤ)), nil))", headListNil,
+				LIST_INT_TYPE, LIST_FAC, true);
+
+		final ExtendedExpression cons1 = LIST_FAC.makeExtendedExpression(
+				EXT_CONS, Arrays.asList(ONE, nil),
+				Collections.<Predicate> emptyList(), null);
+
+		final ExtendedExpression consCons1 = LIST_FAC.makeExtendedExpression(
+				EXT_CONS, Arrays.<Expression> asList(cons1, nil),
+				Collections.<Predicate> emptyList(), null);
+
+		final ExtendedExpression tailConsCons1 = LIST_FAC
+				.makeExtendedExpression(EXT_TAIL,
+						Arrays.<Expression> asList(consCons1),
+						Collections.<Predicate> emptyList(), null);
+
+		final GenericType LIST_LIST_INT_TYPE = LIST_FAC.makeGenericType(
+				Arrays.<Type> asList(LIST_INT_TYPE), EXT_LIST);
+
+		doExpressionTest("tail(cons(cons(1, nil), nil))", tailConsCons1,
+				LIST_LIST_INT_TYPE, LIST_FAC, true);
 	}
 	
 	public void testMinusPU() throws Exception {
