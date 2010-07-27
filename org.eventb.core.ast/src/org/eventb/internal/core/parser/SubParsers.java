@@ -554,6 +554,7 @@ public class SubParsers {
 		private static final String POW_ALPHA_ALPHA = "\u2119(alpha \u00d7 alpha)";
 		private static final String POW_ALPHA_BETA_ALPHA = "\u2119(alpha \u00d7 beta \u00d7 alpha)";
 		private static final String POW_ALPHA_BETA_BETA = "\u2119(alpha \u00d7 beta \u00d7 beta)";
+		private static final String EXTENSION_TYPE = "[see operator definition]";
 		
 		@Override
 		public SubParseResult<Expression> led(Formula<?> left, ParserContext pc) throws SyntaxError {
@@ -564,7 +565,7 @@ public class SubParsers {
 			
 			Type type = pc.subParse(TYPE_PARSER, true);
 			final SourceLocation typeLoc = pc.getSourceLocation();
-			if (!checkValidTypedGeneric(left.getTag(), type, typeLoc, pc.result)) {
+			if (!checkValidTypedGeneric(left, type, typeLoc, pc.result)) {
 				type = null;
 			}
 			final SourceLocation sourceLoc = pc.getEnclosingSourceLocation();
@@ -604,9 +605,9 @@ public class SubParsers {
 		}
 		
 		// FIXME duplicate checks with AtomicExpression => factorize
-		private static boolean checkValidTypedGeneric(int tag, Type type,
+		private static boolean checkValidTypedGeneric(Formula<?> formula, Type type,
 				SourceLocation typeLoc, ParseResult result) throws SyntaxError {
-			switch (tag) {
+			switch (formula.getTag()) {
 			case Formula.EMPTYSET:
 				if (!(type instanceof PowerSetType)) {
 					result.addProblem(newInvalidGenType(typeLoc, POW_ALPHA));
@@ -632,6 +633,13 @@ public class SubParsers {
 					return false;
 				}
 				break;
+			}
+			if (formula instanceof ExtendedExpression) {
+				final ExtendedExpression extExpr = (ExtendedExpression) formula;
+				if (!extExpr.isValidType(type)) {
+					result.addProblem(newInvalidGenType(typeLoc, EXTENSION_TYPE));
+					return false;
+				}
 			}
 			return true;
 		}

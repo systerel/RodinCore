@@ -200,10 +200,14 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		} else {
 			resultType = givenType;
 		}
-		if (!extension.verifyType(resultType, this)) {
+		if (!isValidType(resultType)) {
 			return;
 		}
 		setFinalType(resultType, givenType);
+	}
+
+	public boolean isValidType(Type proposedType) {
+		return extension.verifyType(proposedType, this);
 	}
 
 	@Override

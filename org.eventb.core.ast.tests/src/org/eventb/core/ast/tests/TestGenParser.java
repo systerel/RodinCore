@@ -12,6 +12,8 @@ package org.eventb.core.ast.tests;
 
 import static java.util.Arrays.asList;
 import static org.eventb.core.ast.Formula.*;
+import static org.eventb.core.ast.ProblemKind.InvalidGenericType;
+import static org.eventb.core.ast.ProblemSeverities.Error;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 
 import java.math.BigInteger;
@@ -2069,16 +2071,10 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testDatatypeNilInvalidType() throws Exception {
-
-		final ExtendedExpression nilNoType = LIST_FAC.makeExtendedExpression(
-				EXT_NIL, NO_EXPR, NO_PRED, null, null);
-
-		// null type
-		doExpressionTest("(nil ⦂ ℤ)", nilNoType, null, LIST_FAC, false);
-		// FIXME we may prefer the same behaviour as for empty sets:
-//		final IParseResult result = parseExprRes("(nil ⦂ ℤ)", LIST_FAC, LanguageVersion.LATEST);
-//		assertFailure(result, new ASTProblem(new SourceLocation(1, 7),
-//				InvalidGenericType, Error, "List(alpha)"));
+		final IParseResult result = parseExprRes("(nil ⦂ ℤ)", LIST_FAC,
+				LanguageVersion.LATEST);
+		assertFailure(result, new ASTProblem(new SourceLocation(1, 7),
+				InvalidGenericType, Error, "[see operator definition]"));
 	}
 	
 	public void testDatatypeConstructor() throws Exception {
