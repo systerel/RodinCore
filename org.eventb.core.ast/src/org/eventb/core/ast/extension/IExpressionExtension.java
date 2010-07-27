@@ -26,16 +26,14 @@ public interface IExpressionExtension extends IFormulaExtension {
 	 * 
 	 * @param expression
 	 *            the AST node
-	 * @param proposedType
-	 *            TODO
 	 * @return the type of the given expression or <code>null</code> if it is
 	 *         ill-typed or if its type cannot be determined
 	 */
-	Type synthesizeType(ExtendedExpression expression, Type proposedType,
-			ITypeMediator mediator);
+	Type synthesizeType(ExtendedExpression expression, ITypeMediator mediator);
 
-	// TODO these 2 methods can be mixed into 1 with 2 mediator implementations
-
+	// FIXME pass children: node is under construction; same for synthesize
+	boolean verifyType(Type proposedType, ExtendedExpression expression);
+	
 	Type typeCheck(ExtendedExpression expression, ITypeCheckMediator tcMediator);
 
 	/**
@@ -46,7 +44,7 @@ public interface IExpressionExtension extends IFormulaExtension {
 	 * <p>
 	 * Can be <code>true</code> only if this extension is a type constructor,
 	 * which implies, as a contract for maintaining inner coherence, that the
-	 * {@link #synthesizeType(ExtendedExpression, Type, ITypeMediator)} method returns
+	 * {@link #synthesizeType(ExtendedExpression, ITypeMediator)} method returns
 	 * a powerset of the generic type instantiated with this extension and the
 	 * base type of its children if any.
 	 * </p>

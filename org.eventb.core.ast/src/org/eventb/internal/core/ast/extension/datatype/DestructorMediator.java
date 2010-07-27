@@ -94,27 +94,26 @@ public class DestructorMediator extends DatatypeMediator implements
 		}
 
 		@Override
-		public Type typeCheck(ExtendedExpression expression,
-				ITypeCheckMediator tcMediator) {
-			final List<Type> typePrmVars = new ArrayList<Type>();
-			final TypeParamInst instantiation = new TypeParamInst();
-			for (ITypeParameter prm : typeParams) {
-				final Type alpha = tcMediator.newTypeVariable();
-				instantiation.put(prm, alpha);
-				typePrmVars.add(alpha);
+		public Type synthesizeType(ExtendedExpression expression,
+				ITypeMediator mediator) {
+			final TypeInstantiation instantiation = checkAndGetInst(expression);
+			if(instantiation == null) {
+				return null;
 			}
-			final Type argType = tcMediator.makeGenericType(typePrmVars,
-					typeConstructor);
-			final Expression[] children = expression.getChildExpressions();
-			assert children.length == 1;
-			tcMediator.sameType(argType, children[0].getType());
-			return returnType
-					.toType(tcMediator, typeConstructor, instantiation);
+			return returnType.toType(mediator, instantiation);
 		}
 
 		@Override
-		public Type synthesizeType(ExtendedExpression expression, Type proposedType,
-				ITypeMediator mediator) {
+		public boolean verifyType(Type proposedType,
+				ExtendedExpression expression) {
+			final TypeInstantiation instantiation = checkAndGetInst(expression);
+			if(instantiation == null) {
+				return false;
+			}
+			return returnType.verifyType(proposedType, instantiation);
+		}
+
+		private TypeInstantiation checkAndGetInst(ExtendedExpression expression) {
 			final Expression[] children = expression.getChildExpressions();
 			assert children.length == 1;
 			final Type childType = children[0].getType();
@@ -126,7 +125,7 @@ public class DestructorMediator extends DatatypeMediator implements
 				return null;
 			}
 
-			final TypeParamInst instantiation = new TypeParamInst();
+			final TypeInstantiation instantiation = new TypeInstantiation(typeConstructor);
 			final Type[] actualParams = genChildType.getTypeParameters();
 
 			assert actualParams.length == typeParams.size();
@@ -134,12 +133,25 @@ public class DestructorMediator extends DatatypeMediator implements
 			for (int i = 0; i < actualParams.length; i++) {
 				instantiation.put(typeParams.get(i), actualParams[i]);
 			}
-			final Type resultType = returnType.toType(mediator,
-					typeConstructor, instantiation);
-			if (proposedType != null && !resultType.equals(proposedType)) {
-				return null;
+			return instantiation;
+		}
+
+		@Override
+		public Type typeCheck(ExtendedExpression expression,
+				ITypeCheckMediator tcMediator) {
+			final List<Type> typePrmVars = new ArrayList<Type>();
+			final TypeInstantiation instantiation = new TypeInstantiation(typeConstructor);
+			for (ITypeParameter prm : typeParams) {
+				final Type alpha = tcMediator.newTypeVariable();
+				instantiation.put(prm, alpha);
+				typePrmVars.add(alpha);
 			}
-			return proposedType;
+			final Type argType = tcMediator.makeGenericType(typePrmVars,
+					typeConstructor);
+			final Expression[] children = expression.getChildExpressions();
+			assert children.length == 1;
+			tcMediator.sameType(argType, children[0].getType());
+			return returnType.toType(tcMediator, instantiation);
 		}
 
 		@Override

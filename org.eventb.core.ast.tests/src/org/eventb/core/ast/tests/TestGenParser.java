@@ -52,6 +52,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
+import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -569,26 +570,8 @@ public class TestGenParser extends AbstractTests {
 		}
 
 		@Override
-		public Type typeCheck(ExtendedExpression expression,
-				ITypeCheckMediator tcMediator) {
-			final Type alpha = tcMediator.newTypeVariable();
-			final Type beta = tcMediator.newTypeVariable();
-			final Type gamma = tcMediator.newTypeVariable();
-			final Type leftType = tcMediator.makeRelationalType(alpha, beta);
-			final Type rightType = tcMediator.makeRelationalType(alpha, gamma);
-
-			final Expression[] children = expression.getChildExpressions();
-			tcMediator.sameType(children[0].getType(), leftType);
-			tcMediator.sameType(children[1].getType(), rightType);
-
-			final Type resultType = tcMediator.makeRelationalType(alpha,
-					tcMediator.makeProductType(beta, gamma));
-			return resultType;
-		}
-
-		@Override
 		public Type synthesizeType(ExtendedExpression expression,
-				Type proposedType, ITypeMediator mediator) {
+				ITypeMediator mediator) {
 
 			final Expression[] children = expression.getChildExpressions();
 			Type leftType = children[0].getType();
@@ -597,13 +580,44 @@ public class TestGenParser extends AbstractTests {
 			final Type alpha = leftType.getSource();
 			final Type beta = leftType.getTarget();
 			final Type gamma = rightType.getTarget();
-			if (alpha != null && beta != null && gamma != null
-					&& alpha.equals(rightType.getSource())) {
+			if (alpha != null && beta != null && gamma != null) {
 				return ff.makeRelationalType(alpha, ff.makeProductType(beta,
 						gamma));
 			} else {
 				return null;
 			}
+		}
+
+		@Override
+		public boolean verifyType(Type proposedType,
+				ExtendedExpression expression) {
+			final Type alphaP = proposedType.getSource();
+			if (alphaP == null) {
+				return false;
+			}
+			final Type target = proposedType.getTarget();
+			if (!(target instanceof ProductType)) {
+				return false;
+			}
+			return true;
+		}
+
+		@Override
+		public Type typeCheck(ExtendedExpression expression,
+				ITypeCheckMediator tcMediator) {
+			final Type alpha = tcMediator.newTypeVariable();
+			final Type beta = tcMediator.newTypeVariable();
+			final Type gamma = tcMediator.newTypeVariable();
+			final Type leftType = tcMediator.makeRelationalType(alpha, beta);
+			final Type rightType = tcMediator.makeRelationalType(alpha, gamma);
+		
+			final Expression[] children = expression.getChildExpressions();
+			tcMediator.sameType(children[0].getType(), leftType);
+			tcMediator.sameType(children[1].getType(), rightType);
+		
+			final Type resultType = tcMediator.makeRelationalType(alpha,
+					tcMediator.makeProductType(beta, gamma));
+			return resultType;
 		}
 
 		@Override
@@ -660,16 +674,21 @@ public class TestGenParser extends AbstractTests {
 		
 		@Override
 		public Type synthesizeType(ExtendedExpression expression,
-				Type proposedType, ITypeMediator mediator) {
+				ITypeMediator mediator) {
 			final Expression[] children = expression.getChildExpressions();
-			final Type resultType = children[0].getType();
-			for (Expression child: children) {
+			return children[0].getType();
+		}
+
+		@Override
+		public boolean verifyType(Type proposedType, ExtendedExpression expression) {
+			final Expression[] children = expression.getChildExpressions();
+			for (Expression child : children) {
 				final Type childType = child.getType();
-				if (! (childType instanceof IntegerType)) {
-					return null;
+				if (!(childType instanceof IntegerType)) {
+					return false;
 				}
 			}
-			return resultType;
+			return true;
 		}
 
 		@Override
@@ -1695,18 +1714,23 @@ public class TestGenParser extends AbstractTests {
 		
 		@Override
 		public Type synthesizeType(ExtendedExpression expression,
-				Type proposedType, ITypeMediator mediator) {
+				ITypeMediator mediator) {
 			final Expression[] children = expression.getChildExpressions();
-			final Type resultType = children[0].getType();
-			for (Expression child: children) {
-				final Type childType = child.getType();
-				if (! (childType instanceof IntegerType)) {
-					return null;
-				}
-			}
-			return resultType;
+			return children[0].getType();
 		}
 
+		@Override
+		public boolean verifyType(Type proposedType, ExtendedExpression expression) {
+			final Expression[] children = expression.getChildExpressions();
+			for (Expression child : children) {
+				final Type childType = child.getType();
+				if (!(childType instanceof IntegerType)) {
+					return false;
+				}
+			}
+			return true;
+		}
+		
 		@Override
 		public Type typeCheck(ExtendedExpression expression,
 				ITypeCheckMediator tcMediator) {
@@ -1968,7 +1992,7 @@ public class TestGenParser extends AbstractTests {
 			final ITypeParameter typeS = mediator.getTypeParameter("S");
 			
 			final IArgumentType refS = mediator.newArgumentType(typeS);
-			final IArgumentType listS = mediator.newArgumentTypeConstr(Collections.singletonList(refS));
+			final IArgumentType listS = mediator.newArgumentTypeConstr(asList(refS));
 			mediator.addConstructor("cons", "CONS", Arrays.asList(refS, listS));
 		}
 
@@ -1977,7 +2001,7 @@ public class TestGenParser extends AbstractTests {
 			final ITypeParameter typeS = mediator.getTypeParameter("S");
 			final IArgumentType refS = mediator.newArgumentType(typeS);
 			mediator.addDestructor("head", "HEAD", refS);
-			final IArgumentType listS = mediator.newArgumentTypeConstr(Collections.singletonList(refS));
+			final IArgumentType listS = mediator.newArgumentTypeConstr(asList(refS));
 			mediator.addDestructor("tail", "TAIL", listS);
 		}
 

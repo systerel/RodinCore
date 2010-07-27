@@ -189,9 +189,18 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 			return;
 		}
 
-		final Type resultType = extension.synthesizeType(this,
-				givenType, new TypeMediator(factory));
-		if (resultType == null) {
+		// FIXME this is being constructed !!! do not use below !!!
+		final Type resultType;
+		if (givenType == null) {
+			resultType = extension.synthesizeType(this, new TypeMediator(
+					factory));
+			if (resultType == null) {
+				return;
+			}
+		} else {
+			resultType = givenType;
+		}
+		if (!extension.verifyType(resultType, this)) {
 			return;
 		}
 		setFinalType(resultType, givenType);

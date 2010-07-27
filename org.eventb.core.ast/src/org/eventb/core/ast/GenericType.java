@@ -50,6 +50,7 @@ public class GenericType extends Type {
 	protected GenericType(List<Type> typeParameters,
 			IExpressionExtension exprExtension) {
 		super(isSolved(typeParameters));
+		assert exprExtension.isATypeConstructor();
 		this.typeParameters = new ArrayList<Type>(typeParameters);
 		this.exprExtension = exprExtension;
 	}
@@ -93,7 +94,7 @@ public class GenericType extends Type {
 	}
 	
 	// FIXME using a client implemented interface IExpressionExtension
-	// for equals and hashCode
+	// for equals and hashCode => use == instead
 	
 	@Override
 	public boolean equals(Object obj) {

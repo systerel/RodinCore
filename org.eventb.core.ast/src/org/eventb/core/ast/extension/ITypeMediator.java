@@ -22,7 +22,7 @@ public interface ITypeMediator {
 	BooleanType makeBooleanType();
 
 	GenericType makeGenericType(List<Type> typePrms,
-			IExpressionExtension iExpressionExtension);
+			IExpressionExtension typeExtn);
 
 	GivenType makeGivenType(String name);
 

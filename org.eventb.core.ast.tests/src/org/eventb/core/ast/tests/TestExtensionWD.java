@@ -74,18 +74,24 @@ public class TestExtensionWD extends AbstractTests {
 
 		@Override
 		public Type synthesizeType(ExtendedExpression expression,
-				Type proposedType, ITypeMediator mediator) {
+				ITypeMediator mediator) {
 			final Expression[] children = expression.getChildExpressions();
-			final Type resultType = children[0].getType();
+			return children[0].getType();
+		}
+
+		@Override
+		public boolean verifyType(Type proposedType,
+				ExtendedExpression expression) {
+			final Expression[] children = expression.getChildExpressions();
 			for (Expression child : children) {
 				final Type childType = child.getType();
 				if (!(childType instanceof IntegerType)) {
-					return null;
+					return false;
 				}
 			}
-			return resultType;
+			return true;
 		}
-
+		
 		@Override
 		public Type typeCheck(ExtendedExpression expression,
 				ITypeCheckMediator tcMediator) {

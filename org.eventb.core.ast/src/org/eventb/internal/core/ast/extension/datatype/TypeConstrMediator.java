@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
+import org.eventb.core.ast.GenericType;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
@@ -107,19 +108,7 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 		}
 
 		@Override
-		public Type synthesizeType(ExtendedExpression expression, Type proposedType, ITypeMediator mediator) {
-			final Type resultType = computeType(expression, mediator);
-			if (resultType == null) {
-				return null;
-			}
-			if (proposedType != null && !proposedType.equals(resultType)) {
-				return null;
-			}
-			return resultType;
-		}
-
-		private Type computeType(ExtendedExpression expression,
-				ITypeMediator mediator) {
+		public Type synthesizeType(ExtendedExpression expression, ITypeMediator mediator) {
 			final List<Type> childTypes = new ArrayList<Type>();
 			for (Expression child : expression.getChildExpressions()) {
 				final Type childType = child.getType();
@@ -134,6 +123,32 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 			}
 			return mediator.makePowerSetType(mediator.makeGenericType(
 					childTypes, this));
+		}
+
+		@Override
+		public boolean verifyType(Type proposedType,
+				ExtendedExpression expression) {
+			final Type baseType = proposedType.getBaseType();
+			if (baseType == null) {
+				return false;
+			}
+			if (!(baseType instanceof GenericType)) {
+				return false;
+			}
+			final GenericType genType = (GenericType) baseType;
+			if (genType.getExprExtension() != this) {
+				return false;
+			}
+			final Type[] typeParameters = genType.getTypeParameters();
+			final Expression[] children = expression.getChildExpressions();
+			assert children.length == typeParameters.length;
+			for (int i = 0; i < children.length; i++) {
+				final Type childType = children[i].getType();
+				if (!typeParameters[i].equals(childType.getBaseType())) {
+					return false;
+				}
+			}
+			return true;
 		}
 
 		@Override

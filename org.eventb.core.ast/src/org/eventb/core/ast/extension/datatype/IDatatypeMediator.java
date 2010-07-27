@@ -23,6 +23,11 @@ public interface IDatatypeMediator {
 
 	IArgumentType newArgumentType(ITypeParameter type);
 
-	IArgumentType newArgumentTypeConstr(List<IArgumentType> types);
+	/**
+	 * @param typeParams
+	 *            type parameters
+	 * @return a new type constructor argument type
+	 */
+	IArgumentType newArgumentTypeConstr(List<IArgumentType> typeParams);
 
 }

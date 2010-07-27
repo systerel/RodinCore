@@ -11,7 +11,6 @@
 package org.eventb.internal.core.ast.extension.datatype;
 
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.datatype.IArgumentType;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
@@ -29,8 +28,14 @@ public class ArgTypeParamRef implements IArgumentType {
 	}
 
 	@Override
-	public Type toType(ITypeMediator mediator, IExpressionExtension typeExtn, TypeParamInst instantiation) {
+	public Type toType(ITypeMediator mediator, TypeInstantiation instantiation) {
 		return instantiation.get(typeParam);
+	}
+
+	@Override
+	public boolean verifyType(Type proposedType, TypeInstantiation instantiation) {
+		final Type instType = instantiation.get(typeParam);
+		return proposedType.equals(instType);
 	}
 	
 }

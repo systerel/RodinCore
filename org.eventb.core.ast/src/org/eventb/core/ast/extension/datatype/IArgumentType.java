@@ -11,9 +11,8 @@
 package org.eventb.core.ast.extension.datatype;
 
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.ITypeMediator;
-import org.eventb.internal.core.ast.extension.datatype.TypeParamInst;
+import org.eventb.internal.core.ast.extension.datatype.TypeInstantiation;
 
 /**
  * @author Nicolas Beauger
@@ -21,7 +20,9 @@ import org.eventb.internal.core.ast.extension.datatype.TypeParamInst;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IArgumentType {
-	// TODO check internally typeExtn.isATypeConstructor
-	Type toType(ITypeMediator mediator, IExpressionExtension typeExtn, TypeParamInst instantiation);
-	
+
+	Type toType(ITypeMediator mediator, TypeInstantiation instantiation);
+
+	boolean verifyType(Type proposedType, TypeInstantiation instantiation);
+
 }
