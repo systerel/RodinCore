@@ -62,8 +62,8 @@ public class ConstructorMediator extends DatatypeMediator implements
 		}
 
 		@Override
-		public Predicate getWDPredicate(IWDMediator wdMediator,
-				IExtendedFormula formula) {
+		public Predicate getWDPredicate(IExtendedFormula formula,
+				IWDMediator wdMediator) {
 			return wdMediator.makeTrueWD();
 		}
 
@@ -104,8 +104,8 @@ public class ConstructorMediator extends DatatypeMediator implements
 		}
 
 		@Override
-		public Type typeCheck(ITypeCheckMediator tcMediator,
-				ExtendedExpression expression) {
+		public Type typeCheck(ExtendedExpression expression,
+				ITypeCheckMediator tcMediator) {
 			final TypeParamInst instantiation = new TypeParamInst();
 
 			final List<Type> typeParamVars = new ArrayList<Type>();

@@ -87,8 +87,8 @@ public class TestExtensionWD extends AbstractTests {
 		}
 
 		@Override
-		public Type typeCheck(ITypeCheckMediator tcMediator,
-				ExtendedExpression expression) {
+		public Type typeCheck(ExtendedExpression expression,
+				ITypeCheckMediator tcMediator) {
 			final Expression[] children = expression.getChildExpressions();
 			final Type resultType = tcMediator.makeIntegerType();
 			for (int i = 0; i < children.length; i++) {
@@ -130,8 +130,8 @@ public class TestExtensionWD extends AbstractTests {
 		// BTRUE if the first child is an integer literal
 		// else BFALSE 
 		@Override
-		public Predicate getWDPredicate(IWDMediator wdMediator,
-				IExtendedFormula formula) {
+		public Predicate getWDPredicate(IExtendedFormula formula,
+				IWDMediator wdMediator) {
 			final Expression firstChild = formula.getChildExpressions()[0];
 			
 			final FormulaFactory factory = wdMediator.getFormulaFactory();

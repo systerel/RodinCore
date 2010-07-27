@@ -36,7 +36,7 @@ public interface IExpressionExtension extends IFormulaExtension {
 
 	// TODO these 2 methods can be mixed into 1 with 2 mediator implementations
 
-	Type typeCheck(ITypeCheckMediator tcMediator, ExtendedExpression expression);
+	Type typeCheck(ExtendedExpression expression, ITypeCheckMediator tcMediator);
 
 	/**
 	 * <p>

@@ -152,7 +152,7 @@ public interface IFormulaExtension {
 
 	String getSyntaxSymbol();
 
-	Predicate getWDPredicate(IWDMediator wdMediator, IExtendedFormula formula);
+	Predicate getWDPredicate(IExtendedFormula formula, IWDMediator wdMediator);
 
 	/**
 	 * Whether or not children WD is conjoined to the returned WD predicate.
@@ -165,7 +165,7 @@ public interface IFormulaExtension {
 	 * In most cases, children WD shall be conjoined. Reasons not to do so
 	 * include the case where a WD of the form 'P and ( P => WD(children) )' is
 	 * desired. In the latter case, it is the responsibility of
-	 * {@link #getWDPredicate(IWDMediator, IExtendedFormula)} to explicitly
+	 * {@link #getWDPredicate(IExtendedFormula, IWDMediator)} to explicitly
 	 * embed the WD conditions for children in the returned predicate.
 	 * </p>
 	 * 

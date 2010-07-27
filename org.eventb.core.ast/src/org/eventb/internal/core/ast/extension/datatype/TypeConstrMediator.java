@@ -57,8 +57,8 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 		}
 		
 		@Override
-		public Predicate getWDPredicate(IWDMediator wdMediator,
-				IExtendedFormula formula) {
+		public Predicate getWDPredicate(IExtendedFormula formula,
+				IWDMediator wdMediator) {
 			return wdMediator.makeTrueWD();
 		}
 		
@@ -93,8 +93,8 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 		}
 
 		@Override
-		public Type typeCheck(ITypeCheckMediator tcMediator,
-				ExtendedExpression expression) {
+		public Type typeCheck(ExtendedExpression expression,
+				ITypeCheckMediator tcMediator) {
 			final List<Type> prmTypes = new ArrayList<Type>();
 			for (Expression child : expression.getChildExpressions()) {
 				final Type alpha = tcMediator.newTypeVariable();

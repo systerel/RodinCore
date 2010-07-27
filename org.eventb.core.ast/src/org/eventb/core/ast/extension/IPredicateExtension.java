@@ -19,6 +19,6 @@ import org.eventb.core.ast.ExtendedPredicate;
  */
 public interface IPredicateExtension extends IFormulaExtension {
 
-	void typeCheck(ITypeCheckMediator tcMediator, ExtendedPredicate predicate);
+	void typeCheck(ExtendedPredicate predicate, ITypeCheckMediator tcMediator);
 
 }

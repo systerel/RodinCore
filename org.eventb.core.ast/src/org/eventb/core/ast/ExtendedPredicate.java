@@ -173,7 +173,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 		for (Formula<?> child : getChildren()) {
 			child.typeCheck(result, quantifiedIdentifiers);
 		}
-		extension.typeCheck(new TypeCheckMediator(result, this, false), this);
+		extension.typeCheck(this, new TypeCheckMediator(result, this, false));
 	}
 
 	@Override
@@ -287,7 +287,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	@Override
 	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
 		final WDMediator wdMed = new WDMediator(formulaFactory);
-		final Predicate extensionWD = extension.getWDPredicate(wdMed, this);
+		final Predicate extensionWD = extension.getWDPredicate(this, wdMed);
 		
 		if (extension.conjoinChildrenWD()) {
 			return wdMed.addChildrenWD(extensionWD, this);

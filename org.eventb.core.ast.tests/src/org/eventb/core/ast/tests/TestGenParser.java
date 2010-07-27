@@ -558,8 +558,8 @@ public class TestGenParser extends AbstractTests {
 	private static final IExpressionExtension DIRECT_PRODUCT = new IExpressionExtension() {
 
 		@Override
-		public Predicate getWDPredicate(IWDMediator wdMediator,
-				IExtendedFormula formula) {
+		public Predicate getWDPredicate(IExtendedFormula formula,
+				IWDMediator wdMediator) {
 			return wdMediator.makeTrueWD();
 		}
 
@@ -569,8 +569,8 @@ public class TestGenParser extends AbstractTests {
 		}
 
 		@Override
-		public Type typeCheck(ITypeCheckMediator tcMediator,
-				ExtendedExpression expression) {
+		public Type typeCheck(ExtendedExpression expression,
+				ITypeCheckMediator tcMediator) {
 			final Type alpha = tcMediator.newTypeVariable();
 			final Type beta = tcMediator.newTypeVariable();
 			final Type gamma = tcMediator.newTypeVariable();
@@ -673,8 +673,8 @@ public class TestGenParser extends AbstractTests {
 		}
 
 		@Override
-		public Type typeCheck(ITypeCheckMediator tcMediator,
-				ExtendedExpression expression) {
+		public Type typeCheck(ExtendedExpression expression,
+				ITypeCheckMediator tcMediator) {
 			final Expression[] children = expression.getChildExpressions();
 			final Type resultType = tcMediator.makeIntegerType();
 			for (int i = 0; i < children.length; i++) {
@@ -719,8 +719,8 @@ public class TestGenParser extends AbstractTests {
 		}
 
 		@Override
-		public Predicate getWDPredicate(IWDMediator wdMediator,
-				IExtendedFormula formula) {
+		public Predicate getWDPredicate(IExtendedFormula formula,
+				IWDMediator wdMediator) {
 			return wdMediator.makeTrueWD();
 		}
 
@@ -1708,8 +1708,8 @@ public class TestGenParser extends AbstractTests {
 		}
 
 		@Override
-		public Type typeCheck(ITypeCheckMediator tcMediator,
-				ExtendedExpression expression) {
+		public Type typeCheck(ExtendedExpression expression,
+				ITypeCheckMediator tcMediator) {
 			final Expression[] children = expression.getChildExpressions();
 			final Type resultType = tcMediator.makeIntegerType();
 			for (int i = 0; i < children.length; i++) {
@@ -1749,8 +1749,8 @@ public class TestGenParser extends AbstractTests {
 		}
 
 		@Override
-		public Predicate getWDPredicate(IWDMediator wdMediator,
-				IExtendedFormula formula) {
+		public Predicate getWDPredicate(IExtendedFormula formula,
+				IWDMediator wdMediator) {
 			return wdMediator.makeTrueWD();
 		}
 
@@ -2409,8 +2409,8 @@ public class TestGenParser extends AbstractTests {
 		private static final String ID = "Ext Prime";
 		
 		@Override
-		public Predicate getWDPredicate(IWDMediator wdMediator,
-				IExtendedFormula formula) {
+		public Predicate getWDPredicate(IExtendedFormula formula,
+				IWDMediator wdMediator) {
 			return wdMediator.makeTrueWD();
 		}
 		
@@ -2445,8 +2445,8 @@ public class TestGenParser extends AbstractTests {
 		}
 		
 		@Override
-		public void typeCheck(ITypeCheckMediator tcMediator,
-				ExtendedPredicate predicate) {
+		public void typeCheck(ExtendedPredicate predicate,
+				ITypeCheckMediator tcMediator) {
 			final Expression child = predicate.getChildExpressions()[0];
 			final Type childType = tcMediator.makePowerSetType(tcMediator.makeIntegerType());
 			tcMediator.sameType(child.getType(), childType);

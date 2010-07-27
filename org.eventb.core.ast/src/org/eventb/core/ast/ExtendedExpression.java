@@ -229,7 +229,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		}
 		final TypeCheckMediator mediator = new TypeCheckMediator(result, this,
 				isAtomic());
-		final Type resultType = extension.typeCheck(mediator, this);
+		final Type resultType = extension.typeCheck(this, mediator);
 		setTemporaryType(resultType, result);
 	}
 
@@ -253,7 +253,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	@Override
 	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
 		final WDMediator wdMed = new WDMediator(formulaFactory);
-		final Predicate extensionWD = extension.getWDPredicate(wdMed, this);
+		final Predicate extensionWD = extension.getWDPredicate(this, wdMed);
 		
 		if (extension.conjoinChildrenWD()) {
 			return wdMed.addChildrenWD(extensionWD, this);
