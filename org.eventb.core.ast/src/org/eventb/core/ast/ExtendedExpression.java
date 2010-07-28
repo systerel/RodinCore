@@ -31,6 +31,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
+import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IdentListMerger;
@@ -152,8 +153,9 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	}
 
 	private void checkPreconditions() {
-		assert extension.getKind().checkPreconditions(childExpressions,
-				childPredicates);
+		final IExtensionKind kind = extension.getKind();
+		assert kind.getProperties().getFormulaType() == EXPRESSION;
+		assert kind.checkPreconditions(childExpressions, childPredicates);
 	}
 
 	private Formula<?>[] getChildren() {

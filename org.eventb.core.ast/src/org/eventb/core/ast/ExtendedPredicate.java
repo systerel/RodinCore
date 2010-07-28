@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.IExtendedFormula;
+import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.internal.core.ast.FindingAccumulator;
@@ -115,8 +116,9 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	}
 
 	private void checkPreconditions() {
-		assert extension.getKind().checkPreconditions(childExpressions,
-				childPredicates);
+		final IExtensionKind kind = extension.getKind();
+		assert kind.getProperties().getFormulaType() == PREDICATE;
+		assert kind.checkPreconditions(childExpressions, childPredicates);
 	}
 
 	@Override

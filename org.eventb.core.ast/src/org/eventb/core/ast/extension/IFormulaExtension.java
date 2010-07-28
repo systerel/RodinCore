@@ -132,9 +132,6 @@ public interface IFormulaExtension {
 
 	String getGroupId();
 
-	// FIXME redundancy between formula type provided through the kind and the
-	// choice to implement IExpressionExtension or IPredicateExtension requires
-	// to enforce a compatibility constraint.
 	IExtensionKind getKind();
 
 	void addCompatibilities(ICompatibilityMediator mediator);
