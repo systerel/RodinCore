@@ -131,6 +131,18 @@
 	get_slot(right,t) { ((BinaryPredicate) t).getRight() }
 }
 
+
+/*
+ * ExtendedPredicate
+ */
+
+%op Predicate ExtendedPredicate (childExprs: ExpressionList, childPreds: PredicateList) {
+	is_fsym(t) { t instanceof ExtendedPredicate }
+	get_slot(childExprs,t) { ((ExtendedPredicate) t).getChildExpressions() }
+	get_slot(childPreds,t) { ((ExtendedPredicate) t).getChildPredicates() }
+}
+ 
+
 /*
  * UnaryPredicate
  */
@@ -572,6 +584,17 @@
 %op Expression Bool (predicate: Predicate) {
 	is_fsym(t) { t != null && t.getTag() == Formula.KBOOL }
 	get_slot(predicate,t) { ((BoolExpression) t).getPredicate() }
+}
+
+
+/*
+ * ExtendedExpression
+ */
+
+%op Expression ExtendedExpression (childExprs: ExpressionList, childPreds: PredicateList) {
+	is_fsym(t) { t instanceof ExtendedExpression }
+	get_slot(childExprs,t) { ((ExtendedExpression) t).getChildExpressions() }
+	get_slot(childPreds,t) { ((ExtendedExpression) t).getChildPredicates() }
 }
 
 /*
