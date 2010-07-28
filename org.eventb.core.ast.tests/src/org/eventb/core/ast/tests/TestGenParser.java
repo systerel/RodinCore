@@ -52,7 +52,9 @@ import static org.eventb.core.ast.Formula.TFUN;
 import static org.eventb.core.ast.Formula.TRUE;
 import static org.eventb.core.ast.Formula.UNMINUS;
 import static org.eventb.core.ast.Formula.UPTO;
+import static org.eventb.core.ast.LanguageVersion.LATEST;
 import static org.eventb.core.ast.ProblemKind.InvalidGenericType;
+import static org.eventb.core.ast.ProblemKind.InvalidTypeExpression;
 import static org.eventb.core.ast.ProblemSeverities.Error;
 import static org.eventb.core.ast.extension.ExtensionKindFactory.makePrefixKind;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
@@ -391,13 +393,16 @@ public class TestGenParser extends AbstractTests {
 		checkParsedFormula(formula, expected, actual);
 	}
 
+	private static IParseResult parseTypeRes(String image, FormulaFactory factory) {
+		return factory.parseType(image, LATEST);
+	}
+
 	private static Type doTypeTest(String formula, Type expected) {
 		return doTypeTest(formula, expected, ff);
 	}
 	
 	private static Type doTypeTest(String formula, Type expected, FormulaFactory factory) {
-		final IParseResult result = factory.parseType(formula,
-				LanguageVersion.V2);
+		final IParseResult result = parseTypeRes(formula, factory);
 		if (result.hasProblem()) {
 			System.out.println(result.getProblems());
 		}
@@ -2054,32 +2059,48 @@ public class TestGenParser extends AbstractTests {
 	private static final IExpressionExtension EXT_LIST = LIST_EXTNS.get(LIST_TYPE.getId());
 	private static final ParametricType LIST_INT_TYPE = LIST_FAC.makeParametricType(
 			Collections.<Type> singletonList(INT_TYPE), EXT_LIST);
+	private static final PowerSetType POW_LIST_INT_TYPE = LIST_FAC
+			.makePowerSetType(LIST_INT_TYPE);
 	private static final IExpressionExtension EXT_NIL = LIST_EXTNS.get("NIL");
 	private static final IExpressionExtension EXT_CONS = LIST_EXTNS.get("CONS");
 	private static final IExpressionExtension EXT_HEAD = LIST_EXTNS.get("HEAD");
 	private static final IExpressionExtension EXT_TAIL = LIST_EXTNS.get("TAIL");
 	
 	public void testDatatypeType() throws Exception {
-		
-		final ExtendedExpression list = LIST_FAC.makeExtendedExpression(EXT_LIST,
-				Collections.<Expression> singleton(INT), Collections
-						.<Predicate> emptyList(), null);
 
-		final Expression expr = doExpressionTest("List(ℤ)", list, LIST_FAC);
-		
-		final PowerSetType powListIntType = LIST_FAC.makePowerSetType(LIST_INT_TYPE);
-		assertEquals("unexpected type", powListIntType, expr.getType());
-		
+		final ExtendedExpression list = LIST_FAC.makeExtendedExpression(
+				EXT_LIST, Collections.<Expression> singleton(INT),
+				Collections.<Predicate> emptyList(), null);
+
+		final Expression expr = doExpressionTest("List(ℤ)", list,
+				POW_LIST_INT_TYPE, LIST_FAC, false);
+
 		assertTrue("expected a type expression", expr.isATypeExpression());
 		assertEquals("unexpected toType", LIST_INT_TYPE, expr.toType());
 
 		doTypeTest("List(ℤ)", LIST_INT_TYPE, LIST_FAC);
-		
+
 		final ParametricType listBoolType = LIST_FAC.makeParametricType(
 				Collections.<Type> singletonList(BOOL_TYPE), EXT_LIST);
 		assertFalse(listBoolType.equals(LIST_INT_TYPE));
 	}
 
+	public void testDatatypeExpr() throws Exception {
+		final Expression upTo = LIST_FAC.makeBinaryExpression(UPTO, ZERO, ONE,
+				null);
+
+		final ExtendedExpression list0upTo1 = LIST_FAC.makeExtendedExpression(
+				EXT_LIST, Collections.<Expression> singleton(upTo),
+				Collections.<Predicate> emptyList(), null);
+
+		final Expression expr = doExpressionTest("List(0‥1)", list0upTo1,
+				POW_LIST_INT_TYPE, LIST_FAC, false);
+		assertFalse("unexpected type expression", expr.isATypeExpression());
+		final IParseResult result = parseTypeRes("List(0‥1)", LIST_FAC);
+		assertFailure(result, new ASTProblem(new SourceLocation(0, 8),
+				InvalidTypeExpression, ProblemSeverities.Error));
+	}
+	
 	public void testDatatypeNil() throws Exception {
 
 		final ExtendedExpression nil = LIST_FAC.makeExtendedExpression(EXT_NIL,
