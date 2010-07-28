@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.extension;
 
-import static org.eventb.core.ast.extension.ExtensionKindFactory.makePrefixKind;
+import static org.eventb.core.ast.extension.ExtensionFactory.makePrefixKind;
 import static org.eventb.core.ast.extension.IOperatorProperties.*;
 import static org.eventb.core.ast.extension.IOperatorProperties.Notation.*;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.*;
@@ -23,7 +23,7 @@ import org.eventb.internal.core.ast.extension.ExtensionKind;
  * <p>
  * Standard supported extension kinds are provided as constants. Additionally,
  * instances obtained from
- * {@link ExtensionKindFactory#makePrefixKind(FormulaType, int, FormulaType)}
+ * {@link ExtensionFactory#makePrefixKind(FormulaType, int, FormulaType)}
  * are supported as well, which makes it possible to customize the arity of a
  * parenthesized formula.
  * </p>

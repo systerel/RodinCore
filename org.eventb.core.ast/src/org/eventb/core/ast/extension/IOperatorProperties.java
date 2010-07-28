@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.extension;
 
-import static org.eventb.core.ast.extension.ExtensionKindFactory.makeArity;
-import static org.eventb.core.ast.extension.ExtensionKindFactory.makeFixedArity;
+import static org.eventb.core.ast.extension.ExtensionFactory.makeArity;
+import static org.eventb.core.ast.extension.ExtensionFactory.makeFixedArity;
 
 
 /**

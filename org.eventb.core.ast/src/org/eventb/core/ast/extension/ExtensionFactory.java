@@ -21,9 +21,8 @@ import org.eventb.internal.core.ast.extension.ExtensionKind;
  * @since 2.0
  * 
  */
-public class ExtensionKindFactory { // TODO rename into ExtensionFactory or
-									// ExtensionLib
-
+public class ExtensionFactory {
+	
 	// FIXME for now, only EXPRESSION children are supported.
 	public static IExtensionKind makePrefixKind(FormulaType formulaType,
 			int arity, FormulaType argumentType) {

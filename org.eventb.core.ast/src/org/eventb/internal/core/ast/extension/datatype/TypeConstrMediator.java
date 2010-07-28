@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension.datatype;
 
-import static org.eventb.core.ast.extension.ExtensionKindFactory.makePrefixKind;
+import static org.eventb.core.ast.extension.ExtensionFactory.makePrefixKind;
 import static org.eventb.core.ast.extension.IFormulaExtension.ATOMIC_EXPRESSION;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 

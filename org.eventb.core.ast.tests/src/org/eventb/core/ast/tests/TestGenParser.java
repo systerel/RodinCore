@@ -56,7 +56,7 @@ import static org.eventb.core.ast.LanguageVersion.LATEST;
 import static org.eventb.core.ast.ProblemKind.InvalidGenericType;
 import static org.eventb.core.ast.ProblemKind.InvalidTypeExpression;
 import static org.eventb.core.ast.ProblemSeverities.Error;
-import static org.eventb.core.ast.extension.ExtensionKindFactory.makePrefixKind;
+import static org.eventb.core.ast.extension.ExtensionFactory.makePrefixKind;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 
 import java.math.BigInteger;
