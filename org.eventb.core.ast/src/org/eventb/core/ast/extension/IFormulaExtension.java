@@ -32,7 +32,7 @@ import org.eventb.internal.core.ast.extension.ExtensionKind;
  * 
  * <pre>
  * public IExtensionKind getKind() {
- * 	return new IFormulaExtension.PrefixKind(EXPRESSION, 3, EXPRESSION);
+ *    return ExtensionFactory.makePrefixKind(EXPRESSION, 3, EXPRESSION);
  * }
  * </pre>
  * 
