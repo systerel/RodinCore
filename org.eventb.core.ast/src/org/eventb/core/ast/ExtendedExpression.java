@@ -13,6 +13,7 @@ package org.eventb.core.ast;
 // FIXME should not use AssociativeHelper
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
+import static org.eventb.core.ast.extension.IArity.MAX_ARITY;
 import static org.eventb.core.ast.extension.IOperatorProperties.BINARY;
 import static org.eventb.core.ast.extension.IOperatorProperties.MULTARY_2;
 import static org.eventb.core.ast.extension.IOperatorProperties.NULLARY;
@@ -31,11 +32,11 @@ import java.util.Set;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IOperatorProperties;
-import org.eventb.core.ast.extension.IOperatorProperties.Arity;
 import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
+import org.eventb.internal.core.ast.extension.Arity;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.ast.extension.TypeCheckMediator;
@@ -92,7 +93,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 
 		// the arity given here stands for 'any fixed arity in 1 .. MAX_ARITY'
 		PARENTHESIZED_EXPRESSION(makeOperProps(PREFIX, EXPRESSION, new Arity(1,
-				IOperatorProperties.MAX_ARITY), EXPRESSION, false)) {
+				MAX_ARITY), EXPRESSION, false)) {
 
 			@Override
 			public IParserPrinter<ExtendedExpression> makeParser(int kind,

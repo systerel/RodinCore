@@ -17,14 +17,15 @@ import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.*;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.core.ast.extension.ExtensionKind;
-import org.eventb.internal.core.ast.extension.PrefixKind;
 
 /**
  * Common protocol for formula extensions.
  * <p>
  * Standard supported extension kinds are provided as constants. Additionally,
- * instances of {@link PrefixKind} are supported as well, which makes it
- * possible to customize the arity of a parenthesized formula.
+ * instances obtained from
+ * {@link ExtensionKindFactory#makePrefixKind(FormulaType, int, FormulaType)}
+ * are supported as well, which makes it possible to customize the arity of a
+ * parenthesized formula.
  * </p>
  * <p>
  * For instance, an implementation of {@link #getKind()} could be:

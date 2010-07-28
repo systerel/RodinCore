@@ -8,18 +8,25 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.core.ast.extension;
+package org.eventb.core.ast.extension;
 
-import static org.eventb.core.ast.extension.IOperatorProperties.Notation.PREFIX;
+/**
+ * @since 2.0
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
+ */
+public interface IArity {
 
-import org.eventb.core.ast.extension.IOperatorProperties.FixedArity;
-import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
+	public static final int MAX_ARITY = Integer.MAX_VALUE;
 
-public class PrefixKind extends ExtensionKind {
+	int getMin();
 
-	public PrefixKind(FormulaType formulaType, int arity,
-			FormulaType argumentType) {
-		super(PREFIX, formulaType, new FixedArity(arity), argumentType, false);
-	}
+	int getMax();
+
+	boolean check(int nbArgs);
+
+	boolean isDistinct(IArity other);
+
+	boolean contains(IArity other);
 
 }

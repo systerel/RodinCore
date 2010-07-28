@@ -10,20 +10,33 @@
  *******************************************************************************/
 package org.eventb.core.ast.extension;
 
+import static org.eventb.core.ast.extension.IOperatorProperties.Notation.PREFIX;
+
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
-import org.eventb.internal.core.ast.extension.PrefixKind;
+import org.eventb.internal.core.ast.extension.Arity;
+import org.eventb.internal.core.ast.extension.ExtensionKind;
 
 /**
  * @author Nicolas Beauger
  * @since 2.0
  * 
  */
-public class ExtensionKindFactory {
+public class ExtensionKindFactory { // TODO rename into ExtensionFactory or
+									// ExtensionLib
 
 	// FIXME for now, only EXPRESSION children are supported.
 	public static IExtensionKind makePrefixKind(FormulaType formulaType,
 			int arity, FormulaType argumentType) {
-		return new PrefixKind(formulaType, arity, argumentType);
+		return new ExtensionKind(PREFIX, formulaType, makeFixedArity(arity),
+				argumentType, false);
+	}
+
+	public static IArity makeArity(int min, int max) {
+		return new Arity(min, max);
+	}
+
+	public static IArity makeFixedArity(int arity) {
+		return new Arity(arity, arity);
 	}
 
 }

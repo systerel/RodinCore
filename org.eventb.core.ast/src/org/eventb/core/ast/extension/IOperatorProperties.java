@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eventb.core.ast.extension;
 
-import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Predicate;
+import static org.eventb.core.ast.extension.ExtensionKindFactory.makeArity;
+import static org.eventb.core.ast.extension.ExtensionKindFactory.makeFixedArity;
+
 
 /**
  * Common protocol for operator properties.
@@ -23,90 +24,16 @@ import org.eventb.core.ast.Predicate;
 public interface IOperatorProperties {
 
 
-	public static enum Notation {
+	enum Notation {
 		PREFIX, INFIX, POSTFIX
 	}
 	
-	public static final int MAX_ARITY = Integer.MAX_VALUE;
-
-	/**
-	 * Arity of an operator.
-	 * <p>
-	 * Note: for N_ARY arity, select MULTARY_1 then implement/override
-	 * {@link IExtensionKind#checkPreconditions(Expression[], Predicate[])} to
-	 * check the arity for the desired n.
-	 * </p>
-	 */
-	public static class Arity {
-		private final int min;
-		private final int max;
-		
-		public Arity(int min, int max) {
-			this.min = min;
-			this.max = max;
-		}
-
-		public int getMin() {
-			return min;
-		}
-		
-		public int getMax() {
-			return max;
-		}
-		
-		public boolean check(int nbArgs) {
-			return min <= nbArgs && nbArgs <= max;
-		}
-
-		public boolean isDistinct(Arity other) {
-			return getMin() > other.getMax()
-					|| other.getMin() > getMax();
-		}
-		
-		public boolean contains(Arity other) {
-			return getMin() <= other.getMin()
-					&& other.getMax() <= getMax();
-		}
-		
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = prime + max;
-			result = prime * result + min;
-			return result;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj) {
-				return true;
-			}
-			if (!(obj instanceof Arity)) {
-				return false;
-			}
-			Arity other = (Arity) obj;
-			if (max != other.max) {
-				return false;
-			}
-			if (min != other.min) {
-				return false;
-			}
-			return true;
-		}
-	}
+	IArity NULLARY = makeFixedArity(0);
+	IArity UNARY = makeFixedArity(1);
+	IArity BINARY = makeFixedArity(2);
+	IArity MULTARY_2 = makeArity(2, IArity.MAX_ARITY);
 	
-	public static class FixedArity extends Arity {
-		public FixedArity(int arity) {
-			super(arity, arity);
-		}
-	}
-	
-	public static final Arity NULLARY = new FixedArity(0);
-	public static final Arity UNARY = new FixedArity(1);
-	public static final Arity BINARY = new FixedArity(2);
-	public static final Arity MULTARY_2 = new Arity(2, MAX_ARITY);
-	
-	public static enum FormulaType {
+	enum FormulaType {
 		EXPRESSION, PREDICATE
 	}
 
@@ -115,7 +42,7 @@ public interface IOperatorProperties {
 	FormulaType getFormulaType();
 	
 	// TODO move elsewhere (not a static property)
-	Arity getArity();
+	IArity getArity();
 	
 	// TODO support arguments of mixed types
 	FormulaType getArgumentType();

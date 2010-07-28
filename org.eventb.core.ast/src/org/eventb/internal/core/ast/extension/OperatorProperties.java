@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension;
 
+import org.eventb.core.ast.extension.IArity;
 import org.eventb.core.ast.extension.IOperatorProperties;
 
 /**
@@ -20,12 +21,12 @@ public class OperatorProperties implements IOperatorProperties {
 
 	private final Notation notation;
 	private final FormulaType formulaType;
-	private final Arity arity;
+	private final IArity arity;
 	private final FormulaType argumentType;
-	private  final boolean isAssociative;
+	private final boolean isAssociative;
 
 	private OperatorProperties(Notation notation, FormulaType formulaType,
-			Arity arity, FormulaType argumentType, boolean isAssociative) {
+			IArity arity, FormulaType argumentType, boolean isAssociative) {
 		this.notation = notation;
 		this.formulaType = formulaType;
 		this.arity = arity;
@@ -44,7 +45,7 @@ public class OperatorProperties implements IOperatorProperties {
 	}
 
 	@Override
-	public Arity getArity() {
+	public IArity getArity() {
 		return arity;
 	}
 	
@@ -59,7 +60,7 @@ public class OperatorProperties implements IOperatorProperties {
 	}
 
 	public static IOperatorProperties makeOperProps(Notation notation,
-			FormulaType formulaType, Arity arity, FormulaType argumentType, boolean isAssociative) {
+			FormulaType formulaType, IArity arity, FormulaType argumentType, boolean isAssociative) {
 		return new OperatorProperties(notation, formulaType, arity,
 				argumentType, isAssociative);
 	}

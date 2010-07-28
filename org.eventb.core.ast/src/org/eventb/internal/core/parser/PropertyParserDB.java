@@ -16,9 +16,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.extension.IArity;
 import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
-import org.eventb.core.ast.extension.IOperatorProperties.Arity;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 
@@ -104,9 +104,9 @@ public class PropertyParserDB {
 			list = new ArrayList<IPropertyParserInfo<? extends Formula<?>>>();
 			map.put(newProp, list);
 		}
-		final Arity newArity = newParser.getProperties().getArity();
+		final IArity newArity = newParser.getProperties().getArity();
 		for (IPropertyParserInfo<? extends Formula<?>> parser : list) {
-			final Arity arity = parser.getProperties().getArity();
+			final IArity arity = parser.getProperties().getArity();
 			if(!newArity.isDistinct(arity)) {
 				throw new GenParser.OverrideException("overriding a parser");
 			}
@@ -121,9 +121,9 @@ public class PropertyParserDB {
 		if (list == null) {
 			return null;
 		}
-		final Arity desiredArity = operProps.getArity();
+		final IArity desiredArity = operProps.getArity();
 		for (IPropertyParserInfo<? extends Formula<?>> parserInfo : list) {
-			final Arity arity = parserInfo.getProperties().getArity();
+			final IArity arity = parserInfo.getProperties().getArity();
 			if(arity.contains(desiredArity)) {
 				return parserInfo.makeParser(kind, tag);
 			}

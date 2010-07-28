@@ -15,9 +15,9 @@ import static org.eventb.internal.core.ast.extension.OperatorProperties.makeOper
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.extension.IArity;
 import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IOperatorProperties;
-import org.eventb.core.ast.extension.IOperatorProperties.Arity;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 
@@ -25,7 +25,7 @@ public class ExtensionKind implements IExtensionKind {
 
 	private final IOperatorProperties operProps;
 
-	public ExtensionKind(Notation notation, FormulaType formulaType, Arity arity,
+	public ExtensionKind(Notation notation, FormulaType formulaType, IArity arity,
 			FormulaType argumentType, boolean isAssociative) {
 		this.operProps = makeOperProps(notation, formulaType, arity,
 				argumentType, isAssociative);
