@@ -12,7 +12,6 @@ package org.eventb.internal.core.ast.extension.datatype;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
@@ -168,9 +167,8 @@ public class DestructorMediator extends DatatypeMediator implements
 
 	private final IExpressionExtension typeConstructor;
 
-	public DestructorMediator(String typeName,
-			Map<String, ITypeParameter> typeParams,
-			IExpressionExtension typeConstructor) {
+	public DestructorMediator(IExpressionExtension typeConstructor,
+			List<ITypeParameter> typeParams) {
 		super(typeParams);
 		this.typeConstructor = typeConstructor;
 	}
@@ -178,10 +176,8 @@ public class DestructorMediator extends DatatypeMediator implements
 	@Override
 	public void addDestructor(final String name, final String id,
 			final IArgumentType returnType) {
-		final List<ITypeParameter> typePrmsList = new ArrayList<ITypeParameter>(
-				typeParams.values());
 		final IExpressionExtension destructor = new DestructorExtension(name,
-				id, returnType, typeConstructor, typePrmsList);
+				id, returnType, typeConstructor, typeParams);
 		extensions.add(destructor);
 	}
 

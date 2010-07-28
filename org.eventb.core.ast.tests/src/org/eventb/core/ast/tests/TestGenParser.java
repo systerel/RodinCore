@@ -2564,4 +2564,72 @@ public class TestGenParser extends AbstractTests {
 				Collections.<Predicate> emptySet(), null);
 		doPredicateTest("prime(1)", expected, PRIME_FAC);
 	}
+	private static final IDatatypeExtension MOULT_TYPE = new IDatatypeExtension() {
+
+		private static final String TYPE_NAME = "Moult";
+		private static final String TYPE_IDENTIFIER = "Moult Id";
+		private static final String GROUP_IDENTIFIER = "Moult Group";
+		
+		@Override
+		public String getTypeName() {
+			return TYPE_NAME;
+		}
+
+		@Override
+		public String getId() {
+			return TYPE_IDENTIFIER;
+		}
+		
+		@Override
+		public String getGroupId() {
+			return GROUP_IDENTIFIER;
+		}
+
+		@Override
+		public void addTypeParameters(ITypeConstructorMediator mediator) {
+			mediator.addTypeParam("S");			
+			mediator.addTypeParam("T");			
+		}
+
+		@Override
+		public void addConstructors(IConstructorMediator mediator) {
+			final ITypeParameter typeS = mediator.getTypeParameter("S");
+			final ITypeParameter typeT = mediator.getTypeParameter("T");
+			
+			final IArgumentType refS = mediator.newArgumentType(typeS);
+			final IArgumentType refT = mediator.newArgumentType(typeT);
+			mediator.addConstructor("makeMoult", "MAKE MOULT", Arrays.asList(refS, refT));
+		}
+
+		@Override
+		public void addDestructors(IDestructorMediator mediator) {
+			// no destructors
+		}
+
+	};
+	
+	private static final Map<String, IExpressionExtension> MOULT_EXTNS = FormulaFactory
+			.getExtensions(MOULT_TYPE);
+	private static final FormulaFactory MOULT_FAC = FormulaFactory
+			.getInstance(new HashSet<IFormulaExtension>(MOULT_EXTNS.values()));
+	private static final IExpressionExtension EXT_MOULT = MOULT_EXTNS
+			.get(MOULT_TYPE.getId());
+	private static final ParametricType MOULT_INT_BOOL_TYPE = MOULT_FAC
+			.makeParametricType(Arrays.<Type> asList(INT_TYPE, BOOL_TYPE),
+					EXT_MOULT);
+	private static final IExpressionExtension EXT_MAKE_MOULT = MOULT_EXTNS
+			.get("MAKE MOULT");
+
+	public void testMoult() throws Exception {
+
+		doTypeTest("Moult(ℤ, BOOL)", MOULT_INT_BOOL_TYPE, MOULT_FAC);
+
+		final ExtendedExpression moult1True = MOULT_FAC.makeExtendedExpression(
+				EXT_MAKE_MOULT, Arrays.asList(ONE, ATOM_TRUE),
+				Collections.<Predicate> emptyList(), null);
+
+		doExpressionTest("makeMoult(1, TRUE)", moult1True, MOULT_INT_BOOL_TYPE,
+				MOULT_FAC, true);
+	}
+
 }

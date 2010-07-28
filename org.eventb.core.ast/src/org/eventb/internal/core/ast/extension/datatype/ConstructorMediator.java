@@ -16,7 +16,6 @@ import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPR
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
@@ -183,9 +182,8 @@ public class ConstructorMediator extends DatatypeMediator implements
 	// FIXME we may wish to have priorities and custom type check methods, thus
 	// fully implementing methods from IExpressionExtension
 
-	public ConstructorMediator(String typeName,
-			Map<String, ITypeParameter> typeParams,
-			IExpressionExtension typeConstructor) {
+	public ConstructorMediator(IExpressionExtension typeConstructor,
+			List<ITypeParameter> typeParams) {
 		super(typeParams);
 		this.typeConstructor = typeConstructor;
 	}
@@ -198,10 +196,8 @@ public class ConstructorMediator extends DatatypeMediator implements
 	@Override
 	public void addConstructor(final String name, final String id,
 			final List<IArgumentType> argumentTypes) {
-		final List<ITypeParameter> typePrmsList = new ArrayList<ITypeParameter>(
-				typeParams.values());
 		final IExpressionExtension constructor = new ConstructorExtension(name,
-				id, argumentTypes, typeConstructor, typePrmsList);
+				id, argumentTypes, typeConstructor, typeParams);
 		extensions.add(constructor);
 	}
 

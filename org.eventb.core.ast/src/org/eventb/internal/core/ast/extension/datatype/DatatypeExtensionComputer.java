@@ -33,34 +33,23 @@ public class DatatypeExtensionComputer {
 
 	public Map<String, IExpressionExtension> compute() {
 		final Map<String, IExpressionExtension> result = new HashMap<String, IExpressionExtension>();
-		final String typeName = extension.getTypeName();
 		final TypeConstrMediator typeMed = new TypeConstrMediator(extension);
 		extension.addTypeParameters(typeMed);
 		final IExpressionExtension typeConstructor = typeMed.getTypeConstructor();
 		assert typeConstructor.isATypeConstructor();
 		addExtension(result, typeConstructor);
-		List<ITypeParameter> typePrmList = typeMed.getTypeParams();
-		final Map<String, ITypeParameter> typeParams = makeMap(typePrmList);
+		final List<ITypeParameter> typeParams = typeMed.getTypeParams();
 
-		final ConstructorMediator consMed = new ConstructorMediator(typeName,
-				typeParams, typeConstructor);
+		final ConstructorMediator consMed = new ConstructorMediator(typeConstructor,
+				typeParams);
 		extension.addConstructors(consMed);
 		addExtensions(result, consMed.getExtensions());
 
-		final DestructorMediator destMed = new DestructorMediator(typeName,
-				typeParams, typeConstructor);
+		final DestructorMediator destMed = new DestructorMediator(typeConstructor,
+				typeParams);
 		extension.addDestructors(destMed);
 		addExtensions(result, destMed.getExtensions());
 
-		return result;
-	}
-
-	private static Map<String, ITypeParameter> makeMap(
-			List<ITypeParameter> typePrmList) {
-		final Map<String, ITypeParameter> result = new HashMap<String, ITypeParameter>();
-		for (ITypeParameter parameter : typePrmList) {
-			result.put(parameter.getName(), parameter);
-		}
 		return result;
 	}
 
