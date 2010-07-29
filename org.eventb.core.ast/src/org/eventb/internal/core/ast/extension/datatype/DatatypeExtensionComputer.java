@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
@@ -26,9 +27,11 @@ import org.eventb.core.ast.extension.datatype.ITypeParameter;
 public class DatatypeExtensionComputer {
 
 	private final IDatatypeExtension extension;
+	private final FormulaFactory factory;
 
-	public DatatypeExtensionComputer(IDatatypeExtension extension) {
+	public DatatypeExtensionComputer(IDatatypeExtension extension, FormulaFactory factory) {
 		this.extension = extension;
+		this.factory = factory;
 	}
 
 	public Map<String, IExpressionExtension> compute() {
@@ -41,12 +44,12 @@ public class DatatypeExtensionComputer {
 		final List<ITypeParameter> typeParams = typeMed.getTypeParams();
 
 		final ConstructorMediator consMed = new ConstructorMediator(typeConstructor,
-				typeParams);
+				typeParams, factory);
 		extension.addConstructors(consMed);
 		addExtensions(result, consMed.getExtensions());
 
 		final DestructorMediator destMed = new DestructorMediator(typeConstructor,
-				typeParams);
+				typeParams, factory);
 		extension.addDestructors(destMed);
 		addExtensions(result, destMed.getExtensions());
 

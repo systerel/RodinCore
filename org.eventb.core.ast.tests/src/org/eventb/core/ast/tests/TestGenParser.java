@@ -2052,7 +2052,7 @@ public class TestGenParser extends AbstractTests {
 
 	};
 
-	private static final Map<String, IExpressionExtension> LIST_EXTNS = FormulaFactory
+	private static final Map<String, IExpressionExtension> LIST_EXTNS = ff
 			.getExtensions(LIST_TYPE);
 	private static final FormulaFactory LIST_FAC = FormulaFactory
 			.getInstance(new HashSet<IFormulaExtension>(LIST_EXTNS.values()));	
@@ -2629,7 +2629,7 @@ public class TestGenParser extends AbstractTests {
 
 	};
 	
-	private static final Map<String, IExpressionExtension> MOULT_EXTNS = FormulaFactory
+	private static final Map<String, IExpressionExtension> MOULT_EXTNS = ff
 			.getExtensions(MOULT_TYPE);
 	private static final FormulaFactory MOULT_FAC = FormulaFactory
 			.getInstance(new HashSet<IFormulaExtension>(MOULT_EXTNS.values()));
@@ -2651,6 +2651,129 @@ public class TestGenParser extends AbstractTests {
 
 		doExpressionTest("makeMoult(1, TRUE)", moult1True, MOULT_INT_BOOL_TYPE,
 				MOULT_FAC, true);
+	}
+
+	static class NoInducType implements IDatatypeExtension {
+
+		public static final String CONS1 = "CONS1 ID";
+		public static final String CONS2 = "CONS2 ID";
+		public static final String CONS3 = "CONS3 ID";
+		
+		private static final String TYPE_NAME = "NoInduc";
+		private static final String TYPE_IDENTIFIER = "NoInduc Id";
+		private static final String GROUP_IDENTIFIER = "NoInduc Group";
+		
+		@Override
+		public String getTypeName() {
+			return TYPE_NAME;
+		}
+
+		@Override
+		public String getId() {
+			return TYPE_IDENTIFIER;
+		}
+		
+		@Override
+		public String getGroupId() {
+			return GROUP_IDENTIFIER;
+		}
+
+		@Override
+		public void addTypeParameters(ITypeConstructorMediator mediator) {
+			mediator.addTypeParam("S");			
+			mediator.addTypeParam("T");			
+		}
+
+		@Override
+		public void addConstructors(IConstructorMediator mediator) {
+			final ITypeParameter typeS = mediator.getTypeParameter("S");
+			final IArgumentType refS = mediator.newArgumentType(typeS);
+			
+			final ITypeParameter typeT = mediator.getTypeParameter("T");
+			final IArgumentType refT = mediator.newArgumentType(typeT);
+			
+			final IntegerType intType = mediator.makeIntegerType();
+			final PowerSetType powInt = mediator.makePowerSetType(intType);
+			final IArgumentType argPowInt = mediator.newArgumentType(powInt);
+
+			mediator.addConstructor("cons1", CONS1,
+					asList(refS, argPowInt, refT));
+
+			final IArgumentType powS = mediator.makePowerSetType(refS);
+			final IArgumentType prodPowIntT = mediator.makeProductType(
+					argPowInt, refT);
+			mediator.addConstructor("cons2", CONS2,
+					asList(powS, prodPowIntT));
+			
+			final IArgumentType relST = mediator.makeRelationalType(refS, refT);
+			mediator.addConstructor("cons3", CONS3, asList(relST));
+		}
+
+		@Override
+		public void addDestructors(IDestructorMediator mediator) {
+			// no destructor
+		}
+
+	}
+
+	private static final IDatatypeExtension NO_INDUC_TYPE = new NoInducType();
+
+	private static final Map<String, IExpressionExtension> NO_INDUC_EXTNS = ff
+			.getExtensions(NO_INDUC_TYPE);
+	private static final FormulaFactory NO_INDUC_FAC = FormulaFactory
+			.getInstance(new HashSet<IFormulaExtension>(NO_INDUC_EXTNS.values()));
+	private static final IExpressionExtension EXT_NO_INDUC = NO_INDUC_EXTNS
+			.get(NO_INDUC_TYPE.getId());
+	private static final ParametricType NO_INDUC_INT_BOOL_TYPE = NO_INDUC_FAC
+			.makeParametricType(Arrays.<Type> asList(INT_TYPE, BOOL_TYPE),
+					EXT_NO_INDUC);
+
+	public void testNoInducType() throws Exception {
+		doTypeTest("NoInduc(ℤ, BOOL)", NO_INDUC_INT_BOOL_TYPE, NO_INDUC_FAC);
+	}
+
+	public void testArgSimpleType() throws Exception {
+		final IExpressionExtension extCons1 = NO_INDUC_EXTNS
+				.get(NoInducType.CONS1);
+
+		final ExtendedExpression c1Sing0True = NO_INDUC_FAC
+				.makeExtendedExpression(extCons1, Arrays.asList(ONE,
+						NO_INDUC_FAC.makeSetExtension(ZERO, null), ATOM_TRUE),
+						Collections.<Predicate> emptyList(), null);
+
+		doExpressionTest("cons1(1, {0}, TRUE)", c1Sing0True,
+				NO_INDUC_INT_BOOL_TYPE, NO_INDUC_FAC, true);
+	}
+
+	public void testArgPowerSetType() throws Exception {
+		final IExpressionExtension extCons2 = NO_INDUC_EXTNS
+				.get(NoInducType.CONS2);
+
+		final ExtendedExpression c2Sing2MapSing0True = NO_INDUC_FAC
+				.makeExtendedExpression(extCons2, Arrays.asList(
+						NO_INDUC_FAC.makeSetExtension(ONE, null),
+						NO_INDUC_FAC.makeBinaryExpression(MAPSTO,
+								NO_INDUC_FAC.makeSetExtension(ZERO, null),
+								ATOM_TRUE, null)), Collections
+						.<Predicate> emptyList(), null);
+
+		doExpressionTest("cons2({1}, {0} ↦ TRUE)", c2Sing2MapSing0True,
+				NO_INDUC_INT_BOOL_TYPE, NO_INDUC_FAC, true);
+	}
+
+	public void testArgRelationalType() throws Exception {
+		final IExpressionExtension extCons3 = NO_INDUC_EXTNS
+				.get(NoInducType.CONS3);
+
+		final ExtendedExpression c3SingMaps0True = NO_INDUC_FAC
+				.makeExtendedExpression(extCons3, Arrays.<Expression>asList(
+						NO_INDUC_FAC.makeSetExtension(Arrays.<Expression>asList(
+								NO_INDUC_FAC.makeBinaryExpression(MAPSTO,
+								ZERO, ATOM_TRUE, null)), null)), Collections
+						.<Predicate> emptyList(), null);
+
+		doExpressionTest("cons3({0 ↦ TRUE})", c3SingMaps0True,
+				NO_INDUC_INT_BOOL_TYPE, NO_INDUC_FAC, true);
 	}
 
 }

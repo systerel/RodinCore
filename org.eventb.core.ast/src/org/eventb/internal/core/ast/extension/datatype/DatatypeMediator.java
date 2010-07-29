@@ -15,21 +15,25 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.datatype.IArgumentType;
 import org.eventb.core.ast.extension.datatype.IDatatypeMediator;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
+import org.eventb.internal.core.ast.extension.TypeMediator;
 
 /**
  * @author Nicolas Beauger
  * 
  */
-public class DatatypeMediator implements IDatatypeMediator {
+public class DatatypeMediator extends TypeMediator implements IDatatypeMediator {
 
 	protected final List<ITypeParameter> typeParams;
 	protected final Set<IExpressionExtension> extensions = new HashSet<IExpressionExtension>();
 
-	public DatatypeMediator(List<ITypeParameter> typeParams) {
+	public DatatypeMediator(List<ITypeParameter> typeParams, FormulaFactory factory) {
+		super(factory);
 		this.typeParams = typeParams;
 	}
 
@@ -46,6 +50,27 @@ public class DatatypeMediator implements IDatatypeMediator {
 	@Override
 	public IArgumentType newArgumentType(ITypeParameter type) {
 		return new ArgTypeParamRef(type);
+	}
+
+	@Override
+	public IArgumentType newArgumentType(Type type) {
+		return new ArgSimpleType(type);
+	}
+
+	@Override
+	public IArgumentType makePowerSetType(IArgumentType arg) {
+		return new ArgPowerSet(arg);
+	}
+
+	@Override
+	public IArgumentType makeProductType(IArgumentType left, IArgumentType right) {
+		return new ArgProduct(left, right);
+	}
+
+	@Override
+	public IArgumentType makeRelationalType(IArgumentType left,
+			IArgumentType right) {
+		return new ArgRelational(left, right);
 	}
 
 	@Override

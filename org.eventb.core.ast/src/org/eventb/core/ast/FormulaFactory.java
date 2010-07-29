@@ -101,12 +101,19 @@ public class FormulaFactory {
 	}
 
 	/**
+	 * Computes extensions out of the given data type.
+	 * <p>
+	 * It is possible to have the data type make references to other parametric
+	 * types (through argument types or return types) provided that these other
+	 * types are known by this factory.
+	 * </p>
+	 * 
 	 * @since 2.0
 	 */
-	public static Map<String, IExpressionExtension> getExtensions(
+	public Map<String, IExpressionExtension> getExtensions(
 			IDatatypeExtension extension) {
 		// FIXME returned extensions should be unique
-		return new DatatypeExtensionComputer(extension).compute();
+		return new DatatypeExtensionComputer(extension, this).compute();
 	}
 	
 	protected FormulaFactory() {

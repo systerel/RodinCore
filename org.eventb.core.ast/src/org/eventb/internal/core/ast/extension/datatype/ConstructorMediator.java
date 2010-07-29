@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
@@ -183,8 +184,8 @@ public class ConstructorMediator extends DatatypeMediator implements
 	// fully implementing methods from IExpressionExtension
 
 	public ConstructorMediator(IExpressionExtension typeConstructor,
-			List<ITypeParameter> typeParams) {
-		super(typeParams);
+			List<ITypeParameter> typeParams, FormulaFactory factory) {
+		super(typeParams, factory);
 		this.typeConstructor = typeConstructor;
 	}
 
