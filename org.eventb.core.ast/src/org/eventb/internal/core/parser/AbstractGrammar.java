@@ -14,14 +14,14 @@ import static org.eventb.internal.core.parser.OperatorRegistry.GROUP0;
 import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.COMPATIBLE;
 import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.LEFT_PRIORITY;
 import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.RIGHT_PRIORITY;
-import static org.eventb.internal.core.parser.SubParsers.IDENT_SUBPARSER;
-import static org.eventb.internal.core.parser.SubParsers.INTLIT_SUBPARSER;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.Identifier;
+import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.extension.CycleError;
 import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.internal.core.lexer.Token;
@@ -88,9 +88,8 @@ public abstract class AbstractGrammar {
 		opRegistry.addOperator(_OPEN, OPEN_ID, GROUP0, false);
 		addOpenClose("(", ")");
 		
-		// TODO call IntegerLiteral.init() and Identifier.init()
-		subParsers.addNud(_INTLIT, INTLIT_SUBPARSER);
-		subParsers.addNud(_IDENT, IDENT_SUBPARSER);
+		IntegerLiteral.init(this);
+		Identifier.init(this);
 		subParsers.addNud(_LPAR, MainParsers.CLOSED_SUGAR);
 		addOperators();
 		addOperatorRelationships();
@@ -233,18 +232,11 @@ public abstract class AbstractGrammar {
 	 *            <code>false</code> if it is the left child or a unique child
 	 * @param childKind
 	 * @param parentKind
-	 * FIXME remove version argument, each grammar should answer separately
 	 * @return <code>true</code> iff parentheses are needed
 	 * @since 2.0
 	 */
 	public boolean needsParentheses(boolean isRightChild, int childKind,
 			int parentKind) {
-//		if (childKind == parentKind) {
-//			// FIXME false for maplets
-//			// FIXME missing case for 1 + - 2 (PLUS UNMINUS)
-//			// FIXME false for FUNIMAGE
-//			return true;
-//		}
 		if (parentKind == _EOF) { // TODO maybe not needed
 			return false;
 		}
