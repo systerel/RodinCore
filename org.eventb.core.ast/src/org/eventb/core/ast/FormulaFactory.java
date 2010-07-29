@@ -67,6 +67,9 @@ public class FormulaFactory {
 	// tags of extensions managed by this formula factory
 	private final Map<Integer, IFormulaExtension> extensions;
 	
+	// already computed datatype extensions
+	private final Map<IDatatypeExtension, Map<String, IExpressionExtension>> datatypeCache = new HashMap<IDatatypeExtension, Map<String, IExpressionExtension>>();
+	
 	private final BMath grammar;
 	
 	/**
@@ -107,13 +110,19 @@ public class FormulaFactory {
 	 * types (through argument types or return types) provided that these other
 	 * types are known by this factory.
 	 * </p>
+	 * <p>
 	 * 
+	 * </p>
 	 * @since 2.0
 	 */
-	public Map<String, IExpressionExtension> getExtensions(
+	public synchronized Map<String, IExpressionExtension> getExtensions(
 			IDatatypeExtension extension) {
-		// FIXME returned extensions should be unique
-		return new DatatypeExtensionComputer(extension, this).compute();
+		Map<String, IExpressionExtension> cached = datatypeCache.get(extension);
+		if (cached == null) {
+			cached = new DatatypeExtensionComputer(extension, this).compute();
+			datatypeCache.put(extension, cached);
+		}
+		return cached;
 	}
 	
 	protected FormulaFactory() {

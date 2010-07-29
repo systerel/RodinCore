@@ -2776,4 +2776,22 @@ public class TestGenParser extends AbstractTests {
 				NO_INDUC_INT_BOOL_TYPE, NO_INDUC_FAC, true);
 	}
 
+	public void testDatatypeSameExtensions() throws Exception {
+		final Map<String, IExpressionExtension> extns1 = ff
+				.getExtensions(NO_INDUC_TYPE);
+		final Map<String, IExpressionExtension> extns2 = ff
+				.getExtensions(NO_INDUC_TYPE);
+		 final IExpressionExtension typeExt1 = extns1
+			.get(NO_INDUC_TYPE.getId());
+		 final IExpressionExtension typeExt2 = extns2
+			.get(NO_INDUC_TYPE.getId());
+		 assertSame("expected same extensions", typeExt1, typeExt2);
+		 
+		 final IExpressionExtension cons1Ext1 = extns1
+			.get(NoInducType.CONS1);
+		 final IExpressionExtension cons1Ext2 = extns2
+			.get(NoInducType.CONS1);
+		 assertSame("expected same extensions", cons1Ext1, cons1Ext2);
+		 
+	}
 }
