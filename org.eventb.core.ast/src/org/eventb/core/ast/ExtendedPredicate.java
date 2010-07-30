@@ -145,12 +145,12 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 
 	@Override
 	public Expression[] getChildExpressions() {
-		return childExpressions; // FIXME clone
+		return childExpressions.clone();
 	}
 
 	@Override
 	public Predicate[] getChildPredicates() {
-		return childPredicates; // FIXME clone
+		return childPredicates.clone();
 	}
 
 	@Override

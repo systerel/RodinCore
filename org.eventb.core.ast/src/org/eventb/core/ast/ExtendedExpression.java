@@ -212,12 +212,12 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 
 	@Override
 	public Expression[] getChildExpressions() {
-		return childExpressions.clone(); // FIXME clone
+		return childExpressions.clone();
 	}
 
 	@Override
 	public Predicate[] getChildPredicates() {
-		return childPredicates.clone(); // FIXME clone
+		return childPredicates.clone();
 	}
 
 	@Override
