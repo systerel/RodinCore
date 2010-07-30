@@ -57,9 +57,7 @@ public class ContentProvider implements ITreeContentProvider {
 
 	}
 
-	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		// do nothing
 	}
-
 }
