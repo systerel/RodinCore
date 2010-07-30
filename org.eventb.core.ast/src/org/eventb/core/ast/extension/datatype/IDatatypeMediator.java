@@ -28,6 +28,10 @@ public interface IDatatypeMediator extends ITypeMediator {
 
 	IArgumentType newArgumentType(Type type);
 
+	IArgument newArgument(IArgumentType type);
+
+	IArgument newArgument(String destructorName, IArgumentType type);
+	
 	IArgumentType makePowerSetType(IArgumentType arg);
 	
 	IArgumentType makeProductType(IArgumentType left, IArgumentType right);

@@ -15,8 +15,12 @@ package org.eventb.core.ast.extension.datatype;
  * @since 2.0
  *
  */
-public interface IDestructorMediator extends IDatatypeMediator {
+public interface IArgument {
 
-	void addDestructor(String name, String id, IArgumentType returnType);
-
+	IArgumentType getType();
+	
+	boolean hasDestructor();
+	
+	String getDestructor();
+	
 }

@@ -18,6 +18,7 @@ import java.util.Set;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.datatype.IArgument;
 import org.eventb.core.ast.extension.datatype.IArgumentType;
 import org.eventb.core.ast.extension.datatype.IDatatypeMediator;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
@@ -55,6 +56,16 @@ public class DatatypeMediator extends TypeMediator implements IDatatypeMediator 
 	@Override
 	public IArgumentType newArgumentType(Type type) {
 		return new ArgSimpleType(type);
+	}
+
+	@Override
+	public IArgument newArgument(IArgumentType type) {
+		return new Argument(type);
+	}
+
+	@Override
+	public IArgument newArgument(String destructorName, IArgumentType type) {
+		return new Argument(destructorName, type);
 	}
 
 	@Override

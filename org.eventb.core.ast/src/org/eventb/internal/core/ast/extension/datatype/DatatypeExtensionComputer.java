@@ -48,11 +48,6 @@ public class DatatypeExtensionComputer {
 		extension.addConstructors(consMed);
 		addExtensions(result, consMed.getExtensions());
 
-		final DestructorMediator destMed = new DestructorMediator(typeConstructor,
-				typeParams, factory);
-		extension.addDestructors(destMed);
-		addExtensions(result, destMed.getExtensions());
-
 		return result;
 	}
 

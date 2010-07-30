@@ -116,10 +116,10 @@ import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
+import org.eventb.core.ast.extension.datatype.IArgument;
 import org.eventb.core.ast.extension.datatype.IArgumentType;
 import org.eventb.core.ast.extension.datatype.IConstructorMediator;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
-import org.eventb.core.ast.extension.datatype.IDestructorMediator;
 import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
 import org.eventb.internal.core.parser.AbstractGrammar;
@@ -2052,17 +2052,11 @@ public class TestGenParser extends AbstractTests {
 			final ITypeParameter typeS = mediator.getTypeParameter("S");
 			
 			final IArgumentType refS = mediator.newArgumentType(typeS);
+			final IArgument head = mediator.newArgument("head", refS);
 			final IArgumentType listS = mediator.newArgumentTypeConstr(asList(refS));
-			mediator.addConstructor("cons", "CONS", Arrays.asList(refS, listS));
-		}
-
-		@Override
-		public void addDestructors(IDestructorMediator mediator) {
-			final ITypeParameter typeS = mediator.getTypeParameter("S");
-			final IArgumentType refS = mediator.newArgumentType(typeS);
-			mediator.addDestructor("head", "HEAD", refS);
-			final IArgumentType listS = mediator.newArgumentTypeConstr(asList(refS));
-			mediator.addDestructor("tail", "TAIL", listS);
+			final IArgument tail = mediator.newArgument("tail", listS);
+			
+			mediator.addConstructor("cons", "CONS", Arrays.asList(head, tail));
 		}
 
 	};
@@ -2078,8 +2072,8 @@ public class TestGenParser extends AbstractTests {
 			.makePowerSetType(LIST_INT_TYPE);
 	private static final IExpressionExtension EXT_NIL = LIST_EXTNS.get("NIL");
 	private static final IExpressionExtension EXT_CONS = LIST_EXTNS.get("CONS");
-	private static final IExpressionExtension EXT_HEAD = LIST_EXTNS.get("HEAD");
-	private static final IExpressionExtension EXT_TAIL = LIST_EXTNS.get("TAIL");
+	private static final IExpressionExtension EXT_HEAD = LIST_EXTNS.get("CONS.head");
+	private static final IExpressionExtension EXT_TAIL = LIST_EXTNS.get("CONS.tail");
 	
 	public void testDatatypeType() throws Exception {
 
@@ -2644,13 +2638,10 @@ public class TestGenParser extends AbstractTests {
 			final ITypeParameter typeT = mediator.getTypeParameter("T");
 			
 			final IArgumentType refS = mediator.newArgumentType(typeS);
+			final IArgument argS = mediator.newArgument(refS);
 			final IArgumentType refT = mediator.newArgumentType(typeT);
-			mediator.addConstructor("makeMoult", "MAKE MOULT", Arrays.asList(refS, refT));
-		}
-
-		@Override
-		public void addDestructors(IDestructorMediator mediator) {
-			// no destructors
+			final IArgument argT = mediator.newArgument(refT);
+			mediator.addConstructor("makeMoult", "MAKE MOULT", Arrays.asList(argS, argT));
 		}
 
 	};
@@ -2714,30 +2705,33 @@ public class TestGenParser extends AbstractTests {
 		public void addConstructors(IConstructorMediator mediator) {
 			final ITypeParameter typeS = mediator.getTypeParameter("S");
 			final IArgumentType refS = mediator.newArgumentType(typeS);
+			final IArgument argS = mediator.newArgument(refS);
 			
 			final ITypeParameter typeT = mediator.getTypeParameter("T");
 			final IArgumentType refT = mediator.newArgumentType(typeT);
+			final IArgument argT = mediator.newArgument(refT);
 			
 			final IntegerType intType = mediator.makeIntegerType();
 			final PowerSetType powInt = mediator.makePowerSetType(intType);
-			final IArgumentType argPowInt = mediator.newArgumentType(powInt);
+			final IArgumentType powIntType = mediator.newArgumentType(powInt);
+			final IArgument argPowInt = mediator.newArgument(powIntType);
 
 			mediator.addConstructor("cons1", CONS1,
-					asList(refS, argPowInt, refT));
+					asList(argS, argPowInt, argT));
 
 			final IArgumentType powS = mediator.makePowerSetType(refS);
+			final IArgument argPowS = mediator.newArgument(powS);
+			
 			final IArgumentType prodPowIntT = mediator.makeProductType(
-					argPowInt, refT);
+					powIntType, refT);
+			final IArgument argProdPowIntT = mediator.newArgument(prodPowIntT);
 			mediator.addConstructor("cons2", CONS2,
-					asList(powS, prodPowIntT));
+					asList(argPowS, argProdPowIntT));
 			
 			final IArgumentType relST = mediator.makeRelationalType(refS, refT);
-			mediator.addConstructor("cons3", CONS3, asList(relST));
-		}
-
-		@Override
-		public void addDestructors(IDestructorMediator mediator) {
-			// no destructor
+			final IArgument argRelST = mediator.newArgument(relST);
+			
+			mediator.addConstructor("cons3", CONS3, asList(argRelST));
 		}
 
 	}

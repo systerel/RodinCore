@@ -30,5 +30,4 @@ public interface IDatatypeExtension {
 	
 	void addConstructors(IConstructorMediator mediator);
 	
-	void addDestructors(IDestructorMediator mediator);
 }
