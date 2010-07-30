@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  * 
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - added enableRodinModifyListener() method
  *******************************************************************************/
 package org.rodinp.keyboard;
 
@@ -126,6 +127,17 @@ public class RodinKeyboardPlugin extends AbstractUIPlugin {
 		return null;
 	}
 
+	/**
+	 * Method to enable or disable listening by the keyboard modify listener.
+	 * 
+	 * @param enable
+	 *            <code>true</code> to enable modifications listening,
+	 *            <code>false</code> to deactivate listening
+	 */
+	public void enableRodinModifyListener(boolean enable) {
+		((RodinModifyListener) getRodinModifyListener()).setEnable(enable);
+	}
+	
 	private KeyboardView getKeyboardView() {
 		IWorkbenchPage page = RodinKeyboardPlugin.getActivePage();
 
