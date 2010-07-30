@@ -660,15 +660,10 @@ public class UnaryExpression extends Expression {
 	public Type toType(FormulaFactory factory) throws InvalidExpressionException {
 		if (getTag() != POW)
 			throw new InvalidExpressionException();
-		Type childAsType = child.toType();
+		Type childAsType = child.toType(factory);
 		return factory.makePowerSetType(childAsType);
 	}
 
-	@Override
-	public Type toType() throws InvalidExpressionException {
-		return toType(getFactory());
-	}
-	
 	@Override
 	protected void addGivenTypes(Set<GivenType> set) {
 		child.addGivenTypes(set);

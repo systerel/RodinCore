@@ -110,24 +110,23 @@ public abstract class Expression extends Formula<Expression> {
 	 * </p>
 	 * 
 	 * @param factory
-	 *            factory to use for building the result
+	 *            factory to use for building the result; it is guaranteed to
+	 *            recognize all extensions contained in this expression
 	 * @return the type represented by this expression
 	 * @throws InvalidExpressionException
 	 *             when this expression doesn't denote a type
 	 * @see Type#toExpression(FormulaFactory)
 	 * @see #isATypeExpression()
-	 * @deprecated use {@link #toType()} instead
 	 */
-	@Deprecated
-	public Type toType(FormulaFactory factory) throws InvalidExpressionException {
+	protected Type toType(FormulaFactory factory) throws InvalidExpressionException {
 		throw new InvalidExpressionException();
 	}
 	
 	/**
 	 * @since 2.0
 	 */
-	public Type toType() throws InvalidExpressionException {
-		throw new InvalidExpressionException();
+	public final Type toType() throws InvalidExpressionException {
+		return toType(getFactory());
 	}
 	
 	/**

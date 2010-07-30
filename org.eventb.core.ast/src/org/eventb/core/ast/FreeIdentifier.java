@@ -277,17 +277,11 @@ public class FreeIdentifier extends Identifier {
 		return false;
 	}
 
-	@Deprecated
 	@Override
 	public Type toType(FormulaFactory factory) throws InvalidExpressionException {
 		return factory.makeGivenType(getName());
 	}
 
-	@Override
-	public Type toType() throws InvalidExpressionException {
-		return toType(getFactory());
-	}
-	
 	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		acc.inspect(this);

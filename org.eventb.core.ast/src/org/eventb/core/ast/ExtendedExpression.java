@@ -481,7 +481,6 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		return true;
 	}
 	
-	@Deprecated
 	@Override
 	public Type toType(FormulaFactory factory)
 			throws InvalidExpressionException {
@@ -489,14 +488,10 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 			throw new InvalidExpressionException();
 		}
 		final List<Type> typeParams = new ArrayList<Type>();
-		for(Expression child : childExpressions) {
-			typeParams.add(child.toType());
+		for (Expression child : childExpressions) {
+			typeParams.add(child.toType(factory));
 		}
 		return factory.makeParametricType(typeParams, extension);
 	}
 	
-	@Override
-	public Type toType() throws InvalidExpressionException {
-		return toType(getFactory());
-	}
 }
