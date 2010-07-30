@@ -168,6 +168,7 @@ public class TestGenParser extends AbstractTests {
 	protected static final FreeIdentifier FRID_f = ff.makeFreeIdentifier("f", null);
 	protected static final PredicateVariable PV_P = ff.makePredicateVariable("$P", null);
 	protected static final AtomicExpression INT = ff.makeAtomicExpression(Formula.INTEGER, null);
+	protected static final AtomicExpression BOOL = ff.makeAtomicExpression(Formula.BOOL, null);
 	protected static final UnaryExpression POW_INT = ff.makeUnaryExpression(POW, INT, null);
 	protected static final IntegerType INT_TYPE = ff.makeIntegerType();
 	protected static final BooleanType BOOL_TYPE = ff.makeBooleanType();
@@ -2854,4 +2855,32 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("prime(nil)", primeNil, facListPrime);
 	}
 	
+	public void testMixedTypesToType() throws Exception {
+		final Expression moultIntBool = MOULT_FAC.makeExtendedExpression(
+				EXT_MOULT, Arrays.<Expression> asList(INT, BOOL),
+				Collections.<Predicate> emptySet(), null);
+
+		final HashSet<IFormulaExtension> moultExtns = new HashSet<IFormulaExtension>(
+				MOULT_EXTNS.values());
+		final FormulaFactory listMoultFac = LIST_FAC.withExtensions(moultExtns);
+
+		
+		final Expression listMoult = listMoultFac.makeExtendedExpression(
+				EXT_LIST, Collections.<Expression> singleton(moultIntBool),
+				Collections.<Predicate> emptyList(), null);
+		
+		final ParametricType listMoultType = listMoultFac.makeParametricType(
+				Collections.<Type> singletonList(MOULT_INT_BOOL_TYPE), EXT_LIST);
+		
+		final Type powListMoultType = listMoultFac.makePowerSetType(listMoultType);
+		
+		doExpressionTest("List(Moult(ℤ, BOOL))", listMoult, powListMoultType,
+				listMoultFac, false);
+		
+		assertTrue("expected a type expression", listMoult.isATypeExpression());
+		assertEquals("unexpected type", listMoultType, listMoult.toType());
+		
+		doTypeTest("List(Moult(ℤ, BOOL))", listMoultType, listMoultFac);
+		doTypeTest("ℙ(List(Moult(ℤ, BOOL)))", powListMoultType, listMoultFac);
+	}
 }

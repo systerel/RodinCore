@@ -177,17 +177,26 @@ public class FormulaFactory {
 		return grammar;
 	}
 	
+	private static IllegalArgumentException newIllegalArgument(
+			IFormulaExtension extension) {
+		return new IllegalArgumentException(
+				"the extension is not supported by this factory: "
+						+ extension.getSyntaxSymbol());
+	}
+	
+	private void checkExtension(IFormulaExtension extension) {
+		if (!extensions.containsValue(extension)) {
+			throw newIllegalArgument(extension);
+		}
+	}
+
 	/**
 	 * @since 2.0
 	 */
 	public ExtendedExpression makeExtendedExpression(
 			IExpressionExtension extension, Expression[] expressions,
 			Predicate[] predicates, SourceLocation location, Type type) {
-		if (!extensions.containsValue(extension)) {
-			throw new IllegalArgumentException(
-					"the extension is not supported by this factory: "
-							+ extension.getSyntaxSymbol());
-		}
+		checkExtension(extension);
 		final int tag = ALL_EXTENSIONS.get(extension);
 		return new ExtendedExpression(tag, expressions, predicates, location,
 				this, extension, type);
@@ -223,11 +232,7 @@ public class FormulaFactory {
 	public ExtendedPredicate makeExtendedPredicate(
 			IPredicateExtension extension, Expression[] expressions,
 			Predicate[] predicates, SourceLocation location) {
-		if (!extensions.containsValue(extension)) {
-			throw new IllegalArgumentException(
-					"the extension is not supported by this factory: "
-							+ extension.getSyntaxSymbol());
-		}
+		checkExtension(extension);
 		final int tag = ALL_EXTENSIONS.get(extension);
 		return new ExtendedPredicate(tag, expressions, predicates, location,
 				this, extension);
@@ -1316,6 +1321,7 @@ public class FormulaFactory {
 	 */
 	public ParametricType makeParametricType(List<Type> typePrms,
 			IExpressionExtension exprExt) {
+		checkExtension(exprExt);
 		return new ParametricType(typePrms, exprExt);
 	}
 
