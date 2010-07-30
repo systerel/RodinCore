@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.core.ast.ExtensionHelper.ExtensionGatherer;
+import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.internal.core.ast.BindingSubstitution;
 import org.eventb.internal.core.ast.BoundIdentDeclRemover;
 import org.eventb.internal.core.ast.BoundIdentifierShifter;
@@ -1157,8 +1159,10 @@ public abstract class Formula<T extends Formula<T>> {
 	/**
 	 * @since 2.0
 	 */
-	protected FormulaFactory getFactory() {
-		return FormulaFactory.getDefault();
+	protected final FormulaFactory getFactory() {
+		final Set<IFormulaExtension> extensions = new HashSet<IFormulaExtension>();
+		accept(new ExtensionGatherer(extensions));
+		return FormulaFactory.getInstance(extensions);
 	}
 	
 	/**

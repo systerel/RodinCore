@@ -145,14 +145,19 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 
 	@Override
 	public Expression[] getChildExpressions() {
-		return childExpressions;
+		return childExpressions; // FIXME clone
 	}
 
 	@Override
 	public Predicate[] getChildPredicates() {
-		return childPredicates;
+		return childPredicates; // FIXME clone
 	}
 
+	@Override
+	public IPredicateExtension getExtension() {
+		return extension;
+	}
+	
 	private Formula<?>[] getChildren() {
 		return ExtensionHelper.concat(childExpressions, childPredicates);
 	}
@@ -213,11 +218,6 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 			BoundIdentDecl[] quantifiedIdents) {
 		ExtensionHelper.isLegible(childExpressions, childPredicates, result,
 				quantifiedIdents);
-	}
-
-	@Override
-	protected FormulaFactory getFactory() {
-		return ff;
 	}
 
 	@Override

@@ -104,6 +104,27 @@ public class FormulaFactory {
 	}
 
 	/**
+	 * Makes a new formula factory that recognizes extensions of this factory
+	 * plus given extensions.
+	 * 
+	 * <p>
+	 * Adding already recognized extensions has no effect. The resulting
+	 * recognized extensions are a union of known extensions and given
+	 * extensions.
+	 * </p>
+	 * 
+	 * @param addedExtns
+	 *            a set of extensions to add
+	 * @return a new factory
+	 * @since 2.0
+	 */
+	public FormulaFactory withExtensions(Set<IFormulaExtension> addedExtns) {
+		final Set<IFormulaExtension> newExtns = new HashSet<IFormulaExtension>(extensions.values());
+		newExtns.addAll(addedExtns);
+		return getInstance(newExtns);
+	}
+
+	/**
 	 * Computes extensions out of the given data type.
 	 * <p>
 	 * It is possible to have the data type make references to other parametric

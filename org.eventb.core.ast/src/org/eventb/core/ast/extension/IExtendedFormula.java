@@ -28,4 +28,5 @@ public interface IExtendedFormula {
 
 	Predicate[] getChildPredicates();
 
+	IFormulaExtension getExtension();
 }

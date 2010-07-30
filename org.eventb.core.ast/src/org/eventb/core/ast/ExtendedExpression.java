@@ -212,14 +212,19 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 
 	@Override
 	public Expression[] getChildExpressions() {
-		return childExpressions.clone();
+		return childExpressions.clone(); // FIXME clone
 	}
 
 	@Override
 	public Predicate[] getChildPredicates() {
-		return childPredicates.clone();
+		return childPredicates.clone(); // FIXME clone
 	}
 
+	@Override
+	public IExpressionExtension getExtension() {
+		return extension;
+	}
+	
 	@Override
 	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
 		if (this.getTag() != other.getTag()) {
@@ -273,11 +278,6 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		} else {
 			return extensionWD;
 		}
-	}
-
-	@Override
-	protected FormulaFactory getFactory() {
-		return ff;
 	}
 
 	@SuppressWarnings("unchecked")

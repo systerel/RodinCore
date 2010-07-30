@@ -132,7 +132,7 @@ import org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship;
  * complete.
  * 
  * @author Nicolas Beauger
- * FIXME remove this class (DO NOT COMMIT TO TRUNK !)
+ * TODO merge these tests with other tests (remove duplicates, add original)
  */
 public class TestGenParser extends AbstractTests {
 
@@ -713,6 +713,20 @@ public class TestGenParser extends AbstractTests {
 						extFac.makeFreeIdentifier("B", null)),
 				Collections.<Predicate> emptySet(), null);
 		doExpressionTest("A§B", expected, extFac);
+	}
+
+	public void testExtensionInFormula() throws Exception {
+		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
+				.<IFormulaExtension> singleton(DIRECT_PRODUCT));
+		final Expression prodAB = extFac.makeExtendedExpression(DIRECT_PRODUCT,
+				Arrays.<Expression> asList(
+						extFac.makeFreeIdentifier("A", null),
+						extFac.makeFreeIdentifier("B", null)),
+				Collections.<Predicate> emptySet(), null);
+
+		final Expression expected = ff.makeAssociativeExpression(BUNION,
+				Arrays.<Expression> asList(prodAB, prodAB), null);
+		doExpressionTest("(A§B) ∪ (A§B)", expected, extFac);
 	}
 
 	private static final IExpressionExtension MONEY = new IExpressionExtension() {
@@ -2585,6 +2599,17 @@ public class TestGenParser extends AbstractTests {
 				Collections.<Predicate> emptySet(), null);
 		doPredicateTest("prime(1)", expected, PRIME_FAC);
 	}
+	
+	public void testPredicateExtensionInFormula() throws Exception {
+		final Predicate primeOne = PRIME_FAC.makeExtendedPredicate(EXT_PRIME,
+				Arrays.<Expression> asList(ONE),
+				Collections.<Predicate> emptySet(), null);
+		final Predicate expected = PRIME_FAC.makeAssociativePredicate(LAND,
+				asList(primeOne, primeOne), null);
+		
+		doPredicateTest("prime(1) ∧ prime(1)", expected, PRIME_FAC);
+	}
+	
 	private static final IDatatypeExtension MOULT_TYPE = new IDatatypeExtension() {
 
 		private static final String TYPE_NAME = "Moult";
@@ -2794,4 +2819,39 @@ public class TestGenParser extends AbstractTests {
 		 assertSame("expected same extensions", cons1Ext1, cons1Ext2);
 		 
 	}
+	
+	public void testAddingExtensions() throws Exception {
+		final Predicate primeOne = PRIME_FAC.makeExtendedPredicate(EXT_PRIME,
+				Arrays.<Expression> asList(ONE),
+				Collections.<Predicate> emptySet(), null);
+
+		final Expression nil = LIST_FAC.makeExtendedExpression(EXT_NIL,
+				Collections.<Expression> emptyList(),
+				Collections.<Predicate> emptyList(), null);
+
+		final Expression listInt = LIST_FAC.makeExtendedExpression(EXT_LIST,
+				Collections.<Expression> singleton(INT),
+				Collections.<Predicate> emptyList(), null);
+
+		final Expression powListInt = LIST_FAC.makeUnaryExpression(POW,
+				listInt, null);
+
+		final Predicate nilInListInt = LIST_FAC.makeRelationalPredicate(IN,
+				nil, powListInt, null);
+
+		final FormulaFactory facListPrime = LIST_FAC.withExtensions(Collections
+				.<IFormulaExtension> singleton(EXT_PRIME));
+
+		final Predicate separate = facListPrime.makeAssociativePredicate(LAND,
+				asList(primeOne, nilInListInt), null);
+
+		doPredicateTest("prime(1) ∧ nil ∈ ℙ(List(ℤ))", separate, facListPrime);
+		
+		final Predicate primeNil = facListPrime.makeExtendedPredicate(EXT_PRIME,
+				Arrays.<Expression> asList(nil),
+				Collections.<Predicate> emptySet(), null);
+		
+		doPredicateTest("prime(nil)", primeNil, facListPrime);
+	}
+	
 }

@@ -13,6 +13,7 @@ package org.eventb.core.ast;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
@@ -25,6 +26,27 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  */
 /* package */class ExtensionHelper {
 
+	public static class ExtensionGatherer extends DefaultVisitor {
+		
+		private final Set<IFormulaExtension> extensions;
+
+		public ExtensionGatherer(Set<IFormulaExtension> extensions) {
+			this.extensions = extensions;
+		}
+		
+		@Override
+		public boolean enterExtendedExpression(ExtendedExpression expression) {
+			extensions.add(expression.getExtension());
+			return true;
+		}
+		
+		@Override
+		public boolean enterExtendedPredicate(ExtendedPredicate predicate) {
+			extensions.add(predicate.getExtension());
+			return true;
+		}
+	}
+	
 	public static Formula<?>[] concat(Expression[] expressions,
 			Predicate[] predicates) {
 		final Formula<?>[] children = new Formula<?>[expressions.length
