@@ -1,23 +1,24 @@
 package org.eventb.rubin.tests;
 
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
 
 import java.io.IOException;
 
 import org.eclipse.core.runtime.Path;
-import org.eventb.pp.PPProof;
-import org.eventb.pp.PPResult;
-import org.eventb.pp.PPResult.Result;
 import org.eventb.rubin.PredicateFrontEnd;
 import org.eventb.rubin.Sequent;
+import org.junit.Ignore;
 import org.junit.Test;
 
+/**
+ * Validation tests of newPP based on several examples from Rubin's book and
+ * others.
+ * 
+ * @author Laurent Voisin
+ */
 public class NewPPTests extends AbstractPPTests {
-	
-	public static final String FILE_PATH = "formulas/"; 
+
+	private static final String FILE_PATH = "formulas/";
 
 	/**
 	 * Runs the old predicate prover on a set of sequents taken from chapter 1
@@ -72,7 +73,7 @@ public class NewPPTests extends AbstractPPTests {
 	public void testChapter09() throws Exception {
 		testChapter("rubin_09");
 	}
-	
+
 	/**
 	 * Runs the old predicate prover on a set of sequents taken from chapter 10
 	 * of Jean E. Rubin's book.
@@ -90,59 +91,29 @@ public class NewPPTests extends AbstractPPTests {
 	public void testChapter11() throws Exception {
 		testChapter("rubin_11");
 	}
-	
+
 	@Test
 	public void testOthers() throws Exception {
 		testChapter("others");
 	}
-	
+
+	/*
+	 * This test allows to check specifically the formulas in the special file
+	 * "test". This is used only for debugging purposes.
+	 */
 	@Test
+	@Ignore
 	public void testTests() throws Exception {
 		testChapter("test");
 	}
-	
-	private void testChapter(String chapNo) throws IOException {
-		String fileName = getLocalPath(new Path(FILE_PATH + chapNo + ".txt"));
-		Sequent[] sequents = PredicateFrontEnd.parseFile(fileName);
+
+	private void testChapter(String name) throws IOException {
+		final String filePath = getLocalPath(new Path(FILE_PATH + name + ".txt"));
+		final Sequent[] sequents = PredicateFrontEnd.parseFile(filePath);
 		assertNotNull("Parser failed unexpectedly", sequents);
-		for (Sequent sequent: sequents) {
+		for (Sequent sequent : sequents) {
 			testSequent(sequent);
 		}
-	}
-	
-	protected void testSequent(Sequent sequent) throws IOException {
-		String name = sequent.getName();
-		
-//		if (!name.startsWith("VALID")) return;
-		
-		long start = System.currentTimeMillis();
-		System.out.println("-------------------");
-		System.out.println("Proving: " + name);
-		
-		// Translate to a prover sequent
-		typeCheck(sequent);
-
-		PPProof proof = new PPProof(sequent.getHypotheses(),sequent.getGoal(), null);
-		proof.translate();
-		proof.load();
-		proof.prove(400);
-//		proof.prove(-1);
-		PPResult ppr = proof.getResult();
-		
-		if (name.startsWith("VALIDPPFAILS")) {
-			// Test for an valid sequent that PP fails to discharge
-			assertEquals(name, ppr.getResult(), Result.valid);
-		} else if (name.startsWith("VALID")) {
-			// Test for a valid sequent
-			assertEquals(name, ppr.getResult(), Result.valid);
-		} else if (name.startsWith("INVALID")) {
-			// Test for an invalid sequent
-			assertTrue(name, !ppr.getResult().equals(Result.valid));
-		} else {
-			fail("Invalid name for sequent:\n" + sequent);
-		}
-		long stop = System.currentTimeMillis();
-		System.out.println("Time: " + (stop-start) + "ms");
 	}
 
 }
