@@ -9,6 +9,7 @@
 package org.eventb.internal.pp;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -56,40 +57,61 @@ public class PPReasoner extends XProverReasoner {
 		return new PPInput(reader);
 	}
 
-	public static void constructTest(Iterable<Predicate> hypotheses, Predicate goal) {
-		StringBuilder builder = new StringBuilder();
+	public static void constructTest(Iterable<Predicate> hypotheses,
+			Predicate goal) {
+		final StringBuilder builder = new StringBuilder();
 		builder.append("doTest(\n");
-		builder.append("mList(\n");
-		for (FreeIdentifier identifier : collectFreeIdentifiers(hypotheses, goal)) {
-			builder.append("\""+identifier.getName()+"\",");
-			builder.append("\""+identifier.getType().toString()+"\",");
-			builder.append("\n");
-		}
-		builder.delete(builder.length()-2, builder.length());
-		builder.append("\n");
-		
-		builder.append("),\n mSet(\n");
+		appendTypeEnvironment(builder, hypotheses, goal);
+		builder.append(", mSet(\n");
+		String sep = "\t";
 		for (Predicate predicate : hypotheses) {
-			builder.append("\""+predicate.toString()+"\",");
-			builder.append("\n");
+			builder.append(sep);
+			sep = ",\n\t";
+			appendString(builder, predicate);
 		}
-		builder.delete(builder.length()-2, builder.length());
-		builder.append("\n");
-		
-		builder.append("),");
-		builder.append("\""+goal.toString()+"\"");
-		
-		builder.append(",true);");
+		builder.append("\n), ");
+		appendString(builder, goal);
+		builder.append(", true);\n");
 		debug(builder.toString());
 	}
-	
-	private static Set<FreeIdentifier> collectFreeIdentifiers(Iterable<Predicate> hypotheses, Predicate goal) {
-		Set<FreeIdentifier> result = new HashSet<FreeIdentifier>();
-		for (Predicate predicate : hypotheses) {
-			result.addAll(Arrays.asList(predicate.getFreeIdentifiers()));
+
+	private static void appendTypeEnvironment(StringBuilder builder,
+			Iterable<Predicate> hypotheses, Predicate goal) {
+		builder.append("mList(\n");
+		final FreeIdentifier[] idents = collectFreeIdentifiers(hypotheses, goal);
+		String sep = "\t";
+		for (final FreeIdentifier ident : idents) {
+			builder.append(sep);
+			sep = ",\n\t";
+			appendString(builder, ident.getName());
+			builder.append(", ");
+			appendString(builder, ident.getType());
 		}
-		result.addAll(Arrays.asList(goal.getFreeIdentifiers()));
+		builder.append("\n)");
+	}
+
+	private static FreeIdentifier[] collectFreeIdentifiers(
+			Iterable<Predicate> hypotheses, Predicate goal) {
+		final Set<FreeIdentifier> idents = new HashSet<FreeIdentifier>();
+		for (Predicate predicate : hypotheses) {
+			idents.addAll(Arrays.asList(predicate.getFreeIdentifiers()));
+		}
+		idents.addAll(Arrays.asList(goal.getFreeIdentifiers()));
+		final FreeIdentifier[] result = new FreeIdentifier[idents.size()];
+		idents.toArray(result);
+		Arrays.sort(result, new Comparator<FreeIdentifier>() {
+			@Override
+			public int compare(FreeIdentifier o1, FreeIdentifier o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
 		return result;
+	}
+
+	private static void appendString(StringBuilder builder, Object obj) {
+		builder.append("\"");
+		builder.append(obj);
+		builder.append("\"");
 	}
 
 }
