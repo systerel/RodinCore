@@ -18,10 +18,12 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.rubin.PredicateFrontEnd;
 import org.eventb.rubin.Sequent;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.clearsy.atelierb.provers.core.AtbProversCore;
 
+@Ignore
 public class OldPPTests extends AbstractPPTests {
 	
 	public static final String FILE_PATH = "formulas/"; 
