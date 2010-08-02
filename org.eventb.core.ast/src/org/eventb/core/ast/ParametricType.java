@@ -45,14 +45,14 @@ public class ParametricType extends Type {
 	}
 
 	private final List<Type> typeParameters;
-	private final IExpressionExtension exprExtension;
+	private final IExpressionExtension typeConstructor;
 
 	protected ParametricType(List<Type> typeParameters,
-			IExpressionExtension exprExtension) {
+			IExpressionExtension typeConstructor) {
 		super(isSolved(typeParameters));
-		assert exprExtension.isATypeConstructor();
+		assert typeConstructor.isATypeConstructor();
 		this.typeParameters = new ArrayList<Type>(typeParameters);
-		this.exprExtension = exprExtension;
+		this.typeConstructor = typeConstructor;
 	}
 
 	@Override
@@ -67,12 +67,12 @@ public class ParametricType extends Type {
 		final List<Expression> exprs = buildExprs(typeParameters, factory);
 		final List<Predicate> preds = Collections.<Predicate>emptyList();
 		return factory
-				.makeExtendedExpression(exprExtension, exprs, preds, null);
+				.makeExtendedExpression(typeConstructor, exprs, preds, null);
 	}
 
 	@Override
 	protected void buildString(StringBuilder buffer) {
-		buffer.append(exprExtension.getSyntaxSymbol());
+		buffer.append(typeConstructor.getSyntaxSymbol());
 		if (typeParameters.isEmpty()) {
 			return;
 		}
@@ -90,7 +90,7 @@ public class ParametricType extends Type {
 	}
 	
 	public IExpressionExtension getExprExtension() {
-		return exprExtension;
+		return typeConstructor;
 	}
 	
 	// FIXME using a client implemented interface IExpressionExtension
@@ -103,13 +103,13 @@ public class ParametricType extends Type {
 		if (!(obj instanceof ParametricType))
 			return false;
 		final ParametricType other = (ParametricType) obj;
-		return exprExtension.equals(other.exprExtension)
+		return typeConstructor.equals(other.typeConstructor)
 				&& typeParameters.equals(other.typeParameters);
 	}
 
 	@Override
 	public int hashCode() {
-		final int extHash = exprExtension.hashCode();
+		final int extHash = typeConstructor.hashCode();
 		final int typePrmHash = combineHashCodes(typeParameters);
 		return combineHashCodes(extHash, typePrmHash);
 	}

@@ -1320,9 +1320,9 @@ public class FormulaFactory {
 	 * @since 2.0
 	 */
 	public ParametricType makeParametricType(List<Type> typePrms,
-			IExpressionExtension exprExt) {
-		checkExtension(exprExt);
-		return new ParametricType(typePrms, exprExt);
+			IExpressionExtension typeConstructor) {
+		checkExtension(typeConstructor);
+		return new ParametricType(typePrms, typeConstructor);
 	}
 
 	/**
