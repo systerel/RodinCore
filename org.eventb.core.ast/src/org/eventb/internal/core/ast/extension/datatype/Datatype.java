@@ -49,8 +49,7 @@ public class Datatype implements IDatatype {
 
 		public IExpressionExtension getDestructor(int argNumber) {
 			if (argNumber < 0 || argNumber >= destructors.size()) {
-				throw new IllegalArgumentException("no such argument number "
-						+ argNumber + " for constructor " + constructor.getId());
+				return null;
 			}
 			return destructors.get(argNumber);
 		}
@@ -88,26 +87,22 @@ public class Datatype implements IDatatype {
 		return typeConstructor;
 	}
 
-	private Constructor getConstr(String constructorId) {
-		final Constructor constr = constructors.get(constructorId);
-		if (constr == null) {
-			throw new IllegalArgumentException("unknown constructor id "
-					+ constructorId + " for datatype "
-					+ typeConstructor.getId());
-		}
-		return constr;
-	}
-
 	@Override
 	public IExpressionExtension getConstructor(String constructorId) {
-		final Constructor constructor = getConstr(constructorId);
-		return constructor.getConstructor();
+		final Constructor constr = constructors.get(constructorId);
+		if (constr == null) {
+			return null;
+		}
+		return constr.getConstructor();
 	}
 
 	@Override
 	public IExpressionExtension getDestructor(String constructorId,
 			int argNumber) {
-		final Constructor constr = getConstr(constructorId);
+		final Constructor constr = constructors.get(constructorId);
+		if (constr == null) {
+			return null;
+		}
 		return constr.getDestructor(argNumber);
 	}
 
