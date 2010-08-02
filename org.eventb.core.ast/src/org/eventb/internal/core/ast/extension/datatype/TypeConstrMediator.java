@@ -172,6 +172,12 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 
 	@Override
 	public void addTypeParam(String name) {
+		for (ITypeParameter param : typeParams) {
+			if (param.getName().equals(name)) {
+				throw new IllegalArgumentException("Type Parameter " + name
+						+ " is already defined");
+			}
+		}
 		typeParams.add(new TypeParam(name));
 	}
 
