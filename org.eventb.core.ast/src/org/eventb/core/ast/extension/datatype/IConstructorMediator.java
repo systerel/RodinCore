@@ -66,28 +66,6 @@ public interface IConstructorMediator extends ITypeMediator {
 	IArgumentType newArgumentType(Type type);
 
 	/**
-	 * Makes a new argument with the given argument type and no associated
-	 * destructor.
-	 * 
-	 * @param type
-	 *            a new argument
-	 * @return a new argument
-	 */
-	IArgument newArgument(IArgumentType type);
-
-	/**
-	 * Makes a new argument with the given argument type and an associated
-	 * destructor of the given name (operator symbol).
-	 * 
-	 * @param destructorName
-	 *            the name of the destructor
-	 * @param type
-	 *            a new argument
-	 * @return a new argument
-	 */
-	IArgument newArgument(String destructorName, IArgumentType type);
-
-	/**
 	 * Makes a new argument type whose type is the powerset of the given
 	 * argument type.
 	 * 
@@ -123,11 +101,36 @@ public interface IConstructorMediator extends ITypeMediator {
 	IArgumentType makeRelationalType(IArgumentType left, IArgumentType right);
 
 	/**
+	 * Makes a new argument type whose type is the type constructor of this
+	 * datatype, parameterized with the given type parameters.
+	 * 
 	 * @param typeParams
 	 *            type parameters
 	 * @return a new type constructor argument type
 	 */
 	IArgumentType newArgumentTypeConstr(List<IArgumentType> typeParams);
+
+	/**
+	 * Makes a new argument with the given argument type and no associated
+	 * destructor.
+	 * 
+	 * @param type
+	 *            a new argument
+	 * @return a new argument
+	 */
+	IArgument newArgument(IArgumentType type);
+
+	/**
+	 * Makes a new argument with the given argument type and an associated
+	 * destructor of the given name (operator symbol).
+	 * 
+	 * @param destructorName
+	 *            the name of the destructor
+	 * @param type
+	 *            a new argument
+	 * @return a new argument
+	 */
+	IArgument newArgument(String destructorName, IArgumentType type);
 
 	/**
 	 * Adds a new constructor with the given name, id but no arguments.
