@@ -306,39 +306,44 @@ public class ConstructorMediator extends DatatypeMediator implements
 	
 	}
 
-	private final IExpressionExtension typeConstructor;
-
 	// FIXME we may wish to have priorities and custom type check methods, thus
 	// fully implementing methods from IExpressionExtension
 
 	public ConstructorMediator(IExpressionExtension typeConstructor,
 			List<ITypeParameter> typeParams, FormulaFactory factory) {
-		super(typeParams, factory);
-		this.typeConstructor = typeConstructor;
+		super(typeConstructor, typeParams, factory);
 	}
 
 	@Override
-	public void addConstructor(final String name, final String id) {
+	public void addConstructor(String name, String id) {
 		addConstructor(name, id, Collections.<IArgument> emptyList());
 	}
 
 	@Override
-	public void addConstructor(final String name, final String id,
-			final List<IArgument> arguments) {
+	public void addConstructor(String name, String id,
+			List<IArgument> arguments) {
+		final IExpressionExtension typeConstructor = datatype.getTypeConstructor();
+		final List<ITypeParameter> typeParams = datatype.getTypeParameters();
 		final IExpressionExtension constructor = new ConstructorExtension(name,
 				id, arguments, typeConstructor, typeParams);
-		extensions.add(constructor);
 
+		// FIXME problem with duplicate arguments with destructors:
+		// the destructor is built several times
+		final List<IExpressionExtension> destructors = new ArrayList<IExpressionExtension>();
 		for (IArgument arg : arguments) {
+			final IExpressionExtension destructor;
 			if (arg.hasDestructor()) {
 				final String destructorName = arg.getDestructor();
 				final String destructorId = id + "." + destructorName;
-				final IExpressionExtension destructor = new DestructorExtension(
-						destructorName, destructorId, arg.getType(),
-						typeConstructor, typeParams);
-				extensions.add(destructor);
+				destructor = new DestructorExtension(destructorName,
+						destructorId, arg.getType(), typeConstructor,
+						typeParams);
+			} else {
+				destructor = null;
 			}
+			destructors.add(destructor);
 		}
+		datatype.addConstructor(constructor, destructors);
 	}
 
 }

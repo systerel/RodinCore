@@ -10,16 +10,14 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension.datatype;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.datatype.IArgument;
 import org.eventb.core.ast.extension.datatype.IArgumentType;
+import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeMediator;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
 import org.eventb.internal.core.ast.extension.TypeMediator;
@@ -30,17 +28,17 @@ import org.eventb.internal.core.ast.extension.TypeMediator;
  */
 public class DatatypeMediator extends TypeMediator implements IDatatypeMediator {
 
-	protected final List<ITypeParameter> typeParams;
-	protected final Set<IExpressionExtension> extensions = new HashSet<IExpressionExtension>();
+	protected final Datatype datatype;
 
-	public DatatypeMediator(List<ITypeParameter> typeParams, FormulaFactory factory) {
+	public DatatypeMediator(IExpressionExtension typeConstructor,
+			List<ITypeParameter> typeParams, FormulaFactory factory) {
 		super(factory);
-		this.typeParams = typeParams;
+		this.datatype = new Datatype(typeConstructor, typeParams);
 	}
 
 	@Override
 	public ITypeParameter getTypeParameter(String name) {
-		for (ITypeParameter param : typeParams) {
+		for (ITypeParameter param : datatype.getTypeParameters()) {
 			if (param.getName().equals(name)) {
 				return param;
 			}
@@ -88,8 +86,8 @@ public class DatatypeMediator extends TypeMediator implements IDatatypeMediator 
 	public IArgumentType newArgumentTypeConstr(List<IArgumentType> types) {
 		return new ArgGenTypeRef(types);
 	}
-
-	public Set<IExpressionExtension> getExtensions() {
-		return Collections.unmodifiableSet(extensions);
+	
+	public IDatatype getDatatype() {
+		return datatype;
 	}
 }

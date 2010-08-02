@@ -13,10 +13,10 @@ package org.eventb.internal.core.ast.extension.datatype;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
 
@@ -34,7 +34,7 @@ public class DatatypeExtensionComputer {
 		this.factory = factory;
 	}
 
-	public Map<String, IExpressionExtension> compute() {
+	public IDatatype compute() {
 		final Map<String, IExpressionExtension> result = new HashMap<String, IExpressionExtension>();
 		final TypeConstrMediator typeMed = new TypeConstrMediator(extension);
 		extension.addTypeParameters(typeMed);
@@ -46,16 +46,8 @@ public class DatatypeExtensionComputer {
 		final ConstructorMediator consMed = new ConstructorMediator(typeConstructor,
 				typeParams, factory);
 		extension.addConstructors(consMed);
-		addExtensions(result, consMed.getExtensions());
 
-		return result;
-	}
-
-	private static void addExtensions(Map<String, IExpressionExtension> map,
-			Set<IExpressionExtension> extensions) {
-		for (IExpressionExtension extension : extensions) {
-			addExtension(map, extension);
-		}
+		return consMed.getDatatype();
 	}
 
 	private static void addExtension(Map<String, IExpressionExtension> map,

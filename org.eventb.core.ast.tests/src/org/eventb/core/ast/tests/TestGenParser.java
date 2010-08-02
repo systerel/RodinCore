@@ -62,9 +62,7 @@ import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPR
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Assignment;
@@ -119,6 +117,7 @@ import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.core.ast.extension.datatype.IArgument;
 import org.eventb.core.ast.extension.datatype.IArgumentType;
 import org.eventb.core.ast.extension.datatype.IConstructorMediator;
+import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
@@ -2061,19 +2060,24 @@ public class TestGenParser extends AbstractTests {
 
 	};
 
-	private static final Map<String, IExpressionExtension> LIST_EXTNS = ff
-			.getExtensions(LIST_TYPE);
+	private static final IDatatype LIST_EXTNS = ff.makeDatatype(LIST_TYPE);
 	private static final FormulaFactory LIST_FAC = FormulaFactory
-			.getInstance(new HashSet<IFormulaExtension>(LIST_EXTNS.values()));	
-	private static final IExpressionExtension EXT_LIST = LIST_EXTNS.get(LIST_TYPE.getId());
-	private static final ParametricType LIST_INT_TYPE = LIST_FAC.makeParametricType(
-			Collections.<Type> singletonList(INT_TYPE), EXT_LIST);
+			.getInstance(LIST_EXTNS.getExtensions());
+	private static final IExpressionExtension EXT_LIST = LIST_EXTNS
+			.getTypeConstructor();
+	private static final ParametricType LIST_INT_TYPE = LIST_FAC
+			.makeParametricType(Collections.<Type> singletonList(INT_TYPE),
+					EXT_LIST);
 	private static final PowerSetType POW_LIST_INT_TYPE = LIST_FAC
 			.makePowerSetType(LIST_INT_TYPE);
-	private static final IExpressionExtension EXT_NIL = LIST_EXTNS.get("NIL");
-	private static final IExpressionExtension EXT_CONS = LIST_EXTNS.get("CONS");
-	private static final IExpressionExtension EXT_HEAD = LIST_EXTNS.get("CONS.head");
-	private static final IExpressionExtension EXT_TAIL = LIST_EXTNS.get("CONS.tail");
+	private static final IExpressionExtension EXT_NIL = LIST_EXTNS
+			.getConstructor("NIL");
+	private static final IExpressionExtension EXT_CONS = LIST_EXTNS
+			.getConstructor("CONS");
+	private static final IExpressionExtension EXT_HEAD = LIST_EXTNS
+			.getDestructor("CONS", 0);
+	private static final IExpressionExtension EXT_TAIL = LIST_EXTNS
+			.getDestructor("CONS", 1);
 	
 	public void testDatatypeType() throws Exception {
 
@@ -2646,17 +2650,17 @@ public class TestGenParser extends AbstractTests {
 
 	};
 	
-	private static final Map<String, IExpressionExtension> MOULT_EXTNS = ff
-			.getExtensions(MOULT_TYPE);
+	private static final IDatatype MOULT_EXTNS = ff
+			.makeDatatype(MOULT_TYPE);
 	private static final FormulaFactory MOULT_FAC = FormulaFactory
-			.getInstance(new HashSet<IFormulaExtension>(MOULT_EXTNS.values()));
+			.getInstance(MOULT_EXTNS.getExtensions());
 	private static final IExpressionExtension EXT_MOULT = MOULT_EXTNS
-			.get(MOULT_TYPE.getId());
+			.getTypeConstructor();
 	private static final ParametricType MOULT_INT_BOOL_TYPE = MOULT_FAC
 			.makeParametricType(Arrays.<Type> asList(INT_TYPE, BOOL_TYPE),
 					EXT_MOULT);
 	private static final IExpressionExtension EXT_MAKE_MOULT = MOULT_EXTNS
-			.get("MAKE MOULT");
+			.getConstructor("MAKE MOULT");
 
 	public void testMoult() throws Exception {
 
@@ -2738,12 +2742,12 @@ public class TestGenParser extends AbstractTests {
 
 	private static final IDatatypeExtension NO_INDUC_TYPE = new NoInducType();
 
-	private static final Map<String, IExpressionExtension> NO_INDUC_EXTNS = ff
-			.getExtensions(NO_INDUC_TYPE);
+	private static final IDatatype NO_INDUC_EXTNS = ff
+			.makeDatatype(NO_INDUC_TYPE);
 	private static final FormulaFactory NO_INDUC_FAC = FormulaFactory
-			.getInstance(new HashSet<IFormulaExtension>(NO_INDUC_EXTNS.values()));
+			.getInstance(NO_INDUC_EXTNS.getExtensions());
 	private static final IExpressionExtension EXT_NO_INDUC = NO_INDUC_EXTNS
-			.get(NO_INDUC_TYPE.getId());
+			.getTypeConstructor();
 	private static final ParametricType NO_INDUC_INT_BOOL_TYPE = NO_INDUC_FAC
 			.makeParametricType(Arrays.<Type> asList(INT_TYPE, BOOL_TYPE),
 					EXT_NO_INDUC);
@@ -2754,7 +2758,7 @@ public class TestGenParser extends AbstractTests {
 
 	public void testArgSimpleType() throws Exception {
 		final IExpressionExtension extCons1 = NO_INDUC_EXTNS
-				.get(NoInducType.CONS1);
+				.getConstructor(NoInducType.CONS1);
 
 		final ExtendedExpression c1Sing0True = NO_INDUC_FAC
 				.makeExtendedExpression(extCons1, Arrays.asList(ONE,
@@ -2767,7 +2771,7 @@ public class TestGenParser extends AbstractTests {
 
 	public void testArgPowerSetType() throws Exception {
 		final IExpressionExtension extCons2 = NO_INDUC_EXTNS
-				.get(NoInducType.CONS2);
+				.getConstructor(NoInducType.CONS2);
 
 		final ExtendedExpression c2Sing2MapSing0True = NO_INDUC_FAC
 				.makeExtendedExpression(extCons2, Arrays.asList(
@@ -2783,7 +2787,7 @@ public class TestGenParser extends AbstractTests {
 
 	public void testArgRelationalType() throws Exception {
 		final IExpressionExtension extCons3 = NO_INDUC_EXTNS
-				.get(NoInducType.CONS3);
+				.getConstructor(NoInducType.CONS3);
 
 		final ExtendedExpression c3SingMaps0True = NO_INDUC_FAC
 				.makeExtendedExpression(extCons3, Arrays.<Expression>asList(
@@ -2797,22 +2801,17 @@ public class TestGenParser extends AbstractTests {
 	}
 
 	public void testDatatypeSameExtensions() throws Exception {
-		final Map<String, IExpressionExtension> extns1 = ff
-				.getExtensions(NO_INDUC_TYPE);
-		final Map<String, IExpressionExtension> extns2 = ff
-				.getExtensions(NO_INDUC_TYPE);
-		 final IExpressionExtension typeExt1 = extns1
-			.get(NO_INDUC_TYPE.getId());
-		 final IExpressionExtension typeExt2 = extns2
-			.get(NO_INDUC_TYPE.getId());
-		 assertSame("expected same extensions", typeExt1, typeExt2);
-		 
-		 final IExpressionExtension cons1Ext1 = extns1
-			.get(NoInducType.CONS1);
-		 final IExpressionExtension cons1Ext2 = extns2
-			.get(NoInducType.CONS1);
-		 assertSame("expected same extensions", cons1Ext1, cons1Ext2);
-		 
+		final IDatatype extns1 = ff.makeDatatype(NO_INDUC_TYPE);
+		final IDatatype extns2 = ff.makeDatatype(NO_INDUC_TYPE);
+		final IExpressionExtension typeExt1 = extns1.getTypeConstructor();
+		final IExpressionExtension typeExt2 = extns2.getTypeConstructor();
+		assertSame("expected same extensions", typeExt1, typeExt2);
+
+		final IExpressionExtension cons1Ext1 = extns1
+				.getConstructor(NoInducType.CONS1);
+		final IExpressionExtension cons1Ext2 = extns2
+				.getConstructor(NoInducType.CONS1);
+		assertSame("expected same extensions", cons1Ext1, cons1Ext2);
 	}
 	
 	public void testAddingExtensions() throws Exception {
@@ -2854,10 +2853,8 @@ public class TestGenParser extends AbstractTests {
 				EXT_MOULT, Arrays.<Expression> asList(INT, BOOL),
 				Collections.<Predicate> emptySet(), null);
 
-		final HashSet<IFormulaExtension> moultExtns = new HashSet<IFormulaExtension>(
-				MOULT_EXTNS.values());
-		final FormulaFactory listMoultFac = LIST_FAC.withExtensions(moultExtns);
-
+		final FormulaFactory listMoultFac = LIST_FAC.withExtensions(MOULT_EXTNS
+				.getExtensions());
 		
 		final Expression listMoult = listMoultFac.makeExtendedExpression(
 				EXT_LIST, Collections.<Expression> singleton(moultIntBool),

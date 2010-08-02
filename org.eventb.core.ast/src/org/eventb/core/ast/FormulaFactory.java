@@ -28,6 +28,7 @@ import java.util.Set;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IPredicateExtension;
+import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.datatype.DatatypeExtensionComputer;
@@ -68,7 +69,7 @@ public class FormulaFactory {
 	private final Map<Integer, IFormulaExtension> extensions;
 	
 	// already computed datatype extensions
-	private final Map<IDatatypeExtension, Map<String, IExpressionExtension>> datatypeCache = new HashMap<IDatatypeExtension, Map<String, IExpressionExtension>>();
+	private final Map<IDatatypeExtension, IDatatype> datatypeCache = new HashMap<IDatatypeExtension, IDatatype>();
 	
 	private final BMath grammar;
 	
@@ -136,9 +137,8 @@ public class FormulaFactory {
 	 * </p>
 	 * @since 2.0
 	 */
-	public synchronized Map<String, IExpressionExtension> getExtensions(
-			IDatatypeExtension extension) {
-		Map<String, IExpressionExtension> cached = datatypeCache.get(extension);
+	public synchronized IDatatype makeDatatype(IDatatypeExtension extension) {
+		IDatatype cached = datatypeCache.get(extension);
 		if (cached == null) {
 			cached = new DatatypeExtensionComputer(extension, this).compute();
 			datatypeCache.put(extension, cached);
