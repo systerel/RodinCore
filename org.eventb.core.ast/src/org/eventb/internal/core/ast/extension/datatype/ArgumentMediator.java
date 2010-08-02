@@ -14,11 +14,9 @@ import java.util.List;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.datatype.IArgument;
 import org.eventb.core.ast.extension.datatype.IArgumentType;
-import org.eventb.core.ast.extension.datatype.IDatatype;
-import org.eventb.core.ast.extension.datatype.IDatatypeMediator;
+import org.eventb.core.ast.extension.datatype.IConstructorMediator;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
 import org.eventb.internal.core.ast.extension.TypeMediator;
 
@@ -26,24 +24,11 @@ import org.eventb.internal.core.ast.extension.TypeMediator;
  * @author Nicolas Beauger
  * 
  */
-public class DatatypeMediator extends TypeMediator implements IDatatypeMediator {
+public abstract class ArgumentMediator extends TypeMediator implements
+		IConstructorMediator {
 
-	protected final Datatype datatype;
-
-	public DatatypeMediator(IExpressionExtension typeConstructor,
-			List<ITypeParameter> typeParams, FormulaFactory factory) {
+	public ArgumentMediator(FormulaFactory factory) {
 		super(factory);
-		this.datatype = new Datatype(typeConstructor, typeParams);
-	}
-
-	@Override
-	public ITypeParameter getTypeParameter(String name) {
-		for (ITypeParameter param : datatype.getTypeParameters()) {
-			if (param.getName().equals(name)) {
-				return param;
-			}
-		}
-		return null;
 	}
 
 	@Override
@@ -85,9 +70,5 @@ public class DatatypeMediator extends TypeMediator implements IDatatypeMediator 
 	@Override
 	public IArgumentType newArgumentTypeConstr(List<IArgumentType> types) {
 		return new ArgGenTypeRef(types);
-	}
-	
-	public IDatatype getDatatype() {
-		return datatype;
 	}
 }

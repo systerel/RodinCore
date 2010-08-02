@@ -12,13 +12,40 @@ package org.eventb.core.ast.extension.datatype;
 
 import java.util.List;
 
+import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.ITypeMediator;
+
 /**
  * @author Nicolas Beauger
  * @since 2.0
- * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
-public interface IConstructorMediator extends IDatatypeMediator {
+public interface IConstructorMediator extends ITypeMediator {
 
+	ITypeParameter getTypeParameter(String name);
+
+	IArgumentType newArgumentType(ITypeParameter type);
+
+	IArgumentType newArgumentType(Type type);
+
+	IArgument newArgument(IArgumentType type);
+
+	IArgument newArgument(String destructorName, IArgumentType type);
+	
+	IArgumentType makePowerSetType(IArgumentType arg);
+	
+	IArgumentType makeProductType(IArgumentType left, IArgumentType right);
+	
+	IArgumentType makeRelationalType(IArgumentType left, IArgumentType right);
+	
+	/**
+	 * @param typeParams
+	 *            type parameters
+	 * @return a new type constructor argument type
+	 */
+	IArgumentType newArgumentTypeConstr(List<IArgumentType> typeParams);
+	
 	/**
 	 * Instance with no arguments.
 	 * <p>

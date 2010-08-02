@@ -34,6 +34,7 @@ import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.core.ast.extension.datatype.IArgument;
 import org.eventb.core.ast.extension.datatype.IArgumentType;
 import org.eventb.core.ast.extension.datatype.IConstructorMediator;
+import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
 import org.eventb.internal.core.parser.BMath;
 
@@ -41,7 +42,7 @@ import org.eventb.internal.core.parser.BMath;
  * @author Nicolas Beauger
  * 
  */
-public class ConstructorMediator extends DatatypeMediator implements
+public class ConstructorMediator extends ArgumentMediator implements
 		IConstructorMediator {
 
 	private static class ConstructorExtension implements IExpressionExtension {
@@ -309,9 +310,12 @@ public class ConstructorMediator extends DatatypeMediator implements
 	// FIXME we may wish to have priorities and custom type check methods, thus
 	// fully implementing methods from IExpressionExtension
 
+	private final Datatype datatype;
+	
 	public ConstructorMediator(IExpressionExtension typeConstructor,
 			List<ITypeParameter> typeParams, FormulaFactory factory) {
-		super(typeConstructor, typeParams, factory);
+		super(factory);
+		this.datatype = new Datatype(typeConstructor, typeParams);
 	}
 
 	@Override
@@ -344,6 +348,20 @@ public class ConstructorMediator extends DatatypeMediator implements
 			destructors.add(destructor);
 		}
 		datatype.addConstructor(constructor, destructors);
+	}
+
+	@Override
+	public ITypeParameter getTypeParameter(String name) {
+		for (ITypeParameter param : datatype.getTypeParameters()) {
+			if (param.getName().equals(name)) {
+				return param;
+			}
+		}
+		return null;
+	}
+
+	public IDatatype getDatatype() {
+		return datatype;
 	}
 
 }
