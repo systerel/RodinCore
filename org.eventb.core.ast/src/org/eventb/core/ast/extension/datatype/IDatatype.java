@@ -20,8 +20,14 @@ import org.eventb.core.ast.extension.IFormulaExtension;
 /**
  * Common protocol for datatypes.
  * <p>
- * Instances of this interface are intended to be made through
+ * Instances of this interface are intended to be obtained by calling
  * {@link FormulaFactory#makeDatatype(IDatatypeExtension)}.
+ * </p>
+ * <p>
+ * Extensions returned by {@link #getExtensions()} are intended to be passed to
+ * {@link FormulaFactory#getInstance(Set)} (possibly within a larger set of
+ * extensions) in order to get a factory able to parse and build formulae
+ * containing references to this datatype.
  * </p>
  * 
  * @author Nicolas Beauger

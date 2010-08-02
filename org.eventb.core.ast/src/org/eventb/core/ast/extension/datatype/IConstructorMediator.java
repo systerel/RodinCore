@@ -34,6 +34,12 @@ public interface IConstructorMediator extends ITypeMediator {
 	/**
 	 * Returns the type parameter with the given name, or <code>null</code> if
 	 * not found.
+	 * <p>
+	 * Given name must be that of a type parameter defined by calling
+	 * {@link ITypeConstructorMediator#addTypeParam(String)} in the
+	 * implementation of
+	 * {@link IDatatypeExtension#addTypeParameters(ITypeConstructorMediator)}.
+	 * </p>
 	 * 
 	 * @param name
 	 *            a String
