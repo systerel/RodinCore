@@ -20,21 +20,30 @@ public interface ICompatibilityMediator {
 	/**
 	 * Adds a compatibility between operators of given ids.
 	 * <p>
+	 * Stating that operator op1 is compatible with operator op2 means that <b>a
+	 * op1 b op2 c</b> is parseable and it is parsed <b>(a op1 b) op2 c</b>
+	 * </p>
+	 * <p>
 	 * N.B: Compatibility is 'oriented', thus compatibility from left to right
-	 * does not imply compatibility from right to left.
+	 * does not imply compatibility from right to left. Thus, if one wants to
+	 * express that operators op1 and op2 are compatible in both directions,
+	 * then these two compatibilities must be stated explicitly through two
+	 * method calls. Of course, self-compatibility only requires one such call.
 	 * </p>
 	 * <p>
 	 * If a priority is set between left and right, compatibility is assumed.
 	 * </p>
 	 * <p>
 	 * If there is no priority and no compatibility set between left and right,
-	 * operators are considered incompatible.
+	 * operators are considered incompatible. As a consequence, <b>a op1 b op2
+	 * c</b> will refused by the parser, parentheses will be required.
 	 * </p>
 	 * 
 	 * @param leftOpId
 	 *            an operator id
 	 * @param rightOpId
 	 *            an operator id
+	 * @see #addAssociativity(String)
 	 */
 	void addCompatibility(String leftOpId, String rightOpId);
 
