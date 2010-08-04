@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension.datatype;
 
-import static org.eventb.core.ast.extension.ExtensionFactory.makePrefixKind;
-import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
+import static org.eventb.internal.core.ast.extension.datatype.DatatypeExtensionComputer.computeGroup;
+import static org.eventb.internal.core.ast.extension.datatype.DatatypeExtensionComputer.computeKind;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +36,6 @@ import org.eventb.core.ast.extension.datatype.IArgumentType;
 import org.eventb.core.ast.extension.datatype.IConstructorMediator;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
-import org.eventb.internal.core.parser.BMath;
 
 /**
  * @author Nicolas Beauger
@@ -50,27 +49,21 @@ public class ConstructorMediator extends ArgumentMediator implements
 		private final String name;
 		private final String id;
 		private final String groupId;
+		private final IExtensionKind kind;
 		private final IExpressionExtension typeCons;
-		private final List<IArgument> arguments;
 		private final List<ITypeParameter> typeParams;
+		private final List<IArgument> arguments;
 
-		public ConstructorExtension(String name, String id,
-				List<IArgument> arguments, IExpressionExtension typeCons,
-				List<ITypeParameter> typeParams) {
+		public ConstructorExtension(String name, String id, String groupId,
+				IExtensionKind kind, IExpressionExtension typeCons,
+				List<ITypeParameter> typeParams, List<IArgument> arguments) {
 			this.name = name;
 			this.id = id;
+			this.groupId = groupId;
+			this.kind = kind;
 			this.typeCons = typeCons;
-			this.arguments = arguments;
 			this.typeParams = typeParams;
-			this.groupId = computeGroupId(arguments);
-		}
-
-		private static String computeGroupId(List<IArgument> arguments) {
-			if (arguments.size() == 0) {
-				return BMath.ATOMIC_EXPR;	
-			} else {
-				return BMath.BOUND_UNARY;
-			}
+			this.arguments = arguments;
 		}
 
 		@Override
@@ -91,7 +84,7 @@ public class ConstructorMediator extends ArgumentMediator implements
 
 		@Override
 		public IExtensionKind getKind() {
-			return makePrefixKind(EXPRESSION, arguments.size(), EXPRESSION);
+			return kind;
 		}
 
 		@Override
@@ -194,18 +187,22 @@ public class ConstructorMediator extends ArgumentMediator implements
 	
 		private final String name;
 		private final String id;
-		private final IExpressionExtension typeConstructor;
-		private final IArgumentType returnType;
+		private final String groupId;
+		private final IExtensionKind kind;
+		private final IExpressionExtension typeCons;
 		private final List<ITypeParameter> typeParams;
+		private final IArgumentType returnType;
 	
-		public DestructorExtension(String name, String id,
-				IArgumentType returnType, IExpressionExtension typeConstructor,
-				List<ITypeParameter> typeParams) {
+		public DestructorExtension(String name, String id, String groupId,
+				IExtensionKind kind, IExpressionExtension typeCons,
+				List<ITypeParameter> typeParams, IArgumentType returnType) {
 			this.name = name;
 			this.id = id;
-			this.typeConstructor = typeConstructor;
-			this.returnType = returnType;
+			this.groupId = groupId;
+			this.kind = kind;
+			this.typeCons = typeCons;
 			this.typeParams = typeParams;
+			this.returnType = returnType;
 		}
 	
 		@Override
@@ -221,7 +218,7 @@ public class ConstructorMediator extends ArgumentMediator implements
 	
 		@Override
 		public IExtensionKind getKind() {
-			return PARENTHESIZED_UNARY_EXPRESSION;
+			return kind;
 		}
 	
 		@Override
@@ -231,7 +228,7 @@ public class ConstructorMediator extends ArgumentMediator implements
 	
 		@Override
 		public String getGroupId() {
-			return BMath.BOUND_UNARY;
+			return groupId;
 		}
 	
 		@Override
@@ -272,11 +269,11 @@ public class ConstructorMediator extends ArgumentMediator implements
 				return null;
 			}
 			final ParametricType genChildType = (ParametricType) childType;
-			if (genChildType.getExprExtension() != typeConstructor) {
+			if (genChildType.getExprExtension() != typeCons) {
 				return null;
 			}
 	
-			final TypeInstantiation instantiation = new TypeInstantiation(typeConstructor);
+			final TypeInstantiation instantiation = new TypeInstantiation(typeCons);
 			final Type[] actualParams = genChildType.getTypeParameters();
 	
 			assert actualParams.length == typeParams.size();
@@ -291,14 +288,14 @@ public class ConstructorMediator extends ArgumentMediator implements
 		public Type typeCheck(ExtendedExpression expression,
 				ITypeCheckMediator tcMediator) {
 			final List<Type> typePrmVars = new ArrayList<Type>();
-			final TypeInstantiation instantiation = new TypeInstantiation(typeConstructor);
+			final TypeInstantiation instantiation = new TypeInstantiation(typeCons);
 			for (ITypeParameter prm : typeParams) {
 				final Type alpha = tcMediator.newTypeVariable();
 				instantiation.put(prm, alpha);
 				typePrmVars.add(alpha);
 			}
 			final Type argType = tcMediator.makeParametricType(typePrmVars,
-					typeConstructor);
+					typeCons);
 			final Expression[] children = expression.getChildExpressions();
 			assert children.length == 1;
 			tcMediator.sameType(argType, children[0].getType());
@@ -338,8 +335,12 @@ public class ConstructorMediator extends ArgumentMediator implements
 			List<IArgument> arguments) {
 		final IExpressionExtension typeConstructor = datatype.getTypeConstructor();
 		final List<ITypeParameter> typeParams = datatype.getTypeParameters();
+		final int nbArgs = arguments.size();
+		final String groupId = computeGroup(nbArgs);
+		final IExtensionKind kind = computeKind(nbArgs);
+	
 		final IExpressionExtension constructor = new ConstructorExtension(name,
-				id, arguments, typeConstructor, typeParams);
+				id, groupId, kind, typeConstructor, typeParams, arguments);
 
 		// FIXME problem with duplicate arguments with destructors:
 		// the destructor is built several times
@@ -348,10 +349,14 @@ public class ConstructorMediator extends ArgumentMediator implements
 			final IExpressionExtension destructor;
 			if (arg.hasDestructor()) {
 				final String destructorName = arg.getDestructor();
-				final String destructorId = id + "." + destructorName;
+				final String destructorId = id + "." + destructorName;// TODO arg index
+				final int destrNbArgs = 1; // one argument (of type datatype)
+				final String destrGroupId = computeGroup(destrNbArgs);
+				final IExtensionKind destrKind = computeKind(destrNbArgs);
+				
 				destructor = new DestructorExtension(destructorName,
-						destructorId, arg.getType(), typeConstructor,
-						typeParams);
+						destructorId, destrGroupId, destrKind, typeConstructor,
+						typeParams, arg.getType());
 			} else {
 				destructor = null;
 			}

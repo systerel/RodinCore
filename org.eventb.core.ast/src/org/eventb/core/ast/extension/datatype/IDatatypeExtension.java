@@ -53,16 +53,6 @@ public interface IDatatypeExtension {
 	String getId();
 
 	/**
-	 * Returns the unique group id of this datatype.
-	 * <p>
-	 * Returned id is subsequently used as type constructor extension group id.
-	 * </p>
-	 * 
-	 * @return a unique id
-	 */
-	String getGroupId();
-
-	/**
 	 * Adds the type parameters of this datatype (if any). Does nothing if this
 	 * datatype has no type parameter.
 	 * 

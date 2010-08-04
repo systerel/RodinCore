@@ -10,15 +10,21 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension.datatype;
 
+import static org.eventb.core.ast.extension.ExtensionFactory.makePrefixKind;
+import static org.eventb.core.ast.extension.IFormulaExtension.ATOMIC_EXPRESSION;
+import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
+import org.eventb.internal.core.parser.BMath;
 
 /**
  * @author Nicolas Beauger
@@ -55,4 +61,24 @@ public class DatatypeExtensionComputer {
 		map.put(extension.getId(), extension);
 	}
 	
+	public static String computeGroup(int nbArgs) {
+		final String groupId;
+		if (nbArgs == 0) {
+			groupId = BMath.ATOMIC_EXPR;
+		} else {
+			groupId = BMath.BOUND_UNARY;
+		}
+		return groupId;
+	}
+	
+	public static IExtensionKind computeKind(int nbArgs) {
+		final IExtensionKind kind;
+		if (nbArgs == 0) {
+			kind = ATOMIC_EXPRESSION;
+		} else {
+			kind = makePrefixKind(EXPRESSION, nbArgs, EXPRESSION);
+		}
+		return kind;
+	}
+
 }

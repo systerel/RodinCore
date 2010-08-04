@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension.datatype;
 
-import static org.eventb.core.ast.extension.ExtensionFactory.makePrefixKind;
-import static org.eventb.core.ast.extension.IFormulaExtension.ATOMIC_EXPRESSION;
-import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
+import static org.eventb.internal.core.ast.extension.datatype.DatatypeExtensionComputer.computeGroup;
+import static org.eventb.internal.core.ast.extension.datatype.DatatypeExtensionComputer.computeKind;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,17 +43,17 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 
 	private static class TypeConstructor implements IExpressionExtension {
 
-		private String typeName;
-		private IExtensionKind kind;
-		private String id;
-		private String groupId;
+		private final String typeName;
+		private final String id;
+		private final String groupId;
+		private final IExtensionKind kind;
 
-		public TypeConstructor(String typeName, IExtensionKind kind, String id,
-				String groupId) {
+		public TypeConstructor(String typeName, String id, String groupId,
+				IExtensionKind kind) {
 			this.typeName = typeName;
-			this.kind = kind;
 			this.id = id;
 			this.groupId = groupId;
+			this.kind = kind;
 		}
 
 		@Override
@@ -188,16 +187,11 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 	public IExpressionExtension getTypeConstructor() {
 		final String typeName = datatype.getTypeName();
 		final String id = datatype.getId();
-		final String groupId = datatype.getGroupId();
-		final IExtensionKind kind = computeKind(typeParams.size());
+		final int nbArgs = typeParams.size();
+		final String groupId = computeGroup(nbArgs);
+		final IExtensionKind kind = computeKind(nbArgs);
 
-		return new TypeConstructor(typeName, kind, id, groupId);
+		return new TypeConstructor(typeName, id, groupId, kind);
 	}
 
-	private static IExtensionKind computeKind(int nbArgs) {
-		if (nbArgs == 0) {
-			return ATOMIC_EXPRESSION;
-		}
-		return makePrefixKind(EXPRESSION, nbArgs, EXPRESSION);
-	}
 }

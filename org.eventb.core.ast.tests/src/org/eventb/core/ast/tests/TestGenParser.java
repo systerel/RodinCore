@@ -2022,7 +2022,6 @@ public class TestGenParser extends AbstractTests {
 
 		private static final String TYPE_NAME = "List";
 		private static final String TYPE_IDENTIFIER = "List Id";
-		private static final String GROUP_IDENTIFIER = "List Group";
 		
 		
 		@Override
@@ -2035,11 +2034,6 @@ public class TestGenParser extends AbstractTests {
 			return TYPE_IDENTIFIER;
 		}
 		
-		@Override
-		public String getGroupId() {
-			return GROUP_IDENTIFIER;
-		}
-
 		@Override
 		public void addTypeParameters(ITypeConstructorMediator mediator) {
 			mediator.addTypeParam("S");			
@@ -2613,8 +2607,7 @@ public class TestGenParser extends AbstractTests {
 
 		private static final String TYPE_NAME = "Moult";
 		private static final String TYPE_IDENTIFIER = "Moult Id";
-		private static final String GROUP_IDENTIFIER = "Moult Group";
-		
+
 		@Override
 		public String getTypeName() {
 			return TYPE_NAME;
@@ -2625,11 +2618,6 @@ public class TestGenParser extends AbstractTests {
 			return TYPE_IDENTIFIER;
 		}
 		
-		@Override
-		public String getGroupId() {
-			return GROUP_IDENTIFIER;
-		}
-
 		@Override
 		public void addTypeParameters(ITypeConstructorMediator mediator) {
 			mediator.addTypeParam("S");			
@@ -2682,8 +2670,7 @@ public class TestGenParser extends AbstractTests {
 		
 		private static final String TYPE_NAME = "NoInduc";
 		private static final String TYPE_IDENTIFIER = "NoInduc Id";
-		private static final String GROUP_IDENTIFIER = "NoInduc Group";
-		
+
 		@Override
 		public String getTypeName() {
 			return TYPE_NAME;
@@ -2694,11 +2681,6 @@ public class TestGenParser extends AbstractTests {
 			return TYPE_IDENTIFIER;
 		}
 		
-		@Override
-		public String getGroupId() {
-			return GROUP_IDENTIFIER;
-		}
-
 		@Override
 		public void addTypeParameters(ITypeConstructorMediator mediator) {
 			mediator.addTypeParam("S");			
