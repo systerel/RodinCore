@@ -18,13 +18,17 @@ import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelations
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.extension.CycleError;
+import org.eventb.core.ast.extension.IGrammar;
+import org.eventb.core.ast.extension.IOperator;
 import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.internal.core.lexer.Token;
+import org.eventb.internal.core.parser.ExternalViewUtils.Instantiator;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship;
 
@@ -66,6 +70,19 @@ public abstract class AbstractGrammar {
 	
 	private final Map<Integer, Integer> closeOpenKinds = new HashMap<Integer, Integer>();
 	
+	public IGrammar asExternalView() {
+		final Instantiator<Integer, IOperator> instantiator = new Instantiator<Integer, IOperator>();
+		final Map<Integer, String> kindIds = opRegistry.getKindIds();
+		for (Entry<Integer, String> kindId : kindIds.entrySet()) {
+			final Integer kind = kindId.getKey();
+			final String id = kindId.getValue();
+			final String syntaxSymbol = tokens.getElem(kind);
+			final IOperator operator = new ExternalViewUtils.ExternalOperator(id, syntaxSymbol);
+			instantiator.setInst(kind, operator);
+		}
+		return opRegistry.asExternalView(instantiator);
+	}
+
 	public boolean isOperator(int kind) {
 		// TODO could be replaced by 'there exists a tag for the given kind'
 		return opRegistry.hasGroup(kind) && (!tokens.isReserved(kind));

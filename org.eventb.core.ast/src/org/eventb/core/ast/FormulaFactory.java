@@ -27,6 +27,8 @@ import java.util.Set;
 
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.extension.IGrammar;
+import org.eventb.core.ast.extension.IOperatorGroup;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
@@ -175,6 +177,18 @@ public class FormulaFactory {
 	 */
 	public AbstractGrammar getGrammar() {
 		return grammar;
+	}
+	
+	/**
+	 * Returns a view of the underlying grammar associated to this factory,
+	 * through its operator groups.
+	 * 
+	 * @return a list of operator groups
+	 * @see IOperatorGroup
+	 * @since 2.0
+	 */
+	public IGrammar getGrammarView() {
+		return grammar.asExternalView();
 	}
 	
 	private static IllegalArgumentException newIllegalArgument(

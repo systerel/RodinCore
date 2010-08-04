@@ -15,12 +15,19 @@ import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelations
 import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.LEFT_PRIORITY;
 import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.RIGHT_PRIORITY;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.CycleError;
+import org.eventb.core.ast.extension.IGrammar;
+import org.eventb.core.ast.extension.IOperator;
+import org.eventb.core.ast.extension.IOperatorGroup;
+import org.eventb.internal.core.parser.ExternalViewUtils.ExternalGrammar;
+import org.eventb.internal.core.parser.ExternalViewUtils.ExternalOpGroup;
+import org.eventb.internal.core.parser.ExternalViewUtils.Instantiator;
 
 /**
  * @author Nicolas Beauger
@@ -48,6 +55,10 @@ public class OperatorRegistry {
 
 		public Relation() {
 			// avoid synthetic accessor emulation
+		}
+		
+		public Map<T, Set<T>> getRelationMap() {
+			return Collections.unmodifiableMap(maplets);
 		}
 		
 		public void add(T a, T b) {
@@ -79,6 +90,10 @@ public class OperatorRegistry {
 
 		public Closure() {
 			// avoid synthetic accessor emulation
+		}
+		
+		public Map<T, Set<T>> getRelationMap() {
+			return Collections.unmodifiableMap(reachable);
 		}
 		
 		public boolean contains(T a, T b) {
@@ -138,6 +153,8 @@ public class OperatorRegistry {
 	}
 	
 	private static class OperatorGroup {
+		
+		private final Set<Integer> allOperators = new HashSet<Integer>();
 		private final Relation<Integer> compatibilityRelation = new Relation<Integer>();
 		private final Closure<Integer> operatorPriority = new Closure<Integer>();
 		private final Set<Integer> associativeOperators = new HashSet<Integer>();
@@ -149,9 +166,8 @@ public class OperatorRegistry {
 			this.id = id;
 		}
 
-		// will be needed to display current grammar to extension creator
-		public String getId() {
-			return id;
+		public void add(Integer a) {
+			allOperators.add(a);
 		}
 		
 		/**
@@ -209,6 +225,20 @@ public class OperatorRegistry {
 		public boolean isSpaced(Integer kind) {
 			return spacedOperators.contains(kind);
 		}
+
+		public IOperatorGroup asExternalView(
+				Instantiator<Integer, IOperator> instantiator) {
+			final Set<IOperator> extOpers = instantiator
+					.instantiate(allOperators);
+			final Map<IOperator, Set<IOperator>> extPrio = instantiator
+					.instantiate(operatorPriority.getRelationMap());
+			final Map<IOperator, Set<IOperator>> extCompat = instantiator
+					.instantiate(compatibilityRelation.getRelationMap());
+			final Set<IOperator> extAssoc = instantiator
+					.instantiate(associativeOperators);
+			return new ExternalOpGroup(id, extOpers, extPrio, extCompat,
+					extAssoc);
+		}
 	}
 	
 	private final AllInOnceMap<String, OperatorGroup> idOpGroup = new AllInOnceMap<String, OperatorGroup>();
@@ -222,6 +252,27 @@ public class OperatorRegistry {
 		idOpGroup.put(GROUP0, GROUP_0);
 	}
 	
+	public Map<Integer, String> getKindIds() {
+		// not a bijective map because: { = Set Extension & Comprehension Set
+		// but it is in a single group: Brace Sets
+		// so one id or the other is OK
+		return idKind.invert();
+	}
+	
+	public IGrammar asExternalView(Instantiator<Integer, IOperator> instantiator) {
+		final Instantiator<OperatorGroup, IOperatorGroup> groupInst = new Instantiator<OperatorGroup, IOperatorGroup>();
+		final Set<IOperatorGroup> extGroups = new HashSet<IOperatorGroup>();
+		for (OperatorGroup opGroup : idOpGroup.values()) {
+			final IOperatorGroup groupView = opGroup
+					.asExternalView(instantiator);
+			extGroups.add(groupView);
+			groupInst.setInst(opGroup, groupView);
+		}
+		final Map<IOperatorGroup, Set<IOperatorGroup>> extGroupPrios = groupInst
+				.instantiate(groupPriority.getRelationMap());
+		return new ExternalGrammar(extGroups, extGroupPrios);
+	}
+
 	public void addOperator(Integer kind, String operatorId, String groupId, boolean isSpaced) {
 		idKind.put(operatorId, kind);
 		
@@ -230,6 +281,8 @@ public class OperatorRegistry {
 			operatorGroup = new OperatorGroup(groupId);
 			idOpGroup.put(groupId, operatorGroup);
 		}
+		operatorGroup.add(kind);
+		
 		kindOpGroup.put(kind, operatorGroup);
 		
 		if (isSpaced) {
