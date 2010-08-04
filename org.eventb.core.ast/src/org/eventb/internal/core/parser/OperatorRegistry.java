@@ -169,6 +169,14 @@ public class OperatorRegistry {
 		public void add(Integer a) {
 			allOperators.add(a);
 		}
+
+		private void checkKnown(Integer... ops) {
+			for (Integer op : ops) {
+				if (!allOperators.contains(op)) {
+					throw new IllegalArgumentException("unknown operator " + op);
+				}
+			}
+		}
 		
 		/**
 		 * Adds a compatibility between a and b.
@@ -179,6 +187,7 @@ public class OperatorRegistry {
 		 *            an operator kind
 		 */
 		public void addCompatibility(Integer a, Integer b) {
+			checkKnown(a, b);
 			compatibilityRelation.add(a, b);
 		}
 
@@ -190,26 +199,31 @@ public class OperatorRegistry {
 		 *            an operator kind
 		 */
 		public void addAssociativity(Integer a) {
+			checkKnown(a);
 			compatibilityRelation.add(a, a);
 			associativeOperators.add(a);
 		}
 
 		public void addPriority(Integer a, Integer b)
 				throws CycleError {
+			checkKnown(a, b);
 			operatorPriority.add(a, b);
 		}
 
 		public boolean hasLessPriority(Integer a, Integer b) {
+			checkKnown(a, b);
 			return operatorPriority.contains(a, b);
 		}
 		
 		public boolean isCompatible(Integer a, Integer b) {
+			checkKnown(a, b);
 			return compatibilityRelation.contains(a, b)
 					|| operatorPriority.contains(a, b)
 					|| operatorPriority.contains(b, a);
 		}
 		
 		public boolean isAssociative(Integer a) {
+			checkKnown(a);
 			return associativeOperators.contains(a);
 		}
 		
@@ -219,10 +233,12 @@ public class OperatorRegistry {
 		}
 
 		public void setSpaced(Integer kind) {
+			checkKnown(kind);
 			spacedOperators.add(kind);
 		}
 		
 		public boolean isSpaced(Integer kind) {
+			checkKnown(kind);
 			return spacedOperators.contains(kind);
 		}
 
