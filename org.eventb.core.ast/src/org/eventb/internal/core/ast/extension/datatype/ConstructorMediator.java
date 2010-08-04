@@ -345,11 +345,12 @@ public class ConstructorMediator extends ArgumentMediator implements
 		// FIXME problem with duplicate arguments with destructors:
 		// the destructor is built several times
 		final List<IExpressionExtension> destructors = new ArrayList<IExpressionExtension>();
-		for (IArgument arg : arguments) {
+		for (int i = 0; i < arguments.size(); i++) {
+			final IArgument arg = arguments.get(i);
 			final IExpressionExtension destructor;
 			if (arg.hasDestructor()) {
 				final String destructorName = arg.getDestructor();
-				final String destructorId = id + "." + destructorName;// TODO arg index
+				final String destructorId = id + "." + i;
 				final int destrNbArgs = 1; // one argument (of type datatype)
 				final String destrGroupId = computeGroup(destrNbArgs);
 				final IExtensionKind destrKind = computeKind(destrNbArgs);
