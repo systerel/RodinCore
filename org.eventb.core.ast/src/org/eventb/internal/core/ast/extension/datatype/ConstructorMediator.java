@@ -49,18 +49,28 @@ public class ConstructorMediator extends ArgumentMediator implements
 
 		private final String name;
 		private final String id;
+		private final String groupId;
 		private final IExpressionExtension typeCons;
 		private final List<IArgument> arguments;
 		private final List<ITypeParameter> typeParams;
 
 		public ConstructorExtension(String name, String id,
-				List<IArgument> argumentTypes,
-				IExpressionExtension typeCons, List<ITypeParameter> typeParams) {
+				List<IArgument> arguments, IExpressionExtension typeCons,
+				List<ITypeParameter> typeParams) {
 			this.name = name;
 			this.id = id;
 			this.typeCons = typeCons;
-			this.arguments = argumentTypes;
+			this.arguments = arguments;
 			this.typeParams = typeParams;
+			this.groupId = computeGroupId(arguments);
+		}
+
+		private static String computeGroupId(List<IArgument> arguments) {
+			if (arguments.size() == 0) {
+				return BMath.ATOMIC_EXPR;	
+			} else {
+				return BMath.BOUND_UNARY;
+			}
 		}
 
 		@Override
@@ -91,7 +101,7 @@ public class ConstructorMediator extends ArgumentMediator implements
 
 		@Override
 		public String getGroupId() {
-			return BMath.BOUND_UNARY;
+			return groupId;
 		}
 
 		@Override
