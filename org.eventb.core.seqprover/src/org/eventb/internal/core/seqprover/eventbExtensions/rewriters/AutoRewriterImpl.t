@@ -10,6 +10,7 @@
  *     Systerel - mathematical language V2
  *     Systerel - SIMP_IN_COMPSET_*, SIMP_SPECIAL_OVERL, SIMP_FUNIMAGE_LAMBDA
  *     Systerel - Added tracing mechanism
+ *     Systerel - SIMP_EQUAL_CONSTR*, SIMP_DESTR_CONSTR
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
@@ -48,6 +49,8 @@ import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
+import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
@@ -572,7 +575,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_LIT_GE", "SIMP_LIT_GT", "SIMP_SPECIAL_EQUAL_CARD",
 			"SIMP_LIT_EQUAL_CARD_1", "SIMP_LIT_GT_CARD_0",
 			"SIMP_LIT_LT_CARD_0", "SIMP_LIT_EQUAL_KBOOL_TRUE",
-			"SIMP_LIT_EQUAL_KBOOL_FALSE" })
+			"SIMP_LIT_EQUAL_KBOOL_FALSE", "SIMP_EQUAL_CONSTR",
+			"SIMP_EQUAL_CONSTR_DIFF" })
     @Override
 	public Predicate rewrite(RelationalPredicate predicate) {
 		final Predicate result;
@@ -1049,8 +1053,47 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    		trace(predicate, result, "SIMP_LIT_EQUAL_KBOOL_FALSE");
 				return result;
 	    	}
+	    	
+            /**
+             * SIMP_EQUAL_CONSTR
+             * cons(a1, b1) = cons(a2, b2)  ==  a1 = a2 & b1 = b2
+             * SIMP_EQUAL_CONSTR_DIFF
+             * cons1(...) = cons2(...)  ==  false  [where cons1 /= cons2]
+             */
+            Equal(ext1@ExtendedExpression(args1, _), ext2@ExtendedExpression(args2, _)) -> {
+                if (isDTConstructor((ExtendedExpression)`ext1)
+                		&& isDTConstructor((ExtendedExpression)`ext2)) {
+                	if (`ext1.getTag() != `ext2.getTag()) {
+                		return ff.makeLiteralPredicate(Formula.BFALSE, null);
+                	}
+                	assert `args1.length == `args2.length;
+                	final List<Predicate> equalPreds = new ArrayList<Predicate>();
+                	for (int i=0; i<`args1.length; i++) {
+                		equalPreds.add(ff.makeRelationalPredicate(Formula.EQUAL, `args1[i], `args2[i], null));
+                	}
+                	switch(equalPreds.size()) {
+                	case 0:
+                		return ff.makeLiteralPredicate(Formula.BTRUE, null);
+                	case 1:
+                		return equalPreds.get(0);
+                	default:
+                		return ff.makeAssociativePredicate(Predicate.LAND, equalPreds, null);
+                	}
+                }
+            }
+
 	    }
 	    return predicate;
+	}
+    
+    private static boolean isDTConstructor(ExtendedExpression expr) {
+    	final IExpressionExtension extension = expr.getExtension();
+    	final Object origin = extension.getOrigin();
+    	if (!(origin instanceof IDatatype)) {
+    		return false;
+    	}
+    	final IDatatype datatype = (IDatatype) origin;
+    	return datatype.isConstructor(extension);
 	}
 	
 	@ProverRule( { "SIMP_SPECIAL_BINTER", "SIMP_SPECIAL_BUNION",
@@ -1789,4 +1832,38 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		}
 	    return expression;
 	}
+    
+    @ProverRule("SIMP_DESTR_CONSTR")
+	@Override
+	public Expression rewrite(ExtendedExpression expression) {
+    	%match (Expression expression) {
+
+    		/**
+    		 * SIMP_DESTR_CONSTR:
+    		 * destr(cons(a_1, ..., a_n))  ==  a_i   [i is the param index of the destructor]
+    		 */
+    		destr@ExtendedExpression(exprs,_) -> { // destr@ExtendedExpression((cons@ExtendedExpression(params, _)),_)
+    			if (`exprs.length == 1 && `exprs[0] instanceof ExtendedExpression) {
+    				final ExtendedExpression cons = (ExtendedExpression)`exprs[0];
+    				final int prmIndex = getParamIndex((ExtendedExpression)`destr, cons);
+    				if (prmIndex >= 0) {
+    					final Expression[] params = cons.getChildExpressions();
+    					return `params[prmIndex];
+    				}
+    			}
+    		}
+    	}
+    	return expression;
+    }
+
+    private static int getParamIndex(ExtendedExpression destr, ExtendedExpression cons) {
+    	final IExpressionExtension consExt = cons.getExtension();
+    	final Object origin = consExt.getOrigin();
+    	if (!(origin instanceof IDatatype)) {
+    		return -1;
+    	}
+    	final IDatatype datatype = (IDatatype) origin;
+    	return datatype.getDestructorIndex(consExt, destr.getExtension());
+    }
+
 }

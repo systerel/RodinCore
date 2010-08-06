@@ -11,6 +11,7 @@
  *     Systerel - incremented to version 1 after OnePointRule v2 fix
  *     Systerel - incremented to version 2 after SIMP_FUNIMAGE_LAMBDA fix
  *     Systerel - incremented to version 3 after fixing bug #3025836
+ *     Systerel - incremented to version 4 after adding datatype rules
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
@@ -22,7 +23,7 @@ import org.eventb.core.seqprover.SequentProver;
 public class AutoRewrites extends AbstractAutoRewrites implements
 		IVersionedReasoner {
 
-	private static final int REASONER_VERSION = 3;
+	private static final int REASONER_VERSION = 4;
 
 	public AutoRewrites() {
 		super(true);

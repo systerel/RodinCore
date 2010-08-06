@@ -43,15 +43,20 @@ public abstract class AbstractFormulaRewriterTests {
 	 * The formula factory used to create different formulas for testing.
 	 */
 	protected static final FormulaFactory ff = FormulaFactory.getDefault();
-	
-	protected static final DLib lib = mDLib(ff);
 
 	private static final String[] NO_ENV = new String[0];
 	
 	/**
 	 * The rewriter under test.
 	 */
-	protected IFormulaRewriter r;
+	protected final IFormulaRewriter r;
+
+	/**
+	 * The factory to use for parsing
+	 */
+	protected final FormulaFactory factory;
+	
+	protected final DLib lib;
 	
 	/**
 	 * Constructor.
@@ -63,6 +68,8 @@ public abstract class AbstractFormulaRewriterTests {
 	 */
 	protected AbstractFormulaRewriterTests(IFormulaRewriter r) {
 		this.r = r;
+		this.factory = r.getFactory();
+		this.lib = mDLib(factory);
 	}
 
 	/**
@@ -236,11 +243,11 @@ public abstract class AbstractFormulaRewriterTests {
 
 	private ITypeEnvironment makeTypeEnvironment(String... env) {
 		assertTrue(env.length % 2 == 0);
-		final ITypeEnvironment typenv = ff.makeTypeEnvironment();
+		final ITypeEnvironment typenv = factory.makeTypeEnvironment();
 		for (int i = 0; i < env.length; i+=2) {
 			final String name = env[i];
 			final String typeString = env[i+1];
-			final IParseResult res = ff.parseType(typeString, V2);
+			final IParseResult res = factory.parseType(typeString, V2);
 			assertFalse(res.hasProblem());
 			typenv.addName(name, res.getParsedType());
 		}

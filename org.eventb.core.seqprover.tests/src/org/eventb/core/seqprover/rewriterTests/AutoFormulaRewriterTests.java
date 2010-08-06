@@ -13,7 +13,17 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
+import static java.util.Arrays.asList;
+
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
+import org.eventb.core.ast.IntegerType;
+import org.eventb.core.ast.extension.datatype.IArgument;
+import org.eventb.core.ast.extension.datatype.IArgumentType;
+import org.eventb.core.ast.extension.datatype.IConstructorMediator;
+import org.eventb.core.ast.extension.datatype.IDatatype;
+import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
+import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
 import org.junit.Test;
 
@@ -26,8 +36,51 @@ import org.junit.Test;
  */
 public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 	
+	private static final IDatatypeExtension DATATYPE = new IDatatypeExtension() {
+
+		private static final String TYPE_NAME = "List";
+		private static final String TYPE_IDENTIFIER = "List Id";
+		
+		
+		@Override
+		public String getTypeName() {
+			return TYPE_NAME;
+		}
+
+		@Override
+		public String getId() {
+			return TYPE_IDENTIFIER;
+		}
+		
+		@Override
+		public void addTypeParameters(ITypeConstructorMediator mediator) {
+			// no type parameter			
+		}
+
+		@Override
+		public void addConstructors(IConstructorMediator mediator) {
+			mediator.addConstructor("void", "VOID");
+			
+			final IntegerType intType = mediator.makeIntegerType();
+			final IArgumentType intArgType = mediator.newArgumentType(intType);
+			final IArgument destr1 = mediator.newArgument("destr1", intArgType);
+			final IArgument destr2_0 = mediator.newArgument("destr2_0", intArgType);
+			final IArgument destr2_1 = mediator.newArgument("destr2_1", intArgType);
+			
+			mediator.addConstructor("cons1", "CONS_1", asList(destr1));
+			mediator.addConstructor("cons2", "CONS_2",
+					asList(destr2_0, destr2_1));
+		}
+
+	};
+
+	private static final IDatatype DT = ff.makeDatatype(DATATYPE);
+
+	private static final FormulaFactory DT_FAC = FormulaFactory.getInstance(DT
+			.getExtensions());
+
 	// The automatic rewriter for testing.
-	private static final IFormulaRewriter rewriter = new AutoRewriterImpl(ff);
+	private static final IFormulaRewriter rewriter = new AutoRewriterImpl(DT_FAC);
 	
 	/**
 	 * Constructor.
@@ -325,6 +378,15 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 
 		// FALSE = TRUE  ==  false
 		predicateTest("⊥", "FALSE = TRUE");
+
+		// cons(a1, b1) = cons(a2, b2)  ==  a1 = a2 & b1 = b2
+		predicateTest("⊤", "void = void");
+		predicateTest("a1 = a2", "cons1(a1) = cons1(a2)");
+		predicateTest("a1 = a2 ∧ b1 = b2", "cons2(a1, b1) = cons2(a2, b2)");
+		
+		// cons1(...) = cons2(...)  ==  false
+		predicateTest("⊥", "void = cons1(a1)");
+		predicateTest("⊥", "cons1(a1) = cons2(a2, b2)");
 
 	}
 	
@@ -689,6 +751,13 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 		expressionTest("{x·x∈ℤ×ℤ∣x}(1)", "{x·x∈ℤ×ℤ∣x}(1)");
 		// Rewriting fails as "pair" is not an explicit maplet
 		expressionTest("(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(pair)", "(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(pair)");
+		
+		// destr(cons(a_1, ..., a_n))  ==  a_i   [i is the param index of the destructor]
+		expressionTest("1", "destr1(cons1(1))");
+		expressionTest("1", "destr2_0(cons2(1, 2))");
+		expressionTest("2", "destr2_1(cons2(1, 2))");
+		expressionTest("destr2_0(cons1(1))", "destr2_0(cons1(1))");
+
 	}
 	
 	@Test
