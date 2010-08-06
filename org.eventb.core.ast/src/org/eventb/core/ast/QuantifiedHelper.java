@@ -4,6 +4,10 @@
  */
 package org.eventb.core.ast;
 
+import java.util.List;
+
+import org.eventb.internal.core.ast.BoundIdentDeclRemover;
+
 /**
  * Helper class for implementing quantified formulae of event-B.
  * <p>
@@ -160,5 +164,31 @@ abstract class QuantifiedHelper {
 		}
 		return true;
 	}
+	
+	protected static Predicate getWDSimplifyQ(FormulaFactory formulaFactory,
+			int quant, BoundIdentDecl[] decls, Predicate pred,
+			SourceLocation loc) {
+		
+		if (pred.getTag() == Formula.BTRUE)
+			return pred;
+		
+		final boolean[] used = new boolean[decls.length];
+		addUsedBoundIdentifiers(used, pred);
+		if (! areAllUsed(used)) {
+			BoundIdentDeclRemover subst = 
+				new BoundIdentDeclRemover(decls, used, formulaFactory);
+			final List<BoundIdentDecl> newDecls = subst.getNewDeclarations();
+			final Predicate newPred = pred.rewrite(subst);
+			if (newDecls.size() == 0) {
+				return newPred;
+			}
+			return formulaFactory.makeQuantifiedPredicate(quant,
+					newDecls,
+					newPred,
+					loc);
+		}
+		return formulaFactory.makeQuantifiedPredicate(quant, decls, pred, loc);
+	}
+	
 
 }

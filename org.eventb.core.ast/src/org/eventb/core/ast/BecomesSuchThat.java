@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added accept for ISimpleVisitor
  *     Systerel - added support for predicate variables
+ *     Systerel - externalized wd lemmas generation
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -285,14 +286,6 @@ public class BecomesSuchThat extends Assignment {
 	}
 
 	@Override
-	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		Predicate wdCondition = condition.getWDPredicateRaw(formulaFactory);
-		final SourceLocation loc = getSourceLocation();
-		return getWDSimplifyQ(formulaFactory, FORALL, primedIdents,
-				wdCondition, loc);
-	}
-
-	@Override
 	protected boolean solveChildrenTypes(TypeUnifier unifier) {
 		boolean success = true;
 		for (BoundIdentDecl ident : primedIdents) {
@@ -335,7 +328,8 @@ public class BecomesSuchThat extends Assignment {
 	@Override
 	protected Predicate getFISPredicateRaw(FormulaFactory ff) {
 		final SourceLocation loc = getSourceLocation();
-		return getWDSimplifyQ(ff, EXISTS, primedIdents, condition, loc); 
+		return QuantifiedHelper.getWDSimplifyQ(ff, EXISTS, primedIdents,
+				condition, loc);
 	}
 
 	@Override

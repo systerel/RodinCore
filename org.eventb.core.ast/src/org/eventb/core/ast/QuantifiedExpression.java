@@ -12,6 +12,7 @@
  *     Systerel - added support for predicate variables
  *     Systerel - added form filtering
  *     Systerel - generalised getPositions() into inspect()
+ *     Systerel - externalized wd lemmas generation
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -699,38 +700,6 @@ public class QuantifiedExpression extends Expression {
 		case QINTER: return visitor.continueQINTER(this);
 		case CSET:   return visitor.continueCSET(this);   
 		default:     assert false; return true;
-		}
-	}
-
-	private Predicate getWDPredicateQINTER(FormulaFactory formulaFactory) {
-		final SourceLocation loc = getSourceLocation();
-		Predicate conj0 = getWDPredicateQUNION(formulaFactory);
-		Predicate conj1 = getWDSimplifyQ(formulaFactory, EXISTS,
-				quantifiedIdentifiers, pred, loc);
-		return getWDSimplifyC(formulaFactory, conj0, conj1);
-	}
-
-	private Predicate getWDPredicateQUNION(FormulaFactory formulaFactory) {
-		Predicate conj0 = pred.getWDPredicateRaw(formulaFactory);
-		Predicate conj1 = getWDSimplifyI(formulaFactory, pred, 
-				expr.getWDPredicateRaw(formulaFactory));
-		Predicate inner = getWDSimplifyC(formulaFactory, conj0, conj1);
-		final SourceLocation loc = getSourceLocation();
-		return getWDSimplifyQ(formulaFactory, FORALL, quantifiedIdentifiers,
-				inner, loc);
-	}
-
-	@Override
-	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		switch (getTag()) {
-		case QUNION:
-		case CSET:
-			return getWDPredicateQUNION(formulaFactory);
-		case QINTER:
-			return getWDPredicateQINTER(formulaFactory);
-		default:
-			assert false; 
-			return formulaFactory.makeLiteralPredicate(BFALSE, null);
 		}
 	}
 

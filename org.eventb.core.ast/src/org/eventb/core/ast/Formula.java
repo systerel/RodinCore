@@ -12,18 +12,15 @@
  *     Systerel - added support for predicate variables
  *     Systerel - generalised getPositions() into inspect()
  *     Systerel - added support for mathematical extensions
+ *     Systerel - externalized wd lemmas generation
  *******************************************************************************/
 package org.eventb.core.ast;
-
-import static org.eventb.core.ast.QuantifiedHelper.addUsedBoundIdentifiers;
-import static org.eventb.core.ast.QuantifiedHelper.areAllUsed;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,7 +28,6 @@ import java.util.Set;
 import org.eventb.core.ast.ExtensionHelper.ExtensionGatherer;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.internal.core.ast.BindingSubstitution;
-import org.eventb.internal.core.ast.BoundIdentDeclRemover;
 import org.eventb.internal.core.ast.BoundIdentifierShifter;
 import org.eventb.internal.core.ast.FilteringInspector;
 import org.eventb.internal.core.ast.FindingAccumulator;
@@ -43,6 +39,8 @@ import org.eventb.internal.core.ast.SimpleSubstitution;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
+import org.eventb.internal.core.ast.wd.WDComputer;
+import org.eventb.internal.core.ast.wd.WDImprover;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -1869,17 +1867,17 @@ public abstract class Formula<T extends Formula<T>> {
 	 * <li>implications are replaced by conjunctions according to the
 	 *     equivalences
 	 * <pre>
-	 * 		(⊤ ∧ A) ⇔ A							- getWDSimplifyC
-	 * 		(A ∧ ⊤) ⇔ A							- getWDSimplifyC
-	 * 		(A ∨ ⊤) ⇔ ⊤							- getWDSimplifyD
-	 * 		(⊤ ∨ A) ⇔ ⊤							- getWDSimplifyD
-	 * 		(A ⇒ (B ⇒ C)) ⇔ (A ∧ B ⇒ C)			- getWDSimplifyI
-	 * 		(A ⇒ ⊤) ⇔ ⊤							- getWDSimplifyI
-	 * 		(⊤ ⇒ A) ⇔ A							- getWDSimplifyI
-	 * 		(∀x·⊤) ⇔ ⊤								- getWDSimplifyQ
-	 * 		(∃x·⊤) ⇔ ⊤								- getWDSimplifyQ
-	 *      (∀x·A) ⇔ A provided x nfin A           - getWDSimplifyQ
-	 *      (∃x·A) ⇔ A provided x nfin A           - getWDSimplifyQ
+	 * 		(⊤ ∧ A) ⇔ A							
+	 * 		(A ∧ ⊤) ⇔ A							
+	 * 		(A ∨ ⊤) ⇔ ⊤							
+	 * 		(⊤ ∨ A) ⇔ ⊤							
+	 * 		(A ⇒ (B ⇒ C)) ⇔ (A ∧ B ⇒ C)			
+	 * 		(A ⇒ ⊤) ⇔ ⊤							
+	 * 		(⊤ ⇒ A) ⇔ A							
+	 * 		(∀x·⊤) ⇔ ⊤								
+	 * 		(∃x·⊤) ⇔ ⊤								
+	 *      (∀x·A) ⇔ A provided x nfin A           
+	 *      (∃x·A) ⇔ A provided x nfin A           
 	 * </pre></li></ul></p>
 	 * <p>
 	 * This formula must be type-checked before <code>getWDPredicate()</code>
@@ -1891,97 +1889,12 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public final Predicate getWDPredicate(FormulaFactory formulaFactory) {
 		assert isTypeChecked();
-		return getWDPredicateRaw(formulaFactory).flatten(formulaFactory);
+		final WDComputer wdComputer = new WDComputer(formulaFactory);
+		final Predicate wdLemma = wdComputer.getWDLemma(this);
+		final WDImprover wdImprover = new WDImprover(formulaFactory);
+		return wdImprover.improve(wdLemma);
 	}
-	
-	/**
-	 * Computes the "raw" unflattended WD predicate.
-	 * @param formulaFactory factory to use for creating the predicate
-	 * @return Returns the unflattened well-definedness predicate for this formula.
-	 */
-	protected abstract Predicate getWDPredicateRaw(FormulaFactory formulaFactory);
-	
-	protected static final Predicate getWDSimplifyC(FormulaFactory formulaFactory, Predicate left, Predicate right) {
-		if (left.getTag() == BTRUE)
-			return right;
-		if (right.getTag() == BTRUE)
-			return left;
-		final Predicate[] children = new Predicate[] {left, right};
-		return formulaFactory.makeAssociativePredicate(LAND, children, null);
-	}
-	
-	protected static final Predicate getWDSimplifyD(FormulaFactory formulaFactory, Predicate left, Predicate right) {
-		if (left.getTag() == BTRUE)
-			return left;
-		if (right.getTag() == BTRUE)
-			return right;
-		final Predicate[] children = new Predicate[] {left, right};
-		return formulaFactory.makeAssociativePredicate(LOR, children, null);
-	}
-	
-	protected static final <S extends Formula<?>> Predicate getWDConjunction(FormulaFactory formulaFactory, S left, S right) {
-		final Predicate conj0 = left.getWDPredicateRaw(formulaFactory);
-		final Predicate conj1 = right.getWDPredicateRaw(formulaFactory);
-		return getWDSimplifyC(formulaFactory, conj0, conj1);
-	}
-	
-	protected static final <S extends Formula<?>> Predicate getWDConjunction(FormulaFactory formulaFactory, S[] children) {
-		final LinkedList<Predicate> conjuncts = new LinkedList<Predicate>();
-		for (S child: children) {
-			final Predicate conj = child.getWDPredicateRaw(formulaFactory);
-			if (conj.getTag() != BTRUE)
-				conjuncts.add(conj);
-		}
-		if (conjuncts.isEmpty())
-			return formulaFactory.makeLiteralPredicate(BTRUE, null);
-		if (conjuncts.size() == 1)
-			return conjuncts.getFirst();
-		return formulaFactory.makeAssociativePredicate(LAND, conjuncts, null);
-	}
-	
-	protected static final Predicate getWDSimplifyI(FormulaFactory formulaFactory, Predicate left, Predicate right) {
-		if (left.getTag() == BTRUE || right.getTag() == BTRUE)
-			return right;
-		if (right.getTag() == LIMP) {
-			final Predicate rightLeft = ((BinaryPredicate) right).getLeft();
-			final Predicate newRight = ((BinaryPredicate) right).getRight();
-			final Predicate newLeft = getWDSimplifyC(formulaFactory, left, rightLeft);
-			return getWDSimplifyI(formulaFactory, newLeft, newRight);
-		}
-		return formulaFactory.makeBinaryPredicate(LIMP, left, right, null);
-	}
-	
-	protected static final <S extends Formula<?>> Predicate getWDImplication(FormulaFactory formulaFactory, S left, S right) {
-		Predicate antecedent = left.getWDPredicateRaw(formulaFactory);
-		Predicate consequent = right.getWDPredicateRaw(formulaFactory);
-		return getWDSimplifyI(formulaFactory, antecedent, consequent);
-	}
-	
-	protected static final Predicate getWDSimplifyQ(FormulaFactory formulaFactory,
-			int quant, BoundIdentDecl[] decls, Predicate pred,
-			SourceLocation loc) {
 		
-		if (pred.getTag() == BTRUE)
-			return pred;
-		
-		final boolean[] used = new boolean[decls.length];
-		addUsedBoundIdentifiers(used, pred);
-		if (! areAllUsed(used)) {
-			BoundIdentDeclRemover subst = 
-				new BoundIdentDeclRemover(decls, used, formulaFactory);
-			final List<BoundIdentDecl> newDecls = subst.getNewDeclarations();
-			final Predicate newPred = pred.rewrite(subst);
-			if (newDecls.size() == 0) {
-				return newPred;
-			}
-			return formulaFactory.makeQuantifiedPredicate(quant,
-					newDecls,
-					newPred,
-					loc);
-		}
-		return formulaFactory.makeQuantifiedPredicate(quant, decls, pred, loc);
-	}
-	
 	/**
 	 * Internal method used by the type-checker to set the type of the formula
 	 * after a type-check has been executed.

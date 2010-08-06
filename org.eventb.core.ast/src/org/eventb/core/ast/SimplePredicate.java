@@ -11,6 +11,7 @@
  *     Systerel - fixed bug in synthesizeType()
  *     Systerel - added support for predicate variables
  *     Systerel - generalised getPositions() into inspect()
+ *     Systerel - externalized wd lemmas generation
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -240,11 +241,6 @@ public class SimplePredicate extends Predicate {
 	@Override
 	public void accept(ISimpleVisitor visitor) {
 		visitor.visitSimplePredicate(this);
-	}
-
-	@Override
-	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		return child.getWDPredicateRaw(formulaFactory);
 	}
 
 	@Override

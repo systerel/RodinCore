@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - externalized wd lemmas generation
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -266,18 +267,6 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 			BoundIdentDecl[] quantifiedIdents) {
 		ExtensionHelper.isLegible(childExpressions, childPredicates, result,
 				quantifiedIdents);
-	}
-
-	@Override
-	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		final WDMediator wdMed = new WDMediator(formulaFactory);
-		final Predicate extensionWD = extension.getWDPredicate(this, wdMed);
-		
-		if (extension.conjoinChildrenWD()) {
-			return wdMed.addChildrenWD(extensionWD, this);
-		} else {
-			return extensionWD;
-		}
 	}
 
 	@SuppressWarnings("unchecked")

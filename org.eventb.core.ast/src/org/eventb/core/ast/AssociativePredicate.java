@@ -10,6 +10,7 @@
  *     Systerel - added accept for ISimpleVisitor
  *     Systerel - added support for predicate variables
  *     Systerel - generalised getPositions() into inspect()
+ *     Systerel - externalized wd lemmas generation
  *******************************************************************************/ 
 package org.eventb.core.ast;
 
@@ -310,39 +311,6 @@ public class AssociativePredicate extends Predicate {
 	@Override
 	public void accept(ISimpleVisitor visitor) {
 		visitor.visitAssociativePredicate(this);
-	}
-
-	@Override
-	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		switch (getTag()) {
-		case LAND: return getWDPredicateLAND(0, formulaFactory);
-		case LOR:  return getWDPredicateLOR(0, formulaFactory);
-		default:   assert false; return null;
-		}
-	}
-	
-	private Predicate getWDPredicateLOR(int pred, FormulaFactory formulaFactory) {
-		if(pred + 1 == children.length) {
-			return children[pred].getWDPredicateRaw(formulaFactory);
-		} else {
-			Predicate conj0 = children[pred].getWDPredicateRaw(formulaFactory);
-			Predicate conj1disj0 = children[pred];
-			Predicate conj1disj1 =getWDPredicateLOR(pred+1, formulaFactory);
-			Predicate conj1 = getWDSimplifyD(formulaFactory, conj1disj0, conj1disj1);
-			return getWDSimplifyC(formulaFactory, conj0, conj1);
-		}
-	}
-
-	private Predicate getWDPredicateLAND(int pred, FormulaFactory formulaFactory) {
-		if(pred + 1 == children.length) {
-			return children[pred].getWDPredicateRaw(formulaFactory);
-		} else {
-			Predicate conj0 = children[pred].getWDPredicateRaw(formulaFactory);
-			Predicate conj1ante = children[pred];
-			Predicate conj1cons = getWDPredicateLAND(pred+1, formulaFactory);
-			Predicate conj1 = getWDSimplifyI(formulaFactory, conj1ante, conj1cons);
-			return getWDSimplifyC(formulaFactory, conj0, conj1);
-		}	
 	}
 
 	@Override

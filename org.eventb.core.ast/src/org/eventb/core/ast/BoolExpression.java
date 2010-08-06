@@ -10,6 +10,7 @@
  *     Systerel - added accept for ISimpleVisitor
  *     Systerel - added support for predicate variables
  *     Systerel - generalised getPositions() into inspect()
+ *     Systerel - externalized wd lemmas generation
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -225,11 +226,6 @@ public class BoolExpression extends Expression {
 	@Override
 	public void accept(ISimpleVisitor visitor) {
 		visitor.visitBoolExpression(this);
-	}
-
-	@Override
-	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		return child.getWDPredicateRaw(formulaFactory);
 	}
 
 	@Override

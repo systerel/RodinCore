@@ -11,6 +11,7 @@
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
  *     Systerel - generalised getPositions() into inspect()
+ *     Systerel - externalized wd lemmas generation
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -555,77 +556,6 @@ public class UnaryExpression extends Expression {
 	@Override
 	public void accept(ISimpleVisitor visitor) {
 		visitor.visitUnaryExpression(this);
-	}
-
-	private Predicate getWDPredicateKCARD(FormulaFactory formulaFactory) {
-		Predicate conj0 = child.getWDPredicateRaw(formulaFactory);
-		Predicate conj1 = 
-			formulaFactory.makeSimplePredicate(KFINITE, child, null);
-		return getWDSimplifyC(formulaFactory, conj0, conj1);
-	}
-
-	private Predicate getWDPredicateKINTER(FormulaFactory formulaFactory) {
-		Predicate conj0 = child.getWDPredicateRaw(formulaFactory);
-		Expression emptyset = formulaFactory.makeEmptySet(child.getType(), null);
-		Predicate conj1 = formulaFactory.makeRelationalPredicate(NOTEQUAL, child, emptyset, null);
-		return getWDSimplifyC(formulaFactory, conj0, conj1);
-	}
-
-	private Predicate getWDPredicateKMINMAX(FormulaFactory ff) {
-		Predicate conj0 = child.getWDPredicateRaw(ff);
-		Expression emptyset = ff.makeEmptySet(child.getType(), null);
-		Predicate conj1 = ff.makeRelationalPredicate(NOTEQUAL, child, emptyset, null);
-		Type INT = new IntegerType();
-		Predicate impl = ff.makeBinaryPredicate(LIMP,
-				ff.makeRelationalPredicate(IN,
-						ff.makeBoundIdentifier(0, null, INT),
-						child.shiftBoundIdentifiers(2, ff),
-						null),
-				ff.makeRelationalPredicate(
-						(getTag() == KMIN ? LE : GE),
-						ff.makeBoundIdentifier(1, null, INT),
-						ff.makeBoundIdentifier(0, null, INT),
-						null
-				),
-				null
-		);
-		BoundIdentDecl[] b = new BoundIdentDecl[] {
-				ff.makeBoundIdentDecl("b", null, INT)
-		}; 
-		BoundIdentDecl[] x = new BoundIdentDecl[] {
-				ff.makeBoundIdentDecl("x", null, INT)
-		}; 
-		Predicate conj2 = ff.makeQuantifiedPredicate(EXISTS,
-				b,
-				ff.makeQuantifiedPredicate(FORALL,
-						x,
-						impl,
-						null
-				),
-				null
-		);
-		if (conj0.getTag() == BTRUE) {
-			return ff.makeAssociativePredicate(LAND, 
-					new Predicate[] {conj1, conj2}, null);
-		}
-		return ff.makeAssociativePredicate(LAND, 
-				new Predicate[] {conj0, conj1, conj2}, null);
-	}
-
-	@Override
-	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		switch (getTag()) {
-		case KCARD:
-			return getWDPredicateKCARD(formulaFactory);
-		case KMIN:
-		case KMAX:
-			return getWDPredicateKMINMAX(formulaFactory);
-		case KINTER:
-			return getWDPredicateKINTER(formulaFactory);
-		default:
-			return child.getWDPredicateRaw(formulaFactory);
-		}
-		
 	}
 
 	@Override

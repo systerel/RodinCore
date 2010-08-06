@@ -12,6 +12,7 @@
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
  *     Systerel - generalised getPositions() into inspect()
+ *     Systerel - externalized wd lemmas generation
  *******************************************************************************/ 
 package org.eventb.core.ast;
 
@@ -388,11 +389,6 @@ public class AssociativeExpression extends Expression {
 		AssociativeHelper.isLegibleList(children, result, quantifiedIdents);	
 	}
 	
-	@Override
-	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		return getWDConjunction(formulaFactory, children);
-	}
-
 	@Override
 	protected void toString(IToStringMediator mediator) {
 		final Operators operator = getOperator();

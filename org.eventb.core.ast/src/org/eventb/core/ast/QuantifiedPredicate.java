@@ -10,6 +10,7 @@
  *     Systerel - added accept for ISimpleVisitor
  *     Systerel - added support for predicate variables
  *     Systerel - generalised getPositions() into inspect()
+ *     Systerel - externalized wd lemmas generation
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -374,14 +375,6 @@ public class QuantifiedPredicate extends Predicate {
 	@Override
 	public void accept(ISimpleVisitor visitor) {
 		visitor.visitQuantifiedPredicate(this);		
-	}
-
-	@Override
-	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		final Predicate predWD = pred.getWDPredicateRaw(formulaFactory);
-		final SourceLocation loc = getSourceLocation();
-		return getWDSimplifyQ(formulaFactory, FORALL, quantifiedIdentifiers,
-				predWD, loc);
 	}
 
 	/**

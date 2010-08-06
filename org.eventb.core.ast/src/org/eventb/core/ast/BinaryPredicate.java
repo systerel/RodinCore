@@ -10,6 +10,7 @@
  *     Systerel - added accept for ISimpleVisitor
  *     Systerel - added support for predicate variables
  *     Systerel - generalised getPositions() into inspect()
+ *     Systerel - externalized wd lemmas generation
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -284,25 +285,6 @@ public class BinaryPredicate extends Predicate {
 	@Override
 	public void accept(ISimpleVisitor visitor) {
 		visitor.visitBinaryPredicate(this);
-	}
-
-	private Predicate getWDPredicateLIMP(FormulaFactory formulaFactory) {
-		Predicate conj0 = left.getWDPredicateRaw(formulaFactory);
-		Predicate conj1 = getWDSimplifyI(formulaFactory, left, right.getWDPredicateRaw(formulaFactory));
-		return getWDSimplifyC(formulaFactory, conj0, conj1);
-	}
-	
-	private Predicate getWDPredicateLEQV(FormulaFactory formulaFactory) {
-		return getWDConjunction(formulaFactory, left, right);
-	}
-	
-	@Override
-	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		switch (getTag()) {
-		case LIMP: return getWDPredicateLIMP(formulaFactory);
-		case LEQV: return getWDPredicateLEQV(formulaFactory);
-		default:   assert false; return null;
-		}
 	}
 
 	@Override

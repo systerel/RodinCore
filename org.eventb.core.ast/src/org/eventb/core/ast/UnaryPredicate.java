@@ -10,6 +10,7 @@
  *     Systerel - added accept for ISimpleVisitor
  *     Systerel - added support for predicate variables
  *     Systerel - generalised getPositions() into inspect()
+ *     Systerel - externalized wd lemmas generation
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -235,11 +236,6 @@ public class UnaryPredicate extends Predicate {
 	@Override
 	public void accept(ISimpleVisitor visitor) {
 		visitor.visitUnaryPredicate(this);		
-	}
-
-	@Override
-	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		return child.getWDPredicateRaw(formulaFactory);
 	}
 
 	@Override

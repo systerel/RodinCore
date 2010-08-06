@@ -11,6 +11,7 @@
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
  *     Systerel - generalised getPositions() into inspect()
+ *     Systerel - externalized wd lemmas generation
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -23,7 +24,7 @@ import static org.eventb.internal.core.parser.BMath.PAIR;
 import static org.eventb.internal.core.parser.BMath.RELATION;
 import static org.eventb.internal.core.parser.BMath._RBRACKET;
 
-import java.math.BigInteger;
+
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -759,73 +760,6 @@ public class BinaryExpression extends Expression {
 		visitor.visitBinaryExpression(this);		
 	}
 	
-	private Predicate getWDPredicateDIV(FormulaFactory formulaFactory) {
-		Predicate leftConjunct = left.getWDPredicateRaw(formulaFactory);
-		Predicate rightConjunct = right.getWDPredicateRaw(formulaFactory);
-		Expression zero =  formulaFactory.makeIntegerLiteral(BigInteger.ZERO, null);
-		Predicate extraConjunct = formulaFactory.makeRelationalPredicate(NOTEQUAL, right, zero, null);
-		return 
-		getWDSimplifyC(formulaFactory,
-				getWDSimplifyC(formulaFactory, leftConjunct, rightConjunct),
-				extraConjunct);
-	}
-
-	private Predicate getWDPredicateMOD(FormulaFactory ff) {
-		Predicate leftConjunct = left.getWDPredicateRaw(ff);
-		Predicate rightConjunct = right.getWDPredicateRaw(ff);
-		
-		Expression zero =  ff.makeIntegerLiteral(BigInteger.ZERO, null);
-		Predicate leftWD = ff.makeRelationalPredicate(LE, zero, left, null);
-		Predicate rightWD = ff.makeRelationalPredicate(LT, zero, right, null);
-		return getWDSimplifyC(ff, getWDSimplifyC(ff, getWDSimplifyC(ff,
-				leftConjunct, rightConjunct), leftWD), rightWD);
-	}
-
-	private Predicate getWDPredicateEXPN(FormulaFactory ff) {
-		Predicate leftConjunct = left.getWDPredicateRaw(ff);
-		Predicate rightConjunct = right.getWDPredicateRaw(ff);
-		Expression zero = ff.makeIntegerLiteral(BigInteger.ZERO, null);
-		Predicate leftNotZero = ff.makeRelationalPredicate(LE, zero, left, null);
-		Predicate rightNotZero = ff.makeRelationalPredicate(LE, zero, right, null);
-		return
-		getWDSimplifyC(ff,
-				getWDSimplifyC(ff,
-						getWDSimplifyC(ff, leftConjunct, rightConjunct),
-						leftNotZero),
-						rightNotZero);
-	}
-
-	private Predicate getWDPredicateFUNIMAGE(FormulaFactory ff) {
-		final Predicate leftConjunct = left.getWDPredicateRaw(ff);
-		final Predicate rightConjunct = right.getWDPredicateRaw(ff);
-		final Expression dom = ff.makeUnaryExpression(KDOM, left, null);
-		final Predicate inDom = ff.makeRelationalPredicate(IN, right, dom, null);
-		
-		final Expression src = left.getType().getSource().toExpression(ff);
-		final Expression trg = left.getType().getTarget().toExpression(ff);
-		final Expression pfun = ff.makeBinaryExpression(PFUN, src, trg, null);
-		final Predicate isPFun = ff.makeRelationalPredicate(IN, left, pfun, null);
-		
-		return getWDSimplifyC(ff,
-				getWDSimplifyC(ff,
-						getWDSimplifyC(ff, leftConjunct, rightConjunct),
-						inDom),
-						isPFun);
-	}
-
-	@Override
-	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		switch (getTag()) {
-		case DIV:      return getWDPredicateDIV(formulaFactory);
-		case MOD:      return getWDPredicateMOD(formulaFactory);
-		case EXPN:     return getWDPredicateEXPN(formulaFactory);
-		case FUNIMAGE: return getWDPredicateFUNIMAGE(formulaFactory);
-		default:
-			Predicate leftConjunct = left.getWDPredicateRaw(formulaFactory);
-			Predicate rightConjunct = right.getWDPredicateRaw(formulaFactory);
-			return getWDSimplifyC(formulaFactory, leftConjunct, rightConjunct);
-		}
-	}
 
 	@Override
 	public Expression rewrite(IFormulaRewriter rewriter) {

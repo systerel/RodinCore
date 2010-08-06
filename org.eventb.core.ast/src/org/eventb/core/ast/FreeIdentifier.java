@@ -10,6 +10,7 @@
  *     Systerel - added accept for ISimpleVisitor
  *     Systerel - added support for predicate variables
  *     Systerel - generalised getPositions() into inspect()
+ *     Systerel - externalized wd lemmas generation
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -251,11 +252,6 @@ public class FreeIdentifier extends Identifier {
 	@Override
 	public void accept(ISimpleVisitor visitor) {
 		visitor.visitFreeIdentifier(this);
-	}
-
-	@Override
-	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		return formulaFactory.makeLiteralPredicate(BTRUE, null);
 	}
 
 	@Override

@@ -11,6 +11,7 @@
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
  *     Systerel - generalised getPositions() into inspect()
+ *     Systerel - externalized wd lemmas generation
  *******************************************************************************/ 
 package org.eventb.core.ast;
 
@@ -245,11 +246,6 @@ public class AtomicExpression extends Expression {
 		return;
 	}
 
-	@Override
-	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		return formulaFactory.makeLiteralPredicate(BTRUE, null);
-	}
-	
 	@Override
 	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
 		return this.getTag() == other.getTag() && hasSameType(other);

@@ -8,6 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *     Systerel - generalised getPositions() into inspect()
+ *     Systerel - externalized wd lemmas generation
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -144,11 +145,6 @@ public class PredicateVariable extends Predicate {
 	protected Predicate bindTheseIdents(Map<String, Integer> binding,
 			int offset, FormulaFactory factory) {
 		return this;
-	}
-
-	@Override
-	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		return formulaFactory.makeLiteralPredicate(BTRUE, null);
 	}
 
 	@Override

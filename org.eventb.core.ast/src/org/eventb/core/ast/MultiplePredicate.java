@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - externalized wd lemmas generation
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -286,11 +287,6 @@ public class MultiplePredicate extends Predicate {
 	@Override
 	public void accept(ISimpleVisitor visitor) {
 		visitor.visitMultiplePredicate(this);
-	}
-
-	@Override
-	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		return getWDConjunction(formulaFactory, children);
 	}
 
 	@Override

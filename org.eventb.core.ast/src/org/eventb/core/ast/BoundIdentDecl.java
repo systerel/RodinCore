@@ -10,6 +10,7 @@
  *     Systerel - added accept for ISimpleVisitor
  *     Systerel - added support for predicate variables
  *     Systerel - generalised getPositions() into inspect()
+ *     Systerel - externalized wd lemmas generation
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -151,14 +152,7 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 			type = result.newFreshVariable(getSourceLocation());
 		}
 	}
-	
-	@Override
-	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		// this method should never be called
-		assert false;
-		return formulaFactory.makeLiteralPredicate(BTRUE, null);
-	}
-	
+
 	@Override
 	protected boolean solveType(TypeUnifier unifier) {
 		if (isTypeChecked()) {

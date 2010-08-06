@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - externalized wd lemmas generation
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -285,18 +286,6 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	@Override
 	public void accept(ISimpleVisitor visitor) {
 		visitor.visitExtendedPredicate(this);
-	}
-
-	@Override
-	protected Predicate getWDPredicateRaw(FormulaFactory formulaFactory) {
-		final WDMediator wdMed = new WDMediator(formulaFactory);
-		final Predicate extensionWD = extension.getWDPredicate(this, wdMed);
-		
-		if (extension.conjoinChildrenWD()) {
-			return wdMed.addChildrenWD(extensionWD, this);
-		} else {
-			return extensionWD;
-		}
 	}
 
 	@Override
