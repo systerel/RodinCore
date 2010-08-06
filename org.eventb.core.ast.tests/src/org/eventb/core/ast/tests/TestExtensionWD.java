@@ -156,6 +156,11 @@ public class TestExtensionWD extends AbstractTests {
 			return false;
 		}
 
+		@Override
+		public Object getOrigin() {
+			return null;
+		}
+
 	}
 
 	private static final IExpressionExtension EMAX = new Emax(true);

@@ -23,8 +23,8 @@ import org.eventb.internal.core.ast.extension.ExtensionKind;
  * <p>
  * Standard supported extension kinds are provided as constants. Additionally,
  * instances obtained from
- * {@link ExtensionFactory#makePrefixKind(FormulaType, int, FormulaType)}
- * are supported as well, which makes it possible to customize the arity of a
+ * {@link ExtensionFactory#makePrefixKind(FormulaType, int, FormulaType)} are
+ * supported as well, which makes it possible to customize the arity of a
  * parenthesized formula.
  * </p>
  * <p>
@@ -32,7 +32,7 @@ import org.eventb.internal.core.ast.extension.ExtensionKind;
  * 
  * <pre>
  * public IExtensionKind getKind() {
- *    return ExtensionFactory.makePrefixKind(EXPRESSION, 3, EXPRESSION);
+ * 	return ExtensionFactory.makePrefixKind(EXPRESSION, 3, EXPRESSION);
  * }
  * </pre>
  * 
@@ -103,8 +103,6 @@ public interface IFormulaExtension {
 	IExtensionKind PARENTHESIZED_BINARY_PREDICATE = makePrefixKind(PREDICATE,
 			2, EXPRESSION);
 
-	
-	
 	String getSyntaxSymbol();
 
 	Predicate getWDPredicate(IExtendedFormula formula, IWDMediator wdMediator);
@@ -133,6 +131,14 @@ public interface IFormulaExtension {
 	String getGroupId();
 
 	IExtensionKind getKind();
+
+	/**
+	 * Returns the origin of this extension, or <code>null</code> if no origin
+	 * is defined.
+	 * 
+	 * @return an Object or <code>null</code>
+	 */
+	Object getOrigin();
 
 	void addCompatibilities(ICompatibilityMediator mediator);
 

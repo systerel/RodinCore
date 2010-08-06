@@ -31,6 +31,7 @@ import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
+import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
@@ -41,12 +42,13 @@ import org.eventb.core.ast.extension.datatype.ITypeParameter;
  */
 public class TypeConstrMediator implements ITypeConstructorMediator {
 
-	private static class TypeConstructor implements IExpressionExtension {
+	public static class TypeConstructor implements IExpressionExtension {
 
 		private final String typeName;
 		private final String id;
 		private final String groupId;
 		private final IExtensionKind kind;
+		private IDatatype origin;
 
 		public TypeConstructor(String typeName, String id, String groupId,
 				IExtensionKind kind) {
@@ -160,6 +162,15 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 			return true;
 		}
 
+		public void setOrigin(IDatatype origin) {
+			this.origin = origin;
+		}
+		
+		@Override
+		public IDatatype getOrigin() {
+			return origin;
+		}
+
 	}
 
 	private final List<ITypeParameter> typeParams = new ArrayList<ITypeParameter>();
@@ -184,7 +195,7 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 		return Collections.unmodifiableList(typeParams);
 	}
 
-	public IExpressionExtension getTypeConstructor() {
+	public TypeConstructor getTypeConstructor() {
 		final String typeName = datatype.getTypeName();
 		final String id = datatype.getId();
 		final int nbArgs = typeParams.size();

@@ -702,6 +702,11 @@ public class TestGenParser extends AbstractTests {
 			return false;
 		}
 
+		@Override
+		public Object getOrigin() {
+			return null;
+		}
+
 	};
 
 	public void testExtensionDirectProduct() throws Exception {
@@ -811,6 +816,11 @@ public class TestGenParser extends AbstractTests {
 		@Override
 		public boolean isATypeConstructor() {
 			return false;
+		}
+
+		@Override
+		public Object getOrigin() {
+			return null;
 		}
 
 	};
@@ -1847,6 +1857,11 @@ public class TestGenParser extends AbstractTests {
 			return false;
 		}
 
+		@Override
+		public Object getOrigin() {
+			return null;
+		}
+
 	};
 
 	// verify that the newly introduced symbol cannot be part of an identifier
@@ -2054,24 +2069,24 @@ public class TestGenParser extends AbstractTests {
 
 	};
 
-	private static final IDatatype LIST_EXTNS = ff.makeDatatype(LIST_TYPE);
+	private static final IDatatype LIST_DT = ff.makeDatatype(LIST_TYPE);
 	private static final FormulaFactory LIST_FAC = FormulaFactory
-			.getInstance(LIST_EXTNS.getExtensions());
-	private static final IExpressionExtension EXT_LIST = LIST_EXTNS
+			.getInstance(LIST_DT.getExtensions());
+	private static final IExpressionExtension EXT_LIST = LIST_DT
 			.getTypeConstructor();
 	private static final ParametricType LIST_INT_TYPE = LIST_FAC
 			.makeParametricType(Collections.<Type> singletonList(INT_TYPE),
 					EXT_LIST);
 	private static final PowerSetType POW_LIST_INT_TYPE = LIST_FAC
 			.makePowerSetType(LIST_INT_TYPE);
-	private static final IExpressionExtension EXT_NIL = LIST_EXTNS
+	private static final IExpressionExtension EXT_NIL = LIST_DT
 			.getConstructor("NIL");
-	private static final IExpressionExtension EXT_CONS = LIST_EXTNS
+	private static final IExpressionExtension EXT_CONS = LIST_DT
 			.getConstructor("CONS");
-	private static final IExpressionExtension EXT_HEAD = LIST_EXTNS
-			.getDestructor("CONS", 0);
-	private static final IExpressionExtension EXT_TAIL = LIST_EXTNS
-			.getDestructor("CONS", 1);
+	private static final IExpressionExtension EXT_HEAD = LIST_DT.getDestructor(
+			"CONS", 0);
+	private static final IExpressionExtension EXT_TAIL = LIST_DT.getDestructor(
+			"CONS", 1);
 	
 	public void testDatatypeType() throws Exception {
 
@@ -2248,6 +2263,13 @@ public class TestGenParser extends AbstractTests {
 				LIST_LIST_INT_TYPE, LIST_FAC, true);
 	}
 	
+	public void testDatatypeOrigins() throws Exception {
+		for (IFormulaExtension extension : LIST_DT.getExtensions()) {
+			final Object origin = extension.getOrigin();
+			assertSame("wrong origin for " + extension.getId(), LIST_DT, origin);
+		}
+	}
+
 	public void testMinusPU() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(MINUS, ONE, ZERO, null);
 		doParseUnparseTest("1−0", expected);
@@ -2580,6 +2602,11 @@ public class TestGenParser extends AbstractTests {
 		@Override
 		public boolean conjoinChildrenWD() {
 			return true;
+		}
+
+		@Override
+		public Object getOrigin() {
+			return null;
 		}
 	};
 

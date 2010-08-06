@@ -29,6 +29,11 @@ import org.eventb.core.ast.extension.IFormulaExtension;
  * extensions) in order to get a factory able to parse and build formulae
  * containing references to this datatype.
  * </p>
+ * <p>
+ * Extensions related to a datatype (type constructor, constructors,
+ * destructors) all have an instance of their IDatatype as origin (
+ * {@link IFormulaExtension#getOrigin()}).
+ * </p>
  * 
  * @author Nicolas Beauger
  * @since 2.0
@@ -72,6 +77,16 @@ public interface IDatatype {
 	IExpressionExtension getConstructor(String constructorId);
 
 	/**
+	 * Returns whether the given extension is a constructor of this datatype.
+	 * 
+	 * @param extension
+	 *            an extension
+	 * @return <code>true</code> iff the given extension is a constructor of
+	 *         this datatype
+	 */
+	boolean isConstructor(IExpressionExtension extension);
+
+	/**
 	 * Returns the destructor extension that corresponds to the given
 	 * constructor id and the given argument number, or <code>null</code> if not
 	 * found.
@@ -97,6 +112,26 @@ public interface IDatatype {
 	 * @return an expression extension, or <code>null</code>
 	 */
 	IExpressionExtension getDestructor(String constructorId, int argNumber);
+
+	/**
+	 * Returns the argument number of the given destructor for the given
+	 * constructor.
+	 * <p>
+	 * A negative integer is returned if:
+	 * <li>the given constructor is not defined in this datatype</li>
+	 * <li>the given destructor is not defined in this datatype</li>
+	 * <li>the given destructor does not correspond to the given constructor</li>
+	 * </p>
+	 * 
+	 * @param constructor
+	 *            a constructor
+	 * @param destructor
+	 *            a destructor
+	 * @return a non negative integer in case of success, a negative integer in
+	 *         case of failure
+	 */
+	int getDestructorIndex(IExpressionExtension constructor,
+			IExpressionExtension destructor);
 
 	/**
 	 * Returns a set of all formula extensions defined by this datatype.

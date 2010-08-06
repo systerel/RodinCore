@@ -31,6 +31,8 @@ import org.eventb.core.ast.extension.datatype.ITypeParameter;
  */
 public class Datatype implements IDatatype {
 
+	private static final int INDEX_NOT_FOUND = -1;
+
 	private static class Constructor {
 		private final IExpressionExtension constructor;
 		private final List<IExpressionExtension> destructors;
@@ -52,6 +54,15 @@ public class Datatype implements IDatatype {
 				return null;
 			}
 			return destructors.get(argNumber);
+		}
+		
+		public int findDestructor(IExpressionExtension destructor) {
+			for (int i = 0; i < destructors.size(); i++) {
+				if (destructors.get(i) == destructor) {
+					return i;
+				}
+			}
+			return INDEX_NOT_FOUND;
 		}
 		
 		// non null destructors
@@ -97,6 +108,11 @@ public class Datatype implements IDatatype {
 	}
 
 	@Override
+	public boolean isConstructor(IExpressionExtension extension) {
+		return getConstructor(extension.getId()) == extension;
+	}
+	
+	@Override
 	public IExpressionExtension getDestructor(String constructorId,
 			int argNumber) {
 		final Constructor constr = constructors.get(constructorId);
@@ -104,6 +120,16 @@ public class Datatype implements IDatatype {
 			return null;
 		}
 		return constr.getDestructor(argNumber);
+	}
+
+	@Override
+	public int getDestructorIndex(IExpressionExtension constructor,
+			IExpressionExtension destructor) {
+		final Constructor constr = constructors.get(constructor.getId());
+		if (constr == null) {
+			return INDEX_NOT_FOUND;
+		}
+		return constr.findDestructor(destructor);
 	}
 
 	@Override

@@ -53,10 +53,12 @@ public class ConstructorMediator extends ArgumentMediator implements
 		private final IExpressionExtension typeCons;
 		private final List<ITypeParameter> typeParams;
 		private final List<IArgument> arguments;
+		private final IDatatype origin;
 
 		public ConstructorExtension(String name, String id, String groupId,
 				IExtensionKind kind, IExpressionExtension typeCons,
-				List<ITypeParameter> typeParams, List<IArgument> arguments) {
+				List<ITypeParameter> typeParams, List<IArgument> arguments,
+				IDatatype origin) {
 			this.name = name;
 			this.id = id;
 			this.groupId = groupId;
@@ -64,6 +66,7 @@ public class ConstructorMediator extends ArgumentMediator implements
 			this.typeCons = typeCons;
 			this.typeParams = typeParams;
 			this.arguments = arguments;
+			this.origin = origin;
 		}
 
 		@Override
@@ -181,6 +184,11 @@ public class ConstructorMediator extends ArgumentMediator implements
 		public boolean isATypeConstructor() {
 			return false;
 		}
+
+		@Override
+		public IDatatype getOrigin() {
+			return origin;
+		}
 	}
 
 	private static class DestructorExtension implements IExpressionExtension {
@@ -192,10 +200,12 @@ public class ConstructorMediator extends ArgumentMediator implements
 		private final IExpressionExtension typeCons;
 		private final List<ITypeParameter> typeParams;
 		private final IArgumentType returnType;
+		private final IDatatype origin;
 	
 		public DestructorExtension(String name, String id, String groupId,
 				IExtensionKind kind, IExpressionExtension typeCons,
-				List<ITypeParameter> typeParams, IArgumentType returnType) {
+				List<ITypeParameter> typeParams, IArgumentType returnType,
+				IDatatype origin) {
 			this.name = name;
 			this.id = id;
 			this.groupId = groupId;
@@ -203,6 +213,7 @@ public class ConstructorMediator extends ArgumentMediator implements
 			this.typeCons = typeCons;
 			this.typeParams = typeParams;
 			this.returnType = returnType;
+			this.origin = origin;
 		}
 	
 		@Override
@@ -311,6 +322,11 @@ public class ConstructorMediator extends ArgumentMediator implements
 		public boolean isATypeConstructor() {
 			return false;
 		}
+
+		@Override
+		public IDatatype getOrigin() {
+			return origin;
+		}
 	
 	}
 
@@ -319,10 +335,9 @@ public class ConstructorMediator extends ArgumentMediator implements
 
 	private final Datatype datatype;
 	
-	public ConstructorMediator(IExpressionExtension typeConstructor,
-			List<ITypeParameter> typeParams, FormulaFactory factory) {
+	public ConstructorMediator(Datatype datatype, FormulaFactory factory) {
 		super(factory);
-		this.datatype = new Datatype(typeConstructor, typeParams);
+		this.datatype = datatype;
 	}
 
 	@Override
@@ -340,7 +355,8 @@ public class ConstructorMediator extends ArgumentMediator implements
 		final IExtensionKind kind = computeKind(nbArgs);
 	
 		final IExpressionExtension constructor = new ConstructorExtension(name,
-				id, groupId, kind, typeConstructor, typeParams, arguments);
+				id, groupId, kind, typeConstructor, typeParams, arguments,
+				datatype);
 
 		// FIXME problem with duplicate arguments with destructors:
 		// the destructor is built several times
@@ -357,7 +373,7 @@ public class ConstructorMediator extends ArgumentMediator implements
 				
 				destructor = new DestructorExtension(destructorName,
 						destructorId, destrGroupId, destrKind, typeConstructor,
-						typeParams, arg.getType());
+						typeParams, arg.getType(), datatype);
 			} else {
 				destructor = null;
 			}

@@ -24,6 +24,7 @@ import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
+import org.eventb.internal.core.ast.extension.datatype.TypeConstrMediator.TypeConstructor;
 import org.eventb.internal.core.parser.BMath;
 
 /**
@@ -44,16 +45,17 @@ public class DatatypeExtensionComputer {
 		final Map<String, IExpressionExtension> result = new HashMap<String, IExpressionExtension>();
 		final TypeConstrMediator typeMed = new TypeConstrMediator(extension);
 		extension.addTypeParameters(typeMed);
-		final IExpressionExtension typeConstructor = typeMed.getTypeConstructor();
+		final TypeConstructor typeConstructor = typeMed.getTypeConstructor();
 		assert typeConstructor.isATypeConstructor();
 		addExtension(result, typeConstructor);
 		final List<ITypeParameter> typeParams = typeMed.getTypeParams();
-
-		final ConstructorMediator consMed = new ConstructorMediator(typeConstructor,
-				typeParams, factory);
+		final Datatype datatype = new Datatype(typeConstructor, typeParams);
+		typeConstructor.setOrigin(datatype);
+		final ConstructorMediator consMed = new ConstructorMediator(datatype,
+				factory);
 		extension.addConstructors(consMed);
 
-		return consMed.getDatatype();
+		return datatype;
 	}
 
 	private static void addExtension(Map<String, IExpressionExtension> map,
