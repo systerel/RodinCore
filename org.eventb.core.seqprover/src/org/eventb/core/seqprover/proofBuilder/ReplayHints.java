@@ -63,11 +63,12 @@ public class ReplayHints {
 			return;
 		for (int i = 0; i < old.getAddedFreeIdents().length; i++) {
 			final FreeIdentifier oldFreeIdent = old.getAddedFreeIdents()[i];
-			final FreeIdentifier curFreeIdent = current.getAddedFreeIdents()[i];
-			if ((i < current.getAddedFreeIdents().length)
-					&& (!oldFreeIdent.equals(curFreeIdent))
-					&& (oldFreeIdent.getType().equals(curFreeIdent.getType()))) {
-				this.freeVarRename.put(oldFreeIdent, curFreeIdent);
+			if ((i < current.getAddedFreeIdents().length)){
+				final FreeIdentifier curFreeIdent = current.getAddedFreeIdents()[i];
+				if ((!oldFreeIdent.equals(curFreeIdent))
+						&& (oldFreeIdent.getType().equals(curFreeIdent.getType()))) {
+					this.freeVarRename.put(oldFreeIdent, curFreeIdent);
+				}
 			}
 		}
 	}
