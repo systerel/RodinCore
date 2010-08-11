@@ -156,7 +156,7 @@
             id="fr.systerel.explorer.navigator.content.event"
             labelProvider="fr.systerel.internal.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.events"
-            priority="lowest">
+            priority="lower">
          <triggerPoints>
             <or>
                <instanceof
