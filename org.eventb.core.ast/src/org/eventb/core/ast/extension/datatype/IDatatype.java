@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ParametricType;
+import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
 
@@ -77,6 +79,13 @@ public interface IDatatype {
 	IExpressionExtension getConstructor(String constructorId);
 
 	/**
+	 * Returns all constructors of this datatype.
+	 * 
+	 * @return a set of expression extensions (possibly empty)
+	 */
+	Set<IExpressionExtension> getConstructors();
+	
+	/**
 	 * Returns whether the given extension is a constructor of this datatype.
 	 * 
 	 * @param extension
@@ -112,6 +121,51 @@ public interface IDatatype {
 	 * @return an expression extension, or <code>null</code>
 	 */
 	IExpressionExtension getDestructor(String constructorId, int argNumber);
+
+	/**
+	 * Returns a list of arguments for the given constructor, or
+	 * <code>null</code> if the given extension is not a constructor of this
+	 * datatype.
+	 * <p>
+	 * When not <code>null</code>, the returned list has the size of the number
+	 * of parameters of the constructor, and is ordered after the order of these
+	 * parameters.
+	 * </p>
+	 * 
+	 * @param constructor
+	 *            a constructor extension
+	 * @return a list of arguments, or <code>null</code>
+	 */
+	List<IArgument> getArguments(IExpressionExtension constructor);
+
+	/**
+	 * Returns the list of parameter types for the given constructor, according
+	 * to the given return type.
+	 * <p>
+	 * <code>null</code> is returned if the given extension is not a constructor
+	 * of this datatype, or if the given return type does not have the type
+	 * constructor of this datatype for expression extension.
+	 * </p>
+	 * <p>
+	 * When not <code>null</code>, the returned list has the size of the number
+	 * of parameters of the constructor, and is ordered after the order of these
+	 * parameters.
+	 * </p>
+	 * <p>
+	 * Given return type is used to instantiate type parameters, which may be
+	 * involved in argument types.
+	 * </p>
+	 * 
+	 * @param constructor
+	 *            a constructor extension
+	 * @param returnType
+	 *            return type of the constructor
+	 * @param factory
+	 *            a formula factory to use for building types
+	 * @return a list of types, or <code>null</code>
+	 */
+	List<Type> getArgumentTypes(IExpressionExtension constructor,
+			ParametricType returnType, FormulaFactory factory);
 
 	/**
 	 * Returns the argument number of the given destructor for the given

@@ -145,16 +145,8 @@ public class ConstructorMediator extends ArgumentMediator implements
 				return null;
 			}
 
-			final TypeInstantiation instantiation = new TypeInstantiation(
-					typeCons);
-
 			// instantiate type parameters with those of proposed type
-			final Type[] actualTypePrms = genType.getTypeParameters();
-			assert actualTypePrms.length == typeParams.size();
-			for (int i = 0; i < typeParams.size(); i++) {
-				instantiation.put(typeParams.get(i), actualTypePrms[i]);
-			}
-			return instantiation;
+			return Datatype.makeTypeInst(genType, typeParams);
 		}
 
 		@Override
@@ -219,6 +211,7 @@ public class ConstructorMediator extends ArgumentMediator implements
 		@Override
 		public Predicate getWDPredicate(IExtendedFormula formula,
 				IWDMediator wdMediator) {
+			// FIXME ?: # params . formula.getChildExpressions()[0] = constr(params) 
 			return wdMediator.makeTrueWD();
 		}
 	
@@ -283,16 +276,7 @@ public class ConstructorMediator extends ArgumentMediator implements
 			if (genChildType.getExprExtension() != typeCons) {
 				return null;
 			}
-	
-			final TypeInstantiation instantiation = new TypeInstantiation(typeCons);
-			final Type[] actualParams = genChildType.getTypeParameters();
-	
-			assert actualParams.length == typeParams.size();
-	
-			for (int i = 0; i < actualParams.length; i++) {
-				instantiation.put(typeParams.get(i), actualParams[i]);
-			}
-			return instantiation;
+			return Datatype.makeTypeInst(genChildType, typeParams);
 		}
 	
 		@Override
@@ -379,7 +363,8 @@ public class ConstructorMediator extends ArgumentMediator implements
 			}
 			destructors.add(destructor);
 		}
-		datatype.addConstructor(constructor, destructors);
+		final List<IArgument> argCopy = new ArrayList<IArgument>(arguments);
+		datatype.addConstructor(constructor, destructors, argCopy);
 	}
 
 	@Override
