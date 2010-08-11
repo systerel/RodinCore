@@ -45,6 +45,11 @@
                ratio="0.25"
                relationship="fast"/>
          <view
+               id="org.eventb.ui.views.RuleDetails"
+               ratio="0.25"
+               relationship="fast">
+         </view>
+         <view
                id="org.eventb.ui.views.Goal"
                ratio="0.4"
                relationship="top"
@@ -81,6 +86,9 @@
                relative="org.eventb.ui.views.ProofControl"
                visible="false">
          </view>
+         <viewShortcut
+               id="org.eventb.ui.views.RuleDetails">
+         </viewShortcut>
       </perspectiveExtension>
       <perspectiveExtension targetID="org.eventb.ui.perspective.eventb">
          <view

@@ -62,6 +62,14 @@
             icon="icons/full/clcl16/prf_tree.gif"
             id="org.eventb.ui.views.ProofSkeleton"
             name="%view.ProofSkeleton"/>
+      <view
+            category="org.eventb.ui"
+            class="org.eventb.internal.ui.prooftreeui.RuleDetailsView"
+            icon="icons/full/ctool16/info_prover_rule.gif"
+            id="org.eventb.ui.views.RuleDetails"
+            name="%view.RuleDetails"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
@@ -445,6 +453,15 @@
             adaptable="false"
             id="org.eventb.ui.ProofTreeNode"
             objectClass="org.eventb.core.seqprover.IProofTreeNode">
+         <action
+               class="org.eventb.internal.ui.prooftreeui.ShowRuleDetails"
+               enablesFor="1"
+               icon="icons/full/ctool16/info_prover_rule.gif"
+               id="org.eventb.ui.showRuleDetails"
+               label="%popupMenu.showRuleDetails.label"
+               menubarPath="additions"
+               tooltip="%popupMenu.showRuleDetails.tooltip">
+         </action>
          <action
                class="org.eventb.internal.ui.prooftreeui.Prune"
                enablesFor="1"
