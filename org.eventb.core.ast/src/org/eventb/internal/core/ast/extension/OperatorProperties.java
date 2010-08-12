@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension;
 
-import org.eventb.core.ast.extension.IArity;
+import org.eventb.core.ast.extension.ITypeDistribution;
 import org.eventb.core.ast.extension.IOperatorProperties;
 
 /**
@@ -21,16 +21,14 @@ public class OperatorProperties implements IOperatorProperties {
 
 	private final Notation notation;
 	private final FormulaType formulaType;
-	private final IArity arity;
-	private final FormulaType argumentType;
+	private final ITypeDistribution childTypes;
 	private final boolean isAssociative;
 
 	private OperatorProperties(Notation notation, FormulaType formulaType,
-			IArity arity, FormulaType argumentType, boolean isAssociative) {
+			ITypeDistribution childTypes, boolean isAssociative) {
 		this.notation = notation;
 		this.formulaType = formulaType;
-		this.arity = arity;
-		this.argumentType = argumentType;
+		this.childTypes = childTypes;
 		this.isAssociative = isAssociative;
 	}
 
@@ -45,13 +43,8 @@ public class OperatorProperties implements IOperatorProperties {
 	}
 
 	@Override
-	public IArity getArity() {
-		return arity;
-	}
-	
-	@Override
-	public FormulaType getArgumentType() {
-		return argumentType;
+	public ITypeDistribution getChildTypes() {
+		return childTypes;
 	}
 	
 	@Override
@@ -60,8 +53,9 @@ public class OperatorProperties implements IOperatorProperties {
 	}
 
 	public static IOperatorProperties makeOperProps(Notation notation,
-			FormulaType formulaType, IArity arity, FormulaType argumentType, boolean isAssociative) {
-		return new OperatorProperties(notation, formulaType, arity,
-				argumentType, isAssociative);
+			FormulaType formulaType, ITypeDistribution childTypes,
+			boolean isAssociative) {
+		return new OperatorProperties(notation, formulaType, childTypes,
+				isAssociative);
 	}
 }

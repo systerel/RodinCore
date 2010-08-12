@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension;
 
-import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 import static org.eventb.internal.core.ast.extension.OperatorProperties.makeOperProps;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.extension.IArity;
+import org.eventb.core.ast.extension.ITypeDistribution;
 import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
@@ -25,10 +24,10 @@ public class ExtensionKind implements IExtensionKind {
 
 	private final IOperatorProperties operProps;
 
-	public ExtensionKind(Notation notation, FormulaType formulaType, IArity arity,
-			FormulaType argumentType, boolean isAssociative) {
-		this.operProps = makeOperProps(notation, formulaType, arity,
-				argumentType, isAssociative);
+	public ExtensionKind(Notation notation, FormulaType formulaType,
+			ITypeDistribution childTypes, boolean isAssociative) {
+		this.operProps = makeOperProps(notation, formulaType, childTypes,
+				isAssociative);
 	}
 
 	@Override
@@ -39,15 +38,8 @@ public class ExtensionKind implements IExtensionKind {
 	@Override
 	public boolean checkPreconditions(Expression[] childExprs,
 			Predicate[] childPreds) {
-		final int children;
-		final int alien;
-		if (operProps.getArgumentType() == EXPRESSION) {
-			children = childExprs.length;
-			alien = childPreds.length;
-		} else {
-			children = childPreds.length;
-			alien = childExprs.length;
-		}
-		return operProps.getArity().check(children) && alien == 0;
+		final ITypeDistribution childTypes = operProps.getChildTypes();
+		return childTypes.getExprArity().check(childExprs.length)
+				&& childTypes.getPredArity().check(childPreds.length);
 	}
 }

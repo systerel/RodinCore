@@ -13,6 +13,10 @@ package org.eventb.core.ast.extension;
 import static org.eventb.core.ast.extension.ExtensionFactory.makeArity;
 import static org.eventb.core.ast.extension.ExtensionFactory.makeFixedArity;
 
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.Predicate;
+
 
 /**
  * Common protocol for operator properties.
@@ -20,9 +24,9 @@ import static org.eventb.core.ast.extension.ExtensionFactory.makeFixedArity;
  * @author Nicolas Beauger
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IOperatorProperties {
-
 
 	enum Notation {
 		PREFIX, INFIX, POSTFIX
@@ -34,18 +38,27 @@ public interface IOperatorProperties {
 	IArity MULTARY_2 = makeArity(2, IArity.MAX_ARITY);
 	
 	enum FormulaType {
-		EXPRESSION, PREDICATE
+		EXPRESSION {
+			@Override
+			public boolean check(Formula<?> formula) {
+				return formula instanceof Expression;
+			}
+		},
+		PREDICATE {
+			@Override
+			public boolean check(Formula<?> formula) {
+				return formula instanceof Predicate;
+			}
+		};
+
+		public abstract boolean check(Formula<?> formula);
 	}
 
 	Notation getNotation();
 	
 	FormulaType getFormulaType();
 	
-	// TODO move elsewhere (not a static property)
-	IArity getArity();
-	
-	// TODO support arguments of mixed types
-	FormulaType getArgumentType();
+	ITypeDistribution getChildTypes();
 
 	// FIXME clarify relation with the associativity property, set through
 	// addCompatibilities; maybe remove this method

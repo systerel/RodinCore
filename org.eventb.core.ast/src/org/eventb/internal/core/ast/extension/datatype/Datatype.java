@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.ITypeDistribution;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IFormulaExtension;
@@ -47,9 +48,11 @@ public class Datatype implements IDatatype {
 		public Constructor(IExpressionExtension constructor,
 				List<IExpressionExtension> destructors,
 				List<IArgument> arguments) {
-			this.arguments = arguments;
 			final IExtensionKind kind = constructor.getKind();
-			assert kind.getProperties().getArity().check(destructors.size());
+			final ITypeDistribution childTypes = kind.getProperties()
+					.getChildTypes();
+			assert childTypes.getExprArity().check(destructors.size());
+			this.arguments = arguments;
 			this.constructor = constructor;
 			this.destructors = destructors;
 		}

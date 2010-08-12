@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension.datatype;
 
+import static org.eventb.core.ast.extension.ExtensionFactory.makeAllExpr;
+import static org.eventb.core.ast.extension.ExtensionFactory.makeFixedArity;
 import static org.eventb.core.ast.extension.ExtensionFactory.makePrefixKind;
 import static org.eventb.core.ast.extension.IFormulaExtension.ATOMIC_EXPRESSION;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
@@ -78,7 +80,8 @@ public class DatatypeExtensionComputer {
 		if (nbArgs == 0) {
 			kind = ATOMIC_EXPRESSION;
 		} else {
-			kind = makePrefixKind(EXPRESSION, nbArgs, EXPRESSION);
+			kind = makePrefixKind(EXPRESSION,
+					makeAllExpr(makeFixedArity(nbArgs)));
 		}
 		return kind;
 	}

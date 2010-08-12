@@ -17,6 +17,7 @@ import static org.eventb.internal.core.parser.BMath.*;
 import static org.eventb.internal.core.parser.MainParsers.BOUND_IDENT_DECL_LIST_PARSER;
 import static org.eventb.internal.core.parser.MainParsers.EXPR_LIST_PARSER;
 import static org.eventb.internal.core.parser.MainParsers.EXPR_PARSER;
+import static org.eventb.internal.core.parser.MainParsers.FORMULA_LIST_PARSER;
 import static org.eventb.internal.core.parser.MainParsers.PRED_PARSER;
 import static org.eventb.internal.core.parser.MainParsers.TYPE_PARSER;
 import static org.eventb.internal.core.parser.MainParsers.asExpression;
@@ -63,6 +64,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.QuantifiedExpression.Form;
+import org.eventb.core.ast.extension.ITypeDistribution;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IFormulaExtension;
@@ -1502,40 +1504,43 @@ public class SubParsers {
 		}
 	}
 	
-	public static class ExtendedExprParen extends ParenNudParser<ExtendedExpression, List<Expression>> {
-
-		public ExtendedExprParen(int kind, int tag) {
-			super(kind, tag, EXPR_LIST_PARSER);
+	private static class AbstractExtendedParen<R extends IExtendedFormula> extends ParenNudParser<R, List<Formula<?>>> {
+		
+		private final ExtensionCheckMaker<R> extCheckMaker;
+		
+		public AbstractExtendedParen(int kind, int tag, ExtensionCheckMaker<R> extCheckMaker) {
+			super(kind, tag, FORMULA_LIST_PARSER);
+			this.extCheckMaker = extCheckMaker;
 		}
 
 		@Override
-		protected ExtendedExpression makeValue(FormulaFactory factory,
-				List<Expression> children, SourceLocation loc) throws SyntaxError {
-			return EXTENDED_EXPR.checkAndMake(factory, tag, children, loc);
+		protected R makeValue(FormulaFactory factory,
+				List<Formula<?>> children, SourceLocation loc) throws SyntaxError {
+			return extCheckMaker.checkAndMake(factory, tag, children, loc);
 		}
 
 		@Override
-		protected List<Expression> getChild(ExtendedExpression parent) {
-			return Arrays.asList(parent.getChildExpressions());
+		protected List<Formula<?>> getChild(R parent) {
+			final ITypeDistribution childTypes = parent.getExtension()
+					.getKind().getProperties().getChildTypes();
+			return childTypes.makeList(parent.getChildExpressions(),
+					parent.getChildPredicates());
 		}
 
 	}
 	
-	public static class ExtendedPredParen extends ParenNudParser<ExtendedPredicate, List<Expression>> {
+	public static class ExtendedExprParen extends AbstractExtendedParen<ExtendedExpression> {
+
+		public ExtendedExprParen(int kind, int tag) {
+			super(kind, tag, EXTENDED_EXPR);
+		}
+
+	}
+	
+	public static class ExtendedPredParen extends AbstractExtendedParen<ExtendedPredicate> {
 
 		public ExtendedPredParen(int kind, int tag) {
-			super(kind, tag, EXPR_LIST_PARSER);
-		}
-
-		@Override
-		protected ExtendedPredicate makeValue(FormulaFactory factory,
-				List<Expression> children, SourceLocation loc) throws SyntaxError {
-			return EXTENDED_PRED.checkAndMake(factory, tag, children, loc);
-		}
-
-		@Override
-		protected List<Expression> getChild(ExtendedPredicate parent) {
-			return Arrays.asList(parent.getChildExpressions());
+			super(kind, tag, EXTENDED_PRED);
 		}
 
 	}
@@ -1547,22 +1552,37 @@ public class SubParsers {
 		}
 		
 		public final T checkAndMake(FormulaFactory factory, int tag,
-				List<Expression> children, SourceLocation loc) throws SyntaxError {
-			final IFormulaExtension extension = factory
-					.getExtension(tag);
-			if (!extension.getKind().checkPreconditions(
-					children.toArray(new Expression[children.size()]), NO_PRED)) {
+				List<? extends Formula<?>> children, SourceLocation loc)
+				throws SyntaxError {
+			final IFormulaExtension extension = factory.getExtension(tag);
+			final ITypeDistribution childTypes = extension.getKind()
+					.getProperties().getChildTypes();
+			if (!childTypes.check(children)) {
 				throw new SyntaxError(new ASTProblem(loc,
 						ProblemKind.ExtensionPreconditionError,
 						ProblemSeverities.Error));
 			}
-			return make(factory, extension, children, loc);
+			final List<Expression> childExprs = new ArrayList<Expression>();
+			final List<Predicate> childPreds = new ArrayList<Predicate>();
+			splitExprPred(children, childExprs, childPreds);
+			
+			return make(factory, extension, childExprs, childPreds, loc);
+		}
 
+		private static void splitExprPred(List<? extends Formula<?>> children,
+				List<Expression> childExprs, List<Predicate> childPreds) {
+			for (Formula<?> child : children) {
+				if (child instanceof Expression) {
+					childExprs.add((Expression) child);
+				} else {
+					childPreds.add((Predicate) child);
+				}
+			}
 		}
 
 		protected abstract T make(FormulaFactory factory,
-				final IFormulaExtension extension, List<Expression> children,
-				SourceLocation loc);
+				final IFormulaExtension extension, List<Expression> childExprs,
+				List<Predicate> childPreds, SourceLocation loc);
 
 	}
 	
@@ -1570,11 +1590,11 @@ public class SubParsers {
 
 		@Override
 		protected ExtendedExpression make(FormulaFactory factory,
-				IFormulaExtension extension, List<Expression> children,
-				SourceLocation loc) {
+				IFormulaExtension extension, List<Expression> childExprs,
+				List<Predicate> childPreds, SourceLocation loc) {
 			return factory.makeExtendedExpression(
-					(IExpressionExtension) extension, children,
-					Collections.<Predicate> emptyList(), loc);
+					(IExpressionExtension) extension, childExprs,
+					childPreds, loc);
 		}
 
 	};
@@ -1583,11 +1603,11 @@ public class SubParsers {
 
 		@Override
 		protected ExtendedPredicate make(FormulaFactory factory,
-				IFormulaExtension extension, List<Expression> children,
-				SourceLocation loc) {
+				IFormulaExtension extension, List<Expression> childExprs,
+				List<Predicate> childPreds, SourceLocation loc) {
 			return factory.makeExtendedPredicate(
-					(IPredicateExtension) extension, children,
-					Collections.<Predicate> emptyList(), loc);
+					(IPredicateExtension) extension, childExprs, childPreds,
+					loc);
 		}
 
 	};

@@ -14,14 +14,14 @@ package org.eventb.core.ast;
 // FIXME should not use AssociativeHelper
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
-import static org.eventb.core.ast.extension.IArity.MAX_ARITY;
-import static org.eventb.core.ast.extension.IOperatorProperties.BINARY;
-import static org.eventb.core.ast.extension.IOperatorProperties.MULTARY_2;
-import static org.eventb.core.ast.extension.IOperatorProperties.NULLARY;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 import static org.eventb.core.ast.extension.IOperatorProperties.Notation.INFIX;
 import static org.eventb.core.ast.extension.IOperatorProperties.Notation.PREFIX;
-import static org.eventb.internal.core.ast.extension.OperatorProperties.makeOperProps;
+import static org.eventb.internal.core.ast.extension.ArityCoverage.ANY;
+import static org.eventb.internal.core.ast.extension.ArityCoverage.NONE;
+import static org.eventb.internal.core.ast.extension.ArityCoverage.ONE_OR_MORE;
+import static org.eventb.internal.core.ast.extension.ArityCoverage.TWO;
+import static org.eventb.internal.core.ast.extension.ArityCoverage.TWO_OR_MORE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,13 +34,16 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IOperatorProperties;
+import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
+import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.extension.Arity;
+import org.eventb.internal.core.ast.extension.ArityCoverage;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
+import org.eventb.internal.core.ast.extension.OperatorCoverage;
 import org.eventb.internal.core.ast.extension.TypeCheckMediator;
 import org.eventb.internal.core.ast.extension.TypeMediator;
 import org.eventb.internal.core.parser.ExtendedGrammar;
@@ -61,8 +64,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	private static enum ExtendedExpressionParsers implements
 			IPropertyParserInfo<ExtendedExpression> {
 
-		EXTENDED_ATOMIC_EXPRESSION(makeOperProps(PREFIX, EXPRESSION, NULLARY,
-				EXPRESSION, false)) {
+		EXTENDED_ATOMIC_EXPRESSION(PREFIX, EXPRESSION, NONE, NONE, NONE, false) {
 
 			@Override
 			public IParserPrinter<ExtendedExpression> makeParser(int kind,
@@ -72,8 +74,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 
 		},
 
-		EXTENDED_BINARY_EXPRESSION(makeOperProps(INFIX, EXPRESSION, BINARY,
-				EXPRESSION, false)) {
+		EXTENDED_BINARY_EXPRESSION(INFIX, EXPRESSION, TWO, NONE, TWO, false) {
 
 			@Override
 			public IParserPrinter<ExtendedExpression> makeParser(int kind,
@@ -82,8 +83,8 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 			}
 		},
 
-		EXTENDED_ASSOCIATIVE_EXPRESSION(makeOperProps(INFIX, EXPRESSION,
-				MULTARY_2, EXPRESSION, true)) {
+		EXTENDED_ASSOCIATIVE_EXPRESSION(INFIX, EXPRESSION,
+				TWO_OR_MORE, NONE, TWO_OR_MORE, true) {
 
 			@Override
 			public IParserPrinter<ExtendedExpression> makeParser(int kind,
@@ -93,9 +94,10 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 			}
 		},
 
-		// the arity given here stands for 'any fixed arity in 1 .. MAX_ARITY'
-		PARENTHESIZED_EXPRESSION(makeOperProps(PREFIX, EXPRESSION, new Arity(1,
-				MAX_ARITY), EXPRESSION, false)) {
+		// the arity given here stands for 'any fixed arity in 0 .. MAX_ARITY
+		// for both predicates and expressions, but globally 1 argument or more'
+		PARENTHESIZED_EXPRESSION(PREFIX, EXPRESSION, ANY, ANY, ONE_OR_MORE,
+				false) {
 
 			@Override
 			public IParserPrinter<ExtendedExpression> makeParser(int kind,
@@ -106,15 +108,18 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 
 		;
 
-		private final IOperatorProperties operProps;
+		private final OperatorCoverage operCover;
 
-		private ExtendedExpressionParsers(IOperatorProperties operProps) {
-			this.operProps = operProps;
+		private ExtendedExpressionParsers(Notation notation, FormulaType formulaType,
+				ArityCoverage exprArity, ArityCoverage predArity,
+				ArityCoverage globalArity, boolean isAssociative) {
+			this.operCover = new OperatorCoverage(notation, formulaType,
+					exprArity, predArity, globalArity, isAssociative);
 		}
 
 		@Override
-		public IOperatorProperties getProperties() {
-			return operProps;
+		public OperatorCoverage getOperatorCoverage() {
+			return operCover;
 		}
 
 	}

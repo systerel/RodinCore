@@ -10,6 +10,7 @@ Export-Package: org.eventb.core.ast,
  org.eventb.core.ast.extension,
  org.eventb.core.ast.extension.datatype,
  org.eventb.internal.core.ast;x-friends:="org.eventb.core.ast.tests",
+ org.eventb.internal.core.ast.extension;x-friends:="org.eventb.core.ast.tests",
  org.eventb.internal.core.lexer;x-friends:="org.eventb.core.ast.tests",
  org.eventb.internal.core.parser;x-friends:="org.eventb.core.ast.tests"
 Bundle-ActivationPolicy: lazy

@@ -14,11 +14,10 @@ package org.eventb.core.ast;
 //FIXME should not use AssociativeHelper (else rename Associative into ...)
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
-import static org.eventb.core.ast.extension.IArity.MAX_ARITY;
-import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.PREDICATE;
 import static org.eventb.core.ast.extension.IOperatorProperties.Notation.PREFIX;
-import static org.eventb.internal.core.ast.extension.OperatorProperties.makeOperProps;
+import static org.eventb.internal.core.ast.extension.ArityCoverage.ANY;
+import static org.eventb.internal.core.ast.extension.ArityCoverage.ONE_OR_MORE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,14 +28,17 @@ import java.util.Set;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IOperatorProperties;
+import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
+import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.extension.Arity;
+import org.eventb.internal.core.ast.extension.ArityCoverage;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
+import org.eventb.internal.core.ast.extension.OperatorCoverage;
 import org.eventb.internal.core.ast.extension.TypeCheckMediator;
 import org.eventb.internal.core.parser.ExtendedGrammar;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
@@ -56,9 +58,9 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	private static enum ExtendedPredicateParsers implements
 	IPropertyParserInfo<ExtendedPredicate> {
 
-		// the arity given here stands for 'any fixed arity in 1 .. MAX_ARITY'
-		PARENTHESIZED_PREDICATE(makeOperProps(PREFIX, PREDICATE, new Arity(1,
-				MAX_ARITY), EXPRESSION, false)) {
+		// the arity given here stands for 'any fixed arity in 0 .. MAX_ARITY
+		// for both predicates and expressions, but globally 1 argument or more'
+		PARENTHESIZED_PREDICATE(PREFIX, PREDICATE, ANY, ANY, ONE_OR_MORE, false) {
 
 			@Override
 			public IParserPrinter<ExtendedPredicate> makeParser(int kind,
@@ -69,14 +71,17 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 		},
 		;
 
-		private final IOperatorProperties operProps;
+		private final OperatorCoverage operProps;
 
-		private ExtendedPredicateParsers(IOperatorProperties operProps) {
-			this.operProps = operProps;
+		private ExtendedPredicateParsers(Notation notation, FormulaType formulaType,
+				ArityCoverage exprArity, ArityCoverage predArity,
+				ArityCoverage globalArity, boolean isAssociative) {
+			this.operProps = new OperatorCoverage(notation, formulaType,
+					exprArity, predArity, globalArity, isAssociative);
 		}
 
 		@Override
-		public IOperatorProperties getProperties() {
+		public OperatorCoverage getOperatorCoverage() {
 			return operProps;
 		}
 

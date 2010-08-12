@@ -11,6 +11,8 @@
 package org.eventb.core.ast.extension;
 
 /**
+ * Common protocol for arity.
+ * 
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -24,9 +26,5 @@ public interface IArity {
 	int getMax();
 
 	boolean check(int nbArgs);
-
-	boolean isDistinct(IArity other);
-
-	boolean contains(IArity other);
 
 }

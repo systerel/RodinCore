@@ -46,18 +46,6 @@ public class Arity implements IArity {
 	public boolean check(int nbArgs) {
 		return min <= nbArgs && nbArgs <= max;
 	}
-
-	@Override
-	public boolean isDistinct(IArity other) {
-		return getMin() > other.getMax()
-				|| other.getMin() > getMax();
-	}
-	
-	@Override
-	public boolean contains(IArity other) {
-		return getMin() <= other.getMin()
-				&& other.getMax() <= getMax();
-	}
 	
 	@Override
 	public int hashCode() {

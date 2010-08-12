@@ -56,6 +56,8 @@ import static org.eventb.core.ast.LanguageVersion.LATEST;
 import static org.eventb.core.ast.ProblemKind.InvalidGenericType;
 import static org.eventb.core.ast.ProblemKind.InvalidTypeExpression;
 import static org.eventb.core.ast.ProblemSeverities.Error;
+import static org.eventb.core.ast.extension.ExtensionFactory.makeAllExpr;
+import static org.eventb.core.ast.extension.ExtensionFactory.makeFixedArity;
 import static org.eventb.core.ast.extension.ExtensionFactory.makePrefixKind;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 
@@ -121,6 +123,7 @@ import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
+import org.eventb.internal.core.ast.extension.Cond;
 import org.eventb.internal.core.parser.AbstractGrammar;
 import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship;
@@ -1833,7 +1836,8 @@ public class TestGenParser extends AbstractTests {
 
 		@Override
 		public IExtensionKind getKind() {
-			return makePrefixKind(EXPRESSION, 3, EXPRESSION);
+			return makePrefixKind(EXPRESSION,
+					makeAllExpr(makeFixedArity(3)));
 		}
 
 		@Override
@@ -2882,5 +2886,19 @@ public class TestGenParser extends AbstractTests {
 		
 		doTypeTest("List(Moult(ℤ, BOOL))", listMoultType, listMoultFac);
 		doTypeTest("ℙ(List(Moult(ℤ, BOOL)))", powListMoultType, listMoultFac);
+	}
+
+	public void testCond() throws Exception {
+		final Cond cond = Cond.getCond();
+		final FormulaFactory condFac = FormulaFactory.getInstance(Collections
+				.<IFormulaExtension> singleton(cond));
+		final Expression expectedInt = condFac.makeExtendedExpression(cond,
+				Arrays.<Expression> asList(ZERO, ONE),
+				Arrays.<Predicate> asList(LIT_BTRUE), null);
+		doExpressionTest("COND(⊤, 0, 1)", expectedInt, INT_TYPE, condFac, false);
+		final Expression expected = condFac.makeExtendedExpression(cond,
+				Arrays.asList(FRID_a, ATOM_TRUE),
+				Arrays.<Predicate> asList(LIT_BFALSE), null);
+		doExpressionTest("COND(⊥, a, TRUE)", expected, BOOL_TYPE, condFac, true);
 	}
 }

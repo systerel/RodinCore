@@ -10,12 +10,17 @@
  *******************************************************************************/
 package org.eventb.core.ast.extension;
 
+import static org.eventb.core.ast.extension.ExtensionFactory.TWO_EXPRS;
+import static org.eventb.core.ast.extension.ExtensionFactory.TWO_OR_MORE_EXPRS;
+import static org.eventb.core.ast.extension.ExtensionFactory.NO_CHILD;
+import static org.eventb.core.ast.extension.ExtensionFactory.ONE_EXPR;
 import static org.eventb.core.ast.extension.ExtensionFactory.makePrefixKind;
-import static org.eventb.core.ast.extension.IOperatorProperties.*;
-import static org.eventb.core.ast.extension.IOperatorProperties.Notation.*;
-import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.*;
+import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
+import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.PREDICATE;
+import static org.eventb.core.ast.extension.IOperatorProperties.Notation.INFIX;
 
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.internal.core.ast.extension.ExtensionKind;
 
 /**
@@ -23,16 +28,18 @@ import org.eventb.internal.core.ast.extension.ExtensionKind;
  * <p>
  * Standard supported extension kinds are provided as constants. Additionally,
  * instances obtained from
- * {@link ExtensionFactory#makePrefixKind(FormulaType, int, FormulaType)} are
+ * {@link ExtensionFactory#makePrefixKind(FormulaType, ITypeDistribution)} are
  * supported as well, which makes it possible to customize the arity of a
  * parenthesized formula.
  * </p>
  * <p>
- * For instance, an implementation of {@link #getKind()} could be:
+ * For instance, an implementation of {@link #getKind()} for an expression with
+ * three children of type expression, using methods from
+ * {@link ExtensionFactory}, could be:
  * 
  * <pre>
  * public IExtensionKind getKind() {
- * 	return ExtensionFactory.makePrefixKind(EXPRESSION, 3, EXPRESSION);
+ * 	return makePrefixKind(EXPRESSION, makeAllExpr(makeFixedArity(3)));
  * }
  * </pre>
  * 
@@ -49,7 +56,7 @@ public interface IFormulaExtension {
 	 * expression that takes no parameter, such as <code>"pred"</code> in the
 	 * core language.
 	 */
-	IExtensionKind ATOMIC_EXPRESSION = makePrefixKind(EXPRESSION, 0, EXPRESSION);
+	IExtensionKind ATOMIC_EXPRESSION = makePrefixKind(EXPRESSION, NO_CHILD);
 
 	/**
 	 * Kind for binary infix expressions. A binary infix expression is an
@@ -57,7 +64,7 @@ public interface IFormulaExtension {
 	 * <code>"-"</code>" in the core language.
 	 */
 	IExtensionKind BINARY_INFIX_EXPRESSION = new ExtensionKind(INFIX,
-			EXPRESSION, BINARY, EXPRESSION, false);
+			EXPRESSION, TWO_EXPRS, false);
 
 	/**
 	 * Kind for associative infix expressions. An associative infix expression
@@ -65,7 +72,7 @@ public interface IFormulaExtension {
 	 * parameters, such as "<code>+</code>" in the core language.
 	 */
 	IExtensionKind ASSOCIATIVE_INFIX_EXPRESSION = new ExtensionKind(INFIX,
-			EXPRESSION, MULTARY_2, EXPRESSION, true);
+			EXPRESSION, TWO_OR_MORE_EXPRS, true);
 
 	/**
 	 * Kind for unary prefix expressions. A unary prefix expression is an
@@ -74,7 +81,7 @@ public interface IFormulaExtension {
 	 * parameter must be bracketed with parentheses.
 	 */
 	IExtensionKind PARENTHESIZED_UNARY_EXPRESSION = makePrefixKind(EXPRESSION,
-			1, EXPRESSION);
+			ONE_EXPR);
 
 	/**
 	 * Kind for binary prefix expressions. A binary prefix expression is an
@@ -83,7 +90,7 @@ public interface IFormulaExtension {
 	 * separated with a comma.
 	 */
 	IExtensionKind PARENTHESIZED_BINARY_EXPRESSION = makePrefixKind(EXPRESSION,
-			2, EXPRESSION);
+			TWO_EXPRS);
 
 	/**
 	 * Kind for unary prefix predicates. A unary prefix predicate is an extended
@@ -91,8 +98,8 @@ public interface IFormulaExtension {
 	 * <code>"finite"</code>" in the core language. In the concrete syntax, the
 	 * parameter must be bracketed with parentheses.
 	 */
-	IExtensionKind PARENTHESIZED_UNARY_PREDICATE = makePrefixKind(PREDICATE, 1,
-			EXPRESSION);
+	IExtensionKind PARENTHESIZED_UNARY_PREDICATE = makePrefixKind(PREDICATE,
+			ONE_EXPR);
 
 	/**
 	 * Kind for binary prefix predicates. A binary prefix predicate is an
@@ -101,7 +108,7 @@ public interface IFormulaExtension {
 	 * separated with a comma.
 	 */
 	IExtensionKind PARENTHESIZED_BINARY_PREDICATE = makePrefixKind(PREDICATE,
-			2, EXPRESSION);
+			TWO_EXPRS);
 
 	String getSyntaxSymbol();
 

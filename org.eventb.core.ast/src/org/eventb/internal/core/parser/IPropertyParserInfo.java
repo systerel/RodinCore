@@ -11,13 +11,13 @@
 package org.eventb.internal.core.parser;
 
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.extension.IOperatorProperties;
+import org.eventb.internal.core.ast.extension.OperatorCoverage;
 
 // TODO use also for common parsers
 public interface IPropertyParserInfo<T extends Formula<?>> {
 
 	IParserPrinter<T> makeParser(int kind, int tag);
 
-	IOperatorProperties getProperties();
+	OperatorCoverage getOperatorCoverage();
 	
 }

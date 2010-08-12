@@ -59,8 +59,8 @@ import org.eventb.core.ast.Type;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.GenParser.ParserContext;
-import org.eventb.internal.core.parser.GenParser.SyntaxError;
 import org.eventb.internal.core.parser.GenParser.ParserContext.SavedContext;
+import org.eventb.internal.core.parser.GenParser.SyntaxError;
 import org.eventb.internal.core.parser.IParserPrinter.SubParseResult;
 import org.eventb.internal.core.parser.SubParsers.AbstractNudParser;
 
@@ -87,14 +87,14 @@ public class MainParsers {
 				ProblemSeverities.Error, expectedKind, actualKind);
 	}
 
-	static Predicate asPredicate(Formula<?> formula) throws SyntaxError {
+	public static Predicate asPredicate(Formula<?> formula) throws SyntaxError {
 		if (!(formula instanceof Predicate)) {
 			throw new SyntaxError(makeUnexpectedKindProblem(formula, A_PREDICATE, AN_EXPRESSION));
 		}
 		return (Predicate) formula;
 	}
 
-	static Expression asExpression(Formula<?> formula) throws SyntaxError {
+	public static Expression asExpression(Formula<?> formula) throws SyntaxError {
 		if (!(formula instanceof Expression)) {
 			throw new SyntaxError(makeUnexpectedKindProblem(formula, AN_EXPRESSION, A_PREDICATE));
 		}
@@ -441,9 +441,9 @@ public class MainParsers {
 	 */
 	static class AbstListParser<T extends Formula<?>> implements INudParser<List<T>> {
 	
-		private final INudParser<T> parser;
+		private final INudParser<? extends T> parser;
 		
-		public AbstListParser(INudParser<T> parser) {
+		public AbstListParser(INudParser<? extends T> parser) {
 			this.parser = parser;
 		}
 
@@ -480,9 +480,11 @@ public class MainParsers {
 		
 	}
 
-	static final AbstListParser<Expression> EXPR_LIST_PARSER = new AbstListParser<Expression>(EXPR_PARSER);
+	public static final AbstListParser<Formula<?>> FORMULA_LIST_PARSER = new AbstListParser<Formula<?>>(FORMULA_PARSER);
+
+	public static final AbstListParser<Expression> EXPR_LIST_PARSER = new AbstListParser<Expression>(EXPR_PARSER);
 	
-	static final AbstListParser<Expression> SPACED_EXPR_LIST_PARSER = new AbstListParser<Expression>(EXPR_PARSER) {
+	public static final AbstListParser<Expression> SPACED_EXPR_LIST_PARSER = new AbstListParser<Expression>(EXPR_PARSER) {
 		@Override
 		protected void appendSeparator(IToStringMediator mediator) {
 			super.appendSeparator(mediator);
@@ -490,7 +492,7 @@ public class MainParsers {
 		}
 	};
 	
-	static final AbstListParser<FreeIdentifier> FREE_IDENT_LIST_PARSER = new AbstListParser<FreeIdentifier>(FREE_IDENT_SUBPARSER);
+	public static final AbstListParser<FreeIdentifier> FREE_IDENT_LIST_PARSER = new AbstListParser<FreeIdentifier>(FREE_IDENT_SUBPARSER);
 
 	public static class BoundIdentDeclListParser extends AbstListParser<BoundIdentDecl> {
 
