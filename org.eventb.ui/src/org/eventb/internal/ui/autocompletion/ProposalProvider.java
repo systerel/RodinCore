@@ -60,7 +60,7 @@ public class ProposalProvider implements IContentProposalProvider {
 
 	public ProposalProvider(IAttributeLocation location, FormulaFactory factory) {
 		this.location = location;
-		this.factory = null;
+		this.factory = factory;
 	}
 
 	@Override
