@@ -123,7 +123,6 @@ import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
-import org.eventb.internal.core.ast.extension.Cond;
 import org.eventb.internal.core.parser.AbstractGrammar;
 import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship;
@@ -2889,16 +2888,10 @@ public class TestGenParser extends AbstractTests {
 	}
 
 	public void testCond() throws Exception {
-		final Cond cond = Cond.getCond();
-		final FormulaFactory condFac = FormulaFactory.getInstance(Collections
-				.<IFormulaExtension> singleton(cond));
-		final Expression expectedInt = condFac.makeExtendedExpression(cond,
-				Arrays.<Expression> asList(ZERO, ONE),
-				Arrays.<Predicate> asList(LIT_BTRUE), null);
-		doExpressionTest("COND(⊤, 0, 1)", expectedInt, INT_TYPE, condFac, false);
-		final Expression expected = condFac.makeExtendedExpression(cond,
-				Arrays.asList(FRID_a, ATOM_TRUE),
-				Arrays.<Predicate> asList(LIT_BFALSE), null);
-		doExpressionTest("COND(⊥, a, TRUE)", expected, BOOL_TYPE, condFac, true);
+		final Expression expectedInt = ff.makeCond(LIT_BTRUE, ZERO, ONE, null);
+		doExpressionTest("COND(⊤, 0, 1)", expectedInt, INT_TYPE, ff, false);
+		
+		final Expression expected = ff.makeCond(LIT_BFALSE, FRID_a, ATOM_TRUE, null);
+		doExpressionTest("COND(⊥, a, TRUE)", expected, BOOL_TYPE, ff, true);
 	}
 }

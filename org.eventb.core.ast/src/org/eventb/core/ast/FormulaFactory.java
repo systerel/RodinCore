@@ -14,13 +14,16 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static java.util.Arrays.asList;
 import static org.eventb.core.ast.LanguageVersion.V1;
+import static org.eventb.internal.core.parser.BMathV1.B_MATH_V1;
 
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,12 +36,11 @@ import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.Cond;
 import org.eventb.internal.core.ast.extension.datatype.DatatypeExtensionComputer;
 import org.eventb.internal.core.lexer.Scanner;
 import org.eventb.internal.core.parser.AbstractGrammar;
 import org.eventb.internal.core.parser.BMath;
-import org.eventb.internal.core.parser.BMathV1;
-import org.eventb.internal.core.parser.BMathV2;
 import org.eventb.internal.core.parser.ExtendedGrammar;
 import org.eventb.internal.core.parser.GenParser;
 import org.eventb.internal.core.parser.ParseResult;
@@ -60,10 +62,17 @@ import org.eventb.internal.core.upgrade.VersionUpgrader;
  */
 public class FormulaFactory {
 
-	private static final FormulaFactory DEFAULT_INSTANCE = new FormulaFactory();
-
 	private static final Map<IFormulaExtension, Integer> ALL_EXTENSIONS = Collections
 			.synchronizedMap(new HashMap<IFormulaExtension, Integer>());
+	
+	private static final Set<IFormulaExtension> DEFAULT_EXTENSIONS = new HashSet<IFormulaExtension>(
+			asList(Cond.getCond()));
+
+	private static final FormulaFactory DEFAULT_INSTANCE = getInstance(Collections
+			.<IFormulaExtension> emptySet());
+
+	private static final FormulaFactory V1_INSTANCE = new FormulaFactory(
+			B_MATH_V1);
 	
 	private static volatile int nextExtensionTag = Formula.FIRST_EXTENSION_TAG;
 	
@@ -90,9 +99,12 @@ public class FormulaFactory {
 	public static FormulaFactory getInstance(Set<IFormulaExtension> extensions) {
 		// TODO implement a cache that returns the same instance 
 		// if the same set is given
+		final Set<IFormulaExtension> actualExtns = new LinkedHashSet<IFormulaExtension>(DEFAULT_EXTENSIONS);
+		actualExtns.addAll(extensions);
+		
 		final Map<Integer, IFormulaExtension> extMap = new HashMap<Integer, IFormulaExtension>();
 		synchronized (ALL_EXTENSIONS) {
-			for (IFormulaExtension extension : extensions) {
+			for (IFormulaExtension extension : actualExtns) {
 				Integer tag = ALL_EXTENSIONS.get(extension);
 				if (tag == null) {
 					// FIXME add conflict checks
@@ -122,7 +134,8 @@ public class FormulaFactory {
 	 * @since 2.0
 	 */
 	public FormulaFactory withExtensions(Set<IFormulaExtension> addedExtns) {
-		final Set<IFormulaExtension> newExtns = new HashSet<IFormulaExtension>(extensions.values());
+		final Set<IFormulaExtension> newExtns = new HashSet<IFormulaExtension>(
+				extensions.values());
 		newExtns.addAll(addedExtns);
 		return getInstance(newExtns);
 	}
@@ -148,27 +161,18 @@ public class FormulaFactory {
 		return cached;
 	}
 	
-	protected FormulaFactory() {
-		this(Collections.<Integer, IFormulaExtension>emptyMap());
-	}
-
+	// for V1_INSTANCE only
 	private FormulaFactory(BMath grammar) {
 		this.extensions = Collections.<Integer, IFormulaExtension>emptyMap();
 		this.grammar = grammar;
 	}
 	
-	/**
-	 * @since 2.0
-	 */
-	protected FormulaFactory(Map<Integer, IFormulaExtension> extMap) {
+	// for all V2 instances
+	private FormulaFactory(Map<Integer, IFormulaExtension> extMap) {
 		this.extensions = extMap;
-		if (extMap.isEmpty()) {
-			this.grammar = BMathV2.B_MATH_V2;
-		} else {
-			this.grammar = new ExtendedGrammar(new HashSet<IFormulaExtension>(
-					extMap.values()));
-			this.grammar.init();
-		}
+		this.grammar = new ExtendedGrammar(new HashSet<IFormulaExtension>(
+				extMap.values()));
+		this.grammar.init();
 	}
 
 	/**
@@ -226,8 +230,6 @@ public class FormulaFactory {
 				location, null);
 	}
 	
-	// TODO consider adding a makeExtendedExpression() with a given type argument
-	
 	/**
 	 * @since 2.0
 	 */
@@ -264,9 +266,26 @@ public class FormulaFactory {
 		return makeExtendedPredicate(extension, exprs, preds, location);
 	}
 
-	// TODO add methods to get operator and group ids,
-	// compatibility and priority relations
-	
+	/**
+	 * Returns a new conditional expression.
+	 * 
+	 * @param condition
+	 *            a predicate condition
+	 * @param expr1
+	 *            first expression
+	 * @param expr2
+	 *            second expression
+	 * @param location
+	 *            the location of the conditional expression
+	 * @return a new conditional expression
+	 * @since 2.0
+	 */
+	public ExtendedExpression makeCond(Predicate condition, Expression expr1,
+			Expression expr2, SourceLocation location) {
+		return makeExtendedExpression(Cond.getCond(), asList(expr1, expr2),
+				asList(condition), location);
+	}
+
 	/**
 	 * @since 2.0
 	 */
@@ -1271,7 +1290,7 @@ public class FormulaFactory {
 		if (grammar.getVersion() == version) {
 			factory = this;
 		} else {
-			factory = new FormulaFactory(getGrammar(version));
+			factory = getFactory(version);
 		}
 		final ParseResult result = new ParseResult(factory, version, origin);
 		final Scanner scanner = new Scanner(formula, result, factory.getGrammar());
@@ -1280,12 +1299,12 @@ public class FormulaFactory {
 		return parser.getResult();
 	}
 
-	private static BMath getGrammar(LanguageVersion version) {
+	private static FormulaFactory getFactory(LanguageVersion version) {
 		switch (version) {
 		case V1:
-			return BMathV1.B_MATH_V1;
+			return V1_INSTANCE;
 		case V2:
-			return BMathV2.B_MATH_V2;
+			return DEFAULT_INSTANCE;
 		default:
 			throw new IllegalArgumentException("unknown language version: "
 					+ version);
