@@ -26,7 +26,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.ast.extension.CycleError;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
@@ -53,7 +52,6 @@ public class Cond implements IExpressionExtension {
 		return INSTANCE;
 	}
 	
-	private static final String COND_GROUP_ID = "Cond Group Id";
 	private static final String COND_ID = "Cond Id";
 	private static final String COND_SYMBOL = "COND";
 	
@@ -93,7 +91,7 @@ public class Cond implements IExpressionExtension {
 
 	@Override
 	public String getGroupId() {
-		return COND_GROUP_ID;
+		return BMath.BOUND_UNARY;
 	}
 
 	@Override
@@ -114,13 +112,7 @@ public class Cond implements IExpressionExtension {
 
 	@Override
 	public void addPriorities(IPriorityMediator mediator) {
-		try {
-			mediator.addGroupPriority(BMath.QUANTIFICATION, COND_GROUP_ID);
-			mediator.addGroupPriority(COND_GROUP_ID, BMath.PAIR);
-		} catch (CycleError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// no priorities
 	}
 
 	@Override
