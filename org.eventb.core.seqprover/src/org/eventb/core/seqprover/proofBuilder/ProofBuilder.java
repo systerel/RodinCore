@@ -10,6 +10,7 @@
  *     Systerel - in reuse() and rebuild(), try to replay if the reasoner
  *                version has changed
  *     Systerel - in reuse(), no more try to replay; check reasoners registered
+ *     Systerel - improved rebuild(); 
  *******************************************************************************/
 package org.eventb.core.seqprover.proofBuilder;
 
@@ -318,16 +319,35 @@ public class ProofBuilder {
 			if (ruleIsSkip(node, reuseProofRule)) {
 				// Actually the rule was doing nothing, can be by-passed.
 				return rebuild(node, skelChildren[0], replayHints, proofMonitor);
+			} else {
+				ProofSkeletonWithDependencies skelDeps = ProofSkeletonWithDependencies
+						.withDependencies(skeleton);
+				if (skelDeps.applyTo(node, true, proofMonitor)) {
+					return true;
+				}
+				return skelDeps.applyTo(node, false, proofMonitor);
 			}
-			// We don't know what to do for this node.
-			return false;
 		}
 
 		// Maybe check if the node has the same number of children as the prNode
 		// it may be smart to replay anyway, but generate a warning.
-		if (nodeChildren.length != skelChildren.length)
+		if (nodeChildren.length != skelChildren.length) {
+
+			if (nodeChildren.length < skelChildren.length) {
+				// Create a skeleton with dependencies
+				ProofSkeletonWithDependencies skelDeps = ProofSkeletonWithDependencies
+						.withDependencies(skeleton);
+				if (skelDeps.rebuildUnsortedChildren(nodeChildren,
+						proofMonitor, true)) {
+					return true;
+				}
+				return skelDeps.rebuildUnsortedChildren(nodeChildren,
+						proofMonitor, false);
+
+			}
 			return false;
 
+		}
 		// run recursively for each child
 		boolean combinedResult = true;
 		for (int i = 0; i < nodeChildren.length; i++) {
