@@ -29,8 +29,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarkerDelta;
@@ -58,8 +58,6 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eventb.core.IContextRoot;
-import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.Pair;
@@ -337,18 +335,15 @@ public class EditPage extends EventBEditorPage implements
 		createHyperLink(toolkit, comp, expandAllListener, IEventBSharedImages.IMG_EXPAND_ALL);
 		createHyperLink(toolkit, comp, collapseAllListener, IEventBSharedImages.IMG_COLLAPSE_ALL);
 
-		FormText widget = toolkit.createFormText(comp, true);
+		final FormText widget = toolkit.createFormText(comp, true);
 		final GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
 		widget.setLayoutData(gd);
 		new EventBFormText(widget);
 		final IInternalElement rodinInput = getRodinInput();
-		String declaration = "";
-		if (rodinInput instanceof IMachineRoot)
-			declaration = "MACHINE";
-		else if (rodinInput instanceof IContextRoot)
-			declaration = "CONTEXT";
+		final String declaration = ElementDescRegistry.getInstance().getPrefix(
+				rodinInput.getElementType());
 
-		String text = "<form><li style=\"text\" bindent = \"-20\"><b>"
+		final String text = "<form><li style=\"text\" bindent = \"-20\"><b>"
 				+ declaration + "</b> " + rodinInput.getElementName()
 				+ "</li></form>";
 		widget.setText(text, true, true);
