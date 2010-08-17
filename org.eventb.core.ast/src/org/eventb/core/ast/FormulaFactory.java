@@ -301,6 +301,26 @@ public class FormulaFactory {
 	}
 	
 	/**
+	 * Returns all the extensions of the current formula factory.
+	 * @since 2.0
+	 */
+	public Set<IFormulaExtension> getExtensions() {
+		final Set<IFormulaExtension> result = new HashSet<IFormulaExtension>();
+		for (IFormulaExtension ext : extensions.values()) {
+			result.add(ext);
+		}
+		return result;
+	}
+	
+	/**
+	 * Returns the set of default extensions provided for a factory.
+	 * @since 2.0
+	 */
+	public Set<IFormulaExtension> getDefaultExtensions() {
+		return DEFAULT_EXTENSIONS;
+	}
+
+	/**
 	 * Returns a new associative expression
 	 * <p>
 	 * {BUNION, BINTER, BCOMP, FCOMP, OVR, PLUS, MUL}

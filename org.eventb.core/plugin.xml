@@ -8,6 +8,7 @@
    <extension-point id="configurations" name="%configurations" schema="schema/configurations.exsd"/>
    <extension-point id="postTactics" name="%postTactics" schema="schema/postTactics.exsd"/>
    <extension-point id="pomTactics" name="%pomTactics" schema="schema/pomTactics.exsd"/>
+   <extension-point id="formulaExtensionProviders" name="%formulaExtensionProviders" schema="schema/formulaExtensionProviders.exsd"/>
    <extension
          point="org.eclipse.core.contenttype.contentTypes">
       <content-type

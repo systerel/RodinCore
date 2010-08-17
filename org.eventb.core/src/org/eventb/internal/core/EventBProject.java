@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - now gets the formula factory from extension provider registry
  *******************************************************************************/
 package org.eventb.internal.core;
 
@@ -33,15 +34,12 @@ import org.rodinp.core.IRodinProject;
 public class EventBProject extends PlatformObject implements IEventBProject {
 	
 	private final IRodinProject rodinProject;
-	
-	private final FormulaFactory formulaFactory;
-	
+
 	public EventBProject(IRodinProject rodinProject) {
 		if (rodinProject == null) {
 			throw new NullPointerException();
 		}
 		this.rodinProject = rodinProject;
-		this.formulaFactory = FormulaFactory.getDefault();
 	}
 
 	@Override
@@ -79,6 +77,12 @@ public class EventBProject extends PlatformObject implements IEventBProject {
 	@Override
 	public IContextRoot getContextRoot(String componentName) {
 		return (IContextRoot) getContextFile(componentName).getRoot();
+	}
+
+	@Override
+	public FormulaFactory getFormulaFactory() {
+			return EventBPlugin.getFormulaExtensionProviderRegistry()
+			.getFormulaFactory(this);
 	}
 
 	@Override
@@ -145,11 +149,6 @@ public class EventBProject extends PlatformObject implements IEventBProject {
 	@Override
 	public IPSRoot getPSRoot(String componentName) {
 		return (IPSRoot) getPSFile(componentName).getRoot();
-	}
-
-	@Override
-	public FormulaFactory getFormulaFactory() {
-		return formulaFactory;
 	}
 
 }

@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.extension.FormulaExtensionProviderRegistry;
 import org.eventb.core.pm.IProofManager;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pog.POGModule;
@@ -85,7 +86,8 @@ public class EventBPlugin extends Plugin {
 	private static final String PO_LOADER_TRACE = PLUGIN_ID + "/debug/poloader"; //$NON-NLS-1$
 	private static final String PM_TRACE = PLUGIN_ID + "/debug/pm"; //$NON-NLS-1$
 	private static final String PERF_POM_PROOFREUSE_TRACE = PLUGIN_ID + "/perf/pom/proofReuse"; //$NON-NLS-1$
-	
+	private static final String EXTENSIONPROVIDER_REGISTRY_TRACE = PLUGIN_ID + "/debug/formulaExtensionProvider";//$NON-NLS-1$
+
 	/**
 	 * Returns the name of the component whose data are stored in the file with the given name.
 	 * 
@@ -131,6 +133,20 @@ public class EventBPlugin extends Plugin {
 	 */
 	public static String getMachineFileName(String bareName) {
 		return bareName + ".bum";
+	}
+
+	/**
+	 * Returns the Formula Extension Provider registry managed by the Event-B
+	 * plugin.
+	 * 
+	 * @see IFormulaExtensionProviderRegistry
+	 * 
+	 * @return the Formula Extension Provider registry managed by the Event-B
+	 *         plugin
+	 * @since 2.0
+	 */
+	public static IFormulaExtensionProviderRegistry getFormulaExtensionProviderRegistry() {
+		return FormulaExtensionProviderRegistry.getExtensionProviderRegistry();
 	}
 
 	/**
@@ -247,6 +263,7 @@ public class EventBPlugin extends Plugin {
 		POLoader.DEBUG = parseOption(PO_LOADER_TRACE);
 		UserSupportUtils.DEBUG = parseOption(PM_TRACE);
 		AutoPOM.PERF_PROOFREUSE = parseOption(PERF_POM_PROOFREUSE_TRACE);
+		FormulaExtensionProviderRegistry.DEBUG = parseOption(EXTENSIONPROVIDER_REGISTRY_TRACE);
 	}
 
 	private static boolean parseOption(String key) {
