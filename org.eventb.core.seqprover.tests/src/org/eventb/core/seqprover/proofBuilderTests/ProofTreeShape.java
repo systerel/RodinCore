@@ -55,8 +55,8 @@ public abstract class ProofTreeShape {
 			@Override
 			public void check(IProofTreeNode node) {
 				assertReasonerID(node, SequentProver.PLUGIN_ID + ".contrHyps");
-				// assertGoal(node, null); // Bug in contrHyps.
-				assertNeededHyps(node, not(p)); // other bug in contrHyps.
+				assertGoal(node, null);
+				assertNeededHyps(node, p, not(p));
 			}
 
 			@Override
