@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,17 +50,24 @@ public class ProofTreeSimplifier extends Simplifier<IProofTree> {
 			monitor = new NullProofMonitor();
 		}
 		final SkeletonSimplifier simplifier = new SkeletonSimplifier();
-		final IProofSkeleton simplified = simplifier.simplify(tree.getRoot(), monitor);
-		checkCancel(monitor);
+		// FIXME Fix RuleSimplifer throws assertion exceptions.
+		// See bug item #3052238
+		try {
+			final IProofSkeleton simplified = simplifier.simplify(
+					tree.getRoot(), monitor);
+			checkCancel(monitor);
 
-		final IProofTree result = makeProofTree(tree.getSequent(), this);
-		final boolean success = rebuild(result.getRoot(), simplified, monitor);
-		checkCancel(monitor);
-
-		if (!success || !result.isClosed() || deepEquals(tree, result)) {
+			final IProofTree result = makeProofTree(tree.getSequent(), this);
+			final boolean success = rebuild(result.getRoot(), simplified,
+					monitor);
+			checkCancel(monitor);
+			if (!success || !result.isClosed() || deepEquals(tree, result)) {
+				return null;
+			}
+			return result;
+		} catch (Throwable t) {
 			return null;
 		}
-		return result;
 	}
 
 	private static class NullProofMonitor implements IProofMonitor {
