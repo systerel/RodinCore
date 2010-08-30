@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -150,7 +150,8 @@ public enum GraphProblem implements IRodinProblem {
 	ParameterChangedTypeError(IMarker.SEVERITY_ERROR, Messages.scuser_ParameterChangedTypeError),
 	AssignmentToParameterError(IMarker.SEVERITY_ERROR, Messages.scuser_AssignmentToParameter),
 	AssignmentToCarrierSetError(IMarker.SEVERITY_ERROR, Messages.scuser_AssignmentToCarrierSet),
-	AssignmentToConstantError(IMarker.SEVERITY_ERROR, Messages.scuser_AssignmentToConstant);
+	AssignmentToConstantError(IMarker.SEVERITY_ERROR, Messages.scuser_AssignmentToConstant),
+	EventInitLabelMisspellingWarning(IMarker.SEVERITY_WARNING, Messages.scuser_EventInitLabelMisspelling);
 	
 	private final String errorCode;
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,6 +87,7 @@ public final class Messages {
     public static String scuser_EventMergeActionConflict;
     public static String scuser_EventMergeLabelConflict;
     public static String scuser_EventRefinementError;
+    public static String scuser_EventInitLabelMisspelling;
     public static String scuser_MachineWithoutInitialisation;
 	public static String scuser_InitialisationRefinesEventError;
 	public static String scuser_InitialisationRefinedError;

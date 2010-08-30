@@ -112,6 +112,7 @@ public class MachineEventModule extends LabeledElementModule {
 	}
 
 	private static final String EVENT_NAME_PREFIX = "EVT";
+	private static final String INITIALIZATION = "INITIALIZATION";
 
 	private ISCEvent createSCEvent(ISCMachineRoot target, int index,
 			ILabelSymbolInfo symbolInfo, IEvent event, IProgressMonitor monitor)
@@ -191,13 +192,20 @@ public class MachineEventModule extends LabeledElementModule {
 			if (!filterModules(event, repository, null)) {
 
 				symbolInfos[i].setError();
+				continue;
+			}
 
+			if (concreteEventInfo.isInitialisation()) {
+				init = symbolInfos[i];
 			} else {
-
-				if (concreteEventInfo.isInitialisation()) {
-					init = symbolInfos[i];
+				final String label = concreteEventInfo.getEventLabel();
+				if (label.equalsIgnoreCase(INITIALIZATION)
+						|| label.equalsIgnoreCase(IEvent.INITIALISATION)) {
+					createProblemMarker((ILabeledElement)event,
+							EventBAttributes.LABEL_ATTRIBUTE,
+							GraphProblem.EventInitLabelMisspellingWarning,
+							label);
 				}
-
 			}
 
 		}

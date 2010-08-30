@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -182,7 +182,8 @@ public class GraphProblemTest extends TestCase {
 			spec(GraphProblem.ParameterChangedTypeError, 3),
 			spec(GraphProblem.AssignmentToParameterError, 1),
 			spec(GraphProblem.AssignmentToCarrierSetError, 1),
-			spec(GraphProblem.AssignmentToConstantError, 1)
+			spec(GraphProblem.AssignmentToConstantError, 1),
+			spec(GraphProblem.EventInitLabelMisspellingWarning,1),
 	};
 	
 	private static Map<GraphProblem, Spec> specMap = 

@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCEvent;
@@ -936,6 +937,22 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 				actionsPredicates);
 		hasMarker(e);
 		hasMarker(e2);
+	}
+	
+	public void testEvents_32_initialisationMisspelled() throws Exception {
+		final IMachineRoot mac = createMachine("mac");
+
+		final String initialization = "INITIALIZATION";
+		final IEvent init = addEvent(mac, initialization, makeSList(), makeSList(), makeSList(),
+				makeSList(), makeSList());
+
+		saveRodinFileOf(mac);
+
+		runBuilder();
+		
+		containsMarkers(mac, true);
+		hasMarker(init, EventBAttributes.LABEL_ATTRIBUTE,
+				GraphProblem.EventInitLabelMisspellingWarning, initialization);
 	}
 	
 }
