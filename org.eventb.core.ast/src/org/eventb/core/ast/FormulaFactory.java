@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
-import static java.util.Arrays.asList;
 import static org.eventb.core.ast.LanguageVersion.V1;
 import static org.eventb.internal.core.parser.BMathV1.B_MATH_V1;
 
@@ -65,9 +64,6 @@ public class FormulaFactory {
 	private static final Map<IFormulaExtension, Integer> ALL_EXTENSIONS = Collections
 			.synchronizedMap(new HashMap<IFormulaExtension, Integer>());
 	
-	private static final Set<IFormulaExtension> DEFAULT_EXTENSIONS = new HashSet<IFormulaExtension>(
-			asList(Cond.getCond()));
-
 	private static final FormulaFactory DEFAULT_INSTANCE = getInstance(Collections
 			.<IFormulaExtension> emptySet());
 
@@ -99,7 +95,7 @@ public class FormulaFactory {
 	public static FormulaFactory getInstance(Set<IFormulaExtension> extensions) {
 		// TODO implement a cache that returns the same instance 
 		// if the same set is given
-		final Set<IFormulaExtension> actualExtns = new LinkedHashSet<IFormulaExtension>(DEFAULT_EXTENSIONS);
+		final Set<IFormulaExtension> actualExtns = new LinkedHashSet<IFormulaExtension>();
 		actualExtns.addAll(extensions);
 		
 		final Map<Integer, IFormulaExtension> extMap = new HashMap<Integer, IFormulaExtension>();
@@ -270,23 +266,13 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Returns a new conditional expression.
+	 * Returns the conditional expression extension.
 	 * 
-	 * @param condition
-	 *            a predicate condition
-	 * @param expr1
-	 *            first expression
-	 * @param expr2
-	 *            second expression
-	 * @param location
-	 *            the location of the conditional expression
-	 * @return a new conditional expression
+	 * @return an expression extension
 	 * @since 2.0
 	 */
-	public ExtendedExpression makeCond(Predicate condition, Expression expr1,
-			Expression expr2, SourceLocation location) {
-		return makeExtendedExpression(Cond.getCond(), asList(expr1, expr2),
-				asList(condition), location);
+	public static IExpressionExtension getCond() {
+		return Cond.getCond();
 	}
 
 	/**
@@ -315,14 +301,6 @@ public class FormulaFactory {
 		return result;
 	}
 	
-	/**
-	 * Returns the set of default extensions provided for a factory.
-	 * @since 2.0
-	 */
-	public Set<IFormulaExtension> getDefaultExtensions() {
-		return DEFAULT_EXTENSIONS;
-	}
-
 	/**
 	 * Returns a new associative expression
 	 * <p>

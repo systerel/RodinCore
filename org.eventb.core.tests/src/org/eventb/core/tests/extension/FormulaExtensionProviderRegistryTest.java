@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eventb.core.tests.extension;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
@@ -74,20 +74,14 @@ public class FormulaExtensionProviderRegistryTest {
 	 */
 	@Test
 	public void testFormulaFactoriesEquals() {
+		final Set<IFormulaExtension> expected = Collections.singleton(Prime.getPrime());
+
 		final FormulaFactory factory1 = EventBPlugin
 				.getFormulaExtensionProviderRegistry().getFormulaFactory(
 						eventBProject);
-		final Set<IFormulaExtension> extensions = factory1.getExtensions();
-		final HashSet<IFormulaExtension> extensions2 = new HashSet<IFormulaExtension>();
-		extensions2.add(Prime.getPrime());
-		extensions2.addAll(FormulaFactory.getDefault().getDefaultExtensions());
-		assertSameExtensions(extensions, extensions2);
-	}
-
-	private void assertSameExtensions(Set<IFormulaExtension> s1,
-			Set<IFormulaExtension> s2) {
-		assertTrue("Wrong amount of extensions", s1.size() == s2.size());
-		assertTrue("Different sets of extensions", s1.containsAll(s2));
+		final Set<IFormulaExtension> actual = factory1.getExtensions();
+		
+		assertEquals("wrong extensions", expected, actual);
 	}
 
 }

@@ -2886,12 +2886,23 @@ public class TestGenParser extends AbstractTests {
 		doTypeTest("List(Moult(ℤ, BOOL))", listMoultType, listMoultFac);
 		doTypeTest("ℙ(List(Moult(ℤ, BOOL)))", powListMoultType, listMoultFac);
 	}
+	
+	private static final IExpressionExtension COND = FormulaFactory.getCond();
+
+	private static FormulaFactory FAC_COND = FormulaFactory
+			.getInstance(Collections.<IFormulaExtension> singleton(COND));
+
+	private static ExtendedExpression makeCond(Predicate condition, Expression expr1,
+			Expression expr2, SourceLocation location) {
+		return FAC_COND.makeExtendedExpression(COND, asList(expr1, expr2),
+				asList(condition), location);
+	}
 
 	public void testCond() throws Exception {
-		final Expression expectedInt = ff.makeCond(LIT_BTRUE, ZERO, ONE, null);
-		doExpressionTest("COND(⊤, 0, 1)", expectedInt, INT_TYPE, ff, false);
+		final Expression expectedInt = makeCond(LIT_BTRUE, ZERO, ONE, null);
+		doExpressionTest("COND(⊤, 0, 1)", expectedInt, INT_TYPE, FAC_COND, false);
 		
-		final Expression expected = ff.makeCond(LIT_BFALSE, FRID_a, ATOM_TRUE, null);
-		doExpressionTest("COND(⊥, a, TRUE)", expected, BOOL_TYPE, ff, true);
+		final Expression expected = makeCond(LIT_BFALSE, FRID_a, ATOM_TRUE, null);
+		doExpressionTest("COND(⊥, a, TRUE)", expected, BOOL_TYPE, FAC_COND, true);
 	}
 }
