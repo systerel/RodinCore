@@ -231,8 +231,6 @@ public class QuantifiedPredicate extends Predicate {
 		final String[] boundNames = mediator.getBoundNames();
 		pred.collectNamesAbove(usedNames, boundNames ,
 				quantifiedIdentifiers.length);
-		pred.collectNamesAbove(usedNames, boundNames,
-				quantifiedIdentifiers.length);
 
 		final String[] localNames = QuantifiedUtil.resolveIdents(quantifiedIdentifiers, usedNames);
 
