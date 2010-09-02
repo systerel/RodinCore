@@ -11,6 +11,7 @@
 package org.eventb.core.ast.tests;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.CONVERSE;
@@ -180,10 +181,7 @@ public class TestGenParser extends AbstractTests {
 	private static void assertFailure(IParseResult result, ASTProblem expected) {
 		assertTrue("expected parsing to fail", result.hasProblem());
 		final List<ASTProblem> problems = result.getProblems();
-		System.out.println(problems);
-		assertEquals(1, problems.size());
-		final ASTProblem actual = problems.get(0);
-		assertEquals("wrong problem", expected, actual);
+		assertEquals("wrong problem", singletonList(expected), problems);
 	}
 	
 	private static void checkSourceLocation(Formula<?> formula, int length) {
@@ -206,7 +204,6 @@ public class TestGenParser extends AbstractTests {
 	
 	private static <T extends Formula<T>> void checkParsedFormula(String formula,
 			T expected, T actual) {
-		System.out.println(actual);
 		assertEquals(expected, actual);
 		
 		actual.accept(slChecker);
@@ -387,9 +384,6 @@ public class TestGenParser extends AbstractTests {
 	private static void doPredicatePatternTest(String formula, Predicate expected) {
 		final IParseResult result = ff.parsePredicatePattern(formula,
 				LanguageVersion.V2, null);
-		if (result.hasProblem()) {
-			System.out.println(result.getProblems());
-		}
 		assertFalse(result.hasProblem());
 		final Predicate actual = result.getParsedPredicate();
 		checkParsedFormula(formula, expected, actual);
@@ -405,13 +399,9 @@ public class TestGenParser extends AbstractTests {
 	
 	private static Type doTypeTest(String formula, Type expected, FormulaFactory factory) {
 		final IParseResult result = parseTypeRes(formula, factory);
-		if (result.hasProblem()) {
-			System.out.println(result.getProblems());
-		}
 		assertFalse("unexpected problems " + result.getProblems(),
 				result.hasProblem());
 		final Type actual = result.getParsedType();
-		System.out.println(actual);
 		assertEquals(expected, actual);
 		return actual;
 	}
@@ -419,13 +409,9 @@ public class TestGenParser extends AbstractTests {
 	private static Assignment doAssignmentTest(String formula, Assignment expected) {
 		final IParseResult result = ff.parseAssignment(formula,
 				LanguageVersion.V2, null);
-		if (result.hasProblem()) {
-			System.out.println(result.getProblems());
-		}
 		assertFalse("parse failed for " + formula + ", problems: "
 				+ result.getProblems(), result.hasProblem());
 		final Assignment actual = result.getParsedAssignment();
-		System.out.println(actual);
 		assertEquals(expected, actual);
 	
 		actual.accept(slChecker);
@@ -1753,7 +1739,6 @@ public class TestGenParser extends AbstractTests {
 	public void testManualSubParsers() throws Exception {
 		// bound identifier name is an operator !
 		final IParseResult result = parsePredRes("∀+·⊤");
-		System.out.println(result.getParsedPredicate());
 		assertFailure(result, new ASTProblem(new SourceLocation(1, 1),
 				ProblemKind.UnexpectedSymbol, ProblemSeverities.Error, "an identifier", "+"));
 	}
