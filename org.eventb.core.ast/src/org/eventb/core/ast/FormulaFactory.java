@@ -168,7 +168,10 @@ public class FormulaFactory {
 	}
 	
 	// for all V2 instances
-	private FormulaFactory(Map<Integer, IFormulaExtension> extMap) {
+	/**
+	 * @since 2.0
+	 */
+	protected FormulaFactory(Map<Integer, IFormulaExtension> extMap) {
 		this.extensions = extMap;
 		this.grammar = new ExtendedGrammar(new HashSet<IFormulaExtension>(
 				extMap.values()));
