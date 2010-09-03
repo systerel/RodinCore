@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static java.util.Arrays.asList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
 import java.math.BigInteger;
@@ -32,6 +33,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.LiteralPredicate;
+import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SimplePredicate;
@@ -46,6 +48,13 @@ import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
+import org.eventb.core.ast.extension.datatype.IArgument;
+import org.eventb.core.ast.extension.datatype.IArgumentType;
+import org.eventb.core.ast.extension.datatype.IConstructorMediator;
+import org.eventb.core.ast.extension.datatype.IDatatype;
+import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
+import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
+import org.eventb.core.ast.extension.datatype.ITypeParameter;
 
 /**
  * Unit and acceptance tests for the computation of WD lemmas.
@@ -76,11 +85,13 @@ public class TestWD extends AbstractTests {
 		final T input;
 		final Predicate originalPredicate;
 		final Predicate simplifiedPredicate;
+		protected final FormulaFactory factory;
 
 		TestFormula(ITypeEnvironment env, String in, String exp, String imp) {
+			this.factory = env.getFormulaFactory();
 			this.input = parse(in);
-			this.originalPredicate = parsePredicate(exp).flatten(ff);
-			this.simplifiedPredicate = parsePredicate(imp).flatten(ff);
+			this.originalPredicate = parsePredicate(exp, factory).flatten(factory);
+			this.simplifiedPredicate = parsePredicate(imp, factory).flatten(factory);
 			typeCheck(input, env);
 			typeCheck(originalPredicate, env);
 			typeCheck(simplifiedPredicate, env);
@@ -91,7 +102,7 @@ public class TestWD extends AbstractTests {
 
 		public void test() {
 			// final Predicate actual = computer.getWDLemma(input);
-			final Predicate actual = input.getWDPredicate(ff);
+			final Predicate actual = input.getWDPredicate(factory);
 			assertTrue("Ill-formed WD predicate", actual.isWellFormed());
 			assertTrue("Untyped WD predicate", actual.isTypeChecked());
 			assertEquals(simplifiedPredicate, actual);
@@ -113,20 +124,20 @@ public class TestWD extends AbstractTests {
 
 		@Override
 		public Predicate parse(String image) {
-			return parsePredicate(image);
+			return parsePredicate(image, factory);
 		}
 
 	}
 
 	private static class TestAssignment extends TestFormula<Assignment> {
 
-		TestAssignment(String in, String exp, String imp) {
+		TestAssignment(String in, String exp, String imp, FormulaFactory factory) {
 			super(defaultTEnv, in, exp, imp);
 		}
 
 		@Override
 		public Assignment parse(String image) {
-			return parseAssignment(image);
+			return parseAssignment(image, factory);
 		}
 
 	}
@@ -159,7 +170,7 @@ public class TestWD extends AbstractTests {
 	private static void assertWDLemmaAssignment(String in, String expected,
 			String improvedExpected) {
 		final TestAssignment test = new TestAssignment(in, expected,
-				improvedExpected);
+				improvedExpected, ff);
 		test.test();
 	}
 
@@ -912,4 +923,61 @@ public class TestWD extends AbstractTests {
 		assertEquals("unexpected WD predicate", LIT_BFALSE, actualWD);
 	}
 
+	private static final IDatatypeExtension LIST_TYPE = new IDatatypeExtension() {
+
+		private static final String TYPE_NAME = "List";
+		private static final String TYPE_IDENTIFIER = "List Id";
+		
+		
+		@Override
+		public String getTypeName() {
+			return TYPE_NAME;
+		}
+
+		@Override
+		public String getId() {
+			return TYPE_IDENTIFIER;
+		}
+		
+		@Override
+		public void addTypeParameters(ITypeConstructorMediator mediator) {
+			mediator.addTypeParam("S");			
+		}
+
+		@Override
+		public void addConstructors(IConstructorMediator mediator) {
+			mediator.addConstructor("nil", "NIL");
+			final ITypeParameter typeS = mediator.getTypeParameter("S");
+			
+			final IArgumentType refS = mediator.newArgumentType(typeS);
+			final IArgument head = mediator.newArgument("head", refS);
+			final IArgumentType listS = mediator.newArgumentTypeConstr(asList(refS));
+			final IArgument tail = mediator.newArgument("tail", listS);
+			
+			mediator.addConstructor("cons", "CONS", Arrays.asList(head, tail));
+		}
+
+	};
+
+	private static final IDatatype LIST_DT = ff.makeDatatype(LIST_TYPE);
+	private static final FormulaFactory LIST_FAC = FormulaFactory
+			.getInstance(LIST_DT.getExtensions());
+	private static final IExpressionExtension EXT_LIST = LIST_DT
+			.getTypeConstructor();
+	private static final ParametricType LIST_INT_TYPE = LIST_FAC
+			.makeParametricType(Collections.<Type> singletonList(LIST_FAC.makeIntegerType()),
+					EXT_LIST);
+	
+	public void testDestructorWD() throws Exception {
+		final ITypeEnvironment listEnv = LIST_FAC.makeTypeEnvironment();
+		listEnv.addName("x", INTEGER);
+		listEnv.addName("l", LIST_INT_TYPE);
+		
+		assertWDLemma(listEnv, "x = head(l)",
+				"∃ head0⦂ℤ, tail1⦂List(ℤ)· l = cons(head0, tail1)");
+
+		assertWDLemma(listEnv, "∀l1⦂List(BOOL),l2⦂List(BOOL)· l1=l2 ⇒ tail(l1) = l2",
+				"∀l1⦂List(BOOL),l2⦂List(BOOL)· l1=l2 ⇒ (∃head0⦂BOOL, tail1⦂List(BOOL)· l1 = cons(head0, tail1))");
+
+	}
 }
