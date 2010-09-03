@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - Extracted categories in separate class
+ *     Systerel - added InvalidTypeExpressionError
  *******************************************************************************/
 package org.eventb.core.sc;
 
@@ -41,6 +42,10 @@ public enum ParseProblem implements IRodinProblem {
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_InternalError, 
 			ParseProblemCategory.CATEGORY_NONE),
+	InvalidTypeExpressionError(
+			IMarker.SEVERITY_ERROR, 
+			Messages.scuser_InvalidTypeExpression, 
+			ParseProblemCategory.CATEGORY_TYPING),
 	LexerError(
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_LexerError, 

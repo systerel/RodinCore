@@ -146,8 +146,7 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 				break;
 
 			case InvalidTypeExpression:
-				// internal error
-				problem = ParseProblem.InternalError;
+				problem = ParseProblem.InvalidTypeExpressionError;
 				objects = NO_OBJECT;
 				break;
 

@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added scuser_LoadingRootModuleError
  *     University of Dusseldorf - added theorem attribute
+ *     Systerel - added InvalidTypeExpressionError
  *******************************************************************************/
 package org.eventb.internal.core.sc;
 
@@ -56,6 +57,7 @@ public final class Messages {
 	public static String scuser_DerivedPredIgnored;
 	public static String scuser_InvalidIdentifierName;
 	public static String scuser_InvalidIdentifierContainsSpaces;
+	public static String scuser_InvalidTypeExpression;
 	public static String scuser_LabelUndef;
 	public static String scuser_EmptyLabel;
 	public static String scuser_AbstractContextNameUndef;
