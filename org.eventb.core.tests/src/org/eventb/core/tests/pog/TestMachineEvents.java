@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -440,17 +440,9 @@ public class TestMachineEvents extends EventBPOTest {
 		noSequent(po, "fvt/I1/INV");
 		noSequent(po, "fvt/I2/INV");
 		noSequent(po, "fvt/I3/INV");
+		noSequent(po, "fvt/I4/INV");
+		noSequent(po, "fvt/I5/INV");
 		noSequent(po, "fvt/I6/INV");	
-		
-		sequent = getSequent(po, "fvt/I4/INV");
-		sequentHasIdentifiers(sequent, "V3'");
-		sequentHasHypotheses(sequent, typeEnvironment, "V1>0", "V2∈BOOL", "V1∈ℤ", "V1∈V3", "V3⊆V3", "V3⊆ℤ");
-		sequentHasGoal(sequent, typeEnvironment, "V1∈ℤ");
-		
-		sequent = getSequent(po, "fvt/I5/INV");
-		sequentHasIdentifiers(sequent, "V3'");
-		sequentHasHypotheses(sequent, typeEnvironment, "V1>0", "V2∈BOOL", "V1∈ℤ", "V1∈V3", "V3⊆V3", "V3⊆ℤ");
-		sequentHasGoal(sequent, typeEnvironment, "ℤ⊆ℤ");
 	}
 	
 	/**

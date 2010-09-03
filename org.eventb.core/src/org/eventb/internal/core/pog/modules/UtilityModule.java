@@ -16,12 +16,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.ast.Type;
 import org.eventb.core.pog.IPOGHint;
 import org.eventb.core.pog.IPOGPredicate;
 import org.eventb.core.pog.IPOGSource;
@@ -42,7 +37,6 @@ public abstract class UtilityModule extends POGProcessorModule {
 	protected static final IPOGHint[] NO_HINTS = new IPOGHint[0];
 	protected static final List<IPOGPredicate> emptyPredicates = new ArrayList<IPOGPredicate>(0);
 
-	protected Predicate btrue;
 	protected FormulaFactory factory;
 	
 	/* (non-Javadoc)
@@ -56,7 +50,6 @@ public abstract class UtilityModule extends POGProcessorModule {
 		super.initModule(element, repository, monitor);
 		
 		factory = repository.getFormulaFactory();
-		btrue = factory.makeLiteralPredicate(Formula.BTRUE, null);
 	}
 	
 	/* (non-Javadoc)
@@ -69,38 +62,7 @@ public abstract class UtilityModule extends POGProcessorModule {
 			IProgressMonitor monitor) throws CoreException {
 		
 		factory = null;
-		btrue = null;
 		super.endModule(element, repository, monitor);
-	}
-	
-	private boolean goalIsNotRestricting(Predicate goal) {
-		if (goal instanceof RelationalPredicate) {
-			RelationalPredicate relGoal = (RelationalPredicate) goal;
-			switch (relGoal.getTag()) {
-			case Formula.IN:
-			case Formula.SUBSETEQ:
-				Expression expression = relGoal.getRight();
-				Type type = expression.getType();
-				Type baseType = type.getBaseType(); 
-				if (baseType == null)
-					return false;
-				Expression typeExpression = baseType.toExpression(factory);
-				if (expression.equals(typeExpression))
-					return true;
-				break;
-			default:
-				return false;
-			}
-		}
-		return false;
-	}
-
-	protected boolean goalIsTrivial(Predicate goal) {
-		return goal.equals(btrue) || goalIsNotRestricting(goal);
-	}
-
-	protected void debugTraceTrivial(String sequentName) {
-		System.out.println("POG: " + getClass().getSimpleName() + ": Filtered trivial PO: " + sequentName);
 	}
 
 }

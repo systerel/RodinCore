@@ -22,7 +22,9 @@ import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.eventb.internal.core.pog.POGNatureFactory;
 import org.eventb.internal.core.tool.types.IFilterModule;
@@ -112,7 +114,8 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 	}
 
 	/**
-	 * Create a proof obligation in the specified file.
+	 * Creates a proof obligation in the specified file, if the goal is not
+	 * trivial.
 	 * 
 	 * @param target
 	 *            the target file
@@ -153,6 +156,10 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 			boolean accurate,
 			IProgressMonitor monitor) throws CoreException {
 		
+		if (isTrivial(goal.getPredicate())) {
+			return;
+		}
+		
 		if (acceptPO(name, monitor)) {
 
 			IPOSequent sequent = target.getSequent(name);
@@ -179,7 +186,8 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 	}
 
 	/**
-	 * Create a proof obligation in the specified file with no local hypotheses.
+	 * Creates a proof obligation in the specified file with no local
+	 * hypotheses, if the goal is not trivial.
 	 * 
 	 * @param target
 	 *            the target file
@@ -216,7 +224,7 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 
 	/**
 	 * Create a proof obligation in the specified file with no local hypotheses,
-	 * and no hints.
+	 * and no hints, if the goal is not trivial.
 	 * 
 	 * @param target
 	 *            the target file
@@ -250,7 +258,8 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 	}
 	
 	/**
-	 * Create a proof obligation in the specified file with no hints.
+	 * Creates a proof obligation in the specified file with no hints, if the
+	 * goal is not trivial.
 	 * 
 	 * @param target
 	 *            the target file
@@ -571,6 +580,43 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 	 */
 	protected static final IPOGNature makeNature(String description) {
 		return POGNatureFactory.getInstance().getNature(description);
+	}
+
+	/**
+	 * Returns whether the given predicate is in one of the following forms
+	 * (which trivially hold):
+	 * <ul>
+	 * <li>⊤</li>
+	 * <li>E ∈ Type</li>
+	 * <li>E ⊆ Type</li>
+	 * </ul>
+	 * 
+	 * @param pred
+	 *            a typed predicate
+	 * @return <code>true</code> if the given predicate trivially holds by
+	 *         typing
+	 */
+	protected static boolean isTrivial(Predicate pred) {
+		switch (pred.getTag()) {
+		case Formula.BTRUE:
+			return true;
+		case Formula.IN:
+		case Formula.SUBSETEQ:
+			return ((RelationalPredicate) pred).getRight().isATypeExpression();
+		default:
+			return false;
+		}
+	}
+
+	/**
+	 * Tracing method to use when a trivial PO was filtered.
+	 * 
+	 * @param poName
+	 *            the name of the current po that was filtered
+	 */
+	protected void debugTraceTrivial(String poName) {
+		System.out.println("POG: " + getClass().getSimpleName()
+				+ ": Filtered trivial PO: " + poName);
 	}
 
 }

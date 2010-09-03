@@ -77,7 +77,7 @@ public class FwdMachineEventWitnessModule extends MachineEventActionUtilityModul
 			ISCWitness witness = witnesses.get(i);
 			Predicate predicate = predicates.get(i);
 			
-			if (goalIsTrivial(predicate)) // only trivial POs can be derived from this witness
+			if (isTrivial(predicate)) // only trivial POs can be derived from this witness
 				continue;
 			
 			Predicate wdPredicate = predicate.getWDPredicate(factory);
@@ -136,7 +136,7 @@ public class FwdMachineEventWitnessModule extends MachineEventActionUtilityModul
 			IProgressMonitor monitor) throws CoreException {
 		String sequentName = concreteEventLabel + "/" + witnessLabel + "/" + suffix;
 		
-		if (goalIsTrivial(goal)) {
+		if (isTrivial(goal)) {
 			if (DEBUG_TRIVIAL)
 				debugTraceTrivial(sequentName);
 			return;

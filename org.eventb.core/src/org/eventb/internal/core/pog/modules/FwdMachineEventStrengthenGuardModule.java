@@ -121,7 +121,7 @@ public class FwdMachineEventStrengthenGuardModule extends MachineEventRefinement
 				boolean absGuardIsNew = 
 					absGuardTable.getIndexOfCorrespondingConcrete(i) == -1;
 				
-				if (!goalIsTrivial(absGuard) && absGuardIsNew)
+				if (!isTrivial(absGuard) && absGuardIsNew)
 					conjPredList.add(absGuard);
 			}
 			
@@ -198,7 +198,7 @@ public class FwdMachineEventStrengthenGuardModule extends MachineEventRefinement
 			Predicate absGuard = absGuardPredicates.get(i);
 			String sequentName = concreteEventLabel + "/" + guardLabel + "/GRD";
 			
-			if (goalIsTrivial(absGuard) 
+			if (isTrivial(absGuard) 
 					|| abstractEventGuardTable.getIndexOfCorrespondingConcrete(i) != -1) {
 				if (DEBUG_TRIVIAL)
 					debugTraceTrivial(sequentName);

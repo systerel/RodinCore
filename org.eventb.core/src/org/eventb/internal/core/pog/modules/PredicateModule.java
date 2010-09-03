@@ -109,7 +109,7 @@ public abstract class PredicateModule<PE extends ISCPredicateElement> extends Ut
 			PE predicateElement, int index, Predicate predicate, IProgressMonitor monitor)
 			throws CoreException {
 		final String poName = poPrefix + "/THM";
-		if (goalIsTrivial(predicate)) {
+		if (isTrivial(predicate)) {
 			if (DEBUG_TRIVIAL)
 				debugTraceTrivial(poName);
 			return;
@@ -142,7 +142,7 @@ public abstract class PredicateModule<PE extends ISCPredicateElement> extends Ut
 			IProgressMonitor monitor) throws CoreException {
 		Predicate wdPredicate = predicate.getWDPredicate(factory);
 		final String poName = getWDProofObligationName(poPrefix);
-		if (goalIsTrivial(wdPredicate)) {
+		if (isTrivial(wdPredicate)) {
 			if (DEBUG_TRIVIAL) {
 				debugTraceTrivial(poName);
 			}

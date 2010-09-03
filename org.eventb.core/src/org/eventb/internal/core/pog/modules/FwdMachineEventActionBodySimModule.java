@@ -94,7 +94,7 @@ public class FwdMachineEventActionBodySimModule extends
 			
 			String sequentName = concreteEventLabel + "/" + actionLabel + "/SIM";
 			
-			if (goalIsTrivial(simPredicate)) {
+			if (isTrivial(simPredicate)) {
 				if (DEBUG_TRIVIAL)
 					debugTraceTrivial(sequentName);
 				continue;

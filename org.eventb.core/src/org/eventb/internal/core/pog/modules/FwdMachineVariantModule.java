@@ -65,7 +65,7 @@ public class FwdMachineVariantModule extends UtilityModule {
 		IPOGSource[] sources = new IPOGSource[] {
 				makeSource(IPOSource.DEFAULT_ROLE, variantInfo.getVariant().getSource())
 		};
-		if (!goalIsTrivial(wdPredicate)) {
+		if (!isTrivial(wdPredicate)) {
 			createPO(
 					target, 
 					"VWD", 

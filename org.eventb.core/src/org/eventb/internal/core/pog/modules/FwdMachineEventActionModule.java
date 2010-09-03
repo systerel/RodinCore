@@ -171,7 +171,7 @@ public class FwdMachineEventActionModule extends MachineEventActionUtilityModule
 			IPOGNature nature,
 			IProgressMonitor monitor) throws CoreException {
 		String sequentName = concreteEventLabel + "/" + action.getLabel() + "/" + suffix;
-		if (goalIsTrivial(predicate)) {
+		if (isTrivial(predicate)) {
 			if (DEBUG_TRIVIAL)
 				debugTraceTrivial(sequentName);
 			return;

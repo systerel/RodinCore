@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,7 +70,7 @@ public abstract class MachineEventInvariantModule extends MachineEventRefinement
 			
 			Predicate predicate = invPredicates.get(i);
 			
-			if (goalIsTrivial(predicate)) {
+			if (isTrivial(predicate)) {
 				if (DEBUG_TRIVIAL)
 					debugTraceTrivial(concreteEventLabel + "/" + invariantLabel + "/INV");
 				continue;
