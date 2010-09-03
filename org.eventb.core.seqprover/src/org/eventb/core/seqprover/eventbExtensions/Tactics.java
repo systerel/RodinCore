@@ -114,6 +114,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
 import org.eventb.internal.core.seqprover.eventbExtensions.ModusTollens;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointRule;
+import org.eventb.internal.core.seqprover.eventbExtensions.IsFunImageGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AndOrDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ArithRewriterImpl;
@@ -3644,5 +3645,20 @@ public class Tactics {
 			IProverSequent sequent) {
 		return FunImgSimpImpl.getApplicablePositions(hyp, sequent);
 	}
-
+	
+	
+	/**
+	 * Returns the tactic "Functional Image Goal" for a given position
+	 * where this tactic can apply.
+	 * 
+	 * @param hyp
+	 *            the hypothesis of the form f ∈ S1 op S2
+	 * @param position
+	 *            a valid position of an function application f(E) in the goal
+	 * @return the tactic "Functional Image Goal"
+	 */
+	public static ITactic funImgGoal(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new IsFunImageGoal(),
+				new Input(hyp, position));
+	}
 }

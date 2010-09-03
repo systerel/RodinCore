@@ -91,7 +91,7 @@ public final class Lib {
 	public static boolean isEmptySet(Expression e) {
 		return e.getTag() == Formula.EMPTYSET;
 	}
-	
+
 	public static boolean isFreeIdent(Expression e) {
 		return e.getTag() == Formula.FREE_IDENT;
 	}
@@ -161,7 +161,7 @@ public final class Lib {
 			list = Arrays.asList(P);
 		return new LinkedHashSet<Predicate>(list);
 	}
-	
+
 	public static Predicate[] disjuncts(Predicate P) {
 		if (!isDisj(P))
 			return null;
@@ -259,18 +259,20 @@ public final class Lib {
 		final QuantifiedPredicate qP = (QuantifiedPredicate) P;
 		return qP.getPredicate();
 	}
-	
+
 	@Deprecated
 	public static Expression parseExpression(String str) {
-		final IParseResult plr = ff.parseExpression(str, LANGUAGE_VERSION, null);
+		final IParseResult plr = ff
+				.parseExpression(str, LANGUAGE_VERSION, null);
 		if (plr.hasProblem())
 			return null;
 		return plr.getParsedExpression();
 	}
-    
+
 	@Deprecated
 	public static Assignment parseAssignment(String str) {
-		final IParseResult plr = ff.parseAssignment(str, LANGUAGE_VERSION, null);
+		final IParseResult plr = ff
+				.parseAssignment(str, LANGUAGE_VERSION, null);
 		if (plr.hasProblem())
 			return null;
 		return plr.getParsedAssignment();
@@ -325,11 +327,12 @@ public final class Lib {
 				System.arraycopy(children, i + rewriteChildren.length,
 						newChildren, i + 1, children.length - i
 								- rewriteChildren.length);
-				
+
 				if (newChildren.length == 1) {
 					return newChildren[0];
 				}
-				AssociativeExpression result = ff.makeAssociativeExpression(tag, newChildren, null);
+				AssociativeExpression result = ff.makeAssociativeExpression(
+						tag, newChildren, null);
 				return result.flatten(ff);
 			}
 			return super.rewrite(expression);
@@ -337,7 +340,8 @@ public final class Lib {
 
 	}
 
-	private static class FixedRewriter<T extends Formula<T>> extends DefaultRewriter {
+	private static class FixedRewriter<T extends Formula<T>> extends
+			DefaultRewriter {
 		final T from;
 
 		final T to;
@@ -360,92 +364,92 @@ public final class Lib {
 
 		@Override
 		public Expression rewrite(AssociativeExpression expression) {
-			return this.<Expression>doRewrite(expression);
+			return this.<Expression> doRewrite(expression);
 		}
 
 		@Override
 		public Predicate rewrite(AssociativePredicate predicate) {
-			return this.<Predicate>doRewrite(predicate);
+			return this.<Predicate> doRewrite(predicate);
 		}
 
 		@Override
 		public Expression rewrite(AtomicExpression expression) {
-			return this.<Expression>doRewrite(expression);
+			return this.<Expression> doRewrite(expression);
 		}
 
 		@Override
 		public Expression rewrite(BinaryExpression expression) {
-			return this.<Expression>doRewrite(expression);
+			return this.<Expression> doRewrite(expression);
 		}
 
 		@Override
 		public Predicate rewrite(BinaryPredicate predicate) {
-			return this.<Predicate>doRewrite(predicate);
+			return this.<Predicate> doRewrite(predicate);
 		}
 
 		@Override
 		public Expression rewrite(BoolExpression expression) {
-			return this.<Expression>doRewrite(expression);
+			return this.<Expression> doRewrite(expression);
 		}
 
 		@Override
 		public Expression rewrite(BoundIdentifier identifier) {
-			return this.<Expression>doRewrite(identifier);
+			return this.<Expression> doRewrite(identifier);
 		}
 
 		@Override
 		public Expression rewrite(FreeIdentifier identifier) {
-			return this.<Expression>doRewrite(identifier);
+			return this.<Expression> doRewrite(identifier);
 		}
 
 		@Override
 		public Expression rewrite(IntegerLiteral literal) {
-			return this.<Expression>doRewrite(literal);
+			return this.<Expression> doRewrite(literal);
 		}
 
 		@Override
 		public Predicate rewrite(LiteralPredicate predicate) {
-			return this.<Predicate>doRewrite(predicate);
+			return this.<Predicate> doRewrite(predicate);
 		}
 
 		@Override
 		public Predicate rewrite(MultiplePredicate predicate) {
-			return this.<Predicate>doRewrite(predicate);
+			return this.<Predicate> doRewrite(predicate);
 		}
-		
+
 		@Override
 		public Expression rewrite(QuantifiedExpression expression) {
-			return this.<Expression>doRewrite(expression);
+			return this.<Expression> doRewrite(expression);
 		}
 
 		@Override
 		public Predicate rewrite(QuantifiedPredicate predicate) {
-			return this.<Predicate>doRewrite(predicate);
+			return this.<Predicate> doRewrite(predicate);
 		}
 
 		@Override
 		public Predicate rewrite(RelationalPredicate predicate) {
-			return this.<Predicate>doRewrite(predicate);
+			return this.<Predicate> doRewrite(predicate);
 		}
 
 		@Override
 		public Expression rewrite(SetExtension expression) {
-			return this.<Expression>doRewrite(expression);
+			return this.<Expression> doRewrite(expression);
 		}
 
 		@Override
 		public Predicate rewrite(SimplePredicate predicate) {
-			return this.<Predicate>doRewrite(predicate);
+			return this.<Predicate> doRewrite(predicate);
 		}
 
 		@Override
 		public Expression rewrite(UnaryExpression expression) {
-			return this.<Expression>doRewrite(expression);
+			return this.<Expression> doRewrite(expression);
 		}
 
 		@Override
 		public Predicate rewrite(UnaryPredicate predicate) {
-			return this.<Predicate>doRewrite(predicate);
+			return this.<Predicate> doRewrite(predicate);
 		}
 	}
 
@@ -511,7 +515,7 @@ public final class Lib {
 	public static boolean isPFun(Expression expression) {
 		return expression.getTag() == Expression.PFUN;
 	}
-	
+
 	/**
 	 * Check if an expression is a functional binary expression
 	 * <p>
@@ -519,7 +523,8 @@ public final class Lib {
 	 * @param expression
 	 *            any expression
 	 * @return <code>true</code> iff the expression is a functional expression
-	 *         (binary expression with tag PFUN or TFUN or PINJ or TINJ or PSUR or TSUR or TBIJ)
+	 *         (binary expression with tag PFUN or TFUN or PINJ or TINJ or PSUR
+	 *         or TSUR or TBIJ)
 	 */
 	public static boolean isFun(Expression expression) {
 		return expression.getTag() == Expression.PFUN
@@ -529,34 +534,50 @@ public final class Lib {
 				|| expression.getTag() == Expression.PSUR
 				|| expression.getTag() == Expression.TSUR
 				|| expression.getTag() == Expression.TBIJ;
-	}	
+	}
+
+	/**
+	 * Check if an expression is a relational binary expression
+	 * <p>
+	 * 
+	 * @param expression
+	 *            any expression
+	 * @return <code>true</code> iff the expression is a functional expression
+	 *         (binary expression with tag REL or TREL or SREL or TREL)
+	 */
+	public static boolean isRel(Expression expression) {
+		return expression.getTag() == Expression.REL
+				|| expression.getTag() == Expression.TREL
+				|| expression.getTag() == Expression.SREL
+				|| expression.getTag() == Expression.STREL;
+	}
 
 	/**
 	 * Returns the right hand side of a binary expression.
 	 * 
 	 * @param expr
-	 * 			the given binary expression.
-	 * @return
-	 * 			the right hand side of the given binary expression, or <code>null</code> in case
-	 * 			the given expression is not a binary expression.
+	 *            the given binary expression.
+	 * @return the right hand side of the given binary expression, or
+	 *         <code>null</code> in case the given expression is not a binary
+	 *         expression.
 	 */
-	public static Expression getRight(Expression expr){
+	public static Expression getRight(Expression expr) {
 		if (expr instanceof BinaryExpression) {
 			return ((BinaryExpression) expr).getRight();
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the left hand side of a binary expression.
 	 * 
 	 * @param expr
-	 * 			the given binary expression.
-	 * @return
-	 * 			the left hand side of the given binary expression, or <code>null</code> in case
-	 * 			the given expression is not a binary expression.
+	 *            the given binary expression.
+	 * @return the left hand side of the given binary expression, or
+	 *         <code>null</code> in case the given expression is not a binary
+	 *         expression.
 	 */
-	public static Expression getLeft(Expression expr){
+	public static Expression getLeft(Expression expr) {
 		if (expr instanceof BinaryExpression) {
 			return ((BinaryExpression) expr).getLeft();
 		}
@@ -580,7 +601,6 @@ public final class Lib {
 	public static boolean isInter(Expression expression) {
 		return expression.getTag() == Expression.BINTER;
 	}
-
 
 	/**
 	 * Test if the formula is a set union "S ∪ ... ∪ T".
@@ -622,7 +642,6 @@ public final class Lib {
 		return formula.getTag() == Expression.MAPSTO;
 	}
 
-
 	/**
 	 * Test if the formula is a singleton set "{E}".
 	 * <p>
@@ -640,7 +659,6 @@ public final class Lib {
 		return false;
 	}
 
-
 	/**
 	 * Test if the formula is a direct product "p ⊗ q".
 	 * <p>
@@ -654,7 +672,6 @@ public final class Lib {
 	public static boolean isDirectProduct(Formula<?> formula) {
 		return formula.getTag() == Expression.DPROD;
 	}
-
 
 	/**
 	 * Test if the formula is a parallel product "p ∥ q".
@@ -676,14 +693,13 @@ public final class Lib {
 	 * 
 	 * @param formula
 	 *            any formula
-	 * @return <code>true</code> if the input formula is a finiteness.
-	 *         Return <code>false</code> otherwise.
+	 * @return <code>true</code> if the input formula is a finiteness. Return
+	 *         <code>false</code> otherwise.
 	 * @author htson
 	 */
 	public static boolean isFinite(Formula<?> formula) {
 		return formula.getTag() == Predicate.KFINITE;
 	}
-
 
 	/**
 	 * Test if the formula is a relation "r" (i.e. formula of type ℙ(S × T) for
@@ -705,21 +721,19 @@ public final class Lib {
 		return false;
 	}
 
-
 	/**
 	 * Test if the formula is a set of all relation "S ↔ T" for some S and T
 	 * <p>
 	 * 
 	 * @param formula
 	 *            any formula
-	 * @return <code>true</code> if the input formula is a set of all
-	 *         relations. Return <code>false</code> otherwise.
+	 * @return <code>true</code> if the input formula is a set of all relations.
+	 *         Return <code>false</code> otherwise.
 	 * @author htson
 	 */
 	public static boolean isSetOfRelation(Formula<?> formula) {
 		return formula.getTag() == Expression.REL;
 	}
-
 
 	/**
 	 * Test if the formula is the range of a relation "ran(r)"
@@ -735,7 +749,6 @@ public final class Lib {
 		return formula.getTag() == Expression.KRAN;
 	}
 
-	
 	/**
 	 * Test if the formula is the domain of a relation "dom(r)"
 	 * <p>
@@ -749,7 +762,6 @@ public final class Lib {
 	public static boolean isDom(Formula<?> formula) {
 		return formula.getTag() == Expression.KDOM;
 	}
-
 
 	/**
 	 * Test if the formula is a set of all partial functions "S ⇸ T" for some S
@@ -766,7 +778,6 @@ public final class Lib {
 		return formula.getTag() == Expression.PFUN;
 	}
 
-	
 	/**
 	 * Test if the formula is a bound identifier
 	 * <p>
@@ -780,7 +791,6 @@ public final class Lib {
 	public static boolean isBoundIdentifier(Formula<?> formula) {
 		return formula.getTag() == Formula.BOUND_IDENT;
 	}
-
 
 	/**
 	 * Test if the formula is a bound identifier
@@ -801,15 +811,14 @@ public final class Lib {
 		return false;
 	}
 
-
 	/**
 	 * Test if the formula is a cardinality expression (card(S))
 	 * <p>
 	 * 
 	 * @param formula
 	 *            any formula
-	 * @return <code>true</code> if the input formula is a cardinality expression.
-	 *         Return <code>false</code> otherwise.
+	 * @return <code>true</code> if the input formula is a cardinality
+	 *         expression. Return <code>false</code> otherwise.
 	 * @author htson
 	 */
 	public static boolean isCardinality(Formula<?> formula) {
@@ -841,7 +850,7 @@ public final class Lib {
 	public static Type getDomainType(Expression r) {
 		return r.getType().getSource();
 	}
-	
+
 	public static boolean isPartition(Predicate p) {
 		return p.getTag() == Formula.KPARTITION;
 	}
@@ -854,10 +863,11 @@ public final class Lib {
 	 * @return the rewritten predicate
 	 * @since 1.4
 	 */
-	public static Predicate applyTypeSimplification(Predicate predicate, FormulaFactory ff) {
+	public static Predicate applyTypeSimplification(Predicate predicate,
+			FormulaFactory ff) {
 		final IFormulaRewriter typeRewriter = new TypeRewriterImpl(ff);
 		final Predicate typeRewritten = predicate.rewrite(typeRewriter);
-		
+
 		final IFormulaRewriter autoRewriter = new AutoRewriterImpl(ff);
 		return recursiveRewrite(typeRewritten, autoRewriter);
 	}
@@ -871,7 +881,8 @@ public final class Lib {
 	 *            the rewriter to apply
 	 * @return the rewritten predicate
 	 */
-	// TODO Rodin 2.0 make this method public but non API and call it from AbstractAutoRewrites
+	// TODO Rodin 2.0 make this method public but non API and call it from
+	// AbstractAutoRewrites
 	// In Rodin 2.0, this class will need instantiation for passing
 	// the formula factory to use (not hard-coded anymore) and we will have the
 	// possibility to hide some method using an interface.

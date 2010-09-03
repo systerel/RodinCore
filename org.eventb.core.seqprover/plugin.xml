@@ -374,6 +374,11 @@
             id="funImgSimplifies"
             name="%funImgSimplifiesName">
       </reasoner>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.IsFunImageGoal"
+            id="funImgGoal"
+            name="%funImgGoalName">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">
