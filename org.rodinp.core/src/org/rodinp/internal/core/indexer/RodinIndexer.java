@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,6 +55,13 @@ public class RodinIndexer {
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 				return Status.CANCEL_STATUS;
+			}
+		}
+		
+		public void stop() {
+			final Thread thread = getThread();
+			if (thread != null) {
+				thread.interrupt();
 			}
 		}
 	
@@ -162,7 +169,7 @@ public class RodinIndexer {
 
 	public static void stop() {
 		if (indexerJob != null) {
-			indexerJob.cancel();
+			indexerJob.stop();
 		}
 	}
 
