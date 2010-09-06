@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static java.util.Arrays.asList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
 import java.math.BigInteger;
@@ -33,7 +32,6 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.LiteralPredicate;
-import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SimplePredicate;
@@ -48,13 +46,6 @@ import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
-import org.eventb.core.ast.extension.datatype.IArgument;
-import org.eventb.core.ast.extension.datatype.IArgumentType;
-import org.eventb.core.ast.extension.datatype.IConstructorMediator;
-import org.eventb.core.ast.extension.datatype.IDatatype;
-import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
-import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
-import org.eventb.core.ast.extension.datatype.ITypeParameter;
 
 /**
  * Unit and acceptance tests for the computation of WD lemmas.
@@ -923,51 +914,6 @@ public class TestWD extends AbstractTests {
 		assertEquals("unexpected WD predicate", LIT_BFALSE, actualWD);
 	}
 
-	private static final IDatatypeExtension LIST_TYPE = new IDatatypeExtension() {
-
-		private static final String TYPE_NAME = "List";
-		private static final String TYPE_IDENTIFIER = "List Id";
-		
-		
-		@Override
-		public String getTypeName() {
-			return TYPE_NAME;
-		}
-
-		@Override
-		public String getId() {
-			return TYPE_IDENTIFIER;
-		}
-		
-		@Override
-		public void addTypeParameters(ITypeConstructorMediator mediator) {
-			mediator.addTypeParam("S");			
-		}
-
-		@Override
-		public void addConstructors(IConstructorMediator mediator) {
-			mediator.addConstructor("nil", "NIL");
-			final ITypeParameter typeS = mediator.getTypeParameter("S");
-			
-			final IArgumentType refS = mediator.newArgumentType(typeS);
-			final IArgument head = mediator.newArgument("head", refS);
-			final IArgumentType listS = mediator.newArgumentTypeConstr(asList(refS));
-			final IArgument tail = mediator.newArgument("tail", listS);
-			
-			mediator.addConstructor("cons", "CONS", Arrays.asList(head, tail));
-		}
-
-	};
-
-	private static final IDatatype LIST_DT = ff.makeDatatype(LIST_TYPE);
-	private static final FormulaFactory LIST_FAC = FormulaFactory
-			.getInstance(LIST_DT.getExtensions());
-	private static final IExpressionExtension EXT_LIST = LIST_DT
-			.getTypeConstructor();
-	private static final ParametricType LIST_INT_TYPE = LIST_FAC
-			.makeParametricType(Collections.<Type> singletonList(LIST_FAC.makeIntegerType()),
-					EXT_LIST);
-	
 	public void testDestructorWD() throws Exception {
 		final ITypeEnvironment listEnv = LIST_FAC.makeTypeEnvironment();
 		listEnv.addName("x", INTEGER);

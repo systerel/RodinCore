@@ -31,7 +31,7 @@ import org.eventb.core.ast.SourceLocation;
 public class TestTypeCheckError extends AbstractTests {
 	
 	private void doTestPredicate(String input, ITypeEnvironment te, ProblemKind... problems) {
-		final Predicate pred = parsePredicate(input);
+		final Predicate pred = parsePredicate(input, te.getFormulaFactory());
 		doTest(pred, te, problems);
 	}
 	
@@ -143,4 +143,10 @@ public class TestTypeCheckError extends AbstractTests {
 		doTest(q, ff.makeTypeEnvironment(), ProblemKind.TypeUnknown);
 	}
 	
+	public void testParamTypes() throws Exception {
+		doTestPredicate("x ∈ A ∧ x ∈ List(A)", 
+				LIST_FAC.makeTypeEnvironment(), 
+				ProblemKind.Circularity);
+		
+	}
 }

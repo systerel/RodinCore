@@ -237,6 +237,14 @@ public class TypeUnifier {
 			CProd(left, right) -> {
 				return occurs(typeVar, `left) || occurs(typeVar, `right);
 			}
+			GenType(children) -> {
+				for(Type child: `children) {
+					if (occurs(typeVar, child)) {
+						return true;
+					}
+				}
+				return false;
+			}
 			_ -> {
 				return false;
 			}

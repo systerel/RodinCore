@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static java.util.Arrays.asList;
 import static org.eventb.core.ast.LanguageVersion.LATEST;
+
+import java.util.Arrays;
+import java.util.Collections;
+
 import junit.framework.TestCase;
 
 import org.eventb.core.ast.Assignment;
@@ -21,10 +26,21 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.LanguageVersion;
+import org.eventb.core.ast.ParametricType;
+import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.datatype.IArgument;
+import org.eventb.core.ast.extension.datatype.IArgumentType;
+import org.eventb.core.ast.extension.datatype.IConstructorMediator;
+import org.eventb.core.ast.extension.datatype.IDatatype;
+import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
+import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
+import org.eventb.core.ast.extension.datatype.ITypeParameter;
 
 /**
  * Base abstract class for AST tests.
@@ -34,7 +50,61 @@ import org.eventb.core.ast.Type;
 public abstract class AbstractTests extends TestCase {
 
 	public static final FormulaFactory ff = FormulaFactory.getDefault();
-
+	protected static final IntegerType INT_TYPE = ff.makeIntegerType();
+	private static final IDatatypeExtension LIST_TYPE = new IDatatypeExtension() {
+	
+			private static final String TYPE_NAME = "List";
+			private static final String TYPE_IDENTIFIER = "List Id";
+			
+			
+			@Override
+			public String getTypeName() {
+				return TYPE_NAME;
+			}
+	
+			@Override
+			public String getId() {
+				return TYPE_IDENTIFIER;
+			}
+			
+			@Override
+			public void addTypeParameters(ITypeConstructorMediator mediator) {
+				mediator.addTypeParam("S");			
+			}
+	
+			@Override
+			public void addConstructors(IConstructorMediator mediator) {
+				mediator.addConstructor("nil", "NIL");
+				final ITypeParameter typeS = mediator.getTypeParameter("S");
+				
+				final IArgumentType refS = mediator.newArgumentType(typeS);
+				final IArgument head = mediator.newArgument("head", refS);
+				final IArgumentType listS = mediator.newArgumentTypeConstr(asList(refS));
+				final IArgument tail = mediator.newArgument("tail", listS);
+				
+				mediator.addConstructor("cons", "CONS", Arrays.asList(head, tail));
+			}
+	
+		};
+	protected static final IDatatype LIST_DT = ff.makeDatatype(LIST_TYPE);
+	protected static final FormulaFactory LIST_FAC = FormulaFactory
+				.getInstance(LIST_DT.getExtensions());
+	protected static final IExpressionExtension EXT_LIST = LIST_DT
+				.getTypeConstructor();
+	protected static final ParametricType LIST_INT_TYPE = LIST_FAC
+				.makeParametricType(Collections.<Type> singletonList(INT_TYPE),
+						EXT_LIST);
+	protected static final PowerSetType POW_LIST_INT_TYPE = LIST_FAC
+				.makePowerSetType(LIST_INT_TYPE);
+	protected static final IExpressionExtension EXT_NIL = LIST_DT
+				.getConstructor("NIL");
+	protected static final IExpressionExtension EXT_CONS = LIST_DT
+				.getConstructor("CONS");
+	protected static final IExpressionExtension EXT_HEAD = LIST_DT.getDestructor(
+				"CONS", 0);
+	protected static final IExpressionExtension EXT_TAIL = LIST_DT.getDestructor(
+				"CONS", 1);
+	
 	public static void assertSuccess(String message, IResult result) {
 		assertTrue(message, result.isSuccess());
 		assertFalse(message, result.hasProblem());

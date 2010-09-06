@@ -172,7 +172,6 @@ public class TestGenParser extends AbstractTests {
 	protected static final AtomicExpression INT = ff.makeAtomicExpression(Formula.INTEGER, null);
 	protected static final AtomicExpression BOOL = ff.makeAtomicExpression(Formula.BOOL, null);
 	protected static final UnaryExpression POW_INT = ff.makeUnaryExpression(POW, INT, null);
-	protected static final IntegerType INT_TYPE = ff.makeIntegerType();
 	protected static final BooleanType BOOL_TYPE = ff.makeBooleanType();
 	protected static final PowerSetType POW_INT_TYPE = ff.makePowerSetType(INT_TYPE);
 	protected static final PowerSetType REL_INT_INT = ff.makeRelationalType(INT_TYPE, INT_TYPE);
@@ -2021,61 +2020,6 @@ public class TestGenParser extends AbstractTests {
 		assertFailure(result, expected);
 	}
 
-	private static final IDatatypeExtension LIST_TYPE = new IDatatypeExtension() {
-
-		private static final String TYPE_NAME = "List";
-		private static final String TYPE_IDENTIFIER = "List Id";
-		
-		
-		@Override
-		public String getTypeName() {
-			return TYPE_NAME;
-		}
-
-		@Override
-		public String getId() {
-			return TYPE_IDENTIFIER;
-		}
-		
-		@Override
-		public void addTypeParameters(ITypeConstructorMediator mediator) {
-			mediator.addTypeParam("S");			
-		}
-
-		@Override
-		public void addConstructors(IConstructorMediator mediator) {
-			mediator.addConstructor("nil", "NIL");
-			final ITypeParameter typeS = mediator.getTypeParameter("S");
-			
-			final IArgumentType refS = mediator.newArgumentType(typeS);
-			final IArgument head = mediator.newArgument("head", refS);
-			final IArgumentType listS = mediator.newArgumentTypeConstr(asList(refS));
-			final IArgument tail = mediator.newArgument("tail", listS);
-			
-			mediator.addConstructor("cons", "CONS", Arrays.asList(head, tail));
-		}
-
-	};
-
-	private static final IDatatype LIST_DT = ff.makeDatatype(LIST_TYPE);
-	private static final FormulaFactory LIST_FAC = FormulaFactory
-			.getInstance(LIST_DT.getExtensions());
-	private static final IExpressionExtension EXT_LIST = LIST_DT
-			.getTypeConstructor();
-	private static final ParametricType LIST_INT_TYPE = LIST_FAC
-			.makeParametricType(Collections.<Type> singletonList(INT_TYPE),
-					EXT_LIST);
-	private static final PowerSetType POW_LIST_INT_TYPE = LIST_FAC
-			.makePowerSetType(LIST_INT_TYPE);
-	private static final IExpressionExtension EXT_NIL = LIST_DT
-			.getConstructor("NIL");
-	private static final IExpressionExtension EXT_CONS = LIST_DT
-			.getConstructor("CONS");
-	private static final IExpressionExtension EXT_HEAD = LIST_DT.getDestructor(
-			"CONS", 0);
-	private static final IExpressionExtension EXT_TAIL = LIST_DT.getDestructor(
-			"CONS", 1);
-	
 	public void testDatatypeType() throws Exception {
 
 		final ExtendedExpression list = LIST_FAC.makeExtendedExpression(
@@ -2188,6 +2132,52 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("tail(x)", tail, LIST_FAC);
 	}
 	
+	public void testTypeCheckError() throws Exception {
+		// problem raised by Issam, produced a StackOverflowError
+		final Expression A_Id = LIST_FAC.makeFreeIdentifier("A", null);
+		
+		final Expression List_A = LIST_FAC.makeExtendedExpression(
+				EXT_LIST, asList(A_Id), Collections.<Predicate> emptySet(),
+				null);
+		final Expression List_List_A = LIST_FAC.makeExtendedExpression(
+				EXT_LIST, asList(List_A), Collections.<Predicate> emptySet(),
+				null);
+		
+		final BoundIdentDecl bid_x = LIST_FAC.makeBoundIdentDecl("x", null);
+		final BoundIdentDecl bid_y = LIST_FAC.makeBoundIdentDecl("y", null);
+		final BoundIdentifier bi_x = LIST_FAC.makeBoundIdentifier(1, null);
+		final BoundIdentifier bi_y = LIST_FAC.makeBoundIdentifier(0, null);
+
+		final Predicate x_In_A = LIST_FAC.makeRelationalPredicate(IN, bi_x,
+				A_Id, null);
+
+		final Predicate y_In_ListListA = LIST_FAC.makeRelationalPredicate(IN,
+				bi_y, List_List_A, null);
+		
+		final ExtendedExpression cons_x_y = LIST_FAC
+				.makeExtendedExpression(EXT_CONS, new Expression[]{bi_x, bi_y}, NO_PRED, null);
+		final Predicate cons_In_ListA = LIST_FAC
+		.makeRelationalPredicate(IN, cons_x_y,
+				List_A, null);
+		
+		final Predicate expected = LIST_FAC.makeQuantifiedPredicate(
+				FORALL,
+				asList(bid_x,
+						bid_y), LIST_FAC
+						.makeBinaryPredicate(LIMP, LIST_FAC
+								.makeAssociativePredicate(LAND, asList(x_In_A, y_In_ListListA), null), 
+								cons_In_ListA
+								, null), null);
+		final Predicate pred = doPredicateTest("∀ x,y· (x ∈A ∧ y ∈List(List(A))) ⇒ cons(x,y)∈ List(A)", expected,
+				LIST_FAC);
+		final ITypeCheckResult tcRes = pred.typeCheck(LIST_FAC.makeTypeEnvironment());
+		assertTrue(tcRes.hasProblem());
+		
+		final List<ASTProblem> problems = tcRes.getProblems();
+		for (ASTProblem problem : problems) {
+			assertEquals(ProblemKind.Circularity, problem.getMessage());
+		}
+	}
 	
 	public void testDatatypeDestructorsTyping() throws Exception {
 		
@@ -2653,16 +2643,15 @@ public class TestGenParser extends AbstractTests {
 
 	};
 	
-	private static final IDatatype MOULT_EXTNS = ff
-			.makeDatatype(MOULT_TYPE);
+	private static final IDatatype MOULT_DT = ff.makeDatatype(MOULT_TYPE);
 	private static final FormulaFactory MOULT_FAC = FormulaFactory
-			.getInstance(MOULT_EXTNS.getExtensions());
-	private static final IExpressionExtension EXT_MOULT = MOULT_EXTNS
+			.getInstance(MOULT_DT.getExtensions());
+	private static final IExpressionExtension EXT_MOULT = MOULT_DT
 			.getTypeConstructor();
 	private static final ParametricType MOULT_INT_BOOL_TYPE = MOULT_FAC
 			.makeParametricType(Arrays.<Type> asList(INT_TYPE, BOOL_TYPE),
 					EXT_MOULT);
-	private static final IExpressionExtension EXT_MAKE_MOULT = MOULT_EXTNS
+	private static final IExpressionExtension EXT_MAKE_MOULT = MOULT_DT
 			.getConstructor("MAKE MOULT");
 
 	public void testMoult() throws Exception {
@@ -2850,7 +2839,7 @@ public class TestGenParser extends AbstractTests {
 				EXT_MOULT, Arrays.<Expression> asList(INT, BOOL),
 				Collections.<Predicate> emptySet(), null);
 
-		final FormulaFactory listMoultFac = LIST_FAC.withExtensions(MOULT_EXTNS
+		final FormulaFactory listMoultFac = LIST_FAC.withExtensions(MOULT_DT
 				.getExtensions());
 		
 		final Expression listMoult = listMoultFac.makeExtendedExpression(
