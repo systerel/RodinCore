@@ -56,4 +56,9 @@ public class TypeMediator implements ITypeMediator {
 	public PowerSetType makeRelationalType(Type left, Type right) {
 		return factory.makeRelationalType(left, right);
 	}
+	
+	@Override
+	public FormulaFactory getFactory() {
+		return factory;
+	}
 }

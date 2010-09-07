@@ -3,6 +3,7 @@ package org.eventb.core.ast.extension;
 import java.util.List;
 
 import org.eventb.core.ast.BooleanType;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IntegerType;
@@ -34,4 +35,6 @@ public interface ITypeMediator {
 	ProductType makeProductType(Type left, Type right);
 
 	PowerSetType makeRelationalType(Type left, Type right);
+
+	FormulaFactory getFactory();
 }
