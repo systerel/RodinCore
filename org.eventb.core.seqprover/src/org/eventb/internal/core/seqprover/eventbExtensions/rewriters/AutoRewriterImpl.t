@@ -1833,7 +1833,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    return expression;
 	}
     
-    @ProverRule("SIMP_DESTR_CONSTR")
+	@ProverRule({ "SIMP_DESTR_CONSTR", "SIMP_SPECIAL_COND_BTRUE",
+			"SIMP_SPECIAL_COND_BFALSE" })
 	@Override
 	public Expression rewrite(ExtendedExpression expression) {
     	%match (Expression expression) {
@@ -1849,6 +1850,24 @@ public class AutoRewriterImpl extends DefaultRewriter {
     				if (prmIndex >= 0) {
     					final Expression[] params = cons.getChildExpressions();
     					return `params[prmIndex];
+    				}
+    			}
+    		}
+    		
+    		/**
+    		 * SIMP_SPECIAL_COND_BTRUE:
+    		 * COND(true, E_1, E_2) == E_1
+    		 * 
+    		 * SIMP_SPECIAL_COND_BFALSE:
+    		 * COND(false, E_1, E_2) == E_2
+    		 */
+    		expr@ExtendedExpression(exprs,preds) -> {
+    			if (((ExtendedExpression) `expr).getExtension() == FormulaFactory.getCond()) {
+    				final int condTag = `preds[0].getTag();
+    				if(condTag == Formula.BTRUE) {
+    					return `exprs[0];
+    				} else if(condTag == Formula.BFALSE) {
+    					return `exprs[1];
     				}
     			}
     		}

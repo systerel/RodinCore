@@ -15,9 +15,13 @@ package org.eventb.core.seqprover.rewriterTests;
 
 import static java.util.Arrays.asList;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IntegerType;
+import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.datatype.IArgument;
 import org.eventb.core.ast.extension.datatype.IArgumentType;
 import org.eventb.core.ast.extension.datatype.IConstructorMediator;
@@ -76,8 +80,12 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 
 	private static final IDatatype DT = ff.makeDatatype(DATATYPE);
 
-	private static final FormulaFactory DT_FAC = FormulaFactory.getInstance(DT
-			.getExtensions());
+	private static final Set<IFormulaExtension> EXTENSIONS = new HashSet<IFormulaExtension>();
+	static {
+		EXTENSIONS.addAll(DT.getExtensions());
+		EXTENSIONS.add(FormulaFactory.getCond());
+	}
+	private static final FormulaFactory DT_FAC = FormulaFactory.getInstance(EXTENSIONS);
 
 	// The automatic rewriter for testing.
 	private static final IFormulaRewriter rewriter = new AutoRewriterImpl(DT_FAC);
@@ -1123,4 +1131,14 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 		predicateTest("¬x = 1", "bool(x = 1) = FALSE");
 	}
 
+	@Test
+	public void testCond() throws Exception {
+		
+		// COND(true, E_1, E_2) == E_1
+		expressionTest("1", "COND(⊤,1,2)");
+
+		// COND(false, E_1, E_2) == E_2
+		expressionTest("2", "COND(⊥,1,2)");
+		
+	}
 }
