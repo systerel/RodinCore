@@ -102,7 +102,7 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 				final Type alpha = tcMediator.newTypeVariable();
 				final PowerSetType prmType = tcMediator.makePowerSetType(alpha);
 				tcMediator.sameType(prmType, child.getType());
-				prmTypes.add(prmType);
+				prmTypes.add(alpha);
 			}
 			return tcMediator.makePowerSetType(tcMediator.makeParametricType(
 					prmTypes, this));

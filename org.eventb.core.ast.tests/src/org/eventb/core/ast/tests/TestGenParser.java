@@ -2132,6 +2132,24 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("tail(x)", tail, LIST_FAC);
 	}
 	
+	public void testTypeConstrTypeCheck() throws Exception {
+		final Expression listIntExpr = LIST_FAC.makeExtendedExpression(
+				EXT_LIST, Collections.<Expression> singleton(INT),
+				Collections.<Predicate> emptySet(), null);
+		final Predicate expected = LIST_FAC.makeRelationalPredicate(IN, FRID_x,
+				listIntExpr, null);
+		
+		final Predicate pred = doPredicateTest("x ∈ List(ℤ)", expected,
+				LIST_FAC);
+		final ITypeCheckResult tcResult = pred.typeCheck(LIST_FAC.makeTypeEnvironment());
+		assertFalse(tcResult.hasProblem());
+		assertTrue(pred.isTypeChecked());
+		final FreeIdentifier[] freeIdentifiers = pred.getFreeIdentifiers();
+		assertEquals(1, freeIdentifiers.length);
+		final FreeIdentifier x = freeIdentifiers[0];
+		assertEquals(LIST_INT_TYPE, x.getType());
+	}
+	
 	public void testTypeCheckError() throws Exception {
 		// problem raised by Issam, produced a StackOverflowError
 		final Expression A_Id = LIST_FAC.makeFreeIdentifier("A", null);
