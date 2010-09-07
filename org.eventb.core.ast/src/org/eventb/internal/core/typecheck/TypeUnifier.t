@@ -87,10 +87,10 @@ public class TypeUnifier {
 				}
 				return result.makeProductType(newLeft, newRight);
 			}
-			gt1@GenType(children1), gt2@GenType(children2) -> {
-				final ParametricType genType1 = (ParametricType) `gt1;
-				final ParametricType genType2 = (ParametricType) `gt2;
-				if (genType1.getExprExtension() != genType2.getExprExtension()) {
+			gt1@ParamType(children1), gt2@ParamType(children2) -> {
+				final ParametricType paramType1 = (ParametricType) `gt1;
+				final ParametricType paramType2 = (ParametricType) `gt2;
+				if (paramType1.getExprExtension() != paramType2.getExprExtension()) {
 					return null;
 				}
 				assert `children1.length == `children2.length;
@@ -115,7 +115,7 @@ public class TypeUnifier {
 				if (all2) {
 					return right;
 				}
-				return result.makeParametricType(newTypePrms, genType1.getExprExtension());
+				return result.makeParametricType(newTypePrms, paramType1.getExprExtension());
 			}
 			Int(), Int() -> {
 				return left;
@@ -206,7 +206,7 @@ public class TypeUnifier {
 				}
 				return result.makeProductType(newLeft, newRight);
 			}
-			GenType(children) -> {
+			ParamType(children) -> {
 				final List<Type> newTypePrms = new ArrayList<Type>();
 				boolean same = true;
 				for (Type type: `children) {
@@ -237,7 +237,7 @@ public class TypeUnifier {
 			CProd(left, right) -> {
 				return occurs(typeVar, `left) || occurs(typeVar, `right);
 			}
-			GenType(children) -> {
+			ParamType(children) -> {
 				for(Type child: `children) {
 					if (occurs(typeVar, child)) {
 						return true;

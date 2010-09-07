@@ -42,7 +42,7 @@
 	get_slot(right,t) { ((ProductType) t).getRight() }
 }
 
-%op Type GenType (children : TypeList) {
+%op Type ParamType (children : TypeList) {
 	is_fsym(t) { t instanceof ParametricType }
 	get_slot(children,t) { ((ParametricType) t).getTypeParameters() }
 }
