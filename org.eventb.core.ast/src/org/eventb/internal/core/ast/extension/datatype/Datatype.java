@@ -12,8 +12,8 @@ package org.eventb.internal.core.ast.extension.datatype;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -22,10 +22,10 @@ import java.util.Set;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extension.ITypeDistribution;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.extension.ITypeDistribution;
 import org.eventb.core.ast.extension.datatype.IArgument;
 import org.eventb.core.ast.extension.datatype.IArgumentType;
 import org.eventb.core.ast.extension.datatype.IDatatype;
@@ -96,7 +96,7 @@ public class Datatype implements IDatatype {
 
 	private final List<ITypeParameter> typeParams;
 	private final IExpressionExtension typeConstructor;
-	private final Map<String, Constructor> constructors = new HashMap<String, Constructor>();
+	private final Map<String, Constructor> constructors = new LinkedHashMap<String, Constructor>();
 
 	public Datatype(IExpressionExtension typeConstructor,
 			List<ITypeParameter> typeParams) {
