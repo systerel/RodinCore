@@ -13,6 +13,7 @@
  *     Systerel - added contrHyps() (CNTR)
  *     Systerel - fixed rules FIN_FUN_*
  *     Systerel - implemented rules FUNIMG_SET_DOMSUB_L and FUNIMG_DOMSUB_L
+ *     Systerel - implemented rule DATATYPE_DISTINCT_CASE
  ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
@@ -51,8 +52,10 @@ import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
+import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
@@ -60,8 +63,6 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
-import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
@@ -71,7 +72,6 @@ import org.eventb.core.seqprover.reasoners.Hyp;
 import org.eventb.core.seqprover.reasoners.MngHyp;
 import org.eventb.core.seqprover.reasoners.Review;
 import org.eventb.core.seqprover.tactics.BasicTactics;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites.Input;
 import org.eventb.internal.core.seqprover.eventbExtensions.AbstrExpr;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllD;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllI;
@@ -83,6 +83,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ConjF;
 import org.eventb.internal.core.seqprover.eventbExtensions.Contr;
 import org.eventb.internal.core.seqprover.eventbExtensions.ContrHyps;
 import org.eventb.internal.core.seqprover.eventbExtensions.Cut;
+import org.eventb.internal.core.seqprover.eventbExtensions.DTDistinctCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.DoCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.Eq;
@@ -116,6 +117,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ModusTollens;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointRule;
 import org.eventb.internal.core.seqprover.eventbExtensions.IsFunImageGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites.Input;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AndOrDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ArithRewriterImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ArithRewrites;
@@ -155,8 +157,9 @@ import org.eventb.internal.core.seqprover.reasonerInputs.PFunSetInput;
 
 /**
  * This class contains static methods that wrap Event-B reasoner extensions into
- * tactics. In many cases, applicability methods are also incuded that implement a
- * quick check to see if the tactic may be applicable in a particular situation.
+ * tactics. In many cases, applicability methods are also included that
+ * implement a quick check to see if the tactic may be applicable in a
+ * particular situation.
  * 
  * @author Farhad Mehta, htson
  * 
@@ -3661,4 +3664,40 @@ public class Tactics {
 		return BasicTactics.reasonerTac(new IsFunImageGoal(),
 				new Input(hyp, position));
 	}
+	
+	/**
+	 * Returns the list of applicable positions of the tactic
+	 * "Datatype Distinct Case" {@link DTDistinctCase} to the given predicate.
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of positions (empty if the tactic is not applicable)
+	 * @since 1.4
+	 */
+	public static List<IPosition> dtDistinctCaseGetPositions(Predicate predicate) {
+		return predicate.getPositions(new DefaultFilter() {
+			@Override
+			public boolean select(FreeIdentifier identifier) {
+				return DTDistinctCase.hasDatatypeType(identifier);
+			}
+		});
+	}
+
+	/**
+	 * Returns the tactic "Datatype Distinct Case" for a given position where
+	 * this tactic can be applied.
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            the position of the application
+	 * @return the tactic "Datatype Distinct Case"
+	 * @since 1.4
+	 */
+	public static ITactic dtDistinctCase(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new DTDistinctCase(), new Input(hyp,
+				position));
+	}
+
 }

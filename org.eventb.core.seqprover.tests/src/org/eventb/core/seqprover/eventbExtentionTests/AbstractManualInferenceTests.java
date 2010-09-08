@@ -13,6 +13,7 @@ package org.eventb.core.seqprover.eventbExtentionTests;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
@@ -42,6 +43,14 @@ public abstract class AbstractManualInferenceTests extends AbstractManualReasone
 		}
 	}
 	
+	public AbstractManualInferenceTests() {
+		super();
+	}
+	
+	public AbstractManualInferenceTests(FormulaFactory ff) {
+		super(ff);
+	}
+
 	protected abstract SuccessfulTest[] getSuccessfulTests();
 
 	@Override
@@ -70,7 +79,7 @@ public abstract class AbstractManualInferenceTests extends AbstractManualReasone
 		IReasonerInput input = new AbstractManualInference.Input(predicate, ff
 				.makePosition(positionImage));
 		return new SuccessfullReasonerApplication(TestLib
-				.genSeq(sequenceImage), input, results);
+				.genSeq(sequenceImage, ff), input, results);
 	}
 
 	@Override

@@ -65,13 +65,21 @@ public class TestLib {
 	 * @throws IllegalArgumentException
 	 * 		 in case the sequent could not be constructed due to a parsing or typechecking error.
 	 */
-	public static IProverSequent genSeq(String sequentAsString) {
+	public static IProverSequent genSeq(String sequentAsString, FormulaFactory factory) {
 		final String[] split = sequentAsString.split("\\|-");
-		return genFullSeq("", "", "", split[0], split[1]);
+		return genFullSeq("", "", "", split[0], split[1], factory);
+	}
+	
+	public static IProverSequent genSeq(String sequentAsString) {
+		return genSeq(sequentAsString, ff);
 	}
 	
 	private static final Pattern fullSequentPattern = Pattern
 			.compile("^(.*);H;(.*);S;(.*)\\s*\\|-\\s*(.*)$");	
+	
+	public static IProverSequent genFullSeq(String sequentAsString) {
+		return genFullSeq(sequentAsString, ff);
+	}
 	
 	/**
 	 * Constructs a sequent from a string of the form " Hyps ;H; Hyps ;S; Hyps |-
@@ -102,8 +110,8 @@ public class TestLib {
 	 *             or type-checking error.
 	 * @author htson
 	 */
-	public static IProverSequent genFullSeq(String sequentAsString) {
-		final ITypeEnvironment typenv = mDLib(ff).makeTypeEnvironment();
+	public static IProverSequent genFullSeq(String sequentAsString, FormulaFactory factory) {
+		final ITypeEnvironment typenv = mDLib(factory).makeTypeEnvironment();
 		final Matcher m = fullSequentPattern.matcher(sequentAsString);
 		if (!m.matches()) {
 			throw new IllegalArgumentException("Invalid sequent: "
@@ -171,6 +179,13 @@ public class TestLib {
 
 	}
 
+	public static IProverSequent genFullSeq(String typeEnvImage,
+			String hiddenHypsImage, String defaultHypsImage,
+			String selHypsImage, String goalImage) {
+		return genFullSeq(typeEnvImage, hiddenHypsImage, defaultHypsImage,
+				selHypsImage, goalImage, ff);
+	}
+	
 	/**
 	 * Builds a sequent from several strings detailing its type environment,
 	 * hypotheses and goal. Sets of hypotheses are given as one string
@@ -194,15 +209,19 @@ public class TestLib {
 	 */
 	public static IProverSequent genFullSeq(String typeEnvImage,
 			String hiddenHypsImage, String defaultHypsImage,
-			String selHypsImage, String goalImage) {
+			String selHypsImage, String goalImage, FormulaFactory factory) {
 
-		final ITypeEnvironment typenv = genTypeEnv(typeEnvImage);
+		final ITypeEnvironment typenv = genTypeEnv(typeEnvImage, factory);
 		return genFullSeq(typenv, hiddenHypsImage, defaultHypsImage, selHypsImage, goalImage);
 	}
 
 	private static final Pattern typEnvPairPattern = Pattern
 			.compile("^([^=]*)=([^=]*)$");
 
+	public static ITypeEnvironment genTypeEnv(String typeEnvImage) {
+		return genTypeEnv(typeEnvImage, ff);		
+	}
+	
 	/**
 	 * Generates the type environment specified by the given string. The string
 	 * contains pairs of form <code>ident=type</code> separated by commas.
@@ -220,8 +239,8 @@ public class TestLib {
 	 *            image of the type environment to generate
 	 * @return the type environment described by the given string
 	 */
-	public static ITypeEnvironment genTypeEnv(String typeEnvImage) {
-		final DLib lib = mDLib(ff);
+	public static ITypeEnvironment genTypeEnv(String typeEnvImage, FormulaFactory factory) {
+		final DLib lib = mDLib(factory);
 		final ITypeEnvironment result = lib.makeTypeEnvironment();
 		if (typeEnvImage.length() == 0) {
 			return result;
@@ -264,7 +283,11 @@ public class TestLib {
 	 * 		of type checking error. 
 	 */
 	public static Predicate genPred(String str){
-		return genPred(mDLib(ff).makeTypeEnvironment(), str);
+		return genPred(str, ff);
+	}
+
+	public static Predicate genPred(String str, FormulaFactory factory){
+		return genPred(mDLib(factory).makeTypeEnvironment(), str);
 	}
 
 	/**
@@ -279,7 +302,8 @@ public class TestLib {
 	 * @return The type checked predicate
 	 */
 	public static Predicate genPred(ITypeEnvironment typeEnv, String str) {
-		final Predicate result = mDLib(ff).parsePredicate(str);
+		final DLib lib = mDLib(typeEnv.getFormulaFactory());
+		final Predicate result = lib.parsePredicate(str);
 		if (result == null)
 			throw new IllegalArgumentException("Invalid predicate: " + str);
 		final ITypeCheckResult tcResult = result.typeCheck(typeEnv);

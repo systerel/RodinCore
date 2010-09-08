@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 import static org.junit.Assert.fail;
 
 import java.util.List;
@@ -18,7 +17,6 @@ import java.util.List;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.core.seqprover.tests.Util;
@@ -35,9 +33,13 @@ import org.junit.Test;
  */
 public abstract class AbstractManualReasonerTests extends AbstractReasonerTests {
 
-	// The default formula factory instance
-	protected static final FormulaFactory ff = FormulaFactory.getDefault();
-	protected static final DLib lib = mDLib(ff);
+	public AbstractManualReasonerTests() {
+		super();
+	}
+	
+	public AbstractManualReasonerTests(FormulaFactory ff) {
+		super(ff);
+	}
 
 	/**
 	 * Test the get applicable position for the reasoner.
@@ -50,7 +52,7 @@ public abstract class AbstractManualReasonerTests extends AbstractReasonerTests 
 	 * @see #getPositions(Predicate)
 	 */
 	protected void testGetPosition(String predicateImage, String expected) {
-		Predicate predicate = TestLib.genPred(predicateImage);
+		Predicate predicate = TestLib.genPred(predicateImage, ff);
 		List<IPosition> positions = getPositions(predicate);
 		assertPositions("Applicable positions are incorrect for "
 				+ predicateImage, expected, positions);

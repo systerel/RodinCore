@@ -74,6 +74,24 @@ import org.junit.Test;
 public abstract class AbstractReasonerTests {
 
 
+
+	protected static final FormulaFactory DEFAULT_FACTORY = FormulaFactory.getDefault();
+
+	protected final FormulaFactory ff;
+
+	protected final DLib lib;
+
+	private IReasoner reasoner;
+
+	public AbstractReasonerTests() {
+		this(DEFAULT_FACTORY);
+	}
+
+	public AbstractReasonerTests(FormulaFactory ff) {
+		this.ff = ff;
+		this.lib = mDLib(ff);
+	}
+
 	/**
 	 * Returns the reasoner id of the reasoner to test
 	 * 
@@ -122,10 +140,6 @@ public abstract class AbstractReasonerTests {
 //		return B4freeCore.externalPP(false);
 //		return B4freeCore.externalML(B4freeCore.ML_FORCE_0);
 	}
-	
-	private IReasoner reasoner;
-	
-	protected static final DLib lib = mDLib(FormulaFactory.getDefault());
 	
 	@Before
 	public void setUp() throws Exception {
@@ -428,8 +442,9 @@ public abstract class AbstractReasonerTests {
 		private static final Pattern pattern = Pattern.compile("^\\{([^}]*)\\}"
 				+ "\\[(.*)\\]\\[(.*)\\]\\[(.*)\\]\\s*\\|-\\s*(.*)$");
 
-		private static IProverSequent parseSequent(String sequent) {
-			final Matcher matcher = pattern.matcher(sequent);
+		private static IProverSequent parseSequent(String sequent,
+				FormulaFactory factory) {
+		final Matcher matcher = pattern.matcher(sequent);
 			if (!matcher.matches()) {
 				throw new IllegalArgumentException("Invalid sequent image: "
 						+ sequent);
@@ -441,7 +456,7 @@ public abstract class AbstractReasonerTests {
 			final String selHyps = matcher.group(4);
 			final String goal = matcher.group(5);
 			return TestLib.genFullSeq(typeEnv, hiddenHyps, defaultHyps,
-					selHyps, goal);
+					selHyps, goal, factory);
 		}
 
 		final private IProverSequent[] newSequents;
@@ -461,7 +476,8 @@ public abstract class AbstractReasonerTests {
 			super(sequent, input);
 			this.newSequents = new IProverSequent[newSequents.length];
 			for (int i = 0; i < newSequents.length; i++) {
-				this.newSequents[i] = parseSequent(newSequents[i]);
+				this.newSequents[i] = parseSequent(newSequents[i],
+						sequent.getFormulaFactory());
 			}
 		}
 

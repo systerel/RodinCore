@@ -379,6 +379,11 @@
             id="funImgGoal"
             name="%funImgGoalName">
       </reasoner>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.DTDistinctCase"
+            id="dtDistinctCase"
+            name="%dtDistinctCaseName">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">
