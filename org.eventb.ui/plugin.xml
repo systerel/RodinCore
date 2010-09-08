@@ -1600,6 +1600,17 @@
             target="any"
             tooltip="%proofTactic.funImgSimp.tooltip">
       </tactic>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.dtDistinctCase"
+            interrupt="true"
+            name="%proofTactic.dtDistinctCase.name"
+            priorty="5"
+            skipPostTactic="false"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.DTDistinctCase"
+            target="any"
+            tooltip="%proofTactic.dtDistinctCase.tooltip">
+      </tactic>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
