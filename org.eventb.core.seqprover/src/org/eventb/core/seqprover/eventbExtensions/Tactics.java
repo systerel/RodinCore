@@ -13,7 +13,7 @@
  *     Systerel - added contrHyps() (CNTR)
  *     Systerel - fixed rules FIN_FUN_*
  *     Systerel - implemented rules FUNIMG_SET_DOMSUB_L and FUNIMG_DOMSUB_L
- *     Systerel - implemented rule DATATYPE_DISTINCT_CASE
+ *     Systerel - implemented DATATYPE_DISTINCT_CASE and DATATYPE_INDUCTION
  ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
@@ -84,6 +84,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.Contr;
 import org.eventb.internal.core.seqprover.eventbExtensions.ContrHyps;
 import org.eventb.internal.core.seqprover.eventbExtensions.Cut;
 import org.eventb.internal.core.seqprover.eventbExtensions.DTDistinctCase;
+import org.eventb.internal.core.seqprover.eventbExtensions.DTInduction;
+import org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.DoCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.Eq;
@@ -3667,18 +3669,19 @@ public class Tactics {
 	
 	/**
 	 * Returns the list of applicable positions of the tactic
-	 * "Datatype Distinct Case" {@link DTDistinctCase} to the given predicate.
+	 * "Datatype Distinct Case" {@link DTDistinctCase} and "Datatype Induction"
+	 * {@link DTInduction} to the given predicate.
 	 * 
 	 * @param predicate
 	 *            a predicate
 	 * @return a list of positions (empty if the tactic is not applicable)
 	 * @since 1.4
 	 */
-	public static List<IPosition> dtDistinctCaseGetPositions(Predicate predicate) {
+	public static List<IPosition> dtDCInducGetPositions(Predicate predicate) {
 		return predicate.getPositions(new DefaultFilter() {
 			@Override
 			public boolean select(FreeIdentifier identifier) {
-				return DTDistinctCase.hasDatatypeType(identifier);
+				return DTReasoner.hasDatatypeType(identifier);
 			}
 		});
 	}
@@ -3697,6 +3700,23 @@ public class Tactics {
 	 */
 	public static ITactic dtDistinctCase(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new DTDistinctCase(), new Input(hyp,
+				position));
+	}
+
+	/**
+	 * Returns the tactic "Datatype Induction" for a given position where this
+	 * tactic can be applied.
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            the position of the application
+	 * @return the tactic "Datatype Induction"
+	 * @since 1.4
+	 */
+	public static ITactic dtInduction(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new DTInduction(), new Input(hyp,
 				position));
 	}
 

@@ -384,6 +384,11 @@
             id="dtDistinctCase"
             name="%dtDistinctCaseName">
       </reasoner>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.DTInduction"
+            id="dtInduction"
+            name="%dtInductionName">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">

@@ -27,7 +27,7 @@ import org.eventb.core.seqprover.reasonerExtentionTests.SimpleDatatype;
  * @author Nicolas Beauger
  *
  */
-public class DTDistinctCaseTests extends AbstractManualInferenceTests {
+public class DTInductionTests extends AbstractManualInferenceTests {
 
 	private static final IDatatype SIMPLE_DT = DEFAULT_FACTORY
 			.makeDatatype(SimpleDatatype.getInstance());
@@ -53,17 +53,17 @@ public class DTDistinctCaseTests extends AbstractManualInferenceTests {
 	private static final String P3 = "∀ l⦂Induc(ℤ) · l=l1";
 	private static final String resultP3_0 = "{l1=Induc(ℤ)}[][][l1=ind0] |- ∀ l⦂Induc(ℤ) · l=l1";
 	private static final String resultP3_1 = "{l1=Induc(ℤ), p_ind1_0=Induc(ℤ)}" +
-			"[][][l1=ind1(p_ind1_0)] |- ∀ l⦂Induc(ℤ) · l=l1";
+			"[][][l1=ind1(p_ind1_0) ;; ∀ l⦂Induc(ℤ) · l=p_ind1_0] |- ∀ l⦂Induc(ℤ) · l=l1";
 	private static final String resultP3_2 = "{l1=Induc(ℤ), p_ind2_0=Induc(ℤ), p_ind2_1=Induc(ℤ)}" +
-			"[][][l1=ind2(p_ind2_0, p_ind2_1)] |- ∀ l⦂Induc(ℤ) · l=l1";
+			"[][][l1=ind2(p_ind2_0, p_ind2_1) ;; ∀ l⦂Induc(ℤ) · l=p_ind2_0 ;; ∀ l⦂Induc(ℤ) · l=p_ind2_1] |- ∀ l⦂Induc(ℤ) · l=l1";
 
-	public DTDistinctCaseTests() {
+	public DTInductionTests() {
 		super(DT_FAC);
 	}
 	
 	@Override
 	public String getReasonerID() {
-		return "org.eventb.core.seqprover.dtDistinctCase";
+		return "org.eventb.core.seqprover.dtInduction";
 	}
 
 	@Override
