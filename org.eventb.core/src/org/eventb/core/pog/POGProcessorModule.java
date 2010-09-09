@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eventb.core.pog;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -62,10 +61,6 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 	private static final String SRC_NAME_PREFIX = "SRC";
 	private static final String HINT_NAME_PREFIX = "HINT";
 	private static final String GOAL_NAME = "GOAL";
-	
-	private static final IPOGHint[] NO_HINTS = new IPOGHint[0];
-	private static final List<IPOGPredicate> emptyPredicates = new ArrayList<IPOGPredicate>(
-			0);
 	
 	/**
 	 * Create a proof obligation in the specified file.
@@ -185,117 +180,6 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 		}
 	}
 
-	/**
-	 * Creates a proof obligation in the specified file with no local
-	 * hypotheses, if the goal is not trivial.
-	 * 
-	 * @param target
-	 *            the target file
-	 * @param name
-	 *            the name of the proof obligation
-	 * @param nature
-	 *            the nature of the proof obligation
-	 * @param globalHypotheses
-	 *            the global hypotheses (shared between proof obligations)
-	 * @param goal
-	 *            the goal to be proved
-	 * @param sources
-	 *            references to source elements from which the proof obligation
-	 *            was derived
-	 * @param hints
-	 *            hints for a theorem prover
-	 * @param accurate
-	 *            the accuracy of the PO sequent
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress reporting
-	 *            is not desired
-	 * @throws CoreException
-	 *             if there has been any problem creating the proof obligation
-	 * @since 1.4
-	 */
-	protected final void createPO(IPORoot target, String name,
-			IPOGNature nature, IPOPredicateSet globalHypotheses,
-			IPOGPredicate goal, IPOGSource[] sources, IPOGHint[] hints,
-			boolean accurate, IProgressMonitor monitor) throws CoreException {
-
-		createPO(target, name, nature, globalHypotheses, emptyPredicates, goal,
-				sources, hints, accurate, monitor);
-	}
-
-	/**
-	 * Create a proof obligation in the specified file with no local hypotheses,
-	 * and no hints, if the goal is not trivial.
-	 * 
-	 * @param target
-	 *            the target file
-	 * @param name
-	 *            the name of the proof obligation
-	 * @param nature
-	 *            the nature of the proof obligation
-	 * @param globalHypotheses
-	 *            the global hypotheses (shared between proof obligations)
-	 * @param goal
-	 *            the goal to be proved
-	 * @param sources
-	 *            references to source elements from which the proof obligation
-	 *            was derived
-	 * @param accurate
-	 *            the accuracy of the PO sequent
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress reporting
-	 *            is not desired
-	 * @throws CoreException
-	 *             if there has been any problem creating the proof obligation
-	 * @since 1.4
-	 */
-	protected final void createPO(IPORoot target, String name,
-			IPOGNature nature, IPOPredicateSet globalHypotheses,
-			IPOGPredicate goal, IPOGSource[] sources, boolean accurate,
-			IProgressMonitor monitor) throws CoreException {
-
-		createPO(target, name, nature, globalHypotheses, emptyPredicates, goal,
-				sources, NO_HINTS, accurate, monitor);
-	}
-	
-	/**
-	 * Creates a proof obligation in the specified file with no hints, if the
-	 * goal is not trivial.
-	 * 
-	 * @param target
-	 *            the target file
-	 * @param name
-	 *            the name of the proof obligation
-	 * @param nature
-	 *            the nature of the proof obligation
-	 * @param globalHypotheses
-	 *            the global hypotheses (shared between proof obligations)
-	 * @param localHypotheses
-	 *            the local hypotheses (<b>not</b> shared between proof
-	 *            obligations)
-	 * @param goal
-	 *            the goal to be proved
-	 * @param sources
-	 *            references to source elements from which the proof obligation
-	 *            was derived
-	 * @param accurate
-	 *            the accuracy of the PO sequent
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress reporting
-	 *            is not desired
-	 * @throws CoreException
-	 *             if there has been any problem creating the proof obligation
-	 * @since 1.4
-	 */
-	protected final void createPO(IPORoot target, String name,
-			IPOGNature nature, IPOPredicateSet globalHypotheses,
-			List<IPOGPredicate> localHypotheses, IPOGPredicate goal,
-			IPOGSource[] sources, boolean accurate, IProgressMonitor monitor)
-			throws CoreException {
-
-		createPO(target, name, nature, globalHypotheses, localHypotheses, goal,
-				sources, NO_HINTS, accurate, monitor);
-	}
-	
 	private boolean acceptPO(final String name, final IProgressMonitor monitor) throws CoreException {
 		for (IFilterModule module : getFilterModules()) {
 			if (DEBUG_MODULE)
