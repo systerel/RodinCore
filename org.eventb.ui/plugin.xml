@@ -1608,8 +1608,19 @@
             priorty="5"
             skipPostTactic="false"
             tacticProvider="org.eventb.internal.ui.prover.tactics.DTDistinctCase"
-            target="any"
+            target="goal"
             tooltip="%proofTactic.dtDistinctCase.tooltip">
+      </tactic>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.dtInduction"
+            interrupt="true"
+            name="%proofTactic.dtInduction.name"
+            priorty="5"
+            skipPostTactic="false"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.DTInduction"
+            target="goal"
+            tooltip="%proofTactic.dtInduction.tooltip">
       </tactic>
    </extension>
    <extension

@@ -22,9 +22,9 @@ import org.eventb.ui.prover.ITacticApplication;
  * @author Nicolas Beauger
  * 
  */
-public class DTDistinctCase extends DTTactic {
+public class DTInduction extends DTTactic {
 
-	private static final String TACTIC_ID = "org.eventb.ui.dtDistinctCase";
+	private static final String TACTIC_ID = "org.eventb.ui.dtInduction";
 
 	private static class DCApplication extends DTApplication {
 
@@ -34,7 +34,7 @@ public class DTDistinctCase extends DTTactic {
 
 		@Override
 		public ITactic getTactic(String[] inputs, String gInput) {
-			return Tactics.dtDistinctCase(hyp, position);
+			return Tactics.dtInduction(hyp, position);
 		}
 	}
 
