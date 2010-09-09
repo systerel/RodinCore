@@ -94,6 +94,10 @@ public class GenParser {
 			return stack.peek();
 		}
 		
+		public boolean isStackEmpty() {
+			return stack.isEmpty();
+		}
+		
 		@Override
 		public String toString() {
 			return val.toString() + " " + stack.toString();
@@ -202,6 +206,16 @@ public class GenParser {
 		}
 
 		public void popParentKind() {
+			if (parentKind.isStackEmpty()) {
+				// happens at least for ) without (
+				// simple problem, error recovering => continue
+				result.addProblem(new ASTProblem(makeSourceLocation(la),
+						ProblemKind.UnmatchedTokens, ProblemSeverities.Error));
+				// skip unmatched token
+				t = la;
+				la = scanner.Scan();
+				return;
+			}
 			parentKind.pop();
 		}
 		

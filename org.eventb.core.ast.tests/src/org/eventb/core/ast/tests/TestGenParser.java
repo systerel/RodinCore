@@ -11,7 +11,6 @@
 package org.eventb.core.ast.tests;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.CONVERSE;
@@ -56,6 +55,9 @@ import static org.eventb.core.ast.Formula.UPTO;
 import static org.eventb.core.ast.LanguageVersion.LATEST;
 import static org.eventb.core.ast.ProblemKind.InvalidGenericType;
 import static org.eventb.core.ast.ProblemKind.InvalidTypeExpression;
+import static org.eventb.core.ast.ProblemKind.PrematureEOF;
+import static org.eventb.core.ast.ProblemKind.UnknownOperator;
+import static org.eventb.core.ast.ProblemKind.UnmatchedTokens;
 import static org.eventb.core.ast.ProblemSeverities.Error;
 import static org.eventb.core.ast.extension.ExtensionFactory.makeAllExpr;
 import static org.eventb.core.ast.extension.ExtensionFactory.makeFixedArity;
@@ -177,10 +179,10 @@ public class TestGenParser extends AbstractTests {
 	protected static final PowerSetType REL_INT_INT = ff.makeRelationalType(INT_TYPE, INT_TYPE);
 	protected static final SourceLocationChecker slChecker = new SourceLocationChecker();
 
-	private static void assertFailure(IParseResult result, ASTProblem expected) {
+	private static void assertFailure(IParseResult result, ASTProblem... expected) {
 		assertTrue("expected parsing to fail", result.hasProblem());
 		final List<ASTProblem> problems = result.getProblems();
-		assertEquals("wrong problem", singletonList(expected), problems);
+		assertEquals("wrong problem", asList(expected), problems);
 	}
 	
 	private static void checkSourceLocation(Formula<?> formula, int length) {
@@ -2897,4 +2899,30 @@ public class TestGenParser extends AbstractTests {
 		final Expression expected = makeCond(LIT_BFALSE, FRID_a, ATOM_TRUE, null);
 		doExpressionTest("COND(⊥, a, TRUE)", expected, BOOL_TYPE, FAC_COND, true);
 	}
+	
+	public void testExtraParentheses() throws Exception {
+		assertFailure(ff.parseExpression(")", LATEST, null),
+				makeError(0, 0, UnmatchedTokens), makeError(0, 0, PrematureEOF));
+
+		assertFailure(ff.parseExpression("f(x))", LATEST, null),
+				makeError(4, 4, UnmatchedTokens));
+
+		assertFailure(ff.parseExpression("(", LATEST, null),
+				makeError(0, 0, PrematureEOF));
+
+		assertFailure(ff.parseExpression("f(x)(", LATEST, null),
+				makeError(4, 4, PrematureEOF));
+		
+		assertFailure(ff.parseExpression("(]", LATEST, null),
+				makeError(1, 1, UnknownOperator, "]"));
+		
+		assertFailure(ff.parseExpression("(0]", LATEST, null),
+				makeError(2, 2, ProblemKind.UnexpectedSymbol, ")", "]"));
+	}
+
+	private static ASTProblem makeError(int start, int end, ProblemKind problem, Object... args) {
+		return new ASTProblem(new SourceLocation(start, end),
+				problem, Error, args);
+	}
+	
 }
