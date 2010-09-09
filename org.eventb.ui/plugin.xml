@@ -1401,6 +1401,15 @@
             tooltip="%proofTactic.funCompImg.tooltip"/>
       <tactic
             icon="icons/pending.gif"
+            id="org.eventb.ui.funInterImg"
+            interrupt="false"
+            name="%proofTactic.funInterImg.name"
+            priorty="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FunInterImg"
+            target="any"
+            tooltip="%proofTactic.funInterImg.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
             id="org.eventb.ui.finiteSetGoal"
             interrupt="false"
             name="%proofTactic.finiteSetGoal.name"
