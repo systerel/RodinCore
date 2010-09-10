@@ -14,15 +14,16 @@ import static org.eventb.core.seqprover.eventbExtensions.Tactics.rnGetPositions;
 
 import java.util.List;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.ui.prover.DefaultTacticProvider;
 
-public class RemoveNegationHyp extends DefaultTacticProvider {
+public class RemoveNegation extends AbstractHypGoalTacticProvider {
 
+	
 	@Override
 	@Deprecated
 	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
@@ -31,14 +32,8 @@ public class RemoveNegationHyp extends DefaultTacticProvider {
 	}
 
 	@Override
-	public List<IPosition> getApplicablePositions(IProofTreeNode node,
-			Predicate hyp, String input) {
-		final List<IPosition> positions = rnGetPositions(hyp,
-				node.getFormulaFactory());
-		if (positions.size() == 0) {
-			return null;
-		}
-		return positions;
+	public List<IPosition> retrievePositions(Predicate pred, FormulaFactory ff) {
+		return rnGetPositions(pred, ff);
 	}
 
 }

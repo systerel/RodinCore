@@ -578,7 +578,7 @@
             interrupt="false"
             name="%proofTactics.rnGoal.name"
             priorty="7"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveNegationGoal"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveNegation"
             target="goal"
             tooltip="%proofTactics.rnGoal.tooltip"/>
       <tactic
@@ -780,7 +780,7 @@
             interrupt="false"
             name="%proofTactics.rnHyp.name"
             priorty="5"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveNegationHyp"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveNegation"
             target="hypothesis"
             tooltip="%proofTactics.rnHyp.tooltip"/>
       <tactic
