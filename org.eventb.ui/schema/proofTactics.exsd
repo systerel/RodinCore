@@ -155,7 +155,7 @@ The Event-B Proving User Interface is used for interactively discharging proof o
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="priorty" type="string" use="required">
+         <attribute name="priority" type="string" use="required">
             <annotation>
                <documentation>
                   an interger number indicating the priority for this tactic which is used to sort the tactics in a dropdown list or a toolbar in ascending order. The highest priority is 0.
@@ -289,7 +289,7 @@ The following is an example of adding proof commands to the Event-B Proving User
             id=&quot;org.eventb.ui.falsifyHyp&quot;
             interrupt=&quot;false&quot;
             name=&quot;%proofTactics.falsifyHyp.name&quot;
-            priorty=&quot;1&quot;
+            priority=&quot;1&quot;
             tacticProvider=&quot;org.eventb.internal.ui.prover.tactics.ContradictHyp&quot;
             target=&quot;hypothesis&quot;
             tooltip=&quot;%hypothesisProofTactics.falsify.tooltip&quot;/&gt;
@@ -298,7 +298,7 @@ The following is an example of adding proof commands to the Event-B Proving User
             id=&quot;org.eventb.ui.riHyp&quot;
             interrupt=&quot;false&quot;
             name=&quot;%proofTactics.riHyp.name&quot;
-            priorty=&quot;9&quot;
+            priority=&quot;9&quot;
             tacticProvider=&quot;org.eventb.internal.ui.prover.tactics.RemoveInclusionHyp&quot;
             target=&quot;hypothesis&quot;
             tooltip=&quot;%proofTactics.riHyp.tooltip&quot;/&gt;
@@ -307,7 +307,7 @@ The following is an example of adding proof commands to the Event-B Proving User
             id=&quot;org.eventb.ui.funOvrHyp&quot;
             interrupt=&quot;false&quot;
             name=&quot;%proofTactics.funOvrHyp.name&quot;
-            priorty=&quot;9&quot;
+            priority=&quot;9&quot;
             tacticProvider=&quot;org.eventb.internal.ui.prover.tactics.FunOvrHyp&quot;
             target=&quot;hypothesis&quot;
             tooltip=&quot;%proofTactics.funOvrHyp.tooltip&quot;/&gt;
@@ -316,7 +316,7 @@ The following is an example of adding proof commands to the Event-B Proving User
             id=&quot;org.eventb.ui.falsifyGoal&quot;
             interrupt=&quot;false&quot;
             name=&quot;%proofTactics.falsifyGoal.name&quot;
-            priorty=&quot;1&quot;
+            priority=&quot;1&quot;
             tacticProvider=&quot;org.eventb.internal.ui.prover.tactics.ContradictGoal&quot;
             target=&quot;goal&quot;
             tooltip=&quot;%proofTactics.falsifyGoal.tooltip&quot;/&gt;
@@ -325,7 +325,7 @@ The following is an example of adding proof commands to the Event-B Proving User
             id=&quot;org.eventb.ui.riGoal&quot;
             interrupt=&quot;false&quot;
             name=&quot;%proofTactics.riGoal.name&quot;
-            priorty=&quot;9&quot;
+            priority=&quot;9&quot;
             tacticProvider=&quot;org.eventb.internal.ui.prover.tactics.RemoveInclusionGoal&quot;
             target=&quot;goal&quot;
             tooltip=&quot;%proofTactics.riGoal.tooltip&quot;/&gt;
@@ -334,7 +334,7 @@ The following is an example of adding proof commands to the Event-B Proving User
             id=&quot;org.eventb.ui.funOvrGoal&quot;
             interrupt=&quot;false&quot;
             name=&quot;%proofTactics.funOvrGoal.name&quot;
-            priorty=&quot;9&quot;
+            priority=&quot;9&quot;
             tacticProvider=&quot;org.eventb.internal.ui.prover.tactics.FunOvrGoal&quot;
             target=&quot;goal&quot;
             tooltip=&quot;%proofTactics.funOvrGoal.tooltip&quot;/&gt;
@@ -343,7 +343,7 @@ The following is an example of adding proof commands to the Event-B Proving User
             id=&quot;org.eventb.ui.searchHyp&quot;
             interrupt=&quot;false&quot;
             name=&quot;%proofTactics.searchHyp.name&quot;
-            priorty=&quot;1&quot;
+            priority=&quot;1&quot;
             proofCommand=&quot;org.eventb.internal.ui.prover.tactics.SearchHypotheses&quot;
             target=&quot;global&quot;
             toolbar=&quot;org.eventb.ui.navigationToolbar&quot;
@@ -363,7 +363,7 @@ The following is an example of adding proof commands to the Event-B Proving User
             id=&quot;org.eventb.ui.review&quot;
             interrupt=&quot;false&quot;
             name=&quot;%proofTactics.review.name&quot;
-            priorty=&quot;4&quot;
+            priority=&quot;4&quot;
             proofCommand=&quot;org.eventb.internal.ui.prover.tactics.Review&quot;
             target=&quot;global&quot;
             tooltip=&quot;%proofTactics.review.tooltip&quot;/&gt;
@@ -372,7 +372,7 @@ The following is an example of adding proof commands to the Event-B Proving User
             id=&quot;org.eventb.ui.exE&quot;
             interrupt=&quot;false&quot;
             name=&quot;%proofTactics.exE.name&quot;
-            priorty=&quot;7&quot;
+            priority=&quot;7&quot;
             tacticProvider=&quot;org.eventb.internal.ui.prover.tactics.ExistsInstantiationHyp&quot;
             target=&quot;hypothesis&quot;
             tooltip=&quot;%hypothesisProofTactics.ExE.tooltip&quot;/&gt;

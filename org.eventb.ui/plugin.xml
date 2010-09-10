@@ -541,7 +541,7 @@
             id="org.eventb.ui.falsifyGoal"
             interrupt="false"
             name="%proofTactics.falsifyGoal.name"
-            priorty="1"
+            priority="1"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ContradictGoal"
             target="goal"
             tooltip="%proofTactics.falsifyGoal.tooltip"/>
@@ -550,7 +550,7 @@
             id="org.eventb.ui.conjI"
             interrupt="false"
             name="%proofTactics.conjI.name"
-            priorty="4"
+            priority="4"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ConjunctionIntroduction"
             target="goal"
             tooltip="%proofTactics.conjI.tooltip"/>
@@ -559,7 +559,7 @@
             id="org.eventb.ui.allI"
             interrupt="false"
             name="%proofTactics.allI.name"
-            priorty="5"
+            priority="5"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ForallInstantiationGoal"
             target="goal"
             tooltip="%proofTactics.allI.tooltip"/>
@@ -568,7 +568,7 @@
             id="org.eventb.ui.exI"
             interrupt="false"
             name="%proofTactics.exI.name"
-            priorty="6"
+            priority="6"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ExistsInstantiationGoal"
             target="goal"
             tooltip="%proofTactics.exI.tooltip"/>
@@ -577,7 +577,7 @@
             id="org.eventb.ui.rnGoal"
             interrupt="false"
             name="%proofTactics.rnGoal.name"
-            priorty="7"
+            priority="7"
             tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveNegation"
             target="goal"
             tooltip="%proofTactics.rnGoal.tooltip"/>
@@ -587,7 +587,7 @@
             id="org.eventb.ui.review"
             interrupt="false"
             name="%proofTactics.review.name"
-            priorty="4"
+            priority="4"
             proofCommand="org.eventb.internal.ui.prover.tactics.Review"
             target="global"
             tooltip="%proofTactics.review.tooltip"/>
@@ -596,7 +596,7 @@
             id="org.eventb.ui.doCase"
             interrupt="false"
             name="%proofTactics.doCase.name"
-            priorty="1"
+            priority="1"
             tacticProvider="org.eventb.internal.ui.prover.tactics.DoCase"
             target="global"
             toolbar="org.eventb.ui.sequentToolbar"
@@ -606,7 +606,7 @@
             id="org.eventb.ui.addHypothesis"
             interrupt="false"
             name="%proofTactics.addHyp.name"
-            priorty="2"
+            priority="2"
             tacticProvider="org.eventb.internal.ui.prover.tactics.AddHypothesis"
             target="global"
             toolbar="org.eventb.ui.sequentToolbar"
@@ -616,7 +616,7 @@
             id="org.eventb.ui.abstrExpr"
             interrupt="false"
             name="%proofTactics.abstrExpr.name"
-            priorty="3"
+            priority="3"
             tacticProvider="org.eventb.internal.ui.prover.tactics.AbstrExpr"
             target="global"
             toolbar="org.eventb.ui.sequentToolbar"
@@ -626,7 +626,7 @@
             id="org.eventb.ui.autoProver"
             interrupt="true"
             name="%proofTactics.autoProver.name"
-            priorty="3"
+            priority="3"
             tacticProvider="org.eventb.internal.ui.prover.tactics.AutoProver"
             target="global"
             toolbar="org.eventb.ui.sequentToolbar"
@@ -636,7 +636,7 @@
             id="org.eventb.ui.postTactic"
             interrupt="false"
             name="%proofTactics.postTactic.name"
-            priorty="4"
+            priority="4"
             tacticProvider="org.eventb.internal.ui.prover.tactics.PostTactic"
             target="global"
             toolbar="org.eventb.ui.sequentToolbar"
@@ -646,7 +646,7 @@
             id="org.eventb.ui.lasoo"
             interrupt="false"
             name="%proofTactics.lasoo.name"
-            priorty="5"
+            priority="5"
             tacticProvider="org.eventb.internal.ui.prover.tactics.Lasoo"
             target="global"
             toolbar="org.eventb.ui.sequentToolbar"
@@ -656,7 +656,7 @@
             id="org.eventb.ui.backtrack"
             interrupt="false"
             name="%proofTactics.backtrack.name"
-            priorty="6"
+            priority="6"
             proofCommand="org.eventb.internal.ui.prover.tactics.Backtrack"
             target="global"
             toolbar="org.eventb.ui.backtrackToolbar"
@@ -666,7 +666,7 @@
             id="org.eventb.ui.prune"
             interrupt="false"
             name="%proofTactics.prune.name"
-            priorty="7"
+            priority="7"
             proofCommand="org.eventb.internal.ui.prover.tactics.Prune"
             target="global"
             toolbar="org.eventb.ui.backtrackToolbar"
@@ -676,7 +676,7 @@
             id="org.eventb.ui.searchHyp"
             interrupt="false"
             name="%proofTactics.searchHyp.name"
-            priorty="1"
+            priority="1"
             proofCommand="org.eventb.internal.ui.prover.tactics.SearchHypotheses"
             target="global"
             toolbar="org.eventb.ui.navigationToolbar"
@@ -686,7 +686,7 @@
             id="org.eventb.ui.cacheHypothesis"
             interrupt="false"
             name="%proofTactics.cachehypothesis.name"
-            priorty="2"
+            priority="2"
             proofCommand="org.eventb.internal.ui.prover.tactics.ShowCache"
             target="global"
             toolbar="org.eventb.ui.navigationToolbar"
@@ -696,7 +696,7 @@
             id="org.eventb.ui.previous"
             interrupt="true"
             name="%proofTactics.previous.name"
-            priorty="5"
+            priority="5"
             proofCommand="org.eventb.internal.ui.prover.tactics.Previous"
             target="global"
             toolbar="org.eventb.ui.navigationToolbar"
@@ -706,7 +706,7 @@
             id="org.eventb.ui.next"
             interrupt="true"
             name="%proofTactics.next.name"
-            priorty="6"
+            priority="6"
             proofCommand="org.eventb.internal.ui.prover.tactics.Next"
             target="global"
             toolbar="org.eventb.ui.navigationToolbar"
@@ -716,7 +716,7 @@
             id="org.eventb.ui.info"
             interrupt="false"
             name="%proofTactics.info.name"
-            priorty="7"
+            priority="7"
             proofCommand="org.eventb.internal.ui.prover.tactics.Info"
             target="global"
             toolbar="org.eventb.ui.navigationToolbar"
@@ -743,7 +743,7 @@
             id="org.eventb.ui.falsifyHyp"
             interrupt="false"
             name="%proofTactics.falsifyHyp.name"
-            priorty="1"
+            priority="1"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ContradictHyp"
             target="hypothesis"
             tooltip="%hypothesisProofTactics.falsify.tooltip"/>
@@ -752,7 +752,7 @@
             id="org.eventb.ui.mp"
             interrupt="false"
             name="%proofTactics.mp.name"
-            priorty="2"
+            priority="2"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ImplicationElemination1"
             target="hypothesis"
             tooltip="%proofTactics.mp.tooltip"/>
@@ -761,7 +761,7 @@
             id="org.eventb.ui.conjE"
             interrupt="false"
             name="%proofTactics.conjE.name"
-            priorty="3"
+            priority="3"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ConjunctionElemination"
             target="hypothesis"
             tooltip="%hypothesisProofTactics.ConjE.tooltip"/>
@@ -770,7 +770,7 @@
             id="org.eventb.ui.disjE"
             interrupt="false"
             name="%proofTactics.disjE.name"
-            priorty="4"
+            priority="4"
             tacticProvider="org.eventb.internal.ui.prover.tactics.DisjunctionElemination"
             target="hypothesis"
             tooltip="%hypothesisProofTactics.DisjE.tooltip"/>
@@ -779,7 +779,7 @@
             id="org.eventb.ui.rnHyp"
             interrupt="false"
             name="%proofTactics.rnHyp.name"
-            priorty="5"
+            priority="5"
             tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveNegation"
             target="hypothesis"
             tooltip="%proofTactics.rnHyp.tooltip"/>
@@ -788,7 +788,7 @@
             id="org.eventb.ui.allE"
             interrupt="false"
             name="%proofTactics.allE.name"
-            priorty="6"
+            priority="6"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ForallInstantiationHyp"
             target="hypothesis"
             tooltip="%hypothesisProofTactics.AllD.tooltip"/>
@@ -797,7 +797,7 @@
             id="org.eventb.ui.exE"
             interrupt="false"
             name="%proofTactics.exE.name"
-            priorty="7"
+            priority="7"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ExistsInstantiationHyp"
             target="hypothesis"
             tooltip="%hypothesisProofTactics.ExE.tooltip"/>
@@ -806,7 +806,7 @@
             id="org.eventb.ui.eq1"
             interrupt="false"
             name="%proofTactics.eq1.name"
-            priorty="8"
+            priority="8"
             tacticProvider="org.eventb.internal.ui.prover.tactics.Equality1"
             target="hypothesis"
             tooltip="%hypothesisProofTactics.Eq1.tooltip"/>
@@ -1060,7 +1060,7 @@
             id="org.eventb.ui.doubleImpIHyp"
             interrupt="false"
             name="%proofTactics.doubleImplHyp.name"
-            priorty="8"
+            priority="8"
             tacticProvider="org.eventb.internal.ui.prover.tactics.DoubleImplHyp"
             target="hypothesis"
             tooltip="%proofTactics.doubleImplHyp.tooltip"/>
@@ -1069,7 +1069,7 @@
             id="org.eventb.ui.contImpIHyp"
             interrupt="false"
             name="%proofTactics.contImplHyp.name"
-            priorty="8"
+            priority="8"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ContImpHyp"
             target="hypothesis"
             tooltip="%proofTactics.contImplHyp.tooltip"/>
@@ -1078,7 +1078,7 @@
             id="org.eventb.ui.funOvr"
             interrupt="false"
             name="%proofTactics.funOvr.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FunOvr"
             target="any"
             tooltip="%proofTactics.funOvr.tooltip"/>
@@ -1087,7 +1087,7 @@
             id="org.eventb.ui.he"
             interrupt="false"
             name="%proofTactics.he.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.He"
             target="hypothesis"
             tooltip="%proofTactics.he.tooltip"/>
@@ -1096,7 +1096,7 @@
             id="org.eventb.ui.mt"
             interrupt="false"
             name="%proofTactics.mt.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ModusTollens"
             target="hypothesis"
             tooltip="%proofTactics.mt.tooltip"/>
@@ -1105,7 +1105,7 @@
             id="org.eventb.ui.rm"
             interrupt="false"
             name="%proofTactics.rm.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveMembership"
             target="any"
             tooltip="%proofTactics.rm.tooltip"/>
@@ -1114,7 +1114,7 @@
             id="org.eventb.ui.ri"
             interrupt="false"
             name="%proofTactics.ri.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveInclusion"
             target="any"
             tooltip="%proofTactics.ri.tooltip"/>
@@ -1123,7 +1123,7 @@
             id="org.eventb.ui.sir"
             interrupt="false"
             name="%proofTactics.sir.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveStrictInclusion"
             target="any"
             tooltip="%proofTactics.sir.tooltip"/>
@@ -1132,7 +1132,7 @@
             id="org.eventb.ui.inclusionSetMinusRight"
             interrupt="false"
             name="%proofTactics.inclusionSetMinusRight.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.InclusionSetMinusRight"
             target="any"
             tooltip="%proofTactics.inclusionSetMinusRight.tooltip"/>
@@ -1141,7 +1141,7 @@
             id="org.eventb.ui.riUniv"
             interrupt="false"
             name="%proofTactics.riUniv.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.RemoveInclusionUniversal"
             target="any"
             tooltip="%proofTactics.riUniv.tooltip"/>
@@ -1150,7 +1150,7 @@
             id="org.eventb.ui.impI"
             interrupt="false"
             name="%proofTactics.impI.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.Deduction"
             target="goal"
             tooltip="%proofTactics.impI.tooltip"/>
@@ -1159,7 +1159,7 @@
             id="org.eventb.ui.disjToImpl"
             interrupt="false"
             name="%proofTactics.disjToImpl.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.DisjToImpl"
             target="any"
             tooltip="%proofTactics.disjToImpl.tooltip"/>
@@ -1168,7 +1168,7 @@
             id="org.eventb.ui.allmpD"
             interrupt="false"
             name="%hypothesisProofTactics.allmpD.name"
-            priorty="1"
+            priority="1"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ForallmpD"
             target="hypothesis"
             tooltip="%hypothesisProofTactics.allmpD.tooltip"/>
@@ -1177,7 +1177,7 @@
             id="org.eventb.ui.nextPending"
             interrupt="false"
             name="%proofTactics.nextPending.name"
-            priorty="5"
+            priority="5"
             proofCommand="org.eventb.internal.ui.prover.tactics.NextPending"
             target="global"
             toolbar="org.eventb.ui.navigationToolbar"
@@ -1187,7 +1187,7 @@
             id="org.eventb.ui.nextReviewed"
             interrupt="false"
             name="%proofTactics.nextReview.name"
-            priorty="6"
+            priority="6"
             proofCommand="org.eventb.internal.ui.prover.tactics.NextReview"
             target="global"
             toolbar="org.eventb.ui.navigationToolbar"
@@ -1197,7 +1197,7 @@
             id="org.eventb.ui.impAnd"
             interrupt="false"
             name="%proofTactic.impAnd.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ImpAnd"
             target="any"
             tooltip="%proofTactic.impAnd.tooltip"/>
@@ -1206,7 +1206,7 @@
             id="org.eventb.ui.impOr"
             interrupt="false"
             name="%proofTactic.impOr.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.ImpOr"
             target="any"
             tooltip="%proofTactic.impOr.tooltip"/>
@@ -1215,7 +1215,7 @@
             id="org.eventb.ui.relImgUnionRight"
             interrupt="false"
             name="%proofTactic.relImgUnionRight.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.RelImgUnionRight"
             target="any"
             tooltip="%proofTactic.relImgUnionRight.tooltip"/>
@@ -1224,7 +1224,7 @@
             id="org.eventb.ui.relImgUnionLeft"
             interrupt="false"
             name="%proofTactic.relImgUnionLeft.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.RelImgUnionLeft"
             target="any"
             tooltip="%proofTactic.relImgUnionLeft.tooltip"/>
@@ -1233,7 +1233,7 @@
             id="org.eventb.ui.setEql"
             interrupt="false"
             name="%proofTactic.setEql.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.SetEql"
             target="any"
             tooltip="%proofTactic.setEql.tooltip"/>
@@ -1242,7 +1242,7 @@
             id="org.eventb.ui.eqv"
             interrupt="false"
             name="%proofTactic.eqv.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.Eqv"
             target="any"
             tooltip="%proofTactic.eqv.tooltip"/>
@@ -1251,7 +1251,7 @@
             id="org.eventb.ui.funSetMinusImg"
             interrupt="false"
             name="%proofTactic.funSetMinusImg.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FunSetMinusImg"
             target="any"
             tooltip="%proofTactic.funSetMinusImg.tooltip"/>
@@ -1260,7 +1260,7 @@
             id="org.eventb.ui.funSingletonImg"
             interrupt="false"
             name="%proofTactic.funSingletonImg.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FunSingletonImg"
             target="any"
             tooltip="%proofTactic.funSingletonImg.tooltip"/>
@@ -1269,7 +1269,7 @@
             id="org.eventb.ui.conv"
             interrupt="false"
             name="%proofTactic.conv.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.Conv"
             target="any"
             tooltip="%proofTactic.conv.tooltip"/>
@@ -1278,7 +1278,7 @@
             id="org.eventb.ui.domDistLeft"
             interrupt="false"
             name="%proofTactic.domDistLeft.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.DomDistLeft"
             target="any"
             tooltip="%proofTactic.domDistLeft.tooltip"/>
@@ -1287,7 +1287,7 @@
             id="org.eventb.ui.domDistRight"
             interrupt="false"
             name="%proofTactic.domDistRight.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.DomDistRight"
             target="any"
             tooltip="%proofTactic.domDistRight.tooltip"/>
@@ -1296,7 +1296,7 @@
             id="org.eventb.ui.ranDistLeft"
             interrupt="false"
             name="%proofTactic.ranDistLeft.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.RanDistLeft"
             target="any"
             tooltip="%proofTactic.ranDistLeft.tooltip"/>
@@ -1305,7 +1305,7 @@
             id="org.eventb.ui.ranDistRight"
             interrupt="false"
             name="%proofTactic.ranDistRight.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.RanDistRight"
             target="any"
             tooltip="%proofTactic.ranDistRight.tooltip"/>
@@ -1314,7 +1314,7 @@
             id="org.eventb.ui.setMinus"
             interrupt="false"
             name="%proofTactic.setMinus.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.SetMinus"
             target="any"
             tooltip="%proofTactic.setMinus.tooltip"/>
@@ -1323,7 +1323,7 @@
             id="org.eventb.ui.andOrDist"
             interrupt="false"
             name="%proofTactic.andOrDist.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.AndOrDist"
             target="any"
             tooltip="%proofTactic.andOrDist.tooltip"/>
@@ -1332,7 +1332,7 @@
             id="org.eventb.ui.unionInterDist"
             interrupt="false"
             name="%proofTactic.unionInterDist.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.UnionInterDist"
             target="any"
             tooltip="%proofTactic.unionInterDist.tooltip"/>
@@ -1341,7 +1341,7 @@
             id="org.eventb.ui.compUnionDist"
             interrupt="false"
             name="%proofTactic.compUnionDist.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.CompUnionDist"
             target="any"
             tooltip="%proofTactic.compUnionDist.tooltip"/>
@@ -1350,7 +1350,7 @@
             id="org.eventb.ui.domRanUnionDist"
             interrupt="false"
             name="%proofTactic.domRanUnionDist.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.DomRanUnionDist"
             target="any"
             tooltip="%proofTactic.domRanUnionDist.tooltip"/>
@@ -1359,7 +1359,7 @@
             id="org.eventb.ui.relOvr"
             interrupt="false"
             name="%proofTactic.relOvr.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.RelOvr"
             target="any"
             tooltip="%proofTactic.relOvr.tooltip"/>
@@ -1368,7 +1368,7 @@
             id="org.eventb.ui.compImg"
             interrupt="false"
             name="%proofTactic.compImg.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.CompImg"
             target="any"
             tooltip="%proofTactic.compImg.tooltip"/>
@@ -1377,7 +1377,7 @@
             id="org.eventb.ui.domComp"
             interrupt="false"
             name="%proofTactic.domComp.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.DomComp"
             target="any"
             tooltip="%proofTactic.domComp.tooltip"/>
@@ -1386,7 +1386,7 @@
             id="org.eventb.ui.ranComp"
             interrupt="false"
             name="%proofTactic.ranComp.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.RanComp"
             target="any"
             tooltip="%proofTactic.ranComp.tooltip"/>
@@ -1395,7 +1395,7 @@
             id="org.eventb.ui.funCompImg"
             interrupt="false"
             name="%proofTactic.funCompImg.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FunCompImg"
             target="any"
             tooltip="%proofTactic.funCompImg.tooltip"/>
@@ -1404,7 +1404,7 @@
             id="org.eventb.ui.funInterImg"
             interrupt="false"
             name="%proofTactic.funInterImg.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FunInterImg"
             target="any"
             tooltip="%proofTactic.funInterImg.tooltip"/>
@@ -1413,7 +1413,7 @@
             id="org.eventb.ui.finiteSetGoal"
             interrupt="false"
             name="%proofTactic.finiteSetGoal.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteSetGoal"
             target="goal"
             tooltip="%proofTactic.finiteSetGoal.tooltip"/>
@@ -1422,7 +1422,7 @@
             id="org.eventb.ui.finiteInterGoal"
             interrupt="false"
             name="%proofTactic.finiteInterGoal.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteInterGoal"
             target="goal"
             tooltip="%proofTactic.finiteInterGoal.tooltip"/>
@@ -1431,7 +1431,7 @@
             id="org.eventb.ui.finiteSetMinusGoal"
             interrupt="false"
             name="%proofTactic.finiteSetMinusGoal.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteSetMinusGoal"
             target="goal"
             tooltip="%proofTactic.finiteSetMinusGoal.tooltip"/>
@@ -1440,7 +1440,7 @@
             id="org.eventb.ui.finiteRelationGoal"
             interrupt="false"
             name="%proofTactic.finiteRelationGoal.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteRelationGoal"
             target="goal"
             tooltip="%proofTactic.finiteRelationGoal.tooltip"/>
@@ -1449,7 +1449,7 @@
             id="org.eventb.ui.finiteRelImgGoal"
             interrupt="false"
             name="%proofTactic.finiteRelImgGoal.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteRelImgGoal"
             target="goal"
             tooltip="%proofTactic.finiteRelImgGoal.tooltip"/>
@@ -1458,7 +1458,7 @@
             id="org.eventb.ui.finiteDomGoal"
             interrupt="false"
             name="%proofTactic.finiteDomGoal.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteDomGoal"
             target="goal"
             tooltip="%proofTactic.finiteDomGoal.tooltip"/>
@@ -1467,7 +1467,7 @@
             id="org.eventb.ui.finiteRanGoal"
             interrupt="false"
             name="%proofTactic.finiteRanGoal.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteRanGoal"
             target="goal"
             tooltip="%proofTactic.finiteRanGoal.tooltip"/>
@@ -1476,7 +1476,7 @@
             id="org.eventb.ui.finiteFunctionGoal"
             interrupt="false"
             name="%proofTactic.finiteFunctionGoal.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteFunctionGoal"
             target="goal"
             tooltip="%proofTactic.finiteFunctionGoal.tooltip"/>
@@ -1485,7 +1485,7 @@
             id="org.eventb.ui.finiteFunConvGoal"
             interrupt="false"
             name="%proofTactic.finiteFunConvGoal.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteFunConvGoal"
             target="goal"
             tooltip="%proofTactic.finiteFunConvGoal.tooltip"/>
@@ -1494,7 +1494,7 @@
             id="org.eventb.ui.finiteFunRelImgGoal"
             interrupt="false"
             name="%proofTactic.finiteFunRelImgGoal.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteFunRelImgGoal"
             target="goal"
             tooltip="%proofTactic.finiteFunRelImgGoal.tooltip"/>
@@ -1503,7 +1503,7 @@
             id="org.eventb.ui.finiteFunRanGoal"
             interrupt="false"
             name="%proofTactic.finiteFunRanGoal.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteFunRanGoal"
             target="goal"
             tooltip="%proofTactic.finiteFunRanGoal.tooltip"/>
@@ -1512,7 +1512,7 @@
             id="org.eventb.ui.finiteFunDomGoal"
             interrupt="false"
             name="%proofTactic.finiteFunDomGoal.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteFunDomGoal"
             target="goal"
             tooltip="%proofTactic.finiteFunDomGoal.tooltip"/>
@@ -1521,7 +1521,7 @@
             id="org.eventb.ui.finiteMinGoal"
             interrupt="false"
             name="%proofTactic.finiteMinGoal.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteMinGoal"
             target="goal"
             tooltip="%proofTactic.finiteMinGoal.tooltip"/>
@@ -1530,7 +1530,7 @@
             id="org.eventb.ui.finiteMaxGoal"
             interrupt="false"
             name="%proofTactic.finiteMaxGoal.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteMaxGoal"
             target="goal"
             tooltip="%proofTactic.finiteMaxGoal.tooltip"/>
@@ -1539,7 +1539,7 @@
             id="org.eventb.ui.finiteNegativeGoal"
             interrupt="false"
             name="%proofTactic.finiteNegativeGoal.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteNegativeGoal"
             target="goal"
             tooltip="%proofTactic.finiteNegativeGoal.tooltip"/>
@@ -1548,7 +1548,7 @@
             id="org.eventb.ui.finitePositiveGoal"
             interrupt="false"
             name="%proofTactic.finitePositiveGoal.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FinitePositiveGoal"
             target="goal"
             tooltip="%proofTactic.finitePositiveGoal.tooltip"/>
@@ -1557,7 +1557,7 @@
             id="org.eventb.ui.cardComparisonGoal"
             interrupt="false"
             name="%proofTactic.cardComparisonGoal.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.CardComparisonGoal"
             target="goal"
             tooltip="%proofTactic.cardComparisonGoal.tooltip"/>
@@ -1566,7 +1566,7 @@
             id="org.eventb.ui.cardUpTo"
             interrupt="false"
             name="%proofTactic.cardUpTo.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.CardUpTo"
             target="any"
             tooltip="%proofTactic.cardUpTo.tooltip"/>
@@ -1575,7 +1575,7 @@
             id="org.eventb.ui.partitionRewrites"
             interrupt="true"
             name="%proofTactic.partitionRewrites.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.PartitionRewrites"
             target="any"
             tooltip="%proofTactic.partitionRewrites.tooltip"/>
@@ -1584,7 +1584,7 @@
             id="org.eventb.ui.arithRewrites"
             interrupt="true"
             name="%proofTactic.arithRewrites.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.ui.prover.tactics.Arith"
             target="any"
             tooltip="%proofTactic.arithRewrites.tooltip">
@@ -1594,7 +1594,7 @@
             id="org.eventb.ui.totalDom"
             interrupt="true"
             name="%proofTactic.totalDom.name"
-            priorty="5"
+            priority="5"
             tacticProvider="org.eventb.internal.ui.prover.tactics.TotalDomainSubstitution"
             target="any"
             tooltip="%proofTactic.totalDom.tooltip">
@@ -1604,7 +1604,7 @@
             id="org.eventb.ui.funImgSimp"
             interrupt="true"
             name="%proofTactic.funImgSimp.name"
-            priorty="5"
+            priority="5"
             tacticProvider="org.eventb.internal.ui.prover.tactics.FunImgSimp"
             target="any"
             tooltip="%proofTactic.funImgSimp.tooltip">
@@ -1614,7 +1614,7 @@
             id="org.eventb.ui.dtDistinctCase"
             interrupt="true"
             name="%proofTactic.dtDistinctCase.name"
-            priorty="5"
+            priority="5"
             skipPostTactic="false"
             tacticProvider="org.eventb.internal.ui.prover.tactics.DTDistinctCase"
             target="goal"
@@ -1625,7 +1625,7 @@
             id="org.eventb.ui.dtInduction"
             interrupt="true"
             name="%proofTactic.dtInduction.name"
-            priorty="5"
+            priority="5"
             skipPostTactic="false"
             tacticProvider="org.eventb.internal.ui.prover.tactics.DTInduction"
             target="goal"

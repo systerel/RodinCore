@@ -9,7 +9,7 @@
             id="org.eventb.pp.pprestricted"
             interrupt="true"
             name="%tactic.pprestricted.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.pp.ui.PPTacticProviderRestricted"
             target="global"
             tooltip="%tactic.pprestricted.tooltip"/>
@@ -19,7 +19,7 @@
             id="org.eventb.pp.pplasso"
             interrupt="true"
             name="%tactic.pplasso.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.pp.ui.PPTacticProviderWithLasso"
             target="global"
             tooltip="%tactic.pplasso.tooltip"/>
@@ -29,7 +29,7 @@
             id="org.eventb.pp.ppall"
             interrupt="true"
             name="%tactic.ppall.name"
-            priorty="9"
+            priority="9"
             tacticProvider="org.eventb.internal.pp.ui.PPTacticProvider"
             target="global"
             tooltip="%tactic.ppall.tooltip"/>

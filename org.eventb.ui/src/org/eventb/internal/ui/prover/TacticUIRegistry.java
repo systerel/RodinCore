@@ -310,7 +310,7 @@ public class TacticUIRegistry {
 		}
 
 		private int getPriority(String id) {
-			final String priorityStr = configuration.getAttribute("priorty");
+			final String priorityStr = configuration.getAttribute("priority");
 			try {
 				return Integer.parseInt(priorityStr);
 			} catch (NumberFormatException e) {
