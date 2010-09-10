@@ -24,7 +24,7 @@ public interface ITypeMediator {
 	BooleanType makeBooleanType();
 
 	ParametricType makeParametricType(List<Type> typePrms,
-			IExpressionExtension typeExtn);
+			IExpressionExtension typeConstr);
 
 	GivenType makeGivenType(String name);
 

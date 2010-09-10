@@ -28,8 +28,8 @@ public class TypeMediator implements ITypeMediator {
 	
 	@Override
 	public ParametricType makeParametricType(List<Type> typePrms,
-			IExpressionExtension exprExt) {
-		return factory.makeParametricType(typePrms, exprExt);
+			IExpressionExtension typeConstr) {
+		return factory.makeParametricType(typePrms, typeConstr);
 	}
 
 	@Override
