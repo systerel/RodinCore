@@ -48,6 +48,7 @@ import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -59,6 +60,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IntegerType;
+import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
@@ -113,6 +115,14 @@ public class TestGivenTypes extends AbstractTests {
 	private static final Expression idSS = mId(REL(tS, tS));
 	private static final Expression prj1ST = mPrj1(REL(CPROD(tS, tT), tS));
 	private static final Expression prj2ST = mPrj2(REL(CPROD(tS, tT), tT));
+
+	private static final ParametricType LIST_S_TYPE = LIST_FAC
+	.makeParametricType(Collections.<Type> singletonList(tS),
+			EXT_LIST);
+	private static Expression[] NO_EXPR = new Expression[0];
+	private static Predicate[] NO_PRED = new Predicate[0];
+	private static final Expression nilListS = LIST_FAC.makeExtendedExpression(
+			EXT_NIL, NO_EXPR, NO_PRED, null, LIST_S_TYPE);
 
 	private static final Predicate peS = mRelationalPredicate(EQUAL, eS, eS);
 	private static final Predicate peT = mRelationalPredicate(EQUAL, eT, eT);
@@ -172,6 +182,7 @@ public class TestGivenTypes extends AbstractTests {
 		doTest(idSS, tS);
 		doTest(prj1ST, tS, tT);
 		doTest(prj2ST, tS, tT);
+		doTest(nilListS, tS);
 	}
 
 	/**
@@ -352,6 +363,7 @@ public class TestGivenTypes extends AbstractTests {
 		doTest(mFreeIdentifier("x", INT));
 		doTest(mFreeIdentifier("x", POW(tS)), tS);
 		doTest(mFreeIdentifier("x", CPROD(tS, tT)), tS, tT);
+		doTest(mFreeIdentifier("x", LIST_S_TYPE), tS);
 	}
 	
 }
