@@ -65,6 +65,6 @@ public abstract class ArgumentMediator extends TypeMediator implements
 	@Override
 	public IArgumentType makeParametricType(IExpressionExtension typeConstr,
 			List<IArgumentType> types) {
-		return new ArgGenTypeRef(typeConstr, types);
+		return new ArgParametricType(typeConstr, types);
 	}
 }

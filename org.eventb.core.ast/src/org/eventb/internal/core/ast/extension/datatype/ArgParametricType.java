@@ -23,12 +23,12 @@ import org.eventb.core.ast.extension.datatype.IArgumentType;
  * @author Nicolas Beauger
  *
  */
-public class ArgGenTypeRef implements IArgumentType {
+public class ArgParametricType implements IArgumentType {
 
 	private final IExpressionExtension typeConstr;
 	private final List<IArgumentType> argTypes;
 
-	public ArgGenTypeRef(IExpressionExtension typeConstr, List<IArgumentType> argTypes) {
+	public ArgParametricType(IExpressionExtension typeConstr, List<IArgumentType> argTypes) {
 		this.typeConstr = typeConstr;
 		this.argTypes = argTypes;
 	}
