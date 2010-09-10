@@ -462,12 +462,20 @@ public class ConstructorMediator extends ArgumentMediator implements
 			final ParametricType paramType = (ParametricType) type;
 			final IExpressionExtension exprExtension = paramType
 					.getExprExtension();
+			final IExpressionExtension typeConstr;
+			final IExpressionExtension dtConstr = datatype.getTypeConstructor();
+			// might have been parsed with a temp extension, use the correct one 
+			if (exprExtension.getId().equals(dtConstr.getId())) {
+				typeConstr = dtConstr;
+			} else {
+				typeConstr = exprExtension;
+			}
 			final List<IArgumentType> argTypes = new ArrayList<IArgumentType>();
 			for (Type typePrm : paramType.getTypeParameters()) {
 				final IArgumentType prmArgType = newArgumentType(typePrm);
 				argTypes.add(prmArgType);
 			}
-			return makeParametricType(exprExtension, argTypes);
+			return makeParametricType(typeConstr, argTypes);
 		} else if (type instanceof ProductType) {
 			final ProductType prodType = (ProductType) type;
 			final IArgumentType left = newArgumentType(prodType.getLeft());
