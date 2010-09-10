@@ -81,8 +81,8 @@ public class EventBProject extends PlatformObject implements IEventBProject {
 
 	@Override
 	public FormulaFactory getFormulaFactory() {
-			return EventBPlugin.getFormulaExtensionProviderRegistry()
-			.getFormulaFactory(this);
+		return FormulaExtensionProviderRegistry.getExtensionProviderRegistry()
+				.getFormulaFactory(this);
 	}
 
 	@Override

@@ -22,12 +22,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.extension.FormulaExtensionProviderRegistry;
 import org.eventb.core.pm.IProofManager;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pog.POGModule;
 import org.eventb.core.sc.SCModule;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
+import org.eventb.internal.core.FormulaExtensionProviderRegistry;
 import org.eventb.internal.core.autocompletion.AutoCompletion;
 import org.eventb.internal.core.indexers.EventPropagator;
 import org.eventb.internal.core.indexers.IdentifierPropagator;
@@ -133,20 +133,6 @@ public class EventBPlugin extends Plugin {
 	 */
 	public static String getMachineFileName(String bareName) {
 		return bareName + ".bum";
-	}
-
-	/**
-	 * Returns the Formula Extension Provider registry managed by the Event-B
-	 * plugin.
-	 * 
-	 * @see IFormulaExtensionProviderRegistry
-	 * 
-	 * @return the Formula Extension Provider registry managed by the Event-B
-	 *         plugin
-	 * @since 2.0
-	 */
-	public static IFormulaExtensionProviderRegistry getFormulaExtensionProviderRegistry() {
-		return FormulaExtensionProviderRegistry.getExtensionProviderRegistry();
 	}
 
 	/**

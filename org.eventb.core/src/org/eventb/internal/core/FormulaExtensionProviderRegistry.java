@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.core.extension;
+package org.eventb.internal.core;
 
 import static org.eventb.internal.core.Util.log;
 
@@ -25,18 +25,15 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEventBProject;
-import org.eventb.core.IFormulaExtensionProvider;
-import org.eventb.core.IFormulaExtensionProviderRegistry;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.extension.IFormulaExtensionProvider;
 
 /**
  * Singleton class implementing the formula extension provider registry.
  * 
- * @see org.eventb.core.IFormulaExtensionProviderRegistry
  */
-public class FormulaExtensionProviderRegistry implements
-		IFormulaExtensionProviderRegistry {
+public class FormulaExtensionProviderRegistry {
 
 	private static String PROVIDERS_ID = EventBPlugin.PLUGIN_ID
 			+ ".formulaExtensionProviders";
@@ -64,7 +61,6 @@ public class FormulaExtensionProviderRegistry implements
 		return SINGLETON_INSTANCE;
 	}
 
-	@Override
 	public synchronized boolean isRegistered(String providerID) {
 		if (registry == null) {
 			loadRegistry();
@@ -72,7 +68,6 @@ public class FormulaExtensionProviderRegistry implements
 		return registry.containsKey(providerID);
 	}
 
-	@Override
 	public synchronized String[] getRegisteredIDs() {
 		if (registry == null) {
 			loadRegistry();
@@ -80,7 +75,6 @@ public class FormulaExtensionProviderRegistry implements
 		return registry.keySet().toArray(NO_STRING);
 	}
 
-	@Override
 	public synchronized Set<IFormulaExtension> getFormulaExtensions(
 			IEventBProject project) {
 		final Set<IFormulaExtension> extensions = new HashSet<IFormulaExtension>();
@@ -94,7 +88,6 @@ public class FormulaExtensionProviderRegistry implements
 		return extensions;
 	}
 
-	@Override
 	public synchronized FormulaFactory getFormulaFactory(IEventBProject project) {
 		if (registry == null) {
 			loadRegistry();

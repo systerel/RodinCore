@@ -15,8 +15,8 @@ import java.util.Set;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEventBProject;
-import org.eventb.core.IFormulaExtensionProvider;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.extension.IFormulaExtensionProvider;
 
 /**
  * A dummy extension provider that returns singleton containing one extension

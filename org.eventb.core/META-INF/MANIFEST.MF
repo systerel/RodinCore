@@ -13,6 +13,7 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eventb.core,
  org.eventb.core.basis,
+ org.eventb.core.extension,
  org.eventb.core.pm,
  org.eventb.core.pog,
  org.eventb.core.pog.state,

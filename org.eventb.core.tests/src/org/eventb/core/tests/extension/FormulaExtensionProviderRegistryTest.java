@@ -20,10 +20,10 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEventBProject;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.internal.core.FormulaExtensionProviderRegistry;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -76,8 +76,8 @@ public class FormulaExtensionProviderRegistryTest {
 	public void testFormulaFactoriesEquals() {
 		final Set<IFormulaExtension> expected = Collections.singleton(Prime.getPrime());
 
-		final FormulaFactory factory1 = EventBPlugin
-				.getFormulaExtensionProviderRegistry().getFormulaFactory(
+		final FormulaFactory factory1 = FormulaExtensionProviderRegistry
+				.getExtensionProviderRegistry().getFormulaFactory(
 						eventBProject);
 		final Set<IFormulaExtension> actual = factory1.getExtensions();
 		

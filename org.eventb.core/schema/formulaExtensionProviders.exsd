@@ -62,7 +62,7 @@
                   The provider class used to add new contributed extensions. This class must implement org.eventb.core.IFormulaExtensionProvider.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eventb.core.IFormulaExtensionProvider"/>
+                  <meta.attribute kind="java" basedOn=":org.eventb.core.extension.IFormulaExtensionProvider"/>
                </appInfo>
             </annotation>
          </attribute>

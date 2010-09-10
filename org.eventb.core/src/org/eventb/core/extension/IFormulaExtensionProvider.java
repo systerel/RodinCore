@@ -8,10 +8,11 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.core;
+package org.eventb.core.extension;
 
 import java.util.Set;
 
+import org.eventb.core.IEventBProject;
 import org.eventb.core.ast.extension.IFormulaExtension;
 
 /**
