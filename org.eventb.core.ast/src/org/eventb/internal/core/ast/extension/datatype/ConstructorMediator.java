@@ -23,8 +23,11 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ParametricType;
+import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
@@ -156,8 +159,7 @@ public class ConstructorMediator extends ArgumentMediator implements
 		@Override
 		public Type typeCheck(ExtendedExpression expression,
 				ITypeCheckMediator tcMediator) {
-			final TypeInstantiation instantiation = new TypeInstantiation(
-					typeCons);
+			final TypeInstantiation instantiation = new TypeInstantiation();
 
 			final List<Type> typeParamVars = new ArrayList<Type>();
 			for (ITypeParameter prm : typeParams) {
@@ -349,7 +351,7 @@ public class ConstructorMediator extends ArgumentMediator implements
 		public Type typeCheck(ExtendedExpression expression,
 				ITypeCheckMediator tcMediator) {
 			final List<Type> typePrmVars = new ArrayList<Type>();
-			final TypeInstantiation instantiation = new TypeInstantiation(typeCons);
+			final TypeInstantiation instantiation = new TypeInstantiation();
 			for (ITypeParameter prm : typeParams) {
 				final Type alpha = tcMediator.newTypeVariable();
 				instantiation.put(prm, alpha);
@@ -434,6 +436,11 @@ public class ConstructorMediator extends ArgumentMediator implements
 	}
 
 	@Override
+	public IExpressionExtension getTypeConstructor() {
+		return datatype.getTypeConstructor();
+	}
+	
+	@Override
 	public ITypeParameter getTypeParameter(String name) {
 		for (ITypeParameter param : datatype.getTypeParameters()) {
 			if (param.getName().equals(name)) {
@@ -441,6 +448,36 @@ public class ConstructorMediator extends ArgumentMediator implements
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public IArgumentType newArgumentType(Type type) {
+		if (type instanceof GivenType) {
+			final String name = ((GivenType) type).getName();
+			final ITypeParameter typeParam = getTypeParameter(name);
+			if (typeParam != null) {
+				return newArgumentType(typeParam);
+			}
+		} else if (type instanceof ParametricType) {
+			final ParametricType paramType = (ParametricType) type;
+			final IExpressionExtension exprExtension = paramType
+					.getExprExtension();
+			final List<IArgumentType> argTypes = new ArrayList<IArgumentType>();
+			for (Type typePrm : paramType.getTypeParameters()) {
+				final IArgumentType prmArgType = newArgumentType(typePrm);
+				argTypes.add(prmArgType);
+			}
+			return makeParametricType(exprExtension, argTypes);
+		} else if (type instanceof ProductType) {
+			final ProductType prodType = (ProductType) type;
+			final IArgumentType left = newArgumentType(prodType.getLeft());
+			final IArgumentType right = newArgumentType(prodType.getRight());
+			return makeProductType(left, right);
+		} else if (type instanceof PowerSetType) {
+			final Type baseType = ((PowerSetType) type).getBaseType();
+			return makePowerSetType(newArgumentType(baseType));
+		}
+		return new ArgSimpleType(type);
 	}
 
 	public IDatatype getDatatype() {

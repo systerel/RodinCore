@@ -13,6 +13,7 @@ package org.eventb.core.ast.extension.datatype;
 import java.util.List;
 
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.ITypeMediator;
 
 /**
@@ -31,6 +32,13 @@ import org.eventb.core.ast.extension.ITypeMediator;
  */
 public interface IConstructorMediator extends ITypeMediator {
 
+	/**
+	 * Returns the type constructor for the datatype.
+	 * 
+	 * @return an expression extension
+	 */
+	IExpressionExtension getTypeConstructor();
+	
 	/**
 	 * Returns the type parameter with the given name, or <code>null</code> if
 	 * not found.
@@ -101,14 +109,18 @@ public interface IConstructorMediator extends ITypeMediator {
 	IArgumentType makeRelationalType(IArgumentType left, IArgumentType right);
 
 	/**
-	 * Makes a new argument type whose type is the type constructor of this
-	 * datatype, parameterized with the given type parameters.
+	 * Makes a new argument type whose type is a parametric type, parameterized
+	 * with the given type parameters. The given expression extension must be
+	 * checked to be a type constructor before calling this method.
 	 * 
+	 * @param typeConstr
+	 *            a type constructor extension
 	 * @param typeParams
 	 *            type parameters
 	 * @return a new type constructor argument type
 	 */
-	IArgumentType newArgumentTypeConstr(List<IArgumentType> typeParams);
+	IArgumentType makeParametricType(IExpressionExtension typeConstr,
+			List<IArgumentType> typeParams);
 
 	/**
 	 * Makes a new argument with the given argument type and no associated

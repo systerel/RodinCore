@@ -14,7 +14,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
 
 /**
@@ -23,17 +22,8 @@ import org.eventb.core.ast.extension.datatype.ITypeParameter;
  */
 public class TypeInstantiation {
 
-	private final IExpressionExtension typeExtn;
 	private final Map<ITypeParameter, Type> paramInst = new LinkedHashMap<ITypeParameter, Type>();
 
-	public TypeInstantiation(IExpressionExtension typeExtn) {
-		this.typeExtn = typeExtn;
-	}
-
-	public IExpressionExtension getTypeExtn() {
-		return typeExtn;
-	}
-	
 	public void put(ITypeParameter prm, Type type) {
 		final Type old = paramInst.put(prm, type);
 		if (old != null) {

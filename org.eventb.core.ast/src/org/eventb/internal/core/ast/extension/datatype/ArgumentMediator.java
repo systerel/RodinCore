@@ -13,7 +13,7 @@ package org.eventb.internal.core.ast.extension.datatype;
 import java.util.List;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.datatype.IArgument;
 import org.eventb.core.ast.extension.datatype.IArgumentType;
 import org.eventb.core.ast.extension.datatype.IConstructorMediator;
@@ -34,11 +34,6 @@ public abstract class ArgumentMediator extends TypeMediator implements
 	@Override
 	public IArgumentType newArgumentType(ITypeParameter type) {
 		return new ArgTypeParamRef(type);
-	}
-
-	@Override
-	public IArgumentType newArgumentType(Type type) {
-		return new ArgSimpleType(type);
 	}
 
 	@Override
@@ -68,7 +63,8 @@ public abstract class ArgumentMediator extends TypeMediator implements
 	}
 
 	@Override
-	public IArgumentType newArgumentTypeConstr(List<IArgumentType> types) {
-		return new ArgGenTypeRef(types);
+	public IArgumentType makeParametricType(IExpressionExtension typeConstr,
+			List<IArgumentType> types) {
+		return new ArgGenTypeRef(typeConstr, types);
 	}
 }

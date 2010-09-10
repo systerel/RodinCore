@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.datatype.IArgumentType;
 
@@ -24,9 +25,11 @@ import org.eventb.core.ast.extension.datatype.IArgumentType;
  */
 public class ArgGenTypeRef implements IArgumentType {
 
+	private final IExpressionExtension typeConstr;
 	private final List<IArgumentType> argTypes;
 
-	public ArgGenTypeRef(List<IArgumentType> argTypes) {
+	public ArgGenTypeRef(IExpressionExtension typeConstr, List<IArgumentType> argTypes) {
+		this.typeConstr = typeConstr;
 		this.argTypes = argTypes;
 	}
 
@@ -37,7 +40,7 @@ public class ArgGenTypeRef implements IArgumentType {
 			final Type argType = arg.toType(mediator, instantiation);
 			argTypesInst.add(argType);
 		}
-		return mediator.makeParametricType(argTypesInst, instantiation.getTypeExtn());
+		return mediator.makeParametricType(argTypesInst, typeConstr);
 	}
 
 	@Override
@@ -46,7 +49,7 @@ public class ArgGenTypeRef implements IArgumentType {
 			return false;
 		}
 		final ParametricType genType = (ParametricType) proposedType;
-		if (genType.getExprExtension() != instantiation.getTypeExtn()) {
+		if (genType.getExprExtension() != typeConstr) {
 			return false;
 		}
 		final Type[] typeParams = genType.getTypeParameters();

@@ -52,40 +52,41 @@ public abstract class AbstractTests extends TestCase {
 	public static final FormulaFactory ff = FormulaFactory.getDefault();
 	protected static final IntegerType INT_TYPE = ff.makeIntegerType();
 	private static final IDatatypeExtension LIST_TYPE = new IDatatypeExtension() {
-	
-			private static final String TYPE_NAME = "List";
-			private static final String TYPE_IDENTIFIER = "List Id";
-			
-			
-			@Override
-			public String getTypeName() {
-				return TYPE_NAME;
-			}
-	
-			@Override
-			public String getId() {
-				return TYPE_IDENTIFIER;
-			}
-			
-			@Override
-			public void addTypeParameters(ITypeConstructorMediator mediator) {
-				mediator.addTypeParam("S");			
-			}
-	
-			@Override
-			public void addConstructors(IConstructorMediator mediator) {
-				mediator.addConstructor("nil", "NIL");
-				final ITypeParameter typeS = mediator.getTypeParameter("S");
-				
-				final IArgumentType refS = mediator.newArgumentType(typeS);
-				final IArgument head = mediator.newArgument("head", refS);
-				final IArgumentType listS = mediator.newArgumentTypeConstr(asList(refS));
-				final IArgument tail = mediator.newArgument("tail", listS);
-				
-				mediator.addConstructor("cons", "CONS", Arrays.asList(head, tail));
-			}
-	
-		};
+
+		private static final String TYPE_NAME = "List";
+		private static final String TYPE_IDENTIFIER = "List Id";
+
+		@Override
+		public String getTypeName() {
+			return TYPE_NAME;
+		}
+
+		@Override
+		public String getId() {
+			return TYPE_IDENTIFIER;
+		}
+
+		@Override
+		public void addTypeParameters(ITypeConstructorMediator mediator) {
+			mediator.addTypeParam("S");
+		}
+
+		@Override
+		public void addConstructors(IConstructorMediator mediator) {
+			mediator.addConstructor("nil", "NIL");
+			final ITypeParameter typeS = mediator.getTypeParameter("S");
+
+			final IArgumentType refS = mediator.newArgumentType(typeS);
+			final IArgument head = mediator.newArgument("head", refS);
+			final IExpressionExtension typeCons = mediator.getTypeConstructor();
+			final IArgumentType listS = mediator.makeParametricType(typeCons,
+					asList(refS));
+			final IArgument tail = mediator.newArgument("tail", listS);
+
+			mediator.addConstructor("cons", "CONS", Arrays.asList(head, tail));
+		}
+
+	};
 	protected static final IDatatype LIST_DT = ff.makeDatatype(LIST_TYPE);
 	protected static final FormulaFactory LIST_FAC = FormulaFactory
 				.getInstance(LIST_DT.getExtensions());

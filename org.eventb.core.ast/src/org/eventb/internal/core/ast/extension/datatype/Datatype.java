@@ -225,8 +225,7 @@ public class Datatype implements IDatatype {
 	
 	public static TypeInstantiation makeTypeInst(ParametricType type,
 			List<ITypeParameter> typePrms) {
-		final IExpressionExtension typeCons = type.getExprExtension();
-		final TypeInstantiation instantiation = new TypeInstantiation(typeCons);
+		final TypeInstantiation instantiation = new TypeInstantiation();
 		final Type[] typeValues = type.getTypeParameters();
 		assert typePrms.size() == typeValues.length;
 		for (int i = 0; i < typeValues.length; i++) {

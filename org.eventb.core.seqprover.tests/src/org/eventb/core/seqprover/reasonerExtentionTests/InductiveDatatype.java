@@ -12,6 +12,7 @@ package org.eventb.core.seqprover.reasonerExtentionTests;
 
 import static java.util.Arrays.asList;
 
+import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.datatype.IArgument;
 import org.eventb.core.ast.extension.datatype.IArgumentType;
 import org.eventb.core.ast.extension.datatype.IConstructorMediator;
@@ -53,7 +54,9 @@ public class InductiveDatatype implements IDatatypeExtension {
 	public void addConstructors(IConstructorMediator mediator) {
 		final ITypeParameter prmT = mediator.getTypeParameter("T");
 		final IArgumentType argTypeT = mediator.newArgumentType(prmT);
-		final IArgumentType argTypeInducT = mediator.newArgumentTypeConstr(asList(argTypeT));
+		final IExpressionExtension typeCons = mediator.getTypeConstructor();
+		final IArgumentType argTypeInducT = mediator.makeParametricType(
+				typeCons, asList(argTypeT));
 		
 		final IArgument destr1 = mediator.newArgument("ind1_0", argTypeInducT);
 		final IArgument destr2_0 = mediator.newArgument("ind2_0", argTypeInducT);
