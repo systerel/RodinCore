@@ -18,6 +18,7 @@ package org.rodinp.keyboard;
  * org.rodinp.keyboard.schema/symbols.exsd
  * 
  * @author Thomas Muller
+ * @since 1.1
  * 
  */
 public class ExtensionSymbol {

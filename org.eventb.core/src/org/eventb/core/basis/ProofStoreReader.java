@@ -176,6 +176,9 @@ public class ProofStoreReader implements IProofStoreReader {
 			return neededHyps;
 		}
 		
+		/**
+		 * @since 1.4
+		 */
 		@Override
 		public FormulaFactory getFormulaFactory() {
 			return store.getFormulaFactory();

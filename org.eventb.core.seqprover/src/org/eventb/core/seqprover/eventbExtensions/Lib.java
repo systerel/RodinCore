@@ -240,6 +240,9 @@ public final class Lib {
 		return ((RelationalPredicate) P).getLeft();
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	public static void postConstructionCheck(Formula<?> f) {
 		assert f.isTypeChecked();
 	}
@@ -544,6 +547,7 @@ public final class Lib {
 	 *            any expression
 	 * @return <code>true</code> iff the expression is a functional expression
 	 *         (binary expression with tag REL or TREL or SREL or TREL)
+	 * @since 2.0
 	 */
 	public static boolean isRel(Expression expression) {
 		return expression.getTag() == Expression.REL
@@ -861,7 +865,7 @@ public final class Lib {
 	 * @param predicate
 	 *            a predicate to rewrite
 	 * @return the rewritten predicate
-	 * @since 1.4
+	 * @since 2.0
 	 */
 	public static Predicate applyTypeSimplification(Predicate predicate,
 			FormulaFactory ff) {

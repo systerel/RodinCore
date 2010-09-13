@@ -51,6 +51,9 @@ import org.eventb.core.seqprover.ITactic;
  */
 public class DefaultTacticProvider implements ITacticProvider {
 
+	/**
+	 * @since 2.0
+	 */
 	public static class DefaultPositionApplication implements
 			IPositionApplication {
 
@@ -232,6 +235,9 @@ public class DefaultTacticProvider implements ITacticProvider {
 
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	public static class DefaultPredicateApplication implements
 			IPredicateApplication {
 		
@@ -257,6 +263,9 @@ public class DefaultTacticProvider implements ITacticProvider {
 
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	@Override
 	public List<ITacticApplication> getPossibleApplications(
 			IProofTreeNode node, Predicate hyp, String globalInput) {

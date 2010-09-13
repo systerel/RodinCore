@@ -37,6 +37,7 @@ public interface ITacticProvider {
 	 *            Proof Control View) in case of global tactic
 	 * @return a (possibly empty) list of tactic applications; never returns
 	 *         <code>null</code>
+	 * @since 2.0
 	 */
 	List<ITacticApplication> getPossibleApplications(IProofTreeNode node,
 			Predicate hyp, String globalInput);

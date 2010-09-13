@@ -130,6 +130,7 @@ public interface IEventBEditor<R extends IInternalElement> extends IEditorPart,
 	 * Returns the formula factory used by the root input of this editor.
 	 * 
 	 * @return the formula factory used
+	 * @since 2.0
 	 */
 	public FormulaFactory getFormulaFactory();
 }

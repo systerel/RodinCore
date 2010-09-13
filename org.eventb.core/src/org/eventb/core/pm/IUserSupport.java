@@ -172,6 +172,7 @@ public interface IUserSupport extends IElementChangedListener {
 	 * Returns the formula factory to use.
 	 * 
 	 * @return the formula factory to use according to the input PS file
+	 * @since 1.4
 	 */
 	FormulaFactory getFormulaFactory();
 

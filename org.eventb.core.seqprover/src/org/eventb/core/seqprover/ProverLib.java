@@ -92,6 +92,9 @@ public class ProverLib {
 		return true;
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	public static boolean deepEquals(IProofRule r1, IProofRule r2) {
 		if (r1 == r2) return true;
 		final IReasonerDesc desc1 = r1.getReasonerDesc();
@@ -348,7 +351,7 @@ public class ProverLib {
 	 * @param withHidden
 	 *            also consider hidden hypotheses when <code>true</code>
 	 * @return a set of all hypotheses matching the given criteria
-	 * @since 1.4
+	 * @since 2.0
 	 */
 	public static Set<Predicate> hypsTextSearch(IProverSequent sequent,
 			String pattern, boolean withHidden) {

@@ -219,7 +219,7 @@ public final class ProverFactory {
 	 * @return
 	 * 		A new proof rule with the given information.
 	 * 
-	 * @since 1.4
+	 * @since 2.0
 	 */
 	public static IProofRule makeProofRule (
 			IReasoner generatedBy,
@@ -259,7 +259,7 @@ public final class ProverFactory {
 	 *            <code>null</code> iff there are no hypothesis actions.
 	 * @return A new proof rule with the given information.
 	 * 
-	 * @since 1.4
+	 * @since 2.0
 	 */
 	public static IProofRule makeProofRule (
 			IReasoner generatedBy,

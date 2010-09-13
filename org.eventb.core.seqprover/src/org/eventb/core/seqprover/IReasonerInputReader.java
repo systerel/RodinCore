@@ -33,8 +33,8 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
  * 
  * 
  * @author Farhad Mehta
- * @noextend
- * @noimplement
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  * @since 1.0
  */
 public interface IReasonerInputReader {
@@ -44,6 +44,7 @@ public interface IReasonerInputReader {
 	 * Returns the formula factory for deserializing reasoner input objects.
 	 * 
 	 * @return the formula factory used by the current input reader
+	 * @since 2.0
 	 */
 	FormulaFactory getFormulaFactory();
 	

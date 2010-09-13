@@ -226,6 +226,7 @@ public interface IProverSequent{
 	 * Returns the formula factory to use with this sequent.
 	 * 
 	 * @return the formula factory to use
+	 * @since 2.0
 	 */
 	FormulaFactory getFormulaFactory();
 	

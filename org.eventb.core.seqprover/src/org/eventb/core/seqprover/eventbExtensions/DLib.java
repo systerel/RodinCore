@@ -56,7 +56,7 @@ import org.eventb.core.ast.Type;
  * 
  * @author Farhad Mehta, htson
  * 
- * @since 1.0
+ * @since 2.0
  */
 public class DLib {
 	

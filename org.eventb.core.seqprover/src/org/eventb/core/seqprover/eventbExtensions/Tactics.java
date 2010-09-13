@@ -776,6 +776,9 @@ public class Tactics {
 //		return (new SimpleRewriter.RemoveNegation()).isApplicable(hyp);
 //	}
 
+	/**
+	 * @since 2.0
+	 */
 	public static ITactic removeNeg(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new RemoveNegation(),
 				new RemoveNegation.Input(hyp, position));
@@ -988,6 +991,9 @@ public class Tactics {
 		return positions;
 	}
 	
+	/**
+	 * @since 2.0
+	 */
 	public static ITactic funOvr(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new FunOvr(), new FunOvr.Input(hyp,
 				position));
@@ -1031,6 +1037,7 @@ public class Tactics {
 	 *            the current sequent
 	 * @return <code>true</code> if the tactic is not applicable,
 	 *         <code>false</code> otherwise
+	 * @since 2.0
 	 */
 	public static boolean isRemoveNegationApplicable(Predicate pred,
 			final FormulaFactory ff) {
@@ -1038,6 +1045,9 @@ public class Tactics {
 				.isApplicableOrRewrite(pred);
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	public static List<IPosition> rnGetPositions(Predicate pred, final FormulaFactory ff) {
 		return pred.getPositions(new DefaultFilter() {
 			@Override
@@ -1234,6 +1244,7 @@ public class Tactics {
 	 *            the current sequent
 	 * @return <code>true</code> if the tactic is not applicable,
 	 *         <code>false</code> otherwise
+	 * @since 2.0
 	 */
 	public static boolean isRemoveMembershipApplicable(FormulaFactory ff,
 			Predicate pred) {
@@ -2669,6 +2680,7 @@ public class Tactics {
 	 *            an expression
 	 * @return <code>true</code> if the tactic "function composition image" is
 	 *         applicable to the given expression, <code>false</code> otherwise
+	 * @since 2.0
 	 */
 	public static boolean isFunCompImgApplicable(Expression expression) {
 		return new FunCompImg().isApplicable(expression);
@@ -3252,6 +3264,7 @@ public class Tactics {
 	 * @param predicate
 	 *            a predicate
 	 * @return <code>true</code> if the tactic "finite minimum" is applicable
+	 * @since 2.0
 	 */
 	public static boolean finiteMinIsApplicable(Predicate predicate) {
 		return new FiniteMin().isApplicable(predicate);
@@ -3294,6 +3307,7 @@ public class Tactics {
 	 * @param predicate
 	 *            a predicate
 	 * @return <code>true</code> if the tactic "finite maximum" is applicable
+	 * @since 2.0
 	 */
 	public static boolean finiteMaxIsApplicable(Predicate predicate) {
 		return new FiniteMax().isApplicable(predicate);
@@ -3401,6 +3415,7 @@ public class Tactics {
 	 *            a predicate
 	 * @return <code>true</code> if the tactic "cardinality arithmetic
 	 *         comparison" is applicable
+	 * @since 2.0
 	 */
 	public static boolean isCardComparisonApplicable(Predicate goal) {
 		return new CardComparison().isApplicable(goal);
@@ -3567,7 +3582,7 @@ public class Tactics {
 	 * @param ff
 	 *            the currently used formula factory
 	 * @return a list of applicable positions
-	 * @since 1.1
+	 * @since 2.0
 	 */
 	public static List<IPosition> arithGetPositions(Predicate predicate, FormulaFactory ff) {
 		final IFormulaRewriter rewriter = new ArithRewriterImpl(ff);
@@ -3616,7 +3631,7 @@ public class Tactics {
 	 *            predicate
 	 * @return <code>true</code> iff one-point rules is applicable to the given
 	 *         predicate
-	 * @since 1.1
+	 * @since 2.0
 	 */
 	public static boolean isOnePointApplicable(Predicate predicate,
 			FormulaFactory ff) {
@@ -3709,7 +3724,7 @@ public class Tactics {
 	 * @param position
 	 *            a valid position of an expression in the goal or hypothesis
 	 * @return the tactic "Functional Image Simplification"
-	 * @since 1.4
+	 * @since 2.0
 	 */
 	public static ITactic funImgSimplifies(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new FunImgSimplifies(),
@@ -3743,7 +3758,7 @@ public class Tactics {
 	 *            the current sequent
 	 * @return a set of positions (empty if the tactic is not applicable)
 	 * 
- 	 * @since 1.4
+ 	 * @since 2.0
 	 */
 	public static List<IPosition> funImgSimpGetPositions(Predicate hyp,
 			IProverSequent sequent) {
@@ -3760,7 +3775,7 @@ public class Tactics {
 	 * @return <code>true</code> if the tactic is not applicable,
 	 *         <code>false</code> otherwise
 	 * 
-	 * @since 1.4
+	 * @since 2.0
 	 */
 	public static boolean isFunImgSimpApplicable(Expression expr,
 			IProverSequent sequent) {
@@ -3777,6 +3792,7 @@ public class Tactics {
 	 * @param position
 	 *            a valid position of an function application f(E) in the goal
 	 * @return the tactic "Functional Image Goal"
+	 * @since 2.0
 	 */
 	public static ITactic funImgGoal(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new IsFunImageGoal(),
@@ -3791,7 +3807,7 @@ public class Tactics {
 	 * @param predicate
 	 *            a predicate
 	 * @return a list of positions (empty if the tactic is not applicable)
-	 * @since 1.4
+	 * @since 2.0
 	 */
 	public static List<IPosition> dtDCInducGetPositions(Predicate predicate) {
 		return predicate.getPositions(new DefaultFilter() {
@@ -3812,7 +3828,7 @@ public class Tactics {
 	 * @param position
 	 *            the position of the application
 	 * @return the tactic "Datatype Distinct Case"
-	 * @since 1.4
+	 * @since 2.0
 	 */
 	public static ITactic dtDistinctCase(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new DTDistinctCase(), new Input(hyp,
@@ -3829,7 +3845,7 @@ public class Tactics {
 	 * @param position
 	 *            the position of the application
 	 * @return the tactic "Datatype Induction"
-	 * @since 1.4
+	 * @since 2.0
 	 */
 	public static ITactic dtInduction(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new DTInduction(), new Input(hyp,

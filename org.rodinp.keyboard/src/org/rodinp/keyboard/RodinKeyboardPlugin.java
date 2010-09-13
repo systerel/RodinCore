@@ -133,6 +133,7 @@ public class RodinKeyboardPlugin extends AbstractUIPlugin {
 	 * @param enable
 	 *            <code>true</code> to enable modifications listening,
 	 *            <code>false</code> to deactivate listening
+	 * @since 1.1
 	 */
 	public void enableRodinModifyListener(boolean enable) {
 		((RodinModifyListener) getRodinModifyListener()).setEnable(enable);

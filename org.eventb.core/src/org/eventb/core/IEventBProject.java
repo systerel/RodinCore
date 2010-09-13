@@ -46,6 +46,7 @@ import org.rodinp.core.IRodinProject;
  * 
  * @author Laurent Voisin
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IEventBProject extends IAdaptable {
 
@@ -242,6 +243,7 @@ public interface IEventBProject extends IAdaptable {
 	 * Returns the formula factory associated with this project.
 	 * 
 	 * @return the associated formula factory
+	 * @since 1.4
 	 */
 	FormulaFactory getFormulaFactory();
 

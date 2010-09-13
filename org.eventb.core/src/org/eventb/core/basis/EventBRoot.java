@@ -32,6 +32,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  * @author Laurent Voisin
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class EventBRoot extends EventBElement implements IEventBRoot,
 		IPOStampedElement {
@@ -95,6 +96,9 @@ public abstract class EventBRoot extends EventBElement implements IEventBRoot,
 		return getEventBProject().getPSRoot(getElementName());
 	}
 	
+	/**
+	 * @since 1.4
+	 */
 	@Override
 	public final FormulaFactory getFormulaFactory() {
 		return getEventBProject().getFormulaFactory();

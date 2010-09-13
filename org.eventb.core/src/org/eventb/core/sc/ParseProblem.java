@@ -42,6 +42,9 @@ public enum ParseProblem implements IRodinProblem {
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_InternalError, 
 			ParseProblemCategory.CATEGORY_NONE),
+	/**
+	 * @since 1.4
+	 */
 	InvalidTypeExpressionError(
 			IMarker.SEVERITY_ERROR, 
 			Messages.scuser_InvalidTypeExpression, 

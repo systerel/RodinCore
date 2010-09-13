@@ -67,6 +67,7 @@ import org.rodinp.core.RodinDBException;
  * @author Laurent Voisin
  * @since 1.0
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IProofAttempt {
 
@@ -189,7 +190,7 @@ public interface IProofAttempt {
 	 * Returns the formula factory for this proof attempt.
 	 * 
 	 * @return a formula factory
-	 * @since 1.3
+	 * @since 1.4
 	 */
 	FormulaFactory getFormulaFactory();
 

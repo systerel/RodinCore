@@ -99,7 +99,7 @@ public interface IStateRepository <I extends IState> {
 	 * @return the formula factory stored in the repository
 	 * @throws CoreException
 	 *             if an exception has occurred earlier with this repository
-	 * @since 1.3
+	 * @since 1.4
 	 */
 	FormulaFactory getFormulaFactory() throws CoreException;
 	
@@ -111,7 +111,7 @@ public interface IStateRepository <I extends IState> {
 	 * @throws CoreException
 	 *             if the passed formula factory is <code>null</code> or if
 	 *             an exception has occurred earlier with this repository
-	 * @since 1.3
+	 * @since 1.4
 	 */
 	void setFormulaFactory(FormulaFactory factory) throws CoreException;
 }

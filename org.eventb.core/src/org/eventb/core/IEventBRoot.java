@@ -46,6 +46,7 @@ import org.rodinp.core.IInternalElement;
  * 
  * @author Laurent Voisin
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IEventBRoot extends IInternalElement, IGeneratedElement {
 
@@ -148,6 +149,7 @@ public interface IEventBRoot extends IInternalElement, IGeneratedElement {
 	 * Returns the formula factory associated with this component.
 	 * 
 	 * @return the associated formula factory
+	 * @since 1.4
 	 */
 	FormulaFactory getFormulaFactory();
 

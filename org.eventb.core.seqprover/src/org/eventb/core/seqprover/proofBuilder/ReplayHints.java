@@ -38,11 +38,17 @@ public class ReplayHints {
 	private HashMap<FreeIdentifier, Expression> freeVarRename;
 	private final FormulaFactory factory;
 
+	/**
+	 * @since 2.0
+	 */
 	public ReplayHints(FormulaFactory factory) {
 		this.factory = factory;
 		this.freeVarRename = new HashMap<FreeIdentifier, Expression>();
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	public ReplayHints(ReplayHints replayHints, FormulaFactory factory) {
 		this.factory = factory;
 		this.freeVarRename = new HashMap<FreeIdentifier, Expression>(

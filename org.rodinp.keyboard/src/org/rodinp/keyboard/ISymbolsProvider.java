@@ -18,6 +18,7 @@ import java.util.List;
  * Interface used to contribute programatically the new symbols to the keyboard.
  * 
  * @author Thomas Muller
+ * @since 1.1
  * 
  */
 public interface ISymbolsProvider {

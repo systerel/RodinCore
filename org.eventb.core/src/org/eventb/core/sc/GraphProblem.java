@@ -151,6 +151,9 @@ public enum GraphProblem implements IRodinProblem {
 	AssignmentToParameterError(IMarker.SEVERITY_ERROR, Messages.scuser_AssignmentToParameter),
 	AssignmentToCarrierSetError(IMarker.SEVERITY_ERROR, Messages.scuser_AssignmentToCarrierSet),
 	AssignmentToConstantError(IMarker.SEVERITY_ERROR, Messages.scuser_AssignmentToConstant),
+	/**
+	 * @since 1.4
+	 */
 	EventInitLabelMisspellingWarning(IMarker.SEVERITY_WARNING, Messages.scuser_EventInitLabelMisspelling);
 	
 	private final String errorCode;

@@ -118,26 +118,44 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	+ "/debug/proofskeleton"; //$NON-NLS-1$
 
 	//Helpers for the creation of element default values
+	/**
+	 * @since 2.0
+	 */
 	public static String getPrd_Default(FormulaFactory ff) {
 		return ff.makeLiteralPredicate(Formula.BTRUE, null).toString();
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	public static String getInv_Default(FormulaFactory ff){
 		return getPrd_Default(ff);
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	public static String getAxm_Default(FormulaFactory ff) {
 		return getPrd_Default(ff);
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	public static String getThm_Default(FormulaFactory ff) {
 		return getPrd_Default(ff);
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	public static String getGrd_Default(FormulaFactory ff) {
 		return getGrd_Default(ff);
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	public static String getSub_Default(FormulaFactory ff) {
 		return "";
 	}

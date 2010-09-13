@@ -308,6 +308,7 @@ public interface IProofTreeNode extends IProofSkeleton {
 	 * Returns the formula factory used by the sequent of this proof tree node
 	 * 
 	 * @return the formula factory to use
+	 * @since 2.0
 	 */
 	FormulaFactory getFormulaFactory();
 }
