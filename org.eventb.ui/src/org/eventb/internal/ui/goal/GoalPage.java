@@ -291,7 +291,8 @@ public class GoalPage extends Page implements IGoalPage {
 		} else {
 			Predicate goal = node.getSequent().goal();
 			final String tmpString = goal.toString();
-			final Predicate tmpPred = getParsed(tmpString);
+			final Predicate tmpPred = getParsed(tmpString,
+					node.getFormulaFactory());
 
 			int [] indexes = new int[0];
 

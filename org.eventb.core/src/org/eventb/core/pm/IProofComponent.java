@@ -169,18 +169,13 @@ public interface IProofComponent {
 			IProgressMonitor monitor) throws RodinDBException;
 
 	/**
-	 * Returns the formula factory corresponding to the given proof obligation.
-	 * The result is read from the proof file of this component.
+	 * Returns the formula factory to use.
+	 * The result is read from the proof state file of this component.
 	 * 
-	 * @param poName
-	 *            name of a proof obligation
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress reporting
-	 *            is not desired
 	 * @return a formula factory
 	 * @since 1.3
 	 */
-	FormulaFactory getFormulaFactory(String poName, IProgressMonitor monitor);
+	FormulaFactory getFormulaFactory();
 
 	/**
 	 * Returns the Rodin root associated with this proof component and

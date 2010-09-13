@@ -57,7 +57,7 @@ public class ProofAttempt implements IProofAttempt, IElementChangedListener {
 		this.component = component;
 		this.name = name;
 		this.owner = owner;
-		this.ff = component.getFormulaFactory(name, null);
+		this.ff = component.getFormulaFactory();
 		final IPOSequent poSequent = getPOSequent();
 		this.proofTree = createProofTree(poSequent);
 		if (poSequent.hasPOStamp()) {

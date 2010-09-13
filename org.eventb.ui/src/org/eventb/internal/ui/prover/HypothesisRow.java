@@ -52,6 +52,7 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
@@ -181,7 +182,8 @@ public class HypothesisRow {
 		final String parsedString = hyp.toString();
 
 		//Predicate containing the SourceLocations
-		final Predicate parsedPredicate = getParsed(parsedString); 
+		final FormulaFactory ff = userSupport.getFormulaFactory();
+		final Predicate parsedPredicate = getParsed(parsedString, ff);
 						
 		createImageHyperlinks(buttonComposite);
 		

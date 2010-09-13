@@ -391,11 +391,6 @@ public class ProverUIUtils {
 		}
 		return TacticUIRegistry.getDefault().getTip(predAppli.getTacticID());
 	}
-	
-	// FIXME FF: pass as parameter to parse methods or
-	// add a parameter that makes it possible to compute the factory
-	private static final FormulaFactory formulaFactory = FormulaFactory
-	.getDefault();
 
 	/**
 	 * Returns a parsed and type checked version of the given predicate string,
@@ -415,15 +410,15 @@ public class ProverUIUtils {
 	 * @return a parsed and type checked predicate
 	 */
 	public static Predicate getParsedTypeChecked(String predString, ITypeEnvironment typeEnv) {
-		final Predicate parsedPred = getParsed(predString);
+		final Predicate parsedPred = getParsed(predString, typeEnv.getFormulaFactory());
 		final ITypeCheckResult typeCheckResult = parsedPred.typeCheck(typeEnv);
 		assert !typeCheckResult.hasProblem();
 		return parsedPred;
 	}
 	
 	/**
-	 * Returns a parsed and  not type checked version of the given predicate string,
-	 * using the given type environment.
+	 * Returns a parsed and not type checked version of the given predicate
+	 * string, using the given type environment.
 	 * <p>
 	 * Used by methods that require source locations.
 	 * </p>
@@ -433,10 +428,14 @@ public class ProverUIUtils {
 	 * 
 	 * @param predString
 	 *            a predicate string
+	 * @param formulaFactory
+	 *            the formula factory to use
 	 * @return a parsed predicate
 	 */
-	public static Predicate getParsed(String predString) {
-		final IParseResult parseResult = formulaFactory.parsePredicate(predString, LanguageVersion.LATEST, null);
+	public static Predicate getParsed(String predString,
+			FormulaFactory formulaFactory) {
+		final IParseResult parseResult = formulaFactory.parsePredicate(
+				predString, LanguageVersion.LATEST, null);
 		assert !parseResult.hasProblem();
 		return parseResult.getParsedPredicate();
 	}
@@ -493,7 +492,7 @@ public class ProverUIUtils {
 
 		// Non type-checked predicate containing source location used here to
 		// get hyperlinks
-		final Predicate parsedPred = getParsed(str);
+		final Predicate parsedPred = getParsed(str, us.getFormulaFactory());
 
 		for (ITacticApplication application : applications) {
 			if (application instanceof IPositionApplication) {

@@ -103,8 +103,7 @@ public class ProofSkeletonBuilder {
 	public static IProofTree buildProofTree(IPRProof pr, IProofMonitor monitor)
 			throws RodinDBException {
 		final IProofComponent pc = getProofComponent(pr);
-		final FormulaFactory ff = pc.getFormulaFactory(pr.getElementName(),
-				null);
+		final FormulaFactory ff = pc.getFormulaFactory();
 	
 		final IProverSequent rootSequent = buildRootSequent(pr, ff);
 		if (rootSequent == null) {

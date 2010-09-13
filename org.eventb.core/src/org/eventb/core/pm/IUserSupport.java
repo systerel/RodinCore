@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPSStatus;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProofTreeNodeFilter;
@@ -166,6 +167,13 @@ public interface IUserSupport extends IElementChangedListener {
 	 *         stored in this User Support
 	 */
 	boolean hasUnsavedChanges();
+
+	/**
+	 * Returns the formula factory to use.
+	 * 
+	 * @return the formula factory to use according to the input PS file
+	 */
+	FormulaFactory getFormulaFactory();
 
 	/**
 	 * Get an array of unsaved proof obligations.
