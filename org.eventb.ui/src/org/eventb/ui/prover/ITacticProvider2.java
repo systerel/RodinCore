@@ -14,14 +14,10 @@ import java.util.List;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.ui.prover.ITacticProvider;
 
 /**
- * New protocol for contributing tactic providers.
- * <p>
- * Contributors can use an implementor of this interface as an alternative to
- * {@link ITacticProvider} in the 'proofTactics' extension point.
- * </p>
+ * This is the common interface to provide tactics to the proving user
+ * interface.
  * 
  * @author Nicolas Beauger
  * @since 1.1

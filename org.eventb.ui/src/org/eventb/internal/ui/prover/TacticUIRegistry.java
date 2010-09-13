@@ -12,7 +12,6 @@
 package org.eventb.internal.ui.prover;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -27,22 +26,16 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.core.seqprover.ITactic;
-import org.eventb.ui.prover.IPositionApplication;
-import org.eventb.ui.prover.IPredicateApplication;
-import org.eventb.ui.prover.ITacticApplication;
-import org.eventb.ui.prover.ITacticProvider2;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.prover.IProofCommand;
-import org.eventb.ui.prover.ITacticProvider;
+import org.eventb.ui.prover.ITacticApplication;
+import org.eventb.ui.prover.ITacticProvider2;
 
 public class TacticUIRegistry {
 	// The identifier of the extension point (value
@@ -77,91 +70,6 @@ public class TacticUIRegistry {
 
 	Map<String, DropdownInfo> dropdownRegistry = null;
 
-	private static abstract class TPApplicationWrapper implements ITacticApplication {
-
-		protected final ITacticProvider provider;
-		protected final String tacticID;
-		protected final IProofTreeNode node;
-		protected final Predicate hyp;
-		protected final IPosition position;
-		protected final String tip;
-		private String latestGlobalInput = null;
-		private String[] latestInputs = null;
-		private ITactic latestTactic = null;
-
-		public TPApplicationWrapper(ITacticProvider provider, String tacticID,
-				IProofTreeNode node, Predicate hyp, IPosition position,
-				String globalInput, String tip) {
-			this.provider = provider;
-			this.tacticID = tacticID;
-			this.node = node;
-			this.hyp = hyp;
-			this.position = position;
-			this.tip = tip;
-		}
-
-		@Override
-		public ITactic getTactic(String[] inputs, String globalInput) {
-			if (!globalInput.equals(latestGlobalInput) || !Arrays.equals(inputs, latestInputs)) {
-				latestGlobalInput = globalInput;
-				latestInputs = inputs;
-				latestTactic = provider.getTactic(node, hyp, position, inputs, globalInput);
-			}
-			return latestTactic;
-		}
-		
-		@Override
-		public String getTacticID() {
-			return tacticID;
-		}
-	}
-	
-	private static class TPPositionWrapper extends TPApplicationWrapper implements IPositionApplication {
-		
-		public TPPositionWrapper(ITacticProvider provider, String tacticID, IProofTreeNode node,
-				Predicate hyp, IPosition position, String globalInput,
-				String tip) {
-			super(provider, tacticID, node, hyp, position, globalInput, tip);
-		}
-
-		@Override
-		public Point getHyperlinkBounds(String actualString, Predicate parsedPredicate) {
-			return provider.getOperatorPosition(parsedPredicate, actualString, position);
-		}
-		
-		@Override
-		public String getHyperlinkLabel() {
-			return tip;
-		}
-	}
-	
-	private static class TPPredicateWrapper extends TPApplicationWrapper implements IPredicateApplication {
-
-		private final ImageDescriptor iconDesc;
-		private Image lazyIcon;
-		
-		public TPPredicateWrapper(ITacticProvider provider,
-				String tacticID, IProofTreeNode node, Predicate hyp, IPosition position,
-				String globalInput, String tip, ImageDescriptor iconDesc) {
-			super(provider, tacticID, node, hyp, position, globalInput, tip);
-			this.iconDesc = iconDesc;
-		}
-
-		@Override
-		public Image getIcon() {
-			if (lazyIcon == null) {
-				lazyIcon = EventBImage.getImage(iconDesc, 0);
-			}
-			return lazyIcon;
-		}
-
-		@Override
-		public String getTooltip() {
-			return tip;
-		}
-		
-	}
-	
 	// wraps ITacticProvider and ITacticProvider2 
 	public static interface IApplicationProvider {
 
@@ -171,44 +79,6 @@ public class TacticUIRegistry {
 		
 	}
 
-	private static class TPProvider implements IApplicationProvider {
-
-		private final ITacticProvider provider;
-		private final String tacticID;
-		private final String tip;
-		private final ImageDescriptor iconDesc;
-
-		public TPProvider(ITacticProvider provider, String tacticID, String tip, ImageDescriptor iconDesc) {
-			this.provider = provider;
-			this.tacticID = tacticID;
-			this.tip = tip;
-			this.iconDesc = iconDesc;
-		}
-
-		@Override
-		public List<ITacticApplication> getPossibleApplications(
-				IProofTreeNode node, Predicate hyp, String globalInput) {
-			final List<IPosition> appPos = provider.getApplicablePositions(
-					node, hyp, globalInput);
-			if (appPos == null) {
-				return Collections.emptyList();
-			}
-			final List<ITacticApplication> result = new ArrayList<ITacticApplication>();
-			if (appPos.isEmpty()) { // application to predicate
-				result.add(new TPPredicateWrapper(provider, tacticID, node, hyp, null,
-						globalInput, tip, iconDesc));
-			} else { // application to positions
-				for (IPosition position : appPos) {
-					result.add(new TPPositionWrapper(provider, tacticID, node, hyp,
-							position, globalInput, tip));
-				}
-			}
-			return result;
-		}
-
-	}
-	
-	
 	private static class TP2Provider implements IApplicationProvider {
 
 		private final ITacticProvider2 provider;
@@ -329,10 +199,7 @@ public class TacticUIRegistry {
 
 		private static IApplicationProvider getAppliProvider(Object candidate,
 				String id, String tip, ImageDescriptor iconDesc) {
-			if (candidate instanceof ITacticProvider) {
-				return new TPProvider((ITacticProvider) candidate, id, tip,
-						iconDesc);
-			} else if (candidate instanceof ITacticProvider2) {
+			if (candidate instanceof ITacticProvider2) {
 				return new TP2Provider(((ITacticProvider2) candidate));
 			}
 			return null;

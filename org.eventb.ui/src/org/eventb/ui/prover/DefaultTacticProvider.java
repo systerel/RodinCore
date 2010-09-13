@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eventb.ui.prover;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.swt.graphics.Image;
@@ -44,12 +44,12 @@ import org.eventb.core.seqprover.ITactic;
  * @author htson
  *         <p>
  *         This class provides a default implementation for
- *         {@link org.eventb.ui.prover.ITacticProvider}. Plug-in writers should
+ *         {@link org.eventb.ui.prover.ITacticProvider2}. Plug-in writers should
  *         extends this class in order to provide their own tactic to the
  *         Proving User Interface.
  * @since 1.0
  */
-public class DefaultTacticProvider implements ITacticProvider {
+public class DefaultTacticProvider implements ITacticProvider2 {
 
 	public static class DefaultPositionApplication implements
 			IPositionApplication {
@@ -76,12 +76,8 @@ public class DefaultTacticProvider implements ITacticProvider {
 
 		/**
 		 * This is the default implementation for finding the source location of
-		 * position in predicate. Usually, plug-in writers do not need to override
-		 * this method.
-		 * <p>
-		 * 
-		 * @see org.eventb.ui.prover.ITacticProvider#getOperatorPosition(org.eventb.core.ast.Predicate,
-		 *      java.lang.String, org.eventb.core.ast.IPosition)
+		 * position in predicate. Usually, plug-in writers do not need to
+		 * override this method.
 		 */
 		public Point getOperatorPosition(Predicate predicate, String predStr) {
 			Formula<?> subFormula = predicate.getSubFormula(position);
@@ -261,71 +257,10 @@ public class DefaultTacticProvider implements ITacticProvider {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eventb.ui.prover.ITacticProvider#getApplicablePositions(org.eventb
-	 * .core.seqprover.IProofTreeNode, org.eventb.core.ast.Predicate,
-	 * java.lang.String)
-	 */
-	@Override	
-	@Deprecated
-	public List<IPosition> getApplicablePositions(IProofTreeNode node,
-			Predicate hyp, String input) {
-		if (isApplicable(node, hyp, input))
-			return new ArrayList<IPosition>();
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eventb.ui.prover.ITacticProvider#getTactic(org.eventb.core.seqprover
-	 * .IProofTreeNode, org.eventb.core.ast.Predicate,
-	 * org.eventb.core.ast.IPosition, java.lang.String[])
-	 */
 	@Override
-	@Deprecated
-	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
-			IPosition position, String[] inputs) {
-		return null;
-	}
-
-	/**
-	 * By default call
-	 * {@link #getTactic(IProofTreeNode, Predicate, IPosition, String[])}
-	 * without the global input.
-	 * <p>
-	 * 
-	 * @see org.eventb.ui.prover.ITacticProvider#getTactic(IProofTreeNode,
-	 *      Predicate, IPosition, String[], String)
-	 */
-	@Override
-	@Deprecated
-	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
-			IPosition position, String[] inputs, String globalInput) {
-		return getTactic(node, hyp, position, inputs);
-	}
-
-	/**
-	 * @deprecated Use
-	 *             {@link #getApplicablePositions(IProofTreeNode,Predicate,String)}
-	 *             instead
-	 */
-	@Override
-	@Deprecated
-	public boolean isApplicable(IProofTreeNode node, Predicate hyp, String input) {
-		return false;
-	}
-	
-	@Override
-	@Deprecated
-	public Point getOperatorPosition(Predicate predicate, String predStr,
-			IPosition position) {
-		// TODO SHOULD BE REMOVED
-		return null;
+	public List<ITacticApplication> getPossibleApplications(
+			IProofTreeNode node, Predicate hyp, String globalInput) {
+		return Collections.emptyList();
 	}
 
 }
