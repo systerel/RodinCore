@@ -76,7 +76,7 @@ public class Cond implements IExpressionExtension {
 				null);
 
 		return ff.makeAssociativePredicate(LAND,
-				Arrays.<Predicate> asList(condE1, notCondE2), null);
+				Arrays.<Predicate> asList(cond, condE1, notCondE2), null);
 	}
 
 	@Override
