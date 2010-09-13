@@ -169,13 +169,11 @@ import org.eventb.core.ast.UnaryPredicate;
 
 	@Override
 	public void visitQuantifiedPredicate(QuantifiedPredicate predicate) {
-
 		ITypeEnvironment newITypeEnvironment = env.clone();
-		FreeIdentifier[] freeIdents = FormulaFactory.getDefault()
-				.makeFreshIdentifiers(predicate.getBoundIdentDecls(),
-						newITypeEnvironment);
-		Predicate newpred = predicate.instantiate(freeIdents,
-				FormulaFactory.getDefault());
+		final FormulaFactory ff = newITypeEnvironment.getFormulaFactory();
+		final FreeIdentifier[] freeIdents = ff.makeFreshIdentifiers(
+				predicate.getBoundIdentDecls(), newITypeEnvironment);
+		final Predicate newpred = predicate.instantiate(freeIdents, ff);
 		newpred.accept(this);
 	}
 
