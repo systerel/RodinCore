@@ -49,9 +49,6 @@ public class ProofComponent implements IProofComponent {
 
 	// The PS file of this component
 	private final IPSRoot psRoot;
-	
-	// Cache for the formula factory calculated given the current PS file
-	private FormulaFactory formulaFactory;
 
 	public ProofComponent(IPSRoot psRoot) {
 		this.psRoot = psRoot;
@@ -205,9 +202,7 @@ public class ProofComponent implements IProofComponent {
 
 	@Override
 	public FormulaFactory getFormulaFactory() {
-		if (formulaFactory == null)
-			formulaFactory = psRoot.getFormulaFactory();
-		return formulaFactory;
+		return psRoot.getFormulaFactory();
 	}
 
 }

@@ -34,6 +34,9 @@ import org.rodinp.core.IRodinProject;
 public class EventBProject extends PlatformObject implements IEventBProject {
 	
 	private final IRodinProject rodinProject;
+	
+	// Cache for the formula factory used within this project
+	private FormulaFactory formulaFactory;
 
 	public EventBProject(IRodinProject rodinProject) {
 		if (rodinProject == null) {
@@ -81,8 +84,10 @@ public class EventBProject extends PlatformObject implements IEventBProject {
 
 	@Override
 	public FormulaFactory getFormulaFactory() {
-		return FormulaExtensionProviderRegistry.getExtensionProviderRegistry()
-				.getFormulaFactory(this);
+		if (formulaFactory == null)
+			formulaFactory = FormulaExtensionProviderRegistry
+					.getExtensionProviderRegistry().getFormulaFactory(this);
+		return formulaFactory;
 	}
 
 	@Override
