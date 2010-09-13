@@ -170,6 +170,7 @@ public class GenParser {
 		public SourceLocation makeSourceLocation(int start, int end) {
 			// a source location may occur at the very beginning of the formula
 			// (empty formula for instance would be 0:-1)
+			start = Math.max(0, start);
 			end = Math.max(0, end);
 			
 			// a source location may occur at the very end of the formula

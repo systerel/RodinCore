@@ -2924,5 +2924,12 @@ public class TestGenParser extends AbstractTests {
 		return new ASTProblem(new SourceLocation(start, end),
 				problem, Error, args);
 	}
-	
+
+	public void testEqualInAssign() throws Exception {
+		final IParseResult res = ff.parseAssignment("x = 0", LATEST, null);
+		assertFailure(
+				res,
+				makeError(0, 4, UnknownOperator,
+						" (expected to find an assignment operator)"));
+	}
 }

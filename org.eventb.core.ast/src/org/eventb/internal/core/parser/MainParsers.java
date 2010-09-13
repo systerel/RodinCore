@@ -694,6 +694,7 @@ public class MainParsers {
 			}
 
 			// FIXME when switching to led parsing, this disappears
+			pc.scanUntilEOF();
 			throw new SyntaxError(new ASTProblem(pc
 					.getEnclosingSourceLocation(),
 					ProblemKind.UnknownOperator, ProblemSeverities.Error,
