@@ -1860,14 +1860,21 @@ public class AutoRewriterImpl extends DefaultRewriter {
     		 * 
     		 * SIMP_SPECIAL_COND_BFALSE:
     		 * COND(false, E_1, E_2) == E_2
+    		 * 
+    		 * SIMP_MULTI_COND:
+    		 * COND(C, E, E) == E
     		 */
     		expr@ExtendedExpression(exprs,preds) -> {
     			if (((ExtendedExpression) `expr).getExtension() == FormulaFactory.getCond()) {
     				final int condTag = `preds[0].getTag();
-    				if(condTag == Formula.BTRUE) {
-    					return `exprs[0];
+    				final Expression e1 = `exprs[0];
+       				final Expression e2 = `exprs[1];
+       				if(condTag == Formula.BTRUE) {
+    					return e1;
     				} else if(condTag == Formula.BFALSE) {
-    					return `exprs[1];
+    					return e2;
+    				} else if (e1.equals(e2)) {
+    					return e1;
     				}
     			}
     		}

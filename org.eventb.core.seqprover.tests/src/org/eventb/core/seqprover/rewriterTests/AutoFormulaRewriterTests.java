@@ -1139,6 +1139,9 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 
 		// COND(false, E_1, E_2) == E_2
 		expressionTest("2", "COND(⊥,1,2)");
+
+		// COND(C, E, E) == E
+		expressionTest("2", "COND(x=1,2,2)");
 		
 	}
 }
