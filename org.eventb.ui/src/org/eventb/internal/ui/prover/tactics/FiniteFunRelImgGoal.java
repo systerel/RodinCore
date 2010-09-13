@@ -11,35 +11,67 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+
 import java.util.List;
 
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.ui.prover.DefaultTacticProvider;
+import org.eventb.ui.prover.DefaultTacticProvider.DefaultPositionApplication;
+import org.eventb.ui.prover.ITacticApplication;
+import org.eventb.ui.prover.ITacticProvider2;
 
-public class FiniteFunRelImgGoal extends DefaultTacticProvider {
+/**
+ * Provider for the "finite of relational image of a function" tactic.
+ * <ul>
+ * <li>Provider ID : <code>org.eventb.ui.finiteFunRelImgGoal</code></li>
+ * <li>Target : goal</li>
+ * <ul>
+ */
+public class FiniteFunRelImgGoal implements ITacticProvider2 {
 
-	@Override
-	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
-			IPosition position, String[] inputs, String globalInput) {
-		return Tactics.finiteFunRelImg(node.getSequent(),globalInput);
+	public static class FiniteFunRelImgGoalApplication extends
+			DefaultPositionApplication {
+
+		private static final String TACTIC_ID = "org.eventb.ui.finiteFunRelImgGoal";
+		private final IProofTreeNode node;
+
+		public FiniteFunRelImgGoalApplication(IProofTreeNode node) {
+			super(null, IPosition.ROOT);
+			this.node = node;
+		}
+
+		@Override
+		public ITactic getTactic(String[] inputs, String globalInput) {
+			return Tactics.finiteFunRelImg(node.getSequent(), globalInput);
+		}
+
+		@Override
+		public String getTacticID() {
+			return TACTIC_ID;
+		}
+
 	}
 
 	@Override
-	public List<IPosition> getApplicablePositions(IProofTreeNode node,
-			Predicate hyp, String input) {
+	public List<ITacticApplication> getPossibleApplications(
+			IProofTreeNode node, Predicate hyp, String globalInput) {
 		if (node == null)
-			return null;
-
-		List<IPosition> positions = Tactics.finiteFunRelImgGetPositions(node
-				.getSequent().goal());
-
-		if (positions.size() == 0)
-			return null;
-		return positions;
+			return emptyList();
+		final Predicate goal = node.getSequent().goal();
+		if (Lib.isFinite(goal)) {
+			if (Lib.isRelImg(((SimplePredicate) goal).getExpression())) {
+				final ITacticApplication appli = new FiniteFunRelImgGoalApplication(node);
+				return singletonList(appli);
+			}
+		}
+		return emptyList();
 	}
 
 }

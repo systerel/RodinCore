@@ -13,24 +13,73 @@ package org.eventb.internal.ui.prover.tactics;
 import java.util.List;
 
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.eventb.ui.prover.DefaultTacticProvider.DefaultPositionApplication;
+import org.eventb.ui.prover.ITacticApplication;
 
+/**
+ * Provider for the "remove ∈" tactic.
+ * <ul>
+ * <li>Provider ID : <code>org.eventb.ui.rm</code></li>
+ * <li>Target : any</li>
+ * <ul>
+ */
 public class RemoveMembership extends AbstractHypGoalTacticProvider {
 
-	@Override
-	@Deprecated
-	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
-			IPosition position, String[] inputs) {
-		return Tactics.removeMembership(hyp, position);
+	public static class RemoveMembershipApplication extends
+			DefaultPositionApplication {
+
+		private static final String TACTIC_ID = "org.eventb.ui.rm";
+
+		public RemoveMembershipApplication(Predicate hyp, IPosition position) {
+			super(hyp, position);
+		}
+
+		@Override
+		public ITactic getTactic(String[] inputs, String globalInput) {
+			return Tactics.removeMembership(hyp, position);
+		}
+
+		@Override
+		public String getTacticID() {
+			return TACTIC_ID;
+		}
+
+	}
+
+	public static class RemoveMembershipAppliInspector extends
+			DefaultApplicationInspector {
+
+		private final FormulaFactory ff;
+
+		public RemoveMembershipAppliInspector(FormulaFactory ff, Predicate hyp) {
+			super(hyp);
+			this.ff = ff;
+		}
+
+		@Override
+		public void inspect(RelationalPredicate predicate,
+				IAccumulator<ITacticApplication> accumulator) {
+			if (Tactics.isRemoveMembershipApplicable(ff, predicate)) {
+				final IPosition position = accumulator.getCurrentPosition();
+				accumulator.add(new RemoveMembershipApplication(hyp, position));
+			}
+		}
+
 	}
 
 	@Override
-	public List<IPosition> retrievePositions(Predicate pred, FormulaFactory ff) {
-		return Tactics.rmGetPositions(pred);
+	protected List<ITacticApplication> getApplicationsOnPredicate(
+			IProofTreeNode node, Predicate hyp, String globalInput,
+			Predicate predicate) {
+		return predicate.inspect(new RemoveMembershipAppliInspector(node
+				.getFormulaFactory(), hyp));
 	}
 
 }

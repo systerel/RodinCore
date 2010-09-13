@@ -47,30 +47,32 @@ import org.eventb.core.seqprover.ProverRule;
  */
 @SuppressWarnings("unused")
 public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
-
+	
+	private final boolean isRewrite;
+	private Predicate rewrittenPredicate;
+	
+	/**
+	 * Default rewriter.
+	 */
 	public RemoveMembershipRewriterImpl(FormulaFactory ff) {
+		this(ff, true);
+	}
+	
+	/**
+	 * Constructor using the flag <code>isRewrite</code> telling if the rewriter
+	 * should give the result of rewriting, or just tell if the rewriting is
+	 * possible.
+	 */
+	public RemoveMembershipRewriterImpl(FormulaFactory ff, boolean isRewrite) {
 		super(ff);
+		this.isRewrite = isRewrite;
 	}
 
 	%include {FormulaV2.tom}
-
-    @ProverRule( { "SIMP_MULTI_IN", "SIMP_IN_SING", "DEF_IN_SETENUM",
-			"DEF_IN_MAPSTO", "DEF_IN_POW", "DEF_IN_BUNION", "DEF_IN_BINTER",
-			"DEF_IN_SETMINUS", "DEF_IN_KUNION", "DEF_IN_KINTER",
-			"DEF_IN_QUNION", "DEF_IN_QINTER", "DEF_IN_DOM", "DEF_IN_RAN",
-			"DEF_IN_CONVERSE", "DEF_IN_DOMRES", "DEF_IN_DOMSUB",
-			"DEF_IN_RANRES", "DEF_IN_RANSUB", "DEF_IN_RELIMAGE",
-			"DEF_IN_FCOMP", "DEF_IN_ID", "DEF_IN_RELDOM", "DEF_IN_RELRAN",
-			"DEF_IN_RELDOMRAN", "DEF_IN_FCT", "DEF_IN_TFCT", "DEF_IN_INJ",
-			"DEF_IN_TINJ", "DEF_IN_SURJ", "DEF_IN_TSURJ", "DEF_IN_BIJ",
-			"DEF_IN_DPROD", "DEF_IN_PPROD", "DEF_IN_POW1", "DEF_IN_UPTO" })
-	@Override
-	public Predicate rewrite(RelationalPredicate predicate) {
-		Predicate newPredicate = super.rewrite(predicate);
-		if (!newPredicate.equals(predicate))
-			return newPredicate;
-
-	    %match (Predicate predicate) {
+	
+	public boolean isApplicableOrRewrite(Predicate predicate) {
+    	
+    	%match (Predicate predicate) {
 
 			/**
              * SIMP_MULTI_IN
@@ -83,7 +85,10 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
              * Set Theory: E ∈ {A, ..., B} == E = A ⋁ ... ⋁ E = B
 	    	 */
 	    	In(E, SetExtension(members)) -> {
-	    		return new FormulaUnfold(ff).inSetExtention(`E, `members);
+	    		if (isRewrite) {
+	    			rewrittenPredicate = new FormulaUnfold(ff).inSetExtention(`E, `members);
+	    		}
+	    		return true;
 	    	}
 
 	    	/**
@@ -91,7 +96,10 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
              * Set Theory: E ↦ F ∈ S × T == E ∈ S ∧ F ∈ T
 	    	 */
 	    	In(Mapsto(E, F), Cprod(S, T)) -> {
-	    		return new FormulaUnfold(ff).inMap(`E, `F, `S, `T);
+	    		if (isRewrite) {
+	    			rewrittenPredicate = new FormulaUnfold(ff).inMap(`E, `F, `S, `T);
+	    		}
+	    		return true;
 	    	}
 	    	
 	    	/**
@@ -99,7 +107,10 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ∈ ℙ(S) == E ⊆ S
 	    	 */
 	    	In(E, Pow(S)) -> {
-	    		return new FormulaUnfold(ff).inPow(`E, `S);
+	    		if (isRewrite) {
+	    			rewrittenPredicate = new FormulaUnfold(ff).inPow(`E, `S);
+	    		}
+	    		return true;
 	    	}
 	    	
 	    	/**
@@ -107,7 +118,10 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ∈ S ∪ ... ∪ T == E ∈ S ⋁ ... ⋁ E ∈ T
 	    	 */
 	    	In(E, BUnion(children)) -> {
-	    		return new FormulaUnfold(ff).inAssociative(Formula.LOR, `E, `children);
+	    		if (isRewrite) {
+	    			rewrittenPredicate = new FormulaUnfold(ff).inAssociative(Formula.LOR, `E, `children);
+	    		}
+	    		return true;
 	    	}
 	    	
 	    	/**
@@ -115,7 +129,10 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ∈ S ∩ ... ∩ T == E ∈ S ∧ ... ∧ E ∈ T
 	    	 */
 	    	In(E, BInter(children)) -> {
-	    		return new FormulaUnfold(ff).inAssociative(Formula.LAND, `E, `children);
+	    		if (isRewrite) {
+	    			rewrittenPredicate = new FormulaUnfold(ff).inAssociative(Formula.LAND, `E, `children);
+	    		}
+	    		return true;
 	    	}
 	    	
 	    	/**
@@ -123,7 +140,10 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ∈ S ∖ T == E ∈ S ∧ ¬(E ∈ T)
 	    	 */
 	    	In(E, SetMinus(S, T)) -> {
-	    		return new FormulaUnfold(ff).inSetMinus(`E, `S, `T);
+	    		if (isRewrite) {
+	    			rewrittenPredicate = new FormulaUnfold(ff).inSetMinus(`E, `S, `T);
+	    		}
+	    		return true;
 	    	}
 	    	
 	    	/**
@@ -131,7 +151,10 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ∈ union(S) == ∃s·s ∈ S ∧ E ∈ s
 	    	 */
 	    	In(E, Union(S)) -> {
-	    		return new FormulaUnfold(ff).inGeneralised(Formula.EXISTS, `E, `S);
+	    		if (isRewrite) {
+	    			rewrittenPredicate = new FormulaUnfold(ff).inGeneralised(Formula.EXISTS, `E, `S);
+	    		}
+	    		return true;
 	    	}
 	    	
 	    	/**
@@ -139,7 +162,10 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ∈ inter(S) == ∀s·s ∈ S ⇒ E ∈ s
 	    	 */
 	    	In(E, Inter(S)) -> {
-	    		return new FormulaUnfold(ff).inGeneralised(Formula.FORALL, `E, `S);
+	    		if (isRewrite) {
+	    			rewrittenPredicate = new FormulaUnfold(ff).inGeneralised(Formula.FORALL, `E, `S);
+	    		}
+	    		return true;
 	    	}
 	    	
 	    	/**
@@ -147,7 +173,10 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ∈ (⋃x·P|T) == ∃x·P ∧ E ∈ T
 	    	 */
 	    	In(E, Qunion(x,P,T)) -> {
-	    		return new FormulaUnfold(ff).inQuantified(Formula.EXISTS, `E, `x, `P, `T);
+	    		if (isRewrite) {
+	    			rewrittenPredicate = new FormulaUnfold(ff).inQuantified(Formula.EXISTS, `E, `x, `P, `T);
+	    		}
+	    		return true;
 	    	}
 
 	    	/**
@@ -155,7 +184,10 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ∈ (⋂x·P|T) == ∀x·P ⇒ E ∈ T
 	    	 */
 	    	In(E, Qinter(x,P,T)) -> {
-	    		return new FormulaUnfold(ff).inQuantified(Formula.FORALL, `E, `x, `P, `T);
+	    		if (isRewrite) {
+	    			rewrittenPredicate = new FormulaUnfold(ff).inQuantified(Formula.FORALL, `E, `x, `P, `T);
+	    		}
+	    		return true;
 	    	}
 
 	    	/**
@@ -163,7 +195,10 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ∈ dom(r) == ∃y·E ↦ y ∈ r
 	    	 */
 	    	In(E, Dom(r)) -> {
-	    		return new FormulaUnfold(ff).inDom(`E, `r);
+	    		if (isRewrite) {
+	    			rewrittenPredicate = new FormulaUnfold(ff).inDom(`E, `r);
+	    		}
+	    		return true;
 	    	}
 
 	    	/**
@@ -171,7 +206,10 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: F ∈ ran(r) == ∃x·x ↦ F ∈ r
 	    	 */
 	    	In(F, Ran(r)) -> {
-	    		return new FormulaUnfold(ff).inRan(`F, `r);
+	    		if (isRewrite) {
+	    			rewrittenPredicate = new FormulaUnfold(ff).inRan(`F, `r);
+	    		}
+	    		return true;
 	    	}
 	    	
 	    	/**
@@ -179,7 +217,10 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ↦ F ∈ r∼ == F ↦ E ∈ r
 	    	 */
 	    	In(Mapsto(E, F), Converse(r)) -> {
-	    		return new FormulaUnfold(ff).inConverse(`E, `F, `r);
+	    		if (isRewrite) {
+	    			rewrittenPredicate = new FormulaUnfold(ff).inConverse(`E, `F, `r);
+	    		}
+	    		return true;
 	    	}
 	    	
 	    	/**
@@ -187,7 +228,10 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ↦ F ∈ S ◁ r == E ∈ S ∧ E ↦ F ∈ r
 	    	 */
 	    	In(Mapsto(E, F), DomRes(S, r)) -> {
-	    		return new FormulaUnfold(ff).inDomManipulation(true, `E, `F, `S, `r);
+	    		if (isRewrite) {
+	    			rewrittenPredicate = new FormulaUnfold(ff).inDomManipulation(true, `E, `F, `S, `r);
+	    		}
+	    		return true;
 	    	}
 	    	
 	    	/**
@@ -195,7 +239,10 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ↦ F ∈ S ⩤ r == E ∉ S ∧ E ↦ F ∈ r
 	    	 */
 	    	In(Mapsto(E, F), DomSub(S, r)) -> {
-	    		return new FormulaUnfold(ff).inDomManipulation(false, `E, `F, `S, `r);
+	    		if (isRewrite) {
+	    			rewrittenPredicate = new FormulaUnfold(ff).inDomManipulation(false, `E, `F, `S, `r);
+	    		}
+	    		return true;
 	    	}
 	    	
 	    	/**
@@ -203,7 +250,10 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ↦ F ∈ r ▷ T  == E ↦ F ∈ r ∧ F ∈ T
 	    	 */
 	    	In(Mapsto(E, F), RanRes(r, T)) -> {
-	    		return new FormulaUnfold(ff).inRanManipulation(true, `E, `F, `r, `T);
+	    		if (isRewrite) {
+	    			rewrittenPredicate = new FormulaUnfold(ff).inRanManipulation(true, `E, `F, `r, `T);
+	    		}
+	    		return true;
 	    	}
 
 	    	/**
@@ -211,7 +261,10 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ↦ F ∈ r ⩥ T  == E ↦ F ∈ r ∧ F ∉ T
 	    	 */
 	    	In(Mapsto(E, F), RanSub(r, T)) -> {
-	    		return new FormulaUnfold(ff).inRanManipulation(false, `E, `F, `r, `T);
+	    		if (isRewrite) {
+	    			rewrittenPredicate = new FormulaUnfold(ff).inRanManipulation(false, `E, `F, `r, `T);
+	    		}
+	    		return true;
 	    	}
 	    	
 	    	/**
@@ -219,7 +272,10 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: F ∈ r[S] == (∃x·x ∈ S ∧ x ↦ F ∈ r)
 	    	 */
 	    	In(F, RelImage(r, S)) -> {
-	    		return new FormulaUnfold(ff).inRelImage(`F, `r, `S);
+	    		if (isRewrite) {
+	    			rewrittenPredicate = new FormulaUnfold(ff).inRelImage(`F, `r, `S);
+	    		}
+	    		return true;
 	    	}
 	    	 
 	    	/**
@@ -231,7 +287,10 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 *                        x_(n−1) ↦ F ∈ p_n
 	    	 */
 	    	In(Mapsto(E, F), Fcomp(children)) -> {
-				return new FormulaUnfold(ff).inForwardComposition(`E, `F, `children);
+	    		if (isRewrite) {
+	    			rewrittenPredicate = new FormulaUnfold(ff).inForwardComposition(`E, `F, `children);
+	    		}
+	    		return true;
 	    	}
 
 	    	/**
@@ -239,7 +298,10 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ↦ F ∈ id == E = F
 	    	 */
 	    	In(Mapsto(E, F), IdGen()) -> {
-	    		return makeRelationalPredicate(Predicate.EQUAL, `E, `F);
+	    		if (isRewrite) {
+	    			rewrittenPredicate = makeRelationalPredicate(Predicate.EQUAL, `E, `F);
+	    		}
+	    		return true;
 	    	}
 	    	 
 	    	/**
@@ -247,11 +309,14 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: r ∈ S  T == r ∈ S ↔ T ∧ dom(r) = S
 	    	 */
 	    	In(r, Trel(S, T)) -> {
-	    		Expression rel = makeBinaryExpression(Expression.REL, `S, `T);
-	    		Predicate pred1 = makeRelationalPredicate(Predicate.IN, `r, rel);
-	    		Expression dom = makeUnaryExpression(Expression.KDOM, `r);
-	    		Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, dom, `S);
-	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    		if (isRewrite) {
+	    			final Expression rel = makeBinaryExpression(Expression.REL, `S, `T);
+	    		    final Predicate pred1 = makeRelationalPredicate(Predicate.IN, `r, rel);
+	    		    final Expression dom = makeUnaryExpression(Expression.KDOM, `r);
+	    		    final Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, dom, `S);
+	    		    rewrittenPredicate = makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    		}
+	    		return true;
 	    	}
 
 	    	/**
@@ -259,11 +324,14 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: r ∈ S  T == r ∈ S ↔ T ∧ ran(r) = T
 	    	 */
 	    	In(r, Srel(S, T)) -> {
-	    		Expression rel = makeBinaryExpression(Expression.REL, `S, `T);
-	    		Predicate pred1 = makeRelationalPredicate(Predicate.IN, `r, rel);
-	    		Expression ran = makeUnaryExpression(Expression.KRAN, `r);
-	    		Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, ran, `T);
-	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    		if (isRewrite) {
+	    			final Expression rel = makeBinaryExpression(Expression.REL, `S, `T);
+	    			final Predicate pred1 = makeRelationalPredicate(Predicate.IN, `r, rel);
+	    			final Expression ran = makeUnaryExpression(Expression.KRAN, `r);
+	    			final Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, ran, `T);
+	    			rewrittenPredicate = makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    		}
+	    		return true;
 	    	}
 
 	    	/**
@@ -271,13 +339,16 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: r ∈ S  T == r ∈ S ↔ T ∧ dom(r) = S & ran(r) = T
 	    	 */
 	    	In(r, Strel(S, T)) -> {
-	    		Expression rel = makeBinaryExpression(Expression.REL, `S, `T);
-	    		Predicate pred1 = makeRelationalPredicate(Predicate.IN, `r, rel);
-	    		Expression dom = makeUnaryExpression(Expression.KDOM, `r);
-	    		Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, dom, `S);
-	    		Expression ran = makeUnaryExpression(Expression.KRAN, `r);
-	    		Predicate pred3 = makeRelationalPredicate(Predicate.EQUAL, ran, `T);
-	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2, pred3);
+	    		if (isRewrite) {
+	    			final Expression rel = makeBinaryExpression(Expression.REL, `S, `T);
+	    			final Predicate pred1 = makeRelationalPredicate(Predicate.IN, `r, rel);
+	    			final Expression dom = makeUnaryExpression(Expression.KDOM, `r);
+	    			final Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, dom, `S);
+	    			final Expression ran = makeUnaryExpression(Expression.KRAN, `r);
+	    			final Predicate pred3 = makeRelationalPredicate(Predicate.EQUAL, ran, `T);
+	    			rewrittenPredicate = makeAssociativePredicate(Predicate.LAND, pred1, pred2, pred3);
+	    		}
+	    		return true;
 	    	}
 
 	    	/**
@@ -285,7 +356,10 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: f ∈ S ⇸ T == f ∈ S ↔ T ∧ ∀x,y,z·x ↦ y ∈ f ∧ x ↦ z ∈ f ⇒ y = z
 	    	 */
 	    	In(f, Pfun(S, T)) -> {
-	    		return new FormulaUnfold(ff).inPfun(`f, `S, `T);
+	    		if (isRewrite) {
+	    			rewrittenPredicate = new FormulaUnfold(ff).inPfun(`f, `S, `T);
+	    		}
+	    		return true;
 	    	}
 
 	    	/**
@@ -293,11 +367,14 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: f ∈ S → T == f ∈ S ⇸ T ∧ dom(f) = S
 	    	 */
 	    	In(f, Tfun(S, T)) -> {
-	    		Expression pfun = makeBinaryExpression(Expression.PFUN, `S, `T);
-	    		Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun);
-	    		Expression dom = makeUnaryExpression(Expression.KDOM, `f);
-	    		Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, dom, `S);
-	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    		if (isRewrite) {
+	    			final Expression pfun = makeBinaryExpression(Expression.PFUN, `S, `T);
+	    			final Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun);
+	    			final Expression dom = makeUnaryExpression(Expression.KDOM, `f);
+	    			final Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, dom, `S);
+	    			rewrittenPredicate = makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    		}
+	    		return true;
 	    	}
 
 	    	/**
@@ -305,12 +382,15 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: f ∈ S ⤔ T == f ∈ S ⇸ T ∧ f∼ ∈ T ⇸ S
 	    	 */
 	    	In(f, Pinj(S, T)) -> {
-	    		Expression pfun1 = makeBinaryExpression(Expression.PFUN, `S, `T);
-	    		Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun1);
-	    		Expression inv = makeUnaryExpression(Expression.CONVERSE, `f);
-	    		Expression pfun2 = makeBinaryExpression(Expression.PFUN, `T, `S);
-	    		Predicate pred2 = makeRelationalPredicate(Predicate.IN, inv, pfun2);
-	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    		if (isRewrite) {
+	    			final Expression pfun1 = makeBinaryExpression(Expression.PFUN, `S, `T);
+	    			final Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun1);
+	    			final Expression inv = makeUnaryExpression(Expression.CONVERSE, `f);
+	    			final Expression pfun2 = makeBinaryExpression(Expression.PFUN, `T, `S);
+	    			final Predicate pred2 = makeRelationalPredicate(Predicate.IN, inv, pfun2);
+	    			rewrittenPredicate = makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    		}
+	    		return true;
 	    	}
 
 	    	/**
@@ -318,11 +398,14 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: f ∈ S ↣ T == f ∈ S ⤔ T ∧ dom(f) = S
 	    	 */
 	    	In(f, Tinj(S, T)) -> {
-	    		Expression pfun = makeBinaryExpression(Expression.PINJ, `S, `T);
-	    		Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun);
-	    		Expression dom = makeUnaryExpression(Expression.KDOM, `f);
-	    		Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, dom, `S);
-	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    		if (isRewrite) {
+	    			final Expression pfun = makeBinaryExpression(Expression.PINJ, `S, `T);
+	    			final Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun);
+	    			final Expression dom = makeUnaryExpression(Expression.KDOM, `f);
+	    			final Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, dom, `S);
+	    			rewrittenPredicate = makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    		}
+	    		return true;
 	    	}
 
 	    	/**
@@ -330,11 +413,14 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: f ∈ S ⤀ T == f ∈ S ⇸ T ∧ ran(f) = T
 	    	 */
 	    	In(f, Psur(S, T)) -> {
-	    		Expression pfun = makeBinaryExpression(Expression.PFUN, `S, `T);
-	    		Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun);
-	    		Expression ran = makeUnaryExpression(Expression.KRAN, `f);
-	    		Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, ran, `T);
-	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    		if (isRewrite) {
+	    			final Expression pfun = makeBinaryExpression(Expression.PFUN, `S, `T);
+	    			final Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun);
+	    			final Expression ran = makeUnaryExpression(Expression.KRAN, `f);
+	    			final Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, ran, `T);
+	    			rewrittenPredicate = makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    		}
+	    		return true;
 	    	}
 
 	    	/**
@@ -342,11 +428,14 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: f ∈ S ↠ T == f ∈ S ⤀ T ∧ dom(f) = S
 	    	 */
 	    	In(f, Tsur(S, T)) -> {
-	    		Expression pfun = makeBinaryExpression(Expression.PSUR, `S, `T);
-	    		Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun);
-	    		Expression dom = makeUnaryExpression(Expression.KDOM, `f);
-	    		Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, dom, `S);
-	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    		if (isRewrite) {
+	    			final Expression pfun = makeBinaryExpression(Expression.PSUR, `S, `T);
+	    			final Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun);
+	    			final Expression dom = makeUnaryExpression(Expression.KDOM, `f);
+	    			final Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, dom, `S);
+	    			rewrittenPredicate = makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    		}
+	    		return true;
 	    	}
 
 	    	/**
@@ -354,23 +443,29 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: f ∈ S ⤖ T == f ∈ S ↣ T ∧ ran(f) = T
 	    	 */
 	    	In(f, Tbij(S, T)) -> {
-	    		Expression pfun1 = makeBinaryExpression(Expression.TINJ, `S, `T);
-	    		Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun1);
-	    		Expression ran = makeUnaryExpression(Expression.KRAN, `f);
-	    		Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, ran, `T);
-	    		return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    		if (isRewrite) {
+	    			final Expression pfun1 = makeBinaryExpression(Expression.TINJ, `S, `T);
+	    			final Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun1);
+	    			final Expression ran = makeUnaryExpression(Expression.KRAN, `f);
+	    			final Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, ran, `T);
+	    			rewrittenPredicate = makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    		}
+	    		return true;
 	    	}
 
 	    	/**
 	    	 * DEF_IN_DPROD
-	    	 * Set Theory: E ↦ (F ↦ G) ∈ p ⊗ q == E ↦ F ∈ p ∧ E ↦ G ∈ q
+	    	 * Set Theory: E ↦ (F ↦ G) ∈ p ⊗ 	    		if (isRewrite) { ∈ p ∧ E ↦ G ∈ q
 	    	 */
 	    	In(Mapsto(E, Mapsto(F, G)), Dprod(p, q)) -> {
-				Expression eMapstoF = makeBinaryExpression(Expression.MAPSTO, `E, `F);
-				Expression eMapstoG = makeBinaryExpression(Expression.MAPSTO, `E, `G);
-				Predicate pred1 = makeRelationalPredicate(Predicate.IN, eMapstoF, `p);
-				Predicate pred2 = makeRelationalPredicate(Predicate.IN, eMapstoG, `q);
-				return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    		if (isRewrite) {
+	    			final Expression eMapstoF = makeBinaryExpression(Expression.MAPSTO, `E, `F);
+	    			final Expression eMapstoG = makeBinaryExpression(Expression.MAPSTO, `E, `G);
+	    			final Predicate pred1 = makeRelationalPredicate(Predicate.IN, eMapstoF, `p);
+	    			final Predicate pred2 = makeRelationalPredicate(Predicate.IN, eMapstoG, `q);
+	    			rewrittenPredicate = makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    		}
+	    		return true;
 	    	}
 		
 	    	/**
@@ -378,11 +473,14 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: E ↦ G ↦ (F ↦ H) ∈ p ∥ q == E ↦ F ∈ p ∧ G ↦ H ∈ q
 	    	 */
 	    	In(Mapsto(Mapsto(E, G), Mapsto(F, H)), Pprod(p, q)) -> {
-				Expression eMapstoF = makeBinaryExpression(Expression.MAPSTO, `E, `F);
-				Expression gMapstoH = makeBinaryExpression(Expression.MAPSTO, `G, `H);
-				Predicate pred1 = makeRelationalPredicate(Predicate.IN, eMapstoF, `p);
-				Predicate pred2 = makeRelationalPredicate(Predicate.IN, gMapstoH, `q);
-				return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    		if (isRewrite) {
+	    			final Expression eMapstoF = makeBinaryExpression(Expression.MAPSTO, `E, `F);
+	    			final Expression gMapstoH = makeBinaryExpression(Expression.MAPSTO, `G, `H);
+	    			final Predicate pred1 = makeRelationalPredicate(Predicate.IN, eMapstoF, `p);
+	    			final Predicate pred2 = makeRelationalPredicate(Predicate.IN, gMapstoH, `q);
+	    			rewrittenPredicate = makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    		}
+	    		return true;
 	    	}
 		
 			/**
@@ -390,10 +488,13 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 * Set Theory: S ∈ ℙ1(T)  == S ∈ ℙ(T) ∧ S ≠ ∅
 	    	 */
 	    	In(S, Pow1(T)) -> {
-				Expression powT = makeUnaryExpression(Expression.POW, `T);
-				Predicate pred1 = makeRelationalPredicate(Predicate.IN, `S, `powT);
-				Predicate pred2 = makeRelationalPredicate(Predicate.NOTEQUAL, `S, makeEmptySet(`S.getType()));
-				return makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    		if (isRewrite) {
+	    			final Expression powT = makeUnaryExpression(Expression.POW, `T);
+	    			final Predicate pred1 = makeRelationalPredicate(Predicate.IN, `S, `powT);
+	    			final Predicate pred2 = makeRelationalPredicate(Predicate.NOTEQUAL, `S, makeEmptySet(`S.getType()));
+	    			rewrittenPredicate = makeAssociativePredicate(Predicate.LAND, pred1, pred2);
+	    		}
+	    		return true;
 	    	}
 	    	
 	    	/**
@@ -401,12 +502,36 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
              * Set Theory: E ∈ a‥b == a ≤ E ∧ E ≤ b
              */
             In(E, UpTo(a, b))->{
-				Predicate pred1 = makeRelationalPredicate(Formula.LE, `a, `E );
-				Predicate pred2 = makeRelationalPredicate(Formula.LE, `E, `b);
-				return makeAssociativePredicate(Predicate.LAND, pred1, pred2);				
+            	if (isRewrite) {
+            		final Predicate pred1 = makeRelationalPredicate(Formula.LE, `a, `E );
+            		final Predicate pred2 = makeRelationalPredicate(Formula.LE, `E, `b);
+            		rewrittenPredicate = makeAssociativePredicate(Predicate.LAND, pred1, pred2);				
+            	}
+            	return true;
 			}
-	    }
-	    return predicate;
+	    } // end of %match
+    	rewrittenPredicate = predicate;
+    	return false;
+	}
+	
+	@ProverRule( { "SIMP_MULTI_IN", "SIMP_IN_SING", "DEF_IN_SETENUM",
+		"DEF_IN_MAPSTO", "DEF_IN_POW", "DEF_IN_BUNION", "DEF_IN_BINTER",
+		"DEF_IN_SETMINUS", "DEF_IN_KUNION", "DEF_IN_KINTER",
+		"DEF_IN_QUNION", "DEF_IN_QINTER", "DEF_IN_DOM", "DEF_IN_RAN",
+		"DEF_IN_CONVERSE", "DEF_IN_DOMRES", "DEF_IN_DOMSUB",
+		"DEF_IN_RANRES", "DEF_IN_RANSUB", "DEF_IN_RELIMAGE",
+		"DEF_IN_FCOMP", "DEF_IN_ID", "DEF_IN_RELDOM", "DEF_IN_RELRAN",
+		"DEF_IN_RELDOMRAN", "DEF_IN_FCT", "DEF_IN_TFCT", "DEF_IN_INJ",
+		"DEF_IN_TINJ", "DEF_IN_SURJ", "DEF_IN_TSURJ", "DEF_IN_BIJ",
+		"DEF_IN_DPROD", "DEF_IN_PPROD", "DEF_IN_POW1", "DEF_IN_UPTO" })
+	@Override
+	public Predicate rewrite(RelationalPredicate predicate) {
+		final Predicate newPredicate = super.rewrite(predicate);
+		if (!newPredicate.equals(predicate))
+			return newPredicate;
+
+		isApplicableOrRewrite(predicate);
+		return rewrittenPredicate;
 	}
 
 }

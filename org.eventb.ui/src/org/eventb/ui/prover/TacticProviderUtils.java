@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@ package org.eventb.ui.prover;
 import org.eclipse.swt.graphics.Point;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
-import org.eventb.ui.prover.DefaultTacticProvider;
+import org.eventb.ui.prover.DefaultTacticProvider.DefaultPositionApplication;
 
 /**
  * Utility class intended to give convenient facilities to tactic provider
@@ -44,7 +44,7 @@ public class TacticProviderUtils {
 	 */
 	public static Point getOperatorPosition(Predicate predicate,
 			String predStr, IPosition position) {
-		return new DefaultTacticProvider().getOperatorPosition(predicate,
-				predStr, position);
+		return new DefaultPositionApplication(null, position)
+				.getOperatorPosition(predicate, predStr);
 	}
 }

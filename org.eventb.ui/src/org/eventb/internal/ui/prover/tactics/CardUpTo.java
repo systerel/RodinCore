@@ -12,24 +12,71 @@ package org.eventb.internal.ui.prover.tactics;
 
 import java.util.List;
 
-import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.eventb.ui.prover.DefaultTacticProvider.DefaultPositionApplication;
+import org.eventb.ui.prover.ITacticApplication;
 
+/**
+ * Provider for the "card. up to" tactic.
+ * <ul>
+ * <li>Provider ID : <code>org.eventb.ui.cardUpTo</code></li>
+ * <li>Target : any</li>
+ * <ul>
+ */
 public class CardUpTo extends AbstractHypGoalTacticProvider {
 
-	@Override
-	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
-			IPosition position, String[] inputs, String globalInput) {
-		return Tactics.cardUpToRewrites(hyp, position);
+	public static class CardUpToApplication extends DefaultPositionApplication {
+
+		private static final String TACTIC_ID = "org.eventb.ui.cardUpTo";
+
+		public CardUpToApplication(Predicate hyp, IPosition position) {
+			super(hyp, position);
+		}
+
+		@Override
+		public String getTacticID() {
+			return TACTIC_ID;
+		}
+
+		@Override
+		public ITactic getTactic(String[] inputs, String globalInput) {
+			return Tactics.cardUpToRewrites(hyp, position);
+		}
+
+	}
+	
+	public static class CardUpToAppliInspector extends DefaultApplicationInspector {
+
+		public CardUpToAppliInspector(Predicate hyp) {
+			super(hyp);
+		}
+		
+		@Override
+		public void inspect(UnaryExpression expression,
+				IAccumulator<ITacticApplication> accumulator) {
+			if (expression.getTag() != Formula.KCARD) {
+				return;
+			}
+			if (expression.getChild().getTag() == Formula.UPTO) {
+				final IPosition position = accumulator.getCurrentPosition();
+				accumulator.add(new CardUpToApplication(hyp, position));
+			}
+		}
+		
 	}
 
 	@Override
-	public List<IPosition> retrievePositions(Predicate pred, FormulaFactory ff) {
-		return Tactics.cardUpToGetPositions(pred);
+	protected List<ITacticApplication> getApplicationsOnPredicate(
+			IProofTreeNode node, Predicate hyp, String globalInput,
+			Predicate predicate) {
+		return predicate.inspect(new CardUpToAppliInspector(hyp));
 	}
 
 }

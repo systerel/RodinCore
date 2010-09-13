@@ -11,41 +11,48 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.swt.graphics.Point;
+import org.eventb.core.ast.BinaryExpression;
+import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.ui.prover.IPositionApplication;
+import org.eventb.ui.prover.DefaultTacticProvider.DefaultPositionApplication;
 import org.eventb.ui.prover.ITacticApplication;
-import org.eventb.ui.prover.ITacticProvider2;
 import org.eventb.ui.prover.TacticProviderUtils;
 
-public class FunImgSimp implements ITacticProvider2 {
+/**
+ * Provider for the "Functional image simplification" tactic.
+ * <ul>
+ * <li>Provider ID : <code>org.eventb.ui.funImgSimp</code></li>
+ * <li>Target : any</li>
+ * <ul>
+ */
+public class FunImgSimp extends AbstractHypGoalTacticProvider {
 
-	private static class FunImgSimpApplication implements IPositionApplication {
+	private static class FunImgSimpApplication extends
+			DefaultPositionApplication {
 
-		private static final String GOAL_TACTIC_ID = "org.eventb.ui.funImgSimpGoal";
-		private static final String HYP_TACTIC_ID = "org.eventb.ui.funImgSimpHyp";
-
-		private final Predicate hyp;
-		private final IPosition position;
+		private static final String TACTIC_ID = "org.eventb.ui.funImgSimp";
 
 		public FunImgSimpApplication(Predicate hyp, IPosition position) {
-			this.hyp = hyp;
-			this.position = position;
+			super(hyp, position);
 		}
 
 		@Override
-		public String getHyperlinkLabel() {
-			return null;
+		public String getTacticID() {
+			return TACTIC_ID;
 		}
 
+		@Override
+		public ITactic getTactic(String[] inputs, String gInput) {
+			return Tactics.funImgSimplifies(hyp, position);
+		}
+		
 		@Override
 		public Point getHyperlinkBounds(String parsedString,
 				Predicate parsedPredicate) {
@@ -53,34 +60,34 @@ public class FunImgSimp implements ITacticProvider2 {
 					parsedString, position.getFirstChild());
 		}
 
-		@Override
-		public String getTacticID() {
-			return hyp == null ? GOAL_TACTIC_ID : HYP_TACTIC_ID;
-		}
-
-		@Override
-		public ITactic getTactic(String[] inputs, String gInput) {
-			return Tactics.funImgSimplifies(hyp, position);
-		}
 	}
 
-	private static final List<ITacticApplication> EMPTY_LIST = Collections
-			.emptyList();
+	public static class FunImgSimpApplicationInspector extends
+			DefaultApplicationInspector {
+
+		private final IProofTreeNode node;
+
+		public FunImgSimpApplicationInspector(IProofTreeNode node, Predicate hyp) {
+			super(hyp);
+			this.node = node;
+		}
+
+		@Override
+		public void inspect(BinaryExpression expression,
+				IAccumulator<ITacticApplication> accumulator) {
+			if (Tactics.isFunImgSimpApplicable(expression, node.getSequent())) {
+				final IPosition position = accumulator.getCurrentPosition().getParent();
+				accumulator.add(new FunImgSimpApplication(hyp, position));
+			}
+		}
+		
+	}
 
 	@Override
-	public List<ITacticApplication> getPossibleApplications(
-			IProofTreeNode node, Predicate hyp, String globalInput) {
-		final List<IPosition> positions = Tactics.funImgSimpGetPositions(hyp,
-				node.getSequent());
-		if (positions.isEmpty()) {
-			return EMPTY_LIST;
-		}
-		final List<ITacticApplication> tactics = new ArrayList<ITacticApplication>(
-				positions.size());
-		for (IPosition p : positions) {
-			tactics.add(new FunImgSimpApplication(hyp, p));
-		}
-		return tactics;
+	protected List<ITacticApplication> getApplicationsOnPredicate(
+			IProofTreeNode node, Predicate hyp, String globalInput,
+			Predicate predicate) {
+		return predicate.inspect(new FunImgSimpApplicationInspector(node, hyp));
 	}
 
 }

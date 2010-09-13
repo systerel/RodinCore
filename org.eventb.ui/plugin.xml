@@ -538,13 +538,13 @@
          point="org.eventb.ui.proofTactics">
       <tactic
             icon="icons/full/ctool16/falsify_prover.gif"
-            id="org.eventb.ui.falsifyGoal"
+            id="org.eventb.ui.falsify"
             interrupt="false"
-            name="%proofTactics.falsifyGoal.name"
+            name="%proofTactics.falsify.name"
             priority="1"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.ContradictGoal"
-            target="goal"
-            tooltip="%proofTactics.falsifyGoal.tooltip"/>
+            tacticProvider="org.eventb.internal.ui.prover.tactics.Contradict"
+            target="any"
+            tooltip="%proofTactics.falsify.tooltip"/>
       <tactic
             icon="icons/full/ctool16/conjI_prover.gif"
             id="org.eventb.ui.conjI"
@@ -738,15 +738,6 @@
             name="%proofDropdowns.review.name"
             priority="5"
             toolbar="org.eventb.ui.sequentToolbar"/>
-      <tactic
-            icon="icons/full/ctool16/falsify_prover.gif"
-            id="org.eventb.ui.falsifyHyp"
-            interrupt="false"
-            name="%proofTactics.falsifyHyp.name"
-            priority="1"
-            tacticProvider="org.eventb.internal.ui.prover.tactics.ContradictHyp"
-            target="hypothesis"
-            tooltip="%hypothesisProofTactics.falsify.tooltip"/>
       <tactic
             icon="icons/full/ctool16/impE1_prover.gif"
             id="org.eventb.ui.mp"

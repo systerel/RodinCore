@@ -7,33 +7,42 @@
  * 
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - now implements new ITacticProvider interface
  *******************************************************************************/
 package org.eventb.internal.pp.ui;
 
-import java.util.ArrayList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+
 import java.util.List;
 
-import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.pp.PPCore;
-import org.eventb.ui.prover.DefaultTacticProvider;
+import org.eventb.ui.prover.DefaultTacticProvider.DefaultPredicateApplication;
+import org.eventb.ui.prover.ITacticApplication;
+import org.eventb.ui.prover.ITacticProvider2;
 
-public class PPTacticProvider extends DefaultTacticProvider {
+public class PPTacticProvider implements ITacticProvider2 {
+	
+	public class PPTacticProviderApplication extends DefaultPredicateApplication {
 
-	@Override
-	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
-			IPosition position, String[] inputs, String globalInput) {
-		return PPCore.newPP(false, 0, -1);
+		@Override
+		public ITactic getTactic(String[] inputs, String globalInput) {
+			return PPCore.newPP(false, 0, -1);
+		}
+		
 	}
 
 	@Override
-	public List<IPosition> getApplicablePositions(IProofTreeNode node,
-			Predicate hyp, String input) {
-		if (node != null && node.isOpen())
-			return new ArrayList<IPosition>();
-		return null;
+	public List<ITacticApplication> getPossibleApplications(
+			IProofTreeNode node, Predicate hyp, String globalInput) {
+		if (node != null && node.isOpen()) {
+			final ITacticApplication appli = new PPTacticProviderApplication();
+			return singletonList(appli);
+		}
+		return emptyList();
 	}
 	
 	

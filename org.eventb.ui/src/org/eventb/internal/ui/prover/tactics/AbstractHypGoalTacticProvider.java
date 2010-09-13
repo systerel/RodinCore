@@ -10,39 +10,69 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 
+import static java.util.Collections.emptyList;
+
 import java.util.List;
 
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.IPosition;
+import org.eventb.core.ast.IFormulaInspector;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.ui.prover.DefaultTacticProvider;
+import org.eventb.ui.prover.ITacticApplication;
+import org.eventb.ui.prover.ITacticProvider2;
 
-public abstract class AbstractHypGoalTacticProvider extends DefaultTacticProvider {
-	
+/**
+ * Abstract class for the new tactic providers handling both hypotheses
+ * applications and goal applications.
+ * 
+ * @see ITacticProvider2
+ * @author "Thomas Muller"
+ */
+public abstract class AbstractHypGoalTacticProvider implements ITacticProvider2 {
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.ui.prover.ITacticProvider2#getPossibleApplications(org.eventb
+	 * .core.seqprover.IProofTreeNode, org.eventb.core.ast.Predicate,
+	 * java.lang.String)
+	 */
 	@Override
-	public List<IPosition> getApplicablePositions(IProofTreeNode node,
-			Predicate hyp, String input) {
+	public List<ITacticApplication> getPossibleApplications(
+			IProofTreeNode node, Predicate hyp, String globalInput) {
 		if (node == null) {
-			return null;
+			return emptyList();
 		}
-		final Predicate predicate;
-		if (hyp != null) {
-			predicate = hyp;
-		} else {
-			predicate = node.getSequent().goal();
-		}
-		return getPositions(predicate, node.getFormulaFactory());
+		final Predicate goal = node.getSequent().goal();
+		final Predicate predicate = (hyp != null) ? hyp : goal;
+		return getApplicationsOnPredicate(node, hyp, globalInput, predicate);
 	}
-	
-	public abstract List<IPosition> retrievePositions(Predicate pred, FormulaFactory ff);
-	
-	private List<IPosition> getPositions(Predicate pred, FormulaFactory ff) {
-		final List<IPosition> positions = retrievePositions(pred, ff);
-		if (positions.size() == 0) {
-			return null;
-		}
-		return positions;
-	}
-		
+
+	/**
+	 * Method that clients should implement in order to give the applications of
+	 * a tactic they build for given <code>predicate</code> which is the
+	 * hypothesis <code>hyp</code>, or the goal (if the hypothesis
+	 * <code>hyp</code> is <code>null</code>). If the positions for applications
+	 * are non trivial (e.g. different from <code>IPosition.Root</code>),
+	 * clients should return the applications built by an
+	 * {@link IFormulaInspector}. See {@link DefaultApplicationInspector}.
+	 * 
+	 * @param node
+	 *            the current proof tree node
+	 * @param hyp
+	 *            the hypothesis or <code>null</code> if the goal is taken into
+	 *            account
+	 * 
+	 * @param globalInput
+	 *            the input for the tactic (taken from the input text in the
+	 *            Proof Control View) in case of global tactic
+	 * @param predicate
+	 *            the predicate to consider : the hypothesis if is not
+	 *            <code>null</code> or the goal
+	 * @return the list of possible tactic applications
+	 */
+	protected abstract List<ITacticApplication> getApplicationsOnPredicate(
+			IProofTreeNode node, Predicate hyp, String globalInput,
+			Predicate predicate);
+
 }

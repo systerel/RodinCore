@@ -78,7 +78,7 @@ public class FunImgSimpImpl {
 		return null;
 	}
 
-	private static boolean isApplicable(Expression f, IProverSequent sequent) {
+	public static boolean isApplicable(Expression f, IProverSequent sequent) {
 		return searchFunction(f, sequent) != null;
 	}
 

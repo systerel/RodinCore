@@ -46,13 +46,114 @@ import org.eventb.core.seqprover.ProverRule;
  */
 @SuppressWarnings("unused")
 public class RemoveNegationRewriterImpl extends AutoRewriterImpl {
+	
+	private final boolean isRewrite; 
+	private Predicate rewrittenPredicate;
 
+	/**
+	 * Default constructor.
+	 */
 	public RemoveNegationRewriterImpl(FormulaFactory ff) {
-		super(ff);
+		this(ff, true);
 	}
-
+	
+	/**
+	 * Constructor using the flag <code>isRewrite</code> telling if the rewriter
+	 * should give the result of rewriting, or just tell if the rewriting is
+	 * possible.
+	 */
+	public RemoveNegationRewriterImpl(FormulaFactory ff, boolean isRewrite) {
+		super(ff);
+		this.isRewrite = isRewrite;
+	} 
+	
 	%include {FormulaV2.tom}
 	
+	public boolean isApplicableOrRewrite(Predicate predicate) {
+		
+		%match (Predicate predicate) {
+
+			/**
+			 * DEF_SPECIAL_NOT_EQUAL
+			 * Negation: ¬(S = ∅) == ∃x·x ∈ S
+			 */
+			Not(Equal(S, EmptySet())) -> {
+				if (isRewrite) {
+					rewrittenPredicate = new FormulaUnfold(ff).makeExistantial(`S);
+				}
+				return true;
+			}
+			
+			/**
+			 * DEF_SPECIAL_NOT_EQUAL
+			 * Negation: ¬(∅ = S) == ∃x·x ∈ S
+			 */
+			Not(Equal(EmptySet(), S)) -> {
+				if (isRewrite) {
+					rewrittenPredicate = new FormulaUnfold(ff).makeExistantial(`S);
+				}
+				return true;
+			}
+			
+			/**
+			 * DISTRI_NOT_AND
+			 * Negation: ¬(P ∧ ... ∧ Q) == ¬P ⋁ ... ⋁ ¬Q
+			 */
+			Not(Land(children)) -> {
+				if (isRewrite) {
+					rewrittenPredicate = new FormulaUnfold(ff).deMorgan(Formula.LOR, `children);
+				}
+				return true;
+			}
+			
+			/**
+			 * DISTRI_NOT_OR
+			 * Negation: ¬(P ⋁ ... ⋁ Q) == ¬P ∧ ... ∧ ¬Q
+			 */
+			Not(Lor(children)) -> {
+				if (isRewrite) {
+					rewrittenPredicate = new FormulaUnfold(ff).deMorgan(Formula.LAND, `children);
+				}
+				return true;
+			}
+			
+			/**
+			 * DERIV_NOT_IMP
+			 * Negation: ¬(P ⇒ Q) == P ∧ ¬Q
+			 */
+			Not(Limp(P, Q)) -> {
+				if (isRewrite) {
+					rewrittenPredicate = new FormulaUnfold(ff).negImp(`P, `Q);
+				}
+				return true;
+			}
+			
+			/**
+			 * DERIV_NOT_FORALL
+			 * Negation: ¬(∀x·P) == ∃x·¬P
+			 */
+			Not(ForAll(idents, P)) -> {
+				if (isRewrite) {
+					rewrittenPredicate = new FormulaUnfold(ff).negQuant(Formula.EXISTS, `idents, `P);
+				}
+				return true;
+			}
+			
+			/**
+			 * DERIV_NOT_EXISTS
+			 * Negation: ¬(∃x·P) == ∀x·¬P
+			 */
+			Not(Exists(idents, P)) -> {
+				if (isRewrite) {
+					rewrittenPredicate = new FormulaUnfold(ff).negQuant(Formula.FORALL, `idents, `P);
+				}
+				return true;
+			}
+	    }
+		rewrittenPredicate = predicate;
+	    return false;
+	}
+		
 	@ProverRule( { "DEF_SPECIAL_NOT_EQUAL", "DISTRI_NOT_AND", "DISTRI_NOT_OR",
 			       "DERIV_NOT_IMP", "DERIV_NOT_FORALL", "DERIV_NOT_EXISTS" })
 	@Override
@@ -61,65 +162,8 @@ public class RemoveNegationRewriterImpl extends AutoRewriterImpl {
 		if (!newPredicate.equals(predicate))
 			return newPredicate;
 			
-	    %match (Predicate predicate) {
-
-			/**
-			 * DEF_SPECIAL_NOT_EQUAL
-			 * Negation: ¬(S = ∅) == ∃x·x ∈ S
-			 */
-			Not(Equal(S, EmptySet())) -> {
-				return new FormulaUnfold(ff).makeExistantial(`S);
-			}
-			
-			/**
-			 * DEF_SPECIAL_NOT_EQUAL
-			 * Negation: ¬(∅ = S) == ∃x·x ∈ S
-			 */
-			Not(Equal(EmptySet(), S)) -> {
-				return new FormulaUnfold(ff).makeExistantial(`S);
-			}
-			
-			/**
-			 * DISTRI_NOT_AND
-			 * Negation: ¬(P ∧ ... ∧ Q) == ¬P ⋁ ... ⋁ ¬Q
-			 */
-			Not(Land(children)) -> {
-				return new FormulaUnfold(ff).deMorgan(Formula.LOR, `children);
-			}
-			
-			/**
-			 * DISTRI_NOT_OR
-			 * Negation: ¬(P ⋁ ... ⋁ Q) == ¬P ∧ ... ∧ ¬Q
-			 */
-			Not(Lor(children)) -> {
-				return new FormulaUnfold(ff).deMorgan(Formula.LAND, `children);
-			}
-			
-			/**
-			 * DERIV_NOT_IMP
-			 * Negation: ¬(P ⇒ Q) == P ∧ ¬Q
-			 */
-			Not(Limp(P, Q)) -> {
-				return new FormulaUnfold(ff).negImp(`P, `Q);
-			}
-			
-			/**
-			 * DERIV_NOT_FORALL
-			 * Negation: ¬(∀x·P) == ∃x·¬P
-			 */
-			Not(ForAll(idents, P)) -> {
-				return new FormulaUnfold(ff).negQuant(Formula.EXISTS, `idents, `P);
-			}
-			
-			/**
-			 * DERIV_NOT_EXISTS
-			 * Negation: ¬(∃x·P) == ∀x·¬P
-			 */
-			Not(Exists(idents, P)) -> {
-				return new FormulaUnfold(ff).negQuant(Formula.FORALL, `idents, `P);
-			}
-	    }
-	    return predicate;
+	    isApplicableOrRewrite(predicate);
+	    return rewrittenPredicate;
 	}
 
 }

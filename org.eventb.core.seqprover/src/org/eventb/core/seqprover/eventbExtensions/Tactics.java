@@ -149,7 +149,9 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RelOvrRewri
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusion;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusionUniversal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembershipRewriterImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegation;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegationRewriterImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetEqlRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetMinusRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.StrictInclusionRewrites;
@@ -1019,6 +1021,22 @@ public class Tactics {
 		}
 		return true;
 	}
+	
+	/**
+	 * Tells if the tactic RemoveNegation can apply.
+	 * 
+	 * @param expr
+	 *            the expression
+	 * @param sequent
+	 *            the current sequent
+	 * @return <code>true</code> if the tactic is not applicable,
+	 *         <code>false</code> otherwise
+	 */
+	public static boolean isRemoveNegationApplicable(Predicate pred,
+			final FormulaFactory ff) {
+		return new RemoveNegationRewriterImpl(ff, false)
+				.isApplicableOrRewrite(pred);
+	}
 
 	public static List<IPosition> rnGetPositions(Predicate pred, final FormulaFactory ff) {
 		return pred.getPositions(new DefaultFilter() {
@@ -1205,6 +1223,22 @@ public class Tactics {
 			}
 
 		});
+	}
+	
+	/**
+	 * Tells if the tactic RemoveMembership can apply.
+	 * 
+	 * @param expr
+	 *            the expression
+	 * @param sequent
+	 *            the current sequent
+	 * @return <code>true</code> if the tactic is not applicable,
+	 *         <code>false</code> otherwise
+	 */
+	public static boolean isRemoveMembershipApplicable(FormulaFactory ff,
+			Predicate pred) {
+		return new RemoveMembershipRewriterImpl(ff, false)
+				.isApplicableOrRewrite(pred);
 	}
 
 	public static ITactic removeMembership(Predicate hyp, IPosition position) {
@@ -2625,6 +2659,20 @@ public class Tactics {
 	public static List<IPosition> funCompImgGetPositions(Predicate predicate) {
 		return new FunCompImg().getPositions(predicate, false);
 	}
+	
+	/**
+	 * Tells if the the tactic "function composition image" {@link FunCompImg}
+	 * is applicable to the given position.
+	 * <p>
+	 * 
+	 * @param expression
+	 *            an expression
+	 * @return <code>true</code> if the tactic "function composition image" is
+	 *         applicable to the given expression, <code>false</code> otherwise
+	 */
+	public static boolean isFunCompImgApplicable(Expression expression) {
+		return new FunCompImg().isApplicable(expression);
+	}
 
 	
 	/**
@@ -3196,6 +3244,18 @@ public class Tactics {
 		return new ArrayList<IPosition>();
 	}
 
+	/**
+	 * Tells if the tactic "finite minimum" is applicable {@link FiniteMin} to a
+	 * predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return <code>true</code> if the tactic "finite minimum" is applicable
+	 */
+	public static boolean finiteMinIsApplicable(Predicate predicate) {
+		return new FiniteMin().isApplicable(predicate);
+	}
 	
 	/**
 	 * Return the tactic "Finite minimum" {@link FiniteMin}.
@@ -3224,6 +3284,19 @@ public class Tactics {
 			return Arrays.asList(new IPosition[] { IPosition.ROOT });
 		}
 		return new ArrayList<IPosition>();
+	}
+	
+	/**
+	 * Tells if the tactic "finite maximum" is applicable {@link FiniteMax} to a
+	 * predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return <code>true</code> if the tactic "finite maximum" is applicable
+	 */
+	public static boolean finiteMaxIsApplicable(Predicate predicate) {
+		return new FiniteMax().isApplicable(predicate);
 	}
 
 
@@ -3317,6 +3390,20 @@ public class Tactics {
 	 */
 	public static List<IPosition> cardComparisonGetPositions(Predicate goal) {
 		return new CardComparison().getRootPositions(goal);
+	}
+	
+	/**
+	 * Tells if the tactic "cardinality arithmetic comparison" is applicable
+	 * {@link CardComparison} to a predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return <code>true</code> if the tactic "cardinality arithmetic
+	 *         comparison" is applicable
+	 */
+	public static boolean isCardComparisonApplicable(Predicate goal) {
+		return new CardComparison().isApplicable(goal);
 	}
 
 	/**
@@ -3457,6 +3544,18 @@ public class Tactics {
 	public static ITactic partitionRewrites(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new PartitionRewrites(),
 				new PartitionRewrites.Input(hyp, position));
+	}
+
+	/**
+	 * Returns the arithmetic rewriter.
+	 * 
+	 * @param ff
+	 *            the currently used formula factory
+	 * @return the arithmetic rewriter
+	 * @since 2.0
+	 */
+	public static IFormulaRewriter getArithRewriter(FormulaFactory ff) {
+		return new ArithRewriterImpl(ff);
 	}
 
 	/**
@@ -3649,6 +3748,23 @@ public class Tactics {
 	public static List<IPosition> funImgSimpGetPositions(Predicate hyp,
 			IProverSequent sequent) {
 		return FunImgSimpImpl.getApplicablePositions(hyp, sequent);
+	}
+
+	/**
+	 * Tells if the tactic funImgSimpRewrites can apply.
+	 * 
+	 * @param expr
+	 *            the expression to rewrite
+	 * @param sequent
+	 *            the current sequent
+	 * @return <code>true</code> if the tactic is not applicable,
+	 *         <code>false</code> otherwise
+	 * 
+	 * @since 1.4
+	 */
+	public static boolean isFunImgSimpApplicable(Expression expr,
+			IProverSequent sequent) {
+		return FunImgSimpImpl.isApplicable(expr, sequent);
 	}
 	
 	

@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -19,10 +29,10 @@ public class Prune implements IProofCommand {
 
 	@Override
 	public boolean isApplicable(IUserSupport us, Predicate hyp, String input) {
-		IProofState currentPO = us.getCurrentPO();
+		final IProofState currentPO = us.getCurrentPO();
 		if (currentPO == null)
 			return false;
-		IProofTreeNode node = currentPO.getCurrentNode();
+		final IProofTreeNode node = currentPO.getCurrentNode();
 		return (node != null) && !node.isOpen();
 	}
 

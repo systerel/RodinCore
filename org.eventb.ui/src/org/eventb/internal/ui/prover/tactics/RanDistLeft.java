@@ -17,38 +17,91 @@ import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.eventb.ui.prover.DefaultTacticProvider.DefaultPositionApplication;
+import org.eventb.ui.prover.ITacticApplication;
 
+/**
+ * Provider for the "rewrites range distribution left" tactic.
+ * <ul>
+ * <li>Provider ID : <code>org.eventb.ui.ranDistLeft</code></li>
+ * <li>Target : any</li>
+ * <ul>
+ */
 public class RanDistLeft extends AbstractHypGoalTacticProvider {
 
-	@Override
-	@Deprecated
-	public ITactic getTactic(IProofTreeNode node, Predicate hyp,
-			IPosition position, String[] inputs) {
-		return Tactics.ranDistLeftRewrites(hyp, position);
+	public static class RanDistLeftApplication extends DefaultPositionApplication {
+
+		private static final String TACTIC_ID = "org.eventb.ui.ranDistLeft";
+
+		public RanDistLeftApplication(Predicate hyp, IPosition position) {
+			super(hyp, position);
+		}
+
+		@Override
+		public ITactic getTactic(String[] inputs, String globalInput) {
+			return Tactics.ranDistLeftRewrites(hyp, position);
+		}
+
+		@Override
+		public String getTacticID() {
+			return TACTIC_ID;
+		}
+
+		@Override
+		public Point getHyperlinkBounds(String parsedString,
+				Predicate parsedPredicate) {
+			return getOperatorPosition(parsedPredicate, parsedString);
+		}
+
+		@Override
+		public Point getOperatorPosition(Predicate predicate, String predStr) {
+			final Formula<?> subFormula = predicate.getSubFormula(position);
+			final Expression left = ((BinaryExpression) subFormula).getLeft();
+			final AssociativeExpression leftAssocExp = (AssociativeExpression) left;
+			final Expression[] children = leftAssocExp.getChildren();
+			final Expression first = children[0];
+			final Expression second = children[1];
+			return getOperatorPosition(predStr, first.getSourceLocation()
+					.getEnd() + 1, second.getSourceLocation().getStart());
+		}
+
+	}
+
+	public static class RanDistLeftAppliInspector extends
+			DefaultApplicationInspector {
+
+		public RanDistLeftAppliInspector(Predicate hyp) {
+			super(hyp);
+		}
+
+		@Override
+		public void inspect(BinaryExpression expression,
+				IAccumulator<ITacticApplication> accumulator) {
+			if (expression.getTag() != Expression.RANRES
+					|| expression.getTag() != Expression.RANSUB) {
+				return;
+			}
+			final Expression left = expression.getLeft();
+			if (left.getTag() == Expression.BUNION
+					|| left.getTag() == Expression.BINTER) {
+				final IPosition position = accumulator.getCurrentPosition();
+				accumulator.add(new RanDistLeftApplication(hyp, position));
+			}
+		}
+
 	}
 
 	@Override
-	public List<IPosition> retrievePositions(Predicate pred, FormulaFactory ff) {
-		return Tactics.ranDistLeftGetPositions(pred);
-	}
-
-	@Override
-	public Point getOperatorPosition(Predicate predicate, String predStr,
-			IPosition position) {
-		final Formula<?> subFormula = predicate.getSubFormula(position);
-		final Expression left = ((BinaryExpression) subFormula).getLeft();
-		final AssociativeExpression leftAssocExp = (AssociativeExpression) left;
-		final Expression[] children = leftAssocExp.getChildren();
-		final Expression first = children[0];
-		final Expression second = children[1];
-		return getOperatorPosition(predStr, first.getSourceLocation()
-				.getEnd() + 1, second.getSourceLocation().getStart());
+	protected List<ITacticApplication> getApplicationsOnPredicate(
+			IProofTreeNode node, Predicate hyp, String globalInput,
+			Predicate predicate) {
+		return predicate.inspect(new RanDistLeftAppliInspector(hyp));
 	}
 
 }
