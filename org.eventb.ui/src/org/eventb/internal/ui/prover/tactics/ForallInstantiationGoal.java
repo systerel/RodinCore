@@ -22,7 +22,7 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.DefaultTacticProvider.DefaultPositionApplication;
 import org.eventb.ui.prover.ITacticApplication;
-import org.eventb.ui.prover.ITacticProvider2;
+import org.eventb.ui.prover.ITacticProvider;
 
 /**
  * Provider for the "∀ goal (frees)" tactic.
@@ -31,7 +31,7 @@ import org.eventb.ui.prover.ITacticProvider2;
  * <li>Target : goal</li>
  * <ul>
  */
-public class ForallInstantiationGoal implements ITacticProvider2 {
+public class ForallInstantiationGoal implements ITacticProvider {
 
 	public static class ForallInstantiationGoalApplication extends
 			DefaultPositionApplication {

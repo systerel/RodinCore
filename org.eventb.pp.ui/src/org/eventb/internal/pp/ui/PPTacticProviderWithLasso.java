@@ -23,9 +23,9 @@ import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.pp.PPCore;
 import org.eventb.ui.prover.DefaultTacticProvider.DefaultPredicateApplication;
 import org.eventb.ui.prover.ITacticApplication;
-import org.eventb.ui.prover.ITacticProvider2;
+import org.eventb.ui.prover.ITacticProvider;
 
-public class PPTacticProviderWithLasso implements ITacticProvider2 {
+public class PPTacticProviderWithLasso implements ITacticProvider {
 
 	public static class PPTacticProviderWithLassoApplication extends
 			DefaultPredicateApplication {

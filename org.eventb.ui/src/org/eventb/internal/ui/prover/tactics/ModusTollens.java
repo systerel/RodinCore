@@ -23,7 +23,7 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.DefaultTacticProvider.DefaultPositionApplication;
 import org.eventb.ui.prover.ITacticApplication;
-import org.eventb.ui.prover.ITacticProvider2;
+import org.eventb.ui.prover.ITacticProvider;
 
 /**
  * Provider for the "⇒ hyp mt (hyp)" tactic.
@@ -32,7 +32,7 @@ import org.eventb.ui.prover.ITacticProvider2;
  * <li>Target : hypothesis</li>
  * <ul>
  */
-public class ModusTollens implements ITacticProvider2 {
+public class ModusTollens implements ITacticProvider {
 
 	public class ModusTollensApplication extends DefaultPositionApplication {
 

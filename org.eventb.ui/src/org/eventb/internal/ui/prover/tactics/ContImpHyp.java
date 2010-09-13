@@ -23,7 +23,7 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.DefaultTacticProvider.DefaultPositionApplication;
 import org.eventb.ui.prover.ITacticApplication;
-import org.eventb.ui.prover.ITacticProvider2;
+import org.eventb.ui.prover.ITacticProvider;
 
 /**
  * Provider for the "mp impl" tactic.
@@ -33,7 +33,7 @@ import org.eventb.ui.prover.ITacticProvider2;
  * <li>Target : hypothesis</li>
  * <ul>
  */
-public class ContImpHyp implements ITacticProvider2 {
+public class ContImpHyp implements ITacticProvider {
 
 	public static class CompImpHypApplication extends
 			DefaultPositionApplication {

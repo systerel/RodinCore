@@ -44,12 +44,12 @@ import org.eventb.core.seqprover.ITactic;
  * @author htson
  *         <p>
  *         This class provides a default implementation for
- *         {@link org.eventb.ui.prover.ITacticProvider2}. Plug-in writers should
+ *         {@link org.eventb.ui.prover.ITacticProvider}. Plug-in writers should
  *         extends this class in order to provide their own tactic to the
  *         Proving User Interface.
  * @since 1.0
  */
-public class DefaultTacticProvider implements ITacticProvider2 {
+public class DefaultTacticProvider implements ITacticProvider {
 
 	public static class DefaultPositionApplication implements
 			IPositionApplication {

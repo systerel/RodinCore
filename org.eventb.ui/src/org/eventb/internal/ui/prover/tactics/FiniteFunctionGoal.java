@@ -24,7 +24,7 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.DefaultTacticProvider.DefaultPositionApplication;
 import org.eventb.ui.prover.ITacticApplication;
-import org.eventb.ui.prover.ITacticProvider2;
+import org.eventb.ui.prover.ITacticProvider;
 
 /**
  * Provider for the "finite of function" tactic.
@@ -33,7 +33,7 @@ import org.eventb.ui.prover.ITacticProvider2;
  * <li>Target : goal</li>
  * <ul>
  */
-public class FiniteFunctionGoal implements ITacticProvider2 {
+public class FiniteFunctionGoal implements ITacticProvider {
 
 	public static class FiniteFunctionGoalApplication extends
 			DefaultPositionApplication {

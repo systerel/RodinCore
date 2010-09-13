@@ -18,16 +18,16 @@ import org.eventb.core.ast.IFormulaInspector;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.ui.prover.ITacticApplication;
-import org.eventb.ui.prover.ITacticProvider2;
+import org.eventb.ui.prover.ITacticProvider;
 
 /**
  * Abstract class for the new tactic providers handling both hypotheses
  * applications and goal applications.
  * 
- * @see ITacticProvider2
+ * @see ITacticProvider
  * @author "Thomas Muller"
  */
-public abstract class AbstractHypGoalTacticProvider implements ITacticProvider2 {
+public abstract class AbstractHypGoalTacticProvider implements ITacticProvider {
 
 	/*
 	 * (non-Javadoc)

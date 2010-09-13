@@ -22,7 +22,7 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.DefaultTacticProvider.DefaultPositionApplication;
 import org.eventb.ui.prover.ITacticApplication;
-import org.eventb.ui.prover.ITacticProvider2;
+import org.eventb.ui.prover.ITacticProvider;
 
 /**
  * Provider for the "he (hyp)" tactic.
@@ -31,7 +31,7 @@ import org.eventb.ui.prover.ITacticProvider2;
  * <li>Target : hypothesis</li>
  * <ul>
  */
-public class He implements ITacticProvider2 {
+public class He implements ITacticProvider {
 
 	public static class HeAppliction extends DefaultPositionApplication {
 

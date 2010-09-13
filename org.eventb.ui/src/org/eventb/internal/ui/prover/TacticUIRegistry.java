@@ -35,7 +35,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.prover.IProofCommand;
 import org.eventb.ui.prover.ITacticApplication;
-import org.eventb.ui.prover.ITacticProvider2;
+import org.eventb.ui.prover.ITacticProvider;
 
 public class TacticUIRegistry {
 	// The identifier of the extension point (value
@@ -81,9 +81,9 @@ public class TacticUIRegistry {
 
 	private static class TP2Provider implements IApplicationProvider {
 
-		private final ITacticProvider2 provider;
+		private final ITacticProvider provider;
 
-		public TP2Provider(ITacticProvider2 provider) {
+		public TP2Provider(ITacticProvider provider) {
 			this.provider = provider;
 		}
 
@@ -199,8 +199,8 @@ public class TacticUIRegistry {
 
 		private static IApplicationProvider getAppliProvider(Object candidate,
 				String id, String tip, ImageDescriptor iconDesc) {
-			if (candidate instanceof ITacticProvider2) {
-				return new TP2Provider(((ITacticProvider2) candidate));
+			if (candidate instanceof ITacticProvider) {
+				return new TP2Provider(((ITacticProvider) candidate));
 			}
 			return null;
 		}

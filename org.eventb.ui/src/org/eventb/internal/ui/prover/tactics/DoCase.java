@@ -21,7 +21,7 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.DefaultTacticProvider.DefaultPredicateApplication;
 import org.eventb.ui.prover.ITacticApplication;
-import org.eventb.ui.prover.ITacticProvider2;
+import org.eventb.ui.prover.ITacticProvider;
 
 /**
  * Provider for the "dc" tactic.
@@ -30,7 +30,7 @@ import org.eventb.ui.prover.ITacticProvider2;
  * <li>Target : global (predicate)</li>
  * <ul>
  */
-public class DoCase implements ITacticProvider2 {
+public class DoCase implements ITacticProvider {
 
 	public static class DoCaseApplication extends DefaultPredicateApplication {
 

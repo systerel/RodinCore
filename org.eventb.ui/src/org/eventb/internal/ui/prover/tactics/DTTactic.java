@@ -20,7 +20,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.ui.prover.IPositionApplication;
 import org.eventb.ui.prover.ITacticApplication;
-import org.eventb.ui.prover.ITacticProvider2;
+import org.eventb.ui.prover.ITacticProvider;
 import org.eventb.ui.prover.TacticProviderUtils;
 
 /**
@@ -29,7 +29,7 @@ import org.eventb.ui.prover.TacticProviderUtils;
  * @author Nicolas Beauger
  * 
  */
-public abstract class DTTactic implements ITacticProvider2 {
+public abstract class DTTactic implements ITacticProvider {
 
 	private static final List<ITacticApplication> EMPTY_LIST = Collections
 			.emptyList();

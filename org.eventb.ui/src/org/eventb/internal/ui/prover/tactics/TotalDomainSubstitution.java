@@ -29,10 +29,10 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.IPositionApplication;
 import org.eventb.ui.prover.ITacticApplication;
-import org.eventb.ui.prover.ITacticProvider2;
+import org.eventb.ui.prover.ITacticProvider;
 import org.eventb.ui.prover.TacticProviderUtils;
 
-public class TotalDomainSubstitution implements ITacticProvider2 {
+public class TotalDomainSubstitution implements ITacticProvider {
 
 	private static class TotalDomApplication implements IPositionApplication {
 

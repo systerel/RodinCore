@@ -21,7 +21,7 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.ui.prover.DefaultTacticProvider.DefaultPredicateApplication;
 import org.eventb.ui.prover.ITacticApplication;
-import org.eventb.ui.prover.ITacticProvider2;
+import org.eventb.ui.prover.ITacticProvider;
 
 /**
  * Provider for the "post tactic" tactic.
@@ -30,7 +30,7 @@ import org.eventb.ui.prover.ITacticProvider2;
  * <li>Target : global (predicate)</li>
  * <ul>
  */
-public class PostTactic implements ITacticProvider2 {
+public class PostTactic implements ITacticProvider {
 
 	public static class PostTacticApplication extends
 			DefaultPredicateApplication {

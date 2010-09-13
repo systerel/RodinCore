@@ -22,9 +22,9 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.pp.PPCore;
 import org.eventb.ui.prover.DefaultTacticProvider.DefaultPredicateApplication;
 import org.eventb.ui.prover.ITacticApplication;
-import org.eventb.ui.prover.ITacticProvider2;
+import org.eventb.ui.prover.ITacticProvider;
 
-public class PPTacticProviderRestricted implements ITacticProvider2 {
+public class PPTacticProviderRestricted implements ITacticProvider {
 
 	public static class PPTacticProviderRestrictedApplication extends
 			DefaultPredicateApplication {

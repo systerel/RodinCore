@@ -22,7 +22,7 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.DefaultTacticProvider.DefaultPositionApplication;
 import org.eventb.ui.prover.ITacticApplication;
-import org.eventb.ui.prover.ITacticProvider2;
+import org.eventb.ui.prover.ITacticProvider;
 
 /**
  * Provider for the "Existence of minimum using finite" tactic.
@@ -31,7 +31,7 @@ import org.eventb.ui.prover.ITacticProvider2;
  * <li>Target : goal</li>
  * <ul>
  */
-public class FiniteMinGoal implements ITacticProvider2 {
+public class FiniteMinGoal implements ITacticProvider {
 
 	public static class FiniteMinGoalApplication extends
 			DefaultPositionApplication {

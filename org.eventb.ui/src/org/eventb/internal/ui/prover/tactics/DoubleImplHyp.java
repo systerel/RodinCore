@@ -24,7 +24,7 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.DefaultTacticProvider.DefaultPredicateApplication;
 import org.eventb.ui.prover.ITacticApplication;
-import org.eventb.ui.prover.ITacticProvider2;
+import org.eventb.ui.prover.ITacticProvider;
 
 /**
  * Provider for the "db impl" tactic.
@@ -33,7 +33,7 @@ import org.eventb.ui.prover.ITacticProvider2;
  * <li>Target : hypothesis</li>
  * <ul>
  */
-public class DoubleImplHyp implements ITacticProvider2 {
+public class DoubleImplHyp implements ITacticProvider {
 	
 	public static class DoubleImplHypApplication extends DefaultPredicateApplication {
 

@@ -21,7 +21,7 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.DefaultTacticProvider.DefaultPredicateApplication;
 import org.eventb.ui.prover.ITacticApplication;
-import org.eventb.ui.prover.ITacticProvider2;
+import org.eventb.ui.prover.ITacticProvider;
 
 /**
  * Provider for the "lasoo" tactic.
@@ -30,7 +30,7 @@ import org.eventb.ui.prover.ITacticProvider2;
  * <li>Target : global (predicate)</li>
  * <ul>
  */
-public class Lasoo implements ITacticProvider2 {
+public class Lasoo implements ITacticProvider {
 
 	public static class LasooApplication extends DefaultPredicateApplication {
 
