@@ -28,23 +28,28 @@ public class IsFunImageGoalTests extends AbstractManualInferenceTests {
 	protected SuccessfulTest[] getSuccessfulTests() {
 		return new SuccessfulTest[] {
 
+				new SuccessfulTest(" f ∈ ℕ → (ℕ → ℕ) |- 0∈dom(f(x))",
+						"f ∈ ℕ → (ℕ → ℕ)", "1.0",
+						"{f=ℙ(ℤ×ℙ(ℤ×ℤ)), x=ℤ}[][][f ∈ ℕ → (ℕ → ℕ) ;; f(x)∈ℕ → ℕ] |- 0 ∈ dom(f(x))"),
+
+				new SuccessfulTest(" f ∈ ℤ ⇸ ℤ |- 0<f(x) ", "f ∈ ℤ ⇸ ℤ ", "1",
+						"{f=ℙ(ℤ×ℤ), x=ℤ}[][][f∈ℤ ⇸  ℤ ;; f(x)∈ℤ] |- 0<f(x)"),
+
 				new SuccessfulTest(" f ∈ ℕ → (ℕ → ℕ) |- f(x) ∈ ℤ ⇸ ℤ",
 						"f ∈ ℕ → (ℕ → ℕ)", "0",
 						"{f=ℙ(ℤ×ℙ(ℤ×ℤ)), x=ℤ}[][][f∈ℕ → (ℕ → ℕ) ;; f(x)∈ℕ → ℕ] |- f(x)∈ℤ ⇸ ℤ"),
 
 				new SuccessfulTest(
-						" f ∈ ℕ ↠ (ℕ → (ℕ → ℕ)) |- f(x)(y) ∈ ℤ ⇸ ℤ",
+						" f ∈ ℕ ↠ (ℕ → (ℕ → ℕ)) |- 0∈dom(f(x)(y))",
 						"f ∈ ℕ ↠ (ℕ → (ℕ → ℕ))",
-						"0.0",
-						"{f=ℙ(ℤ×ℙ(ℤ×ℙ(ℤ×ℤ))), y=ℤ, x=ℤ}[][][f∈ℕ ↠ (ℕ → (ℕ → ℕ)) ;; f(x)∈ℕ → (ℕ → ℕ)] |- f(x)(y)∈ℤ ⇸ ℤ"),
+						"1.0.0",
+						"{f=ℙ(ℤ×ℙ(ℤ×ℙ(ℤ×ℤ))), y=ℤ, x=ℤ}[][][f∈ℕ ↠ (ℕ → (ℕ → ℕ)) ;; f(x)∈ℕ → (ℕ → ℕ)] |- 0∈dom(f(x)(y))"),
 
 				new SuccessfulTest(
 						"f ∈ ℕ ↠ (ℕ → (ℕ → ℕ)) ;; f(x)∈ ℕ → (ℕ → ℕ) |- f(x)(y) ∈ ℤ ⇸ ℤ",
 						"f ∈ ℕ ↠ (ℕ → (ℕ → ℕ))",
 						"0.0",
-						"{f=ℙ(ℤ×ℙ(ℤ×ℙ(ℤ×ℤ))), y=ℤ, x=ℤ}[][][f∈ℕ ↠ (ℕ → (ℕ → ℕ)) ;; f(x)∈ℕ → (ℕ → ℕ)] |- f(x)(y)∈ℤ ⇸ ℤ")
-
-		};
+						"{f=ℙ(ℤ×ℙ(ℤ×ℙ(ℤ×ℤ))), y=ℤ, x=ℤ}[][][f∈ℕ ↠ (ℕ → (ℕ → ℕ)) ;; f(x)∈ℕ → (ℕ → ℕ)] |- f(x)(y)∈ℤ ⇸ ℤ") };
 
 	}
 
@@ -58,13 +63,13 @@ public class IsFunImageGoalTests extends AbstractManualInferenceTests {
 				"0",
 
 				// The input hypothesis is not an inclusion.
-				" y=0 ;; f ∈ ℕ → (ℕ → ℕ) |- f(x) ∈ ℤ ⇸ ℤ",
+				" y=0 ;; f ∈ ℕ → (ℕ → ℕ) |- f(x) = f(y)",
 				"y=0",
 				"0",
 
 				// The right side of the inclusion is neither a relational
 				// operator nor a functional operator.
-				" y∈ℕ ;; f ∈ ℕ → (ℕ → ℕ) |- f(x) ∈ ℤ ⇸ ℤ",
+				" y∈ℕ ;; f ∈ ℕ → (ℕ → ℕ) |- f(x) = f(y)",
 				"y∈ℕ",
 				"0",
 
@@ -78,10 +83,9 @@ public class IsFunImageGoalTests extends AbstractManualInferenceTests {
 				// sub-formula of the goal.
 				" g ∈ ℕ → (ℕ → ℕ) ;; f ∈ ℕ → (ℕ → ℕ) |- f(x) ∈ ℤ ⇸ ℤ",
 				"g ∈ ℕ → (ℕ → ℕ)", "1.0",
-				
+
 				// The function application is not top level
-				" f ∈ ℕ → (ℕ → ℕ) |- x=0 ⇒ f(x) ∈ ℤ ⇸ ℤ",
-				"f ∈ ℕ → (ℕ → ℕ)", "0"
+				" f ∈ ℕ → (ℕ → ℕ) |- x=0 ⇒ 0∈dom(f(x))", "f ∈ ℕ → (ℕ → ℕ)", "0"
 
 		};
 	}
