@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added unselected added hypotheses
  *******************************************************************************/
 package org.eventb.core.basis;
 
@@ -49,13 +53,18 @@ public class PRRuleAntecedent extends EventBProofElement implements IPRRuleAntec
 		// optional entries
 		FreeIdentifier[] addedFreeIdents = null;
 		Set<Predicate> addedHyps = null;
+		Set<Predicate> unselAddedHyps = null;
 		ArrayList<IHypAction> hypAction = null;
 
 		addedFreeIdents = getFreeIdents(store.getFormulaFactory());
 		
 		
-		if (hasHyps())
-		addedHyps = getHyps(store);
+		if (hasHyps()) {
+			addedHyps = getHyps(store);
+		}
+		if (hasUnselHyps()) {
+			unselAddedHyps = getUnselHyps(store);
+		}
 		
 		IRodinElement[] children = getChildrenOfType(IPRHypAction.ELEMENT_TYPE);
 		if (children.length != 0)
@@ -66,7 +75,8 @@ public class PRRuleAntecedent extends EventBProofElement implements IPRRuleAntec
 			}
 		}
 		
-		return ProverFactory.makeAntecedent(goal,addedHyps,addedFreeIdents,hypAction);
+		return ProverFactory.makeAntecedent(goal, addedHyps, unselAddedHyps,
+				addedFreeIdents, hypAction);
 	}
 
 
@@ -81,6 +91,10 @@ public class PRRuleAntecedent extends EventBProofElement implements IPRRuleAntec
 		
 		if (! antecedent.getAddedHyps().isEmpty()){
 			setHyps(antecedent.getAddedHyps(), store, monitor);
+		}
+		
+		if (! antecedent.getUnselectedAddedHyps().isEmpty()){
+			setUnselHyps(antecedent.getUnselectedAddedHyps(), store, monitor);
 		}
 		
 		if (! antecedent.getHypActions().isEmpty()){

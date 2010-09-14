@@ -66,41 +66,60 @@ public class ProverSequentTests extends TestCase{
 		
 		// no modification tests
 		seq = TestLib.genSeq(" ⊥ |- ⊥ ");
-		newSeq = ((IInternalProverSequent)seq).modify(null, null, null);
+		newSeq = ((IInternalProverSequent)seq).modify(null, null, null, null);
 		assertSame(seq, newSeq);
-		newSeq = ((IInternalProverSequent)seq).modify(NO_FREE_IDENTS, NO_HYPS, False);
+		newSeq = ((IInternalProverSequent)seq).modify(NO_FREE_IDENTS, NO_HYPS, NO_HYPS, False);
 		assertSame(seq, newSeq);
-		newSeq = ((IInternalProverSequent)seq).modify(null, Collections.singleton(False), null);
+		newSeq = ((IInternalProverSequent) seq).modify(null,
+				Collections.singleton(False),
+				Collections.<Predicate> emptySet(), null);
+		assertSame(seq, newSeq);
+
+		seq = TestLib.genFullSeq(" ⊤;;⊥ ;H;   ;S;  ⊥ |- ⊥ ");
+		newSeq = ((IInternalProverSequent)seq).modify(null, Collections.singleton(True), Collections.singleton(True), null);
 		assertSame(seq, newSeq);
 
 		
 		// failure tests
 		seq = TestLib.genSeq(" x = 1 |- x = 1 ");
-		newSeq = ((IInternalProverSequent)seq).modify(new FreeIdentifier[] {freeIdent_x_int}, null, null);
+		newSeq = ((IInternalProverSequent)seq).modify(new FreeIdentifier[] {freeIdent_x_int}, null, null, null);
 		assertNull(newSeq);
-		newSeq = ((IInternalProverSequent)seq).modify(new FreeIdentifier[] {freeIdent_x_bool}, null, null);
+		newSeq = ((IInternalProverSequent)seq).modify(new FreeIdentifier[] {freeIdent_x_bool}, null, null, null);
 		assertNull(newSeq);
 		Predicate pred_y = TestLib.genPred("y=1");
-		newSeq = ((IInternalProverSequent)seq).modify(null, null, pred_y);
+		newSeq = ((IInternalProverSequent)seq).modify(null, null, null, pred_y);
 		assertNull(newSeq);
-		newSeq = ((IInternalProverSequent)seq).modify(null, Collections.singleton(pred_y), null);
+		newSeq = ((IInternalProverSequent)seq).modify(null, Collections.singleton(pred_y), null, null);
 		assertNull(newSeq);
-		newSeq = ((IInternalProverSequent)seq).modify(new FreeIdentifier[] {freeIdent_y_int, freeIdent_y_int}, null, null);
+		newSeq = ((IInternalProverSequent)seq).modify(null, null, Collections.singleton(pred_y), null);
 		assertNull(newSeq);
-		newSeq = ((IInternalProverSequent)seq).modify(null, null, pv_P);
+		newSeq = ((IInternalProverSequent)seq).modify(new FreeIdentifier[] {freeIdent_y_int, freeIdent_y_int}, null, null, null);
 		assertNull(newSeq);
-		newSeq = ((IInternalProverSequent)seq).modify(null, Collections.singleton(pv_P), null);
+		newSeq = ((IInternalProverSequent)seq).modify(null, null, null, pv_P);
+		assertNull(newSeq);
+		newSeq = ((IInternalProverSequent)seq).modify(null, Collections.singleton(pv_P), null, null);
+		assertNull(newSeq);
+		newSeq = ((IInternalProverSequent)seq).modify(null, Collections.<Predicate> emptySet(), Collections.singleton(False), null);
 		assertNull(newSeq);
 		
 		// success tests
 		seq = TestLib.genSeq(" x = 1 |- x = 1 ");
-		newSeq = ((IInternalProverSequent)seq).modify(new FreeIdentifier[] {freeIdent_y_int}, Collections.singleton(pred_y), pred_y);
+		newSeq = ((IInternalProverSequent)seq).modify(new FreeIdentifier[] {freeIdent_y_int}, Collections.singleton(pred_y), null, pred_y);
 		assertNotNull(newSeq);
 		assertNotSame(seq, newSeq);
 		assertTrue(containsFreeIdent(newSeq.typeEnvironment(), freeIdent_y_int));
 		assertTrue(newSeq.containsHypothesis(pred_y));
 		assertTrue(newSeq.isSelected(pred_y));
 		assertSame(newSeq.goal(), pred_y);
+		
+		newSeq = ((IInternalProverSequent)seq).modify(new FreeIdentifier[] {freeIdent_y_int}, Collections.singleton(pred_y), Collections.singleton(pred_y), pred_y);
+		assertNotNull(newSeq);
+		assertNotSame(seq, newSeq);
+		assertTrue(containsFreeIdent(newSeq.typeEnvironment(), freeIdent_y_int));
+		assertTrue(newSeq.containsHypothesis(pred_y));
+		assertFalse(newSeq.isSelected(pred_y));
+		assertSame(newSeq.goal(), pred_y);
+		
 	}
 	
 	/**
@@ -166,12 +185,12 @@ public class ProverSequentTests extends TestCase{
 		final List<Predicate> ps = Arrays.asList(TestLib.genPred("3=3"),TestLib.genPred("4=4"));
 
 		seq = TestLib.genSeq(" ⊥ ;; 0=0 |- ⊥ ");
-		newSeq = ((IInternalProverSequent)seq).modify(null, Collections.singleton(p1), null);
+		newSeq = ((IInternalProverSequent)seq).modify(null, Collections.singleton(p1), null, null);
 		// The next line should not change the order
-		newSeq = ((IInternalProverSequent)newSeq).modify(null, Collections.singleton(False), null);
-		newSeq = ((IInternalProverSequent)newSeq).modify(null, Collections.singleton(True), null);
-		newSeq = ((IInternalProverSequent)newSeq).modify(null, Collections.singleton(p2), null);
-		newSeq = ((IInternalProverSequent)newSeq).modify(null, ps , null);
+		newSeq = ((IInternalProverSequent)newSeq).modify(null, Collections.singleton(False), null, null);
+		newSeq = ((IInternalProverSequent)newSeq).modify(null, Collections.singleton(True), null, null);
+		newSeq = ((IInternalProverSequent)newSeq).modify(null, Collections.singleton(p2), null, null);
+		newSeq = ((IInternalProverSequent)newSeq).modify(null, ps, null, null);
 		
 		// Test order of selected hypotheses
 		testIterable(new Predicate[]{False,p0,p1,True,p2,ps.get(0),ps.get(1)}, newSeq.selectedHypIterable());

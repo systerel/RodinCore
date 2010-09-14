@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added constraints about predicate variables
+ *     Systerel - added unselected hypotheses
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
@@ -24,40 +25,51 @@ public interface IInternalProverSequent extends IProverSequent{
 	 * <p>
 	 * The original sequent remains unmodified.
 	 * 
-	 * Returns a new sequent after adding the fresh free identifiers, adding and 
-	 * selecting the given hypotheses, and replacing the goal with the given new goal.
+	 * Returns a new sequent after adding the fresh free identifiers, adding and
+	 * selecting the given hypotheses, and replacing the goal with the given new
+	 * goal.
 	 * </p>
 	 * <p>
 	 * This operation can only be performed if :
 	 * <ul>
-	 * <li> All the new free identifiers provided do not appear in the type environment 
-	 * of the sequent, and
-	 * <li> The hypotheses and new goal provided do not contain predicate variables, and
-	 * <li> The hypotheses and new goal provided can be successfully type checked using 
-	 * the type environment of the sequent enriched with the new free identifiers.
+	 * <li>All the new free identifiers provided do not appear in the type
+	 * environment of the sequent, and
+	 * <li>The hypotheses and new goal provided do not contain predicate
+	 * variables, and
+	 * <li>The hypotheses and new goal provided can be successfully type checked
+	 * using the type environment of the sequent enriched with the new free
+	 * identifiers.
 	 * </ul>
-	 * These checks are done. 
+	 * These checks are done.
 	 * </p>
 	 * <p>
-	 * In case this operation succeeds, but 
-	 * 	does not modify the sequent, a reference to the original sequent is returned.
-	 * 	The case of non-modification can therefore be checked using <code>==</code>.
+	 * In case this operation succeeds, but does not modify the sequent, a
+	 * reference to the original sequent is returned. The case of
+	 * non-modification can therefore be checked using <code>==</code>.
 	 * </p>
+	 * 
 	 * @param freshFreeIdents
-	 * 		The fresh identifiers appearing in the given hypotheses and not in the
-	 * 		type environment of the sequent, or <code>null</code> in case none.
+	 *            The fresh identifiers appearing in the given hypotheses and
+	 *            not in the type environment of the sequent, or
+	 *            <code>null</code> in case none.
 	 * @param addedhyps
-	 * 		The hypotheses to add and select, or <code>null</code> in case none.
+	 *            The hypotheses to add and select, or <code>null</code> in case
+	 *            none.
+	 * @param unselAddedHyps
+	 *            the subset of addedhyps to add but not select, or
+	 *            <code>null</code> if none
 	 * @param newGoal
-	 * 		The new goal to replace with, or <code>null</code> in case no goal 
-	 * 		replacement is to be done.
-	 * @return
-	 * 		A new sequent with the given free identifiers added to the type environment,
-	 * 		the given hypotheses added and selected, and the given goal replaced, 
-	 * 		or <code>null</code> in case this operation could not be performed.
-	 * 		
+	 *            The new goal to replace with, or <code>null</code> in case no
+	 *            goal replacement is to be done.
+	 * @return A new sequent with the given free identifiers added to the type
+	 *         environment, the given hypotheses added and selected, and the
+	 *         given goal replaced, or <code>null</code> in case this operation
+	 *         could not be performed.
+	 * 
 	 */
-	IInternalProverSequent modify(FreeIdentifier[] freshFreeIdents, Collection<Predicate> addhyps, Predicate newGoal);
+	IInternalProverSequent modify(FreeIdentifier[] freshFreeIdents,
+			Collection<Predicate> addhyps,
+			Collection<Predicate> unselAddedHyps, Predicate newGoal);
 
 	/**
 	 * Returns a new sequent after selecting the given hypotheses.

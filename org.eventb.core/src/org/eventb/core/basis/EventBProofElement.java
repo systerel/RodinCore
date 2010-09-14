@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - serialization of reasoner version through rule name
+ *     Systerel - added unselected hyps attribute
  *******************************************************************************/
 package org.eventb.core.basis;
 
@@ -17,6 +18,7 @@ import static org.eventb.core.EventBAttributes.GOAL_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.HYPS_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.INF_HYPS_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.MANUAL_PROOF_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.UNSEL_HYPS_ATTRIBUTE;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -179,7 +181,8 @@ public abstract class EventBProofElement extends InternalElement implements
 		return hasAttribute(GOAL_ATTRIBUTE);
 	}
 
-	public void setHyps(Collection<Predicate> hyps, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {
+	private static String serializeCSV(Collection<Predicate> hyps,
+			IProofStoreCollector store) throws RodinDBException {
 		StringBuilder refs = new StringBuilder();
 		String sep = "";
 		for (Predicate pred : hyps) {
@@ -187,11 +190,11 @@ public abstract class EventBProofElement extends InternalElement implements
 			sep = ",";
 			refs.append(store.putPredicate(pred));
 		}
-		setAttributeValue(HYPS_ATTRIBUTE, refs.toString(), monitor);
+		return refs.toString();
 	}
-	
-	public Set<Predicate> getHyps(IProofStoreReader store) throws RodinDBException {
-		String sepRefs = getAttributeValue(HYPS_ATTRIBUTE);
+
+	private Set<Predicate> deserializeCSV(String sepRefs,
+			IProofStoreReader store) throws RodinDBException {
 		String[] refs = sepRefs.split(",");
 		HashSet<Predicate> hyps = new HashSet<Predicate>(refs.length);
 		for(String ref : refs){
@@ -199,30 +202,52 @@ public abstract class EventBProofElement extends InternalElement implements
 		}
 		return hyps;
 	}
+
+	public void setHyps(Collection<Predicate> hyps, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {
+		String refs = serializeCSV(hyps, store);
+		setAttributeValue(HYPS_ATTRIBUTE, refs, monitor);
+	}
+
+	public Set<Predicate> getHyps(IProofStoreReader store) throws RodinDBException {
+		String sepRefs = getAttributeValue(HYPS_ATTRIBUTE);
+		return deserializeCSV(sepRefs, store);
+	}
+
+	/**
+	 * @since 1.4
+	 */
+	public void setUnselHyps(Collection<Predicate> hyps, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {
+		String refs = serializeCSV(hyps, store);
+		setAttributeValue(UNSEL_HYPS_ATTRIBUTE, refs, monitor);
+	}
+	
+	/**
+	 * @since 1.4
+	 */
+	public Set<Predicate> getUnselHyps(IProofStoreReader store) throws RodinDBException {
+		String sepRefs = getAttributeValue(UNSEL_HYPS_ATTRIBUTE);
+		return deserializeCSV(sepRefs, store);
+	}
 	
 	public void setInfHyps(Collection<Predicate> hyps, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {
-		StringBuilder refs = new StringBuilder();
-		String sep = "";
-		for (Predicate pred : hyps) {
-			refs.append(sep);
-			sep = ",";
-			refs.append(store.putPredicate(pred));
-		}
-		setAttributeValue(INF_HYPS_ATTRIBUTE, refs.toString(), monitor);
+		String refs = serializeCSV(hyps, store);
+		setAttributeValue(INF_HYPS_ATTRIBUTE, refs, monitor);
 	}
 	
 	public Set<Predicate> getInfHyps(IProofStoreReader store) throws RodinDBException {
 		String sepRefs = getAttributeValue(INF_HYPS_ATTRIBUTE);
-		String[] refs = sepRefs.split(",");
-		HashSet<Predicate> hyps = new HashSet<Predicate>(refs.length);
-		for(String ref : refs){
-			if (ref.length()!=0) hyps.add(store.getPredicate(ref));
-		}
-		return hyps;
+		return deserializeCSV(sepRefs, store);
 	}
 	
 	public boolean hasHyps() throws RodinDBException {
 		return hasAttribute(HYPS_ATTRIBUTE);
+	}
+	
+	/**
+	 * @since 1.4
+	 */
+	public boolean hasUnselHyps() throws RodinDBException {
+		return hasAttribute(UNSEL_HYPS_ATTRIBUTE);
 	}
 	
 	public FreeIdentifier[] getFreeIdents(FormulaFactory factory) throws RodinDBException {

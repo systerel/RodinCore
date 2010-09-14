@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added makeProofRule(IReasonerDesc, ...)
  *     Systerel - added makeProofRule with needed hypotheses
+ *     Systerel - added makeAntecedent with unselected hypotheses
  *******************************************************************************/
 package org.eventb.core.seqprover;
 
@@ -337,31 +338,30 @@ public final class ProverFactory {
 				null,null,null,
 				display,new IAntecedent[]{antecedent});
 	}
-		
+
 	/**
-	 * Returns a new antecedent with the given inputs. The constructed antecedent
-	 * can then be used to construct a proof rule.
+	 * Returns a new antecedent with the given inputs. The constructed
+	 * antecedent can then be used to construct a proof rule.
 	 * 
 	 * <p>
-	 * This is the most general factory method to construct antecedents. In case the
-	 * antecedent to be constructed is more specific, use of a more specific factory method
-	 * is encouraged.
+	 * This is a very general factory method to construct antecedents. In case
+	 * the antecedent to be constructed is more specific, use of a more specific
+	 * factory method is encouraged.
 	 * </p>
 	 * 
 	 * @param goal
-	 * 		The goal of the antecedent, or <code>null</code> iff the rule is intended
-	 * 		to be goal independent.
+	 *            The goal of the antecedent, or <code>null</code> iff the rule
+	 *            is intended to be goal independent.
 	 * @param addedHyps
-	 * 		The added hypotheses, or <code>null</code> iff there are no added 
-	 * 		hypotheses.
+	 *            The added hypotheses, or <code>null</code> iff there are no
+	 *            added hypotheses.
 	 * @param addedFreeIdents
-	 * 		The added free identifiers, or <code>null</code> iff there are no added
-	 * 		free identifiers.
+	 *            The added free identifiers, or <code>null</code> iff there are
+	 *            no added free identifiers.
 	 * @param hypActions
-	 * 		The hypothesis actions, or <code>null</code> iff there are no hypothesis
-	 * 		actions.
-	 * @return
-	 * 		A new antecedent with the given information.
+	 *            The hypothesis actions, or <code>null</code> iff there are no
+	 *            hypothesis actions.
+	 * @return A new antecedent with the given information.
 	 */
 	public static IAntecedent makeAntecedent(
 			Predicate goal,
@@ -369,7 +369,48 @@ public final class ProverFactory {
 			FreeIdentifier[] addedFreeIdents,
 			List<IHypAction> hypActions){
 		
-		return new Antecedent(goal, addedHyps, addedFreeIdents, hypActions);
+		return makeAntecedent(goal, addedHyps,
+				Collections.<Predicate> emptySet(), addedFreeIdents, hypActions);
+	}
+
+	/**
+	 * Returns a new antecedent with the given inputs. The constructed
+	 * antecedent can then be used to construct a proof rule.
+	 * 
+	 * <p>
+	 * This is the most general factory method to construct antecedents. In case
+	 * the antecedent to be constructed is more specific, use of a more specific
+	 * factory method is encouraged.
+	 * </p>
+	 * 
+	 * @param goal
+	 *            The goal of the antecedent, or <code>null</code> iff the rule
+	 *            is intended to be goal independent
+	 * @param addedHyps
+	 *            The added hypotheses, or <code>null</code> iff there are no
+	 *            added hypotheses
+	 * @param unselectedHyps
+	 *            a subset of added hyps for hypotheses added but not selected,
+	 *            or <code>null</code> if there are no unselected added
+	 *            hypotheses
+	 * @param addedFreeIdents
+	 *            The added free identifiers, or <code>null</code> iff there are
+	 *            no added free identifiers
+	 * @param hypActions
+	 *            The hypothesis actions, or <code>null</code> iff there are no
+	 *            hypothesis actions
+	 * @return A new antecedent with the given information
+	 * @since 2.0
+	 */
+	public static IAntecedent makeAntecedent(
+			Predicate goal,
+			Set<Predicate> addedHyps,
+			Set<Predicate> unselectedHyps,
+			FreeIdentifier[] addedFreeIdents,
+			List<IHypAction> hypActions){
+		
+		return new Antecedent(goal, addedHyps, unselectedHyps, addedFreeIdents,
+				hypActions);
 	}
 
 	/**

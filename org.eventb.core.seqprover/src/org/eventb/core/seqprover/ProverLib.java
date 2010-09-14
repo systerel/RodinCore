@@ -10,6 +10,7 @@
  *     Systerel - fixed bugs, added deepEquals(IHypAction, IHypAction)
  *     Systerel - added simplify(IProofTree, IProofMonitor)
  *     Systerel - checked reasoner versions before reusing proofs
+ *     Systerel - added unselected hypotheses
  *******************************************************************************/
 package org.eventb.core.seqprover;
 
@@ -125,6 +126,7 @@ public class ProverLib {
 		if (a1 == a2) return true;
 		if (! deepEquals(a1.getGoal(), a2.getGoal())) return false;
 		if (! a1.getAddedHyps().equals(a2.getAddedHyps())) return false;
+		if (! a1.getUnselectedAddedHyps().equals(a2.getUnselectedAddedHyps())) return false;
 		if (! Arrays.deepEquals(a1.getAddedFreeIdents(),a2.getAddedFreeIdents())) return false;
 		if (a1.getHypActions().size() != a2.getHypActions().size()) return false;
 		for(int i = 0; i < a1.getHypActions().size(); i++) {

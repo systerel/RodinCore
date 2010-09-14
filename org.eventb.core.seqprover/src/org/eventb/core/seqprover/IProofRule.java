@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added unselected added hypotheses
+ *******************************************************************************/
 package org.eventb.core.seqprover;
 
 import java.util.List;
@@ -151,12 +162,13 @@ public interface IProofRule extends IReasonerOutput{
 		/**
 		 * Returns the added hypotheses of this antecedent.
 		 * <p>
-		 * Added hypotheses are selected by default.
+		 * Added hypotheses are selected by default if they are not also in
+		 * unselected added hypotheses ({@link #getUnselectedAddedHyps()}.
 		 * </p>
 		 * 
 		 * <p>
-		 * The returned collection preserves the order of the elements from the collection used to
-		 * construct it.
+		 * The returned collection preserves the order of the elements from the
+		 * collection used to construct it.
 		 * </p>
 		 * 
 		 * <p>
@@ -166,6 +178,27 @@ public interface IProofRule extends IReasonerOutput{
 		 * @return the added hypotheses of this antecedent
 		 */
 		Set<Predicate> getAddedHyps();
+
+		/**
+		 * Returns the unselected added hypotheses of this antecedent.
+		 * <p>
+		 * The returned set is a subset of that returned by {link
+		 * {@link #getAddedHyps()}.
+		 * </p>
+		 * 
+		 * <p>
+		 * No assumption should be made about the order of the elements in the
+		 * returned collection.
+		 * </p>
+		 * 
+		 * <p>
+		 * Note : The returned object must not be modified in any way.
+		 * </p>
+		 * 
+		 * @return the added hypotheses of this antecedent
+		 * @since 2.0
+		 */
+		Set<Predicate> getUnselectedAddedHyps();
 		
 		/**
 		 * Returns the added free identifiers of this antecedent.

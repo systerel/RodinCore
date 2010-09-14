@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - type-checking is now done with class TypeChecker
  *     Systerel - added check about predicate variables
+ *     Systerel - added unselected added hypotheses
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
@@ -265,8 +266,10 @@ public final class ProverSequent implements IInternalProverSequent{
 	/* (non-Javadoc)
 	 * @see org.eventb.internal.core.seqprover.IInternalProverSequent#modify(org.eventb.core.ast.FreeIdentifier[], java.util.Collection, org.eventb.core.ast.Predicate)
 	 */
-	public IInternalProverSequent modify(FreeIdentifier[] freshFreeIdents, Collection<Predicate> addhyps, Predicate newGoal) {
-		boolean modified = false;
+	public IInternalProverSequent modify(FreeIdentifier[] freshFreeIdents,
+			Collection<Predicate> addhyps,
+			Collection<Predicate> unselAddedHyps, Predicate newGoal) {
+	boolean modified = false;
 		final ITypeEnvironment newTypeEnv;
 		LinkedHashSet<Predicate> newLocalHypotheses = null;
 		LinkedHashSet<Predicate> newSelectedHypotheses = null;
@@ -285,10 +288,16 @@ public final class ProverSequent implements IInternalProverSequent{
 			return null;
 		if (!ProverChecks.checkNoPredicateVariable(newGoal))
 			return null;
+		if (unselAddedHyps != null) {
+			if (addhyps == null || !addhyps.containsAll(unselAddedHyps))
+				return null;
+		}
 		newTypeEnv = checker.getTypeEnvironment();
 		modified |= checker.hasNewTypeEnvironment();
 
 		if (addhyps != null && addhyps.size() != 0) {
+			if (unselAddedHyps == null)
+				unselAddedHyps = Collections.emptySet();
 			newLocalHypotheses = new LinkedHashSet<Predicate>(localHypotheses);
 			newSelectedHypotheses = new LinkedHashSet<Predicate>(selectedHypotheses);
 			newHiddenHypotheses = new LinkedHashSet<Predicate>(hiddenHypotheses);
@@ -298,7 +307,9 @@ public final class ProverSequent implements IInternalProverSequent{
 					newLocalHypotheses.add(hyp);
 					modified = true;
 				}
-				modified |= newSelectedHypotheses.add(hyp);
+				if (!unselAddedHyps.contains(hyp)) {
+					modified |= newSelectedHypotheses.add(hyp);
+				}
 				modified |= newHiddenHypotheses.remove(hyp);
 			}
 		}

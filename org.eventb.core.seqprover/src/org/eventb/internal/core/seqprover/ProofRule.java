@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,14 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added a constructor with IReasonerDesc
+ *     Systerel - added unselected hypotheses
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +30,7 @@ import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.IReasonerInput;
 
-// TODO : preserve order of hypotheses stored by using a LinkedHashSet inplementation
+// order of stored hypotheses is preserved by using a LinkedHashSet
 public class ProofRule extends ReasonerOutput implements IProofRule{
 	
 	private static final Set<Predicate> NO_HYPS = Collections.emptySet();
@@ -37,20 +39,35 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 	public static class Antecedent implements IAntecedent{
 		
 		private final FreeIdentifier[] addedFreeIdentifiers;
-		private final Set <Predicate> addedHypotheses;
-		private final List <IHypAction> hypActions;
+		private final Set<Predicate> addedHypotheses;
+		private final Set<Predicate> unselectedAddedHyps;
+		private final List<IHypAction> hypActions;
 		private final Predicate goal;
 		
 		private static final FreeIdentifier[] NO_FREE_IDENTS = new FreeIdentifier[0];
 		private static final ArrayList<IHypAction> NO_HYP_ACTIONS = new ArrayList<IHypAction>();
 		
-		public Antecedent(Predicate goal, Set<Predicate> addedHyps, FreeIdentifier[] addedFreeIdents, List<IHypAction> hypAction) {
+		public Antecedent(Predicate goal, Set<Predicate> addedHyps,
+				Set<Predicate> unselectedAddedHyps,
+				FreeIdentifier[] addedFreeIdents, List<IHypAction> hypAction) {
 			this.goal = goal;
 			this.addedHypotheses = addedHyps == null ? NO_HYPS : new LinkedHashSet<Predicate>(addedHyps);
+			this.unselectedAddedHyps = unselectedAddedHyps == null ? NO_HYPS : new HashSet<Predicate>(unselectedAddedHyps);
 			this.addedFreeIdentifiers = addedFreeIdents == null ? NO_FREE_IDENTS : addedFreeIdents.clone();
 			this.hypActions = hypAction == null ? NO_HYP_ACTIONS : new ArrayList<IHypAction>(hypAction);
+			checkPreconditions();
 		}
 		
+		private void checkPreconditions() {
+			if (!addedHypotheses.containsAll(unselectedAddedHyps)) {
+				throw new IllegalArgumentException(
+						"unselected added hyps should be a subset of added hyps"
+								+ "\nadded: " + addedHypotheses
+								+ "\nunselected: " + unselectedAddedHyps);
+			}
+			
+		}
+
 		/**
 		 * @return Returns the addedFreeIdentifiers.
 		 */
@@ -80,6 +97,13 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		}
 
 		/**
+		 * @return Returns the unselectedAddedHyps.
+		 */
+		public Set<Predicate> getUnselectedAddedHyps() {
+			return Collections.unmodifiableSet(unselectedAddedHyps);
+		}
+		
+		/**
 		 * @return Returns the goal.
 		 */
 		public final Predicate getGoal() {
@@ -101,7 +125,9 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 				newGoal = goal;
 			}
 			
-			IInternalProverSequent result = ((IInternalProverSequent) seq).modify(addedFreeIdentifiers, addedHypotheses, newGoal);
+			IInternalProverSequent result = ((IInternalProverSequent) seq)
+					.modify(addedFreeIdentifiers, addedHypotheses,
+							unselectedAddedHyps, newGoal);
 			// not strictly needed
 			if (result == null) return null;
 			result = ProofRule.performHypActions(hypActions,result);
