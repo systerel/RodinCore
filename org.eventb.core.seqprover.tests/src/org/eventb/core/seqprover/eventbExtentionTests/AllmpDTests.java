@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - deselect WD predicate and used hypothesis
+ *     Systerel - deselect WD predicate only if not already selected
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
@@ -33,6 +34,7 @@ public class AllmpDTests extends AbstractReasonerTests {
 	
 	final static Predicate hyp = TestLib.genPred(" ∀x,y· x ∈ ℕ ∧ y ∈ ℕ  ⇒ x ∈ P ∧ y ∈ Q ");
 	final static IProverSequent seq = TestLib.genSeq(" ∀x,y· x ∈ ℕ ∧ y ∈ ℕ  ⇒ x ∈ P ∧ y ∈ Q  |- z∈P ");
+	final static IProverSequent seq2 = TestLib.genSeq(" (∀x,y· x ∈ ℕ ∧ y ∈ ℕ  ⇒ x ∈ P ∧ y ∈ Q) ;; z≠0 |- z∈P ");
 	
 	@Override
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
@@ -52,6 +54,14 @@ public class AllmpDTests extends AbstractReasonerTests {
 						"{z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q][] |- z≠0",
 						"{z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q;; z≠0][] |- z∈ℕ∧1 ÷ z∈ℕ",
 						"{z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q;; z≠0][z∈P;; 1 ÷ z∈Q] |- z∈P"
+				),
+				// with WD condition already selected
+				new SuccessfullReasonerApplication(
+						seq2,
+						new AllD.Input(hyp,seq2.typeEnvironment(),new String[]{"z","1÷z"}),
+						"{z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q][z≠0] |- z≠0",
+						"{z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q][z≠0] |- z∈ℕ∧1 ÷ z∈ℕ",
+						"{z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q][z≠0;; z∈P;; 1 ÷ z∈Q] |- z∈P"
 				)
 		};
 	}

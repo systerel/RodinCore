@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - deselect WD predicate and used hypothesis
  *     Systerel - deselect WD pred and used hyp in 2 first antecedents (ver 0)
+ *     Systerel - deselect WD predicate only if not already selected
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
@@ -16,6 +17,7 @@ import static java.util.Collections.singleton;
 import static org.eventb.core.seqprover.ProverFactory.makeDeselectHypAction;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -23,6 +25,7 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
@@ -134,11 +137,13 @@ public class AllmpD extends AllD implements IVersionedReasoner {
 			final Set<Predicate> addedHyps = new LinkedHashSet<Predicate>(WDpreds);
 			final Set<Predicate> toDeselect = new LinkedHashSet<Predicate>(WDpreds);
 			toDeselect.add(univHyp);
-			final ISelectionHypAction deselect = makeDeselectHypAction(toDeselect);
+			final ISelectionHypAction deselect = makeDeselectHypAction(singleton(univHyp));
 			anticidents[1] = ProverFactory.makeAntecedent(
 					impLeft,
 					addedHyps,
-					deselect
+					WDpreds,
+					Lib.NO_FREE_IDENT,
+					Collections.<IHypAction>singletonList(deselect)
 			);
 		}
 
@@ -147,14 +152,13 @@ public class AllmpD extends AllD implements IVersionedReasoner {
 			final Set<Predicate> addedHyps = new LinkedHashSet<Predicate>(WDpreds);
 			addedHyps.addAll(Lib.breakPossibleConjunct(impRight));
 
-			final Set<Predicate> toDeselect = new LinkedHashSet<Predicate>(WDpreds);
-			toDeselect.add(univHyp);
-
-			final ISelectionHypAction deselect = makeDeselectHypAction(toDeselect);
+			final ISelectionHypAction deselect = makeDeselectHypAction(singleton(univHyp));
 			anticidents[2] = ProverFactory.makeAntecedent(
 					null,
 					addedHyps,
-					deselect
+					WDpreds,
+					Lib.NO_FREE_IDENT,
+					Collections.<IHypAction>singletonList(deselect)
 			);
 		}
 		

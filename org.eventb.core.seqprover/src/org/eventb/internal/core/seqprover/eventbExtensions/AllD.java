@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,14 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - deselect WD predicate and used hypothesis
+ *     Systerel - deselect WD predicate only if not already selected
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import static java.util.Collections.singleton;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -23,6 +25,8 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
+import org.eventb.core.seqprover.IHypAction;
+import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
@@ -204,14 +208,14 @@ public class AllD implements IReasoner {
 		addedHyps.addAll(WDpreds);
 		addedHyps.addAll(Lib.breakPossibleConjunct(instantiatedPred));
 		
-		final Set<Predicate> toDeselect = new HashSet<Predicate>();
-		toDeselect.add(univHyp);
-		toDeselect.addAll(WDpreds);
-		
+		final ISelectionHypAction deselectAction = ProverFactory
+				.makeDeselectHypAction(singleton(univHyp));
 		anticidents[1] = ProverFactory.makeAntecedent(
 				null,
 				addedHyps,
-				ProverFactory.makeDeselectHypAction(toDeselect)
+				WDpreds,
+				Lib.NO_FREE_IDENT,
+				Collections.<IHypAction>singletonList(deselectAction)
 				);
 		
 		IProofRule reasonerOutput = ProverFactory.makeProofRule(

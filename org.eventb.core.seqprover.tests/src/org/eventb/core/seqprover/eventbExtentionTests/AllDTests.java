@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - deselect WD predicate and used hypothesis
+ *     Systerel - deselect WD predicate only if not already selected
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
@@ -32,6 +33,7 @@ public class AllDTests extends AbstractReasonerTests {
 	}
 	
 	final static IProverSequent seq = TestLib.genSeq(" ∀x,y· x∈ℤ ⇒ x∈P ∧ y∈P  |- ⊥ ");
+	final static IProverSequent seq2 = TestLib.genSeq(" ∀x,y· x∈ℤ ⇒ x∈P ∧ y∈P  ;; 0≠0 |- ⊥ ");
 	final static Predicate hyp = TestLib.getFirstHyp(seq);
 	
 	@Override
@@ -57,6 +59,13 @@ public class AllDTests extends AbstractReasonerTests {
 						new AllD.Input(hyp,seq.typeEnvironment(),new String[]{"0","1÷0"}),
 						"{P=ℙ(ℤ)}[][][∀x,y·x∈ℤ⇒x∈P∧y∈P] |- 0≠0",
 						"{P=ℙ(ℤ)}[][∀x,y·x∈ℤ⇒x∈P∧y∈P;; 0≠0][0∈ℤ⇒0∈P∧1 ÷ 0∈P] |- ⊥"
+				),
+				// with WD condition already selected
+				new SuccessfullReasonerApplication(
+						seq2,
+						new AllD.Input(hyp,seq2.typeEnvironment(),new String[]{"0","1÷0"}),
+						"{P=ℙ(ℤ)}[][][∀x,y·x∈ℤ⇒x∈P∧y∈P;; 0≠0] |- 0≠0",
+						"{P=ℙ(ℤ)}[][∀x,y·x∈ℤ⇒x∈P∧y∈P][0∈ℤ⇒0∈P∧1 ÷ 0∈P;; 0≠0] |- ⊥"
 				),
 				// not all bound idents instantiated
 				new SuccessfullReasonerApplication(

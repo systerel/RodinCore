@@ -74,12 +74,18 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrite
  * @author Farhad Mehta, htson
  * 
  * @since 1.0
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class Lib {
 
 	static final LanguageVersion LANGUAGE_VERSION = V2;
 	static final FormulaFactory ff = FormulaFactory.getDefault();
 
+	/**
+	 * @since 2.0
+	 */
+	public static final FreeIdentifier[] NO_FREE_IDENT = new FreeIdentifier[0]; 
+	
 	public static boolean isTrue(Predicate P) {
 		return P.getTag() == Formula.BTRUE;
 	}
