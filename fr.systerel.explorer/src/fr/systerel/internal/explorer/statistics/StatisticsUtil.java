@@ -67,7 +67,7 @@ public class StatisticsUtil {
 
 				if (proj.exists()) {
 					final ModelProject modelproject = ModelController
-							.getProject(proj);
+							.getProcessedProject(proj);
 					if (modelproject == null) {
 						return Messages.getString("statistics.expandAtLeastOnce"); //$NON-NLS-1$
 					}

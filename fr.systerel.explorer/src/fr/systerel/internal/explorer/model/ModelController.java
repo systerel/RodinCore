@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -72,30 +72,55 @@ public class ModelController implements IElementChangedListener {
 	 *            The Project to process.
 	 */
 	public static void processProject(IRodinProject project){
-		try {
-			ModelProject prj;
-			if (!projects.containsKey(project)) {
-				prj =  new ModelProject(project);
-				projects.put(project, prj);
-			}	
-			prj =  projects.get(project);
-			//only process if really needed
-			if (prj.needsProcessing) {
-				IContextRoot[] contexts = ExplorerUtils.getContextRootChildren(project);
+		getProcessedProject(project);
+	}
+
+	/**
+	 * Returns a processed RodinProject. Creates a new model for this project
+	 * (Machines, Contexts, Invariants, etc.) if none is already registered.
+	 * Proof Obligations are not included in processing.
+	 * 
+	 * @param project
+	 *            The Project to process
+	 * @return the processed project
+	 */
+	public static ModelProject getProcessedProject(IRodinProject project) {
+		final ModelProject prj = getRegisteredModelProject(project);
+		return processProject(project, prj);
+	}
+
+	private static ModelProject processProject(IRodinProject project,
+			ModelProject prj) {
+		// only process if really needed
+		if (prj.needsProcessing) {
+			try {
+				final IContextRoot[] contexts = ExplorerUtils
+						.getContextRootChildren(project);
 				for (IContextRoot context : contexts) {
 					prj.processContext(context);
 				}
 				prj.calculateContextBranches();
-				IMachineRoot[] machines = ExplorerUtils.getMachineRootChildren(project);
+				final IMachineRoot[] machines = ExplorerUtils
+						.getMachineRootChildren(project);
 				for (IMachineRoot machine : machines) {
 					prj.processMachine(machine);
 				}
 				prj.calculateMachineBranches();
 				prj.needsProcessing = false;
+			} catch (RodinDBException e) {
+				UIUtils.log(e, "when processing project " + project);
 			}
-		} catch (RodinDBException e) {
-			UIUtils.log(e, "when processing project " +project);
 		}
+		return prj;
+	}
+
+	private static ModelProject getRegisteredModelProject(IRodinProject project) {
+		if (!projects.containsKey(project)) {
+			final ModelProject prj =  new ModelProject(project);
+			projects.put(project, prj);
+			return prj;
+		}	
+		return projects.get(project);
 	}
 	
 	
