@@ -58,7 +58,8 @@ public class ExistsInstantiationGoal implements ITacticProvider {
 	public List<ITacticApplication> getPossibleApplications(
 			IProofTreeNode node, Predicate hyp, String globalInput) {
 		if (node != null && Tactics.exI_applicable(node.getSequent().goal())) {
-			singletonList(new ExistsInstantiationGoalApplication());
+			final ITacticApplication appli = new ExistsInstantiationGoalApplication();
+			return singletonList(appli);
 		}
 		return emptyList();
 	}
