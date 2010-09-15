@@ -205,9 +205,8 @@ public class MultiplePredicate extends Predicate {
 	}
 
 	@Override
-	protected void isLegible(LegibilityResult result,
-			BoundIdentDecl[] quantifiedIdents) {
-		isLegibleList(children, result, quantifiedIdents);
+	protected void isLegible(LegibilityResult result) {
+		isLegibleList(children, result);
 	}
 
 	@Override

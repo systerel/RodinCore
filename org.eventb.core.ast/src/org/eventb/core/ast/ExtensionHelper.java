@@ -143,10 +143,9 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
 	}
 
 	public static <T extends Formula<T>, U extends Formula<U>> void isLegible(
-			T[] array1, U[] array2, LegibilityResult result,
-			BoundIdentDecl[] quantifiedIdents) {
-		AssociativeHelper.isLegibleList(array1, result, quantifiedIdents);
-		AssociativeHelper.isLegibleList(array2, result, quantifiedIdents);
+			T[] array1, U[] array2, LegibilityResult result) {
+		AssociativeHelper.isLegibleList(array1, result);
+		AssociativeHelper.isLegibleList(array2, result);
 	}
 
 }

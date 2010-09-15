@@ -240,16 +240,12 @@ public class BecomesEqualTo extends Assignment {
 	}
 
 	@Override
-	protected void isLegible(LegibilityResult result, BoundIdentDecl[] quantifiedIdents) {
+	protected void isLegible(LegibilityResult result) {
 		for (FreeIdentifier ident: assignedIdents) {
-			ident.isLegible(result, quantifiedIdents);
-			if (! result.isSuccess())
-				return;
+			ident.isLegible(result);
 		}
 		for (Expression value: values) {
-			value.isLegible(result, quantifiedIdents);
-			if (! result.isSuccess())
-				return;
+			value.isLegible(result);
 		}
 	}
 

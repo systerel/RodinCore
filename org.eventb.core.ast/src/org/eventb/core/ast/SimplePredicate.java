@@ -176,9 +176,12 @@ public class SimplePredicate extends Predicate {
 				+ child.getSyntaxTree(boundNames, tabs + "\t");
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	@Override
-	protected void isLegible(LegibilityResult result, BoundIdentDecl[] quantifiedIdents) {
-		child.isLegible(result, quantifiedIdents);
+	protected void isLegible(LegibilityResult result) {
+		child.isLegible(result);
 	}
 	
 	@Override

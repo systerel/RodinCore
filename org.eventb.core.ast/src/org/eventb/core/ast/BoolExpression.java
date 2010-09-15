@@ -137,9 +137,12 @@ public class BoolExpression extends Expression {
 		return child;
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	@Override
-	protected void isLegible(LegibilityResult result, BoundIdentDecl[] quantifiedIdents) {
-		child.isLegible(result, quantifiedIdents);
+	protected void isLegible(LegibilityResult result) {
+		child.isLegible(result);
 	}
 
 	@Override

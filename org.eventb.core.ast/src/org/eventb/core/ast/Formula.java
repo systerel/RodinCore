@@ -1510,7 +1510,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public final IResult isLegible(Collection<FreeIdentifier> context) {
 		LegibilityResult result = new LegibilityResult(context);
-		isLegible(result, NO_BOUND_IDENT_DECL);
+		isLegible(result);
 		return result;
 	}
 	
@@ -1850,13 +1850,8 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @param result
 	 *            the LegibilityResult that is used to return information about
 	 *            the errors found. Can not be <code>null</code>
-	 * @param quantifiedIdents
-	 *            the identifiers that are bound in the path from the root node
-	 *            to the current node. Should not be null, can be an empty
-	 *            array.
 	 */
-	protected abstract void isLegible(LegibilityResult result,
-			BoundIdentDecl[] quantifiedIdents);
+	protected abstract void isLegible(LegibilityResult result);
 
 	/**
 	 * Computes the Well-Definedness predicate for this formula.

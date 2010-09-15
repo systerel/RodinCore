@@ -72,13 +72,9 @@ import org.eventb.internal.core.ast.LegibilityResult;
 	 * @param quantifiedIdents
 	 *            a list of currently bound identifiers
 	 */
-	protected static <T extends Formula<T>> void isLegibleList(T[] formulae, LegibilityResult result,
-			BoundIdentDecl[] quantifiedIdents) {
+	protected static <T extends Formula<T>> void isLegibleList(T[] formulae, LegibilityResult result) {
 		for (T formula : formulae) {
-			formula.isLegible(result, quantifiedIdents);
-			if (!result.isSuccess()) {
-				return;
-			}
+			formula.isLegible(result);
 		}
 	}
 	

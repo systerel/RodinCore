@@ -264,12 +264,13 @@ public class RelationalPredicate extends Predicate {
 				+ right.getSyntaxTree(boundNames, tabs + "\t");
 	}
 	
+	/**
+	 * @since 2.0
+	 */
 	@Override
-	protected void isLegible(LegibilityResult result, BoundIdentDecl[] quantifiedIdents) {
-		left.isLegible(result, quantifiedIdents);
-		if (result.isSuccess()) {
-			right.isLegible(result, quantifiedIdents);
-		}
+	protected void isLegible(LegibilityResult result) {
+		left.isLegible(result);
+		right.isLegible(result);
 	}
 	
 	@Override

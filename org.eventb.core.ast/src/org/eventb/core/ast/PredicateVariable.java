@@ -93,9 +93,11 @@ public class PredicateVariable extends Predicate {
 		typeChecked = true;
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	@Override
-	protected void isLegible(LegibilityResult result,
-			BoundIdentDecl[] quantifiedIdents) {
+	protected void isLegible(LegibilityResult result) {
 		// Nothing to do, this sub-formula is always legible.
 	}
 

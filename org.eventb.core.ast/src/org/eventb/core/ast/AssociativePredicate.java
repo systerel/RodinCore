@@ -244,9 +244,12 @@ public class AssociativePredicate extends Predicate {
 						getOperatorImage(), "", this.getClass().getSimpleName());
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	@Override
-	protected void isLegible(LegibilityResult result, BoundIdentDecl[] quantifiedIdents) {
-		AssociativeHelper.isLegibleList(children, result, quantifiedIdents);
+	protected void isLegible(LegibilityResult result) {
+		AssociativeHelper.isLegibleList(children, result);
 	}
 
 	@Override

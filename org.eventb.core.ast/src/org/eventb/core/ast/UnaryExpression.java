@@ -486,8 +486,8 @@ public class UnaryExpression extends Expression {
 	}
 
 	@Override
-	protected void isLegible(LegibilityResult result, BoundIdentDecl[] quantifiedIdents) {
-		child.isLegible(result, quantifiedIdents);
+	protected void isLegible(LegibilityResult result) {
+		child.isLegible(result);
 	}
 
 	@Override

@@ -12,6 +12,7 @@ package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BINTER;
+import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.CSET;
 import static org.eventb.core.ast.Formula.EMPTYSET;
 import static org.eventb.core.ast.Formula.EQUAL;
@@ -112,9 +113,11 @@ public class TestLegibility extends TestCase {
 	
 	final Expression emptySet = mAtomicExpression(EMPTYSET);
 	final Expression sint = mAtomicExpression(INTEGER);
+	// {x ∣ x∈ℤ}
 	final Expression set_x_in_int = mQuantifiedExpression(CSET, Implicit, 
 			mList(bd_x), mRelationalPredicate(IN, b0, sint), b0
 	);
+	// {s ∣ s∈ℤ}
 	final Expression set_s_in_int = mQuantifiedExpression(CSET, Implicit, 
 			mList(bd_s), mRelationalPredicate(IN, b0, sint), b0
 	);
@@ -126,6 +129,7 @@ public class TestLegibility extends TestCase {
 		testItems = new ArrayList<TestItem<?>>(Arrays.asList(simpleTests));
 		
 		// Implicit comprehension set with enclosed comprehension set on the right
+		// {y∩{x ∣ x∈ℤ} ∣ y=∅}={∅}
 		TestItem<Predicate> item1 = new TestItem<Predicate>(
 				mRelationalPredicate(EQUAL,
 						mQuantifiedExpression(CSET, Implicit,
@@ -137,6 +141,7 @@ public class TestLegibility extends TestCase {
 		testItems.add(item1);
 		
 		// Implicit comprehension set with enclosed comprehension set on the left
+		// {{x ∣ x∈ℤ}∩y ∣ y=∅}={∅}
 		TestItem<Predicate> item2 = new TestItem<Predicate>(
 				mRelationalPredicate(EQUAL,
 						mQuantifiedExpression(CSET, Implicit,
@@ -150,7 +155,8 @@ public class TestLegibility extends TestCase {
 		final Expression set_x_in_b0 =
 			mQuantifiedExpression(CSET, Implicit, 
 					mList(bd_x), mRelationalPredicate(IN, b0, b1), b0);
-
+		
+		// {y∩{x ∣ x∈y} ∣ y=∅}={∅}
 		TestItem<Predicate> item3 = new TestItem<Predicate>(
 				mRelationalPredicate(EQUAL,
 						mQuantifiedExpression(CSET, Implicit,
@@ -160,7 +166,8 @@ public class TestLegibility extends TestCase {
 						mSetExtension(mList(emptySet))),
 				true);
 		testItems.add(item3);
-
+		
+		// {{x ∣ x∈y}∩y ∣ y=∅}={∅}
 		TestItem<Predicate> item4 = new TestItem<Predicate>(
 				mRelationalPredicate(EQUAL,
 						mQuantifiedExpression(CSET, Implicit,
@@ -178,73 +185,101 @@ public class TestLegibility extends TestCase {
 	
 	private TestItem<?>[] simpleTests = new TestItem[] {
 			// Pred
+			// ⊥
 			new TestItem<Predicate>( 
 					bfalse,
 					true
-			), new TestItem<Predicate>(
+			),
+			// finite(x)
+			new TestItem<Predicate>(
 					mSimplePredicate(id_x),
 					true
-			), new TestItem<Predicate>(
+			),
+			// x=x
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL, id_x, id_x),
 					true
-			), new TestItem<Predicate>(
+			),
+			// ¬⊥
+			new TestItem<Predicate>(
 					mUnaryPredicate(NOT, bfalse),
 					true
-			), new TestItem<Predicate>(
+			),
+			// ⊥∧⊥
+			new TestItem<Predicate>(
 					mAssociativePredicate(LAND, bfalse, bfalse),
 					true
-			), new TestItem<Predicate>(
+			),
+			// ⊥⇒⊥
+			new TestItem<Predicate>(
 					mBinaryPredicate(LIMP, bfalse, bfalse),
 					true
 			),
 			
 			// QuantPred + Pred
+			// ∀x,y,z·⊥
 			new TestItem<Predicate>(
 					mQuantifiedPredicate(FORALL, mList(bd_x, bd_y, bd_z), bfalse),
 					true
-			), new TestItem<Predicate>(
+			),
+			// ∃x,y·∃s,t·⊥
+			new TestItem<Predicate>(
 					mQuantifiedPredicate(EXISTS, 
 							mList(bd_x, bd_y), 
 							mQuantifiedPredicate(EXISTS, mList(bd_s, bd_t), bfalse)
 					), 
 					true
-			), new TestItem<Predicate>(
+			),
+			// ∃x,y·∃s,y·⊥
+			new TestItem<Predicate>(
 					mQuantifiedPredicate(EXISTS, 
 							mList(bd_x,bd_y), 
 							mQuantifiedPredicate(EXISTS, mList(bd_s, bd_y), bfalse)
 					),
 					false // bound in 2 places
-			), new TestItem<Predicate>(
+			),
+			// bool(∀x·⊥)=x
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL,
 							mBoolExpression(mQuantifiedPredicate(FORALL, mList(bd_x), bfalse)),
 							id_x
 					),
 					false
-			), new TestItem<Predicate>(
+			),
+			// bool(∀x·⊥)=y
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL,
 							mBoolExpression(mQuantifiedPredicate(FORALL, mList(bd_x), bfalse)),
 							id_y
 					),
 					true
-			), new TestItem<Predicate>(
+			),
+			// x=bool(∀x·⊥)
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL,
 							id_x,
 							mBoolExpression(mQuantifiedPredicate(FORALL, mList(bd_x), bfalse))
 					),
 					false
-			), new TestItem<Predicate>(
+			),
+			// ∀x0,y,z·x=x
+			new TestItem<Predicate>(
 					mQuantifiedPredicate(FORALL,
 							mList(bd_x, bd_y, bd_z),
 							mRelationalPredicate(EQUAL, id_x, id_x)
 					),
 					false
-			), new TestItem<Predicate>(
+			),
+			// ∀x,y,z·x=x
+			new TestItem<Predicate>(
 					mQuantifiedPredicate(FORALL,
 							mList(bd_x, bd_y, bd_z),
 							mRelationalPredicate(EQUAL, b2, b2)
 					),
 					true
-			), new TestItem<Predicate>(
+			),
+			// ∀x,y,z0·finite({x,y·⊥ ∣ z})
+			new TestItem<Predicate>(
 					mQuantifiedPredicate(FORALL,
 							mList(bd_x, bd_y, bd_z),
 							mSimplePredicate(
@@ -252,7 +287,9 @@ public class TestLegibility extends TestCase {
 											mList(bd_x, bd_y), bfalse, id_z))
 					),
 					false
-			), new TestItem<Predicate>(
+			),
+			// ∀x,y,z0·finite({s,t·⊥ ∣ z})
+			new TestItem<Predicate>(
 					mQuantifiedPredicate(FORALL,
 							mList(bd_x, bd_y, bd_z),
 							mSimplePredicate(
@@ -260,7 +297,9 @@ public class TestLegibility extends TestCase {
 											mList(bd_s, bd_t), bfalse, id_z))
 					),
 					false
-			), new TestItem<Predicate>(
+			),
+			// ∀x,y,z·finite({s,t·⊥ ∣ z})
+			new TestItem<Predicate>(
 					mQuantifiedPredicate(FORALL, 
 							mList(bd_x, bd_y, bd_z),
 							mSimplePredicate(
@@ -268,7 +307,9 @@ public class TestLegibility extends TestCase {
 											mList(bd_s, bd_t), bfalse, b2))
 					),
 					true
-			), new TestItem<Predicate>(
+			),
+			// ∀x,y,z·finite({s,t0·⊥ ∣ t})
+			new TestItem<Predicate>(
 					mQuantifiedPredicate(FORALL,
 							mList(bd_x, bd_y, bd_z),
 							mSimplePredicate(
@@ -276,7 +317,9 @@ public class TestLegibility extends TestCase {
 											mList(bd_s, bd_t), bfalse, id_t))
 					),
 					false
-			), new TestItem<Predicate>(
+			),
+			// ∀x,y,z·finite({s,t·⊥ ∣ t})
+			new TestItem<Predicate>(
 					mQuantifiedPredicate(FORALL,
 							mList(bd_x, bd_y, bd_z),
 							mSimplePredicate(
@@ -284,32 +327,73 @@ public class TestLegibility extends TestCase {
 											mList(bd_s, bd_t), bfalse, b0))
 					),
 					true
-			),			
+			),
+			
+			// (∀y·y∈ℤ∧(∀z·⊥)∧(∀z·⊥))⇒⊥
+			new TestItem<Predicate>(
+					mBinaryPredicate(Formula.LIMP,
+							mQuantifiedPredicate(
+							mList(bd_y),
+							mAssociativePredicate(
+									mRelationalPredicate(IN, b0, sint),
+									mQuantifiedPredicate(FORALL, 
+											mList(bd_z),bfalse),
+									mQuantifiedPredicate(FORALL, 
+											mList(bd_z),bfalse))
+					),
+					bfalse),
+					true
+			),
+			
+			// (∀y·y∈ℤ∧(∀z·∀z·⊥))⇒⊥
+			new TestItem<Predicate>(mBinaryPredicate(
+					Formula.LIMP,
+					mQuantifiedPredicate(
+							mList(bd_y),
+							mAssociativePredicate(
+									mRelationalPredicate(IN, b0, sint),
+									mQuantifiedPredicate(
+											FORALL,
+											mList(bd_z),
+											mQuantifiedPredicate(FORALL,
+													mList(bd_z), bfalse)))),
+					bfalse),
+					false
+			),
 			
 			// QuantExpr + Expr
+			// {x,y·⊥ ∣ z}=a
 			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL,
 							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
 							id_a
 					),
 					true
-			), new TestItem<Predicate>(
+			),
+			// {x,y·⊥ ∣ z}=x
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL,
 							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
 							id_x
 					),
 					false
-			), new TestItem<Predicate>(
+			),
+			// {x,y·⊥ ∣ z}={s,t·⊥ ∣ u}
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL,
 							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
 							mQuantifiedExpression(CSET, Explicit, mList(bd_s, bd_t), bfalse, id_u)),
 							true
-			), new TestItem<Predicate>(
+			),
+			// {x,y·⊥ ∣ z}={x,y·⊥ ∣ z}
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL,
 							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
 							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z)),
-							false
-			), new TestItem<Expression>(
+							true
+			),
+			// {x,y·⊥ ∣ {x,y·⊥ ∣ z}}
+			new TestItem<Expression>(
 					mQuantifiedExpression(CSET, Explicit, 
 							mList(bd_x, bd_y),
 							bfalse, 
@@ -317,7 +401,9 @@ public class TestLegibility extends TestCase {
 									mList(bd_x, bd_y), bfalse, id_z)
 					),
 					false
-			), new TestItem<Expression>(
+			),
+			// {x,y·⊥ ∣ {s,t·⊥ ∣ u}}
+			new TestItem<Expression>(
 					mQuantifiedExpression(CSET, Explicit, 
 							mList(bd_x, bd_y), 
 							bfalse,
@@ -325,7 +411,9 @@ public class TestLegibility extends TestCase {
 									mList(bd_s, bd_t), bfalse, id_u)
 					),
 					true
-			), new TestItem<Expression>(
+			),
+			// {x0,y·⊥ ∣ {s,t·⊥ ∣ x}}
+			new TestItem<Expression>(
 					mQuantifiedExpression(CSET, Explicit,
 							mList(bd_x, bd_y), 
 							bfalse,
@@ -333,7 +421,9 @@ public class TestLegibility extends TestCase {
 									mList(bd_s, bd_t), bfalse, id_x)
 					),
 					false
-			), new TestItem<Expression>(
+			),
+			// {x,y·⊥ ∣ {s,t·⊥ ∣ x}}
+			new TestItem<Expression>(
 					mQuantifiedExpression(CSET, Explicit,
 							mList(bd_x, bd_y),
 							bfalse,
@@ -341,7 +431,9 @@ public class TestLegibility extends TestCase {
 									mList(bd_s, bd_t), bfalse, b3)
 					),
 					true
-			), new TestItem<Expression>(
+			),
+			// {x,y·⊥ ∣ {s,t·⊥ ∣ t}}
+			new TestItem<Expression>(
 					mQuantifiedExpression(CSET, Explicit, 
 							mList(bd_x, bd_y),
 							bfalse,
@@ -349,151 +441,197 @@ public class TestLegibility extends TestCase {
 									mList(bd_s, bd_t), bfalse, b0)
 					),
 					true
-			), new TestItem<Predicate>(
+			),
+			// {x,y·⊥ ∣ z}={s,t}
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL,
 							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
 							mSetExtension(id_s, id_t)
 					),
 					true
-			), new TestItem<Predicate>(
+			),
+			// {x,y·⊥ ∣ z}={x,t}
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL, 
 							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z), 
 							mSetExtension(id_x, id_t)
 					),
 					false
-			), new TestItem<Expression>(
+			),
+			// {x,y·⊥ ∣ {s,t}}
+			new TestItem<Expression>(
 					mQuantifiedExpression(CSET, Explicit,
 							mList(bd_x, bd_y), 
 							bfalse,
 							mSetExtension(id_s, id_t)
 					),
 					true
-			), new TestItem<Expression>(
+			),
+			// {x0,y·⊥ ∣ {x,t}}
+			new TestItem<Expression>(
 					mQuantifiedExpression(CSET, Explicit, 
 							mList(bd_x, bd_y),
 							bfalse, 
 							mSetExtension(id_x, id_t)
 					),
 					false
-			), new TestItem<Expression>(
+			),
+			// {x,y·⊥ ∣ {x,t}}
+			new TestItem<Expression>(
 					mQuantifiedExpression(CSET, Explicit, 
 							mList(bd_x, bd_y),
 							bfalse, 
 							mSetExtension(b1, id_t)
 					),
 					true
-			), new TestItem<Expression>(
+			),
+			// {x,y·⊥ ∣ union(z)}
+			new TestItem<Expression>(
 					mQuantifiedExpression(CSET, Explicit,
 							mList(bd_x, bd_y),
 							bfalse,
 							mUnaryExpression(KUNION, id_z)
 					),
 					true
-			), new TestItem<Expression>(
+			),
+			// {x0,y·⊥ ∣ union(x)}
+			new TestItem<Expression>(
 					mQuantifiedExpression(CSET, Explicit, 
 							mList(bd_x, bd_y), 
 							bfalse,
 							mUnaryExpression(KUNION, id_x)
 					),
 					false
-			), new TestItem<Expression>(
+			),
+			// {x,y·⊥ ∣ union(x)}
+			new TestItem<Expression>(
 					mQuantifiedExpression(CSET, Explicit,
 							mList(bd_x, bd_y),
 							bfalse,
 							mUnaryExpression(KUNION, b1)
 					),
 					true
-			), new TestItem<Predicate>(
+			),
+			// {x,y·⊥ ∣ z}=union(s)
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL,
 							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
 							mUnaryExpression(KUNION, id_s)
 					),
 					true
-			), new TestItem<Predicate>(
+			),
+			// {x,y·⊥ ∣ z}=union(x)
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL,
 							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
 							mUnaryExpression(KUNION, id_x)
 					),
 					false
-			), new TestItem<Expression>(
+			),
+			// {x,y·⊥ ∣ s ^ t}
+			new TestItem<Expression>(
 					mQuantifiedExpression(CSET, Explicit,
 							mList(bd_x, bd_y), 
 							bfalse,
 							mBinaryExpression(EXPN, id_s, id_t)
 					),
 					true
-			), new TestItem<Expression>(
+			),
+			// {x0,y·⊥ ∣ x ^ t}
+			new TestItem<Expression>(
 					mQuantifiedExpression(CSET, Explicit, 
 							mList(bd_x, bd_y),
 							bfalse,
 							mBinaryExpression(EXPN, id_x, id_t)
 					),
 					false
-			), new TestItem<Expression>(
+			),
+			// {x,y·⊥ ∣ x ^ t}
+			new TestItem<Expression>(
 					mQuantifiedExpression(CSET, Explicit,
 							mList(bd_x, bd_y),
 							bfalse, 
 							mBinaryExpression(EXPN, b1, id_t)
 					),
 					true
-			), new TestItem<Predicate>(
+			),
+			// {x,y·⊥ ∣ z}=s ^ t
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL,
 							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
 							mBinaryExpression(EXPN, id_s, id_t)
 					),
 					true
-			), new TestItem<Predicate>(
+			),
+			// {x,y·⊥ ∣ z}=x ^ t
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL,
 							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
 							mBinaryExpression(EXPN, id_x, id_t)
 					),
 					false
-			), new TestItem<Predicate>(
+			),
+			// {x,y·⊥ ∣ z}=s∗t
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL, 
 							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
 							mAssociativeExpression(MUL, id_s, id_t)
 					),
 					true
-			), new TestItem<Predicate>(
+			),
+			// {x,y·⊥ ∣ z}=x∗t
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL,
 							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
 							mAssociativeExpression(MUL, id_x, id_t)
 					),
 					false
-			), new TestItem<Expression>(
+			),
+			// {x,y·⊥ ∣ s∗t}
+			new TestItem<Expression>(
 					mQuantifiedExpression(CSET, Explicit, 
 							mList(bd_x, bd_y), 
 							bfalse, 
 							mAssociativeExpression(MUL, id_s, id_t)
 					),
 					true
-			), new TestItem<Expression>(
+			),
+			// {x0,y·⊥ ∣ x∗t}
+			new TestItem<Expression>(
 					mQuantifiedExpression(CSET, Explicit, 
 							mList(bd_x, bd_y),
 							bfalse,
 							mAssociativeExpression(MUL, id_x, id_t)
 					),
 					false
-			), new TestItem<Expression>(
+			),
+			// {x,y·⊥ ∣ x∗t}
+			new TestItem<Expression>(
 					mQuantifiedExpression(CSET, Explicit,
 							mList(bd_x, bd_y),
 							bfalse,
 							mAssociativeExpression(MUL, b1, id_t)
 					),
 					true
-			), new TestItem<Predicate>(
+			),
+			// {x,y·⊥ ∣ z}=bool(∀x,y·⊥)
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL,
 							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z), 
 							mBoolExpression(mQuantifiedPredicate(FORALL, mList(bd_x, bd_y), bfalse))
 					),
-					false
-			), new TestItem<Predicate>(
+					true
+			),
+			// {x,y·⊥ ∣ z}=bool(∀s,t·⊥)
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL, 
 							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
 							mBoolExpression(mQuantifiedPredicate(FORALL, mList(bd_s, bd_t), bfalse))
 					),
 					true
-			), new TestItem<Predicate>(
+			),
+			// {x,y·⊥ ∣ s}=bool(∀s,t·⊥)
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL,
 							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_s),
 							mBoolExpression(mQuantifiedPredicate(FORALL, mList(bd_s, bd_t), bfalse))
@@ -502,6 +640,7 @@ public class TestLegibility extends TestCase {
 			),	
 			
 			// QuantExpr + QuantPred
+			// {x,y·∀x,y,z·⊥ ∣ b}=a
 			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL,
 							mQuantifiedExpression(CSET, Explicit,
@@ -512,7 +651,9 @@ public class TestLegibility extends TestCase {
 							), id_a
 					),
 					false
-			), new TestItem<Predicate>(
+			),
+			// {x,y·∀s,t,u·⊥ ∣ b}=a
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL,
 							mQuantifiedExpression(CSET, Explicit,
 									mList(bd_x, bd_y),
@@ -521,7 +662,9 @@ public class TestLegibility extends TestCase {
 							), id_a
 					),
 					true
-			), new TestItem<Predicate>(
+			),
+			// {x0,y·∀s,t,u·⊥ ∣ x}=a
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL,
 							mQuantifiedExpression(CSET, Explicit,
 									mList(bd_x, bd_y),
@@ -530,7 +673,9 @@ public class TestLegibility extends TestCase {
 							), id_a
 					),
 					false
-			), new TestItem<Predicate>(
+			),
+			// {x,y·∀s,t,u·⊥ ∣ u}=a
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL,
 							mQuantifiedExpression(CSET, Explicit,
 									mList(bd_x, bd_y),
@@ -539,7 +684,9 @@ public class TestLegibility extends TestCase {
 							), id_a
 					),
 					false
-			), new TestItem<Predicate>(
+			),
+			// {x,y·∀s,t,u·⊥ ∣ x}=a
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL,
 							mQuantifiedExpression(CSET, Explicit,
 									mList(bd_x, bd_y),
@@ -548,21 +695,27 @@ public class TestLegibility extends TestCase {
 							), id_a
 					),
 					true
-			), new TestItem<Predicate>(
+			),
+			// {x,y·⊥ ∣ z}=bool(∀x,y,z·⊥)
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL,
 							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
 							mBoolExpression(
 									mQuantifiedPredicate(FORALL, mList(bd_x, bd_y, bd_z), bfalse))
 					),
 					false
-			), new TestItem<Predicate>(
+			),
+			// {x,y·⊥ ∣ z}=bool(∀s,t,u·⊥)
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL,
 							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_z),
 							mBoolExpression(
 									mQuantifiedPredicate(FORALL, mList(bd_s, bd_t, bd_u), bfalse))
 					),
 					true
-			), new TestItem<Predicate>(
+			),
+			// {x,y·⊥ ∣ s}=bool(∀s,t,u·⊥)
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL,
 							mQuantifiedExpression(CSET, Explicit, mList(bd_x, bd_y), bfalse, id_s),
 							mBoolExpression(
@@ -570,70 +723,140 @@ public class TestLegibility extends TestCase {
 					),
 					false
 			),
-
+			
+			// { x · x ∈ ℤ ∣ x} ∪ { x · x ∈ ℤ ∣ x } = ∅
+			new TestItem<Predicate>(
+					mRelationalPredicate(EQUAL,
+					mAssociativeExpression(BUNION,
+							mQuantifiedExpression(CSET, Explicit, mList(bd_x),
+									mRelationalPredicate(IN, b0, sint), b0),
+							mQuantifiedExpression(CSET, Explicit, mList(bd_x),
+									mRelationalPredicate(IN, b0, sint), b0)),
+					emptySet), 
+					true
+			),
+			
+			// { x · x ∈ ℙ(ℤ) ∣ x ∪ { x · x ∈ ℤ ∣ x }} = ∅
+			new TestItem<Predicate>(mRelationalPredicate(
+					EQUAL,
+					mQuantifiedExpression(
+							CSET,
+							Explicit,
+							mList(bd_x),
+							mRelationalPredicate(IN, b0,
+									mUnaryExpression(Formula.POW, sint)),
+							mAssociativeExpression(
+									BUNION,
+									b0,
+									mQuantifiedExpression(CSET, Explicit,
+											mList(bd_x),
+											mRelationalPredicate(IN, b0, sint),
+											b0))), 
+					emptySet),
+					false
+			),
+			
 			// Only Exprs
+			// union(x)=y
 			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL, mUnaryExpression(KUNION, id_x), id_y),
 					true
-			), new TestItem<Predicate>(
+			),
+			// bool(⊥)=y
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL, mBoolExpression(bfalse), id_y),
 					true
-			), new TestItem<Expression>(
+			),
+			// {x,y}
+			new TestItem<Expression>(
 					mSetExtension(id_x, id_y),
 					true
-			), new TestItem<Predicate>(
+			),
+			// x=2
+			new TestItem<Predicate>(
 					mRelationalPredicate(EQUAL, id_x, mIntegerLiteral(2)),
 					true
-			), new TestItem<Expression>(
+			),
+			// x ^ y
+			new TestItem<Expression>(
 					mBinaryExpression(EXPN, id_x, id_y),
 					true
-			), new TestItem<Expression>(
+			),
+			// x∗x
+			new TestItem<Expression>(
 					mAssociativeExpression(MUL, id_x, id_x),
 					true
 			),
 			
 			
 			// Assignments
+			// x ≔ x
 			new TestItem<Assignment>(
 					mBecomesEqualTo(mList(id_x), mList(id_x)),
 					true
-			), new TestItem<Assignment>(
+			),
+			// x ≔ {x ∣ x∈ℤ}
+			new TestItem<Assignment>(
 					mBecomesEqualTo(mList(id_x), mList(set_x_in_int)),
 					false
-			), new TestItem<Assignment>(
+			),
+			// x ≔ {s ∣ s∈ℤ}
+			new TestItem<Assignment>(
 					mBecomesEqualTo(mList(id_x), mList(set_s_in_int)),
 					true
-			), new TestItem<Assignment>(
+			),
+			// x,y ≔ y, x
+			new TestItem<Assignment>(
 					mBecomesEqualTo(mList(id_x, id_y), mList(id_y, id_x)),
 					true
-			), new TestItem<Assignment>(
+			),
+			// x,y ≔ {x ∣ x∈ℤ}, t
+			new TestItem<Assignment>(
 					mBecomesEqualTo(mList(id_x, id_y), mList(set_x_in_int, id_t)),
 					false
-			), new TestItem<Assignment>(
+			),
+			// y,x ≔ {x ∣ x∈ℤ}, t
+			new TestItem<Assignment>(
 					mBecomesEqualTo(mList(id_y, id_x), mList(set_x_in_int, id_t)),
 					false
-			), new TestItem<Assignment>(
+			),
+			// x,y,z ≔ y, z, x
+			new TestItem<Assignment>(
 					mBecomesEqualTo(mList(id_x, id_y, id_z), mList(id_y, id_z, id_x)),
 					true
-			), new TestItem<Assignment>(
+			),
+			// x,y,z ≔ {x ∣ x∈ℤ}, t, u
+			new TestItem<Assignment>(
 					mBecomesEqualTo(mList(id_x, id_y, id_z), mList(set_x_in_int, id_t, id_u)),
 					false
-			), new TestItem<Assignment>(
+			),
+			// y,x,z ≔ {x ∣ x∈ℤ}, t, u
+			new TestItem<Assignment>(
 					mBecomesEqualTo(mList(id_y, id_x, id_z), mList(set_x_in_int, id_t, id_u)),
 					false
-			), new TestItem<Assignment>(
+			),
+			// z,y,x ≔ {x ∣ x∈ℤ}, t, u
+			new TestItem<Assignment>(
 					mBecomesEqualTo(mList(id_z, id_y, id_x), mList(set_x_in_int, id_t, id_u)),
 					false
-			), new TestItem<Assignment>(
+			),
+			// x :∈ y
+			new TestItem<Assignment>(
 					mBecomesMemberOf(id_x, id_y),
 					true
-			), new TestItem<Assignment>(
+			),
+			// x :∈ {x ∣ x∈ℤ}
+			new TestItem<Assignment>(
 					mBecomesMemberOf(id_x, set_x_in_int),
 					false
-			), new TestItem<Assignment>(
+			),
+			// x :∣ x'=x
+			new TestItem<Assignment>(
 					mBecomesSuchThat(mList(id_x), mList(bd_xp), mRelationalPredicate(EQUAL, b0, id_x)),
 					true
-			), new TestItem<Assignment>(
+			),
+			// x :∣ x'={x ∣ x∈ℤ}
+			new TestItem<Assignment>(
 					mBecomesSuchThat(mList(id_x), mList(bd_xp), mRelationalPredicate(EQUAL, b0, set_x_in_int)),
 					false
 			),
@@ -646,7 +869,8 @@ public class TestLegibility extends TestCase {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void testLegibility() {
 		for (TestItem item : testItems) {
-			boolean result = item.formula.isLegible(null).isSuccess();
+			final List<FreeIdentifier> freeIdentifiers = Arrays.asList(item.formula.getFreeIdentifiers());
+			boolean result = item.formula.isLegible(freeIdentifiers).isSuccess();
 			String syntaxTree = item.formula.getSyntaxTree();
 			assertEquals("\nTesting syntax tree:\n" + syntaxTree
 					+ "\nResult obtained: " + (result ? "" : "NOT")

@@ -195,13 +195,11 @@ public class BecomesMemberOf extends Assignment {
 	 * @see org.eventb.core.ast.Formula#isLegible(org.eventb.internal.core.ast.LegibilityResult, org.eventb.core.ast.BoundIdentDecl[])
 	 */
 	@Override
-	protected void isLegible(LegibilityResult result, BoundIdentDecl[] quantifiedIdents) {
+	protected void isLegible(LegibilityResult result) {
 		for (FreeIdentifier ident: assignedIdents) {
-			ident.isLegible(result, quantifiedIdents);
-			if (! result.isSuccess())
-				return;
+			ident.isLegible(result);
 		}
-		setExpr.isLegible(result, quantifiedIdents);
+		setExpr.isLegible(result);
 	}
 
 	@Override

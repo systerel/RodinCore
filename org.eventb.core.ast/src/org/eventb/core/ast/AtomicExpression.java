@@ -241,8 +241,11 @@ public class AtomicExpression extends Expression {
 		assert target.equals(child);
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	@Override
-	protected void isLegible(LegibilityResult result, BoundIdentDecl[] quantifiedIdents) {
+	protected void isLegible(LegibilityResult result) {
 		return;
 	}
 

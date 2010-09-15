@@ -269,20 +269,14 @@ public class BecomesSuchThat extends Assignment {
 	}
 
 	@Override
-	protected void isLegible(LegibilityResult result, BoundIdentDecl[] boundAbove) {
+	protected void isLegible(LegibilityResult result) {
 		for (FreeIdentifier ident: assignedIdents) {
-			ident.isLegible(result, boundAbove);
-			if (! result.isSuccess())
-				return;
+			ident.isLegible(result);
 		}
 		for (BoundIdentDecl decl: primedIdents) {
-			decl.isLegible(result, boundAbove);
-			if (! result.isSuccess()) {
-				return;
-			}
+			decl.isLegible(result);
 		}
-		final BoundIdentDecl[] boundBelow = catenateBoundIdentLists(boundAbove, primedIdents);
-		condition.isLegible(result, boundBelow);
+		condition.isLegible(result);
 	}
 
 	@Override

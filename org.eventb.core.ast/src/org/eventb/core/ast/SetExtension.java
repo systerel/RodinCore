@@ -223,13 +223,13 @@ public class SetExtension extends Expression {
 		return str.toString();
 	}
 	
+	/**
+	 * @since 2.0
+	 */
 	@Override
-	protected void isLegible(LegibilityResult result, BoundIdentDecl[] quantifiedIdents) {
+	protected void isLegible(LegibilityResult result) {
 		for (int i=0; i<members.length;i++) {
-			members[i].isLegible(result, quantifiedIdents);
-			if (!result.isSuccess()) {
-				return;
-			}
+			members[i].isLegible(result);
 		}
 	}
 	

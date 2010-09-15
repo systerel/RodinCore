@@ -268,10 +268,8 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	}
 
 	@Override
-	protected void isLegible(LegibilityResult result,
-			BoundIdentDecl[] quantifiedIdents) {
-		ExtensionHelper.isLegible(childExpressions, childPredicates, result,
-				quantifiedIdents);
+	protected void isLegible(LegibilityResult result) {
+		ExtensionHelper.isLegible(childExpressions, childPredicates, result);
 	}
 
 	@SuppressWarnings("unchecked")

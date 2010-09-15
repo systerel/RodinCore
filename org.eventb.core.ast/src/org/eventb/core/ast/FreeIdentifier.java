@@ -191,12 +191,13 @@ public class FreeIdentifier extends Identifier {
 				&& name.equals(((FreeIdentifier) other).name);
 	}
 	
-	/*
+	/**
 	 * A formula containing free identifiers is well-formed, only if the free identifier
 	 * does not appear bound in the formula.
+	 * @since 2.0
 	 */
 	@Override
-	protected void isLegible(LegibilityResult result, BoundIdentDecl[] quantifiedIdents) {
+	protected void isLegible(LegibilityResult result) {
 		if (result.hasBoundIdentDecl(this.name)) {
 			result.addProblem(new ASTProblem(this.getSourceLocation(),
 					ProblemKind.FreeIdentifierHasBoundOccurences,

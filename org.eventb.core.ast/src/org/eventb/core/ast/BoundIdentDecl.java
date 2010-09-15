@@ -120,7 +120,7 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	 * does not appear bound in the formula.
 	 */
 	@Override
-	protected void isLegible(LegibilityResult result, BoundIdentDecl[] quantifiedIdents) {
+	protected void isLegible(LegibilityResult result) {
 		if (result.hasFreeIdent(name)) {
 			result.addProblem(new ASTProblem(
 					this.getSourceLocation(),

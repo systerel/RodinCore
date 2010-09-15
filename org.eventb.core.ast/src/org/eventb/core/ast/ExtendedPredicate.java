@@ -220,10 +220,8 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	}
 
 	@Override
-	protected void isLegible(LegibilityResult result,
-			BoundIdentDecl[] quantifiedIdents) {
-		ExtensionHelper.isLegible(childExpressions, childPredicates, result,
-				quantifiedIdents);
+	protected void isLegible(LegibilityResult result) {
+		ExtensionHelper.isLegible(childExpressions, childPredicates, result);
 	}
 
 	@Override

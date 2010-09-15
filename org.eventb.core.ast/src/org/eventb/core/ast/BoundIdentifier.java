@@ -126,8 +126,11 @@ public class BoundIdentifier extends Identifier {
 		return builder.toString();
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	@Override
-	protected void isLegible(LegibilityResult result, BoundIdentDecl[] quantifiedIdents) {
+	protected void isLegible(LegibilityResult result) {
 		// this has now been moved to isWellFormed because the user cannot cause this problem!
 //		if (boundIndex >= quantifiedIdents.length) {
 //			result.addProblem(new LegibilityProblem(getSourceLocation(),Problem.BoundIdentifierIndexOutOfBounds,new String[]{""},ProblemSeverities.Error));

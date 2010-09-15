@@ -257,18 +257,18 @@ public class QuantifiedPredicate extends Predicate {
 				+ pred.getSyntaxTree(boundNamesBelow,tabs + "\t");
 	}
 
+	/**
+	 * @since 2.0
+	 */
 	@Override
-	protected void isLegible(LegibilityResult result, BoundIdentDecl[] boundAbove) {
-
-		for (BoundIdentDecl decl: quantifiedIdentifiers) {
-			decl.isLegible(result, boundAbove);
-			if (! result.isSuccess()) {
-				break;
-			}
+	protected void isLegible(LegibilityResult result) {
+		final LegibilityResult resultCopy = new LegibilityResult(result);
+		for (BoundIdentDecl decl : quantifiedIdentifiers) {
+			decl.isLegible(resultCopy);
 		}
-		final BoundIdentDecl[] boundBelow = catenateBoundIdentLists(boundAbove, quantifiedIdentifiers);
-		if (result.isSuccess()) {
-			pred.isLegible(result, boundBelow);
+		pred.isLegible(resultCopy);
+		for (ASTProblem problem : resultCopy.getProblems()) {
+				result.addProblem(problem);
 		}
 	}
 	

@@ -1,13 +1,20 @@
-/*
- * Created on 31-jul-2005
+/*******************************************************************************
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- */
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.core.ast;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.FreeIdentifier;
 
@@ -38,6 +45,19 @@ public class LegibilityResult extends AbstractResult {
 			for (FreeIdentifier ident: context) {
 				this.freeIdents.put(ident.getName(), ident);
 			}
+		}
+	}
+
+	/**
+	 * Constructor used to make a copy of the given result.
+	 */
+	public LegibilityResult(LegibilityResult other) {
+		this.freeIdents = new HashMap<String, FreeIdentifier>(other.freeIdents);
+		this.boundIdentDecls = new HashMap<String, BoundIdentDecl>(
+				other.boundIdentDecls);
+
+		for (ASTProblem problem : other.getProblems()) {
+			addProblem(problem);
 		}
 	}
 	
