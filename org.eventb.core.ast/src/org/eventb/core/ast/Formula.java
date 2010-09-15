@@ -1850,6 +1850,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @param result
 	 *            the LegibilityResult that is used to return information about
 	 *            the errors found. Can not be <code>null</code>
+	 * @since 2.0
 	 */
 	protected abstract void isLegible(LegibilityResult result);
 
