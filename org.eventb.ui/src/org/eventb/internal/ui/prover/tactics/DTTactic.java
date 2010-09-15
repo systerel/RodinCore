@@ -56,7 +56,7 @@ public abstract class DTTactic implements ITacticProvider {
 		public Point getHyperlinkBounds(String parsedString,
 				Predicate parsedPredicate) {
 			return TacticProviderUtils.getOperatorPosition(parsedPredicate,
-					parsedString, position.getFirstChild());
+					parsedString, position);
 		}
 
 		@Override

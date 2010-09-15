@@ -73,6 +73,7 @@ import org.eventb.core.seqprover.reasoners.MngHyp;
 import org.eventb.core.seqprover.reasoners.Review;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.eventbExtensions.AbstrExpr;
+import org.eventb.internal.core.seqprover.eventbExtensions.AbstractManualInference;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllD;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllI;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllmpD;
@@ -3831,8 +3832,8 @@ public class Tactics {
 	 * @since 2.0
 	 */
 	public static ITactic dtDistinctCase(Predicate hyp, IPosition position) {
-		return BasicTactics.reasonerTac(new DTDistinctCase(), new Input(hyp,
-				position));
+		return BasicTactics.reasonerTac(new DTDistinctCase(),
+				new AbstractManualInference.Input(hyp, position));
 	}
 
 	/**
@@ -3848,8 +3849,8 @@ public class Tactics {
 	 * @since 2.0
 	 */
 	public static ITactic dtInduction(Predicate hyp, IPosition position) {
-		return BasicTactics.reasonerTac(new DTInduction(), new Input(hyp,
-				position));
+		return BasicTactics.reasonerTac(new DTInduction(),
+				new AbstractManualInference.Input(hyp, position));
 	}
 
 }
