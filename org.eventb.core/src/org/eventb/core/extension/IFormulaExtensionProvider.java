@@ -12,7 +12,7 @@ package org.eventb.core.extension;
 
 import java.util.Set;
 
-import org.eventb.core.IEventBProject;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.extension.IFormulaExtension;
 
 /**
@@ -37,12 +37,12 @@ public interface IFormulaExtensionProvider {
 	/**
 	 * Returns a set of formula extensions defined for a given project.
 	 * 
-	 * @param project
-	 *            the project to retrieve extensions for
+	 * @param root
+	 *            the root element to retrieve extensions for
 	 * 
 	 * @return a set of extensions provided by this extension provider for a
 	 *         given <code>project</code>
 	 */
-	Set<IFormulaExtension> getFormulaExtensions(IEventBProject project);
+	Set<IFormulaExtension> getFormulaExtensions(IEventBRoot root);
 
 }

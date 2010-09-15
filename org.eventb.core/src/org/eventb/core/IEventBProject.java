@@ -242,9 +242,11 @@ public interface IEventBProject extends IAdaptable {
 	/**
 	 * Returns the formula factory associated with this project.
 	 * 
+	 * @param root
+	 *            the root element requesting the factory
 	 * @return the associated formula factory
 	 * @since 1.4
 	 */
-	FormulaFactory getFormulaFactory();
+	FormulaFactory getFormulaFactory(IEventBRoot root);
 
 }

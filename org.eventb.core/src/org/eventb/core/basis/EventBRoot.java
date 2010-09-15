@@ -101,7 +101,7 @@ public abstract class EventBRoot extends EventBElement implements IEventBRoot,
 	 */
 	@Override
 	public final FormulaFactory getFormulaFactory() {
-		return getEventBProject().getFormulaFactory();
+		return getEventBProject().getFormulaFactory(this);
 	}
 
 	public void setConfiguration(String configuration, IProgressMonitor monitor) throws RodinDBException {

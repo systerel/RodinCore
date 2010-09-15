@@ -10,59 +10,39 @@
  *******************************************************************************/
 package org.eventb.core.tests.extension;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Collections;
 import java.util.Set;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.IEventBProject;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.tests.EventBTest;
 import org.eventb.internal.core.FormulaExtensionProviderRegistry;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinCore;
 
 /**
  * Unit tests for the formula extension provider registry.
  */
-public class FormulaExtensionProviderRegistryTest {
+public class FormulaExtensionProviderRegistryTest extends EventBTest {
 
 	protected IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
-	private IRodinProject rodinProject;
-	private IEventBProject eventBProject;
+	private IContextRoot contextRoot;
 
 	@Before
-	public void setUp() throws CoreException {
-		rodinProject = createRodinProject("P");
-		eventBProject = (IEventBProject) rodinProject
-				.getAdapter(IEventBProject.class);
+	public void setUp() throws Exception {
+		super.setUp();
+		contextRoot = createContext("ctx");
 	}
 
 	@After
 	public void cleanUp() throws CoreException {
-		eventBProject = null;
 		rodinProject.getResource().delete(true, null);
-	}
-
-	protected IRodinProject createRodinProject(String projectName)
-			throws CoreException {
-		final IProject project = workspace.getRoot().getProject(projectName);
-		project.create(null);
-		project.open(null);
-		final IProjectDescription pDescription = project.getDescription();
-		pDescription.setNatureIds(new String[] { RodinCore.NATURE_ID });
-		project.setDescription(pDescription, null);
-		final IRodinProject result = RodinCore.valueOf(project);
-		return result;
 	}
 
 	/**
@@ -74,11 +54,11 @@ public class FormulaExtensionProviderRegistryTest {
 	 */
 	@Test
 	public void testFormulaFactoriesEquals() {
-		final Set<IFormulaExtension> expected = Collections.singleton(Prime.getPrime());
+		final Set<IFormulaExtension> expected = Collections.singleton(Prime
+				.getPrime());
 
 		final FormulaFactory factory1 = FormulaExtensionProviderRegistry
-				.getExtensionProviderRegistry().getFormulaFactory(
-						eventBProject);
+				.getExtensionProviderRegistry().getFormulaFactory(contextRoot);
 		final Set<IFormulaExtension> actual = factory1.getExtensions();
 		
 		assertEquals("wrong extensions", expected, actual);

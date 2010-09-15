@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBProject;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPRRoot;
@@ -83,10 +84,10 @@ public class EventBProject extends PlatformObject implements IEventBProject {
 	}
 
 	@Override
-	public FormulaFactory getFormulaFactory() {
+	public FormulaFactory getFormulaFactory(IEventBRoot root) {
 		if (formulaFactory == null)
 			formulaFactory = FormulaExtensionProviderRegistry
-					.getExtensionProviderRegistry().getFormulaFactory(this);
+					.getExtensionProviderRegistry().getFormulaFactory(root);
 		return formulaFactory;
 	}
 

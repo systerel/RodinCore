@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.IEventBProject;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.extension.IFormulaExtensionProvider;
@@ -76,23 +76,23 @@ public class FormulaExtensionProviderRegistry {
 	}
 
 	public synchronized Set<IFormulaExtension> getFormulaExtensions(
-			IEventBProject project) {
+			IEventBRoot root) {
 		final Set<IFormulaExtension> extensions = new HashSet<IFormulaExtension>();
 		for (Entry<String, IFormulaExtensionProvider> entry : registry
 				.entrySet()) {
 			final IFormulaExtensionProvider provider = entry.getValue();
 			if (provider != null) {
-				extensions.addAll(provider.getFormulaExtensions(project));
+				extensions.addAll(provider.getFormulaExtensions(root));
 			}
 		}
 		return extensions;
 	}
 
-	public synchronized FormulaFactory getFormulaFactory(IEventBProject project) {
+	public synchronized FormulaFactory getFormulaFactory(IEventBRoot root) {
 		if (registry == null) {
 			loadRegistry();
 		}
-		final Set<IFormulaExtension> extensions = getFormulaExtensions(project);
+		final Set<IFormulaExtension> extensions = getFormulaExtensions(root);
 		return FormulaFactory.getInstance(extensions);
 	}
 
