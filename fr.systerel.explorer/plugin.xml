@@ -275,7 +275,7 @@
             id="fr.systerel.explorer.navigator.content.carrierSet"
             labelProvider="fr.systerel.internal.explorer.navigator.contentProviders.RodinLabelProvider"
             name="%navigatorContent.carrierSets"
-            priority="high">
+            priority="highest">
          <triggerPoints>
             <or>
                <instanceof
