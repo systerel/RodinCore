@@ -99,7 +99,7 @@ public class DefaultTacticProvider implements ITacticProvider {
 						rightLocation.getStart());
 			}
 			if (subFormula instanceof LiteralPredicate) {
-				return new Point(0, 1);
+				return makeAtomicPos(subFormula.getSourceLocation());
 			}
 			if (subFormula instanceof MultiplePredicate) {
 				final MultiplePredicate mPred = (MultiplePredicate) subFormula;
@@ -134,7 +134,7 @@ public class DefaultTacticProvider implements ITacticProvider {
 						.getEnd() + 1, children[1].getSourceLocation().getStart());
 			}
 			if (subFormula instanceof AtomicExpression) {
-				return new Point(0, 1);
+				return makeAtomicPos(subFormula.getSourceLocation());
 			}
 			if (subFormula instanceof BinaryExpression) {
 				BinaryExpression bExp = (BinaryExpression) subFormula;
@@ -162,15 +162,19 @@ public class DefaultTacticProvider implements ITacticProvider {
 						.getStart(), expression.getSourceLocation().getStart());
 			}
 			if (subFormula instanceof BoolExpression) {
-				return new Point(0, 1);
+				return makeAtomicPos(subFormula.getSourceLocation());
 			}
 			if (subFormula instanceof BoundIdentifier) {
-				return new Point(0, 1);
+				return makeAtomicPos(subFormula.getSourceLocation());
 			}
 			if (subFormula instanceof FreeIdentifier) {
-				return new Point(0, 1);
+				return makeAtomicPos(subFormula.getSourceLocation());
 			}
-			return new Point(0, 1);// The first character
+			return makeAtomicPos(subFormula.getSourceLocation());// The first character
+		}
+
+		private static Point makeAtomicPos(SourceLocation srcLoc) {
+			return new Point(srcLoc.getStart(), srcLoc.getEnd() + 1);
 		}
 
 		/**
