@@ -12,7 +12,6 @@ package org.eventb.internal.core.ast.extension.datatype;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -168,7 +167,7 @@ public class Datatype implements IDatatype {
 
 	@Override
 	public Set<IFormulaExtension> getExtensions() {
-		final Set<IFormulaExtension> extensions = new HashSet<IFormulaExtension>();
+		final Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
 
 		extensions.add(typeConstructor);
 		for (Constructor constr : constructors.values()) {
