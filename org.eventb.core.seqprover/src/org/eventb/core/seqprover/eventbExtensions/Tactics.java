@@ -3797,7 +3797,7 @@ public class Tactics {
 	 */
 	public static ITactic funImgGoal(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new IsFunImageGoal(),
-				new Input(hyp, position));
+				new AbstractManualInference.Input(hyp, position));
 	}
 	
 	/**
