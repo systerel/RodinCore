@@ -530,6 +530,18 @@
             id="funImgSimpTac"
             name="%funImgSimpTacName">
       </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$InDomGoalTac"
+            description="%inDomGoalTacDesc"
+            id="InDomGoalTac"
+            name="%inDomGoalTacName">
+      </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$FunImgInGoalTac"
+            description="%funImgInGoalTacDesc"
+            id="FunImgInGoalTac"
+            name="%funImgInGoalTacName">
+      </autoTactic> 
 
    </extension>
 

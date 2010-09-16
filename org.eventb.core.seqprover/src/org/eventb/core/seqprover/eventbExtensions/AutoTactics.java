@@ -20,6 +20,7 @@ import static org.eventb.core.seqprover.tactics.BasicTactics.loopOnAllPending;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.Expression;
@@ -48,6 +49,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.NegEnum;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.tactics.InDomGoalManager;
+import org.eventb.internal.core.seqprover.eventbExtensions.tactics.TacticsLib;
 
 
 /**
@@ -196,6 +199,58 @@ public class AutoTactics {
 			}
 			return "Selected hypotheses contain no contradicting negations";
 		};
+	}
+	
+	/**
+	 * Discharges any sequent whose goal denotes a membership to a domain the
+	 * value of which is known.
+	 */
+	public static class InDomGoalTac implements ITactic {
+
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			final IProofTreeNode initialNode = ptNode;
+			final IProverSequent sequent = ptNode.getSequent();
+			final Predicate goal = sequent.goal();
+			ptNode = TacticsLib.addFunctionalHypotheses(ptNode, pm);
+			// Create an inDomManager for each different dom expression in goal
+			Set<InDomGoalManager> appManagers = TacticsLib
+					.createInDomManagers(goal);
+			for (InDomGoalManager app : appManagers) {
+				if (app.isApplicable(ptNode)) {
+					if (app.applyTactics(ptNode, pm) == null) {
+						return null;
+					}
+				}
+			}
+			initialNode.pruneChildren();
+			return "Tactic unapplicable";
+		}
+
+	}
+
+	/**
+	 * Discharges any sequent whose goal denotes that a functional image belongs
+	 * to a set when this can be derived from the function properties.
+	 */
+	public static class FunImgInGoalTac implements ITactic {
+
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			final IProofTreeNode initialNode = ptNode;
+			ptNode = TacticsLib.addFunctionalHypotheses(ptNode, pm);
+			if (BasicTactics.reasonerTac(new Hyp(), EMPTY_INPUT).apply(
+					ptNode, pm) == null) {
+				return null;
+			} else {
+				ptNode.pruneChildren();
+			}
+			if (BasicTactics.reasonerTac(new IsFunGoal(), EMPTY_INPUT).apply(
+					ptNode, pm) == null) {
+				return null;
+			}
+			initialNode.pruneChildren();
+			return "Tactic unapplicable";
+		}
+
 	}
 
 	//*************************************************

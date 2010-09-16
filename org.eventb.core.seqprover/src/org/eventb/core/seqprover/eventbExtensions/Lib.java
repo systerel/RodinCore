@@ -906,5 +906,23 @@ public final class Lib {
 		}
 		return resultPred;
 	}
+	
+	/**
+	 * Applies the equality rewriter to the given predicate.
+	 * 
+	 * @param predicate
+	 *            a predicate to rewrite
+	 * @param from
+	 *            the expression that will be replaced
+	 * @param to           
+	 *            the substitute 
+	 * @param ff 
+	 * 			  formula factory	         
+	 * @return the rewritten predicate
+	 */ 
+	public static Predicate equalityRewrite(Predicate pred, Expression from,
+			Expression to, FormulaFactory ff) {
+		return pred.rewrite(new Lib.EqualityRewriter(from, to, ff));
+	}
 
 }
