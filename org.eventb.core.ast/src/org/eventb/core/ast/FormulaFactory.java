@@ -21,7 +21,7 @@ import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -98,7 +98,7 @@ public class FormulaFactory {
 		final Set<IFormulaExtension> actualExtns = new LinkedHashSet<IFormulaExtension>();
 		actualExtns.addAll(extensions);
 		
-		final Map<Integer, IFormulaExtension> extMap = new HashMap<Integer, IFormulaExtension>();
+		final Map<Integer, IFormulaExtension> extMap = new LinkedHashMap<Integer, IFormulaExtension>();
 		synchronized (ALL_EXTENSIONS) {
 			for (IFormulaExtension extension : actualExtns) {
 				Integer tag = ALL_EXTENSIONS.get(extension);
@@ -130,7 +130,7 @@ public class FormulaFactory {
 	 * @since 2.0
 	 */
 	public FormulaFactory withExtensions(Set<IFormulaExtension> addedExtns) {
-		final Set<IFormulaExtension> newExtns = new HashSet<IFormulaExtension>(
+		final Set<IFormulaExtension> newExtns = new LinkedHashSet<IFormulaExtension>(
 				extensions.values());
 		newExtns.addAll(addedExtns);
 		return getInstance(newExtns);
@@ -169,8 +169,8 @@ public class FormulaFactory {
 	 */
 	protected FormulaFactory(Map<Integer, IFormulaExtension> extMap) {
 		this.extensions = extMap;
-		this.grammar = new ExtendedGrammar(new HashSet<IFormulaExtension>(
-				extMap.values()));
+		this.grammar = new ExtendedGrammar(
+				new LinkedHashSet<IFormulaExtension>(extMap.values()));
 		this.grammar.init();
 	}
 
@@ -294,7 +294,7 @@ public class FormulaFactory {
 	 * @since 2.0
 	 */
 	public Set<IFormulaExtension> getExtensions() {
-		final Set<IFormulaExtension> result = new HashSet<IFormulaExtension>();
+		final Set<IFormulaExtension> result = new LinkedHashSet<IFormulaExtension>();
 		for (IFormulaExtension ext : extensions.values()) {
 			result.add(ext);
 		}
