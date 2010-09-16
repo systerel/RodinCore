@@ -108,6 +108,11 @@ public abstract class EventBRoot extends EventBElement implements IEventBRoot,
 		setAttributeValue(EventBAttributes.CONFIGURATION_ATTRIBUTE, configuration, monitor);
 	}
 	
+	@Override
+	public void setFormulaFactory(FormulaFactory ff) {
+		getEventBProject().setFormulaFactory(this, ff);
+	}
+
 	public String getConfiguration() throws RodinDBException {
 		return getAttributeValue(EventBAttributes.CONFIGURATION_ATTRIBUTE);
 	}

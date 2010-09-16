@@ -15,6 +15,7 @@ import java.util.Set;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEventBRoot;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.extension.IFormulaExtensionProvider;
 
@@ -37,6 +38,11 @@ public class PrimeFormulaExtensionProvider implements IFormulaExtensionProvider 
 	@Override
 	public Set<IFormulaExtension> getFormulaExtensions(IEventBRoot root) {
 		return Collections.singleton(Prime.getPrime());
+	}
+
+	@Override
+	public void setFormulaFactory(IEventBRoot root, FormulaFactory ff) {
+		// Not tested here
 	}
 
 }

@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.internal.core;
 
+import static org.eventb.internal.core.FormulaExtensionProviderRegistry.getExtensionProviderRegistry;
+
 import org.eclipse.core.runtime.PlatformObject;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextRoot;
@@ -86,8 +88,8 @@ public class EventBProject extends PlatformObject implements IEventBProject {
 	@Override
 	public FormulaFactory getFormulaFactory(IEventBRoot root) {
 		if (formulaFactory == null)
-			formulaFactory = FormulaExtensionProviderRegistry
-					.getExtensionProviderRegistry().getFormulaFactory(root);
+			formulaFactory = getExtensionProviderRegistry().getFormulaFactory(
+					root);
 		return formulaFactory;
 	}
 
@@ -155,6 +157,11 @@ public class EventBProject extends PlatformObject implements IEventBProject {
 	@Override
 	public IPSRoot getPSRoot(String componentName) {
 		return (IPSRoot) getPSFile(componentName).getRoot();
+	}
+
+	@Override
+	public void setFormulaFactory(IEventBRoot root, FormulaFactory ff) {
+		getExtensionProviderRegistry().setFormulaFactory(root, ff);
 	}
 
 }

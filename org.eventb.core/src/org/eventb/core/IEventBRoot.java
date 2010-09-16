@@ -144,13 +144,24 @@ public interface IEventBRoot extends IInternalElement, IGeneratedElement {
 	 * @return a handle to the proof status file of this component
 	 */
 	IPSRoot getPSRoot();
-	
+
 	/**
-	 * Returns the formula factory associated with this component.
+	 * Returns the formula factory associated with this root element. If this
+	 * element is newly created, it will get a dynamically built formula
+	 * factory, otherwise the formula factory will be the one previously set for
+	 * this root element.
 	 * 
 	 * @return the associated formula factory
 	 * @since 1.4
 	 */
 	FormulaFactory getFormulaFactory();
+
+	/**
+	 * Sets the formula factory associated with this root element. Later calls
+	 * to getFormulaFactory() must return this formula factory.
+	 * 
+	 * @since 2.0
+	 */
+	void setFormulaFactory(FormulaFactory ff);
 
 }

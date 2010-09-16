@@ -13,6 +13,7 @@ package org.eventb.core.extension;
 import java.util.Set;
 
 import org.eventb.core.IEventBRoot;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 
 /**
@@ -44,5 +45,17 @@ public interface IFormulaExtensionProvider {
 	 *         given <code>project</code>
 	 */
 	Set<IFormulaExtension> getFormulaExtensions(IEventBRoot root);
+
+	/**
+	 * Sets the given formula factory on the given root. This method shall set
+	 * the formula factory for a newly created root. A later call on
+	 * getFormulaFactory() shall return this factory.
+	 * 
+	 * @param root
+	 *            the root element
+	 * @param ff
+	 *            the formula factory to be set on the given root
+	 */
+	void setFormulaFactory(IEventBRoot root, FormulaFactory ff);
 
 }

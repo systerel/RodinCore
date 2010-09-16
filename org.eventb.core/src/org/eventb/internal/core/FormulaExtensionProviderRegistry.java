@@ -12,10 +12,7 @@ package org.eventb.internal.core;
 
 import static org.eventb.internal.core.Util.log;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Collections;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -40,14 +37,12 @@ public class FormulaExtensionProviderRegistry {
 
 	private static final FormulaExtensionProviderRegistry SINGLETON_INSTANCE = new FormulaExtensionProviderRegistry();
 
-	private static final String[] NO_STRING = new String[0];
-
 	/**
 	 * Debug flag for <code>EXTENSIONPROVIDER_REGISTRY_TRACE</code>
 	 */
 	public static boolean DEBUG;
 
-	private Map<String, IFormulaExtensionProvider> registry;
+	private IFormulaExtensionProvider provider;
 
 	/**
 	 * Private default constructor enforces that only one instance of this class
@@ -55,79 +50,77 @@ public class FormulaExtensionProviderRegistry {
 	 */
 	private FormulaExtensionProviderRegistry() {
 		// Singleton implementation
+		if (provider == null) {
+			loadProvider();
+		}
 	}
 
 	public static FormulaExtensionProviderRegistry getExtensionProviderRegistry() {
 		return SINGLETON_INSTANCE;
 	}
 
-	public synchronized boolean isRegistered(String providerID) {
-		if (registry == null) {
-			loadRegistry();
-		}
-		return registry.containsKey(providerID);
+	public synchronized boolean isCurrentRegisteredProvider(String providerID) {
+		if (provider == null)
+			return false;
+		return provider.getId().equals(providerID);
 	}
 
-	public synchronized String[] getRegisteredIDs() {
-		if (registry == null) {
-			loadRegistry();
-		}
-		return registry.keySet().toArray(NO_STRING);
+	public synchronized String getRegisteredProviderID() {
+		if (provider == null)
+			return "no_id";
+		return provider.getId();
 	}
 
 	public synchronized Set<IFormulaExtension> getFormulaExtensions(
 			IEventBRoot root) {
-		final Set<IFormulaExtension> extensions = new HashSet<IFormulaExtension>();
-		for (Entry<String, IFormulaExtensionProvider> entry : registry
-				.entrySet()) {
-			final IFormulaExtensionProvider provider = entry.getValue();
-			if (provider != null) {
-				extensions.addAll(provider.getFormulaExtensions(root));
-			}
-		}
-		return extensions;
+		if (provider == null)
+			return Collections.emptySet();
+		return provider.getFormulaExtensions(root);
 	}
 
 	public synchronized FormulaFactory getFormulaFactory(IEventBRoot root) {
-		if (registry == null) {
-			loadRegistry();
-		}
-		final Set<IFormulaExtension> extensions = getFormulaExtensions(root);
-		return FormulaFactory.getInstance(extensions);
+		return FormulaFactory.getInstance(getFormulaExtensions(root));
 	}
 
 	/**
-	 * Initializes the registry using extensions to the formula extension
-	 * provider extension point.
+	 * Initializes the provider using extensions to the formula extension
+	 * provider extension point. It shall be only one extension provider.
 	 */
-	private synchronized void loadRegistry() {
-		if (registry != null) {
+	private synchronized void loadProvider() {
+		if (provider != null) {
 			// Prevents loading by two thread in parallel
 			return;
 		}
-		registry = new HashMap<String, IFormulaExtensionProvider>();
 		final IExtensionRegistry xRegistry = Platform.getExtensionRegistry();
 		final IExtensionPoint xPoint = xRegistry
 				.getExtensionPoint(PROVIDERS_ID);
 		for (IConfigurationElement element : xPoint.getConfigurationElements()) {
 			try {
-				final IFormulaExtensionProvider provider = (IFormulaExtensionProvider) element
-						.createExecutableExtension("class");
 				final String id = element.getAttribute("id");
-				final IFormulaExtensionProvider old = registry.put(id, provider);  
-				if (old != null) {
-					registry.put(id, old);
-					log(null, "Duplicate provider extension " + id
-							+ " ignored");
+				if (provider != null) {
+					log(null, "Only one extension provider allowed. Provider"
+							+ id + " ignored");
+					break;
 				} else {
-					if (DEBUG)
-						System.out.println("Registered provider extension "
-								+ id);
+					provider = (IFormulaExtensionProvider) element
+							.createExecutableExtension("class");
 				}
+				if (DEBUG)
+					System.out.println("Registered provider extension " + id);
 			} catch (CoreException e) {
-				log(e, "while loading extension providers registry");
+				log(e, "while loading extension provider");
 			}
 		}
+	}
+
+	public synchronized void setFormulaFactory(IEventBRoot root,
+			FormulaFactory ff) {
+		if (provider == null)
+			log(null,
+					"Could not set the formula factory on :"
+							+ root.getComponentName()
+							+ " as no extensions provider is registered.");
+		provider.setFormulaFactory(root, ff);
 	}
 
 }
