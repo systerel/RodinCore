@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.BMath.StandardGroup.BOOL_EXPR;
+
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +27,7 @@ import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.BMath.StandardGroup;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
@@ -47,17 +50,17 @@ public class BoolExpression extends Expression {
 	private static final String KBOOL_ID = "To Bool";
 
 	private static enum Operators implements IOperatorInfo<BoolExpression> {
-		OP_KBOOL("bool", KBOOL_ID, BMath.BOOL_EXPR),
+		OP_KBOOL("bool", KBOOL_ID, BOOL_EXPR),
 		;
 		
 		private final String image;
 		private final String id;
 		private final String groupId;
 		
-		private Operators(String image, String id, String groupId) {
+		private Operators(String image, String id, StandardGroup group) {
 			this.image = image;
 			this.id = id;
-			this.groupId = groupId;
+			this.groupId = group.getId();
 		}
 
 		@Override

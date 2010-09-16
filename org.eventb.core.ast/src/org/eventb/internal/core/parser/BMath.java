@@ -37,7 +37,26 @@ import static org.eventb.core.ast.QuantifiedPredicate.EXISTS_ID;
 import static org.eventb.core.ast.QuantifiedPredicate.FORALL_ID;
 import static org.eventb.core.ast.UnaryExpression.CONVERSE_ID;
 import static org.eventb.core.ast.UnaryPredicate.NOT_ID;
-import static org.eventb.internal.core.parser.OperatorRegistry.GROUP0;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.ARITHMETIC;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_EXPR;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_PRED;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.BINOP;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.BOOL_EXPR;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.BOUND_UNARY;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.BRACE_SETS;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.FUNCTIONAL;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.GROUP_0;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.INFIX_PRED;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.INTERVAL;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.LOGIC_PRED;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.NOT_PRED;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.PAIR;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.QUANTIFICATION;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.QUANTIFIED_PRED;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.RELATION;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.RELOP_PRED;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.TYPED;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.UNARY_RELATION;
 import static org.eventb.internal.core.parser.SubParsers.OFTYPE;
 
 import org.eventb.core.ast.AssociativeExpression;
@@ -58,6 +77,7 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.extension.CycleError;
+import org.eventb.internal.core.ast.ASTPlugin;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 
 /**
@@ -77,26 +97,44 @@ public abstract class BMath extends AbstractGrammar {
 
 	private static final String NEGLIT_IMAGE = "a negative integer literal";
 	
-	public static final String RELOP_PRED = "Relational Operator Predicate";
-	public static final String QUANTIFICATION = "Quantification";
-	public static final String PAIR = "Pair";
-	public static final String RELATION = "Set of Relations";
-	public static final String BINOP = "Binary Operator";
-	public static final String INTERVAL = "Interval";
-	public static final String ARITHMETIC = "Arithmetic";
-	public static final String UNARY_RELATION = "Unary Relation";
-	private static final String TYPED = "Typed";
-	public static final String FUNCTIONAL = "Functional";
-	public static final String BRACE_SETS = "Brace Sets";
-	public static final String QUANTIFIED_PRED = "Quantified";
-	public static final String LOGIC_PRED = "Logic Predicate";
-	public static final String INFIX_PRED = "Infix Predicate";
-	public static final String NOT_PRED = "Not Predicate";
-	public static final String ATOMIC_PRED = "Atomic Predicate";
-	public static final String ATOMIC_EXPR = "Atomic Expression";
-	public static final String BOUND_UNARY = "Bound Unary";
-	public static final String BOOL_EXPR = "Bool";
-	public static final String INFIX_SUBST = "Infix Substitution";
+	public static enum StandardGroup {// TODO externalize
+		GROUP_0("group0", "Least Priority Group"),
+		RELOP_PRED("relOp", "Relational Operator Predicate"),
+		QUANTIFICATION("quantification", "Quantification"),
+		PAIR("pair", "Pair"),
+		RELATION("relation", "Set of Relations"),
+		BINOP("binOp", "Binary Operator"),
+		INTERVAL("interval", "Interval"),
+		ARITHMETIC("arithmetic", "Arithmetic"),
+		UNARY_RELATION("unaryRelation", "Unary Relation"),
+		TYPED("typed", "Typed"),
+		FUNCTIONAL("functional", "Functional"),
+		BRACE_SETS("braceSets", "Brace Sets"),
+		QUANTIFIED_PRED("quantifiedPred", "Quantified"),
+		LOGIC_PRED("logicPred", "Logic Predicate"),
+		INFIX_PRED("infixPred", "Infix Predicate"),
+		NOT_PRED("notPred", "Not Predicate"),
+		ATOMIC_PRED("atomicPred", "Atomic Predicate"),
+		ATOMIC_EXPR("atomicExpr", "Atomic Expression"),
+		BOUND_UNARY("boundUnary", "Bound Unary"),
+		BOOL_EXPR("boolExpr", "Bool"),
+		INFIX_SUBST("infixSubst", "Infix Substitution"),
+		;
+		private final String id;
+		private final String name;
+		private StandardGroup(String bareId, String name) {
+			this.id = ASTPlugin.PLUGIN_ID + "." + bareId;
+			this.name = name;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public String getName() {
+			return name;
+		}
+	}
 	
 	private static final String OFTYPE_ID = "Oftype";
 	private static final String NEGLIT_ID = "Negative Literal";
@@ -182,9 +220,9 @@ public abstract class BMath extends AbstractGrammar {
 			UnaryPredicate.init(this);
 			
 			// Undefined Operators
-			addOperator("\u2982", OFTYPE_ID, TYPED, OFTYPE, true);
+			addOperator("\u2982", OFTYPE_ID, TYPED.getId(), OFTYPE, true);
 			
-			addOperator(_NEGLIT, NEGLIT_ID, BMath.ARITHMETIC, null, false);
+			addOperator(_NEGLIT, NEGLIT_ID, ARITHMETIC.getId(), null, false);
 
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
@@ -267,10 +305,10 @@ public abstract class BMath extends AbstractGrammar {
 			addPriority(DIV_ID, EXPN_ID);
 			addPriority(MOD_ID, EXPN_ID);
 			
-			addGroupPrioritySequence(GROUP0, QUANTIFIED_PRED, INFIX_PRED,
+			addGroupPrioritySequence(GROUP_0, QUANTIFIED_PRED, INFIX_PRED,
 					LOGIC_PRED, NOT_PRED, ATOMIC_PRED, RELOP_PRED, PAIR);
 
-			addGroupPrioritySequence(GROUP0, QUANTIFICATION, RELOP_PRED);
+			addGroupPrioritySequence(GROUP_0, QUANTIFICATION, RELOP_PRED);
 			
 			// start of excerpt from kernel language specification table 3.1
 			addGroupPrioritySequence(QUANTIFICATION, PAIR, RELATION, BINOP,

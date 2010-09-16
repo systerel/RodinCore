@@ -34,7 +34,7 @@ import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
-import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.BMath.StandardGroup;
 
 /**
  * @author Nicolas Beauger
@@ -91,7 +91,7 @@ public class Cond implements IExpressionExtension {
 
 	@Override
 	public String getGroupId() {
-		return BMath.BOUND_UNARY;
+		return StandardGroup.BOUND_UNARY.getId();
 	}
 
 	@Override

@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.BMath.StandardGroup.INFIX_SUBST;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -62,7 +64,7 @@ public class BecomesMemberOf extends Assignment {
 		
 		@Override
 		public String getGroupId() {
-			return BMath.INFIX_SUBST;
+			return INFIX_SUBST.getId();
 		}
 
 		@Override

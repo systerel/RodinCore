@@ -15,19 +15,17 @@ import static org.eventb.core.ast.extension.ExtensionFactory.makeFixedArity;
 import static org.eventb.core.ast.extension.ExtensionFactory.makePrefixKind;
 import static org.eventb.core.ast.extension.IFormulaExtension.ATOMIC_EXPRESSION;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_EXPR;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.BOUND_UNARY;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
 import org.eventb.internal.core.ast.extension.datatype.TypeConstrMediator.TypeConstructor;
-import org.eventb.internal.core.parser.BMath;
 
 /**
  * @author Nicolas Beauger
@@ -44,12 +42,10 @@ public class DatatypeExtensionComputer {
 	}
 
 	public IDatatype compute() {
-		final Map<String, IExpressionExtension> result = new HashMap<String, IExpressionExtension>();
 		final TypeConstrMediator typeMed = new TypeConstrMediator(extension);
 		extension.addTypeParameters(typeMed);
 		final TypeConstructor typeConstructor = typeMed.getTypeConstructor();
 		assert typeConstructor.isATypeConstructor();
-		addExtension(result, typeConstructor);
 		final List<ITypeParameter> typeParams = typeMed.getTypeParams();
 		final Datatype datatype = new Datatype(typeConstructor, typeParams);
 		typeConstructor.setOrigin(datatype);
@@ -60,19 +56,14 @@ public class DatatypeExtensionComputer {
 		return datatype;
 	}
 
-	private static void addExtension(Map<String, IExpressionExtension> map,
-			IExpressionExtension extension) {
-		map.put(extension.getId(), extension);
-	}
-	
 	public static String computeGroup(int nbArgs) {
-		final String groupId;
-		if (nbArgs == 0) {
-			groupId = BMath.ATOMIC_EXPR;
-		} else {
-			groupId = BMath.BOUND_UNARY;
+		if (nbArgs > 0) {
+			return BOUND_UNARY.getId();
 		}
-		return groupId;
+		if (nbArgs == 0) {
+			return ATOMIC_EXPR.getId();
+		}
+		throw new IllegalArgumentException("negative number of arguments !");
 	}
 	
 	public static IExtensionKind computeKind(int nbArgs) {

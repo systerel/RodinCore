@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
-import static org.eventb.internal.core.parser.OperatorRegistry.GROUP0;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.GROUP_0;
 import static org.eventb.internal.core.parser.SubParsers.PRED_VAR_SUBPARSER;
 
 import java.util.LinkedHashSet;
@@ -62,7 +62,8 @@ public class PredicateVariable extends Predicate {
 	 */
 	public static void init(BMath grammar) {
 		try {
-			grammar.addOperator(BMath._PREDVAR, PRED_VAR_ID, GROUP0, PRED_VAR_SUBPARSER, false);
+			grammar.addOperator(BMath._PREDVAR, PRED_VAR_ID, GROUP_0.getId(),
+					PRED_VAR_SUBPARSER, false);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

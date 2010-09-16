@@ -16,6 +16,7 @@ package org.eventb.core.ast;
 import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.INFIX_SUBST;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -84,7 +85,7 @@ public class BecomesSuchThat extends Assignment {
 		
 		@Override
 		public String getGroupId() {
-			return BMath.INFIX_SUBST;
+			return INFIX_SUBST.getId();
 		}
 
 		@Override

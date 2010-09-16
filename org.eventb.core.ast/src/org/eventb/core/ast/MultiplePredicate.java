@@ -14,6 +14,7 @@ package org.eventb.core.ast;
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
 import static org.eventb.core.ast.AssociativeHelper.isLegibleList;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_PRED;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -28,6 +29,7 @@ import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.BMath.StandardGroup;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
@@ -58,17 +60,17 @@ public class MultiplePredicate extends Predicate {
 	private static final int FIRST_TAG = FIRST_MULTIPLE_PREDICATE;
 
 	private static enum Operators implements IOperatorInfo<MultiplePredicate> {
-		OP_KPARTITION("partition", KPARTITION_ID, BMath.ATOMIC_PRED),
+		OP_KPARTITION("partition", KPARTITION_ID, ATOMIC_PRED),
 		;
 		
 		private final String image;
 		private final String id;
 		private final String groupId;
 		
-		private Operators(String image, String id, String groupId) {
+		private Operators(String image, String id, StandardGroup group) {
 			this.image = image;
 			this.id = id;
-			this.groupId = groupId;
+			this.groupId = group.getId();
 		}
 
 		@Override

@@ -21,7 +21,7 @@ import static org.eventb.core.ast.QuantifiedHelper.checkBoundIdentTypes;
 import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
-import static org.eventb.internal.core.parser.BMath.QUANTIFIED_PRED;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.QUANTIFIED_PRED;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -39,6 +39,7 @@ import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.BMath.StandardGroup;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
@@ -87,10 +88,10 @@ public class QuantifiedPredicate extends Predicate {
 		private final String groupId;
 		private final int tag;
 		
-		private Operators(String image, String id, String groupId, int tag) {
+		private Operators(String image, String id, StandardGroup group, int tag) {
 			this.image = image;
 			this.id = id;
-			this.groupId = groupId;
+			this.groupId = group.getId();
 			this.tag = tag;
 		}
 

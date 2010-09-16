@@ -15,7 +15,7 @@
  *******************************************************************************/ 
 package org.eventb.core.ast;
 
-import static org.eventb.internal.core.parser.BMath.ATOMIC_EXPR;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_EXPR;
 
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -28,6 +28,7 @@ import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.BMath.StandardGroup;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
@@ -90,10 +91,10 @@ public class AtomicExpression extends Expression {
 		private final String groupId;
 		private final int tag;
 		
-		private Operators(String image, String id, String groupId, int tag) {
+		private Operators(String image, String id, StandardGroup group, int tag) {
 			this.image = image;
 			this.id = id;
-			this.groupId = groupId;
+			this.groupId = group.getId();
 			this.tag = tag;
 		}
 

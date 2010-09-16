@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.extension;
 
+import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_PRED;
+
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Predicate;
@@ -22,7 +24,6 @@ import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.IWDMediator;
-import org.eventb.internal.core.parser.BMath;
 
 @SuppressWarnings("restriction")
 /**
@@ -63,7 +64,7 @@ public class Prime implements IPredicateExtension {
 	
 	@Override
 	public String getGroupId() {
-		return BMath.ATOMIC_PRED;
+		return ATOMIC_PRED.getId();
 	}
 	
 	@Override

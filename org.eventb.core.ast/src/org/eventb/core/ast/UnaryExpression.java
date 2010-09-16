@@ -16,9 +16,9 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.BinaryExpression.MINUS_ID;
-import static org.eventb.internal.core.parser.BMath.ARITHMETIC;
-import static org.eventb.internal.core.parser.BMath.BOUND_UNARY;
-import static org.eventb.internal.core.parser.BMath.UNARY_RELATION;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.ARITHMETIC;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.BOUND_UNARY;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.UNARY_RELATION;
 
 import java.math.BigInteger;
 import java.util.LinkedHashSet;
@@ -32,6 +32,7 @@ import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.BMath.StandardGroup;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
@@ -107,10 +108,10 @@ public class UnaryExpression extends Expression {
 		private final String groupId;
 		private final int tag;
 		
-		private Operators(String image, String id, String groupId, int tag) {
+		private Operators(String image, String id, StandardGroup group, int tag) {
 			this.image = image;
 			this.id = id;
-			this.groupId = groupId;
+			this.groupId = group.getId();
 			this.tag = tag;
 		}
 
@@ -159,7 +160,7 @@ public class UnaryExpression extends Expression {
 		
 		@Override
 		public String getGroupId() {
-			return ARITHMETIC;
+			return ARITHMETIC.getId();
 		}
 
 		@Override

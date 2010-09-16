@@ -16,14 +16,13 @@
 package org.eventb.core.ast;
 
 import static org.eventb.internal.core.parser.AbstractGrammar._RPAR;
-import static org.eventb.internal.core.parser.BMath.ARITHMETIC;
-import static org.eventb.internal.core.parser.BMath.BINOP;
-import static org.eventb.internal.core.parser.BMath.FUNCTIONAL;
-import static org.eventb.internal.core.parser.BMath.INTERVAL;
-import static org.eventb.internal.core.parser.BMath.PAIR;
-import static org.eventb.internal.core.parser.BMath.RELATION;
 import static org.eventb.internal.core.parser.BMath._RBRACKET;
-
+import static org.eventb.internal.core.parser.BMath.StandardGroup.ARITHMETIC;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.BINOP;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.FUNCTIONAL;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.INTERVAL;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.PAIR;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.RELATION;
 
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -37,6 +36,7 @@ import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.BMath.StandardGroup;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
@@ -221,15 +221,15 @@ public class BinaryExpression extends Expression {
 		private final int tag;
 		private final boolean isSpaced;
 		
-		private Operators(String image, String id, String groupId, int tag) {
-			this(image, id, groupId, tag, true);
+		private Operators(String image, String id, StandardGroup group, int tag) {
+			this(image, id, group, tag, true);
 		}
 
-		private Operators(String image, String id, String groupId, int tag,
+		private Operators(String image, String id, StandardGroup group, int tag,
 				boolean isSpaced) {
 			this.image = image;
 			this.id = id;
-			this.groupId = groupId;
+			this.groupId = group.getId();
 			this.tag = tag;
 			this.isSpaced = isSpaced;
 		}

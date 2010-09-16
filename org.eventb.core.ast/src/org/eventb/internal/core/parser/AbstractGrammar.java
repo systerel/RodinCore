@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
-import static org.eventb.internal.core.parser.OperatorRegistry.GROUP0;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.GROUP_0;
 import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.COMPATIBLE;
 import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.LEFT_PRIORITY;
 import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.RIGHT_PRIORITY;
@@ -28,6 +28,7 @@ import org.eventb.core.ast.extension.IGrammar;
 import org.eventb.core.ast.extension.IOperator;
 import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.internal.core.lexer.Token;
+import org.eventb.internal.core.parser.BMath.StandardGroup;
 import org.eventb.internal.core.parser.ExternalViewUtils.Instantiator;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship;
@@ -100,9 +101,9 @@ public abstract class AbstractGrammar {
 	 */
 	public final void init() {
 		
-		opRegistry.addOperator(_EOF, EOF_ID, GROUP0, false);
-		opRegistry.addOperator(_NOOP, NOOP_ID, GROUP0, false);
-		opRegistry.addOperator(_OPEN, OPEN_ID, GROUP0, false);
+		opRegistry.addOperator(_EOF, EOF_ID, GROUP_0.getId(), false);
+		opRegistry.addOperator(_NOOP, NOOP_ID, GROUP_0.getId(), false);
+		opRegistry.addOperator(_OPEN, OPEN_ID, GROUP_0.getId(), false);
 		addOpenClose("(", ")");
 		
 		IntegerLiteral.init(this);
@@ -204,9 +205,9 @@ public abstract class AbstractGrammar {
 		subParsers.addNud(reservedKind, subParser);
 	}
 	
-	protected void addGroupPrioritySequence(String... groupIds) throws CycleError {
-		for (int i = 0; i < groupIds.length - 1; i++) {
-			opRegistry.addGroupPriority(groupIds[i], groupIds[i+1]);
+	protected void addGroupPrioritySequence(StandardGroup... groups) throws CycleError {
+		for (int i = 0; i < groups.length - 1; i++) {
+			opRegistry.addGroupPriority(groups[i].getId(), groups[i+1].getId());
 		}
 	}
 	

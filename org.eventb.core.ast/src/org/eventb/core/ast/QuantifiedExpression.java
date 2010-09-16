@@ -22,8 +22,8 @@ import static org.eventb.core.ast.QuantifiedHelper.checkBoundIdentTypes;
 import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
-import static org.eventb.internal.core.parser.BMath.BRACE_SETS;
-import static org.eventb.internal.core.parser.BMath.QUANTIFICATION;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.BRACE_SETS;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.QUANTIFICATION;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -39,6 +39,7 @@ import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.BMath;
+import org.eventb.internal.core.parser.BMath.StandardGroup;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
@@ -190,10 +191,10 @@ public class QuantifiedExpression extends Expression {
 		private final String id;
 		private final String groupId;
 		
-		private Operators(String image, String id, String groupId) {
+		private Operators(String image, String id, StandardGroup group) {
 			this.image = image;
 			this.id = id;
-			this.groupId = groupId;
+			this.groupId = group.getId();
 		}
 
 		@Override

@@ -63,6 +63,8 @@ import static org.eventb.core.ast.extension.ExtensionFactory.makeAllExpr;
 import static org.eventb.core.ast.extension.ExtensionFactory.makeFixedArity;
 import static org.eventb.core.ast.extension.ExtensionFactory.makePrefixKind;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.ARITHMETIC;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_PRED;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -127,7 +129,6 @@ import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
 import org.eventb.internal.core.parser.AbstractGrammar;
-import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship;
 
 /**
@@ -773,7 +774,7 @@ public class TestGenParser extends AbstractTests {
 
 		@Override
 		public String getGroupId() {
-			return "Arithmetic";
+			return ARITHMETIC.getId();
 		}
 
 		@Override
@@ -1811,7 +1812,7 @@ public class TestGenParser extends AbstractTests {
 
 		@Override
 		public String getGroupId() {
-			return "Arithmetic";
+			return ARITHMETIC.getId();
 		}
 
 		@Override
@@ -2576,7 +2577,7 @@ public class TestGenParser extends AbstractTests {
 		
 		@Override
 		public String getGroupId() {
-			return BMath.ATOMIC_PRED;
+			return ATOMIC_PRED.getId();
 		}
 		
 		@Override

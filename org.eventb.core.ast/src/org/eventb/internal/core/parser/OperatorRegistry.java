@@ -25,6 +25,7 @@ import org.eventb.core.ast.extension.CycleError;
 import org.eventb.core.ast.extension.IGrammar;
 import org.eventb.core.ast.extension.IOperator;
 import org.eventb.core.ast.extension.IOperatorGroup;
+import org.eventb.internal.core.parser.BMath.StandardGroup;
 import org.eventb.internal.core.parser.ExternalViewUtils.ExternalGrammar;
 import org.eventb.internal.core.parser.ExternalViewUtils.ExternalOpGroup;
 import org.eventb.internal.core.parser.ExternalViewUtils.Instantiator;
@@ -34,8 +35,6 @@ import org.eventb.internal.core.parser.ExternalViewUtils.Instantiator;
  *  
  */
 public class OperatorRegistry {
-
-	public static final String GROUP0 = "GROUP 0";
 
 	/**
 	 * Describes the relationship between two operators: left (on the left) and
@@ -48,7 +47,8 @@ public class OperatorRegistry {
 		INCOMPATIBLE,        // no combination is allowed
 	}
 	
-	private static final OperatorGroup GROUP_0 = new OperatorGroup(GROUP0);
+	private static final OperatorGroup GROUP_0 = new OperatorGroup(
+			StandardGroup.GROUP_0.getId());
 	
 	private static class Relation<T> {
 		private final Map<T, Set<T>> maplets = new HashMap<T, Set<T>>();
@@ -265,7 +265,7 @@ public class OperatorRegistry {
 	private final Closure<OperatorGroup> groupPriority = new Closure<OperatorGroup>();
 	
 	public OperatorRegistry() {
-		idOpGroup.put(GROUP0, GROUP_0);
+		idOpGroup.put(StandardGroup.GROUP_0.getId(), GROUP_0);
 	}
 	
 	public Map<Integer, String> getKindIds() {
