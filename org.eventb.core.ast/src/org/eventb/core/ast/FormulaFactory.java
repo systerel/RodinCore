@@ -63,6 +63,8 @@ public class FormulaFactory {
 
 	private static final Map<IFormulaExtension, Integer> ALL_EXTENSIONS = Collections
 			.synchronizedMap(new HashMap<IFormulaExtension, Integer>());
+
+	private static final Map<Set<IFormulaExtension>, FormulaFactory> INSTANCE_CACHE = new HashMap<Set<IFormulaExtension>, FormulaFactory>();
 	
 	private static final FormulaFactory DEFAULT_INSTANCE = getInstance(Collections
 			.<IFormulaExtension> emptySet());
@@ -93,13 +95,15 @@ public class FormulaFactory {
 	 * @since 2.0
 	 */
 	public static FormulaFactory getInstance(Set<IFormulaExtension> extensions) {
-		// TODO implement a cache that returns the same instance 
-		// if the same set is given
 		final Set<IFormulaExtension> actualExtns = new LinkedHashSet<IFormulaExtension>();
 		actualExtns.addAll(extensions);
-		
-		final Map<Integer, IFormulaExtension> extMap = new LinkedHashMap<Integer, IFormulaExtension>();
+
 		synchronized (ALL_EXTENSIONS) {
+			final FormulaFactory cached = INSTANCE_CACHE.get(actualExtns);
+			if (cached != null) {
+				return cached;
+			}
+			final Map<Integer, IFormulaExtension> extMap = new LinkedHashMap<Integer, IFormulaExtension>();
 			for (IFormulaExtension extension : actualExtns) {
 				Integer tag = ALL_EXTENSIONS.get(extension);
 				if (tag == null) {
@@ -110,8 +114,10 @@ public class FormulaFactory {
 				}
 				extMap.put(tag, extension);
 			}
+			final FormulaFactory factory = new FormulaFactory(extMap);
+			INSTANCE_CACHE.put(actualExtns, factory);
+			return factory;
 		}
-		return new FormulaFactory(extMap);
 	}
 
 	/**

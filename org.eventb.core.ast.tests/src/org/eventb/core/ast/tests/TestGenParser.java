@@ -69,7 +69,10 @@ import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_PRED;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Assignment;
@@ -2933,4 +2936,24 @@ public class TestGenParser extends AbstractTests {
 				makeError(0, 4, UnknownOperator,
 						" (expected to find an assignment operator)"));
 	}
+	
+	public void testFactoryCache() throws Exception {
+		final Set<IFormulaExtension> extPrimeList1 = new HashSet<IFormulaExtension>();
+		final Set<IFormulaExtension> extPrimeList2 = new LinkedHashSet<IFormulaExtension>();
+		final Set<IFormulaExtension> listExtns = LIST_DT.getExtensions();
+		extPrimeList1.addAll(listExtns);
+		extPrimeList1.add(EXT_PRIME);
+		extPrimeList2.addAll(extPrimeList1);
+		
+		final Set<IFormulaExtension> extList = new HashSet<IFormulaExtension>();
+		extList.addAll(listExtns);
+
+		final FormulaFactory ffPrimeList1 = FormulaFactory.getInstance(extPrimeList1);
+		final FormulaFactory ffPrimeList2 = FormulaFactory.getInstance(extPrimeList2);
+		assertSame("expected same ff instances", ffPrimeList1, ffPrimeList2);
+		
+		final FormulaFactory ffList = FormulaFactory.getInstance(extList);
+		assertNotSame("expected different ff", ffPrimeList1, ffList);
+	}
+
 }
