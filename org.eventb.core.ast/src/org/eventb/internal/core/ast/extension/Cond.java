@@ -91,7 +91,7 @@ public class Cond implements IExpressionExtension {
 
 	@Override
 	public String getGroupId() {
-		return StandardGroup.BOUND_UNARY.getId();
+		return StandardGroup.CLOSED.getId();
 	}
 
 	@Override

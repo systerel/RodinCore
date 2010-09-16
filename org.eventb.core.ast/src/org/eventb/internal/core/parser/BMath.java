@@ -42,7 +42,7 @@ import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_EXPR;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_PRED;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.BINOP;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.BOOL_EXPR;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.BOUND_UNARY;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.CLOSED;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.BRACE_SETS;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.FUNCTIONAL;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.GROUP_0;
@@ -116,7 +116,7 @@ public abstract class BMath extends AbstractGrammar {
 		NOT_PRED("notPred", "Not Predicate"),
 		ATOMIC_PRED("atomicPred", "Atomic Predicate"),
 		ATOMIC_EXPR("atomicExpr", "Atomic Expression"),
-		BOUND_UNARY("boundUnary", "Bound Unary"),
+		CLOSED("closed", "Closed"),
 		BOOL_EXPR("boolExpr", "Bool"),
 		INFIX_SUBST("infixSubst", "Infix Substitution"),
 		;
@@ -313,7 +313,7 @@ public abstract class BMath extends AbstractGrammar {
 			// start of excerpt from kernel language specification table 3.1
 			addGroupPrioritySequence(QUANTIFICATION, PAIR, RELATION, BINOP,
 					INTERVAL, ARITHMETIC, FUNCTIONAL, UNARY_RELATION,
-					BOUND_UNARY, BOOL_EXPR, BRACE_SETS);
+					CLOSED, BOOL_EXPR, BRACE_SETS);
 			// end of excerpt
 			
 			// ATOMIC_EXPR has the highest priority

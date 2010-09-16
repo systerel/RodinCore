@@ -17,7 +17,7 @@ package org.eventb.core.ast;
 
 import static org.eventb.core.ast.BinaryExpression.MINUS_ID;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.ARITHMETIC;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.BOUND_UNARY;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.CLOSED;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.UNARY_RELATION;
 
 import java.math.BigInteger;
@@ -83,18 +83,18 @@ public class UnaryExpression extends Expression {
 
 	@SuppressWarnings("deprecation")
 	private static enum Operators implements IOperatorInfo<UnaryExpression> {
-		OP_KCARD("card", KCARD_ID, BOUND_UNARY, KCARD),
-		OP_POW("\u2119", POW_ID, BOUND_UNARY, POW),
-		OP_POW1("\u21191", POW1_ID, BOUND_UNARY, POW1),
-		OP_KUNION("union", KUNION_ID, BOUND_UNARY, KUNION),
-		OP_KINTER("inter", KINTER_ID, BOUND_UNARY, KINTER),
-		OP_KDOM("dom", KDOM_ID, BOUND_UNARY, KDOM),
-		OP_KRAN("ran", KRAN_ID, BOUND_UNARY, KRAN),
-		OP_KPRJ1("prj1", KPRJ1_ID, BOUND_UNARY, KPRJ1),
-		OP_KPRJ2("prj2", KPRJ2_ID, BOUND_UNARY, KPRJ2),
-		OP_KID("id", KID_ID, BOUND_UNARY, KID),
-		OP_KMIN("min", KMIN_ID, BOUND_UNARY, KMIN),
-		OP_KMAX("max", KMAX_ID, BOUND_UNARY, KMAX),
+		OP_KCARD("card", KCARD_ID, CLOSED, KCARD),
+		OP_POW("\u2119", POW_ID, CLOSED, POW),
+		OP_POW1("\u21191", POW1_ID, CLOSED, POW1),
+		OP_KUNION("union", KUNION_ID, CLOSED, KUNION),
+		OP_KINTER("inter", KINTER_ID, CLOSED, KINTER),
+		OP_KDOM("dom", KDOM_ID, CLOSED, KDOM),
+		OP_KRAN("ran", KRAN_ID, CLOSED, KRAN),
+		OP_KPRJ1("prj1", KPRJ1_ID, CLOSED, KPRJ1),
+		OP_KPRJ2("prj2", KPRJ2_ID, CLOSED, KPRJ2),
+		OP_KID("id", KID_ID, CLOSED, KID),
+		OP_KMIN("min", KMIN_ID, CLOSED, KMIN),
+		OP_KMAX("max", KMAX_ID, CLOSED, KMAX),
 		OP_CONVERSE("\u223c", CONVERSE_ID, UNARY_RELATION, CONVERSE) {
 			@Override
 			public IParserPrinter<UnaryExpression> makeParser(int kind) {

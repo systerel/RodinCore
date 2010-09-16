@@ -16,7 +16,7 @@ import static org.eventb.core.ast.extension.ExtensionFactory.makePrefixKind;
 import static org.eventb.core.ast.extension.IFormulaExtension.ATOMIC_EXPRESSION;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_EXPR;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.BOUND_UNARY;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.CLOSED;
 
 import java.util.List;
 
@@ -58,7 +58,7 @@ public class DatatypeExtensionComputer {
 
 	public static String computeGroup(int nbArgs) {
 		if (nbArgs > 0) {
-			return BOUND_UNARY.getId();
+			return CLOSED.getId();
 		}
 		if (nbArgs == 0) {
 			return ATOMIC_EXPR.getId();
