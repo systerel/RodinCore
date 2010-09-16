@@ -29,7 +29,9 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.seqprover.IHypAction;
+import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
@@ -40,22 +42,16 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.SerializeException;
-import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
-import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 public class TotalDomRewrites implements IVersionedReasoner {
 
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".totalDom";
 	private static final int VERSION = 2;
 	
-	public static class Input implements IReasonerInput {
+	public static class Input extends AbstractManualRewrites.Input {
+	
 		public static final String POSITION_KEY = "pos";
 		public static final String SUBSTITUTE_KEY = "subst";
-
-		Predicate pred;
-
-		IPosition position;
 
 		Expression substitute;
 
@@ -67,24 +63,17 @@ public class TotalDomRewrites implements IVersionedReasoner {
 		 *            hypothesis to rewrite or <code>null</code>
 		 */
 		public Input(Predicate pred, IPosition position, Expression substitute) {
-			this.pred = pred;
-			this.position = position;
+			super(pred, position);
 			this.substitute = substitute;
+		}	
+		
+		public Predicate getPred(){
+			return pred;
 		}
-
-		public void applyHints(ReplayHints renaming) {
-			if (pred != null)
-				pred = renaming.applyHints(pred);
+		
+		public Expression getSubstitute(){
+			return substitute;
 		}
-
-		public String getError() {
-			return null;
-		}
-
-		public boolean hasError() {
-			return false;
-		}
-
 	}
 
 	public String getReasonerID() {

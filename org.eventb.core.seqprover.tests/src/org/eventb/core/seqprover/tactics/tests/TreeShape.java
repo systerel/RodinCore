@@ -16,18 +16,25 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 import org.eventb.internal.core.seqprover.eventbExtensions.AbstractManualInference;
 import org.eventb.internal.core.seqprover.eventbExtensions.AbstractRewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.Conj;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
+import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
+import org.eventb.internal.core.seqprover.eventbExtensions.IsFunImageGoal;
+import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimplifies;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TotalDomRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
 
 /**
  * Common implementation for verifying rule applications to a proof subtree. The
@@ -47,7 +54,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractMan
  * @author Laurent Voisin
  */
 public abstract class TreeShape {
-
+	
 	private static class ConjIShape extends TreeShape {
 
 		public ConjIShape(TreeShape[] expChildren) {
@@ -162,6 +169,138 @@ public abstract class TreeShape {
 			return FunImgSimplifies.REASONER_ID;
 		}
 	}
+	
+	private static class IsFunGoalShape extends TreeShape{
+
+		public IsFunGoalShape(TreeShape[] expChildren) {
+			super(expChildren);
+		}
+
+		@Override
+		protected void checkInput(IReasonerInput input) {
+			assertEquals(input.getClass(), EmptyInput.class);			
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return IsFunGoal.REASONER_ID;
+		}
+		
+	}
+	
+	private static class FunImgGoalShape extends TreeShape {
+
+		private final Predicate predicate;
+		private final String position;
+
+		public FunImgGoalShape(Predicate pred, String pos,
+				TreeShape[] expChildren) {
+			super(expChildren);
+			this.predicate = pred;
+			this.position = pos;
+		}
+
+		@Override
+		protected void checkInput(IReasonerInput input) {
+			AbstractManualInference.Input i = (AbstractManualInference.Input) input;
+			assertEquals(position, i.getPosition().toString());
+			assertEquals(predicate, i.getPred());
+
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return IsFunImageGoal.REASONER_ID;
+		}
+
+	}
+	
+	private static class TypeRewritesShape extends TreeShape {
+
+		public TypeRewritesShape(TreeShape[] expChildren) {
+			super(expChildren);
+		}
+
+		@Override
+		protected void checkInput(IReasonerInput input) {
+			assertEquals(input.getClass(), EmptyInput.class);
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return TypeRewrites.REASONER_ID;
+		}
+
+	}
+
+	private static class TotalDomShape extends TreeShape {
+
+		private final Predicate predicate;
+
+		private final String position;
+
+		private final Expression substitute;
+
+		public TotalDomShape(Predicate predicate, String position,
+				Expression substitute, TreeShape[] expChildren) {
+			super(expChildren);
+			this.predicate = predicate;
+			this.position = position;
+			this.substitute = substitute;
+		}
+
+		@Override
+		protected void checkInput(IReasonerInput input) {
+			final TotalDomRewrites.Input inp = (TotalDomRewrites.Input) input;
+			assertEquals(inp.getPred(), predicate);
+			assertEquals(inp.getPosition().toString(), position);
+			assertEquals(inp.getSubstitute(), substitute);
+
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return TotalDomRewrites.REASONER_ID;
+		}
+
+	}
+
+	private static class HypShape extends TreeShape {
+
+		public HypShape(TreeShape[] expChildren) {
+			super(expChildren);
+		}
+
+		@Override
+		protected void checkInput(IReasonerInput input) {
+			assertEquals(input.getClass(), EmptyInput.class);
+
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return "org.eventb.core.seqprover.hyp";
+		}
+
+	}
+
+	private static class TrueGoalShape extends TreeShape {
+
+		public TrueGoalShape(TreeShape[] expChildren) {
+			super(expChildren);
+		}
+
+		@Override
+		protected void checkInput(IReasonerInput input) {
+			assertEquals(input.getClass(), EmptyInput.class);
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return TrueGoal.REASONER_ID;
+		}
+
+	}
 
 	public static final TreeShape empty = new EmptyShape();
 
@@ -178,7 +317,33 @@ public abstract class TreeShape {
 			TreeShape expected) {
 		expected.check(node);
 	}
+	
+	public static TreeShape isFunGoal(TreeShape...children){
+		return new IsFunGoalShape(children);
+	}
+	
+	public static TreeShape funImgGoal(Predicate pred, String pos,
+			TreeShape... children) {
+		return new FunImgGoalShape(pred, pos, children);
+	}
 
+	public static TreeShape typeRewrites(TreeShape... children) {
+		return new TypeRewritesShape(children);
+	}
+
+	public static TreeShape hyp(TreeShape... children) {
+		return new HypShape(children);
+	}
+
+	public static TreeShape totalDom(Predicate predicate, String position,
+			Expression substitute, TreeShape... children) {
+		return new TotalDomShape(predicate, position, substitute,children);
+	}
+
+	public static TreeShape trueGoal(TreeShape... children) {
+		return new TrueGoalShape(children);
+	}
+	
 	public static TreeShape conjI(TreeShape... children) {
 		return new ConjIShape(children);
 	}
