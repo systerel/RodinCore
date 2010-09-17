@@ -52,6 +52,7 @@ public class AllTests {
 		suite.addTestSuite(SmartFactoryTests.class);
 		suite.addTestSuite(TestPredicateVariables.class);
 		suite.addTestSuite(TestFormulaInspector.class);
+		suite.addTestSuite(TestWDStrict.class);
 		//$JUnit-END$
 		return suite;
 	}

@@ -249,4 +249,9 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 		return replacement;
 	}
 
+	@Override
+	public boolean isWDStrict() {
+		return true;
+	}
+
 }

@@ -489,4 +489,9 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		return factory.makeParametricType(typeParams, extension);
 	}
 	
+	@Override
+	public boolean isWDStrict() {
+		return extension.conjoinChildrenWD();
+	}
+
 }

@@ -568,4 +568,9 @@ public class AssociativeExpression extends Expression {
 				getTag(), newChildren, getSourceLocation());
 	}
 
+	@Override
+	public boolean isWDStrict() {
+		return true;
+	}
+
 }

@@ -384,4 +384,9 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 		}
 	}
 
+	@Override
+	public boolean isWDStrict() {
+		return extension.conjoinChildrenWD();
+	}
+
 }

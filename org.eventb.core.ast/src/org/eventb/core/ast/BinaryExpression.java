@@ -860,4 +860,9 @@ public class BinaryExpression extends Expression {
 				getSourceLocation());
 	}
 
+	@Override
+	public boolean isWDStrict() {
+		return true;
+	}
+
 }

@@ -364,4 +364,9 @@ public class BinaryPredicate extends Predicate {
 				getSourceLocation());
 	}
 
+	@Override
+	public boolean isWDStrict() {
+		return getTag() == LEQV;
+	}
+
 }

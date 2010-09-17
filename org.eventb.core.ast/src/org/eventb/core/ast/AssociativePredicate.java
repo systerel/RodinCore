@@ -394,4 +394,9 @@ public class AssociativePredicate extends Predicate {
 				getTag(), newChildren, getSourceLocation());
 	}
 
+	@Override
+	public boolean isWDStrict() {
+		return false;
+	}
+
 }

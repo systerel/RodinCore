@@ -334,4 +334,9 @@ public class BecomesEqualTo extends Assignment {
 		}
 	}
 
+	@Override
+	public boolean isWDStrict() {
+		return true;
+	}
+
 }

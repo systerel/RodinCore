@@ -295,4 +295,9 @@ public class UnaryPredicate extends Predicate {
 				getSourceLocation());
 	}
 
+	@Override
+	public boolean isWDStrict() {
+		return true;
+	}
+
 }

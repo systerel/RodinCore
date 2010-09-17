@@ -400,4 +400,9 @@ public class SetExtension extends Expression {
 				getSourceLocation());
 	}
 
+	@Override
+	public boolean isWDStrict() {
+		return true;
+	}
+
 }

@@ -187,4 +187,9 @@ public class IntegerLiteral extends Expression {
 		throw new IllegalArgumentException("Position is outside the formula");
 	}
 
+	@Override
+	public boolean isWDStrict() {
+		return true;
+	}
+
 }

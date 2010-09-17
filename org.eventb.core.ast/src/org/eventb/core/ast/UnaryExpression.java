@@ -635,4 +635,9 @@ public class UnaryExpression extends Expression {
 				getSourceLocation());
 	}
 
+	@Override
+	public boolean isWDStrict() {
+		return true;
+	}
+
 }

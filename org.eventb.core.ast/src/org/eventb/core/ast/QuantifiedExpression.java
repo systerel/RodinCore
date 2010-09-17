@@ -825,4 +825,9 @@ public class QuantifiedExpression extends Expression {
 				newDecls, newPred, newExpr, getSourceLocation(), form);
 	}
 
+	@Override
+	public boolean isWDStrict() {
+		return false;
+	}
+
 }

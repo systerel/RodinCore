@@ -363,4 +363,9 @@ public class MultiplePredicate extends Predicate {
 				getSourceLocation());
 	}
 	
+	@Override
+	public boolean isWDStrict() {
+		return true;
+	}
+
 }

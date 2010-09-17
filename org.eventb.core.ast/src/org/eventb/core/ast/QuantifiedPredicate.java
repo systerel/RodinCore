@@ -538,4 +538,9 @@ public class QuantifiedPredicate extends Predicate {
 				newDecls, newPred, getSourceLocation());
 	}
 
+	@Override
+	public boolean isWDStrict() {
+		return false;
+	}
+
 }

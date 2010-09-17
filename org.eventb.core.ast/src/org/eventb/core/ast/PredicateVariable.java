@@ -206,4 +206,10 @@ public class PredicateVariable extends Predicate {
 		}
 		return ((IFormulaRewriter2) rewriter).rewrite(this);
 	}
+
+	@Override
+	public boolean isWDStrict() {
+		return true;
+	}
+
 }

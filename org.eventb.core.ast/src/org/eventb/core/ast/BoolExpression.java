@@ -286,4 +286,9 @@ public class BoolExpression extends Expression {
 		return rewriter.factory.makeBoolExpression(newChild, getSourceLocation());
 	}
 
+	@Override
+	public boolean isWDStrict() {
+		return true;
+	}
+
 }

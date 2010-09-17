@@ -347,4 +347,9 @@ public class BecomesSuchThat extends Assignment {
 		condition.addGivenTypes(set);
 	}
 
+	@Override
+	public boolean isWDStrict() {
+		return true;
+	}
+
 }

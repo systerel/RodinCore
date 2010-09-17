@@ -1890,7 +1890,17 @@ public abstract class Formula<T extends Formula<T>> {
 		final WDImprover wdImprover = new WDImprover(formulaFactory);
 		return wdImprover.improve(wdLemma);
 	}
-		
+
+	/**
+	 * Returns whether this formula node is WD strict. This node is WD strict if
+	 * its well-definedness implies the well-definedness of all of its children,
+	 * for all WD syntactic transformations (D or L). For instance, addition is
+	 * WD strict, while conjunction is not.
+	 * 
+	 * @return <code>true</code> iff this node is WD strict
+	 */
+	public abstract boolean isWDStrict();
+
 	/**
 	 * Internal method used by the type-checker to set the type of the formula
 	 * after a type-check has been executed.
@@ -2015,7 +2025,32 @@ public abstract class Formula<T extends Formula<T>> {
 		}
 		return formula;
 	}
-	
+
+	/**
+	 * Returns whether the given position is WD strict in this formula. A
+	 * position is WD strict if the well-definedness of this formula implies the
+	 * well-definedness of the subformula occurring at the given position. If
+	 * the given position does not correspond to any sub-formula of this
+	 * formula, then this method returns <code>false</code>.
+	 * 
+	 * @param position
+	 *            position to consider in this formula
+	 * @return <code>true</code> iff the given position is WD strict in this
+	 *         formula
+	 */
+	public boolean isWDStrict(IPosition position) {
+		Formula<?> formula = this;
+		for (int index : ((Position) position).indexes) {
+			if (!formula.isWDStrict())
+				return false;
+			formula = formula.getChild(index);
+			if (formula == null) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	// Return the child of this formula at the given index, or <code>null</code>
 	// if none
 	protected abstract Formula<?> getChild(int index);

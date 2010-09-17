@@ -284,4 +284,9 @@ public class FreeIdentifier extends Identifier {
 		acc.inspect(this);
 	}
 
+	@Override
+	public boolean isWDStrict() {
+		return true;
+	}
+
 }

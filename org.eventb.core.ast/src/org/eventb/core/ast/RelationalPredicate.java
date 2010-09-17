@@ -485,4 +485,9 @@ public class RelationalPredicate extends Predicate {
 				newRight, getSourceLocation());
 	}
 
+	@Override
+	public boolean isWDStrict() {
+		return true;
+	}
+
 }
