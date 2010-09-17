@@ -188,8 +188,7 @@ public class TotalDomRewrites implements IVersionedReasoner {
 			throws SerializeException {
 
 		final String posString = reader.getString(Input.POSITION_KEY);
-		final FormulaFactory ff = reader.getFormulaFactory();
-		final IPosition position = ff.makePosition(posString);
+		final IPosition position = FormulaFactory.makePosition(posString);
 		final Expression[] substitutes = reader.getExpressions(Input.SUBSTITUTE_KEY);
 		
 		if (substitutes.length != 1) {

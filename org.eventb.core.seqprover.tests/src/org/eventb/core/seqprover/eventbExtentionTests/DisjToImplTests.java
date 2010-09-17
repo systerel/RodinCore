@@ -1,10 +1,11 @@
 package org.eventb.core.seqprover.eventbExtentionTests;
 
+import static org.eventb.core.ast.FormulaFactory.makePosition;
+import static org.eventb.core.ast.IPosition.ROOT;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule;
@@ -26,8 +27,6 @@ public class DisjToImplTests extends AbstractTests {
 
 	private static final IReasoner dtiReasoner = new DisjunctionToImplicationRewrites();
 
-	private static final FormulaFactory ff = FormulaFactory.getDefault();
-
 	Predicate P1 = TestLib.genPred("x = 1 ∨ x = 2 ∨ x = 3");
 
 	Predicate P2 = TestLib.genPred("x = 1 ⇒ x = 2 ∨ x = 3 ∨ x = 4");
@@ -41,8 +40,8 @@ public class DisjToImplTests extends AbstractTests {
 
 		// Goal is not applicable
 		seq = TestLib.genSeq(" ⊤ |- ⊤ ");
-		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(null, ff
-				.makePosition("")), null);
+		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(null,
+				ROOT), null);
 		assertTrue(output instanceof IReasonerFailure);
 	}
 
@@ -53,20 +52,20 @@ public class DisjToImplTests extends AbstractTests {
 
 		// Position in goal is incorrect
 		seq = TestLib.genSeq(" ⊤ |- " + P1);
-		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(null, ff
-				.makePosition("0")), null);
+		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(null,
+				makePosition("0")), null);
 		assertTrue(output instanceof IReasonerFailure);
 
 		// Position in goal is incorrect
 		seq = TestLib.genSeq(" ⊤ |- " + P2);
-		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(null, ff
-				.makePosition("0.1")), null);
+		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(null,
+				makePosition("0.1")), null);
 		assertTrue(output instanceof IReasonerFailure);
 
 		// Position in goal is incorrect
 		seq = TestLib.genSeq(" ⊤ |- " + P3);
-		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(null, ff
-				.makePosition("0")), null);
+		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(null,
+				makePosition("0")), null);
 		assertTrue(output instanceof IReasonerFailure);
 
 	}
@@ -81,8 +80,8 @@ public class DisjToImplTests extends AbstractTests {
 
 		// Hyp is not present
 		seq = TestLib.genSeq(" ⊤ |- ⊤ ");
-		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(P1, ff
-				.makePosition("")), null);
+		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(P1,
+				ROOT), null);
 		assertTrue(output instanceof IReasonerFailure);
 	}
 
@@ -93,20 +92,20 @@ public class DisjToImplTests extends AbstractTests {
 
 		// Position in hyp is incorrect
 		seq = TestLib.genSeq(P1 + " |- ⊤ ");
-		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(P1, ff
-				.makePosition("0")), null);
+		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(P1,
+				makePosition("0")), null);
 		assertTrue(output instanceof IReasonerFailure);
 
 		// Position in hyp is incorrect
 		seq = TestLib.genSeq(P2 + " |- ⊤ ");
-		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(P2, ff
-				.makePosition("0.1")), null);
+		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(P2,
+				makePosition("0.1")), null);
 		assertTrue(output instanceof IReasonerFailure);
 
 		// Position in hyp is incorrect
 		seq = TestLib.genSeq(P3 + " |- ⊤ ");
-		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(P3, ff
-				.makePosition("0")), null);
+		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(P3,
+				makePosition("0")), null);
 		assertTrue(output instanceof IReasonerFailure);
 
 	}
@@ -136,32 +135,32 @@ public class DisjToImplTests extends AbstractTests {
 		IReasonerOutput output;
 
 		seq = TestLib.genSeq(" ⊤ |- " + P1);
-		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(null, ff
-				.makePosition("")), null);
+		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(null,
+				ROOT), null);
 		assertTrue(output instanceof IProofRule);
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents("Applied successfully goal P1 ",
 				"{x=ℤ}[][][⊤] |- ¬x=1⇒x=2∨x=3", newSeqs);
 
 		seq = TestLib.genSeq(P1 + " |- ⊤ ");
-		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(P1, ff
-				.makePosition("")), null);
+		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(P1,
+				makePosition("")), null);
 		assertTrue(output instanceof IProofRule);
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents("Applied successfully hyp P1 ",
 				"{x=ℤ}[x=1∨x=2∨x=3][][¬x=1⇒x=2∨x=3] |- ⊤", newSeqs);
 
 		seq = TestLib.genSeq(" ⊤ |- " + P2);
-		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(null, ff
-				.makePosition("1")), null);
+		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(null,
+				makePosition("1")), null);
 		assertTrue(output instanceof IProofRule);
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents("Applied successfully goal P2 ",
 				"{x=ℤ}[][][⊤] |- x=1⇒(¬x=2⇒x=3∨x=4)", newSeqs);
 
 		seq = TestLib.genSeq(P2 + " |- ⊤ ");
-		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(P2, ff
-				.makePosition("1")), null);
+		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(P2,
+				makePosition("1")), null);
 		assertTrue(output instanceof IProofRule);
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents("Applied successfully hyp P2 ",
@@ -169,16 +168,16 @@ public class DisjToImplTests extends AbstractTests {
 				newSeqs);
 
 		seq = TestLib.genSeq(" ⊤ |- " + P3);
-		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(null, ff
-				.makePosition("1.1")), null);
+		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(null,
+				makePosition("1.1")), null);
 		assertTrue(output instanceof IProofRule);
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents("Applied successfully goal P3 ",
 				"{}[][][⊤] |- ∀x·x=0⇒(¬x=2⇒x=3∨x=4)", newSeqs);
 
 		seq = TestLib.genSeq(P3 + " |- ⊤ ");
-		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(P3, ff
-				.makePosition("1.1")), null);
+		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(P3,
+				makePosition("1.1")), null);
 		assertTrue(output instanceof IProofRule);
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents("Applied successfully hyp P3 ",

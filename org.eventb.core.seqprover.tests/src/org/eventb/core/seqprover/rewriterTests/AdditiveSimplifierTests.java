@@ -34,7 +34,7 @@ public class AdditiveSimplifierTests {
 	final FormulaFactory ff = FormulaFactory.getDefault();
 
 	private IPosition mPos(String image) {
-		return ff.makePosition(image);
+		return FormulaFactory.makePosition(image);
 	}
 
 	private Expression parseExpr(String input, ITypeEnvironment typenv) {

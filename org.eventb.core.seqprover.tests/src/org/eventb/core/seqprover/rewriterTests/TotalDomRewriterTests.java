@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
+import static org.eventb.core.ast.FormulaFactory.makePosition;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -222,15 +223,15 @@ public class TotalDomRewriterTests {
 				.genSeq("f∈ℕ→ℕ |- dom(f)∪dom({0↦0})=ℕ");
 
 		// position out of the goal
-		final IPosition posOut = ff.makePosition("3");
+		final IPosition posOut = makePosition("3");
 		doTestWrongPosition(seq, posOut);
 
 		// position of ℕ
-		final IPosition posN = ff.makePosition("1");
+		final IPosition posN = makePosition("1");
 		doTestWrongPosition(seq, posN);
 
 		// position of dom({0↦0}) (no corresponding substitution)
-		final IPosition posDom00 = ff.makePosition("0.1");
+		final IPosition posDom00 = makePosition("0.1");
 		doTestWrongPosition(seq, posDom00);
 	}
 

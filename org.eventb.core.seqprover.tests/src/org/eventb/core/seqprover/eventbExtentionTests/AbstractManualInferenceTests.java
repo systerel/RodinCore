@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
+import static org.eventb.core.ast.FormulaFactory.makePosition;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -76,8 +78,8 @@ public abstract class AbstractManualInferenceTests extends AbstractManualReasone
 			predicate.typeCheck(ff.makeTypeEnvironment());
 		}
 
-		IReasonerInput input = new AbstractManualInference.Input(predicate, ff
-				.makePosition(positionImage));
+		IReasonerInput input = new AbstractManualInference.Input(predicate,
+				makePosition(positionImage));
 		return new SuccessfullReasonerApplication(TestLib
 				.genSeq(sequenceImage, ff), input, results);
 	}
@@ -113,8 +115,7 @@ public abstract class AbstractManualInferenceTests extends AbstractManualReasone
 			predicate = TestLib.genPred(predicateImage);
 			predicate.typeCheck(ff.makeTypeEnvironment());
 		}
-		IPosition position = ff
-						.makePosition(positionImage);
+		IPosition position = makePosition(positionImage);
 		IReasonerInput input = new AbstractManualInference.Input(predicate, position);
 		
 		IProverSequent sequent = TestLib.genSeq(sequentImage);
@@ -132,8 +133,7 @@ public abstract class AbstractManualInferenceTests extends AbstractManualReasone
 		Collection<UnsuccessfullReasonerApplication> unsuccessfullReasonerApps = new ArrayList<UnsuccessfullReasonerApplication>();
 		IProverSequent sequent = TestLib.genSeq(" ⊤ |- ⊤ ");
 		Predicate pred = TestLib.genPred("⊥");
-		IPosition position = ff
-						.makePosition("");
+		IPosition position = IPosition.ROOT;
 		IReasonerInput input = new AbstractManualInference.Input(pred, position);
 		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(
 				sequent, input));

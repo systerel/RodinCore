@@ -144,7 +144,7 @@ public abstract class AbstractManualInference implements IReasoner {
 
 		Set<Predicate> neededHyps = reader.getNeededHyps();
 		String image = reader.getString(POSITION_KEY);
-		IPosition position = reader.getFormulaFactory().makePosition(image);
+		IPosition position = FormulaFactory.makePosition(image);
 
 		final int length = neededHyps.size();
 		if (length == 0) {

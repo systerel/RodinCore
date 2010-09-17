@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
+import static org.eventb.core.ast.FormulaFactory.makePosition;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.seqprover.IProverSequent;
@@ -25,8 +25,8 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.tests.TestLib;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimplifies;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites.Input;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimplifies;
 import org.junit.Test;
 
 public class FunImgSimpRewriterTests extends AbstractReasonerTests {
@@ -38,8 +38,6 @@ public class FunImgSimpRewriterTests extends AbstractReasonerTests {
 	private static final ITypeEnvironment typeEnv = TestLib
 			.genTypeEnv(typeEnvString);
 	
-	private static final FormulaFactory ff = FormulaFactory.getDefault();
-
 	private static final String valids[] = { 
 			"⇸", // partial function
 			"→", // total function
@@ -74,7 +72,7 @@ public class FunImgSimpRewriterTests extends AbstractReasonerTests {
 	 */
 	@Override
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
-		final Input input = new Input(null, ff.makePosition("0"));
+		final Input input = new Input(null, makePosition("0"));
 		final List<SuccessfullReasonerApplication> result = new ArrayList<SuccessfullReasonerApplication>();
 		for (String arrow : valids) {
 			for (String symbol : domSymbols) {
@@ -100,7 +98,7 @@ public class FunImgSimpRewriterTests extends AbstractReasonerTests {
 	 */
 	@Override
 	public UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications() {
-		final Input input = new Input(null, ff.makePosition("0"));
+		final Input input = new Input(null, makePosition("0"));
 		final List<UnsuccessfullReasonerApplication> result = new ArrayList<UnsuccessfullReasonerApplication>();
 		for (String arrow : invalids) {
 			for (String symbol : domSymbols) {
@@ -154,15 +152,15 @@ public class FunImgSimpRewriterTests extends AbstractReasonerTests {
 		final IProverSequent seq = TestLib.genSeq("f∈ℕ→ℕ |- ({1}⩤f)(5)=6");
 
 		// position out of the goal
-		final IPosition posOut = ff.makePosition("3");
+		final IPosition posOut = makePosition("3");
 		doTestWrongPosition(seq, new Input(null, posOut));
 
 		// position of ℕ
-		final IPosition posN = ff.makePosition("1");
+		final IPosition posN = makePosition("1");
 		doTestWrongPosition(seq, new Input(null, posN));
 
 		// position of (5)
-		final IPosition posDom01 = ff.makePosition("0.1");
+		final IPosition posDom01 = makePosition("0.1");
 		doTestWrongPosition(seq, new Input(null, posDom01));
 	}
 

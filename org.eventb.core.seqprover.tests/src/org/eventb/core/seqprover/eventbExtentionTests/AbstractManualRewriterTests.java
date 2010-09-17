@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
+import static org.eventb.core.ast.FormulaFactory.makePosition;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -54,8 +56,8 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 		final Predicate predicate = TestLib.genPred(typenv, predicateImage);
 
 		// Successful in goal
-		IReasonerInput input = new AbstractManualRewrites.Input(null, ff
-				.makePosition(positionImage));
+		IReasonerInput input = new AbstractManualRewrites.Input(null,
+				makePosition(positionImage));
 		final IProverSequent[] expecteds = new IProverSequent[results.length];
 		for (int i = 0; i < expecteds.length; i++) {
 			expecteds[i] = TestLib.genFullSeq(typenv, "", "", "⊤", results[i]);
@@ -64,8 +66,8 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 				.genSeq(" ⊤ |- " + predicate), input, expecteds));
 
 		// Successful in hypothesis
-		input = new AbstractManualRewrites.Input(predicate, ff
-				.makePosition(positionImage));
+		input = new AbstractManualRewrites.Input(predicate,
+				makePosition(positionImage));
 		
 		final StringBuilder sb = new StringBuilder();
 		String sep = "";
@@ -86,8 +88,8 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 		Collection<UnsuccessfullReasonerApplication> unsuccessfullReasonerApps = new ArrayList<UnsuccessfullReasonerApplication>();
 		IProverSequent sequent = TestLib.genSeq(" ⊤ |- ⊤ ");
 		Predicate pred = TestLib.genPred("⊥");
-		IReasonerInput input = new AbstractManualRewrites.Input(pred, ff
-				.makePosition(""));
+		IReasonerInput input = new AbstractManualRewrites.Input(pred,
+				IPosition.ROOT);
 		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(
 				sequent, input));
 		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(
@@ -101,8 +103,7 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 
 		Predicate predicate = TestLib.genPred(predicateImage);
 		predicate.typeCheck(ff.makeTypeEnvironment());
-		IPosition position = ff
-						.makePosition(positionImage);
+		IPosition position = makePosition(positionImage);
 		IReasonerInput input = new AbstractManualRewrites.Input(null, position);
 
 		IProverSequent sequent = TestLib.genSeq(" ⊤ |- " + predicateImage);

@@ -1,8 +1,8 @@
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.FormulaFactory.makePosition;
 import junit.framework.TestCase;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 
 /**
@@ -12,8 +12,6 @@ import org.eventb.core.ast.IPosition;
  */
 public class TestPosition extends TestCase {
 
-	private static FormulaFactory ff = FormulaFactory.getDefault();
-	
 	private void assertSameSign(int expected, int actual) {
 		if (expected == 0 && actual != 0)
 			fail("Expected zero, was " + actual);
@@ -37,7 +35,7 @@ public class TestPosition extends TestCase {
 	}
 	
 	private IPosition mPos(String image) {
-		final IPosition pos = ff.makePosition(image);
+		final IPosition pos = makePosition(image);
 		assertEquals(image, pos.toString());
 		return pos;
 	}

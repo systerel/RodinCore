@@ -1396,7 +1396,7 @@ public class FormulaFactory {
 	 * @throws IllegalArgumentException
 	 *             if the given string doesn't denote a formula position
 	 */
-	public IPosition makePosition(String image) {
+	public static IPosition makePosition(String image) {
 		return new Position(image);
 	}
 

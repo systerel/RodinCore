@@ -216,9 +216,8 @@ public abstract class AbstractManualRewrites implements IReasoner {
 	public final IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
 		
-		final FormulaFactory ff = reader.getFormulaFactory();
 		final String posString = reader.getString(POSITION_KEY);
-		final IPosition position = ff.makePosition(posString);
+		final IPosition position = FormulaFactory.makePosition(posString);
 		
 		if (reader.getGoal() != null) {
 			// Goal rewriting

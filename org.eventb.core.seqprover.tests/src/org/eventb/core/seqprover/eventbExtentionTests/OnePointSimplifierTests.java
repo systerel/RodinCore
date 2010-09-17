@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
+import static org.eventb.core.ast.FormulaFactory.makePosition;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -33,7 +34,7 @@ public class OnePointSimplifierTests {
 	private static void assertFailure(String input, String eqPosStr) {
 		final Predicate pred = genPred(input);
 		final Predicate eq = eqPosStr == null ? null : //
-				(Predicate) pred.getSubFormula(ff.makePosition(eqPosStr));
+				(Predicate) pred.getSubFormula(makePosition(eqPosStr));
 		final OnePointSimplifier ops = new OnePointSimplifier(pred, eq, ff);
 		ops.matchAndApply();
 		assertFalse(ops.wasSuccessfullyApplied());
@@ -47,10 +48,10 @@ public class OnePointSimplifierTests {
 	private static void assertSuccess(String input, String appPosStr,
 			String eqPosStr, String replPosStr, String expected) {
 		final Predicate pred = genPred(input);
-		final IPosition appPos = ff.makePosition(appPosStr);
+		final IPosition appPos = makePosition(appPosStr);
 		final Predicate subPred = (Predicate) pred.getSubFormula(appPos);
-		final IPosition eqPos = ff.makePosition(eqPosStr);
-		final IPosition replPos = ff.makePosition(replPosStr);
+		final IPosition eqPos = makePosition(eqPosStr);
+		final IPosition replPos = makePosition(replPosStr);
 		final Predicate eq = (Predicate) pred.getSubFormula(eqPos);
 		final OnePointSimplifier ops = new OnePointSimplifier(subPred, eq, ff);
 		ops.matchAndApply();
