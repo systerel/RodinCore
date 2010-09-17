@@ -1898,6 +1898,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * WD strict, while conjunction is not.
 	 * 
 	 * @return <code>true</code> iff this node is WD strict
+	 * @since 2.0
 	 */
 	public abstract boolean isWDStrict();
 
@@ -2037,6 +2038,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 *            position to consider in this formula
 	 * @return <code>true</code> iff the given position is WD strict in this
 	 *         formula
+	 * @since 2.0
 	 */
 	public boolean isWDStrict(IPosition position) {
 		Formula<?> formula = this;
