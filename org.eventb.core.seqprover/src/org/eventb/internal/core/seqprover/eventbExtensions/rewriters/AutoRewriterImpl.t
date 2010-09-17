@@ -1233,7 +1233,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_SPECIAL_SETMINUS_L
              * Set Theory: ∅ ∖ S == ∅
 	    	 */
-	    	SetMinus(e@EmptySet(), S) -> {
+	    	SetMinus(e@EmptySet(), _) -> {
 				result = `e;
 	    		trace(expression, result, "SIMP_SPECIAL_SETMINUS_L");
 	    		return result;
@@ -1253,7 +1253,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_TYPE_SETMINUS
              * Set Theory: S ∖ U == ∅
 	    	 */
-	    	SetMinus(S, T) -> {
+	    	SetMinus(_, T) -> {
 				if (`T.isATypeExpression()) {
 					result = makeEmptySet(`T.getType());
 		    		trace(expression, result, "SIMP_TYPE_SETMINUS");
