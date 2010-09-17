@@ -58,7 +58,7 @@ import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SerializeException;
-import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 public abstract class AbstractManualInference implements IReasoner {
@@ -211,20 +211,7 @@ public abstract class AbstractManualInference implements IReasoner {
 		return false;
 	}
 	
-	protected List<IPosition> getTopLevelOnly(Predicate predicate, List<IPosition> positions) {
-		List<IPosition> toBeRemoved = new ArrayList<IPosition>();
-		for (IPosition pos : positions) {
-			if (!Tactics.isParentTopLevelPredicate(predicate, pos)) {
-				toBeRemoved.add(pos);
-			}
-		}
-
-		positions.removeAll(toBeRemoved);
-		return positions;
-	}
-
-
-	public List<IPosition> getPositions(Predicate predicate, boolean topLevel) {
+	public List<IPosition> getPositions(Predicate predicate, boolean wdStrict) {
 		List<IPosition> positions = predicate.getPositions(new DefaultFilter() {
 
 			@Override
@@ -318,8 +305,9 @@ public abstract class AbstractManualInference implements IReasoner {
 			}
 		});
 
-		if (topLevel)
-			return getTopLevelOnly(predicate, positions);
+		if (wdStrict) {
+			Lib.removeWDUnstrictPositions(positions, predicate);
+		}
 		
 		return filter(predicate, positions);
 	}

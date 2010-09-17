@@ -16,6 +16,7 @@ package org.eventb.core.seqprover.eventbExtensions;
 import static org.eventb.core.ast.LanguageVersion.V2;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,6 +37,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
@@ -924,6 +926,29 @@ public final class Lib {
 	public static Predicate equalityRewrite(Predicate pred, Expression from,
 			Expression to, FormulaFactory ff) {
 		return pred.rewrite(new Lib.EqualityRewriter(from, to, ff));
+	}
+
+	/**
+	 * Removes all positions in the given list that are not WD strict in the
+	 * given predicate.
+	 * 
+	 * @param positions
+	 *            a list of positions in the given predicate
+	 * @param predicate
+	 *            some predicate
+	 */
+	public static void removeWDUnstrictPositions(List<IPosition> positions,
+			Predicate predicate) {
+		final Iterator<IPosition> iter = positions.iterator();
+		while (iter.hasNext()) {
+			if (!predicate.isWDStrict(iter.next())) {
+				iter.remove();
+			}
+		}
+	}
+
+	public static boolean isWDStrictPosition(Predicate pred, IPosition pos) {
+		return pred.isWDStrict(pos);
 	}
 
 }

@@ -28,7 +28,6 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
-import org.eventb.core.seqprover.eventbExtensions.Tactics;
 
 public class IsFunImageGoal extends AbstractManualInference {
 
@@ -77,7 +76,7 @@ public class IsFunImageGoal extends AbstractManualInference {
 			return null;
 		}
 
-		if (!Tactics.isParentTopLevelPredicate(goal, position)) {
+		if (!Lib.isWDStrictPosition(goal, position)) {
 			return null;
 		}
 

@@ -980,15 +980,7 @@ public class Tactics {
 				return false;
 			}
 		});
-
-		List<IPosition> toBeRemoved = new ArrayList<IPosition>();
-		for (IPosition pos : positions) {
-			if (!isParentTopLevelPredicate(predicate, pos)) {
-				toBeRemoved.add(pos);
-			}
-		}
-
-		positions.removeAll(toBeRemoved);
+		Lib.removeWDUnstrictPositions(positions, predicate);
 		return positions;
 	}
 	
@@ -1009,24 +1001,14 @@ public class Tactics {
 				new ModusTollens.Input(impHyp));
 	}
 
+	/**
+	 * @deprecated Use {@link Lib#isWDStrictPosition(Predicate,IPosition)}
+	 *             instead
+	 */
+	@Deprecated
 	public static boolean isParentTopLevelPredicate(Predicate pred,
 			IPosition pos) {
-		IPosition tmp = pos;
-
-		while (!tmp.isRoot()) {
-			Formula<?> subFormula = pred.getSubFormula(tmp);
-			if (subFormula instanceof QuantifiedExpression)
-				return false;
-			if (subFormula instanceof Predicate) {
-				tmp = tmp.getParent();
-				if (!tmp.isRoot())
-					return false;
-				return Lib.isNeg(pred);
-			}
-				
-			tmp = tmp.getParent();
-		}
-		return true;
+		return Lib.isWDStrictPosition(pred, pos);
 	}
 	
 	/**
