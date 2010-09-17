@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ public class MachineModule extends BaseModule {
 
 	private final static int LABEL_SYMTAB_SIZE = 2047;
 
-	private ISCMachineRoot machineFile;
+	private ISCMachineRoot machineRoot;
 
 	private IMachineAccuracyInfo accuracyInfo;
 
@@ -65,7 +65,7 @@ public class MachineModule extends BaseModule {
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
-		machineFile = (ISCMachineRoot) target;
+		machineRoot = (ISCMachineRoot) target;
 		super.process(element, target, repository, monitor);
 	}
 
@@ -73,8 +73,8 @@ public class MachineModule extends BaseModule {
 	public void endModule(IRodinElement element, ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
 
-		machineFile.setAccuracy(accuracyInfo.isAccurate(), monitor);
-
+		machineRoot.setAccuracy(accuracyInfo.isAccurate(), monitor);
+		machineRoot.setFormulaFactory(repository.getFormulaFactory());
 		super.endModule(element, repository, monitor);
 	}
 
