@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.IConfigurationElement;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
@@ -58,10 +59,11 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 	public static String PRD_NAME_PREFIX = "PRD";
 	
 	private IPOGStateRepository createRepository(
-			IPORoot target, 
+			IEventBRoot source,
+			IPORoot target,
 			IProgressMonitor monitor) throws CoreException {
 		
-		final POGStateRepository repository = new POGStateRepository(target);
+		final POGStateRepository repository = new POGStateRepository(source, target);
 		
 		if (POGUtil.DEBUG_STATE)
 			repository.debug();
@@ -343,9 +345,11 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 							1);
 					
 					poTmpFile.create(true, monitor);
-				
-					IPOGStateRepository repository = createRepository((IPORoot) poTmpFile.getRoot(), monitor);
-					
+
+					final IPOGStateRepository repository = createRepository(
+					(IEventBRoot) srcRodinFile.getRoot(),
+					(IPORoot) poTmpFile.getRoot(), monitor);
+
 					IPOGProcessorModule rootModule = getRootModule(srcRodinFile);
 				
 					if (rootModule != null) {

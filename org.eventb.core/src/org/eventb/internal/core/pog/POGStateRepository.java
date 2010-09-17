@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.pog;
 
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPORoot;
 import org.eventb.core.pog.state.IPOGState;
 import org.eventb.core.pog.state.IPOGStateRepository;
@@ -24,8 +25,8 @@ public class POGStateRepository extends StateRepository<IPOGState> implements IP
 
 	private final IPORoot target;
 	
-	public POGStateRepository(IPORoot target) {
-		super(target);
+	public POGStateRepository(IEventBRoot source, IPORoot target) {
+		super(source);
 		
 		assert target.exists();
 		
