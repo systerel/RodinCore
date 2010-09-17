@@ -1232,27 +1232,30 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			/**
 	    	 * SIMP_SPECIAL_SETMINUS_L
              * Set Theory: ∅ ∖ S == ∅
+	    	 */
+	    	SetMinus(e@EmptySet(), S) -> {
+				result = `e;
+	    		trace(expression, result, "SIMP_SPECIAL_SETMINUS_L");
+	    		return result;
+	    	}
+
+			/**
 	    	 * SIMP_SPECIAL_SETMINUS_R
              * Set Theory: S ∖ ∅ == S
+	    	 */
+	    	SetMinus(S, EmptySet()) -> {
+				result = `S;
+	    		trace(expression, result, "SIMP_SPECIAL_SETMINUS_R");
+	    		return result;
+	    	}
+
+			/**
 	    	 * SIMP_TYPE_SETMINUS
              * Set Theory: S ∖ U == ∅
 	    	 */
 	    	SetMinus(S, T) -> {
-				PowerSetType type = (PowerSetType) `S.getType();
-
-	    		Expression emptySet = makeEmptySet(type);
-				if (`S.equals(emptySet)) {
-					result = emptySet;
-		    		trace(expression, result, "SIMP_SPECIAL_SETMINUS_L");
-		    		return result;
-				}
-   				if (`T.equals(emptySet)) {
-					result = `S;
-		    		trace(expression, result, "SIMP_SPECIAL_SETMINUS_R");
-		    		return result;
-				}
-				if (`T.equals(type.getBaseType().toExpression(ff))) {
-					result = emptySet;
+				if (`T.isATypeExpression()) {
+					result = makeEmptySet(`T.getType());
 		    		trace(expression, result, "SIMP_TYPE_SETMINUS");
 		    		return result;
 				}
@@ -1263,9 +1266,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Set Theory: U ∖ (U ∖ S) == S
 	    	 */
 			SetMinus(U, SetMinus(U, S)) -> {
-				PowerSetType type = (PowerSetType) `S.getType();
-
-				if (`U.equals(type.getBaseType().toExpression(ff))) {
+				if (`U.isATypeExpression()) {
 					result = `S;
 		    		trace(expression, result, "SIMP_TYPE_SETMINUS_SETMINUS");
 		    		return result;
@@ -1737,24 +1738,20 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * SIMP_SPECIAL_DOM
 			 * Set Theory: dom(∅) == ∅
 			 */
-			Dom(r) -> {
-				if (`r.equals(makeEmptySet(`r.getType()))) {
-					result = makeEmptySet(ff.makePowerSetType(Lib.getDomainType(`r)));
-		    		trace(expression, result, "SIMP_SPECIAL_DOM");
-		    		return result;
-				}
+			Dom(r@EmptySet()) -> {
+				result = makeEmptySet(ff.makePowerSetType(Lib.getDomainType(`r)));
+	    		trace(expression, result, "SIMP_SPECIAL_DOM");
+	    		return result;
 			}
 			
 			/**
              * SIMP_SPECIAL_RAN
 			 * Set Theory: ran(∅) == ∅
 			 */
-			Ran(r) -> {
-				if (`r.equals(makeEmptySet(`r.getType()))) {
-					result = makeEmptySet(ff.makePowerSetType(Lib.getRangeType(`r)));
-		    		trace(expression, result, "SIMP_SPECIAL_RAN");
-		    		return result;
-				}
+			Ran(r@EmptySet()) -> {
+				result = makeEmptySet(ff.makePowerSetType(Lib.getRangeType(`r)));
+	    		trace(expression, result, "SIMP_SPECIAL_RAN");
+	    		return result;
 			}
 	    
 	    }
