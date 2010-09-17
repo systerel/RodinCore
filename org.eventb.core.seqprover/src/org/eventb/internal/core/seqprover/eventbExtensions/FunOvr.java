@@ -32,7 +32,7 @@ import org.eventb.core.seqprover.eventbExtensions.Tactics;
 
 public class FunOvr extends AbstractManualInference implements IVersionedReasoner {
 
-	private static final int VERSION = 0;
+	private static final int VERSION = 1;
 
 	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".funOvr";
 	
@@ -51,12 +51,15 @@ public class FunOvr extends AbstractManualInference implements IVersionedReasone
 		Predicate predicate = pred;
 		if (predicate == null)
 			predicate = seq.goal();
+		else if (!seq.containsHypothesis(predicate)) {
+			return null;
+		}
 
-		final Formula<?> subFormula = predicate.getSubFormula(position);
-		if (subFormula == null) {
+		if (!predicate.isWDStrict(position)) {
 			return null; // invalid position: reasoner failure
 		}
 
+		final Formula<?> subFormula = predicate.getSubFormula(position);
 		// "subFormula" should have the form (f <+ ... <+ g)(G)
 		if (!Tactics.isFunOvrApp(subFormula)) {
 			return null;

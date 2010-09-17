@@ -138,7 +138,15 @@ public class FunOvrTests extends AbstractManualInferenceTests {
 				// P6 in goal
 				" ⊤ |- " + P6,
 				null,
-				"0.0"
+				"0.0",
+				// Not a hypothesis
+				" ⊤ |- " + P3,
+				P3,
+				"0",
+				// Not a WD strict position
+				P1 + " |- ⊤",
+				P1,
+				"1.0",
 		};
 	}
 

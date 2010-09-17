@@ -41,6 +41,7 @@ import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
@@ -49,12 +50,19 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
  * Basic implementation for Function Converse inference rule f~(f(E))
  */
 @SuppressWarnings("unused")
-public class FunSetMinusImg extends AbstractManualInference {
+public class FunSetMinusImg extends AbstractManualInference
+		implements IVersionedReasoner {
+
+	private static final int REASONER_VERSION = 1;
 
 	%include {FormulaV2.tom}
 	
 	public String getReasonerID() {
 		return SequentProver.PLUGIN_ID + ".funSetMinusImg";
+	}
+
+	public int getVersion() {
+		return REASONER_VERSION;
 	}
 	
 	@Override
@@ -86,6 +94,10 @@ public class FunSetMinusImg extends AbstractManualInference {
 			predicate = seq.goal();
 		else if (!seq.containsHypothesis(predicate)) {
 			return null;
+		}
+
+		if (!predicate.isWDStrict(position)) {
+			return null; // invalid position: reasoner failure
 		}
 
 		Formula<?> subFormula = predicate.getSubFormula(position);
