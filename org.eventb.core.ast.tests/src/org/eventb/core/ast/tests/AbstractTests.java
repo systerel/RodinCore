@@ -54,7 +54,7 @@ public abstract class AbstractTests extends TestCase {
 	private static final IDatatypeExtension LIST_TYPE = new IDatatypeExtension() {
 
 		private static final String TYPE_NAME = "List";
-		private static final String TYPE_IDENTIFIER = "List Id";
+		private static final String TYPE_IDENTIFIER = "org.eventb.core.ast.tests.list";
 
 		@Override
 		public String getTypeName() {

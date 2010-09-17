@@ -748,7 +748,7 @@ public class TestWD extends AbstractTests {
 	
 	private static class Emax implements IExpressionExtension {
 		private static final String SYNTAX_SYMBOL = "emax";
-		private static final String OPERATOR_ID = "Extension Maximum";
+		private static final String OPERATOR_ID = "org.eventb.core.ast.tests.extMax";
 		private final boolean conjoinChildrenWD;
 
 		public Emax(boolean conjoinChildrenWD) {
@@ -801,7 +801,7 @@ public class TestWD extends AbstractTests {
 
 		@Override
 		public String getId() {
-			return OPERATOR_ID;
+			return OPERATOR_ID + (conjoinChildrenWD ? ".conj" : ".noConj");
 		}
 
 		@Override

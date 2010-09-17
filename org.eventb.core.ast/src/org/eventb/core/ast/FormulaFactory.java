@@ -16,6 +16,7 @@ package org.eventb.core.ast;
 
 import static org.eventb.core.ast.LanguageVersion.V1;
 import static org.eventb.internal.core.parser.BMathV1.B_MATH_V1;
+import static org.eventb.internal.core.parser.BMathV2.B_MATH_V2;
 
 import java.math.BigInteger;
 import java.util.Collection;
@@ -36,6 +37,7 @@ import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.Cond;
+import org.eventb.internal.core.ast.extension.ExtnUnicityChecker;
 import org.eventb.internal.core.ast.extension.datatype.DatatypeExtensionComputer;
 import org.eventb.internal.core.lexer.Scanner;
 import org.eventb.internal.core.parser.AbstractGrammar;
@@ -66,6 +68,8 @@ public class FormulaFactory {
 
 	private static final Map<Set<IFormulaExtension>, FormulaFactory> INSTANCE_CACHE = new HashMap<Set<IFormulaExtension>, FormulaFactory>();
 	
+	private static final ExtnUnicityChecker EXTN_UNICITY_CHECKER = new ExtnUnicityChecker(B_MATH_V2);
+
 	private static final FormulaFactory DEFAULT_INSTANCE = getInstance(Collections
 			.<IFormulaExtension> emptySet());
 
@@ -103,11 +107,11 @@ public class FormulaFactory {
 			if (cached != null) {
 				return cached;
 			}
+			EXTN_UNICITY_CHECKER.checkUnicity(actualExtns);
 			final Map<Integer, IFormulaExtension> extMap = new LinkedHashMap<Integer, IFormulaExtension>();
 			for (IFormulaExtension extension : actualExtns) {
 				Integer tag = ALL_EXTENSIONS.get(extension);
 				if (tag == null) {
-					// FIXME add conflict checks
 					tag = nextExtensionTag;
 					nextExtensionTag++;
 					ALL_EXTENSIONS.put(extension, tag);

@@ -11,6 +11,7 @@
 package org.eventb.core.ast.tests;
 
 import static java.util.Arrays.asList;
+import static org.eventb.core.ast.AssociativeExpression.BCOMP_ID;
 import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.CONVERSE;
@@ -59,10 +60,12 @@ import static org.eventb.core.ast.ProblemKind.PrematureEOF;
 import static org.eventb.core.ast.ProblemKind.UnknownOperator;
 import static org.eventb.core.ast.ProblemKind.UnmatchedTokens;
 import static org.eventb.core.ast.ProblemSeverities.Error;
+import static org.eventb.core.ast.extension.ExtensionFactory.NO_CHILD;
 import static org.eventb.core.ast.extension.ExtensionFactory.makeAllExpr;
 import static org.eventb.core.ast.extension.ExtensionFactory.makeFixedArity;
 import static org.eventb.core.ast.extension.ExtensionFactory.makePrefixKind;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
+import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.PREDICATE;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.ARITHMETIC;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_PRED;
 
@@ -2952,8 +2955,142 @@ public class TestGenParser extends AbstractTests {
 		final FormulaFactory ffPrimeList2 = FormulaFactory.getInstance(extPrimeList2);
 		assertSame("expected same ff instances", ffPrimeList1, ffPrimeList2);
 		
+		assertSame("expected same ff instances", ffPrimeList1,
+				ffPrimeList1.withExtensions(extList));
+		
 		final FormulaFactory ffList = FormulaFactory.getInstance(extList);
 		assertNotSame("expected different ff", ffPrimeList1, ffList);
+	}
+
+	private static class DummyExtn implements IPredicateExtension {
+
+		private String symbol;
+		private String id;
+
+		public DummyExtn(String symbol, String id) {
+			this.symbol = symbol;
+			this.id = id;
+		}
+
+		@Override
+		public String getSyntaxSymbol() {
+			return symbol;
+		}
+
+		@Override
+		public Predicate getWDPredicate(IExtendedFormula formula,
+				IWDMediator wdMediator) {
+			return wdMediator.makeTrueWD();
+		}
+
+		@Override
+		public boolean conjoinChildrenWD() {
+			return true;
+		}
+
+		@Override
+		public String getId() {
+			return id;
+		}
+
+		@Override
+		public String getGroupId() {
+			return "org.eventb.core.ast.dummy";
+		}
+
+		@Override
+		public IExtensionKind getKind() {
+			return makePrefixKind(PREDICATE, NO_CHILD);
+		}
+
+		@Override
+		public Object getOrigin() {
+			return null;
+		}
+
+		@Override
+		public void addCompatibilities(ICompatibilityMediator mediator) {
+			// None			
+		}
+
+		@Override
+		public void addPriorities(IPriorityMediator mediator) {
+			// None
+		}
+
+		@Override
+		public void typeCheck(ExtendedPredicate predicate,
+				ITypeCheckMediator tcMediator) {
+			// nothing
+		}
+		
+	}
+	
+	private static Set<IFormulaExtension> makeExtns(IFormulaExtension... extensions) {
+		return new HashSet<IFormulaExtension>(asList(extensions));
+	}
+	
+	public void testIdUnicityGiven() throws Exception {
+		final String id = "unic_id0";
+		final DummyExtn ext_s1_id0 = new DummyExtn("unic_s1", id);
+		final DummyExtn ext_s2_id0 = new DummyExtn("unic_s2", id);
+		
+		try {
+			FormulaFactory.getInstance(makeExtns(ext_s1_id0, ext_s2_id0));
+			fail("duplicate id in given extensions");
+		} catch (IllegalArgumentException e) {
+			// as expected
+		}
+		
+	}
+	
+	public void testSymbolUnicityGiven() throws Exception {
+		final String symbol = "unic_s5";
+		final DummyExtn ext_s5_id2 = new DummyExtn(symbol, "unic_id2");
+		final DummyExtn ext_s5_id3 = new DummyExtn(symbol, "unic_id3");
+		
+		try {
+			FormulaFactory.getInstance(makeExtns(ext_s5_id2, ext_s5_id3));
+			fail("duplicate symbol in given extensions");
+		} catch (IllegalArgumentException e) {
+			// as expected
+		}
+		
+	}
+	
+	public void testSymbolNonGlobalUnicity() throws Exception {
+		final String symbol = "unic_s6";
+		final DummyExtn ext_s6_id4 = new DummyExtn(symbol, "unic_id4");
+		final DummyExtn ext_s6_id5 = new DummyExtn(symbol, "unic_id5");
+		
+		FormulaFactory.getInstance(makeExtns(ext_s6_id4));
+		
+		// same symbol with different ids is authorized
+		FormulaFactory.getInstance(makeExtns(ext_s6_id5));
+	}
+	
+	public void testOverridingStandardId() throws Exception {
+		final DummyExtn ext_s7_idLand = new DummyExtn("unic_s7", BCOMP_ID);
+		
+		try {
+			FormulaFactory.getInstance(makeExtns(ext_s7_idLand));
+			fail("overriding standard id");
+		} catch (IllegalArgumentException e) {
+			// as expected
+		}
+
+	}
+	
+	public void testOverridingStandardSymbol() throws Exception {
+		final DummyExtn ext_partition_id6 = new DummyExtn("partition", "unic_id6");
+		
+		try {
+			FormulaFactory.getInstance(makeExtns(ext_partition_id6));
+			fail("overriding standard symbol");
+		} catch (IllegalArgumentException e) {
+			// as expected
+		}
+
 	}
 
 }

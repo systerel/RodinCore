@@ -404,6 +404,10 @@ public class OperatorRegistry {
 	public boolean isSpaced(int kind) {
 		final OperatorGroup group = kindOpGroup.get(kind);
 		return group.isSpaced(kind);
+	}
+
+	public boolean isDeclared(String operatorId) {
+		return idKind.containsKey(operatorId);
 	}	
 	
 }

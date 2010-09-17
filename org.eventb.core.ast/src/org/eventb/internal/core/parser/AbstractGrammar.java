@@ -291,4 +291,8 @@ public abstract class AbstractGrammar {
 	public boolean isSpaced(int kind)	 {
 		return opRegistry.isSpaced(kind);
 	}
+	
+	public boolean isDeclared(String operatorId) {
+		return opRegistry.isDeclared(operatorId);
+	}
 }
