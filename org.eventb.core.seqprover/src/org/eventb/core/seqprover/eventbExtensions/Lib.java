@@ -919,6 +919,7 @@ public final class Lib {
 	 * @param ff 
 	 * 			  formula factory	         
 	 * @return the rewritten predicate
+	 * @since 2.0
 	 */ 
 	public static Predicate equalityRewrite(Predicate pred, Expression from,
 			Expression to, FormulaFactory ff) {

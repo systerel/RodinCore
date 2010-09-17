@@ -204,6 +204,7 @@ public class AutoTactics {
 	/**
 	 * Discharges any sequent whose goal denotes a membership to a domain the
 	 * value of which is known.
+	 * @since 2.0
 	 */
 	public static class InDomGoalTac implements ITactic {
 
@@ -231,6 +232,7 @@ public class AutoTactics {
 	/**
 	 * Discharges any sequent whose goal denotes that a functional image belongs
 	 * to a set when this can be derived from the function properties.
+	 * @since 2.0
 	 */
 	public static class FunImgInGoalTac implements ITactic {
 
