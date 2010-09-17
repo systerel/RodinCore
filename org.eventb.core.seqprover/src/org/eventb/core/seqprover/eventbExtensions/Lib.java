@@ -936,6 +936,7 @@ public final class Lib {
 	 *            a list of positions in the given predicate
 	 * @param predicate
 	 *            some predicate
+	 * @since 2.0
 	 */
 	public static void removeWDUnstrictPositions(List<IPosition> positions,
 			Predicate predicate) {
@@ -946,7 +947,17 @@ public final class Lib {
 			}
 		}
 	}
-
+	
+	/**
+	 * Tells if the formula at the given position in the given predicate is WD
+	 * strict.
+	 * 
+	 * @param positions
+	 *            a position in the given predicate
+	 * @param predicate
+	 *            some predicate
+	 * @since 2.0
+	 */
 	public static boolean isWDStrictPosition(Predicate pred, IPosition pos) {
 		return pred.isWDStrict(pos);
 	}
