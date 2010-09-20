@@ -136,7 +136,7 @@ public class TacticsLib {
 		});
 		List<IPosition> toBeRemoved = new ArrayList<IPosition>();
 		for (IPosition pos : domPositions) {
-			if (!Tactics.isParentTopLevelPredicate(pred, pos)) {
+			if (!Lib.isWDStrictPosition(pred, pos)) {
 				toBeRemoved.add(pos);
 			}
 		}
@@ -161,7 +161,7 @@ public class TacticsLib {
 		}));
 		List<IPosition> toBeRemoved = new ArrayList<IPosition>();
 		for (IPosition pos : funAppPositions) {
-			if (!Tactics.isParentTopLevelPredicate(pred, pos)) {
+			if (!Lib.isWDStrictPosition(pred, pos)) {
 				toBeRemoved.add(pos);
 			}
 		}
