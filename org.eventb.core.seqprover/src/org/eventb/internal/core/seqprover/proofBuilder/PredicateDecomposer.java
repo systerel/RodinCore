@@ -9,7 +9,7 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 
-package org.eventb.core.seqprover.proofBuilder;
+package org.eventb.internal.core.seqprover.proofBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +52,7 @@ import org.eventb.core.ast.UnaryPredicate;
  * @since 2.0
  */
 
-/* package */class PredicateDecomposer implements ISimpleVisitor2 {
+public class PredicateDecomposer implements ISimpleVisitor2 {
 
 	private final List<Predicate> subGoals;
 	private final ITypeEnvironment env;

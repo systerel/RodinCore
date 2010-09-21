@@ -26,6 +26,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.ProofTreeNode;
+import org.eventb.internal.core.seqprover.proofBuilder.ProofSkeletonWithDependencies;
 
 /**
  * This class contains static methods that can be used to reconstruct proof tree

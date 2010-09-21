@@ -9,7 +9,7 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 
-package org.eventb.core.seqprover.proofBuilder;
+package org.eventb.internal.core.seqprover.proofBuilder;
 
 import java.util.List;
 
@@ -21,13 +21,14 @@ import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
 import org.eventb.internal.core.seqprover.ProofDependenciesBuilder;
 import org.eventb.internal.core.seqprover.ProofRule;
 
 /**
  * A data structure used to store a skeleton with his dependencies associated. *
  */
-/* package */class ProofSkeletonWithDependencies implements IProofSkeleton {
+public class ProofSkeletonWithDependencies implements IProofSkeleton {
 
 	private final IProofRule skeletonRule;
 	private final String skeletonComment;
@@ -51,18 +52,13 @@ import org.eventb.internal.core.seqprover.ProofRule;
 	 * or contradictory hypothesis)
 	 */
 	private static boolean isTrivialCase(IProofRule rule) {
-
 		if (rule == null) {
 			return false;
 		}
 		final String reasonerID = rule.getReasonerDesc().getId();
-		if (reasonerID.equals(SequentProver.PLUGIN_ID + ".hyp")
+		return reasonerID.equals(SequentProver.PLUGIN_ID + ".hyp")
 				|| reasonerID.equals(SequentProver.PLUGIN_ID + ".trueGoal")
-				|| reasonerID.equals(SequentProver.PLUGIN_ID + ".contrHyps")) {
-			return true;
-		} else {
-			return false;
-		}
+				|| reasonerID.equals(SequentProver.PLUGIN_ID + ".contrHyps");
 	}
 
 	/**
@@ -77,22 +73,17 @@ import org.eventb.internal.core.seqprover.ProofRule;
 			IProofSkeleton skel) {
 		if (skel instanceof ProofSkeletonWithDependencies) {
 			return (ProofSkeletonWithDependencies) skel;
-		} else {
-			final IProofSkeleton[] skelChildren = skel.getChildNodes();
-			final ProofSkeletonWithDependencies[] children = new ProofSkeletonWithDependencies[skelChildren.length];
-			for (int i = 0; i < skelChildren.length; i++) {
-				children[i] = withDependencies(skelChildren[i]);
-			}
-			final IProofRule rule = skel.getRule();
-			final ProofDependenciesBuilder deps;
-			if (rule == null) {
-				deps = new ProofDependenciesBuilder();
-			} else {
-				deps = computeDependencies(children, rule);
-			}
-			return new ProofSkeletonWithDependencies(skel.getComment(), rule,
-					children, deps);
 		}
+		final IProofSkeleton[] skelChildren = skel.getChildNodes();
+		final ProofSkeletonWithDependencies[] children = new ProofSkeletonWithDependencies[skelChildren.length];
+		for (int i = 0; i < skelChildren.length; i++) {
+			children[i] = withDependencies(skelChildren[i]);
+		}
+		final IProofRule rule = skel.getRule();
+		final ProofDependenciesBuilder deps = computeDependencies(rule,
+				children);
+		return new ProofSkeletonWithDependencies(skel.getComment(), rule,
+				children, deps);
 	}
 
 	/**
@@ -101,7 +92,10 @@ import org.eventb.internal.core.seqprover.ProofRule;
 	 * @return dependencies of this node.
 	 */
 	private static ProofDependenciesBuilder computeDependencies(
-			ProofSkeletonWithDependencies[] children, IProofRule rule) {
+			IProofRule rule, ProofSkeletonWithDependencies[] children) {
+		if (rule == null) {
+			return new ProofDependenciesBuilder();
+		}
 		final ProofDependenciesBuilder[] childProofDeps = new ProofDependenciesBuilder[children.length];
 		for (int i = 0; i < children.length; i++) {
 			childProofDeps[i] = children[i].dependencies;
