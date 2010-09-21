@@ -30,7 +30,7 @@ public class WDMediator implements IWDMediator {
 
 	@Override
 	public Predicate makeTrueWD() {
-		return fb.ff.makeLiteralPredicate(Formula.BTRUE, null);
+		return fb.btrue;
 	}
 
 	@Override
