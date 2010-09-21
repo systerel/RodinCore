@@ -124,7 +124,8 @@ public class ProofRebuildTests {
 		IProofTreeNode nodeSimplified = makeProofTreeNode(P, Q, R, S,
 				land(limp(P, Q), limp(R, S)));
 		assertRebuild(nodeSimplified, (IProofSkeleton) proof, null);
-		splitGoal(splitImplication(hyp(Q)), splitImplication(hyp(S)));
+		splitGoal(splitImplication(hyp(Q)), splitImplication(hyp(S))).check(
+				nodeSimplified);
 	}
 
 	/**
