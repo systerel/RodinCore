@@ -332,21 +332,15 @@ public class ProofBuilder {
 		// Maybe check if the node has the same number of children as the prNode
 		// it may be smart to replay anyway, but generate a warning.
 		if (nodeChildren.length != skelChildren.length) {
-
-			if (nodeChildren.length < skelChildren.length) {
-				// Create a skeleton with dependencies
-				ProofSkeletonWithDependencies skelDeps = ProofSkeletonWithDependencies
-						.withDependencies(skeleton);
-				if (skelDeps.rebuildUnsortedChildren(nodeChildren,
-						proofMonitor, true)) {
-					return true;
-				}
-				return skelDeps.rebuildUnsortedChildren(nodeChildren,
-						proofMonitor, false);
-
+			// Create a skeleton with dependencies
+			ProofSkeletonWithDependencies skelDeps = ProofSkeletonWithDependencies
+			.withDependencies(skeleton);
+			if (skelDeps.rebuildUnsortedChildren(nodeChildren,
+					proofMonitor, true)) {
+				return true;
 			}
-			return false;
-
+			return skelDeps.rebuildUnsortedChildren(nodeChildren,
+					proofMonitor, false);
 		}
 		// run recursively for each child
 		boolean combinedResult = true;

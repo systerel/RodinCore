@@ -55,6 +55,23 @@ public class ProofRebuildTests {
 	}
 
 	/**
+	 * Ensures that the rebuild method still works when a conjunction is
+	 * augmented.
+	 */
+	@Test
+	public void rebuildTestConjunctionMore() throws Exception {
+		IProofTreeNode node = makeProofTreeNode(P, Q, R, land(P, Q, R));
+		IProofTreeNode proofSkeleton = makeProofTreeNode(P, Q, R,
+				land(P, Q, R));
+		splitGoal(hyp(P), hyp(Q), hyp(R)).create(proofSkeleton);
+		IProofTreeNode nodeAugmented = makeProofTreeNode(P, Q, R,
+				land(P, Q, P, R));
+		assertRebuild(node, (IProofSkeleton) proofSkeleton, null);
+		assertRebuild(nodeAugmented, (IProofSkeleton) proofSkeleton, null);
+		splitGoal(hyp(P), hyp(Q), hyp(P), hyp(R)).check(nodeAugmented);
+	}
+
+	/**
 	 * Ensures that the rebuild method still works when the terms of a
 	 * conjunction are shuffled.
 	 * 
