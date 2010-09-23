@@ -214,7 +214,7 @@ public abstract class EventBProofElement extends InternalElement implements
 	}
 
 	/**
-	 * @since 1.4
+	 * @since 2.0
 	 */
 	public void setUnselHyps(Collection<Predicate> hyps, IProofStoreCollector store, IProgressMonitor monitor) throws RodinDBException {
 		String refs = serializeCSV(hyps, store);
@@ -222,7 +222,7 @@ public abstract class EventBProofElement extends InternalElement implements
 	}
 	
 	/**
-	 * @since 1.4
+	 * @since 2.0
 	 */
 	public Set<Predicate> getUnselHyps(IProofStoreReader store) throws RodinDBException {
 		String sepRefs = getAttributeValue(UNSEL_HYPS_ATTRIBUTE);
@@ -244,7 +244,7 @@ public abstract class EventBProofElement extends InternalElement implements
 	}
 	
 	/**
-	 * @since 1.4
+	 * @since 2.0
 	 */
 	public boolean hasUnselHyps() throws RodinDBException {
 		return hasAttribute(UNSEL_HYPS_ATTRIBUTE);

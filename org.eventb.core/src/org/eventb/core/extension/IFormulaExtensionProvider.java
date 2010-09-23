@@ -24,7 +24,7 @@ import org.eventb.core.ast.extension.IFormulaExtension;
  * This interface is intended to be implemented by clients.
  * 
  * @author Thomas Muller
- * @since 1.4
+ * @since 2.0
  */
 public interface IFormulaExtensionProvider {
 

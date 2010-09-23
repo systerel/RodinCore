@@ -99,7 +99,7 @@ public abstract class EventBRoot extends EventBElement implements IEventBRoot,
 	}
 	
 	/**
-	 * @since 1.4
+	 * @since 2.0
 	 */
 	@Override
 	public final FormulaFactory getFormulaFactory() {
@@ -110,6 +110,9 @@ public abstract class EventBRoot extends EventBElement implements IEventBRoot,
 		setAttributeValue(EventBAttributes.CONFIGURATION_ATTRIBUTE, configuration, monitor);
 	}
 	
+	/**
+	 * @since 2.0
+	 */
 	@Override
 	public void setFormulaFactory(FormulaFactory ff) {
 		getExtensionProviderRegistry().setFormulaFactory(this, ff);

@@ -141,7 +141,7 @@ public interface IProofComponent {
 	 * 
 	 * @return the live proof attempt for the given proof obligation and owner,
 	 *         or <code>null</code> if no such proof attempt exists
-	 * @since 1.4
+	 * @since 2.0
 	 */
 	IProofAttempt getProofAttempt(String poName, String owner);
 
@@ -174,7 +174,7 @@ public interface IProofComponent {
 	 * The result is read from the proof state file of this component.
 	 * 
 	 * @return a formula factory
-	 * @since 1.4
+	 * @since 2.0
 	 */
 	FormulaFactory getFormulaFactory();
 
