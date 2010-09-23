@@ -152,7 +152,7 @@ public enum GraphProblem implements IRodinProblem {
 	AssignmentToCarrierSetError(IMarker.SEVERITY_ERROR, Messages.scuser_AssignmentToCarrierSet),
 	AssignmentToConstantError(IMarker.SEVERITY_ERROR, Messages.scuser_AssignmentToConstant),
 	/**
-	 * @since 1.4
+	 * @since 2.0
 	 */
 	EventInitLabelMisspellingWarning(IMarker.SEVERITY_WARNING, Messages.scuser_EventInitLabelMisspelling);
 	

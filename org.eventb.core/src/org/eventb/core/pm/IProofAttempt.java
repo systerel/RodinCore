@@ -190,7 +190,7 @@ public interface IProofAttempt {
 	 * Returns the formula factory for this proof attempt.
 	 * 
 	 * @return a formula factory
-	 * @since 1.4
+	 * @since 2.0
 	 */
 	FormulaFactory getFormulaFactory();
 

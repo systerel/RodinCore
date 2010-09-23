@@ -479,7 +479,7 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 	 *            a typed predicate
 	 * @return <code>true</code> if the given predicate trivially holds by
 	 *         typing
-	 * @since 1.4
+	 * @since 2.0
 	 */
 	protected static boolean isTrivial(Predicate pred) {
 		switch (pred.getTag()) {
@@ -498,7 +498,7 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 	 * 
 	 * @param poName
 	 *            the name of the current po that was filtered
-	 * @since 1.4
+	 * @since 2.0
 	 */
 	protected void debugTraceTrivial(String poName) {
 		System.out.println("POG: " + getClass().getSimpleName()

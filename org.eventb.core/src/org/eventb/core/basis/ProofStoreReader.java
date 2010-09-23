@@ -177,7 +177,7 @@ public class ProofStoreReader implements IProofStoreReader {
 		}
 		
 		/**
-		 * @since 1.4
+		 * @since 2.0
 		 */
 		@Override
 		public FormulaFactory getFormulaFactory() {
