@@ -152,7 +152,7 @@ public interface IEventBRoot extends IInternalElement, IGeneratedElement {
 	 * this root element.
 	 * 
 	 * @return the associated formula factory
-	 * @since 1.4
+	 * @since 2.0
 	 */
 	FormulaFactory getFormulaFactory();
 

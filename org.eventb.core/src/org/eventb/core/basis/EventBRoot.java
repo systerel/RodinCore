@@ -11,6 +11,8 @@
  ******************************************************************************/
 package org.eventb.core.basis;
 
+import static org.eventb.internal.core.FormulaExtensionProviderRegistry.getExtensionProviderRegistry;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextRoot;
@@ -101,7 +103,7 @@ public abstract class EventBRoot extends EventBElement implements IEventBRoot,
 	 */
 	@Override
 	public final FormulaFactory getFormulaFactory() {
-		return getEventBProject().getFormulaFactory(this);
+		return getExtensionProviderRegistry().getFormulaFactory(this);
 	}
 
 	public void setConfiguration(String configuration, IProgressMonitor monitor) throws RodinDBException {
@@ -110,7 +112,7 @@ public abstract class EventBRoot extends EventBElement implements IEventBRoot,
 	
 	@Override
 	public void setFormulaFactory(FormulaFactory ff) {
-		getEventBProject().setFormulaFactory(this, ff);
+		getExtensionProviderRegistry().setFormulaFactory(this, ff);
 	}
 
 	public String getConfiguration() throws RodinDBException {

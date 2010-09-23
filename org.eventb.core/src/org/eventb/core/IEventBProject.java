@@ -12,7 +12,6 @@
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eventb.core.ast.FormulaFactory;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 
@@ -239,25 +238,4 @@ public interface IEventBProject extends IAdaptable {
 	 */
 	IRodinProject getRodinProject();
 	
-	/**
-	 * Returns the formula factory associated with the given root element.
-	 * 
-	 * @param root
-	 *            the root element requesting the factory
-	 * @return the formula factory associated with the given root element
-	 * @since 1.4
-	 */
-	FormulaFactory getFormulaFactory(IEventBRoot root);
-	
-	/**
-	 * Sets the given formula factory associated with the given root element.
-	 * 
-	 * @param root
-	 *            the root element on which the factory will be set
-	 * @param ff
-	 *            the formula to be set for this root
-	 * @since 2.0
-	 */
-	void setFormulaFactory(IEventBRoot root, FormulaFactory ff);
-
 }

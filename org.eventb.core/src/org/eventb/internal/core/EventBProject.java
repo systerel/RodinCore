@@ -12,13 +12,10 @@
  *******************************************************************************/
 package org.eventb.internal.core;
 
-import static org.eventb.internal.core.FormulaExtensionProviderRegistry.getExtensionProviderRegistry;
-
 import org.eclipse.core.runtime.PlatformObject;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBProject;
-import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPRRoot;
@@ -38,9 +35,6 @@ public class EventBProject extends PlatformObject implements IEventBProject {
 	
 	private final IRodinProject rodinProject;
 	
-	// Cache for the formula factory used within this project
-	private FormulaFactory formulaFactory;
-
 	public EventBProject(IRodinProject rodinProject) {
 		if (rodinProject == null) {
 			throw new NullPointerException();
@@ -83,14 +77,6 @@ public class EventBProject extends PlatformObject implements IEventBProject {
 	@Override
 	public IContextRoot getContextRoot(String componentName) {
 		return (IContextRoot) getContextFile(componentName).getRoot();
-	}
-
-	@Override
-	public FormulaFactory getFormulaFactory(IEventBRoot root) {
-		if (formulaFactory == null)
-			formulaFactory = getExtensionProviderRegistry().getFormulaFactory(
-					root);
-		return formulaFactory;
 	}
 
 	@Override
@@ -157,11 +143,6 @@ public class EventBProject extends PlatformObject implements IEventBProject {
 	@Override
 	public IPSRoot getPSRoot(String componentName) {
 		return (IPSRoot) getPSFile(componentName).getRoot();
-	}
-
-	@Override
-	public void setFormulaFactory(IEventBRoot root, FormulaFactory ff) {
-		getExtensionProviderRegistry().setFormulaFactory(root, ff);
 	}
 
 }
