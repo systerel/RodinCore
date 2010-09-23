@@ -17,7 +17,7 @@
 	<!--   build.result.folder - folder to contain the build results           -->
 	<!-- ===================================================================== -->
 	<target name="pre.build.jars">
-		<ant antfile="build-gen.xml" target="generate" />
+		<ant antfile="build-gen.xml" target="unifier" />
 	</target>
 
 	<!-- ===================================================================== -->
@@ -34,7 +34,7 @@
 	<!--   build.result.folder - folder to contain the build results           -->
 	<!-- ===================================================================== -->
 	<target name="pre.build.sources">
-		<ant antfile="build-gen.xml" target="generate" />
+		<ant antfile="build-gen.xml" target="unifier" />
 	</target>
 
 	<!-- ===================================================================== -->
