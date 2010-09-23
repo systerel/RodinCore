@@ -12,8 +12,6 @@ package org.eventb.internal.core.pog.modules;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.IPORoot;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pog.POGProcessorModule;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.rodinp.core.IRodinElement;
@@ -48,15 +46,6 @@ public abstract class BaseModule extends POGProcessorModule {
 			IProgressMonitor monitor) throws CoreException {
 		processModules(element, repository, monitor);
 		
-	}
-	
-	protected static void setFactory(IPOGStateRepository repository)
-			throws CoreException {
-		final FormulaFactory ff = repository.getFormulaFactory();
-		final IPORoot target = repository.getTarget();
-		if (target != null) {
-			target.setFormulaFactory(ff);
-		}
 	}
 
 }

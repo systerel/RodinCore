@@ -73,7 +73,6 @@ public class ContextModule extends BaseModule {
 			IProgressMonitor monitor) throws CoreException {
 
 		contextRoot.setAccuracy(accuracyInfo.isAccurate(), monitor);
-		contextRoot.setFormulaFactory(repository.getFormulaFactory());
 		super.endModule(element, repository, monitor);
 	}
 

@@ -74,7 +74,6 @@ public class MachineModule extends BaseModule {
 			IProgressMonitor monitor) throws CoreException {
 
 		machineRoot.setAccuracy(accuracyInfo.isAccurate(), monitor);
-		machineRoot.setFormulaFactory(repository.getFormulaFactory());
 		super.endModule(element, repository, monitor);
 	}
 

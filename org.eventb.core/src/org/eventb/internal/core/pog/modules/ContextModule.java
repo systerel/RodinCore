@@ -37,7 +37,6 @@ public class ContextModule extends BaseModule {
 			IPOGStateRepository repository, IProgressMonitor monitor)
 			throws CoreException {
 		super.endModule(element, repository, monitor);
-		setFactory(repository);
 	}
 
 }
