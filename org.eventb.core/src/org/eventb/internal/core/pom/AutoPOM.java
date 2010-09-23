@@ -22,7 +22,9 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
+import org.eventb.core.IPRRoot;
 import org.eventb.core.IPSRoot;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofManager;
 import org.eventb.internal.core.Util;
@@ -190,6 +192,10 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		final IRodinFile prFile = pc.getPRRoot().getRodinFile();
 		if (!prFile.exists()) {
 			prFile.create(true, pm);
+
+			// Register the formula factory to use for the proof file
+			final FormulaFactory ff = pc.getFormulaFactory();
+			((IPRRoot) prFile.getRoot()).setFormulaFactory(ff);
 		}
 	}
 	
