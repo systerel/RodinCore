@@ -24,8 +24,6 @@
 
    <requires>
       <import feature="org.eclipse.platform" version="3.6.0" match="compatible"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.core.resources"/>
    </requires>
 
    <plugin
