@@ -75,15 +75,15 @@ public interface IFormulaExtensionProvider {
 
 	/**
 	 * Returns project specific files used for the computation of the factory
-	 * for the given project.
+	 * for the given file root.
 	 * 
 	 * <p>
-	 * These files are subsequently considered by the builder (SC, POG and POM)
-	 * as top priority nodes.
+	 * Subsequently, the builder (SC, POG and POM) will consider that there is a
+	 * dependency from returned files to the given one.
 	 * </p>
 	 * 
 	 * @param root
-	 *            a event-b project
+	 *            an event-b root
 	 * @return a set of rodin files
 	 */
 	Set<IRodinFile> getProjectFiles(IEventBRoot root);
