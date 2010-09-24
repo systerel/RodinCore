@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,13 +8,17 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - added formula extensions
  *******************************************************************************/
 package org.eventb.internal.core.pog;
+
+import static org.eventb.internal.core.Util.addExtensionDependencies;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IMachineRoot;
+import org.eventb.core.IPORoot;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ISCRefinesMachine;
 import org.eventb.core.pog.ProofObligationGenerator;
@@ -37,13 +41,16 @@ public class MachineProofObligationGenerator extends ProofObligationGenerator {
 		IRodinFile source = RodinCore.valueOf(file);
 		ISCMachineRoot sourceRoot = (ISCMachineRoot) source.getRoot();
 		IMachineRoot mch = sourceRoot.getMachineRoot();
-		IRodinFile target = mch.getPORoot().getRodinFile();
+		final IPORoot targetRoot = mch.getPORoot();
+		IRodinFile target = targetRoot.getRodinFile();
 		
 		graph.addTarget(target.getResource());
 		graph.addToolDependency(
 				source.getResource(), 
 				target.getResource(), true);
 		
+		addExtensionDependencies(graph, targetRoot);
+	
 		ISCRefinesMachine[] refinesMachines = sourceRoot.getSCRefinesClauses();
 		if (refinesMachines.length != 0) {
 			final IRodinFile absSC = refinesMachines[0].getAbstractSCMachine();

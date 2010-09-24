@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,11 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - added formula extensions
  *******************************************************************************/
 package org.eventb.internal.core.pog;
+
+import static org.eventb.internal.core.Util.addExtensionDependencies;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -39,6 +42,9 @@ public class ContextProofObligationGenerator extends ProofObligationGenerator {
 		graph.addTarget(target.getResource());
 		graph.addToolDependency(source.getResource(), target.getResource(),
 				true);
+		
+		addExtensionDependencies(graph, target);
+
 	}
 
 }

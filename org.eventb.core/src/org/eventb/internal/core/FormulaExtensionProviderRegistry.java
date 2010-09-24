@@ -13,6 +13,7 @@ package org.eventb.internal.core;
 import static org.eventb.internal.core.Util.log;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -25,6 +26,7 @@ import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.extension.IFormulaExtensionProvider;
+import org.rodinp.core.IRodinFile;
 
 /**
  * Singleton class implementing the formula extension provider registry.
@@ -125,4 +127,15 @@ public class FormulaExtensionProviderRegistry {
 		provider.setFormulaFactory(root, ff);
 	}
 
+	public synchronized Set<IRodinFile> getAllExtensionFiles(
+			IEventBRoot root) {
+		if (provider == null)
+			return Collections.emptySet();
+
+		final Set<IRodinFile> extFiles = new HashSet<IRodinFile>();
+		extFiles.addAll(provider.getCommonFiles(root));
+		extFiles.addAll(provider.getProjectFiles(root));
+
+		return extFiles;
+	}
 }

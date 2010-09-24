@@ -1,19 +1,27 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added formula extensions
  *******************************************************************************/
-
 package org.eventb.internal.core;
+
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IEventBRoot;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.builder.IGraph;
 
 /**
  * This class contains miscellaneous static utility methods.
@@ -124,6 +132,18 @@ public class Util {
 
 		return new CoreException(new Status(IStatus.ERROR,
 				EventBPlugin.PLUGIN_ID, IStatus.OK, message, exception));
+	}
+
+	public static void addExtensionDependencies(IGraph graph, IEventBRoot target)
+			throws CoreException {
+		final FormulaExtensionProviderRegistry extProvReg = FormulaExtensionProviderRegistry
+				.getExtensionProviderRegistry();
+		final Set<IRodinFile> extFiles = extProvReg
+				.getAllExtensionFiles(target);
+		for (IRodinFile extFile : extFiles) {
+			graph.addToolDependency(extFile.getResource(),
+					target.getResource(), true);
+		}
 	}
 
 }

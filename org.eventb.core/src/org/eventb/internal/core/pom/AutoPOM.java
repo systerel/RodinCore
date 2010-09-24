@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - refactored for using the Proof Manager API
  *     Systerel - separation of file and root element
+ *     Systerel - added formula extensions
  *******************************************************************************/
 package org.eventb.internal.core.pom;
 
@@ -172,7 +173,8 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			throws CoreException {
 		try {
 			monitor.beginTask("Extracting " + source.getName(), 1);
-			final IFile target = getPSResource(source);
+			final IPSRoot targetRoot = getPSRoot(source);
+			final IFile target = targetRoot.getResource();
 			graph.addTarget(target);
 			graph.addToolDependency(source, target, true);
 		} finally {
@@ -180,11 +182,11 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		}
 	}
 
-	private static IFile getPSResource(IFile poResource) {
+	private static IPSRoot getPSRoot(IFile poResource) {
 		final IRodinFile poFile = RodinCore.valueOf(poResource);
 		final IPORoot poRoot = (IPORoot) poFile.getRoot();
 		final IPSRoot psRoot = poRoot.getPSRoot();
-		return psRoot.getResource();
+		return psRoot;
 	}
 
 	private void createFreshProofFile(IProofComponent pc, IProgressMonitor pm)

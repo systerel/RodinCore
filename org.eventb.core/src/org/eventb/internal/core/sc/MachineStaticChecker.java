@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,14 +8,18 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - added formula extensions
  *******************************************************************************/
 package org.eventb.internal.core.sc;
+
+import static org.eventb.internal.core.Util.addExtensionDependencies;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesMachine;
+import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.sc.StaticChecker;
 import org.rodinp.core.IRodinFile;
@@ -40,7 +44,8 @@ public class MachineStaticChecker extends StaticChecker {
 		
 			IRodinFile source = RodinCore.valueOf(file);
 			IMachineRoot sourceRoot = (IMachineRoot) source.getRoot();
-			IRodinFile target = sourceRoot.getSCMachineRoot().getRodinFile();
+			final ISCMachineRoot targetRoot = sourceRoot.getSCMachineRoot();
+			IRodinFile target = targetRoot.getRodinFile();
 			ISeesContext[] seen = sourceRoot.getSeesClauses();
 			IRefinesMachine[] abstractMachines = sourceRoot.getRefinesClauses();
 
@@ -49,6 +54,8 @@ public class MachineStaticChecker extends StaticChecker {
 					source.getResource(), 
 					target.getResource(), true);	
 		
+			addExtensionDependencies(graph, targetRoot);
+
 			for (ISeesContext seesContext : seen) {
 				if (seesContext.hasSeenContextName()) {
 					IRodinFile seenSCContext = seesContext.getSeenSCContext();

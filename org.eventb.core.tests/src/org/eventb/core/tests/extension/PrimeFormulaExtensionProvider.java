@@ -18,6 +18,7 @@ import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.extension.IFormulaExtensionProvider;
+import org.rodinp.core.IRodinFile;
 
 /**
  * A dummy extension provider that returns singleton containing one extension
@@ -44,5 +45,18 @@ public class PrimeFormulaExtensionProvider implements IFormulaExtensionProvider 
 	public void setFormulaFactory(IEventBRoot root, FormulaFactory ff) {
 		// Not tested here
 	}
+
+	@Override
+	public Set<IRodinFile> getCommonFiles(IEventBRoot root) {
+		// Not tested here
+		return Collections.emptySet();
+	}
+
+	@Override
+	public Set<IRodinFile> getProjectFiles(IEventBRoot root) {
+		// Not tested here
+		return Collections.emptySet();
+	}
+
 
 }
