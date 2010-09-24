@@ -1539,4 +1539,24 @@ public class FormulaFactory {
 		return result;
 	}
 
+	@Override
+	public int hashCode() {
+		return 31 + extensions.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof FormulaFactory)) {
+			return false;
+		}
+		FormulaFactory other = (FormulaFactory) obj;
+		return extensions.equals(other.extensions);
+	}
+
 }
