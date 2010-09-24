@@ -1230,7 +1230,9 @@
       <tactic id="org.eventb.core.seqprover.onePointHypTac"/>
       <tactic id="org.eventb.core.seqprover.onePointGoalTac"/>
       <tactic id="org.eventb.core.seqprover.finiteHypBoundedGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.funImgSimpTac">
+      <tactic id="org.eventb.core.seqprover.funImgSimpTac"/>      
+      <tactic id="org.eventb.core.seqprover.FunImgInGoalTac"/>
+      <tactic id="org.eventb.core.seqprover.InDomGoalTac">
       </tactic>
    </extension>
    <extension
@@ -1251,7 +1253,9 @@
       <tactic id="org.eventb.core.seqprover.onePointHypTac"/>
       <tactic id="org.eventb.core.seqprover.onePointGoalTac"/>
       <tactic id="org.eventb.core.seqprover.finiteHypBoundedGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.funImgSimpTac">
+      <tactic id="org.eventb.core.seqprover.funImgSimpTac"/>
+      <tactic id="org.eventb.core.seqprover.FunImgInGoalTac"/>
+      <tactic id="org.eventb.core.seqprover.InDomGoalTac">
       </tactic>
    </extension>
    <extension
