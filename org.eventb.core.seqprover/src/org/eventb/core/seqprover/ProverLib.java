@@ -365,11 +365,21 @@ public class ProverLib {
 			iterable = sequent.visibleHypIterable();
 		}
 		for (final Predicate hypothesis : iterable) {
-			if (hypothesis.toString().contains(pattern)) {
+			if (patternMatches(hypothesis, pattern)) {
 				result.add(hypothesis);
 			}
 		}
 		return result;
+	}
+	
+	private static boolean patternMatches(Predicate pred, String pattern) {
+		final String predStr = pred.toString();
+		final String[] toSearch = pattern.split("\\s");
+		for (String str : toSearch) {
+			if (!(predStr.contains(str)))
+				return false;
+		}
+		return true;
 	}
 
 	public static Set<Predicate> hypsFreeIdentsSearch(IProverSequent seq, Set<FreeIdentifier> freeIdents) {
