@@ -42,7 +42,6 @@ import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.ProofMonitor;
-import org.eventb.internal.core.Util;
 import org.eventb.internal.core.pom.POLoader;
 import org.rodinp.core.RodinDBException;
 
@@ -115,7 +114,7 @@ public class ProofState implements IProofState {
 				try {
 					createFreshProofAttempt(monitor);
 				} catch (RodinDBException e) {
-					Util.newCoreException(e.getMessage(), e);
+					throw new IllegalStateException(e);
 				}
 				
 				// Get the proof skeleton and rebuild the tree
