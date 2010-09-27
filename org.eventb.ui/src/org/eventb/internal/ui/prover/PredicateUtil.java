@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
@@ -407,6 +408,10 @@ public class PredicateUtil {
 
 			appendOp(sb, op, height);
 			addSpacing(sb, predString, uPred.getChild(), height - 1);
+		}
+		
+		else if (pred instanceof ExtendedPredicate) {
+			appendImage(sb, pred, predString);
 		}
 
 		if (bracketed) {
