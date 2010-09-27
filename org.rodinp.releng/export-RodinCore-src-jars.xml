@@ -15,6 +15,7 @@
 			         org.eventb.core,
 			         org.eventb.core.ast,
 			         org.eventb.core.seqprover,
+	                 org.eventb.doc.user,
 			         org.eventb.ide,
 			         org.eventb.keyboard,
 			         org.eventb.pp,
