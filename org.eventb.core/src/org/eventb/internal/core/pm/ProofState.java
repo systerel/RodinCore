@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.ProofMonitor;
+import org.eventb.internal.core.Util;
 import org.eventb.internal.core.pom.POLoader;
 import org.rodinp.core.RodinDBException;
 
@@ -111,8 +112,12 @@ public class ProofState implements IProofState {
 
 			@Override
 			public void run() {
-				createFreshProofAttempt(monitor);
-
+				try {
+					createFreshProofAttempt(monitor);
+				} catch (RodinDBException e) {
+					Util.newCoreException(e.getMessage(), e);
+				}
+				
 				// Get the proof skeleton and rebuild the tree
 				IProofSkeleton proofSkeleton;
 				try {
@@ -166,7 +171,8 @@ public class ProofState implements IProofState {
 		});
 	}
 
-	void createFreshProofAttempt(IProgressMonitor monitor) {
+	void createFreshProofAttempt(IProgressMonitor monitor)
+			throws RodinDBException {
 		// Dispose the previous proof attempt
 		if (pa != null) {
 			pa.getProofTree().removeChangeListener(this);
@@ -175,13 +181,8 @@ public class ProofState implements IProofState {
 
 		// Construct the proof tree from the PO file.
 		final IProofComponent pc = userSupport.getProofComponent();
-		try {
-			pa = pc.createProofAttempt(poName, US, monitor);
-			pt = pa.getProofTree();
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		pa = pc.createProofAttempt(poName, US, monitor);
+		pt = pa.getProofTree();
 	}
 
 	protected void newProofTree() {
