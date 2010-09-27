@@ -391,11 +391,10 @@ public class RuleDetailsProvider {
 	}
 
 	private void append(String str, int indent) {
-		String tabs = EMPTY_STRING;
 		for (int i = 0; i < indent; i++) {
-			tabs = tabs + TAB;
+			sText.append(TAB);
 		}
-		sText.append(tabs + str);
+		sText.append(str);
 	}
 
 	private static int getCurrentPosition(StyledText text) {
