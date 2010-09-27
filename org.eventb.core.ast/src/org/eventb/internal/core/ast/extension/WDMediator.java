@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension;
 
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IWDMediator;
