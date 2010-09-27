@@ -51,6 +51,8 @@ public final class Messages {
 	public static String progress_RecalculateAutoStatus_loading;
 	public static String progress_RecalculateAutoStatus_proving;
 	public static String progress_RecalculateAutoStatus_saving;
+	
+	public static String proofComponent_IncompatibleFormulaFactory;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
@@ -70,4 +72,9 @@ public final class Messages {
 	private Messages() {
 		// Do not instantiate
 	}
+	
+	public static String ProofComponent_IncompatibleFormulaFactory(String componentName) {
+		return bind(proofComponent_IncompatibleFormulaFactory, componentName);
+	}
+	
 }

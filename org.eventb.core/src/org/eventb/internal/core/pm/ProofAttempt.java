@@ -134,6 +134,7 @@ public class ProofAttempt implements IProofAttempt, IElementChangedListener {
 		if (isDisposed()) {
 			throw new IllegalStateException(this + " has been disposed");
 		}
+		component.checkFormulaFactoryCompatibility();
 		final CommitProofOperation op = new CommitProofOperation(this, manual,
 				simplify);
 		RodinCore.run(op, component.getSchedulingRule(), monitor);

@@ -191,13 +191,13 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 
 	private void createFreshProofFile(IProofComponent pc, IProgressMonitor pm)
 			throws RodinDBException {
-		final IRodinFile prFile = pc.getPRRoot().getRodinFile();
-		if (!prFile.exists()) {
-			prFile.create(true, pm);
+		final IPRRoot prRoot = pc.getPRRoot();
+		if (!prRoot.exists()) {
+			prRoot.getRodinFile().create(true, pm);
 
 			// Register the formula factory to use for the proof file
 			final FormulaFactory ff = pc.getFormulaFactory();
-			((IPRRoot) prFile.getRoot()).setFormulaFactory(ff);
+			prRoot.setFormulaFactory(ff);
 		}
 	}
 	
