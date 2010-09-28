@@ -43,6 +43,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -74,7 +75,8 @@ public class RuleDetailsProvider {
 	private static final String SPACE = " ";
 	private static final String SEPARATOR = COMMA + SPACE;
 	private static final String INST = "inst ";
-
+    
+	private Font braveFont;
 	private IProofRule rule;
 	private StyledText sText;
 	private RuleDetailsModel model;
@@ -96,6 +98,9 @@ public class RuleDetailsProvider {
 	public RuleDetailsProvider(Composite parent) {
 		sText = new StyledText(parent, MULTI | FULL_SELECTION);
 		final GridData gData = new GridData(TOP, TOP, true, true);
+		braveFont = new Font(parent.getDisplay(), "Brave Sans Mono", 10,
+				SWT.NORMAL);
+		sText.setFont(braveFont);
 		sText.setLayoutData(gData);
 		sText.setTabStops(TABS);
 	}
