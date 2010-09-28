@@ -211,6 +211,7 @@ public class NewVariableDialog extends EventBDialog {
 		setText(initLabelText, getFreeInitialisationActionName());
 		setText(initSubstitutionText, EMPTY);
 		setText(identifierText, getFreeVariable());
+		clearDirtyTexts();
 		select(identifierText);
 	}
 
