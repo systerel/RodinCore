@@ -21,12 +21,16 @@ package org.eventb.internal.ui.eventbeditor;
 
 import static org.eventb.internal.ui.EventBUtils.isReadOnly;
 import static org.eventb.internal.ui.UIUtils.showInfo;
+import static org.eventb.internal.ui.utils.Messages.dialogs_pasteNotAllowed;
 import static org.eventb.internal.ui.utils.Messages.dialogs_readOnlyElement;
+import static org.eventb.internal.ui.utils.Messages.title_canNotPaste;
 import static org.eventb.ui.EventBUIPlugin.getAxm_Default;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -71,6 +75,7 @@ import org.eventb.internal.ui.eventbeditor.dialogs.NewEnumeratedSetDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewEventDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewVariableDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewVariantDialog;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
 import org.eventb.internal.ui.eventbeditor.operations.History;
@@ -78,6 +83,7 @@ import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.internal.ui.preferences.PreferenceUtils;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -1168,4 +1174,95 @@ public class EventBEditorUtils {
 		}
 		return "";
 	}
+	
+	/**
+	 * Perform a copy operation through the undo history.
+	 * <p>
+	 * If the element type of elements to copy and the target are equals, the
+	 * new elements is placed after target. Else the new element is placed at
+	 * the end of the children list.
+	 * 
+	 * @param target
+	 *            The selected element.
+	 * @param elements
+	 *            the elements to copy
+	 */
+	public static void copyElements(IInternalElement target,
+			IRodinElement[] elements) {
+		if (checkAndShowReadOnly(target)) {
+			return;
+		}
+
+		final IElementType<?> typeNotAllowed = elementTypeNotAllowed(elements,
+				target);
+		if (typeNotAllowed == null) {
+			copyElements(elements, target, null);
+		} else if (haveSameType(elements, target)) {
+			try {
+				copyElements(elements, target.getParent(),
+						target.getNextSibling());
+			} catch (RodinDBException e) {
+				e.printStackTrace();
+			}
+		} else {
+			UIUtils.showError(
+					title_canNotPaste,
+					dialogs_pasteNotAllowed(typeNotAllowed.getName(), target
+							.getElementType().getName()));
+			return;
+		}
+		if (EventBEditorUtils.DEBUG)
+			EventBEditorUtils.debug("PASTE SUCCESSFULLY");
+	}
+
+	/**
+	 * Returns the type of an element that is not allowed to be pasted as child
+	 * of target.
+	 * 
+	 * @return the type that is not allowed to be pasted or <code>null</code> if
+	 *         all elements to paste can become valid children
+	 * */
+	private static IElementType<?> elementTypeNotAllowed(
+			IRodinElement[] toPaste, IRodinElement target) {
+		final Set<IElementType<?>> allowedTypes = getAllowedChildTypes(target);
+		for (IRodinElement e : toPaste) {
+			final IElementType<?> type = e.getElementType();
+			if (!allowedTypes.contains(type)) {
+				return type;
+			}
+		}
+		return null;
+	}
+
+	private static Set<IElementType<?>> getAllowedChildTypes(
+			IRodinElement target) {
+		final IElementType<?> targetType = target.getElementType();
+		final IElementType<?>[] childTypes = ElementDescRegistry.getInstance()
+				.getChildTypes(targetType);
+		final Set<IElementType<?>> allowedTypes = new HashSet<IElementType<?>>(
+				Arrays.asList(childTypes));
+		return allowedTypes;
+	}
+
+	private static boolean haveSameType(IRodinElement[] toPaste,
+			IRodinElement target) {
+		final IElementType<?> targetType = target.getElementType();
+		for (IRodinElement e : toPaste) {
+			if (targetType != e.getElementType()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Perform a copy operation through the undo history.
+	 */
+	private static void copyElements(IRodinElement[] handleData,
+			IRodinElement target, IRodinElement nextSibling) {
+		History.getInstance().addOperation(
+				OperationFactory.copyElements((IInternalElement) target,
+						handleData, (IInternalElement) nextSibling));
+	}
+
 }

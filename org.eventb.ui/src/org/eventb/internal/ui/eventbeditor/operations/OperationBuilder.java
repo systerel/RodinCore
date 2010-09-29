@@ -479,15 +479,15 @@ class OperationBuilder {
 	}
 
 	private OperationTree copyElement(IInternalElement parent,
-			IInternalElement element) {
-		return new CopyElement(parent, element);
+			IInternalElement element, IInternalElement sibling) {
+		return new CopyElement(parent, element, sibling);
 	}
 
 	public OperationTree copyElements(IInternalElement parent,
-			IRodinElement[] elements) {
+			IRodinElement[] elements, IInternalElement sibling) {
 		OperationNode op = new OperationNode();
 		for (IRodinElement element : elements) {
-			op.addCommand(copyElement(parent, (IInternalElement) element));
+			op.addCommand(copyElement(parent, (IInternalElement) element, sibling));
 		}
 		return op;
 	}

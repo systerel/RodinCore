@@ -15,13 +15,7 @@
 package org.eventb.internal.ui.eventbeditor.handlers;
 
 import static org.eventb.internal.ui.utils.Messages.dialogs_nothingToPaste;
-import static org.eventb.internal.ui.utils.Messages.dialogs_pasteNotAllowed;
-import static org.eventb.internal.ui.utils.Messages.title_canNotPaste;
 import static org.eventb.internal.ui.utils.Messages.title_nothingToPaste;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -36,12 +30,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eventb.internal.ui.RodinHandleTransfer;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
-import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
-import org.eventb.internal.ui.eventbeditor.operations.History;
-import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
@@ -96,24 +86,7 @@ public class PasteHandler extends AbstractHandler implements IHandler {
 		if (!(target instanceof IInternalElement) || !target.exists())
 			return "Target does not exist";
 
-		if (EventBEditorUtils.checkAndShowReadOnly(target)) {
-			return null;
-		}
-
-		final IElementType<?> typeNotAllowed = elementTypeNotAllowed(
-				elements, target);
-		if (typeNotAllowed == null) {
-			copyElements(elements, target);
-		} else if (haveSameType(elements, target)) {
-			copyElements(elements, target.getParent());
-		} else {
-			UIUtils.showError(title_canNotPaste,
-					dialogs_pasteNotAllowed(typeNotAllowed.getName(), target
-							.getElementType().getName()));
-			return null;
-		}
-		if (EventBEditorUtils.DEBUG)
-			EventBEditorUtils.debug("PASTE SUCCESSFULLY");
+		EventBEditorUtils.copyElements((IInternalElement) target, elements);
 		return null;
 	}
 	
@@ -148,54 +121,4 @@ public class PasteHandler extends AbstractHandler implements IHandler {
 			return null;
 		}
 	}
-
-	/**
-	 * Returns the type of an element that is not allowed to be pasted as child
-	 * of target.
-	 * 
-	 * @return the type that is not allowed to be pasted or <code>null</code> if
-	 *         all elements to paste can become valid children
-	 * */
-	private static IElementType<?> elementTypeNotAllowed(
-			IRodinElement[] toPaste, IRodinElement target) {
-		final Set<IElementType<?>> allowedTypes = getAllowedChildTypes(target);
-		for (IRodinElement e : toPaste) {
-			final IElementType<?> type = e.getElementType();
-			if (!allowedTypes.contains(type)) {
-				return type;
-			}
-		}
-		return null;
-	}
-
-	private static Set<IElementType<?>> getAllowedChildTypes(
-			IRodinElement target) {
-		final IElementType<?> targetType = target.getElementType();
-		final IElementType<?>[] childTypes = ElementDescRegistry.getInstance()
-				.getChildTypes(targetType);
-		final Set<IElementType<?>> allowedTypes = new HashSet<IElementType<?>>(
-				Arrays.asList(childTypes));
-		return allowedTypes;
-	}
-	
-	private static boolean haveSameType(IRodinElement[]toPaste, IRodinElement target){
-		final IElementType<?> targetType = target.getElementType();
-		for (IRodinElement e : toPaste) {
-			if (targetType != e.getElementType()) {
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	/**
-	 * Perform a copy operation through the undo history.
-	 */
-	private static void copyElements(IRodinElement[] handleData,
-			IRodinElement target) {
-		History.getInstance().addOperation(
-				OperationFactory.copyElements((IInternalElement) target,
-						handleData));
-	}
-	
 }

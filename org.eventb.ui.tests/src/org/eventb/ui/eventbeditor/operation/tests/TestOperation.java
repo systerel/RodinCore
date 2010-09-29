@@ -64,15 +64,15 @@ public class TestOperation extends OperationTest {
 	/**
 	 * add all elements to parent.
 	 */
-	private void addElements(Element parent, IInternalElement[] elements)
+	private void addElements(Element parent, IInternalElement[] elements, Element nextSibling)
 			throws RodinDBException {
 		for (IInternalElement element : elements) {
-			parent.addChild(Element.valueOf(element), null);
+			parent.addChild(Element.valueOf(element), nextSibling);
 		}
 	}
 
 	@Test
-	public void testCopyElements() throws Exception {
+	public void testCopyElements1() throws Exception {
 
 		final IMachineRoot mchSource = createMachine("source");
 
@@ -87,9 +87,36 @@ public class TestOperation extends OperationTest {
 
 		// after execute and redo
 		mchElement = Element.valueOf(mch);
-		addElements(mchElement, elements);
+		addElements(mchElement, elements, null);
 
-		final AtomicOperation op = OperationFactory.copyElements(mch, elements);
+		final AtomicOperation op = OperationFactory.copyElements(mch, elements, null);
+
+		verifyOperation(op, mch, mchElement);
+	}
+
+	@Test
+	public void testCopyElements2() throws Exception {
+
+		final IMachineRoot mchSource = createMachine("source");
+		final IEvent eventSource = createEvent(mchSource, "event");
+		createAction(eventSource, "act1", "");
+		createAction(eventSource, "act2", "");
+		final IInternalElement[] elements = new IInternalElement[] {
+				createAction(eventSource, "act3", ""),
+				createAction(eventSource, "act4", "") };
+
+		// at beginning and after undo
+		final IEvent event = createEvent(mch, "event");
+		createAction(event, "act1", "");
+		final IAction action = createAction(event, "act2", "");
+
+		// after execute and redo
+		mchElement = Element.valueOf(mch);
+		final Element eventElement = mchElement.getChildren().get(0);
+		addElements(eventElement, elements, Element.valueOf(action));
+
+		final AtomicOperation op = OperationFactory.copyElements(event,
+				elements, action);
 
 		verifyOperation(op, mch, mchElement);
 	}

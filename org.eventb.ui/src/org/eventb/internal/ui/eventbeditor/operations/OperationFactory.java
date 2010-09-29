@@ -352,14 +352,25 @@ public class OperationFactory {
 	}
 
 	/**
-	 * If all the element into parent
+	 * Return an operation to copy elements into parent.
+	 * 
+	 * @param parent
+	 *            The parent of the new elements
+	 * 
+	 * @param elements
+	 *            an IInternalElement array. Elements to copy
+	 * 
+	 * @param sibling
+	 *            the sibling element before which the copy should be inserted,
+	 *            or <code>null</code> if the copy should be inserted as the
+	 *            last child of the container
 	 */
 	public static AtomicOperation copyElements(IInternalElement parent,
-			IRodinElement[] elements) {
+			IRodinElement[] elements, IInternalElement sibling) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation op = new AtomicOperation(
 				getRodinFileUndoContext(parent), builder.copyElements(parent,
-						elements));
+						elements, sibling));
 		op.setLabel("Copy Element");
 		return op;
 	}

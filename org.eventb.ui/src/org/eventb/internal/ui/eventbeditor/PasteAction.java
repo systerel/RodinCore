@@ -32,8 +32,6 @@ import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eventb.internal.ui.RodinHandleTransfer;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.operations.History;
-import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IInternalElement;
@@ -150,8 +148,7 @@ public class PasteAction extends SelectionListenerAction {
 		if (EventBEditorUtils.checkAndShowReadOnly(pasteInto)) {
 			return;
 		}
-		History.getInstance().addOperation(OperationFactory.copyElements(pasteInto, handleData));
-
+		EventBEditorUtils.copyElements(pasteInto, handleData);
 	}
 
 	private boolean isSupportedType(Transfer transfer, TransferData[] types) {
