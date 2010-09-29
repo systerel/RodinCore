@@ -455,7 +455,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 
 	    	/**
 	    	 * DEF_IN_DPROD
-	    	 * Set Theory: E ↦ (F ↦ G) ∈ p ⊗ 	    		if (isRewrite) { ∈ p ∧ E ↦ G ∈ q
+	    	 * Set Theory: E ↦ (F ↦ G) ∈ p ⊗ q == E ↦ F ∈ p ∧ E ↦ G ∈ q
 	    	 */
 	    	In(Mapsto(E, Mapsto(F, G)), Dprod(p, q)) -> {
 	    		if (isRewrite) {
