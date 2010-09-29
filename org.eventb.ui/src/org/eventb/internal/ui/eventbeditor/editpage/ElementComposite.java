@@ -33,6 +33,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
+import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementRelationship;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributeType;
@@ -42,32 +43,34 @@ import org.rodinp.core.IRodinElement;
 
 public class ElementComposite implements IElementComposite {
 
-	FormToolkit toolkit;
+	public static ElementDescRegistry registry = ElementDescRegistry.getInstance();
+	
+	private final FormToolkit toolkit;
 
-	ScrolledForm form;
+	private final ScrolledForm form;
 
-	Composite compParent;
+	private final Composite compParent;
 
-	IRodinElement rElement;
+	private final IRodinElement rElement;
 
-	EditRow row;
+	private final EditPage page;
+	
+	private final int level;
 
-	Composite composite;
+	private EditRow row;
 
-	Composite mainSectionComposite;
+	private Composite composite;
+
+	private Composite mainSectionComposite;
 
 	// The next two variables maintain a link to the sections embedded in this
 	// composite. The list gives the order of the sections, while the map allows
 	// direct access to a section, based on the type of the elements it
 	// contains.
-	ArrayList<ISectionComposite> sectionComps;
-	Map<IElementType<?>, ISectionComposite> mapComps;
+	private ArrayList<ISectionComposite> sectionComps;
+	private Map<IElementType<?>, ISectionComposite> mapComps;
 
-	EditPage page;
-
-	int level;
-
-	boolean isExpanded;
+	private boolean isExpanded;
 
 	public ElementComposite(EditPage page, FormToolkit toolkit,
 			ScrolledForm form, Composite compParent, IRodinElement element,
@@ -88,7 +91,7 @@ public class ElementComposite implements IElementComposite {
 					SWT.COLOR_GRAY));
 		}
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		GridLayout gridLayout = new GridLayout();
+		final GridLayout gridLayout = new GridLayout();
 		gridLayout.marginWidth = 0;
 		gridLayout.marginHeight = 0;
 		gridLayout.verticalSpacing = 0;
@@ -101,10 +104,6 @@ public class ElementComposite implements IElementComposite {
 		mainSectionComposite = toolkit.createComposite(composite);
 		mainSectionComposite.setLayoutData(new GridData(
 				GridData.FILL_HORIZONTAL));
-		gridLayout = new GridLayout();
-		gridLayout.marginWidth = 0;
-		gridLayout.marginHeight = 0;
-		gridLayout.verticalSpacing = 0;
 		mainSectionComposite.setLayout(gridLayout);
 
 		setExpand(false, false);
@@ -113,6 +112,7 @@ public class ElementComposite implements IElementComposite {
 	@Override
 	public void folding() {
 		setExpand(!isExpanded, false);
+		form.reflow(true);
 	}
 
 	@Override
@@ -120,13 +120,12 @@ public class ElementComposite implements IElementComposite {
 		long beforeTime = 0;
 		if (EventBEditorUtils.DEBUG)
 			beforeTime = System.currentTimeMillis();
-		form.setRedraw(false);
 		this.isExpanded = isExpanded;
 		if (isExpanded) {
 			if (sectionComps == null) {
-				createSectionComposites();
+				createSectionComposites(false);
 			}
-			GridData gridData = (GridData) mainSectionComposite.getLayoutData();
+			final GridData gridData = (GridData) mainSectionComposite.getLayoutData();
 			if (sectionComps.size() == 0) {
 				gridData.heightHint = 0;
 			} else {
@@ -134,14 +133,12 @@ public class ElementComposite implements IElementComposite {
 			}
 			expandSections(recursive);
 		} else {
-			GridData gridData = (GridData) mainSectionComposite.getLayoutData();
+			final GridData gridData = (GridData) mainSectionComposite.getLayoutData();
 			gridData.heightHint = 0;
 			// collapse is always recursive
 			expandSections(true);
 		}
 		row.updateExpandStatus();
-		form.reflow(true);
-		form.setRedraw(true);
 		if (EventBEditorUtils.DEBUG) {
 			long afterTime = System.currentTimeMillis();
 			EventBEditorUtils.debug("Duration: " + (afterTime - beforeTime)
@@ -154,15 +151,13 @@ public class ElementComposite implements IElementComposite {
 			return;
 		}
 		if (recursive || getBooleanPreference(P_EXPAND_SECTIONS)) {
-			for (ISectionComposite sectionComp : sectionComps) {
-				sectionComp.setExpand(isExpanded, recursive);
+			for (final ISectionComposite sectionComp : sectionComps) {
+				sectionComp.setExpandNoReflow(isExpanded, recursive);
 			}
 		}
 	}
 
-	protected void createSectionComposites() {
-		final ElementDescRegistry registry = ElementDescRegistry.getInstance();
-
+	protected void createSectionComposites(boolean reflow) {
 		final IElementRelationship[] rels = registry
 				.getChildRelationships(rElement.getElementType());
 		sectionComps = new ArrayList<ISectionComposite>(rels.length);
@@ -174,6 +169,9 @@ public class ElementComposite implements IElementComposite {
 					rel, level + 1);
 			sectionComps.add(comp);
 			mapComps.put(rel.getChildType(), comp);
+		}
+		if (reflow) {
+			form.reflow(true);
 		}
 	}
 
@@ -192,8 +190,6 @@ public class ElementComposite implements IElementComposite {
 				return;
 
 			// Refresh sub section composite as well?
-			final ElementDescRegistry registry = ElementDescRegistry
-					.getInstance();
 			final IElementRelationship[] rels = registry
 					.getChildRelationships(element.getElementType());
 
@@ -209,18 +205,16 @@ public class ElementComposite implements IElementComposite {
 					}
 				}
 			}
-
 			if (recreate) {
 				for (ISectionComposite sectionComp : sectionComps) {
 					sectionComp.dispose();
 				}
-				createSectionComposites();
+				createSectionComposites(true);
 			}
 		} else {
 			final ISectionComposite comp = getCompositeTowards(element);
 			if (comp != null)
 				comp.refresh(element);
-
 		}
 	}
 
@@ -363,7 +357,6 @@ public class ElementComposite implements IElementComposite {
 				return;
 
 			// Refresh sub section composite as well?
-			final ElementDescRegistry registry = ElementDescRegistry.getInstance();
 			final IElementRelationship[] rels = registry
 					.getChildRelationships(element.getElementType());
 
@@ -384,7 +377,7 @@ public class ElementComposite implements IElementComposite {
 				for (ISectionComposite sectionComp : sectionComps) {
 					sectionComp.dispose();
 				}
-				createSectionComposites();
+				createSectionComposites(true);
 			}
 		} else {
 			row.updateLinks();
@@ -413,4 +406,10 @@ public class ElementComposite implements IElementComposite {
 		final IElementType<?> type = element.getElementType();
 		return mapComps.get(type);
 	}
+
+	@Override
+	public IElementDescRegistry getElemDescRegistry() {
+		return registry;
+	}
+	
 }

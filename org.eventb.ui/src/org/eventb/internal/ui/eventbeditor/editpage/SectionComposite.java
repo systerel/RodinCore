@@ -56,25 +56,25 @@ import org.rodinp.core.RodinDBException;
 public class SectionComposite implements ISectionComposite {
 
 	// The Form Toolkit used to create different Widget
-	FormToolkit toolkit;
+	final FormToolkit toolkit;
 
 	// The top level scrolled form
-	ScrolledForm form;
+	final ScrolledForm form;
 
 	// The composite parent for the section
-	Composite compParent;
+	final Composite compParent;
 
 	// The Rodin parent of this section
-	IInternalElement parent;
+	final IInternalElement parent;
 
 	// The element relationship associated with this section composite
-	IElementRelationship rel;
+	final IElementRelationship rel;
 
 	// The level of this section composite: 0 is the top level
-	int level;
+	final int level;
 
 	// The Edit Page
-	EditPage page;
+	final EditPage page;
 
 	// The main composite
 	Composite composite;
@@ -121,7 +121,7 @@ public class SectionComposite implements ISectionComposite {
 	private void createContents() {
 		composite = toolkit.createComposite(compParent);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		GridLayout gridLayout = new GridLayout();
+		final GridLayout gridLayout = new GridLayout();
 		gridLayout.verticalSpacing = 0;
 		gridLayout.marginWidth = 0;
 		composite.setLayout(gridLayout);
@@ -137,18 +137,11 @@ public class SectionComposite implements ISectionComposite {
 			createPrefixLabel(prefix);
 		}
 
-		gridLayout = new GridLayout();
-		gridLayout.verticalSpacing = 0;
-		gridLayout.marginWidth = 0;
 		beforeHyperlinkComposite = new BeforeHyperlinkComposite(page, parent,
 				rel.getChildType(), toolkit, composite);
 
-		gridLayout = new GridLayout();
-		gridLayout.verticalSpacing = 0;
-		gridLayout.marginWidth = 0;
 		elementComposite = toolkit.createComposite(composite);
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		elementComposite.setLayoutData(gridData);
+		elementComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		elementComposite.setLayout(gridLayout);
 		if (EventBEditorUtils.DEBUG) {
 			elementComposite.setBackground(EventBSharedColor
@@ -165,7 +158,7 @@ public class SectionComposite implements ISectionComposite {
 			createPostfixLabel(suffix);
 		}
 
-		setExpand(false, false);
+		setExpandNoReflow(false, false);
 	}
 
 	private boolean notVoid(final String prefix) {
@@ -173,42 +166,38 @@ public class SectionComposite implements ISectionComposite {
 	}
 
 	private void createPostfixLabel(final String str) {
-		Composite comp = toolkit.createComposite(composite);
+		final Composite comp = toolkit.createComposite(composite);
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		GridLayout gridLayout = new GridLayout();
+		final GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
 		gridLayout.horizontalSpacing = 0;
 		gridLayout.verticalSpacing = 0;
 		comp.setLayout(gridLayout);
 
-		Composite tmp = toolkit.createComposite(comp);
-		GridData gridData = new GridData();
+		final Composite tmp = toolkit.createComposite(comp);
+		final GridData gridData = new GridData();
 		gridData.heightHint = 0;
 		gridData.widthHint = 40 * level;
 		tmp.setLayoutData(gridData);
 
-		FormText widget = toolkit.createFormText(comp, true);
+		final FormText widget = toolkit.createFormText(comp, true);
 
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		widget.setLayoutData(gd);
+		widget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		new EventBFormText(widget);
-		int space = -5;
-		String text = "<form><li style=\"text\" bindent = \"" + space
-				+ "\"><b>" + str + "</b></li></form>";
-		widget.setText(text, true, true);
+		widget.setText(getPrefixFormText(str, -5), true, true);
 	}
 
 	private void createPrefixLabel(final String str) {
-		Composite comp = toolkit.createComposite(composite);
+		final Composite comp = toolkit.createComposite(composite);
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		GridLayout gridLayout = new GridLayout();
+		final GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 3;
 		gridLayout.horizontalSpacing = 0;
 		gridLayout.verticalSpacing = 0;
 		comp.setLayout(gridLayout);
 
-		Composite tmp = toolkit.createComposite(comp);
-		GridData gridData = new GridData();
+		final Composite tmp = toolkit.createComposite(comp);
+		final GridData gridData = new GridData();
 		gridData.widthHint = 40 * level;
 		gridData.heightHint = 0;
 		tmp.setLayoutData(gridData);
@@ -252,14 +241,16 @@ public class SectionComposite implements ISectionComposite {
 
 		prefixFormText = toolkit.createFormText(comp, true);
 
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		prefixFormText.setLayoutData(gd);
 		new EventBFormText(prefixFormText);
-		int space = -20;
-		String text = "<form><li style=\"text\" bindent = \"" + space
-				+ "\"><b>" + str + "</b></li></form>";
-		prefixFormText.setText(text, true, true);
+		prefixFormText.setText(getPrefixFormText(str, -20), true, true);
 		refreshPrefixMarker();
+	}
+	
+	private static String getPrefixFormText(String sectionName, int spaceBefore) {
+		return "<form><li style=\"text\" bindent = \"" + spaceBefore
+		+ "\"><b>" + sectionName + "</b></li></form>";
 	}
 
 	protected boolean isExpanded() {
@@ -272,8 +263,20 @@ public class SectionComposite implements ISectionComposite {
 
 	@Override
 	public void setExpand(final boolean isExpanded, boolean recursive) {
-		long beforeTime = System.currentTimeMillis();
+		final long beforeTime = System.currentTimeMillis();
 		form.setRedraw(false);
+		setExpandNoReflow(isExpanded, recursive);
+		form.reflow(true);
+		form.setRedraw(true);
+		final long afterTime = System.currentTimeMillis();
+		if (EventBEditorUtils.DEBUG) {
+			EventBEditorUtils.debug("Duration: " + (afterTime - beforeTime)
+					+ " ms");
+		}
+	}
+	
+	@Override
+	public void setExpandNoReflow(final boolean isExpanded, boolean recursive) {
 		this.isExpanded = isExpanded;
 		if (isExpanded) {
 			createElementComposites();
@@ -282,7 +285,7 @@ public class SectionComposite implements ISectionComposite {
 			}
 		} else {
 			beforeHyperlinkComposite.setHeightHint(0);
-			GridData gridData = (GridData) elementComposite.getLayoutData();
+			final GridData gridData = (GridData) elementComposite.getLayoutData();
 			gridData.heightHint = 0;
 			afterHyperlinkComposite.setHeightHint(0);
 			// collapse is always recursive
@@ -290,14 +293,6 @@ public class SectionComposite implements ISectionComposite {
 		}
 		updateExpandStatus();
 		refreshPrefixMarker();
-		form.reflow(true);
-		form.setRedraw(true);
-		long afterTime = System.currentTimeMillis();
-		if (EventBEditorUtils.DEBUG) {
-			EventBEditorUtils.debug("Duration: " + (afterTime - beforeTime)
-					+ " ms");
-		}
-
 	}
 
 	void updateExpandStatus() {
@@ -313,7 +308,7 @@ public class SectionComposite implements ISectionComposite {
 	private void createElementComposites() {
 
 		try {
-			IRodinElement[] children = parent.getChildrenOfType(rel
+			final IRodinElement[] children = parent.getChildrenOfType(rel
 					.getChildType());
 			if (!beforeHyperlinkComposite.isInitialised()) {
 				beforeHyperlinkComposite.createHyperlinks(toolkit, level);
@@ -335,7 +330,7 @@ public class SectionComposite implements ISectionComposite {
 					mapComps.put(child, comp);
 				}
 			}
-			GridData gridData = (GridData) elementComposite.getLayoutData();
+			final GridData gridData = (GridData) elementComposite.getLayoutData();
 			if (elementComps.size() != 0) {
 				gridData.heightHint = SWT.DEFAULT;
 			} else {
@@ -390,7 +385,7 @@ public class SectionComposite implements ISectionComposite {
 		}
 
 		if (elementComps.size() == 0) {
-			GridData gridData = (GridData) elementComposite.getLayoutData();
+			final GridData gridData = (GridData) elementComposite.getLayoutData();
 			gridData.heightHint = 0;
 		}
 		updateHyperlink();
@@ -418,7 +413,7 @@ public class SectionComposite implements ISectionComposite {
 					form, elementComposite, element, level);
 			elementComps.add(comp);
 			mapComps.put(element, comp);
-			GridData gridData = (GridData) elementComposite.getLayoutData();
+			final GridData gridData = (GridData) elementComposite.getLayoutData();
 			gridData.heightHint = SWT.DEFAULT;
 			updateHyperlink();
 			form.reflow(true);
@@ -441,30 +436,30 @@ public class SectionComposite implements ISectionComposite {
 		if (parent.equals(element) && childrenType == rel.getChildType()) {
 			// Sorting the section
 			try {
-				Rectangle bounds = elementComposite.getBounds();
-				IRodinElement[] children = parent.getChildrenOfType(rel
+				final Rectangle bounds = elementComposite.getBounds();
+				final IRodinElement[] children = parent.getChildrenOfType(rel
 						.getChildType());
 				assert children.length == elementComps.size();
 				for (int i = 0; i < children.length; ++i) {
-					IRodinElement child = children[i];
+					final IRodinElement child = children[i];
 					// find elementComp corresponding to child
 					int index = indexOf(child);
 					if (index == i) {
 						continue;
 					}
-					IElementComposite elementComp = elementComps.get(index);
+					final IElementComposite elementComp = elementComps.get(index);
 					assert (elementComp != null);
 
 					elementComps.remove(elementComp);
 					elementComps.add(i, elementComp);
 
-					Composite comp = elementComp.getComposite();
+					final Composite comp = elementComp.getComposite();
 					if (i == 0) {
 						comp.moveAbove(null);
 					} else {
-						IElementComposite prevElementComposite = elementComps
+						final IElementComposite prevElementComposite = elementComps
 								.get(i - 1);
-						Composite prevComp = prevElementComposite
+						final Composite prevComp = prevElementComposite
 								.getComposite();
 						comp.moveBelow(prevComp);
 						comp.redraw();
@@ -488,7 +483,7 @@ public class SectionComposite implements ISectionComposite {
 
 	private int indexOf(final IRodinElement child) {
 		int i = 0;
-		for (IElementComposite elementComp : elementComps) {
+		for (final IElementComposite elementComp : elementComps) {
 			if (elementComp.getElement().equals(child)) {
 				return i;
 			}
@@ -516,9 +511,15 @@ public class SectionComposite implements ISectionComposite {
 
 	@Override
 	public void recursiveExpand(final IRodinElement element) {
-		if (parent.equals(element) || element.isAncestorOf(parent)) {
-			setExpand(true, true);
-			for (IElementComposite elementComp : elementComps) {
+		recursiveExpandNoReflow(element);
+		form.reflow(true);
+	}
+
+	@Override
+	public void recursiveExpandNoReflow(final IRodinElement element) {
+		if (parent.equals(element)) {
+			setExpandNoReflow(true, true);
+			for (final IElementComposite elementComp : elementComps) {
 				elementComp.recursiveExpand(element);
 			}
 		} else {
@@ -526,7 +527,7 @@ public class SectionComposite implements ISectionComposite {
 			if (child == null) {
 				return;
 			}
-			setExpand(true, false);
+			setExpandNoReflow(true, false);
 			final IElementComposite comp = getComposite(child);
 			if (comp != null) {
 				comp.recursiveExpand(element);
@@ -564,10 +565,10 @@ public class SectionComposite implements ISectionComposite {
 	// refresh only if necessary
 	@Override
 	public void refreshPrefixMarker() {
-		Color RED = EventBSharedColor.getSystemColor(SWT.COLOR_RED);
-		Color YELLOW = EventBSharedColor.getSystemColor(SWT.COLOR_YELLOW);
-		Color WHITE = EventBSharedColor.getSystemColor(SWT.COLOR_WHITE);
-		Color BLACK = EventBSharedColor.getSystemColor(SWT.COLOR_BLACK);
+		final Color RED = EventBSharedColor.getSystemColor(SWT.COLOR_RED);
+		final Color YELLOW = EventBSharedColor.getSystemColor(SWT.COLOR_YELLOW);
+		final Color WHITE = EventBSharedColor.getSystemColor(SWT.COLOR_WHITE);
+		final Color BLACK = EventBSharedColor.getSystemColor(SWT.COLOR_BLACK);
 		try {
 			final int severity = MarkerUIRegistry.getDefault()
 					.getMaxMarkerSeverity(parent, rel.getChildType());

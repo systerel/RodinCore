@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -16,6 +16,7 @@ package org.eventb.internal.ui.eventbeditor.editpage;
 import java.util.Set;
 
 import org.eclipse.swt.widgets.Composite;
+import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
@@ -172,5 +173,12 @@ public interface IElementComposite {
 	 *            <code>true</code> to propagate expand state recursively
 	 */
 	public void setExpand(boolean isExpanded, boolean recursive);
+	
+	/**
+	 * Returns the instance of IElementDescRegistry used.
+	 * 
+	 * @return an instance of IElementDescRegistry
+	 */
+	public IElementDescRegistry getElemDescRegistry();
 	
 }

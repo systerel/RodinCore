@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -10,6 +10,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added method for marker refresh
  *     Systerel - fixed expanding
+ *     Systerel - added methods to expand without reflowing the form
  ******************************************************************************/
 
 package org.eventb.internal.ui.eventbeditor.editpage;
@@ -110,6 +111,15 @@ public interface ISectionComposite {
 	void recursiveExpand(IRodinElement element);
 
 	/**
+	 * Recursively expand the editing composite for the input element without
+	 * reflowing the main form widget.
+	 * 
+	 * @param element
+	 *            a Rodin element
+	 */
+	void recursiveExpandNoReflow(IRodinElement element);
+
+	/**
 	 * Edit the element for a certain attribute given the attributeType, the
 	 * start and end positions.
 	 * 
@@ -153,4 +163,17 @@ public interface ISectionComposite {
 	 *            <code>true</code> to propagate expand state recursively
 	 */
 	void setExpand(boolean isExpanded, boolean recursive);
+
+	/**
+	 * Set the expand status of the section composite without reflowing the main
+	 * form widget.
+	 * 
+	 * @param isExpanded
+	 *            <code>true</code> if the section composite is going to expand,
+	 *            <code>false</code> otherwise
+	 * @param recursive
+	 *            <code>true</code> to propagate expand state recursively
+	 */
+	void setExpandNoReflow(boolean isExpanded, boolean recursive);
+	
 }

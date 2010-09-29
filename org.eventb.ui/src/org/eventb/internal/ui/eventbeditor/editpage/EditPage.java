@@ -149,8 +149,8 @@ public class EditPage extends EventBEditorPage implements
 		
 		// The body of the main scrolled form has a grid layout (by default has
 		// only one column).
-		Composite body = form.getBody();
-		GridLayout gLayout = new GridLayout();
+		final Composite body = form.getBody();
+		final GridLayout gLayout = new GridLayout();
 		gLayout.marginWidth = 0;
 		gLayout.marginHeight = 0;
 		body.setLayout(gLayout);
@@ -282,7 +282,7 @@ public class EditPage extends EventBEditorPage implements
 	 *            the composite parent.
 	 */
 	private void createDeclaration(Composite parent) {
-		FormToolkit toolkit = this.getManagedForm().getToolkit();
+		final FormToolkit toolkit = this.getManagedForm().getToolkit();
 		final Composite comp = toolkit.createComposite(parent);
 		final boolean borderEnabled = EventBPreferenceStore
 				.getBooleanPreference(PreferenceConstants.P_BORDER_ENABLE);
@@ -293,9 +293,7 @@ public class EditPage extends EventBEditorPage implements
 							.getSystemColor(SWT.COLOR_CYAN));
 		}
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 5;
-		comp.setLayout(gridLayout);
+		comp.setLayout(new GridLayout(5, false));
 		
 		// Expand/Collapse all button
 		final IHyperlinkListener expandAllListener = new IHyperlinkListener() {
@@ -303,8 +301,9 @@ public class EditPage extends EventBEditorPage implements
 			public void linkActivated(HyperlinkEvent e) {
 				assert sectionComps != null;
 				for (ISectionComposite sectionComp : sectionComps) {
-					sectionComp.setExpand(true, true);
+					sectionComp.setExpandNoReflow(true, true);
 				}
+				form.reflow(true);
 			}
 			@Override
 			public void linkEntered(HyperlinkEvent e) {
@@ -320,8 +319,9 @@ public class EditPage extends EventBEditorPage implements
 			public void linkActivated(HyperlinkEvent e) {
 				assert sectionComps != null;
 				for (ISectionComposite sectionComp : sectionComps) {
-					sectionComp.setExpand(false, true);
+					sectionComp.setExpandNoReflow(false, true);
 				}
+				form.reflow(true);
 			}
 			@Override
 			public void linkEntered(HyperlinkEvent e) {
@@ -363,7 +363,7 @@ public class EditPage extends EventBEditorPage implements
 	
 	private static void createHyperLink(FormToolkit toolkit, final Composite comp,
 			IHyperlinkListener listener, String image) {
-		ImageHyperlink hyperlinkExpand =
+		final ImageHyperlink hyperlinkExpand =
 				toolkit.createImageHyperlink(comp, SWT.TOP);
 		// to fix bug 2420471
 		removeFocusListener(hyperlinkExpand);
@@ -405,9 +405,9 @@ public class EditPage extends EventBEditorPage implements
 		sectionComps = new ArrayList<ISectionComposite>(
 				childRelationships.length);
 		mapComps = new HashMap<IElementType<?>, ISectionComposite>();
-		for (IElementRelationship rel : childRelationships) {
+		for (final IElementRelationship rel : childRelationships) {
 			// Create the section composite
-			SectionComposite sectionComp = new SectionComposite(this, toolkit,
+			final SectionComposite sectionComp = new SectionComposite(this, toolkit,
 					form, parent, rodinInput, rel, 0);
 			sectionComps.add(sectionComp);
 			mapComps.put(rel.getChildType(), sectionComp);
@@ -486,8 +486,8 @@ public class EditPage extends EventBEditorPage implements
 				EventBEditorUtils.debug("Full resize");
 			form.reflow(true);			
 		}
-		Rectangle bounds = c.getBounds();
-		Point preferredSize = c.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		final Rectangle bounds = c.getBounds();
+		final Point preferredSize = c.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 
 		if (preferredSize.x > bounds.width || preferredSize.y > bounds.height) {
 			internalPack(c.getParent());
@@ -505,7 +505,7 @@ public class EditPage extends EventBEditorPage implements
 		if (form == null || form.isDisposed())
 			return;
 
-		Display display = form.getDisplay();
+		final Display display = form.getDisplay();
 		display.syncExec(new Runnable() {
 
 			@Override
@@ -578,7 +578,7 @@ public class EditPage extends EventBEditorPage implements
 	 */
 	protected boolean isSelected(IRodinElement element) {
 		if (currentSelection instanceof StructuredSelection) {
-			StructuredSelection ssel = (StructuredSelection) currentSelection;
+			final StructuredSelection ssel = (StructuredSelection) currentSelection;
 			for (Iterator<?> it = ssel.iterator(); it.hasNext();) {
 				if (it.next().equals(element))
 					return true;
@@ -594,7 +594,7 @@ public class EditPage extends EventBEditorPage implements
 	 *            a Rodin Element Delta.
 	 */
 	void processDelta(IRodinElementDelta delta) {
-		IRodinElement element = delta.getElement();
+		final IRodinElement element = delta.getElement();
 		int kind = delta.getKind();
 		if (element instanceof IRodinFile && kind == IRodinElementDelta.CHANGED) {
 			for (IRodinElementDelta subDelta : delta.getAffectedChildren()) {
@@ -643,7 +643,7 @@ public class EditPage extends EventBEditorPage implements
 	 */
 	@Override
 	public void dispose() {
-		IEventBEditor<?> editor = this.getEventBEditor();
+		final IEventBEditor<?> editor = this.getEventBEditor();
 		editor.removeElementChangedListener(this);
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		super.dispose();
@@ -658,12 +658,12 @@ public class EditPage extends EventBEditorPage implements
 		// De-select the current selection
 		deselect(currentSelection);
 
-		List<IRodinElement> elements = new ArrayList<IRodinElement>();
+		final List<IRodinElement> elements = new ArrayList<IRodinElement>();
 		
 		if (selection instanceof StructuredSelection) {
 			for (Iterator<?> it = ((StructuredSelection) selection).iterator(); it
 					.hasNext();) {
-				Object obj = it.next();
+				final Object obj = it.next();
 				if (obj instanceof IRodinElement) {
 					if (select((IRodinElement) obj, true)) {
 						elements.add((IRodinElement) obj);
@@ -720,15 +720,15 @@ public class EditPage extends EventBEditorPage implements
 		assert firstElement.getParent().equals(secondElement.getParent());
 		assert firstElement.getElementType().equals(
 				secondElement.getElementType());
-		IRodinElement parent = firstElement.getParent();
-		IElementType<? extends IRodinElement> type = firstElement
+		final IRodinElement parent = firstElement.getParent();
+		final IElementType<? extends IRodinElement> type = firstElement
 				.getElementType();
 		assert parent instanceof IInternalElement;
 		try {
 			IRodinElement[] children = ((IInternalElement) parent)
 					.getChildrenOfType(type);
 			boolean found = false;
-			List<IRodinElement> selected = new ArrayList<IRodinElement>();
+			final List<IRodinElement> selected = new ArrayList<IRodinElement>();
 			for (IRodinElement child : children) {
 				if (child.equals(firstElement) || child.equals(secondElement)) {
 					selected.add(child);
@@ -754,7 +754,7 @@ public class EditPage extends EventBEditorPage implements
 		if (ssel instanceof StructuredSelection) {
 			for (Iterator<?> it = ((StructuredSelection) ssel).iterator(); it
 					.hasNext();) {
-				Object obj = it.next();
+				final Object obj = it.next();
 				if (obj instanceof IRodinElement) {
 					select((IRodinElement) obj, false);
 				}
@@ -770,20 +770,6 @@ public class EditPage extends EventBEditorPage implements
 		return false;
 	}
 
-	public void recursiveExpand(IRodinElement element) {
-		final IInternalElement rodinInput = getRodinInput();
-		if (element.equals(rodinInput) || element.isAncestorOf(rodinInput)) {
-			for (ISectionComposite sectionComp : sectionComps) {
-				sectionComp.recursiveExpand(element);
-			}
-		} else {
-			final ISectionComposite comp = getCompositeTowards(element);
-			if (comp != null) {
-				comp.recursiveExpand(element);
-			}
-		}
-	}
-
 	public void edit(IInternalElement element, IAttributeType attributeType,
 			int charStart, int charEnd) {
 		final ISectionComposite comp = getCompositeTowards(element);
@@ -794,20 +780,20 @@ public class EditPage extends EventBEditorPage implements
 	
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
-		Map<IRodinElement, Set<IAttributeType>> map = new HashMap<IRodinElement, Set<IAttributeType>>();
-		IFile file = getRodinInput().getResource();
-		IMarkerDelta[] rodinProblemMarkerDeltas = event.findMarkerDeltas(
+		final Map<IRodinElement, Set<IAttributeType>> map = new HashMap<IRodinElement, Set<IAttributeType>>();
+		final IFile file = getRodinInput().getResource();
+		final IMarkerDelta[] rodinProblemMarkerDeltas = event.findMarkerDeltas(
 			RodinMarkerUtil.RODIN_PROBLEM_MARKER, true);
 		for (IMarkerDelta delta : rodinProblemMarkerDeltas) {
-			IResource resource = delta.getResource();
+			final IResource resource = delta.getResource();
 			if (file.equals(resource)) {
 				if (EventBEditorUtils.DEBUG) {
 					printRodinMarkerDelta(delta);
 				}
-				IRodinElement element = RodinMarkerUtil.getElement(delta);
+				final IRodinElement element = RodinMarkerUtil.getElement(delta);
 				if (element == null)
 					continue;
-				IAttributeType attributeType = RodinMarkerUtil
+				final IAttributeType attributeType = RodinMarkerUtil
 						.getAttributeType(delta);
 				addToMap(map, element, attributeType);
 			}
@@ -847,8 +833,8 @@ public class EditPage extends EventBEditorPage implements
 		} else if (kind == IResourceDelta.CHANGED) {
 			EventBEditorUtils.debug("Marker changed");
 		}
-		Map<?,?> attributes = delta.getAttributes();
-		Set<?> keySet = attributes.keySet();
+		final Map<?,?> attributes = delta.getAttributes();
+		final Set<?> keySet = attributes.keySet();
 		for (Object key : keySet) {
 			EventBEditorUtils.debug(key.toString() + " --> "
 					+ attributes.get(key).toString());
