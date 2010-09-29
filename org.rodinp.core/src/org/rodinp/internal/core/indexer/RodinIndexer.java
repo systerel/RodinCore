@@ -45,6 +45,9 @@ public class RodinIndexer {
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			try {
+				if (IndexManager.DEBUG) {
+					Thread.currentThread().setName(this.getName());
+				}
 				processSavedState.join();
 				IndexManager.getDefault().start(
 						processSavedState.getSavedState(), monitor);
@@ -201,7 +204,7 @@ public class RodinIndexer {
 	}
 
 	public static void startAfter(SavedStateProcessor processSavedState) {
-		indexerJob = new IndexerJob("Indexer", processSavedState);
+		indexerJob = new IndexerJob("Index Manager", processSavedState);
 		indexerJob.setPriority(Job.DECORATE);
 		indexerJob.setSystem(true);
 		indexerJob.schedule();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.rodinp.internal.core.indexer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,7 +22,6 @@ import java.util.Set;
 import java.util.concurrent.CancellationException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
@@ -123,8 +123,8 @@ public class ProjectIndexManager {
 	}
 
 	private void doIndexing(final IRodinFile file, IProgressMonitor monitor) {
+		unprocessedFiles.add(file);
 		if (isProjectVanishing) {
-			unprocessedFiles.add(file);
 			printDebugVanish(file);
 			return;
 		}
@@ -133,26 +133,21 @@ public class ProjectIndexManager {
 			computeImports(file);
 
 		final FileIndexingManager fim = FileIndexingManager.getDefault();
-		try {
-			final IIndexingResult result = fim.doIndexing(file, fileImports, monitor);
+		final IIndexingResult result = fim.doIndexing(file, fileImports, monitor);
 
-			checkCancel(monitor);
-			if (result.isSuccess()) {
-				if (mustReindexDependents(result)) {
-					order.setToIterSuccessors();
-				}
-
-				updateTables(result);
-			} else {
+		checkCancel(monitor);
+		if (result.isSuccess()) {
+			if (mustReindexDependents(result)) {
 				order.setToIterSuccessors();
-				order.remove();
-				clean(file);
 			}
-		} catch (OperationCanceledException e) {
-			// remember the file 
-			unprocessedFiles.add(file);
-			throw e;
+
+			updateTables(result);
+		} else {
+			order.setToIterSuccessors();
+			order.remove();
+			clean(file);
 		}
+		unprocessedFiles.remove(file);
 	}
 
 	private boolean mustReindexDependents(IIndexingResult result) {
@@ -272,8 +267,8 @@ public class ProjectIndexManager {
 					+ " should be indexed in project "
 					+ project);
 		}
+		unprocessedFiles.add(file);
 		if (isProjectVanishing) {
-			unprocessedFiles.add(file);
 			printDebugVanish(file);
 			return;
 		}
@@ -287,11 +282,6 @@ public class ProjectIndexManager {
 			final Set<IRodinFile> dependFiles = fim.getDependencies(file, monitor);
 			order.setPredecessors(file, dependFiles);
 			order.setToIter(file);
-			unprocessedFiles.remove(file);
-		} catch (OperationCanceledException e) {
-			// remember the file 
-			unprocessedFiles.add(file);
-			throw e;
 		} catch (IndexingException e) {
 			// forget this file
 		}
@@ -346,6 +336,7 @@ public class ProjectIndexManager {
 	public synchronized boolean indexAll(IProgressMonitor monitor) {
 		try {
 			final IRodinFile[] files = project.getRodinFiles();
+			unprocessedFiles.addAll(Arrays.asList(files));
 			for (IRodinFile file : files) {
 				fileChanged(file, monitor);
 				checkCancel(monitor);
@@ -354,6 +345,10 @@ public class ProjectIndexManager {
 			return true;
 		} catch (RodinDBException e) {
 			return false;
+		} finally {
+			if (monitor != null) {
+				monitor.done();
+			}
 		}
 
 	}
@@ -423,7 +418,7 @@ public class ProjectIndexManager {
 		return new LinkedHashSet<IDeclaration>(exports);
 	}
 
-	public synchronized PersistentPIM getPersistentData() {
+	public PersistentPIM getPersistentData() {
 		final Collection<Descriptor> descColl = index.getDescriptors();
 		final Descriptor[] descriptors = descColl
 				.toArray(new Descriptor[descColl.size()]);
@@ -434,7 +429,6 @@ public class ProjectIndexManager {
 		synchronized (unprocessedFiles) {
 			unprocessed.addAll(unprocessedFiles);
 		}
-		// FIXME some other files in this project may still be unprocessed
 		return new PersistentPIM(project, descriptors, exportClone,
 				persistOrder, unprocessed);
 	}
