@@ -22,7 +22,6 @@
  *******************************************************************************/
 package org.eventb.internal.ui;
 
-import static org.eclipse.swt.SWT.MouseWheel;
 import static org.eventb.ui.EventBUIPlugin.PLUGIN_ID;
 
 import java.lang.reflect.InvocationTargetException;
@@ -46,12 +45,13 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -941,20 +941,17 @@ public class UIUtils {
 	}
 
 	/*
-	 * Fix for bug 2417413: CCombo has a child Text. When Text receives a
-	 * MouseWheel event, CCombo sends a KeyDown event to its listeners. To fix
-	 * it we remove the listener on MouseWheel event.
+	 * Fix for bug 2417413: CCombo has a child Text, and an arrow Button. When
+	 * Text or Button receives a MouseWheel event, CCombo sends a MouseWheel
+	 * event to its listeners. To fix it we remove actions on MouseWheel event.
 	 */
-	public static void removeTextListener(CCombo cc) {
-		for (Control contol : cc.getTabList()) {
-			if (contol instanceof Text) {
-				Text text = (Text) contol;
-				Listener[] listeners = text.getListeners(MouseWheel);
-				if (listeners.length == 1) {
-					text.removeListener(MouseWheel, listeners[0]);
-				}
+	public static void disableMouseWheel(CCombo cc) {
+		cc.addListener(SWT.MouseWheel, new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				event.doit = false;
 			}
-		}
+		});
 	}
 	
 	public static void resetCComboValues(CCombo combo,

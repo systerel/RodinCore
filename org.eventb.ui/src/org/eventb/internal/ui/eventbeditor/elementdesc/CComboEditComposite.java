@@ -19,7 +19,7 @@
 package org.eventb.internal.ui.eventbeditor.elementdesc;
 
 import static org.eventb.internal.ui.UIUtils.COMBO_VALUE_UNDEFINED;
-import static org.eventb.internal.ui.UIUtils.removeTextListener;
+import static org.eventb.internal.ui.UIUtils.disableMouseWheel;
 import static org.eventb.internal.ui.UIUtils.resetCComboValues;
 import static org.eventb.internal.ui.UIUtils.setStringAttribute;
 
@@ -119,7 +119,7 @@ public class CComboEditComposite extends AbstractEditComposite {
 			});
 			
 			// to fix bug 2417413
-			removeTextListener(combo);
+			disableMouseWheel(combo);
 			
 			combo.addSelectionListener(new SelectionListener() {
 
