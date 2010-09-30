@@ -20,6 +20,7 @@ import static org.eclipse.jface.dialogs.IDialogConstants.CANCEL_ID;
 import static org.eclipse.jface.dialogs.IDialogConstants.CANCEL_LABEL;
 import static org.eclipse.jface.dialogs.IDialogConstants.OK_ID;
 import static org.eclipse.jface.dialogs.IDialogConstants.OK_LABEL;
+import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -159,7 +160,8 @@ public class NewConstantDialog extends EventBDialog {
 		createLabel(composite, "Axiom");
 		final IEventBInputText axiomNameText = createNameInputText(composite,
 				getNewAxiomName());
-		final IEventBInputText axiomPredicateText = createContentInputText(composite);
+		final IEventBInputText axiomPredicateText = createContentInputText(
+				composite, IAxiom.ELEMENT_TYPE, PREDICATE_ATTRIBUTE);
 		final Pair<IEventBInputText, IEventBInputText> p = newWidgetPair(
 				axiomNameText, axiomPredicateText);
 		axiomTexts.add(p);

@@ -19,6 +19,8 @@ import static org.eclipse.jface.dialogs.IDialogConstants.CANCEL_ID;
 import static org.eclipse.jface.dialogs.IDialogConstants.CANCEL_LABEL;
 import static org.eclipse.jface.dialogs.IDialogConstants.OK_ID;
 import static org.eclipse.jface.dialogs.IDialogConstants.OK_LABEL;
+import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,6 +47,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.preferences.PreferenceUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -170,8 +173,9 @@ public class NewEventDialog extends EventBDialog {
 		return createNameInputText(composite, value);
 	}
 
-	private IEventBInputText createContentText() {
-		return createContentInputText(composite);
+	private IEventBInputText createContentText(
+			IInternalElementType<?> elementType, IAttributeType attributeType) {
+		return createContentInputText(composite, elementType, attributeType);
 	}
 
 	private Composite createSpace() {
@@ -226,7 +230,8 @@ public class NewEventDialog extends EventBDialog {
 			final IEventBInputText parText = createBText(parComposite, EMPTY);
 			final IEventBInputText grdLabel = createNameText(guardPrefix + i);
 			createSpace();
-			final IEventBInputText grdPredicate = createContentText();
+			final IEventBInputText grdPredicate = createContentText(
+					IGuard.ELEMENT_TYPE, PREDICATE_ATTRIBUTE);
 
 			addGuardListener(parText, grdPredicate);
 
@@ -303,7 +308,8 @@ public class NewEventDialog extends EventBDialog {
 		actCount++;
 		final IEventBInputText actionLabel = createNameText(actPrefix + actCount);
 		createSpace();
-		final IEventBInputText actionSub = createContentText();
+		final IEventBInputText actionSub = createContentText(
+				IAction.ELEMENT_TYPE, ASSIGNMENT_ATTRIBUTE);
 		actTexts.add(newWidgetPair(actionLabel, actionSub));
 	}
 	
@@ -312,7 +318,8 @@ public class NewEventDialog extends EventBDialog {
 		moveAbove(grdLabel, actionSeparator);
 		final Composite separator = createSpace();
 		separator.moveAbove(actionSeparator);
-		final IEventBInputText grdPred = createContentText();
+		final IEventBInputText grdPred = createContentText(IGuard.ELEMENT_TYPE,
+				PREDICATE_ATTRIBUTE);
 		moveAbove(grdPred, actionSeparator);
 		grdTexts.add(newWidgetPair(grdLabel, grdPred));
 		return grdPred;

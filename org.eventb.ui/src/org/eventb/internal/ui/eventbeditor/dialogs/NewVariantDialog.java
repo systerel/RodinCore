@@ -15,11 +15,13 @@ import static org.eclipse.jface.dialogs.IDialogConstants.CANCEL_ID;
 import static org.eclipse.jface.dialogs.IDialogConstants.CANCEL_LABEL;
 import static org.eclipse.jface.dialogs.IDialogConstants.OK_ID;
 import static org.eclipse.jface.dialogs.IDialogConstants.OK_LABEL;
+import static org.eventb.core.EventBAttributes.EXPRESSION_ATTRIBUTE;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eventb.core.IMachineRoot;
+import org.eventb.core.IVariant;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 
@@ -82,7 +84,8 @@ public class NewVariantDialog extends EventBDialog {
 		setFormGridData();
 
 		createLabel(getBody(), message);
-		expressionText = createContentInputText(getBody());
+		expressionText = createContentInputText(getBody(),
+				IVariant.ELEMENT_TYPE, EXPRESSION_ATTRIBUTE);
 		select(expressionText);
 	}
 

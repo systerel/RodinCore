@@ -21,12 +21,15 @@ import static org.eclipse.jface.dialogs.IDialogConstants.CANCEL_ID;
 import static org.eclipse.jface.dialogs.IDialogConstants.CANCEL_LABEL;
 import static org.eclipse.jface.dialogs.IDialogConstants.OK_ID;
 import static org.eclipse.jface.dialogs.IDialogConstants.OK_LABEL;
+import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eventb.core.IAction;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IVariable;
@@ -127,7 +130,8 @@ public class NewVariableDialog extends EventBDialog {
 
 		initLabelText = createNameInputText(getBody(),
 				getFreeInitialisationActionName());
-		initSubstitutionText = createContentInputText(getBody());
+		initSubstitutionText = createContentInputText(getBody(),
+				IAction.ELEMENT_TYPE, ASSIGNMENT_ATTRIBUTE);
 		
 		identifierText.getTextWidget().addModifyListener(
 				new ActionListener(initSubstitutionText.getTextWidget()));
@@ -145,7 +149,8 @@ public class NewVariableDialog extends EventBDialog {
 		createLabel(getBody(), "Invariant");
 		final IEventBInputText invariantNameText = createNameInputText(getBody(),
 				getNewInvariantName(invIndex, invariantsTexts.size()));
-		final IEventBInputText invariantPredicateText = createContentInputText(getBody());
+		final IEventBInputText invariantPredicateText = createContentInputText(
+				getBody(), IInvariant.ELEMENT_TYPE, PREDICATE_ATTRIBUTE);
 		final Pair<IEventBInputText, IEventBInputText> p = newWidgetPair(
 				invariantNameText, invariantPredicateText);
 		invariantsTexts.add(p);

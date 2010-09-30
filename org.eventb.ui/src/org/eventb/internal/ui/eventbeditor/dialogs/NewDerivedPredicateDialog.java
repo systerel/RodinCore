@@ -17,6 +17,7 @@ import static org.eclipse.jface.dialogs.IDialogConstants.CANCEL_ID;
 import static org.eclipse.jface.dialogs.IDialogConstants.CANCEL_LABEL;
 import static org.eclipse.jface.dialogs.IDialogConstants.OK_ID;
 import static org.eclipse.jface.dialogs.IDialogConstants.OK_LABEL;
+import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,6 +58,8 @@ public class NewDerivedPredicateDialog<T extends ILabeledElement> extends
 
 	private final String firstIndex;
 
+	private final IInternalElementType<?> type;
+	
 	/**
 	 * Constructor.
 	 * 
@@ -74,6 +77,7 @@ public class NewDerivedPredicateDialog<T extends ILabeledElement> extends
 	public NewDerivedPredicateDialog(IEventBEditor<?> editor, IEventBRoot root,
 			Shell parentShell, String title, IInternalElementType<?> type) {
 		super(parentShell, root, title);
+		this.type = type;
 		results = new ArrayList<Triplet<String, String, Boolean>>();
 		texts = new ArrayList<Triplet<IEventBInputText, IEventBInputText, Button>>();
 		setShellStyle(getShellStyle() | SWT.RESIZE);
@@ -109,7 +113,8 @@ public class NewDerivedPredicateDialog<T extends ILabeledElement> extends
 		final int index = Integer.parseInt(firstIndex) + texts.size();
 		final IEventBInputText name = createNameInputText(getBody(), prefix
 				+ index);
-		final IEventBInputText content = createContentInputText(getBody());
+		final IEventBInputText content = createContentInputText(getBody(),
+				type, PREDICATE_ATTRIBUTE);
 		final Button button = createIsTheoremButton();
 		texts.add(newWidgetTriplet(name, content, button));
 	}

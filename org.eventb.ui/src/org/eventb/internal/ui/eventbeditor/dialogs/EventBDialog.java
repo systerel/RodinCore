@@ -15,6 +15,7 @@
 package org.eventb.internal.ui.eventbeditor.dialogs;
 
 import static org.eclipse.jface.dialogs.IDialogConstants.CLIENT_ID;
+import static org.eventb.internal.ui.EventBUtils.getFormulaFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,8 +46,15 @@ import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
+import org.eventb.internal.ui.autocompletion.EventBContentProposalAdapter;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.utils.Messages;
+import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.RodinCore;
+import org.rodinp.core.location.IAttributeLocation;
 import org.rodinp.keyboard.RodinKeyboardPlugin;
 
 /**
@@ -237,8 +245,12 @@ public abstract class EventBDialog extends Dialog {
 		return new EventBText(createText(composite, text, 50, false));
 	}
 
-	protected EventBMath createContentInputText(Composite composite) {
-		return new EventBMath(createText(composite, EMPTY, 150, true));
+	protected EventBMath createContentInputText(Composite composite,
+			IInternalElementType<?> elementType, IAttributeType attributeType) {
+		final EventBMath input = new EventBMath(createText(composite, EMPTY,
+				150, true));
+		getProposalAdapter(elementType, attributeType, input);
+		return input;
 	}
 	
 	protected EventBText createBText(Composite parent, String value) {
@@ -463,5 +475,28 @@ public abstract class EventBDialog extends Dialog {
 			}
 		}
 		return duplicateNames;
+	}
+	
+	/**
+	 * Construct a content proposal adapter that can assist the user with
+	 * choosing content for a Event-B Input Text.
+	 * 
+	 * @param elementType
+	 *            type of element associated to the input
+	 * @param attributeType
+	 *            type of attribute associated to the input
+	 * @param input
+	 *            a Event-B Input Text
+	 */
+	protected EventBContentProposalAdapter getProposalAdapter(
+			IInternalElementType<?> elementType, IAttributeType attributeType,
+			IEventBInputText input) {
+		final IInternalElement element = root.getInternalElement(elementType,
+				"tmp");
+		final FormulaFactory ff = getFormulaFactory(root);
+		final IAttributeLocation location = RodinCore.getInternalLocation(
+				element, attributeType);
+		return ContentProposalFactory.getContentProposal(location,
+				input.getTextWidget(), ff);
 	}
 }
