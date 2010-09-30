@@ -55,6 +55,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewriterImpl;
 
 /**
@@ -880,7 +881,8 @@ public final class Lib {
 		final IFormulaRewriter typeRewriter = new TypeRewriterImpl(ff);
 		final Predicate typeRewritten = predicate.rewrite(typeRewriter);
 
-		final IFormulaRewriter autoRewriter = new AutoRewriterImpl(ff);
+		final IFormulaRewriter autoRewriter = new AutoRewriterImpl(ff,
+				Level.LATEST);
 		return recursiveRewrite(typeRewritten, autoRewriter);
 	}
 

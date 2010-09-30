@@ -26,6 +26,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointSimplifier;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
 
 /**
  * Implements simplification of functional images through a set in comprehension
@@ -127,7 +128,7 @@ public class LambdaComputer {
 				innerExpr, null);
 		final Predicate exists = ff.makeQuantifiedPredicate(EXISTS, decls,
 				equals, null);
-		final AutoRewriterImpl rewriter = new AutoRewriterImpl(ff);
+		final AutoRewriterImpl rewriter = new AutoRewriterImpl(ff, Level.L0);
 		boolean changed;
 		Predicate pred = exists;
 		do {

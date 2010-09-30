@@ -39,7 +39,6 @@ import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
-import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
@@ -55,6 +54,7 @@ import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointSimplifier;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
 
 /**
  * Basic automated rewriter for the Event-B sequent prover.
@@ -68,16 +68,19 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	
 	private final DLib dLib;
 	
+	private final AutoRewrites.Level level;
+	
 	private final IntegerLiteral number0 = ff.makeIntegerLiteral(BigInteger.ZERO, null);
 	
 	private final IntegerLiteral number1 = ff.makeIntegerLiteral(BigInteger.ONE, null);
 
 	private final IntegerLiteral number2 = ff.makeIntegerLiteral(new BigInteger("2"), null);
 
-	public AutoRewriterImpl(FormulaFactory ff) {
+	public AutoRewriterImpl(FormulaFactory ff, Level level) {
 		super(true, ff);
 		fs = new FormulaSimplification(ff);
 		dLib = DLib.mDLib(ff);
+		this.level = level;
 	}
 
 	protected UnaryPredicate makeUnaryPredicate(int tag, Predicate child) {

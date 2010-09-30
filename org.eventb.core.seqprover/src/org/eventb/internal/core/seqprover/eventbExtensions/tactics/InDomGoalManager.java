@@ -34,6 +34,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrite
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TotalDomRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewriterImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TotalDomRewrites.Input;
 
 /**
@@ -115,7 +116,7 @@ public class InDomGoalManager {
 				return true;
 			}
 			final Predicate autorewrittenGoal = rewrittenGoal
-					.rewrite(new AutoRewriterImpl(ff));
+					.rewrite(new AutoRewriterImpl(ff, Level.LATEST));
 			autoGoals.add(autorewrittenGoal);
 		}
 		for (int i = 0; i < autoGoals.size(); i++) {

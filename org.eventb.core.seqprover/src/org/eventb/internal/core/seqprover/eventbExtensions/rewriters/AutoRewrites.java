@@ -23,6 +23,17 @@ import org.eventb.core.seqprover.SequentProver;
 public class AutoRewrites extends AbstractAutoRewrites implements
 		IVersionedReasoner {
 
+	public static enum Level {
+		L0, L1;
+		
+		public static final Level LATEST = Level.latest();
+		
+		private static final Level latest() {
+			final Level[] values = Level.values();
+			return values[values.length-1];
+		}
+	}
+	
 	private static final int REASONER_VERSION = 4;
 
 	public AutoRewrites() {
@@ -47,7 +58,7 @@ public class AutoRewrites extends AbstractAutoRewrites implements
 
 	@Override
 	public IFormulaRewriter getRewriter(FormulaFactory ff) {
-		return new AutoRewriterImpl(ff);
+		return new AutoRewriterImpl(ff, Level.L0);
 	}
 
 }

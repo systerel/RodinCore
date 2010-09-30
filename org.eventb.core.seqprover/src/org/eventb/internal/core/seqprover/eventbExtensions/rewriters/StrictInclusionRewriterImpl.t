@@ -14,6 +14,7 @@ import java.math.BigInteger;
 
 import org.eventb.core.ast.*;
 import org.eventb.core.seqprover.ProverRule;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
 
 /**
  * Basic manual rewriter for the Event-B sequent prover.
@@ -22,7 +23,7 @@ import org.eventb.core.seqprover.ProverRule;
 public class StrictInclusionRewriterImpl extends AutoRewriterImpl {
 
 	public StrictInclusionRewriterImpl(FormulaFactory ff) {
-		super(ff);
+		super(ff, Level.L0);
 	}
 	
 	%include {FormulaV2.tom}
