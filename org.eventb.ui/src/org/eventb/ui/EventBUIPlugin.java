@@ -150,7 +150,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	 * @since 2.0
 	 */
 	public static String getGrd_Default(FormulaFactory ff) {
-		return getGrd_Default(ff);
+		return getPrd_Default(ff);
 	}
 
 	/**
