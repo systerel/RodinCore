@@ -15,42 +15,42 @@
  
  // Stylesheet for the XSL pretty printer
  
-.main 		{font-size:16px;font-family:"Brave Sans Mono";}
+.main 		{font-size:14px;font-family:"Brave Sans Mono";}
 .body 		{margin-left:30px;font-family:"Brave Sans Mono";}
 
-.masterKeyword	{font-size:18px; color:red; margin-left:10px; font-weight:bold; margin-bottom:5px; margin-top:15px;font-family:"Brave Sans Mono";}
-.secondaryKeyword {font-size:16px; color:blue; margin-left:30px; font-weight:bold; margin-bottom:2px; margin-top:5px;font-family:"Brave Sans Mono";}
-.componentName {font-size:16px; color:black; font-weight:bold;font-family:"Brave Sans Mono";}
-.comment	{font-size:16px; color:green; padding-left:25px; font-style:italic;font-family:"Brave Sans Mono";}
-.variableIdentifier {font-size:16px; color:black;font-family:"Brave Sans Mono";}
-.invariantLabel {font-size:16px; color:green;font-family:"Brave Sans Mono";}
-.invariantPredicate {font-size:16px; color:black;font-family:"Brave Sans Mono";}
-.theoremLabel {font-size:16px; color:green;font-style:italic;font-family:"Brave Sans Mono";}
-.eventLabel {font-size:16px; color:green; font-weight:bold;font-family:"Brave Sans Mono";}
-.extended  {font-size:16px; color:black; font-weight:bold;font-family:"Brave Sans Mono";}
-.convergence  {font-size:16px; color:black; font-weight:bold;font-family:"Brave Sans Mono";}
-.abstractEventLabel {font-size:16px; color:black;font-family:"Brave Sans Mono";}
-.parameterIdentifier {font-size:16px; color:black;font-family:"Brave Sans Mono";}
-.implicitParameterIdentifier {font-size:16px; font-style: italic; color:black;font-family:"Brave Sans Mono";}
-.guardLabel {font-size:16px; color:green;font-family:"Brave Sans Mono";}
-.guardTheoremLabel {font-size:16px; color:green;font-style:italic;font-family:"Brave Sans Mono";}
-.implicitGuardLabel {font-size:16px; font-style: italic; color:green;font-family:"Brave Sans Mono";}
-.implicitGuardTheoremLabel {font-size:16px; font-style: italic; color:green;font-family:"Brave Sans Mono";}
-.guardPredicate {font-size:16px; color:black;font-family:"Brave Sans Mono";}
-.implicitGuardPredicate {font-size:16px; font-style: italic; color:black;font-family:"Brave Sans Mono";}
-.witnessLabel {font-size:16px; color:green;font-family:"Brave Sans Mono";}
-.witnessPredicate {font-size:16px; color:black;font-family:"Brave Sans Mono";}
-.actionLabel {font-size:16px; color:green;font-family:"Brave Sans Mono";}
-.implicitActionLabel {font-size:16px; font-style: italic; color:green;font-family:"Brave Sans Mono";}
-.actionAssignment {font-size:16px; color:black;font-family:"Brave Sans Mono";}
-.implicitActionAssignment {font-size:16px; font-style: italic; color:black;font-family:"Brave Sans Mono";}
-.variantExpression {font-size:16px; color:green;font-family:"Brave Sans Mono";}
-.setIdentifier {font-size:16px; color:black;font-family:"Brave Sans Mono";}
-.axiomLabel {font-size:16px; color:green;font-family:"Brave Sans Mono";}
-.axiomPredicate {font-size:16px; color:black;font-family:"Brave Sans Mono";}
-.constantIdentifier {font-size:16px; color:black;font-family:"Brave Sans Mono";}
-.multiline {margin-top: 5px;}
+.masterKeyword	{font-size:16px; color:red; margin-left:10px; font-weight:bold; margin-bottom:2px; margin-top:2px;font-family:"Brave Sans Mono";}
+.secondaryKeyword {font-size:14px; color:blue; margin-left:30px; font-weight:bold; margin-bottom:1px; margin-top:1px;font-family:"Brave Sans Mono";}
+.componentName {font-size:14px; color:black; font-weight:bold;font-family:"Brave Sans Mono";}
+.comment	{font-size:14px; color:green; padding-left:25px; font-style:italic;font-family:"Brave Sans Mono";}
+.variableIdentifier {font-size:14px; color:black;font-family:"Brave Sans Mono";}
+.invariantLabel {font-size:14px; color:green;font-family:"Brave Sans Mono";}
+.invariantPredicate {font-size:14px; color:black;font-family:"Brave Sans Mono";}
+.theoremLabel {font-size:14px; color:green;font-style:italic;font-family:"Brave Sans Mono";}
+.eventLabel {font-size:14px; color:green; font-weight:bold;font-family:"Brave Sans Mono";}
+.extended  {font-size:14px; color:black; font-weight:bold;font-family:"Brave Sans Mono";}
+.convergence  {font-size:14px; color:black; font-weight:bold;font-family:"Brave Sans Mono";}
+.abstractEventLabel {font-size:14px; color:black;font-family:"Brave Sans Mono";}
+.parameterIdentifier {font-size:14px; color:black;font-family:"Brave Sans Mono";}
+.implicitParameterIdentifier {font-size:14px; font-style: italic; color:black;font-family:"Brave Sans Mono";}
+.guardLabel {font-size:14px; color:green;font-family:"Brave Sans Mono";}
+.guardTheoremLabel {font-size:14px; color:green;font-style:italic;font-family:"Brave Sans Mono";}
+.implicitGuardLabel {font-size:14px; font-style: italic; color:green;font-family:"Brave Sans Mono";}
+.implicitGuardTheoremLabel {font-size:14px; font-style: italic; color:green;font-family:"Brave Sans Mono";}
+.guardPredicate {font-size:14px; color:black;font-family:"Brave Sans Mono";}
+.implicitGuardPredicate {font-size:14px; font-style: italic; color:black;font-family:"Brave Sans Mono";}
+.witnessLabel {font-size:14px; color:green;font-family:"Brave Sans Mono";}
+.witnessPredicate {font-size:14px; color:black;font-family:"Brave Sans Mono";}
+.actionLabel {font-size:14px; color:green;font-family:"Brave Sans Mono";}
+.implicitActionLabel {font-size:14px; font-style: italic; color:green;font-family:"Brave Sans Mono";}
+.actionAssignment {font-size:14px; color:black;font-family:"Brave Sans Mono";}
+.implicitActionAssignment {font-size:14px; font-style: italic; color:black;font-family:"Brave Sans Mono";}
+.variantExpression {font-size:14px; color:green;font-family:"Brave Sans Mono";}
+.setIdentifier {font-size:14px; color:black;font-family:"Brave Sans Mono";}
+.axiomLabel {font-size:14px; color:green;font-family:"Brave Sans Mono";}
+.axiomPredicate {font-size:14px; color:black;font-family:"Brave Sans Mono";}
+.constantIdentifier {font-size:14px; color:black;font-family:"Brave Sans Mono";}
+.multiline {margin-top: 2px;}
 
-.level1         {color:blue; margin-left:30px; margin-bottom:2px; margin-top:2px;}
-.level2         {color:blue; margin-left:40px; margin-bottom:2px; margin-top:2px;}
-.level3         {color:blue; margin-left:50px; margin-bottom:2px; margin-top:2px;}
+.level1         {color:blue; margin-left:30px; margin-bottom:0px; margin-top:0px;}
+.level2         {color:blue; margin-left:40px; margin-bottom:0px; margin-top:0px;}
+.level3         {color:blue; margin-left:50px; margin-bottom:0px; margin-top:0px;}
