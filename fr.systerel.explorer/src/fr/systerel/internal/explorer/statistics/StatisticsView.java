@@ -112,7 +112,10 @@ public class StatisticsView extends ViewPart implements ISelectionListener,
 		container.setSize(size);
 		
 		addPopUpMenu();
-	
+		final ISelection selection = selectionService.getSelection();
+		if (selection != null)
+			selectionChanged(this, selection);
+
 	}
 	
 	@Override
