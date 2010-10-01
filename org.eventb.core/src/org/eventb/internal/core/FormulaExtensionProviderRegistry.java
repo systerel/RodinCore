@@ -118,10 +118,7 @@ public class FormulaExtensionProviderRegistry {
 	public synchronized void setFormulaFactory(IEventBRoot root,
 			FormulaFactory ff) {
 		if (provider == null) {
-			log(null,
-					"Could not set the formula factory on :"
-							+ root.getComponentName()
-							+ " as no extensions provider is registered.");
+			// Do nothing as mathematical extensions are not here
 			return;
 		}
 		provider.setFormulaFactory(root, ff);
