@@ -68,6 +68,7 @@ public class ProofSimplifierTests extends BuilderTest {
 		saveRodinFileOf(poRoot);
 	}
 
+	// FIXME This test fails as the proof simplifier has been disconnected (in r9882)
 	// FIXME uses autoRewrites which is subject to version changes
 	public void testSimplifyPRProof() throws Exception {
 		final String contents =
