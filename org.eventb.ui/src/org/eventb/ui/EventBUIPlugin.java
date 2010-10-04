@@ -203,7 +203,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	 */
 	private void loadFont() {
 		final Display display = this.getWorkbench().getDisplay();
-		display.asyncExec(new Runnable() {
+		display.syncExec(new Runnable() {
 			@Override
 			public void run() {
 				final FontData[] fontList = display.getFontList("Brave Sans Mono", true);
