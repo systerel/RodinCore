@@ -21,9 +21,9 @@ import org.eventb.core.tool.IStateType;
  * This state component stores a table with information about refinement relationships of concrete events.
  * 
  * @author Stefan Hallerstede
- * @noimplement
- * @noextend
- *
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  * @since 1.0
  */
 public interface IConcreteEventTable extends ISCState, Iterable<IConcreteEventInfo> {

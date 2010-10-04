@@ -28,7 +28,7 @@ import org.eventb.core.tool.IStateType;
  * <p>
  * In comparisons only event labels are considered, i.e., two 
  * abstract event infos are considered equal if their labels are equal.
- * </P>
+ * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
@@ -36,9 +36,9 @@ import org.eventb.core.tool.IStateType;
  * @see IAbstractEventTable
  * 
  * @author Stefan Hallerstede
- * @noimplement
- * @noextend
  * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  * @since 1.0
  */
 public interface IAbstractEventInfo extends ISCState, IConvergenceInfo,
