@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *		ETH Zurich - initial API and implementation
+ *		Systerel - added refined event informations
  *******************************************************************************/
 package org.eventb.core.sc.state;
 
@@ -114,4 +118,18 @@ public interface IAbstractEventInfo extends ISCState, IConvergenceInfo,
 	 * @return the list events that are supposed to merge this abstract event
 	 */
 	List<IConcreteEventInfo> getSplitters();
+
+	/**
+	 * Sets the boolean value <code>refined</code> indicating that the handled
+	 * event is refined.
+	 */
+	void setRefined();
+	
+	/**
+	 * Tells if the handled event was refined.
+	 * 
+	 * @return <code>true</code> if the handled was refined by a concrete event,
+	 *         <code>false</code> otherwise.
+	 */
+	boolean getRefined();
 }

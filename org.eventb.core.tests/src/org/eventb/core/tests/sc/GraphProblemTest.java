@@ -94,7 +94,7 @@ public class GraphProblemTest extends TestCase {
 			spec(GraphProblem.AbstractMachineNotFoundError, 1),
 			spec(GraphProblem.AbstractEventLabelUndefError, 0),
 			spec(GraphProblem.AbstractEventNotFoundError, 1),
-			spec(GraphProblem.AbstractEventNotRefinedError, 1),
+			spec(GraphProblem.AbstractEventNotRefinedWarning, 1),
 			spec(GraphProblem.AbstractEventLabelConflictWarning, 1),
 			spec(GraphProblem.EventMergeSplitError, 1),
 			spec(GraphProblem.EventMergeMergeError, 1),

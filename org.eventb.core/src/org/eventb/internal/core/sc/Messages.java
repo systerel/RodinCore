@@ -74,7 +74,6 @@ public final class Messages {
 	public static String scuser_AbstractMachineNotFound;
     public static String scuser_AbstractEventLabelUndef;
     public static String scuser_AbstractEventNotFound;
-    @Deprecated
     public static String scuser_AbstractEventNotRefined;
     public static String scuser_AbstractEventLabelConflict;
     @Deprecated

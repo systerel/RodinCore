@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     University of Dusseldorf - added theorem attribute
+ *     Systerel - added tests about abstract event not refined
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -1935,6 +1936,54 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		hasMarker(evt, null, GraphProblem.InconsistentEventLabelWarning,
 				"evt");
+	}
+	
+	/*
+	 * There exist an abstract event which is not refined and has not a guard
+	 * with the literal predicate "false". Thus it appears unexplicitely
+	 * disabled.
+	 */
+	public void testEvents_49_AbstractEventNotExplicitelyDisabled()
+			throws Exception {
+		IMachineRoot abs = createMachine("abs");
+		addInitialisation(abs);
+		addEvent(abs, "evt");
+		saveRodinFileOf(abs);
+
+		runBuilder();
+
+		IMachineRoot mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
+		saveRodinFileOf(mac);
+
+		runBuilder();
+
+		hasMarker(mac, null, GraphProblem.AbstractEventNotRefinedWarning, "evt");
+	}
+
+	/*
+	 * There exist an abstract event which is not refined and has a guard with
+	 * the literal predicate "false". Thus it appears explicitely disabled.
+	 */
+	public void testEvents_50_AbstractEventExplicitelyDisabled()
+			throws Exception {
+		IMachineRoot abs = createMachine("abs");
+		addInitialisation(abs);
+		addEvent(abs, "evt", makeSList(), makeSList("falseGuard"),
+				makeSList("⊥"), makeSList(), makeSList());
+		saveRodinFileOf(abs);
+
+		runBuilder();
+
+		IMachineRoot mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addInitialisation(mac);
+		saveRodinFileOf(mac);
+
+		runBuilder();
+
+		hasNotMarker(mac, GraphProblem.AbstractEventNotRefinedWarning);
 	}
 
 }

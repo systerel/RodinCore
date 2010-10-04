@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 University of Southampton and others.
+ * Copyright (c) 2008, 2010 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,10 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.ISCAction;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.LiteralPredicate;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
@@ -164,6 +167,8 @@ public class MachineEventRefinesModule extends SCFilterModule {
 
 			if (symbolInfo.getSymbol().equals(abstractInfo.getEventLabel()))
 				found = true;
+			
+			abstractInfo.setRefined();
 
 			checkForParameterTypeErrors(symbolInfo, typeErrors, types,
 					abstractInfo);
@@ -270,6 +275,7 @@ public class MachineEventRefinesModule extends SCFilterModule {
 				abstractInfo.getSplitters().add(concreteInfo);
 				concreteInfo.getAbstractEventInfos().add(abstractInfo);
 				concreteInfo.makeImmutable();
+				abstractInfo.setRefined();
 				return true;
 			}
 		} else {
@@ -335,10 +341,41 @@ public class MachineEventRefinesModule extends SCFilterModule {
 	@Override
 	public void endModule(ISCStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
+		checkClosedEvents(repository);
 		abstractEventTable = null;
 		concreteEventTable = null;
 		abstractMachineInfo = null;
 		super.endModule(repository, monitor);
 	}
+
+	private void checkClosedEvents(ISCStateRepository repository)
+			throws CoreException {
+		for (final IAbstractEventInfo aInfo : abstractEventTable
+				.getAbstractEventInfos()) {
+			if (aInfo.getRefined()) {
+				continue;
+			}
+			if (!isClosed(aInfo, repository)) {
+				final String abstractLabel = aInfo.getEventLabel();
+				final IMachineRoot machineRoot = concreteEventTable
+						.getMachineRoot();
+				createProblemMarker(machineRoot,
+						GraphProblem.AbstractEventNotRefinedWarning,
+						abstractLabel);
+			}
+		}
+	}
+	
+	private boolean isClosed(IAbstractEventInfo info,
+			ISCStateRepository repository) throws CoreException {
+		final LiteralPredicate bFalse = repository.getFormulaFactory()
+				.makeLiteralPredicate(Formula.BFALSE, null);
+		for (Predicate guard : info.getGuards()) {
+			if (guard.equals(bFalse)) {
+				return true;
+			}
+		}
+		return false;
+	}	
 
 }

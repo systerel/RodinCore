@@ -255,7 +255,7 @@ public class MachineEventModule extends LabeledElementModule {
 
 		events = machineRoot.getEvents();
 
-		concreteEventTable = new ConcreteEventTable();
+		concreteEventTable = new ConcreteEventTable(machineRoot);
 		repository.setState(concreteEventTable);
 
 		identifierSymbolTable = (IIdentifierSymbolTable) repository

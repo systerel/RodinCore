@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *		ETH Zurich - initial API and implementation
+ *		Systerel - added refined event informations
  *******************************************************************************/
 package org.eventb.internal.core.sc;
 
@@ -51,6 +55,7 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	
 	private List<IConcreteEventInfo> mergers;
 	private List<IConcreteEventInfo> splitters;
+	private boolean refined = false;
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sc.IAbstractEventInfo#getEventLabel()
@@ -156,4 +161,14 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 		return splitters;
 	}
 
+	@Override
+	public void setRefined() {
+		refined = true;
+	}
+
+	@Override
+	public boolean getRefined() {
+		return refined;
+	}
+	
 }
