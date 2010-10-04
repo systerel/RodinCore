@@ -36,8 +36,8 @@ import org.rodinp.core.RodinDBException;
 	protected final FormulaFactory factory;
 	protected final String owner;
 
-	public ProofModifier(IPRProof proof, FormulaFactory factory, String owner) {
-		this.factory = factory;
+	public ProofModifier(IPRProof proof, String owner) {
+		this.factory = ((IEventBRoot) proof.getRoot()).getFormulaFactory();
 		this.proof = proof;
 		this.owner = owner;
 	}

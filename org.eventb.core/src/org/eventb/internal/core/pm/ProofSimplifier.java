@@ -12,7 +12,6 @@ package org.eventb.internal.core.pm;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRProof;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
@@ -28,8 +27,8 @@ public class ProofSimplifier extends ProofModifier {
 
 	private static final String SIMPLIFIER = "Simplifier"; //$NON-NLS-1$
 
-	public ProofSimplifier(IPRProof proof, FormulaFactory factory) {
-		super(proof, factory, SIMPLIFIER);
+	public ProofSimplifier(IPRProof proof) {
+		super(proof, SIMPLIFIER);
 	}
 
 	@Override

@@ -18,10 +18,8 @@ import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ast.FormulaFactory;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.internal.explorer.navigator.ExplorerUtils;
@@ -52,9 +50,7 @@ public class ReplayUndischargedHandler extends AbstractJobHandler {
 		for (IPSStatus status : statuses) {
 			ExplorerUtils.checkCancel(subMonitor);
 			final IPRProof proof = status.getProof();
-			final FormulaFactory factory = ((IEventBRoot) status.getRoot())
-					.getFormulaFactory();
-			rebuildProof(proof, factory, subMonitor.newChild(1));
+			rebuildProof(proof, subMonitor.newChild(1));
 		}
 	}
 

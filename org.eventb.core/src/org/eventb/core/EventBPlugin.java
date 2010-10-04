@@ -592,7 +592,7 @@ public class EventBPlugin extends Plugin {
 	 */
 	public static boolean simplifyProof(IPRProof proof, FormulaFactory factory,
 			IProgressMonitor monitor) throws RodinDBException {
-		return new ProofSimplifier(proof, factory).perform(monitor);
+		return new ProofSimplifier(proof).perform(monitor);
 	}
 
 	/**
@@ -600,8 +600,6 @@ public class EventBPlugin extends Plugin {
 	 * 
 	 * @param proof
 	 *            a proof to rebuild
-	 * @param factory
-	 *            the formula factory to use for building the proof skeleton
 	 * @param monitor
 	 *            the progress monitor to use for reporting progress to the
 	 *            user. It is the caller's responsibility to call done() on the
@@ -611,13 +609,11 @@ public class EventBPlugin extends Plugin {
 	 * @return <code>true</code> iff the proof has been successfully rebuilt
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the proof
-	 * @since 1.3
-	 * FIXME consider removing the factory parameter as it should be computed
-	 * from informations located in proof file; else provide a method to get it
+	 * @since 2.0
 	 */
-	public static boolean rebuildProof(IPRProof proof, FormulaFactory factory,
-			IProgressMonitor monitor) throws RodinDBException {
-		return new ProofRebuilder(proof, factory).perform(monitor);
+	public static boolean rebuildProof(IPRProof proof, IProgressMonitor monitor)
+			throws RodinDBException {
+		return new ProofRebuilder(proof).perform(monitor);
 	}
 
 	public static List<String> getCompletions(IAttributeLocation location,

@@ -12,7 +12,6 @@ package org.eventb.internal.core.pm;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRProof;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.tactics.BasicTactics;
@@ -28,8 +27,8 @@ public class ProofRebuilder extends ProofModifier {
 
 	private static final String REBUILDER = "Rebuilder"; //$NON-NLS-1$
 
-	public ProofRebuilder(IPRProof proof, FormulaFactory factory) {
-		super(proof, factory, REBUILDER);
+	public ProofRebuilder(IPRProof proof) {
+		super(proof, REBUILDER);
 	}
 
 	@Override

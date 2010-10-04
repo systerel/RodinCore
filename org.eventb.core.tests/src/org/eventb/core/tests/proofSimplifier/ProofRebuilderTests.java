@@ -100,7 +100,7 @@ public class ProofRebuilderTests extends EventBPOTest {
 		// final int confidence = status.getConfidence();
 		// call EventBPlugin.rebuild()
 		final boolean success = EventBPlugin.rebuildProof(status.getProof(),
-				factory, null);
+				null);
 		// verify that rebuild worked properly
 		assertTrue(success);
 		assertDischargedClosed(status);
