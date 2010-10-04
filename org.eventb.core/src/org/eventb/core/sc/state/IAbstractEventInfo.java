@@ -36,7 +36,9 @@ import org.eventb.core.tool.IStateType;
  * @see IAbstractEventTable
  * 
  * @author Stefan Hallerstede
- *
+ * @noimplement
+ * @noextend
+ * 
  * @since 1.0
  */
 public interface IAbstractEventInfo extends ISCState, IConvergenceInfo,
@@ -122,6 +124,7 @@ public interface IAbstractEventInfo extends ISCState, IConvergenceInfo,
 	/**
 	 * Sets the boolean value <code>refined</code> indicating that the handled
 	 * event is refined.
+	 * @since 2.0
 	 */
 	void setRefined();
 	
@@ -130,6 +133,7 @@ public interface IAbstractEventInfo extends ISCState, IConvergenceInfo,
 	 * 
 	 * @return <code>true</code> if the handled was refined by a concrete event,
 	 *         <code>false</code> otherwise.
+	 * @since 2.0
 	 */
 	boolean getRefined();
 }

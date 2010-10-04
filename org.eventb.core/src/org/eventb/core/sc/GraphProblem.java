@@ -54,6 +54,9 @@ public enum GraphProblem implements IRodinProblem {
 	AbstractMachineNotFoundError(IMarker.SEVERITY_ERROR, Messages.scuser_AbstractMachineNotFound),
 	AbstractEventLabelUndefError(IMarker.SEVERITY_ERROR, Messages.scuser_AbstractEventLabelUndef),
 	AbstractEventNotFoundError(IMarker.SEVERITY_ERROR, Messages.scuser_AbstractEventNotFound),
+	/**
+	 * @since 2.0
+	 */
 	AbstractEventNotRefinedWarning(IMarker.SEVERITY_WARNING, Messages.scuser_AbstractEventNotRefined),
 	AbstractEventLabelConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_AbstractEventLabelConflict),
 	@SuppressWarnings("deprecation")
