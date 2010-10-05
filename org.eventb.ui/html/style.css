@@ -13,7 +13,7 @@
  *     Systerel - added guard theorem labels
  *******************************************************************************/
  
- // Stylesheet for the XSL pretty printer
+ /* Stylesheet for the XSL pretty printer */
  
 .main 		{font-size:14px;font-family:"Brave Sans Mono";}
 .body 		{margin-left:30px;font-family:"Brave Sans Mono";}
