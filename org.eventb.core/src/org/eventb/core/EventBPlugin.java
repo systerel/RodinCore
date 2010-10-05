@@ -621,8 +621,22 @@ public class EventBPlugin extends Plugin {
 		return new ProofRebuilder(proof, applyPostTactics).perform(monitor);
 	}
 
+	/**
+	 * Returns a list of completions for the given location. The list is sorted
+	 * alphabetically.
+	 * 
+	 * @param location
+	 *            the location where completion is desired
+	 * @param prefix
+	 *            the common prefix of all proposed completions
+	 * @param waitUpToDate
+	 *            <code>true</code> iff method call shall be blocked until the
+	 *            underlying indexing system is up to date
+	 * @return a sorted list of possible completions
+	 * @since 2.0
+	 */
 	public static List<String> getCompletions(IAttributeLocation location,
-			String prefix) {
-		return AutoCompletion.getCompletions(location, prefix);
+			String prefix, boolean waitUpToDate) {
+		return AutoCompletion.getCompletions(location, prefix, waitUpToDate);
 	}
  }

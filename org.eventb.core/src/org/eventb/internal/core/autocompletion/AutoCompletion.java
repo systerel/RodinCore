@@ -59,14 +59,19 @@ public class AutoCompletion {
 	 *            the location where completion is desired
 	 * @param prefix
 	 *            the common prefix of all proposed completions
+	 * @param waitUpToDate
+	 *            <code>true</code> iff method call shall be blocked until the
+	 *            underlying indexing system is up to date
 	 * @return a sorted list of possible completions
 	 */
 	public static List<String> getCompletions(IAttributeLocation location,
-			String prefix) {
-		try {
-			RodinCore.makeIndexQuery().waitUpToDate();
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
+			String prefix, boolean waitUpToDate) {
+		if (waitUpToDate) {
+			try {
+				RodinCore.makeIndexQuery().waitUpToDate();
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
 		}
 		final Set<String> completionNames = getCompletionNames(location);
 		filterPrefix(completionNames, prefix);

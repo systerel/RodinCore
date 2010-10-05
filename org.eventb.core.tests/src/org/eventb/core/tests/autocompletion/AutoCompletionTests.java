@@ -232,7 +232,7 @@ public class AutoCompletionTests extends BuilderTest {
 
 	private void doTest(String prefix, IAttributeLocation location, String... expected) {
 		final List<String> completions = AutoCompletion
-				.getCompletions(location, prefix);
+				.getCompletions(location, prefix, true);
 		assertEquals("bad completions", asList(expected), completions);
 	}
 

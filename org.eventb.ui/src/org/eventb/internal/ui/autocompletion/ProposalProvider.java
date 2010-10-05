@@ -68,7 +68,9 @@ public class ProposalProvider implements IContentProposalProvider {
 		final PrefixComputer pc = new PrefixComputer(contents, position, factory);
 		final String prefix = pc.getPrefix();
 		final List<String> completions = EventBPlugin.getCompletions(location,
-				prefix);
+				prefix, false);
+		// TODO launch a job that waits up-to-date completions
+		// and then updates proposals 
 		return makeProposals(contents, position, prefix, completions);
 	}
 
