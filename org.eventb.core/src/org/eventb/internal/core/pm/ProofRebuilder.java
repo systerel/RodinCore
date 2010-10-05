@@ -11,9 +11,13 @@
 package org.eventb.internal.core.pm;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRProof;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.seqprover.IProofSkeleton;
+import org.eventb.core.seqprover.IProofTree;
+import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.ProofMonitor;
 
@@ -26,17 +30,37 @@ import org.eventb.internal.core.ProofMonitor;
 public class ProofRebuilder extends ProofModifier {
 
 	private static final String REBUILDER = "Rebuilder"; //$NON-NLS-1$
+	private final boolean applyPostTactics;
 
-	public ProofRebuilder(IPRProof proof) {
+	public ProofRebuilder(IPRProof proof, boolean applyPostTactics) {
 		super(proof, REBUILDER);
+		this.applyPostTactics = applyPostTactics;
 	}
 
 	@Override
 	protected boolean makeNewProof(IProofAttempt pa,
 			IProofSkeleton originalSkeleton, IProgressMonitor monitor) {
+		final IProofTree pt = pa.getProofTree();
 		final Object result = BasicTactics.rebuildTac(originalSkeleton).apply(
-				pa.getProofTree().getRoot(), new ProofMonitor(monitor));
-		return (result == null);
+				pt.getRoot(), new ProofMonitor(monitor));
+
+		final boolean success = (result == null);
+		if (success && applyPostTactics && !pt.isClosed()) {
+			applyPostTacticsIfEnabled(pt, monitor);
+		}
+		return success;
 	}
 
+	private static void applyPostTacticsIfEnabled(IProofTree pt,
+			IProgressMonitor monitor) {
+		final IAutoTacticPreference postTacticPreference = EventBPlugin
+				.getPostTacticPreference();
+		if (postTacticPreference.isEnabled()) {
+			final ITactic postTactic = postTacticPreference
+					.getSelectedComposedTactic();
+			postTactic.apply(pt.getRoot(), new ProofMonitor(monitor));
+
+		}
+	}
+	
 }

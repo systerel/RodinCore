@@ -50,7 +50,7 @@ public class ReplayUndischargedHandler extends AbstractJobHandler {
 		for (IPSStatus status : statuses) {
 			ExplorerUtils.checkCancel(subMonitor);
 			final IPRProof proof = status.getProof();
-			rebuildProof(proof, subMonitor.newChild(1));
+			rebuildProof(proof, true, subMonitor.newChild(1));
 		}
 	}
 

@@ -133,8 +133,19 @@ public abstract class BuilderTest extends TestCase {
 		}
 	}
 
+	private static void enableAutoTactics(IAutoTacticPreference pref,
+			String[] tacticIds) {
+		final List<ITacticDescriptor> descrs = new ArrayList<ITacticDescriptor>(
+				tacticIds.length);
+		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
+		for (String id : tacticIds) {
+			descrs.add(reg.getTacticDescriptor(id));
+		}
+		pref.setSelectedDescriptors(descrs);
+		pref.setEnabled(true);
+	}
+
 	private static final String[] autoTacticIds = new String[] {
-		"org.eventb.core.seqprover.trueGoalTac",
 		"org.eventb.core.seqprover.trueGoalTac",
 		"org.eventb.core.seqprover.falseHypTac",
 		"org.eventb.core.seqprover.goalInHypTac",
@@ -150,18 +161,29 @@ public abstract class BuilderTest extends TestCase {
 	protected static void enableAutoProver() {
 		final IAutoTacticPreference autoPref = EventBPlugin
 				.getAutoTacticPreference();
-		final List<ITacticDescriptor> descrs = new ArrayList<ITacticDescriptor>(
-				autoTacticIds.length);
-		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
-		for (String id : autoTacticIds) {
-			descrs.add(reg.getTacticDescriptor(id));
-		}
-		autoPref.setSelectedDescriptors(descrs);
-		autoPref.setEnabled(true);
+		enableAutoTactics(autoPref, autoTacticIds);
 	}
 
 	protected static void disableAutoProver() {
 		EventBPlugin.getAutoTacticPreference().setEnabled(false);
+	}
+
+	private static final String[] postTacticIds = new String[] {
+		"org.eventb.core.seqprover.trueGoalTac",
+		"org.eventb.core.seqprover.falseHypTac",
+		"org.eventb.core.seqprover.goalInHypTac",
+		"org.eventb.core.seqprover.autoRewriteTac",
+		"org.eventb.core.seqprover.typeRewriteTac",
+	};
+	
+	protected static void enablePostTactics() {
+		final IAutoTacticPreference postPref = EventBPlugin
+				.getPostTacticPreference();
+		enableAutoTactics(postPref, postTacticIds);
+	}
+
+	protected static void disablePostTactics() {
+		EventBPlugin.getPostTacticPreference().setEnabled(false);
 	}
 
 	/**
@@ -192,6 +214,7 @@ public abstract class BuilderTest extends TestCase {
 		eventBProject = (IEventBProject) rodinProject.getAdapter(IEventBProject.class);
 		
 		disableAutoProver();
+		disablePostTactics();
 		
 		DebugHelpers.disableIndexing();
 	}

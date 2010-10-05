@@ -600,6 +600,10 @@ public class EventBPlugin extends Plugin {
 	 * 
 	 * @param proof
 	 *            a proof to rebuild
+	 * @param applyPostTactics
+	 *            <code>true</code> if post tactics shall be applied in case
+	 *            rebuild does not close the proof tree and post tactics
+	 *            preference is enabled
 	 * @param monitor
 	 *            the progress monitor to use for reporting progress to the
 	 *            user. It is the caller's responsibility to call done() on the
@@ -611,9 +615,10 @@ public class EventBPlugin extends Plugin {
 	 *             if there was a problem accessing the proof
 	 * @since 2.0
 	 */
-	public static boolean rebuildProof(IPRProof proof, IProgressMonitor monitor)
+	public static boolean rebuildProof(IPRProof proof,
+			boolean applyPostTactics, IProgressMonitor monitor)
 			throws RodinDBException {
-		return new ProofRebuilder(proof).perform(monitor);
+		return new ProofRebuilder(proof, applyPostTactics).perform(monitor);
 	}
 
 	public static List<String> getCompletions(IAttributeLocation location,

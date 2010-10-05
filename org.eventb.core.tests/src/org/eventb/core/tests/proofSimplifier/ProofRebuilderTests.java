@@ -34,6 +34,8 @@ import org.rodinp.core.RodinDBException;
  */
 public class ProofRebuilderTests extends EventBPOTest {
 
+	private static final String GOAL = "∀x⦂ℤ·∃y·x=y";
+
 	private static void assertDischargedClosed(IPSStatus status)
 			throws RodinDBException {
 		assertFalse(status.isBroken());
@@ -42,6 +44,16 @@ public class ProofRebuilderTests extends EventBPOTest {
 		final IProofTree proofTree = proof.getProofTree(null);
 		assertNotNull(proofTree);
 		assertTrue(proofTree.isClosed());
+	}
+
+	private static void assertNotDischargedNotClosed(IPSStatus status)
+			throws RodinDBException {
+		assertFalse(status.isBroken());
+		assertTrue(status.getConfidence() == IConfidence.PENDING);
+		final IPRProof proof = status.getProof();
+		final IProofTree proofTree = proof.getProofTree(null);
+		assertNotNull(proofTree);
+		assertFalse(proofTree.isClosed());
 	}
 
 	private IPSStatus getOnlyStatus() throws RodinDBException {
@@ -63,7 +75,7 @@ public class ProofRebuilderTests extends EventBPOTest {
 		return ctx.getAxioms()[0];
 	}
 
-	private void prove(ITactic... tactics) throws RodinDBException {
+	private void prove(boolean assertClosed, ITactic... tactics) throws RodinDBException {
 		final IPSStatus status = getOnlyStatus();
 		final IUserSupportManager usm = EventBPlugin.getUserSupportManager();
 		final IUserSupport us = usm.newUserSupport();
@@ -77,18 +89,21 @@ public class ProofRebuilderTests extends EventBPOTest {
 			us.applyTactic(tactic, false, null);
 		}
 		us.doSave(us.getUnsavedPOs(), null);
-		assertTrue(po.isClosed());
+		if (assertClosed) {
+			assertTrue(po.isClosed());
+		}
 		us.dispose();
 	}
 
-	public void testRebuild() throws Exception {
+	private void doTest(String goal, boolean tacticsClose,
+			boolean applyPostTactics, boolean eventuallyClosed,
+			ITactic... tactics) throws Exception {
 		// create context and PO for ∀ x oftype ℤ· ∃ y · x=y
-		final IAxiom thm = createTheorem("axm", "∀x⦂ℤ·∃y·x=y");
+		final IAxiom thm = createTheorem("axm", goal);
 		// build
 		runBuilder();
 		// prove (free x, y inst x, true goal, simpl rewrite, true goal)
-		prove(Tactics.allI(), Tactics.exI("x"), new AutoTactics.TrueGoalTac(),
-				new AutoTactics.AutoRewriteTac(), new AutoTactics.TrueGoalTac());
+		prove(tacticsClose, tactics);
 		// change predicate into ∀ x · ∃ y · y=x
 		thm.setPredicateString("∀x⦂ℤ·∃y·y=x", null);
 		saveRodinFileOf(thm);
@@ -100,10 +115,40 @@ public class ProofRebuilderTests extends EventBPOTest {
 		// final int confidence = status.getConfidence();
 		// call EventBPlugin.rebuild()
 		final boolean success = EventBPlugin.rebuildProof(status.getProof(),
-				null);
+				applyPostTactics, null);
 		// verify that rebuild worked properly
 		assertTrue(success);
-		assertDischargedClosed(status);
+		if (eventuallyClosed) {
+			assertDischargedClosed(status);
+		} else {
+			assertNotDischargedNotClosed(status);
+		}
+
+	}
+	
+	public void testRebuild() throws Exception {
+		// given tactics close the proof tree
+		// do NOT apply post tactics
+		// eventually, the proof tree is closed
+		doTest(GOAL, true, false, true, Tactics.allI(), Tactics.exI("x"),
+				new AutoTactics.TrueGoalTac(),
+				new AutoTactics.AutoRewriteTac(), new AutoTactics.TrueGoalTac());
+	}
+	
+	public void testRebuildWithPostTacticsDisabled() throws Exception {
+		disablePostTactics();
+		// given tactics do NOT close the proof tree
+		// do apply post tactics
+		// eventually, the proof tree is NOT closed
+		doTest(GOAL, false, true, false, Tactics.allI(), Tactics.exI("x"));
+	}
+	
+	public void testRebuildWithPostTacticsEnabled() throws Exception {
+		enablePostTactics();
+		// given tactics do NOT close the proof tree
+		// do apply post tactics
+		// eventually, the proof tree is closed
+		doTest(GOAL, false, true, true, Tactics.allI(), Tactics.exI("x"));
 	}
 
 }
