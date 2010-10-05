@@ -17,6 +17,7 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -35,6 +36,7 @@ import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
@@ -860,16 +862,28 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				Predicate equalsPred = makeRelationalPredicate(Predicate.EQUAL,
 				                        `expression,
 				                        `E.shiftBoundIdentifiers(`idents.length, ff));
-				Predicate conjunctionPred = makeAssociativePredicate(Predicate.LAND,
-				                                `guard, equalsPred);
-
-				Predicate existsPred = makeQuantifiedPredicate(Predicate.EXISTS,
-				                           `idents, conjunctionPred);
 				
+				if(level.isLessOrEquals(Level.L1) && `E.getTag()==Formula.MAPSTO){
+					
+					final List<Predicate> conjuncts =simpEqualsMapsTo(equalsPred,ff);
+					final AssociativePredicate rewrittenEqualsPred= ff.makeAssociativePredicate(Formula.LAND, conjuncts, null);
+					conjuncts.add(0,`guard);						
+					final AssociativePredicate conjunctionPred = ff.makeAssociativePredicate(Formula.LAND, conjuncts, null);
+					Predicate existsPred = makeQuantifiedPredicate(Predicate.EXISTS,
+							`idents, conjunctionPred );		
+					result = recursiveOnePoint(existsPred,ff);
+					trace(predicate, result, "SIMP_IN_COMPSET_ONEPOINT");
+					return result;
+
+				}
+				
+				Predicate conjunctionPred = makeAssociativePredicate(Predicate.LAND,
+                        `guard,  equalsPred);
+				Predicate existsPred = makeQuantifiedPredicate(Predicate.EXISTS,
+                   `idents, conjunctionPred);
 				final OnePointSimplifier onePoint = 
 				    new OnePointSimplifier(existsPred, equalsPred, ff);
 				onePoint.matchAndApply();
-
 				if (onePoint.wasSuccessfullyApplied()) {
 					// no need to generate a WD PO for the replacement:
 					// it is already generated separately by POM 
@@ -1089,6 +1103,28 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    return predicate;
 	}
     
+private static Predicate recursiveOnePoint(Predicate existsPred, FormulaFactory ff) {
+		
+    	boolean success= true;  	
+    	while(success){    		
+    		if(existsPred.getTag()==Formula.EXISTS){
+    			Predicate existsChild=((QuantifiedPredicate)existsPred).getPredicate();
+    			Predicate[] children=((AssociativePredicate)existsChild).getChildren();
+    			final OnePointSimplifier onePoint = 
+    				new OnePointSimplifier(existsPred,children[children.length-1], ff);
+    			onePoint.matchAndApply();
+    			if (onePoint.wasSuccessfullyApplied()) {
+    				existsPred= onePoint.getProcessedPredicate();
+    			}else{
+    				success=false;
+    			}    			
+    		}else{
+    			success=false;
+    		}
+    	}
+    	return existsPred;
+	}
+    
     private static boolean isDTConstructor(ExtendedExpression expr) {
     	final IExpressionExtension extension = expr.getExtension();
     	final Object origin = extension.getOrigin();
@@ -1098,6 +1134,22 @@ public class AutoRewriterImpl extends DefaultRewriter {
     	final IDatatype datatype = (IDatatype) origin;
     	return datatype.isConstructor(extension);
 	}
+    
+    private static List<Predicate> simpEqualsMapsTo(Predicate predicate, FormulaFactory ff){
+    	final List<Predicate> result=new ArrayList<Predicate>();
+	    %match (Predicate predicate) {
+	    	Equal(Mapsto(E, F) , Mapsto(G, H)) -> {
+	    		Predicate pred1 = ff.makeRelationalPredicate(Expression.EQUAL, `E, `G,null);
+	    		List<Predicate> listPred1 = simpEqualsMapsTo(pred1,ff);
+				Predicate pred2 = ff.makeRelationalPredicate(Expression.EQUAL, `F, `H,null);
+				List<Predicate> listPred2 = simpEqualsMapsTo(pred2,ff);
+				listPred1.addAll(listPred2);
+				return listPred1;
+	    	}	    	
+	    }
+	    result.add(predicate);
+    	return result;
+    }
 	
 	@ProverRule( { "SIMP_SPECIAL_BINTER", "SIMP_SPECIAL_BUNION",
 			"SIMP_TYPE_BINTER", "SIMP_TYPE_BUNION","SIMP_MULTI_BINTER",

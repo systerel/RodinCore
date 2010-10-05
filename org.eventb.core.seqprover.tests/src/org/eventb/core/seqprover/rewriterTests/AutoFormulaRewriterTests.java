@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.datatype.IArgument;
@@ -29,7 +28,6 @@ import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
 import org.junit.Test;
 
 /**
@@ -39,7 +37,7 @@ import org.junit.Test;
  *         using the abstract formula rewriter tests
  *         {@link AbstractFormulaRewriterTests}.
  */
-public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
+public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 	
 	private static final IDatatypeExtension DATATYPE = new IDatatypeExtension() {
 
@@ -86,10 +84,7 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 		EXTENSIONS.addAll(DT.getExtensions());
 		EXTENSIONS.add(FormulaFactory.getCond());
 	}
-	private static final FormulaFactory DT_FAC = FormulaFactory.getInstance(EXTENSIONS);
-
-	// The automatic rewriter for testing.
-	private static final IFormulaRewriter rewriter = new AutoRewriterImpl(DT_FAC, Level.L0);
+	protected static final FormulaFactory DT_FAC = FormulaFactory.getInstance(EXTENSIONS);
 	
 	/**
 	 * Constructor.
@@ -97,7 +92,7 @@ public class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
 	 * Create an abstract formula rewriter test with the input is the automatic
 	 * rewriter.
 	 */
-	public AutoFormulaRewriterTests() {
+	public AutoFormulaRewriterTests(AutoRewriterImpl rewriter) {
 		super(rewriter);
 	}
 

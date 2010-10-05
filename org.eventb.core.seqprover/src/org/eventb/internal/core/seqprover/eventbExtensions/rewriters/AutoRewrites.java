@@ -32,6 +32,16 @@ public class AutoRewrites extends AbstractAutoRewrites implements
 			final Level[] values = Level.values();
 			return values[values.length-1];
 		}
+		
+		public boolean isLessOrEquals(Level other){
+			final int ordinal=this.ordinal();
+			final int otherOrdinal=other.ordinal();
+			if(ordinal<=otherOrdinal){
+				return true;
+			}
+			return false;
+		}		
+		
 	}
 	
 	private static final int REASONER_VERSION = 4;
