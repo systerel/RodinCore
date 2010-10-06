@@ -7,7 +7,7 @@
       <view
             allowMultiple="false"
             category="org.eventb.ui"
-            class="org.eclipse.ui.navigator.CommonNavigator"
+            class="fr.systerel.internal.explorer.navigator.EventBNavigator"
             icon="icons/full/clcl16/prj_expl.gif"
             id="fr.systerel.explorer.navigator.view"
             name="%view.navigator">

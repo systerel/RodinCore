@@ -13,7 +13,6 @@ package fr.systerel.internal.explorer.navigator.contentProviders;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.navigator.CommonViewer;
 import org.eventb.core.IEventBRoot;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IInternalElementType;
@@ -22,7 +21,6 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.internal.explorer.model.ModelController;
-import fr.systerel.internal.explorer.navigator.NavigatorController;
 
 /**
  * @author Nicolas Beauger
@@ -87,9 +85,7 @@ public abstract class AbstractRootContentProvider implements
 
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		if (viewer instanceof CommonViewer) {
-			NavigatorController.setUpNavigator((CommonViewer) viewer);
-		}
+		// ignore
 	}
 
 }
