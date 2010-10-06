@@ -20,6 +20,7 @@ import static org.eclipse.jface.dialogs.IDialogConstants.CANCEL_LABEL;
 import static org.eclipse.jface.dialogs.IDialogConstants.OK_ID;
 import static org.eclipse.jface.dialogs.IDialogConstants.OK_LABEL;
 import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 
 import java.util.ArrayList;
@@ -41,9 +42,12 @@ import org.eventb.core.IAction;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IMachineRoot;
+import org.eventb.core.IParameter;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.autocompletion.ProviderModifyListener;
+import org.eventb.internal.ui.autocompletion.WizardProposalProvider;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.preferences.PreferenceUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
@@ -94,6 +98,8 @@ public class NewEventDialog extends EventBDialog {
 
 	private final String actPrefix;
 
+	private ProviderModifyListener providerListener;
+	
 	/**
 	 * Constructor.
 	 * 
@@ -173,9 +179,8 @@ public class NewEventDialog extends EventBDialog {
 		return createNameInputText(composite, value);
 	}
 
-	private IEventBInputText createContentText(
-			IInternalElementType<?> elementType, IAttributeType attributeType) {
-		return createContentInputText(composite, elementType, attributeType);
+	private IEventBInputText createContentText() {
+		return createContentInputText(composite);
 	}
 
 	private Composite createSpace() {
@@ -210,6 +215,7 @@ public class NewEventDialog extends EventBDialog {
 		parTexts = new ArrayList<IEventBInputText>();
 		grdTexts = new ArrayList<Pair<IEventBInputText, IEventBInputText>>();
 		actTexts = new ArrayList<Pair<IEventBInputText, IEventBInputText>>();
+		providerListener = new ProviderModifyListener();
 
 		composite = toolkit.createComposite(parent);
 		setDebugBackgroundColor();
@@ -219,19 +225,25 @@ public class NewEventDialog extends EventBDialog {
 		createLabels("Label", "Parameter identifier(s)");
 
 		labelText = createBText(createContainer(), getFreeEventLabel());
+		getProposalAdapter(IEvent.ELEMENT_TYPE, LABEL_ATTRIBUTE, labelText);
+
 		createSpace();
 		parComposite = createContainer();
 
 		createSeparator();
 
 		createLabels("Guard label(s)", "Guard predicate(s)");
-
+		
 		for (int i = 1; i <= 3; i++) {
 			final IEventBInputText parText = createBText(parComposite, EMPTY);
+			addIdentifierAdapter(parText, IParameter.ELEMENT_TYPE,
+					LABEL_ATTRIBUTE);
 			final IEventBInputText grdLabel = createNameText(guardPrefix + i);
+			addContentAdapter(grdLabel, IGuard.ELEMENT_TYPE, LABEL_ATTRIBUTE);
 			createSpace();
-			final IEventBInputText grdPredicate = createContentText(
-					IGuard.ELEMENT_TYPE, PREDICATE_ATTRIBUTE);
+			final IEventBInputText grdPredicate = createContentText();
+			addContentAdapter(grdPredicate, IGuard.ELEMENT_TYPE,
+					PREDICATE_ATTRIBUTE);
 
 			addGuardListener(parText, grdPredicate);
 
@@ -252,6 +264,20 @@ public class NewEventDialog extends EventBDialog {
 		select(labelText);
 	}
 
+	private void addContentAdapter(IEventBInputText input,
+			IInternalElementType<?> elementType, IAttributeType attributeType) {
+		final WizardProposalProvider provider = getProposalProviderWithIdent(
+				elementType, attributeType);
+		getProposalAdapter(provider, input);
+		providerListener.addProvider(provider);
+	}
+	
+	private void addIdentifierAdapter(IEventBInputText input,
+			IInternalElementType<?> elementType, IAttributeType attributeType) {
+		providerListener.addInputText(input);
+		getProposalAdapter(elementType, attributeType, input);
+	}
+	
 	private void changeColumn(Composite comp, int numColumn) {
 		final GridLayout layout = (GridLayout) comp.getLayout();
 		layout.numColumns = numColumn;
@@ -269,6 +295,8 @@ public class NewEventDialog extends EventBDialog {
 			initValue();
 		} else if (buttonId == MORE_PARAMETER_ID) {
 			final IEventBInputText parLabel = createBText(parComposite, EMPTY);
+			addIdentifierAdapter(parLabel, IParameter.ELEMENT_TYPE,
+					LABEL_ATTRIBUTE);
 			final IEventBInputText grdPred = createGuard();
 			addGuardListener(parLabel, grdPred);
 
@@ -306,21 +334,24 @@ public class NewEventDialog extends EventBDialog {
 	
 	private void createAction() {
 		actCount++;
-		final IEventBInputText actionLabel = createNameText(actPrefix + actCount);
+		final IEventBInputText actionLabel = createNameText(actPrefix
+				+ actCount);
+		addContentAdapter(actionLabel, IAction.ELEMENT_TYPE, LABEL_ATTRIBUTE);
 		createSpace();
-		final IEventBInputText actionSub = createContentText(
-				IAction.ELEMENT_TYPE, ASSIGNMENT_ATTRIBUTE);
+		final IEventBInputText actionSub = createContentText();
+		addContentAdapter(actionSub, IAction.ELEMENT_TYPE, ASSIGNMENT_ATTRIBUTE);
 		actTexts.add(newWidgetPair(actionLabel, actionSub));
 	}
 	
 	private IEventBInputText createGuard() {
 		final IEventBInputText grdLabel = createNameText(guardPrefix + ++grdCount);
 		moveAbove(grdLabel, actionSeparator);
+		addContentAdapter(grdLabel, IGuard.ELEMENT_TYPE, LABEL_ATTRIBUTE);
 		final Composite separator = createSpace();
 		separator.moveAbove(actionSeparator);
-		final IEventBInputText grdPred = createContentText(IGuard.ELEMENT_TYPE,
-				PREDICATE_ATTRIBUTE);
+		final IEventBInputText grdPred = createContentText();
 		moveAbove(grdPred, actionSeparator);
+		addContentAdapter(grdPred, IGuard.ELEMENT_TYPE, PREDICATE_ATTRIBUTE);
 		grdTexts.add(newWidgetPair(grdLabel, grdPred));
 		return grdPred;
 	}

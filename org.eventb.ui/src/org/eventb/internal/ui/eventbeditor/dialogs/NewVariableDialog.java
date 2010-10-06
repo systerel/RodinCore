@@ -22,6 +22,7 @@ import static org.eclipse.jface.dialogs.IDialogConstants.CANCEL_LABEL;
 import static org.eclipse.jface.dialogs.IDialogConstants.OK_ID;
 import static org.eclipse.jface.dialogs.IDialogConstants.OK_LABEL;
 import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 
 import java.util.ArrayList;
@@ -36,8 +37,12 @@ import org.eventb.core.IVariable;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.autocompletion.WizardProposalProvider;
+import org.eventb.internal.ui.autocompletion.ProviderModifyListener;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IInternalElementType;
 
 /**
  * @author htson
@@ -70,6 +75,8 @@ public class NewVariableDialog extends EventBDialog {
 
 	private final IEventBEditor<IMachineRoot> editor;
 
+	private ProviderModifyListener providerListener;
+	
 	/**
 	 * Constructor.
 	 * 
@@ -121,36 +128,40 @@ public class NewVariableDialog extends EventBDialog {
 		setFormGridLayout(getBody(), 3);
 		setFormGridData();
 
+		providerListener = new ProviderModifyListener();
 		
 		createLabel(getBody(), "Identifier");
-
 		identifierText = createBText(getBody(), EMPTY, 200, true, 2);
+		addIdentifierAdapter(identifierText, IVariable.ELEMENT_TYPE,
+				LABEL_ATTRIBUTE);
 		
 		createLabel(getBody(), "Initialisation");
-
 		initLabelText = createNameInputText(getBody(),
 				getFreeInitialisationActionName());
-		initSubstitutionText = createContentInputText(getBody(),
-				IAction.ELEMENT_TYPE, ASSIGNMENT_ATTRIBUTE);
-		
+		addContentAdapter(initLabelText, IAction.ELEMENT_TYPE, LABEL_ATTRIBUTE);
+		initSubstitutionText = createContentInputText(getBody());
+		addContentAdapter(initSubstitutionText, IAction.ELEMENT_TYPE,
+				ASSIGNMENT_ATTRIBUTE);
 		identifierText.getTextWidget().addModifyListener(
 				new ActionListener(initSubstitutionText.getTextWidget()));
 
 		final Pair<IEventBInputText, IEventBInputText> invariant = createInvariant();
-
 		addGuardListener(identifierText, invariant.getSecond());
 
 		setText(identifierText, getFreeVariable());
-
 		select(identifierText);
 	}
 
 	private Pair<IEventBInputText, IEventBInputText> createInvariant() {
 		createLabel(getBody(), "Invariant");
-		final IEventBInputText invariantNameText = createNameInputText(getBody(),
+		final IEventBInputText invariantNameText = createNameInputText(
+				getBody(),
 				getNewInvariantName(invIndex, invariantsTexts.size()));
-		final IEventBInputText invariantPredicateText = createContentInputText(
-				getBody(), IInvariant.ELEMENT_TYPE, PREDICATE_ATTRIBUTE);
+		addContentAdapter(initLabelText, IInvariant.ELEMENT_TYPE,
+				LABEL_ATTRIBUTE);
+		final IEventBInputText invariantPredicateText = createContentInputText(getBody());
+		addContentAdapter(initLabelText, IInvariant.ELEMENT_TYPE,
+				PREDICATE_ATTRIBUTE);
 		final Pair<IEventBInputText, IEventBInputText> p = newWidgetPair(
 				invariantNameText, invariantPredicateText);
 		invariantsTexts.add(p);
@@ -297,6 +308,20 @@ public class NewVariableDialog extends EventBDialog {
 		disposePairs(invariantsTexts);
 		initSubstitutionText.dispose();
 		return super.close();
+	}
+	
+	private void addContentAdapter(IEventBInputText input,
+			IInternalElementType<?> elementType, IAttributeType attributeType) {
+		final WizardProposalProvider providerPar = getProposalProviderWithIdent(
+				elementType, attributeType);
+		getProposalAdapter(providerPar, input);
+		providerListener.addProvider(providerPar);
+	}
+
+	private void addIdentifierAdapter(IEventBInputText input,
+			IInternalElementType<?> elementType, IAttributeType attributeType) {
+		providerListener.addInputText(input);
+		getProposalAdapter(elementType, attributeType, input);
 	}
 
 }

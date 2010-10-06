@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.autocompletion;
 
+import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Text;
@@ -43,6 +44,16 @@ public class ContentProposalFactory {
 			IAttributeLocation location, Text text, FormulaFactory factory) {
 		return new EventBContentProposalAdapter(text, new TextContentAdapter(),
 				getProposalProvider(location, factory));
+	}
+
+	/**
+	 * Construct a content proposal adapter that can assist the user with
+	 * choosing content for a Text control.
+	 */
+	public static EventBContentProposalAdapter getContentProposal(
+			IContentProposalProvider provider, Text text) {
+		return new EventBContentProposalAdapter(text,
+				new TextContentAdapter(), provider);
 	}
 
 	private static ProposalProvider getProposalProvider(

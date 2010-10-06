@@ -16,6 +16,7 @@ import static org.eclipse.jface.dialogs.IDialogConstants.CANCEL_ID;
 import static org.eclipse.jface.dialogs.IDialogConstants.CANCEL_LABEL;
 import static org.eclipse.jface.dialogs.IDialogConstants.OK_ID;
 import static org.eclipse.jface.dialogs.IDialogConstants.OK_LABEL;
+import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,6 +24,7 @@ import java.util.List;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eventb.core.ICarrierSet;
 import org.eventb.core.IContextRoot;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
@@ -112,6 +114,7 @@ public class NewCarrierSetDialog extends EventBDialog {
 
 	private void createBText(String value) {
 		final EventBText text = createBText(getBody(), value);
+		getProposalAdapter(ICarrierSet.ELEMENT_TYPE, LABEL_ATTRIBUTE, text);
 		namesTexts.add(text);
 	}
 	

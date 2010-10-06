@@ -16,6 +16,8 @@ import static org.eclipse.jface.dialogs.IDialogConstants.CANCEL_ID;
 import static org.eclipse.jface.dialogs.IDialogConstants.CANCEL_LABEL;
 import static org.eclipse.jface.dialogs.IDialogConstants.OK_ID;
 import static org.eclipse.jface.dialogs.IDialogConstants.OK_LABEL;
+import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,9 +25,13 @@ import java.util.List;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eventb.core.IAxiom;
+import org.eventb.core.ICarrierSet;
 import org.eventb.core.IContextRoot;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IInternalElementType;
 
 /**
  * @author htson
@@ -82,7 +88,8 @@ public class NewEnumeratedSetDialog extends EventBDialog {
 		setFormGridLayout(getBody(), 2);
 		setFormGridData();
 
-		nameText = createInput("Identifier");
+		nameText = createInput("Identifier", ICarrierSet.ELEMENT_TYPE,
+				LABEL_ATTRIBUTE);
 		for (int i = 0; i < 3; i++) {
 			createElement();
 		}
@@ -92,13 +99,17 @@ public class NewEnumeratedSetDialog extends EventBDialog {
 		scrolledForm.reflow(true);
 	}
 	
-	private IEventBInputText createInput(String label) {
+	private IEventBInputText createInput(String label,
+			IInternalElementType<?> elementType, IAttributeType attributeType) {
 		createLabel(getBody(), label);
-		return createBText(getBody(), EMPTY, 150, true);
+		final IEventBInputText input = createBText(getBody(), EMPTY, 150, true);
+		getProposalAdapter(elementType, attributeType, input);
+		return input;
 	}
 	
 	private void createElement() {
-		final IEventBInputText text = createInput("Element");
+		final IEventBInputText text = createInput("Element",
+				IAxiom.ELEMENT_TYPE, PREDICATE_ATTRIBUTE);
 		elementTexts.add(text);
 	}
 	

@@ -20,6 +20,7 @@ import static org.eclipse.jface.dialogs.IDialogConstants.CANCEL_ID;
 import static org.eclipse.jface.dialogs.IDialogConstants.CANCEL_LABEL;
 import static org.eclipse.jface.dialogs.IDialogConstants.OK_ID;
 import static org.eclipse.jface.dialogs.IDialogConstants.OK_LABEL;
+import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 
 import java.util.ArrayList;
@@ -34,9 +35,13 @@ import org.eventb.core.IContextRoot;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.autocompletion.WizardProposalProvider;
+import org.eventb.internal.ui.autocompletion.ProviderModifyListener;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.preferences.PreferenceUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IInternalElementType;
 
 /**
  * @author htson
@@ -59,6 +64,8 @@ public class NewConstantDialog extends EventBDialog {
 	private final IEventBEditor<IContextRoot> editor;
 
 	private Composite composite;
+	
+	private ProviderModifyListener providerListener;
 	
 	/**
 	 * Constructor.
@@ -116,12 +123,16 @@ public class NewConstantDialog extends EventBDialog {
 
 		axiomTexts = new ArrayList<Pair<IEventBInputText, IEventBInputText>>();
 
+		providerListener = new ProviderModifyListener();
 		createLabel(composite, "Identifier");
 
 		final String cstIdentifier = UIUtils.getFreeElementIdentifier(root,
 				IConstant.ELEMENT_TYPE);
 		identifierText = createBText(composite, EMPTY, 200, true, 2);
-
+		addIdentifierAdapter(identifierText, IConstant.ELEMENT_TYPE,
+				LABEL_ATTRIBUTE);
+		providerListener.addInputText(identifierText);
+		
 		final Pair<IEventBInputText, IEventBInputText> axiom = createAxiom();
 		addGuardListener(identifierText, axiom.getSecond());
 
@@ -160,8 +171,10 @@ public class NewConstantDialog extends EventBDialog {
 		createLabel(composite, "Axiom");
 		final IEventBInputText axiomNameText = createNameInputText(composite,
 				getNewAxiomName());
-		final IEventBInputText axiomPredicateText = createContentInputText(
-				composite, IAxiom.ELEMENT_TYPE, PREDICATE_ATTRIBUTE);
+		addContentAdapter(axiomNameText, IAxiom.ELEMENT_TYPE, LABEL_ATTRIBUTE);
+		final IEventBInputText axiomPredicateText = createContentInputText(composite);
+		addContentAdapter(axiomPredicateText, IAxiom.ELEMENT_TYPE,
+				PREDICATE_ATTRIBUTE);
 		final Pair<IEventBInputText, IEventBInputText> p = newWidgetPair(
 				axiomNameText, axiomPredicateText);
 		axiomTexts.add(p);
@@ -222,5 +235,19 @@ public class NewConstantDialog extends EventBDialog {
 
 	public String[] getAxiomPredicates() {
 		return getSecond(axmResults);
+	}
+	
+	private void addContentAdapter(IEventBInputText input,
+			IInternalElementType<?> elementType, IAttributeType attributeType) {
+		final WizardProposalProvider providerPar = getProposalProviderWithIdent(
+				elementType, attributeType);
+		getProposalAdapter(providerPar, input);
+		providerListener.addProvider(providerPar);
+	}
+	
+	private void addIdentifierAdapter(IEventBInputText input,
+			IInternalElementType<?> elementType, IAttributeType attributeType) {
+		providerListener.addInputText(input);
+		getProposalAdapter(elementType, attributeType, input);
 	}
 }

@@ -85,7 +85,7 @@ public class ProposalProvider implements IContentProposalProvider {
 		return proposals;
 	}
 
-	private IContentProposal makeProposal(String contents, int position,
+	protected IContentProposal makeProposal(String contents, int position,
 			String prefix, String completion) {
 		final String propContents = completion.substring(prefix.length());
 		final int cursorPos = position + propContents.length();

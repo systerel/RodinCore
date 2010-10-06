@@ -17,6 +17,7 @@ import static org.eclipse.jface.dialogs.IDialogConstants.CANCEL_ID;
 import static org.eclipse.jface.dialogs.IDialogConstants.CANCEL_LABEL;
 import static org.eclipse.jface.dialogs.IDialogConstants.OK_ID;
 import static org.eclipse.jface.dialogs.IDialogConstants.OK_LABEL;
+import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 
 import java.util.ArrayList;
@@ -113,8 +114,9 @@ public class NewDerivedPredicateDialog<T extends ILabeledElement> extends
 		final int index = Integer.parseInt(firstIndex) + texts.size();
 		final IEventBInputText name = createNameInputText(getBody(), prefix
 				+ index);
-		final IEventBInputText content = createContentInputText(getBody(),
-				type, PREDICATE_ATTRIBUTE);
+		getProposalAdapter(type, LABEL_ATTRIBUTE, name);
+		final IEventBInputText content = createContentInputText(getBody());
+		getProposalAdapter(type, PREDICATE_ATTRIBUTE, content);
 		final Button button = createIsTheoremButton();
 		texts.add(newWidgetTriplet(name, content, button));
 	}

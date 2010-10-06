@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -48,6 +49,7 @@ import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
 import org.eventb.internal.ui.autocompletion.EventBContentProposalAdapter;
+import org.eventb.internal.ui.autocompletion.WizardProposalProvider;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.utils.Messages;
 import org.rodinp.core.IAttributeType;
@@ -241,15 +243,14 @@ public abstract class EventBDialog extends Dialog {
 		scrolledForm.reflow(true);
 	}
 
-	protected IEventBInputText createNameInputText(Composite composite, String text) {
+	protected IEventBInputText createNameInputText(Composite composite,
+			String text) {
 		return new EventBText(createText(composite, text, 50, false));
 	}
 
-	protected EventBMath createContentInputText(Composite composite,
-			IInternalElementType<?> elementType, IAttributeType attributeType) {
+	protected EventBMath createContentInputText(Composite composite) {
 		final EventBMath input = new EventBMath(createText(composite, EMPTY,
 				150, true));
-		getProposalAdapter(elementType, attributeType, input);
 		return input;
 	}
 	
@@ -259,14 +260,14 @@ public abstract class EventBDialog extends Dialog {
 
 	protected EventBText createBText(Composite parent, String value,
 			int widthHint, boolean grabExcessHorizontalSpace) {
-		return new EventBText(createText(parent, value, newGridData(
-				grabExcessHorizontalSpace, widthHint)));
+		return new EventBText(createText(parent, value,
+				newGridData(grabExcessHorizontalSpace, widthHint)));
 	}
 
 	protected EventBText createBText(Composite parent, String value,
 			int widthHint, boolean grabExcessHorizontalSpace, int horizontalSpan) {
-		return new EventBText(createText(parent, value, newGridData(true,
-				widthHint, horizontalSpan)));
+		return new EventBText(createText(parent, value,
+				newGridData(true, widthHint, horizontalSpan)));
 	}
 
 	private Text createText(Composite parent, String value,
@@ -306,7 +307,7 @@ public abstract class EventBDialog extends Dialog {
 		text.addModifyListener(new DirtyStateListener());
 		return text;
 	}
-	
+
 	protected void createLabel(Composite parent, String text) {
 		final Label widget = toolkit.createLabel(parent, text, SWT.NONE);
 		final GridData gd = new GridData(SWT.FILL, SWT.CENTER, false, false);
@@ -498,5 +499,37 @@ public abstract class EventBDialog extends Dialog {
 				element, attributeType);
 		return ContentProposalFactory.getContentProposal(location,
 				input.getTextWidget(), ff);
+	}
+	
+	/**
+	 * Construct a content proposal adapter that can assist the user with
+	 * choosing content for a Event-B Input Text.
+	 * 
+	 * @param input
+	 *            a Event-B Input Text
+	 */
+	protected EventBContentProposalAdapter getProposalAdapter(
+			IContentProposalProvider provider, IEventBInputText input) {
+		return ContentProposalFactory.getContentProposal(provider,
+				input.getTextWidget());
+	}
+
+	/**
+	 * Construct a content proposal adapter that can assist the user with
+	 * choosing content for a Event-B Input Text.
+	 * 
+	 * @param elementType
+	 *            type of element associated to the input
+	 * @param attributeType
+	 *            type of attribute associated to the input
+	 */
+	protected WizardProposalProvider getProposalProviderWithIdent(
+			IInternalElementType<?> elementType, IAttributeType attributeType) {
+		final IInternalElement element = root.getInternalElement(elementType,
+				"tmp");
+		final FormulaFactory ff = getFormulaFactory(root);
+		final IAttributeLocation location = RodinCore.getInternalLocation(
+				element, attributeType);
+		return new WizardProposalProvider(location, ff);
 	}
 }

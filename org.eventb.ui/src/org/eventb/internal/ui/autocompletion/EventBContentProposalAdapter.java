@@ -27,7 +27,7 @@ public class EventBContentProposalAdapter implements IContentProposalListener2 {
 
 	private boolean proposalPopupOpen;
 	private final ContentProposalAdapter adaptee;
-
+	
 	public EventBContentProposalAdapter(Control control,
 			IControlContentAdapter controlContentAdapter,
 			IContentProposalProvider proposalProvider) {
