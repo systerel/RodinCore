@@ -16,12 +16,8 @@ import static org.eventb.internal.core.autocompletion.CompletionUtil.getDisappea
 import static org.eventb.internal.core.autocompletion.CompletionUtil.getParameters;
 import static org.eventb.internal.core.indexers.IdentTable.getPrimedName;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ICarrierSet;
@@ -52,20 +48,17 @@ public class AutoCompletion {
 			IVariable.ELEMENT_TYPE);
 
 	/**
-	 * Returns a list of completions for the given location. The list is sorted
-	 * alphabetically.
+	 * Returns a set of identifier proposals for the given location.
 	 * 
 	 * @param location
 	 *            the location where completion is desired
-	 * @param prefix
-	 *            the common prefix of all proposed completions
 	 * @param waitUpToDate
 	 *            <code>true</code> iff method call shall be blocked until the
 	 *            underlying indexing system is up to date
-	 * @return a sorted list of possible completions
+	 * @return a set of proposals
 	 */
-	public static List<String> getCompletions(IAttributeLocation location,
-			String prefix, boolean waitUpToDate) {
+	public static Set<String> getProposals(IAttributeLocation location,
+			boolean waitUpToDate) {
 		if (waitUpToDate) {
 			try {
 				RodinCore.makeIndexQuery().waitUpToDate();
@@ -73,24 +66,7 @@ public class AutoCompletion {
 				Thread.currentThread().interrupt();
 			}
 		}
-		final Set<String> completionNames = getCompletionNames(location);
-		filterPrefix(completionNames, prefix);
-		final List<String> sortedNames = new ArrayList<String>(completionNames);
-		Collections.sort(sortedNames);
-		return sortedNames;
-	}
-
-	private static void filterPrefix(Set<String> names, String prefix) {
-		if (prefix.length() == 0) {
-			return;
-		}
-		final Iterator<String> iter = names.iterator();
-		while(iter.hasNext()) {
-			final String name = iter.next();
-			if (!name.startsWith(prefix)) {
-				iter.remove();
-			}
-		}
+		return getCompletionNames(location);
 	}
 
 	private static Set<String> getCompletionNames(IAttributeLocation location) {

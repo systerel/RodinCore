@@ -103,7 +103,7 @@ public class NewEnumeratedSetDialog extends EventBDialog {
 			IInternalElementType<?> elementType, IAttributeType attributeType) {
 		createLabel(getBody(), label);
 		final IEventBInputText input = createBText(getBody(), EMPTY, 150, true);
-		getProposalAdapter(elementType, attributeType, input);
+		addProposalAdapter(elementType, attributeType, input);
 		return input;
 	}
 	

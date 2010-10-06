@@ -114,7 +114,7 @@ public class NewCarrierSetDialog extends EventBDialog {
 
 	private void createBText(String value) {
 		final EventBText text = createBText(getBody(), value);
-		getProposalAdapter(ICarrierSet.ELEMENT_TYPE, LABEL_ATTRIBUTE, text);
+		addProposalAdapter(ICarrierSet.ELEMENT_TYPE, LABEL_ATTRIBUTE, text);
 		namesTexts.add(text);
 	}
 	

@@ -26,7 +26,7 @@ public class ContentProposalFactory {
 	 * @param factory
 	 *            the formula factory used by the underlying root
 	 */
-	public static EventBContentProposalAdapter getContentProposal(
+	public static EventBContentProposalAdapter makeContentProposal(
 			IAttributeLocation location, StyledText text, FormulaFactory factory) {
 		return new EventBContentProposalAdapter(text,
 				new StyledTextContentAdapter(), getProposalProvider(location,
@@ -40,7 +40,7 @@ public class ContentProposalFactory {
 	 * @param factory
 	 *            the formula factory used by the underlying root
 	 */
-	public static EventBContentProposalAdapter getContentProposal(
+	public static EventBContentProposalAdapter makeContentProposal(
 			IAttributeLocation location, Text text, FormulaFactory factory) {
 		return new EventBContentProposalAdapter(text, new TextContentAdapter(),
 				getProposalProvider(location, factory));
@@ -50,7 +50,7 @@ public class ContentProposalFactory {
 	 * Construct a content proposal adapter that can assist the user with
 	 * choosing content for a Text control.
 	 */
-	public static EventBContentProposalAdapter getContentProposal(
+	public static EventBContentProposalAdapter makeContentProposal(
 			IContentProposalProvider provider, Text text) {
 		return new EventBContentProposalAdapter(text,
 				new TextContentAdapter(), provider);

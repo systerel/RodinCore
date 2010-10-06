@@ -114,9 +114,9 @@ public class NewDerivedPredicateDialog<T extends ILabeledElement> extends
 		final int index = Integer.parseInt(firstIndex) + texts.size();
 		final IEventBInputText name = createNameInputText(getBody(), prefix
 				+ index);
-		getProposalAdapter(type, LABEL_ATTRIBUTE, name);
+		addProposalAdapter(type, LABEL_ATTRIBUTE, name);
 		final IEventBInputText content = createContentInputText(getBody());
-		getProposalAdapter(type, PREDICATE_ATTRIBUTE, content);
+		addProposalAdapter(type, PREDICATE_ATTRIBUTE, content);
 		final Button button = createIsTheoremButton();
 		texts.add(newWidgetTriplet(name, content, button));
 	}

@@ -234,7 +234,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 		final IInternalElement element = (IInternalElement) elem;
 		final IAttributeLocation location = RodinCore.getInternalLocation(
 				element, attrType);
-		return ContentProposalFactory.getContentProposal(location, txt,
+		return ContentProposalFactory.makeContentProposal(location, txt,
 				getFormulaFactory(element));
 	}
 

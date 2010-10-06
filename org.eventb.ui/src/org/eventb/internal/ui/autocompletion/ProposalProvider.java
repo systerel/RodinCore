@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eventb.internal.ui.autocompletion;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
@@ -56,7 +60,7 @@ public class ProposalProvider implements IContentProposalProvider {
 	}
 
 	private final IAttributeLocation location;
-	private FormulaFactory factory;
+	private final FormulaFactory factory;
 
 	public ProposalProvider(IAttributeLocation location, FormulaFactory factory) {
 		this.location = location;
@@ -64,31 +68,58 @@ public class ProposalProvider implements IContentProposalProvider {
 	}
 
 	@Override
-	public IContentProposal[] getProposals(String contents, int position) {
+	public final IContentProposal[] getProposals(String contents, int position) {
 		final PrefixComputer pc = new PrefixComputer(contents, position, factory);
 		final String prefix = pc.getPrefix();
-		final List<String> completions = EventBPlugin.getCompletions(location,
-				prefix, false);
 		// TODO launch a job that waits up-to-date completions
 		// and then updates proposals 
+		
+		return makeAllProposals(contents, position, prefix);
+	}
+
+	protected IContentProposal[] makeAllProposals(String contents, int position,
+			String prefix) {
+		final Set<String> completions = EventBPlugin.getProposals(
+				location, false);
 		return makeProposals(contents, position, prefix, completions);
 	}
 
-	private IContentProposal[] makeProposals(String contents, int position,
-			String prefix, List<String> completions) {
-		final IContentProposal[] proposals = new IContentProposal[completions
+	protected static IContentProposal[] makeProposals(String contents, int position,
+			String prefix, Set<String> completions) {
+		final List<String> filteredSorted = filterAndSort(completions, prefix);
+		final IContentProposal[] proposals = new IContentProposal[filteredSorted
 				.size()];
 		for (int i = 0; i < proposals.length; i++) {
-			proposals[i] = makeProposal(contents, position, prefix, completions
+			proposals[i] = makeProposal(contents, position, prefix, filteredSorted
 					.get(i));
 		}
 		return proposals;
 	}
 
-	protected IContentProposal makeProposal(String contents, int position,
+	private static IContentProposal makeProposal(String contents, int position,
 			String prefix, String completion) {
 		final String propContents = completion.substring(prefix.length());
 		final int cursorPos = position + propContents.length();
 		return new Proposal(propContents, cursorPos, completion);
+	}
+
+	private static List<String> filterAndSort(Set<String> completions, String prefix) {
+		filterPrefix(completions, prefix);
+		final List<String> sortedNames = new ArrayList<String>(completions);
+		Collections.sort(sortedNames);
+		return sortedNames;
+	}
+	
+	private static void filterPrefix(Set<String> names, String prefix) {
+		if (prefix.length() == 0) {
+			return;
+		}
+		final Iterator<String> iter = names.iterator();
+		while(iter.hasNext()) {
+			final String name = iter.next();
+			if (!name.startsWith(prefix)) {
+				iter.remove();
+			}
+		}
 	}
 }

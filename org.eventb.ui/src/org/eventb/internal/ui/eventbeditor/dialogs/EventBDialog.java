@@ -48,7 +48,6 @@ import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
-import org.eventb.internal.ui.autocompletion.EventBContentProposalAdapter;
 import org.eventb.internal.ui.autocompletion.WizardProposalProvider;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.utils.Messages;
@@ -489,7 +488,7 @@ public abstract class EventBDialog extends Dialog {
 	 * @param input
 	 *            a Event-B Input Text
 	 */
-	protected EventBContentProposalAdapter getProposalAdapter(
+	protected void addProposalAdapter(
 			IInternalElementType<?> elementType, IAttributeType attributeType,
 			IEventBInputText input) {
 		final IInternalElement element = root.getInternalElement(elementType,
@@ -497,7 +496,7 @@ public abstract class EventBDialog extends Dialog {
 		final FormulaFactory ff = getFormulaFactory(root);
 		final IAttributeLocation location = RodinCore.getInternalLocation(
 				element, attributeType);
-		return ContentProposalFactory.getContentProposal(location,
+		ContentProposalFactory.makeContentProposal(location,
 				input.getTextWidget(), ff);
 	}
 	
@@ -508,9 +507,9 @@ public abstract class EventBDialog extends Dialog {
 	 * @param input
 	 *            a Event-B Input Text
 	 */
-	protected EventBContentProposalAdapter getProposalAdapter(
-			IContentProposalProvider provider, IEventBInputText input) {
-		return ContentProposalFactory.getContentProposal(provider,
+	protected void addProposalAdapter(IContentProposalProvider provider,
+			IEventBInputText input) {
+		ContentProposalFactory.makeContentProposal(provider,
 				input.getTextWidget());
 	}
 

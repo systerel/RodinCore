@@ -16,7 +16,7 @@ package org.eventb.core;
 
 import static org.rodinp.core.RodinCore.getOccurrenceKind;
 
-import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
@@ -622,21 +622,18 @@ public class EventBPlugin extends Plugin {
 	}
 
 	/**
-	 * Returns a list of completions for the given location. The list is sorted
-	 * alphabetically.
+	 * Returns a set of identifier proposals for the given location.
 	 * 
 	 * @param location
 	 *            the location where completion is desired
-	 * @param prefix
-	 *            the common prefix of all proposed completions
 	 * @param waitUpToDate
 	 *            <code>true</code> iff method call shall be blocked until the
 	 *            underlying indexing system is up to date
-	 * @return a sorted list of possible completions
+	 * @return a set of proposals
 	 * @since 2.0
 	 */
-	public static List<String> getCompletions(IAttributeLocation location,
-			String prefix, boolean waitUpToDate) {
-		return AutoCompletion.getCompletions(location, prefix, waitUpToDate);
+	public static Set<String> getProposals(IAttributeLocation location,
+			boolean waitUpToDate) {
+		return AutoCompletion.getProposals(location, waitUpToDate);
 	}
  }

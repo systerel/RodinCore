@@ -225,7 +225,7 @@ public class NewEventDialog extends EventBDialog {
 		createLabels("Label", "Parameter identifier(s)");
 
 		labelText = createBText(createContainer(), getFreeEventLabel());
-		getProposalAdapter(IEvent.ELEMENT_TYPE, LABEL_ATTRIBUTE, labelText);
+		addProposalAdapter(IEvent.ELEMENT_TYPE, LABEL_ATTRIBUTE, labelText);
 
 		createSpace();
 		parComposite = createContainer();
@@ -268,14 +268,14 @@ public class NewEventDialog extends EventBDialog {
 			IInternalElementType<?> elementType, IAttributeType attributeType) {
 		final WizardProposalProvider provider = getProposalProviderWithIdent(
 				elementType, attributeType);
-		getProposalAdapter(provider, input);
+		addProposalAdapter(provider, input);
 		providerListener.addProvider(provider);
 	}
 	
 	private void addIdentifierAdapter(IEventBInputText input,
 			IInternalElementType<?> elementType, IAttributeType attributeType) {
 		providerListener.addInputText(input);
-		getProposalAdapter(elementType, attributeType, input);
+		addProposalAdapter(elementType, attributeType, input);
 	}
 	
 	private void changeColumn(Composite comp, int numColumn) {

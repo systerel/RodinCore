@@ -241,13 +241,13 @@ public class NewConstantDialog extends EventBDialog {
 			IInternalElementType<?> elementType, IAttributeType attributeType) {
 		final WizardProposalProvider providerPar = getProposalProviderWithIdent(
 				elementType, attributeType);
-		getProposalAdapter(providerPar, input);
+		addProposalAdapter(providerPar, input);
 		providerListener.addProvider(providerPar);
 	}
 	
 	private void addIdentifierAdapter(IEventBInputText input,
 			IInternalElementType<?> elementType, IAttributeType attributeType) {
 		providerListener.addInputText(input);
-		getProposalAdapter(elementType, attributeType, input);
+		addProposalAdapter(elementType, attributeType, input);
 	}
 }

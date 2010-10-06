@@ -21,8 +21,8 @@ import org.eventb.internal.ui.IEventBInputText;
 
 public class ProviderModifyListener implements ModifyListener {
 
-	final Set<WizardProposalProvider> providers;
-	final Set<IEventBInputText> inputs;
+	private final Set<WizardProposalProvider> providers;
+	private final Set<IEventBInputText> inputs;
 
 	public ProviderModifyListener() {
 		providers = new HashSet<WizardProposalProvider>();
@@ -52,7 +52,7 @@ public class ProviderModifyListener implements ModifyListener {
 		final List<String> ids = new ArrayList<String>();
 		for (IEventBInputText text : inputs) {
 			final String id = text.getTextWidget().getText();
-			if (!"".equals(id)) {
+			if (!id.isEmpty()) {
 				ids.add(id);
 			}
 		}

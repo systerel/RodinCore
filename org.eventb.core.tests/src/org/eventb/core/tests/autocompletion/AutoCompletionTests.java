@@ -15,7 +15,8 @@ import static java.util.Arrays.asList;
 import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAxiom;
@@ -226,14 +227,11 @@ public class AutoCompletionTests extends BuilderTest {
 		super.tearDown();
 	}
 
-	private void doTest(IAttributeLocation axiomPred, String... expected) {
-		doTest("", axiomPred, expected);
-	}
-
-	private void doTest(String prefix, IAttributeLocation location, String... expected) {
-		final List<String> completions = AutoCompletion
-				.getCompletions(location, prefix, true);
-		assertEquals("bad completions", asList(expected), completions);
+	private void doTest(IAttributeLocation location, String... expected) {
+		final Set<String> expSet = new HashSet<String>(asList(expected));
+		final Set<String> completions = AutoCompletion
+				.getProposals(location, true);
+		assertEquals("bad completions", expSet, completions);
 	}
 
 	public void testCtxLocalCstInAxm() throws Exception {
@@ -368,17 +366,6 @@ public class AutoCompletionTests extends BuilderTest {
 		// so varM1' must not appear in the completions
 		// but but evt3 is not extended so prmM1 disappears
 		doTest(witLabel, "prmM1");
-	}
-	
-	public void testFilterPrefix() throws Exception {
-		ResourceUtils.createContext(rodinProject, "C1", C1);
-		final IContextRoot c2 = ResourceUtils.createContext(rodinProject, "C2",
-				C2);
-		final IAxiom theorem = c2.getAxiom(INTERNAL_THM1);
-		final IAttributeLocation axiomPred = RodinCore.getInternalLocation(
-				theorem, PREDICATE_ATTRIBUTE);
-		doTest("cs", axiomPred, "cst1");
-		doTest("cst11", axiomPred);
 	}
 	
 	public void testEventLabel() throws Exception {

@@ -11,9 +11,9 @@
 package org.eventb.internal.ui.autocompletion;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eventb.core.ast.FormulaFactory;
@@ -21,17 +21,11 @@ import org.rodinp.core.location.IAttributeLocation;
 
 public class WizardProposalProvider extends ProposalProvider {
 
-	private static final ProposalComparator COMPARATOR = new ProposalComparator();
-	
-	private final FormulaFactory factory;
-	
-	private final List<String> identifiers;
+	private final List<String> identifiers = new ArrayList<String>();
 
 	public WizardProposalProvider(IAttributeLocation location,
 			FormulaFactory factory) {
 		super(location, factory);
-		this.factory = factory;
-		identifiers = new ArrayList<String>();
 	}
 
 	public void setIdentifiers(List<String> identifiers) {
@@ -40,44 +34,25 @@ public class WizardProposalProvider extends ProposalProvider {
 	}
 
 	@Override
-	public IContentProposal[] getProposals(String contents, int position) {
-		final IContentProposal[] globalProposal = super.getProposals(contents,
-				position);
-		final List<IContentProposal> localProposal = getLocalProposal(contents,
-				position);
+	protected IContentProposal[] makeAllProposals(String contents, int position,
+			String prefix) {
+		final IContentProposal[] globalProposal = super.makeAllProposals(contents,
+				position, prefix);
+		final IContentProposal[] localProposal = getLocalProposal(contents,
+				position, prefix);
 
-		final IContentProposal[] result = new IContentProposal[localProposal
-				.size() + globalProposal.length];
-		for (int i = 0; i < localProposal.size(); i++) {
-			result[i] = localProposal.get(i);
-		}
-		for (int i = 0; i < globalProposal.length; i++) {
-			result[i + localProposal.size()] = globalProposal[i];
-		}
+		final IContentProposal[] result = new IContentProposal[localProposal.length
+				+ globalProposal.length];
+
+		System.arraycopy(localProposal, 0, result, 0, localProposal.length);
+		System.arraycopy(globalProposal, 0, result, localProposal.length,
+				globalProposal.length);
 		return result;
 	}
 
-	private List<IContentProposal> getLocalProposal(String contents,
-			int position) {
-		final List<IContentProposal> localProposal = new ArrayList<IContentProposal>();
-		final PrefixComputer pc = new PrefixComputer(contents, position,
-				factory);
-		final String prefix = pc.getPrefix();
-		for (String ident : identifiers) {
-			if (ident.startsWith(prefix)) {
-				localProposal.add(makeProposal(contents, position, prefix,
-						ident));
-			}
-		}
-		Collections.sort(localProposal, COMPARATOR);
-		return localProposal;
-	}
-
-	static class ProposalComparator implements Comparator<IContentProposal> {
-
-		@Override
-		public int compare(IContentProposal o1, IContentProposal o2) {
-			return o1.getLabel().compareTo(o2.getLabel());
-		}
+	private IContentProposal[] getLocalProposal(String contents, int position,
+			String prefix) {
+		final Set<String> completions = new HashSet<String>(identifiers);
+		return makeProposals(contents, position, prefix, completions);
 	}
 }

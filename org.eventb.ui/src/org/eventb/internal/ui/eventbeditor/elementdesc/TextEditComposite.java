@@ -152,7 +152,7 @@ public class TextEditComposite extends AbstractEditComposite {
 
 			final IAttributeType attType = attrDesc.getAttributeType();
 			final IAttributeLocation location = RodinCore.getInternalLocation(element, attType);
-			adapter = ContentProposalFactory.getContentProposal(location, text, getFormulaFactory(element));
+			adapter = ContentProposalFactory.makeContentProposal(location, text, getFormulaFactory(element));
 			text.addVerifyKeyListener(new VerifyKeyListener() {
 				@Override
 				public void verifyKey(VerifyEvent event) {

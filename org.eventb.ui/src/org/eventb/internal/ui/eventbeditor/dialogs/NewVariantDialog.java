@@ -85,7 +85,7 @@ public class NewVariantDialog extends EventBDialog {
 
 		createLabel(getBody(), message);
 		expressionText = createContentInputText(getBody());
-		getProposalAdapter(IVariant.ELEMENT_TYPE, EXPRESSION_ATTRIBUTE,
+		addProposalAdapter(IVariant.ELEMENT_TYPE, EXPRESSION_ATTRIBUTE,
 				expressionText);
 		select(expressionText);
 	}
