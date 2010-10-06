@@ -181,6 +181,8 @@ public final class Messages {
 	public static String dialogs_cancel_renaming;
 	public static String dialogs_projectSelection_title;
 	public static String dialogs_projectSelection_description;
+	public static String dialogs_new_component_title;
+	public static String dialogs_new_component_message;
 	
 	//Dialog titles
 	public static String title_error;
