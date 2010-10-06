@@ -863,11 +863,11 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				                        `expression,
 				                        `E.shiftBoundIdentifiers(`idents.length, ff));
 				
-				if(level.isLessOrEquals(Level.L1) && `E.getTag()==Formula.MAPSTO){
+				if(level.from(Level.L1) && `E.getTag() == Formula.MAPSTO){
 					
-					final List<Predicate> conjuncts =simpEqualsMapsTo(equalsPred,ff);
-					final AssociativePredicate rewrittenEqualsPred= ff.makeAssociativePredicate(Formula.LAND, conjuncts, null);
-					conjuncts.add(0,`guard);						
+					final List<Predicate> conjuncts = new ArrayList<Predicate>();
+					simpEqualsMapsTo(equalsPred, conjuncts, ff);
+					conjuncts.add(0,`guard);
 					final AssociativePredicate conjunctionPred = ff.makeAssociativePredicate(Formula.LAND, conjuncts, null);
 					Predicate existsPred = makeQuantifiedPredicate(Predicate.EXISTS,
 							`idents, conjunctionPred );		
@@ -1103,24 +1103,25 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    return predicate;
 	}
     
-private static Predicate recursiveOnePoint(Predicate existsPred, FormulaFactory ff) {
+   private static Predicate recursiveOnePoint(Predicate existsPred, FormulaFactory ff) {
 		
     	boolean success= true;  	
-    	while(success){    		
-    		if(existsPred.getTag()==Formula.EXISTS){
-    			Predicate existsChild=((QuantifiedPredicate)existsPred).getPredicate();
-    			Predicate[] children=((AssociativePredicate)existsChild).getChildren();
-    			final OnePointSimplifier onePoint = 
-    				new OnePointSimplifier(existsPred,children[children.length-1], ff);
-    			onePoint.matchAndApply();
-    			if (onePoint.wasSuccessfullyApplied()) {
-    				existsPred= onePoint.getProcessedPredicate();
-    			}else{
-    				success=false;
-    			}    			
-    		}else{
-    			success=false;
+    	while(success){
+    		if(existsPred.getTag() != Formula.EXISTS) {
+    			break;
     		}
+    		final Predicate existsChild = ((QuantifiedPredicate)existsPred).getPredicate();
+    		if(existsChild.getTag() != Formula.LAND) {
+    			break;
+    		}
+    		final Predicate[] children = ((AssociativePredicate)existsChild).getChildren();
+			final OnePointSimplifier onePoint = 
+				new OnePointSimplifier(existsPred,children[children.length-1], ff);
+			onePoint.matchAndApply();
+			success = onePoint.wasSuccessfullyApplied();
+			if (success) {
+				existsPred = onePoint.getProcessedPredicate();
+			}
     	}
     	return existsPred;
 	}
@@ -1135,20 +1136,18 @@ private static Predicate recursiveOnePoint(Predicate existsPred, FormulaFactory 
     	return datatype.isConstructor(extension);
 	}
     
-    private static List<Predicate> simpEqualsMapsTo(Predicate predicate, FormulaFactory ff){
-    	final List<Predicate> result=new ArrayList<Predicate>();
+	private static void simpEqualsMapsTo(Predicate predicate,
+			List<Predicate> conjuncts, FormulaFactory ff) {
 	    %match (Predicate predicate) {
 	    	Equal(Mapsto(E, F) , Mapsto(G, H)) -> {
 	    		Predicate pred1 = ff.makeRelationalPredicate(Expression.EQUAL, `E, `G,null);
-	    		List<Predicate> listPred1 = simpEqualsMapsTo(pred1,ff);
+	    		simpEqualsMapsTo(pred1, conjuncts, ff);
 				Predicate pred2 = ff.makeRelationalPredicate(Expression.EQUAL, `F, `H,null);
-				List<Predicate> listPred2 = simpEqualsMapsTo(pred2,ff);
-				listPred1.addAll(listPred2);
-				return listPred1;
+				simpEqualsMapsTo(pred2, conjuncts, ff);
+				return;
 	    	}	    	
 	    }
-	    result.add(predicate);
-    	return result;
+	    conjuncts.add(predicate);
     }
 	
 	@ProverRule( { "SIMP_SPECIAL_BINTER", "SIMP_SPECIAL_BUNION",

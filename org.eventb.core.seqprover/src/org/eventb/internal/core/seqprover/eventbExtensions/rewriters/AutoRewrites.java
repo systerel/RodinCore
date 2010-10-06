@@ -33,13 +33,8 @@ public class AutoRewrites extends AbstractAutoRewrites implements
 			return values[values.length-1];
 		}
 		
-		public boolean isLessOrEquals(Level other){
-			final int ordinal=this.ordinal();
-			final int otherOrdinal=other.ordinal();
-			if(ordinal<=otherOrdinal){
-				return true;
-			}
-			return false;
+		public boolean from(Level other){
+			return this.ordinal() >= other.ordinal();
 		}		
 		
 	}
