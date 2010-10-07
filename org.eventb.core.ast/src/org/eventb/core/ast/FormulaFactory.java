@@ -39,6 +39,7 @@ import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.Cond;
 import org.eventb.internal.core.ast.extension.ExtnUnicityChecker;
 import org.eventb.internal.core.ast.extension.datatype.DatatypeExtensionComputer;
+import org.eventb.internal.core.lexer.GenScan;
 import org.eventb.internal.core.lexer.Scanner;
 import org.eventb.internal.core.parser.AbstractGrammar;
 import org.eventb.internal.core.parser.BMath;
@@ -107,6 +108,7 @@ public class FormulaFactory {
 			if (cached != null) {
 				return cached;
 			}
+			checkSymbols(actualExtns);
 			EXTN_UNICITY_CHECKER.checkUnicity(actualExtns);
 			final Map<Integer, IFormulaExtension> extMap = new LinkedHashMap<Integer, IFormulaExtension>();
 			for (IFormulaExtension extension : actualExtns) {
@@ -122,6 +124,33 @@ public class FormulaFactory {
 			INSTANCE_CACHE.put(actualExtns, factory);
 			return factory;
 		}
+	}
+
+	private static void checkSymbols(Set<IFormulaExtension> actualExtns) {
+		for (IFormulaExtension extn : actualExtns) {
+			final String symbol = extn.getSyntaxSymbol();
+			if (!checkSymbol(symbol)) {
+				throw new IllegalArgumentException("Invalid symbol '" + symbol
+						+ "' in extension " + extn.getId());
+			}
+		}
+	}
+
+	/**
+	 * Checks that a symbol is appropriate for the generic scanner. Such a
+	 * symbol must either be an identifier, or must be not empty and purely
+	 * symbolic (i.e., not contain any character allowable in an identifier).
+	 * 
+	 * @param symbol
+	 *            symbol to test
+	 * @return <code>true</code> iff the given symbol is valid
+	 * @since 2.0
+	 */
+	public static boolean checkSymbol(String symbol) {
+		if (GenScan.isIdent(symbol)) {
+			return true;
+		}
+		return !symbol.isEmpty() && !GenScan.containsIdentChar(symbol);
 	}
 
 	/**

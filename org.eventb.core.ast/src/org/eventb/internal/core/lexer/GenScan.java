@@ -59,6 +59,49 @@ public class GenScan {
 	}
 
 	/**
+	 * Tells whether the given string looks like an identifier.
+	 * 
+	 * @param string
+	 *            a string of characters
+	 * @return <code>true</code> if the given string could be scanned as an
+	 *         identifier
+	 */
+	public static boolean isIdent(String string) {
+		final int len = string.length();
+		if (len == 0) {
+			return false;
+		}
+		if (!firstIdent(string.charAt(0))) {
+			return false;
+		}
+		for (int i = 1; i < len; i++) {
+			if (!extendIdent(string.charAt(i))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Tells whether the given string contains a character that could be part of
+	 * an identifier.
+	 * 
+	 * @param string
+	 *            a string of characters
+	 * @return <code>true</code> if the given string contains an identifier
+	 *         character
+	 */
+	public static boolean containsIdentChar(String string) {
+		for (int i = 0; i < string.length(); i++) {
+			final char c = string.charAt(i);
+			if (firstIdent(c) || extendIdent(c)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * The input string being analyzed.
 	 */
 	private String toParse;
@@ -158,7 +201,7 @@ public class GenScan {
 	 * @return true iff a <code>charAt</code> can be the first character of an
 	 *         identifier
 	 */
-	public final boolean firstIdent(Character charAt) {
+	public static final boolean firstIdent(Character charAt) {
 		return Character.isJavaIdentifierStart((int) charAt)
 				&& LAMBDA != charAt && META != charAt;
 	}
@@ -203,7 +246,7 @@ public class GenScan {
 	 *            The character to be checked
 	 * @return true if the character can be used to build an identifier
 	 */
-	public final boolean extendIdent(char charAt) {
+	public static final boolean extendIdent(char charAt) {
 		return (Character.isJavaIdentifierPart((int) charAt)
 				&& LAMBDA != charAt && META != charAt);
 	}

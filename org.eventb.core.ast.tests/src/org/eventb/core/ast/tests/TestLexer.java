@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.eventb.core.ast.ASTProblem;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.ProblemKind;
@@ -134,4 +135,14 @@ public class TestLexer extends AbstractTests {
 			assertFalse(ff.isValidIdentifierName("prj'p"));
 			assertFalse(ff.isValidIdentifierName("partition'"));
 		}
+		
+		public void testCheckSymbol() throws Exception {
+			assertTrue(FormulaFactory.checkSymbol("ident_like€SYMBOL§"));
+			assertTrue(FormulaFactory.checkSymbol("\u2b50"));
+			assertTrue(FormulaFactory.checkSymbol("\u2b50\u2b11"));
+			assertFalse(FormulaFactory.checkSymbol(""));
+			assertFalse(FormulaFactory.checkSymbol("idWith\u2b50Symbol"));
+			assertFalse(FormulaFactory.checkSymbol("\u2b50WithId"));
+		}
+
 }
