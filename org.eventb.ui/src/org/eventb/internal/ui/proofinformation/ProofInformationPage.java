@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,16 @@
  *     Systerel - replaced variable by parameter
  *     Systerel - separation of file and root element
  *     Systerel - added implicit children for events
+ *     Systerel - refactored to display all possible EventB elements
  ******************************************************************************/
 package org.eventb.internal.ui.proofinformation;
 
+import static org.eventb.internal.ui.UIUtils.getVisibleChildrenOfType;
+import static org.eventb.internal.ui.proofinformation.ProofInformationListItem.getInfo;
 import static org.eventb.ui.EventBUIPlugin.NAVIGATOR_VIEW_ID;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -34,11 +39,9 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.Page;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAction;
-import org.eventb.core.IAxiom;
 import org.eventb.core.IEvent;
-import org.eventb.core.IEventBRoot;
 import org.eventb.core.IGuard;
-import org.eventb.core.IInvariant;
+import org.eventb.core.IIdentifierElement;
 import org.eventb.core.IPOSource;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.IParameter;
@@ -52,35 +55,39 @@ import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
+import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
+import org.eventb.internal.ui.eventbeditor.elementdesc.IElementRelationship;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.ui.EventBFormText;
 import org.eventb.ui.IEventBFormText;
+import org.eventb.ui.IImplicitChildProvider;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * This class is an implementation of a Proof Control 'page'.
+ * 
  * @author htson
- *         <p>
- *         This class is an implementation of a Proof Control 'page'.
  */
 public class ProofInformationPage extends Page implements
 		IProofInformationPage, IUserSupportManagerChangedListener {
 
 	private static final IUserSupportManager USM = EventBPlugin
 			.getUserSupportManager();
+	private static final int subLevel = 3;
 
-	ScrolledForm scrolledForm;
-
+	protected final IUserSupport userSupport;
+	protected IProofState proofState;
+	protected ScrolledForm scrolledForm;
 	private IEventBFormText formText;
-
-	IUserSupport userSupport;
 	
-	IProofState proofState;
 
 	/**
 	 * Constructor.
-	 * <p>
 	 * 
 	 * @param userSupport
 	 *            the User Support corresponding to this page.
@@ -107,22 +114,20 @@ public class ProofInformationPage extends Page implements
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
 	 * it.
-	 * <p>
 	 * 
 	 * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	public void createControl(Composite parent) {
-		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
-
+		final FormToolkit toolkit = new FormToolkit(parent.getDisplay());
 		scrolledForm = toolkit.createScrolledForm(parent);
 
 		if (proofState != null)
 			scrolledForm.setText(proofState.getPSStatus().getElementName());
 
-		Composite body = scrolledForm.getBody();
+		final Composite body = scrolledForm.getBody();
 		body.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		GridLayout gl = new GridLayout();
+		final GridLayout gl = new GridLayout();
 		body.setLayout(gl);
 
 		formText = new EventBFormText(toolkit.createFormText(body, true));
@@ -135,7 +140,6 @@ public class ProofInformationPage extends Page implements
 
 	/**
 	 * Set the formText according to the current prSequent.
-	 * <p>
 	 * 
 	 * @param prSequent
 	 *            the current prSequent
@@ -144,152 +148,76 @@ public class ProofInformationPage extends Page implements
 	// Should there be a pretty-print form for every RodinElement?
 	void setFormText(IPSStatus prSequent, IProgressMonitor monitor) {
 		try {
-			StringBuilder formBuilder = new StringBuilder("<form>");
-
-			IPOSource[] sources = prSequent.getPOSequent().getSources();
+			final StringBuilder formBuilder = new StringBuilder("<form>");
+			final ElementDescRegistry descRegistry = ElementDescRegistry
+					.getInstance();
+			final IPOSource[] sources = prSequent.getPOSequent().getSources();
 			for (IPOSource source : sources) {
-				IRodinElement element = source.getSource();
-				String id = element.getHandleIdentifier();
+				final IRodinElement element = source.getSource();
+				final String id = element.getHandleIdentifier();
 				if (ProofInformationUtils.DEBUG) {
 					ProofInformationUtils.debug("id: " + id);
 					ProofInformationUtils.debug("Find: " + element);
 				}
-				if (element instanceof IAxiom) {
-					IAxiom axm = (IAxiom) element;
-					formBuilder.append("<li style=\"bullet\">Axiom in ");
-					formBuilder.append(((IEventBRoot) axm.getParent()).getComponentName());
-					formBuilder.append("</li><li style=\"text\" value=\"\">");
-					formBuilder.append(UIUtils
-							.makeHyperlink(id, axm.getLabel()));
-					formBuilder.append(": ");
-					formBuilder.append(UIUtils.XMLWrapUp(axm
-							.getPredicateString()));
-					formBuilder.append("</li>");
-				} else if (element instanceof IInvariant) {
-					IInvariant inv = (IInvariant) element;
-					formBuilder.append("<li style=\"bullet\">Invariant in ");
-					formBuilder.append(((IEventBRoot) inv.getParent()).getComponentName());
-					formBuilder.append("</li><li style=\"text\" value=\"\">");
-					formBuilder.append(UIUtils
-							.makeHyperlink(id, inv.getLabel()));
-					formBuilder.append(": ");
-					formBuilder.append(UIUtils.XMLWrapUp(inv
-							.getPredicateString()));
-					formBuilder.append("</li>");
-				} else if (element instanceof IEvent) {
-					IEvent evt = (IEvent) element;
-					formBuilder.append("<li style=\"bullet\">Event in ");
-					formBuilder.append(((IEventBRoot) evt.getParent()).getComponentName());
-					formBuilder.append("</li><li style=\"text\" value=\"\">");
-					formBuilder.append(UIUtils
-							.makeHyperlink(id, evt.getLabel()));
-					formBuilder.append(":</li>");
-					IRefinesEvent[] refinesClauses = evt.getRefinesClauses();
-					List<IParameter> params = UIUtils.getVisibleChildrenOfType(evt, IParameter.ELEMENT_TYPE);
-					List<IGuard> guards = UIUtils.getVisibleChildrenOfType(evt, IGuard.ELEMENT_TYPE);
-					IWitness[] witnesses = evt.getWitnesses();
-					List<IAction> actions = UIUtils.getVisibleChildrenOfType(evt, IAction.ELEMENT_TYPE);
-					
-					if (refinesClauses.length != 0) {
-						formBuilder
-								.append("<li style=\"text\" value=\"\" bindent = \"20\">");
-						formBuilder.append("<b>REFINES</b></li>");
-						for (IRefinesEvent refinesClause : refinesClauses) {
-							formBuilder
-									.append("<li style=\"text\" value=\"\" bindent=\"40\">");
-							formBuilder
-									.append(UIUtils.makeHyperlink(refinesClause
-											.getHandleIdentifier(),
-									refinesClause.getAbstractEventLabel()));
-							formBuilder.append("</li>");
+				formBuilder.append(ProofInformationRootItem.getInfo(element));
+				if (element instanceof IEvent) {
+					appendEventInfo(formBuilder, (IEvent) element, id);
+				} else {
+
+					final IElementDesc elementDesc = descRegistry
+							.getElementDesc(element);
+					for (IElementRelationship rel : elementDesc
+							.getChildRelationships()) {
+						final IImplicitChildProvider icp = rel
+								.getImplicitChildProvider();
+
+						if (!(element instanceof IInternalElement)) {
+							continue;
+						}
+
+						final IInternalElement ie = (IInternalElement) element;
+						final List<IInternalElement> children = new ArrayList<IInternalElement>();
+						if (icp != null) {
+							children.addAll(icp.getImplicitChildren(ie));
+						}
+						final IInternalElementType<?> childType = rel
+								.getChildType();
+						children.addAll(Arrays.asList(ie
+								.getChildrenOfType(childType)));
+						final IElementDesc childDesc = descRegistry
+								.getElementDesc(childType);
+						final String prefix = childDesc.getPrefix();
+						if (prefix.length() != 0 && !children.isEmpty()) {
+							appendPrefixOrSuffix(formBuilder, prefix);
+						}
+						// Display IIdentifierElements in the same row
+						if (!children.isEmpty()
+								&& children.get(0) instanceof IIdentifierElement) {
+							formBuilder.append(ProofInformationListItem
+									.getInfo(children, subLevel));
+						} else {
+							for (IInternalElement child : children) {
+								formBuilder.append(ProofInformationListItem
+										.getInfo(child, subLevel));
+							}
 						}
 					}
-					
-					if (params.size() != 0) {
-						formBuilder
-								.append("<li style=\"text\" value=\"\" bindent = \"20\">");
-						formBuilder.append("<b>ANY</b> ");
-						String sep = "";
-						for (IParameter param : params) {
-							formBuilder.append(sep);
-							sep = ", ";
-							formBuilder.append(UIUtils.makeHyperlink(param
-									.getHandleIdentifier(), param
-									.getIdentifierString()));
-						}
-						formBuilder.append(" <b>WHERE</b></li>");
-					} else if (guards.size() != 0) {
-						formBuilder
-								.append("<li style=\"text\" value=\"\" bindent = \"20\">");
-						formBuilder.append("<b>WHEN</b></li>");
-					} else {
-						formBuilder
-								.append("<li style=\"text\" value=\"\" bindent = \"20\">");
-						formBuilder.append("<b>BEGIN</b></li>");
-					}
-
-					for (IGuard guard : guards) {
-						formBuilder
-								.append("<li style=\"text\" value=\"\" bindent=\"40\">");
-						formBuilder.append(UIUtils.makeHyperlink(guard
-								.getHandleIdentifier(), guard.getLabel()));
-						formBuilder.append(": ");
-						formBuilder.append(UIUtils.XMLWrapUp(guard
-								.getPredicateString()));
-						formBuilder.append("</li>");
-					}
-
-					if (witnesses.length != 0) {
-						formBuilder
-								.append("<li style=\"text\" value=\"\" bindent = \"20\">");
-						formBuilder.append("<b>WITH</b></li>");
-						for (IWitness witness : witnesses) {
-							formBuilder
-									.append("<li style=\"text\" value=\"\" bindent=\"40\">");
-							formBuilder.append(UIUtils.makeHyperlink(witness
-									.getHandleIdentifier(), witness.getLabel()));
-							formBuilder.append(": ");
-							formBuilder.append(UIUtils.XMLWrapUp(witness
-									.getPredicateString()));
-							formBuilder.append("</li>");
-						}
-					}
-					
-					if (actions.size() != 0) {
-						formBuilder
-								.append("<li style=\"text\" value=\"\" bindent=\"20\">");
-						formBuilder.append("<b>THEN</b></li>");
-					}
-
-					for (IAction action : actions) {
-						formBuilder
-								.append("<li style=\"text\" value=\"\" bindent=\"40\">");
-						formBuilder.append(UIUtils.makeHyperlink(action
-								.getHandleIdentifier(), action.getLabel()));
-						formBuilder.append(": ");
-						formBuilder.append(UIUtils.XMLWrapUp(action
-								.getAssignmentString()));
-						formBuilder.append("</li>");
-					}
-					formBuilder
-							.append("<li style=\"text\" value=\"\" bindent=\"20\">");
-					formBuilder.append("<b>END</b></li>");
-				}
-				else {
-					if (ProofInformationUtils.DEBUG) {
-						ProofInformationUtils.debug("Unknow element " + element);
+					final String suffix = elementDesc.getChildrenSuffix();
+					if (suffix.length() != 0) {
+						appendPrefixOrSuffix(formBuilder, suffix);
 					}
 				}
 			}
 			formBuilder.append("</form>");
 			formText.getFormText().setText(formBuilder.toString(), true, false);
-
 			formText.getFormText().addHyperlinkListener(new HyperlinkAdapter() {
 
 				/*
 				 * (non-Javadoc)
 				 * 
-				 * @see org.eclipse.ui.forms.events.HyperlinkAdapter#linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent)
+				 * @see
+				 * org.eclipse.ui.forms.events.HyperlinkAdapter#linkActivated
+				 * (org.eclipse.ui.forms.events.HyperlinkEvent)
 				 */
 				@Override
 				public void linkActivated(HyperlinkEvent e) {
@@ -306,6 +234,55 @@ public class ProofInformationPage extends Page implements
 			e.printStackTrace();
 		}
 
+	}
+
+	private void appendEventInfo(StringBuilder sb, IEvent event, String id)
+			throws RodinDBException {
+		final IRefinesEvent[] refinesClauses = event.getRefinesClauses();
+		final List<IParameter> params = getVisibleChildrenOfType(event,
+				IParameter.ELEMENT_TYPE);
+		final List<IGuard> guards = getVisibleChildrenOfType(event,
+				IGuard.ELEMENT_TYPE);
+		final IWitness[] witnesses = event.getWitnesses();
+		final List<IAction> actions = getVisibleChildrenOfType(event,
+				IAction.ELEMENT_TYPE);
+
+		if (refinesClauses.length != 0) {
+			appendPrefixOrSuffix(sb, "REFINES");
+			for (IRefinesEvent refinesClause : refinesClauses) {
+				sb.append(getInfo(refinesClause, subLevel));
+			}
+		}
+		if (params.size() != 0) {
+			appendPrefixOrSuffix(sb, "ANY");
+			sb.append(getInfo(params, subLevel));
+			appendPrefixOrSuffix(sb, "WHERE");
+		} else if (guards.size() != 0) {
+			appendPrefixOrSuffix(sb, "WHEN");
+		} else {
+			appendPrefixOrSuffix(sb, "BEGIN");
+		}
+		for (IGuard guard : guards) {
+			sb.append(getInfo(guard, subLevel));
+		}
+		if (witnesses.length != 0) {
+			appendPrefixOrSuffix(sb, "WITH");
+			for (IWitness witness : witnesses) {
+				sb.append(getInfo(witness, subLevel));
+			}
+		}
+		if (actions.size() != 0) {
+			appendPrefixOrSuffix(sb, "THEN");
+		}
+		for (IAction action : actions) {
+			sb.append(getInfo(action, subLevel));
+		}
+		appendPrefixOrSuffix(sb, "END");
+	}
+
+	private static void appendPrefixOrSuffix(StringBuilder strb, String str) {
+		strb.append("<li style=\"text\" value=\"\" bindent = \"20\">");
+		strb.append("<b>" + str + "</b></li>");
 	}
 
 	/**
@@ -363,7 +340,7 @@ public class ProofInformationPage extends Page implements
 			return; // Do nothing
 		}
 
-		Display display = scrolledForm.getDisplay();
+		final Display display = scrolledForm.getDisplay();
 		
 		display.syncExec(new Runnable() {
 			@Override
@@ -380,7 +357,7 @@ public class ProofInformationPage extends Page implements
 						// The current proof state is changed.
 						proofState = userSupport.getCurrentPO();
 						if (proofState != null) {
-							IPSStatus prSequent = proofState.getPSStatus();
+							final IPSStatus prSequent = proofState.getPSStatus();
 							if (prSequent.exists()) {
 								scrolledForm.setText(prSequent.getElementName());
 								setFormText(prSequent, new NullProgressMonitor());
@@ -406,7 +383,7 @@ public class ProofInformationPage extends Page implements
 							return;
 						
 						if (proofState != null) {
-							IPSStatus prSequent = proofState.getPSStatus();
+							final IPSStatus prSequent = proofState.getPSStatus();
 							if (prSequent.exists()) {
 								scrolledForm.setText(prSequent.getElementName());
 								setFormText(prSequent, new NullProgressMonitor());
