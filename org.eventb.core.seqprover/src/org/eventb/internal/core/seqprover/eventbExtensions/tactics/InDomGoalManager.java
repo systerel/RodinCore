@@ -44,10 +44,13 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TotalDomRew
  */
 public class InDomGoalManager {
 
-	public final UnaryExpression domExpression;
-	List<IPosition> domPositions;
-	boolean truegoalTac;
-	Expression substitute;
+	protected final UnaryExpression domExpression;
+
+	private List<IPosition> domPositions;
+
+	private boolean truegoalTac;
+
+	private Expression substitute;
 
 	public InDomGoalManager(UnaryExpression domExpression, IPosition position) {
 		this.domExpression = domExpression;
@@ -103,7 +106,7 @@ public class InDomGoalManager {
 		final List<Expression> substitutesList = new ArrayList<Expression>(
 				substitutes);
 		final FormulaFactory ff = sequent.getFormulaFactory();
-		List<Predicate> autoGoals = new ArrayList<Predicate>();
+		final List<Predicate> autoGoals = new ArrayList<Predicate>();
 
 		for (Expression substitute : substitutesList) {
 			final Predicate rewrittenGoal = Lib.equalityRewrite(sequent.goal(),
@@ -142,7 +145,7 @@ public class InDomGoalManager {
 	 */
 	public Object applyTactics(IProofTreeNode ptNode, IProofMonitor pm) {
 
-		IProofTreeNode initialNode = ptNode;
+		final IProofTreeNode initialNode = ptNode;
 
 		// Applies totalDomRewrites for each total domain of the goal
 		for (IPosition domPosition : domPositions) {

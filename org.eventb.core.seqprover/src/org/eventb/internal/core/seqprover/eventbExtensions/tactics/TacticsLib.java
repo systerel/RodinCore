@@ -103,7 +103,7 @@ public class TacticsLib {
 	 */
 	public static Set<InDomGoalManager> createInDomManagers(final Predicate goal) {
 		final List<IPosition> domPositions = TacticsLib.findDomExpression(goal);
-		Set<InDomGoalManager> inDomManagers = new HashSet<InDomGoalManager>();
+		final Set<InDomGoalManager> inDomManagers = new HashSet<InDomGoalManager>();
 		for (IPosition position : domPositions) {
 			final UnaryExpression domExpr = ((UnaryExpression) goal
 					.getSubFormula(position));
@@ -128,13 +128,13 @@ public class TacticsLib {
 	 * @return list of total domain expression positions
 	 */
 	private static List<IPosition> findDomExpression(Predicate pred) {
-		List<IPosition> domPositions = pred.getPositions(new DefaultFilter() {
+		final List<IPosition> domPositions = pred.getPositions(new DefaultFilter() {
 			@Override
 			public boolean select(UnaryExpression expression) {
 				return (Lib.isDom(expression) && expression.isWellFormed());
 			}
 		});
-		List<IPosition> toBeRemoved = new ArrayList<IPosition>();
+		final List<IPosition> toBeRemoved = new ArrayList<IPosition>();
 		for (IPosition pos : domPositions) {
 			if (!Lib.isWDStrictPosition(pred, pos)) {
 				toBeRemoved.add(pos);
@@ -152,14 +152,14 @@ public class TacticsLib {
 	 * @return list of function application positions
 	 */
 	private static List<IPosition> findFunAppPositions(Predicate pred) {
-		List<IPosition> funAppPositions = new ArrayList<IPosition>();
+		final List<IPosition> funAppPositions = new ArrayList<IPosition>();
 		funAppPositions.addAll(pred.getPositions(new DefaultFilter() {
 			@Override
 			public boolean select(BinaryExpression expression) {
 				return (Lib.isFunApp(expression));
 			}
 		}));
-		List<IPosition> toBeRemoved = new ArrayList<IPosition>();
+		final List<IPosition> toBeRemoved = new ArrayList<IPosition>();
 		for (IPosition pos : funAppPositions) {
 			if (!Lib.isWDStrictPosition(pred, pos)) {
 				toBeRemoved.add(pos);
@@ -178,7 +178,7 @@ public class TacticsLib {
 	 * @return list of hypotheses
 	 */
 	private static List<Predicate> getInclusionHypotheses(IProverSequent seq) {
-		List<Predicate> inclusionHypothesis = new ArrayList<Predicate>();
+		final List<Predicate> inclusionHypothesis = new ArrayList<Predicate>();
 		for (Predicate hyp : seq.visibleHypIterable()) {
 			if (Lib.isInclusion(hyp)) {
 				inclusionHypothesis.add(hyp);
