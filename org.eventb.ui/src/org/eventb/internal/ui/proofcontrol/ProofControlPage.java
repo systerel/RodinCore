@@ -16,6 +16,7 @@
  *     Systerel - redirected dialog opening and externalized strings
  *     Systerel - fixed Hyperlink.setImage() calls
  *     Systerel - removed direct access to tactic preferences
+ *     Systerel - added support for autocompletion 
  *******************************************************************************/
 package org.eventb.internal.ui.proofcontrol;
 
@@ -102,6 +103,7 @@ import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBStyledText;
 import org.eventb.internal.ui.IEventBControl;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
 import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.internal.ui.prover.ICommandApplication;
@@ -635,6 +637,9 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				updateToolItems(editor.getUserSupport());
 			}
 		});
+
+		ContentProposalFactory.makeContentProposal(textWidget,
+				editor.getUserSupport());
 
 		toolkit.paintBordersFor(midComp);
 		

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Systerel and others.
+ * Copyright (c) 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,27 +13,32 @@ package org.eventb.internal.ui.autocompletion;
 import java.util.Set;
 
 import org.eclipse.jface.fieldassist.IContentProposal;
-import org.eventb.core.EventBPlugin;
-import org.eventb.core.ast.FormulaFactory;
-import org.rodinp.core.location.IAttributeLocation;
+import org.eventb.core.pm.IProofState;
+import org.eventb.core.pm.IUserSupport;
+import org.eventb.core.seqprover.IProofTreeNode;
 
-public class ProposalProvider extends AbstractProposalProvider {
+public class ProofProposalProvider extends AbstractProposalProvider {
 
-	private final IAttributeLocation location;
+	private final IUserSupport us;
 
-	public ProposalProvider(IAttributeLocation location, FormulaFactory factory) {
-		super(factory);
-		this.location = location;
+	private static final IContentProposal[] EMPTY = new IContentProposal[0];
+
+	public ProofProposalProvider(IUserSupport us) {
+		super(us.getFormulaFactory());
+		this.us = us;
 	}
 
 	@Override
 	protected IContentProposal[] makeAllProposals(String contents,
 			int position, String prefix) {
-		// TODO launch a job that waits up-to-date completions
-		// and then updates proposals
-
-		final Set<String> completions = EventBPlugin.getProposals(location,
-				false);
+		final IProofState po = us.getCurrentPO();
+		if (po == null)
+			return EMPTY;
+		final IProofTreeNode node = po.getCurrentNode();
+		if (node == null)
+			return EMPTY;
+		final Set<String> completions = node.getSequent().typeEnvironment()
+				.getNames();
 		return makeProposals(contents, position, prefix, completions);
 	}
 

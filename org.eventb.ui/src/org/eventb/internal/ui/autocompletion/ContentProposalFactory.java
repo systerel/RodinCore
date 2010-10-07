@@ -15,6 +15,7 @@ import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Text;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.pm.IUserSupport;
 import org.rodinp.core.location.IAttributeLocation;
 
 public class ContentProposalFactory {
@@ -35,6 +36,19 @@ public class ContentProposalFactory {
 
 	/**
 	 * Construct a content proposal adapter that can assist the user with
+	 * choosing content for StyledText control.
+	 * 
+	 * @param us
+	 *            the user support
+	 */
+	public static EventBContentProposalAdapter makeContentProposal(
+			StyledText text, IUserSupport us) {
+		return new EventBContentProposalAdapter(text,
+				new StyledTextContentAdapter(), getProposalProvider(us));
+	}
+
+	/**
+	 * Construct a content proposal adapter that can assist the user with
 	 * choosing content for a Text control.
 	 * 
 	 * @param factory
@@ -49,6 +63,19 @@ public class ContentProposalFactory {
 	/**
 	 * Construct a content proposal adapter that can assist the user with
 	 * choosing content for a Text control.
+	 * 
+	 * @param us
+	 *            the user support
+	 */
+	public static EventBContentProposalAdapter makeContentProposal(Text text,
+			IUserSupport us) {
+		return new EventBContentProposalAdapter(text, new TextContentAdapter(),
+				getProposalProvider(us));
+	}
+
+	/**
+	 * Construct a content proposal adapter that can assist the user with
+	 * choosing content for a Text control.
 	 */
 	public static EventBContentProposalAdapter makeContentProposal(
 			IContentProposalProvider provider, Text text) {
@@ -56,9 +83,14 @@ public class ContentProposalFactory {
 				new TextContentAdapter(), provider);
 	}
 
-	private static ProposalProvider getProposalProvider(
+	private static IContentProposalProvider getProposalProvider(
 			IAttributeLocation location, FormulaFactory factory) {
 		return new ProposalProvider(location, factory);
+	}
+
+	private static IContentProposalProvider getProposalProvider(
+			IUserSupport us) {
+		return new ProofProposalProvider(us);
 	}
 
 }

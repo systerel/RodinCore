@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Systerel - fixed menu bug
  *     ETH Zurich - adapted to org.rodinp.keyboard
  *     Systerel - refactored to use ITacticProvider2 and ITacticApplication
+ *     Systerel - added support for autocompletion 
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
@@ -47,6 +48,7 @@ import org.eventb.internal.ui.DoubleClickStyledTextListener;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.IEventBInputText;
+import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
 import org.eventb.ui.prover.ITacticApplication;
 import org.rodinp.keyboard.preferences.PreferenceConstants;
 
@@ -175,6 +177,7 @@ public class EventBPredicateText implements IPropertyChangeListener {
 			text.setText("     ");
 			boxes[i] = new EventBMath(text);
 			text.setBackground(EventBSharedColor.getSystemColor(SWT.COLOR_YELLOW));
+			ContentProposalFactory.makeContentProposal(text, us);
 			
 			text.addModifyListener(new ModifyListener() {
 

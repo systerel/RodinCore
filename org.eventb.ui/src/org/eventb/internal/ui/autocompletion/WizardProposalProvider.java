@@ -34,10 +34,10 @@ public class WizardProposalProvider extends ProposalProvider {
 	}
 
 	@Override
-	protected IContentProposal[] makeAllProposals(String contents, int position,
-			String prefix) {
-		final IContentProposal[] globalProposal = super.makeAllProposals(contents,
-				position, prefix);
+	protected IContentProposal[] makeAllProposals(String contents,
+			int position, String prefix) {
+		final IContentProposal[] globalProposal = super.makeAllProposals(
+				contents, position, prefix);
 		final IContentProposal[] localProposal = getLocalProposal(contents,
 				position, prefix);
 
