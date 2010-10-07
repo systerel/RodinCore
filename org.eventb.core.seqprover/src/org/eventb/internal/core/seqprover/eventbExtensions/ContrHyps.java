@@ -107,7 +107,7 @@ public class ContrHyps implements IVersionedReasoner {
 				display, NO_ANTECEDENT);
 	}
 
-	private Set<Predicate> contradictingPredicates(final Predicate pred) {
+	public static Set<Predicate> contradictingPredicates(Predicate pred) {
 		if (!Lib.isNeg(pred)) {
 			return null;
 		}

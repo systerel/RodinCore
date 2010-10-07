@@ -40,6 +40,7 @@ import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllI;
 import org.eventb.internal.core.seqprover.eventbExtensions.AutoImpF;
 import org.eventb.internal.core.seqprover.eventbExtensions.Conj;
+import org.eventb.internal.core.seqprover.eventbExtensions.ContrHyps;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteHypBoundedGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.HypOr;
@@ -188,12 +189,14 @@ public class AutoTactics {
 	 * @author Farhad Mehta
 	 *
 	 */
-	public static class FindContrHypsTac implements ITactic{
+	public static class FindContrHypsTac implements ITactic {
 
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 			for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
-				if (Lib.isNeg(shyp) &&
-						ptNode.getSequent().containsHypotheses(Lib.breakPossibleConjunct(Lib.negPred(shyp)))){
+				final Set<Predicate> contrHyps = ContrHyps
+						.contradictingPredicates(shyp);
+				if (contrHyps != null
+						&& ptNode.getSequent().containsHypotheses(contrHyps)) {
 					return Tactics.contrHyps(shyp).apply(ptNode, pm);
 				}
 			}
