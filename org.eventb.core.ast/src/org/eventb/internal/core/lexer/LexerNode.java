@@ -76,7 +76,7 @@ public class LexerNode extends AbstractLexerNode {
 		chars = text.toCharArray();
 		if (fident) {
 			int i;
-			for (i = 0; i < chars.length && genScan.extendIdent(chars[i]); i++) {
+			for (i = 0; i < chars.length && GenScan.extendIdent(chars[i]); i++) {
 				// skip
 			}
 			indIdent = i;
@@ -190,7 +190,7 @@ public class LexerNode extends AbstractLexerNode {
 					// characters of the token correspond to an identifier,
 					// we continue the recognition.
 					if (l == indIdent
-							&& (genScan.extendIdent(charAt) || '\'' == charAt)) {
+							&& (GenScan.extendIdent(charAt) || '\'' == charAt)) {
 						// TODO
 						// check if
 						// we can

@@ -33,7 +33,7 @@ public abstract class AbstractLexerNode {
 	public void adopt(String n, int kind, boolean ident) {
 		assert n.length() != 0;
 		final Character charAt = new Character(n.charAt(0));
-		final boolean firstIdent = ident && genScan.firstIdent(charAt);
+		final boolean firstIdent = ident && GenScan.firstIdent(charAt);
 		if (nodes == null) {
 			nodes = new HashMap<Character, LexerNode>();
 		}
