@@ -4,10 +4,10 @@
 	<head>
 		<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
 				<meta content="ASCII Representations of the Mathematical Symbols (Rodin User Manual),Index (Rodin User Manual),The Mathematical Language (Rodin User Manual)" name="keywords" />
-		<link href="" rel="shortcut icon" />
-		<link href="" rel="search" title="Event-B (English)" type="application/opensearchdescription+xml" />
-<link href="" rel="alternate" title="Event-B RSS Feed" type="application/rss+xml" />
-<link href="" rel="alternate" title="Event-B Atom Feed" type="application/atom+xml" />
+		<link href="http://wiki.event-b.org/favicon.ico" rel="shortcut icon" />
+		<link href="http://wiki.event-b.org/opensearch_desc.php" rel="search" title="Event-B (English)" type="application/opensearchdescription+xml" />
+<link href="http://wiki.event-b.org/index.php?title=Special:Recentchanges&amp;feed=rss" rel="alternate" title="Event-B RSS Feed" type="application/rss+xml" />
+<link href="http://wiki.event-b.org/index.php?title=Special:Recentchanges&amp;feed=atom" rel="alternate" title="Event-B Atom Feed" type="application/atom+xml" />
 		<title>ASCII Representations of the Mathematical Symbols (Rodin User Manual) - Event-B</title>
 		<style media="screen, projection" type="text/css">/*<![CDATA[*/
 			@import "shared.css";
@@ -43,7 +43,7 @@ var wgUserGroups = null;
 var wgUserLanguage = "en";
 var wgContentLanguage = "en";
 var wgBreakFrames = false;
-var wgCurRevisionId = "1409";
+var wgCurRevisionId = "6598";
 var wgVersion = "1.12.0";
 var wgEnableAPI = true;
 var wgEnableWriteAPI = false;
@@ -52,11 +52,11 @@ var wgEnableWriteAPI = false;
 		<script src="wikibits.js_116" type="text/javascript"><!-- wikibits js --></script>
 		<!-- Head Scripts -->
 		<script src="ajax.js_116" type="text/javascript"></script>
-		<script src="" type="text/javascript"><!-- site js --></script>
+		<script src="http://wiki.event-b.org/index.php?title=-&amp;action=raw&amp;gen=js&amp;useskin=monobook" type="text/javascript"><!-- site js --></script>
 		<style type="text/css">/*<![CDATA[*/
-@import "";
-@import "";
-@import "";
+@import "http://wiki.event-b.org/index.php?title=MediaWiki:Common.css&usemsgcache=yes&action=raw&ctype=text/css&smaxage=18000";
+@import "http://wiki.event-b.org/index.php?title=MediaWiki:Monobook.css&usemsgcache=yes&action=raw&ctype=text/css&smaxage=18000";
+@import "http://wiki.event-b.org/index.php?title=-&action=raw&gen=css&maxage=18000";
 /*]]>*/</style>
 	</head>
 <body class="mediawiki ns-0 ltr page-ASCII_Representations_of_the_Mathematical_Symbols_Rodin_User_Manual">
@@ -78,8 +78,10 @@ var wgEnableWriteAPI = false;
 <li class="toclevel-1"><a href="#Unary_Operators"><span class="tocnumber">2</span> <span class="toctext">Unary Operators</span></a></li>
 <li class="toclevel-1"><a href="#Assignment_Operators"><span class="tocnumber">3</span> <span class="toctext">Assignment Operators</span></a></li>
 <li class="toclevel-1"><a href="#Binary_Operators"><span class="tocnumber">4</span> <span class="toctext">Binary Operators</span></a></li>
-<li class="toclevel-1"><a href="#Quantifiers"><span class="tocnumber">5</span> <span class="toctext">Quantifiers</span></a></li>
-<li class="toclevel-1"><a href="#Bracketing"><span class="tocnumber">6</span> <span class="toctext">Bracketing</span></a></li>
+<li class="toclevel-1"><a href="#Multiple_Operators"><span class="tocnumber">5</span> <span class="toctext">Multiple Operators</span></a></li>
+<li class="toclevel-1"><a href="#Quantifiers"><span class="tocnumber">6</span> <span class="toctext">Quantifiers</span></a></li>
+<li class="toclevel-1"><a href="#Bracketing"><span class="tocnumber">7</span> <span class="toctext">Bracketing</span></a></li>
+<li class="toclevel-1"><a href="#Typing"><span class="tocnumber">8</span> <span class="toctext">Typing</span></a></li>
 </ul>
 </td></tr></table><script type="text/javascript"> if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } </script>
 </td></tr></table>
@@ -106,7 +108,12 @@ var wgEnableWriteAPI = false;
 </td></tr>
 <tr align="center" class="ASrow" style="font-family:monospace;">
 <td>NAT1</td><td><img alt="\mathord {\mathbb N_1}" class="tex" src="images/math_072c.png" />
-</td></tr>
+</td></tr></table>
+<table border="1" cellpadding="8" cellspacing="4" class="AStable" frame="box" rules="all" style="margin:1em 1em 1em 0; border-style:solid; border-color:#AAAAAA; display:inline-table;">
+
+<tr bgcolor="#CCCCCC">
+<th> ASCII </th><th> Symbol
+</th></tr>
 <tr align="center" class="ASrow" style="font-family:monospace;">
 <td>BOOL</td><td><img alt="\mathord {\mathrm{BOOL}}" class="tex" src="images/math_625f.png" />
 </td></tr>
@@ -118,6 +125,20 @@ var wgEnableWriteAPI = false;
 </td></tr>
 <tr align="center" class="ASrow" style="font-family:monospace;">
 <td>{} </td><td><img alt="\emptyset " class="tex" src="images/math_14dc.png" />
+</td></tr></table>
+<table border="1" cellpadding="8" cellspacing="4" class="AStable" frame="box" rules="all" style="margin:1em 1em 1em 0; border-style:solid; border-color:#AAAAAA; display:inline-table;">
+
+<tr bgcolor="#CCCCCC">
+<th> ASCII </th><th> Symbol
+</th></tr>
+<tr align="center" class="ASrow" style="font-family:monospace;">
+<td>prj1</td><td><img alt="\prjone " class="tex" src="images/math_9c5a.png" />
+</td></tr>
+<tr align="center" class="ASrow" style="font-family:monospace;">
+<td>prj2</td><td><img alt="\prjtwo " class="tex" src="images/math_67fa.png" />
+</td></tr>
+<tr align="center" class="ASrow" style="font-family:monospace;">
+<td>id</td><td><img alt="\id " class="tex" src="images/math_a2d2.png" />
 </td></tr></table>
 </center>
 <a name="Unary_Operators"></a><h2> <span class="mw-headline"> Unary Operators </span></h2>
@@ -160,19 +181,13 @@ var wgEnableWriteAPI = false;
 <td>ran</td><td><img alt="\ran " class="tex" src="images/math_4aa8.png" />
 </td></tr>
 <tr align="center" class="ASrow" style="font-family:monospace;">
-<td>prj1</td><td><img alt="\prjone " class="tex" src="images/math_9c5a.png" />
+<td> ~ </td><td> ~
 </td></tr></table>
 <table border="1" cellpadding="8" cellspacing="4" class="AStable" frame="box" rules="all" style="margin:1em 1em 1em 0; border-style:solid; border-color:#AAAAAA; display:inline-table;">
 
 <tr bgcolor="#CCCCCC">
 <th> ASCII </th><th> Symbol
 </th></tr>
-<tr align="center" class="ASrow" style="font-family:monospace;">
-<td>prj2</td><td><img alt="\prjtwo " class="tex" src="images/math_67fa.png" />
-</td></tr>
-<tr align="center" class="ASrow" style="font-family:monospace;">
-<td>id</td><td><img alt="\id " class="tex" src="images/math_a2d2.png" />
-</td></tr>
 <tr align="center" class="ASrow" style="font-family:monospace;">
 <td>min</td><td><span class="texhtml">min</span>
 </td></tr>
@@ -283,10 +298,10 @@ var wgEnableWriteAPI = false;
 <td> --&gt;</td><td><img alt="\tfun " class="tex" src="images/math_dbe2.png" />
 </td></tr>
 <tr align="center" class="ASrow" style="font-family:monospace;">
-<td> +-&gt;&gt;</td><td><img alt="\psur " class="tex" src="images/math_dda4.png" />
+<td> +&gt;&gt;</td><td><img alt="\psur " class="tex" src="images/math_dda4.png" />
 </td></tr>
 <tr align="center" class="ASrow" style="font-family:monospace;">
-<td> --&gt;&gt;</td><td><img alt="\tsur " class="tex" src="images/math_78af.png" />
+<td> -&gt;&gt;</td><td><img alt="\tsur " class="tex" src="images/math_78af.png" />
 </td></tr>
 <tr align="center" class="ASrow" style="font-family:monospace;">
 <td> &gt;-&gt;&gt;</td><td><img alt="\tbij " class="tex" src="images/math_5b6c.png" />
@@ -324,6 +339,9 @@ var wgEnableWriteAPI = false;
 <td>&gt;&lt;</td><td><img alt="\dprod " class="tex" src="images/math_b65f.png" />
 </td></tr>
 <tr align="center" class="ASrow" style="font-family:monospace;">
+<td>circ</td><td><img alt="\bcomp " class="tex" src="images/math_a9ea.png" />
+</td></tr>
+<tr align="center" class="ASrow" style="font-family:monospace;">
 <td>;</td><td><img alt="\fcomp " class="tex" src="images/math_ba51.png" />
 </td></tr>
 <tr align="center" class="ASrow" style="font-family:monospace;">
@@ -345,22 +363,35 @@ var wgEnableWriteAPI = false;
 <td>/</td><td><img alt="\div " class="tex" src="images/math_5ae7.png" />
 </td></tr>
 <tr align="center" class="ASrow" style="font-family:monospace;">
-<td>mod</td><td><img alt="\mod " class="tex" src="images/math_49e1.png" />
-</td></tr>
-<tr align="center" class="ASrow" style="font-family:monospace;">
 <td>..</td><td><img alt="\upto " class="tex" src="images/math_9cda.png" />
 </td></tr>
 <tr align="center" class="ASrow" style="font-family:monospace;">
 <td> ^ </td><td><img alt="\expn " class="tex" src="images/math_bdd1.png" />
 </td></tr>
 <tr align="center" class="ASrow" style="font-family:monospace;">
-<td> ~ </td><td><span class="texhtml"><sup> &minus; 1</sup></span>
-</td></tr>
-<tr align="center" class="ASrow" style="font-family:monospace;">
 <td> + </td><td><span class="texhtml"> + </span>
 </td></tr>
 <tr align="center" class="ASrow" style="font-family:monospace;">
 <td> |&gt;&gt; </td><td><img alt="\ransub " class="tex" src="images/math_19c1.png" />
+</td></tr></table>
+<table border="1" cellpadding="8" cellspacing="4" class="AStable" frame="box" rules="all" style="margin:1em 1em 1em 0; border-style:solid; border-color:#AAAAAA; display:inline-table;">
+
+<tr bgcolor="#CCCCCC">
+<th> ASCII </th><th> Symbol
+</th></tr>
+<tr align="center" class="ASrow" style="font-family:monospace;">
+<td>mod</td><td><img alt="\mod " class="tex" src="images/math_49e1.png" />
+</td></tr></table>
+</center>
+<a name="Multiple_Operators"></a><h2> <span class="mw-headline">Multiple Operators </span></h2>
+<center>
+<table border="1" cellpadding="8" cellspacing="4" class="AStable" frame="box" rules="all" style="margin:1em 1em 1em 0; border-style:solid; border-color:#AAAAAA; display:inline-table;">
+
+<tr bgcolor="#CCCCCC">
+<th> ASCII </th><th> Symbol
+</th></tr>
+<tr align="center" class="ASrow" style="font-family:monospace;">
+<td> partition </td><td> <img alt="\operatorname{partition} " class="tex" src="images/math_d7f0.png" />
 </td></tr></table>
 </center>
 <a name="Quantifiers"></a><h2> <span class="mw-headline"> Quantifiers </span></h2>
@@ -420,21 +451,32 @@ var wgEnableWriteAPI = false;
 <td> } </td><td><span class="texhtml">}</span>
 </td></tr></table>
 </center>
+<a name="Typing"></a><h2> <span class="mw-headline">Typing </span></h2>
+<center>
+<table border="1" cellpadding="8" cellspacing="4" class="AStable" frame="box" rules="all" style="margin:1em 1em 1em 0; border-style:solid; border-color:#AAAAAA; display:inline-table;">
+
+<tr bgcolor="#CCCCCC">
+<th> ASCII </th><th> Symbol
+</th></tr>
+<tr align="center" class="ASrow" style="font-family:monospace;">
+<td> oftype </td><td> <a class="image" href="http://wiki.event-b.org/index.php/Image:Oftype.gif" title="Image:oftype.gif"><img alt="Image:oftype.gif" border="0" height="45" src="images/oftype.gif" width="45" /></a>
+</td></tr></table>
+</center>
 <p><br />
 </p>
 <div class="navigation"><table border="2" cellpadding="3" cellspacing="4" rules="all" style="border:2px solid #999999; margin:1em 1em 1em 0;"><tr><td style="vertical-align:sub;"><b>&lt;</b><small>prev:</small> <a href="the_mathematical_language_rodin_user_manual.html" title="The Mathematical Language (Rodin User Manual)">The Mathematical Language</a></td>  <td style="vertical-align:sub;"><b>^</b><small>up:</small> <a href="index_rodin_user_manual1.html" title="Index (Rodin User Manual)">User_Manual_index</a></td></tr></table></div></div>
 
 <!-- 
 NewPP limit report
-Preprocessor node count: 463/1000000
-Post-expand include size: 9630/2097152 bytes
+Preprocessor node count: 478/1000000
+Post-expand include size: 11032/2097152 bytes
 Template argument size: 488/2097152 bytes
 -->
 
-<!-- Saved in parser cache with key mediawiki_eventb:pcache:idhash:65-0!1!0!!en!2!edit=0 and timestamp 20090301174901 -->
+<!-- Saved in parser cache with key mediawiki_eventb:pcache:idhash:65-0!1!0!!en!2!edit=0 and timestamp 20101008135347 -->
 <div class="printfooter">
 Retrieved from "<a href="">http://wiki.event-b.org/index.php/ASCII_Representations_of_the_Mathematical_Symbols_%28Rodin_User_Manual%29</a>"</div>
-			<div id="catlinks"><p class="catlinks"><a href="" title="Special:Categories">Categories</a>: <span dir="ltr"><a href="" title="Category:User documentation">User documentation</a></span> | <span dir="ltr"><a class="new" href="" title="Category:Rodin Platform">Rodin Platform</a></span> | <span dir="ltr"><a class="new" href="" title="Category:User manual">User manual</a></span></p></div>			<!-- end content --><!-- ('div', {'class': 'visualClear'}) ('/div', {}) --></div></div></div>
+			<div id="catlinks"><p class="catlinks"><a href="http://wiki.event-b.org/index.php/Special:Categories" title="Special:Categories">Categories</a>: <span dir="ltr"><a href="http://wiki.event-b.org/index.php/Category:User_documentation" title="Category:User documentation">User documentation</a></span> | <span dir="ltr"><a href="http://wiki.event-b.org/index.php/Category:Rodin_Platform" title="Category:Rodin Platform">Rodin Platform</a></span> | <span dir="ltr"><a href="http://wiki.event-b.org/index.php/Category:User_manual" title="Category:User manual">User manual</a></span></p></div>			<!-- end content --><!-- ('div', {'class': 'visualClear'}) ('/div', {}) --></div></div></div>
     <div id="column-one">
       <!-- ('div', {'id': 'p-cactions', 'class': 'portlet'}) ('/div', {}) -->
       <!-- ('div', {'class': 'portlet', 'id': 'p-personal'}) ('/div', {}) -->
@@ -450,15 +492,15 @@ Retrieved from "<a href="">http://wiki.event-b.org/index.php/ASCII_Representatio
 			<!-- ('div', {'class': 'visualClear'}) ('/div', {}) -->
 			<div id="footerHacked">
 				<ul id="f-list">
-				<li id="lastmod"> This page was last modified 20:32, 10 September 2008.</li>
-				<li id="viewcount">This page has been accessed 828 times.</li>
-				<li id="privacy"><a href="" title="Event-B:Privacy policy">Privacy policy</a></li>
-				<li id="about"><a href="" title="Event-B:About">About Event-B</a></li>
-				<li id="disclaimer"><a href="" title="Event-B:General disclaimer">Disclaimers</a></li>
+				<li id="lastmod"> This page was last modified 12:06, 17 August 2010.</li>
+				<li id="viewcount">This page has been accessed 5,327 times.</li>
+				<li id="privacy"><a href="http://wiki.event-b.org/index.php/Event-B:Privacy_policy" title="Event-B:Privacy policy">Privacy policy</a></li>
+				<li id="about"><a href="http://wiki.event-b.org/index.php/Event-B:About" title="Event-B:About">About Event-B</a></li>
+				<li id="disclaimer"><a href="http://wiki.event-b.org/index.php/Event-B:General_disclaimer" title="Event-B:General disclaimer">Disclaimers</a></li>
 			</ul>
 		</div>
 		
 	
 		<script type="text/javascript">if (window.runOnloadHook) runOnloadHook();</script>
 </div>
-<!-- Served in 0.137 secs. --><br /></body></html>
+<!-- Served in 0.212 secs. --><br /></body></html>

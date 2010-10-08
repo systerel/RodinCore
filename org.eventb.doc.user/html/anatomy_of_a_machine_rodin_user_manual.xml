@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<toc label="Anatomy of a Machine (Rodin User Manual)">
+  <topic label="Dependencies" href="html/anatomy_of_a_machine_rodin_user_manual.html#Dependencies">
+  </topic>
+  <topic label="Variables" href="html/anatomy_of_a_machine_rodin_user_manual.html#Variables">
+   <topic label="Variables Creation Wizard" href="html/anatomy_of_a_machine_rodin_user_manual.html#Variables_Creation_Wizard">
+   </topic>
+   <topic label="Direct Editing of Variables" href="html/anatomy_of_a_machine_rodin_user_manual.html#Direct_Editing_of_Variables">
+   </topic>
+  </topic>
+  <topic label="Invariants" href="html/anatomy_of_a_machine_rodin_user_manual.html#Invariants">
+   <topic label="Invariants Creation Wizard" href="html/anatomy_of_a_machine_rodin_user_manual.html#Invariants_Creation_Wizard">
+   </topic>
+   <topic label="Direct Editing of Invariants" href="html/anatomy_of_a_machine_rodin_user_manual.html#Direct_Editing_of_Invariants">
+   </topic>
+  </topic>
+  <topic label="Events" href="html/anatomy_of_a_machine_rodin_user_manual.html#Events">
+   <topic label="Events Creation Wizard" href="html/anatomy_of_a_machine_rodin_user_manual.html#Events_Creation_Wizard">
+   </topic>
+   <topic label="Direct Editing of Events" href="html/anatomy_of_a_machine_rodin_user_manual.html#Direct_Editing_of_Events">
+   </topic>
+  </topic>
+  <topic label="Adding Comments" href="html/anatomy_of_a_machine_rodin_user_manual.html#Adding_Comments">
+  </topic>
+  <topic label="Pretty Print" href="html/anatomy_of_a_machine_rodin_user_manual.html#Pretty_Print">
+  </topic>
+  <topic label="Dependencies: Refining a Machine" href="html/anatomy_of_a_machine_rodin_user_manual.html#Dependencies:_Refining_a_Machine">
+  </topic>
+  <topic label="Adding more Dependencies" href="html/anatomy_of_a_machine_rodin_user_manual.html#Adding_more_Dependencies">
+   <topic label="Abstract Event" href="html/anatomy_of_a_machine_rodin_user_manual.html#Abstract_Event">
+   </topic>
+   <topic label="Splitting an Event" href="html/anatomy_of_a_machine_rodin_user_manual.html#Splitting_an_Event">
+   </topic>
+   <topic label="Merging Events" href="html/anatomy_of_a_machine_rodin_user_manual.html#Merging_Events">
+   </topic>
+   <topic label="Closing Events" href="html/anatomy_of_a_machine_rodin_user_manual.html#Closing_Events">
+   </topic>
+   <topic label="Witnesses" href="html/anatomy_of_a_machine_rodin_user_manual.html#Witnesses">
+   </topic>
+   <topic label="Variant" href="html/anatomy_of_a_machine_rodin_user_manual.html#Variant">
+   </topic>
+  </topic>
+  <topic label="Synthesis" href="html/anatomy_of_a_machine_rodin_user_manual.html#Synthesis">
+  </topic>
+</toc>

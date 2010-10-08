@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<toc label="Anatomy of a Context (Rodin User Manual)">
+  <topic label="Carrier Sets" href="html/anatomy_of_a_context_rodin_user_manual.html#Carrier_Sets">
+   <topic label="Carrier Sets Creation Wizard." href="html/anatomy_of_a_context_rodin_user_manual.html#Carrier_Sets_Creation_Wizard.">
+   </topic>
+   <topic label="Direct Editing of Carrier Sets." href="html/anatomy_of_a_context_rodin_user_manual.html#Direct_Editing_of_Carrier_Sets.">
+   </topic>
+  </topic>
+  <topic label="Enumerated Sets" href="html/anatomy_of_a_context_rodin_user_manual.html#Enumerated_Sets">
+  </topic>
+  <topic label="Constants" href="html/anatomy_of_a_context_rodin_user_manual.html#Constants">
+   <topic label="Constants Creation Wizard." href="html/anatomy_of_a_context_rodin_user_manual.html#Constants_Creation_Wizard.">
+   </topic>
+   <topic label="Direct Editing of Constants." href="html/anatomy_of_a_context_rodin_user_manual.html#Direct_Editing_of_Constants.">
+   </topic>
+  </topic>
+  <topic label="Axioms" href="html/anatomy_of_a_context_rodin_user_manual.html#Axioms">
+   <topic label="Axioms Creation Wizard." href="html/anatomy_of_a_context_rodin_user_manual.html#Axioms_Creation_Wizard.">
+   </topic>
+   <topic label="Direct Editing of Axioms." href="html/anatomy_of_a_context_rodin_user_manual.html#Direct_Editing_of_Axioms.">
+   </topic>
+  </topic>
+  <topic label="Adding Comments" href="html/anatomy_of_a_context_rodin_user_manual.html#Adding_Comments">
+  </topic>
+  <topic label="Dependencies" href="html/anatomy_of_a_context_rodin_user_manual.html#Dependencies">
+  </topic>
+  <topic label="Pretty Print" href="html/anatomy_of_a_context_rodin_user_manual.html#Pretty_Print">
+  </topic>
+  <topic label="Synthesis" href="html/anatomy_of_a_context_rodin_user_manual.html#Synthesis">
+  </topic>
+</toc>

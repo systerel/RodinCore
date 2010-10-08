@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<toc label="Rodin User Manual">
+  <topic label="1 Project" href="html/project_rodin_user_manual.html">
+   <link toc="project_rodin_user_manual.xml" />  </topic>
+  <topic label="2 Anatomy of a Context" href="html/anatomy_of_a_context_rodin_user_manual.html">
+   <link toc="anatomy_of_a_context_rodin_user_manual.xml" />  </topic>
+  <topic label="3 Anatomy of a Machine" href="html/anatomy_of_a_machine_rodin_user_manual.html">
+   <link toc="anatomy_of_a_machine_rodin_user_manual.xml" />  </topic>
+  <topic label="4 Saving a Context or a Machine" href="html/saving_a_context_or_a_machine_rodin_user_manual.html">
+   <link toc="saving_a_context_or_a_machine_rodin_user_manual.xml" />  </topic>
+  <topic label="5 The Event-B Explorer" href="html/the_event_b_explorer_rodin_user_manual.html">
+   <link toc="the_event_b_explorer_rodin_user_manual.xml" />  </topic>
+  <topic label="6 The Proving Perspective" href="html/http://wiki.event-b.org/index.php/Rodin_Proving_Perspective">
+   <link toc="http://wiki.event-b.org/index.php/Rodin_Proving_Perspective.xml" />  </topic>
+  <topic label="A The Mathematical Language" href="html/the_mathematical_language_rodin_user_manual.html">
+   <link toc="the_mathematical_language_rodin_user_manual.xml" />  </topic>
+  <topic label="B ASCII Representations of the Mathematical Symbols" href="html/ascii_representations_of_the_mathematical_symbols_rodin_user_manual.html">
+   <link toc="ascii_representations_of_the_mathematical_symbols_rodin_user_manual.xml" />  </topic>
+</toc>
