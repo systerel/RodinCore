@@ -1120,6 +1120,15 @@
             tooltip="%proofTactics.sir.tooltip"/>
       <tactic
             icon="icons/pending.gif"
+            id="org.eventb.ui.inclusionSetMinusLeft"
+            interrupt="false"
+            name="%proofTactics.inclusionSetMinusLeft.name"
+            priority="9"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.InclusionSetMinusLeft"
+            target="any"
+            tooltip="%proofTactics.inclusionSetMinusLeft.tooltip"/>
+      <tactic
+            icon="icons/pending.gif"
             id="org.eventb.ui.inclusionSetMinusRight"
             interrupt="false"
             name="%proofTactics.inclusionSetMinusRight.name"

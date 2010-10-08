@@ -709,11 +709,6 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 		expressionTest("{x ∣ x > 0} ∩ S ∩ T", "{x ∣ x > 0} ∩ ℤ ∩ S ∩ T ∩ ℤ");
 		expressionTest("{x ∣ x > 0} ∩ S ∩ T", "ℤ ∩ {x ∣ x > 0} ∩ ℤ ∩ S ∩ T ∩ ℤ ");
 
-		
-		// A \ B <: S == A <: S \/ B
-		predicateTest("A ⊆ {x ∣ x > 0} ∪ B", "A ∖ B ⊆ {x ∣ x > 0} ");
-
-		
 		// r[∅] == ∅
 		expressionTest("(∅ ⦂ ℙ(T))", "r[(∅ ⦂ ℙ(S))]", "r", "ℙ(S×T)");
 		expressionTest("(∅ ⦂ ℙ(T))", "(∅ ⦂ ℙ(S×T))[(∅ ⦂ ℙ(S))]");

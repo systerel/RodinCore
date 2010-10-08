@@ -14,10 +14,9 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.seqprover.SequentProver;
 
-public class InclusionSetMinusRightRewrites extends InclusionSetMinusRewrites {
+public class InclusionSetMinusLeftRewrites extends InclusionSetMinusRewrites {
 
-	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".inclusionSetMinusRightRewrites";
-
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".inclusionSetMinusLeftRewrites";
 
 	public String getReasonerID() {
 		return REASONER_ID;
@@ -25,7 +24,7 @@ public class InclusionSetMinusRightRewrites extends InclusionSetMinusRewrites {
 
 	@Override
 	protected IFormulaRewriter makeRewriter(FormulaFactory ff) {
-		return new InclusionSetMinusRightRewriterImpl(ff);
+		return new InclusionSetMinusLeftRewriterImpl(ff);
 	}
 
 }

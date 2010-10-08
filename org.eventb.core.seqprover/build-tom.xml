@@ -53,6 +53,7 @@
 		<delete file="${rewriter.src}/EqvRewriterImpl.java" />
 		<delete file="${rewriter.src}/ImpAndRewriterImpl.java" />
 		<delete file="${rewriter.src}/ImpOrRewriterImpl.java" />
+		<delete file="${rewriter.src}/InclusionSetMinusLeftRewriterImpl.java" />
 		<delete file="${rewriter.src}/InclusionSetMinusRightRewriterImpl.java" />
 		<delete file="${rewriter.src}/PartitionRewriterImpl.java" />
 		<delete file="${rewriter.src}/RanCompRewriterImpl.java" />

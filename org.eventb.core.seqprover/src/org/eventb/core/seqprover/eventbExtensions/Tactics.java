@@ -116,9 +116,9 @@ import org.eventb.internal.core.seqprover.eventbExtensions.FunSingletonImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.He;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
+import org.eventb.internal.core.seqprover.eventbExtensions.IsFunImageGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.ModusTollens;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointRule;
-import org.eventb.internal.core.seqprover.eventbExtensions.IsFunImageGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites.Input;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AndOrDistRewrites;
@@ -139,6 +139,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimpI
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimplifies;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpAndRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpOrRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.InclusionSetMinusLeftRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.InclusionSetMinusRightRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PartitionRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RanCompRewrites;
@@ -3460,6 +3461,34 @@ public class Tactics {
 
 	/**
 	 * Return the list of applicable positions of the tactic "rewrite inclusion
+	 * with set minus on the left" {@link InclusionSetMinusLeftRewrites} to a
+	 * predicate.
+	 * <p>
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of applicable positions
+	 * @author htson
+	 * @since 2.0
+	 */
+	public static List<IPosition> inclusionSetMinusLeftRewritesGetPositions(
+			Predicate predicate) {
+		return predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(RelationalPredicate predicate) {
+				if (predicate.getTag() == Predicate.SUBSETEQ) {
+					if (Lib.isSetMinus(predicate.getLeft()))
+						return true;
+				}
+				return super.select(predicate);
+			}
+
+		});
+	}
+
+	/**
+	 * Return the list of applicable positions of the tactic "rewrite inclusion
 	 * with set minus on the right" {@link InclusionSetMinusRightRewrites} to a
 	 * predicate.
 	 * <p>
@@ -3485,6 +3514,27 @@ public class Tactics {
 		});
 	}
 
+
+	/**
+	 * Return the tactic "rewrites inclusion with set minus on the left"
+	 * {@link InclusionSetMinusRightRewrites} which is applicable to a
+	 * hypothesis at a given position.
+	 * <p>
+	 * 
+	 * @param hyp
+	 *            a hypothesis or <code>null</code> if the application happens
+	 *            in goal
+	 * @param position
+	 *            a position
+	 * @return The tactic "rewrites inclusion with set minus on the left"
+	 * @author htson
+	 * @since 2.0
+	 */
+	public static ITactic inclusionSetMinusLeftRewrites(Predicate hyp,
+			IPosition position) {
+		return BasicTactics.reasonerTac(new InclusionSetMinusLeftRewrites(),
+				new InclusionSetMinusLeftRewrites.Input(hyp, position));
+	}
 
 	/**
 	 * Return the tactic "rewrites inclusion with set minus on the right"

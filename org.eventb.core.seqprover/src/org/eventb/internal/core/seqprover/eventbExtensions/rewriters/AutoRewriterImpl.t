@@ -572,7 +572,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_EQUAL_MAPSTO", "SIMP_SPECIAL_EQUAL_TRUE", "SIMP_NOTEQUAL",
             "SIMP_NOTIN", "SIMP_NOTSUBSET", "SIMP_NOTSUBSETEQ",
             "SIMP_SPECIAL_SUBSETEQ", "SIMP_MULTI_SUBSETEQ",
-            "DERIV_SUBSETEQ_SETMINUS_L", "SIMP_SUBSETEQ_BUNION",
+            "SIMP_SUBSETEQ_BUNION",
             "SIMP_SUBSETEQ_BINTER", "DERIV_SUBSETEQ_BUNION",
             "DERIV_SUBSETEQ_BINTER", "SIMP_SPECIAL_IN", "SIMP_MULTI_IN",
             "SIMP_IN_SING", "SIMP_IN_COMPSET", "SIMP_IN_COMPSET_ONEPOINT",
@@ -745,21 +745,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				return result;
 	    	}
 			
-	    	/**
-             * DERIV_SUBSETEQ_SETMINUS_L
-	    	 * Set Theory: A ∖ B ⊆ S == A ⊆ S ∪ B
-	    	 */
-	    	SubsetEq(SetMinus(A, B), S) -> {
-	    		Expression [] children = new Expression[2];
-	    		children[0] = `S;
-	    		children[1] = `B;
-	    		Expression union = makeAssociativeExpression(Expression.BUNION,
-	    				children);
-	    		result = makeRelationalPredicate(Predicate.SUBSETEQ, `A, union);
-	    		trace(predicate, result, "DERIV_SUBSETEQ_SETMINUS_L");
-				return result;
-	    	}
-	    	
 	    	/**
              * SIMP_SUBSETEQ_BUNION
 	    	 * Set Theory: S ⊆ A ∪ ... ∪ S ∪ ... ∪ B == ⊤

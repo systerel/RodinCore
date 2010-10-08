@@ -166,6 +166,10 @@
             id="sir"
             name="%sirName"/>
       <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.InclusionSetMinusLeftRewrites"
+            id="inclusionSetMinusLeftRewrites"
+            name="%inclusionSetMinusLeftRewritesName"/>
+       <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.InclusionSetMinusRightRewrites"
             id="inclusionSetMinusRightRewrites"
             name="%inclusionSetMinusRightRewritesName"/>

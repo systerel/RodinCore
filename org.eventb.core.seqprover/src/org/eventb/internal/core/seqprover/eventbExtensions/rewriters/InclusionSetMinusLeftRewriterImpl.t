@@ -46,40 +46,32 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrite
  * Basic manual rewriter for the Event-B sequent prover.
  */
 @SuppressWarnings("unused")
-public class InclusionSetMinusRightRewriterImpl extends AutoRewriterImpl {
+public class InclusionSetMinusLeftRewriterImpl extends AutoRewriterImpl {
 
-	public InclusionSetMinusRightRewriterImpl(FormulaFactory ff) {
+	public InclusionSetMinusLeftRewriterImpl(FormulaFactory ff) {
 		super(ff, Level.L0);
 	}
 
 	%include {FormulaV2.tom}
 
-    @ProverRule("DERIV_SUBSETEQ_SETMINUS_R")	
+    @ProverRule("DERIV_SUBSETEQ_SETMINUS_L")	
 	@Override
 	public Predicate rewrite(RelationalPredicate predicate) {
 
 	    %match (Predicate predicate) {
-		    	
+	    	    	
 	    	/**
-             * DERIV_SUBSETEQ_SETMINUS_R
-	    	 * Set Theory: S ⊆ A ∖ B == (S ⊆ A ∧ S ∩ B = ∅) 
+	    	 * DERIV_SUBSETEQ_SETMINUS_L
+	    	 * Set Theory: A ∖ B ⊆ S == A ⊆ S ∪ B
 	    	 */
-	    	SubsetEq(S, SetMinus(A, B)) -> {
-	    		Predicate [] childrenPred = new Predicate[2];
-	    		childrenPred[0] = ff.makeRelationalPredicate(Predicate.SUBSETEQ,
-	    				`S, `A, null);
+	    	SubsetEq(SetMinus(A, B), S) -> {
 	    		Expression [] children = new Expression[2];
 	    		children[0] = `S;
 	    		children[1] = `B;
-	    		Expression inter = ff.makeAssociativeExpression(Expression.BINTER,
-	    				children, null);
-	    		Expression emptySet = ff.makeEmptySet(`S.getType(), null);
-	    		childrenPred[1] = ff.makeRelationalPredicate(Predicate.EQUAL,
-	    				inter, emptySet, null);  
-	    		return ff.makeAssociativePredicate(Predicate.LAND, childrenPred,
-	    				null);
+	    		Expression union = makeAssociativeExpression(Expression.BUNION,
+	    				children);
+	    		return makeRelationalPredicate(Predicate.SUBSETEQ, `A, union);
 	    	}
-
 	    }
 	    return predicate;
 	}
