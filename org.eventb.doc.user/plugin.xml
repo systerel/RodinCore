@@ -3,11 +3,11 @@
 <plugin>
    <extension  point="org.eclipse.help.toc">
      <toc
-           file="html/rodin_user_manual.xml"
+           file="html/index_rodin_user_manual.xml"
            primary="true">
 	 </toc>
 	 <toc
-           file="html/rodin_tutorial.xml"
+           file="html/index_rodin_tutorial.xml"
            primary="true">
      </toc>
 	 </extension>
