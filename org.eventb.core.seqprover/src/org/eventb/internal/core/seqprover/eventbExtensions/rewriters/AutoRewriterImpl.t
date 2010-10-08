@@ -72,9 +72,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	
 	private final AutoRewrites.Level level;
 	
-	private final IntegerLiteral number0 = ff.makeIntegerLiteral(BigInteger.ZERO, null);
+	protected final IntegerLiteral number0 = ff.makeIntegerLiteral(BigInteger.ZERO, null);
 	
-	private final IntegerLiteral number1 = ff.makeIntegerLiteral(BigInteger.ONE, null);
+	protected final IntegerLiteral number1 = ff.makeIntegerLiteral(BigInteger.ONE, null);
 
 	private final IntegerLiteral number2 = ff.makeIntegerLiteral(new BigInteger("2"), null);
 

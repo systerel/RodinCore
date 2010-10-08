@@ -27,6 +27,14 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 public class RemoveMembership extends AbstractManualRewrites implements
 		IReasoner {
 
+	public static enum RMLevel {
+		L0, L1;
+		
+		public boolean from(RMLevel other) {
+			return this.ordinal() >= other.ordinal();
+		}
+	}
+	
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".rm";
 
 	@Override
@@ -46,7 +54,7 @@ public class RemoveMembership extends AbstractManualRewrites implements
 
 	@Override
 	protected Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
-		IFormulaRewriter rewriter = new RemoveMembershipRewriterImpl(ff);
+		IFormulaRewriter rewriter = getRewriter(ff);
 		Formula<?> predicate = pred.getSubFormula(position);
 
 		Formula<?> newSubPredicate = null;
@@ -56,6 +64,10 @@ public class RemoveMembership extends AbstractManualRewrites implements
 		if (newSubPredicate == null || newSubPredicate == predicate)
 			return null;
 		return pred.rewriteSubFormula(position, newSubPredicate, ff);
+	}
+
+	protected RemoveMembershipRewriterImpl getRewriter(FormulaFactory ff) {
+		return new RemoveMembershipRewriterImpl(ff, RMLevel.L0);
 	}
 
 	public String getReasonerID() {

@@ -150,7 +150,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RelImgUnion
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RelOvrRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusion;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusionUniversal;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.RMLevel;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembershipL1;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembershipRewriterImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegation;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegationRewriterImpl;
@@ -1232,13 +1233,13 @@ public class Tactics {
 	 */
 	public static boolean isRemoveMembershipApplicable(FormulaFactory ff,
 			Predicate pred) {
-		return new RemoveMembershipRewriterImpl(ff, false)
+		return new RemoveMembershipRewriterImpl(ff, RMLevel.L1, false)
 				.isApplicableOrRewrite(pred);
 	}
 
 	public static ITactic removeMembership(Predicate hyp, IPosition position) {
-		return BasicTactics.reasonerTac(new RemoveMembership(),
-				new RemoveMembership.Input(hyp, position));
+		return BasicTactics.reasonerTac(new RemoveMembershipL1(),
+				new RemoveMembershipL1.Input(hyp, position));
 	}
 
 	public static List<IPosition> riGetPositions(Predicate pred) {

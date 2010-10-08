@@ -158,6 +158,10 @@
             id="rm"
             name="%rmName"/>
       <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembershipL1"
+            id="rmL1"
+            name="%rmName"/>
+      <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusion"
             id="ri"
             name="%riName"/>

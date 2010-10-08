@@ -42,6 +42,7 @@ import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.RMLevel;
 
 /**
  * Basic manual rewriter for the Event-B sequent prover.
@@ -49,14 +50,17 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrite
 @SuppressWarnings("unused")
 public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	
+	private static Level[] RM_TO_AUTO_LEVEL = {Level.L0, Level.L1};
+	
 	private final boolean isRewrite;
 	private Predicate rewrittenPredicate;
+	private final RMLevel rmLevel;
 	
 	/**
 	 * Default rewriter.
 	 */
-	public RemoveMembershipRewriterImpl(FormulaFactory ff) {
-		this(ff, true);
+	public RemoveMembershipRewriterImpl(FormulaFactory ff, RMLevel level) {
+		this(ff, level, true);
 	}
 	
 	/**
@@ -64,8 +68,9 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	 * should give the result of rewriting, or just tell if the rewriting is
 	 * possible.
 	 */
-	public RemoveMembershipRewriterImpl(FormulaFactory ff, boolean isRewrite) {
-		super(ff, Level.L0);
+	public RemoveMembershipRewriterImpl(FormulaFactory ff, RMLevel rmLevel, boolean isRewrite) {
+		super(ff, RM_TO_AUTO_LEVEL[rmLevel.ordinal()]);
+		this.rmLevel = rmLevel;
 		this.isRewrite = isRewrite;
 	}
 
@@ -510,6 +515,32 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
             	}
             	return true;
 			}
+            
+	    	/**
+             * DEF_IN_NATURAL
+             * Set Theory: E ∈ NAT == 0 ≤ E
+             */
+            In(E, Natural())->{
+            	if(rmLevel.from(RMLevel.L1)) {
+	            	if (isRewrite) {
+	            		rewrittenPredicate = makeRelationalPredicate(Formula.LE, number0, `E );				
+	            	}
+	            	return true;
+            	}
+			}
+            
+	    	/**
+             * DEF_IN_NATURAL1
+             * Set Theory: E ∈ NAT == 1 ≤ E
+             */
+            In(E, Natural1())->{
+               	if(rmLevel.from(RMLevel.L1)) {
+               		if (isRewrite) {
+               			rewrittenPredicate = makeRelationalPredicate(Formula.LE, number1, `E );				
+               		}
+               		return true;
+               	}
+			}
 	    } // end of %match
     	rewrittenPredicate = predicate;
     	return false;
@@ -524,7 +555,8 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 		"DEF_IN_FCOMP", "DEF_IN_ID", "DEF_IN_RELDOM", "DEF_IN_RELRAN",
 		"DEF_IN_RELDOMRAN", "DEF_IN_FCT", "DEF_IN_TFCT", "DEF_IN_INJ",
 		"DEF_IN_TINJ", "DEF_IN_SURJ", "DEF_IN_TSURJ", "DEF_IN_BIJ",
-		"DEF_IN_DPROD", "DEF_IN_PPROD", "DEF_IN_POW1", "DEF_IN_UPTO" })
+		"DEF_IN_DPROD", "DEF_IN_PPROD", "DEF_IN_POW1", "DEF_IN_UPTO",
+		"DEF_IN_NATURAL", "DEF_IN_NATURAL1"})
 	@Override
 	public Predicate rewrite(RelationalPredicate predicate) {
 		final Predicate newPredicate = super.rewrite(predicate);
