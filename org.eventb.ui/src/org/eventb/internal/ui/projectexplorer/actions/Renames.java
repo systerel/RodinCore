@@ -16,6 +16,7 @@ package org.eventb.internal.ui.projectexplorer.actions;
 
 import static org.eventb.internal.ui.utils.Messages.dialogs_cancelRenaming;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Set;
 
@@ -23,6 +24,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionDelegate;
@@ -121,13 +123,25 @@ public class Renames implements IObjectActionDelegate {
 
 		assert bareName != null;
 
-		try {
-			RodinCore.run(new RenameRunnable(dialog, prj, file, root, fileName,
-					bareName), null);
-		} catch (RodinDBException e) {
-			UIUtils.showUnexpectedError(e, Messages.uiUtils_unexpectedError);
-			UIUtils.log(e, "while renaming " + fileName);
-		}
+		launchRename(new RenameRunnable(dialog, prj, file, root, fileName,
+					bareName));
+	}
+	
+	private void launchRename(final RenameRunnable rename) {
+		UIUtils.runWithProgressDialog(part.getSite().getShell(),
+				new IRunnableWithProgress() {
+					@Override
+					public void run(IProgressMonitor monitor)
+							throws InvocationTargetException,
+							InterruptedException {
+						try {
+							RodinCore.run(rename, monitor);
+						} catch (RodinDBException e) {
+							rename.issueError(e);
+						}
+					}
+
+				});
 
 	}
 
@@ -175,6 +189,11 @@ public class Renames implements IObjectActionDelegate {
 			renameInOccurences(occurences, monitor);
 		}
 
+		public void issueError(Throwable t) {
+			UIUtils.showUnexpectedError(t, Messages.uiUtils_unexpectedError);
+			UIUtils.log(t, "while renaming " + fileName);
+		}
+
 		public boolean cancelRenaming(String newName) {
 			return UIUtils.showQuestion(dialogs_cancelRenaming(newName));
 		}
@@ -187,7 +206,7 @@ public class Renames implements IObjectActionDelegate {
 					final IDeclaration i = query.getDeclaration(root);
 					return query.getOccurrences(i);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					Thread.currentThread().interrupt();
 					return Collections.emptySet();
 				}
 			} else {
