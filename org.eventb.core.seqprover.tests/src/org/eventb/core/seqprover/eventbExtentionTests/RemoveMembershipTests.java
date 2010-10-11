@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,22 +10,46 @@
  *     Systerel - allowing subclasses to provide a type environment
  *     Systerel - mathematical language V2
  *     Systerel - added DEF_IN_UPTO
+ *     Systerel - refactored to introduce level L1
  ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
 import java.util.List;
 
+import org.eventb.core.ast.DefaultFilter;
+import org.eventb.core.ast.IFormulaFilter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembershipRewriterImpl;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.RMLevel;
 
 /**
  * Unit tests for the rm reasoner {@link RemoveMembership}
  * 
  * @author htson
  */
-public class RemoveMembershipTests extends AbstractManualRewriterTests {
+public abstract class RemoveMembershipTests extends AbstractManualRewriterTests {
+
+	private final String reasonerId;
+
+	private final IFormulaFilter posFilter;
+
+	public RemoveMembershipTests(String reasonerId, final RMLevel level) {
+		this.reasonerId = reasonerId;
+		this.posFilter = new DefaultFilter() {
+			@Override
+			public boolean select(RelationalPredicate predicate) {
+				return new RemoveMembershipRewriterImpl(ff, level, false)
+						.isApplicableOrRewrite(predicate);
+			}
+		};
+	}
+
+	protected final List<IPosition> getPositions(Predicate predicate) {
+		return predicate.getPositions(posFilter);
+	}
 
 	// E |-> F : S ** T  == E : S & F : T
 	String P1 = "(0 = 1) ⇒ (1 ↦ 2 ∈ ℕ × ℕ)";
@@ -458,7 +482,7 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 	
 	@Override
 	public String getReasonerID() {
-		return "org.eventb.core.seqprover.rm";
+		return reasonerId;
 	}
 		
 	public String [] getTestGetPositions() {
@@ -556,10 +580,6 @@ public class RemoveMembershipTests extends AbstractManualRewriterTests {
 				ranRes3, "",
 				ranSub3, ""
 		};
-	}
-
-	protected List<IPosition> getPositions(Predicate predicate) {
-		return Tactics.rmGetPositions(predicate);
 	}
 
 	@Override
