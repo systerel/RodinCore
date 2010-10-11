@@ -8,6 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *     Systerel - added DEF_IN_NAT, DEF_IN_NAT1
+ *     Systerel - added DEF_IN_REL
  ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
@@ -46,12 +47,24 @@ public class RemoveMembershipL1Tests extends RemoveMembershipTests {
 
 	private static final String resultP4 = "∀x·x=0⇒1≤x";
 
+	// r : S <-> T == r <: S x T
+	private static final String P5 = " 0 = x ⇒ f ∈ ℕ ↔ BOOL";
+	 	
+	private static final String resultP5 = "0 = x ⇒ f ⊆ ℕ × BOOL";
+		
+	private static final String P6 = "∀x·0 = x ⇒ f ∈ ℕ ↔ BOOL";
+		
+	private static final String resultP6 = "∀x·0 = x ⇒ f ⊆ ℕ × BOOL";
+
 	public String[] getTestGetPositions() {
 		return new String[] {
 				P1, "1",
 				P2, "1.1",
 				P3, "1",
-				P4, "1.1", };
+				P4, "1.1",
+				P5, "1",
+				P6, "1.1",
+		};
 	}
 
 	@Override
@@ -60,18 +73,22 @@ public class RemoveMembershipL1Tests extends RemoveMembershipTests {
 				new SuccessfulTest(P1, "1", resultP1),
 				new SuccessfulTest(P2, "1.1", resultP2),
 				new SuccessfulTest(P3, "1", resultP3),
-				new SuccessfulTest(P4, "1.1", resultP4), };
+				new SuccessfulTest(P4, "1.1", resultP4),
+				new SuccessfulTest(P5, "1", resultP5),
+				new SuccessfulTest(P6, "1.1", resultP6),
+		};
 	}
 
 	@Override
 	protected String[] getUnsuccessfulTests() {
-		final String[] testsL1 = new String[] {
+		return new String[] {
 				P1, "0",
 				P2, "1.0",
 				P3, "0",
 				P4, "1.0",
-			};
-		return testsL1;
+				P5, "0",
+				P6, "0",
+		};
 	}
 
 }

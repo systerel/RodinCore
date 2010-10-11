@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language V2
  *     Systerel - added DEF_IN_UPTO
+ *     Systerel - added DEF_IN_NATURAL, DEF_IN_NATURAL1, DEF_IN_REL
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
@@ -272,6 +273,20 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    		}
 	    		return true;
 	    	}
+	    	
+	    	/**
+	    	 * DEF_IN_REL
+	    	 * Set Theory : r ∈  S ↔ T == r ⊆ S × T
+	    	 */
+	    	In(r, Rel(S, T) ) -> {
+	    		if(rmLevel.from(RMLevel.L1)) {
+	    			if(isRewrite){
+	    				final Expression cprod = makeBinaryExpression(Expression.CPROD,`S,`T);
+	    				rewrittenPredicate = makeRelationalPredicate(Predicate.SUBSETEQ, `r, cprod);
+	    			}
+	    			return true;
+	    		}
+	    	}	    	   	
 	    	
 	    	/**
 	    	 * DEF_IN_RELIMAGE
@@ -551,7 +566,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 		"DEF_IN_SETMINUS", "DEF_IN_KUNION", "DEF_IN_KINTER",
 		"DEF_IN_QUNION", "DEF_IN_QINTER", "DEF_IN_DOM", "DEF_IN_RAN",
 		"DEF_IN_CONVERSE", "DEF_IN_DOMRES", "DEF_IN_DOMSUB",
-		"DEF_IN_RANRES", "DEF_IN_RANSUB", "DEF_IN_RELIMAGE",
+		"DEF_IN_RANRES", "DEF_IN_RANSUB", "DEF_IN_REL","DEF_IN_RELIMAGE",
 		"DEF_IN_FCOMP", "DEF_IN_ID", "DEF_IN_RELDOM", "DEF_IN_RELRAN",
 		"DEF_IN_RELDOMRAN", "DEF_IN_FCT", "DEF_IN_TFCT", "DEF_IN_INJ",
 		"DEF_IN_TINJ", "DEF_IN_SURJ", "DEF_IN_TSURJ", "DEF_IN_BIJ",
