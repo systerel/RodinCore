@@ -1,8 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
-Bundle-SymbolicName: org.eventb.core.seqprover.arith;singleton:=true
-Bundle-Version: 1.0.0
-Require-Bundle: org.eventb.core.seqprover
-Bundle-Vendor: %pluginProvider
-Export-Package: org.eventb.core.seqprover.arith;x-friends:="org.eventb.core.seqprover.arith.tests"
