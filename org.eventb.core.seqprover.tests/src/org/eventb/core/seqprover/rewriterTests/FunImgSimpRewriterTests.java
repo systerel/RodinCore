@@ -11,9 +11,11 @@
 package org.eventb.core.seqprover.rewriterTests;
 
 import static org.eventb.core.ast.FormulaFactory.makePosition;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eventb.core.ast.IPosition;
@@ -23,6 +25,7 @@ import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerFailure;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
+import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites.Input;
@@ -77,20 +80,39 @@ public class FunImgSimpRewriterTests extends AbstractReasonerTests {
 		for (String arrow : valids) {
 			for (String symbol : domSymbols) {
 				final String resultDom = "{"+typeEnvString+"}[][][E⊆S ;; F∈S"+ arrow + "T ;; G∈dom(E "+ symbol + " F)] |- F(G)=F(G)";
-				final IProverSequent seq = TestLib.genFullSeq(typeEnv, "", "", "E⊆S;; G∈dom(E " + symbol + " F) ;; F∈S"+ arrow +"T", "(E " + symbol + " F)(G)=F(G)");
+				final String funImage = "(E " + symbol + " F)(G)";
+				final String goalImage = funImage + "=F(G)";
+				final IProverSequent seq = TestLib.genFullSeq(typeEnv, "", "", "E⊆S;; G∈dom(E " + symbol + " F) ;; F∈S"+ arrow +"T", goalImage);
+				assertApplicability(seq, input, funImage, goalImage);
 				result.add(new SuccessfullReasonerApplication(seq, input, resultDom));
 			}
 			for (String symbol : ranSymbols) {
 				final String resultRan = "{S=ℙ(S), F=ℙ(S×T), T=ℙ(T)}[][][E⊆T ;; F∈S"+ arrow + "T ;; G∈dom(F" + symbol + "E)] |- F(G)=F(G)";
-				final IProverSequent seq = TestLib.genFullSeq(typeEnv, "", "", "E⊆T;; G∈dom(F" + symbol + "E) ;; F∈S" + arrow + "T", "(F" + symbol + "E)(G)=F(G)");
+				final String funImage = "(F" + symbol + "E)(G)";
+				final String goalImage = funImage + "=F(G)";
+				final IProverSequent seq = TestLib.genFullSeq(typeEnv, "", "", "E⊆T;; G∈dom(F" + symbol + "E) ;; F∈S" + arrow + "T", goalImage);
+				assertApplicability(seq, input, funImage, goalImage);
 				result.add(new SuccessfullReasonerApplication(seq, input, resultRan));
 			}
 
 			final String resultSetMinus = "{"+typeEnvString+"}[][][E∈S↔T ;; F∈S"+ arrow + "T ;; G∈dom(F ∖ E)] |- F(G)=F(G)";
-			final IProverSequent seq = TestLib.genFullSeq(typeEnv, "", "", "E∈S↔T;; G∈dom( F ∖ E ) ;; F∈S" + arrow + "T", "( F ∖ E )(G)=F(G)");
+			final String funImage = "( F ∖ E )(G)";
+			final String goalImage = funImage + "=F(G)";
+			final IProverSequent seq = TestLib.genFullSeq(typeEnv, "", "", "E∈S↔T;; G∈dom( F ∖ E ) ;; F∈S" + arrow + "T", goalImage);
+			assertApplicability(seq, input, funImage, goalImage);
 			result.add(new SuccessfullReasonerApplication(seq, input, resultSetMinus));
 		}
 		return result.toArray(new SuccessfullReasonerApplication[result.size()]);
+	}
+
+	private static void assertApplicability(IProverSequent seq, Input input,
+			String funImage, String goalImage) {
+		assertTrue(Tactics.isFunImgSimpApplicable(
+				TestLib.genExpr(seq.typeEnvironment(), funImage), seq));
+		assertEquals(
+				Collections.singletonList(input.getPosition()),
+				Tactics.funImgSimpGetPositions(
+						TestLib.genPred(seq.typeEnvironment(), goalImage), seq));
 	}
 
 	/**

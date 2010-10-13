@@ -3802,8 +3802,9 @@ public class Tactics {
 	/**
 	 * Tells if the tactic funImgSimpRewrites can apply.
 	 * 
-	 * @param expr
-	 *            the expression to rewrite
+	 * @param funImgExpr
+	 *            the expression to rewrite. It is a functional image expression
+	 *            where the tactic funImgSimpRewrites could apply
 	 * @param sequent
 	 *            the current sequent
 	 * @return <code>true</code> if the tactic is not applicable,
@@ -3811,9 +3812,9 @@ public class Tactics {
 	 * 
 	 * @since 2.0
 	 */
-	public static boolean isFunImgSimpApplicable(Expression expr,
+	public static boolean isFunImgSimpApplicable(Expression funImgExpr,
 			IProverSequent sequent) {
-		return FunImgSimpImpl.isApplicable(expr, sequent);
+		return FunImgSimpImpl.isApplicable(funImgExpr, sequent);
 	}
 	
 	

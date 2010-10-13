@@ -55,11 +55,10 @@ public class FunImgSimpImpl {
 
 		@Override
 		public boolean select(BinaryExpression expression) {
-			final Expression f = getFunImgFunction(expression);
-			if (f == null) {
-				return false;
+			if (expression.getTag() == Formula.FUNIMAGE) {
+				return isApplicable(expression, sequent);
 			}
-			return isApplicable(f, sequent);
+			return false;
 		}
 	}
 
@@ -78,7 +77,11 @@ public class FunImgSimpImpl {
 		return null;
 	}
 
-	public static boolean isApplicable(Expression f, IProverSequent sequent) {
+	public static boolean isApplicable(Expression expr, IProverSequent sequent) {
+		final Expression f = getFunImgFunction(expr);
+		if (f == null) {
+			return false;
+		}
 		return searchFunction(f, sequent) != null;
 	}
 
