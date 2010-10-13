@@ -16,6 +16,7 @@
 package org.eventb.core.seqprover.eventbExtensions;
 
 import static org.eventb.core.seqprover.tactics.BasicTactics.composeOnAllPending;
+import static org.eventb.core.seqprover.tactics.BasicTactics.composeUntilSuccess;
 import static org.eventb.core.seqprover.tactics.BasicTactics.loopOnAllPending;
 
 import java.util.Arrays;
@@ -239,21 +240,28 @@ public class AutoTactics {
 	 */
 	public static class FunImgInGoalTac implements ITactic {
 
-		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			final IProofTreeNode initialNode = ptNode;
-			ptNode = TacticsLib.addFunctionalHypotheses(ptNode, pm);
-			if (BasicTactics.reasonerTac(new Hyp(), EMPTY_INPUT).apply(
-					ptNode, pm) == null) {
-				return null;
-			} else {
-				ptNode.pruneChildren();
+		private static final ITactic hypTac = new GoalInHypTac();
+		private static final ITactic funGoalTac = new FunGoalTac();
+
+		public Object apply(final IProofTreeNode initialNode, IProofMonitor pm) {
+			if (!checkPrecondition(initialNode)) {
+				return "Tactic unapplicable";
 			}
-			if (BasicTactics.reasonerTac(new IsFunGoal(), EMPTY_INPUT).apply(
-					ptNode, pm) == null) {
+			final IProofTreeNode ptNode = TacticsLib.addFunctionalHypotheses(
+					initialNode, pm);
+			final ITactic tac = composeUntilSuccess(hypTac, funGoalTac);
+			if (tac.apply(ptNode, pm) == null) {
 				return null;
 			}
 			initialNode.pruneChildren();
-			return "Tactic unapplicable";
+			return "Tactic fails";
+		}
+
+		// Returns true if goal has syntactic form "E(F) : S"
+		private boolean checkPrecondition(final IProofTreeNode node) {
+			final Predicate goal = node.getSequent().goal();
+			final Expression element = Lib.getElement(goal);
+			return element != null && Lib.isFunApp(element);
 		}
 
 	}
