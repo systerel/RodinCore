@@ -26,32 +26,37 @@ import org.eventb.internal.core.seqprover.ProofDependenciesBuilder;
 import org.eventb.internal.core.seqprover.ProofRule;
 
 /**
- * A data structure used to store a skeleton with his dependencies associated. *
+ * Common implementation for decorating a proof skeleton with proof
+ * dependencies.
  */
 public class ProofSkeletonWithDependencies implements IProofSkeleton {
 
-	private final IProofRule skeletonRule;
-	private final String skeletonComment;
+	// Decorated node
+	private final IProofSkeleton skeleton;
+
+	// Additional state: proof dependencies and decorated children
 	private final ProofDependenciesBuilder dependencies;
 	private final ProofSkeletonWithDependencies[] children;
-	private final boolean trivialCase;
 
-	private ProofSkeletonWithDependencies(String comment, IProofRule rule,
-			ProofSkeletonWithDependencies[] children,
-			ProofDependenciesBuilder dependencies) {
-		this.skeletonRule = rule;
-		this.skeletonComment = comment;
-		this.dependencies = dependencies;
-		this.trivialCase = isTrivialCase(rule);
-		this.children = children;
+	// Cached result of isTrivialRule()
+	private final boolean trivialRule;
 
+	private ProofSkeletonWithDependencies(IProofSkeleton skeleton) {
+		this.skeleton = skeleton;
+		final IProofSkeleton[] skelChildren = skeleton.getChildNodes();
+		this.children = new ProofSkeletonWithDependencies[skelChildren.length];
+		for (int i = 0; i < skelChildren.length; i++) {
+			children[i] = withDependencies(skelChildren[i]);
+		}
+		this.dependencies = computeDependencies(skeleton.getRule(), children);
+		this.trivialRule = isTrivialRule(skeleton.getRule());
 	}
 
 	/**
 	 * Determinate if the rule of the skeleton is a trivial case (hyp, true goal
 	 * or contradictory hypothesis)
 	 */
-	private static boolean isTrivialCase(IProofRule rule) {
+	private static boolean isTrivialRule(IProofRule rule) {
 		if (rule == null) {
 			return false;
 		}
@@ -62,28 +67,18 @@ public class ProofSkeletonWithDependencies implements IProofSkeleton {
 	}
 
 	/**
-	 * Static method that allows to associate his dependencies to a proof
-	 * skeleton.
+	 * Returns a proof skeleton decorated with dependencies.
 	 * 
 	 * @param skeleton
 	 *            The proof skeleton
 	 * @return The proof skeleton with his dependencies associated.
 	 */
 	public static ProofSkeletonWithDependencies withDependencies(
-			IProofSkeleton skel) {
-		if (skel instanceof ProofSkeletonWithDependencies) {
-			return (ProofSkeletonWithDependencies) skel;
+			IProofSkeleton skeleton) {
+		if (skeleton instanceof ProofSkeletonWithDependencies) {
+			return (ProofSkeletonWithDependencies) skeleton;
 		}
-		final IProofSkeleton[] skelChildren = skel.getChildNodes();
-		final ProofSkeletonWithDependencies[] children = new ProofSkeletonWithDependencies[skelChildren.length];
-		for (int i = 0; i < skelChildren.length; i++) {
-			children[i] = withDependencies(skelChildren[i]);
-		}
-		final IProofRule rule = skel.getRule();
-		final ProofDependenciesBuilder deps = computeDependencies(rule,
-				children);
-		return new ProofSkeletonWithDependencies(skel.getComment(), rule,
-				children, deps);
+		return new ProofSkeletonWithDependencies(skeleton);
 	}
 
 	/**
@@ -109,11 +104,11 @@ public class ProofSkeletonWithDependencies implements IProofSkeleton {
 	}
 
 	public String getComment() {
-		return skeletonComment;
+		return skeleton.getComment();
 	}
 
 	public IProofRule getRule() {
-		return skeletonRule;
+		return skeleton.getRule();
 	}
 
 	/**
@@ -161,15 +156,13 @@ public class ProofSkeletonWithDependencies implements IProofSkeleton {
 			IProofMonitor proofMonitor, boolean dischargeTrivialCase) {
 
 		boolean combinedSuccess = true;
-		boolean success = false;
 
 		for (int i = 0; i < nodeChildren.length; i++) {
-
+			boolean success;
 			success = rebuildFromChildren(nodeChildren[i], i, children.length,
 					dischargeTrivialCase, proofMonitor);
 
 			if (!success) {
-
 				success = rebuildFromChildren(nodeChildren[i], 0, i,
 						dischargeTrivialCase, proofMonitor);
 			}
@@ -204,13 +197,13 @@ public class ProofSkeletonWithDependencies implements IProofSkeleton {
 
 		for (int i = begin; i < end; i++) {
 
-			if (dischargeTrivialCase && children[i].trivialCase) {
+			if (dischargeTrivialCase && children[i].trivialRule) {
 				if (doRebuild(children[i], node, proofMonitor)) {
 					return true;
 				}
 			}
 
-			if (!dischargeTrivialCase && !children[i].trivialCase) {
+			if (!dischargeTrivialCase && !children[i].trivialRule) {
 				if (children[i].hasCompatibleDependencies(node, proofMonitor)) {
 					if (doRebuild(children[i], node, proofMonitor)) {
 						return true;
@@ -281,7 +274,7 @@ public class ProofSkeletonWithDependencies implements IProofSkeleton {
 	 * @return true iff this node is a leaf node.
 	 */
 	private boolean isLeafNode() {
-		return this.skeletonRule == null;
+		return this.skeleton.getRule() == null;
 	}
 
 }
