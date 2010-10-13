@@ -134,13 +134,7 @@ public class TacticsLib {
 				return (Lib.isDom(expression) && expression.isWellFormed());
 			}
 		});
-		final List<IPosition> toBeRemoved = new ArrayList<IPosition>();
-		for (IPosition pos : domPositions) {
-			if (!Lib.isWDStrictPosition(pred, pos)) {
-				toBeRemoved.add(pos);
-			}
-		}
-		domPositions.removeAll(toBeRemoved);
+		Lib.removeWDUnstrictPositions(domPositions, pred);
 		return domPositions;
 	}
 
@@ -159,13 +153,7 @@ public class TacticsLib {
 				return (Lib.isFunApp(expression));
 			}
 		}));
-		final List<IPosition> toBeRemoved = new ArrayList<IPosition>();
-		for (IPosition pos : funAppPositions) {
-			if (!Lib.isWDStrictPosition(pred, pos)) {
-				toBeRemoved.add(pos);
-			}
-		}
-		funAppPositions.removeAll(toBeRemoved);
+		Lib.removeWDUnstrictPositions(funAppPositions, pred);
 		Collections.reverse(funAppPositions);
 		return funAppPositions;
 	}
