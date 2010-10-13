@@ -45,6 +45,22 @@ public class TestEqualityInferrer extends AbstractInferrerTests {
 	}
 	
     @Test
+	public void testDisappearingDisjunctiveClauses() {
+		doTest(
+				cClause(ab), mList(ab), EMPTY, mList(cClause(ab)),
+				TRUE
+		);
+		doTest(
+				cClause(ab), EMPTY, mList(ab), mList(cClause(ab)),
+				FALSE
+		);
+		doTest(
+				cClause(mList(ab), bc), EMPTY, mList(ab), mList(cClause(ab)),
+				cClause(EMPTY, bc)
+		);
+    }
+
+    @Test
 	public void testSimpleDisjunctiveClausesWithVariables() {
 		doTest(
 				cClause(cPred(d0A,x),ab), mList(ab), EMPTY, mList(cClause(ab)), 
@@ -83,6 +99,26 @@ public class TestEqualityInferrer extends AbstractInferrerTests {
 				cClause(cNotProp(0))
 		);
 	}
+
+    @Test
+	public void testDisappearingEquivalenceClauses() {
+		doTest(
+				cEqClause(ab, cd), mList(ab, cd), EMPTY, mList(cClause(nab)),
+				TRUE
+		);
+		doTest(
+				cEqClause(ab, cd), EMPTY, mList(ab, cd), mList(cClause(nab)),
+				TRUE
+		);
+		doTest(
+				cEqClause(ab, cd), mList(ab), mList(cd), mList(cClause(nab)),
+				FALSE
+		);
+		doTest(
+				cEqClause(ab, cd), mList(cd), mList(ab), mList(cClause(nab)),
+				FALSE
+		);
+    }
 
     @Test
 	public void testSimpleEquivalenceClausesWithConditions() {
@@ -126,8 +162,43 @@ public class TestEqualityInferrer extends AbstractInferrerTests {
 				cEqClause(mList(cProp(0),bc),ab), mList(bc), mList(ab), mList(cClause(ab)),
 				cClause(cProp(0))
 		);
+		doTest(
+				cEqClause(mList(cProp(0),bc),ab), mList(bc), EMPTY, mList(cClause(ab)),
+				cClause(mList(cProp(0)), ab)
+		);
+		doTest(
+				cEqClause(mList(cProp(0),bc),ab), EMPTY, mList(bc), mList(cClause(ab)),
+				cClause(mList(cNotProp(0)), ab)
+		);
 	}
 
+    @Test
+	public void testDisappearingEquivalenceClausesWithConditions() {
+		doTest(
+				cEqClause(mList(ab, cd), bc), mList(ab, cd), mList(bc), mList(cClause(ab)),
+				TRUE
+		);
+		doTest(
+				cEqClause(mList(ab, cd), bc), mList(ab, cd, bc), EMPTY, mList(cClause(ab)),
+				TRUE
+		);
+		doTest(
+				cEqClause(mList(ab, cd), bc), EMPTY, mList(ab, cd, bc), mList(cClause(ab)),
+				TRUE
+		);
+		doTest(
+				cEqClause(mList(ab, cd), bc), mList(ab, cd), EMPTY, mList(cClause(ab)),
+				TRUE
+		);
+		doTest(
+				cEqClause(mList(ab, cd), bc), EMPTY, mList(ab, cd), mList(cClause(ab)),
+				TRUE
+		);
+		doTest(
+				cEqClause(mList(ab, cd), bc), mList(ab), mList(cd), mList(cClause(ab)),
+				cClause(EMPTY, bc)
+		);
+	}
 
 	
 	public void doTest(Clause original, List<EqualityLiteral> trueEqualities,
