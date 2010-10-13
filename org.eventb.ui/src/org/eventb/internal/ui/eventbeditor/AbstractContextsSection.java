@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,11 @@
  *     Systerel - added history support
  *     Systerel - separation of file and root element
  *     Systerel - used IAttributeFactory
+ *     Systerel - prevented from editing generated elements
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
+
+import static org.eventb.internal.ui.EventBUtils.isReadOnly;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -331,6 +334,7 @@ public abstract class AbstractContextsSection<R extends IInternalElement, E exte
 			UIUtils.log(e, "when listing the contexts of "
 					+ rodinRoot.getRodinProject());
 		}
+		contextCombo.setEnabled(!isReadOnly(rodinRoot));
 	}
 
 	/**
@@ -348,12 +352,35 @@ public abstract class AbstractContextsSection<R extends IInternalElement, E exte
 	}
 
 	final void updateButtons() {
-		removeButton.setEnabled(!viewer.getSelection().isEmpty());
-		final String text = contextCombo.getText();
-		if (text.equals("")) {
+		if (isReadOnly(rodinRoot)) {
+			removeButton.setEnabled(false);
 			addButton.setEnabled(false);
 		} else {
-			addButton.setEnabled(!getUsedContextNames().contains(text));
+			setRemoveEnabled();
+			final String text = contextCombo.getText();
+			if (text.equals("")) {
+				addButton.setEnabled(false);
+			} else {
+				addButton.setEnabled(!getUsedContextNames().contains(text));
+			}
+		}
+	}
+
+	private void setRemoveEnabled() {
+		final ISelection selection = viewer.getSelection();
+		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
+			final IStructuredSelection sSelection = (IStructuredSelection) selection;
+			boolean ro = false;
+			for (Object o : sSelection.toList()) {
+				if (o instanceof IInternalElement) {
+					ro = isReadOnly((IInternalElement) o);
+					if (ro)
+						break;
+				}
+			}
+			removeButton.setEnabled(!ro);
+		} else {
+			removeButton.setEnabled(!selection.isEmpty());
 		}
 	}
 

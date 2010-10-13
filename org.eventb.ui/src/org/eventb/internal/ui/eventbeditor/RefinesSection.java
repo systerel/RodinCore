@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,11 @@
  *     Systerel - separation of file and root element
  *     Systerel - used IAttributeFactory
  *     Systerel - update combo list on focus gain
+ *     Systerel - prevented from editing generated elements
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
+
+import static org.eventb.internal.ui.EventBUtils.isReadOnly;
 
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.SWT;
@@ -212,6 +215,7 @@ public class RefinesSection extends SectionPart implements
 
 	private void initCombo() {
 		final IMachineRoot root = editor.getRodinInput();
+		machineCombo.setEnabled(!isReadOnly(root));
 		machineCombo.add(NULL_VALUE);
 		try {
 			final String childName = UIUtils.getFreeChildName(root,

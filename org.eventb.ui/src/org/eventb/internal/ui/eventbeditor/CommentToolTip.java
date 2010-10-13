@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,11 @@
  *     Systerel - used EventBSharedColor
  *     Systerel - added history support
  *     ETH Zurich - adapted to org.rodinp.keyboard
+ *     Systerel - prevented from editing generated elements
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
+
+import static org.eventb.internal.ui.EventBUtils.isReadOnly;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
@@ -399,7 +402,7 @@ public class CommentToolTip {
 			helpShell.setLayout(new FillLayout());
 			helpShell.setSize(400, 200);
 			Text text = new Text(helpShell, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
-
+			text.setEditable(!isReadOnly(element));
 			try {
 				if (element.hasComment()) {
 					text.setText(element.getComment());

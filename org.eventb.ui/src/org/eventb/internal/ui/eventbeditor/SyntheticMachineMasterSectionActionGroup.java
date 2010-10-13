@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - replaced local variable by parameter
  *     Systerel - separation of file and root element
+ *     Systerel - prevented from editing generated elements
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -91,30 +92,39 @@ public class SyntheticMachineMasterSectionActionGroup extends
 		super(eventBEditor, treeViewer);
 		
 		// Add a refines machine clause.
-		addRefinesMachine = new Action() {
+		addRefinesMachine = new SynthesisAction() {
 			@Override
 			public void run() {
-				 EventBEditorUtils.addRefinesMachine(editor, viewer);
+				if (checkReadOnly(editor.getRodinInput())) {
+					return;
+				}
+				EventBEditorUtils.addRefinesMachine(editor, viewer);
 			}
 		};
 		addRefinesMachine.setText("New &Refines Machine");
 		addRefinesMachine.setToolTipText("Create a new refines machine");
 		
 		// Add a sees context clause.
-		addSeesContext = new Action() {
+		addSeesContext = new SynthesisAction() {
 			@Override
 			public void run() {
-				 EventBEditorUtils.addSeesContext(editor, viewer);
+				if (checkReadOnly(editor.getRodinInput())) {
+					return;
+				}
+				EventBEditorUtils.addSeesContext(editor, viewer);
 			}
 		};
 		addSeesContext.setText("New &Sees Context");
 		addSeesContext.setToolTipText("Create a new sees context");
 		
 		// Add a variable.
-		addVariable = new Action() {
+		addVariable = new SynthesisAction() {
 			@Override
 			public void run() {
-				 EventBEditorUtils.addVariable(editor, viewer);
+				if (checkReadOnly(editor.getRodinInput())) {
+					return;
+				}
+				EventBEditorUtils.addVariable(editor, viewer);
 			}
 		};
 		addVariable.setText("New &Variable");
@@ -124,9 +134,12 @@ public class SyntheticMachineMasterSectionActionGroup extends
 						.getImageDescriptor(IEventBSharedImages.IMG_NEW_VARIABLES_PATH));
 
 		// Add an invariant.
-		addInvariant = new Action() {
+		addInvariant = new SynthesisAction() {
 			@Override
 			public void run() {
+				if (checkReadOnly(editor.getRodinInput())) {
+					return;
+				}
 				EventBEditorUtils.addInvariant(editor, viewer);
 			}
 		};
@@ -137,9 +150,12 @@ public class SyntheticMachineMasterSectionActionGroup extends
 						.getImageDescriptor(IEventBSharedImages.IMG_NEW_INVARIANTS_PATH));
 
 		// Add an event.
-		addEvent = new Action() {
+		addEvent = new SynthesisAction() {
 			@Override
 			public void run() {
+				if (checkReadOnly(editor.getRodinInput())) {
+					return;
+				}
 				EventBEditorUtils.addEvent(editor, viewer);
 			}
 		};
@@ -149,9 +165,12 @@ public class SyntheticMachineMasterSectionActionGroup extends
 				.getImageDescriptor(IEventBSharedImages.IMG_NEW_EVENT_PATH));
 		
 		// Add a variant.
-		addVariant = new Action() {
+		addVariant = new SynthesisAction() {
 			@Override
 			public void run() {
+				if (checkReadOnly(editor.getRodinInput())) {
+					return;
+				}
 				EventBEditorUtils.addVariant(editor, viewer);
 			}
 		};
@@ -162,9 +181,12 @@ public class SyntheticMachineMasterSectionActionGroup extends
 						.getImageDescriptor(IEventBSharedImages.IMG_NEW_VARIANT_PATH));
 		
 		// Add a refines event clause.
-		addRefinesEvent = new Action() {
+		addRefinesEvent = new SynthesisAction() {
 			@Override
 			public void run() {
+				if (checkReadOnly(viewer)) {
+					return;
+				}
 				EventBEditorUtils.addRefinesEvent(editor, viewer);
 			}
 		};
@@ -174,9 +196,12 @@ public class SyntheticMachineMasterSectionActionGroup extends
 				.getImageDescriptor(IEventBSharedImages.IMG_NEW_EVENT_PATH));
 		
 		// Add a local variable.
-		addParameter = new Action() {
+		addParameter = new SynthesisAction() {
 			@Override
 			public void run() {
+				if (checkReadOnly(viewer)) {
+					return;
+				}
 				EventBEditorUtils.addParameter(editor, viewer);
 			}
 		};
@@ -187,9 +212,12 @@ public class SyntheticMachineMasterSectionActionGroup extends
 						.getImageDescriptor(IEventBSharedImages.IMG_NEW_VARIABLES_PATH));
 
 		// Add a guard.
-		addGuard = new Action() {
+		addGuard = new SynthesisAction() {
 			@Override
 			public void run() {
+				if (checkReadOnly(viewer)) {
+					return;
+				}
 				EventBEditorUtils.addGuard(editor, viewer);
 			}
 		};
@@ -199,9 +227,12 @@ public class SyntheticMachineMasterSectionActionGroup extends
 				.getImageDescriptor(IEventBSharedImages.IMG_NEW_GUARD_PATH));
 		
 		// Add a witness.
-		addWitness = new Action() {
+		addWitness = new SynthesisAction() {
 			@Override
 			public void run() {
+				if (checkReadOnly(viewer)) {
+					return;
+				}
 				EventBEditorUtils.addWitness(editor, viewer);
 			}
 		};
@@ -211,9 +242,12 @@ public class SyntheticMachineMasterSectionActionGroup extends
 				.getImageDescriptor(IEventBSharedImages.IMG_NEW_EVENT_PATH));
 
 		// Add an action.
-		addAction = new Action() {
+		addAction = new SynthesisAction() {
 			@Override
 			public void run() {
+				if (checkReadOnly(viewer)) {
+					return;
+				}
 				EventBEditorUtils.addAction(editor, viewer);
 			}
 		};
@@ -223,9 +257,12 @@ public class SyntheticMachineMasterSectionActionGroup extends
 				.getImageDescriptor(IEventBSharedImages.IMG_NEW_ACTION_PATH));
 
 		// Delete the current selected element in the tree viewer.
-		delete = new Action() {
+		delete = new SynthesisAction() {
 			@Override
 			public void run() {
+				if (checkReadOnly(viewer)) {
+					return;
+				}
 				EventBEditorUtils.deleteElements(viewer);
 			}
 		};
@@ -235,9 +272,12 @@ public class SyntheticMachineMasterSectionActionGroup extends
 				.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
 
 		// Handle the up action.
-		handleUp = new Action() {
+		handleUp = new SynthesisAction() {
 			@Override
 			public void run() {
+				if (checkReadOnly(viewer)) {
+					return;
+				}
 				EventBEditorUtils.handleUp(editor, viewer);
 			}
 		};
@@ -247,9 +287,12 @@ public class SyntheticMachineMasterSectionActionGroup extends
 				.getImageDescriptor(IEventBSharedImages.IMG_UP_PATH));
 
 		// Handle the down action.
-		handleDown = new Action() {
+		handleDown = new SynthesisAction() {
 			@Override
 			public void run() {
+				if (checkReadOnly(viewer)) {
+					return;
+				}
 				EventBEditorUtils.handleDown(editor, viewer);
 			}
 		};

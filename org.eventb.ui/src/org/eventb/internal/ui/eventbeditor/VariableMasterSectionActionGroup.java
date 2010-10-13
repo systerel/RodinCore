@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - prevented from editing generated elements
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -63,9 +64,12 @@ public class VariableMasterSectionActionGroup extends ActionGroup {
 		this.viewer = treeViewer;
 
 		// Add a variable.
-		addVariable = new Action() {
+		addVariable = new SynthesisAction() {
 			@Override
 			public void run() {
+				if (checkReadOnly(editor.getRodinInput())) {
+					return;
+				}
 				EventBEditorUtils.addVariable(editor, viewer);
 			}
 		};
@@ -75,9 +79,12 @@ public class VariableMasterSectionActionGroup extends ActionGroup {
 				.getImageDescriptor(IEventBSharedImages.IMG_NEW_VARIABLES_PATH));
 
 		// Delete the current selected element in the tree viewer.
-		delete = new Action() {
+		delete = new SynthesisAction() {
 			@Override
 			public void run() {
+				if (checkReadOnly(viewer)) {
+					return;
+				}
 				EventBEditorUtils.deleteElements(viewer);
 			}
 		};
@@ -87,9 +94,12 @@ public class VariableMasterSectionActionGroup extends ActionGroup {
 				.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
 
 		// Handle the up action.
-		handleUp = new Action() {
+		handleUp = new SynthesisAction() {
 			@Override
 			public void run() {
+				if (checkReadOnly(viewer)) {
+					return;
+				}
 				EventBEditorUtils.handleUp(editor, viewer);
 			}
 		};
@@ -99,9 +109,12 @@ public class VariableMasterSectionActionGroup extends ActionGroup {
 				.getImageDescriptor(IEventBSharedImages.IMG_UP_PATH));
 
 		// Handle the down action.
-		handleDown = new Action() {
+		handleDown = new SynthesisAction() {
 			@Override
 			public void run() {
+				if (checkReadOnly(viewer)) {
+					return;
+				}
 				EventBEditorUtils.handleDown(editor, viewer);
 			}
 		};
