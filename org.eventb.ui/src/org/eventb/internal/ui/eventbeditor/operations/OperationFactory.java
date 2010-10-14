@@ -15,7 +15,7 @@ import java.util.Collection;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
-import org.eventb.internal.ui.Pair;
+import org.eventb.internal.ui.eventbeditor.Triplet;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -72,11 +72,13 @@ public class OperationFactory {
 	}
 
 	public static AtomicOperation createConstantWizard(IContextRoot root,
-			String identifier, String[] labels, String[] predicates) {
+			String identifier, String[] labels, String[] predicates,
+			boolean[] isTheorem) {
 		final AtomicOperation op;
 		final OperationBuilder builder = new OperationBuilder();
-		op = new AtomicOperation(getRodinFileUndoContext(root), builder
-				.createConstant(root, identifier, labels, predicates));
+		op = new AtomicOperation(getRodinFileUndoContext(root),
+				builder.createConstant(root, identifier, labels, predicates,
+						isTheorem));
 		op.setLabel("Create Constant");
 		return op;
 	}
@@ -127,7 +129,7 @@ public class OperationFactory {
 	 */
 	public static AtomicOperation createVariableWizard(final IMachineRoot root,
 			final String varName,
-			final Collection<Pair<String, String>> invariant,
+			final Collection<Triplet<String, String, Boolean>> invariant,
 			final String actName, final String actSub) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation op = new AtomicOperation(
@@ -248,12 +250,12 @@ public class OperationFactory {
 	 */
 	public static AtomicOperation createEvent(IMachineRoot root, String name,
 			String[] varNames, String[] grdNames, String[] grdPredicates,
-			String[] actNames, String[] actSubstitutions) {
+			boolean[] grdIsTheorem, String[] actNames, String[] actSubstitutions) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation op = new AtomicOperation(
 				getRodinFileUndoContext(root), builder.createEvent(root, name,
-						varNames, grdNames, grdPredicates, actNames,
-						actSubstitutions));
+						varNames, grdNames, grdPredicates, grdIsTheorem,
+						actNames, actSubstitutions));
 		op.setLabel("Create Event");
 		return op;
 	}

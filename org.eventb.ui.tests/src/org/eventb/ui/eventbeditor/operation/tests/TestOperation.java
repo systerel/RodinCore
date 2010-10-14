@@ -27,7 +27,7 @@ import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.core.IVariable;
-import org.eventb.internal.ui.Pair;
+import org.eventb.internal.ui.eventbeditor.Triplet;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.LabelAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.PredicateAttributeManipulation;
@@ -55,8 +55,8 @@ public class TestOperation extends OperationTest {
 		// after execute and redo, only event are renamed
 		addInvariant(mchElement, "myInvariant", "predicateIsRenamed");
 
-		final AtomicOperation op = OperationFactory.changeAttribute(mch
-				.getRodinFile(), factory, invariant, "predicateIsRenamed");
+		final AtomicOperation op = OperationFactory.changeAttribute(
+				mch.getRodinFile(), factory, invariant, "predicateIsRenamed");
 
 		verifyOperation(op, mch, mchElement);
 	}
@@ -64,8 +64,8 @@ public class TestOperation extends OperationTest {
 	/**
 	 * add all elements to parent.
 	 */
-	private void addElements(Element parent, IInternalElement[] elements, Element nextSibling)
-			throws RodinDBException {
+	private void addElements(Element parent, IInternalElement[] elements,
+			Element nextSibling) throws RodinDBException {
 		for (IInternalElement element : elements) {
 			parent.addChild(Element.valueOf(element), nextSibling);
 		}
@@ -89,7 +89,8 @@ public class TestOperation extends OperationTest {
 		mchElement = Element.valueOf(mch);
 		addElements(mchElement, elements, null);
 
-		final AtomicOperation op = OperationFactory.copyElements(mch, elements, null);
+		final AtomicOperation op = OperationFactory.copyElements(mch, elements,
+				null);
 
 		verifyOperation(op, mch, mchElement);
 	}
@@ -172,7 +173,7 @@ public class TestOperation extends OperationTest {
 		final String[] labels = new String[] { "label1", "label2", "label3" };
 		final String[] predicates = new String[] { "pred1", "pred2", "pred3" };
 		final boolean[] isTheorem = new boolean[] { true, false, true };
-		
+
 		addElementWithLabelPredicate(ctxElement, IAxiom.ELEMENT_TYPE, labels,
 				predicates, isTheorem);
 
@@ -207,14 +208,14 @@ public class TestOperation extends OperationTest {
 	public void testCreateConstantWizard() throws Exception {
 		final String[] labels = new String[] { "axm1", "axm2", "axm3" };
 		final String[] predicates = new String[] { "prd1", "prd2", "prd3" };
-		final boolean[] isTheorem = new boolean[] { false, false, false};
+		final boolean[] isTheorem = new boolean[] { false, true, false };
 		addElementWithIdentifier(ctxElement, IConstant.ELEMENT_TYPE,
 				"myConstant");
 		addElementWithLabelPredicate(ctxElement, IAxiom.ELEMENT_TYPE, labels,
 				predicates, isTheorem);
 
 		final AtomicOperation op = OperationFactory.createConstantWizard(ctx,
-				"myConstant", labels, predicates);
+				"myConstant", labels, predicates, isTheorem);
 
 		verifyOperation(op, ctx, ctxElement);
 	}
@@ -261,7 +262,7 @@ public class TestOperation extends OperationTest {
 		final String[] grdNames = new String[] { "grd1", "grd2" };
 		final String[] grdPredicates = new String[] { "var1 : NAT",
 				"var2 : NAT" };
-		final boolean[] isTheorem = new boolean[] { false, false, false};
+		final boolean[] isTheorem = new boolean[] { false, true, false };
 		final String[] actNames = new String[] { "act1", "act2" };
 		final String[] actSubstitutions = new String[] { "a := var1",
 				"b := var2" };
@@ -274,7 +275,8 @@ public class TestOperation extends OperationTest {
 		addAction(eventElement, actNames, actSubstitutions);
 
 		final AtomicOperation op = OperationFactory.createEvent(mch, "evt",
-				varNames, grdNames, grdPredicates, actNames, actSubstitutions);
+				varNames, grdNames, grdPredicates, isTheorem, actNames,
+				actSubstitutions);
 
 		verifyOperation(op, mch, mchElement);
 	}
@@ -323,9 +325,9 @@ public class TestOperation extends OperationTest {
 		verifyOperation(op, mch, mchElement);
 	}
 
-	private class InvariantsPair extends Pair<String, String> {
-		public InvariantsPair(String obj1, String obj2) {
-			super(obj1, obj2);
+	private class Invariants extends Triplet<String, String, Boolean> {
+		public Invariants(String obj1, String obj2, boolean b) {
+			super(obj1, obj2, b);
 		}
 	}
 
@@ -338,11 +340,11 @@ public class TestOperation extends OperationTest {
 		final Element event = addEventElement(mchElement, "INITIALISATION");
 		addAction(event, "act1", "myVariable := 1");
 
-		InvariantsPair[] invariants = new InvariantsPair[] {
-				new InvariantsPair("inv1", "myVariable > 0"),
-				new InvariantsPair("inv2", "myVariable < 3") };
+		Invariants[] invariants = new Invariants[] {
+				new Invariants("inv1", "myVariable > 0", false),
+				new Invariants("inv2", "myVariable < 3", false) };
 
-		final ArrayList<Pair<String, String>> invariantCollection = new ArrayList<Pair<String, String>>(
+		final ArrayList<Triplet<String, String, Boolean>> invariantCollection = new ArrayList<Triplet<String, String, Boolean>>(
 				Arrays.asList(invariants));
 
 		final AtomicOperation op = OperationFactory.createVariableWizard(mch,
@@ -358,11 +360,11 @@ public class TestOperation extends OperationTest {
 		addInvariant(mchElement, "inv1", "myVariable > 0");
 		addInvariant(mchElement, "inv2", "myVariable < 3");
 
-		InvariantsPair[] invariants = new InvariantsPair[] {
-				new InvariantsPair("inv1", "myVariable > 0"),
-				new InvariantsPair("inv2", "myVariable < 3") };
+		Invariants[] invariants = new Invariants[] {
+				new Invariants("inv1", "myVariable > 0", false),
+				new Invariants("inv2", "myVariable < 3", false) };
 
-		final ArrayList<Pair<String, String>> invariantCollection = new ArrayList<Pair<String, String>>(
+		final ArrayList<Triplet<String, String, Boolean>> invariantCollection = new ArrayList<Triplet<String, String, Boolean>>(
 				Arrays.asList(invariants));
 
 		final AtomicOperation op = OperationFactory.createVariableWizard(mch,
@@ -378,7 +380,7 @@ public class TestOperation extends OperationTest {
 		final Element event = addEventElement(mchElement, "INITIALISATION");
 		addAction(event, "act1", "myVariable := 1");
 
-		final Collection<Pair<String, String>> invariantCollection = Collections
+		final Collection<Triplet<String, String, Boolean>> invariantCollection = Collections
 				.emptyList();
 
 		final AtomicOperation op = OperationFactory.createVariableWizard(mch,
@@ -425,7 +427,7 @@ public class TestOperation extends OperationTest {
 		final IAction act = evt.createChild(IAction.ELEMENT_TYPE, null, null);
 		act.setLabel("act", null);
 		act.setAssignmentString("assignment", null);
-		
+
 		final AtomicOperation op = OperationFactory.deleteElement(evt);
 		verifyOperation(op, mch, mchElement);
 	}
@@ -490,10 +492,12 @@ public class TestOperation extends OperationTest {
 		addInvariant(mchElement, "inv2", "predicate");
 		addInvariant(mchElement, "inv3", "predicate");
 
-		final IInvariant nextSibling = createInvariant(mch, "inv1", "predicate", false);
+		final IInvariant nextSibling = createInvariant(mch, "inv1",
+				"predicate", false);
 		createInvariant(mch, "inv2", "predicate", false);
 		createInvariant(mch, "inv3", "predicate", false);
-		final IInvariant moved = createInvariant(mch, "inv4", "predicate", false);
+		final IInvariant moved = createInvariant(mch, "inv4", "predicate",
+				false);
 
 		final AtomicOperation op = OperationFactory.move(mch, moved, mch,
 				nextSibling);

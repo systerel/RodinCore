@@ -13,6 +13,7 @@
  *     Systerel - increased index of label when add new input
  *     Systerel - used label prefix set by user
  *     Systerel - replaced setFieldValues() with checkAndSetFieldValues()
+ *     Systerel - add widget to edit theorem attribute
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.dialogs;
 
@@ -28,6 +29,7 @@ import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eventb.core.IAction;
@@ -35,11 +37,11 @@ import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IVariable;
 import org.eventb.internal.ui.IEventBInputText;
-import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.autocompletion.WizardProposalProvider;
 import org.eventb.internal.ui.autocompletion.ProviderModifyListener;
+import org.eventb.internal.ui.autocompletion.WizardProposalProvider;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.eventbeditor.Triplet;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
@@ -59,7 +61,7 @@ public class NewVariableDialog extends EventBDialog {
 
 	private String identifierResult;
 
-	private Collection<Pair<String, String>> invariantsResult;
+	private Collection<Triplet<String, String, Boolean>> invariantsResult;
 
 	private String initLabelResult;
 
@@ -67,7 +69,7 @@ public class NewVariableDialog extends EventBDialog {
 
 	private IEventBInputText identifierText;
 
-	private Collection<Pair<IEventBInputText, IEventBInputText>> invariantsTexts;
+	private Collection<Triplet<IEventBInputText, IEventBInputText, Button>> invariantsTexts;
 
 	private IEventBInputText initLabelText;
 
@@ -96,7 +98,7 @@ public class NewVariableDialog extends EventBDialog {
 		this.editor = editor;
 		this.invPrefix = invPrefix;
 		this.invIndex = getInvariantFirstIndex();
-		invariantsTexts = new ArrayList<Pair<IEventBInputText, IEventBInputText>>();
+		invariantsTexts = new ArrayList<Triplet<IEventBInputText, IEventBInputText, Button>>();
 	}
 
 	private String getInvariantFirstIndex() {
@@ -125,13 +127,13 @@ public class NewVariableDialog extends EventBDialog {
 	@Override
 	protected void createContents() {
 		setDebugBackgroundColor();
-		setFormGridLayout(getBody(), 3);
+		setFormGridLayout(getBody(), 4);
 		setFormGridData();
 
 		providerListener = new ProviderModifyListener();
 		
 		createLabel(getBody(), "Identifier");
-		identifierText = createBText(getBody(), EMPTY, 200, true, 2);
+		identifierText = createBText(getBody(), EMPTY, 200, true, 3);
 		addIdentifierAdapter(identifierText, IVariable.ELEMENT_TYPE,
 				LABEL_ATTRIBUTE);
 		
@@ -139,20 +141,20 @@ public class NewVariableDialog extends EventBDialog {
 		initLabelText = createNameInputText(getBody(),
 				getFreeInitialisationActionName());
 		addContentAdapter(initLabelText, IAction.ELEMENT_TYPE, LABEL_ATTRIBUTE);
-		initSubstitutionText = createContentInputText(getBody());
+		initSubstitutionText = createContentInputText(getBody(), 2);
 		addContentAdapter(initSubstitutionText, IAction.ELEMENT_TYPE,
 				ASSIGNMENT_ATTRIBUTE);
 		identifierText.getTextWidget().addModifyListener(
 				new ActionListener(initSubstitutionText.getTextWidget()));
 
-		final Pair<IEventBInputText, IEventBInputText> invariant = createInvariant();
+		final Triplet<IEventBInputText, IEventBInputText, Button> invariant = createInvariant();
 		addGuardListener(identifierText, invariant.getSecond());
 
 		setText(identifierText, getFreeVariable());
 		select(identifierText);
 	}
 
-	private Pair<IEventBInputText, IEventBInputText> createInvariant() {
+	private Triplet<IEventBInputText, IEventBInputText, Button> createInvariant() {
 		createLabel(getBody(), "Invariant");
 		final IEventBInputText invariantNameText = createNameInputText(
 				getBody(),
@@ -162,8 +164,9 @@ public class NewVariableDialog extends EventBDialog {
 		final IEventBInputText invariantPredicateText = createContentInputText(getBody());
 		addContentAdapter(initLabelText, IInvariant.ELEMENT_TYPE,
 				PREDICATE_ATTRIBUTE);
-		final Pair<IEventBInputText, IEventBInputText> p = newWidgetPair(
-				invariantNameText, invariantPredicateText);
+		final Button button = createIsTheoremToogle(getBody());
+		final Triplet<IEventBInputText, IEventBInputText, Button> p = newWidgetTriplet(
+				invariantNameText, invariantPredicateText, button);
 		invariantsTexts.add(p);
 		return p;
 	}
@@ -203,14 +206,12 @@ public class NewVariableDialog extends EventBDialog {
 	}
 	
 	private void addValues() {
-
 		final String varName = getName();
-		final Collection<Pair<String, String>> invariant = getInvariants();
+		final Collection<Triplet<String, String, Boolean>> invariant = getInvariants();
 		final String actName = getInitActionName();
 		final String actSub = getInitActionSubstitution();
 		EventBEditorUtils.newVariable(editor, varName, invariant, actName,
 				actSub);
-
 	}
 
 	private void initialise() {
@@ -218,9 +219,10 @@ public class NewVariableDialog extends EventBDialog {
 		invIndex = getInvariantFirstIndex();
 
 		int num = 0 ;
-		for (Pair<IEventBInputText, IEventBInputText> pair : invariantsTexts) {
-			setText(pair.getFirst(), getNewInvariantName(invIndex, num));
-			setText(pair.getSecond(), EMPTY);
+		for (Triplet<IEventBInputText, IEventBInputText, Button> triplet: invariantsTexts) {
+			setText(triplet.getFirst(), getNewInvariantName(invIndex, num));
+			setText(triplet.getSecond(), EMPTY);
+			triplet.getThird().setSelection(false);
 			num++;
 		}	
 
@@ -250,8 +252,8 @@ public class NewVariableDialog extends EventBDialog {
 			return false;
 		}
 		
-		invariantsResult = new ArrayList<Pair<String, String>>();
-		fillPairResult(invariantsTexts, invariantsResult);
+		invariantsResult = new ArrayList<Triplet<String, String, Boolean>>();
+		fillTripletResult(invariantsTexts, invariantsResult);
 		if (dirtyTexts.contains(initSubstitutionText.getTextWidget())) {
 			initLabelResult = getText(initLabelText);
 			initSubstitutionResult = getText(initSubstitutionText);
@@ -278,7 +280,7 @@ public class NewVariableDialog extends EventBDialog {
 	 * @return invariants as a collection of pairs (name, predicate); never
 	 *         <code>null</code>, but might be empty
 	 */
-	public Collection<Pair<String, String>> getInvariants() {
+	public Collection<Triplet<String, String, Boolean>> getInvariants() {
 		return invariantsResult;
 	}
 
@@ -305,7 +307,7 @@ public class NewVariableDialog extends EventBDialog {
 	@Override
 	public boolean close() {
 		identifierText.dispose();
-		disposePairs(invariantsTexts);
+		disposeTriplets(invariantsTexts);
 		initSubstitutionText.dispose();
 		return super.close();
 	}

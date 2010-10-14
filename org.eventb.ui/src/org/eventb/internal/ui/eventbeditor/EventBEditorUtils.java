@@ -16,6 +16,7 @@
  *     Systerel - added changeFocusWhenDispose
  *     Systerel - added checkAndShowReadOnly
  *     Systerel - replaced Messages.bind() by a static method
+ *     Systerel - add widget to edit theorem attribute in new dialogs
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -66,7 +67,6 @@ import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.ui.EventBUtils;
-import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewCarrierSetDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewConstantDialog;
@@ -494,19 +494,20 @@ public class EventBEditorUtils {
 	public static void addEvent(final IEventBEditor<IMachineRoot> editor,
 			final TreeViewer viewer) {
 
-		final String name = null ;
-		
+		final String name = null;
+
 		final FormulaFactory ff = editor.getFormulaFactory();
 		final String[] varNames = defaultArray(3, null);
 		final String[] grdNames = defaultArray(3, null);
 		final String[] grdPredicates = defaultArray(3,
 				EventBUIPlugin.getPrd_Default(ff));
+		final boolean[] grdIsTheorems = defaultArray(3, false);
 		final String[] actNames = defaultArray(3, null);
 		final String[] actSubstitutions = defaultArray(3,
 				EventBUIPlugin.getSub_Default(ff));
 		final AtomicOperation op = OperationFactory.createEvent(
 				editor.getRodinInput(), name, varNames, grdNames,
-				grdPredicates, actNames, actSubstitutions);
+				grdPredicates, grdIsTheorems, actNames, actSubstitutions);
 		History.getInstance().addOperation(op);
 		IInternalElement event = op.getCreatedElement();
 		displayInSynthesis(viewer, event, event);
@@ -599,6 +600,12 @@ public class EventBEditorUtils {
 		return result ;
 	}
 	
+	private static boolean[] defaultArray(int length, boolean value) {
+		final boolean[] result = new boolean[length];
+		Arrays.fill(result, value);
+		return result;
+	}
+
 	/**
 	 * Add a new axiom.
 	 * <p>
@@ -724,7 +731,7 @@ public class EventBEditorUtils {
 			return; // Cancel
 
 		final String varName = dialog.getName();
-		final Collection<Pair<String, String>> invariant = dialog
+		final Collection<Triplet<String, String, Boolean>> invariant = dialog
 				.getInvariants();
 		final String actName = dialog.getInitActionName();
 		final String actSub = dialog.getInitActionSubstitution();
@@ -749,9 +756,10 @@ public class EventBEditorUtils {
 	 *            the initialization assignment predicate , or <code>null</code>
 	 *            if no initialization is desired
 	 */
-	public static void newVariable(IEventBEditor<IMachineRoot> editor, String varName,
-			final Collection<Pair<String, String>> invariant, String actName,
-			String actSub) {
+	public static void newVariable(IEventBEditor<IMachineRoot> editor,
+			String varName,
+			final Collection<Triplet<String, String, Boolean>> invariant,
+			String actName, String actSub) {
 		final AtomicOperation operation = OperationFactory
 				.createVariableWizard(editor.getRodinInput(), varName,
 						invariant, actName, actSub);
@@ -781,13 +789,16 @@ public class EventBEditorUtils {
 		final String identifier = dialog.getIdentifier();
 		final String[] axmNames = dialog.getAxiomNames();
 		final String[] axmSubs = dialog.getAxiomPredicates();
-		newConstant(editor, identifier, axmNames, axmSubs);
+		final boolean[] axmIsThm = dialog.getAxiomIsTheorem();
+		newConstant(editor, identifier, axmNames, axmSubs, axmIsThm);
 	}
-	
-	public static void newConstant(IEventBEditor<IContextRoot> editor, String identifier,
-			String[] axmNames, String[] axmSubs) {
-		AtomicOperation operation = OperationFactory.createConstantWizard(
-				editor.getRodinInput(), identifier, axmNames, axmSubs);
+
+	public static void newConstant(IEventBEditor<IContextRoot> editor,
+			String identifier, String[] axmNames, String[] axmSubs,
+			boolean[] axmIsThm) {
+		AtomicOperation operation = OperationFactory
+				.createConstantWizard(editor.getRodinInput(), identifier,
+						axmNames, axmSubs, axmIsThm);
 		History.getInstance().addOperation(operation);
 		addNewElements(editor, operation);
 	}
@@ -873,27 +884,26 @@ public class EventBEditorUtils {
 		if (dialog.getReturnCode() == InputDialog.CANCEL)
 			return; // Cancel
 
-		String name = dialog.getLabel();
+		final String name = dialog.getLabel();
+		final String[] paramNames = dialog.getParameters();
+		final String[] grdNames = dialog.getGrdLabels();
+		final String[] grdPredicates = dialog.getGrdPredicates();
+		final boolean[] grdIsTheorem = dialog.getGrdIsTheorem();
+		final String[] actNames = dialog.getActLabels();
+		final String[] actSubstitutions = dialog.getActSubstitutions();
 
-		String[] paramNames = dialog.getParameters();
-
-		String[] grdNames = dialog.getGrdLabels();
-		String[] grdPredicates = dialog.getGrdPredicates();
-
-		String[] actNames = dialog.getActLabels();
-		String[] actSubstitutions = dialog.getActSubstitutions();
-
-		newEvent(editor, name, paramNames, grdNames, grdPredicates, actNames,
-				actSubstitutions);
+		newEvent(editor, name, paramNames, grdNames, grdPredicates,
+				grdIsTheorem, actNames, actSubstitutions);
 
 	}
 
-	public static void newEvent(IEventBEditor<IMachineRoot> editor, String name,
-			String[] paramNames, String[] grdNames, String[] grdPredicates,
-			String[] actNames, String[] actSubstitutions) {
-		AtomicOperation operation = OperationFactory.createEvent(editor
-				.getRodinInput(), name, paramNames, grdNames, grdPredicates,
-				actNames, actSubstitutions);
+	public static void newEvent(IEventBEditor<IMachineRoot> editor,
+			String name, String[] paramNames, String[] grdNames,
+			String[] grdPredicates, boolean[] grdIsTheorem, String[] actNames,
+			String[] actSubstitutions) {
+		AtomicOperation operation = OperationFactory.createEvent(
+				editor.getRodinInput(), name, paramNames, grdNames,
+				grdPredicates, grdIsTheorem, actNames, actSubstitutions);
 		addOperationToHistory(operation, editor);
 	}
 	

@@ -21,7 +21,6 @@ import static org.eventb.core.IConvergenceElement.Convergence.ORDINARY;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,8 +37,8 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
-import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.Triplet;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributeValue;
@@ -49,12 +48,6 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 class OperationBuilder {
-
-	private boolean[] makeFilledArray(int length, boolean value) {
-		final boolean[] result = new boolean[length];
-		Arrays.fill(result, value);
-		return result;
-	}
 
 	private static final String KEYWORD_PARTITION = "partition";
 	
@@ -80,10 +73,10 @@ class OperationBuilder {
 	}
 
 	public OperationTree createConstant(IInternalElement root,
-			String identifier, String[] labels, String[] predicates) {
+			String identifier, String[] labels, String[] predicates,
+			boolean[] isTheorem) {
 		final OperationNode cmd = new OperationNode();
 		cmd.addCommand(createConstant(root, identifier));
-		final boolean[] isTheorem = makeFilledArray(labels.length, false);
 		cmd.addCommand(createAxiom(root, labels, predicates, isTheorem));
 		return cmd;
 	}
@@ -187,8 +180,8 @@ class OperationBuilder {
 	 * @return a command that creates a new variable
 	 */
 	public OperationTree createVariable(IMachineRoot root, String varName,
-			Collection<Pair<String, String>> invariant, String actName,
-			String actSub) {
+			Collection<Triplet<String, String, Boolean>> invariant,
+			String actName, String actSub) {
 		OperationNode cmd = new OperationNode();
 		cmd.addCommand(createVariable(root, varName));
 		if (!invariant.isEmpty()) {
@@ -213,13 +206,13 @@ class OperationBuilder {
 	 * </p>
 	 */
 	private OperationNode createInvariantList(IMachineRoot root,
-			Collection<Pair<String, String>> invariants) {
+			Collection<Triplet<String, String, Boolean>> invariants) {
 		OperationNode cmd = new OperationNode();
 
 		if (invariants != null) {
-			for (Pair<String, String> pair : invariants) {
-				cmd.addCommand(createInvariant(root, pair.getFirst(), pair
-						.getSecond(), false));
+			for (Triplet<String, String, Boolean> triplet : invariants) {
+				cmd.addCommand(createInvariant(root, triplet.getFirst(),
+						triplet.getSecond(), triplet.getThird()));
 			}
 		}
 		return cmd;
@@ -270,13 +263,12 @@ class OperationBuilder {
 
 	public OperationTree createEvent(IMachineRoot root, String name,
 			String[] varIdentifiers, String[] grdLabels,
-			String[] grdPredicates, String[] actLabels,
+			String[] grdPredicates, boolean[] grdIsTheorem, String[] actLabels,
 			String[] actSubstitutions) {
 		OperationCreateElement op = createEvent(root, name);
 		op.addSubCommande(createParameter(root, varIdentifiers));
-		final boolean[] isTheorem = makeFilledArray(grdLabels.length, false);
 		op.addSubCommande(createElementLabelPredicate(root,
-				IGuard.ELEMENT_TYPE, grdLabels, grdPredicates, isTheorem));
+				IGuard.ELEMENT_TYPE, grdLabels, grdPredicates, grdIsTheorem));
 		op.addSubCommande(createElementTwoStringAttribute(root,
 				IAction.ELEMENT_TYPE, LABEL_ATTRIBUTE, ASSIGNMENT_ATTRIBUTE,
 				actLabels, actSubstitutions));

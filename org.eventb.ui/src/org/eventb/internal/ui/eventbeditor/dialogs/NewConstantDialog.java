@@ -12,6 +12,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - increased index of label when add new input
  *     Systerel - replaced setFieldValues() with checkAndSetFieldValues()
+ *     Systerel - add widget to edit theorem attribute
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.dialogs;
 
@@ -27,17 +28,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextRoot;
 import org.eventb.internal.ui.IEventBInputText;
-import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.autocompletion.WizardProposalProvider;
 import org.eventb.internal.ui.autocompletion.ProviderModifyListener;
+import org.eventb.internal.ui.autocompletion.WizardProposalProvider;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.eventbeditor.Triplet;
 import org.eventb.internal.ui.preferences.PreferenceUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributeType;
@@ -57,9 +59,9 @@ public class NewConstantDialog extends EventBDialog {
 
 	private IEventBInputText identifierText;
 
-	private final Collection<Pair<String, String>> axmResults = new ArrayList<Pair<String, String>>();
-	
-	private Collection<Pair<IEventBInputText, IEventBInputText>> axiomTexts;
+	private final Collection<Triplet<String, String, Boolean>> axmResults = new ArrayList<Triplet<String, String, Boolean>>();
+
+	private Collection<Triplet<IEventBInputText, IEventBInputText, Button>> axiomTexts;
 	
 	private final IEventBEditor<IContextRoot> editor;
 
@@ -118,22 +120,22 @@ public class NewConstantDialog extends EventBDialog {
 		composite = toolkit.createComposite(parent);
 		setDebugBackgroundColor();
 
-		setFormGridLayout(composite, 3);
+		setFormGridLayout(composite, 4);
 		setFormGridData();
 
-		axiomTexts = new ArrayList<Pair<IEventBInputText, IEventBInputText>>();
+		axiomTexts = new ArrayList<Triplet<IEventBInputText, IEventBInputText, Button>>();
 
 		providerListener = new ProviderModifyListener();
 		createLabel(composite, "Identifier");
 
 		final String cstIdentifier = UIUtils.getFreeElementIdentifier(root,
 				IConstant.ELEMENT_TYPE);
-		identifierText = createBText(composite, EMPTY, 200, true, 2);
+		identifierText = createBText(composite, EMPTY, 200, true, 3);
 		addIdentifierAdapter(identifierText, IConstant.ELEMENT_TYPE,
 				LABEL_ATTRIBUTE);
 		providerListener.addInputText(identifierText);
 		
-		final Pair<IEventBInputText, IEventBInputText> axiom = createAxiom();
+		final Triplet<IEventBInputText, IEventBInputText, Button> axiom = createAxiom();
 		addGuardListener(identifierText, axiom.getSecond());
 
 		setText(identifierText, cstIdentifier);
@@ -167,7 +169,7 @@ public class NewConstantDialog extends EventBDialog {
 		super.buttonPressed(buttonId);
 	}
 
-	private Pair<IEventBInputText, IEventBInputText> createAxiom(){
+	private Triplet<IEventBInputText, IEventBInputText, Button> createAxiom() {
 		createLabel(composite, "Axiom");
 		final IEventBInputText axiomNameText = createNameInputText(composite,
 				getNewAxiomName());
@@ -175,8 +177,9 @@ public class NewConstantDialog extends EventBDialog {
 		final IEventBInputText axiomPredicateText = createContentInputText(composite);
 		addContentAdapter(axiomPredicateText, IAxiom.ELEMENT_TYPE,
 				PREDICATE_ATTRIBUTE);
-		final Pair<IEventBInputText, IEventBInputText> p = newWidgetPair(
-				axiomNameText, axiomPredicateText);
+		final Button button = createIsTheoremToogle(composite);
+		final Triplet<IEventBInputText, IEventBInputText, Button> p = newWidgetTriplet(
+				axiomNameText, axiomPredicateText, button);
 		axiomTexts.add(p);
 		return p;
 	}
@@ -190,7 +193,7 @@ public class NewConstantDialog extends EventBDialog {
 	
 	private void addValues() {
 		EventBEditorUtils.newConstant(editor, identifierResult,
-				getAxiomNames(), getAxiomPredicates());
+				getAxiomNames(), getAxiomPredicates(), getAxiomIsTheorem());
 	}
 	
 	private void initialise() {
@@ -208,7 +211,7 @@ public class NewConstantDialog extends EventBDialog {
 			return false;
 		}
 		
-		fillPairResult(axiomTexts, axmResults);
+		fillTripletResult(axiomTexts, axmResults);
 		return true;
 	}
 
@@ -225,16 +228,20 @@ public class NewConstantDialog extends EventBDialog {
 	@Override
 	public boolean close() {
 		identifierText.dispose();
-		disposePairs(axiomTexts);
+		disposeTriplets(axiomTexts);
 		return super.close();
 	}
 
 	public String[] getAxiomNames() {
-		return getFirst(axmResults);
+		return getFirstTriplet(axmResults);
 	}
 
 	public String[] getAxiomPredicates() {
-		return getSecond(axmResults);
+		return getSecondTriplet(axmResults);
+	}
+	
+	public boolean[] getAxiomIsTheorem() {
+		return getThirdTriplet(axmResults);
 	}
 	
 	private void addContentAdapter(IEventBInputText input,

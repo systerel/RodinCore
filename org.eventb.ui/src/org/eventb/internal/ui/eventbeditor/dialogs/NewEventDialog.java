@@ -12,6 +12,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - used label prefix set by user
  *     Systerel - replaced setFieldValues() with checkAndSetFieldValues()
+ *     Systerel - add widget to edit theorem attribute
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.dialogs;
 
@@ -34,6 +35,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -49,6 +51,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.autocompletion.ProviderModifyListener;
 import org.eventb.internal.ui.autocompletion.WizardProposalProvider;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.eventbeditor.Triplet;
 import org.eventb.internal.ui.preferences.PreferenceUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributeType;
@@ -68,7 +71,7 @@ public class NewEventDialog extends EventBDialog {
 
 	protected final Collection<String> parsResult = new ArrayList<String>();
 
-	private final Collection<Pair<String, String>> grdResults = new ArrayList<Pair<String, String>>();
+	private final Collection<Triplet<String, String, Boolean>> grdResults = new ArrayList<Triplet<String, String, Boolean>>();
 
 	private final Collection<Pair<String, String>> actResults = new ArrayList<Pair<String, String>>();
 
@@ -76,7 +79,7 @@ public class NewEventDialog extends EventBDialog {
 
 	private Collection<IEventBInputText> parTexts;
 
-	private Collection<Pair<IEventBInputText, IEventBInputText>> grdTexts;
+	private Collection<Triplet<IEventBInputText, IEventBInputText, Button>> grdTexts;
 
 	private Collection<Pair<IEventBInputText, IEventBInputText>> actTexts;
 
@@ -179,8 +182,8 @@ public class NewEventDialog extends EventBDialog {
 		return createNameInputText(composite, value);
 	}
 
-	private IEventBInputText createContentText() {
-		return createContentInputText(composite);
+	private IEventBInputText createContentText(Composite parent) {
+		return createContentInputText(parent);
 	}
 
 	private Composite createSpace() {
@@ -201,11 +204,11 @@ public class NewEventDialog extends EventBDialog {
 		return separator;
 	}
 
-	private Composite createContainer() {
+	private Composite createContainer(int numColumn) {
 		final Composite comp = toolkit.createComposite(composite);
 		final GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false);
-		final GridLayout layout = newLayout(1, 0, 10);
-		layout.makeColumnsEqualWidth = true;
+		final GridLayout layout = newLayout(numColumn, 0, 10);
+		layout.makeColumnsEqualWidth = false;
 		comp.setLayoutData(gd);
 		comp.setLayout(layout);
 		return comp;
@@ -213,7 +216,7 @@ public class NewEventDialog extends EventBDialog {
 	
 	private void createDialogContents(Composite parent) {
 		parTexts = new ArrayList<IEventBInputText>();
-		grdTexts = new ArrayList<Pair<IEventBInputText, IEventBInputText>>();
+		grdTexts = new ArrayList<Triplet<IEventBInputText, IEventBInputText, Button>>();
 		actTexts = new ArrayList<Pair<IEventBInputText, IEventBInputText>>();
 		providerListener = new ProviderModifyListener();
 
@@ -224,11 +227,11 @@ public class NewEventDialog extends EventBDialog {
 
 		createLabels("Label", "Parameter identifier(s)");
 
-		labelText = createBText(createContainer(), getFreeEventLabel());
+		labelText = createBText(createContainer(1), getFreeEventLabel());
 		addProposalAdapter(IEvent.ELEMENT_TYPE, LABEL_ATTRIBUTE, labelText);
 
 		createSpace();
-		parComposite = createContainer();
+		parComposite = createContainer(1);
 
 		createSeparator();
 
@@ -241,14 +244,15 @@ public class NewEventDialog extends EventBDialog {
 			final IEventBInputText grdLabel = createNameText(guardPrefix + i);
 			addContentAdapter(grdLabel, IGuard.ELEMENT_TYPE, LABEL_ATTRIBUTE);
 			createSpace();
-			final IEventBInputText grdPredicate = createContentText();
+			final Composite predContainer = createContainer(2);
+			final IEventBInputText grdPredicate = createContentText(predContainer);
 			addContentAdapter(grdPredicate, IGuard.ELEMENT_TYPE,
 					PREDICATE_ATTRIBUTE);
-
 			addGuardListener(parText, grdPredicate);
+			final Button button = createIsTheoremToogle(predContainer);
 
 			parTexts.add(parText);
-			grdTexts.add(newWidgetPair(grdLabel, grdPredicate));
+			grdTexts.add(newWidgetTriplet(grdLabel, grdPredicate, button));
 		}
 		grdCount = 3;
 		parCount = 3;
@@ -338,7 +342,7 @@ public class NewEventDialog extends EventBDialog {
 				+ actCount);
 		addContentAdapter(actionLabel, IAction.ELEMENT_TYPE, LABEL_ATTRIBUTE);
 		createSpace();
-		final IEventBInputText actionSub = createContentText();
+		final IEventBInputText actionSub = createContentText(composite);
 		addContentAdapter(actionSub, IAction.ELEMENT_TYPE, ASSIGNMENT_ATTRIBUTE);
 		actTexts.add(newWidgetPair(actionLabel, actionSub));
 	}
@@ -349,10 +353,12 @@ public class NewEventDialog extends EventBDialog {
 		addContentAdapter(grdLabel, IGuard.ELEMENT_TYPE, LABEL_ATTRIBUTE);
 		final Composite separator = createSpace();
 		separator.moveAbove(actionSeparator);
-		final IEventBInputText grdPred = createContentText();
-		moveAbove(grdPred, actionSeparator);
+		final Composite parent = createContainer(2);
+		final IEventBInputText grdPred = createContentText(parent);
+		parent.moveAbove(actionSeparator);
 		addContentAdapter(grdPred, IGuard.ELEMENT_TYPE, PREDICATE_ATTRIBUTE);
-		grdTexts.add(newWidgetPair(grdLabel, grdPred));
+		final Button button = createIsTheoremToogle(parent);
+		grdTexts.add(newWidgetTriplet(grdLabel, grdPred, button));
 		return grdPred;
 	}
 	
@@ -365,15 +371,17 @@ public class NewEventDialog extends EventBDialog {
 
 					final String[] grdNames = getGrdLabels();
 					final String[] lGrdPredicates = getGrdPredicates();
-
+					final boolean[] grdIsTheorem = getGrdIsTheorem();
+					
 					final String[] actNames = getActLabels();
 					final String[] lActSub = getActSubstitutions();
 
-					final String[] paramNames = parsResult.toArray(new String[parsResult
-							.size()]);
+					final String[] paramNames = parsResult
+							.toArray(new String[parsResult.size()]);
+					
 					EventBEditorUtils.newEvent(editor, labelResult, paramNames,
-							grdNames, lGrdPredicates, actNames, lActSub);
-
+							grdNames, lGrdPredicates, grdIsTheorem, actNames,
+							lActSub);
 				}
 
 			}, null);
@@ -406,7 +414,7 @@ public class NewEventDialog extends EventBDialog {
 		}
 		
 		grdResults.clear();
-		fillPairResult(grdTexts, grdResults);
+		fillTripletResult(grdTexts, grdResults);
 		
 		actResults.clear();
 		fillPairResult(actTexts, actResults);
@@ -440,7 +448,7 @@ public class NewEventDialog extends EventBDialog {
 	 * @return the list of the guard labels as input by user
 	 */
 	public String[] getGrdLabels() {
-		return getFirst(grdResults);
+		return getFirstTriplet(grdResults);
 	}
 
 	/**
@@ -450,7 +458,17 @@ public class NewEventDialog extends EventBDialog {
 	 * @return the list of the guard predicates as input by user
 	 */
 	public String[] getGrdPredicates() {
-		return getSecond(grdResults);
+		return getSecondTriplet(grdResults);
+	}
+
+	/**
+	 * Get the list of guard theorem attribute of the new event.
+	 * <p>
+	 * 
+	 * @return the list of the guard theorem attribute as input by user
+	 */
+	public boolean[] getGrdIsTheorem() {
+		return getThirdTriplet(grdResults);
 	}
 
 	/**
@@ -476,7 +494,7 @@ public class NewEventDialog extends EventBDialog {
 	@Override
 	public boolean close() {
 		labelText.dispose();
-		disposePairs(grdTexts);
+		disposeTriplets(grdTexts);
 		disposePairs(actTexts);
 		return super.close();
 	}
