@@ -1041,6 +1041,35 @@
       </page>
    </extension>
    <extension
+         point="org.eclipse.ui.preferenceTransfer">
+      <transfer
+            id="org.eventb.ui.transfers.autotactic"
+            name="%preferenceTransfert.autoTactic.name">
+         <mapping scope="instance">
+            <entry node="org.eventb.ui">
+               <key name="Auto-Tactics" />
+               <key name="Auto-Tactic enable" />
+            </entry>
+         </mapping>
+         <description>
+            %preferenceTransfert.autoTactic.description
+         </description>
+      </transfer>
+      <transfer
+            id="org.eventb.ui.transfers.posttactic"
+            name="%preferenceTransfert.postTactic.name">
+         <mapping scope="instance">
+            <entry node="org.eventb.ui">
+               <key name="Post-Tactics" />
+               <key name="Post-Tactic enable" />
+            </entry>
+         </mapping>
+         <description>
+            %preferenceTransfert.postTactic.description
+         </description>
+      </transfer>
+   </extension>
+   <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer class="org.eventb.internal.ui.preferences.PreferenceInitializer"/>
    </extension>
