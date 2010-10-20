@@ -4,6 +4,9 @@
 	<property name="SVNrev" value="some number" />
 	<property name="destination" value="some path" />
 
+	<!-- This script must be run in the same JRE as the workspace
+	     see also http://wiki.event-b.org/index.php/Generating_source_bundles_for_inclusion_in_a_target_platform_configuration
+	 -->
 
 	<target name="plugin_export">
 		<pde.exportPlugins
@@ -29,7 +32,7 @@
 			         org.rodinp.platform"
 			qualifier="r${SVNrev}"
 			useJARFormat="true"/>
-		
+
 	</target>
 
 </project>
