@@ -137,7 +137,7 @@ public class TestLexer extends AbstractTests {
 		}
 		
 		public void testCheckSymbol() throws Exception {
-			assertTrue(FormulaFactory.checkSymbol("ident_like€SYMBOL§"));
+			assertTrue(FormulaFactory.checkSymbol("ident_like€SYMBOL"));
 			assertTrue(FormulaFactory.checkSymbol("\u2b50"));
 			assertTrue(FormulaFactory.checkSymbol("\u2b50\u2b11"));
 			assertFalse(FormulaFactory.checkSymbol(""));
