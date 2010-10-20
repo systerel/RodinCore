@@ -212,23 +212,32 @@ public class AutoTactics {
 	 */
 	public static class InDomGoalTac implements ITactic {
 
-		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			final IProofTreeNode initialNode = ptNode;
-			final IProverSequent sequent = ptNode.getSequent();
+		public Object apply(IProofTreeNode initialNode, IProofMonitor pm) {
+
+			if (!checkPrecondition(initialNode)) {
+				return "Tactic unapplicable";
+			}				
+			final IProverSequent sequent = initialNode.getSequent();
 			final Predicate goal = sequent.goal();
-			ptNode = TacticsLib.addFunctionalHypotheses(ptNode, pm);
-			// Create an inDomManager for each different dom expression in goal
-			Set<InDomGoalManager> appManagers = TacticsLib
-					.createInDomManagers(goal);
-			for (InDomGoalManager app : appManagers) {
-				if (app.isApplicable(ptNode)) {
-					if (app.applyTactics(ptNode, pm) == null) {
-						return null;
-					}
+			if(pm != null && pm.isCanceled()) {
+				return "Canceled";
+			}
+			final IProofTreeNode ptNode = TacticsLib.addFunctionalHypotheses(initialNode, pm);
+			final InDomGoalManager manager = TacticsLib.createInDomManager(goal);
+			if (manager.isApplicable(ptNode)) {
+				if (manager.applyTactics(ptNode, pm) == null) {
+					return null;
 				}
 			}
 			initialNode.pruneChildren();
-			return "Tactic unapplicable";
+			return "Tactic fails";
+		}
+
+		// Returns true if goal has syntactic form "E: dom(F)"
+		private static boolean checkPrecondition(IProofTreeNode node) {
+			final Predicate goal = node.getSequent().goal();
+			final Expression element = Lib.getSet(goal);
+			return element != null && Lib.isDom(element);
 		}
 
 	}
@@ -246,6 +255,9 @@ public class AutoTactics {
 		public Object apply(final IProofTreeNode initialNode, IProofMonitor pm) {
 			if (!checkPrecondition(initialNode)) {
 				return "Tactic unapplicable";
+			}
+			if(pm != null && pm.isCanceled()){
+				return "Canceled";
 			}
 			final IProofTreeNode ptNode = TacticsLib.addFunctionalHypotheses(
 					initialNode, pm);

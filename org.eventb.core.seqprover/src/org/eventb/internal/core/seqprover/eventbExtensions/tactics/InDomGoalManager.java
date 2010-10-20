@@ -11,6 +11,8 @@
 
 package org.eventb.internal.core.seqprover.eventbExtensions.tactics;
 
+import static org.eventb.core.seqprover.tactics.BasicTactics.composeUntilFailure;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -24,29 +26,29 @@ import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
+import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.eventbExtensions.AutoTactics.TrueGoalTac;
+import org.eventb.core.seqprover.eventbExtensions.AutoTactics.TypeRewriteTac;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TotalDomRewrites;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewriterImpl;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TotalDomRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TotalDomRewrites.Input;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewriterImpl;
 
 /**
- * Finds possible substitution for a total domain occurrence and tries to
- * apply tactics to discharge the sequent.
- * 
+ * Finds possible substitution for a total domain occurrence and tries to apply
+ * tactics to discharge the sequent.
  */
 public class InDomGoalManager {
 
 	protected final UnaryExpression domExpression;
 
-	private List<IPosition> domPositions;
+	private IPosition domPosition;
 
 	private boolean truegoalTac;
 
@@ -54,41 +56,8 @@ public class InDomGoalManager {
 
 	public InDomGoalManager(UnaryExpression domExpression, IPosition position) {
 		this.domExpression = domExpression;
-		this.domPositions = new ArrayList<IPosition>();
-		this.domPositions.add(position);
+		this.domPosition = position;
 		this.truegoalTac = false;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-
-		if (this == obj) {
-			return true;
-		}
-
-		if (this.getClass() != obj.getClass()) {
-			return false;
-		}
-
-		final InDomGoalManager other = (InDomGoalManager) obj;
-
-		if (!domExpression.equals(other.domExpression)) {
-			return false;
-		}
-
-		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		int result = 1;
-		final int prime = 37;
-		result = prime * result + domExpression.hashCode();
-		return result;
-	}
-
-	public void addDomPosition(IPosition domPosition) {
-		domPositions.add(domPosition);
 	}
 
 	/**
@@ -145,40 +114,33 @@ public class InDomGoalManager {
 	 */
 	public Object applyTactics(IProofTreeNode ptNode, IProofMonitor pm) {
 
+		final ITactic trueGoalTactic = new TrueGoalTac();
+		final ITactic rewritesTac = new TypeRewriteTac();
 		final IProofTreeNode initialNode = ptNode;
-
-		// Applies totalDomRewrites for each total domain of the goal
-		for (IPosition domPosition : domPositions) {
-			final Input input = new Input(null, domPosition, substitute);
-			(BasicTactics.reasonerTac(new TotalDomRewrites(), input)).apply(
-					ptNode, pm);
-			ptNode = ptNode.getFirstOpenDescendant();
-		}
+		
+		final Input input = new Input(null, domPosition, substitute);
+		(BasicTactics.reasonerTac(new TotalDomRewrites(), input)).apply(ptNode,
+				pm);
+		ptNode = ptNode.getFirstOpenDescendant();
 
 		if (pm != null && pm.isCanceled()) {
 			initialNode.pruneChildren();
 			return "Canceled";
 		}
-
-		// Tries to use true goal tactic
 		if (truegoalTac) {
-			if (BasicTactics.reasonerTac(new TypeRewrites(), new EmptyInput())
-					.apply(ptNode, pm) == null) {
-				ptNode = ptNode.getFirstOpenDescendant();
-				if (new AutoTactics.TrueGoalTac().apply(ptNode, pm) == null) {
-					return null;
-				} else {
-					ptNode.getParent().pruneChildren();
-				}
-			}
-		}
-
-		// Tries to use hyp tactic
-		(BasicTactics.reasonerTac(new AutoRewrites(), new EmptyInput())).apply(
-				ptNode, pm);
-		ptNode = ptNode.getFirstOpenDescendant();
-		if (Tactics.hyp().apply(ptNode, pm) == null) {
-			return null;
+			
+			ITactic tac = composeUntilFailure(rewritesTac,trueGoalTactic);
+			if (tac.apply(ptNode, pm) == null) {
+				return null;
+			}			
+		} else {		
+			//Can't use composeUntilFailure because typeRewrites is not always necessary
+			(BasicTactics.reasonerTac(new AutoRewrites(), new EmptyInput()))
+			.apply(ptNode, pm);
+			ptNode = ptNode.getFirstOpenDescendant();
+			if (Tactics.hyp().apply(ptNode, pm) == null) {
+				return null;
+			}		
 		}
 		initialNode.pruneChildren();
 		return "Tactic unapplicable for this domain substitution";

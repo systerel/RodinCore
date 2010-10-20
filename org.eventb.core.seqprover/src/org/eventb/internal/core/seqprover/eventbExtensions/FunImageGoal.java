@@ -8,11 +8,9 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import java.util.HashSet;
-import java.util.Set;
+import static java.util.Collections.singleton;
 
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Expression;
@@ -26,21 +24,32 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 
-public class IsFunImageGoal extends AbstractManualInference {
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID
-			+ ".funImgGoal";
+/**
+ * A reasoner that generates proof Rules that add a hypothesis of the form 
+ * f(E) : S2 if the reasoner finds an hypothesis of the form f : E1 op E2 
+ * where E, E1 and E2 are expressions.
+ *
+ * @author Hugo De Sa Pereira Pinto
+ */
+
+public class FunImageGoal extends PredicatePositionReasoner {
+
+	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".funImgGoal";
 
 	@Override
+	@ProverRule("FUN_IMAGE_GOAL")
 	public IReasonerOutput apply(IProverSequent seq,
 			IReasonerInput reasonerInput, IProofMonitor pm) {
 
 		final Input input = (Input) reasonerInput;
-		final Predicate pred = input.pred;
-		final IPosition position = input.position;
+		final Predicate pred = input.getPred();
+		final IPosition position = input.getPosition();
 		final IAntecedent[] antecedents = getAntecedents(seq, pred, position);
 
 		if (antecedents == null) {
@@ -61,17 +70,16 @@ public class IsFunImageGoal extends AbstractManualInference {
 		return REASONER_ID;
 	}
 
-	@Override
 	protected IAntecedent[] getAntecedents(IProverSequent seq, Predicate pred,
 			IPosition position) {
 		final Predicate goal = seq.goal();
 		final FormulaFactory ff = seq.getFormulaFactory();
 		final Formula<?> funApp = goal.getSubFormula(position);
 
-		if(funApp==null){
+		if (funApp == null) {
 			return null;
 		}
-		
+
 		if (!seq.containsHypothesis(pred)) {
 			return null;
 		}
@@ -86,25 +94,28 @@ public class IsFunImageGoal extends AbstractManualInference {
 
 		final Expression function = ((BinaryExpression) funApp).getLeft();
 
-		if (Lib.isInclusion(pred)) {
-			final Expression element = Lib.getElement(pred);
-			final Expression set = Lib.getSet(pred);
-
-			if (Lib.isFun(set) || Lib.isRel(set)) {
-				final Expression rightSet = Lib.getRight(set);
-				if (element.equals(function)) {
-					final Predicate addedHyp = ff.makeRelationalPredicate(
-							Formula.IN, (Expression) funApp, rightSet, null);
-					Lib.postConstructionCheck(addedHyp);
-					Set<Predicate> addedHyps = new HashSet<Predicate>();
-					addedHyps.add(addedHyp);
-					IAntecedent[] anticidents = new IAntecedent[1];
-					anticidents[0] = ProverFactory.makeAntecedent(goal,
-							addedHyps, null);
-					return anticidents;
-				}
-			}
+		if (!Lib.isInclusion(pred)) {
+			return null;
 		}
+
+		final Expression element = Lib.getElement(pred);
+		final Expression set = Lib.getSet(pred);
+
+		if (!Lib.isFun(set) && !Lib.isRel(set)) {
+			return null;
+		}	
+		
+		final Expression rightSet = Lib.getRight(set);
+		
+		if (element.equals(function)) {
+			final DLib dl = DLib.mDLib(ff);
+			final Predicate addedHyp = dl.makeInclusion(
+					(Expression) funApp, rightSet);
+			return new IAntecedent[] { //
+					ProverFactory.makeAntecedent(goal, singleton(addedHyp),
+							null), //
+			};
+		}		
 
 		return null;
 	}

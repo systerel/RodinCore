@@ -29,7 +29,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.Conj;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
-import org.eventb.internal.core.seqprover.eventbExtensions.IsFunImageGoal;
+import org.eventb.internal.core.seqprover.eventbExtensions.FunImageGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimplifies;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
@@ -210,7 +210,7 @@ public abstract class TreeShape {
 
 		@Override
 		protected String getReasonerID() {
-			return IsFunImageGoal.REASONER_ID;
+			return FunImageGoal.REASONER_ID;
 		}
 
 	}
