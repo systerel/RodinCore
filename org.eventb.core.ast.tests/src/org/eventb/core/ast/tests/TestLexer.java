@@ -13,11 +13,14 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.LanguageVersion.LATEST;
 import static org.eventb.core.ast.LanguageVersion.V1;
 import static org.eventb.internal.core.parser.BMathV2.B_MATH_V2;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.FormulaFactory;
@@ -25,6 +28,11 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
+import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.extension.datatype.IConstructorMediator;
+import org.eventb.core.ast.extension.datatype.IDatatype;
+import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
+import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
 import org.eventb.internal.core.lexer.Scanner;
 import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.ParseResult;
@@ -143,6 +151,60 @@ public class TestLexer extends AbstractTests {
 		assertFalse(FormulaFactory.checkSymbol(""));
 		assertFalse(FormulaFactory.checkSymbol("idWith\u2b50Symbol"));
 		assertFalse(FormulaFactory.checkSymbol("\u2b50WithId"));
+	}
+
+	private static class DT implements IDatatypeExtension {
+
+		private final String name;
+
+		public DT(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String getTypeName() {
+			return name;
+		}
+
+		@Override
+		public String getId() {
+			return "id" + name;
+		}
+
+		@Override
+		public void addTypeParameters(ITypeConstructorMediator mediator) {
+			// none
+		}
+
+		@Override
+		public void addConstructors(IConstructorMediator mediator) {
+			// none
+		}
+
+	}
+
+	public void testExtensions() throws Exception {
+//		final String prefix = "oo"; // no bug
+		final String prefix = "o"; // bug
+//		final String prefix = "S"; // no bug
+//		final String prefix = "Se"; // no bug
+//		final String prefix = "Seq"; // bug
+
+		// no bug if we do: new DT(prefix + "0")
+		final IDatatype dtSeq = ff.makeDatatype(new DT(prefix));
+		final IDatatype dtSeq1 = ff.makeDatatype(new DT(prefix + "1"));
+		final IDatatype dtSeq2 = ff.makeDatatype(new DT(prefix + "2"));
+
+		final Set<IFormulaExtension> extensions = new HashSet<IFormulaExtension>();
+		extensions.addAll(dtSeq.getExtensions());
+		extensions.addAll(dtSeq1.getExtensions());
+		extensions.addAll(dtSeq2.getExtensions());
+
+		final FormulaFactory ffSeqs = ff.withExtensions(extensions);
+		final ParseResult result = new ParseResult(ffSeqs, LATEST, null);
+
+		// an AssertionError is thrown when the bug is present
+		new Scanner("", result, ffSeqs.getGrammar());
 	}
 
 }
