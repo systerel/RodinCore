@@ -241,9 +241,11 @@ import org.eventb.internal.core.parser.SubParsers;
 		case KPRJ1_GEN:
 		case KPRJ2_GEN:
 			return toPrint.isTypeChecked();
-		default:
-			return false;
 		}
+		if (toPrint instanceof ExtendedExpression) {
+			return ((ExtendedExpression)toPrint).isAtomic();
+		}
+		return false;
 	}
 
 }
