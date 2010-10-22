@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,15 +28,15 @@ import org.eventb.internal.pptrans.translator.PredicateSimplification;
 public class Translator {
 	
 	private Translator() {
-		// Non instanciable class.sxs
+		// Non-instantiable class
 	}
 	
 	/**
-	 * Decomposes every free or bound identifier of a cartesian product type. Decomposed
+	 * Decomposes every free or bound identifier of a Cartesian product type. Decomposed
 	 * predicates can be reduced with reduceToPredicateCalculus.
 	 * @param predicate the predicate to be decomposed
 	 * @param ff the formula factory to be used during decomposition
-	 * @return Returns a new predicate that has no identifiers of a cartesian product type,
+	 * @return Returns a new predicate that has no identifiers of a Cartesian product type,
 	 * except for the quantification of the free identifiers.
 	 */
 	public static Predicate decomposeIdentifiers(Predicate predicate, FormulaFactory ff) {
@@ -59,13 +59,24 @@ public class Translator {
 	/**
 	 * Simplifies predicates with some basic rules.
 	 * @param predicate the predicate to be simplified.
-	 * @param ff the formula factury that should be used during the simplification
+	 * @param ff the formula factory that should be used during the simplification
 	 * @return A new simplified predicate
 	 */
 	public static Predicate simplifyPredicate(Predicate predicate, FormulaFactory ff) {
 		return PredicateSimplification.simplifyPredicate(predicate, ff);
 	}
 
+	/**
+	 * Tells whether the given predicate is in the target sub-language of the PP
+	 * translator. The predicate returned by method
+	 * {@link #reduceToPredicateCalulus(Predicate, FormulaFactory)} is
+	 * guaranteed to pass this test.
+	 * 
+	 * @param predicate
+	 *            a predicate to test
+	 * @return <code>true</code> iff the given predicate is in the target
+	 *         sub-language of the PP translator
+	 */
 	public static boolean isInGoal(Predicate predicate) {
 		return GoalChecker.isInGoal(predicate);
 	}
