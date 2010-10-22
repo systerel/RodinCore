@@ -171,6 +171,62 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 			return origin;
 		}
 
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result
+					+ ((groupId == null) ? 0 : groupId.hashCode());
+			result = prime * result + ((id == null) ? 0 : id.hashCode());
+			result = prime * result + ((kind == null) ? 0 : kind.hashCode());
+			result = prime * result
+					+ ((typeName == null) ? 0 : typeName.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (!(obj instanceof TypeConstructor)) {
+				return false;
+			}
+			TypeConstructor other = (TypeConstructor) obj;
+			if (groupId == null) {
+				if (other.groupId != null) {
+					return false;
+				}
+			} else if (!groupId.equals(other.groupId)) {
+				return false;
+			}
+			if (id == null) {
+				if (other.id != null) {
+					return false;
+				}
+			} else if (!id.equals(other.id)) {
+				return false;
+			}
+			if (kind == null) {
+				if (other.kind != null) {
+					return false;
+				}
+			} else if (!kind.equals(other.kind)) {
+				return false;
+			}
+			if (typeName == null) {
+				if (other.typeName != null) {
+					return false;
+				}
+			} else if (!typeName.equals(other.typeName)) {
+				return false;
+			}
+			return true;
+		}
+
 	}
 
 	private final List<ITypeParameter> typeParams = new ArrayList<ITypeParameter>();

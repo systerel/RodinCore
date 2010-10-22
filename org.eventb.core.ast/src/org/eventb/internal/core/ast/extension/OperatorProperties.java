@@ -58,4 +58,50 @@ public class OperatorProperties implements IOperatorProperties {
 		return new OperatorProperties(notation, formulaType, childTypes,
 				isAssociative);
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((childTypes == null) ? 0 : childTypes.hashCode());
+		result = prime * result
+				+ ((formulaType == null) ? 0 : formulaType.hashCode());
+		result = prime * result + (isAssociative ? 1231 : 1237);
+		result = prime * result
+				+ ((notation == null) ? 0 : notation.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof OperatorProperties)) {
+			return false;
+		}
+		OperatorProperties other = (OperatorProperties) obj;
+		if (childTypes == null) {
+			if (other.childTypes != null) {
+				return false;
+			}
+		} else if (!childTypes.equals(other.childTypes)) {
+			return false;
+		}
+		if (formulaType != other.formulaType) {
+			return false;
+		}
+		if (isAssociative != other.isAssociative) {
+			return false;
+		}
+		if (notation != other.notation) {
+			return false;
+		}
+		return true;
+	}
+	
 }
