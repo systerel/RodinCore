@@ -393,9 +393,13 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		} else {
 			// FIXME should check preconditions about new children
 			// (flattening could break preconditions) 
+			final Expression[] newChildExprs = newChildExpressions
+					.toArray(new Expression[newChildExpressions.size()]);
+			final Predicate[] newChildPreds = newChildPredicates
+					.toArray(new Predicate[newChildPredicates.size()]);
 			before = rewriter.getFactory().makeExtendedExpression(extension,
-					newChildExpressions, newChildPredicates,
-					getSourceLocation());
+					newChildExprs, newChildPreds, getSourceLocation(),
+					getType());
 		}
 		return checkReplacement(rewriter.rewrite(before));
 	}
