@@ -255,7 +255,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	}
 
     @ProverRule( { "SIMP_SPECIAL_AND_BTRUE", "SIMP_SPECIAL_AND_BFALSE",
-			"SIMP_SPECIAL_OR_BTRUE", "SIMP_SPECIAL_OR_BFALSE" })
+    		"SIMP_MULTI_AND", "SIMP_MULTI_AND_NOT",
+			"SIMP_SPECIAL_OR_BTRUE", "SIMP_SPECIAL_OR_BFALSE",
+    		"SIMP_MULTI_OR", "SIMP_MULTI_OR_NOT" })
 	@Override
 	public Predicate rewrite(AssociativePredicate predicate) {
 		final Predicate result;
@@ -265,6 +267,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Conjunction 1: P ∧ ... ∧ ⊤ ∧ ... ∧ Q  == P ∧ ... ∧ Q
              * SIMP_SPECIAL_AND_BFALSE
 	    	 * Conjunction 2: P ∧ ... ∧ ⊥ ∧ ... ∧ Q  == ⊥
+             * SIMP_MULTI_AND
+	    	 * Conjunction 3: P ∧ ... ∧ Q ∧ ... ∧ Q ∧ ... ∧ R  == P ∧ ... ∧ Q ∧ ... ∧ R
+             * SIMP_MULTI_AND_NOT
+	    	 * Conjunction 4: P ∧ ... ∧ Q ∧ ... ∧ ¬Q ∧ ... ∧ R  == P ∧ ... ∧ Q ∧ ... ∧ R
 	    	 */
 	    	Land(children) -> {
 				result = fs.simplifyAssociativePredicate(predicate, `children, dLib.True(),
@@ -278,6 +284,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Disjunction 1: P ⋁ ... ⋁ ⊤ ⋁ ... ⋁ Q  == ⊤
              * SIMP_SPECIAL_OR_BFALSE
 	    	 * Disjunction 2: P ⋁ ... ⋁ ⊥ ⋁ ... ⋁ Q  == P ⋁ ... ⋁ Q
+             * SIMP_MULTI_OR
+	    	 * Disjunction 3: P ⋁ ... ⋁ Q ⋁ ... ⋁ Q ⋁ ... ⋁ R  == P ⋁ ... ⋁ Q ⋁ ... ⋁ R
+             * SIMP_MULTI_OR_NOT
+	    	 * Disjunction 4: P ⋁ ... ⋁ Q ⋁ ... ⋁ ¬Q ⋁ ... ⋁ R  == P ⋁ ... ⋁ Q ⋁ ... ⋁ R
 	    	 */
 	    	Lor(children) -> {
 				result = fs.simplifyAssociativePredicate(predicate, `children, dLib.False(),
