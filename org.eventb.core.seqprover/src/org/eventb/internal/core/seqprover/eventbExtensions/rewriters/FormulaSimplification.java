@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *     Systerel - added simplification for OVR, removed checkForallOnePointRune
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
+
+import static java.util.Collections.singleton;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -42,9 +44,7 @@ public class FormulaSimplification {
 
 		for (T child : children) {
 			if (child.equals(determinant)) {
-				formulas = new ArrayList<T>();
-				formulas.add(determinant);
-				return formulas;
+				return singleton(determinant);
 			}
 
 			if (!child.equals(neutral)) {
@@ -59,12 +59,9 @@ public class FormulaSimplification {
 								pred, null);
 					}
 					if (formulas.contains(negation)) {
-						formulas = new ArrayList<T>();
-						formulas.add(determinant);
-						return formulas;
-					} else {
-						formulas.add(child);
+						return singleton(determinant);
 					}
+					formulas.add(child);
 				} else {
 					formulas.add(child);
 				}
@@ -99,34 +96,39 @@ public class FormulaSimplification {
 
 		final Expression neutral;
 		final Expression determinant;
+		final boolean eliminateDuplicate;
 		final Expression number0 = factory.makeIntegerLiteral(BigInteger.ZERO, null);
 		final Expression number1 = factory.makeIntegerLiteral(BigInteger.ONE, null);
 		switch (tag) {
 		case Expression.BUNION:
 			neutral = factory.makeEmptySet(expression.getType(), null);
 			determinant = expression.getType().getBaseType().toExpression(factory);
+			eliminateDuplicate = true;
 			break;
 		case Expression.BINTER:
 			neutral = expression.getType().getBaseType().toExpression(factory);
 			determinant = factory.makeEmptySet(expression.getType(), null);
+			eliminateDuplicate = true;
 			break;
 		case Expression.PLUS:
 			neutral = number0;
 			determinant = null;
+			eliminateDuplicate = false;
 			break;
 		case Expression.MUL:
 			neutral = number1;
 			determinant = number0;
+			eliminateDuplicate = false;
 			break;
 		case Expression.OVR:
 			neutral = factory.makeEmptySet(expression.getType(), null);
 			determinant = null;
+			eliminateDuplicate = false;
 			break;
 		default:
 			assert false;
 			return expression;
 		}
-		boolean eliminateDuplicate = (tag == Expression.BUNION || tag == Expression.BINTER);
 
 		Collection<Expression> expressions = simplifiedAssociativeFormula(
 				children, neutral, determinant, eliminateDuplicate);
