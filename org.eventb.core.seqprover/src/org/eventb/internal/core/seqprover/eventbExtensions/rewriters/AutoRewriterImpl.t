@@ -275,7 +275,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	Land(children) -> {
 				result = fs.simplifyAssociativePredicate(predicate, `children, dLib.True(),
     				dLib.False());
-				trace(predicate, result, "SIMP_SPECIAL_AND_BTRUE", "SIMP_SPECIAL_AND_BFALSE");
+				trace(predicate, result, "SIMP_SPECIAL_AND_BTRUE", "SIMP_SPECIAL_AND_BFALSE",
+						"SIMP_MULTI_AND", "SIMP_MULTI_AND_NOT");
 				return result;
 			}
 
@@ -292,7 +293,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	Lor(children) -> {
 				result = fs.simplifyAssociativePredicate(predicate, `children, dLib.False(),
     				dLib.True());
-				trace(predicate, result, "SIMP_SPECIAL_OR_BTRUE", "SIMP_SPECIAL_OR_BFALSE");
+				trace(predicate, result, "SIMP_SPECIAL_OR_BTRUE", "SIMP_SPECIAL_OR_BFALSE",
+						"SIMP_MULTI_OR", "SIMP_MULTI_OR_NOT");
 				return result;
 			}
 	    }
