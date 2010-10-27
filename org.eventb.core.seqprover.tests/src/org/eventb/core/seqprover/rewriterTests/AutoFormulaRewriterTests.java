@@ -10,6 +10,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - SIMP_IN_COMPSET, SIMP_SPECIAL_OVERL, SIMP_FUNIMAGE_LAMBDA
  *     Systerel - added tests for SIMP_FUNIMAGE_LAMBDA
+ *     Systerel - added tests for SIMP_FORALL and SIMP_EXISTS
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
@@ -358,6 +359,21 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 				"(∃x, y·x > 0 ∧ y > 0 ∧ z > 0) ∨ (∃x, y·y < 2 ∧ x < 2 ∧ z < 2) ∨ (∃x, y·y < 1 ∧ x < 1 ∧ z < 1)",
 				"∃x, y·(x > 0 ∧ y > 0 ∧ z > 0) ∨ (y < 2 ∧ x < 2 ∧ z < 2) ∨ (y < 1 ∧ x < 1 ∧ z < 1)");
 
+		// SIMP_FORALL: !x,y,z.P(y) == !y.P(y)
+		predicateTest("∀x·x>0", "∀x,y⦂ℤ·x>0");
+		predicateTest("∀x·x>0", "∀y⦂ℤ,x·x>0");
+		predicateTest("∀x·x>0", "∀x,y⦂ℤ,z⦂ℤ·x>0");
+		predicateTest("∀x·x>0", "∀y⦂ℤ,x,z⦂ℤ·x>0");
+		predicateTest("∀x·x>0", "∀y⦂ℤ,z⦂ℤ,x·x>0");
+		predicateTest("∀x,t·x>0 ∨ t>0", "∀x,y⦂ℤ,t,z⦂ℤ·x>0 ∨ t>0");
+
+		// SIMP_EXISTS: #x,y,z.P(y) == #y.P(y)
+		predicateTest("∃x·x>0", "∃x,y⦂ℤ·x>0");
+		predicateTest("∃x·x>0", "∃y⦂ℤ,x·x>0");
+		predicateTest("∃x·x>0", "∃x,y⦂ℤ,z⦂ℤ·x>0");
+		predicateTest("∃x·x>0", "∃y⦂ℤ,x,z⦂ℤ·x>0");
+		predicateTest("∃x·x>0", "∃y⦂ℤ,z⦂ℤ,x·x>0");
+		predicateTest("∃x,t·x>0 ∧ t>0", "∃x,y⦂ℤ,t,z⦂ℤ·x>0 ∧ t>0");
 	}
 
 	/**
