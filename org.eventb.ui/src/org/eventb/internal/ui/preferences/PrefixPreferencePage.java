@@ -53,7 +53,10 @@ public class PrefixPreferencePage extends
 			// we handle values which are strings only
 			final String value = ep.getString(pref);
 			if (!ep.isDefault(pref)) {
-				preferenceStore.setValue(pref, value);
+				if (!(hasProjectSettings())) {
+					// updated value only if there is no specific project value
+					preferenceStore.setValue(pref, value);
+				}
 			} else if (reset) {
 				preferenceStore.setDefault(pref, value);
 				preferenceStore.setToDefault(pref);
