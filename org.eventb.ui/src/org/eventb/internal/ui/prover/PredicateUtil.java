@@ -217,6 +217,12 @@ public class PredicateUtil {
 			sb.append('\n');
 			prettyPrint(sb, maxLen, predString, child, indent + tab);
 		}
+		// TODO refactoring needed here (default case)
+		else if (pred instanceof ExtendedPredicate) {
+			appendSpaces(sb, indent);
+			sb.append(str);
+		}
+
 
 		if (bracketed) {
 			sb.append(')');
