@@ -34,7 +34,7 @@ public class PPReasoner extends XProverReasoner implements IVersionedReasoner {
 
 	public static final String REASONER_ID = "org.eventb.pp.pp";
 	
-	public static final int VERSION = 0;
+	public static final int VERSION = 1;
 
 	public static boolean DEBUG = false;
 	private static void debug(String msg) {
