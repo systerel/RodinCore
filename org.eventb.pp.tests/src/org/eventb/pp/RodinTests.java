@@ -1237,4 +1237,10 @@ public class RodinTests extends AbstractRodinTest {
 				false);
 	}
 
+	@Test
+	public void bug3102775() {
+		doTest(mTypeEnvironment(), mSet("f(TRUE) = 1", "f(FALSE) = 0"), "⊥",
+				false);
+	}
+
 }
