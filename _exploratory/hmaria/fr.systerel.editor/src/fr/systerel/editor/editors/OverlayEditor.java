@@ -34,6 +34,7 @@ import org.eclipse.swt.custom.ExtendedModifyListener;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.VerifyEvent;
@@ -46,9 +47,9 @@ import org.eventb.core.ICommentedElement;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPredicateElement;
-import org.eventb.eventBKeyboard.EventBStyledTextModifyListener;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.keyboard.RodinKeyboardPlugin;
 
 import fr.systerel.editor.actions.StyledTextEditAction;
 import fr.systerel.editor.contentAssist.RodinContentAssistProcessor;
@@ -72,7 +73,7 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 	private RodinEditor editor;
 	private Menu fTextContextMenu;
 	private ArrayList<IAction> editActions = new ArrayList<IAction>();
-	private EventBStyledTextModifyListener eventBTranslator;
+	private ModifyListener eventBTranslator;
 	
 	//counts the lines that were added to the underlying (parent) styled text
 	private int addedLines = 0;
@@ -89,7 +90,7 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 		textViewer = new TextViewer(parent, SWT.BORDER |SWT.V_SCROLL);
 		contentAssistant = getContentAssistant();
 		contentAssistant.install(textViewer);
-		eventBTranslator = new EventBStyledTextModifyListener();
+		eventBTranslator = RodinKeyboardPlugin.getDefault().getRodinModifyListener();
 		
 		setupEditorText();
 	}
@@ -478,7 +479,7 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 		boolean enable = (interval.getElement() instanceof IPredicateElement ||
 				interval.getElement() instanceof IAssignmentElement ) 
 				&& interval.getContentType().equals(RodinConfiguration.CONTENT_TYPE);
-		eventBTranslator.setEnable(enable);
+		RodinKeyboardPlugin.getDefault().enableRodinModifyListener(enable);
 		
 	}
 	

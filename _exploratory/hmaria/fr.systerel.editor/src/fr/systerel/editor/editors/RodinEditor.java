@@ -33,11 +33,11 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
-import org.eventb.eventBKeyboard.preferences.PreferenceConstants;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
+import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 import fr.systerel.editor.documentModel.DocumentMapper;
 import fr.systerel.editor.documentModel.Interval;
@@ -107,7 +107,7 @@ public class RodinEditor extends TextEditor implements IElementChangedListener {
 		styledText.addMouseListener(controller);
 		styledText.addVerifyKeyListener(controller);
 		styledText.addTraverseListener(controller);
-		Font font = JFaceResources.getFont(PreferenceConstants.EVENTB_MATH_FONT);
+		Font font = JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
 		styledText.setFont(font);
 		//TODO
 		ButtonManager buttonManager = new ButtonManager(mapper, styledText, viewer, this);
