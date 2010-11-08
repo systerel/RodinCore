@@ -440,6 +440,7 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
         gd.horizontalSpan = 1;
         gd.minimumWidth = minWidth;
         gd.grabExcessHorizontalSpace = true;
+        gd.grabExcessVerticalSpace = true;
         available.setLayoutData(gd);
 
         buttonBox = getButtonBoxControl(parent);
@@ -453,6 +454,7 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
         gd.horizontalSpan = 1;
         gd.minimumWidth = minWidth;
         gd.grabExcessHorizontalSpace = true;
+        gd.grabExcessVerticalSpace = true;
         selected.setLayoutData(gd);
 
         selectionChanged();
