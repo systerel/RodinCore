@@ -12,6 +12,7 @@
  *     Systerel - added FiniteHypBoundedGoalTac and OnePoint*Tac
  *     Systerel - modified FindContrHypsTac to use ContrHyps (discharge)
  *     Systerel - added FunImgSimpTac tactic (simplify)
+ *     Systerel - added DTDestrWDTac tactic (discharge)
  ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
@@ -25,11 +26,18 @@ import java.util.Set;
 
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IPosition;
+import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryPredicate;
+import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
@@ -270,7 +278,7 @@ public class AutoTactics {
 		}
 
 		// Returns true if goal has syntactic form "E(F) : S"
-		private boolean checkPrecondition(final IProofTreeNode node) {
+		private static boolean checkPrecondition(IProofTreeNode node) {
 			final Predicate goal = node.getSequent().goal();
 			final Expression element = Lib.getElement(goal);
 			return element != null && Lib.isFunApp(element);
@@ -278,6 +286,165 @@ public class AutoTactics {
 
 	}
 
+	public static class DTDestrWDTac implements ITactic {
+		
+		private static class Appli {
+			public static final Appli NOT_APPLI = new Appli(null, null, null);
+			
+			private final FreeIdentifier id;
+			private final IExpressionExtension constr;
+			private final IPosition pos;
+			
+			private Appli(FreeIdentifier id, IExpressionExtension constr, IPosition pos) {
+				this.id = id;
+				this.constr = constr;
+				this.pos = pos;
+			}
+			
+			public static Appli applicable(FreeIdentifier id, IExpressionExtension ext, IPosition pos) {
+				return new Appli(id, ext, pos);
+			}
+
+		}
+		
+		private static final ITactic trueGoalTac = new TrueGoalTac();
+		private static final ITactic hypTac = new GoalInHypTac();
+
+		@Override
+		public Object apply(IProofTreeNode initialNode, IProofMonitor pm) {
+			final Predicate goal = initialNode.getSequent().goal();
+			final Appli appli = getAppli(goal);
+			if (appli == Appli.NOT_APPLI) {
+				return "Tactic unapplicable";
+			}
+			if (pm != null && pm.isCanceled()) {
+				return "Canceled";
+			}
+						
+			// dc
+			final ITactic dc = Tactics.dtDistinctCase(null, appli.pos);
+			final Object resultDC = dc.apply(initialNode, pm);
+			if (resultDC != null) {
+				return resultDC;
+			}
+			
+			IProofTreeNode node = initialNode.getFirstOpenDescendant();
+			final String[] dcHypParams = getDCHypParams(node.getSequent(), appli);
+			
+			// exI
+			final Object resultExI = Tactics.exI(dcHypParams).apply(node, pm);
+			if (resultExI != null) {
+				return resultExI;
+			}
+
+			// true goal, hyp
+			final ITactic tac = loopOnAllPending(trueGoalTac, hypTac);
+				
+			final Object resultTrueHyp = tac.apply(node, pm);
+			if (resultTrueHyp != null) {
+				return resultTrueHyp;
+			}
+			if (node.isClosed()) {
+				return null;
+			}
+			initialNode.pruneChildren();
+			return "Tactic fails";
+		}
+
+		// goal of the form "# bids . id = constr()"
+		// where id is a free identifier with datatype type dt
+		// where dt has a single constructor 
+		private static Appli getAppli(Predicate goal) {
+			if (!Lib.isExQuant(goal)) {
+				return Appli.NOT_APPLI;
+			}
+			final Predicate boundPred = Lib.getBoundPredicate(goal);
+			if (!Lib.isEq(boundPred)) {
+				return Appli.NOT_APPLI;
+			}
+			final Expression eqLeft = Lib.eqLeft(boundPred);
+			if (!Lib.isFreeIdent(eqLeft)) {
+				return Appli.NOT_APPLI;
+			}
+			final Type idType = eqLeft.getType();
+			if (!(idType instanceof ParametricType)) {
+				return Appli.NOT_APPLI;
+			}
+			final IExpressionExtension idTypeExtn = ((ParametricType) idType).getExprExtension();
+			final Object origin = idTypeExtn.getOrigin();
+			if (!(origin instanceof IDatatype)) {
+				return Appli.NOT_APPLI;
+			}
+			final IDatatype dt = (IDatatype) origin;
+			final Set<IExpressionExtension> constructors = dt.getConstructors();
+			if (constructors.size() != 1) {
+				return Appli.NOT_APPLI;
+			}
+			final Expression eqRight = Lib.eqRight(boundPred);
+			if (!(eqRight instanceof ExtendedExpression)) {
+				return Appli.NOT_APPLI;
+			}
+			final IExpressionExtension constrExtn = ((ExtendedExpression) eqRight)
+					.getExtension();
+			final IExpressionExtension constr = constructors.iterator().next();
+			
+			if (!constrExtn.equals(constr)) {
+				return Appli.NOT_APPLI;
+			}
+			final IPosition pos = computePos((QuantifiedPredicate) goal);
+			return Appli.applicable((FreeIdentifier) eqLeft, constrExtn, pos);
+		}
+
+		private static IPosition computePos(QuantifiedPredicate pred) {
+			IPosition pos = IPosition.ROOT.getFirstChild();
+			for (int i = 0; i < pred.getBoundIdentDecls().length; i++) {
+				pos = pos.getNextSibling();
+			}
+			return pos.getFirstChild();
+		}
+
+		private static String[] getDCHypParams(IProverSequent sequent, Appli appli) {
+			for (Predicate hyp : sequent.selectedHypIterable()) {
+				if (!Lib.isEq(hyp)) {
+					continue;
+				}
+				final Expression eqLeft = Lib.eqLeft(hyp);
+				if (!appli.id.equals(eqLeft)) {
+					continue;
+				}
+				final Expression eqRight = Lib.eqRight(hyp);
+				if (!(eqRight instanceof ExtendedExpression)) {
+					continue;
+				}
+				final ExtendedExpression constr = (ExtendedExpression) eqRight;
+				final IExpressionExtension extn = constr.getExtension();
+				if (!appli.constr.equals(extn)) {
+					continue;
+				}
+				final Expression[] children = constr.getChildExpressions();
+				final String[] names = getNames(children);
+				if (names == null) {
+					continue;
+				}
+				return names;
+			}
+			return null;
+		}
+
+		private static String[] getNames(Expression[] children) {
+			final String[] names = new String[children.length];
+			for (int i = 0; i < children.length; i++) {
+				if (!Lib.isFreeIdent(children[i])) {
+					return null;
+				}
+				names[i] = ((FreeIdentifier) children[i]).getName();
+			}
+			return names;
+		}
+
+		
+	}
+	
 	//*************************************************
 	//
 	//				Simplifying Auto tactics

@@ -555,6 +555,12 @@
             id="FunImgInGoalTac"
             name="%funImgInGoalTacName">
       </autoTactic> 
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$DTDestrWDTac"
+            description="%dtDestrWDTacDesc"
+            id="dtDestrWDTac"
+            name="%dtDestrWDTacName">
+      </autoTactic> 
 
    </extension>
 
