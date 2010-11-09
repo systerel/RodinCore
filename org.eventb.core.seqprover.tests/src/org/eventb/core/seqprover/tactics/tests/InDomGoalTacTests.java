@@ -12,8 +12,6 @@
 package org.eventb.core.seqprover.tactics.tests;
 
 import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
-import static org.eventb.core.seqprover.tactics.tests.TreeShape.assertRulesApplied;
-import static org.eventb.core.seqprover.tactics.tests.TreeShape.empty;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.funImgGoal;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.hyp;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.totalDom;
@@ -21,7 +19,6 @@ import static org.eventb.core.seqprover.tactics.tests.TreeShape.trueGoal;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.typeRewrites;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.ast.Expression;
@@ -51,13 +48,11 @@ public class InDomGoalTacTests {
 	private static final String TAC_ID = "org.eventb.core.seqprover.InDomGoalTac";
 
 	private static void assertSuccess(IProofTreeNode node, TreeShape expected) {
-		assertNull(tac.apply(node, null));
-		assertRulesApplied(node, expected);
+		TreeShape.assertSuccess(node, expected, tac);
 	}
 
 	private static void assertFailure(IProofTreeNode node) {
-		assertNotNull(tac.apply(node, null));
-		assertRulesApplied(node, empty);
+		TreeShape.assertFailure(node, tac);
 	}
 
 	private static IProofTree genProofTree(String... preds) {

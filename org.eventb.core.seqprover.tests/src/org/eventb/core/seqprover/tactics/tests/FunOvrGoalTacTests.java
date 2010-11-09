@@ -14,20 +14,19 @@ package org.eventb.core.seqprover.tactics.tests;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.assertRulesApplied;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.conjI;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.empty;
-import static org.eventb.core.seqprover.tactics.tests.TreeShape.funOvr;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.funImgSimp;
+import static org.eventb.core.seqprover.tactics.tests.TreeShape.funOvr;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import org.eventb.core.seqprover.IAutoTacticRegistry;
+import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.junit.Test;
@@ -44,13 +43,11 @@ public class FunOvrGoalTacTests {
 	private static final String TAC_ID = "org.eventb.core.seqprover.funOvrGoalTac";
 
 	private static void assertFailure(IProofTreeNode node) {
-		assertNotNull(tac.apply(node, null));
-		assertRulesApplied(node, empty);
+		TreeShape.assertFailure(node, tac);
 	}
 
 	private static void assertSuccess(IProofTreeNode node, TreeShape expected) {
-		assertNull(tac.apply(node, null));
-		assertRulesApplied(node, expected);
+		TreeShape.assertSuccess(node, expected, tac);
 	}
 
 	private static IProofTree genProofTree(String... preds) {

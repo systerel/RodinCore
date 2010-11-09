@@ -19,7 +19,6 @@ import static org.eventb.core.seqprover.tactics.tests.TreeShape.funImgSimp;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.funOvr;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.ast.AssociativePredicate;
@@ -27,13 +26,13 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
+import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
@@ -52,13 +51,11 @@ public class FunOvrHypTacTests {
 	private static final String TAC_ID = "org.eventb.core.seqprover.funOvrHypTac";
 
 	private static void assertFailure(IProofTreeNode node) {
-		assertNotNull(tac.apply(node, null));
-		assertRulesApplied(node, empty);
+		TreeShape.assertFailure(node, tac);
 	}
 
 	private static void assertSuccess(IProofTreeNode node, TreeShape expected) {
-		assertNull(tac.apply(node, null));
-		assertRulesApplied(node, expected);
+		TreeShape.assertSuccess(node, expected, tac);
 	}
 
 	private static IProofTree genProofTree(String[] bgHyps, String[] selHyps,

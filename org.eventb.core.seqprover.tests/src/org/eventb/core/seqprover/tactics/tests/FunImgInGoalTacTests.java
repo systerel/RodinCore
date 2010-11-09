@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,11 @@
 package org.eventb.core.seqprover.tactics.tests;
 
 import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
-import static org.eventb.core.seqprover.tactics.tests.TreeShape.assertRulesApplied;
-import static org.eventb.core.seqprover.tactics.tests.TreeShape.empty;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.funImgGoal;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.hyp;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.isFunGoal;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.ast.ITypeCheckResult;
@@ -45,13 +42,11 @@ public class FunImgInGoalTacTests {
 	private static final String TAC_ID = "org.eventb.core.seqprover.FunImgInGoalTac";
 
 	private static void assertSuccess(IProofTreeNode node, TreeShape expected) {
-		assertNull(tac.apply(node, null));
-		assertRulesApplied(node, expected);
+		TreeShape.assertSuccess(node, expected, tac);
 	}
 
 	private static void assertFailure(IProofTreeNode node) {
-		assertNotNull(tac.apply(node, null));
-		assertRulesApplied(node, empty);
+		TreeShape.assertFailure(node, tac);
 	}
 
 	private static Predicate parsePredicate(String predStr, IProofTree pt) {

@@ -24,6 +24,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
@@ -373,6 +374,17 @@ public abstract class TreeShape {
 		expected.check(node);
 	}
 	
+	public static void assertSuccess(IProofTreeNode node, TreeShape expected,
+			ITactic tactic) {
+		assertNull(tactic.apply(node, null));
+		assertRulesApplied(node, expected);
+	}
+
+	public static void assertFailure(IProofTreeNode node, ITactic tactic) {
+		assertNotNull(tactic.apply(node, null));
+		assertRulesApplied(node, empty);
+	}
+
 	public static TreeShape isFunGoal(TreeShape...children){
 		return new IsFunGoalShape(children);
 	}

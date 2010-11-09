@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tactics.tests;
 
-import static org.eventb.core.seqprover.tactics.tests.TreeShape.assertRulesApplied;
-import static org.eventb.core.seqprover.tactics.tests.TreeShape.empty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -34,6 +31,7 @@ import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.eventb.core.seqprover.reasonerExtentionTests.RecordDatatype;
 import org.eventb.core.seqprover.reasonerExtentionTests.SimpleDatatype;
+import org.eventb.core.seqprover.tests.ProverSequentTests;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.junit.Test;
 
@@ -42,7 +40,7 @@ import org.junit.Test;
  */
 public class DTDestrWDTacTests {
 
-	private static final FormulaFactory DEFAULT_FACTORY = FormulaFactory.getDefault();
+	private static final FormulaFactory DEFAULT_FACTORY = ProverSequentTests.factory;
 	private static final IDatatype RECORD_DT = DEFAULT_FACTORY
 			.makeDatatype(RecordDatatype.getInstance());
 	private static final IDatatype SIMPLE_DT = DEFAULT_FACTORY
@@ -61,13 +59,11 @@ public class DTDestrWDTacTests {
 	private static final String TAC_ID = "org.eventb.core.seqprover.dtDestrWDTac";
 
 	private static void assertSuccess(IProofTreeNode node, TreeShape expected) {
-		assertNull(tac.apply(node, null));
-		assertRulesApplied(node, expected);
+		TreeShape.assertSuccess(node, expected, tac);
 	}
 
 	private static void assertFailure(IProofTreeNode node) {
-		assertNotNull(tac.apply(node, null));
-		assertRulesApplied(node, empty);
+		TreeShape.assertFailure(node, tac);
 	}
 
 	private static IProofTree genProofTree(String... preds) {
