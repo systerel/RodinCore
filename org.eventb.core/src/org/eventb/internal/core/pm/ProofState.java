@@ -14,6 +14,8 @@
  ******************************************************************************/
 package org.eventb.internal.core.pm;
 
+import static org.eventb.core.seqprover.proofBuilder.ProofBuilder.rebuild;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -23,6 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSStatus;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IProofComponent;
@@ -42,6 +45,7 @@ import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.ProofMonitor;
+import org.eventb.internal.core.Util;
 import org.eventb.internal.core.pom.POLoader;
 import org.rodinp.core.RodinDBException;
 
@@ -118,32 +122,8 @@ public class ProofState implements IProofState {
 				}
 				
 				// Get the proof skeleton and rebuild the tree
-				IProofSkeleton proofSkeleton;
-				try {
-					ProofState.this.setDirty(false);
-					IProofComponent pc = pa.getComponent();
-					proofSkeleton = pc.getProofSkeleton(poName, pa
-							.getFormulaFactory(), monitor);
-					if (proofSkeleton != null) {
-						// ProofBuilder.rebuild(pt.getRoot(), proofSkeleton);
-						Object result = BasicTactics.rebuildTac(proofSkeleton).apply(
-								pt.getRoot(),
-								new ProofMonitor(monitor));
-						if (result != null)
-							ProofState.this.setDirty(true);
-					}
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				initializeProofTree(monitor);
 				pt.addChangeListener(ProofState.this);
-				try {
-					if (status.isBroken())
-						ProofState.this.setDirty(true);
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 				
 				ProofState.this.newProofTree();
 				
@@ -182,6 +162,47 @@ public class ProofState implements IProofState {
 		final IProofComponent pc = userSupport.getProofComponent();
 		pa = pc.createProofAttempt(poName, US, monitor);
 		pt = pa.getProofTree();
+	}
+
+	/*
+	 * Initializes the proof tree with the proof from the proof file. The proof
+	 * tree is considered dirty if either the rebuild failed or the proof was
+	 * marked broken in the status file.
+	 */
+	void initializeProofTree(IProgressMonitor monitor) {
+		setDirty(false);
+		final IProofSkeleton skeleton = readProofSkeleton(monitor);
+		if (skeleton != null) {
+			final IProofTreeNode root = pt.getRoot();
+			final ProofMonitor pm = new ProofMonitor(monitor);
+			if (!rebuild(root, skeleton, pm))
+				setDirty(true);
+		}
+		if (hasBrokenStatus())
+			setDirty(true);
+	}
+
+	/*
+	 * Returns the proof skeleton if readable and well-formed, null otherwise.
+	 */
+	private IProofSkeleton readProofSkeleton(IProgressMonitor pm) {
+		final IProofComponent pc = pa.getComponent();
+		final FormulaFactory ff = pa.getFormulaFactory();
+		try {
+			return pc.getProofSkeleton(poName, ff, pm);
+		} catch (RodinDBException e) {
+			Util.log(e, "while reading proof " + poName);
+			return null;
+		}
+	}
+
+	private boolean hasBrokenStatus() {
+		try {
+			return status.isBroken();
+		} catch (RodinDBException e) {
+			Util.log(e, "when reading status for " + poName);
+			return true;
+		}
 	}
 
 	protected void newProofTree() {

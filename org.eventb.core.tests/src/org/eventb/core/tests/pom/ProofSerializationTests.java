@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,10 @@
  *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.core.tests.pom;
+
+import static org.eventb.core.EventBAttributes.HYPS_ATTRIBUTE;
+import static org.eventb.core.seqprover.eventbExtensions.Tactics.impI;
+import static org.rodinp.core.IRodinDBStatusConstants.ATTRIBUTE_DOES_NOT_EXIST;
 
 import java.util.Collections;
 import java.util.Set;
@@ -22,6 +26,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eventb.core.IPRProof;
+import org.eventb.core.IPRProofRule;
 import org.eventb.core.IPRRoot;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
@@ -30,6 +35,7 @@ import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTree;
+import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.IReasonerRegistry;
@@ -38,9 +44,11 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
+import org.eventb.core.seqprover.eventbExtensions.AutoTactics.TrueGoalTac;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.tactics.BasicTactics;
+import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -251,4 +259,31 @@ public class ProofSerializationTests extends TestCase {
 
 		checkProofTreeSerialization(proof1, proofTree, true);
 	}
+
+	public void testErroneousProof() throws Exception {
+		final IPRProof proof = prRoot.getProof("proof1");
+		proof.create(null, null);
+
+		final IProverSequent sequent = TestLib.genSeq("|- ⊤ ⇒ ⊤");
+		final IProofTree proofTree = ProverFactory.makeProofTree(sequent, null);
+		final IProofTreeNode root = proofTree.getRoot();
+		impI().apply(root, null);
+		new TrueGoalTac().apply(root.getFirstOpenDescendant(), null);
+		assertTrue(proofTree.isClosed());
+		proof.setProofTree(proofTree, null);
+		assertEquals(proofTree.getConfidence(), proof.getConfidence());
+
+		// Fiddle with the serialized proof to break it
+		final IPRProofRule rule = proof.getProofRules()[0];
+		rule.removeAttribute(HYPS_ATTRIBUTE, null);
+
+		try {
+			proof.getSkeleton(ff, null);
+			fail("Should have raised an exception");
+		} catch (RodinDBException e) {
+			final IRodinDBStatus status = e.getRodinDBStatus();
+			assertEquals(ATTRIBUTE_DOES_NOT_EXIST, status.getCode());
+		}
+	}
+
 }
