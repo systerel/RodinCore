@@ -1232,8 +1232,8 @@
       <tactic id="org.eventb.core.seqprover.finiteHypBoundedGoalTac"/>
       <tactic id="org.eventb.core.seqprover.funImgSimpTac"/>      
       <tactic id="org.eventb.core.seqprover.FunImgInGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.InDomGoalTac">
-      </tactic>
+      <tactic id="org.eventb.core.seqprover.InDomGoalTac" />
+      <tactic id="org.eventb.core.seqprover.dtDestrWDTac" />
    </extension>
    <extension
          point="org.eventb.core.pomTactics">
@@ -1255,8 +1255,8 @@
       <tactic id="org.eventb.core.seqprover.finiteHypBoundedGoalTac"/>
       <tactic id="org.eventb.core.seqprover.funImgSimpTac"/>
       <tactic id="org.eventb.core.seqprover.FunImgInGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.InDomGoalTac">
-      </tactic>
+      <tactic id="org.eventb.core.seqprover.InDomGoalTac" />
+      <tactic id="org.eventb.core.seqprover.dtDestrWDTac" />
    </extension>
    <extension
          point="org.rodinp.core.fileElementVersions">

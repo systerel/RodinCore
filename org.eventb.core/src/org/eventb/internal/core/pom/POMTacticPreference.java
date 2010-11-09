@@ -47,6 +47,7 @@ public class POMTacticPreference extends AutoTacticPreference {
 	            "org.eventb.core.seqprover.InDomGoalTac",
 	            "org.eventb.core.seqprover.FunImgInGoalTac",
 	            "org.eventb.core.seqprover.finiteHypBoundedGoalTac",
+	            "org.eventb.core.seqprover.dtDestrWDTac",
 	            "com.clearsy.atelierb.provers.core.ml",
 	            "org.eventb.core.seqprover.partitionRewriteTac",
 	            "org.eventb.core.seqprover.autoRewriteTac",
