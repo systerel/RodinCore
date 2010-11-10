@@ -27,7 +27,8 @@ my %rules;
 
 # Main program
 extract(qw/Inference_Rules
-       Set_Rewrite_Rules Relation_Rewrite_Rules Arithmetic_Rewrite_Rules/);
+       Set_Rewrite_Rules Relation_Rewrite_Rules Arithmetic_Rewrite_Rules
+       Extension_Proof_Rules/);
 print join("\n", sort keys %rules);
 exit 0;
 
