@@ -34,6 +34,7 @@ import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverLib;
+import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
@@ -191,9 +192,7 @@ public class PSUpdater {
 		final IPRProof prProof = status.getProof();
 		final boolean broken;
 		if (prProof.exists()) {
-			IProofDependencies deps = prProof.getProofDependencies(ff, monitor);
-			final IProofSkeleton skel = prProof.getSkeleton(ff, monitor);
-			broken = !ProverLib.isProofReusable(deps, skel, seq);
+			broken = isBroken(seq, prProof, ff, monitor);
 			if (AutoPOM.PERF_PROOFREUSE) 
 			{
 				if (broken) 
@@ -224,6 +223,19 @@ public class PSUpdater {
 		}
 		status.setBroken(broken, null);
 		return broken == true || status.getConfidence() <= IConfidence.PENDING; 
+	}
+
+	private boolean isBroken(IProverSequent seq, IPRProof prProof,
+			FormulaFactory ff, IProgressMonitor pm) {
+		try {
+			final IProofDependencies deps = prProof
+					.getProofDependencies(ff, pm);
+			final IProofSkeleton skel = prProof.getSkeleton(ff, pm);
+			return !ProverLib.isProofReusable(deps, skel, seq);
+		} catch (Throwable e) {
+			Util.log(e, "while updating status of PO " + seq);
+			return true;
+		}
 	}
 
 	public IPSStatus[] getOutOfDateStatuses() {

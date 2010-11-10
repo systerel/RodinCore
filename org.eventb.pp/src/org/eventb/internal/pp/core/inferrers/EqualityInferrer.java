@@ -57,11 +57,12 @@ public class EqualityInferrer extends AbstractInferrer {
 		assertContainsEqualities(clause);
 		
 		boolean inverse = false;
+		final IOrigin origin = getOrigin(clause);
 		for (Entry<EqualityLiteral, Boolean> entry : equalityMap.entrySet()) {
 			if (conditions.contains(entry.getKey())) {
 				if (entry.getValue()) { 
 					// one of the conditions is false -> result = TRUE
-					result = cf.makeTRUE(getOrigin(clause));
+					result = cf.makeTRUE(origin);
 					return;
 				}
 				else conditions.remove(entry.getKey());					
@@ -71,10 +72,23 @@ public class EqualityInferrer extends AbstractInferrer {
 				equalities.remove(entry.getKey());
 			}
 		}
-		if (inverse) EquivalenceClause.inverseOneliteral(predicates, equalities, arithmetic);
-		
-		if (isEmptyWithConditions()) result = cf.makeFALSE(getOrigin(clause));
-		else result = cf.makeClauseFromEquivalenceClause(getOrigin(clause), predicates, equalities, arithmetic, conditions, context);
+		if (isEmptyWithConditions()) {
+			result = inverse ? cf.makeFALSE(origin) : cf.makeTRUE(origin);
+			return;
+		}
+		if (isEmptyWithoutConditions()) {
+			// no literal left, but some conditions
+			if (!inverse) {
+				result = cf.makeTRUE(origin);
+				return;
+			}
+			// else we will produce an empty disjunctive clause in the end
+		} else if (inverse) {
+			EquivalenceClause.inverseOneliteral(predicates, equalities,
+					arithmetic);
+		}
+		result = cf.makeClauseFromEquivalenceClause(origin, predicates,
+				equalities, arithmetic, conditions, context);
 	}
 
 	private void assertContainsEqualities(Clause clause) {

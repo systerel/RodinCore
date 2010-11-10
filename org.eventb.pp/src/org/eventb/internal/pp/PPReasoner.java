@@ -18,6 +18,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
+import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.xprover.XProverCall;
 import org.eventb.core.seqprover.xprover.XProverInput;
@@ -29,10 +30,12 @@ import org.eventb.core.seqprover.xprover.XProverReasoner;
  * @author François Terrier
  *
  */
-public class PPReasoner extends XProverReasoner {
+public class PPReasoner extends XProverReasoner implements IVersionedReasoner {
 
-	public static String REASONER_ID = "org.eventb.pp.pp";
+	public static final String REASONER_ID = "org.eventb.pp.pp";
 	
+	public static final int VERSION = 1;
+
 	public static boolean DEBUG = false;
 	private static void debug(String msg) {
 		System.out.println(msg);
@@ -112,6 +115,11 @@ public class PPReasoner extends XProverReasoner {
 		builder.append("\"");
 		builder.append(obj);
 		builder.append("\"");
+	}
+
+	@Override
+	public int getVersion() {
+		return VERSION;
 	}
 
 }

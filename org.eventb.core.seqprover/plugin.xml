@@ -388,7 +388,7 @@
             name="%funImgSimplifiesName">
       </reasoner>
       <reasoner
-            class="org.eventb.internal.core.seqprover.eventbExtensions.IsFunImageGoal"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.FunImageGoal"
             id="funImgGoal"
             name="%funImgGoalName">
       </reasoner>
@@ -554,6 +554,12 @@
             description="%funImgInGoalTacDesc"
             id="FunImgInGoalTac"
             name="%funImgInGoalTacName">
+      </autoTactic> 
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$DTDestrWDTac"
+            description="%dtDestrWDTacDesc"
+            id="dtDestrWDTac"
+            name="%dtDestrWDTacName">
       </autoTactic> 
 
    </extension>

@@ -23,6 +23,7 @@ public class Messages extends NLS {
 	// Dialogs
 	public static String dialogs_replayingProofs;
 	public static String dialogs_recalculatingAutoStatus;
+	public static String dialogs_applyingAutoProvers;
 	
 	static {
 		// initialize resource bundle

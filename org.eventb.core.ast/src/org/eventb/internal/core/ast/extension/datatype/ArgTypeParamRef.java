@@ -37,5 +37,36 @@ public class ArgTypeParamRef implements IArgumentType {
 		final Type instType = instantiation.get(typeParam);
 		return proposedType.equals(instType);
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((typeParam == null) ? 0 : typeParam.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof ArgTypeParamRef)) {
+			return false;
+		}
+		ArgTypeParamRef other = (ArgTypeParamRef) obj;
+		if (typeParam == null) {
+			if (other.typeParam != null) {
+				return false;
+			}
+		} else if (!typeParam.equals(other.typeParam)) {
+			return false;
+		}
+		return true;
+	}
 	
 }

@@ -136,7 +136,11 @@ public abstract class AbstractInferrer implements IInferrer {
 	}
 
 	protected final boolean isEmptyWithConditions() {
-		return conditions.size() + predicates.size() + arithmetic.size() + equalities.size() == 0;
+		return conditions.size() == 0 && isEmptyWithoutConditions();
+	}
+
+	protected final boolean isEmptyWithoutConditions() {
+		return predicates.size() + arithmetic.size() + equalities.size() == 0;
 	}
 	
 	protected final <T extends Literal<?,?>> void getListCopy(List<T> list,

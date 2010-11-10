@@ -13,9 +13,7 @@ package org.eventb.internal.core.seqprover.eventbExtensions.tactics;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.DefaultFilter;
@@ -55,33 +53,10 @@ public class TacticsLib {
 		for (IPosition funAppPosition : funAppPositions) {
 			final BinaryExpression funApp = (BinaryExpression) goal
 					.getSubFormula(funAppPosition);
-			Predicate neededHyp = null;
-			// Search an hypothesis of the form f ∈ S1 op S2
-			for (Predicate hyp : inclusionHypotheses) {
-				final Expression set = Lib.getSet(hyp);
-				final Expression function = Lib.getLeft(funApp);
-				if (Lib.isRel(set) || Lib.isFun(set)) {
-					if (Lib.getElement(hyp).equals(function)) {
-						neededHyp = hyp;
-						break;
-					}
-				}
-			}
-			// After finding an hypothesis f ∈ S1 op S2, checks if there are
-			// no hypothesis of the form f(E) ∈ S2.
+			Predicate neededHyp = searchFunctionalHypotheses(
+					inclusionHypotheses, funApp);
 			if (neededHyp != null) {
-				for (Predicate hyp : inclusionHypotheses) {
-					final Expression set = Lib.getSet(hyp);
-					final Expression otherSet = ((BinaryExpression) Lib
-							.getSet(neededHyp)).getRight();
-					if (Lib.getElement(hyp).equals(funApp)
-							&& set.equals(otherSet)) {
-						neededHyp = null;
-						break;
-					}
-				}
-				// No applicable hypothesis or no need to apply tactic for this
-				// function application
+				neededHyp = search(inclusionHypotheses, funApp, neededHyp);
 				if (Tactics.funImgGoal(neededHyp, funAppPosition).apply(ptNode,
 						pm) == null) {
 					ptNode = ptNode.getFirstOpenDescendant();
@@ -91,6 +66,55 @@ public class TacticsLib {
 			}
 		}
 		return ptNode;
+	}	
+	
+	/**
+	 * Searches hypotheses of the form f(E)∈ S2 in membership hypotheses.
+	 * @param inclusionHypotheses
+	 * 			list of hypotheses with membership.
+	 * @param funApp
+	 * 			a function application
+	 * @param neededHyp
+	 * 			an hypothesis of the form f ∈ S1 op S2
+	 * @return
+	 * 			true iff no hypotheses of the form f(E)∈ S2 have been found.
+	 */
+	private static Predicate search(List<Predicate> inclusionHypotheses,
+			BinaryExpression funApp, Predicate neededHyp) {
+		for (Predicate hyp : inclusionHypotheses) {
+			final Expression set = Lib.getSet(hyp);
+			final Expression otherSet = ((BinaryExpression) Lib
+					.getSet(neededHyp)).getRight();
+			if (Lib.getElement(hyp).equals(funApp)
+					&& set.equals(otherSet)) {
+				return null;
+			}
+		}
+		return neededHyp;
+	}
+
+	/**
+	 * Finds an hypothesis of the form f ∈ S1 op S2
+	 * 
+	 * @param inclusionHypotheses
+	 * 			List of hypotheses with membership.
+	 * @param funApp
+	 * 			a function application
+	 * @return
+	 * 		 true iff an hypothesis of the form f ∈ S1 op S2 has been found.
+	 */
+	private static Predicate searchFunctionalHypotheses(
+			List<Predicate> inclusionHypotheses, BinaryExpression funApp) {
+		for (Predicate hyp : inclusionHypotheses) {
+			final Expression set = Lib.getSet(hyp);
+			final Expression function = Lib.getLeft(funApp);
+			if (Lib.isRel(set) || Lib.isFun(set)) {
+				if (Lib.getElement(hyp).equals(function)) {
+					return hyp;
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -101,23 +125,14 @@ public class TacticsLib {
 	 *            Goal of the sequent
 	 * @return a set of InDomManager
 	 */
-	public static Set<InDomGoalManager> createInDomManagers(final Predicate goal) {
+	public static InDomGoalManager createInDomManager(final Predicate goal) {
 		final List<IPosition> domPositions = TacticsLib.findDomExpression(goal);
-		final Set<InDomGoalManager> inDomManagers = new HashSet<InDomGoalManager>();
-		for (IPosition position : domPositions) {
-			final UnaryExpression domExpr = ((UnaryExpression) goal
-					.getSubFormula(position));
-			final InDomGoalManager inDomMng = new InDomGoalManager(domExpr,
-					position);
-			if (!inDomManagers.add(inDomMng)) {
-				for (InDomGoalManager mng : inDomManagers) {
-					if (domExpr.equals(mng.domExpression)) {
-						mng.addDomPosition(position);
-					}
-				}
-			}
-		}
-		return inDomManagers;
+		assert(domPositions.size()==1);
+		final UnaryExpression domExpr = ((UnaryExpression) goal
+					.getSubFormula(domPositions.get(0)));
+		final InDomGoalManager inDomMng = new InDomGoalManager(domExpr,
+				domPositions.get(0));		
+		return inDomMng;
 	}
 
 	/**

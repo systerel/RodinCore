@@ -11,6 +11,7 @@
  *     Systerel - add getNameInputText and getContentInputText to factor several methods
  *     Systerel - added checkNewIdentifiers()
  *     ETH Zurich - adapted to org.rodinp.keyboard
+ *     Systerel - add widget to edit theorem attribute
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.dialogs;
 
@@ -29,9 +30,12 @@ import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -50,6 +54,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
 import org.eventb.internal.ui.autocompletion.WizardProposalProvider;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.eventbeditor.Triplet;
 import org.eventb.internal.ui.utils.Messages;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -100,6 +105,8 @@ public abstract class EventBDialog extends Dialog {
 
 	private final int FORM_SPACING = 10;
 
+	private final int DEFAULT_SPAN = 1;
+	
 	/**
 	 * Constructor
 	 * 
@@ -242,14 +249,47 @@ public abstract class EventBDialog extends Dialog {
 		scrolledForm.reflow(true);
 	}
 
+	protected Button createIsTheoremCheck(Composite composite) {
+		return toolkit.createButton(composite, "", SWT.CHECK);
+	}
+
+	protected Button createIsTheoremToogle(Composite composite) {
+		final Button button = toolkit.createButton(composite, "not theorem",
+				SWT.TOGGLE);
+		button.addSelectionListener(new SelectionListener() {
+
+			private String getText() {
+				return (button.getSelection() ? "theorem" : "not theorem");
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				button.setText(getText());
+			}
+		});
+		return button;
+	}
+
 	protected IEventBInputText createNameInputText(Composite composite,
 			String text) {
-		return new EventBText(createText(composite, text, 50, false));
+		return new EventBText(createText(composite, text, 50, false, DEFAULT_SPAN));
 	}
 
 	protected EventBMath createContentInputText(Composite composite) {
 		final EventBMath input = new EventBMath(createText(composite, EMPTY,
-				150, true));
+				150, true, DEFAULT_SPAN));
+		return input;
+	}
+
+	protected EventBMath createContentInputText(Composite composite,
+			int horizontalSpan) {
+		final EventBMath input = new EventBMath(createText(composite, EMPTY,
+				150, true, horizontalSpan));
 		return input;
 	}
 	
@@ -295,8 +335,9 @@ public abstract class EventBDialog extends Dialog {
 	}
 
 	private Text createText(Composite parent, String value, int widthHint,
-			boolean grabExcessHorizontalSpace) {
-		final GridData gd = newGridData(grabExcessHorizontalSpace, widthHint);
+			boolean grabExcessHorizontalSpace, int horizontalSpan) {
+		final GridData gd = newGridData(grabExcessHorizontalSpace, widthHint,
+				horizontalSpan);
 		return createText(parent, value, gd);
 	}
 
@@ -307,10 +348,15 @@ public abstract class EventBDialog extends Dialog {
 		return text;
 	}
 
-	protected void createLabel(Composite parent, String text) {
+	protected void createLabel(Composite parent, String text, int hspan) {
 		final Label widget = toolkit.createLabel(parent, text, SWT.NONE);
-		final GridData gd = new GridData(SWT.FILL, SWT.CENTER, false, false);
+		final GridData gd = new GridData(SWT.FILL, SWT.CENTER, false, false,
+				hspan, DEFAULT_SPAN);
 		widget.setLayoutData(gd);
+	}
+
+	protected void createLabel(Composite parent, String text) {
+		createLabel(parent, text, DEFAULT_SPAN);
 	}
 
 	protected GridLayout newLayout(int numColumns, int verticalSpacing,
@@ -344,6 +390,48 @@ public abstract class EventBDialog extends Dialog {
 		}
 	}
 	
+	protected String[] getFirstTriplet(
+			Collection<Triplet<String, String, Boolean>> triplets) {
+		final Collection<String> result = new ArrayList<String>();
+		for (Triplet<String, String, Boolean> t : triplets)
+			result.add(t.getFirst());
+		return result.toArray(new String[result.size()]);
+	}
+
+	protected String[] getSecondTriplet(
+			Collection<Triplet<String, String, Boolean>> triplets) {
+		final Collection<String> result = new ArrayList<String>();
+		for (Triplet<String, String, Boolean> t : triplets)
+			result.add(t.getSecond());
+		return result.toArray(new String[result.size()]);
+	}
+
+	protected boolean[] getThirdTriplet(
+			Collection<Triplet<String, String, Boolean>> triplets) {
+		final boolean[] result = new boolean[triplets.size()];
+		int i = 0;
+		for (Triplet<String, String, Boolean> t : triplets) {
+			result[i] = t.getThird();
+			i++;
+		}
+		return result;
+	}
+
+	protected Triplet<IEventBInputText, IEventBInputText, Button> newWidgetTriplet(
+			IEventBInputText name, IEventBInputText content, Button button) {
+		return new Triplet<IEventBInputText, IEventBInputText, Button>(name,
+				content, button);
+	}
+
+	protected void disposeTriplets(
+			Collection<Triplet<IEventBInputText, IEventBInputText, Button>> triplets) {
+		for (Triplet<IEventBInputText, IEventBInputText, Button> triplet : triplets) {
+			triplet.getFirst().dispose();
+			triplet.getSecond().dispose();
+			triplet.getThird().dispose();
+		}
+	}
+
 	protected void setDebugBackgroundColor() {
 		if (EventBEditorUtils.DEBUG)
 			scrolledForm.getBody().setBackground(
@@ -404,7 +492,22 @@ public abstract class EventBDialog extends Dialog {
 			}
 		}
 	}
-	
+
+	protected void fillTripletResult(
+			Collection<Triplet<IEventBInputText, IEventBInputText, Button>> fields,
+			Collection<Triplet<String, String, Boolean>> result) {
+		for (Triplet<IEventBInputText, IEventBInputText, Button> triplet : fields) {
+			final IEventBInputText labelInput = triplet.getFirst();
+			final IEventBInputText contentInput = triplet.getSecond();
+			final boolean bool = triplet.getThird().getSelection();
+			if (dirtyTexts.contains(contentInput.getTextWidget())) {
+				final String name = getText(labelInput);
+				result.add(new Triplet<String, String, Boolean>(name,
+						translate(contentInput), bool));
+			}
+		}
+	}
+
 	protected String getText(IEventBInputText text) {
 		return text.getTextWidget().getText();
 	}

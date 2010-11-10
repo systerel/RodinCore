@@ -12,7 +12,9 @@
 package org.eventb.internal.core.seqprover.proofBuilder;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -54,11 +56,11 @@ import org.eventb.core.ast.UnaryPredicate;
 
 public class PredicateDecomposer implements ISimpleVisitor2 {
 
-	private final List<Predicate> subGoals;
-	private final ITypeEnvironment env;
+	private final Set<Predicate> subGoals;
+	private ITypeEnvironment env;
 
 	public PredicateDecomposer(ITypeEnvironment env) {
-		this.subGoals = new ArrayList<Predicate>();
+		this.subGoals = new HashSet<Predicate>();
 		this.env = env;
 	}
 
@@ -169,11 +171,13 @@ public class PredicateDecomposer implements ISimpleVisitor2 {
 
 	@Override
 	public void visitQuantifiedPredicate(QuantifiedPredicate predicate) {
-		ITypeEnvironment newITypeEnvironment = env.clone();
-		final FormulaFactory ff = newITypeEnvironment.getFormulaFactory();
+		final ITypeEnvironment oldEnv = env;
+		env = oldEnv.clone();
+		final FormulaFactory ff = env.getFormulaFactory();
 		final FreeIdentifier[] freeIdents = ff.makeFreshIdentifiers(
-				predicate.getBoundIdentDecls(), newITypeEnvironment);
+				predicate.getBoundIdentDecls(), env);
 		final Predicate newpred = predicate.instantiate(freeIdents, ff);
+		env = oldEnv;
 		newpred.accept(this);
 	}
 

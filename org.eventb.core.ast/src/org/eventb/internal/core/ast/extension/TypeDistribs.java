@@ -93,6 +93,41 @@ public class TypeDistribs {
 			return new ArrayList<Formula<?>>(list);
 		}
 
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((arity == null) ? 0 : arity.hashCode());
+			result = prime * result + ((type == null) ? 0 : type.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (!(obj instanceof AllSameType)) {
+				return false;
+			}
+			AllSameType other = (AllSameType) obj;
+			if (arity == null) {
+				if (other.arity != null) {
+					return false;
+				}
+			} else if (!arity.equals(other.arity)) {
+				return false;
+			}
+			if (type != other.type) {
+				return false;
+			}
+			return true;
+		}
+
+		
 	}
 
 	public static class MixedTypes implements ITypeDistribution {
@@ -165,6 +200,50 @@ public class TypeDistribs {
 				}
 			}
 			return children;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result
+					+ ((exprArity == null) ? 0 : exprArity.hashCode());
+			result = prime * result
+					+ ((predArity == null) ? 0 : predArity.hashCode());
+			result = prime * result + Arrays.hashCode(types);
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (!(obj instanceof MixedTypes)) {
+				return false;
+			}
+			MixedTypes other = (MixedTypes) obj;
+			if (exprArity == null) {
+				if (other.exprArity != null) {
+					return false;
+				}
+			} else if (!exprArity.equals(other.exprArity)) {
+				return false;
+			}
+			if (predArity == null) {
+				if (other.predArity != null) {
+					return false;
+				}
+			} else if (!predArity.equals(other.predArity)) {
+				return false;
+			}
+			if (!Arrays.equals(types, other.types)) {
+				return false;
+			}
+			return true;
 		}
 
 	}

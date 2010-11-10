@@ -8,6 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *     Systerel - added FunImgSimp tree shape
+ *     Systerel - added ExI, DTDestrWD tree shapes
  *******************************************************************************/
 package org.eventb.core.seqprover.tactics.tests;
 
@@ -16,6 +17,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule;
@@ -23,13 +26,17 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
+import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
 import org.eventb.internal.core.seqprover.eventbExtensions.AbstractManualInference;
 import org.eventb.internal.core.seqprover.eventbExtensions.AbstractRewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.Conj;
+import org.eventb.internal.core.seqprover.eventbExtensions.DTDistinctCase;
+import org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
+import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
-import org.eventb.internal.core.seqprover.eventbExtensions.IsFunImageGoal;
+import org.eventb.internal.core.seqprover.eventbExtensions.FunImageGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimplifies;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
@@ -54,6 +61,10 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrite
  * @author Laurent Voisin
  */
 public abstract class TreeShape {
+	
+	private static <T> T[] arr(T... t) {
+		return t;
+	}
 	
 	private static class ConjIShape extends TreeShape {
 
@@ -91,6 +102,27 @@ public abstract class TreeShape {
 		@Override
 		protected String getReasonerID() {
 			return DisjE.REASONER_ID;
+		}
+	}
+
+	private static class ExIShape extends TreeShape {
+
+		private final Expression[] inst;
+		
+		public ExIShape(TreeShape wd, TreeShape instantiated, Expression... inst) {
+			super(arr(wd, instantiated));
+			this.inst = inst;
+		}
+
+		@Override
+		protected void checkInput(IReasonerInput input) {
+			MultipleExprInput i = (MultipleExprInput) input;
+			assertTrue(Arrays.equals(inst, i.getExpressions()));
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return ExI.REASONER_ID;
 		}
 	}
 
@@ -210,7 +242,7 @@ public abstract class TreeShape {
 
 		@Override
 		protected String getReasonerID() {
-			return IsFunImageGoal.REASONER_ID;
+			return FunImageGoal.REASONER_ID;
 		}
 
 	}
@@ -302,6 +334,29 @@ public abstract class TreeShape {
 
 	}
 
+	private static class DTDestrWDShape extends TreeShape {
+
+		private final String position;
+
+		public DTDestrWDShape(String position, Expression[] inst) {
+			super(arr(exI(trueGoal(), hyp(), inst)));
+			this.position = position;
+		}
+
+		@Override
+		protected void checkInput(IReasonerInput input) {
+			final DTReasoner.Input inp = ((DTReasoner.Input) input);
+			assertNull(inp.getPred());
+			assertEquals(position, inp.getPosition().toString());
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return DTDistinctCase.REASONER_ID;
+		}
+		
+	}
+	
 	public static final TreeShape empty = new EmptyShape();
 
 	/**
@@ -352,6 +407,10 @@ public abstract class TreeShape {
 		return new DisjEShape(pred, children);
 	}
 
+	public static TreeShape exI(TreeShape wd, TreeShape instantiated, Expression... inst) {
+		return new ExIShape(wd, instantiated, inst);
+	}
+
 	public static TreeShape funOvr(String position, TreeShape... children) {
 		return new FunOvrShape(null, position, children);
 	}
@@ -363,6 +422,10 @@ public abstract class TreeShape {
 	
 	public static TreeShape funImgSimp(String position, TreeShape... children){
 		return new FunImgSimpShape(position, children);
+	}
+	
+	public static TreeShape dtDestrWD(String position, Expression... inst) {
+		return new DTDestrWDShape(position, inst);
 	}
 	
 

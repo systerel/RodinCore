@@ -1230,4 +1230,17 @@ public class RodinTests extends AbstractRodinTest {
 	public void bug3029910() {
 		doTest(mList("a", "S", "b", "S"), mSet("{a,b} = ∅"), "⊥", true);
 	}
+
+	@Test
+	public void bug3085103() {
+		doTest(mList("y", "BOOL"), mSet("t=FALSE", "y=z"), "t=TRUE ⇔ y=z",
+				false);
+	}
+
+	@Test
+	public void bug3102775() {
+		doTest(mTypeEnvironment(), mSet("f(TRUE) = 1", "f(FALSE) = 0"), "⊥",
+				false);
+	}
+
 }

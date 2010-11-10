@@ -36,7 +36,7 @@ public class BooleanEqualityFormula extends EqualityFormula {
 	Literal<?,?> getLabelPredicate(List<TermSignature> termList, ClauseContext context) {
 		List<TermSignature> newList = descriptor.getUnifiedResults();
 		Literal<?,?> result;
-		if (newList.get(1) instanceof TrueConstantSignature) {
+		if (isSpecialTrue(newList)) {
 			TermSignature sig = termList.get(0);
 			int i = context.getBooleanTable().getIntegerForTermSignature(sig);
 			PredicateLiteralDescriptor predicateDescriptor =
@@ -51,6 +51,16 @@ public class BooleanEqualityFormula extends EqualityFormula {
 		}
 		if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Creating literal from "+this+": "+result);
 		return result;
+	}
+
+	/*
+	 * Special case when all boolean equalities have form "t = TRUE" and "t" is
+	 * a constant.
+	 */
+	private static boolean isSpecialTrue(List<TermSignature> unified) {
+		final TermSignature left = unified.get(0);
+		final TermSignature right = unified.get(1);
+		return left.isConstant() && right instanceof TrueConstantSignature;
 	}
 	
 }

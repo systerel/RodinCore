@@ -314,7 +314,7 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 		super.createControl(parent);
 	}
 
-	private boolean hasProjectSettings() {
+	protected boolean hasProjectSettings() {
 		if (preferenceStore == null)
 			return false;
 		if (node == null)

@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.swt.graphics.Point;
 import org.eventb.core.ast.BinaryExpression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
@@ -57,7 +58,7 @@ public class FunImgSimp extends AbstractHypGoalTacticProvider {
 		public Point getHyperlinkBounds(String parsedString,
 				Predicate parsedPredicate) {
 			return TacticProviderUtils.getOperatorPosition(parsedPredicate,
-					parsedString, position.getFirstChild());
+					parsedString, position);
 		}
 
 	}
@@ -75,8 +76,10 @@ public class FunImgSimp extends AbstractHypGoalTacticProvider {
 		@Override
 		public void inspect(BinaryExpression expression,
 				IAccumulator<ITacticApplication> accumulator) {
+			if (expression.getTag() != Formula.FUNIMAGE)
+				return;
 			if (Tactics.isFunImgSimpApplicable(expression, node.getSequent())) {
-				final IPosition position = accumulator.getCurrentPosition().getParent();
+				final IPosition position = accumulator.getCurrentPosition();
 				accumulator.add(new FunImgSimpApplication(hyp, position));
 			}
 		}

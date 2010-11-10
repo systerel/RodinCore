@@ -187,6 +187,89 @@ public class ConstructorMediator extends ArgumentMediator implements
 		public IDatatype getOrigin() {
 			return origin;
 		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result
+					+ ((arguments == null) ? 0 : arguments.hashCode());
+			result = prime * result
+					+ ((groupId == null) ? 0 : groupId.hashCode());
+			result = prime * result + ((id == null) ? 0 : id.hashCode());
+			result = prime * result + ((kind == null) ? 0 : kind.hashCode());
+			result = prime * result + ((name == null) ? 0 : name.hashCode());
+			result = prime * result
+					+ ((typeCons == null) ? 0 : typeCons.hashCode());
+			result = prime * result
+					+ ((typeParams == null) ? 0 : typeParams.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (!(obj instanceof ConstructorExtension)) {
+				return false;
+			}
+			ConstructorExtension other = (ConstructorExtension) obj;
+			if (arguments == null) {
+				if (other.arguments != null) {
+					return false;
+				}
+			} else if (!arguments.equals(other.arguments)) {
+				return false;
+			}
+			if (groupId == null) {
+				if (other.groupId != null) {
+					return false;
+				}
+			} else if (!groupId.equals(other.groupId)) {
+				return false;
+			}
+			if (id == null) {
+				if (other.id != null) {
+					return false;
+				}
+			} else if (!id.equals(other.id)) {
+				return false;
+			}
+			if (kind == null) {
+				if (other.kind != null) {
+					return false;
+				}
+			} else if (!kind.equals(other.kind)) {
+				return false;
+			}
+			if (name == null) {
+				if (other.name != null) {
+					return false;
+				}
+			} else if (!name.equals(other.name)) {
+				return false;
+			}
+			if (typeCons == null) {
+				if (other.typeCons != null) {
+					return false;
+				}
+			} else if (!typeCons.equals(other.typeCons)) {
+				return false;
+			}
+			if (typeParams == null) {
+				if (other.typeParams != null) {
+					return false;
+				}
+			} else if (!typeParams.equals(other.typeParams)) {
+				return false;
+			}
+			return true;
+		}
+		
 	}
 
 	private static class DestructorExtension implements IExpressionExtension {
@@ -378,6 +461,97 @@ public class ConstructorMediator extends ArgumentMediator implements
 		@Override
 		public IDatatype getOrigin() {
 			return origin;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result
+					+ ((constructor == null) ? 0 : constructor.hashCode());
+			result = prime * result
+					+ ((groupId == null) ? 0 : groupId.hashCode());
+			result = prime * result + ((id == null) ? 0 : id.hashCode());
+			result = prime * result + ((kind == null) ? 0 : kind.hashCode());
+			result = prime * result + ((name == null) ? 0 : name.hashCode());
+			result = prime * result
+					+ ((returnType == null) ? 0 : returnType.hashCode());
+			result = prime * result
+					+ ((typeCons == null) ? 0 : typeCons.hashCode());
+			result = prime * result
+					+ ((typeParams == null) ? 0 : typeParams.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (!(obj instanceof DestructorExtension)) {
+				return false;
+			}
+			DestructorExtension other = (DestructorExtension) obj;
+			if (constructor == null) {
+				if (other.constructor != null) {
+					return false;
+				}
+			} else if (!constructor.equals(other.constructor)) {
+				return false;
+			}
+			if (groupId == null) {
+				if (other.groupId != null) {
+					return false;
+				}
+			} else if (!groupId.equals(other.groupId)) {
+				return false;
+			}
+			if (id == null) {
+				if (other.id != null) {
+					return false;
+				}
+			} else if (!id.equals(other.id)) {
+				return false;
+			}
+			if (kind == null) {
+				if (other.kind != null) {
+					return false;
+				}
+			} else if (!kind.equals(other.kind)) {
+				return false;
+			}
+			if (name == null) {
+				if (other.name != null) {
+					return false;
+				}
+			} else if (!name.equals(other.name)) {
+				return false;
+			}
+			if (returnType == null) {
+				if (other.returnType != null) {
+					return false;
+				}
+			} else if (!returnType.equals(other.returnType)) {
+				return false;
+			}
+			if (typeCons == null) {
+				if (other.typeCons != null) {
+					return false;
+				}
+			} else if (!typeCons.equals(other.typeCons)) {
+				return false;
+			}
+			if (typeParams == null) {
+				if (other.typeParams != null) {
+					return false;
+				}
+			} else if (!typeParams.equals(other.typeParams)) {
+				return false;
+			}
+			return true;
 		}
 	
 	}

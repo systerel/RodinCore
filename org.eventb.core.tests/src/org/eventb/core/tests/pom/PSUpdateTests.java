@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,15 +11,25 @@
  *******************************************************************************/
 package org.eventb.core.tests.pom;
 
+import static org.eventb.core.EventBAttributes.HYPS_ATTRIBUTE;
+import static org.eventb.core.seqprover.eventbExtensions.Tactics.lemma;
+
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
+import org.eventb.core.IPRProof;
+import org.eventb.core.IPRProofRule;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.pm.IProofAttempt;
+import org.eventb.core.pm.IProofComponent;
+import org.eventb.core.pm.IProofManager;
+import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.tests.BuilderTest;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
@@ -74,6 +84,37 @@ public class PSUpdateTests extends BuilderTest {
 		final IPOPredicate poGoal = poSequent.getGoal("G");
 		poGoal.create(null, null);
 		poGoal.setPredicate(BTRUE, null);
+	}
+
+	private void changePO(String name) throws RodinDBException {
+		final IPOSequent poSequent = poRoot.getSequent(name);
+		poSequent.setPOStamp(poSequent.getPOStamp() + 1, null);
+	}
+
+	private void addProof(String name) throws RodinDBException {
+		final IProofManager pm = EventBPlugin.getProofManager();
+		final IProofComponent pc = pm.getProofComponent(poRoot);
+		final IProofAttempt pa = pc.createProofAttempt(name, "test", null);
+		final IProofTreeNode root = pa.getProofTree().getRoot();
+		lemma(BTRUE.toString()).apply(root, null);
+		pa.commit(true, null);
+		pc.save(null, false);
+	}
+
+	// Remove an essential field of a rule
+	private void damageProof(String name) throws RodinDBException {
+		final IPRProof proof = poRoot.getPRRoot().getProof(name);
+		final IPRProofRule rule = proof.getProofRules()[0];
+		rule.removeAttribute(HYPS_ATTRIBUTE, null);
+		proof.getRodinFile().save(null, false);
+	}
+
+	// Remove the argument of a cut rule, destroying its input
+	private void damageProofInput(String name) throws RodinDBException {
+		final IPRProof proof = poRoot.getPRRoot().getProof(name);
+		final IPRProofRule rule = proof.getProofRules()[0];
+		rule.getPRPredRef("pred").delete(false, null);
+		proof.getRodinFile().save(null, false);
 	}
 
 	private void deletePO(String name) throws RodinDBException {
@@ -559,5 +600,41 @@ public class PSUpdateTests extends BuilderTest {
 		movePO("6", "4");
 		runBuilder("6,4,2,5,3,1");
 	}
-	
+
+	/**
+	 * Ensures that a damaged proof does not prevent POM from succeeding. The PO
+	 * with the damaged proof is then marked as broken.
+	 */
+	public final void testErroneousProof() throws CoreException {
+		createPOFile();
+		addPO("1", null);
+		addPO("2", null);
+		addPO("3", null);
+		runBuilder("1,2,3");
+
+		addProof("2");
+		damageProof("2");
+		changePO("2");
+		runBuilder("1,2,3");
+		assertTrue(psRoot.getStatus("2").isBroken());
+	}
+
+	/**
+	 * Ensures that a proof with a damaged input does not prevent POM from
+	 * succeeding. The PO with the damaged proof is then marked as broken.
+	 */
+	public final void testErroneousProofInput() throws CoreException {
+		createPOFile();
+		addPO("1", null);
+		addPO("2", null);
+		addPO("3", null);
+		runBuilder("1,2,3");
+
+		addProof("2");
+		damageProofInput("2");
+		changePO("2");
+		runBuilder("1,2,3");
+		assertTrue(psRoot.getStatus("2").isBroken());
+	}
+
 }

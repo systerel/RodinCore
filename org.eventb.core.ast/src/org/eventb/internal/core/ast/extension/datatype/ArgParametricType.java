@@ -61,4 +61,46 @@ public class ArgParametricType implements IArgumentType {
 		}
 		return true;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((argTypes == null) ? 0 : argTypes.hashCode());
+		result = prime * result
+				+ ((typeConstr == null) ? 0 : typeConstr.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof ArgParametricType)) {
+			return false;
+		}
+		ArgParametricType other = (ArgParametricType) obj;
+		if (argTypes == null) {
+			if (other.argTypes != null) {
+				return false;
+			}
+		} else if (!argTypes.equals(other.argTypes)) {
+			return false;
+		}
+		if (typeConstr == null) {
+			if (other.typeConstr != null) {
+				return false;
+			}
+		} else if (!typeConstr.equals(other.typeConstr)) {
+			return false;
+		}
+		return true;
+	}
+	
+	
 }

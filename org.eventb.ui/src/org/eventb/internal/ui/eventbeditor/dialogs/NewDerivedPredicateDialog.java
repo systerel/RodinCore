@@ -31,8 +31,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.ILabeledElement;
 import org.eventb.internal.ui.IEventBInputText;
-import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.Triplet;
 import org.eventb.internal.ui.preferences.PreferenceUtils;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElementType;
@@ -117,12 +117,8 @@ public class NewDerivedPredicateDialog<T extends ILabeledElement> extends
 		addProposalAdapter(type, LABEL_ATTRIBUTE, name);
 		final IEventBInputText content = createContentInputText(getBody());
 		addProposalAdapter(type, PREDICATE_ATTRIBUTE, content);
-		final Button button = createIsTheoremButton();
+		final Button button = createIsTheoremCheck(getBody());
 		texts.add(newWidgetTriplet(name, content, button));
-	}
-
-	private Button createIsTheoremButton(){
-		return toolkit.createButton(getBody(), "", SWT.CHECK);
 	}
 
 	@Override
@@ -166,93 +162,6 @@ public class NewDerivedPredicateDialog<T extends ILabeledElement> extends
 	public boolean close() {
 		disposeTriplets(texts);
 		return super.close();
-	}
-
-	protected void fillTripletResult(
-			Collection<Triplet<IEventBInputText, IEventBInputText, Button>> fields,
-			Collection<Triplet<String, String, Boolean>> result) {
-		for (Triplet<IEventBInputText, IEventBInputText, Button> triplet : fields) {
-			final IEventBInputText labelInput = triplet.getFirst();
-			final IEventBInputText contentInput = triplet.getSecond();
-			final boolean bool = triplet.getThird().getSelection();
-			if (dirtyTexts.contains(contentInput.getTextWidget())) {
-				final String name = getText(labelInput);
-				result.add(new Triplet<String, String, Boolean>(name,
-						translate(contentInput), bool));
-			}
-		}
-	}
-
-	protected String[] getFirstTriplet(
-			Collection<Triplet<String, String, Boolean>> triplets) {
-		final Collection<String> result = new ArrayList<String>();
-		for (Triplet<String, String, Boolean> t : triplets)
-			result.add(t.getFirst());
-		return result.toArray(new String[result.size()]);
-	}
-
-	protected String[] getSecondTriplet(
-			Collection<Triplet<String, String, Boolean>> triplets) {
-		final Collection<String> result = new ArrayList<String>();
-		for (Triplet<String, String, Boolean> t : triplets)
-			result.add(t.getSecond());
-		return result.toArray(new String[result.size()]);
-	}
-
-	protected boolean[] getThirdTriplet(
-			Collection<Triplet<String, String, Boolean>> triplets) {
-		final boolean[] result = new boolean[triplets.size()];
-		int i = 0;
-		for (Triplet<String, String, Boolean> t : triplets) {
-			result[i] = t.getThird();
-			i++;
-		}
-		return result;
-	}
-
-	protected Triplet<IEventBInputText, IEventBInputText, Button> newWidgetTriplet(
-			IEventBInputText name, IEventBInputText content, Button button) {
-		return new Triplet<IEventBInputText, IEventBInputText, Button>(name,
-				content, button);
-	}
-
-	protected void disposeTriplets(
-			Collection<Triplet<IEventBInputText, IEventBInputText, Button>> triplets) {
-		for (Triplet<IEventBInputText, IEventBInputText, Button> triplet : triplets) {
-			triplet.getFirst().dispose();
-			triplet.getSecond().dispose();
-			triplet.getThird().dispose();
-		}
-	}
-
-	class Triplet<X extends Object, Y extends Object, Z extends Object> {
-		private final Pair<X, Pair<Y, Z>> obj;
-
-		public Triplet(X x, Y y, Z z) {
-			obj = new Pair<X, Pair<Y, Z>>(x, new Pair<Y, Z>(y, z));
-		}
-
-		public X getFirst() {
-			return obj.getFirst();
-		}
-
-		public Y getSecond() {
-			return obj.getSecond().getFirst();
-		}
-
-		public Z getThird() {
-			return obj.getSecond().getSecond();
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			return obj.equals(o);
-		}
-
-		@Override
-		public String toString() {
-			return obj.toString();
-		}
 	}
 	
 }

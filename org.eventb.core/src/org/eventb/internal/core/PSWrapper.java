@@ -226,19 +226,28 @@ public class PSWrapper implements IPSWrapper {
 		final IPOSequent poSequent = status.getPOSequent();
 		final IProverSequent seq =  POLoader.readPO(poSequent, ff);
 		final IPRProof prProof = status.getProof();
-		final boolean broken;
-		if (prProof.exists()) {
-			IProofDependencies deps = prProof.getProofDependencies(ff, pm);
-			final IProofSkeleton skel = prProof.getSkeleton(ff, pm);
-			broken = ! ProverLib.isProofReusable(deps, skel, seq);
-		} else {
-			broken = false;
-		}
+		final boolean broken = isBroken(seq, prProof, ff, pm);
 		status.copyProofInfo(null);
 		if (poSequent.hasPOStamp()) {
 			status.setPOStamp(poSequent.getPOStamp(), null);
 		}
 		status.setBroken(broken, null);
+	}
+
+	private static boolean isBroken(IProverSequent seq, IPRProof prProof,
+			FormulaFactory ff, IProgressMonitor pm) {
+		if (!prProof.exists()) {
+			return false;
+		}
+		try {
+			final IProofDependencies deps = prProof
+					.getProofDependencies(ff, pm);
+			final IProofSkeleton skel = prProof.getSkeleton(ff, pm);
+			return !ProverLib.isProofReusable(deps, skel, seq);
+		} catch (Throwable e) {
+			Util.log(e, "while computing status of PO " + seq);
+			return true;
+		}
 	}
 
 }

@@ -344,8 +344,9 @@ public class BasicTactics {
 	 * Composition of a sequence of tactics till failure
 	 * 
 	 * <p>
-	 * Applying the resulting tactic applies the given tactics in their given order,
-	 * until a tactic fails.
+	 * Applying the resulting tactic applies the given tactics in their given
+	 * order on the first open descendant of the input node, until a tactic
+	 * fails.
 	 * </p>
 	 * <p>
 	 * The resulting tactic succeeds iff all tactics succeed.
@@ -361,7 +362,8 @@ public class BasicTactics {
 	
 			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
 				for (ITactic tactic : tactics){
-					Object tacticApp = tactic.apply(pt, pm);
+					final IProofTreeNode open = pt.getFirstOpenDescendant();
+					final Object tacticApp = tactic.apply(open, pm);
 					if (tacticApp != null) return tacticApp; 
 				}
 				return null;

@@ -7,12 +7,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ * ETH Zurich - initial API and implementation
+ * Systerel - fixed the movement of a  list of selected items
  ******************************************************************************/
 
 package org.eventb.internal.ui.preferences;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.Assert;
@@ -276,20 +278,50 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
 		};
     }
 
-    /**
-     * Notifies that the list selection has changed.
-     */
-    void selectionChanged() {
-        int selectedIndex = selected.getSelectionIndex();
-        int availableIndex = available.getSelectionIndex();
-        int selectedSize = selectedElements.size();
-        
-        addButton.setEnabled(availableIndex >= 0);
-        removeButton.setEnabled(selectedIndex >= 0);
-        upButton.setEnabled(selectedSize > 1 && selectedIndex > 0);
-		downButton.setEnabled(selectedSize > 1 && selectedIndex >= 0
-				&& selectedIndex < selectedSize - 1);
-    }
+	/**
+	 * Notifies that the list selection has changed.
+	 */
+	void selectionChanged() {
+		final int selectedSize = selectedElements.size();
+		final boolean isSelected = selected.getSelectionIndex() >= 0;
+		final int availableIndex = available.getSelectionIndex();
+
+		addButton.setEnabled(availableIndex >= 0);
+		removeButton.setEnabled(isSelected);
+
+		if (isSelected && selectedSize > 1) {
+			final int[] selectedIndices = selected.getSelectionIndices();
+			Arrays.sort(selectedIndices);
+			final boolean isContiguous = isContiguous(selectedIndices);
+			final int firstIndex = selectedIndices[0];
+			final int lastIndex = selectedIndices[selectedIndices.length - 1];
+			upButton.setEnabled(isContiguous && firstIndex > 0);
+			downButton.setEnabled(isContiguous && lastIndex < selectedSize - 1);
+		} else {
+			upButton.setEnabled(false);
+			downButton.setEnabled(false);
+		}
+	}
+
+	/**
+	 * Returns <code>true</code> if the indices (given in a sorted array) are
+	 * contiguous, <code>false</code> otherwise.
+	 * 
+	 * @param indices
+	 *            a sorted array of integers
+	 */
+	private boolean isContiguous(int[] indices) {
+		if (indices.length == 0 || indices.length == 1) {
+			return true;
+		} else {
+			for (int i = 1; i < indices.length; i++) {
+				if (indices[i - 1] + 1 != indices[i]) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}
 
     /**
 	 * Notifies that the Up button has been pressed.
@@ -306,30 +338,36 @@ public abstract class TwoListSelectionEditor extends FieldEditor {
         swap(false);
     }
 
-    /**
-     * Moves the currently selected item up or down.
-     *
-     * @param up <code>true</code> if the item should move up,
-     *  and <code>false</code> if it should move down
-     */
-    private void swap(boolean up) {
-        setPresentsDefaultValue(false);
-        int index = selected.getSelectionIndex();
-        int target = up ? index - 1 : index + 1;
-
-        if (index >= 0) {
-            String[] selection = selected.getSelection();
-            Assert.isTrue(selection.length == 1);
-            selected.remove(index);
-            selected.add(selection[0], target);
-            Object object = selectedElements.get(index);
-            selectedElements.remove(index);
-            selectedElements.add(target, object);
-            
-            selected.setSelection(target);
-        }
-        selectionChanged();
-    }
+	/**
+	 * Moves the currently selected item up or down.
+	 * <p />
+	 * The selected items must be contiguous and not empty. If up is
+	 * <code>true</code>, the first selected item have to be different than the
+	 * first item. If up is <code>false</code> the last selected item have to be
+	 * different than the last item.
+	 * 
+	 * @param up
+	 *            <code>true</code> if the item should move up, and
+	 *            <code>false</code> if it should move down
+	 */
+	private void swap(boolean up) {
+		setPresentsDefaultValue(false);
+		final int[] selectedIndices = selected.getSelectionIndices();
+		final int firstIndex = selectedIndices[0];
+		final int lastIndex = selectedIndices[selectedIndices.length - 1];
+		// element to move
+		final int move = up ? firstIndex - 1 : lastIndex + 1;
+		// new position of moved element
+		final int target = up ? lastIndex : firstIndex;
+		final String[] selection = selected.getItems();
+		Assert.isTrue(selection.length > Math.max(target, move));
+		selected.remove(move);
+		selected.add(selection[move], target);
+		final Object object = selectedElements.get(move);
+		selectedElements.remove(move);
+		selectedElements.add(target, object);
+		selectionChanged();
+	}
 
 	@Override
 	protected void adjustForNumColumns(int numColumns) {

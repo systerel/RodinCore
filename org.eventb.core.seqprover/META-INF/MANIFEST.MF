@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eventb.core.seqprover; singleton:=true
-Bundle-Version: 2.0.0.qualifier
+Bundle-Version: 2.0.1.qualifier
 Bundle-Activator: org.eventb.core.seqprover.SequentProver
 Bundle-Vendor: %pluginProvider
 Bundle-Localization: plugin
@@ -20,5 +20,6 @@ Export-Package: org.eventb.core.seqprover,
  org.eventb.internal.core.seqprover;x-friends:="org.eventb.core.seqprover.tests",
  org.eventb.internal.core.seqprover.eventbExtensions;x-friends:="org.eventb.core.seqprover.tests",
  org.eventb.internal.core.seqprover.eventbExtensions.rewriters;x-friends:="org.eventb.core.seqprover.tests",
+ org.eventb.internal.core.seqprover.proofBuilder;x-friends:="org.eventb.core.seqprover.tests",
  org.eventb.internal.core.seqprover.reasonerInputs;x-friends:="org.eventb.core.seqprover.tests"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

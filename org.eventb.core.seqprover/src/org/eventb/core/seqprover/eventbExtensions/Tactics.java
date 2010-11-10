@@ -116,7 +116,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.FunSingletonImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.He;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
-import org.eventb.internal.core.seqprover.eventbExtensions.IsFunImageGoal;
+import org.eventb.internal.core.seqprover.eventbExtensions.FunImageGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.ModusTollens;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointRule;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
@@ -3802,8 +3802,9 @@ public class Tactics {
 	/**
 	 * Tells if the tactic funImgSimpRewrites can apply.
 	 * 
-	 * @param expr
-	 *            the expression to rewrite
+	 * @param funImgExpr
+	 *            the expression to rewrite. It is a functional image expression
+	 *            where the tactic funImgSimpRewrites could apply
 	 * @param sequent
 	 *            the current sequent
 	 * @return <code>true</code> if the tactic is not applicable,
@@ -3811,9 +3812,9 @@ public class Tactics {
 	 * 
 	 * @since 2.0
 	 */
-	public static boolean isFunImgSimpApplicable(Expression expr,
+	public static boolean isFunImgSimpApplicable(Expression funImgExpr,
 			IProverSequent sequent) {
-		return FunImgSimpImpl.isApplicable(expr, sequent);
+		return FunImgSimpImpl.isApplicable(funImgExpr, sequent);
 	}
 	
 	
@@ -3829,8 +3830,8 @@ public class Tactics {
 	 * @since 2.0
 	 */
 	public static ITactic funImgGoal(Predicate hyp, IPosition position) {
-		return BasicTactics.reasonerTac(new IsFunImageGoal(),
-				new AbstractManualInference.Input(hyp, position));
+		return BasicTactics.reasonerTac(new FunImageGoal(),
+				new FunImageGoal.Input(hyp, position));
 	}
 	
 	/**

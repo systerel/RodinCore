@@ -42,4 +42,36 @@ public class ExtensionKind implements IExtensionKind {
 		return childTypes.getExprArity().check(childExprs.length)
 				&& childTypes.getPredArity().check(childPreds.length);
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((operProps == null) ? 0 : operProps.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof ExtensionKind)) {
+			return false;
+		}
+		ExtensionKind other = (ExtensionKind) obj;
+		if (operProps == null) {
+			if (other.operProps != null) {
+				return false;
+			}
+		} else if (!operProps.equals(other.operProps)) {
+			return false;
+		}
+		return true;
+	}
+	
 }

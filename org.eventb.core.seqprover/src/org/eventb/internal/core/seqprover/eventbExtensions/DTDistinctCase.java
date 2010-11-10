@@ -28,7 +28,7 @@ import org.eventb.core.seqprover.SequentProver;
  */
 public class DTDistinctCase extends DTReasoner {
 
-	private static final String REASONER_ID = SequentProver.PLUGIN_ID
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".dtDistinctCase";
 	private static final String DISPLAY_NAME = "dt dc";
 	
