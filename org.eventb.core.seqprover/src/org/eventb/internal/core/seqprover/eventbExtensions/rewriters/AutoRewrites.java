@@ -24,7 +24,7 @@ public class AutoRewrites extends AbstractAutoRewrites implements
 		IVersionedReasoner {
 
 	public static enum Level {
-		L0, L1;
+		L0, L1, L2;
 		
 		public static final Level LATEST = Level.latest();
 		

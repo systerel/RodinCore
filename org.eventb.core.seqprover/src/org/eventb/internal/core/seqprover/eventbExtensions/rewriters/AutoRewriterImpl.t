@@ -324,7 +324,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
     @ProverRule( { "SIMP_SPECIAL_IMP_BTRUE_L", "SIMP_SPECIAL_IMP_BFALSE_L",
 			"SIMP_SPECIAL_IMP_BTRUE_R", "SIMP_SPECIAL_IMP_BFALSE_R",
 			"SIMP_MULTI_IMP", "SIMP_MULTI_EQV", "SIMP_SPECIAL_EQV_BTRUE",
-			"SIMP_SPECIAL_EQV_BFALSE" })
+			"SIMP_SPECIAL_EQV_BFALSE", "SIMP_MULTI_IMP_OR" })
 	@Override
 	public Predicate rewrite(BinaryPredicate predicate) {
 		final Predicate result;
@@ -427,6 +427,18 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    		result = dLib.makeNeg(`P);
 	    		trace(predicate, result, "SIMP_SPECIAL_EQV_BFALSE");
 				return result;
+ 	    	}
+
+	    	/**
+             * SIMP_MULTI_IMP_OR
+	    	 *    P ∧ ... ∧ Q ∧ ... ∧ R ⇒ Q == ⊤
+	    	 */
+	    	Limp(Land(children), Q) -> {
+	    		if (level2 && contains(`children, `Q)) {
+		    		result = dLib.True();
+		    		trace(predicate, result, "SIMP_MULTI_IMP_OR");
+					return result;
+				}
  	    	}
 
 	    }

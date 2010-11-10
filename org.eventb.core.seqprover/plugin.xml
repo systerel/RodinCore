@@ -127,8 +127,11 @@
       <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewritesL1"
             id="autoRewritesL1"
-            name="%autoRewritesName">
-      </reasoner>
+            name="%autoRewritesName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewritesL2"
+            id="autoRewritesL2"
+            name="%autoRewritesName"/>
       <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites"
             id="typeRewrites"
