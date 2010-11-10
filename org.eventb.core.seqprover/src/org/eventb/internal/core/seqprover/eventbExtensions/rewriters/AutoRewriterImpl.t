@@ -17,7 +17,6 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -36,7 +35,6 @@ import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
@@ -71,6 +69,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	private final DLib dLib;
 	
 	private final AutoRewrites.Level level;
+
+	// Cached enabled levels
+	private final boolean level1;
+	private final boolean level2;
 	
 	protected final IntegerLiteral number0 = ff.makeIntegerLiteral(BigInteger.ZERO, null);
 	
@@ -90,6 +92,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		fs = new FormulaSimplification(ff);
 		dLib = DLib.mDLib(ff);
 		this.level = level;
+		this.level1 = level.from(Level.L1);
+		this.level2 = level.from(Level.L2);
 	}
 
 	protected UnaryPredicate makeUnaryPredicate(int tag, Predicate child) {
@@ -135,6 +139,15 @@ public class AutoRewriterImpl extends DefaultRewriter {
 
 	protected SimplePredicate makeSimplePredicate(int tag, Expression expression) {
 		return ff.makeSimplePredicate(tag, expression, null);
+	}
+
+	protected <T> boolean contains(T[] array, T key) {
+		for (T element : array) {
+			if (element.equals(key)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static <T extends Formula<T>> void trace(T from, T to, String rule,
@@ -769,12 +782,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Set Theory: S ⊆ A ∪ ... ∪ S ∪ ... ∪ B == ⊤
 	    	 */
 	    	SubsetEq(S, BUnion(children)) -> {
-	    		for (Expression child : `children) {
-	    			if (child.equals(`S)) {
-	    				result = dLib.True();
-	    				trace(predicate, result, "SIMP_SUBSETEQ_BUNION");
-	    				return result;
-	    			}
+	    		if (contains(`children, `S)) {
+    				result = dLib.True();
+    				trace(predicate, result, "SIMP_SUBSETEQ_BUNION");
+    				return result;
 	    		}
 	    	}
 			
@@ -783,12 +794,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Set Theory: A ∩ ... ∩ S ∩ ... ∩ B ⊆ S == ⊤
 	    	 */
 	    	SubsetEq(BInter(children), S) -> {
-	    		for (Expression child : `children) {
-	    			if (child.equals(`S)) {
-	    				result = dLib.True();
-	    				trace(predicate, result, "SIMP_SUBSETEQ_BINTER");
-	    				return result;
-	    			}
+	    		if (contains(`children, `S)) {
+    				result = dLib.True();
+    				trace(predicate, result, "SIMP_SUBSETEQ_BINTER");
+    				return result;
 	    		}
 	    	}
 			
@@ -841,12 +850,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Set Theory 18: E ∈ {F} == E = F (if F is a single expression)
 	    	 */
 	    	In(E, SetExtension(members)) -> {
-	    		for (Expression member : `members) {
-					if (`member.equals(`E)) {
-						result = dLib.True();
-						trace(predicate, result, "SIMP_MULTI_IN");
-						return result;
-					}
+	    		if (contains(`members, `E)) {
+					result = dLib.True();
+					trace(predicate, result, "SIMP_MULTI_IN");
+					return result;
 				}
 				if (`members.length == 1) {
 					result = makeRelationalPredicate(Predicate.EQUAL, `E, `members[0]);
@@ -867,7 +874,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				                        `expression,
 				                        `E.shiftBoundIdentifiers(`idents.length, ff));
 				
-				if(level.from(Level.L1) && `E.getTag() == Formula.MAPSTO){
+				if(level1 && `E.getTag() == Formula.MAPSTO){
 					
 					final List<Predicate> conjuncts = new ArrayList<Predicate>();
 					simpEqualsMapsTo(equalsPred, conjuncts, ff);
