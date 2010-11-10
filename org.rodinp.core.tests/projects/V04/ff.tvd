@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<org.rodinp.core.tests.versionFileD version="3">
-<org.rodinp.core.tests.versionEC name="cx"/>
-<org.rodinp.core.tests.versionEB name="bx"/>
-<org.rodinp.core.tests.versionEA name="ax"/>
-<org.rodinp.core.tests.versionEB name="by"/>
-<org.rodinp.core.tests.versionEA name="ay"/>
-<org.rodinp.core.tests.versionEB name="bz"/>
-</org.rodinp.core.tests.versionFileD>
