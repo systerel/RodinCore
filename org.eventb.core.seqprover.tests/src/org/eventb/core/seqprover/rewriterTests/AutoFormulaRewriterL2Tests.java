@@ -41,12 +41,42 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	public void testSIMP_MULTI_IMP_OR() {
 		predicateTest("⊤", "a=0 ∧ b=1 ⇒ a=0");
 		predicateTest("⊤", "a=0 ∧ b=1 ⇒ b=1");
-		
+
 		predicateTest("⊤", "a=0 ∧ b=1 ∧ c=2 ⇒ a=0");
 		predicateTest("⊤", "a=0 ∧ b=1 ∧ c=2 ⇒ b=1");
 		predicateTest("⊤", "a=0 ∧ b=1 ∧ c=2 ⇒ c=2");
-		
+
 		predicateTest("a=0 ∧ b=1 ⇒ a=1", "a=0 ∧ b=1 ⇒ a=1");
+	}
+
+	/**
+	 * Ensures that rule SIMP_MULTI_IMP_AND_NOT_R is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_MULTI_IMP_AND_NOT_R() {
+		predicateTest("¬(a=0 ∧ b=1)", "a=0 ∧ b=1 ⇒ ¬a=0");
+		predicateTest("¬(a=0 ∧ b=1)", "a=0 ∧ b=1 ⇒ ¬b=1");
+
+		predicateTest("¬(a=0 ∧ b=1 ∧ c=2)", "a=0 ∧ b=1 ∧ c=2⇒ ¬a=0");
+		predicateTest("¬(a=0 ∧ b=1 ∧ c=2)", "a=0 ∧ b=1 ∧ c=2⇒ ¬b=1");
+		predicateTest("¬(a=0 ∧ b=1 ∧ c=2)", "a=0 ∧ b=1 ∧ c=2⇒ ¬c=2");
+
+		predicateTest("a=0 ∧ b=1 ⇒ ¬a=1", "a=0 ∧ b=1 ⇒ ¬a=1");
+	}
+
+	/**
+	 * Ensures that rule SIMP_MULTI_IMP_AND_NOT_L is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_MULTI_IMP_AND_NOT_L() {
+		predicateTest("¬(¬a=0 ∧  b=1)", "¬a=0 ∧  b=1 ⇒ a=0");
+		predicateTest("¬( a=0 ∧ ¬b=1)", " a=0 ∧ ¬b=1 ⇒ b=1");
+
+		predicateTest("¬(¬a=0 ∧  b=1 ∧  c=2)", "¬a=0 ∧  b=1 ∧  c=2⇒ a=0");
+		predicateTest("¬( a=0 ∧ ¬b=1 ∧  c=2)", " a=0 ∧ ¬b=1 ∧  c=2⇒ b=1");
+		predicateTest("¬( a=0 ∧  b=1 ∧ ¬c=2)", " a=0 ∧  b=1 ∧ ¬c=2⇒ c=2");
+
+		predicateTest("¬a=0 ∧ b=1 ⇒ a=1", "¬a=0 ∧ b=1 ⇒ a=1");
 	}
 
 }
