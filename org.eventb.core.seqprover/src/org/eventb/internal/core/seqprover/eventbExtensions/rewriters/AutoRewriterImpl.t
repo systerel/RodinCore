@@ -871,25 +871,24 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}	    	
 
 			/**
-             * SIMP_MULTI_IN
-	    	 * Set Theory 8: A ∈ {A} == ⊤
 	    	 * SIMP_MULTI_IN
              * Set Theory 9: B ∈ {A, ..., B, ..., C} == ⊤
+	    	 */
+	    	In(B, SetExtension(eList(_*, B, _*))) -> {
+				result = dLib.True();
+				trace(predicate, result, "SIMP_MULTI_IN");
+				return result;
+	    	}
+
+			/**
 	    	 * SIMP_IN_SING
              * Set Theory 18: E ∈ {F} == E = F (if F is a single expression)
 	    	 */
-	    	In(E, SetExtension(members)) -> {
-	    		if (contains(`members, `E)) {
-					result = dLib.True();
-					trace(predicate, result, "SIMP_MULTI_IN");
-					return result;
-				}
-				if (`members.length == 1) {
-					result = makeRelationalPredicate(Predicate.EQUAL, `E, `members[0]);
-					trace(predicate, result, "SIMP_IN_SING");
-					return result;
-				}
-				return predicate;
+	    	In(E, SetExtension(Fs@eList(_))) -> {
+	    		// Workaround Tom 2.2 bug: don't use `F
+				result = makeRelationalPredicate(Predicate.EQUAL, `E, `Fs[0]);
+				trace(predicate, result, "SIMP_IN_SING");
+				return result;
 	    	}
 
 			/**
@@ -942,13 +941,11 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * SIMP_EQUAL_SING
 	    	 * Set Theory 19: {E} = {F} == E = F   if E, F is a single expression
 	    	 */
-	    	Equal(SetExtension(E), SetExtension(F)) -> {
-   				if (`E.length == 1 && `F.length == 1) {
-					result = makeRelationalPredicate(Predicate.EQUAL, `E[0], `F[0]);
-					trace(predicate, result, "SIMP_EQUAL_SING");
-					return result;
-				}
-				return predicate;
+	    	Equal(SetExtension(Es@eList(_)), SetExtension(Fs@eList(_))) -> {
+	    		// Workaround Tom 2.2 bug: can't use singletons
+				result = makeRelationalPredicate(Predicate.EQUAL, `Es[0], `Fs[0]);
+				trace(predicate, result, "SIMP_EQUAL_SING");
+				return result;
 	    	}
 	    	
 	    	/**
@@ -1259,28 +1256,20 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_SPECIAL_FCOMP
              * Set Theory: p; ... ;∅; ... ;q == ∅
 	    	 */
-	    	Fcomp (children) -> {
-	    		for (Expression child : `children) {
-	    			if (Lib.isEmptySet(child)) {
-	    				result = ff.makeEmptySet(expression.getType(), null);
-	    	    		trace(expression, result, "SIMP_SPECIAL_FCOMP");
-	    				return result;
-	    			}
-	    		}
+	    	Fcomp (eList(_*, EmptySet(), _*)) -> {
+   				result = ff.makeEmptySet(expression.getType(), null);
+   	    		trace(expression, result, "SIMP_SPECIAL_FCOMP");
+   				return result;
 	    	}
 	
 	    	/**
 	    	 * SIMP_SPECIAL_BCOMP
              * Set Theory: p∘ ... ∘∅∘ ... ∘q == ∅
 	    	 */
-	    	Bcomp (children) -> {
-	    		for (Expression child : `children) {
-	    			if (Lib.isEmptySet(child)) {
-	    				result = ff.makeEmptySet(expression.getType(), null);
-	    	    		trace(expression, result, "SIMP_SPECIAL_BCOMP");
-	    				return result;
-	    			}
-	    		}
+	    	Bcomp (eList(_*, EmptySet(), _*)) -> {
+   				result = ff.makeEmptySet(expression.getType(), null);
+   	    		trace(expression, result, "SIMP_SPECIAL_BCOMP");
+   				return result;
 	    	}
 	    	
             /**
@@ -1550,25 +1539,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_MULTI_FUNIMAGE_OVERL_SETENUM
              * Set Theory 16: (f  {E↦ F})(E) == F
 	    	 */
-	    	FunImage(Ovr(children), E) -> {
-	    		Expression lastExpression = `children[`children.length - 1];
-				if (lastExpression instanceof SetExtension) {
-					SetExtension sExt = (SetExtension) lastExpression;
-					Expression[] members = sExt.getMembers();
-					if (members.length == 1) {
-						Expression child = members[0];
-						if (child.getTag() == Expression.MAPSTO) {
-							final BinaryExpression maplet = (BinaryExpression) child; 
-							if (maplet.getLeft().equals(`E)) {
-								result = maplet.getRight();
-					    		trace(expression, result, "SIMP_MULTI_FUNIMAGE_OVERL_SETENUM");
-					    		return result;
-							}
-						}
-					}
-				}
-
-				return expression;
+	    	FunImage(Ovr(eList(_*, SetExtension(eList(Mapsto(E, F))))), E) -> {
+				result = `F;
+	    		trace(expression, result, "SIMP_MULTI_FUNIMAGE_OVERL_SETENUM");
+	    		return result;
 	    	}
 
 	    	/**
@@ -1620,12 +1594,11 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_FUNIMAGE_CPROD
              * Set Theory: (S × {E})(x) == E
 			 */
-			FunImage(Cprod(_, SetExtension(children)), _) -> {
-				if (`children.length == 1) {
-					result = `children[0];
-			        trace(expression, result, "SIMP_FUNIMAGE_CPROD");
-	    	        return result;
-				}
+			FunImage(Cprod(_, SetExtension(Es@eList(_))), _) -> {
+	    		// Workaround Tom 2.2 bug: can't use `E
+				result = `Es[0];
+		        trace(expression, result, "SIMP_FUNIMAGE_CPROD");
+    	        return result;
 			}
 
             /**
@@ -1752,12 +1725,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * SIMP_CARD_SING
 	    	 * Cardinality: card({E}) == 1
 	    	 */
-			Card(SetExtension(children)) -> {
-				if (`children.length == 1) {
-					result = number1;
-		    		trace(expression, result, "SIMP_CARD_SING");
-		    		return result;
-				}
+			Card(SetExtension(eList(_))) -> {
+				result = number1;
+	    		trace(expression, result, "SIMP_CARD_SING");
+	    		return result;
 			}
 
 			/**
@@ -1925,45 +1896,61 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_SPECIAL_COND_BFALSE" })
 	@Override
 	public Expression rewrite(ExtendedExpression expression) {
+    	final Expression result;
     	%match (Expression expression) {
 
     		/**
     		 * SIMP_DESTR_CONSTR:
     		 * destr(cons(a_1, ..., a_n))  ==  a_i   [i is the param index of the destructor]
     		 */
-    		destr@ExtendedExpression(exprs,_) -> { // destr@ExtendedExpression((cons@ExtendedExpression(params, _)),_)
-    			if (`exprs.length == 1 && `exprs[0] instanceof ExtendedExpression) {
-    				final ExtendedExpression cons = (ExtendedExpression)`exprs[0];
-    				final int prmIndex = getParamIndex((ExtendedExpression)`destr, cons);
-    				if (prmIndex >= 0) {
-    					final Expression[] params = cons.getChildExpressions();
-    					return `params[prmIndex];
-    				}
-    			}
+			ExtendedExpression(eList(cons@ExtendedExpression(as,_)), pList()) -> {
+				final int idx = getParamIndex((ExtendedExpression) expression,
+						(ExtendedExpression) `cons);
+				if (idx >= 0) {
+					result = `as[idx];
+					trace(expression, result, "SIMP_DESTR_CONSTR");
+					return result;
+				}
     		}
     		
     		/**
     		 * SIMP_SPECIAL_COND_BTRUE:
     		 * COND(true, E_1, E_2) == E_1
-    		 * 
+    		 */
+    		ExtendedExpression(Es@eList(_,_), pList(BTRUE())) -> {
+ 	    		// Workaround Tom 2.2 bug: can't use `E1
+    			final ExtendedExpression ee = (ExtendedExpression) expression;
+    			if (ee.getExtension() == FormulaFactory.getCond()) {
+					result = `Es[0];
+		    		trace(expression, result, "SIMP_SPECIAL_COND_BTRUE");
+		    		return result;
+				}
+    		}
+
+    		/**
     		 * SIMP_SPECIAL_COND_BFALSE:
     		 * COND(false, E_1, E_2) == E_2
-    		 * 
+    		 */
+    		ExtendedExpression(Es@eList(_,_), pList(BFALSE())) -> {
+ 	    		// Workaround Tom 2.2 bug: can't use `E2
+    			final ExtendedExpression ee = (ExtendedExpression) expression;
+    			if (ee.getExtension() == FormulaFactory.getCond()) {
+					result = `Es[1];
+		    		trace(expression, result, "SIMP_SPECIAL_COND_BFALSE");
+		    		return result;
+				}
+    		}
+
+    		/**
     		 * SIMP_MULTI_COND:
     		 * COND(C, E, E) == E
     		 */
-    		expr@ExtendedExpression(exprs,preds) -> {
-    			if (((ExtendedExpression) `expr).getExtension() == FormulaFactory.getCond()) {
-    				final int condTag = `preds[0].getTag();
-    				final Expression e1 = `exprs[0];
-       				final Expression e2 = `exprs[1];
-       				if(condTag == Formula.BTRUE) {
-    					return e1;
-    				} else if(condTag == Formula.BFALSE) {
-    					return e2;
-    				} else if (e1.equals(e2)) {
-    					return e1;
-    				}
+    		ExtendedExpression(eList(E,E), pList(_)) -> {
+    			final ExtendedExpression ee = (ExtendedExpression) expression;
+    			if (ee.getExtension() == FormulaFactory.getCond()) {
+					result = `E;
+		    		trace(expression, result, "SIMP_MULTI_COND");
+		    		return result;
     			}
     		}
     	}
