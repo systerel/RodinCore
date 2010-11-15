@@ -1557,10 +1557,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 					Expression[] members = sExt.getMembers();
 					if (members.length == 1) {
 						Expression child = members[0];
-						if (child instanceof BinaryExpression
-								&& child.getTag() == Expression.MAPSTO) {
-							if (((BinaryExpression) child).getLeft().equals(`E)) {
-								result = ((BinaryExpression) child).getRight();
+						if (child.getTag() == Expression.MAPSTO) {
+							final BinaryExpression maplet = (BinaryExpression) child; 
+							if (maplet.getLeft().equals(`E)) {
+								result = maplet.getRight();
 					    		trace(expression, result, "SIMP_MULTI_FUNIMAGE_OVERL_SETENUM");
 					    		return result;
 							}
@@ -1670,8 +1670,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	   				Collection<Expression> newMembers = new LinkedHashSet<Expression>();
 
 				for (Expression member : `members) {
-					if (member instanceof BinaryExpression
-							&& member.getTag() == Expression.MAPSTO) {
+					if (member.getTag() == Expression.MAPSTO) {
 						BinaryExpression bExp = (BinaryExpression) member;
 						newMembers.add(
 								makeBinaryExpression(
@@ -1695,8 +1694,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
    				Collection<Expression> domain = new LinkedHashSet<Expression>();
 
 				for (Expression member : `members) {
-					if (member instanceof BinaryExpression
-							&& member.getTag() == Expression.MAPSTO) {
+					if (member.getTag() == Expression.MAPSTO) {
 						BinaryExpression bExp = (BinaryExpression) member;
 						domain.add(bExp.getLeft());
 					} else {
@@ -1717,8 +1715,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    		Collection<Expression> range = new LinkedHashSet<Expression>();
 
 				for (Expression member : `members) {
-					if (member instanceof BinaryExpression
-							&& member.getTag() == Expression.MAPSTO) {
+					if (member.getTag() == Expression.MAPSTO) {
 						BinaryExpression bExp = (BinaryExpression) member;
 						range.add(bExp.getRight());
 					} else {
