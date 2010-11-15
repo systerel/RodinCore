@@ -11,6 +11,8 @@
  *  so that clients can use Tom pattern matching on types.
  */
 
+%include {string.tom}
+
 %typeterm Type {
 	implement { Type }
 	equals(t1,t2) { t1.equals(t2) }
@@ -18,13 +20,15 @@
 
 %typeterm TypeList {
 	implement { Type[] }
-	equals(t1,t2) { t1.equals(t2) }  /* Check if appropriate. */
+	equals(t1,t2) {
+		java.util.Arrays.equals((Type[]) t1, (Type[]) t2)
+	}
 }
 
 %oparray TypeList tList (Type*) {
 	is_fsym(t) { true }
     get_size(t)      { t.length }
-    get_element(t,n) { t[n-1] }
+    get_element(t,n) { t[n] }
 	make_empty(t) { null }
 	make_append(e, t) { null }
 }
