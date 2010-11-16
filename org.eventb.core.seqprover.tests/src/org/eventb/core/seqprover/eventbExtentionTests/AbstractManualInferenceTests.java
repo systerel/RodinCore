@@ -31,6 +31,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.AbstractManualInferen
  */
 public abstract class AbstractManualInferenceTests extends AbstractManualReasonerTests {
 
+	final boolean withErrorMessage;
+
 	class SuccessfulTest {
 		String sequenceImage;
 		String hypothesisImage;
@@ -47,10 +49,17 @@ public abstract class AbstractManualInferenceTests extends AbstractManualReasone
 	
 	public AbstractManualInferenceTests() {
 		super();
+		withErrorMessage = true;
+	}
+
+	public AbstractManualInferenceTests(boolean withErrorMessage) {
+		super();
+		this.withErrorMessage = withErrorMessage;
 	}
 	
 	public AbstractManualInferenceTests(FormulaFactory ff) {
 		super(ff);
+		withErrorMessage = true;
 	}
 
 	protected abstract SuccessfulTest[] getSuccessfulTests();
@@ -121,11 +130,13 @@ public abstract class AbstractManualInferenceTests extends AbstractManualReasone
 		IProverSequent sequent = TestLib.genSeq(sequentImage);
 		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(
 				sequent, input));
-		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(
-				sequent, input,  "Inference " + getReasonerID()
-				+ " is not applicable for " + (predicate == null ? sequent
-						.goal() : predicate) + " at position " + position));
-
+		if (withErrorMessage) {
+			unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(
+					sequent, input, "Inference " + getReasonerID()
+							+ " is not applicable for "
+							+ (predicate == null ? sequent.goal() : predicate)
+							+ " at position " + position));
+		}
 		return unsuccessfullReasonerApps;
 	}
 
@@ -137,10 +148,13 @@ public abstract class AbstractManualInferenceTests extends AbstractManualReasone
 		IReasonerInput input = new AbstractManualInference.Input(pred, position);
 		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(
 				sequent, input));
-		unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(
-				sequent, input, "Inference " + getReasonerID()
-							+ " is not applicable for " + (pred == null ? sequent
-							.goal() : pred) + " at position " + position));
+		if (withErrorMessage) {
+			unsuccessfullReasonerApps.add(new UnsuccessfullReasonerApplication(
+					sequent, input, "Inference " + getReasonerID()
+							+ " is not applicable for "
+							+ (pred == null ? sequent.goal() : pred)
+							+ " at position " + position));
+		}
 		return unsuccessfullReasonerApps;
 	}
 

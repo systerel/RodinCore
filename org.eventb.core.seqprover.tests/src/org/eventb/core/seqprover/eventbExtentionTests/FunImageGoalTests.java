@@ -22,7 +22,11 @@ import org.eventb.core.seqprover.SequentProver;
  * Unit tests for the Functional image goal reasoner.
  */
 
-public class IsFunImageGoalTests extends AbstractManualInferenceTests {
+public class FunImageGoalTests extends AbstractManualInferenceTests {
+
+	public FunImageGoalTests() {
+		super(false);
+	}
 
 	@Override
 	protected SuccessfulTest[] getSuccessfulTests() {
@@ -102,7 +106,6 @@ public class IsFunImageGoalTests extends AbstractManualInferenceTests {
 
 	@Override
 	public String getReasonerID() {
-
 		return SequentProver.PLUGIN_ID + ".funImgGoal";
 	}
 
