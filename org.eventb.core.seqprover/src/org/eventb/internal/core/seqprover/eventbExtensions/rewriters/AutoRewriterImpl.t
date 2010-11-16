@@ -704,7 +704,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 */
 	    	Gt(E, E) -> {
 				result = dLib.False();
-	    		trace(predicate, result, "SIMP_MULTI_GE");
+	    		trace(predicate, result, "SIMP_MULTI_GT");
 				return result;
 	    	}
 			
@@ -1118,7 +1118,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
                 if (isDTConstructor((ExtendedExpression)`ext1)
                 		&& isDTConstructor((ExtendedExpression)`ext2)) {
                 	if (`ext1.getTag() != `ext2.getTag()) {
-                		return ff.makeLiteralPredicate(Formula.BFALSE, null);
+                		result = ff.makeLiteralPredicate(Formula.BFALSE, null);
+                		trace(predicate, result, "SIMP_EQUAL_CONSTR_DIFF");
+                		return result;
                 	}
                 	assert `args1.length == `args2.length;
                 	final List<Predicate> equalPreds = new ArrayList<Predicate>();
@@ -1127,12 +1129,17 @@ public class AutoRewriterImpl extends DefaultRewriter {
                 	}
                 	switch(equalPreds.size()) {
                 	case 0:
-                		return ff.makeLiteralPredicate(Formula.BTRUE, null);
+                		result = ff.makeLiteralPredicate(Formula.BTRUE, null);
+                		break;
                 	case 1:
-                		return equalPreds.get(0);
+                		result = equalPreds.get(0);
+                		break;
                 	default:
-                		return ff.makeAssociativePredicate(Predicate.LAND, equalPreds, null);
+                		result = ff.makeAssociativePredicate(Predicate.LAND, equalPreds, null);
+                		break;
                 	}
+               		trace(predicate, result, "SIMP_EQUAL_CONSTR");
+               		return result;
                 }
             }
 
@@ -1293,6 +1300,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_SPECIAL_DIV_1", "SIMP_SPECIAL_DIV_0", "SIMP_MULTI_DIV_PROD",
 			"SIMP_DIV_MINUS", "SIMP_SPECIAL_EXPN_1_R", "SIMP_SPECIAL_EXPN_0",
 			"SIMP_SPECIAL_EXPN_1_L", "SIMP_FUNIMAGE_FUNIMAGE_CONVERSE",
+			"SIMP_FUNIMAGE_CONVERSE_FUNIMAGE",
 			"SIMP_MULTI_FUNIMAGE_OVERL_SETENUM",
 			"SIMP_FUNIMAGE_FUNIMAGE_CONVERSE_SETENUM",
 			"SIMP_SPECIAL_RELIMAGE_R", "SIMP_SPECIAL_RELIMAGE_L",
@@ -1893,7 +1901,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	}
     
 	@ProverRule({ "SIMP_DESTR_CONSTR", "SIMP_SPECIAL_COND_BTRUE",
-			"SIMP_SPECIAL_COND_BFALSE" })
+			"SIMP_SPECIAL_COND_BFALSE", "SIMP_MULTI_COND" })
 	@Override
 	public Expression rewrite(ExtendedExpression expression) {
     	final Expression result;
