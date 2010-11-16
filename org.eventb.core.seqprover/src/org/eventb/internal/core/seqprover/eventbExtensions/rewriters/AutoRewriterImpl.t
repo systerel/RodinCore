@@ -179,7 +179,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	
 	@ProverRule( { "SIMP_SPECIAL_FINITE", "SIMP_FINITE_SETENUM",
 			"SIMP_FINITE_BUNION", "SIMP_FINITE_POW", "DERIV_FINITE_CPROD",
-			"SIMP_FINITE_CONVERSE", "SIMP_FINITE_UPTO" })
+			"SIMP_FINITE_CONVERSE", "SIMP_FINITE_UPTO",
+			"SIMP_FINITE_NATURAL", "SIMP_FINITE_NATURAL1",
+			"SIMP_FINITE_INTEGER" })
 	@Override
 	public Predicate rewrite(SimplePredicate predicate) {
 		final Predicate result;
@@ -193,6 +195,42 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				result = dLib.True();
 				trace(predicate, result, "SIMP_SPECIAL_FINITE");
 				return result;
+			}
+			
+			/**
+			 * SIMP_FINITE_NATURAL
+			 *    finite(ℕ) == ⊥
+			 */
+			Finite(Natural()) -> {
+				if (level2) {
+					result = dLib.False();
+					trace(predicate, result, "SIMP_FINITE_NATURAL");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_FINITE_NATURAL1
+			 *    finite(ℕ1) == ⊥
+			 */
+			Finite(Natural1()) -> {
+				if (level2) {
+					result = dLib.False();
+					trace(predicate, result, "SIMP_FINITE_NATURAL1");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_FINITE_INTEGER
+			 *    finite(ℤ) == ⊥
+			 */
+			Finite(INTEGER()) -> {
+				if (level2) {
+					result = dLib.False();
+					trace(predicate, result, "SIMP_FINITE_INTEGER");
+					return result;
+				}
 			}
 
 			/**
@@ -325,7 +363,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_SPECIAL_IMP_BTRUE_R", "SIMP_SPECIAL_IMP_BFALSE_R",
 			"SIMP_MULTI_IMP", "SIMP_MULTI_EQV", "SIMP_SPECIAL_EQV_BTRUE",
 			"SIMP_SPECIAL_EQV_BFALSE", "SIMP_MULTI_IMP_OR",
-			"SIMP_MULTI_IMP_AND_NOT_R", "SIMP_MULTI_IMP_AND_NOT_L" })
+			"SIMP_MULTI_IMP_AND_NOT_R", "SIMP_MULTI_IMP_AND_NOT_L",
+			"SIMP_MULTI_EQV_NOT" })
 	@Override
 	public Predicate rewrite(BinaryPredicate predicate) {
 		final Predicate result;
@@ -429,6 +468,26 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    		trace(predicate, result, "SIMP_SPECIAL_EQV_BFALSE");
 				return result;
  	    	}
+
+			/**
+			 * SIMP_MULTI_EQV_NOT
+			 *     P ⇔ ¬P == ⊥
+			 *    ¬P ⇔  P == ⊥
+			 */
+			Leqv(P, Not(P)) -> {
+			 	if (level2) {
+			 		result = dLib.False();
+			 		trace(predicate, result, "SIMP_MULTI_EQV_NOT");
+			 		return result;
+			 	}
+			 }
+			Leqv(Not(P), P) -> {
+			 	if (level2) {
+			 		result = dLib.False();
+			 		trace(predicate, result, "SIMP_MULTI_EQV_NOT");
+			 		return result;
+			 	}
+			 }
 
 	    	/**
              * SIMP_MULTI_IMP_OR
@@ -642,7 +701,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_LIT_EQUAL_CARD_1", "SIMP_LIT_GT_CARD_0",
 			"SIMP_LIT_LT_CARD_0", "SIMP_LIT_EQUAL_KBOOL_TRUE",
 			"SIMP_LIT_EQUAL_KBOOL_FALSE", "SIMP_EQUAL_CONSTR",
-			"SIMP_EQUAL_CONSTR_DIFF" })
+			"SIMP_EQUAL_CONSTR_DIFF", "SIMP_SUBSETEQ_SING",
+			"SIMP_SPECIAL_SUBSET_R", "SIMP_MULTI_SUBSET" })
     @Override
 	public Predicate rewrite(RelationalPredicate predicate) {
 		final Predicate result;
@@ -902,7 +962,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				                        `expression,
 				                        `E.shiftBoundIdentifiers(`idents.length, ff));
 				
-				if(level1 && `E.getTag() == Formula.MAPSTO){
+				if (level1 && `E.getTag() == Formula.MAPSTO){
 					
 					final List<Predicate> conjuncts = new ArrayList<Predicate>();
 					simpEqualsMapsTo(equalsPred, conjuncts, ff);
@@ -1143,6 +1203,42 @@ public class AutoRewriterImpl extends DefaultRewriter {
                 }
             }
 
+            /**
+			 * SIMP_SUBSETEQ_SING
+			 *    {E} ⊆ S == E ∈ S (where E is a single expression)
+			 */
+			SubsetEq(SetExtension(E), S) -> {
+				if (level2 && `E.length == 1) {
+					result = makeRelationalPredicate(Expression.IN, `E[0], `S);
+					trace(predicate, result, "SIMP_SUBSETEQ_SING");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_SPECIAL_SUBSET_R
+			 *    S ⊂ ∅ == ⊥
+			 */
+			Subset(_, EmptySet()) -> {
+				if (level2) {
+					result = dLib.False();
+					trace(predicate, result, "SIMP_SPECIAL_SUBSET_R");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_MULTI_SUBSET
+			 *    S ⊂ S == ⊥
+			 */
+			Subset(S, S) -> {
+				if (level2) {
+					result = dLib.False();
+					trace(predicate, result, "SIMP_MULTI_SUBSET");
+					return result;
+				}
+			}
+
 	    }
 	    return predicate;
 	}
@@ -1151,11 +1247,11 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		
     	boolean success= true;  	
     	while(success){
-    		if(existsPred.getTag() != Formula.EXISTS) {
+    		if (existsPred.getTag() != Formula.EXISTS) {
     			break;
     		}
     		final Predicate existsChild = ((QuantifiedPredicate)existsPred).getPredicate();
-    		if(existsChild.getTag() != Formula.LAND) {
+    		if (existsChild.getTag() != Formula.LAND) {
     			break;
     		}
     		final Predicate[] children = ((AssociativePredicate)existsChild).getChildren();
@@ -1304,7 +1400,18 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_MULTI_FUNIMAGE_OVERL_SETENUM",
 			"SIMP_FUNIMAGE_FUNIMAGE_CONVERSE_SETENUM",
 			"SIMP_SPECIAL_RELIMAGE_R", "SIMP_SPECIAL_RELIMAGE_L",
-			"SIMP_FUNIMAGE_CPROD", "SIMP_FUNIMAGE_LAMBDA" })
+			"SIMP_FUNIMAGE_CPROD", "SIMP_FUNIMAGE_LAMBDA",
+			"SIMP_SPECIAL_CPROD_R", "SIMP_SPECIAL_CPROD_L",
+			"SIMP_SPECIAL_DOMRES_L", "SIMP_SPECIAL_DOMRES_R",
+			"SIMP_TYPE_DOMRES", "SIMP_MULTI_DOMRES_DOM",
+			"SIMP_MULTI_DOMRES_RAN", "SIMP_SPECIAL_RANRES_R",
+			"SIMP_SPECIAL_RANRES_L", "SIMP_TYPE_RANRES",
+			"SIMP_MULTI_RANRES_RAN", "SIMP_MULTI_RANRES_DOM",
+			"SIMP_SPECIAL_DOMSUB_L", "SIMP_SPECIAL_DOMSUB_R",
+			"SIMP_TYPE_DOMSUB", "SIMP_MULTI_DOMSUB_DOM",
+			"SIMP_SPECIAL_RANSUB_R", "SIMP_SPECIAL_RANSUB_L",
+			"SIMP_TYPE_RANSUB", "SIMP_MULTI_RANSUB_RAN",
+			"SIMP_SPECIAL_DPROD_R", "SIMP_SPECIAL_DPROD_L" })
 	@Override
 	public Expression rewrite(BinaryExpression expression) {
 		final Expression result;
@@ -1614,12 +1721,278 @@ public class AutoRewriterImpl extends DefaultRewriter {
              *
              */
             FunImage(Cset(_,_,Mapsto(_,_)),_) -> {
-                result = LambdaComputer.rewrite(expression, ff);
-                if (result != null) {
+                final Expression instance = LambdaComputer.rewrite(expression, ff);
+                if (instance != null) {
+                	result = instance;
                 	trace(expression, result, "SIMP_FUNIMAGE_LAMBDA");
                 	return result;
                 }
             }
+            
+            /**
+			 * SIMP_SPECIAL_CPROD_R
+			 *    S × ∅ == ∅
+			 */
+			Cprod(_, EmptySet()) -> {
+				if (level2) {
+					result = makeEmptySet(expression.getType());
+					trace(expression, result, "SIMP_SPECIAL_CPROD_R");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_SPECIAL_CPROD_L
+			 *    ∅ × S == ∅
+			 */
+			Cprod(EmptySet(), _) -> {
+				if (level2) {
+					result = makeEmptySet(expression.getType());
+					trace(expression, result, "SIMP_SPECIAL_CPROD_L");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_SPECIAL_DOMRES_L
+			 *    ∅ ◁ r == ∅
+			 */
+			DomRes(EmptySet(), r) -> {
+				if (level2) {
+					result = makeEmptySet(`r.getType());
+					trace(expression, result, "SIMP_SPECIAL_DOMRES_L");
+					return result;
+				}
+			}
+			 
+			/**
+			 * SIMP_SPECIAL_DOMRES_R
+			 *    S ◁ ∅ == ∅
+			 */
+			DomRes(_, EmptySet()) -> {
+				if (level2) {
+					result = makeEmptySet(expression.getType());
+					trace(expression, result, "SIMP_SPECIAL_DOMRES_R");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_TYPE_DOMRES
+			 *    Ty ◁ r == r (where Ty is a type expression)
+			 */
+			DomRes(Ty, r) -> {
+				if (level2 && `Ty.isATypeExpression()) {
+					result = `r;
+					trace(expression, result, "SIMP_TYPE_DOMRES");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_MULTI_DOMRES_DOM
+			 *    dom(r) ◁ r == r
+			 */
+			DomRes(Dom(r), r) -> {
+				if (level2) {
+					result = `r;
+					trace(expression, result, "SIMP_MULTI_DOMRES_DOM");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_MULTI_DOMRES_RAN
+			 *    ran(r) ◁ r∼ == r∼
+			 */
+			DomRes(Ran(r), Converse(r)) -> {
+				if (level2) {
+					result = makeUnaryExpression(Expression.CONVERSE, `r);
+					trace(expression, result, "SIMP_MULTI_DOMRES_RAN");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_SPECIAL_RANRES_R
+			 *    r ▷ ∅ == ∅
+			 */
+			RanRes(r, EmptySet()) ->  {
+				if (level2) {
+					result = makeEmptySet(expression.getType());
+					trace(expression, result, "SIMP_SPECIAL_RANRES_R");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_SPECIAL_RANRES_L
+			 *    ∅ ▷ S == ∅
+			 */
+			 RanRes(EmptySet(), _) -> {
+			 	if (level2) {
+			 		result = makeEmptySet(expression.getType());
+			 		trace(expression, result, "SIMP_SPECIAL_RANRES_L");
+					return result;
+			 	}
+			 }
+			
+			/**
+			 * SIMP_TYPE_RANRES
+			 *    r ▷ Ty == r (where Ty is a type expression)
+			 */
+			RanRes(r, Ty) -> {
+				if (level2 && `Ty.isATypeExpression()) {
+					result = `r;
+					trace(expression, result, "SIMP_TYPE_RANRES");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_MULTI_RANRES_RAN
+			 *    r ▷ ran(r) == r
+			 */
+			RanRes(r, Ran(r)) -> {
+				if (level2) {
+					result = `r;
+					trace(expression, result, "SIMP_MULTI_RANRES_RAN");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_MULTI_RANRES_DOM
+			 *    r∼ ▷ dom(r) == r∼
+			 */
+			RanRes(Converse(r), Dom(r)) -> {
+				if (level2) {
+					result = makeUnaryExpression(Expression.CONVERSE, `r);
+					trace(expression, result, "SIMP_MULTI_RANRES_DOM");
+					return result;
+				}
+			}	
+			
+			/**
+			 * SIMP_SPECIAL_DOMSUB_L
+			 *    ∅ ⩤ r == r
+			 */
+			 DomSub(EmptySet(), r) -> {
+			 	if (level2) {
+			 		result = `r;
+			 		trace(expression, result, "SIMP_SPECIAL_DOMSUB_L");
+					return result;
+			 	}
+			 }
+			 
+			 /**
+			  * SIMP_SPECIAL_DOMSUB_R
+			  *    S ⩤ ∅ == ∅
+			  */
+			 DomSub(_, EmptySet()) -> {
+			 	if (level2) {
+			 		result = makeEmptySet(expression.getType());
+			 		trace(expression, result, "SIMP_SPECIAL_DOMSUB_R");
+					return result;			 		
+			 	}
+			 }
+			 
+			 /**
+			  * SIMP_TYPE_DOMSUB
+			  *    Ty ⩤ r == ∅ (where Ty is a type expression)
+			  */
+			 DomSub(Ty, _) -> {
+			 	if (level2 && `Ty.isATypeExpression()) {
+			 		result = makeEmptySet(expression.getType());
+			 		trace(expression, result, "SIMP_TYPE_DOMSUB");
+					return result;		
+			 	}
+			 }
+			 
+			 /**
+			  * SIMP_MULTI_DOMSUB_DOM
+			  *    dom(r) ⩤ r == ∅
+			  */
+			 DomSub(Dom(r), r) -> {
+			 	if (level2) {
+			 		result = makeEmptySet(expression.getType());
+			 		trace(expression, result, "SIMP_MULTI_DOMSUB_DOM");
+					return result;	
+			 	}
+			 }
+			 
+			/**
+			 * SIMP_SPECIAL_RANSUB_R
+			 *    r ⩥ ∅ == r
+			 */
+			RanSub(r, EmptySet()) -> {
+				if (level2) {
+					result = `r;
+					trace(expression, result, "SIMP_SPECIAL_RANSUB_R");
+					return result;	
+				}
+			}
+			
+			/**
+			 * SIMP_SPECIAL_RANSUB_L
+			 *    ∅ ⩥ S == ∅
+			 */
+			RanSub(EmptySet(), _) -> {
+				if (level2) {
+					result = makeEmptySet(expression.getType());
+					trace(expression, result, "SIMP_SPECIAL_RANSUB_L");
+					return result;	
+				}
+			}
+			
+			/**
+			 * SIMP_TYPE_RANSUB
+			 *    r ⩥ Ty == ∅ (where Ty is a type expression)
+			 */
+			RanSub(r, Ty) -> {
+				if (level2 && `Ty.isATypeExpression()) {
+					result = makeEmptySet(expression.getType());
+					trace(expression, result, "SIMP_TYPE_RANSUB");
+					return result;	
+				}
+			}
+			
+			/**
+			 * SIMP_MULTI_RANSUB_RAN
+			 *    r ⩥ ran(r) == ∅
+			 */
+			RanSub(r, Ran(r)) -> {
+				if (level2) {
+					result = makeEmptySet(expression.getType());
+					trace(expression, result, "SIMP_MULTI_RANSUB_RAN");
+					return result;						
+				}
+			}
+			
+			/**
+			 * SIMP_SPECIAL_DPROD_R
+			 *    r ⊗ ∅ == ∅
+			 */
+			Dprod(_, EmptySet()) -> {
+				if (level2) {
+					result = makeEmptySet(expression.getType());
+					trace(expression, result, "SIMP_SPECIAL_DPROD_R");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_SPECIAL_DPROD_L
+			 *    ∅ ⊗ r == ∅
+			 */
+			Dprod(EmptySet(), _) -> {
+				if (level2) {
+					result = makeEmptySet(expression.getType());
+					trace(expression, result, "SIMP_SPECIAL_DPROD_L");
+					return result;
+				}
+			}
+			
 		}
 	    return expression;
 	}
@@ -1627,7 +2000,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	@ProverRule( { "SIMP_CONVERSE_CONVERSE", "SIMP_CONVERSE_SETENUM",
 			"SIMP_DOM_COMPSET", "SIMP_RAN_COMPSET", "SIMP_MINUS_MINUS",
 			"SIMP_SPECIAL_CARD", "SIMP_CARD_SING", "SIMP_CARD_POW",
-			"SIMP_CARD_BUNION", "SIMP_SPECIAL_DOM", "SIMP_SPECIAL_RAN" })
+			"SIMP_CARD_BUNION", "SIMP_SPECIAL_DOM", "SIMP_SPECIAL_RAN",
+			"SIMP_SPECIAL_POW", "SIMP_SPECIAL_POW1", "SIMP_DOM_CONVERSE",
+			"SIMP_RAN_CONVERSE" })
 	@Override
 	public Expression rewrite(UnaryExpression expression) {
 		final Expression result;
@@ -1823,6 +2198,57 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    		trace(expression, result, "SIMP_SPECIAL_RAN");
 	    		return result;
 			}
+						
+			/**
+			 * SIMP_SPECIAL_POW
+			 *    ℙ(∅) == {∅}
+			 */
+			Pow(empty@EmptySet()) -> {
+				if (level2) {
+					Collection<Expression> singleton = new LinkedHashSet<Expression>();
+					singleton.add(makeEmptySet(`empty.getType()));
+					
+					result = makeSetExtension(singleton);
+					trace(expression, result, "SIMP_SPECIAL_POW");
+					return result; 
+				}
+			}
+			
+			/**
+			 * SIMP_SPECIAL_POW1
+			 *    ℙ1(∅) == ∅
+			 */
+			Pow1(EmptySet()) -> {
+				if (level2) {
+					result = makeEmptySet(expression.getType());
+					trace(expression, result, "SIMP_SPECIAL_POW1");
+					return result; 
+				}
+			}
+			
+			/**
+			 * SIMP_DOM_CONVERSE
+			 *    dom(r∼) == ran(r)
+			 */
+			Dom(Converse(r)) -> {
+				if (level2) {
+					result = makeUnaryExpression(Expression.KRAN, `r);
+					trace(expression, result, "SIMP_DOM_CONVERSE");
+					return result;
+				}
+			}
+	    
+	    	/**
+	     	 * SIMP_RAN_CONVERSE
+	     	 *    ran(r∼) == dom(r)
+	     	 */
+	     	Ran(Converse(r)) -> {
+	     		if (level2) {
+	     			result = makeUnaryExpression(Expression.KDOM, `r);
+	     			trace(expression, result, "SIMP_RAN_CONVERSE");
+	     			return result;
+	     		}
+	     	}
 	    
 	    }
 	    return expression;
@@ -1875,7 +2301,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		return result;
 	}
     
-    @ProverRule("SIMP_MULTI_SETENUM") 
+    @ProverRule( {"SIMP_MULTI_SETENUM", "SIMP_SPECIAL_COMPSET_BFALSE",
+                  "SIMP_SPECIAL_COMPSET_BTRUE"} ) 
 	@Override
 	public Expression rewrite(SetExtension expression) {
     	final Expression result;
@@ -1896,6 +2323,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		    		return result;
 				}
 	    	}
+	    	
 		}
 	    return expression;
 	}
