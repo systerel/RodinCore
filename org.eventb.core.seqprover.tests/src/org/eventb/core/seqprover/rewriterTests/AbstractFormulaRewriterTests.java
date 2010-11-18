@@ -19,7 +19,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.eclipse.core.runtime.Assert;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
@@ -168,11 +167,11 @@ public abstract class AbstractFormulaRewriterTests {
 	protected Expression makeExpression(String image, ITypeEnvironment typenv) {
 		Expression input = lib.parseExpression(image);
 		if (input == null)
-			Assert.isTrue(false, "Expression: \n\t" + image
+			fail("Expression: \n\t" + image
 					+ "\n\tcannot be parsed");
 		ITypeCheckResult typeCheck = input.typeCheck(typenv);
 		if (!typeCheck.isSuccess())
-			Assert.isTrue(false, "Expression: \n\t" + image
+			fail("Expression: \n\t" + image
 					+ "\n\tcannot be type checked");
 		return input;
 	}
@@ -230,10 +229,10 @@ public abstract class AbstractFormulaRewriterTests {
 	 */
 	protected void expressionTest(Expression expected,
 			Expression input) {
-		Assert.isTrue(input.isTypeChecked(),
-				"Input expression " + input + " should be type checked");
-		Assert.isTrue(expected.isTypeChecked(),
-				"Expected expression " + expected + " should be type checked");
+		assertTrue("Input expression " + input + " should be type checked",
+				input.isTypeChecked());
+		assertTrue("Expected expression " + expected
+				+ " should be type checked", expected.isTypeChecked());
 		assertEquals("Expected expression: " + expected
 				+ " and input expression: " + input
 				+ " should be of the same type ", expected.getType(), input

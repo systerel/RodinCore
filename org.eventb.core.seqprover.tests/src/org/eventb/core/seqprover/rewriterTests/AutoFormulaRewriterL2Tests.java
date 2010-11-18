@@ -351,4 +351,279 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		expressionTest("∅⦂S↔T×U", "(∅⦂S↔T) ⊗ r", "r", "S↔U");
 	}
 	
+	/**
+	 * Ensures that rule SIMP_SPECIAL_PPROD_R is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_SPECIAL_PPROD_R() {
+		expressionTest("∅⦂S×U↔T×V", "r ∥ (∅⦂U↔V)", "r", "S↔T");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_SPECIAL_PPROD_L is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_SPECIAL_PPROD_L() {
+		expressionTest("∅⦂S×U↔T×V", "(∅⦂S↔T) ∥ r", "r", "U↔V");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_TYPE_RELIMAGE is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_TYPE_RELIMAGE() {
+		expressionTest("ran(r)", "r[S]", "r", "S↔T");
+		expressionTest("r[U]", "r[U]", "r", "S↔T", "U", "ℙ(S)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_MULTI_RELIMAGE_DOM is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_MULTI_RELIMAGE_DOM() {
+		expressionTest("ran(r)", "r[dom(r)]", "r", "S↔T");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_TYPE_RELIMAGE_ID is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_TYPE_RELIMAGE_ID() {
+		expressionTest("T","id[T]", "T", "ℙ(S)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_MULTI_RELIMAGE_CPROD_SING
+	 *  is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_MULTI_RELIMAGE_CPROD_SING() {
+		expressionTest("S", "({E}×S)[{E}]", "S", "ℙ(T)", "E", "U");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_MULTI_RELIMAGE_SING_MAPSTO
+	 *  is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_MULTI_RELIMAGE_SING_MAPSTO() {
+		expressionTest("{F}", "{E ↦ F}[{E}]", "E", "S", "F", "T");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_MULTI_RELIMAGE_CONVERSE_RANSUB
+	 * is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_MULTI_RELIMAGE_CONVERSE_RANSUB() {
+		expressionTest("∅⦂ℙ(U)", "(r ⩥ S)∼[S]", "r", "U↔V");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_MULTI_RELIMAGE_CONVERSE_RANRES
+	 *  is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_MULTI_RELIMAGE_CONVERSE_RANRES() {
+		expressionTest("r∼[S]", "(r ▷ S)∼[S]", "r", "U↔V");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_RELIMAGE_CONVERSE_DOMSUB is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_RELIMAGE_CONVERSE_DOMSUB() {
+		expressionTest("r∼[T]∖S", "(S ⩤ r)∼[T]","r","U↔V");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_MULTI_RELIMAGE_DOMSUB is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_MULTI_RELIMAGE_DOMSUB() {
+		expressionTest("∅⦂ℙ(V)", "(S ⩤ r)[S]","r","U↔V");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_SPECIAL_CONVERSE is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_SPECIAL_CONVERSE() {
+		expressionTest("∅⦂T↔S", "(∅⦂S↔T)∼");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_CONVERSE_ID is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_CONVERSE_ID() {
+		expressionTest("id⦂S↔S", "(id⦂S↔S)∼");
+	}
+
+	/**
+	 * Ensures that rule SIMP_FCOMP_ID_L is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_FCOMP_ID_L() {
+		expressionTest("S ◁ r", "(S ◁ id) ; r", "r", "U↔V");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_FCOMP_ID_R is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_FCOMP_ID_R() {
+		expressionTest("r ▷ S", "r ; (S ◁ id)", "r", "U↔V");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_SPECIAL_REL_R is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_SPECIAL_REL_R() {
+		expressionTest("{(∅⦂ℙ(U×V))}", "S ↔ (∅⦂ℙ(V))", "S", "ℙ(U)");
+		// second test is surjective relation <->>
+		expressionTest("{∅⦂U↔V}", "S  (∅⦂ℙ(V))", "S", "ℙ(U)");
+		expressionTest("{∅⦂U↔V}", "S ⇸ (∅⦂ℙ(V))", "S", "ℙ(U)");
+		expressionTest("{∅⦂U↔V}", "S ⤔ (∅⦂ℙ(V))", "S", "ℙ(U)");
+		expressionTest("{∅⦂U↔V}", "S ⤀ (∅⦂ℙ(V))", "S", "ℙ(U)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_SPECIAL_REL_L is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_SPECIAL_REL_L() {
+		expressionTest("{(∅⦂ℙ(U×V))}", "(∅⦂ℙ(U)) ↔ S", "S", "ℙ(V)");
+		// second test is total relation <<->
+		expressionTest("{(∅⦂ℙ(U×V))}", "(∅⦂ℙ(U))  S", "S", "ℙ(V)");
+		expressionTest("{(∅⦂ℙ(U×V))}", "(∅⦂ℙ(U)) ⇸ S", "S", "ℙ(V)");
+		expressionTest("{(∅⦂ℙ(U×V))}", "(∅⦂ℙ(U)) → S", "S", "ℙ(V)");
+		expressionTest("{(∅⦂ℙ(U×V))}", "(∅⦂ℙ(U)) ⤔ S", "S", "ℙ(V)");
+		expressionTest("{(∅⦂ℙ(U×V))}", "(∅⦂ℙ(U)) ↣ S", "S", "ℙ(V)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_FUNIMAGE_PRJ1 is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_FUNIMAGE_PRJ1() {
+		expressionTest("E", "prj1(E ↦ F)", "E", "S", "F", "T");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_FUNIMAGE_PRJ2 is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_FUNIMAGE_PRJ2() {
+		expressionTest("F", "prj2(E ↦ F)", "E", "S", "F", "T");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_FUNIMAGE_ID is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_FUNIMAGE_ID() {
+		expressionTest("x", "id(x)", "x", "S");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_SPECIAL_EQUAL_RELDOMRAN is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_SPECIAL_EQUAL_RELDOMRAN() {
+		// first test is surjective total relation <<->>
+		expressionTest("{∅⦂ℙ(S×T)}", "(∅⦂ℙ(S))  (∅⦂ℙ(T))");
+		expressionTest("{∅⦂ℙ(S×T)}", "(∅⦂ℙ(S)) ↠ (∅⦂ℙ(T))");
+		expressionTest("{∅⦂ℙ(S×T)}", "(∅⦂ℙ(S)) ⤖ (∅⦂ℙ(T))");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_MULTI_DOM_CPROD is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_MULTI_DOM_CPROD() {
+		expressionTest("E", "dom(E×E)", "E", "ℙ(S)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_MULTI_RAN_CPROD is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_MULTI_RAN_CPROD() {
+		expressionTest("E", "ran(E×E)", "E", "ℙ(S)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_SPECIAL_COMPSET_BFALSE is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_SPECIAL_COMPSET_BFALSE() {
+		expressionTest("∅⦂ℙ(S)", "{x⦂S · ⊥ ∣ E}", "E", "S");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_SPECIAL_COMPSET_BTRUE is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_SPECIAL_COMPSET_BTRUE() {
+		expressionTest("S", "{x⦂S · ⊤ ∣ x}", "S", "ℙ(S)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_KUNION_POW is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_KUNION_POW() {
+		expressionTest("S", "union(ℙ(S))", "S", "ℙ(T)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_KUNION_POW1 is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_KUNION_POW1() {
+		expressionTest("S", "union(ℙ1(S))", "S", "ℙ(T)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_SPECIAL_KUNION is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_SPECIAL_KUNION() {
+		expressionTest("∅⦂ℙ(S)", "union({∅⦂ℙ(S)})", "S", "ℙ(T)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_SPECIAL_QUNION is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_SPECIAL_QUNION() {
+		expressionTest("∅⦂ℙ(S)", "⋃x⦂S · ⊥ ∣ E", "E", "ℙ(S)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_SPECIAL_KINTER is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_SPECIAL_KINTER() {
+		expressionTest("∅⦂ℙ(S)", "inter({∅⦂ℙ(S)})", "S", "ℙ(T)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_KINTER_POW is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_KINTER_POW() {
+		expressionTest("∅⦂ℙ(T)", "inter(ℙ(S))", "S", "ℙ(T)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_FINITE_ID is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_FINITE_ID() {
+		predicateTest("finite(S)", "finite(id⦂S↔S)", "S", "ℙ(S)");
+	}
+
 }

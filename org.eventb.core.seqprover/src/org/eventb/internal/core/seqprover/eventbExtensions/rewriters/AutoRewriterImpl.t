@@ -39,7 +39,9 @@ import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
+import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -181,7 +183,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_FINITE_BUNION", "SIMP_FINITE_POW", "DERIV_FINITE_CPROD",
 			"SIMP_FINITE_CONVERSE", "SIMP_FINITE_UPTO",
 			"SIMP_FINITE_NATURAL", "SIMP_FINITE_NATURAL1",
-			"SIMP_FINITE_INTEGER" })
+			"SIMP_FINITE_INTEGER", "SIMP_FINITE_ID" })
 	@Override
 	public Predicate rewrite(SimplePredicate predicate) {
 		final Predicate result;
@@ -229,6 +231,22 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				if (level2) {
 					result = dLib.False();
 					trace(predicate, result, "SIMP_FINITE_INTEGER");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_FINITE_ID
+			 *    finite(id) == finite(S) (where id has type S↔S)
+			 */
+			Finite(id@IdGen()) -> {
+				if (level2) {
+					final PowerSetType powType = (PowerSetType) `id.getType();
+					final ProductType prodType = (ProductType) powType.getBaseType();
+					final Type s = prodType.getLeft();
+					
+					result = makeSimplePredicate(Predicate.KFINITE, s.toExpression(ff));
+					trace(predicate, result, "SIMP_FINITE_ID");
 					return result;
 				}
 			}
@@ -1295,7 +1313,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
             "SIMP_MULTI_BUNION", "SIMP_SPECIAL_PLUS", "SIMP_SPECIAL_PROD_1",
             "SIMP_SPECIAL_PROD_0", "SIMP_SPECIAL_PROD_MINUS_EVEN",
             "SIMP_SPECIAL_PROD_MINUS_ODD", "SIMP_SPECIAL_FCOMP",
-            "SIMP_SPECIAL_BCOMP", "SIMP_SPECIAL_OVERL" })
+            "SIMP_SPECIAL_BCOMP", "SIMP_SPECIAL_OVERL", " SIMP_FCOMP_ID_L",
+            "SIMP_FCOMP_ID_R" })
 	@Override
 	public Expression rewrite(AssociativeExpression expression) {
 		final Expression result;
@@ -1384,6 +1403,32 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    		trace(expression, result, "SIMP_SPECIAL_OVERL");
 				return result;
      		}
+     		
+     		/**
+			 * SIMP_FCOMP_ID_L
+			 *    (S ◁ id) ; r == S ◁ r
+			 */
+			Fcomp(rs@eList(DomRes(S, IdGen()), _)) -> {
+	    		// Workaround Tom 2.2 bug: can't use last element of list
+				if (level2) {
+					result = makeBinaryExpression(Expression.DOMRES, `S, `rs[1]);
+					trace(expression, result, "SIMP_FCOMP_ID_L");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_FCOMP_ID_R
+			 *    r ; (S ◁ id) == r ▷ S
+			 */
+			Fcomp(rs@eList(_, DomRes(S, IdGen()))) -> {
+				// Workaround Tom 2.2 bug: can't use first element of list
+				if (level2) {
+					result = makeBinaryExpression(Expression.RANRES, `rs[0], `S);
+					trace(expression, result, "SIMP_FCOMP_ID_R");
+					return result;
+				}
+			}
 	    	
 	    }
 	    return expression;
@@ -1411,7 +1456,17 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_TYPE_DOMSUB", "SIMP_MULTI_DOMSUB_DOM",
 			"SIMP_SPECIAL_RANSUB_R", "SIMP_SPECIAL_RANSUB_L",
 			"SIMP_TYPE_RANSUB", "SIMP_MULTI_RANSUB_RAN",
-			"SIMP_SPECIAL_DPROD_R", "SIMP_SPECIAL_DPROD_L" })
+			"SIMP_SPECIAL_DPROD_R", "SIMP_SPECIAL_DPROD_L",
+			"SIMP_SPECIAL_PPROD_R", "SIMP_TYPE_RELIMAGE",
+			"SIMP_MULTI_RELIMAGE_DOM", "SIMP_TYPE_RELIMAGE_ID",
+			"SIMP_MULTI_RELIMAGE_CPROD_SING",
+			"SIMP_MULTI_RELIMAGE_SING_MAPSTO",
+			"SIMP_MULTI_RELIMAGE_CONVERSE_RANSUB",
+			"SIMP_MULTI_RELIMAGE_CONVERSE_RANRES",
+			"SIMP_RELIMAGE_CONVERSE_DOMSUB", "SIMP_MULTI_RELIMAGE_DOMSUB",
+			"SIMP_SPECIAL_REL_R", "SIMP_SPECIAL_REL_L",
+			"SIMP_FUNIMAGE_PRJ1", "SIMP_FUNIMAGE_PRJ2", "SIMP_FUNIMAGE_ID",
+			"SIMP_SPECIAL_EQUAL_RELDOMRAN" } )
 	@Override
 	public Expression rewrite(BinaryExpression expression) {
 		final Expression result;
@@ -1704,7 +1759,123 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    		trace(expression, result, "SIMP_SPECIAL_RELIMAGE_L");
 	    		return result;
 			}
-
+			
+			/**
+			 * SIMP_TYPE_RELIMAGE
+			 *    r[Ty] == ran(r) (where Ty is a type expression)
+			 */
+			RelImage(r, Ty) -> {
+				if (level2 && `Ty.isATypeExpression()) {
+					result = makeUnaryExpression(Expression.KRAN, `r);
+					trace(expression, result, "SIMP_TYPE_RELIMAGE");
+	    			return result;
+				}
+			}
+			
+			/**
+			 * SIMP_MULTI_RELIMAGE_DOM
+			 *    r[dom(r)] == ran(r)
+			 */
+			RelImage(r, Dom(r)) -> {
+				if (level2) {
+					result = makeUnaryExpression(Expression.KRAN, `r);
+					trace(expression, result, "SIMP_MULTI_RELIMAGE_DOM");
+	    			return result;
+				}
+			}
+			
+			/**
+			 * SIMP_TYPE_RELIMAGE_ID
+			 *    id[T] == T
+			 */
+			RelImage(IdGen(), T) -> {
+				if (level2) {
+					result = `T;
+					trace(expression, result, "SIMP_TYPE_RELIMAGE_ID");
+	    			return result;
+				}
+			}
+			
+			/**
+			 * SIMP_MULTI_RELIMAGE_CPROD_SING
+			 *    ({E}×S)[{E}] == S (where E is a single expression)
+			 */
+			RelImage(Cprod(SetExtension(eList(E)), S), SetExtension(eList(E))) -> {
+				if (level2) {
+					result = `S;
+					trace(expression, result, "SIMP_MULTI_RELIMAGE_CPROD_SING");
+	    			return result;
+				}
+			}
+			
+			/**
+			 * SIMP_MULTI_RELIMAGE_SING_MAPSTO
+			 *    {E ↦ F}[{E}] == {F} (where E is a single expression)
+			 */
+			RelImage(SetExtension(eList(Mapsto(E, F))), SetExtension(eList(E))) -> {
+				if (level2) {
+					Collection<Expression> singleton = new LinkedHashSet<Expression>();
+					singleton.add(`F);
+					
+					result = makeSetExtension(singleton);
+					trace(expression, result, "SIMP_MULTI_RELIMAGE_SING_MAPSTO");
+	    			return result;
+				}
+			}
+			
+			/**
+			 * SIMP_MULTI_RELIMAGE_CONVERSE_RANSUB
+			 *    (r ⩥ S)∼[S] == ∅
+			 */
+			RelImage(Converse(RanSub(_, S)), S) -> {
+				if (level2) {
+					result = makeEmptySet(expression.getType());
+					trace(expression, result, "SIMP_MULTI_RELIMAGE_CONVERSE_RANSUB");
+	    			return result;
+				}
+			}
+			
+			/**
+			 * SIMP_MULTI_RELIMAGE_CONVERSE_RANRES
+			 *    (r ▷ S)∼[S] == r∼[S]
+			 */
+			RelImage(Converse(RanRes(r, S)), S) -> {
+				if (level2) {
+					result = makeBinaryExpression(Expression.RELIMAGE,
+								makeUnaryExpression(Expression.CONVERSE, `r),
+								`S); 
+					trace(expression, result, "SIMP_MULTI_RELIMAGE_CONVERSE_RANRES");
+	    			return result;
+				}
+			}
+			
+			/**
+			 * SIMP_RELIMAGE_CONVERSE_DOMSUB
+			 *    (S ⩤ r)∼[T] == r∼[T]∖S
+			 */
+			RelImage(Converse(DomSub(S, r)), T) -> {
+				if (level2) {
+					result = makeBinaryExpression(Expression.SETMINUS,
+								makeBinaryExpression(Expression.RELIMAGE,
+									makeUnaryExpression(Expression.CONVERSE, `r),
+									`T), `S); 
+					trace(expression, result, "SIMP_RELIMAGE_CONVERSE_DOMSUB");
+	    			return result;
+				}
+			}
+			
+			/**
+			 * SIMP_MULTI_RELIMAGE_DOMSUB
+			 *    (S ⩤ r)[S] == ∅
+			 */
+			RelImage(DomSub(S, _), S) -> {
+				if (level2) {
+					result = makeEmptySet(expression.getType());
+					trace(expression, result, "SIMP_MULTI_RELIMAGE_DOMSUB");
+	    			return result;
+				}
+			}
+			
 			/**
 			 * SIMP_FUNIMAGE_CPROD
              * Set Theory: (S × {E})(x) == E
@@ -1993,6 +2164,232 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				}
 			}
 			
+			/**
+			 * SIMP_SPECIAL_PPROD_R
+			 *    r ∥ ∅ == ∅ (parallel product ||)
+			 */
+			Pprod(_, EmptySet()) -> {
+				if (level2) {
+					result = makeEmptySet(expression.getType());
+					trace(expression, result, "SIMP_SPECIAL_PPROD_R");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_SPECIAL_PPROD_L
+			 *    ∅ ∥ r == ∅ (parallel product ||)
+			 */
+			Pprod(EmptySet(), _) -> {
+				if (level2) {
+					result = makeEmptySet(expression.getType());
+					trace(expression, result, "SIMP_SPECIAL_PPROD_L");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_SPECIAL_REL_R
+			 *    S ↔ ∅ == {∅}
+			 *    S  ∅ == {∅} surjective relation <->>
+			 *    S ⇸ ∅ == {∅}
+			 *    S ⤔ ∅ == {∅}
+			 *    S ⤀ ∅ == {∅}
+			 */
+			Rel(_, EmptySet()) -> {
+				if (level2) {
+					Collection<Expression> singleton = new LinkedHashSet<Expression>();
+					singleton.add(makeEmptySet(expression.getType().getBaseType()));
+					
+					result = makeSetExtension(singleton);
+					trace(expression, result, "SIMP_SPECIAL_REL_R");
+					return result;
+				}
+			}
+			Srel(_, EmptySet()) -> {
+				if (level2) {
+					Collection<Expression> singleton = new LinkedHashSet<Expression>();
+					singleton.add(makeEmptySet(expression.getType().getBaseType()));
+					
+					result = makeSetExtension(singleton);
+					trace(expression, result, "SIMP_SPECIAL_REL_R");
+					return result;
+				}
+			}
+			Pfun(_, EmptySet()) -> {
+				if (level2) {
+					Collection<Expression> singleton = new LinkedHashSet<Expression>();
+					singleton.add(makeEmptySet(expression.getType().getBaseType()));
+					
+					result = makeSetExtension(singleton);
+					trace(expression, result, "SIMP_SPECIAL_REL_R");
+					return result;
+				}
+			}
+			Pinj(_, EmptySet()) -> {
+				if (level2) {
+					Collection<Expression> singleton = new LinkedHashSet<Expression>();
+					singleton.add(makeEmptySet(expression.getType().getBaseType()));
+					
+					result = makeSetExtension(singleton);
+					trace(expression, result, "SIMP_SPECIAL_REL_R");
+					return result;
+				}
+			}
+			Psur(_, EmptySet()) -> {
+				if (level2) {
+					Collection<Expression> singleton = new LinkedHashSet<Expression>();
+					singleton.add(makeEmptySet(expression.getType().getBaseType()));
+					
+					result = makeSetExtension(singleton);
+					trace(expression, result, "SIMP_SPECIAL_REL_R");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_SPECIAL_REL_L
+			 *    ∅ ↔ S == {∅}
+			 *    ∅  S == {∅} total relation <<->
+			 *    ∅ ⇸ S == {∅}
+			 *    ∅ → S == {∅}
+			 *    ∅ ⤔ S == {∅}
+			 *    ∅ ↣ S == {∅}
+			 */
+			Rel(EmptySet(), _) -> {
+				if (level2) {
+					Collection<Expression> singleton = new LinkedHashSet<Expression>();
+					singleton.add(makeEmptySet(expression.getType().getBaseType()));
+					
+					result = makeSetExtension(singleton);
+					trace(expression, result, "SIMP_SPECIAL_REL_L");
+					return result;
+				}
+			}
+			Trel(EmptySet(), _) -> {
+				if (level2) {
+					Collection<Expression> singleton = new LinkedHashSet<Expression>();
+					singleton.add(makeEmptySet(expression.getType().getBaseType()));
+					
+					result = makeSetExtension(singleton);
+					trace(expression, result, "SIMP_SPECIAL_REL_L");
+					return result;
+				}
+			}
+			Pfun(EmptySet(), _) -> {
+				if (level2) {
+					Collection<Expression> singleton = new LinkedHashSet<Expression>();
+					singleton.add(makeEmptySet(expression.getType().getBaseType()));
+					
+					result = makeSetExtension(singleton);
+					trace(expression, result, "SIMP_SPECIAL_REL_L");
+					return result;
+				}
+			}
+			Tfun(EmptySet(), _) -> {
+				if (level2) {
+					Collection<Expression> singleton = new LinkedHashSet<Expression>();
+					singleton.add(makeEmptySet(expression.getType().getBaseType()));
+					
+					result = makeSetExtension(singleton);
+					trace(expression, result, "SIMP_SPECIAL_REL_L");
+					return result;
+				}
+			}
+			Pinj(EmptySet(), _) -> {
+				if (level2) {
+					Collection<Expression> singleton = new LinkedHashSet<Expression>();
+					singleton.add(makeEmptySet(expression.getType().getBaseType()));
+					
+					result = makeSetExtension(singleton);
+					trace(expression, result, "SIMP_SPECIAL_REL_L");
+					return result;
+				}
+			}
+			Tinj(EmptySet(), _) -> {
+				if (level2) {
+					Collection<Expression> singleton = new LinkedHashSet<Expression>();
+					singleton.add(makeEmptySet(expression.getType().getBaseType()));
+					
+					result = makeSetExtension(singleton);
+					trace(expression, result, "SIMP_SPECIAL_REL_L");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_FUNIMAGE_PRJ1
+			 *    prj1(E ↦ F) == E
+			 */
+			FunImage(Prj1Gen(), Mapsto(E, _)) -> {
+				if (level2) {
+					result = `E;
+					trace(expression, result, "SIMP_FUNIMAGE_PRJ1");
+					return result;
+				}
+			}
+
+			/**
+			 * SIMP_FUNIMAGE_PRJ2
+			 *    prj2(E ↦ F) == F
+			 */
+			FunImage(Prj2Gen(), Mapsto(_, F)) -> {
+				if (level2) {
+					result = `F;
+					trace(expression, result, "SIMP_FUNIMAGE_PRJ2");
+					return result;
+				}
+			}
+			 
+			/**
+			 * SIMP_FUNIMAGE_ID
+			 *    id(x) = x
+			 */
+			FunImage(IdGen(), x) -> {
+				if (level2) {
+					result = `x;
+					trace(expression, result, "SIMP_FUNIMAGE_ID");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_SPECIAL_EQUAL_RELDOMRAN
+			 *    ∅  ∅
+			 *    ∅ ↠ ∅
+			 *    ∅ ⤖ ∅
+			 */
+			Strel(EmptySet(), EmptySet()) -> {
+				if (level2) {
+					Collection<Expression> singleton = new LinkedHashSet<Expression>();
+					singleton.add(makeEmptySet(expression.getType().getBaseType()));
+					
+					result = makeSetExtension(singleton);
+					trace(expression, result, "SIMP_SPECIAL_EQUAL_RELDOMRAN");
+					return result;
+				}
+			}
+			Tsur(EmptySet(), EmptySet()) -> {
+				if (level2) {
+					Collection<Expression> singleton = new LinkedHashSet<Expression>();
+					singleton.add(makeEmptySet(expression.getType().getBaseType()));
+					
+					result = makeSetExtension(singleton);
+					trace(expression, result, "SIMP_SPECIAL_EQUAL_RELDOMRAN");
+					return result;
+				}
+			}
+			Tbij(EmptySet(), EmptySet()) -> {
+				if (level2) {
+					Collection<Expression> singleton = new LinkedHashSet<Expression>();
+					singleton.add(makeEmptySet(expression.getType().getBaseType()));
+					
+					result = makeSetExtension(singleton);
+					trace(expression, result, "SIMP_SPECIAL_EQUAL_RELDOMRAN");
+					return result;
+				}
+			}
+			
 		}
 	    return expression;
 	}
@@ -2002,7 +2399,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_SPECIAL_CARD", "SIMP_CARD_SING", "SIMP_CARD_POW",
 			"SIMP_CARD_BUNION", "SIMP_SPECIAL_DOM", "SIMP_SPECIAL_RAN",
 			"SIMP_SPECIAL_POW", "SIMP_SPECIAL_POW1", "SIMP_DOM_CONVERSE",
-			"SIMP_RAN_CONVERSE" })
+			"SIMP_RAN_CONVERSE", "SIMP_CONVERSE_ID", "SIMP_SPECIAL_CONVERSE",
+			"SIMP_MULTI_DOM_CPROD", "SIMP_MULTI_RAN_CPROD",
+			"SIMP_KUNION_POW", "SIMP_KUNION_POW1", "SIMP_SPECIAL_KUNION",
+			"SIMP_SPECIAL_KINTER", "SIMP_KINTER_POW" })
 	@Override
 	public Expression rewrite(UnaryExpression expression) {
 		final Expression result;
@@ -2249,6 +2649,114 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	     			return result;
 	     		}
 	     	}
+	     	
+	     	/**
+	     	 * SIMP_CONVERSE_ID
+	     	 *    id∼ == id
+	     	 */
+	     	Converse(convId@IdGen()) -> {
+	     		if (level2) {
+	     			result = ff.makeAtomicExpression(Expression.KID_GEN, null, `convId.getType());
+	     			trace(expression, result, "SIMP_CONVERSE_ID");
+	     			return result;
+	     		}
+	     	}
+	     	
+	     	/**
+			 * SIMP_SPECIAL_CONVERSE
+			 *    ∅∼ == ∅
+			 */
+			Converse(EmptySet()) -> {
+				if (level2) {
+					result = makeEmptySet(expression.getType());
+					trace(expression, result, "SIMP_SPECIAL_CONVERSE");
+	    			return result;
+				}
+			}
+			
+			/**
+			 * SIMP_MULTI_DOM_CPROD
+			 *    dom(E×E) == E
+			 */
+			Dom(Cprod(E, E)) -> {
+				if (level2) {
+					result = `E;
+					trace(expression, result, "SIMP_MULTI_DOM_CPROD");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_MULTI_RAN_CPROD
+			 *    ran(E×E) == E
+			 */
+			Ran(Cprod(E, E)) -> {
+				if (level2) {
+					result = `E;
+					trace(expression, result, "SIMP_MULTI_RAN_CPROD");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_KUNION_POW
+			 *    union(ℙ(S)) == S
+			 */
+			Union(Pow(S)) -> {
+				if (level2) {
+					result = `S;
+					trace(expression, result, "SIMP_KUNION_POW");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_KUNION_POW1
+			 *    union(ℙ1(S)) == S
+			 */
+			Union(Pow1(S)) -> {
+				if (level2) {
+					result = `S;
+					trace(expression, result, "SIMP_KUNION_POW1");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_SPECIAL_KUNION
+			 *    union({∅}) == ∅
+			 */
+			Union(SetExtension(eList(empty@EmptySet()))) -> {
+				if (level2) {
+					result = makeEmptySet(`empty.getType());
+					trace(expression, result, "SIMP_SPECIAL_KUNION");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_SPECIAL_KINTER
+			 *    inter({∅}) == ∅
+			 */
+			Inter(SetExtension(eList(empty@EmptySet()))) -> {
+				if (level2) {
+					result = makeEmptySet(`empty.getType());
+					trace(expression, result, "SIMP_SPECIAL_KINTER");
+					return result;
+				}
+			}
+
+			/**
+			 * SIMP_KINTER_POW
+			 *    inter(ℙ(S)) == ∅
+			 */
+			Inter(Pow(S)) -> {
+				if (level2) {
+					result = makeEmptySet(`S.getType());
+					trace(expression, result, "SIMP_KINTER_POW");
+					return result;
+				}
+			}
 	    
 	    }
 	    return expression;
@@ -2301,8 +2809,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		return result;
 	}
     
-    @ProverRule( {"SIMP_MULTI_SETENUM", "SIMP_SPECIAL_COMPSET_BFALSE",
-                  "SIMP_SPECIAL_COMPSET_BTRUE"} ) 
+    @ProverRule( {"SIMP_MULTI_SETENUM" } ) 
 	@Override
 	public Expression rewrite(SetExtension expression) {
     	final Expression result;
@@ -2389,6 +2896,54 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		    		return result;
     			}
     		}
+    	}
+    	return expression;
+    }
+    
+        
+    @ProverRule( { "SIMP_SPECIAL_COMPSET_BFALSE",
+    			"SIMP_SPECIAL_COMPSET_BTRUE", "SIMP_SPECIAL_QUNION" } )
+    @Override
+    public Expression rewrite(QuantifiedExpression expression) {
+    	final Expression result;
+    	%match (Expression expression) {
+    	
+    		/**
+	    	 * SIMP_SPECIAL_COMPSET_BFALSE
+	    	 *    {x · ⊥ ∣ x} == ∅
+	    	 */
+	    	Cset(bidList(_), BFALSE(), _) -> {
+	    		if (level2) {
+	    			result = makeEmptySet(expression.getType());
+	    			trace(expression, result, "SIMP_SPECIAL_COMPSET_BFALSE");
+		    		return result;
+	    		}
+	    	}
+	    	
+	    	/**
+	    	 * SIMP_SPECIAL_COMPSET_BTRUE
+	    	 *    {x · ⊤ ∣ x} == Ty (where the type of x is Ty)
+	    	 */
+	    	Cset(bidList(_), BTRUE(), BoundIdentifier(0)) -> {
+	    		if (level2) {
+	    			result = expression.getType().getBaseType().toExpression(ff);
+		    		trace(expression, result, "SIMP_SPECIAL_COMPSET_BTRUE");
+		    		return result;
+	    		}
+	    	}
+	    	
+	    	/**
+	    	 * SIMP_SPECIAL_QUNION
+	    	 *    ⋃x · ⊥ ∣ E == ∅
+	    	 */
+	    	Qunion(bidList(_), BFALSE(), _) -> {
+	    		if (level2) {
+	    			result = makeEmptySet(expression.getType());
+	    			trace(expression, result, "SIMP_SPECIAL_QUNION");
+		    		return result;
+	    		}
+	    	}
+	    	
     	}
     	return expression;
     }
