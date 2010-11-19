@@ -119,6 +119,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		return ff.makeSetExtension(expressions, null);
 	}
 	
+	protected SetExtension makeSetExtension(Expression... expressions) {
+		return ff.makeSetExtension(expressions, null);
+	}
+
 	protected UnaryExpression makeUnaryExpression(int tag, Expression child) {
 		return ff.makeUnaryExpression(tag, child, null);
 	}
@@ -1814,10 +1818,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 */
 			RelImage(SetExtension(eList(Mapsto(E, F))), SetExtension(eList(E))) -> {
 				if (level2) {
-					Collection<Expression> singleton = new LinkedHashSet<Expression>();
-					singleton.add(`F);
-					
-					result = makeSetExtension(singleton);
+					result = makeSetExtension(`F);
 					trace(expression, result, "SIMP_MULTI_RELIMAGE_SING_MAPSTO");
 	    			return result;
 				}
