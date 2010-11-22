@@ -386,6 +386,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_MULTI_RELIMAGE_DOM() {
 		expressionTest("ran(r)", "r[dom(r)]", "r", "S↔T");
+		expressionTest("r[dom(s)]", "r[dom(s)]", "r", "S↔T", "s", "S↔V");
 	}
 	
 	/**
@@ -402,7 +403,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_RELIMAGE_CPROD_SING() {
-		expressionTest("S", "({E}×S)[{E}]", "S", "ℙ(T)", "E", "U");
+		expressionTest("S", "({E}×S)[{E}]", "S", "ℙ(U)", "E", "V");
+		expressionTest("({E}×S)[{F}]", "({E}×S)[{F}]", "S", "ℙ(U)", "E", "V", "F", "V");
 	}
 	
 	/**
@@ -412,6 +414,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_MULTI_RELIMAGE_SING_MAPSTO() {
 		expressionTest("{F}", "{E ↦ F}[{E}]", "E", "S", "F", "T");
+		expressionTest("{E ↦ F}[{G}]", "{E ↦ F}[{G}]", "E", "S", "F", "T", "G", "S");
 	}
 	
 	/**
@@ -421,6 +424,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_MULTI_RELIMAGE_CONVERSE_RANSUB() {
 		expressionTest("∅⦂ℙ(U)", "(r ⩥ S)∼[S]", "r", "U↔V");
+		expressionTest("(r ⩥ S)∼[T]", "(r ⩥ S)∼[T]", "r", "U↔V");
 	}
 	
 	/**
@@ -430,6 +434,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_MULTI_RELIMAGE_CONVERSE_RANRES() {
 		expressionTest("r∼[S]", "(r ▷ S)∼[S]", "r", "U↔V");
+		expressionTest("(r ▷ S)∼[T]", "(r ▷ S)∼[T]", "r", "U↔V");
 	}
 	
 	/**
@@ -446,6 +451,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_MULTI_RELIMAGE_DOMSUB() {
 		expressionTest("∅⦂ℙ(V)", "(S ⩤ r)[S]","r","U↔V");
+		expressionTest("(S ⩤ r)[T]", "(S ⩤ r)[T]","r","U↔V");
 	}
 	
 	/**
@@ -485,12 +491,21 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_REL_R() {
-		expressionTest("{(∅⦂ℙ(U×V))}", "S ↔ (∅⦂ℙ(V))", "S", "ℙ(U)");
-		// second test is surjective relation <->>
+		expressionTest("{∅⦂U↔V}", "S ↔ (∅⦂ℙ(V))", "S", "ℙ(U)");
+		// this test is the surjective relation <->>
 		expressionTest("{∅⦂U↔V}", "S  (∅⦂ℙ(V))", "S", "ℙ(U)");
 		expressionTest("{∅⦂U↔V}", "S ⇸ (∅⦂ℙ(V))", "S", "ℙ(U)");
 		expressionTest("{∅⦂U↔V}", "S ⤔ (∅⦂ℙ(V))", "S", "ℙ(U)");
 		expressionTest("{∅⦂U↔V}", "S ⤀ (∅⦂ℙ(V))", "S", "ℙ(U)");
+		
+		expressionTest("S → (∅⦂ℙ(V))", "S → (∅⦂ℙ(V))", "S", "ℙ(U)");
+		// this test is the total relation <<->
+		expressionTest("S  (∅⦂ℙ(V))", "S  (∅⦂ℙ(V))", "S", "ℙ(U)");
+		// this test is the surjective total relation <<->>
+		expressionTest("S  (∅⦂ℙ(V))", "S  (∅⦂ℙ(V))", "S", "ℙ(U)");
+		expressionTest("S ↣ (∅⦂ℙ(V))", "S ↣ (∅⦂ℙ(V))", "S", "ℙ(U)");
+		expressionTest("S ↠ (∅⦂ℙ(V))", "S ↠ (∅⦂ℙ(V))", "S", "ℙ(U)");
+		expressionTest("S ⤖ (∅⦂ℙ(V))", "S ⤖ (∅⦂ℙ(V))", "S", "ℙ(U)");
 	}
 	
 	/**
@@ -498,13 +513,21 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_REL_L() {
-		expressionTest("{(∅⦂ℙ(U×V))}", "(∅⦂ℙ(U)) ↔ S", "S", "ℙ(V)");
-		// second test is total relation <<->
-		expressionTest("{(∅⦂ℙ(U×V))}", "(∅⦂ℙ(U))  S", "S", "ℙ(V)");
-		expressionTest("{(∅⦂ℙ(U×V))}", "(∅⦂ℙ(U)) ⇸ S", "S", "ℙ(V)");
-		expressionTest("{(∅⦂ℙ(U×V))}", "(∅⦂ℙ(U)) → S", "S", "ℙ(V)");
-		expressionTest("{(∅⦂ℙ(U×V))}", "(∅⦂ℙ(U)) ⤔ S", "S", "ℙ(V)");
-		expressionTest("{(∅⦂ℙ(U×V))}", "(∅⦂ℙ(U)) ↣ S", "S", "ℙ(V)");
+		expressionTest("{∅⦂U↔V}", "(∅⦂ℙ(U)) ↔ S", "S", "ℙ(V)");
+		// this test is the total relation <<->
+		expressionTest("{∅⦂U↔V}", "(∅⦂ℙ(U))  S", "S", "ℙ(V)");
+		expressionTest("{∅⦂U↔V}", "(∅⦂ℙ(U)) ⇸ S", "S", "ℙ(V)");
+		expressionTest("{∅⦂U↔V}", "(∅⦂ℙ(U)) → S", "S", "ℙ(V)");
+		expressionTest("{∅⦂U↔V}", "(∅⦂ℙ(U)) ⤔ S", "S", "ℙ(V)");
+		expressionTest("{∅⦂U↔V}", "(∅⦂ℙ(U)) ↣ S", "S", "ℙ(V)");
+		
+		// this test is the surjective relation <->>
+		expressionTest("(∅⦂ℙ(U))  S", "(∅⦂ℙ(U))  S", "S", "ℙ(V)");
+		// this test is the surjective total relation <<->>
+		expressionTest("(∅⦂ℙ(U))  S", "(∅⦂ℙ(U))  S", "S", "ℙ(V)");
+		expressionTest("(∅⦂ℙ(U)) ⤀ S", "(∅⦂ℙ(U)) ⤀ S", "S", "ℙ(V)");
+		expressionTest("(∅⦂ℙ(U)) ↠ S", "(∅⦂ℙ(U)) ↠ S", "S", "ℙ(V)");
+		expressionTest("(∅⦂ℙ(U)) ⤖ S", "(∅⦂ℙ(U)) ⤖ S", "S", "ℙ(V)");
 	}
 	
 	/**
@@ -536,7 +559,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_EQUAL_RELDOMRAN() {
-		// first test is surjective total relation <<->>
+		// this test is the surjective total relation <<->>
 		expressionTest("{∅⦂ℙ(S×T)}", "(∅⦂ℙ(S))  (∅⦂ℙ(T))");
 		expressionTest("{∅⦂ℙ(S×T)}", "(∅⦂ℙ(S)) ↠ (∅⦂ℙ(T))");
 		expressionTest("{∅⦂ℙ(S×T)}", "(∅⦂ℙ(S)) ⤖ (∅⦂ℙ(T))");
@@ -548,6 +571,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_MULTI_DOM_CPROD() {
 		expressionTest("E", "dom(E×E)", "E", "ℙ(S)");
+		expressionTest("dom(E×F)", "dom(E×F)", "E", "ℙ(S)", "F", "ℙ(S)");
 	}
 	
 	/**
@@ -556,6 +580,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_MULTI_RAN_CPROD() {
 		expressionTest("E", "ran(E×E)", "E", "ℙ(S)");
+		expressionTest("ran(E×F)", "ran(E×F)", "E", "ℙ(S)", "F", "ℙ(S)");
 	}
 	
 	/**
@@ -564,6 +589,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_SPECIAL_COMPSET_BFALSE() {
 		expressionTest("∅⦂ℙ(S)", "{x⦂S · ⊥ ∣ E}", "E", "S");
+		expressionTest("{x⦂S, y⦂S · ⊥ ∣ E}", "{x⦂S, y⦂S · ⊥ ∣ E}", "E", "S");
 	}
 	
 	/**
@@ -572,6 +598,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_SPECIAL_COMPSET_BTRUE() {
 		expressionTest("S", "{x⦂S · ⊤ ∣ x}", "S", "ℙ(S)");
+		expressionTest("{x⦂S, y⦂S · ⊤ ∣ x}", "{x⦂S, y⦂S · ⊤ ∣ x}", "S", "ℙ(S)");
 	}
 	
 	/**
@@ -595,7 +622,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_KUNION() {
-		expressionTest("∅⦂ℙ(S)", "union({∅⦂ℙ(S)})", "S", "ℙ(T)");
+		expressionTest("∅⦂ℙ(S)", "union({∅⦂ℙ(S)})");
 	}
 	
 	/**
@@ -603,7 +630,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_QUNION() {
-		expressionTest("∅⦂ℙ(S)", "⋃x⦂S · ⊥ ∣ E", "E", "ℙ(S)");
+		expressionTest("∅⦂ℙ(S)", "⋃ x⦂S · ⊥ ∣ E", "E", "ℙ(S)");
+		expressionTest("⋃ x⦂S, y⦂S · ⊥ ∣ E", "⋃ x⦂S, y⦂S · ⊥ ∣ E", "E", "ℙ(S)");
 	}
 	
 	/**
@@ -611,7 +639,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_KINTER() {
-		expressionTest("∅⦂ℙ(S)", "inter({∅⦂ℙ(S)})", "S", "ℙ(T)");
+		expressionTest("∅⦂ℙ(S)", "inter({∅⦂ℙ(S)})");
 	}
 	
 	/**

@@ -245,10 +245,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 */
 			Finite(id@IdGen()) -> {
 				if (level2) {
-					final PowerSetType powType = (PowerSetType) `id.getType();
-					final ProductType prodType = (ProductType) powType.getBaseType();
-					final Type s = prodType.getLeft();
-					
+					final Type s = `id.getType().getSource();	
 					result = makeSimplePredicate(Predicate.KFINITE, s.toExpression(ff));
 					trace(predicate, result, "SIMP_FINITE_ID");
 					return result;
@@ -1462,9 +1459,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_SPECIAL_RANSUB_R", "SIMP_SPECIAL_RANSUB_L",
 			"SIMP_TYPE_RANSUB", "SIMP_MULTI_RANSUB_RAN",
 			"SIMP_SPECIAL_DPROD_R", "SIMP_SPECIAL_DPROD_L",
-			"SIMP_SPECIAL_PPROD_R", "SIMP_TYPE_RELIMAGE",
-			"SIMP_MULTI_RELIMAGE_DOM", "SIMP_TYPE_RELIMAGE_ID",
-			"SIMP_MULTI_RELIMAGE_CPROD_SING",
+			"SIMP_SPECIAL_PPROD_R", "SIMP_SPECIAL_PPROD_L",
+			"SIMP_TYPE_RELIMAGE", "SIMP_MULTI_RELIMAGE_DOM",
+			"SIMP_TYPE_RELIMAGE_ID", "SIMP_MULTI_RELIMAGE_CPROD_SING",
 			"SIMP_MULTI_RELIMAGE_SING_MAPSTO",
 			"SIMP_MULTI_RELIMAGE_CONVERSE_RANSUB",
 			"SIMP_MULTI_RELIMAGE_CONVERSE_RANRES",
@@ -2198,52 +2195,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 *    S ⤔ ∅ == {∅}
 			 *    S ⤀ ∅ == {∅}
 			 */
-			Rel(_, EmptySet()) -> {
-				if (level2) {
-					Collection<Expression> singleton = new LinkedHashSet<Expression>();
-					singleton.add(makeEmptySet(expression.getType().getBaseType()));
-					
-					result = makeSetExtension(singleton);
-					trace(expression, result, "SIMP_SPECIAL_REL_R");
-					return result;
-				}
-			}
-			Srel(_, EmptySet()) -> {
-				if (level2) {
-					Collection<Expression> singleton = new LinkedHashSet<Expression>();
-					singleton.add(makeEmptySet(expression.getType().getBaseType()));
-					
-					result = makeSetExtension(singleton);
-					trace(expression, result, "SIMP_SPECIAL_REL_R");
-					return result;
-				}
-			}
-			Pfun(_, EmptySet()) -> {
-				if (level2) {
-					Collection<Expression> singleton = new LinkedHashSet<Expression>();
-					singleton.add(makeEmptySet(expression.getType().getBaseType()));
-					
-					result = makeSetExtension(singleton);
-					trace(expression, result, "SIMP_SPECIAL_REL_R");
-					return result;
-				}
-			}
-			Pinj(_, EmptySet()) -> {
-				if (level2) {
-					Collection<Expression> singleton = new LinkedHashSet<Expression>();
-					singleton.add(makeEmptySet(expression.getType().getBaseType()));
-					
-					result = makeSetExtension(singleton);
-					trace(expression, result, "SIMP_SPECIAL_REL_R");
-					return result;
-				}
-			}
-			Psur(_, EmptySet()) -> {
-				if (level2) {
-					Collection<Expression> singleton = new LinkedHashSet<Expression>();
-					singleton.add(makeEmptySet(expression.getType().getBaseType()));
-					
-					result = makeSetExtension(singleton);
+			(Rel | Srel | Pfun | Pinj | Psur)(_, EmptySet()) -> {
+				if (level2) {			
+					result = makeSetExtension(makeEmptySet(expression.getType().getBaseType()));
 					trace(expression, result, "SIMP_SPECIAL_REL_R");
 					return result;
 				}
@@ -2258,62 +2212,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 *    ∅ ⤔ S == {∅}
 			 *    ∅ ↣ S == {∅}
 			 */
-			Rel(EmptySet(), _) -> {
+			(Rel | Trel | Pfun | Tfun | Pinj | Tinj)(EmptySet(), _) -> {
 				if (level2) {
-					Collection<Expression> singleton = new LinkedHashSet<Expression>();
-					singleton.add(makeEmptySet(expression.getType().getBaseType()));
-					
-					result = makeSetExtension(singleton);
-					trace(expression, result, "SIMP_SPECIAL_REL_L");
-					return result;
-				}
-			}
-			Trel(EmptySet(), _) -> {
-				if (level2) {
-					Collection<Expression> singleton = new LinkedHashSet<Expression>();
-					singleton.add(makeEmptySet(expression.getType().getBaseType()));
-					
-					result = makeSetExtension(singleton);
-					trace(expression, result, "SIMP_SPECIAL_REL_L");
-					return result;
-				}
-			}
-			Pfun(EmptySet(), _) -> {
-				if (level2) {
-					Collection<Expression> singleton = new LinkedHashSet<Expression>();
-					singleton.add(makeEmptySet(expression.getType().getBaseType()));
-					
-					result = makeSetExtension(singleton);
-					trace(expression, result, "SIMP_SPECIAL_REL_L");
-					return result;
-				}
-			}
-			Tfun(EmptySet(), _) -> {
-				if (level2) {
-					Collection<Expression> singleton = new LinkedHashSet<Expression>();
-					singleton.add(makeEmptySet(expression.getType().getBaseType()));
-					
-					result = makeSetExtension(singleton);
-					trace(expression, result, "SIMP_SPECIAL_REL_L");
-					return result;
-				}
-			}
-			Pinj(EmptySet(), _) -> {
-				if (level2) {
-					Collection<Expression> singleton = new LinkedHashSet<Expression>();
-					singleton.add(makeEmptySet(expression.getType().getBaseType()));
-					
-					result = makeSetExtension(singleton);
-					trace(expression, result, "SIMP_SPECIAL_REL_L");
-					return result;
-				}
-			}
-			Tinj(EmptySet(), _) -> {
-				if (level2) {
-					Collection<Expression> singleton = new LinkedHashSet<Expression>();
-					singleton.add(makeEmptySet(expression.getType().getBaseType()));
-					
-					result = makeSetExtension(singleton);
+					result = makeSetExtension(makeEmptySet(expression.getType().getBaseType()));
 					trace(expression, result, "SIMP_SPECIAL_REL_L");
 					return result;
 				}
@@ -2361,32 +2262,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 *    ∅ ↠ ∅
 			 *    ∅ ⤖ ∅
 			 */
-			Strel(EmptySet(), EmptySet()) -> {
+			(Strel | Tsur | Tbij)(EmptySet(), EmptySet()) -> {
 				if (level2) {
-					Collection<Expression> singleton = new LinkedHashSet<Expression>();
-					singleton.add(makeEmptySet(expression.getType().getBaseType()));
-					
-					result = makeSetExtension(singleton);
-					trace(expression, result, "SIMP_SPECIAL_EQUAL_RELDOMRAN");
-					return result;
-				}
-			}
-			Tsur(EmptySet(), EmptySet()) -> {
-				if (level2) {
-					Collection<Expression> singleton = new LinkedHashSet<Expression>();
-					singleton.add(makeEmptySet(expression.getType().getBaseType()));
-					
-					result = makeSetExtension(singleton);
-					trace(expression, result, "SIMP_SPECIAL_EQUAL_RELDOMRAN");
-					return result;
-				}
-			}
-			Tbij(EmptySet(), EmptySet()) -> {
-				if (level2) {
-					Collection<Expression> singleton = new LinkedHashSet<Expression>();
-					singleton.add(makeEmptySet(expression.getType().getBaseType()));
-					
-					result = makeSetExtension(singleton);
+					result = makeSetExtension(makeEmptySet(expression.getType().getBaseType()));
 					trace(expression, result, "SIMP_SPECIAL_EQUAL_RELDOMRAN");
 					return result;
 				}
@@ -2607,7 +2485,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 */
 			Pow(empty@EmptySet()) -> {
 				if (level2) {
-					result = makeSetExtension(makeEmptySet(`empty.getType()));
+					result = makeSetExtension(`empty);
 					trace(expression, result, "SIMP_SPECIAL_POW");
 					return result; 
 				}
@@ -2653,9 +2531,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	     	 * SIMP_CONVERSE_ID
 	     	 *    id∼ == id
 	     	 */
-	     	Converse(convId@IdGen()) -> {
+	     	Converse(id@IdGen()) -> {
 	     		if (level2) {
-	     			result = ff.makeAtomicExpression(Expression.KID_GEN, null, `convId.getType());
+	     			result = `id;
 	     			trace(expression, result, "SIMP_CONVERSE_ID");
 	     			return result;
 	     		}
@@ -2727,7 +2605,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 */
 			Union(SetExtension(eList(empty@EmptySet()))) -> {
 				if (level2) {
-					result = makeEmptySet(`empty.getType());
+					result = `empty;
 					trace(expression, result, "SIMP_SPECIAL_KUNION");
 					return result;
 				}
@@ -2739,7 +2617,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 */
 			Inter(SetExtension(eList(empty@EmptySet()))) -> {
 				if (level2) {
-					result = makeEmptySet(`empty.getType());
+					result = `empty;
 					trace(expression, result, "SIMP_SPECIAL_KINTER");
 					return result;
 				}
@@ -2923,9 +2801,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_SPECIAL_COMPSET_BTRUE
 	    	 *    {x · ⊤ ∣ x} == Ty (where the type of x is Ty)
 	    	 */
-	    	Cset(bidList(_), BTRUE(), BoundIdentifier(0)) -> {
+	    	Cset(bidList(_), BTRUE(), bi@BoundIdentifier(0)) -> {
 	    		if (level2) {
-	    			result = expression.getType().getBaseType().toExpression(ff);
+	    			result = `bi.getType().toExpression(ff);
 		    		trace(expression, result, "SIMP_SPECIAL_COMPSET_BTRUE");
 		    		return result;
 	    		}
