@@ -82,12 +82,12 @@ public class AutoRewriterImpl extends DefaultRewriter {
 
 	private final IntegerLiteral number2 = ff.makeIntegerLiteral(new BigInteger("2"), null);
 
-	@ProverRule( { "SIMP_FORALL", "SIMP_EXISTS" })
+	@ProverRule( { "SIMP_FORALL", "SIMP_EXISTS", "SIMP_LIT_MINUS" })
 	/*
-	 * Rules SIMP_FORALL and SIMP_EXISTS are implemented by the fact that this
-	 * rewriter is auto-flattening (first parameter is true in the call to the 
-	 * abstract constructor).  Unfortunately, it is not possible to trace
-	 * auto-flattening.
+	 * Rules SIMP_FORALL, SIMP_EXISTS, and SIMP_LIT_MINUS are implemented by the
+	 * fact that this rewriter is auto-flattening (first parameter is true in
+	 * the call to the abstract constructor). Unfortunately, it is not possible
+	 * to trace auto-flattening.
 	 */
 	public AutoRewriterImpl(FormulaFactory ff, Level level) {
 		super(true, ff);
