@@ -237,7 +237,8 @@ public abstract class AbstractFormulaRewriterTests {
 				+ " and input expression: " + input
 				+ " should be of the same type ", expected.getType(), input
 				.getType());
-		assertEquals(input + " --> " + expected, expected, input.rewrite(r));
+		final Expression actual = input.rewrite(r);
+		assertEquals(input + " --> " + expected, expected, actual);
 	}
 
 	private ITypeEnvironment makeTypeEnvironment(String... env) {
