@@ -1229,9 +1229,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_SUBSETEQ_SING
 			 *    {E} ⊆ S == E ∈ S (where E is a single expression)
 			 */
-			SubsetEq(SetExtension(E), S) -> {
-				if (level2 && `E.length == 1) {
-					result = makeRelationalPredicate(Expression.IN, `E[0], `S);
+			SubsetEq(SetExtension(l@eList(_)), S) -> {
+				// Workaround Tom 2.2 bug
+				if (level2) {
+					result = makeRelationalPredicate(Expression.IN, `l[0], `S);
 					trace(predicate, result, "SIMP_SUBSETEQ_SING");
 					return result;
 				}
@@ -1929,9 +1930,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_SPECIAL_DOMRES_L
 			 *    ∅ ◁ r == ∅
 			 */
-			DomRes(EmptySet(), r) -> {
+			DomRes(EmptySet(), _) -> {
 				if (level2) {
-					result = makeEmptySet(`r.getType());
+					result = makeEmptySet(expression.getType());
 					trace(expression, result, "SIMP_SPECIAL_DOMRES_L");
 					return result;
 				}
@@ -1941,9 +1942,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_SPECIAL_DOMRES_R
 			 *    S ◁ ∅ == ∅
 			 */
-			DomRes(_, EmptySet()) -> {
+			DomRes(_, empty@EmptySet()) -> {
 				if (level2) {
-					result = makeEmptySet(expression.getType());
+					result = `empty;
 					trace(expression, result, "SIMP_SPECIAL_DOMRES_R");
 					return result;
 				}
@@ -1977,9 +1978,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_MULTI_DOMRES_RAN
 			 *    ran(r) ◁ r∼ == r∼
 			 */
-			DomRes(Ran(r), Converse(r)) -> {
+			DomRes(Ran(r), conv@Converse(r)) -> {
 				if (level2) {
-					result = makeUnaryExpression(Expression.CONVERSE, `r);
+					result = `conv;
 					trace(expression, result, "SIMP_MULTI_DOMRES_RAN");
 					return result;
 				}
@@ -1989,7 +1990,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_SPECIAL_RANRES_R
 			 *    r ▷ ∅ == ∅
 			 */
-			RanRes(r, EmptySet()) ->  {
+			RanRes(_, EmptySet()) ->  {
 				if (level2) {
 					result = makeEmptySet(expression.getType());
 					trace(expression, result, "SIMP_SPECIAL_RANRES_R");
@@ -2001,9 +2002,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_SPECIAL_RANRES_L
 			 *    ∅ ▷ S == ∅
 			 */
-			 RanRes(EmptySet(), _) -> {
+			 RanRes(empty@EmptySet(), _) -> {
 			 	if (level2) {
-			 		result = makeEmptySet(expression.getType());
+			 		result = `empty;
 			 		trace(expression, result, "SIMP_SPECIAL_RANRES_L");
 					return result;
 			 	}
@@ -2037,9 +2038,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_MULTI_RANRES_DOM
 			 *    r∼ ▷ dom(r) == r∼
 			 */
-			RanRes(Converse(r), Dom(r)) -> {
+			RanRes(conv@Converse(r), Dom(r)) -> {
 				if (level2) {
-					result = makeUnaryExpression(Expression.CONVERSE, `r);
+					result = `conv;
 					trace(expression, result, "SIMP_MULTI_RANRES_DOM");
 					return result;
 				}
@@ -2061,9 +2062,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			  * SIMP_SPECIAL_DOMSUB_R
 			  *    S ⩤ ∅ == ∅
 			  */
-			 DomSub(_, EmptySet()) -> {
+			 DomSub(_, empty@EmptySet()) -> {
 			 	if (level2) {
-			 		result = makeEmptySet(expression.getType());
+			 		result = `empty;
 			 		trace(expression, result, "SIMP_SPECIAL_DOMSUB_R");
 					return result;			 		
 			 	}
@@ -2109,9 +2110,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_SPECIAL_RANSUB_L
 			 *    ∅ ⩥ S == ∅
 			 */
-			RanSub(EmptySet(), _) -> {
+			RanSub(empty@EmptySet(), _) -> {
 				if (level2) {
-					result = makeEmptySet(expression.getType());
+					result = `empty;
 					trace(expression, result, "SIMP_SPECIAL_RANSUB_L");
 					return result;	
 				}
@@ -2121,7 +2122,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_TYPE_RANSUB
 			 *    r ⩥ Ty == ∅ (where Ty is a type expression)
 			 */
-			RanSub(r, Ty) -> {
+			RanSub(_, Ty) -> {
 				if (level2 && `Ty.isATypeExpression()) {
 					result = makeEmptySet(expression.getType());
 					trace(expression, result, "SIMP_TYPE_RANSUB");
@@ -2606,10 +2607,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 */
 			Pow(empty@EmptySet()) -> {
 				if (level2) {
-					Collection<Expression> singleton = new LinkedHashSet<Expression>();
-					singleton.add(makeEmptySet(`empty.getType()));
-					
-					result = makeSetExtension(singleton);
+					result = makeSetExtension(makeEmptySet(`empty.getType()));
 					trace(expression, result, "SIMP_SPECIAL_POW");
 					return result; 
 				}

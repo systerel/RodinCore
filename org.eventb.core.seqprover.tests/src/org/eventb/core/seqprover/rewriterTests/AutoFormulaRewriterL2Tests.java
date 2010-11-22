@@ -124,7 +124,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_CPROD_R() {
-		expressionTest("∅⦂S↔T", "S × (∅⦂ℙ(T))", "S", "ℙ(S)");
+		expressionTest("∅⦂U↔V", "S × (∅⦂ℙ(V))", "S", "ℙ(U)");
 	}
 	
 	/**
@@ -132,7 +132,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_CPROD_L() {
-		expressionTest("∅⦂S↔T", "(∅⦂ℙ(S)) × S", "S", "ℙ(T)");
+		expressionTest("∅⦂U↔V", "(∅⦂ℙ(U)) × S", "S", "ℙ(V)");
 	}
 
 	/**
@@ -172,7 +172,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_SUBSET() {
-		predicateTest("⊥","S ⊂ S" ,"S", "ℙ(S)");
+		predicateTest("⊥","S ⊂ S" ,"S", "ℙ(T)");
 	}
 	
 	/**
@@ -204,7 +204,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_DOMRES_R() {
-		expressionTest("∅⦂S↔T","S ◁ (∅⦂S↔T)", "S", "ℙ(S)");
+		expressionTest("∅⦂U↔V","S ◁ (∅⦂U↔V)", "S", "ℙ(U)");
 	}
 	
 	/**
@@ -213,6 +213,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_TYPE_DOMRES() {
 		expressionTest("r", "S ◁ r", "r", "S↔T");
+		expressionTest("S ◁ r", "S ◁ r", "r", "U↔V");
 	}
 	
 	/**
@@ -244,7 +245,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_RANRES_L() {
-		expressionTest("∅⦂S↔T","(∅⦂S↔T) ▷ S", "S", "ℙ(T)");
+		expressionTest("∅⦂U↔V","(∅⦂U↔V) ▷ S", "S", "ℙ(V)");
 	}
 	
 	/**
@@ -253,6 +254,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_TYPE_RANRES() {
 		expressionTest("r", "r ▷ T", "r", "S↔T");
+		expressionTest("r ▷ T", "r ▷ T", "r", "U↔V");
 	}
 	
 	/**
@@ -284,7 +286,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_DOMSUB_R() {
-		expressionTest("∅⦂S↔T", "S ⩤ (∅⦂S↔T)");
+		expressionTest("∅⦂U↔V", "S ⩤ (∅⦂U↔V)");
 	}
 	
 	/**
@@ -293,6 +295,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_TYPE_DOMSUB() {
 		expressionTest("∅⦂S↔T", "S ⩤ r", "r","S↔T");
+		expressionTest("S ⩤ r", "S ⩤ r", "r","U↔V");
 	}
 	
 	/**
@@ -316,7 +319,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_RANSUB_L() {
-		expressionTest("∅⦂S↔T", "(∅⦂S↔T) ⩥ S", "S", "ℙ(T)");
+		expressionTest("∅⦂U↔V", "(∅⦂U↔V) ⩥ S");
 	}
 	
 	/**
@@ -325,6 +328,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_TYPE_RANSUB() {
 		expressionTest("∅⦂S↔T", "r ⩥ T", "r", "S↔T");
+		expressionTest("r ⩥ T", "r ⩥ T", "r", "U↔V");
 	}
 	
 	/**
