@@ -197,6 +197,10 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_SPECIAL_DOMRES_L() {
 		expressionTest("∅⦂S↔T","(∅⦂ℙ(S)) ◁ r", "r", "S↔T");
+		// Former rules SIMP_SPECIAL_(ID|PRJ1|PRJ2) 
+		expressionTest("∅⦂S↔S", "∅ ◁ (id⦂S↔S)");
+		expressionTest("∅⦂S×T↔S", "∅ ◁ (prj1⦂S×T↔S)");
+		expressionTest("∅⦂S×T↔T", "∅ ◁ (prj2⦂S×T↔T)");
 	}
 	
 	/**
