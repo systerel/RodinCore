@@ -43,6 +43,7 @@ import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedExpression;
+import org.eventb.core.ast.QuantifiedExpression.Form;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
@@ -146,6 +147,14 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	protected SimplePredicate makeSimplePredicate(int tag, Expression expression) {
 		return ff.makeSimplePredicate(tag, expression, null);
 	}
+	
+	protected QuantifiedExpression makeQuantifiedExpression(int tag, BoundIdentDecl[] boundIdentifiers, Predicate pred, Expression expr, Form form) {
+		return ff.makeQuantifiedExpression(tag, boundIdentifiers, pred, expr, null, form);
+	}
+	
+	protected BoundIdentifier makeBoundIdentifier(int index, Type type) {
+		return ff.makeBoundIdentifier(index, null, type);
+	}
 
 	protected <T> boolean contains(T[] array, T key) {
 		for (T element : array) {
@@ -187,7 +196,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_FINITE_BUNION", "SIMP_FINITE_POW", "DERIV_FINITE_CPROD",
 			"SIMP_FINITE_CONVERSE", "SIMP_FINITE_UPTO",
 			"SIMP_FINITE_NATURAL", "SIMP_FINITE_NATURAL1",
-			"SIMP_FINITE_INTEGER", "SIMP_FINITE_ID" })
+			"SIMP_FINITE_INTEGER", "SIMP_FINITE_ID", "SIMP_FINITE_LAMBDA" })
 	@Override
 	public Predicate rewrite(SimplePredicate predicate) {
 		final Predicate result;
@@ -326,7 +335,23 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				trace(predicate, result, "SIMP_FINITE_UPTO");
 				return result;
 			}
-
+			
+			/**
+			 * SIMP_FINITE_LAMBDA
+			 *    finite(λ x · P ∣ E) == finite({x · P ∣ x})
+			 */
+			Finite(Cset(bil@bidList(_), P, _)) -> {
+				if (level2) {
+					result = makeSimplePredicate(Predicate.KFINITE,
+								makeQuantifiedExpression(Expression.CSET,
+									`bil, `P,
+									makeBoundIdentifier(0, `bil[0].getType()),
+									Form.Explicit));			
+					trace(predicate, result, "SIMP_FINITE_LAMBDA");
+					return result;
+				}
+			}
+			
 	    }
 	    return predicate;
 	}
@@ -721,7 +746,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_LIT_LT_CARD_0", "SIMP_LIT_EQUAL_KBOOL_TRUE",
 			"SIMP_LIT_EQUAL_KBOOL_FALSE", "SIMP_EQUAL_CONSTR",
 			"SIMP_EQUAL_CONSTR_DIFF", "SIMP_SUBSETEQ_SING",
-			"SIMP_SPECIAL_SUBSET_R", "SIMP_MULTI_SUBSET" })
+			"SIMP_SPECIAL_SUBSET_R", "SIMP_MULTI_SUBSET",
+			"SIMP_SPECIAL_EQUAL_REL", "SIMP_SPECIAL_EQUAL_RELDOM" })
     @Override
 	public Predicate rewrite(RelationalPredicate predicate) {
 		final Predicate result;
@@ -1258,7 +1284,40 @@ public class AutoRewriterImpl extends DefaultRewriter {
 					return result;
 				}
 			}
-
+			
+			/**
+			 * SIMP_SPECIAL_EQUAL_REL
+			 *    A ↔ B = ∅ == ⊥
+			 */
+			Equal((Rel | Pfun | Pinj)(_, _), EmptySet()) -> {
+				if (level2) {
+					result = dLib.False();
+					trace(predicate, result, "SIMP_SPECIAL_EQUAL_REL");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_SPECIAL_EQUAL_RELDOM
+			 *    A  B = ∅ == ¬(A = ∅) ∧ B = ∅
+			 *    A → B = ∅ == ¬(A = ∅) ∧ B = ∅
+			 *    A ↣ B = ∅ == ¬(A = ∅) ∧ B = ∅
+			 *    A ↠ B = ∅ == ¬(A = ∅) ∧ B = ∅
+			 *    A ⤖ B = ∅ == ¬(A = ∅) ∧ B = ∅
+			 */
+			Equal((Tfun | Trel | Tinj | Tsur | Tbij)(A, B), EmptySet()) -> {
+				if (level2) {
+					result = makeAssociativePredicate(Predicate.LAND,
+								makeUnaryPredicate(Predicate.NOT,
+									makeRelationalPredicate(Predicate.EQUAL,
+										`A, makeEmptySet(`A.getType()))),
+								makeRelationalPredicate(Predicate.EQUAL,
+									`B, makeEmptySet(`B.getType())));
+					trace(predicate, result, "SIMP_SPECIAL_EQUAL_RELDOM");
+					return result;
+				}
+			}
+			
 	    }
 	    return predicate;
 	}
@@ -1316,7 +1375,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
             "SIMP_SPECIAL_PROD_0", "SIMP_SPECIAL_PROD_MINUS_EVEN",
             "SIMP_SPECIAL_PROD_MINUS_ODD", "SIMP_SPECIAL_FCOMP",
             "SIMP_SPECIAL_BCOMP", "SIMP_SPECIAL_OVERL", " SIMP_FCOMP_ID_L",
-            "SIMP_FCOMP_ID_R" })
+            "SIMP_FCOMP_ID_R", "SIMP_TYPE_OVERL_CPROD",
+            "SIMP_TYPE_FCOMP_R", "SIMP_TYPE_FCOMP_L", "SIMP_TYPE_BCOMP_L",
+            "SIMP_TYPE_BCOMP_R" })
 	@Override
 	public Expression rewrite(AssociativeExpression expression) {
 		final Expression result;
@@ -1395,7 +1456,19 @@ public class AutoRewriterImpl extends DefaultRewriter {
    	    		trace(expression, result, "SIMP_SPECIAL_BCOMP");
    				return result;
 	    	}
-	    	
+	    							
+			/**
+			 * SIMP_TYPE_OVERL_CPROD
+			 *    r  (Ty × S) == Ty × S (where Ty is a type expression)
+			 */
+			Ovr(eList(_, Cprod(Ty, S))) -> {
+				if (level2 && `Ty.isATypeExpression()) {
+					result = makeBinaryExpression(Expression.CPROD, `Ty, `S);
+					trace(expression, result, "SIMP_TYPE_OVERL_CPROD");
+					return result;
+				}
+			}
+			
             /**
              * SIMP_SPECIAL_OVERL
 			 * Set theory: r  ...  ∅  ...  s  ==  r  ...  s
@@ -1431,6 +1504,66 @@ public class AutoRewriterImpl extends DefaultRewriter {
 					return result;
 				}
 			}
+	    	
+	    	/**
+	    	 * SIMP_TYPE_FCOMP_R
+	    	 *    r ; Ty == dom(r) × Tb (where Ty is a type expression and Ty = Ta × Tb)
+	    	 */
+	    	Fcomp(rt@eList(_, Cprod(Ta, Tb))) -> {
+				// Workaround Tom 2.2 bug: can't use first element of list
+	    		if (level2 && `Ta.isATypeExpression() && `Tb.isATypeExpression()) {
+	    			result = makeBinaryExpression(Expression.CPROD,
+	    						makeUnaryExpression(Expression.KDOM, `rt[0]),
+	    						`Tb);
+	    			trace(expression, result, "SIMP_TYPE_FCOMP_R");
+					return result;
+	    		}
+	    	}
+	    	
+	    	/**
+	    	 * SIMP_TYPE_FCOMP_L
+	    	 *    Ty ; r == Ta × ran(r) (where Ty is a type expression and Ty = Ta × Tb)
+	    	 */
+	    	Fcomp(tr@eList(Cprod(Ta, Tb), _)) -> {
+	    		// Workaround Tom 2.2 bug: can't use last element of list
+	    		if (level2 && `Ta.isATypeExpression() && `Tb.isATypeExpression()) {
+	    			result = makeBinaryExpression(Expression.CPROD,
+	    						`Ta,
+	    						makeUnaryExpression(Expression.KRAN, `tr[1]));
+	    			trace(expression, result, "SIMP_TYPE_FCOMP_L");
+					return result;	
+	    		}
+	    	}
+	    	
+	    	/**
+	    	 * SIMP_TYPE_BCOMP_L
+	    	 *    Ty ∘ r == dom(r) × Tb (where Ty is a type expression and Ty = Ta × Tb)
+	    	 */
+	    	Bcomp(tr@eList(Cprod(Ta, Tb), _)) -> {
+	    		// Workaround Tom 2.2 bug: can't use last element of list
+	    		if (level2 && `Ta.isATypeExpression() && `Tb.isATypeExpression()) {
+	    			result = makeBinaryExpression(Expression.CPROD,
+	    						makeUnaryExpression(Expression.KDOM, `tr[1]),
+	    						`Tb);
+	    			trace(expression, result, "SIMP_TYPE_BCOMP_L");
+					return result;	
+	    		}
+	    	}
+	    	
+	    	/**
+	    	 * SIMP_TYPE_BCOMP_R
+	    	 *    r ∘ Ty == Ta × ran(r) (where Ty is a type expression and Ty = Ta × Tb)
+	    	 */
+	    	Bcomp(tr@eList(_, Cprod(Ta, Tb))) -> {
+	    		// Workaround Tom 2.2 bug: can't use first element of list
+	    		if (level2 && `Ta.isATypeExpression() && `Tb.isATypeExpression()) {
+	    			result = makeBinaryExpression(Expression.CPROD,
+	    						`Ta,
+	    						makeUnaryExpression(Expression.KRAN, `tr[0]));
+	    			trace(expression, result, "SIMP_TYPE_BCOMP_R");
+					return result;	
+	    		}
+	    	}
 	    	
 	    }
 	    return expression;
@@ -1468,7 +1601,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_RELIMAGE_CONVERSE_DOMSUB", "SIMP_MULTI_RELIMAGE_DOMSUB",
 			"SIMP_SPECIAL_REL_R", "SIMP_SPECIAL_REL_L",
 			"SIMP_FUNIMAGE_PRJ1", "SIMP_FUNIMAGE_PRJ2", "SIMP_FUNIMAGE_ID",
-			"SIMP_SPECIAL_EQUAL_RELDOMRAN" } )
+			"SIMP_SPECIAL_EQUAL_RELDOMRAN", "SIMP_TYPE_OVERL_CPROD",
+			"SIMP_TYPE_DPROD", "SIMP_TYPE_PPROD" } )
 	@Override
 	public Expression rewrite(BinaryExpression expression) {
 		final Expression result;
@@ -2270,6 +2404,38 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				}
 			}
 			
+			/**
+			 * SIMP_TYPE_DPROD
+			 *    Ta ⊗ Tb == Tc × (Td × Te)
+			 *	  (where Ta and Tb are type expressions such as Ta = Tc × Td and Tb = Tc × Te)
+			 */
+			Dprod(Cprod(Tc, Td), Cprod(Tc, Te)) -> {
+				if (level2 && `Tc.isATypeExpression() &&
+					`Td.isATypeExpression() && `Te.isATypeExpression()) {
+					result = makeBinaryExpression(Expression.CPROD,
+								`Tc,
+								makeBinaryExpression(Expression.CPROD, `Td, `Te));
+					trace(expression, result, "SIMP_TYPE_DPROD");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_TYPE_PPROD
+			 *    Ta ∥ Tb == (Tc × Te) × (Td × Tf)
+			 *    (where Ta and Tb are type expressions such as Ta = Tc × Td and Tb = Te × Tf)
+			 */
+			Pprod(Cprod(Tc, Td), Cprod(Te, Tf)) -> {
+				if (level2 && `Tc.isATypeExpression() && `Td.isATypeExpression() &&
+					`Te.isATypeExpression() && `Tf.isATypeExpression()) {
+					result = makeBinaryExpression(Expression.CPROD,
+								makeBinaryExpression(Expression.CPROD, `Tc, `Te),
+								makeBinaryExpression(Expression.CPROD, `Td, `Tf));
+					trace(expression, result, "SIMP_TYPE_PPROD");
+					return result;
+				}
+			}
+			
 		}
 	    return expression;
 	}
@@ -2282,7 +2448,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_RAN_CONVERSE", "SIMP_CONVERSE_ID", "SIMP_SPECIAL_CONVERSE",
 			"SIMP_MULTI_DOM_CPROD", "SIMP_MULTI_RAN_CPROD",
 			"SIMP_KUNION_POW", "SIMP_KUNION_POW1", "SIMP_SPECIAL_KUNION",
-			"SIMP_SPECIAL_KINTER", "SIMP_KINTER_POW" })
+			"SIMP_SPECIAL_KINTER", "SIMP_KINTER_POW", "SIMP_TYPE_CONVERSE",
+			"SIMP_DOM_ID", "SIMP_RAN_ID", "SIMP_DOM_PRJ1", "SIMP_DOM_PRJ2",
+			"SIMP_RAN_PRJ1", "SIMP_RAN_PRJ2", "SIMP_TYPE_DOM",
+			"SIMP_TYPE_RAN"})
 	@Override
 	public Expression rewrite(UnaryExpression expression) {
 		final Expression result;
@@ -2634,7 +2803,121 @@ public class AutoRewriterImpl extends DefaultRewriter {
 					return result;
 				}
 			}
-	    
+			
+			/**
+			 * SIMP_TYPE_CONVERSE
+			 *    Ty∼ = Tb × Ta (where Ty is a type expression and Ty = Ta × Tb)
+			 */
+			Converse(Cprod(Ta, Tb)) -> {
+				if (level2 && `Ta.isATypeExpression() && `Tb.isATypeExpression()) {
+					result = makeBinaryExpression(Expression.CPROD, `Tb, `Ta);
+					trace(expression, result, "SIMP_TYPE_CONVERSE");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_DOM_ID
+			 *    dom(id) == S (where id has type ℙ(S×S))
+			 */
+			Dom(id@IdGen()) -> {
+				if (level2) {
+					final Type s = `id.getType().getSource();
+					result = s.toExpression(ff);
+					trace(expression, result, "SIMP_DOM_ID");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_RAN_ID
+			 *    ran(id) == S (where id has type ℙ(S×S))
+			 */
+			Ran(id@IdGen()) -> {
+				if (level2) {
+					final Type s = `id.getType().getSource();
+					result = s.toExpression(ff);
+					trace(expression, result, "SIMP_RAN_ID");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_DOM_PRJ1
+			 *    dom(prj1) == S × T (where prj1 has type ℙ(S×T×S))
+			 */
+			Dom(prj1@Prj1Gen()) -> {
+				if (level2) {
+					final Type st = `prj1.getType().getSource();
+					result = st.toExpression(ff);
+					trace(expression, result, "SIMP_DOM_PRJ1");
+					return result;		
+				}
+			}
+			
+			/**
+			 * SIMP_DOM_PRJ2
+			 *    dom(prj2) == S × T (where prj2 has type ℙ(S×T×T))
+			 */
+			Dom(prj2@Prj2Gen()) -> {
+				if (level2) {
+					final Type st = `prj2.getType().getSource();
+					result = st.toExpression(ff);
+					trace(expression, result, "SIMP_DOM_PRJ2");
+					return result;		
+				}
+			}
+			
+			/**
+			 * SIMP_RAN_PRJ1
+			 *    ran(prj1) == S (where prj1 has type ℙ(S×T×S))
+			 */
+			Ran(prj1@Prj1Gen()) -> {
+				if (level2) {
+					final Type st = `prj1.getType().getTarget();
+					result = st.toExpression(ff);
+					trace(expression, result, "SIMP_RAN_PRJ1");
+					return result;		
+				}
+			}
+			
+			/**
+			 * SIMP_RAN_PRJ2
+			 *    ran(prj2) == T (where prj2 has type ℙ(S×T×T))
+			 */
+			Ran(prj2@Prj2Gen()) -> {
+				if (level2) {
+					final Type st = `prj2.getType().getTarget();
+					result = st.toExpression(ff);
+					trace(expression, result, "SIMP_RAN_PRJ2");
+					return result;		
+				}
+			}
+			
+			/**
+			 * SIMP_TYPE_DOM
+			 *    dom(Ty) == Ta (where Ty is a type expression equal to Ta×Tb)
+			 */
+			Dom(Cprod(Ta, Tb)) -> {
+				if (level2 && `Ta.isATypeExpression() && `Tb.isATypeExpression()) {
+					result = `Ta;
+					trace(expression, result, "SIMP_TYPE_DOM");
+					return result;		
+				}
+			}
+			 
+			/**
+			 * SIMP_TYPE_RAN
+			 *    ran(Ty) == Tb (where Ty is a type expression equal to Ta×Tb)
+			 */
+			Ran(Cprod(Ta, Tb)) -> {
+				if (level2 && `Ta.isATypeExpression() && `Tb.isATypeExpression()) {
+					result = `Tb;
+					trace(expression, result, "SIMP_TYPE_RAN");
+					return result;
+				}
+			}
+			
 	    }
 	    return expression;
 	}
@@ -2789,7 +3072,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_SPECIAL_COMPSET_BFALSE
 	    	 *    {x · ⊥ ∣ x} == ∅
 	    	 */
-	    	Cset(bidList(_), BFALSE(), _) -> {
+	    	Cset(_, BFALSE(), _) -> {
 	    		if (level2) {
 	    			result = makeEmptySet(expression.getType());
 	    			trace(expression, result, "SIMP_SPECIAL_COMPSET_BFALSE");
@@ -2801,6 +3084,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_SPECIAL_COMPSET_BTRUE
 	    	 *    {x · ⊤ ∣ x} == Ty (where the type of x is Ty)
 	    	 */
+	    	// TODO generalize to the case where the expression is a maplet
+	    	// combination of pairwise distinct locally bound variables.
 	    	Cset(bidList(_), BTRUE(), bi@BoundIdentifier(0)) -> {
 	    		if (level2) {
 	    			result = `bi.getType().toExpression(ff);
@@ -2813,7 +3098,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_SPECIAL_QUNION
 	    	 *    ⋃x · ⊥ ∣ E == ∅
 	    	 */
-	    	Qunion(bidList(_), BFALSE(), _) -> {
+	    	Qunion(_, BFALSE(), _) -> {
 	    		if (level2) {
 	    			result = makeEmptySet(expression.getType());
 	    			trace(expression, result, "SIMP_SPECIAL_QUNION");

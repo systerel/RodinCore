@@ -567,6 +567,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		expressionTest("{∅⦂ℙ(S×T)}", "(∅⦂ℙ(S))  (∅⦂ℙ(T))");
 		expressionTest("{∅⦂ℙ(S×T)}", "(∅⦂ℙ(S)) ↠ (∅⦂ℙ(T))");
 		expressionTest("{∅⦂ℙ(S×T)}", "(∅⦂ℙ(S)) ⤖ (∅⦂ℙ(T))");
+		
+		// some relations were not tested because they are matched previously
 	}
 	
 	/**
@@ -593,7 +595,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_SPECIAL_COMPSET_BFALSE() {
 		expressionTest("∅⦂ℙ(S)", "{x⦂S · ⊥ ∣ E}", "E", "S");
-		expressionTest("{x⦂S, y⦂S · ⊥ ∣ E}", "{x⦂S, y⦂S · ⊥ ∣ E}", "E", "S");
+		expressionTest("∅⦂ℙ(S)", "{x⦂S, y⦂S · ⊥ ∣ E}", "E", "S");
 	}
 	
 	/**
@@ -635,7 +637,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_SPECIAL_QUNION() {
 		expressionTest("∅⦂ℙ(S)", "⋃ x⦂S · ⊥ ∣ E", "E", "ℙ(S)");
-		expressionTest("⋃ x⦂S, y⦂S · ⊥ ∣ E", "⋃ x⦂S, y⦂S · ⊥ ∣ E", "E", "ℙ(S)");
+		expressionTest("∅⦂ℙ(S)", "⋃ x⦂S, y⦂S · ⊥ ∣ E", "E", "ℙ(S)");
 	}
 	
 	/**
@@ -662,4 +664,215 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		predicateTest("finite(S)", "finite(id⦂S↔S)", "S", "ℙ(S)");
 	}
 
+	/**
+	 * Ensures that rule SIMP_TYPE_OVERL_CPROD is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_TYPE_OVERL_CPROD() {
+		expressionTest("Ty × S", "r  (Ty × S)", "Ty", "ℙ(Ty)", "S", "ℙ(T)");
+		expressionTest("r  (T × S)", "r  (T × S)", "T", "ℙ(U)", "S", "ℙ(V)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_SPECIAL_EQUAL_REL is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_SPECIAL_EQUAL_REL() {
+		predicateTest("⊥", "A ↔ B = ∅⦂ℙ(A ↔ B)");
+		predicateTest("⊥", "A ⇸ B = ∅⦂ℙ(A ↔ B)");
+		predicateTest("⊥", "A ⤔ B = ∅⦂ℙ(A ↔ B)");
+		
+		// some relations were not tested because they are matched previously
+		
+		// this test is the surjective relation
+		predicateTest("A  B = ∅⦂ℙ(A ↔ B)", "A  B = ∅⦂ℙ(A ↔ B)");
+		// this test is the surjective total relation
+		predicateTest("A  B = ∅⦂ℙ(A ↔ B)", "A  B = ∅⦂ℙ(A ↔ B)");
+		predicateTest("A ⤀ B = ∅⦂ℙ(A ↔ B)", "A ⤀ B = ∅⦂ℙ(A ↔ B)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_SPECIAL_EQUAL_RELDOM is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_SPECIAL_EQUAL_RELDOM() {
+		// this test is the total relation
+		predicateTest("¬(A = ∅⦂ℙ(A)) ∧ B = ∅⦂ℙ(B)", "A  B = ∅⦂ℙ(A ↔ B)");
+		predicateTest("¬(A = ∅⦂ℙ(A)) ∧ B = ∅⦂ℙ(B)", "A → B = ∅⦂ℙ(A ↔ B)");
+		predicateTest("¬(A = ∅⦂ℙ(A)) ∧ B = ∅⦂ℙ(B)", "A ↣ B = ∅⦂ℙ(A ↔ B)");
+		predicateTest("¬(A = ∅⦂ℙ(A)) ∧ B = ∅⦂ℙ(B)", "A ↠ B = ∅⦂ℙ(A ↔ B)");
+		predicateTest("¬(A = ∅⦂ℙ(A)) ∧ B = ∅⦂ℙ(B)", "A ⤖ B = ∅⦂ℙ(A ↔ B)");
+		
+		// some relations were not tested because they are matched previously
+		
+		// this test is the surjective relation
+		predicateTest("A  B = ∅⦂ℙ(A ↔ B)", "A  B = ∅⦂ℙ(A ↔ B)");
+		// this test is the surjective total relation
+		predicateTest("A  B = ∅⦂ℙ(A ↔ B)", "A  B = ∅⦂ℙ(A ↔ B)");
+		predicateTest("A ⤀ B = ∅⦂ℙ(A ↔ B)", "A ⤀ B = ∅⦂ℙ(A ↔ B)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_FINITE_LAMBDA is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_FINITE_LAMBDA() {
+		predicateTest("finite({x · x = 5 ∣ x})", "finite(λ x · x = 5 ∣ E)", "E", "S");
+		predicateTest("finite({x · x ∈ ℕ ∣ x})", "finite(λ x · x ∈ ℕ ∣ E)", "E", "S");
+		predicateTest("finite(λ x↦y · x ∈ ℕ ∧ y ∈ BOOL ∣ E)",
+				"finite(λ x↦y · x ∈ ℕ ∧ y ∈ BOOL ∣ E)", "E", "S");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_TYPE_FCOMP_R is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_TYPE_FCOMP_R() {
+		expressionTest("dom(r) × U", "r ; (T×U)", //
+				"r", "S↔T", "T", "ℙ(T)", "U", "ℙ(U)");
+		expressionTest("r ; (T×U)", "r ; (T×U)", //
+				"r", "S↔T", "T", "ℙ(T)", "U", "ℙ(W)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_TYPE_FCOMP_L is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_TYPE_FCOMP_L() {
+		expressionTest("T × ran(r)", "(T×U) ; r", //
+				"r", "U↔V", "T", "ℙ(T)", "U", "ℙ(U)");
+		expressionTest("(T×U) ; r", "(T×U) ; r", //
+				"r", "U↔V", "T", "ℙ(W)", "U", "ℙ(U)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_TYPE_BCOMP_L is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_TYPE_BCOMP_L() {
+		expressionTest("dom(r) × U", "(T×U) ∘ r", //
+				"r", "S↔T", "T", "ℙ(T)", "U", "ℙ(U)");
+		expressionTest("(T×U) ∘ r", "(T×U) ∘ r", //
+				"r", "S↔T", "T", "ℙ(T)", "U", "ℙ(W)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_TYPE_BCOMP_R is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_TYPE_BCOMP_R() {
+		expressionTest("T × ran(r)", "r ∘ (T×U)", //
+				"r", "U↔V", "T", "ℙ(T)", "U", "ℙ(U)");
+		expressionTest("r ∘ (T×U)", "r ∘ (T×U)", //
+				"r", "U↔V", "T", "ℙ(W)", "U", "ℙ(U)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_TYPE_DPROD is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_TYPE_DPROD() {
+		expressionTest("A×(B×C)", "(A×B) ⊗ (A×C)", //
+				"A", "ℙ(A)", "B", "ℙ(B)", "C", "ℙ(C)");
+		expressionTest("(A×B) ⊗ (A×C)", "(A×B) ⊗ (A×C)", //
+				"A", "ℙ(S)", "B", "ℙ(B)", "C", "ℙ(C)");
+		expressionTest("(A×B) ⊗ (A×C)", "(A×B) ⊗ (A×C)", //
+				"A", "ℙ(A)", "B", "ℙ(S)", "C", "ℙ(C)");
+		expressionTest("(A×B) ⊗ (A×C)", "(A×B) ⊗ (A×C)", //
+				"A", "ℙ(A)", "B", "ℙ(B)", "C", "ℙ(S)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_TYPE_PPROD is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_TYPE_PPROD() {
+		expressionTest("(A × C) × (B × D)", "(A × B) ∥ (C × D)", //
+				"A", "ℙ(A)", "B", "ℙ(B)", "C", "ℙ(C)", "D", "ℙ(D)");
+		expressionTest("(A × B) ∥ (C × D)", "(A × B) ∥ (C × D)", //
+				"A", "ℙ(S)", "B", "ℙ(B)", "C", "ℙ(C)", "D", "ℙ(D)");
+		expressionTest("(A × B) ∥ (C × D)", "(A × B) ∥ (C × D)", //
+				"A", "ℙ(A)", "B", "ℙ(S)", "C", "ℙ(C)", "D", "ℙ(D)");
+		expressionTest("(A × B) ∥ (C × D)", "(A × B) ∥ (C × D)", //
+				"A", "ℙ(A)", "B", "ℙ(B)", "C", "ℙ(S)", "D", "ℙ(D)");
+		expressionTest("(A × B) ∥ (C × D)", "(A × B) ∥ (C × D)", //
+				"A", "ℙ(A)", "B", "ℙ(B)", "C", "ℙ(C)", "D", "ℙ(S)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_TYPE_CONVERSE is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_TYPE_CONVERSE() {
+		expressionTest("(B × A)", "(A × B)∼", "A", "ℙ(A)", "B", "ℙ(B)");
+		expressionTest("(A × B)∼", "(A × B)∼", "A", "ℙ(S)", "B", "ℙ(B)");
+		expressionTest("(A × B)∼", "(A × B)∼", "A", "ℙ(A)", "B", "ℙ(S)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_DOM_ID is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_DOM_ID() {
+		expressionTest("S", "dom(id⦂S↔S)", "S", "ℙ(S)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_RAN_ID is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_RAN_ID() {
+		expressionTest("S", "ran(id⦂S↔S)", "S", "ℙ(S)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_DOM_PRJ1 is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_DOM_PRJ1() {
+		expressionTest("S × T", "dom(prj1⦂ℙ(S×T×S))", "S", "ℙ(S)", "T", "ℙ(T)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_DOM_PRJ2 is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_DOM_PRJ2() {
+		expressionTest("S × T", "dom(prj2⦂ℙ(S×T×T))", "S", "ℙ(S)", "T", "ℙ(T)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_RAN_PRJ1 is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_RAN_PRJ1() {
+		expressionTest("S", "ran(prj1⦂ℙ(S×T×S))", "S", "ℙ(S)", "T", "ℙ(T)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_RAN_PRJ2 is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_RAN_PRJ2() {
+		expressionTest("T", "ran(prj2⦂ℙ(S×T×T))", "S", "ℙ(S)", "T", "ℙ(T)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_TYPE_DOM is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_TYPE_DOM() {
+		expressionTest("A", "dom(A×B)", "A", "ℙ(A)", "B", "ℙ(B)");
+		expressionTest("dom(A×B)", "dom(A×B)", "A", "ℙ(S)", "B", "ℙ(T)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_TYPE_RAN is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_TYPE_RAN() {
+		expressionTest("B", "ran(A×B)", "A", "ℙ(A)", "B", "ℙ(B)");
+		expressionTest("ran(A×B)", "ran(A×B)", "A", "ℙ(S)", "B", "ℙ(T)");
+	}
+	
 }
