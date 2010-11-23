@@ -127,7 +127,8 @@ public class TacticsLib {
 	 */
 	public static InDomGoalManager createInDomManager(final Predicate goal) {
 		final List<IPosition> domPositions = TacticsLib.findDomExpression(goal);
-		assert(domPositions.size()==1);
+		assert(domPositions.size()==1); // FIXME assertion in contradiction with javadoc
+		// throws an error that breaks the AutoProver
 		final UnaryExpression domExpr = ((UnaryExpression) goal
 					.getSubFormula(domPositions.get(0)));
 		final InDomGoalManager inDomMng = new InDomGoalManager(domExpr,

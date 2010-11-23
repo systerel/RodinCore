@@ -171,4 +171,15 @@ public class InDomGoalTacTests {
 		assertFailure(pt.getRoot());
 	}
 
+	/**
+	 * Test for bug 3116665: Assertion error with tactic "Belongs to Domain"
+	 */
+	@Test
+	public void testBug3116665() throws Exception {
+		final IProofTree pt = genProofTree(//
+				"v∈dom(dom({1↦1↦1}))" //
+		);
+		// the following throws an assertion error when the bug is present
+		tac.apply(pt.getRoot(), null);
+	}
 }
