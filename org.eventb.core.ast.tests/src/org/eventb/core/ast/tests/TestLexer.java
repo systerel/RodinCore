@@ -25,6 +25,11 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
+import org.eventb.core.ast.extension.datatype.IConstructorMediator;
+import org.eventb.core.ast.extension.datatype.IDatatype;
+import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
+import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
+import org.eventb.internal.core.lexer.GenScan;
 import org.eventb.internal.core.lexer.Scanner;
 import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.ParseResult;
@@ -147,4 +152,55 @@ public class TestLexer extends AbstractTests {
 		assertFalse(FormulaFactory.checkSymbol("\u2b50WithId"));
 	}
 
+	private static FormulaFactory makeFactory(final String... lexems) {
+		final IDatatypeExtension extn = new IDatatypeExtension() {
+
+			@Override
+			public String getTypeName() {
+				return "ExtnTypeName";
+			}
+
+			@Override
+			public String getId() {
+				return "extnId";
+			}
+
+			@Override
+			public void addTypeParameters(ITypeConstructorMediator mediator) {
+				// none
+			}
+
+			@Override
+			public void addConstructors(IConstructorMediator mediator) {
+				for (String lexem : lexems) {
+					mediator.addConstructor(lexem, lexem);
+				}
+			}
+
+		};
+		final IDatatype extnDT = ff.makeDatatype(extn);
+		return FormulaFactory.getInstance(extnDT.getExtensions());
+	}
+	
+	public void testBug3116812_1() throws Exception {
+		final FormulaFactory fac = makeFactory("pt", "pt1", "pt2");
+		// when the bug is present, the following is false
+		// and the recognized token is only "pt2"
+		assertTrue("expected an identifier", fac.isValidIdentifierName("pt21"));
+	}
+	
+	public void testBug3116812_2() throws Exception {
+		// symbol "partition" is already present in the standard grammar
+		final FormulaFactory fac = makeFactory("partition1", "partition2");
+		// the bug makes the following code throw AssertionFailedError
+		GenScan.getLexer(fac.getGrammar());
+	}
+
+	public void testBug3116812_3() throws Exception {
+		// symbols "prj1", "prj2" are already present in the standard grammar
+		final FormulaFactory fac = makeFactory("prj");
+		// the bug makes the following code throw AssertionFailedError
+		GenScan.getLexer(fac.getGrammar());
+	}
+	
 }
