@@ -40,109 +40,111 @@ import org.eventb.internal.core.parser.ParseResult;
  */
 public class TestLexer extends AbstractTests {
 
-        private static final String[] invalidStrings = new String[] {
-        	"-",
-        	"/",
-        };
-        
-        private static int getExpectedKind(int kind, LanguageVersion version) {
-        	if (kind == B_MATH_V2.getPARTITION() && version == V1)
-        		return B_MATH_V2.getIDENT();
-        	return kind;
-        }
+	private static final String[] invalidStrings = new String[] { //
+		"-", //
+		"/", //
+	};
 
-       /**
-         * Tests all the tokens that are needed to construct an event-B formula.
-         */
-        public void testToken() {
-        	
-        	for (LanguageVersion version : LanguageVersion.values()) {
-        		testAllTokens(version);
-        	}
-        }
+	private static int getExpectedKind(int kind, LanguageVersion version) {
+		if (kind == B_MATH_V2.getPARTITION() && version == V1)
+			return B_MATH_V2.getIDENT();
+		return kind;
+	}
 
-        // Check each token string through the lexical analyzer.
-        private void testAllTokens(LanguageVersion version) {
-        	for (Entry<String, Integer> token : B_MATH_V2.getTokens().entrySet()) {
-        		final String image = token.getKey();
-        		final Integer kind = token.getValue();
-        		testToken(image, kind, version);
-			}
-        	testToken("", B_MATH_V2.getEOF(), version);
-           	testToken("x", B_MATH_V2.getIDENT(), version);
-           	testToken("_toto", B_MATH_V2.getIDENT(), version);
-          	testToken("x'", B_MATH_V2.getIDENT(), version);
-        	testToken("2", B_MATH_V2.getINTLIT(), version);
-        	testToken("001", B_MATH_V2.getINTLIT(), version);
-        	testToken("$P", B_MATH_V2.getPREDVAR(), version);
-        	testToken("$_toto", B_MATH_V2.getPREDVAR(), version);
-        	testToken("p'", B_MATH_V2.getIDENT(), version);
-        	testToken("prj'", B_MATH_V2.getIDENT(), version);
-        }
+	/**
+	 * Tests all the tokens that are needed to construct an event-B formula.
+	 */
+	public void testToken() {
+		for (LanguageVersion version : LanguageVersion.values()) {
+			testAllTokens(version);
+		}
+	}
+
+	// Check each token string through the lexical analyzer.
+	private void testAllTokens(LanguageVersion version) {
+		for (Entry<String, Integer> token : B_MATH_V2.getTokens().entrySet()) {
+			final String image = token.getKey();
+			final Integer kind = token.getValue();
+			testToken(image, kind, version);
+		}
+		testToken("", B_MATH_V2.getEOF(), version);
+		testToken("x", B_MATH_V2.getIDENT(), version);
+		testToken("_toto", B_MATH_V2.getIDENT(), version);
+		testToken("x'", B_MATH_V2.getIDENT(), version);
+		testToken("2", B_MATH_V2.getINTLIT(), version);
+		testToken("001", B_MATH_V2.getINTLIT(), version);
+		testToken("$P", B_MATH_V2.getPREDVAR(), version);
+		testToken("$_toto", B_MATH_V2.getPREDVAR(), version);
+		testToken("p'", B_MATH_V2.getIDENT(), version);
+		testToken("prj'", B_MATH_V2.getIDENT(), version);
+	}
 
 	private void testToken(String image, Integer kind, LanguageVersion version) {
-			ParseResult result = new ParseResult(ff, version, null);
-			Scanner scanner = new Scanner(image, result, B_MATH_V2);
+		ParseResult result = new ParseResult(ff, version, null);
+		Scanner scanner = new Scanner(image, result, B_MATH_V2);
+		Token t = scanner.Scan();
+		assertEquals(image, t.val);
+		final String msg = "for \"" + image + "\" with language " + version;
+		assertEquals(msg, getExpectedKind(kind, version), t.kind);
+	}
+
+	/**
+	 * Ensure that invalid tokens get rejected.
+	 */
+	public void testInvalidStrings() {
+		for (LanguageVersion version : LanguageVersion.values()) {
+			testInvalidStrings(version);
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	private void testInvalidStrings(LanguageVersion version) {
+		for (String string : invalidStrings) {
+			final IParseResult result = new ParseResult(ff, version, null);
+			Scanner scanner = new Scanner(string, (ParseResult) result,
+					B_MATH_V2);
 			Token t = scanner.Scan();
-			assertEquals(image, t.val);
-			final String msg = "for \"" + image + "\" with language " + version;
-			assertEquals(msg, getExpectedKind(kind, version), t.kind);
+			assertTrue("Scanner should have succeeded", result.isSuccess());
+			assertTrue(t.kind == 0); // _EOF
+			assertTrue("Scanner should have a problem", result.hasProblem());
+			List<ASTProblem> problems = result.getProblems();
+			assertEquals("Should get one problem", 1, problems.size());
+			ASTProblem problem = problems.get(0);
+			assertEquals("The problem should be a warning",
+					ProblemSeverities.Warning, problem.getSeverity());
+			assertEquals("The problem should be a lexer error",
+					ProblemKind.LexerError, problem.getMessage());
 		}
+	}
 
-        /**
-         * Ensure that invalid tokens get rejected.
-         */
-        public void testInvalidStrings() {
-        	for (LanguageVersion version : LanguageVersion.values()) {
-        		testInvalidStrings(version);
-        	}
-        }
+	public void testIsValidIdentifierName() throws Exception {
+		assertTrue(ff.isValidIdentifierName("foo"));
+		assertTrue(ff.isValidIdentifierName("foo'"));
+		assertFalse(ff.isValidIdentifierName("foo''"));
+		assertFalse(ff.isValidIdentifierName("foo bar"));
+		assertFalse(ff.isValidIdentifierName(" foo"));
+		assertFalse(ff.isValidIdentifierName("foo "));
+		assertFalse(ff.isValidIdentifierName("foo	bar"));
+		assertFalse(ff.isValidIdentifierName("foo'bar"));
+		assertFalse(ff.isValidIdentifierName("'"));
+		assertFalse(ff.isValidIdentifierName("'foo"));
+		assertFalse(ff.isValidIdentifierName("prj1"));
+		assertFalse(ff.isValidIdentifierName(""));
+		assertFalse(ff.isValidIdentifierName("    "));
+		assertFalse(ff.isValidIdentifierName("$P"));
+		assertFalse(ff.isValidIdentifierName("l$"));
+		assertFalse(ff.isValidIdentifierName("prj1'"));
+		assertFalse(ff.isValidIdentifierName("prj'p"));
+		assertFalse(ff.isValidIdentifierName("partition'"));
+	}
 
-		@SuppressWarnings("deprecation")
-		private void testInvalidStrings(LanguageVersion version) {
-			for (String string : invalidStrings) {
-    			final IParseResult result = new ParseResult(ff, version, null);
-    			Scanner scanner = new Scanner(string, (ParseResult) result, B_MATH_V2);
-    			Token t = scanner.Scan();
-    			assertTrue("Scanner should have succeeded", result.isSuccess());
-    			assertTrue(t.kind == 0);	// _EOF
-    			assertTrue("Scanner should have a problem", result.hasProblem());
-    			List<ASTProblem> problems = result.getProblems();
-    			assertEquals("Should get one problem", 1, problems.size());
-    			ASTProblem problem = problems.get(0);
-    			assertEquals("The problem should be a warning", ProblemSeverities.Warning, problem.getSeverity());
-    			assertEquals("The problem should be a lexer error", ProblemKind.LexerError, problem.getMessage());
-        	}
-        }
-		
-		public void testIsValidIdentifierName() throws Exception {
-			assertTrue(ff.isValidIdentifierName("foo"));
-			assertTrue(ff.isValidIdentifierName("foo'"));
-			assertFalse(ff.isValidIdentifierName("foo''"));
-			assertFalse(ff.isValidIdentifierName("foo bar"));
-			assertFalse(ff.isValidIdentifierName(" foo"));
-			assertFalse(ff.isValidIdentifierName("foo "));
-			assertFalse(ff.isValidIdentifierName("foo	bar"));
-			assertFalse(ff.isValidIdentifierName("foo'bar"));
-			assertFalse(ff.isValidIdentifierName("'"));
-			assertFalse(ff.isValidIdentifierName("'foo"));
-			assertFalse(ff.isValidIdentifierName("prj1"));
-			assertFalse(ff.isValidIdentifierName(""));
-			assertFalse(ff.isValidIdentifierName("    "));
-			assertFalse(ff.isValidIdentifierName("$P"));
-			assertFalse(ff.isValidIdentifierName("l$"));
-			assertFalse(ff.isValidIdentifierName("prj1'"));
-			assertFalse(ff.isValidIdentifierName("prj'p"));
-			assertFalse(ff.isValidIdentifierName("partition'"));
-		}
-		
-		public void testCheckSymbol() throws Exception {
-			assertTrue(FormulaFactory.checkSymbol("ident_like€SYMBOL"));
-			assertTrue(FormulaFactory.checkSymbol("\u2b50"));
-			assertTrue(FormulaFactory.checkSymbol("\u2b50\u2b11"));
-			assertFalse(FormulaFactory.checkSymbol(""));
-			assertFalse(FormulaFactory.checkSymbol("idWith\u2b50Symbol"));
-			assertFalse(FormulaFactory.checkSymbol("\u2b50WithId"));
-		}
+	public void testCheckSymbol() throws Exception {
+		assertTrue(FormulaFactory.checkSymbol("ident_like€SYMBOL"));
+		assertTrue(FormulaFactory.checkSymbol("\u2b50"));
+		assertTrue(FormulaFactory.checkSymbol("\u2b50\u2b11"));
+		assertFalse(FormulaFactory.checkSymbol(""));
+		assertFalse(FormulaFactory.checkSymbol("idWith\u2b50Symbol"));
+		assertFalse(FormulaFactory.checkSymbol("\u2b50WithId"));
+	}
 
 }
