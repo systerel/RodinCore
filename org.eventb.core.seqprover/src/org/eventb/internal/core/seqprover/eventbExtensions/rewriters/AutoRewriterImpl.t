@@ -340,13 +340,11 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_FINITE_LAMBDA
 			 *    finite(λ x · P ∣ E) == finite({x · P ∣ x})
 			 */
-			Finite(Cset(bil@bidList(_), P, _)) -> {
+			Finite(Cset(bil, P, Mapsto(D,_))) -> {
 				if (level2) {
 					result = makeSimplePredicate(Predicate.KFINITE,
 								makeQuantifiedExpression(Expression.CSET,
-									`bil, `P,
-									makeBoundIdentifier(0, `bil[0].getType()),
-									Form.Explicit));			
+									`bil, `P, `D, Form.Explicit));
 					trace(predicate, result, "SIMP_FINITE_LAMBDA");
 					return result;
 				}

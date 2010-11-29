@@ -729,7 +729,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		predicateTest("finite({x↦y ∣ x ∈ ℕ ∧ y ∈ BOOL})",
 				"finite(λ x↦y · x ∈ ℕ ∧ y ∈ BOOL ∣ E)", "E", "S");
 		predicateTest("finite({x↦(y↦z) ∣ x = y+z})",
-				"finite(λ x↦(y↦z) · x = y+z ∣ x-y+z)");
+				"finite(λ x↦(y↦z) · x = y+z ∣ x−y+z)");
 	}
 	
 	/**
