@@ -595,7 +595,10 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_SPECIAL_COMPSET_BFALSE() {
 		expressionTest("∅⦂ℙ(S)", "{x⦂S · ⊥ ∣ E}", "E", "S");
+		expressionTest("∅⦂ℙ(S)", "{x⦂S · ⊥ ∣ x}");
+		expressionTest("∅⦂ℙ(ℤ)", "{x · ⊥ ∣ x+1}");
 		expressionTest("∅⦂ℙ(S)", "{x⦂S, y⦂S · ⊥ ∣ E}", "E", "S");
+		expressionTest("∅⦂ℙ(S)", "{x⦂S, y⦂S · ⊥ ∣ y}");
 	}
 	
 	/**
@@ -637,6 +640,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_SPECIAL_QUNION() {
 		expressionTest("∅⦂ℙ(S)", "⋃ x⦂S · ⊥ ∣ E", "E", "ℙ(S)");
+		expressionTest("∅⦂ℙ(S)", "⋃ x⦂S · ⊥ ∣ {x}");
 		expressionTest("∅⦂ℙ(S)", "⋃ x⦂S, y⦂S · ⊥ ∣ E", "E", "ℙ(S)");
 	}
 	
@@ -678,17 +682,17 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_EQUAL_REL() {
-		predicateTest("⊥", "A ↔ B = ∅⦂ℙ(A ↔ B)");
-		predicateTest("⊥", "A ⇸ B = ∅⦂ℙ(A ↔ B)");
-		predicateTest("⊥", "A ⤔ B = ∅⦂ℙ(A ↔ B)");
+		predicateTest("⊥", "A ↔ B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
+		predicateTest("⊥", "A ⇸ B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
+		predicateTest("⊥", "A ⤔ B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
 		
 		// some relations were not tested because they are matched previously
 		
 		// this test is the surjective relation
-		predicateTest("A  B = ∅⦂ℙ(A ↔ B)", "A  B = ∅⦂ℙ(A ↔ B)");
+		predicateTest("A  B = ∅", "A  B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
 		// this test is the surjective total relation
-		predicateTest("A  B = ∅⦂ℙ(A ↔ B)", "A  B = ∅⦂ℙ(A ↔ B)");
-		predicateTest("A ⤀ B = ∅⦂ℙ(A ↔ B)", "A ⤀ B = ∅⦂ℙ(A ↔ B)");
+		predicateTest("A  B = ∅", "A  B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
+		predicateTest("A ⤀ B = ∅", "A ⤀ B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
 	}
 	
 	/**
@@ -697,19 +701,19 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_SPECIAL_EQUAL_RELDOM() {
 		// this test is the total relation
-		predicateTest("¬(A = ∅⦂ℙ(A)) ∧ B = ∅⦂ℙ(B)", "A  B = ∅⦂ℙ(A ↔ B)");
-		predicateTest("¬(A = ∅⦂ℙ(A)) ∧ B = ∅⦂ℙ(B)", "A → B = ∅⦂ℙ(A ↔ B)");
-		predicateTest("¬(A = ∅⦂ℙ(A)) ∧ B = ∅⦂ℙ(B)", "A ↣ B = ∅⦂ℙ(A ↔ B)");
-		predicateTest("¬(A = ∅⦂ℙ(A)) ∧ B = ∅⦂ℙ(B)", "A ↠ B = ∅⦂ℙ(A ↔ B)");
-		predicateTest("¬(A = ∅⦂ℙ(A)) ∧ B = ∅⦂ℙ(B)", "A ⤖ B = ∅⦂ℙ(A ↔ B)");
+		predicateTest("¬ A=∅ ∧ B=∅", "A  B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
+		predicateTest("¬ A=∅ ∧ B=∅", "A → B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
+		predicateTest("¬ A=∅ ∧ B=∅", "A ↣ B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
+		predicateTest("¬ A=∅ ∧ B=∅", "A ↠ B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
+		predicateTest("¬ A=∅ ∧ B=∅", "A ⤖ B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
 		
 		// some relations were not tested because they are matched previously
 		
 		// this test is the surjective relation
-		predicateTest("A  B = ∅⦂ℙ(A ↔ B)", "A  B = ∅⦂ℙ(A ↔ B)");
+		predicateTest("A  B = ∅", "A  B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
 		// this test is the surjective total relation
-		predicateTest("A  B = ∅⦂ℙ(A ↔ B)", "A  B = ∅⦂ℙ(A ↔ B)");
-		predicateTest("A ⤀ B = ∅⦂ℙ(A ↔ B)", "A ⤀ B = ∅⦂ℙ(A ↔ B)");
+		predicateTest("A  B = ∅", "A  B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
+		predicateTest("A ⤀ B = ∅", "A ⤀ B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
 	}
 	
 	/**
@@ -717,10 +721,15 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_FINITE_LAMBDA() {
-		predicateTest("finite({x · x = 5 ∣ x})", "finite(λ x · x = 5 ∣ E)", "E", "S");
-		predicateTest("finite({x · x ∈ ℕ ∣ x})", "finite(λ x · x ∈ ℕ ∣ E)", "E", "S");
-		predicateTest("finite(λ x↦y · x ∈ ℕ ∧ y ∈ BOOL ∣ E)",
+		predicateTest("finite({x ∣ x = 5})", "finite(λ x · x = 5 ∣ E)", //
+				"E", "S");
+		predicateTest("finite({x ∣ x = 5})", "finite(λ x · x = 5 ∣ x)");
+		predicateTest("finite({x ∣ x ∈ ℕ})", "finite(λ x · x ∈ ℕ ∣ E)", //
+				"E", "S");
+		predicateTest("finite({x↦y ∣ x ∈ ℕ ∧ y ∈ BOOL})",
 				"finite(λ x↦y · x ∈ ℕ ∧ y ∈ BOOL ∣ E)", "E", "S");
+		predicateTest("finite({x↦(y↦z) ∣ x = y+z})",
+				"finite(λ x↦(y↦z) · x = y+z ∣ x-y+z)");
 	}
 	
 	/**
