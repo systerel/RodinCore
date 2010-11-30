@@ -1404,7 +1404,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
             "SIMP_SPECIAL_PROD_0", "SIMP_SPECIAL_PROD_MINUS_EVEN",
             "SIMP_SPECIAL_PROD_MINUS_ODD", "SIMP_SPECIAL_FCOMP",
             "SIMP_SPECIAL_BCOMP", "SIMP_SPECIAL_OVERL", " SIMP_FCOMP_ID_L",
-            "SIMP_FCOMP_ID_R", "SIMP_TYPE_OVERL_CPROD",
+            "SIMP_FCOMP_ID_R",
             "SIMP_TYPE_FCOMP_R", "SIMP_TYPE_FCOMP_L", "SIMP_TYPE_BCOMP_L",
             "SIMP_TYPE_BCOMP_R" })
 	@Override
@@ -1486,17 +1486,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
    				return result;
 	    	}
 	    							
-			/**
-			 * SIMP_TYPE_OVERL_CPROD
-			 *    r  (Ty × S) == Ty × S (where Ty is a type expression)
-			 */
-			Ovr(eList(_, Cprod(Ty, S))) -> {
-				if (level2 && `Ty.isATypeExpression()) {
-					result = makeBinaryExpression(Expression.CPROD, `Ty, `S);
-					trace(expression, result, "SIMP_TYPE_OVERL_CPROD");
-					return result;
-				}
-			}
+
 			
             /**
              * SIMP_SPECIAL_OVERL
@@ -1538,9 +1528,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_TYPE_FCOMP_R
 	    	 *    r ; Ty == dom(r) × Tb (where Ty is a type expression and Ty = Ta × Tb)
 	    	 */
-	    	Fcomp(rt@eList(_, Cprod(Ta, Tb))) -> {
+	    	Fcomp(rt@eList(_, Cprod(_, Tb))) -> {
 				// Workaround Tom 2.2 bug: can't use first element of list
-	    		if (level2 && `Ta.isATypeExpression() && `Tb.isATypeExpression()) {
+	    		if (level2 && `rt[1].isATypeExpression()) {
 	    			result = makeBinaryExpression(Expression.CPROD,
 	    						makeUnaryExpression(Expression.KDOM, `rt[0]),
 	    						`Tb);
@@ -1553,9 +1543,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_TYPE_FCOMP_L
 	    	 *    Ty ; r == Ta × ran(r) (where Ty is a type expression and Ty = Ta × Tb)
 	    	 */
-	    	Fcomp(tr@eList(Cprod(Ta, Tb), _)) -> {
+	    	Fcomp(tr@eList(Cprod(Ta, _), _)) -> {
 	    		// Workaround Tom 2.2 bug: can't use last element of list
-	    		if (level2 && `Ta.isATypeExpression() && `Tb.isATypeExpression()) {
+	    		if (level2 && `tr[0].isATypeExpression()) {
 	    			result = makeBinaryExpression(Expression.CPROD,
 	    						`Ta,
 	    						makeUnaryExpression(Expression.KRAN, `tr[1]));
@@ -1568,9 +1558,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_TYPE_BCOMP_L
 	    	 *    Ty ∘ r == dom(r) × Tb (where Ty is a type expression and Ty = Ta × Tb)
 	    	 */
-	    	Bcomp(tr@eList(Cprod(Ta, Tb), _)) -> {
+	    	Bcomp(tr@eList(Cprod(_, Tb), _)) -> {
 	    		// Workaround Tom 2.2 bug: can't use last element of list
-	    		if (level2 && `Ta.isATypeExpression() && `Tb.isATypeExpression()) {
+	    		if (level2 && `tr[0].isATypeExpression()) {
 	    			result = makeBinaryExpression(Expression.CPROD,
 	    						makeUnaryExpression(Expression.KDOM, `tr[1]),
 	    						`Tb);
@@ -1583,9 +1573,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_TYPE_BCOMP_R
 	    	 *    r ∘ Ty == Ta × ran(r) (where Ty is a type expression and Ty = Ta × Tb)
 	    	 */
-	    	Bcomp(tr@eList(_, Cprod(Ta, Tb))) -> {
+	    	Bcomp(tr@eList(_, Cprod(Ta, _))) -> {
 	    		// Workaround Tom 2.2 bug: can't use first element of list
-	    		if (level2 && `Ta.isATypeExpression() && `Tb.isATypeExpression()) {
+	    		if (level2 && `tr[1].isATypeExpression()) {
 	    			result = makeBinaryExpression(Expression.CPROD,
 	    						`Ta,
 	    						makeUnaryExpression(Expression.KRAN, `tr[0]));
@@ -1630,7 +1620,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_RELIMAGE_CONVERSE_DOMSUB", "SIMP_MULTI_RELIMAGE_DOMSUB",
 			"SIMP_SPECIAL_REL_R", "SIMP_SPECIAL_REL_L",
 			"SIMP_FUNIMAGE_PRJ1", "SIMP_FUNIMAGE_PRJ2", "SIMP_FUNIMAGE_ID",
-			"SIMP_SPECIAL_EQUAL_RELDOMRAN", "SIMP_TYPE_OVERL_CPROD",
+			"SIMP_SPECIAL_EQUAL_RELDOMRAN",
 			"SIMP_TYPE_DPROD", "SIMP_TYPE_PPROD",
 			"SIMP_SPECIAL_MOD_0", "SIMP_SPECIAL_MOD_1" } )
 	@Override
@@ -2439,6 +2429,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 *    Ta ⊗ Tb == Tc × (Td × Te)
 			 *	  (where Ta and Tb are type expressions such as Ta = Tc × Td and Tb = Tc × Te)
 			 */
+			// TODO : waiting for the wiki to be updated with the correct version
+			// of the rule
+			/*
 			Dprod(Cprod(Tc, Td), Cprod(Tc, Te)) -> {
 				if (level2 && `Tc.isATypeExpression() &&
 					`Td.isATypeExpression() && `Te.isATypeExpression()) {
@@ -2449,12 +2442,16 @@ public class AutoRewriterImpl extends DefaultRewriter {
 					return result;
 				}
 			}
+			*/
 			
 			/**
 			 * SIMP_TYPE_PPROD
 			 *    Ta ∥ Tb == (Tc × Te) × (Td × Tf)
 			 *    (where Ta and Tb are type expressions such as Ta = Tc × Td and Tb = Te × Tf)
 			 */
+			// TODO : waiting for the wiki to be updated with the correct version
+			// of the rule
+			/*
 			Pprod(Cprod(Tc, Td), Cprod(Te, Tf)) -> {
 				if (level2 && `Tc.isATypeExpression() && `Td.isATypeExpression() &&
 					`Te.isATypeExpression() && `Tf.isATypeExpression()) {
@@ -2465,6 +2462,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 					return result;
 				}
 			}
+			*/
 			
 			/**
 			 * SIMP_SPECIAL_MOD_0
@@ -2864,6 +2862,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_TYPE_CONVERSE
 			 *    Ty∼ = Tb × Ta (where Ty is a type expression and Ty = Ta × Tb)
 			 */
+			// TODO : waiting for the wiki to be updated with the correct version
+			// of the rule
+			/*
 			Converse(Cprod(Ta, Tb)) -> {
 				if (level2 && `Ta.isATypeExpression() && `Tb.isATypeExpression()) {
 					result = makeBinaryExpression(Expression.CPROD, `Tb, `Ta);
@@ -2871,6 +2872,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 					return result;
 				}
 			}
+			*/
 			
 			/**
 			 * SIMP_DOM_ID

@@ -568,7 +568,9 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		expressionTest("{∅⦂ℙ(S×T)}", "(∅⦂ℙ(S)) ↠ (∅⦂ℙ(T))");
 		expressionTest("{∅⦂ℙ(S×T)}", "(∅⦂ℙ(S)) ⤖ (∅⦂ℙ(T))");
 		
-		// some relations were not tested because they are matched previously
+		// negative tests for the other types of relations are not written
+		// because they are previously matched by SIMP_SPECIAL_REL_L and
+		// SIMP_SPECIAL_REL_R
 	}
 	
 	/**
@@ -667,32 +669,24 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	public void testSIMP_FINITE_ID() {
 		predicateTest("finite(S)", "finite(id⦂S↔S)", "S", "ℙ(S)");
 	}
-
-	/**
-	 * Ensures that rule SIMP_TYPE_OVERL_CPROD is implemented correctly.
-	 */
-	@Test
-	public void testSIMP_TYPE_OVERL_CPROD() {
-		expressionTest("Ty × S", "r  (Ty × S)", "Ty", "ℙ(Ty)", "S", "ℙ(T)");
-		expressionTest("r  (T × S)", "r  (T × S)", "T", "ℙ(U)", "S", "ℙ(V)");
-	}
 	
 	/**
 	 * Ensures that rule SIMP_SPECIAL_EQUAL_REL is implemented correctly.
 	 */
 	@Test
 	public void testSIMP_SPECIAL_EQUAL_REL() {
-		predicateTest("⊥", "A ↔ B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
-		predicateTest("⊥", "A ⇸ B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
-		predicateTest("⊥", "A ⤔ B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
-		
-		// some relations were not tested because they are matched previously
+		predicateTest("⊥", "A ↔ B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
+		predicateTest("⊥", "A ⇸ B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
+		predicateTest("⊥", "A ⤔ B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
 		
 		// this test is the surjective relation
-		predicateTest("A  B = ∅", "A  B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
+		predicateTest("A  B = ∅", "A  B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
 		// this test is the surjective total relation
-		predicateTest("A  B = ∅", "A  B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
-		predicateTest("A ⤀ B = ∅", "A ⤀ B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
+		predicateTest("A  B = ∅", "A  B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
+		predicateTest("A ⤀ B = ∅", "A ⤀ B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
+		
+		// negative tests for the other types of relations are not written
+		// because they are matched by SIMP_SPECIAL_EQUAL_RELDOM
 	}
 	
 	/**
@@ -701,19 +695,20 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_SPECIAL_EQUAL_RELDOM() {
 		// this test is the total relation
-		predicateTest("¬ A=∅ ∧ B=∅", "A  B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
-		predicateTest("¬ A=∅ ∧ B=∅", "A → B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
-		predicateTest("¬ A=∅ ∧ B=∅", "A ↣ B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
-		predicateTest("¬ A=∅ ∧ B=∅", "A ↠ B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
-		predicateTest("¬ A=∅ ∧ B=∅", "A ⤖ B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
-		
-		// some relations were not tested because they are matched previously
-		
+		predicateTest("¬ A=∅ ∧ B=∅", "A  B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
+		predicateTest("¬ A=∅ ∧ B=∅", "A → B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
+		predicateTest("¬ A=∅ ∧ B=∅", "A ↣ B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
+		predicateTest("¬ A=∅ ∧ B=∅", "A ↠ B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
+		predicateTest("¬ A=∅ ∧ B=∅", "A ⤖ B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
+				
 		// this test is the surjective relation
-		predicateTest("A  B = ∅", "A  B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
+		predicateTest("A  B = ∅", "A  B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
 		// this test is the surjective total relation
-		predicateTest("A  B = ∅", "A  B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
-		predicateTest("A ⤀ B = ∅", "A ⤀ B = ∅", "A", "ℙ(A)", "B", "ℙ(B)");
+		predicateTest("A  B = ∅", "A  B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
+		predicateTest("A ⤀ B = ∅", "A ⤀ B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
+		
+		// negative tests for the other types of relations are not written
+		// because they are matched by SIMP_SPECIAL_EQUAL_REL
 	}
 	
 	/**
@@ -741,6 +736,10 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 				"r", "S↔T", "T", "ℙ(T)", "U", "ℙ(U)");
 		expressionTest("r ; (T×U)", "r ; (T×U)", //
 				"r", "S↔T", "T", "ℙ(T)", "U", "ℙ(W)");
+		expressionTest("r ; (T×U)", "r ; (T×U)", //
+				"r", "S↔V", "T", "ℙ(V)", "U", "ℙ(U)");
+		expressionTest("r ; (T×U)", "r ; (T×U)", //
+				"r", "S↔V", "T", "ℙ(V)", "U", "ℙ(W)");
 	}
 	
 	/**
@@ -751,7 +750,11 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		expressionTest("T × ran(r)", "(T×U) ; r", //
 				"r", "U↔V", "T", "ℙ(T)", "U", "ℙ(U)");
 		expressionTest("(T×U) ; r", "(T×U) ; r", //
-				"r", "U↔V", "T", "ℙ(W)", "U", "ℙ(U)");
+				"r", "U↔V", "T", "ℙ(X)", "U", "ℙ(U)");
+		expressionTest("(T×U) ; r", "(T×U) ; r", //
+				"r", "W↔V", "T", "ℙ(T)", "U", "ℙ(W)");
+		expressionTest("(T×U) ; r", "(T×U) ; r", //
+				"r", "W↔V", "T", "ℙ(X)", "U", "ℙ(W)");
 	}
 	
 	/**
@@ -763,6 +766,10 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 				"r", "S↔T", "T", "ℙ(T)", "U", "ℙ(U)");
 		expressionTest("(T×U) ∘ r", "(T×U) ∘ r", //
 				"r", "S↔T", "T", "ℙ(T)", "U", "ℙ(W)");
+		expressionTest("(T×U) ∘ r", "(T×U) ∘ r", //
+				"r", "S↔V", "T", "ℙ(V)", "U", "ℙ(U)");
+		expressionTest("(T×U) ∘ r", "(T×U) ∘ r", //
+				"r", "S↔V", "T", "ℙ(V)", "U", "ℙ(W)");
 	}
 	
 	/**
@@ -773,12 +780,18 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		expressionTest("T × ran(r)", "r ∘ (T×U)", //
 				"r", "U↔V", "T", "ℙ(T)", "U", "ℙ(U)");
 		expressionTest("r ∘ (T×U)", "r ∘ (T×U)", //
-				"r", "U↔V", "T", "ℙ(W)", "U", "ℙ(U)");
+				"r", "U↔V", "T", "ℙ(X)", "U", "ℙ(U)");
+		expressionTest("r ∘ (T×U)", "r ∘ (T×U)", //
+				"r", "W↔V", "T", "ℙ(T)", "U", "ℙ(W)");
+		expressionTest("r ∘ (T×U)", "r ∘ (T×U)", //
+				"r", "W↔V", "T", "ℙ(X)", "U", "ℙ(W)");
 	}
 	
 	/**
 	 * Ensures that rule SIMP_TYPE_DPROD is implemented correctly.
 	 */
+	/* TODO : waiting for the wiki to be updated with the correct version of the
+	   rule
 	@Test
 	public void testSIMP_TYPE_DPROD() {
 		expressionTest("A×(B×C)", "(A×B) ⊗ (A×C)", //
@@ -790,10 +803,13 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		expressionTest("(A×B) ⊗ (A×C)", "(A×B) ⊗ (A×C)", //
 				"A", "ℙ(A)", "B", "ℙ(B)", "C", "ℙ(S)");
 	}
+	*/
 	
 	/**
 	 * Ensures that rule SIMP_TYPE_PPROD is implemented correctly.
 	 */
+	/* TODO : waiting for the wiki to be updated with the correct version of the
+	   rule
 	@Test
 	public void testSIMP_TYPE_PPROD() {
 		expressionTest("(A × C) × (B × D)", "(A × B) ∥ (C × D)", //
@@ -807,16 +823,20 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		expressionTest("(A × B) ∥ (C × D)", "(A × B) ∥ (C × D)", //
 				"A", "ℙ(A)", "B", "ℙ(B)", "C", "ℙ(C)", "D", "ℙ(S)");
 	}
+	*/
 	
 	/**
 	 * Ensures that rule SIMP_TYPE_CONVERSE is implemented correctly.
 	 */
+	/* TODO : waiting for the wiki to be updated with the correct version of the
+	    rule (test may be uncorrect)
 	@Test
 	public void testSIMP_TYPE_CONVERSE() {
 		expressionTest("(B × A)", "(A × B)∼", "A", "ℙ(A)", "B", "ℙ(B)");
 		expressionTest("(A × B)∼", "(A × B)∼", "A", "ℙ(S)", "B", "ℙ(B)");
 		expressionTest("(A × B)∼", "(A × B)∼", "A", "ℙ(A)", "B", "ℙ(S)");
 	}
+	*/
 	
 	/**
 	 * Ensures that rule SIMP_DOM_ID is implemented correctly.
