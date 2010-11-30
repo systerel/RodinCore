@@ -190,6 +190,11 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		System.out.println(sb);
 	}
 	
+	protected RelationalPredicate makeIsEmpty(Expression set) {
+		return makeRelationalPredicate(Predicate.EQUAL, set,
+			makeEmptySet(set.getType()));
+	}
+	
 	%include {FormulaV2.tom}
 	
 	@ProverRule( { "SIMP_SPECIAL_FINITE", "SIMP_FINITE_SETENUM",
@@ -302,10 +307,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 */
 			Finite(Cprod(S, T)) -> {
 				Predicate [] children = new Predicate[3];
-				children[0] = makeRelationalPredicate(Predicate.EQUAL, `S,
-						makeEmptySet(`S.getType()));
-				children[1] = makeRelationalPredicate(Predicate.EQUAL, `T,
-						makeEmptySet(`T.getType()));
+				children[0] = makeIsEmpty(`S);
+				children[1] = makeIsEmpty(`T);
 				Predicate [] subChildren = new Predicate[2];
 				subChildren[0] = makeSimplePredicate(Predicate.KFINITE, `S);
 				subChildren[1] = makeSimplePredicate(Predicate.KFINITE, `T);
@@ -778,9 +781,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
  	    	// because matching patterns are not distinct
  	    	Le(E, Card(S)) -> {
  	    		if (level2 && `E.equals(number1)) {
- 	    			result = makeUnaryPredicate(Predicate.NOT,
- 	    						makeRelationalPredicate(Predicate.EQUAL,
- 	    							`S, makeEmptySet(`S.getType())));
+ 	    			result = makeUnaryPredicate(Predicate.NOT, makeIsEmpty(`S));
  	    			trace(predicate, result, "SIMP_LIT_LE_CARD_1");
 					return result;
  	    		}
@@ -804,9 +805,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
  	    	// because matching patterns are not distinct
  	    	Ge(Card(S), E) -> {
  	    		if (level2 && `E.equals(number1)) {
- 	    			result = makeUnaryPredicate(Predicate.NOT,
- 	    						makeRelationalPredicate(Predicate.EQUAL,
- 	    							`S, makeEmptySet(`S.getType())));
+ 	    			result = makeUnaryPredicate(Predicate.NOT, makeIsEmpty(`S));
  	    			trace(predicate, result, "SIMP_LIT_GE_CARD_1");
 					return result;
  	    		}
@@ -1142,7 +1141,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	Equal(Card(S), E) -> {
 	    		if (`E.equals(number0)) {
 	    			Expression emptySet = makeEmptySet(`S.getType());
-	    			result = makeRelationalPredicate(Predicate.EQUAL, `S, emptySet);
+	    			result = makeIsEmpty(`S);
 	    			trace(predicate, result, "SIMP_SPECIAL_EQUAL_CARD");
 	    			return result;
 	    		}
@@ -1163,7 +1162,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	Equal(E, Card(S)) -> {
 	    		if (`E.equals(number0)) {
 	    			Expression emptySet = makeEmptySet(`S.getType());
-	    			result = makeRelationalPredicate(Predicate.EQUAL, `S, emptySet);
+	    			result = makeIsEmpty(`S);
 	    			trace(predicate, result, "SIMP_SPECIAL_EQUAL_CARD");
 	    			return result;
 	    		}
@@ -1181,7 +1180,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	Gt(Card(S), E)-> {
 	    		if (`E.equals(number0)) {
 	    			Expression emptySet = makeEmptySet(`S.getType());
-	    			Predicate equal = makeRelationalPredicate(Predicate.EQUAL, `S, emptySet);
+	    			Predicate equal = makeIsEmpty(`S);
 	    			result = makeUnaryPredicate(Predicate.NOT, equal);
 	    			trace(predicate, result, "SIMP_LIT_GT_CARD_0");
 	    			return result;
@@ -1195,7 +1194,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	Lt(E, Card(S)) -> {
 	    		if (`E.equals(number0)) {
 	    			Expression emptySet = makeEmptySet(`S.getType());
-	    			Predicate equal = makeRelationalPredicate(Predicate.EQUAL, `S, emptySet);
+	    			Predicate equal = makeIsEmpty(`S);
 	    			result = makeUnaryPredicate(Predicate.NOT, equal);
 	    			trace(predicate, result, "SIMP_LIT_LT_CARD_0");
 	    			return result;
@@ -1337,11 +1336,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			Equal((Tfun | Trel | Tinj | Tsur | Tbij)(A, B), EmptySet()) -> {
 				if (level2) {
 					result = makeAssociativePredicate(Predicate.LAND,
-								makeUnaryPredicate(Predicate.NOT,
-									makeRelationalPredicate(Predicate.EQUAL,
-										`A, makeEmptySet(`A.getType()))),
-								makeRelationalPredicate(Predicate.EQUAL,
-									`B, makeEmptySet(`B.getType())));
+								makeUnaryPredicate(Predicate.NOT, makeIsEmpty(`A)),
+								makeIsEmpty(`B));
 					trace(predicate, result, "SIMP_SPECIAL_EQUAL_RELDOM");
 					return result;
 				}
