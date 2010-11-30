@@ -884,4 +884,106 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		expressionTest("ran(A×B)", "ran(A×B)", "A", "ℙ(S)", "B", "ℙ(T)");
 	}
 	
+	/**
+	 * Ensures that rule SIMP_SPECIAL_MOD_0 is implemented correctly
+	 */
+	@Test
+	public void testSIMP_SPECIAL_MOD_0() {
+		expressionTest("0", "0 mod E", "E", "ℤ");
+		expressionTest("2 mod E", "2 mod E", "E", "ℤ");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_SPECIAL_MOD_1 is implemented correctly
+	 */
+	@Test
+	public void testSIMP_SPECIAL_MOD_1() {
+		expressionTest("0", "E mod 1", "E", "ℤ");
+		expressionTest("E mod 3", "E mod 3", "E", "ℤ");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_MIN_SING is implemented correctly
+	 */
+	@Test
+	public void testSIMP_MIN_SING() {
+		expressionTest("E", "min({E})", "E", "ℤ");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_MAX_SING is implemented correctly
+	 */
+	@Test
+	public void testSIMP_MAX_SING() {
+		expressionTest("E", "max({E})", "E", "ℤ");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_MIN_NATURAL is implemented correctly
+	 */
+	@Test
+	public void testSIMP_MIN_NATURAL() {
+		expressionTest("0", "min(ℕ)");
+		expressionTest("min(ℤ)", "min(ℤ)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_MIN_NATURAL1 is implemented correctly
+	 */
+	@Test
+	public void testSIMP_MIN_NATURAL1() {
+		expressionTest("1", "min(ℕ1)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_MIN_UPTO is implemented correctly
+	 */
+	@Test
+	public void testSIMP_MIN_UPTO() {
+		expressionTest("E", "min(E‥F)", "E", "ℤ", "F", "ℤ");
+	}
+
+	/**
+	 * Ensures that rule SIMP_MAX_UPTO is implemented correctly
+	 */
+	@Test
+	public void testSIMP_MAX_UPTO() {
+		expressionTest("F", "max(E‥F)", "E", "ℤ", "F", "ℤ");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_CARD_CONVERSE is implemented correctly
+	 */
+	@Test
+	public void testSIMP_CARD_CONVERSE() {
+		expressionTest("card(r)", "card(r∼)", "r", "S↔T");
+		expressionTest("card(r)", "card(r)", "r", "S↔T");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_CARD_ID is implemented correctly
+	 */
+	@Test
+	public void testSIMP_CARD_ID() {
+		expressionTest("card(S)", "card(S ◁ (id⦂T↔T))", "S", "ℙ(T)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_LIT_GE_CARD_1 is implemented correctly
+	 */
+	@Test
+	public void testSIMP_LIT_GE_CARD_1() {
+		predicateTest("¬(S = ∅⦂ℙ(T))", "card(S) ≥ 1", "S", "ℙ(T)");
+		predicateTest("card(S) ≥ 2", "card(S) ≥ 2", "S", "ℙ(T)");
+	}
+	
+	/**
+	 * Ensures that rule SIMP_LIT_LE_CARD_1 is implemented correctly
+	 */
+	@Test
+	public void testSIMP_LIT_LE_CARD_1() {
+		predicateTest("¬(S = ∅⦂ℙ(T))", "1 ≤ card(S)", "S", "ℙ(T)");
+		predicateTest("0 ≤ card(S)", "0 ≤ card(S)", "S", "ℙ(T)");
+	}
+	
 }

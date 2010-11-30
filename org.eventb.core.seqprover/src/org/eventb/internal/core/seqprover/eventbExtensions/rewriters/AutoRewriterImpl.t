@@ -67,7 +67,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 
 	public static boolean DEBUG;
 
-	private final FormulaSimplification fs;
+	private final DivisionUtils du;
 	
 	private final DLib dLib;
 	
@@ -92,8 +92,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	 */
 	public AutoRewriterImpl(FormulaFactory ff, Level level) {
 		super(true, ff);
-		fs = new FormulaSimplification(ff);
 		dLib = DLib.mDLib(ff);
+		du = new DivisionUtils(dLib);
 		this.level = level;
 		this.level1 = level.from(Level.L1);
 		this.level2 = level.from(Level.L2);
@@ -373,8 +373,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Conjunction 4: P ∧ ... ∧ Q ∧ ... ∧ ¬Q ∧ ... ∧ R  == P ∧ ... ∧ Q ∧ ... ∧ R
 	    	 */
 	    	Land(children) -> {
-				result = fs.simplifyAssociativePredicate(predicate, `children, dLib.True(),
-    				dLib.False());
+    			result = (new LandSimplification(dLib)).simplifyAssociativeFormula(predicate, `children);
 				trace(predicate, result, "SIMP_SPECIAL_AND_BTRUE", "SIMP_SPECIAL_AND_BFALSE",
 						"SIMP_MULTI_AND", "SIMP_MULTI_AND_NOT");
 				return result;
@@ -391,8 +390,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Disjunction 4: P ⋁ ... ⋁ Q ⋁ ... ⋁ ¬Q ⋁ ... ⋁ R  == P ⋁ ... ⋁ Q ⋁ ... ⋁ R
 	    	 */
 	    	Lor(children) -> {
-				result = fs.simplifyAssociativePredicate(predicate, `children, dLib.False(),
-    				dLib.True());
+    			result = (new LorSimplification(dLib)).simplifyAssociativeFormula(predicate, `children);
 				trace(predicate, result, "SIMP_SPECIAL_OR_BTRUE", "SIMP_SPECIAL_OR_BFALSE",
 						"SIMP_MULTI_OR", "SIMP_MULTI_OR_NOT");
 				return result;
@@ -745,7 +743,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_LIT_EQUAL_KBOOL_FALSE", "SIMP_EQUAL_CONSTR",
 			"SIMP_EQUAL_CONSTR_DIFF", "SIMP_SUBSETEQ_SING",
 			"SIMP_SPECIAL_SUBSET_R", "SIMP_MULTI_SUBSET",
-			"SIMP_SPECIAL_EQUAL_REL", "SIMP_SPECIAL_EQUAL_RELDOM" })
+			"SIMP_SPECIAL_EQUAL_REL", "SIMP_SPECIAL_EQUAL_RELDOM",
+			"SIMP_LIT_GE_CARD_1", "SIMP_LIT_LE_CARD_1" })
     @Override
 	public Predicate rewrite(RelationalPredicate predicate) {
 		final Predicate result;
@@ -772,6 +771,22 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 
 			/**
+ 	    	 * SIMP_LIT_LE_CARD_1
+ 	    	 *    1 ≤ card(S) == ¬(S = ∅)
+ 	    	 */
+ 	    	// This rule has to be placed before SIMP_MULTI_LE
+ 	    	// because matching patterns are not distinct
+ 	    	Le(E, Card(S)) -> {
+ 	    		if (level2 && `E.equals(number1)) {
+ 	    			result = makeUnaryPredicate(Predicate.NOT,
+ 	    						makeRelationalPredicate(Predicate.EQUAL,
+ 	    							`S, makeEmptySet(`S.getType())));
+ 	    			trace(predicate, result, "SIMP_LIT_LE_CARD_1");
+					return result;
+ 	    		}
+ 	    	}
+
+			/**
              * SIMP_MULTI_LE
 	    	 * Arithmetic: E ≤ E == ⊤
 	    	 */
@@ -780,6 +795,22 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    		trace(predicate, result, "SIMP_MULTI_LE");
 				return result;
 	    	}
+			
+			/**
+ 	    	 * SIMP_LIT_GE_CARD_1
+ 	    	 *    card(S) ≥ 1 == ¬(S = ∅)
+ 	    	 */
+ 	    	// This rule has to be placed before SIMP_MULTI_GE
+ 	    	// because matching patterns are not distinct
+ 	    	Ge(Card(S), E) -> {
+ 	    		if (level2 && `E.equals(number1)) {
+ 	    			result = makeUnaryPredicate(Predicate.NOT,
+ 	    						makeRelationalPredicate(Predicate.EQUAL,
+ 	    							`S, makeEmptySet(`S.getType())));
+ 	    			trace(predicate, result, "SIMP_LIT_GE_CARD_1");
+					return result;
+ 	    		}
+ 	    	}
 			
 	    	/**
              * SIMP_MULTI_GE
@@ -1390,7 +1421,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Set Theory: S ∩ ... ∩ T ∩ T ∩ ... ∩ V == S ∩ ... ∩ T ∩ ... ∩ V
 	    	 */
 	    	BInter(children) -> {
-	    		result = fs.simplifyAssociativeExpression(expression, `children);
+	    		result = (new InterSimplification(dLib)).simplifyAssociativeFormula(expression, `children);
 	    		trace(expression, result, "SIMP_SPECIAL_BINTER", "SIMP_TYPE_BINTER", "SIMP_MULTI_BINTER");
 				return result;
 	    	}
@@ -1404,7 +1435,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Set Theory: S ∪ ... ∪ T ∪ T ∪ ... ∪ V == S ∪ ... ∪ T ∪ ... ∪ V
 	    	 */
 	    	BUnion(children) -> {
-	    		result = fs.simplifyAssociativeExpression(expression, `children);
+	    		result = (new UnionSimplification(dLib)).simplifyAssociativeFormula(expression, `children);
 	    		trace(expression, result, "SIMP_SPECIAL_BUNION", "SIMP_TYPE_BUNION", "SIMP_MULTI_BUNION");
 				return result;
 	    	}
@@ -1414,7 +1445,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Arithmetic 1: E + ... + 0 + ... + F == E + ... + ... + F
 	    	 */
 	    	Plus (children) -> {
-	    		result = fs.simplifyAssociativeExpression(expression, `children);
+	    		result = (new PlusSimplification(dLib)).simplifyAssociativeFormula(expression, `children);
 	    		trace(expression, result, "SIMP_SPECIAL_PLUS");
 				return result;
 	    	}
@@ -1472,7 +1503,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * Set theory: r  ...  ∅  ...  s  ==  r  ...  s
 			 */
 	    	Ovr(children) -> {
-	    		result = fs.simplifyAssociativeExpression(expression, `children);
+	    		result = (new OverrideSimplification(dLib)).simplifyAssociativeFormula(expression, `children);
 	    		trace(expression, result, "SIMP_SPECIAL_OVERL");
 				return result;
      		}
@@ -1600,7 +1631,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_SPECIAL_REL_R", "SIMP_SPECIAL_REL_L",
 			"SIMP_FUNIMAGE_PRJ1", "SIMP_FUNIMAGE_PRJ2", "SIMP_FUNIMAGE_ID",
 			"SIMP_SPECIAL_EQUAL_RELDOMRAN", "SIMP_TYPE_OVERL_CPROD",
-			"SIMP_TYPE_DPROD", "SIMP_TYPE_PPROD" } )
+			"SIMP_TYPE_DPROD", "SIMP_TYPE_PPROD",
+			"SIMP_SPECIAL_MOD_0", "SIMP_SPECIAL_MOD_1" } )
 	@Override
 	public Expression rewrite(BinaryExpression expression) {
 		final Expression result;
@@ -1755,7 +1787,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Arithmetic: (−E) ÷ (−F) == E ÷ F
 	    	 */
 	    	Div(UnMinus(E), UnMinus(F)) -> {
-	    		result = fs.getFaction(`E, `F);
+	    		result = du.getFaction(`E, `F);
 	    		trace(expression, result, "SIMP_DIV_MINUS");
 	    		return result;
 	    	}
@@ -1765,7 +1797,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Arithmetic: (−E) ÷ (−F) == E ÷ F
 	    	 */
 	    	Div(UnMinus(E), IntegerLiteral(F)) -> {
-	    		result = fs.getFaction(`expression, `E, `F);
+	    		result = du.getFaction(`expression, `E, `F);
 	    		trace(expression, result, "SIMP_DIV_MINUS");
 	    		return result;
 	    	}
@@ -1775,7 +1807,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Arithmetic 10: (−E) ÷ (−F) == E ÷ F
 	    	 */
 	    	Div(IntegerLiteral(E), UnMinus(F)) -> {
-	    		result = fs.getFaction(`expression, `E, `F);
+	    		result = du.getFaction(`expression, `E, `F);
 	    		trace(expression, result, "SIMP_DIV_MINUS");
 	    		return result;
 	    	}
@@ -1789,7 +1821,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Arithmetic: (−E) ÷ (−F) == E ÷ F
 	    	 */
 	    	Div(IntegerLiteral(E), IntegerLiteral(F)) -> {
-	    		result = fs.getFaction(`expression, `E, `F);
+	    		result = du.getFaction(`expression, `E, `F);
 	    		trace(expression, result, "SIMP_SPECIAL_DIV_1", "SIMP_SPECIAL_DIV_0", "SIMP_DIV_MINUS");
 	    		return result;
 	    	}
@@ -2434,6 +2466,30 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				}
 			}
 			
+			/**
+			 * SIMP_SPECIAL_MOD_0
+			 *    0 mod E == 0
+			 */
+			Mod(zero@Z, _) -> {
+				if (level2 && `Z.equals(number0)) {
+					result = `zero;
+					trace(expression, result, "SIMP_SPECIAL_MOD_0");
+					return result;
+				}
+			}		
+			
+			/**
+			 * SIMP_SPECIAL_MOD_1
+			 *    E mod 1 == 0
+			 */
+			Mod(_, O) -> {
+				if (level2 && `O.equals(number1)) {
+					result = `number0;
+					trace(expression, result, "SIMP_SPECIAL_MOD_1");
+					return result;
+				}
+			}
+			
 		}
 	    return expression;
 	}
@@ -2449,7 +2505,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_SPECIAL_KINTER", "SIMP_KINTER_POW", "SIMP_TYPE_CONVERSE",
 			"SIMP_DOM_ID", "SIMP_RAN_ID", "SIMP_DOM_PRJ1", "SIMP_DOM_PRJ2",
 			"SIMP_RAN_PRJ1", "SIMP_RAN_PRJ2", "SIMP_TYPE_DOM",
-			"SIMP_TYPE_RAN"})
+			"SIMP_TYPE_RAN", "SIMP_MIN_SING", "SIMP_MAX_SING",
+			"SIMP_MIN_NATURAL", "SIMP_MIN_NATURAL1", "SIMP_MIN_UPTO",
+			"SIMP_MAX_UPTO", "SIMP_CARD_CONVERSE", "SIMP_CARD_ID" })
 	@Override
 	public Expression rewrite(UnaryExpression expression) {
 		final Expression result;
@@ -2912,6 +2970,104 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				if (level2 && `Ta.isATypeExpression() && `Tb.isATypeExpression()) {
 					result = `Tb;
 					trace(expression, result, "SIMP_TYPE_RAN");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_MIN_SING
+			 *    min({E}) == E (where E is a single expression)
+			 */
+			Min(SetExtension(li@eList(_))) -> {
+				// Workaround : can't access the eList element
+				if (level2) {
+					result = `li[0];
+					trace(expression, result, "SIMP_MIN_SING");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_MAX_SING
+			 *    max({E}) == E (where E is a single expression)
+			 */
+			Max(SetExtension(li@eList(_))) -> {
+				// Workaround : can't access the eList element
+				if (level2) {
+					result = `li[0];
+					trace(expression, result, "SIMP_MAX_SING");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_MIN_NATURAL
+			 *    min(ℕ) == 0
+			 */
+			Min(Natural()) -> {
+				if (level2) {
+					result = number0;
+					trace(expression, result, "SIMP_MIN_NATURAL");
+					return result;
+				}
+			}
+
+			/**
+			 * SIMP_MIN_NATURAL1
+			 *    min(ℕ1) == 1
+			 */
+			Min(Natural1()) -> {
+				if (level2) {
+					result = number1;
+					trace(expression, result, "SIMP_MIN_NATURAL1");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_MIN_UPTO
+			 *    min(E‥F) == E
+			 */
+			Min(UpTo(E, _)) -> {
+				if (level2) {
+					result = `E;
+					trace(expression, result, "SIMP_MIN_UPTO");
+					return result;
+				}
+			}
+			 
+			/**
+			 * SIMP_MAX_UPTO
+			 *    max(E‥F) == F
+			 */
+			Max(UpTo(_, F)) -> {
+				if (level2) {
+					result = `F;
+					trace(expression, result, "SIMP_MAX_UPTO");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_CARD_CONVERSE
+			 *    card(r∼) == card(r)
+			 */
+			Card(Converse(r)) -> {
+				if (level2) {
+					result = makeUnaryExpression(Expression.KCARD, `r);
+					trace(expression, result, "SIMP_CARD_CONVERSE");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_CARD_ID
+			 *    card(S ◁ id) == card(S)
+			 */
+			Card(DomRes(S, IdGen())) -> {
+				if (level2) {
+					result = makeUnaryExpression(Expression.KCARD, `S);
+					trace(expression, result, "SIMP_CARD_ID");
 					return result;
 				}
 			}
