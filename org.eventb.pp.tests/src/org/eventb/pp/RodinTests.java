@@ -1243,4 +1243,13 @@ public class RodinTests extends AbstractRodinTest {
 				false);
 	}
 
+	@Test
+	@Ignore("known bug")
+	public void bug3122147() {
+		doTest(mList("S", "ℙ(T)", "f", "ℙ(T×U)"), mSet(//
+				"S⊆s ⇒ finite(union({x·x∈S ∣ f[{x}]}))", //
+				"S⊆s"),//
+				"finite(union({x·x∈S ∣ f[{x}]}))", true, 20);
+	}
+
 }
