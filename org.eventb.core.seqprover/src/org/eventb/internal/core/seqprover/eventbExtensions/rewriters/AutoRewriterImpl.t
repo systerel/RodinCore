@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
+import static java.math.BigInteger.ONE;
+import static java.math.BigInteger.ZERO;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -77,9 +80,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	private final boolean level1;
 	private final boolean level2;
 	
-	protected final IntegerLiteral number0 = ff.makeIntegerLiteral(BigInteger.ZERO, null);
+	protected final IntegerLiteral number0 = ff.makeIntegerLiteral(ZERO, null);
 	
-	protected final IntegerLiteral number1 = ff.makeIntegerLiteral(BigInteger.ONE, null);
+	protected final IntegerLiteral number1 = ff.makeIntegerLiteral(ONE, null);
 
 	private final IntegerLiteral number2 = ff.makeIntegerLiteral(new BigInteger("2"), null);
 
@@ -774,20 +777,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 
 			/**
- 	    	 * SIMP_LIT_LE_CARD_1
- 	    	 *    1 ≤ card(S) == ¬(S = ∅)
- 	    	 */
- 	    	// This rule has to be placed before SIMP_MULTI_LE
- 	    	// because matching patterns are not distinct
- 	    	Le(E, Card(S)) -> {
- 	    		if (level2 && `E.equals(number1)) {
- 	    			result = makeUnaryPredicate(Predicate.NOT, makeIsEmpty(`S));
- 	    			trace(predicate, result, "SIMP_LIT_LE_CARD_1");
-					return result;
- 	    		}
- 	    	}
-
-			/**
              * SIMP_MULTI_LE
 	    	 * Arithmetic: E ≤ E == ⊤
 	    	 */
@@ -796,20 +785,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    		trace(predicate, result, "SIMP_MULTI_LE");
 				return result;
 	    	}
-			
-			/**
- 	    	 * SIMP_LIT_GE_CARD_1
- 	    	 *    card(S) ≥ 1 == ¬(S = ∅)
- 	    	 */
- 	    	// This rule has to be placed before SIMP_MULTI_GE
- 	    	// because matching patterns are not distinct
- 	    	Ge(Card(S), E) -> {
- 	    		if (level2 && `E.equals(number1)) {
- 	    			result = makeUnaryPredicate(Predicate.NOT, makeIsEmpty(`S));
- 	    			trace(predicate, result, "SIMP_LIT_GE_CARD_1");
-					return result;
- 	    		}
- 	    	}
 			
 	    	/**
              * SIMP_MULTI_GE
@@ -1140,7 +1115,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 */
 	    	Equal(Card(S), E) -> {
 	    		if (`E.equals(number0)) {
-	    			Expression emptySet = makeEmptySet(`S.getType());
 	    			result = makeIsEmpty(`S);
 	    			trace(predicate, result, "SIMP_SPECIAL_EQUAL_CARD");
 	    			return result;
@@ -1161,7 +1135,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 */
 	    	Equal(E, Card(S)) -> {
 	    		if (`E.equals(number0)) {
-	    			Expression emptySet = makeEmptySet(`S.getType());
 	    			result = makeIsEmpty(`S);
 	    			trace(predicate, result, "SIMP_SPECIAL_EQUAL_CARD");
 	    			return result;
@@ -1179,7 +1152,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 */
 	    	Gt(Card(S), E)-> {
 	    		if (`E.equals(number0)) {
-	    			Expression emptySet = makeEmptySet(`S.getType());
 	    			Predicate equal = makeIsEmpty(`S);
 	    			result = makeUnaryPredicate(Predicate.NOT, equal);
 	    			trace(predicate, result, "SIMP_LIT_GT_CARD_0");
@@ -1193,7 +1165,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 */
 	    	Lt(E, Card(S)) -> {
 	    		if (`E.equals(number0)) {
-	    			Expression emptySet = makeEmptySet(`S.getType());
 	    			Predicate equal = makeIsEmpty(`S);
 	    			result = makeUnaryPredicate(Predicate.NOT, equal);
 	    			trace(predicate, result, "SIMP_LIT_LT_CARD_0");
@@ -1343,6 +1314,30 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				}
 			}
 			
+			/**
+ 	    	 * SIMP_LIT_LE_CARD_1
+ 	    	 *    1 ≤ card(S) == ¬(S = ∅)
+ 	    	 */
+ 	    	Le(IntegerLiteral(i), Card(S)) -> {
+ 	    		if (level2 && `i.equals(ONE)) {
+ 	    			result = makeUnaryPredicate(Predicate.NOT, makeIsEmpty(`S));
+ 	    			trace(predicate, result, "SIMP_LIT_LE_CARD_1");
+					return result;
+ 	    		}
+ 	    	}
+
+			/**
+ 	    	 * SIMP_LIT_GE_CARD_1
+ 	    	 *    card(S) ≥ 1 == ¬(S = ∅)
+ 	    	 */
+ 	    	Ge(Card(S), IntegerLiteral(i)) -> {
+ 	    		if (level2 && `i.equals(ONE)) {
+ 	    			result = makeUnaryPredicate(Predicate.NOT, makeIsEmpty(`S));
+ 	    			trace(predicate, result, "SIMP_LIT_GE_CARD_1");
+					return result;
+ 	    		}
+ 	    	}
+
 	    }
 	    return predicate;
 	}
@@ -1722,7 +1717,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Arithmetic: E ÷ 1 = E
 			 */
 			Div(E, IntegerLiteral(F)) -> {
-				if (`F.equals(BigInteger.ONE)) {
+				if (`F.equals(ONE)) {
 					result = `E;
 		    		trace(expression, result, "SIMP_SPECIAL_DIV_1");
 		    		return result;
@@ -1734,7 +1729,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Arithmetic: 0 ÷ E = 0
 			 */
 			Div(IntegerLiteral(F), _) -> {
-				if (`F.equals(BigInteger.ZERO)) {
+				if (`F.equals(ZERO)) {
 					result = number0;
 		    		trace(expression, result, "SIMP_SPECIAL_DIV_0");
 		    		return result;
@@ -2464,8 +2459,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_SPECIAL_MOD_0
 			 *    0 mod E == 0
 			 */
-			Mod(zero@Z, _) -> {
-				if (level2 && `Z.equals(number0)) {
+			Mod(zero@IntegerLiteral(z), _) -> {
+				if (level2 && `z.equals(ZERO)) {
 					result = `zero;
 					trace(expression, result, "SIMP_SPECIAL_MOD_0");
 					return result;
@@ -2476,9 +2471,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_SPECIAL_MOD_1
 			 *    E mod 1 == 0
 			 */
-			Mod(_, O) -> {
-				if (level2 && `O.equals(number1)) {
-					result = `number0;
+			Mod(_, IntegerLiteral(i)) -> {
+				if (level2 && `i.equals(ONE)) {
+					result = number0;
 					trace(expression, result, "SIMP_SPECIAL_MOD_1");
 					return result;
 				}

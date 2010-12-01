@@ -909,8 +909,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_MOD_0() {
-		expressionTest("0", "0 mod E", "E", "ℤ");
-		expressionTest("2 mod E", "2 mod E", "E", "ℤ");
+		expressionTest("0", "0 mod E");
+		expressionTest("2 mod E", "2 mod E");
 	}
 	
 	/**
@@ -918,8 +918,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_MOD_1() {
-		expressionTest("0", "E mod 1", "E", "ℤ");
-		expressionTest("E mod 3", "E mod 3", "E", "ℤ");
+		expressionTest("0", "E mod 1");
+		expressionTest("E mod 3", "E mod 3");
 	}
 	
 	/**
@@ -928,6 +928,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_MIN_SING() {
 		expressionTest("E", "min({E})", "E", "ℤ");
+		expressionTest("min({E,F})", "min({E,F})");
+		expressionTest("min(∅)", "min({})");
 	}
 	
 	/**
@@ -936,6 +938,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_MAX_SING() {
 		expressionTest("E", "max({E})", "E", "ℤ");
+		expressionTest("max({E,F})", "max({E,F})");
+		expressionTest("max(∅)", "max({})");
 	}
 	
 	/**
@@ -985,7 +989,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_CARD_ID() {
-		expressionTest("card(S)", "card(S ◁ (id⦂T↔T))", "S", "ℙ(T)");
+		expressionTest("card(S)", "card(S ◁ id)", "S", "ℙ(T)");
 	}
 	
 	/**
@@ -993,7 +997,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_LIT_GE_CARD_1() {
-		predicateTest("¬(S = ∅⦂ℙ(T))", "card(S) ≥ 1", "S", "ℙ(T)");
+		predicateTest("¬(S = ∅)", "card(S) ≥ 1", "S", "ℙ(T)");
 		predicateTest("card(S) ≥ 2", "card(S) ≥ 2", "S", "ℙ(T)");
 	}
 	
@@ -1002,8 +1006,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_LIT_LE_CARD_1() {
-		predicateTest("¬(S = ∅⦂ℙ(T))", "1 ≤ card(S)", "S", "ℙ(T)");
-		predicateTest("0 ≤ card(S)", "0 ≤ card(S)", "S", "ℙ(T)");
+		predicateTest("¬(S = ∅)", "1 ≤ card(S)", "S", "ℙ(T)");
+		predicateTest("2 ≤ card(S)", "2 ≤ card(S)", "S", "ℙ(T)");
 	}
 	
 }
