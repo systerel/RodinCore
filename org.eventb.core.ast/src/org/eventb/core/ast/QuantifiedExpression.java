@@ -13,6 +13,7 @@
  *     Systerel - added form filtering
  *     Systerel - generalised getPositions() into inspect()
  *     Systerel - externalized wd lemmas generation
+ *     Systerel - added child indexes
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -751,7 +752,7 @@ public class QuantifiedExpression extends Expression {
 	}
 	
 	@Override
-	protected Formula<?> getChild(int index) {
+	public Formula<?> getChild(int index) {
 		if (index < quantifiedIdentifiers.length) {
 			return quantifiedIdentifiers[index];
 		}
@@ -762,8 +763,13 @@ public class QuantifiedExpression extends Expression {
 		case 1:
 			return expr;
 		default:
-			return null;
+			throw invalidIndex(index);
 		}
+	}
+
+	@Override
+	public int getChildCount() {
+		return quantifiedIdentifiers.length + 2;
 	}
 
 	@Override

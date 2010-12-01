@@ -107,20 +107,19 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
 	// TODO use above the same generic types as below
 	// TODO idea: implement an iterator on bi-arrays
 
-	// returns the formula at index as if array1 and array2 were concatenated
-	public static <T extends Formula<T>, U extends Formula<U>> Formula<?> getFormula(
-			T[] array1, U[] array2, int index) {
-		if (index < 0) {
-			return null;
+	public static Formula<?> getChild(Expression[] exprs, Predicate[] preds,
+			int index) {
+		if (index < 0 || index >= getChildCount(exprs, preds)) {
+			throw Formula.invalidIndex(index);
 		}
-		if (index < array1.length) {
-			return array1[index];
+		if (index < exprs.length) {
+			return exprs[index];
 		}
-		index = index - array1.length;
-		if (index < array2.length) {
-			return array2[index];
-		}
-		return null;
+		return preds[index - exprs.length];
+	}
+
+	public static int getChildCount(Expression[] exprs, Predicate[] preds) {
+		return exprs.length + preds.length;
 	}
 
 	public static <T extends Formula<T>, U extends Formula<U>> IPosition getDescendantPos(

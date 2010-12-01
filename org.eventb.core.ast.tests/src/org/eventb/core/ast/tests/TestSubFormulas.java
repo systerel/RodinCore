@@ -10,6 +10,7 @@
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
  *     Systerel - added support for mathematical extensions
+ *     Systerel - added tests for child index
  *******************************************************************************/ 
 package org.eventb.core.ast.tests;
 
@@ -901,11 +902,28 @@ public class TestSubFormulas extends TestCase {
 			IPosition p) {
 		Formula<?> s = f.getSubFormula(p);
 		if (s != null) {
+			checkChildIndex(f, p, s);
 			checkAllPositions(f, p.getFirstChild());
 			if (! p.isRoot()) {
 				checkAllPositions(f, p.getNextSibling());
 			}
+		} else {
+			checkChildIndex(f, p, s);
 		}
+	}
+
+	// Ensures that the child index has the expected properties
+	private <T extends Formula<T>> void checkChildIndex(Formula<T> f,
+			IPosition p, Formula<?> s) {
+		if (p.isRoot())
+			return;
+		final Formula<?> parent = f.getSubFormula(p.getParent());
+		final int index = p.getChildIndex();
+		final int childCount = parent.getChildCount();
+		assertTrue(0 <= index);
+		assertEquals(s != null, index < childCount);
+		if (s != null)
+			assertSame(s, parent.getChild(index));
 	}
 
 	/**

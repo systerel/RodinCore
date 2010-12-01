@@ -8,8 +8,8 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - generalised getPositions() into inspect()
+ *     Systerel - added child indexes
  *******************************************************************************/
-
 package org.eventb.core.ast;
 
 import java.util.Arrays;
@@ -212,7 +212,13 @@ public abstract class Assignment extends Formula<Assignment> {
 	}
 
 	@Override
-	protected final Formula<?> getChild(int index) {
+	public final Formula<?> getChild(int index) {
+		throw new UnsupportedOperationException(
+				"Assignments cannot be rewritten");
+	}
+
+	@Override
+	public final int getChildCount() {
 		throw new UnsupportedOperationException(
 				"Assignments cannot be rewritten");
 	}

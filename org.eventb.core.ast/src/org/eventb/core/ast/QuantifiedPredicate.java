@@ -11,6 +11,7 @@
  *     Systerel - added support for predicate variables
  *     Systerel - generalised getPositions() into inspect()
  *     Systerel - externalized wd lemmas generation
+ *     Systerel - added child indexes
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -494,14 +495,17 @@ public class QuantifiedPredicate extends Predicate {
 	}
 
 	@Override
-	protected Formula<?> getChild(int index) {
+	public Formula<?> getChild(int index) {
+		checkChildIndex(index);
 		if (index < quantifiedIdentifiers.length) {
 			return quantifiedIdentifiers[index];
 		}
-		if (index == quantifiedIdentifiers.length) {
-			return pred;
-		}
-		return null;
+		return pred;
+	}
+
+	@Override
+	public int getChildCount() {
+		return quantifiedIdentifiers.length + 1;
 	}
 
 	@Override

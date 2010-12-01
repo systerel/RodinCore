@@ -166,8 +166,13 @@ public class PredicateVariable extends Predicate {
 	}
 
 	@Override
-	protected Formula<?> getChild(int index) {
-		return null;
+	public Formula<?> getChild(int index) {
+		throw invalidIndex(index);
+	}
+
+	@Override
+	public int getChildCount() {
+		return 0;
 	}
 
 	@Override

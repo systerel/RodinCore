@@ -13,6 +13,7 @@
  *     Systerel - generalised getPositions() into inspect()
  *     Systerel - added support for mathematical extensions
  *     Systerel - externalized wd lemmas generation
+ *     Systerel - added child indexes
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -2018,11 +2019,10 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public final Formula<?> getSubFormula(IPosition position) {
 		Formula<?> formula = this;
-		for (int index: ((Position) position).indexes) {
-			formula = formula.getChild(index);
-			if (formula == null) {
+		for (int index : ((Position) position).indexes) {
+			if (index >= formula.getChildCount())
 				return null;
-			}
+			formula = formula.getChild(index);
 		}
 		return formula;
 	}
@@ -2045,17 +2045,55 @@ public abstract class Formula<T extends Formula<T>> {
 		for (int index : ((Position) position).indexes) {
 			if (!formula.isWDStrict())
 				return false;
-			formula = formula.getChild(index);
-			if (formula == null) {
+			if (index >= formula.getChildCount())
 				return false;
-			}
+			formula = formula.getChild(index);
 		}
 		return true;
 	}
 
-	// Return the child of this formula at the given index, or <code>null</code>
-	// if none
-	protected abstract Formula<?> getChild(int index);
+	/**
+	 * Returns the child at the given index. Child indexes are counted from
+	 * <code>0</code> for the first child to <code>getChildCount() - 1</code>.
+	 * for the last one.
+	 * <p>
+	 * This method is not applicable to assignments.
+	 * </p>
+	 * 
+	 * @param index
+	 *            index of the child to retrieve
+	 * 
+	 * @return the child at the given index
+	 * @throws IllegalArgumentException
+	 *             is the index is not in the appropriate range
+	 * @throws UnsupportedOperationException
+	 *             if this formula is an assignment
+	 * @since 2.1
+	 */
+	public abstract Formula<?> getChild(int index);
+
+	/**
+	 * Returns the number of children of this formula.
+	 * <p>
+	 * This method is not applicable to assignments.
+	 * </p>
+	 * 
+	 * @return the number of children
+	 * @throws UnsupportedOperationException
+	 *             if this formula is an assignment
+	 * @since 2.1
+	 */
+	public abstract int getChildCount();
+
+	protected final void checkChildIndex(int index) {
+		if (index < 0 || index >= getChildCount()) {
+			throw invalidIndex(index);
+		}
+	}
+
+	protected static IllegalArgumentException invalidIndex(int index) {
+		return new IllegalArgumentException("Invalid child index " + index);
+	}
 
 	/**
 	 * Returns the positions of all sub-formulas of this formula that satisfy
@@ -2064,6 +2102,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * The positions are computed by calling the filter on each node of the
 	 * formula tree, traversed in pre-order. Consequently, the returned list is
 	 * always sorted lexicographically.
+	 * </p>
 	 * <p>
 	 * This method is not applicable to assignments.
 	 * </p>
