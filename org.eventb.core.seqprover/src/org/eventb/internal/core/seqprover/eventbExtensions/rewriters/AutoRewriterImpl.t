@@ -16,6 +16,12 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyInter;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyLand;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyLor;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyOvr;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyPlus;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyUnion;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -59,12 +65,6 @@ import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointSimplifier;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ExpressionSimplification.InterSimplification;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ExpressionSimplification.OverrideSimplification;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ExpressionSimplification.PlusSimplification;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ExpressionSimplification.UnionSimplification;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplification.LandSimplification;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplification.LorSimplification;
 
 /**
  * Basic automated rewriter for the Event-B sequent prover.
@@ -383,7 +383,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Conjunction 4: P ∧ ... ∧ Q ∧ ... ∧ ¬Q ∧ ... ∧ R  == P ∧ ... ∧ Q ∧ ... ∧ R
 	    	 */
 	    	Land(_) -> {
-    			result = new LandSimplification(predicate, dLib).simplify();
+    			result = simplifyLand(predicate, dLib);
 				trace(predicate, result, "SIMP_SPECIAL_AND_BTRUE", "SIMP_SPECIAL_AND_BFALSE",
 						"SIMP_MULTI_AND", "SIMP_MULTI_AND_NOT");
 				return result;
@@ -400,7 +400,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Disjunction 4: P ⋁ ... ⋁ Q ⋁ ... ⋁ ¬Q ⋁ ... ⋁ R  == P ⋁ ... ⋁ Q ⋁ ... ⋁ R
 	    	 */
 	    	Lor(_) -> {
-    			result = new LorSimplification(predicate, dLib).simplify();
+    			result = simplifyLor(predicate, dLib);
 				trace(predicate, result, "SIMP_SPECIAL_OR_BTRUE", "SIMP_SPECIAL_OR_BFALSE",
 						"SIMP_MULTI_OR", "SIMP_MULTI_OR_NOT");
 				return result;
@@ -1416,7 +1416,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Set Theory: S ∩ ... ∩ T ∩ T ∩ ... ∩ V == S ∩ ... ∩ T ∩ ... ∩ V
 	    	 */
 	    	BInter(_) -> {
-	    		result = new InterSimplification(expression, dLib).simplify();
+	    		result = simplifyInter(expression, dLib);
 	    		trace(expression, result, "SIMP_SPECIAL_BINTER", "SIMP_TYPE_BINTER", "SIMP_MULTI_BINTER");
 				return result;
 	    	}
@@ -1430,7 +1430,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Set Theory: S ∪ ... ∪ T ∪ T ∪ ... ∪ V == S ∪ ... ∪ T ∪ ... ∪ V
 	    	 */
 	    	BUnion(_) -> {
-	    		result = new UnionSimplification(expression, dLib).simplify();
+	    		result = simplifyUnion(expression, dLib);
 	    		trace(expression, result, "SIMP_SPECIAL_BUNION", "SIMP_TYPE_BUNION", "SIMP_MULTI_BUNION");
 				return result;
 	    	}
@@ -1440,7 +1440,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Arithmetic 1: E + ... + 0 + ... + F == E + ... + ... + F
 	    	 */
 	    	Plus (_) -> {
-	    		result = new PlusSimplification(expression, dLib).simplify();
+	    		result = simplifyPlus(expression, dLib);
 	    		trace(expression, result, "SIMP_SPECIAL_PLUS");
 				return result;
 	    	}
@@ -1488,7 +1488,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * Set theory: r  ...  ∅  ...  s  ==  r  ...  s
 			 */
 	    	Ovr(_) -> {
-	    		result = new OverrideSimplification(expression, dLib).simplify();
+	    		result = simplifyOvr(expression, dLib);
 	    		trace(expression, result, "SIMP_SPECIAL_OVERL");
 				return result;
      		}
