@@ -53,6 +53,9 @@ public class CompImgTests extends AbstractManualRewriterTests {
 
 	String resultP9 = "∀x·x=0⇒{x ↦ 4}[({x ↦ 1};{2 ↦ x};{x ↦ 3})[{x,2}]]={x,1}";
 
+	String P13 = "({x ↦ 1};{2 ↦ x};{x ↦ 1};{x ↦ 4})[{x, 2}] = {x, 1}";
+
+	String resultP13 = "({x ↦ 1};{x ↦ 4})[({x ↦ 1};{2 ↦ x})[{x,2}]]={x,1}";
 	
 	// Failure
 	String P10 = "{x ↦ 1};{2 ↦ x};{x ↦ 3};{x ↦ 4} = {x ↦ 1}";
@@ -83,7 +86,8 @@ public class CompImgTests extends AbstractManualRewriterTests {
 				new SuccessfulTest(P6, "1.1.0.0.2", resultP6),
 				new SuccessfulTest(P7, "0.0.3", resultP7),
 				new SuccessfulTest(P8, "1.0.0.3", resultP8),
-				new SuccessfulTest(P9, "1.1.0.0.3", resultP9)
+				new SuccessfulTest(P9, "1.1.0.0.3", resultP9),
+				new SuccessfulTest(P13, "0.0.2", resultP13),
 		};
 	}
 

@@ -109,6 +109,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.FiniteRelation;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSet;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteSetMinus;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunCompImg;
+import org.eventb.internal.core.seqprover.eventbExtensions.FunImageGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunInterImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunSetMinusImg;
@@ -116,7 +117,6 @@ import org.eventb.internal.core.seqprover.eventbExtensions.FunSingletonImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.He;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
-import org.eventb.internal.core.seqprover.eventbExtensions.FunImageGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.ModusTollens;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointRule;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
@@ -2453,7 +2453,7 @@ public class Tactics {
 
 
 	/**
-	 * Return the list of applicable positions of the tactic "composition image
+	 * Returns the list of applicable positions of the tactic "composition image
 	 * rewrites" {@link CompImgRewrites} to a predicate.
 	 * <p>
 	 * 
@@ -2463,38 +2463,8 @@ public class Tactics {
 	 * @author htson
 	 */
 	public static List<IPosition> compImgGetPositions(Predicate predicate) {
-		List<IPosition> positions = predicate.getPositions(new DefaultFilter() {
-
-			@Override
-			public boolean select(BinaryExpression expression) {
-				if (expression.getTag() == Expression.RELIMAGE) {
-					return true;
-				}
-				return super.select(expression);
-			}
-
-		});
-		
-		List<IPosition> results = new ArrayList<IPosition>();
-		for (IPosition position : positions) {
-			IPosition firstChild = position.getFirstChild();  // Child on the left
-			Formula<?> left = predicate.getSubFormula(firstChild);
-			if (left.getTag() == Expression.FCOMP) {
-				IPosition child = firstChild.getFirstChild();
-				Formula<?> subFormula = predicate.getSubFormula(child);
-				while (subFormula != null) {
-					if (!child.isFirstChild()) {
-						results.add(child);
-					}
-					child = child.getNextSibling();
-					subFormula = predicate.getSubFormula(child);
-				}
-			}
-		}
-		
-		return results; 
+		return CompImgRewrites.getPositions(predicate);
 	}
-
 
 	/**
 	 * Return the tactic "composition image rewrites" {@link CompImgRewrites}
