@@ -1,77 +1,96 @@
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
-import static java.util.Collections.singleton;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 
 public abstract class FormulaSimplification<T extends Formula<T>> {
 
-	protected final DLib dLib;
+	// Original associative formula to simplify
+	protected final T original;
+	protected final T[] children;
 
-	public FormulaSimplification(DLib lib) {
-		dLib = lib;
+	// Children of the resulting formula, so far
+	protected Collection<T> newChildren;
+
+	// If non-null, this contains the result, ignore newChildren above
+	protected T knownResult;
+
+	protected final DLib dLib;
+	protected FormulaFactory ff;
+
+	public FormulaSimplification(T original, T[] children, DLib dLib) {
+		this.original = original;
+		this.children = children;
+		this.dLib = dLib;
+		this.ff = dLib.getFormulaFactory();
+
+		if (eliminateDuplicate()) {
+			this.newChildren = new LinkedHashSet<T>();
+		} else {
+			this.newChildren = new ArrayList<T>();
+		}
+
 	}
 
 	protected abstract boolean eliminateDuplicate();
 
-	protected abstract boolean isNeutral(T formula);
-
-	protected abstract boolean isDeterminant(T formula);
-	
-	protected abstract boolean isContradicting(T formula, Collection<T> formulas);
-
-	protected abstract T getContradictionResult();
-
-	protected abstract T getNeutral(T formula);
-
-	protected abstract T makeAssociativeFormula(int tag, Collection<T> formulas);
-
-	public T simplifyAssociativeFormula(T formula, T[] children) {
-		final Collection<T> formulas = simplifiedAssociativeFormula(children);
-		int size = formulas.size();
-		if (size == 0) {
-			return getNeutral(formula);
-		} else if (size == 1) {
-			return formulas.iterator().next();
-		} else if (size != children.length) {
-			return makeAssociativeFormula(formula.getTag(), formulas);
-		}
-		return formula;
+	public T simplify() {
+		processChildren();
+		return makeResult();
 	}
 
-	protected Collection<T> simplifiedAssociativeFormula(T[] children) {
-		final Collection<T> formulas;
-		if (eliminateDuplicate()) {
-			formulas = new LinkedHashSet<T>();
-		} else {
-			formulas = new ArrayList<T>();
-		}
-
+	protected void processChildren() {
 		for (T child : children) {
-			final T result = processChild(formulas, child);
-			if (result != null) {
-				return singleton(result);
+			processChild(child);
+			if (knownResult != null) {
+				return;
 			}
 		}
-		return formulas;
 	}
-	
-	protected T processChild(final Collection<T> formulas, T child) {
+
+	protected void processChild(T child) {
 		if (isNeutral(child)) {
 			// ignore
 		} else if (isDeterminant(child)) {
-			return child;
-		} else if (isContradicting(child, formulas)) {
-			return getContradictionResult();
+			// TODO use getDeterminantResult(child) instead
+			knownResult = child;
+		} else if (isContradicting(child)) {
+			knownResult = getContradictionResult();
 		} else {
-			formulas.add(child);
+			newChildren.add(child);
 		}
-		return null;
 	}
+
+	protected abstract boolean isNeutral(T child);
+
+	protected abstract boolean isDeterminant(T child);
+
+	protected abstract boolean isContradicting(T child);
+
+	protected abstract T getContradictionResult();
+
+	private T makeResult() {
+		if (knownResult != null) {
+			return knownResult;
+		}
+		int size = newChildren.size();
+		if (size == 0) {
+			return getNeutral();
+		} else if (size == 1) {
+			return newChildren.iterator().next();
+		} else if (size != children.length) {
+			return makeAssociativeFormula();
+		}
+		return original;
+	}
+
+	protected abstract T getNeutral();
+
+	protected abstract T makeAssociativeFormula();
 
 }

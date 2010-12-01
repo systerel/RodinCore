@@ -42,9 +42,7 @@ import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
-import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedExpression.Form;
 import org.eventb.core.ast.QuantifiedPredicate;
@@ -61,6 +59,12 @@ import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointSimplifier;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ExpressionSimplification.InterSimplification;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ExpressionSimplification.OverrideSimplification;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ExpressionSimplification.PlusSimplification;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ExpressionSimplification.UnionSimplification;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplification.LandSimplification;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplification.LorSimplification;
 
 /**
  * Basic automated rewriter for the Event-B sequent prover.
@@ -378,8 +382,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * SIMP_MULTI_AND_NOT
 	    	 * Conjunction 4: P ∧ ... ∧ Q ∧ ... ∧ ¬Q ∧ ... ∧ R  == P ∧ ... ∧ Q ∧ ... ∧ R
 	    	 */
-	    	Land(children) -> {
-    			result = (new LandSimplification(dLib)).simplifyAssociativeFormula(predicate, `children);
+	    	Land(_) -> {
+    			result = new LandSimplification(predicate, dLib).simplify();
 				trace(predicate, result, "SIMP_SPECIAL_AND_BTRUE", "SIMP_SPECIAL_AND_BFALSE",
 						"SIMP_MULTI_AND", "SIMP_MULTI_AND_NOT");
 				return result;
@@ -395,8 +399,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * SIMP_MULTI_OR_NOT
 	    	 * Disjunction 4: P ⋁ ... ⋁ Q ⋁ ... ⋁ ¬Q ⋁ ... ⋁ R  == P ⋁ ... ⋁ Q ⋁ ... ⋁ R
 	    	 */
-	    	Lor(children) -> {
-    			result = (new LorSimplification(dLib)).simplifyAssociativeFormula(predicate, `children);
+	    	Lor(_) -> {
+    			result = new LorSimplification(predicate, dLib).simplify();
 				trace(predicate, result, "SIMP_SPECIAL_OR_BTRUE", "SIMP_SPECIAL_OR_BFALSE",
 						"SIMP_MULTI_OR", "SIMP_MULTI_OR_NOT");
 				return result;
@@ -1411,8 +1415,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * SIMP_MULTI_BINTER
              * Set Theory: S ∩ ... ∩ T ∩ T ∩ ... ∩ V == S ∩ ... ∩ T ∩ ... ∩ V
 	    	 */
-	    	BInter(children) -> {
-	    		result = (new InterSimplification(dLib)).simplifyAssociativeFormula(expression, `children);
+	    	BInter(_) -> {
+	    		result = new InterSimplification(expression, dLib).simplify();
 	    		trace(expression, result, "SIMP_SPECIAL_BINTER", "SIMP_TYPE_BINTER", "SIMP_MULTI_BINTER");
 				return result;
 	    	}
@@ -1425,8 +1429,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * SIMP_MULTI_BUNION
              * Set Theory: S ∪ ... ∪ T ∪ T ∪ ... ∪ V == S ∪ ... ∪ T ∪ ... ∪ V
 	    	 */
-	    	BUnion(children) -> {
-	    		result = (new UnionSimplification(dLib)).simplifyAssociativeFormula(expression, `children);
+	    	BUnion(_) -> {
+	    		result = new UnionSimplification(expression, dLib).simplify();
 	    		trace(expression, result, "SIMP_SPECIAL_BUNION", "SIMP_TYPE_BUNION", "SIMP_MULTI_BUNION");
 				return result;
 	    	}
@@ -1435,8 +1439,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_SPECIAL_PLUS
              * Arithmetic 1: E + ... + 0 + ... + F == E + ... + ... + F
 	    	 */
-	    	Plus (children) -> {
-	    		result = (new PlusSimplification(dLib)).simplifyAssociativeFormula(expression, `children);
+	    	Plus (_) -> {
+	    		result = new PlusSimplification(expression, dLib).simplify();
 	    		trace(expression, result, "SIMP_SPECIAL_PLUS");
 				return result;
 	    	}
@@ -1483,8 +1487,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * SIMP_SPECIAL_OVERL
 			 * Set theory: r  ...  ∅  ...  s  ==  r  ...  s
 			 */
-	    	Ovr(children) -> {
-	    		result = (new OverrideSimplification(dLib)).simplifyAssociativeFormula(expression, `children);
+	    	Ovr(_) -> {
+	    		result = new OverrideSimplification(expression, dLib).simplify();
 	    		trace(expression, result, "SIMP_SPECIAL_OVERL");
 				return result;
      		}
