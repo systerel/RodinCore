@@ -26,6 +26,7 @@ package org.eventb.core.ast;
  *            type of the findings reported by this inspector
  * 
  * @see Formula#inspect(IFormulaInspector)
+ * @see DefaultInspector
  * @see IAccumulator
  * 
  * @author Laurent Voisin

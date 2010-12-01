@@ -23,6 +23,7 @@ package org.eventb.core.ast;
  * </p>
  * 
  * @see Formula#accept(ISimpleVisitor)
+ * @see DefaultSimpleVisitor
  * 
  * @author Nicolas Beauger
  * @since 1.0

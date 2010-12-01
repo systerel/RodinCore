@@ -129,6 +129,7 @@ package org.eventb.core.ast;
  * </pre>
  * 
  * @see Formula#accept(IVisitor)
+ * @see DefaultVisitor
  * 
  * @author Laurent Voisin
  * @since 1.0

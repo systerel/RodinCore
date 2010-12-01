@@ -40,6 +40,7 @@ package org.eventb.core.ast;
  * 
  * @author Laurent Voisin
  * @see Formula#rewrite(IFormulaRewriter)
+ * @see DefaultRewriter
  * @since 1.0
  */
 public interface IFormulaRewriter {
