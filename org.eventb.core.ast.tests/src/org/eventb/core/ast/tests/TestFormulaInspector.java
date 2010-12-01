@@ -19,31 +19,13 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.eventb.core.ast.AssociativeExpression;
-import org.eventb.core.ast.AssociativePredicate;
-import org.eventb.core.ast.AtomicExpression;
-import org.eventb.core.ast.BinaryExpression;
-import org.eventb.core.ast.BinaryPredicate;
-import org.eventb.core.ast.BoolExpression;
-import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
-import org.eventb.core.ast.ExtendedExpression;
-import org.eventb.core.ast.ExtendedPredicate;
+import org.eventb.core.ast.DefaultInspector;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IFormulaInspector;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
-import org.eventb.core.ast.MultiplePredicate;
-import org.eventb.core.ast.PredicateVariable;
-import org.eventb.core.ast.QuantifiedExpression;
-import org.eventb.core.ast.QuantifiedPredicate;
-import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.ast.SetExtension;
-import org.eventb.core.ast.SimplePredicate;
-import org.eventb.core.ast.UnaryExpression;
-import org.eventb.core.ast.UnaryPredicate;
 
 /**
  * Ensures that finding accumulators work as expected for addition of new
@@ -52,72 +34,12 @@ import org.eventb.core.ast.UnaryPredicate;
  */
 public class TestFormulaInspector extends TestCase {
 
-	private static final IFormulaInspector<String> inspector = new IFormulaInspector<String>() {
-
-		@Override
-		public void inspect(AssociativeExpression expression,
-				IAccumulator<String> accumulator) {
-			// do nothing
-		}
-
-		@Override
-		public void inspect(AssociativePredicate predicate,
-				IAccumulator<String> accumulator) {
-			// do nothing
-		}
-
-		@Override
-		public void inspect(AtomicExpression expression,
-				IAccumulator<String> accumulator) {
-			// do nothing
-		}
-
-		@Override
-		public void inspect(BinaryExpression expression,
-				IAccumulator<String> accumulator) {
-			// do nothing
-		}
-
-		@Override
-		public void inspect(BinaryPredicate predicate,
-				IAccumulator<String> accumulator) {
-			// do nothing
-		}
-
-		@Override
-		public void inspect(BoolExpression expression,
-				IAccumulator<String> accumulator) {
-			// do nothing
-		}
-
-		@Override
-		public void inspect(BoundIdentDecl decl,
-				IAccumulator<String> accumulator) {
-			// do nothing
-		}
+	private static final IFormulaInspector<String> inspector = new DefaultInspector<String>() {
 
 		@Override
 		public void inspect(BoundIdentifier identifier,
 				IAccumulator<String> accumulator) {
 			accumulator.add(asList("a", "b", "c"));
-		}
-
-		@Override
-		public void inspect(ExtendedExpression expression,
-				IAccumulator<String> accumulator) {
-			// do nothing
-		}
-
-		@Override
-		public void inspect(ExtendedPredicate predicate,
-				IAccumulator<String> accumulator) {
-			// do nothing
-		}
-
-		@Override
-		public void inspect(FreeIdentifier identifier,
-				IAccumulator<String> accumulator) {
-			// do nothing
 		}
 
 		@Override
@@ -130,60 +52,6 @@ public class TestFormulaInspector extends TestCase {
 		public void inspect(LiteralPredicate predicate,
 				IAccumulator<String> accumulator) {
 			accumulator.add("simple");
-		}
-
-		@Override
-		public void inspect(MultiplePredicate predicate,
-				IAccumulator<String> accumulator) {
-			// do nothing
-		}
-
-		@Override
-		public void inspect(PredicateVariable predicate,
-				IAccumulator<String> accumulator) {
-			// do nothing
-		}
-
-		@Override
-		public void inspect(QuantifiedExpression expression,
-				IAccumulator<String> accumulator) {
-			// do nothing
-		}
-
-		@Override
-		public void inspect(QuantifiedPredicate predicate,
-				IAccumulator<String> accumulator) {
-			// do nothing
-		}
-
-		@Override
-		public void inspect(RelationalPredicate predicate,
-				IAccumulator<String> accumulator) {
-			// do nothing
-		}
-
-		@Override
-		public void inspect(SetExtension expression,
-				IAccumulator<String> accumulator) {
-			// do nothing
-		}
-
-		@Override
-		public void inspect(SimplePredicate predicate,
-				IAccumulator<String> accumulator) {
-			// do nothing
-		}
-
-		@Override
-		public void inspect(UnaryExpression expression,
-				IAccumulator<String> accumulator) {
-			// do nothing
-		}
-
-		@Override
-		public void inspect(UnaryPredicate predicate,
-				IAccumulator<String> accumulator) {
-			// do nothing
 		}
 
 	};
