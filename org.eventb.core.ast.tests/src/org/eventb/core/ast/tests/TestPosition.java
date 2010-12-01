@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added child indexes
+ *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.FormulaFactory.makePosition;
@@ -67,6 +78,8 @@ public class TestPosition extends TestCase {
 		assertEquals(pos, actual.getParent());
 		assertFalse(actual.isRoot());
 		assertTrue(actual.isFirstChild());
+		assertEquals(0, actual.getChildIndex());
+		assertEquals(expect, pos.getChildAtIndex(0));
 	}
 	
 	public final void testGetFirstChild() {
@@ -74,6 +87,10 @@ public class TestPosition extends TestCase {
 		assertFirstChild("0");
 		assertFirstChild("2");
 		assertFirstChild("1.2.3");
+	}
+
+	private void assertChildIndex(IPosition pos) {
+		assertEquals(pos, pos.getParent().getChildAtIndex(pos.getChildIndex()));
 	}
 
 	private void assertNextSibling(String image, String expected) {
@@ -89,6 +106,8 @@ public class TestPosition extends TestCase {
 		assertEquals(pos, actual.getPreviousSibling());
 		assertFalse(actual.isRoot());
 		assertFalse(actual.isFirstChild());
+		assertChildIndex(pos);
+		assertChildIndex(actual);
 	}
 	
 	public final void testGetNextSibling() {
@@ -188,6 +207,36 @@ public class TestPosition extends TestCase {
 		final IPosition root = IPosition.ROOT;
 		assertTrue(root.isRoot());
 		assertEquals("", root.toString());
+	}
+
+	private void failNthChild(String image, int n) {
+		IPosition pos = mPos(image);
+
+		try {
+			pos.getChildAtIndex(n);
+			fail("No exception raised");
+		} catch (IllegalStateException e) {
+			// pass
+		}
+	}
+
+	public final void testNthChild() {
+		// Tests for regular values already done with other queries.
+
+		failNthChild("", -1);
+		failNthChild("0", -23);
+		failNthChild("1.2", -5);
+	}
+
+	public final void testChildIndex() {
+		// Tests for regular values already done with other queries.
+
+		try {
+			IPosition.ROOT.getChildIndex();
+			fail("No exception raised");
+		} catch (IllegalStateException e) {
+			// pass
+		}
 	}
 
 }
