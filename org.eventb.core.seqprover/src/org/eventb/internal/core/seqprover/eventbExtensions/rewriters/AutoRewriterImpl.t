@@ -16,15 +16,19 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyBcomp;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyFcomp;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyInter;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyLand;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyLor;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyMult;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyOvr;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyPlus;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyUnion;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -754,7 +758,11 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_EQUAL_CONSTR_DIFF", "SIMP_SUBSETEQ_SING",
 			"SIMP_SPECIAL_SUBSET_R", "SIMP_MULTI_SUBSET",
 			"SIMP_SPECIAL_EQUAL_REL", "SIMP_SPECIAL_EQUAL_RELDOM",
-			"SIMP_LIT_GE_CARD_1", "SIMP_LIT_LE_CARD_1" })
+			"SIMP_LIT_GE_CARD_1", "SIMP_LIT_LE_CARD_1", "SIMP_LIT_LE_CARD_0",
+			"SIMP_LIT_GE_CARD_0", "SIMP_CARD_NATURAL", "SIMP_CARD_NATURAL1",
+			"SIMP_LIT_IN_NATURAL", "SIMP_LIT_IN_NATURAL1",
+			"SIMP_SPECIAL_IN_NATURAL1", "SIMP_LIT_IN_MINUS_NATURAL",
+			"SIMP_LIT_IN_MINUS_NATURAL1" })
     @Override
 	public Predicate rewrite(RelationalPredicate predicate) {
 		final Predicate result;
@@ -1319,6 +1327,91 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			}
 			
 			/**
+			 * SIMP_CARD_NATURAL
+			 *    card(S) ∈ ℕ == ⊤
+			 */
+			In(Card(_), Natural()) -> {
+				if (level2) {
+					result = dLib.True();
+					trace(predicate, result, "SIMP_CARD_NATURAL");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_CARD_NATURAL1
+			 *    card(S) ∈ ℕ1 == ¬ S = ∅
+			 */
+			In(Card(S), Natural1()) -> {
+				if (level2) {
+					result = makeUnaryPredicate(Predicate.NOT, makeIsEmpty(`S));
+					trace(predicate, result, "SIMP_CARD_NATURAL1");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_LIT_IN_NATURAL
+			 *    i ∈ ℕ == ⊤  (where i is a non−negative literal)
+			 */
+			In(IntegerLiteral(i), Natural()) -> {
+				if (level2 && `i.intValue() >= 0) {
+					result = dLib.True();
+					trace(predicate, result, "SIMP_LIT_IN_NATURAL");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_LIT_IN_NATURAL1
+			 *    i ∈ ℕ1 == ⊤ (where i is a positive literal)
+			 */
+			In(IntegerLiteral(i), Natural1()) -> {
+				if (level2 && `i.intValue() > 0) {
+					result = dLib.True();
+					trace(predicate, result, "SIMP_LIT_IN_NATURAL1");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_SPECIAL_IN_NATURAL1
+			 *    0 ∈ ℕ1 == ⊥
+			 */
+			In(IntegerLiteral(i), Natural1()) -> {
+				if (level2 && `i.equals(ZERO)) {
+					result = dLib.False();
+					trace(predicate, result, "SIMP_SPECIAL_IN_NATURAL1");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_LIT_IN_MINUS_NATURAL
+			 *    −i ∈ ℕ == ⊥ (where i is a positive literal)
+			 */
+			In(IntegerLiteral(i), Natural()) -> {
+				if (level2 && `i.intValue() < 0) {
+					result = dLib.False();
+					trace(predicate, result, "SIMP_LIT_IN_MINUS_NATURAL");
+					return result;
+				}
+			}
+			 
+			/**
+			 * SIMP_LIT_IN_MINUS_NATURAL1
+			 *    −i ∈ ℕ1 == ⊥ (where i is a non−negative literal)
+			 */
+			// TODO Benoit : en l'état, redondance avec SIMP_SPECIAL_IN_NATURAL1
+			In(IntegerLiteral(i), Natural1()) -> {
+				if (level2 && `i.intValue() <= 0) {
+					result = dLib.False();
+					trace(predicate, result, "SIMP_LIT_IN_MINUS_NATURAL1");
+					return result;
+				}
+			}
+			
+			/**
  	    	 * SIMP_LIT_LE_CARD_1
  	    	 *    1 ≤ card(S) == ¬(S = ∅)
  	    	 */
@@ -1329,6 +1422,18 @@ public class AutoRewriterImpl extends DefaultRewriter {
 					return result;
  	    		}
  	    	}
+ 	    	
+ 	    	/**
+			 * SIMP_LIT_LE_CARD_0
+			 *    0 ≤ card(S) == ⊤
+			 */
+			Le(IntegerLiteral(i), Card(_)) -> {
+				if (level2 && `i.equals(ZERO)) {
+					result = dLib.True();
+					trace(predicate, result, "SIMP_LIT_LE_CARD_0");
+					return result;
+				}
+			}
 
 			/**
  	    	 * SIMP_LIT_GE_CARD_1
@@ -1341,6 +1446,18 @@ public class AutoRewriterImpl extends DefaultRewriter {
 					return result;
  	    		}
  	    	}
+
+			/**
+			 * SIMP_LIT_GE_CARD_0
+			 *    card(S) ≥ 0 == ⊤
+			 */
+			Ge(Card(_), IntegerLiteral(i)) -> {
+				if (level2 && `i.equals(ZERO)) {
+					result = dLib.True();
+					trace(predicate, result, "SIMP_LIT_GE_CARD_0");
+					return result;
+				}
+			}
 
 	    }
 	    return predicate;
@@ -1401,7 +1518,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
             "SIMP_SPECIAL_BCOMP", "SIMP_SPECIAL_OVERL", " SIMP_FCOMP_ID_L",
             "SIMP_FCOMP_ID_R",
             "SIMP_TYPE_FCOMP_R", "SIMP_TYPE_FCOMP_L", "SIMP_TYPE_BCOMP_L",
-            "SIMP_TYPE_BCOMP_R" })
+            "SIMP_TYPE_BCOMP_R", "SIMP_TYPE_OVERL_CPROD", "SIMP_TYPE_BCOMP_ID",
+            "SIMP_TYPE_FCOMP_ID" })
 	@Override
 	public Expression rewrite(AssociativeExpression expression) {
 		final Expression result;
@@ -1439,10 +1557,12 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_SPECIAL_PLUS
              * Arithmetic 1: E + ... + 0 + ... + F == E + ... + ... + F
 	    	 */
-	    	Plus (_) -> {
-	    		result = simplifyPlus(expression, dLib);
-	    		trace(expression, result, "SIMP_SPECIAL_PLUS");
-				return result;
+	    	Plus (eList(_*,  IntegerLiteral(i), _*)) -> {
+	    		if (`i.equals(ZERO)) {
+	    			result = simplifyPlus(expression, dLib);
+	    			trace(expression, result, "SIMP_SPECIAL_PLUS");
+					return result;
+				}
 	    	}
 
 	    	/**
@@ -1456,7 +1576,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Arithmetic 7.1: (-E) ∗ F == -(E * F)
 	    	 */
 	    	Mul (_) -> {
-	    		result = MultiplicationSimplifier.simplify(expression, ff);
+	    		result = simplifyMult(expression, dLib);
 	    		trace(expression, result, "SIMP_SPECIAL_PROD_1", "SIMP_SPECIAL_PROD_0", "SIMP_SPECIAL_PROD_MINUS_EVEN", "SIMP_SPECIAL_PROD_MINUS_ODD");
 				return result;
 	    	}
@@ -1466,7 +1586,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Set Theory: p; ... ;∅; ... ;q == ∅
 	    	 */
 	    	Fcomp (eList(_*, EmptySet(), _*)) -> {
-   				result = ff.makeEmptySet(expression.getType(), null);
+	    		result = simplifyFcomp(expression, dLib);
    	    		trace(expression, result, "SIMP_SPECIAL_FCOMP");
    				return result;
 	    	}
@@ -1476,18 +1596,16 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Set Theory: p∘ ... ∘∅∘ ... ∘q == ∅
 	    	 */
 	    	Bcomp (eList(_*, EmptySet(), _*)) -> {
-   				result = ff.makeEmptySet(expression.getType(), null);
+	    		result = simplifyBcomp(expression, dLib);
    	    		trace(expression, result, "SIMP_SPECIAL_BCOMP");
    				return result;
 	    	}
-	    							
-
 			
             /**
              * SIMP_SPECIAL_OVERL
 			 * Set theory: r  ...  ∅  ...  s  ==  r  ...  s
 			 */
-	    	Ovr(_) -> {
+	    	Ovr(eList(_*, EmptySet(), _*)) -> {
 	    		result = simplifyOvr(expression, dLib);
 	    		trace(expression, result, "SIMP_SPECIAL_OVERL");
 				return result;
@@ -1579,6 +1697,42 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    		}
 	    	}
 	    	
+	    	/**
+	    	 * SIMP_TYPE_OVERL_CPROD
+	    	 *    r  ..  Ty == Ty
+	    	 */
+	    	Ovr(eList(_*, Ty)) -> {
+	    		if (level2 && `Ty.isATypeExpression()) {
+	    			result = `Ty;
+	    			trace(expression, result, "SIMP_TYPE_OVERL_CPROD");
+					return result;	
+	    		}
+	    	}
+	    	
+	    	/**
+	    	 * SIMP_TYPE_BCOMP_ID
+	    	 *    r ∘ .. ∘ id ∘ .. ∘ s == r ∘ .. ∘ s
+	    	 */
+	    	Bcomp(eList(_*, IdGen(), _*)) -> {
+	    		if (level2) {
+	    			result = simplifyBcomp(expression, dLib);
+	    			trace(expression, result, "SIMP_TYPE_BCOMP_ID");
+					return result;
+				}
+	    	}
+	    	
+	    	/**
+	    	 * SIMP_TYPE_FCOMP_ID
+	    	 *    r ; .. ; id ; .. ; s == r ; .. ; s
+	    	 */
+	    	Fcomp(eList(_*, IdGen(), _*)) -> {
+	    		if (level2) {
+	    			result = simplifyFcomp(expression, dLib);
+	    			trace(expression, result, "SIMP_TYPE_FCOMP_ID");
+					return result;
+	    		}
+	    	}
+	    	
 	    }
 	    return expression;
 	}
@@ -1616,8 +1770,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_SPECIAL_REL_R", "SIMP_SPECIAL_REL_L",
 			"SIMP_FUNIMAGE_PRJ1", "SIMP_FUNIMAGE_PRJ2", "SIMP_FUNIMAGE_ID",
 			"SIMP_SPECIAL_EQUAL_RELDOMRAN",
-			"SIMP_TYPE_DPROD", "SIMP_TYPE_PPROD",
-			"SIMP_SPECIAL_MOD_0", "SIMP_SPECIAL_MOD_1" } )
+			"SIMP_DPROD_CPROD", "SIMP_PPROD_CPROD",
+			"SIMP_SPECIAL_MOD_0", "SIMP_SPECIAL_MOD_1", "SIMP_MULTI_MOD" } )
 	@Override
 	public Expression rewrite(BinaryExpression expression) {
 		final Expression result;
@@ -2420,44 +2574,32 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			}
 			
 			/**
-			 * SIMP_TYPE_DPROD
-			 *    Ta ⊗ Tb == Tc × (Td × Te)
-			 *	  (where Ta and Tb are type expressions such as Ta = Tc × Td and Tb = Tc × Te)
+			 * SIMP_DPROD_CPROD
+			 *    (S × T) ⊗ (U × V) == (S ∩ U) × (T × V)
 			 */
-			// TODO : waiting for the wiki to be updated with the correct version
-			// of the rule
-			/*
-			Dprod(Cprod(Tc, Td), Cprod(Tc, Te)) -> {
-				if (level2 && `Tc.isATypeExpression() &&
-					`Td.isATypeExpression() && `Te.isATypeExpression()) {
+			Dprod(Cprod(S, T), Cprod(U, V)) -> {
+				if (level2) {
 					result = makeBinaryExpression(Expression.CPROD,
-								`Tc,
-								makeBinaryExpression(Expression.CPROD, `Td, `Te));
-					trace(expression, result, "SIMP_TYPE_DPROD");
+								makeAssociativeExpression(Expression.BINTER, `S, `U),
+								makeBinaryExpression(Expression.CPROD, `T, `V));
+					trace(expression, result, "SIMP_DPROD_CPROD");
 					return result;
 				}
 			}
-			*/
 			
 			/**
-			 * SIMP_TYPE_PPROD
-			 *    Ta ∥ Tb == (Tc × Te) × (Td × Tf)
-			 *    (where Ta and Tb are type expressions such as Ta = Tc × Td and Tb = Te × Tf)
+			 * SIMP_PPROD_CPROD
+			 *    (S × T) ∥ (U × V) == (S × U) × (T × V)
 			 */
-			// TODO : waiting for the wiki to be updated with the correct version
-			// of the rule
-			/*
-			Pprod(Cprod(Tc, Td), Cprod(Te, Tf)) -> {
-				if (level2 && `Tc.isATypeExpression() && `Td.isATypeExpression() &&
-					`Te.isATypeExpression() && `Tf.isATypeExpression()) {
+			Pprod(Cprod(S, T), Cprod(U, V)) -> {
+				if (level2) {
 					result = makeBinaryExpression(Expression.CPROD,
-								makeBinaryExpression(Expression.CPROD, `Tc, `Te),
-								makeBinaryExpression(Expression.CPROD, `Td, `Tf));
-					trace(expression, result, "SIMP_TYPE_PPROD");
+								makeBinaryExpression(Expression.CPROD, `S, `U),
+								makeBinaryExpression(Expression.CPROD, `T, `V));
+					trace(expression, result, "SIMP_PPROD_CPROD");
 					return result;
 				}
 			}
-			*/
 			
 			/**
 			 * SIMP_SPECIAL_MOD_0
@@ -2483,6 +2625,18 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				}
 			}
 			
+			/**
+			 * SIMP_MULTI_MOD
+			 *    E mod E == 0
+			 */
+			Mod(E, E) -> {
+				if (level2) {
+					result = number0;
+					trace(expression, result, "SIMP_MULTI_MOD");
+					return result;
+				}
+			}
+			
 		}
 	    return expression;
 	}
@@ -2495,12 +2649,13 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_RAN_CONVERSE", "SIMP_CONVERSE_ID", "SIMP_SPECIAL_CONVERSE",
 			"SIMP_MULTI_DOM_CPROD", "SIMP_MULTI_RAN_CPROD",
 			"SIMP_KUNION_POW", "SIMP_KUNION_POW1", "SIMP_SPECIAL_KUNION",
-			"SIMP_SPECIAL_KINTER", "SIMP_KINTER_POW", "SIMP_TYPE_CONVERSE",
+			"SIMP_SPECIAL_KINTER", "SIMP_KINTER_POW",
 			"SIMP_DOM_ID", "SIMP_RAN_ID", "SIMP_DOM_PRJ1", "SIMP_DOM_PRJ2",
 			"SIMP_RAN_PRJ1", "SIMP_RAN_PRJ2", "SIMP_TYPE_DOM",
 			"SIMP_TYPE_RAN", "SIMP_MIN_SING", "SIMP_MAX_SING",
 			"SIMP_MIN_NATURAL", "SIMP_MIN_NATURAL1", "SIMP_MIN_UPTO",
-			"SIMP_MAX_UPTO", "SIMP_CARD_CONVERSE", "SIMP_CARD_ID" })
+			"SIMP_MAX_UPTO", "SIMP_CARD_CONVERSE", "SIMP_CARD_ID",
+			"SIMP_CARD_COMPSET", "SIMP_CONVERSE_CPROD" })
 	@Override
 	public Expression rewrite(UnaryExpression expression) {
 		final Expression result;
@@ -2854,22 +3009,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			}
 			
 			/**
-			 * SIMP_TYPE_CONVERSE
-			 *    Ty∼ = Tb × Ta (where Ty is a type expression and Ty = Ta × Tb)
-			 */
-			// TODO : waiting for the wiki to be updated with the correct version
-			// of the rule
-			/*
-			Converse(Cprod(Ta, Tb)) -> {
-				if (level2 && `Ta.isATypeExpression() && `Tb.isATypeExpression()) {
-					result = makeBinaryExpression(Expression.CPROD, `Tb, `Ta);
-					trace(expression, result, "SIMP_TYPE_CONVERSE");
-					return result;
-				}
-			}
-			*/
-			
-			/**
 			 * SIMP_DOM_ID
 			 *    dom(id) == S (where id has type ℙ(S×S))
 			 */
@@ -3065,6 +3204,34 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				if (level2) {
 					result = makeUnaryExpression(Expression.KCARD, `S);
 					trace(expression, result, "SIMP_CARD_ID");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_CARD_COMPSET
+			 *    card({x · x∈S ∣ x}) == card(S) (where x non free in s)
+			 */
+			// TODO Benoit: à revoir, pas sûr du tout
+			/*
+			Card(Cset(bidList(_), In(bi@BoundIdentifier(0), S),bi)) -> {
+				if (level2) {
+					if(! Arrays.asList(`S).contains(`bi)) {
+						result = makeUnaryExpression(Formula.KCARD, `S);
+						trace(expression, result, "SIMP_CARD_COMPSET");
+						return result;
+					}
+				}
+			}*/
+			
+			/**
+			 * SIMP_CONVERSE_CPROD
+			 *    (A × B)∼ == B × A
+			 */
+			Converse(Cprod(A, B)) -> {
+				if (level2) {
+					result = makeBinaryExpression(Formula.CPROD, `B, `A);
+					trace(expression, result, "SIMP_CONVERSE_CPROD");
 					return result;
 				}
 			}

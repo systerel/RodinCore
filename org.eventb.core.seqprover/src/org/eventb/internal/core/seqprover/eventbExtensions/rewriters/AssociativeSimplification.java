@@ -19,6 +19,8 @@ import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.EMPTYSET;
 import static org.eventb.core.ast.Formula.INTLIT;
 import static org.eventb.core.ast.Formula.KID_GEN;
+import static org.eventb.core.ast.Formula.MUL;
+import static org.eventb.core.ast.Formula.UNMINUS;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 
 /**
@@ -66,34 +69,39 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 		return new LorSimplification(predicate, dLib).simplify();
 	}
 
-	public static Expression simplifyInter(AssociativeExpression predicate,
+	public static Expression simplifyInter(AssociativeExpression expression,
 			DLib dLib) {
-		return new InterSimplification(predicate, dLib).simplify();
+		return new InterSimplification(expression, dLib).simplify();
 	}
 
-	public static Expression simplifyUnion(AssociativeExpression predicate,
+	public static Expression simplifyUnion(AssociativeExpression expression,
 			DLib dLib) {
-		return new UnionSimplification(predicate, dLib).simplify();
+		return new UnionSimplification(expression, dLib).simplify();
 	}
 
-	public static Expression simplifyMult(AssociativeExpression predicate,
+	public static Expression simplifyMult(AssociativeExpression expression,
 			DLib dLib) {
-		return new MultSimplification(predicate, dLib).simplify();
+		return new MultSimplification(expression, dLib).simplify();
 	}
 
-	public static Expression simplifyPlus(AssociativeExpression predicate,
+	public static Expression simplifyPlus(AssociativeExpression expression,
 			DLib dLib) {
-		return new PlusSimplification(predicate, dLib).simplify();
+		return new PlusSimplification(expression, dLib).simplify();
 	}
 
-	public static Expression simplifyFcomp(AssociativeExpression predicate,
+	public static Expression simplifyFcomp(AssociativeExpression expression,
 			DLib dLib) {
-		return new FcompSimplification(predicate, dLib).simplify();
+		return new FcompSimplification(expression, dLib).simplify();
 	}
 
-	public static Expression simplifyOvr(AssociativeExpression predicate,
+	public static Expression simplifyBcomp(AssociativeExpression expression,
 			DLib dLib) {
-		return new OvrSimplification(predicate, dLib).simplify();
+		return new BcompSimplification(expression, dLib).simplify();
+	}
+
+	public static Expression simplifyOvr(AssociativeExpression expression,
+			DLib dLib) {
+		return new OvrSimplification(expression, dLib).simplify();
 	}
 
 	private static abstract class PredicateSimplification extends
@@ -217,7 +225,38 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 
 	}
 
-	// TODO implement BcompSimplification
+	private static class BcompSimplification extends ExpressionSimplification {
+
+		BcompSimplification(AssociativeExpression original, DLib dLib) {
+			super(original, dLib);
+		}
+
+		@Override
+		protected boolean eliminateDuplicate() {
+			return false;
+		}
+
+		@Override
+		protected boolean isNeutral(Expression child) {
+			return child.getTag() == KID_GEN;
+		}
+
+		@Override
+		protected boolean isDeterminant(Expression child) {
+			return child.getTag() == EMPTYSET;
+		}
+
+		@Override
+		protected Expression getNeutral() {
+			return ff.makeAtomicExpression(KID_GEN, null, original.getType());
+		}
+		
+		@Override
+		protected Expression getDeterminantResult(Expression child) {
+			return ff.makeEmptySet(original.getType(), null);
+		}
+
+	}
 
 	private static class FcompSimplification extends ExpressionSimplification {
 
@@ -237,13 +276,17 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 
 		@Override
 		protected boolean isDeterminant(Expression child) {
-			// TODO for empty set
-			return false;
+			return child.getTag() == EMPTYSET;
 		}
 
 		@Override
 		protected Expression getNeutral() {
 			return ff.makeAtomicExpression(KID_GEN, null, original.getType());
+		}
+		
+		@Override
+		protected Expression getDeterminantResult(Expression child) {
+			return ff.makeEmptySet(original.getType(), null);
 		}
 
 	}
@@ -279,8 +322,87 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 
 	private static class MultSimplification extends ExpressionSimplification {
 
+		private boolean positive = true;
+		private boolean changed = false;
+
 		MultSimplification(AssociativeExpression original, DLib dLib) {
 			super(original, dLib);
+		}
+
+		@Override
+		protected void processChild(Expression child) {
+			switch (child.getTag()) {
+			case INTLIT:
+				processIntegerLiteral((IntegerLiteral) child);
+				break;
+			case UNMINUS:
+				processUnaryMinus((UnaryExpression) child);
+				break;
+			default:
+				newChildren.add(child);
+				break;
+			}
+		}
+
+		private void processIntegerLiteral(IntegerLiteral child) {
+			BigInteger val = ((IntegerLiteral) child).getValue();
+			if (val.signum() == 0) {
+				knownResult = child;
+			}
+			if (val.signum() < 0) {
+				val = val.abs();
+				negateResult();
+			}
+			if (val.equals(ONE)) {
+				changed = true;
+			} else {
+				newChildren.add(ff.makeIntegerLiteral(val, null));
+			}
+		}
+
+		private void processUnaryMinus(UnaryExpression child) {
+			negateResult();
+			processChild(child.getChild());
+		}
+
+		private void negateResult() {
+			positive = !positive;
+			changed = true;
+		}
+
+		@Override
+		protected Expression makeResult() {
+			if (knownResult != null) {
+				return knownResult;
+			}
+			if (!changed) {
+				return original;
+			}
+			if (positive) {
+				return unsignedResult();
+			} else {
+				return opposite(unsignedResult());
+			}
+		}
+
+		private Expression unsignedResult() {
+			if (newChildren.isEmpty()) {
+				return ff.makeIntegerLiteral(ONE, null);
+			}
+			if (newChildren.size() == 1) {
+				return ((ArrayList<Expression>) newChildren).get(0);
+			}
+			return ff.makeAssociativeExpression(MUL, newChildren, null);
+		}
+
+		private Expression opposite(Expression unsigned) {
+			switch (unsigned.getTag()) {
+			case INTLIT:
+				final BigInteger value = ((IntegerLiteral) unsigned).getValue();
+				return ff.makeIntegerLiteral(value.negate(), null);
+			default:
+				return ff.makeUnaryExpression(UNMINUS, unsigned, null);
+			}
 		}
 
 		@Override
@@ -302,11 +424,6 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 		protected Expression getNeutral() {
 			return ff.makeIntegerLiteral(ONE, null);
 		}
-
-		/**
-		 * TODO should implement additional processing as in
-		 * {@link MultiplicationSimplifier}
-		 */
 
 	}
 
@@ -439,13 +556,11 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 		}
 	}
 
-
-	private void processChild(T child) {
+	protected void processChild(T child) {
 		if (isNeutral(child)) {
 			// ignore
 		} else if (isDeterminant(child)) {
-			// TODO use getDeterminantResult(child) instead
-			knownResult = child;
+			knownResult = getDeterminantResult(child);
 		} else if (isContradicting(child)) {
 			knownResult = getContradictionResult();
 		} else {
@@ -462,7 +577,7 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 
 	protected abstract T getContradictionResult();
 
-	private T makeResult() {
+	protected T makeResult() {
 		if (knownResult != null) {
 			return knownResult;
 		}
@@ -477,9 +592,14 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 		return original;
 	}
 
-
 	protected abstract T getNeutral();
 
 	protected abstract T makeAssociativeFormula();
+
+	// default behaviour that is overriden is specific cases such as Fcomp
+	// and Bcomp
+	protected T getDeterminantResult(T child) {
+		return child;
+	}
 
 }

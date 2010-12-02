@@ -788,57 +788,6 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	}
 	
 	/**
-	 * Ensures that rule SIMP_TYPE_DPROD is implemented correctly.
-	 */
-	/* TODO : waiting for the wiki to be updated with the correct version of the
-	   rule
-	@Test
-	public void testSIMP_TYPE_DPROD() {
-		expressionTest("A×(B×C)", "(A×B) ⊗ (A×C)", //
-				"A", "ℙ(A)", "B", "ℙ(B)", "C", "ℙ(C)");
-		expressionTest("(A×B) ⊗ (A×C)", "(A×B) ⊗ (A×C)", //
-				"A", "ℙ(S)", "B", "ℙ(B)", "C", "ℙ(C)");
-		expressionTest("(A×B) ⊗ (A×C)", "(A×B) ⊗ (A×C)", //
-				"A", "ℙ(A)", "B", "ℙ(S)", "C", "ℙ(C)");
-		expressionTest("(A×B) ⊗ (A×C)", "(A×B) ⊗ (A×C)", //
-				"A", "ℙ(A)", "B", "ℙ(B)", "C", "ℙ(S)");
-	}
-	*/
-	
-	/**
-	 * Ensures that rule SIMP_TYPE_PPROD is implemented correctly.
-	 */
-	/* TODO : waiting for the wiki to be updated with the correct version of the
-	   rule
-	@Test
-	public void testSIMP_TYPE_PPROD() {
-		expressionTest("(A × C) × (B × D)", "(A × B) ∥ (C × D)", //
-				"A", "ℙ(A)", "B", "ℙ(B)", "C", "ℙ(C)", "D", "ℙ(D)");
-		expressionTest("(A × B) ∥ (C × D)", "(A × B) ∥ (C × D)", //
-				"A", "ℙ(S)", "B", "ℙ(B)", "C", "ℙ(C)", "D", "ℙ(D)");
-		expressionTest("(A × B) ∥ (C × D)", "(A × B) ∥ (C × D)", //
-				"A", "ℙ(A)", "B", "ℙ(S)", "C", "ℙ(C)", "D", "ℙ(D)");
-		expressionTest("(A × B) ∥ (C × D)", "(A × B) ∥ (C × D)", //
-				"A", "ℙ(A)", "B", "ℙ(B)", "C", "ℙ(S)", "D", "ℙ(D)");
-		expressionTest("(A × B) ∥ (C × D)", "(A × B) ∥ (C × D)", //
-				"A", "ℙ(A)", "B", "ℙ(B)", "C", "ℙ(C)", "D", "ℙ(S)");
-	}
-	*/
-	
-	/**
-	 * Ensures that rule SIMP_TYPE_CONVERSE is implemented correctly.
-	 */
-	/* TODO : waiting for the wiki to be updated with the correct version of the
-	    rule (test may be uncorrect)
-	@Test
-	public void testSIMP_TYPE_CONVERSE() {
-		expressionTest("(B × A)", "(A × B)∼", "A", "ℙ(A)", "B", "ℙ(B)");
-		expressionTest("(A × B)∼", "(A × B)∼", "A", "ℙ(S)", "B", "ℙ(B)");
-		expressionTest("(A × B)∼", "(A × B)∼", "A", "ℙ(A)", "B", "ℙ(S)");
-	}
-	*/
-	
-	/**
 	 * Ensures that rule SIMP_DOM_ID is implemented correctly.
 	 */
 	@Test
@@ -1010,4 +959,165 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		predicateTest("2 ≤ card(S)", "2 ≤ card(S)", "S", "ℙ(T)");
 	}
 	
+	/**
+	 * Ensures that rule SIMP_LIT_LE_CARD_0 is implemented correctly
+	 */
+	@Test
+	public void testSIMP_LIT_LE_CARD_0() {
+		predicateTest("⊤", "0 ≤ card(S)", "S", "ℙ(T)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_LIT_GE_CARD_0 is implemented correctly
+	 */
+	@Test
+	public void testSIMP_LIT_GE_CARD_0() {
+		predicateTest("⊤", "card(S) ≥ 0", "S", "ℙ(T)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_CARD_NATURAL is implemented correctly
+	 */
+	@Test
+	public void testSIMP_CARD_NATURAL() {
+		predicateTest("⊤", "card(S) ∈ ℕ", "S", "ℙ(T)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_CARD_NATURAL1 is implemented correctly
+	 */
+	@Test
+	public void testSIMP_CARD_NATURAL1() {
+		predicateTest("¬ S = ∅", "card(S) ∈ ℕ1", "S", "ℙ(T)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_LIT_IN_NATURAL is implemented correctly
+	 */
+	@Test
+	public void testSIMP_LIT_IN_NATURAL() {
+		predicateTest("⊤", " 0 ∈ ℕ");
+		predicateTest("⊤", " 1 ∈ ℕ");
+		predicateTest(" i ∈ ℕ", " i ∈ ℕ");
+	}
+
+	/**
+	 * Ensures that rule SIMP_LIT_IN_NATURAL1 is implemented correctly
+	 */
+	@Test
+	public void testSIMP_LIT_IN_NATURAL1() {
+		predicateTest("⊤", " 1 ∈ ℕ1");
+		predicateTest(" i ∈ ℕ1", " i ∈ ℕ1");
+	}
+
+	/**
+	 * Ensures that rule SIMP_SPECIAL_IN_NATURAL1 is implemented correctly
+	 */
+	@Test
+	public void testSIMP_SPECIAL_IN_NATURAL1() {
+		predicateTest("⊥", "0 ∈ ℕ1");
+	}
+
+	/**
+	 * Ensures that rule SIMP_MULTI_MOD is implemented correctly
+	 */
+	@Test
+	public void testSIMP_MULTI_MOD() {
+		expressionTest("0", "E mod E", "E", "ℤ");
+		expressionTest("E mod F", "E mod F", "E", "ℤ", "F", "ℤ");
+	}
+
+	/**
+	 * Ensures that rule SIMP_LIT_IN_MINUS_NATURAL is implemented correctly
+	 */
+	@Test
+	public void testSIMP_LIT_IN_MINUS_NATURAL() {
+		predicateTest("⊥", "−(1) ∈ ℕ");
+		predicateTest("⊥", "−1 ∈ ℕ");
+		predicateTest("−(i) ∈ ℕ", "−(i) ∈ ℕ");
+	}
+
+	/**
+	 * Ensures that rule SIMP_LIT_IN_MINUS_NATURAL1 is implemented correctly
+	 */
+	@Test
+	public void testSIMP_LIT_IN_MINUS_NATURAL1() {
+		predicateTest("⊥", "−(1) ∈ ℕ1");
+		predicateTest("⊥", "−1 ∈ ℕ");
+		predicateTest("−(i) ∈ ℕ1", "−(i) ∈ ℕ1");
+	}
+
+	/**
+	 * Ensures that rule SIMP_CARD_COMPSET is implemented correctly
+	 */
+	// TODO Benoit
+	// @Test
+	// public void testSIMP_CARD_COMPSET() {
+	// expressionTest("card(S)", "card({x · x∈S ∣ x})", "S", "ℙ(T)");
+	// }
+
+	/**
+	 * Ensures that rule SIMP_DPROD_CPROD is implemented correctly
+	 */
+	@Test
+	public void testSIMP_DPROD_CPROD() {
+		expressionTest("(A ∩ C) × (B × D)", "(A × B) ⊗ (C × D)", "A", "ℙ(S)",
+				"B", "ℙ(T)", "C", "ℙ(S)", "D", "ℙ(V)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_PPROD_CPROD is implemented correctly
+	 */
+	@Test
+	public void testSIMP_PPROD_CPROD() {
+		expressionTest("(A × C) × (B × D)", "(A × B) ∥ (C × D)", "A", "ℙ(S)",
+				"B", "ℙ(T)", "C", "ℙ(U)", "D", "ℙ(V)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_CONVERSE_CPROD is implemented correctly
+	 */
+	@Test
+	public void testSIMP_CONVERSE_CPROD() {
+		expressionTest("(B × A)", "(A × B)∼", "A", "ℙ(S)", "B", "ℙ(T)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_TYPE_OVERL_CPROD is implemented correctly
+	 */
+	@Test
+	public void testSIMP_TYPE_OVERL_CPROD() {
+		expressionTest("S × T", "r  (S × T)", "S", "ℙ(S)", "T", "ℙ(T)");
+		expressionTest("S × T", "r  s  (S × T)", "S", "ℙ(S)", "T", "ℙ(T)");
+
+		expressionTest("r  s  (S × T)", "r  s  (S × T)", "S", "ℙ(U)", "T",
+				"ℙ(T)");
+		expressionTest("r  s  (S × T)", "r  s  (S × T)", "S", "ℙ(S)", "T",
+				"ℙ(V)");
+		expressionTest("r  s  (S × T)", "r  s  (S × T)", "S", "ℙ(U)", "T",
+				"ℙ(V)");
+		expressionTest("r  (S × T)  s", "r  (S × T)  s", "S", "ℙ(S)", "T",
+				"ℙ(T)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_TYPE_BCOMP_ID is implemented correctly
+	 */
+	@Test
+	public void testSIMP_TYPE_BCOMP_ID() {
+		expressionTest("r ∘ s", "r ∘ id ∘ s", "r", "T↔U", "s", "S↔T");
+		expressionTest("r", " r ∘ id", "r", "S↔T");
+		expressionTest("r", "id ∘ r ", "r", "S↔T");
+	}
+
+	/**
+	 * Ensures that rule SIMP_TYPE_FCOMP_ID is implemented correctly
+	 */
+	@Test
+	public void testSIMP_TYPE_FCOMP_ID() {
+		expressionTest("r ; s", "r ; id ; s", "r", "S↔T", "s", "T↔U");
+		expressionTest("r", " r ; id", "r", "S↔T");
+		expressionTest("r", "id ; r ", "r", "S↔T");
+	}
+
 }
