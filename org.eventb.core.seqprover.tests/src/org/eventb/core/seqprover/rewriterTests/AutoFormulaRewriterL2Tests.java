@@ -1000,7 +1000,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	public void testSIMP_LIT_IN_NATURAL() {
 		predicateTest("⊤", " 0 ∈ ℕ");
 		predicateTest("⊤", " 1 ∈ ℕ");
-		// TODO predicateTest("⊤", " 3000000000 ∈ ℕ");
+		predicateTest("⊤", " 3000000000 ∈ ℕ");
+		predicateTest("⊤", " 5000000000000000000000 ∈ ℕ");
 		predicateTest(" i ∈ ℕ", " i ∈ ℕ");
 	}
 
@@ -1010,6 +1011,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_LIT_IN_NATURAL1() {
 		predicateTest("⊤", " 1 ∈ ℕ1");
+		predicateTest("⊤", " 3000000000 ∈ ℕ1");
+		predicateTest("⊤", " 5000000000000000000000 ∈ ℕ1");
 		predicateTest(" i ∈ ℕ1", " i ∈ ℕ1");
 	}
 
@@ -1037,6 +1040,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	public void testSIMP_LIT_IN_MINUS_NATURAL() {
 		predicateTest("⊥", "−(1) ∈ ℕ");
 		predicateTest("⊥", "−1 ∈ ℕ");
+		predicateTest("⊥", "−3000000000 ∈ ℕ");
+		predicateTest("⊥", "−5000000000000000000000 ∈ ℕ");
 		predicateTest("−(i) ∈ ℕ", "−(i) ∈ ℕ");
 	}
 
@@ -1046,7 +1051,9 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_LIT_IN_MINUS_NATURAL1() {
 		predicateTest("⊥", "−(1) ∈ ℕ1");
-		predicateTest("⊥", "−1 ∈ ℕ");
+		predicateTest("⊥", "−1 ∈ ℕ1");
+		predicateTest("⊥", "−3000000000 ∈ ℕ1");
+		predicateTest("⊥", "−5000000000000000000000 ∈ ℕ1");
 		predicateTest("−(i) ∈ ℕ1", "−(i) ∈ ℕ1");
 	}
 
