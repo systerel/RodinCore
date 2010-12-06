@@ -1381,19 +1381,21 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 */
 			In(IntegerLiteral(i), Natural1()) -> {
 				if (level2) {
-					final int signum = `i.signum();
-					if (signum > 0) {
+					switch (`i.signum()) {
+					case 1:
 						result = dLib.True();
 						trace(predicate, result, "SIMP_LIT_IN_NATURAL1");
 						return result;
-					} else if (signum == 0) {
+					case 0:
 						result = dLib.False();
 						trace(predicate, result, "SIMP_SPECIAL_IN_NATURAL1");
 						return result;
-					} else {
+					case -1:
 						result = dLib.False();
 						trace(predicate, result, "SIMP_LIT_IN_MINUS_NATURAL1");
 						return result;
+					default:
+						assert false;
 					}
 				}
 			}
