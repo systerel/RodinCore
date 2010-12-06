@@ -392,6 +392,9 @@ public class DLib {
 		return result;
 	}
 
+	/**
+	 * @since 2.1
+	 */
 	public FormulaFactory getFormulaFactory() {
 		return ff;
 	}
