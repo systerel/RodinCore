@@ -84,15 +84,16 @@ public class DomDistRight extends AbstractHypGoalTacticProvider {
 		@Override
 		public void inspect(BinaryExpression expression,
 				IAccumulator<ITacticApplication> accumulator) {
-			if (expression.getTag() == Expression.DOMRES
-					|| expression.getTag() == Expression.DOMSUB) {
-				final Expression right = expression.getRight();
-				final int rightTag = right.getTag();
-				if (right instanceof AssociativeExpression
-						&& (rightTag == Expression.BUNION || rightTag == Expression.BINTER)) {
-					accumulator.add(new DomDistRightApplication(hyp,
-							accumulator.getCurrentPosition()));
-				}
+			final int tag = expression.getTag();
+			if (!(tag == Expression.DOMRES || tag == Expression.DOMSUB)) {
+				return;
+			}
+			final Expression right = expression.getRight();
+			final int rightTag = right.getTag();
+			if (right instanceof AssociativeExpression
+					&& (rightTag == Expression.BUNION || rightTag == Expression.BINTER)) {
+				accumulator.add(new DomDistRightApplication(hyp, accumulator
+						.getCurrentPosition()));
 			}
 		}
 	}

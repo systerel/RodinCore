@@ -38,7 +38,7 @@ public class DomDistLeft extends AbstractHypGoalTacticProvider {
 	public static class DomDistLeftApplication extends
 			DefaultPositionApplication {
 
-		private static final String TACTIC_ID = null;
+		private static final String TACTIC_ID = "org.eventb.ui.domDistLeft";
 
 		public DomDistLeftApplication(Predicate hyp, IPosition position) {
 			super(hyp, position);
@@ -84,15 +84,16 @@ public class DomDistLeft extends AbstractHypGoalTacticProvider {
 		@Override
 		public void inspect(BinaryExpression expression,
 				IAccumulator<ITacticApplication> accumulator) {
-			if (expression.getTag() == Expression.DOMRES
-					|| expression.getTag() == Expression.DOMSUB) {
-				final Expression left = expression.getLeft();
-				final int leftTag = left.getTag();
-				if (left instanceof AssociativeExpression
-						&& (leftTag == Expression.BUNION || leftTag == Expression.BINTER)) {
-					accumulator.add(new DomDistLeftApplication(hyp, accumulator
-							.getCurrentPosition()));
-				}
+			final int tag = expression.getTag();
+			if (!(tag == Expression.DOMRES || tag == Expression.DOMSUB)) {
+				return;
+			}
+			final Expression left = expression.getLeft();
+			final int leftTag = left.getTag();
+			if (left instanceof AssociativeExpression
+					&& (leftTag == Expression.BUNION || leftTag == Expression.BINTER)) {
+				accumulator.add(new DomDistLeftApplication(hyp, accumulator
+						.getCurrentPosition()));
 			}
 		}
 
