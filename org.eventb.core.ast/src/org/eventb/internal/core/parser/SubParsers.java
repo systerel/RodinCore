@@ -490,8 +490,7 @@ public class SubParsers {
 		protected IntegerLiteral makeValue(ParserContext pc, String tokenVal,
 				SourceLocation loc) throws SyntaxError {
 			try {
-				final BigInteger value = BigInteger.valueOf((Integer
-						.valueOf(tokenVal)));
+				final BigInteger value = new BigInteger(tokenVal);
 				return pc.factory.makeIntegerLiteral(value, loc);
 			} catch (NumberFormatException e) {
 				// FIXME this is rather a problem with the lexer: it should

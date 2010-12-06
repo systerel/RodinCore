@@ -64,6 +64,7 @@ import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -493,6 +494,14 @@ public class TestUnparse extends AbstractTests {
 							mAssociativeExpression(MUL,
 									mIntegerLiteral(1),
 									mIntegerLiteral(1)))
+			), new ExprTestPair(
+					"50000000000000000000",
+					ff.makeIntegerLiteral(//
+							new BigInteger("50000000000000000000"), null)
+			), new ExprTestPair(
+					"−50000000000000000000",
+					ff.makeIntegerLiteral(//
+							new BigInteger("-50000000000000000000"), null)
 			), new ExprTestPair(
 					"bool($P)",
 					FastFactory.mBoolExpression(pv_P)

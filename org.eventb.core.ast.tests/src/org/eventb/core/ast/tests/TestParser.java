@@ -43,6 +43,8 @@ import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
 
+import java.math.BigInteger;
+
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
@@ -594,6 +596,20 @@ public class TestParser extends AbstractTests {
 			), new ExprTestPair(
 					"2", 
 					mIntegerLiteral(2) 
+			), new ExprTestPair(
+					"3000000000",
+					mIntegerLiteral(3000000000L)
+			), new ExprTestPair(
+					"−3000000000",
+					mIntegerLiteral(-3000000000L)
+			), new ExprTestPair(
+					"50000000000000000000",
+					ff.makeIntegerLiteral(//
+							new BigInteger("50000000000000000000"), null)
+			), new ExprTestPair(
+					"−50000000000000000000",
+					ff.makeIntegerLiteral(//
+							new BigInteger("-50000000000000000000"), null)
 			), new ExprTestPair(
 					"−1", 
 					mIntegerLiteral(-1) 
