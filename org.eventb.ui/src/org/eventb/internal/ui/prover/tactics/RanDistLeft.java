@@ -84,7 +84,7 @@ public class RanDistLeft extends AbstractHypGoalTacticProvider {
 		public void inspect(BinaryExpression expression,
 				IAccumulator<ITacticApplication> accumulator) {
 			if (expression.getTag() != Expression.RANRES
-					|| expression.getTag() != Expression.RANSUB) {
+					&& expression.getTag() != Expression.RANSUB) {
 				return;
 			}
 			final Expression left = expression.getLeft();
