@@ -1353,64 +1353,51 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			/**
 			 * SIMP_LIT_IN_NATURAL
 			 *    i ∈ ℕ == ⊤  (where i is a non−negative literal)
+			 *
+			 * SIMP_LIT_IN_MINUS_NATURAL
+			 *    −i ∈ ℕ == ⊥ (where i is a positive literal)
 			 */
 			In(IntegerLiteral(i), Natural()) -> {
-				if (level2 && `i.intValue() >= 0) {
-					result = dLib.True();
-					trace(predicate, result, "SIMP_LIT_IN_NATURAL");
-					return result;
+				if (level2) {
+					if (`i.signum() >= 0) {
+						result = dLib.True();
+						trace(predicate, result, "SIMP_LIT_IN_NATURAL");
+						return result;
+					} else {
+						result = dLib.False();
+						trace(predicate, result, "SIMP_LIT_IN_MINUS_NATURAL");
+						return result;
+					}
 				}
 			}
 			
 			/**
 			 * SIMP_LIT_IN_NATURAL1
 			 *    i ∈ ℕ1 == ⊤ (where i is a positive literal)
-			 */
-			In(IntegerLiteral(i), Natural1()) -> {
-				if (level2 && `i.intValue() > 0) {
-					result = dLib.True();
-					trace(predicate, result, "SIMP_LIT_IN_NATURAL1");
-					return result;
-				}
-			}
-			
-			/**
 			 * SIMP_SPECIAL_IN_NATURAL1
 			 *    0 ∈ ℕ1 == ⊥
-			 */
-			In(IntegerLiteral(i), Natural1()) -> {
-				if (level2 && `i.equals(ZERO)) {
-					result = dLib.False();
-					trace(predicate, result, "SIMP_SPECIAL_IN_NATURAL1");
-					return result;
-				}
-			}
-			
-			/**
-			 * SIMP_LIT_IN_MINUS_NATURAL
-			 *    −i ∈ ℕ == ⊥ (where i is a positive literal)
-			 */
-			In(IntegerLiteral(i), Natural()) -> {
-				if (level2 && `i.intValue() < 0) {
-					result = dLib.False();
-					trace(predicate, result, "SIMP_LIT_IN_MINUS_NATURAL");
-					return result;
-				}
-			}
-			 
-			/**
 			 * SIMP_LIT_IN_MINUS_NATURAL1
 			 *    −i ∈ ℕ1 == ⊥ (where i is a non−negative literal)
 			 */
-			// TODO Benoit : en l'état, redondance avec SIMP_SPECIAL_IN_NATURAL1
 			In(IntegerLiteral(i), Natural1()) -> {
-				if (level2 && `i.intValue() <= 0) {
-					result = dLib.False();
-					trace(predicate, result, "SIMP_LIT_IN_MINUS_NATURAL1");
-					return result;
+				if (level2) {
+					final int signum = `i.signum();
+					if (signum > 0) {
+						result = dLib.True();
+						trace(predicate, result, "SIMP_LIT_IN_NATURAL1");
+						return result;
+					} else if (signum == 0) {
+						result = dLib.False();
+						trace(predicate, result, "SIMP_SPECIAL_IN_NATURAL1");
+						return result;
+					} else {
+						result = dLib.False();
+						trace(predicate, result, "SIMP_LIT_IN_MINUS_NATURAL1");
+						return result;
+					}
 				}
 			}
-			
+
 			/**
  	    	 * SIMP_LIT_LE_CARD_1
  	    	 *    1 ≤ card(S) == ¬(S = ∅)
@@ -1557,9 +1544,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_SPECIAL_PLUS
              * Arithmetic 1: E + ... + 0 + ... + F == E + ... + ... + F
 	    	 */
-	    	Plus (eList(_*,  IntegerLiteral(i), _*)) -> {
-	    		if (`i.equals(ZERO)) {
-	    			result = simplifyPlus(expression, dLib);
+	    	Plus(_) -> {
+	    		final Expression rewritten = simplifyPlus(expression, dLib);
+	    		if (rewritten != expression) {
+	    			result = rewritten;
 	    			trace(expression, result, "SIMP_SPECIAL_PLUS");
 					return result;
 				}
@@ -3212,17 +3200,16 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_CARD_COMPSET
 			 *    card({x · x∈S ∣ x}) == card(S) (where x non free in s)
 			 */
-			// TODO Benoit: à revoir, pas sûr du tout
-			/*
-			Card(Cset(bidList(_), In(bi@BoundIdentifier(0), S),bi)) -> {
+			// TODO Laurent: how to generalize ?
+			Card(Cset(bidList(_), In(bi@BoundIdentifier(0), S), bi)) -> {
 				if (level2) {
-					if(! Arrays.asList(`S).contains(`bi)) {
+					if(!Arrays.asList(`S.getBoundIdentifiers()).contains(`bi)) {
 						result = makeUnaryExpression(Formula.KCARD, `S);
 						trace(expression, result, "SIMP_CARD_COMPSET");
 						return result;
 					}
 				}
-			}*/
+			}
 			
 			/**
 			 * SIMP_CONVERSE_CPROD

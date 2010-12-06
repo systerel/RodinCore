@@ -965,6 +965,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_LIT_LE_CARD_0() {
 		predicateTest("⊤", "0 ≤ card(S)", "S", "ℙ(T)");
+		predicateTest("2 ≤ card(S)", "2 ≤ card(S)", "S", "ℙ(T)");
 	}
 
 	/**
@@ -973,6 +974,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_LIT_GE_CARD_0() {
 		predicateTest("⊤", "card(S) ≥ 0", "S", "ℙ(T)");
+		predicateTest("card(S) ≥ 2", "card(S) ≥ 2", "S", "ℙ(T)");
 	}
 
 	/**
@@ -998,6 +1000,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	public void testSIMP_LIT_IN_NATURAL() {
 		predicateTest("⊤", " 0 ∈ ℕ");
 		predicateTest("⊤", " 1 ∈ ℕ");
+		// TODO predicateTest("⊤", " 3000000000 ∈ ℕ");
 		predicateTest(" i ∈ ℕ", " i ∈ ℕ");
 	}
 
@@ -1050,11 +1053,12 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	/**
 	 * Ensures that rule SIMP_CARD_COMPSET is implemented correctly
 	 */
-	// TODO Benoit
-	// @Test
-	// public void testSIMP_CARD_COMPSET() {
-	// expressionTest("card(S)", "card({x · x∈S ∣ x})", "S", "ℙ(T)");
-	// }
+	@Test
+	public void testSIMP_CARD_COMPSET() {
+		expressionTest("card(S)", "card({x · x∈S ∣ x})", "S", "ℙ(T)");
+		expressionTest("card({x · x∈S∩{x} ∣ x})", "card({x · x∈S∩{x} ∣ x})", //
+				"S", "ℙ(T)");
+	}
 
 	/**
 	 * Ensures that rule SIMP_DPROD_CPROD is implemented correctly
@@ -1090,12 +1094,11 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		expressionTest("S × T", "r  (S × T)", "S", "ℙ(S)", "T", "ℙ(T)");
 		expressionTest("S × T", "r  s  (S × T)", "S", "ℙ(S)", "T", "ℙ(T)");
 
-		expressionTest("r  s  (S × T)", "r  s  (S × T)", "S", "ℙ(U)", "T",
-				"ℙ(T)");
-		expressionTest("r  s  (S × T)", "r  s  (S × T)", "S", "ℙ(S)", "T",
-				"ℙ(V)");
-		expressionTest("r  s  (S × T)", "r  s  (S × T)", "S", "ℙ(U)", "T",
-				"ℙ(V)");
+		expressionTest("r  (S × T)", "r  (S × T)", "S", "ℙ(U)", "T", "ℙ(T)");
+		expressionTest("r  (S × T)", "r  (S × T)", "S", "ℙ(S)", "T", "ℙ(V)");
+		expressionTest("r  (S × T)", "r  (S × T)", "S", "ℙ(U)", "T", "ℙ(V)");
+
+		expressionTest("(S × T)  r", "(S × T)  r", "S", "ℙ(S)", "T", "ℙ(T)");
 		expressionTest("r  (S × T)  s", "r  (S × T)  s", "S", "ℙ(S)", "T",
 				"ℙ(T)");
 	}

@@ -19,7 +19,6 @@ import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.EMPTYSET;
 import static org.eventb.core.ast.Formula.INTLIT;
 import static org.eventb.core.ast.Formula.KID_GEN;
-import static org.eventb.core.ast.Formula.MUL;
 import static org.eventb.core.ast.Formula.UNMINUS;
 
 import java.math.BigInteger;
@@ -320,10 +319,14 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 
 	}
 
+	/**
+	 * In this class, in addition to neutral and determinant, we also process
+	 * signs of arguments. When storing new children, we remove any obvious sign
+	 * they could have (negative integer literal or unary minus).
+	 */
 	private static class MultSimplification extends ExpressionSimplification {
 
 		private boolean positive = true;
-		private boolean changed = false;
 
 		MultSimplification(AssociativeExpression original, DLib dLib) {
 			super(original, dLib);
@@ -339,25 +342,19 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 				processUnaryMinus((UnaryExpression) child);
 				break;
 			default:
-				newChildren.add(child);
+				super.processChild(child);
 				break;
 			}
 		}
 
 		private void processIntegerLiteral(IntegerLiteral child) {
-			BigInteger val = ((IntegerLiteral) child).getValue();
-			if (val.signum() == 0) {
-				knownResult = child;
-			}
+			final BigInteger val = child.getValue();
 			if (val.signum() < 0) {
-				val = val.abs();
 				negateResult();
+				processChild(ff.makeIntegerLiteral(val.negate(), null));
+				return;
 			}
-			if (val.equals(ONE)) {
-				changed = true;
-			} else {
-				newChildren.add(ff.makeIntegerLiteral(val, null));
-			}
+			super.processChild(child);
 		}
 
 		private void processUnaryMinus(UnaryExpression child) {
@@ -366,33 +363,18 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 		}
 
 		private void negateResult() {
-			positive = !positive;
 			changed = true;
+			positive = !positive;
 		}
 
 		@Override
 		protected Expression makeResult() {
-			if (knownResult != null) {
-				return knownResult;
-			}
-			if (!changed) {
-				return original;
-			}
+			final Expression unsigned = super.makeResult();
 			if (positive) {
-				return unsignedResult();
+				return unsigned;
 			} else {
-				return opposite(unsignedResult());
+				return opposite(unsigned);
 			}
-		}
-
-		private Expression unsignedResult() {
-			if (newChildren.isEmpty()) {
-				return ff.makeIntegerLiteral(ONE, null);
-			}
-			if (newChildren.size() == 1) {
-				return ((ArrayList<Expression>) newChildren).get(0);
-			}
-			return ff.makeAssociativeExpression(MUL, newChildren, null);
 		}
 
 		private Expression opposite(Expression unsigned) {
@@ -521,6 +503,9 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 	// If non-null, this contains the result, ignore newChildren above
 	protected T knownResult;
 
+	// Set to true if a new result must be created
+	protected boolean changed = false;
+
 	protected final DLib dLib;
 	protected FormulaFactory ff;
 
@@ -538,14 +523,12 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 
 	}
 
-
 	protected abstract boolean eliminateDuplicate();
 
 	protected T simplify() {
 		processChildren();
 		return makeResult();
 	}
-
 
 	private void processChildren() {
 		for (T child : children) {
@@ -558,7 +541,7 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 
 	protected void processChild(T child) {
 		if (isNeutral(child)) {
-			// ignore
+			changed = true;
 		} else if (isDeterminant(child)) {
 			knownResult = getDeterminantResult(child);
 		} else if (isContradicting(child)) {
@@ -567,7 +550,6 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 			newChildren.add(child);
 		}
 	}
-
 
 	protected abstract boolean isNeutral(T child);
 
@@ -586,7 +568,7 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 			return getNeutral();
 		} else if (size == 1) {
 			return newChildren.iterator().next();
-		} else if (size != children.length) {
+		} else if (changed || size != children.length) {
 			return makeAssociativeFormula();
 		}
 		return original;
