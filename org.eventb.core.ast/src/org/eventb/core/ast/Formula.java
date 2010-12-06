@@ -2085,12 +2085,18 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public abstract int getChildCount();
 
+	/**
+	 * @since 2.1
+	 */
 	protected final void checkChildIndex(int index) {
 		if (index < 0 || index >= getChildCount()) {
 			throw invalidIndex(index);
 		}
 	}
 
+	/**
+	 * @since 2.1
+	 */
 	protected static IllegalArgumentException invalidIndex(int index) {
 		return new IllegalArgumentException("Invalid child index " + index);
 	}
