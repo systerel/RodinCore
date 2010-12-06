@@ -85,7 +85,7 @@ public class DomRanUnionDist extends AbstractHypGoalTacticProvider {
 		public void inspect(UnaryExpression expression,
 				IAccumulator<ITacticApplication> accumulator) {
 			if (expression.getTag() != Expression.KDOM
-					|| expression.getTag() != Expression.KRAN) {
+					&& expression.getTag() != Expression.KRAN) {
 				return;
 			}
 			final Expression child = expression.getChild();
