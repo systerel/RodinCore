@@ -167,6 +167,10 @@ public abstract class BuilderTest {
 	@Before
 	public void setUp() throws Exception {
 		
+		disableAllAuto();
+	}
+
+	private static void disableAllAuto() throws CoreException {
 		// ensure autobuilding is turned off
 		IWorkspaceDescription wsDescription = workspace.getDescription();
 		if (wsDescription.isAutoBuilding()) {
@@ -227,6 +231,7 @@ public abstract class BuilderTest {
 		final URI uri = URIUtil.fromString(projectPath);
 		projectName = URIUtil.lastSegment(uri);
 
+		disableAllAuto();
 		final URI absURI = URIUtil.makeAbsolute(uri, URIUtil.fromString("file://"));
 		final File project = URIUtil.toFile(absURI);
 		assertTrue(project.isDirectory());
