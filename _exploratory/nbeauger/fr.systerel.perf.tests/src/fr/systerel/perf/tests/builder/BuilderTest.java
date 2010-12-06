@@ -231,6 +231,7 @@ public abstract class BuilderTest {
 		final URI uri = URIUtil.fromString(projectPath);
 		projectName = URIUtil.lastSegment(uri);
 
+		clearWorkspace();
 		disableAllAuto();
 		final URI absURI = URIUtil.makeAbsolute(uri, URIUtil.fromString("file://"));
 		final File project = URIUtil.toFile(absURI);
