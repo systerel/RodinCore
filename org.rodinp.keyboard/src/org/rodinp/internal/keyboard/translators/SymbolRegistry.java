@@ -130,8 +130,9 @@ public class SymbolRegistry {
 	
 	private boolean isNotRegistered(List<String> registeredIds, String id) {
 		if (registeredIds.contains(id)) {
-			KeyboardUtils.debug("Duplicate id " + id
-					+ ": ignored this configuration.");
+			if (KeyboardUtils.DEBUG)
+				KeyboardUtils.debug("Duplicate id " + id
+						+ ": ignored this configuration.");
 			return false;
 		}
 		return true;
@@ -139,15 +140,17 @@ public class SymbolRegistry {
 	
 	private boolean isNotNull(String id, String combo, String translation) {
 		if (combo == null) {
-			KeyboardUtils.debug("Configuration with id " + id
-					+ " does not have any combo value,"
-					+ " ignored this configuration.");
+			if (KeyboardUtils.DEBUG)
+				KeyboardUtils.debug("Configuration with id " + id
+						+ " does not have any combo value,"
+						+ " ignored this configuration.");
 			return false;
 		}
 		if (translation == null) {
-			KeyboardUtils.debug("Configuration with id " + id
-					+ " does not have any translation value,"
-					+ " ignored this configuration.");
+			if (KeyboardUtils.DEBUG)
+				KeyboardUtils.debug("Configuration with id " + id
+						+ " does not have any translation value,"
+						+ " ignored this configuration.");
 			return false;
 		}
 		return true;
@@ -162,8 +165,10 @@ public class SymbolRegistry {
 	
 	private boolean isNewCombo(Symbols symbols, String combo) {
 		if (symbols.containRawCombo(combo)) {
-			KeyboardUtils.debug("Translation already exists for combination "
-					+ combo + ", ignored this configuration.");
+			if (KeyboardUtils.DEBUG)
+				KeyboardUtils
+						.debug("Translation already exists for combination "
+								+ combo + ", ignored this configuration.");
 			return false;
 		}
 		return true;
@@ -183,9 +188,10 @@ public class SymbolRegistry {
 			return (ISymbolsProvider) element
 					.createExecutableExtension("class");
 		} catch (CoreException e) {
-			KeyboardUtils
-					.debug("Could not retrieve the symbols provider for element"
-							+ element.toString() + ".");
+			if (KeyboardUtils.DEBUG)
+				KeyboardUtils
+						.debug("Could not retrieve the symbols provider for element"
+								+ element.toString() + ".");
 		}
 		return null;
 	}

@@ -53,19 +53,22 @@ public class RodinKeyboardTextTranslator implements IRodinKeyboardTranslator {
 	}
 
 	private void translate(Text widget, int beginIndex, int endIndex) {
-		KeyboardUtils.debugText("***************************************");
-		KeyboardUtils.debugText("Begin: " + beginIndex);
-		KeyboardUtils.debugText("End: " + endIndex);
+		if (KeyboardUtils.TEXT_DEBUG) {
+			KeyboardUtils.debugText("***************************************");
+			KeyboardUtils.debugText("Begin: " + beginIndex);
+			KeyboardUtils.debugText("End: " + endIndex);
+		}
 		if (beginIndex == endIndex)
 			return;
 		String text = widget.getText();
 		int currentPos = widget.getCaretPosition();
 		String subString = text.substring(beginIndex, endIndex);
 
-		KeyboardUtils.debugText("Process: \"" + text + "\"");
-		KeyboardUtils.debugText("Pos: " + currentPos);
-		KeyboardUtils.debugText("Substring: \"" + subString + "\"");
-
+		if (KeyboardUtils.TEXT_DEBUG) {
+			KeyboardUtils.debugText("Process: \"" + text + "\"");
+			KeyboardUtils.debugText("Pos: " + currentPos);
+			KeyboardUtils.debugText("Substring: \"" + subString + "\"");
+		}
 		int realIndex = 0;
 		String test = null;
 		String result = null;
@@ -117,9 +120,10 @@ public class RodinKeyboardTextTranslator implements IRodinKeyboardTranslator {
 
 						widget.setSelection(realIndex, realIndex
 								+ test.length());
-						KeyboardUtils.debugText("Replace at pos " + realIndex
-								+ " from \"" + test + "\" by \"" + result
-								+ "\"");
+						if (KeyboardUtils.TEXT_DEBUG)
+							KeyboardUtils.debugText("Replace at pos "
+									+ realIndex + " from \"" + test
+									+ "\" by \"" + result + "\"");
 						widget.insert(result);
 
 						if (currentPos <= realIndex) { // Translate after
@@ -158,19 +162,22 @@ public class RodinKeyboardTextTranslator implements IRodinKeyboardTranslator {
 	}
 
 	private void translate(StyledText widget, int beginIndex, int endIndex) {
-		KeyboardUtils.debugText("***************************************");
-		KeyboardUtils.debugText("Begin: " + beginIndex);
-		KeyboardUtils.debugText("End: " + endIndex);
+		if (KeyboardUtils.TEXT_DEBUG) {
+			KeyboardUtils.debugText("***************************************");
+			KeyboardUtils.debugText("Begin: " + beginIndex);
+			KeyboardUtils.debugText("End: " + endIndex);
+		}
 		if (beginIndex == endIndex)
 			return;
 		String text = widget.getText();
 		int currentPos = widget.getCaretOffset();
 		String subString = text.substring(beginIndex, endIndex);
 
-		KeyboardUtils.debugText("Process: \"" + text + "\"");
-		KeyboardUtils.debugText("Pos: " + currentPos);
-		KeyboardUtils.debugText("Substring: \"" + subString + "\"");
-
+		if (KeyboardUtils.TEXT_DEBUG) {
+			KeyboardUtils.debugText("Process: \"" + text + "\"");
+			KeyboardUtils.debugText("Pos: " + currentPos);
+			KeyboardUtils.debugText("Substring: \"" + subString + "\"");
+		}
 		int realIndex = 0;
 		String test = null;
 		String result = null;
@@ -216,9 +223,10 @@ public class RodinKeyboardTextTranslator implements IRodinKeyboardTranslator {
 
 						widget.setSelection(realIndex, realIndex
 								+ test.length());
-						KeyboardUtils.debugText("Replace at pos " + realIndex
-								+ " from \"" + test + "\" by \"" + result
-								+ "\"");
+						if (KeyboardUtils.TEXT_DEBUG)
+							KeyboardUtils.debugText("Replace at pos "
+									+ realIndex + " from \"" + test
+									+ "\" by \"" + result + "\"");
 						widget.insert(result);
 
 						if (currentPos <= realIndex) { // Translate after

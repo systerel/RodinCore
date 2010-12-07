@@ -21,17 +21,15 @@ public class KeyboardUtils {
 	public static boolean MATH_DEBUG = false;
 	
 	public static void debug(String str) {
-		if (DEBUG) {
-			System.out.println(str);
-		}
+		System.out.println(str);
 	}
 	
 	public static void debugText(String str) {
-		if (TEXT_DEBUG) System.out.println(str);
+		System.out.println(str);
 	}
 	
 	public static void debugMath(String str) {
-		if (MATH_DEBUG) System.out.println(str);
+		System.out.println(str);
 	}
 
 	/**
