@@ -2015,11 +2015,9 @@ public class Tactics {
 			@Override
 			public boolean select(BinaryExpression expression) {
 				if (expression.getTag() == Expression.SETMINUS) {
-					Expression left = expression.getLeft();
-					Type baseType = left.getType().getBaseType();
-					if (left.equals(baseType.toExpression(FormulaFactory
-							.getDefault()))) {
-						Expression right = expression.getRight();
+					final Expression left = expression.getLeft();
+					if (left.isATypeExpression()) {
+						final Expression right = expression.getRight();
 						if (Lib.isUnion(right)) {
 							return true;
 						}
@@ -2031,7 +2029,7 @@ public class Tactics {
 						}
 					}
 				}
-				return super.select(expression);
+				return false;
 			}
 
 		});

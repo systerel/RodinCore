@@ -67,9 +67,7 @@ public class SetMinusRewriterImpl extends DefaultRewriter {
 	    	 * Set Theory : U ∖ (S ∩ ... ∩ T) == (U ∖ S) ∪ ... ∪ (U ∖ T)
 	    	 */
 			SetMinus(U, BInter(children)) -> {
-				PowerSetType type = (PowerSetType) `U.getType();
-
-				if (`U.equals(type.getBaseType().toExpression(ff))) {
+				if (`U.isATypeExpression()) {
 					return makeSetMinusAssociative(Expression.BUNION, `U,
 							`children);
 				}
@@ -80,9 +78,7 @@ public class SetMinusRewriterImpl extends DefaultRewriter {
 	    	 * Set Theory : U ∖ (S ∪ ... ∪ T) == (U ∖ S) ∩ ... ∩ (U ∖ T)
 	    	 */
 			SetMinus(U, BUnion(children)) -> {
-				PowerSetType type = (PowerSetType) `U.getType();
-
-				if (`U.equals(type.getBaseType().toExpression(ff))) {
+				if (`U.isATypeExpression()) {
 					return makeSetMinusAssociative(Expression.BINTER, `U,
 							`children);
 				}
@@ -93,9 +89,7 @@ public class SetMinusRewriterImpl extends DefaultRewriter {
 	    	 * Set Theory : U ∖ (S ∖ T) == (U ∖ S) ∪ T
 	    	 */
 			SetMinus(U, SetMinus(S, T)) -> {
-				PowerSetType type = (PowerSetType) `U.getType();
-
-				if (`U.equals(type.getBaseType().toExpression(ff))) {
+				if (`U.isATypeExpression()) {
 					Expression uMinusS = ff.makeBinaryExpression(
 							Expression.SETMINUS, `U, `S, null);
 					Collection<Expression> expressions = new ArrayList<Expression>();
