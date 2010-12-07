@@ -64,8 +64,8 @@ public class FunSingletonImg extends AbstractManualInference {
 			/**
 	    	 * Set Theory: f[{E}]
 	    	 */
-			RelImage(_, SetExtension(children)) -> {
-				return `children.length == 1;
+			RelImage(_, SetExtension(eList(_))) -> {
+				return true;
 			}
 
 	    }
@@ -103,11 +103,10 @@ public class FunSingletonImg extends AbstractManualInference {
 			/**
 	    	 * Set Theory: f[{E}]
 	    	 */
-			RelImage(ff, SetExtension(children)) -> {
-				if (`children.length == 1) {
-					f = `ff;
-					E = `children[0];
-				}
+			RelImage(ff, SetExtension(children@eList(_))) -> {
+				// Workaround Tom 2.2. bug
+				f = `ff;
+				E = `children[0];
 			}
 
 	    }
