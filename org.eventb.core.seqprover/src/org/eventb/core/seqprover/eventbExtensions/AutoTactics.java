@@ -286,6 +286,12 @@ public class AutoTactics {
 
 	}
 
+	/**
+	 * Discharges any sequent that has the form of the WD of a datatype
+	 * destructor.
+	 * 
+	 * @since 2.1
+	 */
 	public static class DTDestrWDTac implements ITactic {
 		
 		private static class Appli {
