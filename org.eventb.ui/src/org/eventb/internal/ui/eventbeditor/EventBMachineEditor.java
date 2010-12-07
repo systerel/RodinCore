@@ -13,7 +13,6 @@ package org.eventb.internal.ui.eventbeditor;
 
 import org.eclipse.ui.PartInitException;
 import org.eventb.core.IMachineRoot;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.preferences.MachineEditorPagesPreference;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
@@ -55,9 +54,8 @@ public class EventBMachineEditor extends EventBEditor<IMachineRoot> {
 			try {
 				addPage(page);
 			} catch (PartInitException e) {
-				if (EventBEditorUtils.DEBUG)
-					e.printStackTrace();
-				UIUtils.log(e, "Failed to initialise page " + page.getId());
+				EventBEditorUtils.debugAndLogError(e,
+						"Failed to initialise page " + page.getId());
 			}
 		}
 	}

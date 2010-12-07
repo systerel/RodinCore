@@ -305,9 +305,7 @@ public class EditorPagesRegistry implements IEditorPagesRegistry {
 				return (EventBEditorPage) configElement
 						.createExecutableExtension("class");
 			} catch (Exception e) {
-				if (EventBEditorUtils.DEBUG)
-					e.printStackTrace();
-				UIUtils.log(e,
+				EventBEditorUtils.debugAndLogError(e,
 						"Failed to create a page for editor extension " + id);
 				return null;
 			}
