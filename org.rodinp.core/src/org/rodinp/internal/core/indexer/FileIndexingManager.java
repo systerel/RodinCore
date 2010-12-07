@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.rodinp.internal.core.indexer;
 
+import static org.rodinp.internal.core.indexer.IndexManager.printVerbose;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -85,7 +87,8 @@ public class FileIndexingManager {
 
 	private IRodinFile[] getDependencies(IRodinFile file, IIndexer indexer)
 			throws Throwable {
-		printVerbose(makeMessage("extracting dependencies", file, indexer));
+		if (IndexManager.VERBOSE)
+			printVerbose(makeMessage("extracting dependencies", file, indexer));
 
 		try {
 			final IRodinFile[] result = indexer.getDependencies(file.getRoot());
@@ -146,7 +149,8 @@ public class FileIndexingManager {
 	private IIndexingResult doIndexing(IIndexer indexer,
 			IndexingBridge bridge) {
 		final IRodinFile file = bridge.getRodinFile();
-		printVerbose(makeMessage("indexing", file, indexer));
+		if (IndexManager.VERBOSE)
+			printVerbose(makeMessage("indexing", file, indexer));
 
 		try {
 			final boolean success = indexer.index(bridge);
@@ -155,8 +159,10 @@ public class FileIndexingManager {
 			}
 			bridge.complete();
 			final IIndexingResult result = bridge.getResult();
-			printVerbose(makeMessage("indexing complete", file, indexer));
-			printVerbose("result:\n" + result);
+			if (IndexManager.VERBOSE) {
+				printVerbose(makeMessage("indexing complete", file, indexer));
+				printVerbose("result:\n" + result);
+			}
 			return result;
 
 		} catch (Throwable t) {
@@ -166,7 +172,8 @@ public class FileIndexingManager {
 			IRodinDBStatus status =
 				new RodinDBStatus(IRodinDBStatusConstants.INDEXER_ERROR, t);
 			RodinCore.getRodinCore().getLog().log(status);
-			printVerbose(makeMessage("indexing failed", file, indexer));
+			if (IndexManager.VERBOSE)
+				printVerbose(makeMessage("indexing failed", file, indexer));
 
 			return IndexingResult.failed(file);
 		}
@@ -180,12 +187,6 @@ public class FileIndexingManager {
 				+ file.getPath()
 				+ " : indexer="
 				+ indexer.getId();
-	}
-
-	private static void printVerbose(final String message) {
-		if (IndexManager.VERBOSE) {
-			System.out.println(message);
-		}
 	}
 
 	private static void printDebug(String message) {

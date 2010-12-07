@@ -192,7 +192,8 @@ public final class IndexManager {
 				file = null;
 				return Status.OK_STATUS;
 			} catch (CancellationException e) {
-				printVerbose("indexing cancelled for file: " + fileToIndex);
+				if (IndexManager.VERBOSE)
+					printVerbose("indexing cancelled for file: " + fileToIndex);
 				return Status.CANCEL_STATUS;
 			} finally {
 				if (monitor != null) {
@@ -342,7 +343,8 @@ public final class IndexManager {
 
 	private synchronized void restore(ISavedState savedState,
 			IProgressMonitor monitor) {
-		printVerbose("Restoring IndexManager");
+		if (IndexManager.VERBOSE)
+			printVerbose("Restoring IndexManager");
 		final PersistentIndexManager persistIM = new PersistentIndexManager(
 				pppim, currentDeltas, new Registry<String, String>());
 		final boolean success = PersistenceManager.getDefault().restore(
@@ -386,10 +388,8 @@ public final class IndexManager {
 		indexing.cancel();
 	}
 
-	void printVerbose(String message) {
-		if (VERBOSE) {
-			System.out.println(message);
-		}
+	static void printVerbose(String message) {
+		System.out.println(message);
 	}
 
 	private void indexAll(IProgressMonitor monitor) {
@@ -410,16 +410,18 @@ public final class IndexManager {
 	}
 
 	private void indexAll(IProgressMonitor monitor, IRodinProject... projects) {
-
-		printVerbose("project indexing: " + Arrays.asList(projects));
+		if (VERBOSE)
+			printVerbose("project indexing: " + Arrays.asList(projects));
 		try {
 			for (IRodinProject project : projects) {
 				fetchPIM(project).indexAll(monitor);
 			}
 		} catch (CancellationException e) {
-			printVerbose("indexing Cancelled");
+			if (VERBOSE)
+				printVerbose("indexing Cancelled");
 		} finally {
-			printVerbose("...end project indexing");
+			if (VERBOSE)
+				printVerbose("...end project indexing");
 		}
 	}
 
@@ -436,7 +438,8 @@ public final class IndexManager {
 	}
 	
 	public void projectVanishing(IRodinProject project) {
-		printVerbose("INDEXER: Project " + project + " vanishes");
+		if (VERBOSE)
+			printVerbose("INDEXER: Project " + project + " vanishes");
 		final ProjectIndexManager pim = this.pppim.get(project);
 		if (pim == null) {
 			return;
