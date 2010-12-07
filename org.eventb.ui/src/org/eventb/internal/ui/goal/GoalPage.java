@@ -196,7 +196,8 @@ public class GoalPage extends Page implements IGoalPage {
 	}
 
 	private void createNullHyperlinks() {
-		debug("Create Null Image");
+		if (ProverUIUtils.DEBUG)
+			debug("Create Null Image");
 		ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
 				SWT.CENTER);
 		hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));

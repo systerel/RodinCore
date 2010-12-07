@@ -212,7 +212,8 @@ public class HypothesisRow {
 				SourceLocation loc = ident.getSourceLocation();
 				String image = parsedString.substring(loc.getStart(), loc
 						.getEnd() + 1);
-				debug("Ident: " + image);
+				if (ProverUIUtils.DEBUG)
+					debug("Ident: " + image);
 				string += " " + image + " ";
 				int x = string.length();
 				string += " ";
@@ -254,7 +255,8 @@ public class HypothesisRow {
 	 * Creating a null hyperlink
 	 */
 	private void createNullHyperlinks() {
-		debug("Create Null Image");
+		if (ProverUIUtils.DEBUG)
+			debug("Create Null Image");
 		ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
 				SWT.CENTER);
 		hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));

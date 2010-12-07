@@ -414,8 +414,9 @@ public class TacticUIRegistry {
 					if (id.equals(info.getToolbar())) {
 						String dropdownID = info.getID();
 						dropdowns.add(dropdownID);
-						ProverUIUtils.debug("Attached dropdown " + dropdownID
-								+ " to toolbar " + id);
+						if (ProverUIUtils.DEBUG)
+							ProverUIUtils.debug("Attached dropdown "
+									+ dropdownID + " to toolbar " + id);
 					}
 				}
 			}
@@ -435,8 +436,9 @@ public class TacticUIRegistry {
 					if (id.equals(info.getToolbar())) {
 						String tacticID = info.getID();
 						tactics.add(tacticID);
-						ProverUIUtils.debug("Attached tactic " + tacticID
-								+ " to toolbar " + id);
+						if (ProverUIUtils.DEBUG)
+							ProverUIUtils.debug("Attached tactic " + tacticID
+									+ " to toolbar " + id);
 					}
 				}
 			}
@@ -476,8 +478,9 @@ public class TacticUIRegistry {
 					final TacticUIInfo info = globalRegistry.get(tacticID);
 					if (id.equals(info.getDropdown())) {
 						tactics.add(info.getID());
-						ProverUIUtils.debug("Attached tactic " + tacticID
-								+ " to dropdown " + id);
+						if (ProverUIUtils.DEBUG)
+							ProverUIUtils.debug("Attached tactic " + tacticID
+									+ " to dropdown " + id);
 					}
 				}
 			}
@@ -576,8 +579,9 @@ public class TacticUIRegistry {
 			globalRegistry.put(id, info);
 		}
 		if (error) {
-			ProverUIUtils.debug("Error while trying to put info " + id
-					+ " in a registry");
+			if (ProverUIUtils.DEBUG)
+				ProverUIUtils.debug("Error while trying to put info " + id
+						+ " in a registry");
 		} else {
 			printDebugRegistration(id, "tactic");
 		}
@@ -661,12 +665,14 @@ public class TacticUIRegistry {
 	}
 
 	private static void printDebugConfExists(String id, String kind) {
-		ProverUIUtils.debug("Configuration already exists for " + kind + " "
-				+ id + ", configuration ignored.");
+		if (ProverUIUtils.DEBUG)
+			ProverUIUtils.debug("Configuration already exists for " + kind + " "
+					+ id + ", configuration ignored.");
 	}
 	
 	private static void printDebugRegistration(String id, String kind) {
-		ProverUIUtils.debug("Registered " + kind + " with id " + id);
+		if (ProverUIUtils.DEBUG)
+			ProverUIUtils.debug("Registered " + kind + " with id " + id);
 	}
 
 	public synchronized List<ITacticApplication> getTacticApplicationsToGoal(IUserSupport us) {
