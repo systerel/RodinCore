@@ -187,11 +187,11 @@ public class PSUpdater {
 			throws RodinDBException {
 
 		final IPOSequent poSequent = status.getPOSequent();
-		final FormulaFactory ff = psRoot.getFormulaFactory();
-		final IProverSequent seq = POLoader.readPO(poSequent, ff);
 		final IPRProof prProof = status.getProof();
 		final boolean broken;
 		if (prProof.exists()) {
+			final FormulaFactory ff = psRoot.getFormulaFactory();
+			final IProverSequent seq = POLoader.readPO(poSequent, ff);
 			broken = isBroken(seq, prProof, ff, monitor);
 			if (AutoPOM.PERF_PROOFREUSE) 
 			{
