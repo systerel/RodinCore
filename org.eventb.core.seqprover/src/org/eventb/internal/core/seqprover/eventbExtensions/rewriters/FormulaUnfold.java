@@ -199,12 +199,7 @@ public class FormulaUnfold {
 	}
 
 	public Predicate inDom(Expression E, Expression r) {
-		Type type = r.getType();
-
-		Type baseType = type.getBaseType();
-		assert baseType instanceof ProductType;
-		Type rType = ((ProductType) baseType).getRight();
-
+		final Type rType = r.getType().getTarget();
 		BoundIdentDecl[] boundIdentDecls = getBoundIdentDecls(rType);
 		Expression expression = getExpression(boundIdentDecls.length - 1, rType);
 		Expression left = ff.makeBinaryExpression(Expression.MAPSTO, E
@@ -216,12 +211,7 @@ public class FormulaUnfold {
 	}
 
 	public Predicate inRan(Expression F, Expression r) {
-		Type type = r.getType();
-
-		Type baseType = type.getBaseType();
-		assert baseType instanceof ProductType;
-		Type rType = ((ProductType) baseType).getLeft();
-
+		final Type rType = r.getType().getSource();
 		BoundIdentDecl[] boundIdentDecls = getBoundIdentDecls(rType);
 		Expression expression = getExpression(boundIdentDecls.length - 1, rType);
 
@@ -329,13 +319,7 @@ public class FormulaUnfold {
 		Collection<BoundIdentDecl> identDecls = new ArrayList<BoundIdentDecl>();
 		for (int i = 0; i < rels.length - 1; i++) {
 			Expression rel = rels[i];
-			Type type = rel.getType();
-			assert type instanceof PowerSetType;
-			PowerSetType powerType = (PowerSetType) type;
-			Type baseType = powerType.getBaseType();
-			assert baseType instanceof ProductType;
-			ProductType pType = (ProductType) baseType;
-			Type right = pType.getRight();
+			final Type right = rel.getType().getTarget();
 			BoundIdentDecl[] boundIdentDecls = getBoundIdentDecls(right);
 			for (BoundIdentDecl boundIdentDecl : boundIdentDecls) {
 				identDecls.add(boundIdentDecl);
@@ -349,13 +333,7 @@ public class FormulaUnfold {
 		Expression prev = E.shiftBoundIdentifiers(maxSize, ff);
 		for (int i = 0; i < rels.length - 1; i++) {
 			Expression rel = rels[i];
-			Type type = rel.getType();
-			assert type instanceof PowerSetType;
-			PowerSetType powerType = (PowerSetType) type;
-			Type baseType = powerType.getBaseType();
-			assert baseType instanceof ProductType;
-			ProductType pType = (ProductType) baseType;
-			Type right = pType.getRight();
+			final Type right = rel.getType().getTarget();
 			Expression expression = getExpression(size - 1, right);
 			BoundIdentDecl[] boundIdentDecls = getBoundIdentDecls(right);
 			size = size - boundIdentDecls.length;
