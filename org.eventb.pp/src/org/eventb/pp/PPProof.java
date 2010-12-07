@@ -208,16 +208,18 @@ public class PPProof {
 	}
 	
 	private void debugResult() {
-		if (result.getResult()==Result.valid) {
-//			if (DEBUG) debug("** proof found, traced clauses **");
-//			if (DEBUG) debug(getResult().getTracer().getClauses().toString());
-			if (DEBUG) debug("** proof found **");
-			if (result.getTracer() instanceof org.eventb.internal.pp.core.Tracer) if (DEBUG) debug("closing clauses: "+((org.eventb.internal.pp.core.Tracer)result.getTracer()).getClosingOrigins());
-			if (DEBUG) debug("original hypotheses: "+result.getTracer().getNeededHypotheses().toString());
-			if (DEBUG) debug("goal needed: "+result.getTracer().isGoalNeeded());
-		}
-		else {
-			if (DEBUG) debug("** no proof found **");
+		if (DEBUG) {
+			if (result.getResult() == Result.valid) {
+				// debug("** proof found, traced clauses **");
+				// debug(getResult().getTracer().getClauses().toString());
+				debug("** proof found **");
+				if (result.getTracer() instanceof org.eventb.internal.pp.core.Tracer)
+					debug("closing clauses: " + ((org.eventb.internal.pp.core.Tracer) result.getTracer()).getClosingOrigins());
+				debug("original hypotheses: " + result.getTracer().getNeededHypotheses().toString());
+				debug("goal needed: " + result.getTracer().isGoalNeeded());
+			} else {
+				debug("** no proof found **");
+			}
 		}
 	}
 	

@@ -53,7 +53,7 @@ public abstract class AbstractLabelizableFormula<T extends IndexedDescriptor>
 	
 	@Override
 	final ClauseResult getClauses(List<TermSignature> termList, LabelManager manager, ClauseResult prefix, ClauseContext context) {
-		ClauseBuilder.debugEnter(this);
+		if (ClauseBuilder.DEBUG) ClauseBuilder.debugEnter(this);
 		ClauseResult result;
 		if (manager.hasLabel(this)) {
 			if (ClauseBuilder.DEBUG) ClauseBuilder.debug("Manager contains label for " +this );
@@ -66,7 +66,7 @@ public abstract class AbstractLabelizableFormula<T extends IndexedDescriptor>
 			if (ClauseBuilder.DEBUG) ClauseBuilder.debug(this + " can be simplified");
 			result = getDefinitionClauses(termList, manager, prefix, newContext);
 		}
-		ClauseBuilder.debugExit(this);
+		if (ClauseBuilder.DEBUG) ClauseBuilder.debugExit(this);
 		return result;
 	}
 	

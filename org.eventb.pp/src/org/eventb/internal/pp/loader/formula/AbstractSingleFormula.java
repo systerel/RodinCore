@@ -32,10 +32,10 @@ public abstract class AbstractSingleFormula<T extends LiteralDescriptor> extends
 	@Override
 	ClauseResult getClauses(List<TermSignature> termList, LabelManager manager,
 			ClauseResult prefix, ClauseContext context) {
-		ClauseBuilder.debugEnter(this);
+		if (ClauseBuilder.DEBUG) ClauseBuilder.debugEnter(this);
 		Literal<?, ?> literal = getLabelPredicate(termList, context);
 		prefix.addLiteralToAllLists(literal);
-		ClauseBuilder.debugExit(this);
+		if (ClauseBuilder.DEBUG) ClauseBuilder.debugExit(this);
 		return prefix;
 	}
 
