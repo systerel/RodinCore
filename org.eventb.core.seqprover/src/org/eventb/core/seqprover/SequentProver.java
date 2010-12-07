@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.Plugin;
 import org.eventb.core.seqprover.xprover.XProverReasoner;
 import org.eventb.internal.core.seqprover.AutoTacticRegistry;
 import org.eventb.internal.core.seqprover.ProverChecks;
+import org.eventb.internal.core.seqprover.ProverSequent;
 import org.eventb.internal.core.seqprover.ReasonerRegistry;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
 import org.osgi.framework.BundleContext;
@@ -32,6 +33,8 @@ public class SequentProver extends Plugin {
 	 */
 	private static final String SEQPROVER_TRACE = PLUGIN_ID
 			+ "/debug/seqProver"; //$NON-NLS-1$
+	private static final String PROVER_SEQUENT_TRACE = PLUGIN_ID
+			+ "/debug/proverSequent"; //$NON-NLS-1$
 	private static final String PROVER_CHECKS_TRACE = PLUGIN_ID
 			+ "/debug/proverChecks"; //$NON-NLS-1$
 	private static final String REASONER_REGISTRY_TRACE = PLUGIN_ID
@@ -76,6 +79,7 @@ public class SequentProver extends Plugin {
 	 */
 	private void configureDebugOptions() {
 		SequentProver.DEBUG = parseOption(SEQPROVER_TRACE);
+		ProverSequent.DEBUG = parseOption(PROVER_SEQUENT_TRACE);
 		ProverChecks.DEBUG = parseOption(PROVER_CHECKS_TRACE);
 		ReasonerRegistry.DEBUG = parseOption(REASONER_REGISTRY_TRACE);
 		AutoTacticRegistry.DEBUG = parseOption(TACTIC_REGISTRY_TRACE);

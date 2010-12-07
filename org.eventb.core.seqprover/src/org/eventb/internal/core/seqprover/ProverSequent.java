@@ -25,7 +25,6 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverRule;
-import org.eventb.core.seqprover.SequentProver;
 
 /**
  * This class is the default implementation of the {@link IProverSequent} and 
@@ -47,7 +46,30 @@ import org.eventb.core.seqprover.SequentProver;
  */
 public final class ProverSequent implements IInternalProverSequent{
 	
-	
+	/**
+	 * Debug flag for <code>SEQPROVER_TRACE</code>
+	 */
+	public static boolean DEBUG;
+
+	/**
+	 * Prints the given message to the console in case the debug flag is
+	 * switched on. Optional given objects are appended to the message, calling
+	 * their <code>toString()</code> method only if debug mode is enabled.
+	 * 
+	 * @param message
+	 *            The message to print out to the console
+	 * @param an
+	 *            object to output, or null
+	 */
+	private static void debugOut(String message, Object obj) {
+		if (DEBUG) {
+			if (obj != null) {
+				message = message.concat(obj.toString());
+			}
+			System.out.println(message);
+		}
+	}
+
 	// TODO : Profiling : It may be that caching visible hyps may improve performance.
 	
 	private final ITypeEnvironment typeEnvironment;
@@ -128,7 +150,7 @@ public final class ProverSequent implements IInternalProverSequent{
 		this.hiddenHypotheses = NO_HYPS;
 		this.selectedHypotheses = selectedHypotheses == null ? NO_HYPS : new LinkedHashSet<Predicate>(selectedHypotheses);
 		this.goal = goal;
-		SequentProver.debugOut("Constructed new sequent " + this);
+		debugOut("Constructed new sequent ", this);
 	}
 	
 	
@@ -166,7 +188,7 @@ public final class ProverSequent implements IInternalProverSequent{
 		this.hiddenHypotheses = NO_HYPS;
 		this.selectedHypotheses = NO_HYPS;
 		this.goal = goal;
-		SequentProver.debugOut("Constructed new sequent " + this);
+		debugOut("Constructed new sequent ", this);
 	}
 	
 	
@@ -260,7 +282,7 @@ public final class ProverSequent implements IInternalProverSequent{
 		this.hiddenHypotheses = hiddenHypSet== null ? NO_HYPS : new LinkedHashSet<Predicate>(hiddenHypSet);;
 		this.selectedHypotheses = selectedHypSet== null ? NO_HYPS : new LinkedHashSet<Predicate>(selectedHypSet);
 		this.goal = goal;
-		SequentProver.debugOut("Constructed new sequent " + this);
+		debugOut("Constructed new sequent ", this);
 	}
 
 	/* (non-Javadoc)
