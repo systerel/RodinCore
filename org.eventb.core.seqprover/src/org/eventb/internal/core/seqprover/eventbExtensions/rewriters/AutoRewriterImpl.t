@@ -3528,11 +3528,12 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 */
 			Min(setext@SetExtension(_)) -> {
 				if (level2) {
-					List<Expression> res = simplifyMin((SetExtension) `setext);
-					result = makeUnaryExpression(Formula.KMIN,
-								makeSetExtension(res));
-					trace(expression, result, "SIMP_LIT_MIN");
-					return result;
+					Expression newSet = simplifyMin((SetExtension) `setext, ff);
+					if (newSet != `setext) {
+						result = makeUnaryExpression(Formula.KMIN, newSet);
+						trace(expression, result, "SIMP_LIT_MIN");
+						return result;
+					}
 				}
 			}
 			 
@@ -3543,11 +3544,12 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 */
 			Max(setext@SetExtension(_)) -> {
 				if (level2) {
-					List<Expression> res = simplifyMax((SetExtension) `setext);
-					result = makeUnaryExpression(Formula.KMAX,
-								makeSetExtension(res));
-					trace(expression, result, "SIMP_LIT_MAX");
-					return result;
+					Expression newSet = simplifyMax((SetExtension) `setext, ff);
+					if (newSet != `setext) {
+						result = makeUnaryExpression(Formula.KMAX, newSet);
+						trace(expression, result, "SIMP_LIT_MAX");
+						return result;
+					}
 				}
 			}
 			
