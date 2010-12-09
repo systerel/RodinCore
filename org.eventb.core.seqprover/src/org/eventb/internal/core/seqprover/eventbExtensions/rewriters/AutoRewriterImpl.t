@@ -25,6 +25,9 @@ import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.Asso
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyOvr;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyPlus;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyUnion;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.LambdaCheck.lambdaCheck;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetExtensionSimplifier.simplifyMax;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetExtensionSimplifier.simplifyMin;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -175,6 +178,24 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		}
 		return false;
 	}
+	
+	protected boolean isSingletonWithTag(Expression expression, int tag) {
+		if (expression.getTag() == Formula.SETEXT) {
+			final SetExtension setExtension = (SetExtension) expression;
+			if (setExtension.getChildCount() == 1) {
+				if (setExtension.getChild(0).getTag() == tag) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	protected Expression getSingletonElement(Expression singleton) {
+		assert singleton.getTag() == Formula.SETEXT
+				&& singleton.getChildCount() == 1;
+		return (Expression) singleton.getChild(0);
+	}
 
 	private static <T extends Formula<T>> void trace(T from, T to, String rule,
 			String... otherRules) {
@@ -206,13 +227,25 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			makeEmptySet(set.getType()));
 	}
 	
+	// TODO Benoit : factoriser partout avec cette méthode
+	protected SimplePredicate makeFinite(Expression set) {
+		return makeSimplePredicate(Predicate.KFINITE, set);
+	}
+	
+	// TODO Benoit : factoriser partout avec cette méthode
+	protected UnaryExpression makeCard(Expression set) {
+		return makeUnaryExpression(Expression.KCARD, set);
+	}
+	
 	%include {FormulaV2.tom}
 	
 	@ProverRule( { "SIMP_SPECIAL_FINITE", "SIMP_FINITE_SETENUM",
 			"SIMP_FINITE_BUNION", "SIMP_FINITE_POW", "DERIV_FINITE_CPROD",
 			"SIMP_FINITE_CONVERSE", "SIMP_FINITE_UPTO",
 			"SIMP_FINITE_NATURAL", "SIMP_FINITE_NATURAL1",
-			"SIMP_FINITE_INTEGER", "SIMP_FINITE_ID", "SIMP_FINITE_LAMBDA" })
+			"SIMP_FINITE_INTEGER", "SIMP_FINITE_ID", "SIMP_FINITE_LAMBDA",
+			"SIMP_FINITE_ID_DOMRES", "SIMP_FINITE_PRJ1", "SIMP_FINITE_PRJ2",
+			"SIMP_FINITE_PRJ1_DOMRES", "SIMP_FINITE_PRJ2_DOMRES" })
 	@Override
 	public Predicate rewrite(SimplePredicate predicate) {
 		final Predicate result;
@@ -352,18 +385,80 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			
 			/**
 			 * SIMP_FINITE_LAMBDA
-			 *    finite(λ x · P ∣ E) == finite({x · P ∣ x})
+			 *    finite({x · P ∣ E ↦ F}) == finite({x · P ∣ E})
 			 */
-			Finite(Cset(bil, P, Mapsto(D,_))) -> {
-				if (level2) {
+			Finite(lambda@Cset(bil, P, Mapsto(E,_))) -> {
+				if (level2 && lambdaCheck((QuantifiedExpression) `lambda)) {
 					result = makeSimplePredicate(Predicate.KFINITE,
 								makeQuantifiedExpression(Expression.CSET,
-									`bil, `P, `D, Form.Explicit));
+									`bil, `P, `E, Form.Explicit));
 					trace(predicate, result, "SIMP_FINITE_LAMBDA");
 					return result;
 				}
 			}
 			
+			/**
+			 * SIMP_FINITE_ID_DOMRES
+			 *    finite(E ◁ id) == finite(E)
+			 */
+			Finite(DomRes(E, IdGen())) -> {
+				if (level2) {
+					result = makeSimplePredicate(Formula.KFINITE, `E);
+					trace(predicate, result, "SIMP_FINITE_ID_DOMRES");
+					return result;
+				}
+			} 
+			 
+			/**
+			 * SIMP_FINITE_PRJ1
+			 *    finite(prj1) == finite(S × T) where prj1 has type ℙ(S×T×S)
+			 */
+			Finite(prj1@Prj1Gen()) -> {
+				if (level2) {
+					result = makeSimplePredicate(Formula.KFINITE,
+								`prj1.getType().getSource().toExpression(ff));
+					trace(predicate, result, "SIMP_FINITE_PRJ1");
+					return result;
+				}
+			}
+			 
+			/**
+			 * SIMP_FINITE_PRJ2
+			 *    finite(prj2) == finite(S × T) where prj2 has type ℙ(S×T×T)
+			 */
+			Finite(prj2@Prj2Gen()) -> {
+				if (level2) {
+					result = makeSimplePredicate(Formula.KFINITE,
+								`prj2.getType().getSource().toExpression(ff));
+					trace(predicate, result, "SIMP_FINITE_PRJ2");
+					return result;
+				}
+			}
+
+			/**
+			 * SIMP_FINITE_PRJ1_DOMRES
+			 *    finite(E ◁ prj1) == finite(E)
+			 */
+			Finite(DomRes(E, Prj1Gen())) -> {
+				if (level2) {
+					result = makeSimplePredicate(Formula.KFINITE, `E);
+					trace(predicate, result, "SIMP_FINITE_PRJ1_DOMRES");
+					return result;
+				}
+			}
+
+			/**
+			 * SIMP_FINITE_PRJ2_DOMRES
+			 *    finite(E ◁ prj2) == finite(E)
+			 */
+			Finite(DomRes(E, Prj2Gen())) -> {
+				if (level2) {
+					result = makeSimplePredicate(Formula.KFINITE, `E);
+					trace(predicate, result, "SIMP_FINITE_PRJ2_DOMRES");
+					return result;
+				}
+			}
+
 	    }
 	    return predicate;
 	}
@@ -762,7 +857,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_LIT_GE_CARD_0", "SIMP_CARD_NATURAL", "SIMP_CARD_NATURAL1",
 			"SIMP_LIT_IN_NATURAL", "SIMP_LIT_IN_NATURAL1",
 			"SIMP_SPECIAL_IN_NATURAL1", "SIMP_LIT_IN_MINUS_NATURAL",
-			"SIMP_LIT_IN_MINUS_NATURAL1" })
+			"SIMP_LIT_IN_MINUS_NATURAL1", "SIMP_IN_FUNIMAGE",
+			"SIMP_IN_FUNIMAGE_CONVERSE_L", "SIMP_IN_FUNIMAGE_CONVERSE_R" })
     @Override
 	public Predicate rewrite(RelationalPredicate predicate) {
 		final Predicate result;
@@ -1401,49 +1497,77 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			}
 
 			/**
+			 * SIMP_LIT_LE_CARD_0
+			 *    0 ≤ card(S) == ⊤
  	    	 * SIMP_LIT_LE_CARD_1
  	    	 *    1 ≤ card(S) == ¬(S = ∅)
  	    	 */
  	    	Le(IntegerLiteral(i), Card(S)) -> {
- 	    		if (level2 && `i.equals(ONE)) {
- 	    			result = makeUnaryPredicate(Predicate.NOT, makeIsEmpty(`S));
- 	    			trace(predicate, result, "SIMP_LIT_LE_CARD_1");
-					return result;
- 	    		}
- 	    	}
- 	    	
- 	    	/**
-			 * SIMP_LIT_LE_CARD_0
-			 *    0 ≤ card(S) == ⊤
-			 */
-			Le(IntegerLiteral(i), Card(_)) -> {
-				if (level2 && `i.equals(ZERO)) {
-					result = dLib.True();
-					trace(predicate, result, "SIMP_LIT_LE_CARD_0");
-					return result;
-				}
-			}
-
-			/**
- 	    	 * SIMP_LIT_GE_CARD_1
- 	    	 *    card(S) ≥ 1 == ¬(S = ∅)
- 	    	 */
- 	    	Ge(Card(S), IntegerLiteral(i)) -> {
- 	    		if (level2 && `i.equals(ONE)) {
- 	    			result = makeUnaryPredicate(Predicate.NOT, makeIsEmpty(`S));
- 	    			trace(predicate, result, "SIMP_LIT_GE_CARD_1");
-					return result;
+ 	    		if (level2) {
+ 	    			if (`i. equals(ZERO)) {
+ 	    				result = dLib.True();
+						trace(predicate, result, "SIMP_LIT_LE_CARD_0");
+						return result;
+ 	    			} else if (`i.equals(ONE)) {
+	 	    			result = makeUnaryPredicate(Predicate.NOT, makeIsEmpty(`S));
+	 	    			trace(predicate, result, "SIMP_LIT_LE_CARD_1");
+						return result;
+ 	    			}
  	    		}
  	    	}
 
 			/**
 			 * SIMP_LIT_GE_CARD_0
 			 *    card(S) ≥ 0 == ⊤
+ 	    	 * SIMP_LIT_GE_CARD_1
+ 	    	 *    card(S) ≥ 1 == ¬(S = ∅)
+ 	    	 */
+ 	    	Ge(Card(S), IntegerLiteral(i)) -> {
+ 	    		if (level2) {
+ 	    			if (`i.equals(ZERO)) {
+	 	    			result = dLib.True();
+						trace(predicate, result, "SIMP_LIT_GE_CARD_0");
+						return result;
+ 	    			} else if (`i.equals(ONE)) {
+	 	    			result = makeUnaryPredicate(Predicate.NOT, makeIsEmpty(`S));
+	 	    			trace(predicate, result, "SIMP_LIT_GE_CARD_1");
+						return result;
+ 	    			}
+ 	    		}
+ 	    	}
+			
+			/**
+			 * SIMP_IN_FUNIMAGE
+			 *    E ↦ F(E) ∈ F == ⊤
 			 */
-			Ge(Card(_), IntegerLiteral(i)) -> {
-				if (level2 && `i.equals(ZERO)) {
+			In(Mapsto(E, FunImage(F, E)), F) -> {
+				if (level2) {
 					result = dLib.True();
-					trace(predicate, result, "SIMP_LIT_GE_CARD_0");
+					trace(predicate, result, "SIMP_IN_FUNIMAGE");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_IN_FUNIMAGE_CONVERSE_L
+			 *    F∼(E) ↦ E ∈ F == ⊤
+			 */
+			In(Mapsto(FunImage(Converse(F), E), E), F) -> {
+				if (level2) {
+					result = dLib.True();
+					trace(predicate, result, "SIMP_IN_FUNIMAGE_CONVERSE_L");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_IN_FUNIMAGE_CONVERSE_R
+			 *    F(E) ↦ E ∈ F∼ == ⊤
+			 */
+			In(Mapsto(FunImage(F, E), E), Converse(F)) -> {
+				if (level2) {
+					result = dLib.True();
+					trace(predicate, result, "SIMP_IN_FUNIMAGE_CONVERSE_R");
 					return result;
 				}
 			}
@@ -1566,39 +1690,55 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * Arithmetic 7.1: (-E) ∗ F == -(E * F)
 	    	 */
 	    	Mul (_) -> {
-	    		result = simplifyMult(expression, dLib);
-	    		trace(expression, result, "SIMP_SPECIAL_PROD_1", "SIMP_SPECIAL_PROD_0", "SIMP_SPECIAL_PROD_MINUS_EVEN", "SIMP_SPECIAL_PROD_MINUS_ODD");
-				return result;
+	    		final Expression rewritten = simplifyMult(expression, dLib);
+	    		if (rewritten != expression) {
+	    			result = rewritten;
+	    			trace(expression, result, "SIMP_SPECIAL_PROD_1", "SIMP_SPECIAL_PROD_0", "SIMP_SPECIAL_PROD_MINUS_EVEN", "SIMP_SPECIAL_PROD_MINUS_ODD");
+					return result;
+	    		}
 	    	}
 	    	
 	    	/**
 	    	 * SIMP_SPECIAL_FCOMP
-             * Set Theory: p; ... ;∅; ... ;q == ∅
+             *    r ; .. ;  ∅ ; .. ; s == ∅
+             * SIMP_TYPE_FCOMP_ID
+	    	 *    r ; .. ; id ; .. ; s == r ; .. ; s
 	    	 */
-	    	Fcomp (eList(_*, EmptySet(), _*)) -> {
-	    		result = simplifyFcomp(expression, dLib);
-   	    		trace(expression, result, "SIMP_SPECIAL_FCOMP");
-   				return result;
+	    	Fcomp (_) -> {
+	    		final Expression rewritten = simplifyFcomp(expression, dLib);
+	    		if (rewritten != expression) {
+	    			result = rewritten;
+	    			trace(expression, result, "SIMP_SPECIAL_FCOMP", "SIMP_TYPE_FCOMP_ID");
+   					return result;
+	    		}
 	    	}
 	
 	    	/**
 	    	 * SIMP_SPECIAL_BCOMP
-             * Set Theory: p∘ ... ∘∅∘ ... ∘q == ∅
+             *    r ∘ .. ∘  ∅ ∘ .. ∘ s == ∅
+             * SIMP_TYPE_BCOMP_ID
+	    	 *    r ∘ .. ∘ id ∘ .. ∘ s == r ∘ .. ∘ s
 	    	 */
-	    	Bcomp (eList(_*, EmptySet(), _*)) -> {
-	    		result = simplifyBcomp(expression, dLib);
-   	    		trace(expression, result, "SIMP_SPECIAL_BCOMP");
-   				return result;
+	    	Bcomp (_) -> {
+	    		final Expression rewritten = simplifyBcomp(expression, dLib);
+	    		if (rewritten != expression) {
+		    		result = rewritten;
+	   	    		trace(expression, result, "SIMP_SPECIAL_BCOMP", "SIMP_TYPE_BCOMP_ID");
+	   				return result;
+	    		}
 	    	}
 			
             /**
              * SIMP_SPECIAL_OVERL
 			 * Set theory: r  ...  ∅  ...  s  ==  r  ...  s
 			 */
-	    	Ovr(eList(_*, EmptySet(), _*)) -> {
-	    		result = simplifyOvr(expression, dLib);
-	    		trace(expression, result, "SIMP_SPECIAL_OVERL");
-				return result;
+			Ovr(_) -> {
+	    		final Expression rewritten = simplifyOvr(expression, dLib);
+	    		if (rewritten != expression) {
+	    			result = rewritten;
+	    			trace(expression, result, "SIMP_SPECIAL_OVERL");
+	    			return result;
+	    		}
      		}
      		
      		/**
@@ -1689,37 +1829,25 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	
 	    	/**
 	    	 * SIMP_TYPE_OVERL_CPROD
-	    	 *    r  ..  Ty == Ty
+	    	 *    r  ..  Ty  ..  s == Ty  ..  s
 	    	 */
-	    	Ovr(eList(_*, Ty)) -> {
+	    	Ovr(members@eList(_*, Ty, _*)) -> {
 	    		if (level2 && `Ty.isATypeExpression()) {
-	    			result = `Ty;
+	    			int typeIndex = -1;
+	    			for (int i = 0 ; i < `members.length && typeIndex == -1 ; i++) {
+	    				if (`members[i].equals(`Ty)) {
+	    					typeIndex = i;
+	    				}
+	    			}
+	    			if(typeIndex == `members.length - 1) {
+	    				// the type is the last element
+	    				result = `Ty;
+	    			} else {
+	    				result = makeAssociativeExpression(Formula.OVR, 
+	    					Arrays.copyOfRange(`members, typeIndex, `members.length));
+	    			}
 	    			trace(expression, result, "SIMP_TYPE_OVERL_CPROD");
 					return result;	
-	    		}
-	    	}
-	    	
-	    	/**
-	    	 * SIMP_TYPE_BCOMP_ID
-	    	 *    r ∘ .. ∘ id ∘ .. ∘ s == r ∘ .. ∘ s
-	    	 */
-	    	Bcomp(eList(_*, IdGen(), _*)) -> {
-	    		if (level2) {
-	    			result = simplifyBcomp(expression, dLib);
-	    			trace(expression, result, "SIMP_TYPE_BCOMP_ID");
-					return result;
-				}
-	    	}
-	    	
-	    	/**
-	    	 * SIMP_TYPE_FCOMP_ID
-	    	 *    r ; .. ; id ; .. ; s == r ; .. ; s
-	    	 */
-	    	Fcomp(eList(_*, IdGen(), _*)) -> {
-	    		if (level2) {
-	    			result = simplifyFcomp(expression, dLib);
-	    			trace(expression, result, "SIMP_TYPE_FCOMP_ID");
-					return result;
 	    		}
 	    	}
 	    	
@@ -1761,7 +1889,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_FUNIMAGE_PRJ1", "SIMP_FUNIMAGE_PRJ2", "SIMP_FUNIMAGE_ID",
 			"SIMP_SPECIAL_EQUAL_RELDOMRAN",
 			"SIMP_DPROD_CPROD", "SIMP_PPROD_CPROD",
-			"SIMP_SPECIAL_MOD_0", "SIMP_SPECIAL_MOD_1", "SIMP_MULTI_MOD" } )
+			"SIMP_SPECIAL_MOD_0", "SIMP_SPECIAL_MOD_1", "SIMP_MULTI_MOD",
+			"SIMP_LIT_UPTO", "SIMP_MULTI_FUNIMAGE_SETENUM_LL",
+			"SIMP_MULTI_FUNIMAGE_SETENUM_LR",
+			"SIMP_MULTI_FUNIMAGE_BUNION_SETENUM" } )
 	@Override
 	public Expression rewrite(BinaryExpression expression) {
 		final Expression result;
@@ -2004,6 +2135,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_MULTI_FUNIMAGE_OVERL_SETENUM
              * Set Theory 16: (f  {E↦ F})(E) == F
 	    	 */
+	    	// TODO Benoit : ne correspond pas à la règle du wiki, généraliser
 	    	FunImage(Ovr(eList(_*, SetExtension(eList(Mapsto(E, F))))), E) -> {
 				result = `F;
 	    		trace(expression, result, "SIMP_MULTI_FUNIMAGE_OVERL_SETENUM");
@@ -2627,12 +2759,86 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				}
 			}
 			
+			/**
+			 * SIMP_LIT_UPTO
+			 *    i‥j == ∅ (where i and j are literals and j < i)
+			 */
+			UpTo(IntegerLiteral(i), IntegerLiteral(j)) -> {
+				if (level2 && `j.intValue() < `i.intValue()) {
+					result = makeEmptySet(expression.getType());
+					trace(expression, result, "SIMP_LIT_UPTO");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_MULTI_FUNIMAGE_SETENUM_LL
+			 *    {A ↦ E, .. , B ↦ E}(x) == E
+			 */
+			 /* TODO : conflit avec SIMP_FUNIMAGE_CONVERSE_FUNIMAGE
+			FunImage(SetExtension(members@eList(Mapsto(_, E), _*)), _) -> {
+				if (level2) {				
+					for (Expression child : `members) {
+						if (child.getTag() == Formula.MAPSTO &&
+							((BinaryExpression) child).getRight().equals(`E)) {	
+							// right form, continue
+						} else {
+							return expression;
+						}
+					}
+					
+					result = `E;
+					trace(expression, result, "SIMP_MULTI_FUNIMAGE_SETENUM_LL");
+					return result;
+				}
+			}*/
+			
+			/**
+			 * SIMP_MULTI_FUNIMAGE_SETENUM_LR
+			 *    {A ↦ E, .. , x ↦ y, .. , B ↦ F}(x) == y
+			 */
+			FunImage(SetExtension(members@eList(_*, Mapsto(x, y), _*)), x) -> {
+				if (level2) {
+					for (Expression child : `members) {
+						if (child.getTag() == Formula.MAPSTO) {
+							// right form, continue
+						} else {
+							return expression;
+						}
+					}
+					
+					result = `y;
+					trace(expression, result, "SIMP_MULTI_FUNIMAGE_SETENUM_LR");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_MULTI_FUNIMAGE_BUNION_SETENUM
+			 *    {r ∪ .. ∪ {A ↦ E, .. , x ↦ y, .. , B ↦ F})(x) == y
+			 */
+			FunImage(BUnion(eList(_*, SetExtension(members@eList(_*, Mapsto(x, y), _*)), _*)), x) -> {
+				if (level2) {
+					for (Expression child : `members) {
+						if (child.getTag() == Formula.MAPSTO) {
+							// right form, continue
+						} else {
+							return expression;
+						}
+					}
+					
+					result = `y;
+					trace(expression, result, "SIMP_MULTI_FUNIMAGE_BUNION_SETENUM");
+					return result;
+				}
+			}
+			
 		}
 	    return expression;
 	}
 
 	@ProverRule( { "SIMP_CONVERSE_CONVERSE", "SIMP_CONVERSE_SETENUM",
-			"SIMP_DOM_COMPSET", "SIMP_RAN_COMPSET", "SIMP_MINUS_MINUS",
+			"SIMP_DOM_SETENUM", "SIMP_RAN_SETENUM", "SIMP_MINUS_MINUS",
 			"SIMP_SPECIAL_CARD", "SIMP_CARD_SING", "SIMP_CARD_POW",
 			"SIMP_CARD_BUNION", "SIMP_SPECIAL_DOM", "SIMP_SPECIAL_RAN",
 			"SIMP_SPECIAL_POW", "SIMP_SPECIAL_POW1", "SIMP_DOM_CONVERSE",
@@ -2644,8 +2850,13 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_RAN_PRJ1", "SIMP_RAN_PRJ2", "SIMP_TYPE_DOM",
 			"SIMP_TYPE_RAN", "SIMP_MIN_SING", "SIMP_MAX_SING",
 			"SIMP_MIN_NATURAL", "SIMP_MIN_NATURAL1", "SIMP_MIN_UPTO",
-			"SIMP_MAX_UPTO", "SIMP_CARD_CONVERSE", "SIMP_CARD_ID",
-			"SIMP_CARD_COMPSET", "SIMP_CONVERSE_CPROD" })
+			"SIMP_MAX_UPTO", "SIMP_CARD_CONVERSE", "SIMP_CARD_ID_DOMRES",
+			"SIMP_CARD_COMPSET", "SIMP_CONVERSE_CPROD", "SIMP_CONVERSE_COMPSET",
+			"SIMP_DOM_LAMBDA", "SIMP_RAN_LAMBDA", "SIMP_MIN_BUNION_SING",
+			"SIMP_MAX_BUNION_SING", "SIMP_LIT_MIN", "SIMP_LIT_MAX",
+			 "SIMP_CARD_ID", "SIMP_CARD_PRJ1", "SIMP_CARD_PRJ2",
+			 "SIMP_CARD_PRJ1_DOMRES", "SIMP_CARD_PRJ2_DOMRES",
+			 "SIMP_CARD_LAMBDA" })
 	@Override
 	public Expression rewrite(UnaryExpression expression) {
 		final Expression result;
@@ -2685,7 +2896,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	}
 
 			/**
-             * SIMP_DOM_COMPSET
+             * SIMP_DOM_SETENUM
 	    	 * Set Theory 15: dom(x ↦ a, ..., y ↦ b) = {x, ..., y} 
 	    	 *                (Also remove duplicate in the resulting set) 
 	    	 */
@@ -2702,12 +2913,12 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				}
 
 				result = makeSetExtension(domain);
-	    		trace(expression, result, "SIMP_DOM_COMPSET");
+	    		trace(expression, result, "SIMP_DOM_SETENUM");
 	    		return result;
 	    	}
 		
 			/**
-             * SIMP_RAN_COMPSET
+             * SIMP_RAN_SETENUM
 	    	 * Set Theory 16: ran(x ↦ a, ..., y ↦ b) = {a, ..., b}
 	    	 */
 	    	Ran(SetExtension(members)) -> {
@@ -2723,7 +2934,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				}
 
 				result = makeSetExtension(range);
-	    		trace(expression, result, "SIMP_RAN_COMPSET");
+	    		trace(expression, result, "SIMP_RAN_SETENUM");
 	    		return result;
 	    	}
 
@@ -3187,13 +3398,13 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			}
 			
 			/**
-			 * SIMP_CARD_ID
+			 * SIMP_CARD_ID_DOMRES
 			 *    card(S ◁ id) == card(S)
 			 */
 			Card(DomRes(S, IdGen())) -> {
 				if (level2) {
 					result = makeUnaryExpression(Expression.KCARD, `S);
-					trace(expression, result, "SIMP_CARD_ID");
+					trace(expression, result, "SIMP_CARD_ID_DOMRES");
 					return result;
 				}
 			}
@@ -3221,6 +3432,198 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				if (level2) {
 					result = makeBinaryExpression(Formula.CPROD, `B, `A);
 					trace(expression, result, "SIMP_CONVERSE_CPROD");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_CONVERSE_COMPSET
+			 *    {X · P ∣ x ↦ y}∼ = {X · P ∣ y ↦ x}
+			 */
+			 /* TODO : conflit avec SIMP_FINITE_CONVERSE
+			Converse(Cset(bil, P, Mapsto(x, y))) -> {
+				if (level2) {
+					result = makeQuantifiedExpression(Formula.CSET, `bil, `P,
+								makeBinaryExpression(Formula.MAPSTO, `y, `x),
+								Form.Explicit);
+					trace(expression, result, "SIMP_CONVERSE_COMPSET");
+					return result;
+				}
+			}*/
+
+	    	/**
+			 * SIMP_DOM_LAMBDA
+			 *    dom({x · P ∣ E ↦ F}) = {x · P ∣ E}
+			 */
+			Dom(Cset(bil, P, Mapsto(E, _))) -> {
+				if (level2) {
+					result = makeQuantifiedExpression(Expression.CSET,
+								`bil, `P, `E, Form.Explicit);
+					trace(expression, result, "SIMP_DOM_LAMBDA");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_RAN_LAMBDA
+			 *    ran({x · P ∣ E ↦ F}) = {x · P ∣ F}
+			 */
+			Ran(Cset(bil, P, Mapsto(_, F))) -> {
+				if (level2) {
+					result = makeQuantifiedExpression(Expression.CSET,
+								`bil, `P, `F, Form.Explicit);
+					trace(expression, result, "SIMP_RAN_LAMBDA");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_MIN_BUNION_SING
+			 *    min(S ∪ .. ∪ {min(T)} ∪ .. ∪ U) == min(S ∪ .. ∪ T ∪ .. ∪ U)
+			 */
+			Min(BUnion(children)) -> {
+				if (level2) {
+					Collection<Expression> collec = new LinkedHashSet<Expression>();
+						for (Expression child : `children) {
+							if (isSingletonWithTag(child, Formula.KMIN)) {
+								final UnaryExpression minExpr = (UnaryExpression) getSingletonElement(child);
+								collec.add(minExpr.getChild());
+							} else {
+								collec.add(child);
+							}
+						}
+					result = makeUnaryExpression(Formula.KMIN,
+								makeAssociativeExpression(Formula.BUNION, collec));
+					trace(expression, result, "SIMP_MIN_BUNION_SING");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_MAX_BUNION_SING
+			 *    max(S ∪ .. ∪ {max(T)} ∪ .. ∪ U) == max(S ∪ .. ∪ T ∪ .. ∪ U)
+			 */
+			Max(BUnion(children)) -> {
+				if (level2) {
+					Collection<Expression> collec = new LinkedHashSet<Expression>();
+						for (Expression child : `children) {
+							if (isSingletonWithTag(child, Formula.KMAX)) {
+								final UnaryExpression maxExpr = (UnaryExpression) getSingletonElement(child);
+								collec.add(maxExpr.getChild());
+							} else {
+								collec.add(child);
+							}
+						}
+					result = makeUnaryExpression(Formula.KMAX,
+								makeAssociativeExpression(Formula.BUNION, collec));
+					trace(expression, result, "SIMP_MAX_BUNION_SING");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_LIT_MIN
+			 *    min({E, .. , i, .. , j, .. , H}) = min({E, .. , i, .. , H})
+			 *		(where i and j are literals and i ≤ j)
+			 */
+			Min(setext@SetExtension(_)) -> {
+				if (level2) {
+					List<Expression> res = simplifyMin((SetExtension) `setext);
+					result = makeUnaryExpression(Formula.KMIN,
+								makeSetExtension(res));
+					trace(expression, result, "SIMP_LIT_MIN");
+					return result;
+				}
+			}
+			 
+			/**
+			 * SIMP_LIT_MAX
+			 *    max({E, .. , i, .. , j, .. , H}) = max({E, .. , i, .. , H})
+			 *		(where i and j are literals and i ≥ j)
+			 */
+			Max(setext@SetExtension(_)) -> {
+				if (level2) {
+					List<Expression> res = simplifyMax((SetExtension) `setext);
+					result = makeUnaryExpression(Formula.KMAX,
+								makeSetExtension(res));
+					trace(expression, result, "SIMP_LIT_MAX");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_CARD_ID
+			 *    card(id) == card(S) where id has type ℙ(S×S)
+			 */
+			Card(id@IdGen()) -> {
+				if (level2) {
+					result = makeUnaryExpression(Formula.KCARD,
+					`id.getType().getSource().toExpression(ff));
+					trace(expression, result, "SIMP_CARD_ID");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_CARD_PRJ1
+			 *    card(prj1) == card(S×T) where prj1 has type ℙ(S×T×S)
+			 */
+			Card(prj1@Prj1Gen()) -> {
+				if (level2) {
+					result = makeUnaryExpression(Formula.KCARD,
+					`prj1.getType().getSource().toExpression(ff));
+					trace(expression, result, "SIMP_CARD_PRJ1");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_CARD_PRJ2
+			 *    card(prj2) == card(S×T) where prj2 has type ℙ(S×T×T)
+			 */
+			Card(prj2@Prj2Gen()) -> {
+				if (level2) {
+					result = makeUnaryExpression(Formula.KCARD,
+								`prj2.getType().getSource().toExpression(ff));
+					trace(expression, result, "SIMP_CARD_PRJ2");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_CARD_PRJ1_DOMRES
+			 *    card(E ◁ prj1) == card(E)
+			 */
+			Card(DomRes(E, Prj1Gen())) -> {
+				if (level2) {
+					result = makeUnaryExpression(Formula.KCARD, `E);
+					trace(expression, result, "SIMP_CARD_PRJ1_DOMRES");
+					return result;
+				}
+			}
+			 
+			/**
+			 * SIMP_CARD_PRJ2_DOMRES
+			 *    card(E ◁ prj2) == card(E)
+			 */
+			Card(DomRes(E, Prj2Gen())) -> {
+				if (level2) {
+					result = makeUnaryExpression(Formula.KCARD, `E);
+					trace(expression, result, "SIMP_CARD_PRJ2_DOMRES");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_CARD_LAMBDA
+			 *    card({x · P ∣ E ↦ F}) == card({x · P ∣ E})
+			 */
+			Card(lambda@Cset(bil, P, Mapsto(E,_))) -> {
+				if (level2 && lambdaCheck((QuantifiedExpression) `lambda)) {
+					result = makeUnaryExpression(Predicate.KCARD,
+								makeQuantifiedExpression(Expression.CSET,
+									`bil, `P, `E, Form.Explicit));
+					trace(expression, result, "SIMP_CARD_LAMBDA");
 					return result;
 				}
 			}
