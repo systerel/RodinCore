@@ -139,6 +139,8 @@ public class TestLexer extends AbstractTests {
 		assertFalse(ff.isValidIdentifierName("    "));
 		assertFalse(ff.isValidIdentifierName("$P"));
 		assertFalse(ff.isValidIdentifierName("l$"));
+		assertFalse(ff.isValidIdentifierName("$"));
+		assertFalse(ff.isValidIdentifierName("$$P"));
 		assertFalse(ff.isValidIdentifierName("prj1'"));
 		assertFalse(ff.isValidIdentifierName("prj'p"));
 		assertFalse(ff.isValidIdentifierName("partition'"));
@@ -151,6 +153,9 @@ public class TestLexer extends AbstractTests {
 		assertFalse(FormulaFactory.checkSymbol(""));
 		assertFalse(FormulaFactory.checkSymbol("idWith\u2b50Symbol"));
 		assertFalse(FormulaFactory.checkSymbol("\u2b50WithId"));
+		assertFalse(FormulaFactory.checkSymbol("idWithPrime'"));
+		assertFalse(FormulaFactory.checkSymbol("$metaIdent"));
+		assertFalse(FormulaFactory.checkSymbol("spaced ident"));
 	}
 
 	private static class DT implements IDatatypeExtension {
