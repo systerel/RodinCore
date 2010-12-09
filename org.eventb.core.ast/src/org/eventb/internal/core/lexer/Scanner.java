@@ -19,7 +19,7 @@ import java.util.ListIterator;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.LanguageVersion;
-import org.eventb.internal.core.lexer.GenScan.ScanState;
+import org.eventb.internal.core.lexer.GenLexer.LexState;
 import org.eventb.internal.core.parser.AbstractGrammar;
 import org.eventb.internal.core.parser.ParseResult;
 
@@ -40,7 +40,7 @@ public class Scanner {
 	// iterator on the look-ahead list
 	private ListIterator<Token> iterator = list.listIterator();
 
-	private GenScan lexer = null;
+	private GenLexer lexer = null;
 	
 	/**
 	 * Creates a new scanner that takes its input from <code>str</code>.
@@ -53,9 +53,7 @@ public class Scanner {
 	 *            grammar defining tokens to recognize
 	 */
 	public Scanner(String str, ParseResult result, AbstractGrammar grammar) {
-		lexer = GenScan.getLexer(grammar);
-		lexer.parse(str);
-		lexer.result = result;
+		lexer = new GenLexer(str, result, grammar);
 	}
 
 	private Token getNextToken() {
@@ -113,10 +111,10 @@ public class Scanner {
 
 	public static class ScannerState {
 
-		final ScanState lexState;
+		final LexState lexState;
 		final List<Token> lookedAhead;
 
-		public ScannerState(ScanState lexState, List<Token> lookedAhead) {
+		public ScannerState(LexState lexState, List<Token> lookedAhead) {
 			this.lexState = lexState;
 			this.lookedAhead = new ArrayList<Token>(lookedAhead);
 		}

@@ -39,7 +39,7 @@ import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.Cond;
 import org.eventb.internal.core.ast.extension.ExtnUnicityChecker;
 import org.eventb.internal.core.ast.extension.datatype.DatatypeExtensionComputer;
-import org.eventb.internal.core.lexer.GenScan;
+import org.eventb.internal.core.lexer.GenLexer;
 import org.eventb.internal.core.lexer.Scanner;
 import org.eventb.internal.core.parser.AbstractGrammar;
 import org.eventb.internal.core.parser.BMath;
@@ -147,10 +147,10 @@ public class FormulaFactory {
 	 * @since 2.0
 	 */
 	public static boolean checkSymbol(String symbol) {
-		if (GenScan.isIdent(symbol)) {
+		if (GenLexer.isIdent(symbol)) {
 			return true;
 		}
-		return !symbol.isEmpty() && !GenScan.containsIdentChar(symbol);
+		return !symbol.isEmpty() && GenLexer.isSymbol(symbol);
 	}
 
 	/**
@@ -1503,9 +1503,22 @@ public class FormulaFactory {
 	 * @return <code>true</code> if the given char is a white space
 	 */
 	public static boolean isEventBWhiteSpace(char c) {
-		return Character.isSpaceChar(c)
-			|| ('\u0009' <= c && c <= 0x000d)
-			|| ('\u001c' <= c && c <= '\u001F');
+		return isEventBWhiteSpace((int) c);
+	}
+
+	/**
+	 * Returns whether the given code point is a white space according to the
+	 * Event-B lexical specification.
+	 * 
+	 * @param codePoint
+	 *            the code point to test
+	 * @return <code>true</code> if the given char is a white space
+	 * @since 2.1
+	 */
+	public static boolean isEventBWhiteSpace(int codePoint) {
+		return Character.isSpaceChar(codePoint)
+				|| ('\u0009' <= codePoint && codePoint <= 0x000d)
+				|| ('\u001c' <= codePoint && codePoint <= '\u001F');
 	}
 
 	/**
