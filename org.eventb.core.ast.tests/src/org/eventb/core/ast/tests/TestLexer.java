@@ -15,6 +15,7 @@ package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.LanguageVersion.LATEST;
 import static org.eventb.core.ast.LanguageVersion.V1;
+import static org.eventb.internal.core.parser.AbstractGrammar._EOF;
 import static org.eventb.internal.core.parser.BMathV2.B_MATH_V2;
 
 import java.util.HashSet;
@@ -121,6 +122,35 @@ public class TestLexer extends AbstractTests {
 			assertEquals("The problem should be a lexer error",
 					ProblemKind.LexerError, problem.getMessage());
 		}
+	}
+	
+	public void testCodePoint() throws Exception {
+		final int codePoint = 0x27C54;
+		
+		// pre requirements:
+		assertTrue(Character.isSupplementaryCodePoint(codePoint));
+		assertTrue(Character.isJavaIdentifierStart(codePoint));
+
+		final char[] chars = Character.toChars(codePoint);
+		final String str = String.copyValueOf(chars);
+
+		// 2 code points in 3 chars
+		// verify that the last character is not ignored
+		final String ident = str + "c";
+		assertTrue(ident.length() == 3);
+
+		assertTrue(FormulaFactory.checkSymbol(ident));
+
+		final ParseResult result = new ParseResult(ff, LATEST, null);
+		final Scanner scanner = new Scanner(ident, result, B_MATH_V2);
+		final Token t = scanner.Scan();
+		
+		assertFalse(result.hasProblem());
+		
+		final Token next = scanner.Scan();
+		assertEquals(_EOF, next.kind);
+		
+		assertEquals(ident, t.val);
 	}
 
 	public void testIsValidIdentifierName() throws Exception {
