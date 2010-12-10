@@ -118,8 +118,12 @@ public class TacticsLib {
 	}
 
 	/**
-	 * Creates an instance of InDomManager for each total domain occurrence in
-	 * the goal.
+	 * Creates an instance of InDomManager for the first domain occurrence in
+	 * the given goal.
+	 * <p>
+	 * The given goal MUST have at least one occurrence of a domain. In case
+	 * several occurrences are found, the first one is considered.
+	 * </p>
 	 * 
 	 * @param goal
 	 *            Goal of the sequent
@@ -127,7 +131,7 @@ public class TacticsLib {
 	 */
 	public static InDomGoalManager createInDomManager(final Predicate goal) {
 		final List<IPosition> domPositions = TacticsLib.findDomExpression(goal);
-		assert(domPositions.size()==1);
+		assert !domPositions.isEmpty();
 		final UnaryExpression domExpr = ((UnaryExpression) goal
 					.getSubFormula(domPositions.get(0)));
 		final InDomGoalManager inDomMng = new InDomGoalManager(domExpr,
