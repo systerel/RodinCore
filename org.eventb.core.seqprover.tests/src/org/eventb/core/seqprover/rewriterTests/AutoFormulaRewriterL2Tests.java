@@ -715,10 +715,16 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		predicateTest("finite({x,y,z⦂U · x↦y∈P ∣ x↦E↦z})", //
 					  "finite({x,y,z⦂U · x↦y∈P ∣ x↦E↦z ↦ z})", //
 					  "P", "S↔T", "E", "ℙ(V)");
-		
-		predicateTest("finite({x,y,z⦂U,t⦂ℤ · x↦y∈P ∣ x↦z↦3∗t ↦ z})", //
+		predicateTest("finite({x,y,z⦂U,t⦂ℤ · x↦y∈P ∣ x↦z↦3∗t})", //
 					  "finite({x,y,z⦂U,t⦂ℤ · x↦y∈P ∣ x↦z↦3∗t ↦ z})", //
 					  "P", "S↔T");
+		predicateTest("finite({x,y,z,t · x↦y∈P ∣ x↦z+t})", //
+				  	  "finite({x,y,z,t · x↦y∈P ∣ x↦z+t ↦ x})", //
+				  	  "P", "S↔T");
+		predicateTest("finite({x,y,z,t · x↦y∈P ∣ z+t↦x})", //
+			  	  	  "finite({x,y,z,t · x↦y∈P ∣ z+t↦x ↦ x})", //
+			  	  	  "P", "S↔T");
+		
 		predicateTest("finite({x,y,z⦂U,t⦂V · x↦y∈P ∣ (x↦z) ↦ (x↦t)})", //
 					  "finite({x,y,z⦂U,t⦂V · x↦y∈P ∣ (x↦z) ↦ (x↦t)})", //
 					  "P", "S↔T");
@@ -735,13 +741,19 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		expressionTest("card({x,y,z⦂U · x↦y∈P ∣ x↦E↦z})", //
 					   "card({x,y,z⦂U · x↦y∈P ∣ x↦E↦z ↦ z})", //
 					   "P", "S↔T", "E", "ℙ(V)");
-
-		expressionTest("card({x,y,z⦂U,t⦂ℤ · x↦y∈P ∣ x↦z↦3∗t ↦ z})", //
+		expressionTest("card({x,y,z⦂U,t⦂ℤ · x↦y∈P ∣ x↦z↦3∗t})", //
 					   "card({x,y,z⦂U,t⦂ℤ · x↦y∈P ∣ x↦z↦3∗t ↦ z})", //
 					   "P", "S↔T");
-		expressionTest("card({x,y,z⦂U,t⦂V · x↦y∈P ∣ (x↦z) ↦ (x↦t)})", //
-					   "card({x,y,z⦂U,t⦂V · x↦y∈P ∣ (x↦z) ↦ (x↦t)})", //
+		expressionTest("card({x,y,z,t · x↦y∈P ∣ x↦z+t})", //
+					   "card({x,y,z,t · x↦y∈P ∣ x↦z+t ↦ x})", //
 					   "P", "S↔T");
+		expressionTest("card({x,y,z,t · x↦y∈P ∣ z+t↦x})", //
+					   "card({x,y,z,t · x↦y∈P ∣ z+t↦x ↦ x})", //
+					   "P", "S↔T");
+		
+		expressionTest("card({x,y,z⦂U,t⦂V · x↦y∈P ∣ (x↦z) ↦ (x↦t)})", //
+				  	   "card({x,y,z⦂U,t⦂V · x↦y∈P ∣ (x↦z) ↦ (x↦t)})", //
+				  	   "P", "S↔T");
 	}
 	
 	/**
@@ -1111,8 +1123,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		expressionTest("(S × T)  s", "r  (S × T)  s", //
 				"S", "ℙ(S)", "T", "ℙ(T)");
 		expressionTest("(S × T)  r", "(S × T)  r", "S", "ℙ(S)", "T", "ℙ(T)");
-		expressionTest("(S × T)", "r  (S × T)", "S", "ℙ(S)", "T", "ℙ(T)");
-		expressionTest("(S × T)  s  (S × T)", "r  (S × T)  s  (S × T)", //
+		expressionTest("S × T", "r  (S × T)", "S", "ℙ(S)", "T", "ℙ(T)");
+		expressionTest("S × T", "r  (S × T)  s  (S × T)", //
 				"S", "ℙ(S)", "T", "ℙ(T)");
 
 		expressionTest("r  (S × T)", "r  (S × T)", "S", "ℙ(U)", "T", "ℙ(T)");
@@ -1160,6 +1172,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		expressionTest("∅⦂ℙ(ℤ)", "5‥1");
 		expressionTest("∅⦂ℙ(ℤ)", "5‥−1");
 		expressionTest("∅⦂ℙ(ℤ)", "−1‥−5");
+		expressionTest("∅⦂ℙ(ℤ)", "10000000000‥−50000000000");
 		expressionTest("i‥j", "i‥j");
 	}
 
@@ -1174,6 +1187,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		expressionTest("{x,y,z⦂ℤ,t⦂U · x↦y∈P ∣ x+z}", //
 				   "dom({x,y,z,t⦂U · x↦y∈P ∣ x+z ↦ t})", //
 				   "P", "ℤ↔T");
+		expressionTest("dom({x,y⦂S · x ∈ 1‥2 × 3‥4 ∣ x})", //
+					   "dom({x,y⦂S · x ∈ 1‥2 × 3‥4 ∣ x})");
 	}
 
 	/**
@@ -1187,6 +1202,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 			expressionTest("{x,y,z⦂V · x↦y∈P ∣ x}", //
 					   "ran({x,y,z⦂V · x↦y∈P ∣ x↦z ↦ x})", //
 					   "P", "S↔T");
+			expressionTest("ran({x,y⦂S · x ∈ 1‥2 × 3‥4 ∣ x})", //
+						   "ran({x,y⦂S · x ∈ 1‥2 × 3‥4 ∣ x})");
 	 }
 
 	/**
@@ -1219,8 +1236,10 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_IN_FUNIMAGE() {
 		predicateTest("⊤", "E ↦ F(E) ∈ F", "E", "S", "F", "S↔T");
-		predicateTest("E↦F(G) ∈ F", "E ↦ F(G) ∈ F", //
+		predicateTest("E ↦ F(G) ∈ F", "E ↦ F(G) ∈ F", //
 				"E", "S", "F", "S↔T", "G", "S");
+		predicateTest("E ↦ F(E) ∈ G", "E ↦ F(E) ∈ G", //
+				"E", "S", "F", "S↔T", "G", "S↔T");
 	}
 
 	/**
@@ -1231,6 +1250,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		predicateTest("⊤", "F∼(E) ↦ E ∈ F", "E", "S", "F", "T↔S");
 		predicateTest("F∼(E) ↦ G ∈ F", "F∼(E) ↦ G ∈ F", //
 				"E", "S", "F", "T↔S", "G", "S");
+		predicateTest("F∼(E) ↦ E ∈ G", "F∼(E) ↦ E ∈ G", //
+				"E", "S", "F", "T↔S", "G", "T↔S");
 	}
 
 	/**
@@ -1241,6 +1262,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		predicateTest("⊤", "F(E) ↦ E ∈ F∼", "E", "S", "F", "S↔T");
 		predicateTest("F(E) ↦ G ∈ F∼", "F(E) ↦ G ∈ F∼", //
 				"E", "S", "F", "S↔T", "G", "S");
+		predicateTest("F(E) ↦ E ∈ G∼", "F(E) ↦ E ∈ G∼", //
+				"E", "S", "F", "S↔T", "G", "S↔T");
 	}
 
 	/**
@@ -1321,7 +1344,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_FINITE_ID_DOMRES() {
-		predicateTest("finite(E)", "finite(E ◁ (id⦂S↔S))", "E", "ℙ(S)");
+		predicateTest("finite(E)", "finite(E ◁ id)", "E", "ℙ(S)");
 	}
 
 	/**
@@ -1338,7 +1361,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_FINITE_PRJ1_DOMRES() {
-		predicateTest("finite(E)", "finite(E ◁ (prj1⦂S×T↔S))", "E", "ℙ(S×T)");
+		predicateTest("finite(E)", "finite(E ◁ prj1)", "E", "ℙ(S×T)");
 	}
 
 	/**
@@ -1355,7 +1378,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_FINITE_PRJ2_DOMRES() {
-		predicateTest("finite(E)", "finite(E ◁ (prj2⦂S×T↔T))", "E", "ℙ(S×T)");
+		predicateTest("finite(E)", "finite(E ◁ prj2)", "E", "ℙ(S×T)");
 	}
 
 	/**
@@ -1388,7 +1411,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_CARD_PRJ1_DOMRES() {
-		expressionTest("card(E)", "card(E ◁ (prj1⦂S×T↔S))", "E", "ℙ(S×T)");
+		expressionTest("card(E)", "card(E ◁ prj1)", "E", "ℙ(S×T)");
 	}
 
 	/**
@@ -1405,7 +1428,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_CARD_PRJ2_DOMRES() {
-		expressionTest("card(E)", "card(E ◁ (prj2⦂S×T↔T))", "E", "ℙ(S×T)");
+		expressionTest("card(E)", "card(E ◁ prj2)", "E", "ℙ(S×T)");
 	}
 
 }

@@ -21,7 +21,21 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.SetExtension;
 
-// TODO Benoît present the algorithm here
+/**
+ * Framework for simplifying set extension expressions. Currently, it implements
+ * the following:
+ * <ul>
+ * <li>simplification for min({a, .. , {min(b)}, .. , c})</li>
+ * <li>simplification for max({a, .. , {max(b)}, .. , c})</li>
+ * </ul>
+ * <p>
+ * This class provides one static method per type of simplification. It is
+ * designed around a hierarchy of subclasses, the leaves of which implement an
+ * actual type of simplification. This allows good code factoring.
+ * </p>
+ * 
+ * @author Benoît Lucet
+ */
 public abstract class SetExtensionSimplifier {
 
 	private final SetExtension original;

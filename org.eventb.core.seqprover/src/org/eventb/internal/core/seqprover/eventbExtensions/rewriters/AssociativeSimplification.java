@@ -25,6 +25,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -37,7 +38,7 @@ import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 
 /**
- * Framework for simplifying associative formulas. This class implements several
+ * Framework for simplifying associative formulae. This class implements several
  * simplifications:
  * <ul>
  * <li>neutral element of the operator is removed</li>
@@ -48,7 +49,7 @@ import org.eventb.core.seqprover.eventbExtensions.DLib;
  * <p>
  * This class provides one static method per implemented operator. It is
  * designed around a hierarchy of subclasses (mimicking the AST Formula
- * hierarchy), the leafs of which implement operators. This allows good code
+ * hierarchy), the leaves of which implement operators. This allows good code
  * factoring.
  * </p>
  * 
@@ -249,7 +250,7 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 		protected Expression getNeutral() {
 			return ff.makeAtomicExpression(KID_GEN, null, original.getType());
 		}
-		
+
 		@Override
 		protected Expression getDeterminantResult(Expression child) {
 			return ff.makeEmptySet(original.getType(), null);
@@ -282,7 +283,7 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 		protected Expression getNeutral() {
 			return ff.makeAtomicExpression(KID_GEN, null, original.getType());
 		}
-		
+
 		@Override
 		protected Expression getDeterminantResult(Expression child) {
 			return ff.makeEmptySet(original.getType(), null);
@@ -411,8 +412,48 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 
 	private static class OvrSimplification extends ExpressionSimplification {
 
+		// The last type encountered while traversing the children
+		private Expression type;
+		private boolean newTypeEncountered;
+
 		OvrSimplification(AssociativeExpression original, DLib dLib) {
 			super(original, dLib);
+			this.newTypeEncountered = false;
+		}
+
+		@Override
+		protected void processChildren() {
+			type = null;
+			for (int i = 0; i < children.length; i++) {
+				processChild(children[i]);
+				if (newTypeEncountered) {
+					type = children[i];
+					newTypeEncountered = false;
+				}
+			}
+		}
+
+		@Override
+		protected void processChild(Expression child) {
+			if (isNeutral(child)) {
+				changed = true;
+			} else {
+				newChildren.add(child);
+				if (child.isATypeExpression()) {
+					changed = true;
+					newTypeEncountered = true;
+				}
+			}
+		}
+
+		@Override
+		protected Expression makeResult() {
+			assert !eliminateDuplicate();
+			final List<Expression> newChildrenList = (List<Expression>) newChildren;
+			if (type != null) {
+				removeAllBefore(newChildrenList, type);
+			}
+			return super.makeResult();
 		}
 
 		@Override
@@ -530,7 +571,7 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 		return makeResult();
 	}
 
-	private void processChildren() {
+	protected void processChildren() {
 		for (T child : children) {
 			processChild(child);
 			if (knownResult != null) {
@@ -578,10 +619,24 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 
 	protected abstract T makeAssociativeFormula();
 
-	// default behaviour that is overriden is specific cases such as Fcomp
+	// Default behaviour that is overriden is specific cases such as Fcomp
 	// and Bcomp
 	protected T getDeterminantResult(T child) {
 		return child;
+	}
+
+	/**
+	 * Removes elements from a {@link List}, starting from the beginning and
+	 * until a specified element is reached. The specified element itself is not
+	 * removed from the list. If the element is not contained in the list, then
+	 * no modification is made to the list. The list given in parameters is
+	 * altered, so be careful when using this method.
+	 */
+	protected void removeAllBefore(List<T> list, T object) {
+		assert list.contains(object);
+		while (list.get(0) != object) {
+			list.remove(0);
+		}
 	}
 
 }

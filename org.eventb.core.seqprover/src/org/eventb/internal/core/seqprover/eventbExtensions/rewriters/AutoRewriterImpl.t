@@ -1730,13 +1730,15 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			
             /**
              * SIMP_SPECIAL_OVERL
-			 * Set theory: r  ...  ∅  ...  s  ==  r  ...  s
+			 *    r  ..  ∅  ..  s  ==  r  ..  s
+			 * SIMP_TYPE_OVERL_CPROD
+			 *    r  ..  Ty  ..  s == Ty  ..  s (where Ty is a type expression)
 			 */
 			Ovr(_) -> {
 	    		final Expression rewritten = simplifyOvr(expression, dLib);
 	    		if (rewritten != expression) {
 	    			result = rewritten;
-	    			trace(expression, result, "SIMP_SPECIAL_OVERL");
+	    			trace(expression, result, "SIMP_SPECIAL_OVERL", "SIMP_TYPE_OVERL_CPROD");
 	    			return result;
 	    		}
      		}
@@ -1823,30 +1825,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    						`Ta,
 	    						makeUnaryExpression(Expression.KRAN, `tr[0]));
 	    			trace(expression, result, "SIMP_TYPE_BCOMP_R");
-					return result;	
-	    		}
-	    	}
-	    	
-	    	/**
-	    	 * SIMP_TYPE_OVERL_CPROD
-	    	 *    r  ..  Ty  ..  s == Ty  ..  s
-	    	 */
-	    	Ovr(members@eList(_*, Ty, _*)) -> {
-	    		if (level2 && `Ty.isATypeExpression()) {
-	    			int typeIndex = -1;
-	    			for (int i = 0 ; i < `members.length && typeIndex == -1 ; i++) {
-	    				if (`members[i].equals(`Ty)) {
-	    					typeIndex = i;
-	    				}
-	    			}
-	    			if(typeIndex == `members.length - 1) {
-	    				// the type is the last element
-	    				result = `Ty;
-	    			} else {
-	    				result = makeAssociativeExpression(Formula.OVR, 
-	    					Arrays.copyOfRange(`members, typeIndex, `members.length));
-	    			}
-	    			trace(expression, result, "SIMP_TYPE_OVERL_CPROD");
 					return result;	
 	    		}
 	    	}
@@ -2135,11 +2113,22 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_MULTI_FUNIMAGE_OVERL_SETENUM
              * Set Theory 16: (f  {E↦ F})(E) == F
 	    	 */
-	    	// TODO Benoit : ne correspond pas à la règle du wiki, généraliser
-	    	FunImage(Ovr(eList(_*, SetExtension(eList(Mapsto(E, F))))), E) -> {
-				result = `F;
-	    		trace(expression, result, "SIMP_MULTI_FUNIMAGE_OVERL_SETENUM");
-	    		return result;
+	    	// TODO Benoit : maybe a better way of doing it
+	    	FunImage(Ovr(eList(_*, SetExtension(eList(Mapsto(X, Y))))), X) -> {
+	    		// keeping this version for backwards compatibility
+	    		if (! level2) {
+	    			result = `Y;
+	    			trace(expression, result, "SIMP_MULTI_FUNIMAGE_OVERL_SETENUM");
+	    			return result;
+	    		}
+	    	}
+	    	FunImage(Ovr(eList(_*, SetExtension(eList(_*, Mapsto(X, Y), _*)))), X) -> {
+	    		// pattern matching in respect with the wiki specification
+	    		if (level2) {
+	    			result = `Y;
+	    			trace(expression, result, "SIMP_MULTI_FUNIMAGE_OVERL_SETENUM");
+	    			return result;
+	    		}
 	    	}
 
 	    	/**
@@ -2764,7 +2753,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 *    i‥j == ∅ (where i and j are literals and j < i)
 			 */
 			UpTo(IntegerLiteral(i), IntegerLiteral(j)) -> {
-				if (level2 && `j.intValue() < `i.intValue()) {
+				if (level2 && `i.compareTo(`j) > 0) {
 					result = makeEmptySet(expression.getType());
 					trace(expression, result, "SIMP_LIT_UPTO");
 					return result;
@@ -2795,18 +2784,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			
 			/**
 			 * SIMP_MULTI_FUNIMAGE_SETENUM_LR
-			 *    {A ↦ E, .. , x ↦ y, .. , B ↦ F}(x) == y
+			 *    {E, .. , x ↦ y, .. , F}(x) == y
 			 */
-			FunImage(SetExtension(members@eList(_*, Mapsto(x, y), _*)), x) -> {
+			FunImage(SetExtension(eList(_*, Mapsto(x, y), _*)), x) -> {
 				if (level2) {
-					for (Expression child : `members) {
-						if (child.getTag() == Formula.MAPSTO) {
-							// right form, continue
-						} else {
-							return expression;
-						}
-					}
-					
 					result = `y;
 					trace(expression, result, "SIMP_MULTI_FUNIMAGE_SETENUM_LR");
 					return result;
@@ -2815,18 +2796,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			
 			/**
 			 * SIMP_MULTI_FUNIMAGE_BUNION_SETENUM
-			 *    {r ∪ .. ∪ {A ↦ E, .. , x ↦ y, .. , B ↦ F})(x) == y
+			 *    {r ∪ .. ∪ {E, .. , x ↦ y, .. , F})(x) == y
 			 */
-			FunImage(BUnion(eList(_*, SetExtension(members@eList(_*, Mapsto(x, y), _*)), _*)), x) -> {
+			FunImage(BUnion(eList(_*, SetExtension(eList(_*, Mapsto(x, y), _*)), _*)), x) -> {
 				if (level2) {
-					for (Expression child : `members) {
-						if (child.getTag() == Formula.MAPSTO) {
-							// right form, continue
-						} else {
-							return expression;
-						}
-					}
-					
 					result = `y;
 					trace(expression, result, "SIMP_MULTI_FUNIMAGE_BUNION_SETENUM");
 					return result;
@@ -2876,6 +2849,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * SIMP_CONVERSE_SETENUM
 	    	 * Set Theory: {x ↦ a, ..., y ↦ b}∼ == {a ↦ x, ..., b ↦ y}
 	    	 */
+	    	// TODO Benoit : attention à l'utilisation de LinkedHashSet
 	    	Converse(SetExtension(members)) -> {
 	   				Collection<Expression> newMembers = new LinkedHashSet<Expression>();
 
@@ -3398,18 +3372,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			}
 			
 			/**
-			 * SIMP_CARD_ID_DOMRES
-			 *    card(S ◁ id) == card(S)
-			 */
-			Card(DomRes(S, IdGen())) -> {
-				if (level2) {
-					result = makeUnaryExpression(Expression.KCARD, `S);
-					trace(expression, result, "SIMP_CARD_ID_DOMRES");
-					return result;
-				}
-			}
-			
-			/**
 			 * SIMP_CARD_COMPSET
 			 *    card({x · x∈S ∣ x}) == card(S) (where x non free in s)
 			 */
@@ -3483,17 +3445,18 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 */
 			Min(BUnion(children)) -> {
 				if (level2) {
-					Collection<Expression> collec = new LinkedHashSet<Expression>();
-						for (Expression child : `children) {
-							if (isSingletonWithTag(child, Formula.KMIN)) {
-								final UnaryExpression minExpr = (UnaryExpression) getSingletonElement(child);
-								collec.add(minExpr.getChild());
-							} else {
-								collec.add(child);
-							}
+					final Expression[] newChildren = new Expression[`children.length];	
+					for(int i = 0 ; i < `children.length ; i++) {
+						final Expression child = `children[i];
+						if (isSingletonWithTag(child, Formula.KMIN)) {
+							final UnaryExpression minExpr = (UnaryExpression) getSingletonElement(child);
+							newChildren[i] = minExpr.getChild();
+						} else {
+							newChildren[i] = child;
 						}
+					}
 					result = makeUnaryExpression(Formula.KMIN,
-								makeAssociativeExpression(Formula.BUNION, collec));
+								makeAssociativeExpression(Formula.BUNION, newChildren));
 					trace(expression, result, "SIMP_MIN_BUNION_SING");
 					return result;
 				}
@@ -3505,17 +3468,18 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 */
 			Max(BUnion(children)) -> {
 				if (level2) {
-					Collection<Expression> collec = new LinkedHashSet<Expression>();
-						for (Expression child : `children) {
+					final Expression[] newChildren = new Expression[`children.length];
+						for(int i = 0 ; i < `children.length ; i++) {
+							final Expression child = `children[i];
 							if (isSingletonWithTag(child, Formula.KMAX)) {
 								final UnaryExpression maxExpr = (UnaryExpression) getSingletonElement(child);
-								collec.add(maxExpr.getChild());
+								newChildren[i] = maxExpr.getChild();
 							} else {
-								collec.add(child);
+								newChildren[i] = child;
 							}
 						}
 					result = makeUnaryExpression(Formula.KMAX,
-								makeAssociativeExpression(Formula.BUNION, collec));
+								makeAssociativeExpression(Formula.BUNION, newChildren));
 					trace(expression, result, "SIMP_MAX_BUNION_SING");
 					return result;
 				}
@@ -3556,62 +3520,32 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			/**
 			 * SIMP_CARD_ID
 			 *    card(id) == card(S) where id has type ℙ(S×S)
-			 */
-			Card(id@IdGen()) -> {
-				if (level2) {
-					result = makeUnaryExpression(Formula.KCARD,
-					`id.getType().getSource().toExpression(ff));
-					trace(expression, result, "SIMP_CARD_ID");
-					return result;
-				}
-			}
-			
-			/**
 			 * SIMP_CARD_PRJ1
 			 *    card(prj1) == card(S×T) where prj1 has type ℙ(S×T×S)
-			 */
-			Card(prj1@Prj1Gen()) -> {
-				if (level2) {
-					result = makeUnaryExpression(Formula.KCARD,
-					`prj1.getType().getSource().toExpression(ff));
-					trace(expression, result, "SIMP_CARD_PRJ1");
-					return result;
-				}
-			}
-			
-			/**
 			 * SIMP_CARD_PRJ2
 			 *    card(prj2) == card(S×T) where prj2 has type ℙ(S×T×T)
 			 */
-			Card(prj2@Prj2Gen()) -> {
+			Card(op@(IdGen | Prj1Gen | Prj2Gen)()) -> {
 				if (level2) {
 					result = makeUnaryExpression(Formula.KCARD,
-								`prj2.getType().getSource().toExpression(ff));
-					trace(expression, result, "SIMP_CARD_PRJ2");
+								`op.getType().getSource().toExpression(ff));
+					trace(expression, result, "SIMP_CARD_ID", "SIMP_CARD_PRJ1", "SIMP_CARD_PRJ2");
 					return result;
 				}
 			}
 			
 			/**
+			 * SIMP_CARD_ID_DOMRES
+			 *    card(E ◁ id) == card(E)
 			 * SIMP_CARD_PRJ1_DOMRES
 			 *    card(E ◁ prj1) == card(E)
-			 */
-			Card(DomRes(E, Prj1Gen())) -> {
-				if (level2) {
-					result = makeUnaryExpression(Formula.KCARD, `E);
-					trace(expression, result, "SIMP_CARD_PRJ1_DOMRES");
-					return result;
-				}
-			}
-			 
-			/**
 			 * SIMP_CARD_PRJ2_DOMRES
 			 *    card(E ◁ prj2) == card(E)
 			 */
-			Card(DomRes(E, Prj2Gen())) -> {
+			Card(DomRes(E, (IdGen | Prj1Gen | Prj2Gen)())) -> {
 				if (level2) {
-					result = makeUnaryExpression(Formula.KCARD, `E);
-					trace(expression, result, "SIMP_CARD_PRJ2_DOMRES");
+					result = makeUnaryExpression(Expression.KCARD, `E);
+					trace(expression, result, "SIMP_CARD_ID_DOMRES", "SIMP_CARD_PRJ1_DOMRES", "SIMP_CARD_PRJ2_DOMRES");
 					return result;
 				}
 			}
