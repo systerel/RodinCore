@@ -238,24 +238,19 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			return null;
 		}
 		return makeUnaryExpression(tag,	makeAssociativeExpression(BUNION, newChildren));
-
 	}
-
+	
 	private Expression extractSingletonWithTag(Expression expression, int tag) {
-		if (expression.getTag() != SETEXT) {
-			return null;
-		}
-		final SetExtension setExtension = (SetExtension) expression;
-		if (setExtension.getChildCount() != 1) {
-			return null;
-		}
-		final Expression member = setExtension.getChild(0);
-		if (member.getTag() != tag) {
-			return null;
-		}
-		return ((UnaryExpression) member).getChild(0);
+	    %match (Expression expression) {
+	    	SetExtension(eList(op@(Min | Max)(T))) -> {
+				if (`op.getTag() == tag) {
+					return `T;
+				}
+			}
+	    }
+	    return null;
 	}
-
+	
 	private static <T extends Formula<T>> void trace(T from, T to, String rule,
 			String... otherRules) {
 		if (!DEBUG) {
