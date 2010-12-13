@@ -25,7 +25,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -45,6 +44,8 @@ import org.eventb.core.seqprover.eventbExtensions.DLib;
  * <li>determinant element of the operator determines the result</li>
  * <li>duplicate elements are removed (depending on the operator)</li>
  * <li>contradiction determines the result (depending on the operator)</li>
+ * <li>right determinant wipes out previous children (for overriding)</li>
+ * <li>specific simplifications for multiplication</li>
  * </ul>
  * <p>
  * This class provides one static method per implemented operator. It is
@@ -412,25 +413,8 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 
 	private static class OvrSimplification extends ExpressionSimplification {
 
-		// The last type encountered while traversing the children
-		private Expression type;
-		private boolean newTypeEncountered;
-
 		OvrSimplification(AssociativeExpression original, DLib dLib) {
 			super(original, dLib);
-			this.newTypeEncountered = false;
-		}
-
-		@Override
-		protected void processChildren() {
-			type = null;
-			for (int i = 0; i < children.length; i++) {
-				processChild(children[i]);
-				if (newTypeEncountered) {
-					type = children[i];
-					newTypeEncountered = false;
-				}
-			}
 		}
 
 		@Override
@@ -438,22 +422,11 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 			if (isNeutral(child)) {
 				changed = true;
 			} else {
-				newChildren.add(child);
 				if (child.isATypeExpression()) {
-					changed = true;
-					newTypeEncountered = true;
+					newChildren.clear();  // forget children before
 				}
+				newChildren.add(child);
 			}
-		}
-
-		@Override
-		protected Expression makeResult() {
-			assert !eliminateDuplicate();
-			final List<Expression> newChildrenList = (List<Expression>) newChildren;
-			if (type != null) {
-				removeAllBefore(newChildrenList, type);
-			}
-			return super.makeResult();
 		}
 
 		@Override
@@ -571,7 +544,7 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 		return makeResult();
 	}
 
-	protected void processChildren() {
+	private void processChildren() {
 		for (T child : children) {
 			processChild(child);
 			if (knownResult != null) {
@@ -623,20 +596,6 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 	// and Bcomp
 	protected T getDeterminantResult(T child) {
 		return child;
-	}
-
-	/**
-	 * Removes elements from a {@link List}, starting from the beginning and
-	 * until a specified element is reached. The specified element itself is not
-	 * removed from the list. If the element is not contained in the list, then
-	 * no modification is made to the list. The list given in parameters is
-	 * altered, so be careful when using this method.
-	 */
-	protected void removeAllBefore(List<T> list, T object) {
-		assert list.contains(object);
-		while (list.get(0) != object) {
-			list.remove(0);
-		}
 	}
 
 }
