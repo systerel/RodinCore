@@ -931,16 +931,16 @@ public abstract class Formula<T extends Formula<T>> {
 	}
 
 	/**
-	 * Returns the combination of some formulas' hash codes.
+	 * Returns the combination of some objects' hash codes.
 	 * 
-	 * @param formulas
-	 *            some formulas
-	 * @return a combination of the formulas' hash codes
+	 * @param objects
+	 *            some objects
+	 * @return a combination of the objects' hash codes
 	 */
-	protected static <S extends Formula<?>> int combineHashCodes(S[] formulas) {
+	protected static int combineHashCodes(Object[] objects) {
 		int result = 0;
-		for (Formula<?> formula: formulas) {
-			result = combineHashCodes(result, formula.hashCode);
+		for (final Object object: objects) {
+			result = combineHashCodes(result, object.hashCode());
 		}
 		return result;
 	}

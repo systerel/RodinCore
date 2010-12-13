@@ -95,6 +95,13 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eventb/core/ast/Formula.java" type="org.eventb.core.ast.Formula">
+        <filter comment="non-public API method" id="1143996420">
+            <message_arguments>
+                <message_argument value="combineHashCodes(Object[])"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eventb/core/ast/Identifier.java" type="org.eventb.core.ast.Identifier">
         <filter comment="Method already tagged @since in super-class Formula." id="1227882500">
             <message_arguments>
