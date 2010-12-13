@@ -14,7 +14,7 @@ import static java.util.Arrays.asList;
 import static org.eventb.core.ast.Formula.BOUND_IDENT;
 import static org.eventb.core.ast.Formula.MAPSTO;
 
-import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 
 import org.eventb.core.ast.BinaryExpression;
@@ -34,10 +34,10 @@ import org.eventb.core.ast.QuantifiedExpression;
  * <ul>
  * <li>maplet operators</li>
  * <li>bound identifiers, either locally bound or not</li>
- * <li>expressions that do not contain locally bound variables that occur both
- * in F and G</li>
+ * <li>expressions</li>
  * </ul>
- * </ul>
+ * with the following restriction : if a locally bound variable appears in G,
+ * then it has to appear as a leaf of a maplet operator at least once in F </ul>
  * 
  * @author Benoît Lucet
  */
@@ -49,12 +49,15 @@ public class LambdaCheck {
 
 	private final QuantifiedExpression qExpr;
 	private final int nbBound;
-	private final List<BoundIdentifier> commonLocallyBound;
+
+	// This bitset contains locally bound identifiers that occur in the right
+	// part of the expression of qExpr
+	private final BitSet locallyBoundRight;
 
 	private LambdaCheck(QuantifiedExpression qExpr) {
 		this.qExpr = qExpr;
 		this.nbBound = qExpr.getBoundIdentDecls().length;
-		this.commonLocallyBound = new ArrayList<BoundIdentifier>();
+		this.locallyBoundRight = new BitSet();
 	}
 
 	private boolean verify() {
@@ -65,7 +68,13 @@ public class LambdaCheck {
 		final BinaryExpression maplet = (BinaryExpression) child;
 		final Expression left = maplet.getLeft();
 		final Expression right = maplet.getRight();
-		return checkIdents(left, right) && isInjective(left);
+		if (!(checkIdents(left, right) && isInjective(left))) {
+			return false;
+		}
+		// If the bitset is empty, then all quantified identifiers occurring in
+		// the right-hand side of the expression are guaranteed to occur as
+		// leaves at least once in the left-hand side
+		return locallyBoundRight.isEmpty();
 	}
 
 	private boolean isInjective(Expression expr) {
@@ -75,19 +84,15 @@ public class LambdaCheck {
 			return isInjective(maplet.getLeft())
 					&& isInjective(maplet.getRight());
 		case BOUND_IDENT:
+			final int boundIndex = ((BoundIdentifier) expr).getBoundIndex();
+			if (locallyBoundRight.get(boundIndex)) {
+				locallyBoundRight.set(boundIndex, false);
+			}
 			return true;
 		default:
-			return !containsCommonLocallyBound(expr);
+			// other expression
+			return true;
 		}
-	}
-
-	private boolean containsCommonLocallyBound(Expression expression) {
-		for (final BoundIdentifier bi : expression.getBoundIdentifiers()) {
-			if (commonLocallyBound.contains(bi)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	private boolean isLocallyBound(final BoundIdentifier bi) {
@@ -99,7 +104,7 @@ public class LambdaCheck {
 		for (final BoundIdentifier rbi : right.getBoundIdentifiers()) {
 			if (isLocallyBound(rbi)) {
 				if (lbis.contains(rbi)) {
-					commonLocallyBound.add(rbi);
+					locallyBoundRight.set(rbi.getBoundIndex());
 				} else {
 					return false;
 				}

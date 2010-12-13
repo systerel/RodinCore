@@ -709,9 +709,6 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_FINITE_LAMBDA() {
-		predicateTest("finite({x,y,z⦂U,t⦂V · x↦y∈P ∣ x↦z})", //
-					  "finite({x,y,z⦂U,t⦂V · x↦y∈P ∣ (x↦z) ↦ x})", //
-					  "P", "S↔T");
 		predicateTest("finite({x,y,z⦂U · x↦y∈P ∣ x↦E↦z})", //
 					  "finite({x,y,z⦂U · x↦y∈P ∣ x↦E↦z ↦ z})", //
 					  "P", "S↔T", "E", "ℙ(V)");
@@ -724,6 +721,12 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		predicateTest("finite({x,y,z,t · x↦y∈P ∣ z+t↦x})", //
 			  	  	  "finite({x,y,z,t · x↦y∈P ∣ z+t↦x ↦ x})", //
 			  	  	  "P", "S↔T");
+		predicateTest("finite({x,y,z,t · x↦y∈P ∣ t↦z+3∗t})", //
+		  	  	  	  "finite({x,y,z,t · x↦y∈P ∣ t↦z+3∗t ↦ t})", //
+		  	  	  	  "P", "S↔T");
+		predicateTest("finite({x,y,z⦂U,t · x↦y∈P ∣ z↦3∗t ↦ t})", //
+	  	  	  	  	  "finite({x,y,z⦂U,t · x↦y∈P ∣ z↦3∗t ↦ t})", //
+	  	  	  	  	  "P", "S↔T");
 		
 		predicateTest("finite({x,y,z⦂U,t⦂V · x↦y∈P ∣ (x↦z) ↦ (x↦t)})", //
 					  "finite({x,y,z⦂U,t⦂V · x↦y∈P ∣ (x↦z) ↦ (x↦t)})", //
@@ -735,25 +738,28 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_CARD_LAMBDA() {
-		expressionTest("card({x,y,z⦂U,t⦂V · x↦y∈P ∣ x↦z})", //
-					   "card({x,y,z⦂U,t⦂V · x↦y∈P ∣ (x↦z) ↦ x})", //
-					   "P", "S↔T");
-		expressionTest("card({x,y,z⦂U · x↦y∈P ∣ x↦E↦z})", //
-					   "card({x,y,z⦂U · x↦y∈P ∣ x↦E↦z ↦ z})", //
-					   "P", "S↔T", "E", "ℙ(V)");
-		expressionTest("card({x,y,z⦂U,t⦂ℤ · x↦y∈P ∣ x↦z↦3∗t})", //
-					   "card({x,y,z⦂U,t⦂ℤ · x↦y∈P ∣ x↦z↦3∗t ↦ z})", //
-					   "P", "S↔T");
-		expressionTest("card({x,y,z,t · x↦y∈P ∣ x↦z+t})", //
-					   "card({x,y,z,t · x↦y∈P ∣ x↦z+t ↦ x})", //
-					   "P", "S↔T");
-		expressionTest("card({x,y,z,t · x↦y∈P ∣ z+t↦x})", //
-					   "card({x,y,z,t · x↦y∈P ∣ z+t↦x ↦ x})", //
-					   "P", "S↔T");
-		
-		expressionTest("card({x,y,z⦂U,t⦂V · x↦y∈P ∣ (x↦z) ↦ (x↦t)})", //
-				  	   "card({x,y,z⦂U,t⦂V · x↦y∈P ∣ (x↦z) ↦ (x↦t)})", //
-				  	   "P", "S↔T");
+	expressionTest("card({x,y,z⦂U · x↦y∈P ∣ x↦E↦z})", //
+				  "card({x,y,z⦂U · x↦y∈P ∣ x↦E↦z ↦ z})", //
+				  "P", "S↔T", "E", "ℙ(V)");
+	expressionTest("card({x,y,z⦂U,t⦂ℤ · x↦y∈P ∣ x↦z↦3∗t})", //
+				  "card({x,y,z⦂U,t⦂ℤ · x↦y∈P ∣ x↦z↦3∗t ↦ z})", //
+				  "P", "S↔T");
+	expressionTest("card({x,y,z,t · x↦y∈P ∣ x↦z+t})", //
+			  	  "card({x,y,z,t · x↦y∈P ∣ x↦z+t ↦ x})", //
+			  	  "P", "S↔T");
+	expressionTest("card({x,y,z,t · x↦y∈P ∣ z+t↦x})", //
+		  	  	  "card({x,y,z,t · x↦y∈P ∣ z+t↦x ↦ x})", //
+		  	  	  "P", "S↔T");
+	expressionTest("card({x,y,z,t · x↦y∈P ∣ t↦z+3∗t})", //
+	  	  	  	  "card({x,y,z,t · x↦y∈P ∣ t↦z+3∗t ↦ t})", //
+	  	  	  	  "P", "S↔T");
+	expressionTest("card({x,y,z⦂U,t · x↦y∈P ∣ z↦3∗t ↦ t})", //
+	  	  	  	  "card({x,y,z⦂U,t · x↦y∈P ∣ z↦3∗t ↦ t})", //
+	  	  	  	  "P", "S↔T");
+	
+	expressionTest("card({x,y,z⦂U,t⦂V · x↦y∈P ∣ (x↦z) ↦ (x↦t)})", //
+				  "card({x,y,z⦂U,t⦂V · x↦y∈P ∣ (x↦z) ↦ (x↦t)})", //
+				  "P", "S↔T");
 	}
 	
 	/**
@@ -1216,6 +1222,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		expressionTest("min(S ∪ T)", "min({min(S)} ∪ T)");
 		expressionTest("min(S ∪ {min(T), min(U)})", "min(S ∪ {min(T), min(U)})");
 		expressionTest("min(S ∪ T ∪ U)", "min({min(S)} ∪ T ∪ {min(U)})");
+		expressionTest("min(S ∪ {max(T)} ∪ U)", "min(S ∪ {max(T)} ∪ U)");
+		expressionTest("max(S ∪ {min(T)} ∪ U)", "max(S ∪ {min(T)} ∪ U)");
 	}
 
 	/**
@@ -1228,6 +1236,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		expressionTest("max(S ∪ T)", "max({max(S)} ∪ T)");
 		expressionTest("max(S ∪ {max(T), max(U)})", "max(S ∪ {max(T), max(U)})");
 		expressionTest("max(S ∪ T ∪ U)", "max({max(S)} ∪ T ∪ {max(U)})");
+		expressionTest("min(S ∪ {max(T)} ∪ U)", "min(S ∪ {max(T)} ∪ U)");
+		expressionTest("max(S ∪ {min(T)} ∪ U)", "max(S ∪ {min(T)} ∪ U)");
 	}
 
 	/**
