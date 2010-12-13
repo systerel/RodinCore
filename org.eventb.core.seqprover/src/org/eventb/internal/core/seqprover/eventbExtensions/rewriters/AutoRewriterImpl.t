@@ -179,22 +179,41 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		return false;
 	}
 	
-	protected boolean isSingletonWithTag(Expression expression, int tag) {
-		if (expression.getTag() == Formula.SETEXT) {
-			final SetExtension setExtension = (SetExtension) expression;
-			if (setExtension.getChildCount() == 1) {
-				if (setExtension.getChild(0).getTag() == tag) {
-					return true;
-				}
+	private Expression simplifyExtremumOfUnion(Expression[] children, int tag) {
+		final int length = children.length;
+		final Expression[] newChildren = new Expression[length];
+		boolean changed = false;
+		for (int i = 0; i < length; i++) {
+			final Expression child = children[i];
+			final Expression newChild = extractSingletonWithTag(child, tag);
+			if (newChild != null) {
+				newChildren[i] = newChild;
+				changed = true;
+			} else {
+				newChildren[i] = child;
 			}
 		}
-		return false;
+		if (!changed) {
+			return null;
+		}
+		return makeUnaryExpression(tag,
+				makeAssociativeExpression(Formula.BUNION, newChildren));
+
 	}
 
-	protected Expression getSingletonElement(Expression singleton) {
-		assert singleton.getTag() == Formula.SETEXT
-				&& singleton.getChildCount() == 1;
-		return (Expression) singleton.getChild(0);
+	private Expression extractSingletonWithTag(Expression expression, int tag) {
+		if (expression.getTag() != Formula.SETEXT) {
+			return null;
+		}
+		final SetExtension setExtension = (SetExtension) expression;
+		if (setExtension.getChildCount() != 1) {
+			return null;
+		}
+		final Expression member = setExtension.getChild(0);
+		if (member.getTag() != tag) {
+			return null;
+		}
+		return ((UnaryExpression) member).getChild(0);
 	}
 
 	private static <T extends Formula<T>> void trace(T from, T to, String rule,
@@ -3445,20 +3464,13 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 */
 			Min(BUnion(children)) -> {
 				if (level2) {
-					final Expression[] newChildren = new Expression[`children.length];	
-					for(int i = 0 ; i < `children.length ; i++) {
-						final Expression child = `children[i];
-						if (isSingletonWithTag(child, Formula.KMIN)) {
-							final UnaryExpression minExpr = (UnaryExpression) getSingletonElement(child);
-							newChildren[i] = minExpr.getChild();
-						} else {
-							newChildren[i] = child;
-						}
+					final Expression rewritten =
+							simplifyExtremumOfUnion(`children, Formula.KMIN);
+					if (rewritten != null) {
+						result = rewritten;
+						trace(expression, result, "SIMP_MIN_BUNION_SING");
+						return result;
 					}
-					result = makeUnaryExpression(Formula.KMIN,
-								makeAssociativeExpression(Formula.BUNION, newChildren));
-					trace(expression, result, "SIMP_MIN_BUNION_SING");
-					return result;
 				}
 			}
 			
@@ -3468,20 +3480,13 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 */
 			Max(BUnion(children)) -> {
 				if (level2) {
-					final Expression[] newChildren = new Expression[`children.length];
-						for(int i = 0 ; i < `children.length ; i++) {
-							final Expression child = `children[i];
-							if (isSingletonWithTag(child, Formula.KMAX)) {
-								final UnaryExpression maxExpr = (UnaryExpression) getSingletonElement(child);
-								newChildren[i] = maxExpr.getChild();
-							} else {
-								newChildren[i] = child;
-							}
-						}
-					result = makeUnaryExpression(Formula.KMAX,
-								makeAssociativeExpression(Formula.BUNION, newChildren));
-					trace(expression, result, "SIMP_MAX_BUNION_SING");
-					return result;
+					final Expression rewritten =
+							simplifyExtremumOfUnion(`children, Formula.KMAX);
+					if (rewritten != null) {
+						result = rewritten;
+						trace(expression, result, "SIMP_MAX_BUNION_SING");
+						return result;
+					}
 				}
 			}
 			
