@@ -1235,11 +1235,10 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_IN_FUNIMAGE() {
-		predicateTest("⊤", "E ↦ F(E) ∈ F", "E", "S", "F", "S↔T");
-		predicateTest("E ↦ F(G) ∈ F", "E ↦ F(G) ∈ F", //
-				"E", "S", "F", "S↔T", "G", "S");
-		predicateTest("E ↦ F(E) ∈ G", "E ↦ F(E) ∈ G", //
-				"E", "S", "F", "S↔T", "G", "S↔T");
+		predicateTest("⊤", "E ↦ F(E) ∈ F", "F", "S↔T");
+		predicateTest("E ↦ F(G) ∈ F", "E ↦ F(G) ∈ F", "F", "S↔T");
+		predicateTest("E ↦ F(E) ∈ G", "E ↦ F(E) ∈ G", "F", "S↔T");
+		predicateTest("E ↦ F(E) ∈ F∼", "E ↦ F(E) ∈ F∼", "F", "S↔S");
 	}
 
 	/**
@@ -1247,11 +1246,10 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_IN_FUNIMAGE_CONVERSE_L() {
-		predicateTest("⊤", "F∼(E) ↦ E ∈ F", "E", "S", "F", "T↔S");
-		predicateTest("F∼(E) ↦ G ∈ F", "F∼(E) ↦ G ∈ F", //
-				"E", "S", "F", "T↔S", "G", "S");
-		predicateTest("F∼(E) ↦ E ∈ G", "F∼(E) ↦ E ∈ G", //
-				"E", "S", "F", "T↔S", "G", "T↔S");
+		predicateTest("⊤", "F∼(E) ↦ E ∈ F", "F", "T↔S");
+		predicateTest("F∼(E) ↦ G ∈ F", "F∼(E) ↦ G ∈ F", "F", "T↔S");
+		predicateTest("F∼(E) ↦ E ∈ G", "F∼(E) ↦ E ∈ G", "F", "T↔S");
+		predicateTest("F∼(E) ↦ E ∈ F∼", "F∼(E) ↦ E ∈ F∼", "F", "S↔S");
 	}
 
 	/**
@@ -1259,11 +1257,10 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_IN_FUNIMAGE_CONVERSE_R() {
-		predicateTest("⊤", "F(E) ↦ E ∈ F∼", "E", "S", "F", "S↔T");
-		predicateTest("F(E) ↦ G ∈ F∼", "F(E) ↦ G ∈ F∼", //
-				"E", "S", "F", "S↔T", "G", "S");
-		predicateTest("F(E) ↦ E ∈ G∼", "F(E) ↦ E ∈ G∼", //
-				"E", "S", "F", "S↔T", "G", "S↔T");
+		predicateTest("⊤", "F(E) ↦ E ∈ F∼", "F", "S↔T");
+		predicateTest("F(E) ↦ G ∈ F∼", "F(E) ↦ G ∈ F∼", "F", "S↔T");
+		predicateTest("F(E) ↦ E ∈ G∼", "F(E) ↦ E ∈ G∼", "F", "S↔T");
+		predicateTest("F(E) ↦ E ∈ F", "F(E) ↦ E ∈ F", "F", "S↔S");
 	}
 
 	/**
