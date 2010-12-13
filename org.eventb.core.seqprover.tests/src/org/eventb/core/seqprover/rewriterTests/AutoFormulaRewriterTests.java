@@ -29,6 +29,7 @@ import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
 import org.junit.Test;
 
 /**
@@ -87,6 +88,8 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 	}
 	protected static final FormulaFactory DT_FAC = FormulaFactory.getInstance(EXTENSIONS);
 	
+	protected final boolean level2AndHigher;
+
 	/**
 	 * Constructor.
 	 * <p>
@@ -95,6 +98,7 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 	 */
 	public AutoFormulaRewriterTests(AutoRewriterImpl rewriter) {
 		super(rewriter);
+		this.level2AndHigher = rewriter.getLevel().from(Level.L2);
 	}
 
 	/**

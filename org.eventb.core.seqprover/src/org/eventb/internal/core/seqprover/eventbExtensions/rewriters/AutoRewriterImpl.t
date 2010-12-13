@@ -154,6 +154,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		this.level2 = level.from(Level.L2);
 	}
 
+	public AutoRewrites.Level getLevel() {
+		return level;
+	}
+
 	protected UnaryPredicate makeUnaryPredicate(int tag, Predicate child) {
 		return ff.makeUnaryPredicate(tag, child, null);
 	}
