@@ -118,7 +118,7 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 		return factory.makeBooleanType();
 	}
 	
-	public ParametricType makeParametricType(List<Type> typePrms,
+	public ParametricType makeParametricType(Type[] typePrms,
 			IExpressionExtension exprExt) {
 		return factory.makeParametricType(typePrms, exprExt);
 	}

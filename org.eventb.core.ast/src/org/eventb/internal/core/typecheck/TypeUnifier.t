@@ -87,27 +87,28 @@ public class TypeUnifier {
 				}
 				return result.makeProductType(newLeft, newRight);
 			}
-			gt1@ParamType(children1), gt2@ParamType(children2) -> {
-				final ParametricType paramType1 = (ParametricType) `gt1;
-				final ParametricType paramType2 = (ParametricType) `gt2;
-				if (paramType1.getExprExtension() != paramType2.getExprExtension()) {
+			ParamType(params1), ParamType(params2) -> {
+				final ParametricType paramType1 = (ParametricType) `left;
+				final ParametricType paramType2 = (ParametricType) `right;
+				final IExpressionExtension ext = paramType1.getExprExtension();
+				if (ext != paramType2.getExprExtension()) {
 					return null;
 				}
-				assert `children1.length == `children2.length;
-				final int length = `children1.length;
-				final List<Type> newTypePrms = new ArrayList<Type>(length);
+				final int length = `params1.length;
+				assert length == `params2.length;
+				final Type[] newParams = new Type[length];
 				boolean all1 = true;
 				boolean all2 = true;
 				for (int i = 0; i < length; i++) {
-					final Type child1 = `children1[i];
-					final Type child2 = `children2[i];
-					final Type newChild = unify(child1, child2, origin);
-					if (newChild == null) {
+					final Type param1 = `params1[i];
+					final Type param2 = `params2[i];
+					final Type newParam = unify(param1, param2, origin);
+					if (newParam == null) {
 						return null;
 					}
-					all1 &= newChild == child1;
-					all2 &= newChild == child2;
-					newTypePrms.add(newChild);
+					all1 &= newParam == param1;
+					all2 &= newParam == param2;
+					newParams[i] = newParam;
 				}
 				if (all1) {
 					return left;
@@ -115,7 +116,7 @@ public class TypeUnifier {
 				if (all2) {
 					return right;
 				}
-				return result.makeParametricType(newTypePrms, paramType1.getExprExtension());
+				return result.makeParametricType(newParams, ext);
 			}
 			Int(), Int() -> {
 				return left;
@@ -206,19 +207,21 @@ public class TypeUnifier {
 				}
 				return result.makeProductType(newLeft, newRight);
 			}
-			ParamType(children) -> {
-				final List<Type> newTypePrms = new ArrayList<Type>();
+			ParamType(params) -> {
+				final int length = `params.length;
+				final Type[] newParams = new Type[length];
 				boolean same = true;
-				for (Type type: `children) {
-					final Type newTypePrm = solve(type);
-					same &= newTypePrm == type;
-					newTypePrms.add(newTypePrm);
+				for (int i = 0; i < length; i++) {
+					final Type param = `params[i];
+					final Type newParam = solve(param);
+					same &= newParam == param;
+					newParams[i] = newParam;
 				}
 				if (same) {
 					return intype;
 				}
 				final IExpressionExtension exprExt = ((ParametricType) intype).getExprExtension();
-				return result.makeParametricType(newTypePrms, exprExt);
+				return result.makeParametricType(newParams, exprExt);
 			}
 			_ -> {
 				return intype;
@@ -237,9 +240,9 @@ public class TypeUnifier {
 			CProd(left, right) -> {
 				return occurs(typeVar, `left) || occurs(typeVar, `right);
 			}
-			ParamType(children) -> {
-				for(Type child: `children) {
-					if (occurs(typeVar, child)) {
+			ParamType(params) -> {
+				for(Type param: `params) {
+					if (occurs(typeVar, param)) {
 						return true;
 					}
 				}

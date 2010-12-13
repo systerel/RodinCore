@@ -1390,12 +1390,28 @@ public class FormulaFactory {
 	}
 
 	/**
+	 * Returns the instance of the parametric type of the given constructor with
+	 * the given type parameters.
+	 * 
 	 * @since 2.0
 	 */
 	public ParametricType makeParametricType(List<Type> typePrms,
 			IExpressionExtension typeConstructor) {
 		checkExtension(typeConstructor);
-		return new ParametricType(typePrms, typeConstructor);
+		return new ParametricType(typeConstructor,
+				typePrms.toArray(new Type[typePrms.size()]));
+	}
+
+	/**
+	 * Returns the instance of the parametric type of the given constructor with
+	 * the given type parameters.
+	 * 
+	 * @since 2.1
+	 */
+	public ParametricType makeParametricType(Type[] typePrms,
+			IExpressionExtension typeConstructor) {
+		checkExtension(typeConstructor);
+		return new ParametricType(typeConstructor, typePrms.clone());
 	}
 
 	/**
