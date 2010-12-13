@@ -16,6 +16,7 @@ import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -150,7 +151,12 @@ public abstract class AbstractFormulaRewriterTests {
 				input.isTypeChecked());
 		assertTrue("Expected expression should be type checked ",
 				expected.isTypeChecked());
-		assertEquals(input + " --> " + expected, expected, input.rewrite(r));
+		final Predicate actual = input.rewrite(r);
+		assertEquals(input + " --> " + expected, expected, actual);
+		if (expected.equals(input)) {
+			// If no rewriting occurs, the exact same formula shall be returned.
+			assertSame(input.toString(), input, actual);
+		}
 	}
 
 	/**
@@ -239,6 +245,10 @@ public abstract class AbstractFormulaRewriterTests {
 				.getType());
 		final Expression actual = input.rewrite(r);
 		assertEquals(input + " --> " + expected, expected, actual);
+		if (expected.equals(input)) {
+			// If no rewriting occurs, the exact same formula shall be returned.
+			assertSame(input.toString(), input, actual);
+		}
 	}
 
 	private ITypeEnvironment makeTypeEnvironment(String... env) {
