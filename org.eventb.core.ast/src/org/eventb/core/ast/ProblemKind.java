@@ -17,13 +17,14 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * This enum contains all the problems that can be encountered by the various
- * checkers.
+ * This enumeration contains all the problems that can be encountered by the
+ * various checkers.
  * <p>
  * When a sub-class of class ASTProblem is instantiated, it expects as
  * parameters an unfixed number of arguments, depending on the problem you
- * instanciate. Indicated here is the arguments needed with each problem. The
+ * instantiate. Indicated here is the arguments needed with each problem. The
  * index after the argument indicates its position in the arguments array.
+ * <p>
  * 
  * @author François Terrier
  * 
@@ -33,42 +34,42 @@ public enum ProblemKind {
 	// TODO externalize strings
 	
 	/**
-	 * Argument 0 is the name of the variable.
+	 * Argument 1 is the name of the variable.
 	 */
 	FreeIdentifierHasBoundOccurences ("%1$s appears bound"),
 	/**
-	 * Argument 0 is the name of the variable.
+	 * Argument 1 is the name of the variable.
 	 */
 	BoundIdentifierHasFreeOccurences ("%1$s appears free"),
 	/**
-	 * Argument 0 is the name of the variable.
+	 * Argument 1 is the name of the variable.
 	 */
 	BoundIdentifierIsAlreadyBound ("%1$s is bound twice"),
 	
 	/**
-	 * Argument 0 is the contents of the token.
+	 * Argument 1 is the contents of the token.
 	 */
 	LexerError ("Lexer error, character '%1$s' has been ignored"),
 	
 	/**
-	 * Argument 0 is the name of the first type, argument 1 is the name of the second type.
+	 * Argument 1 is the name of the first type, argument 2 is the name of the second type.
 	 */
 	TypesDoNotMatch ("Type: %1$s does not match type: %2$s"),
 	
 	/**
-	 * Argument 0 is the name of the expected sub-formula kind, argument 1 is the name of the actual sub-formula kind.
+	 * Argument 1 is the name of the expected sub-formula kind, argument 2 is the name of the actual sub-formula kind.
 	 * @since 2.0
 	 */
 	UnexpectedSubFormulaKind ("Unexpected sub-formula, expected: %1$s but was: %2$s"),
 	
 	/**
-	 * Argument 0 is the image of the expected symbol, argument 1 is the name of the actual symbol.
+	 * Argument 1 is the image of the expected symbol, argument 2 is the name of the actual symbol.
 	 * @since 2.0
 	 */
 	UnexpectedSymbol ("Expected: %1$s but was: %2$s"),
 	
 	/**
-	 * Argument 0 is the image of the unknown operator.
+	 * Argument 1 is the image of the unknown operator.
 	 * @since 2.0
 	 */
 	UnknownOperator ("Unknown operator: %1$s"),
@@ -80,7 +81,7 @@ public enum ProblemKind {
 	UnmatchedTokens ("Tokens have been ignored"),
 	
 	/**
-	 * Argument 0 is the image of the expected symbol, argument 1 is the name of the actual symbol.
+	 * Argument 1 is the image of the expected symbol, argument 2 is the name of the actual symbol.
 	 * @since 2.0
 	 */
 	IncompatibleOperators ("Operator: %1$s is not compatible with: %2$s, parentheses are required"),
@@ -91,19 +92,19 @@ public enum ProblemKind {
 	Circularity ("Types do not match"),
 	
 	/**
-	 * Argument 0 is the image of the misplaced operator.
+	 * Argument 1 is the image of the misplaced operator.
 	 * @since 2.0
 	 */
 	MisplacedNudOperator ("Operator: %1$s should appear at the beginning of a sub-formula"),
 	
 	/**
-	 * Argument 0 is the image of the misplaced operator.
+	 * Argument 1 is the image of the misplaced operator.
 	 * @since 2.0
 	 */
 	MisplacedLedOperator ("Operator: %1$s should appear with a sub-formula on its left"),
 
 	/**
-	 * Argument 0 is the compound message with all errors.
+	 * Argument 1 is the compound message with all errors.
 	 * @since 2.0
 	 */
 	VariousPossibleErrors ("Parse failed because either:\n%1$s"),
@@ -115,7 +116,7 @@ public enum ProblemKind {
 	InvalidAssignmentToImage ("Assignment to function image applies to exactly one function"),
 	
 	/**
-	 * Argument 0 is the number of assigned identifiers, argument 1 is the numbers of expressions.
+	 * Argument 1 is the number of assigned identifiers, argument 2 is the numbers of expressions.
 	 * @since 2.0
 	 * 
 	 */
@@ -140,7 +141,7 @@ public enum ProblemKind {
 	IntegerLiteralExpected ("Expected an integer literal"),
 
 	/**
-	 * Argument 0 is the expected type for the generic operator.
+	 * Argument 1 is the expected type for the generic operator.
 	 * @since 2.0
 	 */
 	InvalidGenericType("Invalid type for generic operator, expected %1$s"),
@@ -164,7 +165,7 @@ public enum ProblemKind {
 	PrematureEOF("Premature End Of Formula"),
 	
 	/**
-	 * Argument 0 is the name of the duplicate identifier.
+	 * Argument 1 is the name of the duplicate identifier.
 	 * @since 2.0
 	 */
 	DuplicateIdentifierInPattern("Duplicate identifier in pattern: %1$s"),
@@ -180,7 +181,7 @@ public enum ProblemKind {
 	InvalidTypeExpression("Expression doesn't denote a type"),
 	
 	/**
-	 * Unlocated failure when type-checking.
+	 * Non-located failure when type-checking.
 	 */
 	TypeCheckFailure("Couldn't infer some types"),
 	
@@ -200,7 +201,7 @@ public enum ProblemKind {
 	NotUpgradableError ("Formula cannot be upgraded"),
 	
 	/**
-	 * Argument 0 is the illegal predicate variable.
+	 * Argument 1 is the illegal predicate variable.
 	 * @since 1.2
 	 */
 	PredicateVariableNotAllowed("Predicate variable %1$s is not allowed here"), 
