@@ -51,7 +51,7 @@ import org.eventb.internal.core.seqprover.IInternalProverSequent;
  * These two subsets are disjoint and need not contain all hypotheses. These
  * subsets have no logical significance. Their sole purpose is to add structure
  * to sequents with a large number of hypotheses. Their sizes are intended to be
- * smaller in comparason the set of all hypotheses.
+ * smaller in comparison the set of all hypotheses.
  * </p>
  * 
  * 
