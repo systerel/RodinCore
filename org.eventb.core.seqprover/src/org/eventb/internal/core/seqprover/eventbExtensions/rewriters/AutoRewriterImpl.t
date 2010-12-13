@@ -2165,18 +2165,13 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_MULTI_FUNIMAGE_OVERL_SETENUM
              * Set Theory 16: (f  {E↦ F})(E) == F
 	    	 */
-	    	// TODO Benoit : maybe a better way of doing it
-	    	FunImage(Ovr(eList(_*, SetExtension(eList(Mapsto(X, Y))))), X) -> {
-	    		// keeping this version for backwards compatibility
-	    		if (! level2) {
+	    	FunImage(Ovr(eList(_*, SetExtension(ms@eList(_*, Mapsto(X, Y), _*)))), X) -> {
+	    		if (level2) {
 	    			result = `Y;
 	    			trace(expression, result, "SIMP_MULTI_FUNIMAGE_OVERL_SETENUM");
 	    			return result;
-	    		}
-	    	}
-	    	FunImage(Ovr(eList(_*, SetExtension(eList(_*, Mapsto(X, Y), _*)))), X) -> {
-	    		// pattern matching in respect with the wiki specification
-	    		if (level2) {
+	    		} else if (`ms.length == 1) {
+	    			// keeping this version for backward compatibility
 	    			result = `Y;
 	    			trace(expression, result, "SIMP_MULTI_FUNIMAGE_OVERL_SETENUM");
 	    			return result;

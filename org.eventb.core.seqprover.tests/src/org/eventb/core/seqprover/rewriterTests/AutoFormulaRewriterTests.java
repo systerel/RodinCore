@@ -606,7 +606,13 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 		
 		// (f <+ {E |-> F})(E) = F
 		expressionTest("3", "(f  {x + 2 ↦ 3})(x + 2)");
-
+		expressionTest("(f  {2 ↦ 3}  g)(2)", "(f  {2 ↦ 3}  g)(2)");
+		if (level2AndHigher) {
+			expressionTest("3", "(f  {2 ↦ 3, 4 ↦ 5})(2)");
+		} else {
+			expressionTest("(f  {2 ↦ 3, 4 ↦ 5})(2)", //
+					"(f  {2 ↦ 3, 4 ↦ 5})(2)");
+		}
  
 		// E : {F} == E = F (if F is a single expression)
 		predicateTest("x + 2 ∗ y = y + 2 ∗ x", "x + 2 ∗ y ∈ {y + 2 ∗ x}");
