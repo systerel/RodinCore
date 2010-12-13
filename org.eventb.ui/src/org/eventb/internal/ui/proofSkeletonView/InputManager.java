@@ -325,4 +325,20 @@ public class InputManager implements IPartListener2, ISelectionListener {
 		System.out.println(prefix + "|- " + (goal == null ? "\u22a5" : goal));
 	}
 
+	/**
+	 * Registers the input manager into the Part Service of the current
+	 * workbench window.
+	 */
+	public void register() {
+		workbenchWindow.getPartService().addPartListener(this);
+	}
+	
+	/**
+	 * Unregisters the input manager into the Part Service of the current
+	 * workbench window.
+	 */
+	public void unregister() {
+		workbenchWindow.getPartService().removePartListener(this);
+	}
+
 }

@@ -19,7 +19,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.part.ViewPart;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -49,8 +51,10 @@ public class RuleDetailsView extends ViewPart implements ISelectionListener {
 
 	@Override
 	public void createPartControl(final Composite parent) {
+		final IWorkbenchWindow workbench = getSite().getWorkbenchWindow();
+		final ISelectionService selectionService = workbench.getSelectionService();
 		// add myself as a global selection listener
-		getSite().getPage().addSelectionListener(this);
+        selectionService.addSelectionListener(VIEW_ID, this);
 
 		initializeControl(parent);
 

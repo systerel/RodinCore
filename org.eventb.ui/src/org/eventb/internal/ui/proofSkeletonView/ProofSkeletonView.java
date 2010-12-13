@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,8 +43,7 @@ public class ProofSkeletonView extends ViewPart {
 		masterDetailsBlock.createContent(managedForm);
 
 		selManager = new InputManager(this);
-
-		getSite().getPage().addPartListener(selManager);
+		selManager.register();
 		
 		addContextMenu();
 	}
@@ -67,7 +66,7 @@ public class ProofSkeletonView extends ViewPart {
 	@Override
 	public void dispose() {
 		getSite().setSelectionProvider(null);
-		getSite().getPage().removePartListener(selManager);
+		selManager.unregister();
 		super.dispose();
 	}
 
