@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
-import static java.util.Arrays.asList;
 import static org.eventb.core.ast.Formula.BOUND_IDENT;
 import static org.eventb.core.ast.Formula.MAPSTO;
 
 import java.util.BitSet;
-import java.util.List;
 
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BoundIdentifier;
@@ -50,8 +48,9 @@ public class LambdaCheck {
 	private final QuantifiedExpression qExpr;
 	private final int nbBound;
 
-	// This bitset contains locally bound identifiers that occur in the right
-	// part of the expression of qExpr
+	// This bitset contains locally bound identifiers that occur in the
+	// right-hand side of the expression of qExpr and not yet detected in the
+	// left-hand side in an injective position.
 	private final BitSet locallyBoundRight;
 
 	private LambdaCheck(QuantifiedExpression qExpr) {
@@ -66,51 +65,42 @@ public class LambdaCheck {
 			return false;
 		}
 		final BinaryExpression maplet = (BinaryExpression) child;
-		final Expression left = maplet.getLeft();
-		final Expression right = maplet.getRight();
-		if (!(checkIdents(left, right) && isInjective(left))) {
-			return false;
-		}
+		computeLocallyBoundRight(maplet.getRight());
+		checkOccurrences(maplet.getLeft());
 		// If the bitset is empty, then all quantified identifiers occurring in
 		// the right-hand side of the expression are guaranteed to occur as
 		// leaves at least once in the left-hand side
 		return locallyBoundRight.isEmpty();
 	}
 
-	private boolean isInjective(Expression expr) {
+	private void computeLocallyBoundRight(Expression right) {
+		for (final BoundIdentifier rbi : right.getBoundIdentifiers()) {
+			final int index = rbi.getBoundIndex();
+			if (isLocallyBound(index)) {
+				locallyBoundRight.set(index);
+			}
+		}
+	}
+
+	private boolean isLocallyBound(final int index) {
+		return index < nbBound;
+	}
+
+	private void checkOccurrences(Expression expr) {
 		switch (expr.getTag()) {
 		case MAPSTO:
 			final BinaryExpression maplet = (BinaryExpression) expr;
-			return isInjective(maplet.getLeft())
-					&& isInjective(maplet.getRight());
+			checkOccurrences(maplet.getLeft());
+			checkOccurrences(maplet.getRight());
+			break;
 		case BOUND_IDENT:
 			final int boundIndex = ((BoundIdentifier) expr).getBoundIndex();
-			if (locallyBoundRight.get(boundIndex)) {
-				locallyBoundRight.set(boundIndex, false);
-			}
-			return true;
+			locallyBoundRight.clear(boundIndex);
+			break;
 		default:
 			// other expression
-			return true;
+			break;
 		}
-	}
-
-	private boolean isLocallyBound(final BoundIdentifier bi) {
-		return bi.getBoundIndex() < nbBound;
-	}
-
-	private boolean checkIdents(Expression left, Expression right) {
-		final List<BoundIdentifier> lbis = asList(left.getBoundIdentifiers());
-		for (final BoundIdentifier rbi : right.getBoundIdentifiers()) {
-			if (isLocallyBound(rbi)) {
-				if (lbis.contains(rbi)) {
-					locallyBoundRight.set(rbi.getBoundIndex());
-				} else {
-					return false;
-				}
-			}
-		}
-		return true;
 	}
 
 }
