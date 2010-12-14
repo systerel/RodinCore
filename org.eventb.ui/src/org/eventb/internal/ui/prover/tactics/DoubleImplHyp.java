@@ -22,7 +22,7 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.ui.prover.DefaultTacticProvider.DefaultPredicateApplication;
+import org.eventb.ui.prover.DefaultTacticProvider.DefaultPositionApplication;
 import org.eventb.ui.prover.ITacticApplication;
 import org.eventb.ui.prover.ITacticProvider;
 
@@ -35,18 +35,17 @@ import org.eventb.ui.prover.ITacticProvider;
  */
 public class DoubleImplHyp implements ITacticProvider {
 	
-	public static class DoubleImplHypApplication extends DefaultPredicateApplication {
+	public static class DoubleImplHypApplication extends DefaultPositionApplication {
 
 		private static final String TACTIC_ID = "org.eventb.ui.doubleImpIHyp";
-		private final Predicate hyp;
 
 		public DoubleImplHypApplication(Predicate hyp) {
-			this.hyp = hyp;
+			super(hyp, ROOT);
 		}
 		
 		@Override
 		public ITactic getTactic(String[] inputs, String globalInput) {
-			return Tactics.doubleImpHyp(hyp, ROOT);
+			return Tactics.doubleImpHyp(hyp, position);
 		}
 
 		@Override
