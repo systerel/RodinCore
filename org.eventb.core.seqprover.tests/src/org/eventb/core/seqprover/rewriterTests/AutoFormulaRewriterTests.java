@@ -651,20 +651,31 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 
 		
 		// f(f~(E)) == E
-		expressionTest("y + 2", "{x + 2 ↦ 3}(({x + 2 ↦ 3}∼)(y + 2))");
-		expressionTest("E", "f(f∼(E))", "f", "S↔T", "E", "T");
-		
-		
+		if (level2AndHigher) {
+			expressionTest("E", "f(f∼(E))", "f", "S↔T", "E", "T");
+		} else {
+			expressionTest("y + 2", "{x + 2 ↦ 3}(({x + 2 ↦ 3}∼)(y + 2))");
+		}
+
 		// f~(f(E)) == E
-		expressionTest("y + 2", "({x + 2 ↦ 3}∼)({x + 2 ↦ 3}(y + 2))");
-		expressionTest("E", "f∼(f(E))", "f", "S↔T", "E", "S");
+		if (level2AndHigher) {
+			expressionTest("E", "f∼(f(E))", "f", "S↔T", "E", "S");
+		} else {
+			expressionTest("y + 2", "({x + 2 ↦ 3}∼)({x + 2 ↦ 3}(y + 2))");
+		}
 		
 		
 		// {x |-> a, ..., y |-> b}({a |-> x, ..., b |-> y}(E)) = E
-		expressionTest("y + 2", "{x + 2 ↦ 3}({3 ↦ x + 2}(y + 2))");
-		expressionTest("y + 2", "{x + 2 ↦ 3, y ↦ 2}({3 ↦ x + 2, 2 ↦ y}(y + 2))");
-		expressionTest("y + 2", "{x + 2 ↦ 3, y ↦ 2, a ↦ b}({3 ↦ x + 2, 2 ↦ y, b ↦ a}(y + 2))");
-		
+		if (level2AndHigher) {
+			expressionTest("E", "{x ↦ a, y ↦ b}({a ↦ x, b ↦ y}(E))", //
+					"E", "S", "a", "S", "x", "T");
+		} else {
+			expressionTest("y + 2", "{x + 2 ↦ 3}({3 ↦ x + 2}(y + 2))");
+			expressionTest("y + 2",
+					"{x + 2 ↦ 3, y ↦ 2}({3 ↦ x + 2, 2 ↦ y}(y + 2))");
+			expressionTest("y + 2",
+					"{x + 2 ↦ 3, y ↦ 2, a ↦ b}({3 ↦ x + 2, 2 ↦ y, b ↦ a}(y + 2))");
+		}
 
 		// p;...;{};...;q == {}
 		expressionTest("(∅⦂S↔U)", "f;(∅⦂T↔U)", "f", "S↔T");

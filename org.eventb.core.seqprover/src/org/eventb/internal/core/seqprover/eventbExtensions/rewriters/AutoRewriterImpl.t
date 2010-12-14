@@ -255,8 +255,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    return null;
 	}
 	
-	private Expression simplifySetextOfMapsto(Expression[] children, Expression image, Expression antecedent) {
-		boolean inDomain = false;
+	private Expression simplifySetextOfMapsto(Expression[] children, Expression image) {
 		for (Expression child : children) {
 			if (child.getTag() != MAPSTO) {
 				return null;
@@ -265,11 +264,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			if (!maplet.getRight().equals(image)) {
 				return null;
 			}
-			if (!inDomain && maplet.getLeft().equals(antecedent)) {
-				inDomain = true;
-			}
 		}
-		return inDomain?image:null;
+		return image;
 	}
 	
 	private Expression convertSetextOfMapsto(Expression[] children) {
@@ -1759,6 +1755,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    			result = rewritten;
 	    			trace(expression, result, "SIMP_SPECIAL_PLUS");
 					return result;
+				} else if (!level2) {
+					// This case has to be considered for backward compatibility
+					return expression;
 				}
 	    	}
 
@@ -1778,6 +1777,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    			result = rewritten;
 	    			trace(expression, result, "SIMP_SPECIAL_PROD_1", "SIMP_SPECIAL_PROD_0", "SIMP_SPECIAL_PROD_MINUS_EVEN", "SIMP_SPECIAL_PROD_MINUS_ODD");
 					return result;
+	    		} else if (!level2) {
+	    			// This case has to be considered for backward compatibility
+	    			return expression;
 	    		}
 	    	}
 	    	
@@ -1823,6 +1825,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    			result = rewritten;
 	    			trace(expression, result, "SIMP_SPECIAL_OVERL", "SIMP_TYPE_OVERL_CPROD");
 	    			return result;
+	    		} else if (!level2) {
+	    			// This case has to be considered for backward compatibility
+	    			return expression;
 	    		}
      		}
      		
@@ -2842,9 +2847,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_MULTI_FUNIMAGE_SETENUM_LL
 			 *    {A ↦ E, .. , B ↦ E}(x) == E
 			 */
-			FunImage(SetExtension(members@eList(Mapsto(_, E), _*)), x) -> {
+			FunImage(SetExtension(members@eList(Mapsto(_, E), _*)), _) -> {
 				if (level2) {
-					final Expression rewritten = simplifySetextOfMapsto(`members, `E, `x);
+					final Expression rewritten = simplifySetextOfMapsto(`members, `E);
 					if (rewritten != null) {
 						result = rewritten;
 						trace(expression, result, "SIMP_MULTI_FUNIMAGE_SETENUM_LL");
@@ -2926,6 +2931,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    			result = rewritten;
 	    			trace(expression, result, "SIMP_CONVERSE_SETENUM");
 	    			return result;
+	    		} else if (!level2) {
+	    			// This case has to be considered for backward compatibility
+	    			return expression;
 	    		}
 	    	}
 

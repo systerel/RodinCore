@@ -1161,6 +1161,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		expressionTest("{x, y, z · x ↦ y ↦ z ∈ P ∣ y ↦ x}",
 				"{x, y, z · x ↦ y ↦ z ∈ P∣ x ↦ y}∼", "P", "S×T↔U");
 
+		expressionTest("{x · x ∈ P ∣ x}∼", "{x · x ∈ P ∣ x}∼", "P", "S↔T");
 		expressionTest("{x, y, z · x ∈ ℕ ∧ y ∈ BOOL ∧ z ∈ ℤ ∣ x ↦ y}",
 				"{x, y, z · x ∈ ℕ ∧ y ∈ BOOL ∧ z ∈ ℤ ∣ x ↦ y}");
 	}
@@ -1276,8 +1277,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	public void testSIMP_MULTI_FUNIMAGE_SETENUM_LL() {
 		expressionTest("3", "{1 ↦ 3, 2 ↦ 3}(1)");
 		expressionTest("FALSE", "{0 ↦ FALSE, 1 ↦ FALSE}(0)");
+		expressionTest("3", "{1 ↦ 3, 2 ↦ 3}(x)");
 
-		expressionTest("{1 ↦ 3, 2 ↦ 3}(x)", "{1 ↦ 3, 2 ↦ 3}(x)");
 		expressionTest("{0 ↦ FALSE, 1 ↦ TRUE}(x)", "{0 ↦ FALSE, 1 ↦ TRUE}(x)");
 	}
 
