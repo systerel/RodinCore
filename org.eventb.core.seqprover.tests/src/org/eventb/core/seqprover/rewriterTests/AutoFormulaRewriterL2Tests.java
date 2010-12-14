@@ -726,10 +726,16 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		predicateTest("finite({x,y,z,t · x↦y∈P ∣ t↦z+3∗t})", //
 				"finite({x,y,z,t · x↦y∈P ∣ t↦z+3∗t ↦ t})", //
 				"P", "S↔T");
+		predicateTest("finite({x,y,z⦂ℤ,t · x↦y∈P ∣ z↦3∗t↦t})", //
+				"finite({x,y,z,t · x↦y∈P ∣ z↦3∗t↦t ↦ z+t})", //
+				"P", "S↔T");
+
+		predicateTest("finite({x,y,z,t · x↦y∈P ∣ z↦3∗t+z ↦ z+t})", //
+				"finite({x,y,z,t · x↦y∈P ∣ z↦3∗t+z ↦ z+t})", //
+				"P", "S↔T");
 		predicateTest("finite({x,y,z⦂U,t · x↦y∈P ∣ z↦3∗t ↦ t})", //
 				"finite({x,y,z⦂U,t · x↦y∈P ∣ z↦3∗t ↦ t})", //
 				"P", "S↔T");
-
 		predicateTest("finite({x,y,z⦂U,t⦂V · x↦y∈P ∣ (x↦z) ↦ (x↦t)})", //
 				"finite({x,y,z⦂U,t⦂V · x↦y∈P ∣ (x↦z) ↦ (x↦t)})", //
 				"P", "S↔T");
@@ -740,27 +746,15 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_CARD_LAMBDA() {
-		expressionTest("card({x,y,z⦂U · x↦y∈P ∣ x↦E↦z})", //
-				"card({x,y,z⦂U · x↦y∈P ∣ x↦E↦z ↦ z})", //
-				"P", "S↔T", "E", "ℙ(V)");
-		expressionTest("card({x,y,z⦂U,t⦂ℤ · x↦y∈P ∣ x↦z↦3∗t})", //
-				"card({x,y,z⦂U,t⦂ℤ · x↦y∈P ∣ x↦z↦3∗t ↦ z})", //
-				"P", "S↔T");
-		expressionTest("card({x,y,z,t · x↦y∈P ∣ x↦z+t})", //
-				"card({x,y,z,t · x↦y∈P ∣ x↦z+t ↦ x})", //
-				"P", "S↔T");
-		expressionTest("card({x,y,z,t · x↦y∈P ∣ z+t↦x})", //
-				"card({x,y,z,t · x↦y∈P ∣ z+t↦x ↦ x})", //
-				"P", "S↔T");
-		expressionTest("card({x,y,z,t · x↦y∈P ∣ t↦z+3∗t})", //
-				"card({x,y,z,t · x↦y∈P ∣ t↦z+3∗t ↦ t})", //
-				"P", "S↔T");
-		expressionTest("card({x,y,z⦂U,t · x↦y∈P ∣ z↦3∗t ↦ t})", //
-				"card({x,y,z⦂U,t · x↦y∈P ∣ z↦3∗t ↦ t})", //
+		// The SIMP_CARD_LAMBDA rule implementation uses the same algorithm as
+		// SIMP_FINITE_LAMBDA, therefore minimal testing is performed
+
+		expressionTest("card({x,y,z⦂ℤ,t · x↦y∈P ∣ z↦3∗t↦t})", //
+				"card({x,y,z,t · x↦y∈P ∣ z↦3∗t↦t ↦ z+t})", //
 				"P", "S↔T");
 
-		expressionTest("card({x,y,z⦂U,t⦂V · x↦y∈P ∣ (x↦z) ↦ (x↦t)})", //
-				"card({x,y,z⦂U,t⦂V · x↦y∈P ∣ (x↦z) ↦ (x↦t)})", //
+		expressionTest("card({x,y,z,t · x↦y∈P ∣ z↦3∗t+z ↦ z+t})", //
+				"card({x,y,z,t · x↦y∈P ∣ z↦3∗t+z ↦ z+t})", //
 				"P", "S↔T");
 	}
 
@@ -1160,15 +1154,16 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	}
 
 	/**
-	 * Ensures that rule SIMP_CONVERSE_COMPSET is implemented correctly. TODO :
-	 * conflicts with test of SIMP_FINITE_CONVERSE
+	 * Ensures that rule SIMP_CONVERSE_COMPSET is implemented correctly.
 	 */
-	// @Test
-	// public void testSIMP_CONVERSE_COMPSET() {
-	// expressionTest("{x,y · x∈ℕ ∧ y≤x ∣ y↦x}", "{x,y · x∈ℕ ∧ y≤x ∣ x↦y}∼");
-	// expressionTest("{x,y,z · x∈ℕ ∧ y∈BOOL ∧ z∈ℤ ∣ y↦x}",
-	// "{x,y,z · x∈ℕ ∧ y∈BOOL ∧ z∈ℤ ∣ x↦y}∼");
-	// }
+	@Test
+	public void testSIMP_CONVERSE_COMPSET() {
+		expressionTest("{x, y, z · x ↦ y ↦ z ∈ P ∣ y ↦ x}",
+				"{x, y, z · x ↦ y ↦ z ∈ P∣ x ↦ y}∼", "P", "S×T↔U");
+
+		expressionTest("{x, y, z · x ∈ ℕ ∧ y ∈ BOOL ∧ z ∈ ℤ ∣ x ↦ y}",
+				"{x, y, z · x ∈ ℕ ∧ y ∈ BOOL ∧ z ∈ ℤ ∣ x ↦ y}");
+	}
 
 	/**
 	 * Ensures that rule SIMP_LIT_UPTO is implemented correctly.
@@ -1276,14 +1271,15 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 
 	/**
 	 * Ensures that rule SIMP_MULTI_FUNIMAGE_SETENUM_LL is implemented correctly
-	 * TODO : conflict with test of SIMP_FUNIMAGE_CONVERSE_FUNIMAGE
 	 */
-	// @Test
-	// public void testSIMP_MULTI_FUNIMAGE_SETENUM_LL() {
-	// expressionTest("3", "{1 ↦ 3, 2 ↦ 3}(x)");
-	// expressionTest("FALSE", "{0 ↦ FALSE, 1 ↦ FALSE}(x)");
-	// expressionTest("{0 ↦ FALSE, 1 ↦ TRUE}", "{0 ↦ FALSE, 1 ↦ TRUE}(x)");
-	// }
+	@Test
+	public void testSIMP_MULTI_FUNIMAGE_SETENUM_LL() {
+		expressionTest("3", "{1 ↦ 3, 2 ↦ 3}(1)");
+		expressionTest("FALSE", "{0 ↦ FALSE, 1 ↦ FALSE}(0)");
+
+		expressionTest("{1 ↦ 3, 2 ↦ 3}(x)", "{1 ↦ 3, 2 ↦ 3}(x)");
+		expressionTest("{0 ↦ FALSE, 1 ↦ TRUE}(x)", "{0 ↦ FALSE, 1 ↦ TRUE}(x)");
+	}
 
 	/**
 	 * Ensures that rule SIMP_MULTI_FUNIMAGE_SETENUM_LR is implemented correctly

@@ -255,6 +255,37 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    return null;
 	}
 	
+	private Expression simplifySetextOfMapsto(Expression[] children, Expression image, Expression antecedent) {
+		boolean inDomain = false;
+		for (Expression child : children) {
+			if (child.getTag() != MAPSTO) {
+				return null;
+			}
+			final BinaryExpression maplet = ((BinaryExpression) child);
+			if (!maplet.getRight().equals(image)) {
+				return null;
+			}
+			if (!inDomain && maplet.getLeft().equals(antecedent)) {
+				inDomain = true;
+			}
+		}
+		return inDomain?image:null;
+	}
+	
+	private Expression convertSetextOfMapsto(Expression[] children) {
+		final Expression[] newChildren = new Expression[children.length];
+		for (int i = 0 ; i < children.length ; i++) {
+			final Expression child = children[i];
+			if (child.getTag() == MAPSTO) {
+				final BinaryExpression bExp = (BinaryExpression) child;
+				newChildren[i] = makeBinaryExpression(MAPSTO, bExp.getRight(), bExp.getLeft());
+			} else {
+				return null;
+			}
+		}
+		return makeSetExtension(newChildren);
+	}
+
 	private static <T extends Formula<T>> void trace(T from, T to, String rule,
 			String... otherRules) {
 		if (!DEBUG) {
@@ -2811,23 +2842,16 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_MULTI_FUNIMAGE_SETENUM_LL
 			 *    {A ↦ E, .. , B ↦ E}(x) == E
 			 */
-			 /* TODO : conflit avec SIMP_FUNIMAGE_CONVERSE_FUNIMAGE
-			FunImage(SetExtension(members@eList(Mapsto(_, E), _*)), _) -> {
-				if (level2) {				
-					for (Expression child : `members) {
-						if (child.getTag() == MAPSTO &&
-							((BinaryExpression) child).getRight().equals(`E)) {	
-							// right form, continue
-						} else {
-							return expression;
-						}
+			FunImage(SetExtension(members@eList(Mapsto(_, E), _*)), x) -> {
+				if (level2) {
+					final Expression rewritten = simplifySetextOfMapsto(`members, `E, `x);
+					if (rewritten != null) {
+						result = rewritten;
+						trace(expression, result, "SIMP_MULTI_FUNIMAGE_SETENUM_LL");
+						return result;
 					}
-					
-					result = `E;
-					trace(expression, result, "SIMP_MULTI_FUNIMAGE_SETENUM_LL");
-					return result;
 				}
-			}*/
+			}
 			
 			/**
 			 * SIMP_MULTI_FUNIMAGE_SETENUM_LR
@@ -2896,24 +2920,13 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * SIMP_CONVERSE_SETENUM
 	    	 * Set Theory: {x ↦ a, ..., y ↦ b}∼ == {a ↦ x, ..., b ↦ y}
 	    	 */
-	    	// TODO Benoit : attention à l'utilisation de LinkedHashSet
 	    	Converse(SetExtension(members)) -> {
-	   				Collection<Expression> newMembers = new LinkedHashSet<Expression>();
-
-				for (Expression member : `members) {
-					if (member.getTag() == MAPSTO) {
-						BinaryExpression bExp = (BinaryExpression) member;
-						newMembers.add(
-								makeBinaryExpression(
-										MAPSTO, bExp.getRight(), bExp.getLeft()));
-					} else {
-						return expression;
-					}
-				}
-
-				result = makeSetExtension(newMembers);
-	    		trace(expression, result, "SIMP_CONVERSE_SETENUM");
-	    		return result;
+	    		final Expression rewritten = convertSetextOfMapsto(`members);
+	    		if (rewritten != null) {
+	    			result = rewritten;
+	    			trace(expression, result, "SIMP_CONVERSE_SETENUM");
+	    			return result;
+	    		}
 	    	}
 
 			/**
@@ -3448,7 +3461,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_CONVERSE_COMPSET
 			 *    {X · P ∣ x ↦ y}∼ = {X · P ∣ y ↦ x}
 			 */
-			 /* TODO : conflit avec SIMP_FINITE_CONVERSE
 			Converse(Cset(bil, P, Mapsto(x, y))) -> {
 				if (level2) {
 					result = makeQuantifiedExpression(CSET, `bil, `P,
@@ -3457,7 +3469,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 					trace(expression, result, "SIMP_CONVERSE_COMPSET");
 					return result;
 				}
-			}*/
+			}
 
 	    	/**
 			 * SIMP_DOM_LAMBDA

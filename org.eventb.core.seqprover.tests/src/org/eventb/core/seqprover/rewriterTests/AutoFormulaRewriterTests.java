@@ -652,11 +652,13 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 		
 		// f(f~(E)) == E
 		expressionTest("y + 2", "{x + 2 ↦ 3}(({x + 2 ↦ 3}∼)(y + 2))");
+		expressionTest("E", "f(f∼(E))", "f", "S↔T", "E", "T");
 		
-
+		
 		// f~(f(E)) == E
 		expressionTest("y + 2", "({x + 2 ↦ 3}∼)({x + 2 ↦ 3}(y + 2))");
-
+		expressionTest("E", "f∼(f(E))", "f", "S↔T", "E", "S");
+		
 		
 		// {x |-> a, ..., y |-> b}({a |-> x, ..., b |-> y}(E)) = E
 		expressionTest("y + 2", "{x + 2 ↦ 3}({3 ↦ x + 2}(y + 2))");
@@ -1046,10 +1048,14 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 		
 		
 		// finite(r~) == finite(r)
-		predicateTest("finite({x ↦ y ∣ x > 0 ∧ y < 2})",
-				"finite({x ↦ y ∣ x > 0 ∧ y < 2}∼)");
+		if (level2AndHigher) {
+			predicateTest("finite(r)", "finite(r∼)", "r", "S↔T");
+		} else {
+			predicateTest("finite({x ↦ y ∣ x > 0 ∧ y < 2})",
+					"finite({x ↦ y ∣ x > 0 ∧ y < 2}∼)");
+		}
 
-		
+
 		// finite(a..b) == true
 		predicateTest("⊤", "finite(a‥b)");
 
