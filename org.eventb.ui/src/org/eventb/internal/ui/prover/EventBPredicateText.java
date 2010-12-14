@@ -49,6 +49,7 @@ import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
+import org.eventb.internal.ui.proofcontrol.IProofControlPage;
 import org.eventb.ui.prover.ITacticApplication;
 import org.rodinp.keyboard.preferences.PreferenceConstants;
 
@@ -314,8 +315,11 @@ public class EventBPredicateText implements IPropertyChangeListener {
 		if (ProverUIUtils.DEBUG)
 			for (String input : inputs)
 				ProverUIUtils.debug("Input: \"" + input + "\"");
-
-		final String globalInput = proverUI.getProofControl().getInput();
+		 
+		final IProofControlPage proofControl = proverUI.getProofControl();
+		//fixed bug #3137151
+		final String globalInput = proofControl == null ? "" : proofControl.getInput();
+		
 		final boolean skipPostTactic = TacticUIRegistry.getDefault()
 				.isSkipPostTactic(application.getTacticID());
 		ProverUIUtils.applyTactic(application.getTactic(inputs, globalInput),
