@@ -12,12 +12,18 @@
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
+import static org.eventb.core.ast.FormulaFactory.getInstance;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.datatype.IConstructorMediator;
+import org.eventb.core.ast.extension.datatype.IDatatype;
+import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
+import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
 import org.eventb.pptrans.Translator;
 
 
@@ -1683,4 +1689,40 @@ public class TranslationTests extends AbstractTranslationTests {
 				mTypeEnvironment("a", "T", "b", "U"));
 	}
 	
+	private static final IDatatypeExtension DT_TYPE = new IDatatypeExtension() {
+		
+		@Override
+		public String getTypeName() {
+			return "DT";
+		}
+		
+		@Override
+		public String getId() {
+			return "DT.id";
+		}
+		
+		@Override
+		public void addTypeParameters(ITypeConstructorMediator mediator) {
+			// none
+		}
+		
+		@Override
+		public void addConstructors(IConstructorMediator mediator) {
+			mediator.addConstructor("dt", "dt.id");
+		}
+	};
+	
+	private static final IDatatype DT = ff.makeDatatype(DT_TYPE);
+
+	private static final FormulaFactory DT_FF = getInstance(DT.getExtensions());
+
+	public void testMathExtension() throws Exception {
+		final Predicate pinput = parse("p = dt", DT_FF.makeTypeEnvironment());
+		try {
+			Translator.reduceToPredicateCalulus(pinput, ff);
+			fail("expected UnsupportedOperationException thrown");
+		} catch (UnsupportedOperationException e) {
+			// as expected
+		}
+	}
 }

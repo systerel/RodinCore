@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,8 @@ public abstract class AbstractTranslationTests extends TestCase {
 	}
 
 	public static Predicate parse(String string, ITypeEnvironment te) {
-		IParseResult parseResult = ff.parsePredicate(string, V2, null);
+		final FormulaFactory factory = te.getFormulaFactory();
+		IParseResult parseResult = factory.parsePredicate(string, V2, null);
 		assertFalse("Parse error for: " + string +
 				"\nProblems: " + parseResult.getProblems(),
 				parseResult.hasProblem());

@@ -14,6 +14,7 @@ package org.eventb.internal.pp.sequent;
 import java.util.Map;
 
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
@@ -83,7 +84,15 @@ public class InputPredicate {
 			throw new IllegalStateException(
 					"Substitution should be invoked first");
 		}
-		translatedPredicate = translate(normalizedPredicate);
+		try {
+			translatedPredicate = translate(normalizedPredicate);
+		} catch (UnsupportedOperationException e) {
+			if (isGoal) {
+				translatedPredicate = ff.makeLiteralPredicate(Formula.BFALSE, null); 
+			} else {
+				translatedPredicate = ff.makeLiteralPredicate(Formula.BTRUE, null);
+			}
+		}
 	}
 
 	public void normalize(Map<FreeIdentifier, Expression> subst) {

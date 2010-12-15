@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 ETH Zurich and others.
+ * Copyright (c) 2008, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,15 +13,14 @@
 package org.eventb.pp;
 
 import static org.eventb.core.ast.LanguageVersion.V2;
-import static org.eventb.internal.pp.core.elements.terms.AbstractPPTest.ff;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -34,25 +33,21 @@ import org.eventb.internal.pp.sequent.InputSequent;
  */
 public class TestSequent {
 
-	private static List<Predicate> parseHypotheses(Iterable<String> hypotheses) {
+	private static List<Predicate> parseHypotheses(Iterable<String> hypotheses, FormulaFactory ff) {
 		final List<Predicate> result = new ArrayList<Predicate>();
 		for (final String string : hypotheses) {
-			result.add(parsePredicate(string));
+			result.add(parsePredicate(string, ff));
 		}
 		return result;
 	}
 
-	private static Predicate parsePredicate(String pred) {
+	private static Predicate parsePredicate(String pred, FormulaFactory ff) {
 		final IParseResult result = ff.parsePredicate(pred, V2, null);
 		assertFalse(pred, result.hasProblem());
 		return result.getParsedPredicate();
 	}
 
-	public static ITypeEnvironment parseTypeEnvironment(String... pairs) {
-		return parseTypeEnvironment(Arrays.asList(pairs));
-	}
-
-	public static ITypeEnvironment parseTypeEnvironment(List<String> typenvList) {
+	public static ITypeEnvironment parseTypeEnvironment(List<String> typenvList, FormulaFactory ff) {
 		final ITypeEnvironment result = ff.makeTypeEnvironment();
 		for (int i = 0; i < typenvList.size(); i = i + 2) {
 			String name = typenvList.get(i);
@@ -69,14 +64,14 @@ public class TestSequent {
 	public TestSequent(ITypeEnvironment typeEnvironment,
 			Iterable<String> hypotheses, String goal) {
 		this.typenv = typeEnvironment.clone();
-		this.hypotheses = parseHypotheses(hypotheses);
-		this.goal = parsePredicate(goal);
+		this.hypotheses = parseHypotheses(hypotheses, typeEnvironment.getFormulaFactory());
+		this.goal = parsePredicate(goal, typeEnvironment.getFormulaFactory());
 		typeCheck();
 	}
 
 	public TestSequent(List<String> typenvList, Iterable<String> hypotheses,
-			String goal) {
-		this(parseTypeEnvironment(typenvList), hypotheses, goal);
+				String goal, FormulaFactory ff) {
+		this(parseTypeEnvironment(typenvList, ff), hypotheses, goal);
 	}
 
 	private void typeCheck() {
