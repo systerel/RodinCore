@@ -35,7 +35,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
@@ -740,7 +739,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	private void contributeToActionBars() {
 		IActionBars bars = getSite().getActionBars();
 		fillLocalPullDown(bars.getMenuManager());
-		fillLocalToolBar(bars.getToolBarManager());
 	}
 
 	/**
@@ -770,18 +768,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	}
 
 	/**
-	 * Fill the local toolbar.
-	 * <p>
-	 * 
-	 * @param manager
-	 *            the toolbar manager
-	 */
-	private void fillLocalToolBar(IToolBarManager manager) {
-		manager.add(expertMode);
-	}
-
-	/**
-	 * Creat the actions used in this page.
+	 * Create the actions used in this page.
 	 */
 	private void makeActions() {
 		final IPreferenceStore store = EventBPreferenceStore
