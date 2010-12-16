@@ -15,7 +15,6 @@ package org.eventb.core.ast.tests;
 import static org.eventb.core.ast.LanguageVersion.LATEST;
 import static org.eventb.core.ast.LanguageVersion.V1;
 import static org.eventb.core.ast.LanguageVersion.V2;
-import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
 import java.util.List;
@@ -84,12 +83,12 @@ public class TestTypeChecker extends AbstractTests {
 			new TestItem(
 					"x\u2208\u2124\u22271\u2264x",
 					mTypeEnvironment(),
-					mTypeEnvironment(mList("x"), mList(INTEGER))
+					mTypeEnvironment("x", INTEGER)
 			),
 			
 			new TestItem("x\u2286S\u2227\u2205\u2282x",
-					mTypeEnvironment(mList("S"), mList(POW(ty_S))),
-					mTypeEnvironment(mList("x"), mList(POW(ty_S)))
+					mTypeEnvironment("S", POW(ty_S)),
+					mTypeEnvironment("x", POW(ty_S))
 			),
 			
 			new TestItem("\u2205=\u2205",
@@ -98,13 +97,18 @@ public class TestTypeChecker extends AbstractTests {
 			),
 			
 			new TestItem("x=TRUE",
-					mTypeEnvironment(mList("x"), mList(INTEGER)),
+					mTypeEnvironment("x", INTEGER),
 					null
 			),
 			
 			new TestItem("x=TRUE",
-					mTypeEnvironment(mList("x"), mList(BOOL)),
+					mTypeEnvironment("x", BOOL),
 					mTypeEnvironment()
+			),
+			
+			new TestItem("x=TRUE",
+					mTypeEnvironment(),
+					mTypeEnvironment("x", BOOL)
 			),
 			
 			new TestItem("M = {A \u2223 A \u2209 A}",
@@ -113,15 +117,15 @@ public class TestTypeChecker extends AbstractTests {
 			),
 			new TestItem("x>x",
 					mTypeEnvironment(),
-					mTypeEnvironment(mList("x"), mList(INTEGER))
+					mTypeEnvironment("x", INTEGER)
 			),
 			new TestItem("x\u2208y\u2227y\u2208x",
 					mTypeEnvironment(),
 					null
 			),
 			new TestItem("x\u2208\u2119(y)\u2227y\u2208\u2119(x)",
-					mTypeEnvironment(mList("x"), mList(POW(BOOL))),
-					mTypeEnvironment(mList("y"), mList(POW(BOOL)))
+					mTypeEnvironment("x", POW(BOOL)),
+					mTypeEnvironment("y", POW(BOOL))
 			),
 			
 			new TestItem("\u22a5", 
@@ -137,7 +141,7 @@ public class TestTypeChecker extends AbstractTests {
 					null
 			),
 			new TestItem("finite(x)",
-					mTypeEnvironment(mList("x"), mList(POW(INTEGER))),
+					mTypeEnvironment("x", POW(INTEGER)),
 					mTypeEnvironment()
 			),
 			new TestItem("x=x",
@@ -150,59 +154,59 @@ public class TestTypeChecker extends AbstractTests {
 			),
 			new TestItem("x<x",
 					mTypeEnvironment(),
-					mTypeEnvironment(mList("x"), mList(INTEGER))
+					mTypeEnvironment("x", INTEGER)
 			),
 			new TestItem("x≤x",
 					mTypeEnvironment(),
-					mTypeEnvironment(mList("x"), mList(INTEGER))
+					mTypeEnvironment("x", INTEGER)
 			),
 			new TestItem("x>x",
-					mTypeEnvironment(mList("x"), mList(BOOL)),
+					mTypeEnvironment("x", BOOL),
 					null
 			),
 			new TestItem("x≥x",
 					mTypeEnvironment(),
-					mTypeEnvironment(mList("x"), mList(INTEGER))
+					mTypeEnvironment("x", INTEGER)
 			),
 			new TestItem("x\u2208S",
 					mTypeEnvironment(),
 					null
 			),
 			new TestItem("x\u2208S",
-					mTypeEnvironment(mList("x"), mList(INTEGER)),
-					mTypeEnvironment(mList("S"), mList(POW(INTEGER)))
+					mTypeEnvironment("x", INTEGER),
+					mTypeEnvironment("S", POW(INTEGER))
 			),
 			new TestItem("x\u2208S",
-					mTypeEnvironment(mList("x"), mList(ty_S)),
-					mTypeEnvironment(mList("S"), mList(POW(ty_S)))
+					mTypeEnvironment("x", ty_S),
+					mTypeEnvironment("S", POW(ty_S))
 			),
 			new TestItem("x\u2209S",
-					mTypeEnvironment(mList("x"), mList(ty_S)),
-					mTypeEnvironment(mList("S"), mList(POW(ty_S)))
+					mTypeEnvironment("x", ty_S),
+					mTypeEnvironment("S", POW(ty_S))
 			),
 			new TestItem("x\u2282S",
 					mTypeEnvironment(),
 					null
 			),
 			new TestItem("x\u2282S",
-					mTypeEnvironment(mList("x"), mList(POW(ty_S))),
-					mTypeEnvironment(mList("S"), mList(POW(ty_S)))
+					mTypeEnvironment("x", POW(ty_S)),
+					mTypeEnvironment("S", POW(ty_S))
 			),
 			new TestItem("x\u2284S",
-					mTypeEnvironment(mList("x"), mList(POW(ty_S))),
-					mTypeEnvironment(mList("S"), mList(POW(ty_S)))
+					mTypeEnvironment("x", POW(ty_S)),
+					mTypeEnvironment("S", POW(ty_S))
 			),
 			new TestItem("x\u2286S",
-					mTypeEnvironment(mList("x"), mList(POW(ty_S))),
-					mTypeEnvironment(mList("S"), mList(POW(ty_S)))
+					mTypeEnvironment("x", POW(ty_S)),
+					mTypeEnvironment("S", POW(ty_S))
 			),
 			new TestItem("x\u2288S",
-					mTypeEnvironment(mList("x"), mList(POW(ty_S))),
-					mTypeEnvironment(mList("S"), mList(POW(ty_S)))
+					mTypeEnvironment("x", POW(ty_S)),
+					mTypeEnvironment("S", POW(ty_S))
 			),
 			new TestItem("partition(S, {x},{y})", V2,
-					mTypeEnvironment(mList("x"), mList(ty_S)),
-					mTypeEnvironment(mList("S", "y"), mList(POW(ty_S), ty_S))
+					mTypeEnvironment("x", ty_S),
+					mTypeEnvironment("S", POW(ty_S), "y", ty_S)
 			),
 			// LiteralPredicate
 			new TestItem("\u00ac\u22a5",
@@ -242,73 +246,73 @@ public class TestTypeChecker extends AbstractTests {
 			),
 			// Bound variable "x" has a different type from free variable "x"
 			new TestItem("\u2200 x \u00b7 x \u2208 \u2124",
-					mTypeEnvironment(mList("x"), mList(BOOL)),
+					mTypeEnvironment("x", BOOL),
 					mTypeEnvironment()
 			),
 			new TestItem("\u2203 x \u00b7 x \u2208 \u2124",
-					mTypeEnvironment(mList("x"), mList(BOOL)),
+					mTypeEnvironment("x", BOOL),
 					mTypeEnvironment()
 			),
 			new TestItem("\u2200 x,y,z \u00b7 \u22a5",
-					mTypeEnvironment(mList("x", "y", "z"), mList(BOOL, BOOL, BOOL)),
+					mTypeEnvironment("x", BOOL, "y", BOOL, "z", BOOL),
 					null
 			),
 			new TestItem("\u2200 x,y \u00b7 x ∈ y ∧ y ⊆ ℤ",
-					mTypeEnvironment(mList("x"), mList(BOOL)),  // Not used.
+					mTypeEnvironment("x", BOOL),  // Not used.
 					mTypeEnvironment()
 			),
 			new TestItem("\u2203 x,y,z \u00b7 x ∈ y ∧ x ∈ z ∧ z ⊆ S",
-					mTypeEnvironment(mList("S"), mList(POW(ty_S))),
+					mTypeEnvironment("S", POW(ty_S)),
 					mTypeEnvironment()
 			),
 			new TestItem("\u2200 x,y \u00b7 \u2200 s,t \u00b7 x ∈ s ∧ y ∈ t ∧ s ∩ t ⊆ S",
-					mTypeEnvironment(mList("S"), mList(POW(ty_S))),
+					mTypeEnvironment("S", POW(ty_S)),
 					mTypeEnvironment()
 			),
 			// SimpleExpression
 			new TestItem("bool(\u22a5)=y",
 					mTypeEnvironment(),
-					mTypeEnvironment(mList("y"), mList(BOOL))
+					mTypeEnvironment("y", BOOL)
 			),
 			new TestItem("card(x)=y",
 					mTypeEnvironment(),
 					null
 			),
 			new TestItem("card(x)=y",
-					mTypeEnvironment(mList("x"), mList(ty_S)),
+					mTypeEnvironment("x", ty_S),
 					null
 			),
 			new TestItem("card(x)=y",
-					mTypeEnvironment(mList("x"), mList(POW(ty_S))),
-					mTypeEnvironment(mList("y"), mList(INTEGER))
+					mTypeEnvironment("x", POW(ty_S)),
+					mTypeEnvironment("y", INTEGER)
 			),
 			new TestItem("\u2119(x)=y",
 					mTypeEnvironment(),
 					null
 			),
 			new TestItem("\u2119(x)=y",
-					mTypeEnvironment(mList("y"), mList(POW(POW(INTEGER)))),
-					mTypeEnvironment(mList("x"), mList(POW(INTEGER)))
+					mTypeEnvironment("y", POW(POW(INTEGER))),
+					mTypeEnvironment("x", POW(INTEGER))
 			),
 			new TestItem("\u21191(x)=y",
-					mTypeEnvironment(mList("y"), mList(POW(POW(INTEGER)))),
-					mTypeEnvironment(mList("x"), mList(POW(INTEGER)))
+					mTypeEnvironment("y", POW(POW(INTEGER))),
+					mTypeEnvironment("x", POW(INTEGER))
 			),
 			new TestItem("union(x)=y",
 					mTypeEnvironment(),
 					null
 			),
 			new TestItem("union(x)=y",
-					mTypeEnvironment(mList("y"), mList(POW(ty_S))),
-					mTypeEnvironment(mList("x"), mList(POW(POW(ty_S))))
+					mTypeEnvironment("y", POW(ty_S)),
+					mTypeEnvironment("x", POW(POW(ty_S)))
 			),
 			new TestItem("inter(x)=y",
 					mTypeEnvironment(),
 					null
 			),
 			new TestItem("inter(x)=y",
-					mTypeEnvironment(mList("y"), mList(POW(ty_S))),
-					mTypeEnvironment(mList("x"), mList(POW(POW(ty_S))))
+					mTypeEnvironment("y", POW(ty_S)),
+					mTypeEnvironment("x", POW(POW(ty_S)))
 			),
 			
 			new TestItem("dom(x)=y",
@@ -316,345 +320,356 @@ public class TestTypeChecker extends AbstractTests {
 					null
 			),
 			new TestItem("dom(x)=y",
-					mTypeEnvironment(mList("x"), mList(POW(CPROD(INTEGER,ty_S)))),
-					mTypeEnvironment(mList("y"), mList(POW(INTEGER)))
+					mTypeEnvironment("x", POW(CPROD(INTEGER,ty_S))),
+					mTypeEnvironment("y", POW(INTEGER))
 			),
 			new TestItem("ran(x)=y",
-					mTypeEnvironment(mList("x"), mList(POW(CPROD(INTEGER,ty_S)))),
-					mTypeEnvironment(mList("y"), mList(POW(ty_S)))
+					mTypeEnvironment("x", POW(CPROD(INTEGER,ty_S))),
+					mTypeEnvironment("y", POW(ty_S))
 			),
 			new TestItem("prj1(x)=y",
 					mTypeEnvironment(),
 					null
 			),
 			new TestItem("prj1(x)=y", V1,
-					mTypeEnvironment(mList("x"), mList(POW(CPROD(INTEGER,BOOL)))),
-					mTypeEnvironment(mList("y"), mList(POW(CPROD(CPROD(INTEGER,BOOL),INTEGER))))
+					mTypeEnvironment("x", POW(CPROD(INTEGER,BOOL))),
+					mTypeEnvironment("y", POW(CPROD(CPROD(INTEGER,BOOL),INTEGER)))
 			),
 			new TestItem("x\u25c1prj1=y",
-					mTypeEnvironment(mList("x"), mList(REL(ty_S, ty_T))),
-					mTypeEnvironment(mList("y"), mList(REL(CPROD(ty_S, ty_T), ty_S)))
+					mTypeEnvironment("x", REL(ty_S, ty_T)),
+					mTypeEnvironment("y", REL(CPROD(ty_S, ty_T), ty_S))
 			),
 			new TestItem("prj2(x)=y", V1,
-					mTypeEnvironment(mList("x"), mList(POW(CPROD(INTEGER,BOOL)))),
-					mTypeEnvironment(mList("y"), mList(POW(CPROD(CPROD(INTEGER,BOOL),BOOL))))
+					mTypeEnvironment("x", POW(CPROD(INTEGER,BOOL))),
+					mTypeEnvironment("y", POW(CPROD(CPROD(INTEGER,BOOL),BOOL)))
 			),
 			new TestItem("x\u25c1prj2=y",
-					mTypeEnvironment(mList("x"), mList(REL(ty_S, ty_T))),
-					mTypeEnvironment(mList("y"), mList(REL(CPROD(ty_S, ty_T), ty_T)))
+					mTypeEnvironment("x", REL(ty_S, ty_T)),
+					mTypeEnvironment("y", REL(CPROD(ty_S, ty_T), ty_T))
 			),
 			new TestItem("id(x)=y", V1,
-					mTypeEnvironment(mList("x"), mList(POW(ty_S))),
-					mTypeEnvironment(mList("y"), mList(POW(CPROD(ty_S,ty_S))))
+					mTypeEnvironment("x", POW(ty_S)),
+					mTypeEnvironment("y", POW(CPROD(ty_S,ty_S)))
 			),
 			new TestItem("x\u25c1id=y",
-					mTypeEnvironment(mList("x"), mList(POW(ty_S))),
-					mTypeEnvironment(mList("y"), mList(REL(ty_S,ty_S)))
+					mTypeEnvironment("x", POW(ty_S)),
+					mTypeEnvironment("y", REL(ty_S,ty_S))
 			),
 			new TestItem("id(x)=y",
-					mTypeEnvironment(mList("x"), mList(ty_S)),
-					mTypeEnvironment(mList("y"), mList(ty_S))
+					mTypeEnvironment("x", ty_S),
+					mTypeEnvironment("y", ty_S)
 			),
 			new TestItem("{x,y\u00b7\u22a5\u2223z}=a",
 					mTypeEnvironment(),
 					null
 			),
 			new TestItem("{x,y\u00b7\u22a5\u2223z}=a",
-					mTypeEnvironment(mList("z"), mList(INTEGER)),
+					mTypeEnvironment("z", INTEGER),
 					null
 			),
 			new TestItem("{x \u00b7 x ∈ z \u2223 z}=a",
-					mTypeEnvironment(mList("a"), mList(POW(POW(BOOL)))),
-					mTypeEnvironment(mList("z"), mList(POW(BOOL)))
+					mTypeEnvironment("a", POW(POW(BOOL))),
+					mTypeEnvironment("z", POW(BOOL))
 			),
 			new TestItem("{x \u00b7 \u22a5 \u2223 x}=a",
-					mTypeEnvironment(mList("a"), mList(POW(INTEGER))),
+					mTypeEnvironment("a", POW(INTEGER)),
 					mTypeEnvironment()
 			),
 			new TestItem("{x+y\u2223\u22a5}=a",
 					mTypeEnvironment(),
-					mTypeEnvironment(mList("a"), mList(POW(INTEGER)))
+					mTypeEnvironment("a", POW(INTEGER))
 			),
 			new TestItem("{}={}",
 					mTypeEnvironment(),
 					null
 			),
 			new TestItem("a=∅",
-					mTypeEnvironment(mList("a"), mList(POW(ty_N))),
+					mTypeEnvironment("a", POW(ty_N)),
 					mTypeEnvironment()
 			),
 			new TestItem("a=∅",
-					mTypeEnvironment(mList("a"), mList(POW(CPROD(ty_N,ty_N)))),
+					mTypeEnvironment("a", POW(CPROD(ty_N,ty_N))),
 					mTypeEnvironment()
 			),
 			new TestItem("∅=a",
-					mTypeEnvironment(mList("a"), mList(POW(ty_N))),
+					mTypeEnvironment("a", POW(ty_N)),
 					mTypeEnvironment()
 			),
 			new TestItem("∅=a",
-					mTypeEnvironment(mList("a"), mList(POW(CPROD(ty_N,ty_N)))),
+					mTypeEnvironment("a", POW(CPROD(ty_N,ty_N))),
 					mTypeEnvironment()
 			),
 			new TestItem("{x}=a",
-					mTypeEnvironment(mList("x"), mList(INTEGER)),
-					mTypeEnvironment(mList("a"), mList(POW(INTEGER)))
+					mTypeEnvironment("x", INTEGER),
+					mTypeEnvironment("a", POW(INTEGER))
 			),
 			new TestItem("{x,y,z}=a",
-					mTypeEnvironment(mList("x"), mList(INTEGER)),
-					mTypeEnvironment(mList("y","z","a"), mList(INTEGER,INTEGER,POW(INTEGER)))
+					mTypeEnvironment("x", INTEGER),
+					mTypeEnvironment("y", INTEGER, "z", INTEGER, "a", POW(INTEGER))
 			),
 			new TestItem("x\u2208\u2124",
 					mTypeEnvironment(),
-					mTypeEnvironment(mList("x"), mList(INTEGER))
+					mTypeEnvironment("x", INTEGER)
 			),
 			new TestItem("x\u2208\u2115",
 					mTypeEnvironment(),
-					mTypeEnvironment(mList("x"), mList(INTEGER))
+					mTypeEnvironment("x", INTEGER)
 			),
 			new TestItem("x\u2208\u21151",
 					mTypeEnvironment(),
-					mTypeEnvironment(mList("x"), mList(INTEGER))
+					mTypeEnvironment("x", INTEGER)
 			),
 			new TestItem("x\u2208BOOL",
 					mTypeEnvironment(),
-					mTypeEnvironment(mList("x"), mList(BOOL))
+					mTypeEnvironment("x", BOOL)
 			),
 			new TestItem("x=FALSE",
 					mTypeEnvironment(),
-					mTypeEnvironment(mList("x"), mList(BOOL))
+					mTypeEnvironment("x", BOOL)
 			),
 			new TestItem("x=pred",
 					mTypeEnvironment(),
-					mTypeEnvironment(mList("x"), mList(REL(INTEGER, INTEGER)))
+					mTypeEnvironment("x", REL(INTEGER, INTEGER))
 			),
 			new TestItem("x=succ",
 					mTypeEnvironment(),
-					mTypeEnvironment(mList("x"), mList(REL(INTEGER, INTEGER)))
+					mTypeEnvironment("x", REL(INTEGER, INTEGER))
 			),
 			new TestItem("x=2",
 					mTypeEnvironment(),
-					mTypeEnvironment(mList("x"), mList(INTEGER))
+					mTypeEnvironment("x", INTEGER)
 			),
 			// Primary
 			new TestItem("x\u223c=y",
-					mTypeEnvironment(mList("x"), mList(POW(CPROD(INTEGER,BOOL)))),
-					mTypeEnvironment(mList("y"), mList(POW(CPROD(BOOL,INTEGER))))
+					mTypeEnvironment("x", POW(CPROD(INTEGER,BOOL))),
+					mTypeEnvironment("y", POW(CPROD(BOOL,INTEGER)))
 			),
 			// Image
 			new TestItem("f(x)=a",
-					mTypeEnvironment(mList("f"), mList(POW(CPROD(INTEGER,BOOL)))),
-					mTypeEnvironment(mList("x","a"), mList(INTEGER,BOOL))
+					mTypeEnvironment("f", POW(CPROD(INTEGER,BOOL))),
+					mTypeEnvironment("x", INTEGER, "a", BOOL)
 			),
 			new TestItem("f[x]=a",
-					mTypeEnvironment(mList("f"), mList(POW(CPROD(INTEGER,BOOL)))),
-					mTypeEnvironment(mList("x","a"), mList(POW(INTEGER),POW(BOOL)))
+					mTypeEnvironment("f", POW(CPROD(INTEGER,BOOL))),
+					mTypeEnvironment("x", POW(INTEGER), "a", POW(BOOL))
 			),
 			new TestItem("f[x](y)=a",
-					mTypeEnvironment(mList("f"), mList(REL(ty_S, CPROD(ty_T, ty_U)))),
-					mTypeEnvironment(mList("x", "y", "a"), mList(POW(ty_S), ty_T, ty_U))
+					mTypeEnvironment("f", REL(ty_S, CPROD(ty_T, ty_U))),
+					mTypeEnvironment("x", POW(ty_S), "y", ty_T, "a", ty_U)
 			),
 			new TestItem("f(x)[y]=a",
-					mTypeEnvironment(mList("f"), mList(REL(ty_S, REL(ty_T, ty_U)))),
-					mTypeEnvironment(mList("x", "y", "a"), mList(ty_S, POW(ty_T), POW(ty_U)))
+					mTypeEnvironment("f", REL(ty_S, REL(ty_T, ty_U))),
+					mTypeEnvironment("x", ty_S, "y", POW(ty_T), "a", POW(ty_U))
 			),
 			new TestItem("f(x)(y)=a",
-					mTypeEnvironment(mList("f"), mList(REL(ty_S, REL(ty_T, ty_U)))),
-					mTypeEnvironment(mList("x", "y", "a"), mList(ty_S, ty_T, ty_U))
+					mTypeEnvironment("f", REL(ty_S, REL(ty_T, ty_U))),
+					mTypeEnvironment("x", ty_S, "y", ty_T, "a", ty_U)
 			),
 			new TestItem("f[x][y]=a",
-					mTypeEnvironment(mList("f"), mList(REL(ty_S, CPROD(ty_T, ty_U)))),
-					mTypeEnvironment(mList("x", "y", "a"), mList(POW(ty_S), POW(ty_T), POW(ty_U)))
+					mTypeEnvironment("f", REL(ty_S, CPROD(ty_T, ty_U))),
+					mTypeEnvironment("x", POW(ty_S), "y", POW(ty_T), "a", POW(ty_U))
 			),
 
 			// Factor
 			new TestItem("x^y=a",
 					mTypeEnvironment(),
-					mTypeEnvironment(
-							mList("a",    "x",    "y"),
-							mList(INTEGER, INTEGER, INTEGER)
-					)
+					mTypeEnvironment("a", INTEGER, "x", INTEGER, "y", INTEGER)
 			),
 			
 			// Term
 			new TestItem("x\u2217x=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
-							mList("a",    "x"),
-							mList(INTEGER, INTEGER)
+							"a", INTEGER,
+							"x", INTEGER
 					)
 			),			
 			new TestItem("x\u2217x\u2217x=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
-							mList("a", 	   "x"	),
-							mList(INTEGER, INTEGER)
+							"a", INTEGER,
+							"x", INTEGER
 					)
 			),
 			new TestItem("x÷x=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
-							mList("a",    "x"),
-							mList(INTEGER, INTEGER)
+							"a", INTEGER,
+							"x", INTEGER
 					)
 			),
 			new TestItem("x mod x=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
-							mList("a",	   "x"),
-							mList(INTEGER, INTEGER)
+							"a", INTEGER,
+							"x", INTEGER
 					)
 			),
 			// ArithmeticExpr
 			new TestItem("x+y=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
-							mList("a",    "x",    "y"),
-							mList(INTEGER, INTEGER, INTEGER)
+							"a", INTEGER,
+							"x", INTEGER,
+							"y", INTEGER
 					)
 			),
 			new TestItem("x+y+x=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
-							mList("a",    "x",    "y"),
-							mList(INTEGER, INTEGER, INTEGER)
+							"a", INTEGER,
+							"x", INTEGER,
+							"y", INTEGER
 					)
 			),
 			new TestItem("−x+y+z=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
-							mList("a",    "x",    "y",    "z"),
-							mList(INTEGER, INTEGER, INTEGER, INTEGER)
+							"a", INTEGER,
+							"x", INTEGER,
+							"y", INTEGER,
+							"z", INTEGER
 					)
 			),
 			new TestItem("x−y=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
-							mList("a",    "x",    "y"),
-							mList(INTEGER, INTEGER, INTEGER)
+							"a", INTEGER,
+							"x", INTEGER,
+							"y", INTEGER
 					)
 			),
 			new TestItem("x−y−z=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
-							mList("a",    "x",    "y",    "z"),
-							mList(INTEGER, INTEGER, INTEGER, INTEGER)
+							"a", INTEGER,
+							"x", INTEGER,
+							"y", INTEGER,
+							"z", INTEGER
 					)
 			),
 			new TestItem("−x−y=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
-							mList("a",    "x",    "y"),
-							mList(INTEGER, INTEGER, INTEGER)
+							"a", INTEGER,
+							"x", INTEGER,
+							"y", INTEGER
 					)
 			),
 			new TestItem("x−y+z−x=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
-							mList("a",    "x",    "y",    "z"),
-							mList(INTEGER, INTEGER, INTEGER, INTEGER)
+							"a", INTEGER,
+							"x", INTEGER,
+							"y", INTEGER,
+							"z", INTEGER
 					)
 			),
 			new TestItem("−x−y+z−x=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
-							mList("a",    "x",    "y",    "z"),
-							mList(INTEGER, INTEGER, INTEGER, INTEGER)
+							"a", INTEGER,
+							"x", INTEGER,
+							"y", INTEGER,
+							"z", INTEGER
 					)
 			),
 			new TestItem("x+y−z+x=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
-							mList("a",    "x",    "y",    "z"),
-							mList(INTEGER, INTEGER, INTEGER, INTEGER)
+							"a", INTEGER,
+							"x", INTEGER,
+							"y", INTEGER,
+							"z", INTEGER
 					)
 			),
 			new TestItem("−x+y−z+x=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
-							mList("a",    "x",    "y",    "z"),
-							mList(INTEGER, INTEGER, INTEGER, INTEGER)
+							"a", INTEGER,
+							"x", INTEGER,
+							"y", INTEGER,
+							"z", INTEGER
 					)
 			),
 			// IntervalExpr
 			new TestItem("x\u2025y=a",
 					mTypeEnvironment(),
 					mTypeEnvironment(
-							mList("a",         "x",    "y"),
-							mList(POW(INTEGER), INTEGER, INTEGER)
+							"a", POW(INTEGER),
+							"x", INTEGER,
+							"y", INTEGER
 					)
 			),
 			// RelationExpr
 			new TestItem("x\u2297y=a",
 					mTypeEnvironment(
-							mList("x",                  "y"),
-							mList(POW(CPROD(ty_S,ty_T)), POW(CPROD(ty_S,ty_U)))
+							"x", POW(CPROD(ty_S,ty_T)), 
+							"y", POW(CPROD(ty_S,ty_U))
 					),
-					mTypeEnvironment(mList("a"), mList(POW(CPROD(ty_S,CPROD(ty_T,ty_U)))))
+					mTypeEnvironment("a", POW(CPROD(ty_S,CPROD(ty_T,ty_U))))
 			),
 			new TestItem("x;y=a",
 					mTypeEnvironment(
-							mList("a",                  "x"),
-							mList(POW(CPROD(ty_S,ty_T)), POW(CPROD(ty_S,ty_U)))
+							"a", POW(CPROD(ty_S,ty_T)), 
+							"x", POW(CPROD(ty_S,ty_U))
 					),
-					mTypeEnvironment(mList("y"), mList(POW(CPROD(ty_U,ty_T))))
+					mTypeEnvironment("y", POW(CPROD(ty_U,ty_T)))
 			),
 
 			new TestItem("x;y;z=a",
 					mTypeEnvironment(
-							mList("a",            "x",            "z"),
-							mList(REL(ty_S,ty_T), REL(ty_S,ty_U), REL(ty_V, ty_T))
+							"a", REL(ty_S,ty_T),
+							"x", REL(ty_S,ty_U),
+							"z", REL(ty_V, ty_T)
 					),
-					mTypeEnvironment(mList("y"), mList(POW(CPROD(ty_U,ty_V))))
+					mTypeEnvironment("y", POW(CPROD(ty_U,ty_V)))
 			),
 			new TestItem("x\u25b7y=a",
 					mTypeEnvironment(
-							mList("x"),
-							mList(POW(CPROD(ty_S,ty_T)))
+							"x", POW(CPROD(ty_S,ty_T))
 					),
 					mTypeEnvironment(
-							mList("y",      "a"),
-							mList(POW(ty_T), POW(CPROD(ty_S,ty_T)))
+							"y", POW(ty_T),
+							"a", POW(CPROD(ty_S,ty_T))
 					)
 			),
 			new TestItem("x\u2a65y=a",
 					mTypeEnvironment(
-							mList("x"),
-							mList(POW(CPROD(ty_S,ty_T)))
+							"x", POW(CPROD(ty_S,ty_T))
 					),
 					mTypeEnvironment(
-							mList("y",      "a"),
-							mList(POW(ty_T), POW(CPROD(ty_S,ty_T)))
+							"y", POW(ty_T),
+							"a", POW(CPROD(ty_S,ty_T))
 					)
 			),
 			new TestItem("x\u2229y=a",
 					mTypeEnvironment(
-							mList("x"),
-							mList(POW(ty_T))
+							"x", POW(ty_T)
 					),
 					mTypeEnvironment(
-							mList("y",      "a"),
-							mList(POW(ty_T), POW(ty_T))
+							"y", POW(ty_T),
+							"a", POW(ty_T)
 					)
 			),
 			
 			new TestItem("x\u2229y\u2229z=a",
 					mTypeEnvironment(
-							mList("x"),
-							mList(POW(ty_T))
+							"x", POW(ty_T)
 					),
 					mTypeEnvironment(
-							mList("y",      "z",      "a"),
-							mList(POW(ty_T), POW(ty_T), POW(ty_T))
+							"y", POW(ty_T),
+							"z", POW(ty_T),
+							"a", POW(ty_T)
 					)
 			),
 			new TestItem("x\u2216y=a",
 					mTypeEnvironment(
-							mList("x"),
-							mList(POW(ty_T))
+							"x", POW(ty_T)
 					),
 					mTypeEnvironment(
-							mList("y",      "a"),
-							mList(POW(ty_T), POW(ty_T))
+							"y", POW(ty_T),
+							"a", POW(ty_T)
 					)
 			),
 			new TestItem("x;y\u2a65z=a",
@@ -681,98 +696,80 @@ public class TestTypeChecker extends AbstractTests {
 			// SetExpr
 			new TestItem("x\u222ay=a",
 					mTypeEnvironment(
-							mList("x"),
-							mList(POW(ty_T))
+							"x", POW(ty_T)
 					),
 					mTypeEnvironment(
-							mList("y",      "a"),
-							mList(POW(ty_T), POW(ty_T))
+							"y", POW(ty_T),
+							"a", POW(ty_T)
 					)
 			),
 			new TestItem("x\u222ay\u222az=a",
 					mTypeEnvironment(
-							mList("x"),
-							mList(POW(ty_T))
+							"x", POW(ty_T)
 					),
 					mTypeEnvironment(
-							mList("y",      "z",      "a"),
-							mList(POW(ty_T), POW(ty_T), POW(ty_T))
+							"y", POW(ty_T),
+							"z", POW(ty_T),
+							"a", POW(ty_T)
 					)
 			),
 			new TestItem("x\u00d7y=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(CPROD(ty_S,ty_T)))
+							"a", POW(CPROD(ty_S,ty_T))
 					),
 					mTypeEnvironment(
-							mList("x",      "y"),
-							mList(POW(ty_S), POW(ty_T))
+							"x", POW(ty_S),
+							"y", POW(ty_T)
 					)
 			),
 			new TestItem("x\u00d7y\u00d7z=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(CPROD(CPROD(ty_S,ty_T),ty_U)))
+							"a", POW(CPROD(CPROD(ty_S,ty_T),ty_U))
 					),
 					mTypeEnvironment(
-							mList("x",      "y",      "z"),
-							mList(POW(ty_S), POW(ty_T), POW(ty_U))
+							"x", POW(ty_S),
+							"y", POW(ty_T),
+							"z", POW(ty_U)
 					)
 			),
 			new TestItem("x\ue103y=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(CPROD(ty_S,ty_T)))
+							"a", POW(CPROD(ty_S,ty_T))
 					),
 					mTypeEnvironment(
-							mList("x",                  "y"),
-							mList(POW(CPROD(ty_S,ty_T)), POW(CPROD(ty_S,ty_T)))
+							"x", POW(CPROD(ty_S,ty_T)),
+							"y", POW(CPROD(ty_S,ty_T))
 					)
 			),
 			new TestItem("x\ue103y\ue103z=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(CPROD(ty_S,ty_T)))
+							"a", POW(CPROD(ty_S,ty_T))
 					),
 					mTypeEnvironment(
-							mList(
-									"x",
-									"y",
-									"z"
-							),
-							mList(
-									POW(CPROD(ty_S,ty_T)),
-									POW(CPROD(ty_S,ty_T)),
-									POW(CPROD(ty_S,ty_T))
-							)
+							"x", POW(CPROD(ty_S,ty_T)),
+							"y", POW(CPROD(ty_S,ty_T)),
+							"z", POW(CPROD(ty_S,ty_T))
 					)
 			),
 			
 			new TestItem("f \u2218 g = a",
 					mTypeEnvironment(
-							mList("f",                  "a"),
-							mList(POW(CPROD(ty_T,ty_U)), POW(CPROD(ty_S,ty_U)))
+							"f", POW(CPROD(ty_T,ty_U)),
+							"a", POW(CPROD(ty_S,ty_U))
 					),
 					mTypeEnvironment(
-							mList("g"),
-							mList(POW(CPROD(ty_S,ty_T)))
+							"g", POW(CPROD(ty_S,ty_T))
 					)
 			),
 			
 			new TestItem("f \u2218 g \u2218 h = a",
 					mTypeEnvironment(
-							mList("f",                  "h"),
-							mList(POW(CPROD(ty_U,ty_V)), POW(CPROD(ty_S,ty_T)))
+							"f", POW(CPROD(ty_U,ty_V)),
+							"h", POW(CPROD(ty_S,ty_T))
 					),
 					mTypeEnvironment(
-							mList(
-									"a",
-									"g"
-							),
-							mList(
-									POW(CPROD(ty_S,ty_V)),
-									POW(CPROD(ty_T,ty_U))
-							)
+							"a", POW(CPROD(ty_S,ty_V)),
+							"g", POW(CPROD(ty_T,ty_U))
 					)
 			),
 			new TestItem("x\u2225y=a",
@@ -781,274 +778,258 @@ public class TestTypeChecker extends AbstractTests {
 			),
 			new TestItem("x\u2225y=a",
 					mTypeEnvironment(
-							mList("x",                  "y"),
-							mList(POW(CPROD(ty_S,ty_U)), POW(CPROD(ty_T,ty_V)))
+							"x", POW(CPROD(ty_S,ty_U)),
+							"y", POW(CPROD(ty_T,ty_V))
 					),
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(CPROD(CPROD(ty_S,ty_T),CPROD(ty_U,ty_V))))
+							"a", POW(CPROD(CPROD(ty_S,ty_T),CPROD(ty_U,ty_V)))
 					)
 			),
 			new TestItem("x\u25c1y=a",
 					mTypeEnvironment(
-							mList("y"),
-							mList(POW(CPROD(ty_S,ty_T)))
+							"y", POW(CPROD(ty_S,ty_T))
 					),
 					mTypeEnvironment(
-							mList("x",      "a"),
-							mList(POW(ty_S), POW(CPROD(ty_S,ty_T)))
+							"x", POW(ty_S),
+							"a", POW(CPROD(ty_S,ty_T))
 					)
 			),
 			new TestItem("x\u2a64y=a",
 					mTypeEnvironment(
-							mList("y"),
-							mList(POW(CPROD(ty_S,ty_T)))
+							"y", POW(CPROD(ty_S,ty_T))
 					),
 					mTypeEnvironment(
-							mList("x",      "a"),
-							mList(POW(ty_S), POW(CPROD(ty_S,ty_T)))
+							"x", POW(ty_S),
+							"a", POW(CPROD(ty_S,ty_T))
 					)
 			),
 			// RelationalSetExpr
 			new TestItem("x\ue100y=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(POW(CPROD(ty_S,ty_T))))
+							"a", POW(POW(CPROD(ty_S,ty_T)))
 					),
 					mTypeEnvironment(
-							mList("y",      "x"),
-							mList(POW(ty_T), POW(ty_S))
+							"y", POW(ty_T),
+							"x", POW(ty_S)
 					)
 			),
 			new TestItem("(x\ue100y)\ue100z=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U))))
+							"a", POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U)))
 					),
 					mTypeEnvironment(
-							mList("z",      "y",      "x"),
-							mList(POW(ty_U), POW(ty_T), POW(ty_S))
+							"z", POW(ty_U),
+							"y", POW(ty_T),
+							"x", POW(ty_S)
 					)
 			),
 			new TestItem("x\ue101y=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(POW(CPROD(ty_S,ty_T))))
+							"a", POW(POW(CPROD(ty_S,ty_T)))
 					),
 					mTypeEnvironment(
-							mList("y",      "x"),
-							mList(POW(ty_T), POW(ty_S))
+							"y", POW(ty_T),
+							"x", POW(ty_S)
 					)
 			),
 			new TestItem("(x\ue101y)\ue101z=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U))))
+							"a", POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U)))
 					),
 					mTypeEnvironment(
-							mList("z",      "y",      "x"),
-							mList(POW(ty_U), POW(ty_T), POW(ty_S))
+							"z", POW(ty_U),
+							"y", POW(ty_T),
+							"x", POW(ty_S)
 					)
 			),
 			new TestItem("x\ue102y=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(POW(CPROD(ty_S,ty_T))))
+							"a", POW(POW(CPROD(ty_S,ty_T)))
 					),
 					mTypeEnvironment(
-							mList("y",      "x"),
-							mList(POW(ty_T), POW(ty_S))
+							"y", POW(ty_T),
+							"x", POW(ty_S)
 					)
 			),
 			new TestItem("(x\ue102y)\ue102z=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U))))
+							"a", POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U)))
 					),
 					mTypeEnvironment(
-							mList("z",      "y",      "x"),
-							mList(POW(ty_U), POW(ty_T), POW(ty_S))
+							"z", POW(ty_U),
+							"y", POW(ty_T),
+							"x", POW(ty_S)
 					)
 			),
 			new TestItem("x\u2900y=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(POW(CPROD(ty_S,ty_T))))
+							"a", POW(POW(CPROD(ty_S,ty_T)))
 					),
 					mTypeEnvironment(
-							mList("y",      "x"),
-							mList(POW(ty_T), POW(ty_S))
+							"y", POW(ty_T),
+							"x", POW(ty_S)
 					)
 			),
 			new TestItem("(x\u2900y)\u2900z=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U))))
+							"a", POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U)))
 					),
 					mTypeEnvironment(
-							mList("z",      "y",      "x"),
-							mList(POW(ty_U), POW(ty_T), POW(ty_S))
+							"z", POW(ty_U),
+							"y", POW(ty_T),
+							"x", POW(ty_S)
 					)
 			),
 			new TestItem("x\u2914y=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(POW(CPROD(ty_S,ty_T))))
+							"a", POW(POW(CPROD(ty_S,ty_T)))
 					),
 					mTypeEnvironment(
-							mList("y",      "x"),
-							mList(POW(ty_T), POW(ty_S))
+							"y", POW(ty_T),
+							"x", POW(ty_S)
 					)
 			),
 			new TestItem("(x\u2914y)\u2914z=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U))))
+							"a", POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U)))
 					),
 					mTypeEnvironment(
-							mList("z",      "y",      "x"),
-							mList(POW(ty_U), POW(ty_T), POW(ty_S))
+							"z", POW(ty_U),
+							"y", POW(ty_T),
+							"x", POW(ty_S)
 					)
 			),
 			new TestItem("x\u2916y=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(POW(CPROD(ty_S,ty_T))))
+							"a", POW(POW(CPROD(ty_S,ty_T)))
 					),
 					mTypeEnvironment(
-							mList("y",      "x"),
-							mList(POW(ty_T), POW(ty_S))
+							"y", POW(ty_T),
+							"x", POW(ty_S)
 					)
 			),
 			new TestItem("(x\u2916y)\u2916z=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U))))
+							"a", POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U)))
 					),
 					mTypeEnvironment(
-							mList("z",      "y",      "x"),
-							mList(POW(ty_U), POW(ty_T), POW(ty_S))
+							"z", POW(ty_U),
+							"y", POW(ty_T),
+							"x", POW(ty_S)
 					)
 			),
 			new TestItem("x\u2192y=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(POW(CPROD(ty_S,ty_T))))
+							"a", POW(POW(CPROD(ty_S,ty_T)))
 					),
 					mTypeEnvironment(
-							mList("y",      "x"),
-							mList(POW(ty_T), POW(ty_S))
+							"y", POW(ty_T),
+							"x", POW(ty_S)
 					)
 			),
 			new TestItem("(x\u2192y)\u2192z=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U))))
+							"a", POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U)))
 					),
 					mTypeEnvironment(
-							mList("z",      "y",      "x"),
-							mList(POW(ty_U), POW(ty_T), POW(ty_S))
+							"z", POW(ty_U),
+							"y", POW(ty_T),
+							"x", POW(ty_S)
 					)
 			),
 			new TestItem("x\u2194y=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(POW(CPROD(ty_S,ty_T))))
+							"a", POW(POW(CPROD(ty_S,ty_T)))
 					),
 					mTypeEnvironment(
-							mList("y",      "x"),
-							mList(POW(ty_T), POW(ty_S))
+							"y", POW(ty_T),
+							"x", POW(ty_S)
 					)
 			),
 			new TestItem("(x\u2194y)\u2194z=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U))))
+							"a", POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U)))
 					),
 					mTypeEnvironment(
-							mList("z",      "y",      "x"),
-							mList(POW(ty_U), POW(ty_T), POW(ty_S))
+							"z", POW(ty_U),
+							"y", POW(ty_T),
+							"x", POW(ty_S)
 					)
 			),
 			new TestItem("x\u21a0y=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(POW(CPROD(ty_S,ty_T))))
+							"a", POW(POW(CPROD(ty_S,ty_T)))
 					),
 					mTypeEnvironment(
-							mList("y",      "x"),
-							mList(POW(ty_T), POW(ty_S))
+							"y", POW(ty_T),
+							"x", POW(ty_S)
 					)
 			),
 			new TestItem("(x\u21a0y)\u21a0z=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U))))
+							"a", POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U)))
 					),
 					mTypeEnvironment(
-							mList("z",      "y",      "x"),
-							mList(POW(ty_U), POW(ty_T), POW(ty_S))
+							"z", POW(ty_U),
+							"y", POW(ty_T),
+							"x", POW(ty_S)
 					)
 			),
 			new TestItem("x\u21a3y=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(POW(CPROD(ty_S,ty_T))))
+							"a", POW(POW(CPROD(ty_S,ty_T)))
 					),
 					mTypeEnvironment(
-							mList("y",      "x"),
-							mList(POW(ty_T), POW(ty_S))
+							"y", POW(ty_T),
+							"x", POW(ty_S)
 					)
 			),
 			new TestItem("(x\u21a3y)\u21a3z=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U))))
+							"a", POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U)))
 					),
 					mTypeEnvironment(
-							mList("z",      "y",      "x"),
-							mList(POW(ty_U), POW(ty_T), POW(ty_S))
+							"z", POW(ty_U),
+							"y", POW(ty_T),
+							"x", POW(ty_S)
 					)
 			),
 			new TestItem("x\u21f8y=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(POW(CPROD(ty_S,ty_T))))
+							"a", POW(POW(CPROD(ty_S,ty_T)))
 					),
 					mTypeEnvironment(
-							mList("y",      "x"),
-							mList(POW(ty_T), POW(ty_S))
+							"y", POW(ty_T),
+							"x", POW(ty_S)
 					)
 			),
 			new TestItem("(x\u21f8y)\u21f8z=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U))))
+							"a", POW(POW(CPROD(POW(CPROD(ty_S,ty_T)),ty_U)))
 					),
 					mTypeEnvironment(
-							mList("z",      "y",      "x"),
-							mList(POW(ty_U), POW(ty_T), POW(ty_S))
+							"z", POW(ty_U),
+							"y", POW(ty_T),
+							"x", POW(ty_S)
 					)
 			),
 			// PairExpr
 			new TestItem("x\u21a6y=a",
 					mTypeEnvironment(
-							mList("a"),
-							mList(CPROD(ty_S,ty_T))
+							"a", CPROD(ty_S,ty_T)
 					),
 					mTypeEnvironment(
-							mList("x", "y"),
-							mList(ty_S, ty_T)
+							"x", ty_S,
+							"y", ty_T
 					)
 			),
 			new TestItem("a=x\u21a6y",
 					mTypeEnvironment(
-							mList("a"),
-							mList(CPROD(ty_S,ty_T))
+							"a", CPROD(ty_S,ty_T)
 					),
 					mTypeEnvironment(
-							mList("x", "y"),
-							mList(ty_S, ty_T)
+							"x", ty_S,
+							"y", ty_T
 					)
 			),
 			// QuantifiedExpr & IdentPattern
@@ -1164,18 +1145,18 @@ public class TestTypeChecker extends AbstractTests {
 			
 			// Special formulas
 			new TestItem("∀ s \u00b7 N\u25c1id ⊆ s ∧ s ; r ⊆ s ⇒ c ⊆ s",
-					mTypeEnvironment(mList("N"), mList(POW(ty_N))),
+					mTypeEnvironment("N", POW(ty_N)),
 					mTypeEnvironment(
-							mList("r",                  "c"),
-							mList(POW(CPROD(ty_N,ty_N)), POW(CPROD(ty_N,ty_N)))
+							"r", POW(CPROD(ty_N,ty_N)),
+							"c", POW(CPROD(ty_N,ty_N))
 					)
 			),
 			
 			new TestItem("(λ x ↦ y ↦ z \u00b7 x < y ∧ z ∈ ℤ∣ H ) ( f ( 1 ) ) ∈ ℙ ( ℤ )",
 					mTypeEnvironment(),
 					mTypeEnvironment(
-							mList("H",         "f"),
-							mList(POW(INTEGER), POW(CPROD(INTEGER,CPROD(CPROD(INTEGER,INTEGER),INTEGER))))
+							"H", POW(INTEGER),
+							"f", POW(CPROD(INTEGER,CPROD(CPROD(INTEGER,INTEGER),INTEGER)))
 					)
 			),
 			new TestItem(
@@ -1190,10 +1171,10 @@ public class TestTypeChecker extends AbstractTests {
 					" ( ∀ a, b \u00b7 a ∈ h ∧ a ⊆ b ⇒ b ∈ h ) ∧ " +
 					" ( ∀ c, d \u00b7 c ∈ h ∧ d ∈ h ⇒ c ∩ d ∈ h )" +
 					" } ",
-					mTypeEnvironment(mList("S"), mList(POW(ty_S))),
+					mTypeEnvironment("S", POW(ty_S)),
 					mTypeEnvironment(
-							mList("filter",           "ultraf"),
-							mList(POW(POW(POW(ty_S))), POW(POW(POW(ty_S))))
+							"filter", POW(POW(POW(ty_S))),
+							"ultraf", POW(POW(POW(ty_S)))
 					)
 			),
 			new TestItem(
@@ -1208,17 +1189,16 @@ public class TestTypeChecker extends AbstractTests {
 					" f ∣ f ∈ filter ∧ " +
 					" (∀ g \u00b7 g ∈ filter ∧ f ⊆ g ⇒ f = g) " +
 					" } ",
-					mTypeEnvironment(mList("S"), mList(POW(ty_S))),
+					mTypeEnvironment("S", POW(ty_S)),
 					mTypeEnvironment(
-							mList("filter",           "ultraf"),
-							mList(POW(POW(POW(ty_S))), POW(POW(POW(ty_S))))
+							"filter", POW(POW(POW(ty_S))),
+							"ultraf", POW(POW(POW(ty_S)))
 					)
 			),
 			new TestItem("N\u25c1id ∩ g = ∅",
-					mTypeEnvironment(mList("N"), mList(POW(ty_N))),
+					mTypeEnvironment("N", POW(ty_N)),
 					mTypeEnvironment(
-							mList("g"),
-							mList(POW(CPROD(ty_N,ty_N)))
+							"g", POW(CPROD(ty_N,ty_N))
 					)
 			),
 			new TestItem(
@@ -1238,16 +1218,10 @@ public class TestTypeChecker extends AbstractTests {
 					"     )" +
 					"    )" +
 					" )",
-					mTypeEnvironment(mList("N"), mList(POW(ty_N))),
+					mTypeEnvironment("N", POW(ty_N)),
 					mTypeEnvironment(
-							mList(
-									"g",
-									"h"
-							),
-							mList(
-									POW(CPROD(ty_N,ty_N)),
-									POW(CPROD(ty_N,POW(CPROD(ty_N,ty_N))))
-							)
+							"g", POW(CPROD(ty_N,ty_N)),
+							"h", POW(CPROD(ty_N,POW(CPROD(ty_N,ty_N))))
 					)
 			),
 			new TestItem(
@@ -1257,20 +1231,12 @@ public class TestTypeChecker extends AbstractTests {
 					" ( ∀ s \u00b7 s ⊆ exit\u223c[s] ⇒ s = ∅ ) ∧ " +
 					" aut ⩥ {outside} ⊆ (aut ; exit\u223c) ∧ " +
 					" ( ∃ l \u00b7 l ∈ L ∖ {outside} ∧ outside ↦ l ∈ com ∧ L×{l} ⊆ aut )",
-					mTypeEnvironment(mList("L"), mList(POW(ty_L))),
+					mTypeEnvironment("L", POW(ty_L)),
 					mTypeEnvironment(
-							mList(
-									"aut",
-									"com",
-									"outside",
-									"exit"
-							),
-							mList(
-									POW(CPROD(ty_L,ty_L)),
-									POW(CPROD(ty_L,ty_L)),
-									ty_L,
-									POW(CPROD(ty_L,ty_L))
-							)
+							"aut", POW(CPROD(ty_L,ty_L)),
+							"com", POW(CPROD(ty_L,ty_L)),
+							"outside", ty_L,
+							"exit", POW(CPROD(ty_L,ty_L))
 					)
 			),
 			
@@ -1282,12 +1248,11 @@ public class TestTypeChecker extends AbstractTests {
 					" (∀ v \u00b7 (∀ w \u00b7 f(w) ⊆ w ⇒ v ⊆ w) ⇒ v ⊆ fix) ∧ " +
 					" f(fix) = fix ",
 					mTypeEnvironment(
-							mList("S"),	
-							mList(POW(ty_S))
+							"S", POW(ty_S)
 					),
 					mTypeEnvironment(
-							mList("fix",    "f"),	
-							mList(POW(ty_S), POW(CPROD(POW(ty_S),POW(ty_S))))
+							"fix", POW(ty_S),
+							"f", POW(CPROD(POW(ty_S),POW(ty_S)))
 					)
 			),
 			new TestItem(
@@ -1295,24 +1260,20 @@ public class TestTypeChecker extends AbstractTests {
 					"∧ (∀x\u00b7x ∈ T) " +
 					"∧ (∀x\u00b7x ∈ U) ",
 					mTypeEnvironment(
-							mList("S",      "T",      "U"),	
-							mList(POW(ty_S), POW(ty_T), POW(ty_U))
+							"S", POW(ty_S), "T", POW(ty_T), "U", POW(ty_U)
 					),
 					mTypeEnvironment(
-							mList("x"),	
-							mList(ty_S)
+							"x", ty_S
 					)
 			),
 			new TestItem(
 					"  x ∈ S " +
 					"∧ (∀x\u00b7x ∈ T ∧ (∀x\u00b7x ∈ U)) ",
 					mTypeEnvironment(
-							mList("S",      "T",      "U"),	
-							mList(POW(ty_S), POW(ty_T), POW(ty_U))
+							"S", POW(ty_S), "T", POW(ty_T), "U", POW(ty_U)
 					),
 					mTypeEnvironment(
-							mList("x"),	
-							mList(ty_S)
+							"x", ty_S
 					)
 			),
 			
@@ -1320,8 +1281,8 @@ public class TestTypeChecker extends AbstractTests {
 			new TestItem(
 					"x ∈ y",
 					mTypeEnvironment(
-							mList("x", "y"),
-							mList(ty_S, POW(ty_S2))
+							"x", ty_S,
+							"y", POW(ty_S2)
 					),
 					mTypeEnvironment()
 			),
@@ -1344,91 +1305,98 @@ public class TestTypeChecker extends AbstractTests {
 	private TestItem[] assignItems = new TestItem[] {
 			new TestItem(
 					"x ≔ E",
-					mTypeEnvironment(mList("x"), mList(ty_S)),
-					mTypeEnvironment(mList("E"), mList(ty_S))
+					mTypeEnvironment("x", ty_S),
+					mTypeEnvironment("E", ty_S)
 			),
 			new TestItem(
 					"x ≔ 2",
 					mTypeEnvironment(),
-					mTypeEnvironment(mList("x"), mList(INTEGER))
+					mTypeEnvironment("x", INTEGER)
 			),
 			new TestItem(
 					"x ≔ 2",
-					mTypeEnvironment(mList("x"), mList(ty_S)),
+					mTypeEnvironment("x", ty_S),
 					null
 			),
 			new TestItem(
 					"x,y ≔ E,F",
-					mTypeEnvironment(mList("x", "F"), mList(ty_S, ty_T)),
-					mTypeEnvironment(mList("E", "y"), mList(ty_S, ty_T))
+					mTypeEnvironment("x", ty_S,	"F", ty_T),
+					mTypeEnvironment("E", ty_S, "y", ty_T)
 			),
 			new TestItem(
 					"x,y ≔ E,F",
-					mTypeEnvironment(mList("x", "y", "E"), mList(ty_S, ty_T, ty_T)),
+					mTypeEnvironment("x", ty_S, "y", ty_T, "E", ty_T),
 					null
 			),
 			new TestItem(
 					"x,y ≔ E,F",
-					mTypeEnvironment(mList("x", "y", "F"), mList(ty_S, ty_T, ty_S)),
+					mTypeEnvironment("x", ty_S, "y", ty_T, "F", ty_S),
 					null
 			),
 			new TestItem(
 					"x,y,z ≔ ∅,∅,∅",
 					mTypeEnvironment(
-							mList("x",       "y",       "z"), 
-							mList(POW(ty_S), POW(ty_T), POW(ty_U))),
+							"x", POW(ty_S),
+							"y", POW(ty_T),
+							"z", POW(ty_U)),
 					mTypeEnvironment()
 			),
 			new TestItem(
 					"x,y,z ≔ E,F,G",
 					mTypeEnvironment(
-							mList("x",  "y",  "z",  "E"), 
-							mList(ty_S, ty_T, ty_U, ty_T)),
+							"x", POW(ty_S),
+							"y", POW(ty_T),
+							"z", POW(ty_U),
+							"E", POW(ty_T)),
 					null
 			),
 			new TestItem(
 					"x,y,z ≔ E,F,G",
 					mTypeEnvironment(
-							mList("x",  "y",  "z",  "F"), 
-							mList(ty_S, ty_T, ty_U, ty_U)),
+							"x", POW(ty_S),
+							"y", POW(ty_T),
+							"z", POW(ty_U),
+							"F", POW(ty_U)),
 					null
 			),
 			new TestItem(
 					"x,y,z ≔ E,F,G",
 					mTypeEnvironment(
-							mList("x",  "y",  "z",  "G"), 
-							mList(ty_S, ty_T, ty_U, ty_S)),
+							"x", POW(ty_S),
+							"y", POW(ty_T),
+							"z", POW(ty_U),
+							"G", POW(ty_S)),
 					null
 			),
 			new TestItem(
 					"x :∈ S",
-					mTypeEnvironment(mList("S"), mList(POW(ty_S))),
-					mTypeEnvironment(mList("x"), mList(ty_S))
+					mTypeEnvironment("S", POW(ty_S)),
+					mTypeEnvironment("x", ty_S)
 			),
 			new TestItem(
 					"x :∈ ∅",
-					mTypeEnvironment(mList("x"), mList(POW(ty_S))),
+					mTypeEnvironment("x", POW(ty_S)),
 					mTypeEnvironment()
 			),
 			new TestItem(
 					"x :∈ 1",
-					mTypeEnvironment(mList("x"), mList(ty_S)),
+					mTypeEnvironment("x", ty_S),
 					null
 			),
 			new TestItem(
 					"x :∈ 1",
-					mTypeEnvironment(mList("x"), mList(INTEGER)),
+					mTypeEnvironment("x", INTEGER),
 					null
 			),
 			new TestItem(
 					"x :\u2223 x' < 0",
 					mTypeEnvironment(),
-					mTypeEnvironment(mList("x"), mList(INTEGER))
+					mTypeEnvironment("x", INTEGER)
 			),
 			new TestItem(
 					"x,y :\u2223 x' < 0 ∧ y' = bool(x' = 5)",
 					mTypeEnvironment(),
-					mTypeEnvironment(mList("x", "y"), mList(INTEGER, BOOL))
+					mTypeEnvironment("x", INTEGER, "y", BOOL)
 			),
 	};
 	
