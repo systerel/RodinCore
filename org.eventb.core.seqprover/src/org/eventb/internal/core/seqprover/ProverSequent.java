@@ -47,7 +47,7 @@ import org.eventb.core.seqprover.ProverRule;
 public final class ProverSequent implements IInternalProverSequent{
 	
 	/**
-	 * Debug flag for <code>SEQPROVER_TRACE</code>
+	 * Debug flag for <code>PROVER_SEQUENT_TRACE</code>
 	 */
 	public static boolean DEBUG;
 
@@ -58,15 +58,10 @@ public final class ProverSequent implements IInternalProverSequent{
 	 * 
 	 * @param message
 	 *            The message to print out to the console
-	 * @param an
-	 *            object to output, or null
 	 */
-	private static void debugOut(String message, Object obj) {
+	private void traceCreation() {
 		if (DEBUG) {
-			if (obj != null) {
-				message = message.concat(obj.toString());
-			}
-			System.out.println(message);
+			System.out.println("Constructed new sequent " + this);
 		}
 	}
 
@@ -150,7 +145,7 @@ public final class ProverSequent implements IInternalProverSequent{
 		this.hiddenHypotheses = NO_HYPS;
 		this.selectedHypotheses = selectedHypotheses == null ? NO_HYPS : new LinkedHashSet<Predicate>(selectedHypotheses);
 		this.goal = goal;
-		debugOut("Constructed new sequent ", this);
+		traceCreation();
 	}
 	
 	
@@ -188,7 +183,7 @@ public final class ProverSequent implements IInternalProverSequent{
 		this.hiddenHypotheses = NO_HYPS;
 		this.selectedHypotheses = NO_HYPS;
 		this.goal = goal;
-		debugOut("Constructed new sequent ", this);
+		traceCreation();
 	}
 	
 	
@@ -234,6 +229,8 @@ public final class ProverSequent implements IInternalProverSequent{
 		
 		if (goal == null) this.goal = seq.goal;
 		else this.goal = goal;
+
+		traceCreation();
 	}
 	
 	/**
@@ -282,7 +279,7 @@ public final class ProverSequent implements IInternalProverSequent{
 		this.hiddenHypotheses = hiddenHypSet== null ? NO_HYPS : new LinkedHashSet<Predicate>(hiddenHypSet);;
 		this.selectedHypotheses = selectedHypSet== null ? NO_HYPS : new LinkedHashSet<Predicate>(selectedHypSet);
 		this.goal = goal;
-		debugOut("Constructed new sequent ", this);
+		traceCreation();
 	}
 
 	/* (non-Javadoc)
