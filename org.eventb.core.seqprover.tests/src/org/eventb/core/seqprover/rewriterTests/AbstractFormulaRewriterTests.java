@@ -152,7 +152,7 @@ public abstract class AbstractFormulaRewriterTests {
 		assertTrue("Expected expression should be type checked ",
 				expected.isTypeChecked());
 		final Predicate actual = input.rewrite(r);
-		assertEquals(input + " --> " + expected, expected, actual);
+		assertEquals(input.toString(), expected, actual);
 		if (expected.equals(input)) {
 			// If no rewriting occurs, the exact same formula shall be returned.
 			assertSame(input.toString(), input, actual);
@@ -239,12 +239,12 @@ public abstract class AbstractFormulaRewriterTests {
 				input.isTypeChecked());
 		assertTrue("Expected expression " + expected
 				+ " should be type checked", expected.isTypeChecked());
-		assertEquals("Expected expression: " + expected
-				+ " and input expression: " + input
+		assertEquals("Expected expression " + expected
+				+ " and input expression " + input
 				+ " should be of the same type ", expected.getType(), input
 				.getType());
 		final Expression actual = input.rewrite(r);
-		assertEquals(input + " --> " + expected, expected, actual);
+		assertEquals(input.toString(), expected, actual);
 		if (expected.equals(input)) {
 			// If no rewriting occurs, the exact same formula shall be returned.
 			assertSame(input.toString(), input, actual);
