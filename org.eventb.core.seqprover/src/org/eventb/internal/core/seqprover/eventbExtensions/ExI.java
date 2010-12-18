@@ -58,7 +58,8 @@ public class ExI implements IReasoner {
 	@ProverRule("EXISTS_INST")
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput, IProofMonitor pm){
 	
-		if (! Lib.isExQuant(seq.goal()))
+		final Predicate goal = seq.goal();
+		if (! Lib.isExQuant(goal))
 			return ProverFactory.reasonerFailure(
 					this,reasonerInput,
 					"Goal is not existentially quantified"); 
@@ -69,7 +70,7 @@ public class ExI implements IReasoner {
 		if (input.hasError())
 			return ProverFactory.reasonerFailure(this,reasonerInput,input.getError());
 		
-		BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(seq.goal());
+		BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(goal);
 		
 		// compute instantiations from the input: 
 		// it can be that the number of bound variables have increased 
@@ -91,7 +92,7 @@ public class ExI implements IReasoner {
 		lib.removeTrue(WDpreds);
 		
 		// Generate the instantiated predicate
-		Predicate instantiatedPred = lib.instantiateBoundIdents(seq.goal(),instantiations);
+		Predicate instantiatedPred = lib.instantiateBoundIdents(goal,instantiations);
 		assert instantiatedPred != null;
 		
 		// Generate the anticidents
@@ -111,7 +112,7 @@ public class ExI implements IReasoner {
 		// Generate the successful reasoner output
 		IProofRule reasonerOutput = ProverFactory.makeProofRule(
 				this,input,
-				seq.goal(),
+				goal,
 				"∃ goal (inst "+displayInstantiations(instantiations)+")",
 				anticidents);
 				
