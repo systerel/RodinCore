@@ -15,19 +15,28 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
 import static org.eventb.core.ast.Formula.BFALSE;
+import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BTRUE;
+import static org.eventb.core.ast.Formula.BUNION;
+import static org.eventb.core.ast.Formula.DOMRES;
+import static org.eventb.core.ast.Formula.DOMSUB;
 import static org.eventb.core.ast.Formula.EMPTYSET;
 import static org.eventb.core.ast.Formula.INTLIT;
 import static org.eventb.core.ast.Formula.KID_GEN;
+import static org.eventb.core.ast.Formula.SETMINUS;
 import static org.eventb.core.ast.Formula.UNMINUS;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
+import org.eventb.core.ast.AtomicExpression;
+import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
@@ -46,6 +55,7 @@ import org.eventb.core.seqprover.eventbExtensions.DLib;
  * <li>contradiction determines the result (depending on the operator)</li>
  * <li>right determinant wipes out previous children (for overriding)</li>
  * <li>specific simplifications for multiplication</li>
+ * <li>specific simplifications for fcomp and bcomp</li>
  * </ul>
  * <p>
  * This class provides one static method per implemented operator. It is
@@ -90,14 +100,9 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 		return new PlusSimplification(expression, dLib).simplify();
 	}
 
-	public static Expression simplifyFcomp(AssociativeExpression expression,
+	public static Expression simplifyComp(AssociativeExpression expression,
 			DLib dLib) {
-		return new FcompSimplification(expression, dLib).simplify();
-	}
-
-	public static Expression simplifyBcomp(AssociativeExpression expression,
-			DLib dLib) {
-		return new BcompSimplification(expression, dLib).simplify();
+		return new CompSimplification(expression, dLib).simplify();
 	}
 
 	public static Expression simplifyOvr(AssociativeExpression expression,
@@ -226,10 +231,59 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 
 	}
 
-	private static class BcompSimplification extends ExpressionSimplification {
+	/**
+	 * This class handles operators Fcomp and Bcomp. In addition to neutral and
+	 * determinant, we also process special cases:
+	 * <ul>
+	 * <li>sequences of the form (S ◁ id) ; (T ◁ id) which are simplified in (S
+	 * ∩ T) ◁ id</li>
+	 * <li>sequences of the form (S ⩤ id) ; (T ⩤ id) which are simplified in (S
+	 * ∪ T) ⩤ id</li>
+	 * <li>mixed sequences of the form (S ◁ id) ; (T ⩤ id) which are simplified
+	 * in (S ∖ T) ◁ id</li>
+	 * </ul>
+	 * 
+	 * The utility class {@link CompSpecialHandler} regroups the methods and
+	 * data structures needed to perform the special simplifications described
+	 * above.
+	 */
+	private static class CompSimplification extends ExpressionSimplification {
 
-		BcompSimplification(AssociativeExpression original, DLib dLib) {
+		private CompSpecialHandler specialHandler;
+
+		CompSimplification(AssociativeExpression original, DLib dLib) {
 			super(original, dLib);
+			specialHandler = new CompSpecialHandler();
+		}
+
+		@Override
+		protected void processChild(Expression child) {
+			if (isNeutral(child)) {
+				changed = true;
+			} else if (isDeterminant(child)) {
+				knownResult = getDeterminantResult(child);
+			} else if (specialHandler.isProcessing()) {
+				// processing consecutive special cases
+				if (specialHandler.match(child)) {
+					// continue processing
+					specialHandler.process(child);
+					assert !eliminateDuplicate();
+					((ArrayList<Expression>) newChildren).set(
+							newChildren.size() - 1,
+							specialHandler.buildResult());
+				} else {
+					// stop processing
+					specialHandler.stop();
+					newChildren.add(child);
+				}
+			} else if (specialHandler.match(child)) {
+				// start processing
+				specialHandler.process(child);
+				newChildren.add(child);
+			} else {
+				// no special handling
+				newChildren.add(child);
+			}
 		}
 
 		@Override
@@ -257,37 +311,98 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 			return ff.makeEmptySet(original.getType(), null);
 		}
 
-	}
+		private class CompSpecialHandler {
 
-	private static class FcompSimplification extends ExpressionSimplification {
+			// As long as consecutive special cases are met, this boolean holds
+			// true
+			private boolean isProcessing;
 
-		FcompSimplification(AssociativeExpression original, DLib dLib) {
-			super(original, dLib);
-		}
+			private List<Expression> domResElements;
+			private List<Expression> domSubElements;
 
-		@Override
-		protected boolean eliminateDuplicate() {
-			return false;
-		}
+			// The most recent occurrence of identity is stored, in order to be
+			// able type the resulting expression correctly
+			private AtomicExpression id;
 
-		@Override
-		protected boolean isNeutral(Expression child) {
-			return child.getTag() == KID_GEN;
-		}
+			public CompSpecialHandler() {
+				isProcessing = false;
+				domResElements = new ArrayList<Expression>();
+				domSubElements = new ArrayList<Expression>();
+			}
 
-		@Override
-		protected boolean isDeterminant(Expression child) {
-			return child.getTag() == EMPTYSET;
-		}
+			public boolean match(Expression expression) {
+				if (expression.getTag() != DOMRES
+						&& expression.getTag() != DOMSUB) {
+					return false;
+				}
+				final BinaryExpression bExpr = (BinaryExpression) expression;
+				if (bExpr.getRight().getTag() != KID_GEN) {
+					return false;
+				}
+				return true;
+			}
 
-		@Override
-		protected Expression getNeutral() {
-			return ff.makeAtomicExpression(KID_GEN, null, original.getType());
-		}
+			public void process(Expression expr) {
+				assert match(expr);
+				isProcessing = true;
+				final BinaryExpression bExpr = (BinaryExpression) expr;
 
-		@Override
-		protected Expression getDeterminantResult(Expression child) {
-			return ff.makeEmptySet(original.getType(), null);
+				id = (AtomicExpression) bExpr.getRight();
+				if (expr.getTag() == DOMRES) {
+					domResElements.add(bExpr.getLeft());
+				} else if (expr.getTag() == DOMSUB) {
+					domSubElements.add(bExpr.getLeft());
+				}
+			}
+
+			public Expression buildResult() {
+				final Expression result;
+
+				if (domResElements.isEmpty()) {
+					// only domSub operators
+					final Expression lhs = ff.makeAssociativeExpression(BUNION,
+							domSubElements, null);
+					result = ff.makeBinaryExpression(DOMSUB, lhs, id, null);
+				} else if (domSubElements.isEmpty()) {
+					// only domRes operators
+					final Expression lhs = ff.makeAssociativeExpression(BINTER,
+							domResElements, null);
+					result = ff.makeBinaryExpression(DOMRES, lhs, id, null);
+				} else {
+					// both domSub and domRes operators are present
+					final Expression inter;
+					final Expression union;
+					if (domResElements.size() == 1) {
+						inter = domResElements.get(0);
+					} else {
+						inter = ff.makeAssociativeExpression(BINTER,
+								domResElements, null);
+					}
+					if (domSubElements.size() == 1) {
+						union = domSubElements.get(0);
+					} else {
+						union = ff.makeAssociativeExpression(BUNION,
+								domSubElements, null);
+					}
+					// building the set subtraction
+					final Expression lhs = ff.makeBinaryExpression(SETMINUS,
+							inter, union, null);
+					result = ff.makeBinaryExpression(DOMRES, lhs, id, null);
+				}
+
+				return result;
+			}
+
+			public void stop() {
+				isProcessing = false;
+				domResElements.clear();
+				domSubElements.clear();
+			}
+
+			public boolean isProcessing() {
+				return isProcessing;
+			}
+
 		}
 
 	}
@@ -411,6 +526,15 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 
 	}
 
+	/**
+	 * For simplifications over this operator, we use backward traversing. This
+	 * allows a simpler implementation:
+	 * <ul>
+	 * <li>the traversing is stopped as soon as a type expression is encountered
+	 * </li>
+	 * <li>the handling of duplicates is correctly done from left to right</li>
+	 * </ul>
+	 */
 	private static class OvrSimplification extends ExpressionSimplification {
 
 		OvrSimplification(AssociativeExpression original, DLib dLib) {
@@ -418,20 +542,70 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 		}
 
 		@Override
-		protected void processChild(Expression child) {
-			if (isNeutral(child)) {
-				changed = true;
+		protected void processChildren() {
+			if (children[0].isATypeExpression()) {
+				// If the first element is a type, then the original expression
+				// is returned. This is possible because there is no absorbing
+				// element for operator ovr.
+				knownResult = original;
+			} else if (children[children.length - 1].isATypeExpression()) {
+				// If the last element is a type, then only the last element is
+				// returned.
+				knownResult = children[children.length - 1];
 			} else {
-				if (child.isATypeExpression()) {
-					newChildren.clear();  // forget children before
+				// Otherwise, the elements are traversed backwards.
+				for (int i = children.length - 1; i >= 0; i--) {
+					processChild(children[i]);
+					if (knownResult != null) {
+						return;
+					}
 				}
-				newChildren.add(child);
 			}
 		}
 
 		@Override
+		protected void processChild(Expression child) {
+			if (isNeutral(child)) {
+				changed = true;
+			} else {
+				newChildren.add(child);
+				if (child.isATypeExpression()) {
+					// If a type expression is encountered, then the result is
+					// known and the process stops.
+					final ArrayList<Expression> list = new ArrayList<Expression>(
+							newChildren);
+					// Reverting the order
+					Collections.reverse(list);
+					newChildren = list;
+					knownResult = makeAssociativeFormula();
+				}
+			}
+		}
+
+		@Override
+		protected Expression makeResult() {
+			if (knownResult != null) {
+				return knownResult;
+			}
+			int size = newChildren.size();
+			if (size == 0) {
+				return getNeutral();
+			} else if (size == 1) {
+				return newChildren.iterator().next();
+			} else if (changed || size != children.length) {
+				final ArrayList<Expression> list = new ArrayList<Expression>(
+						newChildren);
+				// Reverting the order
+				Collections.reverse(list);
+				newChildren = list;
+				return makeAssociativeFormula();
+			}
+			return original;
+		}
+
+		@Override
 		protected boolean eliminateDuplicate() {
-			return false;
+			return true;
 		}
 
 		@Override
@@ -512,7 +686,7 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 	protected final T[] children;
 
 	// Children of the resulting formula, so far
-	protected final Collection<T> newChildren;
+	protected Collection<T> newChildren;
 
 	// If non-null, this contains the result, ignore newChildren above
 	protected T knownResult;
@@ -544,7 +718,7 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 		return makeResult();
 	}
 
-	private void processChildren() {
+	protected void processChildren() {
 		for (T child : children) {
 			processChild(child);
 			if (knownResult != null) {

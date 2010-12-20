@@ -611,8 +611,16 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_SPECIAL_COMPSET_BTRUE() {
 		expressionTest("S", "{x⦂S · ⊤ ∣ x}", "S", "ℙ(S)");
-		expressionTest("{x⦂S, y⦂S · ⊤ ∣ x}", "{x⦂S, y⦂S · ⊤ ∣ x}", //
+		expressionTest("S×T", "{x⦂S, y⦂T · ⊤ ∣ x↦y}", "S", "ℙ(S)", "T", "ℙ(T)");
+		expressionTest("T×S", "{x⦂S, y⦂T · ⊤ ∣ y↦x}", "S", "ℙ(S)", "T", "ℙ(T)");
+		expressionTest("T×S×U", "{x⦂S, y⦂T, z⦂U · ⊤ ∣ y↦x↦z}", //
+				"S", "ℙ(S)", "T", "ℙ(T)", "U", "ℙ(U)");
+
+		expressionTest("{x⦂S, y · ⊤ ∣ x↦y+1}", "{x⦂S, y · ⊤ ∣ x↦y+1}", //
 				"S", "ℙ(S)");
+		expressionTest("{x⦂S, y⦂T · ⊤ ∣ x↦a↦y}", "{x⦂S, y⦂T · ⊤ ∣ x↦a↦y}", "a",
+				"A");
+		expressionTest("{x⦂S, y⦂T · ⊤ ∣ x↦y↦x}", "{x⦂S, y⦂T · ⊤ ∣ x↦y↦x}");
 	}
 
 	/**
@@ -1086,8 +1094,23 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_CARD_COMPSET() {
 		expressionTest("card(S)", "card({x · x∈S ∣ x})", "S", "ℙ(T)");
-		expressionTest("card({x · x∈S∩{x} ∣ x})", "card({x · x∈S∩{x} ∣ x})", //
+		expressionTest("card(S)", "card({x, y · x↦y∈S ∣ x↦y})", "S", "ℙ(T×U)");
+
+		expressionTest("card({x, y · x↦a↦y∈S ∣ x↦a↦y})",
+				"card({x, y · x↦a↦y∈S ∣ x↦a↦y})", "S", "ℙ(T×A×U)");
+		expressionTest("card({x, y · x↦y∈S ∣ y↦x})",
+				"card({x, y · x↦y∈S ∣ y↦x})", "S", "ℙ(T×U)");
+		expressionTest("card({x, y · x↦y+1∈S ∣ x↦y+1})",
+				"card({x, y · x↦y+1∈S ∣ x↦y+1})", "S", "ℙ(T×ℤ)");
+
+		expressionTest("card({x · x∈S∪{x} ∣ x})", "card({x · x∈S∪{x} ∣ x})", //
 				"S", "ℙ(T)");
+		expressionTest("card({x, y · x↦y∈S∪{x↦y} ∣ x↦y})",
+				"card({x, y · x↦y∈S∪{x↦y} ∣ x↦y})", //
+				"S", "ℙ(T×U)");
+		expressionTest("card({x, y · x↦y∈S×(U∪{y}) ∣ x↦y})",
+				"card({x, y · x↦y∈S×(U∪{y}) ∣ x↦y})", //
+				"S", "ℙ(T)", "U", "ℙ(V)");
 	}
 
 	/**
@@ -1123,7 +1146,6 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	public void testSIMP_TYPE_OVERL_CPROD() {
 		expressionTest("(S × T)  s", "r  (S × T)  s", //
 				"S", "ℙ(S)", "T", "ℙ(T)");
-		expressionTest("(S × T)  r", "(S × T)  r", "S", "ℙ(S)", "T", "ℙ(T)");
 		expressionTest("S × T", "r  (S × T)", "S", "ℙ(S)", "T", "ℙ(T)");
 		expressionTest("S × T", "r  (S × T)  s  (S × T)", //
 				"S", "ℙ(S)", "T", "ℙ(T)");
@@ -1434,6 +1456,231 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_CARD_PRJ2_DOMRES() {
 		expressionTest("card(E)", "card(E ◁ prj2)", "E", "ℙ(S×T)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_MULTI_EQUAL_BINTER is implemented correctly
+	 */
+	@Test
+	public void testSIMP_MULTI_EQUAL_BINTER() {
+		predicateTest("T ⊆ S ∩ U", "S ∩ T ∩ U = T", //
+				"S", "ℙ(V)", "T", "ℙ(V)", "U", "ℙ(V)");
+		predicateTest("T ⊆ S", "S ∩ T = T", "S", "ℙ(V)", "T", "ℙ(V)");
+		predicateTest("T ⊆ U", "T ∩ U = T", "T", "ℙ(V)", "U", "ℙ(V)");
+		predicateTest("T ⊆ S ∩ U", "S ∩ T ∩ T ∩ U = T", //
+				"S", "ℙ(V)", "T", "ℙ(V)", "U", "ℙ(V)");
+
+		predicateTest("⊤", "T ∩ T = T", "T", "ℙ(U)");
+
+		predicateTest("S ∩ T ∩ U = V", "S ∩ T ∩ U = V", //
+				"S", "ℙ(W)", "T", "ℙ(W)", "U", "ℙ(W)", "V", "ℙ(W)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_MULTI_EQUAL_BUNION is implemented correctly
+	 */
+	@Test
+	public void testSIMP_MULTI_EQUAL_BUNION() {
+		predicateTest("S ∪ U ⊆ T", "S ∪ T ∪ U = T", //
+				"S", "ℙ(V)", "T", "ℙ(V)", "U", "ℙ(V)");
+		predicateTest("S ⊆ T", "S ∪ T = T", "S", "ℙ(V)", "T", "ℙ(V)");
+		predicateTest("U ⊆ T", "T ∪ U = T", "T", "ℙ(V)", "U", "ℙ(V)");
+		predicateTest("S ∪ U ⊆ T", "S ∪ T ∪ T ∪ U = T", //
+				"S", "ℙ(V)", "T", "ℙ(V)", "U", "ℙ(V)");
+
+		predicateTest("⊤", "T ∪ T = T", "T", "ℙ(U)");
+
+		predicateTest("S ∪ T ∪ U = V", "S ∪ T ∪ U = V", //
+				"S", "ℙ(W)", "T", "ℙ(W)", "U", "ℙ(W)", "V", "ℙ(W)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_SPECIAL_SUBSET_L is implemented correctly
+	 */
+	@Test
+	public void testSIMP_SPECIAL_SUBSET_L() {
+		predicateTest("S ≠ ∅", "∅ ⊂ S", "S", "ℙ(T)");
+		predicateTest("⊤", "∅ ⊆ S", "S", "ℙ(T)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_DOMRES_DOMRES_ID is implemented correctly
+	 */
+	@Test
+	public void testSIMP_DOMRES_DOMRES_ID() {
+		expressionTest("(S ∩ T) ◁ id", "S ◁ (T ◁ id)", //
+				"S", "ℙ(U)", "T", "ℙ(U)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_RANRES_DOMRES_ID is implemented correctly
+	 */
+	@Test
+	public void testSIMP_RANRES_DOMRES_ID() {
+		expressionTest("(S ∩ T) ◁ id", "(S ◁ id) ▷ T", //
+				"S", "ℙ(U)", "T", "ℙ(U)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_DOMSUB_DOMRES_ID is implemented correctly
+	 */
+	@Test
+	public void testSIMP_DOMSUB_DOMRES_ID() {
+		expressionTest("(T ∖ S) ◁ id", "S ⩤ (T ◁ id)", //
+				"S", "ℙ(U)", "T", "ℙ(U)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_RANSUB_DOMRES_ID is implemented correctly
+	 */
+	@Test
+	public void testSIMP_RANSUB_DOMRES_ID() {
+		expressionTest("(S ∖ T) ◁ id", "(S ◁ id) ⩥ T", //
+				"S", "ℙ(U)", "T", "ℙ(U)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_DOMRES_DOMSUB_ID is implemented correctly
+	 */
+	@Test
+	public void testSIMP_DOMRES_DOMSUB_ID() {
+		expressionTest("(S ∖ T) ◁ id", "S ◁ (T ⩤ id)", //
+				"S", "ℙ(U)", "T", "ℙ(U)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_RANRES_DOMSUB_ID is implemented correctly
+	 */
+	@Test
+	public void testSIMP_RANRES_DOMSUB_ID() {
+		expressionTest("(T ∖ S) ◁ id", "(S ⩤ id) ▷ T", //
+				"S", "ℙ(U)", "T", "ℙ(U)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_DOMSUB_DOMSUB_ID is implemented correctly
+	 */
+	@Test
+	public void testSIMP_DOMSUB_DOMSUB_ID() {
+		expressionTest("(S ∪ T) ⩤ id", "S ⩤ (T ⩤ id)", //
+				"S", "ℙ(U)", "T", "ℙ(U)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_RANSUB_DOMSUB_ID is implemented correctly
+	 */
+	@Test
+	public void testSIMP_RANSUB_DOMSUB_ID() {
+		expressionTest("(S ∪ T) ⩤ id", "(S ⩤ id) ⩥ T", //
+				"S", "ℙ(U)", "T", "ℙ(U)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_RANRES_ID is implemented correctly
+	 */
+	@Test
+	public void testSIMP_RANRES_ID() {
+		expressionTest("S ◁ id", "id ▷ S", "S", "ℙ(T)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_RANSUB_ID is implemented correctly
+	 */
+	@Test
+	public void testSIMP_RANSUB_ID() {
+		expressionTest("S ⩤ id", "id ⩥ S", "S", "ℙ(T)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_MULTI_DOMSUB_RAN is implemented correctly
+	 */
+	@Test
+	public void testSIMP_MULTI_DOMSUB_RAN() {
+		expressionTest("∅⦂T↔S", "ran(r) ⩤ r∼", "r", "S↔T");
+
+		expressionTest("ran(r) ⩤ s∼", "ran(r) ⩤ s∼", "r", "S↔T", "s", "S↔T");
+	}
+
+	/**
+	 * Ensures that rule SIMP_MULTI_RANSUB_DOM is implemented correctly
+	 */
+	@Test
+	public void testSIMP_MULTI_RANSUB_DOM() {
+		expressionTest("∅⦂T↔S", "r∼ ⩥ dom(r)", "r", "S↔T");
+
+		expressionTest("s∼ ⩥ dom(r)", "s∼ ⩥ dom(r)", "r", "S↔T", "s", "S↔T");
+	}
+
+	/**
+	 * Ensures that rule SIMP_FCOMP_ID is implemented correctly
+	 */
+	@Test
+	public void testSIMP_FCOMP_ID() {
+		expressionTest("r ; ((S ∩ T) ◁ id) ; s", "r ; (S ◁ id) ; (T ◁ id) ; s", //
+				"r", "A↔B", "s", "B↔C");
+		expressionTest(
+				"r ; ((S ∖ T) ◁ id) ; s ; (U ⩤ id) ; t ; ((V ∪ W) ⩤ id) ; u", //
+				"r ; (S ◁ id) ; (T ⩤ id) ; s ; (U ⩤ id) ; t ; (V ⩤ id) ; (W ⩤ id) ; u",//
+				"r", "A↔B", "s", "B↔C", "t", "C↔D", "u", "D↔E");
+
+		expressionTest("r ; (S ◁ id) ; s", "r ; (S ◁ id) ; s", //
+				"r", "A↔B", "s", "B↔C");
+	}
+
+	/**
+	 * Ensures that rule SIMP_MULTI_OVERL is implemented correctly
+	 */
+	@Test
+	public void testSIMP_MULTI_OVERL() {
+		expressionTest("s", "s  s", "s", "A↔B");
+		expressionTest("r  t  s  u", "r  s  t  s  u", "r", "A↔B");
+
+		expressionTest("r  s  t", "r  s  t", "r", "A↔B");
+	}
+
+	/**
+	 * Ensures that rule SIMP_BCOMP_ID is implemented correctly
+	 */
+	@Test
+	public void testSIMP_BCOMP_ID() {
+		// SIMP_BCOMP_ID implementation uses the same algorithm as
+		// SIMP_FCOMP_ID, therefore only one test is performed
+		expressionTest(
+				"r ∘ ((S ∖ T) ◁ id) ∘ s ∘ (U ⩤ id) ∘ t ∘ ((V ∪ W) ⩤ id) ∘ u", //
+				"r ∘ (S ◁ id) ∘ (T ⩤ id) ∘ s ∘ (U ⩤ id) ∘ t ∘ (V ⩤ id) ∘ (W ⩤ id) ∘ u",//
+				"r", "D↔E", "s", "C↔D", "t", "B↔C", "u", "A↔B");
+	}
+
+	/**
+	 * Ensures that rule SIMP_SUBSETEQ_COMPSET_L is implemented correctly
+	 */
+	@Test
+	public void testSIMP_SUBSETEQ_COMPSET_L() {
+		predicateTest("∀y · y∈ℕ ⇒ y∈S", "{x · x∈ℕ ∣ x} ⊆ S", "S", "ℙ(ℤ)");
+		predicateTest("∀x, y · x∈ℤ∧y∈ℤ ⇒ x+y∈S",
+				"{x, y · x∈ℤ∧y∈ℤ ∣ x+y } ⊆ S ", "S", "ℙ(ℤ)");
+		predicateTest("∀x, y · x+y=a ⇒ x+y∈S", "{x, y · x+y=a ∣ x+y} ⊆ S", //
+				"a", "ℤ");
+	}
+
+	/**
+	 * Ensures that rule SIMP_SPECIAL_EQUAL_COMPSET is implemented correctly
+	 */
+	@Test
+	public void testSIMP_SPECIAL_EQUAL_COMPSET() {
+		predicateTest("∀x · ¬x∈ℕ", "{x · x∈ℕ ∣ x} = ∅", "S", "ℙ(ℤ)");
+		predicateTest("∀x, y · ¬(x∈ℤ∧y∈ℤ)", "{x, y · x∈ℤ∧y∈ℤ ∣ x+y } = ∅ ", //
+				"S", "ℙ(ℤ)");
+		predicateTest("∀x, y · ¬(x+y=a)", "{x, y · x+y=a ∣ x+y} = ∅", //
+				"a", "ℤ");
+	}
+
+	/**
+	 * Ensures that rule SIMP_RELIMAGE_ID is implemented correctly
+	 */
+	@Test
+	public void testSIMP_RELIMAGE_ID() {
+		expressionTest("S ∩ T", "(S ◁ id)[T]", "S", "ℙ(A)", "T", "ℙ(A)");
 	}
 
 }

@@ -22,20 +22,13 @@ import org.eventb.core.ast.QuantifiedExpression;
 
 /**
  * Framework for checking if a given comprehension set of the form {x · P ∣ E}
- * is a function, based on its syntactical properties (hence the name
- * {@link LambdaCheck}, although it does not necessarily takes a lambda
- * expression as input). It implies the following checking:
- * <ul>
- * <li>E is of the form F ↦ G</li>
- * <li>all locally bound variables that occur in G also occur in F</li>
- * <li>F looks like a tree constructed with either:</li>
+ * is a lambda expression, which implies that E looks like a tree constructed
+ * with either:
  * <ul>
  * <li>maplet operators</li>
- * <li>bound identifiers, either locally bound or not</li>
- * <li>expressions</li>
+ * <li>bound identifiers as leaves, which are locally bound and pairwise
+ * distinct</li>
  * </ul>
- * with the following restriction : if a locally bound variable appears in G,
- * then it has to appear as a leaf of a maplet operator at least once in F </ul>
  * 
  * @author Benoît Lucet
  */
@@ -47,60 +40,41 @@ public class LambdaCheck {
 
 	private final QuantifiedExpression qExpr;
 	private final int nbBound;
-
-	// This bitset contains locally bound identifiers that occur in the
-	// right-hand side of the expression of qExpr and not yet detected in the
-	// left-hand side in an injective position.
-	private final BitSet locallyBoundRight;
+	private final BitSet locallyBound;
 
 	private LambdaCheck(QuantifiedExpression qExpr) {
 		this.qExpr = qExpr;
 		this.nbBound = qExpr.getBoundIdentDecls().length;
-		this.locallyBoundRight = new BitSet();
+		locallyBound = new BitSet();
 	}
 
 	private boolean verify() {
-		final Expression child = qExpr.getExpression();
-		if (child.getTag() != MAPSTO) {
-			return false;
-		}
-		final BinaryExpression maplet = (BinaryExpression) child;
-		computeLocallyBoundRight(maplet.getRight());
-		checkOccurrences(maplet.getLeft());
-		// If the bitset is empty, then all quantified identifiers occurring in
-		// the right-hand side of the expression are guaranteed to occur as
-		// leaves at least once in the left-hand side
-		return locallyBoundRight.isEmpty();
+		final Expression expression = qExpr.getExpression();
+		return checkTree(expression);
 	}
 
-	private void computeLocallyBoundRight(Expression right) {
-		for (final BoundIdentifier rbi : right.getBoundIdentifiers()) {
-			final int index = rbi.getBoundIndex();
-			if (isLocallyBound(index)) {
-				locallyBoundRight.set(index);
+	private boolean checkTree(Expression expression) {
+		switch (expression.getTag()) {
+		case MAPSTO:
+			final BinaryExpression bExpr = (BinaryExpression) expression;
+			return checkTree(bExpr.getLeft()) && checkTree(bExpr.getRight());
+		case BOUND_IDENT:
+			final int biIndex = ((BoundIdentifier) expression).getBoundIndex();
+			if (!isLocallyBound(biIndex)) {
+				return false;
 			}
+			if (locallyBound.get(biIndex)) {
+				return false;
+			}
+			locallyBound.set(biIndex);
+			return true;
+		default:
+			return false;
 		}
 	}
 
 	private boolean isLocallyBound(final int index) {
 		return index < nbBound;
-	}
-
-	private void checkOccurrences(Expression expr) {
-		switch (expr.getTag()) {
-		case MAPSTO:
-			final BinaryExpression maplet = (BinaryExpression) expr;
-			checkOccurrences(maplet.getLeft());
-			checkOccurrences(maplet.getRight());
-			break;
-		case BOUND_IDENT:
-			final int boundIndex = ((BoundIdentifier) expr).getBoundIndex();
-			locallyBoundRight.clear(boundIndex);
-			break;
-		default:
-			// other expression
-			break;
-		}
 	}
 
 }
