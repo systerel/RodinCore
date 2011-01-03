@@ -21,7 +21,6 @@ import org.eventb.internal.core.seqprover.eventbExtensions.OnePointRule;
 
 /**
  * @author "Nicolas Beauger"
- * 
  */
 public class OnePointRuleTests extends AbstractReasonerTests {
 
@@ -34,12 +33,12 @@ public class OnePointRuleTests extends AbstractReasonerTests {
 				TestLib.genSeq(" |- " + goal), goalInput, "{}[][][] |- "
 						+ simplifiedGoal, "{}[][][] |- " + WDgoal);
 	}
-	
+
 	private static UnsuccessfullReasonerApplication newFailureGoal(String goal) {
 		return new UnsuccessfullReasonerApplication(TestLib.genSeq(" |- "
 				+ goal), goalInput);
 	}
-	
+
 	@Override
 	public String getReasonerID() {
 		return onePoint.getReasonerID();
@@ -48,6 +47,27 @@ public class OnePointRuleTests extends AbstractReasonerTests {
 	@Override
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
 		return new SuccessfullReasonerApplication[] {
+
+				// TODO Benoît: added these tests
+				newSuccessGoal("∃x · x = 1 ∧ x ≥ 0", "1 ≥ 0", "⊤"),
+				newSuccessGoal("∃x · ¬(¬(x = 1) ∨ x ≥ 0)", "¬(⊥ ∨ 1 ≥ 0)", "⊤"),
+
+				newSuccessGoal("∀x · x ≥ 0 ⇒ ¬(x = 1)", "1 ≥ 0 ⇒ ⊥", "⊤"),
+				newSuccessGoal("∀x · x ≥ 0 ⇒ ¬(x = 1 ∧ x ≤ 5)",
+						"1 ≥ 0 ⇒ ¬(1 ≤ 5)", "⊤"),
+
+				newSuccessGoal("∀x,y,z,t·x↦y=z↦t∧x≥z⇒y≥t",
+						"∀x,y,t·y=t∧x≥x⇒y≥t", "⊤"),
+				newSuccessGoal("∀x,y,t·y=t∧x≥x⇒y≥t", "∀x,y·x≥x⇒y≥y", "⊤"),
+
+				// replacements inside a LIMP operator's child
+				newSuccessGoal("∀x,y · (x=1 ⇒ x≥0) ⇒ x+y ≥ 1",
+						"∀y · 1≥0 ⇒ 1+y ≥ 1", "⊤"),
+				newSuccessGoal("∀x,y · (x≥0 ⇒ ¬(x=1)) ⇒ x+y ≥ 1",
+						"∀y · (1≥0 ⇒ ⊥) ⇒ 1+y ≥ 1", "⊤"),
+
+				// ===
+
 				// One quantified identifier => result not quantified
 				newSuccessGoal("∀x· x=0 ∧ x+1=0 ⇒ x+1=2", "0+1=0⇒0+1=2", "⊤"),
 
@@ -56,16 +76,18 @@ public class OnePointRuleTests extends AbstractReasonerTests {
 
 				// 'One conjunct' => no more implication
 				newSuccessGoal("∀x· x=0 ⇒ x+x=0", "0+0=0", "⊤"),
-				
+
 				// 'One conjunct' and Two quantified identifiers
 				newSuccessGoal("∀x,y· x=y ⇒ x+y=2∗x", "∀x·x+x=2∗x", "⊤"),
-				
+
 				// Replacement expression is not trivial => more complex WD
-				newSuccessGoal("∀x,y· x = prj1(0↦1) ∧ x+1=y ⇒ y=1", "∀y·prj1(0 ↦ 1)+1=y⇒y=1", "0 ↦ 1∈dom(prj1)∧prj1∈ℤ × ℤ ⇸ ℤ"),
+				newSuccessGoal("∀x,y· x = prj1(0↦1) ∧ x+1=y ⇒ y=1",
+						"∀y·prj1(0 ↦ 1)+1=y⇒y=1",
+						"0 ↦ 1∈dom(prj1)∧prj1∈ℤ × ℤ ⇸ ℤ"),
 
 				// One Point Rule in hyp => forward inference hyp action
-				new SuccessfullReasonerApplication(TestLib
-						.genSeq("∀x· x=0 ∧ x+1=0 ⇒ x+1=2 |- ⊥"),
+				new SuccessfullReasonerApplication(
+						TestLib.genSeq("∀x· x=0 ∧ x+1=0 ⇒ x+1=2 |- ⊥"),
 						new OnePointRule.Input(TestLib
 								.genPred("∀x· x=0 ∧ x+1=0 ⇒ x+1=2")),
 						"{}[∀x·x=0∧x+1=0⇒x+1=2][][0+1=0⇒0+1=2] |- ⊥",
@@ -78,22 +100,21 @@ public class OnePointRuleTests extends AbstractReasonerTests {
 				newSuccessGoal("∃y· y=0", "⊤", "⊤"),
 				// simple conjunction with ∃ quantifier
 				newSuccessGoal("∃x,y· x=0 ∧ x+1=y", "∃y·0+1=y", "⊤"),
-				
+
 				// Also works with bound identifier on the rhs of the equality
 				newSuccessGoal("∃y· 0=y", "⊤", "⊤"),
 				newSuccessGoal("∃x,y· 0=x ∧ x+1=y", "∃y·0+1=y", "⊤"),
 				newSuccessGoal("∀x· 0=x ∧ x+1=0 ⇒ x+1=2", "0+1=0⇒0+1=2", "⊤"),
-				
+
 				// Will work in chain
-				newSuccessGoal("∀x,y,z· x=0 ∧ y=x ∧ z=y ⇒ ⊥", "∀y,z·y=0∧z=y⇒⊥", "⊤"),
+				newSuccessGoal("∀x,y,z· x=0 ∧ y=x ∧ z=y ⇒ ⊥", "∀y,z·y=0∧z=y⇒⊥",
+						"⊤"),
 				newSuccessGoal("∀y,z·y=0∧z=y⇒⊥", "∀z·z=0⇒⊥", "⊤"),
 				newSuccessGoal("∀z·z=0⇒⊥", "⊥", "⊤"),
-				
+
 				// No replacement to perform
 				newSuccessGoal("∀x,y·x=0∧y=0⇒⊥", "∀y·y=0⇒⊥", "⊤"),
-				newSuccessGoal("∀x·x=0∧0=0⇒⊥", "0=0⇒⊥", "⊤"),
-				
-		};
+				newSuccessGoal("∀x·x=0∧0=0⇒⊥", "0=0⇒⊥", "⊤") };
 	}
 
 	@Override
@@ -105,26 +126,42 @@ public class OnePointRuleTests extends AbstractReasonerTests {
 						.getFirstChild().getNextSibling());
 
 		return new UnsuccessfullReasonerApplication[] {
+
+				// TODO Benoît: added these tests
+				newFailureGoal("∃x · x = 1 ∨ x ≥ 0"),
+				newFailureGoal("∃x · ¬(x = 1) ∨ x ≥ 0"),
+				newFailureGoal("∃x · ¬(x = 1) ∧ x ≥ 0"),
+				newFailureGoal("∃x · ¬(x = 1 ∨ x ≥ 0)"),
+				newFailureGoal("∃x · ¬(x = 1 ∧ x ≥ 0)"),
+				newFailureGoal("∃x · ¬(¬(x = 1) ∧ x ≥ 0)"),
+
+				newFailureGoal("∀x · x ≥ 0 ⇒ x = 1"),
+				newFailureGoal("∀x · x ≥ 0 ⇒ x = 1 ∨ x ≤ 5"),
+				newFailureGoal("∀x · x ≥ 0 ⇒ x = 1 ∧ x ≤ 5"),
+				newFailureGoal("∀x · x ≥ 0 ⇒ ¬(x = 1) ∧ x ≤ 5"),
+				newFailureGoal("∀x · x ≥ 0 ⇒ ¬(x = 1 ∨ x ≤ 5)"),
+				newFailureGoal("∀x · x ≥ 0 ⇒ ¬(¬(x = 1) ∨ x ≤ 5)"),
+				newFailureGoal("∀x · x ≥ 0 ⇒ ¬(¬(x = 1) ∧ x ≤ 5)"),
+
+				// ===
+
 				// Matching predicate for one point rule is not root
 				newFailureGoal("∀x·x ∈ ℕ ⇒ (∀y·y = 1 ∧ y ∈ ℕ ⇒ y = y∗y)"),
-				
+
 				// Exists with implication
 				newFailureGoal("∃x· x=0 ⇒ x=1"),
 
 				// Forall with conjunction
 				newFailureGoal("∀x· x=0 ∧ x=1"),
 
-				
 				// Matching substitution bound identifier is declared outside
 				new UnsuccessfullReasonerApplication(ProverFactory.makeSequent(
 						TestLib.genTypeEnv(""), null, boundOutside), goalInput),
-				
+
 				// Self-referring expressions (x=x+x, x=x*x) are not applicable
 				newFailureGoal("∀x· x=x+x ∧ x=x∗x ⇒ x=0"),
-				
-				//Failure goal with x=x replacement
-				newFailureGoal("∀x·x=x∧x>0⇒⊥")
-		};
-	}
 
+				// Failure goal with x=x replacement
+				newFailureGoal("∀x·x=x∧x>0⇒⊥") };
+	}
 }

@@ -114,6 +114,7 @@ import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.internal.core.seqprover.eventbExtensions.OnePointProcessor;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointSimplifier;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
 
@@ -1223,6 +1224,23 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * SIMP_IN_COMPSET_ONEPOINT
 	    	 * Set Theory 10: E ∈ {x · P(x) | x} == P(E)
 	    	 */
+	    	 // TODO Benoît
+	    	 /*
+	    	 In(_, Cset(_, _, _)) -> {
+	    	 	// if (level2)
+	    	 	final OnePointProcessor opp = new OnePointProcessor(predicate, ff);
+	    	 	opp.matchAndInstantiate();
+	    	 	if(opp.wasSuccessfullyApplied()) {
+	    	 		result = opp.getProcessedPredicate();
+	    	 		trace(predicate, result, "SIMP_IN_COMPSET_ONEPOINT");
+	    	 		return result;
+	    	 	} else {
+	    	 		result = opp.getQPred();
+	    	 		trace(predicate, result, "SIMP_IN_COMPSET");
+	    	 		return result;
+	    	 	}
+	    	 }*/
+	    	 
 	    	In(E, Cset(idents, guard, expression)) -> {
 				Predicate equalsPred = makeRelationalPredicate(EQUAL,
 				                        `expression,
