@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,9 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package fr.systerel.perf.tests.builder;
+
+import static fr.systerel.perf.tests.RodinDBUtils.createRodinProject;
+import static fr.systerel.perf.tests.RodinDBUtils.getProject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +31,8 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+
+import fr.systerel.perf.tests.Chrono;
 
 /**
  * Runs performance tests on projects. Duration is measured by JUnit and
@@ -119,7 +124,7 @@ public class BuilderPerfTests extends BuilderTest {
 		final IProject project = getProject(makeOnlyModelsPrjName());
 //		final IRodinProject rodinProject = getRodinProject(makeOnlyModelsPrjName());
 //		final IRodinFile[] rodinFiles = rodinProject.getRodinFiles();
-		final Chrono chrono = new Chrono();
+		final Chrono chrono = new Chrono(testName);
 		chrono.startMeasure();
 		runBuilder(project);
 		chrono.endMeasure();
@@ -134,7 +139,7 @@ public class BuilderPerfTests extends BuilderTest {
 //		for (IPRRoot prf : proofs) {
 //			Assert.assertFalse(prf.hasChildren());
 //		}
-		final Chrono chrono = new Chrono();
+		final Chrono chrono = new Chrono(testName);
 		chrono.startMeasure();
 		runBuilder(project);
 		chrono.endMeasure();
@@ -151,7 +156,7 @@ public class BuilderPerfTests extends BuilderTest {
 //				System.out.println("found for "+prf.getElementName());
 //			}
 //		}
-		final Chrono chrono = new Chrono();
+		final Chrono chrono = new Chrono(testName);
 		chrono.startMeasure();
 		runBuilder(project);
 		chrono.endMeasure();

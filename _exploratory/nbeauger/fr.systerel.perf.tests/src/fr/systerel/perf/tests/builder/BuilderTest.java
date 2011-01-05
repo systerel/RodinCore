@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,9 @@
  *******************************************************************************/
 package fr.systerel.perf.tests.builder;
 
+import static fr.systerel.perf.tests.RodinDBUtils.deleteAllProjects;
+import static fr.systerel.perf.tests.RodinDBUtils.getWorkspace;
+import static fr.systerel.perf.tests.RodinDBUtils.getWorkspaceRoot;
 import static org.eventb.core.EventBPlugin.getProofManager;
 import static org.eventb.core.EventBPlugin.getUserSupportManager;
 import static org.junit.Assert.assertNotNull;
@@ -23,7 +26,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -33,11 +35,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.URIUtil;
 import org.eventb.core.EventBPlugin;
@@ -53,8 +52,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
-import org.rodinp.core.IRodinDB;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.internal.core.debug.DebugHelpers;
@@ -75,8 +72,6 @@ public abstract class BuilderTest {
 	public static final String PLUGIN_ID = "fr.systerel.performances.tests";
 
 	protected static final FormulaFactory factory = FormulaFactory.getDefault();
-
-	protected static final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
 	public static <T> T[] array(T... objs) {
 		return objs;
@@ -172,10 +167,10 @@ public abstract class BuilderTest {
 
 	private static void disableAllAuto() throws CoreException {
 		// ensure autobuilding is turned off
-		IWorkspaceDescription wsDescription = workspace.getDescription();
+		IWorkspaceDescription wsDescription = getWorkspace().getDescription();
 		if (wsDescription.isAutoBuilding()) {
 			wsDescription.setAutoBuilding(false);
-			workspace.setDescription(wsDescription);
+			getWorkspace().setDescription(wsDescription);
 		}
 		
 		disableAutoProver();
@@ -184,47 +179,14 @@ public abstract class BuilderTest {
 		DebugHelpers.disableIndexing();
 	}
 
-	protected static IRodinProject createRodinProject(String projectName)
-			throws CoreException {
-		IProject project = workspace.getRoot().getProject(projectName);
-		project.create(null);
-		project.open(null);
-		IProjectDescription pDescription = project.getDescription();
-		pDescription.setNatureIds(new String[] {RodinCore.NATURE_ID});
-		project.setDescription(pDescription, null);
-		IRodinProject result = RodinCore.valueOf(project);
-		return result;
-	}
-	
 	@AfterClass
 	public static void clearWorkspace() throws Exception {
-		// Delete all Rodin projects
-		final IRodinDB rodinDB = RodinCore.getRodinDB();
-		for (IRodinProject rp: rodinDB.getRodinProjects()) {
-			rp.getProject().delete(true, true, null);
-		}
+		deleteAllProjects();
 		
 		deleteAllProofAttempts();
 		
 	}
 
-	public static IWorkspaceRoot getWorkspaceRoot() {
-		return workspace.getRoot();
-	}
-
-	/**
-	 * Returns the Rodin Project with the given name in this test
-	 * suite's database. This is a convenience method.
-	 */
-	public static IRodinProject getRodinProject(String name) {
-		IProject project = getProject(name);
-		return RodinCore.valueOf(project);
-	}
-	
-	protected static IProject getProject(String project) {
-		return getWorkspaceRoot().getProject(project);
-	}
-	
 	@BeforeClass
 	public static void importProject() throws Exception {
 		assertNotNull(projectPath);
@@ -242,7 +204,7 @@ public abstract class BuilderTest {
 	private static void importProject(File projectDir) throws Exception {
 		final String projectName = projectDir.getName();
 		IProject project = getWorkspaceRoot().getProject(projectName);
-		IProjectDescription desc = workspace.newProjectDescription(projectName); 
+		IProjectDescription desc = getWorkspace().newProjectDescription(projectName); 
 		desc.setNatureIds(new String[] {RodinCore.NATURE_ID});
 		project.create(desc, null);
 		project.open(null);
@@ -269,31 +231,6 @@ public abstract class BuilderTest {
 				importFiles(project, file, false);
 			}
 		}
-	}
-
-	public static class Chrono {
-		
-		private final String name;
-		private long startTime;
-		
-		public Chrono() {
-			this.name = testName.getMethodName();
-		}
-		
-		public void startMeasure() {
-			startTime = Calendar.getInstance().getTimeInMillis();
-		}
-
-		public void endMeasure() {
-			final long endTime = Calendar.getInstance().getTimeInMillis();
-			
-			final long duration = endTime - startTime;
-			System.out.println(name + " : " + duration);
-		}
-	}
-	
-	protected static long startMeasure() {
-		return Calendar.getInstance().getTimeInMillis();
 	}
 	
 }
