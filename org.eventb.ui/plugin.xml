@@ -582,14 +582,14 @@
             target="goal"
             tooltip="%proofTactics.rnGoal.tooltip"/>
       <tactic
-            dropdown="org.eventb.ui.reviewDropdown"
             icon="icons/reviewed.gif"
             id="org.eventb.ui.review"
             interrupt="false"
             name="%proofTactics.review.name"
-            priority="4"
+            priority="6"
             proofCommand="org.eventb.internal.ui.prover.tactics.Review"
             target="global"
+            toolbar="org.eventb.ui.sequentToolbar"
             tooltip="%proofTactics.review.tooltip"/>
       <tactic
             icon="icons/full/ctool16/dc_prover.gif"
@@ -733,11 +733,6 @@
             id="org.eventb.ui.navigationToolbar"
             name="%proofToolbars.navigation.name"
             priority="10"/>
-      <dropdown
-            id="org.eventb.ui.reviewDropdown"
-            name="%proofDropdowns.review.name"
-            priority="5"
-            toolbar="org.eventb.ui.sequentToolbar"/>
       <tactic
             icon="icons/full/ctool16/impE1_prover.gif"
             id="org.eventb.ui.mp"
