@@ -2267,6 +2267,9 @@
                column="0"
                descriptionId="org.eventb.ui.expression">
          </attributeReference>
+         <attributeReference
+               descriptionId="org.eventb.ui.comment">
+         </attributeReference>
       </attributeRelation>
       <attributeRelation
             elementTypeId="org.eventb.core.event">
