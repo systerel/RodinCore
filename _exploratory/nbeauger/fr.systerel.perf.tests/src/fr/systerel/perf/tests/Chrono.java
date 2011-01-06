@@ -10,6 +10,8 @@
  *******************************************************************************/
 package fr.systerel.perf.tests;
 
+import static fr.systerel.perf.tests.PerfUtils.logger;
+
 import java.util.Calendar;
 
 import org.junit.rules.TestName;
@@ -35,6 +37,6 @@ public class Chrono {
 		final long endTime = Calendar.getInstance().getTimeInMillis();
 
 		final long duration = endTime - startTime;
-		System.out.println(name + " : " + duration);
+		logger.info(name + " : " + duration);
 	}
 }

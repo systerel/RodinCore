@@ -10,8 +10,12 @@
  *******************************************************************************/
 package fr.systerel.perf.tests;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.XMLFormatter;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -38,6 +42,20 @@ import org.rodinp.internal.core.debug.DebugHelpers;
  *
  */
 public class PerfUtils {
+
+	public static final Logger logger = Logger
+			.getLogger("Rodin Performance Measurement");
+
+	static {
+		try {
+			final FileHandler fh = new FileHandler("Results.log", true);
+			fh.setFormatter(new XMLFormatter());
+			// fh.setFormatter(new SimpleFormatter());
+			logger.addHandler(fh);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	private static final IWorkspace WORKSPACE = ResourcesPlugin.getWorkspace();
 
