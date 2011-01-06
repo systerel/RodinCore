@@ -26,6 +26,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -42,31 +44,55 @@ import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IUserSupport;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+import org.rodinp.core.IRodinDB;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinMarkerUtil;
 
 /**
- * Abstract class for builder tests.
+ * Abstract class for builder performance tests.
  * 
- * @author Laurent Voisin
+ * @author Nicolas Beauger
  */
+@RunWith(Parameterized.class)
 public abstract class BuilderTest {
 	
 	@Rule
 	public static final TestName testName = new TestName();
 
-	public static final String projectPath = System.getProperty("projectPath");
-	protected static String projectName;
+	@Parameters
+	public static List<File[]> getProjects() throws Exception {
+		final String projectPath = System.getProperty("projectPath");
+		assertNotNull(projectPath);
+		final URI uri = URIUtil.fromString(projectPath);
+		final URI absURI = URIUtil.makeAbsolute(uri, URIUtil.fromString("file://"));
+		final File project = URIUtil.toFile(absURI);
+		assertTrue(project.isDirectory());
+		final File[] testProjects = project.listFiles();
+		final List<File[]> res = new ArrayList<File[]>(testProjects.length);
+		for (File file : testProjects) {
+			res.add(new File[] { file });
+		}		
+		return res;
+	}
 
+	protected final IRodinProject project;
+	
+	public BuilderTest(File projectDir) throws Exception {
+		this.project = importProject(projectDir);
+	}
+	
 	public static final String PLUGIN_ID = "fr.systerel.performances.tests";
 
 	protected static final FormulaFactory factory = FormulaFactory.getDefault();
-
-	public static <T> T[] array(T... objs) {
-		return objs;
+	
+	protected void runBuilder(IRodinProject rodinProject) throws CoreException {
+		runBuilder(rodinProject.getProject());
 	}
 	
 	protected void runBuilder(IProject project) throws CoreException {
@@ -112,21 +138,9 @@ public abstract class BuilderTest {
 		
 	}
 
-	@BeforeClass
-	public static void importProject() throws Exception {
-		assertNotNull(projectPath);
-		final URI uri = URIUtil.fromString(projectPath);
-		projectName = URIUtil.lastSegment(uri);
-
-		clearWorkspace();
+	private static IRodinProject importProject(File projectDir) throws Exception {
 		disableAllAuto();
-		final URI absURI = URIUtil.makeAbsolute(uri, URIUtil.fromString("file://"));
-		final File project = URIUtil.toFile(absURI);
-		assertTrue(project.isDirectory());
-		importProject(project);
-	}
-
-	private static void importProject(File projectDir) throws Exception {
+		clearWorkspace();
 		final String projectName = projectDir.getName();
 		IProject project = getWorkspaceRoot().getProject(projectName);
 		IProjectDescription desc = getWorkspace().newProjectDescription(projectName); 
@@ -136,6 +150,9 @@ public abstract class BuilderTest {
 		IProjectNature nature = project.getNature(RodinCore.NATURE_ID);
 		nature.configure();
 		importFiles(project, projectDir, true);
+
+		final IRodinDB rodinDB = RodinCore.getRodinDB();
+		return rodinDB.getRodinProject(projectName);
 	}
 	
 	protected static void importFiles(IProject project, File root, boolean isRoot)

@@ -10,19 +10,17 @@
  *******************************************************************************/
 package fr.systerel.perf.tests.builder;
 
+import static fr.systerel.perf.tests.PerfUtils.copy;
 import static fr.systerel.perf.tests.PerfUtils.createRodinProject;
-import static fr.systerel.perf.tests.PerfUtils.getProject;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
 
-import org.eclipse.core.resources.IProject;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPRRoot;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -43,122 +41,98 @@ import fr.systerel.perf.tests.Chrono;
  */
 public class BuilderPerfTests extends BuilderTest {
 
-	private static final List<IRodinProject> LOCAL_PROJECTS = new ArrayList<IRodinProject>();
-	
+	private final String projectName;
+
+	public BuilderPerfTests(File testProject) throws Exception {
+		super(testProject);
+		this.projectName = testProject.getName();
+	}
+
+	private IRodinProject testProject;
+
 	// tests build (SC+POG+POM , no Prover)
 	// 1: only models (no proof file)
 	// 2: with empty proof files (no attempt)
 	// 3: with many proofs made
 
-	// test Prove only
-
-	private static String makeOnlyModelsPrjName() {
-		return projectName + "_onlyModels";
+	private String makeTestPrjName() {
+		return projectName + "_" + testName.getMethodName();
 	}
 
-	private static String makeEmptyProofsPrjName() {
-		return projectName + "_emptyProofs";
+	private String makeChronoName() {
+		return testName.getMethodName() + " / " + projectName;
 	}
 
-	private static String makeWithProofsPrjName() {
-		return projectName + "_withProofs";
-	}
-
-	@BeforeClass
-	public static void makeProjects() throws Exception {
-
+	@Before
+	public void init() throws Exception {
 		final IRodinDB rodinDB = RodinCore.getRodinDB();
 		final IRodinProject project = rodinDB.getRodinProject(projectName);
 		Assert.assertTrue(project.exists());
 
-		final IRodinProject onlyModelsPrj = createRodinProject(makeOnlyModelsPrjName());
-		LOCAL_PROJECTS.add(onlyModelsPrj);
-		final IRodinProject emptyProofsPrj = createRodinProject(makeEmptyProofsPrjName());
-		LOCAL_PROJECTS.add(emptyProofsPrj);
-		
-		final IRodinProject withProofsPrj = createRodinProject(makeWithProofsPrjName());
-		LOCAL_PROJECTS.add(withProofsPrj);			
+		testProject = createRodinProject(makeTestPrjName());
 
-		final IRodinProject[] prjs = LOCAL_PROJECTS.toArray(new IRodinProject[LOCAL_PROJECTS.size()]);
-		
-		final IRodinFile[] ctxs = getRodinFiles(project, IContextRoot.ELEMENT_TYPE);
-		final IRodinFile[] mchs = getRodinFiles(project, IMachineRoot.ELEMENT_TYPE);
+		final IRodinFile[] ctxs = getRodinFiles(project,
+				IContextRoot.ELEMENT_TYPE);
+		final IRodinFile[] mchs = getRodinFiles(project,
+				IMachineRoot.ELEMENT_TYPE);
 		final IRodinFile[] prfs = getRodinFiles(project, IPRRoot.ELEMENT_TYPE);
-		
-		for (IRodinProject prj : prjs) {
-			rodinDB.copy(ctxs, array(prj), null, null, false, null);
-			rodinDB.copy(mchs, array(prj), null, null, false, null);
-		}
-		
-		rodinDB.copy(prfs, array(emptyProofsPrj), null, null, false, null);
-		rodinDB.copy(prfs, array(withProofsPrj), null, null, false, null);
-		
-		for (IRodinFile file : emptyProofsPrj.getRodinFiles()) {
-			final String fileName = file.getElementName();
-			if (fileName.endsWith(".bpr")) {
-				file.getRoot().clear(false, null);
-				continue;
-			}
-		}
+
+		copy(ctxs, testProject);
+		copy(mchs, testProject);
+		copy(prfs, testProject);
 	}
 
-	private static IRodinFile[] getRodinFiles(IRodinProject project, IInternalElementType<?> rootType)
-			throws RodinDBException {
-		final IInternalElement[] roots = project.getRootElementsOfType(rootType);
+	@After
+	public void clearLocalProjects() throws Exception {
+		testProject.getProject().delete(true, null);
+	}
+
+	private static IRodinFile[] getRodinFiles(IRodinProject project,
+			IInternalElementType<?> rootType) throws RodinDBException {
+		final IInternalElement[] roots = project
+				.getRootElementsOfType(rootType);
 		final IRodinFile[] files = new IRodinFile[roots.length];
-		for (int i=0;i<roots.length;i++) {
-			files[i]= roots[i].getRodinFile();
+		for (int i = 0; i < roots.length; i++) {
+			files[i] = roots[i].getRodinFile();
 		}
 		return files;
 	}
 
-	@AfterClass
-	public static void clearLocalProjects() throws Exception {
-		for(IRodinProject project:LOCAL_PROJECTS) {
-			project.getProject().delete(true, null);
+	@Test
+	public void buildOnlyModels() throws Exception {
+		final IRodinFile[] prfs = getRodinFiles(testProject,
+				IPRRoot.ELEMENT_TYPE);
+		for (IRodinFile prf : prfs) {
+			prf.delete(true, null);
 		}
-	}
 
-	@Test
-	public void testOnlyModelsFile() throws Exception {
-		final IProject project = getProject(makeOnlyModelsPrjName());
-//		final IRodinProject rodinProject = getRodinProject(makeOnlyModelsPrjName());
-//		final IRodinFile[] rodinFiles = rodinProject.getRodinFiles();
-		final Chrono chrono = new Chrono(testName);
+		final Chrono chrono = new Chrono(makeChronoName());
 		chrono.startMeasure();
-		runBuilder(project);
+		runBuilder(testProject);
 		chrono.endMeasure();
 	}
 
 	@Test
-	public void testEmptyProofs() throws Exception {
-		final IProject project = getProject(makeEmptyProofsPrjName());
-//		final IRodinProject rodinProject = getRodinProject(makeEmptyProofsPrjName());
-//		final IRodinFile[] rodinFiles = rodinProject.getRodinFiles();
-//		final IPRRoot[] proofs = rodinProject.getRootElementsOfType(IPRRoot.ELEMENT_TYPE);
-//		for (IPRRoot prf : proofs) {
-//			Assert.assertFalse(prf.hasChildren());
-//		}
-		final Chrono chrono = new Chrono(testName);
+	public void buildEmptyProofs() throws Exception {
+		final IRodinFile[] prfs = getRodinFiles(testProject,
+				IPRRoot.ELEMENT_TYPE);
+		for (IRodinFile prf : prfs) {
+			prf.getRoot().clear(false, null);
+		}
+
+		final Chrono chrono = new Chrono(makeChronoName());
 		chrono.startMeasure();
-		runBuilder(project);
+		runBuilder(testProject);
 		chrono.endMeasure();
 	}
 
 	@Test
-	public void testWithProofs() throws Exception {
-		final IProject project = getProject(makeWithProofsPrjName());
-//		final IRodinProject rodinProject = getRodinProject(makeWithProofsPrjName());
-//		final IRodinFile[] rodinFiles = rodinProject.getRodinFiles();
-//		final IPRRoot[] proofs = rodinProject.getRootElementsOfType(IPRRoot.ELEMENT_TYPE);
-//		for (IPRRoot prf : proofs) {
-//			if(prf.hasChildren()) {
-//				System.out.println("found for "+prf.getElementName());
-//			}
-//		}
-		final Chrono chrono = new Chrono(testName);
+	public void buildWithProofs() throws Exception {
+		// proof files are kept as is
+
+		final Chrono chrono = new Chrono(makeChronoName());
 		chrono.startMeasure();
-		runBuilder(project);
+		runBuilder(testProject);
 		chrono.endMeasure();
 	}
 }

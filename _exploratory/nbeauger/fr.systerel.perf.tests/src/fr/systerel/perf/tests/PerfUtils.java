@@ -30,6 +30,7 @@ import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.rodinp.core.IRodinDB;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -165,5 +166,17 @@ public class PerfUtils {
 				.getPostTacticPreference();
 		enableAutoTactics(postPref, postTacticIds);
 	}
-	
+
+	public static <T> T[] array(T... objs) {
+		return objs;
+	}
+
+	public static void copy(IRodinFile[] files, IRodinProject project)
+			throws RodinDBException {
+		if (files.length == 0)
+			return;
+		final IRodinDB rodinDB = RodinCore.getRodinDB();
+		rodinDB.copy(files, array(project), null, null, false, null);
+	}
+
 }
