@@ -13,6 +13,7 @@
 package fr.systerel.perf.tests.builder;
 
 import static fr.systerel.perf.tests.RodinDBUtils.deleteAllProjects;
+import static fr.systerel.perf.tests.RodinDBUtils.disableAllAuto;
 import static fr.systerel.perf.tests.RodinDBUtils.getWorkspace;
 import static fr.systerel.perf.tests.RodinDBUtils.getWorkspaceRoot;
 import static org.eventb.core.EventBPlugin.getProofManager;
@@ -25,8 +26,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -35,18 +34,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.URIUtil;
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.seqprover.IAutoTacticRegistry;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
-import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -54,7 +47,6 @@ import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinMarkerUtil;
-import org.rodinp.internal.core.debug.DebugHelpers;
 
 /**
  * Abstract class for builder tests.
@@ -93,59 +85,6 @@ public abstract class BuilderTest {
 		}
 	}
 
-	private static void enableAutoTactics(IAutoTacticPreference pref,
-			String[] tacticIds) {
-		final List<ITacticDescriptor> descrs = new ArrayList<ITacticDescriptor>(
-				tacticIds.length);
-		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
-		for (String id : tacticIds) {
-			descrs.add(reg.getTacticDescriptor(id));
-		}
-		pref.setSelectedDescriptors(descrs);
-		pref.setEnabled(true);
-	}
-
-	private static final String[] autoTacticIds = new String[] {
-		"org.eventb.core.seqprover.trueGoalTac",
-		"org.eventb.core.seqprover.falseHypTac",
-		"org.eventb.core.seqprover.goalInHypTac",
-		"org.eventb.core.seqprover.funGoalTac",
-		"org.eventb.core.seqprover.autoRewriteTac",
-		"org.eventb.core.seqprover.typeRewriteTac",
-		"org.eventb.core.seqprover.findContrHypsTac",
-		"org.eventb.core.seqprover.eqHypTac",
-		"org.eventb.core.seqprover.shrinkImpHypTac",
-		"org.eventb.core.seqprover.clarifyGoalTac",
-	};
-	
-	protected static void enableAutoProver() {
-		final IAutoTacticPreference autoPref = EventBPlugin
-				.getAutoTacticPreference();
-		enableAutoTactics(autoPref, autoTacticIds);
-	}
-
-	protected static void disableAutoProver() {
-		EventBPlugin.getAutoTacticPreference().setEnabled(false);
-	}
-
-	private static final String[] postTacticIds = new String[] {
-		"org.eventb.core.seqprover.trueGoalTac",
-		"org.eventb.core.seqprover.falseHypTac",
-		"org.eventb.core.seqprover.goalInHypTac",
-		"org.eventb.core.seqprover.autoRewriteTac",
-		"org.eventb.core.seqprover.typeRewriteTac",
-	};
-	
-	protected static void enablePostTactics() {
-		final IAutoTacticPreference postPref = EventBPlugin
-				.getPostTacticPreference();
-		enableAutoTactics(postPref, postTacticIds);
-	}
-
-	protected static void disablePostTactics() {
-		EventBPlugin.getPostTacticPreference().setEnabled(false);
-	}
-
 	/**
 	 * Deletes all user supports and proof attempts that where created and not
 	 * cleaned up.
@@ -163,20 +102,6 @@ public abstract class BuilderTest {
 	public void setUp() throws Exception {
 		
 		disableAllAuto();
-	}
-
-	private static void disableAllAuto() throws CoreException {
-		// ensure autobuilding is turned off
-		IWorkspaceDescription wsDescription = getWorkspace().getDescription();
-		if (wsDescription.isAutoBuilding()) {
-			wsDescription.setAutoBuilding(false);
-			getWorkspace().setDescription(wsDescription);
-		}
-		
-		disableAutoProver();
-		disablePostTactics();
-		
-		DebugHelpers.disableIndexing();
 	}
 
 	@AfterClass

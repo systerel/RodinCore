@@ -17,9 +17,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAxiom;
 import org.junit.After;
-import org.junit.Rule;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.rules.TestName;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -29,15 +28,13 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.perf.tests.Chrono;
+import fr.systerel.perf.tests.RodinDBUtils;
 
 /**
  * @author Nicolas Beauger
  * 
  */
 public class RodinDBPerfTests {
-
-	@Rule
-	public static final TestName testName = new TestName();
 
 	private static final IInternalElementType<IAxiom> ELEMENT_TYPE = IAxiom.ELEMENT_TYPE;
 	private static final int NB_LEVELS = 5;
@@ -105,36 +102,32 @@ public class RodinDBPerfTests {
 		}
 	}
 	
+	@Before
+	public void init() throws Exception {
+		RodinDBUtils.disableAllAuto();
+	}
+	
 	@After
 	public void clean() throws Exception {
 		deleteAllProjects();
 	}
 	
 	@Test
-	public void create() throws Exception {
-		final Chrono chrono = new Chrono(testName);
-		chrono.startMeasure();
-		createTestFile();
-		chrono.endMeasure();
-	}
-
-	@Test
-	public void read() throws Exception {
+	public void createReadModify() throws Exception {
+		final Chrono chronoCreate = new Chrono("DB create");
+		chronoCreate.startMeasure();
 		final IRodinFile file = createTestFile();
-		final Chrono chrono = new Chrono(testName);
-		chrono.startMeasure();
+		chronoCreate.endMeasure();
+		
+		final Chrono chronoRead = new Chrono("DB read");
+		chronoRead.startMeasure();
 		read(file.getRoot());
-		chrono.endMeasure();
-	}
+		chronoRead.endMeasure();
 
-	@Test
-	public void modify() throws Exception {
-		final IRodinFile file = createTestFile();
-		final Chrono chrono = new Chrono(testName);
-		chrono.startMeasure();
+		final Chrono chronoModify = new Chrono("DB modify");
+		chronoModify.startMeasure();
 		modify(file.getRoot());
-		chrono.endMeasure();
-
+		chronoModify.endMeasure();
 	}
 
 }

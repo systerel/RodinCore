@@ -10,31 +10,17 @@
  *******************************************************************************/
 package fr.systerel.perf.tests;
 
-import java.util.Calendar;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
-import org.junit.rules.TestName;
+import fr.systerel.perf.tests.parser.LexerPerfTests;
+import fr.systerel.perf.tests.parser.ParserPerfTests;
+import fr.systerel.perf.tests.rodinDB.RodinDBPerfTests;
 
-public class Chrono {
+@RunWith(Suite.class)
+@SuiteClasses({ LexerPerfTests.class, ParserPerfTests.class,
+		RodinDBPerfTests.class })
+public class NoParamTests {
 
-	private final String name;
-	private long startTime;
-
-	public Chrono(TestName testName) {
-		this(testName.getMethodName());
-	}
-
-	public Chrono(String name) {
-		this.name = name;
-	}
-
-	public void startMeasure() {
-		startTime = Calendar.getInstance().getTimeInMillis();
-	}
-
-	public void endMeasure() {
-		final long endTime = Calendar.getInstance().getTimeInMillis();
-
-		final long duration = endTime - startTime;
-		System.out.println(name + " : " + duration);
-	}
 }

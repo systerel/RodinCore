@@ -10,16 +10,27 @@
  *******************************************************************************/
 package fr.systerel.perf.tests;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eventb.core.EventBPlugin;
+import org.eventb.core.seqprover.IAutoTacticRegistry;
+import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.internal.core.debug.DebugHelpers;
+
 
 
 /**
@@ -69,6 +80,72 @@ public class RodinDBUtils {
 		for (IRodinProject rp: rodinDB.getRodinProjects()) {
 			rp.getProject().delete(true, true, null);
 		}
+	}
+
+	public static void disableAllAuto() throws CoreException {
+		// ensure autobuilding is turned off
+		IWorkspaceDescription wsDescription = getWorkspace().getDescription();
+		if (wsDescription.isAutoBuilding()) {
+			wsDescription.setAutoBuilding(false);
+			getWorkspace().setDescription(wsDescription);
+		}
+		
+		RodinDBUtils.disableAutoProver();
+		RodinDBUtils.disablePostTactics();
+		
+		DebugHelpers.disableIndexing();
+	}
+
+	public static void disableAutoProver() {
+		EventBPlugin.getAutoTacticPreference().setEnabled(false);
+	}
+
+	public static void disablePostTactics() {
+		EventBPlugin.getPostTacticPreference().setEnabled(false);
+	}
+
+	private static final String[] autoTacticIds = new String[] {
+		"org.eventb.core.seqprover.trueGoalTac",
+		"org.eventb.core.seqprover.falseHypTac",
+		"org.eventb.core.seqprover.goalInHypTac",
+		"org.eventb.core.seqprover.funGoalTac",
+		"org.eventb.core.seqprover.autoRewriteTac",
+		"org.eventb.core.seqprover.typeRewriteTac",
+		"org.eventb.core.seqprover.findContrHypsTac",
+		"org.eventb.core.seqprover.eqHypTac",
+		"org.eventb.core.seqprover.shrinkImpHypTac",
+		"org.eventb.core.seqprover.clarifyGoalTac",
+	};
+	private static final String[] postTacticIds = new String[] {
+		"org.eventb.core.seqprover.trueGoalTac",
+		"org.eventb.core.seqprover.falseHypTac",
+		"org.eventb.core.seqprover.goalInHypTac",
+		"org.eventb.core.seqprover.autoRewriteTac",
+		"org.eventb.core.seqprover.typeRewriteTac",
+	};
+
+	private static void enableAutoTactics(IAutoTacticPreference pref,
+			String[] tacticIds) {
+		final List<ITacticDescriptor> descrs = new ArrayList<ITacticDescriptor>(
+				tacticIds.length);
+		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
+		for (String id : tacticIds) {
+			descrs.add(reg.getTacticDescriptor(id));
+		}
+		pref.setSelectedDescriptors(descrs);
+		pref.setEnabled(true);
+	}
+
+	public static void enableAutoProver() {
+		final IAutoTacticPreference autoPref = EventBPlugin
+				.getAutoTacticPreference();
+		enableAutoTactics(autoPref, autoTacticIds);
+	}
+
+	public static void enablePostTactics() {
+		final IAutoTacticPreference postPref = EventBPlugin
+				.getPostTacticPreference();
+		enableAutoTactics(postPref, postTacticIds);
 	}
 	
 }
