@@ -1224,13 +1224,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * SIMP_IN_COMPSET_ONEPOINT
 	    	 * Set Theory 10: E ∈ {x · P(x) | x} == P(E)
 	    	 */
-	    	 // TODO Benoît
-	    	 /*
-	    	 In(_, Cset(_, _, _)) -> {
-	    	 	// if (level2)
+	    	 In(E, Cset(idents, guard, expression)) -> {
 	    	 	final OnePointProcessor opp = new OnePointProcessor(predicate, ff);
 	    	 	opp.matchAndInstantiate();
-	    	 	if(opp.wasSuccessfullyApplied()) {
+	    	 	if (opp.wasSuccessfullyApplied()) {
 	    	 		result = opp.getProcessedPredicate();
 	    	 		trace(predicate, result, "SIMP_IN_COMPSET_ONEPOINT");
 	    	 		return result;
@@ -1239,8 +1236,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 		trace(predicate, result, "SIMP_IN_COMPSET");
 	    	 		return result;
 	    	 	}
-	    	 }*/
-	    	 
+	    	 		
+	    	/*
 	    	In(E, Cset(idents, guard, expression)) -> {
 				Predicate equalsPred = makeRelationalPredicate(EQUAL,
 				                        `expression,
@@ -1279,6 +1276,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 					trace(predicate, result, "SIMP_IN_COMPSET");
 					return result;
 				}
+					    	 		
+	    	 	}*/
 	    	}
 		
 			/**
@@ -1782,6 +1781,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    return predicate;
 	}
     
+   // TODO Benoît: to delete
    private static Predicate recursiveOnePoint(Predicate existsPred, FormulaFactory ff) {
 		
     	boolean success= true;  	

@@ -138,7 +138,13 @@ import org.eventb.core.ast.UnaryPredicate;
  	
  	public static ReplacementUtil matchReplacement(Predicate predicate) {
  		%match (Predicate predicate) {
- 			// TODO Benoit: better way of pattern matching ?
+ 			Equal(bi1@BoundIdentifier(_), bi2@BoundIdentifier(_)) -> {
+ 				if(((BoundIdentifier)`bi1).getBoundIndex() < ((BoundIdentifier)`bi2).getBoundIndex()) {
+ 					return new ReplacementUtil((BoundIdentifier) `bi1, `bi2);
+ 				} else {
+ 					return new ReplacementUtil((BoundIdentifier) `bi2, `bi1);
+ 				}
+ 			}
  			Equal(Expr, bi@BoundIdentifier(_)) -> {
  				return new ReplacementUtil((BoundIdentifier) `bi, `Expr);
  			}
