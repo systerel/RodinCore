@@ -10,8 +10,8 @@
  *******************************************************************************/
 package fr.systerel.perf.tests.builder;
 
-import static fr.systerel.perf.tests.RodinDBUtils.createRodinProject;
-import static fr.systerel.perf.tests.RodinDBUtils.getProject;
+import static fr.systerel.perf.tests.PerfUtils.createRodinProject;
+import static fr.systerel.perf.tests.PerfUtils.getProject;
 
 import java.util.ArrayList;
 import java.util.List;

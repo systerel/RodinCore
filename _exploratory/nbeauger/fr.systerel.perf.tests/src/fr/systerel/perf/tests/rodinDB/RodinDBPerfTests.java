@@ -10,8 +10,8 @@
  *******************************************************************************/
 package fr.systerel.perf.tests.rodinDB;
 
-import static fr.systerel.perf.tests.RodinDBUtils.createRodinProject;
-import static fr.systerel.perf.tests.RodinDBUtils.deleteAllProjects;
+import static fr.systerel.perf.tests.PerfUtils.createRodinProject;
+import static fr.systerel.perf.tests.PerfUtils.deleteAllProjects;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBAttributes;
@@ -28,7 +28,7 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.perf.tests.Chrono;
-import fr.systerel.perf.tests.RodinDBUtils;
+import fr.systerel.perf.tests.PerfUtils;
 
 /**
  * @author Nicolas Beauger
@@ -104,7 +104,7 @@ public class RodinDBPerfTests {
 	
 	@Before
 	public void init() throws Exception {
-		RodinDBUtils.disableAllAuto();
+		PerfUtils.disableAllAuto();
 	}
 	
 	@After

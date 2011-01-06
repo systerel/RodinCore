@@ -12,10 +12,10 @@
  *******************************************************************************/
 package fr.systerel.perf.tests.builder;
 
-import static fr.systerel.perf.tests.RodinDBUtils.deleteAllProjects;
-import static fr.systerel.perf.tests.RodinDBUtils.disableAllAuto;
-import static fr.systerel.perf.tests.RodinDBUtils.getWorkspace;
-import static fr.systerel.perf.tests.RodinDBUtils.getWorkspaceRoot;
+import static fr.systerel.perf.tests.PerfUtils.deleteAllProjects;
+import static fr.systerel.perf.tests.PerfUtils.disableAllAuto;
+import static fr.systerel.perf.tests.PerfUtils.getWorkspace;
+import static fr.systerel.perf.tests.PerfUtils.getWorkspaceRoot;
 import static org.eventb.core.EventBPlugin.getProofManager;
 import static org.eventb.core.EventBPlugin.getUserSupportManager;
 import static org.junit.Assert.assertNotNull;

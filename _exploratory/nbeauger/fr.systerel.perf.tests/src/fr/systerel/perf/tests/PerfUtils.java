@@ -37,12 +37,12 @@ import org.rodinp.internal.core.debug.DebugHelpers;
  * @author Nicolas Beauger
  *
  */
-public class RodinDBUtils {
+public class PerfUtils {
 
 	private static final IWorkspace WORKSPACE = ResourcesPlugin.getWorkspace();
 
 	public static IWorkspaceRoot getWorkspaceRoot() {
-		return RodinDBUtils.WORKSPACE.getRoot();
+		return PerfUtils.WORKSPACE.getRoot();
 	}
 
 	public static IWorkspace getWorkspace() {
@@ -90,8 +90,8 @@ public class RodinDBUtils {
 			getWorkspace().setDescription(wsDescription);
 		}
 		
-		RodinDBUtils.disableAutoProver();
-		RodinDBUtils.disablePostTactics();
+		PerfUtils.disableAutoProver();
+		PerfUtils.disablePostTactics();
 		
 		DebugHelpers.disableIndexing();
 	}
