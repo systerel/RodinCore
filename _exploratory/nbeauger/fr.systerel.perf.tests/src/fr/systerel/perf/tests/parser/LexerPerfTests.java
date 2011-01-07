@@ -15,7 +15,6 @@ import java.util.Map.Entry;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.internal.core.lexer.Scanner;
-import org.eventb.internal.core.lexer.Scanner.ScannerState;
 import org.eventb.internal.core.parser.AbstractGrammar;
 import org.eventb.internal.core.parser.IndexedSet;
 import org.eventb.internal.core.parser.ParseResult;
@@ -61,7 +60,6 @@ public class LexerPerfTests {
 		final ParseResult result = new ParseResult(FACTORY,
 				LanguageVersion.LATEST, null);
 		final String string = sb.toString();
-		final ScannerState init = scanner.save();
 		final Chrono chrono = new Chrono(testName);
 		chrono.startMeasure();
 		for (int i = 0; i < TIMES_REPEAT_SCAN; i++) {
