@@ -9,8 +9,9 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package fr.systerel.perf.tests.parser;
+import static fr.systerel.perf.tests.parser.LexerPerfTests.ALL_TOKENS;
+import static fr.systerel.perf.tests.parser.LexerPerfTests.FACTORY;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.internal.core.parser.ParseResult;
 import org.eventb.internal.core.parser.Scanner;
@@ -32,9 +33,6 @@ public class LexerPerfTestsRodin13 {
 	
 	@Rule
 	public static final TestName testName = new TestName();
-
-	private static final FormulaFactory FACTORY = FormulaFactory.getDefault();
-	private static final String ALL_TOKENS = "≠ ≤ dom ≥ λ ⇔ finite ⇒ partition ⩤ ⩥ card prj2 prj1 succ ▷ ⇸ ¬ mod ⋃ ⋂ + ( ) , ≔ ; pred > · = < ⤀ ∥ ∧ ℕ ∣ ℙ ⊥ ⊤ → ⦂ ↔ ∨ ∩ :∈ ∪ BOOL id ◁ ⤔ union ⤖ ] ∼ TRUE ℙ1 × ^   [   min ℕ1 max ∅ ∃ ‥ ∀ ⊈ ⊆ ⊄ :∣ ⊂ ∈ ∉ inter ∗ ∖ ran − ℤ ↣ FALSE ⊗ ÷ } bool ↠ { ↦ ∘ ";
 
 	@Test
 	public void lexAllTokens() {

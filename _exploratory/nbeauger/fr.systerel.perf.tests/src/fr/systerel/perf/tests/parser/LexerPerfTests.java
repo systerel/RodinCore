@@ -10,13 +10,10 @@
  *******************************************************************************/
 package fr.systerel.perf.tests.parser;
 
-import java.util.Map.Entry;
-
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.internal.core.lexer.Scanner;
 import org.eventb.internal.core.parser.AbstractGrammar;
-import org.eventb.internal.core.parser.IndexedSet;
 import org.eventb.internal.core.parser.ParseResult;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,19 +34,9 @@ public class LexerPerfTests {
 	@Rule
 	public static final TestName testName = new TestName();
 
-	private static final FormulaFactory FACTORY = FormulaFactory.getDefault();
+	public static final FormulaFactory FACTORY = FormulaFactory.getDefault();
 	private static final AbstractGrammar GRAMMAR = FACTORY.getGrammar();
-	private static final IndexedSet<String> TOKENS = GRAMMAR.getTokens();
-	private static final String ALL_TOKENS;
-
-	static {
-		final StringBuilder sb = new StringBuilder();
-		for (Entry<String, Integer> entry : TOKENS.entrySet()) {
-			sb.append(entry.getKey());
-			sb.append(' ');
-		}
-		ALL_TOKENS = sb.toString();
-	}
+	public static final String ALL_TOKENS = "≠ ≤ dom ≥ λ ⇔ finite ⇒ partition ⩤ ⩥ card prj2 prj1 succ ▷ ⇸ ¬ mod ⋃ ⋂ + ( ) , ≔ ; pred > · = < ⤀ ∥ ∧ ℕ ∣ ℙ ⊥ ⊤ → ⦂ ↔ ∨ ∩ :∈ ∪ BOOL id ◁ ⤔ union ⤖ ] ∼ TRUE ℙ1 × ^   [   min ℕ1 max ∅ ∃ ‥ ∀ ⊈ ⊆ ⊄ :∣ ⊂ ∈ ∉ inter ∗ ∖ ran − ℤ ↣ FALSE ⊗ ÷ } bool ↠ { ↦ ∘ ";
 
 	@Test
 	public void lexAllTokens() {
