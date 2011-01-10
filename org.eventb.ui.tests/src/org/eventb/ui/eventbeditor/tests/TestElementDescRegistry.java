@@ -199,12 +199,13 @@ public class TestElementDescRegistry extends TestCase {
 				.getElementDesc(IVariant.ELEMENT_TYPE);
 
 		final AttributeDesc expectedExpression = getExpressionDesc();
+		final AttributeDesc expectedComment = getCommentedDesc();
 
 		assertElementDesc(desc, "VARIANT", "", defaultImgProvider, nullPrefix,
 				nullAttribute, 0);
 
 		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
-				expectedExpression);
+				expectedExpression, expectedComment);
 
 		assertChildrens("Test children", desc.getChildTypes(), noChildren);
 
