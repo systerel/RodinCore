@@ -543,12 +543,7 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 
 		@Override
 		protected void processChildren() {
-			if (children[0].isATypeExpression()) {
-				// If the first element is a type, then the original expression
-				// is returned. This is possible because there is no absorbing
-				// element for operator ovr.
-				knownResult = original;
-			} else if (children[children.length - 1].isATypeExpression()) {
+			if (children[children.length - 1].isATypeExpression()) {
 				// If the last element is a type, then only the last element is
 				// returned.
 				knownResult = children[children.length - 1];

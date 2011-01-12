@@ -16,106 +16,89 @@ import java.util.List;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 
 /**
  * This class implements the algorithm for instantiating one or several bound
  * identifier in a quantified predicate.
- * 
- * TODO Benoît: update commentaries
  */
-public class OnePointInstantiator2 {
+public abstract class OnePointInstantiator2<T extends Formula<T>> {
+
+	public static Predicate instantiatePredicate(QuantifiedPredicate predicate,
+			Expression[] replacements, FormulaFactory ff) {
+		return new OnePointInstantiatorPredicate(predicate, replacements, ff)
+				.instantiate();
+	}
+
+	public static Expression instantiateExpression(
+			QuantifiedExpression expression, Expression[] replacements,
+			FormulaFactory ff) {
+		return new OnePointInstantiatorExpression(expression, replacements, ff)
+				.instantiate();
+	}
 
 	private static final BoundIdentDecl[] NO_BOUND_IDENT_DECLS = new BoundIdentDecl[0];
+	protected final FormulaFactory ff;
 
-	private final QuantifiedPredicate inputPredicate;
-	private final FormulaFactory ff;
+	protected final T input;
+	protected final int tag;
 
 	private final Expression[] replacements;
-
-	private final int tag;
-	private final BoundIdentDecl[] allDecls;
+	protected BoundIdentDecl[] allDecls;
 
 	// allDecls will be split into these two arrays.
-	private BoundIdentDecl[] outerDecls;
-	private BoundIdentDecl[] innerDecls;
+	protected BoundIdentDecl[] outerDecls;
+	protected BoundIdentDecl[] innerDecls;
 
 	/**
 	 * Initiates the instantiation of the given bound identifier by the given
-	 * expression in the given quantified predicate.
+	 * expression in the given quantified predicate or quantified expression.
 	 * <p>
 	 * The given expression must not contain any identifier bound more inward
 	 * than the one to instantiate.
 	 * </p>
 	 * 
-	 * @param pred
-	 *            the predicate where the instantiation shall take place
+	 * @param input
+	 *            the formula where the instantiation shall take place
 	 * @param replacement
 	 *            the expressions to instantiate the bound identifiers with
 	 * @param ff
 	 *            a formula factory for building the result
 	 */
-	public OnePointInstantiator2(QuantifiedPredicate pred,
-			Expression[] replacement, FormulaFactory ff) {
-		this.inputPredicate = pred;
-		this.tag = pred.getTag();
-		this.allDecls = pred.getBoundIdentDecls();
-		this.replacements = replacement;
+	public OnePointInstantiator2(T input, Expression[] replacements,
+			FormulaFactory ff) {
 		this.ff = ff;
+		this.input = input;
+		this.tag = input.getTag();
+		this.replacements = replacements;
 	}
 
 	/**
-	 * This method uses the instantiate method on Quantified predicates defined
-	 * in {@link org.eventb.core.ast.QuantifiedPredicate}
+	 * This method uses the instantiation methods defined in
+	 * {@link QuantifiedExpression} and {@link QuantifiedPredicate}.
 	 * <p>
-	 * In case of an instantiation of one BoundIdentifier by another
-	 * boundIdentifier, we have to calculate a special shift value, in order to
-	 * preserve the correctness in the BoundIdentifier index values.
+	 * In case of an instantiation of one bound identifier by another bound
+	 * identifier, we have to calculate a special shift value, in order to
+	 * preserve the correctness in the bound identifier index values.
 	 * </p>
 	 * We first split the declaration of BoundIdentifiers in two sublists. The
 	 * bound identifier that will be instantiated is the leftmost in the list of
-	 * inner identifiers. The inner predicate is instantiated with the inner
-	 * BoundIdentifiers list. After this calculation, we rebuild a predicate
-	 * which corresponds to the instantiation of the inputPredicate with the
-	 * replacement.
+	 * inner identifiers.
 	 * 
 	 * @return the instantiated predicate
 	 */
-	public Predicate instantiate() {
-		splitIdentDecls();
-
-		final QuantifiedPredicate innerPred = ff.makeQuantifiedPredicate(tag,
-				innerDecls, inputPredicate.getPredicate(), null);
-		final Predicate newInnerPred = innerPred.instantiate(getReplacements(),
-				ff);
-		if (outerDecls.length == 0) {
-			return newInnerPred;
-		}
-
-		// Merge back the split declarations
-		final Predicate newBasePred;
-		final BoundIdentDecl[] newInnerDecls;
-		if (newInnerPred instanceof QuantifiedPredicate) {
-			final QuantifiedPredicate qPred = (QuantifiedPredicate) newInnerPred;
-			newInnerDecls = qPred.getBoundIdentDecls();
-			newBasePred = qPred.getPredicate();
-		} else {
-			newInnerDecls = NO_BOUND_IDENT_DECLS;
-			newBasePred = newInnerPred;
-		}
-		final List<BoundIdentDecl> newDecls = mergeIdentDecls(outerDecls,
-				newInnerDecls);
-		return ff.makeQuantifiedPredicate(tag, newDecls, newBasePred, null);
-	}
+	protected abstract T instantiate();
 
 	/**
 	 * Splits the bound identifier declarations into two sub-arrays (outerDecls
 	 * and innerDecls), such that the bound identifier to replace is the
 	 * leftmost declaration in innerDecls.
 	 */
-	private void splitIdentDecls() {
+	protected void splitIdentDecls() {
 		final int innerDeclsLength = allDecls.length
 				- indexOfFirstReplacement();
 		final int outerDeclsLength = allDecls.length - innerDeclsLength;
@@ -140,12 +123,12 @@ public class OnePointInstantiator2 {
 	 * @return the replacement array for instantiating the predicate quantifying
 	 *         the inner declarations only.
 	 */
-	private Expression[] getReplacements() {
+	protected Expression[] getReplacements() {
 		final int offset = innerDecls.length;
+		final int firstRepIndex = indexOfFirstReplacement();
 		final Expression[] replacements = new Expression[offset];
 		for (int i = 0; i < replacements.length; i++) {
-			Expression replacement = this.replacements[i
-					+ indexOfFirstReplacement()];
+			Expression replacement = this.replacements[i + firstRepIndex];
 			if (replacement == null) {
 				replacements[i] = null;
 			} else {
@@ -156,12 +139,74 @@ public class OnePointInstantiator2 {
 		return replacements;
 	}
 
-	private List<BoundIdentDecl> mergeIdentDecls(BoundIdentDecl[] outerDecls,
+	protected List<BoundIdentDecl> mergeIdentDecls(BoundIdentDecl[] outerDecls,
 			BoundIdentDecl[] innerDecls) {
 		final List<BoundIdentDecl> result = new ArrayList<BoundIdentDecl>();
 		result.addAll(Arrays.asList(outerDecls));
 		result.addAll(Arrays.asList(innerDecls));
 		return result;
+	}
+
+	private static class OnePointInstantiatorPredicate extends
+			OnePointInstantiator2<Predicate> {
+
+		public OnePointInstantiatorPredicate(QuantifiedPredicate input,
+				Expression[] replacements, FormulaFactory ff) {
+			super(input, replacements, ff);
+			this.allDecls = input.getBoundIdentDecls();
+		}
+
+		/**
+		 * The inner predicate is instantiated with the inner BoundIdentifier
+		 * list. After this calculation, we rebuild a predicate which
+		 * corresponds to the instantiation of the inputPredicate with the
+		 * replacement.
+		 */
+		@Override
+		protected Predicate instantiate() {
+			splitIdentDecls();
+			final QuantifiedPredicate innerPred = ff.makeQuantifiedPredicate(
+					tag, innerDecls,
+					((QuantifiedPredicate) input).getPredicate(), null);
+			final Predicate newInnerPred = innerPred.instantiate(
+					getReplacements(), ff);
+			if (outerDecls.length == 0) {
+				return newInnerPred;
+			}
+
+			// Merge back the split declarations
+			final Predicate newBasePred;
+			final BoundIdentDecl[] newInnerDecls;
+			if (newInnerPred instanceof QuantifiedPredicate) {
+				final QuantifiedPredicate qPred = (QuantifiedPredicate) newInnerPred;
+				newInnerDecls = qPred.getBoundIdentDecls();
+				newBasePred = qPred.getPredicate();
+			} else {
+				newInnerDecls = NO_BOUND_IDENT_DECLS;
+				newBasePred = newInnerPred;
+			}
+			final List<BoundIdentDecl> newDecls = mergeIdentDecls(outerDecls,
+					newInnerDecls);
+			return ff.makeQuantifiedPredicate(tag, newDecls, newBasePred, null);
+		}
+
+	}
+
+	private static class OnePointInstantiatorExpression extends
+			OnePointInstantiator2<Expression> {
+
+		public OnePointInstantiatorExpression(QuantifiedExpression input,
+				Expression[] replacements, FormulaFactory ff) {
+			super(input, replacements, ff);
+			this.allDecls = input.getBoundIdentDecls();
+		}
+
+		@Override
+		protected Expression instantiate() {
+			splitIdentDecls();
+			return ((QuantifiedExpression) input).instantiate(
+					getReplacements(), ff);
+		}
 	}
 
 }

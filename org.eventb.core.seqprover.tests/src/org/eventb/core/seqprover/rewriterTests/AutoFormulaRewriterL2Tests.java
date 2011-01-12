@@ -1149,6 +1149,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		expressionTest("S × T", "r  (S × T)", "S", "ℙ(S)", "T", "ℙ(T)");
 		expressionTest("S × T", "r  (S × T)  s  (S × T)", //
 				"S", "ℙ(S)", "T", "ℙ(T)");
+		expressionTest("(S × T)  s", "(S × T)  r  (S × T)  s", //
+				"S", "ℙ(S)", "T", "ℙ(T)");
 
 		expressionTest("r  (S × T)", "r  (S × T)", "S", "ℙ(U)", "T", "ℙ(T)");
 		expressionTest("r  (S × T)", "r  (S × T)", "S", "ℙ(S)", "T", "ℙ(V)");
@@ -1183,7 +1185,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		expressionTest("{x, y, z · x ↦ y ↦ z ∈ P ∣ y ↦ x}",
 				"{x, y, z · x ↦ y ↦ z ∈ P∣ x ↦ y}∼", "P", "S×T↔U");
 
-		expressionTest("{x · x ∈ P ∣ x}∼", "{x · x ∈ P ∣ x}∼", "P", "S↔T");
+		// expressionTest("{x · x ∈ P ∣ x}∼", "{x · x ∈ P ∣ x}∼", "P", "S↔T");
 		expressionTest("{x, y, z · x ∈ ℕ ∧ y ∈ BOOL ∧ z ∈ ℤ ∣ x ↦ y}",
 				"{x, y, z · x ∈ ℕ ∧ y ∈ BOOL ∧ z ∈ ℤ ∣ x ↦ y}");
 	}
@@ -1212,8 +1214,9 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		expressionTest("{x,y,z⦂ℤ,t⦂U · x↦y∈P ∣ x+z}", //
 				"dom({x,y,z,t⦂U · x↦y∈P ∣ x+z ↦ t})", //
 				"P", "ℤ↔T");
-		expressionTest("dom({x,y⦂S · x ∈ 1‥2 × 3‥4 ∣ x})", //
-				"dom({x,y⦂S · x ∈ 1‥2 × 3‥4 ∣ x})");
+		// TODO Benoît
+		// expressionTest("dom({x,y⦂S · x ∈ 1‥2 × 3‥4 ∣ x})", //
+		// "dom({x,y⦂S · x ∈ 1‥2 × 3‥4 ∣ x})");
 	}
 
 	/**
@@ -1227,8 +1230,9 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		expressionTest("{x,y,z⦂V · x↦y∈P ∣ x}", //
 				"ran({x,y,z⦂V · x↦y∈P ∣ x↦z ↦ x})", //
 				"P", "S↔T");
-		expressionTest("ran({x,y⦂S · x ∈ 1‥2 × 3‥4 ∣ x})", //
-				"ran({x,y⦂S · x ∈ 1‥2 × 3‥4 ∣ x})");
+		// TODO Benoît
+		// expressionTest("ran({x,y⦂S · x ∈ 1‥2 × 3‥4 ∣ x})", //
+		// "ran({x,y⦂S · x ∈ 1‥2 × 3‥4 ∣ x})");
 	}
 
 	/**
@@ -1656,7 +1660,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SUBSETEQ_COMPSET_L() {
-		predicateTest("∀y · y∈ℕ ⇒ y∈S", "{x · x∈ℕ ∣ x} ⊆ S", "S", "ℙ(ℤ)");
+		// predicateTest("∀y · y∈ℕ ⇒ y∈S", "{x · x∈ℕ ∣ x} ⊆ S", "S", "ℙ(ℤ)");
 		predicateTest("∀x, y · x∈ℤ∧y∈ℤ ⇒ x+y∈S",
 				"{x, y · x∈ℤ∧y∈ℤ ∣ x+y } ⊆ S ", "S", "ℙ(ℤ)");
 		predicateTest("∀x, y · x+y=a ⇒ x+y∈S", "{x, y · x+y=a ∣ x+y} ⊆ S", //
@@ -1668,7 +1672,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_EQUAL_COMPSET() {
-		predicateTest("∀x · ¬x∈ℕ", "{x · x∈ℕ ∣ x} = ∅", "S", "ℙ(ℤ)");
+		// predicateTest("∀x · ¬x∈ℕ", "{x · x∈ℕ ∣ x} = ∅", "S", "ℙ(ℤ)");
 		predicateTest("∀x, y · ¬(x∈ℤ∧y∈ℤ)", "{x, y · x∈ℤ∧y∈ℤ ∣ x+y } = ∅ ", //
 				"S", "ℙ(ℤ)");
 		predicateTest("∀x, y · ¬(x+y=a)", "{x, y · x+y=a ∣ x+y} = ∅", //
@@ -1684,6 +1688,28 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	}
 
 	/**
+	 * Ensures that rule SIMP_COMPSET_IN is implemented correctly
+	 */
+	@Test
+	public void testSIMP_COMPSET_IN() {
+		expressionTest("S", "{x · x∈S ∣ x}", "S", "ℙ(T)");
+		expressionTest("S", "{x, y · x↦y∈S ∣ x↦y}", "S", "ℙ(T×U)");
+
+		expressionTest("{x, y · x↦a↦y∈S ∣ x↦a↦y}", "{x, y · x↦a↦y∈S ∣ x↦a↦y}",
+				"S", "ℙ(T×A×U)");
+		expressionTest("{x, y · x↦y∈S ∣ y↦x}", "{x, y · x↦y∈S ∣ y↦x}", "S",
+				"ℙ(T×U)");
+		expressionTest("{x, y · x↦y+1∈S ∣ x↦y+1}", "{x, y · x↦y+1∈S ∣ x↦y+1}",
+				"S", "ℙ(T×ℤ)");
+
+		expressionTest("{x · x∈S∪{x} ∣ x}", "{x · x∈S∪{x} ∣ x}", "S", "ℙ(T)");
+		expressionTest("{x, y · x↦y∈S∪{x↦y} ∣ x↦y}",
+				"{x, y · x↦y∈S∪{x↦y} ∣ x↦y}", "S", "ℙ(T×U)");
+		expressionTest("{x, y · x↦y∈S×(U∪{y}) ∣ x↦y}",
+				"{x, y · x↦y∈S×(U∪{y}) ∣ x↦y}", "S", "ℙ(T)", "U", "ℙ(V)");
+	}
+
+	/**
 	 * Ensures that rule SIMP_IN_COMPSET_ONEPOINT is implemented correctly
 	 */
 	@Test
@@ -1694,17 +1720,29 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		predicateTest("∃x,y ·  x↦y=a ∧ (x≥0 ∧ y>x ∧ b>2∗y)",
 				"a↦b ∈ {x,y,z · x≥0 ∧ y>x ∧ z>2∗y ∣ (x↦y)↦z}");
 
-		predicateTest("a=0 ∧ b=0", "a↦b ∈ {x,y · x=0 ∧ y=0 ∣ x↦y}");
+		predicateTest("a↦b = 0↦0", "a↦b ∈ {x,y · x=0 ∧ y=0 ∣ x↦y}");
 		predicateTest("a=b ∧ a≥0", "a↦b ∈ {x · x≥0 ∣ x↦x}");
 		predicateTest("∃y · y+1=b ∧ a>y+c", "a↦b↦c ∈ {x,y,z · x>y+z ∣ x↦y+1↦z}");
 
 		// cas "pathologique" de l'ancienne version
-		predicateTest("∃y · y+1=b ∧ (a=0 ∧ y=0)",
-				"a↦b ∈ {x,y · x=0 ∧ y=0 ∣ x↦y+1}");
+		// predicateTest("∃y · y+1=b ∧ (a=0 ∧ y=0)",
+		// "a↦b ∈ {x,y · x=0 ∧ y=0 ∣ x↦y+1}");
+		predicateTest("a↦b = 0↦0+1", "a↦b ∈ {x,y · x=0 ∧ y=0 ∣ x↦y+1}");
 
 		predicateTest("∃x ·  x≥0 ∧ x+1=1", "1 ∈ {x · x≥0 ∣ x+1}");
 		predicateTest("∃x,y · (x≥0 ∧ y>x) ∧ x↦y=a",
 				"a ∈ {x,y · x≥0 ∧ y>x ∣ x↦y}");
 	}
 
+	/**
+	 * Ensures that rule SIMP_COMPSET_EQUAL is implemented correctly
+	 */
+	@Test
+	public void testSIMP_COMPSET_EQUAL() {
+		expressionTest("{0}", "{x· x=0 ∣ x}");
+		expressionTest("{0+1}", "{x,y· x=0 ∧ y=3 ∣ x+1}");
+		expressionTest("{0↦3}", "{x,y· x=0 ∧ y=3 ∣ x↦y}");
+
+		expressionTest("{x,y· x=0 ∧ y=x ∣ x+y}", "{x,y· x=0 ∧ y=x ∣ x+y}");
+	}
 }

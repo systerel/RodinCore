@@ -114,8 +114,8 @@ import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
-import org.eventb.internal.core.seqprover.eventbExtensions.OnePointProcessor;
-import org.eventb.internal.core.seqprover.eventbExtensions.OnePointSimplifier;
+import org.eventb.internal.core.seqprover.eventbExtensions.OnePointProcessorRewriting;
+import org.eventb.internal.core.seqprover.eventbExtensions.OnePointProcessorExpression;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
 
 /**
@@ -1224,60 +1224,18 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * SIMP_IN_COMPSET_ONEPOINT
 	    	 * Set Theory 10: E ∈ {x · P(x) | x} == P(E)
 	    	 */
-	    	 In(E, Cset(idents, guard, expression)) -> {
-	    	 	final OnePointProcessor opp = new OnePointProcessor(predicate, ff);
+	    	 In(_, Cset(_, _, _)) -> {
+	    	 	final OnePointProcessorRewriting opp = new OnePointProcessorRewriting(predicate, ff);
 	    	 	opp.matchAndInstantiate();
 	    	 	if (opp.wasSuccessfullyApplied()) {
-	    	 		result = opp.getProcessedPredicate();
+	    	 		result = opp.getProcessedResult();
 	    	 		trace(predicate, result, "SIMP_IN_COMPSET_ONEPOINT");
 	    	 		return result;
 	    	 	} else {
-	    	 		result = opp.getQPred();
+	    	 		result = opp.getQuantifiedPredicate();
 	    	 		trace(predicate, result, "SIMP_IN_COMPSET");
 	    	 		return result;
 	    	 	}
-	    	 		
-	    	/*
-	    	In(E, Cset(idents, guard, expression)) -> {
-				Predicate equalsPred = makeRelationalPredicate(EQUAL,
-				                        `expression,
-				                        `E.shiftBoundIdentifiers(`idents.length, ff));
-				
-				if (level1 && `E.getTag() == MAPSTO){
-					
-					final List<Predicate> conjuncts = new ArrayList<Predicate>();
-					simpEqualsMapsTo(equalsPred, conjuncts, ff);
-					conjuncts.add(0,`guard);
-					final AssociativePredicate conjunctionPred = ff.makeAssociativePredicate(LAND, conjuncts, null);
-					Predicate existsPred = makeQuantifiedPredicate(EXISTS,
-							`idents, conjunctionPred );		
-					result = recursiveOnePoint(existsPred,ff);
-					trace(predicate, result, "SIMP_IN_COMPSET_ONEPOINT");
-					return result;
-
-				}
-				
-				Predicate conjunctionPred = makeAssociativePredicate(LAND,
-                        `guard,  equalsPred);
-				Predicate existsPred = makeQuantifiedPredicate(EXISTS,
-                   `idents, conjunctionPred);
-				final OnePointSimplifier onePoint = 
-				    new OnePointSimplifier(existsPred, equalsPred, ff);
-				onePoint.matchAndApply();
-				if (onePoint.wasSuccessfullyApplied()) {
-					// no need to generate a WD PO for the replacement:
-					// it is already generated separately by POM 
-					// for the whole predicate
-					result = onePoint.getProcessedPredicate();
-					trace(predicate, result, "SIMP_IN_COMPSET_ONEPOINT");
-					return result;
-				} else {
-					result = existsPred;
-					trace(predicate, result, "SIMP_IN_COMPSET");
-					return result;
-				}
-					    	 		
-	    	 	}*/
 	    	}
 		
 			/**
@@ -1779,30 +1737,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 
 	    }
 	    return predicate;
-	}
-    
-   // TODO Benoît: to delete
-   private static Predicate recursiveOnePoint(Predicate existsPred, FormulaFactory ff) {
-		
-    	boolean success= true;  	
-    	while(success){
-    		if (existsPred.getTag() != EXISTS) {
-    			break;
-    		}
-    		final Predicate existsChild = ((QuantifiedPredicate)existsPred).getPredicate();
-    		if (existsChild.getTag() != LAND) {
-    			break;
-    		}
-    		final Predicate[] children = ((AssociativePredicate)existsChild).getChildren();
-			final OnePointSimplifier onePoint = 
-				new OnePointSimplifier(existsPred,children[children.length-1], ff);
-			onePoint.matchAndApply();
-			success = onePoint.wasSuccessfullyApplied();
-			if (success) {
-				existsPred = onePoint.getProcessedPredicate();
-			}
-    	}
-    	return existsPred;
 	}
     
     private static boolean isDTConstructor(ExtendedExpression expr) {
@@ -4064,7 +3998,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
     
         
     @ProverRule( { "SIMP_SPECIAL_COMPSET_BFALSE",
-    			"SIMP_SPECIAL_COMPSET_BTRUE", "SIMP_SPECIAL_QUNION" } )
+    			"SIMP_SPECIAL_COMPSET_BTRUE", "SIMP_SPECIAL_QUNION",
+    			"SIMP_COMPSET_IN", "SIMP_COMPSET_EQUAL" } )
     @Override
     public Expression rewrite(QuantifiedExpression expression) {
     	final Expression result;
@@ -4106,6 +4041,40 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    		}
 	    	}
 	    	
+	    	/**
+	    	 * SIMP_COMPSET_IN
+	    	 *    {x · x∈S ∣ x} == S
+	    	 */
+	    	// TODO Benoît: valider avec Laurent pour le lambdaCheck
+	    	Cset(_, In(E, S), E) -> {
+	    		if (level2) {
+	    			if (!containsOneOf(`S.getBoundIdentifiers(), `E.getBoundIdentifiers())) {
+	    				if (lambdaCheck((QuantifiedExpression) expression)) {
+	    					result = `S;
+	    					trace(expression, result, "SIMP_COMPSET_IN");
+		    				return result;
+	    				}
+	    			}
+	    		}
+	    	}
+	 
+	 		/**
+	 		 * SIMP_COMPSET_EQUAL
+	 		 *    {x · x = E ∣ x} == {E}
+	 		 */
+	 		// TODO Benoît: faire un pattern plus précis ?
+		 	Cset(_, _, _) -> {
+		 		if (level2) {
+		 			OnePointProcessorExpression opp = new OnePointProcessorExpression(expression, ff);
+		 			opp.matchAndInstantiate();
+		 			if (opp.wasSuccessfullyApplied()) {
+	    	 			result = opp.getProcessedResult();
+		 				trace(expression, result, "SIMP_COMPSET_EQUAL");
+		    			return result;
+		 			}
+		 		}
+		 	}
+		 	
     	}
     	return expression;
     }

@@ -17,6 +17,7 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+
 import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
 import static org.eventb.core.ast.QuantifiedHelper.areEqualQuantifiers;
 import static org.eventb.core.ast.QuantifiedHelper.checkBoundIdentTypes;
@@ -26,12 +27,15 @@ import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.BRACE_SETS;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.QUANTIFICATION;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.internal.core.ast.BoundIdentSubstitution;
 import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
@@ -53,6 +57,7 @@ import org.eventb.internal.core.parser.SubParsers.ImplicitQuantExpr;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 import org.eventb.internal.core.typecheck.TypeVariable;
+
 
 /**
  * QuantifiedExpression is the class for all quantified expressions in an
@@ -737,6 +742,140 @@ public class QuantifiedExpression extends Expression {
 
 	// TODO add instantiation of subexpression
 
+	public Expression instantiate(Expression[] replacements,
+			FormulaFactory formulaFactory) {
+		BoundIdentSubstitution subst = new BoundIdentSubstitution(
+				quantifiedIdentifiers, replacements, formulaFactory);
+		Expression newExpr = expr.rewrite(subst);
+		
+		List<BoundIdentDecl> newBoundIdentDecls = subst.getNewDeclarations();
+		if (newBoundIdentDecls.isEmpty()) {
+			return formulaFactory.makeSetExtension(newExpr, null);
+		}
+
+		Predicate newPred = cleanUpPredicate(pred, replacements, formulaFactory);
+		if (newPred == null) {
+			newPred = formulaFactory.makeLiteralPredicate(BTRUE, null);
+		} else {
+			QuantifiedPredicate qNewPred = formulaFactory
+					.makeQuantifiedPredicate(FORALL, quantifiedIdentifiers,
+							newPred, null);
+			newPred = qNewPred.instantiate(replacements, formulaFactory);
+			if (newPred instanceof QuantifiedPredicate) {
+				newPred = ((QuantifiedPredicate) newPred).getPredicate();
+			}
+		}
+
+		return formulaFactory.makeQuantifiedExpression(getTag(),
+				newBoundIdentDecls, newPred, newExpr, getSourceLocation(),
+				getForm());
+	}
+
+	private Predicate cleanUpPredicate(Predicate predicate,
+			Expression[] replacements, FormulaFactory ff) {
+		switch (predicate.getTag()) {
+		case LAND:
+		case LOR:
+			final AssociativePredicate aPred = (AssociativePredicate) predicate;
+			return processAssociative(aPred, replacements, ff);
+		case LIMP:
+			final BinaryPredicate bPred = (BinaryPredicate) predicate;
+			return processBinary(bPred, replacements, ff);
+		case NOT:
+			final UnaryPredicate uPred = (UnaryPredicate) predicate;
+			return processUnary(uPred, replacements, ff);
+		case EQUAL:
+			final RelationalPredicate rPred = (RelationalPredicate) predicate;
+			if (isReplacement(rPred, replacements)) {
+				return null;
+			} else {
+				return predicate;
+			}
+		default:
+			return predicate;
+		}
+	}
+
+	private Predicate processAssociative(AssociativePredicate predicate,
+			Expression[] replacements, FormulaFactory ff) {
+		final List<Predicate> newChildren = new ArrayList<Predicate>();
+		for (Predicate child : predicate.getChildren()) {
+			final Predicate newChild = cleanUpPredicate(child, replacements, ff);
+			if (newChild != null) {
+				newChildren.add(newChild);
+			}
+		}
+
+		if (newChildren.size() == 0) {
+			return null;
+		} else if (newChildren.size() == 1) {
+			return newChildren.get(0);
+		} else {
+			return ff.makeAssociativePredicate(predicate.getTag(), newChildren,
+					null);
+		}
+	}
+
+	private Predicate processBinary(BinaryPredicate predicate,
+			Expression[] replacements, FormulaFactory ff) {
+		final Predicate left = cleanUpPredicate(predicate.getLeft(),
+				replacements, ff);
+		final Predicate right = cleanUpPredicate(predicate.getRight(),
+				replacements, ff);
+		if (left == null) {
+			return right;
+		} else if (right == null) {
+			return left;
+		} else {
+			return ff
+					.makeBinaryPredicate(predicate.getTag(), left, right, null);
+		}
+	}
+
+	private Predicate processUnary(UnaryPredicate predicate,
+			Expression[] replacements, FormulaFactory ff) {
+		final Predicate child = cleanUpPredicate(predicate.getChild(),
+				replacements, ff);
+		if (child == null) {
+			return child;
+		} else {
+			return ff.makeUnaryPredicate(predicate.getTag(), child, null);
+		}
+	}
+
+	private boolean isReplacement(RelationalPredicate predicate,
+			Expression[] replacements) {
+
+		if (predicate.getLeft().getTag() == BOUND_IDENT) {
+			if (isExistingReplacement((BoundIdentifier) predicate.getLeft(),
+					predicate.getRight(), replacements)) {
+				return true;
+			}
+		}
+		if (predicate.getRight().getTag() == BOUND_IDENT) {
+			if (isExistingReplacement((BoundIdentifier) predicate.getRight(),
+					predicate.getLeft(), replacements)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean isExistingReplacement(BoundIdentifier bi,
+			Expression replacement, Expression[] replacements) {
+		if (bi.getBoundIndex() >= quantifiedIdentifiers.length) {
+			return false;
+		}
+		int index = quantifiedIdentifiers.length - 1 - bi.getBoundIndex();
+		if (replacements[index] == null) {
+			return false;
+		}
+		if (!replacements[index].equals(replacement)) {
+			return false;
+		}
+		return true;
+	}
+	
 	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		acc.inspect(this);

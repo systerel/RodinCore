@@ -43,15 +43,15 @@ import org.eventb.core.ast.UnaryPredicate;
  
  public class OnePointFilter {
  
- 	static class NormalFormUtil {
+ 	static class QuantifiedFormUtil {
  	
  		private final Expression element;
  		private final BoundIdentDecl[] boundIdents;
  		private final Predicate guard;
  		private final Expression expression;
  		
- 		private NormalFormUtil(Expression element, BoundIdentDecl[] boundIdents,
- 								Predicate guard, Expression expression) {
+ 		private QuantifiedFormUtil(Expression element, BoundIdentDecl[] boundIdents,
+ 									Predicate guard, Expression expression) {
  			this.element = element;
  			this.boundIdents = boundIdents;
  			this.guard = guard;
@@ -127,10 +127,10 @@ import org.eventb.core.ast.UnaryPredicate;
  		return false;
  	}
  	
- 	public static NormalFormUtil matchAndDissociate(Predicate predicate) {
+ 	public static QuantifiedFormUtil matchAndDissociate(Predicate predicate) {
  		%match (Predicate predicate) {
  			In(E, Cset(idents, guard, expression)) -> {
- 				return new NormalFormUtil(`E, `idents, `guard, `expression);
+ 				return new QuantifiedFormUtil(`E, `idents, `guard, `expression);
  			}
  		}
  		return null;

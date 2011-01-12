@@ -571,7 +571,11 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 		// One Point Rule applies replacement on expression ('x=n' here)
 		predicateTest("n=0", "n ∈ {x·x=0∣x}");
 		// One Point Rule does not apply replacement on guard ('x=0' here)
-		predicateTest("∃x· x=0 ∧ x+1 = n", "n ∈ {x·x=0∣x+1}");
+		if (level2AndHigher) {
+			predicateTest("n = 0+1", "n ∈ {x·x=0∣x+1}");
+		} else {
+			predicateTest("∃x· x=0 ∧ x+1 = n", "n ∈ {x·x=0∣x+1}");
+		}
 		// Jean-Raymond Abrial's bug
 		predicateTest("∃z·(∃x,y·(x>0∧y>0)∧g(x+y)−g(x)−g(y)=l)∧l=z",
 				"∃z·(l∈ {x,y·x>0 ∧ y>0 ∣ g(x+y)−g(x)−g(y)})∧l=z");
@@ -794,7 +798,11 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 		expressionTest("(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(w)", "(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(w)",//
 				"w", "ℤ×ℤ");
 		// Rewriting fails as "x" is not a maplet
-		expressionTest("{x·x∈ℤ×ℤ∣x}(1)", "{x·x∈ℤ×ℤ∣x}(1)");
+		if (level2AndHigher) {
+			expressionTest("(ℤ×ℤ)(1)", "{x·x∈ℤ×ℤ∣x}(1)");
+		} else {
+			expressionTest("{x·x∈ℤ×ℤ∣x}(1)", "{x·x∈ℤ×ℤ∣x}(1)");
+		}
 		// Rewriting fails as "pair" is not an explicit maplet
 		expressionTest("(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(pair)", "(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(pair)");
 		
@@ -813,8 +821,7 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 		// Checks that external lambda disappear and x is instantiated
 		expressionTest("(λz·z∈ℕ ∣ z+z)[{1,2,3}]", "(λx·x∈ℙ(ℕ) ∣ (λz·z∈ℕ ∣ z+z)[x])({1,2,3})");
 		// Real example from Bug 2995930 with an argument containing a bound identifier.
-		
-		// TODO Benoît : voir avec Laurent
+		// TODO Benoît
 		if (!level2AndHigher) {
 			predicateTest("∀t⦂ℙ(S)·(λx↦p·x∈t∧p⊆t∣p) = ∅",
 					"∀t⦂ℙ(S)·(λs·s⊆S∣(λx↦p·x∈s∧p⊆s∣p))(t) = ∅", "S", "ℙ(S)");
@@ -1055,9 +1062,15 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 		// finite(S \/ ... \/ T) == finite(S) & ... & finite(T)
 		predicateTest("finite({x ∣ x > 0}) ∧ finite({y ∣ y < 0})",
 				"finite({x ∣ x > 0} ∪ {y ∣ y < 0})");
-		predicateTest(
-				"finite({x ∣ x > 0}) ∧ finite({y ∣ y < 0}) ∧ finite({x ∣ x = 0})",
-				"finite({x ∣ x > 0} ∪ {y ∣ y < 0} ∪ {x ∣ x =  0})");
+		if (level2AndHigher) {
+			predicateTest(
+					"finite({x ∣ x > 0}) ∧ finite({y ∣ y < 0}) ∧ finite({0})",
+					"finite({x ∣ x > 0} ∪ {y ∣ y < 0} ∪ {x ∣ x =  0})");
+		} else {
+			predicateTest(
+					"finite({x ∣ x > 0}) ∧ finite({y ∣ y < 0}) ∧ finite({x ∣ x = 0})",
+					"finite({x ∣ x > 0} ∪ {y ∣ y < 0} ∪ {x ∣ x =  0})");
+		}
 
 		
 		// finite(POW(S)) == finite(S)
@@ -1139,20 +1152,36 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 		// card(S(1) \/ ... \/ S(n)) == card(S(1)) + ... card(S(2)) -
 		//	                            - ... 
 		//                              + (-1)^(n-1)card(S(1) /\ ... card(S(n)))
-		expressionTest(
-				"card({x ∣ x ∈ BOOL}) + card(S) − card({x ∣ x ∈ BOOL} ∩ S)",
-				"card({x ∣ x ∈ BOOL} ∪ S)");
-		expressionTest(
-				"card({x ∣ x ∈ BOOL}) + card(S) + card(T) − "
-						+ "(card({x ∣ x ∈ BOOL} ∩ S) + card({x ∣ x ∈ BOOL} ∩ T) + card(S ∩ T)) + "
-						+ "card({x ∣ x ∈ BOOL} ∩ S ∩ T)",
-				"card({x ∣ x ∈ BOOL} ∪ S ∪ T)");
-		expressionTest(
-				"card({x ∣ x ∈ BOOL}) + card(S) + card(T) + card(R) − "
-						+ "(card({x ∣ x ∈ BOOL} ∩ S) + card({x ∣ x ∈ BOOL} ∩ T) + card({x ∣ x ∈ BOOL} ∩ R) + card(S ∩ T) + card(S ∩ R) + card(T ∩ R)) + "
-						+ "(card({x ∣ x ∈ BOOL} ∩ S ∩ T) + card({x ∣ x ∈ BOOL} ∩ S ∩ R) + card({x ∣ x ∈ BOOL} ∩ T ∩ R) + card(S ∩ T ∩ R)) − "
-						+ "card({x ∣ x ∈ BOOL} ∩ S ∩ T ∩ R)",
-				"card({x ∣ x ∈ BOOL} ∪ S ∪ T ∪ R)");
+		if (level2AndHigher) {
+			expressionTest("card(A) + card(B) − card(A ∩ B)", "card(A ∪ B)", //
+					"A", "ℙ(S)", "B", "ℙ(S)");
+			expressionTest(
+					"card(A) + card(B)  + card(C) − (card(A ∩ B) + card(A ∩ C) + card(B ∩ C)) + card(A ∩ B ∩ C)", //
+					"card(A ∪ B ∪ C)", //
+					"A", "ℙ(S)");
+			expressionTest(
+					"card(A) + card(B) + card(C) + card(D) − "
+							+ "(card(A ∩ B) + card(A ∩ C) + card(A ∩ D) + card(B ∩ C) + card(B ∩ D) + card(C ∩ D)) + "
+							+ "(card(A ∩ B ∩ C) + card(A ∩ B ∩ D) + card(A ∩ C ∩ D) + card(B ∩ C ∩ D)) − "
+							+ "card(A ∩ B ∩ C ∩ D)",//
+					"card(A ∪ B ∪ C ∪ D)", //
+					"A", "ℙ(S)");
+		} else {
+			expressionTest(
+					"card({x ∣ x ∈ BOOL}) + card(S) − card({x ∣ x ∈ BOOL} ∩ S)",
+					"card({x ∣ x ∈ BOOL} ∪ S)");
+			expressionTest(
+					"card({x ∣ x ∈ BOOL}) + card(S) + card(T) − "
+							+ "(card({x ∣ x ∈ BOOL} ∩ S) + card({x ∣ x ∈ BOOL} ∩ T) + card(S ∩ T)) + "
+							+ "card({x ∣ x ∈ BOOL} ∩ S ∩ T)",
+					"card({x ∣ x ∈ BOOL} ∪ S ∪ T)");
+			expressionTest(
+					"card({x ∣ x ∈ BOOL}) + card(S) + card(T) + card(R) − "
+							+ "(card({x ∣ x ∈ BOOL} ∩ S) + card({x ∣ x ∈ BOOL} ∩ T) + card({x ∣ x ∈ BOOL} ∩ R) + card(S ∩ T) + card(S ∩ R) + card(T ∩ R)) + "
+							+ "(card({x ∣ x ∈ BOOL} ∩ S ∩ T) + card({x ∣ x ∈ BOOL} ∩ S ∩ R) + card({x ∣ x ∈ BOOL} ∩ T ∩ R) + card(S ∩ T ∩ R)) − "
+							+ "card({x ∣ x ∈ BOOL} ∩ S ∩ T ∩ R)",
+					"card({x ∣ x ∈ BOOL} ∪ S ∪ T ∪ R)");
+		}
 	}
 
 	/**
