@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -166,13 +166,15 @@ public class ProofPurgerTests extends EventBUITest {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		EventBPlugin.getAutoTacticPreference().setEnabled(false);
+		EventBPlugin.getAutoPostTacticManager().getAutoTacticPreference()
+				.setEnabled(false);
 	}
 	
 	@After
 	@Override
 	public void tearDown() throws Exception {
-		EventBPlugin.getAutoTacticPreference().setEnabled(true);
+		EventBPlugin.getAutoPostTacticManager().getAutoTacticPreference()
+				.setEnabled(true);
 		super.tearDown();
 	}
 

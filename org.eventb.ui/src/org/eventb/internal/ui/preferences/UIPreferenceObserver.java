@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
-import static org.eventb.internal.ui.preferences.PreferenceConstants.P_AUTOTACTICS;
-import static org.eventb.internal.ui.preferences.PreferenceConstants.P_AUTOTACTIC_ENABLE;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_AUTOTACTIC_ENABLE;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_ENABLE;
 import static org.eventb.internal.ui.preferences.PreferenceConstants.P_CONSIDER_HIDDEN_HYPOTHESES;
-import static org.eventb.internal.ui.preferences.PreferenceConstants.P_POSTTACTICS;
-import static org.eventb.internal.ui.preferences.PreferenceConstants.P_POSTTACTIC_ENABLE;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,9 +21,9 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.prover.ProverUIUtils;
 
 /**
  * This class is responsible for reflecting the UI preference store towards
@@ -38,9 +36,7 @@ import org.eventb.internal.ui.prover.ProverUIUtils;
  * </p>
  * <p>
  * Observed preferences are:
- * <li>P_POSTTACTICS</li>
  * <li>P_POSTTACTIC_ENABLE</li>
- * <li>P_AUTOTACTICS</li>
  * <li>P_AUTOTACTIC_ENABLE</li>
  * <li>P_CONSIDER_HIDDEN_HYPOTHESES</li>
  * </p>
@@ -72,8 +68,7 @@ public class UIPreferenceObserver implements IPropertyChangeListener {
 		protected final IPreferenceStore store;
 		protected final String property;
 
-		public TacticPrefSetter(IPreferenceStore store,
-				String property) {
+		public TacticPrefSetter(IPreferenceStore store, String property) {
 			this.store = store;
 			this.property = property;
 		}
@@ -82,16 +77,15 @@ public class UIPreferenceObserver implements IPropertyChangeListener {
 			final Object storeValue = getStoreValue();
 			checkAndUpdate(storeValue);
 		}
-		
+
 		public abstract void checkAndUpdate(Object newValue);
 
 		protected abstract Object getStoreValue();
 	}
-	
+
 	private static abstract class BooleanSetter extends TacticPrefSetter {
 
-		public BooleanSetter(IPreferenceStore store,
-				String property) {
+		public BooleanSetter(IPreferenceStore store, String property) {
 			super(store, property);
 		}
 
@@ -108,14 +102,14 @@ public class UIPreferenceObserver implements IPropertyChangeListener {
 		protected Object getStoreValue() {
 			return store.getBoolean(property);
 		}
-		
+
 		protected abstract void doUpdate(Boolean newValue);
 	}
-	
+
 	private static class TacticBooleanSetter extends BooleanSetter {
-		
+
 		private final IAutoTacticPreference tacticPref;
-		
+
 		public TacticBooleanSetter(IPreferenceStore store,
 				IAutoTacticPreference tacticPref, String property) {
 			super(store, property);
@@ -127,58 +121,29 @@ public class UIPreferenceObserver implements IPropertyChangeListener {
 			tacticPref.setEnabled(newValue.booleanValue());
 		}
 	}
-	
-	private static class TacticStringListSetter extends TacticPrefSetter {
 
-		private final IAutoTacticPreference tacticPref;
-
-		public TacticStringListSetter(IPreferenceStore store,
-				IAutoTacticPreference tacticPref, String property) {
-			super(store, property);
-			this.tacticPref = tacticPref;
-		}
-
-		@Override
-		public void checkAndUpdate(Object newValue) {
-			if (!(newValue instanceof String)) {
-				logBadPropertyType(newValue, property, String.class);
-				return;
-			}
-			final String[] tacticIDs = UIUtils.parseString((String) newValue);
-			tacticPref.setSelectedDescriptors(ProverUIUtils
-					.stringsToTacticDescriptors(tacticPref, tacticIDs));
-		}
-
-		@Override
-		protected Object getStoreValue() {
-			return store.getString(property);
-		}
-	}
-	
 	private final Map<String, TacticPrefSetter> prefSetters = new HashMap<String, TacticPrefSetter>();
-	
+
 	public UIPreferenceObserver(IPreferenceStore store) {
-		final IAutoTacticPreference postTacticPref = EventBPlugin
+		final IAutoPostTacticManager manager = EventBPlugin
+				.getAutoPostTacticManager();
+		final IAutoTacticPreference postTacticPref = manager
 				.getPostTacticPreference();
-		final IAutoTacticPreference autoTacticPref = EventBPlugin
+		final IAutoTacticPreference autoTacticPref = manager
 				.getAutoTacticPreference();
 
-		prefSetters.put(P_POSTTACTICS,
-				new TacticStringListSetter(store, postTacticPref, P_POSTTACTICS));
-		prefSetters.put(P_POSTTACTIC_ENABLE,
-				new TacticBooleanSetter(store, postTacticPref, P_POSTTACTIC_ENABLE));
-		prefSetters.put(P_AUTOTACTICS,
-				new TacticStringListSetter(store, autoTacticPref, P_AUTOTACTICS));
-		prefSetters.put(P_AUTOTACTIC_ENABLE,
-				new TacticBooleanSetter(store, autoTacticPref, P_AUTOTACTIC_ENABLE));
-		prefSetters.put(P_CONSIDER_HIDDEN_HYPOTHESES,
-				new BooleanSetter(store, P_CONSIDER_HIDDEN_HYPOTHESES) {
-					@Override
-					protected void doUpdate(Boolean newValue) {
-						EventBPlugin.getUserSupportManager()
-								.setConsiderHiddenHypotheses(newValue.booleanValue());
-					}
-				});
+		prefSetters.put(P_POSTTACTIC_ENABLE, new TacticBooleanSetter(store,
+				postTacticPref, P_POSTTACTIC_ENABLE));
+		prefSetters.put(P_AUTOTACTIC_ENABLE, new TacticBooleanSetter(store,
+				autoTacticPref, P_AUTOTACTIC_ENABLE));
+		prefSetters.put(P_CONSIDER_HIDDEN_HYPOTHESES, new BooleanSetter(store,
+				P_CONSIDER_HIDDEN_HYPOTHESES) {
+			@Override
+			protected void doUpdate(Boolean newValue) {
+				EventBPlugin.getUserSupportManager()
+						.setConsiderHiddenHypotheses(newValue.booleanValue());
+			}
+		});
 	}
 
 	/**
@@ -189,7 +154,7 @@ public class UIPreferenceObserver implements IPropertyChangeListener {
 			prefSetter.initPreference();
 		}
 	}
-	
+
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		final Object newValue = event.getNewValue();

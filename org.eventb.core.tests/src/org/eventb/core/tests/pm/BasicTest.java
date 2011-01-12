@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,8 +35,8 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
-import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
@@ -121,7 +121,8 @@ public abstract class BasicTest extends TestCase {
 	};
 	
 	protected static void enableAutoProver(boolean limited) {
-		final IAutoTacticPreference p = EventBPlugin.getAutoTacticPreference();
+		final IAutoTacticPreference p = EventBPlugin.getAutoPostTacticManager()
+				.getAutoTacticPreference();
 		final List<ITacticDescriptor> ds;
 		if (limited) {
 			ds = Arrays.asList(getTacticDescriptors(autoTacticIds));
@@ -132,19 +133,22 @@ public abstract class BasicTest extends TestCase {
 	}
 
 	protected static void enableAutoProver(String... ids) {
-		final IAutoTacticPreference p = EventBPlugin.getAutoTacticPreference();
+		final IAutoTacticPreference p = EventBPlugin.getAutoPostTacticManager()
+				.getAutoTacticPreference();
 		final ITacticDescriptor[] ds = getTacticDescriptors(ids);
 		enablePreference(p, Arrays.asList(ds));
 	}
 
 	protected static void enablePostTactic(String... ids) {
-		final IAutoTacticPreference p = EventBPlugin.getPostTacticPreference();
+		final IAutoTacticPreference p = EventBPlugin.getAutoPostTacticManager()
+				.getPostTacticPreference();
 		final ITacticDescriptor[] ds = getTacticDescriptors(ids);
 		enablePreference(p, Arrays.asList(ds));
 	}
 
 	protected static void disablePostTactic() {
-		final IAutoTacticPreference p = EventBPlugin.getPostTacticPreference();
+		final IAutoTacticPreference p = EventBPlugin.getAutoPostTacticManager()
+				.getPostTacticPreference();
 		p.setEnabled(false);
 	}
 
@@ -164,7 +168,8 @@ public abstract class BasicTest extends TestCase {
 	}
 
 	protected static void disableAutoProver() {
-		EventBPlugin.getAutoTacticPreference().setEnabled(false);
+		EventBPlugin.getAutoPostTacticManager().getAutoTacticPreference()
+				.setEnabled(false);
 	}
 	
 	protected static IUserSupport newUserSupport(IPSRoot psRoot) {

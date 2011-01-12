@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
 
 package org.eventb.core.seqprover.autoTacticPreference;
@@ -30,6 +30,7 @@ import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
  *         together.
  *         <li>There is a boolean flag to enable/disable the tactic preference.
  *         </ul>
+ *         </p>
  * @since 1.0
  * 
  */
@@ -37,7 +38,6 @@ public interface IAutoTacticPreference {
 
 	/**
 	 * Checked if a tactic is declared for using with the tactic container.
-	 * <p>
 	 * 
 	 * @param tacticDesc
 	 *            a tactic descriptor {@link ITacticDescriptor}.
@@ -66,7 +66,6 @@ public interface IAutoTacticPreference {
 
 	/**
 	 * Enable/Disable the tactic container.
-	 * <p>
 	 * 
 	 * @param enabled
 	 *            <code>true</code> to enable the container,
@@ -76,7 +75,6 @@ public interface IAutoTacticPreference {
 
 	/**
 	 * Check if the tactic container is currently enable or not.
-	 * <p>
 	 * 
 	 * @return <code>true</code> if enable, <code>false</code> otherwise.
 	 */
@@ -92,7 +90,6 @@ public interface IAutoTacticPreference {
 
 	/**
 	 * Return the tactic that is the composition of the default tactics.
-	 * <p>
 	 * 
 	 * @return a tactic {@link ITactic}.
 	 */
@@ -100,7 +97,6 @@ public interface IAutoTacticPreference {
 
 	/**
 	 * Set the contained tactics to be an array of tactic descriptors.
-	 * <p>
 	 * 
 	 * @param tacticDescs
 	 *            a list of tactic descriptors {@link ITacticDescriptor}.

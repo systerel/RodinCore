@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,7 +49,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 	protected void setUp() throws Exception {
 		super.setUp();
 		// Turn on beginner mode
-		EventBPlugin.getPostTacticPreference().setEnabled(false);
+		EventBPlugin.getAutoPostTacticManager().getPostTacticPreference()
+				.setEnabled(false);
 		enableAutoProver(true);
 		
 		poRoot = createPOFile("x");
@@ -273,14 +274,15 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
-		userSupport.applyTactic(Tactics.lemma("1 = 1"), true, monitor);
-		ITactic defaultPostTactic = EventBPlugin.getPostTacticPreference()
+		userSupport.applyTactic(Tactics.lemma("1 = 1"), false, monitor);
+		final ITactic defaultPostTactic = EventBPlugin
+				.getAutoPostTacticManager().getPostTacticPreference()
 				.getDefaultComposedTactic();
-		userSupport.applyTactic(defaultPostTactic, true, monitor);
-		userSupport.applyTactic(defaultPostTactic, true, monitor);
-		userSupport.applyTactic(Tactics.lemma("2 = 2"), true, monitor);
-		userSupport.applyTactic(defaultPostTactic, true, monitor);
-		userSupport.applyTactic(defaultPostTactic, true, monitor);
+		userSupport.applyTactic(defaultPostTactic, false, monitor);
+		userSupport.applyTactic(defaultPostTactic, false, monitor);
+		userSupport.applyTactic(Tactics.lemma("2 = 2"), false, monitor);
+		userSupport.applyTactic(defaultPostTactic, false, monitor);
+		userSupport.applyTactic(defaultPostTactic, false, monitor);
 		IProofState currentPO = userSupport.getCurrentPO();
 		
 		IProverSequent sequent = currentPO.getCurrentNode().getSequent();
@@ -290,7 +292,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		Predicate hyp1 = iterator.next();
 		Set<Predicate> hyps1 = new HashSet<Predicate>();
 		hyps1.add(hyp1);
-		userSupport.applyTacticToHypotheses(Tactics.falsifyHyp(hyp1), hyps1, true,
+		userSupport.applyTacticToHypotheses(Tactics.falsifyHyp(hyp1), hyps1, false,
 				monitor);
 
 		Set<Predicate> hyps2 = new HashSet<Predicate>();
@@ -403,8 +405,9 @@ public class TestUserSupportDeltas extends TestPMDelta {
 				"[*] x.bps [INFORMATION]\n"
 						+ "Not a new proof node (priority 1)");
 
-		userSupport.applyTactic(EventBPlugin.getPostTacticPreference()
-				.getDefaultComposedTactic(), true, monitor);
+		userSupport.applyTactic(EventBPlugin.getAutoPostTacticManager()
+				.getPostTacticPreference().getDefaultComposedTactic(), true,
+				monitor);
 		clearDeltas();
 		userSupport.selectNode(node1);
 

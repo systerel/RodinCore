@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,7 +62,8 @@ public class TestUserSupports extends TestPM {
 	protected void setUp() throws Exception {
 		super.setUp();
 		// Turn on beginner mode
-		EventBPlugin.getPostTacticPreference().setEnabled(false);
+		EventBPlugin.getAutoPostTacticManager().getPostTacticPreference()
+				.setEnabled(false);
 		enableAutoProver(true);
 		
 		poRoot = createPOFile("x");
@@ -359,13 +360,14 @@ public class TestUserSupports extends TestPM {
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
 
-		userSupport.applyTactic(Tactics.lemma("1 = 1"), true, monitor);
-		ITactic defaultPostTactic = EventBPlugin.getPostTacticPreference().getDefaultComposedTactic();
-		userSupport.applyTactic(defaultPostTactic, true, monitor); // Discharge true goal
-		userSupport.applyTactic(defaultPostTactic, true, monitor); // Discharge 1 = 1
-		userSupport.applyTactic(Tactics.lemma("2 = 2"), true, monitor);
-		userSupport.applyTactic(defaultPostTactic, true, monitor); // Discharge true goal
-		userSupport.applyTactic(defaultPostTactic, true, monitor); // Discharge 2 = 2
+		userSupport.applyTactic(Tactics.lemma("1 = 1"), false, monitor);
+		ITactic defaultPostTactic = EventBPlugin.getAutoPostTacticManager()
+				.getPostTacticPreference().getDefaultComposedTactic();
+		userSupport.applyTactic(defaultPostTactic, false, monitor); // Discharge true goal
+		userSupport.applyTactic(defaultPostTactic, false, monitor); // Discharge 1 = 1
+		userSupport.applyTactic(Tactics.lemma("2 = 2"), false, monitor);
+		userSupport.applyTactic(defaultPostTactic, false, monitor); // Discharge true goal
+		userSupport.applyTactic(defaultPostTactic, false, monitor); // Discharge 2 = 2
 		IProofState currentPO = userSupport.getCurrentPO();
 		Iterable<Predicate> selectedHyps = currentPO.getCurrentNode().getSequent()
 				.selectedHypIterable();
@@ -374,7 +376,7 @@ public class TestUserSupports extends TestPM {
 		Predicate hyp1 = iterator.next();
 		Set<Predicate> hyps1 = new HashSet<Predicate>();
 		hyps1.add(hyp1);
-		userSupport.applyTacticToHypotheses(Tactics.falsifyHyp(hyp1), hyps1, true,
+		userSupport.applyTacticToHypotheses(Tactics.falsifyHyp(hyp1), hyps1, false,
 				monitor);
 
 		Collection<Predicate> cached = currentPO.getCached();
@@ -470,8 +472,9 @@ public class TestUserSupports extends TestPM {
 		assertEquals("Select node 2 again has no effect ", node2, currentPO
 				.getCurrentNode());
 
-		userSupport.applyTactic(EventBPlugin.getPostTacticPreference()
-				.getDefaultComposedTactic(), true, monitor);
+		userSupport.applyTactic(EventBPlugin.getAutoPostTacticManager()
+				.getPostTacticPreference().getDefaultComposedTactic(), true,
+				monitor);
 
 		userSupport.selectNode(node1);
 
@@ -487,7 +490,7 @@ public class TestUserSupports extends TestPM {
 
 		IProofTreeNode node1 = currentPO.getCurrentNode();
 
-		userSupport.applyTactic(Tactics.lemma("2 = 3"), true, monitor);
+		userSupport.applyTactic(Tactics.lemma("2 = 3"), false, monitor);
 
 		IProofTreeNode node2 = currentPO.getCurrentNode();
 		assertTrue("Node 2 is open ", node2.isOpen());
@@ -526,7 +529,7 @@ public class TestUserSupports extends TestPM {
 
 		IProofTreeNode node1 = currentPO.getCurrentNode();
 
-		userSupport.applyTactic(Tactics.lemma("3 = 3"), true, monitor);
+		userSupport.applyTactic(Tactics.lemma("3 = 3"), false, monitor);
 		userSupport.back(monitor);
 		assertEquals("Back to node 1 ", node1, currentPO.getCurrentNode());
 		assertTrue("Node 1 is open again ", node1.isOpen());

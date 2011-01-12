@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,19 +11,13 @@
 package org.eventb.internal.ui.preferences;
 
 import static org.eventb.internal.ui.utils.Messages.preferencepage_enableProjectSpecifixSettings;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import static org.eventb.ui.EventBUIPlugin.PLUGIN_ID;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
-import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -39,8 +33,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eventb.internal.ui.utils.Messages;
@@ -56,10 +50,8 @@ import org.rodinp.core.RodinCore;
  * This class is intended to be sub-classed.
  */
 public abstract class AbstractFieldPreferenceAndPropertyPage extends
-		FieldEditorPreferencePage implements IWorkbenchPropertyPage {
-
-	// Stores all created field editors
-	protected List<FieldEditor> editors = new ArrayList<FieldEditor>();
+		AbstractEventBPreferencePage implements IWorkbenchPropertyPage,
+		IWorkbenchPreferencePage {
 
 	// The current preference store used
 	protected IPreferenceStore preferenceStore;
@@ -85,21 +77,22 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 	// Cache to save if the properties at opening
 	private boolean wasEnabled;
 
+	// The workspace preference page (case of this is a property page)
+	private AbstractFieldPreferenceAndPropertyPage workspacePreferencePage;
+	
 	/**
-	 * Constructor
+	 * Constructor.
 	 * 
-	 * @param style
-	 *            the layout style
 	 * @param prefPageID
 	 *            the ID of this page used to store the preferences
 	 */
-	public AbstractFieldPreferenceAndPropertyPage(int style, String prefPageID) {
-		super(style);
+	public AbstractFieldPreferenceAndPropertyPage(String prefPageID) {
+		super();
 		this.prefPageId = prefPageID;
 	}
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 * 
 	 * @param title
 	 *            the title string
@@ -108,13 +101,14 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 	 * @param prefPageID
 	 *            the ID of this page used to store the preferences
 	 */
-	public AbstractFieldPreferenceAndPropertyPage(String title, int style, String prefPageID) {
-		super(title, style);
+	public AbstractFieldPreferenceAndPropertyPage(String title, int style,
+			String prefPageID) {
+		super();
 		this.prefPageId = prefPageID;
 	}
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 * 
 	 * @param title
 	 *            the title string
@@ -125,30 +119,13 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 	 * @param prefPageID
 	 *            the ID of this page used to store the preferences
 	 */
-	public AbstractFieldPreferenceAndPropertyPage(String title, ImageDescriptor image,
-			int style, String prefPageID) {
-		super(title, image, style);
+	public AbstractFieldPreferenceAndPropertyPage(String title,
+			ImageDescriptor image, int style, String prefPageID) {
+		super();
 		this.image = image;
 		this.prefPageId = prefPageID;
 	}
-	
-	/**
-	 * Method that users should implement, in order to load the values of the
-	 * project scope preference store with the workspace global values. The
-	 * user is responsible of the preferences types he wants to use. The user
-	 * should implement the way that workspace preference values can overwrite
-	 * the project specific values in case of a defaults restoration when
-	 * <code>reset</code> is set to <code>true</code>.
-	 */
-	protected abstract void initializeEditors(boolean reset);
 
-	/**
-	 * Method that users must implement, in order to define the editors they
-	 * intend to use.
-	 */
-	@Override
-	protected abstract void createFieldEditors();
-	
 	/**
 	 * Return the title for a properties page associated with a project.
 	 * 
@@ -160,28 +137,26 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 		return Messages.preferencepage_prefix_propertyPageTitle(prj.getName());
 	}
 
-	/**
-	 * We override the addField method. This allows us to store each field
-	 * editor added by subclasses in a list for later processing.
-	 * 
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#addField(org.eclipse.jface.preference.FieldEditor)
-	 */
-	@Override
-	protected void addField(FieldEditor editor) {
-		editors.add(editor);
-		super.addField(editor);
+	protected void restoreDefaults() {
+		if (isPropertyPage()) {
+			for (IEventBFieldEditor ed : getEditors()) {
+				ed.setEnabled(false);
+			}
+		}
 	}
 
-	/**
-	 * We override the createContents method. In case of property pages we
-	 * insert two radio buttons at the top of the page.
-	 * 
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
-	protected Control createContents(Composite parent) {
+	protected void createFieldEditors(Composite parent) {
 		createButtonOrLink(parent);
-		return super.createContents(parent);
+		// In case of property pages we create a new ScopedPreferenceStore
+		if (isPropertyPage()) {
+			sc = new ProjectScope(project);
+			node = sc.getNode(PLUGIN_ID);
+			preferenceStore = new ScopedPreferenceStore(sc, PLUGIN_ID);
+		} else {
+			preferenceStore = EventBUIPlugin.getDefault().getPreferenceStore();
+		}
+		super.setPreferenceStore(preferenceStore);
 	}
 
 	private void createButtonOrLink(Composite parent) {
@@ -192,23 +167,20 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 		comp.setLayout(layout);
 		comp.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
 		if (!isPropertyPage()) {
-			createLink(comp,
-					Messages.preferencepage_prefixSettings_configureLink);
+			createLink(comp, Messages.preferencepage_configureLink);
 		} else {
 			addEnableSpecificButton(comp);
 		}
 	}
 
 	/**
-	 * We override this method to provide specific behavior on property pages.
-	 * 
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#initialize()
+	 * Initializes all field editors.
 	 */
 	@Override
 	protected void initialize() {
 		if (isPropertyPage()) {
 			initializeButtonStatus();
-			initializeEditors(false);
+			initializeDefaultProperties();
 			initializeEditorsState();
 		}
 		super.initialize();
@@ -226,12 +198,6 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 	}
 
 	private IProject getSelectedProject() {
-		final Set<IProject> projects = new HashSet<IProject>();
-		final IProject[] projArray = RodinCore.getRodinDB().getWorkspaceRoot()
-				.getProjects();
-		for (IProject prj : projArray) {
-			projects.add(prj);
-		}
 		final ProjectSelectionDialog sel = new ProjectSelectionDialog(getShell(),
 				RodinCore.getRodinDB().getWorkspaceRoot());
 		sel.open();
@@ -244,7 +210,7 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 	}
 
 	/**
-	 * Creates a new preferences page and opens it
+	 * Creates a new preferences page and opens it.
 	 */
 	private void configureProjectSettings() {
 		try {
@@ -256,6 +222,7 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 			final AbstractFieldPreferenceAndPropertyPage page = this.getClass()
 					.newInstance();
 			page.project = handled;
+			page.workspacePreferencePage = this;
 			page.setTitle(getTitle());
 			page.setImageDescriptor(image);
 			// and show it
@@ -289,29 +256,13 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 
 	/**
 	 * Returns true if this instance represents a property page (i.e. a project
-	 * is set as owner)
+	 * is set as owner).
 	 * 
-	 * @return true for property pages, false for preference pages
+	 * @return <code>true</code> for property pages, <code>false</code> for
+	 *         preference pages
 	 */
 	public boolean isPropertyPage() {
 		return project != null;
-	}
-
-	/**
-	 * We override the createControl method. In case of property pages we create
-	 * a new <code>ScopedPreferenceStore</code>.
-	 */
-	@Override
-	public void createControl(Composite parent) {
-		if (isPropertyPage()) {
-			sc = new ProjectScope(project);
-			node = sc.getNode(prefPageId);
-			preferenceStore = new ScopedPreferenceStore(sc, prefPageId);
-		} else {
-			preferenceStore = EventBUIPlugin.getDefault().getPreferenceStore();
-		}
-		super.setPreferenceStore(preferenceStore);
-		super.createControl(parent);
 	}
 
 	protected boolean hasProjectSettings() {
@@ -361,21 +312,11 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 	}
 
 	protected void updateEditors(boolean active) {
-		for (FieldEditor ed : editors) {
-			ed.load();
-			ed.setEnabled(active, getFieldEditorParent());
+		for (IEventBFieldEditor ed : getEditors()) {
+			ed.setEnabled(active);
 		}
 	}
 
-	protected void restoreDefaults(){
-		initializeEditors(true);
-		for (FieldEditor ed : editors) {
-			ed.load();
-			ed.setEnabled(false, getFieldEditorParent());
-		}
-	}
-	
-	
 	@Override
 	public IPreferenceStore getPreferenceStore() {
 		return preferenceStore;
@@ -386,7 +327,6 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 		if (isPropertyPage()) {
 			specificButton.setSelection(false);
 			restoreDefaults();
-			return;
 		}
 		super.performDefaults();
 	}
@@ -394,6 +334,7 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 	@Override
 	public void performApply() {
 		flush();
+		super.performApply();
 	}
 
 	@Override
@@ -454,6 +395,27 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 				dialog.open();
 			}
 		});
+	}
+
+	/**
+	 * Method that users should implement, in order to load the values of the
+	 * project scope preference store with the workspace global values. The user
+	 * is responsible of the preferences types he wants to use. The user should
+	 * implement the way that workspace preference values can overwrite the
+	 * project specific values in case of a defaults restoration when
+	 * <code>reset</code> is set to <code>true</code>.
+	 */
+	protected abstract void initializeDefaultProperties();
+
+	/**
+	 * Returns the workspace preference page which opened this page.
+	 * <p>
+	 * If the preference page is not a project specific preference page or is a
+	 * properties page, return <code>null</code>.
+	 * </p> 
+	 */
+	protected AbstractFieldPreferenceAndPropertyPage getWorkspacePreferencePage() {
+		return workspacePreferencePage;
 	}
 
 }

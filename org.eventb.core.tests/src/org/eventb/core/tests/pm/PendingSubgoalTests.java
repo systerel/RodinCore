@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -130,7 +130,8 @@ public class PendingSubgoalTests extends TestPM {
 		super.setUp();
 		
 		// Turn on beginner mode
-		EventBPlugin.getPostTacticPreference().setEnabled(false);
+		EventBPlugin.getAutoPostTacticManager().getPostTacticPreference()
+				.setEnabled(false);
 
 		// Set norm as postactic
 //		EventBPlugin.getDefault().getUserSupportManager().getProvingMode()
@@ -200,7 +201,7 @@ public class PendingSubgoalTests extends TestPM {
 		assertOpen(mList(), G);
 		
 		ITactic tac = Tactics.doCase(P1.toString());
-		userSupport.applyTactic(tac, true, null);
+		userSupport.applyTactic(tac, false, null);
 		assertOpen(mList(), btrue);
 	}
 
@@ -213,11 +214,11 @@ public class PendingSubgoalTests extends TestPM {
 		assertOpen(mList(), G);
 		
 		final ITactic tac = Tactics.doCase(P1.toString());
-		userSupport.applyTactic(tac, true, null);
+		userSupport.applyTactic(tac, false, null);
 		assertOpen(mList(), btrue);
 		
 		final ITactic tac2 = Tactics.review(REVIEWED_MAX);
-		userSupport.applyTactic(tac2, true, null);
+		userSupport.applyTactic(tac2, false, null);
 		assertOpen(mList(P1), G);
 	}
 
@@ -230,14 +231,14 @@ public class PendingSubgoalTests extends TestPM {
 		assertOpen(mList(), G);
 		
 		final ITactic tac = Tactics.doCase(P1.toString());
-		userSupport.applyTactic(tac, true, null);
+		userSupport.applyTactic(tac, false, null);
 		assertOpen(mList(), btrue);
 		
 		gotoNextSibling();
 		assertOpen(mList(P1), G);
 
 		final ITactic tac2 = Tactics.review(REVIEWED_MAX);
-		userSupport.applyTactic(tac2, true, null);
+		userSupport.applyTactic(tac2, false, null);
 		assertOpen(mList(nP1), G);
 	}
 
@@ -250,7 +251,7 @@ public class PendingSubgoalTests extends TestPM {
 		assertOpen(mList(), G);
 		
 		final ITactic tac = Tactics.doCase(P1.toString());
-		userSupport.applyTactic(tac, true, null);
+		userSupport.applyTactic(tac, false, null);
 		assertOpen(mList(), btrue);
 		
 		gotoNextSibling();
@@ -260,7 +261,7 @@ public class PendingSubgoalTests extends TestPM {
 		assertOpen(mList(nP1), G);
 
 		final ITactic tac2 = Tactics.review(REVIEWED_MAX);
-		userSupport.applyTactic(tac2, true, null);
+		userSupport.applyTactic(tac2, false, null);
 		assertOpen(mList(), btrue);
 	}
 
@@ -273,7 +274,7 @@ public class PendingSubgoalTests extends TestPM {
 		assertOpen(mList(), G);
 		
 		final ITactic tac = Tactics.doCase(P1.toString());
-		userSupport.applyTactic(tac, true, null);
+		userSupport.applyTactic(tac, false, null);
 		assertOpen(mList(), btrue);
 		
 		gotoNextSibling();
@@ -282,12 +283,12 @@ public class PendingSubgoalTests extends TestPM {
 		assertOpen(mList(nP1), G);
 
 		final ITactic tac2 = Tactics.doCase(P2.toString());
-		userSupport.applyTactic(tac2, true, null);
+		userSupport.applyTactic(tac2, false, null);
 		gotoNextSibling();
 		assertOpen(mList(nP1, P2), G);
 		
 		final ITactic tac3 = Tactics.review(REVIEWED_MAX);
-		userSupport.applyTactic(tac3, true, null);
+		userSupport.applyTactic(tac3, false, null);
 		assertOpen(mList(nP1, nP2), G);
 	}
 
@@ -300,25 +301,25 @@ public class PendingSubgoalTests extends TestPM {
 		assertOpen(mList(), G);
 
 		final ITactic tac = Tactics.doCase(P1.toString());
-		userSupport.applyTactic(tac, true, null);
+		userSupport.applyTactic(tac, false, null);
 		assertOpen(mList(), btrue);
 
 		// Clean up the WD lemma
 		final ITactic review = Tactics.review(REVIEWED_MAX);
-		userSupport.applyTactic(review, true, null);
+		userSupport.applyTactic(review, false, null);
 		assertOpen(mList(P1), G);
 
 		gotoNextSibling();
 		assertOpen(mList(nP1), G);
 
 		final ITactic tac2 = Tactics.doCase(P2.toString());
-		userSupport.applyTactic(tac2, true, null);
+		userSupport.applyTactic(tac2, false, null);
 		assertOpen(mList(nP1), btrue);
-		userSupport.applyTactic(review, true, null);
+		userSupport.applyTactic(review, false, null);
 		assertOpen(mList(nP1, P2), G);
-		userSupport.applyTactic(review, true, null);
+		userSupport.applyTactic(review, false, null);
 		assertOpen(mList(nP1, nP2), G);
-		userSupport.applyTactic(review, true, null);
+		userSupport.applyTactic(review, false, null);
 		assertOpen(mList(P1), G);
 	}
 

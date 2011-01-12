@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,10 +36,10 @@ import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofManager;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
+import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.BuilderTest;
@@ -153,13 +153,12 @@ public class AutoProverDeltaTests extends BuilderTest {
 
 		// Change the auto-tactic and enable it.
 		final IAutoTacticPreference autoPref = EventBPlugin
-				.getAutoTacticPreference();
+				.getAutoPostTacticManager().getAutoTacticPreference();
 		final List<ITacticDescriptor> descrs = new ArrayList<ITacticDescriptor>();
 		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
 		descrs.add(reg.getTacticDescriptor(TracingReasoner.TACTIC_ID));
-		descrs
-				.add(reg
-						.getTacticDescriptor("org.eventb.core.seqprover.clarifyGoalTac"));
+		descrs.add(reg
+				.getTacticDescriptor("org.eventb.core.seqprover.clarifyGoalTac"));
 		autoPref.setSelectedDescriptors(descrs);
 		autoPref.setEnabled(true);
 	}

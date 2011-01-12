@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,12 +96,31 @@ public final class Messages {
 	public static String preferencepage_editorpage_tab_title;
 	public static String preferencepage_modellingui_description;
 	public static String preferencepage_modellingui_expandSections;
+	
+	public static String preferencepage_seqprover_enablementdescription;
+	public static String preferencepage_pomtactic_title;
 	public static String preferencepage_pomtactic_description;
 	public static String preferencepage_pomtactic_enablementdescription;
 	public static String preferencepage_pomtactic_selectedtacticsdescription;
+	public static String preferencepage_pomtactic_selectedtacticprofiledescription;
+	public static String preferencepage_posttactic_title;
 	public static String preferencepage_posttactic_description;
 	public static String preferencepage_posttactic_enablementdescription;
 	public static String preferencepage_posttactic_selectedtacticsdescription;
+	public static String preferencepage_posttactic_selectedtacticprofiledescription;
+	public static String preferencepage_postautotactic_description;
+	public static String preferencepage_postautotactic_tab_autoposttactics;
+	public static String preferencepage_postautotactic_tab_profiles;
+	public static String preferencepage_postautotactic_profiledetails_header;
+	public static String preferencepage_postautotactic_newbutton;
+	public static String preferencepage_postautotactic_editbutton;
+	public static String preferencepage_postautotactic_removebutton;
+	public static String preferencepage_postautotactic_duplicatebutton;
+	public static String preferencepage_postautotactic_import_ws_profiles;
+	public static String preferencepage_postautotactic_export_ws_profiles;
+	public static String preferencepage_autotactic_defaultprofilename;
+	public static String preferencepage_posttactic_defaultprofilename;
+	
 	public static String preferencepage_eventb_description;
 	public static String preferencepage_provingui_description;
 	public static String preferencepage_provingui_considerHiddenHypotheses;
@@ -117,11 +136,19 @@ public final class Messages {
 	public static String preferencepage_colorsandfonts_dirtystatecolor;
 	public static String preferencepage_colorsandfonts_boxbordercolor;
 	public static String preferencepage_prefixSettings_description;
-	public static String preferencepage_prefixSettings_configureLink;
+	public static String preferencepage_configureLink;
 	public static String preferencepage_prefixSettings_propIDTitle;
 	public static String preferencepage_enableProjectSpecifixSettings;
 	
-
+	// Wizard
+	public static String wizard_editprofil_title;
+	public static String wizard_editprofil_description;
+	public static String wizard_editprofil_nameheader;
+	public static String wizard_editprofil_detailsdescription;
+	public static String wizard_editprofil_profileexists;
+	public static String wizard_editprofil_profilemustbespecified;
+	public static String wizard_editprofil_profilemusthaveatactic;
+	
 	// Attribute Manipulation
 	public static String attributeManipulation_extended_true;
 	public static String attributeManipulation_extended_false;

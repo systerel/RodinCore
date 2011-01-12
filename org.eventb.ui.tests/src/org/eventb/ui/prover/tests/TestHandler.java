@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.eventb.ui.prover.tests;
 
 import static org.eventb.internal.ui.preferences.EventBPreferenceStore.getPreferenceStore;
-import static org.eventb.internal.ui.preferences.PreferenceConstants.P_AUTOTACTIC_ENABLE;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_AUTOTACTIC_ENABLE;
 import junit.framework.TestCase;
 
 import org.eclipse.core.commands.IHandler;

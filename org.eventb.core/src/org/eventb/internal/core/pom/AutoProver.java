@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich.
+ * Copyright (c) 2005, 2011 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,14 +23,15 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofManager;
+import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.internal.core.ProofMonitor;
 import org.rodinp.core.RodinDBException;
 
@@ -42,11 +43,11 @@ public final class AutoProver {
 	
 	public static final String AUTO_PROVER = "auto-prover";
 
-	private static final IAutoTacticPreference PREF = EventBPlugin
-			.getAutoTacticPreference();
+	private static final IAutoPostTacticManager AUTOTACTIC_MANAGER = EventBPlugin
+			.getAutoPostTacticManager();
 
 	public static boolean isEnabled() {
-		return PREF.isEnabled();
+		return AUTOTACTIC_MANAGER.getAutoTacticPreference().isEnabled();
 	}
 
 	private AutoProver() {
@@ -125,7 +126,8 @@ public final class AutoProver {
 	// Consumes one tick of the given progress monitor
 	private static void prove(IProofAttempt pa, IProgressMonitor pm) {
 		pm.subTask("proving");
-		final ITactic tactic = PREF.getSelectedComposedTactic();
+		final IEventBRoot poRoot = pa.getComponent().getPORoot();
+		final ITactic tactic = AUTOTACTIC_MANAGER.getSelectedAutoTactics(poRoot);
 		final SubProgressMonitor spm = new SubProgressMonitor(pm, 1);
 		tactic.apply(pa.getProofTree().getRoot(), new ProofMonitor(spm));
 	}

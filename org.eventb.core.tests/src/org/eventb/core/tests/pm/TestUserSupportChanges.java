@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,7 +72,8 @@ public class TestUserSupportChanges extends TestPM {
 				"f(x)∈ℕ", "x∈dom(f)");
 
 		// Turn on beginner mode
-		EventBPlugin.getPostTacticPreference().setEnabled(false);
+		EventBPlugin.getAutoPostTacticManager().getPostTacticPreference()
+				.setEnabled(false);
 		enableAutoProver(true);
 	}
 

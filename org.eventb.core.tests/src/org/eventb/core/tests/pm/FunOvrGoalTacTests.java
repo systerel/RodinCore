@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,7 +103,8 @@ public class FunOvrGoalTacTests extends BasicTest {
 	 * default.
 	 */
 	public void testRegisteredAsAuto() throws Exception {
-		final IAutoTacticPreference pref = EventBPlugin.getAutoTacticPreference();
+		final IAutoTacticPreference pref = EventBPlugin
+				.getAutoPostTacticManager().getAutoTacticPreference();
 		assertIn(pref.getDeclaredDescriptors());
 		assertIn(pref.getDefaultDescriptors());
 	}
@@ -113,7 +114,8 @@ public class FunOvrGoalTacTests extends BasicTest {
 	 * default.
 	 */
 	public void testRegisteredAsPost() throws Exception {
-		final IAutoTacticPreference pref = EventBPlugin.getPostTacticPreference();
+		final IAutoTacticPreference pref = EventBPlugin
+				.getAutoPostTacticManager().getPostTacticPreference();
 		assertIn(pref.getDeclaredDescriptors());
 		assertIn(pref.getDefaultDescriptors());
 	}

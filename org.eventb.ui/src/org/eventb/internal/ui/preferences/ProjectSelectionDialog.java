@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,9 @@ package org.eventb.internal.ui.preferences;
 
 import static org.eventb.internal.ui.utils.Messages.dialogs_projectSelection_description;
 import static org.eventb.internal.ui.utils.Messages.dialogs_projectSelection_title;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
@@ -193,7 +196,14 @@ public class ProjectSelectionDialog extends SelectionDialog {
 
 		@Override
 		public Object[] getElements(Object inputElement) {
-			return RodinCore.getRodinDB().getWorkspaceRoot().getProjects();
+			final IProject[] projects = RodinCore.getRodinDB().getWorkspaceRoot().getProjects();
+			final List<IProject> result = new ArrayList<IProject>();
+			for (IProject prj : projects) {
+				if (prj.isOpen()) {
+					result.add(prj);					
+				}
+			}
+			return result.toArray();
 		}
 
 		@Override

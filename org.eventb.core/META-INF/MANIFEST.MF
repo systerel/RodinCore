@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eventb.core; singleton:=true
-Bundle-Version: 2.0.1.qualifier
+Bundle-Version: 2.1.0.qualifier
 Bundle-Activator: org.eventb.core.EventBPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -17,6 +17,8 @@ Export-Package: org.eventb.core,
  org.eventb.core.pm,
  org.eventb.core.pog,
  org.eventb.core.pog.state,
+ org.eventb.core.preferences,
+ org.eventb.core.preferences.autotactics,
  org.eventb.core.sc,
  org.eventb.core.sc.state,
  org.eventb.core.tool,

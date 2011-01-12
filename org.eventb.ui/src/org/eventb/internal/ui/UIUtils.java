@@ -766,13 +766,27 @@ public class UIUtils {
 	 * @return the comma separated string representation of input objects.
 	 */
 	public static <T> String toCommaSeparatedList(List<T> objects) {
-		StringBuffer buffer = new StringBuffer();
-		boolean sep = false;
-		for (Object item : objects) {
-			if (sep) {
-				sep = true;
+		return flatten(objects, ",");
+	}
+
+	/**
+	 * Returns a string representation of a list of input objects. The objects
+	 * are separated by a given character.
+	 * 
+	 * @param objects
+	 *            a list of objects
+	 * @param separator
+	 *            the character to use to separate the objects
+	 * @return the string representation of input objects
+	 */
+	public static <T> String flatten(List<T> objects, String separator) {
+		final StringBuffer buffer = new StringBuffer();
+		boolean first = true;
+		for (T item : objects) {
+			if (first) {
+				first = false;
 			} else {
-				buffer.append(","); //$NON-NLS-1$
+				buffer.append(separator);
 			}
 			buffer.append(item);
 		}
@@ -789,7 +803,7 @@ public class UIUtils {
 	public static String toCommaSeparatedList(String[] objects) {
 		StringBuffer buffer = new StringBuffer();
 		boolean sep = false;
-		for (Object item : objects) {
+		for (String item : objects) {
 			if (sep) {
 				sep = true;
 			} else {
@@ -808,7 +822,21 @@ public class UIUtils {
 	 * @return an array of strings that make up the comma separted input string.
 	 */
 	public static String[] parseString(String stringList) {
-		StringTokenizer st = new StringTokenizer(stringList, ",");//$NON-NLS-1$
+		return parseString(stringList, ",");
+	}
+
+	/**
+	 * Parse a character separated string to a list of string.
+	 * 
+	 * @param stringList
+	 *            the comma separated string.
+	 * @param c
+	 *            the character separates the string
+	 * @return an array of strings that make up the character separated input
+	 *         string.
+	 */
+	public static String[] parseString(String stringList, String c) {
+		StringTokenizer st = new StringTokenizer(stringList, c);//$NON-NLS-1$
 		ArrayList<String> result = new ArrayList<String>();
 		while (st.hasMoreElements()) {
 			result.add((String) st.nextElement());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,23 +14,21 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.SWT;
-import org.eventb.core.EventBPlugin;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.internal.ui.EventBSharedColor;
-import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.preferences.tactics.TacticPreferenceUtils;
 import org.rodinp.core.IInternalElementType;
 
 /**
  * @author htson
  *         <p>
  *         Class used to initialize default preference values.
+ *         </p>
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
@@ -41,34 +39,11 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 */
 	@Override
 	public void initializeDefaultPreferences() {
-		IPreferenceStore store = EventBPreferenceStore.getPreferenceStore();
+		final IPreferenceStore store = EventBPreferenceStore
+				.getPreferenceStore();
+
+		TacticPreferenceUtils.initializeDefault(store);
 		
-		// Default value for post-tactic registry
-		List<ITacticDescriptor> defaultPostTacticDescriptors = EventBPlugin
-				.getPostTacticPreference().getDefaultDescriptors();
-		String[] postTacticIDs = new String[defaultPostTacticDescriptors.size()];
-		int i = 0;
-		for (ITacticDescriptor tacticDesc : defaultPostTacticDescriptors) {
-			postTacticIDs[i] = tacticDesc.getTacticID();
-			++i;
-		}
-		store.setDefault(PreferenceConstants.P_POSTTACTICS, UIUtils
-				.toCommaSeparatedList(postTacticIDs));
-		store.setDefault(PreferenceConstants.P_POSTTACTIC_ENABLE, true);
-
-		// Default value for auto-tactic registry
-		List<ITacticDescriptor> defaultAutoTacticDescriptors = EventBPlugin
-				.getAutoTacticPreference().getDefaultDescriptors();
-		String[] autoTacticIDs = new String[defaultAutoTacticDescriptors.size()];
-		i = 0;
-		for (ITacticDescriptor tacticDesc : defaultAutoTacticDescriptors) {
-			autoTacticIDs[i] = tacticDesc.getTacticID();
-			++i;
-		}
-		store.setDefault(PreferenceConstants.P_AUTOTACTICS, UIUtils
-				.toCommaSeparatedList(autoTacticIDs));
-		store.setDefault(PreferenceConstants.P_AUTOTACTIC_ENABLE, true);
-
 		// Default value for machine editor pages
 		IEditorPagesPreference machinePreference = MachineEditorPagesPreference
 				.getDefault(); 

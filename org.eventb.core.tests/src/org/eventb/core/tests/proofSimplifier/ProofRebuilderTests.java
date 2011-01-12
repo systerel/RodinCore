@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -140,7 +140,7 @@ public class ProofRebuilderTests extends EventBPOTest {
 		// given tactics do NOT close the proof tree
 		// do apply post tactics
 		// eventually, the proof tree is NOT closed
-		doTest(GOAL, false, true, false, Tactics.allI(), Tactics.exI("x"));
+		doTest(GOAL, false, false, false, Tactics.allI(), Tactics.exI("x"));
 	}
 	
 	public void testRebuildWithPostTacticsEnabled() throws Exception {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,11 @@
  *     Systerel - added constants for preference page ids
  *     Systerel - added constant for expand section preference
  *     Systerel - added constants to handle new prefix preferences
+ *     Systerel - added constants to handle auto/post-tactics profiles preferences
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
+
+import org.eventb.core.preferences.autotactics.TacticPreferenceConstants;
 
 /**
  * @author htson
@@ -48,13 +51,20 @@ public class PreferenceConstants {
 	public static final String SEQUENT_PROVER_PAGE_ID = "org.eventb.ui.preferences.seqProver";
 
 	/**
+	 * Unique identifier of the preference page for the Auto/Post Tactic settings.
+	 */
+	public static final String AUTO_POST_TACTIC_PREFERENCE_PAGE_ID = "org.eventb.ui.preferences.autoPostTactic";
+
+	/**
 	 * Unique identifier of the preference page for the auto tactic.
 	 */
+	@Deprecated
 	public static final String AUTO_TACTIC_PAGE_ID = "org.eventb.ui.preferences.autoTactic";
 
 	/**
 	 * Unique identifier of the preference page for the post tactic.
 	 */
+	@Deprecated
 	public static final String POST_TACTIC_PAGE_ID = "org.eventb.ui.preferences.postTactic";
 
 	/**
@@ -79,23 +89,31 @@ public class PreferenceConstants {
 	
 	
 	/**
-	 * Preference key for the enablement of Post-Tactics. 
+	 * Preference key for the enablement of Post-Tactics.
+	 * @deprecated use {@link TacticPreferenceConstants} constants instead
 	 */
+	 @Deprecated
 	public static final String P_POSTTACTIC_ENABLE = "Post-Tactic enable"; //$NON-NLS-1$
 
 	/**
 	 * Preference key for the list of selected Post-Tactics.
+	 * @deprecated use {@link TacticPreferenceConstants} constants instead
 	 */
+	@Deprecated
 	public static final String P_POSTTACTICS = "Post-Tactics"; //$NON-NLS-1$
 
 	/**
 	 * Preference key for the enablement of Auto-Tactics.
+	 * @deprecated use {@link TacticPreferenceConstants} constants instead
 	 */
+	@Deprecated
 	public static final String P_AUTOTACTIC_ENABLE = "Auto-Tactic enable"; //$NON-NLS-1$
 
 	/**
 	 * Preference key for the list of selected Auto-Tactics.
+	 * @deprecated use {@link TacticPreferenceConstants} constants instead
 	 */
+	@Deprecated
 	public static final String P_AUTOTACTICS = "Auto-Tactics"; //$NON-NLS-1$
 
 	/**

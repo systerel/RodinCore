@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,12 +12,13 @@ package org.eventb.internal.core.pm;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IPORoot;
 import org.eventb.core.IPRProof;
 import org.eventb.core.pm.IProofAttempt;
+import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.ProofMonitor;
 
@@ -53,13 +54,14 @@ public class ProofRebuilder extends ProofModifier {
 
 	private static void applyPostTacticsIfEnabled(IProofTree pt,
 			IProgressMonitor monitor) {
-		final IAutoTacticPreference postTacticPreference = EventBPlugin
-				.getPostTacticPreference();
-		if (postTacticPreference.isEnabled()) {
-			final ITactic postTactic = postTacticPreference
-					.getSelectedComposedTactic();
+		final IAutoPostTacticManager manager = EventBPlugin
+				.getAutoPostTacticManager();
+		final Object origin = pt.getOrigin();
+		if (origin instanceof IProofAttempt) {
+			final IProofAttempt pa = (IProofAttempt) origin;
+			final IPORoot poRoot = pa.getComponent().getPORoot();
+			final ITactic postTactic = manager.getSelectedPostTactics(poRoot);
 			postTactic.apply(pt.getRoot(), new ProofMonitor(monitor));
-
 		}
 	}
 	

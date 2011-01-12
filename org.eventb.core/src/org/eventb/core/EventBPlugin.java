@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,13 +25,13 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pm.IProofManager;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pog.POGModule;
+import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.sc.SCModule;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.internal.core.FormulaExtensionProviderRegistry;
 import org.eventb.internal.core.autocompletion.AutoCompletion;
 import org.eventb.internal.core.indexers.EventPropagator;
 import org.eventb.internal.core.indexers.IdentifierPropagator;
-import org.eventb.internal.core.pm.PostTacticPreference;
 import org.eventb.internal.core.pm.ProofManager;
 import org.eventb.internal.core.pm.ProofRebuilder;
 import org.eventb.internal.core.pm.ProofSimplifier;
@@ -41,8 +41,9 @@ import org.eventb.internal.core.pog.POGUtil;
 import org.eventb.internal.core.pog.modules.UtilityModule;
 import org.eventb.internal.core.pom.AutoPOM;
 import org.eventb.internal.core.pom.POLoader;
-import org.eventb.internal.core.pom.POMTacticPreference;
 import org.eventb.internal.core.pom.RecalculateAutoStatus;
+import org.eventb.internal.core.preferences.AutoPostTacticManager;
+import org.eventb.internal.core.preferences.PreferenceUtils;
 import org.eventb.internal.core.sc.SCUtil;
 import org.osgi.framework.BundleContext;
 import org.rodinp.core.IRodinElement;
@@ -87,7 +88,8 @@ public class EventBPlugin extends Plugin {
 	private static final String PM_TRACE = PLUGIN_ID + "/debug/pm"; //$NON-NLS-1$
 	private static final String PERF_POM_PROOFREUSE_TRACE = PLUGIN_ID + "/perf/pom/proofReuse"; //$NON-NLS-1$
 	private static final String EXTENSIONPROVIDER_REGISTRY_TRACE = PLUGIN_ID + "/debug/formulaExtensionProvider";//$NON-NLS-1$
-
+	private static final String PREFERENCES_TRACE = PLUGIN_ID + "/debug/preferences"; //$NON-NLS-1$
+	
 	/**
 	 * Returns the name of the component whose data are stored in the file with the given name.
 	 * 
@@ -250,6 +252,7 @@ public class EventBPlugin extends Plugin {
 		UserSupportUtils.DEBUG = parseOption(PM_TRACE);
 		AutoPOM.PERF_PROOFREUSE = parseOption(PERF_POM_PROOFREUSE_TRACE);
 		FormulaExtensionProviderRegistry.DEBUG = parseOption(EXTENSIONPROVIDER_REGISTRY_TRACE);
+		PreferenceUtils.DEBUG = parseOption(PREFERENCES_TRACE);
 	}
 
 	private static boolean parseOption(String key) {
@@ -280,6 +283,7 @@ public class EventBPlugin extends Plugin {
 	public org.eventb.core.pm.IPostTacticRegistry getPostTacticRegistry() {
 		return org.eventb.internal.core.pm.PostTacticRegistry.getDefault();
 	}
+	
 
 	/**
 	 * Return the POM-tactic preference
@@ -292,26 +296,39 @@ public class EventBPlugin extends Plugin {
 	public static IAutoTacticPreference getPOMTacticPreference() {
 		return getAutoTacticPreference();
 	}
-
+	
 	/**
-	 * Return the preference describing the tactic to be used by the automated
-	 * prover.
-	 * 
-	 * @return the auto-prover tactic preference
+	 * Return the Auto/Post tactic manager.
+	 * @since 2.1
 	 */
-	public static IAutoTacticPreference getAutoTacticPreference() {
-		return POMTacticPreference.getDefault();
+	public static IAutoPostTacticManager getAutoPostTacticManager() {
+		return AutoPostTacticManager.getDefault();
 	}
 
 	/**
-	 * Return the post-tactic preference
-	 * <p>
+	 * Returns the preference describing the tactic to be used by the automated
+	 * prover.
+	 * 
+	 * @return the auto-prover tactic preference
+	 * @deprecated replaced by the facade {@link IAutoPostTacticManager} and
+	 *             {@link IAutoPostTacticManager#getAutoTacticPreference()}
+	 */
+	@Deprecated
+	public static IAutoTacticPreference getAutoTacticPreference() {
+		return getAutoPostTacticManager().getAutoTacticPreference();
+	}
+
+	/**
+	 * Returns the post-tactic preference.
 	 * 
 	 * @return the default post-tactic preference
 	 * @author htson
+	 * @deprecated replaced by the facade {@link IAutoPostTacticManager} and
+	 *             {@link IAutoPostTacticManager#getPostTacticPreference()}
 	 */
+	@Deprecated
 	public static IAutoTacticPreference getPostTacticPreference() {
-		return PostTacticPreference.getDefault();
+		return getAutoPostTacticManager().getPostTacticPreference();
 	}
 
 	/**

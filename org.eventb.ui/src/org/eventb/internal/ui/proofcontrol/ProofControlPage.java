@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.proofcontrol;
 
+import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_ENABLE;
 import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyCommand;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyTactic;
@@ -117,6 +118,7 @@ import org.eventb.ui.prover.ITacticApplication;
  * @author htson
  *         <p>
  *         This class is an implementation of a Proof Control 'page'.
+ *         </p>
  */
 public class ProofControlPage extends Page implements IProofControlPage,
 		IUserSupportManagerChangedListener, IPropertyChangeListener {
@@ -172,7 +174,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	/**
 	 * Apply a tactic with a progress monitor (providing cancel button).
-	 * <p>
 	 * 
 	 * @param op
 	 *            a runnable with progress monitor.
@@ -552,8 +553,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
 	 * it.
-	 * <p>
-	 * 
 	 * 
 	 * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -706,7 +705,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	/**
 	 * Set the information (in the bottom of the page).
-	 * <p>
 	 * 
 	 * @param information
 	 *            the string (information from the UserSupport).
@@ -743,7 +741,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	/**
 	 * Fill the local pull down.
-	 * <p>
 	 * 
 	 * @param manager
 	 *            the menu manager
@@ -778,11 +775,10 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			@Override
 			public void run() {
 				boolean checked = !expertMode.isChecked();
-				store.setValue(PreferenceConstants.P_POSTTACTIC_ENABLE,
-						checked);
+				store.setValue(P_POSTTACTIC_ENABLE, checked);
 			}
 		};
-		boolean b = EventBPreferenceStore.getBooleanPreference(PreferenceConstants.P_POSTTACTIC_ENABLE);
+		boolean b = EventBPreferenceStore.getBooleanPreference(P_POSTTACTIC_ENABLE);
 		expertMode.setChecked(!b);
 
 		expertMode.setToolTipText("Disable post-tactic");
@@ -795,11 +791,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			
 			@Override
 			public void run() {
-				final String pageId = PreferenceConstants.POST_TACTIC_PAGE_ID;
-				final String[] displayedIds = new String[] {
-						PreferenceConstants.POST_TACTIC_PAGE_ID,
-						PreferenceConstants.AUTO_TACTIC_PAGE_ID,
-				};
+				final String pageId = PreferenceConstants.AUTO_POST_TACTIC_PREFERENCE_PAGE_ID;
+				final String[] displayedIds = new String[] { pageId };
 				final Dialog dialog = PreferencesUtil.createPreferenceDialogOn(
 						null, pageId, displayedIds, null);
 				dialog.open();
@@ -810,7 +803,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	/**
 	 * Passing the focus request to the text field.
-	 * <p>
 	 * 
 	 * @see org.eclipse.ui.part.IPage#setFocus()
 	 */
@@ -976,9 +968,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(
-				PreferenceConstants.P_POSTTACTIC_ENABLE)) {
-			Object newValue = event.getNewValue();
+		if (event.getProperty().equals(P_POSTTACTIC_ENABLE)) {
+			final Object newValue = event.getNewValue();
 			assert newValue instanceof Boolean || newValue instanceof String;
 			if (newValue instanceof String) {
 				boolean b = ((String) newValue)

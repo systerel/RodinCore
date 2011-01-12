@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.FormulaFactory;
@@ -31,6 +32,7 @@ import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupportInformation;
+import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofSkeleton;
@@ -41,7 +43,6 @@ import org.eventb.core.seqprover.IProofTreeNodeFilter;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverLib;
-import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.ProofMonitor;
@@ -128,12 +129,13 @@ public class ProofState implements IProofState {
 				ProofState.this.newProofTree();
 				
 				if (!pt.getRoot().isClosed() && !userSupport.isSaving()) {
+					final IAutoPostTacticManager manager = EventBPlugin
+							.getAutoPostTacticManager();
 					// Run Post tactic at the root of the tree
-					IAutoTacticPreference postTacticPreference = EventBPlugin
-							.getPostTacticPreference();
-					if (postTacticPreference.isEnabled()) {
-						ITactic postTactic = postTacticPreference
-								.getSelectedComposedTactic();
+					if (pa != null) {
+						final IEventBRoot root = pa.getComponent().getPORoot();
+						final ITactic postTactic = manager
+								.getSelectedPostTactics(root);
 						postTactic.apply(pt.getRoot(),
 								new ProofMonitor(monitor));
 					}
@@ -688,10 +690,12 @@ public class ProofState implements IProofState {
 		if (info == null) {
 			info = "Tactic applied successfully";
 			if (applyPostTactic) {
-				IAutoTacticPreference postTacticPreference = EventBPlugin
-						.getPostTacticPreference();
-				if (postTacticPreference.isEnabled()) {
-					ITactic postTactic = postTacticPreference.getSelectedComposedTactic();
+				if (pa != null) {
+					final IEventBRoot root = pa.getComponent().getPORoot();
+					final IAutoPostTacticManager manager = EventBPlugin
+							.getAutoPostTacticManager();
+					final ITactic postTactic = manager
+							.getSelectedPostTactics(root);
 					postTactic.apply(node, pm);
 				}
 			}

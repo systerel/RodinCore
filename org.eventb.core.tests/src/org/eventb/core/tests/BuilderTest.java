@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,8 +40,8 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
-import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDB;
@@ -160,12 +160,13 @@ public abstract class BuilderTest extends TestCase {
 	
 	protected static void enableAutoProver() {
 		final IAutoTacticPreference autoPref = EventBPlugin
-				.getAutoTacticPreference();
+				.getAutoPostTacticManager().getAutoTacticPreference();
 		enableAutoTactics(autoPref, autoTacticIds);
 	}
 
 	protected static void disableAutoProver() {
-		EventBPlugin.getAutoTacticPreference().setEnabled(false);
+		EventBPlugin.getAutoPostTacticManager().getAutoTacticPreference()
+				.setEnabled(false);
 	}
 
 	private static final String[] postTacticIds = new String[] {
@@ -178,12 +179,13 @@ public abstract class BuilderTest extends TestCase {
 	
 	protected static void enablePostTactics() {
 		final IAutoTacticPreference postPref = EventBPlugin
-				.getPostTacticPreference();
+				.getAutoPostTacticManager().getPostTacticPreference();
 		enableAutoTactics(postPref, postTacticIds);
 	}
 
 	protected static void disablePostTactics() {
-		EventBPlugin.getPostTacticPreference().setEnabled(false);
+		EventBPlugin.getAutoPostTacticManager().getPostTacticPreference()
+				.setEnabled(false);
 	}
 
 	/**

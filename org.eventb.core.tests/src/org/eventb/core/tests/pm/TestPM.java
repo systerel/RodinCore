@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPORoot;
 import org.eventb.core.pm.IUserSupportManager;
+import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.tests.pom.POUtil;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
@@ -29,10 +30,12 @@ public abstract class TestPM extends BasicTest {
 		super.setUp();
 		manager = EventBPlugin.getUserSupportManager();
 		// Disable the Post tactic
-		EventBPlugin.getPostTacticPreference().setEnabled(false);
+		final IAutoPostTacticManager tacManager = EventBPlugin
+				.getAutoPostTacticManager();
+		tacManager.getPostTacticPreference().setEnabled(false);
 		// Enable the POM-Tactic
-		EventBPlugin.getAutoTacticPreference().setEnabled(true);
-		
+		tacManager.getAutoTacticPreference().setEnabled(true);
+
 		// Disable consideration of hidden hypotheses in search
 		manager.setConsiderHiddenHypotheses(false);
 	}

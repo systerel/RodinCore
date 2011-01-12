@@ -1002,14 +1002,9 @@
             name="%preferencePage.seqProverPage.name"/>
       <page
             category="org.eventb.ui.preferences.seqProver"
-            class="org.eventb.internal.ui.preferences.PostTacticPreferencePage"
-            id="org.eventb.ui.preferences.postTactic"
-            name="%preferencePage.postTacticPage.name"/>
-      <page
-            category="org.eventb.ui.preferences.seqProver"
-            class="org.eventb.internal.ui.preferences.POMTacticPreferencePage"
-            id="org.eventb.ui.preferences.autoTactic"
-            name="%preferencePage.autoTacticPage.name"/>
+            class="org.eventb.internal.ui.preferences.tactics.PostAutoTacticPreferencePage"
+            id="org.eventb.ui.preferences.autoPostTactic"
+            name="%preferencePage.autoPostTacticPage.name"/>
       <page
             category="org.eventb.ui.preferences.eventB"
             class="org.eventb.internal.ui.preferences.ModellingUIPreferencePage"
@@ -2475,6 +2470,16 @@
            class="org.eventb.internal.ui.preferences.PrefixPreferencePage"
            id="org.eventb.ui.preferences.prefixPage"
            name="%preferencePage.PrefixPreferencePage.name">
+        <enabledWhen>
+           <adapt
+                 type="org.eclipse.core.resources.IProject">
+           </adapt>
+        </enabledWhen>
+     </page>
+     <page
+           class="org.eventb.internal.ui.preferences.tactics.PostAutoTacticPreferencePage"
+           id="org.eventb.ui.preferences.autoTactic"
+           name="%preferencePage.autoPostTacticPage.name">
         <enabledWhen>
            <adapt
                  type="org.eclipse.core.resources.IProject">

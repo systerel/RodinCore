@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,9 +104,10 @@ public final class RecalculateAutoStatus {
 		try {
 			
 			final IProofTree autoProofTree = pa.getProofTree();
-
+			final IEventBRoot poRoot = pa.getComponent().getPORoot();
+			
 			pm.subTask(Messages.progress_RecalculateAutoStatus_proving);
-			autoTactic().apply(autoProofTree.getRoot(), new ProofMonitor(pm.newChild(7)));
+			autoTactic(poRoot).apply(autoProofTree.getRoot(), new ProofMonitor(pm.newChild(7)));
 
 			pm.subTask(Messages.progress_RecalculateAutoStatus_saving);
 			// Update the tree if it was discharged
@@ -133,9 +134,9 @@ public final class RecalculateAutoStatus {
 		}
 	}
 
-	private static ITactic autoTactic() {
-		return EventBPlugin.getAutoTacticPreference()
-				.getSelectedComposedTactic();
+	private static ITactic autoTactic(IEventBRoot poRoot) {
+		return EventBPlugin.getAutoPostTacticManager().getSelectedAutoTactics(
+				poRoot);
 	}
 
 	private static void makeAllConsistent(Set<IProofComponent> prComps)
