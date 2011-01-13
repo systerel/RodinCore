@@ -12,8 +12,6 @@ package org.eventb.internal.ui.preferences;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -48,8 +46,6 @@ public class EnabledComboEditor implements IEventBFieldEditor {
 
 	private final boolean propertyCase;
 	
-	private boolean enabledCombo;
-	
 	private Group comboGroup;
 
 	private Button enableButton;
@@ -77,19 +73,6 @@ public class EnabledComboEditor implements IEventBFieldEditor {
 			enableButton = new Button(comboGroup, SWT.CHECK);
 			enableButton.setText(enableDescription);
 			setHorizontalSpan(enableButton, NUM_COLUMN);
-			// disable the combo list if the button is not check
-			enableButton.addSelectionListener(new SelectionListener() {
-
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					updateCombo();
-				}
-
-				@Override
-				public void widgetDefaultSelected(SelectionEvent e) {
-					updateCombo();
-				}
-			});
 		}
 		
 		listLabel = new Label(comboGroup, SWT.NONE);
@@ -116,21 +99,6 @@ public class EnabledComboEditor implements IEventBFieldEditor {
 		return group;
 	}
 
-	/**
-	 * Enables the combo list if the enable button is enabled and checked.
-	 */
-	void updateCombo() {
-		final boolean enabled;
-		if (enableButton != null) {
-			enabled = enableButton.isEnabled() && enableButton.getSelection();
-		} else {
-			enabled = wsPreferenceStore.getBoolean(enablePreferenceKey)
-					&& enabledCombo;
-			comboGroup.setEnabled(enabled);
-		}
-		listLabel.setEnabled(enabled);
-		comboList.setEnabled(enabled);
-	}
 	
 	@Override
 	public void store() {
@@ -138,13 +106,10 @@ public class EnabledComboEditor implements IEventBFieldEditor {
 		if (!propertyCase) {
 			isEnabled = enableButton.getSelection();
 		} else {
-			isEnabled = wsPreferenceStore.getBoolean(enablePreferenceKey)
-					&& enabledCombo;
+			isEnabled = wsPreferenceStore.getBoolean(enablePreferenceKey);
 		}
 		preferenceStore.setValue(enablePreferenceKey, isEnabled);
-		if (isEnabled) {
-			preferenceStore.setValue(choicePreferenceKey, comboList.getText());
-		}
+		preferenceStore.setValue(choicePreferenceKey, comboList.getText());
 	}
 
 	@Override
@@ -152,8 +117,9 @@ public class EnabledComboEditor implements IEventBFieldEditor {
 		if (!propertyCase) {
 			enableButton.setEnabled(enabled);
 		}
-		enabledCombo = enabled;
-		updateCombo();
+		comboGroup.setEnabled(enabled);
+		listLabel.setEnabled(enabled);
+		comboList.setEnabled(enabled);
 	}
 
 	@Override
@@ -165,7 +131,6 @@ public class EnabledComboEditor implements IEventBFieldEditor {
 		}
 		final String choice = preferenceStore.getString(choicePreferenceKey);		
 		setChoice(choice);
-		updateCombo();
 	}
 
 	@Override
@@ -181,7 +146,6 @@ public class EnabledComboEditor implements IEventBFieldEditor {
 				.getDefaultString(choicePreferenceKey);
 		comboList.setEnabled(enabled);
 		setChoice(choice);
-		updateCombo();
 	}
 
 	private void setChoice(String value) {
