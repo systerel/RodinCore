@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,55 +18,57 @@ import java.util.BitSet;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.QuantifiedExpression;
 
 /**
- * Framework for checking if a given comprehension set of the form {x · P ∣ E}
- * is a lambda expression, which implies that E looks like a tree constructed
- * with either:
+ * Framework for checking if a given expression is similar to a lambda pattern,
+ * that is looks like a tree constructed with
  * <ul>
- * <li>maplet operators</li>
+ * <li>maplet operators as internal nodes</li>
  * <li>bound identifiers as leaves, which are locally bound and pairwise
  * distinct</li>
  * </ul>
+ * Here, locally bound means that the de Bruijn index is less than a given
+ * constraint.
  * 
  * @author Benoît Lucet
  */
-public class LambdaCheck {
+public class PartialLambdaPatternCheck {
 
-	public static boolean lambdaCheck(QuantifiedExpression expression) {
-		return new LambdaCheck(expression).verify();
+	public static boolean partialLambdaPatternCheck(Expression expression,
+			int nbBound) {
+		return new PartialLambdaPatternCheck(expression, nbBound).verify();
 	}
 
-	private final QuantifiedExpression qExpr;
+	private final Expression expression;
 	private final int nbBound;
-	private final BitSet locallyBound;
 
-	private LambdaCheck(QuantifiedExpression qExpr) {
-		this.qExpr = qExpr;
-		this.nbBound = qExpr.getBoundIdentDecls().length;
-		locallyBound = new BitSet();
+	// Set of de Bruijn indexes of already encountered bound identifiers,
+	// used to check for pairwise distinctness
+	private final BitSet alreadyPresent = new BitSet();
+
+	private PartialLambdaPatternCheck(Expression expression, int nbBound) {
+		this.expression = expression;
+		this.nbBound = nbBound;
 	}
 
 	private boolean verify() {
-		final Expression expression = qExpr.getExpression();
 		return checkTree(expression);
 	}
 
-	private boolean checkTree(Expression expression) {
-		switch (expression.getTag()) {
+	private boolean checkTree(Expression node) {
+		switch (node.getTag()) {
 		case MAPSTO:
-			final BinaryExpression bExpr = (BinaryExpression) expression;
+			final BinaryExpression bExpr = (BinaryExpression) node;
 			return checkTree(bExpr.getLeft()) && checkTree(bExpr.getRight());
 		case BOUND_IDENT:
-			final int biIndex = ((BoundIdentifier) expression).getBoundIndex();
+			final int biIndex = ((BoundIdentifier) node).getBoundIndex();
 			if (!isLocallyBound(biIndex)) {
 				return false;
 			}
-			if (locallyBound.get(biIndex)) {
+			if (alreadyPresent.get(biIndex)) {
 				return false;
 			}
-			locallyBound.set(biIndex);
+			alreadyPresent.set(biIndex);
 			return true;
 		default:
 			return false;

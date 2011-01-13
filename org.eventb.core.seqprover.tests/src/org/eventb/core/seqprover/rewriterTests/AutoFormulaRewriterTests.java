@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -821,11 +821,8 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 		// Checks that external lambda disappear and x is instantiated
 		expressionTest("(λz·z∈ℕ ∣ z+z)[{1,2,3}]", "(λx·x∈ℙ(ℕ) ∣ (λz·z∈ℕ ∣ z+z)[x])({1,2,3})");
 		// Real example from Bug 2995930 with an argument containing a bound identifier.
-		// TODO Benoît
-		if (!level2AndHigher) {
-			predicateTest("∀t⦂ℙ(S)·(λx↦p·x∈t∧p⊆t∣p) = ∅",
-					"∀t⦂ℙ(S)·(λs·s⊆S∣(λx↦p·x∈s∧p⊆s∣p))(t) = ∅", "S", "ℙ(S)");
-		}
+		predicateTest("∀t⦂ℙ(S)·(λx↦p·x∈t∧p⊆t∣p) = a",
+				"∀t⦂ℙ(S)·(λs⦂ℙ(S)·s⊆S∣(λx↦p·x∈s∧p⊆s∣p))(t) = a");
 	}
 
 	/**

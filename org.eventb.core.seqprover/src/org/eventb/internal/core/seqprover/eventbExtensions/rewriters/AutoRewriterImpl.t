@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
-
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BTRUE;
@@ -47,19 +46,15 @@ import static org.eventb.core.ast.Formula.LOR;
 import static org.eventb.core.ast.Formula.LT;
 import static org.eventb.core.ast.Formula.MAPSTO;
 import static org.eventb.core.ast.Formula.MINUS;
-import static org.eventb.core.ast.Formula.MUL;
 import static org.eventb.core.ast.Formula.NOT;
-import static org.eventb.core.ast.Formula.NOTEQUAL;
 import static org.eventb.core.ast.Formula.PLUS;
 import static org.eventb.core.ast.Formula.RANRES;
 import static org.eventb.core.ast.Formula.RELIMAGE;
-import static org.eventb.core.ast.Formula.SETEXT;
 import static org.eventb.core.ast.Formula.SETMINUS;
 import static org.eventb.core.ast.Formula.SUBSET;
 import static org.eventb.core.ast.Formula.SUBSETEQ;
 import static org.eventb.core.ast.Formula.TRUE;
 import static org.eventb.core.ast.Formula.UNMINUS;
-
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyComp;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyInter;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyLand;
@@ -69,7 +64,7 @@ import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.Asso
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyPlus;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyUnion;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunctionalCheck.functionalCheck;
-import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.LambdaCheck.lambdaCheck;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PartialLambdaPatternCheck.partialLambdaPatternCheck;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetExtensionSimplifier.simplifyMax;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetExtensionSimplifier.simplifyMin;
 
@@ -114,8 +109,8 @@ import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
-import org.eventb.internal.core.seqprover.eventbExtensions.OnePointProcessorRewriting;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointProcessorExpression;
+import org.eventb.internal.core.seqprover.eventbExtensions.OnePointProcessorRewriting;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
 
 /**
@@ -232,25 +227,40 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		return false;
 	}
 	
-	protected <T> boolean containsOneOf(T[] array, T[] keys) {
-		for (T element : keys) {
-			if (contains(array, element)) {
-				return true;
+	protected boolean notLocallyBound(Formula<?> form, int nbBound) {
+		for (BoundIdentifier ident : form.getBoundIdentifiers()) {
+			if (ident.getBoundIndex() < nbBound) {
+				return false;
 			}
 		}
-		return false;
+		return true;
 	}
-	
-	protected <T> List<T> removeAllOccurrences(T[] array, T key) {
-		final List<T> resList = new ArrayList<T>();
-		for (T element : array) {
-			if (element.equals(key)) {
-				// do nothing
-			} else {
-				resList.add(element);
+
+	// Removes exactly one occurrence of the given child from the given
+	// associative expression, if possible. Otherwise, returns the given
+	// associative expression unchanged.
+	protected Expression removeChild(AssociativeExpression parent,
+				Expression toRemove) {
+		final int tag = parent.getTag();
+		final Expression[] children = parent.getChildren();
+		final int length = children.length;
+		if (length == 2) {
+			if (toRemove.equals(children[0])) {
+				return children[1];
 			}
+			if (toRemove.equals(children[1])) {
+				return children[0];
+			}
+			return parent;
 		}
-		return resList;
+		final int index = Arrays.asList(children).indexOf(toRemove);
+		if (index == -1) {
+			return parent;
+		}
+		final Expression[] newChildren = new Expression[length - 1];
+		System.arraycopy(children, 0, newChildren, 0, index);
+		System.arraycopy(children, index+1, newChildren, index, length - index - 1);
+		return ff.makeAssociativeExpression(tag, newChildren, null);
 	}
 	
 	private Expression simplifyExtremumOfUnion(Expression[] children, int tag) {
@@ -349,6 +359,11 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		return makeUnaryExpression(KCARD, set);
 	}
 	
+	protected Predicate makeNotEqual(Expression left, Expression right) {
+		return makeUnaryPredicate(NOT,
+			makeRelationalPredicate(EQUAL, left, right));
+	}
+
 	%include {FormulaV2.tom}
 	
 	@ProverRule( { "SIMP_SPECIAL_FINITE", "SIMP_FINITE_SETENUM",
@@ -1073,8 +1088,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * Negation 4: E ≠ F == ¬ E = F
 	    	 */
 	    	NotEqual(E, F) -> {
-	    		result = makeUnaryPredicate(
-	    			NOT, makeRelationalPredicate(EQUAL, `E, `F));
+	    		result = makeNotEqual(`E, `F);
 	    		trace(predicate, result, "SIMP_NOTEQUAL");
 				return result;
 	    	}
@@ -1661,15 +1675,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_MULTI_EQUAL_BINTER
 			 *    S ∩ .. ∩ T ∩ .. ∩ U = T == T ⊆ S ∩ .. ∩ U
 			 */
-			Equal(BInter(children@eList(_*, T, _*)), T) -> {
+			Equal(expr@BInter(eList(_*, T, _*)), T) -> {
 				if (level2) {
-					final List<Expression> newChildren = removeAllOccurrences(`children, `T);
-					final Expression inter;
-					if (newChildren.size() == 1) {
-						inter = newChildren.get(0);
-					} else {
-						inter = makeAssociativeExpression(BINTER, newChildren);
-					}
+					final Expression inter =
+							removeChild((AssociativeExpression) `expr, `T);
 					result = makeRelationalPredicate(SUBSETEQ, `T, inter);
 					trace(predicate, result, "SIMP_MULTI_EQUAL_BINTER");
 					return result;
@@ -1680,15 +1689,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_MULTI_EQUAL_BUNION
 			 *    S ∪ .. ∪ T ∪ .. ∪ U = T == S ∪ .. ∪ U  ⊆ T
 			 */
-			Equal(BUnion(children@eList(_*, T, _*)), T) -> {
+			Equal(expr@BUnion(eList(_*, T, _*)), T) -> {
 				if (level2) {
-					final List<Expression> newChildren = removeAllOccurrences(`children, `T);
-					final Expression union;
-					if (newChildren.size() == 1) {
-						union = newChildren.get(0);
-					} else {
-						union = makeAssociativeExpression(BUNION, newChildren);
-					}
+					final Expression union =
+							removeChild((AssociativeExpression) `expr, `T);
 					result = makeRelationalPredicate(SUBSETEQ, union, `T);
 					trace(predicate, result, "SIMP_MULTI_EQUAL_BUNION");
 					return result;
@@ -1701,7 +1705,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 */
 			Subset(empty@EmptySet(), S) -> {
 				if (level2) {
-					result = makeRelationalPredicate(NOTEQUAL, `S, `empty);
+					result = makeNotEqual(`S, `empty);
 					trace(predicate, result, "SIMP_SPECIAL_SUBSET_L");
 					return result;
 				}
@@ -2159,27 +2163,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_MULTI_DIV_PROD 
              * Arithmetic: (X ∗ ... ∗ E ∗ ... ∗ Y) ÷ E == X ∗ ... ∗ Y
 	    	 */
-	    	Div(Mul(children), E) -> {
-	    		Collection<Expression> newChildren = new ArrayList<Expression>();
-
-				boolean found = false;
-				for (Expression child : `children) {
-					if (found)
-						newChildren.add(child);
-					else if (child.equals(`E))
-						found = true;
-					else
-						newChildren.add(child);
-				}
-	    		if (newChildren.size() < `children.length) {
-		    		if (newChildren.size() == 1) {
-		    			result = newChildren.iterator().next();
-		    		} else {
-		    		    result = makeAssociativeExpression(MUL, newChildren);
-		    		}
-		    		trace(expression, result, "SIMP_MULTI_DIV_PROD");
-		    		return result;
-	    		}
+	    	Div(mul@Mul(eList(_*, E, _*)), E) -> {
+	    		result = removeChild((AssociativeExpression) `mul, `E);
+	    		trace(expression, result, "SIMP_MULTI_DIV_PROD");
+	    		return result;
 	    	}
 
 			/**
@@ -3138,7 +3125,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_TYPE_RAN", "SIMP_MIN_SING", "SIMP_MAX_SING",
 			"SIMP_MIN_NATURAL", "SIMP_MIN_NATURAL1", "SIMP_MIN_UPTO",
 			"SIMP_MAX_UPTO", "SIMP_CARD_CONVERSE", "SIMP_CARD_ID_DOMRES",
-			"SIMP_CARD_COMPSET", "SIMP_CONVERSE_CPROD", "SIMP_CONVERSE_COMPSET",
+			"SIMP_CONVERSE_CPROD", "SIMP_CONVERSE_COMPSET",
 			"SIMP_DOM_LAMBDA", "SIMP_RAN_LAMBDA", "SIMP_MIN_BUNION_SING",
 			"SIMP_MAX_BUNION_SING", "SIMP_LIT_MIN", "SIMP_LIT_MAX",
 			 "SIMP_CARD_ID", "SIMP_CARD_PRJ1", "SIMP_CARD_PRJ2",
@@ -3677,22 +3664,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			}
 			
 			/**
-			 * SIMP_CARD_COMPSET
-			 *    card({x · x∈S ∣ x}) == card(S) (where x non free in s)
-			 */
-			Card(cset@Cset(_, In(E, S), E)) -> {
-				if (level2) {
-					if (!containsOneOf(`S.getBoundIdentifiers(), `E.getBoundIdentifiers())) {
-						if (lambdaCheck((QuantifiedExpression) `cset)) {
-							result = makeCard(`S);
-							trace(expression, result, "SIMP_CARD_COMPSET");
-							return result;
-						}
-					}
-				}
-			}
-			
-			/**
 			 * SIMP_CONVERSE_CPROD
 			 *    (A × B)∼ == B × A
 			 */
@@ -4021,8 +3992,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_SPECIAL_COMPSET_BTRUE
 	    	 *    {x · ⊤ ∣ x} == Ty (where the type of x is Ty)
 	    	 */
-	    	Cset(_, BTRUE(), E) -> {
-	    		if (level2 && lambdaCheck((QuantifiedExpression) expression)) {
+	    	Cset(decls, BTRUE(), E) -> {
+	    		if (level2 && partialLambdaPatternCheck(`E, `decls.length)) {
 	    			result = `E.getType().toExpression(ff);
 		    		trace(expression, result, "SIMP_SPECIAL_COMPSET_BTRUE");
 		    		return result;
@@ -4045,16 +4016,13 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_COMPSET_IN
 	    	 *    {x · x∈S ∣ x} == S
 	    	 */
-	    	// TODO Benoît: valider avec Laurent pour le lambdaCheck
-	    	Cset(_, In(E, S), E) -> {
-	    		if (level2) {
-	    			if (!containsOneOf(`S.getBoundIdentifiers(), `E.getBoundIdentifiers())) {
-	    				if (lambdaCheck((QuantifiedExpression) expression)) {
-	    					result = `S;
-	    					trace(expression, result, "SIMP_COMPSET_IN");
-		    				return result;
-	    				}
-	    			}
+	    	Cset(decls, In(E, S), E) -> {
+	    		final int nbBound = `decls.length;
+	    		if (level2 && notLocallyBound(`S, nbBound)
+	    				&& partialLambdaPatternCheck(`E, nbBound)) {
+   					result = `S.shiftBoundIdentifiers(-nbBound, ff);
+   					trace(expression, result, "SIMP_COMPSET_IN");
+    				return result;
 	    		}
 	    	}
 	 

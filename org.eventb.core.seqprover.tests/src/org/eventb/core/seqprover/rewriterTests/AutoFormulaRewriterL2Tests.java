@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -615,6 +615,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		expressionTest("T×S", "{x⦂S, y⦂T · ⊤ ∣ y↦x}", "S", "ℙ(S)", "T", "ℙ(T)");
 		expressionTest("T×S×U", "{x⦂S, y⦂T, z⦂U · ⊤ ∣ y↦x↦z}", //
 				"S", "ℙ(S)", "T", "ℙ(T)", "U", "ℙ(U)");
+		expressionTest("S×(T×U)×V", "{x⦂S, y⦂T, z⦂U, t⦂V · ⊤ ∣ x↦(y↦z)↦t}",
+				"S", "ℙ(S)", "T", "ℙ(T)", "U", "ℙ(U)", "V", "ℙ(V)");
 
 		expressionTest("{x⦂S, y · ⊤ ∣ x↦y+1}", "{x⦂S, y · ⊤ ∣ x↦y+1}", //
 				"S", "ℙ(S)");
@@ -1089,7 +1091,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	}
 
 	/**
-	 * Ensures that rule SIMP_CARD_COMPSET is implemented correctly
+	 * Ensures that superseded rule SIMP_CARD_COMPSET is implemented correctly,
+	 * although indirectly by rule SIMP_COMPSET_IN.
 	 */
 	@Test
 	public void testSIMP_CARD_COMPSET() {
@@ -1151,6 +1154,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 				"S", "ℙ(S)", "T", "ℙ(T)");
 		expressionTest("(S × T)  s", "(S × T)  r  (S × T)  s", //
 				"S", "ℙ(S)", "T", "ℙ(T)");
+
+		expressionTest("(S × T)  r", "(S × T)  r", "S", "ℙ(S)", "T", "ℙ(T)");
 
 		expressionTest("r  (S × T)", "r  (S × T)", "S", "ℙ(U)", "T", "ℙ(T)");
 		expressionTest("r  (S × T)", "r  (S × T)", "S", "ℙ(S)", "T", "ℙ(V)");
@@ -1214,9 +1219,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		expressionTest("{x,y,z⦂ℤ,t⦂U · x↦y∈P ∣ x+z}", //
 				"dom({x,y,z,t⦂U · x↦y∈P ∣ x+z ↦ t})", //
 				"P", "ℤ↔T");
-		// TODO Benoît
-		// expressionTest("dom({x,y⦂S · x ∈ 1‥2 × 3‥4 ∣ x})", //
-		// "dom({x,y⦂S · x ∈ 1‥2 × 3‥4 ∣ x})");
+		expressionTest("dom({x,y · x ∈ 1‥2 × 3‥4 ∧ y = 5 ∣ x})", //
+				"dom({x,y · x ∈ 1‥2 × 3‥4 ∧ y = 5 ∣ x})");
 	}
 
 	/**
@@ -1230,9 +1234,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		expressionTest("{x,y,z⦂V · x↦y∈P ∣ x}", //
 				"ran({x,y,z⦂V · x↦y∈P ∣ x↦z ↦ x})", //
 				"P", "S↔T");
-		// TODO Benoît
-		// expressionTest("ran({x,y⦂S · x ∈ 1‥2 × 3‥4 ∣ x})", //
-		// "ran({x,y⦂S · x ∈ 1‥2 × 3‥4 ∣ x})");
+		expressionTest("ran({x,y · x ∈ 1‥2 × 3‥4 ∧ y = 5 ∣ x})", //
+				"ran({x,y · x ∈ 1‥2 × 3‥4 ∧ y = 5 ∣ x})");
 	}
 
 	/**
@@ -1503,7 +1506,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_SUBSET_L() {
-		predicateTest("S ≠ ∅", "∅ ⊂ S", "S", "ℙ(T)");
+		predicateTest("¬ S = ∅", "∅ ⊂ S", "S", "ℙ(T)");
 		predicateTest("⊤", "∅ ⊆ S", "S", "ℙ(T)");
 	}
 
@@ -1647,12 +1650,15 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_BCOMP_ID() {
-		// SIMP_BCOMP_ID implementation uses the same algorithm as
-		// SIMP_FCOMP_ID, therefore only one test is performed
+		expressionTest("r ∘ ((S ∩ T) ◁ id) ∘ s", "r ∘ (S ◁ id) ∘ (T ◁ id) ∘ s", //
+				"r", "B↔C", "s", "A↔B");
 		expressionTest(
 				"r ∘ ((S ∖ T) ◁ id) ∘ s ∘ (U ⩤ id) ∘ t ∘ ((V ∪ W) ⩤ id) ∘ u", //
 				"r ∘ (S ◁ id) ∘ (T ⩤ id) ∘ s ∘ (U ⩤ id) ∘ t ∘ (V ⩤ id) ∘ (W ⩤ id) ∘ u",//
 				"r", "D↔E", "s", "C↔D", "t", "B↔C", "u", "A↔B");
+
+		expressionTest("r ∘ (S ◁ id) ∘ s", "r ∘ (S ◁ id) ∘ s", //
+				"r", "B↔C", "s", "A↔B");
 	}
 
 	/**
@@ -1694,6 +1700,9 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	public void testSIMP_COMPSET_IN() {
 		expressionTest("S", "{x · x∈S ∣ x}", "S", "ℙ(T)");
 		expressionTest("S", "{x, y · x↦y∈S ∣ x↦y}", "S", "ℙ(T×U)");
+		expressionTest("{y · y ⊆ A ∧ finite(y) ∣ y}", //
+				"{y · y ⊆ A ∧ finite(y) ∣ {x · x∈y ∣ x}}",//
+				"A", "ℙ(S)");
 
 		expressionTest("{x, y · x↦a↦y∈S ∣ x↦a↦y}", "{x, y · x↦a↦y∈S ∣ x↦a↦y}",
 				"S", "ℙ(T×A×U)");
@@ -1703,10 +1712,10 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 				"S", "ℙ(T×ℤ)");
 
 		expressionTest("{x · x∈S∪{x} ∣ x}", "{x · x∈S∪{x} ∣ x}", "S", "ℙ(T)");
-		expressionTest("{x, y · x↦y∈S∪{x↦y} ∣ x↦y}",
-				"{x, y · x↦y∈S∪{x↦y} ∣ x↦y}", "S", "ℙ(T×U)");
 		expressionTest("{x, y · x↦y∈S×(U∪{y}) ∣ x↦y}",
 				"{x, y · x↦y∈S×(U∪{y}) ∣ x↦y}", "S", "ℙ(T)", "U", "ℙ(V)");
+		expressionTest("{x, y⦂ℙ(T) · x∈y ∣ x}", "{x, y⦂ℙ(T) · x∈y ∣ x}",//
+				"T", "ℙ(T)");
 	}
 
 	/**

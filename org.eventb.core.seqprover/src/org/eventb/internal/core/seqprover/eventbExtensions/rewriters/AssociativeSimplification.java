@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,6 @@ import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
-import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
@@ -220,7 +219,12 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 
 		@Override
 		protected Expression makeAssociativeFormula() {
-			return ff.makeAssociativeExpression(original.getTag(), newChildren,
+			return makeAssociativeFormula(newChildren);
+		}
+
+		protected Expression makeAssociativeFormula(
+				Collection<Expression> children) {
+			return ff.makeAssociativeExpression(original.getTag(), children,
 					null);
 		}
 
@@ -243,17 +247,16 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 	 * in (S ∖ T) ◁ id</li>
 	 * </ul>
 	 * 
-	 * The utility class {@link CompSpecialHandler} regroups the methods and
-	 * data structures needed to perform the special simplifications described
-	 * above.
+	 * The utility class {@link CompAccumulator} regroups the methods and data
+	 * structures needed to perform the special simplifications described above.
 	 */
 	private static class CompSimplification extends ExpressionSimplification {
 
-		private CompSpecialHandler specialHandler;
+		private CompAccumulator accumulator;
 
 		CompSimplification(AssociativeExpression original, DLib dLib) {
 			super(original, dLib);
-			specialHandler = new CompSpecialHandler();
+			accumulator = new CompAccumulator(ff);
 		}
 
 		@Override
@@ -262,27 +265,20 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 				changed = true;
 			} else if (isDeterminant(child)) {
 				knownResult = getDeterminantResult(child);
-			} else if (specialHandler.isProcessing()) {
-				// processing consecutive special cases
-				if (specialHandler.match(child)) {
-					// continue processing
-					specialHandler.process(child);
-					assert !eliminateDuplicate();
-					((ArrayList<Expression>) newChildren).set(
-							newChildren.size() - 1,
-							specialHandler.buildResult());
-				} else {
-					// stop processing
-					specialHandler.stop();
-					newChildren.add(child);
-				}
-			} else if (specialHandler.match(child)) {
-				// start processing
-				specialHandler.process(child);
+			} else if (!accumulator.accumulate(child)) {
+				finishAccumulating();
 				newChildren.add(child);
-			} else {
-				// no special handling
-				newChildren.add(child);
+			}
+		}
+
+		@Override
+		protected void finishChildrenProcessing() {
+			finishAccumulating();
+		}
+
+		private void finishAccumulating() {
+			if (accumulator.isAccumulating()) {
+				newChildren.add(accumulator.stopAccumulating());
 			}
 		}
 
@@ -311,96 +307,110 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 			return ff.makeEmptySet(original.getType(), null);
 		}
 
-		private class CompSpecialHandler {
+		private static class CompAccumulator {
 
-			// As long as consecutive special cases are met, this boolean holds
-			// true
-			private boolean isProcessing;
+			private final FormulaFactory ff;
 
-			private List<Expression> domResElements;
-			private List<Expression> domSubElements;
+			// Count of children accumulated so far
+			private int count = 0;
+
+			private List<Expression> domResElements = new ArrayList<Expression>();
+			private List<Expression> domSubElements = new ArrayList<Expression>();
 
 			// The most recent occurrence of identity is stored, in order to be
-			// able type the resulting expression correctly
-			private AtomicExpression id;
+			// able to construct the accumulated result
+			private Expression id;
 
-			public CompSpecialHandler() {
-				isProcessing = false;
-				domResElements = new ArrayList<Expression>();
-				domSubElements = new ArrayList<Expression>();
+			// The most recent accumulated expression is stored to be returned
+			// if nothing else is added afterwards
+			private Expression lastChild;
+
+			public CompAccumulator(FormulaFactory ff) {
+				this.ff = ff;
+				reset();
 			}
 
-			public boolean match(Expression expression) {
-				if (expression.getTag() != DOMRES
-						&& expression.getTag() != DOMSUB) {
+			public boolean accumulate(Expression expr) {
+				final int tag = expr.getTag();
+				if (tag != DOMRES && tag != DOMSUB) {
 					return false;
 				}
-				final BinaryExpression bExpr = (BinaryExpression) expression;
-				if (bExpr.getRight().getTag() != KID_GEN) {
+				final BinaryExpression bExpr = (BinaryExpression) expr;
+				final Expression left = bExpr.getLeft();
+				final Expression right = bExpr.getRight();
+				if (right.getTag() != KID_GEN) {
 					return false;
 				}
+
+				++count;
+				if (expr.getTag() == DOMRES) {
+					domResElements.add(left);
+				} else {
+					domSubElements.add(left);
+				}
+				id = right;
+				lastChild = expr;
 				return true;
 			}
 
-			public void process(Expression expr) {
-				assert match(expr);
-				isProcessing = true;
-				final BinaryExpression bExpr = (BinaryExpression) expr;
-
-				id = (AtomicExpression) bExpr.getRight();
-				if (expr.getTag() == DOMRES) {
-					domResElements.add(bExpr.getLeft());
-				} else if (expr.getTag() == DOMSUB) {
-					domSubElements.add(bExpr.getLeft());
-				}
-			}
-
-			public Expression buildResult() {
-				final Expression result;
-
-				if (domResElements.isEmpty()) {
-					// only domSub operators
-					final Expression lhs = ff.makeAssociativeExpression(BUNION,
-							domSubElements, null);
-					result = ff.makeBinaryExpression(DOMSUB, lhs, id, null);
-				} else if (domSubElements.isEmpty()) {
-					// only domRes operators
-					final Expression lhs = ff.makeAssociativeExpression(BINTER,
-							domResElements, null);
-					result = ff.makeBinaryExpression(DOMRES, lhs, id, null);
-				} else {
-					// both domSub and domRes operators are present
-					final Expression inter;
-					final Expression union;
-					if (domResElements.size() == 1) {
-						inter = domResElements.get(0);
-					} else {
-						inter = ff.makeAssociativeExpression(BINTER,
-								domResElements, null);
-					}
-					if (domSubElements.size() == 1) {
-						union = domSubElements.get(0);
-					} else {
-						union = ff.makeAssociativeExpression(BUNION,
-								domSubElements, null);
-					}
-					// building the set subtraction
-					final Expression lhs = ff.makeBinaryExpression(SETMINUS,
-							inter, union, null);
-					result = ff.makeBinaryExpression(DOMRES, lhs, id, null);
-				}
-
+			public Expression stopAccumulating() {
+				final Expression result = getResult();
+				reset();
 				return result;
 			}
 
-			public void stop() {
-				isProcessing = false;
+			private void reset() {
+				count = 0;
 				domResElements.clear();
 				domSubElements.clear();
+				id = null;
+				lastChild = null;
 			}
 
-			public boolean isProcessing() {
-				return isProcessing;
+			private Expression getResult() {
+				assert isAccumulating();
+
+				if (count == 1) {
+					return lastChild;
+				}
+
+				final Expression restrictions = makeInter(domResElements);
+				final Expression subtractions = makeUnion(domSubElements);
+				if (subtractions == null) {
+					return ff.makeBinaryExpression(DOMRES, restrictions, id,
+							null);
+				}
+				if (restrictions == null) {
+					return ff.makeBinaryExpression(DOMSUB, subtractions, id,
+							null);
+				}
+				final Expression lhs = ff.makeBinaryExpression(SETMINUS,
+						restrictions, subtractions, null);
+				return ff.makeBinaryExpression(DOMRES, lhs, id, null);
+			}
+
+			private Expression makeInter(List<Expression> exprs) {
+				return makeAssociativeExpr(BINTER, exprs);
+			}
+
+			private Expression makeUnion(List<Expression> exprs) {
+				return makeAssociativeExpr(BUNION, exprs);
+			}
+
+			private Expression makeAssociativeExpr(int tag,
+					List<Expression> exprs) {
+				switch (exprs.size()) {
+				case 0:
+					return null;
+				case 1:
+					return exprs.get(0);
+				default:
+					return ff.makeAssociativeExpression(tag, exprs, null);
+				}
+			}
+
+			public boolean isAccumulating() {
+				return count != 0;
 			}
 
 		}
@@ -532,7 +542,7 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 	 * <ul>
 	 * <li>the traversing is stopped as soon as a type expression is encountered
 	 * </li>
-	 * <li>the handling of duplicates is correctly done from left to right</li>
+	 * <li>the handling of duplicates is correctly done from right to left</li>
 	 * </ul>
 	 */
 	private static class OvrSimplification extends ExpressionSimplification {
@@ -543,17 +553,11 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 
 		@Override
 		protected void processChildren() {
-			if (children[children.length - 1].isATypeExpression()) {
-				// If the last element is a type, then only the last element is
-				// returned.
-				knownResult = children[children.length - 1];
-			} else {
-				// Otherwise, the elements are traversed backwards.
-				for (int i = children.length - 1; i >= 0; i--) {
-					processChild(children[i]);
-					if (knownResult != null) {
-						return;
-					}
+			// Traverse the elements backwards.
+			for (int i = children.length - 1; i >= 0; i--) {
+				processChild(children[i]);
+				if (knownResult != null) {
+					return;
 				}
 			}
 		}
@@ -567,12 +571,7 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 				if (child.isATypeExpression()) {
 					// If a type expression is encountered, then the result is
 					// known and the process stops.
-					final ArrayList<Expression> list = new ArrayList<Expression>(
-							newChildren);
-					// Reverting the order
-					Collections.reverse(list);
-					newChildren = list;
-					knownResult = makeAssociativeFormula();
+					knownResult = makeResult();
 				}
 			}
 		}
@@ -588,12 +587,10 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 			} else if (size == 1) {
 				return newChildren.iterator().next();
 			} else if (changed || size != children.length) {
-				final ArrayList<Expression> list = new ArrayList<Expression>(
+				final ArrayList<Expression> toReverse = new ArrayList<Expression>(
 						newChildren);
-				// Reverting the order
-				Collections.reverse(list);
-				newChildren = list;
-				return makeAssociativeFormula();
+				Collections.reverse(toReverse);
+				return makeAssociativeFormula(toReverse);
 			}
 			return original;
 		}
@@ -681,7 +678,7 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 	protected final T[] children;
 
 	// Children of the resulting formula, so far
-	protected Collection<T> newChildren;
+	protected final Collection<T> newChildren;
 
 	// If non-null, this contains the result, ignore newChildren above
 	protected T knownResult;
@@ -720,6 +717,11 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 				return;
 			}
 		}
+		finishChildrenProcessing();
+	}
+
+	protected void finishChildrenProcessing() {
+		// Do nothing by default
 	}
 
 	protected void processChild(T child) {

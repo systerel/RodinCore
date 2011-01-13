@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,19 +22,22 @@ import org.eventb.core.ast.QuantifiedExpression;
 
 /**
  * Framework for checking if a given comprehension set of the form {x · P ∣ E}
- * is a function, based on its syntactical properties. It implies the following
- * checking:
+ * is a function, based on syntactical properties only. The test is not
+ * exhaustive: it can be the case that the comprehension set is a function
+ * although the test fails.
+ * <p>
+ * It implies the following checking:
  * <ul>
  * <li>E is of the form F ↦ G</li>
- * <li>all locally bound variables that occur in G also occur in F</li>
  * <li>F looks like a tree constructed with either:</li>
  * <ul>
  * <li>maplet operators</li>
  * <li>bound identifiers, either locally bound or not</li>
- * <li>expressions</li>
+ * <li>arbitrary expressions</li>
  * </ul>
- * with the following restriction : if a locally bound variable appears in G,
- * then it has to appear as a leaf of a maplet operator at least once in F </ul>
+ * with the following restriction: if a locally bound variable occurs in G, then
+ * it must occur at least once as a leaf of F </ul>
+ * </p>
  * 
  * @author Benoît Lucet
  */
