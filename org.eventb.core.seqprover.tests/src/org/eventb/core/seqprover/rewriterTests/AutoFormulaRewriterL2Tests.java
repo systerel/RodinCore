@@ -1729,29 +1729,16 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		predicateTest("∃x,y ·  x↦y=a ∧ (x≥0 ∧ y>x ∧ b>2∗y)",
 				"a↦b ∈ {x,y,z · x≥0 ∧ y>x ∧ z>2∗y ∣ (x↦y)↦z}");
 
-		predicateTest("a↦b = 0↦0", "a↦b ∈ {x,y · x=0 ∧ y=0 ∣ x↦y}");
+		predicateTest("a=0 ∧ b=0", "a↦b ∈ {x,y · x=0 ∧ y=0 ∣ x↦y}");
 		predicateTest("a=b ∧ a≥0", "a↦b ∈ {x · x≥0 ∣ x↦x}");
 		predicateTest("∃y · y+1=b ∧ a>y+c", "a↦b↦c ∈ {x,y,z · x>y+z ∣ x↦y+1↦z}");
 
-		// cas "pathologique" de l'ancienne version
-		// predicateTest("∃y · y+1=b ∧ (a=0 ∧ y=0)",
-		// "a↦b ∈ {x,y · x=0 ∧ y=0 ∣ x↦y+1}");
-		predicateTest("a↦b = 0↦0+1", "a↦b ∈ {x,y · x=0 ∧ y=0 ∣ x↦y+1}");
+		predicateTest("∃y · y+1=b ∧ (a=0 ∧ y=0)",
+				"a↦b ∈ {x,y · x=0 ∧ y=0 ∣ x↦y+1}");
 
 		predicateTest("∃x ·  x≥0 ∧ x+1=1", "1 ∈ {x · x≥0 ∣ x+1}");
 		predicateTest("∃x,y · (x≥0 ∧ y>x) ∧ x↦y=a",
 				"a ∈ {x,y · x≥0 ∧ y>x ∣ x↦y}");
 	}
 
-	/**
-	 * Ensures that rule SIMP_COMPSET_EQUAL is implemented correctly
-	 */
-	@Test
-	public void testSIMP_COMPSET_EQUAL() {
-		expressionTest("{0}", "{x· x=0 ∣ x}");
-		expressionTest("{0+1}", "{x,y· x=0 ∧ y=3 ∣ x+1}");
-		expressionTest("{0↦3}", "{x,y· x=0 ∧ y=3 ∣ x↦y}");
-
-		expressionTest("{x,y· x=0 ∧ y=x ∣ x+y}", "{x,y· x=0 ∧ y=x ∣ x+y}");
-	}
 }

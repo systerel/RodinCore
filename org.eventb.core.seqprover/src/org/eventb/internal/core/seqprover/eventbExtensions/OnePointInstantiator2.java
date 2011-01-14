@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,13 +31,6 @@ public abstract class OnePointInstantiator2<T extends Formula<T>> {
 	public static Predicate instantiatePredicate(QuantifiedPredicate predicate,
 			Expression[] replacements, FormulaFactory ff) {
 		return new OnePointInstantiatorPredicate(predicate, replacements, ff)
-				.instantiate();
-	}
-
-	public static Expression instantiateExpression(
-			QuantifiedExpression expression, Expression[] replacements,
-			FormulaFactory ff) {
-		return new OnePointInstantiatorExpression(expression, replacements, ff)
 				.instantiate();
 	}
 
@@ -190,23 +183,6 @@ public abstract class OnePointInstantiator2<T extends Formula<T>> {
 			return ff.makeQuantifiedPredicate(tag, newDecls, newBasePred, null);
 		}
 
-	}
-
-	private static class OnePointInstantiatorExpression extends
-			OnePointInstantiator2<Expression> {
-
-		public OnePointInstantiatorExpression(QuantifiedExpression input,
-				Expression[] replacements, FormulaFactory ff) {
-			super(input, replacements, ff);
-			this.allDecls = input.getBoundIdentDecls();
-		}
-
-		@Override
-		protected Expression instantiate() {
-			splitIdentDecls();
-			return ((QuantifiedExpression) input).instantiate(
-					getReplacements(), ff);
-		}
 	}
 
 }

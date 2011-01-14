@@ -109,7 +109,6 @@ import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
-import org.eventb.internal.core.seqprover.eventbExtensions.OnePointProcessorExpression;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointProcessorRewriting;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
 
@@ -4026,23 +4025,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    		}
 	    	}
 	 
-	 		/**
-	 		 * SIMP_COMPSET_EQUAL
-	 		 *    {x · x = E ∣ x} == {E}
-	 		 */
-	 		// TODO Benoît: faire un pattern plus précis ?
-		 	Cset(_, _, _) -> {
-		 		if (level2) {
-		 			OnePointProcessorExpression opp = new OnePointProcessorExpression(expression, ff);
-		 			opp.matchAndInstantiate();
-		 			if (opp.wasSuccessfullyApplied()) {
-	    	 			result = opp.getProcessedResult();
-		 				trace(expression, result, "SIMP_COMPSET_EQUAL");
-		    			return result;
-		 			}
-		 		}
-		 	}
-		 	
     	}
     	return expression;
     }

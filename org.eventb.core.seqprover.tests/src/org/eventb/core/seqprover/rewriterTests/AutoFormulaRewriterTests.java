@@ -571,11 +571,8 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 		// One Point Rule applies replacement on expression ('x=n' here)
 		predicateTest("n=0", "n ∈ {x·x=0∣x}");
 		// One Point Rule does not apply replacement on guard ('x=0' here)
-		if (level2AndHigher) {
-			predicateTest("n = 0+1", "n ∈ {x·x=0∣x+1}");
-		} else {
-			predicateTest("∃x· x=0 ∧ x+1 = n", "n ∈ {x·x=0∣x+1}");
-		}
+		predicateTest("∃x· x=0 ∧ x+1 = n", "n ∈ {x·x=0∣x+1}");
+
 		// Jean-Raymond Abrial's bug
 		predicateTest("∃z·(∃x,y·(x>0∧y>0)∧g(x+y)−g(x)−g(y)=l)∧l=z",
 				"∃z·(l∈ {x,y·x>0 ∧ y>0 ∣ g(x+y)−g(x)−g(y)})∧l=z");
@@ -1059,15 +1056,9 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 		// finite(S \/ ... \/ T) == finite(S) & ... & finite(T)
 		predicateTest("finite({x ∣ x > 0}) ∧ finite({y ∣ y < 0})",
 				"finite({x ∣ x > 0} ∪ {y ∣ y < 0})");
-		if (level2AndHigher) {
-			predicateTest(
-					"finite({x ∣ x > 0}) ∧ finite({y ∣ y < 0}) ∧ finite({0})",
-					"finite({x ∣ x > 0} ∪ {y ∣ y < 0} ∪ {x ∣ x =  0})");
-		} else {
-			predicateTest(
-					"finite({x ∣ x > 0}) ∧ finite({y ∣ y < 0}) ∧ finite({x ∣ x = 0})",
-					"finite({x ∣ x > 0} ∪ {y ∣ y < 0} ∪ {x ∣ x =  0})");
-		}
+		predicateTest(
+				"finite({x ∣ x > 0}) ∧ finite({y ∣ y < 0}) ∧ finite({x ∣ x = 0})",
+				"finite({x ∣ x > 0} ∪ {y ∣ y < 0} ∪ {x ∣ x =  0})");
 
 		
 		// finite(POW(S)) == finite(S)
