@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eventb.core.ast" version="2">
+    <resource path="src/org/eventb/core/ast/Assignment.java" type="org.eventb.core.ast.Assignment">
+        <filter comment="Method already tagged @since in super-class Formula." id="1227882500">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/AssociativeExpression.java" type="org.eventb.core.ast.AssociativeExpression">
+        <filter comment="Method already tagged @since in super-class Formula." id="1143996420">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Method already tagged @since in super-class Formula." id="1227882500">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/AssociativePredicate.java" type="org.eventb.core.ast.AssociativePredicate">
+        <filter comment="Method already tagged @since in super-class Formula." id="1143996420">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Method already tagged @since in super-class Formula." id="1227882500">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/AtomicExpression.java" type="org.eventb.core.ast.AtomicExpression">
+        <filter comment="Method already tagged @since in super-class Formula." id="1227882500">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/BinaryExpression.java" type="org.eventb.core.ast.BinaryExpression">
+        <filter comment="Method already tagged @since in super-class Formula." id="1143996420">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Method already tagged @since in super-class Formula." id="1227882500">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/BinaryPredicate.java" type="org.eventb.core.ast.BinaryPredicate">
+        <filter comment="Method already tagged @since in super-class Formula." id="1143996420">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Method already tagged @since in super-class Formula." id="1227882500">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/BoolExpression.java" type="org.eventb.core.ast.BoolExpression">
+        <filter comment="Method already tagged @since in super-class Formula." id="1143996420">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Method already tagged @since in super-class Formula." id="1227882500">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/BoundIdentDecl.java" type="org.eventb.core.ast.BoundIdentDecl">
+        <filter comment="Method already tagged @since in super-class Formula." id="1227882500">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/ExtendedExpression.java" type="org.eventb.core.ast.ExtendedExpression">
+        <filter comment="Method already tagged @since in super-class Formula." id="1227882500">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/ExtendedPredicate.java" type="org.eventb.core.ast.ExtendedPredicate">
+        <filter comment="Method already tagged @since in super-class Formula." id="1227882500">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/Formula.java" type="org.eventb.core.ast.Formula">
+        <filter comment="non-public API method" id="1143996420">
+            <message_arguments>
+                <message_argument value="combineHashCodes(Object[])"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/Identifier.java" type="org.eventb.core.ast.Identifier">
+        <filter comment="Method already tagged @since in super-class Formula." id="1227882500">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/IntegerLiteral.java" type="org.eventb.core.ast.IntegerLiteral">
+        <filter comment="Method already tagged @since in super-class Formula." id="1227882500">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/LiteralPredicate.java" type="org.eventb.core.ast.LiteralPredicate">
+        <filter comment="Method already tagged @since in super-class Formula." id="1227882500">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/MultiplePredicate.java" type="org.eventb.core.ast.MultiplePredicate">
+        <filter comment="Method already tagged @since in super-class Formula." id="1143996420">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Method already tagged @since in super-class Formula." id="1227882500">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/PredicateVariable.java" type="org.eventb.core.ast.PredicateVariable">
+        <filter comment="Method already tagged @since in super-class Formula." id="1227882500">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/QuantifiedExpression.java" type="org.eventb.core.ast.QuantifiedExpression">
+        <filter comment="Method already tagged @since in super-class Formula." id="1227882500">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/QuantifiedPredicate.java" type="org.eventb.core.ast.QuantifiedPredicate">
+        <filter comment="Method already tagged @since in super-class Formula." id="1227882500">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/RelationalPredicate.java" type="org.eventb.core.ast.RelationalPredicate">
+        <filter comment="Method already tagged @since in super-class Formula." id="1143996420">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Method already tagged @since in super-class Formula." id="1227882500">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/SetExtension.java" type="org.eventb.core.ast.SetExtension">
+        <filter comment="Method already tagged @since in super-class Formula." id="1143996420">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Method already tagged @since in super-class Formula." id="1227882500">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/SimplePredicate.java" type="org.eventb.core.ast.SimplePredicate">
+        <filter comment="Method already tagged @since in super-class Formula." id="1143996420">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Method already tagged @since in super-class Formula." id="1227882500">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/UnaryExpression.java" type="org.eventb.core.ast.UnaryExpression">
+        <filter comment="Method already tagged @since in super-class Formula." id="1143996420">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Method already tagged @since in super-class Formula." id="1227882500">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/UnaryPredicate.java" type="org.eventb.core.ast.UnaryPredicate">
+        <filter comment="Method already tagged @since in super-class Formula." id="1143996420">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Method already tagged @since in super-class Formula." id="1227882500">
+            <message_arguments>
+                <message_argument value="getChild(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

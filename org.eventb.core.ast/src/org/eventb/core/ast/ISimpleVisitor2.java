@@ -15,6 +15,7 @@ package org.eventb.core.ast;
  * variables.
  * 
  * @see Formula#accept(ISimpleVisitor)
+ * @see DefaultSimpleVisitor
  * 
  * @author Thomas Muller
  * @since 1.2

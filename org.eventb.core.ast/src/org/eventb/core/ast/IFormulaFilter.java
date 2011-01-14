@@ -27,6 +27,7 @@ package org.eventb.core.ast;
  * 
  * @author Laurent Voisin
  * @see Formula#getPositions(IFormulaFilter)
+ * @see DefaultFilter
  * @since 1.0
  */
 public interface IFormulaFilter {

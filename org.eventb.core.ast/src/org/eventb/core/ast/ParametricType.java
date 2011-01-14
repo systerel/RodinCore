@@ -10,22 +10,28 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import static org.eventb.core.ast.Formula.combineHashCodes;
+
+import java.util.Arrays;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.IExpressionExtension;
 
 /**
+ * Implementation of an instance of a parametric type contributed by a math
+ * extension. A parametric type is composed of a type extension together with a
+ * (possibly empty) list of type parameters.
+ * 
  * @author Nicolas Beauger
+ * @author Laurent Voisin
  * @since 2.0
- *
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ParametricType extends Type {
-	
-	private static boolean isSolved(List<Type> typeParameters) {
+
+	private static final Predicate[] NO_PRED = new Predicate[0];
+
+	private static boolean isSolved(Type[] typeParameters) {
 		for (Type type : typeParameters) {
 			if (!type.isSolved()) {
 				return false;
@@ -34,115 +40,82 @@ public class ParametricType extends Type {
 		return true;
 	}
 
-	private static List<Expression> buildExprs(List<Type> typeParams,
+	private static Expression[] buildExprs(Type[] typeParams,
 			FormulaFactory factory) {
-		final List<Expression> result = new ArrayList<Expression>(typeParams
-				.size());
-		for (Type type : typeParams) {
-			result.add(type.buildExpression(factory));
+		final int length = typeParams.length;
+		final Expression[] result = new Expression[length];
+		for (int i = 0; i < length; i++) {
+			result[i] = typeParams[i].toExpression(factory);
 		}
 		return result;
 	}
 
-	private final List<Type> typeParameters;
 	private final IExpressionExtension typeConstructor;
+	private final Type[] typeParameters;
 
-	protected ParametricType(List<Type> typeParameters,
-			IExpressionExtension typeConstructor) {
+	// The array of type parameters must have been built by a formula factory
+	// without any reference leaked outside
+	ParametricType(IExpressionExtension typeConstructor, Type[] typeParameters) {
 		super(isSolved(typeParameters));
 		assert typeConstructor.isATypeConstructor();
-		this.typeParameters = new ArrayList<Type>(typeParameters);
+		this.typeParameters = typeParameters;
 		this.typeConstructor = typeConstructor;
 	}
 
 	@Override
 	protected void addGivenTypes(Set<GivenType> set) {
-		for(Type type: typeParameters) {
+		for (Type type : typeParameters) {
 			type.addGivenTypes(set);
 		}
 	}
 
 	@Override
 	protected Expression buildExpression(FormulaFactory factory) {
-		final List<Expression> exprs = buildExprs(typeParameters, factory);
-		final List<Predicate> preds = Collections.<Predicate>emptyList();
-		return factory
-				.makeExtendedExpression(typeConstructor, exprs, preds, null);
+		return factory.makeExtendedExpression(typeConstructor,
+				buildExprs(typeParameters, factory), NO_PRED, null);
 	}
 
 	@Override
 	protected void buildString(StringBuilder buffer) {
 		buffer.append(typeConstructor.getSyntaxSymbol());
-		if (typeParameters.isEmpty()) {
+		if (typeParameters.length == 0) {
 			return;
 		}
-		buffer.append('(');
-		buffer.append(typeParameters.get(0));
-		for (int i = 1; i < typeParameters.size(); i++) {
-			buffer.append(',');
-			buffer.append(typeParameters.get(i));
+		char sep = '(';
+		for (Type param : typeParameters) {
+			buffer.append(sep);
+			sep = ',';
+			param.buildString(buffer);
 		}
 		buffer.append(')');
 	}
 
 	public Type[] getTypeParameters() {
-		return typeParameters.toArray(new Type[typeParameters.size()]);
+		return typeParameters.clone();
 	}
-	
+
 	public IExpressionExtension getExprExtension() {
 		return typeConstructor;
 	}
-	
+
 	// FIXME using a client implemented interface IExpressionExtension
 	// for equals and hashCode => use == instead
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!(obj instanceof ParametricType))
+		if (obj == null || !this.getClass().equals(obj.getClass()))
 			return false;
 		final ParametricType other = (ParametricType) obj;
-		return typeConstructor.equals(other.typeConstructor)
-				&& typeParameters.equals(other.typeParameters);
+		return this.typeConstructor.equals(other.typeConstructor)
+				&& Arrays.equals(this.typeParameters, other.typeParameters);
 	}
 
 	@Override
 	public int hashCode() {
-		final int extHash = typeConstructor.hashCode();
-		final int typePrmHash = combineHashCodes(typeParameters);
-		return combineHashCodes(extHash, typePrmHash);
+		return combineHashCodes(typeConstructor.hashCode(),
+				combineHashCodes(typeParameters));
 	}
-
-	// FIXME code below is an adapted copy from Formula
-	/**
-	 * Returns the combination of two hash codes.
-	 * 
-	 * @param hash1
-	 *            a hash code
-	 * @param hash2
-	 *            another hash code
-	 * @return a combination of the two hash codes
-	 */
-	private static int combineHashCodes(int hash1, int hash2) {
-		return hash1 * 17 + hash2;
-	}
-
-	/**
-	 * Returns the combination of some types' hash codes.
-	 * 
-	 * @param types
-	 *            some types
-	 * @return a combination of the types' hash codes
-	 */
-	private static <T extends Type> int combineHashCodes(
-			Collection<? extends T> types) {
-		int result = 0;
-		for (T formula: types) {
-			result = combineHashCodes(result, formula.hashCode());
-		}
-		return result;
-	}
-	
 
 }

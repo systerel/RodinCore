@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - added child indexes
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -48,8 +49,13 @@ public abstract class Identifier extends Expression {
 	}
 
 	@Override
-	protected final Formula<?> getChild(int index) {
-		return null;
+	public Formula<?> getChild(int index) {
+		throw invalidIndex(index);
+	}
+
+	@Override
+	public int getChildCount() {
+		return 0;
 	}
 
 	@Override

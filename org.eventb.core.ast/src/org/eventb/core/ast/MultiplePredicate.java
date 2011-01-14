@@ -332,11 +332,14 @@ public class MultiplePredicate extends Predicate {
 	}
 
 	@Override
-	protected Formula<?> getChild(int index) {
-		if (index < children.length) {
-			return children[index];
-		}
-		return null;
+	public Expression getChild(int index) {
+		checkChildIndex(index);
+		return children[index];
+	}
+
+	@Override
+	public int getChildCount() {
+		return children.length;
 	}
 
 	@Override

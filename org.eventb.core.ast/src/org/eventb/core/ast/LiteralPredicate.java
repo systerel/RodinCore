@@ -11,6 +11,7 @@
  *     Systerel - added support for predicate variables
  *     Systerel - generalised getPositions() into inspect()
  *     Systerel - externalized wd lemmas generation
+ *     Systerel - added child indexes
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -225,8 +226,13 @@ public class LiteralPredicate extends Predicate {
 	}
 
 	@Override
-	protected Formula<?> getChild(int index) {
-		return null;
+	public Formula<?> getChild(int index) {
+		throw invalidIndex(index);
+	}
+
+	@Override
+	public int getChildCount() {
+		return 0;
 	}
 
 	@Override

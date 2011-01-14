@@ -429,9 +429,15 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	}
 
 	@Override
-	protected Formula<?> getChild(int index) {
-		return ExtensionHelper.getFormula(childExpressions, childPredicates,
+	public Formula<?> getChild(int index) {
+		checkChildIndex(index);
+		return ExtensionHelper.getChild(childExpressions, childPredicates,
 				index);
+	}
+
+	@Override
+	public int getChildCount() {
+		return ExtensionHelper.getChildCount(childExpressions, childPredicates);
 	}
 
 	@Override

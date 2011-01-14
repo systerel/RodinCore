@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - added child indexes
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -73,6 +74,24 @@ public interface IPosition extends Comparable<IPosition> {
 	IPosition getNextSibling();
 
 	/**
+	 * Returns the position of the <code>n+1</code>th child node of the node
+	 * designated by this position. No attempt is made to check that the
+	 * returned position indeed denotes a node in some formula.
+	 * <p>
+	 * Calling this method is strictly equivalent to calling
+	 * {@link #getFirstChild()} followed by <code>n</code> calls to
+	 * {@link #getNextSibling()}. The first child is thus obtained by passing
+	 * <code>0</code> as argument.
+	 * </p>
+	 * 
+	 * @return the position of the <code>n+1</code>th child
+	 * @throws IllegalStateException
+	 *             if <code>n</code> is negative
+	 * @since 2.1
+	 */
+	IPosition getChildAtIndex(int n);
+
+	/**
 	 * Returns the position of the parent node of the node designated by this
 	 * position.
 	 * <p>
@@ -116,6 +135,21 @@ public interface IPosition extends Comparable<IPosition> {
 	 *         formula
 	 */
 	boolean isRoot();
+
+	/**
+	 * Returns the child index of this position, related to its parent position,
+	 * counting from <code>0</code> for the first child.
+	 * <p>
+	 * This position must not be a root position.
+	 * </p>
+	 * 
+	 * @return the child index of this position related to its parent
+	 * @see #isRoot()
+	 * @throws IllegalStateException
+	 *             if this position is a root position
+	 * @since 2.1
+	 */
+	int getChildIndex();
 
 	/**
 	 * Returns a string representation of this position. Such a string can be

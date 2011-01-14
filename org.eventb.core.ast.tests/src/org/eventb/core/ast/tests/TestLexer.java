@@ -79,6 +79,8 @@ public class TestLexer extends AbstractTests {
 		testToken("_toto", B_MATH_V2.getIDENT(), version);
 		testToken("x'", B_MATH_V2.getIDENT(), version);
 		testToken("2", B_MATH_V2.getINTLIT(), version);
+		testToken("3000000000", B_MATH_V2.getINTLIT(), version);
+		testToken("50000000000000000000", B_MATH_V2.getINTLIT(), version);
 		testToken("001", B_MATH_V2.getINTLIT(), version);
 		testToken("$P", B_MATH_V2.getPREDVAR(), version);
 		testToken("$_toto", B_MATH_V2.getPREDVAR(), version);

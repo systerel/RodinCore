@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2010 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added child indexes
  *******************************************************************************/
 package org.eventb.internal.core.ast;
 
@@ -134,11 +138,7 @@ public final class Position implements IPosition {
 
 	@Override
 	public Position getFirstChild() {
-		final int length = indexes.length;
-		final int[] childIndexes = new int[length + 1];
-		System.arraycopy(indexes, 0, childIndexes, 0, length);
-		childIndexes[length] = 0;
-		return new Position(childIndexes);
+		return getChildAtIndex(0);
 	}
 
 	@Override
@@ -170,6 +170,25 @@ public final class Position implements IPosition {
 		if (lastIdx < 0)
 			return false;
 		return indexes[lastIdx] == 0;
+	}
+
+	@Override
+	public Position getChildAtIndex(int n) {
+		if (n < 0)
+			throw new IllegalStateException("Negative child index " + n);
+		final int length = indexes.length;
+		final int[] childIndexes = new int[length + 1];
+		System.arraycopy(indexes, 0, childIndexes, 0, length);
+		childIndexes[length] = n;
+		return new Position(childIndexes);
+	}
+
+	@Override
+	public int getChildIndex() {
+		final int lastIdx = indexes.length - 1;
+		if (lastIdx < 0)
+			throw new IllegalStateException("Root position has no child index");
+		return indexes[lastIdx];
 	}
 
 }

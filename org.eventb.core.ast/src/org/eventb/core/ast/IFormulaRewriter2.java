@@ -15,6 +15,7 @@ package org.eventb.core.ast;
  * variables.
  * 
  * @see Formula#rewrite(IFormulaRewriter)
+ * @see DefaultRewriter
  * 
  * @author Thomas Muller
  * @since 1.2

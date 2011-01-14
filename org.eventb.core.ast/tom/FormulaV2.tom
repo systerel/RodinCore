@@ -8,7 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language v2
- *     Systerel - added typedecl for int
+ *     Systerel - fixed list operators
  *******************************************************************************/ 
 
 /*
@@ -16,6 +16,8 @@
  *  so that clients can use Tom pattern matching on formulas.
  */
 
+%include {int.tom}
+%include {string.tom}
 
 /*
  * Declaration of sorts used.
@@ -43,22 +45,23 @@
 
 %typeterm PredicateList {
 	implement { Predicate[] }
-	equals(t1,t2) { t1.equals(t2) }  /* Check if appropriate. */
+	equals(t1,t2) {
+		java.util.Arrays.equals((Predicate[]) t1, (Predicate[]) t2)
+	}
 }
 
 %typeterm ExpressionList {
 	implement { Expression[] }
-	equals(t1,t2) { t1.equals(t2) }  /* Check if appropriate. */
+	equals(t1,t2) {
+		java.util.Arrays.equals((Expression[]) t1, (Expression[]) t2)
+	}
 }
 
 %typeterm BoundIdentDeclList {
 	implement { BoundIdentDecl[] }
-	equals(t1,t2) { t1.equals(t2) }  /* Check if appropriate. */
-}
-
-%typeterm int {
-	implement { int }
-	equals(t1,t2) { t1 == t2 }
+	equals(t1,t2) {
+		java.util.Arrays.equals((BoundIdentDecl[]) t1, (BoundIdentDecl[]) t2)
+	}
 }
 
 /*
@@ -68,7 +71,7 @@
 %oparray PredicateList pList (Predicate*) {
 	is_fsym(t) { true }
     get_size(t)      { t.length }
-    get_element(t,n) { t[n-1] }
+    get_element(t,n) { t[n] }
 	make_empty(t) { null }
 	make_append(e, t) { null }
 }
@@ -76,7 +79,7 @@
 %oparray ExpressionList eList (Expression*) {
 	is_fsym(t) { true }
     get_size(t)      { t.length }
-    get_element(t,n) { t[n-1] }
+    get_element(t,n) { t[n] }
 	make_empty(t) { null }
 	make_append(e, t) { null }
 }
@@ -84,7 +87,7 @@
 %oparray BoundIdentDeclList bidList (BoundIdentDecl*) {
 	is_fsym(t) { true }
     get_size(t)      { t.length }
-    get_element(t,n) { t[n-1] }
+    get_element(t,n) { t[n] }
 	make_empty(t) { null }
 	make_append(e, t) { null }
 }
