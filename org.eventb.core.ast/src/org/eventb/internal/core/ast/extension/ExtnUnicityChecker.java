@@ -37,7 +37,7 @@ public class ExtnUnicityChecker {
 	}
 
 	private void checkSymbolUnicity(Set<IFormulaExtension> extns) {
-		final IndexedSet<String> standardSymbols = standardGrammar.getTokens();
+		final IndexedSet standardSymbols = standardGrammar.getTokens();
 		final List<String> symbols = new ArrayList<String>();
 		for (IFormulaExtension extn : extns) {
 			final String symbol = extn.getSyntaxSymbol();

@@ -83,7 +83,7 @@ public abstract class AbstractGrammar {
 	private int _KPARTITION;
 	private int _OFTYPE;
 
-	protected final IndexedSet<String> tokens = new IndexedSet<String>();
+	protected final IndexedSet tokens = new IndexedSet();
 	
 	private final LexKindParserDB subParsers = new LexKindParserDB();
 	
@@ -123,7 +123,7 @@ public abstract class AbstractGrammar {
 		return initOpRegistry.hasGroup(kind) && (!tokens.isReserved(kind));
 	}
 	
-	public IndexedSet<String> getTokens() {
+	public IndexedSet getTokens() {
 		return tokens;
 	}
 

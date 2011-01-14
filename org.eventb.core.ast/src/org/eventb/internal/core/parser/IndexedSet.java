@@ -23,28 +23,28 @@ import org.eventb.internal.core.parser.ExternalViewUtils.Instantiator;
  * @author Nicolas Beauger
  * 
  */
-public class IndexedSet<T> {
+public class IndexedSet {
 
 	private static final int FIRST_INDEX = 0;
 	public static final int NOT_AN_INDEX = FIRST_INDEX - 1;
 
-	private final Map<T, Integer> set = new HashMap<T, Integer>();
-	private final Map<T, Integer> reserved = new HashMap<T, Integer>();
+	private final Map<String, Integer> set = new HashMap<String, Integer>();
+	private final Map<String, Integer> reserved = new HashMap<String, Integer>();
 	private int nextIndex = FIRST_INDEX;
 
 	public IndexedSet() {
 		// nothing to do
 	}
 	
-	public int getOrAdd(T key) {
+	public int getOrAdd(String key) {
 		return getOrAdd(key, set);
 	}
 	
-	public int reserved(T key) {
+	public int reserved(String key) {
 		return getOrAdd(key, reserved);
 	}
 
-	private int getOrAdd(T key, Map<T, Integer> addTo) {
+	private int getOrAdd(String key, Map<String, Integer> addTo) {
 		final Integer current = addTo.get(key);
 		if (current != null) {
 			return current;
@@ -55,15 +55,15 @@ public class IndexedSet<T> {
 		return index;
 	}
 	
-	public int getIndex(T key) {
+	public int getIndex(String key) {
 		return getIndex(key, set);
 	}
 
-	public int getReserved(T key) {
+	public int getReserved(String key) {
 		return getIndex(key, reserved);
 	}
 	
-	private static <T> int getIndex(T key, Map<T, Integer> map) {
+	private static int getIndex(String key, Map<String, Integer> map) {
 		final Integer index = map.get(key);
 		if (index == null) {
 			return NOT_AN_INDEX;
@@ -73,20 +73,20 @@ public class IndexedSet<T> {
 	
 	
 
-	public T getElem(int index) {
-		final T elem = getElem(index, set);
+	public String getElem(int index) {
+		final String elem = getElem(index, set);
 		if (elem != null) {
 			return elem;
 		}
 		return getElem(index, reserved);
 	}
 	
-	public boolean contains(T key) {
+	public boolean contains(String key) {
 		return getIndex(key) != NOT_AN_INDEX;
 	}
 	
-	private static <T> T getElem(int index, Map<T, Integer> map) {
-		for (Entry<T, Integer> entry : map.entrySet()) {
+	private static String getElem(int index, Map<String, Integer> map) {
+		for (Entry<String, Integer> entry : map.entrySet()) {
 			if (entry.getValue().equals(index)) {
 				return entry.getKey();
 			}
@@ -94,7 +94,7 @@ public class IndexedSet<T> {
 		return null;
 	}
 	
-	public Set<Entry<T, Integer>> entrySet() {
+	public Set<Entry<String, Integer>> entrySet() {
 		return Collections.unmodifiableSet(set.entrySet());
 	}
 	
@@ -105,10 +105,10 @@ public class IndexedSet<T> {
 	}
 
 	public void redistribute(Instantiator<Integer, Integer> opKindInst) {
-		final Set<T> conflicts = new HashSet<T>();
+		final Set<String> conflicts = new HashSet<String>();
 		
-		final Map<T, Integer> newSet = redistribute(set, opKindInst, conflicts);
-		final Map<T, Integer> newReserved = redistribute(reserved, opKindInst,
+		final Map<String, Integer> newSet = redistribute(set, opKindInst, conflicts);
+		final Map<String, Integer> newReserved = redistribute(reserved, opKindInst,
 				conflicts);
 
 		processConflicts(conflicts, newSet, newReserved, opKindInst);
@@ -120,10 +120,10 @@ public class IndexedSet<T> {
 		reserved.putAll(newReserved);
 	}
 
-	private Map<T, Integer> redistribute(Map<T, Integer> from,
-			Instantiator<Integer, Integer> opKindInst, final Set<T> conflicts) {
-		final Map<T, Integer> result = new HashMap<T, Integer>();
-		for (Entry<T, Integer> entry : from.entrySet()) {
+	private Map<String, Integer> redistribute(Map<String, Integer> from,
+			Instantiator<Integer, Integer> opKindInst, final Set<String> conflicts) {
+		final Map<String, Integer> result = new HashMap<String, Integer>();
+		for (Entry<String, Integer> entry : from.entrySet()) {
 			final Integer index = entry.getValue();
 			if (!opKindInst.hasInst(index)) {
 				result.put(entry.getKey(), index);
@@ -132,7 +132,7 @@ public class IndexedSet<T> {
 			final Integer newIndex = opKindInst.instantiate(index);
 			result.put(entry.getKey(), newIndex);
 			if (!opKindInst.hasInst(newIndex)) {
-				final T elemConflict = getElem(newIndex);
+				final String elemConflict = getElem(newIndex);
 				if (elemConflict != null) {
 					conflicts.add(elemConflict);
 				}
@@ -141,9 +141,9 @@ public class IndexedSet<T> {
 		return result;
 	}
 
-	private void processConflicts(Set<T> conflicts,
-			Map<T, Integer> newSet, Map<T, Integer> newReserved, Instantiator<Integer, Integer> opKindInst) {
-		for (T obj : conflicts) {
+	private void processConflicts(Set<String> conflicts,
+			Map<String, Integer> newSet, Map<String, Integer> newReserved, Instantiator<Integer, Integer> opKindInst) {
+		for (String obj : conflicts) {
 			final int conflictIndex;
 			final int newIndex;
 			if(newSet.containsKey(obj)) {
