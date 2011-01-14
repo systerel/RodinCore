@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Systerel and others.
+ * Copyright (c) 2009, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,8 @@ import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
  
- public class OnePointFilter {
+@SuppressWarnings("unused")
+public class OnePointFilter {
  
  	static class QuantifiedFormUtil {
  	
