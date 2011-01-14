@@ -1752,20 +1752,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
     	final IDatatype datatype = (IDatatype) origin;
     	return datatype.isConstructor(extension);
 	}
-    
-	private static void simpEqualsMapsTo(Predicate predicate,
-			List<Predicate> conjuncts, FormulaFactory ff) {
-	    %match (Predicate predicate) {
-	    	Equal(Mapsto(E, F) , Mapsto(G, H)) -> {
-	    		Predicate pred1 = ff.makeRelationalPredicate(EQUAL, `E, `G,null);
-	    		simpEqualsMapsTo(pred1, conjuncts, ff);
-				Predicate pred2 = ff.makeRelationalPredicate(EQUAL, `F, `H,null);
-				simpEqualsMapsTo(pred2, conjuncts, ff);
-				return;
-	    	}	    	
-	    }
-	    conjuncts.add(predicate);
-    }
 	
 	@ProverRule( { "SIMP_SPECIAL_BINTER", "SIMP_SPECIAL_BUNION",
 			"SIMP_TYPE_BINTER", "SIMP_TYPE_BUNION","SIMP_MULTI_BINTER",
@@ -3114,7 +3100,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			RelImage(DomSub(S, IdGen()), T) -> {
 				if (level2) {
 					result = makeBinaryExpression(SETMINUS, `T, `S);
-					trace(expression, result, "SIMP_RELIMAGE_DOMRES_ID");
+					trace(expression, result, "SIMP_RELIMAGE_DOMSUB_ID");
 					return result;
 				}
 			}
