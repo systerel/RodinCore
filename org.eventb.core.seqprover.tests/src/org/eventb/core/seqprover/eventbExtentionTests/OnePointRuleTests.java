@@ -114,7 +114,8 @@ public class OnePointRuleTests extends AbstractReasonerTests {
 
 				// No replacement to perform
 				newSuccessGoal("∀x,y·x=0∧y=0⇒⊥", "∀y·y=0⇒⊥", "⊤"),
-				newSuccessGoal("∀x·x=0∧0=0⇒⊥", "0=0⇒⊥", "⊤") };
+				newSuccessGoal("∀x·x=0∧0=0⇒⊥", "0=0⇒⊥", "⊤"), //
+		};
 	}
 
 	@Override
@@ -162,6 +163,7 @@ public class OnePointRuleTests extends AbstractReasonerTests {
 				newFailureGoal("∀x· x=x+x ∧ x=x∗x ⇒ x=0"),
 
 				// Failure goal with x=x replacement
-				newFailureGoal("∀x·x=x∧x>0⇒⊥") };
+				newFailureGoal("∀x·x=x∧x>0⇒⊥"), //
+		};
 	}
 }
