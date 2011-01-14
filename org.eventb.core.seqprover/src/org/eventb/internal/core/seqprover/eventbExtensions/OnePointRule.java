@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Systerel and others.
+ * Copyright (c) 2009, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,22 +13,20 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
+import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 import static org.eventb.core.seqprover.ProverFactory.makeForwardInfHypAction;
 import static org.eventb.core.seqprover.ProverFactory.makeHideHypAction;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
-
-import java.util.Collections;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
-import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
+import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IVersionedReasoner;
-import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
@@ -84,9 +82,9 @@ public class OnePointRule extends HypothesisReasoner implements
 	protected IAntecedent[] getAntecedents(IProverSequent sequent,
 			Predicate pred) {
 
+		final boolean appliesToGoal = isGoalDependent(sequent, pred);
 		final FormulaFactory ff = sequent.getFormulaFactory();
-		final Predicate applyTo = isGoalDependent(sequent, pred) ? sequent
-				.goal() : pred;
+		final Predicate applyTo = appliesToGoal ? sequent.goal() : pred;
 
 		final OnePointProcessorInference processor = new OnePointProcessorInference(
 				(QuantifiedPredicate) applyTo, ff);
@@ -104,22 +102,19 @@ public class OnePointRule extends HypothesisReasoner implements
 		final Predicate replacementWD = mDLib(ff).WD(replacement);
 
 		// There will be 2 antecedents
-		IAntecedent[] antecedents = new IAntecedent[2];
-		final ISelectionHypAction hideOnePointPred = makeHideHypAction(singleton(applyTo));
-		if (isGoalDependent(sequent, pred)) {
-			antecedents[0] = ProverFactory.makeAntecedent(simplified);
+		final IAntecedent a1;
+		final IAntecedent a2;
+		if (appliesToGoal) {
+			a1 = makeAntecedent(simplified);
+			a2 = makeAntecedent(replacementWD);
 		} else {
-			antecedents[0] = ProverFactory.makeAntecedent(
-					null,
-					null,
-					null,
-					asList(makeForwardInfHypAction(singleton(applyTo),
-							singleton(simplified)), hideOnePointPred));
+			final IHypAction fwdInf = makeForwardInfHypAction(
+					singleton(applyTo), singleton(simplified));
+			final IHypAction hideHyp = makeHideHypAction(singleton(applyTo));
+			a1 = makeAntecedent(null, null, null, asList(fwdInf, hideHyp));
+			a2 = makeAntecedent(replacementWD, null, hideHyp);
 		}
-		antecedents[1] = ProverFactory.makeAntecedent(replacementWD,
-				Collections.<Predicate> emptySet(), hideOnePointPred);
-
-		return antecedents;
+		return new IAntecedent[] { a1, a2 };
 	}
 
 }
