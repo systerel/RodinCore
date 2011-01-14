@@ -14,7 +14,6 @@ import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.EXISTS;
-import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.LIMP;
 import static org.eventb.core.ast.Formula.LOR;
@@ -61,14 +60,16 @@ public class OnePointProcessorInference extends OnePointProcessor<Predicate> {
 		successfullyApplied = false;
 		replacementFound = false;
 
-		processing = matchAndSimplify(processing, true, true);
+		final boolean polarity = original.getTag() == EXISTS;
+		processing = matchAndSimplify(processing, polarity);
 
 		if (!replacementFound) {
 			return;
 		}
 
 		if (processing == null) {
-			processing = ff.makeLiteralPredicate(BTRUE, null);
+			processing = ff.makeLiteralPredicate(polarity ? BTRUE : BFALSE,
+					null);
 		}
 
 		processing = instantiate(processing, replacements);
@@ -82,15 +83,15 @@ public class OnePointProcessorInference extends OnePointProcessor<Predicate> {
 	 * removed from the tree and the replacement data is kept.
 	 * 
 	 * @param polarity
-	 *            this parameter tells whether the current subtree was preceded
-	 *            by a NOT operator
-	 * @param rootLevel
-	 *            this parameter tells whether the current tree is the root of
-	 *            the predicate or not
-	 * 
+	 *            <code>true</code> if equality shall be examined for
+	 *            replacement, this also influences the kind of operator that is
+	 *            allowed (and, or, implication)
+	 * @return the predicate minus the replacement, or <code>null</code> if
+	 *         nothing left after removing the replacement (in which case, this
+	 *         means <code>⊤</code> if the polarity is true, <code>⊥</code>
+	 *         otherwise)
 	 */
-	private Predicate matchAndSimplify(Predicate pred, boolean polarity,
-			boolean rootLevel) {
+	private Predicate matchAndSimplify(Predicate pred, boolean polarity) {
 
 		if (replacementFound) {
 			return pred;
@@ -98,7 +99,7 @@ public class OnePointProcessorInference extends OnePointProcessor<Predicate> {
 
 		switch (pred.getTag()) {
 		case LAND:
-			return processLand((AssociativePredicate) pred, polarity, rootLevel);
+			return processLand((AssociativePredicate) pred, polarity);
 		case LOR:
 			return processLor((AssociativePredicate) pred, polarity);
 		case LIMP:
@@ -106,14 +107,17 @@ public class OnePointProcessorInference extends OnePointProcessor<Predicate> {
 		case NOT:
 			return processNot((UnaryPredicate) pred, polarity);
 		case EQUAL:
+			if (!polarity) {
+				return pred;
+			}
 			final RelationalPredicate rPred = (RelationalPredicate) pred;
 			if (isMapletEquality(rPred)) {
-				// case of maplet equality
-				final AssociativePredicate conjuncts = breakMaplet(rPred);
-				return matchAndSimplify(conjuncts, polarity, false);
+				final List<Predicate> conjuncts = breakMaplet(rPred);
+				final Predicate land = ff.makeAssociativePredicate(LAND,
+						conjuncts, null);
+				return matchAndSimplify(land, polarity);
 			} else {
-				// case of standard equality
-				return processEqual((RelationalPredicate) pred, polarity);
+				return processEqual(rPred, polarity);
 			}
 		default:
 			return pred;
@@ -132,11 +136,7 @@ public class OnePointProcessorInference extends OnePointProcessor<Predicate> {
 	 * If a LAND operator is encountered in a negative context, then no valid
 	 * replacement can be found in its children.
 	 */
-	private Predicate processLand(AssociativePredicate pred, boolean polarity,
-			boolean rootLevel) {
-		if (rootLevel && original.getTag() == FORALL) {
-			return pred;
-		}
+	private Predicate processLand(AssociativePredicate pred, boolean polarity) {
 		if (!polarity) {
 			return pred;
 		}
@@ -150,29 +150,38 @@ public class OnePointProcessorInference extends OnePointProcessor<Predicate> {
 	private Predicate processLor(AssociativePredicate pred, boolean polarity) {
 		if (polarity) {
 			return pred;
-		} else {
-			return processAssociative(pred, polarity, LOR);
 		}
+		return processAssociative(pred, polarity, LOR);
 	}
 
 	private Predicate processLimp(BinaryPredicate pred, boolean polarity) {
-		if (original.getTag() != EXISTS) {
-			final Predicate left = matchAndSimplify(pred.getLeft(), polarity,
-					false);
-			final Predicate right = matchAndSimplify(pred.getRight(),
-					!polarity, false);
-			return processBinary(left, right, LIMP);
+		if (polarity) {
+			return pred;
 		}
-		return pred;
+		final Predicate left = matchAndSimplify(pred.getLeft(), !polarity);
+		final Predicate right = matchAndSimplify(pred.getRight(), polarity);
+		if (left == null) {
+			return right;
+		}
+		if (right == null) {
+			return negate(left);
+		}
+		return ff.makeBinaryPredicate(LIMP, left, right, null);
 	}
 
 	private Predicate processNot(UnaryPredicate pred, boolean polarity) {
-		final Predicate newChild = matchAndSimplify(pred.getChild(), !polarity,
-				false);
-		if (newChild != null) {
-			return ff.makeUnaryPredicate(NOT, newChild, null);
+		final Predicate newChild = matchAndSimplify(pred.getChild(), !polarity);
+		if (newChild == null) {
+			return null;
 		}
-		return ff.makeLiteralPredicate(BFALSE, null);
+		return negate(newChild);
+	}
+
+	private Predicate negate(Predicate pred) {
+		if (pred.getTag() == NOT) {
+			return ((UnaryPredicate) pred).getChild();
+		}
+		return ff.makeUnaryPredicate(NOT, pred, null);
 	}
 
 	private Predicate processEqual(RelationalPredicate pred, boolean polarity) {
@@ -187,36 +196,27 @@ public class OnePointProcessorInference extends OnePointProcessor<Predicate> {
 			boolean polarity, int tag) {
 		final List<Predicate> newChildren = new ArrayList<Predicate>();
 		for (Predicate child : pred.getChildren()) {
-			final Predicate newChild = matchAndSimplify(child, polarity, false);
+			final Predicate newChild = matchAndSimplify(child, polarity);
 			if (newChild != null) {
 				newChildren.add(newChild);
 			}
 		}
 
-		if (newChildren.size() == 0) {
+		final int length = newChildren.size();
+		if (length == 0) {
 			return null;
-		} else if (newChildren.size() == 1) {
+		}
+		if (length == 1) {
 			return newChildren.get(0);
-		} else {
-			return ff.makeAssociativePredicate(tag, newChildren, null);
 		}
-	}
-
-	private Predicate processBinary(Predicate left, Predicate right, int tag) {
-		if (left == null) {
-			return right;
-		} else if (right == null) {
-			return left;
-		} else {
-			return ff.makeBinaryPredicate(tag, left, right, null);
-		}
+		return ff.makeAssociativePredicate(tag, newChildren, null);
 	}
 
 	public Expression getReplacement() {
 		assert successfullyApplied;
-		for (int i = 0; i < replacements.length; i++) {
-			if (replacements[i] != null) {
-				return replacements[i];
+		for (Expression replacement : replacements) {
+			if (replacement != null) {
+				return replacement;
 			}
 		}
 		assert false;

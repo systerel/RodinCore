@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,16 +10,11 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import static org.eventb.core.ast.Formula.EQUAL;
-import static org.eventb.core.ast.Formula.LAND;
-import static org.eventb.core.ast.Formula.MAPSTO;
-import static org.eventb.internal.core.seqprover.eventbExtensions.OnePointFilter.getMapletEqualities;
 import static org.eventb.internal.core.seqprover.eventbExtensions.OnePointFilter.matchReplacement;
+import static org.eventb.internal.core.seqprover.eventbExtensions.OnePointFilter.splitMapletEquality;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
@@ -27,7 +22,6 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.internal.core.seqprover.eventbExtensions.OnePointFilter.MapletUtil;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointFilter.ReplacementUtil;
 
 /**
@@ -136,35 +130,16 @@ public abstract class OnePointProcessor<T extends Formula<T>> {
 	}
 
 	protected boolean isMapletEquality(RelationalPredicate pred) {
-		return pred.getTag() == EQUAL && pred.getLeft().getTag() == MAPSTO
-				&& pred.getRight().getTag() == MAPSTO;
+		return OnePointFilter.isMapletEquality(pred);
 	}
 
 	/**
-	 * Breaks an equality of maplets into a conjunction of equalities on the
+	 * Breaks an equality of maplets into a list of equalities between the
 	 * children of the maplets. For instance, a↦b = c↦d shall be rewritten in
 	 * a=c ∧ b=d.
 	 */
-	protected AssociativePredicate breakMaplet(RelationalPredicate pred) {
-		assert isMapletEquality(pred);
-
-		final List<Predicate> conjunction = new ArrayList<Predicate>();
-		simpEqualsMapsTo(pred, conjunction);
-
-		return ff.makeAssociativePredicate(LAND, conjunction, null);
-	}
-
-	private void simpEqualsMapsTo(Predicate predicate,
-			final List<Predicate> conjuncts) {
-
-		MapletUtil mu = getMapletEqualities(predicate, ff);
-
-		if (mu != null) {
-			simpEqualsMapsTo(mu.getLeftEquality(), conjuncts);
-			simpEqualsMapsTo(mu.getRightEquality(), conjuncts);
-		} else {
-			conjuncts.add(predicate);
-		}
+	protected List<Predicate> breakMaplet(RelationalPredicate pred) {
+		return splitMapletEquality(pred, ff);
 	}
 
 	protected boolean availableReplacement() {

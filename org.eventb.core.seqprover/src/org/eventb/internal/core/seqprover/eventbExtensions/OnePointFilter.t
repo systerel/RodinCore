@@ -11,8 +11,12 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import static org.eventb.core.ast.Formula.EQUAL;
+import static org.eventb.core.ast.Formula.LAND;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -156,15 +160,36 @@ public class OnePointFilter {
  		return null;
  	}
  	
- 	public static MapletUtil getMapletEqualities(Predicate predicate, FormulaFactory ff) {
- 		%match (Predicate predicate) {
- 			Equal(Mapsto(A, B), Mapsto(C, D)) -> {
- 				return new MapletUtil(
- 					ff.makeRelationalPredicate(EQUAL, `A, `C, null),
- 					ff.makeRelationalPredicate(EQUAL, `B, `D, null));
+	public static boolean isMapletEquality(RelationalPredicate pred) {
+ 		%match (Predicate pred) {
+ 			Equal(Mapsto(_, _), Mapsto(_, _)) -> {
+ 				return true;
  			}
  		}
- 		return null;
+ 		return false;
+	}
+
+ 	public static List<Predicate> splitMapletEquality(Predicate pred, FormulaFactory ff) {
+ 		%match (Predicate pred) {
+ 			Equal(left@Mapsto(_, _), right@Mapsto(_, _)) -> {
+				final List<Predicate> conjuncts = new ArrayList<Predicate>();
+ 				splitMapletEquality(`left, `right, conjuncts, ff);
+ 				return conjuncts;
+ 			}
+ 		}
+ 		return Collections.singletonList(pred);
  	}
- 
- }
+
+ 	private static void splitMapletEquality(Expression left, Expression right,
+ 			List<Predicate> conjuncts, FormulaFactory ff) {
+ 		%match (Expression left, Expression right) {
+ 			Mapsto(A, B), Mapsto(C, D) -> {
+ 				splitMapletEquality(`A, `C, conjuncts, ff);
+ 				splitMapletEquality(`B, `D, conjuncts, ff);
+ 				return;
+ 			}
+ 		}
+		conjuncts.add(ff.makeRelationalPredicate(EQUAL, left, right, null));
+ 	}
+
+}

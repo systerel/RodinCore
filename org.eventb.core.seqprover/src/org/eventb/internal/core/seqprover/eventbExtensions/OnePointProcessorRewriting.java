@@ -20,7 +20,6 @@ import static org.eventb.internal.core.seqprover.eventbExtensions.OnePointInstan
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
@@ -48,8 +47,10 @@ public class OnePointProcessorRewriting extends OnePointProcessor<Predicate> {
 	}
 
 	/**
-	 * Converts the given predicate of the form E ∈ {x · P(x) ∣ E} in a suitable
-	 * form for the processing to be applied (∃x · x=E ∧ P(x)).
+	 * Converts the given predicate of the form <code>F ∈ {x · P ∣ E}</code>
+	 * in a suitable form for the processing to be applied
+	 * <code>∃x · E=F' ∧ P</code>, where <code>F'</code> is <code>F</code>
+	 * pushed inside the quantification for <code>x</code>.
 	 */
 	private QuantifiedPredicate toQuantifiedForm(RelationalPredicate predicate) {
 		assert match(predicate);
@@ -76,27 +77,16 @@ public class OnePointProcessorRewriting extends OnePointProcessor<Predicate> {
 		assert this.bids != null;
 		assert this.replacements != null;
 
-		if (isMapletEquality(replacement)) {
-			return buildQuantifiedFormPredicateMaplet(replacement,
-					existingGuard);
-		} else {
-			return buildQuantifiedFormPredicateSingle(replacement,
-					existingGuard);
-		}
-	}
-
-	private Predicate buildQuantifiedFormPredicateMaplet(
-			RelationalPredicate replacement, Predicate existingGuard) {
-		final AssociativePredicate mapletEq = breakMaplet(replacement);
+		final List<Predicate> conjuncts = breakMaplet(replacement);
 
 		/*
 		 * This list contains the predicates in which no replacement will be
-		 * made. It contains the guard of the original comprehension set as well
-		 * as potentially non-valid replacements.
+		 * extracted. It contains the guard of the original comprehension set as
+		 * well as potentially non-valid replacements.
 		 */
 		final List<Predicate> predicates = new ArrayList<Predicate>();
 
-		for (Predicate eq : mapletEq.getChildren()) {
+		for (Predicate eq : conjuncts) {
 			/*
 			 * If the current replacement is valid, then it is added to the
 			 * replacements. Otherwise, it is added to the list of predicates
@@ -111,16 +101,6 @@ public class OnePointProcessorRewriting extends OnePointProcessor<Predicate> {
 			return existingGuard;
 		} else {
 			return ff.makeAssociativePredicate(LAND, predicates, null);
-		}
-	}
-
-	private Predicate buildQuantifiedFormPredicateSingle(
-			RelationalPredicate replacement, Predicate existingGuard) {
-		if (checkReplacement(replacement)) {
-			return existingGuard;
-		} else {
-			return ff.makeAssociativePredicate(LAND, new Predicate[] {
-					existingGuard, replacement }, null);
 		}
 	}
 

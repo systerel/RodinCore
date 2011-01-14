@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Systerel and others.
+ * Copyright (c) 2009, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,26 +47,6 @@ public class OnePointRuleTests extends AbstractReasonerTests {
 	@Override
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
 		return new SuccessfullReasonerApplication[] {
-
-				// TODO Benoît: added these tests
-				newSuccessGoal("∃x · x = 1 ∧ x ≥ 0", "1 ≥ 0", "⊤"),
-				newSuccessGoal("∃x · ¬(¬(x = 1) ∨ x ≥ 0)", "¬(⊥ ∨ 1 ≥ 0)", "⊤"),
-
-				newSuccessGoal("∀x · x ≥ 0 ⇒ ¬(x = 1)", "1 ≥ 0 ⇒ ⊥", "⊤"),
-				newSuccessGoal("∀x · x ≥ 0 ⇒ ¬(x = 1 ∧ x ≤ 5)",
-						"1 ≥ 0 ⇒ ¬(1 ≤ 5)", "⊤"),
-
-				newSuccessGoal("∀x,y,z,t·x↦y=z↦t∧x≥z⇒y≥t",
-						"∀x,y,t·y=t∧x≥x⇒y≥t", "⊤"),
-				newSuccessGoal("∀x,y,t·y=t∧x≥x⇒y≥t", "∀x,y·x≥x⇒y≥y", "⊤"),
-
-				// replacements inside a LIMP operator's child
-				newSuccessGoal("∀x,y · (x=1 ⇒ x≥0) ⇒ x+y ≥ 1",
-						"∀y · 1≥0 ⇒ 1+y ≥ 1", "⊤"),
-				newSuccessGoal("∀x,y · (x≥0 ⇒ ¬(x=1)) ⇒ x+y ≥ 1",
-						"∀y · (1≥0 ⇒ ⊥) ⇒ 1+y ≥ 1", "⊤"),
-
-				// ===
 
 				// One quantified identifier => result not quantified
 				newSuccessGoal("∀x· x=0 ∧ x+1=0 ⇒ x+1=2", "0+1=0⇒0+1=2", "⊤"),
@@ -127,24 +107,6 @@ public class OnePointRuleTests extends AbstractReasonerTests {
 						.getFirstChild().getNextSibling());
 
 		return new UnsuccessfullReasonerApplication[] {
-
-				// TODO Benoît: added these tests
-				newFailureGoal("∃x · x = 1 ∨ x ≥ 0"),
-				newFailureGoal("∃x · ¬(x = 1) ∨ x ≥ 0"),
-				newFailureGoal("∃x · ¬(x = 1) ∧ x ≥ 0"),
-				newFailureGoal("∃x · ¬(x = 1 ∨ x ≥ 0)"),
-				newFailureGoal("∃x · ¬(x = 1 ∧ x ≥ 0)"),
-				newFailureGoal("∃x · ¬(¬(x = 1) ∧ x ≥ 0)"),
-
-				newFailureGoal("∀x · x ≥ 0 ⇒ x = 1"),
-				newFailureGoal("∀x · x ≥ 0 ⇒ x = 1 ∨ x ≤ 5"),
-				newFailureGoal("∀x · x ≥ 0 ⇒ x = 1 ∧ x ≤ 5"),
-				newFailureGoal("∀x · x ≥ 0 ⇒ ¬(x = 1) ∧ x ≤ 5"),
-				newFailureGoal("∀x · x ≥ 0 ⇒ ¬(x = 1 ∨ x ≤ 5)"),
-				newFailureGoal("∀x · x ≥ 0 ⇒ ¬(¬(x = 1) ∨ x ≤ 5)"),
-				newFailureGoal("∀x · x ≥ 0 ⇒ ¬(¬(x = 1) ∧ x ≤ 5)"),
-
-				// ===
 
 				// Matching predicate for one point rule is not root
 				newFailureGoal("∀x·x ∈ ℕ ⇒ (∀y·y = 1 ∧ y ∈ ℕ ⇒ y = y∗y)"),
