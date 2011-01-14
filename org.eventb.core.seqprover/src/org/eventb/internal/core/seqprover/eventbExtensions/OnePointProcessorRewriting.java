@@ -23,6 +23,7 @@ import java.util.List;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointFilter.QuantifiedFormUtil;
@@ -42,17 +43,22 @@ public class OnePointProcessorRewriting extends OnePointProcessor<Predicate> {
 	public OnePointProcessorRewriting(RelationalPredicate rPred,
 			FormulaFactory ff) {
 		super(ff);
-		this.original = toQuantifiedForm(rPred);
-		this.processing = ((QuantifiedPredicate) original).getPredicate();
+
+		final Expression cset = rPred.getRight();
+		assert cset instanceof QuantifiedExpression;
+
+		this.bids = ((QuantifiedExpression) cset).getBoundIdentDecls();
+		this.replacements = new Expression[bids.length];
+		this.original = rPred;
 	}
 
 	/**
-	 * Converts the given predicate of the form <code>F ∈ {x · P ∣ E}</code>
-	 * in a suitable form for the processing to be applied
+	 * Converts the given predicate of the form <code>F ∈ {x · P ∣ E}</code> in
+	 * a suitable form for the processing to be applied
 	 * <code>∃x · E=F' ∧ P</code>, where <code>F'</code> is <code>F</code>
 	 * pushed inside the quantification for <code>x</code>.
 	 */
-	private QuantifiedPredicate toQuantifiedForm(RelationalPredicate predicate) {
+	private QuantifiedPredicate toQuantifiedForm(Predicate predicate) {
 		assert match(predicate);
 		QuantifiedFormUtil qfu = matchAndDissociate(predicate);
 
@@ -61,9 +67,6 @@ public class OnePointProcessorRewriting extends OnePointProcessor<Predicate> {
 				qfu.getExpression(),
 				qfu.getElement().shiftBoundIdentifiers(
 						qfu.getBoundIdents().length, ff), null);
-
-		this.bids = qfu.getBoundIdents();
-		this.replacements = new Expression[bids.length];
 
 		final Predicate conjunctionPred = buildQuantifiedFormPredicate(
 				replacement, qfu.getGuard());
@@ -74,11 +77,6 @@ public class OnePointProcessorRewriting extends OnePointProcessor<Predicate> {
 
 	private Predicate buildQuantifiedFormPredicate(
 			RelationalPredicate replacement, Predicate existingGuard) {
-		assert this.bids != null;
-		assert this.replacements != null;
-
-		final List<Predicate> conjuncts = breakMaplet(replacement);
-
 		/*
 		 * This list contains the predicates in which no replacement will be
 		 * extracted. It contains the guard of the original comprehension set as
@@ -87,6 +85,7 @@ public class OnePointProcessorRewriting extends OnePointProcessor<Predicate> {
 		final List<Predicate> predicates = new ArrayList<Predicate>();
 		predicates.add(existingGuard);
 
+		final List<Predicate> conjuncts = breakMaplet(replacement);
 		for (Predicate eq : conjuncts) {
 			/*
 			 * If the current replacement is valid, then it is added to the
@@ -107,6 +106,9 @@ public class OnePointProcessorRewriting extends OnePointProcessor<Predicate> {
 	@Override
 	public void matchAndInstantiate() {
 		successfullyApplied = false;
+
+		original = toQuantifiedForm(original);
+		processing = ((QuantifiedPredicate) original).getPredicate();
 
 		if (!availableReplacement()) {
 			return;

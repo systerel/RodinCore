@@ -394,10 +394,10 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	}
 
 	/**
-	 * Ensures that rule SIMP_TYPE_RELIMAGE_ID is implemented correctly.
+	 * Ensures that rule SIMP_RELIMAGE_ID is implemented correctly.
 	 */
 	@Test
-	public void testSIMP_TYPE_RELIMAGE_ID() {
+	public void testSIMP_RELIMAGE_ID() {
 		expressionTest("T", "id[T]", "T", "ℙ(S)");
 	}
 
@@ -1686,11 +1686,19 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	}
 
 	/**
-	 * Ensures that rule SIMP_RELIMAGE_ID is implemented correctly
+	 * Ensures that rule SIMP_RELIMAGE_DOMRES_ID is implemented correctly
 	 */
 	@Test
-	public void testSIMP_RELIMAGE_ID() {
+	public void testSIMP_RELIMAGE_DOMRES_ID() {
 		expressionTest("S ∩ T", "(S ◁ id)[T]", "S", "ℙ(A)", "T", "ℙ(A)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_RELIMAGE_DOMSUB_ID is implemented correctly
+	 */
+	@Test
+	public void testSIMP_RELIMAGE_DOMSUB_ID() {
+		expressionTest("T ∖ S", "(S ⩤ id)[T]", "S", "ℙ(A)", "T", "ℙ(A)");
 	}
 
 	/**
@@ -1716,6 +1724,20 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 				"{x, y · x↦y∈S×(U∪{y}) ∣ x↦y}", "S", "ℙ(T)", "U", "ℙ(V)");
 		expressionTest("{x, y⦂ℙ(T) · x∈y ∣ x}", "{x, y⦂ℙ(T) · x∈y ∣ x}",//
 				"T", "ℙ(T)");
+	}
+
+	/**
+	 * Ensures that rule SIMP_COMPSET_SUBSETEQ is implemented correctly
+	 */
+	@Test
+	public void testSIMP_COMPSET_SUBSETEQ() {
+		expressionTest("ℙ(S)", "{x, y⦂U · x⊆S ∣ x}", "S", "ℙ(T)");
+
+		expressionTest("{x, y⦂U · x⊆S ∣ y}", "{x, y⦂U · x⊆S ∣ y}", "S", "ℙ(T)");
+		expressionTest("{x, y· x×y⊆S ∣ x × y}", "{x, y· x×y⊆S ∣ x × y}", "S",
+				"ℙ(T×U)");
+		expressionTest("{x, y⦂T · x⊆S∪{y} ∣ x}", "{x, y⦂T · x⊆S∪{y} ∣ x}", //
+				"S", "ℙ(T)");
 	}
 
 	/**

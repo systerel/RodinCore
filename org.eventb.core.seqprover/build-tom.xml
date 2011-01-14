@@ -83,6 +83,7 @@
 		<delete file="${inference.src}/FunSetMinusImg.java" />
 		<delete file="${inference.src}/FunSingletonImg.java" />
 		<delete file="${inference.src}/OnePointFilterUtils.java" />
+		<delete file="${inference.src}/OnePointFilter.java" />
     </target>
 	
 </project>

@@ -48,6 +48,7 @@ import static org.eventb.core.ast.Formula.MAPSTO;
 import static org.eventb.core.ast.Formula.MINUS;
 import static org.eventb.core.ast.Formula.NOT;
 import static org.eventb.core.ast.Formula.PLUS;
+import static org.eventb.core.ast.Formula.POW;
 import static org.eventb.core.ast.Formula.RANRES;
 import static org.eventb.core.ast.Formula.RELIMAGE;
 import static org.eventb.core.ast.Formula.SETMINUS;
@@ -2017,7 +2018,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_SPECIAL_DPROD_R", "SIMP_SPECIAL_DPROD_L",
 			"SIMP_SPECIAL_PPROD_R", "SIMP_SPECIAL_PPROD_L",
 			"SIMP_TYPE_RELIMAGE", "SIMP_MULTI_RELIMAGE_DOM",
-			"SIMP_TYPE_RELIMAGE_ID", "SIMP_MULTI_RELIMAGE_CPROD_SING",
+			"SIMP_RELIMAGE_ID", "SIMP_MULTI_RELIMAGE_CPROD_SING",
 			"SIMP_MULTI_RELIMAGE_SING_MAPSTO",
 			"SIMP_MULTI_RELIMAGE_CONVERSE_RANSUB",
 			"SIMP_MULTI_RELIMAGE_CONVERSE_RANRES",
@@ -2035,7 +2036,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_RANRES_DOMSUB_ID", "SIMP_DOMSUB_DOMSUB_ID",
 			"SIMP_RANSUB_DOMSUB_ID", "SIMP_RANRES_ID", "SIMP_RANSUB_ID",
 			"SIMP_MULTI_DOMSUB_RAN", "SIMP_MULTI_RANSUB_DOM",
-			"SIMP_RELIMAGE_ID" } )
+			"SIMP_RELIMAGE_DOMRES_ID", "SIMP_RELIMAGE_DOMSUB_ID" } )
 	@Override
 	public Expression rewrite(BinaryExpression expression) {
 		final Expression result;
@@ -2344,13 +2345,13 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			}
 			
 			/**
-			 * SIMP_TYPE_RELIMAGE_ID
+			 * SIMP_RELIMAGE_ID
 			 *    id[T] == T
 			 */
 			RelImage(IdGen(), T) -> {
 				if (level2) {
 					result = `T;
-					trace(expression, result, "SIMP_TYPE_RELIMAGE_ID");
+					trace(expression, result, "SIMP_RELIMAGE_ID");
 	    			return result;
 				}
 			}
@@ -3095,13 +3096,25 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			}
 			
 			/**
-			 * SIMP_RELIMAGE_ID
+			 * SIMP_RELIMAGE_DOMRES_ID
 			 *    (S ◁ id)[T] == S ∩ T
 			 */
 			RelImage(DomRes(S, IdGen()), T) -> {
 				if (level2) {
 					result = makeAssociativeExpression(BINTER, `S, `T);
-					trace(expression, result, "SIMP_RELIMAGE_ID");
+					trace(expression, result, "SIMP_RELIMAGE_DOMRES_ID");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_RELIMAGE_DOMSUB_ID
+			 *    (S ⩤ id)[T] == T ∖ S
+			 */
+			RelImage(DomSub(S, IdGen()), T) -> {
+				if (level2) {
+					result = makeBinaryExpression(SETMINUS, `T, `S);
+					trace(expression, result, "SIMP_RELIMAGE_DOMRES_ID");
 					return result;
 				}
 			}
@@ -3969,7 +3982,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
         
     @ProverRule( { "SIMP_SPECIAL_COMPSET_BFALSE",
     			"SIMP_SPECIAL_COMPSET_BTRUE", "SIMP_SPECIAL_QUNION",
-    			"SIMP_COMPSET_IN", "SIMP_COMPSET_EQUAL" } )
+    			"SIMP_COMPSET_IN", "SIMP_COMPSET_SUBSETEQ" } )
     @Override
     public Expression rewrite(QuantifiedExpression expression) {
     	final Expression result;
@@ -4021,6 +4034,19 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    				&& partialLambdaPatternCheck(`E, nbBound)) {
    					result = `S.shiftBoundIdentifiers(-nbBound, ff);
    					trace(expression, result, "SIMP_COMPSET_IN");
+    				return result;
+	    		}
+	    	}
+	    	
+	    	/**
+	    	 * SIMP_COMPSET_SUBSETEQ
+	    	 *    {x · x⊆S ∣ x} == ℙ(S)
+	    	 */
+	    	Cset(decls, SubsetEq(bi@BoundIdentifier(_), S), bi) -> {
+	    		final int nbBound = `decls.length;
+	    		if (level2 && notLocallyBound(`S, nbBound)) {
+	    			result = makeUnaryExpression(POW, `S);
+	    			trace(expression, result, "SIMP_COMPSET_SUBSETEQ");
     				return result;
 	    		}
 	    	}
