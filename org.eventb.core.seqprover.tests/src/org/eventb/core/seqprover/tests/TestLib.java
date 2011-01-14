@@ -43,7 +43,7 @@ import org.eventb.core.seqprover.eventbExtensions.DLib;
  */
 public class TestLib {
 	
-	private static final FormulaFactory ff = FormulaFactory.getDefault();
+	public static final FormulaFactory ff = FormulaFactory.getDefault();
 	
 
 	/**
@@ -356,7 +356,7 @@ public class TestLib {
 			throw new IllegalArgumentException("Invalid expression: " + str);
 		final ITypeCheckResult tcResult = result.typeCheck(typeEnv);
 		if (!tcResult.isSuccess())
-			throw new IllegalArgumentException("Predicate: " + result
+			throw new IllegalArgumentException("Expression: " + result
 					+ " does not typecheck in environment " + typeEnv);
 		typeEnv.addAll(tcResult.getInferredEnvironment());
 		return result;
