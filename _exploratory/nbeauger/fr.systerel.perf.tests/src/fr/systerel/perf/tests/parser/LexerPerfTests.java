@@ -49,9 +49,10 @@ public class LexerPerfTests {
 		final String string = sb.toString();
 		final Chrono chrono = new Chrono(testName);
 		chrono.startMeasure();
+		final int eof = AbstractGrammar._EOF; //GRAMMAR.getEOF();
 		for (int i = 0; i < TIMES_REPEAT_SCAN; i++) {
 			final Scanner scanner = new Scanner(string, result, GRAMMAR);
-			while (scanner.Scan().kind != AbstractGrammar._EOF)
+			while (scanner.Scan().kind != eof)
 				;
 		}
 		chrono.endMeasure();
