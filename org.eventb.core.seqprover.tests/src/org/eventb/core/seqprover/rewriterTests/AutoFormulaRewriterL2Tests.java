@@ -1726,14 +1726,14 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		predicateTest("1≥0", "1 ∈ {x · x≥0 ∣ x}");
 		predicateTest("1≥0 ∧ 2>1", "1↦2 ∈ {x,y · x≥0 ∧ y>x ∣ x↦y}");
 		predicateTest("∃y · 1≥0 ∧ y>1", "1 ∈ {x,y · x≥0 ∧ y>x ∣ x}");
-		predicateTest("∃x,y ·  x↦y=a ∧ (x≥0 ∧ y>x ∧ b>2∗y)",
+		predicateTest("∃x,y · (x≥0 ∧ y>x ∧ b>2∗y) ∧ x↦y=a",
 				"a↦b ∈ {x,y,z · x≥0 ∧ y>x ∧ z>2∗y ∣ (x↦y)↦z}");
 
 		predicateTest("a=0 ∧ b=0", "a↦b ∈ {x,y · x=0 ∧ y=0 ∣ x↦y}");
-		predicateTest("a=b ∧ a≥0", "a↦b ∈ {x · x≥0 ∣ x↦x}");
-		predicateTest("∃y · y+1=b ∧ a>y+c", "a↦b↦c ∈ {x,y,z · x>y+z ∣ x↦y+1↦z}");
+		predicateTest("a≥0 ∧ a=b", "a↦b ∈ {x · x≥0 ∣ x↦x}");
+		predicateTest("∃y · a>y+c ∧ y+1=b", "a↦b↦c ∈ {x,y,z · x>y+z ∣ x↦y+1↦z}");
 
-		predicateTest("∃y · y+1=b ∧ (a=0 ∧ y=0)",
+		predicateTest("∃y · (a=0 ∧ y=0) ∧ y+1=b",
 				"a↦b ∈ {x,y · x=0 ∧ y=0 ∣ x↦y+1}");
 
 		predicateTest("∃x ·  x≥0 ∧ x+1=1", "1 ∈ {x · x≥0 ∣ x+1}");

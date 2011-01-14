@@ -85,6 +85,7 @@ public class OnePointProcessorRewriting extends OnePointProcessor<Predicate> {
 		 * well as potentially non-valid replacements.
 		 */
 		final List<Predicate> predicates = new ArrayList<Predicate>();
+		predicates.add(existingGuard);
 
 		for (Predicate eq : conjuncts) {
 			/*
@@ -96,7 +97,6 @@ public class OnePointProcessorRewriting extends OnePointProcessor<Predicate> {
 				predicates.add(eq);
 			}
 		}
-		predicates.add(existingGuard);
 		if (predicates.size() == 1) {
 			return existingGuard;
 		} else {
