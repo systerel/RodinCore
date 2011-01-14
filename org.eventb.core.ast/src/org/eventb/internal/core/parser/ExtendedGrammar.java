@@ -47,7 +47,7 @@ public class ExtendedGrammar extends BMathV2 {
 				final int kind = tokens.getOrAdd(operatorImage);
 				// the syntax symbol must not already exist as an
 				// operator (an extension shall not add backtracking)
-				if (isOperator(kind)) {
+				if (isInitOperator(kind)) {
 					throw new OverrideException("extension "
 							+ extension.getId() + " is overriding operator "
 							+ operatorImage);
@@ -55,25 +55,19 @@ public class ExtendedGrammar extends BMathV2 {
 
 				final IExtensionKind extKind = extension.getKind();
 				final int tag = FormulaFactory.getTag(extension);
-				final IParserPrinter<? extends Formula<?>> parser = getParser(
-						extKind.getProperties(), kind, tag);
-
 				final String operatorId = extension.getId();
 				final String groupId = extension.getGroupId();
+				final IOperatorInfo<? extends Formula<?>> parser = getParser(
+						extKind.getProperties(), operatorImage, tag,
+						operatorId, groupId);
 
-				// TODO publish isSpaced customization
-				if (parser instanceof INudParser<?>) {
-					addOperator(operatorImage, operatorId, groupId,
-							(INudParser<? extends Formula<?>>) parser, false);
-				} else if (parser instanceof ILedParser<?>) {
-					addOperator(operatorImage, operatorId, groupId,
-							(ILedParser<? extends Formula<?>>) parser, true);
-				} else {
+				if (parser == null) {
 					// should not be ever possible
 					throw new IllegalStateException("Unparseable extension kind: "
 							+ extKind);
 					
 				}
+				addOperator(parser);
 			}
 		} catch (OverrideException e) {
 			// FIXME do not hide the exception

@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.lexer;
 
-import static org.eventb.internal.core.parser.AbstractGrammar._EOF;
-import static org.eventb.internal.core.parser.AbstractGrammar._IDENT;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -105,8 +102,9 @@ public class Scanner {
 		final Scanner scanner = new Scanner(name, result, factory.getGrammar());
 
 		final Token token = scanner.Peek();
+		final int identKind = factory.getGrammar().getIDENT();
 		return (!result.hasProblem() && token != null
-				&& token.kind == _IDENT && token.val.equals(name));
+				&& token.kind == identKind && token.val.equals(name));
 	}
 
 	public static class ScannerState {
@@ -141,7 +139,8 @@ public class Scanner {
 	public boolean lookAheadFor(int searchedKind) {
 		ResetPeek();
 		Token peek = Peek();
-		while (peek.kind != _EOF) {
+		final int eof = lexer.getGrammar().getEOF();
+		while (peek.kind != eof) {
 			if (peek.kind == searchedKind) {
 				return true;
 			}

@@ -16,8 +16,6 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
-import static org.eventb.internal.core.parser.AbstractGrammar._RPAR;
-import static org.eventb.internal.core.parser.BMath._RBRACKET;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.ARITHMETIC;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.BINOP;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.FUNCTIONAL;
@@ -36,6 +34,7 @@ import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
+import org.eventb.internal.core.parser.AbstractGrammar;
 import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.BMath.StandardGroup;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
@@ -205,13 +204,23 @@ public class BinaryExpression extends Expression {
 		OP_FUNIMAGE("(", FUNIMAGE_ID, FUNCTIONAL, FUNIMAGE, false) {
 			@Override
 			public IParserPrinter<BinaryExpression> makeParser(int kind) {
-				return new LedImage(kind, FUNIMAGE, _RPAR);
+				return new LedImage(kind, FUNIMAGE) {
+					@Override
+					protected int getCloseKind(AbstractGrammar grammar) {
+						return grammar.getRPAR();
+					}
+				};
 			}
 		},
 		OP_RELIMAGE("[", RELIMAGE_ID, FUNCTIONAL, RELIMAGE, false) {
 			@Override
 			public IParserPrinter<BinaryExpression> makeParser(int kind) {
-				return new LedImage(kind, RELIMAGE, _RBRACKET);
+				return new LedImage(kind, RELIMAGE) {
+					@Override
+					protected int getCloseKind(AbstractGrammar grammar) {
+						return grammar.getRBRACKET();
+					}
+				}; 
 			}
 		},
 		;

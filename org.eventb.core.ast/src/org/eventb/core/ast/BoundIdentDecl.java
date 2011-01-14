@@ -27,7 +27,6 @@ import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
-import org.eventb.internal.core.parser.AbstractGrammar;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -95,7 +94,7 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 
 	@Override
 	protected int getKind(KindMediator mediator) {
-		return AbstractGrammar._IDENT;
+		return mediator.getIDENT();
 	}
 
 	@Override

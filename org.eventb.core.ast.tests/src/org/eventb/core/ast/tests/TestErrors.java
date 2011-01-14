@@ -119,7 +119,7 @@ public class TestErrors extends AbstractTests {
 				doParseTest(new PredTestItem(
 						"finite(\u03bb x\u21a6(y\u21a6s)\u00b7\u22a5\u2223z",
 						new ASTProblem(new SourceLocation(19, 19), UnexpectedSymbol,
-								Error, ")", "End Of Formula")));
+								Error, ")", "End of Formula")));
 				doParseTest(new PredTestItem(
 						"\u03bb x\u21a6(y\u21a6s)\u00b7\u22a5\u2223z",
 						new ASTProblem(new SourceLocation(0, 12), UnexpectedSubFormulaKind,

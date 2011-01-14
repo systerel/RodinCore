@@ -42,8 +42,8 @@ import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_EXPR;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_PRED;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.BINOP;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.BOOL_EXPR;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.CLOSED;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.BRACE_SETS;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.CLOSED;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.FUNCTIONAL;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.GROUP_0;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.INFIX_PRED;
@@ -57,7 +57,6 @@ import static org.eventb.internal.core.parser.BMath.StandardGroup.RELATION;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.RELOP_PRED;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.TYPED;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.UNARY_RELATION;
-import static org.eventb.internal.core.parser.SubParsers.OFTYPE;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -78,7 +77,6 @@ import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.extension.CycleError;
 import org.eventb.internal.core.ast.ASTPlugin;
-import org.eventb.internal.core.parser.GenParser.OverrideException;
 
 /**
  * @author Nicolas Beauger
@@ -95,8 +93,6 @@ public abstract class BMath extends AbstractGrammar {
 		return version;
 	}
 
-	private static final String NEGLIT_IMAGE = "a negative integer literal";
-	
 	public static enum StandardGroup {// TODO externalize
 		GROUP_0("group0", "Least Priority Group"),
 		RELOP_PRED("relOp", "Relational Operator Predicate"),
@@ -136,98 +132,50 @@ public abstract class BMath extends AbstractGrammar {
 		}
 	}
 	
-	private static final String OFTYPE_ID = "Oftype";
-	private static final String NEGLIT_ID = "Negative Literal";
-	
-	/**
-	 * Configuration table used to parameterize the scanner, with Rodin
-	 * mathematical language tokens.
-	 * 
-	 */
-	private final void initTokens() {
-		_RBRACKET = tokens.getOrAdd("]");
-		_RBRACE = tokens.getOrAdd("}");
-		_MAPSTO = tokens.getOrAdd("\u21a6");
-		_MID = tokens.getOrAdd("\u2223");
-		_DOT = tokens.getOrAdd("\u00b7");
-		_TYPING = tokens.getOrAdd("\u2982");
-		_KPARTITION = tokens.getOrAdd("partition");
-	}
-
-	public static final int _NEGLIT = publicTokens.reserved(NEGLIT_IMAGE);
-	static int _RBRACE;
-	public static int _RBRACKET;
-	static int _MAPSTO;
-	static int _MID;
-	public static int _KPARTITION;
-	static int _DOT;
-	public static int _TYPING;
-	
-	public static final int _PREDVAR = publicTokens.reserved("Predicate Variable");
-
-	@Override
-	public boolean isOperator(int kind) {
-		return kind == _NEGLIT || super.isOperator(kind);
-	}
-	
 	@Override
 	protected void addOperators() {
-		initTokens();
 		
-		addOpenClose("{", "}");
-		addOpenClose("[", "]");
-		try {
-			// AssociativeExpression
-			AssociativeExpression.init(this);
-			// AssociativePredicate
-			AssociativePredicate.init(this);
-			// AtomicExpression is version specific
-			// BecomesEqualTo
-			BecomesEqualTo.init(this);
-			// BecomesMemberOf
-			BecomesMemberOf.init(this);
-			// BecomesSuchThat
-			BecomesSuchThat.init(this);
-			// BinaryExpression
-			BinaryExpression.init(this);
-			// BinaryPredicate
-			BinaryPredicate.init(this);
-			// BoolExpression
-			BoolExpression.init(this);
-			// BoundIdentDecl	parsed as identifier list, then processed by parsers
-			// BoundIdentifier	processed in AbstractGrammar
-			// ExtendedExpression	processed in ExtendedGrammar
-			// ExtendedPredicate	idem
-			// FreeIdentifier	processed in AbstractGrammar
-			// IntegerLiteral	idem
-			// LiteralPredicate
-			LiteralPredicate.init(this);
-			// MultiplePredicate is V2 specific
-			// PredicateVariable
-			PredicateVariable.init(this);
-			// QuantifiedExpression
-			QuantifiedExpression.init(this);
-			// QuantifiedPredicate
-			QuantifiedPredicate.init(this);
-			// RelationalPredicate
-			RelationalPredicate.init(this);
-			// SetExtension
-			SetExtension.init(this);
-			// SimplePredicate
-			SimplePredicate.init(this);
-			// UnaryExpression is version specific
-			// UnaryPredicate
-			UnaryPredicate.init(this);
-			
-			// Undefined Operators
-			addOperator("\u2982", OFTYPE_ID, TYPED.getId(), OFTYPE, true);
-			
-			addOperator(_NEGLIT, NEGLIT_ID, ARITHMETIC.getId(), null, false);
-
-		} catch (OverrideException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// AssociativeExpression
+		AssociativeExpression.init(this);
+		// AssociativePredicate
+		AssociativePredicate.init(this);
+		// AtomicExpression is version specific
+		// BecomesEqualTo
+		BecomesEqualTo.init(this);
+		// BecomesMemberOf
+		BecomesMemberOf.init(this);
+		// BecomesSuchThat
+		BecomesSuchThat.init(this);
+		// BinaryExpression
+		BinaryExpression.init(this);
+		// BinaryPredicate
+		BinaryPredicate.init(this);
+		// BoolExpression
+		BoolExpression.init(this);
+		// BoundIdentDecl	parsed as identifier list, then processed by parsers
+		// BoundIdentifier	processed in AbstractGrammar
+		// ExtendedExpression	processed in ExtendedGrammar
+		// ExtendedPredicate	idem
+		// FreeIdentifier	processed in AbstractGrammar
+		// IntegerLiteral	idem
+		// LiteralPredicate
+		LiteralPredicate.init(this);
+		// MultiplePredicate is V2 specific
+		// PredicateVariable
+		PredicateVariable.init(this);
+		// QuantifiedExpression
+		QuantifiedExpression.init(this);
+		// QuantifiedPredicate
+		QuantifiedPredicate.init(this);
+		// RelationalPredicate
+		RelationalPredicate.init(this);
+		// SetExtension
+		SetExtension.init(this);
+		// SimplePredicate
+		SimplePredicate.init(this);
+		// UnaryExpression is version specific
+		// UnaryPredicate
+		UnaryPredicate.init(this);
 
 	}
 	
@@ -329,13 +277,4 @@ public abstract class BMath extends AbstractGrammar {
 		}
 		
 	}
-
-	public int getPARTITION() {
-		return _KPARTITION;
-	}
-	
-	public int getPREDVAR() {
-		return _PREDVAR;
-	}
-	
 }

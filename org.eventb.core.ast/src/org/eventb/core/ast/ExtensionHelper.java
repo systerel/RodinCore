@@ -14,9 +14,14 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.extension.IToStringMediator;
+import org.eventb.internal.core.parser.AbstractGrammar;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
 /**
@@ -145,6 +150,19 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
 			T[] array1, U[] array2, LegibilityResult result) {
 		AssociativeHelper.isLegibleList(array1, result);
 		AssociativeHelper.isLegibleList(array2, result);
+	}
+
+	public static IParserPrinter<? extends Formula<?>> makeParserPrinter(
+			int tag, IFormulaExtension extension, IToStringMediator mediator) {
+		final IOperatorProperties properties = extension.getKind()
+				.getProperties();
+		final String opId = extension.getId();
+		final String groupId = extension.getGroupId();
+		final String syntaxSymbol = extension.getSyntaxSymbol();
+		final AbstractGrammar grammar = mediator.getFactory().getGrammar();
+		final IOperatorInfo<? extends Formula<?>> opInfo = grammar.getParser(
+				properties, syntaxSymbol, tag, opId, groupId);
+		return opInfo.makeParser(mediator.getKind());
 	}
 
 }

@@ -14,9 +14,6 @@ import static org.eventb.core.ast.LanguageVersion.V1;
 import static org.eventb.internal.core.lexer.LexicalClass.IDENTIFIER;
 import static org.eventb.internal.core.lexer.LexicalClass.SYMBOL;
 import static org.eventb.internal.core.lexer.LexicalClass.WHITESPACE;
-import static org.eventb.internal.core.parser.AbstractGrammar._EOF;
-import static org.eventb.internal.core.parser.AbstractGrammar._IDENT;
-import static org.eventb.internal.core.parser.BMath._KPARTITION;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.ProblemKind;
@@ -155,6 +152,10 @@ public class GenLexer {
 		this.reader = new LexemReader(grammar);
 	}
 
+	public AbstractGrammar getGrammar() {
+		return grammar;
+	}
+	
 	public LexState save() {
 		return new LexState(stream.getTokenStart(), stream.getCurPos());
 	}
@@ -188,7 +189,7 @@ public class GenLexer {
 			addProblem(lexem);
 			return makeEOF();
 		}
-		if (kind == _IDENT && isPrime(stream)) {
+		if (kind == grammar.getIDENT() && isPrime(stream)) {
 			stream.goForward();
 			lexem = stream.getLexem();
 		}
@@ -196,15 +197,15 @@ public class GenLexer {
 	}
 
 	private Token makeToken(int kind, String val) {
-		if (result.getLanguageVersion() == V1 && kind == _KPARTITION) {
-			return new Token(_IDENT, val, stream.getTokenStart());
+		if (result.getLanguageVersion() == V1 && kind == grammar.getPARTITION()) {
+			return new Token(grammar.getIDENT(), val, stream.getTokenStart());
 		} else {
 			return new Token(kind, val, stream.getTokenStart());
 		}
 	}
 
 	private Token makeEOF() {
-		return new Token(_EOF, "", stream.getCurPos());
+		return new Token(grammar.getEOF(), "", stream.getCurPos());
 	}
 
 	private void addProblem(String tokenImage) {

@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
-import static org.eventb.internal.core.parser.AbstractGrammar.*;
-import static org.eventb.internal.core.parser.GenParser.ProgressDirection.*;
+import static org.eventb.internal.core.parser.GenParser.ProgressDirection.LEFT;
+import static org.eventb.internal.core.parser.GenParser.ProgressDirection.RIGHT;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,10 +30,9 @@ import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.core.lexer.Scanner;
-import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.lexer.Scanner.ScannerState;
+import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.IParserPrinter.SubParseResult;
-import org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship;
 
 /**
  * @author Nicolas Beauger
@@ -127,7 +126,7 @@ public class GenParser {
 		protected final ParseResult result;
 		protected final boolean withPredVar;
 		private StackedValue<Binding> binding = new StackedValue<Binding>(new Binding());
-		private StackedValue<Integer> parentKind = new StackedValue<Integer>(_EOF); 
+		private StackedValue<Integer> parentKind; 
 		private StackedValue<Integer> startPos = new StackedValue<Integer>(-1); 
 		private int endPos = -1;
 		private boolean parsingType;
@@ -140,8 +139,13 @@ public class GenParser {
 			this.grammar = factory.getGrammar();
 			this.result = result;
 			this.withPredVar = withPredVar;
+			this.parentKind = new StackedValue<Integer>(grammar.getEOF());
 		}
 
+		public AbstractGrammar getGrammar() {
+			return grammar;
+		}
+		
 		/**
 		 * Makes a source location starting from the position where the latest
 		 * call to a subparse() method occurred, ending at the end position of
@@ -188,7 +192,7 @@ public class GenParser {
 		
 		private void accept() {
 			if (grammar.isOpen(t.kind)) {
-				pushParentKind(_OPEN);
+				pushParentKind(grammar.getOPEN());
 			}
 			if (grammar.isClose(la.kind)) {
 				popParentKind();
@@ -291,15 +295,16 @@ public class GenParser {
 		}
 		
 		public void acceptOpenParen() throws SyntaxError {
-			accept(_LPAR);
+			accept(grammar.getLPAR());
 		}
 		
 		public void acceptCloseParen() throws SyntaxError {
-			accept(_RPAR);
+			accept(grammar.getRPAR());
 		}
 		
 		void scanUntilEOF() {
-			while (t.kind != _EOF) {
+			final int eof = grammar.getEOF();
+			while (t.kind != eof) {
 				accept();
 			}
 		}
@@ -433,7 +438,7 @@ public class GenParser {
 		// (or conversely), as these operators have no relative priority
 		private <T> T subParseNoParent(INudParser<T> parser,
 				List<BoundIdentDecl> newBoundIdents, boolean noCheck) throws SyntaxError {
-			pushParentKind(_NOOP);
+			pushParentKind(grammar.getNOOP());
 			try {
 				if (noCheck) {
 					return subParseNoCheck(parser, newBoundIdents);
@@ -571,12 +576,13 @@ public class GenParser {
 				throw new IllegalArgumentException(
 						"Can only parse one of: Predicate, Expression, Assignment or Type.");
 			}
-			if (pc.t.kind != _EOF) {
+			final int eof = pc.getGrammar().getEOF();
+			if (pc.t.kind != eof) {
 				failUnmatchedTokens(pc);
 			}
 			// TODO remove above debug check when stable
 			if (DEBUG) {
-				if (pc.parentKind.val != _EOF) {
+				if (pc.parentKind.val != eof) {
 					throw new IllegalStateException("Improper parent stack: "
 							+ pc.parentKind + " with " + pc.parentKind.val
 							+ " = "

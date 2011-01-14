@@ -62,8 +62,8 @@ public class PredicateVariable extends Predicate {
 	 */
 	public static void init(BMath grammar) {
 		try {
-			grammar.addOperator(BMath._PREDVAR, PRED_VAR_ID, GROUP_0.getId(),
-					PRED_VAR_SUBPARSER, false);
+			grammar.addOperator(grammar.getPREDVAR(), PRED_VAR_ID,
+					GROUP_0.getId(), PRED_VAR_SUBPARSER, false);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -123,7 +123,7 @@ public class PredicateVariable extends Predicate {
 
 	@Override
 	protected int getKind(KindMediator mediator) {
-		return BMath._PREDVAR;
+		return mediator.getPREDVAR();
 	}
 
 	@Override

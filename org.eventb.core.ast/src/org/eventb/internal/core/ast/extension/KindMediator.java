@@ -29,4 +29,19 @@ public class KindMediator {
 		return kind;
 	}
 	
+	public int getIDENT() {
+		return grammar.getIDENT();
+	}
+	
+	public int getINTLIT() {
+		return grammar.getINTLIT();
+	}
+	
+	public int getNEGLIT() {
+		return grammar.getNEGLIT();
+	}
+
+	public int getPREDVAR() {
+		return grammar.getPREDVAR();
+	}
 }

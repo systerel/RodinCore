@@ -13,10 +13,6 @@ package org.eventb.internal.core.lexer;
 import static org.eventb.internal.core.lexer.GenLexer.LAMBDA;
 import static org.eventb.internal.core.lexer.GenLexer.META;
 import static org.eventb.internal.core.lexer.LexStream.nextCodePoint;
-import static org.eventb.internal.core.parser.AbstractGrammar._EOF;
-import static org.eventb.internal.core.parser.AbstractGrammar._IDENT;
-import static org.eventb.internal.core.parser.AbstractGrammar._INTLIT;
-import static org.eventb.internal.core.parser.BMath._PREDVAR;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.core.lexer.GenLexer.LexemReader;
@@ -53,7 +49,7 @@ public enum LexicalClass {
 		public int getKind(String image, AbstractGrammar grammar) {
 			final int kind = grammar.getTokens().getIndex(image);
 			if (kind == IndexedSet.NOT_AN_INDEX) {
-				return _IDENT;
+				return grammar.getIDENT();
 			} else {
 				return kind;
 			}
@@ -121,7 +117,7 @@ public enum LexicalClass {
 		@Override
 		public int getKind(String image, AbstractGrammar grammar) {
 			assert false;
-			return _EOF;
+			return grammar.getEOF();
 		}
 
 	},
@@ -138,7 +134,7 @@ public enum LexicalClass {
 
 		@Override
 		public int getKind(String image, AbstractGrammar grammar) {
-			return _INTLIT;
+			return grammar.getINTLIT();
 		}
 	},
 	META_VAR {
@@ -157,7 +153,7 @@ public enum LexicalClass {
 
 		@Override
 		public int getKind(String image, AbstractGrammar grammar) {
-			return _PREDVAR;
+			return grammar.getPREDVAR();
 		}
 
 		@Override

@@ -107,8 +107,9 @@ public class PropertyParserDB {
 		list.add(newParser);
 	}
 
-	public IParserPrinter<? extends Formula<?>> getParser(
-			IOperatorProperties operProps, int kind, int tag) {
+	public IOperatorInfo<? extends Formula<?>> getParser(
+			IOperatorProperties operProps, String image, int tag, String opId,
+			String groupId) {
 		final Properties prop = new Properties(operProps);
 		final List<IPropertyParserInfo<? extends Formula<?>>> list = map
 				.get(prop);
@@ -118,7 +119,7 @@ public class PropertyParserDB {
 		for (IPropertyParserInfo<? extends Formula<?>> parserInfo : list) {
 			final OperatorCoverage opCover = parserInfo.getOperatorCoverage();
 			if (opCover.covers(operProps)) {
-				return parserInfo.makeParser(kind, tag);
+				return parserInfo.makeOpInfo(image, tag, opId, groupId);
 			}
 		}
 		return null;

@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 public class AllInOnceMap<K,V> {
 	
@@ -50,6 +51,10 @@ public class AllInOnceMap<K,V> {
 
 	public Collection<V> values() {
 		return Collections.unmodifiableCollection(map.values());
+	}
+	
+	public Set<Entry<K, V>> entrySet() {
+		return Collections.unmodifiableSet(map.entrySet());
 	}
 
 	// should be called only on bijective maps

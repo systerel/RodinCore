@@ -12,9 +12,12 @@ package org.eventb.internal.core.parser;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+
+import org.eventb.internal.core.parser.ExternalViewUtils.Instantiator;
 
 /**
  * @author Nicolas Beauger
@@ -31,12 +34,6 @@ public class IndexedSet<T> {
 
 	public IndexedSet() {
 		// nothing to do
-	}
-	
-	public IndexedSet(IndexedSet<T> other) {
-		this.set.putAll(other.set);
-		this.reserved.putAll(other.reserved);
-		this.nextIndex = other.nextIndex;
 	}
 	
 	public int getOrAdd(T key) {
@@ -59,12 +56,22 @@ public class IndexedSet<T> {
 	}
 	
 	public int getIndex(T key) {
-		final Integer index = set.get(key);
+		return getIndex(key, set);
+	}
+
+	public int getReserved(T key) {
+		return getIndex(key, reserved);
+	}
+	
+	private static <T> int getIndex(T key, Map<T, Integer> map) {
+		final Integer index = map.get(key);
 		if (index == null) {
 			return NOT_AN_INDEX;
 		}
 		return index;
 	}
+	
+	
 
 	public T getElem(int index) {
 		final T elem = getElem(index, set);
@@ -95,6 +102,63 @@ public class IndexedSet<T> {
 		// TODO reserved.containsValue(index) ?
 		return index >= FIRST_INDEX && index < nextIndex
 				&& !set.containsValue(index);
+	}
+
+	public void redistribute(Instantiator<Integer, Integer> opKindInst) {
+		final Set<T> conflicts = new HashSet<T>();
+		
+		final Map<T, Integer> newSet = redistribute(set, opKindInst, conflicts);
+		final Map<T, Integer> newReserved = redistribute(reserved, opKindInst,
+				conflicts);
+
+		processConflicts(conflicts, newSet, newReserved, opKindInst);
+		assert newSet.size() == set.size();
+		assert newReserved.size() == reserved.size();
+		set.clear();
+		set.putAll(newSet);
+		reserved.clear();
+		reserved.putAll(newReserved);
+	}
+
+	private Map<T, Integer> redistribute(Map<T, Integer> from,
+			Instantiator<Integer, Integer> opKindInst, final Set<T> conflicts) {
+		final Map<T, Integer> result = new HashMap<T, Integer>();
+		for (Entry<T, Integer> entry : from.entrySet()) {
+			final Integer index = entry.getValue();
+			if (!opKindInst.hasInst(index)) {
+				result.put(entry.getKey(), index);
+				continue;
+			}
+			final Integer newIndex = opKindInst.instantiate(index);
+			result.put(entry.getKey(), newIndex);
+			if (!opKindInst.hasInst(newIndex)) {
+				final T elemConflict = getElem(newIndex);
+				if (elemConflict != null) {
+					conflicts.add(elemConflict);
+				}
+			}
+		}
+		return result;
+	}
+
+	private void processConflicts(Set<T> conflicts,
+			Map<T, Integer> newSet, Map<T, Integer> newReserved, Instantiator<Integer, Integer> opKindInst) {
+		for (T obj : conflicts) {
+			final int conflictIndex;
+			final int newIndex;
+			if(newSet.containsKey(obj)) {
+				conflictIndex = newSet.remove(obj);
+				newIndex = getOrAdd(obj, newSet);
+			} else if (newReserved.containsKey(obj)) {
+				conflictIndex = newReserved.remove(obj);
+				newIndex = getOrAdd(obj, newReserved);
+			} else {
+				assert false;
+				conflictIndex = Integer.MIN_VALUE;
+				newIndex = Integer.MIN_VALUE;
+			}
+			opKindInst.setInst(conflictIndex, newIndex);
+		}
 	}
 
 }

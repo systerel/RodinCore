@@ -15,8 +15,6 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
-import static org.eventb.internal.core.parser.AbstractGrammar._INTLIT;
-import static org.eventb.internal.core.parser.BMath._NEGLIT;
 import static org.eventb.internal.core.parser.SubParsers.INTLIT_SUBPARSER;
 
 import java.math.BigInteger;
@@ -51,7 +49,7 @@ public class IntegerLiteral extends Expression {
 	 * @since 2.0
 	 */
 	public static void init(AbstractGrammar grammar) {
-		grammar.addReservedSubParser(_INTLIT, INTLIT_SUBPARSER);
+		grammar.addReservedSubParser(grammar.getINTLIT(), INTLIT_SUBPARSER);
 	}
 
 	// This literal value.  Can never be null.
@@ -120,9 +118,9 @@ public class IntegerLiteral extends Expression {
 	@Override
 	protected final int getKind(KindMediator mediator) {
 		if (literal.signum() == -1) {
-			return _NEGLIT;
+			return mediator.getNEGLIT();
 		} else {
-			return _INTLIT;
+			return mediator.getINTLIT();
 		}
 	}
 

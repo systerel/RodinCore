@@ -19,7 +19,6 @@ import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.AbstractGrammar;
-import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.SubParsers;
 
 /**
@@ -151,8 +150,9 @@ import org.eventb.internal.core.parser.SubParsers;
 			boolean isRightOvr, boolean withTypesOvr,
 			final String[] newBoundNames) {
 		if (withTypesOvr && isTypePrintable(formula)) {
-			final IToStringMediator mediator = makeInstance(BMath._TYPING,
-					isRightOvr, withTypesOvr, newBoundNames);
+			final int oftype = factory.getGrammar().getOFTYPE();
+			final IToStringMediator mediator = makeInstance(oftype, isRightOvr,
+					withTypesOvr, newBoundNames);
 			SubParsers.OFTYPE.toString(mediator, (Expression) formula);
 			return;
 		}

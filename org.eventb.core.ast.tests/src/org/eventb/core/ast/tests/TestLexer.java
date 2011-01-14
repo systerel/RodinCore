@@ -15,7 +15,6 @@ package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.LanguageVersion.LATEST;
 import static org.eventb.core.ast.LanguageVersion.V1;
-import static org.eventb.internal.core.parser.AbstractGrammar._EOF;
 import static org.eventb.internal.core.parser.BMathV2.B_MATH_V2;
 
 import java.util.HashSet;
@@ -150,7 +149,7 @@ public class TestLexer extends AbstractTests {
 		assertFalse(result.hasProblem());
 		
 		final Token next = scanner.Scan();
-		assertEquals(_EOF, next.kind);
+		assertEquals(B_MATH_V2.getEOF(), next.kind);
 		
 		assertEquals(ident, t.val);
 	}

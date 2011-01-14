@@ -12,7 +12,6 @@ package org.eventb.internal.core.parser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -175,40 +174,17 @@ public class ExternalViewUtils {
 			}
 		}
 
-		private T instantiate(S source) {
+		public boolean hasInst(S source) {
+			return instantiation.containsKey(source);
+		}
+		
+		public T instantiate(S source) {
 			final T target = instantiation.get(source);
 			if (target == null) {
 				throw new IllegalStateException("no target for source "
 						+ source);
 			}
 			return target;
-		}
-
-		public Set<T> instantiate(Set<S> sourceSet) {
-			final Set<T> targetSet = new HashSet<T>();
-			for (S source : sourceSet) {
-				final T target = instantiate(source);
-				final boolean changed = targetSet.add(target);
-				if (!changed) {
-					throw new IllegalStateException("target " + target
-							+ " has several sources");
-				}
-			}
-			return targetSet;
-		}
-
-		public Map<T, Set<T>> instantiate(Map<S, Set<S>> sourceMap) {
-			final Map<T, Set<T>> targetMap = new HashMap<T, Set<T>>();
-			for (Entry<S, Set<S>> sourceEntry : sourceMap.entrySet()) {
-				final T targetKey = instantiate(sourceEntry.getKey());
-				final Set<T> targetValue = instantiate(sourceEntry.getValue());
-				final Set<T> old = targetMap.put(targetKey, targetValue);
-				if (old != null) {
-					throw new IllegalStateException("target " + targetKey
-							+ " has several sources");
-				}
-			}
-			return targetMap;
 		}
 	}
 

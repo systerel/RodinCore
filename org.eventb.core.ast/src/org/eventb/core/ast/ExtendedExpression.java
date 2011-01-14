@@ -14,6 +14,7 @@ package org.eventb.core.ast;
 // FIXME should not use AssociativeHelper
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
+import static org.eventb.core.ast.ExtensionHelper.makeParserPrinter;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 import static org.eventb.core.ast.extension.IOperatorProperties.Notation.INFIX;
 import static org.eventb.core.ast.extension.IOperatorProperties.Notation.PREFIX;
@@ -33,7 +34,6 @@ import java.util.Set;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
-import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.internal.core.ast.FindingAccumulator;
@@ -48,6 +48,7 @@ import org.eventb.internal.core.ast.extension.TypeCheckMediator;
 import org.eventb.internal.core.ast.extension.TypeMediator;
 import org.eventb.internal.core.parser.ExtendedGrammar;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.parser.IPropertyParserInfo;
 import org.eventb.internal.core.parser.SubParsers;
@@ -121,7 +122,42 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		public OperatorCoverage getOperatorCoverage() {
 			return operCover;
 		}
+		
+		protected abstract  IParserPrinter<ExtendedExpression> makeParser(
+				int kind, int tag);
 
+		@Override
+		public IOperatorInfo<ExtendedExpression> makeOpInfo(final String image,
+				final int tag, final String opId, final String groupId) {
+			return new IOperatorInfo<ExtendedExpression>() {
+				
+				@Override
+				public IParserPrinter<ExtendedExpression> makeParser(int kind) {
+					return ExtendedExpressionParsers.this.makeParser(kind, tag);
+				}
+
+				@Override
+				public boolean isSpaced() {
+					return ExtendedExpressionParsers.this.getOperatorCoverage()
+							.getNotation() == INFIX;
+				}
+				
+				@Override
+				public String getImage() {
+					return image;
+				}
+				
+				@Override
+				public String getId() {
+					return opId;
+				}
+				
+				@Override
+				public String getGroupId() {
+					return groupId;
+				}
+			};
+		}
 	}
 
 	/**
@@ -275,10 +311,8 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void toString(IToStringMediator mediator) {
-		final IOperatorProperties properties = extension.getKind()
-				.getProperties();
-		final IParserPrinter<? extends Formula<?>> parser = ff.getGrammar()
-				.getParser(properties, mediator.getKind(), getTag());
+		final IParserPrinter<? extends Formula<?>> parser = makeParserPrinter(
+				getTag(), extension, mediator);
 		final IParserPrinter<ExtendedExpression> extParser = (IParserPrinter<ExtendedExpression>) parser;
 		extParser.toString(mediator, this);
 	}
