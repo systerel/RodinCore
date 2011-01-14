@@ -185,7 +185,7 @@ public class GenLexer {
 
 		String lexem = stream.getLexem();
 		final int kind = lexClass.getKind(lexem, grammar);
-		if (kind == IndexedSet.NOT_AN_INDEX) {
+		if (kind == IndexedSet.UNKNOWN_KIND) {
 			addProblem(lexem);
 			return makeEOF();
 		}

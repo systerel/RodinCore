@@ -25,23 +25,27 @@ import org.eventb.internal.core.parser.ExternalViewUtils.Instantiator;
  */
 public class IndexedSet {
 
-	private static final int FIRST_INDEX = 0;
-	public static final int NOT_AN_INDEX = FIRST_INDEX - 1;
+	private static final int FIRST_KIND = 0;
+	public static final int UNKNOWN_KIND = FIRST_KIND - 1;
 
-	private final Map<String, Integer> set = new HashMap<String, Integer>();
+	// tokens identified by their lexical image
+	private final Map<String, Integer> lexTokens = new HashMap<String, Integer>();
+	
+	// reserved tokens, identified by an id
 	private final Map<String, Integer> reserved = new HashMap<String, Integer>();
-	private int nextIndex = FIRST_INDEX;
+	
+	private int nextKind = FIRST_KIND;
 
 	public IndexedSet() {
 		// nothing to do
 	}
 	
-	public int getOrAdd(String key) {
-		return getOrAdd(key, set);
+	public int getOrAdd(String lexImage) {
+		return getOrAdd(lexImage, lexTokens);
 	}
 	
-	public int reserved(String key) {
-		return getOrAdd(key, reserved);
+	public int reserved(String reservedId) {
+		return getOrAdd(reservedId, reserved);
 	}
 
 	private int getOrAdd(String key, Map<String, Integer> addTo) {
@@ -49,45 +53,43 @@ public class IndexedSet {
 		if (current != null) {
 			return current;
 		}
-		final int index = nextIndex;
-		addTo.put(key, index);
-		nextIndex++;
-		return index;
+		final int kind = nextKind;
+		addTo.put(key, kind);
+		nextKind++;
+		return kind;
 	}
 	
-	public int getIndex(String key) {
-		return getIndex(key, set);
+	public int getKind(String lexImage) {
+		return getKind(lexImage, lexTokens);
 	}
 
-	public int getReserved(String key) {
-		return getIndex(key, reserved);
+	public int getReserved(String reservedId) {
+		return getKind(reservedId, reserved);
 	}
 	
-	private static int getIndex(String key, Map<String, Integer> map) {
-		final Integer index = map.get(key);
-		if (index == null) {
-			return NOT_AN_INDEX;
+	private static int getKind(String key, Map<String, Integer> map) {
+		final Integer kind = map.get(key);
+		if (kind == null) {
+			return UNKNOWN_KIND;
 		}
-		return index;
+		return kind;
 	}
 	
-	
-
-	public String getElem(int index) {
-		final String elem = getElem(index, set);
+	public String getImage(int kind) {
+		final String elem = getElem(kind, lexTokens);
 		if (elem != null) {
 			return elem;
 		}
-		return getElem(index, reserved);
+		return getElem(kind, reserved);
 	}
 	
-	public boolean contains(String key) {
-		return getIndex(key) != NOT_AN_INDEX;
+	public boolean contains(String lexImage) {
+		return getKind(lexImage) != UNKNOWN_KIND;
 	}
 	
-	private static String getElem(int index, Map<String, Integer> map) {
+	private static String getElem(int kind, Map<String, Integer> map) {
 		for (Entry<String, Integer> entry : map.entrySet()) {
-			if (entry.getValue().equals(index)) {
+			if (entry.getValue().equals(kind)) {
 				return entry.getKey();
 			}
 		}
@@ -95,44 +97,45 @@ public class IndexedSet {
 	}
 	
 	public Set<Entry<String, Integer>> entrySet() {
-		return Collections.unmodifiableSet(set.entrySet());
+		return Collections.unmodifiableSet(lexTokens.entrySet());
 	}
 	
-	public boolean isReserved(int index) {
-		// TODO reserved.containsValue(index) ?
-		return index >= FIRST_INDEX && index < nextIndex
-				&& !set.containsValue(index);
+	public boolean isReserved(int kind) {
+		// TODO reserved.containsValue(kind) ?
+		return kind >= FIRST_KIND && kind < nextKind
+				&& !lexTokens.containsValue(kind);
 	}
 
 	public void redistribute(Instantiator<Integer, Integer> opKindInst) {
 		final Set<String> conflicts = new HashSet<String>();
 		
-		final Map<String, Integer> newSet = redistribute(set, opKindInst, conflicts);
-		final Map<String, Integer> newReserved = redistribute(reserved, opKindInst,
-				conflicts);
+		final Map<String, Integer> newLexTokens = redistribute(lexTokens,
+				opKindInst, conflicts);
+		final Map<String, Integer> newReserved = redistribute(reserved,
+				opKindInst, conflicts);
 
-		processConflicts(conflicts, newSet, newReserved, opKindInst);
-		assert newSet.size() == set.size();
+		processConflicts(conflicts, newLexTokens, newReserved, opKindInst);
+		assert newLexTokens.size() == lexTokens.size();
 		assert newReserved.size() == reserved.size();
-		set.clear();
-		set.putAll(newSet);
+		lexTokens.clear();
+		lexTokens.putAll(newLexTokens);
 		reserved.clear();
 		reserved.putAll(newReserved);
 	}
 
 	private Map<String, Integer> redistribute(Map<String, Integer> from,
-			Instantiator<Integer, Integer> opKindInst, final Set<String> conflicts) {
+			Instantiator<Integer, Integer> opKindInst, Set<String> conflicts) {
 		final Map<String, Integer> result = new HashMap<String, Integer>();
 		for (Entry<String, Integer> entry : from.entrySet()) {
-			final Integer index = entry.getValue();
-			if (!opKindInst.hasInst(index)) {
-				result.put(entry.getKey(), index);
+			final Integer kind = entry.getValue();
+			if (!opKindInst.hasInst(kind)) {
+				result.put(entry.getKey(), kind);
 				continue;
 			}
-			final Integer newIndex = opKindInst.instantiate(index);
-			result.put(entry.getKey(), newIndex);
-			if (!opKindInst.hasInst(newIndex)) {
-				final String elemConflict = getElem(newIndex);
+			final Integer newKind = opKindInst.instantiate(kind);
+			result.put(entry.getKey(), newKind);
+			if (!opKindInst.hasInst(newKind)) {
+				final String elemConflict = getImage(newKind);
 				if (elemConflict != null) {
 					conflicts.add(elemConflict);
 				}
@@ -142,22 +145,24 @@ public class IndexedSet {
 	}
 
 	private void processConflicts(Set<String> conflicts,
-			Map<String, Integer> newSet, Map<String, Integer> newReserved, Instantiator<Integer, Integer> opKindInst) {
+			Map<String, Integer> newLexTokens,
+			Map<String, Integer> newReserved,
+			Instantiator<Integer, Integer> opKindInst) {
 		for (String obj : conflicts) {
-			final int conflictIndex;
-			final int newIndex;
-			if(newSet.containsKey(obj)) {
-				conflictIndex = newSet.remove(obj);
-				newIndex = getOrAdd(obj, newSet);
+			final int conflictKind;
+			final int newKind;
+			if(newLexTokens.containsKey(obj)) {
+				conflictKind = newLexTokens.remove(obj);
+				newKind = getOrAdd(obj, newLexTokens);
 			} else if (newReserved.containsKey(obj)) {
-				conflictIndex = newReserved.remove(obj);
-				newIndex = getOrAdd(obj, newReserved);
+				conflictKind = newReserved.remove(obj);
+				newKind = getOrAdd(obj, newReserved);
 			} else {
 				assert false;
-				conflictIndex = Integer.MIN_VALUE;
-				newIndex = Integer.MIN_VALUE;
+				conflictKind = Integer.MIN_VALUE;
+				newKind = Integer.MIN_VALUE;
 			}
-			opKindInst.setInst(conflictIndex, newIndex);
+			opKindInst.setInst(conflictKind, newKind);
 		}
 	}
 

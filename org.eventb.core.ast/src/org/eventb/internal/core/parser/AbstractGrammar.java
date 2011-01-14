@@ -105,7 +105,7 @@ public abstract class AbstractGrammar {
 		for (Entry<Integer, String> kindId : kindIds.entrySet()) {
 			final Integer kind = kindId.getKey();
 			final String id = kindId.getValue();
-			final String syntaxSymbol = tokens.getElem(kind);
+			final String syntaxSymbol = tokens.getImage(kind);
 			final IOperator operator = new ExternalViewUtils.ExternalOperator(id, syntaxSymbol);
 			instantiator.setInst(kind, operator);
 		}
@@ -198,16 +198,16 @@ public abstract class AbstractGrammar {
 		_INTLIT = tokens.getReserved(INTLIT_IMAGE);
 		_NEGLIT = tokens.getReserved(NEGLIT_ID);
 		_PREDVAR = tokens.getReserved(PREDVAR_ID);
-		_LPAR = tokens.getIndex(LPAR_IMAGE);
-		_RPAR = tokens.getIndex(RPAR_IMAGE);
-		_COMMA = tokens.getIndex(COMMA_IMAGE);
-		_RBRACKET = tokens.getIndex(RBRACKET_IMAGE);
-		_RBRACE = tokens.getIndex(RBRACE_IMAGE);
-		_MAPSTO = tokens.getIndex(MAPSTO_IMAGE);
-		_MID = tokens.getIndex(MID_IMAGE);
-		_DOT = tokens.getIndex(DOT_IMAGE);
-		_KPARTITION = tokens.getIndex(PARTITION_IMAGE);
-		_OFTYPE = tokens.getIndex(OFTYPE_IMAGE);
+		_LPAR = tokens.getKind(LPAR_IMAGE);
+		_RPAR = tokens.getKind(RPAR_IMAGE);
+		_COMMA = tokens.getKind(COMMA_IMAGE);
+		_RBRACKET = tokens.getKind(RBRACKET_IMAGE);
+		_RBRACE = tokens.getKind(RBRACE_IMAGE);
+		_MAPSTO = tokens.getKind(MAPSTO_IMAGE);
+		_MID = tokens.getKind(MID_IMAGE);
+		_DOT = tokens.getKind(DOT_IMAGE);
+		_KPARTITION = tokens.getKind(PARTITION_IMAGE);
+		_OFTYPE = tokens.getKind(OFTYPE_IMAGE);
 	}
 
 	private void compact() {
@@ -232,7 +232,7 @@ public abstract class AbstractGrammar {
 	private void populateSubParsers(
 			IOperatorInfo<? extends Formula<?>> operInfo)
 			throws OverrideException {
-		final int kind = tokens.getIndex(operInfo.getImage());
+		final int kind = tokens.getKind(operInfo.getImage());
 		final IParserPrinter<? extends Formula<?>> parser = operInfo.makeParser(kind);
 		if (parser instanceof INudParser<?>) {
 			subParsers.addNud(kind, (INudParser<? extends Formula<?>>) parser);
@@ -290,7 +290,8 @@ public abstract class AbstractGrammar {
 		deferredOperators.add(operInfo);
 	}
 
-	// subparser gets its kind directly from grammar, i.e kind is not hard coded
+	// must be called only with subparsers getting their kind dynamically from a
+	// grammar while parsing, the kind must not be stored inside the subparser
 	protected void addOperator(String token, String operatorId, String groupId,
 			ILedParser<? extends Formula<?>> subParser, boolean isSpaced)
 			throws OverrideException {
@@ -299,7 +300,8 @@ public abstract class AbstractGrammar {
 		subParsers.addLed(kind, subParser);
 	}
 
-	// subparser gets its kind directly from grammar, i.e kind is not hard coded
+	// must be called only with subparsers getting their kind dynamically from a
+	// grammar while parsing, the kind must not be stored inside the subparser
 	public void addOperator(int kind, String operatorId, String groupId,
 			INudParser<? extends Formula<?>> subParser, boolean isSpaced)
 			throws OverrideException {
@@ -406,12 +408,12 @@ public abstract class AbstractGrammar {
 	}
 	
 	public String getImage(int kind) {
-		return tokens.getElem(kind);
+		return tokens.getImage(kind);
 	}
 
 	public int getKind(String image) {
-		final int kind = tokens.getIndex(image);
-		if (kind == IndexedSet.NOT_AN_INDEX) {
+		final int kind = tokens.getKind(image);
+		if (kind == IndexedSet.UNKNOWN_KIND) {
 			// TODO consider throwing a caught exception (for extensions to manage)
 			throw new IllegalArgumentException("No such token: " + image);
 		}

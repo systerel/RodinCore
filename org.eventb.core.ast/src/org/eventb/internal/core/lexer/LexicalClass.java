@@ -47,8 +47,8 @@ public enum LexicalClass {
 
 		@Override
 		public int getKind(String image, AbstractGrammar grammar) {
-			final int kind = grammar.getTokens().getIndex(image);
-			if (kind == IndexedSet.NOT_AN_INDEX) {
+			final int kind = grammar.getTokens().getKind(image);
+			if (kind == IndexedSet.UNKNOWN_KIND) {
 				return grammar.getIDENT();
 			} else {
 				return kind;
@@ -73,7 +73,7 @@ public enum LexicalClass {
 
 		@Override
 		public int getKind(String image, AbstractGrammar grammar) {
-			return grammar.getTokens().getIndex(image);
+			return grammar.getTokens().getKind(image);
 		}
 
 		@Override
