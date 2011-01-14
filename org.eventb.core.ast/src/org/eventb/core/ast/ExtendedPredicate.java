@@ -140,9 +140,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	private final Expression[] childExpressions;
 	private final Predicate[] childPredicates;
 	private final IPredicateExtension extension;
-	private final FormulaFactory ff;
 
-	
 	public ExtendedPredicate(int tag, Expression[] expressions,
 			Predicate[] predicates, SourceLocation location,
 			FormulaFactory ff, IPredicateExtension extension) {
@@ -151,7 +149,6 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 		this.childExpressions = expressions.clone();
 		this.childPredicates = predicates.clone();
 		this.extension = extension;
-		this.ff = ff;
 		checkPreconditions();
 		setPredicateVariableCache(getChildren());
 		synthesizeType(ff);

@@ -178,7 +178,6 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	private final Expression[] childExpressions;
 	private final Predicate[] childPredicates;
 	private final IExpressionExtension extension;
-	private final FormulaFactory ff;
 
 	protected ExtendedExpression(int tag, Expression[] expressions,
 			Predicate[] predicates, SourceLocation location,
@@ -188,7 +187,6 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		this.childExpressions = expressions.clone();
 		this.childPredicates = predicates.clone();
 		this.extension = extension;
-		this.ff = ff;
 		checkPreconditions();
 		setPredicateVariableCache(getChildren());
 		synthesizeType(ff, type);
