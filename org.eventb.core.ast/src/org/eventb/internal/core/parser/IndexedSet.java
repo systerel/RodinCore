@@ -34,6 +34,9 @@ public class IndexedSet {
 	// reserved tokens, identified by an id
 	private final Map<String, Integer> reserved = new HashMap<String, Integer>();
 	
+	// reversed access to both maps, indexed on kinds
+	private String[] images = null;
+	
 	private int nextKind = FIRST_KIND;
 
 	public IndexedSet() {
@@ -76,6 +79,13 @@ public class IndexedSet {
 	}
 	
 	public String getImage(int kind) {
+		if (images != null) {
+			return images[kind];
+		}
+		return findImage(kind);
+	}
+
+	private String findImage(int kind) {
 		final String elem = getElem(kind, lexTokens);
 		if (elem != null) {
 			return elem;
@@ -166,4 +176,24 @@ public class IndexedSet {
 		}
 	}
 
+	// called when kinds are stable and contiguous;
+	// initializes reversed access to images
+	public void compact() {
+		images = new String[nextKind];
+		compact(lexTokens);
+		compact(reserved);
+	}
+
+	private void compact(Map<String, Integer> map) {
+		for (Entry<String, Integer> entry : map.entrySet()) {
+			final int kind = entry.getValue();
+			final String image = entry.getKey();
+			if (images[kind] != null) {
+				throw new IllegalStateException("token kind overriding: kind = "
+						+ kind + " images: \"" + images[kind] + "\" and \""
+						+ image + "\"");
+			}
+			images[kind] = image;
+		}
+	}
 }

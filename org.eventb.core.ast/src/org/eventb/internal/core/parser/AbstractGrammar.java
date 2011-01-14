@@ -218,6 +218,7 @@ public abstract class AbstractGrammar {
 		initOpRegistry = null;
 		
 		tokens.redistribute(opKindInst);
+		tokens.compact();
 		subParsers.redistribute(opKindInst);
 		
 		final Map<Integer, Integer> newCloseOpen = new HashMap<Integer, Integer>();
