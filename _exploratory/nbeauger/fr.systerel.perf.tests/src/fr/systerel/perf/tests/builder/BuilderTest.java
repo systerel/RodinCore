@@ -27,6 +27,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -74,10 +75,11 @@ public abstract class BuilderTest {
 		final File project = URIUtil.toFile(absURI);
 		assertTrue(project.isDirectory());
 		final File[] testProjects = project.listFiles();
+		Arrays.sort(testProjects);
 		final List<File[]> res = new ArrayList<File[]>(testProjects.length);
 		for (File file : testProjects) {
 			res.add(new File[] { file });
-		}		
+		}
 		return res;
 	}
 
