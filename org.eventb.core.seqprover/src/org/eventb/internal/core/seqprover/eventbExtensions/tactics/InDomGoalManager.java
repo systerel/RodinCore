@@ -65,7 +65,7 @@ public class InDomGoalManager {
 	 * 
 	 * @param ptNode
 	 *            current proof tree node.
-	 * @return true iff the tactic is appplicable.
+	 * @return true iff the tactic is applicable.
 	 */
 	public boolean isApplicable(IProofTreeNode ptNode) {
 

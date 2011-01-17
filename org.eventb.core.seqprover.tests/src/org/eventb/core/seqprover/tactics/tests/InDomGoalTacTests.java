@@ -166,4 +166,16 @@ public class InDomGoalTacTests {
 		assertFailure(pt.getRoot());
 	}
 
+	/**
+	 * Reproduces bug 3116665.
+	 */
+	@Test
+	public void bug3116665() {
+		final IProofTree pt = genProofTree(//
+				"v ∈ dom(dom({1↦1↦1}))"
+		);
+		// when the bug is present, the following line throws an AssertionError
+		tac.apply(pt.getRoot(), null);
+	}
+
 }

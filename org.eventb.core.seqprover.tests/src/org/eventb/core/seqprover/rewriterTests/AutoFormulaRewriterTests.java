@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -29,6 +29,7 @@ import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
 import org.junit.Test;
 
 /**
@@ -87,6 +88,8 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 	}
 	protected static final FormulaFactory DT_FAC = FormulaFactory.getInstance(EXTENSIONS);
 	
+	protected final boolean level2AndHigher;
+
 	/**
 	 * Constructor.
 	 * <p>
@@ -95,6 +98,7 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 	 */
 	public AutoFormulaRewriterTests(AutoRewriterImpl rewriter) {
 		super(rewriter);
+		this.level2AndHigher = rewriter.getLevel().from(Level.L2);
 	}
 
 	/**
@@ -568,6 +572,7 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 		predicateTest("n=0", "n ∈ {x·x=0∣x}");
 		// One Point Rule does not apply replacement on guard ('x=0' here)
 		predicateTest("∃x· x=0 ∧ x+1 = n", "n ∈ {x·x=0∣x+1}");
+
 		// Jean-Raymond Abrial's bug
 		predicateTest("∃z·(∃x,y·(x>0∧y>0)∧g(x+y)−g(x)−g(y)=l)∧l=z",
 				"∃z·(l∈ {x,y·x>0 ∧ y>0 ∣ g(x+y)−g(x)−g(y)})∧l=z");
@@ -602,7 +607,13 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 		
 		// (f <+ {E |-> F})(E) = F
 		expressionTest("3", "(f  {x + 2 ↦ 3})(x + 2)");
-
+		expressionTest("(f  {2 ↦ 3}  g)(2)", "(f  {2 ↦ 3}  g)(2)");
+		if (level2AndHigher) {
+			expressionTest("3", "(f  {2 ↦ 3, 4 ↦ 5})(2)");
+		} else {
+			expressionTest("(f  {2 ↦ 3, 4 ↦ 5})(2)", //
+					"(f  {2 ↦ 3, 4 ↦ 5})(2)");
+		}
  
 		// E : {F} == E = F (if F is a single expression)
 		predicateTest("x + 2 ∗ y = y + 2 ∗ x", "x + 2 ∗ y ∈ {y + 2 ∗ x}");
@@ -641,18 +652,39 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 
 		
 		// f(f~(E)) == E
-		expressionTest("y + 2", "{x + 2 ↦ 3}(({x + 2 ↦ 3}∼)(y + 2))");
-		
+		expressionTest("E", "f(f∼(E))", "f", "S↔T", "E", "T");
+		if (level2AndHigher) {
+			expressionTest("3", "{x + 2 ↦ 3}(({x + 2 ↦ 3}∼)(y + 2))");
+		} else {
+			expressionTest("y + 2", "{x + 2 ↦ 3}(({x + 2 ↦ 3}∼)(y + 2))");
+		}
 
+		
 		// f~(f(E)) == E
-		expressionTest("y + 2", "({x + 2 ↦ 3}∼)({x + 2 ↦ 3}(y + 2))");
+		expressionTest("E", "f∼(f(E))", "f", "S↔T", "E", "S");
+		if (level2AndHigher) {
+			expressionTest("x + 2", "({x + 2 ↦ 3}∼)({x + 2 ↦ 3}(y + 2))");
+		} else {
+			expressionTest("y + 2", "({x + 2 ↦ 3}∼)({x + 2 ↦ 3}(y + 2))");
+		}
 
 		
 		// {x |-> a, ..., y |-> b}({a |-> x, ..., b |-> y}(E)) = E
-		expressionTest("y + 2", "{x + 2 ↦ 3}({3 ↦ x + 2}(y + 2))");
-		expressionTest("y + 2", "{x + 2 ↦ 3, y ↦ 2}({3 ↦ x + 2, 2 ↦ y}(y + 2))");
-		expressionTest("y + 2", "{x + 2 ↦ 3, y ↦ 2, a ↦ b}({3 ↦ x + 2, 2 ↦ y, b ↦ a}(y + 2))");
-		
+		expressionTest("E", "{x ↦ a, y ↦ b}({a ↦ x, b ↦ y}(E))", //
+				"E", "S", "a", "S", "x", "T");
+		if (level2AndHigher) {
+			expressionTest("3", "{x + 2 ↦ 3}({3 ↦ x + 2}(y + 2))");
+			expressionTest("y + 2",
+					"{x + 2 ↦ 3, y ↦ 2}({3 ↦ x + 2, 2 ↦ y}(y + 2))");
+			expressionTest("y + 2",
+					"{x + 2 ↦ 3, y ↦ 2, a ↦ b}({3 ↦ x + 2, 2 ↦ y, b ↦ a}(y + 2))");
+		} else {
+			expressionTest("y + 2", "{x + 2 ↦ 3}({3 ↦ x + 2}(y + 2))");
+			expressionTest("y + 2",
+					"{x + 2 ↦ 3, y ↦ 2}({3 ↦ x + 2, 2 ↦ y}(y + 2))");
+			expressionTest("y + 2",
+					"{x + 2 ↦ 3, y ↦ 2, a ↦ b}({3 ↦ x + 2, 2 ↦ y, b ↦ a}(y + 2))");
+		}
 
 		// p;...;{};...;q == {}
 		expressionTest("(∅⦂S↔U)", "f;(∅⦂T↔U)", "f", "S↔T");
@@ -763,7 +795,11 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 		expressionTest("(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(w)", "(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(w)",//
 				"w", "ℤ×ℤ");
 		// Rewriting fails as "x" is not a maplet
-		expressionTest("{x·x∈ℤ×ℤ∣x}(1)", "{x·x∈ℤ×ℤ∣x}(1)");
+		if (level2AndHigher) {
+			expressionTest("(ℤ×ℤ)(1)", "{x·x∈ℤ×ℤ∣x}(1)");
+		} else {
+			expressionTest("{x·x∈ℤ×ℤ∣x}(1)", "{x·x∈ℤ×ℤ∣x}(1)");
+		}
 		// Rewriting fails as "pair" is not an explicit maplet
 		expressionTest("(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(pair)", "(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(pair)");
 		
@@ -782,8 +818,8 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 		// Checks that external lambda disappear and x is instantiated
 		expressionTest("(λz·z∈ℕ ∣ z+z)[{1,2,3}]", "(λx·x∈ℙ(ℕ) ∣ (λz·z∈ℕ ∣ z+z)[x])({1,2,3})");
 		// Real example from Bug 2995930 with an argument containing a bound identifier.
-		predicateTest("∀t⦂ℙ(S)·(λx↦p·x∈t∧p⊆t∣p) = ∅",
-				"∀t⦂ℙ(S)·(λs·s⊆S∣(λx↦p·x∈s∧p⊆s∣p))(t) = ∅", "S", "ℙ(S)");
+		predicateTest("∀t⦂ℙ(S)·(λx↦p·x∈t∧p⊆t∣p) = a",
+				"∀t⦂ℙ(S)·(λs⦂ℙ(S)·s⊆S∣(λx↦p·x∈s∧p⊆s∣p))(t) = a");
 	}
 
 	/**
@@ -1036,10 +1072,16 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 		
 		
 		// finite(r~) == finite(r)
-		predicateTest("finite({x ↦ y ∣ x > 0 ∧ y < 2})",
-				"finite({x ↦ y ∣ x > 0 ∧ y < 2}∼)");
+		predicateTest("finite(r)", "finite(r∼)", "r", "S↔T");
+		if (level2AndHigher) {
+			predicateTest("finite({x,y · x>0 ∧ y<2 ∣ y↦x})",
+					"finite({x ↦ y ∣ x > 0 ∧ y < 2}∼)");
+		} else {
+			predicateTest("finite({x ↦ y ∣ x > 0 ∧ y < 2})",
+					"finite({x ↦ y ∣ x > 0 ∧ y < 2}∼)");
+		}
 
-		
+
 		// finite(a..b) == true
 		predicateTest("⊤", "finite(a‥b)");
 
@@ -1098,20 +1140,36 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 		// card(S(1) \/ ... \/ S(n)) == card(S(1)) + ... card(S(2)) -
 		//	                            - ... 
 		//                              + (-1)^(n-1)card(S(1) /\ ... card(S(n)))
-		expressionTest(
-				"card({x ∣ x ∈ BOOL}) + card(S) − card({x ∣ x ∈ BOOL} ∩ S)",
-				"card({x ∣ x ∈ BOOL} ∪ S)");
-		expressionTest(
-				"card({x ∣ x ∈ BOOL}) + card(S) + card(T) − "
-						+ "(card({x ∣ x ∈ BOOL} ∩ S) + card({x ∣ x ∈ BOOL} ∩ T) + card(S ∩ T)) + "
-						+ "card({x ∣ x ∈ BOOL} ∩ S ∩ T)",
-				"card({x ∣ x ∈ BOOL} ∪ S ∪ T)");
-		expressionTest(
-				"card({x ∣ x ∈ BOOL}) + card(S) + card(T) + card(R) − "
-						+ "(card({x ∣ x ∈ BOOL} ∩ S) + card({x ∣ x ∈ BOOL} ∩ T) + card({x ∣ x ∈ BOOL} ∩ R) + card(S ∩ T) + card(S ∩ R) + card(T ∩ R)) + "
-						+ "(card({x ∣ x ∈ BOOL} ∩ S ∩ T) + card({x ∣ x ∈ BOOL} ∩ S ∩ R) + card({x ∣ x ∈ BOOL} ∩ T ∩ R) + card(S ∩ T ∩ R)) − "
-						+ "card({x ∣ x ∈ BOOL} ∩ S ∩ T ∩ R)",
-				"card({x ∣ x ∈ BOOL} ∪ S ∪ T ∪ R)");
+		if (level2AndHigher) {
+			expressionTest("card(A) + card(B) − card(A ∩ B)", "card(A ∪ B)", //
+					"A", "ℙ(S)", "B", "ℙ(S)");
+			expressionTest(
+					"card(A) + card(B)  + card(C) − (card(A ∩ B) + card(A ∩ C) + card(B ∩ C)) + card(A ∩ B ∩ C)", //
+					"card(A ∪ B ∪ C)", //
+					"A", "ℙ(S)");
+			expressionTest(
+					"card(A) + card(B) + card(C) + card(D) − "
+							+ "(card(A ∩ B) + card(A ∩ C) + card(A ∩ D) + card(B ∩ C) + card(B ∩ D) + card(C ∩ D)) + "
+							+ "(card(A ∩ B ∩ C) + card(A ∩ B ∩ D) + card(A ∩ C ∩ D) + card(B ∩ C ∩ D)) − "
+							+ "card(A ∩ B ∩ C ∩ D)",//
+					"card(A ∪ B ∪ C ∪ D)", //
+					"A", "ℙ(S)");
+		} else {
+			expressionTest(
+					"card({x ∣ x ∈ BOOL}) + card(S) − card({x ∣ x ∈ BOOL} ∩ S)",
+					"card({x ∣ x ∈ BOOL} ∪ S)");
+			expressionTest(
+					"card({x ∣ x ∈ BOOL}) + card(S) + card(T) − "
+							+ "(card({x ∣ x ∈ BOOL} ∩ S) + card({x ∣ x ∈ BOOL} ∩ T) + card(S ∩ T)) + "
+							+ "card({x ∣ x ∈ BOOL} ∩ S ∩ T)",
+					"card({x ∣ x ∈ BOOL} ∪ S ∪ T)");
+			expressionTest(
+					"card({x ∣ x ∈ BOOL}) + card(S) + card(T) + card(R) − "
+							+ "(card({x ∣ x ∈ BOOL} ∩ S) + card({x ∣ x ∈ BOOL} ∩ T) + card({x ∣ x ∈ BOOL} ∩ R) + card(S ∩ T) + card(S ∩ R) + card(T ∩ R)) + "
+							+ "(card({x ∣ x ∈ BOOL} ∩ S ∩ T) + card({x ∣ x ∈ BOOL} ∩ S ∩ R) + card({x ∣ x ∈ BOOL} ∩ T ∩ R) + card(S ∩ T ∩ R)) − "
+							+ "card({x ∣ x ∈ BOOL} ∩ S ∩ T ∩ R)",
+					"card({x ∣ x ∈ BOOL} ∪ S ∪ T ∪ R)");
+		}
 	}
 
 	/**
@@ -1151,4 +1209,12 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 		expressionTest("2", "COND(x=1,2,2)");
 		
 	}
+
+	@Test
+	public void bug3158594() throws Exception {
+		predicateTest("∃y·y∗y<0∧y=1 ÷ 0",
+				"0 ↦ 0 ∈ {x ∣ ∃ y· y∗y < 0 ∧ y = 1 ÷ 0}");
+		predicateTest("∃y·y∗y<0∧y=1 ÷ 0", "∃y·y∗y<0∧y=1 ÷ 0");
+	}
+
 }

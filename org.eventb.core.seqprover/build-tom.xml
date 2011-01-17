@@ -43,7 +43,6 @@
 		<delete file="${rewriter.src}/AndOrDistRewriterImpl.java" />
 		<delete file="${rewriter.src}/ArithRewriterImpl.java" />
 		<delete file="${rewriter.src}/AutoRewriterImpl.java" />
-		<delete file="${rewriter.src}/CompImgRewriterImpl.java" />
 		<delete file="${rewriter.src}/CompUnionDistRewriterImpl.java" />
 		<delete file="${rewriter.src}/ConvRewriterImpl.java" />
 		<delete file="${rewriter.src}/DomCompRewriterImpl.java" />
@@ -84,6 +83,7 @@
 		<delete file="${inference.src}/FunSetMinusImg.java" />
 		<delete file="${inference.src}/FunSingletonImg.java" />
 		<delete file="${inference.src}/OnePointFilterUtils.java" />
+		<delete file="${inference.src}/OnePointFilter.java" />
     </target>
 	
 </project>

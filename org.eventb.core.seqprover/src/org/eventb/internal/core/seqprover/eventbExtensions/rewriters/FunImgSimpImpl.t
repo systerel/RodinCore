@@ -68,10 +68,9 @@ public class FunImgSimpImpl {
 	}
 
 	private static Predicate searchFunction(Expression f, IProverSequent sequent) {
-		for (Predicate hypo : sequent.visibleHypIterable()) {
-			final Predicate predicate = searchPFuncKind(f, hypo);
-			if (predicate != null) {
-				return predicate;
+		for (Predicate hyp : sequent.visibleHypIterable()) {
+			if (isFunPred(hyp, f)) {
+				return hyp;
 			}
 		}
 		return null;
@@ -93,108 +92,29 @@ public class FunImgSimpImpl {
 	}
 
 	%include {FormulaV2.tom}
-	
-	public static Expression getFunImgFunction(Expression expr){
-	
+
+	public static Expression getFunImgFunction(Expression expr) {
 		%match (Expression expr) {
-			
-			FunImage(DomSub(_,fun),_)->
-			{
+			FunImage((DomSub|DomRes)(_,fun),_) -> {
 				return `fun;
 			}
-			
-			FunImage(DomRes(_,fun),_)->
-			{
-				return `fun;
-			}
-			
-			FunImage(RanRes(fun,_),_)->
-			{
-				return `fun;
-			}
-			
-			FunImage(RanSub(fun,_),_)->
-			{
-				return `fun;
-			}
-			
-			FunImage(SetMinus(fun,_),_)->
-			{
+			FunImage((RanSub|RanRes|SetMinus)(fun,_),_) -> {
 				return `fun;
 			}
 		}
 		return null;
 	}
-				 
-	// search a function if it is at least a partial function 
-	private static Predicate searchPFuncKind(Expression f, Predicate predicate)
-	{
-			%match (Predicate predicate) {
-			/**
-	         * Partial function
-	         */
-			In(exp,Pfun(_,_))->
-			{
-						if (`exp.equals(f))
-						return predicate;
-			}
-			
-			/**
-	         * Total function
-	         */
-			In(exp,Tfun(_,_))->
-			{
-						if (`exp.equals(f))
-						return predicate;
-			}
-			
-			/**
-	         * Partial injection
-	         */
-			In(exp,Pinj(_,_))->
-			{
-						if (`exp.equals(f))
-						return predicate;
-			}
-			
-			/**
-	         * Total injection
-	         */
-			In(exp,Tinj(_,_))->
-			{
-						if (`exp.equals(f))
-						return predicate;
-			}
-			
-			/**
-	         * Partial surjection
-	         */
-			In(exp,Psur(_,_))->
-			{
-						if (`exp.equals(f))
-						return predicate;
-			}
-			
-			/**
-	         * Total surjection
-	         */
-			In(exp,Tsur(_,_))->
-			{
-						if (`exp.equals(f))
-						return predicate;
-			}
 
-			/**
-	         * Bijection
-	         */
-			In(exp,Tbij(_,_))->
-			{
-						if (`exp.equals(f))
-						return predicate;
+	// Tells whether the given predicate states that the given expression
+	// is functional.
+	private static boolean isFunPred(Predicate pred, Expression fun) {
+		%match (Predicate pred) {
+			In(f, (Pfun|Tfun|Pinj|Tinj|Psur|Tsur|Tbij)(_,_)) -> {
+				if (fun.equals(`f))
+					return true;
 			}
-		    
-			}
-		return null;		
-	} 
-	
+		}
+		return false;
+	}
+
 }

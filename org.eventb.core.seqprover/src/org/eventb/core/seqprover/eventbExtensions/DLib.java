@@ -391,8 +391,12 @@ public class DLib {
 		Lib.postConstructionCheck(result);
 		return result;
 	}
-	
-	
-	
+
+	/**
+	 * @since 2.1
+	 */
+	public FormulaFactory getFormulaFactory() {
+		return ff;
+	}
 
 }

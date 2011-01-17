@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Systerel and others.
+ * Copyright (c) 2009, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,76 +13,36 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
+import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 import static org.eventb.core.seqprover.ProverFactory.makeForwardInfHypAction;
 import static org.eventb.core.seqprover.ProverFactory.makeHideHypAction;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
-
-import java.util.Collections;
-import java.util.Set;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
-import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
-import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.IReasonerInputReader;
-import org.eventb.core.seqprover.IReasonerInputWriter;
-import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.IVersionedReasoner;
-import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.SerializeException;
-import org.eventb.core.seqprover.proofBuilder.ReplayHints;
+import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 
 /**
- * @author "Nicolas Beauger"
+ * Generates a proof rule for one point rules ONE_POINT_L and ONE_POINT_R.
  * 
+ * @author Nicolas Beauger
+ * @author Benoît Lucet
  */
-public class OnePointRule implements IVersionedReasoner {
+public class OnePointRule extends HypothesisReasoner implements
+		IVersionedReasoner {
 
 	// NB: One Point Rule is used by AutoRewrites; thus, modifications here also
 	// affect it => don't forget to upgrade its version at the same time !
 	private static final int REASONER_VERSION = 2;
-
-	public static class Input implements IReasonerInput {
-
-		Predicate pred;
-
-		/**
-		 * The parameter is the hypothesis to rewrite. If <code>null</code>,
-		 * the rewriting will be applied to the goal.
-		 * 
-		 * @param pred
-		 *            hypothesis to rewrite or <code>null</code>
-		 */
-		public Input(Predicate pred) {
-			this.pred = pred;
-		}
-
-		public void applyHints(ReplayHints renaming) {
-			if (pred != null)
-				pred = renaming.applyHints(pred);
-		}
-
-		public String getError() {
-			return null;
-		}
-
-		public boolean hasError() {
-			return false;
-		}
-
-		public Predicate getPred() {
-			return pred;
-		}
-
-	}
 
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".onePointRule";
@@ -91,106 +51,70 @@ public class OnePointRule implements IVersionedReasoner {
 		return REASONER_ID;
 	}
 
+	@Override
+	public int getVersion() {
+		return REASONER_VERSION;
+	}
+
+	@Override
+	protected String getDisplay(Predicate pred) {
+		return "One Point Rule in " + (pred == null ? "goal" : pred);
+	}
+
 	public static boolean isApplicable(Formula<?> formula, FormulaFactory ff) {
 		if (!(formula instanceof QuantifiedPredicate)) {
 			return false;
 		}
-		final OnePointSimplifier matcher = new OnePointSimplifier(
+
+		final OnePointProcessorInference matcher = new OnePointProcessorInference(
 				(QuantifiedPredicate) formula, ff);
-		matcher.matchAndApply();
+		matcher.matchAndInstantiate();
 		return matcher.wasSuccessfullyApplied();
 	}
 
-	@ProverRule( { "ONE_POINT_L", "ONE_POINT_R" })
-	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
-			IProofMonitor pm) {
-		final Input pInput = (Input) input;
-		final Predicate pred = pInput.getPred();
-
-		final boolean isGoal = pred == null;
-		final Predicate applyTo = isGoal ? seq.goal() : pred;
-		IAntecedent[] antecedents = getAntecedents(applyTo, isGoal,
-				seq.getFormulaFactory());
-		if (antecedents == null) {
-			return ProverFactory.reasonerFailure(this, pInput, "Inference "
-					+ getReasonerID() + " is not applicable for "
-					+ applyTo);
-		}
-		if (isGoal) {
-			// Generate the successful reasoner output
-			return ProverFactory.makeProofRule(this, input, seq.goal(),
-					getDisplayName(pred), antecedents);
-		} else {
-			return ProverFactory.makeProofRule(this, input, null, pred,
-					getDisplayName(pred), antecedents);
-		}
+	@Override
+	protected boolean isGoalDependent(IProverSequent sequent, Predicate pred) {
+		return pred == null;
 	}
 
-	private String getDisplayName(Predicate pred) {
-		return "One Point Rule in " + (pred == null ? "goal" : pred);
-	}
+	@ProverRule({ "ONE_POINT_L", "ONE_POINT_R" })
+	@Override
+	protected IAntecedent[] getAntecedents(IProverSequent sequent,
+			Predicate pred) {
 
-	private IAntecedent[] getAntecedents(Predicate pred, boolean isGoal,
-			FormulaFactory ff) {
+		final boolean appliesToGoal = isGoalDependent(sequent, pred);
+		final FormulaFactory ff = sequent.getFormulaFactory();
+		final Predicate applyTo = appliesToGoal ? sequent.goal() : pred;
 
-		final OnePointSimplifier onePoint = new OnePointSimplifier(pred, ff);
-		onePoint.matchAndApply();
+		final OnePointProcessorInference processor = new OnePointProcessorInference(
+				(QuantifiedPredicate) applyTo, ff);
+		processor.matchAndInstantiate();
 
-		if (!onePoint.wasSuccessfullyApplied()) {
-			return null;
+		if (!processor.wasSuccessfullyApplied()) {
+			throw new IllegalArgumentException(
+					"One point processing unsuccessful for predicate "
+							+ applyTo);
 		}
-		
-		final Predicate simplified = onePoint.getProcessedPredicate();
 
-		final Expression replacement = onePoint.getReplacement();
+		final Predicate simplified = processor.getProcessedResult();
+		final Expression replacement = processor.getReplacement();
+
 		final Predicate replacementWD = mDLib(ff).WD(replacement);
 
 		// There will be 2 antecedents
-		IAntecedent[] antecedents = new IAntecedent[2];
-
-		final ISelectionHypAction hideOnePointPred = makeHideHypAction(singleton(pred));
-		if (isGoal) {
-			antecedents[0] = ProverFactory.makeAntecedent(simplified);
+		final IAntecedent a1;
+		final IAntecedent a2;
+		if (appliesToGoal) {
+			a1 = makeAntecedent(simplified);
+			a2 = makeAntecedent(replacementWD);
 		} else {
-			antecedents[0] = ProverFactory.makeAntecedent(null, null, null,
-					asList(makeForwardInfHypAction(singleton(pred),
-							singleton(simplified)), hideOnePointPred));
+			final IHypAction fwdInf = makeForwardInfHypAction(
+					singleton(applyTo), singleton(simplified));
+			final IHypAction hideHyp = makeHideHypAction(singleton(applyTo));
+			a1 = makeAntecedent(null, null, null, asList(fwdInf, hideHyp));
+			a2 = makeAntecedent(replacementWD, null, hideHyp);
 		}
-
-		antecedents[1] = ProverFactory.makeAntecedent(replacementWD,
-				Collections.<Predicate> emptySet(), hideOnePointPred);
-
-		return antecedents;
-	}
-
-	public void serializeInput(IReasonerInput rInput,
-			IReasonerInputWriter writer) throws SerializeException {
-		// Nothing to serialise, the predicate is contained inside the rule
-	}
-
-	public Input deserializeInput(IReasonerInputReader reader)
-			throws SerializeException {
-		Set<Predicate> neededHyps = reader.getNeededHyps();
-
-		final int length = neededHyps.size();
-		if (length == 0) {
-			// Goal simplification
-			return new Input(null);
-		}
-		// Hypothesis simplification
-		if (length != 1) {
-			throw new SerializeException(new IllegalStateException(
-					"Expected exactly one needed hypothesis!"));
-		}
-		Predicate pred = null;
-		for (Predicate hyp : neededHyps) {
-			pred = hyp;
-		}
-		return new Input(pred);
-	}
-
-	public int getVersion() {
-		return REASONER_VERSION;
+		return new IAntecedent[] { a1, a2 };
 	}
 
 }

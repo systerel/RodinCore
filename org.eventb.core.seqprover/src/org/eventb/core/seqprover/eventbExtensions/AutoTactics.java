@@ -216,22 +216,25 @@ public class AutoTactics {
 	/**
 	 * Discharges any sequent whose goal denotes a membership to a domain the
 	 * value of which is known.
+	 * 
 	 * @since 2.0
 	 */
 	public static class InDomGoalTac implements ITactic {
 
 		public Object apply(IProofTreeNode initialNode, IProofMonitor pm) {
 
-			if (!checkPrecondition(initialNode)) {
-				return "Tactic unapplicable";
-			}				
 			final IProverSequent sequent = initialNode.getSequent();
 			final Predicate goal = sequent.goal();
-			if(pm != null && pm.isCanceled()) {
+			if (!checkPrecondition(goal)) {
+				return "Tactic unapplicable";
+			}
+			final IProofTreeNode ptNode = TacticsLib.addFunctionalHypotheses(
+					initialNode, pm);
+			if (pm != null && pm.isCanceled()) {
 				return "Canceled";
 			}
-			final IProofTreeNode ptNode = TacticsLib.addFunctionalHypotheses(initialNode, pm);
-			final InDomGoalManager manager = TacticsLib.createInDomManager(goal);
+			final InDomGoalManager manager = TacticsLib
+					.createInDomManager(goal);
 			if (manager.isApplicable(ptNode)) {
 				if (manager.applyTactics(ptNode, pm) == null) {
 					return null;
@@ -242,8 +245,7 @@ public class AutoTactics {
 		}
 
 		// Returns true if goal has syntactic form "E: dom(F)"
-		private static boolean checkPrecondition(IProofTreeNode node) {
-			final Predicate goal = node.getSequent().goal();
+		private static boolean checkPrecondition(Predicate goal) {
 			final Expression element = Lib.getSet(goal);
 			return element != null && Lib.isDom(element);
 		}

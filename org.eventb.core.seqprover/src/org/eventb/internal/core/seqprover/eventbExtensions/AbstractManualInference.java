@@ -11,6 +11,9 @@
  ******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import static org.eventb.core.ast.Formula.CONVERSE;
+import static org.eventb.core.ast.Formula.FCOMP;
+import static org.eventb.core.ast.Formula.IN;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
 import java.util.ArrayList;
@@ -36,9 +39,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
-import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -233,36 +234,23 @@ public abstract class AbstractManualInference extends PredicatePositionReasoner 
 
 	protected IAntecedent makeFunctionalAntecident(Expression f,
 			boolean converse, int tag, FormulaFactory ff) {
-		Type type = f.getType();
-		assert type instanceof PowerSetType;
-		PowerSetType powerType = (PowerSetType) type;
-		Type baseType = powerType.getBaseType();
-		assert baseType instanceof ProductType;
-		ProductType pType = (ProductType) baseType;
-		Type A = pType.getLeft();
-		Type B = pType.getRight();
-		Expression typeA = A.toExpression(ff);
-		Expression typeB = B.toExpression(ff);
-		Expression typeFun;
-		if (converse)
-			typeFun = ff.makeBinaryExpression(tag, typeB,
-				typeA, null);
-		else 
-			typeFun = ff.makeBinaryExpression(tag, typeA,
-					typeB, null);
-		Predicate pred;
+		final Type type = f.getType();
+		final Expression A = type.getSource().toExpression(ff);
+		final Expression B = type.getTarget().toExpression(ff);
+		final Predicate pred;
 		if (converse) {
-			Expression fConverse = ff.makeUnaryExpression(Expression.CONVERSE,
-					f, null);
-			pred = ff.makeRelationalPredicate(Predicate.IN, fConverse, typeFun,
-					null);
+			pred = makeInRelset(ff.makeUnaryExpression(CONVERSE, f, null), tag,
+					B, A, ff);
+		} else {
+			pred = makeInRelset(f, tag, A, B, ff);
 		}
-		else {
-			pred = ff.makeRelationalPredicate(Predicate.IN, f,
-					typeFun, null);
-		}
-		
 		return ProverFactory.makeAntecedent(pred);
+	}
+
+	private Predicate makeInRelset(Expression f, int tag, Expression A,
+			Expression B, FormulaFactory ff) {
+		final Expression set = ff.makeBinaryExpression(tag, A, B, null);
+		return ff.makeRelationalPredicate(IN, f, set, null);
 	}
 
 	protected IAntecedent makeWD(FormulaFactory ff, Predicate pred) {
@@ -273,6 +261,6 @@ public abstract class AbstractManualInference extends PredicatePositionReasoner 
 		if (children.size() == 1)
 			return children.iterator().next();
 		else
-			return ff.makeAssociativeExpression(Expression.FCOMP, children, null);	
+			return ff.makeAssociativeExpression(FCOMP, children, null);
 	}
 }

@@ -90,60 +90,16 @@ public class TotalDomSubstitutions {
 
 	%include {FormulaV2.tom}
 	
-	// a function that computes substitutions if the matched function is replacable for dom(f)
-	// null otherwise
+	// Adds a substitution for a relation whose domain is know
 	private void computeSubstitution(Predicate predicate)
 	{
-			%match (Predicate predicate) {
-			/**
-	         * Total function
-	         */
-			In(left,Tfun(left1,_))->
+		%match (Predicate predicate) {
+			In(left, (Tfun|Tinj|Tsur|Tbij|Trel|Strel)(left1, _))->
 			{
-						addSubstitution(`left, `left1, predicate);
+				addSubstitution(`left, `left1, predicate);
 			}
 			
-			/**
-	         * Total injection
-	         */
-			In(left,Tinj(left1,_))->
-			{
-						addSubstitution(`left, `left1, predicate);
-			}
-			
-			/**
-	         * Total surjection
-	         */
-			In(left,Tsur(left1,_))->
-			{
-						addSubstitution(`left, `left1, predicate);
-			}
-
-			/**
-	         * Bijection
-	         */
-			In(left,Tbij(left1,_))->
-			{
-						addSubstitution(`left, `left1, predicate);
-			}
-			
-			/**
-	         * Total relation
-	         */
-			In(left,Trel(left1,_))->
-			{
-						addSubstitution(`left, `left1, predicate);
-			}
-            
-            /**
-             * Total surjective relation
-             */
-            In(left,Strel(left1,_))->
-            {
-                        addSubstitution(`left, `left1, predicate);
-            }
-            
-			}
+		}
 	} 
 	
 }

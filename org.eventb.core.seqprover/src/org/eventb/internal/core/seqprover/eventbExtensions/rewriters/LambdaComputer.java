@@ -25,7 +25,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.internal.core.seqprover.eventbExtensions.OnePointSimplifier;
+import org.eventb.internal.core.seqprover.eventbExtensions.OnePointProcessorInference;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
 
 /**
@@ -134,7 +134,7 @@ public class LambdaComputer {
 		do {
 			final Predicate old = pred;
 			pred = pred.rewrite(rewriter);
-			pred = OnePointSimplifier.rewrite(pred, ff);
+			pred = OnePointProcessorInference.rewrite(pred, ff);
 			changed = old != pred;
 		} while (changed);
 		if (hasExpectedFinalForm(pred)) {
