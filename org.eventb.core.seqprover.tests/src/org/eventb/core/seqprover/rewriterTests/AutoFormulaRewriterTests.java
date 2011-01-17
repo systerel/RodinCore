@@ -1073,14 +1073,17 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 		
 		// finite(r~) == finite(r)
 		predicateTest("finite(r)", "finite(r∼)", "r", "S↔T");
+		// In level 2, expression "r~" can be rewritten earlier
 		if (level2AndHigher) {
+			predicateTest("BOOL = ∅ ∨ ℤ = ∅ ∨ (finite(BOOL) ∧ finite(ℤ))",
+					"finite((ℤ × BOOL)∼)");
 			predicateTest("finite({x,y · x>0 ∧ y<2 ∣ y↦x})",
 					"finite({x ↦ y ∣ x > 0 ∧ y < 2}∼)");
 		} else {
+			predicateTest("finite(ℤ × BOOL)", "finite((ℤ × BOOL)∼)");
 			predicateTest("finite({x ↦ y ∣ x > 0 ∧ y < 2})",
 					"finite({x ↦ y ∣ x > 0 ∧ y < 2}∼)");
 		}
-
 
 		// finite(a..b) == true
 		predicateTest("⊤", "finite(a‥b)");
