@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.INT_LIT;
 import static org.eventb.internal.core.parser.SubParsers.INTLIT_SUBPARSER;
 
 import java.math.BigInteger;
@@ -49,7 +50,7 @@ public class IntegerLiteral extends Expression {
 	 * @since 2.0
 	 */
 	public static void init(AbstractGrammar grammar) {
-		grammar.addReservedSubParser(grammar.getINTLIT(), INTLIT_SUBPARSER);
+		grammar.addReservedSubParser(INT_LIT, INTLIT_SUBPARSER);
 	}
 
 	// This literal value.  Can never be null.

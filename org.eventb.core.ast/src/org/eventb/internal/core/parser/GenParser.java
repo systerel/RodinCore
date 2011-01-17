@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LPAR;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.NOOP;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.OPEN;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RPAR;
 import static org.eventb.internal.core.parser.GenParser.ProgressDirection.LEFT;
 import static org.eventb.internal.core.parser.GenParser.ProgressDirection.RIGHT;
 
@@ -139,7 +144,7 @@ public class GenParser {
 			this.grammar = factory.getGrammar();
 			this.result = result;
 			this.withPredVar = withPredVar;
-			this.parentKind = new StackedValue<Integer>(grammar.getEOF());
+			this.parentKind = new StackedValue<Integer>(grammar.getKind(EOF));
 		}
 
 		public AbstractGrammar getGrammar() {
@@ -192,7 +197,7 @@ public class GenParser {
 		
 		private void accept() {
 			if (grammar.isOpen(t.kind)) {
-				pushParentKind(grammar.getOPEN());
+				pushParentKind(grammar.getKind(OPEN));
 			}
 			if (grammar.isClose(la.kind)) {
 				popParentKind();
@@ -295,15 +300,15 @@ public class GenParser {
 		}
 		
 		public void acceptOpenParen() throws SyntaxError {
-			accept(grammar.getLPAR());
+			accept(grammar.getKind(LPAR));
 		}
 		
 		public void acceptCloseParen() throws SyntaxError {
-			accept(grammar.getRPAR());
+			accept(grammar.getKind(RPAR));
 		}
 		
 		void scanUntilEOF() {
-			final int eof = grammar.getEOF();
+			final int eof = grammar.getKind(EOF);
 			while (t.kind != eof) {
 				accept();
 			}
@@ -438,7 +443,7 @@ public class GenParser {
 		// (or conversely), as these operators have no relative priority
 		private <T> T subParseNoParent(INudParser<T> parser,
 				List<BoundIdentDecl> newBoundIdents, boolean noCheck) throws SyntaxError {
-			pushParentKind(grammar.getNOOP());
+			pushParentKind(grammar.getKind(NOOP));
 			try {
 				if (noCheck) {
 					return subParseNoCheck(parser, newBoundIdents);
@@ -576,7 +581,7 @@ public class GenParser {
 				throw new IllegalArgumentException(
 						"Can only parse one of: Predicate, Expression, Assignment or Type.");
 			}
-			final int eof = pc.getGrammar().getEOF();
+			final int eof = pc.getGrammar().getKind(EOF);
 			if (pc.t.kind != eof) {
 				failUnmatchedTokens(pc);
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import static org.eventb.core.ast.Formula.KID_GEN;
 import static org.eventb.core.ast.Formula.KPRJ1_GEN;
 import static org.eventb.core.ast.Formula.KPRJ2_GEN;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.OFTYPE;
 
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
@@ -150,10 +151,10 @@ import org.eventb.internal.core.parser.SubParsers;
 			boolean isRightOvr, boolean withTypesOvr,
 			final String[] newBoundNames) {
 		if (withTypesOvr && isTypePrintable(formula)) {
-			final int oftype = factory.getGrammar().getOFTYPE();
+			final int oftype = factory.getGrammar().getKind(OFTYPE);
 			final IToStringMediator mediator = makeInstance(oftype, isRightOvr,
 					withTypesOvr, newBoundNames);
-			SubParsers.OFTYPE.toString(mediator, (Expression) formula);
+			SubParsers.OFTYPE_PARSER.toString(mediator, (Expression) formula);
 			return;
 		}
 		final IToStringMediator mediator = makeInstance(formulaKind,

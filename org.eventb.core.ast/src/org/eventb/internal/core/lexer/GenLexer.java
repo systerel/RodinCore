@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,9 @@ import static org.eventb.core.ast.LanguageVersion.V1;
 import static org.eventb.internal.core.lexer.LexicalClass.IDENTIFIER;
 import static org.eventb.internal.core.lexer.LexicalClass.SYMBOL;
 import static org.eventb.internal.core.lexer.LexicalClass.WHITESPACE;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.IDENT;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PARTITION;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.ProblemKind;
@@ -21,8 +24,8 @@ import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.internal.core.parser.AbstractGrammar;
 import org.eventb.internal.core.parser.BMath;
-import org.eventb.internal.core.parser.TokenSet;
 import org.eventb.internal.core.parser.ParseResult;
+import org.eventb.internal.core.parser.TokenSet;
 
 /**
  * Generic lexer for any {@link BMath} grammar (potentially extended).
@@ -189,7 +192,7 @@ public class GenLexer {
 			addProblem(lexem);
 			return makeEOF();
 		}
-		if (kind == grammar.getIDENT() && isPrime(stream)) {
+		if (kind == grammar.getKind(IDENT) && isPrime(stream)) {
 			stream.goForward();
 			lexem = stream.getLexem();
 		}
@@ -197,15 +200,15 @@ public class GenLexer {
 	}
 
 	private Token makeToken(int kind, String val) {
-		if (result.getLanguageVersion() == V1 && kind == grammar.getPARTITION()) {
-			return new Token(grammar.getIDENT(), val, stream.getTokenStart());
+		if (result.getLanguageVersion() == V1 && kind == grammar.getKind(PARTITION)) {
+			return new Token(grammar.getKind(IDENT), val, stream.getTokenStart());
 		} else {
 			return new Token(kind, val, stream.getTokenStart());
 		}
 	}
 
 	private Token makeEOF() {
-		return new Token(grammar.getEOF(), "", stream.getCurPos());
+		return new Token(grammar.getKind(EOF), "", stream.getCurPos());
 	}
 
 	private void addProblem(String tokenImage) {

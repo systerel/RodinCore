@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,8 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RBRACKET;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RPAR;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.ARITHMETIC;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.BINOP;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.FUNCTIONAL;
@@ -207,7 +209,7 @@ public class BinaryExpression extends Expression {
 				return new LedImage(kind, FUNIMAGE) {
 					@Override
 					protected int getCloseKind(AbstractGrammar grammar) {
-						return grammar.getRPAR();
+						return grammar.getKind(RPAR);
 					}
 				};
 			}
@@ -218,7 +220,7 @@ public class BinaryExpression extends Expression {
 				return new LedImage(kind, RELIMAGE) {
 					@Override
 					protected int getCloseKind(AbstractGrammar grammar) {
-						return grammar.getRBRACKET();
+						return grammar.getKind(RBRACKET);
 					}
 				}; 
 			}

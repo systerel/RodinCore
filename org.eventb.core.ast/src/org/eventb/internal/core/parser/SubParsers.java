@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,13 @@ import static org.eventb.core.ast.Formula.KPARTITION;
 import static org.eventb.core.ast.Formula.MAPSTO;
 import static org.eventb.core.ast.Formula.SETEXT;
 import static org.eventb.core.ast.Formula.UNMINUS;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.DOT;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.IDENT;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.INT_LIT;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.MID;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.OFTYPE;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PRED_VAR;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RBRACE;
 import static org.eventb.internal.core.parser.MainParsers.BOUND_IDENT_DECL_LIST_PARSER;
 import static org.eventb.internal.core.parser.MainParsers.EXPR_LIST_PARSER;
 import static org.eventb.internal.core.parser.MainParsers.EXPR_PARSER;
@@ -394,7 +401,7 @@ public class SubParsers {
 
 		@Override
 		protected int getKind(AbstractGrammar grammar) {
-			return grammar.getIDENT();
+			return grammar.getKind(IDENT);
 		}
 		
 		@Override
@@ -437,7 +444,7 @@ public class SubParsers {
 						ProblemSeverities.Error));
 			}
 			final FreeIdentifier freeIdent = (FreeIdentifier) ident;
-			return new SubParseResult<FreeIdentifier>(freeIdent, pc.getGrammar().getIDENT());
+			return new SubParseResult<FreeIdentifier>(freeIdent, pc.getGrammar().getKind(IDENT));
 		}
 
 		@Override
@@ -451,14 +458,14 @@ public class SubParsers {
 
 		@Override
 		protected int getKind(AbstractGrammar grammar) {
-			return grammar.getIDENT();
+			return grammar.getKind(IDENT);
 		}
 		
 		@Override
 		protected BoundIdentDecl makeValue(ParserContext pc, String tokenVal,
 				SourceLocation loc) throws SyntaxError {
 			Type type = null;
-			final int oftype = pc.getGrammar().getOFTYPE();
+			final int oftype = pc.getGrammar().getKind(OFTYPE);
 			if (pc.t.kind == oftype) {
 				pc.pushParentKind();
 				pc.accept(oftype);
@@ -502,7 +509,7 @@ public class SubParsers {
 
 		@Override
 		protected int getKind(AbstractGrammar grammar) {
-			return grammar.getINTLIT();
+			return grammar.getKind(INT_LIT);
 		}
 		
 		@Override
@@ -548,10 +555,7 @@ public class SubParsers {
 
 		@Override
 		protected int getKind(AbstractGrammar grammar) {
-			if (grammar instanceof BMath) {
-				return ((BMath) grammar).getPREDVAR();
-			}
-			return grammar.getIDENT();
+			return grammar.getKind(PRED_VAR);
 		}
 		
 		@Override
@@ -586,7 +590,7 @@ public class SubParsers {
 			if (!isTypedGeneric(left)) {
 				throw newUnexpectedOftype(pc);
 			}
-			final int oftype = pc.getGrammar().getOFTYPE();
+			final int oftype = pc.getGrammar().getKind(OFTYPE);
 			pc.accept(oftype);
 			
 			Type type = pc.subParse(TYPE_PARSER, true);
@@ -702,7 +706,7 @@ public class SubParsers {
 		}
 
 		public static void appendOftype(IToStringMediator mediator, Type type, boolean withSpaces) {
-			final int oftype = mediator.getFactory().getGrammar().getOFTYPE();
+			final int oftype = mediator.getFactory().getGrammar().getKind(OFTYPE);
 			mediator.appendImage(oftype, withSpaces);
 			mediator.append(type.toString());
 		}
@@ -713,7 +717,7 @@ public class SubParsers {
 	 * Parses expressions outside bound identifier declarations. Always returns
 	 * an expression with the same tag as left.
 	 */
-	public static final ILedParser<Expression> OFTYPE = new OftypeParser();
+	public static final ILedParser<Expression> OFTYPE_PARSER = new OftypeParser();
 	
 	public static class AtomicExpressionParser extends PrefixNudParser<AtomicExpression> {
 	
@@ -1006,7 +1010,7 @@ public class SubParsers {
 		@Override
 		public QuantifiedPredicate parseRight(ParserContext pc) throws SyntaxError {
 			final List<BoundIdentDecl> boundIdentifiers = pc.subParseNoBindingNoCheck(BOUND_IDENT_DECL_LIST_PARSER);
-			final int dot = pc.getGrammar().getDOT();
+			final int dot = pc.getGrammar().getKind(DOT);
 			pc.accept(dot);
 			final Predicate pred = pc.subParseNoCheck(PRED_PARSER, boundIdentifiers);
 
@@ -1020,7 +1024,7 @@ public class SubParsers {
 			super.toString(mediator, toPrint);
 			final BoundIdentDecl[] boundDecls = toPrint.getBoundIdentDecls();
 			printBoundIdentDecls(mediator, boundDecls);
-			final int dot = mediator.getFactory().getGrammar().getDOT();
+			final int dot = mediator.getFactory().getGrammar().getKind(DOT);
 			mediator.appendImage(dot);
 			mediator.subPrintNoPar(toPrint.getPredicate(), false, getLocalNames());
 		}
@@ -1102,7 +1106,7 @@ public class SubParsers {
 		@Override
 		public SetExtension parseRight(ParserContext pc) throws SyntaxError {
 			final List<Expression> exprs;
-			final int rbrace = pc.getGrammar().getRBRACE();
+			final int rbrace = pc.getGrammar().getKind(RBRACE);
 			if (pc.t.kind == rbrace) { // only place where a list may be empty
 				exprs = Collections.emptyList();
 			} else {
@@ -1119,14 +1123,14 @@ public class SubParsers {
 			if (members.length > 0) {
 				EXPR_LIST_PARSER.toString(mediator, asList(members));
 			}
-			final int rbrace = mediator.getFactory().getGrammar().getRBRACE();
+			final int rbrace = mediator.getFactory().getGrammar().getKind(RBRACE);
 			mediator.appendImage(rbrace);
 		}
 	}
 	
 	static void printMid(IToStringMediator mediator) {
 		mediator.append(SPACE);
-		final int mid = mediator.getFactory().getGrammar().getMID();
+		final int mid = mediator.getFactory().getGrammar().getKind(MID);
 		mediator.appendImage(mid);
 		mediator.append(SPACE);
 	}
@@ -1166,10 +1170,10 @@ public class SubParsers {
 		@Override
 		protected QuantifiedExpression parseRight(ParserContext pc) throws SyntaxError {
 			final List<BoundIdentDecl> boundIdents = pc.subParseNoBindingNoCheck(BOUND_IDENT_DECL_LIST_PARSER);
-			final int dot = pc.getGrammar().getDOT();
+			final int dot = pc.getGrammar().getKind(DOT);
 			pc.accept(dot);
 			final Predicate pred = pc.subParseNoParentNoCheck(PRED_PARSER, boundIdents);
-			final int mid = pc.getGrammar().getMID();
+			final int mid = pc.getGrammar().getKind(MID);
 			pc.accept(mid);
 			final Expression expr = pc.subParseNoCheck(EXPR_PARSER, boundIdents);
 			acceptClose(pc);
@@ -1188,7 +1192,7 @@ public class SubParsers {
 			super.toString(mediator, toPrint);
 			final BoundIdentDecl[] boundDecls = toPrint.getBoundIdentDecls();
 			printBoundIdentDecls(mediator, boundDecls);
-			final int dot = mediator.getFactory().getGrammar().getDOT();
+			final int dot = mediator.getFactory().getGrammar().getKind(DOT);
 			mediator.appendImage(dot);
 			mediator.subPrintNoPar(toPrint.getPredicate(), false, getLocalNames());
 			printMid(mediator);
@@ -1204,14 +1208,14 @@ public class SubParsers {
 
 		@Override
 		protected void acceptClose(ParserContext pc) throws SyntaxError {
-			final int rbrace = pc.getGrammar().getRBRACE();
+			final int rbrace = pc.getGrammar().getKind(RBRACE);
 			pc.accept(rbrace);
 		}
 		
 		@Override
 		public void toString(IToStringMediator mediator, QuantifiedExpression toPrint) {
 			super.toString(mediator, toPrint);
-			final int rbrace = mediator.getFactory().getGrammar().getRBRACE();
+			final int rbrace = mediator.getFactory().getGrammar().getKind(RBRACE);
 			mediator.appendImage(rbrace);
 		}
 	}
@@ -1226,7 +1230,7 @@ public class SubParsers {
 		protected final QuantifiedExpression parseRight(ParserContext pc)
 		throws SyntaxError {
 			final Expression expr = pc.subParseNoBindingNoCheck(EXPR_PARSER);
-			final int mid = pc.getGrammar().getMID();
+			final int mid = pc.getGrammar().getKind(MID);
 			pc.accept(mid);
 			final List<BoundIdentDecl> boundIdents = new ArrayList<BoundIdentDecl>();
 			final Expression boundExpr = expr.bindAllFreeIdents(boundIdents, pc.factory);
@@ -1261,14 +1265,14 @@ public class SubParsers {
 
 		@Override
 		protected void acceptClose(ParserContext pc) throws SyntaxError {
-			final int rbrace = pc.getGrammar().getRBRACE();
+			final int rbrace = pc.getGrammar().getKind(RBRACE);
 			pc.accept(rbrace);
 		}
 		
 		@Override
 		public void toString(IToStringMediator mediator, QuantifiedExpression toPrint) {
 			super.toString(mediator, toPrint);
-			final int rbrace = mediator.getFactory().getGrammar().getRBRACE();
+			final int rbrace = mediator.getFactory().getGrammar().getKind(RBRACE);
 			mediator.appendImage(rbrace);
 		}
 	}
@@ -1283,11 +1287,11 @@ public class SubParsers {
 		public QuantifiedExpression parseRight(ParserContext pc) throws SyntaxError {
 			final PatternParser pattParser = new PatternParser(pc.result);
 			final Pattern pattern = pc.subParseNoBindingNoCheck(pattParser);
-			final int dot = pc.getGrammar().getDOT();
+			final int dot = pc.getGrammar().getKind(DOT);
 			pc.accept(dot);
 			final List<BoundIdentDecl> boundDecls = pattern.getDecls();
 			final Predicate pred = pc.subParseNoParentNoCheck(PRED_PARSER, boundDecls);
-			final int mid = pc.getGrammar().getMID();
+			final int mid = pc.getGrammar().getKind(MID);
 			pc.accept(mid);
 			final Expression expr = pc.subParseNoCheck(EXPR_PARSER, boundDecls);
 			
@@ -1308,7 +1312,7 @@ public class SubParsers {
 			
 			PatternParser.appendPattern(mediator, pattern, toPrint.getBoundIdentDecls(), getLocalNames());
 			
-			final int dot = mediator.getFactory().getGrammar().getDOT();
+			final int dot = mediator.getFactory().getGrammar().getKind(DOT);
 			mediator.appendImage(dot);
 			mediator.subPrintNoPar(toPrint.getPredicate(), false, getLocalNames());
 			printMid(mediator);
@@ -1529,7 +1533,7 @@ public class SubParsers {
 				// this is a negative integer literal
 	        	final IntegerLiteral lit = (IntegerLiteral) expr;
 	        	final IntegerLiteral result = pc.factory.makeIntegerLiteral(lit.getValue().negate(), loc);
-				return new SubParseResult<Expression>(result, pc.getGrammar().getINTLIT());
+				return new SubParseResult<Expression>(result, pc.getGrammar().getKind(INT_LIT));
 	        }
 	  		final UnaryExpression result = pc.factory.makeUnaryExpression(UNMINUS, expr, loc);
 			return new SubParseResult<Expression>(result, kind);

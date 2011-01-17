@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,10 @@ package org.eventb.internal.core.lexer;
 import static org.eventb.internal.core.lexer.GenLexer.LAMBDA;
 import static org.eventb.internal.core.lexer.GenLexer.META;
 import static org.eventb.internal.core.lexer.LexStream.nextCodePoint;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.IDENT;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.INT_LIT;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PRED_VAR;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.core.lexer.GenLexer.LexemReader;
@@ -49,7 +53,7 @@ public enum LexicalClass {
 		public int getKind(String image, AbstractGrammar grammar) {
 			final int kind = grammar.getTokens().getKind(image);
 			if (kind == TokenSet.UNKNOWN_KIND) {
-				return grammar.getIDENT();
+				return grammar.getKind(IDENT);
 			} else {
 				return kind;
 			}
@@ -117,7 +121,7 @@ public enum LexicalClass {
 		@Override
 		public int getKind(String image, AbstractGrammar grammar) {
 			assert false;
-			return grammar.getEOF();
+			return grammar.getKind(EOF);
 		}
 
 	},
@@ -134,7 +138,7 @@ public enum LexicalClass {
 
 		@Override
 		public int getKind(String image, AbstractGrammar grammar) {
-			return grammar.getINTLIT();
+			return grammar.getKind(INT_LIT);
 		}
 	},
 	META_VAR {
@@ -153,7 +157,7 @@ public enum LexicalClass {
 
 		@Override
 		public int getKind(String image, AbstractGrammar grammar) {
-			return grammar.getPREDVAR();
+			return grammar.getKind(PRED_VAR);
 		}
 
 		@Override

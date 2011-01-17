@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,11 @@ import static org.eventb.core.ast.Formula.BECOMES_SUCH_THAT;
 import static org.eventb.core.ast.Formula.BOUND_IDENT;
 import static org.eventb.core.ast.Formula.MAPSTO;
 import static org.eventb.core.ast.ProblemKind.PrematureEOF;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.COMMA;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LPAR;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.MAPS_TO;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.NOOP;
 import static org.eventb.internal.core.parser.GenParser.ProgressDirection.RIGHT;
 import static org.eventb.internal.core.parser.SubParsers.BOUND_IDENT_DECL_SUBPARSER;
 import static org.eventb.internal.core.parser.SubParsers.FREE_IDENT_SUBPARSER;
@@ -124,7 +129,7 @@ public class MainParsers {
 		protected static SyntaxError newOperatorError(ParserContext pc,
 				ProblemKind problemKind) {
 			final SourceLocation srcLoc = pc.makeSourceLocation(pc.t);
-			if (pc.t.kind == pc.getGrammar().getEOF()) {
+			if (pc.t.kind == pc.getGrammar().getKind(EOF)) {
 				return new SyntaxError(new ASTProblem(srcLoc, PrematureEOF,
 						ProblemSeverities.Error));
 			}
@@ -348,7 +353,7 @@ public class MainParsers {
 		public SubParseResult<Pattern> nud(ParserContext pc) throws SyntaxError {
 			final PatternAtomParser atomParser = new PatternAtomParser(pattern, this);
 			pc.subParseNoCheck(atomParser);
-			final int mapsto = pc.getGrammar().getMAPSTO();
+			final int mapsto = pc.getGrammar().getKind(MAPS_TO);
 			while (pc.t.kind == mapsto) {
 				pc.accept(mapsto);
 				pc.subParseNoCheck(atomParser);
@@ -366,7 +371,7 @@ public class MainParsers {
 				final Expression right = maplet.getRight();
 				appendPattern(mediator, left, identDecls, boundNames);
 				final int mapsto = mediator.getFactory().getGrammar()
-						.getMAPSTO();
+						.getKind(MAPS_TO);
 				mediator.appendImage(mapsto);
 				final boolean needsParen = right.getTag() == MAPSTO;
 				if (needsParen) mediator.append("(");
@@ -400,7 +405,7 @@ public class MainParsers {
 
 			@Override
 			public SubParseResult<Object> nud(ParserContext pc) throws SyntaxError {
-				if (pc.t.kind == pc.getGrammar().getLPAR()) {
+				if (pc.t.kind == pc.getGrammar().getKind(LPAR)) {
 					pc.acceptOpenParen();
 					pc.subParse(parser, false);
 					pc.acceptCloseParen();
@@ -410,7 +415,7 @@ public class MainParsers {
 					pattern.declParsed(boundIdent);
 				}
 				return new SubParseResult<Object>(null, pc.getGrammar()
-						.getNOOP());
+						.getKind(NOOP));
 			}
 
 			@Override
@@ -450,14 +455,14 @@ public class MainParsers {
 			final List<T> list = new ArrayList<T>();
 			final T first = pc.subParseNoCheck(parser);
 			list.add(first);
-			final int comma = pc.getGrammar().getCOMMA();
+			final int comma = pc.getGrammar().getKind(COMMA);
 			while (pc.t.kind == comma) {
 				pc.accept(comma);
 				final T next = pc.subParseNoCheck(parser);
 				list.add(next);
 			}
 			// FIXME not an operator kind => must be called with compatibility checks disabled
-			return new SubParseResult<List<T>>(list, pc.getGrammar().getNOOP()); 
+			return new SubParseResult<List<T>>(list, pc.getGrammar().getKind(NOOP)); 
 		}
 
 		@Override
@@ -540,7 +545,7 @@ public class MainParsers {
 			final int tokenKind = tokenAfterIdents.kind;
 			pc.accept(tokenKind);
 
-			if (tokenKind == pc.getGrammar().getLPAR()) { // FUNIMAGE assignment
+			if (tokenKind == pc.getGrammar().getKind(LPAR)) { // FUNIMAGE assignment
 				if (idents.size() != 1) {
 					throw new SyntaxError(new ASTProblem(
 							pc.getSourceLocation(),
@@ -595,7 +600,7 @@ public class MainParsers {
 		@Override
 		public SubParseResult<BecomesMemberOf> nud(ParserContext pc) throws SyntaxError {
 			final FreeIdentifier ident = pc.subParse(FREE_IDENT_SUBPARSER, false);
-			if (pc.t.kind == pc.getGrammar().getCOMMA()) {
+			if (pc.t.kind == pc.getGrammar().getKind(COMMA)) {
 				throw new SyntaxError(new ASTProblem(pc
 						.makeSourceLocation(pc.t),
 						ProblemKind.BECMOAppliesToOneIdent,

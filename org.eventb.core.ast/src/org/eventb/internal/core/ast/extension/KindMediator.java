@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,11 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension;
+
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.IDENT;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.INT_LIT;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.NEG_LIT;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PRED_VAR;
 
 import org.eventb.internal.core.parser.AbstractGrammar;
 
@@ -30,18 +35,18 @@ public class KindMediator {
 	}
 	
 	public int getIDENT() {
-		return grammar.getIDENT();
+		return grammar.getKind(IDENT);
 	}
 	
 	public int getINTLIT() {
-		return grammar.getINTLIT();
+		return grammar.getKind(INT_LIT);
 	}
 	
 	public int getNEGLIT() {
-		return grammar.getNEGLIT();
+		return grammar.getKind(NEG_LIT);
 	}
 
 	public int getPREDVAR() {
-		return grammar.getPREDVAR();
+		return grammar.getKind(PRED_VAR);
 	}
 }

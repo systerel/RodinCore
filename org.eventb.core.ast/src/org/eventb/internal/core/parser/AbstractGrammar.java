@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,19 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LPAR;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.NEG_LIT;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.NOOP;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.OFTYPE;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.OPEN;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.ARITHMETIC;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.GROUP_0;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.TYPED;
 import static org.eventb.internal.core.parser.OperatorRelationship.COMPATIBLE;
 import static org.eventb.internal.core.parser.OperatorRelationship.LEFT_PRIORITY;
 import static org.eventb.internal.core.parser.OperatorRelationship.RIGHT_PRIORITY;
-import static org.eventb.internal.core.parser.SubParsers.OFTYPE;
+import static org.eventb.internal.core.parser.SubParsers.OFTYPE_PARSER;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,6 +48,42 @@ import org.eventb.internal.core.parser.GenParser.OverrideException;
  */
 public abstract class AbstractGrammar {
 
+	public static enum DefaultToken {
+		EOF(EOF_ID, true),
+		NOOP(NOOP_ID, true),
+		OPEN(OPEN_ID, true),
+		IDENT(IDENT_IMAGE, true),
+		INT_LIT(INTLIT_IMAGE, true),
+		NEG_LIT(NEGLIT_ID, true),
+		PRED_VAR(PREDVAR_ID, true),
+		LPAR(LPAR_IMAGE, false),
+		RPAR(RPAR_IMAGE, false),
+		COMMA(COMMA_IMAGE, false),
+		RBRACKET(RBRACKET_IMAGE, false),
+		RBRACE(RBRACE_IMAGE, false),
+		MAPS_TO(MAPSTO_IMAGE, false),
+		MID(MID_IMAGE, false),
+		DOT(DOT_IMAGE, false),
+		PARTITION(PARTITION_IMAGE, false),
+		OFTYPE(OFTYPE_IMAGE, false);
+
+		private final String image;
+		private final boolean isReserved;
+		
+		private DefaultToken(String image, boolean isReserved) {
+			this.image = image;
+			this.isReserved = isReserved;
+		}
+		
+		public String getImage() {
+			return image;
+		}
+		
+		public boolean isReserved() {
+			return isReserved;
+		}
+	}
+	
 	private static final String OFTYPE_IMAGE = "\u2982";
 	private static final String EOF_ID = "End of Formula";
 	private static final String NOOP_ID = "No Operator";
@@ -64,25 +106,6 @@ public abstract class AbstractGrammar {
 	private static final String PARTITION_IMAGE = "partition";
 	private static final String OFTYPE_ID = "Oftype";
 	
-	// TODO make an enum
-	private int _EOF;
-	private int _NOOP;
-	private int _OPEN;
-	private int _IDENT;
-	private int _INTLIT;
-	private int _NEGLIT;
-	private int _LPAR;
-	private int _RPAR;
-	private int _COMMA;
-	private int _RBRACKET;
-	private int _RBRACE;
-	private int _MAPSTO;
-	private int _MID;
-	private int _DOT;
-	private int _PREDVAR;
-	private int _KPARTITION;
-	private int _OFTYPE;
-
 	protected TokenSet tokens = new TokenSet();
 	
 	private final LexKindParserDB subParsers = new LexKindParserDB();
@@ -98,6 +121,8 @@ public abstract class AbstractGrammar {
 	private final PropertyParserDB propParsers = new PropertyParserDB();
 	
 	private final Map<Integer, Integer> closeOpenKinds = new HashMap<Integer, Integer>();
+
+	private final int[] defaultTokenKinds = new int[DefaultToken.values().length];
 	
 	public IGrammar asExternalView() {
 		final Instantiator<Integer, IOperator> instantiator = new Instantiator<Integer, IOperator>();
@@ -114,7 +139,7 @@ public abstract class AbstractGrammar {
 
 	public boolean isOperator(int kind) {
 		// TODO could be replaced by 'there exists a tag for the given kind'
-		return kind == getNEGLIT()
+		return kind == getKind(NEG_LIT)
 				|| (opRegistry.hasGroup(kind) && (!tokens.isReserved(kind)));
 	}
 	
@@ -137,13 +162,16 @@ public abstract class AbstractGrammar {
 		try {
 			initDefaultKinds();
 
-			initOpRegistry.addOperator(_EOF, EOF_ID, GROUP_0.getId(), false);
-			initOpRegistry.addOperator(_NOOP, NOOP_ID, GROUP_0.getId(), false);
-			initOpRegistry.addOperator(_OPEN, OPEN_ID, GROUP_0.getId(), false);
-			initOpRegistry.addOperator(_NEGLIT, NEGLIT_ID, ARITHMETIC.getId(),
+			initOpRegistry.addOperator(getKind(EOF), EOF.getImage(), GROUP_0.getId(), false);
+			initOpRegistry.addOperator(getKind(NOOP), NOOP.getImage(), GROUP_0.getId(), false);
+			initOpRegistry.addOperator(getKind(OPEN), OPEN.getImage(), GROUP_0.getId(), false);
+			initOpRegistry.addOperator(getKind(NEG_LIT), NEG_LIT.getImage(), ARITHMETIC.getId(),
 					false);
+			
+			// TODO move down to BMath
 			// Undefined Operators
-			addOperator("\u2982", OFTYPE_ID, TYPED.getId(), OFTYPE, true);
+			addOperator(OFTYPE.getImage(), OFTYPE_ID, TYPED.getId(), OFTYPE_PARSER,
+					true);
 
 			addOpenClose(LPAR_IMAGE, RPAR_IMAGE);
 			addOpenClose(LBRACE_IMAGE, RBRACE_IMAGE);
@@ -151,7 +179,7 @@ public abstract class AbstractGrammar {
 
 			IntegerLiteral.init(this);
 			Identifier.init(this);
-			subParsers.addNud(_LPAR, MainParsers.CLOSED_SUGAR);
+			subParsers.addNud(getKind(LPAR), MainParsers.CLOSED_SUGAR);
 			addOperators();
 			addOperatorRelationships();
 
@@ -171,43 +199,27 @@ public abstract class AbstractGrammar {
 	}
 
 	private void initDefaultKinds() {
-		_EOF = tokens.reserved(EOF_ID);
-		_NOOP = tokens.reserved(NOOP_ID);
-		_OPEN = tokens.reserved(OPEN_ID);
-		_IDENT = tokens.reserved(IDENT_IMAGE);
-		_INTLIT = tokens.reserved(INTLIT_IMAGE);
-		_NEGLIT = tokens.reserved(NEGLIT_ID);
-		_PREDVAR = tokens.reserved(PREDVAR_ID);
-		_LPAR = tokens.getOrAdd(LPAR_IMAGE);
-		_RPAR = tokens.getOrAdd(RPAR_IMAGE);
-		_COMMA = tokens.getOrAdd(COMMA_IMAGE);
-		_RBRACKET = tokens.getOrAdd(RBRACKET_IMAGE);
-		_RBRACE = tokens.getOrAdd(RBRACE_IMAGE);
-		_MAPSTO = tokens.getOrAdd(MAPSTO_IMAGE);
-		_MID = tokens.getOrAdd(MID_IMAGE);
-		_DOT = tokens.getOrAdd(DOT_IMAGE);
-		_KPARTITION = tokens.getOrAdd(PARTITION_IMAGE);
-		_OFTYPE = tokens.getOrAdd(OFTYPE_IMAGE);
+		final DefaultToken[] defTokens = DefaultToken.values();
+		for (int i = 0; i < defTokens.length; i++) {
+			final DefaultToken token = defTokens[i];
+			if (token.isReserved()) {
+				defaultTokenKinds[i] = tokens.reserved(token.getImage());
+			} else {
+				defaultTokenKinds[i] = tokens.getOrAdd(token.getImage());
+			}
+		}
 	}
 
 	private void updateDefaultKinds() {
-		_EOF = tokens.getReserved(EOF_ID);
-		_NOOP = tokens.getReserved(NOOP_ID);
-		_OPEN = tokens.getReserved(OPEN_ID);
-		_IDENT = tokens.getReserved(IDENT_IMAGE);
-		_INTLIT = tokens.getReserved(INTLIT_IMAGE);
-		_NEGLIT = tokens.getReserved(NEGLIT_ID);
-		_PREDVAR = tokens.getReserved(PREDVAR_ID);
-		_LPAR = tokens.getKind(LPAR_IMAGE);
-		_RPAR = tokens.getKind(RPAR_IMAGE);
-		_COMMA = tokens.getKind(COMMA_IMAGE);
-		_RBRACKET = tokens.getKind(RBRACKET_IMAGE);
-		_RBRACE = tokens.getKind(RBRACE_IMAGE);
-		_MAPSTO = tokens.getKind(MAPSTO_IMAGE);
-		_MID = tokens.getKind(MID_IMAGE);
-		_DOT = tokens.getKind(DOT_IMAGE);
-		_KPARTITION = tokens.getKind(PARTITION_IMAGE);
-		_OFTYPE = tokens.getKind(OFTYPE_IMAGE);
+		final DefaultToken[] defTokens = DefaultToken.values();
+		for (int i = 0; i < defTokens.length; i++) {
+			final DefaultToken token = defTokens[i];
+			if (token.isReserved()) {
+				defaultTokenKinds[i] = tokens.getReserved(token.getImage());
+			} else {
+				defaultTokenKinds[i] = tokens.getKind(token.getImage());
+			}
+		}
 	}
 
 	private void compact() {
@@ -324,8 +336,10 @@ public abstract class AbstractGrammar {
 		return closeOpenKinds.containsKey(kind);
 	}
 
-	public void addReservedSubParser(int reservedKind,
+	public void addReservedSubParser(DefaultToken token,
 			INudParser<? extends Formula<?>> subParser) {
+		assert token.isReserved();
+		final int reservedKind = getKind(token);
 		subParsers.addNud(reservedKind, subParser);
 	}
 	
@@ -340,74 +354,6 @@ public abstract class AbstractGrammar {
 		return opRegistry.getOperatorRelationship(leftKind, rightKind);
 	}
 	
-	public int getEOF() {
-		return _EOF;
-	}
-	
-	public int getNOOP() {
-		return _NOOP;
-	}
-	
-	public int getOPEN() {
-		return _OPEN;
-	}
-
-	public int getIDENT() {
-		return _IDENT;
-	}
-	
-	public int getINTLIT() {
-		return _INTLIT;
-	}
-	
-	public int getNEGLIT() {
-		return _NEGLIT;
-	}
-	
-	public int getLPAR() {
-		return _LPAR;
-	}
-	
-	public int getRPAR() {
-		return _RPAR;
-	}
-	
-	public int getCOMMA() {
-		return _COMMA;
-	}
-	
-	public int getRBRACKET() {
-		return _RBRACKET;
-	}
-	
-	public int getRBRACE() {
-		return _RBRACE;
-	}
-	
-	public int getMAPSTO() {
-		return _MAPSTO;
-	}
-
-	public int getMID() {
-		return _MID;
-	}
-	
-	public int getDOT() {
-		return _DOT;
-	}
-	
-	public int getPREDVAR() {
-		return _PREDVAR;
-	}
-
-	public int getPARTITION() {
-		return _KPARTITION;
-	}
-	
-	public int getOFTYPE() {
-		return _OFTYPE;
-	}
-	
 	public String getImage(int kind) {
 		return tokens.getImage(kind);
 	}
@@ -419,6 +365,10 @@ public abstract class AbstractGrammar {
 			throw new IllegalArgumentException("No such token: " + image);
 		}
 		return kind;
+	}
+	
+	public int getKind(DefaultToken token) {
+		return defaultTokenKinds[token.ordinal()];
 	}
 
 	/**
@@ -435,7 +385,7 @@ public abstract class AbstractGrammar {
 	 */
 	public boolean needsParentheses(boolean isRightChild, int childKind,
 			int parentKind) {
-		if (parentKind == getEOF()) { // TODO maybe not needed
+		if (parentKind == getKind(EOF)) { // TODO maybe not needed
 			return false;
 		}
 		if (!isOperator(parentKind) || !isOperator(childKind)) {
