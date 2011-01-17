@@ -25,7 +25,7 @@ import org.eventb.internal.core.parser.ExternalViewUtils.Instantiator;
  * @author Nicolas Beauger
  * 
  */
-public class IndexedSet {
+public class TokenSet {
 
 	private static final int FIRST_KIND = 0;
 	public static final int UNKNOWN_KIND = FIRST_KIND - 1;
@@ -41,7 +41,7 @@ public class IndexedSet {
 	
 	private int nextKind = FIRST_KIND;
 
-	public IndexedSet() {
+	public TokenSet() {
 		// nothing to do
 	}
 	

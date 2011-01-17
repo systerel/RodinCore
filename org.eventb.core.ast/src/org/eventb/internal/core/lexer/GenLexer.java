@@ -21,7 +21,7 @@ import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.internal.core.parser.AbstractGrammar;
 import org.eventb.internal.core.parser.BMath;
-import org.eventb.internal.core.parser.IndexedSet;
+import org.eventb.internal.core.parser.TokenSet;
 import org.eventb.internal.core.parser.ParseResult;
 
 /**
@@ -185,7 +185,7 @@ public class GenLexer {
 
 		String lexem = stream.getLexem();
 		final int kind = lexClass.getKind(lexem, grammar);
-		if (kind == IndexedSet.UNKNOWN_KIND) {
+		if (kind == TokenSet.UNKNOWN_KIND) {
 			addProblem(lexem);
 			return makeEOF();
 		}

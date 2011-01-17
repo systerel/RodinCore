@@ -83,7 +83,7 @@ public abstract class AbstractGrammar {
 	private int _KPARTITION;
 	private int _OFTYPE;
 
-	protected final IndexedSet tokens = new IndexedSet();
+	protected final TokenSet tokens = new TokenSet();
 	
 	private final LexKindParserDB subParsers = new LexKindParserDB();
 	
@@ -123,7 +123,7 @@ public abstract class AbstractGrammar {
 		return initOpRegistry.hasGroup(kind) && (!tokens.isReserved(kind));
 	}
 	
-	public IndexedSet getTokens() {
+	public TokenSet getTokens() {
 		return tokens;
 	}
 
@@ -414,7 +414,7 @@ public abstract class AbstractGrammar {
 
 	public int getKind(String image) {
 		final int kind = tokens.getKind(image);
-		if (kind == IndexedSet.UNKNOWN_KIND) {
+		if (kind == TokenSet.UNKNOWN_KIND) {
 			// TODO consider throwing a caught exception (for extensions to manage)
 			throw new IllegalArgumentException("No such token: " + image);
 		}

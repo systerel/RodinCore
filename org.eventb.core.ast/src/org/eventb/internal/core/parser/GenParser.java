@@ -118,7 +118,7 @@ public class GenParser {
 	}
 	
 	static class ParserContext {
-		private static final Token INIT_TOKEN = new Token(IndexedSet.UNKNOWN_KIND, "", -1);
+		private static final Token INIT_TOKEN = new Token(TokenSet.UNKNOWN_KIND, "", -1);
 
 		private final Scanner scanner;
 		protected final FormulaFactory factory;

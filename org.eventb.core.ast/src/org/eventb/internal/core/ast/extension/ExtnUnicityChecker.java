@@ -17,7 +17,7 @@ import java.util.Set;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.internal.core.ast.ASTPlugin;
 import org.eventb.internal.core.parser.AbstractGrammar;
-import org.eventb.internal.core.parser.IndexedSet;
+import org.eventb.internal.core.parser.TokenSet;
 
 /**
  * @author Nicolas Beauger
@@ -37,7 +37,7 @@ public class ExtnUnicityChecker {
 	}
 
 	private void checkSymbolUnicity(Set<IFormulaExtension> extns) {
-		final IndexedSet standardSymbols = standardGrammar.getTokens();
+		final TokenSet standardSymbols = standardGrammar.getTokens();
 		final List<String> symbols = new ArrayList<String>();
 		for (IFormulaExtension extn : extns) {
 			final String symbol = extn.getSyntaxSymbol();

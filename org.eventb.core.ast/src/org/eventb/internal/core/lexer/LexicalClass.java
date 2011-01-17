@@ -18,7 +18,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.core.lexer.GenLexer.LexemReader;
 import org.eventb.internal.core.parser.AbstractGrammar;
 import org.eventb.internal.core.parser.BMath;
-import org.eventb.internal.core.parser.IndexedSet;
+import org.eventb.internal.core.parser.TokenSet;
 
 /**
  * Lexical classes for any {@link BMath} grammar (potentially extended).
@@ -48,7 +48,7 @@ public enum LexicalClass {
 		@Override
 		public int getKind(String image, AbstractGrammar grammar) {
 			final int kind = grammar.getTokens().getKind(image);
-			if (kind == IndexedSet.UNKNOWN_KIND) {
+			if (kind == TokenSet.UNKNOWN_KIND) {
 				return grammar.getIDENT();
 			} else {
 				return kind;
