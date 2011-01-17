@@ -16,6 +16,7 @@ import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.NEG_L
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.NOOP;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.OFTYPE;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.OPEN;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.*;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.ARITHMETIC;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.GROUP_0;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.TYPED;
@@ -49,23 +50,25 @@ import org.eventb.internal.core.parser.GenParser.OverrideException;
 public abstract class AbstractGrammar {
 
 	public static enum DefaultToken {
-		EOF(EOF_ID, true),
-		NOOP(NOOP_ID, true),
-		OPEN(OPEN_ID, true),
-		IDENT(IDENT_IMAGE, true),
-		INT_LIT(INTLIT_IMAGE, true),
-		NEG_LIT(NEGLIT_ID, true),
-		PRED_VAR(PREDVAR_ID, true),
-		LPAR(LPAR_IMAGE, false),
-		RPAR(RPAR_IMAGE, false),
-		COMMA(COMMA_IMAGE, false),
-		RBRACKET(RBRACKET_IMAGE, false),
-		RBRACE(RBRACE_IMAGE, false),
-		MAPS_TO(MAPSTO_IMAGE, false),
-		MID(MID_IMAGE, false),
-		DOT(DOT_IMAGE, false),
-		PARTITION(PARTITION_IMAGE, false),
-		OFTYPE(OFTYPE_IMAGE, false);
+		EOF("End of Formula", true),
+		NOOP("No Operator", true),
+		OPEN("Open", true),
+		IDENT("an identifier", true),
+		INT_LIT("an integer literal", true),
+		NEG_LIT("a negative integer literal", true),
+		PRED_VAR("Predicate Variable", true),
+		LPAR("(", false),
+		RPAR(")", false),
+		COMMA(",", false),
+		LBRACKET("[", false),
+		RBRACKET("]", false),
+		LBRACE("{", false),
+		RBRACE("}", false),
+		MAPS_TO("\u21a6", false),
+		MID("\u2223", false),
+		DOT("\u00b7", false),
+		PARTITION("partition", false),
+		OFTYPE("\u2982", false);
 
 		private final String image;
 		private final boolean isReserved;
@@ -84,26 +87,6 @@ public abstract class AbstractGrammar {
 		}
 	}
 	
-	private static final String OFTYPE_IMAGE = "\u2982";
-	private static final String EOF_ID = "End of Formula";
-	private static final String NOOP_ID = "No Operator";
-	private static final String OPEN_ID = "Open";
-	private static final String IDENT_IMAGE = "an identifier";
-	private static final String INTLIT_IMAGE = "an integer literal";
-	protected static final String NEGLIT_ID = "a negative integer literal";
-	private static final String PREDVAR_ID = "Predicate Variable";
-
-	private static final String LPAR_IMAGE = "(";
-	private static final String RPAR_IMAGE = ")";
-	private static final String LBRACKET_IMAGE = "[";
-	private static final String RBRACKET_IMAGE = "]";
-	private static final String LBRACE_IMAGE = "{";
-	private static final String RBRACE_IMAGE = "}";
-	private static final String COMMA_IMAGE = ",";
-	private static final String DOT_IMAGE = "\u00b7";
-	private static final String MID_IMAGE = "\u2223";
-	private static final String MAPSTO_IMAGE = "\u21a6";
-	private static final String PARTITION_IMAGE = "partition";
 	private static final String OFTYPE_ID = "Oftype";
 	
 	protected TokenSet tokens = new TokenSet();
@@ -172,9 +155,9 @@ public abstract class AbstractGrammar {
 			// Undefined Operators
 			addOperator(OFTYPE, OFTYPE_ID, TYPED.getId(), OFTYPE_PARSER, true);
 
-			addOpenClose(LPAR_IMAGE, RPAR_IMAGE);
-			addOpenClose(LBRACE_IMAGE, RBRACE_IMAGE);
-			addOpenClose(LBRACKET_IMAGE, RBRACKET_IMAGE);
+			addOpenClose(LPAR.getImage(), RPAR.getImage());
+			addOpenClose(LBRACE.getImage(), RBRACE.getImage());
+			addOpenClose(LBRACKET.getImage(), RBRACKET.getImage());
 
 			IntegerLiteral.init(this);
 			Identifier.init(this);

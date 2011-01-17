@@ -37,6 +37,7 @@ import static org.eventb.core.ast.QuantifiedPredicate.EXISTS_ID;
 import static org.eventb.core.ast.QuantifiedPredicate.FORALL_ID;
 import static org.eventb.core.ast.UnaryExpression.CONVERSE_ID;
 import static org.eventb.core.ast.UnaryPredicate.NOT_ID;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.NEG_LIT;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.ARITHMETIC;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_EXPR;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_PRED;
@@ -223,8 +224,8 @@ public abstract class BMath extends AbstractGrammar {
 		addCompatibility(DIV_ID, MOD_ID);
 		addCompatibility(MOD_ID, DIV_ID);
 		addCompatibility(MOD_ID, MUL_ID);
-		addCompatibility(NEGLIT_ID, PLUS_ID);
-		addCompatibility(NEGLIT_ID, MINUS_ID);
+		addCompatibility(NEG_LIT.getImage(), PLUS_ID);
+		addCompatibility(NEG_LIT.getImage(), MINUS_ID);
 		
 		// CONVERSE is compatible with itself but not associative (meaningless)
 		// => parentheses are required for printing r~~
