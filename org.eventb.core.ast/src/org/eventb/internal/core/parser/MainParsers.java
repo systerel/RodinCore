@@ -25,6 +25,7 @@ import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LPAR;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.MAPS_TO;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.NOOP;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RPAR;
 import static org.eventb.internal.core.parser.GenParser.ProgressDirection.RIGHT;
 import static org.eventb.internal.core.parser.SubParsers.BOUND_IDENT_DECL_SUBPARSER;
 import static org.eventb.internal.core.parser.SubParsers.FREE_IDENT_SUBPARSER;
@@ -374,9 +375,9 @@ public class MainParsers {
 						.getKind(MAPS_TO);
 				mediator.appendImage(mapsto);
 				final boolean needsParen = right.getTag() == MAPSTO;
-				if (needsParen) mediator.append("(");
+				if (needsParen) mediator.append(LPAR.getImage());
 				appendPattern(mediator, right, identDecls, boundNames);
-				if (needsParen) mediator.append(")");
+				if (needsParen) mediator.append(RPAR.getImage());
 				break;
 			case BOUND_IDENT:
 				final BoundIdentifier ident = (BoundIdentifier) pattern;
@@ -479,7 +480,7 @@ public class MainParsers {
 		}
 
 		protected void appendSeparator(IToStringMediator mediator) {
-			mediator.append(",");
+			mediator.append(COMMA.getImage());
 		}
 		
 	}
@@ -508,7 +509,7 @@ public class MainParsers {
 			assert decls.length == localNames.length;
 			printIdent(mediator, decls, localNames, 0);
 			for (int i = 1; i < decls.length; i++) {
-				mediator.append(",");
+				mediator.append(COMMA.getImage());
 				printIdent(mediator, decls, localNames, i);
 			}
 		}

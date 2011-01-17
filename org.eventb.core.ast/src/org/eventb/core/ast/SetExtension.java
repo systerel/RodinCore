@@ -16,6 +16,7 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LBRACE;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.BRACE_SETS;
 
 import java.util.Collection;
@@ -54,7 +55,7 @@ public class SetExtension extends Expression {
 
 	private static final String SETEXT_ID = "Set Extension";
 	private static enum Operators implements IOperatorInfo<SetExtension> {
-		OP_SETEXT("{", SETEXT_ID, BRACE_SETS),
+		OP_SETEXT(LBRACE.getImage(), SETEXT_ID, BRACE_SETS),
 		;
 		
 		private final String image;

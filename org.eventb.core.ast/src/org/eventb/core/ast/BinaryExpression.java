@@ -16,6 +16,9 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LBRACKET;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LPAR;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.MAPS_TO;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RBRACKET;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RPAR;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.ARITHMETIC;
@@ -178,7 +181,7 @@ public class BinaryExpression extends Expression {
 	public static final String RELIMAGE_ID = "Relational Image";
 
 	private static enum Operators implements IOperatorInfo<BinaryExpression> {
-		OP_MAPSTO("\u21a6", MAPSTO_ID, PAIR, MAPSTO),
+		OP_MAPSTO(MAPS_TO.getImage(), MAPSTO_ID, PAIR, MAPSTO),
 		OP_REL("\u2194", REL_ID, RELATION, REL),
 		OP_TREL("\ue100", TREL_ID, RELATION, TREL),
 		OP_SREL("\ue101", SREL_ID, RELATION, SREL),
@@ -203,7 +206,7 @@ public class BinaryExpression extends Expression {
 		OP_DIV("\u00f7", DIV_ID, ARITHMETIC, DIV),
 		OP_MOD("mod", MOD_ID, ARITHMETIC, MOD),
 		OP_EXPN("\u005e", EXPN_ID, ARITHMETIC, EXPN),
-		OP_FUNIMAGE("(", FUNIMAGE_ID, FUNCTIONAL, FUNIMAGE, false) {
+		OP_FUNIMAGE(LPAR.getImage(), FUNIMAGE_ID, FUNCTIONAL, FUNIMAGE, false) {
 			@Override
 			public IParserPrinter<BinaryExpression> makeParser(int kind) {
 				return new LedImage(kind, FUNIMAGE) {
@@ -214,7 +217,7 @@ public class BinaryExpression extends Expression {
 				};
 			}
 		},
-		OP_RELIMAGE("[", RELIMAGE_ID, FUNCTIONAL, RELIMAGE, false) {
+		OP_RELIMAGE(LBRACKET.getImage(), RELIMAGE_ID, FUNCTIONAL, RELIMAGE, false) {
 			@Override
 			public IParserPrinter<BinaryExpression> makeParser(int kind) {
 				return new LedImage(kind, RELIMAGE) {
