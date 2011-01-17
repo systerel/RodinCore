@@ -16,11 +16,14 @@ import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IParseResult;
@@ -44,8 +47,36 @@ public abstract class AbstractFormulaRewriterTests {
 	 */
 	protected static final FormulaFactory ff = FormulaFactory.getDefault();
 
-	private static final String[] NO_ENV = new String[0];
-	
+	public static void assertTypeChecked(Formula<?> formula) {
+		assertTrue("Formula " + formula + " should be type checked.",
+				formula.isTypeChecked());
+	}
+
+	public static void assertSameType(Expression left, Expression right) {
+		assertEquals("Expression " + left + " and expression " + right
+				+ " should bear the same type.", left.getType(),
+				right.getType());
+	}
+
+	private static void typeCheck(String image, Formula<?> formula,
+			ITypeEnvironment typenv) {
+		assertNotNull("Formula " + image + " does not parse.", formula);
+		final ITypeCheckResult tcResult = formula.typeCheck(typenv);
+		if (tcResult.hasProblem()) {
+			final StringBuilder sb = new StringBuilder();
+			sb.append("Formula ");
+			sb.append(image);
+			sb.append(" produces problems during type-check:\n");
+			for (final ASTProblem pb : tcResult.getProblems()) {
+				sb.append('\t');
+				sb.append(pb);
+				sb.append('\n');
+			}
+			fail(sb.toString());
+		}
+		typenv.addAll(tcResult.getInferredEnvironment());
+	}
+
 	/**
 	 * The rewriter under test.
 	 */
@@ -74,7 +105,7 @@ public abstract class AbstractFormulaRewriterTests {
 
 	/**
 	 * Utility method for making a predicate from its string image. This method
-	 * will fail if the string image does not correspond to a well-defined and
+	 * will fail if the string image does not correspond to a well-formed and
 	 * well-typed predicate. The type environment is enriched as a side-effect
 	 * of type-checking the resulting predicate.
 	 * 
@@ -82,31 +113,12 @@ public abstract class AbstractFormulaRewriterTests {
 	 *            the string image of a predicate
 	 * @param typenv
 	 *            typing environment to use for type-check (will be enriched)
-	 * @return a predicate corresponding to the string image
+	 * @return a type-checked predicate corresponding to the string image
 	 */
 	protected Predicate makePredicate(String image, ITypeEnvironment typenv) {
 		final Predicate pred = lib.parsePredicate(image);
-		if (pred == null)
-			fail("Predicate: \n\t" + image + "\n\tcannot be parsed");
-		final ITypeCheckResult typeCheck = pred.typeCheck(typenv);
-		if (typeCheck.hasProblem())
-			fail("Input predicate: \n\t" + image + "\n\tcannot be type checked");
-		typenv.addAll(typeCheck.getInferredEnvironment());
+		typeCheck(image, pred, typenv);
 		return pred;
-	}
-
-	/**
-	 * Test the rewriter for rewriting from an input predicate (represented by
-	 * its string image) to an expected predicate (represented by its string
-	 * image).
-	 * 
-	 * @param expectedImage
-	 *            the string image of the expected predicate.
-	 * @param inputImage
-	 *            the string image of the input predicate.
-	 */
-	protected void predicateTest(String expectedImage, String inputImage) {
-		predicateTest(expectedImage, inputImage, NO_ENV);
 	}
 
 	/**
@@ -146,11 +158,9 @@ public abstract class AbstractFormulaRewriterTests {
 	 * @param input
 	 *            the input predicate.
 	 */
-	protected void predicateTest(Predicate expected, Predicate input) {
-		assertTrue("Input expression should be type checked ",
-				input.isTypeChecked());
-		assertTrue("Expected expression should be type checked ",
-				expected.isTypeChecked());
+	private void predicateTest(Predicate expected, Predicate input) {
+		assertTypeChecked(input);
+		assertTypeChecked(expected);
 		final Predicate actual = input.rewrite(r);
 		assertEquals(input.toString(), expected, actual);
 		if (expected.equals(input)) {
@@ -160,42 +170,23 @@ public abstract class AbstractFormulaRewriterTests {
 	}
 
 	/**
-	 * Utility method for making an expression from its string image. This
-	 * method will make the test failed if the string image does not correspond
-	 * to a well-defined and well-typed expression.
+	 * Utility method for making a predicate from its string image. This method
+	 * will fail if the string image does not correspond to a well-formed and
+	 * well-typed expression. The type environment is enriched as a side-effect
+	 * of type-checking the resulting expression.
 	 * 
 	 * @param image
 	 *            the string image of an expression.
 	 * @param typenv
 	 *            the type environment to use for type-checking the expression
-	 * @return an expression corresponding to the string image.
+	 * @return a type-checked expression corresponding to the string image.
 	 */
-	protected Expression makeExpression(String image, ITypeEnvironment typenv) {
-		Expression input = lib.parseExpression(image);
-		if (input == null)
-			fail("Expression: \n\t" + image
-					+ "\n\tcannot be parsed");
-		ITypeCheckResult typeCheck = input.typeCheck(typenv);
-		if (!typeCheck.isSuccess())
-			fail("Expression: \n\t" + image
-					+ "\n\tcannot be type checked");
+	private Expression makeExpression(String image, ITypeEnvironment typenv) {
+		final Expression input = lib.parseExpression(image);
+		typeCheck(image, input, typenv);
 		return input;
 	}
 
-	/**
-	 * Test the rewriter for rewriting from an input expression (represented by
-	 * its string image) to an expected expression (represented by its string
-	 * image).
-	 * 
-	 * @param expectedImage
-	 *            the string image of the expected expression.
-	 * @param inputImage
-	 *            the string image of the input expression.
-	 */
-	protected void expressionTest(String expectedImage, String inputImage) {
-		expressionTest(expectedImage, inputImage, NO_ENV);
-	}
-	
 	/**
 	 * Test the rewriter for rewriting from an input expression (represented by
 	 * its string image) to an expected expression (represented by its string
@@ -233,16 +224,10 @@ public abstract class AbstractFormulaRewriterTests {
 	 * @param input
 	 *            the input expression.
 	 */
-	protected void expressionTest(Expression expected,
-			Expression input) {
-		assertTrue("Input expression " + input + " should be type checked",
-				input.isTypeChecked());
-		assertTrue("Expected expression " + expected
-				+ " should be type checked", expected.isTypeChecked());
-		assertEquals("Expected expression " + expected
-				+ " and input expression " + input
-				+ " should be of the same type ", expected.getType(), input
-				.getType());
+	private void expressionTest(Expression expected, Expression input) {
+		assertTypeChecked(input);
+		assertTypeChecked(expected);
+		assertSameType(input, expected);
 		final Expression actual = input.rewrite(r);
 		assertEquals(input.toString(), expected, actual);
 		if (expected.equals(input)) {
