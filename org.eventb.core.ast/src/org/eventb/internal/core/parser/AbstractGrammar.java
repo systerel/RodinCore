@@ -11,12 +11,16 @@
 package org.eventb.internal.core.parser;
 
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LBRACE;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LBRACKET;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LPAR;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.NEG_LIT;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.NOOP;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.OFTYPE;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.OPEN;
-import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.*;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RBRACE;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RBRACKET;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RPAR;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.ARITHMETIC;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.GROUP_0;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.TYPED;
