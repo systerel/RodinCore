@@ -1209,4 +1209,12 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 		expressionTest("2", "COND(x=1,2,2)");
 		
 	}
+
+	@Test
+	public void bug3158594() throws Exception {
+		predicateTest("∃y·y∗y<0∧y=1 ÷ 0",
+				"0 ↦ 0 ∈ {x ∣ ∃ y· y∗y < 0 ∧ y = 1 ÷ 0}");
+		predicateTest("∃y·y∗y<0∧y=1 ÷ 0", "∃y·y∗y<0∧y=1 ÷ 0");
+	}
+
 }

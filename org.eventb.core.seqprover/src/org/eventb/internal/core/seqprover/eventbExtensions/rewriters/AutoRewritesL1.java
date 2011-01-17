@@ -23,7 +23,7 @@ public class AutoRewritesL1 extends AbstractAutoRewrites implements
 		IVersionedReasoner {
 
 	private static final String REASONER_ID = AutoRewrites.REASONER_ID + "L1";
-	private static final int VERSION = 0;
+	private static final int VERSION = 1;
 
 	public AutoRewritesL1() {
 		super(true);
