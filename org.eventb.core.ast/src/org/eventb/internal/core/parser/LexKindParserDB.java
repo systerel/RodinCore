@@ -15,9 +15,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.internal.core.lexer.Token;
+import org.eventb.internal.core.parser.ExternalViewUtils.Instantiator;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 
 /**
@@ -97,6 +99,16 @@ public class LexKindParserDB {
 			kindParsers.put(kind, parsers);
 		}
 		return parsers;
+	}
+
+	public void redistribute(Instantiator<Integer, Integer> opKindInst) {
+		final Map<Integer, KindParsers> newKindParsers = new HashMap<Integer, KindParsers>();
+		for (Entry<Integer, KindParsers> entry : kindParsers.entrySet()) {
+			final Integer newKind = opKindInst.instantiate(entry.getKey());
+			newKindParsers.put(newKind, entry.getValue());
+		}
+		kindParsers.clear();
+		kindParsers.putAll(newKindParsers);
 	}
 
 }

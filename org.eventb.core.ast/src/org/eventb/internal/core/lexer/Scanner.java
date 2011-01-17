@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.lexer;
 
-import static org.eventb.internal.core.parser.AbstractGrammar._EOF;
-import static org.eventb.internal.core.parser.AbstractGrammar._IDENT;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.IDENT;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,8 +105,9 @@ public class Scanner {
 		final Scanner scanner = new Scanner(name, result, factory.getGrammar());
 
 		final Token token = scanner.Peek();
+		final int identKind = factory.getGrammar().getKind(IDENT);
 		return (!result.hasProblem() && token != null
-				&& token.kind == _IDENT && token.val.equals(name));
+				&& token.kind == identKind && token.val.equals(name));
 	}
 
 	public static class ScannerState {
@@ -141,7 +142,8 @@ public class Scanner {
 	public boolean lookAheadFor(int searchedKind) {
 		ResetPeek();
 		Token peek = Peek();
-		while (peek.kind != _EOF) {
+		final int eof = lexer.getGrammar().getKind(EOF);
+		while (peek.kind != eof) {
 			if (peek.kind == searchedKind) {
 				return true;
 			}

@@ -4,6 +4,8 @@
  */
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.OFTYPE;
+
 import java.util.List;
 
 import org.eventb.internal.core.ast.BoundIdentDeclRemover;
@@ -61,7 +63,7 @@ abstract class QuantifiedHelper {
 			if (withTypes) {
 				final BoundIdentDecl decl = decls[i];
 				if (decl.isTypeChecked()) {
-					builder.append("\u2982");
+					builder.append(OFTYPE.getImage());
 					builder.append(decl.getType());
 				}
 			}

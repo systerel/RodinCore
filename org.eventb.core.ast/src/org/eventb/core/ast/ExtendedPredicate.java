@@ -14,6 +14,7 @@ package org.eventb.core.ast;
 //FIXME should not use AssociativeHelper (else rename Associative into ...)
 import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
+import static org.eventb.core.ast.ExtensionHelper.makeParserPrinter;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.PREDICATE;
 import static org.eventb.core.ast.extension.IOperatorProperties.Notation.PREFIX;
 import static org.eventb.internal.core.ast.extension.ArityCoverage.ANY;
@@ -27,7 +28,6 @@ import java.util.Set;
 
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
-import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.core.ast.extension.IPredicateExtension;
@@ -42,6 +42,7 @@ import org.eventb.internal.core.ast.extension.OperatorCoverage;
 import org.eventb.internal.core.ast.extension.TypeCheckMediator;
 import org.eventb.internal.core.parser.ExtendedGrammar;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.parser.IPropertyParserInfo;
 import org.eventb.internal.core.parser.SubParsers;
@@ -80,9 +81,44 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 					exprArity, predArity, globalArity, isAssociative);
 		}
 
+		protected abstract  IParserPrinter<ExtendedPredicate> makeParser(
+				int kind, int tag);
+
 		@Override
 		public OperatorCoverage getOperatorCoverage() {
 			return operProps;
+		}
+		
+		@Override
+		public IOperatorInfo<ExtendedPredicate> makeOpInfo(final String image,
+				final int tag, final String opId, final String groupId) {
+			return new IOperatorInfo<ExtendedPredicate>() {
+				
+				@Override
+				public IParserPrinter<ExtendedPredicate> makeParser(int kind) {
+					return ExtendedPredicateParsers.this.makeParser(kind, tag);
+				}
+
+				@Override
+				public boolean isSpaced() {
+					return false;
+				}
+				
+				@Override
+				public String getImage() {
+					return image;
+				}
+				
+				@Override
+				public String getId() {
+					return opId;
+				}
+				
+				@Override
+				public String getGroupId() {
+					return groupId;
+				}
+			};
 		}
 
 	}
@@ -104,9 +140,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	private final Expression[] childExpressions;
 	private final Predicate[] childPredicates;
 	private final IPredicateExtension extension;
-	private final FormulaFactory ff;
 
-	
 	public ExtendedPredicate(int tag, Expression[] expressions,
 			Predicate[] predicates, SourceLocation location,
 			FormulaFactory ff, IPredicateExtension extension) {
@@ -115,7 +149,6 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 		this.childExpressions = expressions.clone();
 		this.childPredicates = predicates.clone();
 		this.extension = extension;
-		this.ff = ff;
 		checkPreconditions();
 		setPredicateVariableCache(getChildren());
 		synthesizeType(ff);
@@ -199,10 +232,8 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void toString(IToStringMediator mediator) {
-		final IOperatorProperties properties = extension.getKind()
-		.getProperties();
-		final IParserPrinter<? extends Formula<?>> parser = ff.getGrammar()
-				.getParser(properties, mediator.getKind(), getTag());
+		final IParserPrinter<? extends Formula<?>> parser = makeParserPrinter(
+				getTag(), extension, mediator);
 		final IParserPrinter<ExtendedPredicate> extParser = (IParserPrinter<ExtendedPredicate>) parser;
 		extParser.toString(mediator, this);
 	}

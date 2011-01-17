@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,11 @@ package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.LanguageVersion.LATEST;
 import static org.eventb.core.ast.LanguageVersion.V1;
-import static org.eventb.internal.core.parser.AbstractGrammar._EOF;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.IDENT;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.INT_LIT;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PARTITION;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PRED_VAR;
 import static org.eventb.internal.core.parser.BMathV2.B_MATH_V2;
 
 import java.util.HashSet;
@@ -52,8 +56,8 @@ public class TestLexer extends AbstractTests {
 	private static final String[] invalidStrings = new String[] { "-", "/", };
 
 	private static int getExpectedKind(int kind, LanguageVersion version) {
-		if (kind == B_MATH_V2.getPARTITION() && version == V1)
-			return B_MATH_V2.getIDENT();
+		if (kind == B_MATH_V2.getKind(PARTITION) && version == V1)
+			return B_MATH_V2.getKind(IDENT);
 		return kind;
 	}
 
@@ -74,18 +78,18 @@ public class TestLexer extends AbstractTests {
 			final Integer kind = token.getValue();
 			testToken(image, kind, version);
 		}
-		testToken("", B_MATH_V2.getEOF(), version);
-		testToken("x", B_MATH_V2.getIDENT(), version);
-		testToken("_toto", B_MATH_V2.getIDENT(), version);
-		testToken("x'", B_MATH_V2.getIDENT(), version);
-		testToken("2", B_MATH_V2.getINTLIT(), version);
-		testToken("3000000000", B_MATH_V2.getINTLIT(), version);
-		testToken("50000000000000000000", B_MATH_V2.getINTLIT(), version);
-		testToken("001", B_MATH_V2.getINTLIT(), version);
-		testToken("$P", B_MATH_V2.getPREDVAR(), version);
-		testToken("$_toto", B_MATH_V2.getPREDVAR(), version);
-		testToken("p'", B_MATH_V2.getIDENT(), version);
-		testToken("prj'", B_MATH_V2.getIDENT(), version);
+		testToken("", B_MATH_V2.getKind(EOF), version);
+		testToken("x", B_MATH_V2.getKind(IDENT), version);
+		testToken("_toto", B_MATH_V2.getKind(IDENT), version);
+		testToken("x'", B_MATH_V2.getKind(IDENT), version);
+		testToken("2", B_MATH_V2.getKind(INT_LIT), version);
+		testToken("3000000000", B_MATH_V2.getKind(INT_LIT), version);
+		testToken("50000000000000000000", B_MATH_V2.getKind(INT_LIT), version);
+		testToken("001", B_MATH_V2.getKind(INT_LIT), version);
+		testToken("$P", B_MATH_V2.getKind(PRED_VAR), version);
+		testToken("$_toto", B_MATH_V2.getKind(PRED_VAR), version);
+		testToken("p'", B_MATH_V2.getKind(IDENT), version);
+		testToken("prj'", B_MATH_V2.getKind(IDENT), version);
 	}
 
 	private void testToken(String image, Integer kind, LanguageVersion version) {
@@ -150,7 +154,7 @@ public class TestLexer extends AbstractTests {
 		assertFalse(result.hasProblem());
 		
 		final Token next = scanner.Scan();
-		assertEquals(_EOF, next.kind);
+		assertEquals(B_MATH_V2.getKind(EOF), next.kind);
 		
 		assertEquals(ident, t.val);
 	}

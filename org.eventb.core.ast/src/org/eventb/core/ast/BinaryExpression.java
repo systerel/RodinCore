@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,11 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
-import static org.eventb.internal.core.parser.AbstractGrammar._RPAR;
-import static org.eventb.internal.core.parser.BMath._RBRACKET;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LBRACKET;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LPAR;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.MAPS_TO;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RBRACKET;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RPAR;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.ARITHMETIC;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.BINOP;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.FUNCTIONAL;
@@ -36,6 +39,7 @@ import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
+import org.eventb.internal.core.parser.AbstractGrammar;
 import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.BMath.StandardGroup;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
@@ -177,7 +181,7 @@ public class BinaryExpression extends Expression {
 	public static final String RELIMAGE_ID = "Relational Image";
 
 	private static enum Operators implements IOperatorInfo<BinaryExpression> {
-		OP_MAPSTO("\u21a6", MAPSTO_ID, PAIR, MAPSTO),
+		OP_MAPSTO(MAPS_TO.getImage(), MAPSTO_ID, PAIR, MAPSTO),
 		OP_REL("\u2194", REL_ID, RELATION, REL),
 		OP_TREL("\ue100", TREL_ID, RELATION, TREL),
 		OP_SREL("\ue101", SREL_ID, RELATION, SREL),
@@ -202,16 +206,26 @@ public class BinaryExpression extends Expression {
 		OP_DIV("\u00f7", DIV_ID, ARITHMETIC, DIV),
 		OP_MOD("mod", MOD_ID, ARITHMETIC, MOD),
 		OP_EXPN("\u005e", EXPN_ID, ARITHMETIC, EXPN),
-		OP_FUNIMAGE("(", FUNIMAGE_ID, FUNCTIONAL, FUNIMAGE, false) {
+		OP_FUNIMAGE(LPAR.getImage(), FUNIMAGE_ID, FUNCTIONAL, FUNIMAGE, false) {
 			@Override
 			public IParserPrinter<BinaryExpression> makeParser(int kind) {
-				return new LedImage(kind, FUNIMAGE, _RPAR);
+				return new LedImage(kind, FUNIMAGE) {
+					@Override
+					protected int getCloseKind(AbstractGrammar grammar) {
+						return grammar.getKind(RPAR);
+					}
+				};
 			}
 		},
-		OP_RELIMAGE("[", RELIMAGE_ID, FUNCTIONAL, RELIMAGE, false) {
+		OP_RELIMAGE(LBRACKET.getImage(), RELIMAGE_ID, FUNCTIONAL, RELIMAGE, false) {
 			@Override
 			public IParserPrinter<BinaryExpression> makeParser(int kind) {
-				return new LedImage(kind, RELIMAGE, _RBRACKET);
+				return new LedImage(kind, RELIMAGE) {
+					@Override
+					protected int getCloseKind(AbstractGrammar grammar) {
+						return grammar.getKind(RBRACKET);
+					}
+				}; 
 			}
 		},
 		;

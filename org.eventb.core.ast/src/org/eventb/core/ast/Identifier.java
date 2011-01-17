@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
-import static org.eventb.internal.core.parser.AbstractGrammar._IDENT;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.IDENT;
 import static org.eventb.internal.core.parser.SubParsers.IDENT_SUBPARSER;
 
 import java.util.Set;
@@ -36,7 +36,7 @@ public abstract class Identifier extends Expression {
 	 * @since 2.0
 	 */
 	public static void init(AbstractGrammar grammar) {
-		grammar.addReservedSubParser(_IDENT, IDENT_SUBPARSER);
+		grammar.addReservedSubParser(IDENT, IDENT_SUBPARSER);
 	}
 
 	protected Identifier(int tag, SourceLocation location, int hashCode) {
@@ -77,7 +77,7 @@ public abstract class Identifier extends Expression {
 
 	@Override
 	protected final int getKind(KindMediator mediator) {
-		return _IDENT;
+		return mediator.getIDENT();
 	}
 
 }

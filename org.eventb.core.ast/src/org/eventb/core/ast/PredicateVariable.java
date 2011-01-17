@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Systerel and others.
+ * Copyright (c) 2009, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PRED_VAR;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.GROUP_0;
 import static org.eventb.internal.core.parser.SubParsers.PRED_VAR_SUBPARSER;
 
@@ -55,14 +56,12 @@ public class PredicateVariable extends Predicate {
 	 */
 	public static final String LEADING_SYMBOL = "$";
 
-	private static final String PRED_VAR_ID = "Predicate Variable";
-
 	/**
 	 * @since 2.0
 	 */
 	public static void init(BMath grammar) {
 		try {
-			grammar.addOperator(BMath._PREDVAR, PRED_VAR_ID, GROUP_0.getId(),
+			grammar.addOperator(PRED_VAR, PRED_VAR.getImage(), GROUP_0.getId(),
 					PRED_VAR_SUBPARSER, false);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
@@ -123,7 +122,7 @@ public class PredicateVariable extends Predicate {
 
 	@Override
 	protected int getKind(KindMediator mediator) {
-		return BMath._PREDVAR;
+		return mediator.getPREDVAR();
 	}
 
 	@Override

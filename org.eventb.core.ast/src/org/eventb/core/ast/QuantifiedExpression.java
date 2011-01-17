@@ -23,6 +23,7 @@ import static org.eventb.core.ast.QuantifiedHelper.checkBoundIdentTypes;
 import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LBRACE;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.BRACE_SETS;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.QUANTIFICATION;
 
@@ -168,13 +169,13 @@ public class QuantifiedExpression extends Expression {
 				return new ImplicitQuantExpr(kind, QINTER);
 			}
 		},
-		OP_CSET_EXPL("{", CSET_ID, BRACE_SETS) {
+		OP_CSET_EXPL(LBRACE.getImage(), CSET_ID, BRACE_SETS) {
 			@Override
 			public IQuantifiedParser<QuantifiedExpression> makeParser(int kind) {
 				return new CSetExplicit(kind);
 			}
 		},
-		OP_CSET_IMPL("{", CSET_ID, BRACE_SETS) {
+		OP_CSET_IMPL(LBRACE.getImage(), CSET_ID, BRACE_SETS) {
 			@Override
 			public IQuantifiedParser<QuantifiedExpression> makeParser(int kind) {
 				return new CSetImplicit(kind);

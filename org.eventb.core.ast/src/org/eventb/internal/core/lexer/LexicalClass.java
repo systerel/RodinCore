@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,16 +13,16 @@ package org.eventb.internal.core.lexer;
 import static org.eventb.internal.core.lexer.GenLexer.LAMBDA;
 import static org.eventb.internal.core.lexer.GenLexer.META;
 import static org.eventb.internal.core.lexer.LexStream.nextCodePoint;
-import static org.eventb.internal.core.parser.AbstractGrammar._EOF;
-import static org.eventb.internal.core.parser.AbstractGrammar._IDENT;
-import static org.eventb.internal.core.parser.AbstractGrammar._INTLIT;
-import static org.eventb.internal.core.parser.BMath._PREDVAR;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.IDENT;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.INT_LIT;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PRED_VAR;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.core.lexer.GenLexer.LexemReader;
 import org.eventb.internal.core.parser.AbstractGrammar;
 import org.eventb.internal.core.parser.BMath;
-import org.eventb.internal.core.parser.IndexedSet;
+import org.eventb.internal.core.parser.TokenSet;
 
 /**
  * Lexical classes for any {@link BMath} grammar (potentially extended).
@@ -51,9 +51,9 @@ public enum LexicalClass {
 
 		@Override
 		public int getKind(String image, AbstractGrammar grammar) {
-			final int kind = grammar.getTokens().getIndex(image);
-			if (kind == IndexedSet.NOT_AN_INDEX) {
-				return _IDENT;
+			final int kind = grammar.getTokens().getKind(image);
+			if (kind == TokenSet.UNKNOWN_KIND) {
+				return grammar.getKind(IDENT);
 			} else {
 				return kind;
 			}
@@ -77,7 +77,7 @@ public enum LexicalClass {
 
 		@Override
 		public int getKind(String image, AbstractGrammar grammar) {
-			return grammar.getTokens().getIndex(image);
+			return grammar.getTokens().getKind(image);
 		}
 
 		@Override
@@ -121,7 +121,7 @@ public enum LexicalClass {
 		@Override
 		public int getKind(String image, AbstractGrammar grammar) {
 			assert false;
-			return _EOF;
+			return grammar.getKind(EOF);
 		}
 
 	},
@@ -138,7 +138,7 @@ public enum LexicalClass {
 
 		@Override
 		public int getKind(String image, AbstractGrammar grammar) {
-			return _INTLIT;
+			return grammar.getKind(INT_LIT);
 		}
 	},
 	META_VAR {
@@ -157,7 +157,7 @@ public enum LexicalClass {
 
 		@Override
 		public int getKind(String image, AbstractGrammar grammar) {
-			return _PREDVAR;
+			return grammar.getKind(PRED_VAR);
 		}
 
 		@Override

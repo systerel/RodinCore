@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,26 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LBRACE;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LBRACKET;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LPAR;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.NEG_LIT;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.NOOP;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.OFTYPE;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.OPEN;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RBRACE;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RBRACKET;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RPAR;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.ARITHMETIC;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.GROUP_0;
-import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.COMPATIBLE;
-import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.LEFT_PRIORITY;
-import static org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship.RIGHT_PRIORITY;
+import static org.eventb.internal.core.parser.BMath.StandardGroup.TYPED;
+import static org.eventb.internal.core.parser.OperatorRelationship.COMPATIBLE;
+import static org.eventb.internal.core.parser.OperatorRelationship.LEFT_PRIORITY;
+import static org.eventb.internal.core.parser.OperatorRelationship.RIGHT_PRIORITY;
+import static org.eventb.internal.core.parser.SubParsers.OFTYPE_PARSER;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +46,6 @@ import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.BMath.StandardGroup;
 import org.eventb.internal.core.parser.ExternalViewUtils.Instantiator;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
-import org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship;
 
 /**
  * @author Nicolas Beauger
@@ -39,30 +53,54 @@ import org.eventb.internal.core.parser.OperatorRegistry.OperatorRelationship;
  */
 public abstract class AbstractGrammar {
 
-	private static final String EOF_ID = "End of File";
-	private static final String NOOP_ID = "No Operator";
-	private static final String OPEN_ID = "Open";
-	private static final String IDENT_IMAGE = "an identifier";
-	private static final String INTLIT_IMAGE = "an integer literal";
+	public static enum DefaultToken {
+		EOF("End of Formula", true),
+		NOOP("No Operator", true),
+		OPEN("Open", true),
+		IDENT("an identifier", true),
+		INT_LIT("an integer literal", true),
+		NEG_LIT("a negative integer literal", true),
+		PRED_VAR("Predicate Variable", true),
+		LPAR("(", false),
+		RPAR(")", false),
+		COMMA(",", false),
+		LBRACKET("[", false),
+		RBRACKET("]", false),
+		LBRACE("{", false),
+		RBRACE("}", false),
+		MAPS_TO("\u21a6", false),
+		MID("\u2223", false),
+		DOT("\u00b7", false),
+		PARTITION("partition", false),
+		OFTYPE("\u2982", false);
 
-	// FIXME make private
-	protected static final IndexedSet<String> publicTokens = new IndexedSet<String>();
+		private final String image;
+		private final boolean isReserved;
+		
+		private DefaultToken(String image, boolean isReserved) {
+			this.image = image;
+			this.isReserved = isReserved;
+		}
+		
+		public String getImage() {
+			return image;
+		}
+		
+		public boolean isReserved() {
+			return isReserved;
+		}
+	}
 	
+	private static final String OFTYPE_ID = "Oftype";
 	
-	public static final int _EOF = publicTokens.reserved("End Of Formula");
-	public static final int _NOOP = publicTokens.reserved("No Operator");
-	public static final int _OPEN = publicTokens.reserved("Open");
-	public static final int _IDENT = publicTokens.reserved(IDENT_IMAGE);
-	public static final int _INTLIT = publicTokens.reserved(INTLIT_IMAGE);
-	public static final int _LPAR = publicTokens.getOrAdd("(");
-	public static final int _RPAR = publicTokens.getOrAdd(")");
-	public static final int _COMMA = publicTokens.getOrAdd(",");
-
-	protected final IndexedSet<String> tokens = new IndexedSet<String>(publicTokens);
+	protected TokenSet tokens = new TokenSet();
 	
 	private final LexKindParserDB subParsers = new LexKindParserDB();
 	
-	private final OperatorRegistry opRegistry = new OperatorRegistry();
+	private OperatorRegistry initOpRegistry = new OperatorRegistry();
+	private OperatorRegistryCompact opRegistry = null;
+	
+	private List<IOperatorInfo<? extends Formula<?>>> deferredOperators = new ArrayList<IOperatorInfo<? extends Formula<?>>>();
 	
 	// used by extended grammar to fetch appropriate parser
 	// and by extended formulae to fetch appropriate printers
@@ -70,6 +108,8 @@ public abstract class AbstractGrammar {
 	private final PropertyParserDB propParsers = new PropertyParserDB();
 	
 	private final Map<Integer, Integer> closeOpenKinds = new HashMap<Integer, Integer>();
+
+	private final int[] defaultTokenKinds = new int[DefaultToken.values().length];
 	
 	public IGrammar asExternalView() {
 		final Instantiator<Integer, IOperator> instantiator = new Instantiator<Integer, IOperator>();
@@ -77,7 +117,7 @@ public abstract class AbstractGrammar {
 		for (Entry<Integer, String> kindId : kindIds.entrySet()) {
 			final Integer kind = kindId.getKey();
 			final String id = kindId.getValue();
-			final String syntaxSymbol = tokens.getElem(kind);
+			final String syntaxSymbol = tokens.getImage(kind);
 			final IOperator operator = new ExternalViewUtils.ExternalOperator(id, syntaxSymbol);
 			instantiator.setInst(kind, operator);
 		}
@@ -86,10 +126,16 @@ public abstract class AbstractGrammar {
 
 	public boolean isOperator(int kind) {
 		// TODO could be replaced by 'there exists a tag for the given kind'
-		return opRegistry.hasGroup(kind) && (!tokens.isReserved(kind));
+		return kind == getKind(NEG_LIT)
+				|| (opRegistry.hasGroup(kind) && (!tokens.isReserved(kind)));
 	}
 	
-	public IndexedSet<String> getTokens() {
+	protected boolean isInitOperator(int kind) {
+		// TODO could be replaced by 'there exists a tag for the given kind'
+		return initOpRegistry.hasGroup(kind) && (!tokens.isReserved(kind));
+	}
+	
+	public TokenSet getTokens() {
 		return tokens;
 	}
 
@@ -100,36 +146,117 @@ public abstract class AbstractGrammar {
 	 * </p>
 	 */
 	public final void init() {
+		try {
+			initDefaultKinds();
+
+			initOpRegistry.addOperator(getKind(EOF), EOF.getImage(), GROUP_0.getId(), false);
+			initOpRegistry.addOperator(getKind(NOOP), NOOP.getImage(), GROUP_0.getId(), false);
+			initOpRegistry.addOperator(getKind(OPEN), OPEN.getImage(), GROUP_0.getId(), false);
+			initOpRegistry.addOperator(getKind(NEG_LIT), NEG_LIT.getImage(), ARITHMETIC.getId(),
+					false);
+			
+			// TODO move to Expression.init() called from BMath
+			// Undefined Operators
+			addOperator(OFTYPE, OFTYPE_ID, TYPED.getId(), OFTYPE_PARSER, true);
+
+			addOpenClose(LPAR.getImage(), RPAR.getImage());
+			addOpenClose(LBRACE.getImage(), RBRACE.getImage());
+			addOpenClose(LBRACKET.getImage(), RBRACKET.getImage());
+
+			IntegerLiteral.init(this);
+			Identifier.init(this);
+			subParsers.addNud(getKind(LPAR), MainParsers.CLOSED_SUGAR);
+			addOperators();
+			addOperatorRelationships();
+
+			// the following redistributes all kinds
+			compact();
+
+			updateDefaultKinds();
+
+			for (IOperatorInfo<? extends Formula<?>> operInfo : deferredOperators) {
+				populateSubParsers(operInfo);
+			}
+			deferredOperators = null;
+		} catch (OverrideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void initDefaultKinds() {
+		final DefaultToken[] defTokens = DefaultToken.values();
+		for (int i = 0; i < defTokens.length; i++) {
+			final DefaultToken token = defTokens[i];
+			if (token.isReserved()) {
+				defaultTokenKinds[i] = tokens.reserved(token.getImage());
+			} else {
+				defaultTokenKinds[i] = tokens.getOrAdd(token.getImage());
+			}
+		}
+	}
+
+	private void updateDefaultKinds() {
+		final DefaultToken[] defTokens = DefaultToken.values();
+		for (int i = 0; i < defTokens.length; i++) {
+			final DefaultToken token = defTokens[i];
+			if (token.isReserved()) {
+				defaultTokenKinds[i] = tokens.getReserved(token.getImage());
+			} else {
+				defaultTokenKinds[i] = tokens.getKind(token.getImage());
+			}
+		}
+	}
+
+	private void compact() {
+		final OpRegistryCompactor regCompactor = new OpRegistryCompactor(
+				initOpRegistry);
+		final Instantiator<Integer, Integer> opKindInst = new Instantiator<Integer, Integer>();
+		opRegistry = regCompactor.compact(opKindInst);
+		initOpRegistry = null;
 		
-		opRegistry.addOperator(_EOF, EOF_ID, GROUP_0.getId(), false);
-		opRegistry.addOperator(_NOOP, NOOP_ID, GROUP_0.getId(), false);
-		opRegistry.addOperator(_OPEN, OPEN_ID, GROUP_0.getId(), false);
-		addOpenClose("(", ")");
+		final TokenSetRedist tokenCompactor = new TokenSetRedist();
+		tokens = tokenCompactor.redistribute(tokens, opKindInst);
+		subParsers.redistribute(opKindInst);
 		
-		IntegerLiteral.init(this);
-		Identifier.init(this);
-		subParsers.addNud(_LPAR, MainParsers.CLOSED_SUGAR);
-		addOperators();
-		addOperatorRelationships();
+		final Map<Integer, Integer> newCloseOpen = new HashMap<Integer, Integer>();
+		for (Entry<Integer, Integer> entry : closeOpenKinds.entrySet()) {
+			newCloseOpen.put(opKindInst.instantiate(entry.getKey()),
+					opKindInst.instantiate(entry.getValue()));
+		}
+		closeOpenKinds.clear();
+		closeOpenKinds.putAll(newCloseOpen);
+	}
+
+	private void populateSubParsers(
+			IOperatorInfo<? extends Formula<?>> operInfo)
+			throws OverrideException {
+		final int kind = tokens.getKind(operInfo.getImage());
+		final IParserPrinter<? extends Formula<?>> parser = operInfo.makeParser(kind);
+		if (parser instanceof INudParser<?>) {
+			subParsers.addNud(kind, (INudParser<? extends Formula<?>>) parser);
+		} else {
+			subParsers.addLed(kind, (ILedParser<? extends Formula<?>>) parser);
+		}
 	}
 
 	protected abstract void addOperators();
 	protected abstract void addOperatorRelationships();
 	
 	public void addCompatibility(String leftOpId, String rightOpId) {
-		opRegistry.addCompatibility(leftOpId, rightOpId);
+		initOpRegistry.addCompatibility(leftOpId, rightOpId);
 	}
 	
 	public void addAssociativity(String opId) {
-		opRegistry.addAssociativity(opId);
+		initOpRegistry.addAssociativity(opId);
 	}
 	
 	public void addPriority(String lowOpId, String highOpId) throws CycleError {
-		opRegistry.addPriority(lowOpId, highOpId);
+		initOpRegistry.addPriority(lowOpId, highOpId);
 	}
 	
 	public void addGroupPriority(String lowGroupId, String highGroupId) throws CycleError {
-		opRegistry.addGroupPriority(lowGroupId, highGroupId);
+		initOpRegistry.addGroupPriority(lowGroupId, highGroupId);
 	}
 
 	public List<INudParser<? extends Formula<?>>> getNudParsers(Token token) {
@@ -141,9 +268,10 @@ public abstract class AbstractGrammar {
 	}
 	
 	// for now, used only for extension parsers
-	public IParserPrinter<? extends Formula<?>> getParser(
-			IOperatorProperties operProps, int kind, int tag) {
-		return propParsers.getParser(operProps, kind, tag);
+	public IOperatorInfo<? extends Formula<?>> getParser(
+			IOperatorProperties operProps, String image, int tag, String opId,
+			String groupId) {
+		return propParsers.getParser(operProps, image, tag, opId, groupId);
 	}
 
 	public void addParser(IPropertyParserInfo<? extends Formula<?>> parserInfo)
@@ -155,35 +283,26 @@ public abstract class AbstractGrammar {
 	public void addOperator(IOperatorInfo<? extends Formula<?>> operInfo)
 			throws OverrideException {
 		final int kind = tokens.getOrAdd(operInfo.getImage());
-		opRegistry.addOperator(kind, operInfo.getId(), operInfo.getGroupId(), operInfo.isSpaced());
-		final IParserPrinter<? extends Formula<?>> parser = operInfo.makeParser(kind);
-		if (parser instanceof INudParser<?>) {
-			subParsers.addNud(kind, (INudParser<? extends Formula<?>>) parser);
+		initOpRegistry.addOperator(kind, operInfo.getId(),
+				operInfo.getGroupId(), operInfo.isSpaced());
+		// kind is unstable at this stage, subParsers are populated later
+		deferredOperators.add(operInfo);
+	}
+
+	// must be called only with subparsers getting their kind dynamically from a
+	// grammar while parsing, the kind must not be stored inside the subparser
+	public void addOperator(DefaultToken token, String operatorId, String groupId,
+			IParserPrinter<? extends Formula<?>> subParser, boolean isSpaced)
+			throws OverrideException {
+		final int kind = getKind(token);
+		initOpRegistry.addOperator(kind, operatorId, groupId, isSpaced);
+		if (subParser instanceof INudParser) {
+			subParsers.addNud(kind,
+					(INudParser<? extends Formula<?>>) subParser);
 		} else {
-			subParsers.addLed(kind, (ILedParser<? extends Formula<?>>) parser);
+			subParsers.addLed(kind,
+					(ILedParser<? extends Formula<?>>) subParser);
 		}
-	}
-	
-	protected void addOperator(String token, String operatorId, String groupId,
-			INudParser<? extends Formula<?>> subParser, boolean isSpaced) {
-		final int kind = tokens.getOrAdd(token);
-		opRegistry.addOperator(kind, operatorId, groupId, isSpaced);
-		subParsers.addNud(kind, subParser);
-	}
-
-	protected void addOperator(String token, String operatorId, String groupId,
-			ILedParser<? extends Formula<?>> subParser, boolean isSpaced)
-			throws OverrideException {
-		final int kind = tokens.getOrAdd(token);
-		opRegistry.addOperator(kind, operatorId, groupId, isSpaced);
-		subParsers.addLed(kind, subParser);
-	}
-
-	public void addOperator(int kind, String operatorId, String groupId,
-			INudParser<? extends Formula<?>> subParser, boolean isSpaced)
-			throws OverrideException {
-		opRegistry.addOperator(kind, operatorId, groupId, isSpaced);
-		subParsers.addNud(kind, subParser);
 	}
 
 	protected void addOpenClose(String open, String close) {
@@ -200,14 +319,16 @@ public abstract class AbstractGrammar {
 		return closeOpenKinds.containsKey(kind);
 	}
 
-	public void addReservedSubParser(int reservedKind,
+	public void addReservedSubParser(DefaultToken token,
 			INudParser<? extends Formula<?>> subParser) {
+		assert token.isReserved();
+		final int reservedKind = getKind(token);
 		subParsers.addNud(reservedKind, subParser);
 	}
 	
 	protected void addGroupPrioritySequence(StandardGroup... groups) throws CycleError {
 		for (int i = 0; i < groups.length - 1; i++) {
-			opRegistry.addGroupPriority(groups[i].getId(), groups[i+1].getId());
+			initOpRegistry.addGroupPriority(groups[i].getId(), groups[i+1].getId());
 		}
 	}
 	
@@ -216,29 +337,21 @@ public abstract class AbstractGrammar {
 		return opRegistry.getOperatorRelationship(leftKind, rightKind);
 	}
 	
-	public int getEOF() {
-		return _EOF;
-	}
-	
-	public int getIDENT() {
-		return _IDENT;
-	}
-	
-	public int getINTLIT() {
-		return _INTLIT;
-	}
-	
 	public String getImage(int kind) {
-		return tokens.getElem(kind);
+		return tokens.getImage(kind);
 	}
 
 	public int getKind(String image) {
-		final int kind = tokens.getIndex(image);
-		if (kind == IndexedSet.NOT_AN_INDEX) {
+		final int kind = tokens.getKind(image);
+		if (kind == TokenSet.UNKNOWN_KIND) {
 			// TODO consider throwing a caught exception (for extensions to manage)
 			throw new IllegalArgumentException("No such token: " + image);
 		}
 		return kind;
+	}
+	
+	public int getKind(DefaultToken token) {
+		return defaultTokenKinds[token.ordinal()];
 	}
 
 	/**
@@ -255,7 +368,7 @@ public abstract class AbstractGrammar {
 	 */
 	public boolean needsParentheses(boolean isRightChild, int childKind,
 			int parentKind) {
-		if (parentKind == _EOF) { // TODO maybe not needed
+		if (parentKind == getKind(EOF)) { // TODO maybe not needed
 			return false;
 		}
 		if (!isOperator(parentKind) || !isOperator(childKind)) {
