@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eventb.internal.core.parser.ExternalViewUtils.Instantiator;
 
@@ -124,7 +126,10 @@ public class IndexedSet {
 		final Map<String, Integer> newReserved = redistribute(reserved,
 				opKindInst, conflicts);
 
-		processConflicts(conflicts, newLexTokens, newReserved, opKindInst);
+		final List<Integer> freeKinds = findFreeKinds(newLexTokens, newReserved);
+		final Map<String, Integer> conflictSolver = makeMap(conflicts, freeKinds);
+		
+		processConflicts(conflictSolver, newLexTokens, newReserved, opKindInst);
 		assert newLexTokens.size() == lexTokens.size();
 		assert newReserved.size() == reserved.size();
 		lexTokens.clear();
@@ -154,23 +159,46 @@ public class IndexedSet {
 		return result;
 	}
 
-	private void processConflicts(Set<String> conflicts,
+	private List<Integer> findFreeKinds(Map<String, Integer> newLexTokens,
+			Map<String, Integer> newReserved) {
+		final List<Integer> freeKinds = new ArrayList<Integer>();
+		for (Integer kind = FIRST_KIND; kind < nextKind; kind++) {
+			if (!newLexTokens.containsValue(kind)
+					&& !newReserved.containsValue(kind)) {
+				freeKinds.add(kind);
+			}
+		}
+		return freeKinds;
+	}
+
+	private static Map<String, Integer> makeMap(Set<String> conflicts,
+			List<Integer> freeKinds) {
+		assert freeKinds.size() == conflicts.size();
+		final Map<String, Integer> map = new HashMap<String, Integer>();
+		int i=0;
+		for (String string : conflicts) {
+			map.put(string, freeKinds.get(i));
+			i++;
+		}
+		return map;
+	}
+
+	private void processConflicts(Map<String, Integer> conflictSolver,
 			Map<String, Integer> newLexTokens,
 			Map<String, Integer> newReserved,
 			Instantiator<Integer, Integer> opKindInst) {
-		for (String obj : conflicts) {
-			final int conflictKind;
-			final int newKind;
-			if(newLexTokens.containsKey(obj)) {
-				conflictKind = newLexTokens.remove(obj);
-				newKind = getOrAdd(obj, newLexTokens);
-			} else if (newReserved.containsKey(obj)) {
-				conflictKind = newReserved.remove(obj);
-				newKind = getOrAdd(obj, newReserved);
+		for (Entry<String, Integer> entry : conflictSolver.entrySet()) {
+			
+			final String image = entry.getKey();
+			final Integer newKind = entry.getValue();
+			final Integer conflictKind;
+			if(newLexTokens.containsKey(image)) {
+				conflictKind = newLexTokens.put(image, newKind);
+			} else if (newReserved.containsKey(image)) {
+				conflictKind = newReserved.put(image, newKind);
 			} else {
 				assert false;
 				conflictKind = Integer.MIN_VALUE;
-				newKind = Integer.MIN_VALUE;
 			}
 			opKindInst.setInst(conflictKind, newKind);
 		}
