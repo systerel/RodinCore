@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -140,10 +140,7 @@ public class TokenSet {
 	}
 	
 	public boolean isReserved(int kind) {
-		// TODO reserved.containsValue(kind) ?
-		// used only as !isReserved() => reverse logic
-		return kind >= FIRST_KIND && kind < nextKind
-				&& !lexTokens.containsValue(kind);
+		 return reserved.containsValue(kind);
 	}
 
 }
