@@ -11,6 +11,7 @@
 package org.eventb.internal.core.parser;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -176,6 +177,10 @@ public class ExternalViewUtils {
 
 		public boolean hasInst(S source) {
 			return instantiation.containsKey(source);
+		}
+		
+		public Collection<T> values() {
+			return instantiation.values();
 		}
 		
 		public T instantiate(S source) {

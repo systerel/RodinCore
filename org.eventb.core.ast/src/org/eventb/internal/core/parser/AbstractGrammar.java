@@ -83,7 +83,7 @@ public abstract class AbstractGrammar {
 	private int _KPARTITION;
 	private int _OFTYPE;
 
-	protected final TokenSet tokens = new TokenSet();
+	protected TokenSet tokens = new TokenSet();
 	
 	private final LexKindParserDB subParsers = new LexKindParserDB();
 	
@@ -217,8 +217,8 @@ public abstract class AbstractGrammar {
 		opRegistry = regCompactor.compact(opKindInst);
 		initOpRegistry = null;
 		
-		tokens.redistribute(opKindInst);
-		tokens.compact();
+		final TokenSetRedist tokenCompactor = new TokenSetRedist();
+		tokens = tokenCompactor.redistribute(tokens, opKindInst);
 		subParsers.redistribute(opKindInst);
 		
 		final Map<Integer, Integer> newCloseOpen = new HashMap<Integer, Integer>();
