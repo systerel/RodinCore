@@ -10,6 +10,8 @@
  *******************************************************************************/
 package fr.systerel.perf.tests.parser;
 
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
+
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.internal.core.lexer.Scanner;
@@ -44,7 +46,7 @@ public class LexerPerfTests {
 		final ParseResult result = new ParseResult(FACTORY,
 				LanguageVersion.LATEST, null);
 		final Chrono chrono = new Chrono(testName);
-		final int eof = GRAMMAR.getEOF();
+		final int eof = GRAMMAR.getKind(EOF);
 		chrono.startMeasure();
 		for (int i = 0; i < TIMES_REPEAT_SCAN; i++) {
 			final Scanner scanner = new Scanner(string, result, GRAMMAR);
