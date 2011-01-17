@@ -168,10 +168,9 @@ public abstract class AbstractGrammar {
 			initOpRegistry.addOperator(getKind(NEG_LIT), NEG_LIT.getImage(), ARITHMETIC.getId(),
 					false);
 			
-			// TODO move down to BMath
+			// TODO move to Expression.init() called from BMath
 			// Undefined Operators
-			addOperator(OFTYPE.getImage(), OFTYPE_ID, TYPED.getId(), OFTYPE_PARSER,
-					true);
+			addOperator(OFTYPE, OFTYPE_ID, TYPED.getId(), OFTYPE_PARSER, true);
 
 			addOpenClose(LPAR_IMAGE, RPAR_IMAGE);
 			addOpenClose(LBRACE_IMAGE, RBRACE_IMAGE);
@@ -305,21 +304,18 @@ public abstract class AbstractGrammar {
 
 	// must be called only with subparsers getting their kind dynamically from a
 	// grammar while parsing, the kind must not be stored inside the subparser
-	protected void addOperator(String token, String operatorId, String groupId,
-			ILedParser<? extends Formula<?>> subParser, boolean isSpaced)
+	public void addOperator(DefaultToken token, String operatorId, String groupId,
+			IParserPrinter<? extends Formula<?>> subParser, boolean isSpaced)
 			throws OverrideException {
-		final int kind = tokens.getOrAdd(token);
+		final int kind = getKind(token);
 		initOpRegistry.addOperator(kind, operatorId, groupId, isSpaced);
-		subParsers.addLed(kind, subParser);
-	}
-
-	// must be called only with subparsers getting their kind dynamically from a
-	// grammar while parsing, the kind must not be stored inside the subparser
-	public void addOperator(int kind, String operatorId, String groupId,
-			INudParser<? extends Formula<?>> subParser, boolean isSpaced)
-			throws OverrideException {
-		initOpRegistry.addOperator(kind, operatorId, groupId, isSpaced);
-		subParsers.addNud(kind, subParser);
+		if (subParser instanceof INudParser) {
+			subParsers.addNud(kind,
+					(INudParser<? extends Formula<?>>) subParser);
+		} else {
+			subParsers.addLed(kind,
+					(ILedParser<? extends Formula<?>>) subParser);
+		}
 	}
 
 	protected void addOpenClose(String open, String close) {

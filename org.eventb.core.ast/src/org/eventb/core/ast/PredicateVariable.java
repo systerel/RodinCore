@@ -56,15 +56,13 @@ public class PredicateVariable extends Predicate {
 	 */
 	public static final String LEADING_SYMBOL = "$";
 
-	private static final String PRED_VAR_ID = "Predicate Variable";
-
 	/**
 	 * @since 2.0
 	 */
 	public static void init(BMath grammar) {
 		try {
-			grammar.addOperator(grammar.getKind(PRED_VAR), PRED_VAR_ID,
-					GROUP_0.getId(), PRED_VAR_SUBPARSER, false);
+			grammar.addOperator(PRED_VAR, PRED_VAR.getImage(), GROUP_0.getId(),
+					PRED_VAR_SUBPARSER, false);
 		} catch (OverrideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
