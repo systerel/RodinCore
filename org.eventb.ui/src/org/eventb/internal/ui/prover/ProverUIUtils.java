@@ -475,8 +475,7 @@ public class ProverUIUtils {
 	 *         predicate <code>pred</code> and its string representation
 	 *         <code>str</code>
 	 */
-	public static Map<Point, List<ITacticApplication>> getHyperlinks(
-			IUserSupport us, boolean isHypothesis, String str, Predicate pred) {
+	public static Map<Point, List<ITacticApplication>> getHyperlinks(TacticHyperlinkManager manager, IUserSupport us, boolean isHypothesis, String str, Predicate pred) {
 
 		final Map<Point, List<ITacticApplication>> links;
 		links = new HashMap<Point, List<ITacticApplication>>();
@@ -491,7 +490,7 @@ public class ProverUIUtils {
 		}
 
 		// Non type-checked predicate containing source location used here to
-		// get hyperlinks
+		// get hyperlinks (in which oftype expression has been removed etc.)
 		final Predicate parsedPred = getParsed(str, us.getFormulaFactory());
 
 		for (ITacticApplication application : applications) {
@@ -503,21 +502,42 @@ public class ProverUIUtils {
 					continue;
 				}
 				if (!checkRange(pt, str)) {
-					UIUtils.log(null, "invalid hyperlink bounds ("
-							+ pt.toString() + ") for tactic "
-							+ application.getTacticID()
-							+ ". Application abandoned.");
+					UIUtils.log(
+							null,
+							"invalid hyperlink bounds (" + pt.toString()
+									+ ") for tactic "
+									+ application.getTacticID()
+									+ ". Application abandoned.");
 					continue;
 				}
-				List<ITacticApplication> applicationList = links.get(pt);
+				final Point positionInText = getGlobalLocationAtOffset(manager,
+						pt);
+				List<ITacticApplication> applicationList = links
+						.get(positionInText);
 				if (applicationList == null) {
 					applicationList = new ArrayList<ITacticApplication>();
-					links.put(pt, applicationList);
+					links.put(positionInText, applicationList);
 				}
 				applicationList.add(application);
 			}
 		}
 		return links;
+	}
+
+	/**
+	 * Returns the location of an hyperlink, accorded to the contents of the
+	 * text.
+	 * 
+	 * @param hyperlinkPosition
+	 *            the position of the hyperlink in the predicate
+	 * @return the position of the hyperlink relatively to the managed styled
+	 *         text contents
+	 */
+	public static Point getGlobalLocationAtOffset(TacticHyperlinkManager manager, Point hyperlinkPosition) {
+		final int offset = manager.getText().getCharCount();
+		hyperlinkPosition.x += offset;
+		hyperlinkPosition.y += offset;
+		return hyperlinkPosition;
 	}
 	
 	/**

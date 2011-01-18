@@ -36,7 +36,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
@@ -279,16 +278,15 @@ public class GoalPage extends Page implements IGoalPage {
 	}
 
 	private void createGoalText(final IProofTreeNode node) {
-		Color color = EventBSharedColor.getSystemColor(SWT.COLOR_GRAY);
+		final Color color = EventBSharedColor.getSystemColor(SWT.COLOR_GRAY);
 		if (goalText != null)
 			goalText.dispose();
-		goalText = new EventBPredicateText(true, toolkit, goalComposite, proverUI, scrolledForm);
-		final StyledText styledText = goalText.getMainTextWidget();
+		//goalText = new EventBPredicateText(true, toolkit, goalComposite, proverUI, scrolledForm);
+		//final StyledText styledText = goalText;
 
 		if (node == null) {
-			goalText.setText("No current goal", userSupport, null, null,
-					Collections.<Point, List<ITacticApplication>> emptyMap());
-			styledText.setBackground(color);
+			//goalText.append("No current goal", userSupport, null);
+			//styledText.setBackground(color);
 		} else {
 			Predicate goal = node.getSequent().goal();
 			final String tmpString = goal.toString();
@@ -307,14 +305,14 @@ public class GoalPage extends Page implements IGoalPage {
 			final Map<Point, List<ITacticApplication>> links;
 			if (node.isOpen()) {
 				final String withoutBox = getParseableString(actualString);
-				links = getHyperlinks(userSupport, false, withoutBox, goal);
+				//links = getHyperlinks(userSupport, false, withoutBox, goal);
 			} else {
 				links = Collections.emptyMap();
 			}
-			goalText.setText(actualString, userSupport, goal, indexes, links);
+			//goalText.append(actualString, userSupport, goal);
 
 			if (!node.isOpen()) {
-				styledText.setBackground(color);
+			//styledText.setBackground(color);
 			}
 
 		}

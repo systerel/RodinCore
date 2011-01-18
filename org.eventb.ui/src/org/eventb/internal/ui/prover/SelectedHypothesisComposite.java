@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -31,6 +32,7 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.ui.EventBImage;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.RodinDBException;
@@ -232,7 +234,10 @@ public class SelectedHypothesisComposite extends HypothesisComposite {
 		// to the bottom of the hypothesis rows.
 		super.refresh();
 		parentForm.reflow(true);
-		scrollToBottom();
+		final Control c = getBottomControl();
+		if (c != null)
+		sc.showControl(c);
+		//scrollToBottom();
 	}
 
 }

@@ -241,7 +241,7 @@ public class PredicateUtil {
 			sb.append('(');
 		}
 		final SourceLocation loc = formula.getSourceLocation();
-		sb.append(string, loc.getStart(), loc.getEnd() + 1);
+		sb.append(string, loc.getStart(), loc.getEnd()+1); //+1 ?
 		if (bracketed) {
 			sb.append(')');
 		}

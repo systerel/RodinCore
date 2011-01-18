@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,51 +16,38 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
-import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
-import static org.eventb.internal.ui.prover.ProverUIUtils.addHyperlink;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyCommand;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyTactic;
 import static org.eventb.internal.ui.prover.ProverUIUtils.debug;
-import static org.eventb.internal.ui.prover.ProverUIUtils.getHyperlinks;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getIcon;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getParsed;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getTooltip;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.PaintObjectEvent;
+import org.eclipse.swt.custom.PaintObjectListener;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GlyphMetrics;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ImageHyperlink;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eventb.core.ast.BoundIdentDecl;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.QuantifiedPredicate;
-import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
-import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
-import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.prover.IPredicateApplication;
 import org.eventb.ui.prover.ITacticApplication;
 
@@ -69,18 +56,15 @@ import org.eventb.ui.prover.ITacticApplication;
  *         <p>
  *         A class to create a row containing a hypothesis and the set of proof
  *         buttons which is applicable to the hypothesis
+ *         </p>
  */
 public class HypothesisRow {
 
 	// Set of composites and button.
 	private final Button checkBox;
 
-	private final Composite buttonComposite;
-
-	private final Composite hypothesisComposite;
-
 	private final ProverUI proverUI;
-	
+
 	private EventBPredicateText hypothesisText;
 
 	// The UserSupport associated with this instance of the editor.
@@ -89,184 +73,163 @@ public class HypothesisRow {
 	// The hypothesis contains in this row.
 	private final Predicate hyp;
 
-	// This should be varied when the user resize.
-	private static final int max_length = 30;
+	private static final int MARGIN = 2;
 
 	private final Color background;
 
 	private final boolean enable;
 
-	private final FormToolkit toolkit;
-
 	private final SelectionListener listener;
-	
-	private final ScrolledForm scrolledForm;
-	
-	private final Collection<ImageHyperlink> hyperlinks;
 
-	
+	// private final Collection<ImageHyperlink> hyperlinks;
+
+	protected StyledText styledText;
+
+	protected TacticHyperlinkManager manager;
+
+	private PaintObjectListener checkBoxPaintListener;
+
 	/**
 	 * @author htson
 	 *         <p>
 	 *         This class extends HyperlinkAdapter and provide response actions
 	 *         when a hyperlink is activated.
 	 */
-	/**
-	 * Constructor.
-	 * 
-	 * @param toolkit
-	 *            The Form Toolkit to create this row
-	 * @param parent
-	 *            The composite parent
-	 */
-	public HypothesisRow(FormToolkit toolkit, Composite parent, Predicate hyp,
-			IUserSupport userSupport, boolean odd,
-			boolean enable,
-			SelectionListener listener, ProverUI proverUI, ScrolledForm scrolledForm) {
-		GridData gd;
+	public HypothesisRow(StyledText styledText, Predicate hyp,
+			IUserSupport userSupport, boolean odd, boolean enable,
+			SelectionListener listener, ProverUI proverUI,
+			TacticHyperlinkManager manager) {
+
+		this.styledText = styledText;
 		this.hyp = hyp;
-		this.scrolledForm = scrolledForm;
 		this.listener = listener;
 		this.userSupport = userSupport;
 		this.enable = enable;
 		this.proverUI = proverUI;
+		this.manager = manager;
 
-		this.toolkit = toolkit;
 		// FIXME why twice the same color?
 		if (odd)
 			background = EventBSharedColor.getSystemColor(SWT.COLOR_WHITE);
 		else
-			background = EventBSharedColor.getSystemColor(SWT.COLOR_WHITE);
+			background = EventBSharedColor.getSystemColor(SWT.COLOR_GRAY);
 
-		checkBox = toolkit.createButton(parent, "", SWT.CHECK);
+		checkBox = new Button(styledText, SWT.CHECK);
+		checkBox.setSize(15, 15);
 		if (ProverUIUtils.DEBUG) {
-			checkBox.setBackground(EventBSharedColor.getSystemColor(SWT.COLOR_DARK_MAGENTA));
-		}
-		else {
+			checkBox.setBackground(EventBSharedColor
+					.getSystemColor(SWT.COLOR_DARK_MAGENTA));
+		} else {
 			checkBox.setBackground(background);
 		}
-		checkBox.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
-				false, false));
+		//checkBox.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		checkBox.setEnabled(enable);
 		checkBox.addSelectionListener(listener);
 		
-		buttonComposite = toolkit.createComposite(parent);
-		GridLayout layout = new GridLayout();
-		layout.makeColumnsEqualWidth = true;
-		layout.numColumns = 3;
+		checkBox.setVisible(false);
+		final int checkBoxOffset = styledText.getCharCount() - 2;
+		checkBoxPaintListener = new PaintObjectListener() {
+			@Override
+			public void paintObject(PaintObjectEvent event) {
+				final StyleRange style = event.style;
+				int start = style.start;
+					int offset = checkBoxOffset;
+					if (start == offset) {
+						final Point textSize = checkBox.getSize();
+						final int x = event.x + MARGIN;
+						final int y = event.y + event.ascent - 2 * textSize.y / 3;
+						checkBox.setLocation(x, y);
+						checkBox.setVisible(true);
+					}
+				}
+		};
+		
+		styledText.addPaintObjectListener(checkBoxPaintListener);
+		addControl(checkBox, checkBoxOffset);
 
-		buttonComposite.setLayout(layout);
-		if (ProverUIUtils.DEBUG) {
-			buttonComposite.setBackground(EventBSharedColor.getSystemColor(SWT.COLOR_DARK_MAGENTA));
-		}
-		else {
-			buttonComposite.setBackground(background);
-		}
-		buttonComposite.setLayoutData(new GridData(SWT.FILL,
-				SWT.FILL, false, false));
-		hyperlinks = new ArrayList<ImageHyperlink>();
+		// buttonComposite = toolkit.createComposite(parent);
+		// GridLayout layout = new GridLayout();
+		// layout.makeColumnsEqualWidth = true;
+		// layout.numColumns = 3;
+		//
+		// buttonComposite.setLayout(layout);
+		// if (ProverUIUtils.DEBUG) {
+		// buttonComposite.setBackground(EventBSharedColor.getSystemColor(SWT.COLOR_DARK_MAGENTA));
+		// }
+		// else {
+		// buttonComposite.setBackground(background);
+		// }
+		// buttonComposite.setLayoutData(new GridData(SWT.FILL,
+		// SWT.FILL, false, false));
+		// hyperlinks = new ArrayList<ImageHyperlink>();
 
-		hypothesisComposite = toolkit.createComposite(parent);
-		gd = new GridData(SWT.FILL, SWT.FILL, true, false);
-		hypothesisComposite.setLayoutData(gd);
-		if (ProverUIUtils.DEBUG) {
-			hypothesisComposite.setBackground(EventBSharedColor.getSystemColor(SWT.COLOR_DARK_MAGENTA));
-		}
-		else {
-			hypothesisComposite.setBackground(background);		
-		}
-		hypothesisComposite.setLayout(new GridLayout());
-		EventBEditorUtils.changeFocusWhenDispose(hypothesisComposite,
-				scrolledForm.getParent());
+		// hypothesisComposite = toolkit.createComposite(parent);
+		// gd = new GridData(SWT.FILL, SWT.FILL, true, false);
+		// hypothesisComposite.setLayoutData(gd);
+		// if (ProverUIUtils.DEBUG) {
+		// hypothesisComposite.setBackground(EventBSharedColor.getSystemColor(SWT.COLOR_DARK_MAGENTA));
+		// }
+		// else {
+		// hypothesisComposite.setBackground(background);
+		// }
+		// hypothesisComposite.setLayout(new GridLayout());
+		// EventBEditorUtils.changeFocusWhenDispose(hypothesisComposite,
+		// styledText);
 
 		final String parsedString = hyp.toString();
-
-		//Predicate containing the SourceLocations
+		// Predicate containing the SourceLocations
 		final FormulaFactory ff = userSupport.getFormulaFactory();
 		final Predicate parsedPredicate = getParsed(parsedString, ff);
-						
-		createImageHyperlinks(buttonComposite);
-		
+
+		// createImageHyperlinks(buttonComposite);
+
 		createHypothesisText(parsedPredicate, parsedString);
 
 	}
 
-	public void createHypothesisText(Predicate parsedPredicate, String parsedString) {
+	public void addControl(Control control, int offset) {
+		final StyleRange style = new StyleRange();
+		style.start = offset;
+		style.length = 1;
+		control.pack();
+		final Rectangle rect = control.getBounds();
+		int ascent = 2 * rect.width / 3;
+		int descent = rect.height - ascent;
+		style.metrics = new GlyphMetrics(ascent + MARGIN, descent + MARGIN,
+				rect.height + 2 * MARGIN);
+		final Point locationAtOffset = styledText.getLocationAtOffset(offset);
+		control.setLocation(locationAtOffset);
+		style.background = EventBSharedColor
+				.getSystemColor(SWT.COLOR_DARK_MAGENTA);
+		styledText.setStyleRange(style);
+	}
+
+	public void createHypothesisText(Predicate parsedPredicate,
+			String parsedString) {
 		if (hypothesisText != null)
 			hypothesisText.dispose();
-		hypothesisText = new EventBPredicateText(false, toolkit,
-				hypothesisComposite, proverUI, scrolledForm);
-		StyledText textWidget = hypothesisText.getMainTextWidget();
-		textWidget.setBackground(background);
-		textWidget.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		if (enable && parsedPredicate.getTag() == Formula.FORALL) {
-			QuantifiedPredicate qpred = (QuantifiedPredicate) parsedPredicate;
-
-			String string = "\u2200 ";
-			BoundIdentDecl[] idents = qpred.getBoundIdentDecls();
-			int[] indexes = new int[idents.length];
-
-			int i = 0;
-			for (BoundIdentDecl ident : idents) {
-				SourceLocation loc = ident.getSourceLocation();
-				String image = parsedString.substring(loc.getStart(), loc
-						.getEnd() + 1);
-				if (ProverUIUtils.DEBUG)
-					debug("Ident: " + image);
-				string += " " + image + " ";
-				int x = string.length();
-				string += " ";
-				indexes[i] = x;
-
-				if (++i == idents.length) {
-					string += "\u00b7\n";
-				} else {
-					string += ", ";
-				}
-			}
-			String str = PredicateUtil.prettyPrint(max_length, parsedString,
-					qpred.getPredicate());
-
-			string += str;
-
-			final Map<Point, List<ITacticApplication>> links = getHyperlinks(
-					userSupport, true, string, hyp);
-					hypothesisText.setText(string, userSupport, hyp, indexes, links);
-		} else {
-			String str = PredicateUtil.prettyPrint(max_length, parsedString,
-					parsedPredicate);
-
-			int[] indexes = new int[0];
-
-			final Map<Point, List<ITacticApplication>> links;
-
-			if (enable) {
-				links = getHyperlinks(userSupport, true, str, hyp);
-			} else {
-				links = Collections.emptyMap();
-			}
-			hypothesisText.setText(str, userSupport, hyp, indexes, links);
-		}
-		toolkit.paintBordersFor(hypothesisComposite);
+		hypothesisText = new EventBPredicateText(this, false, enable, proverUI);
+		hypothesisText.append(parsedString, userSupport, hyp, parsedPredicate);
 	}
 
 	/*
 	 * Creating a null hyperlink
 	 */
 	private void createNullHyperlinks() {
-		if (ProverUIUtils.DEBUG)
-			debug("Create Null Image");
-		ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
-				SWT.CENTER);
-		hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-		toolkit.adapt(hyperlink, true, true);
-		setHyperlinkImage(hyperlink, EventBImage.getImage(IEventBSharedImages.IMG_NULL));
-		hyperlink.setBackground(background);
-		hyperlink.setEnabled(false);
-		hyperlinks.add(hyperlink);
-		return;
+		// if (ProverUIUtils.DEBUG)
+		// debug("Create Null Image");
+		// ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
+		// SWT.CENTER);
+		// hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+		// true));
+		//
+		// toolkit.adapt(hyperlink, true, true);
+		// setHyperlinkImage(hyperlink,
+		// EventBImage.getImage(IEventBSharedImages.IMG_NULL));
+		// hyperlink.setBackground(background);
+		// hyperlink.setEnabled(false);
+		// hyperlinks.add(hyperlink);
+		// return;
 	}
 
 	/**
@@ -286,10 +249,10 @@ public class HypothesisRow {
 		}
 
 		for (final ITacticApplication tacticAppli : tactics) {
-			
+
 			if (!(tacticAppli instanceof IPredicateApplication))
 				continue;
-			
+
 			final IHyperlinkListener hlListener = new IHyperlinkListener() {
 
 				@Override
@@ -304,17 +267,18 @@ public class HypothesisRow {
 
 				@Override
 				public void linkActivated(HyperlinkEvent e) {
-					apply(tacticAppli, tacticUIRegistry
-							.isSkipPostTactic(tacticAppli.getTacticID()));
+					apply(tacticAppli,
+							tacticUIRegistry.isSkipPostTactic(tacticAppli
+									.getTacticID()));
 				}
 			};
 			final IPredicateApplication predAppli = (IPredicateApplication) tacticAppli;
 			final Image icon = getIcon(predAppli);
 			final String tooltip = getTooltip(predAppli);
-			addHyperlink(buttonComposite, toolkit, SWT.BEGINNING,
-					icon, tooltip, hlListener, enable);
+			// addHyperlink(buttonComposite, toolkit, SWT.BEGINNING,
+			// icon, tooltip, hlListener, enable);
 		}
-		
+
 		for (final ICommandApplication commandAppli : commands) {
 			final IHyperlinkListener hlListener = new IHyperlinkListener() {
 
@@ -334,8 +298,8 @@ public class HypothesisRow {
 				}
 
 			};
-			addHyperlink(buttonComposite, toolkit, SWT.FILL, commandAppli
-					.getIcon(), commandAppli.getTooltip(), hlListener, enable);
+			// addHyperlink(buttonComposite, toolkit, SWT.FILL, commandAppli
+			// .getIcon(), commandAppli.getTooltip(), hlListener, enable);
 		}
 
 	}
@@ -344,25 +308,26 @@ public class HypothesisRow {
 	 * Utility method to dispose the compsites and check boxes.
 	 */
 	public void dispose() {
-//		if (hypothesisText != null)
-//			hypothesisText.dispose();
+		if (hypothesisText != null)
+			hypothesisText.dispose();
 
 		if (!checkBox.isDisposed()) {
 			checkBox.removeSelectionListener(listener);
+			styledText.removePaintObjectListener(checkBoxPaintListener);
 			checkBox.dispose();
 		}
-		for (ImageHyperlink hyperlink : hyperlinks)
-			hyperlink.dispose();
-		buttonComposite.dispose();
-		hypothesisComposite.dispose();
+		// for (ImageHyperlink hyperlink : hyperlinks)
+		// hyperlink.dispose();
+		// buttonComposite.dispose();
+		// hypothesisComposite.dispose();
 	}
 
 	/**
 	 * Return if the hypothesis is selected or not.
 	 * <p>
 	 * 
-	 * @return <code>true</code> if the row is selected, and
-	 *         <code>false</code> otherwise
+	 * @return <code>true</code> if the row is selected, and <code>false</code>
+	 *         otherwise
 	 */
 	public boolean isSelected() {
 		return checkBox.getSelection();
@@ -386,13 +351,14 @@ public class HypothesisRow {
 
 		final String globalInput = this.proverUI.getProofControl().getInput();
 		final Set<Predicate> hypSet = Collections.singleton(hyp);
-		applyTactic(tacticAppli.getTactic(inputs, globalInput),
-				userSupport, hypSet, skipPostTactic, new NullProgressMonitor());
+		applyTactic(tacticAppli.getTactic(inputs, globalInput), userSupport,
+				hypSet, skipPostTactic, new NullProgressMonitor());
 	}
 
 	void apply(ICommandApplication commandAppli) {
 		final String[] inputs = hypothesisText.getResults();
-		applyCommand(commandAppli.getProofCommand(), userSupport, hyp, inputs, new NullProgressMonitor());
+		applyCommand(commandAppli.getProofCommand(), userSupport, hyp, inputs,
+				new NullProgressMonitor());
 	}
 
 	public void setSelected(boolean selected) {
