@@ -372,7 +372,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			"SIMP_FINITE_NATURAL", "SIMP_FINITE_NATURAL1",
 			"SIMP_FINITE_INTEGER", "SIMP_FINITE_ID", "SIMP_FINITE_LAMBDA",
 			"SIMP_FINITE_ID_DOMRES", "SIMP_FINITE_PRJ1", "SIMP_FINITE_PRJ2",
-			"SIMP_FINITE_PRJ1_DOMRES", "SIMP_FINITE_PRJ2_DOMRES" })
+			"SIMP_FINITE_PRJ1_DOMRES", "SIMP_FINITE_PRJ2_DOMRES",
+			"SIMP_FINITE_BOOL" })
 	@Override
 	public Predicate rewrite(SimplePredicate predicate) {
 		final Predicate result;
@@ -420,6 +421,18 @@ public class AutoRewriterImpl extends DefaultRewriter {
 				if (level2) {
 					result = dLib.False();
 					trace(predicate, result, "SIMP_FINITE_INTEGER");
+					return result;
+				}
+			}
+			
+			/**
+			 * SIMP_FINITE_BOOL
+			 *    finite(BOOL) == ⊤
+			 */
+			Finite(BOOL()) -> {
+				if (level2) {
+					result = dLib.True();
+					trace(predicate, result, "SIMP_FINITE_BOOL");
 					return result;
 				}
 			}

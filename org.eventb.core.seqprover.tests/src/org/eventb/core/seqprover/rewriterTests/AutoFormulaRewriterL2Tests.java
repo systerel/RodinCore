@@ -1763,4 +1763,12 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 				"a ∈ {x,y · x≥0 ∧ y>x ∣ x↦y}");
 	}
 
+	/**
+	 * Ensures that rule SIMP_FINITE_BOOL is implemented correctly
+	 */
+	@Test
+	public void testSIMP_FINITE_BOOL() {
+		predicateTest("⊤", "finite(BOOL)");
+	}
+
 }
