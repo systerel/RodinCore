@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,8 +92,10 @@ public abstract class SetExtensionSimplifier {
 		IntegerLiteral extremumChild = null;
 		extremumValue = null;
 		int extremumPosition = -1;
+		int nbIntLit = 0;
 		for (final Expression member : originalMembers) {
 			if (member.getTag() == INTLIT) {
+				++ nbIntLit;
 				final IntegerLiteral intlit = (IntegerLiteral) member;
 				final BigInteger value = intlit.getValue();
 				if (extremumChild == null || isNewExtremum(value)) {
@@ -105,8 +107,8 @@ public abstract class SetExtensionSimplifier {
 				result.add(member);
 			}
 		}
-		if (extremumChild == null) {
-			// no literal was found in the set extension, nothing to do
+		if (nbIntLit < 2) {
+			// at most one literal was found in the set extension, nothing new
 			return original;
 		}
 		result.add(extremumPosition, extremumChild);
