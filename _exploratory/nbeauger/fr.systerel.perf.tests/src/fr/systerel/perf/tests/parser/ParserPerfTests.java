@@ -10,7 +10,8 @@
  *******************************************************************************/
 package fr.systerel.perf.tests.parser;
 
-import org.eventb.core.ast.FormulaFactory;
+import static fr.systerel.perf.tests.parser.Common.FACTORY;
+
 import org.eventb.core.ast.LanguageVersion;
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,8 +30,6 @@ public class ParserPerfTests {
 	
 	@Rule
 	public static final TestName testName = new TestName();
-
-	private static final FormulaFactory FACTORY = FormulaFactory.getDefault();
 
 	/*
 	 * LPAR RPAR LBRACKET RBRACKET LBRACE RBRACE EXPN NOT CPROD LAMBDA UPTO

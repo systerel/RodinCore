@@ -9,9 +9,10 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package fr.systerel.perf.tests.parser;
-import static fr.systerel.perf.tests.parser.LexerPerfTests.FACTORY;
-import static fr.systerel.perf.tests.parser.LexerPerfTests.TIMES_REPEAT_SCAN;
-import static fr.systerel.perf.tests.parser.LexerPerfTests.makeLexString;
+
+import static fr.systerel.perf.tests.parser.Common.FACTORY;
+import static fr.systerel.perf.tests.parser.Common.TIMES_REPEAT_SCAN;
+import static fr.systerel.perf.tests.parser.Common.makeLexString;
 
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.internal.core.parser.ParseResult;
