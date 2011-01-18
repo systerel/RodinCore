@@ -79,8 +79,6 @@ public class HypothesisRow {
 
 	protected TacticHyperlinkManager manager;
 
-	private ControlHolder<Button> checkBoxHolder2;
-
 	private final int nbTabsFromLeft;
 
 	/**
@@ -103,21 +101,15 @@ public class HypothesisRow {
 		this.manager = manager;
 		this.nbTabsFromLeft = nbTabsFromLeft;
 
-		// FIXME why twice the same color?
-		if (odd)
-			background = EventBSharedColor.getSystemColor(SWT.COLOR_WHITE);
-		else
-			background = EventBSharedColor.getSystemColor(SWT.COLOR_GRAY);
-
+		background = EventBSharedColor.getSystemColor(SWT.COLOR_WHITE);
+	
 		final Button checkBox = new Button(styledText, SWT.CHECK);
-		checkBox.setSize(15, 15);
 		if (ProverUIUtils.DEBUG) {
 			checkBox.setBackground(EventBSharedColor
 					.getSystemColor(SWT.COLOR_DARK_MAGENTA));
 		} else {
 			checkBox.setBackground(background);
 		}
-		//checkBox.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		checkBox.setEnabled(enable);
 		checkBox.addSelectionListener(listener);
 
@@ -125,10 +117,11 @@ public class HypothesisRow {
 		checkBoxHolder = new ControlHolder<Button>(styledText, checkBox, checkBoxOffset);
 		checkBoxHolder.attach();
 		
-		final Button checkbox2 = new Button(styledText, SWT.PUSH);
-		final int checkbox2Offset = checkBoxOffset + 1;
-		checkBoxHolder2 = new ControlHolder<Button>(styledText, checkbox2, checkbox2Offset);
-		checkBoxHolder2.attach();
+//		final int comboOffset = checkBoxOffset + 1;
+//		final ImageCombo combo = new ImageCombo(styledText, SWT.DROP_DOWN);
+//		comboHolder = new ControlHolder<ImageCombo>(styledText, combo, comboOffset);
+//		comboHolder.attach();
+		//createImageHyperlinks(combo);
 		
 		// buttonComposite = toolkit.createComposite(parent);
 		// GridLayout layout = new GridLayout();
@@ -164,7 +157,6 @@ public class HypothesisRow {
 		final FormulaFactory ff = userSupport.getFormulaFactory();
 		final Predicate parsedPredicate = getParsed(parsedString, ff);
 
-		// createImageHyperlinks(buttonComposite);
 
 		createHypothesisText(parsedPredicate, parsedString);
 
@@ -179,7 +171,8 @@ public class HypothesisRow {
 	}
 
 	/*
-	 * Creating a null hyperlink
+	 * Creating a null hyperlink to be placed if no predicate application
+	 * exists.
 	 */
 	private void createNullHyperlinks() {
 		// if (ProverUIUtils.DEBUG)
@@ -282,7 +275,6 @@ public class HypothesisRow {
 			checkbox.removeSelectionListener(listener);
 		}
 		checkBoxHolder.remove();
-		checkBoxHolder2.remove();
 		// for (ImageHyperlink hyperlink : hyperlinks)
 		// hyperlink.dispose();
 		// buttonComposite.dispose();

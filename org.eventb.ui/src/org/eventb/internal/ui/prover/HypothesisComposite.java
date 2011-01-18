@@ -381,7 +381,7 @@ public abstract class HypothesisComposite implements
 					NB_TABS_LEFT, hyp, userSupport, i % 2 != 0, enabled, this,
 					proverUI, manager);
 			rows.add(row);
-			styledText.append("\n\n");
+			styledText.append("\n");
 			i++;
 		}
 		if (enabled) {
