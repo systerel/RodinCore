@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -132,41 +132,59 @@ public abstract class AbstractFormulaRewriterTests {
 	 * environment where <code>S</code> is a given set and <code>x</code> is an
 	 * integer, one would pass the strings <code>"S", "ℙ(S)", "x", "ℤ"</code>.
 	 * </p>
-	 * 
-	 * @param expectedImage
-	 *            the string image of the expected predicate
 	 * @param inputImage
 	 *            the string image of the input predicate
+	 * @param expectedImage
+	 *            the string image of the expected predicate
 	 * @param env
 	 *            a list of strings describing the type environment to use for
 	 *            type-checking
 	 */
-	protected void predicateTest(String expectedImage, String inputImage,
+	protected void rewritePred(String inputImage, String expectedImage,
 			String... env) {
 		final ITypeEnvironment typenv = makeTypeEnvironment(env);
 		final Predicate input = makePredicate(inputImage, typenv);
 		final Predicate expected = makePredicate(expectedImage, typenv);
-		predicateTest(expected, input);
+		rewritePred(input, expected);
 	}
 
 	/**
-	 * Test the rewriter for rewriting from an input predicate to an expected
-	 * predicate.
-	 * 
-	 * @param expected
-	 *            the expected predicate.
-	 * @param input
-	 *            the input predicate.
+	 * Ensures that the rewriter does not change the given predicate.
+	 * <p>
+	 * The type environment is described by a list of strings which must contain
+	 * an even number of elements. It contains alternatively names and types to
+	 * assign to them in the environment. For instance, to describe a type
+	 * environment where <code>S</code> is a given set and <code>x</code> is an
+	 * integer, one would pass the strings <code>"S", "ℙ(S)", "x", "ℤ"</code>.
+	 * </p>
+	 * @param inputImage
+	 *            the string image of the input predicate
+	 * @param expectedImage
+	 *            the string image of the expected predicate
+	 * @param env
+	 *            a list of strings describing the type environment to use for
+	 *            type-checking
 	 */
-	private void predicateTest(Predicate expected, Predicate input) {
+	protected void noRewritePred(String inputImage, String... env) {
+		final ITypeEnvironment typenv = makeTypeEnvironment(env);
+		final Predicate input = makePredicate(inputImage, typenv);
+		noRewritePred(input);
+	}
+
+	private void rewritePred(Predicate input, Predicate expected) {
 		assertTypeChecked(input);
 		assertTypeChecked(expected);
+		if (expected.equals(input)) {
+			fail("Expected is the same as input " + input);
+		}
 		final Predicate actual = input.rewrite(r);
 		assertEquals(input.toString(), expected, actual);
-		if (expected.equals(input)) {
-			// If no rewriting occurs, the exact same formula shall be returned.
-			assertSame(input.toString(), input, actual);
-		}
+	}
+
+	private void noRewritePred(Predicate input) {
+		assertTypeChecked(input);
+		final Predicate actual = input.rewrite(r);
+		assertSame(input.toString(), input, actual);
 	}
 
 	/**
@@ -198,42 +216,58 @@ public abstract class AbstractFormulaRewriterTests {
 	 * environment where <code>S</code> is a given set and <code>x</code> is
 	 * an integer, one would pass the strings <code>"S", "ℙ(S)", "x", "ℤ"</code>.
 	 * </p>
-	 * 
+	 * @param inputImage
+	 *            the string image of the input expression.
 	 * @param expectedImage
 	 *            the string image of the expected expression.
+	 * @param env
+	 *            a list of strings describing the type environment to use for
+	 *            type-checking
+	 */
+	protected void rewriteExpr(String inputImage,
+			String expectedImage, String... env) {
+		final ITypeEnvironment typenv = makeTypeEnvironment(env);
+		final Expression input = makeExpression(inputImage, typenv);
+		final Expression expected = makeExpression(expectedImage, typenv);
+		rewriteExpr(input, expected);
+	}
+
+	/**
+	 * Ensures that the rewriter does not change the given expression.
+	 * <p>
+	 * The type environment is described by a list of strings which must contain
+	 * an even number of elements. It contains alternatively names and types to
+	 * assign to them in the environment. For instance, to describe a type
+	 * environment where <code>S</code> is a given set and <code>x</code> is
+	 * an integer, one would pass the strings <code>"S", "ℙ(S)", "x", "ℤ"</code>.
+	 * </p>
 	 * @param inputImage
 	 *            the string image of the input expression.
 	 * @param env
 	 *            a list of strings describing the type environment to use for
 	 *            type-checking
 	 */
-	protected void expressionTest(String expectedImage,
-			String inputImage, String... env) {
+	protected void noRewriteExpr(String inputImage, String... env) {
 		final ITypeEnvironment typenv = makeTypeEnvironment(env);
 		final Expression input = makeExpression(inputImage, typenv);
-		final Expression expected = makeExpression(expectedImage, typenv);
-		expressionTest(expected, input);
+		noRewriteExpr(input);
 	}
 
-	/**
-	 * Test the rewriter for rewriting from an input expression to an expected
-	 * expression.
-	 * 
-	 * @param expected
-	 *            the expected expression.
-	 * @param input
-	 *            the input expression.
-	 */
-	private void expressionTest(Expression expected, Expression input) {
+	private void rewriteExpr(Expression input, Expression expected) {
 		assertTypeChecked(input);
 		assertTypeChecked(expected);
 		assertSameType(input, expected);
+		if (expected.equals(input)) {
+			fail("Expected is the same as input " + input);
+		}
 		final Expression actual = input.rewrite(r);
 		assertEquals(input.toString(), expected, actual);
-		if (expected.equals(input)) {
-			// If no rewriting occurs, the exact same formula shall be returned.
-			assertSame(input.toString(), input, actual);
-		}
+	}
+
+	private void noRewriteExpr(Expression input) {
+		assertTypeChecked(input);
+		final Expression actual = input.rewrite(r);
+		assertSame(input.toString(), input, actual);
 	}
 
 	private ITypeEnvironment makeTypeEnvironment(String... env) {

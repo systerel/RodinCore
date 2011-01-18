@@ -39,14 +39,14 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_IMP_OR() {
-		predicateTest("⊤", "a=0 ∧ b=1 ⇒ a=0");
-		predicateTest("⊤", "a=0 ∧ b=1 ⇒ b=1");
+		rewritePred("a=0 ∧ b=1 ⇒ a=0", "⊤");
+		rewritePred("a=0 ∧ b=1 ⇒ b=1", "⊤");
 
-		predicateTest("⊤", "a=0 ∧ b=1 ∧ c=2 ⇒ a=0");
-		predicateTest("⊤", "a=0 ∧ b=1 ∧ c=2 ⇒ b=1");
-		predicateTest("⊤", "a=0 ∧ b=1 ∧ c=2 ⇒ c=2");
+		rewritePred("a=0 ∧ b=1 ∧ c=2 ⇒ a=0", "⊤");
+		rewritePred("a=0 ∧ b=1 ∧ c=2 ⇒ b=1", "⊤");
+		rewritePred("a=0 ∧ b=1 ∧ c=2 ⇒ c=2", "⊤");
 
-		predicateTest("a=0 ∧ b=1 ⇒ a=1", "a=0 ∧ b=1 ⇒ a=1");
+		noRewritePred("a=0 ∧ b=1 ⇒ a=1");
 	}
 
 	/**
@@ -54,14 +54,14 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_IMP_AND_NOT_R() {
-		predicateTest("¬(a=0 ∧ b=1)", "a=0 ∧ b=1 ⇒ ¬a=0");
-		predicateTest("¬(a=0 ∧ b=1)", "a=0 ∧ b=1 ⇒ ¬b=1");
+		rewritePred("a=0 ∧ b=1 ⇒ ¬a=0", "¬(a=0 ∧ b=1)");
+		rewritePred("a=0 ∧ b=1 ⇒ ¬b=1", "¬(a=0 ∧ b=1)");
 
-		predicateTest("¬(a=0 ∧ b=1 ∧ c=2)", "a=0 ∧ b=1 ∧ c=2⇒ ¬a=0");
-		predicateTest("¬(a=0 ∧ b=1 ∧ c=2)", "a=0 ∧ b=1 ∧ c=2⇒ ¬b=1");
-		predicateTest("¬(a=0 ∧ b=1 ∧ c=2)", "a=0 ∧ b=1 ∧ c=2⇒ ¬c=2");
+		rewritePred("a=0 ∧ b=1 ∧ c=2⇒ ¬a=0", "¬(a=0 ∧ b=1 ∧ c=2)");
+		rewritePred("a=0 ∧ b=1 ∧ c=2⇒ ¬b=1", "¬(a=0 ∧ b=1 ∧ c=2)");
+		rewritePred("a=0 ∧ b=1 ∧ c=2⇒ ¬c=2", "¬(a=0 ∧ b=1 ∧ c=2)");
 
-		predicateTest("a=0 ∧ b=1 ⇒ ¬a=1", "a=0 ∧ b=1 ⇒ ¬a=1");
+		noRewritePred("a=0 ∧ b=1 ⇒ ¬a=1");
 	}
 
 	/**
@@ -69,14 +69,14 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_IMP_AND_NOT_L() {
-		predicateTest("¬(¬a=0 ∧  b=1)", "¬a=0 ∧  b=1 ⇒ a=0");
-		predicateTest("¬( a=0 ∧ ¬b=1)", " a=0 ∧ ¬b=1 ⇒ b=1");
+		rewritePred("¬a=0 ∧  b=1 ⇒ a=0", "¬(¬a=0 ∧  b=1)");
+		rewritePred(" a=0 ∧ ¬b=1 ⇒ b=1", "¬( a=0 ∧ ¬b=1)");
 
-		predicateTest("¬(¬a=0 ∧  b=1 ∧  c=2)", "¬a=0 ∧  b=1 ∧  c=2 ⇒ a=0");
-		predicateTest("¬( a=0 ∧ ¬b=1 ∧  c=2)", " a=0 ∧ ¬b=1 ∧  c=2 ⇒ b=1");
-		predicateTest("¬( a=0 ∧  b=1 ∧ ¬c=2)", " a=0 ∧  b=1 ∧ ¬c=2 ⇒ c=2");
+		rewritePred("¬a=0 ∧  b=1 ∧  c=2 ⇒ a=0", "¬(¬a=0 ∧  b=1 ∧  c=2)");
+		rewritePred(" a=0 ∧ ¬b=1 ∧  c=2 ⇒ b=1", "¬( a=0 ∧ ¬b=1 ∧  c=2)");
+		rewritePred(" a=0 ∧  b=1 ∧ ¬c=2 ⇒ c=2", "¬( a=0 ∧  b=1 ∧ ¬c=2)");
 
-		predicateTest("¬a=0 ∧ b=1 ⇒ a=1", "¬a=0 ∧ b=1 ⇒ a=1");
+		noRewritePred("¬a=0 ∧ b=1 ⇒ a=1");
 	}
 
 	/**
@@ -84,11 +84,11 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_EQV_NOT() {
-		predicateTest("⊥", " a=0 ⇔ ¬a=0");
-		predicateTest("⊥", "¬b=1 ⇔  b=1");
+		rewritePred(" a=0 ⇔ ¬a=0", "⊥");
+		rewritePred("¬b=1 ⇔  b=1", "⊥");
 
-		predicateTest(" a=0 ⇔ ¬a=1", " a=0 ⇔ ¬a=1");
-		predicateTest("¬a=0 ⇔  b=1", "¬a=0 ⇔ b=1");
+		noRewritePred(" a=0 ⇔ ¬a=1");
+		noRewritePred("¬a=0 ⇔  b=1");
 	}
 
 	/**
@@ -96,11 +96,11 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SUBSETEQ_SING() {
-		predicateTest("0 ∈ S", "{0} ⊆ S");
-		predicateTest("0 ∈ ℤ", "{0} ⊆ ℤ");
-		predicateTest("0 ∈ ℕ1", "{0} ⊆ ℕ1");
+		rewritePred("{0} ⊆ S", "0 ∈ S");
+		rewritePred("{0} ⊆ ℤ", "0 ∈ ℤ");
+		rewritePred("{0} ⊆ ℕ1", "0 ∈ ℕ1");
 
-		predicateTest("{0,1} ⊆ ℤ", "{0,1} ⊆ ℤ");
+		noRewritePred("{0,1} ⊆ ℤ");
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_POW() {
-		expressionTest("{∅⦂ℙ(S)}", "ℙ(∅⦂ℙ(S))");
+		rewriteExpr("ℙ(∅⦂ℙ(S))", "{∅⦂ℙ(S)}");
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_POW1() {
-		expressionTest("∅⦂ℙ(ℙ(S))", "ℙ1(∅⦂ℙ(S))");
+		rewriteExpr("ℙ1(∅⦂ℙ(S))", "∅⦂ℙ(ℙ(S))");
 	}
 
 	/**
@@ -124,7 +124,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_CPROD_R() {
-		expressionTest("∅⦂U↔V", "S × (∅⦂ℙ(V))", "S", "ℙ(U)");
+		rewriteExpr("S × (∅⦂ℙ(V))", "∅⦂U↔V", "S", "ℙ(U)");
 	}
 
 	/**
@@ -132,7 +132,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_CPROD_L() {
-		expressionTest("∅⦂U↔V", "(∅⦂ℙ(U)) × S", "S", "ℙ(V)");
+		rewriteExpr("(∅⦂ℙ(U)) × S", "∅⦂U↔V", "S", "ℙ(V)");
 	}
 
 	/**
@@ -140,7 +140,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_FINITE_NATURAL() {
-		predicateTest("⊥", "finite(ℕ)");
+		rewritePred("finite(ℕ)", "⊥");
 	}
 
 	/**
@@ -148,7 +148,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_FINITE_NATURAL1() {
-		predicateTest("⊥", "finite(ℕ1)");
+		rewritePred("finite(ℕ1)", "⊥");
 	}
 
 	/**
@@ -156,7 +156,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_FINITE_INTEGER() {
-		predicateTest("⊥", "finite(ℤ)");
+		rewritePred("finite(ℤ)", "⊥");
 	}
 
 	/**
@@ -164,7 +164,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_SUBSET_R() {
-		predicateTest("⊥", "S ⊂ (∅⦂ℙ(T))");
+		rewritePred("S ⊂ (∅⦂ℙ(T))", "⊥");
 	}
 
 	/**
@@ -172,7 +172,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_SUBSET() {
-		predicateTest("⊥", "S ⊂ S", "S", "ℙ(T)");
+		rewritePred("S ⊂ S", "⊥", "S", "ℙ(T)");
 	}
 
 	/**
@@ -180,7 +180,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_DOM_CONVERSE() {
-		expressionTest("ran(r)", "dom(r∼)", "r", "S↔T");
+		rewriteExpr("dom(r∼)", "ran(r)", "r", "S↔T");
 	}
 
 	/**
@@ -188,7 +188,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_RAN_CONVERSE() {
-		expressionTest("dom(r)", "ran(r∼)", "r", "S↔T");
+		rewriteExpr("ran(r∼)", "dom(r)", "r", "S↔T");
 	}
 
 	/**
@@ -196,11 +196,11 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_DOMRES_L() {
-		expressionTest("∅⦂S↔T", "(∅⦂ℙ(S)) ◁ r", "r", "S↔T");
+		rewriteExpr("(∅⦂ℙ(S)) ◁ r", "∅⦂S↔T", "r", "S↔T");
 		// Former rules SIMP_SPECIAL_(ID|PRJ1|PRJ2)
-		expressionTest("∅⦂S↔S", "∅ ◁ (id⦂S↔S)");
-		expressionTest("∅⦂S×T↔S", "∅ ◁ (prj1⦂S×T↔S)");
-		expressionTest("∅⦂S×T↔T", "∅ ◁ (prj2⦂S×T↔T)");
+		rewriteExpr("∅ ◁ (id⦂S↔S)", "∅⦂S↔S");
+		rewriteExpr("∅ ◁ (prj1⦂S×T↔S)", "∅⦂S×T↔S");
+		rewriteExpr("∅ ◁ (prj2⦂S×T↔T)", "∅⦂S×T↔T");
 	}
 
 	/**
@@ -208,7 +208,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_DOMRES_R() {
-		expressionTest("∅⦂U↔V", "S ◁ (∅⦂U↔V)", "S", "ℙ(U)");
+		rewriteExpr("S ◁ (∅⦂U↔V)", "∅⦂U↔V", "S", "ℙ(U)");
 	}
 
 	/**
@@ -216,8 +216,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_TYPE_DOMRES() {
-		expressionTest("r", "S ◁ r", "r", "S↔T");
-		expressionTest("S ◁ r", "S ◁ r", "r", "U↔V");
+		rewriteExpr("S ◁ r", "r", "r", "S↔T");
+		noRewriteExpr("S ◁ r", "r", "U↔V");
 	}
 
 	/**
@@ -225,7 +225,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_DOMRES_DOM() {
-		expressionTest("r", "dom(r) ◁ r", "r", "S↔T");
+		rewriteExpr("dom(r) ◁ r", "r", "r", "S↔T");
 	}
 
 	/**
@@ -233,7 +233,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_DOMRES_RAN() {
-		expressionTest("r∼", "ran(r) ◁ r∼", "r", "S↔T");
+		rewriteExpr("ran(r) ◁ r∼", "r∼", "r", "S↔T");
 	}
 
 	/**
@@ -241,7 +241,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_RANRES_R() {
-		expressionTest("∅⦂S↔T", "r ▷ (∅⦂ℙ(T))", "r", "S↔T");
+		rewriteExpr("r ▷ (∅⦂ℙ(T))", "∅⦂S↔T", "r", "S↔T");
 	}
 
 	/**
@@ -249,7 +249,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_RANRES_L() {
-		expressionTest("∅⦂U↔V", "(∅⦂U↔V) ▷ S", "S", "ℙ(V)");
+		rewriteExpr("(∅⦂U↔V) ▷ S", "∅⦂U↔V", "S", "ℙ(V)");
 	}
 
 	/**
@@ -257,8 +257,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_TYPE_RANRES() {
-		expressionTest("r", "r ▷ T", "r", "S↔T");
-		expressionTest("r ▷ T", "r ▷ T", "r", "U↔V");
+		rewriteExpr("r ▷ T", "r", "r", "S↔T");
+		noRewriteExpr("r ▷ T", "r", "U↔V");
 	}
 
 	/**
@@ -266,7 +266,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_RANRES_RAN() {
-		expressionTest("r", "r ▷ ran(r)", "r", "S↔T");
+		rewriteExpr("r ▷ ran(r)", "r", "r", "S↔T");
 	}
 
 	/**
@@ -274,7 +274,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_RANRES_DOM() {
-		expressionTest("r∼", "r∼ ▷ dom(r)", "r", "S↔T");
+		rewriteExpr("r∼ ▷ dom(r)", "r∼", "r", "S↔T");
 	}
 
 	/**
@@ -282,7 +282,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_DOMSUB_L() {
-		expressionTest("r", "∅ ⩤ r", "r", "S↔T");
+		rewriteExpr("∅ ⩤ r", "r", "r", "S↔T");
 	}
 
 	/**
@@ -290,7 +290,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_DOMSUB_R() {
-		expressionTest("∅⦂U↔V", "S ⩤ (∅⦂U↔V)");
+		rewriteExpr("S ⩤ (∅⦂U↔V)", "∅⦂U↔V");
 	}
 
 	/**
@@ -298,8 +298,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_TYPE_DOMSUB() {
-		expressionTest("∅⦂S↔T", "S ⩤ r", "r", "S↔T");
-		expressionTest("S ⩤ r", "S ⩤ r", "r", "U↔V");
+		rewriteExpr("S ⩤ r", "∅⦂S↔T", "r", "S↔T");
+		noRewriteExpr("S ⩤ r", "r", "U↔V");
 	}
 
 	/**
@@ -307,7 +307,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_DOMSUB_DOM() {
-		expressionTest("∅⦂S↔T", "dom(r) ⩤ r", "r", "S↔T");
+		rewriteExpr("dom(r) ⩤ r", "∅⦂S↔T", "r", "S↔T");
 	}
 
 	/**
@@ -315,7 +315,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_RANSUB_R() {
-		expressionTest("r", "r ⩥ ∅", "r", "S↔T");
+		rewriteExpr("r ⩥ ∅", "r", "r", "S↔T");
 	}
 
 	/**
@@ -323,7 +323,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_RANSUB_L() {
-		expressionTest("∅⦂U↔V", "(∅⦂U↔V) ⩥ S");
+		rewriteExpr("(∅⦂U↔V) ⩥ S", "∅⦂U↔V");
 	}
 
 	/**
@@ -331,8 +331,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_TYPE_RANSUB() {
-		expressionTest("∅⦂S↔T", "r ⩥ T", "r", "S↔T");
-		expressionTest("r ⩥ T", "r ⩥ T", "r", "U↔V");
+		rewriteExpr("r ⩥ T", "∅⦂S↔T", "r", "S↔T");
+		noRewriteExpr("r ⩥ T", "r", "U↔V");
 	}
 
 	/**
@@ -340,7 +340,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_RANSUB_RAN() {
-		expressionTest("∅⦂S↔T", "r ⩥ ran(r)", "r", "S↔T");
+		rewriteExpr("r ⩥ ran(r)", "∅⦂S↔T", "r", "S↔T");
 	}
 
 	/**
@@ -348,7 +348,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_DPROD_R() {
-		expressionTest("∅⦂S↔T×U", "r ⊗ (∅⦂S↔U)", "r", "S↔T");
+		rewriteExpr("r ⊗ (∅⦂S↔U)", "∅⦂S↔T×U", "r", "S↔T");
 	}
 
 	/**
@@ -356,7 +356,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_DPROD_L() {
-		expressionTest("∅⦂S↔T×U", "(∅⦂S↔T) ⊗ r", "r", "S↔U");
+		rewriteExpr("(∅⦂S↔T) ⊗ r", "∅⦂S↔T×U", "r", "S↔U");
 	}
 
 	/**
@@ -364,7 +364,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_PPROD_R() {
-		expressionTest("∅⦂S×U↔T×V", "r ∥ (∅⦂U↔V)", "r", "S↔T");
+		rewriteExpr("r ∥ (∅⦂U↔V)", "∅⦂S×U↔T×V", "r", "S↔T");
 	}
 
 	/**
@@ -372,7 +372,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_PPROD_L() {
-		expressionTest("∅⦂S×U↔T×V", "(∅⦂S↔T) ∥ r", "r", "U↔V");
+		rewriteExpr("(∅⦂S↔T) ∥ r", "∅⦂S×U↔T×V", "r", "U↔V");
 	}
 
 	/**
@@ -380,8 +380,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_TYPE_RELIMAGE() {
-		expressionTest("ran(r)", "r[S]", "r", "S↔T");
-		expressionTest("r[U]", "r[U]", "r", "S↔T", "U", "ℙ(S)");
+		rewriteExpr("r[S]", "ran(r)", "r", "S↔T");
+		noRewriteExpr("r[U]", "r", "S↔T", "U", "ℙ(S)");
 	}
 
 	/**
@@ -389,8 +389,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_RELIMAGE_DOM() {
-		expressionTest("ran(r)", "r[dom(r)]", "r", "S↔T");
-		expressionTest("r[dom(s)]", "r[dom(s)]", "r", "S↔T", "s", "S↔V");
+		rewriteExpr("r[dom(r)]", "ran(r)", "r", "S↔T");
+		noRewriteExpr("r[dom(s)]", "r", "S↔T", "s", "S↔V");
 	}
 
 	/**
@@ -398,7 +398,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_RELIMAGE_ID() {
-		expressionTest("T", "id[T]", "T", "ℙ(S)");
+		rewriteExpr("id[T]", "T", "T", "ℙ(S)");
 	}
 
 	/**
@@ -407,9 +407,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_RELIMAGE_CPROD_SING() {
-		expressionTest("S", "({E}×S)[{E}]", "S", "ℙ(U)", "E", "V");
-		expressionTest("({E}×S)[{F}]", "({E}×S)[{F}]", //
-				"S", "ℙ(U)", "E", "V", "F", "V");
+		rewriteExpr("({E}×S)[{E}]", "S", "S", "ℙ(U)", "E", "V");
+		noRewriteExpr("({E}×S)[{F}]", "S", "ℙ(U)", "E", "V");
 	}
 
 	/**
@@ -418,9 +417,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_RELIMAGE_SING_MAPSTO() {
-		expressionTest("{F}", "{E ↦ F}[{E}]", "E", "S", "F", "T");
-		expressionTest("{E ↦ F}[{G}]", "{E ↦ F}[{G}]", //
-				"E", "S", "F", "T", "G", "S");
+		rewriteExpr("{E ↦ F}[{E}]", "{F}", "E", "S", "F", "T");
+		noRewriteExpr("{E ↦ F}[{G}]", "E", "S", "F", "T");
 	}
 
 	/**
@@ -429,8 +427,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_RELIMAGE_CONVERSE_RANSUB() {
-		expressionTest("∅⦂ℙ(U)", "(r ⩥ S)∼[S]", "r", "U↔V");
-		expressionTest("(r ⩥ S)∼[T]", "(r ⩥ S)∼[T]", "r", "U↔V");
+		rewriteExpr("(r ⩥ S)∼[S]", "∅⦂ℙ(U)", "r", "U↔V");
+		noRewriteExpr("(r ⩥ S)∼[T]", "r", "U↔V");
 	}
 
 	/**
@@ -439,8 +437,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_RELIMAGE_CONVERSE_RANRES() {
-		expressionTest("r∼[S]", "(r ▷ S)∼[S]", "r", "U↔V");
-		expressionTest("(r ▷ S)∼[T]", "(r ▷ S)∼[T]", "r", "U↔V");
+		rewriteExpr("(r ▷ S)∼[S]", "r∼[S]", "r", "U↔V");
+		noRewriteExpr("(r ▷ S)∼[T]", "r", "U↔V");
 	}
 
 	/**
@@ -448,7 +446,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_RELIMAGE_CONVERSE_DOMSUB() {
-		expressionTest("r∼[T]∖S", "(S ⩤ r)∼[T]", "r", "U↔V");
+		rewriteExpr("(S ⩤ r)∼[T]", "r∼[T]∖S", "r", "U↔V");
 	}
 
 	/**
@@ -456,8 +454,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_RELIMAGE_DOMSUB() {
-		expressionTest("∅⦂ℙ(V)", "(S ⩤ r)[S]", "r", "U↔V");
-		expressionTest("(S ⩤ r)[T]", "(S ⩤ r)[T]", "r", "U↔V");
+		rewriteExpr("(S ⩤ r)[S]", "∅⦂ℙ(V)", "r", "U↔V");
+		noRewriteExpr("(S ⩤ r)[T]", "r", "U↔V");
 	}
 
 	/**
@@ -465,7 +463,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_CONVERSE() {
-		expressionTest("∅⦂T↔S", "(∅⦂S↔T)∼");
+		rewriteExpr("(∅⦂S↔T)∼", "∅⦂T↔S");
 	}
 
 	/**
@@ -473,7 +471,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_CONVERSE_ID() {
-		expressionTest("id⦂S↔S", "(id⦂S↔S)∼");
+		rewriteExpr("(id⦂S↔S)∼", "id⦂S↔S");
 	}
 
 	/**
@@ -481,7 +479,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_FCOMP_ID_L() {
-		expressionTest("S ◁ r", "(S ◁ id) ; r", "r", "U↔V");
+		rewriteExpr("(S ◁ id) ; r", "S ◁ r", "r", "U↔V");
 	}
 
 	/**
@@ -489,7 +487,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_FCOMP_ID_R() {
-		expressionTest("r ▷ S", "r ; (S ◁ id)", "r", "U↔V");
+		rewriteExpr("r ; (S ◁ id)", "r ▷ S", "r", "U↔V");
 	}
 
 	/**
@@ -497,21 +495,21 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_REL_R() {
-		expressionTest("{∅⦂U↔V}", "S ↔ (∅⦂ℙ(V))", "S", "ℙ(U)");
+		rewriteExpr("S ↔ (∅⦂ℙ(V))", "{∅⦂U↔V}", "S", "ℙ(U)");
 		// this test is the surjective relation <->>
-		expressionTest("{∅⦂U↔V}", "S  (∅⦂ℙ(V))", "S", "ℙ(U)");
-		expressionTest("{∅⦂U↔V}", "S ⇸ (∅⦂ℙ(V))", "S", "ℙ(U)");
-		expressionTest("{∅⦂U↔V}", "S ⤔ (∅⦂ℙ(V))", "S", "ℙ(U)");
-		expressionTest("{∅⦂U↔V}", "S ⤀ (∅⦂ℙ(V))", "S", "ℙ(U)");
+		rewriteExpr("S  (∅⦂ℙ(V))", "{∅⦂U↔V}", "S", "ℙ(U)");
+		rewriteExpr("S ⇸ (∅⦂ℙ(V))", "{∅⦂U↔V}", "S", "ℙ(U)");
+		rewriteExpr("S ⤔ (∅⦂ℙ(V))", "{∅⦂U↔V}", "S", "ℙ(U)");
+		rewriteExpr("S ⤀ (∅⦂ℙ(V))", "{∅⦂U↔V}", "S", "ℙ(U)");
 
-		expressionTest("S → (∅⦂ℙ(V))", "S → (∅⦂ℙ(V))", "S", "ℙ(U)");
+		noRewriteExpr("S → (∅⦂ℙ(V))", "S", "ℙ(U)");
 		// this test is the total relation <<->
-		expressionTest("S  (∅⦂ℙ(V))", "S  (∅⦂ℙ(V))", "S", "ℙ(U)");
+		noRewriteExpr("S  (∅⦂ℙ(V))", "S", "ℙ(U)");
 		// this test is the surjective total relation <<->>
-		expressionTest("S  (∅⦂ℙ(V))", "S  (∅⦂ℙ(V))", "S", "ℙ(U)");
-		expressionTest("S ↣ (∅⦂ℙ(V))", "S ↣ (∅⦂ℙ(V))", "S", "ℙ(U)");
-		expressionTest("S ↠ (∅⦂ℙ(V))", "S ↠ (∅⦂ℙ(V))", "S", "ℙ(U)");
-		expressionTest("S ⤖ (∅⦂ℙ(V))", "S ⤖ (∅⦂ℙ(V))", "S", "ℙ(U)");
+		noRewriteExpr("S  (∅⦂ℙ(V))", "S", "ℙ(U)");
+		noRewriteExpr("S ↣ (∅⦂ℙ(V))", "S", "ℙ(U)");
+		noRewriteExpr("S ↠ (∅⦂ℙ(V))", "S", "ℙ(U)");
+		noRewriteExpr("S ⤖ (∅⦂ℙ(V))", "S", "ℙ(U)");
 	}
 
 	/**
@@ -519,21 +517,21 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_REL_L() {
-		expressionTest("{∅⦂U↔V}", "(∅⦂ℙ(U)) ↔ S", "S", "ℙ(V)");
+		rewriteExpr("(∅⦂ℙ(U)) ↔ S", "{∅⦂U↔V}", "S", "ℙ(V)");
 		// this test is the total relation <<->
-		expressionTest("{∅⦂U↔V}", "(∅⦂ℙ(U))  S", "S", "ℙ(V)");
-		expressionTest("{∅⦂U↔V}", "(∅⦂ℙ(U)) ⇸ S", "S", "ℙ(V)");
-		expressionTest("{∅⦂U↔V}", "(∅⦂ℙ(U)) → S", "S", "ℙ(V)");
-		expressionTest("{∅⦂U↔V}", "(∅⦂ℙ(U)) ⤔ S", "S", "ℙ(V)");
-		expressionTest("{∅⦂U↔V}", "(∅⦂ℙ(U)) ↣ S", "S", "ℙ(V)");
+		rewriteExpr("(∅⦂ℙ(U))  S", "{∅⦂U↔V}", "S", "ℙ(V)");
+		rewriteExpr("(∅⦂ℙ(U)) ⇸ S", "{∅⦂U↔V}", "S", "ℙ(V)");
+		rewriteExpr("(∅⦂ℙ(U)) → S", "{∅⦂U↔V}", "S", "ℙ(V)");
+		rewriteExpr("(∅⦂ℙ(U)) ⤔ S", "{∅⦂U↔V}", "S", "ℙ(V)");
+		rewriteExpr("(∅⦂ℙ(U)) ↣ S", "{∅⦂U↔V}", "S", "ℙ(V)");
 
 		// this test is the surjective relation <->>
-		expressionTest("(∅⦂ℙ(U))  S", "(∅⦂ℙ(U))  S", "S", "ℙ(V)");
+		noRewriteExpr("(∅⦂ℙ(U))  S", "S", "ℙ(V)");
 		// this test is the surjective total relation <<->>
-		expressionTest("(∅⦂ℙ(U))  S", "(∅⦂ℙ(U))  S", "S", "ℙ(V)");
-		expressionTest("(∅⦂ℙ(U)) ⤀ S", "(∅⦂ℙ(U)) ⤀ S", "S", "ℙ(V)");
-		expressionTest("(∅⦂ℙ(U)) ↠ S", "(∅⦂ℙ(U)) ↠ S", "S", "ℙ(V)");
-		expressionTest("(∅⦂ℙ(U)) ⤖ S", "(∅⦂ℙ(U)) ⤖ S", "S", "ℙ(V)");
+		noRewriteExpr("(∅⦂ℙ(U))  S", "S", "ℙ(V)");
+		noRewriteExpr("(∅⦂ℙ(U)) ⤀ S", "S", "ℙ(V)");
+		noRewriteExpr("(∅⦂ℙ(U)) ↠ S", "S", "ℙ(V)");
+		noRewriteExpr("(∅⦂ℙ(U)) ⤖ S", "S", "ℙ(V)");
 	}
 
 	/**
@@ -541,7 +539,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_FUNIMAGE_PRJ1() {
-		expressionTest("E", "prj1(E ↦ F)", "E", "S", "F", "T");
+		rewriteExpr("prj1(E ↦ F)", "E", "E", "S", "F", "T");
 	}
 
 	/**
@@ -549,7 +547,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_FUNIMAGE_PRJ2() {
-		expressionTest("F", "prj2(E ↦ F)", "E", "S", "F", "T");
+		rewriteExpr("prj2(E ↦ F)", "F", "E", "S", "F", "T");
 	}
 
 	/**
@@ -557,7 +555,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_FUNIMAGE_ID() {
-		expressionTest("x", "id(x)", "x", "S");
+		rewriteExpr("id(x)", "x", "x", "S");
 	}
 
 	/**
@@ -566,9 +564,9 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_SPECIAL_EQUAL_RELDOMRAN() {
 		// this test is the surjective total relation <<->>
-		expressionTest("{∅⦂ℙ(S×T)}", "(∅⦂ℙ(S))  (∅⦂ℙ(T))");
-		expressionTest("{∅⦂ℙ(S×T)}", "(∅⦂ℙ(S)) ↠ (∅⦂ℙ(T))");
-		expressionTest("{∅⦂ℙ(S×T)}", "(∅⦂ℙ(S)) ⤖ (∅⦂ℙ(T))");
+		rewriteExpr("(∅⦂ℙ(S))  (∅⦂ℙ(T))", "{∅⦂ℙ(S×T)}");
+		rewriteExpr("(∅⦂ℙ(S)) ↠ (∅⦂ℙ(T))", "{∅⦂ℙ(S×T)}");
+		rewriteExpr("(∅⦂ℙ(S)) ⤖ (∅⦂ℙ(T))", "{∅⦂ℙ(S×T)}");
 
 		// negative tests for the other types of relations are not written
 		// because they are previously matched by SIMP_SPECIAL_REL_L and
@@ -580,8 +578,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_DOM_CPROD() {
-		expressionTest("E", "dom(E×E)", "E", "ℙ(S)");
-		expressionTest("dom(E×F)", "dom(E×F)", "E", "ℙ(S)", "F", "ℙ(S)");
+		rewriteExpr("dom(E×E)", "E", "E", "ℙ(S)");
+		noRewriteExpr("dom(E×F)", "E", "ℙ(S)", "F", "ℙ(S)");
 	}
 
 	/**
@@ -589,8 +587,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_RAN_CPROD() {
-		expressionTest("E", "ran(E×E)", "E", "ℙ(S)");
-		expressionTest("ran(E×F)", "ran(E×F)", "E", "ℙ(S)", "F", "ℙ(S)");
+		rewriteExpr("ran(E×E)", "E", "E", "ℙ(S)");
+		noRewriteExpr("ran(E×F)", "E", "ℙ(S)", "F", "ℙ(S)");
 	}
 
 	/**
@@ -598,11 +596,11 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_COMPSET_BFALSE() {
-		expressionTest("∅⦂ℙ(S)", "{x⦂S · ⊥ ∣ E}", "E", "S");
-		expressionTest("∅⦂ℙ(S)", "{x⦂S · ⊥ ∣ x}");
-		expressionTest("∅⦂ℙ(ℤ)", "{x · ⊥ ∣ x+1}");
-		expressionTest("∅⦂ℙ(S)", "{x⦂S, y⦂S · ⊥ ∣ E}", "E", "S");
-		expressionTest("∅⦂ℙ(S)", "{x⦂S, y⦂S · ⊥ ∣ y}");
+		rewriteExpr("{x⦂S · ⊥ ∣ E}", "∅⦂ℙ(S)", "E", "S");
+		rewriteExpr("{x⦂S · ⊥ ∣ x}", "∅⦂ℙ(S)");
+		rewriteExpr("{x · ⊥ ∣ x+1}", "∅⦂ℙ(ℤ)");
+		rewriteExpr("{x⦂S, y⦂S · ⊥ ∣ E}", "∅⦂ℙ(S)", "E", "S");
+		rewriteExpr("{x⦂S, y⦂S · ⊥ ∣ y}", "∅⦂ℙ(S)");
 	}
 
 	/**
@@ -610,19 +608,17 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_COMPSET_BTRUE() {
-		expressionTest("S", "{x⦂S · ⊤ ∣ x}", "S", "ℙ(S)");
-		expressionTest("S×T", "{x⦂S, y⦂T · ⊤ ∣ x↦y}", "S", "ℙ(S)", "T", "ℙ(T)");
-		expressionTest("T×S", "{x⦂S, y⦂T · ⊤ ∣ y↦x}", "S", "ℙ(S)", "T", "ℙ(T)");
-		expressionTest("T×S×U", "{x⦂S, y⦂T, z⦂U · ⊤ ∣ y↦x↦z}", //
+		rewriteExpr("{x⦂S · ⊤ ∣ x}", "S", "S", "ℙ(S)");
+		rewriteExpr("{x⦂S, y⦂T · ⊤ ∣ x↦y}", "S×T", "S", "ℙ(S)", "T", "ℙ(T)");
+		rewriteExpr("{x⦂S, y⦂T · ⊤ ∣ y↦x}", "T×S", "S", "ℙ(S)", "T", "ℙ(T)");
+		rewriteExpr("{x⦂S, y⦂T, z⦂U · ⊤ ∣ y↦x↦z}", "T×S×U", //
 				"S", "ℙ(S)", "T", "ℙ(T)", "U", "ℙ(U)");
-		expressionTest("S×(T×U)×V", "{x⦂S, y⦂T, z⦂U, t⦂V · ⊤ ∣ x↦(y↦z)↦t}",
+		rewriteExpr("{x⦂S, y⦂T, z⦂U, t⦂V · ⊤ ∣ x↦(y↦z)↦t}", "S×(T×U)×V",
 				"S", "ℙ(S)", "T", "ℙ(T)", "U", "ℙ(U)", "V", "ℙ(V)");
 
-		expressionTest("{x⦂S, y · ⊤ ∣ x↦y+1}", "{x⦂S, y · ⊤ ∣ x↦y+1}", //
-				"S", "ℙ(S)");
-		expressionTest("{x⦂S, y⦂T · ⊤ ∣ x↦a↦y}", "{x⦂S, y⦂T · ⊤ ∣ x↦a↦y}", "a",
-				"A");
-		expressionTest("{x⦂S, y⦂T · ⊤ ∣ x↦y↦x}", "{x⦂S, y⦂T · ⊤ ∣ x↦y↦x}");
+		noRewriteExpr("{x⦂S, y · ⊤ ∣ x↦y+1}", "S", "ℙ(S)");
+		noRewriteExpr("{x⦂S, y⦂T · ⊤ ∣ x↦a↦y}", "a", "A");
+		noRewriteExpr("{x⦂S, y⦂T · ⊤ ∣ x↦y↦x}");
 	}
 
 	/**
@@ -630,7 +626,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_KUNION_POW() {
-		expressionTest("S", "union(ℙ(S))", "S", "ℙ(T)");
+		rewriteExpr("union(ℙ(S))", "S", "S", "ℙ(T)");
 	}
 
 	/**
@@ -638,7 +634,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_KUNION_POW1() {
-		expressionTest("S", "union(ℙ1(S))", "S", "ℙ(T)");
+		rewriteExpr("union(ℙ1(S))", "S", "S", "ℙ(T)");
 	}
 
 	/**
@@ -646,7 +642,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_KUNION() {
-		expressionTest("∅⦂ℙ(S)", "union({∅⦂ℙ(S)})");
+		rewriteExpr("union({∅⦂ℙ(S)})", "∅⦂ℙ(S)");
 	}
 
 	/**
@@ -654,9 +650,9 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_QUNION() {
-		expressionTest("∅⦂ℙ(S)", "⋃ x⦂S · ⊥ ∣ E", "E", "ℙ(S)");
-		expressionTest("∅⦂ℙ(S)", "⋃ x⦂S · ⊥ ∣ {x}");
-		expressionTest("∅⦂ℙ(S)", "⋃ x⦂S, y⦂S · ⊥ ∣ E", "E", "ℙ(S)");
+		rewriteExpr("⋃ x⦂S · ⊥ ∣ E", "∅⦂ℙ(S)", "E", "ℙ(S)");
+		rewriteExpr("⋃ x⦂S · ⊥ ∣ {x}", "∅⦂ℙ(S)");
+		rewriteExpr("⋃ x⦂S, y⦂S · ⊥ ∣ E", "∅⦂ℙ(S)", "E", "ℙ(S)");
 	}
 
 	/**
@@ -664,7 +660,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_KINTER() {
-		expressionTest("∅⦂ℙ(S)", "inter({∅⦂ℙ(S)})");
+		rewriteExpr("inter({∅⦂ℙ(S)})", "∅⦂ℙ(S)");
 	}
 
 	/**
@@ -672,7 +668,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_KINTER_POW() {
-		expressionTest("∅⦂ℙ(T)", "inter(ℙ(S))", "S", "ℙ(T)");
+		rewriteExpr("inter(ℙ(S))", "∅⦂ℙ(T)", "S", "ℙ(T)");
 	}
 
 	/**
@@ -680,15 +676,15 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_EQUAL_REL() {
-		predicateTest("⊥", "A ↔ B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
-		predicateTest("⊥", "A ⇸ B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
-		predicateTest("⊥", "A ⤔ B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
+		rewritePred("A ↔ B = ∅", "⊥", "A", "ℙ(S)", "B", "ℙ(T)");
+		rewritePred("A ⇸ B = ∅", "⊥", "A", "ℙ(S)", "B", "ℙ(T)");
+		rewritePred("A ⤔ B = ∅", "⊥", "A", "ℙ(S)", "B", "ℙ(T)");
 
 		// this test is the surjective relation
-		predicateTest("A  B = ∅", "A  B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
+		noRewritePred("A  B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
 		// this test is the surjective total relation
-		predicateTest("A  B = ∅", "A  B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
-		predicateTest("A ⤀ B = ∅", "A ⤀ B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
+		noRewritePred("A  B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
+		noRewritePred("A ⤀ B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
 
 		// negative tests for the other types of relations are not written
 		// because they are matched by SIMP_SPECIAL_EQUAL_RELDOM
@@ -700,17 +696,17 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_SPECIAL_EQUAL_RELDOM() {
 		// this test is the total relation
-		predicateTest("¬ A=∅ ∧ B=∅", "A  B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
-		predicateTest("¬ A=∅ ∧ B=∅", "A → B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
-		predicateTest("¬ A=∅ ∧ B=∅", "A ↣ B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
-		predicateTest("¬ A=∅ ∧ B=∅", "A ↠ B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
-		predicateTest("¬ A=∅ ∧ B=∅", "A ⤖ B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
+		rewritePred("A  B = ∅", "¬ A=∅ ∧ B=∅", "A", "ℙ(S)", "B", "ℙ(T)");
+		rewritePred("A → B = ∅", "¬ A=∅ ∧ B=∅", "A", "ℙ(S)", "B", "ℙ(T)");
+		rewritePred("A ↣ B = ∅", "¬ A=∅ ∧ B=∅", "A", "ℙ(S)", "B", "ℙ(T)");
+		rewritePred("A ↠ B = ∅", "¬ A=∅ ∧ B=∅", "A", "ℙ(S)", "B", "ℙ(T)");
+		rewritePred("A ⤖ B = ∅", "¬ A=∅ ∧ B=∅", "A", "ℙ(S)", "B", "ℙ(T)");
 
 		// this test is the surjective relation
-		predicateTest("A  B = ∅", "A  B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
+		noRewritePred("A  B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
 		// this test is the surjective total relation
-		predicateTest("A  B = ∅", "A  B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
-		predicateTest("A ⤀ B = ∅", "A ⤀ B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
+		noRewritePred("A  B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
+		noRewritePred("A ⤀ B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
 
 		// negative tests for the other types of relations are not written
 		// because they are matched by SIMP_SPECIAL_EQUAL_REL
@@ -721,33 +717,30 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_FINITE_LAMBDA() {
-		predicateTest("finite({x,y,z⦂U · x↦y∈P ∣ x↦E↦z})", //
-				"finite({x,y,z⦂U · x↦y∈P ∣ x↦E↦z ↦ z})", //
+		rewritePred("finite({x,y,z⦂U · x↦y∈P ∣ x↦E↦z ↦ z})", //
+				"finite({x,y,z⦂U · x↦y∈P ∣ x↦E↦z})", //
 				"P", "S↔T", "E", "ℙ(V)");
-		predicateTest("finite({x,y,z⦂U,t⦂ℤ · x↦y∈P ∣ x↦z↦3∗t})", //
-				"finite({x,y,z⦂U,t⦂ℤ · x↦y∈P ∣ x↦z↦3∗t ↦ z})", //
+		rewritePred("finite({x,y,z⦂U,t⦂ℤ · x↦y∈P ∣ x↦z↦3∗t ↦ z})", //
+				"finite({x,y,z⦂U,t⦂ℤ · x↦y∈P ∣ x↦z↦3∗t})", //
 				"P", "S↔T");
-		predicateTest("finite({x,y,z,t · x↦y∈P ∣ x↦z+t})", //
-				"finite({x,y,z,t · x↦y∈P ∣ x↦z+t ↦ x})", //
+		rewritePred("finite({x,y,z,t · x↦y∈P ∣ x↦z+t ↦ x})", //
+				"finite({x,y,z,t · x↦y∈P ∣ x↦z+t})", //
 				"P", "S↔T");
-		predicateTest("finite({x,y,z,t · x↦y∈P ∣ z+t↦x})", //
-				"finite({x,y,z,t · x↦y∈P ∣ z+t↦x ↦ x})", //
+		rewritePred("finite({x,y,z,t · x↦y∈P ∣ z+t↦x ↦ x})", //
+				"finite({x,y,z,t · x↦y∈P ∣ z+t↦x})", //
 				"P", "S↔T");
-		predicateTest("finite({x,y,z,t · x↦y∈P ∣ t↦z+3∗t})", //
-				"finite({x,y,z,t · x↦y∈P ∣ t↦z+3∗t ↦ t})", //
+		rewritePred("finite({x,y,z,t · x↦y∈P ∣ t↦z+3∗t ↦ t})", //
+				"finite({x,y,z,t · x↦y∈P ∣ t↦z+3∗t})", //
 				"P", "S↔T");
-		predicateTest("finite({x,y,z⦂ℤ,t · x↦y∈P ∣ z↦3∗t↦t})", //
-				"finite({x,y,z,t · x↦y∈P ∣ z↦3∗t↦t ↦ z+t})", //
+		rewritePred("finite({x,y,z,t · x↦y∈P ∣ z↦3∗t↦t ↦ z+t})", //
+				"finite({x,y,z⦂ℤ,t · x↦y∈P ∣ z↦3∗t↦t})", //
 				"P", "S↔T");
 
-		predicateTest("finite({x,y,z,t · x↦y∈P ∣ z↦3∗t+z ↦ z+t})", //
-				"finite({x,y,z,t · x↦y∈P ∣ z↦3∗t+z ↦ z+t})", //
+		noRewritePred("finite({x,y,z,t · x↦y∈P ∣ z↦3∗t+z ↦ z+t})", //
 				"P", "S↔T");
-		predicateTest("finite({x,y,z⦂U,t · x↦y∈P ∣ z↦3∗t ↦ t})", //
-				"finite({x,y,z⦂U,t · x↦y∈P ∣ z↦3∗t ↦ t})", //
+		noRewritePred("finite({x,y,z⦂U,t · x↦y∈P ∣ z↦3∗t ↦ t})", //
 				"P", "S↔T");
-		predicateTest("finite({x,y,z⦂U,t⦂V · x↦y∈P ∣ (x↦z) ↦ (x↦t)})", //
-				"finite({x,y,z⦂U,t⦂V · x↦y∈P ∣ (x↦z) ↦ (x↦t)})", //
+		noRewritePred("finite({x,y,z⦂U,t⦂V · x↦y∈P ∣ (x↦z) ↦ (x↦t)})", //
 				"P", "S↔T");
 	}
 
@@ -759,12 +752,11 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		// The SIMP_CARD_LAMBDA rule implementation uses the same algorithm as
 		// SIMP_FINITE_LAMBDA, therefore minimal testing is performed
 
-		expressionTest("card({x,y,z⦂ℤ,t · x↦y∈P ∣ z↦3∗t↦t})", //
-				"card({x,y,z,t · x↦y∈P ∣ z↦3∗t↦t ↦ z+t})", //
+		rewriteExpr("card({x,y,z,t · x↦y∈P ∣ z↦3∗t↦t ↦ z+t})", //
+				"card({x,y,z⦂ℤ,t · x↦y∈P ∣ z↦3∗t↦t})", //
 				"P", "S↔T");
 
-		expressionTest("card({x,y,z,t · x↦y∈P ∣ z↦3∗t+z ↦ z+t})", //
-				"card({x,y,z,t · x↦y∈P ∣ z↦3∗t+z ↦ z+t})", //
+		noRewriteExpr("card({x,y,z,t · x↦y∈P ∣ z↦3∗t+z ↦ z+t})", //
 				"P", "S↔T");
 	}
 
@@ -773,13 +765,13 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_TYPE_FCOMP_R() {
-		expressionTest("dom(r) × U", "r ; (T×U)", //
+		rewriteExpr("r ; (T×U)", "dom(r) × U", //
 				"r", "S↔T", "T", "ℙ(T)", "U", "ℙ(U)");
-		expressionTest("r ; (T×U)", "r ; (T×U)", //
+		noRewriteExpr("r ; (T×U)", //
 				"r", "S↔T", "T", "ℙ(T)", "U", "ℙ(W)");
-		expressionTest("r ; (T×U)", "r ; (T×U)", //
+		noRewriteExpr("r ; (T×U)", //
 				"r", "S↔V", "T", "ℙ(V)", "U", "ℙ(U)");
-		expressionTest("r ; (T×U)", "r ; (T×U)", //
+		noRewriteExpr("r ; (T×U)", //
 				"r", "S↔V", "T", "ℙ(V)", "U", "ℙ(W)");
 	}
 
@@ -788,13 +780,13 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_TYPE_FCOMP_L() {
-		expressionTest("T × ran(r)", "(T×U) ; r", //
+		rewriteExpr("(T×U) ; r", "T × ran(r)", //
 				"r", "U↔V", "T", "ℙ(T)", "U", "ℙ(U)");
-		expressionTest("(T×U) ; r", "(T×U) ; r", //
+		noRewriteExpr("(T×U) ; r", //
 				"r", "U↔V", "T", "ℙ(X)", "U", "ℙ(U)");
-		expressionTest("(T×U) ; r", "(T×U) ; r", //
+		noRewriteExpr("(T×U) ; r", //
 				"r", "W↔V", "T", "ℙ(T)", "U", "ℙ(W)");
-		expressionTest("(T×U) ; r", "(T×U) ; r", //
+		noRewriteExpr("(T×U) ; r", //
 				"r", "W↔V", "T", "ℙ(X)", "U", "ℙ(W)");
 	}
 
@@ -803,13 +795,13 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_TYPE_BCOMP_L() {
-		expressionTest("dom(r) × U", "(T×U) ∘ r", //
+		rewriteExpr("(T×U) ∘ r", "dom(r) × U", //
 				"r", "S↔T", "T", "ℙ(T)", "U", "ℙ(U)");
-		expressionTest("(T×U) ∘ r", "(T×U) ∘ r", //
+		noRewriteExpr("(T×U) ∘ r", //
 				"r", "S↔T", "T", "ℙ(T)", "U", "ℙ(W)");
-		expressionTest("(T×U) ∘ r", "(T×U) ∘ r", //
+		noRewriteExpr("(T×U) ∘ r", //
 				"r", "S↔V", "T", "ℙ(V)", "U", "ℙ(U)");
-		expressionTest("(T×U) ∘ r", "(T×U) ∘ r", //
+		noRewriteExpr("(T×U) ∘ r", //
 				"r", "S↔V", "T", "ℙ(V)", "U", "ℙ(W)");
 	}
 
@@ -818,13 +810,13 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_TYPE_BCOMP_R() {
-		expressionTest("T × ran(r)", "r ∘ (T×U)", //
+		rewriteExpr("r ∘ (T×U)", "T × ran(r)", //
 				"r", "U↔V", "T", "ℙ(T)", "U", "ℙ(U)");
-		expressionTest("r ∘ (T×U)", "r ∘ (T×U)", //
+		noRewriteExpr("r ∘ (T×U)", //
 				"r", "U↔V", "T", "ℙ(X)", "U", "ℙ(U)");
-		expressionTest("r ∘ (T×U)", "r ∘ (T×U)", //
+		noRewriteExpr("r ∘ (T×U)", //
 				"r", "W↔V", "T", "ℙ(T)", "U", "ℙ(W)");
-		expressionTest("r ∘ (T×U)", "r ∘ (T×U)", //
+		noRewriteExpr("r ∘ (T×U)", //
 				"r", "W↔V", "T", "ℙ(X)", "U", "ℙ(W)");
 	}
 
@@ -833,7 +825,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_DOM_ID() {
-		expressionTest("S", "dom(id⦂S↔S)", "S", "ℙ(S)");
+		rewriteExpr("dom(id⦂S↔S)", "S", "S", "ℙ(S)");
 	}
 
 	/**
@@ -841,7 +833,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_RAN_ID() {
-		expressionTest("S", "ran(id⦂S↔S)", "S", "ℙ(S)");
+		rewriteExpr("ran(id⦂S↔S)", "S", "S", "ℙ(S)");
 	}
 
 	/**
@@ -849,7 +841,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_DOM_PRJ1() {
-		expressionTest("S × T", "dom(prj1⦂ℙ(S×T×S))", "S", "ℙ(S)", "T", "ℙ(T)");
+		rewriteExpr("dom(prj1⦂ℙ(S×T×S))", "S × T", "S", "ℙ(S)", "T", "ℙ(T)");
 	}
 
 	/**
@@ -857,7 +849,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_DOM_PRJ2() {
-		expressionTest("S × T", "dom(prj2⦂ℙ(S×T×T))", "S", "ℙ(S)", "T", "ℙ(T)");
+		rewriteExpr("dom(prj2⦂ℙ(S×T×T))", "S × T", "S", "ℙ(S)", "T", "ℙ(T)");
 	}
 
 	/**
@@ -865,7 +857,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_RAN_PRJ1() {
-		expressionTest("S", "ran(prj1⦂ℙ(S×T×S))", "S", "ℙ(S)", "T", "ℙ(T)");
+		rewriteExpr("ran(prj1⦂ℙ(S×T×S))", "S", "S", "ℙ(S)", "T", "ℙ(T)");
 	}
 
 	/**
@@ -873,7 +865,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_RAN_PRJ2() {
-		expressionTest("T", "ran(prj2⦂ℙ(S×T×T))", "S", "ℙ(S)", "T", "ℙ(T)");
+		rewriteExpr("ran(prj2⦂ℙ(S×T×T))", "T", "S", "ℙ(S)", "T", "ℙ(T)");
 	}
 
 	/**
@@ -881,8 +873,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_TYPE_DOM() {
-		expressionTest("A", "dom(A×B)", "A", "ℙ(A)", "B", "ℙ(B)");
-		expressionTest("dom(A×B)", "dom(A×B)", "A", "ℙ(S)", "B", "ℙ(T)");
+		rewriteExpr("dom(A×B)", "A", "A", "ℙ(A)", "B", "ℙ(B)");
+		noRewriteExpr("dom(A×B)", "A", "ℙ(S)", "B", "ℙ(T)");
 	}
 
 	/**
@@ -890,8 +882,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_TYPE_RAN() {
-		expressionTest("B", "ran(A×B)", "A", "ℙ(A)", "B", "ℙ(B)");
-		expressionTest("ran(A×B)", "ran(A×B)", "A", "ℙ(S)", "B", "ℙ(T)");
+		rewriteExpr("ran(A×B)", "B", "A", "ℙ(A)", "B", "ℙ(B)");
+		noRewriteExpr("ran(A×B)", "A", "ℙ(S)", "B", "ℙ(T)");
 	}
 
 	/**
@@ -899,8 +891,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_MOD_0() {
-		expressionTest("0", "0 mod E");
-		expressionTest("2 mod E", "2 mod E");
+		rewriteExpr("0 mod E", "0");
+		noRewriteExpr("2 mod E");
 	}
 
 	/**
@@ -908,8 +900,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_MOD_1() {
-		expressionTest("0", "E mod 1");
-		expressionTest("E mod 3", "E mod 3");
+		rewriteExpr("E mod 1", "0");
+		noRewriteExpr("E mod 3");
 	}
 
 	/**
@@ -917,9 +909,9 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MIN_SING() {
-		expressionTest("E", "min({E})", "E", "ℤ");
-		expressionTest("min({E,F})", "min({E,F})");
-		expressionTest("min(∅)", "min({})");
+		rewriteExpr("min({E})", "E", "E", "ℤ");
+		noRewriteExpr("min({E,F})");
+		rewriteExpr("min({})", "min(∅)");
 	}
 
 	/**
@@ -927,9 +919,9 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MAX_SING() {
-		expressionTest("E", "max({E})", "E", "ℤ");
-		expressionTest("max({E,F})", "max({E,F})");
-		expressionTest("max(∅)", "max({})");
+		rewriteExpr("max({E})", "E", "E", "ℤ");
+		noRewriteExpr("max({E,F})");
+		rewriteExpr("max({})", "max(∅)");
 	}
 
 	/**
@@ -937,8 +929,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MIN_NATURAL() {
-		expressionTest("0", "min(ℕ)");
-		expressionTest("min(ℤ)", "min(ℤ)");
+		rewriteExpr("min(ℕ)", "0");
+		noRewriteExpr("min(ℤ)");
 	}
 
 	/**
@@ -946,7 +938,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MIN_NATURAL1() {
-		expressionTest("1", "min(ℕ1)");
+		rewriteExpr("min(ℕ1)", "1");
 	}
 
 	/**
@@ -954,7 +946,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MIN_UPTO() {
-		expressionTest("E", "min(E‥F)", "E", "ℤ", "F", "ℤ");
+		rewriteExpr("min(E‥F)", "E", "E", "ℤ", "F", "ℤ");
 	}
 
 	/**
@@ -962,7 +954,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MAX_UPTO() {
-		expressionTest("F", "max(E‥F)", "E", "ℤ", "F", "ℤ");
+		rewriteExpr("max(E‥F)", "F", "E", "ℤ", "F", "ℤ");
 	}
 
 	/**
@@ -970,8 +962,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_CARD_CONVERSE() {
-		expressionTest("card(r)", "card(r∼)", "r", "S↔T");
-		expressionTest("card(r)", "card(r)", "r", "S↔T");
+		rewriteExpr("card(r∼)", "card(r)", "r", "S↔T");
+		noRewriteExpr("card(r)", "r", "S↔T");
 	}
 
 	/**
@@ -979,8 +971,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_LIT_GE_CARD_1() {
-		predicateTest("¬(S = ∅)", "card(S) ≥ 1", "S", "ℙ(T)");
-		predicateTest("card(S) ≥ 2", "card(S) ≥ 2", "S", "ℙ(T)");
+		rewritePred("card(S) ≥ 1", "¬(S = ∅)", "S", "ℙ(T)");
+		noRewritePred("card(S) ≥ 2", "S", "ℙ(T)");
 	}
 
 	/**
@@ -988,8 +980,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_LIT_LE_CARD_1() {
-		predicateTest("¬(S = ∅)", "1 ≤ card(S)", "S", "ℙ(T)");
-		predicateTest("2 ≤ card(S)", "2 ≤ card(S)", "S", "ℙ(T)");
+		rewritePred("1 ≤ card(S)", "¬(S = ∅)", "S", "ℙ(T)");
+		noRewritePred("2 ≤ card(S)", "S", "ℙ(T)");
 	}
 
 	/**
@@ -997,8 +989,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_LIT_LE_CARD_0() {
-		predicateTest("⊤", "0 ≤ card(S)", "S", "ℙ(T)");
-		predicateTest("2 ≤ card(S)", "2 ≤ card(S)", "S", "ℙ(T)");
+		rewritePred("0 ≤ card(S)", "⊤", "S", "ℙ(T)");
+		noRewritePred("2 ≤ card(S)", "S", "ℙ(T)");
 	}
 
 	/**
@@ -1006,8 +998,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_LIT_GE_CARD_0() {
-		predicateTest("⊤", "card(S) ≥ 0", "S", "ℙ(T)");
-		predicateTest("card(S) ≥ 2", "card(S) ≥ 2", "S", "ℙ(T)");
+		rewritePred("card(S) ≥ 0", "⊤", "S", "ℙ(T)");
+		noRewritePred("card(S) ≥ 2", "S", "ℙ(T)");
 	}
 
 	/**
@@ -1015,7 +1007,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_CARD_NATURAL() {
-		predicateTest("⊤", "card(S) ∈ ℕ", "S", "ℙ(T)");
+		rewritePred("card(S) ∈ ℕ", "⊤", "S", "ℙ(T)");
 	}
 
 	/**
@@ -1023,7 +1015,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_CARD_NATURAL1() {
-		predicateTest("¬ S = ∅", "card(S) ∈ ℕ1", "S", "ℙ(T)");
+		rewritePred("card(S) ∈ ℕ1", "¬ S = ∅", "S", "ℙ(T)");
 	}
 
 	/**
@@ -1031,11 +1023,11 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_LIT_IN_NATURAL() {
-		predicateTest("⊤", " 0 ∈ ℕ");
-		predicateTest("⊤", " 1 ∈ ℕ");
-		predicateTest("⊤", " 3000000000 ∈ ℕ");
-		predicateTest("⊤", " 5000000000000000000000 ∈ ℕ");
-		predicateTest(" i ∈ ℕ", " i ∈ ℕ");
+		rewritePred(" 0 ∈ ℕ", "⊤");
+		rewritePred(" 1 ∈ ℕ", "⊤");
+		rewritePred(" 3000000000 ∈ ℕ", "⊤");
+		rewritePred(" 5000000000000000000000 ∈ ℕ", "⊤");
+		noRewritePred(" i ∈ ℕ");
 	}
 
 	/**
@@ -1043,10 +1035,10 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_LIT_IN_NATURAL1() {
-		predicateTest("⊤", " 1 ∈ ℕ1");
-		predicateTest("⊤", " 3000000000 ∈ ℕ1");
-		predicateTest("⊤", " 5000000000000000000000 ∈ ℕ1");
-		predicateTest(" i ∈ ℕ1", " i ∈ ℕ1");
+		rewritePred(" 1 ∈ ℕ1", "⊤");
+		rewritePred(" 3000000000 ∈ ℕ1", "⊤");
+		rewritePred(" 5000000000000000000000 ∈ ℕ1", "⊤");
+		noRewritePred(" i ∈ ℕ1");
 	}
 
 	/**
@@ -1054,7 +1046,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_IN_NATURAL1() {
-		predicateTest("⊥", "0 ∈ ℕ1");
+		rewritePred("0 ∈ ℕ1", "⊥");
 	}
 
 	/**
@@ -1062,8 +1054,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_MOD() {
-		expressionTest("0", "E mod E", "E", "ℤ");
-		expressionTest("E mod F", "E mod F", "E", "ℤ", "F", "ℤ");
+		rewriteExpr("E mod E", "0");
+		noRewriteExpr("E mod F");
 	}
 
 	/**
@@ -1071,11 +1063,11 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_LIT_IN_MINUS_NATURAL() {
-		predicateTest("⊥", "−(1) ∈ ℕ");
-		predicateTest("⊥", "−1 ∈ ℕ");
-		predicateTest("⊥", "−3000000000 ∈ ℕ");
-		predicateTest("⊥", "−5000000000000000000000 ∈ ℕ");
-		predicateTest("−(i) ∈ ℕ", "−(i) ∈ ℕ");
+		rewritePred("−(1) ∈ ℕ", "⊥");
+		rewritePred("−1 ∈ ℕ", "⊥");
+		rewritePred("−3000000000 ∈ ℕ", "⊥");
+		rewritePred("−5000000000000000000000 ∈ ℕ", "⊥");
+		noRewritePred("−(i) ∈ ℕ");
 	}
 
 	/**
@@ -1083,11 +1075,11 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_LIT_IN_MINUS_NATURAL1() {
-		predicateTest("⊥", "−(1) ∈ ℕ1");
-		predicateTest("⊥", "−1 ∈ ℕ1");
-		predicateTest("⊥", "−3000000000 ∈ ℕ1");
-		predicateTest("⊥", "−5000000000000000000000 ∈ ℕ1");
-		predicateTest("−(i) ∈ ℕ1", "−(i) ∈ ℕ1");
+		rewritePred("−(1) ∈ ℕ1", "⊥");
+		rewritePred("−1 ∈ ℕ1", "⊥");
+		rewritePred("−3000000000 ∈ ℕ1", "⊥");
+		rewritePred("−5000000000000000000000 ∈ ℕ1", "⊥");
+		noRewritePred("−(i) ∈ ℕ1");
 	}
 
 	/**
@@ -1096,23 +1088,16 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_CARD_COMPSET() {
-		expressionTest("card(S)", "card({x · x∈S ∣ x})", "S", "ℙ(T)");
-		expressionTest("card(S)", "card({x, y · x↦y∈S ∣ x↦y})", "S", "ℙ(T×U)");
+		rewriteExpr("card({x · x∈S ∣ x})", "card(S)", "S", "ℙ(T)");
+		rewriteExpr("card({x, y · x↦y∈S ∣ x↦y})", "card(S)", "S", "ℙ(T×U)");
 
-		expressionTest("card({x, y · x↦a↦y∈S ∣ x↦a↦y})",
-				"card({x, y · x↦a↦y∈S ∣ x↦a↦y})", "S", "ℙ(T×A×U)");
-		expressionTest("card({x, y · x↦y∈S ∣ y↦x})",
-				"card({x, y · x↦y∈S ∣ y↦x})", "S", "ℙ(T×U)");
-		expressionTest("card({x, y · x↦y+1∈S ∣ x↦y+1})",
-				"card({x, y · x↦y+1∈S ∣ x↦y+1})", "S", "ℙ(T×ℤ)");
+		noRewriteExpr("card({x, y · x↦a↦y∈S ∣ x↦a↦y})", "S", "ℙ(T×A×U)");
+		noRewriteExpr("card({x, y · x↦y∈S ∣ y↦x})", "S", "ℙ(T×U)");
+		noRewriteExpr("card({x, y · x↦y+1∈S ∣ x↦y+1})", "S", "ℙ(T×ℤ)");
 
-		expressionTest("card({x · x∈S∪{x} ∣ x})", "card({x · x∈S∪{x} ∣ x})", //
-				"S", "ℙ(T)");
-		expressionTest("card({x, y · x↦y∈S∪{x↦y} ∣ x↦y})",
-				"card({x, y · x↦y∈S∪{x↦y} ∣ x↦y})", //
-				"S", "ℙ(T×U)");
-		expressionTest("card({x, y · x↦y∈S×(U∪{y}) ∣ x↦y})",
-				"card({x, y · x↦y∈S×(U∪{y}) ∣ x↦y})", //
+		noRewriteExpr("card({x · x∈S∪{x} ∣ x})", "S", "ℙ(T)");
+		noRewriteExpr("card({x, y · x↦y∈S∪{x↦y} ∣ x↦y})", "S", "ℙ(T×U)");
+		noRewriteExpr("card({x, y · x↦y∈S×(U∪{y}) ∣ x↦y})", //
 				"S", "ℙ(T)", "U", "ℙ(V)");
 	}
 
@@ -1121,7 +1106,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_DPROD_CPROD() {
-		expressionTest("(A ∩ C) × (B × D)", "(A × B) ⊗ (C × D)", //
+		rewriteExpr("(A × B) ⊗ (C × D)", "(A ∩ C) × (B × D)", //
 				"A", "ℙ(S)", "B", "ℙ(T)", "C", "ℙ(S)", "D", "ℙ(V)");
 	}
 
@@ -1130,7 +1115,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_PPROD_CPROD() {
-		expressionTest("(A × C) × (B × D)", "(A × B) ∥ (C × D)", //
+		rewriteExpr("(A × B) ∥ (C × D)", "(A × C) × (B × D)", //
 				"A", "ℙ(S)", "B", "ℙ(T)", "C", "ℙ(U)", "D", "ℙ(V)");
 	}
 
@@ -1139,7 +1124,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_CONVERSE_CPROD() {
-		expressionTest("(B × A)", "(A × B)∼", "A", "ℙ(S)", "B", "ℙ(T)");
+		rewriteExpr("(A × B)∼", "(B × A)", "A", "ℙ(S)", "B", "ℙ(T)");
 	}
 
 	/**
@@ -1147,19 +1132,19 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_TYPE_OVERL_CPROD() {
-		expressionTest("(S × T)  s", "r  (S × T)  s", //
+		rewriteExpr("r  (S × T)  s", "(S × T)  s", //
 				"S", "ℙ(S)", "T", "ℙ(T)");
-		expressionTest("S × T", "r  (S × T)", "S", "ℙ(S)", "T", "ℙ(T)");
-		expressionTest("S × T", "r  (S × T)  s  (S × T)", //
+		rewriteExpr("r  (S × T)", "S × T", "S", "ℙ(S)", "T", "ℙ(T)");
+		rewriteExpr("r  (S × T)  s  (S × T)", "S × T", //
 				"S", "ℙ(S)", "T", "ℙ(T)");
-		expressionTest("(S × T)  s", "(S × T)  r  (S × T)  s", //
+		rewriteExpr("(S × T)  r  (S × T)  s", "(S × T)  s", //
 				"S", "ℙ(S)", "T", "ℙ(T)");
 
-		expressionTest("(S × T)  r", "(S × T)  r", "S", "ℙ(S)", "T", "ℙ(T)");
+		noRewriteExpr("(S × T)  r", "S", "ℙ(S)", "T", "ℙ(T)");
 
-		expressionTest("r  (S × T)", "r  (S × T)", "S", "ℙ(U)", "T", "ℙ(T)");
-		expressionTest("r  (S × T)", "r  (S × T)", "S", "ℙ(S)", "T", "ℙ(V)");
-		expressionTest("r  (S × T)", "r  (S × T)", "S", "ℙ(U)", "T", "ℙ(V)");
+		noRewriteExpr("r  (S × T)", "S", "ℙ(U)", "T", "ℙ(T)");
+		noRewriteExpr("r  (S × T)", "S", "ℙ(S)", "T", "ℙ(V)");
+		noRewriteExpr("r  (S × T)", "S", "ℙ(U)", "T", "ℙ(V)");
 	}
 
 	/**
@@ -1167,9 +1152,9 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_TYPE_BCOMP_ID() {
-		expressionTest("r ∘ s", "r ∘ id ∘ s", "r", "T↔U", "s", "S↔T");
-		expressionTest("r", " r ∘ id", "r", "S↔T");
-		expressionTest("r", "id ∘ r ", "r", "S↔T");
+		rewriteExpr("r ∘ id ∘ s", "r ∘ s", "r", "T↔U", "s", "S↔T");
+		rewriteExpr(" r ∘ id", "r", "r", "S↔T");
+		rewriteExpr("id ∘ r ", "r", "r", "S↔T");
 	}
 
 	/**
@@ -1177,9 +1162,9 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_TYPE_FCOMP_ID() {
-		expressionTest("r ; s", "r ; id ; s", "r", "S↔T", "s", "T↔U");
-		expressionTest("r", " r ; id", "r", "S↔T");
-		expressionTest("r", "id ; r ", "r", "S↔T");
+		rewriteExpr("r ; id ; s", "r ; s", "r", "S↔T", "s", "T↔U");
+		rewriteExpr(" r ; id", "r", "r", "S↔T");
+		rewriteExpr("id ; r ", "r", "r", "S↔T");
 	}
 
 	/**
@@ -1187,12 +1172,11 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_CONVERSE_COMPSET() {
-		expressionTest("{x, y, z · x ↦ y ↦ z ∈ P ∣ y ↦ x}",
-				"{x, y, z · x ↦ y ↦ z ∈ P∣ x ↦ y}∼", "P", "S×T↔U");
+		rewriteExpr("{x, y, z · x ↦ y ↦ z ∈ P∣ x ↦ y}∼",
+				"{x, y, z · x ↦ y ↦ z ∈ P ∣ y ↦ x}", "P", "S×T↔U");
 
-		// expressionTest("{x · x ∈ P ∣ x}∼", "{x · x ∈ P ∣ x}∼", "P", "S↔T");
-		expressionTest("{x, y, z · x ∈ ℕ ∧ y ∈ BOOL ∧ z ∈ ℤ ∣ x ↦ y}",
-				"{x, y, z · x ∈ ℕ ∧ y ∈ BOOL ∧ z ∈ ℤ ∣ x ↦ y}");
+		noRewriteExpr("{x · x∈P ∧ x∈Q ∣ x}∼", "P", "S↔T");
+		noRewriteExpr("{x, y, z · x ∈ ℕ ∧ y ∈ BOOL ∧ z ∈ ℤ ∣ x ↦ y}");
 	}
 
 	/**
@@ -1200,12 +1184,12 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_LIT_UPTO() {
-		expressionTest("−1‥5", "−1‥5");
-		expressionTest("∅⦂ℙ(ℤ)", "5‥1");
-		expressionTest("∅⦂ℙ(ℤ)", "5‥−1");
-		expressionTest("∅⦂ℙ(ℤ)", "−1‥−5");
-		expressionTest("∅⦂ℙ(ℤ)", "10000000000‥−50000000000");
-		expressionTest("i‥j", "i‥j");
+		noRewriteExpr("−1‥5");
+		rewriteExpr("5‥1", "∅⦂ℙ(ℤ)");
+		rewriteExpr("5‥−1", "∅⦂ℙ(ℤ)");
+		rewriteExpr("−1‥−5", "∅⦂ℙ(ℤ)");
+		rewriteExpr("10000000000‥−50000000000", "∅⦂ℙ(ℤ)");
+		noRewriteExpr("i‥j");
 	}
 
 	/**
@@ -1213,14 +1197,13 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_DOM_LAMBDA() {
-		expressionTest("{x,y,z,t · x↦y∈P ∣ x+z+3∗t}", //
-				"dom({x,y,z,t · x↦y∈P ∣ x+z+3∗t ↦ t})", //
+		rewriteExpr("dom({x,y,z,t · x↦y∈P ∣ x+z+3∗t ↦ t})", //
+				"{x,y,z,t · x↦y∈P ∣ x+z+3∗t}", //
 				"P", "ℤ↔T");
-		expressionTest("{x,y,z⦂ℤ,t⦂U · x↦y∈P ∣ x+z}", //
-				"dom({x,y,z,t⦂U · x↦y∈P ∣ x+z ↦ t})", //
+		rewriteExpr("dom({x,y,z,t⦂U · x↦y∈P ∣ x+z ↦ t})", //
+				"{x,y,z⦂ℤ,t⦂U · x↦y∈P ∣ x+z}", //
 				"P", "ℤ↔T");
-		expressionTest("dom({x,y · x ∈ 1‥2 × 3‥4 ∧ y = 5 ∣ x})", //
-				"dom({x,y · x ∈ 1‥2 × 3‥4 ∧ y = 5 ∣ x})");
+		noRewriteExpr("dom({x,y · x ∈ 1‥2 × 3‥4 ∧ y = 5 ∣ x})");
 	}
 
 	/**
@@ -1228,14 +1211,13 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_RAN_LAMBDA() {
-		expressionTest("{x,y,z⦂ℤ,t⦂ℤ · x↦y∈P ∣ t}", //
-				"ran({x,y,z,t · x↦y∈P ∣ (x+z+3∗t) ↦ t})", //
+		rewriteExpr("ran({x,y,z,t · x↦y∈P ∣ (x+z+3∗t) ↦ t})", //
+				"{x,y,z⦂ℤ,t⦂ℤ · x↦y∈P ∣ t}", //
 				"P", "ℤ↔T");
-		expressionTest("{x,y,z⦂V · x↦y∈P ∣ x}", //
-				"ran({x,y,z⦂V · x↦y∈P ∣ x↦z ↦ x})", //
+		rewriteExpr("ran({x,y,z⦂V · x↦y∈P ∣ x↦z ↦ x})", //
+				"{x,y,z⦂V · x↦y∈P ∣ x}", //
 				"P", "S↔T");
-		expressionTest("ran({x,y · x ∈ 1‥2 × 3‥4 ∧ y = 5 ∣ x})", //
-				"ran({x,y · x ∈ 1‥2 × 3‥4 ∧ y = 5 ∣ x})");
+		noRewriteExpr("ran({x,y · x ∈ 1‥2 × 3‥4 ∧ y = 5 ∣ x})");
 	}
 
 	/**
@@ -1243,13 +1225,13 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MIN_BUNION_SING() {
-		expressionTest("min(S ∪ T ∪ U)", "min(S ∪ {min(T)} ∪ U)");
-		expressionTest("min(S ∪ T)", "min(S ∪ {min(T)})");
-		expressionTest("min(S ∪ T)", "min({min(S)} ∪ T)");
-		expressionTest("min(S ∪ {min(T), min(U)})", "min(S ∪ {min(T), min(U)})");
-		expressionTest("min(S ∪ T ∪ U)", "min({min(S)} ∪ T ∪ {min(U)})");
-		expressionTest("min(S ∪ {max(T)} ∪ U)", "min(S ∪ {max(T)} ∪ U)");
-		expressionTest("max(S ∪ {min(T)} ∪ U)", "max(S ∪ {min(T)} ∪ U)");
+		rewriteExpr("min(S ∪ {min(T)} ∪ U)", "min(S ∪ T ∪ U)");
+		rewriteExpr("min(S ∪ {min(T)})", "min(S ∪ T)");
+		rewriteExpr("min({min(S)} ∪ T)", "min(S ∪ T)");
+		noRewriteExpr("min(S ∪ {min(T), min(U)})");
+		rewriteExpr("min({min(S)} ∪ T ∪ {min(U)})", "min(S ∪ T ∪ U)");
+		noRewriteExpr("min(S ∪ {max(T)} ∪ U)");
+		noRewriteExpr("max(S ∪ {min(T)} ∪ U)");
 	}
 
 	/**
@@ -1257,13 +1239,13 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MAX_BUNION_SING() {
-		expressionTest("max(S ∪ T ∪ U)", "max(S ∪ {max(T)} ∪ U)");
-		expressionTest("max(S ∪ T)", "max(S ∪ {max(T)})");
-		expressionTest("max(S ∪ T)", "max({max(S)} ∪ T)");
-		expressionTest("max(S ∪ {max(T), max(U)})", "max(S ∪ {max(T), max(U)})");
-		expressionTest("max(S ∪ T ∪ U)", "max({max(S)} ∪ T ∪ {max(U)})");
-		expressionTest("min(S ∪ {max(T)} ∪ U)", "min(S ∪ {max(T)} ∪ U)");
-		expressionTest("max(S ∪ {min(T)} ∪ U)", "max(S ∪ {min(T)} ∪ U)");
+		rewriteExpr("max(S ∪ {max(T)} ∪ U)", "max(S ∪ T ∪ U)");
+		rewriteExpr("max(S ∪ {max(T)})", "max(S ∪ T)");
+		rewriteExpr("max({max(S)} ∪ T)", "max(S ∪ T)");
+		noRewriteExpr("max(S ∪ {max(T), max(U)})");
+		rewriteExpr("max({max(S)} ∪ T ∪ {max(U)})", "max(S ∪ T ∪ U)");
+		noRewriteExpr("min(S ∪ {max(T)} ∪ U)");
+		noRewriteExpr("max(S ∪ {min(T)} ∪ U)");
 	}
 
 	/**
@@ -1271,10 +1253,10 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_IN_FUNIMAGE() {
-		predicateTest("⊤", "E ↦ F(E) ∈ F", "F", "S↔T");
-		predicateTest("E ↦ F(G) ∈ F", "E ↦ F(G) ∈ F", "F", "S↔T");
-		predicateTest("E ↦ F(E) ∈ G", "E ↦ F(E) ∈ G", "F", "S↔T");
-		predicateTest("E ↦ F(E) ∈ F∼", "E ↦ F(E) ∈ F∼", "F", "S↔S");
+		rewritePred("E ↦ F(E) ∈ F", "⊤", "F", "S↔T");
+		noRewritePred("E ↦ F(G) ∈ F", "F", "S↔T");
+		noRewritePred("E ↦ F(E) ∈ G", "F", "S↔T");
+		noRewritePred("E ↦ F(E) ∈ F∼", "F", "S↔S");
 	}
 
 	/**
@@ -1282,10 +1264,10 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_IN_FUNIMAGE_CONVERSE_L() {
-		predicateTest("⊤", "F∼(E) ↦ E ∈ F", "F", "T↔S");
-		predicateTest("F∼(E) ↦ G ∈ F", "F∼(E) ↦ G ∈ F", "F", "T↔S");
-		predicateTest("F∼(E) ↦ E ∈ G", "F∼(E) ↦ E ∈ G", "F", "T↔S");
-		predicateTest("F∼(E) ↦ E ∈ F∼", "F∼(E) ↦ E ∈ F∼", "F", "S↔S");
+		rewritePred("F∼(E) ↦ E ∈ F", "⊤", "F", "T↔S");
+		noRewritePred("F∼(E) ↦ G ∈ F", "F", "T↔S");
+		noRewritePred("F∼(E) ↦ E ∈ G", "F", "T↔S");
+		noRewritePred("F∼(E) ↦ E ∈ F∼", "F", "S↔S");
 	}
 
 	/**
@@ -1293,10 +1275,10 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_IN_FUNIMAGE_CONVERSE_R() {
-		predicateTest("⊤", "F(E) ↦ E ∈ F∼", "F", "S↔T");
-		predicateTest("F(E) ↦ G ∈ F∼", "F(E) ↦ G ∈ F∼", "F", "S↔T");
-		predicateTest("F(E) ↦ E ∈ G∼", "F(E) ↦ E ∈ G∼", "F", "S↔T");
-		predicateTest("F(E) ↦ E ∈ F", "F(E) ↦ E ∈ F", "F", "S↔S");
+		rewritePred("F(E) ↦ E ∈ F∼", "⊤", "F", "S↔T");
+		noRewritePred("F(E) ↦ G ∈ F∼", "F", "S↔T");
+		noRewritePred("F(E) ↦ E ∈ G∼", "F", "S↔T");
+		noRewritePred("F(E) ↦ E ∈ F", "F", "S↔S");
 	}
 
 	/**
@@ -1304,11 +1286,11 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_FUNIMAGE_SETENUM_LL() {
-		expressionTest("3", "{1 ↦ 3, 2 ↦ 3}(1)");
-		expressionTest("FALSE", "{0 ↦ FALSE, 1 ↦ FALSE}(0)");
-		expressionTest("3", "{1 ↦ 3, 2 ↦ 3}(x)");
+		rewriteExpr("{1 ↦ 3, 2 ↦ 3}(1)", "3");
+		rewriteExpr("{0 ↦ FALSE, 1 ↦ FALSE}(0)", "FALSE");
+		rewriteExpr("{1 ↦ 3, 2 ↦ 3}(x)", "3");
 
-		expressionTest("{0 ↦ FALSE, 1 ↦ TRUE}(x)", "{0 ↦ FALSE, 1 ↦ TRUE}(x)");
+		noRewriteExpr("{0 ↦ FALSE, 1 ↦ TRUE}(x)");
 	}
 
 	/**
@@ -1316,11 +1298,10 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_FUNIMAGE_SETENUM_LR() {
-		expressionTest("Y", "{A ↦ E, X ↦ Y, B ↦ F}(X)", "X", "S", "Y", "T");
-		expressionTest("Y", "{X ↦ Y}(X)", "X", "S", "Y", "T");
+		rewriteExpr("{A ↦ E, X ↦ Y, B ↦ F}(X)", "Y", "X", "S", "Y", "T");
+		rewriteExpr("{X ↦ Y}(X)", "Y", "X", "S", "Y", "T");
 
-		expressionTest("{A ↦ E, B ↦ F}(X)", "{A ↦ E, B ↦ F}(X)", //
-				"A", "S", "E", "T");
+		noRewriteExpr("{A ↦ E, B ↦ F}(X)", "A", "S", "E", "T");
 	}
 
 	/**
@@ -1329,17 +1310,16 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_FUNIMAGE_BUNION_SETENUM() {
-		expressionTest("Y", "(r ∪ {A ↦ E, X ↦ Y, B ↦ F } ∪ s)(X)", //
+		rewriteExpr("(r ∪ {A ↦ E, X ↦ Y, B ↦ F } ∪ s)(X)", "Y", //
 				"r", "S↔T", "X", "S", "Y", "T");
-		expressionTest("Y", "(r ∪ {A ↦ E, X ↦ Y, B ↦ F })(X)", //
+		rewriteExpr("(r ∪ {A ↦ E, X ↦ Y, B ↦ F })(X)", "Y", //
 				"r", "S↔T", "X", "S", "Y", "T");
-		expressionTest("Y", "({A ↦ E, X ↦ Y, B ↦ F } ∪ r)(X)", //
+		rewriteExpr("({A ↦ E, X ↦ Y, B ↦ F } ∪ r)(X)", "Y", //
 				"r", "S↔T", "X", "S", "Y", "T");
-		expressionTest("Y", "(r ∪ {X ↦ Y} ∪ s)(X)", //
+		rewriteExpr("(r ∪ {X ↦ Y} ∪ s)(X)", "Y", //
 				"r", "S↔T", "X", "S", "Y", "T");
 
-		expressionTest("(r ∪ {A ↦ E, B ↦ F } ∪ s)(X)",
-				"(r ∪ {A ↦ E, B ↦ F } ∪ s)(X)", //
+		noRewriteExpr("(r ∪ {A ↦ E, B ↦ F } ∪ s)(X)", //
 				"r", "S↔T", "X", "S", "Y", "T");
 	}
 
@@ -1348,10 +1328,9 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_LIT_MIN() {
-		expressionTest("min({−3})", "min({−2, 1, −3})");
-		expressionTest("min({A, B})", "min({A, B})");
-		expressionTest("min({A, B, −100000000000, C})",
-				"min({A, −3, −1, B, −100000000000, C})");
+		rewriteExpr("min({−2, 1, −3})", "min({−3})");
+		noRewriteExpr("min({A, B})");
+		noRewriteExpr("min({A, B, −100000000000, C})");
 	}
 
 	/**
@@ -1359,10 +1338,9 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_LIT_MAX() {
-		expressionTest("max({1})", "max({−2, 1, −3})");
-		expressionTest("max({A, B})", "max({A, B})");
-		expressionTest("max({A, B, 100000000000, C})",
-				"max({A, 3, 1, B, 100000000000, C})");
+		rewriteExpr("max({−2, 1, −3})", "max({1})");
+		noRewriteExpr("max({A, B})");
+		noRewriteExpr("max({A, B, 100000000000, C})");
 	}
 
 	/**
@@ -1370,7 +1348,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_FINITE_ID() {
-		predicateTest("finite(S)", "finite(id⦂S↔S)", "S", "ℙ(S)");
+		rewritePred("finite(id⦂S↔S)", "finite(S)", "S", "ℙ(S)");
 	}
 
 	/**
@@ -1378,7 +1356,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_FINITE_ID_DOMRES() {
-		predicateTest("finite(E)", "finite(E ◁ id)", "E", "ℙ(S)");
+		rewritePred("finite(E ◁ id)", "finite(E)", "E", "ℙ(S)");
 	}
 
 	/**
@@ -1386,7 +1364,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_FINITE_PRJ1() {
-		predicateTest("finite(S × T)", "finite(prj1⦂ℙ(S×T×S))", //
+		rewritePred("finite(prj1⦂ℙ(S×T×S))", "finite(S × T)", //
 				"S", "ℙ(S)", "T", "ℙ(T)");
 	}
 
@@ -1395,7 +1373,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_FINITE_PRJ1_DOMRES() {
-		predicateTest("finite(E)", "finite(E ◁ prj1)", "E", "ℙ(S×T)");
+		rewritePred("finite(E ◁ prj1)", "finite(E)", "E", "ℙ(S×T)");
 	}
 
 	/**
@@ -1403,7 +1381,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_FINITE_PRJ2() {
-		predicateTest("finite(S × T)", "finite(prj2⦂S×T↔T)", //
+		rewritePred("finite(prj2⦂S×T↔T)", "finite(S × T)", //
 				"S", "ℙ(S)", "T", "ℙ(T)");
 	}
 
@@ -1412,7 +1390,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_FINITE_PRJ2_DOMRES() {
-		predicateTest("finite(E)", "finite(E ◁ prj2)", "E", "ℙ(S×T)");
+		rewritePred("finite(E ◁ prj2)", "finite(E)", "E", "ℙ(S×T)");
 	}
 
 	/**
@@ -1420,7 +1398,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_CARD_ID() {
-		expressionTest("card(S)", "card(id⦂S↔S)", "S", "ℙ(S)");
+		rewriteExpr("card(id⦂S↔S)", "card(S)", "S", "ℙ(S)");
 	}
 
 	/**
@@ -1428,7 +1406,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_CARD_ID_DOMRES() {
-		expressionTest("card(E)", "card(E ◁ id)", "E", "ℙ(T)");
+		rewriteExpr("card(E ◁ id)", "card(E)", "E", "ℙ(T)");
 	}
 
 	/**
@@ -1436,7 +1414,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_CARD_PRJ1() {
-		expressionTest("card(S × T)", "card(prj1⦂S×T↔S)", //
+		rewriteExpr("card(prj1⦂S×T↔S)", "card(S × T)", //
 				"S", "ℙ(S)", "T", "ℙ(T)");
 	}
 
@@ -1445,7 +1423,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_CARD_PRJ1_DOMRES() {
-		expressionTest("card(E)", "card(E ◁ prj1)", "E", "ℙ(S×T)");
+		rewriteExpr("card(E ◁ prj1)", "card(E)", "E", "ℙ(S×T)");
 	}
 
 	/**
@@ -1453,7 +1431,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_CARD_PRJ2() {
-		expressionTest("card(S × T)", "card(prj2⦂S×T↔T)", //
+		rewriteExpr("card(prj2⦂S×T↔T)", "card(S × T)", //
 				"S", "ℙ(S)", "T", "ℙ(T)");
 	}
 
@@ -1462,7 +1440,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_CARD_PRJ2_DOMRES() {
-		expressionTest("card(E)", "card(E ◁ prj2)", "E", "ℙ(S×T)");
+		rewriteExpr("card(E ◁ prj2)", "card(E)", "E", "ℙ(S×T)");
 	}
 
 	/**
@@ -1470,16 +1448,16 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_EQUAL_BINTER() {
-		predicateTest("T ⊆ S ∩ U", "S ∩ T ∩ U = T", //
+		rewritePred("S ∩ T ∩ U = T", "T ⊆ S ∩ U", //
 				"S", "ℙ(V)", "T", "ℙ(V)", "U", "ℙ(V)");
-		predicateTest("T ⊆ S", "S ∩ T = T", "S", "ℙ(V)", "T", "ℙ(V)");
-		predicateTest("T ⊆ U", "T ∩ U = T", "T", "ℙ(V)", "U", "ℙ(V)");
-		predicateTest("T ⊆ S ∩ U", "S ∩ T ∩ T ∩ U = T", //
+		rewritePred("S ∩ T = T", "T ⊆ S", "S", "ℙ(V)", "T", "ℙ(V)");
+		rewritePred("T ∩ U = T", "T ⊆ U", "T", "ℙ(V)", "U", "ℙ(V)");
+		rewritePred("S ∩ T ∩ T ∩ U = T", "T ⊆ S ∩ U", //
 				"S", "ℙ(V)", "T", "ℙ(V)", "U", "ℙ(V)");
 
-		predicateTest("⊤", "T ∩ T = T", "T", "ℙ(U)");
+		rewritePred("T ∩ T = T", "⊤", "T", "ℙ(U)");
 
-		predicateTest("S ∩ T ∩ U = V", "S ∩ T ∩ U = V", //
+		noRewritePred("S ∩ T ∩ U = V", //
 				"S", "ℙ(W)", "T", "ℙ(W)", "U", "ℙ(W)", "V", "ℙ(W)");
 	}
 
@@ -1488,16 +1466,16 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_EQUAL_BUNION() {
-		predicateTest("S ∪ U ⊆ T", "S ∪ T ∪ U = T", //
+		rewritePred("S ∪ T ∪ U = T", "S ∪ U ⊆ T", //
 				"S", "ℙ(V)", "T", "ℙ(V)", "U", "ℙ(V)");
-		predicateTest("S ⊆ T", "S ∪ T = T", "S", "ℙ(V)", "T", "ℙ(V)");
-		predicateTest("U ⊆ T", "T ∪ U = T", "T", "ℙ(V)", "U", "ℙ(V)");
-		predicateTest("S ∪ U ⊆ T", "S ∪ T ∪ T ∪ U = T", //
+		rewritePred("S ∪ T = T", "S ⊆ T", "S", "ℙ(V)", "T", "ℙ(V)");
+		rewritePred("T ∪ U = T", "U ⊆ T", "T", "ℙ(V)", "U", "ℙ(V)");
+		rewritePred("S ∪ T ∪ T ∪ U = T", "S ∪ U ⊆ T", //
 				"S", "ℙ(V)", "T", "ℙ(V)", "U", "ℙ(V)");
 
-		predicateTest("⊤", "T ∪ T = T", "T", "ℙ(U)");
+		rewritePred("T ∪ T = T", "⊤", "T", "ℙ(U)");
 
-		predicateTest("S ∪ T ∪ U = V", "S ∪ T ∪ U = V", //
+		noRewritePred("S ∪ T ∪ U = V", //
 				"S", "ℙ(W)", "T", "ℙ(W)", "U", "ℙ(W)", "V", "ℙ(W)");
 	}
 
@@ -1506,8 +1484,8 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_SUBSET_L() {
-		predicateTest("¬ S = ∅", "∅ ⊂ S", "S", "ℙ(T)");
-		predicateTest("⊤", "∅ ⊆ S", "S", "ℙ(T)");
+		rewritePred("∅ ⊂ S", "¬ S = ∅", "S", "ℙ(T)");
+		rewritePred("∅ ⊆ S", "⊤", "S", "ℙ(T)");
 	}
 
 	/**
@@ -1515,7 +1493,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_DOMRES_DOMRES_ID() {
-		expressionTest("(S ∩ T) ◁ id", "S ◁ (T ◁ id)", //
+		rewriteExpr("S ◁ (T ◁ id)", "(S ∩ T) ◁ id", //
 				"S", "ℙ(U)", "T", "ℙ(U)");
 	}
 
@@ -1524,7 +1502,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_RANRES_DOMRES_ID() {
-		expressionTest("(S ∩ T) ◁ id", "(S ◁ id) ▷ T", //
+		rewriteExpr("(S ◁ id) ▷ T", "(S ∩ T) ◁ id", //
 				"S", "ℙ(U)", "T", "ℙ(U)");
 	}
 
@@ -1533,7 +1511,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_DOMSUB_DOMRES_ID() {
-		expressionTest("(T ∖ S) ◁ id", "S ⩤ (T ◁ id)", //
+		rewriteExpr("S ⩤ (T ◁ id)", "(T ∖ S) ◁ id", //
 				"S", "ℙ(U)", "T", "ℙ(U)");
 	}
 
@@ -1542,7 +1520,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_RANSUB_DOMRES_ID() {
-		expressionTest("(S ∖ T) ◁ id", "(S ◁ id) ⩥ T", //
+		rewriteExpr("(S ◁ id) ⩥ T", "(S ∖ T) ◁ id", //
 				"S", "ℙ(U)", "T", "ℙ(U)");
 	}
 
@@ -1551,7 +1529,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_DOMRES_DOMSUB_ID() {
-		expressionTest("(S ∖ T) ◁ id", "S ◁ (T ⩤ id)", //
+		rewriteExpr("S ◁ (T ⩤ id)", "(S ∖ T) ◁ id", //
 				"S", "ℙ(U)", "T", "ℙ(U)");
 	}
 
@@ -1560,7 +1538,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_RANRES_DOMSUB_ID() {
-		expressionTest("(T ∖ S) ◁ id", "(S ⩤ id) ▷ T", //
+		rewriteExpr("(S ⩤ id) ▷ T", "(T ∖ S) ◁ id", //
 				"S", "ℙ(U)", "T", "ℙ(U)");
 	}
 
@@ -1569,7 +1547,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_DOMSUB_DOMSUB_ID() {
-		expressionTest("(S ∪ T) ⩤ id", "S ⩤ (T ⩤ id)", //
+		rewriteExpr("S ⩤ (T ⩤ id)", "(S ∪ T) ⩤ id", //
 				"S", "ℙ(U)", "T", "ℙ(U)");
 	}
 
@@ -1578,7 +1556,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_RANSUB_DOMSUB_ID() {
-		expressionTest("(S ∪ T) ⩤ id", "(S ⩤ id) ⩥ T", //
+		rewriteExpr("(S ⩤ id) ⩥ T", "(S ∪ T) ⩤ id", //
 				"S", "ℙ(U)", "T", "ℙ(U)");
 	}
 
@@ -1587,7 +1565,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_RANRES_ID() {
-		expressionTest("S ◁ id", "id ▷ S", "S", "ℙ(T)");
+		rewriteExpr("id ▷ S", "S ◁ id", "S", "ℙ(T)");
 	}
 
 	/**
@@ -1595,7 +1573,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_RANSUB_ID() {
-		expressionTest("S ⩤ id", "id ⩥ S", "S", "ℙ(T)");
+		rewriteExpr("id ⩥ S", "S ⩤ id", "S", "ℙ(T)");
 	}
 
 	/**
@@ -1603,9 +1581,9 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_DOMSUB_RAN() {
-		expressionTest("∅⦂T↔S", "ran(r) ⩤ r∼", "r", "S↔T");
+		rewriteExpr("ran(r) ⩤ r∼", "∅⦂T↔S", "r", "S↔T");
 
-		expressionTest("ran(r) ⩤ s∼", "ran(r) ⩤ s∼", "r", "S↔T", "s", "S↔T");
+		noRewriteExpr("ran(r) ⩤ s∼", "r", "S↔T", "s", "S↔T");
 	}
 
 	/**
@@ -1613,9 +1591,9 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_RANSUB_DOM() {
-		expressionTest("∅⦂T↔S", "r∼ ⩥ dom(r)", "r", "S↔T");
+		rewriteExpr("r∼ ⩥ dom(r)", "∅⦂T↔S", "r", "S↔T");
 
-		expressionTest("s∼ ⩥ dom(r)", "s∼ ⩥ dom(r)", "r", "S↔T", "s", "S↔T");
+		noRewriteExpr("s∼ ⩥ dom(r)", "r", "S↔T", "s", "S↔T");
 	}
 
 	/**
@@ -1623,14 +1601,14 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_FCOMP_ID() {
-		expressionTest("r ; ((S ∩ T) ◁ id) ; s", "r ; (S ◁ id) ; (T ◁ id) ; s", //
+		rewriteExpr("r ; (S ◁ id) ; (T ◁ id) ; s", "r ; ((S ∩ T) ◁ id) ; s", //
 				"r", "A↔B", "s", "B↔C");
-		expressionTest(
-				"r ; ((S ∖ T) ◁ id) ; s ; (U ⩤ id) ; t ; ((V ∪ W) ⩤ id) ; u", //
-				"r ; (S ◁ id) ; (T ⩤ id) ; s ; (U ⩤ id) ; t ; (V ⩤ id) ; (W ⩤ id) ; u",//
+		rewriteExpr(
+				"r ; (S ◁ id) ; (T ⩤ id) ; s ; (U ⩤ id) ; t ; (V ⩤ id) ; (W ⩤ id) ; u", //
+				"r ; ((S ∖ T) ◁ id) ; s ; (U ⩤ id) ; t ; ((V ∪ W) ⩤ id) ; u",//
 				"r", "A↔B", "s", "B↔C", "t", "C↔D", "u", "D↔E");
 
-		expressionTest("r ; (S ◁ id) ; s", "r ; (S ◁ id) ; s", //
+		noRewriteExpr("r ; (S ◁ id) ; s", //
 				"r", "A↔B", "s", "B↔C");
 	}
 
@@ -1639,10 +1617,10 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_MULTI_OVERL() {
-		expressionTest("s", "s  s", "s", "A↔B");
-		expressionTest("r  t  s  u", "r  s  t  s  u", "r", "A↔B");
+		rewriteExpr("s  s", "s", "s", "A↔B");
+		rewriteExpr("r  s  t  s  u", "r  t  s  u", "r", "A↔B");
 
-		expressionTest("r  s  t", "r  s  t", "r", "A↔B");
+		noRewriteExpr("r  s  t", "r", "A↔B");
 	}
 
 	/**
@@ -1650,15 +1628,14 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_BCOMP_ID() {
-		expressionTest("r ∘ ((S ∩ T) ◁ id) ∘ s", "r ∘ (S ◁ id) ∘ (T ◁ id) ∘ s", //
+		rewriteExpr("r ∘ (S ◁ id) ∘ (T ◁ id) ∘ s", "r ∘ ((S ∩ T) ◁ id) ∘ s", //
 				"r", "B↔C", "s", "A↔B");
-		expressionTest(
-				"r ∘ ((S ∖ T) ◁ id) ∘ s ∘ (U ⩤ id) ∘ t ∘ ((V ∪ W) ⩤ id) ∘ u", //
-				"r ∘ (S ◁ id) ∘ (T ⩤ id) ∘ s ∘ (U ⩤ id) ∘ t ∘ (V ⩤ id) ∘ (W ⩤ id) ∘ u",//
+		rewriteExpr(
+				"r ∘ (S ◁ id) ∘ (T ⩤ id) ∘ s ∘ (U ⩤ id) ∘ t ∘ (V ⩤ id) ∘ (W ⩤ id) ∘ u", //
+				"r ∘ ((S ∖ T) ◁ id) ∘ s ∘ (U ⩤ id) ∘ t ∘ ((V ∪ W) ⩤ id) ∘ u",//
 				"r", "D↔E", "s", "C↔D", "t", "B↔C", "u", "A↔B");
 
-		expressionTest("r ∘ (S ◁ id) ∘ s", "r ∘ (S ◁ id) ∘ s", //
-				"r", "B↔C", "s", "A↔B");
+		noRewriteExpr("r ∘ (S ◁ id) ∘ s", "r", "B↔C", "s", "A↔B");
 	}
 
 	/**
@@ -1667,9 +1644,9 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_SUBSETEQ_COMPSET_L() {
 		// predicateTest("∀y · y∈ℕ ⇒ y∈S", "{x · x∈ℕ ∣ x} ⊆ S", "S", "ℙ(ℤ)");
-		predicateTest("∀x, y · x∈ℤ∧y∈ℤ ⇒ x+y∈S",
-				"{x, y · x∈ℤ∧y∈ℤ ∣ x+y } ⊆ S ", "S", "ℙ(ℤ)");
-		predicateTest("∀x, y · x+y=a ⇒ x+y∈S", "{x, y · x+y=a ∣ x+y} ⊆ S", //
+		rewritePred("{x, y · x∈ℤ∧y∈ℤ ∣ x+y } ⊆ S ",
+				"∀x, y · x∈ℤ∧y∈ℤ ⇒ x+y∈S", "S", "ℙ(ℤ)");
+		rewritePred("{x, y · x+y=a ∣ x+y} ⊆ S", "∀x, y · x+y=a ⇒ x+y∈S", //
 				"a", "ℤ");
 	}
 
@@ -1679,9 +1656,9 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSIMP_SPECIAL_EQUAL_COMPSET() {
 		// predicateTest("∀x · ¬x∈ℕ", "{x · x∈ℕ ∣ x} = ∅", "S", "ℙ(ℤ)");
-		predicateTest("∀x, y · ¬(x∈ℤ∧y∈ℤ)", "{x, y · x∈ℤ∧y∈ℤ ∣ x+y } = ∅ ", //
+		rewritePred("{x, y · x∈ℤ∧y∈ℤ ∣ x+y } = ∅ ", "∀x, y · ¬(x∈ℤ∧y∈ℤ)", //
 				"S", "ℙ(ℤ)");
-		predicateTest("∀x, y · ¬(x+y=a)", "{x, y · x+y=a ∣ x+y} = ∅", //
+		rewritePred("{x, y · x+y=a ∣ x+y} = ∅", "∀x, y · ¬(x+y=a)", //
 				"a", "ℤ");
 	}
 
@@ -1690,7 +1667,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_RELIMAGE_DOMRES_ID() {
-		expressionTest("S ∩ T", "(S ◁ id)[T]", "S", "ℙ(A)", "T", "ℙ(A)");
+		rewriteExpr("(S ◁ id)[T]", "S ∩ T", "S", "ℙ(A)", "T", "ℙ(A)");
 	}
 
 	/**
@@ -1698,7 +1675,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_RELIMAGE_DOMSUB_ID() {
-		expressionTest("T ∖ S", "(S ⩤ id)[T]", "S", "ℙ(A)", "T", "ℙ(A)");
+		rewriteExpr("(S ⩤ id)[T]", "T ∖ S", "S", "ℙ(A)", "T", "ℙ(A)");
 	}
 
 	/**
@@ -1706,24 +1683,19 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_COMPSET_IN() {
-		expressionTest("S", "{x · x∈S ∣ x}", "S", "ℙ(T)");
-		expressionTest("S", "{x, y · x↦y∈S ∣ x↦y}", "S", "ℙ(T×U)");
-		expressionTest("{y · y ⊆ A ∧ finite(y) ∣ y}", //
-				"{y · y ⊆ A ∧ finite(y) ∣ {x · x∈y ∣ x}}",//
+		rewriteExpr("{x · x∈S ∣ x}", "S", "S", "ℙ(T)");
+		rewriteExpr("{x, y · x↦y∈S ∣ x↦y}", "S", "S", "ℙ(T×U)");
+		rewriteExpr("{y · y ⊆ A ∧ finite(y) ∣ {x · x∈y ∣ x}}", //
+				"{y · y ⊆ A ∧ finite(y) ∣ y}",//
 				"A", "ℙ(S)");
 
-		expressionTest("{x, y · x↦a↦y∈S ∣ x↦a↦y}", "{x, y · x↦a↦y∈S ∣ x↦a↦y}",
-				"S", "ℙ(T×A×U)");
-		expressionTest("{x, y · x↦y∈S ∣ y↦x}", "{x, y · x↦y∈S ∣ y↦x}", "S",
-				"ℙ(T×U)");
-		expressionTest("{x, y · x↦y+1∈S ∣ x↦y+1}", "{x, y · x↦y+1∈S ∣ x↦y+1}",
-				"S", "ℙ(T×ℤ)");
+		noRewriteExpr("{x, y · x↦a↦y∈S ∣ x↦a↦y}", "S", "ℙ(T×A×U)");
+		noRewriteExpr("{x, y · x↦y∈S ∣ y↦x}", "S", "ℙ(T×U)");
+		noRewriteExpr("{x, y · x↦y+1∈S ∣ x↦y+1}", "S", "ℙ(T×ℤ)");
 
-		expressionTest("{x · x∈S∪{x} ∣ x}", "{x · x∈S∪{x} ∣ x}", "S", "ℙ(T)");
-		expressionTest("{x, y · x↦y∈S×(U∪{y}) ∣ x↦y}",
-				"{x, y · x↦y∈S×(U∪{y}) ∣ x↦y}", "S", "ℙ(T)", "U", "ℙ(V)");
-		expressionTest("{x, y⦂ℙ(T) · x∈y ∣ x}", "{x, y⦂ℙ(T) · x∈y ∣ x}",//
-				"T", "ℙ(T)");
+		noRewriteExpr("{x · x∈S∪{x} ∣ x}", "S", "ℙ(T)");
+		noRewriteExpr("{x, y · x↦y∈S×(U∪{y}) ∣ x↦y}", "S", "ℙ(T)", "U", "ℙ(V)");
+		noRewriteExpr("{x, y⦂ℙ(T) · x∈y ∣ x}", "T", "ℙ(T)");
 	}
 
 	/**
@@ -1731,13 +1703,11 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_COMPSET_SUBSETEQ() {
-		expressionTest("ℙ(S)", "{x, y⦂U · x⊆S ∣ x}", "S", "ℙ(T)");
+		rewriteExpr("{x, y⦂U · x⊆S ∣ x}", "ℙ(S)", "S", "ℙ(T)");
 
-		expressionTest("{x, y⦂U · x⊆S ∣ y}", "{x, y⦂U · x⊆S ∣ y}", "S", "ℙ(T)");
-		expressionTest("{x, y· x×y⊆S ∣ x × y}", "{x, y· x×y⊆S ∣ x × y}", "S",
-				"ℙ(T×U)");
-		expressionTest("{x, y⦂T · x⊆S∪{y} ∣ x}", "{x, y⦂T · x⊆S∪{y} ∣ x}", //
-				"S", "ℙ(T)");
+		noRewriteExpr("{x, y⦂U · x⊆S ∣ y}", "S", "ℙ(T)");
+		noRewriteExpr("{x, y· x×y⊆S ∣ x × y}", "S", "ℙ(T×U)");
+		noRewriteExpr("{x, y⦂T · x⊆S∪{y} ∣ x}", "S", "ℙ(T)");
 	}
 
 	/**
@@ -1745,22 +1715,22 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_IN_COMPSET_ONEPOINT() {
-		predicateTest("1≥0", "1 ∈ {x · x≥0 ∣ x}");
-		predicateTest("1≥0 ∧ 2>1", "1↦2 ∈ {x,y · x≥0 ∧ y>x ∣ x↦y}");
-		predicateTest("∃y · 1≥0 ∧ y>1", "1 ∈ {x,y · x≥0 ∧ y>x ∣ x}");
-		predicateTest("∃x,y · (x≥0 ∧ y>x ∧ b>2∗y) ∧ x↦y=a",
-				"a↦b ∈ {x,y,z · x≥0 ∧ y>x ∧ z>2∗y ∣ (x↦y)↦z}");
+		rewritePred("1 ∈ {x · x≥0 ∣ x}", "1≥0");
+		rewritePred("1↦2 ∈ {x,y · x≥0 ∧ y>x ∣ x↦y}", "1≥0 ∧ 2>1");
+		rewritePred("1 ∈ {x,y · x≥0 ∧ y>x ∣ x}", "∃y · 1≥0 ∧ y>1");
+		rewritePred("a↦b ∈ {x,y,z · x≥0 ∧ y>x ∧ z>2∗y ∣ (x↦y)↦z}",
+				"∃x,y · (x≥0 ∧ y>x ∧ b>2∗y) ∧ x↦y=a");
 
-		predicateTest("a=0 ∧ b=0", "a↦b ∈ {x,y · x=0 ∧ y=0 ∣ x↦y}");
-		predicateTest("a≥0 ∧ a=b", "a↦b ∈ {x · x≥0 ∣ x↦x}");
-		predicateTest("∃y · a>y+c ∧ y+1=b", "a↦b↦c ∈ {x,y,z · x>y+z ∣ x↦y+1↦z}");
+		rewritePred("a↦b ∈ {x,y · x=0 ∧ y=0 ∣ x↦y}", "a=0 ∧ b=0");
+		rewritePred("a↦b ∈ {x · x≥0 ∣ x↦x}", "a≥0 ∧ a=b");
+		rewritePred("a↦b↦c ∈ {x,y,z · x>y+z ∣ x↦y+1↦z}", "∃y · a>y+c ∧ y+1=b");
 
-		predicateTest("∃y · (a=0 ∧ y=0) ∧ y+1=b",
-				"a↦b ∈ {x,y · x=0 ∧ y=0 ∣ x↦y+1}");
+		rewritePred("a↦b ∈ {x,y · x=0 ∧ y=0 ∣ x↦y+1}",
+				"∃y · (a=0 ∧ y=0) ∧ y+1=b");
 
-		predicateTest("∃x ·  x≥0 ∧ x+1=1", "1 ∈ {x · x≥0 ∣ x+1}");
-		predicateTest("∃x,y · (x≥0 ∧ y>x) ∧ x↦y=a",
-				"a ∈ {x,y · x≥0 ∧ y>x ∣ x↦y}");
+		rewritePred("1 ∈ {x · x≥0 ∣ x+1}", "∃x ·  x≥0 ∧ x+1=1");
+		rewritePred("a ∈ {x,y · x≥0 ∧ y>x ∣ x↦y}",
+				"∃x,y · (x≥0 ∧ y>x) ∧ x↦y=a");
 	}
 
 	/**
@@ -1768,7 +1738,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 */
 	@Test
 	public void testSIMP_FINITE_BOOL() {
-		predicateTest("⊤", "finite(BOOL)");
+		rewritePred("finite(BOOL)", "⊤");
 	}
 
 }

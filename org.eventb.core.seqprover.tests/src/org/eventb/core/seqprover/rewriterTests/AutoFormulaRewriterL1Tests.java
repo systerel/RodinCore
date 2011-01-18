@@ -40,9 +40,9 @@ public class AutoFormulaRewriterL1Tests extends AutoFormulaRewriterTests {
 	@Test
 	public void testSimpCompSet() {
 
-		predicateTest("1 ∈ ℕ  ∧   ¬ 0∈ℕ1", "1 ↦ 0∈{x,y·x∈ℕ∧y∉ℕ1 ∣ x ↦ y}");
-		predicateTest("1 ∈ ℕ  ∧   ¬ 0∈ℕ1  ∧  f(6) < 7",
-				"1 ↦ 0 ↦ 6∈{x,y,z·x∈ℕ∧y∉ℕ1∧f(z)<7 ∣ x ↦ y ↦ z}");
+		rewritePred("1 ↦ 0∈{x,y·x∈ℕ∧y∉ℕ1 ∣ x ↦ y}", "1 ∈ ℕ  ∧   ¬ 0∈ℕ1");
+		rewritePred("1 ↦ 0 ↦ 6∈{x,y,z·x∈ℕ∧y∉ℕ1∧f(z)<7 ∣ x ↦ y ↦ z}",
+				"1 ∈ ℕ  ∧   ¬ 0∈ℕ1  ∧  f(6) < 7");
 
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -43,187 +43,187 @@ public class ArithFormulaRewriterTests extends AbstractFormulaRewriterTests {
 	@Test
 	public void testArithmetics() {
 		// (A + ... + C + ... + B) - C  ==  A + ... + B
-		expressionTest("y ∗ 3", "x ∗ 2 + y ∗ 3 − x ∗ 2");
-		expressionTest("x ∗ 2", "x ∗ 2 + y ∗ 3 − y ∗ 3");
-		expressionTest("x + y", "x + y + z − z");
-		expressionTest("x + z", "x + y + z − y");
-		expressionTest("y + z", "x + y + z − x");
+		rewriteExpr("x ∗ 2 + y ∗ 3 − x ∗ 2", "y ∗ 3");
+		rewriteExpr("x ∗ 2 + y ∗ 3 − y ∗ 3", "x ∗ 2");
+		rewriteExpr("x + y + z − z", "x + y");
+		rewriteExpr("x + y + z − y", "x + z");
+		rewriteExpr("x + y + z − x", "y + z");
 		
 		// (A + ... + D + ... + (C - D) + ... + B)  ==  A + ... + C + ... B
-		expressionTest("y ∗ 2", "x + (y ∗ 2 − x)");
-		expressionTest("y ∗ 2", "(y ∗ 2 − x) + x");
-		expressionTest("x + y", "x + (y − z) + z");
-		expressionTest("x + y", "x + z + (y − z)");
-		expressionTest("y + x", "z + (y − z) + x");
-		expressionTest("y + x", "(y − z) + z + x");
-		expressionTest("x + y", "z + x + (y − z)");
-		expressionTest("y + x", " (y − z) + x + z");
-		expressionTest("x + (y − z)", "(x − z) + z + (y − z)");
-		expressionTest("x + (y − z)", "(x − z) + (y − z) + z");
-		expressionTest("x + (y − z)", "z + (x − z) + (y − z)");
+		rewriteExpr("x + (y ∗ 2 − x)", "y ∗ 2");
+		rewriteExpr("(y ∗ 2 − x) + x", "y ∗ 2");
+		rewriteExpr("x + (y − z) + z", "x + y");
+		rewriteExpr("x + z + (y − z)", "x + y");
+		rewriteExpr("z + (y − z) + x", "y + x");
+		rewriteExpr("(y − z) + z + x", "y + x");
+		rewriteExpr("z + x + (y − z)", "x + y");
+		rewriteExpr(" (y − z) + x + z", "y + x");
+		rewriteExpr("(x − z) + z + (y − z)", "x + (y − z)");
+		rewriteExpr("(x − z) + (y − z) + z", "x + (y − z)");
+		rewriteExpr("z + (x − z) + (y − z)", "x + (y − z)");
 
 		// (A + ... + E + ... + B) - (C + ... + E + ... + D)  == (A + ... + B) - (C + ... + D)
-		expressionTest("y − z", "(x + y) − (x + z)");
-		expressionTest("y − z", "(x + y) − (z + x)");
-		expressionTest("x − z", "(x + y) − (y + z)");
-		expressionTest("x − z", "(x + y) − (z + y)");
-		expressionTest("y − (z + x)", "(x + y) − (x + z + x)");
-		expressionTest("y − (z + x)", "(y + x) − (x + z + x)");
-		expressionTest("(y + x) − z", "(x + y + x) − (x + z)");
-		expressionTest("(y + x) − z", "(x + y + x) − (z + x)");
-		expressionTest("(a + b) − (c + d)", "(a + e + b) − (c + e + d)");
-		expressionTest("(a + b) − (c + d)", "(a + b + e) − (c + e + d)");
-		expressionTest("(a + b) − (c + d)", "(e + a + b) − (c + e + d)");
-		expressionTest("(a + b) − (c + d)", "(a + e + b) − (e + c + d)");
-		expressionTest("(a + b) − (c + d)", "(a + b + e) − (e + c + d)");
-		expressionTest("(a + b) − (c + d)", "(e + a + b) − (e + c + d)");
-		expressionTest("(a + b) − (c + d)", "(a + e + b) − (c + d + e)");
-		expressionTest("(a + b) − (c + d)", "(a + b + e) − (c + d + e)");
-		expressionTest("(a + b) − (c + d)", "(e + a + b) − (c + d + e)");
+		rewriteExpr("(x + y) − (x + z)", "y − z");
+		rewriteExpr("(x + y) − (z + x)", "y − z");
+		rewriteExpr("(x + y) − (y + z)", "x − z");
+		rewriteExpr("(x + y) − (z + y)", "x − z");
+		rewriteExpr("(x + y) − (x + z + x)", "y − (z + x)");
+		rewriteExpr("(y + x) − (x + z + x)", "y − (z + x)");
+		rewriteExpr("(x + y + x) − (x + z)", "(y + x) − z");
+		rewriteExpr("(x + y + x) − (z + x)", "(y + x) − z");
+		rewriteExpr("(a + e + b) − (c + e + d)", "(a + b) − (c + d)");
+		rewriteExpr("(a + b + e) − (c + e + d)", "(a + b) − (c + d)");
+		rewriteExpr("(e + a + b) − (c + e + d)", "(a + b) − (c + d)");
+		rewriteExpr("(a + e + b) − (e + c + d)", "(a + b) − (c + d)");
+		rewriteExpr("(a + b + e) − (e + c + d)", "(a + b) − (c + d)");
+		rewriteExpr("(e + a + b) − (e + c + d)", "(a + b) − (c + d)");
+		rewriteExpr("(a + e + b) − (c + d + e)", "(a + b) − (c + d)");
+		rewriteExpr("(a + b + e) − (c + d + e)", "(a + b) − (c + d)");
+		rewriteExpr("(e + a + b) − (c + d + e)", "(a + b) − (c + d)");
 		
 		// C - (A + ... + C + ... + B)  ==  -(A + ... + B)
-		expressionTest("−(y ∗ 3)", "x ∗ 2 − (x ∗ 2 + y ∗ 3)");
-		expressionTest("−(x ∗ 2)", "y ∗ 3 − (x ∗ 2 + y ∗ 3)");
-		expressionTest("−(x + y)", "z − (x + y + z)");
-		expressionTest("−(x + z)", "y − (x + y + z)");
-		expressionTest("−(y + z)", "x − (x + y + z)");
+		rewriteExpr("x ∗ 2 − (x ∗ 2 + y ∗ 3)", "−(y ∗ 3)");
+		rewriteExpr("y ∗ 3 − (x ∗ 2 + y ∗ 3)", "−(x ∗ 2)");
+		rewriteExpr("z − (x + y + z)", "−(x + y)");
+		rewriteExpr("y − (x + y + z)", "−(x + z)");
+		rewriteExpr("x − (x + y + z)", "−(y + z)");
 		
 		// A - (- B)  == A + B
-		expressionTest("x+y", "x− (−y)");
-		expressionTest("x∗2 + 3∗y + x", "x∗2 − (−(3∗y + x))");
-		expressionTest("x+3", "x−(−3)");
+		rewriteExpr("x− (−y)", "x+y");
+		rewriteExpr("x∗2 − (−(3∗y + x))", "x∗2 + 3∗y + x");
+		rewriteExpr("x−(−3)", "x+3");
 		
 		// C = A + ... + C + ... + B  ==  0 = A + ... + B
-		predicateTest("0 = x", "y = x + y");
-		predicateTest("0 = y", "x = x + y");
-		predicateTest("0 = x + y", "z = x + y + z");
-		predicateTest("0 = x + y", "z = z + x + y");
-		predicateTest("0 = x + y", "z = x + z + y");
+		rewritePred("y = x + y", "0 = x");
+		rewritePred("x = x + y", "0 = y");
+		rewritePred("z = x + y + z", "0 = x + y");
+		rewritePred("z = z + x + y", "0 = x + y");
+		rewritePred("z = x + z + y", "0 = x + y");
 
 		// A + ... + C + ... + B = C  ==  A + ... + B = 0
-		predicateTest("x = 0", "x + y = y");
-		predicateTest("y = 0", "x + y = x");
-		predicateTest("x + y = 0", "x + y + z = z");
-		predicateTest("x + y = 0", "z + x + y = z");
-		predicateTest("x + y = 0", "x + z + y = z");
+		rewritePred("x + y = y", "x = 0");
+		rewritePred("x + y = x", "y = 0");
+		rewritePred("x + y + z = z", "x + y = 0");
+		rewritePred("z + x + y = z", "x + y = 0");
+		rewritePred("x + z + y = z", "x + y = 0");
 		
 		// A + ... + E + ... + B  = C + ... + E + ... + D   == A + ... + B = C + ... + D
-		predicateTest("a = c ∗ 2", "a + b = c ∗ 2 + b");
-		predicateTest("a = c ∗ 2", "b + a = c ∗ 2 + b");
-		predicateTest("a = c ∗ 2", "a + b = b + c ∗ 2");
-		predicateTest("a = c ∗ 2", "b + a = b + c ∗ 2");
-		predicateTest("a = c + d", "a + b = c + b + d");
-		predicateTest("a = c + d", "a + b = c + d + b");
-		predicateTest("a = c + d", "a + b = b + c + d");
-		predicateTest("a + b = c", "a + b + d = c + d");
-		predicateTest("a + b = c", "a + d + b = c + d");
-		predicateTest("a + b = c", "d + a + b = c + d");
-		predicateTest("a + b = c + d", "a + b + e = c + d + e");
-		predicateTest("a + b = c + d", "a + e + b = c + d + e");
-		predicateTest("a + b = c + d", "e + a + b = c + d + e");
-		predicateTest("a + b = c + d", "a + b + e = c + e + d");
-		predicateTest("a + b = c + d", "a + e + b = c + e + d");
-		predicateTest("a + b = c + d", "e + a + b = c + e + d");
-		predicateTest("a + b = c + d", "a + b + e = e + c + d");
-		predicateTest("a + b = c + d", "a + e + b = e + c + d");
-		predicateTest("a + b = c + d", "e + a + b = e + c + d");
+		rewritePred("a + b = c ∗ 2 + b", "a = c ∗ 2");
+		rewritePred("b + a = c ∗ 2 + b", "a = c ∗ 2");
+		rewritePred("a + b = b + c ∗ 2", "a = c ∗ 2");
+		rewritePred("b + a = b + c ∗ 2", "a = c ∗ 2");
+		rewritePred("a + b = c + b + d", "a = c + d");
+		rewritePred("a + b = c + d + b", "a = c + d");
+		rewritePred("a + b = b + c + d", "a = c + d");
+		rewritePred("a + b + d = c + d", "a + b = c");
+		rewritePred("a + d + b = c + d", "a + b = c");
+		rewritePred("d + a + b = c + d", "a + b = c");
+		rewritePred("a + b + e = c + d + e", "a + b = c + d");
+		rewritePred("a + e + b = c + d + e", "a + b = c + d");
+		rewritePred("e + a + b = c + d + e", "a + b = c + d");
+		rewritePred("a + b + e = c + e + d", "a + b = c + d");
+		rewritePred("a + e + b = c + e + d", "a + b = c + d");
+		rewritePred("e + a + b = c + e + d", "a + b = c + d");
+		rewritePred("a + b + e = e + c + d", "a + b = c + d");
+		rewritePred("a + e + b = e + c + d", "a + b = c + d");
+		rewritePred("e + a + b = e + c + d", "a + b = c + d");
 		
 		// C < A + ... + C + ... + B  ==  0 < A + ... + B
-		predicateTest("0 < x", "y < x + y");
-		predicateTest("0 < y", "x < x + y");
-		predicateTest("0 < x + y", "z < x + y + z");
-		predicateTest("0 < x + y", "z < z + x + y");
-		predicateTest("0 < x + y", "z < x + z + y");
+		rewritePred("y < x + y", "0 < x");
+		rewritePred("x < x + y", "0 < y");
+		rewritePred("z < x + y + z", "0 < x + y");
+		rewritePred("z < z + x + y", "0 < x + y");
+		rewritePred("z < x + z + y", "0 < x + y");
 
 		// A + ... + C + ... + B < C  ==  A + ... + B < 0
-		predicateTest("x < 0", "x + y < y");
-		predicateTest("y < 0", "x + y < x");
-		predicateTest("x + y < 0", "x + y + z < z");
-		predicateTest("x + y < 0", "z + x + y < z");
-		predicateTest("x + y < 0", "x + z + y < z");
+		rewritePred("x + y < y", "x < 0");
+		rewritePred("x + y < x", "y < 0");
+		rewritePred("x + y + z < z", "x + y < 0");
+		rewritePred("z + x + y < z", "x + y < 0");
+		rewritePred("x + z + y < z", "x + y < 0");
 
 		// A + ... + E + ... + B  < C + ... + E + ... + D   == A + ... + B < C + ... + D
-		predicateTest("a < c ∗ 2", "a + b < c ∗ 2 + b");
-		predicateTest("a < c ∗ 2", "b + a < c ∗ 2 + b");
-		predicateTest("a < c ∗ 2", "a + b < b + c ∗ 2");
-		predicateTest("a < c ∗ 2", "b + a < b + c ∗ 2");
-		predicateTest("a < c + d", "a + b < c + b + d");
-		predicateTest("a < c + d", "a + b < c + d + b");
-		predicateTest("a < c + d", "a + b < b + c + d");
-		predicateTest("a + b < c", "a + b + d < c + d");
-		predicateTest("a + b < c", "a + d + b < c + d");
-		predicateTest("a + b < c", "d + a + b < c + d");
-		predicateTest("a + b < c + d", "a + b + e < c + d + e");
-		predicateTest("a + b < c + d", "a + e + b < c + d + e");
-		predicateTest("a + b < c + d", "e + a + b < c + d + e");
-		predicateTest("a + b < c + d", "a + b + e < c + e + d");
-		predicateTest("a + b < c + d", "a + e + b < c + e + d");
-		predicateTest("a + b < c + d", "e + a + b < c + e + d");
-		predicateTest("a + b < c + d", "a + b + e < e + c + d");
-		predicateTest("a + b < c + d", "a + e + b < e + c + d");
-		predicateTest("a + b < c + d", "e + a + b < e + c + d");
+		rewritePred("a + b < c ∗ 2 + b", "a < c ∗ 2");
+		rewritePred("b + a < c ∗ 2 + b", "a < c ∗ 2");
+		rewritePred("a + b < b + c ∗ 2", "a < c ∗ 2");
+		rewritePred("b + a < b + c ∗ 2", "a < c ∗ 2");
+		rewritePred("a + b < c + b + d", "a < c + d");
+		rewritePred("a + b < c + d + b", "a < c + d");
+		rewritePred("a + b < b + c + d", "a < c + d");
+		rewritePred("a + b + d < c + d", "a + b < c");
+		rewritePred("a + d + b < c + d", "a + b < c");
+		rewritePred("d + a + b < c + d", "a + b < c");
+		rewritePred("a + b + e < c + d + e", "a + b < c + d");
+		rewritePred("a + e + b < c + d + e", "a + b < c + d");
+		rewritePred("e + a + b < c + d + e", "a + b < c + d");
+		rewritePred("a + b + e < c + e + d", "a + b < c + d");
+		rewritePred("a + e + b < c + e + d", "a + b < c + d");
+		rewritePred("e + a + b < c + e + d", "a + b < c + d");
+		rewritePred("a + b + e < e + c + d", "a + b < c + d");
+		rewritePred("a + e + b < e + c + d", "a + b < c + d");
+		rewritePred("e + a + b < e + c + d", "a + b < c + d");
 
 		// C <= A + ... + C + ... + B  ==  0 <= A + ... + B
-		predicateTest("0 ≤ x", "y ≤ x + y");
-		predicateTest("0 ≤ y", "x ≤ x + y");
-		predicateTest("0 ≤ x + y", "z ≤ x + y + z");
-		predicateTest("0 ≤ x + y", "z ≤ z + x + y");
-		predicateTest("0 ≤ x + y", "z ≤ x + z + y");
+		rewritePred("y ≤ x + y", "0 ≤ x");
+		rewritePred("x ≤ x + y", "0 ≤ y");
+		rewritePred("z ≤ x + y + z", "0 ≤ x + y");
+		rewritePred("z ≤ z + x + y", "0 ≤ x + y");
+		rewritePred("z ≤ x + z + y", "0 ≤ x + y");
 
 		// A + ... + C + ... + B <= C  ==  A + ... + B <= 0
-		predicateTest("x ≤ 0", "x + y ≤ y");
-		predicateTest("y ≤ 0", "x + y ≤ x");
-		predicateTest("x + y ≤ 0", "x + y + z ≤ z");
-		predicateTest("x + y ≤ 0", "z + x + y ≤ z");
-		predicateTest("x + y ≤ 0", "x + z + y ≤ z");
+		rewritePred("x + y ≤ y", "x ≤ 0");
+		rewritePred("x + y ≤ x", "y ≤ 0");
+		rewritePred("x + y + z ≤ z", "x + y ≤ 0");
+		rewritePred("z + x + y ≤ z", "x + y ≤ 0");
+		rewritePred("x + z + y ≤ z", "x + y ≤ 0");
 
 		// A + ... + E + ... + B  <= C + ... + E + ... + D   == A + ... + B <= C + ... + D
-		predicateTest("a ≤ c ∗ 2", "a + b ≤ c ∗ 2 + b");
-		predicateTest("a ≤ c ∗ 2", "b + a ≤ c ∗ 2 + b");
-		predicateTest("a ≤ c ∗ 2", "a + b ≤ b + c ∗ 2");
-		predicateTest("a ≤ c ∗ 2", "b + a ≤ b + c ∗ 2");
-		predicateTest("a ≤ c + d", "a + b ≤ c + b + d");
-		predicateTest("a ≤ c + d", "a + b ≤ c + d + b");
-		predicateTest("a ≤ c + d", "a + b ≤ b + c + d");
-		predicateTest("a + b ≤ c", "a + b + d ≤ c + d");
-		predicateTest("a + b ≤ c", "a + d + b ≤ c + d");
-		predicateTest("a + b ≤ c", "d + a + b ≤ c + d");
-		predicateTest("a + b ≤ c + d", "a + b + e ≤ c + d + e");
-		predicateTest("a + b ≤ c + d", "a + e + b ≤ c + d + e");
-		predicateTest("a + b ≤ c + d", "e + a + b ≤ c + d + e");
-		predicateTest("a + b ≤ c + d", "a + b + e ≤ c + e + d");
-		predicateTest("a + b ≤ c + d", "a + e + b ≤ c + e + d");
-		predicateTest("a + b ≤ c + d", "e + a + b ≤ c + e + d");
-		predicateTest("a + b ≤ c + d", "a + b + e ≤ e + c + d");
-		predicateTest("a + b ≤ c + d", "a + e + b ≤ e + c + d");
-		predicateTest("a + b ≤ c + d", "e + a + b ≤ e + c + d");
+		rewritePred("a + b ≤ c ∗ 2 + b", "a ≤ c ∗ 2");
+		rewritePred("b + a ≤ c ∗ 2 + b", "a ≤ c ∗ 2");
+		rewritePred("a + b ≤ b + c ∗ 2", "a ≤ c ∗ 2");
+		rewritePred("b + a ≤ b + c ∗ 2", "a ≤ c ∗ 2");
+		rewritePred("a + b ≤ c + b + d", "a ≤ c + d");
+		rewritePred("a + b ≤ c + d + b", "a ≤ c + d");
+		rewritePred("a + b ≤ b + c + d", "a ≤ c + d");
+		rewritePred("a + b + d ≤ c + d", "a + b ≤ c");
+		rewritePred("a + d + b ≤ c + d", "a + b ≤ c");
+		rewritePred("d + a + b ≤ c + d", "a + b ≤ c");
+		rewritePred("a + b + e ≤ c + d + e", "a + b ≤ c + d");
+		rewritePred("a + e + b ≤ c + d + e", "a + b ≤ c + d");
+		rewritePred("e + a + b ≤ c + d + e", "a + b ≤ c + d");
+		rewritePred("a + b + e ≤ c + e + d", "a + b ≤ c + d");
+		rewritePred("a + e + b ≤ c + e + d", "a + b ≤ c + d");
+		rewritePred("e + a + b ≤ c + e + d", "a + b ≤ c + d");
+		rewritePred("a + b + e ≤ e + c + d", "a + b ≤ c + d");
+		rewritePred("a + e + b ≤ e + c + d", "a + b ≤ c + d");
+		rewritePred("e + a + b ≤ e + c + d", "a + b ≤ c + d");
 		
 		// A - C = B - C  ==  A = B
-		predicateTest("a = c ∗ 2", "a − b = c ∗ 2 − b");
+		rewritePred("a − b = c ∗ 2 − b", "a = c ∗ 2");
 		
 		// A - C < B - C  ==  A < B
-		predicateTest("a < c ∗ 2", "a − b < c ∗ 2 − b");
+		rewritePred("a − b < c ∗ 2 − b", "a < c ∗ 2");
 		
 		// A - C <= B - C  ==  A <= B
-		predicateTest("a ≤ c ∗ 2", "a − b ≤ c ∗ 2 − b");
+		rewritePred("a − b ≤ c ∗ 2 − b", "a ≤ c ∗ 2");
 		
 		// C - A = C - B  ==  B = A
-		predicateTest("c ∗ 2 = a", "b − a = b − c ∗ 2");
+		rewritePred("b − a = b − c ∗ 2", "c ∗ 2 = a");
 		
 		// C - A < C - B  ==  B < A
-		predicateTest("c ∗ 2 < a", "b − a < b − c ∗ 2");
+		rewritePred("b − a < b − c ∗ 2", "c ∗ 2 < a");
 		
 		// C - A <= C - B  ==  B <= A
-		predicateTest("c ∗ 2 ≤ a", "b − a ≤ b − c ∗ 2");
+		rewritePred("b − a ≤ b − c ∗ 2", "c ∗ 2 ≤ a");
 	}
 
 	@Test
 	public void testBugZeroPlusZero() throws Exception {
 		// the following succeeds
-		expressionTest("0+0", "0+0");
+		noRewriteExpr("0+0");	// FIXME what's this
 		// the following fails
-		predicateTest("1=0", "1+1=1");
-		predicateTest("0=1", "1=1+1");
-		predicateTest("1=1", "1+1=1+1");
+		rewritePred("1+1=1", "1=0");
+		rewritePred("1=1+1", "0=1");
+		rewritePred("1+1=1+1", "1=1");
 	}
 }

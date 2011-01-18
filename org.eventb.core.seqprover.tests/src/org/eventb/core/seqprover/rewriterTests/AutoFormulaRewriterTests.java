@@ -107,53 +107,53 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 	@Test
 	public void testConjunction() {
 		// P & ... & true & ... & Q == P & ... & ... & Q
-		predicateTest("x = 1", "x = 1 ∧ ⊤");
-		predicateTest("x = 1", "⊤ ∧ x = 1");
-		predicateTest("x = 1 ∧ y = 2 ∧ z = 3", "x = 1 ∧ y = 2 ∧ z = 3");
-		predicateTest("x = 1 ∧ y = 2 ∧ z = 3", "⊤ ∧ x = 1 ∧ y = 2 ∧ z = 3");
-		predicateTest("x = 1 ∧ y = 2 ∧ z = 3", "x = 1 ∧ ⊤ ∧ y = 2 ∧ z = 3");
-		predicateTest("x = 1 ∧ y = 2 ∧ z = 3", "x = 1 ∧ y = 2 ∧ ⊤ ∧ z = 3");
-		predicateTest("x = 1 ∧ y = 2 ∧ z = 3", "x = 1 ∧ y = 2 ∧ z = 3 ∧ ⊤");
-		predicateTest("x = 1 ∧ y = 2 ∧ z = 3", "⊤ ∧ x = 1 ∧ ⊤ ∧ y = 2 ∧ z = 3");
-		predicateTest("x = 1 ∧ y = 2 ∧ z = 3", "⊤ ∧ x = 1 ∧ y = 2 ∧ z = 3 ∧ ⊤");
-		predicateTest("x = 1 ∧ y = 2 ∧ z = 3", "x = 1 ∧ ⊤ ∧ y = 2 ∧ z = 3 ∧ ⊤");
-		predicateTest("x = 1 ∧ y = 2 ∧ z = 3",
-				"⊤ ∧ x = 1 ∧ ⊤ ∧ y = 2 ∧ z = 3 ∧ ⊤");
+		rewritePred("x = 1 ∧ ⊤", "x = 1");
+		rewritePred("⊤ ∧ x = 1", "x = 1");
+		noRewritePred("x = 1 ∧ y = 2 ∧ z = 3");
+		rewritePred("⊤ ∧ x = 1 ∧ y = 2 ∧ z = 3", "x = 1 ∧ y = 2 ∧ z = 3");
+		rewritePred("x = 1 ∧ ⊤ ∧ y = 2 ∧ z = 3", "x = 1 ∧ y = 2 ∧ z = 3");
+		rewritePred("x = 1 ∧ y = 2 ∧ ⊤ ∧ z = 3", "x = 1 ∧ y = 2 ∧ z = 3");
+		rewritePred("x = 1 ∧ y = 2 ∧ z = 3 ∧ ⊤", "x = 1 ∧ y = 2 ∧ z = 3");
+		rewritePred("⊤ ∧ x = 1 ∧ ⊤ ∧ y = 2 ∧ z = 3", "x = 1 ∧ y = 2 ∧ z = 3");
+		rewritePred("⊤ ∧ x = 1 ∧ y = 2 ∧ z = 3 ∧ ⊤", "x = 1 ∧ y = 2 ∧ z = 3");
+		rewritePred("x = 1 ∧ ⊤ ∧ y = 2 ∧ z = 3 ∧ ⊤", "x = 1 ∧ y = 2 ∧ z = 3");
+		rewritePred("⊤ ∧ x = 1 ∧ ⊤ ∧ y = 2 ∧ z = 3 ∧ ⊤",
+				"x = 1 ∧ y = 2 ∧ z = 3");
 
 
 		// P & ... & false & ... & Q == false
-		predicateTest("⊥", "x = 1 ∧ ⊥");
-		predicateTest("⊥", "⊥ ∧ x = 1");
-		predicateTest("⊥", "⊥ ∧ x = 1 ∧ y = 2 ∧ z = 3");
-		predicateTest("⊥", "x = 1 ∧ ⊥ ∧ y = 2 ∧ z = 3");
-		predicateTest("⊥", "x = 1 ∧ y = 2 ∧ ⊥ ∧ z = 3");
-		predicateTest("⊥", "x = 1 ∧ y = 2 ∧ z = 3 ∧ ⊥");
-		predicateTest("⊥", "⊥ ∧ x = 1 ∧ ⊥ ∧ y = 2 ∧ z = 3");
-		predicateTest("⊥", "⊥ ∧ x = 1 ∧ y = 2 ∧ z = 3 ∧ ⊥");
-		predicateTest("⊥", "x = 1 ∧ ⊥ ∧ y = 2 ∧ z = 3 ∧ ⊥");
-		predicateTest("⊥", "⊥ ∧ x = 1 ∧ ⊥ ∧ y = 2 ∧ z = 3 ∧ ⊥");
+		rewritePred("x = 1 ∧ ⊥", "⊥");
+		rewritePred("⊥ ∧ x = 1", "⊥");
+		rewritePred("⊥ ∧ x = 1 ∧ y = 2 ∧ z = 3", "⊥");
+		rewritePred("x = 1 ∧ ⊥ ∧ y = 2 ∧ z = 3", "⊥");
+		rewritePred("x = 1 ∧ y = 2 ∧ ⊥ ∧ z = 3", "⊥");
+		rewritePred("x = 1 ∧ y = 2 ∧ z = 3 ∧ ⊥", "⊥");
+		rewritePred("⊥ ∧ x = 1 ∧ ⊥ ∧ y = 2 ∧ z = 3", "⊥");
+		rewritePred("⊥ ∧ x = 1 ∧ y = 2 ∧ z = 3 ∧ ⊥", "⊥");
+		rewritePred("x = 1 ∧ ⊥ ∧ y = 2 ∧ z = 3 ∧ ⊥", "⊥");
+		rewritePred("⊥ ∧ x = 1 ∧ ⊥ ∧ y = 2 ∧ z = 3 ∧ ⊥", "⊥");
 
 
 		// P & ... & Q & ... & Q & ... & R == P & ... & Q & ... & ... & R
-		predicateTest("x = 1", "x = 1 ∧ x = 1");
-		predicateTest("x = 1 ∧ y = 2 ∧ z = 3", "x = 1 ∧ x = 1 ∧ y = 2 ∧ z = 3");
-		predicateTest("x = 1 ∧ y = 2 ∧ z = 3", "x = 1 ∧ y = 2 ∧ x = 1 ∧ z = 3");
-		predicateTest("x = 1 ∧ y = 2 ∧ z = 3", "x = 1 ∧ y = 2 ∧ z = 3 ∧ x = 1");
-		predicateTest("x = 1 ∧ y = 2 ∧ z = 3", "x = 1 ∧ y = 2 ∧ z = 3 ∧ y = 2");
-		predicateTest("x = 1 ∧ y = 2 ∧ z = 3", "x = 1 ∧ y = 2 ∧ z = 3 ∧ z = 3");
-		predicateTest("x = 1 ∧ y = 2 ∧ z = 3",
-				"x = 1 ∧ y = 2 ∧ z = 3 ∧ z = 3 ∧ y = 2");
+		rewritePred("x = 1 ∧ x = 1", "x = 1");
+		rewritePred("x = 1 ∧ x = 1 ∧ y = 2 ∧ z = 3", "x = 1 ∧ y = 2 ∧ z = 3");
+		rewritePred("x = 1 ∧ y = 2 ∧ x = 1 ∧ z = 3", "x = 1 ∧ y = 2 ∧ z = 3");
+		rewritePred("x = 1 ∧ y = 2 ∧ z = 3 ∧ x = 1", "x = 1 ∧ y = 2 ∧ z = 3");
+		rewritePred("x = 1 ∧ y = 2 ∧ z = 3 ∧ y = 2", "x = 1 ∧ y = 2 ∧ z = 3");
+		rewritePred("x = 1 ∧ y = 2 ∧ z = 3 ∧ z = 3", "x = 1 ∧ y = 2 ∧ z = 3");
+		rewritePred("x = 1 ∧ y = 2 ∧ z = 3 ∧ z = 3 ∧ y = 2",
+				"x = 1 ∧ y = 2 ∧ z = 3");
 				
 
 		// P & ... & Q & ... & not(Q) & ... & R == false
-		predicateTest("⊥", "x = 1 ∧ ¬x = 1");
-		predicateTest("⊥", "¬x = 1 ∧ x = 1 ∧ y = 2 ∧ z = 3");
-		predicateTest("⊥", "x = 1 ∧ ¬x = 1 ∧ y = 2 ∧ z = 3");
-		predicateTest("⊥", "x = 1 ∧ y = 2 ∧ z = 3 ∧ ¬x = 1");
-		predicateTest("⊥", "x = 1 ∧ y = 2 ∧ z = 3 ∧ ¬x = 1");
-		predicateTest("⊥", "x = 1 ∧ ¬y = 2 ∧ y = 2 ∧ z = 3 ∧ ¬x = 1");
-		predicateTest("⊥", "x = 1 ∧ ¬y = 2 ∧ y = 2 ∧ ¬x = 1 ∧ z = 3 ∧ ¬x = 1");
-		predicateTest("⊥", "y = 2 ∧ ¬x = 1 ∧ z = 3 ∧ ¬x = 1 ∧ x = 1 ∧ ¬y = 2");
+		rewritePred("x = 1 ∧ ¬x = 1", "⊥");
+		rewritePred("¬x = 1 ∧ x = 1 ∧ y = 2 ∧ z = 3", "⊥");
+		rewritePred("x = 1 ∧ ¬x = 1 ∧ y = 2 ∧ z = 3", "⊥");
+		rewritePred("x = 1 ∧ y = 2 ∧ z = 3 ∧ ¬x = 1", "⊥");
+		rewritePred("x = 1 ∧ y = 2 ∧ z = 3 ∧ ¬x = 1", "⊥");
+		rewritePred("x = 1 ∧ ¬y = 2 ∧ y = 2 ∧ z = 3 ∧ ¬x = 1", "⊥");
+		rewritePred("x = 1 ∧ ¬y = 2 ∧ y = 2 ∧ ¬x = 1 ∧ z = 3 ∧ ¬x = 1", "⊥");
+		rewritePred("y = 2 ∧ ¬x = 1 ∧ z = 3 ∧ ¬x = 1 ∧ x = 1 ∧ ¬y = 2", "⊥");
 	}
 
 	/**
@@ -162,49 +162,49 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 	@Test
 	public void testDisjunction() {
 		// P or ... or true or ... or Q == true
-		predicateTest("⊤", "x = 1 ∨ ⊤");
-		predicateTest("⊤", "⊤ ∨ x = 1");
-		predicateTest("x = 1 ∨ y = 2 ∨ z = 3", "x = 1 ∨ y = 2 ∨ z = 3");
-		predicateTest("⊤", "⊤ ∨ x = 1 ∨ y = 2 ∨ z = 3");
-		predicateTest("⊤", "x = 1 ∨ ⊤ ∨ y = 2 ∨ z = 3");
-		predicateTest("⊤", "x = 1 ∨ y = 2 ∨ z = 3 ∨ ⊤");
-		predicateTest("⊤", "⊤ ∨ x = 1 ∨ ⊤ ∨ y = 2 ∨ z = 3");
-		predicateTest("⊤", "⊤ ∨ x = 1 ∨ y = 2 ∨ z = 3 ∨ ⊤");
-		predicateTest("⊤", "x = 1 ∨ ⊤ ∨ y = 2 ∨ z = 3 ∨ ⊤");
-		predicateTest("⊤", "⊤ ∨ x = 1 ∨ ⊤ ∨ y = 2 ∨ z = 3 ∨ ⊤");
+		rewritePred("x = 1 ∨ ⊤", "⊤");
+		rewritePred("⊤ ∨ x = 1", "⊤");
+		noRewritePred("x = 1 ∨ y = 2 ∨ z = 3");
+		rewritePred("⊤ ∨ x = 1 ∨ y = 2 ∨ z = 3", "⊤");
+		rewritePred("x = 1 ∨ ⊤ ∨ y = 2 ∨ z = 3", "⊤");
+		rewritePred("x = 1 ∨ y = 2 ∨ z = 3 ∨ ⊤", "⊤");
+		rewritePred("⊤ ∨ x = 1 ∨ ⊤ ∨ y = 2 ∨ z = 3", "⊤");
+		rewritePred("⊤ ∨ x = 1 ∨ y = 2 ∨ z = 3 ∨ ⊤", "⊤");
+		rewritePred("x = 1 ∨ ⊤ ∨ y = 2 ∨ z = 3 ∨ ⊤", "⊤");
+		rewritePred("⊤ ∨ x = 1 ∨ ⊤ ∨ y = 2 ∨ z = 3 ∨ ⊤", "⊤");
 		
 		
 		// P or ... or false or ... or Q == P or ... or ... or Q
-		predicateTest("x = 1", "x = 1 ∨ ⊥");
-		predicateTest("x = 1", "⊥ ∨ x = 1");
-		predicateTest("x = 1 ∨ y = 2 ∨ z = 3", "⊥ ∨ x = 1 ∨ y = 2 ∨ z = 3");
-		predicateTest("x = 1 ∨ y = 2 ∨ z = 3", "x = 1 ∨ ⊥ ∨ y = 2 ∨ z = 3");
-		predicateTest("x = 1 ∨ y = 2 ∨ z = 3", "x = 1 ∨ y = 2 ∨ z = 3 ∨ ⊥");
-		predicateTest("x = 1 ∨ y = 2 ∨ z = 3", "⊥ ∨ x = 1 ∨ ⊥ ∨ y = 2 ∨ z = 3");
-		predicateTest("x = 1 ∨ y = 2 ∨ z = 3", "⊥ ∨ x = 1 ∨ y = 2 ∨ z = 3 ∨ ⊥");
-		predicateTest("x = 1 ∨ y = 2 ∨ z = 3", "x = 1 ∨ ⊥ ∨ y = 2 ∨ z = 3 ∨ ⊥");
-		predicateTest("x = 1 ∨ y = 2 ∨ z = 3",
-				"⊥ ∨ x = 1 ∨ ⊥ ∨ y = 2 ∨ z = 3 ∨ ⊥");
+		rewritePred("x = 1 ∨ ⊥", "x = 1");
+		rewritePred("⊥ ∨ x = 1", "x = 1");
+		rewritePred("⊥ ∨ x = 1 ∨ y = 2 ∨ z = 3", "x = 1 ∨ y = 2 ∨ z = 3");
+		noRewritePred("x = 1 ∨ y = 2 ∨ z = 3");
+		rewritePred("x = 1 ∨ y = 2 ∨ z = 3 ∨ ⊥", "x = 1 ∨ y = 2 ∨ z = 3");
+		rewritePred("⊥ ∨ x = 1 ∨ ⊥ ∨ y = 2 ∨ z = 3", "x = 1 ∨ y = 2 ∨ z = 3");
+		rewritePred("⊥ ∨ x = 1 ∨ y = 2 ∨ z = 3 ∨ ⊥", "x = 1 ∨ y = 2 ∨ z = 3");
+		rewritePred("x = 1 ∨ ⊥ ∨ y = 2 ∨ z = 3 ∨ ⊥", "x = 1 ∨ y = 2 ∨ z = 3");
+		rewritePred("⊥ ∨ x = 1 ∨ ⊥ ∨ y = 2 ∨ z = 3 ∨ ⊥",
+				"x = 1 ∨ y = 2 ∨ z = 3");
 
 		
 		// P or ... or Q or ... or Q or ... or R == P or ... or Q or ... or ... or R
-		predicateTest("x = 1", "x = 1 ∨ x = 1");
-		predicateTest("x = 1 ∨ y = 2 ∨ z = 3", "x = 1 ∨ x = 1 ∨ y = 2 ∨ z = 3");
-		predicateTest("x = 1 ∨ y = 2 ∨ z = 3", "x = 1 ∨ y = 2 ∨ x = 1 ∨ z = 3");
-		predicateTest("x = 1 ∨ y = 2 ∨ z = 3", "x = 1 ∨ y = 2 ∨ z = 3 ∨ x = 1");
-		predicateTest("x = 1 ∨ y = 2 ∨ z = 3", "x = 1 ∨ y = 2 ∨ z = 3 ∨ y = 2");
-		predicateTest("x = 1 ∨ y = 2 ∨ z = 3", "x = 1 ∨ y = 2 ∨ z = 3 ∨ z = 3");
-		predicateTest("x = 1 ∨ y = 2 ∨ z = 3",
-				"x = 1 ∨ y = 2 ∨ x = 1 ∨ z = 3 ∨ z = 3");
+		rewritePred("x = 1 ∨ x = 1", "x = 1");
+		rewritePred("x = 1 ∨ x = 1 ∨ y = 2 ∨ z = 3", "x = 1 ∨ y = 2 ∨ z = 3");
+		rewritePred("x = 1 ∨ y = 2 ∨ x = 1 ∨ z = 3", "x = 1 ∨ y = 2 ∨ z = 3");
+		rewritePred("x = 1 ∨ y = 2 ∨ z = 3 ∨ x = 1", "x = 1 ∨ y = 2 ∨ z = 3");
+		rewritePred("x = 1 ∨ y = 2 ∨ z = 3 ∨ y = 2", "x = 1 ∨ y = 2 ∨ z = 3");
+		rewritePred("x = 1 ∨ y = 2 ∨ z = 3 ∨ z = 3", "x = 1 ∨ y = 2 ∨ z = 3");
+		rewritePred("x = 1 ∨ y = 2 ∨ x = 1 ∨ z = 3 ∨ z = 3",
+				"x = 1 ∨ y = 2 ∨ z = 3");
 		
 		
 		// P or ... or Q or ... or not(Q) or ... or R == true
-		predicateTest("⊤", "x = 1 ∨ ¬x = 1");
-		predicateTest("⊤", "¬x = 1 ∨ x = 1 ∨ y = 2 ∨ z = 3");
-		predicateTest("⊤", "x = 1 ∨ ¬x = 1 ∨ y = 2 ∨ z = 3");
-		predicateTest("⊤", "x = 1 ∨ y = 2 ∨ ¬x = 1 ∨ z = 3");
-		predicateTest("⊤", "x = 1 ∨ y = 2 ∨ z = 3 ∨ ¬x = 1");
-		predicateTest("⊤", "x = 1 ∨ y = 2 ∨ z = 3 ∨ y = 2 ∨ ¬y = 2 ∨ ¬x = 1");
+		rewritePred("x = 1 ∨ ¬x = 1", "⊤");
+		rewritePred("¬x = 1 ∨ x = 1 ∨ y = 2 ∨ z = 3", "⊤");
+		rewritePred("x = 1 ∨ ¬x = 1 ∨ y = 2 ∨ z = 3", "⊤");
+		rewritePred("x = 1 ∨ y = 2 ∨ ¬x = 1 ∨ z = 3", "⊤");
+		rewritePred("x = 1 ∨ y = 2 ∨ z = 3 ∨ ¬x = 1", "⊤");
+		rewritePred("x = 1 ∨ y = 2 ∨ z = 3 ∨ y = 2 ∨ ¬y = 2 ∨ ¬x = 1", "⊤");
 	}
 
 	/**
@@ -213,27 +213,27 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 	@Test
 	public void testImplication() {
 		// true => P == P
-		predicateTest("x = 2", "⊤ ⇒ x = 2");
-		predicateTest("⊤", "⊤ ⇒ ⊤");
-		predicateTest("⊥", "⊤ ⇒ ⊥");
+		rewritePred("⊤ ⇒ x = 2", "x = 2");
+		rewritePred("⊤ ⇒ ⊤", "⊤");
+		rewritePred("⊤ ⇒ ⊥", "⊥");
 		
 		
 		// false => P == true
-		predicateTest("⊤", "⊥ ⇒ x = 2");
-		predicateTest("⊤", "⊥ ⇒ ⊤");
-		predicateTest("⊤", "⊥ ⇒ ⊥");
+		rewritePred("⊥ ⇒ x = 2", "⊤");
+		rewritePred("⊥ ⇒ ⊤", "⊤");
+		rewritePred("⊥ ⇒ ⊥", "⊤");
 
 		
 		// P => true == true
-		predicateTest("⊤", "x = 2 ⇒ ⊤");
+		rewritePred("x = 2 ⇒ ⊤", "⊤");
 
 
 		// P => false == not(P)
-		predicateTest("¬x = 2", "x = 2 ⇒ ⊥");
+		rewritePred("x = 2 ⇒ ⊥", "¬x = 2");
 
 
 		// P => P == true
-		predicateTest("⊤", "x = 2 ⇒ x = 2");
+		rewritePred("x = 2 ⇒ x = 2", "⊤");
 		
 	}
 
@@ -243,25 +243,25 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 	@Test
 	public void testEquivalent() {
 		// P <=> true == P
-		predicateTest("x = 2", "x = 2 ⇔ ⊤");
-		predicateTest("⊤", "⊤ ⇔ ⊤");
-		predicateTest("⊥", "⊥ ⇔ ⊤");
+		rewritePred("x = 2 ⇔ ⊤", "x = 2");
+		rewritePred("⊤ ⇔ ⊤", "⊤");
+		rewritePred("⊥ ⇔ ⊤", "⊥");
 
 		
 		// true <=> P == P
-		predicateTest("x = 2", "⊤ ⇔ x = 2");
-		predicateTest("⊥", "⊤ ⇔ ⊥");
+		rewritePred("⊤ ⇔ x = 2", "x = 2");
+		rewritePred("⊤ ⇔ ⊥", "⊥");
 
 		
 		// P <=> false == not(P)
-		predicateTest("¬x = 2", "x = 2 ⇔ ⊥");
-		predicateTest("⊤", "⊥ ⇔ ⊥");
+		rewritePred("x = 2 ⇔ ⊥", "¬x = 2");
+		rewritePred("⊥ ⇔ ⊥", "⊤");
 
 		// false <=> P == not(P)
-		predicateTest("¬x = 2", "⊥ ⇔ x = 2");
+		rewritePred("⊥ ⇔ x = 2", "¬x = 2");
 
 		// P <=> P == true
-		predicateTest("⊤", "x = 2 ⇔ x = 2");
+		rewritePred("x = 2 ⇔ x = 2", "⊤");
 
 	}
 
@@ -271,72 +271,72 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 	@Test
 	public void testNegation() {
 		// not(true)  ==  false
-		predicateTest("⊥", "¬⊤");
+		rewritePred("¬⊤", "⊥");
 
 
 		// not(false)  ==  true
-		predicateTest("⊤", "¬⊥");
+		rewritePred("¬⊥", "⊤");
 		
 
 		// not(not(P))  ==  not(P)
-		predicateTest("x = 2", "¬¬x = 2");
-		predicateTest("⊤", "¬¬⊤");
-		predicateTest("⊥", "¬¬⊥");
+		rewritePred("¬¬x = 2", "x = 2");
+		rewritePred("¬¬⊤", "⊤");
+		rewritePred("¬¬⊥", "⊥");
 		
 
 		// not(x /: S))  ==  x : S
-		predicateTest("2 ∈ S", "¬2 ∉ S");
-		predicateTest("x ∈ {x ∣ x > 0}", "¬x ∉ {x ∣ x > 0}");
+		rewritePred("¬2 ∉ S", "2 ∈ S");
+		rewritePred("¬x ∉ {x ∣ x > 0}", "x ∈ {x ∣ x > 0}");
 
 		
 		// E /= F  ==  not (E = F)
-		predicateTest("¬x + 2 = y", "x + 2 ≠ y");
+		rewritePred("x + 2 ≠ y", "¬x + 2 = y");
 		
 
 		// E /: F  ==  not (E : F)
-		predicateTest("¬2 ∈ S", "2 ∉ S");
-		predicateTest("¬x ∈ {x ∣ x > 0}", "x ∉ {x ∣ x > 0}");
+		rewritePred("2 ∉ S", "¬2 ∈ S");
+		rewritePred("x ∉ {x ∣ x > 0}", "¬x ∈ {x ∣ x > 0}");
 
 		
 		// E /<<: F  ==  not (E <<: F)
-		predicateTest("¬ S ⊂ {x ∣ x > 0}", "S ⊄ {x ∣ x > 0}");
-		predicateTest("¬ {x ∣ x > 0} ⊂ S", "{x ∣ x > 0} ⊄ S");
+		rewritePred("S ⊄ {x ∣ x > 0}", "¬ S ⊂ {x ∣ x > 0}");
+		rewritePred("{x ∣ x > 0} ⊄ S", "¬ {x ∣ x > 0} ⊂ S");
 		
 		
 		// E /<: F  ==  not (E <: F)
-		predicateTest("¬ S ⊆ {x ∣ x > 0}", "S ⊈ {x ∣ x > 0}");
-		predicateTest("¬ {x ∣ x > 0} ⊆ S", "{x ∣ x > 0} ⊈ S");
+		rewritePred("S ⊈ {x ∣ x > 0}", "¬ S ⊆ {x ∣ x > 0}");
+		rewritePred("{x ∣ x > 0} ⊈ S", "¬ {x ∣ x > 0} ⊆ S");
 
 		
 		// not(a <= b) == a > b
-		predicateTest("x + 2 > y ∗ 2", "¬ x + 2 ≤ y ∗ 2");
+		rewritePred("¬ x + 2 ≤ y ∗ 2", "x + 2 > y ∗ 2");
 
 		
 		// not(a >= b) == a < b
-		predicateTest("x + 2 < y ∗ 2", "¬ x + 2 ≥ y ∗ 2");
+		rewritePred("¬ x + 2 ≥ y ∗ 2", "x + 2 < y ∗ 2");
 
 		
     	// not(a > b) == a <= b
-		predicateTest("x + 2 ≤ y ∗ 2", "¬ x + 2 > y ∗ 2");
+		rewritePred("¬ x + 2 > y ∗ 2", "x + 2 ≤ y ∗ 2");
 
 		
 	   	// not(a < b) == a >= b
-		predicateTest("x + 2 ≥ y ∗ 2", "¬ x + 2 < y ∗ 2");
+		rewritePred("¬ x + 2 < y ∗ 2", "x + 2 ≥ y ∗ 2");
 
 
 	   	// not(E = FALSE) == E = TRUE
-		predicateTest("E = TRUE", "¬ E = FALSE");
+		rewritePred("¬ E = FALSE", "E = TRUE");
 		
 
 	   	// not(E = TRUE) == E = FALSE
-		predicateTest("E = FALSE", "¬ E = TRUE");
+		rewritePred("¬ E = TRUE", "E = FALSE");
 		
 
 	   	// not(FALSE = E) == TRUE = E
-		predicateTest("TRUE = E", "¬ FALSE = E");
+		rewritePred("¬ FALSE = E", "TRUE = E");
 
 	   	// not(TRUE = E) == FALSE = E
-		predicateTest("FALSE = E", "¬ TRUE = E");
+		rewritePred("¬ TRUE = E", "FALSE = E");
 		
 	}
 
@@ -346,38 +346,38 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 	@Test
 	public void testQuantification() {
 		// !x.(P & Q) == (!x.P) & (!x.Q)
-		predicateTest("(∀x·x > 0) ∧ (∀x·x < 2)", "∀x·x > 0 ∧ x < 2");
-		predicateTest("(∀x·x > 0) ∧ (∀x·x < 2) ∧ (∀x·x < 1)", "∀x·x > 0 ∧ x < 2 ∧ x < 1");
-		predicateTest("(∀x, y·x > 0 ∨ y > 0) ∧ (∀x, y·y < 2 ∨ x < 2)",
-				"∀x, y·(x > 0 ∨ y > 0) ∧ (y < 2 ∨ x < 2)");
-		predicateTest(
-				"(∀x, y·x > 0 ∨ y > 0 ∨ z > 0) ∧ (∀x, y·y < 2 ∨ x < 2 ∨ z < 2) ∧ (∀x, y·y < 1 ∨ x < 1 ∨ z < 1)",
-				"∀x, y·(x > 0 ∨ y > 0 ∨ z > 0) ∧ (y < 2 ∨ x < 2 ∨ z < 2) ∧ (y < 1 ∨ x < 1 ∨ z < 1)");
+		rewritePred("∀x·x > 0 ∧ x < 2", "(∀x·x > 0) ∧ (∀x·x < 2)");
+		rewritePred("∀x·x > 0 ∧ x < 2 ∧ x < 1", "(∀x·x > 0) ∧ (∀x·x < 2) ∧ (∀x·x < 1)");
+		rewritePred("∀x, y·(x > 0 ∨ y > 0) ∧ (y < 2 ∨ x < 2)",
+				"(∀x, y·x > 0 ∨ y > 0) ∧ (∀x, y·y < 2 ∨ x < 2)");
+		rewritePred(
+				"∀x, y·(x > 0 ∨ y > 0 ∨ z > 0) ∧ (y < 2 ∨ x < 2 ∨ z < 2) ∧ (y < 1 ∨ x < 1 ∨ z < 1)",
+				"(∀x, y·x > 0 ∨ y > 0 ∨ z > 0) ∧ (∀x, y·y < 2 ∨ x < 2 ∨ z < 2) ∧ (∀x, y·y < 1 ∨ x < 1 ∨ z < 1)");
 
 		// #x.(P or Q) == (#x.P) or (#x.Q)
-		predicateTest("(∃x·x > 0) ∨ (∃x·x < 2)", "∃x·x > 0 ∨ x < 2");
-		predicateTest("(∃x·x > 0) ∨ (∃x·x < 2) ∨ (∃x·x < 1)", "∃x·x > 0 ∨ x < 2 ∨ x < 1");
-		predicateTest("(∃x, y·x > 0 ∧ y > 0) ∨ (∃x, y·y < 2 ∧ x < 2)",
-				"∃x, y·(x > 0 ∧ y > 0) ∨ (y < 2 ∧ x < 2)");
-		predicateTest(
-				"(∃x, y·x > 0 ∧ y > 0 ∧ z > 0) ∨ (∃x, y·y < 2 ∧ x < 2 ∧ z < 2) ∨ (∃x, y·y < 1 ∧ x < 1 ∧ z < 1)",
-				"∃x, y·(x > 0 ∧ y > 0 ∧ z > 0) ∨ (y < 2 ∧ x < 2 ∧ z < 2) ∨ (y < 1 ∧ x < 1 ∧ z < 1)");
+		rewritePred("∃x·x > 0 ∨ x < 2", "(∃x·x > 0) ∨ (∃x·x < 2)");
+		rewritePred("∃x·x > 0 ∨ x < 2 ∨ x < 1", "(∃x·x > 0) ∨ (∃x·x < 2) ∨ (∃x·x < 1)");
+		rewritePred("∃x, y·(x > 0 ∧ y > 0) ∨ (y < 2 ∧ x < 2)",
+				"(∃x, y·x > 0 ∧ y > 0) ∨ (∃x, y·y < 2 ∧ x < 2)");
+		rewritePred(
+				"∃x, y·(x > 0 ∧ y > 0 ∧ z > 0) ∨ (y < 2 ∧ x < 2 ∧ z < 2) ∨ (y < 1 ∧ x < 1 ∧ z < 1)",
+				"(∃x, y·x > 0 ∧ y > 0 ∧ z > 0) ∨ (∃x, y·y < 2 ∧ x < 2 ∧ z < 2) ∨ (∃x, y·y < 1 ∧ x < 1 ∧ z < 1)");
 
 		// SIMP_FORALL: !x,y,z.P(y) == !y.P(y)
-		predicateTest("∀x·x>0", "∀x,y⦂ℤ·x>0");
-		predicateTest("∀x·x>0", "∀y⦂ℤ,x·x>0");
-		predicateTest("∀x·x>0", "∀x,y⦂ℤ,z⦂ℤ·x>0");
-		predicateTest("∀x·x>0", "∀y⦂ℤ,x,z⦂ℤ·x>0");
-		predicateTest("∀x·x>0", "∀y⦂ℤ,z⦂ℤ,x·x>0");
-		predicateTest("∀x,t·x>0 ∨ t>0", "∀x,y⦂ℤ,t,z⦂ℤ·x>0 ∨ t>0");
+		rewritePred("∀x,y⦂ℤ·x>0", "∀x·x>0");
+		rewritePred("∀y⦂ℤ,x·x>0", "∀x·x>0");
+		rewritePred("∀x,y⦂ℤ,z⦂ℤ·x>0", "∀x·x>0");
+		rewritePred("∀y⦂ℤ,x,z⦂ℤ·x>0", "∀x·x>0");
+		rewritePred("∀y⦂ℤ,z⦂ℤ,x·x>0", "∀x·x>0");
+		rewritePred("∀x,y⦂ℤ,t,z⦂ℤ·x>0 ∨ t>0", "∀x,t·x>0 ∨ t>0");
 
 		// SIMP_EXISTS: #x,y,z.P(y) == #y.P(y)
-		predicateTest("∃x·x>0", "∃x,y⦂ℤ·x>0");
-		predicateTest("∃x·x>0", "∃y⦂ℤ,x·x>0");
-		predicateTest("∃x·x>0", "∃x,y⦂ℤ,z⦂ℤ·x>0");
-		predicateTest("∃x·x>0", "∃y⦂ℤ,x,z⦂ℤ·x>0");
-		predicateTest("∃x·x>0", "∃y⦂ℤ,z⦂ℤ,x·x>0");
-		predicateTest("∃x,t·x>0 ∧ t>0", "∃x,y⦂ℤ,t,z⦂ℤ·x>0 ∧ t>0");
+		rewritePred("∃x,y⦂ℤ·x>0", "∃x·x>0");
+		rewritePred("∃y⦂ℤ,x·x>0", "∃x·x>0");
+		rewritePred("∃x,y⦂ℤ,z⦂ℤ·x>0", "∃x·x>0");
+		rewritePred("∃y⦂ℤ,x,z⦂ℤ·x>0", "∃x·x>0");
+		rewritePred("∃y⦂ℤ,z⦂ℤ,x·x>0", "∃x·x>0");
+		rewritePred("∃x,y⦂ℤ,t,z⦂ℤ·x>0 ∧ t>0", "∃x,t·x>0 ∧ t>0");
 	}
 
 	/**
@@ -386,31 +386,31 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 	@Test
 	public void testEquality() {
 		// E = E == true
-		predicateTest("⊤", "x + 2 ∗ y = x + 2 ∗ y");
+		rewritePred("x + 2 ∗ y = x + 2 ∗ y", "⊤");
 
 
 		// E /= E == false
-		predicateTest("⊥", "x + 2 ∗ y ≠ x + 2 ∗ y");
+		rewritePred("x + 2 ∗ y ≠ x + 2 ∗ y", "⊥");
 
 		
 		// E |-> F = G |-> H == E = G & F = H
-		predicateTest("x + 2 ∗ y = 2 ∧ 3 = y + 2 ∗ x", "x + 2 ∗ y ↦ 3 = 2 ↦ y + 2 ∗ x");
+		rewritePred("x + 2 ∗ y ↦ 3 = 2 ↦ y + 2 ∗ x", "x + 2 ∗ y = 2 ∧ 3 = y + 2 ∗ x");
 		
 		// TRUE = FALSE  ==  false
-		predicateTest("⊥", "TRUE = FALSE");
+		rewritePred("TRUE = FALSE", "⊥");
 
 
 		// FALSE = TRUE  ==  false
-		predicateTest("⊥", "FALSE = TRUE");
+		rewritePred("FALSE = TRUE", "⊥");
 
 		// cons(a1, b1) = cons(a2, b2)  ==  a1 = a2 & b1 = b2
-		predicateTest("⊤", "void = void");
-		predicateTest("a1 = a2", "cons1(a1) = cons1(a2)");
-		predicateTest("a1 = a2 ∧ b1 = b2", "cons2(a1, b1) = cons2(a2, b2)");
+		rewritePred("void = void", "⊤");
+		rewritePred("cons1(a1) = cons1(a2)", "a1 = a2");
+		rewritePred("cons2(a1, b1) = cons2(a2, b2)", "a1 = a2 ∧ b1 = b2");
 		
 		// cons1(...) = cons2(...)  ==  false
-		predicateTest("⊥", "void = cons1(a1)");
-		predicateTest("⊥", "cons1(a1) = cons2(a2, b2)");
+		rewritePred("void = cons1(a1)", "⊥");
+		rewritePred("cons1(a1) = cons2(a2, b2)", "⊥");
 
 	}
 	
@@ -420,406 +420,404 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 	@Test
 	public void testSetTheory() {
 		// S /\ ... /\ {} /\ ... /\ T == {}
-		expressionTest("(∅ ⦂ ℙ(ℤ))", "{x ∣ x > 0} ∩ ∅");
-		expressionTest("(∅ ⦂ ℙ(ℤ))", "∅ ∩ {x ∣ x > 0}");
-		expressionTest("(∅ ⦂ ℙ(ℤ))", "∅ ∩ {x ∣ x > 0} ∩ S ∩ T");
-		expressionTest("(∅ ⦂ ℙ(ℤ))", "{x ∣ x > 0} ∩ S ∩ ∅ ∩ T");
-		expressionTest("(∅ ⦂ ℙ(ℤ))", "{x ∣ x > 0} ∩ S ∩ T ∩ ∅");
-		expressionTest("(∅ ⦂ ℙ(ℤ))", "∅ ∩ {x ∣ x > 0} ∩ ∅ ∩ S ∩ T");
-		expressionTest("(∅ ⦂ ℙ(ℤ))", "∅ ∩ {x ∣ x > 0} ∩ S ∩ T ∩ ∅");
-		expressionTest("(∅ ⦂ ℙ(ℤ))", "{x ∣ x > 0} ∩ ∅ ∩ S ∩ T ∩ ∅");
-		expressionTest("(∅ ⦂ ℙ(ℤ))", "∅ ∩ {x ∣ x > 0} ∩ ∅ ∩ S ∩ T ∩ ∅");
+		rewriteExpr("{x ∣ x > 0} ∩ ∅", "(∅ ⦂ ℙ(ℤ))");
+		rewriteExpr("∅ ∩ {x ∣ x > 0}", "(∅ ⦂ ℙ(ℤ))");
+		rewriteExpr("∅ ∩ {x ∣ x > 0} ∩ S ∩ T", "(∅ ⦂ ℙ(ℤ))");
+		rewriteExpr("{x ∣ x > 0} ∩ S ∩ ∅ ∩ T", "(∅ ⦂ ℙ(ℤ))");
+		rewriteExpr("{x ∣ x > 0} ∩ S ∩ T ∩ ∅", "(∅ ⦂ ℙ(ℤ))");
+		rewriteExpr("∅ ∩ {x ∣ x > 0} ∩ ∅ ∩ S ∩ T", "(∅ ⦂ ℙ(ℤ))");
+		rewriteExpr("∅ ∩ {x ∣ x > 0} ∩ S ∩ T ∩ ∅", "(∅ ⦂ ℙ(ℤ))");
+		rewriteExpr("{x ∣ x > 0} ∩ ∅ ∩ S ∩ T ∩ ∅", "(∅ ⦂ ℙ(ℤ))");
+		rewriteExpr("∅ ∩ {x ∣ x > 0} ∩ ∅ ∩ S ∩ T ∩ ∅", "(∅ ⦂ ℙ(ℤ))");
 		
 		// Test with empty and type
-		expressionTest("(∅ ⦂ ℙ(S))", "(∅ ⦂ ℙ(S)) ∩ ∅");
-		expressionTest("(∅ ⦂ ℙ(S))", "(∅ ⦂ ℙ(S)) ∩ S");
-		expressionTest("(∅ ⦂ ℙ(S))", "S ∩ (∅ ⦂ ℙ(S))");
+		rewriteExpr("(∅ ⦂ ℙ(S)) ∩ ∅", "(∅ ⦂ ℙ(S))");
+		rewriteExpr("(∅ ⦂ ℙ(S)) ∩ S", "(∅ ⦂ ℙ(S))");
+		rewriteExpr("S ∩ (∅ ⦂ ℙ(S))", "(∅ ⦂ ℙ(S))");
 
 
 		// S /\ ... /\ T /\ ... /\ T /\ ... /\ U == S /\ ... /\ T /\ ... /\ ... /\ U
-		expressionTest("{x ∣ x > 0}", "{x ∣ x > 0} ∩ {x ∣ x > 0}");
-		expressionTest("S ∩ T ∩ {x ∣ x > 0}", "S ∩ S ∩ T ∩ {x ∣ x > 0}");
-		expressionTest("S ∩ T ∩ {x ∣ x > 0}", "S ∩ T ∩ S ∩ {x ∣ x > 0}");
-		expressionTest("S ∩ T ∩ {x ∣ x > 0}", "S ∩ T ∩ {x ∣ x > 0} ∩ S");
-		expressionTest("S ∩ T ∩ {x ∣ x > 0}", "S ∩ T ∩ S ∩ {x ∣ x > 0} ∩ S");
-		expressionTest("S ∩ T ∩ {x ∣ x > 0}", "S ∩ T ∩ S ∩ T ∩ {x ∣ x > 0} ∩ S ∩ T");
+		rewriteExpr("{x ∣ x > 0} ∩ {x ∣ x > 0}", "{x ∣ x > 0}");
+		rewriteExpr("S ∩ S ∩ T ∩ {x ∣ x > 0}", "S ∩ T ∩ {x ∣ x > 0}");
+		rewriteExpr("S ∩ T ∩ S ∩ {x ∣ x > 0}", "S ∩ T ∩ {x ∣ x > 0}");
+		rewriteExpr("S ∩ T ∩ {x ∣ x > 0} ∩ S", "S ∩ T ∩ {x ∣ x > 0}");
+		rewriteExpr("S ∩ T ∩ S ∩ {x ∣ x > 0} ∩ S", "S ∩ T ∩ {x ∣ x > 0}");
+		rewriteExpr("S ∩ T ∩ S ∩ T ∩ {x ∣ x > 0} ∩ S ∩ T", "S ∩ T ∩ {x ∣ x > 0}");
 
-		expressionTest("S", "S ∩ S", "S", "ℙ(S)");
-		expressionTest("S", "S ∩ S ∩ S", "S", "ℙ(S)");
-		expressionTest("t", "t ∩ t", "t", "ℙ(S)");
-		expressionTest("t", "t ∩ t ∩ t", "t", "ℙ(S)");
+		rewriteExpr("S ∩ S", "S", "S", "ℙ(S)");
+		rewriteExpr("S ∩ S ∩ S", "S", "S", "ℙ(S)");
+		rewriteExpr("t ∩ t", "t", "t", "ℙ(S)");
+		rewriteExpr("t ∩ t ∩ t", "t", "t", "ℙ(S)");
 
 
 		// S \/ ... \/ {} \/ ... \/ T == S ... \/ ... \/ T
-		expressionTest("{x ∣ x > 0}", "{x ∣ x > 0} ∪ ∅");
-		expressionTest("{x ∣ x > 0}", "∅ ∪ {x ∣ x > 0}");
-		expressionTest("{x ∣ x > 0} ∪ S ∪ T", "∅ ∪ {x ∣ x > 0} ∪ S ∪ T");
-		expressionTest("{x ∣ x > 0} ∪ S ∪ T", "{x ∣ x > 0} ∪ S ∪ ∅ ∪ T");
-		expressionTest("{x ∣ x > 0} ∪ S ∪ T", "{x ∣ x > 0} ∪ S ∪ T ∪ ∅");
-		expressionTest("{x ∣ x > 0} ∪ S ∪ T", "∅ ∪ {x ∣ x > 0} ∪ ∅ ∪ S ∪ T");
-		expressionTest("{x ∣ x > 0} ∪ S ∪ T", "∅ ∪ {x ∣ x > 0} ∪ S ∪ T ∪ ∅");
-		expressionTest("{x ∣ x > 0} ∪ S ∪ T", "{x ∣ x > 0} ∪ ∅ ∪ S ∪ T ∪ ∅");
-		expressionTest("{x ∣ x > 0} ∪ S ∪ T", "∅ ∪ {x ∣ x > 0} ∪ ∅ ∪ S ∪ T ∪ ∅");
+		rewriteExpr("{x ∣ x > 0} ∪ ∅", "{x ∣ x > 0}");
+		rewriteExpr("∅ ∪ {x ∣ x > 0}", "{x ∣ x > 0}");
+		rewriteExpr("∅ ∪ {x ∣ x > 0} ∪ S ∪ T", "{x ∣ x > 0} ∪ S ∪ T");
+		rewriteExpr("{x ∣ x > 0} ∪ S ∪ ∅ ∪ T", "{x ∣ x > 0} ∪ S ∪ T");
+		rewriteExpr("{x ∣ x > 0} ∪ S ∪ T ∪ ∅", "{x ∣ x > 0} ∪ S ∪ T");
+		rewriteExpr("∅ ∪ {x ∣ x > 0} ∪ ∅ ∪ S ∪ T", "{x ∣ x > 0} ∪ S ∪ T");
+		rewriteExpr("∅ ∪ {x ∣ x > 0} ∪ S ∪ T ∪ ∅", "{x ∣ x > 0} ∪ S ∪ T");
+		rewriteExpr("{x ∣ x > 0} ∪ ∅ ∪ S ∪ T ∪ ∅", "{x ∣ x > 0} ∪ S ∪ T");
+		rewriteExpr("∅ ∪ {x ∣ x > 0} ∪ ∅ ∪ S ∪ T ∪ ∅", "{x ∣ x > 0} ∪ S ∪ T");
 
-		expressionTest("S", "S ∪ S", "S", "ℙ(S)");
-		expressionTest("S", "S ∪ S ∪ S", "S", "ℙ(S)");
-		expressionTest("t", "t ∪ t", "t", "ℙ(S)");
-		expressionTest("t", "t ∪ t ∪ t", "t", "ℙ(S)");
+		rewriteExpr("S ∪ S", "S", "S", "ℙ(S)");
+		rewriteExpr("S ∪ S ∪ S", "S", "S", "ℙ(S)");
+		rewriteExpr("t ∪ t", "t", "t", "ℙ(S)");
+		rewriteExpr("t ∪ t ∪ t", "t", "t", "ℙ(S)");
 
 		
 		// S \/ ... \/ T \/ ... \/ T \/ ... \/ U == S \/ ... \/ T \/ ... \/ ... \/ U
-		expressionTest("{x ∣ x > 0}", "{x ∣ x > 0} ∪ {x ∣ x > 0}");
-		expressionTest("S ∪ T ∪ {x ∣ x > 0}", "S ∪ S ∪ T ∪ {x ∣ x > 0}");
-		expressionTest("S ∪ T ∪ {x ∣ x > 0}", "S ∪ T ∪ S ∪ {x ∣ x > 0}");
-		expressionTest("S ∪ T ∪ {x ∣ x > 0}", "S ∪ T ∪ {x ∣ x > 0} ∪ S");
-		expressionTest("S ∪ T ∪ {x ∣ x > 0}", "S ∪ T ∪ S ∪ {x ∣ x > 0} ∪ S");
-		expressionTest("S ∪ T ∪ {x ∣ x > 0}", "S ∪ T ∪ S ∪ T ∪ {x ∣ x > 0} ∪ S ∪ T");
+		rewriteExpr("{x ∣ x > 0} ∪ {x ∣ x > 0}", "{x ∣ x > 0}");
+		rewriteExpr("S ∪ S ∪ T ∪ {x ∣ x > 0}", "S ∪ T ∪ {x ∣ x > 0}");
+		rewriteExpr("S ∪ T ∪ S ∪ {x ∣ x > 0}", "S ∪ T ∪ {x ∣ x > 0}");
+		rewriteExpr("S ∪ T ∪ {x ∣ x > 0} ∪ S", "S ∪ T ∪ {x ∣ x > 0}");
+		rewriteExpr("S ∪ T ∪ S ∪ {x ∣ x > 0} ∪ S", "S ∪ T ∪ {x ∣ x > 0}");
+		rewriteExpr("S ∪ T ∪ S ∪ T ∪ {x ∣ x > 0} ∪ S ∪ T", "S ∪ T ∪ {x ∣ x > 0}");
 
 
 		// {} <: S == true
-		predicateTest("⊤", "∅ ⊆ {x ∣ x > 0}");
+		rewritePred("∅ ⊆ {x ∣ x > 0}", "⊤");
 		
 
 		// S <: S == true
-		predicateTest("⊤", "{x ∣ x > 0} ⊆ {x ∣ x > 0}");
+		rewritePred("{x ∣ x > 0} ⊆ {x ∣ x > 0}", "⊤");
 		
 
 		// S <: A \/ ... \/ S \/ ... \/ B == true
-		predicateTest("⊤", "S ⊆ S ∪ T ∪ {x ∣ x > 0}");
-		predicateTest("⊤", "S ⊆ T ∪ S ∪ {x ∣ x > 0}");
-		predicateTest("⊤", "S ⊆ T ∪ {x ∣ x > 0} ∪ S");
+		rewritePred("S ⊆ S ∪ T ∪ {x ∣ x > 0}", "⊤");
+		rewritePred("S ⊆ T ∪ S ∪ {x ∣ x > 0}", "⊤");
+		rewritePred("S ⊆ T ∪ {x ∣ x > 0} ∪ S", "⊤");
 
 		
 		// A /\ ... /\ S /\ ... /\ B <: S == true
-		predicateTest("⊤", "S ∩ T ∩ {x ∣ x > 0} ⊆ S");
-		predicateTest("⊤", "T ∩ S ∩ {x ∣ x > 0} ⊆ S");
-		predicateTest("⊤", "T ∩ {x ∣ x > 0} ∩ S ⊆ S");
+		rewritePred("S ∩ T ∩ {x ∣ x > 0} ⊆ S", "⊤");
+		rewritePred("T ∩ S ∩ {x ∣ x > 0} ⊆ S", "⊤");
+		rewritePred("T ∩ {x ∣ x > 0} ∩ S ⊆ S", "⊤");
 		
 
 		// A \/ ... \/ B <: S == A <: S & ... & B <: S
-		predicateTest("A ⊆ {x ∣ x > 0} ∧ B ⊆ {x ∣ x > 0}", "A ∪ B ⊆ {x ∣ x > 0}");
-		predicateTest("A ⊆ {x ∣ x > 0} ∧ B ⊆ {x ∣ x > 0} ∧ C ⊆ {x ∣ x > 0}",
-				"A ∪ B ∪ C ⊆ {x ∣ x > 0}");
+		rewritePred("A ∪ B ⊆ {x ∣ x > 0}", "A ⊆ {x ∣ x > 0} ∧ B ⊆ {x ∣ x > 0}");
+		rewritePred("A ∪ B ∪ C ⊆ {x ∣ x > 0}",
+				"A ⊆ {x ∣ x > 0} ∧ B ⊆ {x ∣ x > 0} ∧ C ⊆ {x ∣ x > 0}");
 
 		
 		// S <: A /\ ... /\ B == S <: A & ... & S <: B
-		predicateTest("{x ∣ x > 0} ⊆ A ∧ {x ∣ x > 0} ⊆ B", "{x ∣ x > 0} ⊆ A ∩ B");
-		predicateTest("{x ∣ x > 0} ⊆ A ∧ {x ∣ x > 0} ⊆ B ∧ {x ∣ x > 0} ⊆ C",
-				"{x ∣ x > 0} ⊆ A ∩ B ∩ C");
+		rewritePred("{x ∣ x > 0} ⊆ A ∩ B", "{x ∣ x > 0} ⊆ A ∧ {x ∣ x > 0} ⊆ B");
+		rewritePred("{x ∣ x > 0} ⊆ A ∩ B ∩ C",
+				"{x ∣ x > 0} ⊆ A ∧ {x ∣ x > 0} ⊆ B ∧ {x ∣ x > 0} ⊆ C");
 		
 		
 		// A \/ ... \/ B <<: S == A <<: S & ... & B <<: S
 		// This rule is wrong and has been removed, no rewriting should occur.
-		predicateTest("A ∪ B ⊂ {x ∣ x > 0}", "A ∪ B ⊂ {x ∣ x > 0}");
-		predicateTest("A ∪ B ∪ C ⊂ {x ∣ x > 0}",	"A ∪ B ∪ C ⊂ {x ∣ x > 0}");
+		noRewritePred("A ∪ B ⊂ {x ∣ x > 0}");
+		noRewritePred("A ∪ B ∪ C ⊂ {x ∣ x > 0}");
 
 		
 		// S <<: A /\ ... /\ B == S <<: A & ... & S <<: B
 		// This rule is wrong and has been removed, no rewriting should occur.
-		predicateTest("{x ∣ x > 0} ⊂ A ∩ B", "{x ∣ x > 0} ⊂ A ∩ B");
-		predicateTest("{x ∣ x > 0} ⊂ A ∩ B ∩ C",	"{x ∣ x > 0} ⊂ A ∩ B ∩ C");
+		noRewritePred("{x ∣ x > 0} ⊂ A ∩ B");
+		noRewritePred("{x ∣ x > 0} ⊂ A ∩ B ∩ C");
 
 		
 		// E : {} == false
-		predicateTest("⊥", "2 ∈ ∅");
-		predicateTest("⊥", "FALSE ∈ ∅");
-		predicateTest("⊥", "x + 2 ∈ ∅");
+		rewritePred("2 ∈ ∅", "⊥");
+		rewritePred("FALSE ∈ ∅", "⊥");
+		rewritePred("x + 2 ∈ ∅", "⊥");
 
 		
 		// A : {A} == true
-		predicateTest("⊤", "2 ∈ {2}");
-		predicateTest("⊤", "x + 2 ∈ {x + 2}");
-		predicateTest("⊤", "FALSE ∈ {FALSE}");
+		rewritePred("2 ∈ {2}", "⊤");
+		rewritePred("x + 2 ∈ {x + 2}", "⊤");
+		rewritePred("FALSE ∈ {FALSE}", "⊤");
 
 		
 		// B : {A, ..., B, ..., C} == true
-		predicateTest("⊤", "B ∈ {B, x + 2, C}");
-		predicateTest("⊤", "B ∈ {x + 2, B, C}");
-		predicateTest("⊤", "B ∈ {x + 2, C, B}");
-		predicateTest("⊤", "B ∈ {B, x + 2, B, C}");
-		predicateTest("⊤", "B ∈ {B, x + 2, C, B}");
-		predicateTest("⊤", "B ∈ {x + 2, B, C, B}");
-		predicateTest("⊤", "B ∈ {B, x + 2, B, C, B}");
+		rewritePred("B ∈ {B, x + 2, C}", "⊤");
+		rewritePred("B ∈ {x + 2, B, C}", "⊤");
+		rewritePred("B ∈ {x + 2, C, B}", "⊤");
+		rewritePred("B ∈ {B, x + 2, B, C}", "⊤");
+		rewritePred("B ∈ {B, x + 2, C, B}", "⊤");
+		rewritePred("B ∈ {x + 2, B, C, B}", "⊤");
+		rewritePred("B ∈ {B, x + 2, B, C, B}", "⊤");
 
 
 		// {A, ..., B, ..., B, ..., C} == {A, ..., B, ..., C}
-		expressionTest("{x + 2 ∗ y}", "{x + 2 ∗ y, x + 2 ∗ y}");
-		expressionTest("{x + 2 ∗ y, E, F}", "{x + 2 ∗ y, x + 2 ∗ y, E, F}");
-		expressionTest("{x + 2 ∗ y, E, F}", "{x + 2 ∗ y, E, x + 2 ∗ y, F}");
-		expressionTest("{x + 2 ∗ y, E, F}", "{x + 2 ∗ y, E, F, x + 2 ∗ y}");
-		expressionTest("{E, x + 2 ∗ y, F}", "{E, x + 2 ∗ y, F, x + 2 ∗ y}");
-		expressionTest("{E, F, x + 2 ∗ y}", "{E, F, x + 2 ∗ y, x + 2 ∗ y}");
-		expressionTest("{E, x + 2 ∗ y, F}", "{E, x + 2 ∗ y, E, F, x + 2 ∗ y, F}");
+		rewriteExpr("{x + 2 ∗ y, x + 2 ∗ y}", "{x + 2 ∗ y}");
+		rewriteExpr("{x + 2 ∗ y, x + 2 ∗ y, E, F}", "{x + 2 ∗ y, E, F}");
+		rewriteExpr("{x + 2 ∗ y, E, x + 2 ∗ y, F}", "{x + 2 ∗ y, E, F}");
+		rewriteExpr("{x + 2 ∗ y, E, F, x + 2 ∗ y}", "{x + 2 ∗ y, E, F}");
+		rewriteExpr("{E, x + 2 ∗ y, F, x + 2 ∗ y}", "{E, x + 2 ∗ y, F}");
+		rewriteExpr("{E, F, x + 2 ∗ y, x + 2 ∗ y}", "{E, F, x + 2 ∗ y}");
+		rewriteExpr("{E, x + 2 ∗ y, E, F, x + 2 ∗ y, F}", "{E, x + 2 ∗ y, F}");
 
 		
 		// E : {x | P(x)} == P(E)
-		predicateTest("x > 0 ∧ x < 2", "x ∈ {y ∣ y > 0 ∧ y < 2}");
+		rewritePred("x ∈ {y ∣ y > 0 ∧ y < 2}", "x > 0 ∧ x < 2");
 
 		// E : {x . P(x) | x} == P(E)
-		predicateTest("n ≥ 0", "n ∈ {x·x≥0∣x}");
-		predicateTest("∀n·n≥1 ⇒ n ≥ 0", "∀n·n≥1 ⇒ n ∈ {x·x≥0∣x}");
+		rewritePred("n ∈ {x·x≥0∣x}", "n ≥ 0");
+		rewritePred("∀n·n≥1 ⇒ n ∈ {x·x≥0∣x}", "∀n·n≥1 ⇒ n ≥ 0");
 		
 		// F : {x,y . P(x,y) | E(x,y) == #x,y . P(x,y) & E(x,y) = F
-		predicateTest("∃x,y· (x≥ 0 ∧ y≥ 0) ∧ x+y = n", "n ∈ {x,y·x≥0∧y≥0∣x+y}");
-		predicateTest("∀n·n≥0 ⇒ (∃x,y· (x≥ 0 ∧ y≥ 0) ∧ x+y = n)",
-				"∀n·n≥0 ⇒ n ∈ {x,y·x≥0∧y≥0∣x+y}");
+		rewritePred("n ∈ {x,y·x≥0∧y≥0∣x+y}", "∃x,y· (x≥ 0 ∧ y≥ 0) ∧ x+y = n");
+		rewritePred("∀n·n≥0 ⇒ n ∈ {x,y·x≥0∧y≥0∣x+y}",
+				"∀n·n≥0 ⇒ (∃x,y· (x≥ 0 ∧ y≥ 0) ∧ x+y = n)");
 		// One Point Rule applies
-		predicateTest("∀n·n≥0 ⇒ (∃y· (n ≥ 0 ∧ y≥ 0))",
-				"∀n·n≥0 ⇒ n ∈ {x,y·x≥0∧y≥0∣x}");
-		predicateTest("∀n,m·n≥0 ⇒ (∃y· (n ≥ 0 ∧ y≥ m))",
-				"∀n,m·n≥0 ⇒ n ∈ {x,y·x≥0∧y≥m∣x}");
+		rewritePred("∀n·n≥0 ⇒ n ∈ {x,y·x≥0∧y≥0∣x}",
+				"∀n·n≥0 ⇒ (∃y· (n ≥ 0 ∧ y≥ 0))");
+		rewritePred("∀n,m·n≥0 ⇒ n ∈ {x,y·x≥0∧y≥m∣x}",
+				"∀n,m·n≥0 ⇒ (∃y· (n ≥ 0 ∧ y≥ m))");
 		// One Point Rule applies replacement on expression ('x=n' here)
-		predicateTest("n=0", "n ∈ {x·x=0∣x}");
+		rewritePred("n ∈ {x·x=0∣x}", "n=0");
 		// One Point Rule does not apply replacement on guard ('x=0' here)
-		predicateTest("∃x· x=0 ∧ x+1 = n", "n ∈ {x·x=0∣x+1}");
+		rewritePred("n ∈ {x·x=0∣x+1}", "∃x· x=0 ∧ x+1 = n");
 
 		// Jean-Raymond Abrial's bug
-		predicateTest("∃z·(∃x,y·(x>0∧y>0)∧g(x+y)−g(x)−g(y)=l)∧l=z",
-				"∃z·(l∈ {x,y·x>0 ∧ y>0 ∣ g(x+y)−g(x)−g(y)})∧l=z");
+		rewritePred("∃z·(l∈ {x,y·x>0 ∧ y>0 ∣ g(x+y)−g(x)−g(y)})∧l=z",
+				"∃z·(∃x,y·(x>0∧y>0)∧g(x+y)−g(x)−g(y)=l)∧l=z");
 		
 		// S \ S == {}
-		expressionTest("(∅ ⦂ ℙ(ℤ))", "{y ∣ y > 0} ∖ {y ∣ y > 0}");
+		rewriteExpr("{y ∣ y > 0} ∖ {y ∣ y > 0}", "(∅ ⦂ ℙ(ℤ))");
 		
 
 		// {} \ S == {}
-		expressionTest("(∅ ⦂ ℙ(ℤ))", "∅ ∖ {y ∣ y > 0}");
+		rewriteExpr("∅ ∖ {y ∣ y > 0}", "(∅ ⦂ ℙ(ℤ))");
 
 
 		// S \ {} == S
-		expressionTest("{y ∣ y > 0}", "{y ∣ y > 0} ∖ ∅");
+		rewriteExpr("{y ∣ y > 0} ∖ ∅", "{y ∣ y > 0}");
 
 		
 		// r~~ == r
-		expressionTest("{x ↦ y ∣ x > 0 ∧ y < 2}", "{x ↦ y ∣ x > 0 ∧ y < 2}∼∼");
+		rewriteExpr("{x ↦ y ∣ x > 0 ∧ y < 2}∼∼", "{x ↦ y ∣ x > 0 ∧ y < 2}");
 		
 
 		// dom({x |-> a, ..., y |-> b}) == {x, ..., y}
-		expressionTest("{x + 2}", "dom({x + 2 ↦ 3})");
-		expressionTest("{x + 2, 2}", "dom({x + 2 ↦ 3, 2 ↦ y})");
-		expressionTest("{x + 2, 2, a}", "dom({x + 2 ↦ 3, 2 ↦ y, a ↦ b})");
+		rewriteExpr("dom({x + 2 ↦ 3})", "{x + 2}");
+		rewriteExpr("dom({x + 2 ↦ 3, 2 ↦ y})", "{x + 2, 2}");
+		rewriteExpr("dom({x + 2 ↦ 3, 2 ↦ y, a ↦ b})", "{x + 2, 2, a}");
 
 		
 		// ran({x |-> a, ..., y |-> b}) == {a, ..., b}
-		expressionTest("{3}", "ran({x + 2 ↦ 3})");
-		expressionTest("{3, y}", "ran({x + 2 ↦ 3, 2 ↦ y})");
-		expressionTest("{3, y, b}", "ran({x + 2 ↦ 3, 2 ↦ y, a ↦ b})");
+		rewriteExpr("ran({x + 2 ↦ 3})", "{3}");
+		rewriteExpr("ran({x + 2 ↦ 3, 2 ↦ y})", "{3, y}");
+		rewriteExpr("ran({x + 2 ↦ 3, 2 ↦ y, a ↦ b})", "{3, y, b}");
 
 		
 		// (f <+ {E |-> F})(E) = F
-		expressionTest("3", "(f  {x + 2 ↦ 3})(x + 2)");
-		expressionTest("(f  {2 ↦ 3}  g)(2)", "(f  {2 ↦ 3}  g)(2)");
+		rewriteExpr("(f  {x + 2 ↦ 3})(x + 2)", "3");
+		noRewriteExpr("(f  {2 ↦ 3}  g)(2)");
 		if (level2AndHigher) {
-			expressionTest("3", "(f  {2 ↦ 3, 4 ↦ 5})(2)");
+			rewriteExpr("(f  {2 ↦ 3, 4 ↦ 5})(2)", "3");
 		} else {
-			expressionTest("(f  {2 ↦ 3, 4 ↦ 5})(2)", //
-					"(f  {2 ↦ 3, 4 ↦ 5})(2)");
+			noRewriteExpr("(f  {2 ↦ 3, 4 ↦ 5})(2)");
 		}
  
 		// E : {F} == E = F (if F is a single expression)
-		predicateTest("x + 2 ∗ y = y + 2 ∗ x", "x + 2 ∗ y ∈ {y + 2 ∗ x}");
+		rewritePred("x + 2 ∗ y ∈ {y + 2 ∗ x}", "x + 2 ∗ y = y + 2 ∗ x");
 
 		
 		// not(E : {F}) == not(E = F) (if F is a single expression)
-		predicateTest("¬x + 2 ∗ y = y + 2 ∗ x", "¬x + 2 ∗ y ∈ {y + 2 ∗ x}");
+		rewritePred("¬x + 2 ∗ y ∈ {y + 2 ∗ x}", "¬x + 2 ∗ y = y + 2 ∗ x");
 
 		
 		// {E} = {F} == E = F if E, F is a single expression
-		predicateTest("x + 2 ∗ y = y + 2 ∗ x", "{x + 2 ∗ y} = {y + 2 ∗ x}");
+		rewritePred("{x + 2 ∗ y} = {y + 2 ∗ x}", "x + 2 ∗ y = y + 2 ∗ x");
 		
 		
 		// not({E} = {F}) == not(E = F) if E, F is a single expression
-		predicateTest("¬x + 2 ∗ y = y + 2 ∗ x", "¬{x + 2 ∗ y} = {y + 2 ∗ x}");
+		rewritePred("¬{x + 2 ∗ y} = {y + 2 ∗ x}", "¬x + 2 ∗ y = y + 2 ∗ x");
 
 		
 		// {x |-> a, ..., y |-> b}~  ==  {a |-> x, ..., b |-> y}
-		expressionTest("{3 ↦ x + 2}", "{x + 2 ↦ 3}∼");
-		expressionTest("{3 ↦ x + 2, y ↦ 2}", "{x + 2 ↦ 3, 2 ↦ y}∼");
-		expressionTest("{3 ↦ x + 2, y ↦ 2, b ↦ a}", "{x + 2 ↦ 3, 2 ↦ y, a ↦ b}∼");
+		rewriteExpr("{x + 2 ↦ 3}∼", "{3 ↦ x + 2}");
+		rewriteExpr("{x + 2 ↦ 3, 2 ↦ y}∼", "{3 ↦ x + 2, y ↦ 2}");
+		rewriteExpr("{x + 2 ↦ 3, 2 ↦ y, a ↦ b}∼", "{3 ↦ x + 2, y ↦ 2, b ↦ a}");
 		
 
 		// Typ = {} == false (where Typ is a type expression) is NOT done here
-		predicateTest("ℤ = ∅", "ℤ = ∅");
-		predicateTest("ℙ(ℤ) = ∅", "ℙ(ℤ) = ∅");
+		noRewritePred("ℤ = ∅");
+		noRewritePred("ℙ(ℤ) = ∅");
 
 		
 		// {} = Typ == false (where Typ is a type expression) is NOT done here
-		predicateTest("∅ = ℤ", "∅ = ℤ");
-		predicateTest("∅ = ℙ(ℤ)", "∅ = ℙ(ℤ)");
+		noRewritePred("∅ = ℤ");
+		noRewritePred("∅ = ℙ(ℤ)");
 		
 
 		// E : Typ == true (where Typ is a type expression) is NOT done here
-		predicateTest("E ∈ ℤ", "E ∈ ℤ");
+		noRewritePred("E ∈ ℤ");
 
 		
 		// f(f~(E)) == E
-		expressionTest("E", "f(f∼(E))", "f", "S↔T", "E", "T");
+		rewriteExpr("f(f∼(E))", "E", "f", "S↔T");
 		if (level2AndHigher) {
-			expressionTest("3", "{x + 2 ↦ 3}(({x + 2 ↦ 3}∼)(y + 2))");
+			rewriteExpr("{x + 2 ↦ 3}(({x + 2 ↦ 3}∼)(y + 2))", "3");
 		} else {
-			expressionTest("y + 2", "{x + 2 ↦ 3}(({x + 2 ↦ 3}∼)(y + 2))");
+			rewriteExpr("{x + 2 ↦ 3}(({x + 2 ↦ 3}∼)(y + 2))", "y + 2");
 		}
 
 		
 		// f~(f(E)) == E
-		expressionTest("E", "f∼(f(E))", "f", "S↔T", "E", "S");
+		rewriteExpr("f∼(f(E))", "E", "f", "S↔T", "E", "S");
 		if (level2AndHigher) {
-			expressionTest("x + 2", "({x + 2 ↦ 3}∼)({x + 2 ↦ 3}(y + 2))");
+			rewriteExpr("({x + 2 ↦ 3}∼)({x + 2 ↦ 3}(y + 2))", "x + 2");
 		} else {
-			expressionTest("y + 2", "({x + 2 ↦ 3}∼)({x + 2 ↦ 3}(y + 2))");
+			rewriteExpr("({x + 2 ↦ 3}∼)({x + 2 ↦ 3}(y + 2))", "y + 2");
 		}
 
 		
 		// {x |-> a, ..., y |-> b}({a |-> x, ..., b |-> y}(E)) = E
-		expressionTest("E", "{x ↦ a, y ↦ b}({a ↦ x, b ↦ y}(E))", //
+		rewriteExpr("{x ↦ a, y ↦ b}({a ↦ x, b ↦ y}(E))", "E", //
 				"E", "S", "a", "S", "x", "T");
 		if (level2AndHigher) {
-			expressionTest("3", "{x + 2 ↦ 3}({3 ↦ x + 2}(y + 2))");
-			expressionTest("y + 2",
-					"{x + 2 ↦ 3, y ↦ 2}({3 ↦ x + 2, 2 ↦ y}(y + 2))");
-			expressionTest("y + 2",
-					"{x + 2 ↦ 3, y ↦ 2, a ↦ b}({3 ↦ x + 2, 2 ↦ y, b ↦ a}(y + 2))");
+			rewriteExpr("{x + 2 ↦ 3}({3 ↦ x + 2}(y + 2))", "3");
+			rewriteExpr("{x + 2 ↦ 3, y ↦ 2}({3 ↦ x + 2, 2 ↦ y}(y + 2))",
+					"y + 2");
+			rewriteExpr("{x + 2 ↦ 3, y ↦ 2, a ↦ b}({3 ↦ x + 2, 2 ↦ y, b ↦ a}(y + 2))",
+					"y + 2");
 		} else {
-			expressionTest("y + 2", "{x + 2 ↦ 3}({3 ↦ x + 2}(y + 2))");
-			expressionTest("y + 2",
-					"{x + 2 ↦ 3, y ↦ 2}({3 ↦ x + 2, 2 ↦ y}(y + 2))");
-			expressionTest("y + 2",
-					"{x + 2 ↦ 3, y ↦ 2, a ↦ b}({3 ↦ x + 2, 2 ↦ y, b ↦ a}(y + 2))");
+			rewriteExpr("{x + 2 ↦ 3}({3 ↦ x + 2}(y + 2))", "y + 2");
+			rewriteExpr("{x + 2 ↦ 3, y ↦ 2}({3 ↦ x + 2, 2 ↦ y}(y + 2))",
+					"y + 2");
+			rewriteExpr("{x + 2 ↦ 3, y ↦ 2, a ↦ b}({3 ↦ x + 2, 2 ↦ y, b ↦ a}(y + 2))",
+					"y + 2");
 		}
 
 		// p;...;{};...;q == {}
-		expressionTest("(∅⦂S↔U)", "f;(∅⦂T↔U)", "f", "S↔T");
-		expressionTest("(∅⦂S↔U)", "(∅⦂S↔T);f", "f", "T↔U");
-		expressionTest("(∅⦂S↔W)", "(∅⦂S↔T);f;g;h",//
+		rewriteExpr("f;(∅⦂T↔U)", "(∅⦂S↔U)", "f", "S↔T");
+		rewriteExpr("(∅⦂S↔T);f", "(∅⦂S↔U)", "f", "T↔U");
+		rewriteExpr("(∅⦂S↔T);f;g;h", "(∅⦂S↔W)",//
 				"f", "T↔U", "g", "U↔V", "h", "V↔W");
-		expressionTest("(∅⦂S↔W)", "f;(∅⦂T↔U);g;h",//
+		rewriteExpr("f;(∅⦂T↔U);g;h", "(∅⦂S↔W)",//
 				"f", "S↔T", "g", "U↔V", "h", "V↔W");
-		expressionTest("(∅⦂S↔W)", "f;g;h;(∅⦂V↔W)",//
+		rewriteExpr("f;g;h;(∅⦂V↔W)", "(∅⦂S↔W)",//
 				"f", "S↔T", "g", "T↔U", "h", "U↔V");
-		expressionTest("(∅⦂S↔X)", "(∅⦂S↔T);f;(∅⦂U↔V);g;h",//
+		rewriteExpr("(∅⦂S↔T);f;(∅⦂U↔V);g;h", "(∅⦂S↔X)",//
 				"f", "T↔U", "g", "V↔W", "h", "W↔X");
-		expressionTest("(∅⦂S↔X)", "(∅⦂S↔T);f;g;h;(∅⦂W↔X)",//
+		rewriteExpr("(∅⦂S↔T);f;g;h;(∅⦂W↔X)", "(∅⦂S↔X)",//
 				"f", "T↔U", "g", "U↔V", "h", "V↔W");
-		expressionTest("(∅⦂S↔X)", "f;(∅⦂T↔U);g;h;(∅⦂W↔X)",//
+		rewriteExpr("f;(∅⦂T↔U);g;h;(∅⦂W↔X)", "(∅⦂S↔X)",//
 				"f", "S↔T", "g", "U↔V", "h", "V↔W");
-		expressionTest("(∅⦂S↔Y)", "(∅⦂S↔T);f;(∅⦂U↔V);g;h;(∅⦂X↔Y)",//
+		rewriteExpr("(∅⦂S↔T);f;(∅⦂U↔V);g;h;(∅⦂X↔Y)", "(∅⦂S↔Y)",//
 				"f", "T↔U", "g", "V↔W", "h", "W↔X");
 
 
 		// p circ ... circ {} circ ... circ q == {}
-		expressionTest("(∅⦂S↔U)", "f∘(∅⦂S↔T)", "f", "T↔U");
-		expressionTest("(∅⦂S↔U)", "(∅⦂T↔U)∘f", "f", "S↔T");
-		expressionTest("(∅⦂S↔W)", "(∅⦂V↔W)∘h∘g∘f",//
+		rewriteExpr("f∘(∅⦂S↔T)", "(∅⦂S↔U)", "f", "T↔U");
+		rewriteExpr("(∅⦂T↔U)∘f", "(∅⦂S↔U)", "f", "S↔T");
+		rewriteExpr("(∅⦂V↔W)∘h∘g∘f", "(∅⦂S↔W)",//
 				"f", "S↔T", "g", "T↔U", "h", "U↔V");
-		expressionTest("(∅⦂S↔W)", "h∘g∘(∅⦂T↔U)∘f",//
+		rewriteExpr("h∘g∘(∅⦂T↔U)∘f", "(∅⦂S↔W)",//
 				"f", "S↔T", "g", "U↔V", "h", "V↔W");
-		expressionTest("(∅⦂S↔W)", "h∘g∘f∘(∅⦂S↔T)",//
+		rewriteExpr("h∘g∘f∘(∅⦂S↔T)", "(∅⦂S↔W)",//
 				"f", "T↔U", "g", "U↔V", "h", "V↔W");
-		expressionTest("(∅⦂S↔X)", "(∅⦂W↔X)∘h∘g∘(∅⦂T↔U)∘f",//
+		rewriteExpr("(∅⦂W↔X)∘h∘g∘(∅⦂T↔U)∘f", "(∅⦂S↔X)",//
 				"f", "S↔T", "g", "U↔V", "h", "V↔W");
-		expressionTest("(∅⦂S↔X)", "h∘g∘(∅⦂U↔V)∘f∘(∅⦂S↔T)",//
+		rewriteExpr("h∘g∘(∅⦂U↔V)∘f∘(∅⦂S↔T)", "(∅⦂S↔X)",//
 				"f", "T↔U", "g", "V↔W", "h", "W↔X");
-		expressionTest("(∅⦂S↔X)", "(∅⦂W↔X)∘h∘g∘f∘(∅⦂S↔T)",//
+		rewriteExpr("(∅⦂W↔X)∘h∘g∘f∘(∅⦂S↔T)", "(∅⦂S↔X)",//
 				"f", "T↔U", "g", "U↔V", "h", "V↔W");
-		expressionTest("(∅⦂S↔Y)", "(∅⦂X↔Y)∘h∘g∘(∅⦂U↔V)∘f∘(∅⦂S↔T)",//
+		rewriteExpr("(∅⦂X↔Y)∘h∘g∘(∅⦂U↔V)∘f∘(∅⦂S↔T)", "(∅⦂S↔Y)",//
 				"f", "T↔U", "g", "V↔W", "h", "W↔X");
 
 
 		// U \ (U \ S) == S
-		expressionTest("{x ∣ x > 0}", "ℤ ∖ (ℤ ∖ {x ∣ x > 0})");
-		expressionTest("ℙ({x ∣ x > 0})", "ℙ(ℤ) ∖ (ℙ(ℤ) ∖ ℙ({x ∣ x > 0}))");
+		rewriteExpr("ℤ ∖ (ℤ ∖ {x ∣ x > 0})", "{x ∣ x > 0}");
+		rewriteExpr("ℙ(ℤ) ∖ (ℙ(ℤ) ∖ ℙ({x ∣ x > 0}))", "ℙ({x ∣ x > 0})");
 		
 		
 		// S \ U == {}
-		expressionTest("(∅ ⦂ ℙ(ℤ))", "S ∖ ℤ");
-		expressionTest("(∅ ⦂ ℙ(ℤ×ℤ))", "S ∖ (ℤ × ℤ)");
+		rewriteExpr("S ∖ ℤ", "(∅ ⦂ ℙ(ℤ))");
+		rewriteExpr("S ∖ (ℤ × ℤ)", "(∅ ⦂ ℙ(ℤ×ℤ))");
 
 		
 		// S \/ ... \/ U \/ ... \/ T == U
-		expressionTest("ℤ", "ℤ ∪ S");
-		expressionTest("ℤ", "S ∪ ℤ");
-		expressionTest("ℤ", "ℤ ∪ S ∪ T ∪ U");
-		expressionTest("ℤ", "S ∪ ℤ ∪ T ∪ U");
-		expressionTest("ℤ", "S ∪ T ∪ U ∪ ℤ ");
-		expressionTest("ℤ", "ℤ ∪ S ∪ ℤ ∪ T ∪ U");
-		expressionTest("ℤ", "ℤ ∪ S ∪ T ∪ U ∪ ℤ");
-		expressionTest("ℤ", "S ∪ ℤ ∪ T ∪ U ∪ ℤ");
-		expressionTest("ℤ", "ℤ ∪ S ∪ ℤ ∪ T ∪ U ∪ ℤ");
+		rewriteExpr("ℤ ∪ S", "ℤ");
+		rewriteExpr("S ∪ ℤ", "ℤ");
+		rewriteExpr("ℤ ∪ S ∪ T ∪ U", "ℤ");
+		rewriteExpr("S ∪ ℤ ∪ T ∪ U", "ℤ");
+		rewriteExpr("S ∪ T ∪ U ∪ ℤ ", "ℤ");
+		rewriteExpr("ℤ ∪ S ∪ ℤ ∪ T ∪ U", "ℤ");
+		rewriteExpr("ℤ ∪ S ∪ T ∪ U ∪ ℤ", "ℤ");
+		rewriteExpr("S ∪ ℤ ∪ T ∪ U ∪ ℤ", "ℤ");
+		rewriteExpr("ℤ ∪ S ∪ ℤ ∪ T ∪ U ∪ ℤ", "ℤ");
 
 		
 		// S /\ ... /\ U /\ ... /\ T == S /\ ... /\ ... /\ T
-		expressionTest("{x ∣ x > 0}", "ℤ ∩ {x ∣ x > 0}");
-		expressionTest("{x ∣ x > 0}", "{x ∣ x > 0} ∩ ℤ");
-		expressionTest("{x ∣ x > 0} ∩ S ∩ T", "ℤ ∩ {x ∣ x > 0} ∩ S ∩ T");
-		expressionTest("{x ∣ x > 0} ∩ S ∩ T", "{x ∣ x > 0} ∩ ℤ ∩ S ∩ T");
-		expressionTest("{x ∣ x > 0} ∩ S ∩ T", "{x ∣ x > 0} ∩ S ∩ T ∩ ℤ");
-		expressionTest("{x ∣ x > 0} ∩ S ∩ T", "ℤ ∩ {x ∣ x > 0} ∩ ℤ ∩ S ∩ T");
-		expressionTest("{x ∣ x > 0} ∩ S ∩ T", "ℤ ∩ {x ∣ x > 0} ∩ S ∩ T ∩ ℤ");
-		expressionTest("{x ∣ x > 0} ∩ S ∩ T", "{x ∣ x > 0} ∩ ℤ ∩ S ∩ T ∩ ℤ");
-		expressionTest("{x ∣ x > 0} ∩ S ∩ T", "ℤ ∩ {x ∣ x > 0} ∩ ℤ ∩ S ∩ T ∩ ℤ ");
+		rewriteExpr("ℤ ∩ {x ∣ x > 0}", "{x ∣ x > 0}");
+		rewriteExpr("{x ∣ x > 0} ∩ ℤ", "{x ∣ x > 0}");
+		rewriteExpr("ℤ ∩ {x ∣ x > 0} ∩ S ∩ T", "{x ∣ x > 0} ∩ S ∩ T");
+		rewriteExpr("{x ∣ x > 0} ∩ ℤ ∩ S ∩ T", "{x ∣ x > 0} ∩ S ∩ T");
+		rewriteExpr("{x ∣ x > 0} ∩ S ∩ T ∩ ℤ", "{x ∣ x > 0} ∩ S ∩ T");
+		rewriteExpr("ℤ ∩ {x ∣ x > 0} ∩ ℤ ∩ S ∩ T", "{x ∣ x > 0} ∩ S ∩ T");
+		rewriteExpr("ℤ ∩ {x ∣ x > 0} ∩ S ∩ T ∩ ℤ", "{x ∣ x > 0} ∩ S ∩ T");
+		rewriteExpr("{x ∣ x > 0} ∩ ℤ ∩ S ∩ T ∩ ℤ", "{x ∣ x > 0} ∩ S ∩ T");
+		rewriteExpr("ℤ ∩ {x ∣ x > 0} ∩ ℤ ∩ S ∩ T ∩ ℤ ", "{x ∣ x > 0} ∩ S ∩ T");
 
 		// r[∅] == ∅
-		expressionTest("(∅ ⦂ ℙ(T))", "r[(∅ ⦂ ℙ(S))]", "r", "ℙ(S×T)");
-		expressionTest("(∅ ⦂ ℙ(T))", "(∅ ⦂ ℙ(S×T))[(∅ ⦂ ℙ(S))]");
+		rewriteExpr("r[(∅ ⦂ ℙ(S))]", "(∅ ⦂ ℙ(T))", "r", "ℙ(S×T)");
+		rewriteExpr("(∅ ⦂ ℙ(S×T))[(∅ ⦂ ℙ(S))]", "(∅ ⦂ ℙ(T))");
 
 		// ∅[A] == ∅
-		expressionTest("(∅ ⦂ ℙ(T))", "(∅ ⦂ ℙ(S×T))[A]", "A", "ℙ(S)");
+		rewriteExpr("(∅ ⦂ ℙ(S×T))[A]", "(∅ ⦂ ℙ(T))", "A", "ℙ(S)");
 		
 		// dom({}) == {}
-		expressionTest("(∅ ⦂ ℙ(S))", "dom((∅ ⦂ ℙ(S×T)))");
+		rewriteExpr("dom((∅ ⦂ ℙ(S×T)))", "(∅ ⦂ ℙ(S))");
 		
 		// ran({}) == {}
-		expressionTest("(∅ ⦂ ℙ(T))", "ran((∅ ⦂ ℙ(S×T)))");
+		rewriteExpr("ran((∅ ⦂ ℙ(S×T)))", "(∅ ⦂ ℙ(T))");
 
 		// (S ** {E})(x) == E
-		expressionTest("TRUE", "(ℕ × {TRUE})(1)");
-		expressionTest("1", "(BOOL × {1})(TRUE)");
+		rewriteExpr("(ℕ × {TRUE})(1)", "TRUE");
+		rewriteExpr("(BOOL × {1})(TRUE)", "1");
 	
 		// r <+ ... <+ {} <+ ... <+ s = r <+ ... <+ s
-		expressionTest("{1 ↦ 2}  {3 ↦ 4}", "{1 ↦ 2}  ∅  {3 ↦ 4}");
+		rewriteExpr("{1 ↦ 2}  ∅  {3 ↦ 4}", "{1 ↦ 2}  {3 ↦ 4}");
 		
 		// (%x . P | E)(y) and similar
-		expressionTest("0", "(λx·x∈ℤ∣x)(0)");
-		expressionTest("1", "{x·x∈ℤ∣x↦x}(1)");
-		expressionTest("1+2", "(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(1↦2)");
-		expressionTest("prj1(1↦2)", "(λx·x∈ℤ×ℤ∣prj1(x))(1↦2)");
-		expressionTest(//
-				"{m↦n∣m>5−3 ∧ n> (8−4)∗2}",//
+		rewriteExpr("(λx·x∈ℤ∣x)(0)", "0");
+		rewriteExpr("{x·x∈ℤ∣x↦x}(1)", "1");
+		rewriteExpr("(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(1↦2)", "1+2");
+		rewriteExpr("(λx·x∈ℤ×ℤ∣prj1(x))(1↦2)", "prj1(1↦2)");
+		rewriteExpr(//
 				"(λ(x↦y)↦((a↦b)↦(c ⦂ ℤ ))·"//
 						+ "x∈ℤ∧y∈ℤ∧a∈ℤ∧b∈ℤ ∣"//
-						+ "{m↦n∣m>y−x ∧ n>(b−a)∗c})((3↦5)↦((4↦8)↦2))");
-		predicateTest("∀x·x=ℕ⇒x={m∣m>1+2}",
-				"∀x·x=ℕ⇒x=(λa↦b·a∈ℕ∧b∈ℕ∣{m∣m>a+b})(1↦2)");
-		predicateTest("∀x·x=ℕ⇒x={m∣m>0}",
-				"∀x·x=ℕ⇒x=(λa↦b·a∈ℕ∧b∈ℕ∣{m∣m>a+b})(0↦0)");
+						+ "{m↦n∣m>y−x ∧ n>(b−a)∗c})((3↦5)↦((4↦8)↦2))",//
+				"{m↦n∣m>5−3 ∧ n> (8−4)∗2}");
+		rewritePred("∀x·x=ℕ⇒x=(λa↦b·a∈ℕ∧b∈ℕ∣{m∣m>a+b})(1↦2)",
+				"∀x·x=ℕ⇒x={m∣m>1+2}");
+		rewritePred("∀x·x=ℕ⇒x=(λa↦b·a∈ℕ∧b∈ℕ∣{m∣m>a+b})(0↦0)",
+				"∀x·x=ℕ⇒x={m∣m>0}");
 		// verify that no exception is thrown when no rewrite occurs
-		expressionTest("(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(w)", "(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(w)",//
-				"w", "ℤ×ℤ");
+		noRewriteExpr("(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(w)", "w", "ℤ×ℤ");
 		// Rewriting fails as "x" is not a maplet
 		if (level2AndHigher) {
-			expressionTest("(ℤ×ℤ)(1)", "{x·x∈ℤ×ℤ∣x}(1)");
+			rewriteExpr("{x·x∈ℤ×ℤ∣x}(1)", "(ℤ×ℤ)(1)");
 		} else {
-			expressionTest("{x·x∈ℤ×ℤ∣x}(1)", "{x·x∈ℤ×ℤ∣x}(1)");
+			noRewriteExpr("{x·x∈ℤ×ℤ∣x}(1)");
 		}
 		// Rewriting fails as "pair" is not an explicit maplet
-		expressionTest("(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(pair)", "(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(pair)");
+		noRewriteExpr("(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(pair)");
 		
 		// destr(cons(a_1, ..., a_n))  ==  a_i   [i is the param index of the destructor]
-		expressionTest("1", "destr1(cons1(1))");
-		expressionTest("1", "destr2_0(cons2(1, 2))");
-		expressionTest("2", "destr2_1(cons2(1, 2))");
-		expressionTest("destr2_0(cons1(1))", "destr2_0(cons1(1))");
+		rewriteExpr("destr1(cons1(1))", "1");
+		rewriteExpr("destr2_0(cons2(1, 2))", "1");
+		rewriteExpr("destr2_1(cons2(1, 2))", "2");
+		noRewriteExpr("destr2_0(cons1(1))");
 
 	}
 	
 	@Test
 	public void testBug2995930() {
 		// Checks that internal lambda is conserved, and De Bruijn index are correct
-		expressionTest("(λx↦p·x∈s∧p⊆s∣p)", "(λs·s⊆S∣(λx↦p·x∈s∧p⊆s∣p))(s)", "s", "ℙ(S)");
+		rewriteExpr("(λs·s⊆S∣(λx↦p·x∈s∧p⊆s∣p))(s)", "(λx↦p·x∈s∧p⊆s∣p)", "s", "ℙ(S)");
 		// Checks that external lambda disappear and x is instantiated
-		expressionTest("(λz·z∈ℕ ∣ z+z)[{1,2,3}]", "(λx·x∈ℙ(ℕ) ∣ (λz·z∈ℕ ∣ z+z)[x])({1,2,3})");
+		rewriteExpr("(λx·x∈ℙ(ℕ) ∣ (λz·z∈ℕ ∣ z+z)[x])({1,2,3})", "(λz·z∈ℕ ∣ z+z)[{1,2,3}]");
 		// Real example from Bug 2995930 with an argument containing a bound identifier.
-		predicateTest("∀t⦂ℙ(S)·(λx↦p·x∈t∧p⊆t∣p) = a",
-				"∀t⦂ℙ(S)·(λs⦂ℙ(S)·s⊆S∣(λx↦p·x∈s∧p⊆s∣p))(t) = a");
+		rewritePred("∀t⦂ℙ(S)·(λs⦂ℙ(S)·s⊆S∣(λx↦p·x∈s∧p⊆s∣p))(t) = a",
+				"∀t⦂ℙ(S)·(λx↦p·x∈t∧p⊆t∣p) = a");
 	}
 
 	/**
@@ -828,10 +826,10 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 	 */
 	@Test
 	public void testBug3025836() {
-		predicateTest("∀x,y,z·x∈ℤ ∧ y∈BOOL ∧ z∈BOOL ⇒ x=0",
-				"∀x,y,z·x∈ℤ ∧ y∈BOOL ∧ z∈BOOL ⇒ (λa·a∈ℤ ∣ a)(x)=0");
-		predicateTest("∀x⦂ℤ,y⦂ℙ(ℤ)·y∪{x}=∅",
-				"∀x⦂ℤ,y⦂ℙ(ℤ)·(λa·a∈ℤ∣y∪{a})(x)=∅");
+		rewritePred("∀x,y,z·x∈ℤ ∧ y∈BOOL ∧ z∈BOOL ⇒ (λa·a∈ℤ ∣ a)(x)=0",
+				"∀x,y,z·x∈ℤ ∧ y∈BOOL ∧ z∈BOOL ⇒ x=0");
+		rewritePred("∀x⦂ℤ,y⦂ℙ(ℤ)·(λa·a∈ℤ∣y∪{a})(x)=∅",
+				"∀x⦂ℤ,y⦂ℙ(ℤ)·y∪{x}=∅");
 	}
 
 	/**
@@ -840,189 +838,189 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 	@Test
 	public void testArithmetic() {
 		// E + ... + 0 + ... + F == E + ... + ... + F
-		expressionTest("0", "0 + 0");
-		expressionTest("x + 2 ∗ y", "0 + (x + 2 ∗ y)");
-		expressionTest("x + 2 ∗ y", "(x + 2 ∗ y) + 0");
-		expressionTest("x + 2 ∗ y + y", "0 + (x + 2 ∗ y) + y");
-		expressionTest("x + 2 ∗ y + y", "(x + 2 ∗ y) + 0 + y");
-		expressionTest("x + 2 ∗ y + y", "(x + 2 ∗ y) + y + 0");
-		expressionTest("x + 2 ∗ y + y", "0 + (x + 2 ∗ y) + 0 + y");
-		expressionTest("x + 2 ∗ y + y", "0 + (x + 2 ∗ y) + y + 0");
-		expressionTest("x + 2 ∗ y + y", "(x + 2 ∗ y) + 0 + y + 0");
-		expressionTest("x + 2 ∗ y + y", "0 + (x + 2 ∗ y) + 0 + y + 0");
+		rewriteExpr("0 + 0", "0");
+		rewriteExpr("0 + (x + 2 ∗ y)", "x + 2 ∗ y");
+		rewriteExpr("(x + 2 ∗ y) + 0", "x + 2 ∗ y");
+		rewriteExpr("0 + (x + 2 ∗ y) + y", "x + 2 ∗ y + y");
+		rewriteExpr("(x + 2 ∗ y) + 0 + y", "x + 2 ∗ y + y");
+		rewriteExpr("(x + 2 ∗ y) + y + 0", "x + 2 ∗ y + y");
+		rewriteExpr("0 + (x + 2 ∗ y) + 0 + y", "x + 2 ∗ y + y");
+		rewriteExpr("0 + (x + 2 ∗ y) + y + 0", "x + 2 ∗ y + y");
+		rewriteExpr("(x + 2 ∗ y) + 0 + y + 0", "x + 2 ∗ y + y");
+		rewriteExpr("0 + (x + 2 ∗ y) + 0 + y + 0", "x + 2 ∗ y + y");
 		
 		
 		// E - 0 == E
-		expressionTest("(x + 2 ∗ y)", "(x + 2 ∗ y) − 0");
+		rewriteExpr("(x + 2 ∗ y) − 0", "(x + 2 ∗ y)");
 
 		
 		// 0 - E == -E
-		expressionTest("−(x + 2 ∗ y)", "0 − (x + 2 ∗ y)");
-		expressionTest("−(1)", "0 − 1");
-		expressionTest("−1", "−(1)");
+		rewriteExpr("0 − (x + 2 ∗ y)", "−(x + 2 ∗ y)");
+		rewriteExpr("0 − 1", "−(1)");
+		rewriteExpr("−(1)", "−1");
 
 
 		// -(-E) == E
-		expressionTest("x + 2 ∗ y", "−(−(x + 2 ∗ y))");
-		expressionTest("1", "−(−1)");
-		expressionTest("1", "−(−(1))");
+		rewriteExpr("−(−(x + 2 ∗ y))", "x + 2 ∗ y");
+		rewriteExpr("−(−1)", "1");
+		rewriteExpr("−(−(1))", "1");
 		
 		
 		// E - E == 0
-		expressionTest("0", "1 − 1");
-		expressionTest("0", "(x + 2 ∗ y) − (x + 2 ∗ y)");
+		rewriteExpr("1 − 1", "0");
+		rewriteExpr("(x + 2 ∗ y) − (x + 2 ∗ y)", "0");
 		
 		
 		// E * ... * 1 * ... * F == E * ... * ... * F
-		expressionTest("1", "1 ∗ 1");
-		expressionTest("x + 2 ∗ y", "(x + 2 ∗ y) ∗ 1");
-		expressionTest("x + 2 ∗ y", "1 ∗ (x + 2 ∗ y)");
-		expressionTest("(x + 2 ∗ y) ∗ y", "1 ∗ (x + 2 ∗ y) ∗ y");
-		expressionTest("(x + 2 ∗ y) ∗ y", "(x + 2 ∗ y) ∗ 1 ∗ y");
-		expressionTest("(x + 2 ∗ y) ∗ y", "(x + 2 ∗ y) ∗ y ∗ 1");
-		expressionTest("(x + 2 ∗ y) ∗ y", "1 ∗ (x + 2 ∗ y) ∗ 1 ∗ y");
-		expressionTest("(x + 2 ∗ y) ∗ y", "1 ∗ (x + 2 ∗ y) ∗ y ∗ 1");
-		expressionTest("(x + 2 ∗ y) ∗ y", "(x + 2 ∗ y) ∗ 1 ∗ y ∗ 1");
-		expressionTest("(x + 2 ∗ y) ∗ y", "1 ∗ (x + 2 ∗ y) ∗ 1 ∗ y ∗ 1");
+		rewriteExpr("1 ∗ 1", "1");
+		rewriteExpr("(x + 2 ∗ y) ∗ 1", "x + 2 ∗ y");
+		rewriteExpr("1 ∗ (x + 2 ∗ y)", "x + 2 ∗ y");
+		rewriteExpr("1 ∗ (x + 2 ∗ y) ∗ y", "(x + 2 ∗ y) ∗ y");
+		rewriteExpr("(x + 2 ∗ y) ∗ 1 ∗ y", "(x + 2 ∗ y) ∗ y");
+		rewriteExpr("(x + 2 ∗ y) ∗ y ∗ 1", "(x + 2 ∗ y) ∗ y");
+		rewriteExpr("1 ∗ (x + 2 ∗ y) ∗ 1 ∗ y", "(x + 2 ∗ y) ∗ y");
+		rewriteExpr("1 ∗ (x + 2 ∗ y) ∗ y ∗ 1", "(x + 2 ∗ y) ∗ y");
+		rewriteExpr("(x + 2 ∗ y) ∗ 1 ∗ y ∗ 1", "(x + 2 ∗ y) ∗ y");
+		rewriteExpr("1 ∗ (x + 2 ∗ y) ∗ 1 ∗ y ∗ 1", "(x + 2 ∗ y) ∗ y");
 
 		
 		// E * ... * 0 * ... * F == 0
-		expressionTest("0", "0 ∗ 0");
-		expressionTest("0", "0 ∗ 1");
-		expressionTest("0", "1 ∗ 0");
-		expressionTest("0", "(x + 2 ∗ y) ∗ 0");
-		expressionTest("0", "0 ∗ (x + 2 ∗ y)");
-		expressionTest("0", "0 ∗ (x + 2 ∗ y) ∗ y");
-		expressionTest("0", "(x + 2 ∗ y) ∗ 0 ∗ y");
-		expressionTest("0", "(x + 2 ∗ y) ∗ y ∗ 0");
-		expressionTest("0", "0 ∗ (x + 2 ∗ y) ∗ 0 ∗ y");
-		expressionTest("0", "0 ∗ (x + 2 ∗ y) ∗ y ∗ 0");
-		expressionTest("0", "(x + 2 ∗ y) ∗ 0 ∗ y ∗ 0");
-		expressionTest("0", "0 ∗ (x + 2 ∗ y) ∗ 0 ∗ y ∗ 0");
+		rewriteExpr("0 ∗ 0", "0");
+		rewriteExpr("0 ∗ 1", "0");
+		rewriteExpr("1 ∗ 0", "0");
+		rewriteExpr("(x + 2 ∗ y) ∗ 0", "0");
+		rewriteExpr("0 ∗ (x + 2 ∗ y)", "0");
+		rewriteExpr("0 ∗ (x + 2 ∗ y) ∗ y", "0");
+		rewriteExpr("(x + 2 ∗ y) ∗ 0 ∗ y", "0");
+		rewriteExpr("(x + 2 ∗ y) ∗ y ∗ 0", "0");
+		rewriteExpr("0 ∗ (x + 2 ∗ y) ∗ 0 ∗ y", "0");
+		rewriteExpr("0 ∗ (x + 2 ∗ y) ∗ y ∗ 0", "0");
+		rewriteExpr("(x + 2 ∗ y) ∗ 0 ∗ y ∗ 0", "0");
+		rewriteExpr("0 ∗ (x + 2 ∗ y) ∗ 0 ∗ y ∗ 0", "0");
 
 
 		// (-E) * (-F) == E * F
-		expressionTest("(x + 2 ∗ y) ∗ y", "(−(x + 2 ∗ y)) ∗ (−y)");
-		expressionTest("(x + 2 ∗ y) ∗ 2", "(−(x + 2 ∗ y)) ∗ (−2)");
-		expressionTest("(x + 2 ∗ y) ∗ 2", "(−(x + 2 ∗ y)) ∗ (−(2))");
-		expressionTest("2 ∗ (x + 2 ∗ y)", "(−2) ∗ (−(x + 2 ∗ y))");
-		expressionTest("2 ∗ (x + 2 ∗ y)", "(−(2)) ∗ (−(x + 2 ∗ y))");
-		expressionTest("−((x + 2 ∗ y) ∗ 2)",
-				"(−(x + 2 ∗ y)) ∗ (−(2)) ∗ (−1)");
-		expressionTest("−((x + 2 ∗ y) ∗ 2)", "−((x + 2 ∗ y) ∗ 2 ∗ 1)");
+		rewriteExpr("(−(x + 2 ∗ y)) ∗ (−y)", "(x + 2 ∗ y) ∗ y");
+		rewriteExpr("(−(x + 2 ∗ y)) ∗ (−2)", "(x + 2 ∗ y) ∗ 2");
+		rewriteExpr("(−(x + 2 ∗ y)) ∗ (−(2))", "(x + 2 ∗ y) ∗ 2");
+		rewriteExpr("(−2) ∗ (−(x + 2 ∗ y))", "2 ∗ (x + 2 ∗ y)");
+		rewriteExpr("(−(2)) ∗ (−(x + 2 ∗ y))", "2 ∗ (x + 2 ∗ y)");
+		rewriteExpr("(−(x + 2 ∗ y)) ∗ (−(2)) ∗ (−1)",
+				"−((x + 2 ∗ y) ∗ 2)");
+		rewriteExpr("−((x + 2 ∗ y) ∗ 2 ∗ 1)", "−((x + 2 ∗ y) ∗ 2)");
 		
 
 		// E / E == 1
-		expressionTest("1", "2 ÷ 2");
-		expressionTest("1", "(x + 2 ∗ y) ÷ (x + 2 ∗ y)");
+		rewriteExpr("2 ÷ 2", "1");
+		rewriteExpr("(x + 2 ∗ y) ÷ (x + 2 ∗ y)", "1");
 
 		
 		// E / 1 == E
-		expressionTest("2", "2 ÷ 1");
-		expressionTest("x + 2 ∗ y", "(x + 2 ∗ y) ÷ 1");
+		rewriteExpr("2 ÷ 1", "2");
+		rewriteExpr("(x + 2 ∗ y) ÷ 1", "x + 2 ∗ y");
 
 		
 		// 0 / E == 0
-		expressionTest("0", "0 ÷ 2");
-		expressionTest("0", "0 ÷ (x + 2 ∗ y)");
+		rewriteExpr("0 ÷ 2", "0");
+		rewriteExpr("0 ÷ (x + 2 ∗ y)", "0");
 
 		
 		// (-E) /(-F) == E / F
-		expressionTest("3 ÷ 2", "(−3) ÷ (−2)");
-		expressionTest("x ÷ (x + 2 ∗ y)", "(−x) ÷(−(x + 2 ∗ y))");
+		rewriteExpr("(−3) ÷ (−2)", "3 ÷ 2");
+		rewriteExpr("(−x) ÷(−(x + 2 ∗ y))", "x ÷ (x + 2 ∗ y)");
 
 		
 		// (X * ... * E * ... * Y)/E == X * ... * Y
-		expressionTest("2", "((x + 2 ∗ y) ∗ 2) ÷  (x + 2 ∗ y)");
-		expressionTest("2", "(2 ∗ (x + 2 ∗ y)) ÷  (x + 2 ∗ y)");
-		expressionTest("x + 2 ∗ y", "(2 ∗ (x + 2 ∗ y)) ÷  2");
-		expressionTest("x + 2 ∗ y", "((x + 2 ∗ y) ∗ 2) ÷  2");
-		expressionTest("(x + 2 ∗ y) ∗ 2", "(2 ∗ (x + 2 ∗ y) ∗ 2) ÷  2");
-		expressionTest("2 ∗ (x + 2 ∗ y)", "(2 ∗ (x + 2 ∗ y) ∗ (x + 2 ∗ y)) ÷  (x + 2 ∗ y)");
+		rewriteExpr("((x + 2 ∗ y) ∗ 2) ÷  (x + 2 ∗ y)", "2");
+		rewriteExpr("(2 ∗ (x + 2 ∗ y)) ÷  (x + 2 ∗ y)", "2");
+		rewriteExpr("(2 ∗ (x + 2 ∗ y)) ÷  2", "x + 2 ∗ y");
+		rewriteExpr("((x + 2 ∗ y) ∗ 2) ÷  2", "x + 2 ∗ y");
+		rewriteExpr("(2 ∗ (x + 2 ∗ y) ∗ 2) ÷  2", "(x + 2 ∗ y) ∗ 2");
+		rewriteExpr("(2 ∗ (x + 2 ∗ y) ∗ (x + 2 ∗ y)) ÷  (x + 2 ∗ y)", "2 ∗ (x + 2 ∗ y)");
 
 		
 		// E^1 == E
-		expressionTest("2", "2^1");
-		expressionTest("−2", "(−2)^1");
-		expressionTest("x + 2 ∗ y", "(x + 2 ∗ y)^1");
-		expressionTest("−(x + 2 ∗ y)", "(−(x + 2 ∗ y))^1");
+		rewriteExpr("2^1", "2");
+		rewriteExpr("(−2)^1", "−2");
+		rewriteExpr("(x + 2 ∗ y)^1", "x + 2 ∗ y");
+		rewriteExpr("(−(x + 2 ∗ y))^1", "−(x + 2 ∗ y)");
 		
 		
 		// E^0 == 1
-		expressionTest("1", "2^0");
-		expressionTest("1", "(−2)^0");
-		expressionTest("1", "(x + 2 ∗ y)^0");
-		expressionTest("1", "(−(x + 2 ∗ y))^0");
+		rewriteExpr("2^0", "1");
+		rewriteExpr("(−2)^0", "1");
+		rewriteExpr("(x + 2 ∗ y)^0", "1");
+		rewriteExpr("(−(x + 2 ∗ y))^0", "1");
 
 
 		// 1^E == 1
-		expressionTest("1", "1^2");
-		expressionTest("1", "1^(−2)");
-		expressionTest("1", "1^(x + 2 ∗ y)");
-		expressionTest("1", "1^(−(x + 2 ∗ y))");
+		rewriteExpr("1^2", "1");
+		rewriteExpr("1^(−2)", "1");
+		rewriteExpr("1^(x + 2 ∗ y)", "1");
+		rewriteExpr("1^(−(x + 2 ∗ y))", "1");
 
 		
 		// -(i) == (-i) where i is a literal
-		expressionTest("(−1)", "−(1)");
+		rewriteExpr("−(1)", "(−1)");
 		
 		
 		// -(-i) == i where i is a literal
-		expressionTest("1", "−(−1)");
+		rewriteExpr("−(−1)", "1");
 
 		
 		// i = j == true   or   i = j == false  (by computation)
-		predicateTest("⊤", "1 = 1");
-		predicateTest("⊥", "1 = 2");
-		predicateTest("⊥", "1 = −1");
-		predicateTest("⊤", "−1 = −1");
-		predicateTest("⊥", "−1 = −2");
-		predicateTest("⊥", "−1 = 1");
+		rewritePred("1 = 1", "⊤");
+		rewritePred("1 = 2", "⊥");
+		rewritePred("1 = −1", "⊥");
+		rewritePred("−1 = −1", "⊤");
+		rewritePred("−1 = −2", "⊥");
+		rewritePred("−1 = 1", "⊥");
 		
 
 		// i <= j == true   or   i <= j == false  (by computation)
-		predicateTest("⊤", "1 ≤ 1");
-		predicateTest("⊤", "1 ≤ 2");
-		predicateTest("⊥", "1 ≤ −1");
-		predicateTest("⊤", "−1 ≤ −1");
-		predicateTest("⊥", "−1 ≤ −2");
-		predicateTest("⊤", "−1 ≤ 1");
+		rewritePred("1 ≤ 1", "⊤");
+		rewritePred("1 ≤ 2", "⊤");
+		rewritePred("1 ≤ −1", "⊥");
+		rewritePred("−1 ≤ −1", "⊤");
+		rewritePred("−1 ≤ −2", "⊥");
+		rewritePred("−1 ≤ 1", "⊤");
 
 		// i < j == true   or   i < j == false  (by computation)
-		predicateTest("⊥", "1 < 1");
-		predicateTest("⊤", "1 < 2");
-		predicateTest("⊥", "1 < −1");
-		predicateTest("⊥", "−1 < −1");
-		predicateTest("⊥", "−1 < −2");
-		predicateTest("⊤", "−1 < 1");
+		rewritePred("1 < 1", "⊥");
+		rewritePred("1 < 2", "⊤");
+		rewritePred("1 < −1", "⊥");
+		rewritePred("−1 < −1", "⊥");
+		rewritePred("−1 < −2", "⊥");
+		rewritePred("−1 < 1", "⊤");
 
 		// i >= j == true   or   i >= j == false  (by computation)
-		predicateTest("⊤", "1 ≥ 1");
-		predicateTest("⊥", "1 ≥ 2");
-		predicateTest("⊤", "1 ≥ −1");
-		predicateTest("⊤", "−1 ≥ −1");
-		predicateTest("⊤", "−1 ≥ −2");
-		predicateTest("⊥", "−1 ≥ 1");
+		rewritePred("1 ≥ 1", "⊤");
+		rewritePred("1 ≥ 2", "⊥");
+		rewritePred("1 ≥ −1", "⊤");
+		rewritePred("−1 ≥ −1", "⊤");
+		rewritePred("−1 ≥ −2", "⊤");
+		rewritePred("−1 ≥ 1", "⊥");
 
 		// i > j == true   or   i > j == false  (by computation)
-		predicateTest("⊥", "1 > 1");
-		predicateTest("⊥", "1 > 2");
-		predicateTest("⊤", "1 > −1");
-		predicateTest("⊥", "−1 > −1");
-		predicateTest("⊤", "−1 > −2");
-		predicateTest("⊥", "−1 > 1");
+		rewritePred("1 > 1", "⊥");
+		rewritePred("1 > 2", "⊥");
+		rewritePred("1 > −1", "⊤");
+		rewritePred("−1 > −1", "⊥");
+		rewritePred("−1 > −2", "⊤");
+		rewritePred("−1 > 1", "⊥");
 		
 		// E <= E = true
-		predicateTest("⊤", "x + 2 ∗ y ≤ x + 2 ∗ y");
+		rewritePred("x + 2 ∗ y ≤ x + 2 ∗ y", "⊤");
 
 
 		// E >= E = true
-		predicateTest("⊤", "x + 2 ∗ y ≥ x + 2 ∗ y");
+		rewritePred("x + 2 ∗ y ≥ x + 2 ∗ y", "⊤");
 
 		// E < E = false
-		predicateTest("⊥", "x + 2 ∗ y < x + 2 ∗ y");
+		rewritePred("x + 2 ∗ y < x + 2 ∗ y", "⊥");
 
 		// E > E = false
-		predicateTest("⊥", "x + 2 ∗ y > x + 2 ∗ y");
+		rewritePred("x + 2 ∗ y > x + 2 ∗ y", "⊥");
 
 	}
 
@@ -1032,10 +1030,10 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 	 */
 	@Test
 	public void testBug2706216() {
-		expressionTest("− (d ∗ 2)", "d ∗ (−2)");
-		expressionTest("− (d ∗ 2 ∗ 2)", "d ∗ 2 ∗ (−2)");
+		rewriteExpr("d ∗ (−2)", "− (d ∗ 2)");
+		rewriteExpr("d ∗ 2 ∗ (−2)", "− (d ∗ 2 ∗ 2)");
 		// original problem
-		expressionTest("v + (− d)", "v + d ∗ (−1)");
+		rewriteExpr("v + d ∗ (−1)", "v + (− d)");
 	}	
 
 	/**
@@ -1044,49 +1042,49 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 	@Test
 	public void testFinite() {
 		// finite({}) == true
-		predicateTest("⊤", "finite((∅ ⦂ ℙ(ℤ)))");
+		rewritePred("finite((∅ ⦂ ℙ(ℤ)))", "⊤");
 
 		
 		// finite({a, ..., b}) == true
-		predicateTest("⊤", "finite({TRUE})");
-		predicateTest("⊤", "finite({TRUE, FALSE})");
-		predicateTest("⊤", "finite({1, 2})");
-		predicateTest("⊤", "finite({2})");
+		rewritePred("finite({TRUE})", "⊤");
+		rewritePred("finite({TRUE, FALSE})", "⊤");
+		rewritePred("finite({1, 2})", "⊤");
+		rewritePred("finite({2})", "⊤");
 		
 		// finite(S \/ ... \/ T) == finite(S) & ... & finite(T)
-		predicateTest("finite({x ∣ x > 0}) ∧ finite({y ∣ y < 0})",
-				"finite({x ∣ x > 0} ∪ {y ∣ y < 0})");
-		predicateTest(
-				"finite({x ∣ x > 0}) ∧ finite({y ∣ y < 0}) ∧ finite({x ∣ x = 0})",
-				"finite({x ∣ x > 0} ∪ {y ∣ y < 0} ∪ {x ∣ x =  0})");
+		rewritePred("finite({x ∣ x > 0} ∪ {y ∣ y < 0})",
+				"finite({x ∣ x > 0}) ∧ finite({y ∣ y < 0})");
+		rewritePred(
+				"finite({x ∣ x > 0} ∪ {y ∣ y < 0} ∪ {x ∣ x =  0})",
+				"finite({x ∣ x > 0}) ∧ finite({y ∣ y < 0}) ∧ finite({x ∣ x = 0})");
 
 		
 		// finite(POW(S)) == finite(S)
-		predicateTest("finite({x ∣ x > 0})", "finite(ℙ({x ∣ x > 0}))");
+		rewritePred("finite(ℙ({x ∣ x > 0}))", "finite({x ∣ x > 0})");
 
 		
 		// finite(S ** T) == S = {} or T = {} or (finite(S) & finite(T))
-		predicateTest(
-				"{x ∣ x > 0} = ∅ ∨ {x ∣ x < 0} = ∅ ∨ (finite({x ∣ x > 0}) ∧ finite({x ∣ x < 0}))",
-				"finite({x ∣ x > 0} × {x ∣ x < 0})");
+		rewritePred(
+				"finite({x ∣ x > 0} × {x ∣ x < 0})",
+				"{x ∣ x > 0} = ∅ ∨ {x ∣ x < 0} = ∅ ∨ (finite({x ∣ x > 0}) ∧ finite({x ∣ x < 0}))");
 		
 		
 		// finite(r~) == finite(r)
-		predicateTest("finite(r)", "finite(r∼)", "r", "S↔T");
+		rewritePred("finite(r∼)", "finite(r)", "r", "S↔T");
 		// In level 2, expression "r~" can be rewritten earlier
 		if (level2AndHigher) {
-			predicateTest("BOOL = ∅ ∨ ℤ = ∅ ∨ (finite(BOOL) ∧ finite(ℤ))",
-					"finite((ℤ × BOOL)∼)");
-			predicateTest("finite({x,y · x>0 ∧ y<2 ∣ y↦x})",
-					"finite({x ↦ y ∣ x > 0 ∧ y < 2}∼)");
+			rewritePred("finite((ℤ × BOOL)∼)",
+					"BOOL = ∅ ∨ ℤ = ∅ ∨ (finite(BOOL) ∧ finite(ℤ))");
+			rewritePred("finite({x ↦ y ∣ x > 0 ∧ y < 2}∼)",
+					"finite({x,y · x>0 ∧ y<2 ∣ y↦x})");
 		} else {
-			predicateTest("finite(ℤ × BOOL)", "finite((ℤ × BOOL)∼)");
-			predicateTest("finite({x ↦ y ∣ x > 0 ∧ y < 2})",
-					"finite({x ↦ y ∣ x > 0 ∧ y < 2}∼)");
+			rewritePred("finite((ℤ × BOOL)∼)", "finite(ℤ × BOOL)");
+			rewritePred("finite({x ↦ y ∣ x > 0 ∧ y < 2}∼)",
+					"finite({x ↦ y ∣ x > 0 ∧ y < 2})");
 		}
 
 		// finite(a..b) == true
-		predicateTest("⊤", "finite(a‥b)");
+		rewritePred("finite(a‥b)", "⊤");
 
 	}
 
@@ -1097,81 +1095,81 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 	@Test
 	public void testCardinality() {
 		// card({}) == 0
-		expressionTest("0", "card((∅ ⦂ ℙ(S)))");
+		rewriteExpr("card((∅ ⦂ ℙ(S)))", "0");
 
 		
 		// card({E}) == 1
-		expressionTest("1", "card({x + 1})");
+		rewriteExpr("card({x + 1})", "1");
 		
 		
 		// card(POW(S)) == 2^card(S)
-		expressionTest("2^(card({x ∣ x >0}))", "card(ℙ({x ∣ x > 0}))");
+		rewriteExpr("card(ℙ({x ∣ x > 0}))", "2^(card({x ∣ x >0}))");
 		
 		
 		// card(S) = 0  ==  S = {}
-		predicateTest("{x ∣ x > 0} = ∅", "card({x ∣ x > 0}) = 0");
+		rewritePred("card({x ∣ x > 0}) = 0", "{x ∣ x > 0} = ∅");
 
 		
 		// 0 = card(S)  ==  S = {}
-		predicateTest("{x ∣ x > 0} = ∅", "0 = card({x ∣ x > 0})");
+		rewritePred("0 = card({x ∣ x > 0})", "{x ∣ x > 0} = ∅");
 
 		
 		// not(card(S) = 0)  ==  not(S = {})
-		predicateTest("¬{x ∣ x > 0} = ∅", "¬card({x ∣ x > 0}) = 0");
+		rewritePred("¬card({x ∣ x > 0}) = 0", "¬{x ∣ x > 0} = ∅");
 
 		
 		// not(0 = card(S))  ==  not(S = {})
-		predicateTest("¬{x ∣ x > 0} = ∅", "¬0 = card({x ∣ x > 0})");
+		rewritePred("¬0 = card({x ∣ x > 0})", "¬{x ∣ x > 0} = ∅");
 
 		
 		// card(S) > 0  ==  not(S = {})
-		predicateTest("¬{x ∣ x > 0} = ∅", "card({x ∣ x > 0}) > 0");
+		rewritePred("card({x ∣ x > 0}) > 0", "¬{x ∣ x > 0} = ∅");
 
 		
 		// 0 < card(S)  ==  not(S = {})
-		predicateTest("¬{x ∣ x > 0} = ∅", "0 < card({x ∣ x > 0})");
+		rewritePred("0 < card({x ∣ x > 0})", "¬{x ∣ x > 0} = ∅");
 		
 
 		// card(S) = 1 == #x.S = {x}
-		predicateTest("∃y·{x ∣ x > 0} = {y}", "card({x ∣ x > 0}) = 1");
+		rewritePred("card({x ∣ x > 0}) = 1", "∃y·{x ∣ x > 0} = {y}");
 
 		
 		// 1 = card(S) == #x.S = {x}
-		predicateTest("∃y·{x ∣ x > 0} = {y}", "1 = card({x ∣ x > 0})");
+		rewritePred("1 = card({x ∣ x > 0})", "∃y·{x ∣ x > 0} = {y}");
 
 
 		// card(S(1) \/ ... \/ S(n)) == card(S(1)) + ... card(S(2)) -
 		//	                            - ... 
 		//                              + (-1)^(n-1)card(S(1) /\ ... card(S(n)))
 		if (level2AndHigher) {
-			expressionTest("card(A) + card(B) − card(A ∩ B)", "card(A ∪ B)", //
+			rewriteExpr("card(A ∪ B)", "card(A) + card(B) − card(A ∩ B)", //
 					"A", "ℙ(S)", "B", "ℙ(S)");
-			expressionTest(
-					"card(A) + card(B)  + card(C) − (card(A ∩ B) + card(A ∩ C) + card(B ∩ C)) + card(A ∩ B ∩ C)", //
+			rewriteExpr(
 					"card(A ∪ B ∪ C)", //
+					"card(A) + card(B)  + card(C) − (card(A ∩ B) + card(A ∩ C) + card(B ∩ C)) + card(A ∩ B ∩ C)", //
 					"A", "ℙ(S)");
-			expressionTest(
+			rewriteExpr(
+					"card(A ∪ B ∪ C ∪ D)",//
 					"card(A) + card(B) + card(C) + card(D) − "
 							+ "(card(A ∩ B) + card(A ∩ C) + card(A ∩ D) + card(B ∩ C) + card(B ∩ D) + card(C ∩ D)) + "
 							+ "(card(A ∩ B ∩ C) + card(A ∩ B ∩ D) + card(A ∩ C ∩ D) + card(B ∩ C ∩ D)) − "
-							+ "card(A ∩ B ∩ C ∩ D)",//
-					"card(A ∪ B ∪ C ∪ D)", //
+							+ "card(A ∩ B ∩ C ∩ D)", //
 					"A", "ℙ(S)");
 		} else {
-			expressionTest(
-					"card({x ∣ x ∈ BOOL}) + card(S) − card({x ∣ x ∈ BOOL} ∩ S)",
-					"card({x ∣ x ∈ BOOL} ∪ S)");
-			expressionTest(
+			rewriteExpr(
+					"card({x ∣ x ∈ BOOL} ∪ S)",
+					"card({x ∣ x ∈ BOOL}) + card(S) − card({x ∣ x ∈ BOOL} ∩ S)");
+			rewriteExpr(
+					"card({x ∣ x ∈ BOOL} ∪ S ∪ T)",
 					"card({x ∣ x ∈ BOOL}) + card(S) + card(T) − "
 							+ "(card({x ∣ x ∈ BOOL} ∩ S) + card({x ∣ x ∈ BOOL} ∩ T) + card(S ∩ T)) + "
-							+ "card({x ∣ x ∈ BOOL} ∩ S ∩ T)",
-					"card({x ∣ x ∈ BOOL} ∪ S ∪ T)");
-			expressionTest(
+							+ "card({x ∣ x ∈ BOOL} ∩ S ∩ T)");
+			rewriteExpr(
+					"card({x ∣ x ∈ BOOL} ∪ S ∪ T ∪ R)",
 					"card({x ∣ x ∈ BOOL}) + card(S) + card(T) + card(R) − "
 							+ "(card({x ∣ x ∈ BOOL} ∩ S) + card({x ∣ x ∈ BOOL} ∩ T) + card({x ∣ x ∈ BOOL} ∩ R) + card(S ∩ T) + card(S ∩ R) + card(T ∩ R)) + "
 							+ "(card({x ∣ x ∈ BOOL} ∩ S ∩ T) + card({x ∣ x ∈ BOOL} ∩ S ∩ R) + card({x ∣ x ∈ BOOL} ∩ T ∩ R) + card(S ∩ T ∩ R)) − "
-							+ "card({x ∣ x ∈ BOOL} ∩ S ∩ T ∩ R)",
-					"card({x ∣ x ∈ BOOL} ∪ S ∪ T ∪ R)");
+							+ "card({x ∣ x ∈ BOOL} ∩ S ∩ T ∩ R)");
 		}
 	}
 
@@ -1181,43 +1179,43 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 	@Test
 	public void testBoolean() {
 		// bool(false) == FALSE
-		expressionTest("FALSE", "bool(⊥)");
+		rewriteExpr("bool(⊥)", "FALSE");
 		
 		// bool(true) == TRUE
-		expressionTest("TRUE", "bool(⊤)");
+		rewriteExpr("bool(⊤)", "TRUE");
 		
 		// TRUE = bool(P) == P
-		predicateTest("x = 1", "TRUE = bool(x = 1)");
+		rewritePred("TRUE = bool(x = 1)", "x = 1");
 		
 		// bool(P) = TRUE == P
-		predicateTest("x = 1", "bool(x = 1) = TRUE");
+		rewritePred("bool(x = 1) = TRUE", "x = 1");
 		
 		// FALSE = bool(P) == not(P)
-		predicateTest("¬x = 1", "FALSE = bool(x = 1)");
+		rewritePred("FALSE = bool(x = 1)", "¬x = 1");
 		
 		// bool(P) = FALSE == not(P)
-		predicateTest("¬x = 1", "bool(x = 1) = FALSE");
+		rewritePred("bool(x = 1) = FALSE", "¬x = 1");
 	}
 
 	@Test
 	public void testCond() throws Exception {
 		
 		// COND(true, E_1, E_2) == E_1
-		expressionTest("1", "COND(⊤,1,2)");
+		rewriteExpr("COND(⊤,1,2)", "1");
 
 		// COND(false, E_1, E_2) == E_2
-		expressionTest("2", "COND(⊥,1,2)");
+		rewriteExpr("COND(⊥,1,2)", "2");
 
 		// COND(C, E, E) == E
-		expressionTest("2", "COND(x=1,2,2)");
+		rewriteExpr("COND(x=1,2,2)", "2");
 		
 	}
 
 	@Test
 	public void bug3158594() throws Exception {
-		predicateTest("∃y·y∗y<0∧y=1 ÷ 0",
-				"0 ↦ 0 ∈ {x ∣ ∃ y· y∗y < 0 ∧ y = 1 ÷ 0}");
-		predicateTest("∃y·y∗y<0∧y=1 ÷ 0", "∃y·y∗y<0∧y=1 ÷ 0");
+		rewritePred("0 ↦ 0 ∈ {x ∣ ∃ y· y∗y < 0 ∧ y = 1 ÷ 0}",
+				"∃y·y∗y<0∧y=1 ÷ 0");
+		noRewritePred("∃y·y∗y<0∧y=1 ÷ 0");
 	}
 
 }

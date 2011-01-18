@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -47,41 +47,41 @@ public class TypeRewriterTests extends AbstractFormulaRewriterTests {
 	@Test
 	public void test_SIMP_TYPE_EQUAL_EMPTY_Left() throws Exception {
 		// Typ = {} == false (where Typ is a type expression)
-		predicateTest("⊥", "ℤ = ∅");
-		predicateTest("⊥", "ℙ(ℤ) = ∅");
-		predicateTest("ℕ = ∅", "ℕ = ∅");
+		rewritePred("ℤ = ∅", "⊥");
+		rewritePred("ℙ(ℤ) = ∅", "⊥");
+		noRewritePred("ℕ = ∅");
 	}
 
 	@Test
 	public void test_SIMP_TYPE_EQUAL_EMPTY_Right() throws Exception {
 		// {} = Typ == false (where Typ is a type expression)
-		predicateTest("⊥", "∅ = ℤ");
-		predicateTest("⊥", "∅ = ℙ(ℤ)");
-		predicateTest("∅ = ℕ", "∅ = ℕ");
+		rewritePred("∅ = ℤ", "⊥");
+		rewritePred("∅ = ℙ(ℤ)", "⊥");
+		noRewritePred("∅ = ℕ");
 	}
 
 	@Test
 	public void test_SIMP_TYPE_IN() throws Exception {
 		// E : Typ == true (where Typ is a type expression)
-		predicateTest("⊤", "E ∈ ℤ");
-		predicateTest("⊤", "E ∈ ℙ(ℤ)");
-		predicateTest("E ∈ ℕ", "E ∈ ℕ");
+		rewritePred("E ∈ ℤ", "⊤");
+		rewritePred("E ∈ ℙ(ℤ)", "⊤");
+		noRewritePred("E ∈ ℕ");
 	}
 	
 	@Test
 	public void test_SIMP_TYPE_SUBSETEQ() throws Exception {
 		// S <: Typ == true (where Typ is a type expression)
-		predicateTest("⊤", "S ⊆ ℤ");
-		predicateTest("⊤", "S ⊆ ℙ(ℤ)");
-		predicateTest("S ⊆ ℕ", "S ⊆ ℕ");
+		rewritePred("S ⊆ ℤ", "⊤");
+		rewritePred("S ⊆ ℙ(ℤ)", "⊤");
+		noRewritePred("S ⊆ ℕ");
 	}
 	
 	@Test
 	public void test_SIMP_TYPE_SUBSET_L() throws Exception {
 		// S <<: Typ == S /= Typ (where Typ is a type expression)
-		predicateTest("S ≠ ℤ", "S ⊂ ℤ");
-		predicateTest("S ≠ ℙ(ℤ)", "S ⊂ ℙ(ℤ)");
-		predicateTest("S ⊂ ℕ", "S ⊂ ℕ");
+		rewritePred("S ⊂ ℤ", "S ≠ ℤ");
+		rewritePred("S ⊂ ℙ(ℤ)", "S ≠ ℙ(ℤ)");
+		noRewritePred("S ⊂ ℕ");
 	}
 
 	@Test
