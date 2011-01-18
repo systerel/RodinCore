@@ -122,6 +122,7 @@ public class EventBPredicateText {
 						final int x = event.x + MARGIN;
 						final int y = event.y + event.ascent - 2 * textSize.y / 3;
 						text.setLocation(x, y);
+						text.setVisible(true);
 						final Rectangle bounds = text.getBounds();
 						event.gc.drawRectangle(bounds.x - 1, bounds.y - 1,
 								bounds.width + 1, bounds.height + 1);
@@ -211,6 +212,7 @@ public class EventBPredicateText {
 		style.metrics = new GlyphMetrics(ascent + MARGIN, descent + MARGIN,
 				rect.width + 2 * MARGIN);
 		text.setLocation(styledText.getLocationAtOffset(offset));
+		text.setVisible(false);
 		styledText.setStyleRange(style);
 	}
 

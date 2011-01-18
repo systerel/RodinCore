@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -587,12 +587,11 @@ public abstract class HypothesisComposite implements
 	 * Scroll to the bottom of the list of hypothesis rows. This is implemented
 	 * by showing the leftmost control of the last hypothesis.
 	 */
-	public Control getBottomControl() {
+	public void scrollToBottom() {
 		if (!rows.isEmpty()) {
 			final HypothesisRow lastRow = rows.get(rows.size() - 1);
-			return lastRow.getLeftmostControl();
+			sc.showControl(lastRow.getLeftmostControl());
 		}
-		return null;
 	}
 	
 	

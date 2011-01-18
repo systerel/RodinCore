@@ -29,16 +29,10 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.PaintObjectEvent;
-import org.eclipse.swt.custom.PaintObjectListener;
-import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GlyphMetrics;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -60,8 +54,8 @@ import org.eventb.ui.prover.ITacticApplication;
  */
 public class HypothesisRow {
 
-	// Set of composites and button.
-	private final Button checkBox;
+	// Check Button holder
+	private final ControlHolder<Button> checkBoxHolder;
 
 	private final ProverUI proverUI;
 
@@ -72,8 +66,6 @@ public class HypothesisRow {
 
 	// The hypothesis contains in this row.
 	private final Predicate hyp;
-
-	private static final int MARGIN = 2;
 
 	private final Color background;
 
@@ -86,8 +78,6 @@ public class HypothesisRow {
 	protected StyledText styledText;
 
 	protected TacticHyperlinkManager manager;
-
-	private PaintObjectListener checkBoxPaintListener;
 
 	/**
 	 * @author htson
@@ -114,7 +104,7 @@ public class HypothesisRow {
 		else
 			background = EventBSharedColor.getSystemColor(SWT.COLOR_GRAY);
 
-		checkBox = new Button(styledText, SWT.CHECK);
+		final Button checkBox = new Button(styledText, SWT.CHECK);
 		checkBox.setSize(15, 15);
 		if (ProverUIUtils.DEBUG) {
 			checkBox.setBackground(EventBSharedColor
@@ -125,28 +115,11 @@ public class HypothesisRow {
 		//checkBox.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		checkBox.setEnabled(enable);
 		checkBox.addSelectionListener(listener);
-		
-		checkBox.setVisible(false);
-		final int checkBoxOffset = styledText.getCharCount() - 2;
-		checkBoxPaintListener = new PaintObjectListener() {
-			@Override
-			public void paintObject(PaintObjectEvent event) {
-				final StyleRange style = event.style;
-				int start = style.start;
-					int offset = checkBoxOffset;
-					if (start == offset) {
-						final Point textSize = checkBox.getSize();
-						final int x = event.x + MARGIN;
-						final int y = event.y + event.ascent - 2 * textSize.y / 3;
-						checkBox.setLocation(x, y);
-						checkBox.setVisible(true);
-					}
-				}
-		};
-		
-		styledText.addPaintObjectListener(checkBoxPaintListener);
-		addControl(checkBox, checkBoxOffset);
 
+		final int checkBoxOffset = styledText.getCharCount() - 2;
+		checkBoxHolder = new ControlHolder<Button>(styledText, checkBox, checkBoxOffset);
+		checkBoxHolder.attach();
+		
 		// buttonComposite = toolkit.createComposite(parent);
 		// GridLayout layout = new GridLayout();
 		// layout.makeColumnsEqualWidth = true;
@@ -185,23 +158,6 @@ public class HypothesisRow {
 
 		createHypothesisText(parsedPredicate, parsedString);
 
-	}
-
-	public void addControl(Control control, int offset) {
-		final StyleRange style = new StyleRange();
-		style.start = offset;
-		style.length = 1;
-		control.pack();
-		final Rectangle rect = control.getBounds();
-		int ascent = 2 * rect.width / 3;
-		int descent = rect.height - ascent;
-		style.metrics = new GlyphMetrics(ascent + MARGIN, descent + MARGIN,
-				rect.height + 2 * MARGIN);
-		final Point locationAtOffset = styledText.getLocationAtOffset(offset);
-		control.setLocation(locationAtOffset);
-		style.background = EventBSharedColor
-				.getSystemColor(SWT.COLOR_DARK_MAGENTA);
-		styledText.setStyleRange(style);
 	}
 
 	public void createHypothesisText(Predicate parsedPredicate,
@@ -311,11 +267,11 @@ public class HypothesisRow {
 		if (hypothesisText != null)
 			hypothesisText.dispose();
 
-		if (!checkBox.isDisposed()) {
-			checkBox.removeSelectionListener(listener);
-			styledText.removePaintObjectListener(checkBoxPaintListener);
-			checkBox.dispose();
+		final Button checkbox = checkBoxHolder.getControl();
+		if (!checkbox.isDisposed()) {
+			checkbox.removeSelectionListener(listener);
 		}
+		checkBoxHolder.remove();
 		// for (ImageHyperlink hyperlink : hyperlinks)
 		// hyperlink.dispose();
 		// buttonComposite.dispose();
@@ -330,7 +286,8 @@ public class HypothesisRow {
 	 *         otherwise
 	 */
 	public boolean isSelected() {
-		return checkBox.getSelection();
+		final Button checkbox = checkBoxHolder.getControl();
+		return checkbox.getSelection();
 	}
 
 	/**
@@ -362,11 +319,11 @@ public class HypothesisRow {
 	}
 
 	public void setSelected(boolean selected) {
-		checkBox.setSelection(selected);
+		checkBoxHolder.getControl().setSelection(selected);
 	}
 
 	public Control getLeftmostControl() {
-		return checkBox;
+		return checkBoxHolder.getControl();
 	}
 
 }

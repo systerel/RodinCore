@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * 
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - Initial API and implementation
  ******************************************************************************/
 
 package org.eventb.internal.ui.prover;
@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -32,7 +31,6 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.ui.EventBImage;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.RodinDBException;
@@ -234,10 +232,7 @@ public class SelectedHypothesisComposite extends HypothesisComposite {
 		// to the bottom of the hypothesis rows.
 		super.refresh();
 		parentForm.reflow(true);
-		final Control c = getBottomControl();
-		if (c != null)
-		sc.showControl(c);
-		//scrollToBottom();
+		scrollToBottom();
 	}
 
 }
