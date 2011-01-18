@@ -20,7 +20,6 @@ import static org.eventb.internal.ui.prover.ProverUIUtils.addHyperlink;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyCommand;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyTactic;
 import static org.eventb.internal.ui.prover.ProverUIUtils.debug;
-import static org.eventb.internal.ui.prover.ProverUIUtils.getHyperlinks;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getIcon;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getParsed;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getProofStateDelta;
@@ -89,6 +88,8 @@ public class GoalPage extends Page implements IGoalPage {
 
 	private static final IUserSupportManager USM = EventBPlugin
 			.getUserSupportManager();
+	
+	private static final int NB_TABS_LEFT = 2;
 
 	protected final IUserSupport userSupport;
 
@@ -299,7 +300,7 @@ public class GoalPage extends Page implements IGoalPage {
 				indexes = getIndexesString(tmpPred, tmpString);
 			} else {
 				actualString = PredicateUtil.prettyPrint(max_length, tmpString,
-						tmpPred);
+						tmpPred, NB_TABS_LEFT);
 			}
 
 			final Map<Point, List<ITacticApplication>> links;
@@ -370,7 +371,7 @@ public class GoalPage extends Page implements IGoalPage {
 			}
 		}
 		actualString += PredicateUtil.prettyPrint(max_length, sourceString,
-				qpred.getPredicate());
+				qpred.getPredicate(), NB_TABS_LEFT);
 		return offsets;
 	}
 

@@ -88,9 +88,9 @@ public abstract class HypothesisComposite implements
 	private static final IUserSupportManager USM = EventBPlugin
 			.getUserSupportManager();
 
-	private static final int[] TSTOPS = { 20, 40, 60, 80 };
+	//private static final int[] TSTOPS = { 20, 40, 60, 80 };
 	
-	private static final String TAB = "\t";
+	private static final int NB_TABS_LEFT = 2;
 
 	private static final int LINE_SPACING = 3;
 
@@ -227,7 +227,7 @@ public abstract class HypothesisComposite implements
 				.getFont(PreferenceConstants.RODIN_MATH_FONT);
 		JFaceResources.getFontRegistry().addListener(this);
 		styledText.setFont(font);
-		styledText.setTabStops(TSTOPS);
+		//styledText.setTabStops(TSTOPS);
 		styledText.setEditable(false);
 		styledText.setLineSpacing(LINE_SPACING);
 		styledText.addMouseListener(new DoubleClickStyledTextListener(styledText));
@@ -376,10 +376,10 @@ public abstract class HypothesisComposite implements
 		// Recreating the hypothesis rows according to the input.
 		int i = 0;
 		for (Predicate hyp : hyps) {
-			styledText.append(TAB);
-			styledText.append(TAB);
-			final HypothesisRow row = new HypothesisRow(styledText, hyp,
-					userSupport, i % 2 != 0, enabled, this, proverUI, manager);
+			ProverUIUtils.appendTabs(styledText, NB_TABS_LEFT);
+			final HypothesisRow row = new HypothesisRow(styledText,
+					NB_TABS_LEFT, hyp, userSupport, i % 2 != 0, enabled, this,
+					proverUI, manager);
 			rows.add(row);
 			styledText.append("\n\n");
 			i++;
@@ -406,7 +406,7 @@ public abstract class HypothesisComposite implements
 					+ " ms.");
 		}
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 

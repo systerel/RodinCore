@@ -92,22 +92,24 @@ public class EventBPredicateText {
 		this.enable = enable;
 	}
 
-	// This must be called after initialisation
 	public void append(String parsedString, IUserSupport userSupport,
 			Predicate hyp, Predicate parsedPredicate) {
 		this.us = userSupport;
+		
+		textOffset = styledText.getCharCount();
+		final String prettyStr = getPrettyPrintedString(parsedString, parsedPredicate);
+
 		final Map<Point, List<ITacticApplication>> links = getLinks(
-				parsedString, hyp);
+				prettyStr, hyp);
 		manager.putAssociation(links.keySet(), hypothesisRow);
 		manager.setHyperlinks(links, hypothesisRow);
-		textOffset = styledText.getCharCount();
 
-		final String disPredStr = getDisplayablePredicateString(parsedString, parsedPredicate);
-		styledText.append(disPredStr);
+		styledText.append(prettyStr);
 		
-
 		createTextBoxes();
-		// reposition widgets on paint event and draw a box around the widgets.
+		
+		// reposition widgets on paint event and draw a red box around the
+		// yellow input widgets
 		paintObjListener = new PaintObjectListener() {
 			@Override
 			public void paintObject(PaintObjectEvent event) {
@@ -135,8 +137,9 @@ public class EventBPredicateText {
 		setStyle();
 	}
 	
-	private String getDisplayablePredicateString(String predicateStr,
+	private String getPrettyPrintedString(String predicateStr,
 			Predicate parsedPredicate) {
+		final int nbTabsFromLeft = hypothesisRow.getNbTabsFromLeft();
 		if (enable && parsedPredicate.getTag() == Formula.FORALL) {
 			final String space = " ";
 			final QuantifiedPredicate qpred = (QuantifiedPredicate) parsedPredicate;
@@ -162,12 +165,13 @@ public class EventBPredicateText {
 					stb.append(", ");
 				}
 			}
+			ProverUIUtils.appendTabs(stb, nbTabsFromLeft);
 			stb.append(prettyPrint(MAX_LENGTH, predicateStr,
-					qpred.getPredicate()));
+					qpred.getPredicate(), nbTabsFromLeft));
 			return stb.toString();
 		}
 		offsets = new int[0];
-		return prettyPrint(MAX_LENGTH, predicateStr, parsedPredicate);
+		return prettyPrint(MAX_LENGTH, predicateStr, parsedPredicate, nbTabsFromLeft);
 	}
 
 	private Map<Point, List<ITacticApplication>> getLinks(String predicateStr,
@@ -198,6 +202,7 @@ public class EventBPredicateText {
 				}
 			});
 			resizeControl(text, offset);
+			text.setVisible(false);
 		}
 	}
 
@@ -212,7 +217,6 @@ public class EventBPredicateText {
 		style.metrics = new GlyphMetrics(ascent + MARGIN, descent + MARGIN,
 				rect.width + 2 * MARGIN);
 		text.setLocation(styledText.getLocationAtOffset(offset));
-		text.setVisible(false);
 		styledText.setStyleRange(style);
 	}
 
@@ -242,5 +246,5 @@ public class EventBPredicateText {
 		}
 		return results;
 	}
-
+	
 }

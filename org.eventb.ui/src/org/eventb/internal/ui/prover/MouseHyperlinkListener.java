@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,6 +77,8 @@ public abstract class MouseHyperlinkListener implements Listener {
 
 		@Override
 		public void handleEvent(Event e) {
+			if (ProverUIUtils.DEBUG)
+				ProverUIUtils.debug("Hover ");
 			manager.showToolTip(new Point(e.x, e.y));
 		}
 	}

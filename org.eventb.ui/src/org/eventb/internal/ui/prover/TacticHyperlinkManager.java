@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -228,7 +228,7 @@ public class TacticHyperlinkManager {
 	// Display the shell 16 pixels below the place where the user clicked
 	// so that the hyperlink source is not hidden by the menu
 	void setMenuLocation(Menu menu, Point position) {
-		Point belowCursor = new Point(position.x, position.y + 16);
+		Point belowCursor = new Point(position.x + 5, position.y + 10);
 		menu.setLocation(belowCursor);
 	}
 

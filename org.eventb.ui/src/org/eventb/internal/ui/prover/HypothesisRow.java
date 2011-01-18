@@ -79,13 +79,17 @@ public class HypothesisRow {
 
 	protected TacticHyperlinkManager manager;
 
+	private ControlHolder<Button> checkBoxHolder2;
+
+	private final int nbTabsFromLeft;
+
 	/**
 	 * @author htson
 	 *         <p>
 	 *         This class extends HyperlinkAdapter and provide response actions
 	 *         when a hyperlink is activated.
 	 */
-	public HypothesisRow(StyledText styledText, Predicate hyp,
+	public HypothesisRow(StyledText styledText, int nbTabsFromLeft, Predicate hyp,
 			IUserSupport userSupport, boolean odd, boolean enable,
 			SelectionListener listener, ProverUI proverUI,
 			TacticHyperlinkManager manager) {
@@ -97,6 +101,7 @@ public class HypothesisRow {
 		this.enable = enable;
 		this.proverUI = proverUI;
 		this.manager = manager;
+		this.nbTabsFromLeft = nbTabsFromLeft;
 
 		// FIXME why twice the same color?
 		if (odd)
@@ -119,6 +124,11 @@ public class HypothesisRow {
 		final int checkBoxOffset = styledText.getCharCount() - 2;
 		checkBoxHolder = new ControlHolder<Button>(styledText, checkBox, checkBoxOffset);
 		checkBoxHolder.attach();
+		
+		final Button checkbox2 = new Button(styledText, SWT.PUSH);
+		final int checkbox2Offset = checkBoxOffset + 1;
+		checkBoxHolder2 = new ControlHolder<Button>(styledText, checkbox2, checkbox2Offset);
+		checkBoxHolder2.attach();
 		
 		// buttonComposite = toolkit.createComposite(parent);
 		// GridLayout layout = new GridLayout();
@@ -272,6 +282,7 @@ public class HypothesisRow {
 			checkbox.removeSelectionListener(listener);
 		}
 		checkBoxHolder.remove();
+		checkBoxHolder2.remove();
 		// for (ImageHyperlink hyperlink : hyperlinks)
 		// hyperlink.dispose();
 		// buttonComposite.dispose();
@@ -324,6 +335,10 @@ public class HypothesisRow {
 
 	public Control getLeftmostControl() {
 		return checkBoxHolder.getControl();
+	}
+
+	public int getNbTabsFromLeft() {
+		return nbTabsFromLeft;
 	}
 
 }

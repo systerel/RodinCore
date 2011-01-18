@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -74,6 +75,12 @@ public class ProverUIUtils {
 	 * The debug flag. 
 	 */
 	public static boolean DEBUG = false;
+	
+	
+	/**
+	 * The character used to build a margin on the left of the proving UI
+	 */
+	public static String TAB = "\t";
 
 	// The debug prefix.
 	private final static String DEBUG_PREFIX = "*** ProverUI *** ";
@@ -533,7 +540,8 @@ public class ProverUIUtils {
 	 * @return the position of the hyperlink relatively to the managed styled
 	 *         text contents
 	 */
-	public static Point getGlobalLocationAtOffset(TacticHyperlinkManager manager, Point hyperlinkPosition) {
+	public static Point getGlobalLocationAtOffset(
+			TacticHyperlinkManager manager, Point hyperlinkPosition) {
 		final int offset = manager.getText().getCharCount();
 		hyperlinkPosition.x += offset;
 		hyperlinkPosition.y += offset;
@@ -576,5 +584,18 @@ public class ProverUIUtils {
 		SafeRunner.run(getter);
 		return getter.getResult();
 	}
+	
+	public static void appendTabs(StringBuilder sb, int nbTabs) {
+		for (int i = 0; i < nbTabs ; i++) {
+			sb.append(TAB);
+		}
+	}
+	
+	public static void appendTabs(StyledText st, int nbTabs) {
+		for (int i = 0; i < nbTabs ; i++) {
+			st.append(TAB);
+		}
+	}
+	
 
 }
