@@ -24,6 +24,7 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
 import org.eventb.internal.core.seqprover.Messages;
+import org.eventb.internal.core.seqprover.Util;
 
 /**
  * This class contains static methods that return basic tactics.
@@ -88,8 +89,16 @@ public class BasicTactics {
 			@Override
 			public Object apply(IProofTreeNode pt, IProofMonitor pm){
 				if (!pt.isOpen()) return "Root already has children";
-				IReasonerOutput reasonerOutput = 
-					reasoner.apply(pt.getSequent(), reasonerInput, pm);
+				final IReasonerOutput reasonerOutput;
+				try {
+					reasonerOutput = reasoner.apply(pt.getSequent(),
+							reasonerInput, pm);
+				} catch (Exception e) {
+					final String msg = "while applying the reasoner: "
+							+ reasoner.getReasonerID();
+					Util.log(e, msg);
+					return "Reasoner failed unexpectedly, see error log";
+				}
 				if (reasonerOutput == null) return "! Plugin returned null !";
 				if (!(reasonerOutput instanceof IProofRule)) return reasonerOutput;
 				IProofRule rule = (IProofRule)reasonerOutput;

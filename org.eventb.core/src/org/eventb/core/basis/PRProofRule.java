@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2005, 2014 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IRepairableInputReasoner;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SerializeException;
+import org.eventb.internal.core.Util;
 import org.eventb.internal.core.basis.ProofStoreCollector;
 import org.eventb.internal.core.basis.ProofStoreReader;
 import org.rodinp.core.IInternalElementType;
@@ -116,7 +117,16 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 
 		final IReasonerInputReader deserializer = new ProofStoreReader.Bridge(this, store, confidence,
 				display, goal, neededHyps, antecedents);
-		final IReasonerInput input = getInput(reasonerDesc, deserializer);
+
+		final IReasonerInput input;
+		try {
+			input = getInput(reasonerDesc, deserializer);
+		} catch (Exception e) {
+			final String msg = "while deserializing rule of reasoner: "
+							+ reasonerDesc.getId();
+			Util.log(e, msg);
+			return new EmptySkeleton(comment);
+		}
 		
 		final IProofRule proofRule = ProverFactory.makeProofRule(
 				reasonerDesc,
@@ -139,13 +149,24 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 			return reasoner.deserializeInput(deserializer);
 		} catch (SerializeException e) {
 			if (reasoner instanceof IRepairableInputReasoner) {
-				final IReasonerInput repaired = ((IRepairableInputReasoner) reasoner)
-						.repair(deserializer);
+				IReasonerInput repaired = null;
+				try {
+					repaired = ((IRepairableInputReasoner) reasoner)
+							.repair(deserializer);
+				} catch (Exception e1) {
+					final String msg1 = "while repairing input of reasoner: "
+							+ reasoner.getReasonerID();
+					Util.log(e1, msg1);
+					throw Util.newRodinDBException(msg1, e1);				}
 				if (repaired != null) {
 					return repaired;
 				}
 			}
-			throw (RodinDBException) e.getCause();
+			final Throwable cause = e.getCause();
+			final String msg = "while deserializing input of reasoner: "
+					+ reasoner.getReasonerID();
+			Util.log(cause, msg);
+			throw Util.newRodinDBException(msg, cause);
 		}
 	}
 
@@ -176,15 +197,17 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 		}
 
 		// write out the reasoner input
-		IReasoner reasoner = proofRule.generatedBy();
-		IReasonerInput input = proofRule.generatedUsing();
+		final IReasoner reasoner = proofRule.generatedBy();
+		final IReasonerInput input = proofRule.generatedUsing();
+		final IReasonerInputWriter writer =
+			new ProofStoreCollector.Bridge(this, store, monitor);
 		try {
-			IReasonerInputWriter writer = 
-				new ProofStoreCollector.Bridge(this, store, monitor); 
 			reasoner.serializeInput(input, writer);
 		} catch (SerializeException e) {
-			// TODO check before casting
-			throw (RodinDBException)e.getCause();
+			final Throwable cause = e.getCause();
+			final String msg = "while serializing input of reasoner: "
+					+ reasoner.getReasonerID();
+			throw Util.newRodinDBException(msg, cause);
 		}
 	}
 

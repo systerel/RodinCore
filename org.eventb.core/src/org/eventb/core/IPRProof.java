@@ -131,7 +131,8 @@ public interface IPRProof extends IInternalElement, IPRProofInfoElement {
 
 	/**
 	 * Sets the proof tree of this proof element by serializing the given proof
-	 * tree into the database.
+	 * tree into the database. The proof tree can be modified by pruning some
+	 * nodes in case of serialization failure.
 	 * 
 	 * <p>
 	 * This method also increments the PR stamp for this element, as well as the

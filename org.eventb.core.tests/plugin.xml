@@ -19,6 +19,11 @@
             id="contextDependentReasoner"
             name="contextDependentReasoner">
       </reasoner>
+      <reasoner
+            class="org.eventb.core.tests.pom.AdversarialReasoner"
+            id="adversarial"
+            name="Adversarial reasoner">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">
@@ -28,6 +33,11 @@
             id="tracingTactic"
             name="Tracing Tactic">
       </autoTactic>
+      <autoTactic
+            class="org.eventb.core.tests.pom.AdversarialReasoner$Tactic"
+            description="Adversarial tactic that can fail badly"
+            id="adversarialTac"
+            name="Adversarial Tactic"/>
    </extension>
    <extension
          point="org.eventb.core.pogModuleTypes">
