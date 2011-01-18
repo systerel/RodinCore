@@ -109,10 +109,7 @@ public abstract class EventBProofElement extends InternalElement implements
 	@Override
 	public void setHasManualProof(boolean value, IProgressMonitor monitor)
 			throws RodinDBException {
-
 		setAttributeTrue(MANUAL_PROOF_ATTRIBUTE, value, monitor);
-		
-		assert(value == getHasManualProof());
 	}
 
 	/**
