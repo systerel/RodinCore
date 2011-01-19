@@ -9,7 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
  *     Systerel - mathematical language V2
- *     Systerel - added dispose listener to hypothesis composite
+ *     Systerel - added dispose checkboxListener to hypothesis composite
  *     Systerel - refactored to use ITacticProvider2 and ITacticApplication
  *     Systerel - bug correction (oftype) #2884753
  *     Systerel - fixed Hyperlink.setImage() calls
@@ -53,10 +53,10 @@ import org.eventb.ui.prover.ITacticApplication;
  */
 public class HypothesisRow {
 
+	// Number of tabulations from the left
+	private final int nbTabsFromLeft;
 
 	private final ProverUI proverUI;
-
-	private EventBPredicateText hypothesisText;
 
 	// The UserSupport associated with this instance of the editor.
 	private final IUserSupport userSupport;
@@ -66,24 +66,24 @@ public class HypothesisRow {
 
 	private final boolean enable;
 
-	private final SelectionListener listener;
-
 	protected StyledText styledText;
+
+	private EventBPredicateText hypothesisText;
 
 	protected TacticHyperlinkManager manager;
 
-	private final int nbTabsFromLeft;
-
 	// Check Button holder
 	private final ControlHolder<Button> checkBoxHolder;
+	private final SelectionListener checkboxListener;
 	
 	// Predicate/Command holder
-	private ControlHolder<Button> menuHolder;
+	private ControlHolder<Button> predAppliHolder;
+	private SelectionListener predAppliListener;
+	
 
 	/**
 	 * @author htson
-	 *         <p>
-	 *         This class extends HyperlinkAdapter and provide response actions
+	 *         This class extends and provide response actions
 	 *         when a hyperlink is activated.
 	 */
 	public HypothesisRow(StyledText styledText, int nbTabsFromLeft, Predicate hyp,
@@ -93,7 +93,7 @@ public class HypothesisRow {
 
 		this.styledText = styledText;
 		this.hyp = hyp;
-		this.listener = listener;
+		this.checkboxListener = listener;
 		this.userSupport = userSupport;
 		this.enable = enable;
 		this.proverUI = proverUI;
@@ -108,9 +108,9 @@ public class HypothesisRow {
 		checkBoxHolder.attach(enable);
 		
 		final int menuOffset = checkBoxOffset + 1;
-		final Button predAppli = createApplicationsButton();
-		menuHolder = new ControlHolder<Button>(styledText, predAppli, menuOffset);
-		menuHolder.attach(enable);
+		final Button predAppliButton = createApplicationsButton();
+		predAppliHolder = new ControlHolder<Button>(styledText, predAppliButton, menuOffset);
+		predAppliHolder.attach(enable);
 
 		final String parsedString = hyp.toString();
 		// Predicate containing the SourceLocations
@@ -129,7 +129,7 @@ public class HypothesisRow {
 	}
 	
 	private Button createApplicationsButton() {
-		Button button = new Button(styledText, SWT.ARROW | SWT.DOWN);
+		final Button button = new Button(styledText, SWT.ARROW | SWT.DOWN);
 		button.setEnabled(false);
 		if (!enable) {
 			return button;
@@ -142,24 +142,24 @@ public class HypothesisRow {
 		final int tacSize = tactics.size();
 		if (tacSize == 1 && comSize == 0) {
 			final ITacticApplication appli = tactics.get(0);
-			button = new Button(styledText, SWT.PUSH);
+			final Button tacButton = new Button(styledText, SWT.PUSH);
 			final IPredicateApplication predAppli = (IPredicateApplication) appli;
-			button.setImage(getIcon(predAppli));
-			button.setToolTipText(getTooltip(predAppli));
-			button.addSelectionListener(getTacticSelectionListener(
+			tacButton.setImage(getIcon(predAppli));
+			tacButton.setToolTipText(getTooltip(predAppli));
+			tacButton.addSelectionListener(getTacticSelectionListener(
 					tacticUIRegistry, appli));
-			return button;
+			return tacButton;
 		}
 		if (tacSize == 0 && comSize == 1) {
 			final ICommandApplication command = commands.get(0);
-			button = new Button(styledText, SWT.PUSH);
-			button.setImage(command.getIcon());
-			button.setToolTipText(command.getTooltip());
-			return button;
+			final Button comButton = new Button(styledText, SWT.PUSH);
+			comButton.setImage(command.getIcon());
+			comButton.setToolTipText(command.getTooltip());
+			return comButton;
 		}
 		button.setEnabled(true);
 		final Menu menu = new Menu(button);
-		final SelectionListener arrowListener = new SelectionListener() {
+		predAppliListener = new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				menu.setVisible(true);
@@ -170,7 +170,7 @@ public class HypothesisRow {
 				widgetSelected(e);
 			}
 		};
-		button.addSelectionListener(arrowListener);
+		button.addSelectionListener(predAppliListener);
 		createImageHyperlinks(menu, tacticUIRegistry, tactics, commands);
 		return button;
 
@@ -249,7 +249,7 @@ public class HypothesisRow {
 	}
 
 	/**
-	 * Utility method to dispose the compsites and check boxes.
+	 * Utility method to dispose the composites and check boxes.
 	 */
 	public void dispose() {
 		if (hypothesisText != null)
@@ -257,10 +257,16 @@ public class HypothesisRow {
 
 		final Button checkbox = checkBoxHolder.getControl();
 		if (!checkbox.isDisposed()) {
-			checkbox.removeSelectionListener(listener);
+			checkbox.removeSelectionListener(checkboxListener);
 		}
 		checkBoxHolder.remove();
-		menuHolder.remove();
+		
+		final Button predAppliButton = predAppliHolder.getControl();
+		if (!predAppliButton.isDisposed() && predAppliListener != null) {
+			predAppliButton.removeSelectionListener(predAppliListener);
+		}
+		predAppliHolder.remove();
+		
 	}
 
 	/**

@@ -52,7 +52,7 @@ public class ControlHolder<U extends Control> {
 	}
 	
 	public void remove() {
-		if (!text.isDisposed())
+		if (!text.isDisposed() && painter != null)
 			text.removePaintObjectListener(painter);
 			painter = null;
 		if (!control.isDisposed())
@@ -75,7 +75,6 @@ public class ControlHolder<U extends Control> {
 				rect.height + 2 * MARGIN);
 		final Point locationAtOffset = text.getLocationAtOffset(position);
 		control.setLocation(locationAtOffset);
-		//style.background = EventBSharedColor.getSystemColor(SWT.COLOR_DARK_BLUE);
 		text.setStyleRange(style);
 	}
 
