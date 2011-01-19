@@ -23,6 +23,7 @@ import static org.eventb.internal.ui.prover.ProverUIUtils.getIcon;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getParsed;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getTooltip;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -53,8 +54,6 @@ import org.eventb.ui.prover.ITacticApplication;
  */
 public class HypothesisRow {
 
-	// Check Button holder
-	private final ControlHolder<Button> checkBoxHolder;
 
 	private final ProverUI proverUI;
 
@@ -70,14 +69,16 @@ public class HypothesisRow {
 
 	private final SelectionListener listener;
 
-	// private final Collection<ImageHyperlink> hyperlinks;
-
 	protected StyledText styledText;
 
 	protected TacticHyperlinkManager manager;
 
 	private final int nbTabsFromLeft;
 
+	// Check Button holder
+	private final ControlHolder<Button> checkBoxHolder;
+	
+	// Predicate/Command holder
 	private ControlHolder<Button> menuHolder;
 
 	/**
@@ -101,153 +102,140 @@ public class HypothesisRow {
 		this.nbTabsFromLeft = nbTabsFromLeft;
 
 		final Button checkBox = new Button(styledText, SWT.CHECK);
-		if (ProverUIUtils.DEBUG) {
-			checkBox.setBackground(EventBSharedColor
-					.getSystemColor(SWT.COLOR_DARK_MAGENTA));
-		} else {
-			checkBox.setBackground(EventBSharedColor
-					.getSystemColor(SWT.COLOR_WHITE));
-		}
-		checkBox.setEnabled(enable);
 		checkBox.addSelectionListener(listener);
 
 		final int checkBoxOffset = styledText.getCharCount() - nbTabsFromLeft;
 		checkBoxHolder = new ControlHolder<Button>(styledText, checkBox, checkBoxOffset);
-		checkBoxHolder.attach();
-		
+		checkBoxHolder.attach(enable);
 		
 		final int menuOffset = checkBoxOffset + 1;
-		final Button arrow = new Button(styledText, SWT.ARROW | SWT.DOWN);
-		menuHolder = new ControlHolder<Button>(styledText, arrow, menuOffset);
-		menuHolder.attach();
-		
-		final Menu menu = new Menu(arrow);
-		
-		final SelectionListener arrowListener = new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				menu.setVisible(true);
-			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e);
-			}
-		};
-		
-		arrow.addSelectionListener(arrowListener);
-		createImageHyperlinks(menu);
-		
-//		final int comboOffset = checkBoxOffset + 1;
-//		final ImageCombo combo = new ImageCombo(styledText, SWT.DROP_DOWN);
-//		comboHolder = new ControlHolder<ImageCombo>(styledText, combo, comboOffset);
-//		comboHolder.attach();
-		//createImageHyperlinks(combo);
-		
-		// buttonComposite = toolkit.createComposite(parent);
-		// GridLayout layout = new GridLayout();
-		// layout.makeColumnsEqualWidth = true;
-		// layout.numColumns = 3;
-		//
-		// buttonComposite.setLayout(layout);
-		// if (ProverUIUtils.DEBUG) {
-		// buttonComposite.setBackground(EventBSharedColor.getSystemColor(SWT.COLOR_DARK_MAGENTA));
-		// }
-		// else {
-		// buttonComposite.setBackground(background);
-		// }
-		// buttonComposite.setLayoutData(new GridData(SWT.FILL,
-		// SWT.FILL, false, false));
-		// hyperlinks = new ArrayList<ImageHyperlink>();
-
-		// hypothesisComposite = toolkit.createComposite(parent);
-		// gd = new GridData(SWT.FILL, SWT.FILL, true, false);
-		// hypothesisComposite.setLayoutData(gd);
-		// if (ProverUIUtils.DEBUG) {
-		// hypothesisComposite.setBackground(EventBSharedColor.getSystemColor(SWT.COLOR_DARK_MAGENTA));
-		// }
-		// else {
-		// hypothesisComposite.setBackground(background);
-		// }
-		// hypothesisComposite.setLayout(new GridLayout());
-		// EventBEditorUtils.changeFocusWhenDispose(hypothesisComposite,
-		// styledText);
+		final Button predAppli = createApplicationsButton();
+		menuHolder = new ControlHolder<Button>(styledText, predAppli, menuOffset);
+		menuHolder.attach(enable);
 
 		final String parsedString = hyp.toString();
 		// Predicate containing the SourceLocations
 		final FormulaFactory ff = userSupport.getFormulaFactory();
 		final Predicate parsedPredicate = getParsed(parsedString, ff);
-
-
 		createHypothesisText(parsedPredicate, parsedString);
 
 	}
 
-	public void createHypothesisText(Predicate parsedPredicate,
+	private void createHypothesisText(Predicate parsedPredicate,
 			String parsedString) {
 		if (hypothesisText != null)
 			hypothesisText.dispose();
 		hypothesisText = new EventBPredicateText(this, false, enable, proverUI);
 		hypothesisText.append(parsedString, userSupport, hyp, parsedPredicate);
 	}
-
-	/**
-	 * Utility methods to create image hyperlinks for applicable tactics.
-	 */
-	private void createImageHyperlinks(Menu menu) {
-		if (! enable) {
-			return;
+	
+	private Button createApplicationsButton() {
+		Button button = new Button(styledText, SWT.ARROW | SWT.DOWN);
+		button.setEnabled(false);
+		if (!enable) {
+			return button;
 		}
 		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
-		final List<ITacticApplication> tactics = tacticUIRegistry
-				.getTacticApplicationsToHypothesis(userSupport, hyp);
+		final List<IPredicateApplication> tactics = retainPredicateApplications(tacticUIRegistry);
 		final List<ICommandApplication> commands = tacticUIRegistry
 				.getCommandApplicationsToHypothesis(userSupport, hyp);
-		if (tactics.isEmpty() && commands.isEmpty()) {
-			// createNullHyperlinks();
-			return;
+		final int comSize = commands.size();
+		final int tacSize = tactics.size();
+		if (tacSize == 1 && comSize == 0) {
+			final ITacticApplication appli = tactics.get(0);
+			button = new Button(styledText, SWT.PUSH);
+			button.setImage(getIcon((IPredicateApplication) appli));
+			button.addSelectionListener(getTacticSelectionListener(
+					tacticUIRegistry, appli));
+			return button;
 		}
+		if (tacSize == 0 && comSize == 1) {
+			final ICommandApplication command = commands.get(0);
+			button = new Button(styledText, SWT.PUSH);
+			button.setImage(command.getIcon());
+			return button;
+		}
+		button.setEnabled(true);
+		final Menu menu = new Menu(button);
+		final SelectionListener arrowListener = new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				menu.setVisible(true);
+			}
 
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+		};
+		button.addSelectionListener(arrowListener);
+		createImageHyperlinks(menu, tacticUIRegistry, tactics, commands);
+		return button;
+
+	}
+
+	private List<IPredicateApplication> retainPredicateApplications(
+			TacticUIRegistry tacticUIRegistry) {
+		final List<IPredicateApplication> predApplis = new ArrayList<IPredicateApplication>();
+		final List<ITacticApplication> tactics = tacticUIRegistry
+				.getTacticApplicationsToHypothesis(userSupport, hyp);
+		for (ITacticApplication tactic : tactics) {
+			if (tactic instanceof IPredicateApplication) {
+				predApplis.add((IPredicateApplication) tactic);
+			}
+		}
+		return predApplis;
+	}
+
+	/**
+	 * Utility methods to create menu items for applicable tactics and commands
+	 */
+	private void createImageHyperlinks(Menu menu, TacticUIRegistry registry,
+			List<IPredicateApplication> tactics, List<ICommandApplication> commands) {
 		for (final ITacticApplication tacticAppli : tactics) {
-
 			if (!(tacticAppli instanceof IPredicateApplication))
 				continue;
-
-			final SelectionListener hlListener = new SelectionListener() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					apply(tacticAppli,
-							tacticUIRegistry.isSkipPostTactic(tacticAppli
-									.getTacticID()));
-				}
-
-				@Override
-				public void widgetDefaultSelected(SelectionEvent e) {
-					widgetSelected(e);
-				}
-			};
 			final IPredicateApplication predAppli = (IPredicateApplication) tacticAppli;
 			final Image icon = getIcon(predAppli);
 			final String tooltip = getTooltip(predAppli);
-			addMenuItem(menu, icon, tooltip, enable, hlListener);
+			final SelectionListener tacListener = getTacticSelectionListener(
+					registry, predAppli);
+			addMenuItem(menu, icon, tooltip, enable, tacListener);
 		}
-
 		for (final ICommandApplication commandAppli : commands) {
-			final SelectionListener hlListener = new SelectionListener() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					apply(commandAppli);
-				}
-
-				@Override
-				public void widgetDefaultSelected(SelectionEvent e) {
-					widgetSelected(e);
-				}
-			};
+			final SelectionListener hlListener = getCommandListener(commandAppli);
 			addMenuItem(menu, commandAppli.getIcon(),
 					commandAppli.getTooltip(), enable, hlListener);
 		}
-
+	}
+	
+	private SelectionListener getTacticSelectionListener(
+			final TacticUIRegistry tacticUIRegistry,
+			final ITacticApplication appli) {
+		return new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				apply(appli,
+						tacticUIRegistry.isSkipPostTactic(appli.getTacticID()));
+			}
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+		};
+	}
+	
+	private SelectionListener getCommandListener(final ICommandApplication appli) {
+		return new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				apply(appli);
+			}
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+		};
 	}
 
 	private static void addMenuItem(Menu menu, Image icon, String tooltip, boolean enable, SelectionListener listener) {

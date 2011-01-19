@@ -45,14 +45,16 @@ public class ControlHolder<U extends Control> {
 		this.length = length;
 	}
 	
-	public void attach() {
+	public void attach(boolean enable) {
 		addControl();
-		registerPainter();
+		if (enable)
+			registerPainter();
 	}
 	
 	public void remove() {
 		if (!text.isDisposed())
 			text.removePaintObjectListener(painter);
+			painter = null;
 		if (!control.isDisposed())
 			control.dispose();
 	}

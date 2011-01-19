@@ -48,7 +48,6 @@ import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.internal.ui.DoubleClickStyledTextListener;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.searchhypothesis.SearchHypothesisComposite;
 import org.eventb.internal.ui.searchhypothesis.SearchHypothesisUtils;
@@ -88,11 +87,9 @@ public abstract class HypothesisComposite implements
 	private static final IUserSupportManager USM = EventBPlugin
 			.getUserSupportManager();
 
-	//private static final int[] TSTOPS = { 20, 40, 60, 80 };
 	
-	private static final int NB_TABS_LEFT = 3;
-
-	private static final int LINE_SPACING = 3;
+	private static final int NB_TABS_LEFT = 3; //Tabs
+	private static final int LINE_SPACING = 3; //px
 
 	// The User Support associated with this Hypothesis Composite.
 	protected IUserSupport userSupport;
@@ -142,9 +139,6 @@ public abstract class HypothesisComposite implements
 
 		// Create an empty hypothesis rows.
 		rows = new ArrayList<HypothesisRow>();
-
-		// Listen to the changes from the user support manager.
-		USM.addChangeListener(this);
 	}
 
 	/**
@@ -156,10 +150,17 @@ public abstract class HypothesisComposite implements
 
 		JFaceResources.getFontRegistry().removeListener(this);
 		
-		// Disposing the hypothesis row.
+		totalClearance();
+		control = null;
+		styledText = null;
+	}
+	
+	private void totalClearance() {
 		for (HypothesisRow row : rows) {
 			row.dispose();
 		}
+		rows.clear();
+		manager.dispose();
 	}
 
 	/**
@@ -187,18 +188,18 @@ public abstract class HypothesisComposite implements
 		final CoolItem item = new CoolItem(buttonBar, SWT.NONE);
 		item.setControl(toolBar);
 		toolBar.pack();
-		Point size = toolBar.getSize();
-		Point preferred = item.computeSize(size.x, size.y);
+		final Point size = toolBar.getSize();
+		final Point preferred = item.computeSize(size.x, size.y);
 		item.setPreferredSize(preferred);
 
 		// Create a dummy toolbar, if not then the cool bar is not displayed.
 		final ToolBar dummyBar = new ToolBar(buttonBar, SWT.FLAT);
 		dummyBar.pack();
-		size = dummyBar.getSize();
-		CoolItem dummyItem = new CoolItem(buttonBar, SWT.NONE);
+		final Point size2 = dummyBar.getSize();
+		final CoolItem dummyItem = new CoolItem(buttonBar, SWT.NONE);
 		dummyItem.setControl(dummyBar);
-		preferred = dummyItem.computeSize(size.x, size.y);
-		dummyItem.setPreferredSize(preferred);
+		final Point preferred2 = dummyItem.computeSize(size2.x, size2.y);
+		dummyItem.setPreferredSize(preferred2);
 
 		// Set the layout data for the top cool bar
 		final FormData coolData = new FormData();
@@ -227,10 +228,8 @@ public abstract class HypothesisComposite implements
 				.getFont(PreferenceConstants.RODIN_MATH_FONT);
 		JFaceResources.getFontRegistry().addListener(this);
 		styledText.setFont(font);
-		//styledText.setTabStops(TSTOPS);
 		styledText.setEditable(false);
 		styledText.setLineSpacing(LINE_SPACING);
-		styledText.addMouseListener(new DoubleClickStyledTextListener(styledText));
 		
 		manager = new TacticHyperlinkManager(styledText);
 
@@ -240,6 +239,7 @@ public abstract class HypothesisComposite implements
 		}
 		// Refresh to create to fill out the content of the scrolled form.
 		refresh();
+		USM.addChangeListener(this);
 	}
 
 	/**
@@ -269,7 +269,7 @@ public abstract class HypothesisComposite implements
 	private IProverSequent getProverSequent(IProofState ps) {
 		IProverSequent sequent = null;
 		if (ps != null) {
-			IProofTreeNode node = ps.getCurrentNode();
+			final IProofTreeNode node = ps.getCurrentNode();
 			if (node != null) {
 				sequent = node.getSequent();
 			}
@@ -292,7 +292,7 @@ public abstract class HypothesisComposite implements
 	private boolean isEnabled(IProofState ps) {
 		boolean enabled = false;
 		if (ps != null) {
-			IProofTreeNode node = ps.getCurrentNode();
+			final IProofTreeNode node = ps.getCurrentNode();
 			if (node != null) {
 				if (node.isOpen())
 					enabled = true;
@@ -360,12 +360,9 @@ public abstract class HypothesisComposite implements
 		}
 		styledText.setRedraw(false);
 		styledText.setText("");
-		// Remove all the existing hypothesis rows.
-		for (HypothesisRow row : rows) {
-			row.dispose();
-		}
-		rows.clear();
-		manager.dispose();
+		
+		totalClearance();
+	
 		if (traced) {
 			final long elapsed = System.currentTimeMillis() - start;
 			SearchHypothesisUtils.debug("clearing rows took " + elapsed
@@ -384,6 +381,7 @@ public abstract class HypothesisComposite implements
 			styledText.append("\n");
 			i++;
 		}
+		
 		if (enabled) {
 			manager.enableListeners();
 		} else {
@@ -396,7 +394,7 @@ public abstract class HypothesisComposite implements
 			start = System.currentTimeMillis();
 		}
 
-		// Reflow the scrolled form and update the status of the tool bar items.
+		// update the status of the tool bar items.
 		updateToolbarItems();
 		sc.setMinSize(styledText.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 

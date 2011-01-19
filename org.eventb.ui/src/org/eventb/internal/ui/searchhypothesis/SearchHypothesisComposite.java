@@ -1,15 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
  ******************************************************************************/
-
 package org.eventb.internal.ui.searchhypothesis;
 
 import java.util.ArrayList;
@@ -81,25 +79,22 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 		// Create item for adding hypotheses.
 		addItem = new ToolItem(toolBar, SWT.PUSH);
 		addItem.setImage(EventBImage.getImage(IEventBSharedImages.IMG_ADD));
-		addItem
-				.setToolTipText(Messages.searchedHypothesis_toolItem_add_toolTipText);
+		addItem.setToolTipText(Messages.searchedHypothesis_toolItem_add_toolTipText);
+		final IUserSupport us = userSupport;
 		addItem.addSelectionListener(new SelectionListener() {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				IUserSupport userSupport = SearchHypothesisComposite.this
-						.getUserSupport();
-				assert userSupport != null;
-				
-				Set<Predicate> selected = SearchHypothesisComposite.this
+				assert us != null;
+
+				final Set<Predicate> selected = SearchHypothesisComposite.this
 						.getSelectedHyps();
-				ITactic t = Tactics.mngHyp(ProverFactory
+				final ITactic t = Tactics.mngHyp(ProverFactory
 						.makeSelectHypAction(selected));
 				try {
-					userSupport.applyTacticToHypotheses(t, selected, true,
+					us.applyTacticToHypotheses(t, selected, true,
 							new NullProgressMonitor());
 				} catch (RodinDBException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
@@ -118,16 +113,13 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 		removeItem
 				.setToolTipText(Messages.searchedHypothesis_toolItem_remove_toolTipText);
 		removeItem.addSelectionListener(new SelectionListener() {
-
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				IUserSupport userSupport = SearchHypothesisComposite.this
-						.getUserSupport();
-				assert userSupport != null;
+				assert us != null;
 
-				Set<Predicate> deselected = SearchHypothesisComposite.this
+				final Set<Predicate> deselected = SearchHypothesisComposite.this
 						.getSelectedHyps();
-				userSupport.removeSearchedHypotheses(deselected);
+				us.removeSearchedHypotheses(deselected);
 			}
 
 			@Override
@@ -212,7 +204,7 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 		}
 
 		// Return the valid searched hypotheses only.
-		Collection<Predicate> validSearched = new ArrayList<Predicate>();
+		final Collection<Predicate> validSearched = new ArrayList<Predicate>();
 		for (Predicate search : searched) {
 			if (ps.getCurrentNode().getSequent().containsHypothesis(search))
 				validSearched.add(search);
