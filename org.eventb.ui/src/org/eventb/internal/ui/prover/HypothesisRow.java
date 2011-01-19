@@ -41,7 +41,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.ui.prover.IPredicateApplication;
 import org.eventb.ui.prover.ITacticApplication;
 
@@ -144,7 +143,9 @@ public class HypothesisRow {
 		if (tacSize == 1 && comSize == 0) {
 			final ITacticApplication appli = tactics.get(0);
 			button = new Button(styledText, SWT.PUSH);
-			button.setImage(getIcon((IPredicateApplication) appli));
+			final IPredicateApplication predAppli = (IPredicateApplication) appli;
+			button.setImage(getIcon(predAppli));
+			button.setToolTipText(getTooltip(predAppli));
 			button.addSelectionListener(getTacticSelectionListener(
 					tacticUIRegistry, appli));
 			return button;
@@ -153,6 +154,7 @@ public class HypothesisRow {
 			final ICommandApplication command = commands.get(0);
 			button = new Button(styledText, SWT.PUSH);
 			button.setImage(command.getIcon());
+			button.setToolTipText(command.getTooltip());
 			return button;
 		}
 		button.setEnabled(true);
