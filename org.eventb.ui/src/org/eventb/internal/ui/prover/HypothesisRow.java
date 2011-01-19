@@ -30,14 +30,13 @@ import java.util.Set;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.events.IHyperlinkListener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IUserSupport;
@@ -67,8 +66,6 @@ public class HypothesisRow {
 	// The hypothesis contains in this row.
 	private final Predicate hyp;
 
-	private final Color background;
-
 	private final boolean enable;
 
 	private final SelectionListener listener;
@@ -80,6 +77,8 @@ public class HypothesisRow {
 	protected TacticHyperlinkManager manager;
 
 	private final int nbTabsFromLeft;
+
+	private ControlHolder<Button> menuHolder;
 
 	/**
 	 * @author htson
@@ -101,21 +100,43 @@ public class HypothesisRow {
 		this.manager = manager;
 		this.nbTabsFromLeft = nbTabsFromLeft;
 
-		background = EventBSharedColor.getSystemColor(SWT.COLOR_WHITE);
-	
 		final Button checkBox = new Button(styledText, SWT.CHECK);
 		if (ProverUIUtils.DEBUG) {
 			checkBox.setBackground(EventBSharedColor
 					.getSystemColor(SWT.COLOR_DARK_MAGENTA));
 		} else {
-			checkBox.setBackground(background);
+			checkBox.setBackground(EventBSharedColor
+					.getSystemColor(SWT.COLOR_WHITE));
 		}
 		checkBox.setEnabled(enable);
 		checkBox.addSelectionListener(listener);
 
-		final int checkBoxOffset = styledText.getCharCount() - 2;
+		final int checkBoxOffset = styledText.getCharCount() - nbTabsFromLeft;
 		checkBoxHolder = new ControlHolder<Button>(styledText, checkBox, checkBoxOffset);
 		checkBoxHolder.attach();
+		
+		
+		final int menuOffset = checkBoxOffset + 1;
+		final Button arrow = new Button(styledText, SWT.ARROW | SWT.DOWN);
+		menuHolder = new ControlHolder<Button>(styledText, arrow, menuOffset);
+		menuHolder.attach();
+		
+		final Menu menu = new Menu(arrow);
+		
+		final SelectionListener arrowListener = new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				menu.setVisible(true);
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+		};
+		
+		arrow.addSelectionListener(arrowListener);
+		createImageHyperlinks(menu);
 		
 //		final int comboOffset = checkBoxOffset + 1;
 //		final ImageCombo combo = new ImageCombo(styledText, SWT.DROP_DOWN);
@@ -170,40 +191,20 @@ public class HypothesisRow {
 		hypothesisText.append(parsedString, userSupport, hyp, parsedPredicate);
 	}
 
-	/*
-	 * Creating a null hyperlink to be placed if no predicate application
-	 * exists.
-	 */
-	private void createNullHyperlinks() {
-		// if (ProverUIUtils.DEBUG)
-		// debug("Create Null Image");
-		// ImageHyperlink hyperlink = new ImageHyperlink(buttonComposite,
-		// SWT.CENTER);
-		// hyperlink.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-		// true));
-		//
-		// toolkit.adapt(hyperlink, true, true);
-		// setHyperlinkImage(hyperlink,
-		// EventBImage.getImage(IEventBSharedImages.IMG_NULL));
-		// hyperlink.setBackground(background);
-		// hyperlink.setEnabled(false);
-		// hyperlinks.add(hyperlink);
-		// return;
-	}
-
 	/**
 	 * Utility methods to create image hyperlinks for applicable tactics.
-	 * <p>
-	 * 
 	 */
-	private void createImageHyperlinks(Composite parent) {
+	private void createImageHyperlinks(Menu menu) {
+		if (! enable) {
+			return;
+		}
 		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
-		List<ITacticApplication> tactics = tacticUIRegistry
+		final List<ITacticApplication> tactics = tacticUIRegistry
 				.getTacticApplicationsToHypothesis(userSupport, hyp);
 		final List<ICommandApplication> commands = tacticUIRegistry
 				.getCommandApplicationsToHypothesis(userSupport, hyp);
 		if (tactics.isEmpty() && commands.isEmpty()) {
-			createNullHyperlinks();
+			// createNullHyperlinks();
 			return;
 		}
 
@@ -212,55 +213,49 @@ public class HypothesisRow {
 			if (!(tacticAppli instanceof IPredicateApplication))
 				continue;
 
-			final IHyperlinkListener hlListener = new IHyperlinkListener() {
-
+			final SelectionListener hlListener = new SelectionListener() {
 				@Override
-				public void linkEntered(HyperlinkEvent e) {
-					return;
-				}
-
-				@Override
-				public void linkExited(HyperlinkEvent e) {
-					return;
-				}
-
-				@Override
-				public void linkActivated(HyperlinkEvent e) {
+				public void widgetSelected(SelectionEvent e) {
 					apply(tacticAppli,
 							tacticUIRegistry.isSkipPostTactic(tacticAppli
 									.getTacticID()));
+				}
+
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+					widgetSelected(e);
 				}
 			};
 			final IPredicateApplication predAppli = (IPredicateApplication) tacticAppli;
 			final Image icon = getIcon(predAppli);
 			final String tooltip = getTooltip(predAppli);
-			// addHyperlink(buttonComposite, toolkit, SWT.BEGINNING,
-			// icon, tooltip, hlListener, enable);
+			addMenuItem(menu, icon, tooltip, enable, hlListener);
 		}
 
 		for (final ICommandApplication commandAppli : commands) {
-			final IHyperlinkListener hlListener = new IHyperlinkListener() {
-
+			final SelectionListener hlListener = new SelectionListener() {
 				@Override
-				public void linkEntered(HyperlinkEvent e) {
-					return;
-				}
-
-				@Override
-				public void linkExited(HyperlinkEvent e) {
-					return;
-				}
-
-				@Override
-				public void linkActivated(HyperlinkEvent e) {
+				public void widgetSelected(SelectionEvent e) {
 					apply(commandAppli);
 				}
 
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+					widgetSelected(e);
+				}
 			};
-			// addHyperlink(buttonComposite, toolkit, SWT.FILL, commandAppli
-			// .getIcon(), commandAppli.getTooltip(), hlListener, enable);
+			addMenuItem(menu, commandAppli.getIcon(),
+					commandAppli.getTooltip(), enable, hlListener);
 		}
 
+	}
+
+	private static void addMenuItem(Menu menu, Image icon, String tooltip, boolean enable, SelectionListener listener) {
+		final MenuItem item = new MenuItem(menu, SWT.PUSH);
+		item.setImage(icon);
+		item.setText(tooltip);
+		item.setEnabled(enable);
+		item.addSelectionListener(listener);
 	}
 
 	/**
@@ -275,15 +270,11 @@ public class HypothesisRow {
 			checkbox.removeSelectionListener(listener);
 		}
 		checkBoxHolder.remove();
-		// for (ImageHyperlink hyperlink : hyperlinks)
-		// hyperlink.dispose();
-		// buttonComposite.dispose();
-		// hypothesisComposite.dispose();
+		menuHolder.remove();
 	}
 
 	/**
 	 * Return if the hypothesis is selected or not.
-	 * <p>
 	 * 
 	 * @return <code>true</code> if the row is selected, and <code>false</code>
 	 *         otherwise
@@ -295,7 +286,6 @@ public class HypothesisRow {
 
 	/**
 	 * Get the contained hypothesis.
-	 * <p>
 	 * 
 	 * @return the hypothesis corresponding to this row
 	 */

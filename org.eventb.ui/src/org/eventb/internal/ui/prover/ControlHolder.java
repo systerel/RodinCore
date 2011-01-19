@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.PaintObjectEvent;
 import org.eclipse.swt.custom.PaintObjectListener;
 import org.eclipse.swt.custom.StyleRange;
@@ -19,7 +18,6 @@ import org.eclipse.swt.graphics.GlyphMetrics;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
-import org.eventb.internal.ui.EventBSharedColor;
 
 /**
  * Class used to register controls in a StyledText.
@@ -31,14 +29,20 @@ public class ControlHolder<U extends Control> {
 	private final int MARGIN = 2;
 	private final StyledText text;
 	private int position;
+	private final int length;
 	private PaintObjectListener painter;
 	
 	protected final U control;
 	
 	public ControlHolder(StyledText text, U control, int position) {
+		this(text, control, position, 1);
+	}
+	
+	public ControlHolder(StyledText text, U control, int position, int length) {
 		this.text = text;
 		this.control = control;
 		this.position = position;
+		this.length = length;
 	}
 	
 	public void attach() {
@@ -60,7 +64,7 @@ public class ControlHolder<U extends Control> {
 	private void addControl() {
 		final StyleRange style = new StyleRange();
 		style.start = position;
-		style.length = 1;
+		style.length = length;
 		control.pack();
 		final Rectangle rect = control.getBounds();
 		int ascent = 2 * rect.width / 3;
@@ -69,7 +73,7 @@ public class ControlHolder<U extends Control> {
 				rect.height + 2 * MARGIN);
 		final Point locationAtOffset = text.getLocationAtOffset(position);
 		control.setLocation(locationAtOffset);
-		style.background = EventBSharedColor.getSystemColor(SWT.COLOR_DARK_BLUE);
+		//style.background = EventBSharedColor.getSystemColor(SWT.COLOR_DARK_BLUE);
 		text.setStyleRange(style);
 	}
 

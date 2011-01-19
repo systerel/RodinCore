@@ -158,7 +158,7 @@ public class EventBPredicateText {
 				int x = stb.length();
 				stb.append(space);
 				offsets[i] = x;
-
+				stb.append(space);
 				if (++i == idents.length) {
 					stb.append("\u00b7\n");
 				} else {

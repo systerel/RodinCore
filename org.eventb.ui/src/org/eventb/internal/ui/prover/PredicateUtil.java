@@ -38,6 +38,12 @@ public class PredicateUtil {
 	private static final String SPACES = "                              ";
 	private static final int SPACES_LENGTH = SPACES.length();
 	
+	
+	public static String prettyPrint(int maxLen, String predString,
+			Predicate pred) {
+		return prettyPrint(maxLen, predString, pred, 0);
+	}
+	
 	public static String prettyPrint(int maxLen, String predString,
 			Predicate pred, int leftTabs) {
 		final StringBuilder sb = new StringBuilder(predString.length());

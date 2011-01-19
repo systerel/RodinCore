@@ -90,7 +90,7 @@ public abstract class HypothesisComposite implements
 
 	//private static final int[] TSTOPS = { 20, 40, 60, 80 };
 	
-	private static final int NB_TABS_LEFT = 2;
+	private static final int NB_TABS_LEFT = 3;
 
 	private static final int LINE_SPACING = 3;
 
