@@ -93,14 +93,13 @@ public class DeltaProcessor {
 			return;
 		}
 		// Save the list of listeners
-		IUserSupportManagerChangedListener[] savedListeners =
-			new IUserSupportManagerChangedListener[length];
-		listeners.toArray(savedListeners);
+		final IUserSupportManagerChangedListener[] savedListeners = listeners
+				.toArray(new IUserSupportManagerChangedListener[length]);
 		try {
 			firing = true;
 			if (UserSupportUtils.DEBUG)
 				UserSupportUtils.debug("Start firing delta");
-			for (IUserSupportManagerChangedListener listener: listeners) {
+			for (IUserSupportManagerChangedListener listener : savedListeners) {
 				notifyListener(listener, savedRoot);
 			}
 			if (UserSupportUtils.DEBUG)
