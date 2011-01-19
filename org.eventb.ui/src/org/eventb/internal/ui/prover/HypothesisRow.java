@@ -73,8 +73,8 @@ public class HypothesisRow {
 	protected TacticHyperlinkManager manager;
 
 	// Check Button holder
-	private final ControlHolder<Button> checkBoxHolder;
-	private final SelectionListener checkboxListener;
+	private ControlHolder<Button> checkBoxHolder;
+	private SelectionListener checkboxListener;
 	
 	// Predicate/Command holder
 	private ControlHolder<Button> predAppliHolder;
@@ -100,22 +100,14 @@ public class HypothesisRow {
 		this.manager = manager;
 		this.nbTabsFromLeft = nbTabsFromLeft;
 
-		final Button checkBox = new Button(styledText, SWT.CHECK);
-		checkBox.addSelectionListener(listener);
-
-		final int checkBoxOffset = styledText.getCharCount() - nbTabsFromLeft;
-		checkBoxHolder = new ControlHolder<Button>(styledText, checkBox, checkBoxOffset);
-		checkBoxHolder.attach(enable);
+		createControlButtons();
 		
-		final int menuOffset = checkBoxOffset + 1;
-		final Button predAppliButton = createApplicationsButton();
-		predAppliHolder = new ControlHolder<Button>(styledText, predAppliButton, menuOffset);
-		predAppliHolder.attach(enable);
-
 		final String parsedString = hyp.toString();
+		
 		// Predicate containing the SourceLocations
 		final FormulaFactory ff = userSupport.getFormulaFactory();
 		final Predicate parsedPredicate = getParsed(parsedString, ff);
+		
 		createHypothesisText(parsedPredicate, parsedString);
 
 	}
@@ -126,6 +118,18 @@ public class HypothesisRow {
 			hypothesisText.dispose();
 		hypothesisText = new EventBPredicateText(this, false, enable, proverUI);
 		hypothesisText.append(parsedString, userSupport, hyp, parsedPredicate);
+	}
+	
+	private void createControlButtons(){
+			final Button checkBox = new Button(styledText, SWT.CHECK);
+			checkBox.addSelectionListener(checkboxListener);
+			final int checkBoxOffset = styledText.getCharCount() - nbTabsFromLeft;
+			checkBoxHolder = new ControlHolder<Button>(styledText, checkBox, checkBoxOffset);
+			checkBoxHolder.attach();
+			final int menuOffset = checkBoxOffset + 1;
+			final Button predAppliButton = createApplicationsButton();
+			predAppliHolder = new ControlHolder<Button>(styledText, predAppliButton, menuOffset);
+			predAppliHolder.attach();
 	}
 	
 	private Button createApplicationsButton() {
@@ -173,7 +177,6 @@ public class HypothesisRow {
 		button.addSelectionListener(predAppliListener);
 		createImageHyperlinks(menu, tacticUIRegistry, tactics, commands);
 		return button;
-
 	}
 
 	private List<IPredicateApplication> retainPredicateApplications(
@@ -255,17 +258,21 @@ public class HypothesisRow {
 		if (hypothesisText != null)
 			hypothesisText.dispose();
 
-		final Button checkbox = checkBoxHolder.getControl();
-		if (!checkbox.isDisposed()) {
-			checkbox.removeSelectionListener(checkboxListener);
+		if (checkBoxHolder != null) {
+			final Button checkbox = checkBoxHolder.getControl();
+			if (!checkbox.isDisposed()) {
+				checkbox.removeSelectionListener(checkboxListener);
+			}
+			checkBoxHolder.remove();
 		}
-		checkBoxHolder.remove();
 		
-		final Button predAppliButton = predAppliHolder.getControl();
-		if (!predAppliButton.isDisposed() && predAppliListener != null) {
-			predAppliButton.removeSelectionListener(predAppliListener);
+		if (predAppliHolder != null) {
+			final Button predAppliButton = predAppliHolder.getControl();
+			if (!predAppliButton.isDisposed() && predAppliListener != null) {
+				predAppliButton.removeSelectionListener(predAppliListener);
+			}
+			predAppliHolder.remove();			
 		}
-		predAppliHolder.remove();
 		
 	}
 
@@ -276,6 +283,8 @@ public class HypothesisRow {
 	 *         otherwise
 	 */
 	public boolean isSelected() {
+		if (!enable)
+			return false;
 		final Button checkbox = checkBoxHolder.getControl();
 		return checkbox.getSelection();
 	}
@@ -308,6 +317,8 @@ public class HypothesisRow {
 	}
 
 	public void setSelected(boolean selected) {
+		if (!enable)
+			return;
 		checkBoxHolder.getControl().setSelection(selected);
 	}
 

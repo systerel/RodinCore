@@ -45,10 +45,9 @@ public class ControlHolder<U extends Control> {
 		this.length = length;
 	}
 	
-	public void attach(boolean enable) {
+	public void attach() {
 		addControl();
-		if (enable)
-			registerPainter();
+		registerPainter();
 	}
 	
 	public void remove() {
