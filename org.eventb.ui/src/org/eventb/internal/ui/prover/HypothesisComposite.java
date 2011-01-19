@@ -112,6 +112,9 @@ public abstract class HypothesisComposite implements
 
 	protected ScrolledComposite sc;
 
+
+	private Font font;
+
 	/**
 	 * Constructor.
 	 * <p>
@@ -151,15 +154,17 @@ public abstract class HypothesisComposite implements
 		JFaceResources.getFontRegistry().removeListener(this);
 		
 		totalClearance();
-		control = null;
-		styledText = null;
 	}
 	
 	private void totalClearance() {
+		if (styledText == null) {
+			return;
+		}
 		for (HypothesisRow row : rows) {
 			row.dispose();
 		}
 		rows.clear();
+		if (manager != null)
 		manager.dispose();
 	}
 
@@ -217,21 +222,9 @@ public abstract class HypothesisComposite implements
 		scrolledData.top = new FormAttachment(buttonBar);
 		scrolledData.bottom = new FormAttachment(100);
 		sc.setLayoutData(scrolledData);
-		
-		// Create the styled text below the cool bar
-		styledText = new StyledText(sc, SWT.NONE);
-		sc.setContent(styledText);
-		sc.setExpandHorizontal(true);
-		sc.setExpandVertical(true);
-		
-		final Font font = JFaceResources
+		font = JFaceResources
 				.getFont(PreferenceConstants.RODIN_MATH_FONT);
 		JFaceResources.getFontRegistry().addListener(this);
-		styledText.setFont(font);
-		styledText.setEditable(false);
-		styledText.setLineSpacing(LINE_SPACING);
-		
-		manager = new TacticHyperlinkManager(styledText);
 
 		if (ProverUIUtils.DEBUG) {
 			styledText.setBackground(EventBSharedColor
@@ -240,6 +233,18 @@ public abstract class HypothesisComposite implements
 		// Refresh to create to fill out the content of the scrolled form.
 		refresh();
 		USM.addChangeListener(this);
+	}
+	
+	private void initStyledTextAndManager(){
+		// Create the styled text below the cool bar
+		styledText = new StyledText(sc, SWT.NONE);
+		sc.setContent(styledText);
+		sc.setExpandHorizontal(true);
+		sc.setExpandVertical(true);
+		styledText.setFont(font);
+		styledText.setEditable(false);
+		styledText.setLineSpacing(LINE_SPACING);
+		manager = new TacticHyperlinkManager(styledText);
 	}
 
 	/**
@@ -352,17 +357,20 @@ public abstract class HypothesisComposite implements
 	private void reinitialise(Iterable<Predicate> hyps, IProverSequent sequent,
 			boolean enabled) {
 
-		final boolean traced = SearchHypothesisUtils.DEBUG
-				&& (this instanceof SearchHypothesisComposite);
+		final boolean traced = true; //SearchHypothesisUtils.DEBUG
+				//&& (this instanceof SearchHypothesisComposite);
 		long start = 0;
 		if (traced) {
 			start = System.currentTimeMillis();
 		}
-		styledText.setRedraw(false);
-		styledText.setText("");
-		
+		if (styledText != null) {
+			styledText.dispose();
+		}
 		totalClearance();
-	
+		initStyledTextAndManager();
+		assert styledText != null;
+		styledText.setRedraw(false);
+		
 		if (traced) {
 			final long elapsed = System.currentTimeMillis() - start;
 			SearchHypothesisUtils.debug("clearing rows took " + elapsed
@@ -378,7 +386,6 @@ public abstract class HypothesisComposite implements
 					NB_TABS_LEFT, hyp, userSupport, i % 2 != 0, enabled, this,
 					proverUI, manager);
 			rows.add(row);
-			styledText.append("\n");
 			i++;
 		}
 		
@@ -493,9 +500,9 @@ public abstract class HypothesisComposite implements
 			}
 		}
 
-		if (needRefresh) {
+		if (needRefresh && styledText != null) {
+			
 			Display display = styledText.getDisplay();
-
 			display.syncExec(new Runnable() {
 				@Override
 				public void run() {
@@ -616,7 +623,7 @@ public abstract class HypothesisComposite implements
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
-			Font font = JFaceResources
+			font = JFaceResources
 					.getFont(PreferenceConstants.RODIN_MATH_FONT);
 			styledText.setFont(font);
 			styledText.pack();

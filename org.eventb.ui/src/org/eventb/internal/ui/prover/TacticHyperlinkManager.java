@@ -206,7 +206,7 @@ public class TacticHyperlinkManager {
 	}
 
 	protected void disableListeners() {
-		if (!text.isDisposed()) {
+		if (text != null && !text.isDisposed()) {
 			text.removeListener(SWT.MouseDown, mouseDownListener);
 			text.removeListener(SWT.MouseMove, mouseMoveListener);
 			text.removeListener(SWT.MouseHover, mouseHoverListener);

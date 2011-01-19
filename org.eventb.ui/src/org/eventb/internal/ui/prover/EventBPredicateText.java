@@ -98,13 +98,15 @@ public class EventBPredicateText {
 		
 		textOffset = styledText.getCharCount();
 		final String prettyStr = getPrettyPrintedString(parsedString, parsedPredicate);
-
+		final StringBuilder predBuilder = new StringBuilder(prettyStr);
+		predBuilder.append("\n");
+		
 		final Map<Point, List<ITacticApplication>> links = getLinks(
 				prettyStr, hyp);
 		manager.putAssociation(links.keySet(), hypothesisRow);
 		manager.setHyperlinks(links, hypothesisRow);
 
-		styledText.append(prettyStr);
+		styledText.append(predBuilder.toString());
 		
 		createTextBoxes();
 		
