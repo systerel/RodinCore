@@ -184,41 +184,18 @@ public abstract class HypothesisComposite implements
 		control.setLayout(new FormLayout());
 
 		// Create the top cool bar.
-		final CoolBar buttonBar = new CoolBar(control, SWT.FLAT);
-		final ToolBar toolBar = new ToolBar(buttonBar, SWT.FLAT);
-		createItems(toolBar);
-		final CoolItem item = new CoolItem(buttonBar, SWT.NONE);
-		item.setControl(toolBar);
-		toolBar.pack();
-		final Point size = toolBar.getSize();
-		final Point preferred = item.computeSize(size.x, size.y);
-		item.setPreferredSize(preferred);
+		final CoolBar buttonBar = createTopCoolBar(control);
 
 		// Create a dummy toolbar, if not then the cool bar is not displayed.
-		final ToolBar dummyBar = new ToolBar(buttonBar, SWT.FLAT);
-		dummyBar.pack();
-		final Point size2 = dummyBar.getSize();
-		final CoolItem dummyItem = new CoolItem(buttonBar, SWT.NONE);
-		dummyItem.setControl(dummyBar);
-		final Point preferred2 = dummyItem.computeSize(size2.x, size2.y);
-		dummyItem.setPreferredSize(preferred2);
+		createDummyToolbar(buttonBar);
 
 		// Set the layout data for the top cool bar
-		final FormData coolData = new FormData();
-		coolData.left = new FormAttachment(0);
-		coolData.right = new FormAttachment(100);
-		coolData.top = new FormAttachment(0);
-		buttonBar.setLayoutData(coolData);
+		setLayoutData(buttonBar);
 		
 		// Creates a scrolledComposite to hold the styledText.
 		sc = new ScrolledComposite(control, SWT.H_SCROLL | SWT.V_SCROLL);
-		sc.setLayout(new GridLayout(1, false));
-		final FormData scrolledData = new FormData();
-		scrolledData.left = new FormAttachment(0);
-		scrolledData.right = new FormAttachment(100);
-		scrolledData.top = new FormAttachment(buttonBar);
-		scrolledData.bottom = new FormAttachment(100);
-		sc.setLayoutData(scrolledData);
+		setScrolledLayout(sc, buttonBar);
+		
 		font = JFaceResources
 				.getFont(PreferenceConstants.RODIN_MATH_FONT);
 		JFaceResources.getFontRegistry().addListener(this);
@@ -231,7 +208,48 @@ public abstract class HypothesisComposite implements
 		refresh();
 		USM.addChangeListener(this);
 	}
+
+	private CoolBar createTopCoolBar(Composite parent) {
+		final CoolBar buttonBar = new CoolBar(parent, SWT.FLAT);
+		final ToolBar toolBar = new ToolBar(buttonBar, SWT.FLAT);
+		createItems(toolBar);
+		final CoolItem item = new CoolItem(buttonBar, SWT.NONE);
+		item.setControl(toolBar);
+		toolBar.pack();
+		final Point size = toolBar.getSize();
+		final Point preferred = item.computeSize(size.x, size.y);
+		item.setPreferredSize(preferred);
+		return buttonBar;
+	}
+
+	private static void createDummyToolbar(final CoolBar buttonBar) {
+		final ToolBar dummyBar = new ToolBar(buttonBar, SWT.FLAT);
+		dummyBar.pack();
+		final Point size2 = dummyBar.getSize();
+		final CoolItem dummyItem = new CoolItem(buttonBar, SWT.NONE);
+		dummyItem.setControl(dummyBar);
+		final Point preferred2 = dummyItem.computeSize(size2.x, size2.y);
+		dummyItem.setPreferredSize(preferred2);
+	}
 	
+	private static void setLayoutData(CoolBar buttonBar) {
+		final FormData coolData = new FormData();
+		coolData.left = new FormAttachment(0);
+		coolData.right = new FormAttachment(100);
+		coolData.top = new FormAttachment(0);
+		buttonBar.setLayoutData(coolData);
+	}
+
+	private static void setScrolledLayout(ScrolledComposite scComp, CoolBar buttonBar) {
+		scComp.setLayout(new GridLayout(1, false));
+		final FormData scrolledData = new FormData();
+		scrolledData.left = new FormAttachment(0);
+		scrolledData.right = new FormAttachment(100);
+		scrolledData.top = new FormAttachment(buttonBar);
+		scrolledData.bottom = new FormAttachment(100);
+		scComp.setLayoutData(scrolledData);
+	}
+
 	private void initStyledTextAndManager(){
 		// Create the styled text below the cool bar
 		styledText = new StyledText(sc, SWT.NONE);
@@ -451,55 +469,11 @@ public abstract class HypothesisComposite implements
 			return; // Do nothing
 		}
 
-		boolean needRefresh = false;
-
-		// Handle the case where the user support has changed.
-		if (kind == IUserSupportDelta.CHANGED) {
-			int usFlags = affectedUserSupport.getFlags();
-			if ((usFlags & IUserSupportDelta.F_CURRENT) != 0) {
-				// The current proof state is changed, reinitialise the
-				// view.
-				needRefresh = true;
-			} else if ((usFlags & IUserSupportDelta.F_STATE) != 0) {
-				// If the changes occurs in some proof states.
-				IProofState proofState = userSupport.getCurrentPO();
-				// Trying to get the change for the current proof state.
-				final IProofStateDelta affectedProofState = ProverUIUtils
-						.getProofStateDelta(affectedUserSupport, proofState);
-				if (affectedProofState != null) {
-					// If there are some changes
-					int psKind = affectedProofState.getKind();
-					if (psKind == IProofStateDelta.ADDED) {
-						// This case should not happened since the proof state
-						// must exist before creating this.
-						if (ProverUIUtils.DEBUG)
-							ProverUIUtils
-									.debug("Error: Delta said that the proof state is added"); // $NON-NLS-1$
-						return; // Do nothing
-					}
-
-					if (psKind == IProofStateDelta.REMOVED) {
-						// Do nothing in this case, this will be handled
-						// by the main proof editor.
-						return;
-					}
-
-					if (psKind == IProofStateDelta.CHANGED) {
-						// If there are some changes to the proof state.
-						int psFlags = affectedProofState.getFlags();
-						if ((psFlags & flags) != 0) {
-							// Update the view if the corresponding flag
-							// has been changed
-							needRefresh = true;
-						}
-					}
-				}
-			}
-		}
+		final boolean needRefresh = needRefresh(affectedUserSupport);
 
 		if (needRefresh && styledText != null) {
 			
-			Display display = styledText.getDisplay();
+			final Display display = styledText.getDisplay();
 			display.syncExec(new Runnable() {
 				@Override
 				public void run() {
@@ -511,6 +485,57 @@ public abstract class HypothesisComposite implements
 
 		if (ProverUIUtils.DEBUG)
 			ProverUIUtils.debug("End User Support Manager Changed"); // $NON-NLS-1$
+	}
+
+	private boolean needRefresh(IUserSupportDelta affectedUserSupport) {
+		final int kind = affectedUserSupport.getKind();
+		
+		// Handle the case where the user support has changed.
+		if (kind != IUserSupportDelta.CHANGED) {
+			return false;
+		}
+		final int usFlags = affectedUserSupport.getFlags();
+		if ((usFlags & IUserSupportDelta.F_CURRENT) != 0) {
+			// The current proof state is changed, reinitialise the
+			// view.
+			return true;
+		}
+		if ((usFlags & IUserSupportDelta.F_STATE) == 0) {
+			return false;
+		}
+		// If the changes occurs in some proof states.
+		final IProofState proofState = userSupport.getCurrentPO();
+		// Trying to get the change for the current proof state.
+		final IProofStateDelta affectedProofState = ProverUIUtils
+				.getProofStateDelta(affectedUserSupport, proofState);
+		if (affectedProofState == null) {
+			return false;
+		}
+		// If there are some changes
+		final int psKind = affectedProofState.getKind();
+		switch (psKind) {
+		case IProofStateDelta.ADDED:
+			// This case should not happened since the proof state
+			// must exist before creating this.
+			if (ProverUIUtils.DEBUG)
+				ProverUIUtils
+						.debug("Error: Delta said that the proof state is added"); // $NON-NLS-1$
+			return false; // Do nothing
+		case IProofStateDelta.REMOVED:
+			// Do nothing in this case, this will be handled
+			// by the main proof editor.
+			return false;
+		case IProofStateDelta.CHANGED:
+			// If there are some changes to the proof state.
+			final int psFlags = affectedProofState.getFlags();
+			if ((psFlags & flags) != 0) {
+				// Update the view if the corresponding flag
+				// has been changed
+				return true;
+			}
+		default:
+			return false;
+		}
 	}
 
 	/**
