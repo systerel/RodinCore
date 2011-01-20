@@ -52,7 +52,7 @@ import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
-import org.eventb.internal.ui.prover.HypothesisRow;
+import org.eventb.internal.ui.prover.PredicateRow;
 import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
@@ -77,7 +77,7 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 
 	private StyledText styledText;
 
-	private HypothesisRow row;
+	private PredicateRow row;
 	
 	private TacticHyperlinkManager manager;
 
@@ -183,7 +183,7 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 		final boolean enabled = node.isOpen();
 		styledText.setRedraw(false);
 		ProverUIUtils.appendTabs(styledText, NB_TABS_LEFT);
-		row = new HypothesisRow(styledText, NB_TABS_LEFT, goal, true,
+		row = new PredicateRow(styledText, NB_TABS_LEFT, goal, true,
 				userSupport, false, enabled, null, proverUI, manager);
 		if (enabled) {
 			manager.enableListeners();			

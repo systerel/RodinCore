@@ -51,7 +51,7 @@ import org.eventb.ui.prover.ITacticApplication;
  *         buttons which is applicable to the predicate
  *         </p>
  */
-public class HypothesisRow {
+public class PredicateRow {
 
 	// Number of tabulations from the left
 	private final int nbTabsFromLeft;
@@ -88,7 +88,7 @@ public class HypothesisRow {
 	 *         This class extends and provide response actions
 	 *         when a hyperlink is activated.
 	 */
-	public HypothesisRow(StyledText styledText, int nbTabsFromLeft, Predicate pred, boolean isGoal,
+	public PredicateRow(StyledText styledText, int nbTabsFromLeft, Predicate pred, boolean isGoal,
 			IUserSupport userSupport, boolean odd, boolean enable,
 			SelectionListener listener, ProverUI proverUI,
 			TacticHyperlinkManager manager) {

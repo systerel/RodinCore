@@ -74,7 +74,7 @@ public class EventBPredicateText {
 
 	private final TacticHyperlinkManager manager;
 
-	private final HypothesisRow hypothesisRow;
+	private final PredicateRow hypothesisRow;
 
 	private PaintObjectListener paintObjListener;
 
@@ -84,7 +84,7 @@ public class EventBPredicateText {
 	// Tells if hyperlinks should be enabled
 	private final boolean enable;
 
-	public EventBPredicateText(HypothesisRow hypothesisRow, boolean isGoal,
+	public EventBPredicateText(PredicateRow hypothesisRow, boolean isGoal,
 			boolean enable, ProverUI proverUI) {
 		this.hypothesisRow = hypothesisRow;
 		this.styledText = hypothesisRow.styledText;

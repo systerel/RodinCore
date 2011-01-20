@@ -100,7 +100,7 @@ public abstract class HypothesisComposite implements
 	private TacticHyperlinkManager manager;
 
 	// The collection of hypothesis rows.
-	private final List<HypothesisRow> rows = new ArrayList<HypothesisRow>();
+	private final List<PredicateRow> rows = new ArrayList<PredicateRow>();
 
 	// The top-level composite control of this hypothesis composite.
 	private Composite control;
@@ -157,7 +157,7 @@ public abstract class HypothesisComposite implements
 		if (styledText == null) {
 			return;
 		}
-		for (HypothesisRow row : rows) {
+		for (PredicateRow row : rows) {
 			row.dispose();
 		}
 		rows.clear();
@@ -397,7 +397,7 @@ public abstract class HypothesisComposite implements
 		int i = 0;
 		for (Predicate hyp : hyps) {
 			ProverUIUtils.appendTabs(styledText, NB_TABS_LEFT);
-			final HypothesisRow row = new HypothesisRow(styledText,
+			final PredicateRow row = new PredicateRow(styledText,
 					NB_TABS_LEFT, hyp, false, userSupport, i % 2 != 0, enabled, this,
 					proverUI, manager);
 			rows.add(row);
@@ -570,7 +570,7 @@ public abstract class HypothesisComposite implements
 	 */
 	public Set<Predicate> getSelectedHyps() {
 		Set<Predicate> selected = new HashSet<Predicate>();
-		for (HypothesisRow hr : rows) {
+		for (PredicateRow hr : rows) {
 			if (hr.isSelected()) {
 				selected.add(hr.getPredicate());
 			}
@@ -582,7 +582,7 @@ public abstract class HypothesisComposite implements
 	 * Inverse the current selection.
 	 */
 	public void inverseSelectedHyps() {
-		for (HypothesisRow hr : rows) {
+		for (PredicateRow hr : rows) {
 			hr.setSelected(!hr.isSelected());
 		}
 		updateToolbarItems();
@@ -592,7 +592,7 @@ public abstract class HypothesisComposite implements
 	 * De-select all hypotheses. 
 	 */
 	public void deselectAllHyps() {
-		for (HypothesisRow hr : rows) {
+		for (PredicateRow hr : rows) {
 			if (hr.isSelected())
 				hr.setSelected(false);
 		}
@@ -603,7 +603,7 @@ public abstract class HypothesisComposite implements
 	 * Select all hypotheses.
 	 */
 	public void selectAllHyps() {
-		for (HypothesisRow hr : rows) {
+		for (PredicateRow hr : rows) {
 			if (!hr.isSelected())
 				hr.setSelected(true);
 		}
@@ -616,7 +616,7 @@ public abstract class HypothesisComposite implements
 	 */
 	public void scrollToBottom() {
 		if (!rows.isEmpty()) {
-			final HypothesisRow lastRow = rows.get(rows.size() - 1);
+			final PredicateRow lastRow = rows.get(rows.size() - 1);
 			sc.showControl(lastRow.getLeftmostControl());
 		}
 	}

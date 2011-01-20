@@ -54,7 +54,7 @@ public class TacticHyperlinkManager {
 
 	private final Map<Point, List<ITacticApplication>> links = new HashMap<Point, List<ITacticApplication>>();
 
-	private final Map<Point, HypothesisRow> hypAppli = new HashMap<Point, HypothesisRow>();
+	private final Map<Point, PredicateRow> hypAppli = new HashMap<Point, PredicateRow>();
 	
 	private Menu tipMenu;
 
@@ -75,14 +75,14 @@ public class TacticHyperlinkManager {
 		return text;
 	}
 	
-	public void putAssociation(Set<Point> points, HypothesisRow row) {
+	public void putAssociation(Set<Point> points, PredicateRow row) {
 		for (Point pt : points) {
 			hypAppli.put(pt, row);			
 		}
 	}
 	
 	public void setHyperlinks(Map<Point, List<ITacticApplication>> toAdd,
-			HypothesisRow hypRow) {
+			PredicateRow hypRow) {
 		links.putAll(toAdd);
 	}
 
@@ -128,7 +128,7 @@ public class TacticHyperlinkManager {
 		final boolean skipPostTactic = TacticUIRegistry.getDefault()
 				.isSkipPostTactic(tacticPosition.getTacticID());
 		
-		final HypothesisRow hypothesisRow = hypAppli.get(link);
+		final PredicateRow hypothesisRow = hypAppli.get(link);
 		if (hypothesisRow != null)
 			hypothesisRow.apply(tacticPosition, skipPostTactic);
 	}
