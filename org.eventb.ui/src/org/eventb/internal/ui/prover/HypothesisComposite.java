@@ -92,7 +92,7 @@ public abstract class HypothesisComposite implements
 	private static final int LINE_SPACING = 3; //px
 
 	// The User Support associated with this Hypothesis Composite.
-	protected final IUserSupport userSupport;
+	private final IUserSupport userSupport;
 
 	// The main scrolled form.
 	private StyledText styledText;

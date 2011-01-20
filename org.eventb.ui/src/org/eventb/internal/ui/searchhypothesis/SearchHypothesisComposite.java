@@ -80,11 +80,11 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 		addItem = new ToolItem(toolBar, SWT.PUSH);
 		addItem.setImage(EventBImage.getImage(IEventBSharedImages.IMG_ADD));
 		addItem.setToolTipText(Messages.searchedHypothesis_toolItem_add_toolTipText);
-		final IUserSupport us = userSupport;
 		addItem.addSelectionListener(new SelectionListener() {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
+				final IUserSupport us = getUserSupport();
 				assert us != null;
 
 				final Set<Predicate> selected = SearchHypothesisComposite.this
@@ -115,6 +115,7 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 		removeItem.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
+				final IUserSupport us = getUserSupport();
 				assert us != null;
 
 				final Set<Predicate> deselected = SearchHypothesisComposite.this

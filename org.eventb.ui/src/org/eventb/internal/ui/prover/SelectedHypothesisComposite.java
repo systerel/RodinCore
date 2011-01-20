@@ -90,14 +90,14 @@ public class SelectedHypothesisComposite extends HypothesisComposite {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				assert userSupport != null;
+				assert getUserSupport() != null;
 				Set<Predicate> deselected = SelectedHypothesisComposite.this
 						.getSelectedHyps();
 				ITactic t = Tactics.mngHyp(ProverFactory
 						.makeDeselectHypAction(deselected));
 				try {
-					userSupport.applyTacticToHypotheses(t, deselected, true,
-							new NullProgressMonitor());
+					getUserSupport().applyTacticToHypotheses(t, deselected,
+							true, new NullProgressMonitor());
 				} catch (RodinDBException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -141,7 +141,7 @@ public class SelectedHypothesisComposite extends HypothesisComposite {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				assert userSupport != null;
+				assert getUserSupport() != null;
 				SelectedHypothesisComposite.this.inverseSelectedHyps();
 			}
 
