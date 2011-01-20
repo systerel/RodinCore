@@ -92,7 +92,7 @@ public abstract class HypothesisComposite implements
 	private static final int LINE_SPACING = 3; //px
 
 	// The User Support associated with this Hypothesis Composite.
-	protected IUserSupport userSupport;
+	protected final IUserSupport userSupport;
 
 	// The main scrolled form.
 	private StyledText styledText;
@@ -100,15 +100,15 @@ public abstract class HypothesisComposite implements
 	private TacticHyperlinkManager manager;
 
 	// The collection of hypothesis rows.
-	private List<HypothesisRow> rows;
+	private final List<HypothesisRow> rows = new ArrayList<HypothesisRow>();
 
 	// The top-level composite control of this hypothesis composite.
 	Composite control;
 
 	// The main prover editor associated with this Hypothesis composite.
-	private ProverUI proverUI;
+	private final ProverUI proverUI;
 
-	private int flags;
+	private final int flags;
 
 	protected ScrolledComposite sc;
 
@@ -139,9 +139,6 @@ public abstract class HypothesisComposite implements
 		this.userSupport = userSupport;
 		this.proverUI = proverUI;
 		this.flags = flags;
-
-		// Create an empty hypothesis rows.
-		rows = new ArrayList<HypothesisRow>();
 	}
 
 	/**
