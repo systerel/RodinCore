@@ -205,7 +205,7 @@ public class TacticHyperlinkManager {
 		showToolTip(tacticApplis, widgetPosition, currentLink);
 	}
 
-	protected void disableListeners() {
+	public void disableListeners() {
 		if (text != null && !text.isDisposed()) {
 			text.removeListener(SWT.MouseDown, mouseDownListener);
 			text.removeListener(SWT.MouseMove, mouseMoveListener);
@@ -215,7 +215,7 @@ public class TacticHyperlinkManager {
 		}
 	}
 	
-	protected void enableListeners() {
+	public void enableListeners() {
 		if (!text.isDisposed()) {
 			text.addListener(SWT.MouseDown, mouseDownListener);
 			text.addListener(SWT.MouseMove, mouseMoveListener);

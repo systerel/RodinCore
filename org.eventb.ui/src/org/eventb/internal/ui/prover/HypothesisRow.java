@@ -47,8 +47,8 @@ import org.eventb.ui.prover.ITacticApplication;
 /**
  * @author htson
  *         <p>
- *         A class to create a row containing a hypothesis and the set of proof
- *         buttons which is applicable to the hypothesis
+ *         A class to create a row containing a predicate and the set of proof
+ *         buttons which is applicable to the predicate
  *         </p>
  */
 public class HypothesisRow {
@@ -58,17 +58,17 @@ public class HypothesisRow {
 
 	private final ProverUI proverUI;
 
-	// The UserSupport associated with this instance of the editor.
+	// The UserSupport associated with this instance of the editor
 	private final IUserSupport userSupport;
 
-	// The hypothesis contains in this row.
-	private final Predicate hyp;
+	// The predicate contained by this row
+	private final Predicate pred;
 
 	private final boolean enable;
 
 	protected StyledText styledText;
 
-	private EventBPredicateText hypothesisText;
+	private EventBPredicateText predicateText;
 
 	protected TacticHyperlinkManager manager;
 
@@ -79,6 +79,8 @@ public class HypothesisRow {
 	// Predicate/Command holder
 	private ControlHolder<Button> predAppliHolder;
 	private SelectionListener predAppliListener;
+
+	private boolean isGoal;
 	
 
 	/**
@@ -86,13 +88,14 @@ public class HypothesisRow {
 	 *         This class extends and provide response actions
 	 *         when a hyperlink is activated.
 	 */
-	public HypothesisRow(StyledText styledText, int nbTabsFromLeft, Predicate hyp,
+	public HypothesisRow(StyledText styledText, int nbTabsFromLeft, Predicate pred, boolean isGoal,
 			IUserSupport userSupport, boolean odd, boolean enable,
 			SelectionListener listener, ProverUI proverUI,
 			TacticHyperlinkManager manager) {
 
 		this.styledText = styledText;
-		this.hyp = hyp;
+		this.pred = pred;
+		this.isGoal = isGoal;
 		this.checkboxListener = listener;
 		this.userSupport = userSupport;
 		this.enable = enable;
@@ -102,34 +105,38 @@ public class HypothesisRow {
 
 		createControlButtons();
 		
-		final String parsedString = hyp.toString();
+		final String parsedString = pred.toString();
 		
 		// Predicate containing the SourceLocations
 		final FormulaFactory ff = userSupport.getFormulaFactory();
 		final Predicate parsedPredicate = getParsed(parsedString, ff);
 		
-		createHypothesisText(parsedPredicate, parsedString);
+		createPredicateText(parsedPredicate, parsedString);
 
 	}
 
-	private void createHypothesisText(Predicate parsedPredicate,
+	private void createPredicateText(Predicate parsedPredicate,
 			String parsedString) {
-		if (hypothesisText != null)
-			hypothesisText.dispose();
-		hypothesisText = new EventBPredicateText(this, false, enable, proverUI);
-		hypothesisText.append(parsedString, userSupport, hyp, parsedPredicate);
+		if (predicateText != null)
+			predicateText.dispose();
+		predicateText = new EventBPredicateText(this, isGoal, enable, proverUI);
+		predicateText.append(parsedString, userSupport, pred, parsedPredicate);
 	}
 	
-	private void createControlButtons(){
+	private void createControlButtons() {
+		final int checkBoxOffset = styledText.getCharCount() - nbTabsFromLeft;
 			final Button checkBox = new Button(styledText, SWT.CHECK);
+			checkBoxHolder = new ControlHolder<Button>(styledText, checkBox,
+					checkBoxOffset);
+		if (!isGoal) {
 			checkBox.addSelectionListener(checkboxListener);
-			final int checkBoxOffset = styledText.getCharCount() - nbTabsFromLeft;
-			checkBoxHolder = new ControlHolder<Button>(styledText, checkBox, checkBoxOffset);
 			checkBoxHolder.attach();
-			final int menuOffset = checkBoxOffset + 1;
-			final Button predAppliButton = createApplicationsButton();
-			predAppliHolder = new ControlHolder<Button>(styledText, predAppliButton, menuOffset);
-			predAppliHolder.attach();
+		}
+		final int menuOffset = checkBoxOffset + 1;
+		final Button predAppliButton = createApplicationsButton();
+		predAppliHolder = new ControlHolder<Button>(styledText,
+				predAppliButton, menuOffset);
+		predAppliHolder.attach();
 	}
 	
 	private Button createApplicationsButton() {
@@ -139,9 +146,18 @@ public class HypothesisRow {
 			return button;
 		}
 		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
-		final List<IPredicateApplication> tactics = retainPredicateApplications(tacticUIRegistry);
-		final List<ICommandApplication> commands = tacticUIRegistry
-				.getCommandApplicationsToHypothesis(userSupport, hyp);
+		final List<IPredicateApplication> tactics;
+		final List<ICommandApplication> commands;
+		
+		if (isGoal) {
+			tactics = retainPredicateApplications(tacticUIRegistry);
+			commands = tacticUIRegistry
+					.getCommandApplicationsToGoal(userSupport);
+		} else {
+			tactics = retainPredicateApplications(tacticUIRegistry);
+			commands = tacticUIRegistry.getCommandApplicationsToHypothesis(
+					userSupport, pred);
+		}
 		final int comSize = commands.size();
 		final int tacSize = tactics.size();
 		if (tacSize == 1 && comSize == 0) {
@@ -182,8 +198,13 @@ public class HypothesisRow {
 	private List<IPredicateApplication> retainPredicateApplications(
 			TacticUIRegistry tacticUIRegistry) {
 		final List<IPredicateApplication> predApplis = new ArrayList<IPredicateApplication>();
-		final List<ITacticApplication> tactics = tacticUIRegistry
-				.getTacticApplicationsToHypothesis(userSupport, hyp);
+		final List<ITacticApplication> tactics;
+		if (isGoal) {
+			tactics = tacticUIRegistry.getTacticApplicationsToGoal(userSupport);
+		} else {
+			tactics = tacticUIRegistry.getTacticApplicationsToHypothesis(
+					userSupport, pred);
+		}
 		for (ITacticApplication tactic : tactics) {
 			if (tactic instanceof IPredicateApplication) {
 				predApplis.add((IPredicateApplication) tactic);
@@ -255,12 +276,12 @@ public class HypothesisRow {
 	 * Utility method to dispose the composites and check boxes.
 	 */
 	public void dispose() {
-		if (hypothesisText != null)
-			hypothesisText.dispose();
+		if (predicateText != null)
+			predicateText.dispose();
 
 		if (checkBoxHolder != null) {
 			final Button checkbox = checkBoxHolder.getControl();
-			if (!checkbox.isDisposed()) {
+			if (!checkbox.isDisposed() && checkboxListener != null) {
 				checkbox.removeSelectionListener(checkboxListener);
 			}
 			checkBoxHolder.remove();
@@ -290,29 +311,39 @@ public class HypothesisRow {
 	}
 
 	/**
-	 * Get the contained hypothesis.
+	 * Get the contained predicate.
 	 * 
-	 * @return the hypothesis corresponding to this row
+	 * @return the predicate corresponding to this row
 	 */
-	public Predicate getHypothesis() {
-		return hyp;
+	public Predicate getPredicate() {
+		return pred;
 	}
 
 	void apply(ITacticApplication tacticAppli, boolean skipPostTactic) {
-		final String[] inputs = hypothesisText.getResults();
+		final String[] inputs = predicateText.getResults();
 		if (ProverUIUtils.DEBUG)
 			for (String input : inputs)
 				debug("Input: \"" + input + "\"");
 
 		final String globalInput = this.proverUI.getProofControl().getInput();
-		final Set<Predicate> hypSet = Collections.singleton(hyp);
+		if (isGoal) {
+			applyTactic(tacticAppli.getTactic(inputs, globalInput), userSupport,
+					null, skipPostTactic, new NullProgressMonitor());
+			return;
+		}
+		final Set<Predicate> hypSet = Collections.singleton(pred);
 		applyTactic(tacticAppli.getTactic(inputs, globalInput), userSupport,
 				hypSet, skipPostTactic, new NullProgressMonitor());
 	}
 
 	void apply(ICommandApplication commandAppli) {
-		final String[] inputs = hypothesisText.getResults();
-		applyCommand(commandAppli.getProofCommand(), userSupport, hyp, inputs,
+		final String[] inputs = predicateText.getResults();
+		if (isGoal) {
+			applyCommand(commandAppli.getProofCommand(), userSupport,
+					null, inputs, new NullProgressMonitor());
+			return;
+		}
+		applyCommand(commandAppli.getProofCommand(), userSupport, pred, inputs,
 				new NullProgressMonitor());
 	}
 

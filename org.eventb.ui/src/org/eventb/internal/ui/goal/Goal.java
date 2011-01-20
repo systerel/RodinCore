@@ -1,15 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
- * 
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.ui.goal;
 
 import org.eclipse.ui.IWorkbenchPart;
@@ -18,7 +16,6 @@ import org.eventb.ui.EventBUIPlugin;
 
 /**
  * @author htson
- *         <p>
  *         Implementation of the Goal View.
  */
 public class Goal extends ProverContentOutline {
@@ -44,7 +41,7 @@ public class Goal extends ProverContentOutline {
 		// Try to get a Search Hypothesis Page.
 		Object obj = part.getAdapter(IGoalPage.class);
 		if (obj instanceof IGoalPage) {
-			IGoalPage page = (IGoalPage) obj;
+			final IGoalPage page = (IGoalPage) obj;
 			initPage(page);
 			page.createControl(getPageBook());
 			return new PageRec(part, page);

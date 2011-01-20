@@ -398,7 +398,7 @@ public abstract class HypothesisComposite implements
 		for (Predicate hyp : hyps) {
 			ProverUIUtils.appendTabs(styledText, NB_TABS_LEFT);
 			final HypothesisRow row = new HypothesisRow(styledText,
-					NB_TABS_LEFT, hyp, userSupport, i % 2 != 0, enabled, this,
+					NB_TABS_LEFT, hyp, false, userSupport, i % 2 != 0, enabled, this,
 					proverUI, manager);
 			rows.add(row);
 			i++;
@@ -572,7 +572,7 @@ public abstract class HypothesisComposite implements
 		Set<Predicate> selected = new HashSet<Predicate>();
 		for (HypothesisRow hr : rows) {
 			if (hr.isSelected()) {
-				selected.add(hr.getHypothesis());
+				selected.add(hr.getPredicate());
 			}
 		}
 		return selected;
