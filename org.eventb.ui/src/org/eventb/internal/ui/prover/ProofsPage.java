@@ -58,7 +58,7 @@ public class ProofsPage extends FormPage implements
 
 	public static final String PAGE_TITLE = "No Current Obligation"; //$NON-NLS-1$
 
-	public static final String PAGE_TAB_TITLE = "State"; //$NON-NLS-1$
+	public static final String PAGE_TAB_TITLE = PAGE_ID; //$NON-NLS-1$
 
 	private static final int DEFAULT_HEIGHT = 400;
 
