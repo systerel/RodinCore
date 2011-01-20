@@ -103,14 +103,14 @@ public abstract class HypothesisComposite implements
 	private final List<HypothesisRow> rows = new ArrayList<HypothesisRow>();
 
 	// The top-level composite control of this hypothesis composite.
-	Composite control;
+	private Composite control;
 
 	// The main prover editor associated with this Hypothesis composite.
 	private final ProverUI proverUI;
 
 	private final int flags;
 
-	protected ScrolledComposite sc;
+	private ScrolledComposite sc;
 
 
 	private Font font;
@@ -503,7 +503,7 @@ public abstract class HypothesisComposite implements
 			display.syncExec(new Runnable() {
 				@Override
 				public void run() {
-					if (!control.isDisposed())
+					if (!getControl().isDisposed())
 						refresh();
 				}
 			});
