@@ -373,6 +373,9 @@ public class ProverLib {
 	}
 	
 	private static boolean patternMatches(Predicate pred, String pattern) {
+		if (pattern.isEmpty()) {
+			return true;
+		}
 		final String predStr = pred.toString();
 		final String[] toSearch = pattern.split("\\s");
 		for (String str : toSearch) {
