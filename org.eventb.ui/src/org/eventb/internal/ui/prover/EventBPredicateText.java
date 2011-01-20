@@ -83,6 +83,8 @@ public class EventBPredicateText {
 
 	// Tells if hyperlinks should be enabled
 	private final boolean enable;
+	
+	protected boolean boxesDrawn;
 
 	public EventBPredicateText(PredicateRow hypothesisRow, boolean isGoal,
 			boolean enable, ProverUI proverUI) {
@@ -90,6 +92,7 @@ public class EventBPredicateText {
 		this.styledText = hypothesisRow.styledText;
 		this.manager = hypothesisRow.manager;
 		this.enable = enable;
+		this.boxesDrawn = false;
 	}
 
 	public void append(String parsedString, IUserSupport userSupport,
@@ -108,13 +111,16 @@ public class EventBPredicateText {
 
 		styledText.append(predBuilder.toString());
 		
-		createTextBoxes();
-		
 		// reposition widgets on paint event and draw a red box around the
 		// yellow input widgets
 		paintObjListener = new PaintObjectListener() {
 			@Override
 			public void paintObject(PaintObjectEvent event) {
+				if (!boxesDrawn) {
+					createTextBoxes();
+					boxesDrawn = true;
+				}
+				
 				event.gc.setForeground(RED);
 				final StyleRange style = event.style;
 				int start = style.start;
