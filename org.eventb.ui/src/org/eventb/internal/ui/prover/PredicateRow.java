@@ -125,10 +125,10 @@ public class PredicateRow {
 	
 	private void createControlButtons() {
 		final int checkBoxOffset = styledText.getCharCount() - nbTabsFromLeft;
+		if (!isGoal) {
 			final Button checkBox = new Button(styledText, SWT.CHECK);
 			checkBoxHolder = new ControlHolder<Button>(styledText, checkBox,
 					checkBoxOffset);
-		if (!isGoal) {
 			checkBox.addSelectionListener(checkboxListener);
 			checkBoxHolder.attach();
 		}
@@ -304,7 +304,7 @@ public class PredicateRow {
 	 *         otherwise
 	 */
 	public boolean isSelected() {
-		if (!enable)
+		if (!enable || checkBoxHolder == null)
 			return false;
 		final Button checkbox = checkBoxHolder.getControl();
 		return checkbox.getSelection();
@@ -348,12 +348,15 @@ public class PredicateRow {
 	}
 
 	public void setSelected(boolean selected) {
-		if (!enable)
+		if (!enable || checkBoxHolder == null)
 			return;
 		checkBoxHolder.getControl().setSelection(selected);
 	}
 
 	public Control getLeftmostControl() {
+		if (checkBoxHolder == null) {
+			return predAppliHolder.getControl();
+		}
 		return checkBoxHolder.getControl();
 	}
 

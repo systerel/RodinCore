@@ -68,7 +68,7 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 	private static final IUserSupportManager USM = EventBPlugin.getUserSupportManager();
 	
 	// Number of tabulation in the left margin
-	private static final int NB_TABS_LEFT = 4; //tabs
+	private static final int NB_TABS_LEFT = 3; //tabs
 	private static final int LINE_SPACING = 2; //px
 
 	protected final IUserSupport userSupport;
@@ -120,7 +120,7 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 	
 	@Override
 	public void createControl(Composite parent) {
-		
+		font = JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
 		// Create the top-level composite.
 		control = new Composite(parent, SWT.NULL);
 		if (ProverUIUtils.DEBUG) {
