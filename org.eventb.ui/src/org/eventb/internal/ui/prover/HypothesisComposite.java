@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
+import static org.eventb.internal.ui.prover.ProverUIUtils.getIndentation;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -153,18 +155,6 @@ public abstract class HypothesisComposite implements
 		totalClearance();
 	}
 	
-	private void totalClearance() {
-		if (styledText == null) {
-			return;
-		}
-		for (PredicateRow row : rows) {
-			row.dispose();
-		}
-		rows.clear();
-		if (manager != null)
-		manager.dispose();
-	}
-
 	/**
 	 * Create the control of the hypothesis composite. This should be called
 	 * after the constructor.
@@ -248,18 +238,6 @@ public abstract class HypothesisComposite implements
 		scrolledData.top = new FormAttachment(buttonBar);
 		scrolledData.bottom = new FormAttachment(100);
 		scComp.setLayoutData(scrolledData);
-	}
-
-	private void initStyledTextAndManager(){
-		// Create the styled text below the cool bar
-		styledText = new StyledText(sc, SWT.NONE);
-		sc.setContent(styledText);
-		sc.setExpandHorizontal(true);
-		sc.setExpandVertical(true);
-		styledText.setFont(font);
-		styledText.setEditable(false);
-		styledText.setLineSpacing(LINE_SPACING);
-		manager = new TacticHyperlinkManager(styledText);
 	}
 
 	/**
@@ -367,13 +345,12 @@ public abstract class HypothesisComposite implements
 	 * @param sequent
 	 *            a prover sequent
 	 * @param enabled
-	 *            <code>true</code> if the hypothesis rows should be enable.
+	 *            <code>true</code> if the hypothesis rows should be enabled.
 	 */
 	private void reinitialise(Iterable<Predicate> hyps, IProverSequent sequent,
 			boolean enabled) {
 
-		final boolean traced = true; //SearchHypothesisUtils.DEBUG
-				//&& (this instanceof SearchHypothesisComposite);
+		final boolean traced = ProverUIUtils.DEBUG;
 		long start = 0;
 		if (traced) {
 			start = System.currentTimeMillis();
@@ -388,31 +365,42 @@ public abstract class HypothesisComposite implements
 		
 		if (traced) {
 			final long elapsed = System.currentTimeMillis() - start;
-			SearchHypothesisUtils.debug("clearing rows took " + elapsed
+			ProverUIUtils.debug("Clearing rows and text took " + elapsed
 					+ " ms.");
 			start = System.currentTimeMillis();
 		}
 
 		// Recreating the hypothesis rows according to the input.
-		int i = 0;
 		for (Predicate hyp : hyps) {
-			ProverUIUtils.appendTabs(styledText, NB_TABS_LEFT);
-			final PredicateRow row = new PredicateRow(styledText,
-					NB_TABS_LEFT, hyp, false, userSupport, i % 2 != 0, enabled, this,
-					proverUI, manager);
+			final PredicateRow row = new PredicateRow(NB_TABS_LEFT, hyp, false,
+					userSupport, enabled, this, proverUI, manager);
 			rows.add(row);
-			i++;
 		}
 		
-		if (enabled) {
-			manager.enableListeners();
-		} else {
-			manager.disableListeners();
-		}
-		styledText.setRedraw(true);
 		if (traced) {
 			final long elapsed = System.currentTimeMillis() - start;
-			SearchHypothesisUtils.debug("adding rows took " + elapsed + " ms.");
+			SearchHypothesisUtils.debug("Creating rows took " + elapsed + " ms.");
+			start = System.currentTimeMillis();
+		}
+		
+		final String indentation = getIndentation(NB_TABS_LEFT);
+		int i = 0;
+		for (PredicateRow row : rows) {
+			manager.appendText(indentation);
+			row.append(i%2!=0);
+			i++;
+		}
+		manager.setContents();
+		manager.activateBackgroundColoration();
+		for (PredicateRow row : rows) {
+			row.attachButtons();
+		}
+		manager.enableListeners(enabled);
+		styledText.setRedraw(true);
+		
+		if (traced) {
+			final long elapsed = System.currentTimeMillis() - start;
+			SearchHypothesisUtils.debug("painting styledText took " + elapsed + " ms.");
 			start = System.currentTimeMillis();
 		}
 
@@ -426,7 +414,31 @@ public abstract class HypothesisComposite implements
 					+ " ms.");
 		}
 	}
-	
+
+	private void totalClearance() {
+		if (styledText == null) {
+			return;
+		}
+		for (PredicateRow row : rows) {
+			row.dispose();
+		}
+		rows.clear();
+		if (manager != null)
+			manager.dispose();
+	}
+
+	private void initStyledTextAndManager(){
+		// Create the styled text below the cool bar
+		styledText = new StyledText(sc, SWT.NONE);
+		sc.setContent(styledText);
+		sc.setExpandHorizontal(true);
+		sc.setExpandVertical(true);
+		styledText.setFont(font);
+		styledText.setEditable(false);
+		styledText.setLineSpacing(LINE_SPACING);
+		manager = new TacticHyperlinkManager(styledText);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

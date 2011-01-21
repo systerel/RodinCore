@@ -16,6 +16,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
+import static org.eventb.internal.ui.prover.ProverUIUtils.SOFT_BG_COLOR;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyCommand;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyTactic;
 import static org.eventb.internal.ui.prover.ProverUIUtils.debug;
@@ -33,6 +34,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
@@ -41,6 +43,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IUserSupport;
+import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.ui.prover.IPredicateApplication;
 import org.eventb.ui.prover.ITacticApplication;
 
@@ -53,6 +56,8 @@ import org.eventb.ui.prover.ITacticApplication;
  */
 public class PredicateRow {
 
+	private static final Color WHITE = EventBSharedColor.getSystemColor(SWT.COLOR_WHITE);
+
 	// Number of tabulations from the left
 	private final int nbTabsFromLeft;
 
@@ -63,10 +68,10 @@ public class PredicateRow {
 
 	// The predicate contained by this row
 	private final Predicate pred;
+	// The predicate re-parsed and containing source locations
+	private final Predicate parsedPredicate;
 
 	private final boolean enable;
-
-	protected StyledText styledText;
 
 	private EventBPredicateText predicateText;
 
@@ -81,19 +86,16 @@ public class PredicateRow {
 	private SelectionListener predAppliListener;
 
 	private boolean isGoal;
-	
 
 	/**
 	 * @author htson
 	 *         This class extends and provide response actions
 	 *         when a hyperlink is activated.
 	 */
-	public PredicateRow(StyledText styledText, int nbTabsFromLeft, Predicate pred, boolean isGoal,
-			IUserSupport userSupport, boolean odd, boolean enable,
-			SelectionListener listener, ProverUI proverUI,
-			TacticHyperlinkManager manager) {
+	public PredicateRow(int nbTabsFromLeft, Predicate pred, boolean isGoal,
+			IUserSupport userSupport, boolean enable, SelectionListener listener,
+			ProverUI proverUI, TacticHyperlinkManager manager) {
 
-		this.styledText = styledText;
 		this.pred = pred;
 		this.isGoal = isGoal;
 		this.checkboxListener = listener;
@@ -103,44 +105,61 @@ public class PredicateRow {
 		this.manager = manager;
 		this.nbTabsFromLeft = nbTabsFromLeft;
 
-		createControlButtons();
-		
-		final String parsedString = pred.toString();
-		
-		// Predicate containing the SourceLocations
 		final FormulaFactory ff = userSupport.getFormulaFactory();
-		final Predicate parsedPredicate = getParsed(parsedString, ff);
+		final String parsedString = pred.toString();		
+		// Predicate containing the SourceLocations
+		this.parsedPredicate = getParsed(parsedString, ff);
 		
-		createPredicateText(parsedPredicate, parsedString);
-
+		createPredicateText();
 	}
 
-	private void createPredicateText(Predicate parsedPredicate,
-			String parsedString) {
+	private void createPredicateText() {
 		if (predicateText != null)
 			predicateText.dispose();
 		predicateText = new EventBPredicateText(this, isGoal, enable, proverUI);
-		predicateText.append(parsedString, userSupport, pred, parsedPredicate);
+		predicateText.load(pred.toString(), userSupport, pred, parsedPredicate);
 	}
 	
-	private void createControlButtons() {
-		final int checkBoxOffset = styledText.getCharCount() - nbTabsFromLeft;
+	public void append(boolean odd) {
+		createControlButtons(odd);
+		predicateText.append(manager, odd);
+	}
+	
+	public void attachButtons() {
 		if (!isGoal) {
-			final Button checkBox = new Button(styledText, SWT.CHECK);
-			checkBoxHolder = new ControlHolder<Button>(styledText, checkBox,
-					checkBoxOffset);
-			checkBox.addSelectionListener(checkboxListener);
 			checkBoxHolder.attach();
 		}
-		final int menuOffset = checkBoxOffset + 1;
-		final Button predAppliButton = createApplicationsButton();
-		predAppliHolder = new ControlHolder<Button>(styledText,
-				predAppliButton, menuOffset);
 		predAppliHolder.attach();
 	}
 	
+	private void createControlButtons(boolean odd) {
+		final int checkBoxOffset = manager.getCurrentOffset() - nbTabsFromLeft;
+		final StyledText text = manager.getText();
+		if (!isGoal) {
+			final Button checkBox = new Button(manager.getText(), SWT.CHECK);
+			if (odd){
+				checkBox.setBackground(SOFT_BG_COLOR);				
+			}else{
+				checkBox.setBackground(WHITE);
+			}
+			checkBoxHolder = new ControlHolder<Button>(text, checkBox,
+					checkBoxOffset);
+			checkBox.addSelectionListener(checkboxListener);
+		}
+		final int menuOffset = checkBoxOffset + 1;
+		final Button predAppliButton = createApplicationsButton();
+		if (odd){
+			predAppliButton.setBackground(SOFT_BG_COLOR);				
+		}else{
+			predAppliButton.setBackground(WHITE);
+		}
+		predAppliHolder = new ControlHolder<Button>(text,
+				predAppliButton, menuOffset);
+	}
+	
 	private Button createApplicationsButton() {
-		final Button button = new Button(styledText, SWT.ARROW | SWT.DOWN);
+		final StyledText text = manager.getText();
+		final Button button = new Button(text, SWT.ARROW | SWT.DOWN);
 		button.setEnabled(false);
 		if (!enable) {
 			return button;
@@ -162,7 +181,7 @@ public class PredicateRow {
 		final int tacSize = tactics.size();
 		if (tacSize == 1 && comSize == 0) {
 			final ITacticApplication appli = tactics.get(0);
-			final Button tacButton = new Button(styledText, SWT.PUSH);
+			final Button tacButton = new Button(text, SWT.PUSH);
 			final IPredicateApplication predAppli = (IPredicateApplication) appli;
 			tacButton.setImage(getIcon(predAppli));
 			tacButton.setToolTipText(getTooltip(predAppli));
@@ -172,7 +191,7 @@ public class PredicateRow {
 		}
 		if (tacSize == 0 && comSize == 1) {
 			final ICommandApplication command = commands.get(0);
-			final Button comButton = new Button(styledText, SWT.PUSH);
+			final Button comButton = new Button(text, SWT.PUSH);
 			comButton.setImage(command.getIcon());
 			comButton.setToolTipText(command.getTooltip());
 			return comButton;

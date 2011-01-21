@@ -66,6 +66,7 @@ import org.rodinp.keyboard.preferences.PreferenceConstants;
 public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener {
 
 	private static final IUserSupportManager USM = EventBPlugin.getUserSupportManager();
+	private static final Color NO_GOAL_BG_COLOR = EventBSharedColor.getSystemColor(SWT.COLOR_GRAY);
 	
 	// Number of tabulation in the left margin
 	private static final int NB_TABS_LEFT = 3; //tabs
@@ -174,22 +175,20 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 
 	private void createGoalText(final IProofTreeNode node) {
 		if (node == null) {
-			final Color color = EventBSharedColor.getSystemColor(SWT.COLOR_GRAY);
 			styledText.append("No current goal");
-			styledText.setBackground(color);
+			styledText.setBackground(NO_GOAL_BG_COLOR);
 			return;
 		}
 		final Predicate goal = node.getSequent().goal();
 		final boolean enabled = node.isOpen();
 		styledText.setRedraw(false);
-		ProverUIUtils.appendTabs(styledText, NB_TABS_LEFT);
-		row = new PredicateRow(styledText, NB_TABS_LEFT, goal, true,
-				userSupport, false, enabled, null, proverUI, manager);
-		if (enabled) {
-			manager.enableListeners();			
-		} else {
-			manager.disableListeners();
-		}
+		manager.appendText(ProverUIUtils.getIndentation(NB_TABS_LEFT));
+		row = new PredicateRow(NB_TABS_LEFT, goal, true,
+				userSupport, enabled, null, proverUI, manager);
+		row.append(false);
+		manager.setContents();
+		row.attachButtons();
+		manager.enableListeners(enabled);
 		styledText.setRedraw(true);
 	}
 

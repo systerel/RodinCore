@@ -61,22 +61,16 @@ public class EventBPredicateText {
 
 	private static final int MAX_LENGTH = 30;
 
-	protected final StyledText styledText;
-
+	
+	private String predicateText;
+	
 	// The yellow boxes to insert some input
 	protected IEventBInputText[] boxes;
 
 	// The offset of each box on a given line
 	protected int[] offsets;
 
-	// The offset of the parent styledText before this predicate is appended
-	protected int textOffset;
-
-	private final TacticHyperlinkManager manager;
-
-	private final PredicateRow hypothesisRow;
-
-	private PaintObjectListener paintObjListener;
+	private final PredicateRow predicateRow;
 
 	// Constants for showing different cursors
 	private IUserSupport us;
@@ -86,41 +80,48 @@ public class EventBPredicateText {
 	
 	protected boolean boxesDrawn;
 
-	public EventBPredicateText(PredicateRow hypothesisRow, boolean isGoal,
+	private Map<Point, List<ITacticApplication>> links;
+
+	private Predicate pred;
+
+	public EventBPredicateText(PredicateRow predicateRow, boolean isGoal,
 			boolean enable, ProverUI proverUI) {
-		this.hypothesisRow = hypothesisRow;
-		this.styledText = hypothesisRow.styledText;
-		this.manager = hypothesisRow.manager;
+		this.predicateRow = predicateRow;
 		this.enable = enable;
 		this.boxesDrawn = false;
 	}
+	
+	public void load(String parsedString, IUserSupport userSupport,
+			Predicate predicate, Predicate parsedPredicate) {
+		us = userSupport;
+		pred = predicate;
+		predicateText = getPrettyPrintedString(parsedString, parsedPredicate);
+	}
+	
+	
+	public void append(TacticHyperlinkManager manager, boolean odd) {
+		links = getLinks(predicateText, pred, manager);
+		manager.setHyperlinks(links, predicateRow);
+		manager.putAssociation(links.keySet(), predicateRow);
+		manager.addPaintObjectListener(createPaintListener(manager));
+		final int startOffset = manager.getCurrentOffset();
+		manager.appendText(predicateText);
+		final int endOffset = manager.getCurrentOffset();
+		manager.addBackgroundPainter(odd, startOffset, endOffset);
+	}
 
-	public void append(String parsedString, IUserSupport userSupport,
-			Predicate hyp, Predicate parsedPredicate) {
-		this.us = userSupport;
-		
-		textOffset = styledText.getCharCount();
-		final String prettyStr = getPrettyPrintedString(parsedString, parsedPredicate);
-		final StringBuilder predBuilder = new StringBuilder(prettyStr);
-		predBuilder.append("\n");
-		
-		final Map<Point, List<ITacticApplication>> links = getLinks(
-				prettyStr, hyp);
-		manager.putAssociation(links.keySet(), hypothesisRow);
-		manager.setHyperlinks(links, hypothesisRow);
-
-		styledText.append(predBuilder.toString());
-		
-		// reposition widgets on paint event and draw a red box around the
-		// yellow input widgets
-		paintObjListener = new PaintObjectListener() {
+	// creates a paintObjectListener that repositions widgets on paint event and
+	// draw a red box around the
+	// yellow input widgets
+	private PaintObjectListener createPaintListener(final TacticHyperlinkManager manager) {
+		final int textOffset = manager.getCurrentOffset();
+		return new PaintObjectListener() {
 			@Override
 			public void paintObject(PaintObjectEvent event) {
 				if (!boxesDrawn) {
-					createTextBoxes();
+					createTextBoxes(manager, textOffset);
 					boxesDrawn = true;
 				}
-				
 				event.gc.setForeground(RED);
 				final StyleRange style = event.style;
 				int start = style.start;
@@ -130,9 +131,9 @@ public class EventBPredicateText {
 						final Text text = boxes[i].getTextWidget();
 						final Point textSize = text.getSize();
 						final int x = event.x + MARGIN;
-						final int y = event.y + event.ascent - 2 * textSize.y / 3;
+						final int y = event.y + event.ascent - 2 * textSize.y
+								/ 3;
 						text.setLocation(x, y);
-						text.setVisible(true);
 						final Rectangle bounds = text.getBounds();
 						event.gc.drawRectangle(bounds.x - 1, bounds.y - 1,
 								bounds.width + 1, bounds.height + 1);
@@ -141,17 +142,15 @@ public class EventBPredicateText {
 				}
 			}
 		};
-		styledText.addPaintObjectListener(paintObjListener);
-		setStyle();
 	}
 	
 	private String getPrettyPrintedString(String predicateStr,
 			Predicate parsedPredicate) {
-		final int nbTabsFromLeft = hypothesisRow.getNbTabsFromLeft();
+		final int nbTabsFromLeft = predicateRow.getNbTabsFromLeft();
+		final StringBuilder stb = new StringBuilder();
 		if (enable && parsedPredicate.getTag() == Formula.FORALL) {
 			final String space = " ";
 			final QuantifiedPredicate qpred = (QuantifiedPredicate) parsedPredicate;
-			final StringBuilder stb = new StringBuilder();
 			stb.append("\u2200 ");
 			final BoundIdentDecl[] idents = qpred.getBoundIdentDecls();
 			offsets = new int[idents.length];
@@ -176,27 +175,31 @@ public class EventBPredicateText {
 			ProverUIUtils.appendTabs(stb, nbTabsFromLeft);
 			stb.append(prettyPrint(MAX_LENGTH, predicateStr,
 					qpred.getPredicate(), nbTabsFromLeft));
+			stb.append("\n");
 			return stb.toString();
 		}
 		offsets = new int[0];
-		return prettyPrint(MAX_LENGTH, predicateStr, parsedPredicate, nbTabsFromLeft);
+		stb.append(prettyPrint(MAX_LENGTH, predicateStr, parsedPredicate, nbTabsFromLeft));
+		stb.append("\n");
+		return stb.toString();
 	}
 
 	private Map<Point, List<ITacticApplication>> getLinks(String predicateStr,
-			Predicate hypothesis) {
+			Predicate predicate, TacticHyperlinkManager manager) {
 		if (enable) {
 			return getHyperlinks(manager, us, true, predicateStr,
-					hypothesis);
+					predicate);
 		}
 		return emptyMap();
 	}
 
-	protected void createTextBoxes() {
+	protected void createTextBoxes(TacticHyperlinkManager manager, int textOffset) {
 		if (offsets == null)
 			return;
 		this.boxes = new IEventBInputText[offsets.length];
 		for (int i = 0; i < offsets.length; ++i) {
-			final Text text = new Text(styledText, SWT.SINGLE);
+			final StyledText parent = manager.getText();
+			final Text text = new Text(parent, SWT.SINGLE);
 			final int offset = offsets[i] + textOffset;
 			text.setText("     ");
 			boxes[i] = new EventBMath(text);
@@ -206,15 +209,15 @@ public class EventBPredicateText {
 				@Override
 				public void modifyText(ModifyEvent e) {
 					
-					resizeControl(text, offset);
+					createOrRelocateInputBoxes(parent, text, offset);
 				}
 			});
-			resizeControl(text, offset);
-			text.setVisible(false);
+			createOrRelocateInputBoxes(parent, text, offset);
 		}
 	}
 
-	protected void resizeControl(Text text, int offset) {
+	protected void createOrRelocateInputBoxes(StyledText parent, Text text,
+			int offset) {
 		final StyleRange style = new StyleRange();
 		style.start = offset;
 		style.length = 1;
@@ -224,23 +227,22 @@ public class EventBPredicateText {
 		final int descent = rect.height - ascent;
 		style.metrics = new GlyphMetrics(ascent + MARGIN, descent + MARGIN,
 				rect.width + 2 * MARGIN);
-		text.setLocation(styledText.getLocationAtOffset(offset));
-		styledText.setStyleRange(style);
+		text.setLocation(parent.getLocationAtOffset(offset));
+		parent.setStyleRange(style);
 	}
 
-	private void setStyle() {
-		manager.setHyperlinkStyle();
-	}
+	// It's this one that was setting the styles for each predicate.
+	// Now the manager should do it
+//	private void setStyle() {
+//		manager.setHyperlinkStyle();
+//	}
 
 	public void dispose() {
-		if (paintObjListener != null && !styledText.isDisposed())
-			styledText.removePaintObjectListener(paintObjListener);
 		if (boxes != null) {
 			for (IEventBInputText box : boxes) {
 				box.dispose();
 			}
 		}
-		manager.disposeMenu();
 	}
 
 	public String[] getResults() {

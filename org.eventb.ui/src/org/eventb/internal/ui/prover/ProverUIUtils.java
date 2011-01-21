@@ -28,9 +28,10 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -50,11 +51,12 @@ import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
+import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
+import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.prover.IPositionApplication;
 import org.eventb.ui.prover.IPredicateApplication;
@@ -84,6 +86,9 @@ public class ProverUIUtils {
 
 	// The debug prefix.
 	private final static String DEBUG_PREFIX = "*** ProverUI *** ";
+	
+	
+	public final static Color SOFT_BG_COLOR = EventBSharedColor.getColor(new RGB(247, 247, 247));
 
 	/**
 	 * Prints the message if the {@link #DEBUG} flag is
@@ -542,7 +547,7 @@ public class ProverUIUtils {
 	 */
 	public static Point getGlobalLocationAtOffset(
 			TacticHyperlinkManager manager, Point hyperlinkPosition) {
-		final int offset = manager.getText().getCharCount();
+		final int offset = manager.getCurrentOffset();
 		hyperlinkPosition.x += offset;
 		hyperlinkPosition.y += offset;
 		return hyperlinkPosition;
@@ -585,15 +590,15 @@ public class ProverUIUtils {
 		return getter.getResult();
 	}
 	
+	public static String getIndentation(int nbTabs) {
+		final StringBuilder sb = new StringBuilder();
+		appendTabs(sb, nbTabs);
+		return sb.toString();
+	}
+	
 	public static void appendTabs(StringBuilder sb, int nbTabs) {
 		for (int i = 0; i < nbTabs ; i++) {
 			sb.append(TAB);
-		}
-	}
-	
-	public static void appendTabs(StyledText st, int nbTabs) {
-		for (int i = 0; i < nbTabs ; i++) {
-			st.append(TAB);
 		}
 	}
 	

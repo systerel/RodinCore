@@ -13,14 +13,20 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
+import static org.eventb.internal.ui.prover.ProverUIUtils.SOFT_BG_COLOR;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getHyperlinkLabel;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.PaintObjectListener;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MenuEvent;
@@ -44,20 +50,22 @@ import org.eventb.ui.prover.ITacticApplication;
 
 public class TacticHyperlinkManager {
 
-	final Color RED = EventBSharedColor.getSystemColor(SWT.COLOR_RED);
+	final static Color RED = EventBSharedColor.getSystemColor(SWT.COLOR_RED);
 
 	final Cursor arrowCursor = new Cursor(Display.getDefault(), SWT.CURSOR_ARROW);
 
 	final Cursor handCursor = new Cursor(Display.getDefault(), SWT.CURSOR_HAND);
 
 	private final StyledText text;
+	private final StringBuilder toAppend;
+	private int stringBuilderOffset;
 
 	private final Map<Point, List<ITacticApplication>> links = new HashMap<Point, List<ITacticApplication>>();
-
 	private final Map<Point, PredicateRow> hypAppli = new HashMap<Point, PredicateRow>();
-	
-	private Menu tipMenu;
+	private final Set<PaintObjectListener> paintListeners = new HashSet<PaintObjectListener>();
+	private final Set<BackgroundPainter> backgroundPainters = new HashSet<BackgroundPainter>();
 
+	private Menu tipMenu;
 	private Point currentLink;
 	
 	private MouseDownListener mouseDownListener = new MouseDownListener(this);
@@ -65,10 +73,13 @@ public class TacticHyperlinkManager {
 	private MouseHoverListener mouseHoverListener = new MouseHoverListener(this);
 	private MouseEnterListener mouseEnterListener = new MouseEnterListener(this);	
 	private MouseExitListener mouseExitListener = new MouseExitListener(this);
+
 	
 	public TacticHyperlinkManager(StyledText text) {
 		this.text = text;
 		currentLink = null;
+		this.toAppend = new StringBuilder();
+		this.stringBuilderOffset = 0;
 	}
 	
 	public StyledText getText() {
@@ -88,8 +99,16 @@ public class TacticHyperlinkManager {
 
 	public void dispose() {
 		disableListeners();
+		disposeMenu();
+		if (text != null && !text.isDisposed()) {
+			for (PaintObjectListener p : paintListeners) {
+				text.removePaintObjectListener(p);
+			}
+		}
 		links.clear();
 		hypAppli.clear();
+		paintListeners.clear();
+		backgroundPainters.clear();
 	}
 
 	public void enableCurrentLink() {
@@ -103,14 +122,20 @@ public class TacticHyperlinkManager {
 		text.setStyleRange(style);
 	}
 
-	public void setHyperlinkStyle() {
+	public List<StyleRange> getHyperlinkStyles() {
+		final List<StyleRange> ranges = new ArrayList<StyleRange>();
 		for (Point point : links.keySet()) {
 			final StyleRange style = new StyleRange();
 			style.start = point.x;
 			style.length = point.y - point.x;
 			style.foreground = RED;
-			text.setStyleRange(style);
+			ranges.add(style);
 		}
+		return ranges;
+	}
+	
+	public void addPaintObjectListener(PaintObjectListener listener) {
+		paintListeners.add(listener);
 	}
 
 	public void activateHyperlink(Point link, Point widgetPosition) {
@@ -169,7 +194,7 @@ public class TacticHyperlinkManager {
 					@Override
 					public void widgetSelected(SelectionEvent se) {
 						applyTactic(link, tacticPosition);
-						enableListeners();
+						enableListeners(true);
 					}
 
 				});
@@ -184,12 +209,12 @@ public class TacticHyperlinkManager {
 
 			@Override
 			public void menuHidden(MenuEvent e) {
-				enableListeners();
+				enableListeners(true);
 			}
 
 			@Override
 			public void menuShown(MenuEvent e) {
-				disableListeners();
+				enableListeners(false);
 			}
 			
 		});
@@ -205,7 +230,7 @@ public class TacticHyperlinkManager {
 		showToolTip(tacticApplis, widgetPosition, currentLink);
 	}
 
-	public void disableListeners() {
+	private void disableListeners() {
 		if (text != null && !text.isDisposed()) {
 			text.removeListener(SWT.MouseDown, mouseDownListener);
 			text.removeListener(SWT.MouseMove, mouseMoveListener);
@@ -215,13 +240,21 @@ public class TacticHyperlinkManager {
 		}
 	}
 	
-	public void enableListeners() {
+	private void enableListeners() {
 		if (!text.isDisposed()) {
 			text.addListener(SWT.MouseDown, mouseDownListener);
 			text.addListener(SWT.MouseMove, mouseMoveListener);
 			text.addListener(SWT.MouseHover, mouseHoverListener);
 			text.addListener(SWT.MouseExit, mouseExitListener);
 			text.addListener(SWT.MouseEnter, mouseEnterListener);
+		}
+	}
+	
+	public void enableListeners(boolean enabled) {
+		if (enabled) {
+			enableListeners();
+		} else {
+			disableListeners();
 		}
 	}
 	
@@ -237,7 +270,6 @@ public class TacticHyperlinkManager {
 			tipMenu.dispose();
 		}
 	}
-
 	public void hideMenu() {
 		if (tipMenu != null && !tipMenu.isDisposed() && tipMenu.isVisible()) {
 			tipMenu.setVisible(false);
@@ -281,8 +313,8 @@ public class TacticHyperlinkManager {
 				}
 			}
 		} catch (IllegalArgumentException exception) {
-			// if (ProverUIUtils.DEBUG)
-			// ProverUIUtils.debug("Invalid");
+			if (ProverUIUtils.DEBUG)
+				ProverUIUtils.debug("Invalid mouse position");
 		}
 	}
 
@@ -312,4 +344,64 @@ public class TacticHyperlinkManager {
 		}
 	}
 
+	public void appendText(String str) {
+		stringBuilderOffset += str.length();
+		toAppend.append(str);
+	}
+
+	public void setContents() {	
+		text.setText(toAppend.toString());
+		final List<StyleRange> hyperlinkStyles = getHyperlinkStyles();
+		Collections.sort(hyperlinkStyles, new Comparator<StyleRange>(){
+			@Override
+			public int compare(StyleRange o1, StyleRange o2) {
+				return o1.start - o2.start;
+			}
+		});
+		final StyleRange[] ranges = hyperlinkStyles
+				.toArray(new StyleRange[hyperlinkStyles.size()]);
+		text.setStyleRanges(ranges);
+		for (PaintObjectListener l : paintListeners){
+			text.addPaintObjectListener(l);
+		}
+	}
+
+	public int getCurrentOffset() {
+		return stringBuilderOffset;
+	}
+
+	public void addBackgroundPainter(boolean odd, final int startOffset, final int endOffset) {
+		if (odd) {
+			backgroundPainters.add(new BackgroundPainter(text, startOffset, endOffset, SOFT_BG_COLOR));
+		}
+	}
+	
+	public void activateBackgroundColoration() {
+		for (BackgroundPainter p : backgroundPainters){
+			p.draw();
+		}
+	}
+	
+	private static class BackgroundPainter {
+		
+		private int start;
+		private int end;
+		private StyledText text;
+		private Color color;
+
+		public BackgroundPainter(StyledText text, int start, int end, Color color) {
+			this.start = start;
+			this.end = end;
+			this.text = text;
+			this.color = color;
+		}
+		
+		public void draw() {
+			final int startLine = text.getLineAtOffset(start);
+			final int endLine = text.getLineAtOffset(end);
+			final int length = endLine - startLine;
+			text.setLineBackground(startLine, length, color);
+		}
+	}
+	
 }
