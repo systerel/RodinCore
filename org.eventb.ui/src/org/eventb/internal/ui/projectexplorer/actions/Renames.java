@@ -111,7 +111,7 @@ public class Renames implements IObjectActionDelegate {
 		final String fileName = getDefaultName(root);
 
 		final RenamesComponentDialog dialog = new RenamesComponentDialog(part
-				.getSite().getShell(), fileName, false,
+				.getSite().getShell(), fileName, true,
 				new RodinFileInputValidator(prj));
 
 		dialog.open();
