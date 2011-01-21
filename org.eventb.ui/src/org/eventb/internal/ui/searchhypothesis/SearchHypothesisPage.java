@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,10 +124,11 @@ public class SearchHypothesisPage extends HypothesisPage implements
 		manager.add(refresh);
 
 		final SearchBox sBox = searchBox;
+		final IUserSupport us = userSupport;
 		final Action search = new Action(null, AS_PUSH_BUTTON) {
 			@Override
 			public void run() {
-				if (userSupport == null) {
+				if (us == null) {
 					return;
 				}
 				sBox.search();

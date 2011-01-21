@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
+import static org.eventb.internal.ui.prover.ProverUIUtils.appendTabs;
 import static org.eventb.internal.ui.utils.PredicateHeightComputer.getHeight;
 
 import java.util.ArrayList;
@@ -36,16 +37,22 @@ public class PredicateUtil {
 	private static final int tab = 2;
 	private static final String SPACES = "                              ";
 	private static final int SPACES_LENGTH = SPACES.length();
-
+	
+	
 	public static String prettyPrint(int maxLen, String predString,
 			Predicate pred) {
+		return prettyPrint(maxLen, predString, pred, 0);
+	}
+	
+	public static String prettyPrint(int maxLen, String predString,
+			Predicate pred, int leftTabs) {
 		final StringBuilder sb = new StringBuilder(predString.length());
-		prettyPrint(sb, maxLen, predString, pred, 0);
+		prettyPrint(sb, maxLen, predString, pred, 0, leftTabs);
 		return sb.toString();
 	}
 
 	private static void prettyPrint(StringBuilder sb, int maxLen,
-			String predString, Predicate pred, int indent) {
+			String predString, Predicate pred, int indent, int leftTabs) {
 
 		final int start = sb.length();
 		appendSpaces(sb, indent);
@@ -112,8 +119,9 @@ public class PredicateUtil {
 							appendSpaces(sb, indent);
 							sb.append(oldString);
 							sb.append('\n');
+							appendTabs(sb, leftTabs);
 						}
-						prettyPrint(sb, maxLen, predString, child, indent);
+						prettyPrint(sb, maxLen, predString, child, indent, leftTabs);
 					}
 				}
 
@@ -122,10 +130,11 @@ public class PredicateUtil {
 						currentString = newString;
 						currentChildren.add(child);
 					} else if (oldString == "") {
-						prettyPrint(sb, maxLen, predString, child, indent);
+						prettyPrint(sb, maxLen, predString, child, indent, leftTabs);
 						appendSpaces(sb, indent);
 						sb.append(op);
 						sb.append('\n');
+						appendTabs(sb, leftTabs);
 						currentString = "";
 						currentChildren.clear();
 						currentHeight = -1;
@@ -133,6 +142,7 @@ public class PredicateUtil {
 						appendSpaces(sb, indent);
 						sb.append(oldString);
 						sb.append('\n');
+						appendTabs(sb, leftTabs);
 						currentHeight = getHeight(child);
 						currentChildren.clear();
 						currentChildren.add(child);
@@ -157,12 +167,14 @@ public class PredicateUtil {
 				op = "\u21d2";
 			else if (tag == Predicate.LEQV)
 				op = "\u21d4";
-			prettyPrint(sb, maxLen, predString, bPred.getLeft(), indent + tab);
+			prettyPrint(sb, maxLen, predString, bPred.getLeft(), indent + tab, leftTabs);
 			sb.append('\n');
+			appendTabs(sb, leftTabs);
 			appendSpaces(sb, indent);
 			sb.append(op);
 			sb.append('\n');
-			prettyPrint(sb, maxLen, predString, bPred.getRight(), indent + tab);
+			appendTabs(sb, leftTabs);
+			prettyPrint(sb, maxLen, predString, bPred.getRight(), indent + tab, leftTabs);
 		}
 
 		else if (pred instanceof LiteralPredicate) {
@@ -191,7 +203,8 @@ public class PredicateUtil {
 			sb.append(' ');
 			appendDeclsImage(sb, decls, predString);
 			sb.append(" \u00b7 \n");
-			prettyPrint(sb, maxLen, predString, predicate, indent + tab);
+			appendTabs(sb, leftTabs);
+			prettyPrint(sb, maxLen, predString, predicate, indent + tab, leftTabs);
 		}
 
 		else if (pred instanceof RelationalPredicate) {
@@ -215,7 +228,8 @@ public class PredicateUtil {
 			appendSpaces(sb, indent);
 			sb.append(op);
 			sb.append('\n');
-			prettyPrint(sb, maxLen, predString, child, indent + tab);
+			appendTabs(sb, leftTabs);
+			prettyPrint(sb, maxLen, predString, child, indent + tab, leftTabs);
 		}
 		// TODO refactoring needed here (default case)
 		else if (pred instanceof ExtendedPredicate) {
@@ -241,7 +255,7 @@ public class PredicateUtil {
 			sb.append('(');
 		}
 		final SourceLocation loc = formula.getSourceLocation();
-		sb.append(string, loc.getStart(), loc.getEnd() + 1);
+		sb.append(string, loc.getStart(), loc.getEnd()+1); //+1 ?
 		if (bracketed) {
 			sb.append(')');
 		}
@@ -438,5 +452,5 @@ public class PredicateUtil {
 		}
 		sb.append(SPACES, 0, number);
 	}
-
+	
 }

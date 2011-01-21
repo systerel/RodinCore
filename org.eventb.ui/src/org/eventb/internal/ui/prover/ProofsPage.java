@@ -58,7 +58,7 @@ public class ProofsPage extends FormPage implements
 
 	public static final String PAGE_TITLE = "No Current Obligation"; //$NON-NLS-1$
 
-	public static final String PAGE_TAB_TITLE = "State"; //$NON-NLS-1$
+	public static final String PAGE_TAB_TITLE = PAGE_ID; //$NON-NLS-1$
 
 	private static final int DEFAULT_HEIGHT = 400;
 
@@ -104,12 +104,12 @@ public class ProofsPage extends FormPage implements
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
-		ScrolledForm form = managedForm.getForm();
+		final ScrolledForm form = managedForm.getForm();
 		form.setText(PAGE_TITLE);
 		body = form.getBody();
 
 		control = new Composite(body, SWT.NULL);
-		GridLayout gridLayout = new GridLayout();
+		final GridLayout gridLayout = new GridLayout();
 		gridLayout.horizontalSpacing = 0;
 		gridLayout.verticalSpacing = 0;
 		gridLayout.marginHeight = 0;
@@ -128,12 +128,12 @@ public class ProofsPage extends FormPage implements
 		tmpComp = new Composite(control, SWT.NULL);
 		if (ProverUIUtils.DEBUG) {
 			tmpComp.setBackground(EventBSharedColor
-					.getSystemColor(SWT.COLOR_CYAN));
+					.getSystemColor(SWT.COLOR_DARK_GRAY));
 		}
 		else {
 			tmpComp.setBackground(form.getBackground());
 		}
-		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		final GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gridData.heightHint = 0;
 		gridData.widthHint = 0;
 		tmpComp.setLayoutData(gridData);
@@ -229,7 +229,6 @@ public class ProofsPage extends FormPage implements
 		control.setBounds(0, 0, totalWidth, totalHeight);
 		control.layout(true);
 		hypComposite.setSize(selectedSize.x, hypHeigth);
-		hypComposite.reflow(true);
 
 		if (ProverUIUtils.DEBUG) {
 			ProverUIUtils.debug("Desired Height " + selectedSize.y);

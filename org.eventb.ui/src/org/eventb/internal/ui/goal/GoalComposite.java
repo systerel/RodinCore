@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.ui.goal;
 
 import java.util.ArrayList;
@@ -43,16 +53,16 @@ public class GoalComposite extends HypothesisComposite {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				IUserSupport userSupport = GoalComposite.this.getUserSupport();
-				assert userSupport != null;
-				
-				Set<Predicate> selected = GoalComposite.this.getSelectedHyps();
-				ITactic t = Tactics.mngHyp(ProverFactory.makeSelectHypAction(selected));
+				final IUserSupport us = getUserSupport();
+				assert us != null;
+				final Set<Predicate> selected = GoalComposite.this
+						.getSelectedHyps();
+				final ITactic t = Tactics.mngHyp(ProverFactory
+						.makeSelectHypAction(selected));
 				try {
-					userSupport.applyTacticToHypotheses(t, selected, true,
+					us.applyTacticToHypotheses(t, selected, true,
 							new NullProgressMonitor());
 				} catch (RodinDBException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
@@ -61,21 +71,21 @@ public class GoalComposite extends HypothesisComposite {
 			public void widgetSelected(SelectionEvent e) {
 				widgetDefaultSelected(e);
 			}
-			
+
 		});
 
 		removeItem = new ToolItem(toolBar, SWT.PUSH);
 		removeItem.setImage(EventBImage.getImage(IEventBSharedImages.IMG_REMOVE));
 		removeItem.setToolTipText("Remove from cached");
 		removeItem.addSelectionListener(new SelectionListener() {
-
+			
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				IUserSupport userSupport = GoalComposite.this.getUserSupport();
-				assert userSupport != null;
-				
-				Set<Predicate> deselected = GoalComposite.this.getSelectedHyps();
-				userSupport.removeCachedHypotheses(deselected);
+				final IUserSupport us = getUserSupport();
+				assert us != null;
+				final Set<Predicate> deselected = GoalComposite.this
+						.getSelectedHyps();
+				us.removeCachedHypotheses(deselected);
 			}
 
 			@Override

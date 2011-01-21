@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,22 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
+import static org.eventb.internal.ui.prover.ProverUIUtils.getIndentation;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -31,8 +39,6 @@ import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
@@ -47,6 +53,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.searchhypothesis.SearchHypothesisComposite;
 import org.eventb.internal.ui.searchhypothesis.SearchHypothesisUtils;
+import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 /**
  * @author htson
@@ -62,8 +69,8 @@ import org.eventb.internal.ui.searchhypothesis.SearchHypothesisUtils;
  *         </p>
  *         <p>
  *         Clients need to implements method for creating different tool bar
- *         items {@link #createItems(ToolBar)}, update the status of these
- *         items when there are some changes occur {@link #updateToolbarItems()}.
+ *         items {@link #createItems(ToolBar)}, update the status of these items
+ *         when there are some changes occur {@link #updateToolbarItems()}.
  *         </p>
  *         <p>
  *         Moreover, clients need to implement method
@@ -76,37 +83,47 @@ import org.eventb.internal.ui.searchhypothesis.SearchHypothesisUtils;
  * @see IProofStateDelta#F_SEARCH
  */
 public abstract class HypothesisComposite implements
-		IUserSupportManagerChangedListener, SelectionListener {
+		IUserSupportManagerChangedListener, SelectionListener,
+		IPropertyChangeListener {
 
 	private static final IUserSupportManager USM = EventBPlugin
 			.getUserSupportManager();
 
+	
+	private static final int NB_TABS_LEFT = 3; //Tabs
+	private static final int LINE_SPACING = 3; //px
+
 	// The User Support associated with this Hypothesis Composite.
-	IUserSupport userSupport;
+	private final IUserSupport userSupport;
 
 	// The main scrolled form.
-	private ScrolledForm scrolledForm;
+	private StyledText styledText;
+	
+	private TacticHyperlinkManager manager;
 
 	// The collection of hypothesis rows.
-	private List<HypothesisRow> rows;
+	private final List<PredicateRow> rows = new ArrayList<PredicateRow>();
 
-	// The form toolkit used to create different widgets within this composite.
-	private FormToolkit toolkit;
+	// The top-level composite control of this hypothesis composite.
+	private Composite control;
 
-	// The top-level composite control of this hypothesis composite. 
-	Composite control;
-	
 	// The main prover editor associated with this Hypothesis composite.
-	private ProverUI proverUI;
+	private final ProverUI proverUI;
 
-	private int flags;
+	private final int flags;
+
+	private ScrolledComposite sc;
+
+
+	private Font font;
 
 	/**
 	 * Constructor.
 	 * <p>
 	 * 
 	 * @param userSupport
-	 *            the User Support associated with this Hypothesis Page. This value must not be <code>null</code>.
+	 *            the User Support associated with this Hypothesis Page. This
+	 *            value must not be <code>null</code>.
 	 * @param flags
 	 *            the IProofStateDelta flags that this page should respond to
 	 *            when changes occur in the proof state. For example,
@@ -124,27 +141,20 @@ public abstract class HypothesisComposite implements
 		this.userSupport = userSupport;
 		this.proverUI = proverUI;
 		this.flags = flags;
-		
-		// Create an empty hypothesis rows.
-		rows = new ArrayList<HypothesisRow>();
-
-		// Listen to the changes from the user support manager.
-		USM.addChangeListener(this);
 	}
 
 	/**
-	 * Dispose the hypothesis composite by disposing the hypothesis rows. 
+	 * Dispose the hypothesis composite by disposing the hypothesis rows.
 	 */
 	public void dispose() {
 		// Disconnect from the user support manager.
 		USM.removeChangeListener(this);
-		
-		// Disposing the hypothesis row.
-		for (HypothesisRow row : rows) {
-			row.dispose();
-		}
-	}
 
+		JFaceResources.getFontRegistry().removeListener(this);
+		
+		totalClearance();
+	}
+	
 	/**
 	 * Create the control of the hypothesis composite. This should be called
 	 * after the constructor.
@@ -154,70 +164,80 @@ public abstract class HypothesisComposite implements
 	 */
 	public void createControl(Composite parent) {
 
-		// Get the form toolkit from the composite parent.
-		toolkit = new FormToolkit(parent.getDisplay());
-
 		// Create the top-level composite.
-		control = toolkit.createComposite(parent, SWT.NULL);
+		control = new Composite(parent, SWT.NULL);
 		if (ProverUIUtils.DEBUG) {
-			control.setBackground(EventBSharedColor.getSystemColor(
-				SWT.COLOR_DARK_GRAY));
+			control.setBackground(EventBSharedColor
+					.getSystemColor(SWT.COLOR_DARK_GRAY));
 		}
 		// Set the layout of the top-level control to a form layout.
 		control.setLayout(new FormLayout());
-		
+
 		// Create the top cool bar.
-		CoolBar buttonBar = new CoolBar(control, SWT.FLAT);
-		ToolBar toolBar = new ToolBar(buttonBar, SWT.FLAT);
+		final CoolBar buttonBar = createTopCoolBar(control);
+
+		// Create a dummy toolbar, if not then the cool bar is not displayed.
+		createDummyToolbar(buttonBar);
+
+		// Set the layout data for the top cool bar
+		setLayoutData(buttonBar);
+		
+		// Creates a scrolledComposite to hold the styledText.
+		sc = new ScrolledComposite(control, SWT.H_SCROLL | SWT.V_SCROLL);
+		setScrolledLayout(sc, buttonBar);
+		
+		font = JFaceResources
+				.getFont(PreferenceConstants.RODIN_MATH_FONT);
+		JFaceResources.getFontRegistry().addListener(this);
+
+		if (ProverUIUtils.DEBUG) {
+			styledText.setBackground(EventBSharedColor
+					.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+		}
+		// Refresh to create to fill out the content of the scrolled form.
+		refresh();
+		USM.addChangeListener(this);
+	}
+
+	private CoolBar createTopCoolBar(Composite parent) {
+		final CoolBar buttonBar = new CoolBar(parent, SWT.FLAT);
+		final ToolBar toolBar = new ToolBar(buttonBar, SWT.FLAT);
 		createItems(toolBar);
-		toolBar.pack();
-		Point size = toolBar.getSize();
-		CoolItem item = new CoolItem(buttonBar, SWT.NONE);
+		final CoolItem item = new CoolItem(buttonBar, SWT.NONE);
 		item.setControl(toolBar);
-		Point preferred = item.computeSize(size.x, size.y);
+		toolBar.pack();
+		final Point size = toolBar.getSize();
+		final Point preferred = item.computeSize(size.x, size.y);
 		item.setPreferredSize(preferred);
+		return buttonBar;
+	}
 
-		// Creat a dummy toolbar, if not then the cool bar is not displayed.
-		ToolBar dummyBar = new ToolBar(buttonBar, SWT.FLAT);
+	private static void createDummyToolbar(final CoolBar buttonBar) {
+		final ToolBar dummyBar = new ToolBar(buttonBar, SWT.FLAT);
 		dummyBar.pack();
-		size = dummyBar.getSize();
-		CoolItem dummyItem = new CoolItem(buttonBar, SWT.NONE);
+		final Point size2 = dummyBar.getSize();
+		final CoolItem dummyItem = new CoolItem(buttonBar, SWT.NONE);
 		dummyItem.setControl(dummyBar);
-		preferred = dummyItem.computeSize(size.x, size.y);
-		dummyItem.setPreferredSize(preferred);
-
-		// Set the layout data for the top cool bar		
-		FormData coolData = new FormData();
+		final Point preferred2 = dummyItem.computeSize(size2.x, size2.y);
+		dummyItem.setPreferredSize(preferred2);
+	}
+	
+	private static void setLayoutData(CoolBar buttonBar) {
+		final FormData coolData = new FormData();
 		coolData.left = new FormAttachment(0);
 		coolData.right = new FormAttachment(100);
 		coolData.top = new FormAttachment(0);
 		buttonBar.setLayoutData(coolData);
+	}
 
-		// Create the scrolled form below the cool bar
-		scrolledForm = toolkit.createScrolledForm(control);
-		FormData scrolledData = new FormData();
+	private static void setScrolledLayout(ScrolledComposite scComp, CoolBar buttonBar) {
+		scComp.setLayout(new GridLayout(1, false));
+		final FormData scrolledData = new FormData();
 		scrolledData.left = new FormAttachment(0);
 		scrolledData.right = new FormAttachment(100);
 		scrolledData.top = new FormAttachment(buttonBar);
 		scrolledData.bottom = new FormAttachment(100);
-		scrolledForm.setLayoutData(scrolledData);
-
-		// Set the layout data for the body of the scrolled form to be a grid
-		// layout with 3 columns.
-		Composite comp = scrolledForm.getBody();
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
-		layout.verticalSpacing = 0;
-		comp.setLayout(layout);
-		
-		if (ProverUIUtils.DEBUG) {
-			comp
-				.setBackground(EventBSharedColor.getSystemColor(
-						SWT.COLOR_GREEN));
-		}
-
-		// Refresh to create to fill out the content of the scrolled form.
-		refresh();
+		scComp.setLayoutData(scrolledData);
 	}
 
 	/**
@@ -241,14 +261,13 @@ public abstract class HypothesisComposite implements
 	 * @param ps
 	 *            a proof state.
 	 * @return the prover sequent at the current node of the proof state. Return
-	 *         <code>null</code> if the proof state itself is
-	 *         <code>null</code> or the current node within the proof state is
-	 *         <code>null</code>.
+	 *         <code>null</code> if the proof state itself is <code>null</code>
+	 *         or the current node within the proof state is <code>null</code>.
 	 */
 	private IProverSequent getProverSequent(IProofState ps) {
 		IProverSequent sequent = null;
 		if (ps != null) {
-			IProofTreeNode node = ps.getCurrentNode();
+			final IProofTreeNode node = ps.getCurrentNode();
 			if (node != null) {
 				sequent = node.getSequent();
 			}
@@ -271,7 +290,7 @@ public abstract class HypothesisComposite implements
 	private boolean isEnabled(IProofState ps) {
 		boolean enabled = false;
 		if (ps != null) {
-			IProofTreeNode node = ps.getCurrentNode();
+			final IProofTreeNode node = ps.getCurrentNode();
 			if (node != null) {
 				if (node.isOpen())
 					enabled = true;
@@ -298,7 +317,6 @@ public abstract class HypothesisComposite implements
 		final Iterable<Predicate> hyps = getHypotheses(ps);
 		final boolean enabled = isEnabled(ps);
 		reinitialise(hyps, sequent, enabled);
-
 		if (traced) {
 			final long elapsed = System.currentTimeMillis() - start;
 			SearchHypothesisUtils.debug("Refreshing view took " + elapsed
@@ -322,60 +340,111 @@ public abstract class HypothesisComposite implements
 	 * collection of hypothesis, the prover sequent. Also specify if the
 	 * hypothesis rows should be enable or not.
 	 * 
-	 * @param hyps a collection of hypotheses.
-	 * @param sequent a prover sequent
-	 * @param enabled <code>true</code> if the hypothesis rows should be enable.
+	 * @param hyps
+	 *            a collection of hypotheses.
+	 * @param sequent
+	 *            a prover sequent
+	 * @param enabled
+	 *            <code>true</code> if the hypothesis rows should be enabled.
 	 */
 	private void reinitialise(Iterable<Predicate> hyps, IProverSequent sequent,
 			boolean enabled) {
 
-		final boolean traced = SearchHypothesisUtils.DEBUG
-				&& (this instanceof SearchHypothesisComposite);
+		final boolean traced = ProverUIUtils.DEBUG;
 		long start = 0;
 		if (traced) {
 			start = System.currentTimeMillis();
-		}		
-		// Remove all the existing hypothesis rows.
-		for (HypothesisRow row : rows) {
-			row.dispose();
 		}
-		rows.clear();
+		if (styledText != null) {
+			styledText.dispose();
+		}
+		totalClearance();
+		initStyledTextAndManager();
+		assert styledText != null;
+		styledText.setRedraw(false);
+		
 		if (traced) {
 			final long elapsed = System.currentTimeMillis() - start;
-			SearchHypothesisUtils.debug("clearing rows took " + elapsed
+			ProverUIUtils.debug("Clearing rows and text took " + elapsed
 					+ " ms.");
 			start = System.currentTimeMillis();
-		}		
+		}
 
 		// Recreating the hypothesis rows according to the input.
-		int i = 0;
 		for (Predicate hyp : hyps) {
-			HypothesisRow row = new HypothesisRow(toolkit, scrolledForm
-					.getBody(), hyp, userSupport, i % 2 != 0,
-					enabled, this, proverUI, scrolledForm);
+			final PredicateRow row = new PredicateRow(NB_TABS_LEFT, hyp, false,
+					userSupport, enabled, this, proverUI, manager);
 			rows.add(row);
-			i++;
 		}
+		
 		if (traced) {
 			final long elapsed = System.currentTimeMillis() - start;
-			SearchHypothesisUtils.debug("adding rows took " + elapsed + " ms.");
+			SearchHypothesisUtils.debug("Creating rows took " + elapsed + " ms.");
 			start = System.currentTimeMillis();
-		}		
+		}
+		
+		final String indentation = getIndentation(NB_TABS_LEFT);
+		int i = 0;
+		for (PredicateRow row : rows) {
+			manager.appendText(indentation);
+			row.append(i%2!=0);
+			i++;
+		}
+		manager.setContents();
+		manager.activateBackgroundColoration();
+		for (PredicateRow row : rows) {
+			row.attachButtons();
+		}
+		manager.enableListeners(enabled);
+		styledText.setRedraw(true);
+		
+		if (traced) {
+			final long elapsed = System.currentTimeMillis() - start;
+			SearchHypothesisUtils.debug("painting styledText took " + elapsed + " ms.");
+			start = System.currentTimeMillis();
+		}
 
-		// Reflow the scrolled form and update the status of the tool bar items.
-		scrolledForm.reflow(true);
+		// update the status of the tool bar items.
 		updateToolbarItems();
+		sc.setMinSize(styledText.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+
 		if (traced) {
 			final long elapsed = System.currentTimeMillis() - start;
 			SearchHypothesisUtils.debug("reflow + toolbars took " + elapsed
 					+ " ms.");
-		}		
+		}
+	}
+
+	private void totalClearance() {
+		if (styledText == null) {
+			return;
+		}
+		for (PredicateRow row : rows) {
+			row.dispose();
+		}
+		rows.clear();
+		if (manager != null)
+			manager.dispose();
+	}
+
+	private void initStyledTextAndManager(){
+		// Create the styled text below the cool bar
+		styledText = new StyledText(sc, SWT.NONE);
+		sc.setContent(styledText);
+		sc.setExpandHorizontal(true);
+		sc.setExpandVertical(true);
+		styledText.setFont(font);
+		styledText.setEditable(false);
+		styledText.setLineSpacing(LINE_SPACING);
+		manager = new TacticHyperlinkManager(styledText);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eventb.core.pm.IProofStateChangedListener#proofStateChanged(org.eventb.core.pm.IProofStateDelta)
+	 * @see
+	 * org.eventb.core.pm.IProofStateChangedListener#proofStateChanged(org.eventb
+	 * .core.pm.IProofStateDelta)
 	 */
 	@Override
 	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
@@ -412,61 +481,15 @@ public abstract class HypothesisComposite implements
 			return; // Do nothing
 		}
 
-		boolean needRefresh = false;
-		
-		// Handle the case where the user support has changed.
-		if (kind == IUserSupportDelta.CHANGED) {
-			int usFlags = affectedUserSupport.getFlags();
-			if ((usFlags & IUserSupportDelta.F_CURRENT) != 0) {
-				// The current proof state is changed, reinitialise the
-				// view.
-				needRefresh = true;
-			}
-			else if ((usFlags & IUserSupportDelta.F_STATE) != 0) {
-				// If the changes occurs in some proof states.
-				IProofState proofState = userSupport.getCurrentPO();
-				// Trying to get the change for the current proof state.
-				final IProofStateDelta affectedProofState = ProverUIUtils
-						.getProofStateDelta(affectedUserSupport,
-								proofState);
-				if (affectedProofState != null) {
-					// If there are some changes
-					int psKind = affectedProofState.getKind();
-					if (psKind == IProofStateDelta.ADDED) {
-						// This case should not happened since the proof state
-						// must exist before creating this.
-						if (ProverUIUtils.DEBUG)
-							ProverUIUtils
-									.debug("Error: Delta said that the proof state is added"); // $NON-NLS-1$
-						return; // Do nothing
-					}
+		final boolean needRefresh = needRefresh(affectedUserSupport);
 
-					if (psKind == IProofStateDelta.REMOVED) {
-						// Do nothing in this case, this will be handled
-						// by the main proof editor.
-						return;
-					}
-
-					if (psKind == IProofStateDelta.CHANGED) {
-						// If there are some changes to the proof state.
-						int psFlags = affectedProofState.getFlags();
-						if ((psFlags & flags) != 0) {
-							// Update the view if the corresponding flag
-							// has been changed
-							needRefresh = true;
-						}
-					}
-				}
-			}
-		}
-
-		if (needRefresh) {
-			Display display = scrolledForm.getDisplay();
-
+		if (needRefresh && styledText != null) {
+			
+			final Display display = styledText.getDisplay();
 			display.syncExec(new Runnable() {
 				@Override
 				public void run() {
-					if (!control.isDisposed())
+					if (!getControl().isDisposed())
 						refresh();
 				}
 			});
@@ -476,11 +499,62 @@ public abstract class HypothesisComposite implements
 			ProverUIUtils.debug("End User Support Manager Changed"); // $NON-NLS-1$
 	}
 
+	private boolean needRefresh(IUserSupportDelta affectedUserSupport) {
+		final int kind = affectedUserSupport.getKind();
+		
+		// Handle the case where the user support has changed.
+		if (kind != IUserSupportDelta.CHANGED) {
+			return false;
+		}
+		final int usFlags = affectedUserSupport.getFlags();
+		if ((usFlags & IUserSupportDelta.F_CURRENT) != 0) {
+			// The current proof state is changed, reinitialise the
+			// view.
+			return true;
+		}
+		if ((usFlags & IUserSupportDelta.F_STATE) == 0) {
+			return false;
+		}
+		// If the changes occurs in some proof states.
+		final IProofState proofState = userSupport.getCurrentPO();
+		// Trying to get the change for the current proof state.
+		final IProofStateDelta affectedProofState = ProverUIUtils
+				.getProofStateDelta(affectedUserSupport, proofState);
+		if (affectedProofState == null) {
+			return false;
+		}
+		// If there are some changes
+		final int psKind = affectedProofState.getKind();
+		switch (psKind) {
+		case IProofStateDelta.ADDED:
+			// This case should not happened since the proof state
+			// must exist before creating this.
+			if (ProverUIUtils.DEBUG)
+				ProverUIUtils
+						.debug("Error: Delta said that the proof state is added"); // $NON-NLS-1$
+			return false; // Do nothing
+		case IProofStateDelta.REMOVED:
+			// Do nothing in this case, this will be handled
+			// by the main proof editor.
+			return false;
+		case IProofStateDelta.CHANGED:
+			// If there are some changes to the proof state.
+			final int psFlags = affectedProofState.getFlags();
+			if ((psFlags & flags) != 0) {
+				// Update the view if the corresponding flag
+				// has been changed
+				return true;
+			}
+		default:
+			return false;
+		}
+	}
+
 	/**
 	 * Pass the focus to the scrolled form.
 	 */
 	public void setFocus() {
-		scrolledForm.setFocus();
+		styledText.setFocus();
 	}
 
 	/**
@@ -508,9 +582,9 @@ public abstract class HypothesisComposite implements
 	 */
 	public Set<Predicate> getSelectedHyps() {
 		Set<Predicate> selected = new HashSet<Predicate>();
-		for (HypothesisRow hr : rows) {
+		for (PredicateRow hr : rows) {
 			if (hr.isSelected()) {
-				selected.add(hr.getHypothesis());
+				selected.add(hr.getPredicate());
 			}
 		}
 		return selected;
@@ -520,7 +594,7 @@ public abstract class HypothesisComposite implements
 	 * Inverse the current selection.
 	 */
 	public void inverseSelectedHyps() {
-		for (HypothesisRow hr : rows) {
+		for (PredicateRow hr : rows) {
 			hr.setSelected(!hr.isSelected());
 		}
 		updateToolbarItems();
@@ -530,7 +604,7 @@ public abstract class HypothesisComposite implements
 	 * De-select all hypotheses. 
 	 */
 	public void deselectAllHyps() {
-		for (HypothesisRow hr : rows) {
+		for (PredicateRow hr : rows) {
 			if (hr.isSelected())
 				hr.setSelected(false);
 		}
@@ -541,23 +615,11 @@ public abstract class HypothesisComposite implements
 	 * Select all hypotheses.
 	 */
 	public void selectAllHyps() {
-		for (HypothesisRow hr : rows) {
+		for (PredicateRow hr : rows) {
 			if (!hr.isSelected())
 				hr.setSelected(true);
 		}
 		updateToolbarItems();
-	}
-
-	/**
-	 * Recomputes the body layout and the scroll bars. The method should be used
-	 * when changes somewhere in the form body invalidate the current layout
-	 * and/or scroll bars.
-	 * 
-	 * @param flushCache
-	 *            if <code>true</code>, drop the cached data.
-	 */
-	public void reflow(boolean flushCache) {
-		scrolledForm.reflow(flushCache);
 	}
 
 	/**
@@ -566,11 +628,13 @@ public abstract class HypothesisComposite implements
 	 */
 	public void scrollToBottom() {
 		if (!rows.isEmpty()) {
-			final HypothesisRow lastRow = rows.get(rows.size() - 1);
-			scrolledForm.showControl(lastRow.getLeftmostControl());
+			final PredicateRow lastRow = rows.get(rows.size() - 1);
+			sc.showControl(lastRow.getLeftmostControl());
 		}
 	}
 	
+	
+
 	/**
 	 * Set the size of the top-level control.
 	 * 
@@ -581,6 +645,23 @@ public abstract class HypothesisComposite implements
 	 */
 	public void setSize(int width, int height) {
 		control.setSize(width, height);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse
+	 * .jface.util.PropertyChangeEvent)
+	 */
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
+			font = JFaceResources
+					.getFont(PreferenceConstants.RODIN_MATH_FONT);
+			styledText.setFont(font);
+			styledText.pack();
+		}
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -28,8 +28,10 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -49,11 +51,12 @@ import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
+import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
+import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.prover.IPositionApplication;
 import org.eventb.ui.prover.IPredicateApplication;
@@ -74,9 +77,18 @@ public class ProverUIUtils {
 	 * The debug flag. 
 	 */
 	public static boolean DEBUG = false;
+	
+	
+	/**
+	 * The character used to build a margin on the left of the proving UI
+	 */
+	public static String TAB = "\t";
 
 	// The debug prefix.
 	private final static String DEBUG_PREFIX = "*** ProverUI *** ";
+	
+	
+	public final static Color SOFT_BG_COLOR = EventBSharedColor.getColor(new RGB(247, 247, 247));
 
 	/**
 	 * Prints the message if the {@link #DEBUG} flag is
@@ -475,8 +487,7 @@ public class ProverUIUtils {
 	 *         predicate <code>pred</code> and its string representation
 	 *         <code>str</code>
 	 */
-	public static Map<Point, List<ITacticApplication>> getHyperlinks(
-			IUserSupport us, boolean isHypothesis, String str, Predicate pred) {
+	public static Map<Point, List<ITacticApplication>> getHyperlinks(TacticHyperlinkManager manager, IUserSupport us, boolean isHypothesis, String str, Predicate pred) {
 
 		final Map<Point, List<ITacticApplication>> links;
 		links = new HashMap<Point, List<ITacticApplication>>();
@@ -491,7 +502,7 @@ public class ProverUIUtils {
 		}
 
 		// Non type-checked predicate containing source location used here to
-		// get hyperlinks
+		// get hyperlinks (in which oftype expression has been removed etc.)
 		final Predicate parsedPred = getParsed(str, us.getFormulaFactory());
 
 		for (ITacticApplication application : applications) {
@@ -503,21 +514,43 @@ public class ProverUIUtils {
 					continue;
 				}
 				if (!checkRange(pt, str)) {
-					UIUtils.log(null, "invalid hyperlink bounds ("
-							+ pt.toString() + ") for tactic "
-							+ application.getTacticID()
-							+ ". Application abandoned.");
+					UIUtils.log(
+							null,
+							"invalid hyperlink bounds (" + pt.toString()
+									+ ") for tactic "
+									+ application.getTacticID()
+									+ ". Application abandoned.");
 					continue;
 				}
-				List<ITacticApplication> applicationList = links.get(pt);
+				final Point positionInText = getGlobalLocationAtOffset(manager,
+						pt);
+				List<ITacticApplication> applicationList = links
+						.get(positionInText);
 				if (applicationList == null) {
 					applicationList = new ArrayList<ITacticApplication>();
-					links.put(pt, applicationList);
+					links.put(positionInText, applicationList);
 				}
 				applicationList.add(application);
 			}
 		}
 		return links;
+	}
+
+	/**
+	 * Returns the location of an hyperlink, accorded to the contents of the
+	 * text.
+	 * 
+	 * @param hyperlinkPosition
+	 *            the position of the hyperlink in the predicate
+	 * @return the position of the hyperlink relatively to the managed styled
+	 *         text contents
+	 */
+	public static Point getGlobalLocationAtOffset(
+			TacticHyperlinkManager manager, Point hyperlinkPosition) {
+		final int offset = manager.getCurrentOffset();
+		hyperlinkPosition.x += offset;
+		hyperlinkPosition.y += offset;
+		return hyperlinkPosition;
 	}
 	
 	/**
@@ -556,5 +589,18 @@ public class ProverUIUtils {
 		SafeRunner.run(getter);
 		return getter.getResult();
 	}
+	
+	public static String getIndentation(int nbTabs) {
+		final StringBuilder sb = new StringBuilder();
+		appendTabs(sb, nbTabs);
+		return sb.toString();
+	}
+	
+	public static void appendTabs(StringBuilder sb, int nbTabs) {
+		for (int i = 0; i < nbTabs ; i++) {
+			sb.append(TAB);
+		}
+	}
+	
 
 }
