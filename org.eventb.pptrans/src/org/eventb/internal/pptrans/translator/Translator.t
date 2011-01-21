@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -660,9 +660,10 @@ public class Translator extends IdentityTranslator {
 	         * RULE IR16: 	e ∈{a1,...,an} 	
 	         *	  			e=a1 ∨ ... ∨ e=an		
 	         */
-	        SetExtension((a)) -> {
+	        SetExtension(as@(_)) -> {
+	        	// Workaround Tom 2.2 bug: can't use last element of list
 				return translateEqual(
-						ff.makeRelationalPredicate(Formula.EQUAL, e, `a, loc));
+						ff.makeRelationalPredicate(Formula.EQUAL, e, `as[0], loc));
 						
 			}
 			SetExtension(members) -> {
