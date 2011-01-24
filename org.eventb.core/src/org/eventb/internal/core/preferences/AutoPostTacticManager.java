@@ -14,7 +14,6 @@ import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_CHOICE;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_TACTICSPROFILES;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
@@ -78,25 +77,13 @@ public class AutoPostTacticManager implements IAutoPostTacticManager {
 	@Override
 	public ITactic getSelectedAutoTactics(IEventBRoot root) {
 		final IProject project = root.getRodinProject().getProject();
-		if (autoTacPref.isEnabled()) {
-			return getSelectedComposedTactics(project, true);
-		} else {
-			autoTacPref.setSelectedDescriptors(Collections
-					.<ITacticDescriptor> emptyList());
-			return autoTacPref.getSelectedComposedTactic();
-		}
+		return getSelectedComposedTactics(project, true);
 	}
 
 	@Override
 	public ITactic getSelectedPostTactics(IEventBRoot root) {
-		if (postTacPref.isEnabled()) {
-			final IProject project = root.getRodinProject().getProject();
-			return getSelectedComposedTactics(project, false);
-		} else {
-			postTacPref.setSelectedDescriptors(Collections
-					.<ITacticDescriptor> emptyList());
-			return postTacPref.getSelectedComposedTactic();
-		}
+		final IProject project = root.getRodinProject().getProject();
+		return getSelectedComposedTactics(project, false);
 	}
 
 	private ITactic getSelectedComposedTactics(IProject project, boolean auto) {
@@ -105,8 +92,9 @@ public class AutoPostTacticManager implements IAutoPostTacticManager {
 		final String profiles = preferencesService.getString(PREF_QUALIFIER,
 				P_TACTICSPROFILES, null, contexts);
 		if (profiles == null) {
-			if (auto)
+			if (auto) {
 				return autoTacPref.getSelectedComposedTactic();
+			}
 			return postTacPref.getSelectedComposedTactic();
 		}
 		profilesCache.inject(profiles);

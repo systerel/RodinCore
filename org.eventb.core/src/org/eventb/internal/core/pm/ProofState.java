@@ -43,6 +43,7 @@ import org.eventb.core.seqprover.IProofTreeNodeFilter;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverLib;
+import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.ProofMonitor;
@@ -132,12 +133,17 @@ public class ProofState implements IProofState {
 					final IAutoPostTacticManager manager = EventBPlugin
 							.getAutoPostTacticManager();
 					// Run Post tactic at the root of the tree
-					if (pa != null) {
-						final IEventBRoot root = pa.getComponent().getPORoot();
-						final ITactic postTactic = manager
-								.getSelectedPostTactics(root);
-						postTactic.apply(pt.getRoot(),
-								new ProofMonitor(monitor));
+					final IAutoTacticPreference postTac = manager
+							.getPostTacticPreference();
+					if (postTac.isEnabled()) {
+						if (pa != null) {
+							final IEventBRoot root = pa.getComponent()
+									.getPORoot();
+							final ITactic postTactic = manager
+									.getSelectedPostTactics(root);
+							postTactic.apply(pt.getRoot(), new ProofMonitor(
+									monitor));
+						}
 					}
 				}
 				selectInitialSubgoal();
@@ -694,9 +700,12 @@ public class ProofState implements IProofState {
 					final IEventBRoot root = pa.getComponent().getPORoot();
 					final IAutoPostTacticManager manager = EventBPlugin
 							.getAutoPostTacticManager();
-					final ITactic postTactic = manager
-							.getSelectedPostTactics(root);
-					postTactic.apply(node, pm);
+					final IAutoTacticPreference postTac = manager.getPostTacticPreference();
+					if (postTac.isEnabled()) {
+						final ITactic postTactic = manager
+						.getSelectedPostTactics(root);
+						postTactic.apply(node, pm);
+					}
 				}
 			}
 			deltaProcessor.informationChanged(userSupport,

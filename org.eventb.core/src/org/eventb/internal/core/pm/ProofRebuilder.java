@@ -19,6 +19,7 @@ import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.ProofMonitor;
 
@@ -56,6 +57,9 @@ public class ProofRebuilder extends ProofModifier {
 			IProgressMonitor monitor) {
 		final IAutoPostTacticManager manager = EventBPlugin
 				.getAutoPostTacticManager();
+		final IAutoTacticPreference postTac = manager.getPostTacticPreference();
+		if (!postTac.isEnabled())
+			return;
 		final Object origin = pt.getOrigin();
 		if (origin instanceof IProofAttempt) {
 			final IProofAttempt pa = (IProofAttempt) origin;
