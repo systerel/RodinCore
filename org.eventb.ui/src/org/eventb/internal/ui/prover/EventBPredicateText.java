@@ -84,9 +84,12 @@ public class EventBPredicateText {
 
 	private Predicate pred;
 
+	private final boolean isGoal;
+
 	public EventBPredicateText(PredicateRow predicateRow, boolean isGoal,
 			boolean enable, ProverUI proverUI) {
 		this.predicateRow = predicateRow;
+		this.isGoal = isGoal;
 		this.enable = enable;
 		this.boxesDrawn = false;
 	}
@@ -148,10 +151,15 @@ public class EventBPredicateText {
 			Predicate parsedPredicate) {
 		final int nbTabsFromLeft = predicateRow.getNbTabsFromLeft();
 		final StringBuilder stb = new StringBuilder();
-		if (enable && parsedPredicate.getTag() == Formula.FORALL) {
+		final int tag = parsedPredicate.getTag();
+		if (enable && (!isGoal && tag == Formula.FORALL)
+				|| (isGoal && tag == Formula.EXISTS)) {
 			final String space = " ";
 			final QuantifiedPredicate qpred = (QuantifiedPredicate) parsedPredicate;
-			stb.append("\u2200 ");
+			if (tag == Formula.EXISTS)
+				stb.append("\u2203");
+			if (tag == Formula.FORALL)
+				stb.append("\u2200 ");
 			final BoundIdentDecl[] idents = qpred.getBoundIdentDecls();
 			offsets = new int[idents.length];
 			int i = 0;
@@ -179,7 +187,8 @@ public class EventBPredicateText {
 			return stb.toString();
 		}
 		offsets = new int[0];
-		stb.append(prettyPrint(MAX_LENGTH, predicateStr, parsedPredicate, nbTabsFromLeft));
+		stb.append(prettyPrint(MAX_LENGTH, predicateStr, parsedPredicate,
+				nbTabsFromLeft));
 		stb.append("\n");
 		return stb.toString();
 	}
@@ -187,8 +196,7 @@ public class EventBPredicateText {
 	private Map<Point, List<ITacticApplication>> getLinks(String predicateStr,
 			Predicate predicate, TacticHyperlinkManager manager) {
 		if (enable) {
-			return getHyperlinks(manager, us, true, predicateStr,
-					predicate);
+			return getHyperlinks(manager, us, !isGoal, predicateStr, predicate);
 		}
 		return emptyMap();
 	}
@@ -230,12 +238,6 @@ public class EventBPredicateText {
 		text.setLocation(parent.getLocationAtOffset(offset));
 		parent.setStyleRange(style);
 	}
-
-	// It's this one that was setting the styles for each predicate.
-	// Now the manager should do it
-//	private void setStyle() {
-//		manager.setHyperlinkStyle();
-//	}
 
 	public void dispose() {
 		if (boxes != null) {
