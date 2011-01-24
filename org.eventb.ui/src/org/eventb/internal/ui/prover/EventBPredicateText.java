@@ -116,32 +116,44 @@ public class EventBPredicateText {
 	// creates a paintObjectListener that repositions widgets on paint event and
 	// draw a red box around the
 	// yellow input widgets
-	private PaintObjectListener createPaintListener(final TacticHyperlinkManager manager) {
+	private PaintObjectListener createPaintListener(
+			final TacticHyperlinkManager manager) {
 		final int textOffset = manager.getCurrentOffset();
 		return new PaintObjectListener() {
+
+			private boolean painting = false;
+
 			@Override
 			public void paintObject(PaintObjectEvent event) {
-				if (!boxesDrawn) {
-					createTextBoxes(manager, textOffset);
-					boxesDrawn = true;
+				if (painting) {
+					return;
 				}
-				event.gc.setForeground(RED);
-				final StyleRange style = event.style;
-				int start = style.start;
-				for (int i = 0; i < offsets.length; i++) {
-					int offset = offsets[i] + textOffset;
-					if (start == offset) {
-						final Text text = boxes[i].getTextWidget();
-						final Point textSize = text.getSize();
-						final int x = event.x + MARGIN;
-						final int y = event.y + event.ascent - 2 * textSize.y
-								/ 3;
-						text.setLocation(x, y);
-						final Rectangle bounds = text.getBounds();
-						event.gc.drawRectangle(bounds.x - 1, bounds.y - 1,
-								bounds.width + 1, bounds.height + 1);
-						break;
+				try {
+					painting = true;
+					if (!boxesDrawn) {
+						createTextBoxes(manager, textOffset);
+						boxesDrawn = true;
 					}
+					event.gc.setForeground(RED);
+					final StyleRange style = event.style;
+					int start = style.start;
+					for (int i = 0; i < offsets.length; i++) {
+						int offset = offsets[i] + textOffset;
+						if (start == offset) {
+							final Text text = boxes[i].getTextWidget();
+							final Point textSize = text.getSize();
+							final int x = event.x + MARGIN;
+							final int y = event.y + event.ascent - 2
+									* textSize.y / 3;
+							text.setLocation(x, y);
+							final Rectangle bounds = text.getBounds();
+							event.gc.drawRectangle(bounds.x - 1, bounds.y - 1,
+									bounds.width + 1, bounds.height + 1);
+							break;
+						}
+					}
+				} finally {
+					painting = false;
 				}
 			}
 		};
