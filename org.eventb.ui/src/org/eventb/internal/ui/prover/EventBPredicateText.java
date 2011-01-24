@@ -103,10 +103,12 @@ public class EventBPredicateText {
 	
 	
 	public void append(TacticHyperlinkManager manager, boolean odd) {
-		links = getLinks(predicateText, pred, manager);
-		manager.setHyperlinks(links, predicateRow);
-		manager.putAssociation(links.keySet(), predicateRow);
-		manager.addPaintObjectListener(createPaintListener(manager));
+		if (enable) {
+			links = getLinks(predicateText, pred, manager);
+			manager.setHyperlinks(links, predicateRow);
+			manager.putAssociation(links.keySet(), predicateRow);
+			manager.addPaintObjectListener(createPaintListener(manager));
+		}
 		final int startOffset = manager.getCurrentOffset();
 		manager.appendText(predicateText);
 		final int endOffset = manager.getCurrentOffset();
