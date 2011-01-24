@@ -82,7 +82,9 @@ public class ProverUIUtils {
 	/**
 	 * The character used to build a margin on the left of the proving UI
 	 */
-	public static String TAB = "\t";
+	public static final String TAB = "\t";
+	
+	public static final String OBJ = "\uFFFC";
 
 	// The debug prefix.
 	private final static String DEBUG_PREFIX = "*** ProverUI *** ";
@@ -590,15 +592,20 @@ public class ProverUIUtils {
 		return getter.getResult();
 	}
 	
-	public static String getIndentation(int nbTabs) {
+	public static String getControlSpacing(int nbControls, int nbTabs) {
 		final StringBuilder sb = new StringBuilder();
+		appendStrs(sb, nbControls, OBJ);
 		appendTabs(sb, nbTabs);
 		return sb.toString();
 	}
 	
 	public static void appendTabs(StringBuilder sb, int nbTabs) {
-		for (int i = 0; i < nbTabs ; i++) {
-			sb.append(TAB);
+			appendStrs(sb, nbTabs, TAB);
+	}
+	
+	public static void appendStrs(StringBuilder sb, int nbTabs, String str) {
+		for (int i = 0; i < nbTabs; i++) {
+			sb.append(str);
 		}
 	}
 	

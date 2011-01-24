@@ -182,7 +182,7 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 		final Predicate goal = node.getSequent().goal();
 		final boolean enabled = node.isOpen();
 		styledText.setRedraw(false);
-		manager.appendText(ProverUIUtils.getIndentation(NB_TABS_LEFT));
+		manager.appendText("\t\uFFFC\t");
 		row = new PredicateRow(NB_TABS_LEFT, goal, true,
 				userSupport, enabled, null, proverUI, manager);
 		row.append(false);

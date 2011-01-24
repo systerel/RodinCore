@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
-import static org.eventb.internal.ui.prover.ProverUIUtils.getIndentation;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -90,8 +88,9 @@ public abstract class HypothesisComposite implements
 			.getUserSupportManager();
 
 	
-	private static final int NB_TABS_LEFT = 3; //Tabs
-	private static final int LINE_SPACING = 3; //px
+	private static final int NB_TABS_LEFT = 3; // Tabs
+	private static final int LINE_SPACING = 3; // px
+	private static final int NB_CONTROLS = 2; // number of buttons on the left
 
 	// The User Support associated with this Hypothesis Composite.
 	private final IUserSupport userSupport;
@@ -383,7 +382,8 @@ public abstract class HypothesisComposite implements
 			start = System.currentTimeMillis();
 		}
 		
-		final String indentation = getIndentation(NB_TABS_LEFT);
+		final String indentation = ProverUIUtils.getControlSpacing(NB_CONTROLS,
+				NB_TABS_LEFT - NB_CONTROLS);
 		int i = 0;
 		for (PredicateRow row : rows) {
 			manager.appendText(indentation);
