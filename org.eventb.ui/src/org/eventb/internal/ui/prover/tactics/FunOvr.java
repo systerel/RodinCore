@@ -76,8 +76,11 @@ public class FunOvr extends AbstractHypGoalTacticProvider {
 	public static class FunOvrAppliInspector extends
 			DefaultApplicationInspector {
 
-		public FunOvrAppliInspector(Predicate hyp) {
+		private final Predicate pred;
+
+		public FunOvrAppliInspector(Predicate pred, Predicate hyp) {
 			super(hyp);
+			this.pred = pred;
 		}
 
 		@Override
@@ -85,7 +88,9 @@ public class FunOvr extends AbstractHypGoalTacticProvider {
 				IAccumulator<ITacticApplication> accumulator) {
 			if (Tactics.isFunOvrApp(expression)) {
 				final IPosition position = accumulator.getCurrentPosition();
-				accumulator.add(new FunOvrApplication(hyp, position));
+				if (pred.isWDStrict(position)) {
+					accumulator.add(new FunOvrApplication(hyp, position));
+				}
 			}
 		}
 
@@ -95,7 +100,7 @@ public class FunOvr extends AbstractHypGoalTacticProvider {
 	protected List<ITacticApplication> getApplicationsOnPredicate(
 			IProofTreeNode node, Predicate hyp, String globalInput,
 			Predicate predicate) {
-		return predicate.inspect(new FunOvrAppliInspector(hyp));
+		return predicate.inspect(new FunOvrAppliInspector(predicate, hyp));
 	}
 
 }

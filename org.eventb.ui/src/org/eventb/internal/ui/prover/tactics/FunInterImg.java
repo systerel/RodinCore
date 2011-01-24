@@ -35,7 +35,8 @@ import org.eventb.ui.prover.ITacticApplication;
  */
 public class FunInterImg extends AbstractHypGoalTacticProvider {
 
-	public static class FunInterImgApplication extends DefaultPositionApplication {
+	public static class FunInterImgApplication extends
+			DefaultPositionApplication {
 
 		public FunInterImgApplication(Predicate hyp, IPosition position) {
 			super(hyp, position);
@@ -50,48 +51,55 @@ public class FunInterImg extends AbstractHypGoalTacticProvider {
 		public String getTacticID() {
 			return "org.eventb.ui.funInterImg";
 		}
-		
+
 		@Override
 		public Point getHyperlinkBounds(String parsedString,
 				Predicate parsedPredicate) {
 			return getOperatorPosition(parsedPredicate, parsedString);
 		}
-		
+
 		@Override
 		public Point getOperatorPosition(Predicate predicate, String predStr) {
 			Formula<?> subFormula = predicate.getSubFormula(position);
 			Expression right = ((BinaryExpression) subFormula).getRight();
-			Expression[] children = ((AssociativeExpression) right).getChildren();
+			Expression[] children = ((AssociativeExpression) right)
+					.getChildren();
 			Expression first = children[0];
 			Expression second = children[1];
 			return getOperatorPosition(predStr, first.getSourceLocation()
 					.getEnd() + 1, second.getSourceLocation().getStart());
 		}
-		
-	}
-	
-	public static class FunInterImgAppliInspector extends DefaultApplicationInspector {
 
-		public FunInterImgAppliInspector(Predicate hyp) {
+	}
+
+	public static class FunInterImgAppliInspector extends
+			DefaultApplicationInspector {
+
+		private final Predicate pred;
+
+		public FunInterImgAppliInspector(Predicate pred, Predicate hyp) {
 			super(hyp);
+			this.pred = pred;
 		}
-		
+
 		@Override
 		public void inspect(BinaryExpression expression,
 				IAccumulator<ITacticApplication> accumulator) {
 			if (Tactics.isFunInterImgApp(expression)) {
 				final IPosition position = accumulator.getCurrentPosition();
-				accumulator.add(new FunInterImgApplication(hyp, position));
+				if (pred.isWDStrict(position)) {
+					accumulator.add(new FunInterImgApplication(hyp, position));
+				}
 			}
 		}
-		
+
 	}
 
 	@Override
 	protected List<ITacticApplication> getApplicationsOnPredicate(
 			IProofTreeNode node, Predicate hyp, String globalInput,
 			Predicate predicate) {
-		return predicate.inspect(new FunInterImgAppliInspector(hyp));
+		return predicate.inspect(new FunInterImgAppliInspector(predicate, hyp));
 	}
 
 }

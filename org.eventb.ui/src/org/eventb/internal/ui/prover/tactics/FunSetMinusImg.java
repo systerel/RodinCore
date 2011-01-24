@@ -75,8 +75,11 @@ public class FunSetMinusImg extends AbstractHypGoalTacticProvider {
 	public static class FunSetMinusImgAppliInspector extends
 			DefaultApplicationInspector {
 
-		public FunSetMinusImgAppliInspector(Predicate hyp) {
+		private final Predicate pred;
+
+		public FunSetMinusImgAppliInspector(Predicate pred, Predicate hyp) {
 			super(hyp);
+			this.pred = pred;
 		}
 
 		/**
@@ -90,7 +93,10 @@ public class FunSetMinusImg extends AbstractHypGoalTacticProvider {
 			}
 			if (expression.getRight().getTag() == Formula.SETMINUS) {
 				final IPosition position = accumulator.getCurrentPosition();
-				accumulator.add(new FunSetMinusImgApplication(hyp, position));
+				if (pred.isWDStrict(position)) {
+					accumulator
+							.add(new FunSetMinusImgApplication(hyp, position));
+				}
 			}
 		}
 
@@ -100,7 +106,8 @@ public class FunSetMinusImg extends AbstractHypGoalTacticProvider {
 	protected List<ITacticApplication> getApplicationsOnPredicate(
 			IProofTreeNode node, Predicate hyp, String globalInput,
 			Predicate predicate) {
-		return predicate.inspect(new FunSetMinusImgAppliInspector(hyp));
+		return predicate.inspect(new FunSetMinusImgAppliInspector(predicate,
+				hyp));
 	}
 
 }
