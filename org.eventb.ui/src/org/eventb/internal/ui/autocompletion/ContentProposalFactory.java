@@ -88,7 +88,7 @@ public class ContentProposalFactory {
 		return new ProposalProvider(location, factory);
 	}
 
-	private static IContentProposalProvider getProposalProvider(
+	public static IContentProposalProvider getProposalProvider(
 			IUserSupport us) {
 		return new ProofProposalProvider(us);
 	}

@@ -16,6 +16,7 @@ import org.eclipse.swt.custom.PaintObjectListener;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.GlyphMetrics;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -30,25 +31,21 @@ import org.eventb.internal.ui.EventBSharedColor;
 public class ControlHolder<U extends Control> {
 	
 	private static final int MARGIN = 1; //px
+	private static final int LENGTH = 1; //offset
 	
 	private final StyledText text;
-	private int position;
-	private final int length;
-	private final U control;
-	private PaintObjectListener painter;
-	private final boolean drawBoxAround;
+	private final ControlPainter<U> painter;
 	
-	public ControlHolder(U control, int position, boolean drawBoxAround) {
-		this(control, position, 1, drawBoxAround);
-	}
-
-	public ControlHolder(U control, int position, int length,
-			boolean drawBoxAround) {
+	protected final int offset;
+	protected final U control;
+	protected final boolean drawBoxAround;
+	
+	public ControlHolder(U control, int offset, boolean drawBoxAround) {
 		this.text = (StyledText) control.getParent();
 		this.control = control;
-		this.position = position;
-		this.length = length;
+		this.offset = offset;
 		this.drawBoxAround = drawBoxAround;
+		this.painter = new ControlPainter<U>(this);
 	}
 	
 	public void attach() {
@@ -59,7 +56,6 @@ public class ControlHolder<U extends Control> {
 	public void remove() {
 		if (!text.isDisposed() && painter != null)
 			text.removePaintObjectListener(painter);
-			painter = null;
 		if (!control.isDisposed())
 			control.dispose();
 	}
@@ -70,15 +66,15 @@ public class ControlHolder<U extends Control> {
 	
 	private void addControl() {
 		final StyleRange style = new StyleRange();
-		style.start = position;
-		style.length = length;
+		style.start = offset;
+		style.length = LENGTH;
 		control.pack();
 		final Rectangle rect = control.getBounds();
 		int ascent = 2 * rect.height / 3;
 		int descent = rect.height - ascent;
 		style.metrics = new GlyphMetrics(ascent + MARGIN, descent + MARGIN,
 				rect.width + 2 * MARGIN);
-		final Point loc = text.getLocationAtOffset(position);
+		final Point loc = text.getLocationAtOffset(offset);
 		loc.x += MARGIN;
 		loc.y += MARGIN;
 		control.setLocation(loc);
@@ -86,35 +82,66 @@ public class ControlHolder<U extends Control> {
 	}
 
 	private void registerPainter() {
-		final int offset = this.position;
-		final Control c = this.control;
-		final boolean drawBox = this.drawBoxAround;
-		painter = new PaintObjectListener() {
+		text.addPaintObjectListener(painter);
+	}
+	
+	private static class ControlPainter<U extends Control> implements
+			PaintObjectListener {
 
-			@Override
-			public void paintObject(PaintObjectEvent event) {
+		private static final Color RED = EventBSharedColor
+				.getSystemColor(SWT.COLOR_RED);
+		private final ControlHolder<U> holder;
+		private boolean painting = false;
+
+		public ControlPainter(ControlHolder<U> holder) {
+			this.holder = holder;
+		}
+
+		@Override
+		public void paintObject(PaintObjectEvent event) {
+			if (painting)
+				return;
+			try {
+				painting = true;
 				final StyleRange style = event.style;
 				int start = style.start;
-				if (start == offset) {
-					final Point controlSize = c.getSize();
-					final int x = event.x + MARGIN;
-					final int height = event.ascent + event.descent;
-					final int y = event.y + MARGIN + (height - controlSize.y)
-							/ 2;
-					c.setLocation(x, y);
-					if (drawBox) {
-					final Rectangle bounds = c.getBounds();
-					final Color savedBgColor = event.gc.getForeground();
-					event.gc.setForeground(EventBSharedColor
-							.getSystemColor(SWT.COLOR_RED));
-					event.gc.drawRectangle(bounds.x - 1, bounds.y - 1,
-							bounds.width + 1, bounds.height + 1);
-					event.gc.setForeground(savedBgColor);
-					}
+				if (start != holder.offset) {
+					return;
 				}
+				paintAndPlace(event.x, event.y, event.ascent, event.descent);
+				drawBoxAround(event.gc, holder.drawBoxAround);
+			} finally {
+				painting = false;
 			}
-		};
-		text.addPaintObjectListener(painter);
+		}
+		
+		private void paintAndPlace(int ex, int ey, int ascent, int descent) {
+			final Rectangle controlBounds = holder.control.getBounds();
+			final int x = ex + MARGIN;
+			final int lineHeight = ascent + descent;
+			final int y = ey + MARGIN + (lineHeight - controlBounds.height) / 2;
+			holder.control.setLocation(x, y);
+		}
+
+		private void drawBoxAround(GC gc, final boolean drawBoxAround) {
+			if (!drawBoxAround)
+				return;
+			final Rectangle bounds = holder.control.getBounds();
+			final Color savedBgColor = gc.getForeground();
+			gc.setForeground(RED);
+			gc.drawRectangle(bounds.x - 1, bounds.y - 1, bounds.width + 1,
+					bounds.height + 1);
+			gc.setForeground(savedBgColor);
+		}
+
+	}
+	
+	protected void paintAndPlace(int ex, int ey, int ascent, int descent) {
+		final Rectangle controlBounds = control.getBounds();
+		final int x = ex + MARGIN;
+		final int lineHeight = ascent + descent;
+		final int y = ey + MARGIN + (lineHeight - controlBounds.height) / 2;
+		control.setLocation(x, y);
 	}
 	
 }

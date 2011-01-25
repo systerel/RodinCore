@@ -89,7 +89,6 @@ public abstract class HypothesisComposite implements
 
 	
 	private static final int NB_TABS_LEFT = 3; // Tabs
-	//private static final int LINE_SPACING = 3; // px
 	private static final int NB_CONTROLS = 2; // number of buttons on the left
 
 	// The User Support associated with this Hypothesis Composite.
@@ -166,7 +165,7 @@ public abstract class HypothesisComposite implements
 		// Create the top-level composite.
 		control = new Composite(parent, SWT.NULL);
 		if (ProverUIUtils.DEBUG) {
-			control.setBackground(EventBSharedColor
+			control.setBackground(EventBSharedColor	//private static final int LINE_SPACING = 3; // px
 					.getSystemColor(SWT.COLOR_DARK_GRAY));
 		}
 		// Set the layout of the top-level control to a form layout.
@@ -189,10 +188,6 @@ public abstract class HypothesisComposite implements
 				.getFont(PreferenceConstants.RODIN_MATH_FONT);
 		JFaceResources.getFontRegistry().addListener(this);
 
-		if (ProverUIUtils.DEBUG) {
-			styledText.setBackground(EventBSharedColor
-					.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-		}
 		// Refresh to create to fill out the content of the scrolled form.
 		refresh();
 		USM.addChangeListener(this);
@@ -395,8 +390,6 @@ public abstract class HypothesisComposite implements
 		for (PredicateRow row : rows) {
 			row.attachButtons();
 		}
-		manager.enableListeners(enabled);
-		styledText.setRedraw(true);
 		
 		if (traced) {
 			final long elapsed = System.currentTimeMillis() - start;
@@ -407,7 +400,9 @@ public abstract class HypothesisComposite implements
 		// update the status of the tool bar items.
 		updateToolbarItems();
 		sc.setMinSize(styledText.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		manager.enableListeners(enabled);
 
+		styledText.setRedraw(true);
 		if (traced) {
 			final long elapsed = System.currentTimeMillis() - start;
 			SearchHypothesisUtils.debug("reflow + toolbars took " + elapsed
@@ -435,7 +430,6 @@ public abstract class HypothesisComposite implements
 		sc.setExpandVertical(true);
 		styledText.setFont(font);
 		styledText.setEditable(false);
-		//styledText.setLineSpacing(LINE_SPACING);
 		manager = new TacticHyperlinkManager(styledText);
 	}
 

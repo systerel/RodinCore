@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
@@ -166,11 +167,14 @@ public class EventBPredicateText {
 		return emptyMap();
 	}
 
-	protected void createTextBoxes(TacticHyperlinkManager manager, int textOffset) {
+	protected void createTextBoxes(TacticHyperlinkManager manager,
+			int textOffset) {
 		if (offsets == null)
 			return;
 		this.boxes = new IEventBInputText[offsets.length];
 		this.textControls = new ArrayList<ControlHolder<Text>>(offsets.length);
+		final IContentProposalProvider proposalProvider = ContentProposalFactory
+				.getProposalProvider(us);
 		for (int i = 0; i < offsets.length; ++i) {
 			final StyledText parent = manager.getText();
 			final Text text = new Text(parent, SWT.SINGLE);
@@ -179,7 +183,7 @@ public class EventBPredicateText {
 			boxes[i] = new EventBMath(text);
 			textControls.add(i, new ControlHolder<Text>(text, offset, true));
 			text.setBackground(YELLOW);
-			ContentProposalFactory.makeContentProposal(text, us);
+			ContentProposalFactory.makeContentProposal(proposalProvider, text);
 		}
 	}
 
