@@ -49,6 +49,22 @@ import org.eventb.ui.IEventBSharedImages;
 public class SearchHypothesisPage extends HypothesisPage implements
 		ISearchHypothesisPage, IPropertyChangeListener {
 
+	private static class PrefAction extends Action {
+		
+		public PrefAction() {
+			super(searchedHypothesis_toolItem_preferences, AS_PUSH_BUTTON);
+		}
+
+		@Override
+		public void run() {
+			final String pageId = PROVING_UI_PAGE_ID;
+			final String[] displayedIds = new String[] { PROVING_UI_PAGE_ID };
+			final Dialog dialog = PreferencesUtil.createPreferenceDialogOn(
+					null, pageId, displayedIds, null);
+			dialog.open();
+		}
+	}
+
 	private final IPreferenceStore store;
 
 	private Action considerHidden;
@@ -92,17 +108,7 @@ public class SearchHypothesisPage extends HypothesisPage implements
 		setPreferences(b);
 		manager.add(considerHidden);
 
-		final Action openPreferences = new Action(
-				searchedHypothesis_toolItem_preferences, AS_PUSH_BUTTON) {
-			@Override
-			public void run() {
-				final String pageId = PROVING_UI_PAGE_ID;
-				final String[] displayedIds = new String[] { PROVING_UI_PAGE_ID };
-				final Dialog dialog = PreferencesUtil.createPreferenceDialogOn(
-						null, pageId, displayedIds, null);
-				dialog.open();
-			}
-		};
+		final Action openPreferences = new PrefAction();
 		manager.add(openPreferences);
 	}
 
