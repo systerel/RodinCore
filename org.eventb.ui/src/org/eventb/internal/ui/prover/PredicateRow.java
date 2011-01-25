@@ -130,31 +130,31 @@ public class PredicateRow {
 			checkBoxHolder.attach();
 		}
 		predAppliHolder.attach();
+		predicateText.attach();
 	}
 	
 	private void createControlButtons(boolean odd) {
 		final int checkBoxOffset = manager.getCurrentOffset() - nbTabsFromLeft;
-		final StyledText text = manager.getText();
 		if (!isGoal) {
 			final Button checkBox = new Button(manager.getText(), SWT.CHECK);
-			if (odd){
-				checkBox.setBackground(SOFT_BG_COLOR);				
-			}else{
+			if (odd) {
+				checkBox.setBackground(SOFT_BG_COLOR);
+			} else {
 				checkBox.setBackground(WHITE);
 			}
-			checkBoxHolder = new ControlHolder<Button>(text, checkBox,
-					checkBoxOffset);
+			checkBoxHolder = new ControlHolder<Button>(checkBox,
+					checkBoxOffset, false);
 			checkBox.addSelectionListener(checkboxListener);
 		}
 		final int menuOffset = checkBoxOffset + 1;
 		final Button predAppliButton = createApplicationsButton();
-		if (odd){
-			predAppliButton.setBackground(SOFT_BG_COLOR);				
-		}else{
+		if (odd) {
+			predAppliButton.setBackground(SOFT_BG_COLOR);
+		} else {
 			predAppliButton.setBackground(WHITE);
 		}
-		predAppliHolder = new ControlHolder<Button>(text,
-				predAppliButton, menuOffset);
+		predAppliHolder = new ControlHolder<Button>(predAppliButton,
+				menuOffset, false);
 	}
 	
 	private Button createApplicationsButton() {

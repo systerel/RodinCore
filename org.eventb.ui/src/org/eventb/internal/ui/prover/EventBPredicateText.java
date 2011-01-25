@@ -18,25 +18,18 @@
 package org.eventb.internal.ui.prover;
 
 import static java.util.Collections.emptyMap;
-import static org.eclipse.swt.SWT.COLOR_RED;
 import static org.eclipse.swt.SWT.COLOR_YELLOW;
 import static org.eventb.internal.ui.prover.PredicateUtil.prettyPrint;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getHyperlinks;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.PaintObjectEvent;
-import org.eclipse.swt.custom.PaintObjectListener;
-import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GlyphMetrics;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Text;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
@@ -52,20 +45,17 @@ import org.eventb.ui.prover.ITacticApplication;
 
 public class EventBPredicateText {
 
-	private static final int MARGIN = 2;
-
-	protected static final Color RED = EventBSharedColor
-			.getSystemColor(COLOR_RED);
 	protected static final Color YELLOW = EventBSharedColor
 			.getSystemColor(COLOR_YELLOW);
 
 	private static final int MAX_LENGTH = 30;
-
 	
 	private String predicateText;
 	
 	// The yellow boxes to insert some input
 	protected IEventBInputText[] boxes;
+	// The holders for the yellow boxes
+	protected List<ControlHolder<Text>> textControls;
 
 	// The offset of each box on a given line
 	protected int[] offsets;
@@ -103,62 +93,24 @@ public class EventBPredicateText {
 	
 	
 	public void append(TacticHyperlinkManager manager, boolean odd) {
+		final int startOffset = manager.getCurrentOffset();
 		if (enable) {
 			links = getLinks(predicateText, pred, manager);
 			manager.setHyperlinks(links, predicateRow);
 			manager.putAssociation(links.keySet(), predicateRow);
-			manager.addPaintObjectListener(createPaintListener(manager));
+			createTextBoxes(manager, startOffset);
 		}
-		final int startOffset = manager.getCurrentOffset();
 		manager.appendText(predicateText);
 		final int endOffset = manager.getCurrentOffset();
 		manager.addBackgroundPainter(odd, startOffset, endOffset);
 	}
-
-	// creates a paintObjectListener that repositions widgets on paint event and
-	// draw a red box around the
-	// yellow input widgets
-	private PaintObjectListener createPaintListener(
-			final TacticHyperlinkManager manager) {
-		final int textOffset = manager.getCurrentOffset();
-		return new PaintObjectListener() {
-
-			private boolean painting = false;
-
-			@Override
-			public void paintObject(PaintObjectEvent event) {
-				if (painting) {
-					return;
-				}
-				try {
-					painting = true;
-					if (!boxesDrawn) {
-						createTextBoxes(manager, textOffset);
-						boxesDrawn = true;
-					}
-					event.gc.setForeground(RED);
-					final StyleRange style = event.style;
-					int start = style.start;
-					for (int i = 0; i < offsets.length; i++) {
-						int offset = offsets[i] + textOffset;
-						if (start == offset) {
-							final Text text = boxes[i].getTextWidget();
-							final Point textSize = text.getSize();
-							final int x = event.x + MARGIN;
-							final int y = event.y + event.ascent - 2
-									* textSize.y / 3;
-							text.setLocation(x, y);
-							final Rectangle bounds = text.getBounds();
-							event.gc.drawRectangle(bounds.x - 1, bounds.y - 1,
-									bounds.width + 1, bounds.height + 1);
-							break;
-						}
-					}
-				} finally {
-					painting = false;
-				}
+	
+	public void attach() {
+		if (enable) {
+			for (ControlHolder<Text> c : textControls) {
+				c.attach();
 			}
-		};
+		}
 	}
 	
 	private String getPrettyPrintedString(String predicateStr,
@@ -197,12 +149,11 @@ public class EventBPredicateText {
 			ProverUIUtils.appendTabs(stb, nbTabsFromLeft);
 			stb.append(prettyPrint(MAX_LENGTH, predicateStr,
 					qpred.getPredicate(), nbTabsFromLeft));
-			stb.append("\n");
-			return stb.toString();
+		} else {
+			offsets = new int[0];
+			stb.append(prettyPrint(MAX_LENGTH, predicateStr, parsedPredicate,
+					nbTabsFromLeft));
 		}
-		offsets = new int[0];
-		stb.append(prettyPrint(MAX_LENGTH, predicateStr, parsedPredicate,
-				nbTabsFromLeft));
 		stb.append("\n");
 		return stb.toString();
 	}
@@ -219,44 +170,28 @@ public class EventBPredicateText {
 		if (offsets == null)
 			return;
 		this.boxes = new IEventBInputText[offsets.length];
+		this.textControls = new ArrayList<ControlHolder<Text>>(offsets.length);
 		for (int i = 0; i < offsets.length; ++i) {
 			final StyledText parent = manager.getText();
 			final Text text = new Text(parent, SWT.SINGLE);
 			final int offset = offsets[i] + textOffset;
 			text.setText("     ");
 			boxes[i] = new EventBMath(text);
+			textControls.add(i, new ControlHolder<Text>(text, offset, true));
 			text.setBackground(YELLOW);
 			ContentProposalFactory.makeContentProposal(text, us);
-			text.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					
-					createOrRelocateInputBoxes(parent, text, offset);
-				}
-			});
-			createOrRelocateInputBoxes(parent, text, offset);
 		}
-	}
-
-	protected void createOrRelocateInputBoxes(StyledText parent, Text text,
-			int offset) {
-		final StyleRange style = new StyleRange();
-		style.start = offset;
-		style.length = 1;
-		text.pack();
-		final Rectangle rect = text.getBounds();
-		final int ascent = 2 * rect.height / 3;
-		final int descent = rect.height - ascent;
-		style.metrics = new GlyphMetrics(ascent + MARGIN, descent + MARGIN,
-				rect.width + 2 * MARGIN);
-		text.setLocation(parent.getLocationAtOffset(offset));
-		parent.setStyleRange(style);
 	}
 
 	public void dispose() {
 		if (boxes != null) {
 			for (IEventBInputText box : boxes) {
 				box.dispose();
+			}
+		}
+		if (textControls != null) {
+			for (ControlHolder<Text> c : textControls) {
+				c.remove();
 			}
 		}
 	}

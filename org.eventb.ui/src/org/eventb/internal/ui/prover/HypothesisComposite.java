@@ -89,7 +89,7 @@ public abstract class HypothesisComposite implements
 
 	
 	private static final int NB_TABS_LEFT = 3; // Tabs
-	private static final int LINE_SPACING = 3; // px
+	//private static final int LINE_SPACING = 3; // px
 	private static final int NB_CONTROLS = 2; // number of buttons on the left
 
 	// The User Support associated with this Hypothesis Composite.
@@ -435,7 +435,7 @@ public abstract class HypothesisComposite implements
 		sc.setExpandVertical(true);
 		styledText.setFont(font);
 		styledText.setEditable(false);
-		styledText.setLineSpacing(LINE_SPACING);
+		//styledText.setLineSpacing(LINE_SPACING);
 		manager = new TacticHyperlinkManager(styledText);
 	}
 
