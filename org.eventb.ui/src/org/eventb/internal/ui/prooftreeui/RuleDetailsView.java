@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others. 
+ * Copyright (c) 2010, 2011 Systerel and others. 
  *  
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -54,7 +54,7 @@ public class RuleDetailsView extends ViewPart implements ISelectionListener {
 		final IWorkbenchWindow workbench = getSite().getWorkbenchWindow();
 		final ISelectionService selectionService = workbench.getSelectionService();
 		// add myself as a global selection listener
-        selectionService.addSelectionListener(VIEW_ID, this);
+        selectionService.addSelectionListener(this);
 
 		initializeControl(parent);
 
@@ -68,6 +68,8 @@ public class RuleDetailsView extends ViewPart implements ISelectionListener {
 		gl.marginWidth = ZERO;
 		sc = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);
 		sc.setLayout(gl);
+		sc.setExpandVertical(true);
+		sc.setExpandHorizontal(true);
 	}
 
 	@Override
@@ -85,15 +87,18 @@ public class RuleDetailsView extends ViewPart implements ISelectionListener {
 			return;
 		}
 		sc.setVisible(true);
+		sc.setRedraw(false);
 		final Control details = rdp.getRuleDetailsPresentation(rule);
 		sc.setContent(details);
-		sc.setExpandVertical(true);
-		sc.setExpandHorizontal(true);
 		sc.setMinSize(details.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		sc.setRedraw(true);
 	}
 
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		if (!(part instanceof ProofTreeUI)) {
+			return;
+		}
 		if (selection instanceof IStructuredSelection) {
 			final IStructuredSelection ssel = ((IStructuredSelection) selection);
 			final Object element = ssel.getFirstElement();
@@ -104,6 +109,17 @@ public class RuleDetailsView extends ViewPart implements ISelectionListener {
 				refreshContents((IProofTreeNode) element);
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
+	 */
+	@Override
+	public void dispose() {
+		final IWorkbenchWindow workbench = getSite().getWorkbenchWindow();
+		final ISelectionService selectionService = workbench.getSelectionService();
+        selectionService.removeSelectionListener(this);
+		super.dispose();
 	}
 
 }
