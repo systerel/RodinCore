@@ -335,7 +335,10 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		Point size = toolBar.getSize();
 		CoolItem item = new CoolItem(coolBar, SWT.NONE);
 		item.setControl(toolBar);
-		Point preferred = item.computeSize(size.x, size.y);
+		// width increment required on windows platforms
+		// in order not to hide right most button with right separation bar
+		final int widthIncr = 4;
+		Point preferred = item.computeSize(size.x + widthIncr, size.y);
 		item.setPreferredSize(preferred);
 		// Allow data to be copied or moved to the drop target
 		int operations = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_DEFAULT;
