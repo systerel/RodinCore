@@ -1740,5 +1740,19 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	public void testSIMP_FINITE_BOOL() {
 		rewritePred("finite(BOOL)", "⊤");
 	}
+	
+	/**
+	 * Ensures that rule SIMP_COMPSET is implemented correctly
+	 */
+	@Test
+	public void testSIMP_COMPSET() {
+		rewriteExpr("{x⦂S,y⦂T · a=b ∣ a+b}", "{x⦂S · a=b ∣ a+b}", "a", "ℤ");
+
+		noRewriteExpr("{x⦂S · a=b ∣ a+b}", "a", "ℤ");
+		
+		noRewriteExpr("{x⦂ℤ,y⦂T · a=x ∣ a+b}");
+		noRewriteExpr("{x⦂S,y⦂ℤ · a=b ∣ a+y}");
+		noRewriteExpr("{x⦂ℤ,y⦂ℤ · x=b ∣ a+y}");
+	}
 
 }

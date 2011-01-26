@@ -4049,6 +4049,26 @@ public class AutoRewriterImpl extends DefaultRewriter {
     				return result;
 	    		}
 	    	}
+	    	
+	    	/**
+	    	 * SIMP_COMPSET
+	    	 *    {x, .., y · Pg ∣ Eg} == {x · Pg ∣ Eg} where Pg and Eg are ground formulas
+	    	 */
+	    	Cset(decls, P, E) -> {
+	    		if (level2) {
+	    			final int nbBound = `decls.length;
+	    			if (notLocallyBound(`P, nbBound) && notLocallyBound(`E, nbBound)) {
+	    				if (nbBound == 1) {
+	    					result = expression;
+	    				} else {
+	    					BoundIdentDecl[] decl = new BoundIdentDecl[] { `decls[0] };
+	    					result = makeQuantifiedExpression(CSET, decl, `P, `E, Form.Explicit);
+	    				}
+	    				trace(expression, result, "SIMP_COMPSET");
+    					return result;
+	    			}
+	    		}
+	    	}
 	 
     	}
     	return expression;
