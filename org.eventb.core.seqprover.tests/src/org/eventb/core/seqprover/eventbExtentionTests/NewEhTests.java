@@ -11,7 +11,7 @@
 package org.eventb.core.seqprover.eventbExtentionTests;
 
 import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
-import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
+import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.Eq;
 
@@ -33,7 +33,7 @@ public class NewEhTests extends AbstractReasonerTests {
 		return new SuccessfullReasonerApplication[]{
 				new SuccessfullReasonerApplication(
 						TestLib.genSeq(" 1=2 ;; 1+1 = 2 |- 1+1+1 = 3 "),
-						new SinglePredInput(TestLib.genPred("1=2")),
+						new HypothesisReasoner.Input(TestLib.genPred("1=2")),
 						"{}[][1+1=2][1=2;; 2+2=2] |- 2+2+2=3"
 						)
 		};
@@ -43,13 +43,13 @@ public class NewEhTests extends AbstractReasonerTests {
 	public UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications() {
 		return new UnsuccessfullReasonerApplication[]{
 				// eqHyp not present
-				new UnsuccessfullReasonerApplication(TestLib.genSeq(" ⊤ |- ⊤ "), new SinglePredInput(TestLib.genPred("1=2"))),
+				new UnsuccessfullReasonerApplication(TestLib.genSeq(" ⊤ |- ⊤ "), new HypothesisReasoner.Input(TestLib.genPred("1=2"))),
 				// eqHyp not an equality
-				new UnsuccessfullReasonerApplication(TestLib.genSeq(" ⊤ |- ⊥ "), new SinglePredInput(TestLib.genPred("⊤"))),
+				new UnsuccessfullReasonerApplication(TestLib.genSeq(" ⊤ |- ⊥ "), new HypothesisReasoner.Input(TestLib.genPred("⊤"))),
 				// nothing to do
-				new UnsuccessfullReasonerApplication(TestLib.genSeq(" 1=2 ;; ⊤ |- ⊤ "), new SinglePredInput(TestLib.genPred("1=2"))),
+				new UnsuccessfullReasonerApplication(TestLib.genSeq(" 1=2 ;; ⊤ |- ⊤ "), new HypothesisReasoner.Input(TestLib.genPred("1=2"))),
 				// nothing to do
-				new UnsuccessfullReasonerApplication(TestLib.genSeq(" 1=2 ;; 1=1 ;; 2=2 |- ⊤ "), new SinglePredInput(TestLib.genPred("1=2")))
+				new UnsuccessfullReasonerApplication(TestLib.genSeq(" 1=2 ;; 1=1 ;; 2=2 |- ⊤ "), new HypothesisReasoner.Input(TestLib.genPred("1=2")))
 		};
 	}
 

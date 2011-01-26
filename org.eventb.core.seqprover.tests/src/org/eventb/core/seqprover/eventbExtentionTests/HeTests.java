@@ -8,7 +8,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerFailure;
 import org.eventb.core.seqprover.IReasonerOutput;
-import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
+import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.He;
 import org.junit.Test;
@@ -35,7 +35,7 @@ public class HeTests extends AbstractTests {
 
 		// Hyp is not equality
 		seq = TestLib.genSeq(" 1 = 2 ⇒ 2 = 3 |- ⊤ ");
-		output = heReasoner.apply(seq, new SinglePredInput(TestLib
+		output = heReasoner.apply(seq, new HypothesisReasoner.Input(TestLib
 				.genPred("1 = 2 ⇒ 2 = 3")), null);
 		assertTrue(output instanceof IReasonerFailure);
 	}
@@ -46,7 +46,7 @@ public class HeTests extends AbstractTests {
 		IReasonerOutput output;
 
 		seq = TestLib.genSeq(P1 + " ;; ⊤ |- ⊤ ");
-		output = heReasoner.apply(seq, new SinglePredInput(P1), null);
+		output = heReasoner.apply(seq, new HypothesisReasoner.Input(P1), null);
 		assertTrue(output instanceof IReasonerFailure);
 	}
 
@@ -60,7 +60,7 @@ public class HeTests extends AbstractTests {
 
 		// Hyp is not present
 		seq = TestLib.genSeq(" ⊤ |- ⊤ ");
-		output = heReasoner.apply(seq, new SinglePredInput(P1), null);
+		output = heReasoner.apply(seq, new HypothesisReasoner.Input(P1), null);
 		assertTrue(output instanceof IReasonerFailure);
 	}
 
@@ -75,21 +75,21 @@ public class HeTests extends AbstractTests {
 		IReasonerOutput output;
 
 		seq = TestLib.genSeq(P1 + " ;; 0+1 = 2 |- 1+0+1 = 3 ");
-		output = heReasoner.apply(seq, new SinglePredInput(P1), null);
+		output = heReasoner.apply(seq, new HypothesisReasoner.Input(P1), null);
 		assertTrue(output instanceof IProofRule);
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents("Applied successfully equality P1 ",
 				"{}[][0+1=2][0=1, 0+0=2] |- 0+0+0=3", newSeqs);
 
 		seq = TestLib.genSeq(P2 + " ;; 0+1 = 2 |- 2+0+1 = 3 ");
-		output = heReasoner.apply(seq, new SinglePredInput(P2), null);
+		output = heReasoner.apply(seq, new HypothesisReasoner.Input(P2), null);
 		assertTrue(output instanceof IProofRule);
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents("Applied successfully equality P2 ",
 				"{}[][0+1=2][1=0+1, 1=2] |- 2+1=3", newSeqs);
 
 		seq = TestLib.genSeq(P3 + " ;; 0+1 = 0+1+2 |- 2+0+1 = 0+1+2+3 ");
-		output = heReasoner.apply(seq, new SinglePredInput(P3), null);
+		output = heReasoner.apply(seq, new HypothesisReasoner.Input(P3), null);
 		assertTrue(output instanceof IProofRule);
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents("Applied successfully equality P2 ",

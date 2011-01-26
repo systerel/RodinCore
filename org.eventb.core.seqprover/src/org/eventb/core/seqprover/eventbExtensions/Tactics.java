@@ -693,7 +693,8 @@ public class Tactics {
 	}
 
 	public static ITactic eqE(Predicate eqHyp) {
-		return BasicTactics.reasonerTac(new Eq(), new SinglePredInput(eqHyp));
+		return BasicTactics.reasonerTac(new Eq(), new HypothesisReasoner.Input(
+				eqHyp));
 	}
 
 	public static boolean eqE_applicable(Predicate hyp) {
@@ -996,7 +997,8 @@ public class Tactics {
 	}
 
 	public static ITactic he(Predicate hyp) {
-		return BasicTactics.reasonerTac(new He(), new SinglePredInput(hyp));
+		return BasicTactics.reasonerTac(new He(), new HypothesisReasoner.Input(
+				hyp));
 	}
 
 	public static ITactic modusTollens(Predicate impHyp) {
