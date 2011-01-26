@@ -18,7 +18,6 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.GlyphMetrics;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eventb.internal.ui.EventBSharedColor;
@@ -74,10 +73,6 @@ public class ControlHolder<U extends Control> {
 		int descent = rect.height - ascent;
 		style.metrics = new GlyphMetrics(ascent + MARGIN, descent + MARGIN,
 				rect.width + 2 * MARGIN);
-		final Point loc = text.getLocationAtOffset(offset);
-		loc.x += MARGIN;
-		loc.y += MARGIN;
-		control.setLocation(loc);
 		text.setStyleRange(style);
 	}
 
