@@ -18,7 +18,6 @@
 package org.eventb.internal.ui.prover;
 
 import static java.util.Collections.emptyMap;
-import static org.eclipse.swt.SWT.COLOR_YELLOW;
 import static org.eventb.internal.ui.prover.PredicateUtil.prettyPrint;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getHyperlinks;
 
@@ -26,37 +25,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jface.fieldassist.IContentProposalProvider;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Text;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.internal.ui.EventBMath;
-import org.eventb.internal.ui.EventBSharedColor;
-import org.eventb.internal.ui.IEventBInputText;
-import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
 import org.eventb.ui.prover.ITacticApplication;
 
 public class EventBPredicateText {
-
-	protected static final Color YELLOW = EventBSharedColor
-			.getSystemColor(COLOR_YELLOW);
 
 	private static final int MAX_LENGTH = 30;
 	
 	private String predicateText;
 	
-	// The yellow boxes to insert some input
-	protected IEventBInputText[] boxes;
 	// The holders for the yellow boxes
-	protected List<ControlHolder<Text>> textControls;
+	protected List<YellowBoxHolder> textControls;
 
 	// The offset of each box on a given line
 	protected int[] offsets;
@@ -77,11 +62,14 @@ public class EventBPredicateText {
 
 	private final boolean isGoal;
 
+	private final YellowBoxMaker yellowBoxMaker;
+
 	public EventBPredicateText(PredicateRow predicateRow, boolean isGoal,
-			boolean enable, ProverUI proverUI) {
+			boolean enable, ProverUI proverUI, YellowBoxMaker yellowBoxMaker) {
 		this.predicateRow = predicateRow;
 		this.isGoal = isGoal;
 		this.enable = enable;
+		this.yellowBoxMaker = yellowBoxMaker;
 		this.boxesDrawn = false;
 	}
 	
@@ -108,8 +96,8 @@ public class EventBPredicateText {
 	
 	public void attach() {
 		if (enable) {
-			for (ControlHolder<Text> c : textControls) {
-				c.attach();
+			for (ControlHolder c : textControls) {
+				c.attach(true);
 			}
 		}
 	}
@@ -171,42 +159,29 @@ public class EventBPredicateText {
 			int textOffset) {
 		if (offsets == null)
 			return;
-		this.boxes = new IEventBInputText[offsets.length];
-		this.textControls = new ArrayList<ControlHolder<Text>>(offsets.length);
-		final IContentProposalProvider proposalProvider = ContentProposalFactory
-				.getProposalProvider(us);
+		this.textControls = new ArrayList<YellowBoxHolder>(offsets.length);
 		for (int i = 0; i < offsets.length; ++i) {
-			final StyledText parent = manager.getText();
-			final Text text = new Text(parent, SWT.SINGLE);
 			final int offset = offsets[i] + textOffset;
-			text.setText("     ");
-			boxes[i] = new EventBMath(text);
-			textControls.add(i, new ControlHolder<Text>(text, offset, true));
-			text.setBackground(YELLOW);
-			ContentProposalFactory.makeContentProposal(proposalProvider, text);
+			textControls.add(i, new YellowBoxHolder(yellowBoxMaker, offset,
+					true));
 		}
 	}
 
 	public void dispose() {
-		if (boxes != null) {
-			for (IEventBInputText box : boxes) {
-				box.dispose();
-			}
-		}
 		if (textControls != null) {
-			for (ControlHolder<Text> c : textControls) {
-				c.remove();
+			for (YellowBoxHolder h : textControls) {
+				h.remove();
 			}
 		}
 	}
 
 	public String[] getResults() {
-		if (boxes == null)
+		if (textControls == null)
 			return new String[0];
-		final String[] results = new String[boxes.length];
+		final String[] results = new String[offsets.length];
 		int i = 0;
-		for (IEventBInputText box : boxes) {
-			results[i] = box.getTextWidget().getText();
+		for (YellowBoxHolder holder : textControls) {
+			results[i] = holder.getInputString();
 			i++;
 		}
 		return results;

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -50,6 +51,7 @@ import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.internal.ui.EventBSharedColor;
+import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
 import org.eventb.internal.ui.searchhypothesis.SearchHypothesisComposite;
 import org.eventb.internal.ui.searchhypothesis.SearchHypothesisUtils;
 import org.rodinp.keyboard.preferences.PreferenceConstants;
@@ -365,25 +367,33 @@ public abstract class HypothesisComposite implements
 			start = System.currentTimeMillis();
 		}
 
+		final ControlMaker checkBoxMaker = new CheckBoxMaker(styledText);
+		final IContentProposalProvider proposalProvider = ContentProposalFactory
+				.getProposalProvider(userSupport);
+		final YellowBoxMaker yellowBoxMaker = new YellowBoxMaker(styledText,
+				proposalProvider);
+		
 		// Recreating the hypothesis rows according to the input.
 		for (Predicate hyp : hyps) {
 			final PredicateRow row = new PredicateRow(NB_TABS_LEFT, hyp, false,
-					userSupport, enabled, this, proverUI, manager);
+					userSupport, enabled, this, proverUI, manager,
+					checkBoxMaker, yellowBoxMaker);
 			rows.add(row);
 		}
 		
 		if (traced) {
 			final long elapsed = System.currentTimeMillis() - start;
-			SearchHypothesisUtils.debug("Creating rows took " + elapsed + " ms.");
+			SearchHypothesisUtils.debug("Creating rows took " + elapsed
+					+ " ms.");
 			start = System.currentTimeMillis();
 		}
-		
+
 		final String indentation = ProverUIUtils.getControlSpacing(NB_CONTROLS,
 				NB_TABS_LEFT - NB_CONTROLS);
 		int i = 0;
 		for (PredicateRow row : rows) {
 			manager.appendText(indentation);
-			row.append(i%2!=0);
+			row.append(i % 2 != 0);
 			i++;
 		}
 		manager.setContents();
@@ -391,10 +401,11 @@ public abstract class HypothesisComposite implements
 		for (PredicateRow row : rows) {
 			row.attachButtons();
 		}
-		
+
 		if (traced) {
 			final long elapsed = System.currentTimeMillis() - start;
-			SearchHypothesisUtils.debug("painting styledText took " + elapsed + " ms.");
+			SearchHypothesisUtils.debug("painting styledText took " + elapsed
+					+ " ms.");
 			start = System.currentTimeMillis();
 		}
 
@@ -642,8 +653,6 @@ public abstract class HypothesisComposite implements
 		}
 	}
 	
-	
-
 	/**
 	 * Set the size of the top-level control.
 	 * 

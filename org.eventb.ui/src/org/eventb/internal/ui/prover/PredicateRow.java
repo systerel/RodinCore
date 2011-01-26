@@ -37,7 +37,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eventb.core.ast.FormulaFactory;
@@ -78,23 +77,29 @@ public class PredicateRow {
 	protected TacticHyperlinkManager manager;
 
 	// Check Button holder
-	private ControlHolder<Button> checkBoxHolder;
+	private ControlHolder checkBoxHolder;
 	private SelectionListener checkboxListener;
 	
 	// Predicate/Command holder
-	private ControlHolder<Button> predAppliHolder;
+	private ControlHolder predAppliHolder;
 	private SelectionListener predAppliListener;
 
 	private boolean isGoal;
+
+	private final ControlMaker checkBoxMaker;
+	private final YellowBoxMaker yellowBoxMaker;
 
 	/**
 	 * @author htson
 	 *         This class extends and provide response actions
 	 *         when a hyperlink is activated.
+	 * @param yellowBoxMaker 
 	 */
 	public PredicateRow(int nbTabsFromLeft, Predicate pred, boolean isGoal,
-			IUserSupport userSupport, boolean enable, SelectionListener listener,
-			ProverUI proverUI, TacticHyperlinkManager manager) {
+			IUserSupport userSupport, boolean enable,
+			SelectionListener listener, ProverUI proverUI,
+			TacticHyperlinkManager manager, ControlMaker checkboxMaker,
+			YellowBoxMaker yellowBoxMaker) {
 
 		this.pred = pred;
 		this.isGoal = isGoal;
@@ -104,6 +109,8 @@ public class PredicateRow {
 		this.proverUI = proverUI;
 		this.manager = manager;
 		this.nbTabsFromLeft = nbTabsFromLeft;
+		this.checkBoxMaker = checkboxMaker;
+		this.yellowBoxMaker = yellowBoxMaker;
 
 		final FormulaFactory ff = userSupport.getFormulaFactory();
 		final String parsedString = pred.toString();		
@@ -116,10 +123,11 @@ public class PredicateRow {
 	private void createPredicateText() {
 		if (predicateText != null)
 			predicateText.dispose();
-		predicateText = new EventBPredicateText(this, isGoal, enable, proverUI);
+		predicateText = new EventBPredicateText(this, isGoal, enable, proverUI,
+				yellowBoxMaker);
 		predicateText.load(pred.toString(), userSupport, pred, parsedPredicate);
 	}
-	
+
 	public void append(boolean odd) {
 		createControlButtons(odd);
 		predicateText.append(manager, odd);
@@ -127,34 +135,25 @@ public class PredicateRow {
 	
 	public void attachButtons() {
 		if (!isGoal) {
-			checkBoxHolder.attach();
+			checkBoxHolder.attach(true);
 		}
-		predAppliHolder.attach();
+		predAppliHolder.attach(false);
 		predicateText.attach();
 	}
 	
 	private void createControlButtons(boolean odd) {
 		final int checkBoxOffset = manager.getCurrentOffset() - nbTabsFromLeft;
+		final Color bgColor = odd ? SOFT_BG_COLOR : WHITE;
 		if (!isGoal) {
-			final Button checkBox = new Button(manager.getText(), SWT.CHECK);
-			if (odd) {
-				checkBox.setBackground(SOFT_BG_COLOR);
-			} else {
-				checkBox.setBackground(WHITE);
-			}
-			checkBoxHolder = new ControlHolder<Button>(checkBox,
-					checkBoxOffset, false);
-			checkBox.addSelectionListener(checkboxListener);
+			checkBoxHolder = new ControlHolder(checkBoxMaker,
+					checkBoxOffset, false, bgColor);
+			checkBoxHolder.addSelectionListener(checkboxListener);
 		}
 		final int menuOffset = checkBoxOffset + 1;
 		final Button predAppliButton = createApplicationsButton();
-		if (odd) {
-			predAppliButton.setBackground(SOFT_BG_COLOR);
-		} else {
-			predAppliButton.setBackground(WHITE);
-		}
-		predAppliHolder = new ControlHolder<Button>(predAppliButton,
-				menuOffset, false);
+		predAppliHolder = new ControlHolder(predAppliButton,
+				menuOffset, false, bgColor);
+		predAppliButton.setVisible(false);
 	}
 	
 	private Button createApplicationsButton() {
@@ -299,18 +298,9 @@ public class PredicateRow {
 			predicateText.dispose();
 
 		if (checkBoxHolder != null) {
-			final Button checkbox = checkBoxHolder.getControl();
-			if (!checkbox.isDisposed() && checkboxListener != null) {
-				checkbox.removeSelectionListener(checkboxListener);
-			}
 			checkBoxHolder.remove();
 		}
-		
 		if (predAppliHolder != null) {
-			final Button predAppliButton = predAppliHolder.getControl();
-			if (!predAppliButton.isDisposed() && predAppliListener != null) {
-				predAppliButton.removeSelectionListener(predAppliListener);
-			}
 			predAppliHolder.remove();			
 		}
 		
@@ -323,10 +313,13 @@ public class PredicateRow {
 	 *         otherwise
 	 */
 	public boolean isSelected() {
-		if (!enable || checkBoxHolder == null)
-			return false;
-		final Button checkbox = checkBoxHolder.getControl();
-		return checkbox.getSelection();
+		if (enable && checkBoxHolder != null) {
+			final Button checkbox = (Button) checkBoxHolder.getControl();
+			if (checkbox != null) {
+				return checkbox.getSelection();
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -369,16 +362,11 @@ public class PredicateRow {
 	public void setSelected(boolean selected) {
 		if (!enable || checkBoxHolder == null)
 			return;
-		checkBoxHolder.getControl().setSelection(selected);
+		checkBoxHolder.render();
+		final Button checkbox = (Button) checkBoxHolder.getControl();
+		checkbox.setSelection(selected);
 	}
-
-	public Control getLeftmostControl() {
-		if (checkBoxHolder == null) {
-			return predAppliHolder.getControl();
-		}
-		return checkBoxHolder.getControl();
-	}
-
+	
 	public int getNbTabsFromLeft() {
 		return nbTabsFromLeft;
 	}

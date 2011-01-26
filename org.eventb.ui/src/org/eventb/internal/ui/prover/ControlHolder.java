@@ -15,10 +15,12 @@ import org.eclipse.swt.custom.PaintObjectEvent;
 import org.eclipse.swt.custom.PaintObjectListener;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.GlyphMetrics;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
 import org.eventb.internal.ui.EventBSharedColor;
 
@@ -27,48 +29,86 @@ import org.eventb.internal.ui.EventBSharedColor;
  *  
  * @author "Thomas Muller"
  */
-public class ControlHolder<U extends Control> {
+public class ControlHolder {
+	
+	protected static final Color RED = EventBSharedColor
+			.getSystemColor(SWT.COLOR_RED);
 	
 	private static final int MARGIN = 1; //px
 	private static final int LENGTH = 1; //offset
 	
 	private final StyledText text;
-	private final ControlPainter<U> painter;
+	private final ControlPainter painter;
 	
 	protected final int offset;
-	protected final U control;
 	protected final boolean drawBoxAround;
 	
-	public ControlHolder(U control, int offset, boolean drawBoxAround) {
-		this.text = (StyledText) control.getParent();
+	private SelectionListener listener;
+	private Color bgColor;
+
+	protected ControlMaker maker;
+	protected Control control;
+	
+	public ControlHolder(ControlMaker maker, int offset, boolean drawBoxAround) {
+		this.maker = maker;
+		this.offset = offset;
+		this.drawBoxAround = drawBoxAround;
+		this.text = (StyledText) maker.getParent();
+		this.painter = new ControlPainter(this);
+	}
+	
+	public ControlHolder(ControlMaker maker, int offset, boolean drawBoxAround,
+			Color bgColor) {
+		this(maker, offset, drawBoxAround);
+		this.bgColor = bgColor;
+	}
+
+	public ControlHolder(Control control, int offset, boolean drawBoxAround) {
 		this.control = control;
 		this.offset = offset;
 		this.drawBoxAround = drawBoxAround;
-		this.painter = new ControlPainter<U>(this);
+		this.text = (StyledText) control.getParent();
+		this.painter = new ControlPainter(this);
+	}
+
+	public ControlHolder(Control control, int offset, boolean drawBoxAround,
+			Color bgColor) {
+		this(control, offset, drawBoxAround);
+		this.bgColor = bgColor;
+		control.setBackground(bgColor);
+	}
+		
+	public void attach(boolean lazy) {
+		setStyleRange(lazy);
+		registerPainter();
 	}
 	
-	public void attach() {
-		addControl();
-		registerPainter();
+	public void addSelectionListener(SelectionListener l) {
+			listener = l;
 	}
 	
 	public void remove() {
 		if (!text.isDisposed() && painter != null)
 			text.removePaintObjectListener(painter);
-		if (!control.isDisposed())
+		if (control != null && !control.isDisposed()) {
+			if (listener != null && control instanceof Button) {
+				((Button) control).removeSelectionListener(listener);
+			}
 			control.dispose();
+		}
 	}
 	
-	public U getControl() {
-		return control;
-	}
-	
-	private void addControl() {
+	protected void setStyleRange(boolean lazy) {
 		final StyleRange style = new StyleRange();
 		style.start = offset;
 		style.length = LENGTH;
-		control.pack();
-		final Rectangle rect = control.getBounds();
+		final Rectangle rect;
+		if (lazy) {
+			rect = maker.getBounds(this);
+		} else {
+			control.pack();
+			rect = control.getBounds();
+		}
 		int ascent = 2 * rect.height / 3;
 		int descent = rect.height - ascent;
 		style.metrics = new GlyphMetrics(ascent + MARGIN, descent + MARGIN,
@@ -80,15 +120,21 @@ public class ControlHolder<U extends Control> {
 		text.addPaintObjectListener(painter);
 	}
 	
-	private static class ControlPainter<U extends Control> implements
+	public void setControl(Control c) {
+		this.control = c;
+		setBackgroundColor();
+		if (listener != null && c instanceof Button) {
+			((Button)c).addSelectionListener(listener);
+		}
+	}
+	
+	private static class ControlPainter implements
 			PaintObjectListener {
 
-		private static final Color RED = EventBSharedColor
-				.getSystemColor(SWT.COLOR_RED);
-		private final ControlHolder<U> holder;
+		private final ControlHolder holder;
 		private boolean painting = false;
 
-		public ControlPainter(ControlHolder<U> holder) {
+		public ControlPainter(ControlHolder holder) {
 			this.holder = holder;
 		}
 
@@ -103,19 +149,11 @@ public class ControlHolder<U extends Control> {
 				if (start != holder.offset) {
 					return;
 				}
-				paintAndPlace(event.x, event.y, event.ascent, event.descent);
+				holder.paintAndPlace(event.x, event.y, event.ascent, event.descent);
 				drawBoxAround(event.gc, holder.drawBoxAround);
 			} finally {
 				painting = false;
 			}
-		}
-		
-		private void paintAndPlace(int ex, int ey, int ascent, int descent) {
-			final Rectangle controlBounds = holder.control.getBounds();
-			final int x = ex + MARGIN;
-			final int lineHeight = ascent + descent;
-			final int y = ey + MARGIN + (lineHeight - controlBounds.height) / 2;
-			holder.control.setLocation(x, y);
 		}
 
 		private void drawBoxAround(GC gc, final boolean drawBoxAround) {
@@ -132,11 +170,35 @@ public class ControlHolder<U extends Control> {
 	}
 	
 	protected void paintAndPlace(int ex, int ey, int ascent, int descent) {
-		final Rectangle controlBounds = control.getBounds();
+		final Rectangle controlBounds;
+		if (control == null) {
+			controlBounds = maker.getBounds(this);
+		} else {
+			controlBounds = control.getBounds();
+		}
 		final int x = ex + MARGIN;
 		final int lineHeight = ascent + descent;
 		final int y = ey + MARGIN + (lineHeight - controlBounds.height) / 2;
+		if (control == null) {
+			setControl(maker.getControl());
+		}
+		control.setVisible(true);
 		control.setLocation(x, y);
+	}
+	
+	public void render() {
+		if (control == null) {
+			control = maker.getControl();
+		}
+	}
+	
+	public void setBackgroundColor() {
+		if (bgColor != null)
+			control.setBackground(bgColor);
+	}
+
+	public Control getControl() {
+		return control;
 	}
 	
 }

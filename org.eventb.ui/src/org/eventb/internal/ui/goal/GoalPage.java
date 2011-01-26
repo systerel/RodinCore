@@ -22,6 +22,7 @@ import static org.eventb.internal.ui.prover.ProverUIUtils.getUserSupportDelta;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -51,12 +52,16 @@ import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBSharedColor;
+import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
+import org.eventb.internal.ui.prover.CheckBoxMaker;
+import org.eventb.internal.ui.prover.ControlMaker;
 import org.eventb.internal.ui.prover.PredicateRow;
 import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticHyperlinkManager;
+import org.eventb.internal.ui.prover.YellowBoxMaker;
 import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 /**
@@ -183,8 +188,14 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 		final boolean enabled = node.isOpen();
 		styledText.setRedraw(false);
 		manager.appendText("\t\uFFFC\t");
-		row = new PredicateRow(NB_TABS_LEFT, goal, true,
-				userSupport, enabled, null, proverUI, manager);
+		
+		final ControlMaker checkboxMaker = new CheckBoxMaker(styledText);
+		final IContentProposalProvider provider = ContentProposalFactory
+				.getProposalProvider(userSupport);
+		final YellowBoxMaker yellowBoxMaker = new YellowBoxMaker(styledText,
+				provider);
+		row = new PredicateRow(NB_TABS_LEFT, goal, true, userSupport, enabled,
+				null, proverUI, manager, checkboxMaker, yellowBoxMaker);
 		row.append(false);
 		manager.setContents();
 		row.attachButtons();
