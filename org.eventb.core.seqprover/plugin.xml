@@ -405,6 +405,11 @@
             id="dtInduction"
             name="%dtInductionName">
       </reasoner>
+      <reasoner
+      		class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FiniteDefRewrites"
+      		id="finiteDefRewrites"
+      		name="%finiteDefRewritesName">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FiniteDefRewriter;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FiniteDefRewrites.FiniteDefRewriter;
 import org.junit.Test;
 
 public class FiniteDefTests extends AbstractFormulaRewriterTests {
@@ -29,6 +29,7 @@ public class FiniteDefTests extends AbstractFormulaRewriterTests {
 		rewritePred("finite(A×B)", "∃n,f · f∈1‥n⤖A×B", "A", "ℙ(S)", "B", "ℙ(T)");
 		rewritePred("¬A=∅ ∧ finite(A)", "¬A=∅ ∧ (∃n,f · f∈1‥n⤖A)", "A", "ℙ(S)");
 		rewritePred("finite({x · x=1÷0 ∣ x})", "∃n,f · f∈1‥n⤖{x · x=1÷0 ∣ x}");
+		rewriteExpr("{x⦂ℙ(S) · finite(x) ∣ x}", "{x⦂ℙ(S) · ∃n,f · f∈1‥n⤖x ∣ x}");
 	}
 
 }
