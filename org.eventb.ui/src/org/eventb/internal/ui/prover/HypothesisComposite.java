@@ -27,6 +27,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -618,12 +619,26 @@ public abstract class HypothesisComposite implements
 
 	/**
 	 * Scroll to the bottom of the list of hypothesis rows. This is implemented
-	 * by showing the leftmost control of the last hypothesis.
+	 * directly by calculating the uppermost line to be shown.
 	 */
 	public void scrollToBottom() {
 		if (!rows.isEmpty()) {
-			final PredicateRow lastRow = rows.get(rows.size() - 1);
-			sc.showControl(lastRow.getLeftmostControl());
+			final int lastLineIndex = styledText.getLineCount() - 1;
+			final Rectangle area = control.getClientArea();
+			final int avgLineHeight = styledText.getLineHeight();
+			final int avgLinesUp = area.height / avgLineHeight;
+
+			int cumulatedSize = 0;
+			int i = lastLineIndex;
+			final int offsetAtLine = styledText.getOffsetAtLine(i);
+			for (i = lastLineIndex; i > lastLineIndex - avgLinesUp; i--) {
+				cumulatedSize += styledText.getLineHeight(offsetAtLine);
+				if (cumulatedSize >= area.height) {
+					break;
+				}
+			}
+			final Point lineLoc = styledText.getLocationAtOffset(offsetAtLine);
+			sc.setOrigin(lineLoc);
 		}
 	}
 	
