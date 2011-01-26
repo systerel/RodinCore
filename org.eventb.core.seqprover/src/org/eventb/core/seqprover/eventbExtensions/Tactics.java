@@ -135,6 +135,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomDistRigh
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DomRanUnionDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DoubleImplHypRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqvRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FiniteDefRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimpImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimplifies;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpAndRewrites;
@@ -3853,6 +3854,17 @@ public class Tactics {
 	public static ITactic dtInduction(Predicate hyp, IPosition position) {
 		return BasicTactics.reasonerTac(new DTInduction(),
 				new AbstractManualInference.Input(hyp, position));
+	}
+	
+	/**
+	 * Returns the tactic {@link FiniteDefRewrites} for a given position where
+	 * it can be applied.
+	 * 
+	 * @since 2.1
+	 */
+	public static ITactic finiteDef(Predicate hyp, IPosition position) {
+		return BasicTactics.reasonerTac(new FiniteDefRewrites(),
+				new AbstractManualRewrites.Input(hyp, position));
 	}
 
 }

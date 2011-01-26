@@ -1650,6 +1650,17 @@
             target="goal"
             tooltip="%proofTactic.dtInduction.tooltip">
       </tactic>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.finiteDef"
+            interrupt="true"
+            name="%proofTactic.finiteDef.name"
+            priority="5"
+            skipPostTactic="false"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.FiniteDef"
+            target="any"
+            tooltip="%proofTactic.finiteDef.tooltip">
+      </tactic>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
