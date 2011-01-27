@@ -25,6 +25,7 @@
       <discovery label="B2Rodin update site" url="http://bmethod.com/update_site/b2rodin"/>
       <discovery label="Brama update site" url="http://bmethod.com/update_site/brama"/>
       <discovery label="ProB update site" url="http://www.stups.uni-duesseldorf.de/update"/>
+      <discovery label="ProR update site (Requirements)" url="http://update.pror.org"/>
       <discovery label="AnimB update site" url="http://www.animb.org/updatesite"/>
    </url>
 
