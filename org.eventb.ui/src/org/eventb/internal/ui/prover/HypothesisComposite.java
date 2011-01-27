@@ -678,7 +678,8 @@ public abstract class HypothesisComposite implements
 			font = JFaceResources
 					.getFont(PreferenceConstants.RODIN_MATH_FONT);
 			styledText.setFont(font);
-			styledText.pack();
+			refresh();
+			scrollToBottom();
 		}
 	}
 

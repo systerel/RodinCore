@@ -105,7 +105,6 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 		super();
 		this.proverUI = proverUI;
 		this.userSupport = userSupport;
-		USM.addChangeListener(this);
 	}
 
 	@Override
@@ -146,14 +145,19 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 		fd.top = new FormAttachment(0);
 		fd.bottom = new FormAttachment(100);
 		sc.setLayoutData(fd);
+		JFaceResources.getFontRegistry().addListener(this);
+		setGoal();
+		contributeToActionBars();
+		USM.addChangeListener(this);
+	}
 
+	private void setGoal() {
 		final IProofState ps = userSupport.getCurrentPO();
 		if (ps != null) {
 			setGoal(ps.getCurrentNode());
 		} else {
 			setGoal(null);
 		}
-		contributeToActionBars();
 	}
 
 	/**
@@ -367,9 +371,9 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
 			font = JFaceResources
-					.getFont(PreferenceConstants.RODIN_MATH_FONT);
+					.getFont(PreferenceConstants.RODIN_MATH_FONT);			
 			styledText.setFont(font);
-			styledText.pack();
+			setGoal();
 		}
 	}
 
