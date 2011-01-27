@@ -193,6 +193,10 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			throws RodinDBException {
 		final IPRRoot prRoot = pc.getPRRoot();
 		if (!prRoot.exists()) {
+			if (prRoot.getResource().exists()) { // file is corrupted
+				Util.log(null, "overriding corrupted proof file "
+						+ prRoot.getResource().getFullPath().toString());
+			}
 			prRoot.getRodinFile().create(true, pm);
 
 			// Register the formula factory to use for the proof file
