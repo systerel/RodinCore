@@ -11,6 +11,8 @@ instructions.configure=\
   addRepository(type:1,location:http${#58}//rodin-b-sharp.sourceforge.net/updates,name:Rodin);\
   addRepository(type:0,location:http${#58}//www.stups.uni-duesseldorf.de/update,name:ProB);\
   addRepository(type:1,location:http${#58}//www.stups.uni-duesseldorf.de/update,name:ProB);\
+  addRepository(type:0,location:http${#58}//update.pror.org,name:ProR (Requirements));\
+  addRepository(type:1,location:http${#58}//update.pror.org,name:ProR (Requirements));\
   addRepository(type:0,location:http${#58}//www.animb.org/updatesite,name:AnimB);\
   addRepository(type:1,location:http${#58}//www.animb.org/updatesite,name:AnimB);\
   addRepository(type:0,location:http${#58}//iliasov.org/modplugin,name:Modularisation);\
