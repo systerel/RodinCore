@@ -18,17 +18,6 @@
       %license
    </license>
 
-   <url>
-      <discovery label="Ganymede discovery site" url="http://download.eclipse.org/releases/ganymede"/>
-      <discovery label="Main Rodin update site" url="http://rodin-b-sharp.sourceforge.net/updates"/>
-      <discovery label="Atelier B Provers update site" url="http://bmethod.com/update_site/atelierb_provers"/>
-      <discovery label="B2Rodin update site" url="http://bmethod.com/update_site/b2rodin"/>
-      <discovery label="Brama update site" url="http://bmethod.com/update_site/brama"/>
-      <discovery label="ProB update site" url="http://www.stups.uni-duesseldorf.de/update"/>
-      <discovery label="ProR update site (Requirements)" url="http://update.pror.org"/>
-      <discovery label="AnimB update site" url="http://www.animb.org/updatesite"/>
-   </url>
-
    <requires>
       <import feature="org.rodinp.platform" version="0.0.0" match="compatible"/>
    </requires>
