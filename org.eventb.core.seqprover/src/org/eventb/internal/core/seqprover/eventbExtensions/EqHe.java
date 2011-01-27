@@ -27,6 +27,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
@@ -35,7 +36,8 @@ import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 /**
  * This class handles reasoners Eq and He.
  */
-public abstract class EqHe extends HypothesisReasoner {
+public abstract class EqHe extends HypothesisReasoner implements
+		IVersionedReasoner {
 
 	private boolean goalDependant = true;
 

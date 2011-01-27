@@ -82,7 +82,7 @@ public class FiniteDefRewrites extends AbstractManualRewrites {
 		@Override
 		public Predicate rewrite(SimplePredicate predicate) {
 			if (Lib.isFinite(predicate)) {
-				final Expression set = predicate.getChild(0);
+				final Expression set = predicate.getExpression();
 
 				final Type intType = ff.makeIntegerType();
 				final Type fType = ff.makeRelationalType(intType, set.getType()

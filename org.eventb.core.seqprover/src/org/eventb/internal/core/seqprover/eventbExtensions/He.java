@@ -22,6 +22,7 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 public class He extends EqHe {
 
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".he";
+	private static final int REASONER_VERSION = 1;
 
 	@Override
 	public String getReasonerID() {
@@ -29,8 +30,13 @@ public class He extends EqHe {
 	}
 
 	@Override
+	public int getVersion() {
+		return REASONER_VERSION;
+	}
+
+	@Override
 	protected String getDisplay(Predicate pred) {
-		return "he in " + pred;
+		return "he with " + pred;
 	}
 
 	@Override
@@ -49,4 +55,5 @@ public class He extends EqHe {
 			Predicate hypEq) throws IllegalArgumentException {
 		return super.getAntecedents(sequent, hypEq);
 	}
+
 }

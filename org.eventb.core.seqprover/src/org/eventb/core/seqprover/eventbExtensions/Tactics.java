@@ -3869,4 +3869,24 @@ public class Tactics {
 				new AbstractManualRewrites.Input(hyp, position));
 	}
 
+	/**
+	 * Returns the list of applicable positions of the tactic
+	 * {@link FiniteDefRewrites} to the given predicate.
+	 * 
+	 * @param predicate
+	 *            a predicate
+	 * @return a list of positions (empty if the tactic is not applicable)
+	 * @since 2.1
+	 */
+	public static List<IPosition> finiteDefGetPositions(Predicate predicate) {
+		return predicate.getPositions(new DefaultFilter() {
+
+			@Override
+			public boolean select(SimplePredicate pred) {
+				return Lib.isFinite(pred);
+			}
+			
+		});
+	}
+
 }
