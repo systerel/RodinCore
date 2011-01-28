@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - Added tests since addition of SIMP_NOT_NOT rule
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
@@ -143,6 +144,10 @@ public class RemoveNegationTests extends AbstractManualRewriterTests {
 	String P30 = "∀x·x = 0 ⇒ ¬(∅= {{x} ↦ 0})";
 	
 	String resultP30 = "∀x·x=0⇒(∃x0,x1·x0 ↦ x1∈{{x} ↦ 0})";
+	
+	String P31 = "¬¬(0=1)";
+
+	String resultP31 = "0=1";
 
 	@Override
 	public String getReasonerID() {
@@ -222,7 +227,8 @@ public class RemoveNegationTests extends AbstractManualRewriterTests {
 				P27, "0",
 				P28, "1.0",
 				P29, "0",
-				P30, "1.0"
+				P30, "1.0",
+				P31, "1"
 		};
 	}
 

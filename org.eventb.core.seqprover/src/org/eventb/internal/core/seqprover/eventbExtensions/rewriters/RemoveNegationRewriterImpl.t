@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language V2
+ *     Systerel - added SIMP_NOT_NOT rule
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
@@ -73,6 +74,17 @@ public class RemoveNegationRewriterImpl extends AutoRewriterImpl {
 	public boolean isApplicableOrRewrite(Predicate predicate) {
 		
 		%match (Predicate predicate) {
+
+			/**
+			 * SIMP_NOT_NOT
+			 * Negation: ¬¬P == P
+			 */
+			Not(Not(P)) -> {
+				if (isRewrite) {
+					rewrittenPredicate = `P;
+				}
+				return true;
+			}
 
 			/**
 			 * DEF_SPECIAL_NOT_EQUAL
@@ -155,7 +167,7 @@ public class RemoveNegationRewriterImpl extends AutoRewriterImpl {
 	    return false;
 	}
 		
-	@ProverRule( { "DEF_SPECIAL_NOT_EQUAL", "DISTRI_NOT_AND", "DISTRI_NOT_OR",
+	@ProverRule( { "SIMP_NOT_NOT", "DEF_SPECIAL_NOT_EQUAL", "DISTRI_NOT_AND", "DISTRI_NOT_OR",
 			       "DERIV_NOT_IMP", "DERIV_NOT_FORALL", "DERIV_NOT_EXISTS" })
 	@Override
 	public Predicate rewrite(UnaryPredicate predicate) {
