@@ -11,10 +11,16 @@
  ******************************************************************************/
 package org.eventb.internal.ui.prooftreeui;
 
+import static org.rodinp.keyboard.preferences.PreferenceConstants.RODIN_MATH_FONT;
+
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -34,7 +40,7 @@ import org.eventb.ui.EventBUIPlugin;
  * @author "Thomas Muller"
  */
 
-public class RuleDetailsView extends ViewPart implements ISelectionListener {
+public class RuleDetailsView extends ViewPart implements ISelectionListener, IPropertyChangeListener {
 
 	/**
 	 * The identifier of the Rule Details View (value
@@ -48,6 +54,7 @@ public class RuleDetailsView extends ViewPart implements ISelectionListener {
 	private ScrolledComposite sc = null;
 	private IProofTreeNode currentNode = null;
 	private RuleDetailsProvider rdp = null;
+	private Font font;
 
 	@Override
 	public void createPartControl(final Composite parent) {
@@ -58,6 +65,8 @@ public class RuleDetailsView extends ViewPart implements ISelectionListener {
 
 		initializeControl(parent);
 
+		font = JFaceResources.getFont(RODIN_MATH_FONT);
+		JFaceResources.getFontRegistry().addListener(this);
 		// prime the selection to display contents
 		selectionChanged(null, getSite().getPage().getSelection());
 	}
@@ -79,7 +88,7 @@ public class RuleDetailsView extends ViewPart implements ISelectionListener {
 
 	public void refreshContents(IProofTreeNode node) {
 		if (rdp == null) {
-			rdp = new RuleDetailsProvider(sc);
+			rdp = new RuleDetailsProvider(sc, font);
 		}
 		final IProofRule rule = node.getRule();
 		if (rule == null) {
@@ -119,7 +128,22 @@ public class RuleDetailsView extends ViewPart implements ISelectionListener {
 		final IWorkbenchWindow workbench = getSite().getWorkbenchWindow();
 		final ISelectionService selectionService = workbench.getSelectionService();
         selectionService.removeSelectionListener(this);
+        JFaceResources.getFontRegistry().removeListener(this);
 		super.dispose();
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(RODIN_MATH_FONT)) {
+			font = JFaceResources.getFont(RODIN_MATH_FONT);
+			if (rdp == null) {
+				return;
+			}
+			rdp.setFont(font);
+			if (currentNode != null) {
+				refreshContents(currentNode);
+			}
+		}
 	}
 
 }

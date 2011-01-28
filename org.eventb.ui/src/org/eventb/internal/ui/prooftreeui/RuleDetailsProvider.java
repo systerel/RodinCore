@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others. 
+ * Copyright (c) 2010, 2011 Systerel and others. 
  *  
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -76,7 +76,6 @@ public class RuleDetailsProvider {
 	private static final String SEPARATOR = COMMA + SPACE;
 	private static final String INST = "inst ";
     
-	private Font braveFont;
 	private IProofRule rule;
 	private StyledText sText;
 	private RuleDetailsModel model;
@@ -95,14 +94,16 @@ public class RuleDetailsProvider {
 	 *            the composite that will hold the styled text to print rule
 	 *            informations
 	 */
-	public RuleDetailsProvider(Composite parent) {
+	public RuleDetailsProvider(Composite parent, Font font) {
 		sText = new StyledText(parent, MULTI | FULL_SELECTION);
 		final GridData gData = new GridData(TOP, TOP, true, true);
-		braveFont = new Font(parent.getDisplay(), "Brave Sans Mono", 10,
-				SWT.NORMAL);
-		sText.setFont(braveFont);
+		sText.setFont(font);
 		sText.setLayoutData(gData);
 		sText.setTabStops(TABS);
+	}
+	
+	public void setFont(Font font) {
+		sText.setFont(font);
 	}
 
 	public Control getRuleDetailsPresentation(IProofRule handledRule) {
