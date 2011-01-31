@@ -567,6 +567,18 @@
             wizardId="org.eventb.ui.wizards.NewComponent">
          <enablement></enablement>
       </commonWizard>
+      <commonFilter
+            activeByDefault="false"
+            class="fr.systerel.internal.explorer.navigator.filters.AutoPOFilter"
+            id="fr.systerel.explorer.navigator.filters.autoPO"
+            name="%filters.disAuto">
+      </commonFilter>
+      <commonFilter
+            activeByDefault="false"
+            class="fr.systerel.internal.explorer.navigator.filters.ManualPOFilter"
+            id="fr.systerel.explorer.navigator.filters.manualPO"
+            name="%filters.disManual">
+      </commonFilter>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
