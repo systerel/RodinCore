@@ -47,7 +47,7 @@ public class ImpOrRewrites extends AbstractManualRewrites {
 	}
 
 	@Override
-	protected Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
+	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
 		IFormulaRewriter rewriter = new ImpOrRewriterImpl(ff);
 		Formula<?> subFormula = pred.getSubFormula(position);
 		

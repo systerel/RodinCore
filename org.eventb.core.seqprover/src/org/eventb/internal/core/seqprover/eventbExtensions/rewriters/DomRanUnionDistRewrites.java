@@ -47,7 +47,7 @@ public class DomRanUnionDistRewrites extends AbstractManualRewrites {
 	}
 
 	@Override
-	protected Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
+	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
 		IFormulaRewriter rewriter = new DomRanUnionDistRewriterImpl(ff);
 		Formula<?> subFormula = pred.getSubFormula(position);
 		

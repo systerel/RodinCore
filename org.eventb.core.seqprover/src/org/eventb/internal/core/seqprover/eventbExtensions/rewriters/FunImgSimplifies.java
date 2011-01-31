@@ -77,7 +77,7 @@ public class FunImgSimplifies extends AbstractManualRewrites implements
 	}
 
 	@Override
-	protected Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
+	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
 		final Formula<?> subFormula = pred.getSubFormula(position);
 		if (subFormula == null || subFormula.getTag() != Expression.FUNIMAGE) {
 			return null;

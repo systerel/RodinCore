@@ -47,7 +47,7 @@ public class RelImgUnionRightRewrites extends AbstractManualRewrites {
 	}
 
 	@Override
-	protected Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
+	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
 		IFormulaRewriter rewriter = new RelImgUnionRightRewriterImpl(ff);
 		Formula<?> subFormula = pred.getSubFormula(position);
 		

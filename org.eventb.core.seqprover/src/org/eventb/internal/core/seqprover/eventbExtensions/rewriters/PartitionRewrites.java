@@ -52,7 +52,7 @@ public class PartitionRewrites extends AbstractManualRewrites {
 	}
 
 	@Override
-	protected Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
+	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
 		IFormulaRewriter rewriter = new PartitionRewriterImpl(ff);
 		Formula<?> subFormula = pred.getSubFormula(position);
 		if (subFormula == null || subFormula.getTag() != Formula.KPARTITION) {

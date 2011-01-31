@@ -48,7 +48,7 @@ public class DomDistRightRewrites extends AbstractManualRewrites {
 	}
 
 	@Override
-	protected Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
+	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
 		IFormulaRewriter rewriter = new DomDistRightRewriterImpl(ff);
 		Formula<?> subFormula = pred.getSubFormula(position);
 		

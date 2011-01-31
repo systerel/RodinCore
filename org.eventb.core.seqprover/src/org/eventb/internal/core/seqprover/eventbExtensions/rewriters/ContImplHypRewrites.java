@@ -45,7 +45,7 @@ public class ContImplHypRewrites extends AbstractManualRewrites {
 	}
 
 	@Override
-	protected Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
+	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
 		BinaryPredicate predicate = (BinaryPredicate) pred
 				.getSubFormula(position);
 		IFormulaRewriter rewriter = new ContImplRewriter(true, ff);

@@ -52,7 +52,7 @@ public class ArithRewrites extends AbstractManualRewrites implements IVersionedR
 	}
 
 	@Override
-	protected Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
+	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
 		Formula<?> subFormula = pred.getSubFormula(position);
 		final Formula<?> newSubFormula;
 		final IFormulaRewriter rewriter = new ArithRewriterImpl(ff);

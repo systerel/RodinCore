@@ -60,7 +60,7 @@ public class FiniteDefRewrites extends AbstractManualRewrites {
 	}
 
 	@Override
-	protected Predicate rewrite(Predicate pred, IPosition position,
+	public Predicate rewrite(Predicate pred, IPosition position,
 			FormulaFactory ff) {
 		Formula<?> subFormula = pred.getSubFormula(position);
 		if (subFormula == null || !(subFormula.getTag() == Formula.KFINITE)) {

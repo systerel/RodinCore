@@ -191,7 +191,7 @@ public abstract class AbstractManualRewrites implements IReasoner {
 	 * @param ff TODO
 	 * @return the predicate which is the result of rewriting
 	 */
-	protected abstract Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff);
+	public abstract Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff);
 
 	/**
 	 * Returns the name to display in the generated rule.

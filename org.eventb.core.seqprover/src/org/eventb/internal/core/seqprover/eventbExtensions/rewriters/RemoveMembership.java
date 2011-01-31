@@ -53,7 +53,7 @@ public class RemoveMembership extends AbstractManualRewrites implements
 	}
 
 	@Override
-	protected Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
+	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
 		IFormulaRewriter rewriter = getRewriter(ff);
 		Formula<?> predicate = pred.getSubFormula(position);
 

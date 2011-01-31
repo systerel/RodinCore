@@ -60,7 +60,7 @@ public class CompImgRewrites extends AbstractManualRewrites {
 	 */
 	@Override
 	@ProverRule("DERIV_RELIMAGE_FCOMP")
-	protected Predicate rewrite(Predicate pred, IPosition position,
+	public Predicate rewrite(Predicate pred, IPosition position,
 			FormulaFactory ff) {
 		if (position.isRoot())
 			return null;

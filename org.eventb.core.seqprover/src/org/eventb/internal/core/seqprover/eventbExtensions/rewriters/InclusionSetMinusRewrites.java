@@ -43,7 +43,7 @@ public abstract class InclusionSetMinusRewrites extends AbstractManualRewrites i
 	protected abstract IFormulaRewriter makeRewriter(FormulaFactory ff);
 	
 	@Override
-	protected Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
+	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
 		IFormulaRewriter rewriter = makeRewriter(ff);
 		Formula<?> predicate = pred.getSubFormula(position);
 
