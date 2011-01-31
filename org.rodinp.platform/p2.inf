@@ -17,4 +17,5 @@ instructions.configure=\
   addRepository(type:1,location:http${#58}//www.animb.org/updatesite,name:AnimB);\
   addRepository(type:0,location:http${#58}//iliasov.org/modplugin,name:Modularisation);\
   addRepository(type:1,location:http${#58}//iliasov.org/modplugin,name:Modularisation);\
-  
+  addRepository(type:0,location:http${#58}//subclipse.tigris.org/update_1.6.x,name:Subclipse);\
+  addRepository(type:1,location:http${#58}//subclipse.tigris.org/update_1.6.x,name:Subclipse);\
