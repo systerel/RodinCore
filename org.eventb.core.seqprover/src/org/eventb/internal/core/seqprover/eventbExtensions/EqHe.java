@@ -87,7 +87,7 @@ public abstract class EqHe extends HypothesisReasoner implements
 		if (actions.isEmpty() && !goalDependant) {
 			// When both goal and hypotheses are unchanged, the reasoner
 			// application fails
-			throw new IllegalArgumentException("Nothing to replace");
+			throw new IllegalArgumentException("Nothing to rewrite");
 		}
 		final IAntecedent antecedent = makeAntecedent(newGoal, null, null,
 				actions);
