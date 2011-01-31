@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,15 @@
  * 
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - added methods rewritePred and noRewritePred
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
 import static org.eventb.core.ast.FormulaFactory.makePosition;
+import static org.eventb.core.seqprover.tests.TestLib.genPred;
+import static org.eventb.core.seqprover.tests.TestLib.genTypeEnv;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,13 +32,29 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractMan
 //import com.b4free.rodin.core.B4freeCore;
 
 /**
- * @author htson
- *         <p>
- *         Abstract unit tests for the Manual Rewrites reasoner
- *         {@link AbstractManualRewrites}
+ * Abstract unit tests for the Manual Rewrites reasoner
+ * {@link AbstractManualRewrites}. Beyond the usual methods for testing success,
+ * failure, positions and reasoner ID, subclasses can also do additional
+ * rewriting tests with methods
+ * {@link #rewritePred(String, String, String,String)} and
+ * {@link #noRewritePred(String, String, String)}.
  * 
+ * @author htson
  */
 public abstract class AbstractManualRewriterTests extends AbstractManualReasonerTests {
+
+	private final AbstractManualRewrites rewriter;
+
+	/**
+	 * For backward compatibility with previous tests, do not use anymore.
+	 */
+	public AbstractManualRewriterTests() {
+		this.rewriter = null;
+	}
+
+	public AbstractManualRewriterTests(AbstractManualRewrites rewriter) {
+		this.rewriter = rewriter;
+	}
 
 	protected static class SuccessfulTest {
 		
@@ -168,5 +189,74 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 //	public ITactic getJustDischTactic() {
 //		return B4freeCore.externalPP(false);
 //	}
-	
+
+	/**
+	 * Test the rewriter for rewriting from an input predicate (represented by
+	 * its string image) at a given position to an expected predicate
+	 * (represented by its string image).
+	 * <p>
+	 * The type environment is described by a list of strings which must contain
+	 * an even number of elements. It contains alternatively names and types to
+	 * assign to them in the environment. For instance, to describe a type
+	 * environment where <code>S</code> is a given set and <code>x</code> is an
+	 * integer, one would pass the strings <code>"S", "ℙ(S)", "x", "ℤ"</code>.
+	 * </p>
+	 * 
+	 * @param inputImage
+	 *            the string image of the input predicate
+	 * @param pos
+	 *            the string image of the position to rewrite
+	 * @param expectedImage
+	 *            the string image of the expected predicate
+	 * @param env
+	 *            a list of strings describing the type environment to use for
+	 *            type-checking
+	 */
+	protected void rewritePred(String inputImage, String posImage,
+			String expectedImage, String typenvImage) {
+		final ITypeEnvironment typenv = genTypeEnv(typenvImage);
+		final Predicate input = genPred(typenv, inputImage);
+		final Predicate expected = genPred(typenv, expectedImage);
+		final IPosition pos = makePosition(posImage);
+		final Predicate actual = rewriter.rewrite(input, pos, ff);
+		assertEquals(expected, actual);
+	}
+
+	protected void rewritePred(String inputImage, String posImage,
+			String expectedImage) {
+		rewritePred(inputImage, posImage, expectedImage, "");
+	}
+
+	/**
+	 * Test the rewriter for not rewriting an input predicate (represented by
+	 * its string image) at a given position.
+	 * <p>
+	 * The type environment is described by a list of strings which must contain
+	 * an even number of elements. It contains alternatively names and types to
+	 * assign to them in the environment. For instance, to describe a type
+	 * environment where <code>S</code> is a given set and <code>x</code> is an
+	 * integer, one would pass the strings <code>"S", "ℙ(S)", "x", "ℤ"</code>.
+	 * </p>
+	 * 
+	 * @param inputImage
+	 *            the string image of the input predicate
+	 * @param pos
+	 *            the string image of the position to rewrite
+	 * @param env
+	 *            a list of strings describing the type environment to use for
+	 *            type-checking
+	 */
+	protected void noRewritePred(String inputImage, String posImage,
+			String typenvImage) {
+		final ITypeEnvironment typenv = genTypeEnv(typenvImage);
+		final Predicate input = genPred(typenv, inputImage);
+		final IPosition pos = makePosition(posImage);
+		final Predicate actual = rewriter.rewrite(input, pos, ff);
+		assertNull(actual);
+	}
+
+	protected void noRewritePred(String inputImage, String posImage) {
+		noRewritePred(inputImage, posImage, "");
+	}
+
 }
