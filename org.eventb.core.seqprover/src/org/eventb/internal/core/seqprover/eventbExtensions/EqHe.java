@@ -11,12 +11,14 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import static java.util.Collections.singleton;
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
+import static org.eventb.core.seqprover.ProverFactory.makeDeselectHypAction;
 import static org.eventb.core.seqprover.ProverFactory.makeForwardInfHypAction;
+import static org.eventb.core.seqprover.ProverFactory.makeSelectHypAction;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +30,6 @@ import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IVersionedReasoner;
-import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
@@ -70,9 +71,6 @@ public abstract class EqHe extends HypothesisReasoner implements
 	protected IAntecedent[] getAntecedents(IProverSequent sequent,
 			Predicate hypEq) throws IllegalArgumentException {
 
-		final FormulaFactory ff = sequent.getFormulaFactory();
-		final DLib dlib = mDLib(ff);
-
 		if (hypEq == null) {
 			throw new IllegalArgumentException("Nonexistent hypothesis");
 		}
@@ -81,60 +79,86 @@ public abstract class EqHe extends HypothesisReasoner implements
 					"Hypothesis is not an equality: " + hypEq);
 		}
 
-		final Expression from = getFrom(hypEq);
-		final Expression to = getTo(hypEq);
+		final Rewriter rewriter = new Rewriter(hypEq, getFrom(hypEq),
+				getTo(hypEq), sequent.getFormulaFactory());
+		final List<IHypAction> actions = rewriteHypotheses(sequent, rewriter);
+		final Predicate newGoal = rewriteGoal(sequent, rewriter);
+		goalDependant = newGoal != null;
+		if (actions.isEmpty() && !goalDependant) {
+			// When both goal and hypotheses are unchanged, the reasoner
+			// application fails
+			throw new IllegalArgumentException("Nothing to replace");
+		}
+		final IAntecedent antecedent = makeAntecedent(newGoal, null, null,
+				actions);
+		return new IAntecedent[] { antecedent };
+	}
 
-		final List<IHypAction> rewrites = new ArrayList<IHypAction>();
+	private List<IHypAction> rewriteHypotheses(IProverSequent sequent,
+			Rewriter rewriter) {
+		final List<IHypAction> actions = new ArrayList<IHypAction>();
 		final Set<Predicate> toDeselect = new LinkedHashSet<Predicate>();
 		final Set<Predicate> toSelect = new LinkedHashSet<Predicate>();
-
-		for (Predicate hyp : sequent.selectedHypIterable()) {
-
-			if (hyp.equals(hypEq)) {
+		for (final Predicate hyp : sequent.selectedHypIterable()) {
+			final Predicate rewritten = rewriter.rewrite(hyp);
+			if (rewritten == null) {
 				continue;
 			}
-
-			final Predicate rewritten = dlib.rewrite(hyp, from, to);
-
 			if (sequent.containsHypothesis(rewritten)) {
-				// if the sequent contains the rewritten hypothesis, we have to
-				// consider the case where the hypothesis is not selected. In
-				// this case, it becomes selected
+				// If the sequent already contains the rewritten hypothesis, we
+				// have to consider the case where the hypothesis is not yet
+				// selected. In this case, it becomes selected. Otherwise,
+				// nothing happens
 				if (!sequent.isSelected(rewritten)) {
 					toSelect.add(rewritten);
 					toDeselect.add(hyp);
 				}
-				continue;
+			} else {
+				actions.add(makeForwardInfHypAction(singleton(hyp),
+						singleton(rewritten)));
+				toDeselect.add(hyp);
 			}
-
-			rewrites.add(makeForwardInfHypAction(Collections.singleton(hyp),
-					Collections.singleton(rewritten)));
-			toDeselect.add(hyp);
 		}
-
 		if (!toDeselect.isEmpty()) {
-			rewrites.add(ProverFactory.makeDeselectHypAction(toDeselect));
+			actions.add(makeDeselectHypAction(toDeselect));
 		}
 		if (!toSelect.isEmpty()) {
-			rewrites.add(ProverFactory.makeSelectHypAction(toSelect));
+			actions.add(makeSelectHypAction(toSelect));
 		}
-
-		Predicate newGoal = dlib.rewrite(sequent.goal(), from, to);
-		// if the goal is not rewritten, goal dependency is updated
-		goalDependant = newGoal != sequent.goal();
-
-		if (!goalDependant) {
-			newGoal = null;
-			if (rewrites.isEmpty()) {
-				// when both goal and hypotheses are unchanged, the reasoner
-				// application fails
-				throw new IllegalArgumentException("Nothing to replace");
-			}
-		}
-
-		final IAntecedent antecedent = makeAntecedent(newGoal, null, null,
-				rewrites);
-
-		return new IAntecedent[] { antecedent };
+		return actions;
 	}
+
+	private Predicate rewriteGoal(IProverSequent sequent, Rewriter rewriter) {
+		return rewriter.rewrite(sequent.goal());
+	}
+
+	private static class Rewriter {
+
+		private final Predicate source;
+		private final Expression from;
+		private final Expression to;
+		private final DLib dlib;
+
+		public Rewriter(Predicate hypEq, Expression from, Expression to,
+				FormulaFactory ff) {
+			this.source = hypEq;
+			this.from = from;
+			this.to = to;
+			this.dlib = mDLib(ff);
+		}
+
+		// Rewrites given predicate, returns null if nothing happens
+		public Predicate rewrite(Predicate pred) {
+			if (source.equals(pred)) {
+				return null;
+			}
+			final Predicate rewritten = dlib.rewrite(pred, from, to);
+			if (rewritten == pred) {
+				return null;
+			}
+			return rewritten;
+		}
+
+	}
+
 }
