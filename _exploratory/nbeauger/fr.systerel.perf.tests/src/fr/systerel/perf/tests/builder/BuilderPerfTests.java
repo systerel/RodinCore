@@ -12,12 +12,16 @@ package fr.systerel.perf.tests.builder;
 
 import static fr.systerel.perf.tests.PerfUtils.copy;
 import static fr.systerel.perf.tests.PerfUtils.createRodinProject;
+import static fr.systerel.perf.tests.PerfUtils.logger;
 
 import java.io.File;
 
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPRRoot;
+import org.eventb.core.IPSRoot;
+import org.eventb.core.IPSStatus;
+import org.eventb.core.seqprover.IConfidence;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -122,6 +126,24 @@ public class BuilderPerfTests extends BuilderTest {
 		chrono.startMeasure();
 		runBuilder(testProject);
 		chrono.endMeasure();
+
+		logDischargedPOs();
+	}
+
+	private void logDischargedPOs() throws RodinDBException {
+		int totalPOs = 0;
+		int discharged = 0;
+		for (IPSRoot ps : testProject
+				.getRootElementsOfType(IPSRoot.ELEMENT_TYPE)) {
+			for (IPSStatus status : ps.getStatuses()) {
+				totalPOs++;
+				if (status.getConfidence() == IConfidence.DISCHARGED_MAX) {
+					discharged++;
+				}
+			}
+		}
+		logger.info(makeChronoName() + " : discharged " + discharged + " / "
+				+ totalPOs + " POs");
 	}
 
 	@Test
