@@ -31,6 +31,7 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.perf.tests.Chrono;
+import fr.systerel.perf.tests.PerfUtils;
 
 /**
  * Runs performance tests on projects. Duration is measured by JUnit and
@@ -113,12 +114,9 @@ public class BuilderPerfTests extends BuilderTest {
 	}
 
 	@Test
-	public void buildEmptyProofs() throws Exception {
-		final IRodinFile[] prfs = getRodinFiles(testProject,
-				IPRRoot.ELEMENT_TYPE);
-		for (IRodinFile prf : prfs) {
-			prf.getRoot().clear(false, null);
-		}
+	public void buildAndProve() throws Exception {
+		PerfUtils.enableAutoProver();
+		PerfUtils.enablePostTactics();
 
 		final Chrono chrono = new Chrono(makeChronoName());
 		chrono.startMeasure();
