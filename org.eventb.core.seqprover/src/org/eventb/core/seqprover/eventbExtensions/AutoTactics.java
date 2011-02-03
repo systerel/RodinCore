@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     Systerel - modified FindContrHypsTac to use ContrHyps (discharge)
  *     Systerel - added FunImgSimpTac tactic (simplify)
  *     Systerel - added DTDestrWDTac tactic (discharge)
+ *     Systerel - added tactics to combine rm and ri
  ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
@@ -21,6 +22,7 @@ import static org.eventb.core.seqprover.tactics.BasicTactics.composeUntilSuccess
 import static org.eventb.core.seqprover.tactics.BasicTactics.loopOnAllPending;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -769,6 +771,270 @@ public class AutoTactics {
 			}
 			return false;
 		}
+	}
+
+	/**
+	 * Abstract implementation of an automatic tactic to apply once on a given
+	 * collections of predicates. This class is intended to be used to wrap
+	 * existing manual tactics.
+	 * 
+	 * @author Thomas Muller
+	 * @since 2.1
+	 */
+	private static abstract class AbstractPredOnceTac implements ITactic {
+
+		@Override
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			if (pm != null && pm.isCanceled()) {
+				return "Canceled";
+			}
+			for (Predicate pred : getPredicates(ptNode)) {
+				final List<IPosition> pos = getPositions(pred,
+						ptNode.getFormulaFactory());
+				if (pm != null && pm.isCanceled()) {
+					return "Canceled";
+				}
+				if (pos.size() != 0) {
+					if (pred.equals(ptNode.getSequent().goal())) {
+						return getTactic(null, pos.get(0)).apply(ptNode, pm);						
+					}
+					return getTactic(pred, pos.get(0)).apply(ptNode, pm);
+				}
+			}
+			return "Tactic unapplicable";
+		}
+
+		/**
+		 * Returns the predicates on which the tactic should apply on.
+		 * 
+		 * @param ptNode
+		 *            the current proof tree node
+		 * @return the predicates on which the tactic should apply on.
+		 */
+		protected abstract Iterable<Predicate> getPredicates(
+				IProofTreeNode ptNode);
+
+		/**
+		 * Returns a list of positions at which the tactic can apply.
+		 * 
+		 * @param predicate
+		 *            the predicate on which the positions are calculated
+		 * @param ff
+		 *            the formula factory to be used
+		 * @return the positions where the current tactic can apply on the given
+		 *         predicate
+		 */
+		protected abstract List<IPosition> getPositions(Predicate predicate,
+				FormulaFactory ff);
+
+		/**
+		 * Returns the tactic to be applied on a given predicate at a given
+		 * position.
+		 * 
+		 * @param pred
+		 *            the predicate on which the tactic shall apply
+		 * @param pos
+		 *            the position where the tactic can apply
+		 * @return the tactic to apply on the given predicate at the given
+		 *         position
+		 */
+		protected abstract ITactic getTactic(Predicate pred, IPosition pos);
+
+	}
+
+	/**
+	 * Abstract implementation of the "Remove Membership" tactic to be applied
+	 * once on a given predicate.
+	 * 
+	 * @since 2.1
+	 */
+	private static abstract class RmOnceTac extends AbstractPredOnceTac {
+
+		protected List<IPosition> getPositions(Predicate pred, FormulaFactory ff) {
+			
+			return Tactics.rmGetPositions(pred, ff);
+		}
+
+		protected ITactic getTactic(Predicate pred, IPosition pos) {
+			return Tactics.removeMembership(pred, pos);
+		}
+
+	}
+
+	/**
+	 * The automatic "Remove Inclusion" tactic to be applied once on a given
+	 * predicate.
+	 * 
+	 * @since 2.1
+	 */
+	private static abstract class RiOnceTac extends AbstractPredOnceTac {
+
+		@Override
+		protected List<IPosition> getPositions(Predicate pred, FormulaFactory ff) {
+			return Tactics.riGetPositions(pred);
+		}
+
+		@Override
+		protected ITactic getTactic(Predicate pred, IPosition pos) {
+			return Tactics.removeInclusion(pred, pos);
+		}
+
+	}
+
+	/**
+	 * The automatic "Remove Membership" tactic to be applied once on a goal.
+	 * 
+	 * @since 2.1
+	 */
+	private static class RmGoalOnceAutoTac extends RmOnceTac implements ITactic {
+
+		@Override
+		protected Iterable<Predicate> getPredicates(IProofTreeNode ptNode) {
+			final Predicate goal = ptNode.getSequent().goal();
+			return Collections.singleton(goal);
+		}
+
+	}
+
+	/**
+	 * The automatic "Remove Inclusion" tactic to be applied once on a goal.
+	 * 
+	 * @since 2.1
+	 */
+	private static class RiGoalOnceAutoTac extends RiOnceTac {
+
+		@Override
+		protected Iterable<Predicate> getPredicates(IProofTreeNode ptNode) {
+			return Collections.singleton(ptNode.getSequent().goal());
+		}
+
+	}
+
+	/**
+	 * An automatic tactic combining the "RemoveMembership" tactic, and the
+	 * "Remove Inclusion" tactic to apply on a goal, and looping on all pending
+	 * sub-nodes.
+	 * 
+	 * @since 2.1
+	 */
+	public static class RmiGoalAutoTac extends AbsractLazilyConstrTactic {
+
+		@Override
+		protected ITactic getSingInstance() {
+			return loopOnAllPending(new RmGoalOnceAutoTac(),
+					new RiGoalOnceAutoTac());
+		}
+
+	}
+
+	/**
+	 * The automatic "Remove Membership" tactic to be applied on once an
+	 * hypothesis.
+	 * 
+	 * @since 2.1
+	 */
+	private static class RmHypOnceAutoTac extends RmOnceTac implements ITactic {
+		@Override
+		protected Iterable<Predicate> getPredicates(IProofTreeNode ptNode) {
+			return ptNode.getSequent().selectedHypIterable();
+		}
+	}
+
+	/**
+	 * The automatic "Remove Inclusion" tactic to be applied once on an
+	 * hypothesis.
+	 * 
+	 * @since 2.1
+	 */
+	private static class RiHypOnceAutoTac extends RiOnceTac {
+
+		@Override
+		protected Iterable<Predicate> getPredicates(IProofTreeNode ptNode) {
+			return ptNode.getSequent().selectedHypIterable();
+		}
+
+	}
+
+	/**
+	 * An automatic tactic combining the "RemoveMembership" tactic, and the
+	 * "Remove Inclusion" tactic to apply on hypotheses, and looping on all
+	 * pending nodes.
+	 * 
+	 * @since 2.1
+	 */
+	public static class RmiHypAutoTac extends AbsractLazilyConstrTactic {
+
+		@Override
+		protected ITactic getSingInstance() {
+			return loopOnAllPending(new RmHypOnceAutoTac(),
+					new RiHypOnceAutoTac());
+		}
+
+	}
+
+	private abstract static class EqvRewritesAutoTac extends
+			AbstractPredOnceTac {
+
+		@Override
+		protected List<IPosition> getPositions(Predicate predicate,
+				FormulaFactory ff) {
+			return Tactics.eqvGetPositions(predicate);
+		}
+
+		@Override
+		protected ITactic getTactic(Predicate hyp, IPosition pos) {
+			return Tactics.eqvRewrites(hyp, pos);
+		}
+
+	}
+	
+	private static class EqvRewritesHypOnceTac extends EqvRewritesAutoTac {
+
+		@Override
+		protected Iterable<Predicate> getPredicates(IProofTreeNode ptNode) {
+			return ptNode.getSequent().selectedHypIterable();
+		}
+		
+	}
+	
+	private static class EqvRewritesGoalOnceTac extends EqvRewritesAutoTac {
+
+		@Override
+		protected Iterable<Predicate> getPredicates(IProofTreeNode ptNode) {
+			return Collections.singleton(ptNode.getSequent().goal());
+		}
+		
+	}
+	
+	/**
+	 * An automatic tactic to apply "Remove Equivalence" tactic on hypotheses,
+	 * and looping on all pending nodes.
+	 * 
+	 * @since 2.1
+	 */
+	public static class EqvRewritesHypAutoTac extends AbsractLazilyConstrTactic {
+
+		@Override
+		protected ITactic getSingInstance() {
+			return BasicTactics.loopOnAllPending(new EqvRewritesHypOnceTac());
+		}
+		
+	}
+	
+	/**
+	 * An automatic tactic combining the "RemoveMembership" tactic, and the
+	 * "Remove Inclusion" tactic to apply on the goal, and looping on all
+	 * pending nodes.
+	 * 
+	 * @since 2.1
+	 */
+	public static class EqvRewritesGoalAutoTac extends AbsractLazilyConstrTactic {
+
+		@Override
+		protected ITactic getSingInstance() {
+			return BasicTactics.loopOnAllPending(new EqvRewritesGoalOnceTac());
+		}
+		
 	}
 	
 	

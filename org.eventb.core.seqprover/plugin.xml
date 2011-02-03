@@ -568,8 +568,31 @@
             description="%dtDestrWDTacDesc"
             id="dtDestrWDTac"
             name="%dtDestrWDTacName">
-      </autoTactic> 
-
+      </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$RmiHypAutoTac"
+            description="%rmiHypTacDesc"
+            id="rmiHypTac"
+            name="%rmiHypTacName">
+      </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$RmiGoalAutoTac"
+            description="%rmiGoalTacDesc"
+            id="rmiGoalTac"
+            name="%rmiGoalTacName">
+      </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$EqvRewritesHypAutoTac"
+            description="%eqvHypTacDesc"
+            id="eqvHypTac"
+            name="%eqvHypTacName">
+      </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$EqvRewritesGoalAutoTac"
+            description="%eqvHypTacDesc"
+            id="eqvGoalTac"
+            name="%eqvGoalTacName">
+      </autoTactic>
    </extension>
 
 </plugin>

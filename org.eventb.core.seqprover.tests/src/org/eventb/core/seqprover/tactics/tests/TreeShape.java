@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Systerel - initial API and implementation
  *     Systerel - added FunImgSimp tree shape
  *     Systerel - added ExI, DTDestrWD tree shapes
+ *     Systerel - added rm, ri and eqv tree shapes
  *******************************************************************************/
 package org.eventb.core.seqprover.tactics.tests;
 
@@ -35,12 +36,15 @@ import org.eventb.internal.core.seqprover.eventbExtensions.DTDistinctCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
+import org.eventb.internal.core.seqprover.eventbExtensions.FunImageGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
-import org.eventb.internal.core.seqprover.eventbExtensions.FunImageGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimplifies;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqvRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimplifies;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusion;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembershipL1;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TotalDomRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
 
@@ -358,6 +362,72 @@ public abstract class TreeShape {
 		
 	}
 	
+	private static class RmShape extends TreeShape {
+
+		private final String position;
+
+		public RmShape(String position, TreeShape... children) {
+			super(children);
+			this.position = position;
+		}
+
+		@Override
+		protected void checkInput(IReasonerInput input) {
+			final AbstractManualRewrites.Input inp = ((AbstractManualRewrites.Input) input);
+			assertEquals(position, inp.getPosition().toString());
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return RemoveMembershipL1.REASONER_ID;
+		}
+		
+	}
+	
+	private static class RiShape extends TreeShape {
+
+		private final String position;
+
+		public RiShape(String position, TreeShape... children) {
+			super(children);
+			this.position = position;
+		}
+
+		@Override
+		protected void checkInput(IReasonerInput input) {
+			final AbstractManualRewrites.Input inp = ((AbstractManualRewrites.Input) input);
+			assertEquals(position, inp.getPosition().toString());
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return RemoveInclusion.REASONER_ID;
+		}
+		
+	}
+	
+	private static class EqvShape extends TreeShape {
+
+		private final String position;
+
+		public EqvShape(String position, TreeShape... children) {
+			super(children);
+			this.position = position;
+		}
+
+		@Override
+		protected void checkInput(IReasonerInput input) {
+			final AbstractManualRewrites.Input inp = ((AbstractManualRewrites.Input) input);
+			assertEquals(position, inp.getPosition().toString());
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return EqvRewrites.REASONER_ID;
+		}
+		
+	}
+	
 	public static final TreeShape empty = new EmptyShape();
 
 	/**
@@ -440,7 +510,18 @@ public abstract class TreeShape {
 		return new DTDestrWDShape(position, inst);
 	}
 	
+	public static TreeShape rm(String position, TreeShape... children) {
+		return new RmShape(position, children);
+	}
 
+	public static TreeShape ri(String position, TreeShape... children) {
+		return new RiShape(position, children);
+	}
+
+	public static TreeShape eqv(String position, TreeShape... children) {
+		return new EqvShape(position, children);
+	}
+	
 	protected final TreeShape[] expChildren;
 
 	public TreeShape(TreeShape[] expChildren) {

@@ -1234,6 +1234,18 @@
       <tactic id="org.eventb.core.seqprover.FunImgInGoalTac"/>
       <tactic id="org.eventb.core.seqprover.InDomGoalTac" />
       <tactic id="org.eventb.core.seqprover.dtDestrWDTac" />
+      <tactic
+            id="org.eventb.core.seqprover.rmiHypTac">
+      </tactic>
+      <tactic
+            id="org.eventb.core.seqprover.rmiGoalTac">
+      </tactic>
+      <tactic
+            id="org.eventb.core.seqprover.eqvHypTac">
+      </tactic>
+      <tactic
+            id="org.eventb.core.seqprover.eqvGoalTac">
+      </tactic>
    </extension>
    <extension
          point="org.eventb.core.pomTactics">
@@ -1257,6 +1269,18 @@
       <tactic id="org.eventb.core.seqprover.FunImgInGoalTac"/>
       <tactic id="org.eventb.core.seqprover.InDomGoalTac" />
       <tactic id="org.eventb.core.seqprover.dtDestrWDTac" />
+      <tactic
+            id="org.eventb.core.seqprover.rmiHypTac">
+      </tactic>
+      <tactic
+            id="org.eventb.core.seqprover.rmiGoalTac">
+      </tactic>
+      <tactic
+            id="org.eventb.core.seqprover.eqvHypTac">
+      </tactic>
+      <tactic
+            id="org.eventb.core.seqprover.eqvGoalTac">
+      </tactic>
    </extension>
    <extension
          point="org.rodinp.core.fileElementVersions">

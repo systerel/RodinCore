@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,10 +44,8 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
@@ -1085,142 +1083,38 @@ public class Tactics {
 		});
 	}
 
-	public static List<IPosition> rmGetPositions(Predicate pred) {
+	/**
+	 * @param pred
+	 *            the predicate from which we retrieve the positions where the
+	 *            tactic "Remove Membership" can apply
+	 * @param ff
+	 *            the formula factory to use
+	 * @return the positions where the tactic "Remove Membership" can apply on
+	 *         the given predicate
+	 * @since 2.1
+	 */
+	public static List<IPosition> rmGetPositions(Predicate pred,
+			final FormulaFactory ff) {
 		return pred.getPositions(new DefaultFilter() {
-
 			@Override
 			public boolean select(RelationalPredicate predicate) {
-				if (predicate.getTag() == Predicate.IN) {
-					Expression left = predicate.getLeft();
-					Expression right = predicate.getRight();
-					int rTag = right.getTag();
-					int lTag = left.getTag();
-					if (left instanceof BinaryExpression
-							&& lTag == Expression.MAPSTO
-							&& right instanceof BinaryExpression
-							&& rTag == Expression.CPROD) {
-						return true;
-					}
-					if (right instanceof UnaryExpression
-							&& rTag == Expression.POW) {
-						return true;
-					}
-					if (right instanceof UnaryExpression
-							&& rTag == Expression.POW1) {
-						return true;
-					}
-					if (right instanceof AssociativeExpression
-							&& (rTag == Expression.BUNION || rTag == Expression.BINTER)) {
-						return true;
-					}
-					if (right instanceof BinaryExpression
-							&& rTag == Expression.SETMINUS) {
-						return true;
-					}
-					if (right instanceof SetExtension) {
-						return true;
-					}
-					if (right instanceof UnaryExpression
-							&& (rTag == Expression.KUNION || rTag == Expression.KINTER)) {
-						return true;
-					}
-					if (right instanceof QuantifiedExpression
-							&& (rTag == Expression.QUNION || rTag == Expression.QINTER)) {
-						return true;
-					}
-					if (right instanceof UnaryExpression
-							&& (rTag == Expression.KDOM || rTag == Expression.KRAN)) {
-						return true;
-					}
-					if (right instanceof UnaryExpression
-							&& rTag == Expression.CONVERSE) {
-						return true;
-					}
-					if (right instanceof BinaryExpression
-							&& (rTag == Expression.DOMRES || rTag == Expression.DOMSUB)) {
-						return (left instanceof BinaryExpression && lTag == Expression.MAPSTO);
-					}
-					if (right instanceof BinaryExpression
-							&& (rTag == Expression.RANRES || rTag == Expression.RANSUB)) {
-						return (left instanceof BinaryExpression && lTag == Expression.MAPSTO);
-					}
-					if (right instanceof BinaryExpression
-							&& rTag == Expression.RELIMAGE) {
-						return true;
-					}
-					if (left instanceof BinaryExpression
-							&& lTag == Expression.MAPSTO
-							&& right instanceof AtomicExpression
-							&& rTag == Expression.KID_GEN) {
-						return true;
-					}
-					if (left instanceof BinaryExpression
-							&& lTag == Expression.MAPSTO
-							&& right instanceof AssociativeExpression
-							&& rTag == Expression.FCOMP) {
-						return true;
-					}
-					if (right instanceof BinaryExpression
-							&& rTag == Expression.TREL) {
-						return true;
-					}
-					if (right instanceof BinaryExpression
-							&& rTag == Expression.SREL) {
-						return true;
-					}
-					if (right instanceof BinaryExpression
-							&& rTag == Expression.STREL) {
-						return true;
-					}
-					if (right instanceof BinaryExpression
-							&& rTag == Expression.PFUN) {
-						return true;
-					}
-					if (right instanceof BinaryExpression
-							&& rTag == Expression.TFUN) {
-						return true;
-					}
-					if (right instanceof BinaryExpression
-							&& rTag == Expression.PINJ) {
-						return true;
-					}
-					if (right instanceof BinaryExpression
-							&& rTag == Expression.TINJ) {
-						return true;
-					}
-					if (right instanceof BinaryExpression
-							&& rTag == Expression.PSUR) {
-						return true;
-					}
-					if (right instanceof BinaryExpression
-							&& rTag == Expression.TSUR) {
-						return true;
-					}
-					if (right instanceof BinaryExpression
-							&& rTag == Expression.TBIJ) {
-						return true;
-					}
-					if (rTag == Expression.UPTO) {
-						return true;
-					}
-					if (Lib.isDirectProduct(right) && Lib.isMapping(left)) {
-						Expression innerMap = ((BinaryExpression) left).getRight();
-						return Lib.isMapping(innerMap);
-					}
-					if (Lib.isParallelProduct(right) && Lib.isMapping(left)) {
-						Expression innerMapLeft = ((BinaryExpression) left)
-								.getLeft();
-						Expression innerMapRight = ((BinaryExpression) left)
-								.getRight();
-						return Lib.isMapping(innerMapLeft)
-								&& Lib.isMapping(innerMapRight);
-					}
-					
-				}
-				return super.select(predicate);
+				return isRemoveMembershipApplicable(ff, predicate);
 			}
-
 		});
+	}
+	
+	/**
+	 * @param pred
+	 *            the predicate from which we retrieve the positions where the
+	 *            tactic "Remove Membership" can apply
+	 * @return the positions where the tactic "Remove Membership" can apply on
+	 *         the given predicate
+	 * @Deprecated use {@link Tactics#rmGetPositions(Predicate, FormulaFactory)}
+	 *             instead
+	 */
+	@Deprecated
+	public static List<IPosition> rmGetPositions(Predicate pred) {
+		return rmGetPositions(pred, FormulaFactory.getDefault());
 	}
 	
 	/**
