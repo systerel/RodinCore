@@ -132,18 +132,22 @@ public class ControlHolder {
 			PaintObjectListener {
 
 		private final ControlHolder holder;
-		private boolean painting = false;
+		private ControlMaker maker;
+		
 
 		public ControlPainter(ControlHolder holder) {
 			this.holder = holder;
+			this.maker = holder.maker;
 		}
 
 		@Override
 		public void paintObject(PaintObjectEvent event) {
-			if (painting)
+			if (maker != null && maker.isPainting())
 				return;
 			try {
-				painting = true;
+				if (maker != null){
+					maker.setPainting(true);
+				}
 				final StyleRange style = event.style;
 				int start = style.start;
 				if (start != holder.offset) {
@@ -152,7 +156,9 @@ public class ControlHolder {
 				holder.paintAndPlace(event.x, event.y, event.ascent, event.descent);
 				drawBoxAround(event.gc, holder.drawBoxAround);
 			} finally {
-				painting = false;
+				if (maker != null) {
+					maker.setPainting(false);
+				}
 			}
 		}
 

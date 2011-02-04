@@ -23,6 +23,7 @@ public abstract class ControlMaker {
 	
 	private final Composite parent;
 	private Rectangle bounds;
+	private boolean painting = false;
 	
 	public ControlMaker(Composite parent) {
 		this.parent = parent;
@@ -49,6 +50,14 @@ public abstract class ControlMaker {
 	
 	public Composite getParent() {
 		return parent;
+	}
+
+	public boolean isPainting() {
+		return painting;
+	}
+	
+	public void setPainting(boolean painting){
+		this.painting = painting;
 	}
 	
 }
