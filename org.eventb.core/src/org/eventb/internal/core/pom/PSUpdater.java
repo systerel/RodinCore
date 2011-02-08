@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -158,7 +158,7 @@ public class PSUpdater {
 		}
 	}
 
-	private IProgressMonitor definedProgressMonitor(IProgressMonitor ipm) {
+	private static IProgressMonitor definedProgressMonitor(IProgressMonitor ipm) {
 		final IProgressMonitor pm;
 		if (ipm == null) {
 			pm = new NullProgressMonitor();
@@ -170,7 +170,7 @@ public class PSUpdater {
 	
 	// Returns true if the both the status and the corresponding PO sequent
 	// carry the same stamp.
-	private boolean hasSameStampAsPo(IPSStatus psStatus)
+	private static boolean hasSameStampAsPo(IPSStatus psStatus)
 			throws RodinDBException {
 		if (! psStatus.exists() || ! psStatus.hasPOStamp()) {
 			return false;
@@ -225,7 +225,7 @@ public class PSUpdater {
 		return broken == true || status.getConfidence() <= IConfidence.PENDING; 
 	}
 
-	private boolean isBroken(IProverSequent seq, IPRProof prProof,
+	private static boolean isBroken(IProverSequent seq, IPRProof prProof,
 			FormulaFactory ff, IProgressMonitor pm) {
 		try {
 			final IProofDependencies deps = prProof
