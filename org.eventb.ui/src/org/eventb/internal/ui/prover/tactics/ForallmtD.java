@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * Copyright (c) 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     ETH Zurich - initial API and implementation
+ *     Systerel - initial API and implementation
  *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 
@@ -23,25 +23,25 @@ import org.eventb.ui.prover.ITacticApplication;
 import org.eventb.ui.prover.ITacticProvider;
 
 /**
- * Provider for the "Forall Modus Ponens" tactic.
+ * Provider for the "Forall Modus Tollens" tactic.
  * <ul>
- * <li>Provider ID : <code>org.eventb.ui.allmpD</code></li>
+ * <li>Provider ID : <code>org.eventb.ui.allmtD</code></li>
  * <li>Target : hypothesis</li>
  * <ul>
  */
-public class ForallmpD implements ITacticProvider {
+public class ForallmtD implements ITacticProvider {
 
-	public static class ForallmpDApplication extends ForallFollowedApplication {
+	public static class ForallmtDApplication extends ForallFollowedApplication {
 
-		private static final String TACTIC_ID = "org.eventb.ui.allmpD";
+		private static final String TACTIC_ID = "org.eventb.ui.allmtD";
 
-		public ForallmpDApplication(Predicate hyp) {
+		public ForallmtDApplication(Predicate hyp) {
 			super(hyp);
 		}
 
 		@Override
 		public ITactic getTactic(String[] inputs, String globalInput) {
-			return Tactics.allmpD(hyp, inputs);
+			return Tactics.allmtD(hyp, inputs);
 		}
 
 		@Override
@@ -55,7 +55,7 @@ public class ForallmpD implements ITacticProvider {
 	public List<ITacticApplication> getPossibleApplications(
 			IProofTreeNode node, Predicate hyp, String globalInput) {
 		if (Tactics.allmpD_applicable(hyp)) {
-			final ITacticApplication appli = new ForallmpDApplication(hyp);
+			final ITacticApplication appli = new ForallmtDApplication(hyp);
 			return singletonList(appli);
 		}
 		return emptyList();

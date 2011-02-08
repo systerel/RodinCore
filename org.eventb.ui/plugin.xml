@@ -1192,6 +1192,16 @@
             target="hypothesis"
             tooltip="%hypothesisProofTactics.allmpD.tooltip"/>
       <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.allmtD"
+            interrupt="false"
+            name="%hypothesisProofTactics.allmtD.name"
+            priority="1"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.ForallmtD"
+            target="hypothesis"
+            tooltip="%hypothesisProofTactics.allmtD.tooltip">
+      </tactic>
+      <tactic
             icon="icons/full/ctool16/next_pd.gif"
             id="org.eventb.ui.nextPending"
             interrupt="false"

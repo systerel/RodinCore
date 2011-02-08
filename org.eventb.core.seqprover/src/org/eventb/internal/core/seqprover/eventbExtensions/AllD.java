@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - deselect WD predicate and used hypothesis
  *     Systerel - deselect WD predicate only if not already selected
+ *     Systerel - refactored duplicated code with AllmpD
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
@@ -50,6 +51,7 @@ import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
 public class AllD implements IReasoner {
 	
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".allD";
+	private static final String display = "∀ hyp"; 
 	
 	
 	public static class Input implements IReasonerInput {
@@ -124,6 +126,10 @@ public class AllD implements IReasoner {
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
+	
+	protected String getDisplayedRuleName() {
+		return display;
+	}
 
 	public void serializeInput(IReasonerInput rInput, IReasonerInputWriter writer)
 			throws SerializeException {
@@ -150,12 +156,12 @@ public class AllD implements IReasoner {
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput reasonerInput, IProofMonitor pm){
 	
 		// Organize Input
-		Input input = (Input) reasonerInput;
+		final Input input = (Input) reasonerInput;
 
 		if (input.hasError())
 			return ProverFactory.reasonerFailure(this,reasonerInput,input.getError());
 		
-		Predicate univHyp = input.pred;
+		final Predicate univHyp = input.pred;
 		
 		if (! seq.containsHypothesis(univHyp))
 			return ProverFactory.reasonerFailure(this,input,
@@ -164,14 +170,14 @@ public class AllD implements IReasoner {
 			return ProverFactory.reasonerFailure(this,input,
 					"Hypothesis is not universally quantified:"+univHyp);
 		
-		BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(univHyp);
+		final BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(univHyp);
 		
 		
 		// compute instantiations from the input: 
 		// it can be that the number of bound variables have increased 
 	    // or decreased, or their types have changed.
 		// Not sure if reasoner should actually modify its input to reflect this.
-		Expression[] instantiations = input.computeInstantiations(boundIdentDecls);
+		final Expression[] instantiations = input.computeInstantiations(boundIdentDecls);
 		
 		if (instantiations == null)
 			return ProverFactory.reasonerFailure(
@@ -180,7 +186,11 @@ public class AllD implements IReasoner {
 					"Type error when trying to instantiate bound identifiers");
 		
 		assert instantiations.length == boundIdentDecls.length;
-		
+		final String failureCheck = checkInstantiations(instantiations,
+				boundIdentDecls);
+		if (failureCheck != null) {
+			return ProverFactory.reasonerFailure(this, input, failureCheck);
+		}
 		
 		// Generate the well definedness predicate for the instantiations
 		final FormulaFactory factory = seq.getFormulaFactory();
@@ -188,57 +198,87 @@ public class AllD implements IReasoner {
 		final Predicate WDpred = lib.WD(instantiations);
 		final Set<Predicate> WDpreds = Lib.breakPossibleConjunct(WDpred);
 		lib.removeTrue(WDpreds);
-		
-		// Generate the instantiated predicate
-		Predicate instantiatedPred = lib.instantiateBoundIdents(univHyp,
-				instantiations);
-	    assert instantiatedPred != null;
-		
-		// Generate the successful reasoner output
-		
-		// Generate the anticidents
-		IAntecedent[] anticidents = new IAntecedent[2];
 
-		// Well definedness condition
-		anticidents[0] = ProverFactory.makeAntecedent(lib.makeConj(WDpreds));
-		
-		
+		// Generate the instantiated predicate
+		final Predicate instantiatedPred = lib.instantiateBoundIdents(univHyp,
+				instantiations);
+		assert instantiatedPred != null;
+
+		// Generate the antecedents
+		final IAntecedent[] antecedents = getAntecedents(lib, WDpreds, univHyp,
+				instantiatedPred);
+
+		// Generate the successful reasoner output
+		final IProofRule reasonerOutput = ProverFactory.makeProofRule(this,
+				input, null, univHyp, getDisplay(instantiations), antecedents);
+		return reasonerOutput;
+	}
+	
+	/**
+	 * Generates the antecedents for the rule to make.
+	 * 
+	 * @param lib
+	 *            the dynamic library
+	 * @param WDpreds
+	 *            the well definedness predicates for the instantiations.
+	 * @param univHyp
+	 *            the universal input predicate
+	 * @param instantiatedPred
+	 *            the universal predicate after instantiation
+	 * @return the antecedent of the rule to make
+	 */
+	protected IAntecedent[] getAntecedents(DLib lib, Set<Predicate> WDpreds,
+			Predicate univHyp, Predicate instantiatedPred) {
+
+		final IAntecedent[] antecedents = new IAntecedent[2];
+
+		// First antecedent : Well Definedness condition
+		antecedents[0] = ProverFactory.makeAntecedent(lib.makeConj(WDpreds));
+
 		// The instantiated goal
 		final Set<Predicate> addedHyps = new LinkedHashSet<Predicate>();
 		addedHyps.addAll(WDpreds);
 		addedHyps.addAll(Lib.breakPossibleConjunct(instantiatedPred));
-		
-		final ISelectionHypAction deselectAction = ProverFactory
-				.makeDeselectHypAction(singleton(univHyp));
-		anticidents[1] = ProverFactory.makeAntecedent(
-				null,
-				addedHyps,
-				WDpreds,
-				Lib.NO_FREE_IDENT,
-				Collections.<IHypAction>singletonList(deselectAction)
-				);
-		
-		IProofRule reasonerOutput = ProverFactory.makeProofRule(
-				this,input,
-				null,
-				univHyp,
-				"∀ hyp (inst "+displayInstantiations(instantiations)+")",
-				anticidents
-				);
-		
-		return reasonerOutput;
+
+		antecedents[1] = ProverFactory
+				.makeAntecedent(
+						null,
+						addedHyps,
+						WDpreds,
+						Lib.NO_FREE_IDENT,
+						Collections
+								.<IHypAction> singletonList(getDeselectAction(univHyp)));
+		return antecedents;
 	}
 	
-	protected String displayInstantiations(Expression[] instantiations){
-		StringBuilder str = new StringBuilder();
+	protected ISelectionHypAction getDeselectAction(Predicate univHyp) {
+		return ProverFactory.makeDeselectHypAction(singleton(univHyp));
+	}
+	
+	protected String checkInstantiations(Expression[] expressions,
+			BoundIdentDecl[] boundIdentDecls) {
+		return null;
+	}
+
+	private String getDisplay(Expression[] instantiations) {
+		final StringBuilder str = new StringBuilder();
+		str.append(getDisplayedRuleName());
+		str.append(" (inst ");
+		appendInstantiations(str, instantiations);
+		str.append(")");
+		return str.toString();
+	}
+	
+	private void appendInstantiations(StringBuilder str,
+			Expression[] instantiations) {
 		for (int i = 0; i < instantiations.length; i++) {
 			if (instantiations[i] == null)
 				str.append("_");
 			else
 				str.append(instantiations[i].toString());
-			if (i != instantiations.length-1) str.append(",");
+			if (i != instantiations.length - 1)
+				str.append(",");
 		}
-		return str.toString();
 	}
 
 }

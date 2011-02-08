@@ -75,6 +75,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.AbstractManualInferen
 import org.eventb.internal.core.seqprover.eventbExtensions.AllD;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllI;
 import org.eventb.internal.core.seqprover.eventbExtensions.AllmpD;
+import org.eventb.internal.core.seqprover.eventbExtensions.AllmtD;
 import org.eventb.internal.core.seqprover.eventbExtensions.CardComparison;
 import org.eventb.internal.core.seqprover.eventbExtensions.CardUpTo;
 import org.eventb.internal.core.seqprover.eventbExtensions.Conj;
@@ -611,11 +612,47 @@ public class Tactics {
 			}
 		};
 	}
+	
+	/**
+	 * Tactic for instantiating a universally quantified implicative hypothesis
+	 * and performing a modus tollens on it in one step.
+	 * 
+	 * @param univHyp
+	 * @param instantiations
+	 * @return the tactic
+	 * @since 2.2
+	 */
+	public static ITactic allmtD(final Predicate univHyp,
+			final String... instantiations) {
+		final Predicate pred = univHyp;
+		return new ITactic() {
+
+			public Object apply(IProofTreeNode pt, IProofMonitor pm) {
+				final ITypeEnvironment typeEnv = pt.getSequent()
+						.typeEnvironment();
+				final AllD.Input input = new AllD.Input(pred, typeEnv,
+						instantiations);
+				return (BasicTactics.reasonerTac(new AllmtD(), input)).apply(
+						pt, pm);
+			}
+		};
+	}
 
 	public static boolean allD_applicable(Predicate hyp) {
 		return Lib.isUnivQuant(hyp);
 	}
 
+	/**
+	 * Tells if it is possible to instantiate the given hypothesis and further
+	 * apply modus ponens, or modus tollens on it in one step.
+	 * 
+	 * @param hyp
+	 *            the hypothesis on which we want to apply the tactic
+	 * @return <code>true</code> if the tactics allmpD and allmtD are applicable
+	 *         on the selected hypothesis
+	 * FIXME change the name of this method as it is now also used for the
+	 *        modus tollens
+	 */
 	public static boolean allmpD_applicable(Predicate hyp) {
 		if (Lib.isUnivQuant(hyp)) {
 			QuantifiedPredicate forall = (QuantifiedPredicate) hyp;

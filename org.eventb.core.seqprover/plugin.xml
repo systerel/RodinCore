@@ -17,6 +17,11 @@
             id="allmpD"
             name="%allmpDName"/>
       <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.AllmtD"
+            id="allmtD"
+            name="%allmtDName">
+      </reasoner>
+      <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.AllI"
             id="allI"
             name="%allIName"/>
