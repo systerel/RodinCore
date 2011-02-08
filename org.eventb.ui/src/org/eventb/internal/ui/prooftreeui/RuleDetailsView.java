@@ -68,7 +68,7 @@ public class RuleDetailsView extends ViewPart implements ISelectionListener, IPr
 		font = JFaceResources.getFont(RODIN_MATH_FONT);
 		JFaceResources.getFontRegistry().addListener(this);
 		// prime the selection to display contents
-		selectionChanged(null, getSite().getPage().getSelection());
+		refreshOnSelectionChanged(getSite().getPage().getSelection());
 	}
 
 	private void initializeControl(final Composite parent) {
@@ -102,12 +102,8 @@ public class RuleDetailsView extends ViewPart implements ISelectionListener, IPr
 		sc.setMinSize(details.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		sc.setRedraw(true);
 	}
-
-	@Override
-	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		if (!(part instanceof ProofTreeUI)) {
-			return;
-		}
+	
+	private void refreshOnSelectionChanged(ISelection selection) {		
 		if (selection instanceof IStructuredSelection) {
 			final IStructuredSelection ssel = ((IStructuredSelection) selection);
 			final Object element = ssel.getFirstElement();
@@ -118,6 +114,14 @@ public class RuleDetailsView extends ViewPart implements ISelectionListener, IPr
 				refreshContents((IProofTreeNode) element);
 			}
 		}
+	}
+
+	@Override
+	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		if (!(part instanceof ProofTreeUI)) {
+			return;
+		}
+		refreshOnSelectionChanged(selection);
 	}
 
 	/* (non-Javadoc)
