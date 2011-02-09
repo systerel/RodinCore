@@ -204,6 +204,7 @@ public interface IEventBSharedImages {
 
 	public static final String IMG_DISCHARGED_BROKEN_PATH = "icons/discharged_broken.gif";
 
+	// TODO remove constant, icon does not exist
 	public static final String IMG_UNATTEMPTED_PATH = "icons/unattempted.gif";
 
 	public static final String IMG_REFINES_PATH = "icons/full/ctool16/refines.gif";

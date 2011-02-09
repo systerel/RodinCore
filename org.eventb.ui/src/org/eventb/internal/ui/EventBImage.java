@@ -140,6 +140,7 @@ public class EventBImage {
 		registerImage(registry, IEventBSharedImages.IMG_REFINES,
 				"icons/full/ctool16/refines.gif");
 
+		// TODO remove constant, icon does not exist
 		registerImage(registry, IMG_PENGUIN, "icons/penguins-dancing.gif");
 		registerImage(registry, IEventBSharedImages.IMG_NULL,
 				"icons/full/ctool16/null.gif");
