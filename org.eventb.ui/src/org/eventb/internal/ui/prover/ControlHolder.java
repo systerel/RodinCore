@@ -121,6 +121,7 @@ public class ControlHolder {
 			setControl(maker.getControl(this));
 		}
 		control.setVisible(true);
+		control.setEnabled(row.isEnabled());
 		control.setBounds(x, y, cBounds.width, cBounds.height);
 	}
 
