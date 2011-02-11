@@ -54,6 +54,7 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
+import org.eventb.internal.ui.prover.CharacterPairHighlighter;
 import org.eventb.internal.ui.prover.CheckBoxMaker;
 import org.eventb.internal.ui.prover.ControlMaker;
 import org.eventb.internal.ui.prover.ControlPainter;
@@ -97,6 +98,7 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 
 	private Composite control;
 	private ControlPainter controlPainter;
+	private CharacterPairHighlighter cml;
 	
 	/**
 	 * Constructor.
@@ -122,10 +124,15 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 			row.dispose();
 			row = null;
 		}
-		if (controlPainter != null) {
-			if (styledText != null && !styledText.isDisposed())
+		if (styledText != null && !styledText.isDisposed()) {
+			if (controlPainter != null) {
 				styledText.removePaintObjectListener(controlPainter);
-			controlPainter.clear();
+				controlPainter.clear();
+			}
+			if (cml != null) {
+				styledText.removeKeyListener(cml);
+				styledText.removeKeyListener(cml);
+			}
 		}
 		if (manager != null)
 			manager.dispose();
@@ -187,6 +194,10 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 		manager = new TacticHyperlinkManager(styledText);
 		controlPainter = new ControlPainter();
 		styledText.addPaintObjectListener(controlPainter);
+		cml = new CharacterPairHighlighter(styledText);
+		styledText.addKeyListener(cml);
+		styledText.addMouseListener(cml);
+		
 		createGoalText(node);
 		sc.setContent(styledText);
 		sc.setMinSize(styledText.computeSize(SWT.DEFAULT, SWT.DEFAULT));
