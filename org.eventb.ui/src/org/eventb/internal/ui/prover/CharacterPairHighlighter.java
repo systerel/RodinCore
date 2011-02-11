@@ -32,6 +32,7 @@ public class CharacterPairHighlighter implements MouseListener, KeyListener {
 	private static final int NOT_FOUND = -1;
 	private final StyledText text;
 	private StyleRange range;
+	private StyleRange backupRange;
 	private char c;
 
 	public CharacterPairHighlighter(StyledText text) {
@@ -69,11 +70,12 @@ public class CharacterPairHighlighter implements MouseListener, KeyListener {
 	}
 
 	private void removeRange() {
-		if (range != null) {
+		if (backupRange != null) {
+			text.setStyleRange(backupRange);
+		} else if (range != null) {
 			range.font = null;
 			range.rise = 0;
 			range.metrics = null;
-			range.foreground = null;
 			range.background = null;
 			range.borderStyle = SWT.NONE;
 			range.borderColor = null;
@@ -101,7 +103,11 @@ public class CharacterPairHighlighter implements MouseListener, KeyListener {
 			pairDistance = getPairedBehind(text.getText(0, carStart - 2), c);
 		}
 		if (pairDistance != NOT_FOUND) {
-			range = new StyleRange(carStart + pairDistance, 1, null,null);
+			final int matched = carStart + pairDistance;
+			backupRange = text.getStyleRangeAtOffset(matched);
+				range = new StyleRange(matched, 1, null, null);
+			if (backupRange != null)
+				range.foreground = backupRange.foreground;
 			range.borderStyle = SWT.BORDER_SOLID;
 			range.borderColor = GRAY;
 			text.setStyleRange(range);
@@ -109,14 +115,6 @@ public class CharacterPairHighlighter implements MouseListener, KeyListener {
 	}
 
 	private static int getPairedAhead(String text, char c) {
-		return getPairedAhead(text, c, 0);
-	}
-
-	private static int getPairedBehind(String text, char c) {
-		return getPairedBehind(text, c, text.length());
-	}
-
-	private static int getPairedAhead(String text, char c, int start) {
 		final char toSearch;
 		switch (c) {
 		case '(':
@@ -131,18 +129,26 @@ public class CharacterPairHighlighter implements MouseListener, KeyListener {
 		default:
 			return -1;
 		}
-		if (text.isEmpty() || start >= text.length()) {
+		int depth = 0;
+		int cnt;
+		for (cnt = 0; cnt < text.length(); cnt++) {
+			if (depth == 0 && text.charAt(cnt) == toSearch) {
+				break;
+			}
+			if (depth > 0 && text.charAt(cnt) == toSearch) {
+				depth--;
+			}
+			if (text.charAt(cnt) == c) {
+				depth++;
+			}
+		}
+		if (depth > 0){
 			return -1;
 		}
-		int oNdx = text.indexOf(c, start);
-		int cNdx = text.indexOf(toSearch, start);
-		if (oNdx < cNdx && oNdx > 0) {
-			return getPairedAhead(text, c, cNdx + 1);
-		}
-		return cNdx + 1;
+		return cnt + 1;
 	}
 
-	private static int getPairedBehind(String text, char c, int end) {
+	private static int getPairedBehind(String text, char c) {
 		final char toSearch;
 		switch (c) {
 		case ')':
@@ -157,15 +163,24 @@ public class CharacterPairHighlighter implements MouseListener, KeyListener {
 		default:
 			return -1;
 		}
-		if (text.isEmpty() || end <= 0) {
+
+		int depth = 0;
+		int cnt ;
+		for (cnt = text.length()-1; cnt > 0; cnt--) {
+			if (depth == 0 && text.charAt(cnt) == toSearch) {
+				break;
+			}
+			if (depth > 0 && text.charAt(cnt) == toSearch) {
+				depth--;
+			}
+			if (text.charAt(cnt) == c) {
+				depth++;
+			}
+		}
+		if (depth > 0) {
 			return -1;
 		}
-		int oNdx = text.lastIndexOf(toSearch, end);
-		int cNdx = text.lastIndexOf(c, end);
-		if (oNdx < cNdx && cNdx > 0) {
-			return getPairedBehind(text, c, oNdx - 1);
-		}
-		return -text.length() + oNdx - 1;
+		return -text.length()+cnt-1;
 	}
 
 }
