@@ -162,8 +162,8 @@ public class EventBPredicateText {
 		this.textControls = new ArrayList<YellowBoxHolder>(offsets.length);
 		for (int i = 0; i < offsets.length; ++i) {
 			final int offset = offsets[i] + textOffset;
-			textControls.add(i, new YellowBoxHolder(yellowBoxMaker, offset,
-					true));
+			textControls.add(i, new YellowBoxHolder(predicateRow,
+					yellowBoxMaker, offset, true));
 		}
 	}
 

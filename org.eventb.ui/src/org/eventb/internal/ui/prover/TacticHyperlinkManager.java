@@ -152,7 +152,7 @@ public class TacticHyperlinkManager {
 	protected void applyTactic(Point link, ITacticApplication tacticPosition) {
 		final boolean skipPostTactic = TacticUIRegistry.getDefault()
 				.isSkipPostTactic(tacticPosition.getTacticID());
-		
+
 		final PredicateRow hypothesisRow = hypAppli.get(link);
 		if (hypothesisRow != null)
 			hypothesisRow.apply(tacticPosition, skipPostTactic);

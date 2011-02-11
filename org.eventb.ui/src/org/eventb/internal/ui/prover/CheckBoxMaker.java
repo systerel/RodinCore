@@ -21,14 +21,14 @@ import org.eclipse.swt.widgets.Control;
  * @author "Thomas Muller"
  */
 public class CheckBoxMaker extends ControlMaker {
-	
+
 	public CheckBoxMaker(Composite parent) {
 		super(parent);
 	}
-	
+
 	@Override
-	public Control makeControl() {
+	public Control makeControl(ControlHolder holder) {
 		return new Button(getParent(), SWT.CHECK);
 	}
-	
+
 }

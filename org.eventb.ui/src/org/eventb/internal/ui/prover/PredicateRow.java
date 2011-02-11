@@ -17,33 +17,21 @@
 package org.eventb.internal.ui.prover;
 
 import static org.eventb.internal.ui.prover.ProverUIUtils.SOFT_BG_COLOR;
-import static org.eventb.internal.ui.prover.ProverUIUtils.applyCommand;
-import static org.eventb.internal.ui.prover.ProverUIUtils.applyTactic;
 import static org.eventb.internal.ui.prover.ProverUIUtils.debug;
-import static org.eventb.internal.ui.prover.ProverUIUtils.getIcon;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getParsed;
-import static org.eventb.internal.ui.prover.ProverUIUtils.getTooltip;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.internal.ui.EventBSharedColor;
-import org.eventb.ui.prover.IPredicateApplication;
 import org.eventb.ui.prover.ITacticApplication;
 
 /**
@@ -55,7 +43,8 @@ import org.eventb.ui.prover.ITacticApplication;
  */
 public class PredicateRow {
 
-	private static final Color WHITE = EventBSharedColor.getSystemColor(SWT.COLOR_WHITE);
+	private static final Color WHITE = EventBSharedColor
+			.getSystemColor(SWT.COLOR_WHITE);
 
 	// Number of tabulations from the left
 	private final int nbTabsFromLeft;
@@ -82,12 +71,14 @@ public class PredicateRow {
 	
 	// Predicate/Command holder
 	private ControlHolder predAppliHolder;
-	private SelectionListener predAppliListener;
 
 	private boolean isGoal;
 
+	private final ControlPainter controlPainter;
 	private final ControlMaker checkBoxMaker;
+	private final ControlMaker appliMaker;
 	private final YellowBoxMaker yellowBoxMaker;
+
 
 	/**
 	 * @author htson
@@ -98,8 +89,8 @@ public class PredicateRow {
 	public PredicateRow(int nbTabsFromLeft, Predicate pred, boolean isGoal,
 			IUserSupport userSupport, boolean enable,
 			SelectionListener listener, ProverUI proverUI,
-			TacticHyperlinkManager manager, ControlMaker checkboxMaker,
-			YellowBoxMaker yellowBoxMaker) {
+			TacticHyperlinkManager manager, ControlPainter controlPainter,
+			ControlMaker checkboxMaker, ControlMaker appliMaker, YellowBoxMaker yellowBoxMaker) {
 
 		this.pred = pred;
 		this.isGoal = isGoal;
@@ -109,7 +100,9 @@ public class PredicateRow {
 		this.proverUI = proverUI;
 		this.manager = manager;
 		this.nbTabsFromLeft = nbTabsFromLeft;
+		this.controlPainter = controlPainter;
 		this.checkBoxMaker = checkboxMaker;
+		this.appliMaker = appliMaker;
 		this.yellowBoxMaker = yellowBoxMaker;
 
 		final FormulaFactory ff = userSupport.getFormulaFactory();
@@ -120,6 +113,10 @@ public class PredicateRow {
 		createPredicateText();
 	}
 
+	public ControlPainter getControlPainter() {
+		return controlPainter;
+	}
+	
 	private void createPredicateText() {
 		if (predicateText != null)
 			predicateText.dispose();
@@ -137,7 +134,7 @@ public class PredicateRow {
 		if (!isGoal) {
 			checkBoxHolder.attach(true);
 		}
-		predAppliHolder.attach(false);
+		predAppliHolder.attach(true);
 		predicateText.attach();
 	}
 	
@@ -145,151 +142,15 @@ public class PredicateRow {
 		final int checkBoxOffset = manager.getCurrentOffset() - nbTabsFromLeft;
 		final Color bgColor = odd ? SOFT_BG_COLOR : WHITE;
 		if (!isGoal) {
-			checkBoxHolder = new ControlHolder(checkBoxMaker,
+			checkBoxHolder = new ControlHolder(this, checkBoxMaker,
 					checkBoxOffset, false, bgColor);
 			checkBoxHolder.addSelectionListener(checkboxListener);
 		}
 		final int menuOffset = checkBoxOffset + 1;
-		final Button predAppliButton = createApplicationsButton();
-		predAppliHolder = new ControlHolder(predAppliButton,
-				menuOffset, false, bgColor);
-		predAppliButton.setVisible(false);
+		predAppliHolder = new ControlHolder(this, appliMaker, menuOffset,
+				false, bgColor);
 	}
 	
-	private Button createApplicationsButton() {
-		final StyledText text = manager.getText();
-		final Button button = new Button(text, SWT.ARROW | SWT.DOWN);
-		button.setEnabled(false);
-		if (!enable) {
-			return button;
-		}
-		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
-		final List<IPredicateApplication> tactics;
-		final List<ICommandApplication> commands;
-		
-		if (isGoal) {
-			tactics = retainPredicateApplications(tacticUIRegistry);
-			commands = tacticUIRegistry
-					.getCommandApplicationsToGoal(userSupport);
-		} else {
-			tactics = retainPredicateApplications(tacticUIRegistry);
-			commands = tacticUIRegistry.getCommandApplicationsToHypothesis(
-					userSupport, pred);
-		}
-		final int comSize = commands.size();
-		final int tacSize = tactics.size();
-		if (tacSize == 1 && comSize == 0) {
-			final ITacticApplication appli = tactics.get(0);
-			final Button tacButton = new Button(text, SWT.PUSH);
-			final IPredicateApplication predAppli = (IPredicateApplication) appli;
-			tacButton.setImage(getIcon(predAppli));
-			tacButton.setToolTipText(getTooltip(predAppli));
-			tacButton.addSelectionListener(getTacticSelectionListener(
-					tacticUIRegistry, appli));
-			return tacButton;
-		}
-		if (tacSize == 0 && comSize == 1) {
-			final ICommandApplication command = commands.get(0);
-			final Button comButton = new Button(text, SWT.PUSH);
-			comButton.setImage(command.getIcon());
-			comButton.setToolTipText(command.getTooltip());
-			return comButton;
-		}
-		button.setEnabled(true);
-		final Menu menu = new Menu(button);
-		predAppliListener = new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				menu.setVisible(true);
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e);
-			}
-		};
-		button.addSelectionListener(predAppliListener);
-		createImageHyperlinks(menu, tacticUIRegistry, tactics, commands);
-		return button;
-	}
-
-	private List<IPredicateApplication> retainPredicateApplications(
-			TacticUIRegistry tacticUIRegistry) {
-		final List<IPredicateApplication> predApplis = new ArrayList<IPredicateApplication>();
-		final List<ITacticApplication> tactics;
-		if (isGoal) {
-			tactics = tacticUIRegistry.getTacticApplicationsToGoal(userSupport);
-		} else {
-			tactics = tacticUIRegistry.getTacticApplicationsToHypothesis(
-					userSupport, pred);
-		}
-		for (ITacticApplication tactic : tactics) {
-			if (tactic instanceof IPredicateApplication) {
-				predApplis.add((IPredicateApplication) tactic);
-			}
-		}
-		return predApplis;
-	}
-
-	/**
-	 * Utility methods to create menu items for applicable tactics and commands
-	 */
-	private void createImageHyperlinks(Menu menu, TacticUIRegistry registry,
-			List<IPredicateApplication> tactics, List<ICommandApplication> commands) {
-		for (final ITacticApplication tacticAppli : tactics) {
-			if (!(tacticAppli instanceof IPredicateApplication))
-				continue;
-			final IPredicateApplication predAppli = (IPredicateApplication) tacticAppli;
-			final Image icon = getIcon(predAppli);
-			final String tooltip = getTooltip(predAppli);
-			final SelectionListener tacListener = getTacticSelectionListener(
-					registry, predAppli);
-			addMenuItem(menu, icon, tooltip, enable, tacListener);
-		}
-		for (final ICommandApplication commandAppli : commands) {
-			final SelectionListener hlListener = getCommandListener(commandAppli);
-			addMenuItem(menu, commandAppli.getIcon(),
-					commandAppli.getTooltip(), enable, hlListener);
-		}
-	}
-	
-	private SelectionListener getTacticSelectionListener(
-			final TacticUIRegistry tacticUIRegistry,
-			final ITacticApplication appli) {
-		return new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				apply(appli,
-						tacticUIRegistry.isSkipPostTactic(appli.getTacticID()));
-			}
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e);
-			}
-		};
-	}
-	
-	private SelectionListener getCommandListener(final ICommandApplication appli) {
-		return new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				apply(appli);
-			}
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e);
-			}
-		};
-	}
-
-	private static void addMenuItem(Menu menu, Image icon, String tooltip, boolean enable, SelectionListener listener) {
-		final MenuItem item = new MenuItem(menu, SWT.PUSH);
-		item.setImage(icon);
-		item.setText(tooltip);
-		item.setEnabled(enable);
-		item.addSelectionListener(listener);
-	}
-
 	/**
 	 * Utility method to dispose the composites and check boxes.
 	 */
@@ -307,7 +168,7 @@ public class PredicateRow {
 	}
 
 	/**
-	 * Return if the hypothesis is selected or not.
+	 * Tells if the hypothesis is selected or not.
 	 * 
 	 * @return <code>true</code> if the row is selected, and <code>false</code>
 	 *         otherwise
@@ -321,6 +182,51 @@ public class PredicateRow {
 		}
 		return false;
 	}
+	
+	/**
+	 * Applies the given tactic application to the predicate held by this row.
+	 * 
+	 * @param tacticAppli
+	 *            the tactic application
+	 * @param skipPostTactic
+	 *            the boolean telling if the post tactics should be skiped
+	 */
+	protected void apply(ITacticApplication tacticAppli, boolean skipPostTactic) {
+		final String[] inputs = getPredicateText().getResults();
+		if (ProverUIUtils.DEBUG)
+			for (String input : inputs)
+				debug("Input: \"" + input + "\"");
+
+		final String globalInput = getProverUI().getProofControl().getInput();
+		final IUserSupport us = getUserSupport();
+		if (isGoal()) {
+			ProverUIUtils.applyTactic(
+					tacticAppli.getTactic(inputs, globalInput), us, null,
+					skipPostTactic, new NullProgressMonitor());
+			return;
+		}
+		final Set<Predicate> hypSet = Collections.singleton(getPredicate());
+		ProverUIUtils.applyTactic(tacticAppli.getTactic(inputs, globalInput),
+				us, hypSet, skipPostTactic, new NullProgressMonitor());
+	}
+
+	/**
+	 * Applies the command to the predicate held by this row.
+	 * 
+	 * @param commandAppli
+	 *            the command application
+	 */
+	protected void apply(ICommandApplication commandAppli) {
+		final String[] inputs = getPredicateText().getResults();
+		final IUserSupport us = getUserSupport();
+		if (isGoal()) {
+			ProverUIUtils.applyCommand(commandAppli.getProofCommand(), us,
+					null, inputs, new NullProgressMonitor());
+			return;
+		}
+		ProverUIUtils.applyCommand(commandAppli.getProofCommand(), us,
+				getPredicate(), inputs, new NullProgressMonitor());
+	}
 
 	/**
 	 * Get the contained predicate.
@@ -330,35 +236,44 @@ public class PredicateRow {
 	public Predicate getPredicate() {
 		return pred;
 	}
-
-	void apply(ITacticApplication tacticAppli, boolean skipPostTactic) {
-		final String[] inputs = predicateText.getResults();
-		if (ProverUIUtils.DEBUG)
-			for (String input : inputs)
-				debug("Input: \"" + input + "\"");
-
-		final String globalInput = this.proverUI.getProofControl().getInput();
-		if (isGoal) {
-			applyTactic(tacticAppli.getTactic(inputs, globalInput), userSupport,
-					null, skipPostTactic, new NullProgressMonitor());
-			return;
-		}
-		final Set<Predicate> hypSet = Collections.singleton(pred);
-		applyTactic(tacticAppli.getTactic(inputs, globalInput), userSupport,
-				hypSet, skipPostTactic, new NullProgressMonitor());
+	
+	/**
+	 * Tells if the predicate row appears activated (i.e. the current proof tree
+	 * node is open)
+	 * 
+	 * @return <code>true</code> if the current proof tree node where this
+	 *         predicate comes from is open, <code>false</code> otherwise
+	 */
+	public boolean isEnabled() {
+		return enable;
+	}
+	
+	/**
+	 * Tells if the predicate held by this row is the goal of a sequent.
+	 * 
+	 * @return <code>true</code> if the current the predicate of this row is a
+	 *         goal, <code>false</code> otherwise
+	 */
+	public boolean isGoal() {
+		return isGoal;
+	}
+	
+	/**
+	 * Returns the user support from which the predicate has been computed.
+	 * 
+	 * @return the current user support
+	 */
+	public IUserSupport getUserSupport() {
+		return userSupport;
 	}
 
-	void apply(ICommandApplication commandAppli) {
-		final String[] inputs = predicateText.getResults();
-		if (isGoal) {
-			applyCommand(commandAppli.getProofCommand(), userSupport,
-					null, inputs, new NullProgressMonitor());
-			return;
-		}
-		applyCommand(commandAppli.getProofCommand(), userSupport, pred, inputs,
-				new NullProgressMonitor());
-	}
-
+	/**
+	 * Selects this row by checking the checkbox button. The checkbox button is
+	 * rendered (i.e. created and packed) if it has not yet been created.
+	 * 
+	 * @param selected
+	 *            the selection
+	 */
 	public void setSelected(boolean selected) {
 		if (!enable || checkBoxHolder == null)
 			return;
@@ -367,8 +282,33 @@ public class PredicateRow {
 		checkbox.setSelection(selected);
 	}
 	
+	/**
+	 * Returns the number of tabulations and controls that are making a left
+	 * margin.
+	 * 
+	 * @return the number of tabulations and controls in the left margin
+	 */
 	public int getNbTabsFromLeft() {
 		return nbTabsFromLeft;
+	}
+	
+	/**
+	 * Returns the predicate text object of this row.
+	 * 
+	 * @return the pretty print and display object of the predicate held by this
+	 *         row
+	 */
+	public EventBPredicateText getPredicateText() {
+		return predicateText;
+	}
+	
+	/**
+	 * Returns the parent prover UI.
+	 * 
+	 * @return the parent prover UI
+	 */
+	public ProverUI getProverUI() {
+		return proverUI;
 	}
 
 }

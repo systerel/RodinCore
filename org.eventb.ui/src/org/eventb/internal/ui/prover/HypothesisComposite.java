@@ -118,6 +118,9 @@ public abstract class HypothesisComposite implements
 
 	private Font font;
 
+
+	private ControlPainter controlPainter;
+
 	/**
 	 * Constructor.
 	 * <p>
@@ -368,6 +371,7 @@ public abstract class HypothesisComposite implements
 		}
 
 		final ControlMaker checkBoxMaker = new CheckBoxMaker(styledText);
+		final ControlMaker appliMaker = new PredAppliCommandMaker(styledText);
 		final IContentProposalProvider proposalProvider = ContentProposalFactory
 				.getProposalProvider(userSupport);
 		final YellowBoxMaker yellowBoxMaker = new YellowBoxMaker(styledText,
@@ -377,7 +381,7 @@ public abstract class HypothesisComposite implements
 		for (Predicate hyp : hyps) {
 			final PredicateRow row = new PredicateRow(NB_TABS_LEFT, hyp, false,
 					userSupport, enabled, this, proverUI, manager,
-					checkBoxMaker, yellowBoxMaker);
+					controlPainter, checkBoxMaker, appliMaker, yellowBoxMaker);
 			rows.add(row);
 		}
 		
@@ -413,8 +417,10 @@ public abstract class HypothesisComposite implements
 		updateToolbarItems();
 		sc.setMinSize(styledText.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		manager.enableListeners(enabled);
-
+		
+		styledText.addPaintObjectListener(controlPainter);
 		styledText.setRedraw(true);
+		
 		if (traced) {
 			final long elapsed = System.currentTimeMillis() - start;
 			SearchHypothesisUtils.debug("reflow + toolbars took " + elapsed
@@ -428,6 +434,11 @@ public abstract class HypothesisComposite implements
 		}
 		for (PredicateRow row : rows) {
 			row.dispose();
+		}
+		if (controlPainter != null) {
+			if (styledText != null && !styledText.isDisposed())
+				styledText.removePaintObjectListener(controlPainter);
+			controlPainter.clear();
 		}
 		rows.clear();
 		if (manager != null)
@@ -443,6 +454,7 @@ public abstract class HypothesisComposite implements
 		styledText.setFont(font);
 		styledText.setEditable(false);
 		manager = new TacticHyperlinkManager(styledText);
+		controlPainter = new ControlPainter();
 	}
 
 	/*

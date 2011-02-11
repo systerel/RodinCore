@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
+import org.eclipse.swt.custom.PaintObjectEvent;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.widgets.Text;
@@ -25,8 +26,9 @@ public class YellowBoxHolder extends ControlHolder {
 	// The yellow boxes to insert some input
 	private IEventBInputText box;
 
-	public YellowBoxHolder(ControlMaker maker, int offset, boolean drawBoxAround) {
-		super(maker, offset, drawBoxAround);
+	public YellowBoxHolder(PredicateRow row, ControlMaker maker,
+			int offset, boolean drawBoxAround) {
+		super(row, maker, offset, drawBoxAround);
 	}
 
 	@Override
@@ -37,8 +39,8 @@ public class YellowBoxHolder extends ControlHolder {
 	}
 
 	@Override
-	protected void paintAndPlace(int ex, int ey, int ascent, int descent) {
-		super.paintAndPlace(ex, ey, ascent, descent);
+	protected void paintAndPlace(PaintObjectEvent event) {
+		super.paintAndPlace(event);
 		if (box == null) {
 			box = new EventBMath((Text) control);
 			box.getTextWidget().addVerifyListener(new YellowBoxVerifyListener(this));			

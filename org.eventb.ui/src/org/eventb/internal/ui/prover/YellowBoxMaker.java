@@ -20,21 +20,23 @@ import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
 
 /**
+ * Class creating instantiation boxes.
+ * 
  * @author "Thomas Muller"
- *
  */
 public class YellowBoxMaker extends ControlMaker {
 
-	private static final Color YELLOW = EventBSharedColor.getSystemColor(SWT.COLOR_YELLOW);
+	private static final Color YELLOW = EventBSharedColor
+			.getSystemColor(SWT.COLOR_YELLOW);
 	private final IContentProposalProvider provider;
-	
+
 	public YellowBoxMaker(Composite parent, IContentProposalProvider provider) {
 		super(parent);
 		this.provider = provider;
 	}
-	
+
 	@Override
-	public Control makeControl() {
+	public Control makeControl(ControlHolder holder) {
 		final Text text = new Text(getParent(), SWT.SINGLE);
 		text.setText("     ");
 		text.setBackground(YELLOW);
