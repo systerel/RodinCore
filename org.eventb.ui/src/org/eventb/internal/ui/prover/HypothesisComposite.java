@@ -122,7 +122,10 @@ public abstract class HypothesisComposite implements
 	private ControlPainter controlPainter;
 
 
-	private CharacterPairHighlighter ssl;
+	private CharacterPairHighlighter ch;
+
+
+	private SearchHighlighter sh;
 
 	/**
 	 * Constructor.
@@ -438,8 +441,11 @@ public abstract class HypothesisComposite implements
 		for (PredicateRow row : rows) {
 			row.dispose();
 		}
-		if (ssl != null) {
-			ssl.remove();
+		if (ch != null) {
+			ch.remove();
+		}
+		if (sh != null){
+			sh.remove();
 		}
 		if (controlPainter != null) {
 			if (styledText != null && !styledText.isDisposed())
@@ -461,7 +467,8 @@ public abstract class HypothesisComposite implements
 		styledText.setEditable(false);
 		manager = new TacticHyperlinkManager(styledText);
 		controlPainter = new ControlPainter();
-		ssl = CharacterPairHighlighter.highlight(styledText);
+		ch = CharacterPairHighlighter.highlight(styledText);
+		sh = SearchHighlighter.hightlight(styledText);
 	}
 
 	/*

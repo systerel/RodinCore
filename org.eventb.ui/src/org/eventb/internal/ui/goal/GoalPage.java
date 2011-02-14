@@ -19,6 +19,7 @@ import static org.eventb.internal.ui.prover.CharacterPairHighlighter.highlight;
 import static org.eventb.internal.ui.prover.ProverUIUtils.debug;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getProofStateDelta;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getUserSupportDelta;
+import static org.eventb.internal.ui.prover.SearchHighlighter.hightlight;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -64,6 +65,7 @@ import org.eventb.internal.ui.prover.PredicateRow;
 import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
+import org.eventb.internal.ui.prover.SearchHighlighter;
 import org.eventb.internal.ui.prover.TacticHyperlinkManager;
 import org.eventb.internal.ui.prover.YellowBoxMaker;
 import org.rodinp.keyboard.preferences.PreferenceConstants;
@@ -100,6 +102,7 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 	private Composite control;
 	private ControlPainter controlPainter;
 	private CharacterPairHighlighter cml;
+	private SearchHighlighter shl;
 	
 	/**
 	 * Constructor.
@@ -133,6 +136,9 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 		}
 		if (cml != null) {
 			cml.remove();
+		}
+		if (shl != null) {
+			shl.remove();
 		}
 		if (manager != null)
 			manager.dispose();
@@ -195,6 +201,7 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 		controlPainter = new ControlPainter();
 		styledText.addPaintObjectListener(controlPainter);
 		cml = highlight(styledText);
+		shl = hightlight(styledText);
 		
 		createGoalText(node);
 		sc.setContent(styledText);
