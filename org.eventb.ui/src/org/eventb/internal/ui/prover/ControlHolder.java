@@ -43,7 +43,6 @@ public class ControlHolder {
 
 	private SelectionListener listener;
 	private Color bgColor;
-	private int lastPaintTime;
 	protected Control control;
 
 
@@ -107,7 +106,6 @@ public class ControlHolder {
 	}
 
 	protected void paintAndPlace(PaintObjectEvent event) {
-		lastPaintTime = event.time;
 		final Rectangle cBounds;
 		if (control == null) {
 			cBounds = maker.getBounds(this);
@@ -155,10 +153,6 @@ public class ControlHolder {
 
 	public StyledText getText() {
 		return text;
-	}
-
-	public int getLastPaintTime() {
-		return lastPaintTime;
 	}
 
 }
