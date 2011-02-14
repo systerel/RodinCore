@@ -28,7 +28,8 @@ import org.eventb.internal.ui.EventBSharedColor;
  */
 public class CharacterPairHighlighter implements MouseListener, KeyListener {
 
-	private static final Color GRAY = EventBSharedColor.getSystemColor(SWT.COLOR_DARK_GRAY);
+	private static final Color GRAY = EventBSharedColor
+			.getSystemColor(SWT.COLOR_GRAY);
 	private static final int NOT_FOUND = -1;
 	private final StyledText text;
 	private StyleRange range;
@@ -46,7 +47,7 @@ public class CharacterPairHighlighter implements MouseListener, KeyListener {
 
 	@Override
 	public void mouseDown(MouseEvent e) {
-		removeRange();
+		removeRange(range, backupRange, text);
 	}
 
 	@Override
@@ -57,7 +58,7 @@ public class CharacterPairHighlighter implements MouseListener, KeyListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		if (e.character != SWT.ESC) {
-			removeRange();
+			removeRange(range, backupRange, text);
 			higlightPairCharacter();
 		}
 	}
@@ -65,22 +66,29 @@ public class CharacterPairHighlighter implements MouseListener, KeyListener {
 	@Override
 	public void keyReleased(KeyEvent e) {
 		if (e.character == SWT.ESC) {
-			removeRange();
+			removeRange(range, backupRange, text);
 		}
 	}
 
-	private void removeRange() {
-		if (backupRange != null) {
-			text.setStyleRange(backupRange);
-		} else if (range != null) {
-			range.font = null;
-			range.rise = 0;
-			range.metrics = null;
-			range.background = null;
-			range.borderStyle = SWT.NONE;
-			range.borderColor = null;
-			text.setStyleRange(range);
-			range = null;
+	private static void removeRange(StyleRange toErase, StyleRange backup,
+			StyledText text) {
+		final StyleRange eraser;
+		if (backup != null) {
+			eraser = backup;
+		} else if (toErase != null) {
+			toErase.font = null;
+			toErase.rise = 0;
+			toErase.metrics = null;
+			toErase.background = null;
+			toErase.borderStyle = SWT.NONE;
+			toErase.borderColor = null;
+			eraser = toErase;
+		} else {
+			eraser = null;
+		}
+		if (eraser != null) {
+			text.setStyleRange(eraser);
+			toErase = null;
 		}
 	}
 
@@ -105,7 +113,7 @@ public class CharacterPairHighlighter implements MouseListener, KeyListener {
 		if (pairDistance != NOT_FOUND) {
 			final int matched = carStart + pairDistance;
 			backupRange = text.getStyleRangeAtOffset(matched);
-				range = new StyleRange(matched, 1, null, null);
+			range = new StyleRange(matched, 1, null, null);
 			if (backupRange != null)
 				range.foreground = backupRange.foreground;
 			range.borderStyle = SWT.BORDER_SOLID;
@@ -142,7 +150,7 @@ public class CharacterPairHighlighter implements MouseListener, KeyListener {
 				depth++;
 			}
 		}
-		if (depth > 0){
+		if (depth > 0) {
 			return -1;
 		}
 		return cnt + 1;
@@ -163,10 +171,9 @@ public class CharacterPairHighlighter implements MouseListener, KeyListener {
 		default:
 			return -1;
 		}
-
 		int depth = 0;
-		int cnt ;
-		for (cnt = text.length()-1; cnt > 0; cnt--) {
+		int cnt;
+		for (cnt = text.length() - 1; cnt > 0; cnt--) {
 			if (depth == 0 && text.charAt(cnt) == toSearch) {
 				break;
 			}
@@ -180,7 +187,7 @@ public class CharacterPairHighlighter implements MouseListener, KeyListener {
 		if (depth > 0) {
 			return -1;
 		}
-		return -text.length()+cnt-1;
+		return -text.length() + cnt - 1;
 	}
 
 }
