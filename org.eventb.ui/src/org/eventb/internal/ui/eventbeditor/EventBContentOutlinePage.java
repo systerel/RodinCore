@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,15 @@
  *     Systerel - separation of file and root element
  *     Systerel - redirected dialog opening and externalized strings
  *     Systerel - fixed Rodin errors when input does not exist
+ *     Systerel - used eclipse decorator mechanism
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
 import static org.eventb.internal.ui.utils.Messages.dialogs_canNotGetChildren;
 import static org.eventb.internal.ui.utils.Messages.title_error;
 
+import org.eclipse.jface.viewers.DecoratingLabelProvider;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -25,6 +28,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eventb.internal.ui.RodinElementTreeLabelProvider;
 import org.eventb.internal.ui.UIUtils;
@@ -224,7 +228,10 @@ public class EventBContentOutlinePage extends ContentOutlinePage {
 		TreeViewer viewer = getTreeViewer();
 		viewer.setContentProvider(new EventBContentOutlineProvider());
 		viewer.setSorter(new ElementSorter());
-		viewer.setLabelProvider(new RodinElementTreeLabelProvider(viewer));
+		final ILabelDecorator decorator = PlatformUI.getWorkbench()
+		.getDecoratorManager().getLabelDecorator();
+		viewer.setLabelProvider(new DecoratingLabelProvider(
+				new RodinElementTreeLabelProvider(viewer), decorator));
 		viewer.addSelectionChangedListener(this);
 
 		if (fInput != null)

@@ -661,6 +661,27 @@
             commandId="fr.systerel.explorer.replay">
       </handler>
    </extension>
+   <extension
+         point="org.eclipse.ui.decorators">
+      <decorator
+            class="fr.systerel.internal.explorer.navigator.decorators.POStatusDec"
+            id="fr.systerel.explorer.poStatus"
+            label="%decorator.poStatus.label"
+            lightweight="true"
+            location="BOTTOM_RIGHT"
+            state="true">
+         <enablement>
+            <or>
+               <objectClass
+                     name="org.rodinp.core.IRodinElement">
+               </objectClass>
+               <objectClass
+                     name="fr.systerel.explorer.IElementNode">
+               </objectClass>
+            </or>
+         </enablement>
+      </decorator>
+   </extension>
 
 
 </plugin>

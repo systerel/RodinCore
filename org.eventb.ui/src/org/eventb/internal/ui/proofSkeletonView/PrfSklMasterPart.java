@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,15 +8,19 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *     ETH Zurich - adapted to org.rodinp.keyboard
+ *     Systerel - used eclipse decorator mechanism
  *******************************************************************************/
 package org.eventb.internal.ui.proofSkeletonView;
 
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.DecoratingLabelProvider;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.rodinp.keyboard.preferences.PreferenceConstants;
@@ -60,7 +64,10 @@ public class PrfSklMasterPart implements IFormPart {
 		this.viewer = new TreeViewer(parent);
 		viewer.getControl().setFont(EVENTB_FONT);
 		viewer.setContentProvider(new PrfSklContentProvider());
-		viewer.setLabelProvider(new PrfSklLabelProvider());
+		final ILabelDecorator decorator = PlatformUI.getWorkbench()
+				.getDecoratorManager().getLabelDecorator();
+		viewer.setLabelProvider(new DecoratingLabelProvider(
+				new PrfSklLabelProvider(), decorator));
 		viewer.addSelectionChangedListener(treeListener);
 	}
 

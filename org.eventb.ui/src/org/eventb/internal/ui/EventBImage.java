@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,26 +7,22 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- *     Systerel : used element description in getImageDescriptor()
+ *     Rodin @ ETH Zurich - initial API and implementation
+ *     Systerel - used element description in getImageDescriptor()
+ *     Systerel - used eclipse decorator mechanism
  ******************************************************************************/
 
 package org.eventb.internal.ui;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eventb.core.ICommentedElement;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
-import org.eventb.internal.ui.markers.IMarkerRegistry;
-import org.eventb.internal.ui.markers.MarkerRegistry;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
@@ -284,46 +280,7 @@ public class EventBImage {
 		if (desc == null)
 			return null;
 
-		int F_COMMENT = 0x00001;
-		
-		int F_ERROR = 0x00002;
-		
-		int F_WARNING = 0x00004;
-
-		int F_INFO = 0x00008;
-
-		// Compute the key
-		// key = desc:Description:overlay
-		// overlay = comment + error
-		int overlay = 0;
-		if (element instanceof ICommentedElement) {
-			ICommentedElement ce = (ICommentedElement) element;
-			try {
-				if (ce.hasComment() && ce.getComment().length() != 0)
-					overlay = overlay | F_COMMENT;
-			} catch (RodinDBException e) {
-				// Do nothing
-				if (UIUtils.DEBUG)
-					e.printStackTrace();
-			}
-		}
-
-		IMarkerRegistry registry = MarkerRegistry.getDefault();
-		try {
-			int severity = registry.getMaxMarkerSeverity(element);
-			if (severity == IMarker.SEVERITY_ERROR) {
-				overlay = overlay | F_ERROR;
-			} else if (severity == IMarker.SEVERITY_WARNING) {
-				overlay = overlay | F_WARNING;
-			} else if (severity == IMarker.SEVERITY_INFO) {
-				overlay = overlay | F_INFO;
-			}
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return getImage(desc, overlay);
+		return getImage(desc);
 	}
 
 	/**
@@ -373,12 +330,6 @@ public class EventBImage {
 		// overlay = comment
 		String key = "node:" + base_path;
 
-		String comment = "0";
-		if (!node.getComment().equals("")) {
-			comment = "1";
-		}
-		key += ":" + comment;
-
 		// Return the image if it exists, otherwise create a new image and
 		// register with the registry.
 		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
@@ -387,9 +338,6 @@ public class EventBImage {
 			if (UIUtils.DEBUG)
 				System.out.println("Create a new image: " + key);
 			OverlayIcon icon = new OverlayIcon(getImageDescriptor(base_path));
-			if (comment == "1")
-				icon
-						.addTopLeft(getImageDescriptor(IEventBSharedImages.IMG_COMMENT_OVERLAY_PATH));
 			image = icon.createImage();
 			registry.put(key, image);
 		}
@@ -404,15 +352,9 @@ public class EventBImage {
 	 * @return the image corresponding to the input sequent
 	 */
 	public static Image getPRSequentImage(IPSStatus status) {
+		// TODO don't use path, use key (ex: IEventBSharedImages.IMG_PENDING)
+		// same everywhere
 		String base_path = "";
-
-		int F_AUTO = 0x00001;
-		
-		int F_INACCURATE = 0x00002;
-		
-		int F_REVIEWED_BROKEN = 0x00004;
-		
-		int F_DISCHARGED_BROKEN = 0x00008;
 
 		int confidence;
 		
@@ -428,8 +370,6 @@ public class EventBImage {
 			UIUtils.log(e, message);
 			return null;
 		}
-
-		int overlay = 0;
 
 		boolean isAttempted = confidence > IConfidence.UNATTEMPTED;
 		if (!isAttempted)
@@ -452,10 +392,6 @@ public class EventBImage {
 				if (confidence == IConfidence.PENDING) {
 					// Do nothing
 				}
-				else if (confidence <= IConfidence.REVIEWED_MAX)
-					overlay = overlay | F_REVIEWED_BROKEN;
-				else if (confidence <= IConfidence.DISCHARGED_MAX)
-					overlay = overlay | F_DISCHARGED_BROKEN;
 				base_path = IEventBSharedImages.IMG_PENDING_PATH;
 			} else {
 				if (confidence == IConfidence.PENDING)
@@ -467,36 +403,11 @@ public class EventBImage {
 			}
 		}
 
-		boolean isAutomatic = false;
-		try {
-			isAutomatic = ! status.getHasManualProof();
-		} catch (RodinDBException e) {
-			String message = "Cannot check if the proof tree of the sequent "
-				+ status.getElementName()
-				+ " is automatically generated or not";
-			if (UIUtils.DEBUG) {
-				System.out.println(message);
-				e.printStackTrace();
-			}
-		}
-		if (isAutomatic && isAttempted) {
-			overlay = overlay | F_AUTO;
-		}
-
-		boolean isAccurate = false;
-		try {
-			isAccurate = status.getPOSequent().isAccurate();
-		} catch (RodinDBException e) {
-			// Do nothing
-		}
-		if (!isAccurate) {
-			overlay = overlay | F_INACCURATE;
-		}
 		// Compute the key
 		// key = "prsequent":pluginID:base_path:overlay
 		// overlay = auto
-		String key = "prsequent:" + base_path + ":" + overlay;
-
+		String key = "prsequent:" + base_path;
+		
 		// Return the image if it exists, otherwise create a new image and
 		// register with the registry.
 		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
@@ -504,21 +415,7 @@ public class EventBImage {
 		if (image == null) {
 			if (UIUtils.DEBUG)
 				System.out.println("Create a new image: " + key);
-			OverlayIcon icon = new OverlayIcon(getImageDescriptor(base_path));
-			if ((overlay & F_AUTO) != 0)
-				icon
-						.addTopRight(getImageDescriptor(IEventBSharedImages.IMG_AUTO_OVERLAY_PATH));
-			if ((overlay & F_INACCURATE) != 0)
-				icon
-						.addBottomLeft(getImageDescriptor(IEventBSharedImages.IMG_WARNING_OVERLAY_PATH));
-			if ((overlay & F_REVIEWED_BROKEN) != 0) {
-				icon
-						.addBottomRight(getImageDescriptor(IEventBSharedImages.IMG_REVIEWED_OVERLAY_PATH));
-			}
-			if ((overlay & F_DISCHARGED_BROKEN) != 0) {
-				icon
-						.addBottomRight(getImageDescriptor(IEventBSharedImages.IMG_DISCHARGED_OVERLAY_PATH));
-			}
+			final OverlayIcon icon = new OverlayIcon(getImageDescriptor(base_path));
 			image = icon.createImage();
 			registry.put(key, image);
 		}
@@ -532,15 +429,8 @@ public class EventBImage {
 		return elementDesc.getImageProvider().getImageDescriptor(element);
 	}
 
-	public static Image getImage(ImageDescriptor desc, int overlay) {
-		int F_COMMENT = 0x00001;
-		
-		int F_ERROR = 0x00002;
-		
-		int F_WARNING = 0x00004;
-
+	public static Image getImage(ImageDescriptor desc) {
 		String key = "desc:" + desc;
-		key += ":" + overlay;
 
 		ImageRegistry imageRegistry = EventBUIPlugin.getDefault()
 				.getImageRegistry();
@@ -549,15 +439,6 @@ public class EventBImage {
 			if (UIUtils.DEBUG)
 				System.out.println("Create a new image: " + key);
 			OverlayIcon icon = new OverlayIcon(desc);
-			if ((overlay & F_COMMENT) != 0)
-				icon
-						.addTopLeft(getImageDescriptor(IEventBSharedImages.IMG_COMMENT_OVERLAY_PATH));
-			if ((overlay & F_ERROR) != 0)
-				icon
-						.addBottomLeft(getImageDescriptor(IEventBSharedImages.IMG_ERROR_OVERLAY_PATH));
-			else if ((overlay & F_WARNING) != 0)
-				icon
-						.addBottomLeft(getImageDescriptor(IEventBSharedImages.IMG_WARNING_OVERLAY_PATH));
 			image = icon.createImage();
 			imageRegistry.put(key, image);
 		}

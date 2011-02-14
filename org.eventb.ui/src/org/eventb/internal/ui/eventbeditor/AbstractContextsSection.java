@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - used IAttributeFactory
  *     Systerel - prevented from editing generated elements
+ *     Systerel - used eclipse decorator mechanism
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -23,6 +24,8 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.viewers.DecoratingLabelProvider;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -43,6 +46,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -165,7 +169,10 @@ public abstract class AbstractContextsSection<R extends IInternalElement, E exte
 				// TODO Empty default
 			}
 		});
-		viewer.setLabelProvider(new RodinElementTableLabelProvider(viewer));
+		final ILabelDecorator decorator = PlatformUI.getWorkbench()
+				.getDecoratorManager().getLabelDecorator();
+		viewer.setLabelProvider(new DecoratingLabelProvider(
+				new RodinElementTableLabelProvider(viewer), decorator));
 		viewer.setInput(rodinRoot);
 		viewer.addSelectionChangedListener(this);
 

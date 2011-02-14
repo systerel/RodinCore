@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,18 +12,25 @@
  *     Systerel - used ElementDescRegistry
  *     Systerel - introduced read only elements
  *     Systerel - fixed Hyperlink.setImage() calls
+ *     Systerel - used eclipse decorator mechanism
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
 import static org.eventb.internal.ui.eventbeditor.EventBEditorUtils.checkAndShowReadOnly;
 
+import java.util.Arrays;
+
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -40,7 +47,7 @@ import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 
-public class ButtonComposite {
+public class ButtonComposite implements ILabelProviderListener {
 
 	Composite composite;
 
@@ -118,7 +125,7 @@ public class ButtonComposite {
 
 		final IRodinElement element = elementComp.getElement();
 		selectHyperlink = toolkit.createImageHyperlink(composite, SWT.TOP);
-		setHyperlinkImage(selectHyperlink, EventBImage.getRodinImage(element));
+		updateSelectHyperlink();
 		selectHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
@@ -150,6 +157,8 @@ public class ButtonComposite {
 		});
 
 		updateLinks();
+		PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()
+				.addListener(this);
 	}
 
 	public void updateLinks() {
@@ -160,8 +169,18 @@ public class ButtonComposite {
 			foldingHyperlink.setVisible(true);
 		} else
 			foldingHyperlink.setVisible(false);
-		setHyperlinkImage(selectHyperlink, EventBImage.getRodinImage(element));
+		updateSelectHyperlink();
 		selectHyperlink.redraw();
+	}
+
+	private static Image getDecoratedImage(IRodinElement element) {
+		final Image image = EventBImage.getRodinImage(element);
+		final Image decorated = PlatformUI.getWorkbench().getDecoratorManager()
+				.getLabelDecorator().decorateImage(image, element);
+		if (decorated != null) {
+			return decorated;
+		}
+		return image;
 	}
 
 	public boolean isSelected() {
@@ -191,6 +210,30 @@ public class ButtonComposite {
 			setHyperlinkImage(foldingHyperlink, EventBImage
 					.getImage(IEventBSharedImages.IMG_COLLAPSED));
 		}
+	}
+
+	// Note: the standard decorator mechanism works with ILabelProvider
+	// which we do not have here
+	// TODO: listener should be placed upper, in the edit page
+	// but it is inefficient without appropriate refresh methods
+	// (currently we would use the postRefresh that would refresh
+	// the same composite several times and globally)
+	// Postponed until new editor implementation
+	@Override
+	public void labelProviderChanged(LabelProviderChangedEvent event) {
+		final Object[] elements = event.getElements();
+		final IRodinElement element = elementComp.getElement();
+		if (Arrays.asList(elements).contains(element)) {
+			updateSelectHyperlink();
+		}
+	}
+
+	private void updateSelectHyperlink() {
+		if (selectHyperlink.isDisposed()) {
+			return;
+		}
+		final IRodinElement element = elementComp.getElement();
+		setHyperlinkImage(selectHyperlink, getDecoratedImage(element));
 	}
 
 }
