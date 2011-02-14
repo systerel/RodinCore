@@ -15,6 +15,7 @@
  *     Systerel - fixed Hyperlink.setImage() calls
  ******************************************************************************/
 package org.eventb.internal.ui.goal;
+import static org.eventb.internal.ui.prover.CharacterPairHighlighter.highlight;
 import static org.eventb.internal.ui.prover.ProverUIUtils.debug;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getProofStateDelta;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getUserSupportDelta;
@@ -129,10 +130,9 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 				styledText.removePaintObjectListener(controlPainter);
 				controlPainter.clear();
 			}
-			if (cml != null) {
-				styledText.removeKeyListener(cml);
-				styledText.removeKeyListener(cml);
-			}
+		}
+		if (cml != null) {
+			cml.remove();
 		}
 		if (manager != null)
 			manager.dispose();
@@ -194,9 +194,7 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 		manager = new TacticHyperlinkManager(styledText);
 		controlPainter = new ControlPainter();
 		styledText.addPaintObjectListener(controlPainter);
-		cml = new CharacterPairHighlighter(styledText);
-		styledText.addKeyListener(cml);
-		styledText.addMouseListener(cml);
+		cml = highlight(styledText);
 		
 		createGoalText(node);
 		sc.setContent(styledText);

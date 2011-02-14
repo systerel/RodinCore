@@ -13,6 +13,8 @@ package org.eventb.internal.ui.prover;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -26,7 +28,7 @@ import org.eventb.internal.ui.EventBSharedColor;
  * 
  * @author "Thomas Muller"
  */
-public class CharacterPairHighlighter implements MouseListener, KeyListener {
+public class CharacterPairHighlighter implements MouseListener, KeyListener, FocusListener {
 
 	private static final Color GRAY = EventBSharedColor
 			.getSystemColor(SWT.COLOR_GRAY);
@@ -36,13 +38,29 @@ public class CharacterPairHighlighter implements MouseListener, KeyListener {
 	private StyleRange backupRange;
 	private char c;
 
-	public CharacterPairHighlighter(StyledText text) {
+	private CharacterPairHighlighter(StyledText text) {
 		this.text = text;
 	}
 
+	public static CharacterPairHighlighter highlight(StyledText text) {
+		final CharacterPairHighlighter h = new CharacterPairHighlighter(text);
+		text.addMouseListener(h);
+		text.addKeyListener(h);
+		text.addFocusListener(h);
+		return h;
+	}
+	
+	public void remove() {
+		if (text != null && !text.isDisposed()) {
+			text.removeKeyListener(this);
+			text.removeMouseListener(this);
+			text.removeFocusListener(this);
+		}
+	}
+		
 	@Override
 	public void mouseDoubleClick(MouseEvent e) {
-		// IGNORE
+		// Nothing to do
 	}
 
 	@Override
@@ -68,6 +86,17 @@ public class CharacterPairHighlighter implements MouseListener, KeyListener {
 		if (e.character == SWT.ESC) {
 			removeRange(range, backupRange, text);
 		}
+	}
+
+	@Override
+	public void focusGained(FocusEvent e) {
+		// Nothing to do
+		
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		removeRange(range, backupRange, text);
 	}
 
 	private static void removeRange(StyleRange toErase, StyleRange backup,
