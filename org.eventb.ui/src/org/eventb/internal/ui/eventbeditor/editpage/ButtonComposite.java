@@ -214,6 +214,7 @@ public class ButtonComposite implements ILabelProviderListener {
 
 	// Note: the standard decorator mechanism works with ILabelProvider
 	// which we do not have here
+	// FIXME: not updated when proof status changes
 	// TODO: listener should be placed upper, in the edit page
 	// but it is inefficient without appropriate refresh methods
 	// (currently we would use the postRefresh that would refresh
