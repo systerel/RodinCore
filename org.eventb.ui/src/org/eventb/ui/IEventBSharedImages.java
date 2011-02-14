@@ -53,7 +53,9 @@ public interface IEventBSharedImages {
 	public static final String IMG_AXIOMS = "Axioms";
 
 	public static final String IMG_DISCHARGED = "Discharged";
-
+	
+	public static final String IMG_DISCHARGED_PALE = "Discharged Pale";
+	
 	public static final String IMG_DISCHARGED_BROKEN = "Discharged Broken";
 
 	public static final String IMG_PENDING = "Pending";
@@ -64,6 +66,8 @@ public interface IEventBSharedImages {
 
 	public static final String IMG_REVIEWED = "REVIEWED";
 
+	public static final String IMG_REVIEWED_PALE = "Reviewed Pale";
+	
 	public static final String IMG_REVIEWED_BROKEN = "Reviewed Broken";
 
 	public static final String IMG_APPLIED = "Applied";

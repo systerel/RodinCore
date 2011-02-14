@@ -125,10 +125,14 @@ public class EventBImage {
 				"icons/applied.gif");
 		registerImage(registry, IEventBSharedImages.IMG_DISCHARGED,
 				"icons/discharged.gif");
+		registerImage(registry, IEventBSharedImages.IMG_DISCHARGED_PALE,
+				IEventBSharedImages.IMG_DISCHARGED_PALE_PATH);
 		registerImage(registry, IEventBSharedImages.IMG_DISCHARGED_BROKEN,
 				"icons/discharged_broken.gif");
 		registerImage(registry, IEventBSharedImages.IMG_REVIEWED,
 				"icons/reviewed.gif");
+		registerImage(registry, IEventBSharedImages.IMG_REVIEWED_PALE,
+				IEventBSharedImages.IMG_REVIEWED_PALE_PATH);
 		registerImage(registry, IEventBSharedImages.IMG_REVIEWED_BROKEN,
 				"icons/reviewed_broken.gif");
 		registerImage(registry, IEventBSharedImages.IMG_DEFAULT,
@@ -291,27 +295,27 @@ public class EventBImage {
 	 *            a proof tree node
 	 * @return the path of the base image corresponding to the input node
 	 */
-	private static final String getProofTreeNodeBaseImagePath(
+	private static final String getProofTreeNodeBaseImageKey(
 			IProofTreeNode node) {
 
 		int confidence = node.getConfidence();
 
 		if (confidence == IConfidence.PENDING) {
 			if (node.hasChildren())
-				return IEventBSharedImages.IMG_PENDING_PALE_PATH;
-			return IEventBSharedImages.IMG_PENDING_PATH;
+				return IEventBSharedImages.IMG_PENDING_PALE;
+			return IEventBSharedImages.IMG_PENDING;
 		}
 		if (confidence <= IConfidence.REVIEWED_MAX) {
 			if (node.hasChildren())
-				return IEventBSharedImages.IMG_REVIEWED_PALE_PATH;
-			return IEventBSharedImages.IMG_REVIEWED_PATH;
+				return IEventBSharedImages.IMG_REVIEWED_PALE;
+			return IEventBSharedImages.IMG_REVIEWED;
 		}
 		if (confidence <= IConfidence.DISCHARGED_MAX) {
 			if (node.hasChildren())
-				return IEventBSharedImages.IMG_DISCHARGED_PALE_PATH;
-			return IEventBSharedImages.IMG_DISCHARGED_PATH;
+				return IEventBSharedImages.IMG_DISCHARGED_PALE;
+			return IEventBSharedImages.IMG_DISCHARGED;
 		}
-		return IEventBSharedImages.IMG_NULL_PATH;
+		return IEventBSharedImages.IMG_NULL;
 	}
 
 	/**
@@ -323,25 +327,12 @@ public class EventBImage {
 	 * @return the image corresponding to the input node
 	 */
 	public static Image getProofTreeNodeImage(IProofTreeNode node) {
-		String base_path = getProofTreeNodeBaseImagePath(node);
+		final String baseKey = getProofTreeNodeBaseImageKey(node);
 
-		// Compute the key
-		// key = "node":pluginID:base_path:overlay
-		// overlay = comment
-		String key = "node:" + base_path;
+		// key for image descriptor as OverlayIcon
+		final String key = "node:" + baseKey;
 
-		// Return the image if it exists, otherwise create a new image and
-		// register with the registry.
-		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
-		Image image = registry.get(key);
-		if (image == null) {
-			if (UIUtils.DEBUG)
-				System.out.println("Create a new image: " + key);
-			OverlayIcon icon = new OverlayIcon(getImageDescriptor(base_path));
-			image = icon.createImage();
-			registry.put(key, image);
-		}
-		return image;
+		return getOverlayImage(key, baseKey);
 	}
 
 	/**
@@ -352,11 +343,8 @@ public class EventBImage {
 	 * @return the image corresponding to the input sequent
 	 */
 	public static Image getPRSequentImage(IPSStatus status) {
-		// TODO don't use path, use key (ex: IEventBSharedImages.IMG_PENDING)
-		// same everywhere
-		String base_path = "";
 
-		int confidence;
+		final int confidence;
 		
 		try {
 			confidence = status.getConfidence();
@@ -371,9 +359,10 @@ public class EventBImage {
 			return null;
 		}
 
+		final String baseKey;
 		boolean isAttempted = confidence > IConfidence.UNATTEMPTED;
 		if (!isAttempted)
-			base_path = IEventBSharedImages.IMG_PENDING_PALE_PATH;
+			baseKey = IEventBSharedImages.IMG_PENDING_PALE;
 		else {
 			boolean isProofBroken = false;
 			try {
@@ -392,30 +381,41 @@ public class EventBImage {
 				if (confidence == IConfidence.PENDING) {
 					// Do nothing
 				}
-				base_path = IEventBSharedImages.IMG_PENDING_PATH;
+				baseKey = IEventBSharedImages.IMG_PENDING;
 			} else {
 				if (confidence == IConfidence.PENDING)
-					base_path = IEventBSharedImages.IMG_PENDING_PATH;
+					baseKey = IEventBSharedImages.IMG_PENDING;
 				else if (confidence <= IConfidence.REVIEWED_MAX)
-					base_path = IEventBSharedImages.IMG_REVIEWED_PATH;
+					baseKey = IEventBSharedImages.IMG_REVIEWED;
 				else if (confidence <= IConfidence.DISCHARGED_MAX)
-					base_path = IEventBSharedImages.IMG_DISCHARGED_PATH;
+					baseKey = IEventBSharedImages.IMG_DISCHARGED;
+				else // cannot happen
+					throw new IllegalStateException(
+							"invalid proof confidence: " + confidence);
 			}
 		}
 
-		// Compute the key
-		// key = "prsequent":pluginID:base_path:overlay
-		// overlay = auto
-		String key = "prsequent:" + base_path;
+		// key for image descriptor as OverlayIcon
+		final String key = "prsequent:" + baseKey;
 		
-		// Return the image if it exists, otherwise create a new image and
-		// register with the registry.
-		ImageRegistry registry = EventBUIPlugin.getDefault().getImageRegistry();
+		return getOverlayImage(key, baseKey);
+	}
+
+	// returns an image as OverlayIcon, registering it if needed 
+	// an image must already be registered under baseKey
+	private static Image getOverlayImage(String key, String baseKey) {
+		final ImageRegistry registry = EventBUIPlugin.getDefault()
+				.getImageRegistry();
 		Image image = registry.get(key);
 		if (image == null) {
 			if (UIUtils.DEBUG)
 				System.out.println("Create a new image: " + key);
-			final OverlayIcon icon = new OverlayIcon(getImageDescriptor(base_path));
+			final ImageDescriptor descriptor = registry.getDescriptor(baseKey);
+			if (descriptor == null) {
+				throw new IllegalStateException("unknown image descriptor: "
+						+ baseKey);
+			}
+			final OverlayIcon icon = new OverlayIcon(descriptor);
 			image = icon.createImage();
 			registry.put(key, image);
 		}
@@ -430,9 +430,9 @@ public class EventBImage {
 	}
 
 	public static Image getImage(ImageDescriptor desc) {
-		String key = "desc:" + desc;
+		final String key = "desc:" + desc;
 
-		ImageRegistry imageRegistry = EventBUIPlugin.getDefault()
+		final ImageRegistry imageRegistry = EventBUIPlugin.getDefault()
 				.getImageRegistry();
 		Image image = imageRegistry.get(key);
 		if (image == null) {
