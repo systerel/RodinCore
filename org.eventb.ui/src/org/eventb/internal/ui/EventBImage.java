@@ -150,12 +150,6 @@ public class EventBImage {
 		registerImage(registry, IEventBSharedImages.IMG_REMOVE,
 				"icons/full/ctool16/remove.gif");
 
-		// FIXME remove, registered twice
-		registerImage(registry, IEventBSharedImages.IMG_ADD,
-				"icons/full/ctool16/add.gif");
-		registerImage(registry, IEventBSharedImages.IMG_REMOVE,
-				"icons/full/ctool16/remove.gif");
-
 		registerImage(registry, IEventBSharedImages.IMG_COLLAPSED,
 				"icons/full/elcl16/collapsed.gif");
 		registerImage(registry, IEventBSharedImages.IMG_COLLAPSED_HOVER,
