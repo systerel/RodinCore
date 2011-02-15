@@ -97,7 +97,7 @@ public class EventBImage {
 	 *            The image registry
 	 */
 	public static void initializeImageRegistry(ImageRegistry registry) {
-		registerImage(registry, IEventBSharedImages.IMG_MACHINE, "icons/full/obj16/mch_obj.gif");
+		registerImage(registry, IEventBSharedImages.IMG_MACHINE, IEventBSharedImages.IMG_MACHINE_PATH);
 		registerImage(registry, IEventBSharedImages.IMG_CONTEXT, "icons/full/obj16/ctx_obj.gif");
 		registerImage(registry, IEventBSharedImages.IMG_VARIABLES, "icons/full/obj16/vars_obj.gif");
 		registerImage(registry, IEventBSharedImages.IMG_INVARIANTS, "icons/full/obj16/invs_obj.gif");
@@ -116,40 +116,41 @@ public class EventBImage {
 				"icons/full/clcl16/newcomp_wiz.gif");
 
 		registerImage(registry, IEventBSharedImages.IMG_PENDING,
-				"icons/pending.gif");
+				IEventBSharedImages.IMG_PENDING_PATH);
 		registerImage(registry, IEventBSharedImages.IMG_PENDING_PALE,
-				"icons/pending_pale.gif");
+				IEventBSharedImages.IMG_PENDING_PALE_PATH);
 		registerImage(registry, IEventBSharedImages.IMG_PENDING_BROKEN,
-				"icons/pending_broken.gif");
+				IEventBSharedImages.IMG_PENDING_BROKEN_PATH);
 		registerImage(registry, IEventBSharedImages.IMG_APPLIED,
 				"icons/applied.gif");
 		registerImage(registry, IEventBSharedImages.IMG_DISCHARGED,
-				"icons/discharged.gif");
+				IEventBSharedImages.IMG_DISCHARGED_PATH);
 		registerImage(registry, IEventBSharedImages.IMG_DISCHARGED_PALE,
 				IEventBSharedImages.IMG_DISCHARGED_PALE_PATH);
 		registerImage(registry, IEventBSharedImages.IMG_DISCHARGED_BROKEN,
-				"icons/discharged_broken.gif");
+				IEventBSharedImages.IMG_DISCHARGED_BROKEN_PATH);
 		registerImage(registry, IEventBSharedImages.IMG_REVIEWED,
-				"icons/reviewed.gif");
+				IEventBSharedImages.IMG_REVIEWED_PATH);
 		registerImage(registry, IEventBSharedImages.IMG_REVIEWED_PALE,
 				IEventBSharedImages.IMG_REVIEWED_PALE_PATH);
 		registerImage(registry, IEventBSharedImages.IMG_REVIEWED_BROKEN,
-				"icons/reviewed_broken.gif");
+				IEventBSharedImages.IMG_REVIEWED_BROKEN_PATH);
 		registerImage(registry, IEventBSharedImages.IMG_DEFAULT,
 				"icons/sample.gif");
 		registerImage(registry, IEventBSharedImages.IMG_REFINES,
-				"icons/full/ctool16/refines.gif");
+				IEventBSharedImages.IMG_REFINES_PATH);
 
 		// TODO remove constant, icon does not exist
 		registerImage(registry, IMG_PENGUIN, "icons/penguins-dancing.gif");
 		registerImage(registry, IEventBSharedImages.IMG_NULL,
-				"icons/full/ctool16/null.gif");
+				IEventBSharedImages.IMG_NULL_PATH);
 
 		registerImage(registry, IEventBSharedImages.IMG_ADD,
 				"icons/full/ctool16/add.gif");
 		registerImage(registry, IEventBSharedImages.IMG_REMOVE,
 				"icons/full/ctool16/remove.gif");
 
+		// FIXME remove, registered twice
 		registerImage(registry, IEventBSharedImages.IMG_ADD,
 				"icons/full/ctool16/add.gif");
 		registerImage(registry, IEventBSharedImages.IMG_REMOVE,
@@ -191,9 +192,9 @@ public class EventBImage {
 				"icons/full/ctool16/select_none_prover.gif");
 
 		registerImage(registry, IEventBSharedImages.IMG_UP,
-				"icons/full/ctool16/up_edit.gif");
+				IEventBSharedImages.IMG_UP_PATH);
 		registerImage(registry, IEventBSharedImages.IMG_DOWN,
-				"icons/full/ctool16/down_edit.gif");
+				IEventBSharedImages.IMG_DOWN_PATH);
 		registerImage(registry, IEventBSharedImages.IMG_CARRIER_SET,
 				IEventBSharedImages.IMG_CARRIER_SET_PATH);
 		registerImage(registry, IEventBSharedImages.IMG_VARIABLE,
