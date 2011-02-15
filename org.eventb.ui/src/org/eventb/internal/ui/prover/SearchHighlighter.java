@@ -87,7 +87,9 @@ public class SearchHighlighter implements FocusListener, KeyListener,
 			originalRanges = null;
 			return;
 		}
-		restoreOriginalRanges();
+		if (text.getSelectionCount() > 0) {
+			restoreOriginalRanges();
+		}
 		displayMatchings();
 	}
 
