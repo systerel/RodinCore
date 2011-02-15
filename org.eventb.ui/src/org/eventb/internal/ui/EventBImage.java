@@ -140,8 +140,6 @@ public class EventBImage {
 		registerImage(registry, IEventBSharedImages.IMG_REFINES,
 				IEventBSharedImages.IMG_REFINES_PATH);
 
-		// TODO remove constant, icon does not exist
-		registerImage(registry, IMG_PENGUIN, "icons/penguins-dancing.gif");
 		registerImage(registry, IEventBSharedImages.IMG_NULL,
 				IEventBSharedImages.IMG_NULL_PATH);
 
