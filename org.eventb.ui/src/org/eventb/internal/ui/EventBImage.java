@@ -14,6 +14,78 @@
 
 package org.eventb.internal.ui;
 
+import static org.eventb.ui.IEventBSharedImages.IMG_ACTION;
+import static org.eventb.ui.IEventBSharedImages.IMG_ACTION_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_ADD;
+import static org.eventb.ui.IEventBSharedImages.IMG_APPLIED;
+import static org.eventb.ui.IEventBSharedImages.IMG_AXIOM;
+import static org.eventb.ui.IEventBSharedImages.IMG_AXIOMS;
+import static org.eventb.ui.IEventBSharedImages.IMG_AXIOM_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_CARRIER_SET;
+import static org.eventb.ui.IEventBSharedImages.IMG_CARRIER_SETS;
+import static org.eventb.ui.IEventBSharedImages.IMG_CARRIER_SET_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_COLLAPSED;
+import static org.eventb.ui.IEventBSharedImages.IMG_COLLAPSED_HOVER;
+import static org.eventb.ui.IEventBSharedImages.IMG_COLLAPSE_ALL;
+import static org.eventb.ui.IEventBSharedImages.IMG_CONSTANT;
+import static org.eventb.ui.IEventBSharedImages.IMG_CONSTANTS;
+import static org.eventb.ui.IEventBSharedImages.IMG_CONSTANT_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_CONTEXT;
+import static org.eventb.ui.IEventBSharedImages.IMG_DEFAULT;
+import static org.eventb.ui.IEventBSharedImages.IMG_DISCHARGED;
+import static org.eventb.ui.IEventBSharedImages.IMG_DISCHARGED_BROKEN;
+import static org.eventb.ui.IEventBSharedImages.IMG_DISCHARGED_BROKEN_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_DISCHARGED_PALE;
+import static org.eventb.ui.IEventBSharedImages.IMG_DISCHARGED_PALE_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_DISCHARGED_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_DOWN;
+import static org.eventb.ui.IEventBSharedImages.IMG_DOWN_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_EVENT;
+import static org.eventb.ui.IEventBSharedImages.IMG_EVENTS;
+import static org.eventb.ui.IEventBSharedImages.IMG_EVENT_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_EXPANDED;
+import static org.eventb.ui.IEventBSharedImages.IMG_EXPANDED_HOVER;
+import static org.eventb.ui.IEventBSharedImages.IMG_EXPAND_ALL;
+import static org.eventb.ui.IEventBSharedImages.IMG_GUARD;
+import static org.eventb.ui.IEventBSharedImages.IMG_GUARD_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_INVARIANT;
+import static org.eventb.ui.IEventBSharedImages.IMG_INVARIANTS;
+import static org.eventb.ui.IEventBSharedImages.IMG_INVARIANT_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_INVERSE;
+import static org.eventb.ui.IEventBSharedImages.IMG_MACHINE;
+import static org.eventb.ui.IEventBSharedImages.IMG_MACHINE_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_NULL;
+import static org.eventb.ui.IEventBSharedImages.IMG_NULL_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_PARAMETER;
+import static org.eventb.ui.IEventBSharedImages.IMG_PARAMETER_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_PENDING;
+import static org.eventb.ui.IEventBSharedImages.IMG_PENDING_BROKEN;
+import static org.eventb.ui.IEventBSharedImages.IMG_PENDING_BROKEN_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_PENDING_PALE;
+import static org.eventb.ui.IEventBSharedImages.IMG_PENDING_PALE_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_PENDING_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_REFINES;
+import static org.eventb.ui.IEventBSharedImages.IMG_REFINES_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_REMOVE;
+import static org.eventb.ui.IEventBSharedImages.IMG_REVIEWED;
+import static org.eventb.ui.IEventBSharedImages.IMG_REVIEWED_BROKEN;
+import static org.eventb.ui.IEventBSharedImages.IMG_REVIEWED_BROKEN_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_REVIEWED_PALE;
+import static org.eventb.ui.IEventBSharedImages.IMG_REVIEWED_PALE_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_REVIEWED_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_SELECT_ALL;
+import static org.eventb.ui.IEventBSharedImages.IMG_SELECT_NONE;
+import static org.eventb.ui.IEventBSharedImages.IMG_SH_PROVER;
+import static org.eventb.ui.IEventBSharedImages.IMG_SH_PROVER_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_THEOREM;
+import static org.eventb.ui.IEventBSharedImages.IMG_THEOREMS;
+import static org.eventb.ui.IEventBSharedImages.IMG_THEOREM_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_UP;
+import static org.eventb.ui.IEventBSharedImages.IMG_UP_PATH;
+import static org.eventb.ui.IEventBSharedImages.IMG_VARIABLE;
+import static org.eventb.ui.IEventBSharedImages.IMG_VARIABLES;
+import static org.eventb.ui.IEventBSharedImages.IMG_VARIABLE_PATH;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
@@ -24,7 +96,6 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.ui.EventBUIPlugin;
-import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -35,10 +106,9 @@ import org.rodinp.core.RodinDBException;
  *         useful to other plug-ins.
  *         <p>
  *         This class provides <code>Image</code> and
- *         <code>ImageDescriptor</code>s for each named image in the
- *         interface. All <code>Image</code> objects provided by this class
- *         are managed by this class and must never be disposed by other
- *         clients.
+ *         <code>ImageDescriptor</code>s for each named image in the interface.
+ *         All <code>Image</code> objects provided by this class are managed by
+ *         this class and must never be disposed by other clients.
  *         </p>
  *         <p>
  *         This class is not intended to be extended by clients.
@@ -57,7 +127,7 @@ public class EventBImage {
 	public static final String IMG_NEW_COMPONENT = "New Component";
 
 	public static final String IMG_DISCHARGED_SMILEY = "Discharged Smiley";
-	
+
 	public static final String IMG_PENDING_SMILEY = "Pending Smiley";
 
 	public static final String IMG_REVIEW_SMILEY = "Review Smiley";
@@ -97,76 +167,58 @@ public class EventBImage {
 	 *            The image registry
 	 */
 	public static void initializeImageRegistry(ImageRegistry registry) {
-		registerImage(registry, IEventBSharedImages.IMG_MACHINE, IEventBSharedImages.IMG_MACHINE_PATH);
-		registerImage(registry, IEventBSharedImages.IMG_CONTEXT, "icons/full/obj16/ctx_obj.gif");
-		registerImage(registry, IEventBSharedImages.IMG_VARIABLES, "icons/full/obj16/vars_obj.gif");
-		registerImage(registry, IEventBSharedImages.IMG_INVARIANTS, "icons/full/obj16/invs_obj.gif");
-		registerImage(registry, IEventBSharedImages.IMG_THEOREMS, "icons/full/obj16/thms_obj.gif");
-		registerImage(registry, IEventBSharedImages.IMG_EVENTS, "icons/full/obj16/evts_obj.gif");
-				
-		registerImage(registry, IEventBSharedImages.IMG_CARRIER_SETS,
+		registerImage(registry, IMG_MACHINE, IMG_MACHINE_PATH);
+		registerImage(registry, IMG_CONTEXT, "icons/full/obj16/ctx_obj.gif");
+		registerImage(registry, IMG_VARIABLES, "icons/full/obj16/vars_obj.gif");
+		registerImage(registry, IMG_INVARIANTS, "icons/full/obj16/invs_obj.gif");
+		registerImage(registry, IMG_THEOREMS, "icons/full/obj16/thms_obj.gif");
+		registerImage(registry, IMG_EVENTS, "icons/full/obj16/evts_obj.gif");
+
+		registerImage(registry, IMG_CARRIER_SETS,
 				"icons/full/obj16/sets_obj.gif");
-		registerImage(registry, IEventBSharedImages.IMG_CONSTANTS,
-				"icons/full/obj16/csts_obj.gif");
-		registerImage(registry, IEventBSharedImages.IMG_AXIOMS,
-				"icons/full/obj16/axms_obj.gif");
+		registerImage(registry, IMG_CONSTANTS, "icons/full/obj16/csts_obj.gif");
+		registerImage(registry, IMG_AXIOMS, "icons/full/obj16/axms_obj.gif");
 		registerImage(registry, IMG_NEW_PROJECT,
 				"icons/full/clcl16/newprj_wiz.gif");
 		registerImage(registry, IMG_NEW_COMPONENT,
 				"icons/full/clcl16/newcomp_wiz.gif");
 
-		registerImage(registry, IEventBSharedImages.IMG_PENDING,
-				IEventBSharedImages.IMG_PENDING_PATH);
-		registerImage(registry, IEventBSharedImages.IMG_PENDING_PALE,
-				IEventBSharedImages.IMG_PENDING_PALE_PATH);
-		registerImage(registry, IEventBSharedImages.IMG_PENDING_BROKEN,
-				IEventBSharedImages.IMG_PENDING_BROKEN_PATH);
-		registerImage(registry, IEventBSharedImages.IMG_APPLIED,
-				"icons/applied.gif");
-		registerImage(registry, IEventBSharedImages.IMG_DISCHARGED,
-				IEventBSharedImages.IMG_DISCHARGED_PATH);
-		registerImage(registry, IEventBSharedImages.IMG_DISCHARGED_PALE,
-				IEventBSharedImages.IMG_DISCHARGED_PALE_PATH);
-		registerImage(registry, IEventBSharedImages.IMG_DISCHARGED_BROKEN,
-				IEventBSharedImages.IMG_DISCHARGED_BROKEN_PATH);
-		registerImage(registry, IEventBSharedImages.IMG_REVIEWED,
-				IEventBSharedImages.IMG_REVIEWED_PATH);
-		registerImage(registry, IEventBSharedImages.IMG_REVIEWED_PALE,
-				IEventBSharedImages.IMG_REVIEWED_PALE_PATH);
-		registerImage(registry, IEventBSharedImages.IMG_REVIEWED_BROKEN,
-				IEventBSharedImages.IMG_REVIEWED_BROKEN_PATH);
-		registerImage(registry, IEventBSharedImages.IMG_DEFAULT,
-				"icons/sample.gif");
-		registerImage(registry, IEventBSharedImages.IMG_REFINES,
-				IEventBSharedImages.IMG_REFINES_PATH);
+		registerImage(registry, IMG_PENDING, IMG_PENDING_PATH);
+		registerImage(registry, IMG_PENDING_PALE, IMG_PENDING_PALE_PATH);
+		registerImage(registry, IMG_PENDING_BROKEN, IMG_PENDING_BROKEN_PATH);
+		registerImage(registry, IMG_APPLIED, "icons/applied.gif");
+		registerImage(registry, IMG_DISCHARGED, IMG_DISCHARGED_PATH);
+		registerImage(registry, IMG_DISCHARGED_PALE, IMG_DISCHARGED_PALE_PATH);
+		registerImage(registry, IMG_DISCHARGED_BROKEN,
+				IMG_DISCHARGED_BROKEN_PATH);
+		registerImage(registry, IMG_REVIEWED, IMG_REVIEWED_PATH);
+		registerImage(registry, IMG_REVIEWED_PALE, IMG_REVIEWED_PALE_PATH);
+		registerImage(registry, IMG_REVIEWED_BROKEN, IMG_REVIEWED_BROKEN_PATH);
+		registerImage(registry, IMG_DEFAULT, "icons/sample.gif");
+		registerImage(registry, IMG_REFINES, IMG_REFINES_PATH);
 
-		registerImage(registry, IEventBSharedImages.IMG_NULL,
-				IEventBSharedImages.IMG_NULL_PATH);
+		registerImage(registry, IMG_NULL, IMG_NULL_PATH);
 
-		registerImage(registry, IEventBSharedImages.IMG_ADD,
-				"icons/full/ctool16/add.gif");
-		registerImage(registry, IEventBSharedImages.IMG_REMOVE,
-				"icons/full/ctool16/remove.gif");
+		registerImage(registry, IMG_ADD, "icons/full/ctool16/add.gif");
+		registerImage(registry, IMG_REMOVE, "icons/full/ctool16/remove.gif");
 
-		registerImage(registry, IEventBSharedImages.IMG_COLLAPSED,
+		registerImage(registry, IMG_COLLAPSED,
 				"icons/full/elcl16/collapsed.gif");
-		registerImage(registry, IEventBSharedImages.IMG_COLLAPSED_HOVER,
+		registerImage(registry, IMG_COLLAPSED_HOVER,
 				"icons/full/elcl16/collapsedHover.gif");
-		registerImage(registry, IEventBSharedImages.IMG_EXPANDED,
-				"icons/full/elcl16/expanded.gif");
-		registerImage(registry, IEventBSharedImages.IMG_EXPANDED_HOVER,
+		registerImage(registry, IMG_EXPANDED, "icons/full/elcl16/expanded.gif");
+		registerImage(registry, IMG_EXPANDED_HOVER,
 				"icons/full/elcl16/expandedHover.gif");
-		registerImage(registry, IEventBSharedImages.IMG_EXPAND_ALL,
+		registerImage(registry, IMG_EXPAND_ALL,
 				"icons/full/elcl16/expandall.gif");
-		registerImage(registry, IEventBSharedImages.IMG_COLLAPSED,
+		registerImage(registry, IMG_COLLAPSED,
 				"icons/full/elcl16/collapsed.gif");
-		registerImage(registry, IEventBSharedImages.IMG_COLLAPSED_HOVER,
+		registerImage(registry, IMG_COLLAPSED_HOVER,
 				"icons/full/elcl16/collapsedHover.gif");
-		registerImage(registry, IEventBSharedImages.IMG_COLLAPSE_ALL,
+		registerImage(registry, IMG_COLLAPSE_ALL,
 				"icons/full/elcl16/collapseall.gif");
-		registerImage(registry, IEventBSharedImages.IMG_EXPANDED,
-				"icons/full/elcl16/expanded.gif");
-		registerImage(registry, IEventBSharedImages.IMG_EXPANDED_HOVER,
+		registerImage(registry, IMG_EXPANDED, "icons/full/elcl16/expanded.gif");
+		registerImage(registry, IMG_EXPANDED_HOVER,
 				"icons/full/elcl16/expandedHover.gif");
 
 		registerImage(registry, EventBImage.IMG_DISCHARGED_SMILEY,
@@ -175,41 +227,28 @@ public class EventBImage {
 				"icons/full/ctool16/sad.gif");
 		registerImage(registry, EventBImage.IMG_REVIEW_SMILEY,
 				"icons/full/ctool16/wink-blue.gif");
-		
-		registerImage(registry, IEventBSharedImages.IMG_INVERSE,
+
+		registerImage(registry, IMG_INVERSE,
 				"icons/full/ctool16/inv_prover.gif");
-		registerImage(registry, IEventBSharedImages.IMG_SELECT_ALL,
+		registerImage(registry, IMG_SELECT_ALL,
 				"icons/full/ctool16/select_all_prover.gif");
-		registerImage(registry, IEventBSharedImages.IMG_SELECT_NONE,
+		registerImage(registry, IMG_SELECT_NONE,
 				"icons/full/ctool16/select_none_prover.gif");
 
-		registerImage(registry, IEventBSharedImages.IMG_UP,
-				IEventBSharedImages.IMG_UP_PATH);
-		registerImage(registry, IEventBSharedImages.IMG_DOWN,
-				IEventBSharedImages.IMG_DOWN_PATH);
-		registerImage(registry, IEventBSharedImages.IMG_CARRIER_SET,
-				IEventBSharedImages.IMG_CARRIER_SET_PATH);
-		registerImage(registry, IEventBSharedImages.IMG_VARIABLE,
-				IEventBSharedImages.IMG_VARIABLE_PATH);
-		registerImage(registry, IEventBSharedImages.IMG_INVARIANT,
-				IEventBSharedImages.IMG_INVARIANT_PATH);
-		registerImage(registry, IEventBSharedImages.IMG_AXIOM,
-				IEventBSharedImages.IMG_AXIOM_PATH);
-		registerImage(registry, IEventBSharedImages.IMG_THEOREM,
-				IEventBSharedImages.IMG_THEOREM_PATH);
-		registerImage(registry, IEventBSharedImages.IMG_CONSTANT,
-				IEventBSharedImages.IMG_CONSTANT_PATH);
-		registerImage(registry, IEventBSharedImages.IMG_EVENT,
-				IEventBSharedImages.IMG_EVENT_PATH);
-		
-		registerImage(registry, IEventBSharedImages.IMG_GUARD,
-				IEventBSharedImages.IMG_GUARD_PATH);
-		registerImage(registry, IEventBSharedImages.IMG_PARAMETER,
-				IEventBSharedImages.IMG_PARAMETER_PATH);
-		registerImage(registry, IEventBSharedImages.IMG_ACTION,
-				IEventBSharedImages.IMG_ACTION_PATH);
-		registerImage(registry, IEventBSharedImages.IMG_SH_PROVER,
-				IEventBSharedImages.IMG_SH_PROVER_PATH);
+		registerImage(registry, IMG_UP, IMG_UP_PATH);
+		registerImage(registry, IMG_DOWN, IMG_DOWN_PATH);
+		registerImage(registry, IMG_CARRIER_SET, IMG_CARRIER_SET_PATH);
+		registerImage(registry, IMG_VARIABLE, IMG_VARIABLE_PATH);
+		registerImage(registry, IMG_INVARIANT, IMG_INVARIANT_PATH);
+		registerImage(registry, IMG_AXIOM, IMG_AXIOM_PATH);
+		registerImage(registry, IMG_THEOREM, IMG_THEOREM_PATH);
+		registerImage(registry, IMG_CONSTANT, IMG_CONSTANT_PATH);
+		registerImage(registry, IMG_EVENT, IMG_EVENT_PATH);
+
+		registerImage(registry, IMG_GUARD, IMG_GUARD_PATH);
+		registerImage(registry, IMG_PARAMETER, IMG_PARAMETER_PATH);
+		registerImage(registry, IMG_ACTION, IMG_ACTION_PATH);
+		registerImage(registry, IMG_SH_PROVER, IMG_SH_PROVER_PATH);
 
 	}
 
@@ -288,27 +327,26 @@ public class EventBImage {
 	 *            a proof tree node
 	 * @return the path of the base image corresponding to the input node
 	 */
-	private static final String getProofTreeNodeBaseImageKey(
-			IProofTreeNode node) {
+	private static final String getProofTreeNodeBaseImageKey(IProofTreeNode node) {
 
 		int confidence = node.getConfidence();
 
 		if (confidence == IConfidence.PENDING) {
 			if (node.hasChildren())
-				return IEventBSharedImages.IMG_PENDING_PALE;
-			return IEventBSharedImages.IMG_PENDING;
+				return IMG_PENDING_PALE;
+			return IMG_PENDING;
 		}
 		if (confidence <= IConfidence.REVIEWED_MAX) {
 			if (node.hasChildren())
-				return IEventBSharedImages.IMG_REVIEWED_PALE;
-			return IEventBSharedImages.IMG_REVIEWED;
+				return IMG_REVIEWED_PALE;
+			return IMG_REVIEWED;
 		}
 		if (confidence <= IConfidence.DISCHARGED_MAX) {
 			if (node.hasChildren())
-				return IEventBSharedImages.IMG_DISCHARGED_PALE;
-			return IEventBSharedImages.IMG_DISCHARGED;
+				return IMG_DISCHARGED_PALE;
+			return IMG_DISCHARGED;
 		}
-		return IEventBSharedImages.IMG_NULL;
+		return IMG_NULL;
 	}
 
 	/**
@@ -338,7 +376,7 @@ public class EventBImage {
 	public static Image getPRSequentImage(IPSStatus status) {
 
 		final int confidence;
-		
+
 		try {
 			confidence = status.getConfidence();
 		} catch (RodinDBException e) {
@@ -355,7 +393,7 @@ public class EventBImage {
 		final String baseKey;
 		boolean isAttempted = confidence > IConfidence.UNATTEMPTED;
 		if (!isAttempted)
-			baseKey = IEventBSharedImages.IMG_PENDING_PALE;
+			baseKey = IMG_PENDING_PALE;
 		else {
 			boolean isProofBroken = false;
 			try {
@@ -374,15 +412,16 @@ public class EventBImage {
 				if (confidence == IConfidence.PENDING) {
 					// Do nothing
 				}
-				baseKey = IEventBSharedImages.IMG_PENDING;
+				baseKey = IMG_PENDING;
 			} else {
 				if (confidence == IConfidence.PENDING)
-					baseKey = IEventBSharedImages.IMG_PENDING;
+					baseKey = IMG_PENDING;
 				else if (confidence <= IConfidence.REVIEWED_MAX)
-					baseKey = IEventBSharedImages.IMG_REVIEWED;
+					baseKey = IMG_REVIEWED;
 				else if (confidence <= IConfidence.DISCHARGED_MAX)
-					baseKey = IEventBSharedImages.IMG_DISCHARGED;
-				else // cannot happen
+					baseKey = IMG_DISCHARGED;
+				else
+					// cannot happen
 					throw new IllegalStateException(
 							"invalid proof confidence: " + confidence);
 			}
@@ -390,11 +429,11 @@ public class EventBImage {
 
 		// key for image descriptor as OverlayIcon
 		final String key = "prsequent:" + baseKey;
-		
+
 		return getOverlayImage(key, baseKey);
 	}
 
-	// returns an image as OverlayIcon, registering it if needed 
+	// returns an image as OverlayIcon, registering it if needed
 	// an image must already be registered under baseKey
 	private static Image getOverlayImage(String key, String baseKey) {
 		final ImageRegistry registry = EventBUIPlugin.getDefault()
