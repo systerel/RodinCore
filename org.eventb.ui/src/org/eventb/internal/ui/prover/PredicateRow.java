@@ -144,7 +144,7 @@ public class PredicateRow {
 		if (!isGoal) {
 			checkBoxHolder = new ControlHolder(this, checkBoxMaker,
 					checkBoxOffset, false, bgColor);
-			checkBoxHolder.addSelectionListener(checkboxListener);
+			checkBoxHolder.addListener(checkboxListener);
 		}
 		final int menuOffset = checkBoxOffset + 1;
 		predAppliHolder = new ControlHolder(this, appliMaker, menuOffset,
@@ -208,6 +208,22 @@ public class PredicateRow {
 		final Set<Predicate> hypSet = Collections.singleton(getPredicate());
 		ProverUIUtils.applyTactic(tacticAppli.getTactic(inputs, globalInput),
 				us, hypSet, skipPostTactic, new NullProgressMonitor());
+	}
+
+	/**
+	 * Instantiates the given predicate with the current value of the inputs.
+	 * This method applies <code>allE</code> on an hypothesis, and
+	 * <code>exI</code> on a goal.
+	 */
+	protected void instantiate() {
+		final IUserSupport us = getUserSupport();
+		final String[] inputs = getPredicateText().getResults();
+		final String globalInput = getProverUI().getProofControl().getInput();
+		if (isGoal) {
+			ProverUIUtils.applyInstantiation(null, us, inputs, globalInput);
+			return;
+		}
+		ProverUIUtils.applyInstantiation(pred, us, inputs, globalInput);
 	}
 
 	/**

@@ -12,6 +12,8 @@ package org.eventb.internal.ui.prover;
 
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -40,8 +42,28 @@ public class YellowBoxMaker extends ControlMaker {
 		final Text text = new Text(getParent(), SWT.SINGLE);
 		text.setText("     ");
 		text.setBackground(YELLOW);
+		holder.addListener(new YellowBoxKeyListener(text, holder));
 		ContentProposalFactory.makeContentProposal(provider, text);
 		return text;
+	}
+
+	private static class YellowBoxKeyListener extends KeyAdapter {
+
+		private final ControlHolder holder;
+		private final Text owner;
+
+		public YellowBoxKeyListener(Text owner, ControlHolder holder) {
+			this.holder = holder;
+			this.owner = owner;
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+			if (e.character == SWT.CR && owner.isFocusControl()) {
+				final PredicateRow row = holder.getRow();
+				row.instantiate();
+			}
+		}
 	}
 
 }

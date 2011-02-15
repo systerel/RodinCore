@@ -12,8 +12,8 @@ package org.eventb.internal.ui.prover;
 
 import static org.eventb.internal.ui.prover.ProverUIUtils.getIcon;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getTooltip;
+import static org.eventb.internal.ui.prover.ProverUIUtils.retainPredicateApplications;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -146,29 +146,6 @@ public class PredAppliCommandMaker extends ControlMaker {
 			addMenuItem(menu, commandAppli.getIcon(),
 					commandAppli.getTooltip(), row.isEnabled(), hlListener);
 		}
-	}
-
-	/**
-	 * Utility method to keep only the predicate applications calculated for the
-	 * predicate of the given row
-	 */
-	private static List<IPredicateApplication> retainPredicateApplications(
-			TacticUIRegistry tacticUIRegistry, PredicateRow row) {
-		final List<IPredicateApplication> predApplis = new ArrayList<IPredicateApplication>();
-		final List<ITacticApplication> tactics;
-		final IUserSupport us = row.getUserSupport();
-		if (row.isGoal()) {
-			tactics = tacticUIRegistry.getTacticApplicationsToGoal(us);
-		} else {
-			tactics = tacticUIRegistry.getTacticApplicationsToHypothesis(us,
-					row.getPredicate());
-		}
-		for (ITacticApplication tactic : tactics) {
-			if (tactic instanceof IPredicateApplication) {
-				predApplis.add((IPredicateApplication) tactic);
-			}
-		}
-		return predApplis;
 	}
 
 	private static void addMenuItem(Menu menu, Image icon, String tooltip,

@@ -18,12 +18,15 @@ import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.SafeRunnable;
@@ -58,6 +61,8 @@ import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.prover.tactics.ExistsInstantiationGoal.ExistsInstantiationGoalApplication;
+import org.eventb.internal.ui.prover.tactics.ForallInstantiationHyp.ForallInstantiationHypApplication;
 import org.eventb.ui.prover.IPositionApplication;
 import org.eventb.ui.prover.IPredicateApplication;
 import org.eventb.ui.prover.IProofCommand;
@@ -251,6 +256,53 @@ public class ProverUIUtils {
 		}
 	}
 
+	/**
+	 * Applies the instantiation tactic on the hypothesis or the goal if
+	 * hypothesis is <code>null</code>.
+	 * 
+	 * @param hypothesis
+	 *            the hypothesis to instantiate or <code>null</code> if the goal
+	 *            is to be taken into consideration
+	 * @param us
+	 *            the current user support
+	 * @param inputs
+	 *            the user inputs
+	 * @param globalInput
+	 *            the global input
+	 */
+	public static void applyInstantiation(Predicate hypothesis,
+			IUserSupport us, String[] inputs, String globalInput) {
+		final TacticUIRegistry registry = TacticUIRegistry.getDefault();
+		final List<ITacticApplication> applis;
+		final Set<Predicate> hypset;
+		if (hypothesis == null) {
+			applis = registry.getTacticApplicationsToGoal(us);
+			hypset = null;
+		} else {
+			applis = registry.getTacticApplicationsToHypothesis(us, hypothesis);
+			hypset = Collections.singleton(hypothesis);
+		}
+		final Set<String> iTacticIDs = getInstantiationTacticIDs();
+		for (ITacticApplication app : applis) {
+			if (iTacticIDs.contains(app.getTacticID())) {
+				applyTactic(app.getTactic(inputs, globalInput), us, hypset,
+						false, new NullProgressMonitor());
+				return;
+			}
+		}
+	}
+
+	/**
+	 * Returns the IDs of the instantiation tactics.
+	 * 
+	 * @return the IDs of the instantiation tactics.
+	 */
+	private static Set<String> getInstantiationTacticIDs() {
+		final Set<String> tacticIDs = new HashSet<String>();
+		tacticIDs.add(new ForallInstantiationHypApplication(null).getTacticID());
+		tacticIDs.add(new ExistsInstantiationGoalApplication().getTacticID());
+		return tacticIDs;
+	}
 	
 	/**
 	 * Converts an array of tactic IDs to an array of tactic descriptor
@@ -607,6 +659,29 @@ public class ProverUIUtils {
 		for (int i = 0; i < nbTabs; i++) {
 			sb.append(str);
 		}
+	}
+
+	/**
+	 * Utility method to keep only the predicate applications calculated for the
+	 * predicate of the given row
+	 */
+	public static List<IPredicateApplication> retainPredicateApplications(
+			TacticUIRegistry tacticUIRegistry, PredicateRow row) {
+		final List<IPredicateApplication> predApplis = new ArrayList<IPredicateApplication>();
+		final List<ITacticApplication> tactics;
+		final IUserSupport us = row.getUserSupport();
+		if (row.isGoal()) {
+			tactics = tacticUIRegistry.getTacticApplicationsToGoal(us);
+		} else {
+			tactics = tacticUIRegistry.getTacticApplicationsToHypothesis(us,
+					row.getPredicate());
+		}
+		for (ITacticApplication tactic : tactics) {
+			if (tactic instanceof IPredicateApplication) {
+				predApplis.add((IPredicateApplication) tactic);
+			}
+		}
+		return predApplis;
 	}
 	
 

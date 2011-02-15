@@ -10,10 +10,17 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
+import java.util.EventListener;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.PaintObjectEvent;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GlyphMetrics;
@@ -41,7 +48,7 @@ public class ControlHolder {
 	protected final boolean drawBoxAround;
 	private final PredicateRow row;
 
-	private SelectionListener listener;
+	private Set<EventListener> listeners;
 	private Color bgColor;
 	protected Control control;
 
@@ -53,6 +60,7 @@ public class ControlHolder {
 		this.offset = offset;
 		this.drawBoxAround = drawBoxAround;
 		this.text = (StyledText) maker.getParent();
+		this.listeners = new HashSet<EventListener>();
 	}
 
 	public ControlHolder(PredicateRow row, ControlMaker maker, int offset,
@@ -64,19 +72,6 @@ public class ControlHolder {
 	public void attach(boolean lazy) {
 		setStyleRange(lazy);
 		row.getControlPainter().registerControlHolder(this);
-	}
-
-	public void addSelectionListener(SelectionListener alistener) {
-		listener = alistener;
-	}
-
-	public void remove() {
-		if (control != null && !control.isDisposed()) {
-			if (listener != null && control instanceof Button) {
-				((Button) control).removeSelectionListener(listener);
-			}
-			control.dispose();
-		}
 	}
 
 	protected void setStyleRange(boolean lazy) {
@@ -95,14 +90,6 @@ public class ControlHolder {
 		style.metrics = new GlyphMetrics(ascent + MARGIN, descent + MARGIN,
 				rect.width + 2 * MARGIN);
 		text.setStyleRange(style);
-	}
-
-	public void setControl(Control c) {
-		this.control = c;
-		setBackgroundColor();
-		if (listener != null && c instanceof Button) {
-			((Button) c).addSelectionListener(listener);
-		}
 	}
 
 	protected void paintAndPlace(PaintObjectEvent event) {
@@ -126,12 +113,63 @@ public class ControlHolder {
 		control.setEnabled(row.isEnabled());
 		control.setBounds(x, y, cBounds.width, cBounds.height);
 	}
-	
+
 	private static boolean isWindows(){
 		final String os = System.getProperty("os.name");
 		return os.toLowerCase().contains("win");
 	}
-	
+
+	public void setControl(Control c) {
+		this.control = c;
+		setBackgroundColor();
+		for (EventListener lr : listeners){
+			addListenerToControl(c, lr);
+		}
+	}
+
+	public void addListener(EventListener alistener) {
+		listeners.add(alistener);
+	}
+
+	public void remove() {
+		if (control != null && !control.isDisposed()) {
+			for(EventListener lr : listeners){
+				removeListenersFromControl(control, lr);
+			}
+			control.dispose();
+		}
+	}
+
+	private static void addListenerToControl(Control c, EventListener listener) {
+		if (c instanceof Button && listener instanceof SelectionListener) {
+			((Button) c).addSelectionListener((SelectionListener) listener);
+		}
+		if (listener instanceof MouseListener) {
+			c.addMouseListener((MouseListener) listener);
+		}
+		if (listener instanceof KeyListener) {
+			c.addKeyListener((KeyListener) listener);
+		}
+		if (listener instanceof FocusListener) {
+			c.addFocusListener((FocusListener) listener);
+		}
+	}
+
+	private static void removeListenersFromControl(Control c, EventListener listener) {
+		if (c instanceof Button && listener instanceof SelectionListener) {
+			((Button) c).removeSelectionListener((SelectionListener) listener);
+		}
+		if (listener instanceof MouseListener) {
+			c.removeMouseListener((MouseListener) listener);
+		}
+		if (listener instanceof KeyListener) {
+			c.removeKeyListener((KeyListener) listener);
+		}
+		if (listener instanceof FocusListener) {
+			c.removeFocusListener((FocusListener) listener);
+		}
+	}
+
 	public void render() {
 		if (control == null) {
 			control = maker.getControl(this);
