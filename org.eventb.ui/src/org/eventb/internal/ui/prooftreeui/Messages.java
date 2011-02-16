@@ -17,7 +17,6 @@ import java.text.MessageFormat;
 
 public class Messages {
 	private static final String BUNDLE_NAME = "org.eventb.internal.ui.prooftreeui.messages"; //$NON-NLS-1$
-	public static String EditProofTreeNodeComment_message;
 	public static String EditProofTreeNodeComment_title;
 	public static String RuleDetailsProvider_addedfreeidentifiers_title;
 	public static String RuleDetailsProvider_antecedent_title;

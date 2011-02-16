@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.internal.ui.MultiLineInputDialog;
 import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.RodinDBException;
 
@@ -44,9 +45,9 @@ public class EditProofTreeNodeComment extends AbstractProofTreeAction {
 		final IProofTreeNode node = (IProofTreeNode) ssel.getFirstElement();
 		final String currentComment = node
 				.getComment();
-		final InputDialog dialog = new InputDialog(shell,
+		final InputDialog dialog = new MultiLineInputDialog(shell,
 				Messages.EditProofTreeNodeComment_title,
-				Messages.EditProofTreeNodeComment_message,
+				null,
 				currentComment,
 				null);
 		final int result = dialog.open();
