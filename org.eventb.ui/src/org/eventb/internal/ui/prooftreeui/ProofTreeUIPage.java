@@ -10,8 +10,11 @@
  *     Systerel - Added a constant for the user support manager
  *     ETH Zurich - adapted to org.rodinp.keyboard
  *     Systerel - used eclipse decorator mechanism
+ *     Systerel - added comment tooltip support
  ******************************************************************************/
 package org.eventb.internal.ui.prooftreeui;
+
+import static org.eventb.internal.ui.prooftreeui.ProofTreeUIUtils.setupCommentTooltip;
 
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -91,7 +94,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	private Object fInput;
 
 	// The associated user support.
-	IUserSupport userSupport;
+	final IUserSupport userSupport;
 
 	// Group of action that is used.
 	ProofTreeUIActionGroup groupActionSet;
@@ -105,10 +108,13 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	 *         <p>
 	 *         This class provides the labels for elements in the tree viewer.
 	 */
-	private class ProofTreeLabelProvider extends LabelProvider implements
+	private static class ProofTreeLabelProvider extends LabelProvider implements
 			IFontProvider, IPropertyChangeListener {
 
-		public ProofTreeLabelProvider() {
+		private final TreeViewer viewer;
+
+		public ProofTreeLabelProvider(TreeViewer viewer) {
+			this.viewer = viewer;
 			JFaceResources.getFontRegistry().addListener(this);
 		}
 
@@ -196,22 +202,20 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 		viewer.setContentProvider(new ProofTreeUIContentProvider(this));
 		final ILabelDecorator decorator = PlatformUI.getWorkbench()
 				.getDecoratorManager().getLabelDecorator();
-		viewer.setLabelProvider(new DecoratingLabelProvider(
-				new ProofTreeLabelProvider(), decorator));
+		final DecoratingLabelProvider labelProvider = new DecoratingLabelProvider(
+				new ProofTreeLabelProvider(viewer), decorator);
+		viewer.setLabelProvider(labelProvider);
 		viewer.addSelectionChangedListener(this);
-		Tree tree = viewer.getTree();
+		final Tree tree = viewer.getTree();
 		tree.setHeaderVisible(false);
-		GridData gd = new GridData(GridData.FILL_BOTH);
+		final GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 1;
 		tree.setLayoutData(gd);
-
-//		ProofTreeUIToolTip handler = new ProofTreeUIToolTip(viewer.getControl()
-//				.getShell(), userSupport);
-//		handler.activateHoverHelp(viewer.getControl());
+		
+		setupCommentTooltip(viewer);
 
 		makeActions();
 		hookContextMenu();
-//		hookDoubleClickAction();
 		contributeToActionBars();
 
 		if (fInput != null)
