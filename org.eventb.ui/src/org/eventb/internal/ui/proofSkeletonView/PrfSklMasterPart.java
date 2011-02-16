@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.proofSkeletonView;
 
+import static org.eventb.internal.ui.prooftreeui.ProofTreeUIUtils.setupCommentTooltip;
+
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
@@ -36,7 +38,7 @@ public class PrfSklMasterPart implements IFormPart {
 	private static final Font EVENTB_FONT = JFaceResources
 			.getFont(PreferenceConstants.RODIN_MATH_FONT);
 
-	private TreeViewer viewer;
+	private final TreeViewer viewer;
 	private IManagedForm managedForm;
 
 	// listener to the tree selection
@@ -69,6 +71,7 @@ public class PrfSklMasterPart implements IFormPart {
 		viewer.setLabelProvider(new DecoratingLabelProvider(
 				new PrfSklLabelProvider(), decorator));
 		viewer.addSelectionChangedListener(treeListener);
+		setupCommentTooltip(viewer);
 	}
 
 	@Override
