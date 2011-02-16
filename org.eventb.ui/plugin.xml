@@ -486,6 +486,15 @@
                label="%popupMenu.copy.label"
                menubarPath="additions"
                tooltip="%popupMenu.copy.tooltip"/>
+         <action
+               class="org.eventb.internal.ui.prooftreeui.EditProofTreeNodeComment"
+               enablesFor="1"
+               icon="icons/full/ovr16/cmt_ovr.gif"
+               id="org.eventb.ui.editComment"
+               label="%popupMenu.editComment.label"
+               menubarPath="additions"
+               tooltip="%popupMenu.editComment.tooltip">
+         </action>
       </objectContribution>
       <objectContribution
             adaptable="true"

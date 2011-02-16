@@ -760,8 +760,10 @@ public class ProofState implements IProofState {
 	}
 
 	@Override
-	public void setComment(final String text, final IProofTreeNode node)
-			throws RodinDBException {
+	public void setComment(final String text, final IProofTreeNode node) {
+		// set dirty BEFORE setting comment, for delta listeners
+		// to get the correct dirty state
+		setDirty(true);
 		node.setComment(text);
 	}
 
