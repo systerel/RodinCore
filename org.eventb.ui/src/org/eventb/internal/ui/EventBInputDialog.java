@@ -12,6 +12,7 @@ package org.eventb.internal.ui;
 
 import static org.eventb.internal.ui.autocompletion.ContentProposalFactory.makeContentProposal;
 
+import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -29,8 +30,8 @@ public class EventBInputDialog extends InputDialog {
 	private final IUserSupport us;
 
 	public EventBInputDialog(Shell parentShell, String title, String message,
-			String initialValue, IUserSupport us) {
-		super(parentShell, title, message, initialValue, null);
+			String initialValue, IInputValidator validator, IUserSupport us) {
+		super(parentShell, title, message, initialValue, validator);
 		this.us = us;
 	}
 
