@@ -13,22 +13,24 @@ package org.eventb.internal.ui;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eventb.core.pm.IUserSupport;
 
 /**
  * @author Nicolas Beauger
  * 
  */
-public class MultiLineInputDialog extends InputDialog {
+public class MultiLineInputDialog extends EventBInputDialog {
+
 	public MultiLineInputDialog(Shell parentShell, String title,
-			String message, String initialValue, IInputValidator validator) {
-		super(parentShell, title, message, initialValue, validator);
+			String message, String initialValue, IInputValidator validator,
+			IUserSupport userSupport) {
+		super(parentShell, title, message, initialValue, validator, userSupport);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 

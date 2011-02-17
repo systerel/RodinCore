@@ -49,7 +49,8 @@ public class EditProofTreeNodeComment extends AbstractProofTreeAction {
 				Messages.EditProofTreeNodeComment_title,
 				null,
 				currentComment,
-				null);
+				null,
+				userSupport);
 		final int result = dialog.open();
 		if (result == Window.CANCEL)
 			return;
