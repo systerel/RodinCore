@@ -48,14 +48,11 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.reasonerInputs.MultiplePredInput;
 import org.eventb.core.seqprover.reasoners.Hyp;
 import org.eventb.core.seqprover.tactics.BasicTactics;
-import org.eventb.internal.core.seqprover.eventbExtensions.AllI;
 import org.eventb.internal.core.seqprover.eventbExtensions.AutoImpF;
-import org.eventb.internal.core.seqprover.eventbExtensions.Conj;
 import org.eventb.internal.core.seqprover.eventbExtensions.ContrHyps;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteHypBoundedGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.HypOr;
-import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
 import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.NegEnum;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
@@ -500,7 +497,7 @@ public class AutoTactics {
 
 		@Override
 		protected ITactic getSingInstance() {
-			return BasicTactics.reasonerTac(new ImpI(), EMPTY_INPUT);
+			return Tactics.impI();
 		}
 	}
 	
@@ -515,7 +512,7 @@ public class AutoTactics {
 
 		@Override
 		protected ITactic getSingInstance() {
-			return BasicTactics.reasonerTac(new AllI(), EMPTY_INPUT);
+			return Tactics.allI();
 		}
 	}
 	
@@ -1055,7 +1052,7 @@ public class AutoTactics {
 
 		@Override
 		protected ITactic getSingInstance() {
-			return BasicTactics.reasonerTac(new Conj(), new Conj.Input(null));
+			return Tactics.conjI();
 		}
 	}
 
