@@ -14,7 +14,8 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.ui.EventBUIPlugin;
 
@@ -28,11 +29,13 @@ public class RestoreStyles extends AbstractHandler implements IHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final IWorkbenchPart part = EventBUIPlugin.getActivePage()
-				.getActivePart();
-		if (part instanceof ProverUI) {
-			final ProverUI pu = ((ProverUI) part);
-			pu.getHighlighter().removeHightlight();
+		final IWorkbenchPage page = EventBUIPlugin.getActivePage();
+		if (page != null) {
+			final IEditorPart activeEditor = page.getActiveEditor();
+			if (activeEditor instanceof ProverUI) {
+				final ProverUI pu = ((ProverUI) activeEditor);
+				pu.getHighlighter().removeHightlight();
+			}
 		}
 		return null;
 	}
