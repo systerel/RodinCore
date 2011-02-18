@@ -28,7 +28,8 @@ import org.eventb.internal.ui.EventBSharedColor;
  * 
  * @author "Thomas Muller"
  */
-public class CharacterPairHighlighter implements MouseListener, KeyListener, FocusListener {
+public class CharacterPairHighlighter implements MouseListener, KeyListener,
+		FocusListener {
 
 	private static final Color GRAY = EventBSharedColor
 			.getSystemColor(SWT.COLOR_GRAY);
@@ -83,9 +84,7 @@ public class CharacterPairHighlighter implements MouseListener, KeyListener, Foc
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		if (e.character == SWT.ESC) {
-			removeRange(range, backupRange, text);
-		}
+		// Nothing to do
 	}
 
 	@Override

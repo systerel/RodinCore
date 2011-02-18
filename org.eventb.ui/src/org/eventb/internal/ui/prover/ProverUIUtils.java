@@ -31,10 +31,15 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CaretEvent;
+import org.eclipse.swt.custom.CaretListener;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -684,5 +689,31 @@ public class ProverUIUtils {
 		return predApplis;
 	}
 	
+	public static CaretListener getCaretListener(
+			final ScrolledComposite scrolledComp, final int padding) {
+		return new CaretListener() {
+
+			@Override
+			public void caretMoved(CaretEvent e) {
+				final StyledText lText = (StyledText) e.widget;
+				final int caretOffset = lText.getCaretOffset();
+				final Point caretPos = lText.getLocationAtOffset(caretOffset);
+				final Rectangle area = scrolledComp.getClientArea();
+				final Point origin = scrolledComp.getOrigin();
+				if (caretPos.x > origin.x + area.width - padding)
+					origin.x = Math.max(origin.x, caretPos.x - area.width
+							+ padding);
+				if (caretPos.x < origin.x)
+					origin.x = caretPos.x;
+				if (caretPos.y > origin.y + area.height - padding)
+					origin.y = Math.max(origin.y, caretPos.y + padding
+							- area.height);
+				if (caretPos.y < origin.y)
+					origin.y = caretPos.y;
+				scrolledComp.setOrigin(origin);
+			}
+		};
+
+	}
 
 }

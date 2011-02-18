@@ -11,141 +11,332 @@
 package org.eventb.internal.ui.prover;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eventb.internal.ui.EventBSharedColor;
 
 /**
- * Class able to display occurences of a substring in hypotheses.
+ * Class able to display occurences of a substring in proverUI views.
  * 
  * @author "Thomas Muller"
  */
-public class SearchHighlighter implements FocusListener, KeyListener,
-		MouseListener {
+public class SearchHighlighter {
 
-	private static final Color GREEN = EventBSharedColor.getSystemColor(SWT.COLOR_GREEN);
-	private final StyledText text;
-	private StyleRange[] originalRanges;
-	
-	private SearchHighlighter(StyledText text) {
-		this.text = text;
+	protected static final Color BGCOLOR = EventBSharedColor.getColor(new RGB(85,
+			255, 185));
+
+	private static class HighlightData {
+
+		private final StyledText text;
+		private final HighlightListener hListener;
+		private final SearchHighlighter highlighter;
+		private StyleRange[] originalRanges;
+		private List<Integer> matchingOffsets;
+		private int currentMatching = -1;
+
+		public HighlightData(StyledText text, SearchHighlighter highlighter) {
+			this.text = text;
+			this.hListener = new HighlightListener(this);
+			this.highlighter = highlighter;
+			this.matchingOffsets = new ArrayList<Integer>();
+		}
+		
+		public void addHiglightListener() {
+			if (text == null || text.isDisposed())
+				return;
+			text.addMouseListener(hListener);
+			text.addKeyListener(hListener);
+		}
+
+		public void removeHighlightListener() {
+			if (text == null || text.isDisposed())
+				return;
+			text.removeMouseListener(hListener);
+			text.addKeyListener(hListener);
+		}
+		
+		protected void rememberRanges() {
+			if (originalRanges == null && text != null && !text.isDisposed())
+				originalRanges = text.getStyleRanges();
+		}
+		
+		protected void updateSelection() {
+			if (text != null && !text.isDisposed())
+				highlighter.setToSearch(text.getSelectionText());
+		}
+
+		protected void restoreOriginalRanges() {
+			if (validRanges() && text != null && !text.isDisposed())
+				text.setStyleRanges(originalRanges);
+		}
+		
+		protected void refreshHighlight() {
+			highlighter.refreshHighlight();
+		}
+		
+		protected boolean isSelection() {
+			return text.getSelectionCount() > 0;
+		}
+		
+		private boolean validRanges() {
+			return originalRanges != null && originalRanges.length > 0;
+		}
+		
+		public void highlightMatchings(String toSearch, Color bgColor) {
+			matchingOffsets = getSearchMatchingOffsets(toSearch);
+			for (int m : matchingOffsets) {
+				final int length = toSearch.length();
+				final StyleRange[] styleRanges = text.getStyleRanges(m, length, true);
+				if (styleRanges.length == 0) {
+					text.setStyleRange(new StyleRange(m, length, null, bgColor));
+				} else {
+					for (StyleRange r : styleRanges) {
+						r.background = bgColor;
+						text.setStyleRange(r);
+					}					
+				}
+			}
+		}
+		
+		private void revealMatching(int matchingOffset) {
+			text.setCaretOffset(matchingOffset);
+		}
+		
+		public void revealNextMatching() {
+			if (!matchingOffsets.contains(currentMatching)) {
+				final int caretOffset = text.getCaretOffset();
+				currentMatching = searchNextMatching(caretOffset);
+			} else {
+				final int index = matchingOffsets.indexOf(currentMatching);
+				if (index < 0 || index > matchingOffsets.size())
+					return;
+				currentMatching = matchingOffsets.listIterator(index).next();
+			}
+			if (currentMatching != -1) {
+				revealMatching(currentMatching);
+				currentMatching++;
+			}
+		}
+
+		public void revealPreviousMatching() {
+			if (!matchingOffsets.contains(currentMatching)) {
+				final int caretOffset = text.getCaretOffset();
+				currentMatching = searchPreviousMatching(caretOffset);
+			} else {
+				final int index = matchingOffsets.indexOf(currentMatching);
+				if (index < 0 || index >= matchingOffsets.size())
+					return;
+				if (index == 0)
+					currentMatching = matchingOffsets.get(index);
+				else
+					currentMatching = matchingOffsets.listIterator(index)
+							.previous();
+			}
+			if (currentMatching != -1) {
+				revealMatching(currentMatching);
+			}
+		}
+
+		private int searchNextMatching(int caretOffset) {
+			for (int i : matchingOffsets) {
+				if (i > caretOffset) {
+					return i;
+				}
+			}
+			return -1;
+		}
+		
+		private int searchPreviousMatching(int caretOffset) {
+			for (int i = matchingOffsets.size()-1; i > 0; i--){
+				final Integer loc = matchingOffsets.get(i);
+				if (loc < caretOffset){
+					return loc;
+				}
+			}
+			return -1;
+		}
+
+		public List<Integer> getSearchMatchingOffsets(String toLight) {
+			if (text.isDisposed())
+				return Collections.emptyList();
+			final String contents = text.getText();
+			final List<Integer> collected = new ArrayList<Integer>();
+			collectMatchingOffsets(collected, 0, toLight, contents);
+			return collected;
+		}
+
+		private void collectMatchingOffsets(List<Integer> collected, int begin,
+				String searched, String contents) {
+			final int index = contents.indexOf(searched, begin);
+			if (index == -1) {
+				return;
+			}
+			collected.add(index);
+			if (index + 1 < contents.length()) {
+				collectMatchingOffsets(collected, index + 1, searched, contents);
+			}
+		}
+
+		public StyledText getText() {
+			return text;
+		}
+
+	}
+
+	private static class HighlightListener implements MouseListener,
+			KeyListener {
+
+		private final HighlightData data;
+
+		public HighlightListener(HighlightData data) {
+			this.data = data;
+		}
+
+		@Override
+		public void mouseDoubleClick(MouseEvent e) {
+			// Nothing to do
+		}
+
+		@Override
+		public void mouseDown(MouseEvent e) {
+			// Nothing to do
+		}
+
+		@Override
+		public void mouseUp(MouseEvent e) {
+			data.updateSelection();
+			if (data.isSelection()){
+				data.refreshHighlight();				
+			}
+		}
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+			// Nothing to do
+			
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+			data.updateSelection();
+			if (data.isSelection()){
+				data.refreshHighlight();				
+			}
+		}
+
+	}
+
+	private static SearchHighlighter INSTANCE;
+
+	private Set<HighlightData> toHighlight;
+
+	private String toSearch;
+
+	private SearchHighlighter() {
+		// private constructor : SINGLETON
+		toHighlight = new LinkedHashSet<HighlightData>();
+		setToSearch("");
+	}
+
+	public static SearchHighlighter newHighlighter() {
+		if (INSTANCE == null)
+			INSTANCE = new SearchHighlighter();
+		return INSTANCE;
+	}
+
+	public void highlight(StyledText text) {
+		final HighlightData data = new HighlightData(text, this);
+		data.addHiglightListener();
+		toHighlight.add(data);
 	}
 	
-	public static SearchHighlighter hightlight(StyledText text) {
-		final SearchHighlighter sh = new SearchHighlighter(text);
-		text.addFocusListener(sh);
-		text.addKeyListener(sh);
-		text.addMouseListener(sh);
-		return sh;
-	}
-	
-	public void remove() {
-		if (text != null && !text.isDisposed()) {
-			text.removeKeyListener(this);
-			text.removeMouseListener(this);
-			text.removeFocusListener(this);
+	public void removeHighlight(StyledText text) {
+		HighlightData toRemove = null;
+		for (HighlightData data : toHighlight) {
+			if (data.getText() == text) {
+				toRemove = data;
+				break;
+			}
+		}
+		if (toRemove != null) {
+			toRemove.removeHighlightListener();
+			toHighlight.remove(toRemove);
 		}
 	}
+
+	public void highlightPattern(String pattern) {
+		removeHightlight();
+		setToSearch(pattern);
+		refreshHighlight();
+	}
 	
-	@Override
-	public void mouseDoubleClick(MouseEvent e) {
-		// Nothing to do 
+	public void setToSearch(String toSearchStr) {
+		toSearch = toSearchStr;
+	}
+	
+	public String getToSearch() {
+		return toSearch;
 	}
 
-	@Override
-	public void mouseDown(MouseEvent e) {
-		rememberOriginalRanges();
-	}
-
-	@Override
-	public void mouseUp(MouseEvent e) {
-		if (text.getSelectionCount() > 0)
-			restoreOriginalRanges();
-		displayMatchings();
-	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		rememberOriginalRanges();
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		if (e.character == SWT.ESC) {
-			restoreOriginalRanges();
-			originalRanges = null;
+	public void refreshHighlight() {
+		for (HighlightData d : toHighlight) {
+			d.rememberRanges();
+			d.restoreOriginalRanges();
+		}
+		if (toSearch.isEmpty())
 			return;
+		for (HighlightData d : toHighlight) {
+			d.highlightMatchings(toSearch, BGCOLOR);
 		}
-		if (text.getSelectionCount() > 0) {
-			restoreOriginalRanges();
+	}
+
+	public void removeHightlight() {
+		setToSearch("");
+		for (HighlightData d : toHighlight) {
+			d.rememberRanges();
+			d.restoreOriginalRanges();
+			removeSelection(d);
 		}
-		displayMatchings();
 	}
 
-	@Override
-	public void focusLost(FocusEvent e) {
-		restoreOriginalRanges();
-		originalRanges = null;
-	}
-
-	@Override
-	public void focusGained(FocusEvent e) {
-		rememberOriginalRanges();
-	}
-
-	private void rememberOriginalRanges() {
-		if (originalRanges == null) {
-			originalRanges = text.getStyleRanges(); 			
+	private void removeSelection(HighlightData d) {
+		final StyledText text = d.getText();
+		if (text == null || text.isDisposed())
+			return;
+		if (text.isFocusControl()) {
+			final int caretOffset = text.getCaretOffset();
+			text.setSelection(caretOffset);
 		}
 	}
 	
-	private void restoreOriginalRanges() {
-		if (originalRanges == null)
-			return;
-		text.setStyleRanges(originalRanges);
-	}
-
-	private void displayMatchings() {
-		final String selection = text.getSelectionText();
-		if (selection.isEmpty())
-			return;
-		final List<Integer> matchingOffsets = getSearchMatchingOffsets(selection);
-		final Point curSel = text.getSelection();
-		for (int m : matchingOffsets) {
-			if (curSel.x == m)
-				continue;
-			final StyleRange toSet = new StyleRange(m, selection.length(), null, GREEN); 
-			text.setStyleRange(toSet);
+	public void traverseNext() {
+		for (HighlightData d : toHighlight) {
+			final StyledText text = d.getText();
+			if (!text.isDisposed() && text.isFocusControl()) {
+				d.revealNextMatching();
+				break;
+			}
 		}
 	}
 
-	private List<Integer> getSearchMatchingOffsets(String selection) {
-		final String contents = text.getText();
-		final List<Integer> collected = new ArrayList<Integer>();
-		collectMatchingOffsets(collected, 0, selection, contents);
-		return collected;
-	}
-	
-	private void collectMatchingOffsets(List<Integer> collected, int begin,
-			String searched, String contents) {
-		final int index = contents.indexOf(searched, begin);
-		if (index == -1) {
-			return;
-		}
-		collected.add(index);
-		if (index + 1 < contents.length()) {
-			collectMatchingOffsets(collected, index + 1, searched, contents);
+	public void traversePrevious() {
+		for (HighlightData d : toHighlight) {
+			final StyledText text = d.getText();
+			if (!text.isDisposed() && d.getText().isFocusControl()) {
+				d.revealPreviousMatching();
+				break;
+			}
 		}
 	}
 	

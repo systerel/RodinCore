@@ -23,6 +23,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CaretListener;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionListener;
@@ -115,6 +116,7 @@ public abstract class HypothesisComposite implements
 
 	private ScrolledComposite sc;
 
+	private CaretListener cl;
 
 	private Font font;
 
@@ -123,9 +125,6 @@ public abstract class HypothesisComposite implements
 
 
 	private CharacterPairHighlighter ch;
-
-
-	private SearchHighlighter sh;
 
 	/**
 	 * Constructor.
@@ -423,6 +422,7 @@ public abstract class HypothesisComposite implements
 		updateToolbarItems();
 		sc.setMinSize(styledText.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		manager.enableListeners(enabled);
+		proverUI.getHighlighter().refreshHighlight();
 		
 		styledText.addPaintObjectListener(controlPainter);
 		styledText.setRedraw(true);
@@ -444,9 +444,10 @@ public abstract class HypothesisComposite implements
 		if (ch != null) {
 			ch.remove();
 		}
-		if (sh != null){
-			sh.remove();
+		if (cl != null && !styledText.isDisposed()) {
+			styledText.removeCaretListener(cl);
 		}
+		proverUI.getHighlighter().removeHighlight(styledText);
 		if (controlPainter != null) {
 			if (styledText != null && !styledText.isDisposed())
 				styledText.removePaintObjectListener(controlPainter);
@@ -459,16 +460,18 @@ public abstract class HypothesisComposite implements
 
 	private void initStyledTextAndManager(){
 		// Create the styled text below the cool bar
-		styledText = new StyledText(sc, SWT.NONE);
+		styledText = new StyledText(sc, SWT.SCROLL_PAGE | SWT.SCROLL_LINE);
 		sc.setContent(styledText);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
 		styledText.setFont(font);
 		styledText.setEditable(false);
+		cl = ProverUIUtils.getCaretListener(sc, 50);
+		styledText.addCaretListener(cl);
 		manager = new TacticHyperlinkManager(styledText);
 		controlPainter = new ControlPainter();
 		ch = CharacterPairHighlighter.highlight(styledText);
-		sh = SearchHighlighter.hightlight(styledText);
+		proverUI.getHighlighter().highlight(styledText);
 	}
 
 	/*

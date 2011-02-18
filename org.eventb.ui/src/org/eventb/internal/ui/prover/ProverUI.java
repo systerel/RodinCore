@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,6 +104,8 @@ public class ProverUI extends EventBFormEditor implements
 
 	// The associated UserSupport
 	IUserSupport userSupport;
+	
+	SearchHighlighter highlighter;
 
 	// The associated Rodin file handle
 	IRodinFile psFile = null;
@@ -120,6 +122,7 @@ public class ProverUI extends EventBFormEditor implements
 		saving = false;
 		this.userSupport = USM.newUserSupport();
 		USM.addChangeListener(this);
+		this.highlighter = SearchHighlighter.newHighlighter();
 	}
 	
 	@Override
@@ -577,4 +580,16 @@ public class ProverUI extends EventBFormEditor implements
 		return fProofControlPage;
 	}
 
+	public SearchHighlighter getHighlighter() {
+		return highlighter;
+	}
+
+	public void traverseNextHighlight() {
+		highlighter.traverseNext();
+	}
+
+	public void traversePreviousHighlight() {
+		highlighter.traversePrevious();
+	}
+	
 }

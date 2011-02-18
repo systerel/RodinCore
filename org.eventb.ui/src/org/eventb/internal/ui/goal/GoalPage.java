@@ -19,7 +19,6 @@ import static org.eventb.internal.ui.prover.CharacterPairHighlighter.highlight;
 import static org.eventb.internal.ui.prover.ProverUIUtils.debug;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getProofStateDelta;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getUserSupportDelta;
-import static org.eventb.internal.ui.prover.SearchHighlighter.hightlight;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -29,6 +28,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CaretListener;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
@@ -65,7 +65,6 @@ import org.eventb.internal.ui.prover.PredicateRow;
 import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
-import org.eventb.internal.ui.prover.SearchHighlighter;
 import org.eventb.internal.ui.prover.TacticHyperlinkManager;
 import org.eventb.internal.ui.prover.YellowBoxMaker;
 import org.rodinp.keyboard.preferences.PreferenceConstants;
@@ -102,7 +101,7 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 	private Composite control;
 	private ControlPainter controlPainter;
 	private CharacterPairHighlighter cml;
-	private SearchHighlighter shl;
+	private CaretListener cl;
 	
 	/**
 	 * Constructor.
@@ -129,6 +128,9 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 			row = null;
 		}
 		if (styledText != null && !styledText.isDisposed()) {
+			proverUI.getHighlighter().removeHighlight(styledText);
+			if (cl != null)
+				styledText.removeCaretListener(cl);
 			if (controlPainter != null) {
 				styledText.removePaintObjectListener(controlPainter);
 				controlPainter.clear();
@@ -136,9 +138,6 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 		}
 		if (cml != null) {
 			cml.remove();
-		}
-		if (shl != null) {
-			shl.remove();
 		}
 		if (manager != null)
 			manager.dispose();
@@ -201,11 +200,13 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 		controlPainter = new ControlPainter();
 		styledText.addPaintObjectListener(controlPainter);
 		cml = highlight(styledText);
-		shl = hightlight(styledText);
-		
+		proverUI.getHighlighter().highlight(styledText);
+		cl = ProverUIUtils.getCaretListener(sc, 0);
+		styledText.addCaretListener(cl);
 		createGoalText(node);
 		sc.setContent(styledText);
 		sc.setMinSize(styledText.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		proverUI.getHighlighter().refreshHighlight();
 	}
 
 	private void createGoalText(final IProofTreeNode node) {
