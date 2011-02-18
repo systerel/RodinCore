@@ -77,6 +77,10 @@ public class MarkerRegistry implements IMarkerRegistry {
 			IRodinElement rodinElement;
 			try {
 				rodinElement = RodinMarkerUtil.getElement(marker);
+				if (rodinElement == null) {
+					// happens with tmp files
+					continue;
+				}
 				if (element.equals(rodinElement)
 						|| element.isAncestorOf(rodinElement)) {
 					int severityAttribute = marker.getAttribute(
