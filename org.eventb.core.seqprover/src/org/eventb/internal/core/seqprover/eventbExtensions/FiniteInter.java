@@ -28,7 +28,7 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
 public class FiniteInter extends EmptyInputReasoner {
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".finiteInter";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".finiteInter";
 	
 	public String getReasonerID() {
 		return REASONER_ID;

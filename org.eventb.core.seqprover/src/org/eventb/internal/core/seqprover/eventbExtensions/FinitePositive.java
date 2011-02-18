@@ -32,7 +32,7 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
 public class FinitePositive extends EmptyInputReasoner {
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".finitePositive";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".finitePositive";
 
 	public String getReasonerID() {
 		return REASONER_ID;

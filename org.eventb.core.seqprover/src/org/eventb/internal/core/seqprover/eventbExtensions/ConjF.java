@@ -23,7 +23,7 @@ import org.eventb.core.seqprover.reasonerInputs.ForwardInfReasoner;
  */
 public final class ConjF extends ForwardInfReasoner {
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".conjF";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".conjF";
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.seqprover.reasonerInputs.ForwardInfReasoner#getDisplay(org.eventb.core.ast.Predicate)

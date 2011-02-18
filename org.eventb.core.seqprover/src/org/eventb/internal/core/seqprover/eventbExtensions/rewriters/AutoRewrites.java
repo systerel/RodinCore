@@ -45,7 +45,7 @@ public class AutoRewrites extends AbstractAutoRewrites implements
 		super(true);
 	}
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".autoRewrites";
 
 	public String getReasonerID() {

@@ -36,7 +36,7 @@ import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 @Deprecated
 public class ExE extends HypothesisReasoner{
 	
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".exE";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".exE";
 	
 	public String getReasonerID() {
 		return REASONER_ID;

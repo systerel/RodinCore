@@ -35,7 +35,7 @@ import org.eventb.core.seqprover.reasonerInputs.SingleExprInputReasoner;
 public class FiniteSet extends SingleExprInputReasoner implements
 		IVersionedReasoner {
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".finiteSet";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".finiteSet";
 
 	private static final int VERSION = 0;
 

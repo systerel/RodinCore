@@ -25,7 +25,7 @@ public class TypeRewrites extends AbstractAutoRewrites implements IVersionedReas
 		super(true);
 	}
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".typeRewrites";
 
 	public String getReasonerID() {

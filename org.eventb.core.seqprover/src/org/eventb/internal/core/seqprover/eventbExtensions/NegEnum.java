@@ -47,7 +47,7 @@ import org.eventb.core.seqprover.reasonerInputs.MultiplePredInputReasoner;
  */
 public class NegEnum extends MultiplePredInputReasoner implements IReasoner {
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".negEnum";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".negEnum";
 
 	public String getReasonerID() {
 		return REASONER_ID;

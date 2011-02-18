@@ -23,7 +23,7 @@ import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 public class Review implements IReasoner{
 	
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".review";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".review";
 	
 	public static class Input implements IReasonerInput {
 

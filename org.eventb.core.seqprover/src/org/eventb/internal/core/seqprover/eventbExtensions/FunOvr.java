@@ -34,7 +34,7 @@ public class FunOvr extends AbstractManualInference implements IVersionedReasone
 
 	private static final int VERSION = 1;
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".funOvr";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".funOvr";
 	
 	public String getReasonerID() {
 		return REASONER_ID;

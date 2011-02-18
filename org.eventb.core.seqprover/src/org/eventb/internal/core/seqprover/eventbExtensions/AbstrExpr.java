@@ -41,7 +41,7 @@ import org.eventb.core.seqprover.reasonerInputs.SingleExprInputReasoner;
  */
 public class AbstrExpr extends SingleExprInputReasoner {
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".ae";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".ae";
 	
 	public String getReasonerID() {
 		return REASONER_ID;

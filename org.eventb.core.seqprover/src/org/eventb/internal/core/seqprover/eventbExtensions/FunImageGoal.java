@@ -42,7 +42,7 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
  */
 public class FunImageGoal extends PredicatePositionReasoner {
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".funImgGoal";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".funImgGoal";
 
 	@Override
 	@ProverRule("FUN_IMAGE_GOAL")

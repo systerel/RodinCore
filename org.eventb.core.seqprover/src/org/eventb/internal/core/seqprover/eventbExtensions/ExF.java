@@ -34,7 +34,7 @@ import org.eventb.core.seqprover.reasonerInputs.ForwardInfReasoner;
  */
 public class ExF extends ForwardInfReasoner {
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".exF";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".exF";
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.seqprover.reasonerInputs.ForwardInfReasoner#getDisplay(org.eventb.core.ast.Predicate)

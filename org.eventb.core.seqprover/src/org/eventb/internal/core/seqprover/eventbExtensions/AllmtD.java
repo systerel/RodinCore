@@ -38,7 +38,7 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
  */
 public class AllmtD extends AllD implements IVersionedReasoner {
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".allmtD";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".allmtD";
 	private static int VERSION = 0;
 	
 	private static String display = "∀ hyp mt";

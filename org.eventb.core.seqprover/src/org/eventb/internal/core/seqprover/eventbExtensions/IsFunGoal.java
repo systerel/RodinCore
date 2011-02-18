@@ -36,7 +36,7 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
  */
 public class IsFunGoal extends EmptyInputReasoner{
 	
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".isFunGoal";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".isFunGoal";
 	
 	public String getReasonerID() {
 		return REASONER_ID;

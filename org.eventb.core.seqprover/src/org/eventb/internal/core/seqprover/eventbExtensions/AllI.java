@@ -39,7 +39,7 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
  */
 public class AllI extends EmptyInputReasoner{
 	
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".allI";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".allI";
 	
 	public String getReasonerID() {
 		return REASONER_ID;

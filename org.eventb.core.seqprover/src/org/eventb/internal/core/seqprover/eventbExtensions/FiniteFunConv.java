@@ -34,7 +34,7 @@ public class FiniteFunConv extends PFunSetInputReasoner {
 
 	private static final String REASONER_DESC = "finite of function converse";
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".finiteFunConv";
 
 	public static int getVersion() {

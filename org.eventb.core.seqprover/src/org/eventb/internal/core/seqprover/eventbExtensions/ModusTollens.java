@@ -44,7 +44,7 @@ import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
  */
 public class ModusTollens extends HypothesisReasoner implements IVersionedReasoner {
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".mt";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".mt";
 	private static final int VERSION = 2;
 
 	public String getReasonerID() {

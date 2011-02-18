@@ -39,7 +39,7 @@ import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
  */
 public class DoCase extends SinglePredInputReasoner{
 	
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".doCase";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".doCase";
 	
 	public String getReasonerID() {
 		return REASONER_ID;

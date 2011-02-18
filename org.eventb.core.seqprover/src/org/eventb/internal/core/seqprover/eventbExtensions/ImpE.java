@@ -39,7 +39,7 @@ import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
  */
 public class ImpE extends HypothesisReasoner implements IVersionedReasoner {
 	
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".impE";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".impE";
 	private static final int VERSION = 2;
 	
 	public String getReasonerID() {

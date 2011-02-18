@@ -16,7 +16,7 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
 public class HypOr extends EmptyInputReasoner implements IReasoner {
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".hypOr";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".hypOr";
 
 	public String getReasonerID() {
 		return REASONER_ID;

@@ -33,7 +33,7 @@ public class FiniteFunction extends PFunSetInputReasoner {
 
 	private static final String REASONER_DESC = "finite of function";
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".finiteFunction";
 
 	public String getReasonerID() {

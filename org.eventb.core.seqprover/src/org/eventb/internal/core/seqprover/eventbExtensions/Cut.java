@@ -32,7 +32,7 @@ import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
  */
 public class Cut extends SinglePredInputReasoner {
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".cut";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".cut";
 	
 	public String getReasonerID() {
 		return REASONER_ID;

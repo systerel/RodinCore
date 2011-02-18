@@ -34,7 +34,7 @@ public class FiniteFunRelImg extends PFunSetInputReasoner {
 
 	private static final String REASONER_DESC = "finite of relational image of a function";
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".finiteFunRelImg";
 
 	public String getReasonerID() {

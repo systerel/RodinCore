@@ -28,7 +28,7 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
 public class FiniteRelImg extends EmptyInputReasoner {
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".finiteRelImg";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".finiteRelImg";
 	
 	public String getReasonerID() {
 		return REASONER_ID;

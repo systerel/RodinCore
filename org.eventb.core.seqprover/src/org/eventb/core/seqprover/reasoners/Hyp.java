@@ -13,7 +13,7 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
 public class Hyp extends EmptyInputReasoner{
 	
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".hyp";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".hyp";
 	
 	public String getReasonerID() {
 		return REASONER_ID;

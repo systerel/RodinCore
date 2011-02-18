@@ -25,7 +25,7 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 // TODO : maybe remove the hyp splitting from this rewriter since this is implemented in the ConjD reasoner.
 public class Conj extends AbstractRewriter {
 	
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".conj";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".conj";
 	
 	public String getReasonerID() {
 		return REASONER_ID;

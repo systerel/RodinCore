@@ -37,7 +37,7 @@ import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
  */
 public class Contr extends HypothesisReasoner{
 	
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".contr";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".contr";
 	
 	public String getReasonerID() {
 		return REASONER_ID;

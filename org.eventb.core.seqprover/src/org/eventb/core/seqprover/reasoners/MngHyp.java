@@ -25,7 +25,7 @@ import org.eventb.internal.core.seqprover.SelectionHypAction;
 
 public class MngHyp implements IReasoner {
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".mngHyp";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".mngHyp";
 
 	public static class Input implements IReasonerInput {
 

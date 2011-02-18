@@ -36,7 +36,7 @@ public class FunImgSimplifies extends AbstractManualRewrites implements
 
 	private static final int VERSION = 0;
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".funImgSimplifies";
 
 	public int getVersion() {

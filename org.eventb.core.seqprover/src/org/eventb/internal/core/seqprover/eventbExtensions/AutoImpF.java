@@ -40,7 +40,7 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
  */
 public class AutoImpF extends EmptyInputReasoner {
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".autoImpE";
 
 	public String getReasonerID() {

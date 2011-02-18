@@ -38,7 +38,7 @@ import org.eventb.core.seqprover.reasonerInputs.SingleExprInputReasoner;
 public class FiniteRelation extends SingleExprInputReasoner implements
 		IVersionedReasoner {
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".finiteRelation";
 
 	private static final int VERSION = 0;

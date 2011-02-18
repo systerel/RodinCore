@@ -34,7 +34,7 @@ public class FiniteFunRan extends PFunSetInputReasoner {
 
 	private static final String REASONER_DESC = "finite of range of a function";
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".finiteFunRan";
 
 	public String getReasonerID() {

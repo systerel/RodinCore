@@ -45,7 +45,7 @@ import org.eventb.core.seqprover.SerializeException;
 
 public class TotalDomRewrites implements IVersionedReasoner {
 
-	public static String REASONER_ID = SequentProver.PLUGIN_ID + ".totalDom";
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".totalDom";
 	private static final int VERSION = 2;
 	
 	public static class Input extends AbstractManualRewrites.Input {
