@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.utils.tests;
 
+import static org.eventb.core.tests.BuilderTest.PLUGIN_ID;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -40,8 +41,6 @@ import org.w3c.dom.Document;
  */
 public class TestPrettyPrint extends TestCase {
 
-	private static final String PLUGIN_ID = "org.eventb.core.tests";
-	
 	private static final File XSLT_FILE = getLocalFile("utils/prettyprint.xslt",
 			EventBPlugin.PLUGIN_ID);
 	

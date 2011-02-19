@@ -20,7 +20,7 @@ import org.eventb.core.tool.IModuleType;
 public class MachineEventActionFISFilterModule extends POGFilterTestModule {
 
 	public static final IModuleType<MachineEventActionFISFilterModule> MODULE_TYPE = 
-		POGCore.getModuleType(getPluginID() + ".machineEventActionFISFilterModule"); //$NON-NLS-1$
+		POGCore.getModuleType(PLUGIN_ID + ".machineEventActionFISFilterModule"); //$NON-NLS-1$
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IPOGFilterModule#accept(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)

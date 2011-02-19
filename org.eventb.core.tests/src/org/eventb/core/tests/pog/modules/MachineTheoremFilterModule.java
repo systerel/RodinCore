@@ -20,7 +20,7 @@ import org.eventb.core.tool.IModuleType;
 public class MachineTheoremFilterModule extends POGFilterTestModule {
 
 	public static final IModuleType<MachineTheoremFilterModule> MODULE_TYPE = 
-		POGCore.getModuleType(getPluginID() + ".machineTheoremFilterModule"); //$NON-NLS-1$
+		POGCore.getModuleType(PLUGIN_ID + ".machineTheoremFilterModule"); //$NON-NLS-1$
 	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.IPOGFilterModule#accept(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)

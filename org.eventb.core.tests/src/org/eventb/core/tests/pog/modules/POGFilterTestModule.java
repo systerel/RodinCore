@@ -8,6 +8,7 @@
 package org.eventb.core.tests.pog.modules;
 
 import org.eventb.core.pog.POGFilterModule;
+import org.eventb.core.tests.BuilderTest;
 
 /**
  * @author Stefan Hallerstede
@@ -15,8 +16,6 @@ import org.eventb.core.pog.POGFilterModule;
  */
 public abstract class POGFilterTestModule extends POGFilterModule {
 
-	protected static String getPluginID() {
-		return "org.eventb.core.tests";
-	}
+	protected static final String PLUGIN_ID = BuilderTest.PLUGIN_ID;
 
 }
