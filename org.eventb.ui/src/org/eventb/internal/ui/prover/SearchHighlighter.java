@@ -331,7 +331,7 @@ public class SearchHighlighter {
 	public void traversePrevious() {
 		for (HighlightData d : toHighlight) {
 			final StyledText text = d.getText();
-			if (!text.isDisposed() && d.getText().isFocusControl()) {
+			if (!text.isDisposed() && text.isFocusControl()) {
 				d.revealPreviousMatching();
 				break;
 			}
