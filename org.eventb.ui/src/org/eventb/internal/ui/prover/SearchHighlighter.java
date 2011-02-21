@@ -97,14 +97,12 @@ public class SearchHighlighter {
 			matchingOffsets = getSearchMatchingOffsets(toSearch);
 			for (int m : matchingOffsets) {
 				final int length = toSearch.length();
-				final StyleRange[] styleRanges = text.getStyleRanges(m, length, true);
-				if (styleRanges.length == 0) {
-					text.setStyleRange(new StyleRange(m, length, null, bgColor));
-				} else {
-					for (StyleRange r : styleRanges) {
-						r.background = bgColor;
-						text.setStyleRange(r);
-					}					
+				final StyleRange[] styleRanges = text.getStyleRanges(m, length,
+						true);
+				text.setStyleRange(new StyleRange(m, length, null, bgColor));
+				for (StyleRange r : styleRanges) {
+					r.background = bgColor;
+					text.setStyleRange(r);
 				}
 			}
 		}
