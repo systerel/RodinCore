@@ -24,11 +24,14 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.preferences.IPrefElementTranslator;
+import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.ListPreference;
 import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
+import org.eventb.core.seqprover.tactics.BasicTactics;
+import org.eventb.internal.core.Util;
 import org.eventb.internal.core.pm.PostTacticPreference;
 import org.eventb.internal.core.pom.POMTacticPreference;
 
@@ -92,29 +95,51 @@ public class AutoPostTacticManager implements IAutoPostTacticManager {
 		final String profiles = preferencesService.getString(PREF_QUALIFIER,
 				P_TACTICSPROFILES, null, contexts);
 		if (profiles == null) {
-			if (auto) {
-				return autoTacPref.getSelectedComposedTactic();
-			}
-			return postTacPref.getSelectedComposedTactic();
+			Util.log(null, "Failed to load the tactic profiles on the project "
+					+ project.getName());
+			return BasicTactics.failTac("Failed to load the tactic profiles.");
 		}
 		profilesCache.inject(profiles);
 		final String choice;
-		final List<ITacticDescriptor> profileDescriptors;
-
 		if (auto) {
 			choice = preferencesService.getString(PREF_QUALIFIER,
 					P_AUTOTACTIC_CHOICE, null, contexts);
-			profileDescriptors = profilesCache.getEntry(choice).getValue();
-			autoTacPref.setSelectedDescriptors(profileDescriptors);
-			return autoTacPref.getSelectedComposedTactic();
-		} else { // (type.equals(POST_TACTICS_TAG)) {
+		} else { // (type.equals(POST_TACTICS_TAG))
 			choice = preferencesService.getString(PREF_QUALIFIER,
-					P_POSTTACTIC_CHOICE, null, contexts);
-			profileDescriptors = profilesCache.getEntry(choice).getValue();
-			postTacPref.setSelectedDescriptors(profileDescriptors);
-			return postTacPref.getSelectedComposedTactic();
+					P_POSTTACTIC_CHOICE, null, contexts);			
 		}
+		return getCorrespondingTactic(choice, auto);
+	}
+	
+	private ITactic getCorrespondingTactic(String choice, boolean auto) {
+		final ITactic composedTactic;
+		if (auto)
+			composedTactic = getTactic(choice, autoTacPref);
+		else
+			composedTactic = getTactic(choice, postTacPref);
+		if (composedTactic == null) {
+			final String tacType = (auto) ? "auto" : "post";
+			Util.log(null, "Failed to load the tactic profile " + choice
+					+ "for the tactic " + tacType + "tactic");
+			return BasicTactics.failTac("Could not load the profile " + choice
+					+ " from the cache for the tactic " + tacType + "tactic");
+		}
+		return composedTactic;
+	}
 
+	private ITactic getTactic(String choice, IAutoTacticPreference pref) {
+		final List<ITacticDescriptor> profileDescriptors;
+		final IPrefMapEntry<List<ITacticDescriptor>> entry = profilesCache
+				.getEntry(choice);
+		if (entry == null) {
+			return null;
+		}
+		profileDescriptors = entry.getValue();
+		if (profileDescriptors == null) {
+			return null;
+		}
+		pref.setSelectedDescriptors(profileDescriptors);
+		return pref.getSelectedComposedTactic();
 	}
 
 	@Override
