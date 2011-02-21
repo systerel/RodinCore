@@ -208,10 +208,11 @@ public class EditProfilWizard extends Wizard {
 				} else if (name.isEmpty()) {
 					message = wizard_editprofil_profilemustbespecified;
 					complete = false;
-				} else if (selection.getSelectedObjects().size() == 0) {
-					message = wizard_editprofil_profilemusthaveatactic;
-					complete = false;
 				}
+			}
+			if (selection.getSelectedObjects().size() == 0) {
+				message = wizard_editprofil_profilemusthaveatactic;
+				complete = false;
 			}
 			setErrorMessage(message);
 			setPageComplete(complete);
