@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,15 +96,15 @@ public class PRProof extends EventBProofElement implements IPRProof {
 	@Override
 	public IProofDependencies getProofDependencies(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException{
 		if (getConfidence() <= IConfidence.UNATTEMPTED) return unattemptedProofDeps;
-		IProofStoreReader store = new ProofStoreReader(this, factory);
+		final IProofStoreReader store = new ProofStoreReader(this, factory);
 		
-		Predicate goal;
-		Set<Predicate> usedHypotheses;
-		ITypeEnvironment usedFreeIdents;
-		Set<String> introducedFreeIdents;
+		final Predicate goal;
+		final Set<Predicate> usedHypotheses;
+		final ITypeEnvironment usedFreeIdents;
+		final Set<String> introducedFreeIdents;
 		
 		if (monitor == null) monitor = new NullProgressMonitor();
-		try{
+		try {
 			monitor.beginTask("Reading Proof Dependencies", 4);
 			usedFreeIdents = store.getBaseTypeEnv();
 			introducedFreeIdents = PRProof.this.getIntroFreeIdents(monitor);
@@ -113,13 +113,11 @@ public class PRProof extends EventBProofElement implements IPRProof {
 			else
 				goal = null;
 			usedHypotheses = PRProof.this.getHyps(store);
-		}
-		finally
-		{
+		} finally {
 			monitor.done();
 		}
 		
-		boolean hasDeps = (goal != null ||
+		final boolean hasDeps = (goal != null ||
 				! usedHypotheses.isEmpty() ||
 				! usedFreeIdents.isEmpty() ||
 				! introducedFreeIdents.isEmpty()); 
