@@ -109,7 +109,19 @@ public class EnabledComboEditor implements IEventBFieldEditor {
 			isEnabled = wsPreferenceStore.getBoolean(enablePreferenceKey);
 		}
 		preferenceStore.setValue(enablePreferenceKey, isEnabled);
-		preferenceStore.setValue(choicePreferenceKey, comboList.getText());
+		forceChoicePreferenceSerialization();
+	}
+
+	/**
+	 * Fixed bug #3189256 due to the default behaviour of the preference store.
+	 * Indeed, if the value set for a preference is the default value in the
+	 * preference store, no preference is serialized. This is incompatible with
+	 * eclipse's preferences mechanism that interprets this absence of
+	 * serialization as the absence of preference. Thus we must force the
+	 * serialization of the choice to use it in other plug-ins.
+	 */
+	private void forceChoicePreferenceSerialization() {
+		preferenceStore.putValue(choicePreferenceKey, comboList.getText());
 	}
 
 	@Override
