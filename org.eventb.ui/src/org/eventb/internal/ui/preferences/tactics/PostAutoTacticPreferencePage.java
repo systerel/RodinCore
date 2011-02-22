@@ -221,6 +221,7 @@ public class PostAutoTacticPreferencePage extends
 					@Override
 					public void handleEvent(Event event) {
 						editProfile();
+						updateProfilesList();
 					}
 
 				});
