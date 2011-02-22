@@ -26,7 +26,10 @@ import java.util.Random;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eventb.core.EventBPlugin;
@@ -52,6 +55,8 @@ public class TacticsPreferencesTest extends EventBUITest {
 	private static final String[] wsTacticIDs = {
 			"org.eventb.core.seqprover.goalInHypTac",
 			"org.eventb.core.seqprover.funGoalTac", };
+
+	private static final String PREF_QUALIFIER = "org.eventb.ui";
 
 	/**
 	 * Test the read and write operations in preference store of a profile list.
@@ -161,10 +166,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 			List<ITacticDescriptor> actual, String name) {
 		assertEquals("The number of tactics is not equals", expected.size(),
 				actual.size());
-		for (int i = 0; i < expected.size(); i++) {
-			assertEquals("The tactics list of " + name + " should be equals",
-					actual.get(i), expected.get(i));
-		}
+		assertTrue(expected.containsAll(actual));
 	}
 
 	/**
@@ -308,4 +310,72 @@ public class TacticsPreferencesTest extends EventBUITest {
 		return (List<ITacticDescriptor>) field.get(autopref);
 	}
 	
+	/**
+	 * Bug #3189256. THIS IS A NON REGRESSION TEST. Ensures that the default
+	 * profile for the auto tactic is used in case of project specific settings
+	 * with a non-default workspace profile. This ensures that the default
+	 * preference which is serialized at a project scope, is taken into
+	 * consideration. Indeed, for a preference store, the absence of value means
+	 * default value. With eclipse's preferences mechanism, no value means no
+	 * preference.
+	 * 
+	 * @throws Exception
+	 */
+	public void testBug3189256() throws Exception {
+		final IContextRoot c = createContext("c");
+		final IProject p = c.getRodinProject().getProject();
+		final IAutoPostTacticManager manager = EventBPlugin
+				.getAutoPostTacticManager();
+		final IAutoTacticPreference autoTac = manager.getAutoTacticPreference();
+
+		// Creates the project scoped preference store
+		final ProjectScope scope = new ProjectScope(p);
+		final ScopedPreferenceStore scStore = new ScopedPreferenceStore(scope,
+				EventBUIPlugin.PLUGIN_ID);
+
+		final String dftAutoProfileName = "Default Auto Tactic Profile";
+		final List<ITacticDescriptor> defaultDescriptors = autoTac
+				.getDefaultDescriptors();
+		final String[] defaultAutoDescs = new String[defaultDescriptors.size()];
+		int i = 0;
+		for (ITacticDescriptor td : defaultDescriptors) {
+			defaultAutoDescs[i] = td.getTacticID();
+			i++;
+		}
+		// Saving project profile
+		final List<ITacticDescriptor> prjDescs = getTacticDescList(autoTac,
+				defaultAutoDescs);
+		storeProfile(scStore, prjDescs, dftAutoProfileName);
+		// **************************************************************
+		// IMPORTANT ! Forces serialization of the choice at project scope
+		scStore.putValue(TacticPreferenceConstants.P_AUTOTACTIC_CHOICE,
+				dftAutoProfileName);
+		// **************************************************************
+		final IPreferenceStore wsStore = EventBUIPlugin.getDefault()
+				.getPreferenceStore();
+		final String wsProfileName = "WSProfile 1";
+		// Saving workspace profile
+		final List<ITacticDescriptor> wsDescs = getTacticDescList(autoTac,
+				wsTacticIDs);
+		storeProfile(wsStore, wsDescs, wsProfileName);
+		wsStore.setValue(TacticPreferenceConstants.P_AUTOTACTIC_CHOICE,
+				wsProfileName);
+
+		// Verifies that the choice is "Default Auto Tactic Profile"
+		final IPreferencesService preferencesService = Platform
+				.getPreferencesService();
+		final IScopeContext[] sc = { scope };
+		final String choice = preferencesService.getString(PREF_QUALIFIER,
+				TacticPreferenceConstants.P_AUTOTACTIC_CHOICE, null, sc);
+		assertEquals("Project scope choice is invalid", dftAutoProfileName,
+				choice);
+
+		// We load the auto tactic
+		manager.getSelectedAutoTactics(c);
+
+		final List<ITacticDescriptor> projectAutoSelected = getSelectedDescs((AutoTacticPreference) autoTac);
+		// We check that the selected profile is the project specific one
+		assertList(projectAutoSelected, defaultDescriptors, dftAutoProfileName);
+	}
+
 }
