@@ -120,7 +120,7 @@ public class AutoPostTacticManager implements IAutoPostTacticManager {
 		if (composedTactic == null) {
 			final String tacType = (auto) ? "auto" : "post";
 			Util.log(null, "Failed to load the tactic profile " + choice
-					+ "for the tactic " + tacType + "tactic");
+					+ " for the tactic " + tacType + "tactic");
 			return BasicTactics.failTac("Could not load the profile " + choice
 					+ " from the cache for the tactic " + tacType + "tactic");
 		}
