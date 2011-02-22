@@ -44,6 +44,44 @@ import org.eventb.internal.core.seqprover.ProofRule.Antecedent;
  */
 public final class ProverFactory {
 
+	private static class ProofDeps implements IProofDependencies {
+		private final ITypeEnvironment usedFreeIdents;
+		private final boolean hasDeps;
+		private final Set<Predicate> usedHypotheses;
+		private final Set<String> introducedFreeIdents;
+		private final Predicate goal;
+
+		private ProofDeps(ITypeEnvironment usedFreeIdents, boolean hasDeps,
+				Set<Predicate> usedHypotheses,
+				Set<String> introducedFreeIdents, Predicate goal) {
+			this.usedFreeIdents = usedFreeIdents;
+			this.hasDeps = hasDeps;
+			this.usedHypotheses = usedHypotheses;
+			this.introducedFreeIdents = introducedFreeIdents;
+			this.goal = goal;
+		}
+
+		public Predicate getGoal() {
+			return goal;
+		}
+
+		public Set<String> getIntroducedFreeIdents() {
+			return introducedFreeIdents;
+		}
+
+		public ITypeEnvironment getUsedFreeIdents() {
+			return usedFreeIdents;
+		}
+
+		public Set<Predicate> getUsedHypotheses() {
+			return usedHypotheses;
+		}
+
+		public boolean hasDeps() {
+			return hasDeps;
+		}
+	}
+
 	/**
 	 * Non-instantiable class
 	 */
@@ -653,29 +691,8 @@ public final class ProverFactory {
 			final ITypeEnvironment usedFreeIdents,
 			final Set<String> introducedFreeIdents){
 	
-		return new IProofDependencies(){
-	
-			public Predicate getGoal() {
-				return goal;
-			}
-	
-			public Set<String> getIntroducedFreeIdents() {
-				return introducedFreeIdents;
-			}
-	
-			public ITypeEnvironment getUsedFreeIdents() {
-				return usedFreeIdents;
-			}
-	
-			public Set<Predicate> getUsedHypotheses() {
-				return usedHypotheses;
-			}
-	
-			public boolean hasDeps() {
-				return hasDeps;
-			}
-			
-		};
+		return new ProofDeps(usedFreeIdents, hasDeps, usedHypotheses,
+				introducedFreeIdents, goal);
 	}
 
 	/**
