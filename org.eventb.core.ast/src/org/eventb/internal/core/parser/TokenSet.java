@@ -140,7 +140,7 @@ public class TokenSet {
 	}
 	
 	public boolean isReserved(int kind) {
-		 return reserved.containsValue(kind);
+		 return reserved.containsKey(getImage(kind));
 	}
 
 }
