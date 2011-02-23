@@ -22,6 +22,7 @@ package org.eventb.internal.ui.proofcontrol;
 
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_ENABLE;
 import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
+import static org.eventb.internal.ui.prover.CharacterPairHighlighter.highlight;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyCommand;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyTactic;
 import static org.eventb.internal.ui.utils.Messages.title_unexpectedError;
@@ -106,6 +107,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
 import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
+import org.eventb.internal.ui.prover.CharacterPairHighlighter;
 import org.eventb.internal.ui.prover.ICommandApplication;
 import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUI;
@@ -156,6 +158,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	ImageHyperlink smiley; 
 	
 	private ProofStatusLineManager statusManager;
+
+	private CharacterPairHighlighter ch;
 
 	/**
 	 * Constructor
@@ -209,6 +213,9 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		textInput.dispose();
 		history.dispose();
 		scrolledForm.dispose();
+		if (ch != null){
+			ch.remove();
+		}
 		super.dispose();
 	}
 
@@ -610,7 +617,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		smiley.setBackground(scrolledForm.getBackground());
 
 		// A text field
-		textWidget = new StyledText(midComp, SWT.MULTI | SWT.BORDER); 
+		textWidget = new StyledText(midComp, SWT.MULTI | SWT.BORDER);
+		ch = highlight(textWidget);
 		toolkit.adapt(textWidget, true, false);	
 		textInput = new EventBStyledText(textWidget, true);
 

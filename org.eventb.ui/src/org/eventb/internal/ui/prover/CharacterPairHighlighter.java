@@ -123,7 +123,8 @@ public class CharacterPairHighlighter implements MouseListener, KeyListener,
 	private void higlightPairCharacter() {
 		final int carStart = text.getCaretOffset();
 		final int textEnd = text.getCharCount() - 1;
-		if (carStart < 2 || carStart > textEnd || text.getSelectionCount() != 0) {
+		if (carStart < 1 || carStart - 1 > textEnd
+				|| text.getSelectionCount() != 0) {
 			return;
 		}
 		// size == 1
@@ -132,10 +133,10 @@ public class CharacterPairHighlighter implements MouseListener, KeyListener,
 
 		int pairDistance = NOT_FOUND;
 		if (carStart < textEnd) {
-			pairDistance = getPairedAhead(text.getText(carStart + 1, textEnd),
+			pairDistance = getPairedAhead(text.getText(carStart, textEnd),
 					c);
 		}
-		if (pairDistance == NOT_FOUND) {
+		if (pairDistance == NOT_FOUND && carStart > 1) {
 			pairDistance = getPairedBehind(text.getText(0, carStart - 2), c);
 		}
 		if (pairDistance != NOT_FOUND) {
@@ -167,8 +168,10 @@ public class CharacterPairHighlighter implements MouseListener, KeyListener,
 		}
 		int depth = 0;
 		int cnt;
+		boolean found = false;
 		for (cnt = 0; cnt < text.length(); cnt++) {
 			if (depth == 0 && text.charAt(cnt) == toSearch) {
+				found = true;
 				break;
 			}
 			if (depth > 0 && text.charAt(cnt) == toSearch) {
@@ -178,10 +181,10 @@ public class CharacterPairHighlighter implements MouseListener, KeyListener,
 				depth++;
 			}
 		}
-		if (depth > 0) {
+		if (depth > 0 || !found) {
 			return -1;
 		}
-		return cnt + 1;
+		return cnt;
 	}
 
 	private static int getPairedBehind(String text, char c) {
@@ -201,8 +204,10 @@ public class CharacterPairHighlighter implements MouseListener, KeyListener,
 		}
 		int depth = 0;
 		int cnt;
-		for (cnt = text.length() - 1; cnt > 0; cnt--) {
+		boolean found = false;
+		for (cnt = text.length()-1; cnt >= 0; cnt--) {
 			if (depth == 0 && text.charAt(cnt) == toSearch) {
+				found = true;
 				break;
 			}
 			if (depth > 0 && text.charAt(cnt) == toSearch) {
@@ -212,7 +217,7 @@ public class CharacterPairHighlighter implements MouseListener, KeyListener,
 				depth++;
 			}
 		}
-		if (depth > 0) {
+		if (depth > 0 || !found) {
 			return -1;
 		}
 		return -text.length() + cnt - 1;
