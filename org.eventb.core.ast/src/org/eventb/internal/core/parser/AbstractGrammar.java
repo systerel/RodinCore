@@ -107,8 +107,9 @@ public abstract class AbstractGrammar {
 	// TODO try to generalise to standard language operators
 	private final PropertyParserDB propParsers = new PropertyParserDB();
 	
-	private final Map<Integer, Integer> closeOpenKinds = new HashMap<Integer, Integer>();
-
+	private Map<Integer, Integer> initCloseOpenKinds = new HashMap<Integer, Integer>();
+	private Brackets brackets = null;
+	
 	private final int[] defaultTokenKinds = new int[DefaultToken.values().length];
 	
 	public IGrammar asExternalView() {
@@ -219,13 +220,9 @@ public abstract class AbstractGrammar {
 		tokens = tokenCompactor.redistribute(tokens, opKindInst);
 		subParsers.redistribute(opKindInst);
 		
-		final Map<Integer, Integer> newCloseOpen = new HashMap<Integer, Integer>();
-		for (Entry<Integer, Integer> entry : closeOpenKinds.entrySet()) {
-			newCloseOpen.put(opKindInst.instantiate(entry.getKey()),
-					opKindInst.instantiate(entry.getValue()));
-		}
-		closeOpenKinds.clear();
-		closeOpenKinds.putAll(newCloseOpen);
+		final BracketCompactor brkCompactor = new BracketCompactor(initCloseOpenKinds);
+		brackets = brkCompactor.compact(opKindInst);
+		initCloseOpenKinds = null;
 	}
 
 	private void populateSubParsers(
@@ -308,15 +305,15 @@ public abstract class AbstractGrammar {
 	protected void addOpenClose(String open, String close) {
 		final int openKind = tokens.getOrAdd(open);
 		final int closeKind = tokens.getOrAdd(close);
-		closeOpenKinds.put(closeKind, openKind);
+		initCloseOpenKinds.put(closeKind, openKind);
 	}
 
 	public boolean isOpen(int kind) {
-		return closeOpenKinds.containsValue(kind);
+		return brackets.isOpen(kind);
 	}
 
 	public boolean isClose(int kind) {
-		return closeOpenKinds.containsKey(kind);
+		return brackets.isClose(kind);
 	}
 
 	public void addReservedSubParser(DefaultToken token,
