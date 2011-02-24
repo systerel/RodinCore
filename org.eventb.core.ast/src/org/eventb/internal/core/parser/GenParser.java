@@ -43,15 +43,14 @@ public class GenParser {
 	public static class SyntaxError extends Exception {
 
 		private static final long serialVersionUID = -8349775303104088736L;
-
-		private final ASTProblem problem;
+		private static final SyntaxError SYNTAX_ERROR = new SyntaxError();
 		
-		public SyntaxError(ASTProblem problem) {
-			this.problem = problem;
+		private SyntaxError() {
+			// singleton
 		}
 
-		public ASTProblem getProblem() {
-			return problem;
+		public static SyntaxError getInstance() {
+			return SYNTAX_ERROR;
 		}
 
 	}
@@ -88,9 +87,9 @@ public class GenParser {
 	 */
 	public void parse() {
 
+		final ParserContext pc = new ParserContext(scanner, factory,
+				result, withPredVar);
 		try {
-			final ParserContext pc = new ParserContext(scanner, factory,
-					result, withPredVar);
 			pc.init();
 			// separate parsed type in order to have
 			// errors in case of unexpected result type
@@ -114,12 +113,11 @@ public class GenParser {
 			if (pc.t.kind != eof) {
 				failUnmatchedTokens(pc);
 			}
-			// TODO remove above debug check when stable
 			if (DEBUG) {
 				pc.debugEndChecks();
 			}
 		} catch (SyntaxError e) {
-			processFailure(e.getProblem());
+			processFailure(pc.takeProblem());
 		}
 
 	}

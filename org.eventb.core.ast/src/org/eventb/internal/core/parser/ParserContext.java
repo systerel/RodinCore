@@ -122,6 +122,8 @@ public class ParserContext {
 	private boolean parsingType;
 	protected Token t;    // last recognized token
 	protected Token la;   // lookahead token
+	private ASTProblem curProblem; // problem for currently thrown SyntaxError, or null
+
 	
 	protected ParserContext(Scanner scanner, FormulaFactory factory, ParseResult result, boolean withPredVar) {
 		this.scanner = scanner;
@@ -253,6 +255,25 @@ public class ParserContext {
 		
 	}
 	
+	public SyntaxError syntaxError(ASTProblem problem) throws SyntaxError {
+		assert curProblem == null;
+		curProblem = problem;
+		return SyntaxError.getInstance();
+	}
+	
+	/**
+	 * Returns the problem of the currently thrown syntax error. Returned
+	 * problem is no more available hereafter.
+	 * 
+	 * @return an AST problem
+	 */
+	public ASTProblem takeProblem() {
+		assert curProblem != null;
+		final ASTProblem copy = curProblem;
+		curProblem = null;
+		return copy;
+	}
+	
 	public boolean isParsingType() {
 		return parsingType;
 	}
@@ -277,7 +298,7 @@ public class ParserContext {
 	public void accept(int expectedKind) throws SyntaxError {
 		if (t.kind != expectedKind) {
 			final String expected = grammar.getImage(expectedKind);
-			throw new SyntaxError(new ASTProblem(makeSourceLocation(t),
+			throw syntaxError(new ASTProblem(makeSourceLocation(t),
 					ProblemKind.UnexpectedSymbol, ProblemSeverities.Error,
 					expected, grammar.getImage(t.kind)));
 		}
@@ -337,10 +358,9 @@ public class ParserContext {
 				leftKind, rightKind);
 		switch (opRel) {
 		case INCOMPATIBLE:
-			throw new SyntaxError(new ASTProblem(makeSourceLocation(t),
-					ProblemKind.IncompatibleOperators,
-					ProblemSeverities.Error, grammar.getImage(leftKind),
-					grammar.getImage(rightKind)));
+			throw syntaxError(new ASTProblem(makeSourceLocation(t),
+					ProblemKind.IncompatibleOperators, ProblemSeverities.Error,
+					grammar.getImage(leftKind), grammar.getImage(rightKind)));
 		case RIGHT_PRIORITY:
 			return RIGHT;
 		case COMPATIBLE:
@@ -365,12 +385,11 @@ public class ParserContext {
 		if (!parseRes.isClosed()) {
 			final int childKind = parseRes.getKind();
 			if (grammar.needsParentheses(isRightChild, childKind, parentKind.val)) {
-				throw new SyntaxError(new ASTProblem(
-						getSourceLocation(),
+				throw syntaxError(new ASTProblem(getSourceLocation(),
 						ProblemKind.IncompatibleOperators,
-						ProblemSeverities.Error, grammar
-						.getImage(parentKind.val), grammar
-						.getImage(childKind)));
+						ProblemSeverities.Error,
+						grammar.getImage(parentKind.val),
+						grammar.getImage(childKind)));
 			}
 		}
 		return parseRes;

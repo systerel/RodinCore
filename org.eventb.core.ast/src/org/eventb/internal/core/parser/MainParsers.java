@@ -87,16 +87,16 @@ public class MainParsers {
 				ProblemSeverities.Error, expectedKind, actualKind);
 	}
 
-	public static Predicate asPredicate(Formula<?> formula) throws SyntaxError {
+	public static Predicate asPredicate(Formula<?> formula, ParserContext pc) throws SyntaxError {
 		if (!(formula instanceof Predicate)) {
-			throw new SyntaxError(makeUnexpectedKindProblem(formula, A_PREDICATE, AN_EXPRESSION));
+			throw pc.syntaxError(makeUnexpectedKindProblem(formula, A_PREDICATE, AN_EXPRESSION));
 		}
 		return (Predicate) formula;
 	}
 
-	public static Expression asExpression(Formula<?> formula) throws SyntaxError {
+	public static Expression asExpression(Formula<?> formula, ParserContext pc) throws SyntaxError {
 		if (!(formula instanceof Expression)) {
-			throw new SyntaxError(makeUnexpectedKindProblem(formula, AN_EXPRESSION, A_PREDICATE));
+			throw pc.syntaxError(makeUnexpectedKindProblem(formula, AN_EXPRESSION, A_PREDICATE));
 		}
 		return (Expression) formula;
 	}
@@ -126,26 +126,26 @@ public class MainParsers {
 		protected abstract P getParser(ParserContext pc) throws SyntaxError;
 		protected abstract SubParseResult<Formula<?>> apply(ParserContext pc, P parser, Formula<?> left) throws SyntaxError;
 		
-		protected static SyntaxError newOperatorError(ParserContext pc,
-				ProblemKind problemKind) {
+		protected static ASTProblem newOperatorError(ParserContext pc,
+				ProblemKind problemKind) throws SyntaxError {
 			final SourceLocation srcLoc = pc.makeSourceLocation(pc.t);
 			if (pc.t.kind == pc.getGrammar().getKind(EOF)) {
-				return new SyntaxError(new ASTProblem(srcLoc, PrematureEOF,
-						ProblemSeverities.Error));
+				return new ASTProblem(srcLoc, PrematureEOF,
+						ProblemSeverities.Error);
 			}
-			return new SyntaxError(new ASTProblem(srcLoc, problemKind,
-					ProblemSeverities.Error, pc.t.val));
+			return new ASTProblem(srcLoc, problemKind, ProblemSeverities.Error,
+					pc.t.val);
 		}
 
 		// errors must be non empty 
-		protected static SyntaxError newCompoundError(SourceLocation loc, Set<ASTProblem> errors) {
+		protected static ASTProblem newCompoundError(SourceLocation loc, Set<ASTProblem> errors) {
 			final List<String> messages = new ArrayList<String>(errors.size());
 			for (ASTProblem astProblem : errors) {
 				messages.add(astProblem.toString());
 			}
-			return new SyntaxError(new ASTProblem(loc,
+			return new ASTProblem(loc,
 					ProblemKind.VariousPossibleErrors, ProblemSeverities.Error,
-					ProblemKind.makeCompoundMessage(errors)));
+					ProblemKind.makeCompoundMessage(errors));
 		}
 
 	}
@@ -159,9 +159,11 @@ public class MainParsers {
 			if (subParsers.isEmpty()) {
 				final ILedParser<? extends Formula<?>> ledParser = pc.getLedParser();
 				if (ledParser == null) { // no parser exists for current token
-					throw newOperatorError(pc, ProblemKind.UnknownOperator);
+					throw pc.syntaxError(newOperatorError(pc,
+							ProblemKind.UnknownOperator));
 				} else { // operator is misplaced
-					throw newOperatorError(pc, ProblemKind.MisplacedLedOperator);
+					throw pc.syntaxError(newOperatorError(pc,
+							ProblemKind.MisplacedLedOperator));
 				}
 			}
 			return subParsers;
@@ -189,14 +191,15 @@ public class MainParsers {
 							nudResult.isClosed());
 					// FIXME check for ambiguities (several succeeding parsers)
 				} catch (SyntaxError e) {
-					errors.add(e.getProblem());
+					errors.add(pc.takeProblem());
 					pc.restore(savedContext);
 				}
 			}
 			if (errors.size() == 1) {
-				throw new SyntaxError(errors.iterator().next());
+				throw pc.syntaxError(errors.iterator().next());
 			} else {
-				throw newCompoundError(pc.makeSourceLocation(pc.t), errors);
+				throw pc.syntaxError(newCompoundError(
+						pc.makeSourceLocation(pc.t), errors));
 			}
 		}
 		
@@ -211,9 +214,11 @@ public class MainParsers {
 			if (subParser == null) {
 				final List<INudParser<? extends Formula<?>>> nudParsers = pc.getNudParsers();
 				if (nudParsers.isEmpty()) { // no parser exists for current token
-					throw newOperatorError(pc, ProblemKind.UnknownOperator);
+					throw pc.syntaxError(newOperatorError(pc,
+							ProblemKind.UnknownOperator));
 				} else { // operator is misplaced
-					throw newOperatorError(pc, ProblemKind.MisplacedNudOperator);
+					throw pc.syntaxError(newOperatorError(pc,
+							ProblemKind.MisplacedNudOperator));
 				}
 			}
 			return subParser;
@@ -264,7 +269,7 @@ public class MainParsers {
 				final SubParseResult<Expression> exprResult = pc.subParseRes(EXPR_PARSER, false);
 				final Expression expression = exprResult.getParsed();
 				if (!expression.isATypeExpression()) {
-					throw newInvalidTypeExpr(pc);
+					throw pc.syntaxError(newInvalidTypeExpr(pc));
 				}
 				final Type type = expression.toType();
 				return new SubParseResult<Type>(type, exprResult.getKind(),
@@ -279,8 +284,9 @@ public class MainParsers {
 			}
 		}
 
-		private SyntaxError newInvalidTypeExpr(ParserContext pc) {
-			return new SyntaxError(new ASTProblem(pc.getSourceLocation(), ProblemKind.InvalidTypeExpression, ProblemSeverities.Error));
+		private ASTProblem newInvalidTypeExpr(ParserContext pc) {
+			return new ASTProblem(pc.getSourceLocation(),
+					ProblemKind.InvalidTypeExpression, ProblemSeverities.Error);
 		}
 
 		@Override
@@ -295,7 +301,7 @@ public class MainParsers {
 		@Override
 		public SubParseResult<Predicate> nud(ParserContext pc) throws SyntaxError {
 			final SubParseResult<? extends Formula<?>> formulaResult = FORMULA_PARSER.nud(pc);
-			final Predicate predicate = asPredicate(formulaResult.getParsed());
+			final Predicate predicate = asPredicate(formulaResult.getParsed(), pc);
 			return new SubParseResult<Predicate>(predicate, formulaResult
 					.getKind(), formulaResult.isClosed());
 		}
@@ -311,7 +317,7 @@ public class MainParsers {
 		@Override
 		public SubParseResult<Expression> nud(ParserContext pc) throws SyntaxError {
 			final SubParseResult<? extends Formula<?>> formulaResult = FORMULA_PARSER.nud(pc);
-			final Expression expression = asExpression(formulaResult.getParsed());
+			final Expression expression = asExpression(formulaResult.getParsed(), pc);
 			return new SubParseResult<Expression>(expression, formulaResult
 					.getKind(), formulaResult.isClosed());
 		}
@@ -547,8 +553,7 @@ public class MainParsers {
 
 			if (tokenKind == pc.getGrammar().getKind(LPAR)) { // FUNIMAGE assignment
 				if (idents.size() != 1) {
-					throw new SyntaxError(new ASTProblem(
-							pc.getSourceLocation(),
+					throw pc.syntaxError(new ASTProblem(pc.getSourceLocation(),
 							ProblemKind.InvalidAssignmentToImage,
 							ProblemSeverities.Error));
 				}
@@ -563,8 +568,8 @@ public class MainParsers {
 			} else if (tokenKind == kind) {
 				final List<Expression> values = pc.subParseNoCheck(EXPR_LIST_PARSER);
 				if (idents.size() != values.size()) {
-					throw new SyntaxError(new ASTProblem(
-							pc.makeSourceLocation(tokenAfterIdents),
+					throw pc.syntaxError(new ASTProblem(pc
+							.makeSourceLocation(tokenAfterIdents),
 							ProblemKind.IncompatibleIdentExprNumbers,
 							ProblemSeverities.Error, idents.size(), values
 									.size()));
@@ -572,7 +577,7 @@ public class MainParsers {
 				final BecomesEqualTo bet = pc.factory.makeBecomesEqualTo(idents, values, pc.getSourceLocation());
 				return new SubParseResult<BecomesEqualTo>(bet, kind);
 			} else {
-				throw new SyntaxError(new ASTProblem(pc
+				throw pc.syntaxError(new ASTProblem(pc
 						.makeSourceLocation(tokenAfterIdents),
 						ProblemKind.UnknownOperator, ProblemSeverities.Error,
 						tokenAfterIdents + " (as assignment operator)"));
@@ -601,7 +606,7 @@ public class MainParsers {
 		public SubParseResult<BecomesMemberOf> nud(ParserContext pc) throws SyntaxError {
 			final FreeIdentifier ident = pc.subParse(FREE_IDENT_SUBPARSER, false);
 			if (pc.t.kind == pc.getGrammar().getKind(COMMA)) {
-				throw new SyntaxError(new ASTProblem(pc
+				throw pc.syntaxError(new ASTProblem(pc
 						.makeSourceLocation(pc.t),
 						ProblemKind.BECMOAppliesToOneIdent,
 						ProblemSeverities.Error));
@@ -699,8 +704,8 @@ public class MainParsers {
 
 			// FIXME when switching to led parsing, this disappears
 			pc.scanUntilEOF();
-			throw new SyntaxError(new ASTProblem(pc
-					.getEnclosingSourceLocation(),
+			throw pc.syntaxError(new ASTProblem(
+					pc.getEnclosingSourceLocation(),
 					ProblemKind.UnknownOperator, ProblemSeverities.Error,
 					" (expected to find an assignment operator)"));
 		}

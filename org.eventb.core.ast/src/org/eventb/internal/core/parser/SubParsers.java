@@ -184,6 +184,12 @@ public class SubParsers {
 			pc.acceptOpenParen();
 			final C child = pc.subParseNoCheck(childParser);
 			pc.acceptCloseParen();
+			return checkAndMakeValue(pc, child);
+		}
+
+		private R checkAndMakeValue(ParserContext pc, final C child)
+				throws SyntaxError {
+			checkValue(pc, child);
 			return makeValue(pc.factory, child, pc.getSourceLocation());
 		}
 		
@@ -204,6 +210,10 @@ public class SubParsers {
 			childParser.toString(mediator, child);
 		}
 		
+		protected void checkValue(ParserContext pc, C child) throws SyntaxError {
+			// to be overridden by subclasses when required
+		}
+
 		protected abstract R makeValue(FormulaFactory factory, C child, SourceLocation loc) throws SyntaxError;
 	}
 	
@@ -296,9 +306,16 @@ public class SubParsers {
 		@Override
 		public final SubParseResult<R> led(Formula<?> left, ParserContext pc) throws SyntaxError {
 			pc.accept(kind);
-			final C typedLeft = asLeftType(left);
+			final C typedLeft = asLeftType(left, pc);
 			final C right = parseRight(pc);
-			final R value = makeValue(pc.factory, typedLeft, right, pc.getSourceLocation());
+			return checkAndMakeResult(pc, typedLeft, right);
+		}
+
+		private SubParseResult<R> checkAndMakeResult(ParserContext pc,
+				final C typedLeft, final C right) throws SyntaxError {
+			checkValue(pc, typedLeft, right);
+			final R value = makeValue(pc.factory, typedLeft, right,
+					pc.getSourceLocation());
 			return new SubParseResult<R>(value, kind);
 		}
 
@@ -317,8 +334,13 @@ public class SubParsers {
 			mediator.subPrint(right, true);
 		}
 		
-		protected abstract C asLeftType(Formula<?> left) throws SyntaxError;
+		protected abstract C asLeftType(Formula<?> left, ParserContext pc) throws SyntaxError;
 		
+		protected void checkValue(ParserContext pc, C left, C right)
+				throws SyntaxError {
+			// to be overridden by subclasses when required
+		}
+	
 		protected abstract R makeValue(FormulaFactory factory, C left,
 				C right, SourceLocation loc) throws SyntaxError;
 	}
@@ -330,8 +352,8 @@ public class SubParsers {
 		}
 		
 		@Override
-		protected final Expression asLeftType(Formula<?> left) throws SyntaxError {
-			return asExpression(left);
+		protected final Expression asLeftType(Formula<?> left, ParserContext pc) throws SyntaxError {
+			return asExpression(left, pc);
 		}
 		
 	}
@@ -343,8 +365,8 @@ public class SubParsers {
 		}
 		
 		@Override
-		protected Predicate asLeftType(Formula<?> left) throws SyntaxError {
-			return asPredicate(left);
+		protected Predicate asLeftType(Formula<?> left, ParserContext pc) throws SyntaxError {
+			return asPredicate(left, pc);
 		}
 
 	}
@@ -360,7 +382,7 @@ public class SubParsers {
 
 		@Override
 		public SubParseResult<R> led(Formula<?> left, ParserContext pc) throws SyntaxError {
-			final C typedLeft = asChildType(left);
+			final C typedLeft = asChildType(left, pc);
 			
 			final List<C> children = new ArrayList<C>();
 			children.add(typedLeft);
@@ -370,11 +392,21 @@ public class SubParsers {
 				final C next = pc.subParse(childParser, true);
 				children.add(next);
 			} while (pc.t.kind == kind);
-			
-			final R result = makeResult(pc.factory, children, pc.getSourceLocation());
+			return checkAndMakeResult(pc, children);
+		}
+
+		private SubParseResult<R> checkAndMakeResult(ParserContext pc,
+				final List<C> children) throws SyntaxError {
+			checkResult(pc, children);
+			final R result = makeResult(pc.factory, children,
+					pc.getSourceLocation());
 			return new SubParseResult<R>(result, kind);
 		}
 		
+		protected void checkResult(ParserContext pc, List<C> children) throws SyntaxError {
+			// to be overridden by children when required
+		}
+
 		protected abstract C[] getChildren(R parent);
 		
 		@Override
@@ -387,7 +419,7 @@ public class SubParsers {
 			}
 		}
 		
-		protected abstract C asChildType(Formula<?> left) throws SyntaxError;
+		protected abstract C asChildType(Formula<?> left, ParserContext pc) throws SyntaxError;
 		
 		protected abstract R makeResult(FormulaFactory factory,
 				List<C> children, SourceLocation loc) throws SyntaxError;
@@ -438,7 +470,7 @@ public class SubParsers {
 		public SubParseResult<FreeIdentifier> nud(ParserContext pc) throws SyntaxError {
 			final Identifier ident = pc.subParse(IDENT_SUBPARSER, false);
 			if (!(ident instanceof FreeIdentifier)) {
-				throw new SyntaxError(new ASTProblem(ident.getSourceLocation(),
+				throw pc.syntaxError(new ASTProblem(ident.getSourceLocation(),
 						ProblemKind.FreeIdentifierExpected,
 						ProblemSeverities.Error));
 			}
@@ -520,7 +552,7 @@ public class SubParsers {
 			} catch (NumberFormatException e) {
 				// FIXME this is rather a problem with the lexer: it should
 				// never have returned a _INTLIT token kind
-				throw new SyntaxError(new ASTProblem(loc,
+				throw pc.syntaxError(new ASTProblem(loc,
 						ProblemKind.IntegerLiteralExpected,
 						ProblemSeverities.Error));
 			}
@@ -587,7 +619,7 @@ public class SubParsers {
 		@Override
 		public SubParseResult<Expression> led(Formula<?> left, ParserContext pc) throws SyntaxError {
 			if (!isTypedGeneric(left)) {
-				throw newUnexpectedOftype(pc);
+				throw pc.syntaxError(newUnexpectedOftype(pc));
 			}
 			final int oftype = pc.getGrammar().getKind(OFTYPE);
 			pc.accept(oftype);
@@ -629,9 +661,9 @@ public class SubParsers {
 			return false;
 		}
 
-		private SyntaxError newUnexpectedOftype(ParserContext pc) {
-			return new SyntaxError(new ASTProblem(pc.makeSourceLocation(pc.t),
-					ProblemKind.UnexpectedOftype, ProblemSeverities.Error));
+		private ASTProblem newUnexpectedOftype(ParserContext pc) {
+			return new ASTProblem(pc.makeSourceLocation(pc.t),
+					ProblemKind.UnexpectedOftype, ProblemSeverities.Error);
 		}
 		
 		// FIXME duplicate checks with AtomicExpression => factorize
@@ -741,8 +773,10 @@ public class SubParsers {
 		@Override
 		protected ExtendedExpression parseRight(ParserContext pc)
 				throws SyntaxError {
-			return EXTENDED_EXPR.checkAndMake(pc.factory, tag, Collections
-					.<Expression> emptyList(), pc.getSourceLocation());
+			EXTENDED_EXPR.check(pc, tag, Collections.<Expression> emptyList());
+			return EXTENDED_EXPR.make(pc.factory, tag,
+					Collections.<Expression> emptyList(),
+					pc.getSourceLocation());
 		}
 
 	}
@@ -778,10 +812,17 @@ public class SubParsers {
 		}
 
 		@Override
+		protected void checkValue(ParserContext pc,
+				Expression left, Expression right)
+				throws SyntaxError {
+			EXTENDED_EXPR.check(pc, tag, asList(left, right));
+		}
+		
+		@Override
 		protected ExtendedExpression makeValue(FormulaFactory factory,
-				Expression left, Expression right, SourceLocation loc) throws SyntaxError {
-			return EXTENDED_EXPR.checkAndMake(factory, tag, asList(left,
-					right), loc);
+				Expression left, Expression right, SourceLocation loc)
+				throws SyntaxError {
+			return EXTENDED_EXPR.make(factory, tag, asList(left, right), loc);
 		}
 		
 		@Override
@@ -810,8 +851,8 @@ public class SubParsers {
 		}
 
 		@Override
-		protected Expression asChildType(Formula<?> left) throws SyntaxError {
-			return asExpression(left);
+		protected Expression asChildType(Formula<?> left, ParserContext pc) throws SyntaxError {
+			return asExpression(left, pc);
 		}
 
 		@Override
@@ -828,14 +869,19 @@ public class SubParsers {
 		}
 		
 		@Override
+		protected void checkResult(ParserContext pc, List<Expression> children) throws SyntaxError {
+			EXTENDED_EXPR.check(pc, tag, children);
+		}
+		
+		@Override
 		protected ExtendedExpression makeResult(FormulaFactory factory,
 				List<Expression> children, SourceLocation loc) throws SyntaxError {
-			return EXTENDED_EXPR.checkAndMake(factory, tag, children, loc);
+			return EXTENDED_EXPR.make(factory, tag, children, loc);
 		}
 
 		@Override
-		protected Expression asChildType(Formula<?> left) throws SyntaxError {
-			return asExpression(left);
+		protected Expression asChildType(Formula<?> left, ParserContext pc) throws SyntaxError {
+			return asExpression(left, pc);
 		}
 
 		@Override
@@ -852,8 +898,8 @@ public class SubParsers {
 		}
 
 		@Override
-		protected Predicate asChildType(Formula<?> left) throws SyntaxError {
-			return asPredicate(left);
+		protected Predicate asChildType(Formula<?> left, ParserContext pc) throws SyntaxError {
+			return asPredicate(left, pc);
 		}
 
 		@Override
@@ -1404,9 +1450,14 @@ public class SubParsers {
 		}
 
 		@Override
+		protected void checkValue(ParserContext pc, List<Formula<?>> children) throws SyntaxError {
+			extCheckMaker.check(pc, tag, children);
+		}
+		
+		@Override
 		protected R makeValue(FormulaFactory factory,
 				List<Formula<?>> children, SourceLocation loc) throws SyntaxError {
-			return extCheckMaker.checkAndMake(factory, tag, children, loc);
+			return extCheckMaker.make(factory, tag, children, loc);
 		}
 
 		@Override
@@ -1441,21 +1492,27 @@ public class SubParsers {
 			// avoid synthetic accessor methods
 		}
 		
-		public final T checkAndMake(FormulaFactory factory, int tag,
-				List<? extends Formula<?>> children, SourceLocation loc)
-				throws SyntaxError {
-			final IFormulaExtension extension = factory.getExtension(tag);
+		public final void check(ParserContext pc, int tag,
+				List<? extends Formula<?>> children) throws SyntaxError {
+			final IFormulaExtension extension = pc.factory.getExtension(tag);
 			final ITypeDistribution childTypes = extension.getKind()
 					.getProperties().getChildTypes();
 			if (!childTypes.check(children)) {
-				throw new SyntaxError(new ASTProblem(loc,
+				final SourceLocation loc = pc.getSourceLocation();
+				throw pc.syntaxError(new ASTProblem(loc,
 						ProblemKind.ExtensionPreconditionError,
 						ProblemSeverities.Error));
 			}
+
+		}
+
+		public final T make(FormulaFactory factory, int tag,
+				List<? extends Formula<?>> children, SourceLocation loc) {
+			final IFormulaExtension extension = factory.getExtension(tag);
 			final List<Expression> childExprs = new ArrayList<Expression>();
 			final List<Predicate> childPreds = new ArrayList<Predicate>();
 			splitExprPred(children, childExprs, childPreds);
-			
+
 			return make(factory, extension, childExprs, childPreds, loc);
 		}
 
