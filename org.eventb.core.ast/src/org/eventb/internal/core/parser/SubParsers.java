@@ -85,7 +85,6 @@ import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.ITypeDistribution;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
-import org.eventb.internal.core.parser.GenParser.ParserContext;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 import org.eventb.internal.core.parser.MainParsers.BoundIdentDeclListParser;
 import org.eventb.internal.core.parser.MainParsers.PatternParser;

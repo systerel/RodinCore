@@ -59,10 +59,9 @@ import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.lexer.Token;
-import org.eventb.internal.core.parser.GenParser.ParserContext;
-import org.eventb.internal.core.parser.GenParser.ParserContext.SavedContext;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 import org.eventb.internal.core.parser.IParserPrinter.SubParseResult;
+import org.eventb.internal.core.parser.ParserContext.SavedContext;
 import org.eventb.internal.core.parser.SubParsers.AbstractNudParser;
 
 /**

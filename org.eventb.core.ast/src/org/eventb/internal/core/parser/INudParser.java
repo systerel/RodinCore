@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
-import org.eventb.internal.core.parser.GenParser.ParserContext;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 
 /**

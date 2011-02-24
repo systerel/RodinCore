@@ -11,7 +11,6 @@
 package org.eventb.internal.core.parser;
 
 import org.eventb.core.ast.Formula;
-import org.eventb.internal.core.parser.GenParser.ParserContext;
 import org.eventb.internal.core.parser.GenParser.SyntaxError;
 
 /**
