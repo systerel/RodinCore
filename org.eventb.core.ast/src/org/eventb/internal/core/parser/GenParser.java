@@ -73,42 +73,6 @@ public class GenParser {
 
 	}
 
-	private static class StackedValue<T> {
-		T val;
-		private final Stack<T> stack = new Stack<T>();
-		
-		public StackedValue(T initVal) {
-			this.val = initVal;
-		}
-		
-		public StackedValue(StackedValue<T> toCopy) {
-			this.val = toCopy.val;
-			this.stack.addAll(toCopy.stack);
-		}
-		
-		public void push(T newVal) {
-			stack.push(val);
-			val = newVal;
-		}
-
-		public void pop() {
-			val = stack.pop();
-		}
-
-		public T peekStack() {
-			return stack.peek();
-		}
-		
-		public boolean isStackEmpty() {
-			return stack.isEmpty();
-		}
-		
-		@Override
-		public String toString() {
-			return val.toString() + " " + stack.toString();
-		}
-	}
-	
 	private final Scanner scanner;
 	
 	// this field configures the parser to parse some kind of formula,
@@ -124,6 +88,75 @@ public class GenParser {
 	}
 	
 	static class ParserContext {
+
+		private static class Binding {
+			private Map<String, Integer> binders;
+			private int maxCount = -1;
+		
+			// Creates an empty binding.
+		    Binding() {
+		    	binders = new HashMap<String, Integer>();
+		    }
+			
+		    // Creates a new binding based on <code>base</code> and extended
+		    // with <code>idents</code>
+			Binding(Binding base, List<BoundIdentDecl> idents) {
+		    	binders = new HashMap<String, Integer>(base.binders);
+				int index = base.maxCount;
+				for (BoundIdentDecl ident: idents) {
+					binders.put(ident.getName(), ++ index);
+				}
+				maxCount = index;
+			}
+		
+			// Returns the index to use for the identifier <code>name</code>
+			// or -1 if the name is free under this binding.
+			int getBoundIndex(String name) {
+				Integer index = binders.get(name);
+				if (index == null) {
+					return -1;
+				} else {
+					return maxCount - index;
+				}
+			}
+		}
+
+		private static class StackedValue<T> {
+			T val;
+			private final Stack<T> stack = new Stack<T>();
+			
+			public StackedValue(T initVal) {
+				this.val = initVal;
+			}
+			
+			public StackedValue(StackedValue<T> toCopy) {
+				this.val = toCopy.val;
+				this.stack.addAll(toCopy.stack);
+			}
+			
+			public void push(T newVal) {
+				stack.push(val);
+				val = newVal;
+			}
+		
+			public void pop() {
+				val = stack.pop();
+			}
+		
+			public T peekStack() {
+				return stack.peek();
+			}
+			
+			public boolean isStackEmpty() {
+				return stack.isEmpty();
+			}
+			
+			@Override
+			public String toString() {
+				return val.toString() + " " + stack.toString();
+			}
+		}
+
 		private static final Token INIT_TOKEN = new Token(TokenSet.UNKNOWN_KIND, "", -1);
 
 		private final Scanner scanner;
@@ -519,39 +552,7 @@ public class GenParser {
 		}
 	}
 	
-    private static class Binding {
-    	private Map<String, Integer> binders;
-    	private int maxCount = -1;
- 
-    	// Creates an empty binding.
-        Binding() {
-        	binders = new HashMap<String, Integer>();
-        }
-    	
-        // Creates a new binding based on <code>base</code> and extended
-        // with <code>idents</code>
-		Binding(Binding base, List<BoundIdentDecl> idents) {
-        	binders = new HashMap<String, Integer>(base.binders);
-			int index = base.maxCount;
-    		for (BoundIdentDecl ident: idents) {
-    			binders.put(ident.getName(), ++ index);
-    		}
-    		maxCount = index;
-    	}
-
-		// Returns the index to use for the identifier <code>name</code>
-		// or -1 if the name is free under this binding.
-		int getBoundIndex(String name) {
-			Integer index = binders.get(name);
-			if (index == null) {
-				return -1;
-			} else {
-				return maxCount - index;
-			}
-		}
-    }
-
-	public GenParser(Class<?> clazz, Scanner scanner, ParseResult result,
+    public GenParser(Class<?> clazz, Scanner scanner, ParseResult result,
 			boolean withPredVar) {
 		super();
 		this.scanner = scanner;
