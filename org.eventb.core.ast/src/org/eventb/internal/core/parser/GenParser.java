@@ -508,6 +508,15 @@ public class GenParser {
 			}
 			return scanner.lookAheadFor(searchedKind);
 		}
+
+		public void debugEndChecks() {
+			final int eof = grammar.getKind(EOF);
+			if (parentKind.val != eof) {
+				throw new IllegalStateException("Improper parent stack: "
+						+ parentKind + " with " + parentKind.val + " = "
+						+ factory.getGrammar().getImage(parentKind.val));
+			}
+		}
 	}
 	
     private static class Binding {
@@ -588,12 +597,7 @@ public class GenParser {
 			}
 			// TODO remove above debug check when stable
 			if (DEBUG) {
-				if (pc.parentKind.val != eof) {
-					throw new IllegalStateException("Improper parent stack: "
-							+ pc.parentKind + " with " + pc.parentKind.val
-							+ " = "
-							+ factory.getGrammar().getImage(pc.parentKind.val));
-				}
+				pc.debugEndChecks();
 			}
 		} catch (SyntaxError e) {
 			processFailure(e.getProblem());
