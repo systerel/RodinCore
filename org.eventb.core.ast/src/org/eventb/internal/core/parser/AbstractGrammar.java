@@ -24,10 +24,10 @@ import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RPAR;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.ARITHMETIC;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.GROUP_0;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.TYPED;
-import static org.eventb.internal.core.parser.OperatorRelationship.COMPATIBLE;
-import static org.eventb.internal.core.parser.OperatorRelationship.LEFT_PRIORITY;
-import static org.eventb.internal.core.parser.OperatorRelationship.RIGHT_PRIORITY;
 import static org.eventb.internal.core.parser.SubParsers.OFTYPE_PARSER;
+import static org.eventb.internal.core.parser.operators.OperatorRelationship.COMPATIBLE;
+import static org.eventb.internal.core.parser.operators.OperatorRelationship.LEFT_PRIORITY;
+import static org.eventb.internal.core.parser.operators.OperatorRelationship.RIGHT_PRIORITY;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,8 +44,17 @@ import org.eventb.core.ast.extension.IOperator;
 import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.BMath.StandardGroup;
-import org.eventb.internal.core.parser.ExternalViewUtils.Instantiator;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.operators.BracketCompactor;
+import org.eventb.internal.core.parser.operators.Brackets;
+import org.eventb.internal.core.parser.operators.ExternalViewUtils;
+import org.eventb.internal.core.parser.operators.LexKindParserDB;
+import org.eventb.internal.core.parser.operators.OpRegistryCompactor;
+import org.eventb.internal.core.parser.operators.OperatorRegistry;
+import org.eventb.internal.core.parser.operators.OperatorRegistryCompact;
+import org.eventb.internal.core.parser.operators.OperatorRelationship;
+import org.eventb.internal.core.parser.operators.PropertyParserDB;
+import org.eventb.internal.core.parser.operators.ExternalViewUtils.Instantiator;
 
 /**
  * @author Nicolas Beauger

@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.core.parser;
+package org.eventb.internal.core.parser.operators;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +20,10 @@ import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.internal.core.ast.extension.OperatorCoverage;
+import org.eventb.internal.core.parser.GenParser;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.IOperatorInfo;
+import org.eventb.internal.core.parser.IPropertyParserInfo;
 
 /**
  * @author Nicolas Beauger

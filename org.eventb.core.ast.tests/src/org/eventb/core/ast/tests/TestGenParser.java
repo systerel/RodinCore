@@ -135,7 +135,7 @@ import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
 import org.eventb.internal.core.parser.AbstractGrammar;
-import org.eventb.internal.core.parser.OperatorRelationship;
+import org.eventb.internal.core.parser.operators.OperatorRelationship;
 
 /**
  * This test class aims at supporting generic parser development. It is not part

@@ -8,12 +8,12 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.core.parser;
+package org.eventb.internal.core.parser.operators;
 
-import static org.eventb.internal.core.parser.OperatorRelationship.COMPATIBLE;
-import static org.eventb.internal.core.parser.OperatorRelationship.INCOMPATIBLE;
-import static org.eventb.internal.core.parser.OperatorRelationship.LEFT_PRIORITY;
-import static org.eventb.internal.core.parser.OperatorRelationship.RIGHT_PRIORITY;
+import static org.eventb.internal.core.parser.operators.OperatorRelationship.COMPATIBLE;
+import static org.eventb.internal.core.parser.operators.OperatorRelationship.INCOMPATIBLE;
+import static org.eventb.internal.core.parser.operators.OperatorRelationship.LEFT_PRIORITY;
+import static org.eventb.internal.core.parser.operators.OperatorRelationship.RIGHT_PRIORITY;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -22,8 +22,8 @@ import java.util.Set;
 import org.eventb.core.ast.extension.IGrammar;
 import org.eventb.core.ast.extension.IOperator;
 import org.eventb.core.ast.extension.IOperatorGroup;
-import org.eventb.internal.core.parser.ExternalViewUtils.ExternalGrammar;
-import org.eventb.internal.core.parser.ExternalViewUtils.Instantiator;
+import org.eventb.internal.core.parser.operators.ExternalViewUtils.ExternalGrammar;
+import org.eventb.internal.core.parser.operators.ExternalViewUtils.Instantiator;
 
 /**
  * @author Nicolas Beauger

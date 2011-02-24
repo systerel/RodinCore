@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.core.parser;
+package org.eventb.internal.core.parser.operators;
 
 import java.util.BitSet;
 import java.util.HashSet;
@@ -17,8 +17,8 @@ import java.util.Set;
 
 import org.eventb.core.ast.extension.IOperator;
 import org.eventb.core.ast.extension.IOperatorGroup;
-import org.eventb.internal.core.parser.ExternalViewUtils.ExternalOpGroup;
-import org.eventb.internal.core.parser.ExternalViewUtils.Instantiator;
+import org.eventb.internal.core.parser.operators.ExternalViewUtils.ExternalOpGroup;
+import org.eventb.internal.core.parser.operators.ExternalViewUtils.Instantiator;
 
 /**
  * An optimized implementation of operator group. This type is used after

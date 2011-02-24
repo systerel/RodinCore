@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.core.parser;
+package org.eventb.internal.core.parser.operators;
 
 /**
  * Data structure for matching brackets.

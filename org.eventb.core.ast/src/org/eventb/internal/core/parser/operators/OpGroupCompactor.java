@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.core.parser;
+package org.eventb.internal.core.parser.operators;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eventb.internal.core.parser.ExternalViewUtils.Instantiator;
+import org.eventb.internal.core.parser.operators.ExternalViewUtils.Instantiator;
 
 /**
  * @author Nicolas Beauger

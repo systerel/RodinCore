@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eventb.internal.core.parser.ExternalViewUtils.Instantiator;
+import org.eventb.internal.core.parser.operators.ExternalViewUtils.Instantiator;
 
 /**
  * @author Nicolas Beauger

@@ -38,6 +38,7 @@ import org.eventb.internal.core.lexer.Scanner;
 import org.eventb.internal.core.lexer.Scanner.ScannerState;
 import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.IParserPrinter.SubParseResult;
+import org.eventb.internal.core.parser.operators.OperatorRelationship;
 
 /**
  * @author Nicolas Beauger
