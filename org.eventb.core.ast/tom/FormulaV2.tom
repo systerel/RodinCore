@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language v2
  *     Systerel - fixed list operators
+ *     Systerel - migration to tom-2.8
  *******************************************************************************/ 
 
 /*
@@ -25,11 +26,13 @@
 
 %typeterm Predicate {
 	implement { Predicate }
+	is_sort(t) { t instanceof Predicate }
 	equals(t1,t2) { t1.equals(t2) }
 }
 
 %typeterm Expression {
 	implement { Expression }
+	is_sort(t) { t instanceof Expression }
 	equals(t1,t2) { t1.equals(t2) }
 }
 
@@ -268,15 +271,15 @@
  * LiteralPredicate
  */
 
-%op Predicate LiteralPredicate {
+%op Predicate LiteralPredicate() {
 	is_fsym(t) { t instanceof LiteralPredicate }
 }
 
-%op Predicate BTRUE {
+%op Predicate BTRUE() {
 	is_fsym(t) { t != null && t.getTag() == Formula.BTRUE }
 }
 
-%op Predicate BFALSE {
+%op Predicate BFALSE() {
 	is_fsym(t) { t != null && t.getTag() == Formula.BFALSE }
 }
 
@@ -356,55 +359,55 @@
  * AtomicExpression
  */
  
-%op Expression AtomicExpression {
+%op Expression AtomicExpression() {
 	is_fsym(t) { t instanceof AtomicExpression }
 }
 
-%op Expression Natural {
+%op Expression Natural() {
 	is_fsym(t) { t != null && t.getTag() == Formula.NATURAL }
 }
 	
-%op Expression Natural1 {
+%op Expression Natural1() {
 	is_fsym(t) { t != null && t.getTag() == Formula.NATURAL1 }
 }
 
-%op Expression INTEGER {
+%op Expression INTEGER() {
 	is_fsym(t) { t != null && t.getTag() == Formula.INTEGER }
 }
 
-%op Expression BOOL {
+%op Expression BOOL() {
 	is_fsym(t) { t != null && t.getTag() == Formula.BOOL }
 }
 	
-%op Expression TRUE {
+%op Expression TRUE() {
 	is_fsym(t) { t != null && t.getTag() == Formula.TRUE }
 }
 
-%op Expression FALSE {
+%op Expression FALSE() {
 	is_fsym(t) { t != null && t.getTag() == Formula.FALSE }
 }
 
-%op Expression EmptySet {
+%op Expression EmptySet() {
 	is_fsym(t) { t != null && t.getTag() == Formula.EMPTYSET }
 }
 	
-%op Expression PRED {
+%op Expression PRED() {
 	is_fsym(t) { t != null && t.getTag() == Formula.KPRED }
 }
 
-%op Expression SUCC {
+%op Expression SUCC() {
 	is_fsym(t) { t != null && t.getTag() == Formula.KSUCC }
 }
 
-%op Expression Prj1Gen {
+%op Expression Prj1Gen() {
 	is_fsym(t) { t != null && t.getTag() == Formula.KPRJ1_GEN }
 }
 
-%op Expression Prj2Gen {
+%op Expression Prj2Gen() {
 	is_fsym(t) { t != null && t.getTag() == Formula.KPRJ2_GEN }
 }
 
-%op Expression IdGen {
+%op Expression IdGen() {
 	is_fsym(t) { t != null && t.getTag() == Formula.KID_GEN }
 }
 
@@ -604,7 +607,7 @@
  * Identifier
  */
 
-%op Expression Identifier {
+%op Expression Identifier() {
 	is_fsym(t) { t instanceof Identifier }
 }
 
