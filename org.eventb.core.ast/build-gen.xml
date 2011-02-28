@@ -16,6 +16,7 @@
 	<target name="unifier"
 			description="Generate the type unifier using Tom">
 		<tom config="${tom.home}/Tom.xml"
+				classpathref="tom.classpath"
 				srcdir="${src}"
 				destdir="${src}"
 				options="-I ${org.eventb.core.ast.home}/tom"
