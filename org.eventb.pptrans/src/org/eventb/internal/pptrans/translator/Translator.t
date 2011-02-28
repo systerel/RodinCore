@@ -381,10 +381,8 @@ public class Translator extends IdentityTranslator {
 					return super.translate(pred);
 				}
 	    	}
-	    	_ -> {
-	    		return super.translate(pred);
-	    	}
 	    }
+	    return super.translate(pred);
 	}
 	
 	protected Predicate translateIn(Expression e, Expression rhs, SourceLocation loc) {
@@ -568,7 +566,7 @@ public class Translator extends IdentityTranslator {
 			EmptySet() -> {
 				return ff.makeLiteralPredicate(Formula.BFALSE, loc);
 			}
-			SetExtension(()) -> {
+			SetExtension(_) -> {
 				return ff.makeLiteralPredicate(Formula.BFALSE, loc);
 			}
 			/**
@@ -660,7 +658,7 @@ public class Translator extends IdentityTranslator {
 	         * RULE IR16: 	e ∈{a1,...,an} 	
 	         *	  			e=a1 ∨ ... ∨ e=an		
 	         */
-	        SetExtension(as@(_)) -> {
+	        SetExtension(as@_) -> {
 	        	// Workaround Tom 2.2 bug: can't use last element of list
 				return translateEqual(
 						ff.makeRelationalPredicate(Formula.EQUAL, e, `as[0], loc));
@@ -917,10 +915,8 @@ public class Translator extends IdentityTranslator {
 						func(e),
 						loc);	
 			}
-			_ -> {
-				return null;
-			}
 		}					
+		return null;
 	}
 	
 	private Expression purifyMaplet(
@@ -938,17 +934,15 @@ public class Translator extends IdentityTranslator {
 				else
 					return ff.makeBinaryExpression(Formula.MAPSTO, nl, nr, loc);
 			}
-			_ -> {
-				Expression substitute = quant.addQuantifier(expr.getType(), loc);
-				bindings.add(0, 
-					ff.makeRelationalPredicate(
+		}
+		Expression substitute = quant.addQuantifier(expr.getType(), loc);
+		bindings.add(0, 
+				ff.makeRelationalPredicate(
 						Formula.EQUAL, 
 						substitute, 
 						quant.push(expr), 
 						loc));
-				return substitute;
-			}
-		}
+		return substitute;
 	}
 	
 	protected Predicate translateIn_EF(
@@ -1142,10 +1136,8 @@ public class Translator extends IdentityTranslator {
 			SUCC() -> {
 				return translateEqual(equalsPlusOne(f, e, loc));
 			}
-			_ -> {
-				return null;
-	    	}
 		}
+		return null;
 	}
 	
 	private Predicate equalsPlusOne(Expression left, Expression right,
@@ -1181,10 +1173,8 @@ public class Translator extends IdentityTranslator {
 			Prj2Gen() -> {	
 				return translate(ff.makeRelationalPredicate(Formula.EQUAL, f, g, loc));
 			}
-			_ -> {
-				return null;
-	    	}
 		}
+		return null;
 	}
 
 	protected Predicate translateIn_E_FG(
@@ -1210,10 +1200,8 @@ public class Translator extends IdentityTranslator {
 					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, e, g, loc), `q, loc),
 					loc);
 			}
-			_ -> {
-				return null;
-	    	}
 		}
+		return null;
 	}
 
 	protected Predicate translateIn_EF_GH(
@@ -1239,10 +1227,8 @@ public class Translator extends IdentityTranslator {
 					translateIn(ff.makeBinaryExpression(Formula.MAPSTO, f, h, loc), `q, loc),
 					loc);
 			}
-			_ -> {
-				return null;
-	    	}
 		}
+		return null;
 	}
 	
 	protected Predicate func(Expression f) {
@@ -1431,18 +1417,16 @@ public class Translator extends IdentityTranslator {
 			Equal(max@Max(s), n@Identifier()) -> {
    				return translateEqualsMinMax(`n, `max, `s, loc);
 			}
-	        /**
-	        * RULE ER13: 	el(bop(s)) = er  
-	        *	  			c∀ el(bop(s)∗) = er
-	        */
-			_ -> {
-				Predicate newPred = Reorganizer.reorganize((RelationalPredicate)pred, ff);
-
-				if (newPred != pred)
-					return translate(newPred);
-				else
-					return super.translate(pred);
-			}
 		}
+		/**
+		 * RULE ER13: 	el(bop(s)) = er  
+		 *	  			c∀ el(bop(s)∗) = er
+		 */
+		Predicate newPred = Reorganizer.reorganize((RelationalPredicate)pred, ff);
+		
+		if (newPred != pred)
+			return translate(newPred);
+		else
+			return super.translate(pred);
 	}
 }

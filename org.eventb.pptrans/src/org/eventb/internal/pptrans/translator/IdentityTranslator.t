@@ -102,10 +102,8 @@ public class IdentityTranslator extends IdentityTranslatorBase {
 	    	ExtendedExpression(_, _) -> {
 	    		throw new UnsupportedOperationException("Extended expressions are not supported: " + expr);
 	    	}
-	    	_ -> {
-	    		throw new AssertionError("Unknown expression: " + expr);
-	    	}
 	    }
+	    throw new AssertionError("Unknown expression: " + expr);
 	}
 	
 	@Override
@@ -153,9 +151,7 @@ public class IdentityTranslator extends IdentityTranslatorBase {
 	    	ExtendedPredicate(_, _) -> {
 	    		throw new UnsupportedOperationException("Extended predicates are not supported: " + pred);
 	    	}
-	       	_ -> {
-	    		throw new AssertionError("Unknown Predicate: " + pred);
-	    	}
 	    }
+	    throw new AssertionError("Unknown Predicate: " + pred);
 	}
 }

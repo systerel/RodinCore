@@ -259,10 +259,8 @@ public class PredicateSimplification extends IdentityTranslator  {
 	    		return mBFALSE(loc);
 	    	}
 
-	    	_ -> {
-	    		return super.translate(pred);
-	    	}
 	    }
+	    return super.translate(pred);
 	}
 	
 	@Override
