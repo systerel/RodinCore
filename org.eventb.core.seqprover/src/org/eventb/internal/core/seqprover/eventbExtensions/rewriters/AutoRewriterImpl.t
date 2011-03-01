@@ -11,6 +11,7 @@
  *     Systerel - SIMP_IN_COMPSET_*, SIMP_SPECIAL_OVERL, SIMP_FUNIMAGE_LAMBDA
  *     Systerel - Added tracing mechanism
  *     Systerel - SIMP_EQUAL_CONSTR*, SIMP_DESTR_CONSTR
+ *     Systerel - move to tom-2.8
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
@@ -778,8 +779,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * SIMP_MULTI_IMP_OR
 	    	 *    P ∧ ... ∧ Q ∧ ... ∧ R ⇒ Q == ⊤
 	    	 */
-	    	Limp(Land(children), Q) -> {
-	    		if (level2 && contains(`children, `Q)) {
+	    	Limp(Land(pList(_*, Q, _*)), Q) -> {
+	    		if (level2) {
 		    		result = dLib.True();
 		    		trace(predicate, result, "SIMP_MULTI_IMP_OR");
 					return result;
@@ -794,6 +795,11 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 *    P ∧ ... ∧ ¬Q ∧ ... ∧ R ⇒ Q == ¬(P ∧ ... ∧ ¬Q ∧ ... ∧ R)
 	    	 */
 	    	Limp(and@Land(children), Q) -> {
+	    		/* cannot do same as above because makeNeg(Q) =/= Not(Q)
+	    		 * TODO tom doc says the following should work:
+	    		 * Limp(and@Land(pList(_*, nQ, _*)), Q)
+	    		 * && (nQ << Predicate dLib.makeNeg(Q))
+	    		 */
 	    		if (level2 && contains(`children, dLib.makeNeg(`Q))) {
 		    		result = dLib.makeNeg(`and);
 		    		trace(predicate, result, "SIMP_MULTI_IMP_AND_NOT_R",
@@ -1164,24 +1170,20 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * SIMP_SUBSETEQ_BUNION
 	    	 * Set Theory: S ⊆ A ∪ ... ∪ S ∪ ... ∪ B == ⊤
 	    	 */
-	    	SubsetEq(S, BUnion(children)) -> {
-	    		if (contains(`children, `S)) {
-    				result = dLib.True();
-    				trace(predicate, result, "SIMP_SUBSETEQ_BUNION");
-    				return result;
-	    		}
+	    	SubsetEq(S, BUnion(eList(_*, S, _*))) -> {
+	    		result = dLib.True();
+	    		trace(predicate, result, "SIMP_SUBSETEQ_BUNION");
+	    		return result;
 	    	}
 			
 	    	/**
              * SIMP_SUBSETEQ_BINTER
 	    	 * Set Theory: A ∩ ... ∩ S ∩ ... ∩ B ⊆ S == ⊤
 	    	 */
-	    	SubsetEq(BInter(children), S) -> {
-	    		if (contains(`children, `S)) {
-    				result = dLib.True();
-    				trace(predicate, result, "SIMP_SUBSETEQ_BINTER");
-    				return result;
-	    		}
+	    	SubsetEq(BInter(eList(_*, S, _*)), S) -> {
+				result = dLib.True();
+				trace(predicate, result, "SIMP_SUBSETEQ_BINTER");
+				return result;
 	    	}
 			
 			/**
@@ -1238,9 +1240,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_IN_SING
              * Set Theory 18: E ∈ {F} == E = F (if F is a single expression)
 	    	 */
-	    	In(E, SetExtension(Fs@eList(_))) -> {
-	    		// Workaround Tom 2.2 bug: don't use `F
-				result = makeRelationalPredicate(EQUAL, `E, `Fs[0]);
+	    	In(E, SetExtension(eList(F))) -> {
+				result = makeRelationalPredicate(EQUAL, `E, `F);
 				trace(predicate, result, "SIMP_IN_SING");
 				return result;
 	    	}
@@ -1269,9 +1270,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * SIMP_EQUAL_SING
 	    	 * Set Theory 19: {E} = {F} == E = F   if E, F is a single expression
 	    	 */
-	    	Equal(SetExtension(Es@eList(_)), SetExtension(Fs@eList(_))) -> {
-	    		// Workaround Tom 2.2 bug: can't use singletons
-				result = makeRelationalPredicate(EQUAL, `Es[0], `Fs[0]);
+	    	Equal(SetExtension(eList(E)), SetExtension(eList(F))) -> {
+				result = makeRelationalPredicate(EQUAL, `E, `F);
 				trace(predicate, result, "SIMP_EQUAL_SING");
 				return result;
 	    	}
@@ -1471,10 +1471,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_SUBSETEQ_SING
 			 *    {E} ⊆ S == E ∈ S (where E is a single expression)
 			 */
-			SubsetEq(SetExtension(l@eList(_)), S) -> {
-				// Workaround Tom 2.2 bug
+			SubsetEq(SetExtension(eList(E)), S) -> {
 				if (level2) {
-					result = makeRelationalPredicate(IN, `l[0], `S);
+					result = makeRelationalPredicate(IN, `E, `S);
 					trace(predicate, result, "SIMP_SUBSETEQ_SING");
 					return result;
 				}
@@ -1906,10 +1905,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_FCOMP_ID_L
 			 *    (S ◁ id) ; r == S ◁ r
 			 */
-			Fcomp(rs@eList(DomRes(S, IdGen()), _)) -> {
-	    		// Workaround Tom 2.2 bug: can't use last element of list
+			Fcomp(eList(DomRes(S, IdGen()), r)) -> {
 				if (level2) {
-					result = makeBinaryExpression(DOMRES, `S, `rs[1]);
+					result = makeBinaryExpression(DOMRES, `S, `r);
 					trace(expression, result, "SIMP_FCOMP_ID_L");
 					return result;
 				}
@@ -1919,10 +1917,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_FCOMP_ID_R
 			 *    r ; (S ◁ id) == r ▷ S
 			 */
-			Fcomp(rs@eList(_, DomRes(S, IdGen()))) -> {
-				// Workaround Tom 2.2 bug: can't use first element of list
+			Fcomp(eList(r, DomRes(S, IdGen()))) -> {
 				if (level2) {
-					result = makeBinaryExpression(RANRES, `rs[0], `S);
+					result = makeBinaryExpression(RANRES, `r, `S);
 					trace(expression, result, "SIMP_FCOMP_ID_R");
 					return result;
 				}
@@ -1932,11 +1929,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_TYPE_FCOMP_R
 	    	 *    r ; Ty == dom(r) × Tb (where Ty is a type expression and Ty = Ta × Tb)
 	    	 */
-	    	Fcomp(rt@eList(_, Cprod(_, Tb))) -> {
-				// Workaround Tom 2.2 bug: can't use first element of list
-	    		if (level2 && `rt[1].isATypeExpression()) {
+	    	Fcomp(eList(r, Ty@Cprod(_, Tb))) -> {
+	    		if (level2 && `Ty.isATypeExpression()) {
 	    			result = makeBinaryExpression(CPROD,
-	    						makeUnaryExpression(KDOM, `rt[0]),
+	    						makeUnaryExpression(KDOM, `r),
 	    						`Tb);
 	    			trace(expression, result, "SIMP_TYPE_FCOMP_R");
 					return result;
@@ -1947,12 +1943,11 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_TYPE_FCOMP_L
 	    	 *    Ty ; r == Ta × ran(r) (where Ty is a type expression and Ty = Ta × Tb)
 	    	 */
-	    	Fcomp(tr@eList(Cprod(Ta, _), _)) -> {
-	    		// Workaround Tom 2.2 bug: can't use last element of list
-	    		if (level2 && `tr[0].isATypeExpression()) {
+	    	Fcomp(eList(Ty@Cprod(Ta, _), r)) -> {
+	    		if (level2 && `Ty.isATypeExpression()) {
 	    			result = makeBinaryExpression(CPROD,
 	    						`Ta,
-	    						makeUnaryExpression(KRAN, `tr[1]));
+	    						makeUnaryExpression(KRAN, `r));
 	    			trace(expression, result, "SIMP_TYPE_FCOMP_L");
 					return result;	
 	    		}
@@ -1962,11 +1957,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_TYPE_BCOMP_L
 	    	 *    Ty ∘ r == dom(r) × Tb (where Ty is a type expression and Ty = Ta × Tb)
 	    	 */
-	    	Bcomp(tr@eList(Cprod(_, Tb), _)) -> {
-	    		// Workaround Tom 2.2 bug: can't use last element of list
-	    		if (level2 && `tr[0].isATypeExpression()) {
+	    	Bcomp(eList(Ty@Cprod(_, Tb), r)) -> {
+	    		if (level2 && `Ty.isATypeExpression()) {
 	    			result = makeBinaryExpression(CPROD,
-	    						makeUnaryExpression(KDOM, `tr[1]),
+	    						makeUnaryExpression(KDOM, `r),
 	    						`Tb);
 	    			trace(expression, result, "SIMP_TYPE_BCOMP_L");
 					return result;	
@@ -1977,12 +1971,11 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 * SIMP_TYPE_BCOMP_R
 	    	 *    r ∘ Ty == Ta × ran(r) (where Ty is a type expression and Ty = Ta × Tb)
 	    	 */
-	    	Bcomp(tr@eList(_, Cprod(Ta, _))) -> {
-	    		// Workaround Tom 2.2 bug: can't use first element of list
-	    		if (level2 && `tr[1].isATypeExpression()) {
+	    	Bcomp(eList(r, Ty@Cprod(Ta, _))) -> {
+	    		if (level2 && `Ty.isATypeExpression()) {
 	    			result = makeBinaryExpression(CPROD,
 	    						`Ta,
-	    						makeUnaryExpression(KRAN, `tr[0]));
+	    						makeUnaryExpression(KRAN, `r));
 	    			trace(expression, result, "SIMP_TYPE_BCOMP_R");
 					return result;	
 	    		}
@@ -2436,9 +2429,8 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_FUNIMAGE_CPROD
              * Set Theory: (S × {E})(x) == E
 			 */
-			FunImage(Cprod(_, SetExtension(Es@eList(_))), _) -> {
-	    		// Workaround Tom 2.2 bug: can't use `E
-				result = `Es[0];
+			FunImage(Cprod(_, SetExtension(eList(E))), _) -> {
+				result = `E;
 		        trace(expression, result, "SIMP_FUNIMAGE_CPROD");
     	        return result;
 			}
@@ -3592,10 +3584,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_MIN_SING
 			 *    min({E}) == E (where E is a single expression)
 			 */
-			Min(SetExtension(li@eList(_))) -> {
-				// Workaround : can't access the eList element
+			Min(SetExtension(eList(E))) -> {
 				if (level2) {
-					result = `li[0];
+					result = `E;
 					trace(expression, result, "SIMP_MIN_SING");
 					return result;
 				}
@@ -3605,10 +3596,9 @@ public class AutoRewriterImpl extends DefaultRewriter {
 			 * SIMP_MAX_SING
 			 *    max({E}) == E (where E is a single expression)
 			 */
-			Max(SetExtension(li@eList(_))) -> {
-				// Workaround : can't access the eList element
+			Max(SetExtension(eList(E))) -> {
 				if (level2) {
-					result = `li[0];
+					result = `E;
 					trace(expression, result, "SIMP_MAX_SING");
 					return result;
 				}
@@ -3938,11 +3928,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
     		 * SIMP_SPECIAL_COND_BTRUE:
     		 * COND(true, E_1, E_2) == E_1
     		 */
-    		ExtendedExpression(Es@eList(_,_), pList(BTRUE())) -> {
- 	    		// Workaround Tom 2.2 bug: can't use `E1
+    		ExtendedExpression(eList(E1,_), pList(BTRUE())) -> {
     			final ExtendedExpression ee = (ExtendedExpression) expression;
     			if (ee.getExtension() == FormulaFactory.getCond()) {
-					result = `Es[0];
+					result = `E1;
 		    		trace(expression, result, "SIMP_SPECIAL_COND_BTRUE");
 		    		return result;
 				}
@@ -3952,11 +3941,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
     		 * SIMP_SPECIAL_COND_BFALSE:
     		 * COND(false, E_1, E_2) == E_2
     		 */
-    		ExtendedExpression(Es@eList(_,_), pList(BFALSE())) -> {
- 	    		// Workaround Tom 2.2 bug: can't use `E2
+    		ExtendedExpression(eList(_,E2), pList(BFALSE())) -> {
     			final ExtendedExpression ee = (ExtendedExpression) expression;
     			if (ee.getExtension() == FormulaFactory.getCond()) {
-					result = `Es[1];
+					result = `E2;
 		    		trace(expression, result, "SIMP_SPECIAL_COND_BFALSE");
 		    		return result;
 				}
