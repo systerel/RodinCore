@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language V2
  *     Systerel - added pred and succ (IR47, IR48)
+ *     Systerel - move to tom-2.8
  *******************************************************************************/
 
 package org.eventb.internal.pptrans.translator;
@@ -658,10 +659,9 @@ public class Translator extends IdentityTranslator {
 	         * RULE IR16: 	e ∈{a1,...,an} 	
 	         *	  			e=a1 ∨ ... ∨ e=an		
 	         */
-	        SetExtension(as@_) -> {
-	        	// Workaround Tom 2.2 bug: can't use last element of list
+	        SetExtension(eList(a)) -> {
 				return translateEqual(
-						ff.makeRelationalPredicate(Formula.EQUAL, e, `as[0], loc));
+						ff.makeRelationalPredicate(Formula.EQUAL, e, `a, loc));
 						
 			}
 			SetExtension(members) -> {
