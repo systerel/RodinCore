@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -127,9 +127,9 @@ public class OnePointFilterUtils {
 								return new ToProcessStruct(`identDecls, getConjuncts(`impLeft), `impRight);      
 							}
 
-							Exists(identDecls, pred) -> {
-								return new ToProcessStruct(`identDecls, getConjuncts(`pred), null);
-							}
+			Exists(identDecls, pred) -> {
+				return new ToProcessStruct(`identDecls, getConjuncts(`pred), null);
+			}
 		}
 		return null;
 	}
