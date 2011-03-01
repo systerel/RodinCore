@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language V2
+ *     Systerel - move to tom-2.8
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
@@ -103,10 +104,9 @@ public class FunSingletonImg extends AbstractManualInference {
 			/**
 	    	 * Set Theory: f[{E}]
 	    	 */
-			RelImage(ff, SetExtension(children@eList(_))) -> {
-				// Workaround Tom 2.2. bug
+			RelImage(ff, SetExtension(eList(EE))) -> {
 				f = `ff;
-				E = `children[0];
+				E = `EE;
 			}
 
 	    }
