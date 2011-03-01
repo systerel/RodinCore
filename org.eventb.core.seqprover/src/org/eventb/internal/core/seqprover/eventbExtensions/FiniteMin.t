@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language V2
+ *     Systerel - move to tom-2.8
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
@@ -65,29 +66,16 @@ public class FiniteMin extends AbstractEmptyInputReasoner {
 			
 			/**
 	    	 * Set Theory: ∃n·(∀x·x ∈ S ⇒ n ≤ x)
-	    	 */
-			Exists(in, ForAll(ix, Limp(In(x, S), Le(n, x)))) -> {
-				if (`in.length == 1 && `ix.length == 1) {
-					if (Lib.isBoundIdentifier(`x) && Lib.isBoundIdentifier(`n)) {
-						return (((BoundIdentifier) `x).getBoundIndex() == 0 && 
-								((BoundIdentifier) `n).getBoundIndex() == 1 &&
-								`S.getBoundIdentifiers().length == 0);
-					}
-				}
-			}
-
-			/**
 	    	 * Set Theory: ∃n·(∀x·x ∈ S ⇒ x ≥ n)
 	    	 */
-			Exists(in, ForAll(ix, Limp(In(x, S), Ge(x, n)))) -> {
-				if (`in.length == 1 && `ix.length == 1) {
-					if (Lib.isBoundIdentifier(`x) && Lib.isBoundIdentifier(`n)) {
-						return (((BoundIdentifier) `x).getBoundIndex() == 0 && 
-								((BoundIdentifier) `n).getBoundIndex() == 1 &&
-								`S.getBoundIdentifiers().length == 0);
-					}
-				}
+			Exists(bidList(_),
+					ForAll(bidList(_),
+							Limp(In(x@BoundIdentifier(0), S), ineq_nx)))
+			&& (   Le(BoundIdentifier(1), x) << ineq_nx
+				|| Ge(x, BoundIdentifier(1)) << ineq_nx) -> {
+					return 	`S.getBoundIdentifiers().length == 0;
 			}
+
 	    }
 	    return false;
 	}
@@ -107,33 +95,19 @@ public class FiniteMin extends AbstractEmptyInputReasoner {
 			
 			/**
 	    	 * Set Theory: ∃n·(∀x·x ∈ S ⇒ n ≤ x)
-	    	 */
-			Exists(in, ForAll(ix, Limp(In(x, SS), Le(n, x)))) -> {
-				if (`in.length == 1 && `ix.length == 1) {
-					if (Lib.isBoundIdentifier(`x) && Lib.isBoundIdentifier(`n)) {
-						if (((BoundIdentifier) `x).getBoundIndex() == 0 && 
-								((BoundIdentifier) `n).getBoundIndex() == 1 &&
-								`SS.getBoundIdentifiers().length == 0) {
-							S = `SS;
-						}
-					}
-				}
-			}
-
-			/**
 	    	 * Set Theory: ∃n·(∀x·x ∈ S ⇒ x ≥ n)
 	    	 */
-			Exists(in, ForAll(ix, Limp(In(x, SS), Ge(x, n)))) -> {
-				if (`in.length == 1 && `ix.length == 1) {
-					if (Lib.isBoundIdentifier(`x) && Lib.isBoundIdentifier(`n)) {
-						if (((BoundIdentifier) `x).getBoundIndex() == 0 && 
-								((BoundIdentifier) `n).getBoundIndex() == 1 &&
-								`SS.getBoundIdentifiers().length == 0) {
-							S = `SS;
-						}
+			Exists(bidList(_),
+					ForAll(bidList(_),
+							Limp(In(x@BoundIdentifier(0), SS), ineq_nx)))
+			&& (   Le(BoundIdentifier(1), x) << ineq_nx
+				|| Ge(x, BoundIdentifier(1)) << ineq_nx) -> {
+
+					if (`SS.getBoundIdentifiers().length == 0) {
+						S = `SS;
 					}
-				}
 			}
+
 	    }
 
 		if (S == null)
