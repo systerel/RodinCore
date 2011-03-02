@@ -111,11 +111,9 @@ public class OperatorGroupCompact {
 	private Set<IOperator> toSet(BitSet bitSet,
 			Instantiator<Integer, IOperator> inst) {
 		final Set<IOperator> set = new HashSet<IOperator>();
-		for (int i = 0; i < bitSet.size(); i++) {
-			if (bitSet.get(i)) {
-				final IOperator op = inst.instantiate(i + firstKind);
-				set.add(op);
-			}
+		for (int i = bitSet.nextSetBit(0); i >= 0; i = bitSet.nextSetBit(i + 1)) {
+			final IOperator op = inst.instantiate(i);
+			set.add(op);
 		}
 		return set;
 	}
