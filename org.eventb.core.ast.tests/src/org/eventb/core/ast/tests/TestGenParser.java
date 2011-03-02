@@ -3093,4 +3093,8 @@ public class TestGenParser extends AbstractTests {
 
 	}
 
+	public void testGrammarViewBug() throws Exception {
+		// the following throws IndexOutOfBoundsException when bug is present
+		ff.getGrammarView();
+	}
 }
