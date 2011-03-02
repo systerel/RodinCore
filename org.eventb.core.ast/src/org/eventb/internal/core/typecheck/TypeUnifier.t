@@ -12,9 +12,6 @@
 
 package org.eventb.internal.core.typecheck;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.Formula;
