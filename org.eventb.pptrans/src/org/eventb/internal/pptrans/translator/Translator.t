@@ -567,7 +567,7 @@ public class Translator extends IdentityTranslator {
 			EmptySet() -> {
 				return ff.makeLiteralPredicate(Formula.BFALSE, loc);
 			}
-			SetExtension(_) -> {
+			SetExtension(eList()) -> {
 				return ff.makeLiteralPredicate(Formula.BFALSE, loc);
 			}
 			/**
