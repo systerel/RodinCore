@@ -73,7 +73,7 @@ public class FiniteMin extends AbstractEmptyInputReasoner {
 							Limp(In(x@BoundIdentifier(0), S), ineq_nx)))
 			&& (   Le(BoundIdentifier(1), x) << ineq_nx
 				|| Ge(x, BoundIdentifier(1)) << ineq_nx) -> {
-					return 	`S.getBoundIdentifiers().length == 0;
+					return 	`S.isWellFormed();
 			}
 
 	    }
@@ -103,7 +103,7 @@ public class FiniteMin extends AbstractEmptyInputReasoner {
 			&& (   Le(BoundIdentifier(1), x) << ineq_nx
 				|| Ge(x, BoundIdentifier(1)) << ineq_nx) -> {
 
-					if (`SS.getBoundIdentifiers().length == 0) {
+					if (`SS.isWellFormed()) {
 						S = `SS;
 					}
 			}

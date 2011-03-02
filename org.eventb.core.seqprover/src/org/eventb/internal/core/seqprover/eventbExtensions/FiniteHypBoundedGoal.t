@@ -72,7 +72,7 @@ public class FiniteHypBoundedGoal extends EmptyInputReasoner {
 	    	 */
 			Exists(bidList(_), ForAll(bidList(_), Limp(In(BoundIdentifier(0), S),
 			        Le(BoundIdentifier(1), BoundIdentifier(0))))) -> {
-				if (`S.getBoundIdentifiers().length == 0) {
+				if (`S.isWellFormed()) {
                     return `S;
 				}
 			}
@@ -83,7 +83,7 @@ public class FiniteHypBoundedGoal extends EmptyInputReasoner {
 	    	 */
 			Exists(bidList(_), ForAll(bidList(_), Limp(In(BoundIdentifier(0), S),
 			        Ge(BoundIdentifier(0), BoundIdentifier(1))))) -> {
-				if (`S.getBoundIdentifiers().length == 0) {
+				if (`S.isWellFormed()) {
                     return `S;
 				}
 			}
@@ -94,7 +94,7 @@ public class FiniteHypBoundedGoal extends EmptyInputReasoner {
              */
             Exists(bidList(_), ForAll(bidList(_), Limp(In(BoundIdentifier(0), S),
                     Le(BoundIdentifier(0), BoundIdentifier(1))))) -> {
-				if (`S.getBoundIdentifiers().length == 0) {
+				if (`S.isWellFormed()) {
                     return `S;
 				}
             }
@@ -105,7 +105,7 @@ public class FiniteHypBoundedGoal extends EmptyInputReasoner {
              */
             Exists(bidList(_), ForAll(bidList(_), Limp(In(BoundIdentifier(0), S),
                     Ge(BoundIdentifier(1), BoundIdentifier(0))))) -> {
-				if (`S.getBoundIdentifiers().length == 0) {
+				if (`S.isWellFormed()) {
                     return `S;
 				}
             }

@@ -72,7 +72,7 @@ public class FiniteMax extends AbstractEmptyInputReasoner {
 							Limp(In(x@BoundIdentifier(0), S), ineq_xn)))
 			&& (   Le(x, BoundIdentifier(1)) << ineq_xn
 				|| Ge(BoundIdentifier(1), x) << ineq_xn) -> {
-					return `S.getBoundIdentifiers().length == 0;
+					return `S.isWellFormed();
 			}
 
 	    }
@@ -101,7 +101,7 @@ public class FiniteMax extends AbstractEmptyInputReasoner {
 							Limp(In(x@BoundIdentifier(0), SS), ineq_xn)))
 			&& (   Le(x, BoundIdentifier(1)) << ineq_xn
                 || Ge(BoundIdentifier(1), x) << ineq_xn) -> {
-						if (`SS.getBoundIdentifiers().length == 0) {
+						if (`SS.isWellFormed()) {
 							S = `SS;
 						}
 			}
