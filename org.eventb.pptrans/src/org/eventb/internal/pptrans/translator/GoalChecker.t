@@ -106,10 +106,8 @@ public abstract class GoalChecker {
       			}
       			return false;
 			}	
-			_ -> {
-				return false;
-			}	
 		}
+		return false;
 	}
 	
     /**
@@ -160,10 +158,8 @@ public abstract class GoalChecker {
 			IntegerLiteral(_) -> {
 				return true;
 			}
-			_ -> {
-				return false;
-			}
 		}
+		return false;
 	}
 	
 	private static boolean isSetExpression(Expression expr) {
@@ -171,10 +167,8 @@ public abstract class GoalChecker {
 			Identifier() -> {
 				return expr.getType() instanceof PowerSetType;
 			}
-			_ -> {
-				return false;
-			}
 		}
+		return false;
 	}
 
 /* TODO turn back to private ? */
@@ -189,10 +183,8 @@ public abstract class GoalChecker {
 			(INTEGER|BOOL)() -> { 
 				return true; 
 			}
-			_ -> {
-				return false;
-			}
 		}
+		return false;
 	}
 
 	private static boolean isBooleanExpression(Expression expr) {
@@ -203,9 +195,7 @@ public abstract class GoalChecker {
 			Identifier() -> {
 				return expr.getType() instanceof BooleanType;
 			}
-			_ -> {
-				return false;
-			}
 		}
+		return false;
 	}
 }

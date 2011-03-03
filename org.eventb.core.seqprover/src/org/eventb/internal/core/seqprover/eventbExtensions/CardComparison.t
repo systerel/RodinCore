@@ -81,36 +81,12 @@ public class CardComparison extends AbstractManualInference {
 			
 			/**
 	    	 * Set Theory: card(S) = card(T), where S and T have the same type.
-	    	 */
-			Equal(Card(S), Card(T)) -> {
-				return haveSameType(`S, `T);
-			}
-
-			/**
 	    	 * Set Theory: card(S) ≤ card(T), where S and T have the same type.
-	    	 */
-			Le(Card(S), Card(T)) -> {
-				return haveSameType(`S, `T);
-			}
-
-			/**
 	    	 * Set Theory: card(S) < card(T), where S and T have the same type.
-	    	 */
-			Lt(Card(S), Card(T)) -> {
-				return haveSameType(`S, `T);
-			}
-
-			/**
 	    	 * Set Theory: card(S) ≥ card(T), where S and T have the same type.
-	    	 */
-			Ge(Card(S), Card(T)) -> {
-				return haveSameType(`S, `T);
-			}
-
-			/**
 	    	 * Set Theory: card(S) > card(T), where S and T have the same type.
 	    	 */
-			Gt(Card(S), Card(T)) -> {
+			(Equal|Le|Lt|Ge|Gt)(Card(S), Card(T)) -> {
 				return haveSameType(`S, `T);
 			}
 

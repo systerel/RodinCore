@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - migration to tom-2.8
  *******************************************************************************/
 
 /*
@@ -15,6 +19,7 @@
 
 %typeterm Type {
 	implement { Type }
+	is_sort(t) {t instanceof Type }
 	equals(t1,t2) { t1.equals(t2) }
 }
 
@@ -58,10 +63,10 @@
 	get_slot(name,t) { ((GivenType) t).getName() }
 }
 
-%op Type Int {
+%op Type Int() {
 	is_fsym(t) { t instanceof IntegerType }
 }
 
-%op Type Bool {
+%op Type Bool() {
 	is_fsym(t) { t instanceof BooleanType }
 }

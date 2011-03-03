@@ -30,9 +30,10 @@
 	<target name="tom" depends="init"
 		description="Launch tom for all files">
 		<tom config="${tom.home}/Tom.xml"
+				classpathref="tom.classpath"
 				srcdir="${src}"
 				destdir="${src}"
-				options="-I ${org.eventb.core.ast.home}/tom --static"
+				options="-I ${org.eventb.core.ast.home}/tom"
 				pretty="true"
 				optimize="true">
 			<include name="**/*.t" />

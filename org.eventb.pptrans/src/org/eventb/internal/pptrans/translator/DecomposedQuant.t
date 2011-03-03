@@ -166,11 +166,9 @@ public class DecomposedQuant {
 				final Expression l = mapletOfType(`left, name, loc);
 				return ff.makeBinaryExpression(Formula.MAPSTO, l, r, loc);
 			}
-			_ -> {
-				final int index = identDecls.size();
-				identDecls.add(0, ff.makeBoundIdentDecl(name, loc, type));
-				return ff.makeBoundIdentifier(index, loc, type);	
-			}
 		}
+		final int index = identDecls.size();
+		identDecls.add(0, ff.makeBoundIdentDecl(name, loc, type));
+		return ff.makeBoundIdentifier(index, loc, type);	
 	}
 }

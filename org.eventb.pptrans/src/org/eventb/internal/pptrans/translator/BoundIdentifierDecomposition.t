@@ -152,10 +152,8 @@ public class BoundIdentifierDecomposition extends IdentityTranslator {
 				Substitute p = mapletOffsets.get(`idx);
 				return p.expr.shiftBoundIdentifiers(count - p.boundIndex, ff);
 			}
-			_ -> {
-				return super.translate(expr);
-			}
 		}
+		return super.translate(expr);
 	}
 	
 	private Predicate translateQPred(int tag, BoundIdentDecl[] is,
@@ -187,9 +185,7 @@ public class BoundIdentifierDecomposition extends IdentityTranslator {
 			Exists(is, P) -> {
 				return translateQPred(EXISTS, `is, `P, loc);
 			}
-			_ -> {
-				return super.translate(pred);
-			}
 		}
+		return super.translate(pred);
 	}
 }

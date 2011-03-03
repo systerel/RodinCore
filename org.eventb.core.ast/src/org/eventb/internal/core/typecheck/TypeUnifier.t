@@ -1,15 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - migration to tom-2.8
  *******************************************************************************/
 
 package org.eventb.internal.core.typecheck;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.BooleanType;
@@ -45,7 +46,7 @@ public class TypeUnifier {
 	
 	// This declaration is made local to this file, as type variables are not
 	// exposed to the published API.
-	%op Type TypeVar {
+	%op Type TypeVar() {
 		is_fsym(t) { t instanceof TypeVariable }
 	}
 
@@ -138,11 +139,9 @@ public class TypeUnifier {
 					return null;
 				}
 			}
-			_, _ -> {
-				result.addUnificationProblem(left, right, origin);
-				return null;
-			}
 		}
+		result.addUnificationProblem(left, right, origin);
+		return null;
 	}
 
 	private <T extends Formula<?>> Type unifyVariable(TypeVariable variable, Type otherType, T origin) {
@@ -223,10 +222,8 @@ public class TypeUnifier {
 				final IExpressionExtension exprExt = ((ParametricType) intype).getExprExtension();
 				return result.makeParametricType(newParams, exprExt);
 			}
-			_ -> {
-				return intype;
-			}
 		}
+		return intype;
 	}
 
 	protected final boolean occurs(TypeVariable typeVar, Type expr) {
@@ -248,10 +245,8 @@ public class TypeUnifier {
 				}
 				return false;
 			}
-			_ -> {
-				return false;
-			}
 		}
+		return false;
 	}
 	
 	public final FormulaFactory getFormulaFactory() {
