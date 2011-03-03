@@ -38,16 +38,19 @@
 
 %typeterm BoundIdentDecl {
 	implement { BoundIdentDecl }
+	is_sort(t) { t instanceof BoundIdentDecl }
 	equals(t1,t2) { t1.equals(t2) }
 }
 
 %typeterm BigInteger {
 	implement { BigInteger }
+	is_sort(t) { t instanceof BigInteger }
 	equals(t1,t2) { t1.equals(t2) }
 }
 
 %typeterm PredicateList {
 	implement { Predicate[] }
+	is_sort(t) { t instanceof Predicate[] }
 	equals(t1,t2) {
 		java.util.Arrays.equals((Predicate[]) t1, (Predicate[]) t2)
 	}
@@ -55,6 +58,7 @@
 
 %typeterm ExpressionList {
 	implement { Expression[] }
+	is_sort(t) { t instanceof Expression[] }
 	equals(t1,t2) {
 		java.util.Arrays.equals((Expression[]) t1, (Expression[]) t2)
 	}
@@ -62,6 +66,7 @@
 
 %typeterm BoundIdentDeclList {
 	implement { BoundIdentDecl[] }
+	is_sort(t) { t instanceof BoundIdentDecl[] }
 	equals(t1,t2) {
 		java.util.Arrays.equals((BoundIdentDecl[]) t1, (BoundIdentDecl[]) t2)
 	}
