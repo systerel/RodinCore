@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others
+ * Copyright (c) 2006, 2011 ETH Zurich and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added test2648946
  *     Systerel - added test2962503
+ *     Systerel - added test for SMT solvers
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
@@ -240,6 +241,14 @@ public class DocTests extends AbstractTranslationTests {
 				" (∃x·x = j + 1) ∧ (∀x,y,z·y=x+1 ∧ z=x+1 ⇒ y=z) ∧" +
 				" 0 ≤ i ∧ (∀x·x=j+1 ⇒ 0≤x) ∧ 0 ≤ i ∧ 0 ≤ j",//
 				false, te);
+	}
+
+	/**
+	 * Unit test coming from usage in translation to SMT solvers.
+	 */
+	public void testSMT1() {
+		final ITypeEnvironment te = mTypeEnvironment("a", "S");
+		doTransTest("a↦BOOL↦ℤ ∈ A", "a↦BOOL↦ℤ ∈ A", true, te);
 	}
 
 }
