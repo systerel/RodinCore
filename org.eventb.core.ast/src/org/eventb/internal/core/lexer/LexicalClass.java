@@ -31,6 +31,10 @@ import org.eventb.internal.core.parser.TokenSet;
  * 
  */
 public enum LexicalClass {
+
+	// Note: if any isStart() method is modified, getLexicalClass() has to be
+	// modified accordingly
+
 	IDENTIFIER {
 
 		private boolean isExcluded(int codePoint) {
@@ -259,5 +263,19 @@ public enum LexicalClass {
 			}
 		}
 		return true;
+	}
+
+	private static final LexicalClass[] OPTIMIZED_ORDER = new LexicalClass[] {
+			IDENTIFIER, WHITESPACE, INTEGER_LITERAL, META_VAR };
+
+	// valid as long as start of SYMBOL is default (all other start checks fail)
+	public static LexicalClass getLexicalClass(int startCodePoint) {
+
+		for (LexicalClass lexClass : OPTIMIZED_ORDER) {
+			if (lexClass.isStart(startCodePoint)) {
+				return lexClass;
+			}
+		}
+		return SYMBOL;
 	}
 }

@@ -107,14 +107,13 @@ public class GenLexer {
 
 		// Recognizes the lexical class, given the first code point of a lexem.
 		private static LexicalClass recognize(int codePoint) {
-			// TODO optimize using smart test order (context-dependent)
-			for (LexicalClass lexClass : LexicalClass.values()) {
-				if (lexClass.isStart(codePoint)) {
-					return lexClass;
-				}
+			final LexicalClass lexClass = LexicalClass
+					.getLexicalClass(codePoint);
+			if (lexClass == null) {
+				throw new IllegalStateException(
+						"LEXER: code point with no lexical class: " + codePoint);
 			}
-			throw new IllegalStateException(
-					"LEXER: code point with no lexical class: " + codePoint);
+			return lexClass;
 		}
 
 	}
