@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,22 +7,26 @@
  * 
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - added regression tests for bugs
  *******************************************************************************/
 package org.eventb.pp;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 import static org.eventb.internal.pp.core.elements.terms.Util.mSet;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.internal.pp.core.elements.terms.Util;
 import org.junit.Ignore;
 import org.junit.Test;
 
 public class RodinTests extends AbstractRodinTest {
+
+	private static final List<String> NO_ENV = emptyList();
+	private static final Set<String> NO_HYP = emptySet();
 
 	static ITypeEnvironment env = ff.makeTypeEnvironment();
 	static {
@@ -97,7 +101,7 @@ public class RodinTests extends AbstractRodinTest {
 		
 		doTest(
 			mList("P","ℙ(S)","Q","ℙ(S)"),
-			new HashSet<String>(),
+			NO_HYP,
 			"(∀x·∃y·x∈P∧y∈Q)⇒(∃y·∀x·x∈P∧y∈Q)",true
 		);
 	}
@@ -136,7 +140,7 @@ public class RodinTests extends AbstractRodinTest {
     @Test
 	public void testSimpleSplit() {
 		doTest(
-				new ArrayList<String>(),
+				NO_ENV,
 				mSet(
 						"(A=TRUE⇒B=TRUE)∧(C=TRUE⇒¬D=TRUE)",
 						"(E=TRUE⇒¬B=TRUE)∧(¬F=TRUE⇒D=TRUE)",
@@ -623,7 +627,8 @@ public class RodinTests extends AbstractRodinTest {
 				"∃x,y·x∈P∧y∈Q∧x ↦ y∈R",true
 		);
 		
-		doTest(mList("P","ℙ(E)"),new HashSet<String>(),"(∀x·x∈P⇔x∈Q)⇒((∀x·x∈P)⇔(∀x·x∈Q))",true);
+		doTest(mList("P", "ℙ(E)"), NO_HYP, "(∀x·x∈P⇔x∈Q)⇒((∀x·x∈P)⇔(∀x·x∈Q))",
+				true);
 	}
 	
     @Test
@@ -937,14 +942,14 @@ public class RodinTests extends AbstractRodinTest {
 			doTest(mSet("X ⊆ B", "B ⊆ X"), "X = B", true);
 			doTest(mSet("x ⊆ B"), "B ∖ (B ∖ x) = x", true);
 			doTest(mSet("x ⊆ B"), "B ∖ (B ∖ x) = x", true);
-			doTest(new HashSet<String>(), "S ∖ (S ∖ k) = k", true);
+			doTest(NO_HYP, "S ∖ (S ∖ k) = k", true);
 			// doTest(mSet(
 			// "S ∖ (S ∖ k) ∈ x"
 			// ),"k ∈ x",true
 			// );
 
 			// translation
-			// doTest(new HashSet<String>(),
+			// doTest(NO_HYP,
 			// "((D=TRUE ⇔ E=TRUE) ⇔ F=TRUE) ⇔ (D=TRUE ⇔ (E=TRUE ⇔
 			// F=TRUE))",true
 			// );
@@ -1063,7 +1068,7 @@ public class RodinTests extends AbstractRodinTest {
 
     @Test
 	public void testTrueGoal() {
-		doTest(new HashSet<String>(), "⊤", true);
+		doTest(NO_HYP, "⊤", true);
 	}
 
     @Test
@@ -1074,7 +1079,7 @@ public class RodinTests extends AbstractRodinTest {
     @Test
 	public void testBug1833264() {
 		doTest(mList("DO", "S"),
-				new HashSet<String>(),
+				NO_HYP,
 				"f(bool((DO=DC ∧ oD=TRUE) ∨ (DO=DO ∧ cD=TRUE)) ↦ DO)" +
 				"< f(bool((dEC=DC ∧ oD=TRUE) ∨ (dEC=DO∧cD=TRUE)) ↦ dEC)",
 				false);
@@ -1085,7 +1090,7 @@ public class RodinTests extends AbstractRodinTest {
 	public void test1833264_1() throws Exception {
 		
 		doTest(mList("DO", "S"),
-				new HashSet<String>(),
+				NO_HYP,
 				"(DO=DC ∧ oD=TRUE) ⇔ " +
 				"((dEC=DC ∧ oD=TRUE) ∨ (dEC=DO∧cD=TRUE))",
 				false);
@@ -1149,12 +1154,7 @@ public class RodinTests extends AbstractRodinTest {
 	 */
     @Test
 	public void testTypeInstantiation() {
-		doTest(
-				mList(
-						"S","ℙ(S)"
-				), Util.<String>mSet(
-				), "∃y·∀x·x ∈ S ⇒ x ∈ y"
-				, true);
+		doTest(mList("S", "ℙ(S)"), NO_HYP, "∃y·∀x·x ∈ S ⇒ x ∈ y", true);
 	}
 
 	// public static void main(String[] args) {
@@ -1190,7 +1190,7 @@ public class RodinTests extends AbstractRodinTest {
 				mList( //
 						"S", "ℙ(S)", //
 						"a", "S" //
-				), Util.<String> mSet(), //
+				), NO_HYP, //
 				"a=b ∨ c=b ⇔ a=b ∨ d=b", //
 				false);
 	}
@@ -1215,13 +1215,18 @@ public class RodinTests extends AbstractRodinTest {
 	}
 
 	@Test
+	public void bug2952091() throws Exception {
+		doTest(NO_ENV, NO_HYP, "(P=TRUE ∨ R=TRUE) ⇔ (P=TRUE ∨ Q=TRUE)", false);
+	}
+
+	@Test
 	public void bug2961857() throws Exception {
 		doTest( //
 				mList( //
 						"S", "ℙ(S)", //
 						"T", "ℙ(T)", //
 						"p", "S×T" //
-				), Util.<String>mSet(), //
+				), NO_HYP, //
 				"p ∈ dom(prj1)", //
 				true);
 	}
