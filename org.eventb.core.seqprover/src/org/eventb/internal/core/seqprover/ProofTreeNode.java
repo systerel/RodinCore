@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - extended interface with getFormulaFactory() method
+ *     Systerel - used nested classes instead of anonymous ones
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
@@ -38,6 +39,34 @@ import org.eventb.core.seqprover.ProverLib;
  */
 public final class ProofTreeNode implements IProofTreeNode {
 	
+	private static class ProofSkeleton implements IProofSkeleton {
+
+		private final String comment;
+		
+		private final IProofSkeleton[] childSkelNodes;
+
+		private final IProofRule proofRule;
+
+		public ProofSkeleton(String comment, IProofSkeleton[] childSkelNodes,
+				IProofRule proofRule) {
+			this.comment = comment;
+			this.childSkelNodes = childSkelNodes;
+			this.proofRule = proofRule;
+		}
+
+		public IProofSkeleton[] getChildNodes() {
+			return childSkelNodes;
+		}
+
+		public IProofRule getRule() {
+			return proofRule;
+		}
+
+		public String getComment() {
+			return comment;
+		}
+	}
+
 	private static final ProofTreeNode[] NO_NODE = new ProofTreeNode[0];
 	
 	
@@ -178,21 +207,7 @@ public final class ProofTreeNode implements IProofTreeNode {
 			childSkelNodes[i] = childNodes[i].copyProofSkeleton();
 		}
 		
-		return 
-		new IProofSkeleton(){
-			
-			public IProofSkeleton[] getChildNodes() {
-				return childSkelNodes;
-			}
-			
-			public IProofRule getRule() {
-				return proofRule;
-			}
-			
-			public String getComment() {
-				return comment;
-			}		
-		};
+		return new ProofSkeleton(comment, childSkelNodes, proofRule);
 	}
 	
 	
