@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - optimized setProofTree()
+ *     Systerel - used nested classes instead of anonymous ones
  *******************************************************************************/
 package org.eventb.core.basis;
 
@@ -31,7 +32,6 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofDependencies;
-import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.ProverFactory;
@@ -95,7 +95,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 
 	@Override
 	public IProofDependencies getProofDependencies(FormulaFactory factory, IProgressMonitor monitor) throws RodinDBException{
-		if (getConfidence() <= IConfidence.UNATTEMPTED) return unattemptedProofDeps;
+		if (getConfidence() <= IConfidence.UNATTEMPTED) return UNATTEMPTED_PROOF_DEPS;
 		final IProofStoreReader store = new ProofStoreReader(this, factory);
 		
 		final Predicate goal;
@@ -132,7 +132,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 			IProgressMonitor monitor) throws RodinDBException {
 		
 		if (getConfidence() == IConfidence.UNATTEMPTED) {
-			return unattemptedProofSkel;
+			return UNATTEMPTED_PROOF_SKEL;
 		}
 		
 		if (monitor == null) {
@@ -169,27 +169,11 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		return identNames;
 	}
 	
-	private static final IProofDependencies unattemptedProofDeps =
-		ProverFactory.makeProofDependencies(false, null, null, null, null);
-	
-	private static final IProofSkeleton unattemptedProofSkel = new IProofSkeleton()
-	{
+	private static final IProofDependencies UNATTEMPTED_PROOF_DEPS = ProverFactory
+			.makeProofDependencies(false, null, null, null, null);
 
-		@Override
-		public IProofSkeleton[] getChildNodes() {
-			return NO_CHILDREN;
-		}
-
-		@Override
-		public String getComment() {
-			return "";
-		}
-
-		@Override
-		public IProofRule getRule() {
-			return null;
-		}
-	};
+	private static final IProofSkeleton UNATTEMPTED_PROOF_SKEL = new EmptySkeleton(
+			"");
 		
 	@Override
 	public IPRStoredExpr getExpression(String name) {

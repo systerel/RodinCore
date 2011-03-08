@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - serialization of reasoner version through rule name
  *     Systerel - added unselected hyps attribute
+ *     Systerel - used nested classes instead of anonymous ones
  *******************************************************************************/
 package org.eventb.core.basis;
 
@@ -58,6 +59,30 @@ import org.rodinp.core.basis.InternalElement;
  */
 public abstract class EventBProofElement extends InternalElement implements
 		IPRProofInfoElement, IPOStampedElement {
+
+	static class EmptySkeleton implements IProofSkeleton {
+
+		private final String comment;
+
+		public EmptySkeleton(String comment) {
+			this.comment = comment;
+		}
+
+		@Override
+		public IProofSkeleton[] getChildNodes() {
+			return NO_CHILDREN;
+		}
+
+		@Override
+		public String getComment() {
+			return comment;
+		}
+
+		@Override
+		public IProofRule getRule() {
+			return null;
+		}
+	}
 
 	protected static final String[] NO_STRINGS = new String[0];
 	protected static final IProofSkeleton[] NO_CHILDREN = new IProofSkeleton[0];
@@ -291,20 +316,7 @@ public abstract class EventBProofElement extends InternalElement implements
 
 		IPRProofRule[] rules = getProofRules();
 		if (rules.length == 0) {
-			return new IProofSkeleton() {
-				@Override
-				public IProofSkeleton[] getChildNodes() {
-					return NO_CHILDREN;
-				}
-				@Override
-				public String getComment() {
-					return comment;
-				}
-				@Override
-				public IProofRule getRule() {
-					return null;
-				}
-			};
+			return new EmptySkeleton(comment);
 		}
 		if (rules.length != 1) {
 			Util.log(null, "More than one rule in proof skeleton node " + this);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - deserialization of reasoner version through IReasonerDesc
+ *     Systerel - used nested classes instead of anonymous ones
  *******************************************************************************/
 package org.eventb.core.basis;
 
@@ -24,6 +25,7 @@ import org.eventb.core.IProofStoreCollector;
 import org.eventb.core.IProofStoreReader;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerDesc;
@@ -34,7 +36,6 @@ import org.eventb.core.seqprover.IReasonerRegistry;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.SerializeException;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -45,6 +46,30 @@ import org.rodinp.core.RodinDBException;
  * @since 1.0
  */
 public class PRProofRule extends EventBProofElement implements IPRProofRule {
+
+	private static class ProofSkeleton extends EmptySkeleton {
+	
+		private final IProofSkeleton[] children;
+		
+		private final IProofRule proofRule;
+	
+		public ProofSkeleton(IProofSkeleton[] children, String comment,
+				IProofRule proofRule) {
+			super(comment);
+			this.children = children;
+			this.proofRule = proofRule;
+		}
+	
+		@Override
+		public IProofSkeleton[] getChildNodes() {
+			return children;
+		}
+	
+		@Override
+		public IProofRule getRule() {
+			return proofRule;
+		}
+	}
 
 	public PRProofRule(String ruleID, IRodinElement parent) {
 		super(ruleID, parent);
@@ -110,24 +135,8 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 				display, 
 				antecedents);
 		
-		IProofSkeleton skeleton = new IProofSkeleton() {
-
-				@Override
-				public IProofSkeleton[] getChildNodes() {
-					return children;
-				}
-
-				@Override
-				public IProofRule getRule() {
-					return proofRule;
-				}
-
-				@Override
-				public String getComment() {
-					return comment;
-				}
-			
-		};
+		final IProofSkeleton skeleton = new ProofSkeleton(children, comment,
+				proofRule);
 		return skeleton;
 	}
 
