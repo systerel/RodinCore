@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,7 +78,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 		final int workUnits = 2 + nbOfPOs * 2 + 2 + nbOfPOs;
 		
 		try {
-			pm.beginTask("Proving " + componentName + ": ", workUnits);
+			pm.beginTask("Processing PO for " + componentName + ": ", workUnits);
 			
 			pm.subTask("loading");
 			createFreshProofFile(pc, newSubProgressMonitor(pm, 1));

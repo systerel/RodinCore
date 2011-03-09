@@ -94,10 +94,11 @@ public class AutoPostTacticManager implements IAutoPostTacticManager {
 		final IScopeContext[] contexts = { sc };
 		final String profiles = preferencesService.getString(PREF_QUALIFIER,
 				P_TACTICSPROFILES, null, contexts);
+		// Case where the UI was not initialized (e.g. tests)
+		// We return the selected tactics
 		if (profiles == null) {
-			Util.log(null, "Failed to load the tactic profiles on the project "
-					+ project.getName());
-			return BasicTactics.failTac("Failed to load the tactic profiles.");
+			return auto ? autoTacPref.getSelectedComposedTactic() : postTacPref
+					.getSelectedComposedTactic();
 		}
 		profilesCache.inject(profiles);
 		final String choice;
