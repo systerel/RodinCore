@@ -12,6 +12,8 @@ package org.eventb.internal.ui.preferences.tactics;
 
 import static org.eclipse.swt.SWT.NONE;
 
+import java.util.Arrays;
+
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
@@ -105,6 +107,9 @@ public class DetailedList {
 	 * Adds the element to the end of the main list and selected it.
 	 */
 	public void addElement(String element) {
+		if (Arrays.asList(list.getItems()).contains(element)){
+			return;
+		}
 		list.add(element);
 		final int index = list.getItemCount() - 1;
 		list.setSelection(index);
