@@ -43,7 +43,6 @@ public class ControlHolder {
 
 	private SelectionListener listener;
 	private Color bgColor;
-	private int lastPaintTime;
 	protected Control control;
 
 
@@ -107,7 +106,6 @@ public class ControlHolder {
 	}
 
 	protected void paintAndPlace(PaintObjectEvent event) {
-		lastPaintTime = event.time;
 		final Rectangle cBounds;
 		if (control == null) {
 			cBounds = maker.getBounds(this);
@@ -116,14 +114,24 @@ public class ControlHolder {
 		}
 		final int x = event.x + MARGIN;
 		final int lineHeight = event.ascent + event.descent;
-		final int y = event.y + MARGIN + (lineHeight - cBounds.height) / 2;
+		final int y;
+		if (isWindows())
+			y = event.y + MARGIN;
+		else
+			y = event.y + MARGIN + (lineHeight - cBounds.height) / 2;
 		if (control == null) {
 			setControl(maker.getControl(this));
 		}
 		control.setVisible(true);
+		control.setEnabled(row.isEnabled());
 		control.setBounds(x, y, cBounds.width, cBounds.height);
 	}
-
+	
+	private static boolean isWindows(){
+		final String os = System.getProperty("os.name");
+		return os.toLowerCase().contains("win");
+	}
+	
 	public void render() {
 		if (control == null) {
 			control = maker.getControl(this);
@@ -145,10 +153,6 @@ public class ControlHolder {
 
 	public StyledText getText() {
 		return text;
-	}
-
-	public int getLastPaintTime() {
-		return lastPaintTime;
 	}
 
 }

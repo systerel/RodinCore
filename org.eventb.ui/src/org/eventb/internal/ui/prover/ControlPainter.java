@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.PaintObjectEvent;
@@ -33,11 +33,11 @@ public class ControlPainter implements PaintObjectListener {
 
 	private static final Color RED = EventBSharedColor
 			.getSystemColor(SWT.COLOR_RED);
-	private final List<ControlHolder> holders;
+	private final Map<Integer, ControlHolder> holders;
 	private boolean painting = false;
 
 	public ControlPainter() {
-		this.holders = new ArrayList<ControlHolder>();
+		this.holders = new HashMap<Integer, ControlHolder>();
 	}
 
 	@Override
@@ -47,14 +47,8 @@ public class ControlPainter implements PaintObjectListener {
 		try {
 			painting = true;
 			final StyleRange style = event.style;
-			int start = style.start;
-			for (ControlHolder holder : holders) {
-				if (start != holder.offset) {
-					continue;
-				}
-				if (holder.getLastPaintTime() == event.time) {
-					continue;
-				}
+			final ControlHolder holder = holders.get(style.start);
+			if (holder != null) {
 				holder.paintAndPlace(event);
 				drawBoxAround(event.gc, holder);
 			}
@@ -66,19 +60,15 @@ public class ControlPainter implements PaintObjectListener {
 	private void drawBoxAround(GC gc, final ControlHolder holder) {
 		if (!holder.drawBoxAround)
 			return;
-		final Rectangle bounds = holder.control.getBounds();
+		final Rectangle b = holder.control.getBounds();
 		final Color savedBgColor = gc.getForeground();
 		gc.setForeground(RED);
-		gc.drawRectangle(bounds.x - 1, bounds.y - 1, bounds.width + 1,
-				bounds.height + 1);
+		gc.drawRectangle(b.x - 1, b.y - 1, b.width + 1, b.height + 1);
 		gc.setForeground(savedBgColor);
 	}
 	
 	public void registerControlHolder(ControlHolder holder) {
-		if (holders.contains(holder)) {
-			return;
-		}
-		holders.add(holder);
+		holders.put(holder.offset, holder);
 	}
 	
 	public void clear() {
