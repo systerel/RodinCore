@@ -23,23 +23,22 @@ public abstract class ControlMaker {
 	
 	private final Composite parent;
 	private Rectangle bounds;
-	private boolean painting = false;
 	
 	public ControlMaker(Composite parent) {
 		this.parent = parent;
 	}
 	
-	public Control getControl(){
-		final Control c = makeControl();
+	public Control getControl(ControlHolder holder){
+		final Control c = makeControl(holder);
 		c.pack();
 		return c;
 	}
 	
-	public abstract Control makeControl();
+	public abstract Control makeControl(ControlHolder holder);
 	
 	public Rectangle getBounds(ControlHolder holder){
 		if (bounds == null) {
-			final Control c = makeControl();
+			final Control c = makeControl(holder);
 			c.pack();
 			bounds = c.getBounds();
 			holder.setControl(c);
@@ -50,14 +49,6 @@ public abstract class ControlMaker {
 	
 	public Composite getParent() {
 		return parent;
-	}
-
-	public boolean isPainting() {
-		return painting;
-	}
-	
-	public void setPainting(boolean painting){
-		this.painting = painting;
 	}
 	
 }

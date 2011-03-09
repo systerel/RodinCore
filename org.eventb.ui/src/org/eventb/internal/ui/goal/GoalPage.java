@@ -56,6 +56,8 @@ import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.internal.ui.prover.CheckBoxMaker;
 import org.eventb.internal.ui.prover.ControlMaker;
+import org.eventb.internal.ui.prover.ControlPainter;
+import org.eventb.internal.ui.prover.PredAppliCommandMaker;
 import org.eventb.internal.ui.prover.PredicateRow;
 import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUI;
@@ -94,6 +96,7 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 	private Font font;
 
 	private Composite control;
+	private ControlPainter controlPainter;
 	
 	/**
 	 * Constructor.
@@ -118,6 +121,11 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 		if (row != null) {
 			row.dispose();
 			row = null;
+		}
+		if (controlPainter != null) {
+			if (styledText != null && !styledText.isDisposed())
+				styledText.removePaintObjectListener(controlPainter);
+			controlPainter.clear();
 		}
 		if (manager != null)
 			manager.dispose();
@@ -177,6 +185,8 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 		styledText.setEditable(false);
 		styledText.setLineSpacing(LINE_SPACING);
 		manager = new TacticHyperlinkManager(styledText);
+		controlPainter = new ControlPainter();
+		styledText.addPaintObjectListener(controlPainter);
 		createGoalText(node);
 		sc.setContent(styledText);
 		sc.setMinSize(styledText.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -194,12 +204,14 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 		manager.appendText("\t\uFFFC\t");
 		
 		final ControlMaker checkboxMaker = new CheckBoxMaker(styledText);
+		final ControlMaker appliMaker = new PredAppliCommandMaker(styledText);
 		final IContentProposalProvider provider = ContentProposalFactory
 				.getProposalProvider(userSupport);
 		final YellowBoxMaker yellowBoxMaker = new YellowBoxMaker(styledText,
 				provider);
 		row = new PredicateRow(NB_TABS_LEFT, goal, true, userSupport, enabled,
-				null, proverUI, manager, checkboxMaker, yellowBoxMaker);
+				null, proverUI, manager, controlPainter, checkboxMaker,
+				appliMaker, yellowBoxMaker);
 		row.append(false);
 		manager.setContents();
 		row.attachButtons();
