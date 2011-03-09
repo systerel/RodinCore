@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.core.parser;
+package org.eventb.internal.core.parser.operators;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,8 +19,10 @@ import java.util.Map.Entry;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.internal.core.lexer.Token;
-import org.eventb.internal.core.parser.ExternalViewUtils.Instantiator;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.operators.ExternalViewUtils.Instantiator;
+import org.eventb.internal.core.parser.ILedParser;
+import org.eventb.internal.core.parser.INudParser;
 
 /**
  * @author Nicolas Beauger

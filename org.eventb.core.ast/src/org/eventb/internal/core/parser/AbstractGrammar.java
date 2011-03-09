@@ -24,10 +24,10 @@ import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RPAR;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.ARITHMETIC;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.GROUP_0;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.TYPED;
-import static org.eventb.internal.core.parser.OperatorRelationship.COMPATIBLE;
-import static org.eventb.internal.core.parser.OperatorRelationship.LEFT_PRIORITY;
-import static org.eventb.internal.core.parser.OperatorRelationship.RIGHT_PRIORITY;
 import static org.eventb.internal.core.parser.SubParsers.OFTYPE_PARSER;
+import static org.eventb.internal.core.parser.operators.OperatorRelationship.COMPATIBLE;
+import static org.eventb.internal.core.parser.operators.OperatorRelationship.LEFT_PRIORITY;
+import static org.eventb.internal.core.parser.operators.OperatorRelationship.RIGHT_PRIORITY;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,8 +44,17 @@ import org.eventb.core.ast.extension.IOperator;
 import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.BMath.StandardGroup;
-import org.eventb.internal.core.parser.ExternalViewUtils.Instantiator;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
+import org.eventb.internal.core.parser.operators.BracketCompactor;
+import org.eventb.internal.core.parser.operators.Brackets;
+import org.eventb.internal.core.parser.operators.ExternalViewUtils;
+import org.eventb.internal.core.parser.operators.LexKindParserDB;
+import org.eventb.internal.core.parser.operators.OpRegistryCompactor;
+import org.eventb.internal.core.parser.operators.OperatorRegistry;
+import org.eventb.internal.core.parser.operators.OperatorRegistryCompact;
+import org.eventb.internal.core.parser.operators.OperatorRelationship;
+import org.eventb.internal.core.parser.operators.PropertyParserDB;
+import org.eventb.internal.core.parser.operators.ExternalViewUtils.Instantiator;
 
 /**
  * @author Nicolas Beauger
@@ -107,8 +116,9 @@ public abstract class AbstractGrammar {
 	// TODO try to generalise to standard language operators
 	private final PropertyParserDB propParsers = new PropertyParserDB();
 	
-	private final Map<Integer, Integer> closeOpenKinds = new HashMap<Integer, Integer>();
-
+	private Map<Integer, Integer> initCloseOpenKinds = new HashMap<Integer, Integer>();
+	private Brackets brackets = null;
+	
 	private final int[] defaultTokenKinds = new int[DefaultToken.values().length];
 	
 	public IGrammar asExternalView() {
@@ -219,13 +229,9 @@ public abstract class AbstractGrammar {
 		tokens = tokenCompactor.redistribute(tokens, opKindInst);
 		subParsers.redistribute(opKindInst);
 		
-		final Map<Integer, Integer> newCloseOpen = new HashMap<Integer, Integer>();
-		for (Entry<Integer, Integer> entry : closeOpenKinds.entrySet()) {
-			newCloseOpen.put(opKindInst.instantiate(entry.getKey()),
-					opKindInst.instantiate(entry.getValue()));
-		}
-		closeOpenKinds.clear();
-		closeOpenKinds.putAll(newCloseOpen);
+		final BracketCompactor brkCompactor = new BracketCompactor(initCloseOpenKinds);
+		brackets = brkCompactor.compact(opKindInst);
+		initCloseOpenKinds = null;
 	}
 
 	private void populateSubParsers(
@@ -308,15 +314,15 @@ public abstract class AbstractGrammar {
 	protected void addOpenClose(String open, String close) {
 		final int openKind = tokens.getOrAdd(open);
 		final int closeKind = tokens.getOrAdd(close);
-		closeOpenKinds.put(closeKind, openKind);
+		initCloseOpenKinds.put(closeKind, openKind);
 	}
 
 	public boolean isOpen(int kind) {
-		return closeOpenKinds.containsValue(kind);
+		return brackets.isOpen(kind);
 	}
 
 	public boolean isClose(int kind) {
-		return closeOpenKinds.containsKey(kind);
+		return brackets.isClose(kind);
 	}
 
 	public void addReservedSubParser(DefaultToken token,

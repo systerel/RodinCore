@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.core.parser;
+package org.eventb.internal.core.parser.operators;
 
 import java.util.BitSet;
 import java.util.HashMap;
@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eventb.internal.core.parser.ExternalViewUtils.Instantiator;
+import org.eventb.internal.core.parser.operators.ExternalViewUtils.Instantiator;
 
 /**
  * @author Nicolas Beauger
@@ -69,8 +69,8 @@ public class Matrix {
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < size; j++) {
+		for (int i = offset; i < size + offset; i++) {
+			for (int j = offset; j < size + offset; j++) {
 				if (get(i, j)) {
 					sb.append('X');
 				} else {
@@ -84,12 +84,12 @@ public class Matrix {
 
 	public <T> Map<T, Set<T>> toRelationMap(Instantiator<Integer, T> inst) {
 		final Map<T, Set<T>> relMap = new HashMap<T, Set<T>>();
-		for (int i = 0; i < getSize(); i++) {
-			final T leftOp = inst.instantiate(i + offset);
+		for (int i = offset; i < size + offset; i++) {
+			final T leftOp = inst.instantiate(i);
 			final Set<T> rightOps = new HashSet<T>();
-			for (int j = 0; j < getSize(); j++) {
+			for (int j = offset; j < size + offset; j++) {
 				if (get(i, j)) {
-					final T rightOp = inst.instantiate(j + offset);
+					final T rightOp = inst.instantiate(j);
 					rightOps.add(rightOp);
 				}
 			}

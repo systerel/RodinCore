@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.core.parser;
+package org.eventb.internal.core.parser.operators;
 
 import java.util.BitSet;
 import java.util.HashSet;
@@ -17,8 +17,8 @@ import java.util.Set;
 
 import org.eventb.core.ast.extension.IOperator;
 import org.eventb.core.ast.extension.IOperatorGroup;
-import org.eventb.internal.core.parser.ExternalViewUtils.ExternalOpGroup;
-import org.eventb.internal.core.parser.ExternalViewUtils.Instantiator;
+import org.eventb.internal.core.parser.operators.ExternalViewUtils.ExternalOpGroup;
+import org.eventb.internal.core.parser.operators.ExternalViewUtils.Instantiator;
 
 /**
  * An optimized implementation of operator group. This type is used after
@@ -111,11 +111,9 @@ public class OperatorGroupCompact {
 	private Set<IOperator> toSet(BitSet bitSet,
 			Instantiator<Integer, IOperator> inst) {
 		final Set<IOperator> set = new HashSet<IOperator>();
-		for (int i = 0; i < bitSet.size(); i++) {
-			if (bitSet.get(i)) {
-				final IOperator op = inst.instantiate(i + firstKind);
-				set.add(op);
-			}
+		for (int i = bitSet.nextSetBit(0); i >= 0; i = bitSet.nextSetBit(i + 1)) {
+			final IOperator op = inst.instantiate(i);
+			set.add(op);
 		}
 		return set;
 	}
