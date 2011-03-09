@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.preferences;
 
+import static org.eventb.internal.core.Util.log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,10 +49,14 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 			return null;
 		}
 		final Map<String, T> map = new HashMap<String, T>();
-		final String[] stringMap = PreferenceUtils.parseString(pref, SEPARATOR_MAP);
+		final String[] stringMap = PreferenceUtils.parseString(pref,
+				SEPARATOR_MAP);
 		for (String elt : stringMap) {
-			final String[] entry = PreferenceUtils.parseString(elt, SEPARATOR_MAP_ELEMENT);
-			if (entry.length == 2) {
+			final String[] entry = PreferenceUtils.parseString(elt,
+					SEPARATOR_MAP_ELEMENT);
+			if (entry.length != 2) {
+				log(null, "Invalid entry for the preference element: " + elt);
+			} else {
 				final String key = entry[0];
 				final T value = translator.inject(entry[1]);
 				map.put(key, value);
