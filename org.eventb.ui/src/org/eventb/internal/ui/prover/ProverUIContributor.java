@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,29 +9,18 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - redirected dialog opening and externalized strings
+ *     Systerel - removed sample action
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
-import static org.eventb.internal.ui.utils.Messages.dialogs_sample_action_executed;
-import static org.eventb.internal.ui.utils.Messages.title_ui_plugin;
-
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.part.MultiPageEditorActionBarContributor;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
-import org.eventb.internal.ui.UIUtils;
 
 /**
  * @author htson
@@ -43,16 +32,6 @@ public class ProverUIContributor extends MultiPageEditorActionBarContributor {
 
 	// TODO Define the action for the Prover UI Editor.
 	private IEditorPart activeEditorPart;
-
-	private Action sampleAction;
-
-	/**
-	 * Constructor: Create a multi-page contributor.
-	 */
-	public ProverUIContributor() {
-		super();
-		createActions();
-	}
 
 	/**
 	 * Returns the action registed with the given text editor.
@@ -104,30 +83,4 @@ public class ProverUIContributor extends MultiPageEditorActionBarContributor {
 		}
 	}
 
-	private void createActions() {
-		sampleAction = new Action() {
-			@Override
-			public void run() {
-				UIUtils.showInfo(title_ui_plugin,dialogs_sample_action_executed);
-			}
-		};
-		sampleAction.setText("Sample Action");
-		sampleAction.setToolTipText("Sample Action tool tip");
-		sampleAction.setImageDescriptor(PlatformUI.getWorkbench()
-				.getSharedImages().getImageDescriptor(
-						IDE.SharedImages.IMG_OBJS_TASK_TSK));
-	}
-
-	@Override
-	public void contributeToMenu(IMenuManager manager) {
-		IMenuManager menu = new MenuManager("Editor &Menu");
-		manager.prependToGroup(IWorkbenchActionConstants.MB_ADDITIONS, menu);
-		menu.add(sampleAction);
-	}
-
-	@Override
-	public void contributeToToolBar(IToolBarManager manager) {
-		manager.add(new Separator());
-		manager.add(sampleAction);
-	}
 }
