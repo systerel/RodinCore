@@ -204,7 +204,6 @@ public final class Messages {
 	public static String dialogs_elementDoesNotExist;
 	public static String dialogs_po_Deleted;
 	public static String dialogs_prover_error_creating_page;
-	public static String dialogs_sample_action_executed;
 	public static String dialogs_cancel_renaming;
 	public static String dialogs_projectSelection_title;
 	public static String dialogs_projectSelection_description;
@@ -219,7 +218,6 @@ public final class Messages {
 	public static String title_variantExists;
 	public static String title_po_Deleted;
 	public static String title_prover_editor;
-	public static String title_ui_plugin;
 	
 	// Tactics
 	public static String tactics_replaceWith;
