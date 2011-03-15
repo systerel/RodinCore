@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Systerel - added simplify(IProofTree, IProofMonitor)
  *     Systerel - checked reasoner versions before reusing proofs
  *     Systerel - added unselected hypotheses
+ *     Systerel - checked reasoner conflicts in proof dependencies
  *******************************************************************************/
 package org.eventb.core.seqprover;
 
@@ -219,15 +220,10 @@ public class ProverLib {
 	 * Returns whether the given proof dependencies allow a reuse of the
 	 * corresponding proof on the given sequent.
 	 * <p>
-	 * This method does NOT take reasoner versions into account. Thus, the
-	 * result might be <code>true</code> even though the rules used in the proof
-	 * come from non registered or outdated reasoners. This method should only
-	 * be used for proof trees known to have been built using valid reasoners.
-	 * </p>
-	 * <p>
-	 * When in doubt, use
+	 * This method does take reasoner versions into account since 2.2 and is
+	 * henceforth fully equivalent to
 	 * {@link #isProofReusable(IProofDependencies, IProofSkeleton, IProverSequent)}
-	 * instead.
+	 * , without requiring the extraction of a proof skeleton .
 	 * </p>
 	 * 
 	 * @param proofDependencies
@@ -251,6 +247,10 @@ public class ProverLib {
 		if (! Collections.disjoint(
 				sequent.typeEnvironment().getNames(),
 				proofDependencies.getIntroducedFreeIdents())) return false;	
+		final Set<IReasonerDesc> usedReasoners = proofDependencies.getUsedReasoners();
+		for (IReasonerDesc reasonerDesc : usedReasoners) {
+			if (!isReasonerReusable(reasonerDesc)) return false;
+		}
 		return true;
 	}
 
@@ -274,27 +274,14 @@ public class ProverLib {
 	 */
 	public static boolean isRuleReusable(IProofRule rule) {
 		final IReasonerDesc reasoner = rule.getReasonerDesc();
+		return isReasonerReusable(reasoner);
+	}
+
+	private static boolean isReasonerReusable(final IReasonerDesc reasoner) {
 		final boolean isRegistered = ReasonerRegistry.getReasonerRegistry()
 				.isRegistered(reasoner.getId());
 	
 		return isRegistered && !reasoner.hasVersionConflict();
-	}
-
-	private static boolean isVersionCompatible(IProofSkeleton proofSkeleton) {
-		final IProofRule rule = proofSkeleton.getRule();
-		if (rule == null) {
-			// leaf: no reasoner => no compatibility problem
-			return true;
-		}
-		if (!isRuleReusable(rule)) {
-			return false;
-		}
-		for (IProofSkeleton childNode : proofSkeleton.getChildNodes()) {
-			if (!isVersionCompatible(childNode)) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	/**
@@ -319,11 +306,15 @@ public class ProverLib {
 	 *            a sequent on which to check for reusability
 	 * @return <code>true</code> iff the proof tree can be reused on the sequent
 	 * @since 1.3
+	 * @deprecated since 2.2,
+	 *             {@link #proofReusable(IProofDependencies, IProverSequent)} is
+	 *             equivalent, without having to compute a proof skeleton, which
+	 *             makes it faster
 	 */
+	@Deprecated
 	public static boolean isProofReusable(IProofDependencies proofDependencies,
 			IProofSkeleton proofSkeleton, IProverSequent sequent) {
-		return isProofDepsReusable(proofDependencies, sequent)
-				&& isVersionCompatible(proofSkeleton);
+		return proofReusable(proofDependencies, sequent);
 	}
 	
 	/**

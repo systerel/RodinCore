@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - added used reasoners to proof dependencies
  *******************************************************************************/
 
 package org.eventb.core.seqprover.tests;
@@ -59,7 +60,7 @@ public class ProofRuleTests {
 	private final static IAntecedent[] NO_ANTECEDENTS = new IAntecedent[0];
 	private final static Set<Predicate> NO_HYPS = Collections.emptySet();
 	
-	private static final IReasonerDesc fakeDesc = SequentProver
+	protected static final IReasonerDesc fakeDesc = SequentProver
 			.getReasonerRegistry().getReasonerDesc(TEST_PLUGIN_ID + ".noId");
 	private static final IReasoner fakeReas = fakeDesc.getInstance();
 	private static final IReasonerInput emptyInput = new EmptyInput();
