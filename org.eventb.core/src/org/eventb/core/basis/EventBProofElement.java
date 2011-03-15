@@ -215,7 +215,7 @@ public abstract class EventBProofElement extends InternalElement implements
 		return refs.toString();
 	}
 
-	private Set<Predicate> deserializeCSV(String sepRefs,
+	private static Set<Predicate> deserializeCSV(String sepRefs,
 			IProofStoreReader store) throws RodinDBException {
 		String[] refs = sepRefs.split(",");
 		HashSet<Predicate> hyps = new HashSet<Predicate>(refs.length);
