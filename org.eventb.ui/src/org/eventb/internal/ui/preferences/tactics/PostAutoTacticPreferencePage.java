@@ -62,10 +62,10 @@ import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.internal.ui.preferences.AbstractFieldPreferenceAndPropertyPage;
 import org.eventb.internal.ui.preferences.EnabledComboEditor;
+import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.IEventBFieldEditor;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.internal.ui.utils.Messages;
-import org.eventb.ui.EventBUIPlugin;
 
 public class PostAutoTacticPreferencePage extends
 		AbstractFieldPreferenceAndPropertyPage {
@@ -138,7 +138,7 @@ public class PostAutoTacticPreferencePage extends
 			// this page is opened from an other preference page
 			workspaceCache = page.cache;
 		} else {
-			final IPreferenceStore wsStore = EventBUIPlugin.getDefault()
+			final IPreferenceStore wsStore = EventBPreferenceStore
 					.getPreferenceStore();
 			workspaceCache = new TacticsProfilesCache(wsStore);
 			workspaceCache.load();
