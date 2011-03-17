@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.emf.ecore.extension_parser">
+      <parser
+            class="org.rodinp.core.emf.lightcore.RodinResourceFactory"
+            type="ert">
+      </parser>
+   </extension>
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            base-type="org.eclipse.core.runtime.xml"
+            file-extensions="ert"
+            id="content-type-test"
+            name="Test content type"
+            priority="normal">
+      </content-type>
+   </extension>
+   <extension
+         point="org.rodinp.core.internalElementTypes">
+      <internalElementType
+            class="org.rodinp.core.emf.tests.basis.RodinTestRoot"
+            id="test"
+            name="Test Rodin Root">
+      </internalElementType>
+      <internalElementType
+            class="org.rodinp.core.emf.tests.basis.ImplicitHolder"
+            id="implicitHolder"
+            name="Test Implicit Child Holder">
+      </internalElementType>
+      <internalElementType
+            class="org.rodinp.core.emf.tests.basis.RodinTestDependency"
+            id="testDependency"
+            name="Dependency Element for Tests">
+      </internalElementType>
+   </extension>
+   <extension
+         point="org.rodinp.core.fileAssociations">
+      <fileAssociation
+            content-type-id="org.rodinp.core.emf.tests.content-type-test"
+            root-element-type="org.rodinp.core.emf.tests.test">
+      </fileAssociation>
+   </extension>
+   <extension
+         point="org.rodinp.core.attributeTypes">
+      <attributeType
+            id="fBool"
+            kind="boolean"
+            name="Boolean attribute">
+      </attributeType>
+      <attributeType
+            id="fHandle"
+            kind="handle"
+            name="Element handle attribute">
+      </attributeType>
+      <attributeType
+            id="fInt"
+            kind="integer"
+            name="Integer attribute">
+      </attributeType>
+      <attributeType
+            id="fLong"
+            kind="long"
+            name="Long attribute">
+      </attributeType>
+      <attributeType
+            id="fString"
+            kind="string"
+            name="String attribute">
+      </attributeType>
+      <attributeType
+            id="testAttributeType"
+            kind="string"
+            name="Test Attribute Type">
+      </attributeType>
+      <attributeType
+            id="testDependencyAttribute"
+            kind="handle"
+            name="Test Dependency Attribute">
+      </attributeType>
+   </extension>
+
+</plugin>
