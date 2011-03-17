@@ -229,7 +229,8 @@ public class PSUpdater {
 		try {
 			// exception is thrown if rules are corrupted
 			// TODO make an external action for checking data corruption
-			prProof.getSkeleton(ff, pm);
+			// the following line throws an exception in case of corruption
+//			prProof.getSkeleton(ff, pm);
 			
 			// check dependencies
 			final IProofDependencies deps = prProof
