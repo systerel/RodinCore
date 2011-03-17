@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPRIdentifier;
 import org.eventb.core.IPRProof;
+import org.eventb.core.IPRReasoner;
 import org.eventb.core.IPRStoredExpr;
 import org.eventb.core.IPRStoredPred;
 import org.eventb.core.IProofStoreCollector;
@@ -59,12 +60,6 @@ public class PRProof extends EventBProofElement implements IPRProof {
 	public IInternalElementType<IPRProof> getElementType() {
 		return ELEMENT_TYPE;
 	}
-	
-//	@Override
-//	public int getConfidence() throws RodinDBException {
-//		if (!hasConfidence()) return IConfidence.UNATTEMPTED;
-//		return getAttributeValue(EventBAttributes.CONFIDENCE_ATTRIBUTE);
-//	}
 	
 	// TODO fix usage of monitor.
 	@Override
@@ -105,7 +100,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		final Set<Predicate> usedHypotheses;
 		final ITypeEnvironment usedFreeIdents;
 		final Set<String> introducedFreeIdents;
-		final Set<IReasonerDesc> usedReasoners = new HashSet<IReasonerDesc>();
+		final Set<IReasonerDesc> usedReasoners;
 		
 		if (monitor == null) monitor = new NullProgressMonitor();
 		try {
@@ -118,9 +113,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 				goal = null;
 			usedHypotheses = PRProof.this.getHyps(store);
 			
-			// TODO read reasoners directly from store
-			final IProofSkeleton skel = getSkeleton(store);
-			addUsedReasoners(skel, usedReasoners);
+			usedReasoners = getUsedReasoners(store);
 		} finally {
 			monitor.done();
 		}
@@ -134,19 +127,6 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		return ProverFactory.makeProofDependencies(hasDeps, goal,
 				usedHypotheses, usedFreeIdents, introducedFreeIdents,
 				usedReasoners);
-	}
-	
-	private static void addUsedReasoners(IProofSkeleton proofSkeleton,
-			Set<IReasonerDesc> usedReasoners) {
-		final IProofRule rule = proofSkeleton.getRule();
-		if (rule == null) {
-			// leaf: no reasoner
-			return;
-		}
-		usedReasoners.add(rule.getReasonerDesc());
-		for (IProofSkeleton childNode : proofSkeleton.getChildNodes()) {
-			addUsedReasoners(childNode, usedReasoners);
-		}
 	}
 	
 	@Override
@@ -264,5 +244,49 @@ public class PRProof extends EventBProofElement implements IPRProof {
 				monitor));
 	}
 
+	/**
+	 * @since 2.2
+	 */
+	@Override
+	public IPRReasoner getReasoner(String name) {
+		return getInternalElement(IPRReasoner.ELEMENT_TYPE, name);
+	}
+	
+	/**
+	 * @since 2.2
+	 */
+	@Override
+	public IPRReasoner[] getReasoners() throws RodinDBException {
+		return getChildrenOfType(IPRReasoner.ELEMENT_TYPE);
+	}
+	
+	// TODO consider making public
+	private Set<IReasonerDesc> getUsedReasoners(IProofStoreReader store)
+			throws RodinDBException {
+		final Set<IReasonerDesc> usedReasoners = new HashSet<IReasonerDesc>();
+		final IPRReasoner[] reasoners = PRProof.this.getReasoners();
+		if (reasoners.length == 0) { // old storage: reasoners in skeleton
+			final IProofSkeleton skel = getSkeleton(store);
+			addUsedReasoners(skel, usedReasoners);
+		} else {
+			for (IPRReasoner reasoner : reasoners) {
+				usedReasoners.add(reasoner.getReasoner());
+			}
+		}
+		return usedReasoners;
+	}
+	
+	private static void addUsedReasoners(IProofSkeleton proofSkeleton,
+			Set<IReasonerDesc> usedReasoners) {
+		final IProofRule rule = proofSkeleton.getRule();
+		if (rule == null) {
+			// leaf: no reasoner
+			return;
+		}
+		usedReasoners.add(rule.getReasonerDesc());
+		for (IProofSkeleton childNode : proofSkeleton.getChildNodes()) {
+			addUsedReasoners(childNode, usedReasoners);
+		}
+	}
 
 }

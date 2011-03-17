@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - refactored expression and predicate storage
+ *     Systerel - collected used reasoners and moved them to proof root
  ******************************************************************************/
 package org.eventb.core.basis;
 
@@ -20,6 +21,7 @@ import org.eventb.core.IPRIdentifier;
 import org.eventb.core.IPRPredRef;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPRProofRule;
+import org.eventb.core.IPRReasoner;
 import org.eventb.core.IPRStoredExpr;
 import org.eventb.core.IPRStoredPred;
 import org.eventb.core.IPRStringInput;
@@ -27,6 +29,7 @@ import org.eventb.core.IProofStoreCollector;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.internal.core.Util;
@@ -40,17 +43,15 @@ import org.rodinp.core.RodinDBException;
 public class ProofStoreCollector implements IProofStoreCollector {
 
 	private final ITypeEnvironment baseTypEnv;
-	private Map<Predicate,String> predicates;
-	private int predCount;
-	private Map<Expression,String> expressions;
-	private int exprCount;
+	private final Map<Predicate,String> predicates = new HashMap<Predicate,String>();
+	private int predCount = 0;
+	private final Map<Expression,String> expressions = new HashMap<Expression,String>();
+	private int exprCount = 0;
+	private final Map<IReasonerDesc, String> reasoners = new HashMap<IReasonerDesc, String>();
+	private int reasonerCount = 0;
 	
 	public ProofStoreCollector(ITypeEnvironment baseTypEnv){
 		this.baseTypEnv = baseTypEnv;
-		this.predicates = new HashMap<Predicate,String>();
-		this.predCount = 0;
-		this.expressions = new HashMap<Expression,String>();
-		this.exprCount = 0;
 	}
 	
 	@Override
@@ -79,6 +80,20 @@ public class ProofStoreCollector implements IProofStoreCollector {
 		return ref;
 	}
 
+	/**
+	 * @since 2.2
+	 */
+	@Override
+	public String putReasoner(IReasonerDesc reasoner) {
+		String ref = reasoners.get(reasoner);
+		if (ref == null) {
+			ref = "r" + Integer.toString(reasonerCount);
+			reasoners.put(reasoner, ref);
+			reasonerCount++;
+		}
+		return ref;
+	}
+
 	@Override
 	public void writeOut(IPRProof prProof, IProgressMonitor monitor)
 			throws RodinDBException {
@@ -99,6 +114,13 @@ public class ProofStoreCollector implements IProofStoreCollector {
 			prExpr.create(null, monitor);
 			final Expression expr = entry.getKey();
 			prExpr.setExpression(expr, baseTypEnv, monitor);
+		}
+		
+		for (Map.Entry<IReasonerDesc, String> entry : reasoners.entrySet()) {
+			final IPRReasoner prReasoner = prProof.getReasoner(entry.getValue());
+			prReasoner.create(null, monitor);
+			final IReasonerDesc reasoner = entry.getKey();
+			prReasoner.setReasoner(reasoner, monitor);
 		}
 	}
 	

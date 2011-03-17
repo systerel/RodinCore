@@ -10,6 +10,7 @@
  *     Systerel - serialization of reasoner version through rule name
  *     Systerel - added unselected hyps attribute
  *     Systerel - used nested classes instead of anonymous ones
+ *     Systerel - collected used reasoners and moved them to proof root
  *******************************************************************************/
 package org.eventb.core.basis;
 
@@ -39,7 +40,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofSkeleton;
-import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinElement;
@@ -217,10 +217,10 @@ public abstract class EventBProofElement extends InternalElement implements
 
 	private static Set<Predicate> deserializeCSV(String sepRefs,
 			IProofStoreReader store) throws RodinDBException {
-		String[] refs = sepRefs.split(",");
-		HashSet<Predicate> hyps = new HashSet<Predicate>(refs.length);
-		for(String ref : refs){
-			if (ref.length()!=0) hyps.add(store.getPredicate(ref));
+		final String[] refs = sepRefs.split(",");
+		final Set<Predicate> hyps = new HashSet<Predicate>(refs.length);
+		for (String ref : refs) {
+			if (!ref.isEmpty()) hyps.add(store.getPredicate(ref));
 		}
 		return hyps;
 	}
@@ -299,16 +299,15 @@ public abstract class EventBProofElement extends InternalElement implements
 		
 		if (skel.getRule() == null) return;
 
-		final String ruleName = getVersionedRuleName(skel.getRule());
-		final IPRProofRule prRule = getProofRule(ruleName);
+		final IPRProofRule prRule = getProofRule(skel.getRule(), store);
 		prRule.create(null,null);
 		
 		prRule.setProofRule(skel, store, monitor);
 	}
 
-	private static String getVersionedRuleName(IProofRule rule) {
-		final IReasonerDesc desc = rule.getReasonerDesc();
-		return desc.getVersionedId();
+	private IPRProofRule getProofRule(IProofRule rule, IProofStoreCollector store) {
+		final String ref = store.putReasoner(rule.getReasonerDesc());
+		return getProofRule(ref);
 	}
 	
 	public IProofSkeleton getSkeleton(IProofStoreReader store) throws RodinDBException {

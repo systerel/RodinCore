@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - updated Javadoc
+ *     Systerel - moved used reasoners to proof root
  ******************************************************************************/
 package org.eventb.core;
 
@@ -61,9 +62,8 @@ import org.rodinp.core.RodinDBException;
  * Clients should use the Proof Manager API rather than direct access to this
  * Rodin database API.
  * </p>
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  * 
  * @see IProofTree
  * @see IProofDependencies
@@ -360,4 +360,28 @@ public interface IPRProof extends IInternalElement, IPRProofInfoElement {
 	void setComment(String comment, IProgressMonitor monitor)
 			throws RodinDBException;
 
+	
+	/**
+	 * Returns a handle to the reasoner child with the given name.
+	 * <p>
+	 * This is a handle-only method. The reasoner element may or may not be
+	 * present.
+	 * </p>
+	 * 
+	 * @param name
+	 *            element name of the child
+	 * @return a handle to the child reasoner with the given element name
+	 * @since 2.2
+	 */
+	IPRReasoner getReasoner(String name);
+
+	/**
+	 * Returns all reasoner child elements.
+	 * 
+	 * @return an array of all used reasoners
+	 * @throws RodinDBException
+	 * @see #getPredicate(String)
+	 * @since 2.2
+	 */
+	IPRReasoner[] getReasoners() throws RodinDBException;
 }

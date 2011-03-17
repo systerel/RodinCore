@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - refactored expression and predicate storage
+ *     Systerel - moved used reasoners to proof root
  ******************************************************************************/
 package org.eventb.core.basis;
 
@@ -20,6 +21,7 @@ import org.eventb.core.IPRIdentifier;
 import org.eventb.core.IPRPredRef;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPRProofRule;
+import org.eventb.core.IPRReasoner;
 import org.eventb.core.IPRStoredExpr;
 import org.eventb.core.IPRStoredPred;
 import org.eventb.core.IPRStringInput;
@@ -28,9 +30,11 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IReasonerInputReader;
-import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.core.seqprover.IReasonerDesc;
+import org.eventb.core.seqprover.IReasonerInputReader;
+import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.SerializeException;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -41,21 +45,20 @@ public class ProofStoreReader implements IProofStoreReader {
 	private final IPRProof prProof;
 	private final FormulaFactory factory;
 	
-	private ITypeEnvironment baseTypEnv;
-	private Map<String, Predicate> predicates;
-	private Map<String, Expression> expressions;
+	private ITypeEnvironment baseTypEnv = null;
+	private final Map<String, Predicate> predicates = new HashMap<String, Predicate>();
+	private final Map<String, Expression> expressions = new HashMap<String, Expression>();
+	private final Map<String, IReasonerDesc> reasoners = new HashMap<String, IReasonerDesc>();
+	
 	
 	@Override
 	public FormulaFactory getFormulaFactory() {
 		return factory;
 	}
 	
-	public ProofStoreReader(IPRProof prProof, FormulaFactory factory){
+	public ProofStoreReader(IPRProof prProof, FormulaFactory factory) {
 		this.prProof = prProof;
 		this.factory = factory;
-		this.baseTypEnv = null;
-		this.predicates = new HashMap<String, Predicate>();
-		this.expressions = new HashMap<String, Expression>();
 	}
 	
 	@Override
@@ -94,6 +97,26 @@ public class ProofStoreReader implements IProofStoreReader {
 			expressions.put(ref, expr);
 		}
 		return expr;
+	}
+
+	/**
+	 * @since 2.2
+	 */
+	@Override
+	public IReasonerDesc getReasoner(String ref) throws RodinDBException {
+		IReasonerDesc reasoner = reasoners.get(ref);
+		if (reasoner == null) {
+			final IPRReasoner prReas = prProof.getReasoner(ref);
+			if (prReas.exists()) {
+				reasoner = prReas.getReasoner();
+			} else { // old storage: ref is reasoner id
+				reasoner = SequentProver.getReasonerRegistry().getReasonerDesc(
+						ref);
+			}
+			
+			reasoners.put(ref, reasoner);
+		}
+		return reasoner;
 	}
 
 	// TODO : return null in case key is not present instead of throwing an exception

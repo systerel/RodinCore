@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -216,8 +216,9 @@ public class ProofAttemptTests extends AbstractProofTests {
 					"	m.bpr[*]: {CHILDREN}\n" + 
 					"		m[org.eventb.core.prFile][*]: {CHILDREN}\n" + 
 					"			PO1[org.eventb.core.prProof][*]: {CHILDREN | ATTRIBUTE}\n" + 
-					"				org.eventb.core.seqprover.trueGoal[org.eventb.core.prRule][+]: {}\n" + 
+					"				r0[org.eventb.core.prRule][+]: {}\n" + 
 					"				p0[org.eventb.core.prPred][+]: {}\n" + 
+					"				r0[org.eventb.core.prReas][+]: {}\n" + 
 					"	m.bps[*]: {CHILDREN}\n" + 
 					"		m[org.eventb.core.psFile][*]: {CHILDREN}\n" + 
 					"			PO1[org.eventb.core.psStatus][*]: {ATTRIBUTE}");

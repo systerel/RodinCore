@@ -32,9 +32,7 @@ import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
-import org.eventb.core.seqprover.IReasonerRegistry;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.SerializeException;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -80,20 +78,13 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 		return ELEMENT_TYPE;
 	}
 
-
-	private String getReasonerID() {
+	private String getReasonerRef() {
 		return getElementName();
 	}
 
-	private IReasoner getReasoner() {
-		return getReasonerDesc().getInstance();
-	}
-	
 	// returns a descriptor with the version of the reasoner used in the proof
-	// the version is encoded in the element name (this.getReasonerID())
-	private IReasonerDesc getReasonerDesc() {
-		final IReasonerRegistry reasonerRegistry = SequentProver.getReasonerRegistry();
-		return reasonerRegistry.getReasonerDesc(this.getReasonerID());
+	private IReasonerDesc getReasonerDesc(IProofStoreReader store) throws RodinDBException {
+		return store.getReasoner(this.getReasonerRef());
 	}
 
 	@Override
@@ -115,6 +106,7 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 
 		final String display = getRuleDisplay();
 		final int confidence = getConfidence();
+		final IReasonerDesc reasonerDesc = getReasonerDesc(store);
 
 		final IReasonerInput input;
 		try {
@@ -122,12 +114,13 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 				new ProofStoreReader.Bridge(this, store, confidence,
 						display, goal, neededHyps, antecedents);
 				
-			input = getReasoner().deserializeInput(deserializer);
+			input = reasonerDesc.getInstance().deserializeInput(deserializer);
 		} catch (SerializeException e) {
 			throw (RodinDBException) e.getCause();
 		}
+		
 		final IProofRule proofRule = ProverFactory.makeProofRule(
-				getReasonerDesc(),
+				reasonerDesc,
 				input, 
 				goal, 
 				neededHyps, 

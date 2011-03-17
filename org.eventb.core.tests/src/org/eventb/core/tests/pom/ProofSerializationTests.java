@@ -49,6 +49,7 @@ import org.eventb.core.seqprover.eventbExtensions.AutoTactics.TrueGoalTac;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.tactics.BasicTactics;
+import org.eventb.core.tests.ResourceUtils;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -73,6 +74,11 @@ public class ProofSerializationTests extends TestCase {
 		assertEquals(proofTree.getConfidence(), proof.getConfidence());
 
 		// Check that the stored tree is the same
+		checkDeserialization(proof, proofTree, hasDeps);
+	}
+
+	private static void checkDeserialization(IPRProof proof,
+			IProofTree proofTree, boolean hasDeps) throws RodinDBException {
 		IProofSkeleton skel = proof.getSkeleton(ff, null);
 		assertTrue(ProverLib.deepEquals(proofTree.getRoot(), skel));
 		
@@ -288,4 +294,33 @@ public class ProofSerializationTests extends TestCase {
 		}
 	}
 
+	// before 2.2, versioned reasoner ids were stored in rule element names
+	// from 2.2 on, rule element name bears a reference to a IPRReasoner
+	// located in proof root
+	// ensure that old storage is still readable
+	public void testReasonerStorageCompatibility() throws Exception {
+		final String contents = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
+				+ "<org.eventb.core.prFile version=\"1\">"
+				+ "<org.eventb.core.prProof name=\"oldProof\" org.eventb.core.confidence=\"1000\" org.eventb.core.prFresh=\"\" org.eventb.core.prGoal=\"p0\" org.eventb.core.prHyps=\"\">"
+				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.impI\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"⇒ goal\" org.eventb.core.prGoal=\"p0\" org.eventb.core.prHyps=\"\">"
+				+ "<org.eventb.core.prAnte name=\"0\" org.eventb.core.prGoal=\"p1\" org.eventb.core.prHyps=\"p1\">"
+				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.trueGoal\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"⊤ goal\" org.eventb.core.prGoal=\"p1\" org.eventb.core.prHyps=\"\"/>"
+				+ "</org.eventb.core.prAnte>"
+				+ "</org.eventb.core.prRule>"
+				+ "<org.eventb.core.prPred name=\"p1\" org.eventb.core.predicate=\"⊤\"/>"
+				+ "<org.eventb.core.prPred name=\"p0\" org.eventb.core.predicate=\"⊤⇒⊤\"/>"
+				+ "</org.eventb.core.prProof>"
+				+ "</org.eventb.core.prFile>";
+		final IPRRoot prFile = ResourceUtils.createPRFile(rodinProject, "oldProofFile", contents);
+		final IPRProof proof = prFile.getProof("oldProof");
+
+		final IProverSequent sequent = TestLib.genSeq("|- ⊤ ⇒ ⊤");
+		final IProofTree proofTree = ProverFactory.makeProofTree(sequent, null);
+		final IProofTreeNode root = proofTree.getRoot();
+		impI().apply(root, null);
+		new TrueGoalTac().apply(root.getFirstOpenDescendant(), null);
+		assertTrue(proofTree.isClosed());
+
+		checkDeserialization(proof, proofTree, true);
+	}
 }

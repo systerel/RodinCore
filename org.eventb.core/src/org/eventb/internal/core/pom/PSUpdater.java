@@ -227,6 +227,11 @@ public class PSUpdater {
 	private static boolean isBroken(IProverSequent seq, IPRProof prProof,
 			FormulaFactory ff, IProgressMonitor pm) {
 		try {
+			// exception is thrown if rules are corrupted
+			// TODO make an external action for checking data corruption
+			prProof.getSkeleton(ff, pm);
+			
+			// check dependencies
 			final IProofDependencies deps = prProof
 					.getProofDependencies(ff, pm);
 			return !ProverLib.proofReusable(deps, seq);
