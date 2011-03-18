@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.rodinp.core.emf.lightcore.sync;
 
+import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.SafeRunner;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -97,17 +100,66 @@ public class SynchroManager {
 	 *            the IInternalElement counterpart of the parent
 	 */
 	public static void implicitLoad(LightElement parent,
-			IInternalElement iParent) {
+			final IInternalElement iParent) {
 		final List<IImplicitChildProvider> providers = ImplicitChildProviderManager
 				.getProvidersFor(iParent.getElementType());
-		for (IImplicitChildProvider p : providers) {
-			for (IInternalElement e : p.getImplicitChildren(iParent)) {
+		for (final IImplicitChildProvider p : providers) {
+			for (IInternalElement e : ImplicitChildrenComputer
+					.safeGetImplicitChildren(iParent, p)) {
 				final ImplicitElement implicit = loadImplicitElementFor(e);
 				parent.getChildren().add(implicit);
 			}
 		}
 	}
 
+	private static class ImplicitChildrenComputer {
+
+		private List<? extends IInternalElement> implicitChildren;
+		private final IInternalElement parent;
+		private final IImplicitChildProvider provider;
+
+		private ImplicitChildrenComputer(IInternalElement parent,
+				IImplicitChildProvider provider) {
+			this.parent = parent;
+			this.provider = provider;
+			computeImplicitChildren();
+		}
+
+		private void computeImplicitChildren() {
+			SafeRunner.run(new ISafeRunnable() {
+
+				@Override
+				public void run() throws Exception {
+					implicitChildren = provider.getImplicitChildren(parent);
+				}
+
+				@Override
+				public void handleException(Throwable exception) {
+					System.out
+							.println("An exception occured while the implicit child provider"
+									+ provider.toString()
+									+ " attempted to calculate implicit children of "
+									+ parent.getElementName());
+				}
+			});
+		}
+
+		private List<? extends IInternalElement> getImplicitChildren() {
+			return implicitChildren;
+		}
+
+		public static List<? extends IInternalElement> safeGetImplicitChildren(
+				IInternalElement parent, IImplicitChildProvider provider) {
+			final ImplicitChildrenComputer c = new ImplicitChildrenComputer(
+					parent, provider);
+			final List<? extends IInternalElement> children = c
+					.getImplicitChildren();
+			return (children == null) ? Collections
+					.<IInternalElement> emptyList() : children;
+		}
+
+	}
+	
 	private static InternalElement loadInternalElementFor(IRodinElement iElement) {
 		final InternalElement eElement = LightcoreFactory.eINSTANCE
 				.createInternalElement();

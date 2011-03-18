@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,12 +30,15 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.emf.lightcore.IImplicitChildProvider;
 import org.rodinp.core.emf.lightcore.LightElement;
 import org.rodinp.core.emf.lightcore.LightcorePackage;
 import org.rodinp.core.emf.lightcore.sync.ImplicitChildProviderManager;
 import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
 import org.rodinp.core.emf.tests.basis.ImplicitHolder;
 import org.rodinp.core.emf.tests.basis.RodinTestDependency;
+import org.rodinp.core.emf.tests.basis.RodinTestRoot;
+import org.rodinp.core.emf.tests.basis.TestBuggyImplicitChildProvider;
 import org.rodinp.core.emf.tests.basis.TestImplicitChildProvider;
 import org.rodinp.core.tests.basis.NamedElement;
 
@@ -154,7 +158,7 @@ public class ImplicitElementHandlingTests {
 		rf1.save(null, true);
 		rf2.save(null, true);
 
-		createProvider(ImplicitHolder.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
+		final IImplicitChildProvider p = createProvider(ImplicitHolder.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
 
 		// now checking the loaded resource for rf2
 		final Resource rodinResource = getRodinResource(project,
@@ -183,6 +187,7 @@ public class ImplicitElementHandlingTests {
 		// we check that implicit elements have been recomputed and that holder2
 		// does not contain implicit children
 		assertTrue(eHolder2.getChildren().isEmpty());
+		ImplicitChildProviderManager.removeProvider(p);
 	}
 
 	/**
@@ -219,7 +224,7 @@ public class ImplicitElementHandlingTests {
 		rf2.save(null, true);
 		rf3.save(null, true);
 
-		createProvider(ImplicitHolder.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
+		final IImplicitChildProvider p = createProvider(ImplicitHolder.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
 
 		// now checking the loaded resource
 		final Resource rodinResource = getRodinResource(project,
@@ -251,13 +256,45 @@ public class ImplicitElementHandlingTests {
 			assertTrue(e.getRodinElement().equals(expecteds2[j]));
 			j++;
 		}
+		ImplicitChildProviderManager.removeProvider(p);
 	}
+	
+	/**
+	 * Checks that the implicit child providing mechanism works.
+	 */
+	@Test
+	public void resistToBuggyProvider() throws RodinDBException {		
+		final IInternalElement rf1root = rf1.getRoot();
+		final NamedElement s1 = getNamedElement(rf1root, "s1");
+		final NamedElement s2 = getNamedElement(rf1root, "s2");
+		rf1.save(null, true);
 
-	public void createProvider(
+		final IImplicitChildProvider p = new TestBuggyImplicitChildProvider();
+		ImplicitChildProviderManager.addProviderFor(p,
+				RodinTestRoot.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
+		
+		// now checking the loaded resource
+		final Resource rodinResource = getRodinResource(project,
+				rf1.getElementName());
+		// We get the light model
+		final LightElement rootElement = (LightElement) rodinResource
+				.getContents().get(0);
+		final LightElement eS1 = SynchroUtils.findElement(s1, rootElement);
+		// removing eS1 to create a delta and throw the NPE
+		EcoreUtil.remove(eS1);
+		// If we reach this point, the exception didn't break nothing
+		assertTrue(rootElement.getChildren().size() == 1);
+		assertTrue(rootElement.getChildren().get(0).getRodinElement().equals(s2));
+		//ImplicitChildProviderManager.removeProvider(p);
+	}
+	
+	public IImplicitChildProvider createProvider(
 			IInternalElementType<? extends IInternalElement> parentType,
 			IInternalElementType<? extends IInternalElement> childType) {
+		final IImplicitChildProvider p = new TestImplicitChildProvider();
 		ImplicitChildProviderManager.addProviderFor(
 				new TestImplicitChildProvider(), parentType, childType);
+		return p;
 	}
 
 	private static ImplicitHolder getImplicitHolder(IInternalElement parent,
