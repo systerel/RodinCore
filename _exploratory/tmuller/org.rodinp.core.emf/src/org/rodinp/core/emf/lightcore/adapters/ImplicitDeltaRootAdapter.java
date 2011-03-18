@@ -26,10 +26,10 @@ import org.rodinp.core.emf.lightcore.LightElement;
 public class ImplicitDeltaRootAdapter extends AdapterImpl implements
 		IElementChangedListener {
 
-	private final DeltaProcessor processor;
+	private final ImplicitDeltaProcessor processor;
 
 	public ImplicitDeltaRootAdapter(LightElement root) {
-		this.processor = new DeltaProcessor(this, root);
+		this.processor = new ImplicitDeltaProcessor(this, root);
 		RodinCore.addElementChangedListener(this);
 	}
 

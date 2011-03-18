@@ -511,6 +511,7 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 			this.setRoot(iElement.isRoot());
 			SynchroUtils.loadAttributes(iElement, this);
 			SynchroUtils.adaptForElementMoveAndRemove(this);
+			SynchroUtils.adaptRootForImplicitChildren(this);
 		}
 	}
 	

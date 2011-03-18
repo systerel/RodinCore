@@ -15,10 +15,13 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.emf.lightcore.ImplicitElement;
 import org.rodinp.core.emf.lightcore.LightElement;
 import org.rodinp.core.emf.lightcore.LightcorePackage;
 import org.rodinp.core.emf.lightcore.sync.SynchroManager;
@@ -58,9 +61,18 @@ public class ImplicitDeltaProcessor {
 				return;
 			}
 		}
+
+		if (element instanceof IRodinDB) {
+			for (IRodinElementDelta d : delta.getAffectedChildren()) {
+				processDelta(d);
+				return;
+			}
+		}
 		// if the delta does not concern a modification in the project we
 		// return;
-		if (!(element.getRodinProject().equals(rodinRoot.getRodinProject()))) {
+		final IRodinProject rodinProject = element.getRodinProject();
+		if (rodinProject != null
+				&& !(rodinProject.equals(rodinRoot.getRodinProject()))) {
 			return;
 		}
 		recalculateImplicitChildren();
@@ -70,7 +82,8 @@ public class ImplicitDeltaProcessor {
 		final EList<EObject> implicitChildren = root.getAllContained(
 				LightcorePackage.Literals.IMPLICIT_ELEMENT, false);
 		for (EObject child : implicitChildren) {
-			EcoreUtil.remove(child);
+			if (child instanceof ImplicitElement)
+				EcoreUtil.remove(child);
 		}
 		recursiveImplicitLoadFromRoot();
 	}
@@ -88,9 +101,15 @@ public class ImplicitDeltaProcessor {
 
 	private void recursiveImplicitLoad(LightElement element)
 			throws RodinDBException {
-		if (element.getRodinElement() instanceof IInternalElement) {
-			final IInternalElement parent = (IInternalElement) element;
+		final Object rodinElement = element.getRodinElement();
+		if (rodinElement instanceof IInternalElement) {
+			final IInternalElement parent = (IInternalElement) rodinElement;
 			SynchroManager.implicitLoad(element, parent);
+		}
+		for (LightElement eChild : element.getChildren()) {
+			if (!(eChild instanceof ImplicitElement)) {
+				recursiveImplicitLoad(eChild);				
+			}
 		}
 	}
 

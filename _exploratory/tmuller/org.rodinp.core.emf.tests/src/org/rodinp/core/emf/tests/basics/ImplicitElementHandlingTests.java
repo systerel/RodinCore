@@ -31,6 +31,7 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.lightcore.LightElement;
 import org.rodinp.core.emf.lightcore.LightcorePackage;
 import org.rodinp.core.emf.lightcore.sync.ImplicitChildProviderManager;
+import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
 import org.rodinp.core.emf.tests.basis.ImplicitHolder;
 import org.rodinp.core.emf.tests.basis.RodinTestDependency;
 import org.rodinp.core.emf.tests.basis.TestImplicitChildProvider;
@@ -39,7 +40,7 @@ import org.rodinp.core.tests.basis.NamedElement;
 /**
  * Tests for the implicit children handling within light models.
  */
-public class ImplicitElementHandling {
+public class ImplicitElementHandlingTests {
 
 	private static final String f1Name = "resource1.ert";
 	private static final String f2Name = "resource2.ert";
@@ -89,12 +90,11 @@ public class ImplicitElementHandling {
 		// from rf2 and rf1
 		final ImplicitHolder holder3 = getImplicitHolder(rf3Root, "Holder3");
 
-		createProvider(ImplicitHolder.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
-
 		rf1.save(null, true);
 		rf2.save(null, true);
 		rf3.save(null, true);
 
+		createProvider(ImplicitHolder.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
 		// now checking the loaded resource
 		final Resource rodinResource = getRodinResource(project,
 				rf3.getElementName());
@@ -127,6 +127,55 @@ public class ImplicitElementHandling {
 		assertTrue("We found more than 4 implicit children", i == 4);
 		assertArrayEquals("Implicit element array should be equal", expecteds,
 				actuals);
+	}
+
+	/**
+	 * Creates a simple dependency from one root element to a parent element,
+	 * and checks that the implicit children have been recomputed in the child
+	 * root element.
+	 */
+	@Test
+	public void createDependencyAndCheckImplicitChildren()
+			throws RodinDBException {
+		final ImplicitHolder holder1 = getImplicitHolder(rf1.getRoot(),
+				"Holder1");
+		final NamedElement s1 = getNamedElement(holder1, "s1");
+		final NamedElement s2 = getNamedElement(holder1, "s2");
+		final IInternalElement rf2Root = rf2.getRoot();
+		final ImplicitHolder holder2 = getImplicitHolder(rf2.getRoot(),
+				"Holder2");
+		rf1.save(null, true);
+		rf2.save(null, true);
+
+		createProvider(ImplicitHolder.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
+
+		// now checking the loaded resource for rf2
+		final Resource rodinResource = getRodinResource(project,
+				rf2.getElementName());
+		final LightElement rootElement = (LightElement) rodinResource
+				.getContents().get(0);
+		final LightElement eHolder2 = SynchroUtils.findElement(holder2,
+				rootElement);
+		// we check that there is no implicit element under eHolder2
+		assertTrue(eHolder2.getChildren().isEmpty());
+		// now we add the dependency to rf1, so we expect the implicit children
+		// to be recalculated from the delta of database
+		final RodinTestDependency d = getDependencyElement(rf2Root,
+				"dependencyToRf1");
+		d.setDependency(rf1.getRoot());
+		rf2.save(null, true);
+		// we check that implicit elements have been recomputed and that holder2
+		// carries s1 and s2
+		final EList<LightElement> children2 = eHolder2.getChildren();
+		assertTrue(children2.size() == 2);
+		assertTrue(children2.get(0).getRodinElement().equals(s1));
+		assertTrue(children2.get(1).getRodinElement().equals(s2));
+		// now we delete the dependency, so it might not be any implicit element
+		// left.
+		d.delete(true, null);
+		// we check that implicit elements have been recomputed and that holder2
+		// does not contain implicit children
+		assertTrue(eHolder2.getChildren().isEmpty());
 	}
 
 	public void createProvider(

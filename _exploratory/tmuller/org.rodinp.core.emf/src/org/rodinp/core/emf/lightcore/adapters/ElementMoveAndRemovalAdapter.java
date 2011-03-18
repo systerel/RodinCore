@@ -15,6 +15,7 @@ import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.emf.lightcore.ImplicitElement;
 import org.rodinp.core.emf.lightcore.LightElement;
 
 /**
@@ -42,7 +43,8 @@ public class ElementMoveAndRemovalAdapter extends AdapterImpl {
 					final LightElement e = (LightElement) o;
 					final IRodinElement rElement = (IRodinElement) e
 							.getRodinElement();
-					if (rElement instanceof IInternalElement) {
+					if (rElement instanceof IInternalElement
+							&& !(e instanceof ImplicitElement)) {
 						((IInternalElement) rElement).delete(true, null);
 					}
 				}
