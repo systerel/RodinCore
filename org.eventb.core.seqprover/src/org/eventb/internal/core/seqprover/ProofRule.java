@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added a constructor with IReasonerDesc
  *     Systerel - added unselected hypotheses
+ *     Systerel - added used reasoners to proof dependencies
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
@@ -259,7 +260,10 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 				assert (depGoal == null || depGoal.equals(subProofDeps.getGoal()));
 				depGoal = subProofDeps.getGoal();
 			}
-
+			
+			// add used reasoners
+			proofDeps.getUsedReasoners().addAll(
+					subProofDeps.getUsedReasoners());
 		}
 		
 		if (goal != null){	
@@ -273,6 +277,7 @@ public class ProofRule extends ReasonerOutput implements IProofRule{
 		for (Predicate hyp : neededHypotheses)
 			proofDeps.getUsedFreeIdents().addAll(Arrays.asList(hyp.getFreeIdentifiers()));
 		
+		proofDeps.getUsedReasoners().add(reasonerDesc);
 		return proofDeps;
 	}
 	

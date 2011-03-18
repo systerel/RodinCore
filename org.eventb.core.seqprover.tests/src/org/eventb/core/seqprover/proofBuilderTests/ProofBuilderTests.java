@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Systerel and others.
+ * Copyright (c) 2009, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -132,8 +132,8 @@ public class ProofBuilderTests {
 
 		assertFalse(
 				"[ProverLib] should not claim a proof is reusable when it is not",
-				ProverLib.isProofReusable(trivialTree.getProofDependencies(),
-						trivialTree.getRoot(), trueSequent));
+				ProverLib.proofReusable(trivialTree.getProofDependencies(),
+						trueSequent));
 	}
 
 	@Test
@@ -147,9 +147,8 @@ public class ProofBuilderTests {
 		assertTrue("could not reuse", ProofBuilder.reuse(node, trivialTree
 				.getRoot(), null));
 
-		assertTrue("[ProverLib] should be reusable", ProverLib.isProofReusable(
-				trivialTree.getProofDependencies(),
-				trivialTree.getRoot(), trivialSequent));
+		assertTrue("[ProverLib] should be reusable", ProverLib.proofReusable(
+				trivialTree.getProofDependencies(), trivialSequent));
 	}
 
 	@Test
@@ -164,9 +163,8 @@ public class ProofBuilderTests {
 				.getRoot(), null));
 		assertTrue(t.isClosed());
 
-		assertTrue("[ProverLib] should be reusable", ProverLib.isProofReusable(
-				branchTree.getProofDependencies(),
-				branchTree.getRoot(), branchSequent));
+		assertTrue("[ProverLib] should be reusable", ProverLib.proofReusable(
+				branchTree.getProofDependencies(), branchSequent));
 	}
 
 	@Test
@@ -182,8 +180,8 @@ public class ProofBuilderTests {
 
 		assertFalse(
 				"[ProverLib] should not claim a proof is reusable when it is not",
-				ProverLib.isProofReusable(branchTree2.getProofDependencies(),
-						branchTree2.getRoot(), branchSequent));
+				ProverLib.proofReusable(branchTree2.getProofDependencies(),
+						branchSequent));
 	}
 
 	@Test
@@ -202,9 +200,9 @@ public class ProofBuilderTests {
 		
 		assertFalse(makeMessage("ProofBuilder.reuse()", false), ProofBuilder
 				.reuse(node, trivialTree.getRoot(), null));
-		assertFalse(makeMessage("ProverLib.isProofReusable()", false), ProverLib
-				.isProofReusable(trivialTree.getProofDependencies(),
-						trivialTree.getRoot(), trivialSequent));
+		assertFalse(makeMessage("ProverLib.proofReusable()", false),
+				ProverLib.proofReusable(trivialTree.getProofDependencies(),
+						trivialSequent));
 	}
 	
 	private static String makeMessage(String reuser, boolean successExpected) {
@@ -215,7 +213,7 @@ public class ProofBuilderTests {
 	// makes a proof discharged by the given reasoner in its inner version
 	// tries to reuse the proof (registered reasoner version = 2)
 	// verifies that:
-	// ProverLib.isProofReusable() == successExpected
+	// ProverLib.proofReusable()   == successExpected
 	// ProofBuilder.reuse()        == successExpected
 	// treeAfterReuse.isClosed()   == successExpected
 	private static void doVersionTest(AbstractFakeReasoner reasoner,
@@ -228,10 +226,10 @@ public class ProofBuilderTests {
 				null);
 		final IProofTreeNode node = treeAfterReuse.getRoot();
 
-		final boolean successReusable = ProverLib.isProofReusable(reused
-				.getProofDependencies(), reusedSkel, sequent);
+		final boolean successReusable = ProverLib.proofReusable(
+				reused.getProofDependencies(), sequent);
 		assertEquals(
-				makeMessage("ProverLib.isProofReusable()", successExpected),
+				makeMessage("ProverLib.proofReusable()", successExpected),
 				successExpected, successReusable);
 
 		final boolean success = ProofBuilder.reuse(node, reusedSkel, null);

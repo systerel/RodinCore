@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - added used reasoners to proof dependencies
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
@@ -20,6 +21,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofDependencies;
+import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.ProverFactory;
 
 /**
@@ -34,17 +36,11 @@ import org.eventb.core.seqprover.ProverFactory;
  */
 public class ProofDependenciesBuilder {
 
-	private Predicate goal;
-	private Set<Predicate> usedHypotheses;
-	private Set<FreeIdentifier> usedFreeIdents;
-	private Set<String> introducedFreeIdents;
-
-	public ProofDependenciesBuilder() {
-		goal = null;
-		usedHypotheses = new HashSet<Predicate>();
-		usedFreeIdents = new HashSet<FreeIdentifier>();
-		introducedFreeIdents = new HashSet<String>();
-	}
+	private Predicate goal = null;
+	private final Set<Predicate> usedHypotheses = new HashSet<Predicate>();
+	private final Set<FreeIdentifier> usedFreeIdents = new HashSet<FreeIdentifier>();
+	private final Set<String> introducedFreeIdents = new HashSet<String>();
+	private final Set<IReasonerDesc> usedReasoners = new HashSet<IReasonerDesc>();
 
 	/**
 	 * @return the goal
@@ -82,6 +78,13 @@ public class ProofDependenciesBuilder {
 	}
 
 	/**
+	 * @return the used reasoners
+	 */
+	public Set<IReasonerDesc> getUsedReasoners() {
+		return usedReasoners;
+	}
+	
+	/**
 	 * The last method to call after all dependencies have been calculated.
 	 * 
 	 * This should be the last method called on an instance of this class (i.e. the calling instance should
@@ -93,13 +96,16 @@ public class ProofDependenciesBuilder {
 		boolean hasDeps = (goal != null ||
 				! usedHypotheses.isEmpty() ||
 				! usedFreeIdents.isEmpty() ||
-				! introducedFreeIdents.isEmpty()); 
-		ITypeEnvironment usedTypEnv = mDLib(ff).makeTypeEnvironment();
+				! introducedFreeIdents.isEmpty() ||
+				! usedReasoners.isEmpty()); 
+		final ITypeEnvironment usedTypEnv = mDLib(ff).makeTypeEnvironment();
 		for (FreeIdentifier freeIdent : usedFreeIdents) {
 			usedTypEnv.add(freeIdent);
 		}
 		
-		IProofDependencies finishedProofDeps = ProverFactory.makeProofDependencies(hasDeps, goal, usedHypotheses, usedTypEnv, introducedFreeIdents);
+		final IProofDependencies finishedProofDeps = ProverFactory
+				.makeProofDependencies(hasDeps, goal, usedHypotheses,
+						usedTypEnv, introducedFreeIdents, usedReasoners);
 		return finishedProofDeps;
 	}
 }

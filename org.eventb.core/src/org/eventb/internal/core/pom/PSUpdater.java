@@ -31,7 +31,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofDependencies;
-import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.internal.core.Util;
@@ -228,10 +227,14 @@ public class PSUpdater {
 	private static boolean isBroken(IProverSequent seq, IPRProof prProof,
 			FormulaFactory ff, IProgressMonitor pm) {
 		try {
+			// TODO make an external action for checking data corruption
+			// the following line throws an exception in case of corruption
+//			prProof.getSkeleton(ff, pm);
+			
+			// check dependencies
 			final IProofDependencies deps = prProof
 					.getProofDependencies(ff, pm);
-			final IProofSkeleton skel = prProof.getSkeleton(ff, pm);
-			return !ProverLib.isProofReusable(deps, skel, seq);
+			return !ProverLib.proofReusable(deps, seq);
 		} catch (Throwable e) {
 			Util.log(e, "while updating status of PO " + seq);
 			return true;

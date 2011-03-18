@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  * 
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - added used reasoners to proof dependencies
  *******************************************************************************/
 
 package org.eventb.core.seqprover.tests;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -19,15 +21,20 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
+import java.util.HashSet;
+
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.tactics.BasicTactics;
+import org.eventb.internal.core.seqprover.ReasonerRegistry;
 import org.junit.Test;
 
 /**
@@ -372,6 +379,11 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	 */
 	@Test
 	public void testProofDependencies() {
+		final IReasonerDesc hypDesc = getDesc("org.eventb.core.seqprover.hyp");
+		final IReasonerDesc impIDesc = getDesc("org.eventb.core.seqprover.impI");
+		final IReasonerDesc lemmaDesc = getDesc("org.eventb.core.seqprover.cut");
+		final IReasonerDesc allIDesc = getDesc("org.eventb.core.seqprover.allI");
+		
 		IProverSequent sequent;
 		IProofTree proofTree;
 		IProofDependencies proofDependencies;
@@ -386,6 +398,8 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genPreds("x=1")));
 		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv("x=ℤ")));
 		assertTrue(proofDependencies.getIntroducedFreeIdents().size() == 0);
+		assertEquals(Collections.singleton(hypDesc),
+				proofDependencies.getUsedReasoners());
 		
 		// test getUsedHypotheses
 		sequent = TestLib.genSeq("y=2 ;; x=1 |- x=1 ⇒ x=1");
@@ -399,6 +413,8 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genPreds()));
 		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv("x=ℤ")));
 		assertTrue(proofDependencies.getIntroducedFreeIdents().size() == 0);
+		assertEquals(new HashSet<IReasonerDesc>(asList(impIDesc, hypDesc)),
+				proofDependencies.getUsedReasoners());
 		
 		
 		// test getUsedFreeIdents
@@ -411,6 +427,8 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertTrue(proofDependencies.getUsedHypotheses().isEmpty());
 		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv("y=ℤ")));
 		assertTrue(proofDependencies.getIntroducedFreeIdents().size() == 0);
+		assertEquals(Collections.singleton(lemmaDesc),
+				proofDependencies.getUsedReasoners());
 		
 		//	 test getIntroducedFreeIdents
 		sequent = TestLib.genSeq("y=2 |- ∀ x· x∈ℤ");
@@ -422,6 +440,8 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genPreds()));
 		assertTrue(proofDependencies.getUsedFreeIdents().equals(TestLib.genTypeEnv("")));
 		assertTrue(proofDependencies.getIntroducedFreeIdents().contains("x"));
+		assertEquals(Collections.singleton(allIDesc),
+				proofDependencies.getUsedReasoners());
 		
 		// test getGoal
 		sequent = TestLib.genSeq("1=2 |- 1=2");
@@ -436,6 +456,13 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genPreds("1=2")));
 		assertTrue(proofDependencies.getUsedFreeIdents().isEmpty());
 		assertTrue(proofDependencies.getIntroducedFreeIdents().size() == 0);
+		assertEquals(
+				new HashSet<IReasonerDesc>(asList(ProofRuleTests.fakeDesc,
+						hypDesc)), proofDependencies.getUsedReasoners());
+	}
+
+	private static IReasonerDesc getDesc(String id) {
+		return ReasonerRegistry.getReasonerRegistry().getLiveReasonerDesc(id);
 	}
 
 	/**

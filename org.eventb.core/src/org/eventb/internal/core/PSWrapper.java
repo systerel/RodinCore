@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -242,8 +242,7 @@ public class PSWrapper implements IPSWrapper {
 		try {
 			final IProofDependencies deps = prProof
 					.getProofDependencies(ff, pm);
-			final IProofSkeleton skel = prProof.getSkeleton(ff, pm);
-			return !ProverLib.isProofReusable(deps, skel, seq);
+			return !ProverLib.proofReusable(deps, seq);
 		} catch (Throwable e) {
 			Util.log(e, "while computing status of PO " + seq);
 			return true;

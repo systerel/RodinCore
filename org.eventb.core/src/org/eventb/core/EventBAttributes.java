@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -150,6 +150,12 @@ public final class EventBAttributes {
 	
 	public static IAttributeType.String PR_SETS_ATTRIBUTE =
 		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prSets");
+	
+	/**
+	 * @since 2.2
+	 */
+	public static IAttributeType.String PR_REASONER_ID_ATTRIBUTE = 
+		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".prRID");
 	
 	private EventBAttributes() {
 		// Non-instantiable class

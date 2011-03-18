@@ -310,6 +310,11 @@
             id="scParameter"
             name="%eventBscParameter">
       </internalElementType>
+      <internalElementType
+            class="org.eventb.core.basis.PRReasoner"
+            id="prReas"
+            name="%eventBprReasoner">
+      </internalElementType>
    </extension>
    <extension
          point="org.rodinp.core.autoTools">
@@ -532,6 +537,11 @@
             id="generated"
             kind="boolean"
             name="%eventBgeneratedAttribute">
+      </attributeType>
+      <attributeType
+            id="prRID"
+            kind="string"
+            name="%eventBprRIDAttribute">
       </attributeType>
    </extension>
    <extension

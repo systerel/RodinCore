@@ -616,6 +616,8 @@ public class PSUpdateTests extends BuilderTest {
 		damageProof("2");
 		changePO("2");
 		runBuilder("1,2,3");
+		// FIXME perform data corruption tests separately from ps update
+		// see PSUpdater.isBroken()
 		assertTrue(psRoot.getStatus("2").isBroken());
 	}
 
@@ -634,6 +636,8 @@ public class PSUpdateTests extends BuilderTest {
 		damageProofInput("2");
 		changePO("2");
 		runBuilder("1,2,3");
+		// FIXME perform data corruption tests separately from ps update
+		// see PSUpdater.isBroken()
 		assertTrue(psRoot.getStatus("2").isBroken());
 	}
 

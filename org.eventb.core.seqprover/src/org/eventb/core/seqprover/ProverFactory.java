@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - added makeProofRule(IReasonerDesc, ...)
  *     Systerel - added makeProofRule with needed hypotheses
  *     Systerel - added makeAntecedent with unselected hypotheses
+ *     Systerel - added used reasoners to proof dependencies
  *******************************************************************************/
 package org.eventb.core.seqprover;
 
@@ -50,15 +51,18 @@ public final class ProverFactory {
 		private final Set<Predicate> usedHypotheses;
 		private final Set<String> introducedFreeIdents;
 		private final Predicate goal;
+		private final Set<IReasonerDesc> usedReasoners;
 
 		private ProofDeps(ITypeEnvironment usedFreeIdents, boolean hasDeps,
 				Set<Predicate> usedHypotheses,
-				Set<String> introducedFreeIdents, Predicate goal) {
+				Set<String> introducedFreeIdents, Predicate goal,
+				Set<IReasonerDesc> usedReasoners) {
 			this.usedFreeIdents = usedFreeIdents;
 			this.hasDeps = hasDeps;
 			this.usedHypotheses = usedHypotheses;
 			this.introducedFreeIdents = introducedFreeIdents;
 			this.goal = goal;
+			this.usedReasoners = usedReasoners;
 		}
 
 		public Predicate getGoal() {
@@ -79,6 +83,10 @@ public final class ProverFactory {
 
 		public boolean hasDeps() {
 			return hasDeps;
+		}
+		
+		public Set<IReasonerDesc> getUsedReasoners() {
+			return usedReasoners;
 		}
 	}
 
@@ -670,11 +678,11 @@ public final class ProverFactory {
 	}
 
 	/**
-	 * Constructs an instance of {@link IProofDependencies} from the values given as
-	 * parameters. 
+	 * Constructs an instance of {@link IProofDependencies} from the values
+	 * given as parameters.
 	 * 
-	 * This is a convenience method. Clients must independently check that the data 
-	 * provided conforms to the constraints in {@link IProofDependencies}.
+	 * This is a convenience method. Clients must independently check that the
+	 * data provided conforms to the constraints in {@link IProofDependencies}.
 	 * 
 	 * @param hasDeps
 	 * @param goal
@@ -683,7 +691,10 @@ public final class ProverFactory {
 	 * @param introducedFreeIdents
 	 * @return An instance of {@link IProofDependencies} with the values given as 
 	 * 	input parameters
+	 * @deprecated use instead
+	 *             {@link #makeProofDependencies(boolean, Predicate, Set, ITypeEnvironment, Set, Set)
 	 */
+	@Deprecated
 	public static IProofDependencies makeProofDependencies(
 			final boolean hasDeps,
 			final Predicate goal,
@@ -691,8 +702,38 @@ public final class ProverFactory {
 			final ITypeEnvironment usedFreeIdents,
 			final Set<String> introducedFreeIdents){
 	
+		return makeProofDependencies(hasDeps, goal, usedHypotheses,
+				usedFreeIdents, introducedFreeIdents,
+				Collections.<IReasonerDesc> emptySet());
+	}
+
+	/**
+	 * Constructs an instance of {@link IProofDependencies} from the values
+	 * given as parameters.
+	 * 
+	 * This is a convenience method. Clients must independently check that the
+	 * data provided conforms to the constraints in {@link IProofDependencies}.
+	 * 
+	 * @param hasDeps
+	 * @param goal
+	 * @param usedHypotheses
+	 * @param usedFreeIdents
+	 * @param introducedFreeIdents
+	 * @param usedReasoners
+	 * @return An instance of {@link IProofDependencies} with the values given as 
+	 * 	input parameters
+	 * @since 2.2
+	 */
+	public static IProofDependencies makeProofDependencies(
+			final boolean hasDeps,
+			final Predicate goal,
+			final Set<Predicate> usedHypotheses,
+			final ITypeEnvironment usedFreeIdents,
+			final Set<String> introducedFreeIdents,
+			final Set<IReasonerDesc> usedReasoners) {
+
 		return new ProofDeps(usedFreeIdents, hasDeps, usedHypotheses,
-				introducedFreeIdents, goal);
+				introducedFreeIdents, goal, usedReasoners);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - added used reasoners to proof dependencies
  *******************************************************************************/
 package org.eventb.core.tests.pom;
 
@@ -48,6 +49,7 @@ import org.eventb.core.seqprover.eventbExtensions.AutoTactics.TrueGoalTac;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.tactics.BasicTactics;
+import org.eventb.core.tests.ResourceUtils;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -72,6 +74,11 @@ public class ProofSerializationTests extends TestCase {
 		assertEquals(proofTree.getConfidence(), proof.getConfidence());
 
 		// Check that the stored tree is the same
+		checkDeserialization(proof, proofTree, hasDeps);
+	}
+
+	private static void checkDeserialization(IPRProof proof,
+			IProofTree proofTree, boolean hasDeps) throws RodinDBException {
 		IProofSkeleton skel = proof.getSkeleton(ff, null);
 		assertTrue(ProverLib.deepEquals(proofTree.getRoot(), skel));
 		
@@ -174,9 +181,10 @@ public class ProofSerializationTests extends TestCase {
 		checkProofTreeSerialization(proof1, proofTree, false);
 		
 		// an identity rule that doesn't do anything.
+		// since a reasoner is used, it does have dependencies
 		Set<Predicate> noHyps = Collections.emptySet();
 		Tactics.mngHyp(ProverFactory.makeHideHypAction(noHyps)).apply(proofTree.getRoot(), null);
-		checkProofTreeSerialization(proof1, proofTree, false);
+		checkProofTreeSerialization(proof1, proofTree, true);
 		
 		
 		// Test 4 ; a proof tree with no goal dependencies, closed
@@ -286,4 +294,33 @@ public class ProofSerializationTests extends TestCase {
 		}
 	}
 
+	// before 2.2, versioned reasoner ids were stored in rule element names
+	// from 2.2 on, rule element name bears a reference to a IPRReasoner
+	// located in proof root
+	// ensure that old storage is still readable
+	public void testReasonerStorageCompatibility() throws Exception {
+		final String contents = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
+				+ "<org.eventb.core.prFile version=\"1\">"
+				+ "<org.eventb.core.prProof name=\"oldProof\" org.eventb.core.confidence=\"1000\" org.eventb.core.prFresh=\"\" org.eventb.core.prGoal=\"p0\" org.eventb.core.prHyps=\"\">"
+				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.impI\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"⇒ goal\" org.eventb.core.prGoal=\"p0\" org.eventb.core.prHyps=\"\">"
+				+ "<org.eventb.core.prAnte name=\"0\" org.eventb.core.prGoal=\"p1\" org.eventb.core.prHyps=\"p1\">"
+				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.trueGoal\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"⊤ goal\" org.eventb.core.prGoal=\"p1\" org.eventb.core.prHyps=\"\"/>"
+				+ "</org.eventb.core.prAnte>"
+				+ "</org.eventb.core.prRule>"
+				+ "<org.eventb.core.prPred name=\"p1\" org.eventb.core.predicate=\"⊤\"/>"
+				+ "<org.eventb.core.prPred name=\"p0\" org.eventb.core.predicate=\"⊤⇒⊤\"/>"
+				+ "</org.eventb.core.prProof>"
+				+ "</org.eventb.core.prFile>";
+		final IPRRoot prFile = ResourceUtils.createPRFile(rodinProject, "oldProofFile", contents);
+		final IPRProof proof = prFile.getProof("oldProof");
+
+		final IProverSequent sequent = TestLib.genSeq("|- ⊤ ⇒ ⊤");
+		final IProofTree proofTree = ProverFactory.makeProofTree(sequent, null);
+		final IProofTreeNode root = proofTree.getRoot();
+		impI().apply(root, null);
+		new TrueGoalTac().apply(root.getFirstOpenDescendant(), null);
+		assertTrue(proofTree.isClosed());
+
+		checkDeserialization(proof, proofTree, true);
+	}
 }
