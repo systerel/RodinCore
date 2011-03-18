@@ -34,7 +34,7 @@ public class TestImplicitChildProvider implements IImplicitChildProvider {
 			IInternalElement parent) {
 		if (parent instanceof ImplicitHolder) {
 			try {
-				List<IInternalElement> implicitChildren = new ArrayList<IInternalElement>();
+				final List<IInternalElement> implicitChildren = new ArrayList<IInternalElement>();
 				final List<IInternalElement> result = recursiveAdditionOfImplicitChildren(
 						parent, implicitChildren);
 				return result;
