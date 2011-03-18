@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.IInternalElement;
@@ -58,6 +59,12 @@ public class ImplicitElementHandlingTests {
 		rf1 = createAndSaveRodinFile(project, f1Name);
 		rf2 = createAndSaveRodinFile(project, f2Name);
 		rf3 = createAndSaveRodinFile(project, f3Name);
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		project.getProject().delete(true, true, null);
+		project.getRodinDB().close();
 	}
 
 	/**
@@ -176,6 +183,74 @@ public class ImplicitElementHandlingTests {
 		// we check that implicit elements have been recomputed and that holder2
 		// does not contain implicit children
 		assertTrue(eHolder2.getChildren().isEmpty());
+	}
+
+	/**
+	 * Creates a complex dependency from one root parent element to another
+	 * parent element, and checks that the implicit children have been
+	 * recomputed in the lowest element in the hierarchy.
+	 * 
+	 * @throws RodinDBException
+	 */
+	@Test
+	public void createComplexDependencyAndCheckImplicitChildren()
+			throws RodinDBException {
+		final ImplicitHolder holder1 = getImplicitHolder(rf1.getRoot(),
+				"Holder1");
+		final NamedElement s1 = getNamedElement(holder1, "s1");
+		final NamedElement s2 = getNamedElement(holder1, "s2");
+
+		final IInternalElement rf2Root = rf2.getRoot();
+		final ImplicitHolder holder2 = getImplicitHolder(rf2.getRoot(),
+				"Holder2");
+		final NamedElement ss1 = getNamedElement(holder2, "ss1");
+		final NamedElement ss2 = getNamedElement(holder2, "ss2");
+
+		final IInternalElement rf3Root = rf3.getRoot();
+		final RodinTestDependency d2 = getDependencyElement(rf3Root,
+				"dependencyToRf2");
+		d2.setDependency(rf2.getRoot());
+
+		// The holder which is supposed to be the root for all implicit elements
+		// from rf2 as there is not yet a dependency between rf2 and rf1
+		final ImplicitHolder holder3 = getImplicitHolder(rf3Root, "Holder3");
+
+		rf1.save(null, true);
+		rf2.save(null, true);
+		rf3.save(null, true);
+
+		createProvider(ImplicitHolder.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
+
+		// now checking the loaded resource
+		final Resource rodinResource = getRodinResource(project,
+				rf3.getElementName());
+		// We get the light model
+		final LightElement rootElement = (LightElement) rodinResource
+				.getContents().get(0);
+
+		final LightElement eHolder3 = SynchroUtils.findElement(holder3,
+				rootElement);
+		final NamedElement[] expecteds1 = { ss1, ss2 };
+		int i = 0;
+		final EList<LightElement> children = eHolder3.getChildren();
+		for (LightElement e : children){
+			assertTrue(e.getRodinElement().equals(expecteds1[i]));
+			i++;
+		}
+
+		// now adding a dependency between parents rf2 and rf1
+		final RodinTestDependency d = getDependencyElement(rf2Root,
+				"dependencyToRf1");
+		d.setDependency(rf1.getRoot());
+
+		// checks that rf3 contains implicit children from rf1 and rf2 in the
+		// right order
+		final NamedElement[] expecteds2 = { s1, s2, ss1, ss2 };
+		int j = 0;
+		for (LightElement e : children){
+			assertTrue(e.getRodinElement().equals(expecteds2[j]));
+			j++;
+		}
 	}
 
 	public void createProvider(

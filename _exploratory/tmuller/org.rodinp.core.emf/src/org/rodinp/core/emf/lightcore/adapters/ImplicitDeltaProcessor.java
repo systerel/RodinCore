@@ -62,11 +62,20 @@ public class ImplicitDeltaProcessor {
 			}
 		}
 
-		if (element instanceof IRodinDB) {
+		if (kind == IRodinElementDelta.ADDED) {
+			if (element instanceof IRodinDB || element instanceof IRodinProject
+					|| element instanceof IRodinFile) {
+					//not enough modification to modify implicit children
+					return;
+			}
+		}
+		
+		if (element instanceof IRodinDB || element instanceof IRodinProject
+				|| element instanceof IRodinFile) {
 			for (IRodinElementDelta d : delta.getAffectedChildren()) {
 				processDelta(d);
-				return;
 			}
+			return;
 		}
 		// if the delta does not concern a modification in the project we
 		// return;
@@ -108,7 +117,7 @@ public class ImplicitDeltaProcessor {
 		}
 		for (LightElement eChild : element.getChildren()) {
 			if (!(eChild instanceof ImplicitElement)) {
-				recursiveImplicitLoad(eChild);				
+				recursiveImplicitLoad(eChild);
 			}
 		}
 	}

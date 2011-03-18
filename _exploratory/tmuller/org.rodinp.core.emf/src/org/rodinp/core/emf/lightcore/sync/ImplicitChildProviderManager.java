@@ -69,6 +69,19 @@ public class ImplicitChildProviderManager {
 					new ArrayList<IImplicitProvidingAssociation>());
 			list = relationships.get(parentType);
 		}
+		for (IImplicitProvidingAssociation asso : list) {
+			final IInternalElementType<? extends IInternalElement> typeToAdd = association
+					.getType();
+			if (asso.getType().equals(typeToAdd)) {
+				final IInternalElementType<? extends IInternalElement> childType = typeToAdd;
+				System.out
+						.println("There is already a registered provider for the association: "
+								+ parentType.getId()
+								+ " <--> "
+								+ childType.getId());
+				return;
+			}
+		}
 		list.add(association);
 	}
 

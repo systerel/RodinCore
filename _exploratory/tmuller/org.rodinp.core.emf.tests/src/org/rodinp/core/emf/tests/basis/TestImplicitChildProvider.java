@@ -39,7 +39,9 @@ public class TestImplicitChildProvider implements IImplicitChildProvider {
 						parent, implicitChildren);
 				return result;
 			} catch (RodinDBException e) {
-				e.printStackTrace();
+				// Something went wrong : could not retrieve the implicit
+				// children...
+				// No need to bother the user with my error
 			}
 		}
 		return Collections.emptyList();
