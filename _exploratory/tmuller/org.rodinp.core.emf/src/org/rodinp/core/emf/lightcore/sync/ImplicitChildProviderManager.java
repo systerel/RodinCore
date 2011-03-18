@@ -130,4 +130,15 @@ public class ImplicitChildProviderManager {
 		return providers;
 	}
 
+	public static void removeProvider(IImplicitChildProvider provider) {
+		for (List<IImplicitProvidingAssociation> a : relationships.values()) {
+			for (IImplicitProvidingAssociation asso : a) {
+				if (asso.getProvider().equals(provider)) {
+					a.remove(asso);
+					return;
+				}
+			}
+		}
+	}
+
 }
