@@ -150,7 +150,7 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 				int start = viewer.modelOffset2WidgetOffset(inter.getOffset());
 				offset = start + pos;
 				if (inter.getLength() > 0) {
-					text = parent.getText(start, start +inter.getLength());
+					text = parent.getText(start, start + inter.getLength() - 1);
 				} else {
 					text = "";
 				}

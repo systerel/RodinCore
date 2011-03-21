@@ -179,11 +179,12 @@ public class RodinTextGenerator {
 		addLabelRegion("Refines: ", machine);
 		
 		for (IRefinesMachine refines : machine.getRefinesClauses()) {
+			builder.append(lineSeparator);
 			int offset = builder.length();
+			builder.append(tab);
 			builder.append(refines.getAbstractMachineName());
 			length = builder.length() - offset;
 			documentMapper.processInterval(offset, length, refines, RodinConfiguration.CONTENT_TYPE);
-			builder.append(lineSeparator);
 		}
 		length = builder.length() - start;
 		documentMapper.addEditorElementWithType(IRefinesMachine.ELEMENT_TYPE, start, length);
@@ -196,11 +197,12 @@ public class RodinTextGenerator {
 		int length;
 		addLabelRegion("Sees: ", machine);
 		for (ISeesContext sees : machine.getSeesClauses()) {
+			builder.append(lineSeparator);
 			int offset = builder.length();
+			builder.append(tab);
 			builder.append(sees.getSeenContextName());
 			length = builder.length() - offset;
 			documentMapper.processInterval(offset, length, sees, RodinConfiguration.CONTENT_TYPE);
-			builder.append(lineSeparator);
 		}
 		length = builder.length()-start;
 //		foldingRegions.add(new Position(start, length));

@@ -51,7 +51,8 @@ public class ElementButton implements PaintListener {
 
 	private void createButton() {
 		button = new Button(parent, SWT.PUSH);
-		button.setSize(15, 15);
+		final int lineHeight = parent.getLineHeight();
+		button.setSize(lineHeight, lineHeight);
 		Image image = getDefaultImage();
 		button.setImage(image);
 		button.addSelectionListener(new SelectionListener() {
