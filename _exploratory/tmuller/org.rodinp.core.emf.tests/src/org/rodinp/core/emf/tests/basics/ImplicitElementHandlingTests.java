@@ -11,6 +11,7 @@
 package org.rodinp.core.emf.tests.basics;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.rodinp.core.emf.tests.basics.AbstractRodinEMFCoreTest.createAndSaveRodinFile;
 import static org.rodinp.core.emf.tests.basics.AbstractRodinEMFCoreTest.getNamedElement;
@@ -256,6 +257,18 @@ public class ImplicitElementHandlingTests {
 			assertTrue(e.getRodinElement().equals(expecteds2[j]));
 			j++;
 		}
+		
+		// now removing the dependency between rf3 and rf2
+		final RodinTestDependency[] dArray = rf3.getRoot().getChildrenOfType(
+				RodinTestDependency.ELEMENT_TYPE);
+		assertTrue(dArray.length == 1);
+		final RodinTestDependency rDependency = dArray[0];
+		assertNotNull(rDependency);
+		rDependency.delete(true, null);
+		
+		// check that there is no more implicit children
+		assertTrue(eHolder3.getChildren().isEmpty());
+		
 		ImplicitChildProviderManager.removeProvider(p);
 	}
 	
