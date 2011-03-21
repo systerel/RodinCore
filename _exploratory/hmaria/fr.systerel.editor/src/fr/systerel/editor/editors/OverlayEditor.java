@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -150,7 +150,7 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 				int start = viewer.modelOffset2WidgetOffset(inter.getOffset());
 				offset = start + pos;
 				if (inter.getLength() > 0) {
-					text = parent.getText(start, start +inter.getLength()-1);
+					text = parent.getText(start, start +inter.getLength());
 				} else {
 					text = "";
 				}
@@ -208,22 +208,22 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 	 *            The new height of the editor
 	 */
 	private void adaptEditorLines(int new_height) {
-		//need to add lines?
-		if (new_height > editorText.getSize().y && new_height > editorText.getLineHeight()+4) {
-			Point location = new Point(0, editorText.getLocation().y +editorText.getSize().y);
-			int offset = parent.getOffsetAtLocation(location);
+		// need to add lines?
+		if (new_height > editorText.getSize().y
+				&& new_height > editorText.getLineHeight() + 4) {
+			int offset = parent.getCaretOffset();
 			int line = parent.getLineAtOffset(offset);
 			int start = parent.getOffsetAtLine(line);
-			parent.replaceTextRange(start, 0, System.getProperty("line.separator"));
+			parent.replaceTextRange(start, 0,
+					System.getProperty("line.separator"));
 			addedLines++;
-		//need to remove lines?
-		} else if (new_height < editorText.getSize().y && addedLines > 0 ) {
-			Point location = new Point(0, editorText.getLocation().y +editorText.getSize().y);
-			int offset = parent.getOffsetAtLocation(location);
+			// need to remove lines?
+		} else if (new_height < editorText.getSize().y && addedLines > 0) {
+			int offset = parent.getCaretOffset();
 			int line = parent.getLineAtOffset(offset);
-			int start = parent.getOffsetAtLine(line-1);
+			int start = parent.getOffsetAtLine(line - 1);
 			int end = parent.getOffsetAtLine(line);
-			parent.replaceTextRange(start, end-start, "");
+			parent.replaceTextRange(start, end - start, "");
 			addedLines--;
 		}
 	}
@@ -232,9 +232,8 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 		editorText.setVisible(false);
 		interval = null;
 		addedLines = 0;
-		
-	}
 
+	}
 	
 	public void addChangeToDatabase() {
 		if (interval != null) {
