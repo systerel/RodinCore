@@ -57,9 +57,6 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 	}
 
 	private static final String SEQ_HYP_NAME = "SEQHYP";
-	private static final String PRD_NAME_PREFIX = "PRD";
-	private static final String SRC_NAME_PREFIX = "SRC";
-	private static final String GOAL_NAME = "GOAL";
 	
 	/**
 	 * Create a proof obligation in the specified file.
@@ -165,7 +162,8 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 
 			putPOGPredicates(hypothesis, localHypotheses, monitor);
 
-			IPOPredicate goalPredicate = sequent.getGoal(GOAL_NAME);
+			IPOPredicate goalPredicate = sequent.createChild(
+					IPOPredicate.ELEMENT_TYPE, null, monitor);
 			putPredicate(goalPredicate, goal, monitor);
 
 			sequent.setPOGNature(nature, monitor);
@@ -196,7 +194,6 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 			IPOPredicate predicate, 
 			IPOGPredicate pogPredicate, 
 			IProgressMonitor monitor) throws RodinDBException {
-		predicate.create(null, monitor);
 		predicate.setPredicate(pogPredicate.getPredicate(), monitor);
 		predicate.setSource(pogPredicate.getSource(), monitor);
 	}
@@ -222,13 +219,12 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 		
 		if (sources == null)
 			return;
-		
-		for (int idx=0; idx < sources.length; idx++) {
+		for (IPOGSource pogSource : sources) {
 			
-			IPOSource source = sequent.getSource(SRC_NAME_PREFIX + idx);
-			source.create(null, monitor);
-			source.setSource(sources[idx].getSource(), monitor);
-			source.setRole(sources[idx].getRole(), monitor);
+			IPOSource source = sequent.createChild(IPOSource.ELEMENT_TYPE,
+					null, monitor);
+			source.setSource(pogSource.getSource(), monitor);
+			source.setRole(pogSource.getRole(), monitor);
 		}
 
 	}
@@ -241,11 +237,10 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 		if (localHypothesis == null)
 			return;
 		
-		int index = 0;
-		
 		for (IPOGPredicate predicate : localHypothesis) {
 			
-			IPOPredicate poPredicate = hypothesis.getPredicate(PRD_NAME_PREFIX + index++);
+			IPOPredicate poPredicate = hypothesis.createChild(
+					IPOPredicate.ELEMENT_TYPE, null, monitor);
 			putPredicate(poPredicate, predicate, monitor);
 		}
 
