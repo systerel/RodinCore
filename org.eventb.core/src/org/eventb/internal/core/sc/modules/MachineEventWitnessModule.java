@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,8 +69,6 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 	private FormulaFactory factory;
 	private IConcreteEventInfo concreteEventInfo;
 
-	private static String WITNESS_NAME_PREFIX = "WIT";
-
 	private static int WITNESS_HASH_TABLE_SIZE = 31;
 
 	@Override
@@ -112,17 +110,14 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 			IProgressMonitor monitor) throws RodinDBException {
 		Set<String> permissible = new HashSet<String>(witnessNames);
 
-		int index = 0;
-
 		for (int i = 0; i < formulaElements.length; i++) {
 			if (formulas[i] != null) {
 				String label = formulaElements[i].getLabel();
 				boolean labelIsNeeded = witnessNames.contains(label);
 				if (labelIsNeeded) {
 					witnessNames.remove(label);
-					createSCWitness(target, WITNESS_NAME_PREFIX + index++,
-							formulaElements[i].getLabel(), formulaElements[i],
-							formulas[i], monitor);
+					createSCWitness(target, formulaElements[i].getLabel(),
+							formulaElements[i], formulas[i], monitor);
 				} else {
 					if (permissible.contains(label)) {
 						createProblemMarker(formulaElements[i],
@@ -140,21 +135,20 @@ public class MachineEventWitnessModule extends PredicateModule<IWitness> {
 		for (String name : witnessNames) {
 			createProblemMarker(event, GraphProblem.WitnessLabelMissingWarning,
 					name);
-			createSCWitness(target, WITNESS_NAME_PREFIX + index++, name, event,
-					btrue, monitor);
+			createSCWitness(target, name, event, btrue, monitor);
 		}
 	}
 
-	void createSCWitness(ISCEvent target, String name, String label,
-			IRodinElement source, Predicate predicate, IProgressMonitor monitor)
+	void createSCWitness(ISCEvent target, String label, IRodinElement source,
+			Predicate predicate, IProgressMonitor monitor)
 			throws RodinDBException {
 
 		if (target == null)
 			return;
 
 		// TODO save witnesses by means of symbol infos
-		ISCWitness scWitness = target.getSCWitness(name);
-		scWitness.create(null, monitor);
+		ISCWitness scWitness = target.createChild(ISCWitness.ELEMENT_TYPE,
+				null, monitor);
 		scWitness.setLabel(label, monitor);
 		scWitness.setPredicate(predicate, null);
 		scWitness.setSource(source, monitor);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,8 +57,6 @@ public class MachineEventCommitRefinesModule extends SCProcessorModule {
 	private IConcreteEventTable concreteEventTable;
 	private String eventLabel;
 
-	private static String REFINES_NAME_PREFIX = "REF";
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -97,8 +95,6 @@ public class MachineEventCommitRefinesModule extends SCProcessorModule {
 
 		if (refines.size() > 0) { // user specified refinements
 
-			int index = 0;
-
 			for (IRefinesEvent refinesEvent : refines) {
 
 				String label = refinesEvent.getAbstractEventLabel();
@@ -106,28 +102,25 @@ public class MachineEventCommitRefinesModule extends SCProcessorModule {
 				ISCEvent abstractEvent = abstractEventTable
 						.getAbstractEventInfo(label).getEvent();
 
-				index = createRefinesEvent(target, index, refinesEvent,
-						abstractEvent, monitor);
+				createRefinesEvent(target, refinesEvent, abstractEvent, monitor);
 			}
 		} else if (concreteEventInfo.getAbstractEventInfos().size() > 0) { // implicit
 			// refinement
 			IAbstractEventInfo abstractEventInfo = concreteEventInfo
 					.getAbstractEventInfos().get(0);
 
-			createRefinesEvent(target, 0, concreteEventInfo.getEvent(),
+			createRefinesEvent(target, concreteEventInfo.getEvent(),
 					abstractEventInfo.getEvent(), monitor);
 		}
 	}
 
-	private int createRefinesEvent(ISCEvent target, int index,
-			IRodinElement element, ISCEvent abstractEvent,
-			IProgressMonitor monitor) throws RodinDBException {
-		ISCRefinesEvent scRefinesEvent = target
-				.getSCRefinesClause(REFINES_NAME_PREFIX + index++);
-		scRefinesEvent.create(null, monitor);
+	private void createRefinesEvent(ISCEvent target, IRodinElement element,
+			ISCEvent abstractEvent, IProgressMonitor monitor)
+			throws RodinDBException {
+		ISCRefinesEvent scRefinesEvent = target.createChild(
+				ISCRefinesEvent.ELEMENT_TYPE, null, monitor);
 		scRefinesEvent.setAbstractSCEvent(abstractEvent, null);
 		scRefinesEvent.setSource(element, monitor);
-		return index;
 	}
 
 	/*
