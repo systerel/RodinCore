@@ -153,8 +153,8 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 		final IProofSkeleton[] children = skel.getChildNodes();
 		assert antecedents.length == children.length;
 		for (int i = 0; i < antecedents.length; i++) {
-			PRRuleAntecedent child = (PRRuleAntecedent) getAntecedent(Integer.toString(i));
-			child.create(null, null);
+			PRRuleAntecedent child = (PRRuleAntecedent) createChild(
+					IPRRuleAntecedent.ELEMENT_TYPE, null, monitor);
 			child.setAntecedent(antecedents[i], store, monitor);
 			child.setSkeleton(children[i], store, monitor);
 		}
