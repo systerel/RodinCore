@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,9 +51,8 @@ public class LabelSymbolInfo
 	public ILabeledElement createSCElement(IInternalElement parent,
 			String elementName, IProgressMonitor monitor) throws CoreException {
 		checkPersistence();
-		ILabeledElement element = parent.getInternalElement(getSymbolType(),
-				elementName);
-		element.create(null, monitor);
+		ILabeledElement element = parent.createChild(getSymbolType(), null,
+				monitor);
 		createAttributes(element, monitor);
 		element.setLabel(getSymbol(), monitor);
 		return element;
