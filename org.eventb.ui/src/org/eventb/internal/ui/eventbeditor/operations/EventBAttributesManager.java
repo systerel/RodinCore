@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,12 @@ public class EventBAttributesManager {
 
 	private void getAttributes(final IInternalElement element,
 			IAttributeType type) throws RodinDBException {
-		if (type instanceof IAttributeType.Boolean) {
+		if (type instanceof IAttributeType.String) {
+			final IAttributeType.String attrType = (IAttributeType.String) type;
+			final String value = element.getAttributeValue(attrType);
+			listString.add(new Pair<IAttributeType.String, String>(attrType,
+					value));
+		} else if (type instanceof IAttributeType.Boolean) {
 			final IAttributeType.Boolean attrType = (IAttributeType.Boolean) type;
 			final Boolean value = new Boolean(element
 					.getAttributeValue(attrType));
@@ -74,11 +79,6 @@ public class EventBAttributesManager {
 			final IAttributeType.Long attrType = (IAttributeType.Long) type;
 			final Long value = new Long(element.getAttributeValue(attrType));
 			listLong.add(new Pair<IAttributeType.Long, Long>(attrType, value));
-		} else if (type instanceof IAttributeType.String) {
-			final IAttributeType.String attrType = (IAttributeType.String) type;
-			final String value = element.getAttributeValue(attrType);
-			listString.add(new Pair<IAttributeType.String, String>(attrType,
-					value));
 		}
 	}
 

@@ -1,9 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2008 University of Southampton.
+ * Copyright (c) 2008, 2011 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     University of Southampton - initial API and implementation
  *******************************************************************************/
 package org.eventb.internal.core.sc.symbolTable;
 
@@ -37,7 +40,11 @@ public class AttributedSymbol implements IAttributedSymbol {
 		for (int i = 0; i < types.size(); i++) {
 			IAttributeType type = types.get(i);
 			Object value = values.get(i);
-			if (type instanceof IAttributeType.Boolean) {
+			if (type instanceof IAttributeType.String) {
+				IAttributeType.String sType = (IAttributeType.String) type;
+				String sValue = (String) value;
+				element.setAttributeValue(sType, sValue, monitor);
+			} else if (type instanceof IAttributeType.Boolean) {
 				IAttributeType.Boolean bType = (IAttributeType.Boolean) type;
 				Boolean bValue = (Boolean) value;
 				element.setAttributeValue(bType, bValue, monitor);
@@ -53,10 +60,6 @@ public class AttributedSymbol implements IAttributedSymbol {
 				IAttributeType.Long lType = (IAttributeType.Long) type;
 				Long lValue = (Long) value;
 				element.setAttributeValue(lType, lValue, monitor);
-			} else if (type instanceof IAttributeType.String) {
-				IAttributeType.String sType = (IAttributeType.String) type;
-				String sValue = (String) value;
-				element.setAttributeValue(sType, sValue, monitor);
 			} else {
 				throw Util.newCoreException("Unknown attribute type");
 			}
