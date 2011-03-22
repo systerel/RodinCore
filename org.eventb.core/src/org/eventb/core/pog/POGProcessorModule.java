@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,6 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 	private static final String SEQ_HYP_NAME = "SEQHYP";
 	private static final String PRD_NAME_PREFIX = "PRD";
 	private static final String SRC_NAME_PREFIX = "SRC";
-	private static final String HINT_NAME_PREFIX = "HINT";
 	private static final String GOAL_NAME = "GOAL";
 	
 	/**
@@ -210,10 +209,8 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 		if (hints == null)
 			return;
 		
-		for (int idx=0; idx < hints.length; idx++) {
-			
-			hints[idx].create(sequent, HINT_NAME_PREFIX + idx, monitor);
-
+		for (IPOGHint hint : hints) {
+			hint.create(sequent, null, monitor);
 		}
 
 	}

@@ -1,9 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
 package org.eventb.core.pog;
 
@@ -57,10 +60,10 @@ class POGIntervalSelectionHint implements IPOGHint {
 	}
 
 	@Override
-	public void create(IPOSequent sequent, String name, IProgressMonitor monitor) 
-	throws RodinDBException {
-		IPOSelectionHint selectionHint = sequent.getSelectionHint(name);
-		selectionHint.create(null, monitor);
+	public void create(IPOSequent sequent, String name, IProgressMonitor monitor)
+			throws RodinDBException {
+		IPOSelectionHint selectionHint = sequent.createChild(
+				IPOSelectionHint.ELEMENT_TYPE, null, monitor);
 		selectionHint.setInterval(start, end, null);
 	}
 	
