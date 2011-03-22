@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,7 +65,6 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 		return MODULE_TYPE;
 	}
 
-	private static String ACTION_NAME_PREFIX = "ACT";
 	private static String ACTION_REPAIR_LABEL = "GEN";
 
 	private IConcreteEventInfo concreteEventInfo;
@@ -86,8 +85,7 @@ public class MachineEventActionModule extends AssignmentModule<IAction> {
 		HashMap<String, Integer> assignedByAction = checkLHS(monitor);
 
 		if (targetEvent != null) {
-			createSCAssignments(targetEvent, ACTION_NAME_PREFIX, targetEvent
-					.getSCActions().length, monitor);
+			createSCAssignments(targetEvent, monitor);
 		}
 
 		if (isInitialisation)

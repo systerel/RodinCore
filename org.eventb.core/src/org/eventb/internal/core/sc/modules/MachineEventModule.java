@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,8 +80,6 @@ public class MachineEventModule extends LabeledElementModule {
 			throws CoreException {
 
 		IRodinFile machineFile = (IRodinFile) element;
-		IMachineRoot machineRoot = (IMachineRoot) machineFile.getRoot();
-		
 		monitor.subTask(Messages.bind(Messages.progress_MachineEvents));
 
 		ILabelSymbolInfo[] symbolInfos = fetchEvents(machineFile, repository,
@@ -89,36 +87,30 @@ public class MachineEventModule extends LabeledElementModule {
 
 		ISCEvent[] scEvents = new ISCEvent[events.length];
 
-		commitEvents(machineRoot, (ISCMachineRoot) target, scEvents,
-				symbolInfos, monitor);
+		commitEvents((ISCMachineRoot) target, scEvents, symbolInfos, monitor);
 
 		processEvents(scEvents, repository, symbolInfos, monitor);
 
 	}
 
-	private void commitEvents(IMachineRoot machineFile, ISCMachineRoot target,
-			ISCEvent[] scEvents, ILabelSymbolInfo[] symbolInfos,
-			IProgressMonitor monitor) throws CoreException {
-
-		int index = 0;
-
+	private void commitEvents(ISCMachineRoot target, ISCEvent[] scEvents,
+			ILabelSymbolInfo[] symbolInfos, IProgressMonitor monitor)
+			throws CoreException {
 		for (int i = 0; i < events.length; i++) {
 			if (symbolInfos[i] != null && !symbolInfos[i].hasError()) {
-				scEvents[i] = createSCEvent(target, index++, symbolInfos[i],
-						events[i], monitor);
+				scEvents[i] = createSCEvent(target, symbolInfos[i], monitor);
 			}
 		}
 
 	}
 
-	private static final String EVENT_NAME_PREFIX = "EVT";
 	private static final String INITIALIZATION = "INITIALIZATION";
 
-	private ISCEvent createSCEvent(ISCMachineRoot target, int index,
-			ILabelSymbolInfo symbolInfo, IEvent event, IProgressMonitor monitor)
+	private ISCEvent createSCEvent(ISCMachineRoot target,
+			ILabelSymbolInfo symbolInfo, IProgressMonitor monitor)
 			throws CoreException {
-		ILabeledElement scEvent = symbolInfo.createSCElement(target,
-				EVENT_NAME_PREFIX + index, monitor);
+		ILabeledElement scEvent = symbolInfo.createSCElement(target, null,
+				monitor);
 		return (ISCEvent) scEvent;
 	}
 

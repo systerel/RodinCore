@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,19 +93,15 @@ public abstract class ExpressionModule<I extends IInternalElement> extends
 		return new Expression[size];
 	}
 	
-	protected final int createSCExpressions(IInternalElement target,
-			String namePrefix, int index, IProgressMonitor monitor)
-			throws CoreException {
-		int k = index;
-
+	protected final void createSCExpressions(IInternalElement target,
+			IProgressMonitor monitor) throws CoreException {
 		for (int i = 0; i < formulaElements.length; i++) {
 			if (formulas[i] == null)
 				continue;
 			ISCExpressionElement scExprElem = (ISCExpressionElement) symbolInfos[i]
-					.createSCElement(target, namePrefix + k++, monitor);
+					.createSCElement(target, null, monitor);
 			scExprElem.setExpression(formulas[i], null);
 		}
-		return k;
 	}
 
 }

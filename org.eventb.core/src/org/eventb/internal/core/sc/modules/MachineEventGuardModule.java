@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,8 +57,6 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 		return MODULE_TYPE;
 	}
 
-	private static String GUARD_NAME_PREFIX = "GRD";
-
 	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
@@ -74,8 +72,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 
 		if (target != null) {
 			ISCEvent targetEvent = (ISCEvent) target;
-			createSCPredicates(targetEvent, GUARD_NAME_PREFIX, targetEvent
-					.getSCGuards().length, monitor);
+			createSCPredicates(targetEvent, monitor);
 		}
 	}
 

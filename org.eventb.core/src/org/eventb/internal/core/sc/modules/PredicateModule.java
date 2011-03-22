@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,19 +94,15 @@ public abstract class PredicateModule<I extends IPredicateElement> extends
 			predicate.copy(target, null, null, false, monitor);
 	}
 
-	protected final int createSCPredicates(IInternalElement target,
-			String namePrefix, int index, IProgressMonitor monitor)
-			throws CoreException {
-		int k = index;
-
+	protected final void createSCPredicates(IInternalElement target,
+			IProgressMonitor monitor) throws CoreException {
 		for (int i = 0; i < formulaElements.length; i++) {
 			if (formulas[i] == null)
 				continue;
 			ISCPredicateElement scPredElem = (ISCPredicateElement) symbolInfos[i]
-					.createSCElement(target, namePrefix + k++, monitor);
+					.createSCElement(target, null, monitor);
 			scPredElem.setPredicate(formulas[i], null);
 		}
-		return k;
 	}
 
 }

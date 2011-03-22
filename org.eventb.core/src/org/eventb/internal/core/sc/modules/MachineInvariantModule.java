@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,8 +49,6 @@ public class MachineInvariantModule extends
 		return MODULE_TYPE;
 	}
 
-	private static String INVARIANT_NAME_PREFIX = "INV";
-
 	@Override
 	public void process(IRodinElement element, IInternalElement target,
 			ISCStateRepository repository, IProgressMonitor monitor)
@@ -63,11 +61,8 @@ public class MachineInvariantModule extends
 
 		monitor.subTask(Messages.bind(Messages.progress_MachineInvariants));
 
-		int offset = 0;
-
 		if (scMachineRoot != null) {
 			ISCInvariant[] scInvariants = scMachineRoot.getSCInvariants();
-			offset = scInvariants.length;
 			copySCPredicates(scInvariants, target, monitor);
 		}
 
@@ -76,7 +71,7 @@ public class MachineInvariantModule extends
 
 		checkAndType(element.getElementName(), repository, monitor);
 
-		createSCPredicates(target, INVARIANT_NAME_PREFIX, offset, monitor);
+		createSCPredicates(target, monitor);
 
 	}
 
