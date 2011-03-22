@@ -44,7 +44,7 @@
         <details key="body" value="final EList&lt;LightElement> list = new BasicEList&lt;LightElement>();&#xA;&#x9;if (!(type instanceof IInternalElement)) {&#xA;&#x9;&#x9;return list;&#x9;&#xA;&#x9;}&#xA;&#x9;final EList&lt;LightElement> children = getChildren();&#xA;&#x9;for (LightElement child : children) {&#xA;&#x9;&#x9;if (((IInternalElement) child.getRodinElement()).getElementType() == type) {&#xA;&#x9;&#x9;&#x9;list.add(child);&#xA;&#x9;&#x9;}&#xA;&#x9;}&#xA;&#x9;return list;"/>
       </eAnnotations>
       <eGenericType eClassifier="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EEList">
-        <eTypeArguments/>
+        <eTypeArguments eClassifier="#//LightElement"/>
       </eGenericType>
       <eParameters name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
     </eOperations>

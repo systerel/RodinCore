@@ -205,6 +205,6 @@ public interface LightElement extends LightObject {
 	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='final EList<LightElement> list = new BasicEList<LightElement>();\n\tif (!(type instanceof IInternalElement)) {\n\t\treturn list;\t\n\t}\n\tfinal EList<LightElement> children = getChildren();\n\tfor (LightElement child : children) {\n\t\tif (((IInternalElement) child.getRodinElement()).getElementType() == type) {\n\t\t\tlist.add(child);\n\t\t}\n\t}\n\treturn list;'"
 	 * @generated
 	 */
-	EList<?> getElementsOfType(Object type);
+	EList<LightElement> getElementsOfType(Object type);
 
 } // LightElement

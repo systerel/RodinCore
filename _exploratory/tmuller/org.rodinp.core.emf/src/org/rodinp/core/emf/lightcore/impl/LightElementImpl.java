@@ -22,7 +22,6 @@ import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.emf.lightcore.Attribute;
 import org.rodinp.core.emf.lightcore.LightElement;
 import org.rodinp.core.emf.lightcore.LightcorePackage;
@@ -304,9 +303,9 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<?> getElementsOfType(Object type) {
+	public EList<LightElement> getElementsOfType(Object type) {
 		final EList<LightElement> list = new BasicEList<LightElement>();
-			if (!(type instanceof IInternalElementType)) {
+			if (!(type instanceof IInternalElement)) {
 				return list;	
 			}
 			final EList<LightElement> children = getChildren();

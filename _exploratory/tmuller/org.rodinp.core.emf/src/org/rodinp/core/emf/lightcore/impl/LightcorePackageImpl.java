@@ -435,7 +435,7 @@ public class LightcorePackageImpl extends EPackageImpl implements LightcorePacka
 		op = addEOperation(lightElementEClass, null, "getElementsOfType", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEJavaObject(), "type", 0, 1, IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(theEcorePackage.getEEList());
-		g2 = createEGenericType();
+		g2 = createEGenericType(this.getLightElement());
 		g1.getETypeArguments().add(g2);
 		initEOperation(op, g1);
 
