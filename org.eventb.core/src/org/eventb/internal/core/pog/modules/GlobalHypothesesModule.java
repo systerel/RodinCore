@@ -1,9 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
@@ -54,7 +57,6 @@ public abstract class GlobalHypothesesModule extends UtilityModule {
 		super.endModule(element, repository, monitor);
 	}
 
-	private static String PRD_NAME_PREFIX = "PRD";
 	protected ITypeEnvironment typeEnvironment;
 	protected int index;
 
@@ -106,8 +108,8 @@ public abstract class GlobalHypothesesModule extends UtilityModule {
 	}
 
 	protected void savePOPredicate(IPOPredicateSet rootSet, ISCPredicateElement element, IProgressMonitor monitor) throws RodinDBException {
-		IPOPredicate predicate = rootSet.getPredicate(PRD_NAME_PREFIX + index++);
-		predicate.create(null, monitor);
+		IPOPredicate predicate = rootSet.createChild(IPOPredicate.ELEMENT_TYPE,
+				null, monitor);
 		predicate.setPredicateString(element.getPredicateString(), monitor);
 		predicate.setSource(((ITraceableElement) element).getSource(), monitor);
 	}
