@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added enableRodinModifyListener() method
+ *     Systerel - moved the keyboard view modify listenere here
  *******************************************************************************/
 package org.rodinp.keyboard;
 
@@ -43,6 +44,9 @@ public class RodinKeyboardPlugin extends AbstractUIPlugin {
 
 	// The shared instance
 	private static RodinKeyboardPlugin plugin;
+	
+	private final static RodinModifyListener listener = new RodinModifyListener(); 
+	
 	
 	/**
 	 * The constructor
@@ -121,10 +125,7 @@ public class RodinKeyboardPlugin extends AbstractUIPlugin {
 	}
 
 	public ModifyListener getRodinModifyListener() {
-		KeyboardView view = getKeyboardView();
-		if (view != null)
-			return view.getListener();
-		return null;
+		return listener;
 	}
 
 	/**

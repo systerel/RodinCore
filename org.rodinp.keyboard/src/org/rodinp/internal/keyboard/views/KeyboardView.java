@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  * 
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - retrieves the modify listener for the plugin
  *******************************************************************************/
 package org.rodinp.internal.keyboard.views;
 
@@ -72,7 +73,8 @@ public class KeyboardView extends ViewPart implements IPropertyChangeListener {
 				| SWT.H_SCROLL);
 		GridData gD = new GridData(GridData.FILL_BOTH);
 		formula.setLayoutData(gD);
-		listener = new RodinModifyListener();
+		final RodinKeyboardPlugin kPlugin = RodinKeyboardPlugin.getDefault();
+		listener = (RodinModifyListener) kPlugin.getRodinModifyListener();
 		formula.addModifyListener(listener);
 
 		// Using a special fonts for showing Event-B symbols.
