@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,13 +114,10 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 
 	}
 
-	private static final String REFINES_NAME = "REF";
-
 	private void saveRefinesMachine(ISCMachineRoot target,
 			IProgressMonitor monitor) throws RodinDBException {
-		ISCRefinesMachine scRefinesMachine = target
-				.getSCRefinesClause(REFINES_NAME);
-		scRefinesMachine.create(null, monitor);
+		ISCRefinesMachine scRefinesMachine = target.createChild(
+				ISCRefinesMachine.ELEMENT_TYPE, null, monitor);
 		scRefinesMachine.setAbstractSCMachine(scAbstractMachineFile.getRodinFile(), null);
 		scRefinesMachine.setSource(refinesMachine, null);
 	}

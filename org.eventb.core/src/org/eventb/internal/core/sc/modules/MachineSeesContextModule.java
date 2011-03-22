@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,8 +103,6 @@ public class MachineSeesContextModule extends ContextPointerModule {
 	public static final IModuleType<MachineSeesContextModule> MODULE_TYPE = SCCore
 			.getModuleType(EventBPlugin.PLUGIN_ID + ".machineSeesContextModule"); //$NON-NLS-1$
 
-	public static final String SEES_NAME_PREFIX = "SEES";
-
 	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
@@ -150,7 +148,6 @@ public class MachineSeesContextModule extends ContextPointerModule {
 
 		boolean accurate = true;
 
-		int count = 0;
 		final int size = contextPointerArray.size();
 		for (int i = 0; i < size; ++i) {
 			final IRodinFile scSeenContext = contextPointerArray
@@ -158,9 +155,8 @@ public class MachineSeesContextModule extends ContextPointerModule {
 			if (scSeenContext == null || contextPointerArray.hasError(i)) {
 				accurate = false;
 			} else {
-				final ISCSeesContext scSees = target
-						.getSCSeesClause(SEES_NAME_PREFIX + count++);
-				scSees.create(null, monitor);
+				final ISCSeesContext scSees = target.createChild(
+						ISCSeesContext.ELEMENT_TYPE, null, monitor);
 
 				scSees.setSeenSCContext(scSeenContext, monitor);
 

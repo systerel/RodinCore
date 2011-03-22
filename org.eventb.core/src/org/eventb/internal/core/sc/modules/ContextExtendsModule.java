@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,8 +42,6 @@ public class ContextExtendsModule extends ContextPointerModule {
 
 	public static final IModuleType<ContextExtendsModule> MODULE_TYPE = SCCore
 			.getModuleType(EventBPlugin.PLUGIN_ID + ".contextExtendsModule"); //$NON-NLS-1$
-
-	private static final String EXTENDS_NAME_PREFIX = "EXTENDS";
 
 	@Override
 	public IModuleType<?> getModuleType() {
@@ -151,7 +149,6 @@ public class ContextExtendsModule extends ContextPointerModule {
 			throws RodinDBException {
 		boolean accurate = true;
 
-		int count = 0;
 		final int size = contextPointerArray.size();
 		for (int i = 0; i < size; ++i) {
 			final IRodinFile scSeenContext = contextPointerArray
@@ -159,9 +156,8 @@ public class ContextExtendsModule extends ContextPointerModule {
 			if (scSeenContext == null || contextPointerArray.hasError(i)) {
 				accurate = false;
 			} else {
-				final ISCExtendsContext scExtends = scCtxRoot
-						.getSCExtendsClause(EXTENDS_NAME_PREFIX + count++);
-				scExtends.create(null, null);
+				final ISCExtendsContext scExtends = scCtxRoot.createChild(
+						ISCExtendsContext.ELEMENT_TYPE, null, null);
 
 				scExtends.setAbstractSCContext((ISCContextRoot) scSeenContext
 						.getRoot(), null);
