@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     Systerel - Initial API and implementation
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
+
+import static org.eventb.internal.ui.preferences.PreferenceConstants.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -101,7 +103,7 @@ public class PreferenceUtils {
 	 * @return the prefix preference key for the given type
 	 */
 	public static String getPrefixPreferenceKey(IInternalElementType<?> type) {
-		return PreferenceConstants.P_PREFIX + type.getId();
+		return P_PREFIX + type.getId();
 	}
 
 	/**
@@ -119,13 +121,10 @@ public class PreferenceUtils {
 		final IProject prj = parent.getRodinFile().getRodinProject()
 				.getProject();
 		final String prefName = getPrefixPreferenceKey(type);
-		// we try with project specific prefix settings
-		final IScopeContext sc = new ProjectScope(prj);
-		final IEclipsePreferences pref = sc
-				.getNode(PreferenceConstants.PREFIX_PREFERENCE_PAGE_ID);
+		final IEclipsePreferences pref = getProjectPreference(prj);
 		if (pref != null) {
 			final String projectSpecificPrefix = pref.get(prefName, "");
-			if (!(projectSpecificPrefix.length() == 0)) {
+			if (projectSpecificPrefix.length() != 0) {
 				return projectSpecificPrefix;
 			}
 		}
@@ -133,7 +132,7 @@ public class PreferenceUtils {
 		final IPreferenceStore store = EventBUIPlugin.getDefault()
 				.getPreferenceStore();
 		final String prefPrefix = store.getString(prefName);
-		if (!(prefPrefix.length() == 0))
+		if (prefPrefix.length() != 0)
 			return prefPrefix;
 		// we finally get the default prefix from the contribution,
 		// this is a security but should never be called
@@ -168,9 +167,8 @@ public class PreferenceUtils {
 		final IScopeContext sc = new ProjectScope(prj);
 		final IEclipsePreferences cnode = sc.getNode(prefName);
 		try {
-			final String[] children = cnode.childrenNames();
-			for (int i = 0; i < children.length; i++) {
-				clearAllProperties(children[i], prj);
+			for (final String childName : cnode.childrenNames()) {
+				clearAllProperties(childName, prj);
 			}
 			cnode.clear();
 		} catch (BackingStoreException e) {
@@ -190,11 +188,34 @@ public class PreferenceUtils {
 	 */
 	public static void setAutoNamePrefix(IProject project,
 			IInternalElementType<?> type, String newPrefix) {
-		final IScopeContext sc = new ProjectScope(project);
-		final IEclipsePreferences pref = sc
-				.getNode(PreferenceConstants.PREFIX_PREFERENCE_PAGE_ID);
+		final IEclipsePreferences pref = getProjectPreference(project);
 		if (pref != null) {
 			pref.put(getPrefixPreferenceKey(type), newPrefix);
+		}
+	}
+
+	private static IEclipsePreferences getProjectPreference(IProject project) {
+		final IScopeContext sc = new ProjectScope(project);
+		return sc.getNode(PREFIX_PREFERENCE_PAGE_ID);
+	}
+
+	/**
+	 * Sets the default values in the given preference store.
+	 * 
+	 * @param store
+	 *            a preference store
+	 */
+	public static void setDefaultPreferences(IPreferenceStore store) {
+		setDefaultPreferences(store, getCtxElementsPrefixes());
+		setDefaultPreferences(store, getMchElementsPrefixes());
+	}
+
+	private static void setDefaultPreferences(IPreferenceStore store,
+			Set<IInternalElementType<?>> types) {
+		for (final IInternalElementType<?> type : types) {
+			final String key = getPrefixPreferenceKey(type);
+			final String value = getAutoNamePrefixFromDesc(type);
+			store.setDefault(key, value);
 		}
 	}
 

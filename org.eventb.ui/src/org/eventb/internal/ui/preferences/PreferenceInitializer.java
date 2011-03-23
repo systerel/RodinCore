@@ -14,17 +14,22 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
+import static org.eclipse.jface.preference.PreferenceConverter.setDefault;
 import static org.eventb.internal.ui.EventBSharedColor.RGB_DARK_GREEN;
 import static org.eventb.internal.ui.EventBSharedColor.RGB_RED;
 import static org.eventb.internal.ui.EventBSharedColor.RGB_YELLOW;
-
-import java.util.Set;
+import static org.eventb.internal.ui.preferences.PreferenceConstants.P_BORDER_ENABLE;
+import static org.eventb.internal.ui.preferences.PreferenceConstants.P_BOX_BORDER_COLOR;
+import static org.eventb.internal.ui.preferences.PreferenceConstants.P_COMMENT_FOREGROUND;
+import static org.eventb.internal.ui.preferences.PreferenceConstants.P_CONSIDER_HIDDEN_HYPOTHESES;
+import static org.eventb.internal.ui.preferences.PreferenceConstants.P_DIRTY_STATE_COLOR;
+import static org.eventb.internal.ui.preferences.PreferenceConstants.P_EXPAND_SECTIONS;
+import static org.eventb.internal.ui.preferences.PreferenceConstants.P_REQUIRED_FIELD_BACKGROUND;
+import static org.eventb.internal.ui.preferences.PreferenceConstants.P_TEXT_FOREGROUND;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
 import org.eventb.internal.ui.preferences.tactics.TacticPreferenceUtils;
-import org.rodinp.core.IInternalElementType;
 
 /**
  * @author htson
@@ -34,70 +39,35 @@ import org.rodinp.core.IInternalElementType;
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
-	 */
 	@Override
 	public void initializeDefaultPreferences() {
 		final IPreferenceStore store = EventBPreferenceStore
 				.getPreferenceStore();
 
 		TacticPreferenceUtils.initializeDefault(store);
-		
-		// Default value for machine editor pages
-		IEditorPagesPreference machinePreference = MachineEditorPagesPreference
-				.getDefault(); 
-		machinePreference.setDefault();
 
-		// Default value for context editor pages
-		IEditorPagesPreference contextPreference = ContextEditorPagesPreference
-				.getDefault();
-		contextPreference.setDefault();
-		
+		// Default value for editor pages
+		MachineEditorPagesPreference.getDefault().setDefault();
+		ContextEditorPagesPreference.getDefault().setDefault();
+
 		// Default values for borders and colors and fonts
-		store.setDefault(PreferenceConstants.P_BORDER_ENABLE, true);
-		
+		store.setDefault(P_BORDER_ENABLE, true);
+
 		// Default value consider hidden hypotheses
-		store.setDefault(PreferenceConstants.P_CONSIDER_HIDDEN_HYPOTHESES,
-				false);
-		
-		// Default value for section expanding 
-		store.setDefault(PreferenceConstants.P_EXPAND_SECTIONS, true);
-		
-		PreferenceConverter.setDefault(store,
-				PreferenceConstants.P_TEXT_FOREGROUND, RGB_DARK_GREEN);
-		
-		PreferenceConverter.setDefault(store,
-				PreferenceConstants.P_COMMENT_FOREGROUND, RGB_DARK_GREEN);
-		
-		PreferenceConverter
-				.setDefault(store,
-						PreferenceConstants.P_REQUIRED_FIELD_BACKGROUND,
-						RGB_YELLOW);
-		
-		PreferenceConverter.setDefault(store,
-				PreferenceConstants.P_DIRTY_STATE_COLOR, RGB_YELLOW);
+		store.setDefault(P_CONSIDER_HIDDEN_HYPOTHESES, false);
 
-		PreferenceConverter.setDefault(store,
-				PreferenceConstants.P_BOX_BORDER_COLOR, RGB_RED);
-		
-		
-		// Set the values for context element prefixes		
-		final Set<IInternalElementType<?>> registeredContextItems = PreferenceUtils
-				.getCtxElementsPrefixes();
-		for (IInternalElementType<?> type : registeredContextItems) {
-			final String name = PreferenceUtils.getPrefixPreferenceKey(type);
-			store.setDefault(name, PreferenceUtils.getAutoNamePrefixFromDesc(type));
-		}
+		// Default value for section expanding
+		store.setDefault(P_EXPAND_SECTIONS, true);
 
-		// Set the values for machine element prefixes
-		final Set<IInternalElementType<?>> registeredMachineItems = PreferenceUtils
-				.getMchElementsPrefixes();
-		for (IInternalElementType<?> type : registeredMachineItems) {
-			final String name = PreferenceUtils.getPrefixPreferenceKey(type);
-			store.setDefault(name, PreferenceUtils.getAutoNamePrefixFromDesc(type));
-		}
+		// Default colors
+		setDefault(store, P_TEXT_FOREGROUND, RGB_DARK_GREEN);
+		setDefault(store, P_COMMENT_FOREGROUND, RGB_DARK_GREEN);
+		setDefault(store, P_REQUIRED_FIELD_BACKGROUND, RGB_YELLOW);
+		setDefault(store, P_DIRTY_STATE_COLOR, RGB_YELLOW);
+		setDefault(store, P_BOX_BORDER_COLOR, RGB_RED);
+
+		// Set the values for context element prefixes
+		PreferenceUtils.setDefaultPreferences(store);
 	}
+
 }
