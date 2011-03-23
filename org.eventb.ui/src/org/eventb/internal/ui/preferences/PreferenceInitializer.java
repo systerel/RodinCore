@@ -14,13 +14,15 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
+import static org.eventb.internal.ui.EventBSharedColor.RGB_DARK_GREEN;
+import static org.eventb.internal.ui.EventBSharedColor.RGB_RED;
+import static org.eventb.internal.ui.EventBSharedColor.RGB_YELLOW;
+
 import java.util.Set;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.swt.SWT;
-import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.preferences.tactics.TacticPreferenceUtils;
 import org.rodinp.core.IInternalElementType;
 
@@ -65,26 +67,21 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.P_EXPAND_SECTIONS, true);
 		
 		PreferenceConverter.setDefault(store,
-				PreferenceConstants.P_TEXT_FOREGROUND, EventBSharedColor
-						.getSystemColor(SWT.COLOR_DARK_GREEN).getRGB());
+				PreferenceConstants.P_TEXT_FOREGROUND, RGB_DARK_GREEN);
 		
 		PreferenceConverter.setDefault(store,
-				PreferenceConstants.P_COMMENT_FOREGROUND, EventBSharedColor
-						.getSystemColor(SWT.COLOR_DARK_GREEN).getRGB());
+				PreferenceConstants.P_COMMENT_FOREGROUND, RGB_DARK_GREEN);
 		
 		PreferenceConverter
 				.setDefault(store,
 						PreferenceConstants.P_REQUIRED_FIELD_BACKGROUND,
-						EventBSharedColor.getSystemColor(SWT.COLOR_YELLOW)
-								.getRGB());
+						RGB_YELLOW);
 		
 		PreferenceConverter.setDefault(store,
-				PreferenceConstants.P_DIRTY_STATE_COLOR, EventBSharedColor
-						.getSystemColor(SWT.COLOR_YELLOW).getRGB());
+				PreferenceConstants.P_DIRTY_STATE_COLOR, RGB_YELLOW);
 
 		PreferenceConverter.setDefault(store,
-				PreferenceConstants.P_BOX_BORDER_COLOR, EventBSharedColor
-						.getSystemColor(SWT.COLOR_RED).getRGB());
+				PreferenceConstants.P_BOX_BORDER_COLOR, RGB_RED);
 		
 		
 		// Set the values for context element prefixes		
