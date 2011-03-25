@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,10 @@
  *******************************************************************************/
 package org.eventb.internal.ui.proofSkeletonView;
 
+import static org.rodinp.keyboard.preferences.PreferenceConstants.RODIN_MATH_FONT;
+
 import java.util.ArrayList;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.JFaceResources;
@@ -32,7 +35,6 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
-import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 /**
  * DetailsPage for sequents. It is used within the proof skeleton
@@ -42,9 +44,6 @@ import org.rodinp.keyboard.preferences.PreferenceConstants;
  * 
  */
 public class SequentDetailsPage implements IDetailsPage {
-
-	private static final Font EVENTB_FONT = JFaceResources
-			.getFont(PreferenceConstants.RODIN_MATH_FONT);
 
 	private ListViewer viewer;
 
@@ -88,9 +87,15 @@ public class SequentDetailsPage implements IDetailsPage {
 	public void createContents(Composite parent) {
 		parent.setLayout(new FillLayout());
 		viewer = new ListViewer(parent);
-		viewer.getControl().setFont(EVENTB_FONT);
+		setFont(JFaceResources.getFont(RODIN_MATH_FONT));
 		viewer.setContentProvider(sequentContentProvider);
 		addPopUpMenu();
+	}
+
+	public void setFont(Font font) {
+		if (viewer == null || viewer.getControl().isDisposed())
+			return;
+		viewer.getControl().setFont(font);
 	}
 
 	private void addPopUpMenu() {

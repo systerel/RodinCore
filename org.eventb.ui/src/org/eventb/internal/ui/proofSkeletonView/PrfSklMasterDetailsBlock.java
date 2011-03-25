@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eventb.internal.ui.proofSkeletonView;
 
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IManagedForm;
@@ -67,4 +68,9 @@ public class PrfSklMasterDetailsBlock extends MasterDetailsBlock {
 		}
 	}
 
+	public void setFont(Font font) {
+		masterPart.setFont(font);
+		SequentDetailsPage.getDefault().setFont(font);
+	}
+	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,14 @@
  *******************************************************************************/
 package org.eventb.internal.ui.proofSkeletonView;
 
+import static org.rodinp.keyboard.preferences.PreferenceConstants.RODIN_MATH_FONT;
+
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -27,7 +33,7 @@ import org.eclipse.ui.part.ViewPart;
  * @author Nicolas Beauger
  * 
  */
-public class ProofSkeletonView extends ViewPart {
+public class ProofSkeletonView extends ViewPart implements IPropertyChangeListener {
 
 	public static boolean DEBUG;
 	
@@ -46,6 +52,7 @@ public class ProofSkeletonView extends ViewPart {
 		selManager.register();
 		
 		addContextMenu();
+		JFaceResources.getFontRegistry().addListener(this);
 	}
 
 	private void addContextMenu() {
@@ -67,6 +74,7 @@ public class ProofSkeletonView extends ViewPart {
 	public void dispose() {
 		getSite().setSelectionProvider(null);
 		selManager.unregister();
+		JFaceResources.getFontRegistry().removeListener(this);
 		super.dispose();
 	}
 
@@ -96,6 +104,15 @@ public class ProofSkeletonView extends ViewPart {
 			}
 		}
 		setTitleToolTip(input.getTitleTooltip());
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(RODIN_MATH_FONT)) {
+			final Font font = JFaceResources.getFont(RODIN_MATH_FONT);
+			masterDetailsBlock.setFont(font);
+		}
+		
 	}
 
 }

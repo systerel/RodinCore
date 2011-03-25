@@ -13,6 +13,7 @@
 package org.eventb.internal.ui.proofSkeletonView;
 
 import static org.eventb.internal.ui.prooftreeui.ProofTreeUIUtils.setupCommentTooltip;
+import static org.rodinp.keyboard.preferences.PreferenceConstants.RODIN_MATH_FONT;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
@@ -25,7 +26,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
-import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 /**
  * Master part of the MasterDetailsBlock for the proof skeleton viewer.
@@ -34,9 +34,6 @@ import org.rodinp.keyboard.preferences.PreferenceConstants;
  * 
  */
 public class PrfSklMasterPart implements IFormPart {
-
-	private static final Font EVENTB_FONT = JFaceResources
-			.getFont(PreferenceConstants.RODIN_MATH_FONT);
 
 	private final TreeViewer viewer;
 	private IManagedForm managedForm;
@@ -64,7 +61,7 @@ public class PrfSklMasterPart implements IFormPart {
 	 */
 	public PrfSklMasterPart(Composite parent) {
 		this.viewer = new TreeViewer(parent);
-		viewer.getControl().setFont(EVENTB_FONT);
+		setFont(JFaceResources.getFont(RODIN_MATH_FONT));
 		viewer.setContentProvider(new PrfSklContentProvider());
 		final ILabelDecorator decorator = PlatformUI.getWorkbench()
 				.getDecoratorManager().getLabelDecorator();
@@ -72,6 +69,12 @@ public class PrfSklMasterPart implements IFormPart {
 				new PrfSklLabelProvider(), decorator));
 		viewer.addSelectionChangedListener(treeListener);
 		setupCommentTooltip(viewer);
+	}
+
+	public void setFont(Font font) {
+		if (viewer == null || viewer.getControl().isDisposed())
+			return;
+		viewer.getControl().setFont(font);
 	}
 
 	@Override
