@@ -23,6 +23,7 @@ import org.rodinp.core.emf.lightcore.ImplicitElement;
 import org.rodinp.core.emf.lightcore.InternalElement;
 import org.rodinp.core.emf.lightcore.LightElement;
 import org.rodinp.core.emf.lightcore.LightcoreFactory;
+import org.rodinp.core.emf.lightcore.childproviders.ImplicitChildProviderManager;
 
 /**
  * Class able to load and save EMF/Rodin models.

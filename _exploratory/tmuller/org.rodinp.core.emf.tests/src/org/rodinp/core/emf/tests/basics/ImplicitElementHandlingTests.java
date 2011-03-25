@@ -34,7 +34,7 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.lightcore.IImplicitChildProvider;
 import org.rodinp.core.emf.lightcore.LightElement;
 import org.rodinp.core.emf.lightcore.LightcorePackage;
-import org.rodinp.core.emf.lightcore.sync.ImplicitChildProviderManager;
+import org.rodinp.core.emf.lightcore.childproviders.ImplicitChildProviderManager;
 import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
 import org.rodinp.core.emf.tests.basis.ImplicitHolder;
 import org.rodinp.core.emf.tests.basis.RodinTestDependency;

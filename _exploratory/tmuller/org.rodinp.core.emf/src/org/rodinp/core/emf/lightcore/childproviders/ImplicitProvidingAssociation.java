@@ -8,12 +8,11 @@
  * Contributors:
  *     Systerel - Initial API and implementation
  *******************************************************************************/
-package org.rodinp.internal.core.emf.lightcore.sync;
+package org.rodinp.core.emf.lightcore.childproviders;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.emf.lightcore.IImplicitChildProvider;
-import org.rodinp.core.emf.lightcore.sync.IImplicitProvidingAssociation;
 
 public class ImplicitProvidingAssociation implements
 		IImplicitProvidingAssociation {

@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - Initial API and implementation
  *******************************************************************************/
-package org.rodinp.core.emf.lightcore.sync;
+package org.rodinp.core.emf.lightcore.childproviders;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;

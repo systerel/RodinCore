@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - Initial API and implementation
  *******************************************************************************/
-package org.rodinp.core.emf.lightcore.sync;
+package org.rodinp.core.emf.lightcore.childproviders;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,7 +19,6 @@ import java.util.Map;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.emf.lightcore.IImplicitChildProvider;
-import org.rodinp.internal.core.emf.lightcore.sync.ImplicitProvidingAssociation;
 
 /**
  * The manager class for {@link IImplicitChildProvider}. An instance of implicit
