@@ -39,12 +39,12 @@ public class ApiFactoryImpl extends EFactoryImpl implements ApiFactory {
 	 */
 	public static ApiFactory init() {
 		try {
-			ApiFactory theApiFactory = (ApiFactory) EPackage.Registry.INSTANCE
-					.getEFactory("http://emf.core.rodinp.org/models/lightcore/api");
+			ApiFactory theApiFactory = (ApiFactory)EPackage.Registry.INSTANCE.getEFactory("http://emf.core.rodinp.org/models/lightcore/api"); 
 			if (theApiFactory != null) {
 				return theApiFactory;
 			}
-		} catch (Exception exception) {
+		}
+		catch (Exception exception) {
 			EcorePlugin.INSTANCE.log(exception);
 		}
 		return new ApiFactoryImpl();
@@ -68,9 +68,8 @@ public class ApiFactoryImpl extends EFactoryImpl implements ApiFactory {
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-		default:
-			throw new IllegalArgumentException("The class '" + eClass.getName()
-					+ "' is not a valid classifier");
+			default:
+				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
 	}
 
@@ -82,9 +81,8 @@ public class ApiFactoryImpl extends EFactoryImpl implements ApiFactory {
 	@Override
 	public Object createFromString(EDataType eDataType, String initialValue) {
 		switch (eDataType.getClassifierID()) {
-		default:
-			throw new IllegalArgumentException("The datatype '"
-					+ eDataType.getName() + "' is not a valid classifier");
+			default:
+				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
 	}
 
@@ -96,9 +94,8 @@ public class ApiFactoryImpl extends EFactoryImpl implements ApiFactory {
 	@Override
 	public String convertToString(EDataType eDataType, Object instanceValue) {
 		switch (eDataType.getClassifierID()) {
-		default:
-			throw new IllegalArgumentException("The datatype '"
-					+ eDataType.getName() + "' is not a valid classifier");
+			default:
+				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
 	}
 
@@ -108,7 +105,7 @@ public class ApiFactoryImpl extends EFactoryImpl implements ApiFactory {
 	 * @generated
 	 */
 	public ApiPackage getApiPackage() {
-		return (ApiPackage) getEPackage();
+		return (ApiPackage)getEPackage();
 	}
 
 	/**
