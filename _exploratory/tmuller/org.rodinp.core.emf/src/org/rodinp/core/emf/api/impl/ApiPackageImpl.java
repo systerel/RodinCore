@@ -21,6 +21,9 @@ import org.eclipse.emf.ecore.EPackage;
 
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
+import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IAttributeValue;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.emf.api.ApiFactory;
 
 import org.rodinp.core.emf.api.itf.ILElement;
@@ -103,6 +106,36 @@ public class ApiPackageImpl extends EPackageImpl {
 	public static final int LIST = 1;
 
 	/**
+	 * The meta object id for the '<em>IAttribute Type</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.rodinp.core.IAttributeType
+	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getIAttributeType()
+	 * @generated
+	 */
+	public static final int IATTRIBUTE_TYPE = 2;
+
+	/**
+	 * The meta object id for the '<em>IAttribute Value</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.rodinp.core.IAttributeValue
+	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getIAttributeValue()
+	 * @generated
+	 */
+	public static final int IATTRIBUTE_VALUE = 3;
+
+	/**
+	 * The meta object id for the '<em>IInternal Element</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.rodinp.core.IInternalElement
+	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getIInternalElement()
+	 * @generated
+	 */
+	public static final int IINTERNAL_ELEMENT = 4;
+
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -115,6 +148,27 @@ public class ApiPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	private EDataType listEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType iAttributeTypeEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType iAttributeValueEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType iInternalElementEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -205,6 +259,42 @@ public class ApiPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for data type '{@link org.rodinp.core.IAttributeType <em>IAttribute Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>IAttribute Type</em>'.
+	 * @see org.rodinp.core.IAttributeType
+	 * @generated
+	 */
+	public EDataType getIAttributeType() {
+		return iAttributeTypeEDataType;
+	}
+
+	/**
+	 * Returns the meta object for data type '{@link org.rodinp.core.IAttributeValue <em>IAttribute Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>IAttribute Value</em>'.
+	 * @see org.rodinp.core.IAttributeValue
+	 * @generated
+	 */
+	public EDataType getIAttributeValue() {
+		return iAttributeValueEDataType;
+	}
+
+	/**
+	 * Returns the meta object for data type '{@link org.rodinp.core.IInternalElement <em>IInternal Element</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>IInternal Element</em>'.
+	 * @see org.rodinp.core.IInternalElement
+	 * @generated
+	 */
+	public EDataType getIInternalElement() {
+		return iInternalElementEDataType;
+	}
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -239,6 +329,9 @@ public class ApiPackageImpl extends EPackageImpl {
 
 		// Create data types
 		listEDataType = createEDataType(LIST);
+		iAttributeTypeEDataType = createEDataType(IATTRIBUTE_TYPE);
+		iAttributeValueEDataType = createEDataType(IATTRIBUTE_VALUE);
+		iInternalElementEDataType = createEDataType(IINTERNAL_ELEMENT);
 	}
 
 	/**
@@ -283,8 +376,47 @@ public class ApiPackageImpl extends EPackageImpl {
 		g1.getETypeArguments().add(g2);
 		initEOperation(op, g1);
 
+		op = addEOperation(ilElementEClass, null, "getAttributes", 0, 1,
+				IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(this.getList());
+		g2 = createEGenericType(this.getIAttributeValue());
+		g1.getETypeArguments().add(g2);
+		initEOperation(op, g1);
+
+		op = addEOperation(ilElementEClass, this.getIAttributeValue(),
+				"getAttribute", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getIAttributeType(), "type", 0, 1, IS_UNIQUE,
+				IS_ORDERED);
+
+		op = addEOperation(ilElementEClass, null, "setAttribute", 0, 1,
+				IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getIAttributeValue(), "value", 0, 1, IS_UNIQUE,
+				IS_ORDERED);
+
+		addEOperation(ilElementEClass, this.getIInternalElement(),
+				"getElement", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		addEOperation(ilElementEClass, null, "delete", 0, 1, IS_UNIQUE,
+				IS_ORDERED);
+
+		op = addEOperation(ilElementEClass, null, "moveChild", 0, 1, IS_UNIQUE,
+				IS_ORDERED);
+		addEParameter(op, ecorePackage.getEInt(), "newPos", 0, 1, IS_UNIQUE,
+				IS_ORDERED);
+		addEParameter(op, ecorePackage.getEInt(), "oldPos", 0, 1, IS_UNIQUE,
+				IS_ORDERED);
+
 		// Initialize data types
 		initEDataType(listEDataType, List.class, "List", !IS_SERIALIZABLE,
+				!IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(iAttributeTypeEDataType, IAttributeType.class,
+				"IAttributeType", !IS_SERIALIZABLE,
+				!IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(iAttributeValueEDataType, IAttributeValue.class,
+				"IAttributeValue", !IS_SERIALIZABLE,
+				!IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(iInternalElementEDataType, IInternalElement.class,
+				"IInternalElement", !IS_SERIALIZABLE,
 				!IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource

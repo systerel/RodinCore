@@ -9,9 +9,32 @@
         <eTypeArguments eClassifier="#//ILElement"/>
       </eGenericType>
     </eOperations>
+    <eOperations name="getAttributes">
+      <eGenericType eClassifier="#//List">
+        <eTypeArguments eClassifier="#//IAttributeValue"/>
+      </eGenericType>
+    </eOperations>
+    <eOperations name="getAttribute" eType="#//IAttributeValue">
+      <eParameters name="type" eType="#//IAttributeType"/>
+    </eOperations>
+    <eOperations name="setAttribute">
+      <eParameters name="value" eType="#//IAttributeValue"/>
+    </eOperations>
+    <eOperations name="getElement" eType="#//IInternalElement"/>
+    <eOperations name="delete"/>
+    <eOperations name="moveChild">
+      <eParameters name="newPos" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      <eParameters name="oldPos" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    </eOperations>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="List" instanceClassName="java.util.List"
       serializable="false">
     <eTypeParameters name="T"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="IAttributeType" instanceClassName="org.rodinp.core.IAttributeType"
+      serializable="false"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="IAttributeValue" instanceClassName="org.rodinp.core.IAttributeValue"
+      serializable="false"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="IInternalElement" instanceClassName="org.rodinp.core.IInternalElement"
+      serializable="false"/>
 </ecore:EPackage>

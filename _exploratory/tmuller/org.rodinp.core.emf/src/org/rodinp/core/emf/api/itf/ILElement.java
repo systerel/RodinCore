@@ -12,6 +12,10 @@ package org.rodinp.core.emf.api.itf;
 
 import java.util.List;
 
+import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IAttributeValue;
+import org.rodinp.core.IInternalElement;
+
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>IL Element</b></em>'.
@@ -27,5 +31,47 @@ public interface ILElement {
 	 * @generated
 	 */
 	List<ILElement> getChildren();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	List<IAttributeValue> getAttributes();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	IAttributeValue getAttribute(IAttributeType type);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	void setAttribute(IAttributeValue value);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	IInternalElement getElement();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	void delete();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	void moveChild(int newPos, int oldPos);
 
 } // ILElement
