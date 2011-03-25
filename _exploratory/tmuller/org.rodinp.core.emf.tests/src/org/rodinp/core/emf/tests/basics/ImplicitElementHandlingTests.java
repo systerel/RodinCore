@@ -172,7 +172,7 @@ public class ImplicitElementHandlingTests {
 		final LightElement eHolder2 = SynchroUtils.findElement(holder2,
 				rootElement);
 		// we check that there is no implicit element under eHolder2
-		assertTrue(eHolder2.getChildren().isEmpty());
+		assertTrue(eHolder2.getEChildren().isEmpty());
 		// now we add the dependency to rf1, so we expect the implicit children
 		// to be recalculated from the delta of database
 		final RodinTestDependency d = getDependencyElement(rf2Root,
@@ -190,7 +190,7 @@ public class ImplicitElementHandlingTests {
 		d.delete(true, null);
 		// we check that implicit elements have been recomputed and that holder2
 		// does not contain implicit children
-		assertTrue(eHolder2.getChildren().isEmpty());
+		assertTrue(eHolder2.getEChildren().isEmpty());
 		ImplicitChildProviderManager.removeProvider(p);
 	}
 
@@ -270,7 +270,7 @@ public class ImplicitElementHandlingTests {
 		rDependency.delete(true, null);
 		
 		// check that there is no more implicit children
-		assertTrue(eHolder3.getChildren().isEmpty());
+		assertTrue(eHolder3.getEChildren().isEmpty());
 		
 		ImplicitChildProviderManager.removeProvider(p);
 	}
@@ -299,7 +299,7 @@ public class ImplicitElementHandlingTests {
 		// removing eS1 to create a delta and throw the NPE
 		EcoreUtil.remove(eS1);
 		// If we reach this point, the exception didn't break nothing
-		assertTrue(rootElement.getChildren().size() == 1);
+		assertTrue(rootElement.getEChildren().size() == 1);
 		assertTrue(rootElement.getEChildren().get(0).getERodinElement().equals(s2));
 		//ImplicitChildProviderManager.removeProvider(p);
 	}

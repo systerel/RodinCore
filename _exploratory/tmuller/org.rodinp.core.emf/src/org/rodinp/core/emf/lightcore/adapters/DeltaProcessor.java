@@ -124,7 +124,7 @@ public class DeltaProcessor {
 		if (parent instanceof IInternalElement) {
 			final LightElement eParent = findElement(parent, root);
 			if (eParent != null) {
-				eParent.getChildren().add(e);
+				eParent.getEChildren().add(e);
 			}
 		}
 		for (IRodinElement child : ((IInternalElement) element).getChildren()) {
@@ -167,7 +167,7 @@ public class DeltaProcessor {
 			// removes the element from the children of its parent
 			final LightElement parent = found.getEParent();
 			if (parent != null) {
-				parent.getChildren().remove(found);
+				parent.getEChildren().remove(found);
 			} else { // unload the root (=found)
 				found.eResource().unload();
 			}

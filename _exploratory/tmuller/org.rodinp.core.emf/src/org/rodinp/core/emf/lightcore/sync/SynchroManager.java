@@ -82,7 +82,7 @@ public class SynchroManager {
 			IInternalElement iParent, IInternalElement child)
 			throws RodinDBException {
 		final InternalElement lChild = loadInternalElementFor(child);
-		parent.getChildren().add(lChild);
+		parent.getEChildren().add(lChild);
 		implicitLoad(lChild, child);
 		for (IRodinElement ichild : child.getChildren()) {
 			if (ichild instanceof IInternalElement)
@@ -107,7 +107,7 @@ public class SynchroManager {
 			for (IInternalElement e : ImplicitChildrenComputer
 					.safeGetImplicitChildren(iParent, p)) {
 				final ImplicitElement implicit = loadImplicitElementFor(e);
-				parent.getChildren().add(implicit);
+				parent.getEChildren().add(implicit);
 			}
 		}
 	}
