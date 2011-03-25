@@ -1,8 +1,12 @@
 /**
- * <copyright>
- * </copyright>
- *
- * $Id$
+ * Copyright (c) 2011 Systerel and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ *  
+ * Contributors:
+ *     Systerel - Initial API and implementation
  */
 package org.rodinp.core.emf.api.impl;
 
@@ -10,29 +14,94 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EcorePackage;
 
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import org.rodinp.core.emf.api.ApiFactory;
-import org.rodinp.core.emf.api.ApiPackage;
 
 import org.rodinp.core.emf.api.itf.ILElement;
 
-import org.rodinp.core.emf.lightcore.LightcorePackage;
-
-import org.rodinp.core.emf.lightcore.impl.LightcorePackageImpl;
-
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model <b>Package</b>.
+ * The <b>Package</b> for the model.
+ * It contains accessors for the meta objects to represent
+ * <ul>
+ *   <li>each class,</li>
+ *   <li>each feature of each class,</li>
+ *   <li>each enum,</li>
+ *   <li>and each data type</li>
+ * </ul>
  * <!-- end-user-doc -->
+ * @see org.rodinp.core.emf.api.ApiFactory
  * @generated
  */
-public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
+public class ApiPackageImpl extends EPackageImpl {
+	/**
+	 * The package name.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public static final String eNAME = "api";
+
+	/**
+	 * The package namespace URI.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public static final String eNS_URI = "http://emf.core.rodinp.org/models/lightcore/api";
+
+	/**
+	 * The package namespace name.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public static final String eNS_PREFIX = "org.rodinp.core.emf.lightcore.api";
+
+	/**
+	 * The singleton instance of the package.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public static final ApiPackageImpl eINSTANCE = org.rodinp.core.emf.api.impl.ApiPackageImpl
+			.init();
+
+	/**
+	 * The meta object id for the '{@link org.rodinp.core.emf.api.itf.ILElement <em>IL Element</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.rodinp.core.emf.api.itf.ILElement
+	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getILElement()
+	 * @generated
+	 */
+	public static final int IL_ELEMENT = 0;
+
+	/**
+	 * The number of structural features of the '<em>IL Element</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int IL_ELEMENT_FEATURE_COUNT = 0;
+
+	/**
+	 * The meta object id for the '<em>List</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see java.util.List
+	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getList()
+	 * @generated
+	 */
+	public static final int LIST = 1;
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -58,12 +127,12 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.emf.ecore.EPackage.Registry
-	 * @see org.rodinp.core.emf.api.ApiPackage#eNS_URI
+	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#eNS_URI
 	 * @see #init()
 	 * @generated
 	 */
 	private ApiPackageImpl() {
-		super(eNS_URI, ApiFactory.eINSTANCE);
+		super(eNS_URI, ((EFactory) ApiFactory.INSTANCE));
 	}
 
 	/**
@@ -76,7 +145,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
 	 * 
-	 * <p>This method is used to initialize {@link ApiPackage#eINSTANCE} when that field is accessed.
+	 * <p>This method is used to initialize {@link ApiPackageImpl#eINSTANCE} when that field is accessed.
 	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -85,40 +154,38 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @see #initializePackageContents()
 	 * @generated
 	 */
-	public static ApiPackage init() {
-		if (isInited) return (ApiPackage)EPackage.Registry.INSTANCE.getEPackage(ApiPackage.eNS_URI);
+	public static ApiPackageImpl init() {
+		if (isInited)
+			return (ApiPackageImpl) EPackage.Registry.INSTANCE
+					.getEPackage(ApiPackageImpl.eNS_URI);
 
 		// Obtain or create and register package
-		ApiPackageImpl theApiPackage = (ApiPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof ApiPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new ApiPackageImpl());
+		ApiPackageImpl theApiPackage = (ApiPackageImpl) (EPackage.Registry.INSTANCE
+				.get(eNS_URI) instanceof ApiPackageImpl ? EPackage.Registry.INSTANCE
+				.get(eNS_URI) : new ApiPackageImpl());
 
 		isInited = true;
 
-		// Initialize simple dependencies
-		EcorePackage.eINSTANCE.eClass();
-
-		// Obtain or create and register interdependencies
-		LightcorePackageImpl theLightcorePackage = (LightcorePackageImpl)(EPackage.Registry.INSTANCE.getEPackage(LightcorePackage.eNS_URI) instanceof LightcorePackageImpl ? EPackage.Registry.INSTANCE.getEPackage(LightcorePackage.eNS_URI) : LightcorePackage.eINSTANCE);
-
 		// Create package meta-data objects
 		theApiPackage.createPackageContents();
-		theLightcorePackage.createPackageContents();
 
 		// Initialize created meta-data
 		theApiPackage.initializePackageContents();
-		theLightcorePackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		theApiPackage.freeze();
 
-  
 		// Update the registry and return the package
-		EPackage.Registry.INSTANCE.put(ApiPackage.eNS_URI, theApiPackage);
+		EPackage.Registry.INSTANCE.put(ApiPackageImpl.eNS_URI, theApiPackage);
 		return theApiPackage;
 	}
 
 	/**
+	 * Returns the meta object for class '{@link org.rodinp.core.emf.api.itf.ILElement <em>IL Element</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>IL Element</em>'.
+	 * @see org.rodinp.core.emf.api.itf.ILElement
 	 * @generated
 	 */
 	public EClass getILElement() {
@@ -126,8 +193,11 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	}
 
 	/**
+	 * Returns the meta object for data type '{@link java.util.List <em>List</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>List</em>'.
+	 * @see java.util.List
 	 * @generated
 	 */
 	public EDataType getList() {
@@ -135,12 +205,14 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	}
 
 	/**
+	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @return the factory that creates the instances of the model.
 	 * @generated
 	 */
 	public ApiFactory getApiFactory() {
-		return (ApiFactory)getEFactoryInstance();
+		return (ApiFactory) getEFactoryInstance();
 	}
 
 	/**
@@ -158,7 +230,8 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	public void createPackageContents() {
-		if (isCreated) return;
+		if (isCreated)
+			return;
 		isCreated = true;
 
 		// Create classes and their features
@@ -183,7 +256,8 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	public void initializePackageContents() {
-		if (isInitialized) return;
+		if (isInitialized)
+			return;
 		isInitialized = true;
 
 		// Initialize package
@@ -199,16 +273,19 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 		// Add supertypes to classes
 
 		// Initialize classes and features; add operations and parameters
-		initEClass(ilElementEClass, ILElement.class, "ILElement", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEClass(ilElementEClass, ILElement.class, "ILElement", IS_ABSTRACT,
+				IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
-		EOperation op = addEOperation(ilElementEClass, null, "getChildren", 0, 1, IS_UNIQUE, IS_ORDERED);
+		EOperation op = addEOperation(ilElementEClass, null, "getChildren", 0,
+				1, IS_UNIQUE, IS_ORDERED);
 		EGenericType g1 = createEGenericType(this.getList());
 		EGenericType g2 = createEGenericType(this.getILElement());
 		g1.getETypeArguments().add(g2);
 		initEOperation(op, g1);
 
 		// Initialize data types
-		initEDataType(listEDataType, List.class, "List", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(listEDataType, List.class, "List", !IS_SERIALIZABLE,
+				!IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

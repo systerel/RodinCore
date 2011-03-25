@@ -1,14 +1,16 @@
 /**
- * <copyright>
- * </copyright>
- *
- * $Id$
+ * Copyright (c) 2011 Systerel and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ *  
+ * Contributors:
+ *     Systerel - Initial API and implementation
  */
 package org.rodinp.core.emf.api.itf;
 
 import java.util.List;
-
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
@@ -16,15 +18,12 @@ import org.eclipse.emf.ecore.EObject;
  * <!-- end-user-doc -->
  *
  *
- * @see org.rodinp.core.emf.api.ApiPackage#getILElement()
- * @model interface="true" abstract="true"
  * @generated
  */
-public interface ILElement extends EObject {
+public interface ILElement {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model kind="operation" dataType="org.rodinp.core.emf.api.itf.List<org.rodinp.core.emf.api.itf.ILElement>" many="false"
 	 * @generated
 	 */
 	List<ILElement> getChildren();

@@ -8,7 +8,6 @@ package org.rodinp.core.emf.lightcore.impl;
 
 import java.util.Map;
 
-
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EGenericType;
@@ -17,8 +16,6 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
-import org.rodinp.core.emf.api.ApiPackage;
-import org.rodinp.core.emf.api.impl.ApiPackageImpl;
 import org.rodinp.core.emf.lightcore.Attribute;
 import org.rodinp.core.emf.lightcore.ImplicitElement;
 import org.rodinp.core.emf.lightcore.InternalElement;
@@ -126,15 +123,12 @@ public class LightcorePackageImpl extends EPackageImpl implements LightcorePacka
 		EcorePackage.eINSTANCE.eClass();
 
 		// Obtain or create and register interdependencies
-		ApiPackageImpl theApiPackage = (ApiPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(ApiPackage.eNS_URI) instanceof ApiPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(ApiPackage.eNS_URI) : ApiPackage.eINSTANCE);
 
 		// Create package meta-data objects
 		theLightcorePackage.createPackageContents();
-		theApiPackage.createPackageContents();
 
 		// Initialize created meta-data
 		theLightcorePackage.initializePackageContents();
-		theApiPackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		theLightcorePackage.freeze();
@@ -395,7 +389,6 @@ public class LightcorePackageImpl extends EPackageImpl implements LightcorePacka
 
 		// Obtain other dependent packages
 		EcorePackage theEcorePackage = (EcorePackage)EPackage.Registry.INSTANCE.getEPackage(EcorePackage.eNS_URI);
-		ApiPackage theApiPackage = (ApiPackage)EPackage.Registry.INSTANCE.getEPackage(ApiPackage.eNS_URI);
 
 		// Create type parameters
 
@@ -404,7 +397,6 @@ public class LightcorePackageImpl extends EPackageImpl implements LightcorePacka
 		// Add supertypes to classes
 		lightObjectEClass.getESuperTypes().add(theEcorePackage.getEObject());
 		lightElementEClass.getESuperTypes().add(this.getLightObject());
-		lightElementEClass.getESuperTypes().add(theApiPackage.getILElement());
 		attributeEClass.getESuperTypes().add(this.getLightObject());
 		internalElementEClass.getESuperTypes().add(this.getLightElement());
 		implicitElementEClass.getESuperTypes().add(this.getLightElement());
