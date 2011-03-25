@@ -42,7 +42,7 @@ public class ElementMoveAndRemovalAdapter extends AdapterImpl {
 				if (o instanceof LightElement) {
 					final LightElement e = (LightElement) o;
 					final IRodinElement rElement = (IRodinElement) e
-							.getRodinElement();
+							.getERodinElement();
 					if (rElement instanceof IInternalElement
 							&& !(e instanceof ImplicitElement)) {
 						((IInternalElement) rElement).delete(true, null);
@@ -60,7 +60,7 @@ public class ElementMoveAndRemovalAdapter extends AdapterImpl {
 				return;
 			}
 			final LightElement e = (LightElement) o;
-			final IRodinElement rElement = (IRodinElement) e.getRodinElement();
+			final IRodinElement rElement = (IRodinElement) e.getERodinElement();
 			if (!(rElement instanceof IInternalElement)) {
 				return;
 			}

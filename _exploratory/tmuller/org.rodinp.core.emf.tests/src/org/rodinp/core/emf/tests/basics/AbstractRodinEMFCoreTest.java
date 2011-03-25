@@ -82,7 +82,7 @@ public abstract class AbstractRodinEMFCoreTest {
 			IRodinElement rodinElement) {
 		final InternalElement iElem = LightcoreFactory.eINSTANCE
 				.createInternalElement();
-		iElem.setRodinElement(rodinElement);
+		iElem.setERodinElement(rodinElement);
 		iElem.load();
 		return iElem;
 	}

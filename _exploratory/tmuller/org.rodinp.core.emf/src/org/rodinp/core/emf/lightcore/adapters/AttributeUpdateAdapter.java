@@ -57,7 +57,7 @@ public class AttributeUpdateAdapter extends AdapterImpl {
 				isUpdating = true;
 				final Attribute attribute = (Attribute) notifier;
 				final Object rElement = (IRodinElement) attribute.getOwner()
-						.getRodinElement();
+						.getERodinElement();
 				if (rElement instanceof IInternalElement) {
 					if (!knownType(attribute, (IInternalElement) rElement))
 						return;

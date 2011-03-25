@@ -8,6 +8,7 @@ package org.rodinp.core.emf.lightcore;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
+import org.rodinp.core.emf.api.itf.ILElement;
 
 /**
  * <!-- begin-user-doc -->
@@ -17,12 +18,12 @@ import org.eclipse.emf.common.util.EMap;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.rodinp.core.emf.lightcore.LightElement#getAttributes <em>Attributes</em>}</li>
+ *   <li>{@link org.rodinp.core.emf.lightcore.LightElement#getEAttributes <em>EAttributes</em>}</li>
  *   <li>{@link org.rodinp.core.emf.lightcore.LightElement#getReference <em>Reference</em>}</li>
- *   <li>{@link org.rodinp.core.emf.lightcore.LightElement#getChildren <em>Children</em>}</li>
- *   <li>{@link org.rodinp.core.emf.lightcore.LightElement#getParent <em>Parent</em>}</li>
- *   <li>{@link org.rodinp.core.emf.lightcore.LightElement#isRoot <em>Root</em>}</li>
- *   <li>{@link org.rodinp.core.emf.lightcore.LightElement#getRodinElement <em>Rodin Element</em>}</li>
+ *   <li>{@link org.rodinp.core.emf.lightcore.LightElement#getEChildren <em>EChildren</em>}</li>
+ *   <li>{@link org.rodinp.core.emf.lightcore.LightElement#getEParent <em>EParent</em>}</li>
+ *   <li>{@link org.rodinp.core.emf.lightcore.LightElement#isERoot <em>ERoot</em>}</li>
+ *   <li>{@link org.rodinp.core.emf.lightcore.LightElement#getERodinElement <em>ERodin Element</em>}</li>
  * </ul>
  * </p>
  *
@@ -30,23 +31,23 @@ import org.eclipse.emf.common.util.EMap;
  * @model abstract="true"
  * @generated
  */
-public interface LightElement extends LightObject {
+public interface LightElement extends LightObject, ILElement {
 	/**
-	 * Returns the value of the '<em><b>Attributes</b></em>' map.
+	 * Returns the value of the '<em><b>EAttributes</b></em>' map.
 	 * The key is of type {@link java.lang.String},
 	 * and the value is of type {@link org.rodinp.core.emf.lightcore.Attribute},
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Attributes</em>' map isn't clear,
+	 * If the meaning of the '<em>EAttributes</em>' map isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Attributes</em>' map.
-	 * @see org.rodinp.core.emf.lightcore.LightcorePackage#getLightElement_Attributes()
+	 * @return the value of the '<em>EAttributes</em>' map.
+	 * @see org.rodinp.core.emf.lightcore.LightcorePackage#getLightElement_EAttributes()
 	 * @model mapType="org.rodinp.core.emf.lightcore.StringToAttributeMapEntry<org.eclipse.emf.ecore.EString, org.rodinp.core.emf.lightcore.Attribute>"
 	 * @generated
 	 */
-	EMap<String, Attribute> getAttributes();
+	EMap<String, Attribute> getEAttributes();
 
 	/**
 	 * Returns the value of the '<em><b>Reference</b></em>' attribute.
@@ -76,102 +77,102 @@ public interface LightElement extends LightObject {
 	void setReference(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Children</b></em>' containment reference list.
+	 * Returns the value of the '<em><b>EChildren</b></em>' containment reference list.
 	 * The list contents are of type {@link org.rodinp.core.emf.lightcore.LightElement}.
-	 * It is bidirectional and its opposite is '{@link org.rodinp.core.emf.lightcore.LightElement#getParent <em>Parent</em>}'.
+	 * It is bidirectional and its opposite is '{@link org.rodinp.core.emf.lightcore.LightElement#getEParent <em>EParent</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Children</em>' containment reference list isn't clear,
+	 * If the meaning of the '<em>EChildren</em>' containment reference list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Children</em>' containment reference list.
-	 * @see org.rodinp.core.emf.lightcore.LightcorePackage#getLightElement_Children()
-	 * @see org.rodinp.core.emf.lightcore.LightElement#getParent
-	 * @model opposite="parent" containment="true"
+	 * @return the value of the '<em>EChildren</em>' containment reference list.
+	 * @see org.rodinp.core.emf.lightcore.LightcorePackage#getLightElement_EChildren()
+	 * @see org.rodinp.core.emf.lightcore.LightElement#getEParent
+	 * @model opposite="eParent" containment="true"
 	 * @generated
 	 */
-	EList<LightElement> getChildren();
+	EList<LightElement> getEChildren();
 
 	/**
-	 * Returns the value of the '<em><b>Parent</b></em>' container reference.
-	 * It is bidirectional and its opposite is '{@link org.rodinp.core.emf.lightcore.LightElement#getChildren <em>Children</em>}'.
+	 * Returns the value of the '<em><b>EParent</b></em>' container reference.
+	 * It is bidirectional and its opposite is '{@link org.rodinp.core.emf.lightcore.LightElement#getEChildren <em>EChildren</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Parent</em>' container reference isn't clear,
+	 * If the meaning of the '<em>EParent</em>' container reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Parent</em>' container reference.
-	 * @see #setParent(LightElement)
-	 * @see org.rodinp.core.emf.lightcore.LightcorePackage#getLightElement_Parent()
-	 * @see org.rodinp.core.emf.lightcore.LightElement#getChildren
-	 * @model opposite="children" transient="false"
+	 * @return the value of the '<em>EParent</em>' container reference.
+	 * @see #setEParent(LightElement)
+	 * @see org.rodinp.core.emf.lightcore.LightcorePackage#getLightElement_EParent()
+	 * @see org.rodinp.core.emf.lightcore.LightElement#getEChildren
+	 * @model opposite="eChildren" transient="false"
 	 * @generated
 	 */
-	LightElement getParent();
+	LightElement getEParent();
 
 	/**
-	 * Sets the value of the '{@link org.rodinp.core.emf.lightcore.LightElement#getParent <em>Parent</em>}' container reference.
+	 * Sets the value of the '{@link org.rodinp.core.emf.lightcore.LightElement#getEParent <em>EParent</em>}' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Parent</em>' container reference.
-	 * @see #getParent()
+	 * @param value the new value of the '<em>EParent</em>' container reference.
+	 * @see #getEParent()
 	 * @generated
 	 */
-	void setParent(LightElement value);
+	void setEParent(LightElement value);
 
 	/**
-	 * Returns the value of the '<em><b>Root</b></em>' attribute.
+	 * Returns the value of the '<em><b>ERoot</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Root</em>' attribute isn't clear,
+	 * If the meaning of the '<em>ERoot</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Root</em>' attribute.
-	 * @see #setRoot(boolean)
-	 * @see org.rodinp.core.emf.lightcore.LightcorePackage#getLightElement_Root()
+	 * @return the value of the '<em>ERoot</em>' attribute.
+	 * @see #setERoot(boolean)
+	 * @see org.rodinp.core.emf.lightcore.LightcorePackage#getLightElement_ERoot()
 	 * @model
 	 * @generated
 	 */
-	boolean isRoot();
+	boolean isERoot();
 
 	/**
-	 * Sets the value of the '{@link org.rodinp.core.emf.lightcore.LightElement#isRoot <em>Root</em>}' attribute.
+	 * Sets the value of the '{@link org.rodinp.core.emf.lightcore.LightElement#isERoot <em>ERoot</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Root</em>' attribute.
-	 * @see #isRoot()
+	 * @param value the new value of the '<em>ERoot</em>' attribute.
+	 * @see #isERoot()
 	 * @generated
 	 */
-	void setRoot(boolean value);
+	void setERoot(boolean value);
 
 	/**
-	 * Returns the value of the '<em><b>Rodin Element</b></em>' attribute.
+	 * Returns the value of the '<em><b>ERodin Element</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Rodin Element</em>' attribute isn't clear,
+	 * If the meaning of the '<em>ERodin Element</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Rodin Element</em>' attribute.
-	 * @see #setRodinElement(Object)
-	 * @see org.rodinp.core.emf.lightcore.LightcorePackage#getLightElement_RodinElement()
+	 * @return the value of the '<em>ERodin Element</em>' attribute.
+	 * @see #setERodinElement(Object)
+	 * @see org.rodinp.core.emf.lightcore.LightcorePackage#getLightElement_ERodinElement()
 	 * @model
 	 * @generated
 	 */
-	Object getRodinElement();
+	Object getERodinElement();
 
 	/**
-	 * Sets the value of the '{@link org.rodinp.core.emf.lightcore.LightElement#getRodinElement <em>Rodin Element</em>}' attribute.
+	 * Sets the value of the '{@link org.rodinp.core.emf.lightcore.LightElement#getERodinElement <em>ERodin Element</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Rodin Element</em>' attribute.
-	 * @see #getRodinElement()
+	 * @param value the new value of the '<em>ERodin Element</em>' attribute.
+	 * @see #getERodinElement()
 	 * @generated
 	 */
-	void setRodinElement(Object value);
+	void setERodinElement(Object value);
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -202,7 +203,7 @@ public interface LightElement extends LightObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @model many="false"
-	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='final EList<LightElement> list = new BasicEList<LightElement>();\n\tif (!(type instanceof IInternalElement)) {\n\t\treturn list;\t\n\t}\n\tfinal EList<LightElement> children = getChildren();\n\tfor (LightElement child : children) {\n\t\tif (((IInternalElement) child.getRodinElement()).getElementType() == type) {\n\t\t\tlist.add(child);\n\t\t}\n\t}\n\treturn list;'"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='\t\tfinal EList<LightElement> list = new BasicEList<LightElement>();\n\t\t\tif (!(type instanceof <%org.rodinp.core.IInternalElementType%>)) {\n\t\t\t\treturn list;\t\n\t\t\t}\n\t\t\tfinal EList<LightElement> children = getEChildren();\n\t\t\tfor (LightElement child : children) {\n\t\t\t\tif (((IInternalElement) child.getERodinElement()).getElementType() == type) {\n\t\t\t\t\tlist.add(child);\n\t\t\t\t}\n\t\t\t}\n\t\t\treturn list;'"
 	 * @generated
 	 */
 	EList<LightElement> getElementsOfType(Object type);

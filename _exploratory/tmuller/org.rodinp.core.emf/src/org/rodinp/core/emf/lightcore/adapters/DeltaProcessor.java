@@ -36,7 +36,7 @@ public class DeltaProcessor {
 	public DeltaProcessor(Adapter owner, LightElement root) {
 		this.owner = (DeltaRootAdapter) owner;
 		this.root = root;
-		this.rodinRoot = (IRodinElement) root.getRodinElement();
+		this.rodinRoot = (IRodinElement) root.getERodinElement();
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class DeltaProcessor {
 			return;
 		final InternalElement e = LightcoreFactory.eINSTANCE
 				.createInternalElement();
-		e.setRodinElement(element);
+		e.setERodinElement(element);
 		e.load();
 		final IRodinElement parent = element.getParent();
 		if (parent instanceof IInternalElement) {
@@ -135,7 +135,7 @@ public class DeltaProcessor {
 	private void reorderElement(IRodinElement element) throws RodinDBException {
 		final IRodinElement parent = element.getParent();
 		final LightElement toMove = findElement(element, root);
-		final LightElement eParent = toMove.getParent();
+		final LightElement eParent = toMove.getEParent();
 		if (parent instanceof IInternalElement && eParent != null) {
 			final IRodinElement[] children = ((IInternalElement) parent)
 					.getChildren();
@@ -145,7 +145,7 @@ public class DeltaProcessor {
 					break;
 				i++;
 			}
-			eParent.getChildren().move(i, toMove);
+			eParent.getEChildren().move(i, toMove);
 		}
 	}
 
@@ -165,7 +165,7 @@ public class DeltaProcessor {
 		LightElement found = findElement(toRemove, root);
 		if (found != null) {
 			// removes the element from the children of its parent
-			final LightElement parent = found.getParent();
+			final LightElement parent = found.getEParent();
 			if (parent != null) {
 				parent.getChildren().remove(found);
 			} else { // unload the root (=found)

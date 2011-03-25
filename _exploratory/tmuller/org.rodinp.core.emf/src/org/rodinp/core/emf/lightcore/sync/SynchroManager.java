@@ -163,7 +163,7 @@ public class SynchroManager {
 	private static InternalElement loadInternalElementFor(IRodinElement iElement) {
 		final InternalElement eElement = LightcoreFactory.eINSTANCE
 				.createInternalElement();
-		eElement.setRodinElement(iElement);
+		eElement.setERodinElement(iElement);
 		eElement.load();
 		return eElement;
 	}
@@ -171,7 +171,7 @@ public class SynchroManager {
 	private static ImplicitElement loadImplicitElementFor(IRodinElement iElement) {
 		final ImplicitElement eImplicit = LightcoreFactory.eINSTANCE
 				.createImplicitElement();
-		eImplicit.setRodinElement(iElement);
+		eImplicit.setERodinElement(iElement);
 		eImplicit.load();
 		return eImplicit;
 	}

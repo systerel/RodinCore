@@ -54,7 +54,7 @@ public class LoadModelTests extends AbstractRodinEMFCoreTest {
 				.get(0);
 
 		assertTrue(element instanceof InternalElement);
-		assertTrue(element.isRoot());
+		assertTrue(element.isERoot());
 
 		// Then delete the file
 		rodinFile.getResource().delete(true, null);
@@ -93,11 +93,11 @@ public class LoadModelTests extends AbstractRodinEMFCoreTest {
 		final LightElement rootElement = (LightElement) rodinResource
 				.getContents().get(0);
 
-		final EList<LightElement> rootChildren = rootElement.getChildren();
+		final EList<LightElement> rootChildren = rootElement.getEChildren();
 		assertTrue("It should be just one child: NE", rootChildren.size() == 1);
 
 		final LightElement lightNE = rootChildren.get(0);
-		final EMap<String, Attribute> NEatts = lightNE.getAttributes();
+		final EMap<String, Attribute> NEatts = lightNE.getEAttributes();
 		assertTrue("It should be just one attribute for NE", NEatts.size() == 1);
 
 		final Attribute NEatt = NEatts.get(0).getValue();
@@ -126,19 +126,19 @@ public class LoadModelTests extends AbstractRodinEMFCoreTest {
 		ne2.setAttributeValue(v2, null);
 
 		// We verify that the elements are created
-		final EList<LightElement> children = root.getChildren();
+		final EList<LightElement> children = root.getEChildren();
 		assertTrue(children.size() == 1);
 		final LightElement child = children.get(0);
-		assertTrue(child.getRodinElement().equals(ne));
-		final EList<LightElement> neChildren = child.getChildren();
+		assertTrue(child.getERodinElement().equals(ne));
+		final EList<LightElement> neChildren = child.getEChildren();
 		assertTrue(neChildren.size() == 1);
 		final LightElement neChild = neChildren.get(0);
-		assertTrue(neChild.getRodinElement().equals(ne2));
+		assertTrue(neChild.getERodinElement().equals(ne2));
 
-		final Attribute attribute = neChild.getAttributes().get(
+		final Attribute attribute = neChild.getEAttributes().get(
 				AbstractRodinDBTests.fString.getId());
 		assertEquals(attribute.getValue(), attributeString);
-		final Attribute attribute2 = neChild.getAttributes().get(
+		final Attribute attribute2 = neChild.getEAttributes().get(
 				AbstractRodinDBTests.fBool.getId());
 		assertEquals(attribute2.getValue(), true);
 	}

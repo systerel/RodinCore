@@ -53,7 +53,7 @@ public class SynchroUtils {
 				lAttribute.setOwner(lElement);
 				lAttribute.setType(type);
 				lAttribute.setValue(rodinAttribute.getValue());
-				lElement.getAttributes().put(type.getId(), lAttribute);
+				lElement.getEAttributes().put(type.getId(), lAttribute);
 			}
 		} catch (RodinDBException e) {
 			System.out.println("Could not load the attributes for the "
@@ -70,18 +70,18 @@ public class SynchroUtils {
 		for (IAttributeType t : availableTypes) {
 			ids.add(t.getId());
 		}
-		lElement.getAttributes().retainAll(ids);
+		lElement.getEAttributes().retainAll(ids);
 	}
 
 	public static LightElement findElement(IRodinElement toFind,
 			LightElement root) {
-		if (toFind.equals(root.getRodinElement()))
+		if (toFind.equals(root.getERodinElement()))
 			return root;
 		final TreeIterator<EObject> eAllContents = root.eAllContents();
 		while (eAllContents.hasNext()) {
 			final EObject next = eAllContents.next();
 			if (next instanceof LightElement
-					&& ((LightElement) next).getRodinElement().equals(toFind)) {
+					&& ((LightElement) next).getERodinElement().equals(toFind)) {
 				return (LightElement) next;
 			}
 		}
@@ -90,14 +90,14 @@ public class SynchroUtils {
 
 	public static void adaptRootForDBChanges(LightElement e) {
 		final DeltaRootAdapterFactory f = new DeltaRootAdapterFactory();
-		if (e.isRoot()) {
+		if (e.isERoot()) {
 			f.adapt(e, DeltaRootAdapter.class);
 		}
 	}
 
 	public static void adaptRootForImplicitChildren(LightElement e) {
 		final ImplicitDeltaRootAdapterFactory f = new ImplicitDeltaRootAdapterFactory();
-		if (e.isRoot()) {
+		if (e.isERoot()) {
 			f.adapt(e, DeltaRootAdapterFactory.class);
 		}
 	}

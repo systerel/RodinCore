@@ -117,7 +117,7 @@ public class ImplicitElementHandlingTests {
 				.getElementsOfType(ImplicitHolder.ELEMENT_TYPE);
 
 		final LightElement eHolder3 = (LightElement) hold.get(0);
-		assertTrue(eHolder3.getRodinElement().equals(holder3));
+		assertTrue(eHolder3.getERodinElement().equals(holder3));
 
 		final NamedElement[] expecteds = { s1, s2, ss1, ss2 };
 		final EList<EObject> eImplicitChildren = eHolder3.getAllContained(
@@ -130,9 +130,9 @@ public class ImplicitElementHandlingTests {
 				assertTrue(
 						"The type of the element " + e.toString()
 								+ " is not NamedElement.",
-						((LightElement) e).getRodinElement() instanceof NamedElement);
+						((LightElement) e).getERodinElement() instanceof NamedElement);
 				actuals[i] = (NamedElement) ((LightElement) e)
-						.getRodinElement();
+						.getERodinElement();
 				i++;
 			}
 		}
@@ -164,8 +164,11 @@ public class ImplicitElementHandlingTests {
 		// now checking the loaded resource for rf2
 		final Resource rodinResource = getRodinResource(project,
 				rf2.getElementName());
+
+		
 		final LightElement rootElement = (LightElement) rodinResource
 				.getContents().get(0);
+		
 		final LightElement eHolder2 = SynchroUtils.findElement(holder2,
 				rootElement);
 		// we check that there is no implicit element under eHolder2
@@ -178,10 +181,10 @@ public class ImplicitElementHandlingTests {
 		rf2.save(null, true);
 		// we check that implicit elements have been recomputed and that holder2
 		// carries s1 and s2
-		final EList<LightElement> children2 = eHolder2.getChildren();
+		final EList<LightElement> children2 = eHolder2.getEChildren();
 		assertTrue(children2.size() == 2);
-		assertTrue(children2.get(0).getRodinElement().equals(s1));
-		assertTrue(children2.get(1).getRodinElement().equals(s2));
+		assertTrue(children2.get(0).getERodinElement().equals(s1));
+		assertTrue(children2.get(1).getERodinElement().equals(s2));
 		// now we delete the dependency, so it might not be any implicit element
 		// left.
 		d.delete(true, null);
@@ -238,9 +241,9 @@ public class ImplicitElementHandlingTests {
 				rootElement);
 		final NamedElement[] expecteds1 = { ss1, ss2 };
 		int i = 0;
-		final EList<LightElement> children = eHolder3.getChildren();
+		final EList<LightElement> children = eHolder3.getEChildren();
 		for (LightElement e : children){
-			assertTrue(e.getRodinElement().equals(expecteds1[i]));
+			assertTrue(e.getERodinElement().equals(expecteds1[i]));
 			i++;
 		}
 
@@ -254,7 +257,7 @@ public class ImplicitElementHandlingTests {
 		final NamedElement[] expecteds2 = { s1, s2, ss1, ss2 };
 		int j = 0;
 		for (LightElement e : children){
-			assertTrue(e.getRodinElement().equals(expecteds2[j]));
+			assertTrue(e.getERodinElement().equals(expecteds2[j]));
 			j++;
 		}
 		
@@ -297,7 +300,7 @@ public class ImplicitElementHandlingTests {
 		EcoreUtil.remove(eS1);
 		// If we reach this point, the exception didn't break nothing
 		assertTrue(rootElement.getChildren().size() == 1);
-		assertTrue(rootElement.getChildren().get(0).getRodinElement().equals(s2));
+		assertTrue(rootElement.getEChildren().get(0).getERodinElement().equals(s2));
 		//ImplicitChildProviderManager.removeProvider(p);
 	}
 	

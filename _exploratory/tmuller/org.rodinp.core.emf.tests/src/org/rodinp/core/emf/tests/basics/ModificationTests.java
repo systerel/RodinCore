@@ -48,10 +48,10 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 
 		final NamedElement ne = getNamedElement(rodinFile.getRoot(), "NE");
 
-		final EList<LightElement> children = root.getChildren();
+		final EList<LightElement> children = root.getEChildren();
 		assertTrue(children.size() == 1);
 		final LightElement child = children.get(0); // ne
-		assertTrue(child.getRodinElement().equals(ne));
+		assertTrue(child.getERodinElement().equals(ne));
 
 		// we delete ne
 		EcoreUtil.remove(child);
@@ -77,14 +77,14 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 		final LightElement root = (LightElement) rodinResource.getContents()
 				.get(0);
 		// there is just one child ne for the root
-		final EList<LightElement> children = root.getChildren();
+		final EList<LightElement> children = root.getEChildren();
 		assertTrue(children.size() == 1);
 		final LightElement neLight = children.get(0);
-		final Attribute a = neLight.getAttributes().get(fBool.getId());
+		final Attribute a = neLight.getEAttributes().get(fBool.getId());
 		assertTrue(a.getValue().equals(true));
 		ne.removeAttribute(fBool, null);
 		assertTrue(ne.getAttributeTypes().length == 0);
-		assertTrue(neLight.getAttributes().get(fBool.getId()) == null);
+		assertTrue(neLight.getEAttributes().get(fBool.getId()) == null);
 	}
 
 	/**
@@ -107,9 +107,9 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 
 		// we search for NE child in the Light model
 		// it has been created by the database delta listener
-		final LightElement neLightElement = root.getChildren().get(0);
+		final LightElement neLightElement = root.getEChildren().get(0);
 
-		final EMap<String, Attribute> a = neLightElement.getAttributes();
+		final EMap<String, Attribute> a = neLightElement.getEAttributes();
 		// we check that there is just one attribute set for this element
 		assertTrue(a.values().size() == 1);
 
@@ -141,8 +141,8 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 
 		// we search for NE child in the Light model
 		// it has been created by the database delta listener
-		final LightElement neLightElement = root.getChildren().get(0);
-		final EMap<String, Attribute> a = neLightElement.getAttributes();
+		final LightElement neLightElement = root.getEChildren().get(0);
+		final EMap<String, Attribute> a = neLightElement.getEAttributes();
 		final String boolId = fBool.getId();
 		// we check that there is just one attribute set for this element
 		final Attribute a1 = a.get(boolId);
@@ -204,7 +204,7 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 		final LightElement root = (LightElement) rodinResource.getContents()
 				.get(0);
 		assertArrayEquals(ordered, getIRodinElementChildren(root));
-		final EList<LightElement> children = root.getChildren();
+		final EList<LightElement> children = root.getEChildren();
 		// move ne2 to the first position
 		children.move(0, children.get(1));
 		final NamedElement[] ordered2 = { ne2, ne, ne3 };
@@ -214,12 +214,12 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 	}
 
 	private IRodinElement[] getIRodinElementChildren(LightElement element) {
-		final EList<LightElement> eChildren = element.getChildren();
+		final EList<LightElement> eChildren = element.getEChildren();
 		final IRodinElement[] lightChildren = new IRodinElement[eChildren
 				.size()];
 		int i = 0;
 		for (LightElement child : eChildren) {
-			lightChildren[i] = (IRodinElement) child.getRodinElement();
+			lightChildren[i] = (IRodinElement) child.getERodinElement();
 			i++;
 		}
 		return lightChildren;

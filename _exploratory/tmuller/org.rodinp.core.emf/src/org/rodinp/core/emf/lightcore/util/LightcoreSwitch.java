@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.lightcore.*;
 
 /**
@@ -98,6 +99,7 @@ public class LightcoreSwitch<T> {
 				LightElement lightElement = (LightElement)theEObject;
 				T result = caseLightElement(lightElement);
 				if (result == null) result = caseLightObject(lightElement);
+				if (result == null) result = caseILElement(lightElement);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -119,6 +121,7 @@ public class LightcoreSwitch<T> {
 				T result = caseInternalElement(internalElement);
 				if (result == null) result = caseLightElement(internalElement);
 				if (result == null) result = caseLightObject(internalElement);
+				if (result == null) result = caseILElement(internalElement);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -127,6 +130,7 @@ public class LightcoreSwitch<T> {
 				T result = caseImplicitElement(implicitElement);
 				if (result == null) result = caseLightElement(implicitElement);
 				if (result == null) result = caseLightObject(implicitElement);
+				if (result == null) result = caseILElement(implicitElement);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -221,6 +225,21 @@ public class LightcoreSwitch<T> {
 	 * @generated
 	 */
 	public T caseImplicitElement(ImplicitElement object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>IL Element</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>IL Element</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseILElement(ILElement object) {
 		return null;
 	}
 

@@ -39,7 +39,7 @@ public class ImplicitDeltaProcessor {
 	public ImplicitDeltaProcessor(Adapter owner, LightElement root) {
 		this.owner = (ImplicitDeltaRootAdapter) owner;
 		this.root = root;
-		this.rodinRoot = (IInternalElement) root.getRodinElement();
+		this.rodinRoot = (IInternalElement) root.getERodinElement();
 	}
 
 	/**
@@ -110,12 +110,12 @@ public class ImplicitDeltaProcessor {
 
 	private void recursiveImplicitLoad(LightElement element)
 			throws RodinDBException {
-		final Object rodinElement = element.getRodinElement();
+		final Object rodinElement = element.getERodinElement();
 		if (rodinElement instanceof IInternalElement) {
 			final IInternalElement parent = (IInternalElement) rodinElement;
 			SynchroManager.implicitLoad(element, parent);
 		}
-		for (LightElement eChild : element.getChildren()) {
+		for (LightElement eChild : element.getEChildren()) {
 			if (!(eChild instanceof ImplicitElement)) {
 				recursiveImplicitLoad(eChild);
 			}

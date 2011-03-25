@@ -28,7 +28,7 @@ public class DeltaRootAdapterFactory extends AdapterFactoryImpl {
 	protected Adapter createAdapter(Notifier target) {
 		if (target instanceof LightElement) {
 			final LightElement le = (LightElement) target;
-			if (le.isRoot())
+			if (le.isERoot())
 				return new DeltaRootAdapter(le);
 		}
 		return NullDeltaRootAdapter.INSTANCE;

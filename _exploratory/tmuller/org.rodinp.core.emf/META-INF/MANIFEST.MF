@@ -11,8 +11,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.rodinp.core,
  org.eclipse.emf.ecore;visibility:=reexport
 Bundle-ActivationPolicy: lazy
-Export-Package: org.rodinp.core.emf.lightcore,
- org.rodinp.core.emf.lightcore.impl,
- org.rodinp.core.emf.lightcore.sync,
- org.rodinp.core.emf.lightcore.util
+Export-Package: org.rodinp.core.emf.api.itf,
+ org.rodinp.core.emf.lightcore;x-friends:="org.rodinp.core.emf.tests",
+ org.rodinp.core.emf.lightcore.sync;x-friends:="org.rodinp.core.emf.tests"
 Bundle-Activator: org.rodinp.core.emf.lightcore.LightCorePlugin

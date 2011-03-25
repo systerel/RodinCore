@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="api"
+    nsURI="http://emf.core.rodinp.org/models/lightcore/api" nsPrefix="org.rodinp.core.emf.lightcore.api">
+  <eClassifiers xsi:type="ecore:EClass" name="ILElement" abstract="true" interface="true">
+    <eOperations name="getChildren">
+      <eGenericType eClassifier="#//List">
+        <eTypeArguments eClassifier="#//ILElement"/>
+      </eGenericType>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="List" instanceClassName="java.util.List"
+      serializable="false">
+    <eTypeParameters name="T"/>
+  </eClassifiers>
+</ecore:EPackage>
