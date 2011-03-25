@@ -7,8 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
-  *******************************************************************************/
-
+ *******************************************************************************/
 package fr.systerel.editor.editors;
 
 import java.util.ArrayList;
@@ -43,12 +42,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.swt.IFocusService;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 import org.eventb.core.IAssignmentElement;
-import org.eventb.core.ICommentedElement;
-import org.eventb.core.IIdentifierElement;
-import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPredicateElement;
-import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 import org.rodinp.keyboard.RodinKeyboardPlugin;
 
 import fr.systerel.editor.actions.StyledTextEditAction;
@@ -56,12 +50,12 @@ import fr.systerel.editor.contentAssist.RodinContentAssistProcessor;
 import fr.systerel.editor.documentModel.DocumentMapper;
 import fr.systerel.editor.documentModel.Interval;
 
-
 /**
  * This class manages the little text field that is used to edit an element.
  */
-public class OverlayEditor implements IAnnotationModelListener, IAnnotationModelListenerExtension, 
-										ExtendedModifyListener, VerifyKeyListener, IMenuListener, PaintListener{
+public class OverlayEditor implements IAnnotationModelListener,
+		IAnnotationModelListenerExtension, ExtendedModifyListener,
+		VerifyKeyListener, IMenuListener, PaintListener {
 	private StyledText editorText;
 	private DocumentMapper mapper;
 	private StyledText parent;
@@ -74,27 +68,28 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 	private Menu fTextContextMenu;
 	private ArrayList<IAction> editActions = new ArrayList<IAction>();
 	private ModifyListener eventBTranslator;
-	
-	//counts the lines that were added to the underlying (parent) styled text
+
+	// counts the lines that were added to the underlying (parent) styled text
 	private int addedLines = 0;
-	
-	public static final String EDITOR_TEXT_ID = RodinEditor.EDITOR_ID +".editorText";
 
+	public static final String EDITOR_TEXT_ID = RodinEditor.EDITOR_ID
+			+ ".editorText";
 
-	public OverlayEditor(StyledText parent, DocumentMapper mapper, ProjectionViewer viewer, RodinEditor editor) {
+	public OverlayEditor(StyledText parent, DocumentMapper mapper,
+			ProjectionViewer viewer, RodinEditor editor) {
 		this.viewer = viewer;
 		this.mapper = mapper;
 		this.parent = parent;
 		this.editor = editor;
-		
-		textViewer = new TextViewer(parent, SWT.BORDER |SWT.V_SCROLL);
+
+		textViewer = new TextViewer(parent, SWT.BORDER | SWT.V_SCROLL);
 		contentAssistant = getContentAssistant();
 		contentAssistant.install(textViewer);
-		eventBTranslator = RodinKeyboardPlugin.getDefault().getRodinModifyListener();
-		
+		eventBTranslator = RodinKeyboardPlugin.getDefault()
+				.getRodinModifyListener();
+
 		setupEditorText();
 	}
-
 
 	private void setupEditorText() {
 		editorText = textViewer.getTextWidget();
@@ -112,27 +107,27 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 
 		createMenu();
 		createEditActions();
-	
-		
-		//the focus tracker is used to activate the handlers, when the widget has focus.
-		IFocusService focusService =(IFocusService) editor.getSite().getService(IFocusService.class);
+
+		// the focus tracker is used to activate the handlers, when the widget
+		// has focus.
+		IFocusService focusService = (IFocusService) editor.getSite()
+				.getService(IFocusService.class);
 		focusService.addFocusTracker(editorText, EDITOR_TEXT_ID);
 	}
 
-
 	private void createMenu() {
 		String id = "editorTextMenu";
-		MenuManager manager= new MenuManager(id, id);
+		MenuManager manager = new MenuManager(id, id);
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(this);
-		fTextContextMenu= manager.createContextMenu(editorText);
+		fTextContextMenu = manager.createContextMenu(editorText);
 
 		editorText.setMenu(fTextContextMenu);
 	}
 
-	
-	public void showAtOffset(int offset){
-		Interval inter = mapper.findEditableInterval(viewer.widgetOffset2ModelOffset(offset));
+	public void showAtOffset(int offset) {
+		Interval inter = mapper.findEditableInterval(viewer
+				.widgetOffset2ModelOffset(offset));
 		int pos = 0;
 		if (inter != null) {
 			pos = offset - inter.getOffset();
@@ -142,7 +137,7 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 		if (editorText.isVisible()) {
 			saveAndExit();
 		}
-		
+
 		if (!editorText.isVisible()) {
 			String text;
 			if (inter != null) {
@@ -155,10 +150,13 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 					text = "";
 				}
 				Point location = (parent.getLocationAtOffset(start));
-				
-				Point endPoint = new Point(findMaxWidth(start, start +inter.getLength()), parent.getLocationAtOffset(start +inter.getLength()).y);
-				Point size = new Point(endPoint.x - location.x, endPoint.y - (location.y) +parent.getLineHeight());
-				
+
+				Point endPoint = new Point(findMaxWidth(start,
+						start + inter.getLength()),
+						parent.getLocationAtOffset(start + inter.getLength()).y);
+				Point size = new Point(endPoint.x - location.x, endPoint.y
+						- (location.y) + parent.getLineHeight());
+
 				textViewer.setDocument(createDocument(text));
 				editorText.setCaretOffset(offset - start);
 				resizeTo(size.x, size.y);
@@ -166,23 +164,23 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 				setToLocation(location.x, location.y);
 				editorText.setVisible(true);
 				editorText.setFocus();
-			}			
+			}
 		}
 		interval = inter;
 	}
-	
+
 	/**
 	 * Sets the editor text to a given location. The y-value will get slightly
 	 * corrected. The y value should correspond to the start of a line in the
 	 * underlying editor
 	 * 
-	 * @param x,
-	 *            the x-value of the new location
-	 * @param y,
-	 *            the y-value of the new location
+	 * @param x
+	 *            , the x-value of the new location
+	 * @param y
+	 *            , the y-value of the new location
 	 */
 	public void setToLocation(int x, int y) {
-		editorText.setLocation(x, y-2);
+		editorText.setLocation(x, y - 2);
 	}
 
 	/**
@@ -192,11 +190,12 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 	 * @param height
 	 */
 	public void resizeTo(int width, int height) {
-		int w = Math.max(width +5 +editorText.getVerticalBar().getSize().x, DEFAULT_WIDTH);
-		int h = Math.max(height, editorText.getLineHeight() ) +4;
-		
+		int w = Math.max(width + 5 + editorText.getVerticalBar().getSize().x,
+				DEFAULT_WIDTH);
+		int h = Math.max(height, editorText.getLineHeight()) + 4;
+
 		adaptEditorLines(h);
-		
+
 		editorText.setSize(w, h);
 	}
 
@@ -227,71 +226,76 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 			addedLines--;
 		}
 	}
-	
+
 	public void abortEditing() {
 		editorText.setVisible(false);
 		interval = null;
 		addedLines = 0;
 
 	}
-	
+
 	public void addChangeToDatabase() {
-		if (interval != null) {
-			//TODO: check if there really are changes. if not, do nothing.
-			IRodinElement element = interval.getElement();
-			String contentType= interval.getContentType();
-			String text = removeWhiteSpaces(editorText.getText());
-			if (element instanceof IIdentifierElement && contentType.equals(RodinConfiguration.IDENTIFIER_TYPE)) {
-				try {
-					((IIdentifierElement) element).setIdentifierString(text, null);
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if (element instanceof ILabeledElement && contentType.equals(RodinConfiguration.IDENTIFIER_TYPE)) {
-				try {
-					((ILabeledElement) element).setLabel(text, null);
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if (element instanceof IPredicateElement && contentType.equals(RodinConfiguration.CONTENT_TYPE)) {
-				try {
-					((IPredicateElement) element).setPredicateString(text, null);
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if (element instanceof IAssignmentElement && contentType.equals(RodinConfiguration.CONTENT_TYPE)) {
-				try {
-					((IAssignmentElement) element).setAssignmentString(text, null);
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if (element instanceof ICommentedElement && contentType.equals(RodinConfiguration.COMMENT_TYPE)) {
-				try {
-					((ICommentedElement) element).setComment(text, null);
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
+		// if (interval != null) {
+		// //TODO: check if there really are changes. if not, do nothing.
+		// IRodinElement element = interval.getElement();
+		// String contentType= interval.getContentType();
+		// String text = removeWhiteSpaces(editorText.getText());
+		// if (element instanceof IIdentifierElement &&
+		// contentType.equals(RodinConfiguration.IDENTIFIER_TYPE)) {
+		// try {
+		// ((IIdentifierElement) element).setIdentifierString(text, null);
+		// } catch (RodinDBException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// }
+		// if (element instanceof ILabeledElement &&
+		// contentType.equals(RodinConfiguration.IDENTIFIER_TYPE)) {
+		// try {
+		// ((ILabeledElement) element).setLabel(text, null);
+		// } catch (RodinDBException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// }
+		// if (element instanceof IPredicateElement &&
+		// contentType.equals(RodinConfiguration.CONTENT_TYPE)) {
+		// try {
+		// ((IPredicateElement) element).setPredicateString(text, null);
+		// } catch (RodinDBException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// }
+		// if (element instanceof IAssignmentElement &&
+		// contentType.equals(RodinConfiguration.CONTENT_TYPE)) {
+		// try {
+		// ((IAssignmentElement) element).setAssignmentString(text, null);
+		// } catch (RodinDBException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// }
+		// if (element instanceof ICommentedElement &&
+		// contentType.equals(RodinConfiguration.COMMENT_TYPE)) {
+		// try {
+		// ((ICommentedElement) element).setComment(text, null);
+		// } catch (RodinDBException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// }
+		// }
 
 	}
-	
+
 	/**
 	 * Removes whitespaces at beginning and end of a text.
 	 * 
 	 * @return the text with the whitespaces removed
 	 */
 	public String removeWhiteSpaces(String text) {
-		
+
 		int first_pos = -1;
 		int last_pos = -1;
 		int i = 0;
@@ -299,24 +303,23 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 			if (first_pos == -1 && !isWhitespace(ch)) {
 				first_pos = i;
 			}
-			if (last_pos == -1 && isWhitespace(ch)){
+			if (last_pos == -1 && isWhitespace(ch)) {
 				last_pos = i;
 			}
-			if (last_pos != -1 && !isWhitespace(ch)){
+			if (last_pos != -1 && !isWhitespace(ch)) {
 				last_pos = -1;
 			}
 			i++;
 		}
 		first_pos = Math.max(first_pos, 0);
-		last_pos = (last_pos == -1 ) ? (text.length()) : last_pos;
+		last_pos = (last_pos == -1) ? (text.length()) : last_pos;
 		return (text.substring(first_pos, last_pos));
 	}
-	
+
 	protected boolean isWhitespace(char c) {
 		return (c == ' ' || c == '\t' || c == '\n' || c == '\r');
 	}
 
-	
 	/**
 	 * finds the maximum with of the the text in the parent widget within a
 	 * given range.
@@ -325,164 +328,165 @@ public class OverlayEditor implements IAnnotationModelListener, IAnnotationModel
 	 * @param end
 	 * @return the maximum with in pixels.
 	 */
-	protected int findMaxWidth(int start, int end){
+	protected int findMaxWidth(int start, int end) {
 		int firstLine = parent.getLineAtOffset(start);
 		int lastLine = parent.getLineAtOffset(end);
 		int max = 0;
 		for (int i = firstLine; i <= lastLine; i++) {
-			max = Math.max(parent.getLocationAtOffset(parent.getOffsetAtLine(i+1)-1).x, max);
+			max = Math.max(parent.getLocationAtOffset(parent
+					.getOffsetAtLine(i + 1) - 1).x, max);
 		}
-		
+
 		return max;
 	}
-	
+
 	protected IDocument createDocument(String text) {
 		IDocument doc = new Document();
 		doc.set(text);
 		return doc;
 	}
 
-
-
-
 	public void modelChanged(IAnnotationModel model) {
 		// do nothing
 	}
 
-
 	public void modelChanged(AnnotationModelEvent event) {
 		// react to folding of the editor
-		
-		if (event.getChangedAnnotations().length >0 && editorText.isVisible()) {
-			//adjust the location of the editor
+
+		if (event.getChangedAnnotations().length > 0 && editorText.isVisible()) {
+			// adjust the location of the editor
 			if (viewer.modelOffset2WidgetOffset(interval.getOffset()) > 0) {
-//				setToLocation(editorText.getLocation().x, parent.getLocationAtOffset(viewer.modelOffset2WidgetOffset(interval.getOffset())).y);
+				// setToLocation(editorText.getLocation().x,
+				// parent.getLocationAtOffset(viewer.modelOffset2WidgetOffset(interval.getOffset())).y);
 			} else {
-				// if the interval that is currently being edited is hidden from view
+				// if the interval that is currently being edited is hidden from
+				// view
 				// abort the editing
 				abortEditing();
 			}
 		}
 	}
 
-
 	/**
 	 * Resizes the editorText widget according to the text modifications.
 	 */
 	public void modifyText(ExtendedModifyEvent event) {
 		int max = 0;
-		for (int i = 0; i < editorText.getLineCount()-1; i++) {
-			int offset = editorText.getOffsetAtLine(i +1)-1;
+		for (int i = 0; i < editorText.getLineCount() - 1; i++) {
+			int offset = editorText.getOffsetAtLine(i + 1) - 1;
 			max = Math.max(max, editorText.getLocationAtOffset(offset).x);
 		}
-		//last line
-		max = Math.max(max, editorText.getLocationAtOffset(editorText.getCharCount()).x);
+		// last line
+		max = Math.max(max,
+				editorText.getLocationAtOffset(editorText.getCharCount()).x);
 		int height = editorText.getLineCount() * editorText.getLineHeight();
 		resizeTo(max, height);
-		
+
 	}
-	
+
 	public IContentAssistant getContentAssistant() {
 
-		ContentAssistant assistant= new ContentAssistant();
-//		assistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
-		assistant.setContentAssistProcessor(new RodinContentAssistProcessor(mapper, this), Document.DEFAULT_CONTENT_TYPE);
+		ContentAssistant assistant = new ContentAssistant();
+		// assistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
+		assistant.setContentAssistProcessor(new RodinContentAssistProcessor(
+				mapper, this), Document.DEFAULT_CONTENT_TYPE);
 
 		assistant.enableAutoActivation(true);
 		assistant.setAutoActivationDelay(500);
-		assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
-		assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
+		assistant
+				.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
+		assistant
+				.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
 
 		return assistant;
 	}
 
-
 	public void verifyKey(VerifyEvent event) {
-		if ((event.stateMask == SWT.NONE)  && event.character == SWT.CR) {
-			//do not add the return to the text
+		if ((event.stateMask == SWT.NONE) && event.character == SWT.CR) {
+			// do not add the return to the text
 			event.doit = false;
 			saveAndExit();
 		}
 		if (event.character == SWT.ESC) {
 			abortEditing();
 		}
-		
-		
+
 		if ((event.stateMask & SWT.CTRL) != 0 && event.character == '\u0020') {
 			contentAssistant.showPossibleCompletions();
 		}
-			
+
 	}
 
 	/**
-	 *
-	 * @return the interval that this editor is currently editing
-	 * or <code>null</code>, if the editor is not visible currently.
+	 * 
+	 * @return the interval that this editor is currently editing or
+	 *         <code>null</code>, if the editor is not visible currently.
 	 */
 	public Interval getInterval() {
 		return interval;
 	}
 
-
 	public void menuAboutToShow(IMenuManager manager) {
-		
+
 		for (IAction action : editActions) {
-			if (action.getActionDefinitionId().equals(IWorkbenchActionDefinitionIds.COPY)
-					|| action.getActionDefinitionId().equals(IWorkbenchActionDefinitionIds.CUT)) {
+			if (action.getActionDefinitionId().equals(
+					IWorkbenchActionDefinitionIds.COPY)
+					|| action.getActionDefinitionId().equals(
+							IWorkbenchActionDefinitionIds.CUT)) {
 				action.setEnabled(editorText.getSelectionCount() > 0);
 			}
-			if (action.getActionDefinitionId().equals(IWorkbenchActionDefinitionIds.PASTE)) {
-				//TODO: disable, if nothing to paste.
+			if (action.getActionDefinitionId().equals(
+					IWorkbenchActionDefinitionIds.PASTE)) {
+				// TODO: disable, if nothing to paste.
 			}
 			manager.add(action);
-			
+
 		}
 	}
-	
+
 	public void createEditActions() {
 		IAction action;
-		action= new StyledTextEditAction(editorText, ST.COPY);
+		action = new StyledTextEditAction(editorText, ST.COPY);
 		action.setText("Copy");
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
 		editActions.add(action);
 
-		action= new StyledTextEditAction(editorText, ST.PASTE);
+		action = new StyledTextEditAction(editorText, ST.PASTE);
 		action.setText("Paste");
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
 		editActions.add(action);
 
-		action= new StyledTextEditAction(editorText, ST.CUT);
+		action = new StyledTextEditAction(editorText, ST.CUT);
 		action.setText("Cut");
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.CUT);
 		editActions.add(action);
-		
+
 	}
-	
+
 	public void saveAndExit() {
 		addChangeToDatabase();
 		abortEditing();
 	}
 
-
-
 	public void paintControl(PaintEvent e) {
 		if (interval != null) {
 			if (viewer.modelOffset2WidgetOffset(interval.getOffset()) > 0) {
-				setToLocation(editorText.getLocation().x, parent.getLocationAtOffset(viewer.modelOffset2WidgetOffset(interval.getOffset())).y);
-			} 
+				setToLocation(
+						editorText.getLocation().x,
+						parent.getLocationAtOffset(viewer
+								.modelOffset2WidgetOffset(interval.getOffset())).y);
+			}
 		}
-		
+
 	}
 
 	public void setEventBTranslation(Interval interval) {
-		boolean enable = (interval.getElement() instanceof IPredicateElement ||
-				interval.getElement() instanceof IAssignmentElement ) 
-				&& interval.getContentType().equals(RodinConfiguration.CONTENT_TYPE);
+		boolean enable = (interval.getElement() instanceof IPredicateElement || interval
+				.getElement() instanceof IAssignmentElement)
+				&& interval.getContentType().equals(
+						RodinConfiguration.CONTENT_TYPE);
 		RodinKeyboardPlugin.getDefault().enableRodinModifyListener(enable);
-		
-	}
-	
-	
 
-	
+	}
+
 }

@@ -15,7 +15,10 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.navigator,
  org.eclipse.ui.console,
  org.eclipse.core.expressions,
- org.rodinp.keyboard;bundle-version="1.1.0"
+ org.rodinp.keyboard;bundle-version="1.1.0",
+ org.rodinp.core.emf,
+ org.eclipse.emf.edit,
+ org.eventb.ui
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

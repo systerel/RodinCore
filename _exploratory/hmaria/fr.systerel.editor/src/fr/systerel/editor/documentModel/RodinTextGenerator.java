@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -7,31 +7,30 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
-  *******************************************************************************/
-
+ *******************************************************************************/
 package fr.systerel.editor.documentModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.Position;
-import org.eventb.core.IAction;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ICommentedElement;
-import org.eventb.core.IContextRoot;
-import org.eventb.core.IEvent;
-import org.eventb.core.IEventBRoot;
-import org.eventb.core.IGuard;
 import org.eventb.core.IIdentifierElement;
-import org.eventb.core.IInvariant;
 import org.eventb.core.ILabeledElement;
-import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPredicateElement;
-import org.eventb.core.IRefinesMachine;
-import org.eventb.core.ISeesContext;
-import org.eventb.core.ITheorem;
-import org.eventb.core.IVariable;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
+import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
+import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
+import org.eventb.internal.ui.eventbeditor.elementdesc.IElementRelationship;
+import org.eventb.internal.ui.eventbeditor.elementdesc.NullAttributeDesc;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
+import org.rodinp.core.emf.lightcore.Attribute;
+import org.rodinp.core.emf.lightcore.LightElement;
 
 import fr.systerel.editor.editors.RodinConfiguration;
 
@@ -41,376 +40,301 @@ import fr.systerel.editor.editors.RodinConfiguration;
  */
 public class RodinTextGenerator {
 
-	
-	private StringBuilder builder;
-	private DocumentMapper documentMapper;
-	private ArrayList<Position> foldingRegions = new ArrayList<Position>();
-	private Object lineSeparator = System.getProperty("line.separator");
-	private Character tab = '\u0009';
+	private static final Character tab = '\u0009';
+	private static final Object lineSeparator = System
+			.getProperty("line.separator");
 
-	
+	private final DocumentMapper documentMapper;
+
+	private StringBuilder builder;
+	private int level = 0;
+
+	private ArrayList<Position> foldingRegions = new ArrayList<Position>();
+
 	public RodinTextGenerator(DocumentMapper documentMapper) {
 		this.documentMapper = documentMapper;
 	}
-	
+
 	/**
 	 * Creates the text for the document and creates the intervals.
 	 * 
-	 * @param root
+	 * @param inputRoot
 	 *            The machine or context that is displayed in the document.
 	 */
-	public String createText(IEventBRoot root) {
+	public String createText(LightElement inputRoot) {
 		builder = new StringBuilder();
 		documentMapper.resetPrevious();
-		
-		if (root instanceof IMachineRoot) {
-			IMachineRoot machine = (IMachineRoot) root;
-			createMachineText(machine);
-		}
-		if (root instanceof IContextRoot) {
-			IContextRoot context = (IContextRoot) root;
-//			createContextText(context);
-		}
-		
+		traverseRoot(null, inputRoot);
 		return builder.toString();
-		
 	}
 
-	private void createMachineText(IMachineRoot machine) {
-		try {
-			addTitleRegion(machine.getComponentName());
-			processElement(machine); //adds the comment
-			
-			addRefinesRegion(machine);
-			addSeesRegion(machine);
-			
-			addVariablesRegion(machine);
-			addInvariantsRegion(machine);
-			addTheoremsRegion(machine);
-			addEventsRegion(machine);
-			
-			
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	private void addInvariantsRegion(IMachineRoot machine)
-			throws RodinDBException {
-		IInvariant[] invariants = machine.getInvariants();
-		if (invariants.length > 0) {
-			int start = builder.length();
-			int length;
-			addTitleRegion("Invariants:");
-			for (IInvariant inv : invariants) {
-//				processElement(inv);
-				processInvariant(inv);
+	@SuppressWarnings({ "restriction" })
+	private void traverseRoot(IProgressMonitor monitor, LightElement e) {
+		final IRodinElement rodinElement = (IRodinElement) e.getERodinElement();
+		if (rodinElement instanceof IInternalElement) {
+			final IElementDesc desc = ElementDescRegistry.getInstance()
+					.getElementDesc(rodinElement);
+			addSectionRegion(desc.getPrefix());
+			level++;
+			if (rodinElement instanceof ICommentedElement) {
+				processCommentedElement(e);
 			}
-			length = builder.length() - start;
-//			foldingRegions.add(new Position(start,length));
-			documentMapper.addEditorElementWithType(IInvariant.ELEMENT_TYPE, start, length);
-			builder.append(lineSeparator);
+			addLabelRegion(rodinElement.getElementName(), e);
+			level--;
+			// process the comment
+			processElement(e);
+			traverse(monitor, e);
 		}
 	}
 
-	
-	
-	private void addVariablesRegion(IMachineRoot machine)
-			throws RodinDBException {
-		
-		IVariable[] variables = machine.getVariables();
-		if (variables.length > 0) {
-			int start = builder.length();
-			int length;
-			addTitleRegion("Variables:");
-			for (IVariable var : variables) {
-//				processElement(var);
-				processVariable(var);
+	@SuppressWarnings("restriction")
+	private void traverse(IProgressMonitor mon, LightElement e) {
+		final IElementDesc desc = getElementDesc(e);
+		for (IElementRelationship rel : desc.getChildRelationships()) {
+			final List<LightElement> c = retrieveChildrenToProcess(rel, e);
+			final IElementDesc childDesc = getElementDesc(rel.getChildType());
+			if (childDesc == null)
+				continue;
+			int start = -1;
+			final boolean noChildren = c.isEmpty();
+			if (noChildren) {
+				continue;
 			}
-			length = builder.length() -start;
-//			foldingRegions.add(new Position(start,length));
-			documentMapper.addEditorElementWithType(IVariable.ELEMENT_TYPE, start, length);
-			builder.append(lineSeparator);
-		}
-	}
-
-	private void addTheoremsRegion(IMachineRoot machine)
-			throws RodinDBException {
-
-		ITheorem[] theorems = machine.getTheorems();
-		if (theorems.length > 0) {
-			int start = builder.length();
-			int length;
-			addTitleRegion("Theorems:");
-			for (ITheorem thm : theorems) {
-				processElement(thm);
+			if (!(noChildren)) {
+				start = builder.length();
+				if (level < 1) {
+					addSectionRegion(childDesc.getPrefix());
+				} else {
+					addKeywordRegion(childDesc.getPrefix());
+				}
 			}
-			length = builder.length();
-//			foldingRegions.add(new Position(start, length));
-			documentMapper.addEditorElementWithType(ITheorem.ELEMENT_TYPE, start, length);
-			builder.append(lineSeparator);
-		}
-	}
-
-	
-	private void addEventsRegion(IMachineRoot machine) throws RodinDBException {
-
-		IEvent[] events = machine.getEvents();
-		if (events.length > 0) {
-			int start = builder.length();
-			int length;
-			addTitleRegion("Events:");
-			for (IEvent evt : events) {
-				processEvent(evt);
+			for (LightElement in : c) {
+				level++;
+				processElement(in);
+				//final int eStart = builder.length();
+				traverse(mon, in);
+				//setFoldingForSubElement(in, eStart);
+				level--;
 			}
-			length = builder.length() - start;
-//			foldingRegions.add(new Position(start, length));
-			documentMapper.addEditorElementWithType(IEvent.ELEMENT_TYPE, start, length);
-			
-			builder.append(lineSeparator);
+			final int length = builder.length() - start;
+			if (start != -1 && level == 0) {
+				documentMapper.addEditorSection(rel.getChildType(), start,
+						length);
+			}
 		}
 	}
 
-	private void addRefinesRegion(IMachineRoot machine) throws RodinDBException {
+//	private void setFoldingForSubElement(LightElement toFold,
+//			final int foldStart) {
+//		if (level == 1) {
+//			final EditorItem foldedElement = documentMapper
+//					.getEditorElement(toFold);
+//			final int length = builder.length() - foldStart;
+//			if (foldedElement != null)
+//				foldedElement.setFoldingPosition(foldStart, length);
+//		}
+//	}
 
-		int start = builder.length();
-		int length;
-		addLabelRegion("Refines: ", machine);
-		
-		for (IRefinesMachine refines : machine.getRefinesClauses()) {
-			builder.append(lineSeparator);
-			int offset = builder.length();
-			builder.append(tab);
-			builder.append(refines.getAbstractMachineName());
-			length = builder.length() - offset;
-			documentMapper.processInterval(offset, length, refines, RodinConfiguration.CONTENT_TYPE);
-		}
-		length = builder.length() - start;
-		documentMapper.addEditorElementWithType(IRefinesMachine.ELEMENT_TYPE, start, length);
-		builder.append(lineSeparator);
+	// We retrieve all children of the element elt and if the client defined a
+	// way to retrieve children including implicit ones, we ask the implicit
+	// child provider to get this list of visible children
+	@SuppressWarnings("restriction")
+	private List<LightElement> retrieveChildrenToProcess(
+			IElementRelationship rel, LightElement elt) {
+		final ArrayList<LightElement> result = new ArrayList<LightElement>();
+		final IInternalElementType<?> type = rel.getChildType();
+		result.addAll(elt.getElementsOfType(type));
+		return result;
 	}
 
-	private void addSeesRegion(IMachineRoot machine) throws RodinDBException {
-		//TODO: Add intervals;
-		int start = builder.length();
-		int length;
-		addLabelRegion("Sees: ", machine);
-		for (ISeesContext sees : machine.getSeesClauses()) {
-			builder.append(lineSeparator);
-			int offset = builder.length();
-			builder.append(tab);
-			builder.append(sees.getSeenContextName());
-			length = builder.length() - offset;
-			documentMapper.processInterval(offset, length, sees, RodinConfiguration.CONTENT_TYPE);
-		}
-		length = builder.length()-start;
-//		foldingRegions.add(new Position(start, length));
-		documentMapper.addEditorElementWithType(ISeesContext.ELEMENT_TYPE, start, length);
-		builder.append(lineSeparator);
-		builder.append(lineSeparator);
+	// Retrieves the element desc from the registry for the given element e
+	@SuppressWarnings("restriction")
+	private static IElementDesc getElementDesc(LightElement e) {
+		final IRodinElement rodinElement = (IRodinElement) e.getERodinElement();
+		return ElementDescRegistry.getInstance().getElementDesc(rodinElement);
 	}
-	
-	protected void addElementRegion(String text, IRodinElement element, String contentType) {
+
+	// Retrieves the element desc from the registry for the given element e
+	@SuppressWarnings("restriction")
+	private static IElementDesc getElementDesc(IInternalElementType<?> type) {
+		return ElementDescRegistry.getInstance().getElementDesc(type);
+	}
+
+	@SuppressWarnings("restriction")
+	private static IAttributeDesc getAttributeDesc(String id,
+			IInternalElementType<?> type) {
+		int i = 0;
+		IAttributeDesc desc;
+		final List<IAttributeDesc> descs = new ArrayList<IAttributeDesc>();
+		while ((desc = ElementDescRegistry.getInstance().getAttribute(type, i)) != null) {
+			descs.add(desc);
+			i++;
+		}
+		for (IAttributeDesc r : descs) {
+			if (r.getAttributeType().getId().equals(id)) {
+				return r;
+			}
+		}
+		return new NullAttributeDesc();
+	}
+
+	protected void addElementRegion(String text, LightElement element,
+			String contentType) {
 		int start = builder.length();
 		builder.append(text);
 		int length = builder.length() - start;
 		documentMapper.processInterval(start, length, element, contentType);
-		
 	}
 
-	protected void addLabelRegion(String text, IRodinElement element) {
+	protected void addLabelRegion(String text, LightElement element) {
 		int start = builder.length();
+		builder.append(getTabs(level));
 		builder.append(text);
+		builder.append(lineSeparator);
 		int length = builder.length() - start;
-		documentMapper.processInterval(start, length, element, RodinConfiguration.LABEL_TYPE);
-		
-	}
-	
-	protected void addCommentHeaderRegion(IRodinElement element) {
-		int start = builder.length();
-		builder.append("// ");
-		int length = builder.length() - start;
-		documentMapper.processInterval(start, length, element, RodinConfiguration.COMMENT_HEADER_TYPE);
-		
+		documentMapper.processInterval(start, length, element,
+				RodinConfiguration.LABEL_TYPE);
 	}
 
-	
-	protected void addTitleRegion(String title) {
+	protected void addCommentHeaderRegion(LightElement element) {
 		int start = builder.length();
+		builder.append(getTabs(level));
+		builder.append("§");
+		int length = builder.length() - start;
+		documentMapper.processInterval(start, length, element,
+				RodinConfiguration.COMMENT_HEADER_TYPE);
+	}
+
+	protected void addKeywordRegion(String title) {
+		int start = builder.length();
+		builder.append(getTabs(level));
 		builder.append(title);
 		builder.append(lineSeparator);
+		int length = builder.length() - start;
+		documentMapper.processInterval(start, length, null,
+				RodinConfiguration.KEYWORD_TYPE);
+	}
+
+	protected void addSectionRegion(String title) {
+		int start = builder.length();
+		builder.append(getTabs(level));
+		builder.append(title);
 		builder.append(lineSeparator);
 		int length = builder.length() - start;
-		documentMapper.processInterval(start, length, null, RodinConfiguration.TITLE_TYPE);
+		documentMapper.processInterval(start, length, null,
+				RodinConfiguration.SECTION_TYPE);
 	}
-	
-	
 
-	private void processCommentedElement(ICommentedElement element) {
-		try {
-			addCommentHeaderRegion(element);
-			
-			if (element.hasComment()) {
-				addElementRegion(element.getComment(), element, RodinConfiguration.COMMENT_TYPE);
-			} else {
-				addElementRegion("", element, RodinConfiguration.COMMENT_TYPE);
-			}
+	private void processCommentedElement(LightElement element) {
+		addCommentHeaderRegion(element);
+		final Attribute commentAttribute = element.getEAttributes().get(
+				EventBAttributes.COMMENT_ATTRIBUTE.getId());
+		if (commentAttribute != null) {
+			final String comment = processMulti((String) commentAttribute
+					.getValue());
+			addElementRegion(comment, element, RodinConfiguration.COMMENT_TYPE);
+		} else {
+			addElementRegion("", element, RodinConfiguration.COMMENT_TYPE);
+		}
+		builder.append(lineSeparator);
+	}
+
+	private void processPredicateElement(LightElement element) {
+		final Attribute predAttribute = element.getEAttributes().get(
+				EventBAttributes.PREDICATE_ATTRIBUTE.getId());
+		if (predAttribute != null) {
+			final String pred = processMulti((String) predAttribute.getValue());
+			addElementRegion(pred, element, RodinConfiguration.CONTENT_TYPE);
+		} else {
+			addElementRegion("", element, RodinConfiguration.CONTENT_TYPE);
+		}
+		builder.append(lineSeparator);
+	}
+
+	private void processAssignmentElement(LightElement element) {
+		final Attribute assignAttribute = element.getEAttributes().get(
+				EventBAttributes.ASSIGNMENT_ATTRIBUTE.getId());
+		if (assignAttribute != null) {
+			final String assign = processMulti((String) assignAttribute
+					.getValue());
+			addElementRegion(assign, element, RodinConfiguration.CONTENT_TYPE);
+		} else {
+			addElementRegion("", element, RodinConfiguration.CONTENT_TYPE);
+		}
+		builder.append(lineSeparator);
+	}
+
+	private String processMulti(String str) {
+		final StringBuilder sb = new StringBuilder();
+		final String[] split = str.split((String) lineSeparator);
+		int i = 0;
+		for (String s : split) {
+			if (i != 0)
+				sb.append(getTabs(level));
+			sb.append(s);
+			if (i != split.length - 1)
+				sb.append(lineSeparator);
+			i++;
+		}
+		return sb.toString();
+	}
+
+	private void processLabeledElement(LightElement element) {
+		final Attribute labelAttribute = element.getEAttributes().get(
+				EventBAttributes.LABEL_ATTRIBUTE.getId());
+		builder.append(getTabs(level));
+		if (labelAttribute != null) {
+			addElementRegion((String) labelAttribute.getValue(), element,
+					RodinConfiguration.IDENTIFIER_TYPE);
+			builder.append(" : ");
+		} else {
+			addElementRegion("", element, RodinConfiguration.IDENTIFIER_TYPE);
+		}
+		if (!element.getEChildren().isEmpty()) {
 			builder.append(lineSeparator);
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
-	
-	private void processPredicateElement(IPredicateElement element) {
-		try {			
-			if (element.hasPredicateString()) {
-				addElementRegion(element.getPredicateString(), element, RodinConfiguration.CONTENT_TYPE);
-			} else {
-				addElementRegion("", element, RodinConfiguration.CONTENT_TYPE);
+
+	private void processIdentifierElement(LightElement element) {
+		final Attribute identifierAttribute = element.getEAttributes().get(
+				EventBAttributes.IDENTIFIER_ATTRIBUTE.getId());
+		builder.append(getTabs(level));
+		if (identifierAttribute != null) {
+			addElementRegion((String) identifierAttribute.getValue(), element,
+					RodinConfiguration.IDENTIFIER_TYPE);
+		} else {
+			addElementRegion("", element, RodinConfiguration.IDENTIFIER_TYPE);
+		}
+	}
+
+	private void processElement(LightElement element) {
+		final IRodinElement rodinElement = (IRodinElement) element
+				.getERodinElement();
+		if (rodinElement instanceof ILabeledElement) {
+			if (rodinElement instanceof ICommentedElement) {
+				processCommentedElement(element);
 			}
-			builder.append(lineSeparator);
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			processLabeledElement(element);
 		}
-	}
-
-	private void processAssignmentElement(IAssignmentElement element) {
-		try {
-			if (element.hasAssignmentString()) {
-				addElementRegion(element.getAssignmentString(), element, RodinConfiguration.CONTENT_TYPE);
-			} else {
-				addElementRegion("", element, RodinConfiguration.CONTENT_TYPE);
+		if (rodinElement instanceof IIdentifierElement) {
+			processIdentifierElement(element);
+			if (rodinElement instanceof ICommentedElement) {
+				processCommentedElement(element);
 			}
-			builder.append(lineSeparator);
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+		if (rodinElement instanceof IPredicateElement) {
+			processPredicateElement(element);
+		}
+		if (rodinElement instanceof IAssignmentElement) {
+			processAssignmentElement(element);
+		}
+		// builder.append(lineSeparator);
 	}
 
-	
-	private void processLabeledElement(ILabeledElement element) {
-		try {
-
-			if (element.hasLabel()) {
-				addElementRegion(element.getLabel(), element, RodinConfiguration.IDENTIFIER_TYPE);
-			} else {
-				addElementRegion("", element, RodinConfiguration.IDENTIFIER_TYPE);
-			}
-//			builder.append(lineSeparator);
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	private void processIdentifierElement(IIdentifierElement element) {
-		try {
-			if (element.hasIdentifierString()) {
-				addElementRegion(element.getIdentifierString(), element, RodinConfiguration.IDENTIFIER_TYPE);
-			} else {
-				addElementRegion("", element, RodinConfiguration.IDENTIFIER_TYPE);
-			}
-//			builder.append(lineSeparator);
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	
-	private void processElement(IRodinElement element) {
-		if (element instanceof ILabeledElement) {
-			processLabeledElement((ILabeledElement) element);
-		}
-		if (element instanceof IIdentifierElement) {
-			processIdentifierElement((IIdentifierElement) element);
-		}
-		if (element instanceof ICommentedElement) {
-			processCommentedElement((ICommentedElement) element);
-		}
-		if (element instanceof IPredicateElement) {
-			processPredicateElement((IPredicateElement) element);
-		}
-		if (element instanceof IAssignmentElement) {
-			processAssignmentElement((IAssignmentElement) element);
-		}
-		builder.append(lineSeparator);
-	}
-	
-
-	private void processEvent(IEvent event) throws RodinDBException {
-
-		int start = builder.length();		
-		builder.append(tab);
-		processLabeledElement(event);
-		
-		builder.append(tab);
-		processCommentedElement(event);
-		
-		IGuard[] guards = event.getGuards();
-		for (IGuard guard : guards) {
-			addLabelRegion(getTabs(2), guard);
-			addElementRegion(guard.getLabel(), guard, RodinConfiguration.IDENTIFIER_TYPE);
-			addLabelRegion(": ", guard);
-			processPredicateElement(guard);
-		}
-		builder.append(lineSeparator);
-//		IWitness[] witnesses = event.getWitnesses();
-//		for (IWitness witness : witnesses) {
-//			processElement(witness);
-//		}
-//		
-		
-		IAction[] actions = event.getActions();
-		for (IAction action : actions) {
-			addLabelRegion(getTabs(2), action);
-			addElementRegion(action.getLabel(), action, RodinConfiguration.IDENTIFIER_TYPE);
-			addLabelRegion(": ", action);
-			processAssignmentElement(action);
-		}
-		builder.append(lineSeparator);
-		
-		
-		int length = builder.length() - start;
-		documentMapper.getEditorElement(event).setFoldingPosition(start, length);
-		
-		builder.append(lineSeparator);
-	}
-	
-	private void processInvariant(IInvariant invariant) throws RodinDBException {
-
-		builder.append(tab);
-		processLabeledElement(invariant);
-		
-		builder.append(tab);
-		processCommentedElement(invariant);
-		
-		builder.append(tab);
-		processPredicateElement(invariant);
-		
-		builder.append(lineSeparator);
-	}
-	
-	private void processVariable(IVariable variable) throws RodinDBException {
-
-		builder.append(tab);
-		processIdentifierElement(variable);
-		
-		builder.append(tab);
-		processCommentedElement(variable);
-		
-		builder.append(lineSeparator);
-	}
-
-	
 	public Position[] getFoldingRegions() {
 		return foldingRegions.toArray(new Position[foldingRegions.size()]);
 	}
-	
+
 	private String getTabs(int number) {
 		StringBuilder tabs = new StringBuilder();
 		for (int i = 0; i < number; i++) {

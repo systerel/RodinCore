@@ -8,7 +8,7 @@
             class="fr.systerel.editor.editors.RodinEditor"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
             default="true"
-            extensions="bum"
+            extensions="bum, buc"
             icon="icons/full/obj16/mch_obj.gif"
             id="fr.systerel.editor.editors.RodinEditor"
             name="%editorName">
@@ -51,6 +51,17 @@
             </with>
          </activeWhen>
       </handler>
+   </extension>
+   <extension
+         point="org.eclipse.emf.ecore.extension_parser">
+      <parser
+            class="org.rodinp.core.emf.lightcore.RodinResourceFactory"
+            type="buc">
+      </parser>
+      <parser
+            class="org.rodinp.core.emf.lightcore.RodinResourceFactory"
+            type="bum">
+      </parser>
    </extension>
 
 </plugin>

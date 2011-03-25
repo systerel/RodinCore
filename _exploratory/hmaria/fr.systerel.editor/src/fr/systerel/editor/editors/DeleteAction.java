@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
-  *******************************************************************************/
-
+ *******************************************************************************/
 package fr.systerel.editor.editors;
 
 import org.eclipse.jface.text.TextSelection;
@@ -17,36 +16,34 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.editor.documentModel.EditorElement;
+import fr.systerel.editor.documentModel.EditorItem;
 
 public class DeleteAction extends RodinEditorAction {
-	
-	
-	
+
 	public DeleteAction(RodinEditor editor) {
 		super(editor);
 	}
 
-	
-	public void run(){
-		ISelection selection =editor.getSelectionProvider().getSelection();
+	public void run() {
+		ISelection selection = editor.getSelectionProvider().getSelection();
 		if (selection instanceof TextSelection) {
-			TextSelection text =(TextSelection) selection;
-			EditorElement element = editor.getDocumentMapper().findEditorElement(text.getOffset(), text.getLength());
-//			System.out.println(element);
-			if (element != null) {
-				IRodinElement rodinElement = element.getRodinElement();
-//				System.out.println(rodinElement);
-				if (rodinElement != null) {
+			TextSelection text = (TextSelection) selection;
+			EditorItem element = editor.getDocumentMapper().findEditorElement(
+					text.getOffset(), text.getLength());
+			if (element != null && element instanceof EditorElement) {
+				IRodinElement toDelete = ((EditorElement) element)
+						.getRodinElement();
+				if (toDelete != null) {
 					try {
-						rodinElement.getRodinDB().delete(new IRodinElement[] {rodinElement}, true, null);
+						toDelete.getRodinDB().delete(
+								new IRodinElement[] { toDelete }, true,
+								null);
 					} catch (RodinDBException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 			}
 		}
 	}
-	
-	
+
 }

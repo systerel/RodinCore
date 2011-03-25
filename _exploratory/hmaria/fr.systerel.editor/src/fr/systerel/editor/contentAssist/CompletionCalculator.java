@@ -12,8 +12,8 @@
 package fr.systerel.editor.contentAssist;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
+import org.eclipse.emf.common.util.EList;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.IMachineRoot;
@@ -22,6 +22,7 @@ import org.eventb.core.ISeesContext;
 import org.eventb.core.IVariable;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.emf.lightcore.LightElement;
 
 import fr.systerel.editor.EditorUtils;
 import fr.systerel.editor.documentModel.DocumentMapper;
@@ -46,17 +47,18 @@ public class CompletionCalculator {
 		Interval interval = overlayEditor.getInterval();
 	
 		if (interval != null) {
-			IRodinElement element = interval.getElement();
+			LightElement element = interval.getElement();
 			if (element != null) {
+				IRodinElement rElement = (IRodinElement) element.getERodinElement();
 				if (element instanceof IRefinesMachine) {
-					IMachineRoot[] identifiers = getMachines(element);
+					IMachineRoot[] identifiers = getMachines(rElement);
 					for (IMachineRoot id : identifiers) {
 						result.add(id.getComponentName());
 					}
 					return result.toArray(new String[result.size()]);
 				}
 				if (element instanceof ISeesContext) {
-					IContextRoot[] identifiers = getContexts(element);
+					IContextRoot[] identifiers = getContexts(rElement);
 					for (IContextRoot id : identifiers) {
 						result.add(id.getComponentName());
 					}
@@ -82,14 +84,12 @@ public class CompletionCalculator {
 	
 	protected IIdentifierElement[] getVariablesAndConstants() {
 		ArrayList<IIdentifierElement> result = new ArrayList<IIdentifierElement>();
-		try {
-			result.addAll(Arrays.asList(documentMapper.getRoot().getChildrenOfType(IVariable.ELEMENT_TYPE)));
-			//TODO: add variables and constants from seen and refined machines.
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		final EList<LightElement> variables = documentMapper.getRoot()
+				.getElementsOfType(IVariable.ELEMENT_TYPE);
+		for (LightElement v : variables) {
+			result.add((IIdentifierElement) v.getERodinElement());
 		}
-		
+		// TODO: add variables and constants from seen and refined machines.
 		return result.toArray(new IIdentifierElement[result.size()]);
 	}
 	
@@ -97,7 +97,6 @@ public class CompletionCalculator {
 		try {
 			return EditorUtils.getMachineRootChildren(element.getRodinProject());
 		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -108,7 +107,6 @@ public class CompletionCalculator {
 		try {
 			return EditorUtils.getContextRootChildren(element.getRodinProject());
 		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

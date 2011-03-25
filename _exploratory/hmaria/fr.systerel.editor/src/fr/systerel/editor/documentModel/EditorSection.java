@@ -10,28 +10,25 @@
  *******************************************************************************/
 package fr.systerel.editor.documentModel;
 
-import org.rodinp.core.IRodinElement;
-import org.rodinp.core.emf.lightcore.LightElement;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 
-public class EditorElement extends EditorItem {
+public class EditorSection extends EditorItem {
 
-	private final LightElement element;
+	private final IInternalElementType<? extends IInternalElement> type;
 
-	public EditorElement(LightElement element) {
-		this.element = element;
+	public EditorSection(IInternalElementType<?> elementType) {
+		this.type = elementType;
 	}
-	
+
 	/**
-	 * Returns the light element associated to this item.  
+	 * Returns the type of the (direct children) elements which are contained in
+	 * this section.
 	 * 
-	 * @return the element associated with this EditorItem.
+	 * @return the type of the direct children of the section
 	 */
-	public LightElement getLightElement() {
-		return element;
-	}
-	
-	public IRodinElement getRodinElement() {
-		return (IRodinElement) element.getERodinElement();
+	public IInternalElementType<?> getElementType() {
+		return type;
 	}
 
 }

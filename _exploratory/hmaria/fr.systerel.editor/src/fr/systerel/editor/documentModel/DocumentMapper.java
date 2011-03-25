@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
-  *******************************************************************************/
-
+ *******************************************************************************/
 package fr.systerel.editor.documentModel;
 
 import java.util.ArrayList;
@@ -20,50 +19,52 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ICommentedElement;
-import org.eventb.core.IEventBRoot;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPredicateElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.emf.lightcore.LightElement;
 
 import fr.systerel.editor.editors.RodinConfiguration;
 
-
 /**
  * Maps <code>Intervals</code> to a document.
- * The following rule applies for Intervals:
- * An editable is never next to another editable interval.
- * For each offset there can be at most three intervals at that position.
- * Only editable intervals can be zero length.
- *
+ * 
+ * The following rules applies for Intervals:
+ * <ul>
+ * <li>an editable is never next to another editable interval.</li>
+ * <li>for each offset there can be at most three intervals at that position.</li>
+ * <li>only editable intervals can be zero length.</li>
+ * </ul>
  */
 public class DocumentMapper {
-	
+
 	private ArrayList<Interval> intervals = new ArrayList<Interval>();
-	private IEventBRoot root;
+	private LightElement root;
 	private Interval previous;
 	private IDocument document;
 	private RodinDocumentProvider documentProvider;
-	
-	private HashMap<IRodinElement, EditorElement> editorElements = new HashMap<IRodinElement, EditorElement>();
-	private HashMap<IInternalElementType<?>, EditorElement> editorElementsWithType = new HashMap<IInternalElementType<?>, EditorElement>();
-	
+
+	private HashMap<LightElement, EditorItem> editorElements = new HashMap<LightElement, EditorItem>();
+	private HashMap<IInternalElementType<?>, EditorItem> sections = new HashMap<IInternalElementType<?>, EditorItem>();
+
 	/**
-	 * Adds an interval to the document mapper at the end of the list.
-	 * The intervals must be added in the order they appear in the text!
+	 * Adds an interval to the document mapper at the end of the list. The
+	 * intervals must be added in the order they appear in the text!
+	 * 
 	 * @param interval
 	 * @throws Exception
 	 */
 	public void addInterval(Interval interval) throws Exception {
 		if (intervals.size() > 0) {
-			if (intervals.get(intervals.size() -1).compareTo(interval) > 0) {
+			if (intervals.get(intervals.size() - 1).compareTo(interval) > 0) {
 				throw new Exception("Insertion must be sorted");
 			}
 		}
 		intervals.add(interval);
-		
+
 	}
 
 	/**
@@ -79,75 +80,78 @@ public class DocumentMapper {
 	public void addIntervalAfter(Interval interval, Interval previous) {
 		int index = intervals.indexOf(previous);
 		if (index >= 0 && index < intervals.size()) {
-			intervals.add(index +1, interval);
+			intervals.add(index + 1, interval);
 		} else {
 			try {
 				addInterval(interval);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		
+
 	}
-	
+
 	/**
-	 * returns all intervals that are contained in the range starting from offset
-	 * @param offset The offset of the range.
-	 * @param length The length of the range
+	 * returns all intervals that are contained in the range starting from
+	 * offset
+	 * 
+	 * @param offset
+	 *            The offset of the range.
+	 * @param length
+	 *            The length of the range
 	 * @return All intervals that are found in the range.
 	 */
 	public Interval[] findIntervals(int offset, int length) {
-		int index =  findFirstIntervalIndex(offset);
+		int index = findFirstIntervalIndex(offset);
 		if (index >= 0) {
-			ArrayList<Interval> results =  new ArrayList<Interval>();
+			ArrayList<Interval> results = new ArrayList<Interval>();
 			for (int i = index; i < intervals.size(); i++) {
-				if (intervals.get(i).getOffset() <= offset +length) {
+				if (intervals.get(i).getOffset() <= offset + length) {
 					results.add(intervals.get(i));
 				}
-				
+
 			}
 			return results.toArray(new Interval[results.size()]);
-		}
-		else if (intervals.size() > 0 && index < intervals.get(0).getOffset()) {
-			ArrayList<Interval> results =  new ArrayList<Interval>();
-			for (Interval interval: intervals) {
-				if (interval.getOffset() <= offset +length) {
+		} else if (intervals.size() > 0 && index < intervals.get(0).getOffset()) {
+			ArrayList<Interval> results = new ArrayList<Interval>();
+			for (Interval interval : intervals) {
+				if (interval.getOffset() <= offset + length) {
 					results.add(interval);
 				}
-				
+
 			}
 			return results.toArray(new Interval[results.size()]);
-			
+
 		}
-		
+
 		return new Interval[0];
 	}
-	
+
 	/**
 	 * Binary search to find an interval that contains an offset
+	 * 
 	 * @param offset
 	 * @return
 	 */
 	private int findIntervalIndex(int offset) {
 		int low = 0;
-		int high =  intervals.size()-1;
+		int high = intervals.size() - 1;
 		int mid;
-		while  (low <= high ) {
-			mid =  (low + high)/2;
-			
+		while (low <= high) {
+			mid = (low + high) / 2;
+
 			if (intervals.get(mid).getOffset() > offset) {
-				high =  mid -1;
-			}
-			else if (intervals.get(mid).getOffset() < offset 
-					&& (intervals.get(mid).getOffset() + intervals.get(mid).getLength() < offset)) {
-				low =  mid +1;
-			}
-			else return mid;
+				high = mid - 1;
+			} else if (intervals.get(mid).getOffset() < offset
+					&& (intervals.get(mid).getOffset()
+							+ intervals.get(mid).getLength() < offset)) {
+				low = mid + 1;
+			} else
+				return mid;
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * Finds the first interval that contains an offset (includes intervals
 	 * ending at that position)
@@ -157,27 +161,29 @@ public class DocumentMapper {
 	 */
 	protected int findFirstIntervalIndex(int offset) {
 		int result = findIntervalIndex(offset);
-		//check the two previous intervals.
+		// check the two previous intervals.
 		if (result > 0) {
-			Interval previous = intervals.get(result- 1);
-			if (previous.getOffset() +previous.getLength() >= offset) {
-				result = result -1;
+			Interval previous = intervals.get(result - 1);
+			if (previous.getOffset() + previous.getLength() >= offset) {
+				result = result - 1;
 			}
 		}
 		if (result > 0) {
-			Interval previous = intervals.get(result- 1);
-			if (previous.getOffset() +previous.getLength() >= offset) {
-				result = result -1;
+			Interval previous = intervals.get(result - 1);
+			if (previous.getOffset() + previous.getLength() >= offset) {
+				result = result - 1;
 			}
 		}
-		
+
 		return result;
 	}
 
 	/**
 	 * Finds an editable interval for a given offset
+	 * 
 	 * @param offset
-	 * @return the editable interval at the given offset or <code>null</code> if none exists.
+	 * @return the editable interval at the given offset or <code>null</code> if
+	 *         none exists.
 	 */
 	public Interval findEditableInterval(int offset) {
 		int index = findEditableIntervalIndex(offset);
@@ -203,7 +209,6 @@ public class DocumentMapper {
 		return null;
 	}
 
-	
 	/**
 	 * Finds the index of the first interval that starts after a given offset.
 	 * 
@@ -219,18 +224,18 @@ public class DocumentMapper {
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * Finds the last editable interval that ends before a given offset.
 	 * 
 	 * @param offset
-	 * @return the editable interval before given offset or <code>null</code>
-	 *         if none exists.
+	 * @return the editable interval before given offset or <code>null</code> if
+	 *         none exists.
 	 */
 	public Interval findEditableIntervalBefore(int offset) {
 		Interval previous = null;
 		for (Interval interval : intervals) {
-			if (interval.getOffset() + interval.getLength() >=  offset) {
+			if (interval.getOffset() + interval.getLength() >= offset) {
 				return previous;
 			}
 			if (interval.isEditable()) {
@@ -239,37 +244,41 @@ public class DocumentMapper {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Finds the index of an interval that contains a given offset and is editable.
+	 * Finds the index of an interval that contains a given offset and is
+	 * editable.
+	 * 
 	 * @param offset
 	 * @return The index of the resulting interval or -1 if none was found.
 	 */
 	protected int findEditableIntervalIndex(int offset) {
-		//an editable is never next to another editable interval (or in the same position)
-		//for each offset there can be at most three intervals at that position
-		//only editable intervals can be zero length.
+		// an editable is never next to another editable interval (or in the
+		// same position)
+		// for each offset there can be at most three intervals at that position
+		// only editable intervals can be zero length.
 		int index = findFirstIntervalIndex(offset);
 		if (index >= 0 && index < intervals.size()) {
 			Interval interval = intervals.get(index);
 			if (interval.isEditable()) {
 				return index;
-			} 
+			}
 			// try the next one
 			if (index + 1 < intervals.size()) {
-				interval = intervals.get(index +1);
-				if (offset >= interval.getOffset() && offset <= interval.getOffset() +interval.getLength()) {
+				interval = intervals.get(index + 1);
+				if (offset >= interval.getOffset()
+						&& offset <= interval.getOffset()
+								+ interval.getLength()) {
 					if (interval.isEditable()) {
-						return index +1;
-					} 
+						return index + 1;
+					}
 				}
-				
+
 			}
 		}
 		return -1;
 	}
 
-	
 	protected Interval findFirstInterval(int offset) {
 		int index = findFirstIntervalIndex(offset);
 		if (index >= 0 && index < intervals.size()) {
@@ -277,7 +286,7 @@ public class DocumentMapper {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Processes an interval. Creates and adds a new interval, if there exists
 	 * none yet. Otherwise updates length and offset. It is expected that this
@@ -288,7 +297,8 @@ public class DocumentMapper {
 	 * @param element
 	 * @param contentType
 	 */
-	public void processInterval(int offset, int length, IRodinElement element, String contentType) {
+	public void processInterval(int offset, int length, LightElement element,
+			String contentType) {
 		Interval inter;
 		if (Interval.isEditableType(contentType)) {
 			inter = findInterval(element, contentType);
@@ -296,42 +306,39 @@ public class DocumentMapper {
 				inter.setLength(length);
 				inter.setOffset(offset);
 			} else {
-				inter= new Interval(offset, length, element, contentType);
+				inter = new Interval(offset, length, element, contentType);
 				try {
 					addIntervalAfter(inter, previous);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		} else {
-			if (intervals.indexOf(previous) < intervals.size()-1){
-				inter = intervals.get(intervals.indexOf(previous) +1);
+			if (intervals.indexOf(previous) < intervals.size() - 1) {
+				inter = intervals.get(intervals.indexOf(previous) + 1);
 				inter.setLength(length);
 				inter.setOffset(offset);
 			} else {
-				inter= new Interval(offset, length, element, contentType);
+				inter = new Interval(offset, length, element, contentType);
 				try {
 					addInterval(inter);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		}
 		previous = inter;
 		if (element != null) {
-			EditorElement el = editorElements.get(element);
+			EditorItem el = editorElements.get(element);
 			if (el == null) {
 				el = new EditorElement(element);
 			}
 			el.addInterval(inter);
 			editorElements.put(element, el);
 		}
-		
-		
+
 	}
-	
+
 	/**
 	 * Finds the first interval that belongs to the given element
 	 * 
@@ -339,7 +346,7 @@ public class DocumentMapper {
 	 * @return the first interval that belongs to the given element
 	 */
 	public Interval findInterval(IRodinElement element) {
-		//TODO: adapt this method to editorElements. will be faster?
+		// TODO: adapt this method to editorElements. will be faster?
 		for (Interval interval : intervals) {
 			if (element.equals(interval.getElement())) {
 				return interval;
@@ -350,96 +357,99 @@ public class DocumentMapper {
 
 	/**
 	 * Finds the first interval that belongs to the given element and has a
-	 * given contentType. 
+	 * given contentType.
 	 * 
 	 * @param element
 	 * @param contentType
 	 * @return the first interval that belongs to the given element
 	 */
-	public Interval findInterval(IRodinElement element, String contentType) {
-		//TODO: adapt this method to editorElements. will be faster?
+	public Interval findInterval(LightElement element, String contentType) {
+		// TODO: adapt this method to editorElements. will be faster?
 		for (Interval interval : intervals) {
-			if (element.equals(interval.getElement()) && interval.getContentType().equals(contentType)) {
+			if (element.equals(interval.getElement())
+					&& interval.getContentType().equals(contentType)) {
 				return interval;
 			}
 		}
 		return null;
 	}
-	
-	
+
 	public ArrayList<Interval> getIntervals() {
 		return intervals;
 	}
-	
-	public IEventBRoot getRoot() {
+
+	public LightElement getRoot() {
 		return root;
 	}
 
-	public void setRoot(IEventBRoot root) {
+	public void setRoot(LightElement root) {
 		this.root = root;
 	}
-	
+
 	public void resetPrevious() {
 		previous = null;
 	}
 
-	public EditorElement[] getEditorElements() {
-		return editorElements.values().toArray(new EditorElement[editorElements.size()]);
+	public EditorItem[] getEditorElements() {
+		return editorElements.values().toArray(
+				new EditorItem[editorElements.size()]);
 	}
 
-	public EditorElement[] getEditorElementsWithType() {
-		return editorElementsWithType.values().toArray(new EditorElement[editorElements.size()]);
+	public EditorItem[] getEditorElementsWithType() {
+		return sections.values().toArray(
+				new EditorItem[editorElements.size()]);
 	}
-	
-	public EditorElement getEditorElement(IRodinElement key) {
+
+	public EditorItem getEditorElement(LightElement key) {
 		return editorElements.get(key);
 	}
 
-	public EditorElement getEditorElementWithType(IRodinElement key) {
-		return editorElementsWithType.get(key);
+	public EditorItem getEditorSection(LightElement key) {
+		return sections.get(key);
 	}
-	
-	public void addEditorElement(IRodinElement key, EditorElement value) {
+
+	public void addEditorElement(LightElement key, EditorItem value) {
 		editorElements.put(key, value);
 	}
 
-	public void addEditorElementWithType(IInternalElementType<?> key, EditorElement value) {
-		editorElementsWithType.put(key, value);
+	public void addEditorSection(IInternalElementType<?> key,
+			EditorSection value) {
+		sections.put(key, value);
 	}
 
-	public void addEditorElementWithType(IInternalElementType<?> type, int folding_start, int folding_length) {
-		EditorElement el = editorElementsWithType.get(type);
-		if (el == null ) {
-			el = new EditorElement(type);
-			editorElementsWithType.put(type, el);
+	public void addEditorSection(IInternalElementType<?> type,
+			int folding_start, int folding_length) {
+		EditorItem el = sections.get(type);
+		if (el == null) {
+			el = new EditorSection(type);
+			sections.put(type, el);
 		}
 		el.setFoldingPosition(folding_start, folding_length);
 	}
-	
+
 	public Position[] getFoldingPositions() {
 		ArrayList<Position> result = new ArrayList<Position>();
-		for (EditorElement el : editorElements.values()) {
+		for (EditorItem el : editorElements.values()) {
 			if (el.getFoldingPosition() != null) {
 				result.add(el.getFoldingPosition());
 			}
 		}
-		for (EditorElement el : editorElementsWithType.values()) {
+		for (EditorItem el : sections.values()) {
 			if (el.getFoldingPosition() != null) {
 				result.add(el.getFoldingPosition());
 			}
 		}
 		return result.toArray(new Position[result.size()]);
 	}
-	
-	
+
 	public ProjectionAnnotation[] getFoldingAnnotations() {
 		ArrayList<ProjectionAnnotation> result = new ArrayList<ProjectionAnnotation>();
-		for (EditorElement el : editorElements.values()) {
+		for (EditorItem el : editorElements.values()) {
 			if (el.getFoldingAnnotation() != null) {
 				result.add(el.getFoldingAnnotation());
 			}
 		}
-		for (EditorElement el : editorElementsWithType.values()) {
+		for (EditorItem el : sections.values()) {
 			if (el.getFoldingAnnotation() != null) {
 				result.add(el.getFoldingAnnotation());
 			}
@@ -448,74 +458,76 @@ public class DocumentMapper {
 	}
 
 	public void elementChanged(IRodinElement element) {
-		EditorElement el = editorElements.get(element);
+		EditorItem el = editorElements.get(element);
 		if (el != null) {
 			for (Interval interval : el.getIntervals()) {
 				try {
-					if (element instanceof IIdentifierElement && 
-							interval.getContentType().equals(RodinConfiguration.IDENTIFIER_TYPE)) {
+					if (element instanceof IIdentifierElement
+							&& interval.getContentType().equals(
+									RodinConfiguration.IDENTIFIER_TYPE)) {
 						checkIdentifier((IIdentifierElement) element, interval);
-					}
-					else if (element instanceof ILabeledElement && 
-							interval.getContentType().equals(RodinConfiguration.IDENTIFIER_TYPE)) {
+					} else if (element instanceof ILabeledElement
+							&& interval.getContentType().equals(
+									RodinConfiguration.IDENTIFIER_TYPE)) {
 						checkLabeled((ILabeledElement) element, interval);
-					}
-					else if (element instanceof IAssignmentElement && 
-							interval.getContentType().equals(RodinConfiguration.CONTENT_TYPE)) {
+					} else if (element instanceof IAssignmentElement
+							&& interval.getContentType().equals(
+									RodinConfiguration.CONTENT_TYPE)) {
 						checkAssignment((IAssignmentElement) element, interval);
-					}
-					else if (element instanceof IPredicateElement && 
-							interval.getContentType().equals(RodinConfiguration.CONTENT_TYPE)) {
+					} else if (element instanceof IPredicateElement
+							&& interval.getContentType().equals(
+									RodinConfiguration.CONTENT_TYPE)) {
 						checkPredicate((IPredicateElement) element, interval);
-					}
-					else if (element instanceof ICommentedElement && 
-							interval.getContentType().equals(RodinConfiguration.COMMENT_TYPE)) {
+					} else if (element instanceof ICommentedElement
+							&& interval.getContentType().equals(
+									RodinConfiguration.COMMENT_TYPE)) {
 						checkCommented((ICommentedElement) element, interval);
 					}
 				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
-					
+
 				}
 			}
 		}
 	}
-	
-	public void elementRemoved(IRodinElement element){
-		System.out.println("element removed: " +element);
-		EditorElement editorElement = editorElements.get(element);
+
+	public void elementRemoved(IRodinElement element) {
+		System.out.println("element removed: " + element);
+		EditorItem editorElement = editorElements.get(element);
 		if (editorElement != null) {
 			int offset = editorElement.getOffset();
-			int length =  editorElement.getLength();
+			int length = editorElement.getLength();
 			removeElements(offset, length);
 			removeIntervals(offset, length);
 			adaptFoldingPositions(offset, -length);
-			
+
 			documentProvider.replaceTextInDocument(offset, length, "");
 		}
 	}
 
 	protected void removeElements(int offset, int length) {
-		ArrayList<EditorElement> toRemove = new ArrayList<EditorElement>();
-		for (EditorElement element : editorElements.values()) {
-			if (element.getOffset() >= offset && element.getOffset() +element.getLength() <= offset +length ) {
+		ArrayList<EditorItem> toRemove = new ArrayList<EditorItem>();
+		for (EditorItem element : editorElements.values()) {
+			if (element.getOffset() >= offset
+					&& element.getOffset() + element.getLength() <= offset
+							+ length) {
 				toRemove.add(element);
 				element.dispose();
 			}
 		}
 		editorElements.values().removeAll(toRemove);
 		toRemove.clear();
-		for (EditorElement element : editorElementsWithType.values()) {
+		for (EditorItem element : sections.values()) {
 			toRemove.add(element);
 		}
-		editorElementsWithType.values().removeAll(toRemove);
+		sections.values().removeAll(toRemove);
 	}
-	
+
 	protected void removeIntervals(int offset, int length) {
 		ArrayList<Interval> toRemove = new ArrayList<Interval>();
 		for (Interval interval : intervals) {
-			int end = interval.getOffset() +interval.getLength();
-			if (interval.getOffset() >= offset && end <=  offset +length) {
+			int end = interval.getOffset() + interval.getLength();
+			if (interval.getOffset() >= offset && end <= offset + length) {
 				toRemove.add(interval);
 			}
 			if (interval.getOffset() > offset) {
@@ -524,12 +536,12 @@ public class DocumentMapper {
 		}
 		intervals.removeAll(toRemove);
 		adaptIntervalOffsetsFrom(findIntervalIndexAfter(offset), -length);
-			
+
 	}
-	
+
 	private void checkLabeled(ILabeledElement element, Interval interval)
 			throws RodinDBException {
-		if ( element.hasLabel()) {
+		if (element.hasLabel()) {
 			String text = element.getLabel();
 			synchronizeInterval(interval, text);
 		}
@@ -558,7 +570,7 @@ public class DocumentMapper {
 			synchronizeInterval(interval, text);
 		}
 	}
-	
+
 	private void checkCommented(ICommentedElement element, Interval interval)
 			throws RodinDBException {
 		if (element.hasComment()) {
@@ -566,8 +578,7 @@ public class DocumentMapper {
 			synchronizeInterval(interval, text);
 		}
 	}
-	
-	
+
 	public IDocument getDocument() {
 		return document;
 	}
@@ -575,7 +586,7 @@ public class DocumentMapper {
 	public void setDocument(IDocument document) {
 		this.document = document;
 	}
-	
+
 	/**
 	 * Adapts the offset of the intervals starting from a given index in the
 	 * list.
@@ -604,22 +615,23 @@ public class DocumentMapper {
 	 *            The delta of the change
 	 */
 	public void adaptFoldingPositions(int offset, int delta) {
-		ArrayList<EditorElement> elements = new ArrayList<EditorElement>(editorElements.values());
-		elements.addAll(editorElementsWithType.values());
-		for (EditorElement el : elements) {
+		ArrayList<EditorItem> elements = new ArrayList<EditorItem>(
+				editorElements.values());
+		elements.addAll(sections.values());
+		for (EditorItem el : elements) {
 			Position pos = el.getFoldingPosition();
-			if (pos  != null) {
-				//change happened inside position
-				if (pos.getOffset() <= offset && pos.getOffset() +pos.getLength() >= offset) {
-					pos.setLength(pos.getLength() +delta);
-				//change happened ahead of position
-				} else if ( pos.getOffset() > offset) {
-					pos.setOffset(pos.getOffset() +delta);
+			if (pos != null) {
+				// change happened inside position
+				if (pos.getOffset() <= offset
+						&& pos.getOffset() + pos.getLength() >= offset) {
+					pos.setLength(pos.getLength() + delta);
+					// change happened ahead of position
+				} else if (pos.getOffset() > offset) {
+					pos.setOffset(pos.getOffset() + delta);
 				}
 			}
 		}
 	}
-
 
 	/**
 	 * Gets the text that is bound by the given interval from the underlying
@@ -627,21 +639,20 @@ public class DocumentMapper {
 	 * 
 	 * @param interval
 	 * @return The text to be found in the document within the interval bounds,
-	 *         or <code>null</code> if the bounds of the interval do not
-	 *         conform with the document.
+	 *         or <code>null</code> if the bounds of the interval do not conform
+	 *         with the document.
 	 */
 	protected String getTextFromDocument(Interval interval) {
-		if (document != null ){
+		if (document != null) {
 			try {
 				return document.get(interval.getOffset(), interval.getLength());
 			} catch (BadLocationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Synchronizes a given interval with its representation in the text. I.e.
 	 * the text area in the document represented by the document is replaced by
@@ -656,27 +667,27 @@ public class DocumentMapper {
 	 */
 	protected void synchronizeInterval(Interval interval, String new_Text) {
 		String old_text = getTextFromDocument(interval);
-		if (!old_text.equals(new_Text)){
-			adaptIntervalOffsetsFrom(intervals.indexOf(interval) +1, new_Text.length() - old_text.length());
-			adaptFoldingPositions(interval.getOffset(), new_Text.length() - old_text.length());
+		if (!old_text.equals(new_Text)) {
+			adaptIntervalOffsetsFrom(intervals.indexOf(interval) + 1,
+					new_Text.length() - old_text.length());
+			adaptFoldingPositions(interval.getOffset(), new_Text.length()
+					- old_text.length());
 			documentProvider.replaceTextInDocument(interval, new_Text);
 			interval.setLength(new_Text.length());
 		}
 	}
-	
 
 	public void setDocumentProvider(RodinDocumentProvider documentProvider) {
 		this.documentProvider = documentProvider;
 	}
-	
-	
-	public EditorElement findEditorElement(int offset, int length) {
-		for (EditorElement element : editorElements.values()) {
+
+	public EditorItem findEditorElement(int offset, int length) {
+		for (EditorItem element : editorElements.values()) {
 			if (element.getOffset() == offset && element.getLength() == length) {
 				return element;
 			}
 		}
 		return null;
 	}
-	
+
 }
