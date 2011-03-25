@@ -22,12 +22,15 @@ import org.rodinp.core.IInternalElement;
  * <!-- end-user-doc -->
  *
  *
+ * @see org.rodinp.core.emf.api.ApiPackage#getILElement()
+ * @model interface="true" abstract="true"
  * @generated
  */
 public interface ILElement {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @model kind="operation" dataType="org.rodinp.core.emf.api.itf.List<org.rodinp.core.emf.api.itf.ILElement>" many="false"
 	 * @generated
 	 */
 	List<ILElement> getChildren();
@@ -35,6 +38,7 @@ public interface ILElement {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @model kind="operation" dataType="org.rodinp.core.emf.api.itf.List<org.rodinp.core.emf.api.itf.IAttributeValue>" many="false"
 	 * @generated
 	 */
 	List<IAttributeValue> getAttributes();
@@ -42,6 +46,7 @@ public interface ILElement {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @model dataType="org.rodinp.core.emf.api.itf.IAttributeValue" typeDataType="org.rodinp.core.emf.api.itf.IAttributeType"
 	 * @generated
 	 */
 	IAttributeValue getAttribute(IAttributeType type);
@@ -49,6 +54,7 @@ public interface ILElement {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @model valueDataType="org.rodinp.core.emf.api.itf.IAttributeValue"
 	 * @generated
 	 */
 	void setAttribute(IAttributeValue value);
@@ -56,6 +62,7 @@ public interface ILElement {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @model kind="operation" dataType="org.rodinp.core.emf.api.itf.IInternalElement"
 	 * @generated
 	 */
 	IInternalElement getElement();
@@ -63,6 +70,7 @@ public interface ILElement {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @model
 	 * @generated
 	 */
 	void delete();
@@ -70,6 +78,7 @@ public interface ILElement {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @model
 	 * @generated
 	 */
 	void moveChild(int newPos, int oldPos);

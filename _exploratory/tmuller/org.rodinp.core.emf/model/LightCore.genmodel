@@ -54,8 +54,24 @@
     <genDataTypes ecoreDataType="api.ecore#//List">
       <genTypeParameters ecoreTypeParameter="api.ecore#//List/T"/>
     </genDataTypes>
+    <genDataTypes ecoreDataType="api.ecore#//IAttributeType"/>
+    <genDataTypes ecoreDataType="api.ecore#//IAttributeValue"/>
+    <genDataTypes ecoreDataType="api.ecore#//IInternalElement"/>
     <genClasses image="false" ecoreClass="api.ecore#//ILElement">
       <genOperations ecoreOperation="api.ecore#//ILElement/getChildren"/>
+      <genOperations ecoreOperation="api.ecore#//ILElement/getAttributes"/>
+      <genOperations ecoreOperation="api.ecore#//ILElement/getAttribute">
+        <genParameters ecoreParameter="api.ecore#//ILElement/getAttribute/type"/>
+      </genOperations>
+      <genOperations ecoreOperation="api.ecore#//ILElement/setAttribute">
+        <genParameters ecoreParameter="api.ecore#//ILElement/setAttribute/value"/>
+      </genOperations>
+      <genOperations ecoreOperation="api.ecore#//ILElement/getElement"/>
+      <genOperations ecoreOperation="api.ecore#//ILElement/delete"/>
+      <genOperations ecoreOperation="api.ecore#//ILElement/moveChild">
+        <genParameters ecoreParameter="api.ecore#//ILElement/moveChild/newPos"/>
+        <genParameters ecoreParameter="api.ecore#//ILElement/moveChild/oldPos"/>
+      </genOperations>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

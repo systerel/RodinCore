@@ -14,9 +14,15 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
+
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
+
 import org.rodinp.core.emf.api.ApiFactory;
+
+import org.rodinp.core.emf.api.ApiPackage;
+import org.rodinp.core.emf.api.itf.*;
 
 /**
  * <!-- begin-user-doc -->
@@ -26,22 +32,14 @@ import org.rodinp.core.emf.api.ApiFactory;
  */
 public class ApiFactoryImpl extends EFactoryImpl implements ApiFactory {
 	/**
-	 * The singleton instance of the factory.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public static final ApiFactoryImpl eINSTANCE = init();
-
-	/**
 	 * Creates the default factory implementation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public static ApiFactoryImpl init() {
+	public static ApiFactory init() {
 		try {
-			ApiFactoryImpl theApiFactory = (ApiFactoryImpl) EPackage.Registry.INSTANCE
+			ApiFactory theApiFactory = (ApiFactory) EPackage.Registry.INSTANCE
 					.getEFactory("http://emf.core.rodinp.org/models/lightcore/api");
 			if (theApiFactory != null) {
 				return theApiFactory;
@@ -109,8 +107,8 @@ public class ApiFactoryImpl extends EFactoryImpl implements ApiFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ApiPackageImpl getApiPackage() {
-		return (ApiPackageImpl) getEPackage();
+	public ApiPackage getApiPackage() {
+		return (ApiPackage) getEPackage();
 	}
 
 	/**
@@ -120,8 +118,8 @@ public class ApiFactoryImpl extends EFactoryImpl implements ApiFactory {
 	 * @generated
 	 */
 	@Deprecated
-	public static ApiPackageImpl getPackage() {
-		return ApiPackageImpl.eINSTANCE;
+	public static ApiPackage getPackage() {
+		return ApiPackage.eINSTANCE;
 	}
 
 } //ApiFactoryImpl

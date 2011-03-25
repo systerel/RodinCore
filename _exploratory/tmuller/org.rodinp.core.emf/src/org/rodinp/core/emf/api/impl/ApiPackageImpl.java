@@ -24,8 +24,10 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
+
 import org.rodinp.core.emf.api.ApiFactory;
 
+import org.rodinp.core.emf.api.ApiPackage;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 /**
@@ -39,102 +41,9 @@ import org.rodinp.core.emf.api.itf.ILElement;
  *   <li>and each data type</li>
  * </ul>
  * <!-- end-user-doc -->
- * @see org.rodinp.core.emf.api.ApiFactory
  * @generated
  */
-public class ApiPackageImpl extends EPackageImpl {
-	/**
-	 * The package name.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public static final String eNAME = "api";
-
-	/**
-	 * The package namespace URI.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public static final String eNS_URI = "http://emf.core.rodinp.org/models/lightcore/api";
-
-	/**
-	 * The package namespace name.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public static final String eNS_PREFIX = "org.rodinp.core.emf.lightcore.api";
-
-	/**
-	 * The singleton instance of the package.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public static final ApiPackageImpl eINSTANCE = org.rodinp.core.emf.api.impl.ApiPackageImpl
-			.init();
-
-	/**
-	 * The meta object id for the '{@link org.rodinp.core.emf.api.itf.ILElement <em>IL Element</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.rodinp.core.emf.api.itf.ILElement
-	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getILElement()
-	 * @generated
-	 */
-	public static final int IL_ELEMENT = 0;
-
-	/**
-	 * The number of structural features of the '<em>IL Element</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int IL_ELEMENT_FEATURE_COUNT = 0;
-
-	/**
-	 * The meta object id for the '<em>List</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see java.util.List
-	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getList()
-	 * @generated
-	 */
-	public static final int LIST = 1;
-
-	/**
-	 * The meta object id for the '<em>IAttribute Type</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.rodinp.core.IAttributeType
-	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getIAttributeType()
-	 * @generated
-	 */
-	public static final int IATTRIBUTE_TYPE = 2;
-
-	/**
-	 * The meta object id for the '<em>IAttribute Value</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.rodinp.core.IAttributeValue
-	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getIAttributeValue()
-	 * @generated
-	 */
-	public static final int IATTRIBUTE_VALUE = 3;
-
-	/**
-	 * The meta object id for the '<em>IInternal Element</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.rodinp.core.IInternalElement
-	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getIInternalElement()
-	 * @generated
-	 */
-	public static final int IINTERNAL_ELEMENT = 4;
-
+public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -181,12 +90,12 @@ public class ApiPackageImpl extends EPackageImpl {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see org.eclipse.emf.ecore.EPackage.Registry
-	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#eNS_URI
+	 * @see org.rodinp.core.emf.api.ApiPackage#eNS_URI
 	 * @see #init()
 	 * @generated
 	 */
 	private ApiPackageImpl() {
-		super(eNS_URI, ((EFactory) ApiFactory.INSTANCE));
+		super(eNS_URI, ApiFactory.eINSTANCE);
 	}
 
 	/**
@@ -199,7 +108,7 @@ public class ApiPackageImpl extends EPackageImpl {
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
 	 * 
-	 * <p>This method is used to initialize {@link ApiPackageImpl#eINSTANCE} when that field is accessed.
+	 * <p>This method is used to initialize {@link ApiPackage#eINSTANCE} when that field is accessed.
 	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -208,10 +117,10 @@ public class ApiPackageImpl extends EPackageImpl {
 	 * @see #initializePackageContents()
 	 * @generated
 	 */
-	public static ApiPackageImpl init() {
+	public static ApiPackage init() {
 		if (isInited)
-			return (ApiPackageImpl) EPackage.Registry.INSTANCE
-					.getEPackage(ApiPackageImpl.eNS_URI);
+			return (ApiPackage) EPackage.Registry.INSTANCE
+					.getEPackage(ApiPackage.eNS_URI);
 
 		// Obtain or create and register package
 		ApiPackageImpl theApiPackage = (ApiPackageImpl) (EPackage.Registry.INSTANCE
@@ -230,16 +139,13 @@ public class ApiPackageImpl extends EPackageImpl {
 		theApiPackage.freeze();
 
 		// Update the registry and return the package
-		EPackage.Registry.INSTANCE.put(ApiPackageImpl.eNS_URI, theApiPackage);
+		EPackage.Registry.INSTANCE.put(ApiPackage.eNS_URI, theApiPackage);
 		return theApiPackage;
 	}
 
 	/**
-	 * Returns the meta object for class '{@link org.rodinp.core.emf.api.itf.ILElement <em>IL Element</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>IL Element</em>'.
-	 * @see org.rodinp.core.emf.api.itf.ILElement
 	 * @generated
 	 */
 	public EClass getILElement() {
@@ -247,11 +153,8 @@ public class ApiPackageImpl extends EPackageImpl {
 	}
 
 	/**
-	 * Returns the meta object for data type '{@link java.util.List <em>List</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>List</em>'.
-	 * @see java.util.List
 	 * @generated
 	 */
 	public EDataType getList() {
@@ -259,11 +162,8 @@ public class ApiPackageImpl extends EPackageImpl {
 	}
 
 	/**
-	 * Returns the meta object for data type '{@link org.rodinp.core.IAttributeType <em>IAttribute Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>IAttribute Type</em>'.
-	 * @see org.rodinp.core.IAttributeType
 	 * @generated
 	 */
 	public EDataType getIAttributeType() {
@@ -271,11 +171,8 @@ public class ApiPackageImpl extends EPackageImpl {
 	}
 
 	/**
-	 * Returns the meta object for data type '{@link org.rodinp.core.IAttributeValue <em>IAttribute Value</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>IAttribute Value</em>'.
-	 * @see org.rodinp.core.IAttributeValue
 	 * @generated
 	 */
 	public EDataType getIAttributeValue() {
@@ -283,11 +180,8 @@ public class ApiPackageImpl extends EPackageImpl {
 	}
 
 	/**
-	 * Returns the meta object for data type '{@link org.rodinp.core.IInternalElement <em>IInternal Element</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>IInternal Element</em>'.
-	 * @see org.rodinp.core.IInternalElement
 	 * @generated
 	 */
 	public EDataType getIInternalElement() {
@@ -295,10 +189,8 @@ public class ApiPackageImpl extends EPackageImpl {
 	}
 
 	/**
-	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the factory that creates the instances of the model.
 	 * @generated
 	 */
 	public ApiFactory getApiFactory() {
