@@ -18,4 +18,6 @@ package org.rodinp.core.emf.api.itf;
 public interface ILFile {
 
 	ILElement getRoot();
+	
+	boolean isEmpty();
 }

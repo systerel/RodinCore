@@ -176,4 +176,9 @@ public class RodinResource extends ResourceImpl implements ILFile {
 	public ILElement getRoot() {
 		return (ILElement) getContents().get(0);
 	}
+
+	@Override
+	public boolean isEmpty() {
+		return getContents().isEmpty();
+	}
 }

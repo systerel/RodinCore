@@ -18,17 +18,12 @@ import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.EMap;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.junit.Test;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
-import org.rodinp.core.emf.lightcore.Attribute;
 import org.rodinp.core.emf.lightcore.InternalElement;
-import org.rodinp.core.emf.lightcore.LightElement;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 
@@ -64,8 +59,7 @@ public class LoadModelTests extends AbstractRodinEMFCoreTest {
 
 		// Ensures that the resource contents is empty (i.e. resource is
 		// unloaded)
-		assertTrue("The resource data should be empty", rodinResource
-				.getContents().size() == 0);
+		assertTrue("The resource data should be empty", rodinResource.isEmpty());
 	}
 
 	/**
