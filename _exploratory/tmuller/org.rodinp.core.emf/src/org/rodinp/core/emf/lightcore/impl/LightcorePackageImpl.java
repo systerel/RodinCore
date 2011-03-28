@@ -460,7 +460,11 @@ public class LightcorePackageImpl extends EPackageImpl implements LightcorePacka
 
 		initEClass(internalElementEClass, InternalElement.class, "InternalElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
+		addEOperation(internalElementEClass, theEcorePackage.getEBoolean(), "isImplicit", 0, 1, IS_UNIQUE, IS_ORDERED);
+
 		initEClass(implicitElementEClass, ImplicitElement.class, "ImplicitElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		addEOperation(implicitElementEClass, theEcorePackage.getEBoolean(), "isImplicit", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);

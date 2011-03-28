@@ -45,8 +45,12 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference LightCore.ecore#//Attribute/entry"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference LightCore.ecore#//Attribute/key"/>
     </genClasses>
-    <genClasses ecoreClass="LightCore.ecore#//InternalElement"/>
-    <genClasses ecoreClass="LightCore.ecore#//ImplicitElement"/>
+    <genClasses ecoreClass="LightCore.ecore#//InternalElement">
+      <genOperations ecoreOperation="LightCore.ecore#//InternalElement/isImplicit"/>
+    </genClasses>
+    <genClasses ecoreClass="LightCore.ecore#//ImplicitElement">
+      <genOperations ecoreOperation="LightCore.ecore#//ImplicitElement/isImplicit"/>
+    </genClasses>
   </genPackages>
   <genPackages prefix="Api" basePackage="org.rodinp.core.emf" adapterFactory="false"
       interfacePackageSuffix="itf" generateExampleClass="false" literalsInterface="false"
@@ -72,6 +76,7 @@
         <genParameters ecoreParameter="api.ecore#//ILElement/moveChild/newPos"/>
         <genParameters ecoreParameter="api.ecore#//ILElement/moveChild/oldPos"/>
       </genOperations>
+      <genOperations ecoreOperation="api.ecore#//ILElement/isImplicit"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

@@ -40,4 +40,13 @@ public class InternalElementImpl extends LightElementImpl implements InternalEle
 		return LightcorePackage.Literals.INTERNAL_ELEMENT;
 	}
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean isImplicit() {
+		return false;
+	}
+
 } //InternalElementImpl

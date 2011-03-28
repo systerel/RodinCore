@@ -18,4 +18,13 @@ package org.rodinp.core.emf.lightcore;
  * @generated
  */
 public interface ImplicitElement extends LightElement {
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model kind="operation"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='return true;'"
+	 * @generated
+	 */
+	boolean isImplicit();
 } // ImplicitElement

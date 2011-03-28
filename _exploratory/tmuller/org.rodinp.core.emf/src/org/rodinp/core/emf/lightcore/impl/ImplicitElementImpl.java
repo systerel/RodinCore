@@ -40,4 +40,13 @@ public class ImplicitElementImpl extends LightElementImpl implements ImplicitEle
 		return LightcorePackage.Literals.IMPLICIT_ELEMENT;
 	}
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean isImplicit() {
+		return true;
+	}
+
 } //ImplicitElementImpl
