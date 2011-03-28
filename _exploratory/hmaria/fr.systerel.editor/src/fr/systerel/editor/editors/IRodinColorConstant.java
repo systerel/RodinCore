@@ -7,28 +7,40 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
-  *******************************************************************************/
+ *******************************************************************************/
 
 package fr.systerel.editor.editors;
 
 import org.eclipse.swt.graphics.RGB;
 
 public interface IRodinColorConstant {
+
 	RGB COMMENT = new RGB(63, 127, 95);
-	RGB COMMENT_HEADER = new RGB(103, 187, 155);
-	RGB SECTION = new RGB(0,200,0);
-	RGB LABEL = new RGB(0, 0, 0);
-	RGB IDENTIFIER = new RGB(0, 0, 0);
+	RGB IMPLICIT_COMMENT = new RGB(95, 150, 95);
+
 	RGB CONTENT = new RGB(0, 0, 192);
-	RGB DEFAULT = new RGB(0, 0, 0);
+	RGB IMPLICIT_CONTENT = new RGB(105, 105, 200);
+
+	RGB LABEL = new RGB(0, 0, 0);
+	RGB IMPLICIT_LABEL = new RGB(130, 130 , 130);
 	
+	RGB IDENTIFIER = new RGB(0, 0, 0);
+	RGB IMPLICIT_IDENTIFIER = new RGB(130, 130, 130);
+	
+	RGB COMMENT_HEADER = new RGB(103, 187, 155); 	// The comment header §
+	RGB SECTION = new RGB(0, 200, 0);
+	RGB DEFAULT = new RGB(0, 0, 0);
+
+	/**
+	 * Backgrounds
+	 */
 	RGB COMMENT_DEBUG_BG = new RGB(63, 163, 83);
-	RGB COMMENT_HEADER_DEBUG_BG = new RGB(63,100, 100);
+	RGB COMMENT_HEADER_DEBUG_BG = new RGB(63, 100, 100);
 	RGB LABEL_DEBUG_BG = new RGB(240, 255, 110);
 	RGB IDENTIFIER_DEBUG_BG = new RGB(200, 200, 200);
 	RGB CONTENT_DEBUG_BG = new RGB(150, 150, 192);
-	RGB DEFAULT_DEBUG_BG  = new RGB(170, 70, 70);
+	RGB DEFAULT_DEBUG_BG = new RGB(170, 70, 70);
 	RGB SECTION_DEBUG_BG = new RGB(170, 170, 70);
 	RGB KEYWORD_DEBUG_BG = new RGB(190, 50, 0);
-	
+
 }
