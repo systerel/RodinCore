@@ -360,6 +360,12 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 						"return (IInternalElement) getERodinElement();" });
 		addAnnotation(ilElementEClass.getEOperations().get(5), source,
 				new String[] { "body", "EcoreUtil.delete(this, true);" });
+		addAnnotation(
+				ilElementEClass.getEOperations().get(6),
+				source,
+				new String[] {
+						"body",
+						"final EList<LightElement> children = getEChildren();\nchildren.move(newPos, oldPos);" });
 	}
 
 } //ApiPackageImpl

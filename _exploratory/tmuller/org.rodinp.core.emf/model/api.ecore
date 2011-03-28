@@ -45,6 +45,9 @@
       </eAnnotations>
     </eOperations>
     <eOperations name="moveChild">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="body" value="final EList&lt;LightElement> children = getEChildren();&#xA;children.move(newPos, oldPos);"/>
+      </eAnnotations>
       <eParameters name="newPos" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
       <eParameters name="oldPos" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     </eOperations>

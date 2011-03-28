@@ -351,9 +351,8 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	 * @generated
 	 */
 	public void moveChild(int newPos, int oldPos) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+		final EList<LightElement> children = getEChildren();
+		children.move(newPos, oldPos);
 	}
 
 	/**

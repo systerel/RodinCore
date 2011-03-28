@@ -83,7 +83,7 @@ public interface ILElement {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model
+	 * @model annotation="http://www.eclipse.org/emf/2002/GenModel body='final EList<LightElement> children = getEChildren();\nchildren.move(newPos, oldPos);'"
 	 * @generated
 	 */
 	void moveChild(int newPos, int oldPos);
