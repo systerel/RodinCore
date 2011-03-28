@@ -32,10 +32,9 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.emf.api.itf.ICoreImplicitChildProvider;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
-import org.rodinp.core.emf.api.itf.ImplicitChildProviderManager;
-import org.rodinp.core.emf.api.itf.ICoreImplicitChildProvider;
 import org.rodinp.core.emf.api.itf.ImplicitChildProviderManager;
 import org.rodinp.core.emf.lightcore.LightElement;
 import org.rodinp.core.emf.lightcore.LightcorePackage;
@@ -123,7 +122,7 @@ public class ImplicitElementHandlingTests {
 		assertTrue(eHolder3.getElement().equals(holder3));
 
 		final NamedElement[] expecteds = { s1, s2, ss1, ss2 };
-		final EList<EObject> eImplicitChildren = eHolder3.getAllContained(
+		final EList<EObject> eImplicitChildren = ((LightElement)eHolder3).getAllContained(
 				LightcorePackage.Literals.IMPLICIT_ELEMENT, false);
 
 		final NamedElement[] actuals = new NamedElement[4];
@@ -162,7 +161,7 @@ public class ImplicitElementHandlingTests {
 		rf1.save(null, true);
 		rf2.save(null, true);
 
-		final IImplicitChildProvider p = createProvider(ImplicitHolder.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
+		final ICoreImplicitChildProvider p = createProvider(ImplicitHolder.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
 
 		// now checking the loaded resource for rf2
 		final ILFile rodinResource = getRodinResource(project,
@@ -170,10 +169,10 @@ public class ImplicitElementHandlingTests {
 		
 		final ILElement rootElement = rodinResource.getRoot();
 		
-		final LightElement eHolder2 = SynchroUtils.findElement(holder2,
+		final ILElement eHolder2 = SynchroUtils.findElement(holder2,
 				rootElement);
 		// we check that there is no implicit element under eHolder2
-		assertTrue(eHolder2.getEChildren().isEmpty());
+		assertTrue(eHolder2.getChildren().isEmpty());
 		// now we add the dependency to rf1, so we expect the implicit children
 		// to be recalculated from the delta of database
 		final RodinTestDependency d = getDependencyElement(rf2Root,
@@ -182,16 +181,16 @@ public class ImplicitElementHandlingTests {
 		rf2.save(null, true);
 		// we check that implicit elements have been recomputed and that holder2
 		// carries s1 and s2
-		final EList<LightElement> children2 = eHolder2.getEChildren();
+		final List<? extends ILElement> children2 = eHolder2.getChildren();
 		assertTrue(children2.size() == 2);
-		assertTrue(children2.get(0).getERodinElement().equals(s1));
-		assertTrue(children2.get(1).getERodinElement().equals(s2));
+		assertTrue(children2.get(0).getElement().equals(s1));
+		assertTrue(children2.get(1).getElement().equals(s2));
 		// now we delete the dependency, so it might not be any implicit element
 		// left.
 		d.delete(true, null);
 		// we check that implicit elements have been recomputed and that holder2
 		// does not contain implicit children
-		assertTrue(eHolder2.getEChildren().isEmpty());
+		assertTrue(eHolder2.getChildren().isEmpty());
 		ImplicitChildProviderManager.removeProvider(p);
 	}
 
@@ -229,7 +228,7 @@ public class ImplicitElementHandlingTests {
 		rf2.save(null, true);
 		rf3.save(null, true);
 
-		final IImplicitChildProvider p = createProvider(ImplicitHolder.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
+		final ICoreImplicitChildProvider p = createProvider(ImplicitHolder.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
 
 		// now checking the loaded resource
 		final ILFile rodinResource = getRodinResource(project,
@@ -237,13 +236,13 @@ public class ImplicitElementHandlingTests {
 		// We get the light model
 		final ILElement rootElement = rodinResource.getRoot();
 
-		final LightElement eHolder3 = SynchroUtils.findElement(holder3,
+		final ILElement eHolder3 = SynchroUtils.findElement(holder3,
 				rootElement);
 		final NamedElement[] expecteds1 = { ss1, ss2 };
 		int i = 0;
-		final EList<LightElement> children = eHolder3.getEChildren();
-		for (LightElement e : children){
-			assertTrue(e.getERodinElement().equals(expecteds1[i]));
+		final List<? extends ILElement> children = eHolder3.getChildren();
+		for (ILElement e : children){
+			assertTrue(e.getElement().equals(expecteds1[i]));
 			i++;
 		}
 
@@ -256,8 +255,8 @@ public class ImplicitElementHandlingTests {
 		// right order
 		final NamedElement[] expecteds2 = { s1, s2, ss1, ss2 };
 		int j = 0;
-		for (LightElement e : children){
-			assertTrue(e.getERodinElement().equals(expecteds2[j]));
+		for (ILElement e : children){
+			assertTrue(e.getElement().equals(expecteds2[j]));
 			j++;
 		}
 		
@@ -270,7 +269,7 @@ public class ImplicitElementHandlingTests {
 		rDependency.delete(true, null);
 		
 		// check that there is no more implicit children
-		assertTrue(eHolder3.getEChildren().isEmpty());
+		assertTrue(eHolder3.getChildren().isEmpty());
 		
 		ImplicitChildProviderManager.removeProvider(p);
 	}
@@ -285,7 +284,7 @@ public class ImplicitElementHandlingTests {
 		final NamedElement s2 = getNamedElement(rf1root, "s2");
 		rf1.save(null, true);
 
-		final IImplicitChildProvider p = new TestBuggyImplicitChildProvider();
+		final ICoreImplicitChildProvider p = new TestBuggyImplicitChildProvider();
 		ImplicitChildProviderManager.addProviderFor(p,
 				RodinTestRoot.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
 		
@@ -294,19 +293,19 @@ public class ImplicitElementHandlingTests {
 				rf1.getElementName());
 		// We get the light model
 		final ILElement rootElement = rodinResource.getRoot();
-		final LightElement eS1 = SynchroUtils.findElement(s1, rootElement);
+		final ILElement eS1 = SynchroUtils.findElement(s1, rootElement);
 		// removing eS1 to create a delta and throw the NPE
-		EcoreUtil.remove(eS1);
+		EcoreUtil.remove((LightElement) eS1);
 		// If we reach this point, the exception didn't break nothing
 		assertTrue(rootElement.getChildren().size() == 1);
 		assertTrue(rootElement.getChildren().get(0).getElement().equals(s2));
 		//ImplicitChildProviderManager.removeProvider(p);
 	}
 	
-	public IImplicitChildProvider createProvider(
+	public ICoreImplicitChildProvider createProvider(
 			IInternalElementType<? extends IInternalElement> parentType,
 			IInternalElementType<? extends IInternalElement> childType) {
-		final IImplicitChildProvider p = new TestImplicitChildProvider();
+		final ICoreImplicitChildProvider p = new TestImplicitChildProvider();
 		ImplicitChildProviderManager.addProviderFor(
 				new TestImplicitChildProvider(), parentType, childType);
 		return p;

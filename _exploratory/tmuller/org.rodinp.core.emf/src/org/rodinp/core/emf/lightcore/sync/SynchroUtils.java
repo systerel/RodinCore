@@ -21,6 +21,7 @@ import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.lightcore.Attribute;
 import org.rodinp.core.emf.lightcore.LightElement;
 import org.rodinp.core.emf.lightcore.LightObject;
@@ -46,13 +47,12 @@ public class SynchroUtils {
 					.getAttributeTypes()));
 			keepKnownAttributes(lElement, availableTypes);
 			for (IAttributeType type : availableTypes) {
-				final IAttributeValue rodinAttribute = iElement
-						.getAttributeValue(type);
+				final IAttributeValue value = iElement.getAttributeValue(type);
 				final Attribute lAttribute = LightcoreFactory.eINSTANCE
 						.createAttribute();
 				lAttribute.setOwner(lElement);
 				lAttribute.setType(type);
-				lAttribute.setValue(rodinAttribute.getValue());
+				lAttribute.setValue(value);
 				lElement.getEAttributes().put(type.getId(), lAttribute);
 			}
 		} catch (RodinDBException e) {
@@ -73,19 +73,23 @@ public class SynchroUtils {
 		lElement.getEAttributes().retainAll(ids);
 	}
 
-	public static LightElement findElement(IRodinElement toFind,
-			LightElement root) {
-		if (toFind.equals(root.getERodinElement()))
+	public static ILElement findElement(IRodinElement toFind, ILElement root) {
+		if (toFind.equals(root.getElement()))
 			return root;
-		final TreeIterator<EObject> eAllContents = root.eAllContents();
+		final TreeIterator<EObject> eAllContents = ((LightElement) root)
+				.eAllContents();
 		while (eAllContents.hasNext()) {
 			final EObject next = eAllContents.next();
-			if (next instanceof LightElement
-					&& ((LightElement) next).getERodinElement().equals(toFind)) {
-				return (LightElement) next;
+			if (next instanceof ILElement
+					&& ((ILElement) next).getElement().equals(toFind)) {
+				return (ILElement) next;
 			}
 		}
 		return null;
+	}
+	
+	public static LightElement findElement(IRodinElement toFind, LightElement root) {
+		return findElement(toFind, root);
 	}
 
 	public static void adaptRootForDBChanges(LightElement e) {
