@@ -24,7 +24,7 @@
     </eOperations>
     <eOperations name="getAttribute" eType="#//IAttributeValue">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="body" value="final Attribute attribute = getEAttributes().get(type.getId());&#xA;return (IAttributeValue) attribute.getValue();"/>
+        <details key="body" value="final Attribute attribute = getEAttributes().get(type.getId());&#xA;if (attribute == null)&#xA;&#x9;return null;&#xA;return (IAttributeValue) attribute.getValue();"/>
       </eAnnotations>
       <eParameters name="type" eType="#//IAttributeType"/>
     </eOperations>

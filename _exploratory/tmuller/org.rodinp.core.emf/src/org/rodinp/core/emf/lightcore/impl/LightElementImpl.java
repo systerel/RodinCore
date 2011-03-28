@@ -310,6 +310,8 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	 */
 	public IAttributeValue getAttribute(IAttributeType type) {
 		final Attribute attribute = getEAttributes().get(type.getId());
+		if (attribute == null)
+			return null;
 		return (IAttributeValue) attribute.getValue();
 	}
 

@@ -382,7 +382,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 				source,
 				new String[] {
 						"body",
-						"final Attribute attribute = getEAttributes().get(type.getId());\nreturn (IAttributeValue) attribute.getValue();" });
+						"final Attribute attribute = getEAttributes().get(type.getId());\nif (attribute == null)\n\treturn null;\nreturn (IAttributeValue) attribute.getValue();" });
 		addAnnotation(
 				ilElementEClass.getEOperations().get(3),
 				source,
