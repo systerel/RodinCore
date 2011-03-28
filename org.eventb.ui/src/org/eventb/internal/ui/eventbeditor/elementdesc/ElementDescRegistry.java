@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Systerel and others.
+ * Copyright (c) 2009, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,8 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.emf.api.itf.ICoreImplicitChildProvider;
+import org.rodinp.core.emf.api.itf.ImplicitChildProviderManager;
 
 /**
  * Registry for element descriptors contributed through the
@@ -242,7 +244,15 @@ public class ElementDescRegistry implements IElementDescRegistry {
 			final String type = child.getAttribute("typeId");
 			final IInternalElementType<?> elementType = RodinCore.getInternalElementType(type);
 			final int priority = parseInt(child.getAttribute("priority"));
-			result.add(new ElementDescRelationship(parent, elementType, priority, getImplicitChildProvider(child)));
+			final IImplicitChildProvider implicitChildProvider = getImplicitChildProvider(child);
+			if (parent instanceof IInternalElementType
+					&& implicitChildProvider != null) {
+				final IInternalElementType<?> iParent = (IInternalElementType<?>) parent;
+				ImplicitChildProviderManager.addProviderFor(
+						new CoreImplicitChildProviderWrapper(
+								implicitChildProvider), iParent, elementType);
+			}
+			result.add(new ElementDescRelationship(parent, elementType, priority, implicitChildProvider));
 		}
 		return result;
 	}
@@ -260,7 +270,23 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		}
 		return null;
 	}
+	
+	private static class CoreImplicitChildProviderWrapper implements ICoreImplicitChildProvider {
 
+		private final IImplicitChildProvider provider;
+		
+		public CoreImplicitChildProviderWrapper(IImplicitChildProvider provider) {
+			this.provider = provider;
+		}
+		
+		@Override
+		public List<? extends IInternalElement> getImplicitChildren(
+				IInternalElement parent) {
+			return provider.getImplicitChildren(parent);
+		}
+		
+	}
+	
 	private static int parseInt(String s) {
 		if (s == null) {
 			return HIGHEST_PRIORITY;
