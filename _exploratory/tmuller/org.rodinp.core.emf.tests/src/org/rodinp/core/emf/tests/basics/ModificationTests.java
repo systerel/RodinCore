@@ -15,17 +15,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.rodinp.core.tests.AbstractRodinDBTests.fBool;
 
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.EMap;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.util.EcoreUtil;
+import java.util.List;
+
 import org.junit.Test;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.emf.lightcore.Attribute;
-import org.rodinp.core.emf.lightcore.LightElement;
+import org.rodinp.core.emf.api.itf.ILElement;
+import org.rodinp.core.emf.api.itf.ILFile;
 import org.rodinp.core.tests.basis.NamedElement;
 
 /**
@@ -41,20 +39,19 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 	@Test
 	public void deleteAnElement() throws RodinDBException {
 
-		final Resource rodinResource = getRodinResource();
+		final ILFile rodinResource = getRodinResource();
 
-		final LightElement root = (LightElement) rodinResource.getContents()
-				.get(0);
+		final ILElement root = rodinResource.getRoot();
 
 		final NamedElement ne = getNamedElement(rodinFile.getRoot(), "NE");
 
-		final EList<LightElement> children = root.getEChildren();
+		final List<? extends ILElement> children = root.getChildren();
 		assertTrue(children.size() == 1);
-		final LightElement child = children.get(0); // ne
-		assertTrue(child.getERodinElement().equals(ne));
+		final ILElement child = children.get(0); // ne
+		assertTrue(child.getElement().equals(ne));
 
 		// we delete ne
-		EcoreUtil.remove(child);
+		child.delete();
 		assertTrue(children.isEmpty());
 		// ensures that the element ne has been removed from the database
 		assertFalse(ne.exists());
@@ -73,18 +70,18 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 		ne.setAttributeValue(v1, null);
 
 		// we get the resource
-		final Resource rodinResource = getRodinResource();
-		final LightElement root = (LightElement) rodinResource.getContents()
-				.get(0);
+		final ILFile rodinResource = getRodinResource();
+		final ILElement root = rodinResource.getRoot();
+
 		// there is just one child ne for the root
-		final EList<LightElement> children = root.getEChildren();
+		final List<? extends ILElement> children = root.getChildren();
 		assertTrue(children.size() == 1);
-		final LightElement neLight = children.get(0);
-		final Attribute a = neLight.getEAttributes().get(fBool.getId());
+		final ILElement neLight = children.get(0);
+		final IAttributeValue a = neLight.getAttribute(fBool);
 		assertTrue(a.getValue().equals(true));
 		ne.removeAttribute(fBool, null);
 		assertTrue(ne.getAttributeTypes().length == 0);
-		assertTrue(neLight.getEAttributes().get(fBool.getId()) == null);
+		assertTrue(neLight.getAttribute(fBool) == null);
 	}
 
 	/**
@@ -94,11 +91,10 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 	@Test
 	public void modifyLightAttribute() throws RodinDBException {
 		// we get the resource (empty)
-		final Resource rodinResource = getRodinResource();
+		final ILFile rodinResource = getRodinResource();
 		// we get the root element of the light model
-		final LightElement root = (LightElement) rodinResource.getContents()
-				.get(0);
-
+		final ILElement root = rodinResource.getRoot();
+		
 		// we create elements, and add one attribute to the first element
 		// beneath the root
 		final NamedElement ne = getNamedElement(rodinFile.getRoot(), "NE");
@@ -107,15 +103,14 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 
 		// we search for NE child in the Light model
 		// it has been created by the database delta listener
-		final LightElement neLightElement = root.getEChildren().get(0);
+		final ILElement neLightElement = root.getChildren().get(0);
 
-		final EMap<String, Attribute> a = neLightElement.getEAttributes();
+		final List<IAttributeValue> a = neLightElement.getAttributes();
 		// we check that there is just one attribute set for this element
-		assertTrue(a.values().size() == 1);
+		assertTrue(a.size() == 1);
 
 		// we modify the value of the boolean attribute in the light model
-		final Attribute lightV1 = a.get(fBool.getId());
-		lightV1.setValue(false);
+		neLightElement.setAttribute(fBool.makeValue(false));
 
 		// we check that the value was updated to false in the database
 		final boolean attributeValue = ne.getAttributeValue(fBool);
@@ -129,10 +124,10 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 	@Test
 	public void modifyRodinAttribute() throws RodinDBException {
 		// we get the resource (empty)
-		final Resource rodinResource = getRodinResource();
+		final ILFile rodinResource = getRodinResource();
 		// we get the root element of the light model
-		final LightElement root = (LightElement) rodinResource.getContents()
-				.get(0);
+		final ILElement root = rodinResource.getRoot();
+		
 		// we create elements, and add one attribute to the first element
 		// beneath the root
 		final NamedElement ne = getNamedElement(rodinFile.getRoot(), "NE");
@@ -141,17 +136,15 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 
 		// we search for NE child in the Light model
 		// it has been created by the database delta listener
-		final LightElement neLightElement = root.getEChildren().get(0);
-		final EMap<String, Attribute> a = neLightElement.getEAttributes();
-		final String boolId = fBool.getId();
+		final ILElement neLightElement = root.getChildren().get(0);
+		final IAttributeValue a = neLightElement.getAttribute(fBool);
 		// we check that there is just one attribute set for this element
-		final Attribute a1 = a.get(boolId);
-		assertTrue(a1.getValue().equals(true));
+		assertTrue(a.getValue().equals(true));
 
 		final IAttributeValue v2 = fBool.makeValue(false);
 		ne.setAttributeValue(v2, null);
 
-		final Attribute a2 = a.get(boolId);
+		final IAttributeValue a2 = neLightElement.getAttribute(fBool);
 		assertTrue(a2.getValue().equals(false));
 	}
 
@@ -161,7 +154,7 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 	 */
 	@Test
 	public void modifyElementOrder() throws RodinDBException {
-		final Resource rodinResource = getRodinResource();
+		final ILFile rodinResource = getRodinResource();
 		final IInternalElement rodinRoot = rodinFile.getRoot();
 		// we create elements, and add one attribute to the first element
 		// beneath the root
@@ -172,8 +165,8 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 		assertArrayEquals(ordered, rodinRoot.getChildren());
 
 		// we get the root element of the light model
-		final LightElement root = (LightElement) rodinResource.getContents()
-				.get(0);
+		final ILElement root = rodinResource.getRoot();
+		
 		assertArrayEquals(ordered, getIRodinElementChildren(root));
 
 		// modify the ordering in the database
@@ -190,7 +183,7 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 	 */
 	@Test
 	public void modifyLightElementOrder() throws RodinDBException {
-		final Resource rodinResource = getRodinResource();
+		final ILFile rodinResource = getRodinResource();
 		final IInternalElement rodinRoot = rodinFile.getRoot();
 		// we create elements, and add one attribute to the first element
 		// beneath the root
@@ -201,25 +194,24 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 		assertArrayEquals(ordered, rodinRoot.getChildren());
 
 		// we get the root element of the light model
-		final LightElement root = (LightElement) rodinResource.getContents()
-				.get(0);
+		final ILElement root = rodinResource.getRoot();
+		
 		assertArrayEquals(ordered, getIRodinElementChildren(root));
-		final EList<LightElement> children = root.getEChildren();
 		// move ne2 to the first position
-		children.move(0, children.get(1));
+		root.moveChild(0, 1);
 		final NamedElement[] ordered2 = { ne2, ne, ne3 };
 		assertArrayEquals(ordered2, getIRodinElementChildren(root));
 		assertArrayEquals(ordered2, rodinRoot.getChildren());
 
 	}
 
-	private IRodinElement[] getIRodinElementChildren(LightElement element) {
-		final EList<LightElement> eChildren = element.getEChildren();
+	private IRodinElement[] getIRodinElementChildren(ILElement root) {
+		final List<? extends ILElement> eChildren = root.getChildren();
 		final IRodinElement[] lightChildren = new IRodinElement[eChildren
 				.size()];
 		int i = 0;
-		for (LightElement child : eChildren) {
-			lightChildren[i] = (IRodinElement) child.getERodinElement();
+		for (ILElement child : eChildren) {
+			lightChildren[i] = child.getElement();
 			i++;
 		}
 		return lightChildren;

@@ -18,10 +18,11 @@ import static org.rodinp.core.emf.tests.basics.AbstractRodinEMFCoreTest.getNamed
 import static org.rodinp.core.emf.tests.basics.AbstractRodinEMFCoreTest.getRodinResource;
 import static org.rodinp.core.emf.tests.basics.AbstractRodinEMFCoreTest.pNAME;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -31,6 +32,9 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.emf.api.itf.ILElement;
+import org.rodinp.core.emf.api.itf.ILFile;
+import org.rodinp.core.emf.api.itf.ImplicitChildProviderManager;
 import org.rodinp.core.emf.api.itf.ICoreImplicitChildProvider;
 import org.rodinp.core.emf.api.itf.ImplicitChildProviderManager;
 import org.rodinp.core.emf.lightcore.LightElement;
@@ -108,16 +112,15 @@ public class ImplicitElementHandlingTests {
 
 		createProvider(ImplicitHolder.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
 		// now checking the loaded resource
-		final Resource rodinResource = getRodinResource(project,
+		final ILFile rodinResource = getRodinResource(project,
 				rf3.getElementName());
 		// We get the light model
-		final LightElement rootElement = (LightElement) rodinResource
-				.getContents().get(0);
-		final EList<?> hold = rootElement
-				.getElementsOfType(ImplicitHolder.ELEMENT_TYPE);
+		final ILElement rootElement = rodinResource.getRoot();
+		final List<ILElement> hold = rootElement
+				.getChildrenOfType(ImplicitHolder.ELEMENT_TYPE);
 
-		final LightElement eHolder3 = (LightElement) hold.get(0);
-		assertTrue(eHolder3.getERodinElement().equals(holder3));
+		final ILElement eHolder3 = hold.get(0);
+		assertTrue(eHolder3.getElement().equals(holder3));
 
 		final NamedElement[] expecteds = { s1, s2, ss1, ss2 };
 		final EList<EObject> eImplicitChildren = eHolder3.getAllContained(
@@ -159,15 +162,13 @@ public class ImplicitElementHandlingTests {
 		rf1.save(null, true);
 		rf2.save(null, true);
 
-		final ICoreImplicitChildProvider p = createProvider(ImplicitHolder.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
+		final IImplicitChildProvider p = createProvider(ImplicitHolder.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
 
 		// now checking the loaded resource for rf2
-		final Resource rodinResource = getRodinResource(project,
+		final ILFile rodinResource = getRodinResource(project,
 				rf2.getElementName());
-
 		
-		final LightElement rootElement = (LightElement) rodinResource
-				.getContents().get(0);
+		final ILElement rootElement = rodinResource.getRoot();
 		
 		final LightElement eHolder2 = SynchroUtils.findElement(holder2,
 				rootElement);
@@ -228,14 +229,13 @@ public class ImplicitElementHandlingTests {
 		rf2.save(null, true);
 		rf3.save(null, true);
 
-		final ICoreImplicitChildProvider p = createProvider(ImplicitHolder.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
+		final IImplicitChildProvider p = createProvider(ImplicitHolder.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
 
 		// now checking the loaded resource
-		final Resource rodinResource = getRodinResource(project,
+		final ILFile rodinResource = getRodinResource(project,
 				rf3.getElementName());
 		// We get the light model
-		final LightElement rootElement = (LightElement) rodinResource
-				.getContents().get(0);
+		final ILElement rootElement = rodinResource.getRoot();
 
 		final LightElement eHolder3 = SynchroUtils.findElement(holder3,
 				rootElement);
@@ -285,29 +285,28 @@ public class ImplicitElementHandlingTests {
 		final NamedElement s2 = getNamedElement(rf1root, "s2");
 		rf1.save(null, true);
 
-		final ICoreImplicitChildProvider p = new TestBuggyImplicitChildProvider();
+		final IImplicitChildProvider p = new TestBuggyImplicitChildProvider();
 		ImplicitChildProviderManager.addProviderFor(p,
 				RodinTestRoot.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
 		
 		// now checking the loaded resource
-		final Resource rodinResource = getRodinResource(project,
+		final ILFile rodinResource = getRodinResource(project,
 				rf1.getElementName());
 		// We get the light model
-		final LightElement rootElement = (LightElement) rodinResource
-				.getContents().get(0);
+		final ILElement rootElement = rodinResource.getRoot();
 		final LightElement eS1 = SynchroUtils.findElement(s1, rootElement);
 		// removing eS1 to create a delta and throw the NPE
 		EcoreUtil.remove(eS1);
 		// If we reach this point, the exception didn't break nothing
-		assertTrue(rootElement.getEChildren().size() == 1);
-		assertTrue(rootElement.getEChildren().get(0).getERodinElement().equals(s2));
+		assertTrue(rootElement.getChildren().size() == 1);
+		assertTrue(rootElement.getChildren().get(0).getElement().equals(s2));
 		//ImplicitChildProviderManager.removeProvider(p);
 	}
 	
-	public ICoreImplicitChildProvider createProvider(
+	public IImplicitChildProvider createProvider(
 			IInternalElementType<? extends IInternalElement> parentType,
 			IInternalElementType<? extends IInternalElement> childType) {
-		final ICoreImplicitChildProvider p = new TestImplicitChildProvider();
+		final IImplicitChildProvider p = new TestImplicitChildProvider();
 		ImplicitChildProviderManager.addProviderFor(
 				new TestImplicitChildProvider(), parentType, childType);
 		return p;

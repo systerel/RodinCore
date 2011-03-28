@@ -16,7 +16,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.junit.After;
@@ -27,9 +26,11 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.emf.api.itf.ILFile;
 import org.rodinp.core.emf.lightcore.InternalElement;
 import org.rodinp.core.emf.lightcore.LightElement;
 import org.rodinp.core.emf.lightcore.LightcoreFactory;
+import org.rodinp.core.emf.lightcore.RodinResource;
 import org.rodinp.core.tests.basis.NamedElement;
 
 /**
@@ -58,16 +59,16 @@ public abstract class AbstractRodinEMFCoreTest {
 		rodinProject.getRodinDB().close();
 	}
 
-	protected Resource getRodinResource() {
+	protected ILFile getRodinResource() {
 		return getRodinResource(rodinProject, fNAME);
 	}
 	
-	protected static Resource getRodinResource(IRodinProject project, String filename) {
+	protected static ILFile getRodinResource(IRodinProject project, String filename) {
 		final ResourceSet resourceSet = new ResourceSetImpl();
 		final String projectName = project.getElementName();
 		final URI uri = URI.createPlatformResourceURI(
 				projectName + "/" + filename, true);
-		return resourceSet.getResource(uri, true);
+		return (RodinResource) resourceSet.getResource(uri, true);
 	}
 
 	protected static NamedElement getNamedElement(IInternalElement parent,

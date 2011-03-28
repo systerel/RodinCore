@@ -15,6 +15,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.EList;
@@ -23,6 +24,8 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.junit.Test;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.emf.api.itf.ILElement;
+import org.rodinp.core.emf.api.itf.ILFile;
 import org.rodinp.core.emf.lightcore.Attribute;
 import org.rodinp.core.emf.lightcore.InternalElement;
 import org.rodinp.core.emf.lightcore.LightElement;
@@ -48,13 +51,12 @@ public class LoadModelTests extends AbstractRodinEMFCoreTest {
 	@Test
 	public void loadAResource() throws IOException, InterruptedException,
 			CoreException {
-		final Resource rodinResource = getRodinResource();
+		final ILFile rodinResource = getRodinResource();
 		// We get the light model
-		final LightElement element = (LightElement) rodinResource.getContents()
-				.get(0);
+		final ILElement element = rodinResource.getRoot();
 
 		assertTrue(element instanceof InternalElement);
-		assertTrue(element.isERoot());
+		assertTrue(((InternalElement) element).isERoot());
 
 		// Then delete the file
 		rodinFile.getResource().delete(true, null);
@@ -88,20 +90,20 @@ public class LoadModelTests extends AbstractRodinEMFCoreTest {
 		rodinFile.save(null, true);
 
 		// now checking the loaded resource
-		final Resource rodinResource = getRodinResource();
+		final ILFile rodinResource = getRodinResource();
 		// We get the light model
-		final LightElement rootElement = (LightElement) rodinResource
-				.getContents().get(0);
+		final ILElement rootElement = rodinResource.getRoot();
 
-		final EList<LightElement> rootChildren = rootElement.getEChildren();
+		final List<? extends ILElement> rootChildren = rootElement.getChildren();
 		assertTrue("It should be just one child: NE", rootChildren.size() == 1);
 
-		final LightElement lightNE = rootChildren.get(0);
-		final EMap<String, Attribute> NEatts = lightNE.getEAttributes();
+		final ILElement lightNE = rootChildren.get(0);
+		final List<IAttributeValue> NEatts = lightNE.getAttributes();
 		assertTrue("It should be just one attribute for NE", NEatts.size() == 1);
 
-		final Attribute NEatt = NEatts.get(0).getValue();
-		assertEquals("", NEatt.getValue(), true);
+		final IAttributeValue attVal = NEatts.get(0);
+		final Object NEatt = attVal.getValue();
+		assertEquals("", NEatt, true);
 	}
 
 	/**
@@ -111,9 +113,8 @@ public class LoadModelTests extends AbstractRodinEMFCoreTest {
 	@Test
 	public void afterLoadingTest() throws RodinDBException {
 		// first we retreive the resource that has a root (see the first test)
-		final Resource rodinResource = getRodinResource();
-		final LightElement root = (LightElement) rodinResource.getContents()
-				.get(0);
+		final ILFile rodinResource = getRodinResource();
+		final ILElement root = rodinResource.getRoot();
 
 		// then we create children in the database
 		final NamedElement ne = getNamedElement(rodinFile.getRoot(), "NE");
@@ -126,20 +127,20 @@ public class LoadModelTests extends AbstractRodinEMFCoreTest {
 		ne2.setAttributeValue(v2, null);
 
 		// We verify that the elements are created
-		final EList<LightElement> children = root.getEChildren();
+		final List<? extends ILElement> children = root.getChildren();
 		assertTrue(children.size() == 1);
-		final LightElement child = children.get(0);
-		assertTrue(child.getERodinElement().equals(ne));
-		final EList<LightElement> neChildren = child.getEChildren();
+		final ILElement child = children.get(0);
+		assertTrue(child.getElement().equals(ne));
+		final List<? extends ILElement> neChildren = child.getChildren();
 		assertTrue(neChildren.size() == 1);
-		final LightElement neChild = neChildren.get(0);
-		assertTrue(neChild.getERodinElement().equals(ne2));
+		final ILElement neChild = neChildren.get(0);
+		assertTrue(neChild.getElement().equals(ne2));
 
-		final Attribute attribute = neChild.getEAttributes().get(
-				AbstractRodinDBTests.fString.getId());
+		final IAttributeValue attribute = neChild
+				.getAttribute(AbstractRodinDBTests.fString);
 		assertEquals(attribute.getValue(), attributeString);
-		final Attribute attribute2 = neChild.getEAttributes().get(
-				AbstractRodinDBTests.fBool.getId());
+		final IAttributeValue attribute2 = neChild
+				.getAttribute(AbstractRodinDBTests.fBool);
 		assertEquals(attribute2.getValue(), true);
 	}
 
