@@ -20,8 +20,10 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.IVariable;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.lightcore.LightElement;
 
 import fr.systerel.editor.EditorUtils;
@@ -47,9 +49,9 @@ public class CompletionCalculator {
 		Interval interval = overlayEditor.getInterval();
 	
 		if (interval != null) {
-			LightElement element = interval.getElement();
+			ILElement element = interval.getElement();
 			if (element != null) {
-				IRodinElement rElement = (IRodinElement) element.getERodinElement();
+				final IInternalElement rElement = element.getElement();
 				if (element instanceof IRefinesMachine) {
 					IMachineRoot[] identifiers = getMachines(rElement);
 					for (IMachineRoot id : identifiers) {
@@ -84,10 +86,10 @@ public class CompletionCalculator {
 	
 	protected IIdentifierElement[] getVariablesAndConstants() {
 		ArrayList<IIdentifierElement> result = new ArrayList<IIdentifierElement>();
-		final EList<LightElement> variables = documentMapper.getRoot()
+		final EList<LightElement> variables = ((LightElement)documentMapper.getRoot())
 				.getElementsOfType(IVariable.ELEMENT_TYPE);
-		for (LightElement v : variables) {
-			result.add((IIdentifierElement) v.getERodinElement());
+		for (ILElement v : variables) {
+			result.add((IIdentifierElement) v.getElement());
 		}
 		// TODO: add variables and constants from seen and refined machines.
 		return result.toArray(new IIdentifierElement[result.size()]);

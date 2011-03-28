@@ -21,13 +21,17 @@ import static fr.systerel.editor.editors.RodinConfiguration.IMPLICIT_LABEL_TYPE;
 import static fr.systerel.editor.editors.RodinConfiguration.KEYWORD_TYPE;
 import static fr.systerel.editor.editors.RodinConfiguration.LABEL_TYPE;
 import static fr.systerel.editor.editors.RodinConfiguration.SECTION_TYPE;
+import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.COMMENT_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.Position;
-import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ICommentedElement;
 import org.eventb.core.IIdentifierElement;
@@ -38,11 +42,11 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.elementdesc.NullAttributeDesc;
+import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.emf.lightcore.Attribute;
-import org.rodinp.core.emf.lightcore.ImplicitElement;
+import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.lightcore.LightElement;
 
 /**
@@ -72,7 +76,7 @@ public class RodinTextGenerator {
 	 * @param inputRoot
 	 *            The machine or context that is displayed in the document.
 	 */
-	public String createText(LightElement inputRoot) {
+	public String createText(ILElement inputRoot) {
 		builder = new StringBuilder();
 		documentMapper.resetPrevious();
 		traverseRoot(null, inputRoot);
@@ -80,8 +84,8 @@ public class RodinTextGenerator {
 	}
 
 	@SuppressWarnings({ "restriction" })
-	private void traverseRoot(IProgressMonitor monitor, LightElement e) {
-		final IRodinElement rodinElement = (IRodinElement) e.getERodinElement();
+	private void traverseRoot(IProgressMonitor monitor, ILElement e) {
+		final IRodinElement rodinElement = (IRodinElement) e.getElement();
 		if (rodinElement instanceof IInternalElement) {
 			final IElementDesc desc = ElementDescRegistry.getInstance()
 					.getElementDesc(rodinElement);
@@ -99,10 +103,10 @@ public class RodinTextGenerator {
 	}
 
 	@SuppressWarnings("restriction")
-	private void traverse(IProgressMonitor mon, LightElement e) {
+	private void traverse(IProgressMonitor mon, ILElement e) {
 		final IElementDesc desc = getElementDesc(e);
 		for (IElementRelationship rel : desc.getChildRelationships()) {
-			final List<LightElement> c = retrieveChildrenToProcess(rel, e);
+			final List<ILElement> c = retrieveChildrenToProcess(rel, e);
 			final IElementDesc childDesc = getElementDesc(rel.getChildType());
 			if (childDesc == null)
 				continue;
@@ -119,7 +123,7 @@ public class RodinTextGenerator {
 					addKeywordRegion(childDesc.getPrefix());
 				}
 			}
-			for (LightElement in : c) {
+			for (ILElement in : c) {
 				level++;
 				processElement(in);
 				// final int eStart = builder.length();
@@ -135,7 +139,7 @@ public class RodinTextGenerator {
 		}
 	}
 
-	// private void setFoldingForSubElement(LightElement toFold,
+	// private void setFoldingForSubElement(ILElement toFold,
 	// final int foldStart) {
 	// if (level == 1) {
 	// final EditorItem foldedElement = documentMapper
@@ -150,18 +154,18 @@ public class RodinTextGenerator {
 	// way to retrieve children including implicit ones, we ask the implicit
 	// child provider to get this list of visible children
 	@SuppressWarnings("restriction")
-	private List<LightElement> retrieveChildrenToProcess(
-			IElementRelationship rel, LightElement elt) {
-		final ArrayList<LightElement> result = new ArrayList<LightElement>();
+	private List<ILElement> retrieveChildrenToProcess(IElementRelationship rel,
+			ILElement elt) {
+		final ArrayList<ILElement> result = new ArrayList<ILElement>();
 		final IInternalElementType<?> type = rel.getChildType();
-		result.addAll(elt.getElementsOfType(type));
+		result.addAll(((LightElement)elt).getElementsOfType(type));
 		return result;
 	}
 
 	// Retrieves the element desc from the registry for the given element e
 	@SuppressWarnings("restriction")
-	private static IElementDesc getElementDesc(LightElement e) {
-		final IRodinElement rodinElement = (IRodinElement) e.getERodinElement();
+	private static IElementDesc getElementDesc(ILElement e) {
+		final IRodinElement rodinElement = (IRodinElement) e.getElement();
 		return ElementDescRegistry.getInstance().getElementDesc(rodinElement);
 	}
 
@@ -189,7 +193,7 @@ public class RodinTextGenerator {
 		return new NullAttributeDesc();
 	}
 
-	protected void addElementRegion(String text, LightElement element,
+	protected void addElementRegion(String text, ILElement element,
 			String contentType) {
 		int start = builder.length();
 		builder.append(text);
@@ -197,7 +201,7 @@ public class RodinTextGenerator {
 		documentMapper.processInterval(start, length, element, contentType);
 	}
 
-	protected void addLabelRegion(String text, LightElement element) {
+	protected void addLabelRegion(String text, ILElement element) {
 		int start = builder.length();
 		builder.append(getTabs(level));
 		builder.append(text);
@@ -206,7 +210,7 @@ public class RodinTextGenerator {
 		documentMapper.processInterval(start, length, element, LABEL_TYPE);
 	}
 
-	protected void addCommentHeaderRegion(LightElement element) {
+	protected void addCommentHeaderRegion(ILElement element) {
 		int start = builder.length();
 		builder.append(getTabs(level));
 		builder.append("§");
@@ -233,10 +237,10 @@ public class RodinTextGenerator {
 		documentMapper.processInterval(start, length, null, SECTION_TYPE);
 	}
 
-	private void processCommentedElement(LightElement element) {
+	private void processCommentedElement(ILElement element) {
 		addCommentHeaderRegion(element);
-		final Attribute commentAttribute = element.getEAttributes().get(
-				EventBAttributes.COMMENT_ATTRIBUTE.getId());
+		final IAttributeValue commentAttribute = element
+				.getAttribute(COMMENT_ATTRIBUTE);
 		final String contentType = getContentType(element,
 				IMPLICIT_COMMENT_TYPE, COMMENT_TYPE);
 		if (commentAttribute != null) {
@@ -249,9 +253,9 @@ public class RodinTextGenerator {
 		builder.append(lineSeparator);
 	}
 
-	private void processPredicateElement(LightElement element) {
-		final Attribute predAttribute = element.getEAttributes().get(
-				EventBAttributes.PREDICATE_ATTRIBUTE.getId());
+	private void processPredicateElement(ILElement element) {
+		final IAttributeValue predAttribute = element
+				.getAttribute(PREDICATE_ATTRIBUTE);
 		final String contentType = getContentType(element,
 				IMPLICIT_CONTENT_TYPE, CONTENT_TYPE);
 		if (predAttribute != null) {
@@ -263,9 +267,9 @@ public class RodinTextGenerator {
 		builder.append(lineSeparator);
 	}
 
-	private void processAssignmentElement(LightElement element) {
-		final Attribute assignAttribute = element.getEAttributes().get(
-				EventBAttributes.ASSIGNMENT_ATTRIBUTE.getId());
+	private void processAssignmentElement(ILElement element) {
+		final IAttributeValue assignAttribute = element
+				.getAttribute(ASSIGNMENT_ATTRIBUTE);
 		final String contentType = getContentType(element,
 				IMPLICIT_CONTENT_TYPE, CONTENT_TYPE);
 		if (assignAttribute != null) {
@@ -278,9 +282,9 @@ public class RodinTextGenerator {
 		builder.append(lineSeparator);
 	}
 
-	private void processLabeledElement(LightElement element) {
-		final Attribute labelAttribute = element.getEAttributes().get(
-				EventBAttributes.LABEL_ATTRIBUTE.getId());
+	private void processLabeledElement(ILElement element) {
+		final IAttributeValue labelAttribute = element
+				.getAttribute(LABEL_ATTRIBUTE);
 		builder.append(getTabs(level));
 		final String contentType = getContentType(element, IMPLICIT_LABEL_TYPE,
 				LABEL_TYPE);
@@ -291,14 +295,14 @@ public class RodinTextGenerator {
 		} else {
 			addElementRegion("", element, contentType);
 		}
-		if (!element.getEChildren().isEmpty()) {
+		if (!element.getChildren().isEmpty()) {
 			builder.append(lineSeparator);
 		}
 	}
 
-	private void processIdentifierElement(LightElement element) {
-		final Attribute identifierAttribute = element.getEAttributes().get(
-				EventBAttributes.IDENTIFIER_ATTRIBUTE.getId());
+	private void processIdentifierElement(ILElement element) {
+		final IAttributeValue identifierAttribute = element
+				.getAttribute(IDENTIFIER_ATTRIBUTE);
 		builder.append(getTabs(level));
 		final String contentType = getContentType(element,
 				IMPLICIT_IDENTIFIER_TYPE, IDENTIFIER_TYPE);
@@ -310,9 +314,8 @@ public class RodinTextGenerator {
 		}
 	}
 
-	private void processElement(LightElement element) {
-		final IRodinElement rodinElement = (IRodinElement) element
-				.getERodinElement();
+	private void processElement(ILElement element) {
+		final IRodinElement rodinElement = (IRodinElement) element.getElement();
 		if (rodinElement instanceof ILabeledElement) {
 			if (rodinElement instanceof ICommentedElement) {
 				processCommentedElement(element);
@@ -334,9 +337,9 @@ public class RodinTextGenerator {
 		// builder.append(lineSeparator);
 	}
 
-	private String getContentType(LightElement element,
+	private String getContentType(ILElement element,
 			String implicitContentType, String contentType) {
-		if (element instanceof ImplicitElement) {
+		if (element.isImplicit()) {
 			return implicitContentType;
 		}
 		return contentType;

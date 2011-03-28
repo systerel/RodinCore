@@ -41,6 +41,7 @@ import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
 import org.eventb.core.IEventBRoot;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinMarkerUtil;
+import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.lightcore.LightElement;
 
 import fr.systerel.editor.editors.RodinConfiguration;
@@ -54,7 +55,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 
 	private IDocument document;
 	private DocumentMapper documentMapper;
-	private LightElement inputRoot;
+	private ILElement inputRoot;
 	private IEditorInput editorInput;
 	private RodinTextGenerator textGenerator;
 
@@ -129,8 +130,8 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 			inputResource = getResource(file);
 			final EList<EObject> contents = inputResource.getContents();
 			if ((contents.size() == 1)) {
-				inputRoot = (LightElement) contents.get(0);
-				documentMapper.setRoot((LightElement) contents.get(0));
+				inputRoot = (ILElement) contents.get(0);
+				documentMapper.setRoot((ILElement) contents.get(0));
 				textGenerator = new RodinTextGenerator(documentMapper);
 				document.set(textGenerator.createText(inputRoot));
 			}
@@ -153,7 +154,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	@Override
 	protected void doSaveDocument(IProgressMonitor monitor, Object element,
 			IDocument document, boolean overwrite) throws CoreException {
-		inputRoot.save();
+		((LightElement)inputRoot).save();
 	}
 
 	@Override
@@ -191,7 +192,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	}
 
 	public IEventBRoot getInputRoot() {
-		return (IEventBRoot) inputRoot.getERodinElement();
+		return (IEventBRoot) inputRoot.getElement();
 	}
 
 	public MarkerAnnotationPosition[] getMarkerAnnotations() {
@@ -199,7 +200,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		if (inputRoot == null){
 			return results.toArray(new MarkerAnnotationPosition[0]);
 		}
-		final IRodinElement iRoot = (IRodinElement) inputRoot.getERodinElement();
+		final IRodinElement iRoot = (IRodinElement) inputRoot.getElement();
 		if (!(iRoot instanceof IEventBRoot)) {
 			return results.toArray(new MarkerAnnotationPosition[0]);
 		}

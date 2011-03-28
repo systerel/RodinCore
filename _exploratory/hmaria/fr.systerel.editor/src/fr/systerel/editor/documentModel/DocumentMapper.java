@@ -25,7 +25,7 @@ import org.eventb.core.IPredicateElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.emf.lightcore.LightElement;
+import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.editors.RodinConfiguration;
 
@@ -42,12 +42,12 @@ import fr.systerel.editor.editors.RodinConfiguration;
 public class DocumentMapper {
 
 	private ArrayList<Interval> intervals = new ArrayList<Interval>();
-	private LightElement root;
+	private ILElement root;
 	private Interval previous;
 	private IDocument document;
 	private RodinDocumentProvider documentProvider;
 
-	private HashMap<LightElement, EditorItem> editorElements = new HashMap<LightElement, EditorItem>();
+	private HashMap<ILElement, EditorItem> editorElements = new HashMap<ILElement, EditorItem>();
 	private HashMap<IInternalElementType<?>, EditorItem> sections = new HashMap<IInternalElementType<?>, EditorItem>();
 
 	/**
@@ -297,7 +297,7 @@ public class DocumentMapper {
 	 * @param element
 	 * @param contentType
 	 */
-	public void processInterval(int offset, int length, LightElement element,
+	public void processInterval(int offset, int length, ILElement element,
 			String contentType) {
 		Interval inter;
 		if (Interval.isEditableType(contentType)) {
@@ -363,7 +363,7 @@ public class DocumentMapper {
 	 * @param contentType
 	 * @return the first interval that belongs to the given element
 	 */
-	public Interval findInterval(LightElement element, String contentType) {
+	public Interval findInterval(ILElement element, String contentType) {
 		// TODO: adapt this method to editorElements. will be faster?
 		for (Interval interval : intervals) {
 			if (element.equals(interval.getElement())
@@ -378,11 +378,11 @@ public class DocumentMapper {
 		return intervals;
 	}
 
-	public LightElement getRoot() {
+	public ILElement getRoot() {
 		return root;
 	}
 
-	public void setRoot(LightElement root) {
+	public void setRoot(ILElement root) {
 		this.root = root;
 	}
 
@@ -400,15 +400,15 @@ public class DocumentMapper {
 				new EditorItem[editorElements.size()]);
 	}
 
-	public EditorItem getEditorElement(LightElement key) {
+	public EditorItem getEditorElement(ILElement key) {
 		return editorElements.get(key);
 	}
 
-	public EditorItem getEditorSection(LightElement key) {
+	public EditorItem getEditorSection(ILElement key) {
 		return sections.get(key);
 	}
 
-	public void addEditorElement(LightElement key, EditorItem value) {
+	public void addEditorElement(ILElement key, EditorItem value) {
 		editorElements.put(key, value);
 	}
 

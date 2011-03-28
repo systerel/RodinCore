@@ -11,13 +11,13 @@
 package fr.systerel.editor.documentModel;
 
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.emf.lightcore.LightElement;
+import org.rodinp.core.emf.api.itf.ILElement;
 
 public class EditorElement extends EditorItem {
 
-	private final LightElement element;
+	private final ILElement element;
 
-	public EditorElement(LightElement element) {
+	public EditorElement(ILElement element) {
 		this.element = element;
 	}
 	
@@ -26,12 +26,12 @@ public class EditorElement extends EditorItem {
 	 * 
 	 * @return the element associated with this EditorItem.
 	 */
-	public LightElement getLightElement() {
+	public ILElement getLightElement() {
 		return element;
 	}
 	
 	public IRodinElement getRodinElement() {
-		return (IRodinElement) element.getERodinElement();
+		return (IRodinElement) element.getElement();
 	}
 
 }

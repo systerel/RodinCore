@@ -14,7 +14,7 @@ package fr.systerel.editor.documentModel;
 import java.util.Arrays;
 
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.emf.lightcore.LightElement;
+import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.editors.RodinConfiguration;
 
@@ -28,7 +28,7 @@ public class Interval implements Comparable<Interval> {
 	private int offset;
 	private int length;
 
-	private final LightElement element;
+	private final ILElement element;
 	private final IRodinElement rodinElement;
 	private String contentType;
 	private boolean changed;
@@ -39,18 +39,18 @@ public class Interval implements Comparable<Interval> {
 			RodinConfiguration.IDENTIFIER_TYPE, //
 	};
 
-	public Interval(int offset, int length, LightElement element,
+	public Interval(int offset, int length, ILElement element,
 			String contentType) {
 		this.offset = offset;
 		this.length = length;
 		this.element = element;
-		this.rodinElement = getRodinElement(element);
+		this.rodinElement = getElement(element);
 		this.contentType = contentType;
 	}
 
-	private IRodinElement getRodinElement(LightElement element) {
+	private IRodinElement getElement(ILElement element) {
 		if (element != null)
-			return (IRodinElement) element.getERodinElement();
+			return (IRodinElement) element.getElement();
 		return null;
 	}
 
@@ -78,7 +78,7 @@ public class Interval implements Comparable<Interval> {
 		return rodinElement;
 	}
 
-	public LightElement getElement() {
+	public ILElement getElement() {
 		return element;
 	}
 
