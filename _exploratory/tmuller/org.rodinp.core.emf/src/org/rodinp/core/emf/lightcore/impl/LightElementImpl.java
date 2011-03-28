@@ -342,8 +342,7 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	 * @generated
 	 */
 	public void delete() {
-		int i = 2;
-		i++;
+		EcoreUtil.delete(this, true);
 	}
 
 	/**

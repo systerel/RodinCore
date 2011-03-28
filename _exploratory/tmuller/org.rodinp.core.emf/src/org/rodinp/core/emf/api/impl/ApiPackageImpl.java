@@ -359,7 +359,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 				new String[] { "body",
 						"return (IInternalElement) getERodinElement();" });
 		addAnnotation(ilElementEClass.getEOperations().get(5), source,
-				new String[] { "body", "int i = 2;\ni++;" });
+				new String[] { "body", "EcoreUtil.delete(this, true);" });
 	}
 
 } //ApiPackageImpl

@@ -75,7 +75,7 @@ public interface ILElement {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model annotation="http://www.eclipse.org/emf/2002/GenModel body='int i = 2;\ni++;'"
+	 * @model annotation="http://www.eclipse.org/emf/2002/GenModel body='EcoreUtil.delete(this, true);'"
 	 * @generated
 	 */
 	void delete();

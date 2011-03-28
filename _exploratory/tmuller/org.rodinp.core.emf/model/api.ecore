@@ -41,7 +41,7 @@
     </eOperations>
     <eOperations name="delete">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="body" value="int i = 2;&#xA;i++;"/>
+        <details key="body" value="EcoreUtil.delete(this, true);"/>
       </eAnnotations>
     </eOperations>
     <eOperations name="moveChild">
