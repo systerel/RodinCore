@@ -34,7 +34,11 @@
       </eAnnotations>
       <eParameters name="value" eType="#//IAttributeValue"/>
     </eOperations>
-    <eOperations name="getElement" eType="#//IInternalElement"/>
+    <eOperations name="getElement" eType="#//IInternalElement">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="body" value="return (IInternalElement) getERodinElement();"/>
+      </eAnnotations>
+    </eOperations>
     <eOperations name="delete">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="body" value="int i = 2;&#xA;i++;"/>

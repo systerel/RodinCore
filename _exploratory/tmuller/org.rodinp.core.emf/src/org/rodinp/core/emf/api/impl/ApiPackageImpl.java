@@ -355,6 +355,9 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 				new String[] {
 						"body",
 						"final Attribute lAttribute = LightcoreFactory.eINSTANCE.createAttribute();\nlAttribute.setOwner(this);\nlAttribute.setType(value.getType());\nlAttribute.setValue(value);\ngetEAttributes().put(value.getType().getId(), lAttribute);" });
+		addAnnotation(ilElementEClass.getEOperations().get(4), source,
+				new String[] { "body",
+						"return (IInternalElement) getERodinElement();" });
 		addAnnotation(ilElementEClass.getEOperations().get(5), source,
 				new String[] { "body", "int i = 2;\ni++;" });
 	}

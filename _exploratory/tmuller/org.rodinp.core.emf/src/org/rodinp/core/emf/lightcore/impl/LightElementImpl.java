@@ -333,9 +333,7 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	 * @generated
 	 */
 	public IInternalElement getElement() {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+		return (IInternalElement) getERodinElement();
 	}
 
 	/**

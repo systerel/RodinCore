@@ -67,6 +67,7 @@ public interface ILElement {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @model kind="operation" dataType="org.rodinp.core.emf.api.itf.IInternalElement"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='return (IInternalElement) getERodinElement();'"
 	 * @generated
 	 */
 	IInternalElement getElement();
