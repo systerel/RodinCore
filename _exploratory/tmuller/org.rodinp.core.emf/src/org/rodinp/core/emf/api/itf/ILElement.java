@@ -106,4 +106,13 @@ public interface ILElement {
 	 */
 	List<ILElement> getChildrenOfType(IInternalElementType<?> type);
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model kind="operation" dataType="org.rodinp.core.emf.api.itf.IInternalElementType<? extends org.rodinp.core.emf.api.itf.IInternalElement>"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='return getElement().getElementType();'"
+	 * @generated
+	 */
+	IInternalElementType<? extends IInternalElement> getElementType();
+
 } // ILElement

@@ -328,6 +328,15 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 		g1.getETypeArguments().add(g2);
 		initEOperation(op, g1);
 
+		op = addEOperation(ilElementEClass, null, "getElementType", 0, 1,
+				IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(this.getIInternalElementType());
+		g2 = createEGenericType();
+		g1.getETypeArguments().add(g2);
+		g3 = createEGenericType(this.getIInternalElement());
+		g2.setEUpperBound(g3);
+		initEOperation(op, g1);
+
 		// Initialize data types
 		initEDataType(listEDataType, List.class, "List", !IS_SERIALIZABLE,
 				!IS_GENERATED_INSTANCE_CLASS);
@@ -397,6 +406,10 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 				new String[] {
 						"body",
 						"final List<ILElement> list = new <%java.util.ArrayList%><ILElement>();\nfor (ILElement child : getChildren()) {\n\tif (child.getElement().getElementType() == type) {\n\t\tlist.add(child);\n\t}\n}\nreturn list;" });
+		addAnnotation(
+				ilElementEClass.getEOperations().get(9),
+				source,
+				new String[] { "body", "return getElement().getElementType();" });
 	}
 
 } //ApiPackageImpl
