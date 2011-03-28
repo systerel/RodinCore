@@ -14,24 +14,17 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
-import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
-
-import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
-
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
-
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.emf.api.ApiFactory;
-
 import org.rodinp.core.emf.api.ApiPackage;
 import org.rodinp.core.emf.api.itf.ILElement;
-import org.rodinp.core.emf.lightcore.LightcorePackage;
-import org.rodinp.core.emf.lightcore.impl.LightcorePackageImpl;
 
 /**
  * <!-- begin-user-doc -->
@@ -81,6 +74,13 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	private EDataType iInternalElementEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType iInternalElementTypeEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -196,6 +196,15 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EDataType getIInternalElementType() {
+		return iInternalElementTypeEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public ApiFactory getApiFactory() {
 		return (ApiFactory) getEFactoryInstance();
 	}
@@ -227,6 +236,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 		iAttributeTypeEDataType = createEDataType(IATTRIBUTE_TYPE);
 		iAttributeValueEDataType = createEDataType(IATTRIBUTE_VALUE);
 		iInternalElementEDataType = createEDataType(IINTERNAL_ELEMENT);
+		iInternalElementTypeEDataType = createEDataType(IINTERNAL_ELEMENT_TYPE);
 	}
 
 	/**
@@ -255,6 +265,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 
 		// Create type parameters
 		addETypeParameter(listEDataType, "T");
+		addETypeParameter(iInternalElementTypeEDataType, "T");
 
 		// Set bounds for type parameters
 
@@ -306,6 +317,17 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 		addEOperation(ilElementEClass, ecorePackage.getEBoolean(),
 				"isImplicit", 0, 1, IS_UNIQUE, IS_ORDERED);
 
+		op = addEOperation(ilElementEClass, null, "getChildrenOfType", 0, 1,
+				IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(this.getIInternalElementType());
+		g2 = createEGenericType();
+		g1.getETypeArguments().add(g2);
+		addEParameter(op, g1, "type", 0, 1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(this.getList());
+		g2 = createEGenericType(this.getILElement());
+		g1.getETypeArguments().add(g2);
+		initEOperation(op, g1);
+
 		// Initialize data types
 		initEDataType(listEDataType, List.class, "List", !IS_SERIALIZABLE,
 				!IS_GENERATED_INSTANCE_CLASS);
@@ -318,6 +340,9 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 		initEDataType(iInternalElementEDataType, IInternalElement.class,
 				"IInternalElement", !IS_SERIALIZABLE,
 				!IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(iInternalElementTypeEDataType,
+				IInternalElementType.class, "IInternalElementType",
+				!IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);
@@ -366,6 +391,12 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 				new String[] {
 						"body",
 						"final EList<LightElement> children = getEChildren();\nchildren.move(newPos, oldPos);" });
+		addAnnotation(
+				ilElementEClass.getEOperations().get(8),
+				source,
+				new String[] {
+						"body",
+						"final List<ILElement> list = new <%java.util.ArrayList%><ILElement>();\nfor (ILElement child : getChildren()) {\n\tif (child.getElement().getElementType() == type) {\n\t\tlist.add(child);\n\t}\n}\nreturn list;" });
 	}
 
 } //ApiPackageImpl

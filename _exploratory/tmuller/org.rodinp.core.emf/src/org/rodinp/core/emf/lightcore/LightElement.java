@@ -199,13 +199,4 @@ public interface LightElement extends LightObject, ILElement {
 	 */
 	void doSetReference(String newReference);
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @model many="false"
-	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='\t\tfinal EList<LightElement> list = new BasicEList<LightElement>();\n\t\t\tif (!(type instanceof <%org.rodinp.core.IInternalElementType%>)) {\n\t\t\t\treturn list;\t\n\t\t\t}\n\t\t\tfinal EList<LightElement> children = getEChildren();\n\t\t\tfor (LightElement child : children) {\n\t\t\t\tif (((IInternalElement) child.getERodinElement()).getElementType() == type) {\n\t\t\t\t\tlist.add(child);\n\t\t\t\t}\n\t\t\t}\n\t\t\treturn list;'"
-	 * @generated
-	 */
-	EList<LightElement> getElementsOfType(Object type);
-
 } // LightElement

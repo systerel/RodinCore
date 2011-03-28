@@ -30,9 +30,6 @@
       <genOperations ecoreOperation="LightCore.ecore#//LightElement/doSetReference">
         <genParameters ecoreParameter="LightCore.ecore#//LightElement/doSetReference/newReference"/>
       </genOperations>
-      <genOperations ecoreOperation="LightCore.ecore#//LightElement/getElementsOfType">
-        <genParameters ecoreParameter="LightCore.ecore#//LightElement/getElementsOfType/type"/>
-      </genOperations>
     </genClasses>
     <genClasses ecoreClass="LightCore.ecore#//StringToAttributeMapEntry">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute LightCore.ecore#//StringToAttributeMapEntry/key"/>
@@ -61,6 +58,9 @@
     <genDataTypes ecoreDataType="api.ecore#//IAttributeType"/>
     <genDataTypes ecoreDataType="api.ecore#//IAttributeValue"/>
     <genDataTypes ecoreDataType="api.ecore#//IInternalElement"/>
+    <genDataTypes ecoreDataType="api.ecore#//IInternalElementType">
+      <genTypeParameters ecoreTypeParameter="api.ecore#//IInternalElementType/T"/>
+    </genDataTypes>
     <genClasses image="false" ecoreClass="api.ecore#//ILElement">
       <genOperations ecoreOperation="api.ecore#//ILElement/getChildren"/>
       <genOperations ecoreOperation="api.ecore#//ILElement/getAttributes"/>
@@ -77,6 +77,9 @@
         <genParameters ecoreParameter="api.ecore#//ILElement/moveChild/oldPos"/>
       </genOperations>
       <genOperations ecoreOperation="api.ecore#//ILElement/isImplicit"/>
+      <genOperations ecoreOperation="api.ecore#//ILElement/getElementsOfType">
+        <genParameters ecoreParameter="api.ecore#//ILElement/getElementsOfType/type"/>
+      </genOperations>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

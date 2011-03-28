@@ -8,11 +8,10 @@ package org.rodinp.core.emf.lightcore.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 import java.util.List;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
@@ -25,9 +24,9 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributeValue;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.emf.api.itf.ILElement;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.emf.lightcore.Attribute;
 import org.rodinp.core.emf.lightcore.LightElement;
 import org.rodinp.core.emf.lightcore.LightcoreFactory;
@@ -371,6 +370,21 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public List<ILElement> getChildrenOfType(IInternalElementType<?> type) {
+		final List<ILElement> list = new ArrayList<ILElement>();
+		for (ILElement child : getChildren()) {
+			if (child.getElement().getElementType() == type) {
+				list.add(child);
+			}
+		}
+		return list;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public String getReferenceWithoutResolving() {
 		if (this.eIsProxy()){
 			return ((InternalEObject)this).eProxyURI().fragment();
@@ -390,24 +404,6 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 		}else{
 			reference = newReference;
 		}
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EList<LightElement> getElementsOfType(Object type) {
-				final EList<LightElement> list = new BasicEList<LightElement>();
-					if (!(type instanceof IInternalElementType)) {
-						return list;	
-					}
-					final EList<LightElement> children = getEChildren();
-					for (LightElement child : children) {
-						if (((IInternalElement) child.getERodinElement()).getElementType() == type) {
-							list.add(child);
-						}
-					}
-					return list;
 	}
 
 	/**

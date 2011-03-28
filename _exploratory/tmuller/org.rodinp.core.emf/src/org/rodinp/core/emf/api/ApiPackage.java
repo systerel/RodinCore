@@ -122,6 +122,16 @@ public interface ApiPackage extends EPackage {
 	int IINTERNAL_ELEMENT = 4;
 
 	/**
+	 * The meta object id for the '<em>IInternal Element Type</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.rodinp.core.IInternalElementType
+	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getIInternalElementType()
+	 * @generated
+	 */
+	int IINTERNAL_ELEMENT_TYPE = 5;
+
+	/**
 	 * Returns the meta object for class '{@link org.rodinp.core.emf.api.itf.ILElement <em>IL Element</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -174,6 +184,17 @@ public interface ApiPackage extends EPackage {
 	 * @generated
 	 */
 	EDataType getIInternalElement();
+
+	/**
+	 * Returns the meta object for data type '{@link org.rodinp.core.IInternalElementType <em>IInternal Element Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>IInternal Element Type</em>'.
+	 * @see org.rodinp.core.IInternalElementType
+	 * @model instanceClass="org.rodinp.core.IInternalElementType" serializeable="false" typeParameters="T"
+	 * @generated
+	 */
+	EDataType getIInternalElementType();
 
 	/**
 	 * Returns the factory that creates the instances of the model.

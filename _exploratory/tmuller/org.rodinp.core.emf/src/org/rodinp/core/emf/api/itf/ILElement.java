@@ -15,6 +15,7 @@ import java.util.List;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 
 /**
  * <!-- begin-user-doc -->
@@ -95,5 +96,14 @@ public interface ILElement {
 	 * @generated
 	 */
 	boolean isImplicit();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model dataType="org.rodinp.core.emf.api.itf.List<org.rodinp.core.emf.api.itf.ILElement>" many="false" typeDataType="org.rodinp.core.emf.api.itf.IInternalElementType<?>"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='final List<ILElement> list = new <%java.util.ArrayList%><ILElement>();\nfor (ILElement child : getChildren()) {\n\tif (child.getElement().getElementType() == type) {\n\t\tlist.add(child);\n\t}\n}\nreturn list;'"
+	 * @generated
+	 */
+	List<ILElement> getChildrenOfType(IInternalElementType<?> type);
 
 } // ILElement
