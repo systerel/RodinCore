@@ -14,7 +14,6 @@ package org.rodinp.core.emf.lightcore;
 import java.io.IOException;
 import java.util.Map;
 
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -29,24 +28,16 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.emf.api.itf.ILElement;
+import org.rodinp.core.emf.api.itf.ILFile;
 import org.rodinp.core.emf.lightcore.sync.SynchroManager;
 
 /**
- * 
- * This is the serialisation of Event-B models from EMF into the Rodin database
- * We overload save and load directly as we are not interested in input or
- * output streams (because we load/save through the Rodin API)
- * 
- * We extend XMIResourceImpl (rather than ResourceImpl). This allows clients to
- * call the I/O stream versions of save and load to obtain the model content in
- * EMF's default XMI stream. For example, EMF compare uses this.
- * 
- * If file extension is "xmb", default xmi serialisation is used.
+ * This is the serialisation of Event-B models from EMF into the Rodin database.
  * 
  * @author cfs/ff
- * 
  */
-public class RodinResource extends ResourceImpl {
+public class RodinResource extends ResourceImpl implements ILFile {
 
 	private IRodinFile rodinFile;
 	private IRodinProject rodinProject;
@@ -179,5 +170,10 @@ public class RodinResource extends ResourceImpl {
 		}
 		// does file exist?
 		return rodinFile == null ? file.exists() : rodinFile.exists();
+	}
+
+	@Override
+	public ILElement getRoot() {
+		return (ILElement) getContents().get(0);
 	}
 }
