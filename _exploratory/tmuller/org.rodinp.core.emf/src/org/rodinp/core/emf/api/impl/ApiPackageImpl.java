@@ -337,6 +337,12 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 		String source = "http://www.eclipse.org/emf/2002/GenModel";
 		addAnnotation(ilElementEClass.getEOperations().get(0), source,
 				new String[] { "body", "return getEChildren();" });
+		addAnnotation(
+				ilElementEClass.getEOperations().get(1),
+				source,
+				new String[] {
+						"body",
+						"final EMap<String, Attribute> attributes = getEAttributes();\nfinal List<IAttributeValue> values = new <%java.util.ArrayList%><IAttributeValue>(\n\t\tattributes.size());\nfor (Attribute att : attributes.values()) {\n\tvalues.add((IAttributeValue) att.getValue());\n}\nreturn values;" });
 		addAnnotation(ilElementEClass.getEOperations().get(5), source,
 				new String[] { "body", "int i = 2;\ni++;" });
 	}

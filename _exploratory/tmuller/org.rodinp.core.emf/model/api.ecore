@@ -15,6 +15,9 @@
       </eGenericType>
     </eOperations>
     <eOperations name="getAttributes">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="body" value="final EMap&lt;String, Attribute> attributes = getEAttributes();&#xA;final List&lt;IAttributeValue> values = new &lt;%java.util.ArrayList%>&lt;IAttributeValue>(&#xA;&#x9;&#x9;attributes.size());&#xA;for (Attribute att : attributes.values()) {&#xA;&#x9;values.add((IAttributeValue) att.getValue());&#xA;}&#xA;return values;"/>
+      </eAnnotations>
       <eGenericType eClassifier="#//List">
         <eTypeArguments eClassifier="#//IAttributeValue"/>
       </eGenericType>

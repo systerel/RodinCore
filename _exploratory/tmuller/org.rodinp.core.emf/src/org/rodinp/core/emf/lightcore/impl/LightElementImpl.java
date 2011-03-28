@@ -6,6 +6,7 @@
  */
 package org.rodinp.core.emf.lightcore.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import java.util.List;
@@ -293,9 +294,13 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	 * @generated
 	 */
 	public List<IAttributeValue> getAttributes() {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+		final EMap<String, Attribute> attributes = getEAttributes();
+		final List<IAttributeValue> values = new ArrayList<IAttributeValue>(
+				attributes.size());
+		for (Attribute att : attributes.values()) {
+			values.add((IAttributeValue) att.getValue());
+		}
+		return values;
 	}
 
 	/**
