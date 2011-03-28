@@ -49,6 +49,7 @@ public interface ILElement {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @model dataType="org.rodinp.core.emf.api.itf.IAttributeValue" typeDataType="org.rodinp.core.emf.api.itf.IAttributeType"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='final Attribute attribute = getEAttributes().get(type.getId());\nreturn (IAttributeValue) attribute.getValue();'"
 	 * @generated
 	 */
 	IAttributeValue getAttribute(IAttributeType type);
@@ -57,6 +58,7 @@ public interface ILElement {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @model valueDataType="org.rodinp.core.emf.api.itf.IAttributeValue"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='final Attribute lAttribute = LightcoreFactory.eINSTANCE.createAttribute();\nlAttribute.setOwner(this);\nlAttribute.setType(value.getType());\nlAttribute.setValue(value);\ngetEAttributes().put(value.getType().getId(), lAttribute);'"
 	 * @generated
 	 */
 	void setAttribute(IAttributeValue value);

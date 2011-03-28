@@ -343,6 +343,18 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 				new String[] {
 						"body",
 						"final EMap<String, Attribute> attributes = getEAttributes();\nfinal List<IAttributeValue> values = new <%java.util.ArrayList%><IAttributeValue>(\n\t\tattributes.size());\nfor (Attribute att : attributes.values()) {\n\tvalues.add((IAttributeValue) att.getValue());\n}\nreturn values;" });
+		addAnnotation(
+				ilElementEClass.getEOperations().get(2),
+				source,
+				new String[] {
+						"body",
+						"final Attribute attribute = getEAttributes().get(type.getId());\nreturn (IAttributeValue) attribute.getValue();" });
+		addAnnotation(
+				ilElementEClass.getEOperations().get(3),
+				source,
+				new String[] {
+						"body",
+						"final Attribute lAttribute = LightcoreFactory.eINSTANCE.createAttribute();\nlAttribute.setOwner(this);\nlAttribute.setType(value.getType());\nlAttribute.setValue(value);\ngetEAttributes().put(value.getType().getId(), lAttribute);" });
 		addAnnotation(ilElementEClass.getEOperations().get(5), source,
 				new String[] { "body", "int i = 2;\ni++;" });
 	}

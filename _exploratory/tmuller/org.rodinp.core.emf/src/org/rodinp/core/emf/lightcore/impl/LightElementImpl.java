@@ -30,6 +30,7 @@ import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.emf.lightcore.Attribute;
 import org.rodinp.core.emf.lightcore.LightElement;
+import org.rodinp.core.emf.lightcore.LightcoreFactory;
 import org.rodinp.core.emf.lightcore.LightcorePackage;
 import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
 
@@ -309,9 +310,8 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	 * @generated
 	 */
 	public IAttributeValue getAttribute(IAttributeType type) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+		final Attribute attribute = getEAttributes().get(type.getId());
+		return (IAttributeValue) attribute.getValue();
 	}
 
 	/**
@@ -320,9 +320,11 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	 * @generated
 	 */
 	public void setAttribute(IAttributeValue value) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+		final Attribute lAttribute = LightcoreFactory.eINSTANCE.createAttribute();
+		lAttribute.setOwner(this);
+		lAttribute.setType(value.getType());
+		lAttribute.setValue(value);
+		getEAttributes().put(value.getType().getId(), lAttribute);
 	}
 
 	/**
