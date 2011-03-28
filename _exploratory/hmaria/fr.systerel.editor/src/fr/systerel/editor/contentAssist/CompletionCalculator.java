@@ -12,8 +12,8 @@
 package fr.systerel.editor.contentAssist;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import org.eclipse.emf.common.util.EList;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.IMachineRoot;
@@ -24,7 +24,6 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
-import org.rodinp.core.emf.lightcore.LightElement;
 
 import fr.systerel.editor.EditorUtils;
 import fr.systerel.editor.documentModel.DocumentMapper;
@@ -86,8 +85,8 @@ public class CompletionCalculator {
 	
 	protected IIdentifierElement[] getVariablesAndConstants() {
 		ArrayList<IIdentifierElement> result = new ArrayList<IIdentifierElement>();
-		final EList<LightElement> variables = ((LightElement)documentMapper.getRoot())
-				.getElementsOfType(IVariable.ELEMENT_TYPE);
+		final List<ILElement> variables = documentMapper.getRoot()
+				.getChildrenOfType(IVariable.ELEMENT_TYPE);
 		for (ILElement v : variables) {
 			result.add((IIdentifierElement) v.getElement());
 		}
