@@ -18,12 +18,12 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.emf.lightcore.IImplicitChildProvider;
+import org.rodinp.core.emf.api.itf.ICoreImplicitChildProvider;
+import org.rodinp.core.emf.api.itf.ImplicitChildProviderManager;
 import org.rodinp.core.emf.lightcore.ImplicitElement;
 import org.rodinp.core.emf.lightcore.InternalElement;
 import org.rodinp.core.emf.lightcore.LightElement;
 import org.rodinp.core.emf.lightcore.LightcoreFactory;
-import org.rodinp.core.emf.lightcore.childproviders.ImplicitChildProviderManager;
 
 /**
  * Class able to load and save EMF/Rodin models.
@@ -102,9 +102,9 @@ public class SynchroManager {
 	 */
 	public static void implicitLoad(LightElement parent,
 			final IInternalElement iParent) {
-		final List<IImplicitChildProvider> providers = ImplicitChildProviderManager
+		final List<ICoreImplicitChildProvider> providers = ImplicitChildProviderManager
 				.getProvidersFor(iParent.getElementType());
-		for (final IImplicitChildProvider p : providers) {
+		for (final ICoreImplicitChildProvider p : providers) {
 			for (IInternalElement e : ImplicitChildrenComputer
 					.safeGetImplicitChildren(iParent, p)) {
 				final ImplicitElement implicit = loadImplicitElementFor(e);
@@ -117,10 +117,10 @@ public class SynchroManager {
 
 		private List<? extends IInternalElement> implicitChildren;
 		private final IInternalElement parent;
-		private final IImplicitChildProvider provider;
+		private final ICoreImplicitChildProvider provider;
 
 		private ImplicitChildrenComputer(IInternalElement parent,
-				IImplicitChildProvider provider) {
+				ICoreImplicitChildProvider provider) {
 			this.parent = parent;
 			this.provider = provider;
 			computeImplicitChildren();
@@ -150,7 +150,7 @@ public class SynchroManager {
 		}
 
 		public static List<? extends IInternalElement> safeGetImplicitChildren(
-				IInternalElement parent, IImplicitChildProvider provider) {
+				IInternalElement parent, ICoreImplicitChildProvider provider) {
 			final ImplicitChildrenComputer c = new ImplicitChildrenComputer(
 					parent, provider);
 			final List<? extends IInternalElement> children = c

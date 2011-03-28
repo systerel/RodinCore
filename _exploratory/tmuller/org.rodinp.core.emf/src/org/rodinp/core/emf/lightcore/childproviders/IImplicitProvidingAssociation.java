@@ -12,7 +12,7 @@ package org.rodinp.core.emf.lightcore.childproviders;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.emf.lightcore.IImplicitChildProvider;
+import org.rodinp.core.emf.api.itf.ICoreImplicitChildProvider;
 
 public interface IImplicitProvidingAssociation {
 
@@ -25,6 +25,6 @@ public interface IImplicitProvidingAssociation {
 	/**
 	 * @return the implicit child provider for the current child type
 	 */
-	public IImplicitChildProvider getProvider();
+	public ICoreImplicitChildProvider getProvider();
 
 }

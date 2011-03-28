@@ -31,10 +31,10 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.emf.lightcore.IImplicitChildProvider;
+import org.rodinp.core.emf.api.itf.ICoreImplicitChildProvider;
+import org.rodinp.core.emf.api.itf.ImplicitChildProviderManager;
 import org.rodinp.core.emf.lightcore.LightElement;
 import org.rodinp.core.emf.lightcore.LightcorePackage;
-import org.rodinp.core.emf.lightcore.childproviders.ImplicitChildProviderManager;
 import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
 import org.rodinp.core.emf.tests.basis.ImplicitHolder;
 import org.rodinp.core.emf.tests.basis.RodinTestDependency;
@@ -159,7 +159,7 @@ public class ImplicitElementHandlingTests {
 		rf1.save(null, true);
 		rf2.save(null, true);
 
-		final IImplicitChildProvider p = createProvider(ImplicitHolder.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
+		final ICoreImplicitChildProvider p = createProvider(ImplicitHolder.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
 
 		// now checking the loaded resource for rf2
 		final Resource rodinResource = getRodinResource(project,
@@ -228,7 +228,7 @@ public class ImplicitElementHandlingTests {
 		rf2.save(null, true);
 		rf3.save(null, true);
 
-		final IImplicitChildProvider p = createProvider(ImplicitHolder.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
+		final ICoreImplicitChildProvider p = createProvider(ImplicitHolder.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
 
 		// now checking the loaded resource
 		final Resource rodinResource = getRodinResource(project,
@@ -285,7 +285,7 @@ public class ImplicitElementHandlingTests {
 		final NamedElement s2 = getNamedElement(rf1root, "s2");
 		rf1.save(null, true);
 
-		final IImplicitChildProvider p = new TestBuggyImplicitChildProvider();
+		final ICoreImplicitChildProvider p = new TestBuggyImplicitChildProvider();
 		ImplicitChildProviderManager.addProviderFor(p,
 				RodinTestRoot.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
 		
@@ -304,10 +304,10 @@ public class ImplicitElementHandlingTests {
 		//ImplicitChildProviderManager.removeProvider(p);
 	}
 	
-	public IImplicitChildProvider createProvider(
+	public ICoreImplicitChildProvider createProvider(
 			IInternalElementType<? extends IInternalElement> parentType,
 			IInternalElementType<? extends IInternalElement> childType) {
-		final IImplicitChildProvider p = new TestImplicitChildProvider();
+		final ICoreImplicitChildProvider p = new TestImplicitChildProvider();
 		ImplicitChildProviderManager.addProviderFor(
 				new TestImplicitChildProvider(), parentType, childType);
 		return p;

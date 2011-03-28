@@ -12,15 +12,15 @@ package org.rodinp.core.emf.lightcore.childproviders;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.emf.lightcore.IImplicitChildProvider;
+import org.rodinp.core.emf.api.itf.ICoreImplicitChildProvider;
 
 public class ImplicitProvidingAssociation implements
 		IImplicitProvidingAssociation {
 
 	final IInternalElementType<? extends IInternalElement> type;
-	final IImplicitChildProvider provider;
+	final ICoreImplicitChildProvider provider;
 
-	public ImplicitProvidingAssociation(IImplicitChildProvider provider,
+	public ImplicitProvidingAssociation(ICoreImplicitChildProvider provider,
 			IInternalElementType<? extends IInternalElement> type) {
 		this.provider = provider;
 		this.type = type;
@@ -32,7 +32,7 @@ public class ImplicitProvidingAssociation implements
 	}
 
 	@Override
-	public IImplicitChildProvider getProvider() {
+	public ICoreImplicitChildProvider getProvider() {
 		return provider;
 	}
 

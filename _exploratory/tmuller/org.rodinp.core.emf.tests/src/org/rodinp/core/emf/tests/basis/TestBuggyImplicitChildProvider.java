@@ -14,13 +14,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.emf.lightcore.IImplicitChildProvider;
+import org.rodinp.core.emf.api.itf.ICoreImplicitChildProvider;
 
 /**
  * Creates a buggy implicit child provider that creates a null pointer
  * exception which could do problems in implicit child retrieval.
  */
-public class TestBuggyImplicitChildProvider implements IImplicitChildProvider {
+public class TestBuggyImplicitChildProvider implements ICoreImplicitChildProvider {
 
 	@SuppressWarnings("null")
 	@Override

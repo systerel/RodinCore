@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - Initial API and implementation
  *******************************************************************************/
-package org.rodinp.core.emf.lightcore;
+package org.rodinp.core.emf.api.itf;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ import org.rodinp.core.IInternalElement;
  * 
  * @author Thomas Muller
  */
-public interface IImplicitChildProvider {
+public interface ICoreImplicitChildProvider {
 
 	/**
 	 * Gives all the implicit children for a given containing element (i.e.

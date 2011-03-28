@@ -19,7 +19,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.RodinElement;
-import org.rodinp.core.emf.lightcore.IImplicitChildProvider;
+import org.rodinp.core.emf.api.itf.ICoreImplicitChildProvider;
 import org.rodinp.core.tests.basis.NamedElement;
 
 /**
@@ -27,7 +27,7 @@ import org.rodinp.core.tests.basis.NamedElement;
  * from the other roots which are in the hierarchy given by
  * {@link RodinTestDependency} dependency.
  */
-public class TestImplicitChildProvider implements IImplicitChildProvider {
+public class TestImplicitChildProvider implements ICoreImplicitChildProvider {
 
 	@Override
 	public List<? extends IInternalElement> getImplicitChildren(

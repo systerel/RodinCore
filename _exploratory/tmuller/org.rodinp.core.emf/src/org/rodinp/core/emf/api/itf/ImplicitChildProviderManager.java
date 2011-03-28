@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - Initial API and implementation
  *******************************************************************************/
-package org.rodinp.core.emf.lightcore.childproviders;
+package org.rodinp.core.emf.api.itf;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,10 +18,11 @@ import java.util.Map;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.emf.lightcore.IImplicitChildProvider;
+import org.rodinp.core.emf.lightcore.childproviders.IImplicitProvidingAssociation;
+import org.rodinp.core.emf.lightcore.childproviders.ImplicitProvidingAssociation;
 
 /**
- * The manager class for {@link IImplicitChildProvider}. An instance of implicit
+ * The manager class for {@link ICoreImplicitChildProvider}. An instance of implicit
  * child provider is linked to a child type. It can be many child providers for
  * a given parent type.
  * 
@@ -29,7 +30,7 @@ import org.rodinp.core.emf.lightcore.IImplicitChildProvider;
  */
 public class ImplicitChildProviderManager {
 
-	private final static Map<IInternalElementType<? extends IInternalElement>, List<IImplicitProvidingAssociation>> relationships = new HashMap<IInternalElementType<? extends IInternalElement>, List<IImplicitProvidingAssociation>>();;
+	private final static Map<IInternalElementType<? extends IInternalElement>, List<IImplicitProvidingAssociation>> relationships = new HashMap<IInternalElementType<? extends IInternalElement>, List<IImplicitProvidingAssociation>>();
 
 	/**
 	 * Adds an implicit providing association made from the given childType and
@@ -42,7 +43,7 @@ public class ImplicitChildProviderManager {
 	 * @param childType
 	 *            the type of the provided children
 	 */
-	public static void addProviderFor(IImplicitChildProvider provider,
+	public static void addProviderFor(ICoreImplicitChildProvider provider,
 			IInternalElementType<? extends IInternalElement> parentType,
 			IInternalElementType<? extends IInternalElement> childType) {
 		addProviderFor(parentType, new ImplicitProvidingAssociation(provider,
@@ -96,7 +97,7 @@ public class ImplicitChildProviderManager {
 	 * @return the unique implicit child provider for the given parent/child
 	 *         relationship
 	 */
-	public static IImplicitChildProvider getProviderFor(
+	public static ICoreImplicitChildProvider getProviderFor(
 			IInternalElementType<? extends IInternalElement> parentType,
 			IInternalElementType<? extends IInternalElement> childType) {
 		final List<IImplicitProvidingAssociation> list = relationships
@@ -114,14 +115,14 @@ public class ImplicitChildProviderManager {
 		return null;
 	}
 
-	public static List<IImplicitChildProvider> getProvidersFor(
+	public static List<ICoreImplicitChildProvider> getProvidersFor(
 			IInternalElementType<? extends IInternalElement> parentType) {
 		final List<IImplicitProvidingAssociation> assocs = relationships
 				.get(parentType);
 		if (assocs == null) {
 			return Collections.emptyList();
 		}
-		final List<IImplicitChildProvider> providers = new ArrayList<IImplicitChildProvider>(
+		final List<ICoreImplicitChildProvider> providers = new ArrayList<ICoreImplicitChildProvider>(
 				assocs.size());
 		for (IImplicitProvidingAssociation a : assocs) {
 			providers.add(a.getProvider());
@@ -129,7 +130,7 @@ public class ImplicitChildProviderManager {
 		return providers;
 	}
 
-	public static void removeProvider(IImplicitChildProvider provider) {
+	public static void removeProvider(ICoreImplicitChildProvider provider) {
 		for (List<IImplicitProvidingAssociation> a : relationships.values()) {
 			for (IImplicitProvidingAssociation asso : a) {
 				if (asso.getProvider().equals(provider)) {
