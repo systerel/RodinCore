@@ -283,10 +283,8 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public List<ILElement> getChildren() {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+	public List<? extends ILElement> getChildren() {
+		return getEChildren();
 	}
 
 	/**

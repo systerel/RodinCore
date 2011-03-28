@@ -121,31 +121,26 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	public static ApiPackage init() {
-		if (isInited) return (ApiPackage)EPackage.Registry.INSTANCE.getEPackage(ApiPackage.eNS_URI);
+		if (isInited)
+			return (ApiPackage) EPackage.Registry.INSTANCE
+					.getEPackage(ApiPackage.eNS_URI);
 
 		// Obtain or create and register package
-		ApiPackageImpl theApiPackage = (ApiPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof ApiPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new ApiPackageImpl());
+		ApiPackageImpl theApiPackage = (ApiPackageImpl) (EPackage.Registry.INSTANCE
+				.get(eNS_URI) instanceof ApiPackageImpl ? EPackage.Registry.INSTANCE
+				.get(eNS_URI) : new ApiPackageImpl());
 
 		isInited = true;
 
-		// Initialize simple dependencies
-		EcorePackage.eINSTANCE.eClass();
-
-		// Obtain or create and register interdependencies
-		LightcorePackageImpl theLightcorePackage = (LightcorePackageImpl)(EPackage.Registry.INSTANCE.getEPackage(LightcorePackage.eNS_URI) instanceof LightcorePackageImpl ? EPackage.Registry.INSTANCE.getEPackage(LightcorePackage.eNS_URI) : LightcorePackage.eINSTANCE);
-
 		// Create package meta-data objects
 		theApiPackage.createPackageContents();
-		theLightcorePackage.createPackageContents();
 
 		// Initialize created meta-data
 		theApiPackage.initializePackageContents();
-		theLightcorePackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		theApiPackage.freeze();
 
-  
 		// Update the registry and return the package
 		EPackage.Registry.INSTANCE.put(ApiPackage.eNS_URI, theApiPackage);
 		return theApiPackage;
@@ -202,7 +197,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	public ApiFactory getApiFactory() {
-		return (ApiFactory)getEFactoryInstance();
+		return (ApiFactory) getEFactoryInstance();
 	}
 
 	/**
@@ -220,7 +215,8 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	public void createPackageContents() {
-		if (isCreated) return;
+		if (isCreated)
+			return;
 		isCreated = true;
 
 		// Create classes and their features
@@ -248,7 +244,8 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	public void initializePackageContents() {
-		if (isInitialized) return;
+		if (isInitialized)
+			return;
 		isInitialized = true;
 
 		// Initialize package
@@ -264,42 +261,84 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 		// Add supertypes to classes
 
 		// Initialize classes and features; add operations and parameters
-		initEClass(ilElementEClass, ILElement.class, "ILElement", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEClass(ilElementEClass, ILElement.class, "ILElement", IS_ABSTRACT,
+				IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
-		EOperation op = addEOperation(ilElementEClass, null, "getChildren", 0, 1, IS_UNIQUE, IS_ORDERED);
+		EOperation op = addEOperation(ilElementEClass, null, "getChildren", 0,
+				1, IS_UNIQUE, IS_ORDERED);
 		EGenericType g1 = createEGenericType(this.getList());
-		EGenericType g2 = createEGenericType(this.getILElement());
+		EGenericType g2 = createEGenericType();
 		g1.getETypeArguments().add(g2);
+		EGenericType g3 = createEGenericType(this.getILElement());
+		g2.setEUpperBound(g3);
 		initEOperation(op, g1);
 
-		op = addEOperation(ilElementEClass, null, "getAttributes", 0, 1, IS_UNIQUE, IS_ORDERED);
+		op = addEOperation(ilElementEClass, null, "getAttributes", 0, 1,
+				IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(this.getList());
 		g2 = createEGenericType(this.getIAttributeValue());
 		g1.getETypeArguments().add(g2);
 		initEOperation(op, g1);
 
-		op = addEOperation(ilElementEClass, this.getIAttributeValue(), "getAttribute", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getIAttributeType(), "type", 0, 1, IS_UNIQUE, IS_ORDERED);
+		op = addEOperation(ilElementEClass, this.getIAttributeValue(),
+				"getAttribute", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getIAttributeType(), "type", 0, 1, IS_UNIQUE,
+				IS_ORDERED);
 
-		op = addEOperation(ilElementEClass, null, "setAttribute", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getIAttributeValue(), "value", 0, 1, IS_UNIQUE, IS_ORDERED);
+		op = addEOperation(ilElementEClass, null, "setAttribute", 0, 1,
+				IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getIAttributeValue(), "value", 0, 1, IS_UNIQUE,
+				IS_ORDERED);
 
-		addEOperation(ilElementEClass, this.getIInternalElement(), "getElement", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEOperation(ilElementEClass, this.getIInternalElement(),
+				"getElement", 0, 1, IS_UNIQUE, IS_ORDERED);
 
-		addEOperation(ilElementEClass, null, "delete", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEOperation(ilElementEClass, null, "delete", 0, 1, IS_UNIQUE,
+				IS_ORDERED);
 
-		op = addEOperation(ilElementEClass, null, "moveChild", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEInt(), "newPos", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEInt(), "oldPos", 0, 1, IS_UNIQUE, IS_ORDERED);
+		op = addEOperation(ilElementEClass, null, "moveChild", 0, 1, IS_UNIQUE,
+				IS_ORDERED);
+		addEParameter(op, ecorePackage.getEInt(), "newPos", 0, 1, IS_UNIQUE,
+				IS_ORDERED);
+		addEParameter(op, ecorePackage.getEInt(), "oldPos", 0, 1, IS_UNIQUE,
+				IS_ORDERED);
+
+		addEOperation(ilElementEClass, ecorePackage.getEBoolean(),
+				"isImplicit", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		// Initialize data types
-		initEDataType(listEDataType, List.class, "List", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(iAttributeTypeEDataType, IAttributeType.class, "IAttributeType", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(iAttributeValueEDataType, IAttributeValue.class, "IAttributeValue", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(iInternalElementEDataType, IInternalElement.class, "IInternalElement", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(listEDataType, List.class, "List", !IS_SERIALIZABLE,
+				!IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(iAttributeTypeEDataType, IAttributeType.class,
+				"IAttributeType", !IS_SERIALIZABLE,
+				!IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(iAttributeValueEDataType, IAttributeValue.class,
+				"IAttributeValue", !IS_SERIALIZABLE,
+				!IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(iInternalElementEDataType, IInternalElement.class,
+				"IInternalElement", !IS_SERIALIZABLE,
+				!IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);
+
+		// Create annotations
+		// http://www.eclipse.org/emf/2002/GenModel
+		createGenModelAnnotations();
+	}
+
+	/**
+	 * Initializes the annotations for <b>http://www.eclipse.org/emf/2002/GenModel</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createGenModelAnnotations() {
+		String source = "http://www.eclipse.org/emf/2002/GenModel";
+		addAnnotation(ilElementEClass.getEOperations().get(0), source,
+				new String[] { "body", "return getEChildren();" });
+		addAnnotation(ilElementEClass.getEOperations().get(5), source,
+				new String[] { "body", "int i = 2;\ni++;" });
 	}
 
 } //ApiPackageImpl

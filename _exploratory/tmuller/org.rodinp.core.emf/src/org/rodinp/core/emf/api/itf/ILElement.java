@@ -30,10 +30,11 @@ public interface ILElement {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model kind="operation" dataType="org.rodinp.core.emf.api.itf.List<org.rodinp.core.emf.api.itf.ILElement>" many="false"
+	 * @model kind="operation" dataType="org.rodinp.core.emf.api.itf.List<? extends org.rodinp.core.emf.api.itf.ILElement>" many="false"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='return getEChildren();'"
 	 * @generated
 	 */
-	List<ILElement> getChildren();
+	List<? extends ILElement> getChildren();
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -70,7 +71,7 @@ public interface ILElement {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model
+	 * @model annotation="http://www.eclipse.org/emf/2002/GenModel body='int i = 2;\ni++;'"
 	 * @generated
 	 */
 	void delete();
@@ -82,5 +83,13 @@ public interface ILElement {
 	 * @generated
 	 */
 	void moveChild(int newPos, int oldPos);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model kind="operation"
+	 * @generated
+	 */
+	boolean isImplicit();
 
 } // ILElement

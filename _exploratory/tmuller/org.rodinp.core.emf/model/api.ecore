@@ -5,8 +5,13 @@
     nsURI="http://emf.core.rodinp.org/models/lightcore/api" nsPrefix="org.rodinp.core.emf.lightcore.api">
   <eClassifiers xsi:type="ecore:EClass" name="ILElement" abstract="true" interface="true">
     <eOperations name="getChildren">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="body" value="return getEChildren();"/>
+      </eAnnotations>
       <eGenericType eClassifier="#//List">
-        <eTypeArguments eClassifier="#//ILElement"/>
+        <eTypeArguments>
+          <eUpperBound eClassifier="#//ILElement"/>
+        </eTypeArguments>
       </eGenericType>
     </eOperations>
     <eOperations name="getAttributes">
