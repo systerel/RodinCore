@@ -27,6 +27,9 @@ public interface IRodinColorConstant {
 	RGB IDENTIFIER = new RGB(0, 0, 0);
 	RGB IMPLICIT_IDENTIFIER = new RGB(130, 130, 130);
 	
+	RGB ATTRIBUTE = new RGB(200, 0, 0);
+	RGB IMPLICIT_ATTRIBUTE = new RGB(180, 20, 20);
+	
 	RGB COMMENT_HEADER = new RGB(103, 187, 155); 	// The comment header §
 	RGB SECTION = new RGB(0, 200, 0);
 	RGB DEFAULT = new RGB(0, 0, 0);

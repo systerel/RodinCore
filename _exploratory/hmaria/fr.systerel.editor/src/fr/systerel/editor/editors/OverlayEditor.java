@@ -82,7 +82,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 		this.parent = parent;
 		this.editor = editor;
 
-		textViewer = new TextViewer(parent, SWT.BORDER | SWT.V_SCROLL);
+		textViewer = new TextViewer(parent, SWT.V_SCROLL);
 		contentAssistant = getContentAssistant();
 		contentAssistant.install(textViewer);
 		eventBTranslator = RodinKeyboardPlugin.getDefault()
@@ -128,7 +128,9 @@ public class OverlayEditor implements IAnnotationModelListener,
 	public void showAtOffset(int offset) {
 		Interval inter = mapper.findEditableInterval(viewer
 				.widgetOffset2ModelOffset(offset));
-		int pos = 0;
+		if (inter == null)
+			return;
+		int pos = 0;		
 		if (inter != null) {
 			pos = offset - inter.getOffset();
 		}
@@ -194,38 +196,38 @@ public class OverlayEditor implements IAnnotationModelListener,
 				DEFAULT_WIDTH);
 		int h = Math.max(height, editorText.getLineHeight()) + 4;
 
-		adaptEditorLines(h);
+		//adaptEditorLines(h);
 
 		editorText.setSize(w, h);
 	}
 
-	/**
-	 * Adds or removes lines in the underlying editor in order not to cover up
-	 * its content with the overlay editor.
-	 * 
-	 * @param new_height
-	 *            The new height of the editor
-	 */
-	private void adaptEditorLines(int new_height) {
-		// need to add lines?
-		if (new_height > editorText.getSize().y
-				&& new_height > editorText.getLineHeight() + 4) {
-			int offset = parent.getCaretOffset();
-			int line = parent.getLineAtOffset(offset);
-			int start = parent.getOffsetAtLine(line);
-			parent.replaceTextRange(start, 0,
-					System.getProperty("line.separator"));
-			addedLines++;
-			// need to remove lines?
-		} else if (new_height < editorText.getSize().y && addedLines > 0) {
-			int offset = parent.getCaretOffset();
-			int line = parent.getLineAtOffset(offset);
-			int start = parent.getOffsetAtLine(line - 1);
-			int end = parent.getOffsetAtLine(line);
-			parent.replaceTextRange(start, end - start, "");
-			addedLines--;
-		}
-	}
+//	/**
+//	 * Adds or removes lines in the underlying editor in order not to cover up
+//	 * its content with the overlay editor.
+//	 * 
+//	 * @param new_height
+//	 *            The new height of the editor
+//	 */
+//	private void adaptEditorLines(int new_height) {
+//		// need to add lines?
+//		if (new_height > editorText.getSize().y
+//				&& new_height > editorText.getLineHeight() + 4) {
+//			int offset = parent.getCaretOffset();
+//			int line = parent.getLineAtOffset(offset);
+//			int start = parent.getOffsetAtLine(line);
+//			parent.replaceTextRange(start, 0,
+//					System.getProperty("line.separator"));
+//			addedLines++;
+//			// need to remove lines?
+//		} else if (new_height < editorText.getSize().y && addedLines > 0) {
+//			int offset = parent.getCaretOffset();
+//			int line = parent.getLineAtOffset(offset);
+//			int start = parent.getOffsetAtLine(line - 1);
+//			int end = parent.getOffsetAtLine(line);
+//			parent.replaceTextRange(start, end - start, "");
+//			addedLines--;
+//		}
+//	}
 
 	public void abortEditing() {
 		editorText.setVisible(false);
@@ -464,7 +466,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 	}
 
 	public void saveAndExit() {
-		addChangeToDatabase();
+		//addChangeToDatabase();
 		abortEditing();
 	}
 
