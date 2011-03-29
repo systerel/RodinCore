@@ -73,23 +73,24 @@ public class SynchroUtils {
 		lElement.getEAttributes().retainAll(ids);
 	}
 
-	public static ILElement findElement(IRodinElement toFind, ILElement root) {
+	public static LightElement findElement(IRodinElement toFind,
+			LightElement root) {
 		if (toFind.equals(root.getElement()))
 			return root;
 		final TreeIterator<EObject> eAllContents = ((LightElement) root)
 				.eAllContents();
 		while (eAllContents.hasNext()) {
 			final EObject next = eAllContents.next();
-			if (next instanceof ILElement
-					&& ((ILElement) next).getElement().equals(toFind)) {
-				return (ILElement) next;
+			if (next instanceof LightElement
+					&& ((LightElement) next).getElement().equals(toFind)) {
+				return (LightElement) next;
 			}
 		}
 		return null;
 	}
-	
-	public static LightElement findElement(IRodinElement toFind, LightElement root) {
-		return findElement(toFind, root);
+
+	public static ILElement findElement(IRodinElement toFind, ILElement root) {
+		return findElement(toFind, (LightElement)root);
 	}
 
 	public static void adaptRootForDBChanges(LightElement e) {
