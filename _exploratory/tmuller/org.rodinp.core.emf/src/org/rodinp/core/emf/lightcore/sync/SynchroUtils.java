@@ -52,7 +52,7 @@ public class SynchroUtils {
 						.createAttribute();
 				lAttribute.setOwner(lElement);
 				lAttribute.setType(type);
-				lAttribute.setValue(value);
+				lAttribute.setValue(value.getValue());
 				lElement.getEAttributes().put(type.getId(), lAttribute);
 			}
 		} catch (RodinDBException e) {

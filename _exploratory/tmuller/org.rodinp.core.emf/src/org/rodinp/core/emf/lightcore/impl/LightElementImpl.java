@@ -23,9 +23,11 @@ import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IAttributeType.Handle;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.lightcore.Attribute;
 import org.rodinp.core.emf.lightcore.LightElement;
@@ -298,7 +300,8 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 		final List<IAttributeValue> values = new ArrayList<IAttributeValue>(
 				attributes.size());
 		for (Attribute att : attributes.values()) {
-			values.add((IAttributeValue) att.getValue());
+			final IAttributeValue value = valueOf(att);
+			values.add(value);
 		}
 		return values;
 	}
@@ -312,7 +315,92 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 		final Attribute attribute = getEAttributes().get(type.getId());
 		if (attribute == null)
 			return null;
-		return (IAttributeValue) attribute.getValue();
+		return valueOf(attribute);
+	}
+
+	private static IAttributeValue valueOf(Attribute att) {
+		final IAttributeType type = (IAttributeType) att.getType();
+		final Object valueObj = att.getValue();
+		if (type instanceof IAttributeType.Boolean) {
+			return ((IAttributeType.Boolean) type)
+					.makeValue((Boolean) valueObj);
+		}
+		if (type instanceof IAttributeType.Handle) {
+			return ((IAttributeType.Handle) type)
+					.makeValue((IRodinElement) valueObj);
+		}
+		if (type instanceof IAttributeType.String) {
+			return ((IAttributeType.String) type).makeValue((String) valueObj);
+		}
+		if (type instanceof IAttributeType.Integer) {
+			return ((IAttributeType.Integer) type)
+					.makeValue((Integer) valueObj);
+		}
+		if (type instanceof IAttributeType.Long) {
+			return ((IAttributeType.Long) type).makeValue((Long) valueObj);
+		}
+		throw new IllegalStateException("illegal attribute type: "
+				+ type.getId());
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Boolean getAttribute(org.rodinp.core.IAttributeType.Boolean type) {
+		final Attribute attribute = getEAttributes().get(type.getId());
+		if (attribute == null)
+			return null;
+		return (Boolean) attribute.getValue();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public IRodinElement getAttribute(Handle type) {
+		final Attribute attribute = getEAttributes().get(type.getId());
+		if (attribute == null)
+			return null;
+		return (IRodinElement) attribute.getValue();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Integer getAttribute(org.rodinp.core.IAttributeType.Integer type) {
+		final Attribute attribute = getEAttributes().get(type.getId());
+		if (attribute == null)
+			return null;
+		return (Integer) attribute.getValue();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Long getAttribute(org.rodinp.core.IAttributeType.Long type) {
+		final Attribute attribute = getEAttributes().get(type.getId());
+		if (attribute == null)
+			return null;
+		return (Long) attribute.getValue();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getAttribute(org.rodinp.core.IAttributeType.String type) {
+		final Attribute attribute = getEAttributes().get(type.getId());
+		if (attribute == null)
+			return null;
+		return (String) attribute.getValue();
 	}
 
 	/**
@@ -321,11 +409,14 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	 * @generated
 	 */
 	public void setAttribute(IAttributeValue value) {
-		final Attribute lAttribute = LightcoreFactory.eINSTANCE.createAttribute();
-		lAttribute.setOwner(this);
-		lAttribute.setType(value.getType());
-		lAttribute.setValue(value);
-		getEAttributes().put(value.getType().getId(), lAttribute);
+		Attribute attribute = getEAttributes().get(value.getType().getId());
+		if (attribute == null) {
+			attribute = LightcoreFactory.eINSTANCE.createAttribute();
+			attribute.setOwner(this);
+			attribute.setType(value.getType());
+			getEAttributes().put(value.getType().getId(), attribute);
+		}
+		attribute.setValue(value.getValue());
 	}
 
 	/**

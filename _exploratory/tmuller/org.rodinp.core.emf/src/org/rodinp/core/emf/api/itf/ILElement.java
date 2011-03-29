@@ -13,9 +13,11 @@ package org.rodinp.core.emf.api.itf;
 import java.util.List;
 
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IAttributeType.Handle;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRodinElement;
 
 /**
  * <!-- begin-user-doc -->
@@ -41,7 +43,7 @@ public interface ILElement {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @model kind="operation" dataType="org.rodinp.core.emf.api.itf.List<org.rodinp.core.emf.api.itf.IAttributeValue>" many="false"
-	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='final EMap<String, Attribute> attributes = getEAttributes();\nfinal List<IAttributeValue> values = new <%java.util.ArrayList%><IAttributeValue>(\n\t\tattributes.size());\nfor (Attribute att : attributes.values()) {\n\tvalues.add((IAttributeValue) att.getValue());\n}\nreturn values;'"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='final EMap<String, Attribute> attributes = getEAttributes();\nfinal List<IAttributeValue> values = new ArrayList<IAttributeValue>(\n\t\tattributes.size());\nfor (Attribute att : attributes.values()) {\n\tfinal IAttributeValue value = valueOf(att);\n\tvalues.add(value);\n}\nreturn values;'"
 	 * @generated
 	 */
 	List<IAttributeValue> getAttributes();
@@ -50,7 +52,7 @@ public interface ILElement {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @model dataType="org.rodinp.core.emf.api.itf.IAttributeValue" typeDataType="org.rodinp.core.emf.api.itf.IAttributeType"
-	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='final Attribute attribute = getEAttributes().get(type.getId());\nif (attribute == null)\n\treturn null;\nreturn (IAttributeValue) attribute.getValue();'"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='final Attribute attribute = getEAttributes().get(type.getId());\nif (attribute == null)\n\treturn null;\nreturn valueOf(attribute);'"
 	 * @generated
 	 */
 	IAttributeValue getAttribute(IAttributeType type);
@@ -58,8 +60,53 @@ public interface ILElement {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @model typeDataType="org.rodinp.core.emf.api.itf.IAttributeType_Boolean"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='final Attribute attribute = getEAttributes().get(type.getId());\nif (attribute == null)\n\treturn null;\nreturn (Boolean) attribute.getValue();'"
+	 * @generated
+	 */
+	Boolean getAttribute(org.rodinp.core.IAttributeType.Boolean type);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model dataType="org.rodinp.core.emf.api.itf.IRodinElement" typeDataType="org.rodinp.core.emf.api.itf.IAttributeType_Handle"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='final Attribute attribute = getEAttributes().get(type.getId());\nif (attribute == null)\n\treturn null;\nreturn (IRodinElement) attribute.getValue();'"
+	 * @generated
+	 */
+	IRodinElement getAttribute(Handle type);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model typeDataType="org.rodinp.core.emf.api.itf.IAttributeType_Integer"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='final Attribute attribute = getEAttributes().get(type.getId());\nif (attribute == null)\n\treturn null;\nreturn (Integer) attribute.getValue();'"
+	 * @generated
+	 */
+	Integer getAttribute(org.rodinp.core.IAttributeType.Integer type);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model typeDataType="org.rodinp.core.emf.api.itf.IAttributeType_Long"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='final Attribute attribute = getEAttributes().get(type.getId());\nif (attribute == null)\n\treturn null;\nreturn (Long) attribute.getValue();'"
+	 * @generated
+	 */
+	Long getAttribute(org.rodinp.core.IAttributeType.Long type);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model typeDataType="org.rodinp.core.emf.api.itf.IAttributeType_String"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='final Attribute attribute = getEAttributes().get(type.getId());\nif (attribute == null)\n\treturn null;\nreturn (String) attribute.getValue();'"
+	 * @generated
+	 */
+	String getAttribute(org.rodinp.core.IAttributeType.String type);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @model valueDataType="org.rodinp.core.emf.api.itf.IAttributeValue"
-	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='final Attribute lAttribute = LightcoreFactory.eINSTANCE.createAttribute();\nlAttribute.setOwner(this);\nlAttribute.setType(value.getType());\nlAttribute.setValue(value);\ngetEAttributes().put(value.getType().getId(), lAttribute);'"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='Attribute attribute = getEAttributes().get(value.getType().getId());\nif (attribute == null) {\n\tattribute = LightcoreFactory.eINSTANCE.createAttribute();\n\tattribute.setOwner(this);\n\tattribute.setType(value.getType());\n\tgetEAttributes().put(value.getType().getId(), attribute);\n}\nattribute.setValue(value.getValue());'"
 	 * @generated
 	 */
 	void setAttribute(IAttributeValue value);

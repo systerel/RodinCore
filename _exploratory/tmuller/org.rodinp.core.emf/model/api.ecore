@@ -16,7 +16,7 @@
     </eOperations>
     <eOperations name="getAttributes">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="body" value="final EMap&lt;String, Attribute> attributes = getEAttributes();&#xA;final List&lt;IAttributeValue> values = new &lt;%java.util.ArrayList%>&lt;IAttributeValue>(&#xA;&#x9;&#x9;attributes.size());&#xA;for (Attribute att : attributes.values()) {&#xA;&#x9;values.add((IAttributeValue) att.getValue());&#xA;}&#xA;return values;"/>
+        <details key="body" value="final EMap&lt;String, Attribute> attributes = getEAttributes();&#xA;final List&lt;IAttributeValue> values = new ArrayList&lt;IAttributeValue>(&#xA;&#x9;&#x9;attributes.size());&#xA;for (Attribute att : attributes.values()) {&#xA;&#x9;final IAttributeValue value = valueOf(att);&#xA;&#x9;values.add(value);&#xA;}&#xA;return values;"/>
       </eAnnotations>
       <eGenericType eClassifier="#//List">
         <eTypeArguments eClassifier="#//IAttributeValue"/>
@@ -24,13 +24,43 @@
     </eOperations>
     <eOperations name="getAttribute" eType="#//IAttributeValue">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="body" value="final Attribute attribute = getEAttributes().get(type.getId());&#xA;if (attribute == null)&#xA;&#x9;return null;&#xA;return (IAttributeValue) attribute.getValue();"/>
+        <details key="body" value="final Attribute attribute = getEAttributes().get(type.getId());&#xA;if (attribute == null)&#xA;&#x9;return null;&#xA;return valueOf(attribute);"/>
       </eAnnotations>
       <eParameters name="type" eType="#//IAttributeType"/>
     </eOperations>
+    <eOperations name="getAttribute" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBooleanObject">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="body" value="final Attribute attribute = getEAttributes().get(type.getId());&#xA;if (attribute == null)&#xA;&#x9;return null;&#xA;return (Boolean) attribute.getValue();"/>
+      </eAnnotations>
+      <eParameters name="type" eType="#//IAttributeType_Boolean"/>
+    </eOperations>
+    <eOperations name="getAttribute" eType="#//IRodinElement">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="body" value="final Attribute attribute = getEAttributes().get(type.getId());&#xA;if (attribute == null)&#xA;&#x9;return null;&#xA;return (IRodinElement) attribute.getValue();"/>
+      </eAnnotations>
+      <eParameters name="type" eType="#//IAttributeType_Handle"/>
+    </eOperations>
+    <eOperations name="getAttribute" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="body" value="final Attribute attribute = getEAttributes().get(type.getId());&#xA;if (attribute == null)&#xA;&#x9;return null;&#xA;return (Integer) attribute.getValue();"/>
+      </eAnnotations>
+      <eParameters name="type" eType="#//IAttributeType_Integer"/>
+    </eOperations>
+    <eOperations name="getAttribute" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELongObject">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="body" value="final Attribute attribute = getEAttributes().get(type.getId());&#xA;if (attribute == null)&#xA;&#x9;return null;&#xA;return (Long) attribute.getValue();"/>
+      </eAnnotations>
+      <eParameters name="type" eType="#//IAttributeType_Long"/>
+    </eOperations>
+    <eOperations name="getAttribute" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="body" value="final Attribute attribute = getEAttributes().get(type.getId());&#xA;if (attribute == null)&#xA;&#x9;return null;&#xA;return (String) attribute.getValue();"/>
+      </eAnnotations>
+      <eParameters name="type" eType="#//IAttributeType_String"/>
+    </eOperations>
     <eOperations name="setAttribute">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="body" value="final Attribute lAttribute = LightcoreFactory.eINSTANCE.createAttribute();&#xA;lAttribute.setOwner(this);&#xA;lAttribute.setType(value.getType());&#xA;lAttribute.setValue(value);&#xA;getEAttributes().put(value.getType().getId(), lAttribute);"/>
+        <details key="body" value="Attribute attribute = getEAttributes().get(value.getType().getId());&#xA;if (attribute == null) {&#xA;&#x9;attribute = LightcoreFactory.eINSTANCE.createAttribute();&#xA;&#x9;attribute.setOwner(this);&#xA;&#x9;attribute.setType(value.getType());&#xA;&#x9;getEAttributes().put(value.getType().getId(), attribute);&#xA;}&#xA;attribute.setValue(value.getValue());"/>
       </eAnnotations>
       <eParameters name="value" eType="#//IAttributeValue"/>
     </eOperations>
@@ -90,4 +120,16 @@
       serializable="false">
     <eTypeParameters name="T"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="IAttributeType_Boolean" instanceClassName="org.rodinp.core.IAttributeType.Boolean"
+      serializable="false"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="IAttributeType_Handle" instanceClassName="org.rodinp.core.IAttributeType.Handle"
+      serializable="false"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="IAttributeType_Integer" instanceClassName="org.rodinp.core.IAttributeType.Integer"
+      serializable="false"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="IAttributeType_Long" instanceClassName="org.rodinp.core.IAttributeType.Long"
+      serializable="false"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="IAttributeType_String" instanceClassName="org.rodinp.core.IAttributeType.String"
+      serializable="false"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="IRodinElement" instanceClassName="org.rodinp.core.IRodinElement"
+      serializable="false"/>
 </ecore:EPackage>

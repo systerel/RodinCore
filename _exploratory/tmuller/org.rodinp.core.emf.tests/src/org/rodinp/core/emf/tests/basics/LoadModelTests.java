@@ -130,12 +130,12 @@ public class LoadModelTests extends AbstractRodinEMFCoreTest {
 		final ILElement neChild = neChildren.get(0);
 		assertTrue(neChild.getElement().equals(ne2));
 
-		final IAttributeValue attribute = neChild
+		final String attribute = neChild
 				.getAttribute(AbstractRodinDBTests.fString);
-		assertEquals(attribute.getValue(), attributeString);
-		final IAttributeValue attribute2 = neChild
+		assertEquals(attribute, attributeString);
+		final Boolean attribute2 = neChild
 				.getAttribute(AbstractRodinDBTests.fBool);
-		assertEquals(attribute2.getValue(), true);
+		assertEquals(attribute2, true);
 	}
 
 }

@@ -19,9 +19,11 @@ import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IAttributeType.Handle;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.ApiFactory;
 import org.rodinp.core.emf.api.ApiPackage;
 import org.rodinp.core.emf.api.itf.ILElement;
@@ -81,6 +83,48 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	private EDataType iInternalElementTypeEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType iAttributeType_BooleanEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType iAttributeType_HandleEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType iAttributeType_IntegerEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType iAttributeType_LongEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType iAttributeType_StringEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType iRodinElementEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -205,6 +249,60 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EDataType getIAttributeType_Boolean() {
+		return iAttributeType_BooleanEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDataType getIAttributeType_Handle() {
+		return iAttributeType_HandleEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDataType getIAttributeType_Integer() {
+		return iAttributeType_IntegerEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDataType getIAttributeType_Long() {
+		return iAttributeType_LongEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDataType getIAttributeType_String() {
+		return iAttributeType_StringEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDataType getIRodinElement() {
+		return iRodinElementEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public ApiFactory getApiFactory() {
 		return (ApiFactory) getEFactoryInstance();
 	}
@@ -237,6 +335,12 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 		iAttributeValueEDataType = createEDataType(IATTRIBUTE_VALUE);
 		iInternalElementEDataType = createEDataType(IINTERNAL_ELEMENT);
 		iInternalElementTypeEDataType = createEDataType(IINTERNAL_ELEMENT_TYPE);
+		iAttributeType_BooleanEDataType = createEDataType(IATTRIBUTE_TYPE_BOOLEAN);
+		iAttributeType_HandleEDataType = createEDataType(IATTRIBUTE_TYPE_HANDLE);
+		iAttributeType_IntegerEDataType = createEDataType(IATTRIBUTE_TYPE_INTEGER);
+		iAttributeType_LongEDataType = createEDataType(IATTRIBUTE_TYPE_LONG);
+		iAttributeType_StringEDataType = createEDataType(IATTRIBUTE_TYPE_STRING);
+		iRodinElementEDataType = createEDataType(IRODIN_ELEMENT);
 	}
 
 	/**
@@ -296,6 +400,31 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 		addEParameter(op, this.getIAttributeType(), "type", 0, 1, IS_UNIQUE,
 				IS_ORDERED);
 
+		op = addEOperation(ilElementEClass, ecorePackage.getEBooleanObject(),
+				"getAttribute", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getIAttributeType_Boolean(), "type", 0, 1,
+				IS_UNIQUE, IS_ORDERED);
+
+		op = addEOperation(ilElementEClass, this.getIRodinElement(),
+				"getAttribute", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getIAttributeType_Handle(), "type", 0, 1,
+				IS_UNIQUE, IS_ORDERED);
+
+		op = addEOperation(ilElementEClass, ecorePackage.getEIntegerObject(),
+				"getAttribute", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getIAttributeType_Integer(), "type", 0, 1,
+				IS_UNIQUE, IS_ORDERED);
+
+		op = addEOperation(ilElementEClass, ecorePackage.getELongObject(),
+				"getAttribute", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getIAttributeType_Long(), "type", 0, 1,
+				IS_UNIQUE, IS_ORDERED);
+
+		op = addEOperation(ilElementEClass, ecorePackage.getEString(),
+				"getAttribute", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getIAttributeType_String(), "type", 0, 1,
+				IS_UNIQUE, IS_ORDERED);
+
 		op = addEOperation(ilElementEClass, null, "setAttribute", 0, 1,
 				IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getIAttributeValue(), "value", 0, 1, IS_UNIQUE,
@@ -352,6 +481,27 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 		initEDataType(iInternalElementTypeEDataType,
 				IInternalElementType.class, "IInternalElementType",
 				!IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(iAttributeType_BooleanEDataType,
+				org.rodinp.core.IAttributeType.Boolean.class,
+				"IAttributeType_Boolean", !IS_SERIALIZABLE,
+				!IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(iAttributeType_HandleEDataType, Handle.class,
+				"IAttributeType_Handle", !IS_SERIALIZABLE,
+				!IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(iAttributeType_IntegerEDataType,
+				org.rodinp.core.IAttributeType.Integer.class,
+				"IAttributeType_Integer", !IS_SERIALIZABLE,
+				!IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(iAttributeType_LongEDataType,
+				org.rodinp.core.IAttributeType.Long.class,
+				"IAttributeType_Long", !IS_SERIALIZABLE,
+				!IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(iAttributeType_StringEDataType,
+				org.rodinp.core.IAttributeType.String.class,
+				"IAttributeType_String", !IS_SERIALIZABLE,
+				!IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(iRodinElementEDataType, IRodinElement.class,
+				"IRodinElement", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);
@@ -376,38 +526,68 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 				source,
 				new String[] {
 						"body",
-						"final EMap<String, Attribute> attributes = getEAttributes();\nfinal List<IAttributeValue> values = new <%java.util.ArrayList%><IAttributeValue>(\n\t\tattributes.size());\nfor (Attribute att : attributes.values()) {\n\tvalues.add((IAttributeValue) att.getValue());\n}\nreturn values;" });
+						"final EMap<String, Attribute> attributes = getEAttributes();\nfinal List<IAttributeValue> values = new ArrayList<IAttributeValue>(\n\t\tattributes.size());\nfor (Attribute att : attributes.values()) {\n\tfinal IAttributeValue value = valueOf(att);\n\tvalues.add(value);\n}\nreturn values;" });
 		addAnnotation(
 				ilElementEClass.getEOperations().get(2),
 				source,
 				new String[] {
 						"body",
-						"final Attribute attribute = getEAttributes().get(type.getId());\nif (attribute == null)\n\treturn null;\nreturn (IAttributeValue) attribute.getValue();" });
+						"final Attribute attribute = getEAttributes().get(type.getId());\nif (attribute == null)\n\treturn null;\nreturn valueOf(attribute);" });
 		addAnnotation(
 				ilElementEClass.getEOperations().get(3),
 				source,
 				new String[] {
 						"body",
-						"final Attribute lAttribute = LightcoreFactory.eINSTANCE.createAttribute();\nlAttribute.setOwner(this);\nlAttribute.setType(value.getType());\nlAttribute.setValue(value);\ngetEAttributes().put(value.getType().getId(), lAttribute);" });
-		addAnnotation(ilElementEClass.getEOperations().get(4), source,
-				new String[] { "body",
-						"return (IInternalElement) getERodinElement();" });
-		addAnnotation(ilElementEClass.getEOperations().get(5), source,
-				new String[] { "body", "EcoreUtil.delete(this, true);" });
+						"final Attribute attribute = getEAttributes().get(type.getId());\nif (attribute == null)\n\treturn null;\nreturn (Boolean) attribute.getValue();" });
+		addAnnotation(
+				ilElementEClass.getEOperations().get(4),
+				source,
+				new String[] {
+						"body",
+						"final Attribute attribute = getEAttributes().get(type.getId());\nif (attribute == null)\n\treturn null;\nreturn (IRodinElement) attribute.getValue();" });
+		addAnnotation(
+				ilElementEClass.getEOperations().get(5),
+				source,
+				new String[] {
+						"body",
+						"final Attribute attribute = getEAttributes().get(type.getId());\nif (attribute == null)\n\treturn null;\nreturn (Integer) attribute.getValue();" });
 		addAnnotation(
 				ilElementEClass.getEOperations().get(6),
 				source,
 				new String[] {
 						"body",
-						"final EList<LightElement> children = getEChildren();\nchildren.move(newPos, oldPos);" });
+						"final Attribute attribute = getEAttributes().get(type.getId());\nif (attribute == null)\n\treturn null;\nreturn (Long) attribute.getValue();" });
+		addAnnotation(
+				ilElementEClass.getEOperations().get(7),
+				source,
+				new String[] {
+						"body",
+						"final Attribute attribute = getEAttributes().get(type.getId());\nif (attribute == null)\n\treturn null;\nreturn (String) attribute.getValue();" });
 		addAnnotation(
 				ilElementEClass.getEOperations().get(8),
 				source,
 				new String[] {
 						"body",
+						"Attribute attribute = getEAttributes().get(value.getType().getId());\nif (attribute == null) {\n\tattribute = LightcoreFactory.eINSTANCE.createAttribute();\n\tattribute.setOwner(this);\n\tattribute.setType(value.getType());\n\tgetEAttributes().put(value.getType().getId(), attribute);\n}\nattribute.setValue(value.getValue());" });
+		addAnnotation(ilElementEClass.getEOperations().get(9), source,
+				new String[] { "body",
+						"return (IInternalElement) getERodinElement();" });
+		addAnnotation(ilElementEClass.getEOperations().get(10), source,
+				new String[] { "body", "EcoreUtil.delete(this, true);" });
+		addAnnotation(
+				ilElementEClass.getEOperations().get(11),
+				source,
+				new String[] {
+						"body",
+						"final EList<LightElement> children = getEChildren();\nchildren.move(newPos, oldPos);" });
+		addAnnotation(
+				ilElementEClass.getEOperations().get(13),
+				source,
+				new String[] {
+						"body",
 						"final List<ILElement> list = new <%java.util.ArrayList%><ILElement>();\nfor (ILElement child : getChildren()) {\n\tif (child.getElement().getElementType() == type) {\n\t\tlist.add(child);\n\t}\n}\nreturn list;" });
 		addAnnotation(
-				ilElementEClass.getEOperations().get(9),
+				ilElementEClass.getEOperations().get(14),
 				source,
 				new String[] { "body", "return getElement().getElementType();" });
 	}

@@ -77,8 +77,8 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 		final List<? extends ILElement> children = root.getChildren();
 		assertTrue(children.size() == 1);
 		final ILElement neLight = children.get(0);
-		final IAttributeValue a = neLight.getAttribute(fBool);
-		assertTrue(a.getValue().equals(true));
+		final Boolean a = neLight.getAttribute(fBool);
+		assertTrue(a.equals(true));
 		ne.removeAttribute(fBool, null);
 		assertTrue(ne.getAttributeTypes().length == 0);
 		assertTrue(neLight.getAttribute(fBool) == null);
@@ -137,15 +137,15 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 		// we search for NE child in the Light model
 		// it has been created by the database delta listener
 		final ILElement neLightElement = root.getChildren().get(0);
-		final IAttributeValue a = neLightElement.getAttribute(fBool);
+		final Boolean a = neLightElement.getAttribute(fBool);
 		// we check that there is just one attribute set for this element
-		assertTrue(a.getValue().equals(true));
+		assertTrue(a.equals(true));
 
 		final IAttributeValue v2 = fBool.makeValue(false);
 		ne.setAttributeValue(v2, null);
 
-		final IAttributeValue a2 = neLightElement.getAttribute(fBool);
-		assertTrue(a2.getValue().equals(false));
+		final Boolean a2 = neLightElement.getAttribute(fBool);
+		assertTrue(a2.equals(false));
 	}
 
 	/**

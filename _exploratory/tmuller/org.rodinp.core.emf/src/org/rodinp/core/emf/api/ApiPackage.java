@@ -132,6 +132,66 @@ public interface ApiPackage extends EPackage {
 	int IINTERNAL_ELEMENT_TYPE = 5;
 
 	/**
+	 * The meta object id for the '<em>IAttribute Type Boolean</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.rodinp.core.IAttributeType.Boolean
+	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getIAttributeType_Boolean()
+	 * @generated
+	 */
+	int IATTRIBUTE_TYPE_BOOLEAN = 6;
+
+	/**
+	 * The meta object id for the '<em>IAttribute Type Handle</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.rodinp.core.IAttributeType.Handle
+	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getIAttributeType_Handle()
+	 * @generated
+	 */
+	int IATTRIBUTE_TYPE_HANDLE = 7;
+
+	/**
+	 * The meta object id for the '<em>IAttribute Type Integer</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.rodinp.core.IAttributeType.Integer
+	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getIAttributeType_Integer()
+	 * @generated
+	 */
+	int IATTRIBUTE_TYPE_INTEGER = 8;
+
+	/**
+	 * The meta object id for the '<em>IAttribute Type Long</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.rodinp.core.IAttributeType.Long
+	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getIAttributeType_Long()
+	 * @generated
+	 */
+	int IATTRIBUTE_TYPE_LONG = 9;
+
+	/**
+	 * The meta object id for the '<em>IAttribute Type String</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.rodinp.core.IAttributeType.String
+	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getIAttributeType_String()
+	 * @generated
+	 */
+	int IATTRIBUTE_TYPE_STRING = 10;
+
+	/**
+	 * The meta object id for the '<em>IRodin Element</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.rodinp.core.IRodinElement
+	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getIRodinElement()
+	 * @generated
+	 */
+	int IRODIN_ELEMENT = 11;
+
+	/**
 	 * Returns the meta object for class '{@link org.rodinp.core.emf.api.itf.ILElement <em>IL Element</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -195,6 +255,72 @@ public interface ApiPackage extends EPackage {
 	 * @generated
 	 */
 	EDataType getIInternalElementType();
+
+	/**
+	 * Returns the meta object for data type '{@link org.rodinp.core.IAttributeType.Boolean <em>IAttribute Type Boolean</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>IAttribute Type Boolean</em>'.
+	 * @see org.rodinp.core.IAttributeType.Boolean
+	 * @model instanceClass="org.rodinp.core.IAttributeType.Boolean" serializeable="false"
+	 * @generated
+	 */
+	EDataType getIAttributeType_Boolean();
+
+	/**
+	 * Returns the meta object for data type '{@link org.rodinp.core.IAttributeType.Handle <em>IAttribute Type Handle</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>IAttribute Type Handle</em>'.
+	 * @see org.rodinp.core.IAttributeType.Handle
+	 * @model instanceClass="org.rodinp.core.IAttributeType.Handle" serializeable="false"
+	 * @generated
+	 */
+	EDataType getIAttributeType_Handle();
+
+	/**
+	 * Returns the meta object for data type '{@link org.rodinp.core.IAttributeType.Integer <em>IAttribute Type Integer</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>IAttribute Type Integer</em>'.
+	 * @see org.rodinp.core.IAttributeType.Integer
+	 * @model instanceClass="org.rodinp.core.IAttributeType.Integer" serializeable="false"
+	 * @generated
+	 */
+	EDataType getIAttributeType_Integer();
+
+	/**
+	 * Returns the meta object for data type '{@link org.rodinp.core.IAttributeType.Long <em>IAttribute Type Long</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>IAttribute Type Long</em>'.
+	 * @see org.rodinp.core.IAttributeType.Long
+	 * @model instanceClass="org.rodinp.core.IAttributeType.Long" serializeable="false"
+	 * @generated
+	 */
+	EDataType getIAttributeType_Long();
+
+	/**
+	 * Returns the meta object for data type '{@link org.rodinp.core.IAttributeType.String <em>IAttribute Type String</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>IAttribute Type String</em>'.
+	 * @see org.rodinp.core.IAttributeType.String
+	 * @model instanceClass="org.rodinp.core.IAttributeType.String" serializeable="false"
+	 * @generated
+	 */
+	EDataType getIAttributeType_String();
+
+	/**
+	 * Returns the meta object for data type '{@link org.rodinp.core.IRodinElement <em>IRodin Element</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>IRodin Element</em>'.
+	 * @see org.rodinp.core.IRodinElement
+	 * @model instanceClass="org.rodinp.core.IRodinElement" serializeable="false"
+	 * @generated
+	 */
+	EDataType getIRodinElement();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
