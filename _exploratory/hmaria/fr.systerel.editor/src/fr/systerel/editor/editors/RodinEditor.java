@@ -13,6 +13,7 @@ package fr.systerel.editor.editors;
 import java.util.HashMap;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
@@ -32,7 +33,13 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
+import org.eventb.core.IContextRoot;
+import org.eventb.core.IEventBRoot;
+import org.eventb.core.IMachineRoot;
+import org.eventb.ui.EventBUIPlugin;
+import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.keyboard.preferences.PreferenceConstants;
 
@@ -112,6 +119,23 @@ public class RodinEditor extends TextEditor {
 
 		updateFoldingStructure(documentProvider.getFoldingRegions());
 		updateMarkerStructure(documentProvider.getMarkerAnnotations());
+		
+		setTitleImage(documentProvider.getInputRoot());
+	}
+
+	private void setTitleImage(IEventBRoot inputRoot) {
+		final IInternalElementType<?> rootType = inputRoot.getElementType();
+		String img = null;
+		if (rootType == IMachineRoot.ELEMENT_TYPE) {
+			img = IEventBSharedImages.IMG_MACHINE;
+		} else if (rootType == IContextRoot.ELEMENT_TYPE) {
+			img = IEventBSharedImages.IMG_CONTEXT;
+		}
+		if (img != null) {
+			final ImageRegistry imgReg = EventBUIPlugin.getDefault()
+					.getImageRegistry();
+			setTitleImage(imgReg.get(img));
+		}
 	}
 
 	/**
