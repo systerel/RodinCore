@@ -280,13 +280,11 @@ public class RodinTextGenerator {
 
 	private void processCommentedElement(ILElement element, boolean appendTabs) {
 		addCommentHeaderRegion(element, appendTabs);
-		final IAttributeValue commentAttribute = element
-				.getAttribute(COMMENT_ATTRIBUTE);
+		final String commentAttribute = element.getAttribute(COMMENT_ATTRIBUTE);
 		final String contentType = getContentType(element,
 				IMPLICIT_COMMENT_TYPE, COMMENT_TYPE);
 		if (commentAttribute != null) {
-			final String comment = processMulti((String) commentAttribute
-					.getValue());
+			final String comment = processMulti(commentAttribute);
 			addElementRegion(comment, element, contentType);
 		} else {
 			addElementRegion("", element, contentType);
@@ -296,12 +294,11 @@ public class RodinTextGenerator {
 	}
 
 	private void processPredicateElement(ILElement element) {
-		final IAttributeValue predAttribute = element
-				.getAttribute(PREDICATE_ATTRIBUTE);
+		final String predAttribute = element.getAttribute(PREDICATE_ATTRIBUTE);
 		final String contentType = getContentType(element,
 				IMPLICIT_CONTENT_TYPE, CONTENT_TYPE);
 		if (predAttribute != null) {
-			final String pred = processMulti((String) predAttribute.getValue());
+			final String pred = processMulti(predAttribute);
 			addElementRegion(pred, element, contentType);
 		} else {
 			addElementRegion("", element, contentType);
@@ -310,13 +307,11 @@ public class RodinTextGenerator {
 	}
 
 	private void processAssignmentElement(ILElement element) {
-		final IAttributeValue assignAttribute = element
-				.getAttribute(ASSIGNMENT_ATTRIBUTE);
+		final String assignAttribute = element.getAttribute(ASSIGNMENT_ATTRIBUTE);
 		final String contentType = getContentType(element,
 				IMPLICIT_CONTENT_TYPE, CONTENT_TYPE);
 		if (assignAttribute != null) {
-			final String assign = processMulti((String) assignAttribute
-					.getValue());
+			final String assign = processMulti(assignAttribute);
 			addElementRegion(assign, element, contentType);
 		} else {
 			addElementRegion("", element, contentType);
@@ -325,14 +320,12 @@ public class RodinTextGenerator {
 	}
 
 	private void processLabeledElement(ILElement element) {
-		final IAttributeValue labelAttribute = element
-				.getAttribute(LABEL_ATTRIBUTE);
+		final String labelAttribute = element.getAttribute(LABEL_ATTRIBUTE);
 		builder.append(getTabs(level));
 		final String contentType = getContentType(element,
 				IMPLICIT_IDENTIFIER_TYPE, IDENTIFIER_TYPE);
 		if (labelAttribute != null) {
-			addElementRegion((String) labelAttribute.getValue(), element,
-					contentType);
+			addElementRegion(labelAttribute, element, contentType);
 			builder.append(" : ");
 		} else {
 			addElementRegion("", element, contentType);
@@ -344,13 +337,12 @@ public class RodinTextGenerator {
 	}
 
 	private void processIdentifierElement(ILElement element) {
-		final IAttributeValue identifierAttribute = element
+		final String identifierAttribute = element
 				.getAttribute(IDENTIFIER_ATTRIBUTE);
 		final String contentType = getContentType(element,
 				IMPLICIT_IDENTIFIER_TYPE, IDENTIFIER_TYPE);
 		if (identifierAttribute != null) {
-			addElementRegion((String) identifierAttribute.getValue(), element,
-					contentType);
+			addElementRegion((String) identifierAttribute, element, contentType);
 		} else {
 			addElementRegion("", element, contentType);
 		}
