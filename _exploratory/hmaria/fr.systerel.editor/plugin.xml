@@ -9,7 +9,7 @@
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
             default="true"
             extensions="bum, buc"
-            icon="icons/full/obj16/mch_obj.gif"
+            icon="icons/full/clcl16/b_file.gif"
             id="fr.systerel.editor.editors.RodinEditor"
             name="%editorName">
       </editor>
