@@ -130,7 +130,7 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 				: null;
 		rdr = new RodinDamagerRepairer(new TextAttribute(
 				colorManager.getColor(IRodinColorConstant.ATTRIBUTE), bgColor,
-				SWT.NONE));
+				SWT.ITALIC));
 		reconciler.setDamager(rdr, ATTRIBUTE_TYPE);
 		reconciler.setRepairer(rdr, ATTRIBUTE_TYPE);
 
@@ -138,7 +138,7 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 				: null;
 		rdr = new RodinDamagerRepairer(new TextAttribute(
 				colorManager.getColor(IRodinColorConstant.IMPLICIT_ATTRIBUTE),
-				bgColor, SWT.NONE));
+				bgColor, SWT.ITALIC));
 		reconciler.setDamager(rdr, IMPLICIT_ATTRIBUTE_TYPE);
 		reconciler.setRepairer(rdr, IMPLICIT_ATTRIBUTE_TYPE);
 

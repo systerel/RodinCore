@@ -19,10 +19,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.command.BasicCommandStack;
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
@@ -54,7 +56,7 @@ import fr.systerel.editor.editors.RodinEditor;
 public class RodinDocumentProvider extends AbstractDocumentProvider {
 
 	private IDocument document;
-	private DocumentMapper documentMapper;
+	protected DocumentMapper documentMapper;
 	private ILElement inputRoot;
 	private IEditorInput editorInput;
 	private RodinTextGenerator textGenerator;
@@ -62,6 +64,23 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	private ComposedAdapterFactory adapterFactory;
 	private AdapterFactoryEditingDomain editingDomain;
 	private Resource inputResource;
+
+	protected EContentAdapter elementChangeAdapter = 
+		new EContentAdapter() {
+		@Override
+		public void notifyChanged(Notification notification) {
+			final Object notifier = notification.getNotifier();
+			if (notification.isTouch()) {
+				return;
+			}
+			if (notifier instanceof ILElement) {
+				documentMapper.elementChanged((ILElement) notifier);
+//				for (ILElement e : ((ILElement) notifier).getChildren()) {
+//					documentMapper.elementChanged((ILElement) e);
+//				}
+			}
+		}
+	};
 
 	public RodinDocumentProvider(DocumentMapper mapper, RodinEditor editor) {
 		this.documentMapper = mapper;
@@ -73,7 +92,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 			throws CoreException {
 		return new AnnotationModel();
 	}
-
+	
 	protected void initializeEditingDomain() {
 		// Create an adapter factory that yields item providers.
 		adapterFactory = new ComposedAdapterFactory(
@@ -116,6 +135,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 							+ " : "
 							+ exception.getMessage());
 		}
+		resource.eAdapters().add(elementChangeAdapter);
 		return resource;
 	}
 
@@ -249,24 +269,23 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	}
 
 	protected void replaceTextInDocument(Interval interval, String text) {
-		if (document != null) {
-			try {
-				fireElementContentAboutToBeReplaced(document);
-				document.replace(interval.getOffset(), interval.getLength(),
-						text);
-				fireElementContentReplaced(document);
-			} catch (BadLocationException e) {
-				e.printStackTrace();
-			}
-		}
+		replaceTextInDocument(interval.getOffset(), interval.getLength(), text);
+	}
+	
+	protected void replaceTextInDocument(int offset, int length, String text) {
+		fireElementContentAboutToBeReplaced(document);
+		silentReplaceTextInDocument(offset, length, text);
+		fireElementContentReplaced(document);
+	}
+	
+	protected void silentReplaceTextInDocument(Interval interval, String text) {
+		silentReplaceTextInDocument(interval.getOffset(), interval.getLength(), text);
 	}
 
-	protected void replaceTextInDocument(int offset, int length, String text) {
+	protected void silentReplaceTextInDocument(int offset, int length, String text) {
 		if (document != null) {
 			try {
-				fireElementContentAboutToBeReplaced(document);
 				document.replace(offset, length, text);
-				fireElementContentReplaced(document);
 			} catch (BadLocationException e) {
 				e.printStackTrace();
 			}

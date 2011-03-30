@@ -41,8 +41,14 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.swt.IFocusService;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAssignmentElement;
+import org.eventb.core.ICommentedElement;
+import org.eventb.core.IIdentifierElement;
+import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPredicateElement;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.keyboard.RodinKeyboardPlugin;
 
 import fr.systerel.editor.actions.StyledTextEditAction;
@@ -147,7 +153,8 @@ public class OverlayEditor implements IAnnotationModelListener,
 				int start = viewer.modelOffset2WidgetOffset(inter.getOffset());
 				offset = start + pos;
 				if (inter.getLength() > 0) {
-					text = parent.getText(start, start + inter.getLength() - 1);
+					final String extracted = parent.getText(start, start + inter.getLength() - 1);
+					text = extracted;
 				} else {
 					text = "";
 				}
@@ -236,59 +243,40 @@ public class OverlayEditor implements IAnnotationModelListener,
 
 	}
 
-	public void addChangeToDatabase() {
-		// if (interval != null) {
-		// //TODO: check if there really are changes. if not, do nothing.
-		// IRodinElement element = interval.getElement();
-		// String contentType= interval.getContentType();
-		// String text = removeWhiteSpaces(editorText.getText());
-		// if (element instanceof IIdentifierElement &&
-		// contentType.equals(RodinConfiguration.IDENTIFIER_TYPE)) {
-		// try {
-		// ((IIdentifierElement) element).setIdentifierString(text, null);
-		// } catch (RodinDBException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// }
-		// if (element instanceof ILabeledElement &&
-		// contentType.equals(RodinConfiguration.IDENTIFIER_TYPE)) {
-		// try {
-		// ((ILabeledElement) element).setLabel(text, null);
-		// } catch (RodinDBException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// }
-		// if (element instanceof IPredicateElement &&
-		// contentType.equals(RodinConfiguration.CONTENT_TYPE)) {
-		// try {
-		// ((IPredicateElement) element).setPredicateString(text, null);
-		// } catch (RodinDBException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// }
-		// if (element instanceof IAssignmentElement &&
-		// contentType.equals(RodinConfiguration.CONTENT_TYPE)) {
-		// try {
-		// ((IAssignmentElement) element).setAssignmentString(text, null);
-		// } catch (RodinDBException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// }
-		// if (element instanceof ICommentedElement &&
-		// contentType.equals(RodinConfiguration.COMMENT_TYPE)) {
-		// try {
-		// ((ICommentedElement) element).setComment(text, null);
-		// } catch (RodinDBException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// }
-		// }
-
+	public void updateModelAfterChanges() {
+		if (interval == null) {
+			return;
+		}
+		final String contentType = interval.getContentType();
+		final ILElement element = interval.getElement();
+		final IInternalElement ielement = element.getElement();
+		final String text = editorText.getText();
+		if (ielement instanceof IIdentifierElement
+				&& contentType.equals(RodinConfiguration.IDENTIFIER_TYPE)) {
+			element.setAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE
+					.makeValue(text));
+		}
+		if (ielement instanceof ILabeledElement
+				&& contentType.equals(RodinConfiguration.IDENTIFIER_TYPE)) {
+			element.setAttribute(EventBAttributes.LABEL_ATTRIBUTE
+					.makeValue(text));
+		}
+		if (ielement instanceof IPredicateElement
+				&& contentType.equals(RodinConfiguration.CONTENT_TYPE)) {
+			element.setAttribute(EventBAttributes.PREDICATE_ATTRIBUTE
+					.makeValue(text));
+		}
+		if (ielement instanceof IAssignmentElement
+				&& contentType.equals(RodinConfiguration.CONTENT_TYPE)) {
+			element.setAttribute(EventBAttributes.ASSIGNMENT_ATTRIBUTE
+					.makeValue(text));
+		}
+		if (ielement instanceof ICommentedElement
+				&& contentType.equals(RodinConfiguration.COMMENT_TYPE)) {
+			element.setAttribute(EventBAttributes.COMMENT_ATTRIBUTE
+					.makeValue(text));
+		}
+		//mapper.elementChanged(element);
 	}
 
 	/**
@@ -317,7 +305,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 		last_pos = (last_pos == -1) ? (text.length()) : last_pos;
 		return (text.substring(first_pos, last_pos));
 	}
-
+	
 	protected boolean isWhitespace(char c) {
 		return (c == ' ' || c == '\t' || c == '\n' || c == '\r');
 	}
@@ -466,7 +454,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 	}
 
 	public void saveAndExit() {
-		//addChangeToDatabase();
+		updateModelAfterChanges();
 		abortEditing();
 	}
 

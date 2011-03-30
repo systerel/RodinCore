@@ -22,6 +22,7 @@ import org.eventb.core.ICommentedElement;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPredicateElement;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -47,7 +48,7 @@ public class DocumentMapper {
 	private IDocument document;
 	private RodinDocumentProvider documentProvider;
 
-	private HashMap<ILElement, EditorItem> editorElements = new HashMap<ILElement, EditorItem>();
+	private HashMap<IInternalElement, EditorItem> editorElements = new HashMap<IInternalElement, EditorItem>();
 	private HashMap<IInternalElementType<?>, EditorItem> sections = new HashMap<IInternalElementType<?>, EditorItem>();
 
 	/**
@@ -329,12 +330,12 @@ public class DocumentMapper {
 		}
 		previous = inter;
 		if (element != null) {
-			EditorItem el = editorElements.get(element);
+			EditorItem el = editorElements.get(element.getElement());
 			if (el == null) {
 				el = new EditorElement(element);
 			}
 			el.addInterval(inter);
-			editorElements.put(element, el);
+			editorElements.put(element.getElement(), el);
 		}
 
 	}
@@ -401,7 +402,7 @@ public class DocumentMapper {
 	}
 
 	public EditorItem getEditorElement(ILElement key) {
-		return editorElements.get(key);
+		return editorElements.get(key.getElement());
 	}
 
 	public EditorItem getEditorSection(ILElement key) {
@@ -409,7 +410,7 @@ public class DocumentMapper {
 	}
 
 	public void addEditorElement(ILElement key, EditorItem value) {
-		editorElements.put(key, value);
+		editorElements.put(key.getElement(), value);
 	}
 
 	public void addEditorSection(IInternalElementType<?> key,
@@ -457,31 +458,43 @@ public class DocumentMapper {
 		return result.toArray(new ProjectionAnnotation[result.size()]);
 	}
 
-	public void elementChanged(IRodinElement element) {
-		EditorItem el = editorElements.get(element);
+	public void elementChanged(ILElement element) {
+		final IInternalElement ie = element.getElement();
+		final EditorItem el = editorElements.get(ie);
 		if (el != null) {
 			for (Interval interval : el.getIntervals()) {
 				try {
-					if (element instanceof IIdentifierElement
-							&& interval.getContentType().equals(
-									RodinConfiguration.IDENTIFIER_TYPE)) {
-						checkIdentifier((IIdentifierElement) element, interval);
-					} else if (element instanceof ILabeledElement
-							&& interval.getContentType().equals(
-									RodinConfiguration.IDENTIFIER_TYPE)) {
-						checkLabeled((ILabeledElement) element, interval);
-					} else if (element instanceof IAssignmentElement
-							&& interval.getContentType().equals(
-									RodinConfiguration.CONTENT_TYPE)) {
-						checkAssignment((IAssignmentElement) element, interval);
-					} else if (element instanceof IPredicateElement
-							&& interval.getContentType().equals(
-									RodinConfiguration.CONTENT_TYPE)) {
-						checkPredicate((IPredicateElement) element, interval);
-					} else if (element instanceof ICommentedElement
-							&& interval.getContentType().equals(
-									RodinConfiguration.COMMENT_TYPE)) {
-						checkCommented((ICommentedElement) element, interval);
+					final String contentType = interval.getContentType();
+					if (ie instanceof IIdentifierElement
+							&& (contentType
+									.equals(RodinConfiguration.IDENTIFIER_TYPE)
+							|| contentType
+									.equals(RodinConfiguration.IMPLICIT_IDENTIFIER_TYPE))) {
+						checkIdentifier((IIdentifierElement) ie, interval);
+					} else if (ie instanceof ILabeledElement
+							&& (contentType
+									.equals(RodinConfiguration.IDENTIFIER_TYPE)
+							|| contentType
+									.equals(RodinConfiguration.IMPLICIT_IDENTIFIER_TYPE))) {
+						checkLabeled((ILabeledElement) ie, interval);
+					} else if (ie instanceof IAssignmentElement
+							&& (contentType
+									.equals(RodinConfiguration.CONTENT_TYPE)
+							|| contentType
+									.equals(RodinConfiguration.IMPLICIT_CONTENT_TYPE))) {
+						checkAssignment((IAssignmentElement) ie, interval);
+					} else if (ie instanceof IPredicateElement
+							&& (contentType
+									.equals(RodinConfiguration.CONTENT_TYPE)
+							|| contentType
+									.equals(RodinConfiguration.IMPLICIT_CONTENT_TYPE))){
+						checkPredicate((IPredicateElement) ie, interval);
+					} else if (ie instanceof ICommentedElement
+							&& (contentType
+									.equals(RodinConfiguration.COMMENT_TYPE)
+							|| contentType
+									.equals(RodinConfiguration.IMPLICIT_COMMENT_TYPE))) {
+						checkCommented((ICommentedElement) ie, interval);
 					}
 				} catch (RodinDBException e) {
 					e.printStackTrace();
@@ -500,7 +513,6 @@ public class DocumentMapper {
 			removeElements(offset, length);
 			removeIntervals(offset, length);
 			adaptFoldingPositions(offset, -length);
-
 			documentProvider.replaceTextInDocument(offset, length, "");
 		}
 	}
@@ -672,7 +684,12 @@ public class DocumentMapper {
 					new_Text.length() - old_text.length());
 			adaptFoldingPositions(interval.getOffset(), new_Text.length()
 					- old_text.length());
-			documentProvider.replaceTextInDocument(interval, new_Text);
+			if (interval.getElement().isImplicit()) {
+				documentProvider
+						.silentReplaceTextInDocument(interval, new_Text);
+			} else {
+				documentProvider.replaceTextInDocument(interval, new_Text);
+			}
 			interval.setLength(new_Text.length());
 		}
 	}

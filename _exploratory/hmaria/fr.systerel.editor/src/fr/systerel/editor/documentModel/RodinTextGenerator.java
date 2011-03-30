@@ -316,7 +316,6 @@ public class RodinTextGenerator {
 		} else {
 			addElementRegion("", element, contentType);
 		}
-		// builder.append(lineSeparator);
 	}
 
 	private void processLabeledElement(ILElement element) {
@@ -383,6 +382,7 @@ public class RodinTextGenerator {
 
 	private String processMulti(String str) {
 		final StringBuilder sb = new StringBuilder();
+		//final String toSplit = str.replaceAll("\r", (String) lineSeparator);
 		final String[] split = str.split((String) lineSeparator);
 		int i = 0;
 		for (String s : split) {
