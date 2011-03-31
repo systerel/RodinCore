@@ -200,49 +200,49 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 		Color bgColor = (COLOR_DEBUG) ? colorManager.getColor(COMMENT_DEBUG_BG)
 				: null;
 		RodinDamagerRepairer rdr = new RodinDamagerRepairer(new TextAttribute(
-				colorManager.getColor(COMMENT), bgColor, SWT.NONE));
+				colorManager.getColor(COMMENT_TYPE.getColor()), bgColor, SWT.NONE));
 		reconciler.setDamager(rdr, COMMENT_TYPE.getName());
 		reconciler.setRepairer(rdr, COMMENT_TYPE.getName());
 
 		bgColor = (COLOR_DEBUG) ? colorManager.getColor(COMMENT_DEBUG_BG)
 				: null;
 		rdr = new RodinDamagerRepairer(new TextAttribute(
-				colorManager.getColor(IMPLICIT_COMMENT), bgColor, SWT.NONE));
+				colorManager.getColor(IMPLICIT_COMMENT_TYPE.getColor()), bgColor, SWT.NONE));
 		reconciler.setDamager(rdr, IMPLICIT_COMMENT_TYPE.getName());
 		reconciler.setRepairer(rdr, IMPLICIT_COMMENT_TYPE.getName());
 
 		bgColor = (COLOR_DEBUG) ? colorManager.getColor(CONTENT_DEBUG_BG)
 				: null;
 		rdr = new RodinDamagerRepairer(new TextAttribute(
-				colorManager.getColor(CONTENT), bgColor, SWT.NONE));
+				colorManager.getColor(CONTENT_TYPE.getColor()), bgColor, SWT.NONE));
 		reconciler.setDamager(rdr, CONTENT_TYPE.getName());
 		reconciler.setRepairer(rdr, CONTENT_TYPE.getName());
 
 		bgColor = (COLOR_DEBUG) ? colorManager.getColor(CONTENT_DEBUG_BG)
 				: null;
 		rdr = new RodinDamagerRepairer(new TextAttribute(
-				colorManager.getColor(IMPLICIT_CONTENT), bgColor, SWT.NONE));
+				colorManager.getColor(IMPLICIT_CONTENT_TYPE.getColor()), bgColor, SWT.NONE));
 		reconciler.setDamager(rdr, IMPLICIT_CONTENT_TYPE.getName());
 		reconciler.setRepairer(rdr, IMPLICIT_CONTENT_TYPE.getName());
 
 		bgColor = (COLOR_DEBUG) ? colorManager.getColor(IDENTIFIER_DEBUG_BG)
 				: null;
 		rdr = new RodinDamagerRepairer(new TextAttribute(
-				colorManager.getColor(IDENTIFIER), bgColor, SWT.NONE));
+				colorManager.getColor(IDENTIFIER_TYPE.getColor()), bgColor, SWT.NONE));
 		reconciler.setDamager(rdr, IDENTIFIER_TYPE.getName());
 		reconciler.setRepairer(rdr, IDENTIFIER_TYPE.getName());
 
 		bgColor = (COLOR_DEBUG) ? colorManager.getColor(IDENTIFIER_DEBUG_BG)
 				: null;
 		rdr = new RodinDamagerRepairer(new TextAttribute(
-				colorManager.getColor(IMPLICIT_IDENTIFIER), bgColor, SWT.NONE));
+				colorManager.getColor(IMPLICIT_IDENTIFIER_TYPE.getColor()), bgColor, SWT.NONE));
 		reconciler.setDamager(rdr, IMPLICIT_IDENTIFIER_TYPE.getName());
 		reconciler.setRepairer(rdr, IMPLICIT_IDENTIFIER_TYPE.getName());
 
 		bgColor = (COLOR_DEBUG) ? colorManager.getColor(CONTENT_DEBUG_BG)
 				: null;
 		rdr = new RodinDamagerRepairer(new TextAttribute(
-				colorManager.getColor(IRodinColorConstant.ATTRIBUTE), bgColor,
+				colorManager.getColor(ATTRIBUTE_TYPE.getColor()), bgColor,
 				SWT.ITALIC));
 		reconciler.setDamager(rdr, ATTRIBUTE_TYPE.getName());
 		reconciler.setRepairer(rdr, ATTRIBUTE_TYPE.getName());
@@ -250,7 +250,7 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 		bgColor = (COLOR_DEBUG) ? colorManager.getColor(CONTENT_DEBUG_BG)
 				: null;
 		rdr = new RodinDamagerRepairer(new TextAttribute(
-				colorManager.getColor(IRodinColorConstant.IMPLICIT_ATTRIBUTE),
+				colorManager.getColor(IMPLICIT_ATTRIBUTE_TYPE.getColor()),
 				bgColor, SWT.ITALIC));
 		reconciler.setDamager(rdr, IMPLICIT_ATTRIBUTE_TYPE.getName());
 		reconciler.setRepairer(rdr, IMPLICIT_ATTRIBUTE_TYPE.getName());
@@ -258,34 +258,34 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 		bgColor = (COLOR_DEBUG) ? colorManager
 				.getColor(IRodinColorConstant.LABEL_DEBUG_BG) : null;
 		rdr = new RodinDamagerRepairer(new TextAttribute(
-				colorManager.getColor(LABEL), bgColor, SWT.NONE));
+				colorManager.getColor(LABEL_TYPE.getColor()), bgColor, SWT.NONE));
 		reconciler.setDamager(rdr, LABEL_TYPE.getName());
 		reconciler.setRepairer(rdr, LABEL_TYPE.getName());
 
 		bgColor = (COLOR_DEBUG) ? colorManager.getColor(LABEL_DEBUG_BG) : null;
 		rdr = new RodinDamagerRepairer(new TextAttribute(
-				colorManager.getColor(IMPLICIT_LABEL), bgColor, SWT.NONE));
+				colorManager.getColor(IMPLICIT_LABEL_TYPE.getColor()), bgColor, SWT.NONE));
 		reconciler.setDamager(rdr, IMPLICIT_LABEL_TYPE.getName());
 		reconciler.setRepairer(rdr, IMPLICIT_LABEL_TYPE.getName());
 
 		bgColor = (COLOR_DEBUG) ? colorManager.getColor(SECTION_DEBUG_BG)
 				: null;
 		rdr = new RodinDamagerRepairer(new TextAttribute(
-				colorManager.getColor(LABEL), bgColor, SWT.BOLD));
+				colorManager.getColor(LABEL_TYPE.getColor()), bgColor, SWT.BOLD));
 		reconciler.setDamager(rdr, SECTION_TYPE.getName());
 		reconciler.setRepairer(rdr, SECTION_TYPE.getName());
 
 		bgColor = (COLOR_DEBUG) ? colorManager.getColor(KEYWORD_DEBUG_BG)
 				: null;
 		rdr = new RodinDamagerRepairer(new TextAttribute(
-				colorManager.getColor(LABEL), bgColor, SWT.BOLD | SWT.ITALIC));
+				colorManager.getColor(LABEL_TYPE.getColor()), bgColor, SWT.BOLD | SWT.ITALIC));
 		reconciler.setDamager(rdr, KEYWORD_TYPE.getName());
 		reconciler.setRepairer(rdr, KEYWORD_TYPE.getName());
 
 		bgColor = (COLOR_DEBUG) ? colorManager
 				.getColor(COMMENT_HEADER_DEBUG_BG) : null;
 		rdr = new RodinDamagerRepairer(new TextAttribute(
-				colorManager.getColor(COMMENT_HEADER), bgColor, SWT.NONE));
+				colorManager.getColor(COMMENT_HEADER_TYPE.getColor()), bgColor, SWT.NONE));
 		reconciler.setDamager(rdr, COMMENT_HEADER_TYPE.getName());
 		reconciler.setRepairer(rdr, COMMENT_HEADER_TYPE.getName());
 

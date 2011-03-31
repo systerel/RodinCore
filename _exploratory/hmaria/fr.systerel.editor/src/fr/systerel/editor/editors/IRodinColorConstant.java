@@ -16,7 +16,7 @@ import org.eclipse.swt.graphics.RGB;
 public interface IRodinColorConstant {
 
 	// TODO make preferences
-	
+
 	RGB COMMENT = new RGB(63, 127, 95);
 	RGB IMPLICIT_COMMENT = new RGB(95, 150, 95);
 
@@ -24,15 +24,15 @@ public interface IRodinColorConstant {
 	RGB IMPLICIT_CONTENT = new RGB(105, 105, 200);
 
 	RGB LABEL = new RGB(0, 0, 0);
-	RGB IMPLICIT_LABEL = new RGB(130, 130 , 130);
-	
+	RGB IMPLICIT_LABEL = new RGB(130, 130, 130);
+
 	RGB IDENTIFIER = new RGB(0, 0, 0);
 	RGB IMPLICIT_IDENTIFIER = new RGB(130, 130, 130);
-	
+
 	RGB ATTRIBUTE = new RGB(80, 80, 100);
 	RGB IMPLICIT_ATTRIBUTE = new RGB(160, 160, 190);
-	
-	RGB COMMENT_HEADER = new RGB(103, 187, 155); 	// The comment header §
+
+	RGB COMMENT_HEADER = new RGB(103, 187, 155); // The comment header §
 	RGB SECTION = new RGB(0, 200, 0);
 	RGB DEFAULT = new RGB(0, 0, 0);
 
