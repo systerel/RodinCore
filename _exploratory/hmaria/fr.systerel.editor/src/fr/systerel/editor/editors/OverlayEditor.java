@@ -55,6 +55,7 @@ import fr.systerel.editor.actions.StyledTextEditAction;
 import fr.systerel.editor.contentAssist.RodinContentAssistProcessor;
 import fr.systerel.editor.documentModel.DocumentMapper;
 import fr.systerel.editor.documentModel.Interval;
+import fr.systerel.editor.editors.RodinConfiguration.ContentType;
 
 /**
  * This class manages the little text field that is used to edit an element.
@@ -247,7 +248,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 		if (interval == null) {
 			return;
 		}
-		final String contentType = interval.getContentType();
+		final ContentType contentType = interval.getContentType();
 		final ILElement element = interval.getElement();
 		final IInternalElement ielement = element.getElement();
 		final String text = editorText.getText();

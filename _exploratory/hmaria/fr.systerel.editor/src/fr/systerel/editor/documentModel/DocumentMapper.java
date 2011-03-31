@@ -29,6 +29,7 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.editors.RodinConfiguration;
+import fr.systerel.editor.editors.RodinConfiguration.ContentType;
 
 /**
  * Maps <code>Intervals</code> to a document.
@@ -299,9 +300,9 @@ public class DocumentMapper {
 	 * @param contentType
 	 */
 	public void processInterval(int offset, int length, ILElement element,
-			String contentType) {
+			ContentType contentType) {
 		Interval inter;
-		if (Interval.isEditableType(contentType)) {
+		if (contentType.isEditable()) {
 			inter = findInterval(element, contentType);
 			if (inter != null) {
 				inter.setLength(length);
@@ -364,7 +365,7 @@ public class DocumentMapper {
 	 * @param contentType
 	 * @return the first interval that belongs to the given element
 	 */
-	public Interval findInterval(ILElement element, String contentType) {
+	public Interval findInterval(ILElement element, ContentType contentType) {
 		// TODO: adapt this method to editorElements. will be faster?
 		for (Interval interval : intervals) {
 			if (element.equals(interval.getElement())
@@ -464,7 +465,7 @@ public class DocumentMapper {
 		if (el != null) {
 			for (Interval interval : el.getIntervals()) {
 				try {
-					final String contentType = interval.getContentType();
+					final ContentType contentType = interval.getContentType();
 					if (ie instanceof IIdentifierElement
 							&& (contentType
 									.equals(RodinConfiguration.IDENTIFIER_TYPE)

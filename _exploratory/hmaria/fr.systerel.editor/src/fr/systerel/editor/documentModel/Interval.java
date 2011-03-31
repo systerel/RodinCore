@@ -11,12 +11,10 @@
 
 package fr.systerel.editor.documentModel;
 
-import java.util.Arrays;
-
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.itf.ILElement;
 
-import fr.systerel.editor.editors.RodinConfiguration;
+import fr.systerel.editor.editors.RodinConfiguration.ContentType;
 
 /**
  * An interval represents a range in a document associated with a
@@ -30,17 +28,11 @@ public class Interval implements Comparable<Interval> {
 
 	private final ILElement element;
 	private final IRodinElement rodinElement;
-	private String contentType;
+	private ContentType contentType;
 	private boolean changed;
 
-	private static String[] editableTypes = { //
-	RodinConfiguration.COMMENT_TYPE, //
-			RodinConfiguration.CONTENT_TYPE, //
-			RodinConfiguration.IDENTIFIER_TYPE, //
-	};
-
 	public Interval(int offset, int length, ILElement element,
-			String contentType) {
+			ContentType contentType) {
 		this.offset = offset;
 		this.length = length;
 		this.element = element;
@@ -82,7 +74,7 @@ public class Interval implements Comparable<Interval> {
 		return element;
 	}
 
-	public String getContentType() {
+	public ContentType getContentType() {
 		return contentType;
 	}
 
@@ -98,11 +90,7 @@ public class Interval implements Comparable<Interval> {
 	 * Tells if this interval is editable.
 	 */
 	public boolean isEditable() {
-		return Arrays.asList(editableTypes).contains(contentType);
-	}
-
-	public static boolean isEditableType(String contentType) {
-		return Arrays.asList(editableTypes).contains(contentType);
+		return contentType.isEditable();
 	}
 
 }

@@ -15,6 +15,8 @@ import org.eclipse.swt.graphics.RGB;
 
 public interface IRodinColorConstant {
 
+	// TODO make preferences
+	
 	RGB COMMENT = new RGB(63, 127, 95);
 	RGB IMPLICIT_COMMENT = new RGB(95, 150, 95);
 

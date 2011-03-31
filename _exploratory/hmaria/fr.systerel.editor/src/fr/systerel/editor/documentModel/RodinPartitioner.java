@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ import org.eclipse.jface.text.TypedRegion;
 import org.eclipse.jface.text.rules.FastPartitioner;
 
 import fr.systerel.editor.editors.RodinConfiguration;
+import fr.systerel.editor.editors.RodinConfiguration.ContentType;
 
 /**
  * Partitions a document according to the intervals.
@@ -87,9 +88,12 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 	private Position[] fCachedPositions= null;
 	
 	
-	public RodinPartitioner(DocumentMapper documentMapper,  String[] legalContentTypes) {
+	public RodinPartitioner(DocumentMapper documentMapper,  ContentType[] contentTypes) {
 		this.mapper = documentMapper;
-		fLegalContentTypes= TextUtilities.copy(legalContentTypes);
+		fLegalContentTypes= new String[contentTypes.length];
+		for (int i = 0; i < contentTypes.length; i++) {
+			fLegalContentTypes[i] = contentTypes[i].getName();
+		}
 		fPositionCategory= CONTENT_TYPES_CATEGORY + hashCode();
 		fPositionUpdater= new DefaultPositionUpdater(fPositionCategory);
 	}
@@ -244,25 +248,34 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 					if (index > 0) {
 						TypedPosition previous= (TypedPosition) category[index-1];
 						if (previous.getOffset() + previous.getLength() == offset){
+							final String prevTypeName = previous.getType();
+							final ContentType prevType = RodinConfiguration
+									.getContentType(prevTypeName);
 							//the editable types are considered open partitions
-							if (Interval.isEditableType(previous.getType()))  {
-								return new TypedRegion(previous.getOffset(), previous.getLength(), previous.getType());
+							if (prevType.isEditable())  {
+								return new TypedRegion(previous.getOffset(), previous.getLength(), prevTypeName);
 							}
 						}
 					}
 					
 					//check if there is a open partition starting at offset:
 					if (next.getOffset() == offset){
+						final String nextTypeName = next.getType();
+						final ContentType nextType = RodinConfiguration
+								.getContentType(nextTypeName);
 						//the editable types are considered open partitions
-						if (Interval.isEditableType(next.getType()))  {
+						if (nextType.isEditable())  {
 							return new TypedRegion(next.getOffset(), next.getLength(), next.getType());
 						}
 					}
 					if (index +1 < category.length) {
 						next= (TypedPosition) category[index +1];
 						if (next.getOffset() == offset){
+							final String nextTypeName = next.getType();
+							final ContentType nextType = RodinConfiguration
+									.getContentType(nextTypeName);
 							//the editable types are considered open partitions
-							if (Interval.isEditableType(next.getType()))  {
+							if (nextType.isEditable())  {
 								return new TypedRegion(next.getOffset(), next.getLength(), next.getType());
 							}
 						}
@@ -393,10 +406,10 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 			try {
 				TypedPosition p;
 				if (last_end < interval.getOffset() ) {
-					p = new TypedPosition(last_end, interval.getOffset()-(last_end), RodinConfiguration.LABEL_TYPE);
+					p = new TypedPosition(last_end, interval.getOffset()-(last_end), RodinConfiguration.LABEL_TYPE.getName());
 					fDocument.addPosition(fPositionCategory, p);
 				}
-				p = new TypedPosition(interval.getOffset(), interval.getLength(), interval.getContentType());
+				p = new TypedPosition(interval.getOffset(), interval.getLength(), interval.getContentType().getName());
 				last_end = interval.getOffset() +interval.getLength();
 				fDocument.addPosition(fPositionCategory, p);
 			} catch (BadLocationException e) {
@@ -540,7 +553,9 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 					if (affected.getOffset() > event.getOffset()) {
 						break;
 					}
-					if (Interval.isEditableType(affected.getType()))  {
+					final ContentType affectedType = RodinConfiguration
+							.getContentType(affected.getType());
+					if (affectedType.isEditable())  {
 						if (affected.getOffset() == event.getOffset() ) {
 							fNewOffSet = event.getOffset();
 							fNewLength = event.getText().length() + affected.getLength();
@@ -557,7 +572,9 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 					if (affected.getOffset() +affected.getLength() < event.getOffset()) {
 						break;
 					}
-					if (Interval.isEditableType(affected.getType()))  {
+					final ContentType affectedType = RodinConfiguration
+					.getContentType(affected.getType());
+					if (affectedType.isEditable())  {
 						if ( affected.getOffset() +affected.getLength() == event.getOffset()) {
 							fNewOffSet = affected.getOffset();
 							fNewLength = event.getText().length() + affected.getLength();

@@ -51,6 +51,8 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 
+import fr.systerel.editor.editors.RodinConfiguration.ContentType;
+
 /**
  * Creates the text for a given root. The intervals and editor elements are
  * built too and registered with the document mapper.
@@ -227,7 +229,7 @@ public class RodinTextGenerator {
 	}
 
 	protected void addElementRegion(String text, ILElement element,
-			String contentType) {
+			ContentType contentType) {
 		int start = builder.length();
 		builder.append(text);
 		int length = builder.length() - start;
@@ -281,7 +283,7 @@ public class RodinTextGenerator {
 	private void processCommentedElement(ILElement element, boolean appendTabs) {
 		addCommentHeaderRegion(element, appendTabs);
 		final String commentAttribute = element.getAttribute(COMMENT_ATTRIBUTE);
-		final String contentType = getContentType(element,
+		final ContentType contentType = getContentType(element,
 				IMPLICIT_COMMENT_TYPE, COMMENT_TYPE);
 		if (commentAttribute != null) {
 			final String comment = processMulti(commentAttribute);
@@ -295,7 +297,7 @@ public class RodinTextGenerator {
 
 	private void processPredicateElement(ILElement element) {
 		final String predAttribute = element.getAttribute(PREDICATE_ATTRIBUTE);
-		final String contentType = getContentType(element,
+		final ContentType contentType = getContentType(element,
 				IMPLICIT_CONTENT_TYPE, CONTENT_TYPE);
 		if (predAttribute != null) {
 			final String pred = processMulti(predAttribute);
@@ -308,7 +310,7 @@ public class RodinTextGenerator {
 
 	private void processAssignmentElement(ILElement element) {
 		final String assignAttribute = element.getAttribute(ASSIGNMENT_ATTRIBUTE);
-		final String contentType = getContentType(element,
+		final ContentType contentType = getContentType(element,
 				IMPLICIT_CONTENT_TYPE, CONTENT_TYPE);
 		if (assignAttribute != null) {
 			final String assign = processMulti(assignAttribute);
@@ -321,7 +323,7 @@ public class RodinTextGenerator {
 	private void processLabeledElement(ILElement element) {
 		final String labelAttribute = element.getAttribute(LABEL_ATTRIBUTE);
 		builder.append(getTabs(level));
-		final String contentType = getContentType(element,
+		final ContentType contentType = getContentType(element,
 				IMPLICIT_IDENTIFIER_TYPE, IDENTIFIER_TYPE);
 		if (labelAttribute != null) {
 			addElementRegion(labelAttribute, element, contentType);
@@ -338,7 +340,7 @@ public class RodinTextGenerator {
 	private void processIdentifierElement(ILElement element) {
 		final String identifierAttribute = element
 				.getAttribute(IDENTIFIER_ATTRIBUTE);
-		final String contentType = getContentType(element,
+		final ContentType contentType = getContentType(element,
 				IMPLICIT_IDENTIFIER_TYPE, IDENTIFIER_TYPE);
 		if (identifierAttribute != null) {
 			addElementRegion((String) identifierAttribute, element, contentType);
@@ -372,12 +374,12 @@ public class RodinTextGenerator {
 		processOtherAttributes(element);
 	}
 
-	private String getContentType(ILElement element,
-			String implicitContentType, String contentType) {
+	private ContentType getContentType(ILElement element,
+			ContentType implicitIdentifierType, ContentType identifierType) {
 		if (element.isImplicit()) {
-			return implicitContentType;
+			return implicitIdentifierType;
 		}
-		return contentType;
+		return identifierType;
 	}
 
 	private String processMulti(String str) {

@@ -47,6 +47,7 @@ import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.lightcore.LightElement;
 
 import fr.systerel.editor.editors.RodinConfiguration;
+import fr.systerel.editor.editors.RodinConfiguration.ContentType;
 import fr.systerel.editor.editors.RodinEditor;
 
 /**
@@ -160,7 +161,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 
 		}
 		RodinPartitioner partitioner = new RodinPartitioner(documentMapper,
-				new String[] { //
+				new ContentType[] { //
 				RodinConfiguration.IDENTIFIER_TYPE,
 						RodinConfiguration.COMMENT_TYPE,
 						RodinConfiguration.LABEL_TYPE,
