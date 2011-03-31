@@ -137,7 +137,7 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 			"__implicit_label", TEXT, false, IMPLICIT_LABEL);
 
 	public static final ContentType ATTRIBUTE_TYPE = new ContentType(
-			"__attribute", TEXT, false, ATTRIBUTE);
+			"__attribute", TEXT, true, ATTRIBUTE);
 	public static final ContentType IMPLICIT_ATTRIBUTE_TYPE = new ContentType(
 			"__implicit_attribute", TEXT, false, IMPLICIT_ATTRIBUTE);
 

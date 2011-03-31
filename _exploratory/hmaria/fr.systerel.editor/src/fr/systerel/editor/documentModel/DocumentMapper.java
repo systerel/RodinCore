@@ -301,6 +301,11 @@ public class DocumentMapper {
 	 */
 	public void processInterval(int offset, int length, ILElement element,
 			ContentType contentType) {
+		processInterval(offset, length, element, contentType, null);
+	}
+	
+	public void processInterval(int offset, int length, ILElement element,
+			ContentType contentType, String[] possibleValues) {
 		Interval inter;
 		if (contentType.isEditable()) {
 			inter = findInterval(element, contentType);
@@ -308,7 +313,7 @@ public class DocumentMapper {
 				inter.setLength(length);
 				inter.setOffset(offset);
 			} else {
-				inter = new Interval(offset, length, element, contentType);
+				inter = new Interval(offset, length, element, contentType, possibleValues);
 				try {
 					addIntervalAfter(inter, previous);
 				} catch (Exception e) {

@@ -30,12 +30,19 @@ public class Interval implements Comparable<Interval> {
 	private final IRodinElement rodinElement;
 	private ContentType contentType;
 	private boolean changed;
+	private final String[] possibleValues;
 
 	public Interval(int offset, int length, ILElement element,
 			ContentType contentType) {
+		this(offset, length, element, contentType, null);
+	}
+
+	public Interval(int offset, int length, ILElement element,
+			ContentType contentType, String[] possibleValues) {
 		this.offset = offset;
 		this.length = length;
 		this.element = element;
+		this.possibleValues = possibleValues;
 		this.rodinElement = getElement(element);
 		this.contentType = contentType;
 	}
@@ -76,6 +83,10 @@ public class Interval implements Comparable<Interval> {
 
 	public ContentType getContentType() {
 		return contentType;
+	}
+
+	public String[] getPossibleValues() {
+		return possibleValues;
 	}
 
 	public boolean isChanged() {

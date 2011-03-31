@@ -39,6 +39,7 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.swt.IFocusService;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 import org.eventb.core.EventBAttributes;
@@ -148,35 +149,56 @@ public class OverlayEditor implements IAnnotationModelListener,
 		}
 
 		if (!editorText.isVisible()) {
-			String text;
+
+
 			if (inter != null) {
-				setEventBTranslation(inter);
-				int start = viewer.modelOffset2WidgetOffset(inter.getOffset());
-				offset = start + pos;
-				if (inter.getLength() > 0) {
-					final String extracted = parent.getText(start, start + inter.getLength() - 1);
-					text = extracted;
+				final String[] possibleValues = inter.getPossibleValues();
+				if (possibleValues != null) {
+					showTipMenu(possibleValues);
 				} else {
-					text = "";
+					showEditorText(inter, pos);
 				}
-				Point location = (parent.getLocationAtOffset(start));
-
-				Point endPoint = new Point(findMaxWidth(start,
-						start + inter.getLength()),
-						parent.getLocationAtOffset(start + inter.getLength()).y);
-				Point size = new Point(endPoint.x - location.x, endPoint.y
-						- (location.y) + parent.getLineHeight());
-
-				textViewer.setDocument(createDocument(text));
-				editorText.setCaretOffset(offset - start);
-				resizeTo(size.x, size.y);
-				editorText.setFont(parent.getFont());
-				setToLocation(location.x, location.y);
-				editorText.setVisible(true);
-				editorText.setFocus();
 			}
 		}
 		interval = inter;
+	}
+
+	private void showEditorText(Interval inter, int pos) {
+		int offset;
+		setEventBTranslation(inter);
+		int start = viewer.modelOffset2WidgetOffset(inter.getOffset());
+		offset = start + pos;
+		final String text;
+		if (inter.getLength() > 0) {
+			final String extracted = parent.getText(start, start + inter.getLength() - 1);
+			text = extracted;
+		} else {
+			text = "";
+		}
+		Point location = (parent.getLocationAtOffset(start));
+
+		Point endPoint = new Point(findMaxWidth(start,
+				start + inter.getLength()),
+				parent.getLocationAtOffset(start + inter.getLength()).y);
+		Point size = new Point(endPoint.x - location.x, endPoint.y
+				- (location.y) + parent.getLineHeight());
+
+		textViewer.setDocument(createDocument(text));
+		editorText.setCaretOffset(offset - start);
+		resizeTo(size.x, size.y);
+		editorText.setFont(parent.getFont());
+		setToLocation(location.x, location.y);
+		editorText.setVisible(true);
+		editorText.setFocus();
+	}
+
+	private void showTipMenu(final String[] possibleValues) {
+		final Menu tipMenu = new Menu(editorText.getShell(), SWT.POP_UP);
+		for (String value : possibleValues) {
+			final MenuItem item = new MenuItem(tipMenu, SWT.PUSH);
+			item.setText(value);
+		}
+		tipMenu.setVisible(true);
 	}
 
 	/**
