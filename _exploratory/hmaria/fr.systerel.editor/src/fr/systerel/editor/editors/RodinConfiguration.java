@@ -30,7 +30,6 @@ import static fr.systerel.editor.editors.IRodinColorConstant.LABEL;
 import static fr.systerel.editor.editors.IRodinColorConstant.LABEL_DEBUG_BG;
 import static fr.systerel.editor.editors.IRodinColorConstant.SECTION;
 import static fr.systerel.editor.editors.IRodinColorConstant.SECTION_DEBUG_BG;
-import static fr.systerel.editor.editors.RodinConfiguration.EditType.TEXT;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,9 +42,6 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
-import org.rodinp.core.IAttributeType;
-import org.rodinp.core.RodinDBException;
-import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.documentModel.DocumentMapper;
 import fr.systerel.editor.documentModel.RodinDamagerRepairer;
@@ -55,31 +51,21 @@ import fr.systerel.editor.documentModel.RodinDamagerRepairer;
  */
 public class RodinConfiguration extends SourceViewerConfiguration {
 
-	public static enum EditType {
-		TEXT, TOGGLE, CHOICE
-	}
-
 	public static class ContentType {
 
 		private final String name;
-		private final EditType editType;
 		private final boolean isEditable;
 		private final RGB color;
 
-		public ContentType(String contentName, EditType editType,
-				boolean isEditable, RGB color) {
+		public ContentType(String contentName, boolean isEditable,
+				RGB color) {
 			this.name = contentName;
-			this.editType = editType;
 			this.isEditable = isEditable;
 			this.color = color;
 		}
 
 		public String getName() {
 			return name;
-		}
-
-		public EditType getEditType() {
-			return editType;
 		}
 
 		public boolean isEditable() {
@@ -91,62 +77,39 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 		}
 	}
 
-	public static class StringContent {
-		private final ContentType contentType;
-		private final IAttributeType.String attributeType;
-
-		public StringContent(ContentType contentType,
-				IAttributeType.String attributeType) {
-			this.contentType = contentType;
-			this.attributeType = attributeType;
-		}
-
-		public ContentType getContentType() {
-			return contentType;
-		}
-
-		public IAttributeType.String getAttributeType() {
-			return attributeType;
-		}
-
-		public String getValue(ILElement element) throws RodinDBException {
-			return element.getAttribute(attributeType);
-		}
-	}
-
 	// FIXME take care about attribute type extensions
 	// TODO make contributions out of the following constants
 	public static final ContentType IDENTIFIER_TYPE = new ContentType(
-			"__identifier", TEXT, true, IDENTIFIER);
+			"__identifier", true, IDENTIFIER);
 	public static final ContentType IMPLICIT_IDENTIFIER_TYPE = new ContentType(
-			"__implicit_identifier", TEXT, false, IMPLICIT_IDENTIFIER);
+			"__implicit_identifier", false, IMPLICIT_IDENTIFIER);
 
 	public static final ContentType CONTENT_TYPE = new ContentType("__content",
-			TEXT, true, CONTENT);
+			true, CONTENT);
 	public static final ContentType IMPLICIT_CONTENT_TYPE = new ContentType(
-			"__implicit_content", TEXT, false, IMPLICIT_CONTENT);
+			"__implicit_content", false, IMPLICIT_CONTENT);
 
 	public static final ContentType COMMENT_TYPE = new ContentType("__comment",
-			TEXT, true, COMMENT);
+			true, COMMENT);
 	public static final ContentType IMPLICIT_COMMENT_TYPE = new ContentType(
-			"__implicit_comment", TEXT, false, IMPLICIT_COMMENT);
+			"__implicit_comment", false, IMPLICIT_COMMENT);
 
 	public static final ContentType LABEL_TYPE = new ContentType("__label",
-			TEXT, true, LABEL);
+			true, LABEL);
 	public static final ContentType IMPLICIT_LABEL_TYPE = new ContentType(
-			"__implicit_label", TEXT, false, IMPLICIT_LABEL);
+			"__implicit_label", false, IMPLICIT_LABEL);
 
 	public static final ContentType ATTRIBUTE_TYPE = new ContentType(
-			"__attribute", TEXT, true, ATTRIBUTE);
+			"__attribute", true, ATTRIBUTE);
 	public static final ContentType IMPLICIT_ATTRIBUTE_TYPE = new ContentType(
-			"__implicit_attribute", TEXT, false, IMPLICIT_ATTRIBUTE);
+			"__implicit_attribute", false, IMPLICIT_ATTRIBUTE);
 
 	public static final ContentType KEYWORD_TYPE = new ContentType("__keyword",
-			TEXT, false, DEFAULT);
+			false, DEFAULT);
 	public static final ContentType SECTION_TYPE = new ContentType("__section",
-			TEXT, false, SECTION);
+			false, SECTION);
 	public static final ContentType COMMENT_HEADER_TYPE = new ContentType(
-			"__comment_header", TEXT, false, COMMENT_HEADER);
+			"__comment_header", false, COMMENT_HEADER);
 
 	private static ContentType[] contentTypes = new ContentType[] {
 		IDENTIFIER_TYPE,
