@@ -218,7 +218,7 @@ public class RodinTextGenerator {
 				value = manipulation.getValue(rElement, null);
 				if (!value.isEmpty()) {
 					final String[] possibleValues = manipulation.getPossibleValues(rElement, null);
-					addAttributeRegion(value, element, possibleValues);
+					addAttributeRegion(value, element, manipulation);
 				}
 			} catch (RodinDBException e) {
 				value = "failure while loading";
@@ -237,11 +237,11 @@ public class RodinTextGenerator {
 		documentMapper.processInterval(start, length, element, contentType);
 	}
 
-	protected void addAttributeRegion(String text, ILElement element, String[] possibleValues) {
+	protected void addAttributeRegion(String text, ILElement element, IAttributeManipulation manipulation) {
 		int start = builder.length();
 		builder.append(text);
 		int length = builder.length() - start;
-		documentMapper.processInterval(start, length, element, ATTRIBUTE_TYPE, possibleValues);
+		documentMapper.processInterval(start, length, element, ATTRIBUTE_TYPE, manipulation);
 	}
 
 	protected void addLabelRegion(String text, ILElement element) {

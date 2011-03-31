@@ -36,6 +36,8 @@ import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Menu;
@@ -48,7 +50,9 @@ import org.eventb.core.ICommentedElement;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPredicateElement;
+import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.keyboard.RodinKeyboardPlugin;
 
@@ -152,9 +156,9 @@ public class OverlayEditor implements IAnnotationModelListener,
 
 
 			if (inter != null) {
-				final String[] possibleValues = inter.getPossibleValues();
-				if (possibleValues != null) {
-					showTipMenu(possibleValues);
+				final IAttributeManipulation attManip = inter.getAttributeManipulation();
+				if (attManip != null) {
+					showTipMenu(inter);
 				} else {
 					showEditorText(inter, pos);
 				}
@@ -192,11 +196,31 @@ public class OverlayEditor implements IAnnotationModelListener,
 		editorText.setFocus();
 	}
 
-	private void showTipMenu(final String[] possibleValues) {
+	private void showTipMenu(final Interval inter) {
 		final Menu tipMenu = new Menu(editorText.getShell(), SWT.POP_UP);
-		for (String value : possibleValues) {
+		for (final String value : inter.getPossibleValues()) {
 			final MenuItem item = new MenuItem(tipMenu, SWT.PUSH);
 			item.setText(value);
+			item.addSelectionListener(new SelectionListener() {
+
+				@Override
+				public void widgetDefaultSelected(SelectionEvent se) {
+					widgetSelected(se);
+				}
+
+				@Override
+				public void widgetSelected(SelectionEvent se) {
+					final ILElement element = inter.getElement();
+					final IAttributeManipulation attManip = inter.getAttributeManipulation();
+					try {
+						attManip.setValue(element.getElement(), value, null);
+					} catch (RodinDBException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+
+			});
 		}
 		tipMenu.setVisible(true);
 	}

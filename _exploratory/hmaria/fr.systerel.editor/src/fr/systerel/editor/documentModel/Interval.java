@@ -11,6 +11,7 @@
 
 package fr.systerel.editor.documentModel;
 
+import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.itf.ILElement;
 
@@ -28,9 +29,9 @@ public class Interval implements Comparable<Interval> {
 
 	private final ILElement element;
 	private final IRodinElement rodinElement;
-	private ContentType contentType;
+	private final ContentType contentType;
 	private boolean changed;
-	private final String[] possibleValues;
+	private final IAttributeManipulation attManip;
 
 	public Interval(int offset, int length, ILElement element,
 			ContentType contentType) {
@@ -38,11 +39,11 @@ public class Interval implements Comparable<Interval> {
 	}
 
 	public Interval(int offset, int length, ILElement element,
-			ContentType contentType, String[] possibleValues) {
+			ContentType contentType, IAttributeManipulation attManip) {
 		this.offset = offset;
 		this.length = length;
 		this.element = element;
-		this.possibleValues = possibleValues;
+		this.attManip = attManip;
 		this.rodinElement = getElement(element);
 		this.contentType = contentType;
 	}
@@ -85,8 +86,14 @@ public class Interval implements Comparable<Interval> {
 		return contentType;
 	}
 
+	public IAttributeManipulation getAttributeManipulation() {
+		return attManip;
+	}
+
 	public String[] getPossibleValues() {
-		return possibleValues;
+		if (attManip == null)
+			return null;
+		return attManip.getPossibleValues(rodinElement, null);
 	}
 
 	public boolean isChanged() {

@@ -22,6 +22,7 @@ import org.eventb.core.ICommentedElement;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPredicateElement;
+import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -305,7 +306,7 @@ public class DocumentMapper {
 	}
 	
 	public void processInterval(int offset, int length, ILElement element,
-			ContentType contentType, String[] possibleValues) {
+			ContentType contentType, IAttributeManipulation manipulation) {
 		Interval inter;
 		if (contentType.isEditable()) {
 			inter = findInterval(element, contentType);
@@ -313,7 +314,7 @@ public class DocumentMapper {
 				inter.setLength(length);
 				inter.setOffset(offset);
 			} else {
-				inter = new Interval(offset, length, element, contentType, possibleValues);
+				inter = new Interval(offset, length, element, contentType, manipulation);
 				try {
 					addIntervalAfter(inter, previous);
 				} catch (Exception e) {
