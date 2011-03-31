@@ -691,12 +691,7 @@ public class DocumentMapper {
 					new_Text.length() - old_text.length());
 			adaptFoldingPositions(interval.getOffset(), new_Text.length()
 					- old_text.length());
-			if (interval.getElement().isImplicit()) {
-				documentProvider
-						.silentReplaceTextInDocument(interval, new_Text);
-			} else {
-				documentProvider.replaceTextInDocument(interval, new_Text);
-			}
+			documentProvider.replaceTextInDocument(interval, new_Text);
 			interval.setLength(new_Text.length());
 		}
 	}

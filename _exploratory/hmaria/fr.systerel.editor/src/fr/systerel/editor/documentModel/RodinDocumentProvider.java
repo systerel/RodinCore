@@ -266,28 +266,15 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	}
 	
 	protected void replaceTextInDocument(int offset, int length, String text) {
-		fireElementContentAboutToBeReplaced(document);
 		if (document != null) {
 			try {
+				fireElementContentAboutToBeReplaced(document);
 				document.replace(offset, length, text);
-			} catch (BadLocationException e) {
-			}
-		}
-		fireElementContentReplaced(document);
-	}
-	
-	protected void silentReplaceTextInDocument(Interval interval, String text) {
-		silentReplaceTextInDocument(interval.getOffset(), interval.getLength(), text);
-	}
-
-	protected void silentReplaceTextInDocument(int offset, int length, String text) {
-		if (document != null) {
-			try {
-				document.replace(offset, length, text);
+				fireElementContentReplaced(document);
 			} catch (BadLocationException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-
+	
 }
