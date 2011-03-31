@@ -38,7 +38,6 @@ import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
-import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.keyboard.preferences.PreferenceConstants;
@@ -193,18 +192,14 @@ public class RodinEditor extends TextEditor {
 	 *            The new markers
 	 */
 	public void updateMarkerStructure(MarkerAnnotationPosition[] markers) {
-		Annotation[] annotations = new Annotation[markers.length];
-
+		final Annotation[] annotations = new Annotation[markers.length];
 		// this will hold the new annotations along
 		// with their corresponding positions
-		HashMap<Annotation, Position> newAnnotations = new HashMap<Annotation, Position>();
-
+		final HashMap<Annotation, Position> newAnnotations = new HashMap<Annotation, Position>();
 		int i = 0;
-
 		for (Annotation annotation : oldMarkers) {
 			visualAnnotationModel.removeAnnotation(annotation);
 		}
-
 		for (MarkerAnnotationPosition marker : markers) {
 			annotations[i] = marker.getAnnotation();
 			newAnnotations.put(marker.getAnnotation(), marker.getPosition());
@@ -224,7 +219,7 @@ public class RodinEditor extends TextEditor {
 	protected void doSetSelection(ISelection selection) {
 		super.doSetSelection(selection);
 		if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
-			Interval interval = mapper
+			final Interval interval = mapper
 					.findInterval((IRodinElement) ((IStructuredSelection) selection)
 							.getFirstElement());
 			if (interval != null) {
@@ -232,42 +227,6 @@ public class RodinEditor extends TextEditor {
 						true);
 			}
 		}
-	}
-
-	/**
-	 * Reacts to changes in the databases. The editor is refreshed.
-	 */
-	public void elementChanged(ElementChangedEvent event) {
-		System.out.println(event.getDelta());
-		// final DeltaProcessor proc = new DeltaProcessor(event.getDelta(),
-		// documentProvider.getInputRoot());
-		// PlatformUI.getWorkbench().getDisplay().asyncExec( new Runnable() {
-		//
-		// public void run() {
-		// IRodinElement[] changed = proc.getElementsToRefresh();
-		// IRodinElement[] removed = proc.getElementsToRemove();
-		// if (changed.length > 0) {
-		// for (IRodinElement element : changed) {
-		// mapper.elementChanged(element);
-		// }
-		// }
-		// else if (removed.length > 0) {
-		// for (IRodinElement element : removed) {
-		// mapper.elementRemoved(element);
-		// }
-		// }
-		// else if (proc.isMustRefreshMarkers()) {
-		// updateMarkerStructure(documentProvider.getMarkerAnnotations());
-		// }
-		// else if (proc.isMustRefresh()) {
-		// performRevert();
-		// }
-		//
-		// }
-		//
-		// });
-		//
-		//
 	}
 
 	private void setElementStateListener() {
@@ -278,7 +237,6 @@ public class RodinEditor extends TextEditor {
 			}
 
 			public void elementContentReplaced(Object element) {
-				// setHighlightRange(topIndex, 0, false);
 				documentProvider.setCanSaveDocument(documentProvider
 						.getEditorInput());
 				updateFoldingStructure(documentProvider.getFoldingRegions());

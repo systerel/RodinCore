@@ -20,9 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
@@ -44,6 +42,7 @@ import org.eventb.core.IEventBRoot;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.core.emf.api.itf.ILElement;
+import org.rodinp.core.emf.api.itf.ILFile;
 import org.rodinp.core.emf.lightcore.LightElement;
 
 import fr.systerel.editor.editors.RodinConfiguration;
@@ -66,19 +65,15 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	private AdapterFactoryEditingDomain editingDomain;
 	private Resource inputResource;
 
-	protected EContentAdapter elementChangeAdapter = 
-		new EContentAdapter() {
+	protected EContentAdapter elementChangeAdapter = new EContentAdapter() {
 		@Override
 		public void notifyChanged(Notification notification) {
 			final Object notifier = notification.getNotifier();
-			if (notification.isTouch()) {
-				return;
-			}
 			if (notifier instanceof ILElement) {
 				documentMapper.elementChanged((ILElement) notifier);
-//				for (ILElement e : ((ILElement) notifier).getChildren()) {
-//					documentMapper.elementChanged((ILElement) e);
-//				}
+				for (ILElement c : ((ILElement) notifier).getChildren()) {
+					documentMapper.elementChanged(c);
+				}
 			}
 		}
 	};
@@ -149,13 +144,10 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 			editorInput = (IEditorInput) element;
 
 			inputResource = getResource(file);
-			final EList<EObject> contents = inputResource.getContents();
-			if ((contents.size() == 1)) {
-				inputRoot = (ILElement) contents.get(0);
-				documentMapper.setRoot((ILElement) contents.get(0));
-				textGenerator = new RodinTextGenerator(documentMapper);
-				document.set(textGenerator.createText(inputRoot));
-			}
+			inputRoot = ((ILFile) inputResource).getRoot();
+			documentMapper.setRoot(inputRoot);
+			textGenerator = new RodinTextGenerator(documentMapper);
+			document.set(textGenerator.createText(inputRoot));
 			documentMapper.setDocument(document);
 			documentMapper.setDocumentProvider(this);
 
@@ -255,8 +247,8 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	 *         the document.
 	 */
 	private Position findPosition(IMarker marker) {
-		IRodinElement element = RodinMarkerUtil.getElement(marker);
-		Interval interval = documentMapper.findInterval(element);
+		final IRodinElement element = RodinMarkerUtil.getElement(marker);
+		final Interval interval = documentMapper.findInterval(element);
 
 		if (interval != null) {
 			return new Position(interval.getOffset(), interval.getLength());
@@ -275,7 +267,12 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	
 	protected void replaceTextInDocument(int offset, int length, String text) {
 		fireElementContentAboutToBeReplaced(document);
-		silentReplaceTextInDocument(offset, length, text);
+		if (document != null) {
+			try {
+				document.replace(offset, length, text);
+			} catch (BadLocationException e) {
+			}
+		}
 		fireElementContentReplaced(document);
 	}
 	
