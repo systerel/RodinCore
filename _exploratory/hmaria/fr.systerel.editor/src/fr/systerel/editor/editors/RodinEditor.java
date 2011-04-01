@@ -180,7 +180,7 @@ public class RodinEditor extends TextEditor {
 			i++;
 		}
 
-		annotationModel.modifyAnnotations(oldAnnotations, newAnnotations, null);
+		//annotationModel.modifyAnnotations(oldAnnotations, newAnnotations, null);
 
 		oldAnnotations = annotations;
 	}

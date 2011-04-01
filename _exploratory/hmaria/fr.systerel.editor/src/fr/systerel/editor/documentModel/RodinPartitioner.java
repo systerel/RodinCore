@@ -144,17 +144,14 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 	public ITypedRegion[] computePartitioning(int offset, int length,
 			boolean includeZeroLengthPartitions) {
 		checkInitialization();
-		List<ITypedRegion> list= new ArrayList<ITypedRegion>();
-
+		final List<ITypedRegion> list= new ArrayList<ITypedRegion>();
 		try {
-
 			int endOffset= offset + length;
-
-			Position[] category= getPositions();
-
-			TypedPosition previous= null, current= null;
+			final Position[] category = getPositions();
+			TypedPosition previous = null;
+			TypedPosition current = null;
 			int start, end, gapOffset;
-			Position gap= new Position(0);
+			final Position gap = new Position(0);
 
 			int startIndex= getFirstIndexEndingAfterOffset(category, offset);
 			int endIndex= getFirstIndexStartingAfterOffset(category, endOffset);
@@ -209,7 +206,7 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 			throw ex;
 		}
 
-		TypedRegion[] result= new TypedRegion[list.size()];
+		final TypedRegion[] result= new TypedRegion[list.size()];
 		list.toArray(result);
 		return result;
 	}
@@ -223,7 +220,6 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 	}
 
 	public String[] getManagingPositionCategories() {
-		// TODO Auto-generated method stub
 		return new String[] {fPositionCategory};
 	}
 
@@ -233,7 +229,7 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 
 		try {
 
-			Position[] category = getPositions();
+			final Position[] category = getPositions();
 
 			if (category == null || category.length == 0)
 				return new TypedRegion(0, fDocument.getLength(), IDocument.DEFAULT_CONTENT_TYPE);
@@ -392,12 +388,9 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 	
 	/**
 	 * Performs the initial partitioning of the partitioner's document.
-	 * <p>
-	 * May be extended by subclasses.
-	 * </p>
 	 */
 	protected void initialize() {
-		fIsInitialized= true;
+		fIsInitialized = true;
 		clearPositionCache();
 		
 		ArrayList<Interval> intervals = mapper.getIntervals();
@@ -406,22 +399,18 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 			try {
 				TypedPosition p;
 				if (last_end < interval.getOffset() ) {
-					p = new TypedPosition(last_end, interval.getOffset()-(last_end), RodinConfiguration.LABEL_TYPE.getName());
+					p = new TypedPosition(last_end, interval.getOffset()-(last_end), RodinConfiguration.COMMENT_TYPE.getName());
 					fDocument.addPosition(fPositionCategory, p);
 				}
 				p = new TypedPosition(interval.getOffset(), interval.getLength(), interval.getContentType().getName());
 				last_end = interval.getOffset() +interval.getLength();
 				fDocument.addPosition(fPositionCategory, p);
 			} catch (BadLocationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (BadPositionCategoryException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-				
 		}
-
 	}
 	
 	/**
@@ -508,7 +497,8 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 	 * <code>calculatePosition()</code>
 	 */
 	private void correctPosition() {
-		//if inserted directly before or after a position, adapt position accordingly
+		// if inserted directly before or after a position, adapt position
+		// accordingly
 		try {
 			Position[] category = getPositions();
 			Position changing = category[correctionIndex];
@@ -518,21 +508,17 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 			// remove and add it again freshly to solve this problem.
 			fDocument.removePosition(fPositionCategory, changing);
 			fDocument.addPosition(fPositionCategory, changing);
-			
 		} catch (BadPositionCategoryException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (BadLocationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 
 	/**
 	 * Calculates the correction to positions that have changed. The default
-	 * positionUpdate works fine generally, but not at the beginning and end of editable
-	 * intervals. The results needed for correction are stored in
+	 * positionUpdate works fine generally, but not at the beginning and end of
+	 * editable intervals. The results needed for correction are stored in
 	 * <code>correctionIndex</code>, <code>fNewOffSet</code> and
 	 * <code>fNewLength</code>.
 	 * 
@@ -542,57 +528,58 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 	 *         otherwise.
 	 */
 	private boolean calculateCorrection(DocumentEvent event) {
-		//only in case of insertions
+		// only in case of insertions
 		if (event.getText().length() > 0 && event.getLength() == 0) {
 			try {
-				Position[] category= getPositions();
-				//insertion at beginning
-				int first= fDocument.computeIndexInCategory(fPositionCategory, event.getOffset());
+				final Position[] category = getPositions();
+				// insertion at beginning
+				int first = fDocument.computeIndexInCategory(fPositionCategory,
+						event.getOffset());
 				for (int i = first; i < category.length; i++) {
-					TypedPosition affected = (TypedPosition) category[i];
+					final TypedPosition affected = (TypedPosition) category[i];
 					if (affected.getOffset() > event.getOffset()) {
 						break;
 					}
 					final ContentType affectedType = RodinConfiguration
 							.getContentType(affected.getType());
-					if (affectedType.isEditable())  {
-						if (affected.getOffset() == event.getOffset() ) {
+					if (affectedType.isEditable()) {
+						if (affected.getOffset() == event.getOffset()) {
 							fNewOffSet = event.getOffset();
-							fNewLength = event.getText().length() + affected.getLength();
-							correctionIndex = i;
-							return true;
-						} 					
-					}
-					
-				}
-				
-				//insertion at end
-				for (int i = first-1; i >= 0; i--) {
-					TypedPosition affected = (TypedPosition) category[i];
-					if (affected.getOffset() +affected.getLength() < event.getOffset()) {
-						break;
-					}
-					final ContentType affectedType = RodinConfiguration
-					.getContentType(affected.getType());
-					if (affectedType.isEditable())  {
-						if ( affected.getOffset() +affected.getLength() == event.getOffset()) {
-							fNewOffSet = affected.getOffset();
-							fNewLength = event.getText().length() + affected.getLength();
+							fNewLength = event.getText().length()
+									+ affected.getLength();
 							correctionIndex = i;
 							return true;
 						}
 					}
 				}
-				
+				// insertion at end
+				for (int i = first - 1; i >= 0; i--) {
+					final TypedPosition affected = (TypedPosition) category[i];
+					if (affected.getOffset() + affected.getLength() < event
+							.getOffset()) {
+						break;
+					}
+					final ContentType affectedType = RodinConfiguration
+							.getContentType(affected.getType());
+					if (affectedType.isEditable()) {
+						if (affected.getOffset() + affected.getLength() == event
+								.getOffset()) {
+							fNewOffSet = affected.getOffset();
+							fNewLength = event.getText().length()
+									+ affected.getLength();
+							correctionIndex = i;
+							return true;
+						}
+					}
+				}
+
 			} catch (BadLocationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (BadPositionCategoryException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
 		}
 		return false;
 	}
+	
 }

@@ -148,8 +148,7 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		return new String[] { IDENTIFIER_TYPE.getName(),
-				COMMENT_TYPE.getName(), LABEL_TYPE.getName(),
-				CONTENT_TYPE.getName() };
+				COMMENT_TYPE.getName(), CONTENT_TYPE.getName() };
 	}
 
 	public IPresentationReconciler getPresentationReconciler(
@@ -158,7 +157,7 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 
 		// FIXME temporary code
 		// Do something better
-		final boolean COLOR_DEBUG = false;
+		final boolean COLOR_DEBUG = true;
 
 		Color bgColor = (COLOR_DEBUG) ? colorManager.getColor(COMMENT_DEBUG_BG)
 				: null;

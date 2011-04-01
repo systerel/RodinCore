@@ -686,7 +686,7 @@ public class DocumentMapper {
 	 */
 	protected void synchronizeInterval(Interval interval, String new_Text) {
 		String old_text = getTextFromDocument(interval);
-		if (!old_text.equals(new_Text)) {
+		if (old_text == null || !old_text.equals(new_Text)) {
 			adaptIntervalOffsetsFrom(intervals.indexOf(interval) + 1,
 					new_Text.length() - old_text.length());
 			adaptFoldingPositions(interval.getOffset(), new_Text.length()
