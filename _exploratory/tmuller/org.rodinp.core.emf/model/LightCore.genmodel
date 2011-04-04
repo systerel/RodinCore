@@ -61,11 +61,32 @@
     <genDataTypes ecoreDataType="api.ecore#//IInternalElementType">
       <genTypeParameters ecoreTypeParameter="api.ecore#//IInternalElementType/T"/>
     </genDataTypes>
+    <genDataTypes ecoreDataType="api.ecore#//IAttributeType_Boolean"/>
+    <genDataTypes ecoreDataType="api.ecore#//IAttributeType_Handle"/>
+    <genDataTypes ecoreDataType="api.ecore#//IAttributeType_Integer"/>
+    <genDataTypes ecoreDataType="api.ecore#//IAttributeType_Long"/>
+    <genDataTypes ecoreDataType="api.ecore#//IAttributeType_String"/>
+    <genDataTypes ecoreDataType="api.ecore#//IRodinElement"/>
     <genClasses image="false" ecoreClass="api.ecore#//ILElement">
       <genOperations ecoreOperation="api.ecore#//ILElement/getChildren"/>
       <genOperations ecoreOperation="api.ecore#//ILElement/getAttributes"/>
       <genOperations ecoreOperation="api.ecore#//ILElement/getAttribute">
         <genParameters ecoreParameter="api.ecore#//ILElement/getAttribute/type"/>
+      </genOperations>
+      <genOperations ecoreOperation="api.ecore#//ILElement/getAttribute.1">
+        <genParameters ecoreParameter="api.ecore#//ILElement/getAttribute.1/type"/>
+      </genOperations>
+      <genOperations ecoreOperation="api.ecore#//ILElement/getAttribute.2">
+        <genParameters ecoreParameter="api.ecore#//ILElement/getAttribute.2/type"/>
+      </genOperations>
+      <genOperations ecoreOperation="api.ecore#//ILElement/getAttribute.3">
+        <genParameters ecoreParameter="api.ecore#//ILElement/getAttribute.3/type"/>
+      </genOperations>
+      <genOperations ecoreOperation="api.ecore#//ILElement/getAttribute.4">
+        <genParameters ecoreParameter="api.ecore#//ILElement/getAttribute.4/type"/>
+      </genOperations>
+      <genOperations ecoreOperation="api.ecore#//ILElement/getAttribute.5">
+        <genParameters ecoreParameter="api.ecore#//ILElement/getAttribute.5/type"/>
       </genOperations>
       <genOperations ecoreOperation="api.ecore#//ILElement/setAttribute">
         <genParameters ecoreParameter="api.ecore#//ILElement/setAttribute/value"/>
@@ -77,9 +98,10 @@
         <genParameters ecoreParameter="api.ecore#//ILElement/moveChild/oldPos"/>
       </genOperations>
       <genOperations ecoreOperation="api.ecore#//ILElement/isImplicit"/>
-      <genOperations ecoreOperation="api.ecore#//ILElement/getElementsOfType">
-        <genParameters ecoreParameter="api.ecore#//ILElement/getElementsOfType/type"/>
+      <genOperations ecoreOperation="api.ecore#//ILElement/getChildrenOfType">
+        <genParameters ecoreParameter="api.ecore#//ILElement/getChildrenOfType/type"/>
       </genOperations>
+      <genOperations ecoreOperation="api.ecore#//ILElement/getElementType"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

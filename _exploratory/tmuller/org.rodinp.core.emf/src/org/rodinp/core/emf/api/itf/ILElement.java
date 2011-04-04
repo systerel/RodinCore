@@ -106,7 +106,7 @@ public interface ILElement {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @model valueDataType="org.rodinp.core.emf.api.itf.IAttributeValue"
-	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='Attribute attribute = getEAttributes().get(value.getType().getId());\nif (attribute == null) {\n\tattribute = LightcoreFactory.eINSTANCE.createAttribute();\n\tattribute.setOwner(this);\n\tattribute.setType(value.getType());\n\tgetEAttributes().put(value.getType().getId(), attribute);\n}\nattribute.setValue(value.getValue());'"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='final IAttributeType type = value.getType();\nfinal Attribute attribute = getEAttributes().get(type.getId());\nfinal Object new_value = value.getValue();\nfinal Object old_value = (attribute != null) ? attribute.getValue()\n\t: null;\nif (new_value == null || new_value.equals(old_value)) {\n\treturn;\n}\nif (attribute == null) {\n\tattribute = LightcoreFactory.eINSTANCE.createAttribute();\n\tattribute.setOwner(this);\n\tattribute.setType(type);\n}\nattribute.setValue(value.getValue());\ngetEAttributes().put(type.getId(), attribute);'"
 	 * @generated
 	 */
 	void setAttribute(IAttributeValue value);

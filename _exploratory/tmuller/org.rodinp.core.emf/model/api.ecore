@@ -60,7 +60,7 @@
     </eOperations>
     <eOperations name="setAttribute">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="body" value="Attribute attribute = getEAttributes().get(value.getType().getId());&#xA;if (attribute == null) {&#xA;&#x9;attribute = LightcoreFactory.eINSTANCE.createAttribute();&#xA;&#x9;attribute.setOwner(this);&#xA;&#x9;attribute.setType(value.getType());&#xA;&#x9;getEAttributes().put(value.getType().getId(), attribute);&#xA;}&#xA;attribute.setValue(value.getValue());"/>
+        <details key="body" value="final IAttributeType type = value.getType();&#xA;Attribute attribute = getEAttributes().get(type.getId());&#xA;final Object new_value = value.getValue();&#xA;final Object old_value = (attribute != null) ? attribute.getValue()&#xA;&#x9;: null;&#xA;if (new_value == null || new_value.equals(old_value)) {&#xA;&#x9;return;&#xA;}&#xA;if (attribute == null) {&#xA;&#x9;attribute = LightcoreFactory.eINSTANCE.createAttribute();&#xA;&#x9;attribute.setOwner(this);&#xA;&#x9;attribute.setType(type);&#xA;}&#xA;attribute.setValue(value.getValue());&#xA;getEAttributes().put(type.getId(), attribute);"/>
       </eAnnotations>
       <eParameters name="value" eType="#//IAttributeValue"/>
     </eOperations>

@@ -568,7 +568,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 				source,
 				new String[] {
 						"body",
-						"Attribute attribute = getEAttributes().get(value.getType().getId());\nif (attribute == null) {\n\tattribute = LightcoreFactory.eINSTANCE.createAttribute();\n\tattribute.setOwner(this);\n\tattribute.setType(value.getType());\n\tgetEAttributes().put(value.getType().getId(), attribute);\n}\nattribute.setValue(value.getValue());" });
+						"final IAttributeType type = value.getType();\nfinal Attribute attribute = getEAttributes().get(type.getId());\nfinal Object new_value = value.getValue();\nfinal Object old_value = (attribute != null) ? attribute.getValue()\n\t: null;\nif (new_value == null || new_value.equals(old_value)) {\n\treturn;\n}\nif (attribute == null) {\n\tattribute = LightcoreFactory.eINSTANCE.createAttribute();\n\tattribute.setOwner(this);\n\tattribute.setType(type);\n}\nattribute.setValue(value.getValue());\ngetEAttributes().put(type.getId(), attribute);" });
 		addAnnotation(ilElementEClass.getEOperations().get(9), source,
 				new String[] { "body",
 						"return (IInternalElement) getERodinElement();" });

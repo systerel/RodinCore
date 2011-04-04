@@ -409,14 +409,21 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	 * @generated
 	 */
 	public void setAttribute(IAttributeValue value) {
-		Attribute attribute = getEAttributes().get(value.getType().getId());
+		final IAttributeType type = value.getType();
+		Attribute attribute = getEAttributes().get(type.getId());
+		final Object new_value = value.getValue();
+		final Object old_value = (attribute != null) ? attribute.getValue()
+			: null;
+		if (new_value == null || new_value.equals(old_value)) {
+			return;
+		}
 		if (attribute == null) {
 			attribute = LightcoreFactory.eINSTANCE.createAttribute();
 			attribute.setOwner(this);
-			attribute.setType(value.getType());
-			getEAttributes().put(value.getType().getId(), attribute);
+			attribute.setType(type);
 		}
 		attribute.setValue(value.getValue());
+		getEAttributes().put(type.getId(), attribute);
 	}
 
 	/**
@@ -699,7 +706,7 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 		if (eRodinElement instanceof IInternalElement) {
 			final IInternalElement iElement = (IInternalElement) eRodinElement;
 			this.setERoot(iElement.isRoot());
-			SynchroUtils.loadAttributes(iElement, this);
+			SynchroUtils.loadAttributes(iElement, this, true);
 			SynchroUtils.adaptForElementMoveAndRemove(this);
 			SynchroUtils.adaptRootForImplicitChildren(this);
 		}
