@@ -41,14 +41,14 @@ public class ButtonManager {
 	}
 
 	public void createButtons() {
-		createMenu();
-		EditorItem[] elements = documentMapper.getEditorElements();
-		ElementButton button;
-		for (EditorItem element : elements) {
-			button = new ElementButton(styledText, element,
-					viewer);
-			button.getButton().setMenu(menu);
-		}
+//		createMenu();
+//		EditorItem[] elements = documentMapper.getEditorElements();
+//		ElementButton button;
+//		for (EditorItem element : elements) {
+//			button = new ElementButton(styledText, element,
+//					viewer);
+//			button.getButton().setMenu(menu);
+//		}
 	}
 
 	public void createMenu() {

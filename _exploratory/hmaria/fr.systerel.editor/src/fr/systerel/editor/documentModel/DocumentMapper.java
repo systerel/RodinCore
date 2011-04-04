@@ -81,7 +81,7 @@ public class DocumentMapper {
 	 * @throws Exception
 	 */
 	public void addIntervalAfter(Interval interval, Interval previous) {
-		int index = intervals.indexOf(previous);
+		final int index = intervals.indexOf(previous);
 		if (index >= 0 && index < intervals.size()) {
 			intervals.add(index + 1, interval);
 		} else {
@@ -105,9 +105,9 @@ public class DocumentMapper {
 	 * @return All intervals that are found in the range.
 	 */
 	public Interval[] findIntervals(int offset, int length) {
-		int index = findFirstIntervalIndex(offset);
+		final int index = findFirstIntervalIndex(offset);
 		if (index >= 0) {
-			ArrayList<Interval> results = new ArrayList<Interval>();
+			final ArrayList<Interval> results = new ArrayList<Interval>();
 			for (int i = index; i < intervals.size(); i++) {
 				if (intervals.get(i).getOffset() <= offset + length) {
 					results.add(intervals.get(i));
@@ -116,17 +116,14 @@ public class DocumentMapper {
 			}
 			return results.toArray(new Interval[results.size()]);
 		} else if (intervals.size() > 0 && index < intervals.get(0).getOffset()) {
-			ArrayList<Interval> results = new ArrayList<Interval>();
+			final ArrayList<Interval> results = new ArrayList<Interval>();
 			for (Interval interval : intervals) {
 				if (interval.getOffset() <= offset + length) {
 					results.add(interval);
 				}
-
 			}
 			return results.toArray(new Interval[results.size()]);
-
 		}
-
 		return new Interval[0];
 	}
 
@@ -166,7 +163,7 @@ public class DocumentMapper {
 		int result = findIntervalIndex(offset);
 		// check the two previous intervals.
 		if (result > 0) {
-			Interval previous = intervals.get(result - 1);
+			final Interval previous = intervals.get(result - 1);
 			if (previous.getOffset() + previous.getLength() >= offset) {
 				result = result - 1;
 			}
@@ -177,7 +174,6 @@ public class DocumentMapper {
 				result = result - 1;
 			}
 		}
-
 		return result;
 	}
 
@@ -189,7 +185,7 @@ public class DocumentMapper {
 	 *         none exists.
 	 */
 	public Interval findEditableInterval(int offset) {
-		int index = findEditableIntervalIndex(offset);
+		final int index = findEditableIntervalIndex(offset);
 		if (index >= 0) {
 			return intervals.get(index);
 		}
@@ -283,7 +279,7 @@ public class DocumentMapper {
 	}
 
 	protected Interval findFirstInterval(int offset) {
-		int index = findFirstIntervalIndex(offset);
+		final int index = findFirstIntervalIndex(offset);
 		if (index >= 0 && index < intervals.size()) {
 			return intervals.get(index);
 		}
@@ -354,10 +350,11 @@ public class DocumentMapper {
 	 * @return the first interval that belongs to the given element
 	 */
 	public Interval findInterval(IRodinElement element) {
-		// TODO: adapt this method to editorElements. will be faster?
-		for (Interval interval : intervals) {
-			if (element.equals(interval.getElement())) {
-				return interval;
+		final EditorItem editorItem = editorElements.get(element);
+		if (editorItem != null) {
+			final ArrayList<Interval> itemIntervals = editorItem.getIntervals();
+			if (itemIntervals.size() > 0) {
+				return itemIntervals.get(0);
 			}
 		}
 		return null;
@@ -372,14 +369,8 @@ public class DocumentMapper {
 	 * @return the first interval that belongs to the given element
 	 */
 	public Interval findInterval(ILElement element, ContentType contentType) {
-		// TODO: adapt this method to editorElements. will be faster?
-		for (Interval interval : intervals) {
-			if (element.equals(interval.getElement())
-					&& interval.getContentType().equals(contentType)) {
-				return interval;
-			}
-		}
-		return null;
+		final EditorItem item = editorElements.get(element.getElement());
+		return item.getInterval(contentType);
 	}
 
 	public ArrayList<Interval> getIntervals() {
@@ -436,7 +427,7 @@ public class DocumentMapper {
 	}
 
 	public Position[] getFoldingPositions() {
-		ArrayList<Position> result = new ArrayList<Position>();
+		final ArrayList<Position> result = new ArrayList<Position>();
 		for (EditorItem el : editorElements.values()) {
 			if (el.getFoldingPosition() != null) {
 				result.add(el.getFoldingPosition());
@@ -451,7 +442,7 @@ public class DocumentMapper {
 	}
 
 	public ProjectionAnnotation[] getFoldingAnnotations() {
-		ArrayList<ProjectionAnnotation> result = new ArrayList<ProjectionAnnotation>();
+		final ArrayList<ProjectionAnnotation> result = new ArrayList<ProjectionAnnotation>();
 		for (EditorItem el : editorElements.values()) {
 			if (el.getFoldingAnnotation() != null) {
 				result.add(el.getFoldingAnnotation());
@@ -513,10 +504,10 @@ public class DocumentMapper {
 
 	public void elementRemoved(IRodinElement element) {
 		System.out.println("element removed: " + element);
-		EditorItem editorElement = editorElements.get(element);
+		final EditorItem editorElement = editorElements.get(element);
 		if (editorElement != null) {
-			int offset = editorElement.getOffset();
-			int length = editorElement.getLength();
+			final int offset = editorElement.getOffset();
+			final int length = editorElement.getLength();
 			removeElements(offset, length);
 			removeIntervals(offset, length);
 			adaptFoldingPositions(offset, -length);
@@ -525,7 +516,7 @@ public class DocumentMapper {
 	}
 
 	protected void removeElements(int offset, int length) {
-		ArrayList<EditorItem> toRemove = new ArrayList<EditorItem>();
+		final ArrayList<EditorItem> toRemove = new ArrayList<EditorItem>();
 		for (EditorItem element : editorElements.values()) {
 			if (element.getOffset() >= offset
 					&& element.getOffset() + element.getLength() <= offset
@@ -543,9 +534,9 @@ public class DocumentMapper {
 	}
 
 	protected void removeIntervals(int offset, int length) {
-		ArrayList<Interval> toRemove = new ArrayList<Interval>();
+		final ArrayList<Interval> toRemove = new ArrayList<Interval>();
 		for (Interval interval : intervals) {
-			int end = interval.getOffset() + interval.getLength();
+			final int end = interval.getOffset() + interval.getLength();
 			if (interval.getOffset() >= offset && end <= offset + length) {
 				toRemove.add(interval);
 			}
@@ -561,7 +552,7 @@ public class DocumentMapper {
 	private void checkLabeled(ILabeledElement element, Interval interval)
 			throws RodinDBException {
 		if (element.hasLabel()) {
-			String text = element.getLabel();
+			final String text = element.getLabel();
 			synchronizeInterval(interval, text);
 		}
 	}
@@ -569,7 +560,7 @@ public class DocumentMapper {
 	private void checkIdentifier(IIdentifierElement element, Interval interval)
 			throws RodinDBException {
 		if (element.hasIdentifierString()) {
-			String text = element.getIdentifierString();
+			final String text = element.getIdentifierString();
 			synchronizeInterval(interval, text);
 		}
 	}
@@ -577,7 +568,7 @@ public class DocumentMapper {
 	private void checkAssignment(IAssignmentElement element, Interval interval)
 			throws RodinDBException {
 		if (element.hasAssignmentString()) {
-			String text = element.getAssignmentString();
+			final String text = element.getAssignmentString();
 			synchronizeInterval(interval, text);
 		}
 	}
@@ -585,7 +576,7 @@ public class DocumentMapper {
 	private void checkPredicate(IPredicateElement element, Interval interval)
 			throws RodinDBException {
 		if (element.hasPredicateString()) {
-			String text = element.getPredicateString();
+			final String text = element.getPredicateString();
 			synchronizeInterval(interval, text);
 		}
 	}
@@ -593,7 +584,7 @@ public class DocumentMapper {
 	private void checkCommented(ICommentedElement element, Interval interval)
 			throws RodinDBException {
 		if (element.hasComment()) {
-			String text = element.getComment();
+			final String text = element.getComment();
 			synchronizeInterval(interval, text);
 		}
 	}
@@ -634,11 +625,11 @@ public class DocumentMapper {
 	 *            The delta of the change
 	 */
 	public void adaptFoldingPositions(int offset, int delta) {
-		ArrayList<EditorItem> elements = new ArrayList<EditorItem>(
+		final ArrayList<EditorItem> elements = new ArrayList<EditorItem>(
 				editorElements.values());
 		elements.addAll(sections.values());
 		for (EditorItem el : elements) {
-			Position pos = el.getFoldingPosition();
+			final Position pos = el.getFoldingPosition();
 			if (pos != null) {
 				// change happened inside position
 				if (pos.getOffset() <= offset
@@ -681,19 +672,24 @@ public class DocumentMapper {
 	 * 
 	 * @param interval
 	 *            The interval where the change happened
-	 * @param new_Text
+	 * @param newText
 	 *            The new text to be set into that interval
 	 */
-	protected void synchronizeInterval(Interval interval, String new_Text) {
-		String old_text = getTextFromDocument(interval);
-		if (old_text == null || !old_text.equals(new_Text)) {
-			adaptIntervalOffsetsFrom(intervals.indexOf(interval) + 1,
-					new_Text.length() - old_text.length());
-			adaptFoldingPositions(interval.getOffset(), new_Text.length()
-					- old_text.length());
-			documentProvider.replaceTextInDocument(interval, new_Text);
-			interval.setLength(new_Text.length());
+	protected void synchronizeInterval(Interval interval, String newText) {
+		final String old_text = getTextFromDocument(interval);
+		if (!old_text.equals(newText)) {
+			final int newTextLength = newText.length();
+			final int delta = newTextLength
+					- ((old_text == null) ? 0 : old_text.length());
+			adaptAfter(interval, delta);
+			documentProvider.replaceTextInDocument(interval, newText);
+			interval.setLength(newTextLength);
 		}
+	}
+	
+	private void adaptAfter(Interval interval, int delta) {
+		adaptIntervalOffsetsFrom(intervals.indexOf(interval) + 1, delta);
+		adaptFoldingPositions(interval.getOffset(), delta);
 	}
 
 	public void setDocumentProvider(RodinDocumentProvider documentProvider) {

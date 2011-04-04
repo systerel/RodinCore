@@ -7,8 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
-  *******************************************************************************/
-
+ *******************************************************************************/
 package fr.systerel.editor.documentModel;
 
 import java.util.ArrayList;
@@ -17,186 +16,112 @@ import java.util.List;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
-import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.DocumentEvent;
-import org.eclipse.jface.text.DocumentRewriteSession;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.jface.text.IDocumentPartitionerExtension;
-import org.eclipse.jface.text.IDocumentPartitionerExtension2;
-import org.eclipse.jface.text.IDocumentPartitionerExtension3;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.TypedPosition;
 import org.eclipse.jface.text.TypedRegion;
 import org.eclipse.jface.text.rules.FastPartitioner;
+import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 
 import fr.systerel.editor.editors.RodinConfiguration;
 import fr.systerel.editor.editors.RodinConfiguration.ContentType;
 
 /**
- * Partitions a document according to the intervals.
- * Parts of this class are copied from {@link FastPartitioner}
+ * Partitions a document according to the intervals. Parts of this class are
+ * copied from {@link FastPartitioner}
  */
-public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitionerExtension,IDocumentPartitionerExtension2, IDocumentPartitionerExtension3  {
-
-	private DocumentMapper mapper;
-	/** The partitioner's document */
-	protected IDocument fDocument;
+public class RodinPartitioner extends FastPartitioner {
 
 	/**
-	 * The position category this partitioner uses to store the document's partitioning information.
+	 * The document mapper providing information for partition computing
 	 */
-	private static final String CONTENT_TYPES_CATEGORY= "__content_types_category"; //$NON-NLS-1$
-	/** The legal content types of this partitioner */
-	protected final String[] fLegalContentTypes;
-	/** The document length before a document change occurred */
-	protected int fPreviousDocumentLength;
-	/** The position updater used to for the default updating of partitions */
-	protected final DefaultPositionUpdater fPositionUpdater;
-	/** The offset at which the first changed partition starts */
-	protected int fStartOffset;
-	/** The offset at which the last changed partition ends */
-	protected int fEndOffset;
-	/**The offset at which a partition has been deleted */
-	protected int fDeleteOffset;
-	
-	/** for correcting positions */
+	private DocumentMapper mapper;
+
+	/** To correct positions */
 	protected int fNewOffSet;
 	protected int fNewLength;
 	protected int correctionIndex;
-	
-	/**
-	 * The position category this partitioner uses to store the document's partitioning information.
-	 */
-	private final String fPositionCategory;
-	/**
-	 * The active document rewrite session.
-	 */
-	private DocumentRewriteSession fActiveRewriteSession;
-	/**
-	 * Flag indicating whether this partitioner has been initialized.
-	 */
-	private boolean fIsInitialized= false;
-	/**
-	 * The cached positions from our document, so we don't create a new array every time
-	 * someone requests partition information.
-	 */
-	private Position[] fCachedPositions= null;
-	
-	
-	public RodinPartitioner(DocumentMapper documentMapper,  ContentType[] contentTypes) {
+
+	public RodinPartitioner(DocumentMapper documentMapper, String[] contentTypes) {
+		super(new RuleBasedPartitionScanner(), contentTypes);
 		this.mapper = documentMapper;
-		fLegalContentTypes= new String[contentTypes.length];
-		for (int i = 0; i < contentTypes.length; i++) {
-			fLegalContentTypes[i] = contentTypes[i].getName();
-		}
-		fPositionCategory= CONTENT_TYPES_CATEGORY + hashCode();
-		fPositionUpdater= new DefaultPositionUpdater(fPositionCategory);
 	}
 
-	public ITypedRegion[] computePartitioning(int offset, int length) {
-		return computePartitioning(offset, length, false);
-	}
-
-	public void connect(IDocument document) {
-		connect(document, false);
-		
-	}
-
-	public void disconnect() {
-		try {
-			fDocument.removePositionCategory(fPositionCategory);
-		} catch (BadPositionCategoryException x) {
-			// do nothing
-		}
-		
-	}
-
+	@Override
 	public void documentAboutToBeChanged(DocumentEvent event) {
-		// TODO Auto-generated method stub
-		
+		// Do nothing
 	}
 
-	public boolean documentChanged(DocumentEvent event) {
-		if (fIsInitialized) {
-			IRegion region= documentChanged2(event);
-			return (region != null);
-		}
-		return false;
-	}
-
+	@Override
 	public String getContentType(int offset) {
 		return getContentType(offset, false);
 	}
-
-	public String[] getLegalContentTypes() {
-		return TextUtilities.copy(fLegalContentTypes);
-	}
-
-	public ITypedRegion getPartition(int offset) {
-		return getPartition(offset, false);
-	}
-
+	
+	@Override
 	public ITypedRegion[] computePartitioning(int offset, int length,
 			boolean includeZeroLengthPartitions) {
 		checkInitialization();
-		final List<ITypedRegion> list= new ArrayList<ITypedRegion>();
+		final List<ITypedRegion> list = new ArrayList<ITypedRegion>();
 		try {
-			int endOffset= offset + length;
+			int endOffset = offset + length;
 			final Position[] category = getPositions();
 			TypedPosition previous = null;
 			TypedPosition current = null;
 			int start, end, gapOffset;
 			final Position gap = new Position(0);
 
-			int startIndex= getFirstIndexEndingAfterOffset(category, offset);
-			int endIndex= getFirstIndexStartingAfterOffset(category, endOffset);
-			for (int i= startIndex; i < endIndex; i++) {
-
-				current= (TypedPosition) category[i];
-
-				gapOffset= (previous != null) ? previous.getOffset() + previous.getLength() : 0;
+			int startIndex = getFirstIndexEndingAfterOffset(category, offset);
+			int endIndex = getFirstIndexStartingAfterOffset(category, endOffset);
+			for (int i = startIndex; i < endIndex; i++) {
+				current = (TypedPosition) category[i];
+				gapOffset = (previous != null) ? previous.getOffset()
+						+ previous.getLength() : 0;
 				if (current.getOffset() - gapOffset >= 0) {
 					gap.setOffset(gapOffset);
 					gap.setLength(current.getOffset() - gapOffset);
-					if ((includeZeroLengthPartitions && overlapsOrTouches(gap, offset, length)) ||
-							(gap.getLength() > 0 && gap.overlapsWith(offset, length))) {
-						start= Math.max(offset, gapOffset);
-						end= Math.min(endOffset, gap.getOffset() + gap.getLength());
-						list.add(new TypedRegion(start, end - start, IDocument.DEFAULT_CONTENT_TYPE));
+					if ((includeZeroLengthPartitions && overlapsOrTouches(gap,
+							offset, length))
+							|| (gap.getLength() > 0 && gap.overlapsWith(offset,
+									length))) {
+						start = Math.max(offset, gapOffset);
+						end = Math.min(endOffset,
+								gap.getOffset() + gap.getLength());
+						list.add(new TypedRegion(start, end - start,
+								IDocument.DEFAULT_CONTENT_TYPE));
 					}
 				}
-
 				if (current.overlapsWith(offset, length)) {
-					start= Math.max(offset, current.getOffset());
-					end= Math.min(endOffset, current.getOffset() + current.getLength());
-					if (end- start > 0 || includeZeroLengthPartitions) {
-						list.add(new TypedRegion(start, end - start, current.getType()));
+					start = Math.max(offset, current.getOffset());
+					end = Math.min(endOffset,
+							current.getOffset() + current.getLength());
+					if (end - start > 0 || includeZeroLengthPartitions) {
+						list.add(new TypedRegion(start, end - start, current
+								.getType()));
 					}
 				}
-
-				previous= current;
+				previous = current;
 			}
-
 			if (previous != null) {
-				gapOffset= previous.getOffset() + previous.getLength();
+				gapOffset = previous.getOffset() + previous.getLength();
 				gap.setOffset(gapOffset);
 				gap.setLength(fDocument.getLength() - gapOffset);
-				if ((includeZeroLengthPartitions && overlapsOrTouches(gap, offset, length)) ||
-						(gap.getLength() > 0 && gap.overlapsWith(offset, length))) {
-					start= Math.max(offset, gapOffset);
-					end= Math.min(endOffset, fDocument.getLength());
-					list.add(new TypedRegion(start, end - start, IDocument.DEFAULT_CONTENT_TYPE));
+				if ((includeZeroLengthPartitions && overlapsOrTouches(gap,
+						offset, length))
+						|| (gap.getLength() > 0 && gap.overlapsWith(offset,
+								length))) {
+					start = Math.max(offset, gapOffset);
+					end = Math.min(endOffset, fDocument.getLength());
+					list.add(new TypedRegion(start, end - start,
+							IDocument.DEFAULT_CONTENT_TYPE));
 				}
 			}
-
 			if (list.isEmpty())
-				list.add(new TypedRegion(offset, length, IDocument.DEFAULT_CONTENT_TYPE));
-
+				list.add(new TypedRegion(offset, length,
+						IDocument.DEFAULT_CONTENT_TYPE));
 		} catch (BadPositionCategoryException ex) {
 			// Make sure we clear the cache
 			clearPositionCache();
@@ -205,289 +130,167 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 			clearPositionCache();
 			throw ex;
 		}
-
-		final TypedRegion[] result= new TypedRegion[list.size()];
+		final TypedRegion[] result = new TypedRegion[list.size()];
 		list.toArray(result);
 		return result;
 	}
 
+	@Override
 	public String getContentType(int offset, boolean preferOpenPartitions) {
-		ITypedRegion partition = getPartition(offset, preferOpenPartitions);
+		final ITypedRegion partition = getPartition(offset,
+				preferOpenPartitions);
 		if (partition != null) {
 			return partition.getType();
 		}
 		return null;
 	}
 
-	public String[] getManagingPositionCategories() {
-		return new String[] {fPositionCategory};
+	private String getPositionCategory() {
+		return getManagingPositionCategories()[0];
 	}
 
 	public ITypedRegion getPartition(int offset, boolean preferOpenPartitions) {
-		
 		checkInitialization();
-
 		try {
-
 			final Position[] category = getPositions();
-
 			if (category == null || category.length == 0)
-				return new TypedRegion(0, fDocument.getLength(), IDocument.DEFAULT_CONTENT_TYPE);
-
-			int index= fDocument.computeIndexInCategory(fPositionCategory, offset);
-
+				return new TypedRegion(0, fDocument.getLength(),
+						IDocument.DEFAULT_CONTENT_TYPE);
+			int index = fDocument.computeIndexInCategory(getPositionCategory(),
+					offset);
 			if (index < category.length) {
-				TypedPosition next= (TypedPosition) category[index];
-
+				TypedPosition next = (TypedPosition) category[index];
 				if (preferOpenPartitions) {
-					//check if there is a non zero open partition ending at offset:
+					// check if there is a non zero open partition ending at
+					// offset:
 					if (index > 0) {
-						TypedPosition previous= (TypedPosition) category[index-1];
-						if (previous.getOffset() + previous.getLength() == offset){
+						final TypedPosition previous = (TypedPosition) category[index - 1];
+						if (previous.getOffset() + previous.getLength() == offset) {
 							final String prevTypeName = previous.getType();
 							final ContentType prevType = RodinConfiguration
 									.getContentType(prevTypeName);
-							//the editable types are considered open partitions
-							if (prevType.isEditable())  {
-								return new TypedRegion(previous.getOffset(), previous.getLength(), prevTypeName);
+							// the editable types are considered open partitions
+							if (prevType.isEditable()) {
+								return new TypedRegion(previous.getOffset(),
+										previous.getLength(), prevTypeName);
 							}
 						}
 					}
-					
-					//check if there is a open partition starting at offset:
-					if (next.getOffset() == offset){
+					// check if there is a open partition starting at offset:
+					if (next.getOffset() == offset) {
 						final String nextTypeName = next.getType();
 						final ContentType nextType = RodinConfiguration
 								.getContentType(nextTypeName);
-						//the editable types are considered open partitions
-						if (nextType.isEditable())  {
-							return new TypedRegion(next.getOffset(), next.getLength(), next.getType());
+						// the editable types are considered open partitions
+						if (nextType.isEditable()) {
+							return new TypedRegion(next.getOffset(),
+									next.getLength(), next.getType());
 						}
 					}
-					if (index +1 < category.length) {
-						next= (TypedPosition) category[index +1];
-						if (next.getOffset() == offset){
+					if (index + 1 < category.length) {
+						next = (TypedPosition) category[index + 1];
+						if (next.getOffset() == offset) {
 							final String nextTypeName = next.getType();
 							final ContentType nextType = RodinConfiguration
 									.getContentType(nextTypeName);
-							//the editable types are considered open partitions
-							if (nextType.isEditable())  {
-								return new TypedRegion(next.getOffset(), next.getLength(), next.getType());
+							// the editable types are considered open partitions
+							if (nextType.isEditable()) {
+								return new TypedRegion(next.getOffset(),
+										next.getLength(), next.getType());
 							}
 						}
 					}
-					next= (TypedPosition) category[index];
-					
+					next = (TypedPosition) category[index];
 				}
-				
-				
-				if (offset == next.offset)
-					return new TypedRegion(next.getOffset(), next.getLength(), next.getType());
-
+				if (offset == next.offset || offset < next.offset + next.length)
+					return new TypedRegion(next.getOffset(), next.getLength(),
+							next.getType());
 				if (index == 0)
-					return new TypedRegion(0, next.offset, IDocument.DEFAULT_CONTENT_TYPE);
-
-				TypedPosition previous= (TypedPosition) category[index - 1];
+					return new TypedRegion(0, next.offset,
+							IDocument.DEFAULT_CONTENT_TYPE);
+				final TypedPosition previous = (TypedPosition) category[index - 1];
 				if (previous.includes(offset))
-					return new TypedRegion(previous.getOffset(), previous.getLength(), previous.getType());
-
-				int endOffset= previous.getOffset() + previous.getLength();
-				return new TypedRegion(endOffset, next.getOffset() - endOffset, IDocument.DEFAULT_CONTENT_TYPE);
+					return new TypedRegion(previous.getOffset(),
+							previous.getLength(), previous.getType());
+				int endOffset = previous.getOffset() + previous.getLength();
+				return new TypedRegion(endOffset, next.getOffset() - endOffset,
+						IDocument.DEFAULT_CONTENT_TYPE);
 			}
-
-			TypedPosition previous= (TypedPosition) category[category.length - 1];
+			final TypedPosition previous = (TypedPosition) category[category.length - 1];
 			if (previous.includes(offset))
-				return new TypedRegion(previous.getOffset(), previous.getLength(), previous.getType());
 
-			int endOffset= previous.getOffset() + previous.getLength();
-			return new TypedRegion(endOffset, fDocument.getLength() - endOffset, IDocument.DEFAULT_CONTENT_TYPE);
+				return new TypedRegion(previous.getOffset(),
+						previous.getLength(), previous.getType());
+			final int endOffset = previous.getOffset() + previous.getLength();
 
+			return new TypedRegion(endOffset,
+					fDocument.getLength() - endOffset,
+					IDocument.DEFAULT_CONTENT_TYPE);
 		} catch (BadPositionCategoryException x) {
 		} catch (BadLocationException x) {
 		}
-
-		return new TypedRegion(0, fDocument.getLength(), IDocument.DEFAULT_CONTENT_TYPE);
-		
-	}
-
-	public void connect(IDocument document, boolean delayInitialization) {
-		fDocument = document;
-		fDocument.addPositionCategory(fPositionCategory);
-
-		fIsInitialized= false;
-		if (!delayInitialization)
-			checkInitialization();
-		
-	}
-
-	public DocumentRewriteSession getActiveRewriteSession() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void startRewriteSession(DocumentRewriteSession session)
-			throws IllegalStateException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void stopRewriteSession(DocumentRewriteSession session) {
-		// TODO Auto-generated method stub
-		
+		return new TypedRegion(0, fDocument.getLength(),
+				IDocument.DEFAULT_CONTENT_TYPE);
 	}
 
 	/**
 	 * There should never be more than one partition affected.
 	 */
+	@Override
 	public IRegion documentChanged2(DocumentEvent event) {
-		if (!fIsInitialized)
-			return null;
-
+		checkInitialization();
 		Assert.isTrue(event.getDocument() == fDocument);
-		//if the document changed from the beginning, restart from scratch by initializing
+		// if the document changed from the beginning, restart from scratch by
+		// initializing
 		if (event.getOffset() == 0) {
 			try {
-				fDocument.removePositionCategory(fPositionCategory);
-				fDocument.addPositionCategory(fPositionCategory);
+				final String positionCategory = getPositionCategory();
+				fDocument.removePositionCategory(positionCategory);
+				fDocument.addPositionCategory(positionCategory);
 				initialize();
 			} catch (BadPositionCategoryException e) {
-				// TODO Auto-generated catch block
+				// cannot happen if document has been connected before
 				e.printStackTrace();
 			}
-		}
-		else {
+		} else {
 			try {
-	
-				boolean needsCorrection = calculateCorrection(event);
-				
-				//this handles changes of existing partitions
-				//currently there can be no new partitions.
-				fPositionUpdater.update(event);
 
+				boolean needsCorrection = calculateCorrection(event);
+				// this handles changes of existing partitions
+				// currently there can be no new partitions.
+				fPositionUpdater.update(event);
 				if (needsCorrection) {
 					correctPosition();
 				}
-
-				
 			} finally {
 				clearPositionCache();
 			}
 		}
 		return new Region(event.getOffset(), event.getText().length());
-		
 	}
 
-
-	/**
-	 * Calls {@link #initialize()} if the receiver is not yet initialized.
-	 */
-	protected final void checkInitialization() {
-		if (!fIsInitialized)
-			initialize();
-	}
-	
 	/**
 	 * Performs the initial partitioning of the partitioner's document.
 	 */
+	@Override
 	protected void initialize() {
-		fIsInitialized = true;
-		clearPositionCache();
-		
-		ArrayList<Interval> intervals = mapper.getIntervals();
-		int last_end = 0;
+		super.initialize();
+		final ArrayList<Interval> intervals = mapper.getIntervals();
 		for (Interval interval : intervals) {
 			try {
-				TypedPosition p;
-				if (last_end < interval.getOffset() ) {
-					p = new TypedPosition(last_end, interval.getOffset()-(last_end), RodinConfiguration.COMMENT_TYPE.getName());
-					fDocument.addPosition(fPositionCategory, p);
-				}
-				p = new TypedPosition(interval.getOffset(), interval.getLength(), interval.getContentType().getName());
-				last_end = interval.getOffset() +interval.getLength();
-				fDocument.addPosition(fPositionCategory, p);
+				final int offset = interval.getOffset();
+				final int length = interval.getLength();
+				final String contentTypeName = interval.getContentType()
+						.getName();
+				final TypedPosition position = new TypedPosition(offset,
+						length, contentTypeName);
+				fDocument.addPosition(getPositionCategory(), position);
 			} catch (BadLocationException e) {
 				e.printStackTrace();
 			} catch (BadPositionCategoryException e) {
 				e.printStackTrace();
 			}
 		}
-	}
-	
-	/**
-	 * Clears the position cache. Needs to be called whenever the positions have
-	 * been updated.
-	 */
-	protected final void clearPositionCache() {
-		if (fCachedPositions != null) {
-			fCachedPositions= null;
-		}
-	}
-
-	
-	/**
-	 * Returns the partitioners positions.
-	 *
-	 * @return the partitioners positions
-	 * @throws BadPositionCategoryException if getting the positions from the
-	 *         document fails
-	 */
-	protected final Position[] getPositions() throws BadPositionCategoryException {
-		if (fCachedPositions == null) {
-			fCachedPositions= fDocument.getPositions(fPositionCategory);
-		} 
-		return fCachedPositions;
-	}
-	
-	/**
-	 * Returns <code>true</code> if the given ranges overlap with or touch each other.
-	 *
-	 * @param gap the first range
-	 * @param offset the offset of the second range
-	 * @param length the length of the second range
-	 * @return <code>true</code> if the given ranges overlap with or touch each other
-	 */
-	private boolean overlapsOrTouches(Position gap, int offset, int length) {
-		return gap.getOffset() <= offset + length && offset <= gap.getOffset() + gap.getLength();
-	}
-
-	/**
-	 * Returns the index of the first position which ends after the given offset.
-	 *
-	 * @param positions the positions in linear order
-	 * @param offset the offset
-	 * @return the index of the first position which ends after the offset
-	 */
-	private int getFirstIndexEndingAfterOffset(Position[] positions, int offset) {
-		int i= -1, j= positions.length;
-		while (j - i > 1) {
-			int k= (i + j) >> 1;
-			Position p= positions[k];
-			if (p.getOffset() + p.getLength() > offset)
-				j= k;
-			else
-				i= k;
-		}
-		return j;
-	}
-
-	/**
-	 * Returns the index of the first position which starts at or after the given offset.
-	 *
-	 * @param positions the positions in linear order
-	 * @param offset the offset
-	 * @return the index of the first position which starts after the offset
-	 */
-	private int getFirstIndexStartingAfterOffset(Position[] positions, int offset) {
-		int i= -1, j= positions.length;
-		while (j - i > 1) {
-			int k= (i + j) >> 1;
-			Position p= positions[k];
-			if (p.getOffset() >= offset)
-				j= k;
-			else
-				i= k;
-		}
-		return j;
 	}
 
 	/**
@@ -500,14 +303,15 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 		// if inserted directly before or after a position, adapt position
 		// accordingly
 		try {
-			Position[] category = getPositions();
-			Position changing = category[correctionIndex];
+			final Position[] positions = getPositions();
+			final Position changing = positions[correctionIndex];
 			changing.setOffset(fNewOffSet);
 			changing.setLength(fNewLength);
 			// the order of the positions in the document may have changed.
 			// remove and add it again freshly to solve this problem.
-			fDocument.removePosition(fPositionCategory, changing);
-			fDocument.addPosition(fPositionCategory, changing);
+			final String positionCategory = getPositionCategory();
+			fDocument.removePosition(positionCategory, changing);
+			fDocument.addPosition(positionCategory, changing);
 		} catch (BadPositionCategoryException e) {
 			e.printStackTrace();
 		} catch (BadLocationException e) {
@@ -533,8 +337,8 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 			try {
 				final Position[] category = getPositions();
 				// insertion at beginning
-				int first = fDocument.computeIndexInCategory(fPositionCategory,
-						event.getOffset());
+				int first = fDocument.computeIndexInCategory(
+						getPositionCategory(), event.getOffset());
 				for (int i = first; i < category.length; i++) {
 					final TypedPosition affected = (TypedPosition) category[i];
 					if (affected.getOffset() > event.getOffset()) {
@@ -542,7 +346,10 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 					}
 					final ContentType affectedType = RodinConfiguration
 							.getContentType(affected.getType());
-					if (affectedType.isEditable()) {
+					if (affected.getType().equals(
+							IDocument.DEFAULT_CONTENT_TYPE))
+						continue;
+					if (affectedType.isEditable() || affectedType.isImplicit()) {
 						if (affected.getOffset() == event.getOffset()) {
 							fNewOffSet = event.getOffset();
 							fNewLength = event.getText().length()
@@ -561,7 +368,8 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 					}
 					final ContentType affectedType = RodinConfiguration
 							.getContentType(affected.getType());
-					if (affectedType.isEditable()) {
+					if (affectedType.isEditable()
+							&& affectedType == RodinConfiguration.IMPLICIT_COMMENT_TYPE) {
 						if (affected.getOffset() + affected.getLength() == event
 								.getOffset()) {
 							fNewOffSet = affected.getOffset();
@@ -581,5 +389,76 @@ public class RodinPartitioner implements IDocumentPartitioner, IDocumentPartitio
 		}
 		return false;
 	}
-	
+
+	/**************************************************************************
+	 * UTILITY METHODS COPIED FROM {@link FastPartitioner} as they are private
+	 */
+
+	/**
+	 * Returns <code>true</code> if the given ranges overlap with or touch each
+	 * other.
+	 * 
+	 * @param gap
+	 *            the first range
+	 * @param offset
+	 *            the offset of the second range
+	 * @param length
+	 *            the length of the second range
+	 * @return <code>true</code> if the given ranges overlap with or touch each
+	 *         other
+	 */
+	private static boolean overlapsOrTouches(Position gap, int offset,
+			int length) {
+		return gap.getOffset() <= offset + length
+				&& offset <= gap.getOffset() + gap.getLength();
+	}
+
+	/**
+	 * Returns the index of the first position which ends after the given
+	 * offset.
+	 * 
+	 * @param positions
+	 *            the positions in linear order
+	 * @param offset
+	 *            the offset
+	 * @return the index of the first position which ends after the offset
+	 */
+	private static int getFirstIndexEndingAfterOffset(Position[] positions,
+			int offset) {
+		int i = -1, j = positions.length;
+		while (j - i > 1) {
+			int k = (i + j) >> 1;
+			Position p = positions[k];
+			if (p.getOffset() + p.getLength() > offset)
+				j = k;
+			else
+				i = k;
+		}
+		return j;
+	}
+
+	/**
+	 * Returns the index of the first position which starts at or after the
+	 * given offset.
+	 * 
+	 * @param positions
+	 *            the positions in linear order
+	 * @param offset
+	 *            the offset
+	 * @return the index of the first position which starts after the offset
+	 */
+	private static int getFirstIndexStartingAfterOffset(Position[] positions,
+			int offset) {
+		int i = -1, j = positions.length;
+		while (j - i > 1) {
+			int k = (i + j) >> 1;
+			Position p = positions[k];
+			if (p.getOffset() >= offset)
+				j = k;
+			else
+				i = k;
+		}
+		return j;
+	}
+
 }

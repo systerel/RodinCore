@@ -152,12 +152,12 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 			documentMapper.setDocumentProvider(this);
 
 		}
-		RodinPartitioner partitioner = new RodinPartitioner(documentMapper,
-				new ContentType[] { //
-				RodinConfiguration.IDENTIFIER_TYPE,
-						RodinConfiguration.COMMENT_TYPE,
-						RodinConfiguration.LABEL_TYPE,
-						RodinConfiguration.CONTENT_TYPE });
+		final RodinPartitioner partitioner = new RodinPartitioner(
+				documentMapper, new String[] { //
+				RodinConfiguration.IDENTIFIER_TYPE.getName(),
+						RodinConfiguration.COMMENT_TYPE.getName(),
+						RodinConfiguration.LABEL_TYPE.getName(),
+						RodinConfiguration.CONTENT_TYPE.getName() });
 		document.setDocumentPartitioner(partitioner);
 		partitioner.connect(document, false);
 

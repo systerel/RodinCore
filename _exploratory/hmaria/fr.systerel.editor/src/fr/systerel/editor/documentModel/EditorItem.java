@@ -16,6 +16,7 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 
 import fr.systerel.editor.editors.ElementButton;
+import fr.systerel.editor.editors.RodinConfiguration.ContentType;
 
 /**
  * This class represents an item in the editor that can spread several intervals
@@ -32,8 +33,29 @@ public abstract class EditorItem {
 	// TODO: check if it is really necessary to save the annotations.
 	private ProjectionAnnotation foldingAnnotation;
 
+	/**
+	 * Returns all the intervals of the item
+	 * 
+	 * @return the intervals
+	 */
 	public ArrayList<Interval> getIntervals() {
 		return intervals;
+	}
+
+	/**
+	 * The first interval found with the given type
+	 * 
+	 * @param type
+	 *            the content type to search the interval for
+	 * @return the first interval with the given content type
+	 */
+	public Interval getInterval(ContentType type) {
+		for (Interval i : intervals) {
+			if (i.getContentType().equals(type)) {
+				return i;
+			}
+		}
+		return null;
 	}
 
 	public void addInterval(Interval interval) {

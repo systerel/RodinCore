@@ -55,12 +55,14 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 
 		private final String name;
 		private final boolean isEditable;
+		private final boolean isImplicit;
 		private final RGB color;
 
 		public ContentType(String contentName, boolean isEditable,
-				RGB color) {
+				boolean isImplicit, RGB color) {
 			this.name = contentName;
 			this.isEditable = isEditable;
+			this.isImplicit = isImplicit;
 			this.color = color;
 		}
 
@@ -75,43 +77,51 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 		public RGB getColor() {
 			return color;
 		}
+		
+		public boolean isImplicit() {
+			return isImplicit;
+		}
 	}
 
 	// FIXME take care about attribute type extensions
 	// TODO make contributions out of the following constants
+	public static final ContentType PRESENTATION_TYPE = new ContentType(
+			"__separator_", false, false, CONTENT);
+	
 	public static final ContentType IDENTIFIER_TYPE = new ContentType(
-			"__identifier", true, IDENTIFIER);
+			"__identifier", true, false, IDENTIFIER);
 	public static final ContentType IMPLICIT_IDENTIFIER_TYPE = new ContentType(
-			"__implicit_identifier", false, IMPLICIT_IDENTIFIER);
+			"__implicit_identifier", false, true, IMPLICIT_IDENTIFIER);
 
 	public static final ContentType CONTENT_TYPE = new ContentType("__content",
-			true, CONTENT);
+			true, false, CONTENT);
 	public static final ContentType IMPLICIT_CONTENT_TYPE = new ContentType(
-			"__implicit_content", false, IMPLICIT_CONTENT);
+			"__implicit_content", false, true, IMPLICIT_CONTENT);
 
 	public static final ContentType COMMENT_TYPE = new ContentType("__comment",
-			true, COMMENT);
+			true, false, COMMENT);
 	public static final ContentType IMPLICIT_COMMENT_TYPE = new ContentType(
-			"__implicit_comment", false, IMPLICIT_COMMENT);
+			"__implicit_comment", false, true, IMPLICIT_COMMENT);
 
 	public static final ContentType LABEL_TYPE = new ContentType("__label",
-			true, LABEL);
+			true, false, LABEL);
 	public static final ContentType IMPLICIT_LABEL_TYPE = new ContentType(
-			"__implicit_label", false, IMPLICIT_LABEL);
+			"__implicit_label", false, true, IMPLICIT_LABEL);
 
 	public static final ContentType ATTRIBUTE_TYPE = new ContentType(
-			"__attribute", true, ATTRIBUTE);
+			"__attribute", true, false, ATTRIBUTE);
 	public static final ContentType IMPLICIT_ATTRIBUTE_TYPE = new ContentType(
-			"__implicit_attribute", false, IMPLICIT_ATTRIBUTE);
+			"__implicit_attribute", false, true, IMPLICIT_ATTRIBUTE);
 
 	public static final ContentType KEYWORD_TYPE = new ContentType("__keyword",
-			false, DEFAULT);
+			false, false, DEFAULT);
 	public static final ContentType SECTION_TYPE = new ContentType("__section",
-			false, SECTION);
+			false, false, SECTION);
 	public static final ContentType COMMENT_HEADER_TYPE = new ContentType(
-			"__comment_header", false, COMMENT_HEADER);
+			"__comment_header", false, false, COMMENT_HEADER);
 
 	private static ContentType[] contentTypes = new ContentType[] {
+		PRESENTATION_TYPE,
 		IDENTIFIER_TYPE,
 		IMPLICIT_IDENTIFIER_TYPE,
 		CONTENT_TYPE,
