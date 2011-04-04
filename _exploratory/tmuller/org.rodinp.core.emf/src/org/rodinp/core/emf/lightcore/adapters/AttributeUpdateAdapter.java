@@ -12,9 +12,6 @@ package org.rodinp.core.emf.lightcore.adapters;
 
 import static org.rodinp.core.emf.lightcore.LightCorePlugin.DEBUG;
 
-import java.util.Arrays;
-
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.rodinp.core.IAttributeType;
@@ -40,13 +37,9 @@ public class AttributeUpdateAdapter extends AdapterImpl {
 		if (notification.isTouch()) {
 			return;
 		}
-		// if we are initializing the EMF attribute value, we don't need to
-		// update the Rodin attribute (?)
-		if (!notification.wasSet()) {
+		if (isUpdating) {			
 			return;
 		}
-		if (isUpdating)
-			return;
 		final Object notifier = notification.getNotifier();
 		final int notificationType = notification.getEventType();
 
@@ -59,10 +52,11 @@ public class AttributeUpdateAdapter extends AdapterImpl {
 				final Object rElement = (IRodinElement) attribute.getOwner()
 						.getERodinElement();
 				if (rElement instanceof IInternalElement) {
-					if (!knownType(attribute, (IInternalElement) rElement))
-						return;
-					final IInternalElement iElem = (IInternalElement) rElement;
-					setValue(iElem, attribute, notification.getNewValue());
+					if (attribute.getType() instanceof IAttributeType) {
+						final IInternalElement iElem = (IInternalElement) rElement;
+						setValue(iElem, attribute, notification.getNewValue());						
+					}
+					
 					if (DEBUG) {
 						System.out.println("AttributeUpdateAdapter: new value"
 								+ notification.getNewValue() + " for "
@@ -76,13 +70,6 @@ public class AttributeUpdateAdapter extends AdapterImpl {
 				isUpdating = false;
 			}
 		}
-	}
-
-	private boolean knownType(Attribute attribute, IInternalElement rElement)
-			throws RodinDBException {
-		final IAttributeType type = (IAttributeType) attribute.getType();
-		final IAttributeType[] attributeTypes = rElement.getAttributeTypes();
-		return Arrays.asList(attributeTypes).contains(type);
 	}
 
 	private static void setValue(IInternalElement element, Attribute att,

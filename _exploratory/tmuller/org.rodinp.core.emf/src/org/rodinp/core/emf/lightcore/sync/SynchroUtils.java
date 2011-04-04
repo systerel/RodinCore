@@ -40,7 +40,7 @@ import org.rodinp.core.emf.lightcore.adapters.ImplicitDeltaRootAdapterFactory;
 public class SynchroUtils {
 
 	public static void loadAttributes(IInternalElement iElement,
-			LightElement lElement) {
+			LightElement lElement, boolean silent) {
 		final HashSet<IAttributeType> availableTypes;
 		try {
 			availableTypes = new HashSet<IAttributeType>(Arrays.asList(iElement
@@ -50,16 +50,25 @@ public class SynchroUtils {
 				final IAttributeValue value = iElement.getAttributeValue(type);
 				final Attribute lAttribute = LightcoreFactory.eINSTANCE
 						.createAttribute();
+				if (silent)
+					lAttribute.eSetDeliver(false);
 				lAttribute.setOwner(lElement);
 				lAttribute.setType(type);
 				lAttribute.setValue(value.getValue());
 				lElement.getEAttributes().put(type.getId(), lAttribute);
+				if (silent)
+					lAttribute.eSetDeliver(true);
 			}
 		} catch (RodinDBException e) {
 			System.out.println("Could not load the attributes for the "
 					+ "UI model from the element " + iElement.toString() + " "
 					+ e.getMessage());
 		}
+	}
+	
+	public static void reloadAttributes(IInternalElement iElement,
+			LightElement lElement) {
+		loadAttributes(iElement, lElement, false);
 	}
 
 	// Used in case of reloading, to remove the attributes which were suppressed

@@ -60,6 +60,7 @@ public class SynchroManager {
 
 	private static InternalElement loadRodinModel(IInternalElement iParent) {
 		final InternalElement parent = loadInternalElementFor(iParent);
+		parent.eSetDeliver(false);
 		implicitLoad(parent, iParent);
 		if (iParent.isRoot()) {
 			SynchroUtils.adaptRootForDBChanges(parent);
@@ -76,6 +77,7 @@ public class SynchroManager {
 					+ " model for the element " + iParent.toString() + " "
 					+ e.getMessage());
 		}
+		parent.eSetDeliver(true);
 		return parent;
 	}
 
@@ -164,16 +166,20 @@ public class SynchroManager {
 	private static InternalElement loadInternalElementFor(IRodinElement iElement) {
 		final InternalElement eElement = LightcoreFactory.eINSTANCE
 				.createInternalElement();
+		eElement.eSetDeliver(false);
 		eElement.setERodinElement(iElement);
 		eElement.load();
+		eElement.eSetDeliver(true);
 		return eElement;
 	}
 
 	private static ImplicitElement loadImplicitElementFor(IRodinElement iElement) {
 		final ImplicitElement eImplicit = LightcoreFactory.eINSTANCE
 				.createImplicitElement();
+		eImplicit.eSetDeliver(false);
 		eImplicit.setERodinElement(iElement);
 		eImplicit.load();
+		eImplicit.eSetDeliver(false);
 		return eImplicit;
 	}
 

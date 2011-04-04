@@ -158,7 +158,7 @@ public class DeltaProcessor {
 	public void reloadAttributes(IRodinElement toReload) {
 		final LightElement found = findElement(toReload, root);
 		if (toReload instanceof IInternalElement && found != null)
-			SynchroUtils.loadAttributes((IInternalElement) toReload, found);
+			SynchroUtils.reloadAttributes((IInternalElement) toReload, found);
 	}
 
 	public void removeElement(IRodinElement toRemove) {
