@@ -201,26 +201,26 @@ public class RodinTextGenerator {
 	 */
 	@SuppressWarnings("restriction")
 	private void processOtherAttributes(ILElement element) {
-		final List<IAttributeValue> attributes = new ArrayList<IAttributeValue>(
-				element.getAttributes());
-		for (IAttributeValue lv : element.getAttributes()) {
-			if (Arrays.asList(BASIC_ATTRIBUTE_TYPES).contains(lv.getType())) {
-				attributes.remove(lv);
-			}
-		}
 		int i = 0;
+		final IInternalElement rElement = element.getElement();
 		for (IAttributeDesc d : getAttributeDescs(element.getElementType())) {
-			final IInternalElement rElement = element.getElement();
 			String value = "";
 			try {
 				if (i == 0)
-					builder.append(" ");
+					addPresentationRegion(" ", element);
 				final IAttributeManipulation manipulation = d.getManipulation();
 				value = manipulation.getValue(rElement, null);
 				if (!value.isEmpty()) {
-					addPresentationRegion(d.getPrefix(), element);
+					final String prefix = d.getPrefix();
+					if (!prefix.isEmpty()) {
+						addPresentationRegion(prefix, element);
+					}
 					addAttributeRegion(value, element, manipulation);
-					addPresentationRegion(d.getSuffix(), element);
+					final String suffix = d.getSuffix();
+					if (!suffix.isEmpty()){
+						addPresentationRegion(suffix, element);						
+					}
+					i++;
 				}
 			} catch (RodinDBException e) {
 				value = "failure while loading";
