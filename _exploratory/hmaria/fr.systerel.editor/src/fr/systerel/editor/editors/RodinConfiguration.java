@@ -167,7 +167,7 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 
 		// FIXME temporary code
 		// Do something better
-		final boolean COLOR_DEBUG = true;
+		final boolean COLOR_DEBUG = false;
 
 		Color bgColor = (COLOR_DEBUG) ? colorManager.getColor(COMMENT_DEBUG_BG)
 				: null;

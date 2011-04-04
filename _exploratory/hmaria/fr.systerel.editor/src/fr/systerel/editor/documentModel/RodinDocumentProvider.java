@@ -46,7 +46,6 @@ import org.rodinp.core.emf.api.itf.ILFile;
 import org.rodinp.core.emf.lightcore.LightElement;
 
 import fr.systerel.editor.editors.RodinConfiguration;
-import fr.systerel.editor.editors.RodinConfiguration.ContentType;
 import fr.systerel.editor.editors.RodinEditor;
 
 /**
@@ -65,15 +64,19 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	private AdapterFactoryEditingDomain editingDomain;
 	private Resource inputResource;
 
-	protected EContentAdapter elementChangeAdapter = new EContentAdapter() {
+	protected EContentAdapter elementPresentationChangeAdapter = new EContentAdapter() {
 		@Override
 		public void notifyChanged(Notification notification) {
+			final Object oldObject = notification.getOldValue();
 			final Object notifier = notification.getNotifier();
-			if (notifier instanceof ILElement) {
+			if (notification.isTouch()) {
+				return;
+			}
+			if (notifier instanceof ILElement && (!(oldObject instanceof ILElement))){
 				documentMapper.elementChanged((ILElement) notifier);
-				for (ILElement c : ((ILElement) notifier).getChildren()) {
-					documentMapper.elementChanged(c);
-				}
+			}
+			if (oldObject instanceof ILElement) {
+				documentMapper.elementChanged((ILElement) oldObject);
 			}
 		}
 	};
@@ -97,7 +100,6 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 				.addAdapterFactory(new ResourceItemProviderAdapterFactory());
 		adapterFactory
 				.addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
-
 		// Create the command stack that will notify this editor as commands are
 		// executed.
 		final BasicCommandStack commandStack = new BasicCommandStack();
@@ -131,7 +133,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 							+ " : "
 							+ exception.getMessage());
 		}
-		resource.eAdapters().add(elementChangeAdapter);
+		resource.eAdapters().add(elementPresentationChangeAdapter);
 		return resource;
 	}
 
