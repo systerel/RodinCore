@@ -8,28 +8,28 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.editors;
+package fr.systerel.editor.presentation;
 
-import static fr.systerel.editor.editors.IRodinColorConstant.ATTRIBUTE;
-import static fr.systerel.editor.editors.IRodinColorConstant.COMMENT;
-import static fr.systerel.editor.editors.IRodinColorConstant.COMMENT_DEBUG_BG;
-import static fr.systerel.editor.editors.IRodinColorConstant.COMMENT_HEADER;
-import static fr.systerel.editor.editors.IRodinColorConstant.COMMENT_HEADER_DEBUG_BG;
-import static fr.systerel.editor.editors.IRodinColorConstant.CONTENT;
-import static fr.systerel.editor.editors.IRodinColorConstant.CONTENT_DEBUG_BG;
-import static fr.systerel.editor.editors.IRodinColorConstant.DEFAULT;
-import static fr.systerel.editor.editors.IRodinColorConstant.IDENTIFIER;
-import static fr.systerel.editor.editors.IRodinColorConstant.IDENTIFIER_DEBUG_BG;
-import static fr.systerel.editor.editors.IRodinColorConstant.IMPLICIT_ATTRIBUTE;
-import static fr.systerel.editor.editors.IRodinColorConstant.IMPLICIT_COMMENT;
-import static fr.systerel.editor.editors.IRodinColorConstant.IMPLICIT_CONTENT;
-import static fr.systerel.editor.editors.IRodinColorConstant.IMPLICIT_IDENTIFIER;
-import static fr.systerel.editor.editors.IRodinColorConstant.IMPLICIT_LABEL;
-import static fr.systerel.editor.editors.IRodinColorConstant.KEYWORD_DEBUG_BG;
-import static fr.systerel.editor.editors.IRodinColorConstant.LABEL;
-import static fr.systerel.editor.editors.IRodinColorConstant.LABEL_DEBUG_BG;
-import static fr.systerel.editor.editors.IRodinColorConstant.SECTION;
-import static fr.systerel.editor.editors.IRodinColorConstant.SECTION_DEBUG_BG;
+import static fr.systerel.editor.presentation.IRodinColorConstant.ATTRIBUTE;
+import static fr.systerel.editor.presentation.IRodinColorConstant.COMMENT;
+import static fr.systerel.editor.presentation.IRodinColorConstant.COMMENT_DEBUG_BG;
+import static fr.systerel.editor.presentation.IRodinColorConstant.COMMENT_HEADER;
+import static fr.systerel.editor.presentation.IRodinColorConstant.COMMENT_HEADER_DEBUG_BG;
+import static fr.systerel.editor.presentation.IRodinColorConstant.CONTENT;
+import static fr.systerel.editor.presentation.IRodinColorConstant.CONTENT_DEBUG_BG;
+import static fr.systerel.editor.presentation.IRodinColorConstant.DEFAULT;
+import static fr.systerel.editor.presentation.IRodinColorConstant.IDENTIFIER;
+import static fr.systerel.editor.presentation.IRodinColorConstant.IDENTIFIER_DEBUG_BG;
+import static fr.systerel.editor.presentation.IRodinColorConstant.IMPLICIT_ATTRIBUTE;
+import static fr.systerel.editor.presentation.IRodinColorConstant.IMPLICIT_COMMENT;
+import static fr.systerel.editor.presentation.IRodinColorConstant.IMPLICIT_CONTENT;
+import static fr.systerel.editor.presentation.IRodinColorConstant.IMPLICIT_IDENTIFIER;
+import static fr.systerel.editor.presentation.IRodinColorConstant.IMPLICIT_LABEL;
+import static fr.systerel.editor.presentation.IRodinColorConstant.KEYWORD_DEBUG_BG;
+import static fr.systerel.editor.presentation.IRodinColorConstant.LABEL;
+import static fr.systerel.editor.presentation.IRodinColorConstant.LABEL_DEBUG_BG;
+import static fr.systerel.editor.presentation.IRodinColorConstant.SECTION;
+import static fr.systerel.editor.presentation.IRodinColorConstant.SECTION_DEBUG_BG;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,9 +42,10 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
+import org.rodinp.core.IAttributeType;
 
 import fr.systerel.editor.documentModel.DocumentMapper;
-import fr.systerel.editor.documentModel.RodinDamagerRepairer;
+import fr.systerel.editor.editors.ColorManager;
 
 /**
  *
@@ -81,6 +82,36 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 		public boolean isImplicit() {
 			return isImplicit;
 		}
+		
+		public boolean isAttributeContentType() {
+			return false;
+		}
+		
+		public IAttributeType getAttributeType() {
+			return null;
+		}
+		
+	}
+	
+	public static class AttributeContentType extends ContentType {
+
+		private final IAttributeType attributeType;
+
+		public AttributeContentType(String contentName, boolean isEditable,
+				boolean isImplicit, RGB color, IAttributeType attributeType) {
+			super(contentName, isEditable, isImplicit, color);
+			this.attributeType = attributeType;
+		}
+		
+		public IAttributeType getAttributeType() {
+			return attributeType;
+		}
+		
+		@Override
+		public boolean isAttributeContentType() {
+			return true;
+		}
+
 	}
 
 	// FIXME take care about attribute type extensions
@@ -141,6 +172,10 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 		for (ContentType contentType : contentTypes) {
 			typesByName.put(contentType.getName(), contentType);
 		}
+	}
+	
+	public static ContentType getAttributeContentType(IAttributeType type) {
+		return new AttributeContentType("__attribute", true, false, ATTRIBUTE, type);
 	}
 	
 	public static ContentType getContentType(String name) {

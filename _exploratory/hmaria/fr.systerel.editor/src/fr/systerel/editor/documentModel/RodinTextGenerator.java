@@ -10,17 +10,12 @@
  *******************************************************************************/
 package fr.systerel.editor.documentModel;
 
-import static fr.systerel.editor.editors.RodinConfiguration.ATTRIBUTE_TYPE;
-import static fr.systerel.editor.editors.RodinConfiguration.COMMENT_HEADER_TYPE;
-import static fr.systerel.editor.editors.RodinConfiguration.COMMENT_TYPE;
-import static fr.systerel.editor.editors.RodinConfiguration.CONTENT_TYPE;
-import static fr.systerel.editor.editors.RodinConfiguration.IDENTIFIER_TYPE;
-import static fr.systerel.editor.editors.RodinConfiguration.IMPLICIT_COMMENT_TYPE;
-import static fr.systerel.editor.editors.RodinConfiguration.IMPLICIT_CONTENT_TYPE;
-import static fr.systerel.editor.editors.RodinConfiguration.IMPLICIT_IDENTIFIER_TYPE;
-import static fr.systerel.editor.editors.RodinConfiguration.KEYWORD_TYPE;
-import static fr.systerel.editor.editors.RodinConfiguration.LABEL_TYPE;
-import static fr.systerel.editor.editors.RodinConfiguration.SECTION_TYPE;
+import static fr.systerel.editor.presentation.RodinConfiguration.COMMENT_TYPE;
+import static fr.systerel.editor.presentation.RodinConfiguration.CONTENT_TYPE;
+import static fr.systerel.editor.presentation.RodinConfiguration.IDENTIFIER_TYPE;
+import static fr.systerel.editor.presentation.RodinConfiguration.IMPLICIT_COMMENT_TYPE;
+import static fr.systerel.editor.presentation.RodinConfiguration.IMPLICIT_CONTENT_TYPE;
+import static fr.systerel.editor.presentation.RodinConfiguration.IMPLICIT_IDENTIFIER_TYPE;
 import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.COMMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
@@ -33,6 +28,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.formatter.IFormattingStrategy;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ICommentedElement;
 import org.eventb.core.IIdentifierElement;
@@ -44,15 +40,13 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 
-import fr.systerel.editor.editors.RodinConfiguration;
-import fr.systerel.editor.editors.RodinConfiguration.ContentType;
+import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
 
 /**
  * Creates the text for a given root. The intervals and editor elements are
@@ -60,20 +54,14 @@ import fr.systerel.editor.editors.RodinConfiguration.ContentType;
  */
 public class RodinTextGenerator {
 
-	private static final Character tab = '\u0009';
-	private static final Object lineSeparator = System
-			.getProperty("line.separator");
-
 	private static final IAttributeType[] BASIC_ATTRIBUTE_TYPES = {
 			ASSIGNMENT_ATTRIBUTE, COMMENT_ATTRIBUTE, IDENTIFIER_ATTRIBUTE,
 			LABEL_ATTRIBUTE, PREDICATE_ATTRIBUTE };
 
 	private final DocumentMapper documentMapper;
 
-	private StringBuilder builder;
-	private int level = 0;
-
 	private ArrayList<Position> foldingRegions = new ArrayList<Position>();
+	private RodinTextStream stream;
 
 	public RodinTextGenerator(DocumentMapper documentMapper) {
 		this.documentMapper = documentMapper;
@@ -86,10 +74,9 @@ public class RodinTextGenerator {
 	 *            The machine or context that is displayed in the document.
 	 */
 	public String createText(ILElement inputRoot) {
-		builder = new StringBuilder();
-		documentMapper.resetPrevious();
+		stream = new RodinTextStream(documentMapper);
 		traverseRoot(null, inputRoot);
-		return builder.toString();
+		return stream.getText();
 	}
 
 	@SuppressWarnings({ "restriction" })
@@ -98,14 +85,14 @@ public class RodinTextGenerator {
 		if (rodinElement instanceof IInternalElement) {
 			final IElementDesc desc = ElementDescRegistry.getInstance()
 					.getElementDesc(rodinElement);
-			addSectionRegion(desc.getPrefix());
-			level++;
+			stream.addSectionRegion(desc.getPrefix());
+			stream.incrementIndentation();
 			processCommentedElement(e, true);
-			builder.append((String) lineSeparator);
-			addPresentationRegion(getTabs(level), e);
-			addLabelRegion(rodinElement.getElementName(), e);
+			stream.appendLineSeparator();
+			stream.appendPresentationTabs(e);
+			stream.addLabelRegion(rodinElement.getElementName(), e);
 			processOtherAttributes(e);
-			level--;
+			stream.decrementIndentation();
 			traverse(monitor, e);
 		}
 	}
@@ -124,23 +111,23 @@ public class RodinTextGenerator {
 				continue;
 			}
 			if (!(noChildren)) {
-				start = builder.length();
-				if (level < 1) {
-					addSectionRegion(childDesc.getPrefix());
+				start = stream.getLength();
+				if (stream.getLevel() < 1) {
+					stream.addSectionRegion(childDesc.getPrefix());
 				} else {
-					addKeywordRegion(childDesc.getPrefix());
+					stream.addKeywordRegion(childDesc.getPrefix());
 				}
 			}
 			for (ILElement in : c) {
-				level++;
-				addPresentationRegion(getTabs(level), in);
+				stream.incrementIndentation();
+				stream.appendPresentationTabs(in);
 				processElement(in);
 				traverse(mon, in);
-				level--;
+				stream.decrementIndentation();
 			}
-			final int length = builder.length() - start;
-			if (start != -1 && level == 0) {
-				documentMapper.addEditorSection(rel.getChildType(), start,
+			final int length = stream.getLength() - start;
+			if (start != -1 && stream.getLevel() == 0) {
+				stream.addEditorSection(rel.getChildType(), start,
 						length);
 			}
 		}
@@ -207,104 +194,42 @@ public class RodinTextGenerator {
 			String value = "";
 			try {
 				if (i == 0)
-					addPresentationRegion(" ", element);
+					stream.addPresentationRegion(" ", element);
 				final IAttributeManipulation manipulation = d.getManipulation();
 				value = manipulation.getValue(rElement, null);
 				if (!value.isEmpty()) {
 					final String prefix = d.getPrefix();
 					if (!prefix.isEmpty()) {
-						addPresentationRegion(prefix, element);
+						stream.addPresentationRegion(prefix, element);
 					}
-					addAttributeRegion(value, element, manipulation);
+					stream.addAttributeRegion(value, element, manipulation, d.getAttributeType());
 					final String suffix = d.getSuffix();
 					if (!suffix.isEmpty()){
-						addPresentationRegion(suffix, element);						
+						stream.addPresentationRegion(suffix, element);						
 					}
 					i++;
 				}
 			} catch (RodinDBException e) {
 				value = "failure while loading";
 			}
-			addPresentationRegion(" ", element);
+			stream.addPresentationRegion(" ", element);
 		}
-		builder.append((String) lineSeparator);
-	}
-
-	protected void addElementRegion(String text, ILElement element,
-			ContentType contentType) {
-		int start = builder.length();
-		builder.append(text);
-		int length = builder.length() - start;
-		documentMapper.processInterval(start, length, element, contentType);
-	}
-
-	protected void addAttributeRegion(String text, ILElement element,
-			IAttributeManipulation manipulation) {
-		int start = builder.length();
-		builder.append(text);
-		int length = builder.length() - start;
-		documentMapper.processInterval(start, length, element, ATTRIBUTE_TYPE,
-				manipulation);
-	}
-
-	protected void addLabelRegion(String text, ILElement element) {
-		int start = builder.length();
-		builder.append(text);
-		int length = builder.length() - start;
-		documentMapper.processInterval(start, length, element, LABEL_TYPE);
-		builder.append(lineSeparator);
-	}
-
-	protected void addPresentationRegion(String text, ILElement element) {
-		int start = builder.length();
-		builder.append(text);
-		int length = builder.length() - start;
-		documentMapper.processInterval(start, length, element,
-				RodinConfiguration.PRESENTATION_TYPE);
-	}
-
-	protected void addCommentHeaderRegion(ILElement element, boolean appendTabs) {
-		if (appendTabs)
-			builder.append(getTabs(level));
-		int start = builder.length();
-		builder.append("§");
-		int length = builder.length() - start;
-		documentMapper.processInterval(start, length, element,
-				COMMENT_HEADER_TYPE);
-	}
-
-	protected void addKeywordRegion(String title) {
-		addPresentationRegion(getTabs(level), null);
-		int start = builder.length();
-		builder.append(title);
-		int length = builder.length() - start;
-		documentMapper.processInterval(start, length, null, KEYWORD_TYPE);
-		builder.append(lineSeparator);
-	}
-
-	protected void addSectionRegion(String title) {
-		if (level > 0)
-			addPresentationRegion(getTabs(level), null);
-		int start = builder.length();
-		builder.append(title);
-		int length = builder.length() - start;
-		documentMapper.processInterval(start, length, null, SECTION_TYPE);
-		builder.append((String) lineSeparator);
+		stream.appendLineSeparator();
 	}
 
 	private void processCommentedElement(ILElement element, boolean appendTabs) {
-		addCommentHeaderRegion(element, appendTabs);
+		stream.addCommentHeaderRegion(element, appendTabs);
 		final String commentAttribute = element.getAttribute(COMMENT_ATTRIBUTE);
 		final ContentType contentType = getContentType(element,
 				IMPLICIT_COMMENT_TYPE, COMMENT_TYPE);
 		if (commentAttribute != null) {
-			final String comment = processMulti(commentAttribute);
-			addElementRegion(comment, element, contentType);
+			final String comment = commentAttribute;
+			stream.addElementRegion(comment, element, contentType, true);
 		} else {
-			addElementRegion("", element, contentType);
+			stream.addElementRegion("", element, contentType, true);
 		}
 		if (!appendTabs)
-			builder.append((String) lineSeparator);
+			stream.appendLineSeparator();
 	}
 
 	private void processPredicateElement(ILElement element) {
@@ -312,10 +237,10 @@ public class RodinTextGenerator {
 		final ContentType contentType = getContentType(element,
 				IMPLICIT_CONTENT_TYPE, CONTENT_TYPE);
 		if (predAttribute != null) {
-			final String pred = processMulti(predAttribute);
-			addElementRegion(pred, element, contentType);
+			final String pred = predAttribute;
+			stream.addElementRegion(pred, element, contentType, false);
 		} else {
-			addElementRegion("", element, contentType);
+			stream.addElementRegion("", element, contentType, false);
 		}
 	}
 
@@ -324,27 +249,27 @@ public class RodinTextGenerator {
 		final ContentType contentType = getContentType(element,
 				IMPLICIT_CONTENT_TYPE, CONTENT_TYPE);
 		if (assignAttribute != null) {
-			final String assign = processMulti(assignAttribute);
-			addElementRegion(assign, element, contentType);
+			final String assign = assignAttribute;
+			stream.addElementRegion(assign, element, contentType, false);
 		} else {
-			addElementRegion("", element, contentType);
+			stream.addElementRegion("", element, contentType, false);
 		}
 	}
 
 	private void processLabeledElement(ILElement element) {
 		final String labelAttribute = element.getAttribute(LABEL_ATTRIBUTE);
-		addPresentationRegion(getTabs(level), element);
+		stream.appendPresentationTabs(element);
 		final ContentType contentType = getContentType(element,
 				IMPLICIT_IDENTIFIER_TYPE, IDENTIFIER_TYPE);
 		if (labelAttribute != null) {
-			addElementRegion(labelAttribute, element, contentType);
-			addPresentationRegion(" : ", element);
+			stream.addElementRegion(labelAttribute, element, contentType, false);
+			stream.addPresentationRegion(" : ", element);
 		} else {
-			addElementRegion("", element, contentType);
+			stream.addElementRegion("", element, contentType, false);
 		}
 		if (!element.getChildren().isEmpty()
 				&& element.getAttributes().isEmpty()) {
-			builder.append((String) lineSeparator);
+			stream.appendLineSeparator();
 		}
 	}
 
@@ -354,9 +279,9 @@ public class RodinTextGenerator {
 		final ContentType contentType = getContentType(element,
 				IMPLICIT_IDENTIFIER_TYPE, IDENTIFIER_TYPE);
 		if (identifierAttribute != null) {
-			addElementRegion((String) identifierAttribute, element, contentType);
+			stream.addElementRegion((String) identifierAttribute, element, contentType, false);
 		} else {
-			addElementRegion("", element, contentType);
+			stream.addElementRegion("", element, contentType, false);
 		}
 	}
 
@@ -385,40 +310,35 @@ public class RodinTextGenerator {
 		// display attributes at the end
 		processOtherAttributes(element);
 	}
-
-	private ContentType getContentType(ILElement element,
-			ContentType implicitIdentifierType, ContentType identifierType) {
+	
+	private static ContentType getContentType(ILElement element,
+			ContentType implicitType, ContentType type) {
 		if (element.isImplicit()) {
-			return implicitIdentifierType;
+			return implicitType;
 		}
-		return identifierType;
+		return type;
 	}
-
-	private String processMulti(String str) {
-		final StringBuilder sb = new StringBuilder();
-		final String[] split = str.split((String) lineSeparator);
-		int i = 0;
-		for (String s : split) {
-			if (i != 0)
-				sb.append(getTabs(level));
-			s.replaceAll("\r", "\r" + getTabs(level));
-			sb.append(s);
-			if (i != split.length - 1)
-				sb.append((String) lineSeparator);
-			i++;
-		}
-		return sb.toString();
-	}
-
+	
+//	private String processMulti(String str) {
+//		final StringBuilder sb = new StringBuilder();
+//		final String[] split = str.split((String) RodinTextStream.lineSeparator);
+//		int i = 0;
+//		for (String s : split) {
+//			final String tabs = stream.getTabsForCurrentLevel();
+//			if (i != 0) {
+//				sb.append(tabs);
+//			}
+//			s.replaceAll("\r", "\r" + tabs);
+//			sb.append(s);
+//			if (i != split.length - 1)
+//				sb.append(RodinTextStream.lineSeparator);
+//			i++;
+//		}
+//		return sb.toString();
+//	}
+	
 	public Position[] getFoldingRegions() {
 		return foldingRegions.toArray(new Position[foldingRegions.size()]);
 	}
 
-	private String getTabs(int number) {
-		StringBuilder tabs = new StringBuilder();
-		for (int i = 0; i < number; i++) {
-			tabs.append(tab);
-		}
-		return tabs.toString();
-	}
 }

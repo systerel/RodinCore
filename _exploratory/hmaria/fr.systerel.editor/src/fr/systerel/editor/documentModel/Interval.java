@@ -15,7 +15,7 @@ import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.itf.ILElement;
 
-import fr.systerel.editor.editors.RodinConfiguration.ContentType;
+import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
 
 /**
  * An interval represents a range in a document associated with a
@@ -30,22 +30,31 @@ public class Interval implements Comparable<Interval> {
 	private final ILElement element;
 	private final IRodinElement rodinElement;
 	private final ContentType contentType;
-	private boolean changed;
 	private final IAttributeManipulation attManip;
+	private final boolean multiLine;
+	private boolean changed;
+	private int indentation;
 
 	public Interval(int offset, int length, ILElement element,
-			ContentType contentType) {
-		this(offset, length, element, contentType, null);
+			ContentType contentType, boolean multiLine) {
+		this(offset, length, element, contentType, null, multiLine);
 	}
 
 	public Interval(int offset, int length, ILElement element,
-			ContentType contentType, IAttributeManipulation attManip) {
+			ContentType contentType, IAttributeManipulation attManip,
+			boolean multiLine) {
 		this.offset = offset;
 		this.length = length;
 		this.element = element;
 		this.attManip = attManip;
 		this.rodinElement = getElement(element);
 		this.contentType = contentType;
+		this.multiLine = multiLine;
+	}
+
+	public Interval(int offset, int length, ILElement element,
+			ContentType contentType, IAttributeManipulation attManip) {
+		this(offset, length, element, contentType, attManip, false);
 	}
 
 	private IRodinElement getElement(ILElement element) {
@@ -73,7 +82,7 @@ public class Interval implements Comparable<Interval> {
 	public void setLength(int length) {
 		this.length = length;
 	}
-
+	
 	public IRodinElement getRodinElement() {
 		return rodinElement;
 	}
@@ -109,6 +118,18 @@ public class Interval implements Comparable<Interval> {
 	 */
 	public boolean isEditable() {
 		return contentType.isEditable();
+	}
+	
+	public boolean isMultiLine() {
+		return multiLine;
+	}
+	
+	public void setIndentation(int indentation) {
+		this.indentation = indentation;
+	}
+	
+	public int getIndentation() {
+		return indentation;
 	}
 
 }

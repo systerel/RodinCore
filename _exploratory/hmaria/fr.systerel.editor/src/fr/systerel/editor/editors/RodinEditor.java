@@ -46,6 +46,7 @@ import fr.systerel.editor.documentModel.DocumentMapper;
 import fr.systerel.editor.documentModel.Interval;
 import fr.systerel.editor.documentModel.MarkerAnnotationPosition;
 import fr.systerel.editor.documentModel.RodinDocumentProvider;
+import fr.systerel.editor.presentation.RodinConfiguration;
 
 public class RodinEditor extends TextEditor {
 

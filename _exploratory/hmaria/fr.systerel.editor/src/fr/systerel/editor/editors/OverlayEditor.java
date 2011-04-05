@@ -60,7 +60,8 @@ import fr.systerel.editor.actions.StyledTextEditAction;
 import fr.systerel.editor.contentAssist.RodinContentAssistProcessor;
 import fr.systerel.editor.documentModel.DocumentMapper;
 import fr.systerel.editor.documentModel.Interval;
-import fr.systerel.editor.editors.RodinConfiguration.ContentType;
+import fr.systerel.editor.presentation.RodinConfiguration;
+import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
 
 /**
  * This class manages the little text field that is used to edit an element.
@@ -111,6 +112,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 		editorText.setFont(parent.getFont());
 		Point oldsize = parent.getSize();
 		parent.pack();
+		
 		parent.setSize(oldsize);
 		editorText.setVisible(false);
 		editorText.addExtendedModifyListener(this);
@@ -211,15 +213,14 @@ public class OverlayEditor implements IAnnotationModelListener,
 				@Override
 				public void widgetSelected(SelectionEvent se) {
 					final ILElement element = inter.getElement();
-					final IAttributeManipulation attManip = inter.getAttributeManipulation();
+					final IAttributeManipulation attManip = inter
+							.getAttributeManipulation();
 					try {
 						attManip.setValue(element.getElement(), value, null);
 					} catch (RodinDBException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
-
 			});
 		}
 		tipMenu.setVisible(true);
@@ -236,7 +237,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 	 *            , the y-value of the new location
 	 */
 	public void setToLocation(int x, int y) {
-		editorText.setLocation(x, y - 2);
+		editorText.setLocation(x, y);
 	}
 
 	/**
@@ -250,20 +251,20 @@ public class OverlayEditor implements IAnnotationModelListener,
 				DEFAULT_WIDTH);
 		int h = Math.max(height, editorText.getLineHeight()) + 4;
 
-		//adaptEditorLines(h);
+		adaptEditorLines(h);
 
 		editorText.setSize(w, h);
 	}
 
-//	/**
-//	 * Adds or removes lines in the underlying editor in order not to cover up
-//	 * its content with the overlay editor.
-//	 * 
-//	 * @param new_height
-//	 *            The new height of the editor
-//	 */
-//	private void adaptEditorLines(int new_height) {
-//		// need to add lines?
+	/**
+	 * Adds or removes lines in the underlying editor in order not to cover up
+	 * its content with the overlay editor.
+	 * 
+	 * @param new_height
+	 *            The new height of the editor
+	 */
+	private void adaptEditorLines(int new_height) {
+		// need to add lines?
 //		if (new_height > editorText.getSize().y
 //				&& new_height > editorText.getLineHeight() + 4) {
 //			int offset = parent.getCaretOffset();
@@ -281,7 +282,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 //			parent.replaceTextRange(start, end - start, "");
 //			addedLines--;
 //		}
-//	}
+	}
 
 	public void abortEditing() {
 		editorText.setVisible(false);
@@ -323,7 +324,6 @@ public class OverlayEditor implements IAnnotationModelListener,
 			element.setAttribute(EventBAttributes.COMMENT_ATTRIBUTE
 					.makeValue(text));
 		}
-		//mapper.elementChanged(element);
 	}
 
 	/**

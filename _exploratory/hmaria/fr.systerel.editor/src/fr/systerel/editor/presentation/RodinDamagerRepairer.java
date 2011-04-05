@@ -9,7 +9,7 @@
  *     Systerel - initial API and implementation
   *******************************************************************************/
 
-package fr.systerel.editor.documentModel;
+package fr.systerel.editor.presentation;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.DocumentEvent;

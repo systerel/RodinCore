@@ -16,7 +16,7 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 
 import fr.systerel.editor.editors.ElementButton;
-import fr.systerel.editor.editors.RodinConfiguration.ContentType;
+import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
 
 /**
  * This class represents an item in the editor that can spread several intervals

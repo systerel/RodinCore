@@ -29,8 +29,9 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 
-import fr.systerel.editor.editors.RodinConfiguration;
-import fr.systerel.editor.editors.RodinConfiguration.ContentType;
+import fr.systerel.editor.presentation.RodinConfiguration;
+import fr.systerel.editor.presentation.RodinConfiguration.AttributeContentType;
+import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
 
 /**
  * Maps <code>Intervals</code> to a document.
@@ -295,14 +296,29 @@ public class DocumentMapper {
 	 * @param length
 	 * @param element
 	 * @param contentType
+	 * @param multiLine
 	 */
 	public void processInterval(int offset, int length, ILElement element,
-			ContentType contentType) {
-		processInterval(offset, length, element, contentType, null);
+			ContentType contentType, boolean multiLine) {
+		processInterval(offset, length, element, contentType, null, multiLine,
+				0);
 	}
-	
+
 	public void processInterval(int offset, int length, ILElement element,
-			ContentType contentType, IAttributeManipulation manipulation) {
+			ContentType contentType) {
+		processInterval(offset, length, element, contentType, null, false, 0);
+	}
+
+	public void processInterval(int offset, int length, ILElement element,
+			ContentType contentType, IAttributeManipulation manipulation,
+			boolean multiLine) {
+		processInterval(offset, length, element, contentType, manipulation,
+				multiLine, 0);
+	}
+
+	public void processInterval(int offset, int length, ILElement element,
+			ContentType contentType, IAttributeManipulation manipulation,
+			boolean multiLine, int indentationLevel) {
 		Interval inter;
 		if (contentType.isEditable()) {
 			inter = findInterval(element, contentType);
@@ -310,7 +326,9 @@ public class DocumentMapper {
 				inter.setLength(length);
 				inter.setOffset(offset);
 			} else {
-				inter = new Interval(offset, length, element, contentType, manipulation);
+				inter = new Interval(offset, length, element, contentType,
+						manipulation, multiLine);
+				inter.setIndentation(indentationLevel);
 				try {
 					addIntervalAfter(inter, previous);
 				} catch (Exception e) {
@@ -323,7 +341,9 @@ public class DocumentMapper {
 				inter.setLength(length);
 				inter.setOffset(offset);
 			} else {
-				inter = new Interval(offset, length, element, contentType);
+				inter = new Interval(offset, length, element, contentType,
+						multiLine);
+				inter.setIndentation(indentationLevel);
 				try {
 					addInterval(inter);
 				} catch (Exception e) {
@@ -463,6 +483,9 @@ public class DocumentMapper {
 			for (Interval interval : el.getIntervals()) {
 				try {
 					final ContentType contentType = interval.getContentType();
+					if (contentType.equals(RodinConfiguration.PRESENTATION_TYPE) || (contentType.equals(RodinConfiguration.SECTION_TYPE))) {
+						continue;
+					}
 					if (ie instanceof IIdentifierElement
 							&& (contentType
 									.equals(RodinConfiguration.IDENTIFIER_TYPE)
@@ -493,10 +516,11 @@ public class DocumentMapper {
 							|| contentType
 									.equals(RodinConfiguration.IMPLICIT_COMMENT_TYPE))) {
 						checkCommented((ICommentedElement) ie, interval);
+					} else if (contentType.isAttributeContentType()) {
+						checkAttribute(element, interval);
 					}
 				} catch (RodinDBException e) {
 					e.printStackTrace();
-
 				}
 			}
 		}
@@ -586,6 +610,15 @@ public class DocumentMapper {
 		if (element.hasComment()) {
 			final String text = element.getComment();
 			synchronizeInterval(interval, text);
+		}
+	}
+	
+	private void checkAttribute(ILElement element, Interval interval) {
+		try {
+			synchronizeInterval(interval, interval.getAttributeManipulation()
+					.getValue(element.getElement(), null));
+		} catch (RodinDBException e) {
+			e.printStackTrace();
 		}
 	}
 

@@ -45,8 +45,8 @@ import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
 import org.rodinp.core.emf.lightcore.LightElement;
 
-import fr.systerel.editor.editors.RodinConfiguration;
 import fr.systerel.editor.editors.RodinEditor;
+import fr.systerel.editor.presentation.RodinConfiguration;
 
 /**
  * This is a document provider for rodin machines and contexts. It is intended
@@ -72,7 +72,8 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 			if (notification.isTouch()) {
 				return;
 			}
-			if (notifier instanceof ILElement && (!(oldObject instanceof ILElement))){
+			if (notifier instanceof ILElement
+					&& (!(oldObject instanceof ILElement))) {
 				documentMapper.elementChanged((ILElement) notifier);
 			}
 			if (oldObject instanceof ILElement) {
@@ -162,7 +163,6 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 						RodinConfiguration.CONTENT_TYPE.getName() });
 		document.setDocumentPartitioner(partitioner);
 		partitioner.connect(document, false);
-
 		return document;
 	}
 
