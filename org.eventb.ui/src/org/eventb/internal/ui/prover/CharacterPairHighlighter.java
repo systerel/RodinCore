@@ -114,7 +114,7 @@ public class CharacterPairHighlighter implements MouseListener, KeyListener,
 		} else {
 			eraser = null;
 		}
-		if (eraser != null) {
+		if (eraser != null && text.getCharCount() > eraser.start + eraser.length ) {
 			text.setStyleRange(eraser);
 			toErase = null;
 		}
