@@ -76,9 +76,13 @@ public class DeltaProcessor {
 			}
 			return;
 		}
+		
+		int flags = delta.getFlags();
+		if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
+			reloadAttributes(element);
+		}
 
 		if (kind == IRodinElementDelta.CHANGED) {
-			int flags = delta.getFlags();
 
 			if ((flags & IRodinElementDelta.F_CHILDREN) != 0) {
 				final IRodinElementDelta[] deltas = delta.getAffectedChildren();
