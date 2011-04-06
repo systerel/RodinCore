@@ -60,6 +60,7 @@ import fr.systerel.editor.actions.StyledTextEditAction;
 import fr.systerel.editor.contentAssist.RodinContentAssistProcessor;
 import fr.systerel.editor.documentModel.DocumentMapper;
 import fr.systerel.editor.documentModel.Interval;
+import fr.systerel.editor.documentModel.RodinTextStream;
 import fr.systerel.editor.presentation.RodinConfiguration;
 import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
 
@@ -177,7 +178,9 @@ public class OverlayEditor implements IAnnotationModelListener,
 		final String text;
 		if (inter.getLength() > 0) {
 			final String extracted = parent.getText(start, start + inter.getLength() - 1);
-			text = extracted;
+			final int level = inter.getIndentation();
+			final boolean multiLine = inter.isMultiLine();
+			text = RodinTextStream.deprocessMulti(multiLine, level, extracted);
 		} else {
 			text = "";
 		}
@@ -324,6 +327,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 			element.setAttribute(EventBAttributes.COMMENT_ATTRIBUTE
 					.makeValue(text));
 		}
+		mapper.elementChanged(element);
 	}
 
 	/**

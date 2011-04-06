@@ -43,6 +43,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
+import org.rodinp.core.emf.lightcore.Attribute;
 import org.rodinp.core.emf.lightcore.LightElement;
 
 import fr.systerel.editor.editors.RodinEditor;
@@ -72,12 +73,15 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 			if (notification.isTouch()) {
 				return;
 			}
-			if (notifier instanceof ILElement
-					&& (!(oldObject instanceof ILElement))) {
+			final boolean isILElement = !(oldObject instanceof ILElement);
+			if (notifier instanceof ILElement && isILElement) {
 				documentMapper.elementChanged((ILElement) notifier);
 			}
 			if (oldObject instanceof ILElement) {
 				documentMapper.elementChanged((ILElement) oldObject);
+			}
+			if (oldObject instanceof Attribute) {
+				documentMapper.elementChanged(((Attribute) oldObject).getOwner());
 			}
 		}
 	};

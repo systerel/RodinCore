@@ -319,24 +319,6 @@ public class RodinTextGenerator {
 		return type;
 	}
 	
-//	private String processMulti(String str) {
-//		final StringBuilder sb = new StringBuilder();
-//		final String[] split = str.split((String) RodinTextStream.lineSeparator);
-//		int i = 0;
-//		for (String s : split) {
-//			final String tabs = stream.getTabsForCurrentLevel();
-//			if (i != 0) {
-//				sb.append(tabs);
-//			}
-//			s.replaceAll("\r", "\r" + tabs);
-//			sb.append(s);
-//			if (i != split.length - 1)
-//				sb.append(RodinTextStream.lineSeparator);
-//			i++;
-//		}
-//		return sb.toString();
-//	}
-	
 	public Position[] getFoldingRegions() {
 		return foldingRegions.toArray(new Position[foldingRegions.size()]);
 	}

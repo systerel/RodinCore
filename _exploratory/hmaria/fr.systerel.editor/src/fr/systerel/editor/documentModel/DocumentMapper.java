@@ -30,7 +30,6 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.presentation.RodinConfiguration;
-import fr.systerel.editor.presentation.RodinConfiguration.AttributeContentType;
 import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
 
 /**
@@ -709,13 +708,15 @@ public class DocumentMapper {
 	 *            The new text to be set into that interval
 	 */
 	protected void synchronizeInterval(Interval interval, String newText) {
+		final String pNewText = RodinTextStream.processMulti(
+				interval.isMultiLine(), interval.getIndentation(), newText);
 		final String old_text = getTextFromDocument(interval);
-		if (!old_text.equals(newText)) {
-			final int newTextLength = newText.length();
+		if (!pNewText.equals(old_text)) {
+			final int newTextLength = pNewText.length();
 			final int delta = newTextLength
 					- ((old_text == null) ? 0 : old_text.length());
 			adaptAfter(interval, delta);
-			documentProvider.replaceTextInDocument(interval, newText);
+			documentProvider.replaceTextInDocument(interval, pNewText);
 			interval.setLength(newTextLength);
 		}
 	}

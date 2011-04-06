@@ -39,6 +39,20 @@ public class RodinTextStream {
 	private final StringBuilder builder;
 	private final DocumentMapper mapper;
 	
+	public static String processMulti(boolean multiLine, int level, String text) {
+		if (!multiLine || text == null)
+			return text;
+		return text.replaceAll("(\r\n)|(\r)|(\n)", "$0" + getTabs(level));
+	}
+
+	public static String deprocessMulti(boolean multiLine, int level,
+			String text) {
+		if (!multiLine)
+			return text;
+		return text.replaceAll("((\r\n)|(\r)|(\n))(" + getTabs(level) + "){1}",
+				"$1");
+	}
+
 	public RodinTextStream(DocumentMapper mapper) {
 		this.builder = new StringBuilder();
 		this.mapper = mapper;
@@ -56,11 +70,14 @@ public class RodinTextStream {
 	}
 	
 	protected void addElementRegion(String text, ILElement element,
-			ContentType contentType,IAttributeManipulation manipulation, boolean multiLine) {
+			ContentType contentType, IAttributeManipulation manipulation,
+			boolean multiLine) {
 		final int start = builder.length();
-		builder.append(text);
+		final String multilined = processMulti(multiLine, getLevel(), text);
+		builder.append(multilined);
 		final int length = builder.length() - start;
-		mapper.processInterval(start, length, element, contentType, manipulation, multiLine);
+		mapper.processInterval(start, length, element, contentType,
+				manipulation, multiLine, getLevel());
 	}
 
 	protected void addAttributeRegion(String text, ILElement element,
@@ -96,7 +113,7 @@ public class RodinTextStream {
 		builder.append((String) lineSeparator);
 	}
 
-	private static String getTabs(int number) {
+	public static String getTabs(int number) {
 		StringBuilder tabs = new StringBuilder();
 		for (int i = 0; i < number; i++) {
 			tabs.append(tab);
