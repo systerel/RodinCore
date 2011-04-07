@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.editors;
+package fr.systerel.editor.actions;
 
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -17,6 +17,7 @@ import org.rodinp.core.RodinDBException;
 
 import fr.systerel.editor.documentModel.EditorElement;
 import fr.systerel.editor.documentModel.EditorItem;
+import fr.systerel.editor.editors.RodinEditor;
 
 public class DeleteAction extends RodinEditorAction {
 

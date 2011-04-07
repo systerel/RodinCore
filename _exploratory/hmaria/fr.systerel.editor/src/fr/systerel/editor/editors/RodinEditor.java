@@ -42,10 +42,12 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.keyboard.preferences.PreferenceConstants;
 
+import fr.systerel.editor.actions.DeleteAction;
 import fr.systerel.editor.documentModel.DocumentMapper;
 import fr.systerel.editor.documentModel.Interval;
 import fr.systerel.editor.documentModel.MarkerAnnotationPosition;
 import fr.systerel.editor.documentModel.RodinDocumentProvider;
+import fr.systerel.editor.presentation.ColorManager;
 import fr.systerel.editor.presentation.RodinConfiguration;
 
 public class RodinEditor extends TextEditor {

@@ -9,9 +9,11 @@
  *     Systerel - initial API and implementation
   *******************************************************************************/
 
-package fr.systerel.editor.editors;
+package fr.systerel.editor.actions;
 
 import org.eclipse.jface.action.Action;
+
+import fr.systerel.editor.editors.RodinEditor;
 
 /**
  *
