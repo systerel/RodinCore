@@ -28,7 +28,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.formatter.IFormattingStrategy;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ICommentedElement;
 import org.eventb.core.IIdentifierElement;
@@ -127,8 +126,7 @@ public class RodinTextGenerator {
 			}
 			final int length = stream.getLength() - start;
 			if (start != -1 && stream.getLevel() == 0) {
-				stream.addEditorSection(rel.getChildType(), start,
-						length);
+				stream.addEditorSection(rel.getChildType(), start, length);
 			}
 		}
 	}
@@ -166,16 +164,18 @@ public class RodinTextGenerator {
 	private static IElementDesc getElementDesc(IInternalElementType<?> type) {
 		return ElementDescRegistry.getInstance().getElementDesc(type);
 	}
-	
+
 	@SuppressWarnings("restriction")
-	private static List<IAttributeDesc> getAttributeDescs(IInternalElementType<?> elementType) {
+	private static List<IAttributeDesc> getAttributeDescs(
+			IInternalElementType<?> elementType) {
 		final List<IAttributeDesc> descs = new ArrayList<IAttributeDesc>();
 		int i = 0;
 		IAttributeDesc desc;
-		final List<IAttributeType> refList = Arrays.asList(BASIC_ATTRIBUTE_TYPES);
+		final List<IAttributeType> refList = Arrays
+				.asList(BASIC_ATTRIBUTE_TYPES);
 		while ((desc = ElementDescRegistry.getInstance().getAttribute(
 				elementType, i)) != null) {
-			if (!refList.contains(desc.getAttributeType())){
+			if (!refList.contains(desc.getAttributeType())) {
 				descs.add(desc);
 			}
 			i++;
@@ -202,10 +202,11 @@ public class RodinTextGenerator {
 					if (!prefix.isEmpty()) {
 						stream.addPresentationRegion(prefix, element);
 					}
-					stream.addAttributeRegion(value, element, manipulation, d.getAttributeType());
+					stream.addAttributeRegion(value, element, manipulation,
+							d.getAttributeType());
 					final String suffix = d.getSuffix();
-					if (!suffix.isEmpty()){
-						stream.addPresentationRegion(suffix, element);						
+					if (!suffix.isEmpty()) {
+						stream.addPresentationRegion(suffix, element);
 					}
 					i++;
 				}
@@ -238,21 +239,22 @@ public class RodinTextGenerator {
 				IMPLICIT_CONTENT_TYPE, CONTENT_TYPE);
 		if (predAttribute != null) {
 			final String pred = predAttribute;
-			stream.addElementRegion(pred, element, contentType, false);
+			stream.addElementRegion(pred, element, contentType, true);
 		} else {
-			stream.addElementRegion("", element, contentType, false);
+			stream.addElementRegion("", element, contentType, true);
 		}
 	}
 
 	private void processAssignmentElement(ILElement element) {
-		final String assignAttribute = element.getAttribute(ASSIGNMENT_ATTRIBUTE);
+		final String assignAttribute = element
+				.getAttribute(ASSIGNMENT_ATTRIBUTE);
 		final ContentType contentType = getContentType(element,
 				IMPLICIT_CONTENT_TYPE, CONTENT_TYPE);
 		if (assignAttribute != null) {
 			final String assign = assignAttribute;
-			stream.addElementRegion(assign, element, contentType, false);
+			stream.addElementRegion(assign, element, contentType, true);
 		} else {
-			stream.addElementRegion("", element, contentType, false);
+			stream.addElementRegion("", element, contentType, true);
 		}
 	}
 
@@ -279,7 +281,8 @@ public class RodinTextGenerator {
 		final ContentType contentType = getContentType(element,
 				IMPLICIT_IDENTIFIER_TYPE, IDENTIFIER_TYPE);
 		if (identifierAttribute != null) {
-			stream.addElementRegion((String) identifierAttribute, element, contentType, false);
+			stream.addElementRegion((String) identifierAttribute, element,
+					contentType, false);
 		} else {
 			stream.addElementRegion("", element, contentType, false);
 		}
@@ -310,7 +313,7 @@ public class RodinTextGenerator {
 		// display attributes at the end
 		processOtherAttributes(element);
 	}
-	
+
 	private static ContentType getContentType(ILElement element,
 			ContentType implicitType, ContentType type) {
 		if (element.isImplicit()) {
@@ -318,7 +321,7 @@ public class RodinTextGenerator {
 		}
 		return type;
 	}
-	
+
 	public Position[] getFoldingRegions() {
 		return foldingRegions.toArray(new Position[foldingRegions.size()]);
 	}
