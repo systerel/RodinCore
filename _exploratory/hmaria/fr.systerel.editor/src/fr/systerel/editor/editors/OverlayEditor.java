@@ -11,6 +11,7 @@
 package fr.systerel.editor.editors;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -34,12 +35,13 @@ import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.swt.IFocusService;
@@ -50,8 +52,11 @@ import org.eventb.core.ICommentedElement;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPredicateElement;
+import org.eventb.internal.ui.EventBSharedColor;
+import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.keyboard.RodinKeyboardPlugin;
@@ -60,6 +65,7 @@ import fr.systerel.editor.actions.StyledTextEditAction;
 import fr.systerel.editor.contentAssist.RodinContentAssistProcessor;
 import fr.systerel.editor.documentModel.DocumentMapper;
 import fr.systerel.editor.documentModel.Interval;
+import fr.systerel.editor.documentModel.RodinPartitioner;
 import fr.systerel.editor.documentModel.RodinTextStream;
 import fr.systerel.editor.presentation.RodinConfiguration;
 import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
@@ -69,25 +75,27 @@ import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
  */
 public class OverlayEditor implements IAnnotationModelListener,
 		IAnnotationModelListenerExtension, ExtendedModifyListener,
-		VerifyKeyListener, IMenuListener, PaintListener {
+		VerifyKeyListener, IMenuListener {
+
+	public static final String EDITOR_TEXT_ID = RodinEditor.EDITOR_ID
+	+ ".editorText";
+	private static final RGB BACKGROUND = new RGB(250, 250, 250);
+	private static final Color BG_COLOR = EventBSharedColor.getColor(BACKGROUND);
+	private static final int MARGIN = 4;
+
+	private final ProjectionViewer viewer;
+	private final DocumentMapper mapper;
+	private final StyledText parent;
+	private final RodinEditor editor;
+	private final ITextViewer textViewer;
+	
+	private final IContentAssistant contentAssistant;
+
 	private StyledText editorText;
-	private DocumentMapper mapper;
-	private StyledText parent;
-	private ProjectionViewer viewer;
 	private Interval interval;
-	private static final int DEFAULT_WIDTH = 300;
-	private ITextViewer textViewer;
-	private IContentAssistant contentAssistant;
-	private RodinEditor editor;
 	private Menu fTextContextMenu;
 	private ArrayList<IAction> editActions = new ArrayList<IAction>();
 	private ModifyListener eventBTranslator;
-
-	// counts the lines that were added to the underlying (parent) styled text
-	private int addedLines = 0;
-
-	public static final String EDITOR_TEXT_ID = RodinEditor.EDITOR_ID
-			+ ".editorText";
 
 	public OverlayEditor(StyledText parent, DocumentMapper mapper,
 			ProjectionViewer viewer, RodinEditor editor) {
@@ -95,55 +103,51 @@ public class OverlayEditor implements IAnnotationModelListener,
 		this.mapper = mapper;
 		this.parent = parent;
 		this.editor = editor;
-
-		textViewer = new TextViewer(parent, SWT.V_SCROLL);
+		textViewer = new TextViewer(parent, SWT.NONE);
+		textViewer.getTextWidget().setBackground(BG_COLOR);
 		contentAssistant = getContentAssistant();
 		contentAssistant.install(textViewer);
 		eventBTranslator = RodinKeyboardPlugin.getDefault()
 				.getRodinModifyListener();
-
 		setupEditorText();
 	}
 
 	private void setupEditorText() {
 		editorText = textViewer.getTextWidget();
-
 		editorText.addVerifyKeyListener(this);
-
 		editorText.setFont(parent.getFont());
-		Point oldsize = parent.getSize();
-		parent.pack();
-		
+
+		final Point oldsize = parent.getSize();
+		parent.pack();	
 		parent.setSize(oldsize);
+		
 		editorText.setVisible(false);
 		editorText.addExtendedModifyListener(this);
-		parent.addPaintListener(this);
 		editorText.addModifyListener(eventBTranslator);
-
 		createMenu();
 		createEditActions();
-
 		// the focus tracker is used to activate the handlers, when the widget
 		// has focus.
-		IFocusService focusService = (IFocusService) editor.getSite()
+		final IFocusService focusService = (IFocusService) editor.getSite()
 				.getService(IFocusService.class);
 		focusService.addFocusTracker(editorText, EDITOR_TEXT_ID);
 	}
 
 	private void createMenu() {
-		String id = "editorTextMenu";
-		MenuManager manager = new MenuManager(id, id);
+		final String id = "editorTextMenu";
+		final MenuManager manager = new MenuManager(id, id);
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(this);
 		fTextContextMenu = manager.createContextMenu(editorText);
-
 		editorText.setMenu(fTextContextMenu);
 	}
 
 	public void showAtOffset(int offset) {
-		Interval inter = mapper.findEditableInterval(viewer
+		final Interval inter = mapper.findEditableInterval(viewer
 				.widgetOffset2ModelOffset(offset));
 		if (inter == null)
+			return;
+		if (inter.getElement().isImplicit())
 			return;
 		int pos = 0;		
 		if (inter != null) {
@@ -154,49 +158,76 @@ public class OverlayEditor implements IAnnotationModelListener,
 		if (editorText.isVisible()) {
 			saveAndExit();
 		}
-
+		interval = inter;
 		if (!editorText.isVisible()) {
-
-
 			if (inter != null) {
-				final IAttributeManipulation attManip = inter.getAttributeManipulation();
-				if (attManip != null) {
-					showTipMenu(inter);
+				final ContentType contentType = inter.getContentType();
+				if (!contentType.isAttributeContentType()) {
+					showEditorText(inter, pos);					
 				} else {
-					showEditorText(inter, pos);
+					handleAttributeContentType(inter, contentType);
 				}
 			}
 		}
-		interval = inter;
+	}
+
+	private void handleAttributeContentType(final Interval inter,
+			final ContentType contentType) {
+		if (!contentType.isBooleanAttributeType()) {
+			final IAttributeManipulation attManip = inter
+					.getAttributeManipulation();
+			if (attManip != null) {
+				showTipMenu(inter);
+			}
+			return;
+		}
+		changeBooleanValue(inter);
+	}
+
+	private void changeBooleanValue(Interval inter) {
+		final IRodinElement element = inter.getRodinElement();
+		final IAttributeManipulation manip = inter.getAttributeManipulation();
+		try {
+			final String value = manip.getValue(element, null);
+			final String[] possibleValues = manip.getPossibleValues(element,
+					null);
+			String toSet = null;
+			for (String v : possibleValues) {
+				if (v.equals(value)) {
+					continue;
+				}
+				toSet = v;
+			}
+			if (toSet != null)
+				manip.setValue(element, toSet, null);
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void showEditorText(Interval inter, int pos) {
-		int offset;
 		setEventBTranslation(inter);
-		int start = viewer.modelOffset2WidgetOffset(inter.getOffset());
-		offset = start + pos;
+		final int start = viewer.modelOffset2WidgetOffset(inter.getOffset());
+		final int end = start + inter.getLength();
+		final int clickOffset = start + pos;
 		final String text;
 		if (inter.getLength() > 0) {
-			final String extracted = parent.getText(start, start + inter.getLength() - 1);
+			final String extracted = parent.getText(start, end - 1);
 			final int level = inter.getIndentation();
 			final boolean multiLine = inter.isMultiLine();
-			text = RodinTextStream.deprocessMulti(multiLine, level, extracted);
+			final boolean tabbedMultiline = inter.isTabbedMultiline();
+			text = RodinTextStream.deprocessMulti(level, multiLine,
+					tabbedMultiline, extracted);
 		} else {
 			text = "";
 		}
-		Point location = (parent.getLocationAtOffset(start));
-
-		Point endPoint = new Point(findMaxWidth(start,
-				start + inter.getLength()),
-				parent.getLocationAtOffset(start + inter.getLength()).y);
-		Point size = new Point(endPoint.x - location.x, endPoint.y
-				- (location.y) + parent.getLineHeight());
-
+		final Point beginPt = (parent.getLocationAtOffset(start));
 		textViewer.setDocument(createDocument(text));
-		editorText.setCaretOffset(offset - start);
-		resizeTo(size.x, size.y);
+		final Rectangle bounds = parent.getTextBounds(start, end);
+		editorText.setCaretOffset(clickOffset - start);
+		editorText.setSize(bounds.width + MARGIN, bounds.height);
+		editorText.setLocation(beginPt.x - 2, beginPt.y); // -2 to place on text
 		editorText.setFont(parent.getFont());
-		setToLocation(location.x, location.y);
 		editorText.setVisible(true);
 		editorText.setFocus();
 	}
@@ -229,69 +260,9 @@ public class OverlayEditor implements IAnnotationModelListener,
 		tipMenu.setVisible(true);
 	}
 
-	/**
-	 * Sets the editor text to a given location. The y-value will get slightly
-	 * corrected. The y value should correspond to the start of a line in the
-	 * underlying editor
-	 * 
-	 * @param x
-	 *            , the x-value of the new location
-	 * @param y
-	 *            , the y-value of the new location
-	 */
-	public void setToLocation(int x, int y) {
-		editorText.setLocation(x, y);
-	}
-
-	/**
-	 * Resizes the editor. A margin will be added to the given width and height.
-	 * 
-	 * @param width
-	 * @param height
-	 */
-	public void resizeTo(int width, int height) {
-		int w = Math.max(width + 5 + editorText.getVerticalBar().getSize().x,
-				DEFAULT_WIDTH);
-		int h = Math.max(height, editorText.getLineHeight()) + 4;
-
-		adaptEditorLines(h);
-
-		editorText.setSize(w, h);
-	}
-
-	/**
-	 * Adds or removes lines in the underlying editor in order not to cover up
-	 * its content with the overlay editor.
-	 * 
-	 * @param new_height
-	 *            The new height of the editor
-	 */
-	private void adaptEditorLines(int new_height) {
-		// need to add lines?
-//		if (new_height > editorText.getSize().y
-//				&& new_height > editorText.getLineHeight() + 4) {
-//			int offset = parent.getCaretOffset();
-//			int line = parent.getLineAtOffset(offset);
-//			int start = parent.getOffsetAtLine(line);
-//			parent.replaceTextRange(start, 0,
-//					System.getProperty("line.separator"));
-//			addedLines++;
-//			// need to remove lines?
-//		} else if (new_height < editorText.getSize().y && addedLines > 0) {
-//			int offset = parent.getCaretOffset();
-//			int line = parent.getLineAtOffset(offset);
-//			int start = parent.getOffsetAtLine(line - 1);
-//			int end = parent.getOffsetAtLine(line);
-//			parent.replaceTextRange(start, end - start, "");
-//			addedLines--;
-//		}
-	}
-
 	public void abortEditing() {
 		editorText.setVisible(false);
 		interval = null;
-		addedLines = 0;
-
 	}
 
 	public void updateModelAfterChanges() {
@@ -327,58 +298,6 @@ public class OverlayEditor implements IAnnotationModelListener,
 			element.setAttribute(EventBAttributes.COMMENT_ATTRIBUTE
 					.makeValue(text));
 		}
-		mapper.elementChanged(element);
-	}
-
-	/**
-	 * Removes whitespaces at beginning and end of a text.
-	 * 
-	 * @return the text with the whitespaces removed
-	 */
-	public String removeWhiteSpaces(String text) {
-
-		int first_pos = -1;
-		int last_pos = -1;
-		int i = 0;
-		for (char ch : text.toCharArray()) {
-			if (first_pos == -1 && !isWhitespace(ch)) {
-				first_pos = i;
-			}
-			if (last_pos == -1 && isWhitespace(ch)) {
-				last_pos = i;
-			}
-			if (last_pos != -1 && !isWhitespace(ch)) {
-				last_pos = -1;
-			}
-			i++;
-		}
-		first_pos = Math.max(first_pos, 0);
-		last_pos = (last_pos == -1) ? (text.length()) : last_pos;
-		return (text.substring(first_pos, last_pos));
-	}
-	
-	protected boolean isWhitespace(char c) {
-		return (c == ' ' || c == '\t' || c == '\n' || c == '\r');
-	}
-
-	/**
-	 * finds the maximum with of the the text in the parent widget within a
-	 * given range.
-	 * 
-	 * @param start
-	 * @param end
-	 * @return the maximum with in pixels.
-	 */
-	protected int findMaxWidth(int start, int end) {
-		int firstLine = parent.getLineAtOffset(start);
-		int lastLine = parent.getLineAtOffset(end);
-		int max = 0;
-		for (int i = firstLine; i <= lastLine; i++) {
-			max = Math.max(parent.getLocationAtOffset(parent
-					.getOffsetAtLine(i + 1) - 1).x, max);
-		}
-
-		return max;
 	}
 
 	protected IDocument createDocument(String text) {
@@ -401,8 +320,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 				// parent.getLocationAtOffset(viewer.modelOffset2WidgetOffset(interval.getOffset())).y);
 			} else {
 				// if the interval that is currently being edited is hidden from
-				// view
-				// abort the editing
+				// view abort the editing
 				abortEditing();
 			}
 		}
@@ -412,23 +330,32 @@ public class OverlayEditor implements IAnnotationModelListener,
 	 * Resizes the editorText widget according to the text modifications.
 	 */
 	public void modifyText(ExtendedModifyEvent event) {
-		int max = 0;
-		for (int i = 0; i < editorText.getLineCount() - 1; i++) {
-			int offset = editorText.getOffsetAtLine(i + 1) - 1;
-			max = Math.max(max, editorText.getLocationAtOffset(offset).x);
+		final String text = editorText.getText();
+		mapper.synchronizeInterval(interval, text);
+		final int offset = interval.getOffset();
+		final int end = offset + interval.getLength();
+		final int height = getHeight(parent.getText(offset, end));
+		if (!editorText.getText().isEmpty()) {
+			final Rectangle textBounds = editorText.getTextBounds(0,
+					editorText.getCharCount() - 1);
+			editorText.setSize(textBounds.width + MARGIN, height);
+			editorText.setLocation(parent.getLocationAtOffset(offset));
 		}
-		// last line
-		max = Math.max(max,
-				editorText.getLocationAtOffset(editorText.getCharCount()).x);
-		int height = editorText.getLineCount() * editorText.getLineHeight();
-		resizeTo(max, height);
+		editorText.setRedraw(true);
+	}
 
+	private int getHeight(final String extracted) {
+		final String regex = "(\r\n)|(\n)|(\r)";
+		final Pattern pattern = Pattern.compile(regex);
+		final String[] split = pattern.split(extracted);
+		final int height = split.length * editorText.getLineHeight();
+		return height;
 	}
 
 	public IContentAssistant getContentAssistant() {
 
 		ContentAssistant assistant = new ContentAssistant();
-		// assistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
+		//assistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 		assistant.setContentAssistProcessor(new RodinContentAssistProcessor(
 				mapper, this), Document.DEFAULT_CONTENT_TYPE);
 
@@ -507,18 +434,6 @@ public class OverlayEditor implements IAnnotationModelListener,
 	public void saveAndExit() {
 		updateModelAfterChanges();
 		abortEditing();
-	}
-
-	public void paintControl(PaintEvent e) {
-		if (interval != null) {
-			if (viewer.modelOffset2WidgetOffset(interval.getOffset()) > 0) {
-				setToLocation(
-						editorText.getLocation().x,
-						parent.getLocationAtOffset(viewer
-								.modelOffset2WidgetOffset(interval.getOffset())).y);
-			}
-		}
-
 	}
 
 	public void setEventBTranslation(Interval interval) {

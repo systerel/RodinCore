@@ -34,21 +34,35 @@ public class RodinTextStream {
 	private static final Character tab = '\u0009';
 	static final Object lineSeparator = System
 			.getProperty("line.separator");
+	private static final int NO_TABS = 0;
+	private static final String WHITESPACE = " ";
 	
 	private int level = 0;
 	private final StringBuilder builder;
 	private final DocumentMapper mapper;
-	
-	public static String processMulti(boolean multiLine, int level, String text) {
+
+	public static String processMulti(boolean multiLine, int level,
+			boolean addWhiteSpace, String text) {
 		if (!multiLine || text == null)
 			return text;
-		return text.replaceAll("(\r\n)|(\r)|(\n)", "$0" + getTabs(level));
+		final String regex = "(\r\n)|(\r)|(\n)";
+		if (addWhiteSpace)
+			return text.replaceAll(regex, "$0" + getTabs(level) + WHITESPACE);
+		return text.replaceAll(regex, "$0" + getTabs(level));
 	}
 
-	public static String deprocessMulti(boolean multiLine, int level,
-			String text) {
+	public static String deprocessMulti(int level, boolean multiLine,
+			boolean tabbed, String text) {
 		if (!multiLine)
 			return text;
+		return deprocessMulti(level, tabbed, text);
+	}
+
+	public static String deprocessMulti(int level, boolean tabbed, String text) {
+		if (!tabbed) {
+			return text.replaceAll("((\r\n)|(\r)|(\n))(" + getTabs(level)
+					+ WHITESPACE + "){1}", "$1");
+		}
 		return text.replaceAll("((\r\n)|(\r)|(\n))(" + getTabs(level) + "){1}",
 				"$1");
 	}
@@ -63,26 +77,35 @@ public class RodinTextStream {
 			int folding_start, int folding_length) {
 		mapper.addEditorSection(type, folding_start, folding_length);
 	}
-	
+
 	protected void addElementRegion(String text, ILElement element,
 			ContentType contentType, boolean multiLine) {
-		addElementRegion(text, element,	contentType, null, multiLine);
+		addElementRegion(text, element, contentType, null, multiLine, NO_TABS);
 	}
-	
+
+	protected void addElementRegion(String text, ILElement element,
+			ContentType contentType, boolean multiLine, int additionalTabs) {
+		addElementRegion(text, element, contentType, null, multiLine,
+				additionalTabs);
+	}
+
 	protected void addElementRegion(String text, ILElement element,
 			ContentType contentType, IAttributeManipulation manipulation,
-			boolean multiLine) {
+			boolean multiLine, int additionalTabs) {
 		final int start = builder.length();
-		final String multilined = processMulti(multiLine, getLevel(), text);
+		final String multilined = processMulti(multiLine, getLevel()
+				+ additionalTabs, additionalTabs == 0, text);
 		builder.append(multilined);
 		final int length = builder.length() - start;
 		mapper.processInterval(start, length, element, contentType,
-				manipulation, multiLine, getLevel());
+				manipulation, multiLine, getLevel() + additionalTabs,
+				additionalTabs != 0);
 	}
 
 	protected void addAttributeRegion(String text, ILElement element,
 			IAttributeManipulation manipulation, IAttributeType attributeType) {
-		addElementRegion(text, element, getAttributeContentType(attributeType), manipulation, false);
+		addElementRegion(text, element, getAttributeContentType(attributeType),
+				manipulation, false, NO_TABS);
 	}
 
 	protected void addLabelRegion(String text, ILElement element) {

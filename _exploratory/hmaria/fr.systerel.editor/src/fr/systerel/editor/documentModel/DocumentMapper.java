@@ -168,12 +168,6 @@ public class DocumentMapper {
 				result = result - 1;
 			}
 		}
-		if (result > 0) {
-			Interval previous = intervals.get(result - 1);
-			if (previous.getOffset() + previous.getLength() >= offset) {
-				result = result - 1;
-			}
-		}
 		return result;
 	}
 
@@ -314,10 +308,17 @@ public class DocumentMapper {
 		processInterval(offset, length, element, contentType, manipulation,
 				multiLine, 0);
 	}
-
+	
 	public void processInterval(int offset, int length, ILElement element,
 			ContentType contentType, IAttributeManipulation manipulation,
 			boolean multiLine, int indentationLevel) {
+		processInterval(offset, length, element, contentType, manipulation,
+				multiLine, indentationLevel, false);
+	}
+
+	public void processInterval(int offset, int length, ILElement element,
+			ContentType contentType, IAttributeManipulation manipulation,
+			boolean multiLine, int indentationLevel, boolean tabbedMultiline) {
 		Interval inter;
 		if (contentType.isEditable()) {
 			inter = findInterval(element, contentType);
@@ -326,7 +327,7 @@ public class DocumentMapper {
 				inter.setOffset(offset);
 			} else {
 				inter = new Interval(offset, length, element, contentType,
-						manipulation, multiLine);
+						manipulation, multiLine, tabbedMultiline);
 				inter.setIndentation(indentationLevel);
 				try {
 					addIntervalAfter(inter, previous);
@@ -707,9 +708,10 @@ public class DocumentMapper {
 	 * @param newText
 	 *            The new text to be set into that interval
 	 */
-	protected void synchronizeInterval(Interval interval, String newText) {
+	public void synchronizeInterval(Interval interval, String newText) {
 		final String pNewText = RodinTextStream.processMulti(
-				interval.isMultiLine(), interval.getIndentation(), newText);
+				interval.isMultiLine(), interval.getIndentation(),
+				!interval.isTabbedMultiline(), newText);
 		final String old_text = getTextFromDocument(interval);
 		if (!pNewText.equals(old_text)) {
 			final int newTextLength = pNewText.length();

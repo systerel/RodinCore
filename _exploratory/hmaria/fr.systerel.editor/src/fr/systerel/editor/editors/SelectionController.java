@@ -16,12 +16,11 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
+
 import fr.systerel.editor.documentModel.DocumentMapper;
 import fr.systerel.editor.documentModel.EditorItem;
 import fr.systerel.editor.documentModel.Interval;
@@ -35,8 +34,8 @@ import fr.systerel.editor.documentModel.Interval;
  * folding and the <code>DocumentMapper</code> works with model coordinates and
  * not widget coordinates.
  */
-public class SelectionController implements SelectionListener, MouseListener,
-		VerifyListener, VerifyKeyListener, TraverseListener {
+public class SelectionController implements MouseListener, VerifyListener,
+		VerifyKeyListener, TraverseListener {
 
 	private StyledText styledText;
 	private DocumentMapper mapper;
@@ -52,24 +51,6 @@ public class SelectionController implements SelectionListener, MouseListener,
 		this.overlayEditor = overlayEditor;
 	}
 
-	public void widgetDefaultSelected(SelectionEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
-	 * Controls the selection in widget
-	 */
-	public void widgetSelected(SelectionEvent e) {
-
-		int offset = widget2ModelOffset(styledText.getSelection().x);
-		int end = widget2ModelOffset(styledText.getSelection().y);
-		if (!isValidSelection(offset, end - offset)) {
-			correctSelection();
-		}
-		styledText.setEditable(isEditableRegion(offset));
-	}
-
 	/**
 	 * Checks if a selection is valid.
 	 * 
@@ -81,12 +62,12 @@ public class SelectionController implements SelectionListener, MouseListener,
 	 */
 	public boolean isValidSelection(int offset, int length) {
 		int modelOffset = viewer.widgetOffset2ModelOffset(offset);
-		// Interval[] intervals = mapper.findIntervals(modelOffset, length);
-		// if (intervals.length ==1 ) {
-		// return true;
-		// }
-
-		EditorItem element = mapper.findEditorElement(modelOffset, length);
+		Interval[] intervals = mapper.findIntervals(modelOffset, length);
+		if (intervals.length == 1) {
+			return true;
+		}
+		final EditorItem element = mapper
+				.findEditorElement(modelOffset, length);
 		return element != null;
 	}
 

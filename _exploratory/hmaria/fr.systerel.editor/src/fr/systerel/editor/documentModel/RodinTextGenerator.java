@@ -239,9 +239,9 @@ public class RodinTextGenerator {
 				IMPLICIT_CONTENT_TYPE, CONTENT_TYPE);
 		if (predAttribute != null) {
 			final String pred = predAttribute;
-			stream.addElementRegion(pred, element, contentType, true);
+			stream.addElementRegion(pred, element, contentType, true, 2);
 		} else {
-			stream.addElementRegion("", element, contentType, true);
+			stream.addElementRegion("", element, contentType, true, 2);
 		}
 	}
 
@@ -252,9 +252,9 @@ public class RodinTextGenerator {
 				IMPLICIT_CONTENT_TYPE, CONTENT_TYPE);
 		if (assignAttribute != null) {
 			final String assign = assignAttribute;
-			stream.addElementRegion(assign, element, contentType, true);
+			stream.addElementRegion(assign, element, contentType, true, 2);
 		} else {
-			stream.addElementRegion("", element, contentType, true);
+			stream.addElementRegion("", element, contentType, true, 2);
 		}
 	}
 
@@ -265,7 +265,7 @@ public class RodinTextGenerator {
 				IMPLICIT_IDENTIFIER_TYPE, IDENTIFIER_TYPE);
 		if (labelAttribute != null) {
 			stream.addElementRegion(labelAttribute, element, contentType, false);
-			stream.addPresentationRegion(" : ", element);
+			stream.addPresentationRegion(":\t", element);
 		} else {
 			stream.addElementRegion("", element, contentType, false);
 		}

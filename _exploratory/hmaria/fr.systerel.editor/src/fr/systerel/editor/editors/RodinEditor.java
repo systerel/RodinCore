@@ -107,8 +107,6 @@ public class RodinEditor extends TextEditor {
 		annotationModel.addAnnotationModelListener(overlayEditor);
 		SelectionController controller = new SelectionController(styledText,
 				mapper, viewer, overlayEditor);
-		styledText.addSelectionListener(controller);
-		// styledText.addVerifyListener(controller);
 		styledText.addMouseListener(controller);
 		styledText.addVerifyKeyListener(controller);
 		styledText.addTraverseListener(controller);

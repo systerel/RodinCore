@@ -32,17 +32,18 @@ public class Interval implements Comparable<Interval> {
 	private final ContentType contentType;
 	private final IAttributeManipulation attManip;
 	private final boolean multiLine;
+	private final boolean tabbed;
 	private boolean changed;
 	private int indentation;
 
 	public Interval(int offset, int length, ILElement element,
 			ContentType contentType, boolean multiLine) {
-		this(offset, length, element, contentType, null, multiLine);
+		this(offset, length, element, contentType, null, multiLine, false);
 	}
 
 	public Interval(int offset, int length, ILElement element,
 			ContentType contentType, IAttributeManipulation attManip,
-			boolean multiLine) {
+			boolean multiLine, boolean tabbed) {
 		this.offset = offset;
 		this.length = length;
 		this.element = element;
@@ -50,11 +51,12 @@ public class Interval implements Comparable<Interval> {
 		this.rodinElement = getElement(element);
 		this.contentType = contentType;
 		this.multiLine = multiLine;
+		this.tabbed = false;
 	}
 
 	public Interval(int offset, int length, ILElement element,
 			ContentType contentType, IAttributeManipulation attManip) {
-		this(offset, length, element, contentType, attManip, false);
+		this(offset, length, element, contentType, attManip, false, false);
 	}
 
 	private IRodinElement getElement(ILElement element) {
@@ -122,6 +124,10 @@ public class Interval implements Comparable<Interval> {
 	
 	public boolean isMultiLine() {
 		return multiLine;
+	}
+	
+	public boolean isTabbedMultiline() {
+		return tabbed;
 	}
 	
 	public void setIndentation(int indentation) {

@@ -90,6 +90,10 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 			return null;
 		}
 		
+		public boolean isBooleanAttributeType() {
+			return false;
+		}
+		
 	}
 	
 	public static class AttributeContentType extends ContentType {
@@ -109,6 +113,11 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 		@Override
 		public boolean isAttributeContentType() {
 			return true;
+		}
+		
+		@Override
+		public boolean isBooleanAttributeType() {
+			return attributeType instanceof IAttributeType.Boolean;
 		}
 
 	}
