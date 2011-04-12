@@ -133,6 +133,13 @@ public class OverlayEditor implements IAnnotationModelListener,
 		focusService.addFocusTracker(editorText, EDITOR_TEXT_ID);
 	}
 
+	protected IDocument createDocument(String text) {
+		IDocument doc = new Document();
+		doc.set(text);
+		return doc;
+	}
+
+	//TODO Check for command based replacement ?
 	private void createMenu() {
 		final String id = "editorTextMenu";
 		final MenuManager manager = new MenuManager(id, id);
@@ -233,7 +240,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 	}
 
 	private void showTipMenu(final Interval inter) {
-		final Menu tipMenu = new Menu(editorText.getShell(), SWT.POP_UP);
+		final Menu tipMenu = new Menu(parent);
 		for (final String value : inter.getPossibleValues()) {
 			final MenuItem item = new MenuItem(tipMenu, SWT.PUSH);
 			item.setText(value);
@@ -257,6 +264,9 @@ public class OverlayEditor implements IAnnotationModelListener,
 				}
 			});
 		}
+		final Point loc = parent.getLocationAtOffset(inter.getOffset());
+		final Point mapped = parent.getDisplay().map(parent, null, loc);
+		tipMenu.setLocation(mapped);
 		tipMenu.setVisible(true);
 	}
 
@@ -265,6 +275,9 @@ public class OverlayEditor implements IAnnotationModelListener,
 		interval = null;
 	}
 
+	/**
+	 * Updates the current interval  displayed text.
+	 */
 	public void updateModelAfterChanges() {
 		if (interval == null) {
 			return;
@@ -298,12 +311,6 @@ public class OverlayEditor implements IAnnotationModelListener,
 			element.setAttribute(EventBAttributes.COMMENT_ATTRIBUTE
 					.makeValue(text));
 		}
-	}
-
-	protected IDocument createDocument(String text) {
-		IDocument doc = new Document();
-		doc.set(text);
-		return doc;
 	}
 
 	public void modelChanged(IAnnotationModel model) {
