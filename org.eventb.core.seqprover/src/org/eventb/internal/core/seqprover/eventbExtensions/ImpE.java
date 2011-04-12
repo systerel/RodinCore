@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,24 +10,22 @@
  *     Systerel - corrected: hid original hyp, added impLeft hyp (V0)
  *     Systerel - visibility: deselected impLeft hyp (V1)
  *     Systerel - back to original rule, but hiding the original predicate (V2)
+ *     Systerel - factored out code common with ModusTollens
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
-
-import static java.util.Collections.singleton;
-import static org.eventb.core.seqprover.ProverFactory.makeHideHypAction;
 
 import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
-import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
-import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
+import org.eventb.core.seqprover.reasonerInputs.ImpHypothesisReasoner;
 
 /**
  * Generates a proof rule for modus ponens for a given implicative hypothesis.
@@ -37,7 +35,7 @@ import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
  * 
  * @author Farhad Mehta
  */
-public class ImpE extends HypothesisReasoner implements IVersionedReasoner {
+public class ImpE extends ImpHypothesisReasoner implements IVersionedReasoner {
 	
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".impE";
 	private static final int VERSION = 2;
@@ -48,34 +46,17 @@ public class ImpE extends HypothesisReasoner implements IVersionedReasoner {
 
 	@ProverRule("MH")
 	@Override
-	protected IAntecedent[] getAntecedents(IProverSequent sequent,
-			Predicate pred) throws IllegalArgumentException {
-
-		if (pred == null) {
-			throw new IllegalArgumentException("Null hypothesis");
-		}
-		if (!Lib.isImp(pred)) {
-			throw new IllegalArgumentException(
-					"Hypothesis is not an implication: " + pred);
-		}
-
-		final Predicate impLeft = Lib.impLeft(pred);
-		final Predicate impRight = Lib.impRight(pred);
-		final Set<Predicate> addedHyps = Lib.breakPossibleConjunct(impRight);
-		final IHypAction hideHypAction = makeHideHypAction(singleton(pred));
+	protected IAntecedent[] getAntecedents(Predicate left, Predicate right,
+			DLib lib, IHypAction hideHypAction) {
+		final Set<Predicate> addedHyps = Lib.breakPossibleConjunct(right);
 		return new IAntecedent[] {
-				ProverFactory.makeAntecedent(impLeft, null, hideHypAction),
+				ProverFactory.makeAntecedent(left, null, hideHypAction),
 				ProverFactory.makeAntecedent(null, addedHyps, hideHypAction) };
 	}
 
 	@Override
 	protected String getDisplay(Predicate pred) {
 		return "⇒ hyp mp (" + pred + ")";
-	}
-	
-	@Override
-	protected boolean isGoalDependent(IProverSequent sequent, Predicate pred) {
-		return false;
 	}
 
 	public int getVersion() {
