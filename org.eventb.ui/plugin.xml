@@ -752,6 +752,16 @@
             target="hypothesis"
             tooltip="%proofTactics.mp.tooltip"/>
       <tactic
+            icon="icons/full/ctool16/impE1_prover.gif"
+            id="org.eventb.ui.impCase"
+            interrupt="false"
+            name="%proofTactics.impCase.name"
+            priority="3"
+            skipPostTactic="false"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.ImpCaseProvider"
+            target="hypothesis"
+            tooltip="%proofTactics.impCase.tooltip"/>
+      <tactic
             icon="icons/full/ctool16/conjE_prover.gif"
             id="org.eventb.ui.conjE"
             interrupt="false"

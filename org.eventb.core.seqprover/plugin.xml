@@ -74,6 +74,10 @@
             id="impE"
             name="%impEName"/>
       <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.ImpCase"
+            id="impCase"
+            name="%impCaseName"/>
+      <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.ImpI"
             id="impI"
             name="%impIName"/>

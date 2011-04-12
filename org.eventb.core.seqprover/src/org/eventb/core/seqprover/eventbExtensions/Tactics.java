@@ -114,6 +114,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunSetMinusImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunSingletonImg;
 import org.eventb.internal.core.seqprover.eventbExtensions.He;
+import org.eventb.internal.core.seqprover.eventbExtensions.ImpCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
 import org.eventb.internal.core.seqprover.eventbExtensions.ModusTollens;
@@ -698,6 +699,15 @@ public class Tactics {
 		return Lib.isImp(hyp);
 	}
 	
+	public static ITactic impCase(Predicate impHyp) {
+		return BasicTactics.reasonerTac(new ImpCase(),
+										new ImpCase.Input(impHyp));
+	}
+
+	public static boolean impCase_applicable(Predicate hyp) {
+		return Lib.isImp(hyp);
+	}
+
 //	/**
 //	 * This tactic tries to automatically apply an impE or he for an implicative selected hyp 
 //	 * where the right hand side of the implication is contained in the hyps.
