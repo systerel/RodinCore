@@ -31,11 +31,12 @@ import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
  */
 public class RodinTextStream {
 
-	private static final Character tab = '\u0009';
-	static final Object lineSeparator = System
-			.getProperty("line.separator");
+	private static final String COMMENT_HEADER_DELIMITER = "§";
+	private static final Character TAB = '\u0009';
 	private static final int NO_TABS = 0;
 	private static final String WHITESPACE = " ";
+	private static final Object LINESEPARATOR = System
+			.getProperty("line.separator");
 	
 	private int level = 0;
 	private final StringBuilder builder;
@@ -59,12 +60,15 @@ public class RodinTextStream {
 	}
 
 	public static String deprocessMulti(int level, boolean tabbed, String text) {
+		final String commonPatternStart = "((\r\n)|(\r)|(\n))(";
+		// Tells that it should take into account one (only) matching pattern 
+		final String commonPatternEnd = "){1}";
 		if (!tabbed) {
-			return text.replaceAll("((\r\n)|(\r)|(\n))(" + getTabs(level)
-					+ WHITESPACE + "){1}", "$1");
+			return text.replaceAll(commonPatternStart + getTabs(level)
+					+ WHITESPACE + commonPatternEnd, "$1");
 		}
-		return text.replaceAll("((\r\n)|(\r)|(\n))(" + getTabs(level) + "){1}",
-				"$1");
+		return text.replaceAll(commonPatternStart + getTabs(level)
+				+ commonPatternEnd, "$1");
 	}
 
 	public RodinTextStream(DocumentMapper mapper) {
@@ -110,7 +114,7 @@ public class RodinTextStream {
 
 	protected void addLabelRegion(String text, ILElement element) {
 		addElementRegion(text, element, LABEL_TYPE, false);
-		builder.append(lineSeparator);
+		builder.append(LINESEPARATOR);
 	}
 
 	protected void addPresentationRegion(String text, ILElement element) {
@@ -120,26 +124,27 @@ public class RodinTextStream {
 	protected void addCommentHeaderRegion(ILElement element, boolean appendTabs) {
 		if (appendTabs)
 			builder.append(getTabs(level));
-		addElementRegion("§", element, COMMENT_HEADER_TYPE, false);
+		addElementRegion(COMMENT_HEADER_DELIMITER, element,
+				COMMENT_HEADER_TYPE, false);
 	}
 
 	protected void addKeywordRegion(String title) {
 		addPresentationRegion(getTabs(level), null);
 		addElementRegion(title, null, KEYWORD_TYPE, false);
-		builder.append(lineSeparator);
+		builder.append(LINESEPARATOR);
 	}
 
 	protected void addSectionRegion(String title) {
 		if (level > 0)
 			addPresentationRegion(getTabs(level), null);
 		addElementRegion(title, null, SECTION_TYPE, false);
-		builder.append((String) lineSeparator);
+		builder.append((String) LINESEPARATOR);
 	}
 
 	public static String getTabs(int number) {
 		StringBuilder tabs = new StringBuilder();
 		for (int i = 0; i < number; i++) {
-			tabs.append(tab);
+			tabs.append(TAB);
 		}
 		return tabs.toString();
 	}
@@ -153,7 +158,7 @@ public class RodinTextStream {
 	}
 	
 	public void appendLineSeparator() {
-		builder.append(lineSeparator);
+		builder.append(LINESEPARATOR);
 	}
 	
 	public void appendPresentationTabs(ILElement e) {
