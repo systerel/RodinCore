@@ -482,8 +482,8 @@ public class RodinCore extends Plugin {
 	}
 
 	/**
-	 * Refines the given root. In case the refinement fails, an error is logged
-	 * and <code>null</code> is returned.
+	 * Refines the given root to a file with the given name. In case the
+	 * refinement fails, an error is logged and <code>null</code> is returned.
 	 * <p>
 	 * The given source root is not modified by this operation.
 	 * </p>
@@ -495,10 +495,18 @@ public class RodinCore extends Plugin {
 	 * 
 	 * @param sourceRoot
 	 *            the root to refine
+	 * @param targetName
+	 *            name of the refined target, including the extension, which
+	 *            must give the same root type as the source root
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress report is
+	 *            not desired
 	 * @return refined root or <code>null</code>
 	 */
-	public static IInternalElement refine(IInternalElement sourceRoot) {
-		return new RefinementProcessor(sourceRoot).refine();
+	// FIXME either check same root type, or take a bare name
+	public static IInternalElement refine(IInternalElement sourceRoot,
+			String targetName, IProgressMonitor monitor) {
+		return new RefinementProcessor(sourceRoot).refine(targetName, monitor);
 	}
 
 	/**

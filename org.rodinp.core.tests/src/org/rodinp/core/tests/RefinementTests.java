@@ -162,7 +162,10 @@ public class RefinementTests extends AbstractRodinDBTests {
 
 	private static void assertRefCalls(boolean successExpected,
 			IInternalElement abstractRoot, boolean ordered, Integer... expected) {
-		final IInternalElement refinedRoot = RodinCore.refine(abstractRoot);
+		final String refinedName = "refined_"
+				+ abstractRoot.getRodinFile().getElementName();
+		final IInternalElement refinedRoot = RodinCore.refine(abstractRoot,
+				refinedName, null);
 		if (successExpected) {
 			assertNotNull(refinedRoot);
 			assertFalse(refinedRoot.equals(abstractRoot));
@@ -201,7 +204,7 @@ public class RefinementTests extends AbstractRodinDBTests {
 	// no refinement & no participant & no order => empty list
 	public void testAllEmpty() throws Exception {
 		final IInternalElement root = makeRoot1("f");
-		assertNoRefinementCall(root);
+		assertRefCalls(false, root, false);
 	}
 
 	// 1 refinement & no participant & no order => empty list
@@ -246,9 +249,11 @@ public class RefinementTests extends AbstractRodinDBTests {
 		REG.addRefinement(RodinTestRoot2.ELEMENT_TYPE, "refTest2");
 		REG.addParticipant(new RefPart1(), "part1", RodinTestRoot.ELEMENT_TYPE);
 		REG.addParticipant(new RefPart2(), "part2", RodinTestRoot2.ELEMENT_TYPE);
-		REG.addOrder("part1", "part2");
-		final IInternalElement root = makeRoot1("f");
-		assertRefinementCalls(root, 1);
+		final IInternalElement root1 = makeRoot1("f");
+		assertRefinementCalls(root1, 1);
+		LOGGER.clear();
+		final IInternalElement root2 = makeRoot2("f");
+		assertRefinementCalls(root2, 2);
 	}
 
 	// 2 refinements with same 2 participants each, in a different order =>
@@ -270,13 +275,13 @@ public class RefinementTests extends AbstractRodinDBTests {
 		REG.addOrder(part22, part21);
 		final IInternalElement root1 = makeRoot1("f1");
 		assertRefinementCalls(root1, 1, 2);
+		LOGGER.clear();
 		final IInternalElement root2 = makeRoot2("f2");
 		assertRefinementCalls(root2, 2, 1);
 	}
 
 	// test contribution loading
 	public void testLoad() throws Exception {
-		REG.load(RodinTestRoot.ELEMENT_TYPE);
 		final IInternalElement root = makeRoot1("f");
 		assertRefinementCalls(root, 1, 2);
 	}
@@ -427,17 +432,43 @@ public class RefinementTests extends AbstractRodinDBTests {
 
 	}
 
+	// target root already exists
+	public void testTargetRootAlreadyExists() throws Exception {
+		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
+		REG.addParticipant(new RefPart1(), "refPart1Id",
+				RodinTestRoot.ELEMENT_TYPE);
+		final IInternalElement root1 = createRoot1("refTest1");
+		final IInternalElement root2 = createRoot1("refTest2");
+		final String root2Name = root2.getRodinFile().getElementName();
+		try {
+			RodinCore.refine(root1, root2Name, null);
+			fail("exception expected");
+		} catch (IllegalArgumentException e) {
+			// as expected
+		}
+	}
+
+	private static void createChildren(IInternalElement root, int nbChildren)
+			throws RodinDBException {
+		for (int i = 0; i < nbChildren; i++)
+			root.createChild(NamedElement.ELEMENT_TYPE, null, null);
+	}
+
 	// 1 refinement & 1 participant that throws an exception
 	public void testExceptionInParticipantCall() throws Exception {
 		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
 		REG.addParticipant(EXCEPTION_PARTICIPANT, "exceptionParticipant",
 				RodinTestRoot.ELEMENT_TYPE);
 		final IInternalElement root = createRoot1("f");
+		createChildren(root, 5);
 		// the exception must be caught underneath
 		assertFailure(root, 3);
 	}
 
 	// a participant modifies the original file => error log+ failure
+	// FIXME don't know how to check easily in core implementation (except
+	// making a copy at the beginning, or listening to database changes) =>
+	// document restriction and trust implementors
 	public void testOriginalFileModified() throws Exception {
 		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
 		REG.addParticipant(MODIF_ABSTRACT_PARTICIPANT,
