@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  *     Systerel - added asRodinElement()
  *     Systerel - separation of file and root element
  *     Systerel - added database indexer
+ *     Systerel - added refinements
  *******************************************************************************/
 package org.rodinp.core;
 
@@ -39,6 +40,7 @@ import org.rodinp.core.location.IInternalLocation;
 import org.rodinp.core.location.IRodinLocation;
 import org.rodinp.internal.core.BatchOperation;
 import org.rodinp.internal.core.ElementTypeManager;
+import org.rodinp.internal.core.RefinementProcessor;
 import org.rodinp.internal.core.Region;
 import org.rodinp.internal.core.RodinDB;
 import org.rodinp.internal.core.RodinDBManager;
@@ -477,6 +479,26 @@ public class RodinCore extends Plugin {
 		final MementoTokenizer memento = new MementoTokenizer(handleIdentifier);
 		final RodinDB db = RodinDBManager.getRodinDBManager().getRodinDB();
 		return db.getHandleFromMemento(memento);
+	}
+
+	/**
+	 * Refines the given root. In case the refinement fails, an error is logged
+	 * and <code>null</code> is returned.
+	 * <p>
+	 * The given source root is not modified by this operation.
+	 * </p>
+	 * <p>
+	 * In the context of this plug-in, the notion of refinement is to be
+	 * understood as an operation that creates a new component from an existing
+	 * one, without any constraint about the results.
+	 * </p>
+	 * 
+	 * @param sourceRoot
+	 *            the root to refine
+	 * @return refined root or <code>null</code>
+	 */
+	public static IInternalElement refine(IInternalElement sourceRoot) {
+		return new RefinementProcessor(sourceRoot).refine();
 	}
 
 	/**

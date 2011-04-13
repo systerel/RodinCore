@@ -12,6 +12,7 @@
 -->
    <extension-point id="indexers" name="%indexersName" schema="schema/indexers.exsd"/>
    <extension-point id="occurrenceKinds" name="%occurrenceKindsName" schema="schema/occurrenceKinds.exsd"/>
+   <extension-point id="refinements" name="%refinementsName" schema="schema/refinements.exsd"/>
 
    <extension point="org.eclipse.core.contenttype.contentTypes">
 		<content-type
