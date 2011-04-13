@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2008, 2011 University of Dusseldorf and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     University of Dusseldorf - initial API and implementation
+ *     Systerel - added more tests
+ *******************************************************************************/
 package org.rodinp.core.tests;
 
 import junit.framework.Test;
@@ -61,6 +72,7 @@ public class AllTests {
 		suite.addTestSuite(AncestryTests.class);
 		suite.addTestSuite(UtilTests.class);
 		suite.addTestSuite(RunnableTests.class);
+		suite.addTestSuite(RefinementTests.class);
 
 		suite.addTestSuite(MBuilderTest.class);
 		suite.addTestSuite(CBuilderTest.class);

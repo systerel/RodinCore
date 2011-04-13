@@ -595,4 +595,27 @@
             root-element-type="org.rodinp.core.tests.test2">
       </indexer>
    </extension>
+  <extension
+        id="testRefinements"
+        name="Test Refinements"
+        point="org.rodinp.core.refinements">
+     <Refinement
+           root-element-type="org.rodinp.core.tests.test"
+           id="testRefinement">
+     </Refinement>
+     <Participant
+           class="org.rodinp.core.tests.RefinementTests$RefPart1"
+           id="testParticipant1"
+           refinement-id="org.rodinp.core.tests.testRefinement">
+     </Participant>
+     <Participant
+           class="org.rodinp.core.tests.RefinementTests$RefPart2"
+           id="testParticipant2"
+           refinement-id="org.rodinp.core.tests.testRefinement">
+     </Participant>
+     <Order
+           first-participant-id="org.rodinp.core.tests.testParticipant1"
+           second-participant-id="org.rodinp.core.tests.testParticipant2">
+     </Order>
+  </extension>
 </plugin>
