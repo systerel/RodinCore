@@ -38,7 +38,7 @@ public class RefinementProcessor {
 		try {
 			final List<IRefinementParticipant> participants = RefinementRegistry
 					.getDefault().getRefinementParticipants(rootType);
-			if (participants == null) {
+			if (participants == null || participants.isEmpty()) {
 				return null;
 			}
 			final IInternalElement refinedRoot = makeRefinedRoot(refinedName);
