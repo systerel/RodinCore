@@ -15,6 +15,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.rodinp.internal.core.util.sort.DefaultNode;
+
 public class Node<T> extends DefaultNode<T, Node<T>> {
 
 	private boolean mark;

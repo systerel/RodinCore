@@ -22,8 +22,8 @@ import java.util.Set;
 
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRefinementParticipant;
-import org.rodinp.internal.core.indexer.sort.DefaultNode;
-import org.rodinp.internal.core.indexer.sort.Sorter;
+import org.rodinp.internal.core.util.sort.DefaultNode;
+import org.rodinp.internal.core.util.sort.Sorter;
 
 /**
  * @author Nicolas Beauger

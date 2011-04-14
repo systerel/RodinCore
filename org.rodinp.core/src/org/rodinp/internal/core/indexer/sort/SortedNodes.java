@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.rodinp.internal.core.indexer.persistence.PersistentSortedNodes;
+import org.rodinp.internal.core.util.sort.Sorter;
 
 /**
  * @author Nicolas Beauger
