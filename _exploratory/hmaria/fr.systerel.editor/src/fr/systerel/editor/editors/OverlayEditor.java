@@ -53,7 +53,6 @@ import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPredicateElement;
 import org.eventb.internal.ui.EventBSharedColor;
-import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -65,7 +64,6 @@ import fr.systerel.editor.actions.StyledTextEditAction;
 import fr.systerel.editor.contentAssist.RodinContentAssistProcessor;
 import fr.systerel.editor.documentModel.DocumentMapper;
 import fr.systerel.editor.documentModel.Interval;
-import fr.systerel.editor.documentModel.RodinPartitioner;
 import fr.systerel.editor.documentModel.RodinTextStream;
 import fr.systerel.editor.presentation.RodinConfiguration;
 import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
@@ -96,6 +94,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 	private Menu fTextContextMenu;
 	private ArrayList<IAction> editActions = new ArrayList<IAction>();
 	private ModifyListener eventBTranslator;
+	private Point editorPos;
 
 	public OverlayEditor(StyledText parent, DocumentMapper mapper,
 			ProjectionViewer viewer, RodinEditor editor) {
@@ -222,9 +221,9 @@ public class OverlayEditor implements IAnnotationModelListener,
 			final String extracted = parent.getText(start, end - 1);
 			final int level = inter.getIndentation();
 			final boolean multiLine = inter.isMultiLine();
-			final boolean tabbedMultiline = inter.isTabbedMultiline();
+			final boolean addWhiteSpace = inter.isAddWhiteSpace();
 			text = RodinTextStream.deprocessMulti(level, multiLine,
-					tabbedMultiline, extracted);
+					addWhiteSpace, extracted);
 		} else {
 			text = "";
 		}
@@ -272,6 +271,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 
 	public void abortEditing() {
 		editorText.setVisible(false);
+		editorPos = null;
 		interval = null;
 	}
 
@@ -323,8 +323,8 @@ public class OverlayEditor implements IAnnotationModelListener,
 		if (event.getChangedAnnotations().length > 0 && editorText.isVisible()) {
 			// adjust the location of the editor
 			if (viewer.modelOffset2WidgetOffset(interval.getOffset()) > 0) {
-				// setToLocation(editorText.getLocation().x,
-				// parent.getLocationAtOffset(viewer.modelOffset2WidgetOffset(interval.getOffset())).y);
+				//editorText.setLocation(editorText.getLocation().x,
+				//parent.getLocationAtOffset(viewer.modelOffset2WidgetOffset(interval.getOffset())).y);
 			} else {
 				// if the interval that is currently being edited is hidden from
 				// view abort the editing
@@ -342,12 +342,16 @@ public class OverlayEditor implements IAnnotationModelListener,
 		final int offset = interval.getOffset();
 		final int end = offset + interval.getLength();
 		final int height = getHeight(parent.getText(offset, end));
+		editorText.setRedraw(false);
 		if (!editorText.getText().isEmpty()) {
 			final Rectangle textBounds = editorText.getTextBounds(0,
 					editorText.getCharCount() - 1);
-			editorText.setSize(textBounds.width + MARGIN, height);
-			editorText.setLocation(parent.getLocationAtOffset(offset));
+			editorText.setSize(Math.max(MARGIN, textBounds.width + MARGIN), height);
 		}
+		if (editorPos == null) {
+			editorPos = parent.getLocationAtOffset(offset);
+		}
+		editorText.setLocation(editorPos);
 		editorText.setRedraw(true);
 	}
 

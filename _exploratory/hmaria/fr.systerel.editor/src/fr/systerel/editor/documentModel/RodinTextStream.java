@@ -22,6 +22,7 @@ import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.emf.api.itf.ILElement;
 
+import fr.systerel.editor.presentation.RodinConfiguration;
 import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
 
 /**
@@ -31,6 +32,7 @@ import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
  */
 public class RodinTextStream {
 
+	public static int MIN_LEVEL = 1;
 	private static final String COMMENT_HEADER_DELIMITER = "§";
 	private static final Character TAB = '\u0009';
 	private static final int NO_TABS = 0;
@@ -38,10 +40,9 @@ public class RodinTextStream {
 	private static final Object LINESEPARATOR = System
 			.getProperty("line.separator");
 	
-	private int level = 0;
 	private final StringBuilder builder;
 	private final DocumentMapper mapper;
-
+	private int level = MIN_LEVEL;
 	public static String processMulti(boolean multiLine, int level,
 			boolean addWhiteSpace, String text) {
 		if (!multiLine || text == null)
@@ -59,11 +60,12 @@ public class RodinTextStream {
 		return deprocessMulti(level, tabbed, text);
 	}
 
-	public static String deprocessMulti(int level, boolean tabbed, String text) {
+	public static String deprocessMulti(int level, boolean addWhitespace,
+			String text) {
 		final String commonPatternStart = "((\r\n)|(\r)|(\n))(";
-		// Tells that it should take into account one (only) matching pattern 
+		// Tells that it should take into account one (only) matching pattern
 		final String commonPatternEnd = "){1}";
-		if (!tabbed) {
+		if (addWhitespace) {
 			return text.replaceAll(commonPatternStart + getTabs(level)
 					+ WHITESPACE + commonPatternEnd, "$1");
 		}
@@ -97,13 +99,15 @@ public class RodinTextStream {
 			ContentType contentType, IAttributeManipulation manipulation,
 			boolean multiLine, int additionalTabs) {
 		final int start = builder.length();
+		final boolean addWhiteSpace = contentType == RodinConfiguration.COMMENT_TYPE
+				|| contentType == RodinConfiguration.IMPLICIT_COMMENT_TYPE;
 		final String multilined = processMulti(multiLine, getLevel()
-				+ additionalTabs, additionalTabs == 0, text);
+				+ additionalTabs, addWhiteSpace, text);
 		builder.append(multilined);
 		final int length = builder.length() - start;
 		mapper.processInterval(start, length, element, contentType,
 				manipulation, multiLine, getLevel() + additionalTabs,
-				additionalTabs != 0);
+				addWhiteSpace);
 	}
 
 	protected void addAttributeRegion(String text, ILElement element,
@@ -123,7 +127,7 @@ public class RodinTextStream {
 
 	protected void addCommentHeaderRegion(ILElement element, boolean appendTabs) {
 		if (appendTabs)
-			builder.append(getTabs(level));
+			builder.append(TAB);
 		addElementRegion(COMMENT_HEADER_DELIMITER, element,
 				COMMENT_HEADER_TYPE, false);
 	}
@@ -179,6 +183,18 @@ public class RodinTextStream {
 	
 	public String getText() {
 		return builder.toString();
+	}
+
+	public void appendPresentationTabs(ILElement e, int indentation) {
+		addPresentationRegion(getTabs(indentation), e);
+	}
+
+	public void incrementIndentation(int i) {
+		level += i;
+	}
+	
+	public void decrementIndentation(int i) {
+		level -= i;
 	}
 	
 }

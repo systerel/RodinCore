@@ -276,14 +276,22 @@ public class RodinPartitioner extends FastPartitioner {
 	protected void initialize() {
 		super.initialize();
 		final ArrayList<Interval> intervals = mapper.getIntervals();
+		int last_end = 0;
 		for (Interval interval : intervals) {
 			try {
 				final int offset = interval.getOffset();
 				final int length = interval.getLength();
+				
 				final String contentTypeName = interval.getContentType()
 						.getName();
-				final TypedPosition position = new TypedPosition(offset,
+				TypedPosition position;
+				if (last_end < interval.getOffset() ) {
+					position = new TypedPosition(last_end, offset-last_end, RodinConfiguration.LABEL_TYPE.getName());
+					fDocument.addPosition(getPositionCategory(), position);
+				}
+				position = new TypedPosition(offset,
 						length, contentTypeName);
+				last_end = interval.getOffset() + interval.getLength();
 				fDocument.addPosition(getPositionCategory(), position);
 			} catch (BadLocationException e) {
 				e.printStackTrace();

@@ -279,21 +279,26 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 
 		bgColor = (COLOR_DEBUG) ? colorManager.getColor(LABEL_DEBUG_BG) : null;
 		rdr = new RodinDamagerRepairer(new TextAttribute(
-				colorManager.getColor(IMPLICIT_LABEL_TYPE.getColor()), bgColor, SWT.NONE));
+				colorManager.getColor(IMPLICIT_LABEL_TYPE.getColor()), bgColor,
+				SWT.BOLD));
 		reconciler.setDamager(rdr, IMPLICIT_LABEL_TYPE.getName());
 		reconciler.setRepairer(rdr, IMPLICIT_LABEL_TYPE.getName());
 
 		bgColor = (COLOR_DEBUG) ? colorManager.getColor(SECTION_DEBUG_BG)
 				: null;
 		rdr = new RodinDamagerRepairer(new TextAttribute(
-				colorManager.getColor(LABEL_TYPE.getColor()), bgColor, SWT.BOLD));
+				colorManager.getColor(LABEL_TYPE.getColor()), bgColor,
+				SWT.ITALIC));
 		reconciler.setDamager(rdr, SECTION_TYPE.getName());
 		reconciler.setRepairer(rdr, SECTION_TYPE.getName());
 
 		bgColor = (COLOR_DEBUG) ? colorManager.getColor(KEYWORD_DEBUG_BG)
 				: null;
-		rdr = new RodinDamagerRepairer(new TextAttribute(
-				colorManager.getColor(LABEL_TYPE.getColor()), bgColor, SWT.BOLD | SWT.ITALIC));
+		final TextAttribute att = new TextAttribute(
+				colorManager.getColor(LABEL_TYPE.getColor()), bgColor,
+				SWT.ITALIC);
+		rdr = new RodinDamagerRepairer(att);
+
 		reconciler.setDamager(rdr, KEYWORD_TYPE.getName());
 		reconciler.setRepairer(rdr, KEYWORD_TYPE.getName());
 

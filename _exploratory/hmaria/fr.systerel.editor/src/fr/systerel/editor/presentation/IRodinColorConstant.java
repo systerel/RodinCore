@@ -23,7 +23,7 @@ public interface IRodinColorConstant {
 	RGB CONTENT = new RGB(0, 0, 192);
 	RGB IMPLICIT_CONTENT = new RGB(105, 105, 200);
 
-	RGB LABEL = new RGB(0, 0, 0);
+	RGB LABEL = new RGB(0, 50, 70);
 	RGB IMPLICIT_LABEL = new RGB(130, 130, 130);
 
 	RGB IDENTIFIER = new RGB(0, 0, 0);

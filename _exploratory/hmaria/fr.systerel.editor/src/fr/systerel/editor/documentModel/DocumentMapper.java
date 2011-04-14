@@ -318,7 +318,7 @@ public class DocumentMapper {
 
 	public void processInterval(int offset, int length, ILElement element,
 			ContentType contentType, IAttributeManipulation manipulation,
-			boolean multiLine, int indentationLevel, boolean tabbedMultiline) {
+			boolean multiLine, int indentationLevel, boolean addWhitespace) {
 		Interval inter;
 		if (contentType.isEditable()) {
 			inter = findInterval(element, contentType);
@@ -327,7 +327,7 @@ public class DocumentMapper {
 				inter.setOffset(offset);
 			} else {
 				inter = new Interval(offset, length, element, contentType,
-						manipulation, multiLine, tabbedMultiline);
+						manipulation, multiLine, addWhitespace);
 				inter.setIndentation(indentationLevel);
 				try {
 					addIntervalAfter(inter, previous);
@@ -431,11 +431,6 @@ public class DocumentMapper {
 		editorElements.put(key.getElement(), value);
 	}
 
-	public void addEditorSection(IInternalElementType<?> key,
-			EditorSection value) {
-		sections.put(key, value);
-	}
-
 	public void addEditorSection(IInternalElementType<?> type,
 			int folding_start, int folding_length) {
 		EditorItem el = sections.get(type);
@@ -448,11 +443,11 @@ public class DocumentMapper {
 
 	public Position[] getFoldingPositions() {
 		final ArrayList<Position> result = new ArrayList<Position>();
-		for (EditorItem el : editorElements.values()) {
-			if (el.getFoldingPosition() != null) {
-				result.add(el.getFoldingPosition());
-			}
-		}
+//		for (EditorItem el : editorElements.values()) {
+//			if (el.getFoldingPosition() != null) {
+//				result.add(el.getFoldingPosition());
+//			}
+//		}
 		for (EditorItem el : sections.values()) {
 			if (el.getFoldingPosition() != null) {
 				result.add(el.getFoldingPosition());
@@ -463,11 +458,11 @@ public class DocumentMapper {
 
 	public ProjectionAnnotation[] getFoldingAnnotations() {
 		final ArrayList<ProjectionAnnotation> result = new ArrayList<ProjectionAnnotation>();
-		for (EditorItem el : editorElements.values()) {
-			if (el.getFoldingAnnotation() != null) {
-				result.add(el.getFoldingAnnotation());
-			}
-		}
+//		for (EditorItem el : editorElements.values()) {
+//			if (el.getFoldingAnnotation() != null) {
+//				result.add(el.getFoldingAnnotation());
+//			}
+//		}
 		for (EditorItem el : sections.values()) {
 			if (el.getFoldingAnnotation() != null) {
 				result.add(el.getFoldingAnnotation());
@@ -711,7 +706,7 @@ public class DocumentMapper {
 	public void synchronizeInterval(Interval interval, String newText) {
 		final String pNewText = RodinTextStream.processMulti(
 				interval.isMultiLine(), interval.getIndentation(),
-				!interval.isTabbedMultiline(), newText);
+				interval.isAddWhiteSpace(), newText);
 		final String old_text = getTextFromDocument(interval);
 		if (!pNewText.equals(old_text)) {
 			final int newTextLength = pNewText.length();

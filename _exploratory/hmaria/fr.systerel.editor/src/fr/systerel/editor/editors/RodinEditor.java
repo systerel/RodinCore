@@ -58,10 +58,10 @@ public class RodinEditor extends TextEditor {
 	private StyledText styledText;
 	private DocumentMapper mapper = new DocumentMapper();
 	private ProjectionSupport projectionSupport;
-	private ProjectionAnnotationModel annotationModel;
+	private ProjectionAnnotationModel projectionAnnotationModel;
 	private OverlayEditor overlayEditor;
 	private IAnnotationModel visualAnnotationModel;
-	private Annotation[] oldAnnotations;
+	private Annotation[] oldPojectionAnnotations = new Annotation[0];
 	private Annotation[] oldMarkers = new Annotation[0];
 	private RodinDocumentProvider documentProvider;
 
@@ -98,13 +98,13 @@ public class RodinEditor extends TextEditor {
 				getAnnotationAccess(), getSharedColors());
 		projectionSupport.install();
 		viewer.doOperation(ProjectionViewer.TOGGLE);
-		annotationModel = viewer.getProjectionAnnotationModel();
+		projectionAnnotationModel = viewer.getProjectionAnnotationModel();
 		visualAnnotationModel = viewer.getVisualAnnotationModel();
 
 		styledText = getSourceViewer().getTextWidget();
 
 		overlayEditor = new OverlayEditor(styledText, mapper, viewer, this);
-		annotationModel.addAnnotationModelListener(overlayEditor);
+		projectionAnnotationModel.addAnnotationModelListener(overlayEditor);
 		SelectionController controller = new SelectionController(styledText,
 				mapper, viewer, overlayEditor);
 		styledText.addMouseListener(controller);
@@ -121,6 +121,8 @@ public class RodinEditor extends TextEditor {
 		updateMarkerStructure(documentProvider.getMarkerAnnotations());
 		
 		setTitleImage(documentProvider.getInputRoot());
+		
+		adjustHighlightRange(0, mapper.getDocument().getLength());
 	}
 
 	private void setTitleImage(IEventBRoot inputRoot) {
@@ -141,9 +143,10 @@ public class RodinEditor extends TextEditor {
 	/**
 	 * Creates a projection viewer to allow folding
 	 */
+	@Override
 	protected ISourceViewer createSourceViewer(Composite parent,
 			IVerticalRuler ruler, int styles) {
-		ISourceViewer viewer = new ProjectionViewer(parent, ruler,
+		final ISourceViewer viewer = new ProjectionViewer(parent, ruler,
 				getOverviewRuler(), isOverviewRulerVisible(), styles);
 
 		// ensure decoration support has been created and configured.
@@ -158,32 +161,16 @@ public class RodinEditor extends TextEditor {
 	 *            The new positions
 	 */
 	public void updateFoldingStructure(Position[] positions) {
-
-		positions = mapper.getFoldingPositions();
-		
-		// Annotation[] annotations = new Annotation[positions.length];
-		ProjectionAnnotation[] annotations = mapper.getFoldingAnnotations();
-
-		// this will hold the new annotations along
-		// with their corresponding positions
-		HashMap<Annotation, Position> newAnnotations = new HashMap<Annotation, Position>();
-		boolean collapsed = false;
-
-		int i = 0;
-		for (Position position : positions) {
-			// ProjectionAnnotation annotation = new
-			// ProjectionAnnotation(collapsed);
-
-			newAnnotations.put(annotations[i], new Position(position.offset,
-					position.length));
-
-			// annotations[i]=annotation;
+		for (Annotation a : oldPojectionAnnotations) {
+			projectionAnnotationModel.removeAnnotation(a);
+		}
+		final Annotation[] annotations = documentProvider
+				.getFoldingAnnotations();
+		for (int i = 0; i < positions.length; i++) {			
+			projectionAnnotationModel.addAnnotation(annotations[i], positions[i]);
 			i++;
 		}
-
-		//annotationModel.modifyAnnotations(oldAnnotations, newAnnotations, null);
-
-		oldAnnotations = annotations;
+		oldPojectionAnnotations = annotations;
 	}
 
 	/**

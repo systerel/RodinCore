@@ -10,6 +10,7 @@
  *******************************************************************************/
 package fr.systerel.editor.documentModel;
 
+import static fr.systerel.editor.documentModel.RodinTextStream.MIN_LEVEL;
 import static fr.systerel.editor.presentation.RodinConfiguration.COMMENT_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.CONTENT_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.IDENTIFIER_TYPE;
@@ -30,6 +31,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.Position;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ICommentedElement;
+import org.eventb.core.IEvent;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPredicateElement;
@@ -85,13 +87,14 @@ public class RodinTextGenerator {
 			final IElementDesc desc = ElementDescRegistry.getInstance()
 					.getElementDesc(rodinElement);
 			stream.addSectionRegion(desc.getPrefix());
-			stream.incrementIndentation();
+			stream.incrementIndentation(2);
+			stream.appendPresentationTabs(e, 2);
 			processCommentedElement(e, true);
 			stream.appendLineSeparator();
 			stream.appendPresentationTabs(e);
 			stream.addLabelRegion(rodinElement.getElementName(), e);
 			processOtherAttributes(e);
-			stream.decrementIndentation();
+			stream.decrementIndentation(2);
 			traverse(monitor, e);
 		}
 	}
@@ -109,24 +112,25 @@ public class RodinTextGenerator {
 			if (noChildren) {
 				continue;
 			}
-			if (!(noChildren)) {
-				start = stream.getLength();
-				if (stream.getLevel() < 1) {
-					stream.addSectionRegion(childDesc.getPrefix());
-				} else {
-					stream.addKeywordRegion(childDesc.getPrefix());
-				}
+			start = stream.getLength();
+			if (stream.getLevel() < MIN_LEVEL) {
+				stream.addSectionRegion(childDesc.getPrefix());
+			} else {
+				stream.addKeywordRegion(childDesc.getPrefix());
 			}
+			stream.incrementIndentation(2);
 			for (ILElement in : c) {
-				stream.incrementIndentation();
 				stream.appendPresentationTabs(in);
 				processElement(in);
 				traverse(mon, in);
-				stream.decrementIndentation();
+				if (in.getElementType() == IEvent.ELEMENT_TYPE)
+					stream.appendLineSeparator();
 			}
+			stream.decrementIndentation(2);
 			final int length = stream.getLength() - start;
-			if (start != -1 && stream.getLevel() == 0) {
-				stream.addEditorSection(rel.getChildType(), start, length);
+			if (start != -1 && !noChildren) {
+				//stream.addEditorSection(rel.getChildType(), start, length);
+				start = -1;
 			}
 		}
 	}
