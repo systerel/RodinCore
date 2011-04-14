@@ -502,6 +502,7 @@ public class RodinCore extends Plugin {
 	 *            a progress monitor, or <code>null</code> if progress report is
 	 *            not desired
 	 * @return refined root or <code>null</code>
+	 * @since 1.4
 	 */
 	// FIXME either check same root type, or take a bare name
 	public static IInternalElement refine(IInternalElement sourceRoot,

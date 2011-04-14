@@ -11,7 +11,10 @@
 package org.rodinp.core;
 
 /**
+ * Common protocol for refinement participants.
+ * 
  * @author Nicolas Beauger
+ * @since 1.4
  * 
  */
 public interface IRefinementParticipant {
@@ -27,5 +30,5 @@ public interface IRefinementParticipant {
 	 *            the source of the refinement
 	 */
 	void process(IInternalElement refinedRoot, IInternalElement sourceRoot);
-	
+
 }
