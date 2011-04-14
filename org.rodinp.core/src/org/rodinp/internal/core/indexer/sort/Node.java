@@ -90,7 +90,6 @@ public class Node<T> extends DefaultNode<T, Node<T>> {
 		return orderPos;
 	}
 
-	@Override
 	public void setOrderPos(int orderPos) {
 		if (orderPos < 0) {
 			this.orderPos = -1;

@@ -26,8 +26,6 @@ public interface INode<T, N extends INode<T, ?>> {
 	 */
 	int degree();
 
-	void setOrderPos(int orderPos);
-
 	List<N> getSuccessors();
 
 }

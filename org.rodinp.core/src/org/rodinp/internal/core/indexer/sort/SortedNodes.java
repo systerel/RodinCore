@@ -59,11 +59,21 @@ public class SortedNodes<T> implements Iterator<T> {
 		order.clear();
 		final Sorter<T, Node<T>> sorter = new Sorter<T, Node<T>>(nodes);
 		order.addAll(sorter.sort());
+		setOrderPos(order);
 
 		if (iterating) {
 			restartPos = findRestartPos();
 		} else {
 			restartPos = 0;
+		}
+	}
+	
+	private void setOrderPos(List<Node<T>> order) {
+		int pos = 0;
+
+		for (Node<T> node : order) {
+			node.setOrderPos(pos);
+			pos++;
 		}
 	}
 

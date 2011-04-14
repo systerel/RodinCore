@@ -39,11 +39,6 @@ public class DefaultNode<T, N extends INode<T, N>> implements INode<T, N> {
 	}
 
 	@Override
-	public void setOrderPos(int orderPos) {
-		// nothing by default
-	}
-
-	@Override
 	public List<N> getSuccessors() {
 		return Collections.unmodifiableList(successors);
 	}

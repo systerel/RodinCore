@@ -65,7 +65,6 @@ public class Sorter<T, N extends INode<T, N>> {
 				// because the client may later break it himself from elsewhere.
 			}
 		}
-		setOrderPos(order);
 
 		return order;
 	}
@@ -90,7 +89,6 @@ public class Sorter<T, N extends INode<T, N>> {
 		while (!zeroDegrees.isEmpty()) {
 			final N node = zeroDegrees.get(0);
 			order.add(node);
-			node.setOrderPos(order.size());
 			zeroDegrees.remove(0);
 			remaining.remove(node);
 			for (N succ : node.getSuccessors()) {
@@ -116,15 +114,6 @@ public class Sorter<T, N extends INode<T, N>> {
 			}
 		}
 		return minDegNode;
-	}
-
-	private void setOrderPos(List<N> order) {
-		int pos = 0;
-
-		for (N node : order) {
-			node.setOrderPos(pos);
-			pos++;
-		}
 	}
 
 }
