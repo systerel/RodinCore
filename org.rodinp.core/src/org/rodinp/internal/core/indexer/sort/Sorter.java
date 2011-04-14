@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,21 +16,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Sorter<T> {
+public class Sorter<T, N extends INode<T, N>> {
 
-	private static class Degrees<T> {
+	private static class Degrees<T, N extends INode<T, N>> {
 
-		private final Map<Node<T>, Integer> degrees;
+		private final Map<INode<T, N>, Integer> degrees;
 
 		public Degrees() {
-			degrees = new HashMap<Node<T>, Integer>();
+			degrees = new HashMap<INode<T, N>, Integer>();
 		}
 
-		public void set(Node<T> node, int degree) {
+		public void set(INode<T, N> node, int degree) {
 			degrees.put(node, degree);
 		}
 
-		public int decr(Node<T> node) {
+		public int decr(N node) {
 			Integer degree = degrees.get(node);
 			if (degree == null) {
 				return -1;
@@ -41,17 +41,17 @@ public class Sorter<T> {
 		}
 	}
 
-	private final Collection<Node<T>> nodes;
+	private final Collection<N> nodes;
 
-	public Sorter(Collection<Node<T>> nodes) {
+	public Sorter(Collection<N> nodes) {
 		this.nodes = nodes;
 	}
 
-	public List<Node<T>> sort() {
-		final Degrees<T> degrees = new Degrees<T>();
-		final List<Node<T>> zeroDegrees = new ArrayList<Node<T>>();
-		final List<Node<T>> remaining = new ArrayList<Node<T>>();
-		final List<Node<T>> order = new ArrayList<Node<T>>();
+	public List<N> sort() {
+		final Degrees<T, N> degrees = new Degrees<T, N>();
+		final List<N> zeroDegrees = new ArrayList<N>();
+		final List<N> remaining = new ArrayList<N>();
+		final List<N> order = new ArrayList<N>();
 
 		initDegrees(degrees, zeroDegrees, remaining);
 		while (!remaining.isEmpty()) {
@@ -59,7 +59,7 @@ public class Sorter<T> {
 			order.addAll(topoSort(degrees, zeroDegrees, remaining));
 
 			if (!remaining.isEmpty()) { // there are cycles => break them
-				final Node<T> minDegree = findMinDegree(remaining);
+				final N minDegree = findMinDegree(remaining);
 				zeroDegrees.add(minDegree);
 				// The cycle is only virtually broken, the graph is not modified
 				// because the client may later break it himself from elsewhere.
@@ -70,9 +70,9 @@ public class Sorter<T> {
 		return order;
 	}
 
-	private void initDegrees(Degrees<T> degrees, List<Node<T>> zeroDegrees,
-			List<Node<T>> remaining) {
-		for (Node<T> node : nodes) {
+	private void initDegrees(Degrees<T, N> degrees, List<N> zeroDegrees,
+			List<N> remaining) {
+		for (N node : nodes) {
 			remaining.add(node);
 			final int degree = node.degree();
 			degrees.set(node, degree);
@@ -82,18 +82,18 @@ public class Sorter<T> {
 		}
 	}
 
-	private List<Node<T>> topoSort(Degrees<T> degrees,
-			List<Node<T>> zeroDegrees, List<Node<T>> remaining) {
+	private List<N> topoSort(Degrees<T, N> degrees,
+			List<N> zeroDegrees, List<N> remaining) {
 
-		final List<Node<T>> order = new ArrayList<Node<T>>();
+		final List<N> order = new ArrayList<N>();
 
 		while (!zeroDegrees.isEmpty()) {
-			final Node<T> node = zeroDegrees.get(0);
+			final N node = zeroDegrees.get(0);
 			order.add(node);
 			node.setOrderPos(order.size());
 			zeroDegrees.remove(0);
 			remaining.remove(node);
-			for (Node<T> succ : node.getSuccessors()) {
+			for (N succ : node.getSuccessors()) {
 				if (remaining.contains(succ)) {
 					final int degree = degrees.decr(succ);
 					if (degree == 0) {
@@ -105,10 +105,10 @@ public class Sorter<T> {
 		return order;
 	}
 
-	private Node<T> findMinDegree(List<Node<T>> remaining) {
-		Node<T> minDegNode = null;
+	private N findMinDegree(List<N> remaining) {
+		N minDegNode = null;
 		int minDegree = Integer.MAX_VALUE;
-		for (Node<T> node : remaining) {
+		for (N node : remaining) {
 			final int degree = node.degree();
 			if (degree < minDegree) {
 				minDegree = degree;
@@ -118,10 +118,10 @@ public class Sorter<T> {
 		return minDegNode;
 	}
 
-	private void setOrderPos(List<Node<T>> order) {
+	private void setOrderPos(List<N> order) {
 		int pos = 0;
 
-		for (Node<T> node : order) {
+		for (N node : order) {
 			node.setOrderPos(pos);
 			pos++;
 		}

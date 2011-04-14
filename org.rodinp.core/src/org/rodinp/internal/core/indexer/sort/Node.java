@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,32 +15,19 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class Node<T> {
+public class Node<T> extends DefaultNode<T, Node<T>> {
 
-	private final T label;
-	private final List<Node<T>> predecessors;
-	private final List<Node<T>> successors;
 	private boolean mark;
 	private int orderPos;
 
 	public Node(T label) {
-		this.label = label;
-		this.predecessors = new ArrayList<Node<T>>();
-		this.successors = new ArrayList<Node<T>>();
+		super(label);
 		this.mark = false;
 		this.orderPos = -1;
 	}
 
-	public T getLabel() {
-		return label;
-	}
-
 	public List<Node<T>> getPredecessors() {
 		return Collections.unmodifiableList(predecessors);
-	}
-
-	public List<Node<T>> getSuccessors() {
-		return Collections.unmodifiableList(successors);
 	}
 
 	public void changePredecessors(List<Node<T>> newPredecessors) {
@@ -103,6 +90,7 @@ public class Node<T> {
 		return orderPos;
 	}
 
+	@Override
 	public void setOrderPos(int orderPos) {
 		if (orderPos < 0) {
 			this.orderPos = -1;
@@ -114,10 +102,6 @@ public class Node<T> {
 	// false if both nodes have -1 as orderPos
 	public boolean isAfter(Node<T> node) {
 		return this.orderPos > node.orderPos;
-	}
-
-	public int degree() {
-		return predecessors.size();
 	}
 
 	@Override
