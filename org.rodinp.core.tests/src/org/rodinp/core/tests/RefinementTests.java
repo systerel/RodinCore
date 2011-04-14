@@ -105,22 +105,6 @@ public class RefinementTests extends AbstractRodinDBTests {
 		}
 	};
 
-	private static final IRefinementParticipant MODIF_ABSTRACT_PARTICIPANT = new AbsRefPart(
-			4, LOGGER) {
-
-		@Override
-		public void process(IInternalElement refinedRoot,
-				IInternalElement abstractRoot) {
-			super.process(refinedRoot, abstractRoot);
-			try {
-				abstractRoot.createChild(NamedElement.ELEMENT_TYPE, null, null);
-			} catch (RodinDBException e) {
-				fail("exception unexpected during this part of the test: "
-						+ e.getLocalizedMessage());
-			}
-		}
-	};
-
 	private static final RefinementRegistry REG = RefinementRegistry
 			.getDefault();
 
@@ -463,18 +447,6 @@ public class RefinementTests extends AbstractRodinDBTests {
 		createChildren(root, 5);
 		// the exception must be caught underneath
 		assertFailure(root, 3);
-	}
-
-	// a participant modifies the original file => error log+ failure
-	// FIXME don't know how to check easily in core implementation (except
-	// making a copy at the beginning, or listening to database changes) =>
-	// document restriction and trust implementors
-	public void testOriginalFileModified() throws Exception {
-		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
-		REG.addParticipant(MODIF_ABSTRACT_PARTICIPANT,
-				"modifAbstractParticipant", RodinTestRoot.ELEMENT_TYPE);
-		final IInternalElement root = createRoot1("f");
-		assertFailure(root, 4);
 	}
 
 }
