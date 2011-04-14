@@ -13,19 +13,33 @@ package org.rodinp.internal.core.indexer.sort;
 import java.util.List;
 
 /**
+ * Common protocol for graph nodes.
+ * 
  * @author Nicolas Beauger
  * 
  * @param <T>
  */
 public interface INode<T, N extends INode<T, ?>> {
 
+	/**
+	 * Returns the label associated to this node.
+	 * 
+	 * @return a label
+	 */
 	T getLabel();
 
 	/**
-	 * @return
+	 * Returns the degree of this node, i.e the number of its predecessors.
+	 * 
+	 * @return a positive or null integer
 	 */
 	int degree();
 
+	/**
+	 * Returns a list (possibly empty) of successor nodes.
+	 * 
+	 * @return a list of nodes
+	 */
 	List<N> getSuccessors();
 
 }

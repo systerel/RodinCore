@@ -15,6 +15,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * Default implementation of {@link INode}.
+ * 
  * @author Nicolas Beauger
  * 
  */

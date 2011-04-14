@@ -16,6 +16,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Implementation of a topological sort for {@link INode}.
+ * 
+ * @author Nicolas Beauger
+ * 
+ * @param <T>
+ *            type of node labels
+ * @param <N>
+ *            type of nodes
+ */
 public class Sorter<T, N extends INode<T, N>> {
 
 	private static class Degrees<T, N extends INode<T, N>> {
@@ -81,8 +91,8 @@ public class Sorter<T, N extends INode<T, N>> {
 		}
 	}
 
-	private List<N> topoSort(Degrees<T, N> degrees,
-			List<N> zeroDegrees, List<N> remaining) {
+	private List<N> topoSort(Degrees<T, N> degrees, List<N> zeroDegrees,
+			List<N> remaining) {
 
 		final List<N> order = new ArrayList<N>();
 
