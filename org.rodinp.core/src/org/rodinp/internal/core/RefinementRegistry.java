@@ -14,8 +14,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRefinementParticipant;
+import org.rodinp.core.RodinCore;
+import org.rodinp.internal.core.util.Util;
 
 /**
  * @author Nicolas Beauger
@@ -30,6 +37,19 @@ public class RefinementRegistry {
 			super(message);
 		}
 	}
+
+	private static final String REFINEMENT_EXTENSION_POINT_ID = RodinCore.PLUGIN_ID
+			+ ".refinements";
+
+	private static final String REFINEMENT = "Refinement";
+	private static final String PARTICIPANT = "Participant";
+	private static final String ORDER = "Order";
+	private static final String ID = "id";
+	private static final String ROOT_TYPE = "root-element-type";
+	private static final String REFINEMENT_ID = "refinement-id";
+	private static final String CLASS = "class";
+	private static final String FIRST_PARTICIPANT = "first-participant-id";
+	private static final String SECOND_PARTICIPANT = "second-participant-id";
 
 	private static final RefinementRegistry DEFAULT_INSTANCE = new RefinementRegistry();
 
@@ -78,13 +98,74 @@ public class RefinementRegistry {
 			// come from the extension point
 			return;
 		}
-		// TODO
+		final IExtensionRegistry reg = Platform.getExtensionRegistry();
+		final IConfigurationElement[] extensions = reg
+				.getConfigurationElementsFor(REFINEMENT_EXTENSION_POINT_ID);
+		// FIXME load all refinements first
+		// then participants
+		// then orders
+		for (IConfigurationElement element : extensions) {
+			final String extensionId = element.getDeclaringExtension()
+					.getUniqueIdentifier();
+			try {
+				final String name = element.getName();
+				if (name.equals(REFINEMENT)) {
+					loadRefinement(element);
+				} else if (name.equals(PARTICIPANT)) {
+					loadParticipant(element);
+				} else if (name.equals(ORDER)) {
+					loadOrder(element);
+				}
+			} catch (Exception e) {
+				extensionLoadException(extensionId, e);
+				// continue
+			}
+		}
+
 	}
 
-	// TODO refinements could be removed and replaced with references to root
-	// types
-	// but that would prevent from adding new attributes to refinements in the
-	// future
+	private void extensionLoadException(String extensionId, Exception e) {
+		Util.log(e, "Exception while loading refinement extension "
+				+ extensionId);
+	}
+
+	private void loadRefinement(IConfigurationElement element)
+			throws RefinementException {
+		final String bareId = element.getAttribute(ID);
+		checkNoDots(bareId);
+		final String namespace = element.getNamespaceIdentifier();
+		final String refinementId = namespace + "." + bareId;
+		final String rootElType = element.getAttribute(ROOT_TYPE);
+		final IInternalElementType<IInternalElement> rootType = RodinCore
+				.getInternalElementType(rootElType);
+		addRefinement(rootType, refinementId);
+	}
+
+	private static void checkNoDots(final String id) throws RefinementException {
+		if (id.contains(".")) {
+			throw new RefinementException("id should not contain dots " + id);
+		}
+	}
+
+	private void loadParticipant(IConfigurationElement element)
+			throws CoreException, RefinementException {
+		final String bareId = element.getAttribute(ID);
+		checkNoDots(bareId);
+		final String namespace = element.getNamespaceIdentifier();
+		final String participantId = namespace + "." + bareId;
+		final String refinementId = element.getAttribute(REFINEMENT_ID);
+		final IRefinementParticipant participant = (IRefinementParticipant) element
+				.createExecutableExtension(CLASS);
+		addParticipant(participant, participantId, refinementId);
+	}
+
+	private void loadOrder(IConfigurationElement element)
+			throws RefinementException {
+		final String first = element.getAttribute(FIRST_PARTICIPANT);
+		final String second = element.getAttribute(SECOND_PARTICIPANT);
+		addOrder(first, second);
+	}
+
 	public void addRefinement(IInternalElementType<?> rootType,
 			String refinementId) throws RefinementException {
 		if (refinements.containsKey(rootType)) {
@@ -98,9 +179,20 @@ public class RefinementRegistry {
 							+ refinementId);
 		}
 
-		final Refinement refinement = new Refinement();
+		final Refinement refinement = new Refinement(rootType);
 		refinementIds.put(refinementId, refinement);
 		refinements.put(rootType, refinement);
+	}
+
+	private void addParticipant(IRefinementParticipant refinementParticipant,
+			String participantId, String refinementId)
+			throws RefinementException {
+		final Refinement refinement = refinementIds.get(refinementId);
+		if (refinement == null) {
+			throw new RefinementException("unknown refinement " + refinementId);
+		}
+		final IInternalElementType<?> rootType = refinement.getRootType();
+		addParticipant(refinementParticipant, participantId, rootType);
 	}
 
 	public void addParticipant(IRefinementParticipant refinementParticipant,

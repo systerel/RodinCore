@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRefinementParticipant;
 import org.rodinp.internal.core.RefinementRegistry.RefinementException;
 import org.rodinp.internal.core.util.sort.DefaultNode;
@@ -51,11 +52,16 @@ public class Refinement {
 	private final List<IRefinementParticipant> orderedRefParts = new ArrayList<IRefinementParticipant>();
 	private boolean ordered = false;
 	private boolean cycleDetected = false;
+	private final IInternalElementType<?> rootType;
 
-	public Refinement() {
-		// avoid synthetic accessor
+	public Refinement(IInternalElementType<?> rootType) {
+		this.rootType = rootType;
 	}
 
+	public IInternalElementType<?> getRootType() {
+		return rootType;
+	}
+	
 	public List<IRefinementParticipant> getOrderedParticipants() {
 		if (!ordered) {
 			orderParticipants();
