@@ -22,7 +22,6 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.basis.RodinTestRoot;
 import org.rodinp.core.tests.basis.RodinTestRoot2;
 import org.rodinp.internal.core.RefinementRegistry;
@@ -145,14 +144,14 @@ public class RefinementTests extends AbstractRodinDBTests {
 	}
 
 	private static void assertRefCalls(boolean successExpected,
-			IInternalElement abstractRoot, boolean ordered, Integer... expected) {
+			IInternalElement sourceRoot, boolean ordered, Integer... expected) {
 		final String refinedName = "refined_"
-				+ abstractRoot.getRodinFile().getElementName();
-		final IInternalElement refinedRoot = RodinCore.refine(abstractRoot,
+				+ sourceRoot.getRodinFile().getElementName();
+		final IInternalElement refinedRoot = RodinCore.refine(sourceRoot,
 				refinedName, null);
 		if (successExpected) {
 			assertNotNull(refinedRoot);
-			assertFalse(refinedRoot.equals(abstractRoot));
+			assertFalse(refinedRoot.equals(sourceRoot));
 		} else {
 			assertNull(refinedRoot);
 		}
@@ -174,15 +173,9 @@ public class RefinementTests extends AbstractRodinDBTests {
 		assertFailure(abstractRoot);
 	}
 
-	private static void assertFailure(IInternalElement abstractRoot,
+	private static void assertFailure(IInternalElement sourceRoot,
 			Integer... expected) throws Exception {
-		final IRodinProject copyPrj = createRodinProject("copy_project");
-		abstractRoot.getRodinFile().copy(copyPrj, null, null, false, null);
-		final IInternalElement copy = copyPrj
-				.getRootElementsOfType(abstractRoot.getElementType())[0];
-
-		assertRefCalls(false, abstractRoot, true, expected);
-		assertFalse(abstractRoot.hasSameContents(copy));
+		assertRefCalls(false, sourceRoot, true, expected);
 	}
 
 	// // functional cases ////
@@ -196,7 +189,7 @@ public class RefinementTests extends AbstractRodinDBTests {
 	// 1 refinement & no participant & no order => empty list
 	public void test1Ref0Part() throws Exception {
 		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
-		final IInternalElement root = createRoot1("f");
+		final IInternalElement root = makeRoot1("f");
 		assertNoRefinementCall(root);
 	}
 
@@ -434,19 +427,12 @@ public class RefinementTests extends AbstractRodinDBTests {
 		}
 	}
 
-	private static void createChildren(IInternalElement root, int nbChildren)
-			throws RodinDBException {
-		for (int i = 0; i < nbChildren; i++)
-			root.createChild(NamedElement.ELEMENT_TYPE, null, null);
-	}
-
 	// 1 refinement & 1 participant that throws an exception
 	public void testExceptionInParticipantCall() throws Exception {
 		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
 		REG.addParticipant(EXCEPTION_PARTICIPANT, "exceptionParticipant",
 				RodinTestRoot.ELEMENT_TYPE);
-		final IInternalElement root = createRoot1("f");
-		createChildren(root, 5);
+		final IInternalElement root = makeRoot1("f");
 		// the exception must be caught underneath
 		assertFailure(root, 3);
 	}
