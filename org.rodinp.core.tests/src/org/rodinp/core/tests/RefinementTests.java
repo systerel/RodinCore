@@ -169,8 +169,9 @@ public class RefinementTests extends AbstractRodinDBTests {
 		assertRefCalls(true, abstractRoot, true, expected);
 	}
 
-	private static void assertNoRefinementCall(IInternalElement abstractRoot) {
-		assertRefinementCalls(abstractRoot);
+	private static void assertNoRefinementCall(IInternalElement abstractRoot)
+			throws Exception {
+		assertFailure(abstractRoot);
 	}
 
 	private static void assertFailure(IInternalElement abstractRoot,
@@ -187,14 +188,15 @@ public class RefinementTests extends AbstractRodinDBTests {
 	// // functional cases ////
 	// no refinement & no participant & no order => empty list
 	public void testAllEmpty() throws Exception {
-		final IInternalElement root = makeRoot1("f");
+		// use root type 2 to avoid contributions
+		final IInternalElement root = makeRoot2("f");
 		assertRefCalls(false, root, false);
 	}
 
 	// 1 refinement & no participant & no order => empty list
 	public void test1Ref0Part() throws Exception {
 		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
-		final IInternalElement root = makeRoot1("f");
+		final IInternalElement root = createRoot1("f");
 		assertNoRefinementCall(root);
 	}
 
