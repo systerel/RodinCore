@@ -19,7 +19,7 @@ import java.util.List;
  * 
  * @param <T>
  */
-public interface INode<T, N extends INode<T, ?>> {
+public interface INode<T, N extends INode<T, N>> {
 
 	/**
 	 * Returns the label associated to this node.
