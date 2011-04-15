@@ -38,21 +38,18 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.swt.IFocusService;
-import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ICommentedElement;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPredicateElement;
-import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -65,6 +62,7 @@ import fr.systerel.editor.contentAssist.RodinContentAssistProcessor;
 import fr.systerel.editor.documentModel.DocumentMapper;
 import fr.systerel.editor.documentModel.Interval;
 import fr.systerel.editor.documentModel.RodinTextStream;
+import fr.systerel.editor.presentation.IRodinColorConstant;
 import fr.systerel.editor.presentation.RodinConfiguration;
 import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
 
@@ -77,8 +75,6 @@ public class OverlayEditor implements IAnnotationModelListener,
 
 	public static final String EDITOR_TEXT_ID = RodinEditor.EDITOR_ID
 	+ ".editorText";
-	private static final RGB BACKGROUND = new RGB(250, 250, 250);
-	private static final Color BG_COLOR = EventBSharedColor.getColor(BACKGROUND);
 	private static final int MARGIN = 4;
 
 	private final ProjectionViewer viewer;
@@ -91,10 +87,10 @@ public class OverlayEditor implements IAnnotationModelListener,
 
 	private StyledText editorText;
 	private Interval interval;
-	private Menu fTextContextMenu;
 	private ArrayList<IAction> editActions = new ArrayList<IAction>();
 	private ModifyListener eventBTranslator;
 	private Point editorPos;
+	private Menu fTextContextMenu;
 
 	public OverlayEditor(StyledText parent, DocumentMapper mapper,
 			ProjectionViewer viewer, RodinEditor editor) {
@@ -103,7 +99,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 		this.parent = parent;
 		this.editor = editor;
 		textViewer = new TextViewer(parent, SWT.NONE);
-		textViewer.getTextWidget().setBackground(BG_COLOR);
+		textViewer.getTextWidget().setBackground(IRodinColorConstant.BG_COLOR);
 		contentAssistant = getContentAssistant();
 		contentAssistant.install(textViewer);
 		eventBTranslator = RodinKeyboardPlugin.getDefault()
@@ -140,12 +136,12 @@ public class OverlayEditor implements IAnnotationModelListener,
 
 	//TODO Check for command based replacement ?
 	private void createMenu() {
-		final String id = "editorTextMenu";
-		final MenuManager manager = new MenuManager(id, id);
-		manager.setRemoveAllWhenShown(true);
-		manager.addMenuListener(this);
-		fTextContextMenu = manager.createContextMenu(editorText);
-		editorText.setMenu(fTextContextMenu);
+		 final String id = "editorTextMenu";
+		 final MenuManager manager = new MenuManager(id, id);
+		 manager.setRemoveAllWhenShown(true);
+		 manager.addMenuListener(this);
+		 fTextContextMenu = manager.createContextMenu(editorText);
+		 editorText.setMenu(fTextContextMenu);
 	}
 
 	public void showAtOffset(int offset) {
@@ -409,17 +405,16 @@ public class OverlayEditor implements IAnnotationModelListener,
 
 		for (IAction action : editActions) {
 			if (action.getActionDefinitionId().equals(
-					IWorkbenchActionDefinitionIds.COPY)
+					IWorkbenchCommandConstants.EDIT_COPY)
 					|| action.getActionDefinitionId().equals(
-							IWorkbenchActionDefinitionIds.CUT)) {
+							IWorkbenchCommandConstants.EDIT_CUT)) {
 				action.setEnabled(editorText.getSelectionCount() > 0);
 			}
 			if (action.getActionDefinitionId().equals(
-					IWorkbenchActionDefinitionIds.PASTE)) {
+					IWorkbenchCommandConstants.EDIT_PASTE)) {
 				// TODO: disable, if nothing to paste.
 			}
 			manager.add(action);
-
 		}
 	}
 
@@ -427,19 +422,18 @@ public class OverlayEditor implements IAnnotationModelListener,
 		IAction action;
 		action = new StyledTextEditAction(editorText, ST.COPY);
 		action.setText("Copy");
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
 		editActions.add(action);
 
 		action = new StyledTextEditAction(editorText, ST.PASTE);
 		action.setText("Paste");
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_PASTE);
 		editActions.add(action);
 
 		action = new StyledTextEditAction(editorText, ST.CUT);
 		action.setText("Cut");
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.CUT);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_CUT);
 		editActions.add(action);
-
 	}
 
 	public void saveAndExit() {

@@ -11,7 +11,9 @@
 
 package fr.systerel.editor.presentation;
 
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
+import org.eventb.internal.ui.EventBSharedColor;
 
 public interface IRodinColorConstant {
 
@@ -33,7 +35,7 @@ public interface IRodinColorConstant {
 	RGB IMPLICIT_ATTRIBUTE = new RGB(160, 160, 190);
 
 	RGB COMMENT_HEADER = new RGB(103, 187, 155); // The comment header §
-	RGB SECTION = new RGB(0, 200, 0);
+	RGB SECTION = new RGB(0, 50, 70);
 	RGB DEFAULT = new RGB(0, 0, 0);
 
 	/**
@@ -48,4 +50,6 @@ public interface IRodinColorConstant {
 	RGB SECTION_DEBUG_BG = new RGB(170, 170, 70);
 	RGB KEYWORD_DEBUG_BG = new RGB(190, 50, 0);
 
+	RGB BACKGROUND = new RGB(250, 250, 250);
+	Color BG_COLOR = EventBSharedColor.getColor(BACKGROUND);
 }

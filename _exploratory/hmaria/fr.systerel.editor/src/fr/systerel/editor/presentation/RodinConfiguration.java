@@ -287,7 +287,7 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 		bgColor = (COLOR_DEBUG) ? colorManager.getColor(SECTION_DEBUG_BG)
 				: null;
 		rdr = new RodinDamagerRepairer(new TextAttribute(
-				colorManager.getColor(LABEL_TYPE.getColor()), bgColor,
+				colorManager.getColor(SECTION_TYPE.getColor()), bgColor,
 				SWT.ITALIC));
 		reconciler.setDamager(rdr, SECTION_TYPE.getName());
 		reconciler.setRepairer(rdr, SECTION_TYPE.getName());
@@ -295,7 +295,7 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 		bgColor = (COLOR_DEBUG) ? colorManager.getColor(KEYWORD_DEBUG_BG)
 				: null;
 		final TextAttribute att = new TextAttribute(
-				colorManager.getColor(LABEL_TYPE.getColor()), bgColor,
+				colorManager.getColor(KEYWORD_TYPE.getColor()), bgColor,
 				SWT.ITALIC);
 		rdr = new RodinDamagerRepairer(att);
 

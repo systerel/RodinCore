@@ -6,7 +6,6 @@
          point="org.eclipse.ui.editors">
       <editor
             class="fr.systerel.editor.editors.RodinEditor"
-            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
             default="true"
             extensions="bum, buc"
             icon="icons/full/clcl16/b_file.gif"
@@ -62,6 +61,26 @@
             class="org.rodinp.core.emf.lightcore.RodinResourceFactory"
             type="bum">
       </parser>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="fr.systerel.editor.handlers.TestHandler"
+            id="fr.systerel.editor.command1"
+            name="TEST">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:#TextEditorContext?after=additions">
+         <command
+               commandId="fr.systerel.editor.command1"
+               label="TEST"
+               style="push">
+         </command>
+      </menuContribution>
    </extension>
 
 </plugin>

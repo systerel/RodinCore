@@ -14,7 +14,6 @@ import static fr.systerel.editor.presentation.RodinConfiguration.COMMENT_HEADER_
 import static fr.systerel.editor.presentation.RodinConfiguration.KEYWORD_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.LABEL_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.PRESENTATION_TYPE;
-import static fr.systerel.editor.presentation.RodinConfiguration.SECTION_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.getAttributeContentType;
 
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
@@ -43,6 +42,7 @@ public class RodinTextStream {
 	private final StringBuilder builder;
 	private final DocumentMapper mapper;
 	private int level = MIN_LEVEL;
+	
 	public static String processMulti(boolean multiLine, int level,
 			boolean addWhiteSpace, String text) {
 		if (!multiLine || text == null)
@@ -141,7 +141,7 @@ public class RodinTextStream {
 	protected void addSectionRegion(String title) {
 		if (level > 0)
 			addPresentationRegion(getTabs(level), null);
-		addElementRegion(title, null, SECTION_TYPE, false);
+		addElementRegion(title, null, KEYWORD_TYPE, false);
 		builder.append((String) LINESEPARATOR);
 	}
 

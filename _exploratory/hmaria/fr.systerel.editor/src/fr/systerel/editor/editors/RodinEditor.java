@@ -12,7 +12,6 @@ package fr.systerel.editor.editors;
 
 import java.util.HashMap;
 
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Position;
@@ -20,7 +19,6 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
@@ -31,8 +29,6 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.IElementStateListener;
-import org.eclipse.ui.texteditor.ITextEditorActionConstants;
-import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
@@ -42,7 +38,6 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.keyboard.preferences.PreferenceConstants;
 
-import fr.systerel.editor.actions.DeleteAction;
 import fr.systerel.editor.documentModel.DocumentMapper;
 import fr.systerel.editor.documentModel.Interval;
 import fr.systerel.editor.documentModel.MarkerAnnotationPosition;
@@ -65,6 +60,10 @@ public class RodinEditor extends TextEditor {
 	private Annotation[] oldMarkers = new Annotation[0];
 	private RodinDocumentProvider documentProvider;
 
+	private ProjectionViewer viewer;
+
+//	private Menu fTextContextMenu;
+
 	public RodinEditor() {
 		super();
 		colorManager = new ColorManager();
@@ -74,56 +73,61 @@ public class RodinEditor extends TextEditor {
 		setDocumentProvider(documentProvider);
 		setElementStateListener();
 	}
-
-	protected void createActions() {
-		super.createActions();
-		IAction action = new DeleteAction(this);
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.DELETE);
-		action.setText("Delete");
-		setAction(ITextEditorActionConstants.DELETE, action);
-	}
-
+	
 	public void dispose() {
 		colorManager.dispose();
 		super.dispose();
 	}
-
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
-
-		// obtain a foldable editor
-		ProjectionViewer viewer = (ProjectionViewer) getSourceViewer();
+		viewer = (ProjectionViewer) getSourceViewer();
 		projectionSupport = new ProjectionSupport(viewer,
 				getAnnotationAccess(), getSharedColors());
 		projectionSupport.install();
 		viewer.doOperation(ProjectionViewer.TOGGLE);
 		projectionAnnotationModel = viewer.getProjectionAnnotationModel();
 		visualAnnotationModel = viewer.getVisualAnnotationModel();
-
-		styledText = getSourceViewer().getTextWidget();
-
+		styledText = viewer.getTextWidget();
 		overlayEditor = new OverlayEditor(styledText, mapper, viewer, this);
 		projectionAnnotationModel.addAnnotationModelListener(overlayEditor);
-		SelectionController controller = new SelectionController(styledText,
+		final SelectionController controller = new SelectionController(styledText,
 				mapper, viewer, overlayEditor);
 		styledText.addMouseListener(controller);
 		styledText.addVerifyKeyListener(controller);
 		styledText.addTraverseListener(controller);
-		Font font = JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
+		
+		final Font font = JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
 		styledText.setFont(font);
-		// TODO
-		ButtonManager buttonManager = new ButtonManager(mapper, styledText,
-				viewer, this);
-		buttonManager.createButtons();
-
-		updateFoldingStructure(documentProvider.getFoldingRegions());
+		
+//		ButtonManager buttonManager = new ButtonManager(mapper, styledText,
+//				viewer, this);
+//		buttonManager.createButtons();
+		
+		// TODO Folding is broken REPAIR
+//		updateFoldingStructure(documentProvider.getFoldingRegions());
 		updateMarkerStructure(documentProvider.getMarkerAnnotations());
-		
 		setTitleImage(documentProvider.getInputRoot());
-		
-		adjustHighlightRange(0, mapper.getDocument().getLength());
 	}
+	
+	// Used to override the context menu
+//	private void createMenu() {
+//		 final String id = "rodinEditorMenu";
+//		 final MenuManager manager = new MenuManager(id, id);
+//		 manager.setRemoveAllWhenShown(true);
+//		 //manager.addMenuListener(this);
+//		 fTextContextMenu = manager.createContextMenu(styledText);
+//		 styledText.setMenu(fTextContextMenu);
+//	}
+	
+//	protected void createActions() {
+//	 		super.createActions();
+//			IAction action = new DeleteAction(this);
+//			action.setActionDefinitionId(IWorkbenchActionDefinitionIds.DELETE);
+//			action.setText("Delete");
+//			setAction(ITextEditorActionConstants.DELETE, action);
+//	}
 
 	private void setTitleImage(IEventBRoot inputRoot) {
 		final IInternalElementType<?> rootType = inputRoot.getElementType();
@@ -153,7 +157,7 @@ public class RodinEditor extends TextEditor {
 		getSourceViewerDecorationSupport(viewer);
 		return viewer;
 	}
-
+	
 	/**
 	 * Replaces the old folding structure with this new one.
 	 * 
@@ -199,7 +203,7 @@ public class RodinEditor extends TextEditor {
 		oldMarkers = annotations;
 
 	}
-
+	
 	/**
 	 * Sets the selection. If the selection is a <code>IRodinElement</code> the
 	 * corresponding area in the editor is highlighted
@@ -250,7 +254,5 @@ public class RodinEditor extends TextEditor {
 	public DocumentMapper getDocumentMapper() {
 		return mapper;
 	}
-	
-	
 	
 }
