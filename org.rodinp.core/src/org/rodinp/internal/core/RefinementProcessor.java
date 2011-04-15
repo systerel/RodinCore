@@ -52,8 +52,8 @@ public class RefinementProcessor {
 			for (IRefinementParticipant participant : participants) {
 				if (subMon.isCanceled())
 					return null;
-				participant.process(refinedRoot, sourceRoot);
-				subMon.worked(1);
+				participant
+						.process(refinedRoot, sourceRoot, subMon.newChild(1));
 			}
 			refinedRoot.getRodinFile().save(monitor, false);
 			return refinedRoot;

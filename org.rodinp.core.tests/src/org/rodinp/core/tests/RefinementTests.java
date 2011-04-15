@@ -15,6 +15,7 @@ import static java.util.Arrays.asList;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRefinementParticipant;
 import org.rodinp.core.IRodinDB;
@@ -75,7 +76,7 @@ public class RefinementTests extends AbstractRodinDBTests {
 
 		@Override
 		public void process(IInternalElement refinedRoot,
-				IInternalElement abstractRoot) {
+				IInternalElement abstractRoot, IProgressMonitor monitor) {
 			logger.called(number);
 		}
 
@@ -98,8 +99,8 @@ public class RefinementTests extends AbstractRodinDBTests {
 
 		@Override
 		public void process(IInternalElement refinedRoot,
-				IInternalElement abstractRoot) {
-			super.process(refinedRoot, abstractRoot);
+				IInternalElement abstractRoot, IProgressMonitor monitor) {
+			super.process(refinedRoot, abstractRoot, monitor);
 			throw new RuntimeException();
 		}
 	};

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.rodinp.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 /**
  * Common protocol for refinement participants.
  * 
@@ -28,7 +30,12 @@ public interface IRefinementParticipant {
 	 *            the refined root
 	 * @param sourceRoot
 	 *            the source of the refinement
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code>
+	 * @throws RodinDBException
+	 *             if a database operation fails
 	 */
-	void process(IInternalElement refinedRoot, IInternalElement sourceRoot);
+	void process(IInternalElement refinedRoot, IInternalElement sourceRoot,
+			IProgressMonitor monitor) throws RodinDBException;
 
 }
