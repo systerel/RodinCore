@@ -485,6 +485,9 @@ public class RodinCore extends Plugin {
 	 * Refines the given root to a file with the given name. In case the
 	 * refinement fails, an error is logged and <code>null</code> is returned.
 	 * <p>
+	 * The refined file is created in the same project as the source file.
+	 * </p>
+	 * <p>
 	 * The given source root is not modified by this operation.
 	 * </p>
 	 * <p>
@@ -496,17 +499,22 @@ public class RodinCore extends Plugin {
 	 * @param sourceRoot
 	 *            the root to refine
 	 * @param targetName
-	 *            name of the refined target, including the extension, which
-	 *            must give the same root type as the source root
+	 *            name of the refined target, including the extension (see
+	 *            {@link IRodinProject#getRodinFile(String)})
+	 * @see IRodinProject#getRodinFile(String)
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code> if progress report is
 	 *            not desired
 	 * @return refined root or <code>null</code>
+	 * @throws RodinDBException
+	 *             if a database request fails during the operation
+	 * @throws IllegalArgumentException
+	 *             if the given target file already exists
 	 * @since 1.4
 	 */
-	// FIXME either check same root type, or take a bare name
 	public static IInternalElement refine(IInternalElement sourceRoot,
-			String targetName, IProgressMonitor monitor) {
+			String targetName, IProgressMonitor monitor)
+			throws RodinDBException {
 		return new RefinementProcessor(sourceRoot).refine(targetName, monitor);
 	}
 

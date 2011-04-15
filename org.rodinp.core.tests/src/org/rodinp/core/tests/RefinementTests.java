@@ -144,7 +144,8 @@ public class RefinementTests extends AbstractRodinDBTests {
 	}
 
 	private static void assertRefCalls(boolean successExpected,
-			IInternalElement sourceRoot, boolean ordered, Integer... expected) {
+			IInternalElement sourceRoot, boolean ordered, Integer... expected)
+			throws RodinDBException {
 		final String refinedName = "refined_"
 				+ sourceRoot.getRodinFile().getElementName();
 		final IInternalElement refinedRoot = RodinCore.refine(sourceRoot,
@@ -159,12 +160,13 @@ public class RefinementTests extends AbstractRodinDBTests {
 	}
 
 	private static void assertUnorderedRefinementCalls(
-			IInternalElement abstractRoot, Integer... expected) {
+			IInternalElement abstractRoot, Integer... expected)
+			throws RodinDBException {
 		assertRefCalls(true, abstractRoot, false, expected);
 	}
 
 	private static void assertRefinementCalls(IInternalElement abstractRoot,
-			Integer... expected) {
+			Integer... expected) throws RodinDBException {
 		assertRefCalls(true, abstractRoot, true, expected);
 	}
 
@@ -433,8 +435,13 @@ public class RefinementTests extends AbstractRodinDBTests {
 		REG.addParticipant(EXCEPTION_PARTICIPANT, "exceptionParticipant",
 				RodinTestRoot.ELEMENT_TYPE);
 		final IInternalElement root = makeRoot1("f");
-		// the exception must be caught underneath
-		assertFailure(root, 3);
+		// the exception is not caught underneath
+		try {
+			RodinCore.refine(root, "refRoot", null);
+			fail("exception expected");
+		} catch (RuntimeException e) {
+			// as expected
+		}
 	}
 
 }

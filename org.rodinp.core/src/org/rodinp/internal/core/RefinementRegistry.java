@@ -46,29 +46,28 @@ public class RefinementRegistry {
 			@Override
 			public void load(IConfigurationElement element,
 					RefinementRegistry reg) throws Exception {
-					final String bareId = element.getAttribute(ID);
-					checkNoDots(bareId);
-					final String namespace = element.getNamespaceIdentifier();
-					final String refinementId = namespace + "." + bareId;
-					final String rootElType = element.getAttribute(ROOT_TYPE);
-					final IInternalElementType<IInternalElement> rootType = RodinCore
-							.getInternalElementType(rootElType);
-					reg.addRefinement(rootType, refinementId);
+				final String bareId = element.getAttribute(ID);
+				checkNoDots(bareId);
+				final String namespace = element.getNamespaceIdentifier();
+				final String refinementId = namespace + "." + bareId;
+				final String rootElType = element.getAttribute(ROOT_TYPE);
+				final IInternalElementType<IInternalElement> rootType = RodinCore
+						.getInternalElementType(rootElType);
+				reg.addRefinement(rootType, refinementId);
 			}
 		},
 		PARTICIPANTS {
 			@Override
 			public void load(IConfigurationElement element,
 					RefinementRegistry reg) throws Exception {
-					final String bareId = element.getAttribute(ID);
-					checkNoDots(bareId);
-					final String namespace = element.getNamespaceIdentifier();
-					final String participantId = namespace + "." + bareId;
-					final String refinementId = element
-							.getAttribute(REFINEMENT_ID);
-					final IRefinementParticipant participant = (IRefinementParticipant) element
-							.createExecutableExtension(CLASS);
-					reg.addParticipant(participant, participantId, refinementId);
+				final String bareId = element.getAttribute(ID);
+				checkNoDots(bareId);
+				final String namespace = element.getNamespaceIdentifier();
+				final String participantId = namespace + "." + bareId;
+				final String refinementId = element.getAttribute(REFINEMENT_ID);
+				final IRefinementParticipant participant = (IRefinementParticipant) element
+						.createExecutableExtension(CLASS);
+				reg.addParticipant(participant, participantId, refinementId);
 			}
 		},
 		ORDERS {
