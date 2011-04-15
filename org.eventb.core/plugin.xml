@@ -1466,5 +1466,26 @@
             name="%redeclarationKindName">
       </occurrenceKind>
    </extension>
+   <extension
+         point="org.rodinp.core.refinements">
+      <Refinement
+            id="contextRefinement"
+            root-element-type="org.eventb.core.contextFile">
+      </Refinement>
+      <Participant
+            class="org.eventb.internal.core.refinement.ExtendContext"
+            id="contextRefiner"
+            refinement-id="org.eventb.core.contextRefinement">
+      </Participant>
+      <Refinement
+            id="machineRefinement"
+            root-element-type="org.eventb.core.machineFile">
+      </Refinement>
+      <Participant
+            class="org.eventb.internal.core.refinement.RefineMachine"
+            id="machineRefiner"
+            refinement-id="org.eventb.core.machineRefinement">
+      </Participant>
+   </extension>
 
 </plugin>
