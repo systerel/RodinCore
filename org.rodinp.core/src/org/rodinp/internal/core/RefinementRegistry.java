@@ -133,6 +133,20 @@ public class RefinementRegistry {
 	// all participant ids with associated refinement
 	private final Map<String, Refinement> participants = new HashMap<String, Refinement>();
 
+	public IInternalElementType<?> getRootType(String refinementId) {
+		try {
+			load();
+		} catch (RefinementException e) {
+			Util.log(e, "while loading refinement registry");
+			return null;
+		}
+		final Refinement refinement = refinementIds.get(refinementId);
+		if (refinement == null) {
+			return null;
+		}
+		return refinement.getRootType();
+	}
+
 	/**
 	 * Returns an ordered list of refinement participants for the given root
 	 * element type. The order is computed from contributions. In case no
@@ -145,7 +159,7 @@ public class RefinementRegistry {
 	 */
 	public List<IRefinementParticipant> getRefinementParticipants(
 			IInternalElementType<?> rootType) throws RefinementException {
-		load(rootType);
+		load();
 		final Refinement refinement = refinements.get(rootType);
 		if (refinement == null) {
 			return null;
@@ -153,9 +167,8 @@ public class RefinementRegistry {
 		return refinement.getOrderedParticipants();
 	}
 
-	private void load(IInternalElementType<?> rootType)
-			throws RefinementException {
-		if (refinements.containsKey(rootType)) { // already loaded
+	private void load() throws RefinementException {
+		if (!refinements.isEmpty()) { // already loaded
 			// FIXME refinements might have been programmatically added before
 			// for now we suppose that, except in tests, the only contributions
 			// come from the extension point
