@@ -45,6 +45,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqvRewrites
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimplifies;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusion;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembershipL1;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegation;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TotalDomRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
 
@@ -428,6 +429,31 @@ public abstract class TreeShape {
 		
 	}
 	
+	private static class RnShape extends TreeShape {
+
+		private final Predicate predicate;
+		private final String position;
+
+		public RnShape(Predicate predicate, String position, TreeShape... expChildren) {
+			super(expChildren);
+			this.predicate = predicate;
+			this.position = position;
+		}
+
+		@Override
+		protected void checkInput(IReasonerInput input) {
+			final AbstractManualRewrites.Input inp = ((AbstractManualRewrites.Input) input);
+			assertEquals(position, inp.getPosition().toString());
+			assertEquals(predicate, inp.getPred());
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return RemoveNegation.REASONER_ID;
+		}
+
+	}
+
 	public static final TreeShape empty = new EmptyShape();
 
 	/**
@@ -522,6 +548,14 @@ public abstract class TreeShape {
 		return new EqvShape(position, children);
 	}
 	
+	public static TreeShape rn(String position, TreeShape... children) {
+		return new RnShape(null, position, children);
+	}
+
+	public static TreeShape rn(Predicate hyp, String pos, TreeShape... children) {
+		return new RnShape(hyp, pos, children);
+	}
+
 	protected final TreeShape[] expChildren;
 
 	public TreeShape(TreeShape[] expChildren) {

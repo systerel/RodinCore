@@ -602,6 +602,12 @@
             id="eqvGoalTac"
             name="%eqvGoalTacName">
       </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$NnfRewritesAutoTac"
+            description="%NnfTacDesc"
+            id="NnfTac"
+            name="%NnfTacName">
+      </autoTactic>
    </extension>
 
 </plugin>

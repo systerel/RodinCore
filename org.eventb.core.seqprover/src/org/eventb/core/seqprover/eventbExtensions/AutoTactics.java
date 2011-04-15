@@ -20,6 +20,7 @@ package org.eventb.core.seqprover.eventbExtensions;
 import static org.eventb.core.seqprover.tactics.BasicTactics.composeOnAllPending;
 import static org.eventb.core.seqprover.tactics.BasicTactics.composeUntilSuccess;
 import static org.eventb.core.seqprover.tactics.BasicTactics.loopOnAllPending;
+import static org.eventb.core.seqprover.eventbExtensions.Tactics.*;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.BinaryPredicate;
+import org.eventb.core.ast.DefaultFilter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
@@ -1193,6 +1195,85 @@ public class AutoTactics {
 
 	}
 	
+	/**
+	 * The automatic tactic "Negation Normal Form" to be applied once on a
+	 * hypothesis or a goal.
+	 * 
+	 * @since 2.1
+	 */
+	public static class NnfRewritesOnceTac implements ITactic {
+
+		@Override
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			final FormulaFactory ff = ptNode.getFormulaFactory();
+			final IProverSequent sequent = ptNode.getSequent();
+			for (Predicate hyp : sequent.visibleHypIterable()) {
+				final IPosition posHyp = nnfGetPosition(hyp, ff);
+				if (posHyp != null) {
+					return removeNeg(hyp, posHyp).apply(ptNode, pm);
+				}
+			}
+			final IPosition posGoal = nnfGetPosition(sequent.goal(), ff);
+			if (posGoal != null) {
+				return removeNeg(null, posGoal).apply(ptNode, pm);
+			}
+			return "Tactic unapplicable";
+		}
+
+	}
+
+	/**
+	 * An automatic tactic to apply "Negation Normal Form" tactic on hypothesis 
+	 * and goal, and looping on all pending nodes.
+	 * 
+	 * @since 2.1
+	 */
+	public static class NnfRewritesAutoTac extends AbsractLazilyConstrTactic {
+
+		@Override
+		protected ITactic getSingInstance() {
+			return BasicTactics.loopOnAllPending(new NnfRewritesOnceTac());
+		}	
+
+	}
+	
+	/**
+	 * @since 2.1
+	 */
+	public static IPosition nnfGetPosition (Predicate pred, final FormulaFactory ff){
+		final List<IPosition> listPos = pred.getPositions(new DefaultFilter(){
+			@Override
+			public boolean select(UnaryPredicate predicate){
+				if (predicate.getTag() == Predicate.NOT) {
+					Predicate child = predicate.getChild();
+					if (Lib.isNeg(child)) {
+						return true;
+					}
+					if (Lib.isImp(child)) {
+						return true;
+					}
+					if (Lib.isExQuant(child)) {
+						return true;
+					}
+					if (Lib.isUnivQuant(child)) {
+						return true;
+					}
+					if (Lib.isConj(child)) {
+						return true;
+					}
+					if (Lib.isDisj(child)) {
+						return true;
+					}
+				}
+				return false;
+			}
+		});
+		if (listPos.isEmpty()){
+			return null;
+		}
+		return listPos.get(0);
+	}
+
 	//*************************************************
 	//
 	//				Mixed

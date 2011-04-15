@@ -49,6 +49,19 @@ public class TacticTestUtils {
 	}
 
 	/**
+	 * Asserts that the application of the given tactic fails and does not
+	 * modify the proof tree.
+	 * 
+	 * @param node
+	 *            the considered proof tree node
+	 * @param tac
+	 *            the tactic tested
+	 */
+	public static void assertFailure(IProofTreeNode node, ITactic tac) {
+		TreeShape.assertFailure(node, tac);
+	}
+
+	/**
 	 * Asserts that the tactic registry contains a descriptor corresponding to
 	 * the given id, and that the instance of the tactic attached to this
 	 * descriptor is equal to the tactic given as parameter.

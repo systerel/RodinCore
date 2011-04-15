@@ -52,7 +52,7 @@ public abstract class AbstractManualRewrites implements IReasoner {
 		 * rewriting will be applied to the goal.
 		 * 
 		 * @param pred
-		 *            hypothesis to rewrite or <code>null</code>
+		 *            hypothesis to rewrite or <code>null</code> for goal
 		 * @param position
 		 *            the position where the reasoner can apply
 		 */
@@ -76,6 +76,10 @@ public abstract class AbstractManualRewrites implements IReasoner {
 		
 		public IPosition getPosition(){
 			return position;
+		}
+
+		public Predicate getPred(){
+			return pred;
 		}
 
 	}
