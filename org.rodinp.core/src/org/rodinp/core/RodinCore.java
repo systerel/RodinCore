@@ -41,6 +41,7 @@ import org.rodinp.core.location.IRodinLocation;
 import org.rodinp.internal.core.BatchOperation;
 import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.RefinementProcessor;
+import org.rodinp.internal.core.RefinementRegistry;
 import org.rodinp.internal.core.Region;
 import org.rodinp.internal.core.RodinDB;
 import org.rodinp.internal.core.RodinDBManager;
@@ -481,6 +482,16 @@ public class RodinCore extends Plugin {
 		return db.getHandleFromMemento(memento);
 	}
 
+	/**
+	 * Returns the refinement registry instance.
+	 * 
+	 * @return the refinement registry
+	 * @since 1.4
+	 */
+	public static IRefinementRegistry getRefinementRegistry() {
+		return RefinementRegistry.getDefault();
+	}
+	
 	/**
 	 * Refines the given root to a file with the given name. In case the
 	 * refinement fails, an error is logged and <code>null</code> is returned.
