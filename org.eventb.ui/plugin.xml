@@ -7,6 +7,7 @@
       schema="schema/editorPages.exsd"/>
    <extension-point id="proofTactics" name="%point.proofTacticsName" schema="schema/proofTactics.exsd"/>
    <extension-point id="editorItems" name="%point.editorItemsName" schema="schema/editorItems.exsd"/>
+   <extension-point id="refinementUI" name="%point.refinementUIName" schema="schema/refinementUI.exsd"/>
 
    
    <extension
@@ -1804,6 +1805,12 @@
             id="org.eventb.ui.prove.previousHighlight"
             name="%commands.previousHighlight.name">
       </command>
+      <command
+            defaultHandler="org.eventb.internal.ui.refine.RefineHandler"
+            description="%commands.refine.description"
+            id="org.eventb.ui.refine"
+            name="%commands.refine.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.contexts">
@@ -2671,6 +2678,14 @@
       <menuContribution
             locationURI="popup:org.eventb.ui.views.ProofSkeleton?after=additions">
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.ui.popup.any">
+         <command
+               commandId="org.eventb.ui.refine"
+               style="push">
+         </command>
+      </menuContribution>
    </extension>
   <extension
         point="org.eclipse.ui.propertyPages">
@@ -2758,5 +2773,20 @@
            </objectClass>
         </enablement>
      </decorator>
+  </extension>
+  <extension
+        point="org.eventb.ui.refinementUI">
+     <UIMessages
+           label="%refinementUI.context.label"
+           message="%refinementUI.context.message"
+           refinement-id="org.eventb.core.contextRefinement"
+           title="%refinementUI.context.title">
+     </UIMessages>
+     <UIMessages
+           label="%refinementUI.machine.label"
+           message="%refinementUI.machine.message"
+           refinement-id="org.eventb.core.machineRefinement"
+           title="%refinementUI.machine.title">
+     </UIMessages>
   </extension>
 </plugin>
