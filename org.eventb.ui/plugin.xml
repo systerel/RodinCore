@@ -2681,13 +2681,10 @@
       <menuContribution
             allPopups="false"
             locationURI="popup:org.eclipse.ui.popup.any">
-         <command
-               commandId="org.eventb.ui.refine"
-               style="push">
-            <visibleWhen
-                  checkEnabled="true">
-            </visibleWhen>
-         </command>
+         <dynamic
+               class="org.eventb.internal.ui.refine.RefineItem"
+               id="org.eventb.ui.refineItem">
+         </dynamic>
       </menuContribution>
    </extension>
   <extension
