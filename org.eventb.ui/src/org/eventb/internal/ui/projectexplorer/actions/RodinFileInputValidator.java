@@ -20,7 +20,7 @@ public class RodinFileInputValidator implements IInputValidator {
 
 	private final IEventBProject prj;
 
-	RodinFileInputValidator(IRodinProject prj) {
+	public RodinFileInputValidator(IRodinProject prj) {
 		this.prj = (IEventBProject) prj.getAdapter(IEventBProject.class);
 	}
 

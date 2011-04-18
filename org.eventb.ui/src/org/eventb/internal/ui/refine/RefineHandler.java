@@ -16,13 +16,56 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.handlers.HandlerUtil;
+import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.projectexplorer.actions.RodinFileInputValidator;
+import org.eventb.internal.ui.refine.RefinementUIRegistry.RefinementUI;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 
 /**
  * @author Nicolas Beauger
  * 
  */
 public class RefineHandler extends AbstractHandler {
+
+	private static final class CreateRefinement implements IWorkspaceRunnable {
+
+		private final IInternalElement sourceRoot;
+		private final IInternalElement targetRoot;
+
+		public CreateRefinement(IInternalElement sourceRoot,
+				IInternalElement targetRoot) {
+			this.sourceRoot = sourceRoot;
+			this.targetRoot = targetRoot;
+		}
+
+		@Override
+		public void run(IProgressMonitor monitor) throws RodinDBException {
+			targetRoot.getRodinFile().create(false, monitor);
+
+			final boolean success = RodinCore.refine(sourceRoot, targetRoot,
+					monitor);
+
+			if (success) {
+				targetRoot.getRodinFile().save(monitor, false);
+				UIUtils.linkToEventBEditor(targetRoot);
+			}
+		}
+
+	}
 
 	private IInternalElement currentRoot;
 
@@ -32,8 +75,62 @@ public class RefineHandler extends AbstractHandler {
 			throw new IllegalStateException(
 					"I have no clue which component to refine !");
 		}
-		
+		final IInternalElementType<? extends IInternalElement> rootType = currentRoot
+				.getElementType();
+		final IWorkbenchPart activePart = HandlerUtil
+				.getActivePartChecked(event);
+		final RefinementUI refUI = RefinementUIRegistry.getDefault()
+				.getRefinementUI(rootType);
+		final String extension = getExtension(rootType);
+		final IRodinFile target = askRefinementFileFor(
+				currentRoot.getRodinFile(), activePart, refUI, extension);
+		if (target == null) {
+			return null;
+		}
+
+		final CreateRefinement op = new CreateRefinement(currentRoot,
+				target.getRoot());
+		try {
+			RodinCore.run(op, null);
+		} catch (RodinDBException e) {
+			UIUtils.log(
+					e,
+					"When creating a refinement of "
+							+ currentRoot.getElementName() + " by  "
+							+ target.getElementName());
+		}
 		return null;
+	}
+
+	private static String getExtension(IInternalElementType<?> rootType) {
+		final IContentType contentType = Platform.getContentTypeManager()
+				.getContentType(rootType.getId());
+		final String[] fileSpecs = contentType
+				.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
+		if (fileSpecs.length == 0) {
+			throw new IllegalStateException(
+					"no file extension for content type " + contentType.getId());
+		}
+		final String extension = fileSpecs[0];
+		return extension;
+	}
+
+	// Asks the user the name of the refined file to create and returns it.
+	private static IRodinFile askRefinementFileFor(IRodinFile abs,
+			IWorkbenchPart part, RefinementUI refUI, String extension) {
+		final IRodinProject prj = abs.getRodinProject();
+		final InputDialog dialog = new InputDialog(part.getSite().getShell(),
+				refUI.title, refUI.message, abs.getBareName() + "0",
+				new RodinFileInputValidator(prj));
+		dialog.open();
+
+		final String name = dialog.getValue();
+		if (name == null) {
+			return null;
+		}
+		final IPath path = new Path(name).addFileExtension(extension);
+		final String fileName = path.toString();
+		return prj.getRodinFile(fileName);
 	}
 
 	@Override
@@ -45,14 +142,12 @@ public class RefineHandler extends AbstractHandler {
 
 		if (enabled) {
 			this.currentRoot = (IInternalElement) selection.get(0);
-		} else {
-			this.currentRoot = null;
 		}
 		setBaseEnabled(enabled);
 		// FIXME set popup menu label, (use dynamic menu contribution ?)
 	}
 
-	private boolean computeEnablement(List<?> selection) {
+	private static boolean computeEnablement(List<?> selection) {
 		if (selection.size() != 1)
 			return false;
 		final Object x = selection.get(0);
