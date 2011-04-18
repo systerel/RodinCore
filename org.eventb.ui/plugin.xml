@@ -2684,6 +2684,9 @@
          <command
                commandId="org.eventb.ui.refine"
                style="push">
+            <visibleWhen
+                  checkEnabled="true">
+            </visibleWhen>
          </command>
       </menuContribution>
    </extension>
