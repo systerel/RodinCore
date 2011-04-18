@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.projectexplorer.actions.RodinFileInputValidator;
@@ -77,13 +77,12 @@ public class RefineHandler extends AbstractHandler {
 		}
 		final IInternalElementType<? extends IInternalElement> rootType = currentRoot
 				.getElementType();
-		final IWorkbenchPart activePart = HandlerUtil
-				.getActivePartChecked(event);
+		final Shell activeShell = HandlerUtil.getActiveShellChecked(event);
 		final RefinementUI refUI = RefinementUIRegistry.getDefault()
 				.getRefinementUI(rootType);
 		final String extension = getExtension(rootType);
 		final IRodinFile target = askRefinementFileFor(
-				currentRoot.getRodinFile(), activePart, refUI, extension);
+				currentRoot.getRodinFile(), activeShell, refUI, extension);
 		if (target == null) {
 			return null;
 		}
@@ -117,10 +116,10 @@ public class RefineHandler extends AbstractHandler {
 
 	// Asks the user the name of the refined file to create and returns it.
 	private static IRodinFile askRefinementFileFor(IRodinFile abs,
-			IWorkbenchPart part, RefinementUI refUI, String extension) {
+			Shell parentShell, RefinementUI refUI, String extension) {
 		final IRodinProject prj = abs.getRodinProject();
-		final InputDialog dialog = new InputDialog(part.getSite().getShell(),
-				refUI.title, refUI.message, abs.getBareName() + "0",
+		final InputDialog dialog = new InputDialog(parentShell, refUI.title,
+				refUI.message, abs.getBareName() + "0",
 				new RodinFileInputValidator(prj));
 		dialog.open();
 
