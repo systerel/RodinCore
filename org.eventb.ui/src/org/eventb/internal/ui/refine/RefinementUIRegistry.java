@@ -57,12 +57,6 @@ public class RefinementUIRegistry {
 		return DEFAULT_INSTANCE;
 	}
 
-	public boolean hasRefinement(IInternalElementType<?> elType) {
-		load();
-		return refinementUIs.containsKey(elType);
-		// return (x instanceof IContextRoot || x instanceof IMachineRoot);
-	}
-
 	public RefinementUI getRefinementUI(IInternalElementType<?> elType) {
 		load();
 		return refinementUIs.get(elType);

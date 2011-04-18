@@ -153,8 +153,8 @@ public class RefineHandler extends AbstractHandler {
 		if (!(x instanceof IInternalElement))
 			return false;
 		final IInternalElement e = (IInternalElement) x;
-		return RefinementUIRegistry.getDefault().hasRefinement(
-				e.getElementType());
+		return RefinementUIRegistry.getDefault().getRefinementUI(
+				e.getElementType()) != null;
 	}
 
 }
