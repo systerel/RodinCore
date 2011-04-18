@@ -123,12 +123,15 @@ public class DeltaProcessor {
 		final InternalElement e = LightcoreFactory.eINSTANCE
 				.createInternalElement();
 		e.setERodinElement(element);
+		e.setEIsRoot(element.isRoot());
+		e.setERoot(root);
 		e.load();
 		final IRodinElement parent = element.getParent();
 		if (parent instanceof IInternalElement) {
 			final LightElement eParent = findElement(parent, root);
 			if (eParent != null) {
 				eParent.getEChildren().add(e);
+				//eParent.addElement(e, null);
 			}
 		}
 		for (IRodinElement child : ((IInternalElement) element).getChildren()) {

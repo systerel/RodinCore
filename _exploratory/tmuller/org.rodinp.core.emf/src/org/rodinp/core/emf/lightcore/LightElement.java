@@ -19,11 +19,12 @@ import org.rodinp.core.emf.api.itf.ILElement;
  * The following features are supported:
  * <ul>
  *   <li>{@link org.rodinp.core.emf.lightcore.LightElement#getEAttributes <em>EAttributes</em>}</li>
+ *   <li>{@link org.rodinp.core.emf.lightcore.LightElement#isEIsRoot <em>EIs Root</em>}</li>
  *   <li>{@link org.rodinp.core.emf.lightcore.LightElement#getReference <em>Reference</em>}</li>
  *   <li>{@link org.rodinp.core.emf.lightcore.LightElement#getEChildren <em>EChildren</em>}</li>
  *   <li>{@link org.rodinp.core.emf.lightcore.LightElement#getEParent <em>EParent</em>}</li>
- *   <li>{@link org.rodinp.core.emf.lightcore.LightElement#isERoot <em>ERoot</em>}</li>
  *   <li>{@link org.rodinp.core.emf.lightcore.LightElement#getERodinElement <em>ERodin Element</em>}</li>
+ *   <li>{@link org.rodinp.core.emf.lightcore.LightElement#getERoot <em>ERoot</em>}</li>
  * </ul>
  * </p>
  *
@@ -48,6 +49,32 @@ public interface LightElement extends LightObject, ILElement {
 	 * @generated
 	 */
 	EMap<String, Attribute> getEAttributes();
+
+	/**
+	 * Returns the value of the '<em><b>EIs Root</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>EIs Root</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>EIs Root</em>' attribute.
+	 * @see #setEIsRoot(boolean)
+	 * @see org.rodinp.core.emf.lightcore.LightcorePackage#getLightElement_EIsRoot()
+	 * @model
+	 * @generated
+	 */
+	boolean isEIsRoot();
+
+	/**
+	 * Sets the value of the '{@link org.rodinp.core.emf.lightcore.LightElement#isEIsRoot <em>EIs Root</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>EIs Root</em>' attribute.
+	 * @see #isEIsRoot()
+	 * @generated
+	 */
+	void setEIsRoot(boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>Reference</b></em>' attribute.
@@ -123,32 +150,6 @@ public interface LightElement extends LightObject, ILElement {
 	void setEParent(LightElement value);
 
 	/**
-	 * Returns the value of the '<em><b>ERoot</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>ERoot</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>ERoot</em>' attribute.
-	 * @see #setERoot(boolean)
-	 * @see org.rodinp.core.emf.lightcore.LightcorePackage#getLightElement_ERoot()
-	 * @model
-	 * @generated
-	 */
-	boolean isERoot();
-
-	/**
-	 * Sets the value of the '{@link org.rodinp.core.emf.lightcore.LightElement#isERoot <em>ERoot</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>ERoot</em>' attribute.
-	 * @see #isERoot()
-	 * @generated
-	 */
-	void setERoot(boolean value);
-
-	/**
 	 * Returns the value of the '<em><b>ERodin Element</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -175,6 +176,32 @@ public interface LightElement extends LightObject, ILElement {
 	void setERodinElement(Object value);
 
 	/**
+	 * Returns the value of the '<em><b>ERoot</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>ERoot</em>' reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>ERoot</em>' reference.
+	 * @see #setERoot(LightElement)
+	 * @see org.rodinp.core.emf.lightcore.LightcorePackage#getLightElement_ERoot()
+	 * @model
+	 * @generated
+	 */
+	LightElement getERoot();
+
+	/**
+	 * Sets the value of the '{@link org.rodinp.core.emf.lightcore.LightElement#getERoot <em>ERoot</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>ERoot</em>' reference.
+	 * @see #getERoot()
+	 * @generated
+	 */
+	void setERoot(LightElement value);
+
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
@@ -199,4 +226,11 @@ public interface LightElement extends LightObject, ILElement {
 	 */
 	void doSetReference(String newReference);
 
+	/**
+	 * @generated NOT
+	 * @param toAdd
+	 * @param nextSibling
+	 */
+	void addElement(ILElement toAdd, ILElement nextSibling);
+	
 } // LightElement

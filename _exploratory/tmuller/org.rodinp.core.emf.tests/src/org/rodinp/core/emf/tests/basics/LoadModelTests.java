@@ -51,7 +51,7 @@ public class LoadModelTests extends AbstractRodinEMFCoreTest {
 		final ILElement element = rodinResource.getRoot();
 
 		assertTrue(element instanceof InternalElement);
-		assertTrue(((InternalElement) element).isERoot());
+		assertTrue(((InternalElement) element).isEIsRoot());
 
 		// Then delete the file
 		rodinFile.getResource().delete(true, null);

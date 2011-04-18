@@ -104,14 +104,14 @@ public class SynchroUtils {
 
 	public static void adaptRootForDBChanges(LightElement e) {
 		final DeltaRootAdapterFactory f = new DeltaRootAdapterFactory();
-		if (e.isERoot()) {
+		if (e.isEIsRoot()) {
 			f.adapt(e, DeltaRootAdapter.class);
 		}
 	}
 
 	public static void adaptRootForImplicitChildren(LightElement e) {
 		final ImplicitDeltaRootAdapterFactory f = new ImplicitDeltaRootAdapterFactory();
-		if (e.isERoot()) {
+		if (e.isEIsRoot()) {
 			f.adapt(e, DeltaRootAdapterFactory.class);
 		}
 	}

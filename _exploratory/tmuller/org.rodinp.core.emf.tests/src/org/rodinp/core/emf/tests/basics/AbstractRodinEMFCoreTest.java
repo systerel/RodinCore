@@ -21,15 +21,11 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILFile;
-import org.rodinp.core.emf.lightcore.InternalElement;
-import org.rodinp.core.emf.lightcore.LightElement;
-import org.rodinp.core.emf.lightcore.LightcoreFactory;
 import org.rodinp.core.emf.lightcore.RodinResource;
 import org.rodinp.core.tests.basis.NamedElement;
 
@@ -73,19 +69,10 @@ public abstract class AbstractRodinEMFCoreTest {
 
 	protected static NamedElement getNamedElement(IInternalElement parent,
 			String name) throws RodinDBException {
-		final NamedElement ne = parent.getInternalElement(
+		final NamedElement ne = (NamedElement) parent.getInternalElement(
 				NamedElement.ELEMENT_TYPE, name);
 		ne.create(null, null);
 		return ne;
-	}
-
-	protected static LightElement createInternalElement(LightElement parent,
-			IRodinElement rodinElement) {
-		final InternalElement iElem = LightcoreFactory.eINSTANCE
-				.createInternalElement();
-		iElem.setERodinElement(rodinElement);
-		iElem.load();
-		return iElem;
 	}
 
 	protected static IRodinProject createRodinProject(String projectName)

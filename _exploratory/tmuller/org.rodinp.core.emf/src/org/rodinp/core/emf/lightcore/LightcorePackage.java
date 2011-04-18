@@ -99,13 +99,22 @@ public interface LightcorePackage extends EPackage {
 	int LIGHT_ELEMENT__EATTRIBUTES = LIGHT_OBJECT_FEATURE_COUNT + 0;
 
 	/**
+	 * The feature id for the '<em><b>EIs Root</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LIGHT_ELEMENT__EIS_ROOT = LIGHT_OBJECT_FEATURE_COUNT + 1;
+
+	/**
 	 * The feature id for the '<em><b>Reference</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LIGHT_ELEMENT__REFERENCE = LIGHT_OBJECT_FEATURE_COUNT + 1;
+	int LIGHT_ELEMENT__REFERENCE = LIGHT_OBJECT_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>EChildren</b></em>' containment reference list.
@@ -114,7 +123,7 @@ public interface LightcorePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int LIGHT_ELEMENT__ECHILDREN = LIGHT_OBJECT_FEATURE_COUNT + 2;
+	int LIGHT_ELEMENT__ECHILDREN = LIGHT_OBJECT_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>EParent</b></em>' container reference.
@@ -123,16 +132,7 @@ public interface LightcorePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int LIGHT_ELEMENT__EPARENT = LIGHT_OBJECT_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>ERoot</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LIGHT_ELEMENT__EROOT = LIGHT_OBJECT_FEATURE_COUNT + 4;
+	int LIGHT_ELEMENT__EPARENT = LIGHT_OBJECT_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>ERodin Element</b></em>' attribute.
@@ -144,13 +144,22 @@ public interface LightcorePackage extends EPackage {
 	int LIGHT_ELEMENT__ERODIN_ELEMENT = LIGHT_OBJECT_FEATURE_COUNT + 5;
 
 	/**
+	 * The feature id for the '<em><b>ERoot</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LIGHT_ELEMENT__EROOT = LIGHT_OBJECT_FEATURE_COUNT + 6;
+
+	/**
 	 * The number of structural features of the '<em>Light Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LIGHT_ELEMENT_FEATURE_COUNT = LIGHT_OBJECT_FEATURE_COUNT + 6;
+	int LIGHT_ELEMENT_FEATURE_COUNT = LIGHT_OBJECT_FEATURE_COUNT + 7;
 
 	/**
 	 * The meta object id for the '{@link org.rodinp.core.emf.lightcore.impl.StringToAttributeMapEntryImpl <em>String To Attribute Map Entry</em>}' class.
@@ -273,6 +282,15 @@ public interface LightcorePackage extends EPackage {
 	int INTERNAL_ELEMENT__EATTRIBUTES = LIGHT_ELEMENT__EATTRIBUTES;
 
 	/**
+	 * The feature id for the '<em><b>EIs Root</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INTERNAL_ELEMENT__EIS_ROOT = LIGHT_ELEMENT__EIS_ROOT;
+
+	/**
 	 * The feature id for the '<em><b>Reference</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -300,15 +318,6 @@ public interface LightcorePackage extends EPackage {
 	int INTERNAL_ELEMENT__EPARENT = LIGHT_ELEMENT__EPARENT;
 
 	/**
-	 * The feature id for the '<em><b>ERoot</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int INTERNAL_ELEMENT__EROOT = LIGHT_ELEMENT__EROOT;
-
-	/**
 	 * The feature id for the '<em><b>ERodin Element</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -316,6 +325,15 @@ public interface LightcorePackage extends EPackage {
 	 * @ordered
 	 */
 	int INTERNAL_ELEMENT__ERODIN_ELEMENT = LIGHT_ELEMENT__ERODIN_ELEMENT;
+
+	/**
+	 * The feature id for the '<em><b>ERoot</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INTERNAL_ELEMENT__EROOT = LIGHT_ELEMENT__EROOT;
 
 	/**
 	 * The number of structural features of the '<em>Internal Element</em>' class.
@@ -346,6 +364,15 @@ public interface LightcorePackage extends EPackage {
 	int IMPLICIT_ELEMENT__EATTRIBUTES = LIGHT_ELEMENT__EATTRIBUTES;
 
 	/**
+	 * The feature id for the '<em><b>EIs Root</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IMPLICIT_ELEMENT__EIS_ROOT = LIGHT_ELEMENT__EIS_ROOT;
+
+	/**
 	 * The feature id for the '<em><b>Reference</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -373,15 +400,6 @@ public interface LightcorePackage extends EPackage {
 	int IMPLICIT_ELEMENT__EPARENT = LIGHT_ELEMENT__EPARENT;
 
 	/**
-	 * The feature id for the '<em><b>ERoot</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IMPLICIT_ELEMENT__EROOT = LIGHT_ELEMENT__EROOT;
-
-	/**
 	 * The feature id for the '<em><b>ERodin Element</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -389,6 +407,15 @@ public interface LightcorePackage extends EPackage {
 	 * @ordered
 	 */
 	int IMPLICIT_ELEMENT__ERODIN_ELEMENT = LIGHT_ELEMENT__ERODIN_ELEMENT;
+
+	/**
+	 * The feature id for the '<em><b>ERoot</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IMPLICIT_ELEMENT__EROOT = LIGHT_ELEMENT__EROOT;
 
 	/**
 	 * The number of structural features of the '<em>Implicit Element</em>' class.
@@ -431,6 +458,17 @@ public interface LightcorePackage extends EPackage {
 	EReference getLightElement_EAttributes();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.rodinp.core.emf.lightcore.LightElement#isEIsRoot <em>EIs Root</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>EIs Root</em>'.
+	 * @see org.rodinp.core.emf.lightcore.LightElement#isEIsRoot()
+	 * @see #getLightElement()
+	 * @generated
+	 */
+	EAttribute getLightElement_EIsRoot();
+
+	/**
 	 * Returns the meta object for the attribute '{@link org.rodinp.core.emf.lightcore.LightElement#getReference <em>Reference</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -464,15 +502,15 @@ public interface LightcorePackage extends EPackage {
 	EReference getLightElement_EParent();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.rodinp.core.emf.lightcore.LightElement#isERoot <em>ERoot</em>}'.
+	 * Returns the meta object for the reference '{@link org.rodinp.core.emf.lightcore.LightElement#getERoot <em>ERoot</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>ERoot</em>'.
-	 * @see org.rodinp.core.emf.lightcore.LightElement#isERoot()
+	 * @return the meta object for the reference '<em>ERoot</em>'.
+	 * @see org.rodinp.core.emf.lightcore.LightElement#getERoot()
 	 * @see #getLightElement()
 	 * @generated
 	 */
-	EAttribute getLightElement_ERoot();
+	EReference getLightElement_ERoot();
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.rodinp.core.emf.lightcore.LightElement#getERodinElement <em>ERodin Element</em>}'.
@@ -655,6 +693,14 @@ public interface LightcorePackage extends EPackage {
 		EReference LIGHT_ELEMENT__EATTRIBUTES = eINSTANCE.getLightElement_EAttributes();
 
 		/**
+		 * The meta object literal for the '<em><b>EIs Root</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute LIGHT_ELEMENT__EIS_ROOT = eINSTANCE.getLightElement_EIsRoot();
+
+		/**
 		 * The meta object literal for the '<em><b>Reference</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -679,12 +725,12 @@ public interface LightcorePackage extends EPackage {
 		EReference LIGHT_ELEMENT__EPARENT = eINSTANCE.getLightElement_EParent();
 
 		/**
-		 * The meta object literal for the '<em><b>ERoot</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>ERoot</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute LIGHT_ELEMENT__EROOT = eINSTANCE.getLightElement_ERoot();
+		EReference LIGHT_ELEMENT__EROOT = eINSTANCE.getLightElement_ERoot();
 
 		/**
 		 * The meta object literal for the '<em><b>ERodin Element</b></em>' attribute feature.

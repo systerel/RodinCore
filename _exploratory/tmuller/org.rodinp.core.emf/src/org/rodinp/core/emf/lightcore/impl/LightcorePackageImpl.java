@@ -176,7 +176,7 @@ public class LightcorePackageImpl extends EPackageImpl implements LightcorePacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getLightElement_Reference() {
+	public EAttribute getLightElement_EIsRoot() {
 		return (EAttribute)lightElementEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -185,8 +185,8 @@ public class LightcorePackageImpl extends EPackageImpl implements LightcorePacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getLightElement_EChildren() {
-		return (EReference)lightElementEClass.getEStructuralFeatures().get(2);
+	public EAttribute getLightElement_Reference() {
+		return (EAttribute)lightElementEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -194,7 +194,7 @@ public class LightcorePackageImpl extends EPackageImpl implements LightcorePacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getLightElement_EParent() {
+	public EReference getLightElement_EChildren() {
 		return (EReference)lightElementEClass.getEStructuralFeatures().get(3);
 	}
 
@@ -203,8 +203,17 @@ public class LightcorePackageImpl extends EPackageImpl implements LightcorePacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getLightElement_ERoot() {
-		return (EAttribute)lightElementEClass.getEStructuralFeatures().get(4);
+	public EReference getLightElement_EParent() {
+		return (EReference)lightElementEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getLightElement_ERoot() {
+		return (EReference)lightElementEClass.getEStructuralFeatures().get(6);
 	}
 
 	/**
@@ -347,11 +356,12 @@ public class LightcorePackageImpl extends EPackageImpl implements LightcorePacka
 
 		lightElementEClass = createEClass(LIGHT_ELEMENT);
 		createEReference(lightElementEClass, LIGHT_ELEMENT__EATTRIBUTES);
+		createEAttribute(lightElementEClass, LIGHT_ELEMENT__EIS_ROOT);
 		createEAttribute(lightElementEClass, LIGHT_ELEMENT__REFERENCE);
 		createEReference(lightElementEClass, LIGHT_ELEMENT__ECHILDREN);
 		createEReference(lightElementEClass, LIGHT_ELEMENT__EPARENT);
-		createEAttribute(lightElementEClass, LIGHT_ELEMENT__EROOT);
 		createEAttribute(lightElementEClass, LIGHT_ELEMENT__ERODIN_ELEMENT);
+		createEReference(lightElementEClass, LIGHT_ELEMENT__EROOT);
 
 		stringToAttributeMapEntryEClass = createEClass(STRING_TO_ATTRIBUTE_MAP_ENTRY);
 		createEAttribute(stringToAttributeMapEntryEClass, STRING_TO_ATTRIBUTE_MAP_ENTRY__KEY);
@@ -429,11 +439,12 @@ public class LightcorePackageImpl extends EPackageImpl implements LightcorePacka
 		initEClass(lightElementEClass, LightElement.class, "LightElement", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getLightElement_EAttributes(), this.getStringToAttributeMapEntry(), null, "eAttributes", null, 0, -1, LightElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		getLightElement_EAttributes().getEKeys().add(this.getStringToAttributeMapEntry_Key());
+		initEAttribute(getLightElement_EIsRoot(), theEcorePackage.getEBoolean(), "eIsRoot", null, 0, 1, LightElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getLightElement_Reference(), ecorePackage.getEString(), "reference", "", 1, 1, LightElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getLightElement_EChildren(), this.getLightElement(), this.getLightElement_EParent(), "eChildren", null, 0, -1, LightElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getLightElement_EParent(), this.getLightElement(), this.getLightElement_EChildren(), "eParent", null, 0, 1, LightElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getLightElement_ERoot(), theEcorePackage.getEBoolean(), "eRoot", null, 0, 1, LightElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getLightElement_ERodinElement(), theEcorePackage.getEJavaObject(), "eRodinElement", null, 0, 1, LightElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getLightElement_ERoot(), this.getLightElement(), null, "eRoot", null, 0, 1, LightElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		addEOperation(lightElementEClass, ecorePackage.getEString(), "getReferenceWithoutResolving", 0, 1, IS_UNIQUE, IS_ORDERED);
 

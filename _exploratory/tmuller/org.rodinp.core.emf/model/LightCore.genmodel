@@ -21,11 +21,12 @@
     </genClasses>
     <genClasses image="false" ecoreClass="LightCore.ecore#//LightElement">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference LightCore.ecore#//LightElement/eAttributes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute LightCore.ecore#//LightElement/eIsRoot"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute LightCore.ecore#//LightElement/reference"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference LightCore.ecore#//LightElement/eChildren"/>
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference LightCore.ecore#//LightElement/eParent"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute LightCore.ecore#//LightElement/eRoot"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute LightCore.ecore#//LightElement/eRodinElement"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EReference LightCore.ecore#//LightElement/eRoot"/>
       <genOperations ecoreOperation="LightCore.ecore#//LightElement/getReferenceWithoutResolving"/>
       <genOperations ecoreOperation="LightCore.ecore#//LightElement/doSetReference">
         <genParameters ecoreParameter="LightCore.ecore#//LightElement/doSetReference/newReference"/>
@@ -102,6 +103,10 @@
         <genParameters ecoreParameter="api.ecore#//ILElement/getChildrenOfType/type"/>
       </genOperations>
       <genOperations ecoreOperation="api.ecore#//ILElement/getElementType"/>
+      <genOperations ecoreOperation="api.ecore#//ILElement/createChild">
+        <genParameters ecoreParameter="api.ecore#//ILElement/createChild/type"/>
+        <genParameters ecoreParameter="api.ecore#//ILElement/createChild/nextSibling"/>
+      </genOperations>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

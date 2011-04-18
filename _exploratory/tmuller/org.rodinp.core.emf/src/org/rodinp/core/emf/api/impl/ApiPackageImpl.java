@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributeType.Handle;
@@ -27,6 +28,8 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.ApiFactory;
 import org.rodinp.core.emf.api.ApiPackage;
 import org.rodinp.core.emf.api.itf.ILElement;
+import org.rodinp.core.emf.lightcore.LightcorePackage;
+import org.rodinp.core.emf.lightcore.impl.LightcorePackageImpl;
 
 /**
  * <!-- begin-user-doc -->
@@ -466,6 +469,15 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 		g2.setEUpperBound(g3);
 		initEOperation(op, g1);
 
+		op = addEOperation(ilElementEClass, this.getILElement(), "createChild",
+				1, 1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(this.getIInternalElementType());
+		g2 = createEGenericType();
+		g1.getETypeArguments().add(g2);
+		addEParameter(op, g1, "type", 1, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getILElement(), "nextSibling", 0, 1, IS_UNIQUE,
+				IS_ORDERED);
+
 		// Initialize data types
 		initEDataType(listEDataType, List.class, "List", !IS_SERIALIZABLE,
 				!IS_GENERATED_INSTANCE_CLASS);
@@ -568,7 +580,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 				source,
 				new String[] {
 						"body",
-						"final IAttributeType type = value.getType();\nfinal Attribute attribute = getEAttributes().get(type.getId());\nfinal Object new_value = value.getValue();\nfinal Object old_value = (attribute != null) ? attribute.getValue()\n\t: null;\nif (new_value == null || new_value.equals(old_value)) {\n\treturn;\n}\nif (attribute == null) {\n\tattribute = LightcoreFactory.eINSTANCE.createAttribute();\n\tattribute.setOwner(this);\n\tattribute.setType(type);\n}\nattribute.setValue(value.getValue());\ngetEAttributes().put(type.getId(), attribute);" });
+						"final IAttributeType type = value.getType();\nAttribute attribute = getEAttributes().get(type.getId());\nfinal Object new_value = value.getValue();\nfinal Object old_value = (attribute != null) ? attribute.getValue()\n\t: null;\nif (new_value == null || new_value.equals(old_value)) {\n\treturn;\n}\nif (attribute == null) {\n\tattribute = LightcoreFactory.eINSTANCE.createAttribute();\n\tattribute.setOwner(this);\n\tattribute.setType(type);\n}\nattribute.setValue(value.getValue());\ngetEAttributes().put(type.getId(), attribute);" });
 		addAnnotation(ilElementEClass.getEOperations().get(9), source,
 				new String[] { "body",
 						"return (IInternalElement) getERodinElement();" });
@@ -590,6 +602,12 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 				ilElementEClass.getEOperations().get(14),
 				source,
 				new String[] { "body", "return getElement().getElementType();" });
+		addAnnotation(
+				ilElementEClass.getEOperations().get(15),
+				source,
+				new String[] {
+						"body",
+						"final IInternalElement internalNextSibling = (nextSibling == null) ? null\n\t\t: nextSibling.getElement();\ntry {\n\tIInternalElement child = getElement().createChild(type,\n\t\t\tinternalNextSibling, null);\n\tfinal InternalElement loaded = SynchroManager\n\t\t\t.loadInternalElementFor(child, eRoot);\n\tthis.addElement(loaded, nextSibling);\n\treturn loaded;\n} catch (RodinDBException e) {\n\te.printStackTrace();\n}\nreturn null;" });
 	}
 
 } //ApiPackageImpl

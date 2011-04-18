@@ -41,6 +41,7 @@
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="eAttributes" upperBound="-1"
         eType="#//StringToAttributeMapEntry" containment="true" eKeys="#//StringToAttributeMapEntry/key"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="eIsRoot" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="reference" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" defaultValueLiteral=""
         iD="true"/>
@@ -48,8 +49,8 @@
         eType="#//LightElement" containment="true" eOpposite="#//LightElement/eParent"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="eParent" eType="#//LightElement"
         eOpposite="#//LightElement/eChildren"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="eRoot" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="eRodinElement" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EJavaObject"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="eRoot" eType="#//LightElement"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="StringToAttributeMapEntry" instanceClassName="java.util.Map$Entry">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

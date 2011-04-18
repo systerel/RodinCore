@@ -60,6 +60,11 @@
         <genParameters ecoreParameter="api.ecore#//ILElement/getChildrenOfType/type"/>
       </genOperations>
       <genOperations ecoreOperation="api.ecore#//ILElement/getElementType"/>
+      <genOperations ecoreOperation="api.ecore#//ILElement/create">
+        <genParameters ecoreParameter="api.ecore#//ILElement/create/type"/>
+        <genParameters ecoreParameter="api.ecore#//ILElement/create/parent"/>
+        <genParameters ecoreParameter="api.ecore#//ILElement/create/nextSibling"/>
+      </genOperations>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

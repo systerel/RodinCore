@@ -59,7 +59,7 @@ public class SynchroManager {
 	}
 
 	private static InternalElement loadRodinModel(IInternalElement iParent) {
-		final InternalElement parent = loadInternalElementFor(iParent);
+		final InternalElement parent = loadInternalElementFor(iParent, null);
 		parent.eSetDeliver(false);
 		implicitLoad(parent, iParent);
 		if (iParent.isRoot()) {
@@ -84,7 +84,8 @@ public class SynchroManager {
 	private static void recursiveLoad(LightElement parent,
 			IInternalElement iParent, IInternalElement child)
 			throws RodinDBException {
-		final InternalElement lChild = loadInternalElementFor(child);
+		final LightElement eRoot = parent.getERoot();
+		final InternalElement lChild = loadInternalElementFor(child, eRoot);
 		parent.getEChildren().add(lChild);
 		implicitLoad(lChild, child);
 		for (IRodinElement ichild : child.getChildren()) {
@@ -109,7 +110,8 @@ public class SynchroManager {
 		for (final ICoreImplicitChildProvider p : providers) {
 			for (IInternalElement e : ImplicitChildrenComputer
 					.safeGetImplicitChildren(iParent, p)) {
-				final ImplicitElement implicit = loadImplicitElementFor(e);
+				final LightElement eRoot = parent.getERoot();
+				final ImplicitElement implicit = loadImplicitElementFor(e, eRoot);
 				parent.getEChildren().add(implicit);
 			}
 		}
@@ -163,23 +165,38 @@ public class SynchroManager {
 
 	}
 	
-	private static InternalElement loadInternalElementFor(IRodinElement iElement) {
+	public static InternalElement loadInternalElementFor(
+			IRodinElement iElement, LightElement root) {
 		final InternalElement eElement = LightcoreFactory.eINSTANCE
 				.createInternalElement();
 		eElement.eSetDeliver(false);
 		eElement.setERodinElement(iElement);
+		final boolean isRoot = iElement.isRoot();
+		eElement.setEIsRoot(isRoot);
+		if (root == null && isRoot) {
+			eElement.setERoot(eElement);
+		} else {
+			eElement.setERoot(root);
+		}
 		eElement.load();
 		eElement.eSetDeliver(true);
 		return eElement;
 	}
 
-	private static ImplicitElement loadImplicitElementFor(IRodinElement iElement) {
+	private static ImplicitElement loadImplicitElementFor(IRodinElement iElement, LightElement root) {
 		final ImplicitElement eImplicit = LightcoreFactory.eINSTANCE
 				.createImplicitElement();
 		eImplicit.eSetDeliver(false);
 		eImplicit.setERodinElement(iElement);
+		final boolean isRoot = iElement.isRoot();
+		eImplicit.setEIsRoot(isRoot);
+		if (root == null && isRoot) {
+			eImplicit.setERoot(eImplicit);
+		} else {
+			eImplicit.setERoot(root);
+		}
 		eImplicit.load();
-		eImplicit.eSetDeliver(false);
+		eImplicit.eSetDeliver(true);
 		return eImplicit;
 	}
 

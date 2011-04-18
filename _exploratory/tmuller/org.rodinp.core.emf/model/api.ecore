@@ -105,6 +105,17 @@
         </eTypeArguments>
       </eGenericType>
     </eOperations>
+    <eOperations name="createChild" lowerBound="1" eType="#//ILElement">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="body" value="final IInternalElement internalNextSibling = (nextSibling == null) ? null&#xA;&#x9;&#x9;: nextSibling.getElement();&#xA;try {&#xA;&#x9;final IInternalElement child = getElement().createChild(type,&#xA;&#x9;&#x9;&#x9;internalNextSibling, null);&#xA;&#x9;final InternalElement loaded = SynchroManager&#xA;&#x9;&#x9;&#x9;.loadInternalElementFor(child, eRoot);&#xA;&#x9;this.addElement(loaded, nextSibling);&#xA;&#x9;return loaded;&#xA;} catch (RodinDBException e) {&#xA;&#x9;e.printStackTrace();&#xA;}&#xA;return null;"/>
+      </eAnnotations>
+      <eParameters name="type" lowerBound="1">
+        <eGenericType eClassifier="#//IInternalElementType">
+          <eTypeArguments/>
+        </eGenericType>
+      </eParameters>
+      <eParameters name="nextSibling" eType="#//ILElement"/>
+    </eOperations>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="List" instanceClassName="java.util.List"
       serializable="false">

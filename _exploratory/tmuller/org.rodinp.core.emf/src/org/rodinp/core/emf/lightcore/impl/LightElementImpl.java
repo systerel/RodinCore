@@ -28,11 +28,14 @@ import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.lightcore.Attribute;
+import org.rodinp.core.emf.lightcore.InternalElement;
 import org.rodinp.core.emf.lightcore.LightElement;
 import org.rodinp.core.emf.lightcore.LightcoreFactory;
 import org.rodinp.core.emf.lightcore.LightcorePackage;
+import org.rodinp.core.emf.lightcore.sync.SynchroManager;
 import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
 
 /**
@@ -43,11 +46,12 @@ import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.rodinp.core.emf.lightcore.impl.LightElementImpl#getEAttributes <em>EAttributes</em>}</li>
+ *   <li>{@link org.rodinp.core.emf.lightcore.impl.LightElementImpl#isEIsRoot <em>EIs Root</em>}</li>
  *   <li>{@link org.rodinp.core.emf.lightcore.impl.LightElementImpl#getReference <em>Reference</em>}</li>
  *   <li>{@link org.rodinp.core.emf.lightcore.impl.LightElementImpl#getEChildren <em>EChildren</em>}</li>
  *   <li>{@link org.rodinp.core.emf.lightcore.impl.LightElementImpl#getEParent <em>EParent</em>}</li>
- *   <li>{@link org.rodinp.core.emf.lightcore.impl.LightElementImpl#isERoot <em>ERoot</em>}</li>
  *   <li>{@link org.rodinp.core.emf.lightcore.impl.LightElementImpl#getERodinElement <em>ERodin Element</em>}</li>
+ *   <li>{@link org.rodinp.core.emf.lightcore.impl.LightElementImpl#getERoot <em>ERoot</em>}</li>
  * </ul>
  * </p>
  *
@@ -63,6 +67,26 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	 * @ordered
 	 */
 	protected EMap<String, Attribute> eAttributes;
+
+	/**
+	 * The default value of the '{@link #isEIsRoot() <em>EIs Root</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isEIsRoot()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean EIS_ROOT_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isEIsRoot() <em>EIs Root</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isEIsRoot()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean eIsRoot = EIS_ROOT_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getReference() <em>Reference</em>}' attribute.
@@ -95,26 +119,6 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	protected EList<LightElement> eChildren;
 
 	/**
-	 * The default value of the '{@link #isERoot() <em>ERoot</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isERoot()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean EROOT_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isERoot() <em>ERoot</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isERoot()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean eRoot = EROOT_EDEFAULT;
-
-	/**
 	 * The default value of the '{@link #getERodinElement() <em>ERodin Element</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -133,6 +137,16 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	 * @ordered
 	 */
 	protected Object eRodinElement = ERODIN_ELEMENT_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getERoot() <em>ERoot</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getERoot()
+	 * @generated
+	 * @ordered
+	 */
+	protected LightElement eRoot;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -163,6 +177,27 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 			eAttributes = new EcoreEMap<String,Attribute>(LightcorePackage.Literals.STRING_TO_ATTRIBUTE_MAP_ENTRY, StringToAttributeMapEntryImpl.class, this, LightcorePackage.LIGHT_ELEMENT__EATTRIBUTES);
 		}
 		return eAttributes;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean isEIsRoot() {
+		return eIsRoot;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setEIsRoot(boolean newEIsRoot) {
+		boolean oldEIsRoot = eIsRoot;
+		eIsRoot = newEIsRoot;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, LightcorePackage.LIGHT_ELEMENT__EIS_ROOT, oldEIsRoot, eIsRoot));
 	}
 
 	/**
@@ -244,27 +279,6 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public boolean isERoot() {
-		return eRoot;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setERoot(boolean newERoot) {
-		boolean oldERoot = eRoot;
-		eRoot = newERoot;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, LightcorePackage.LIGHT_ELEMENT__EROOT, oldERoot, eRoot));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public Object getERodinElement() {
 		return eRodinElement;
 	}
@@ -279,6 +293,44 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 		eRodinElement = newERodinElement;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, LightcorePackage.LIGHT_ELEMENT__ERODIN_ELEMENT, oldERodinElement, eRodinElement));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public LightElement getERoot() {
+		if (eRoot != null && eRoot.eIsProxy()) {
+			InternalEObject oldERoot = (InternalEObject)eRoot;
+			eRoot = (LightElement)eResolveProxy(oldERoot);
+			if (eRoot != oldERoot) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, LightcorePackage.LIGHT_ELEMENT__EROOT, oldERoot, eRoot));
+			}
+		}
+		return eRoot;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public LightElement basicGetERoot() {
+		return eRoot;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setERoot(LightElement newERoot) {
+		LightElement oldERoot = eRoot;
+		eRoot = newERoot;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, LightcorePackage.LIGHT_ELEMENT__EROOT, oldERoot, eRoot));
 	}
 
 	/**
@@ -489,6 +541,28 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 		return getElement().getElementType();
 	}
 
+	
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ILElement createChild(IInternalElementType<?> type, ILElement nextSibling) {
+		final IInternalElement internalNextSibling = (nextSibling == null) ? null
+				: nextSibling.getElement();
+		try {
+			final IInternalElement child = getElement().createChild(type,
+					internalNextSibling, null);
+			final InternalElement loaded = SynchroManager
+					.loadInternalElementFor(child, eRoot);
+			this.addElement(loaded, nextSibling);
+			return loaded;
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -577,16 +651,19 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 			case LightcorePackage.LIGHT_ELEMENT__EATTRIBUTES:
 				if (coreType) return getEAttributes();
 				else return getEAttributes().map();
+			case LightcorePackage.LIGHT_ELEMENT__EIS_ROOT:
+				return isEIsRoot();
 			case LightcorePackage.LIGHT_ELEMENT__REFERENCE:
 				return getReference();
 			case LightcorePackage.LIGHT_ELEMENT__ECHILDREN:
 				return getEChildren();
 			case LightcorePackage.LIGHT_ELEMENT__EPARENT:
 				return getEParent();
-			case LightcorePackage.LIGHT_ELEMENT__EROOT:
-				return isERoot();
 			case LightcorePackage.LIGHT_ELEMENT__ERODIN_ELEMENT:
 				return getERodinElement();
+			case LightcorePackage.LIGHT_ELEMENT__EROOT:
+				if (resolve) return getERoot();
+				return basicGetERoot();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -603,6 +680,9 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 			case LightcorePackage.LIGHT_ELEMENT__EATTRIBUTES:
 				((EStructuralFeature.Setting)getEAttributes()).set(newValue);
 				return;
+			case LightcorePackage.LIGHT_ELEMENT__EIS_ROOT:
+				setEIsRoot((Boolean)newValue);
+				return;
 			case LightcorePackage.LIGHT_ELEMENT__REFERENCE:
 				setReference((String)newValue);
 				return;
@@ -613,11 +693,11 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 			case LightcorePackage.LIGHT_ELEMENT__EPARENT:
 				setEParent((LightElement)newValue);
 				return;
-			case LightcorePackage.LIGHT_ELEMENT__EROOT:
-				setERoot((Boolean)newValue);
-				return;
 			case LightcorePackage.LIGHT_ELEMENT__ERODIN_ELEMENT:
 				setERodinElement(newValue);
+				return;
+			case LightcorePackage.LIGHT_ELEMENT__EROOT:
+				setERoot((LightElement)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -634,6 +714,9 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 			case LightcorePackage.LIGHT_ELEMENT__EATTRIBUTES:
 				getEAttributes().clear();
 				return;
+			case LightcorePackage.LIGHT_ELEMENT__EIS_ROOT:
+				setEIsRoot(EIS_ROOT_EDEFAULT);
+				return;
 			case LightcorePackage.LIGHT_ELEMENT__REFERENCE:
 				setReference(REFERENCE_EDEFAULT);
 				return;
@@ -643,11 +726,11 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 			case LightcorePackage.LIGHT_ELEMENT__EPARENT:
 				setEParent((LightElement)null);
 				return;
-			case LightcorePackage.LIGHT_ELEMENT__EROOT:
-				setERoot(EROOT_EDEFAULT);
-				return;
 			case LightcorePackage.LIGHT_ELEMENT__ERODIN_ELEMENT:
 				setERodinElement(ERODIN_ELEMENT_EDEFAULT);
+				return;
+			case LightcorePackage.LIGHT_ELEMENT__EROOT:
+				setERoot((LightElement)null);
 				return;
 		}
 		super.eUnset(featureID);
@@ -663,16 +746,18 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 		switch (featureID) {
 			case LightcorePackage.LIGHT_ELEMENT__EATTRIBUTES:
 				return eAttributes != null && !eAttributes.isEmpty();
+			case LightcorePackage.LIGHT_ELEMENT__EIS_ROOT:
+				return eIsRoot != EIS_ROOT_EDEFAULT;
 			case LightcorePackage.LIGHT_ELEMENT__REFERENCE:
 				return REFERENCE_EDEFAULT == null ? reference != null : !REFERENCE_EDEFAULT.equals(reference);
 			case LightcorePackage.LIGHT_ELEMENT__ECHILDREN:
 				return eChildren != null && !eChildren.isEmpty();
 			case LightcorePackage.LIGHT_ELEMENT__EPARENT:
 				return getEParent() != null;
-			case LightcorePackage.LIGHT_ELEMENT__EROOT:
-				return eRoot != EROOT_EDEFAULT;
 			case LightcorePackage.LIGHT_ELEMENT__ERODIN_ELEMENT:
 				return ERODIN_ELEMENT_EDEFAULT == null ? eRodinElement != null : !ERODIN_ELEMENT_EDEFAULT.equals(eRodinElement);
+			case LightcorePackage.LIGHT_ELEMENT__EROOT:
+				return eRoot != null;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -687,10 +772,10 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (reference: ");
+		result.append(" (eIsRoot: ");
+		result.append(eIsRoot);
+		result.append(", reference: ");
 		result.append(reference);
-		result.append(", eRoot: ");
-		result.append(eRoot);
 		result.append(", eRodinElement: ");
 		result.append(eRodinElement);
 		result.append(')');
@@ -705,7 +790,6 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	public void load() {
 		if (eRodinElement instanceof IInternalElement) {
 			final IInternalElement iElement = (IInternalElement) eRodinElement;
-			this.setERoot(iElement.isRoot());
 			SynchroUtils.loadAttributes(iElement, this, true);
 			SynchroUtils.adaptForElementMoveAndRemove(this);
 			SynchroUtils.adaptRootForImplicitChildren(this);
@@ -722,6 +806,28 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 		if (eRodinElement instanceof IInternalElement) {
 			//
 		}
+	}
+	
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	@Override
+	public void addElement(ILElement toAdd, ILElement nextSibling) {
+		final ILElement found = SynchroUtils.findElement(toAdd.getElement(),
+				eRoot);
+		if (found != null)
+			return;
+		if (nextSibling != null) {
+			final int position = (nextSibling != null) ? getEChildren()
+					.lastIndexOf(nextSibling) : -1;
+			if (position != -1) {
+				getEChildren().add(position, (LightElement) toAdd);
+				return;
+			}
+		}
+		getEChildren().add((LightElement) toAdd);
 	}
 
 } //LightElementImpl
