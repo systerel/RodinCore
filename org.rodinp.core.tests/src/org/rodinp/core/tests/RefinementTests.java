@@ -137,26 +137,17 @@ public class RefinementTests extends AbstractRodinDBTests {
 		return makeRoot(bareName, "test2");
 	}
 
-	private IInternalElement createRoot1(String bareName)
-			throws RodinDBException {
-		final IInternalElement root = makeRoot1(bareName);
-		root.getRodinFile().create(true, null);
-		return root;
-	}
-
 	private static void assertRefCalls(boolean successExpected,
 			IInternalElement sourceRoot, boolean ordered, Integer... expected)
 			throws RodinDBException {
 		final String refinedName = "refined_"
 				+ sourceRoot.getRodinFile().getElementName();
-		final IInternalElement refinedRoot = RodinCore.refine(sourceRoot,
-				refinedName, null);
-		if (successExpected) {
-			assertNotNull(refinedRoot);
-			assertFalse(refinedRoot.equals(sourceRoot));
-		} else {
-			assertNull(refinedRoot);
-		}
+		final IRodinFile targetFile = sourceRoot.getRodinProject()
+				.getRodinFile(refinedName);
+		final IInternalElement refinedRoot = targetFile.getRoot();
+
+		final boolean success = RodinCore.refine(sourceRoot, refinedRoot, null);
+		assertEquals(successExpected, success);
 		LOGGER.assertCalls(ordered, expected);
 	}
 
@@ -414,31 +405,16 @@ public class RefinementTests extends AbstractRodinDBTests {
 
 	}
 
-	// target root already exists
-	public void testTargetRootAlreadyExists() throws Exception {
-		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
-		REG.addParticipant(new RefPart1(), "refPart1Id",
-				RodinTestRoot.ELEMENT_TYPE);
-		final IInternalElement root1 = createRoot1("refTest1");
-		final IInternalElement root2 = createRoot1("refTest2");
-		final String root2Name = root2.getRodinFile().getElementName();
-		try {
-			RodinCore.refine(root1, root2Name, null);
-			fail("exception expected");
-		} catch (IllegalArgumentException e) {
-			// as expected
-		}
-	}
-
 	// 1 refinement & 1 participant that throws an exception
 	public void testExceptionInParticipantCall() throws Exception {
 		REG.addRefinement(RodinTestRoot.ELEMENT_TYPE, "refTest");
 		REG.addParticipant(EXCEPTION_PARTICIPANT, "exceptionParticipant",
 				RodinTestRoot.ELEMENT_TYPE);
 		final IInternalElement root = makeRoot1("f");
+		final IInternalElement target = makeRoot1("f2");
 		// the exception is not caught underneath
 		try {
-			RodinCore.refine(root, "refRoot", null);
+			RodinCore.refine(root, target, null);
 			fail("exception expected");
 		} catch (RuntimeException e) {
 			// as expected

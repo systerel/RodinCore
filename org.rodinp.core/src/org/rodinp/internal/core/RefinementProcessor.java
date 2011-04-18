@@ -19,8 +19,6 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRefinementParticipant;
-import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.internal.core.RefinementRegistry.RefinementException;
 import org.rodinp.internal.core.util.Util;
@@ -37,7 +35,7 @@ public class RefinementProcessor {
 		this.sourceRoot = sourceRoot;
 	}
 
-	public IInternalElement refine(String refinedName, IProgressMonitor monitor)
+	public boolean refine(IInternalElement targetRoot, IProgressMonitor monitor)
 			throws RodinDBException {
 		final IInternalElementType<? extends IInternalElement> rootType = sourceRoot
 				.getElementType();
@@ -45,38 +43,23 @@ public class RefinementProcessor {
 			final List<IRefinementParticipant> participants = RefinementRegistry
 					.getDefault().getRefinementParticipants(rootType);
 			if (participants == null || participants.isEmpty()) {
-				return null;
+				return false;
 			}
-			final IInternalElement refinedRoot = makeRefinedRoot(refinedName);
+			final IInternalElement refinedRoot = targetRoot;// makeRefinedRoot(targetRoot);
 			final SubMonitor subMon = convert(monitor, participants.size());
 			for (IRefinementParticipant participant : participants) {
 				if (subMon.isCanceled())
-					return null;
+					return false;
 				participant
 						.process(refinedRoot, sourceRoot, subMon.newChild(1));
 			}
-			refinedRoot.getRodinFile().save(monitor, false);
-			return refinedRoot;
+			return true;
 		} catch (RefinementException e) {
 			Util.log(e, "while refining "
 					+ sourceRoot.getRodinFile().getElementName() + " to "
-					+ refinedName);
-			return null;
+					+ targetRoot);
+			return false;
 		}
 	}
 
-	private IInternalElement makeRefinedRoot(String refinedName) {
-		final IRodinProject project = sourceRoot.getRodinProject();
-		final IRodinFile rodinFile = project.getRodinFile(refinedName);
-		if (rodinFile == null) {
-			throw new IllegalArgumentException(
-					"Illegal file name, possibly wrong extension: "
-							+ refinedName);
-		}
-		if (rodinFile.exists()) {
-			throw new IllegalArgumentException(
-					"refinement target already exists: " + refinedName);
-		}
-		return rodinFile.getRoot();
-	}
 }
