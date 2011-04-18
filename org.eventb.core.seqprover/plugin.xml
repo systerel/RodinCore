@@ -598,7 +598,7 @@
       </autoTactic>
       <autoTactic
             class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$EqvRewritesGoalAutoTac"
-            description="%eqvHypTacDesc"
+            description="%eqvGoalTacDesc"
             id="eqvGoalTac"
             name="%eqvGoalTacName">
       </autoTactic>
