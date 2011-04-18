@@ -147,6 +147,11 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 	public static final ContentType IMPLICIT_LABEL_TYPE = new ContentType(
 			"__implicit_label", false, true, IMPLICIT_LABEL);
 
+	public static final ContentType BOLD_LABEL_TYPE = new ContentType("__bold_label",
+			true, false, LABEL);
+	public static final ContentType BOLD_IMPLICIT_LABEL_TYPE = new ContentType(
+			"__bold_implicit_label", false, true, IMPLICIT_LABEL);
+	
 	public static final ContentType ATTRIBUTE_TYPE = new ContentType(
 			"__attribute", true, false, ATTRIBUTE);
 	public static final ContentType IMPLICIT_ATTRIBUTE_TYPE = new ContentType(
@@ -169,6 +174,8 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 		IMPLICIT_COMMENT_TYPE,
 		LABEL_TYPE,
 		IMPLICIT_LABEL_TYPE,
+		BOLD_LABEL_TYPE,
+		BOLD_IMPLICIT_LABEL_TYPE,
 		ATTRIBUTE_TYPE,
 		IMPLICIT_ATTRIBUTE_TYPE,
 		KEYWORD_TYPE,
@@ -280,9 +287,24 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 		bgColor = (COLOR_DEBUG) ? colorManager.getColor(LABEL_DEBUG_BG) : null;
 		rdr = new RodinDamagerRepairer(new TextAttribute(
 				colorManager.getColor(IMPLICIT_LABEL_TYPE.getColor()), bgColor,
-				SWT.BOLD));
+				SWT.NONE));
 		reconciler.setDamager(rdr, IMPLICIT_LABEL_TYPE.getName());
 		reconciler.setRepairer(rdr, IMPLICIT_LABEL_TYPE.getName());
+		
+		bgColor = (COLOR_DEBUG) ? colorManager
+				.getColor(IRodinColorConstant.LABEL_DEBUG_BG) : null;
+		rdr = new RodinDamagerRepairer(new TextAttribute(
+				colorManager.getColor(BOLD_LABEL_TYPE.getColor()), bgColor, SWT.BOLD));
+		reconciler.setDamager(rdr, BOLD_LABEL_TYPE.getName());
+		reconciler.setRepairer(rdr, BOLD_LABEL_TYPE.getName());
+
+		bgColor = (COLOR_DEBUG) ? colorManager.getColor(LABEL_DEBUG_BG) : null;
+		rdr = new RodinDamagerRepairer(new TextAttribute(
+				colorManager.getColor(BOLD_IMPLICIT_LABEL_TYPE.getColor()), bgColor,
+				SWT.BOLD));
+		reconciler.setDamager(rdr, BOLD_IMPLICIT_LABEL_TYPE.getName());
+		reconciler.setRepairer(rdr,BOLD_IMPLICIT_LABEL_TYPE.getName());
+
 
 		bgColor = (COLOR_DEBUG) ? colorManager.getColor(SECTION_DEBUG_BG)
 				: null;

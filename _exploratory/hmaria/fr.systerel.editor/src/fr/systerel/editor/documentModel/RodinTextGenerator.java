@@ -11,12 +11,16 @@
 package fr.systerel.editor.documentModel;
 
 import static fr.systerel.editor.documentModel.RodinTextStream.MIN_LEVEL;
+import static fr.systerel.editor.presentation.RodinConfiguration.BOLD_IMPLICIT_LABEL_TYPE;
+import static fr.systerel.editor.presentation.RodinConfiguration.BOLD_LABEL_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.COMMENT_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.CONTENT_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.IDENTIFIER_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.IMPLICIT_COMMENT_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.IMPLICIT_CONTENT_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.IMPLICIT_IDENTIFIER_TYPE;
+import static fr.systerel.editor.presentation.RodinConfiguration.IMPLICIT_LABEL_TYPE;
+import static fr.systerel.editor.presentation.RodinConfiguration.LABEL_TYPE;
 import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.COMMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
@@ -273,8 +277,15 @@ public class RodinTextGenerator {
 	private void processLabeledElement(ILElement element) {
 		final String labelAttribute = element.getAttribute(LABEL_ATTRIBUTE);
 		stream.appendPresentationTabs(element);
-		final ContentType contentType = getContentType(element,
-				RodinConfiguration.IMPLICIT_LABEL_TYPE, RodinConfiguration.LABEL_TYPE);
+		final ContentType contentType;
+		if ((element.getAttribute(ASSIGNMENT_ATTRIBUTE) == null)
+				&& (element.getAttribute(PREDICATE_ATTRIBUTE) == null)) {
+			contentType = getContentType(element, BOLD_IMPLICIT_LABEL_TYPE,
+					BOLD_LABEL_TYPE);
+		} else {
+			contentType = getContentType(element, IMPLICIT_LABEL_TYPE,
+					LABEL_TYPE);
+		}
 		if (labelAttribute != null) {
 			stream.addElementRegion(labelAttribute, element, contentType, false);
 			stream.addPresentationRegion(":\t", element);

@@ -12,6 +12,7 @@ package fr.systerel.editor.editors;
 
 import java.util.HashMap;
 
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Position;
@@ -66,6 +67,7 @@ public class RodinEditor extends TextEditor {
 
 	public RodinEditor() {
 		super();
+		setEditorContextMenuId(EDITOR_ID);
 		colorManager = new ColorManager();
 		setSourceViewerConfiguration(new RodinConfiguration(colorManager,
 				mapper));

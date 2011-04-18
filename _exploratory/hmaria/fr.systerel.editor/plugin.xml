@@ -65,19 +65,46 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="fr.systerel.editor.handlers.TestHandler"
-            id="fr.systerel.editor.command1"
-            name="TEST">
+            categoryId="fr.systerel.editor.editionCategory"
+            defaultHandler="fr.systerel.editor.handlers.AddChildHandler"
+            id="fr.systerel.editor.addChild"
+            name="Add Child Command">
       </command>
+      <command
+            categoryId="fr.systerel.editor.editionCategory"
+            defaultHandler="fr.systerel.editor.handlers.RemoveHandler"
+            id="fr.systerel.editor.removeElement"
+            name="Remove">
+      </command>
+      <command
+            categoryId="fr.systerel.editor.editionCategory"
+            defaultHandler="fr.systerel.editor.handlers.AddSiblingHandler"
+            id="fr.systerel.editor.addSibling"
+            name="Add Sibling">
+      </command>
+      <category
+            id="fr.systerel.editor.editionCategory"
+            name="Model Edition Commands">
+      </category>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="popup:#TextEditorContext?after=additions">
+            locationURI="popup:fr.systerel.editor.editors.RodinEditor?before=additions">
          <command
-               commandId="fr.systerel.editor.command1"
-               label="TEST"
+               commandId="fr.systerel.editor.addChild"
+               label="Add Child"
+               style="push">
+         </command>
+         <command
+               commandId="fr.systerel.editor.addSibling"
+               label="Add Sibling"
+               style="push">
+         </command>
+         <command
+               commandId="fr.systerel.editor.removeElement"
+               label="Remove"
                style="push">
          </command>
       </menuContribution>
