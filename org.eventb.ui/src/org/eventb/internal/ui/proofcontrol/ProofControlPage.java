@@ -782,17 +782,17 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		final IPreferenceStore store = EventBPreferenceStore
 				.getPreferenceStore();
 
-		expertMode = new Action("Disable post-tactic", IAction.AS_CHECK_BOX) {
+		expertMode = new Action("Enable post-tactic", IAction.AS_CHECK_BOX) {
 			@Override
 			public void run() {
-				boolean checked = !expertMode.isChecked();
+				boolean checked = expertMode.isChecked();
 				store.setValue(P_POSTTACTIC_ENABLE, checked);
 			}
 		};
 		boolean b = EventBPreferenceStore.getBooleanPreference(P_POSTTACTIC_ENABLE);
-		expertMode.setChecked(!b);
+		expertMode.setChecked(b);
 
-		expertMode.setToolTipText("Disable post-tactic");
+		expertMode.setToolTipText("Enable post-tactic");
 
 		expertMode
 				.setImageDescriptor(EventBImage
@@ -981,15 +981,16 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(P_POSTTACTIC_ENABLE)) {
 			final Object newValue = event.getNewValue();
-			assert newValue instanceof Boolean || newValue instanceof String;
+			boolean b;
 			if (newValue instanceof String) {
-				boolean b = ((String) newValue)
-										.compareToIgnoreCase("true") == 0;
-				expertMode.setChecked(!b);
+				b = ((String) newValue).compareToIgnoreCase("true") == 0;
+			} else if (newValue instanceof Boolean) {
+				b = (Boolean) newValue;
 			} else {
-				Boolean b = (Boolean) newValue;
-				expertMode.setChecked(!b);
+				// FIXME error
+				throw new IllegalArgumentException();
 			}
+			expertMode.setChecked(b);
 		}
 
 	}
