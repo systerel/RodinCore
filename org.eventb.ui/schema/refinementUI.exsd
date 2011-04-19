@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eventb.ui" id="refinementUI" name="Refinement UI"/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point.]
+         This extension point is the user interface complement of org.rodinp.core.refinements. It makes  refinements available to users, via customized menu contribution items and input dialogs.
       </documentation>
    </annotation>
 
@@ -52,14 +52,14 @@
          <attribute name="refinement-id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The fully qualified identifier of a refinement.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The label that will appear in contextual menus.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -69,7 +69,7 @@
          <attribute name="title" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The title of the window that asks for the name of the refinement target.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -79,7 +79,7 @@
          <attribute name="message" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The message of the window that asks for the name of the refinement target.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -94,7 +94,8 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         org.eventb.ui 2.2;
+Rodin 2.2
       </documentation>
    </annotation>
 
@@ -103,7 +104,7 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         An example of is given in this very plug-in for Extend and Refine.
       </documentation>
    </annotation>
 
@@ -112,7 +113,7 @@
          <meta.section type="apiinfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         There is no API associated to this extension point. Merely providing a contribution enables user interface for a given refinement.
       </documentation>
    </annotation>
 
@@ -121,7 +122,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         An example of is given in this very plug-in for Extend and Refine.
       </documentation>
    </annotation>
 
