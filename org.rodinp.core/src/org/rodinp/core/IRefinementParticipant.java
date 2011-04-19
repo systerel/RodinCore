@@ -22,12 +22,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface IRefinementParticipant {
 
 	/**
-	 * Modifies the given refined root in order to make it (partially or
+	 * Modifies the given target root in order to make it (partially or
 	 * entirely) a refinement of the given source root. The source root is not
 	 * modified by this operation.
 	 * 
-	 * @param refinedRoot
-	 *            the refined root
+	 * @param targetRoot
+	 *            the target root
 	 * @param sourceRoot
 	 *            the source of the refinement
 	 * @param monitor
@@ -35,7 +35,7 @@ public interface IRefinementParticipant {
 	 * @throws RodinDBException
 	 *             if a database operation fails
 	 */
-	void process(IInternalElement refinedRoot, IInternalElement sourceRoot,
+	void process(IInternalElement targetRoot, IInternalElement sourceRoot,
 			IProgressMonitor monitor) throws RodinDBException;
 
 }
