@@ -6,7 +6,15 @@
          <meta.schema plugin="org.rodinp.core" id="refinements" name="Refinements"/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point.]
+         In the context of this plug-in, the notion of refinement is to be understood as an operation that makes a new component (the target) from an existing one (the source), without any constraint about the results.
+&lt;p&gt;
+Three kinds of contributions are available:
+&lt;ul&gt;
+&lt;li&gt;Refinement, that describes the refinement for a given root element type&lt;/li&gt;
+&lt;li&gt;Participant, that actually performs a part of the refinement&lt;/li&gt;
+&lt;li&gt;Order, to use when several participants are involved, to control in which order they are called&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -52,18 +60,23 @@
    </element>
 
    <element name="Refinement">
+      <annotation>
+         <documentation>
+            Defines a refinement.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The identifier for this refinement (simple id token, unique for refinements within the extension namespace). The token cannot contain dot (.) or whitespace.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="root-element-type" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The fully qualified element type identifier this refinement applies to.
                </documentation>
             </annotation>
          </attribute>
@@ -71,25 +84,30 @@
    </element>
 
    <element name="Participant">
+      <annotation>
+         <documentation>
+            Defines a participant in a refinement. The sam
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The identifier for this participant (simple id token, unique for participants within the extension namespace). The token cannot contain dot (.) or whitespace.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="refinement-id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The fully qualified identifier of the refinement this participant takes part in.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The fully qualified name of a class that implements &lt;code&gt;IRefinementParticipant&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.rodinp.core.IRefinementParticipant"/>
@@ -104,14 +122,14 @@
          <attribute name="first-participant-id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The fully qualified identifier of the participant called before the other one.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="second-participant-id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The fully qualified identifier of the participant called after the other one.
                </documentation>
             </annotation>
          </attribute>
@@ -123,7 +141,8 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         org.rodinp.core 1.4;
+Rodin 2.2
       </documentation>
    </annotation>
 
@@ -132,7 +151,7 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         Extensions of this point can be found in org.eventb.core plug-in.
       </documentation>
    </annotation>
 
@@ -141,7 +160,7 @@
          <meta.section type="apiinfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         Refinement can be performed by calling &lt;samp&gt;RodinCore.getRefinementManager()&lt;/samp&gt;. See &lt;samp&gt;org.rodinp.core.IRefinementManager&lt;/samp&gt;.
       </documentation>
    </annotation>
 
@@ -150,7 +169,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         Extensions of this point can be found in org.eventb.core plug-in.
       </documentation>
    </annotation>
 
