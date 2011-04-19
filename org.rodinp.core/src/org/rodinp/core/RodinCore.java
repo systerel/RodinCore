@@ -40,8 +40,7 @@ import org.rodinp.core.location.IInternalLocation;
 import org.rodinp.core.location.IRodinLocation;
 import org.rodinp.internal.core.BatchOperation;
 import org.rodinp.internal.core.ElementTypeManager;
-import org.rodinp.internal.core.RefinementProcessor;
-import org.rodinp.internal.core.RefinementRegistry;
+import org.rodinp.internal.core.RefinementManager;
 import org.rodinp.internal.core.Region;
 import org.rodinp.internal.core.RodinDB;
 import org.rodinp.internal.core.RodinDBManager;
@@ -483,49 +482,14 @@ public class RodinCore extends Plugin {
 	}
 
 	/**
-	 * Returns the refinement registry instance.
+	 * Returns the refinement manager instance.
 	 * 
-	 * @return the refinement registry
+	 * @return the refinement manager
+	 * @see IRefinementManager
 	 * @since 1.4
 	 */
-	public static IRefinementRegistry getRefinementRegistry() {
-		return RefinementRegistry.getDefault();
-	}
-
-	/**
-	 * Refines the given source root to the given target root. In case the
-	 * refinement fails, <code>false</code> is returned and an error is logged
-	 * when appropriate.
-	 * <p>
-	 * In the context of this plug-in, the notion of refinement is to be
-	 * understood as an operation that fills a new component (the target) from
-	 * an existing one (the source), without any constraint about the results.
-	 * </p>
-	 * <p>
-	 * The given source root is not modified by this operation.
-	 * </p>
-	 * <p>
-	 * The given target file is modified but not saved by this operation.
-	 * </p>
-	 * 
-	 * @param sourceRoot
-	 *            the source root to refine
-	 * @param targetRoot
-	 *            the target root, initially empty, intended to be filled by
-	 *            refinement participants
-	 * @see IRodinProject#getRodinFile(String)
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress report is
-	 *            not desired
-	 * @return refined root or <code>null</code>
-	 * @throws RodinDBException
-	 *             if a database request fails during the operation
-	 * @since 1.4
-	 */
-	public static boolean refine(IInternalElement sourceRoot,
-			IInternalElement targetRoot, IProgressMonitor monitor)
-			throws RodinDBException {
-		return new RefinementProcessor(sourceRoot).refine(targetRoot, monitor);
+	public static IRefinementManager getRefinementManager() {
+		return RefinementManager.getDefault();
 	}
 
 	/**

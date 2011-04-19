@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.Platform;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRefinementParticipant;
-import org.rodinp.core.IRefinementRegistry;
 import org.rodinp.core.RodinCore;
 import org.rodinp.internal.core.util.Util;
 
@@ -29,7 +28,7 @@ import org.rodinp.internal.core.util.Util;
  * @author Nicolas Beauger
  * 
  */
-public class RefinementRegistry implements IRefinementRegistry {
+public class RefinementRegistry {
 
 	public static class RefinementException extends Exception {
 		private static final long serialVersionUID = 3388507398186210462L;
@@ -134,7 +133,6 @@ public class RefinementRegistry implements IRefinementRegistry {
 	// all participant ids with associated refinement
 	private final Map<String, Refinement> participants = new HashMap<String, Refinement>();
 
-	@Override
 	public IInternalElementType<?> getRootType(String refinementId) {
 		try {
 			load();

@@ -30,6 +30,7 @@ import org.eventb.internal.ui.projectexplorer.actions.RodinFileInputValidator;
 import org.eventb.internal.ui.refine.RefinementUIRegistry.RefinementUI;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRefinementManager;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -56,7 +57,8 @@ public class RefineHandler extends AbstractHandler {
 		public void run(IProgressMonitor monitor) throws RodinDBException {
 			targetRoot.getRodinFile().create(false, monitor);
 
-			final boolean success = RodinCore.refine(sourceRoot, targetRoot,
+			final IRefinementManager refMgr = RodinCore.getRefinementManager();
+			final boolean success = refMgr.refine(sourceRoot, targetRoot,
 					monitor);
 
 			if (success) {

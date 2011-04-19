@@ -75,7 +75,7 @@ public class RefinementUIRegistry {
 			try {
 				final String refinementId = element.getAttribute(REFINEMENT_ID);
 				final IInternalElementType<?> rootType = RodinCore
-						.getRefinementRegistry().getRootType(refinementId);
+						.getRefinementManager().getRootType(refinementId);
 				if (rootType == null) {
 					UIUtils.log(null, "invalid refinement id: " + refinementId);
 					continue;

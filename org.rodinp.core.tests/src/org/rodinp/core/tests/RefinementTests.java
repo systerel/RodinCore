@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRefinementManager;
 import org.rodinp.core.IRefinementParticipant;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinFile;
@@ -146,7 +147,8 @@ public class RefinementTests extends AbstractRodinDBTests {
 				.getRodinFile(refinedName);
 		final IInternalElement refinedRoot = targetFile.getRoot();
 
-		final boolean success = RodinCore.refine(sourceRoot, refinedRoot, null);
+		final IRefinementManager refMgr = RodinCore.getRefinementManager();
+		final boolean success = refMgr.refine(sourceRoot, refinedRoot, null);
 		assertEquals(successExpected, success);
 		LOGGER.assertCalls(ordered, expected);
 	}
@@ -414,7 +416,8 @@ public class RefinementTests extends AbstractRodinDBTests {
 		final IInternalElement target = makeRoot1("f2");
 		// the exception is not caught underneath
 		try {
-			RodinCore.refine(root, target, null);
+			final IRefinementManager refMgr = RodinCore.getRefinementManager();
+			refMgr.refine(root, target, null);
 			fail("exception expected");
 		} catch (RuntimeException e) {
 			// as expected
