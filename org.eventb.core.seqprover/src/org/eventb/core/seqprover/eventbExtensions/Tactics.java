@@ -699,11 +699,17 @@ public class Tactics {
 		return Lib.isImp(hyp);
 	}
 	
+	/**
+	 * @since 2.2
+	 */
 	public static ITactic impCase(Predicate impHyp) {
 		return BasicTactics.reasonerTac(new ImpCase(),
 										new ImpCase.Input(impHyp));
 	}
 
+	/**
+	 * @since 2.2
+	 */
 	public static boolean impCase_applicable(Predicate hyp) {
 		return Lib.isImp(hyp);
 	}

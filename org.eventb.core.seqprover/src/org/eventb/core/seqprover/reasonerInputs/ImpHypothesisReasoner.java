@@ -25,6 +25,7 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
  * Common implementation for reasoners that works on an implicative hypothesis.
  * 
  * @author Emmanuel Billaud
+ * @since 2.2
  */
 public abstract class ImpHypothesisReasoner extends HypothesisReasoner {
 

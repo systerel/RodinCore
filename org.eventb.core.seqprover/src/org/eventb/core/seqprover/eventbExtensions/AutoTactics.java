@@ -1199,7 +1199,7 @@ public class AutoTactics {
 	 * The automatic tactic "Negation Normal Form" to be applied once on a
 	 * hypothesis or a goal.
 	 * 
-	 * @since 2.1
+	 * @since 2.2
 	 */
 	public static class NnfRewritesOnceTac implements ITactic {
 
@@ -1226,7 +1226,7 @@ public class AutoTactics {
 	 * An automatic tactic to apply "Negation Normal Form" tactic on hypothesis 
 	 * and goal, and looping on all pending nodes.
 	 * 
-	 * @since 2.1
+	 * @since 2.2
 	 */
 	public static class NnfRewritesAutoTac extends AbsractLazilyConstrTactic {
 
@@ -1238,7 +1238,7 @@ public class AutoTactics {
 	}
 	
 	/**
-	 * @since 2.1
+	 * @since 2.2
 	 */
 	public static IPosition nnfGetPosition (Predicate pred, final FormulaFactory ff){
 		final List<IPosition> listPos = pred.getPositions(new DefaultFilter(){
