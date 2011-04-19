@@ -166,9 +166,18 @@ public interface ILElement {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @model required="true" typeDataType="org.rodinp.core.emf.api.itf.IInternalElementType<?>" typeRequired="true"
-	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='final IInternalElement internalNextSibling = (nextSibling == null) ? null\n\t\t: nextSibling.getElement();\ntry {\n\tIInternalElement child = getElement().createChild(type,\n\t\t\tinternalNextSibling, null);\n\tfinal InternalElement loaded = SynchroManager\n\t\t\t.loadInternalElementFor(child, eRoot);\n\tthis.addElement(loaded, nextSibling);\n\treturn loaded;\n} catch (RodinDBException e) {\n\te.printStackTrace();\n}\nreturn null;'"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='final IInternalElement internalNextSibling = (nextSibling == null) ? null\n\t\t: nextSibling.getElement();\ntry {\n\tfinal IInternalElement child = getElement().createChild(type,\n\t\t\tinternalNextSibling, null);\n\tfinal InternalElement loaded = SynchroManager\n\t\t\t.loadInternalElementFor(child, eRoot);\n\tthis.addElement(loaded, nextSibling);\n\treturn loaded;\n} catch (RodinDBException e) {\n\te.printStackTrace();\n}\nreturn null;'"
 	 * @generated
 	 */
 	ILElement createChild(IInternalElementType<?> type, ILElement nextSibling);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model kind="operation"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='return getEParent();'"
+	 * @generated
+	 */
+	ILElement getParent();
 
 } // ILElement

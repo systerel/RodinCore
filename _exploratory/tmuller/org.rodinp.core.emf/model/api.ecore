@@ -116,6 +116,11 @@
       </eParameters>
       <eParameters name="nextSibling" eType="#//ILElement"/>
     </eOperations>
+    <eOperations name="getParent" eType="#//ILElement">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="body" value="return getEParent();"/>
+      </eAnnotations>
+    </eOperations>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="List" instanceClassName="java.util.List"
       serializable="false">
