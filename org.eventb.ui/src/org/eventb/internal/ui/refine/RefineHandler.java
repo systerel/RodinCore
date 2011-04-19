@@ -37,6 +37,8 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
+ * Handler for command "org.eventb.ui.refine".
+ * 
  * @author Nicolas Beauger
  * 
  */
@@ -145,7 +147,6 @@ public class RefineHandler extends AbstractHandler {
 			this.currentRoot = (IInternalElement) selection.get(0);
 		}
 		setBaseEnabled(enabled);
-		// FIXME set popup menu label, (use dynamic menu contribution ?)
 	}
 
 	private static boolean computeEnablement(List<?> selection) {

@@ -22,6 +22,8 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 
 /**
+ * Registry for refinement UI data.
+ * 
  * @author Nicolas Beauger
  * 
  */
