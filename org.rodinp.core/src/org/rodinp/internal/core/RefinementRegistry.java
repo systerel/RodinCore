@@ -221,7 +221,7 @@ public class RefinementRegistry {
 							+ refinementId);
 		}
 
-		final Refinement refinement = new Refinement(rootType);
+		final Refinement refinement = new Refinement(rootType, refinementId);
 		refinementIds.put(refinementId, refinement);
 		refinements.put(rootType, refinement);
 	}

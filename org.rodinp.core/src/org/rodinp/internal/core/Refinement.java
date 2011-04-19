@@ -53,9 +53,11 @@ public class Refinement {
 	private boolean ordered = false;
 	private boolean cycleDetected = false;
 	private final IInternalElementType<?> rootType;
+	private final String refinementId;
 
-	public Refinement(IInternalElementType<?> rootType) {
+	public Refinement(IInternalElementType<?> rootType, String refinementId) {
 		this.rootType = rootType;
+		this.refinementId = refinementId;
 	}
 
 	public IInternalElementType<?> getRootType() {
@@ -86,10 +88,12 @@ public class Refinement {
 		final Collection<Refinement.Node> nodes = toNodes(succs, preds);
 		final Sorter<IRefinementParticipant, Refinement.Node> sorter = new Sorter<IRefinementParticipant, Refinement.Node>(
 				nodes);
+		// nodes are guaranteed cycle free
 		final List<Refinement.Node> sorted = sorter.sort();
 		for (Refinement.Node node : sorted) {
 			orderedRefParts.add(node.getLabel());
 		}
+		ordered = true;
 	}
 
 	private void computeSuccPreds(
@@ -172,11 +176,12 @@ public class Refinement {
 		}
 	}
 
-	private static void processCycleFound(String before, String after)
+	private void processCycleFound(String before, String after)
 			throws RefinementException {
+		cycleDetected = true;
 		throw new RefinementException(
-				"cycle in refinement partitipant order, introduced by "
-						+ before + " < " + after);
+				"cycle in refinement participant order for " + refinementId
+						+ ", introduced by " + before + " < " + after);
 	}
 
 }
