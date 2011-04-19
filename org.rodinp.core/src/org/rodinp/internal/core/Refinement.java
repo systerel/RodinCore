@@ -28,25 +28,25 @@ import org.rodinp.internal.core.util.sort.Sorter;
 
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
 public class Refinement {
 
-	private static class Node extends DefaultNode<IRefinementParticipant, Refinement.Node> {
-		
+	private static class Node extends DefaultNode<IRefinementParticipant, Node> {
+
 		public Node(IRefinementParticipant refinePart) {
 			super(refinePart);
 		}
-		
-		public void setSuccsPreds(List<Refinement.Node> succs, List<Refinement.Node> preds) {
+
+		public void setSuccsPreds(List<Node> succs, List<Node> preds) {
 			successors.clear();
 			predecessors.clear();
 			successors.addAll(succs);
 			predecessors.addAll(preds);
 		}
-		
+
 	}
-	
+
 	private final Map<String, IRefinementParticipant> participants = new HashMap<String, IRefinementParticipant>();
 	private final Map<String, Set<String>> order = new HashMap<String, Set<String>>();
 	private final List<IRefinementParticipant> orderedRefParts = new ArrayList<IRefinementParticipant>();
@@ -63,7 +63,7 @@ public class Refinement {
 	public IInternalElementType<?> getRootType() {
 		return rootType;
 	}
-	
+
 	public List<IRefinementParticipant> getOrderedParticipants() {
 		if (!ordered) {
 			orderParticipants();
@@ -85,12 +85,12 @@ public class Refinement {
 		final Map<IRefinementParticipant, List<IRefinementParticipant>> preds = new HashMap<IRefinementParticipant, List<IRefinementParticipant>>();
 
 		computeSuccPreds(succs, preds);
-		final Collection<Refinement.Node> nodes = toNodes(succs, preds);
-		final Sorter<IRefinementParticipant, Refinement.Node> sorter = new Sorter<IRefinementParticipant, Refinement.Node>(
+		final Collection<Node> nodes = toNodes(succs, preds);
+		final Sorter<IRefinementParticipant, Node> sorter = new Sorter<IRefinementParticipant, Node>(
 				nodes);
 		// nodes are guaranteed cycle free
-		final List<Refinement.Node> sorted = sorter.sort();
-		for (Refinement.Node node : sorted) {
+		final List<Node> sorted = sorter.sort();
+		for (Node node : sorted) {
 			orderedRefParts.add(node.getLabel());
 		}
 		ordered = true;
@@ -100,12 +100,11 @@ public class Refinement {
 			Map<IRefinementParticipant, List<IRefinementParticipant>> succMap,
 			Map<IRefinementParticipant, List<IRefinementParticipant>> predMap) {
 		for (Entry<String, Set<String>> entry : order.entrySet()) {
-			final IRefinementParticipant part = participants.get(entry
-					.getKey());
+			final IRefinementParticipant part = participants
+					.get(entry.getKey());
 			final List<IRefinementParticipant> succs = new ArrayList<IRefinementParticipant>();
 			for (String succId : entry.getValue()) {
-				final IRefinementParticipant succ = participants
-						.get(succId);
+				final IRefinementParticipant succ = participants.get(succId);
 				succs.add(succ);
 				List<IRefinementParticipant> preds = predMap.get(succId);
 				if (preds == null) {
@@ -118,30 +117,30 @@ public class Refinement {
 		}
 	}
 
-	private Collection<Refinement.Node> toNodes(
+	private Collection<Node> toNodes(
 			Map<IRefinementParticipant, List<IRefinementParticipant>> succMap,
 			Map<IRefinementParticipant, List<IRefinementParticipant>> predMap) {
-		final Map<IRefinementParticipant, Refinement.Node> nodes = new HashMap<IRefinementParticipant, Refinement.Node>();
+		final Map<IRefinementParticipant, Node> nodes = new HashMap<IRefinementParticipant, Node>();
 		for (IRefinementParticipant part : participants.values()) {
 			nodes.put(part, new Node(part));
 		}
-		for (Entry<IRefinementParticipant, Refinement.Node> entry : nodes.entrySet()) {
+		for (Entry<IRefinementParticipant, Node> entry : nodes.entrySet()) {
 			final IRefinementParticipant participant = entry.getKey();
-			final List<Refinement.Node> succN = toNodeList(participant, succMap, nodes);
-			final List<Refinement.Node> predN = toNodeList(participant, predMap, nodes);
+			final List<Node> succN = toNodeList(participant, succMap, nodes);
+			final List<Node> predN = toNodeList(participant, predMap, nodes);
 			entry.getValue().setSuccsPreds(succN, predN);
 		}
 		return nodes.values();
 	}
 
-	private List<Refinement.Node> toNodeList(IRefinementParticipant participant,
+	private List<Node> toNodeList(IRefinementParticipant participant,
 			Map<IRefinementParticipant, List<IRefinementParticipant>> map,
-			Map<IRefinementParticipant, Refinement.Node> nodes) {
+			Map<IRefinementParticipant, Node> nodes) {
 		List<IRefinementParticipant> succs = map.get(participant);
 		if (succs == null) {
 			return Collections.emptyList();
 		}
-		final List<Refinement.Node> succN = new ArrayList<Refinement.Node>();
+		final List<Node> succN = new ArrayList<Node>();
 		for (IRefinementParticipant part : succs) {
 			succN.add(nodes.get(part));
 		}
