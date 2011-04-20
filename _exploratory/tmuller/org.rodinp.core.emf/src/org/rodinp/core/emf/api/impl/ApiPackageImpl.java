@@ -481,6 +481,9 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 		addEOperation(ilElementEClass, this.getILElement(), "getParent", 0, 1,
 				IS_UNIQUE, IS_ORDERED);
 
+		addEOperation(ilElementEClass, this.getILElement(), "getRoot", 0, 1,
+				IS_UNIQUE, IS_ORDERED);
+
 		// Initialize data types
 		initEDataType(listEDataType, List.class, "List", !IS_SERIALIZABLE,
 				!IS_GENERATED_INSTANCE_CLASS);
@@ -613,6 +616,8 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 						"final IInternalElement internalNextSibling = (nextSibling == null) ? null\n\t\t: nextSibling.getElement();\ntry {\n\tfinal IInternalElement child = getElement().createChild(type,\n\t\t\tinternalNextSibling, null);\n\tfinal InternalElement loaded = SynchroManager\n\t\t\t.loadInternalElementFor(child, eRoot);\n\tthis.addElement(loaded, nextSibling);\n\treturn loaded;\n} catch (RodinDBException e) {\n\te.printStackTrace();\n}\nreturn null;" });
 		addAnnotation(ilElementEClass.getEOperations().get(16), source,
 				new String[] { "body", "return getEParent();" });
+		addAnnotation(ilElementEClass.getEOperations().get(17), source,
+				new String[] { "body", "return getERoot();" });
 	}
 
 } //ApiPackageImpl

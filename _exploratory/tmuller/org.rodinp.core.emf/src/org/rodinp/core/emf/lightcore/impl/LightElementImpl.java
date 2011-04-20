@@ -577,6 +577,15 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public ILElement getRoot() {
+		return getERoot();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public String getReferenceWithoutResolving() {
 		if (this.eIsProxy()){
 			return ((InternalEObject)this).eProxyURI().fragment();

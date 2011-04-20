@@ -107,6 +107,8 @@
         <genParameters ecoreParameter="api.ecore#//ILElement/createChild/type"/>
         <genParameters ecoreParameter="api.ecore#//ILElement/createChild/nextSibling"/>
       </genOperations>
+      <genOperations ecoreOperation="api.ecore#//ILElement/getParent"/>
+      <genOperations ecoreOperation="api.ecore#//ILElement/getRoot"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

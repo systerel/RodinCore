@@ -180,4 +180,13 @@ public interface ILElement {
 	 */
 	ILElement getParent();
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model kind="operation"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='return getERoot();'"
+	 * @generated
+	 */
+	ILElement getRoot();
+
 } // ILElement
