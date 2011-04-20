@@ -51,16 +51,16 @@ public class RodinEditor extends TextEditor {
 
 	public static final String EDITOR_ID = "fr.systerel.editor.editors.RodinEditor";
 
-	private ColorManager colorManager;
+	private final ColorManager colorManager = new ColorManager();
 	private StyledText styledText;
-	private DocumentMapper mapper;
+	private final DocumentMapper mapper = new DocumentMapper();
 	private ProjectionSupport projectionSupport;
 	private ProjectionAnnotationModel projectionAnnotationModel;
 	private OverlayEditor overlayEditor;
 	private IAnnotationModel visualAnnotationModel;
 	private Annotation[] oldPojectionAnnotations = new Annotation[0];
 	private Annotation[] oldMarkers = new Annotation[0];
-	private RodinDocumentProvider documentProvider;
+	private final RodinDocumentProvider documentProvider;
 
 	private ProjectionViewer viewer;
 
@@ -69,8 +69,6 @@ public class RodinEditor extends TextEditor {
 	public RodinEditor() {
 		super();
 		setEditorContextMenuId(EDITOR_ID);
-		colorManager = new ColorManager();
-		mapper = new DocumentMapper();
 		setSourceViewerConfiguration(new RodinConfiguration(colorManager, mapper));
 		documentProvider = new RodinDocumentProvider(mapper, this);
 		setDocumentProvider(documentProvider);
