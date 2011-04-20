@@ -53,7 +53,7 @@ public class RodinEditor extends TextEditor {
 
 	private ColorManager colorManager;
 	private StyledText styledText;
-	private DocumentMapper mapper = new DocumentMapper();
+	private DocumentMapper mapper;
 	private ProjectionSupport projectionSupport;
 	private ProjectionAnnotationModel projectionAnnotationModel;
 	private OverlayEditor overlayEditor;
@@ -70,8 +70,8 @@ public class RodinEditor extends TextEditor {
 		super();
 		setEditorContextMenuId(EDITOR_ID);
 		colorManager = new ColorManager();
-		setSourceViewerConfiguration(new RodinConfiguration(colorManager,
-				mapper));
+		mapper = new DocumentMapper();
+		setSourceViewerConfiguration(new RodinConfiguration(colorManager, mapper));
 		documentProvider = new RodinDocumentProvider(mapper, this);
 		setDocumentProvider(documentProvider);
 		setElementStateListener();
@@ -80,6 +80,10 @@ public class RodinEditor extends TextEditor {
 	public void dispose() {
 		colorManager.dispose();
 		super.dispose();
+	}
+	
+	public Composite getTextComposite() {
+		return styledText;
 	}
 	
 	@Override
@@ -93,6 +97,7 @@ public class RodinEditor extends TextEditor {
 		projectionAnnotationModel = viewer.getProjectionAnnotationModel();
 		visualAnnotationModel = viewer.getVisualAnnotationModel();
 		styledText = viewer.getTextWidget();
+		
 		overlayEditor = new OverlayEditor(styledText, mapper, viewer, this);
 		projectionAnnotationModel.addAnnotationModelListener(overlayEditor);
 		final SelectionController controller = new SelectionController(styledText,
@@ -113,6 +118,13 @@ public class RodinEditor extends TextEditor {
 		updateMarkerStructure(documentProvider.getMarkerAnnotations());
 		setTitleImage(documentProvider.getInputRoot());
 	}
+	
+	@Override
+	protected void editorContextMenuAboutToShow(IMenuManager menu) {
+		// TODO Auto-generated method stub
+		super.editorContextMenuAboutToShow(menu); 
+	}
+	
 	
 	// Used to override the context menu
 //	private void createMenu() {
@@ -234,7 +246,7 @@ public class RodinEditor extends TextEditor {
 			public void elementContentReplaced(Object element) {
 				documentProvider.setCanSaveDocument(documentProvider
 						.getEditorInput());
-				updateFoldingStructure(documentProvider.getFoldingRegions());
+				//updateFoldingStructure(documentProvider.getFoldingRegions());
 				updateMarkerStructure(documentProvider.getMarkerAnnotations());
 
 			}
@@ -256,6 +268,10 @@ public class RodinEditor extends TextEditor {
 
 	public DocumentMapper getDocumentMapper() {
 		return mapper;
+	}
+
+	public int getCurrentOffset() {
+		return styledText.getCaretOffset();
 	}
 	
 }

@@ -10,8 +10,12 @@
  *******************************************************************************/
 package fr.systerel.editor.documentModel;
 
+import static fr.systerel.editor.documentModel.DocumentElementUtils.getChildPossibleTypes;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -29,6 +33,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 
+import fr.systerel.editor.handlers.context.ChildCreationInfo;
 import fr.systerel.editor.presentation.RodinConfiguration;
 import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
 
@@ -308,7 +313,7 @@ public class DocumentMapper {
 		processInterval(offset, length, element, contentType, manipulation,
 				multiLine, 0);
 	}
-	
+
 	public void processInterval(int offset, int length, ILElement element,
 			ContentType contentType, IAttributeManipulation manipulation,
 			boolean multiLine, int indentationLevel) {
@@ -415,15 +420,14 @@ public class DocumentMapper {
 	}
 
 	public EditorItem[] getEditorElementsWithType() {
-		return sections.values().toArray(
-				new EditorItem[editorElements.size()]);
+		return sections.values().toArray(new EditorItem[editorElements.size()]);
 	}
 
 	public EditorItem getEditorElement(ILElement key) {
 		return editorElements.get(key.getElement());
 	}
 
-	public EditorItem getEditorSection(ILElement key) {
+	public EditorItem getEditorSection(IInternalElementType<?> key) {
 		return sections.get(key);
 	}
 
@@ -443,11 +447,11 @@ public class DocumentMapper {
 
 	public Position[] getFoldingPositions() {
 		final ArrayList<Position> result = new ArrayList<Position>();
-//		for (EditorItem el : editorElements.values()) {
-//			if (el.getFoldingPosition() != null) {
-//				result.add(el.getFoldingPosition());
-//			}
-//		}
+		// for (EditorItem el : editorElements.values()) {
+		// if (el.getFoldingPosition() != null) {
+		// result.add(el.getFoldingPosition());
+		// }
+		// }
 		for (EditorItem el : sections.values()) {
 			if (el.getFoldingPosition() != null) {
 				result.add(el.getFoldingPosition());
@@ -458,11 +462,11 @@ public class DocumentMapper {
 
 	public ProjectionAnnotation[] getFoldingAnnotations() {
 		final ArrayList<ProjectionAnnotation> result = new ArrayList<ProjectionAnnotation>();
-//		for (EditorItem el : editorElements.values()) {
-//			if (el.getFoldingAnnotation() != null) {
-//				result.add(el.getFoldingAnnotation());
-//			}
-//		}
+		// for (EditorItem el : editorElements.values()) {
+		// if (el.getFoldingAnnotation() != null) {
+		// result.add(el.getFoldingAnnotation());
+		// }
+		// }
 		for (EditorItem el : sections.values()) {
 			if (el.getFoldingAnnotation() != null) {
 				result.add(el.getFoldingAnnotation());
@@ -478,37 +482,35 @@ public class DocumentMapper {
 			for (Interval interval : el.getIntervals()) {
 				try {
 					final ContentType contentType = interval.getContentType();
-					if (contentType.equals(RodinConfiguration.PRESENTATION_TYPE) || (contentType.equals(RodinConfiguration.SECTION_TYPE))) {
+					if (contentType
+							.equals(RodinConfiguration.PRESENTATION_TYPE)
+							|| (contentType
+									.equals(RodinConfiguration.SECTION_TYPE))) {
 						continue;
 					}
 					if (ie instanceof IIdentifierElement
 							&& (contentType
-									.equals(RodinConfiguration.IDENTIFIER_TYPE)
-							|| contentType
+									.equals(RodinConfiguration.IDENTIFIER_TYPE) || contentType
 									.equals(RodinConfiguration.IMPLICIT_IDENTIFIER_TYPE))) {
 						checkIdentifier((IIdentifierElement) ie, interval);
 					} else if (ie instanceof ILabeledElement
 							&& (contentType
-									.equals(RodinConfiguration.IDENTIFIER_TYPE)
-							|| contentType
+									.equals(RodinConfiguration.IDENTIFIER_TYPE) || contentType
 									.equals(RodinConfiguration.IMPLICIT_IDENTIFIER_TYPE))) {
 						checkLabeled((ILabeledElement) ie, interval);
 					} else if (ie instanceof IAssignmentElement
 							&& (contentType
-									.equals(RodinConfiguration.CONTENT_TYPE)
-							|| contentType
+									.equals(RodinConfiguration.CONTENT_TYPE) || contentType
 									.equals(RodinConfiguration.IMPLICIT_CONTENT_TYPE))) {
 						checkAssignment((IAssignmentElement) ie, interval);
 					} else if (ie instanceof IPredicateElement
 							&& (contentType
-									.equals(RodinConfiguration.CONTENT_TYPE)
-							|| contentType
-									.equals(RodinConfiguration.IMPLICIT_CONTENT_TYPE))){
+									.equals(RodinConfiguration.CONTENT_TYPE) || contentType
+									.equals(RodinConfiguration.IMPLICIT_CONTENT_TYPE))) {
 						checkPredicate((IPredicateElement) ie, interval);
 					} else if (ie instanceof ICommentedElement
 							&& (contentType
-									.equals(RodinConfiguration.COMMENT_TYPE)
-							|| contentType
+									.equals(RodinConfiguration.COMMENT_TYPE) || contentType
 									.equals(RodinConfiguration.IMPLICIT_COMMENT_TYPE))) {
 						checkCommented((ICommentedElement) ie, interval);
 					} else if (contentType.isAttributeContentType()) {
@@ -607,11 +609,15 @@ public class DocumentMapper {
 			synchronizeInterval(interval, text);
 		}
 	}
-	
+
 	private void checkAttribute(ILElement element, Interval interval) {
 		try {
-			synchronizeInterval(interval, interval.getAttributeManipulation()
-					.getValue(element.getElement(), null));
+			final IAttributeManipulation attManip = interval
+					.getAttributeManipulation();
+			if (attManip == null)
+				return;
+			synchronizeInterval(interval,
+					attManip.getValue(element.getElement(), null));
 		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
@@ -717,7 +723,7 @@ public class DocumentMapper {
 			interval.setLength(newTextLength);
 		}
 	}
-	
+
 	private void adaptAfter(Interval interval, int delta) {
 		adaptIntervalOffsetsFrom(intervals.indexOf(interval) + 1, delta);
 		adaptFoldingPositions(interval.getOffset(), delta);
@@ -734,6 +740,50 @@ public class DocumentMapper {
 			}
 		}
 		return null;
+	}
+
+	public ChildCreationInfo getChildCreationPossibility(final int selOffset) {
+		final int findIntervalIndex = findIntervalIndex(selOffset);
+		if (findIntervalIndex != -1) {
+			final Interval interval = intervals.get(findIntervalIndex);
+			final ILElement element = interval.getElement();
+			final EditorItem editorItem;
+			if (element != null) {
+				editorItem = editorElements.get(element.getElement());
+				final Interval interAfter = findEditableIntervalAfter(editorItem
+						.getOffset() + editorItem.getLength());
+				if (interAfter == null) {
+					return new ChildCreationInfo(
+							getChildPossibleTypes(element),
+							element, null);
+				}
+				final ILElement nextElement = interAfter.getElement();
+				if (nextElement != null) {
+					return new ChildCreationInfo(
+							getChildPossibleTypes(element), element,
+							nextElement);
+				}
+			} else {
+				final Interval interAfter = findEditableIntervalAfter(selOffset);
+				final ILElement next = interAfter.getElement();
+				final IInternalElementType<? extends IInternalElement> elementType = next
+						.getElementType();
+				editorItem = sections.get(elementType);
+				if (editorItem != null) {
+					final Set<IInternalElementType<? extends IInternalElement>> singleton = Collections
+							.<IInternalElementType<? extends IInternalElement>> singleton(elementType);
+					return new ChildCreationInfo(singleton, next.getParent(),
+							next);
+				}
+			}
+		}
+		return null;
+	}
+
+	public void reinitialize() {
+		intervals.clear();
+		sections.clear();
+		editorElements.clear();
 	}
 
 }

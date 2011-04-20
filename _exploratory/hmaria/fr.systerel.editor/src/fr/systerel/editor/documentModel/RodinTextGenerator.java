@@ -10,6 +10,8 @@
  *******************************************************************************/
 package fr.systerel.editor.documentModel;
 
+import static fr.systerel.editor.documentModel.DocumentElementUtils.getAttributeDescs;
+import static fr.systerel.editor.documentModel.DocumentElementUtils.getElementDesc;
 import static fr.systerel.editor.documentModel.RodinTextStream.MIN_LEVEL;
 import static fr.systerel.editor.presentation.RodinConfiguration.BOLD_IMPLICIT_LABEL_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.BOLD_LABEL_TYPE;
@@ -28,7 +30,6 @@ import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -44,14 +45,12 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
-import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 
-import fr.systerel.editor.presentation.RodinConfiguration;
 import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
 
 /**
@@ -59,10 +58,6 @@ import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
  * built too and registered with the document mapper.
  */
 public class RodinTextGenerator {
-
-	private static final IAttributeType[] BASIC_ATTRIBUTE_TYPES = {
-			ASSIGNMENT_ATTRIBUTE, COMMENT_ATTRIBUTE, IDENTIFIER_ATTRIBUTE,
-			LABEL_ATTRIBUTE, PREDICATE_ATTRIBUTE };
 
 	private final DocumentMapper documentMapper;
 	private final int TWO_TABS_INDENT = 2;
@@ -81,6 +76,7 @@ public class RodinTextGenerator {
 	 *            The machine or context that is displayed in the document.
 	 */
 	public String createText(ILElement inputRoot) {
+		documentMapper.reinitialize();
 		stream = new RodinTextStream(documentMapper);
 		traverseRoot(null, inputRoot);
 		return stream.getText();
@@ -137,7 +133,7 @@ public class RodinTextGenerator {
 			stream.decrementIndentation(TWO_TABS_INDENT);
 			final int length = stream.getLength() - start;
 			if (start != -1 && !noChildren) {
-				//stream.addEditorSection(rel.getChildType(), start, length);
+				stream.addEditorSection(rel.getChildType(), start, length);
 				start = -1;
 			}
 		}
@@ -158,42 +154,7 @@ public class RodinTextGenerator {
 		return result;
 	}
 
-	// Retrieves the element desc from the registry for the given element e
-	@SuppressWarnings("restriction")
-	private static IElementDesc getElementDesc(ILElement e) {
-		final IRodinElement rodinElement = (IRodinElement) e.getElement();
-		return ElementDescRegistry.getInstance().getElementDesc(rodinElement);
-	}
 
-	/**
-	 * Retrieves the element desc from the registry for the given element type
-	 * <code>type<code>.
-	 * 
-	 * @param type
-	 *            the element type to retrieve the descriptor for
-	 */
-	@SuppressWarnings("restriction")
-	private static IElementDesc getElementDesc(IInternalElementType<?> type) {
-		return ElementDescRegistry.getInstance().getElementDesc(type);
-	}
-
-	@SuppressWarnings("restriction")
-	private static List<IAttributeDesc> getAttributeDescs(
-			IInternalElementType<?> elementType) {
-		final List<IAttributeDesc> descs = new ArrayList<IAttributeDesc>();
-		int i = 0;
-		IAttributeDesc desc;
-		final List<IAttributeType> refList = Arrays
-				.asList(BASIC_ATTRIBUTE_TYPES);
-		while ((desc = ElementDescRegistry.getInstance().getAttribute(
-				elementType, i)) != null) {
-			if (!refList.contains(desc.getAttributeType())) {
-				descs.add(desc);
-			}
-			i++;
-		}
-		return descs;
-	}
 
 	/**
 	 * Processes the attributes other than comments.

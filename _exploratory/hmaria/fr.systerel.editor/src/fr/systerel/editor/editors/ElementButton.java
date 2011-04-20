@@ -85,9 +85,8 @@ public class ElementButton implements PaintListener {
 	public void reposition() {
 		int offset = viewer.modelOffset2WidgetOffset(editorElement.getOffset());
 		if (offset > -1) {
-			int line = parent.getLineAtOffset(offset);
-			Point location = parent.getLocationAtOffset(parent
-					.getOffsetAtLine(line));
+//			int line = parent.getLineAtOffset(offset);
+			Point location = parent.getLocationAtOffset(offset);
 			button.setLocation(location);
 			button.setVisible(true);
 		} else {

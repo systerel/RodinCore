@@ -12,6 +12,7 @@
 package fr.systerel.editor.documentModel;
 
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.itf.ILElement;
 
@@ -35,13 +36,18 @@ public class Interval implements Comparable<Interval> {
 	private final boolean addWhiteSpace;
 	private boolean changed;
 	private int indentation;
-
 	public Interval(int offset, int length, ILElement element,
 			ContentType contentType, boolean multiLine) {
 		this(offset, length, element, contentType, null, multiLine, false);
 	}
 
 	public Interval(int offset, int length, ILElement element,
+			ContentType contentType, IAttributeManipulation attManip,
+			boolean multiLine, boolean addWhiteSpace) {
+		this(offset, length, element, null, contentType, null, multiLine, false);
+	}
+	
+	public Interval(int offset, int length, ILElement element, IInternalElementType<?> elementType,
 			ContentType contentType, IAttributeManipulation attManip,
 			boolean multiLine, boolean addWhiteSpace) {
 		this.offset = offset;

@@ -73,6 +73,9 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 			if (notification.isTouch()) {
 				return;
 			}
+			if (notification.getEventType() == Notification.ADD) {
+				return;
+			}
 			final boolean isILElement = !(oldObject instanceof ILElement);
 			if (notifier instanceof ILElement && isILElement) {
 				documentMapper.elementChanged((ILElement) notifier);
@@ -189,13 +192,13 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		// do nothing
 	}
 
-	protected void doSynchronize(Object element, IProgressMonitor monitor)
+	public void doSynchronize(Object element, IProgressMonitor monitor)
 			throws CoreException {
 		System.out.println("synchronizing");
 		fireElementContentAboutToBeReplaced(element);
 		document.set(textGenerator.createText(inputRoot));
 		fireElementContentReplaced(element);
-		fireElementDirtyStateChanged(element, false);
+		fireElementDirtyStateChanged(element, true);
 	}
 
 	public boolean isReadOnly(Object element) {
