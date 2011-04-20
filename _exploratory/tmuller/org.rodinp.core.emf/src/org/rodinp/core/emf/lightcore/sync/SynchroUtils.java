@@ -101,6 +101,22 @@ public class SynchroUtils {
 	public static ILElement findElement(IRodinElement toFind, ILElement root) {
 		return findElement(toFind, (LightElement)root);
 	}
+	
+	public static int getPositionOf(LightElement root, IInternalElement element)
+			throws RodinDBException {
+		final IInternalElement[] children = root.getElement()
+				.getChildrenOfType(element.getElementType());
+		int pos = -1;
+		int i = 0;
+		for (IInternalElement e : children) {
+			if (e.equals(element)) {
+				pos = i;
+				break;
+			}
+			i++;
+		}
+		return pos;
+	}
 
 	public static void adaptRootForDBChanges(LightElement e) {
 		final DeltaRootAdapterFactory f = new DeltaRootAdapterFactory();

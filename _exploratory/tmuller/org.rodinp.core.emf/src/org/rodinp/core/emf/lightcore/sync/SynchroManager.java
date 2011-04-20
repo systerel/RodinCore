@@ -170,6 +170,7 @@ public class SynchroManager {
 		final InternalElement eElement = LightcoreFactory.eINSTANCE
 				.createInternalElement();
 		eElement.eSetDeliver(false);
+		eElement.setReference(iElement.getElementName()+"["+iElement.getElementType().getName()+"]");
 		eElement.setERodinElement(iElement);
 		final boolean isRoot = iElement.isRoot();
 		eElement.setEIsRoot(isRoot);

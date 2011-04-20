@@ -6,6 +6,8 @@
  */
 package org.rodinp.core.emf.lightcore.impl;
 
+import static org.rodinp.core.emf.lightcore.sync.SynchroUtils.getPositionOf;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -555,7 +557,7 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 					internalNextSibling, null);
 			final InternalElement loaded = SynchroManager
 					.loadInternalElementFor(child, eRoot);
-			this.addElement(loaded, nextSibling);
+			this.addElement(loaded, getPositionOf(eRoot, internalNextSibling));
 			return loaded;
 		} catch (RodinDBException e) {
 			e.printStackTrace();
@@ -832,18 +834,14 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	 * @generated NOT
 	 */
 	@Override
-	public void addElement(ILElement toAdd, ILElement nextSibling) {
+	public void addElement(ILElement toAdd, int pos) {
 		final ILElement found = SynchroUtils.findElement(toAdd.getElement(),
 				eRoot);
 		if (found != null)
 			return;
-		if (nextSibling != null) {
-			final int position = (nextSibling != null) ? getEChildren()
-					.lastIndexOf(nextSibling) : -1;
-			if (position != -1) {
-				getEChildren().add(position, (LightElement) toAdd);
-				return;
-			}
+		if (pos != -1) {
+			getEChildren().add(pos, (LightElement) toAdd);
+			return;
 		}
 		getEChildren().add((LightElement) toAdd);
 	}

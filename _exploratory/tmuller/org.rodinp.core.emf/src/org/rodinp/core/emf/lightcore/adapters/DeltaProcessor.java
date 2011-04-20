@@ -11,6 +11,7 @@
 package org.rodinp.core.emf.lightcore.adapters;
 
 import static org.rodinp.core.emf.lightcore.sync.SynchroUtils.findElement;
+import static org.rodinp.core.emf.lightcore.sync.SynchroUtils.getPositionOf;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.rodinp.core.IInternalElement;
@@ -123,6 +124,7 @@ public class DeltaProcessor {
 		final InternalElement e = LightcoreFactory.eINSTANCE
 				.createInternalElement();
 		e.setERodinElement(element);
+		e.setReference(element.getElementName()+"["+element.getElementType().getName()+"]");
 		e.setEIsRoot(element.isRoot());
 		e.setERoot(root);
 		e.load();
@@ -130,15 +132,16 @@ public class DeltaProcessor {
 		if (parent instanceof IInternalElement) {
 			final LightElement eParent = findElement(parent, root);
 			if (eParent != null) {
-				eParent.getEChildren().add(e);
-				//eParent.addElement(e, null);
+				// eParent.getEChildren().add(e);
+				final int pos = getPositionOf(root, (IInternalElement) element);
+				eParent.addElement(e, pos);
 			}
 		}
 		for (IRodinElement child : ((IInternalElement) element).getChildren()) {
 			addElement(child);
 		}
 	}
-
+	
 	private void reorderElement(IRodinElement element) throws RodinDBException {
 		final IRodinElement parent = element.getParent();
 		final LightElement toMove = findElement(element, root);

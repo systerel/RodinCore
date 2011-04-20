@@ -229,8 +229,8 @@ public interface LightElement extends LightObject, ILElement {
 	/**
 	 * @generated NOT
 	 * @param toAdd
-	 * @param nextSibling
+	 * @param pos
 	 */
-	void addElement(ILElement toAdd, ILElement nextSibling);
+	void addElement(ILElement toAdd, int pos);
 	
 } // LightElement
