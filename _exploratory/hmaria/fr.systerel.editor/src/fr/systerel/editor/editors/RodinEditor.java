@@ -12,6 +12,7 @@ package fr.systerel.editor.editors;
 
 import java.util.HashMap;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
@@ -172,9 +173,9 @@ public class RodinEditor extends TextEditor {
 		}
 		final Annotation[] annotations = documentProvider
 				.getFoldingAnnotations();
+		Assert.isLegal(annotations.length == positions.length);
 		for (int i = 0; i < positions.length; i++) {			
 			projectionAnnotationModel.addAnnotation(annotations[i], positions[i]);
-			i++;
 		}
 		oldPojectionAnnotations = annotations;
 	}
