@@ -138,4 +138,7 @@ public class Interval implements Comparable<Interval> {
 		return indentation;
 	}
 
+	public boolean contains(int pos) {
+		return offset <= pos && pos <= offset + length;
+	}
 }
