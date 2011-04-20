@@ -145,21 +145,21 @@ public class OverlayEditor implements IAnnotationModelListener,
 	}
 
 	public void showAtOffset(int offset) {
-		final Interval inter = mapper.findEditableInterval(viewer
-				.widgetOffset2ModelOffset(offset));
-		if (inter == null)
-			return;
-		if (inter.getElement().isImplicit())
-			return;
-		int pos = 0;		
-		if (inter != null) {
-			pos = offset - inter.getOffset();
-		}
 		// if the overlay editor is currently shown,
 		// save the content and show at the new location.
-		if (editorText.isVisible()) {
+		if (editorText.isVisible() && interval != null
+				&& !interval.contains(offset)) {
 			saveAndExit();
 		}
+		final Interval inter = mapper.findEditableInterval(viewer
+				.widgetOffset2ModelOffset(offset));
+		if (inter == null) {
+			return;
+		}
+		if (inter.getElement().isImplicit())
+			return;
+		final int pos = offset - inter.getOffset();
+		
 		interval = inter;
 		if (!editorText.isVisible()) {
 			if (inter != null) {
