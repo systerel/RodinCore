@@ -60,11 +60,6 @@ public class Interval implements Comparable<Interval> {
 		this.addWhiteSpace = addWhiteSpace;
 	}
 
-	public Interval(int offset, int length, ILElement element,
-			ContentType contentType, IAttributeManipulation attManip) {
-		this(offset, length, element, contentType, attManip, false, false);
-	}
-
 	private IRodinElement getElement(ILElement element) {
 		if (element != null)
 			return (IRodinElement) element.getElement();
