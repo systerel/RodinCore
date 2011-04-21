@@ -119,7 +119,7 @@ public class DocumentMapper {
 		final int endIndex = offset + length;
 		if (index >= 0) {
 			return intervalsStartingBefore(endIndex);
-		} else if (intervals.size() > 0 && index < intervals.get(0).getOffset()) {
+		} else if (intervals.size() > 0) {
 			return intervalsStartingBefore(endIndex);
 		}
 		return NO_INTERVAL;
