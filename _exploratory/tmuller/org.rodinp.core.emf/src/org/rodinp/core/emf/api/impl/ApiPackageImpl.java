@@ -644,7 +644,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 		addAnnotation(ilElementEClass.getEOperations().get(17), source,
 				new String[] { "body", "return getERoot();" });
 		addAnnotation(ilAttributeEClass.getEOperations().get(0), source,
-				new String[] { "body", "return (ILElement)getOwner();" });
+				new String[] { "body", "return (ILElement)getEOwner();" });
 	}
 
 } //ApiPackageImpl

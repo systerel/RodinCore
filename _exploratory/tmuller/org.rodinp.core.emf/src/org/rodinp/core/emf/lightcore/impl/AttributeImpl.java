@@ -313,7 +313,7 @@ public class AttributeImpl extends LightObjectImpl implements Attribute {
 	 * @generated
 	 */
 	public ILElement getOwner() {
-		return (ILElement)getOwner();
+		return (ILElement)getEOwner();
 	}
 
 	/**

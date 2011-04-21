@@ -26,7 +26,7 @@ public interface ILAttribute {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @model kind="operation"
-	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='return (ILElement)getOwner();'"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='return (ILElement)getEOwner();'"
 	 * @generated
 	 */
 	ILElement getOwner();
