@@ -846,4 +846,59 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 		getEChildren().add((LightElement) toAdd);
 	}
 
+	/**
+	 * @Generated NOT
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((reference == null) ? 0 : reference.hashCode());
+		return result;
+	}
+
+	/**
+	 * @Generated NOT
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LightElementImpl other = (LightElementImpl) obj;
+		if (eAttributes == null) {
+			if (other.eAttributes != null)
+				return false;
+		} else if (!getAttributes().equals(other.getAttributes()))
+			return false;
+		if (eChildren == null) {
+			if (other.eChildren != null)
+				return false;
+		} else if (!getChildren().equals(other.getChildren()))
+			return false;
+		if (eIsRoot != other.eIsRoot)
+			return false;
+		if (eRodinElement == null) {
+			if (other.eRodinElement != null)
+				return false;
+		} else if (!getElement().equals(other.getElement()))
+			return false;
+		if (eRoot == null) {
+			if (other.eRoot != null)
+				return false;
+		} else if (!getRoot().equals(other.getRoot()))
+			return false;
+		if (reference == null) {
+			if (other.reference != null)
+				return false;
+		} else if (!getReference().equals(other.getReference()))
+			return false;
+		return true;
+	}	
+	
+
 } //LightElementImpl

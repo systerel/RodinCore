@@ -38,7 +38,8 @@ public class ElementCreationTests extends AbstractRodinEMFCoreTest {
 		final ILElement child = root.createChild(NamedElement.ELEMENT_TYPE,
 				null);
 		assertTrue(root.getChildren().size() == 1);
-		assertTrue(root.getChildren().get(0) == child);
+		final ILElement added = root.getChildren().get(0);
+		assertTrue(added.equals(child));
 	}
 
 	/**
@@ -55,8 +56,10 @@ public class ElementCreationTests extends AbstractRodinEMFCoreTest {
 				NamedElement.ELEMENT_TYPE, secondChild);
 		final List<? extends ILElement> children = root.getChildren();
 		assertTrue(children.size() == 2);
-		assertTrue(children.get(0) == firstChild);
-		assertTrue(children.get(1) == secondChild);
+		final ILElement firstAddedChild = children.get(0);
+		assertTrue(firstAddedChild.equals(firstChild));
+		final ILElement secondAddedChild = children.get(1);
+		assertTrue(secondAddedChild.equals(secondChild));
 	}
 
 }
