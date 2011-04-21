@@ -52,38 +52,47 @@ public class RodinEditor extends TextEditor {
 	public static final String EDITOR_ID = "fr.systerel.editor.editors.RodinEditor";
 
 	private final ColorManager colorManager = new ColorManager();
-	private StyledText styledText;
 	private final DocumentMapper mapper = new DocumentMapper();
+	private final RodinDocumentProvider documentProvider;
+
+	private StyledText styledText;
 	private ProjectionSupport projectionSupport;
 	private ProjectionAnnotationModel projectionAnnotationModel;
 	private OverlayEditor overlayEditor;
 	private IAnnotationModel visualAnnotationModel;
 	private Annotation[] oldPojectionAnnotations = new Annotation[0];
 	private Annotation[] oldMarkers = new Annotation[0];
-	private final RodinDocumentProvider documentProvider;
 
 	private ProjectionViewer viewer;
+	private IElementStateListener stateListener;
 
-//	private Menu fTextContextMenu;
+	// private Menu fTextContextMenu;
 
 	public RodinEditor() {
 		super();
 		setEditorContextMenuId(EDITOR_ID);
-		setSourceViewerConfiguration(new RodinConfiguration(colorManager, mapper));
+		setSourceViewerConfiguration(new RodinConfiguration(colorManager,
+				mapper));
 		documentProvider = new RodinDocumentProvider(mapper, this);
 		setDocumentProvider(documentProvider);
-		setElementStateListener();
+		stateListener = RodinEditorElementStateListener.getNewListener(this,
+				documentProvider);
+		documentProvider.addElementStateListener(stateListener);
 	}
-	
+
 	public void dispose() {
+		close(false);
 		colorManager.dispose();
+		if (stateListener != null)
+			documentProvider.removeElementStateListener(stateListener);
+		documentProvider.unloadResource();
 		super.dispose();
 	}
-	
+
 	public Composite getTextComposite() {
 		return styledText;
 	}
-	
+
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
@@ -95,52 +104,34 @@ public class RodinEditor extends TextEditor {
 		projectionAnnotationModel = viewer.getProjectionAnnotationModel();
 		visualAnnotationModel = viewer.getVisualAnnotationModel();
 		styledText = viewer.getTextWidget();
-		
+
 		overlayEditor = new OverlayEditor(styledText, mapper, viewer, this);
 		projectionAnnotationModel.addAnnotationModelListener(overlayEditor);
-		final SelectionController controller = new SelectionController(styledText,
-				mapper, viewer, overlayEditor);
+		final SelectionController controller = new SelectionController(
+				styledText, mapper, viewer, overlayEditor);
 		styledText.addMouseListener(controller);
 		styledText.addVerifyKeyListener(controller);
 		styledText.addTraverseListener(controller);
-		
-		final Font font = JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
+
+		final Font font = JFaceResources
+				.getFont(PreferenceConstants.RODIN_MATH_FONT);
 		styledText.setFont(font);
-		
-//		ButtonManager buttonManager = new ButtonManager(mapper, styledText,
-//				viewer, this);
-//		buttonManager.createButtons();
-		
+
+		// ButtonManager buttonManager = new ButtonManager(mapper, styledText,
+		// viewer, this);
+		// buttonManager.createButtons();
+
 		// TODO Folding is broken REPAIR
-//		updateFoldingStructure(documentProvider.getFoldingRegions());
+		// updateFoldingStructure(documentProvider.getFoldingRegions());
 		updateMarkerStructure(documentProvider.getMarkerAnnotations());
 		setTitleImage(documentProvider.getInputRoot());
 	}
-	
+
 	@Override
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		// TODO Auto-generated method stub
-		super.editorContextMenuAboutToShow(menu); 
+		super.editorContextMenuAboutToShow(menu);
 	}
-	
-	
-	// Used to override the context menu
-//	private void createMenu() {
-//		 final String id = "rodinEditorMenu";
-//		 final MenuManager manager = new MenuManager(id, id);
-//		 manager.setRemoveAllWhenShown(true);
-//		 //manager.addMenuListener(this);
-//		 fTextContextMenu = manager.createContextMenu(styledText);
-//		 styledText.setMenu(fTextContextMenu);
-//	}
-	
-//	protected void createActions() {
-//	 		super.createActions();
-//			IAction action = new DeleteAction(this);
-//			action.setActionDefinitionId(IWorkbenchActionDefinitionIds.DELETE);
-//			action.setText("Delete");
-//			setAction(ITextEditorActionConstants.DELETE, action);
-//	}
 
 	private void setTitleImage(IEventBRoot inputRoot) {
 		final IInternalElementType<?> rootType = inputRoot.getElementType();
@@ -170,7 +161,7 @@ public class RodinEditor extends TextEditor {
 		getSourceViewerDecorationSupport(viewer);
 		return viewer;
 	}
-	
+
 	/**
 	 * Replaces the old folding structure with this new one.
 	 * 
@@ -184,8 +175,9 @@ public class RodinEditor extends TextEditor {
 		final Annotation[] annotations = documentProvider
 				.getFoldingAnnotations();
 		Assert.isLegal(annotations.length == positions.length);
-		for (int i = 0; i < positions.length; i++) {			
-			projectionAnnotationModel.addAnnotation(annotations[i], positions[i]);
+		for (int i = 0; i < positions.length; i++) {
+			projectionAnnotationModel.addAnnotation(annotations[i],
+					positions[i]);
 		}
 		oldPojectionAnnotations = annotations;
 	}
@@ -216,7 +208,7 @@ public class RodinEditor extends TextEditor {
 		oldMarkers = annotations;
 
 	}
-	
+
 	/**
 	 * Sets the selection. If the selection is a <code>IRodinElement</code> the
 	 * corresponding area in the editor is highlighted
@@ -234,36 +226,6 @@ public class RodinEditor extends TextEditor {
 		}
 	}
 
-	private void setElementStateListener() {
-		documentProvider.addElementStateListener(new IElementStateListener() {
-
-			public void elementContentAboutToBeReplaced(Object element) {
-				// do nothing
-			}
-
-			public void elementContentReplaced(Object element) {
-				documentProvider.setCanSaveDocument(documentProvider
-						.getEditorInput());
-				//updateFoldingStructure(documentProvider.getFoldingRegions());
-				updateMarkerStructure(documentProvider.getMarkerAnnotations());
-
-			}
-
-			public void elementDeleted(Object element) {
-				// do nothing
-			}
-
-			public void elementDirtyStateChanged(Object element, boolean isDirty) {
-				// do nothing
-			}
-
-			public void elementMoved(Object originalElement, Object movedElement) {
-				// do nothing
-			}
-			
-		});
-	}
-
 	public DocumentMapper getDocumentMapper() {
 		return mapper;
 	}
@@ -271,5 +233,47 @@ public class RodinEditor extends TextEditor {
 	public int getCurrentOffset() {
 		return styledText.getCaretOffset();
 	}
-	
+
+	private static class RodinEditorElementStateListener implements
+			IElementStateListener {
+
+		private final RodinDocumentProvider provider;
+		private final RodinEditor editor;
+
+		public RodinEditorElementStateListener(RodinEditor editor,
+				RodinDocumentProvider provider) {
+			this.provider = provider;
+			this.editor = editor;
+		}
+
+		private static IElementStateListener getNewListener(RodinEditor editor,
+				RodinDocumentProvider provider) {
+			return new RodinEditorElementStateListener(editor, provider);
+		}
+
+		public void elementContentAboutToBeReplaced(Object element) {
+			// do nothing
+		}
+
+		public void elementContentReplaced(Object element) {
+			provider.setCanSaveDocument(provider.getEditorInput());
+			// updateFoldingStructure(documentProvider.getFoldingRegions());
+			editor.updateMarkerStructure(provider.getMarkerAnnotations());
+
+		}
+
+		public void elementDeleted(Object element) {
+			// do nothing
+		}
+
+		public void elementDirtyStateChanged(Object element, boolean isDirty) {
+			// do nothing
+		}
+
+		public void elementMoved(Object originalElement, Object movedElement) {
+			// do nothing
+		}
+
+	}
+
 }

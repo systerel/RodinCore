@@ -44,6 +44,7 @@ import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
 import org.rodinp.core.emf.lightcore.Attribute;
+import org.rodinp.core.emf.lightcore.RodinResource;
 
 import fr.systerel.editor.editors.RodinEditor;
 import fr.systerel.editor.presentation.RodinConfiguration;
@@ -62,7 +63,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 
 	private ComposedAdapterFactory adapterFactory;
 	private AdapterFactoryEditingDomain editingDomain;
-	private Resource inputResource;
+	private ILFile inputResource;
 
 	protected EContentAdapter elementPresentationChangeAdapter = new EContentAdapter() {
 		@Override
@@ -152,8 +153,8 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 					.getAdapter(IFile.class);
 			editorInput = (IEditorInput) element;
 
-			inputResource = getResource(file);
-			inputRoot = ((ILFile) inputResource).getRoot();
+			inputResource = (ILFile) getResource(file);
+			inputRoot = inputResource.getRoot();
 			documentMapper.setRoot(inputRoot);
 			textGenerator = new RodinTextGenerator(documentMapper);
 			document.set(textGenerator.createText(inputRoot));
@@ -285,12 +286,10 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		}
 	}
 
-	public void saveDocument() {
-		try {
-			saveDocument(null, null, document, true);
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
+	public void unloadResource() {
+		((RodinResource)inputResource).unload();
 	}
+	
+	
 	
 }
