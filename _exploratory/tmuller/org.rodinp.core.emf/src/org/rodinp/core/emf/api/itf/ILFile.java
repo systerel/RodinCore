@@ -13,11 +13,13 @@ package org.rodinp.core.emf.api.itf;
 
 /**
  * @author Nicolas Beauger
- *
  */
 public interface ILFile {
 
 	ILElement getRoot();
 	
 	boolean isEmpty();
+	
+	void save();
+	
 }

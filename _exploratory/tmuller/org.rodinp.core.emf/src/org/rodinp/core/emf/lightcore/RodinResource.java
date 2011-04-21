@@ -12,6 +12,7 @@
 package org.rodinp.core.emf.lightcore;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -21,9 +22,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -91,6 +90,13 @@ public class RodinResource extends ResourceImpl implements ILFile {
 		}
 	}
 
+	public void save() {
+		try {
+			saveAsRodin(Collections.emptyMap());
+		} catch (IOException e) {
+		}
+	}
+	
 	@Override
 	public void save(final Map<?, ?> options) throws IOException {
 		saveAsRodin(options);
@@ -118,12 +124,6 @@ public class RodinResource extends ResourceImpl implements ILFile {
 				RodinCore.run(new IWorkspaceRunnable() {
 					public void run(final IProgressMonitor monitor)
 							throws CoreException {
-						for (EObject content : getContents()) {
-							if (content instanceof IInternalElement) {
-								SynchroManager.getDefault().saveModelFromRoot(
-										(IInternalElement) content);
-							}
-						}
 						rodinFile.save(null, true);
 					}
 				}, null);
