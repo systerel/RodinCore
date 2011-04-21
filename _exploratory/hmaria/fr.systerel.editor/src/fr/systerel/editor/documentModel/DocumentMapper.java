@@ -281,6 +281,11 @@ public class DocumentMapper {
 		return null;
 	}
 
+	/**
+	 * Processes an interval. Creates and adds a new interval, if there exists
+	 * none yet. Otherwise updates length and offset. It is expected that this
+	 * method is called in the order the intervals appear in the document.
+	 */
 	public void processInterval(int offset, int length, ILElement element,
 			ContentType contentType, IAttributeManipulation manipulation,
 			boolean multiLine, int indentationLevel, boolean addWhitespace) {
