@@ -44,7 +44,6 @@ import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
 import org.rodinp.core.emf.lightcore.Attribute;
-import org.rodinp.core.emf.lightcore.LightElement;
 
 import fr.systerel.editor.editors.RodinEditor;
 import fr.systerel.editor.presentation.RodinConfiguration;
@@ -176,7 +175,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	@Override
 	protected void doSaveDocument(IProgressMonitor monitor, Object element,
 			IDocument document, boolean overwrite) throws CoreException {
-		((LightElement)inputRoot).save();
+		((ILFile)inputResource).save();
 	}
 
 	@Override
@@ -283,6 +282,14 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 			} catch (BadLocationException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	public void saveDocument() {
+		try {
+			saveDocument(null, null, document, true);
+		} catch (CoreException e) {
+			e.printStackTrace();
 		}
 	}
 	
