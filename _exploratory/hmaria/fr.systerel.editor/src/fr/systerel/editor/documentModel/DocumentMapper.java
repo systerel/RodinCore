@@ -15,6 +15,7 @@ import static fr.systerel.editor.documentModel.DocumentElementUtils.getChildPoss
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -111,19 +112,20 @@ public class DocumentMapper {
 	 */
 	public Interval[] findIntervals(int offset, int length) {
 		final int index = findFirstIntervalIndex(offset);
+		final int endIndex = offset + length;
 		if (index >= 0) {
-			final ArrayList<Interval> results = new ArrayList<Interval>();
-			for (int i = index; i < intervals.size(); i++) {
-				if (intervals.get(i).getOffset() <= offset + length) {
-					results.add(intervals.get(i));
+			final List<Interval> results = new ArrayList<Interval>();
+			for (Interval interval : intervals) {
+				if (interval.getOffset() <= endIndex) {
+					results.add(interval);
 				}
 
 			}
 			return results.toArray(new Interval[results.size()]);
 		} else if (intervals.size() > 0 && index < intervals.get(0).getOffset()) {
-			final ArrayList<Interval> results = new ArrayList<Interval>();
+			final List<Interval> results = new ArrayList<Interval>();
 			for (Interval interval : intervals) {
-				if (interval.getOffset() <= offset + length) {
+				if (interval.getOffset() <= endIndex) {
 					results.add(interval);
 				}
 			}
