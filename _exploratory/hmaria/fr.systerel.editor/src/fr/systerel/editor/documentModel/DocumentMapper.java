@@ -124,9 +124,9 @@ public class DocumentMapper {
 		return NO_INTERVAL;
 	}
 
-	private Interval[] intervalsStartingBefore(int intervalIndex, int endIndex) {
+	private Interval[] intervalsStartingBefore(int fromInterval, int endIndex) {
 		final List<Interval> results = new ArrayList<Interval>();
-		for (int i = intervalIndex; i< intervals.size(); i++) {
+		for (int i = fromInterval; i< intervals.size(); i++) {
 			if (intervals.get(i).getOffset() <= endIndex) {
 				results.add(intervals.get(i));
 			}
