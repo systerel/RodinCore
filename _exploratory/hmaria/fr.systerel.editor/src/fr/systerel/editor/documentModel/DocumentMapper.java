@@ -117,9 +117,7 @@ public class DocumentMapper {
 	public Interval[] findIntervals(int offset, int length) {
 		final int index = findFirstIntervalIndex(offset);
 		final int endIndex = offset + length;
-		if (index >= 0) {
-			return intervalsStartingBefore(endIndex);
-		} else if (intervals.size() > 0) {
+		if (index >= 0 || intervals.size() > 0) {
 			return intervalsStartingBefore(endIndex);
 		}
 		return NO_INTERVAL;
