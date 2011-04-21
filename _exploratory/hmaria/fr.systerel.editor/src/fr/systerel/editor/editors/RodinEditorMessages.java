@@ -30,6 +30,7 @@ public class RodinEditorMessages {
 		try {
 			return fgResourceBundle.getString(key);
 		} catch (MissingResourceException e) {
+			e.printStackTrace();
 			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
 		}
 	}

@@ -123,10 +123,12 @@ public class RodinPartitioner extends FastPartitioner {
 				list.add(new TypedRegion(offset, length,
 						IDocument.DEFAULT_CONTENT_TYPE));
 		} catch (BadPositionCategoryException ex) {
+			ex.printStackTrace();
 			// Make sure we clear the cache
 			clearPositionCache();
 		} catch (RuntimeException ex) {
 			// Make sure we clear the cache
+			ex.printStackTrace();
 			clearPositionCache();
 			throw ex;
 		}
@@ -227,7 +229,9 @@ public class RodinPartitioner extends FastPartitioner {
 					fDocument.getLength() - endOffset,
 					IDocument.DEFAULT_CONTENT_TYPE);
 		} catch (BadPositionCategoryException x) {
+			x.printStackTrace();
 		} catch (BadLocationException x) {
+			x.printStackTrace();
 		}
 		return new TypedRegion(0, fDocument.getLength(),
 				IDocument.DEFAULT_CONTENT_TYPE);

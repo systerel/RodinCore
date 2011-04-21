@@ -185,6 +185,7 @@ public class RodinTextGenerator {
 				}
 			} catch (RodinDBException e) {
 				value = "failure while loading";
+				e.printStackTrace();
 			}
 			stream.addPresentationRegion(" ", element);
 		}
