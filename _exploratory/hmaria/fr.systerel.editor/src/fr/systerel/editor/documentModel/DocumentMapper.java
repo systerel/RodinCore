@@ -50,6 +50,10 @@ import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
  */
 public class DocumentMapper {
 
+	/**
+	 * 
+	 */
+	private static final Interval[] NO_INTERVAL = new Interval[0];
 	private ArrayList<Interval> intervals = new ArrayList<Interval>();
 	private ILElement root;
 	private Interval previous;
@@ -114,24 +118,21 @@ public class DocumentMapper {
 		final int index = findFirstIntervalIndex(offset);
 		final int endIndex = offset + length;
 		if (index >= 0) {
-			final List<Interval> results = new ArrayList<Interval>();
-			for (Interval interval : intervals) {
-				if (interval.getOffset() <= endIndex) {
-					results.add(interval);
-				}
-
-			}
-			return results.toArray(new Interval[results.size()]);
+			return intervalsStartingBefore(endIndex);
 		} else if (intervals.size() > 0 && index < intervals.get(0).getOffset()) {
-			final List<Interval> results = new ArrayList<Interval>();
-			for (Interval interval : intervals) {
-				if (interval.getOffset() <= endIndex) {
-					results.add(interval);
-				}
-			}
-			return results.toArray(new Interval[results.size()]);
+			return intervalsStartingBefore(endIndex);
 		}
-		return new Interval[0];
+		return NO_INTERVAL;
+	}
+
+	private Interval[] intervalsStartingBefore(final int endIndex) {
+		final List<Interval> results = new ArrayList<Interval>();
+		for (Interval interval : intervals) {
+			if (interval.getOffset() <= endIndex) {
+				results.add(interval);
+			}
+		}
+		return results.toArray(new Interval[results.size()]);
 	}
 
 	/**
