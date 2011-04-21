@@ -52,7 +52,7 @@ public class SynchroUtils {
 						.createAttribute();
 				if (silent)
 					lAttribute.eSetDeliver(false);
-				lAttribute.setOwner(lElement);
+				lAttribute.setEOwner(lElement);
 				lAttribute.setType(type);
 				lAttribute.setValue(value.getValue());
 				lElement.getEAttributes().put(type.getId(), lAttribute);

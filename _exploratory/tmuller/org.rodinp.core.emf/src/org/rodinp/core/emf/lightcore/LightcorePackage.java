@@ -227,13 +227,13 @@ public interface LightcorePackage extends EPackage {
 	int ATTRIBUTE__VALUE = LIGHT_OBJECT_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Owner</b></em>' reference.
+	 * The feature id for the '<em><b>EOwner</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ATTRIBUTE__OWNER = LIGHT_OBJECT_FEATURE_COUNT + 2;
+	int ATTRIBUTE__EOWNER = LIGHT_OBJECT_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Entry</b></em>' reference.
@@ -590,15 +590,15 @@ public interface LightcorePackage extends EPackage {
 	EAttribute getAttribute_Value();
 
 	/**
-	 * Returns the meta object for the reference '{@link org.rodinp.core.emf.lightcore.Attribute#getOwner <em>Owner</em>}'.
+	 * Returns the meta object for the reference '{@link org.rodinp.core.emf.lightcore.Attribute#getEOwner <em>EOwner</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Owner</em>'.
-	 * @see org.rodinp.core.emf.lightcore.Attribute#getOwner()
+	 * @return the meta object for the reference '<em>EOwner</em>'.
+	 * @see org.rodinp.core.emf.lightcore.Attribute#getEOwner()
 	 * @see #getAttribute()
 	 * @generated
 	 */
-	EReference getAttribute_Owner();
+	EReference getAttribute_EOwner();
 
 	/**
 	 * Returns the meta object for the reference '{@link org.rodinp.core.emf.lightcore.Attribute#getEntry <em>Entry</em>}'.
@@ -793,12 +793,12 @@ public interface LightcorePackage extends EPackage {
 		EAttribute ATTRIBUTE__VALUE = eINSTANCE.getAttribute_Value();
 
 		/**
-		 * The meta object literal for the '<em><b>Owner</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>EOwner</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference ATTRIBUTE__OWNER = eINSTANCE.getAttribute_Owner();
+		EReference ATTRIBUTE__EOWNER = eINSTANCE.getAttribute_EOwner();
 
 		/**
 		 * The meta object literal for the '<em><b>Entry</b></em>' reference feature.

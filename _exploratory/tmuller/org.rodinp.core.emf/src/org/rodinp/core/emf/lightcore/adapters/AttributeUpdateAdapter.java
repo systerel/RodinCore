@@ -49,7 +49,7 @@ public class AttributeUpdateAdapter extends AdapterImpl {
 			try {
 				isUpdating = true;
 				final Attribute attribute = (Attribute) notifier;
-				final Object rElement = (IRodinElement) attribute.getOwner()
+				final Object rElement = (IRodinElement) attribute.getEOwner()
 						.getERodinElement();
 				if (rElement instanceof IInternalElement) {
 					if (attribute.getType() instanceof IAttributeType) {

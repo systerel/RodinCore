@@ -473,7 +473,7 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 		}
 		if (attribute == null) {
 			attribute = LightcoreFactory.eINSTANCE.createAttribute();
-			attribute.setOwner(this);
+		        attribute.setEOwner(this);
 			attribute.setType(type);
 		}
 		attribute.setValue(value.getValue());
@@ -557,7 +557,7 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 					internalNextSibling, null);
 			final InternalElement loaded = SynchroManager
 					.loadInternalElementFor(child, eRoot);
-			this.addElement(loaded, getPositionOf(eRoot, internalNextSibling));
+			addElement(loaded, SynchroUtils.getPositionOf(eRoot, internalNextSibling));
 			return loaded;
 		} catch (RodinDBException e) {
 			e.printStackTrace();

@@ -284,7 +284,7 @@ public class LightcorePackageImpl extends EPackageImpl implements LightcorePacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getAttribute_Owner() {
+	public EReference getAttribute_EOwner() {
 		return (EReference)attributeEClass.getEStructuralFeatures().get(2);
 	}
 
@@ -370,7 +370,7 @@ public class LightcorePackageImpl extends EPackageImpl implements LightcorePacka
 		attributeEClass = createEClass(ATTRIBUTE);
 		createEAttribute(attributeEClass, ATTRIBUTE__TYPE);
 		createEAttribute(attributeEClass, ATTRIBUTE__VALUE);
-		createEReference(attributeEClass, ATTRIBUTE__OWNER);
+		createEReference(attributeEClass, ATTRIBUTE__EOWNER);
 		createEReference(attributeEClass, ATTRIBUTE__ENTRY);
 		createEReference(attributeEClass, ATTRIBUTE__KEY);
 
@@ -415,6 +415,7 @@ public class LightcorePackageImpl extends EPackageImpl implements LightcorePacka
 		lightElementEClass.getESuperTypes().add(this.getLightObject());
 		lightElementEClass.getESuperTypes().add(theApiPackage.getILElement());
 		attributeEClass.getESuperTypes().add(this.getLightObject());
+		attributeEClass.getESuperTypes().add(theApiPackage.getILAttribute());
 		internalElementEClass.getESuperTypes().add(this.getLightElement());
 		implicitElementEClass.getESuperTypes().add(this.getLightElement());
 
@@ -458,7 +459,7 @@ public class LightcorePackageImpl extends EPackageImpl implements LightcorePacka
 		initEClass(attributeEClass, Attribute.class, "Attribute", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getAttribute_Type(), theEcorePackage.getEJavaObject(), "type", "", 1, 1, Attribute.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAttribute_Value(), ecorePackage.getEJavaObject(), "value", null, 1, 1, Attribute.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getAttribute_Owner(), this.getLightElement(), null, "owner", null, 1, 1, Attribute.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getAttribute_EOwner(), this.getLightElement(), null, "eOwner", null, 1, 1, Attribute.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getAttribute_Entry(), this.getStringToAttributeMapEntry(), null, "entry", null, 1, 1, Attribute.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
 		initEReference(getAttribute_Key(), this.getStringToAttributeMapEntry(), this.getStringToAttributeMapEntry_Value(), "key", null, 1, 1, Attribute.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 

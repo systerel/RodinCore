@@ -21,5 +21,7 @@ public interface ILFile {
 	boolean isEmpty();
 	
 	void save();
+
+	void unloadResource();
 	
 }

@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.lightcore.Attribute;
 import org.rodinp.core.emf.lightcore.LightElement;
 import org.rodinp.core.emf.lightcore.LightcorePackage;
@@ -28,7 +29,7 @@ import org.rodinp.core.emf.lightcore.LightcorePackage;
  * <ul>
  *   <li>{@link org.rodinp.core.emf.lightcore.impl.AttributeImpl#getType <em>Type</em>}</li>
  *   <li>{@link org.rodinp.core.emf.lightcore.impl.AttributeImpl#getValue <em>Value</em>}</li>
- *   <li>{@link org.rodinp.core.emf.lightcore.impl.AttributeImpl#getOwner <em>Owner</em>}</li>
+ *   <li>{@link org.rodinp.core.emf.lightcore.impl.AttributeImpl#getEOwner <em>EOwner</em>}</li>
  *   <li>{@link org.rodinp.core.emf.lightcore.impl.AttributeImpl#getEntry <em>Entry</em>}</li>
  *   <li>{@link org.rodinp.core.emf.lightcore.impl.AttributeImpl#getKey <em>Key</em>}</li>
  * </ul>
@@ -78,14 +79,14 @@ public class AttributeImpl extends LightObjectImpl implements Attribute {
 	protected Object value = VALUE_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getOwner() <em>Owner</em>}' reference.
+	 * The cached value of the '{@link #getEOwner() <em>EOwner</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getOwner()
+	 * @see #getEOwner()
 	 * @generated
 	 * @ordered
 	 */
-	protected LightElement owner;
+	protected LightElement eOwner;
 
 	/**
 	 * The cached value of the '{@link #getEntry() <em>Entry</em>}' reference.
@@ -173,16 +174,16 @@ public class AttributeImpl extends LightObjectImpl implements Attribute {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public LightElement getOwner() {
-		if (owner != null && owner.eIsProxy()) {
-			InternalEObject oldOwner = (InternalEObject)owner;
-			owner = (LightElement)eResolveProxy(oldOwner);
-			if (owner != oldOwner) {
+	public LightElement getEOwner() {
+		if (eOwner != null && eOwner.eIsProxy()) {
+			InternalEObject oldEOwner = (InternalEObject)eOwner;
+			eOwner = (LightElement)eResolveProxy(oldEOwner);
+			if (eOwner != oldEOwner) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, LightcorePackage.ATTRIBUTE__OWNER, oldOwner, owner));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, LightcorePackage.ATTRIBUTE__EOWNER, oldEOwner, eOwner));
 			}
 		}
-		return owner;
+		return eOwner;
 	}
 
 	/**
@@ -190,8 +191,8 @@ public class AttributeImpl extends LightObjectImpl implements Attribute {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public LightElement basicGetOwner() {
-		return owner;
+	public LightElement basicGetEOwner() {
+		return eOwner;
 	}
 
 	/**
@@ -199,11 +200,11 @@ public class AttributeImpl extends LightObjectImpl implements Attribute {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setOwner(LightElement newOwner) {
-		LightElement oldOwner = owner;
-		owner = newOwner;
+	public void setEOwner(LightElement newEOwner) {
+		LightElement oldEOwner = eOwner;
+		eOwner = newEOwner;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, LightcorePackage.ATTRIBUTE__OWNER, oldOwner, owner));
+			eNotify(new ENotificationImpl(this, Notification.SET, LightcorePackage.ATTRIBUTE__EOWNER, oldEOwner, eOwner));
 	}
 
 	/**
@@ -311,6 +312,15 @@ public class AttributeImpl extends LightObjectImpl implements Attribute {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public ILElement getOwner() {
+		return (ILElement)getOwner();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -349,9 +359,9 @@ public class AttributeImpl extends LightObjectImpl implements Attribute {
 				return getType();
 			case LightcorePackage.ATTRIBUTE__VALUE:
 				return getValue();
-			case LightcorePackage.ATTRIBUTE__OWNER:
-				if (resolve) return getOwner();
-				return basicGetOwner();
+			case LightcorePackage.ATTRIBUTE__EOWNER:
+				if (resolve) return getEOwner();
+				return basicGetEOwner();
 			case LightcorePackage.ATTRIBUTE__ENTRY:
 				if (resolve) return getEntry();
 				return basicGetEntry();
@@ -377,8 +387,8 @@ public class AttributeImpl extends LightObjectImpl implements Attribute {
 			case LightcorePackage.ATTRIBUTE__VALUE:
 				setValue(newValue);
 				return;
-			case LightcorePackage.ATTRIBUTE__OWNER:
-				setOwner((LightElement)newValue);
+			case LightcorePackage.ATTRIBUTE__EOWNER:
+				setEOwner((LightElement)newValue);
 				return;
 			case LightcorePackage.ATTRIBUTE__ENTRY:
 				setEntry((Map.Entry<String, Attribute>)newValue);
@@ -404,8 +414,8 @@ public class AttributeImpl extends LightObjectImpl implements Attribute {
 			case LightcorePackage.ATTRIBUTE__VALUE:
 				setValue(VALUE_EDEFAULT);
 				return;
-			case LightcorePackage.ATTRIBUTE__OWNER:
-				setOwner((LightElement)null);
+			case LightcorePackage.ATTRIBUTE__EOWNER:
+				setEOwner((LightElement)null);
 				return;
 			case LightcorePackage.ATTRIBUTE__ENTRY:
 				setEntry((Map.Entry<String, Attribute>)null);
@@ -429,8 +439,8 @@ public class AttributeImpl extends LightObjectImpl implements Attribute {
 				return TYPE_EDEFAULT == null ? type != null : !TYPE_EDEFAULT.equals(type);
 			case LightcorePackage.ATTRIBUTE__VALUE:
 				return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
-			case LightcorePackage.ATTRIBUTE__OWNER:
-				return owner != null;
+			case LightcorePackage.ATTRIBUTE__EOWNER:
+				return eOwner != null;
 			case LightcorePackage.ATTRIBUTE__ENTRY:
 				return entry != null;
 			case LightcorePackage.ATTRIBUTE__KEY:

@@ -27,6 +27,7 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.ApiFactory;
 import org.rodinp.core.emf.api.ApiPackage;
+import org.rodinp.core.emf.api.itf.ILAttribute;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.lightcore.LightcorePackage;
 import org.rodinp.core.emf.lightcore.impl.LightcorePackageImpl;
@@ -51,6 +52,13 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	private EClass ilElementEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass ilAttributeEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -207,6 +215,15 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getILAttribute() {
+		return ilAttributeEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EDataType getList() {
 		return listEDataType;
 	}
@@ -331,6 +348,8 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 
 		// Create classes and their features
 		ilElementEClass = createEClass(IL_ELEMENT);
+
+		ilAttributeEClass = createEClass(IL_ATTRIBUTE);
 
 		// Create data types
 		listEDataType = createEDataType(LIST);
@@ -484,6 +503,12 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 		addEOperation(ilElementEClass, this.getILElement(), "getRoot", 0, 1,
 				IS_UNIQUE, IS_ORDERED);
 
+		initEClass(ilAttributeEClass, ILAttribute.class, "ILAttribute",
+				IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		addEOperation(ilAttributeEClass, this.getILElement(), "getOwner", 0, 1,
+				IS_UNIQUE, IS_ORDERED);
+
 		// Initialize data types
 		initEDataType(listEDataType, List.class, "List", !IS_SERIALIZABLE,
 				!IS_GENERATED_INSTANCE_CLASS);
@@ -586,7 +611,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 				source,
 				new String[] {
 						"body",
-						"final IAttributeType type = value.getType();\nAttribute attribute = getEAttributes().get(type.getId());\nfinal Object new_value = value.getValue();\nfinal Object old_value = (attribute != null) ? attribute.getValue()\n\t: null;\nif (new_value == null || new_value.equals(old_value)) {\n\treturn;\n}\nif (attribute == null) {\n\tattribute = LightcoreFactory.eINSTANCE.createAttribute();\n\tattribute.setOwner(this);\n\tattribute.setType(type);\n}\nattribute.setValue(value.getValue());\ngetEAttributes().put(type.getId(), attribute);" });
+						"final IAttributeType type = value.getType();\nAttribute attribute = getEAttributes().get(type.getId());\nfinal Object new_value = value.getValue();\nfinal Object old_value = (attribute != null) ? attribute.getValue()\n\t: null;\nif (new_value == null || new_value.equals(old_value)) {\n\treturn;\n}\nif (attribute == null) {\n\tattribute = LightcoreFactory.eINSTANCE.createAttribute();\n        attribute.setEOwner(this);\n\tattribute.setType(type);\n}\nattribute.setValue(value.getValue());\ngetEAttributes().put(type.getId(), attribute);" });
 		addAnnotation(ilElementEClass.getEOperations().get(9), source,
 				new String[] { "body",
 						"return (IInternalElement) getERodinElement();" });
@@ -613,11 +638,13 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 				source,
 				new String[] {
 						"body",
-						"final IInternalElement internalNextSibling = (nextSibling == null) ? null\n\t\t: nextSibling.getElement();\ntry {\n\tfinal IInternalElement child = getElement().createChild(type,\n\t\t\tinternalNextSibling, null);\n\tfinal InternalElement loaded = SynchroManager\n\t\t\t.loadInternalElementFor(child, eRoot);\n\tthis.addElement(loaded, nextSibling);\n\treturn loaded;\n} catch (RodinDBException e) {\n\te.printStackTrace();\n}\nreturn null;" });
+						"final IInternalElement internalNextSibling = (nextSibling == null) ? null\n\t\t: nextSibling.getElement();\ntry {\n\tfinal IInternalElement child = getElement().createChild(type,\n\t\t\tinternalNextSibling, null);\n\tfinal InternalElement loaded = SynchroManager\n\t\t\t.loadInternalElementFor(child, eRoot);\n\taddElement(loaded, SynchroUtils.getPositionOf(eRoot, internalNextSibling));\n\treturn loaded;\n} catch (RodinDBException e) {\n\te.printStackTrace();\n}\nreturn null;" });
 		addAnnotation(ilElementEClass.getEOperations().get(16), source,
 				new String[] { "body", "return getEParent();" });
 		addAnnotation(ilElementEClass.getEOperations().get(17), source,
 				new String[] { "body", "return getERoot();" });
+		addAnnotation(ilAttributeEClass.getEOperations().get(0), source,
+				new String[] { "body", "return (ILElement)getOwner();" });
 	}
 
 } //ApiPackageImpl

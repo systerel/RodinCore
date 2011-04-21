@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.rodinp.core.IRodinFile;
@@ -94,6 +95,7 @@ public class RodinResource extends ResourceImpl implements ILFile {
 		try {
 			saveAsRodin(Collections.emptyMap());
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -180,5 +182,18 @@ public class RodinResource extends ResourceImpl implements ILFile {
 	@Override
 	public boolean isEmpty() {
 		return getContents().isEmpty();
+	}
+
+	public void unloadResource() {
+		unload();
+		getResourceSet().getResources().remove(this);
+		try {
+			// Make the associated RodinFile consistent if it is has some
+			// unsaved change
+			if (rodinFile.hasUnsavedChanges())
+				rodinFile.makeConsistent(new NullProgressMonitor());
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -7,6 +7,7 @@
 package org.rodinp.core.emf.lightcore;
 
 import java.util.Map;
+import org.rodinp.core.emf.api.itf.ILAttribute;
 
 /**
  * <!-- begin-user-doc -->
@@ -18,7 +19,7 @@ import java.util.Map;
  * <ul>
  *   <li>{@link org.rodinp.core.emf.lightcore.Attribute#getType <em>Type</em>}</li>
  *   <li>{@link org.rodinp.core.emf.lightcore.Attribute#getValue <em>Value</em>}</li>
- *   <li>{@link org.rodinp.core.emf.lightcore.Attribute#getOwner <em>Owner</em>}</li>
+ *   <li>{@link org.rodinp.core.emf.lightcore.Attribute#getEOwner <em>EOwner</em>}</li>
  *   <li>{@link org.rodinp.core.emf.lightcore.Attribute#getEntry <em>Entry</em>}</li>
  *   <li>{@link org.rodinp.core.emf.lightcore.Attribute#getKey <em>Key</em>}</li>
  * </ul>
@@ -28,7 +29,7 @@ import java.util.Map;
  * @model
  * @generated
  */
-public interface Attribute extends LightObject {
+public interface Attribute extends LightObject, ILAttribute {
 	/**
 	 * Returns the value of the '<em><b>Type</b></em>' attribute.
 	 * The default value is <code>""</code>.
@@ -83,30 +84,30 @@ public interface Attribute extends LightObject {
 	void setValue(Object value);
 
 	/**
-	 * Returns the value of the '<em><b>Owner</b></em>' reference.
+	 * Returns the value of the '<em><b>EOwner</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Owner</em>' reference isn't clear,
+	 * If the meaning of the '<em>EOwner</em>' reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Owner</em>' reference.
-	 * @see #setOwner(LightElement)
-	 * @see org.rodinp.core.emf.lightcore.LightcorePackage#getAttribute_Owner()
+	 * @return the value of the '<em>EOwner</em>' reference.
+	 * @see #setEOwner(LightElement)
+	 * @see org.rodinp.core.emf.lightcore.LightcorePackage#getAttribute_EOwner()
 	 * @model required="true"
 	 * @generated
 	 */
-	LightElement getOwner();
+	LightElement getEOwner();
 
 	/**
-	 * Sets the value of the '{@link org.rodinp.core.emf.lightcore.Attribute#getOwner <em>Owner</em>}' reference.
+	 * Sets the value of the '{@link org.rodinp.core.emf.lightcore.Attribute#getEOwner <em>EOwner</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Owner</em>' reference.
-	 * @see #getOwner()
+	 * @param value the new value of the '<em>EOwner</em>' reference.
+	 * @see #getEOwner()
 	 * @generated
 	 */
-	void setOwner(LightElement value);
+	void setEOwner(LightElement value);
 
 	/**
 	 * Returns the value of the '<em><b>Entry</b></em>' reference.

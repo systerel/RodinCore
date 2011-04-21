@@ -82,6 +82,25 @@ public interface ApiPackage extends EPackage {
 	int IL_ELEMENT_FEATURE_COUNT = 0;
 
 	/**
+	 * The meta object id for the '{@link org.rodinp.core.emf.api.itf.ILAttribute <em>IL Attribute</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.rodinp.core.emf.api.itf.ILAttribute
+	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getILAttribute()
+	 * @generated
+	 */
+	int IL_ATTRIBUTE = 1;
+
+	/**
+	 * The number of structural features of the '<em>IL Attribute</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IL_ATTRIBUTE_FEATURE_COUNT = 0;
+
+	/**
 	 * The meta object id for the '<em>List</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -89,7 +108,7 @@ public interface ApiPackage extends EPackage {
 	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getList()
 	 * @generated
 	 */
-	int LIST = 1;
+	int LIST = 2;
 
 	/**
 	 * The meta object id for the '<em>IAttribute Type</em>' data type.
@@ -99,7 +118,7 @@ public interface ApiPackage extends EPackage {
 	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getIAttributeType()
 	 * @generated
 	 */
-	int IATTRIBUTE_TYPE = 2;
+	int IATTRIBUTE_TYPE = 3;
 
 	/**
 	 * The meta object id for the '<em>IAttribute Value</em>' data type.
@@ -109,7 +128,7 @@ public interface ApiPackage extends EPackage {
 	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getIAttributeValue()
 	 * @generated
 	 */
-	int IATTRIBUTE_VALUE = 3;
+	int IATTRIBUTE_VALUE = 4;
 
 	/**
 	 * The meta object id for the '<em>IInternal Element</em>' data type.
@@ -119,7 +138,7 @@ public interface ApiPackage extends EPackage {
 	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getIInternalElement()
 	 * @generated
 	 */
-	int IINTERNAL_ELEMENT = 4;
+	int IINTERNAL_ELEMENT = 5;
 
 	/**
 	 * The meta object id for the '<em>IInternal Element Type</em>' data type.
@@ -129,7 +148,7 @@ public interface ApiPackage extends EPackage {
 	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getIInternalElementType()
 	 * @generated
 	 */
-	int IINTERNAL_ELEMENT_TYPE = 5;
+	int IINTERNAL_ELEMENT_TYPE = 6;
 
 	/**
 	 * The meta object id for the '<em>IAttribute Type Boolean</em>' data type.
@@ -139,7 +158,7 @@ public interface ApiPackage extends EPackage {
 	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getIAttributeType_Boolean()
 	 * @generated
 	 */
-	int IATTRIBUTE_TYPE_BOOLEAN = 6;
+	int IATTRIBUTE_TYPE_BOOLEAN = 7;
 
 	/**
 	 * The meta object id for the '<em>IAttribute Type Handle</em>' data type.
@@ -149,7 +168,7 @@ public interface ApiPackage extends EPackage {
 	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getIAttributeType_Handle()
 	 * @generated
 	 */
-	int IATTRIBUTE_TYPE_HANDLE = 7;
+	int IATTRIBUTE_TYPE_HANDLE = 8;
 
 	/**
 	 * The meta object id for the '<em>IAttribute Type Integer</em>' data type.
@@ -159,7 +178,7 @@ public interface ApiPackage extends EPackage {
 	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getIAttributeType_Integer()
 	 * @generated
 	 */
-	int IATTRIBUTE_TYPE_INTEGER = 8;
+	int IATTRIBUTE_TYPE_INTEGER = 9;
 
 	/**
 	 * The meta object id for the '<em>IAttribute Type Long</em>' data type.
@@ -169,7 +188,7 @@ public interface ApiPackage extends EPackage {
 	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getIAttributeType_Long()
 	 * @generated
 	 */
-	int IATTRIBUTE_TYPE_LONG = 9;
+	int IATTRIBUTE_TYPE_LONG = 10;
 
 	/**
 	 * The meta object id for the '<em>IAttribute Type String</em>' data type.
@@ -179,7 +198,7 @@ public interface ApiPackage extends EPackage {
 	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getIAttributeType_String()
 	 * @generated
 	 */
-	int IATTRIBUTE_TYPE_STRING = 10;
+	int IATTRIBUTE_TYPE_STRING = 11;
 
 	/**
 	 * The meta object id for the '<em>IRodin Element</em>' data type.
@@ -189,7 +208,7 @@ public interface ApiPackage extends EPackage {
 	 * @see org.rodinp.core.emf.api.impl.ApiPackageImpl#getIRodinElement()
 	 * @generated
 	 */
-	int IRODIN_ELEMENT = 11;
+	int IRODIN_ELEMENT = 12;
 
 	/**
 	 * Returns the meta object for class '{@link org.rodinp.core.emf.api.itf.ILElement <em>IL Element</em>}'.
@@ -200,6 +219,16 @@ public interface ApiPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getILElement();
+
+	/**
+	 * Returns the meta object for class '{@link org.rodinp.core.emf.api.itf.ILAttribute <em>IL Attribute</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>IL Attribute</em>'.
+	 * @see org.rodinp.core.emf.api.itf.ILAttribute
+	 * @generated
+	 */
+	EClass getILAttribute();
 
 	/**
 	 * Returns the meta object for data type '{@link java.util.List <em>List</em>}'.
