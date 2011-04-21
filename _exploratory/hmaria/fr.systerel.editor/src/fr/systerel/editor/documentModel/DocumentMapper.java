@@ -115,19 +115,20 @@ public class DocumentMapper {
 	 * @return All intervals that are found in the range.
 	 */
 	public Interval[] findIntervals(int offset, int length) {
-		final int index = findFirstIntervalIndex(offset);
+		int index = findFirstIntervalIndex(offset);
 		final int endIndex = offset + length;
 		if (index >= 0 || intervals.size() > 0) {
-			return intervalsStartingBefore(endIndex);
+			index = Math.max(0, index);
+			return intervalsStartingBefore(index, endIndex);
 		}
 		return NO_INTERVAL;
 	}
 
-	private Interval[] intervalsStartingBefore(final int endIndex) {
+	private Interval[] intervalsStartingBefore(int intervalIndex, int endIndex) {
 		final List<Interval> results = new ArrayList<Interval>();
-		for (Interval interval : intervals) {
-			if (interval.getOffset() <= endIndex) {
-				results.add(interval);
+		for (int i = intervalIndex; i< intervals.size(); i++) {
+			if (intervals.get(i).getOffset() <= endIndex) {
+				results.add(intervals.get(i));
 			}
 		}
 		return results.toArray(new Interval[results.size()]);
