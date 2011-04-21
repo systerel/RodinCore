@@ -147,8 +147,7 @@ public class DocumentMapper {
 
 			if (intervals.get(mid).getOffset() > offset) {
 				high = mid - 1;
-			} else if (intervals.get(mid).getOffset() < offset // TODO first test in weaker
-					&& (intervals.get(mid).getLastIndex() < offset)) {
+			} else if (	intervals.get(mid).getLastIndex() < offset) {
 				low = mid + 1;
 			} else
 				return mid;
