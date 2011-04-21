@@ -295,7 +295,7 @@ public class RodinPartitioner extends FastPartitioner {
 				}
 				position = new TypedPosition(offset,
 						length, contentTypeName);
-				last_end = interval.getOffset() + interval.getLength();
+				last_end = interval.getLastIndex();
 				fDocument.addPosition(getPositionCategory(), position);
 			} catch (BadLocationException e) {
 				e.printStackTrace();

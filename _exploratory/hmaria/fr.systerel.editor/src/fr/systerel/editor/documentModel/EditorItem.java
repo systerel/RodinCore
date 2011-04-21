@@ -118,7 +118,7 @@ public abstract class EditorItem {
 			return foldingPosition.getLength();
 		} else if (intervals.size() > 0) {
 			Interval last = intervals.get(intervals.size() - 1);
-			return last.getOffset() + last.getLength() - getOffset();
+			return last.getLastIndex() - getOffset();
 		}
 		return -1;
 	}

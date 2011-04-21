@@ -132,7 +132,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 		}
 		// do not delete after the editable has ended
 		int end = widget2ModelOffset(e.end);
-		if (editable.getOffset() + editable.getLength() < end
+		if (editable.getLastIndex() < end
 				&& e.text.length() == 0) {
 			// System.out.println("can not delete after editable has ended");
 			e.doit = false;

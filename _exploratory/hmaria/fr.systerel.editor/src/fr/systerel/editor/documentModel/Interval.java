@@ -86,6 +86,10 @@ public class Interval implements Comparable<Interval> {
 	public void setLength(int length) {
 		this.length = length;
 	}
+
+	public int getLastIndex() {
+		return offset + length;
+	}
 	
 	public IRodinElement getRodinElement() {
 		return rodinElement;

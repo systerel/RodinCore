@@ -336,7 +336,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 		final String text = editorText.getText();
 		mapper.synchronizeInterval(interval, text);
 		final int offset = interval.getOffset();
-		final int end = offset + interval.getLength();
+		final int end = interval.getLastIndex();
 		final int height = getHeight(parent.getText(offset, end));
 		editorText.setRedraw(false);
 		if (!editorText.getText().isEmpty()) {

@@ -147,9 +147,8 @@ public class DocumentMapper {
 
 			if (intervals.get(mid).getOffset() > offset) {
 				high = mid - 1;
-			} else if (intervals.get(mid).getOffset() < offset
-					&& (intervals.get(mid).getOffset()
-							+ intervals.get(mid).getLength() < offset)) {
+			} else if (intervals.get(mid).getOffset() < offset // TODO first test in weaker
+					&& (intervals.get(mid).getLastIndex() < offset)) {
 				low = mid + 1;
 			} else
 				return mid;
@@ -169,7 +168,7 @@ public class DocumentMapper {
 		// check the two previous intervals.
 		if (result > 0) {
 			final Interval previous = intervals.get(result - 1);
-			if (previous.getOffset() + previous.getLength() >= offset) {
+			if (previous.getLastIndex() >= offset) {
 				result = result - 1;
 			}
 		}
@@ -233,7 +232,7 @@ public class DocumentMapper {
 	public Interval findEditableIntervalBefore(int offset) {
 		Interval previous = null;
 		for (Interval interval : intervals) {
-			if (interval.getOffset() + interval.getLength() >= offset) {
+			if (interval.getLastIndex() >= offset) {
 				return previous;
 			}
 			if (interval.isEditable()) {
@@ -555,8 +554,8 @@ public class DocumentMapper {
 	protected void removeIntervals(int offset, int length) {
 		final ArrayList<Interval> toRemove = new ArrayList<Interval>();
 		for (Interval interval : intervals) {
-			final int end = interval.getOffset() + interval.getLength();
-			if (interval.getOffset() >= offset && end <= offset + length) {
+			if (interval.getOffset() >= offset
+					&& interval.getLastIndex() <= offset + length) {
 				toRemove.add(interval);
 			}
 			if (interval.getOffset() > offset) {
