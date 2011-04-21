@@ -37,17 +37,6 @@ public class Interval implements Comparable<Interval> {
 	private boolean changed;
 	private int indentation;
 	
-	public Interval(int offset, int length, ILElement element,
-			ContentType contentType, boolean multiLine) {
-		this(offset, length, element, contentType, null, multiLine, false);
-	}
-
-	public Interval(int offset, int length, ILElement element,
-			ContentType contentType, IAttributeManipulation attManip,
-			boolean multiLine, boolean addWhiteSpace) {
-		this(offset, length, element, null, contentType, attManip, multiLine, false);
-	}
-	
 	public Interval(int offset, int length, ILElement element, IInternalElementType<?> elementType,
 			ContentType contentType, IAttributeManipulation attManip,
 			boolean multiLine, boolean addWhiteSpace) {

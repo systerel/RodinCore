@@ -290,14 +290,16 @@ public class DocumentMapper {
 			ContentType contentType, IAttributeManipulation manipulation,
 			boolean multiLine, int indentationLevel, boolean addWhitespace) {
 		Interval inter;
+		final IInternalElementType<?> type = (element == null) ? null : element
+				.getElementType();
 		if (contentType.isEditable()) {
 			inter = findInterval(element, contentType);
 			if (inter != null) {
 				inter.setLength(length);
 				inter.setOffset(offset);
 			} else {
-				inter = new Interval(offset, length, element, contentType,
-						manipulation, multiLine, addWhitespace);
+				inter = new Interval(offset, length, element, type,
+						contentType, manipulation, multiLine, addWhitespace);
 				inter.setIndentation(indentationLevel);
 				try {
 					addIntervalAfter(inter, previous);
@@ -311,8 +313,8 @@ public class DocumentMapper {
 				inter.setLength(length);
 				inter.setOffset(offset);
 			} else {
-				inter = new Interval(offset, length, element, contentType,
-						multiLine);
+				inter = new Interval(offset, length, element, type,
+						contentType, manipulation, multiLine, addWhitespace);
 				inter.setIndentation(indentationLevel);
 				try {
 					addInterval(inter);
@@ -326,9 +328,9 @@ public class DocumentMapper {
 			EditorItem el = editorElements.get(element.getElement());
 			if (el == null) {
 				el = new EditorElement(element);
+				editorElements.put(element.getElement(), el);
 			}
 			el.addInterval(inter);
-			editorElements.put(element.getElement(), el);
 		}
 
 	}
