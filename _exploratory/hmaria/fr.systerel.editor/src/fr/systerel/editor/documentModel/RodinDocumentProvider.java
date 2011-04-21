@@ -19,10 +19,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.command.BasicCommandStack;
-import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
@@ -43,11 +41,10 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
-import org.rodinp.core.emf.lightcore.Attribute;
-import org.rodinp.core.emf.lightcore.RodinResource;
 
 import fr.systerel.editor.editors.RodinEditor;
 import fr.systerel.editor.presentation.RodinConfiguration;
+import fr.systerel.editor.presentation.updaters.PresentationUpdater;
 
 /**
  * This is a document provider for rodin machines and contexts. It is intended
@@ -64,33 +61,11 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	private ComposedAdapterFactory adapterFactory;
 	private AdapterFactoryEditingDomain editingDomain;
 	private ILFile inputResource;
-
-	protected EContentAdapter elementPresentationChangeAdapter = new EContentAdapter() {
-		@Override
-		public void notifyChanged(Notification notification) {
-			final Object oldObject = notification.getOldValue();
-			final Object notifier = notification.getNotifier();
-			if (notification.isTouch()) {
-				return;
-			}
-			if (notification.getEventType() == Notification.ADD) {
-				return;
-			}
-			final boolean isILElement = !(oldObject instanceof ILElement);
-			if (notifier instanceof ILElement && isILElement) {
-				documentMapper.elementChanged((ILElement) notifier);
-			}
-			if (oldObject instanceof ILElement) {
-				documentMapper.elementChanged((ILElement) oldObject);
-			}
-			if (oldObject instanceof Attribute) {
-				documentMapper.elementChanged(((Attribute) oldObject).getOwner());
-			}
-		}
-	};
+	private final PresentationUpdater elementPresentationChangeAdapter;
 
 	public RodinDocumentProvider(DocumentMapper mapper, RodinEditor editor) {
 		this.documentMapper = mapper;
+		elementPresentationChangeAdapter = new PresentationUpdater(mapper);
 		initializeEditingDomain();
 	}
 
@@ -287,9 +262,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	}
 
 	public void unloadResource() {
-		((RodinResource)inputResource).unload();
+		inputResource.unloadResource();
 	}
-	
-	
 	
 }
