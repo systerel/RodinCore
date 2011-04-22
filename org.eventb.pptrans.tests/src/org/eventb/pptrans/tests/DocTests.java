@@ -244,11 +244,25 @@ public class DocTests extends AbstractTranslationTests {
 	}
 
 	/**
-	 * Unit test coming from usage in translation to SMT solvers.
+	 * Unit test coming from usage in translation to SMT solvers. Shows that
+	 * predefined set types <code>BOOL</code> and <code>ℤ</code> are retained in
+	 * the left-hand side of a membership predicate.
 	 */
 	public void testSMT1() {
 		final ITypeEnvironment te = mTypeEnvironment("a", "S");
-		doTransTest("a↦BOOL↦ℤ ∈ A", "a↦BOOL↦ℤ ∈ A", true, te);
+		doTransTest("a↦BOOL↦ℤ ∈ A", "a↦BOOL↦ℤ ∈ A", false, te);
 	}
 
+	/**
+	 * Other unit tests used for verifying assumptions about the translation
+	 * of booleans.
+	 */
+	public void testSMT2() throws Exception {
+		final ITypeEnvironment te = mTypeEnvironment("f", "BOOL ↔ S");
+		doTransTest("f(TRUE) = a", "∃x·x=TRUE ∧ x↦a ∈ f", false, te);
+		doTransTest("f(FALSE) = a", "∃x·¬x=TRUE ∧ x↦a ∈ f", false, te);
+		doTransTest("b = bool(c=TRUE ∧ FALSE=d)",
+				"b=TRUE ⇔ (c=TRUE ∧ ¬d=TRUE)", false, te);
+		doTransTest("A=BOOL", "∀x· x ∈ A", false, te);
+	}
 }
