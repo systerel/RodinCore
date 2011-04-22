@@ -30,6 +30,8 @@ public class FiniteHypBoundedGoalTests extends AbstractAutomaticReasonerTests {
 	private static final String lowerBoundR = "∃n·(∀x·x ∈ {1,2,3} ⇒ x ≥ n)";
 	private static final String upperBoundL = "∃n·(∀x·x ∈ {1,2,3} ⇒ n ≥ x)";
 	private static final String upperBoundR = "∃n·(∀x·x ∈ {1,2,3} ⇒ x ≤ n)";
+	private static final String malformed1 = "∃n,m⦂ℤ·(∀x·x ∈ {1,2,3} ⇒ n ≤ x)";
+	private static final String malformed2 = "∃n·(∀x,y⦂ℤ·x ∈ {1,2,3} ⇒ n ≤ x)";
 
 	private static String makeSeq(String hyps, String goal) {
 		return hyps + " ;H;   ;S; " + hyps + " |- " + goal;
@@ -69,7 +71,9 @@ public class FiniteHypBoundedGoalTests extends AbstractAutomaticReasonerTests {
 				// comprehension set with bound identifiers references
 				makeSeq("finite({y·n≤y∧y≤10∣2∗y})",
 						"∃n·(∀x·x ∈ {y·n≤y∧y≤10∣2∗y} ⇒ n ≤ x)"),
-
+				// malformed predicates
+				makeSeq(finite123, malformed1),
+				makeSeq(finite123, malformed2),
 		};
 	}
 
