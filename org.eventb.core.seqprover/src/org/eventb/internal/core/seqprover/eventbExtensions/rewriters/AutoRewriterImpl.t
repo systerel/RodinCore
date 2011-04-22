@@ -795,10 +795,10 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    	 *    P ∧ ... ∧ ¬Q ∧ ... ∧ R ⇒ Q == ¬(P ∧ ... ∧ ¬Q ∧ ... ∧ R)
 	    	 */
 	    	Limp(and@Land(children), Q) -> {
-	    		/* cannot do same as above because makeNeg(Q) =/= Not(Q)
-	    		 * TODO tom doc says the following should work:
-	    		 * Limp(and@Land(pList(_*, nQ, _*)), Q)
-	    		 * && (nQ << Predicate dLib.makeNeg(Q))
+	    		/* Tom-2.8 doc says the following should work:
+	    		 *    Limp(and@Land(pList(_*, nQ, _*)), Q)
+	    		 *    && (nQ << Predicate dLib.makeNeg(Q))
+	    		 * but this raises an internal error in Tom!
 	    		 */
 	    		if (level2 && contains(`children, dLib.makeNeg(`Q))) {
 		    		result = dLib.makeNeg(`and);
