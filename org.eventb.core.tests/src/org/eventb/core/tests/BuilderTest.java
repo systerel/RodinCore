@@ -223,15 +223,19 @@ public abstract class BuilderTest extends TestCase {
 	 * @throws Exception
 	 *             in case of error
 	 */
-	public static void importProjectFiles(IProject dest, String srcName)
+	public void importProjectFiles(IProject dest, String srcName)
 			throws Exception {
-		final URL entry = Platform.getBundle(PLUGIN_ID).getEntry("projects");
+		final URL entry = getProjectsURL();
 		final URL projectsURL = FileLocator.toFileURL(entry);
 		final File projectsDir = new File(projectsURL.toURI());
 		for (final File project : projectsDir.listFiles()) {
 			if (project.isDirectory() && project.getName().equals(srcName))
 				importFiles(dest, project, true);
 		}
+	}
+
+	protected URL getProjectsURL() {
+		return Platform.getBundle(PLUGIN_ID).getEntry("projects");
 	}
 
 	private static void importFiles(IProject project, File root, boolean isRoot)
