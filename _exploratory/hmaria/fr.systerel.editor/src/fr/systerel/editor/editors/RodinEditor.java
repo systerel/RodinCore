@@ -75,7 +75,7 @@ public class RodinEditor extends TextEditor {
 				mapper));
 		documentProvider = new RodinDocumentProvider(mapper, this);
 		setDocumentProvider(documentProvider);
-		stateListener = RodinEditorElementStateListener.getNewListener(this,
+		stateListener = EditorElementStateListener.getNewListener(this,
 				documentProvider);
 		documentProvider.addElementStateListener(stateListener);
 	}
@@ -232,48 +232,6 @@ public class RodinEditor extends TextEditor {
 
 	public int getCurrentOffset() {
 		return styledText.getCaretOffset();
-	}
-
-	private static class RodinEditorElementStateListener implements
-			IElementStateListener {
-
-		private final RodinDocumentProvider provider;
-		private final RodinEditor editor;
-
-		public RodinEditorElementStateListener(RodinEditor editor,
-				RodinDocumentProvider provider) {
-			this.provider = provider;
-			this.editor = editor;
-		}
-
-		private static IElementStateListener getNewListener(RodinEditor editor,
-				RodinDocumentProvider provider) {
-			return new RodinEditorElementStateListener(editor, provider);
-		}
-
-		public void elementContentAboutToBeReplaced(Object element) {
-			// do nothing
-		}
-
-		public void elementContentReplaced(Object element) {
-			provider.setCanSaveDocument(provider.getEditorInput());
-			// updateFoldingStructure(documentProvider.getFoldingRegions());
-			editor.updateMarkerStructure(provider.getMarkerAnnotations());
-
-		}
-
-		public void elementDeleted(Object element) {
-			// do nothing
-		}
-
-		public void elementDirtyStateChanged(Object element, boolean isDirty) {
-			// do nothing
-		}
-
-		public void elementMoved(Object originalElement, Object movedElement) {
-			// do nothing
-		}
-
 	}
 
 }
