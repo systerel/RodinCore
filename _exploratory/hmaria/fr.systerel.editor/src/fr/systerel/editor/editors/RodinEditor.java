@@ -65,6 +65,7 @@ public class RodinEditor extends TextEditor {
 
 	private ProjectionViewer viewer;
 	private IElementStateListener stateListener;
+	private CursorManager cursorManager;
 
 	// private Menu fTextContextMenu;
 
@@ -112,6 +113,9 @@ public class RodinEditor extends TextEditor {
 		styledText.addMouseListener(controller);
 		styledText.addVerifyKeyListener(controller);
 		styledText.addTraverseListener(controller);
+
+		cursorManager = new CursorManager(this, viewer);
+		styledText.addMouseMoveListener(cursorManager);
 
 		final Font font = JFaceResources
 				.getFont(PreferenceConstants.RODIN_MATH_FONT);

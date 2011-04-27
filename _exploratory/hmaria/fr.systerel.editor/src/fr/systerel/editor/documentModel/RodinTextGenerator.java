@@ -93,7 +93,7 @@ public class RodinTextGenerator {
 			stream.appendPresentationTabs(e, TWO_TABS_INDENT);
 			processCommentedElement(e, true, 0);
 			stream.appendLineSeparator();
-			stream.appendPresentationTabs(e);
+			stream.appendLeftPresentationTabs(e);
 			stream.addLabelRegion(rodinElement.getElementName(), e);
 			processOtherAttributes(e);
 			stream.decrementIndentation(TWO_TABS_INDENT);
@@ -122,7 +122,7 @@ public class RodinTextGenerator {
 			}
 			stream.incrementIndentation(TWO_TABS_INDENT);
 			for (ILElement in : c) {
-				stream.appendPresentationTabs(in);
+				stream.appendLeftPresentationTabs(in);
 				processElement(in);
 				traverse(mon, in);
 				if (in.getElementType() == IEvent.ELEMENT_TYPE) {
@@ -238,7 +238,7 @@ public class RodinTextGenerator {
 
 	private void processLabeledElement(ILElement element) {
 		final String labelAttribute = element.getAttribute(LABEL_ATTRIBUTE);
-		stream.appendPresentationTabs(element);
+		stream.appendLeftPresentationTabs(element);
 		final ContentType contentType;
 		if ((element.getAttribute(ASSIGNMENT_ATTRIBUTE) == null)
 				&& (element.getAttribute(PREDICATE_ATTRIBUTE) == null)) {

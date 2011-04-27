@@ -124,8 +124,11 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 
 	// FIXME take care about attribute type extensions
 	// TODO make contributions out of the following constants
+	public static final ContentType LEFT_PRESENTATION_TYPE = new ContentType(
+			"__left_presentation_", false, false, CONTENT);
+	
 	public static final ContentType PRESENTATION_TYPE = new ContentType(
-			"__separator_", false, false, CONTENT);
+			"__presentation_", false, false, CONTENT);
 	
 	public static final ContentType IDENTIFIER_TYPE = new ContentType(
 			"__identifier", true, false, IDENTIFIER);
@@ -165,6 +168,7 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 			"__comment_header", false, false, COMMENT_HEADER);
 
 	private static ContentType[] contentTypes = new ContentType[] {
+		LEFT_PRESENTATION_TYPE,
 		PRESENTATION_TYPE,
 		IDENTIFIER_TYPE,
 		IMPLICIT_IDENTIFIER_TYPE,
@@ -330,7 +334,14 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 				colorManager.getColor(COMMENT_HEADER_TYPE.getColor()), bgColor, SWT.NONE));
 		reconciler.setDamager(rdr, COMMENT_HEADER_TYPE.getName());
 		reconciler.setRepairer(rdr, COMMENT_HEADER_TYPE.getName());
-
+		
+		rdr = new RodinDamagerRepairer(new TextAttribute(
+				colorManager.getColor(PRESENTATION_TYPE.getColor()), bgColor, SWT.NONE));
+		reconciler.setDamager(rdr, PRESENTATION_TYPE.getName());
+		reconciler.setRepairer(rdr, PRESENTATION_TYPE.getName());
+		
+		reconciler.setDamager(rdr, LEFT_PRESENTATION_TYPE.getName());
+		reconciler.setRepairer(rdr, LEFT_PRESENTATION_TYPE.getName());
 		return reconciler;
 	}
 }

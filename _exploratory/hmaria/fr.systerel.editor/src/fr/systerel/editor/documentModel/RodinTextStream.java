@@ -13,6 +13,7 @@ package fr.systerel.editor.documentModel;
 import static fr.systerel.editor.presentation.RodinConfiguration.COMMENT_HEADER_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.KEYWORD_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.LABEL_TYPE;
+import static fr.systerel.editor.presentation.RodinConfiguration.LEFT_PRESENTATION_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.PRESENTATION_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.getAttributeContentType;
 
@@ -118,31 +119,35 @@ public class RodinTextStream {
 
 	protected void addLabelRegion(String text, ILElement element) {
 		addElementRegion(text, element, LABEL_TYPE, false);
-		builder.append(LINESEPARATOR);
+		addPresentationRegion((String) LINESEPARATOR, element);
 	}
 
+	protected void addLeftPresentationRegion(String text, ILElement element) {
+		addElementRegion(text, element, LEFT_PRESENTATION_TYPE, false);
+	}
+	
 	protected void addPresentationRegion(String text, ILElement element) {
 		addElementRegion(text, element, PRESENTATION_TYPE, false);
 	}
 
 	protected void addCommentHeaderRegion(ILElement element, boolean appendTabs) {
 		if (appendTabs)
-			builder.append(TAB);
+			addPresentationRegion(String.valueOf(TAB), element);
 		addElementRegion(COMMENT_HEADER_DELIMITER, element,
 				COMMENT_HEADER_TYPE, false);
 	}
 
 	protected void addKeywordRegion(String title) {
-		addPresentationRegion(getTabs(level), null);
+		appendLeftPresentationTabs(null);
 		addElementRegion(title, null, KEYWORD_TYPE, false);
-		builder.append(LINESEPARATOR);
+		appendLineSeparator();
 	}
 
 	protected void addSectionRegion(String title) {
 		if (level > 0)
-			addPresentationRegion(getTabs(level), null);
+			appendLeftPresentationTabs(null);
 		addElementRegion(title, null, KEYWORD_TYPE, false);
-		builder.append((String) LINESEPARATOR);
+		appendLineSeparator();
 	}
 
 	public static String getTabs(int number) {
@@ -162,11 +167,11 @@ public class RodinTextStream {
 	}
 	
 	public void appendLineSeparator() {
-		builder.append(LINESEPARATOR);
+		addPresentationRegion((String) LINESEPARATOR, null);
 	}
 	
-	public void appendPresentationTabs(ILElement e) {
-		addPresentationRegion(getTabs(level), e);
+	public void appendLeftPresentationTabs(ILElement e) {
+		addLeftPresentationRegion(getTabs(level), e);
 	}
 	
 	public int getLevel() {
@@ -186,7 +191,7 @@ public class RodinTextStream {
 	}
 
 	public void appendPresentationTabs(ILElement e, int indentation) {
-		addPresentationRegion(getTabs(indentation), e);
+		addLeftPresentationRegion(getTabs(indentation), e);
 	}
 
 	public void incrementIndentation(int i) {

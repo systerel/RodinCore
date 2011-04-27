@@ -75,15 +75,14 @@ public class SelectionController implements MouseListener, VerifyListener,
 	 * Resets the selection
 	 */
 	public void correctSelection() {
-		boolean forward = styledText.getSelection().y == styledText
-				.getCaretOffset();
+		final int x = styledText.getSelection().x;
+		final int y = styledText.getSelection().y;
+		boolean forward = y == styledText.getCaretOffset();
 		if (forward) {
-			styledText.setSelection(styledText.getSelection().x,
-					styledText.getSelection().x);
+			styledText.setSelection(x, x);
 
 		} else {
-			styledText.setSelection(styledText.getSelection().y,
-					styledText.getSelection().y);
+			styledText.setSelection(y, y);
 		}
 
 	}
@@ -108,7 +107,6 @@ public class SelectionController implements MouseListener, VerifyListener,
 
 	public void mouseDown(MouseEvent e) {
 		// do nothing
-
 	}
 
 	public void mouseUp(MouseEvent e) {
@@ -119,7 +117,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 	}
 
 	public void verifyText(VerifyEvent e) {
-		int start = widget2ModelOffset(e.start);
+		int start = viewer.widgetOffset2ModelOffset(e.start);
 
 		Interval editable = mapper.findEditableInterval(start);
 		// if there is no editable interval in the region, cancel.
@@ -131,21 +129,13 @@ public class SelectionController implements MouseListener, VerifyListener,
 			return;
 		}
 		// do not delete after the editable has ended
-		int end = widget2ModelOffset(e.end);
+		int end = viewer.widgetOffset2ModelOffset(e.end);
 		if (editable.getLastIndex() < end
 				&& e.text.length() == 0) {
 			// System.out.println("can not delete after editable has ended");
 			e.doit = false;
 			return;
 		}
-	}
-
-	protected int widget2ModelOffset(int widgetOffset) {
-		return viewer.widgetOffset2ModelOffset(widgetOffset);
-	}
-
-	protected int model2widgetOffset(int modelOffset) {
-		return viewer.modelOffset2WidgetOffset(modelOffset);
 	}
 
 	public void verifyKey(VerifyEvent event) {
@@ -169,18 +159,18 @@ public class SelectionController implements MouseListener, VerifyListener,
 	}
 
 	public void goToNextEditRegion() {
-		int offset = widget2ModelOffset(styledText.getCaretOffset());
+		int offset = viewer.widgetOffset2ModelOffset(styledText.getCaretOffset());
 		Interval next = mapper.findEditableIntervalAfter(offset);
-		int new_offset = model2widgetOffset(next.getOffset());
+		int new_offset = viewer.modelOffset2WidgetOffset(next.getOffset());
 		// TODO: check if folding regions need to be expanded.
 		styledText.setCaretOffset(new_offset);
 		styledText.showSelection();
 	}
 
 	public void goToPreviousEditRegion() {
-		int offset = widget2ModelOffset(styledText.getCaretOffset());
+		int offset = viewer.widgetOffset2ModelOffset(styledText.getCaretOffset());
 		Interval next = mapper.findEditableIntervalBefore(offset);
-		int new_offset = model2widgetOffset(next.getOffset());
+		int new_offset = viewer.modelOffset2WidgetOffset(next.getOffset());
 		// TODO: check if folding regions need to be expanded.
 		styledText.setCaretOffset(new_offset);
 		styledText.showSelection();

@@ -133,6 +133,14 @@ public class DocumentMapper {
 		}
 		return results.toArray(new Interval[results.size()]);
 	}
+	
+	public Interval findInterval(int offset) {
+		final int index = findIntervalIndex(offset);
+		if (index != -1) {
+			return intervals.get(index);
+		}
+		return null;
+	}
 
 	/**
 	 * Binary search to find an interval that contains an offset
@@ -412,7 +420,7 @@ public class DocumentMapper {
 				try {
 					final ContentType contentType = interval.getContentType();
 					if (contentType
-							.equals(RodinConfiguration.PRESENTATION_TYPE)
+							.equals(RodinConfiguration.LEFT_PRESENTATION_TYPE)
 							|| (contentType
 									.equals(RodinConfiguration.SECTION_TYPE))) {
 						continue;
