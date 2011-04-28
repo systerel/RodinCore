@@ -34,6 +34,7 @@ import org.eclipse.swt.custom.ExtendedModifyListener;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
@@ -84,6 +85,9 @@ public class OverlayEditor implements IAnnotationModelListener,
 	
 	private final IContentAssistant contentAssistant;
 
+	private final ModifyListener eventBTranslator = RodinKeyboardPlugin
+			.getDefault().createRodinModifyListener();
+
 	private StyledText editorText;
 	private Interval interval;
 	private ArrayList<IAction> editActions = new ArrayList<IAction>();
@@ -115,8 +119,6 @@ public class OverlayEditor implements IAnnotationModelListener,
 		editorText.setVisible(false);
 		editorText.addExtendedModifyListener(this);			
 
-		editorText.addModifyListener(RodinKeyboardPlugin.getDefault()
-				.createRodinModifyListener());
 		createMenu();
 		createEditActions();
 		// the focus tracker is used to activate the handlers, when the widget
@@ -264,6 +266,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 	}
 
 	public void abortEditing() {
+		editorText.removeModifyListener(eventBTranslator);
 		editorText.setVisible(false);
 		editorPos = null;
 		interval = null;
@@ -440,12 +443,13 @@ public class OverlayEditor implements IAnnotationModelListener,
 	}
 
 	public void setEventBTranslation(Interval interval) {
-		boolean enable = (interval.getElement() instanceof IPredicateElement || interval
-				.getElement() instanceof IAssignmentElement)
+		final IInternalElement element = interval.getElement().getElement();
+		final boolean enable = (element instanceof IPredicateElement || element instanceof IAssignmentElement)
 				&& interval.getContentType().equals(
 						RodinConfiguration.CONTENT_TYPE);
-		RodinKeyboardPlugin.getDefault().enableRodinModifyListener(enable);
-
+		if (enable) {
+			editorText.addModifyListener(eventBTranslator);
+		}
 	}
 
 }
