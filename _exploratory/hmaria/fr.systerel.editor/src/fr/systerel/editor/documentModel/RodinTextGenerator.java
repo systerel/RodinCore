@@ -216,17 +216,16 @@ public class RodinTextGenerator {
 		processPredAssElement(element, ASSIGNMENT_ATTRIBUTE);
 	}
 
-	private void processPredAssElement(ILElement element, IAttributeType.String attrType) {
-		final String attrValue = element.getAttribute(attrType);
+	private void processPredAssElement(ILElement element,
+			IAttributeType.String attrType) {
+		String attrValue = element.getAttribute(attrType);
+		if (attrValue == null) {
+			attrValue = "";
+		}
 		final ContentType contentType = getContentType(element,
 				IMPLICIT_CONTENT_TYPE, CONTENT_TYPE);
-		if (attrValue != null) {
-			stream.addElementRegion(attrValue, element, contentType, true,
-					TWO_TABS_INDENT);
-		} else {
-			stream.addElementRegion("", element, contentType, true,
-					TWO_TABS_INDENT);
-		}
+		stream.addElementRegion(attrValue, element, contentType, true,
+				TWO_TABS_INDENT);
 	}
 
 	private void processLabeledElement(ILElement element) {
