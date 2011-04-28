@@ -85,21 +85,19 @@ public class RodinTextGenerator {
 
 	@SuppressWarnings({ "restriction" })
 	private void traverseRoot(IProgressMonitor monitor, ILElement e) {
-		final IRodinElement rodinElement = (IRodinElement) e.getElement();
-		if (rodinElement instanceof IInternalElement) {
-			final IElementDesc desc = ElementDescRegistry.getInstance()
-					.getElementDesc(rodinElement);
-			stream.addSectionRegion(desc.getPrefix());
-			stream.incrementIndentation(TWO_TABS_INDENT);
-			stream.appendPresentationTabs(e, TWO_TABS_INDENT);
-			processCommentedElement(e, true, 0);
-			stream.appendLineSeparator();
-			stream.appendLeftPresentationTabs(e);
-			stream.addLabelRegion(rodinElement.getElementName(), e);
-			processOtherAttributes(e);
-			stream.decrementIndentation(TWO_TABS_INDENT);
-			traverse(monitor, e);
-		}
+		final IInternalElement element = e.getElement();
+		final IElementDesc desc = ElementDescRegistry.getInstance()
+				.getElementDesc(element);
+		stream.addSectionRegion(desc.getPrefix());
+		stream.incrementIndentation(TWO_TABS_INDENT);
+		stream.appendPresentationTabs(e, TWO_TABS_INDENT);
+		processCommentedElement(e, true, 0);
+		stream.appendLineSeparator();
+		stream.appendLeftPresentationTabs(e);
+		stream.addLabelRegion(element.getElementName(), e);
+		processOtherAttributes(e);
+		stream.decrementIndentation(TWO_TABS_INDENT);
+		traverse(monitor, e);
 	}
 
 	@SuppressWarnings("restriction")
