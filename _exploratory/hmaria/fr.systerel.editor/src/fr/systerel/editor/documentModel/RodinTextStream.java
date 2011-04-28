@@ -138,14 +138,14 @@ public class RodinTextStream {
 	}
 
 	protected void addKeywordRegion(String title) {
-		appendLeftPresentationTabs(null);
+		appendPresentationTabs(null);
 		addElementRegion(title, null, KEYWORD_TYPE, false);
 		appendLineSeparator();
 	}
 
 	protected void addSectionRegion(String title) {
 		if (level > 0)
-			appendLeftPresentationTabs(null);
+			appendPresentationTabs(null);
 		addElementRegion(title, null, KEYWORD_TYPE, false);
 		appendLineSeparator();
 	}
@@ -170,10 +170,6 @@ public class RodinTextStream {
 		addPresentationRegion((String) LINESEPARATOR, null);
 	}
 	
-	public void appendLeftPresentationTabs(ILElement e) {
-		addLeftPresentationRegion(getTabs(level), e);
-	}
-	
 	public int getLevel() {
 		return level;
 	}
@@ -190,8 +186,16 @@ public class RodinTextStream {
 		return builder.toString();
 	}
 
+	public void appendLeftPresentationTabs(ILElement e) {
+		addLeftPresentationRegion(getTabs(level), e);
+	}
+
 	public void appendPresentationTabs(ILElement e, int indentation) {
-		addLeftPresentationRegion(getTabs(indentation), e);
+		addPresentationRegion(getTabs(indentation), e);
+	}
+	
+	public void appendPresentationTabs(ILElement e) {
+		addPresentationRegion(getTabs(level), null);
 	}
 
 	public void incrementIndentation(int i) {
