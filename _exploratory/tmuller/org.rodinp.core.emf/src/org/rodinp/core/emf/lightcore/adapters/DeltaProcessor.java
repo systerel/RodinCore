@@ -132,8 +132,7 @@ public class DeltaProcessor {
 		if (parent instanceof IInternalElement) {
 			final LightElement eParent = findElement(parent, root);
 			if (eParent != null) {
-				// eParent.getEChildren().add(e);
-				final int pos = getPositionOf(root, (IInternalElement) element);
+				final int pos = getPositionOf(eParent, (IInternalElement) element);
 				eParent.addElement(e, pos);
 			}
 		}
