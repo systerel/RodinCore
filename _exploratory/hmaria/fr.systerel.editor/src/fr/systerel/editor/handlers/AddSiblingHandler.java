@@ -36,8 +36,10 @@ public class AddSiblingHandler extends AbstractEditorHandler {
 			return;
 		}
 		try {
-			final IInternalElement localParent = element.getParent()
-					.getElement();
+			final ILElement parent = element.getParent();
+			if (parent == null)
+				return;
+			final IInternalElement localParent = parent.getElement();
 			ElementDescRegistry.getInstance().createElement(
 					localParent.getRoot(), localParent,
 					element.getElementType(), element.getElement());
