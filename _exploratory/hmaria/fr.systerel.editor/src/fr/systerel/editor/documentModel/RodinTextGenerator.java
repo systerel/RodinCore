@@ -45,6 +45,7 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -208,27 +209,19 @@ public class RodinTextGenerator {
 	}
 
 	private void processPredicateElement(ILElement element) {
-		final String predAttribute = element.getAttribute(PREDICATE_ATTRIBUTE);
-		final ContentType contentType = getContentType(element,
-				IMPLICIT_CONTENT_TYPE, CONTENT_TYPE);
-		if (predAttribute != null) {
-			final String pred = predAttribute;
-			stream.addElementRegion(pred, element, contentType, true,
-					TWO_TABS_INDENT);
-		} else {
-			stream.addElementRegion("", element, contentType, true,
-					TWO_TABS_INDENT);
-		}
+		processPredAssElement(element, PREDICATE_ATTRIBUTE);
 	}
 
 	private void processAssignmentElement(ILElement element) {
-		final String assignAttribute = element
-				.getAttribute(ASSIGNMENT_ATTRIBUTE);
+		processPredAssElement(element, ASSIGNMENT_ATTRIBUTE);
+	}
+
+	private void processPredAssElement(ILElement element, IAttributeType.String attrType) {
+		final String attrValue = element.getAttribute(attrType);
 		final ContentType contentType = getContentType(element,
 				IMPLICIT_CONTENT_TYPE, CONTENT_TYPE);
-		if (assignAttribute != null) {
-			final String assign = assignAttribute;
-			stream.addElementRegion(assign, element, contentType, true,
+		if (attrValue != null) {
+			stream.addElementRegion(attrValue, element, contentType, true,
 					TWO_TABS_INDENT);
 		} else {
 			stream.addElementRegion("", element, contentType, true,
