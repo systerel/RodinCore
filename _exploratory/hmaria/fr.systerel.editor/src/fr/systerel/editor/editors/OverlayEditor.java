@@ -34,7 +34,6 @@ import org.eclipse.swt.custom.ExtendedModifyListener;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
@@ -88,7 +87,6 @@ public class OverlayEditor implements IAnnotationModelListener,
 	private StyledText editorText;
 	private Interval interval;
 	private ArrayList<IAction> editActions = new ArrayList<IAction>();
-	private ModifyListener eventBTranslator;
 	private Point editorPos;
 	private Menu fTextContextMenu;
 
@@ -102,8 +100,6 @@ public class OverlayEditor implements IAnnotationModelListener,
 		textViewer.getTextWidget().setBackground(IRodinColorConstant.BG_COLOR);
 		contentAssistant = getContentAssistant();
 		contentAssistant.install(textViewer);
-		eventBTranslator = RodinKeyboardPlugin.getDefault()
-				.getRodinModifyListener();
 		setupEditorText();
 	}
 
@@ -112,13 +108,15 @@ public class OverlayEditor implements IAnnotationModelListener,
 		editorText.addVerifyKeyListener(this);
 		editorText.setFont(parent.getFont());
 
-		final Point oldsize = parent.getSize();
 		parent.pack();	
+		final Point oldsize = parent.getSize();
 		parent.setSize(oldsize);
 		
 		editorText.setVisible(false);
-		editorText.addExtendedModifyListener(this);
-		editorText.addModifyListener(eventBTranslator);
+		editorText.addExtendedModifyListener(this);			
+
+		editorText.addModifyListener(RodinKeyboardPlugin.getDefault()
+				.createRodinModifyListener());
 		createMenu();
 		createEditActions();
 		// the focus tracker is used to activate the handlers, when the widget
