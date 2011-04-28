@@ -11,11 +11,13 @@
 package fr.systerel.editor.documentModel;
 
 import static fr.systerel.editor.documentModel.DocumentElementUtils.getChildPossibleTypes;
+import static fr.systerel.editor.documentModel.DocumentElementUtils.getSibling;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -60,8 +62,8 @@ public class DocumentMapper {
 	private IDocument document;
 	private RodinDocumentProvider documentProvider;
 
-	private HashMap<IInternalElement, EditorItem> editorElements = new HashMap<IInternalElement, EditorItem>();
-	private HashMap<IInternalElementType<?>, EditorItem> sections = new HashMap<IInternalElementType<?>, EditorItem>();
+	private OrderedEditorItemMap<IInternalElement> editorElements = new OrderedEditorItemMap<IInternalElement>();
+	private Map<IInternalElementType<?>, EditorItem> sections = new LinkedHashMap<IInternalElementType<?>, EditorItem>();
 
 	/**
 	 * Adds an interval to the document mapper at the end of the list. The
@@ -102,6 +104,29 @@ public class DocumentMapper {
 			}
 		}
 
+	}
+	
+	/**
+	 * Adds an interval to the document mapper just after a given interval. If
+	 * the given previous interval is not found in the list, the new interval is
+	 * added at the end of the list. The intervals must be added in the order
+	 * they appear in the text!
+	 * 
+	 * @param interval
+	 * @param previous
+	 * @throws Exception
+	 */
+	private void addIntervalBefore(Interval interval, Interval next) {
+		final int index = intervals.indexOf(next);
+		if (index > 0 && index <= intervals.size()) {
+			intervals.add(index - 1, interval);
+		} else {
+			try {
+				addInterval(interval);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**
@@ -311,11 +336,7 @@ public class DocumentMapper {
 		}
 		previous = inter;
 		if (element != null) {
-			EditorItem el = editorElements.get(element.getElement());
-			if (el == null) {
-				el = new EditorElement(element);
-				editorElements.put(element.getElement(), el);
-			}
+			EditorItem el = editorElements.getOrCreate(element);
 			el.addInterval(inter);
 		}
 
@@ -328,6 +349,8 @@ public class DocumentMapper {
 	 * @return the first interval that belongs to the given element
 	 */
 	public Interval findInterval(IRodinElement element) {
+		if (element == null)
+			return null;
 		final EditorItem editorItem = editorElements.get(element);
 		if (editorItem != null) {
 			final ArrayList<Interval> itemIntervals = editorItem.getIntervals();
@@ -336,6 +359,13 @@ public class DocumentMapper {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Finds the first interval that belongs to the given element
+	 */
+	public Interval findInterval(ILElement element) {
+		return findInterval(element.getElement());
 	}
 
 	/**
@@ -367,11 +397,6 @@ public class DocumentMapper {
 		previous = null;
 	}
 
-	public EditorItem[] getEditorElements() {
-		return editorElements.values().toArray(
-				new EditorItem[editorElements.size()]);
-	}
-
 	public void addEditorSection(IInternalElementType<?> type,
 			int folding_start, int folding_length) {
 		EditorItem el = sections.get(type);
@@ -380,6 +405,11 @@ public class DocumentMapper {
 			sections.put(type, el);
 		}
 		el.setFoldingPosition(folding_start, folding_length);
+	}
+
+	// TODO fix intervals...
+	public void addEditorElement(ILElement added) {
+		editorElements.addItem(added);
 	}
 
 	public Position[] getFoldingPositions() {
@@ -546,7 +576,7 @@ public class DocumentMapper {
 	 */
 	private void adaptFoldingPositions(int offset, int delta) {
 		final ArrayList<EditorItem> elements = new ArrayList<EditorItem>(
-				editorElements.values());
+				editorElements.getItems());
 		elements.addAll(sections.values());
 		for (EditorItem el : elements) {
 			final Position pos = el.getFoldingPosition();
@@ -583,6 +613,11 @@ public class DocumentMapper {
 		return null;
 	}
 
+	public void adaptAfter(Interval interval, int delta) {
+		adaptIntervalOffsetsFrom(intervals.indexOf(interval) + 1, delta);
+		adaptFoldingPositions(interval.getOffset(), delta);
+	}
+
 	/**
 	 * Synchronizes a given interval with its representation in the text. I.e.
 	 * the text area in the document represented by the document is replaced by
@@ -610,17 +645,12 @@ public class DocumentMapper {
 		}
 	}
 
-	private void adaptAfter(Interval interval, int delta) {
-		adaptIntervalOffsetsFrom(intervals.indexOf(interval) + 1, delta);
-		adaptFoldingPositions(interval.getOffset(), delta);
-	}
-
 	public void setDocumentProvider(RodinDocumentProvider documentProvider) {
 		this.documentProvider = documentProvider;
 	}
 
 	public EditorItem findEditorElement(int offset, int length) {
-		for (EditorItem element : editorElements.values()) {
+		for (EditorItem element : editorElements.getItems()) {
 			if (element.getOffset() == offset && element.getLength() == length) {
 				return element;
 			}

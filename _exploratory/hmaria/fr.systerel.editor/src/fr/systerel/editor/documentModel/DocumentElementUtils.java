@@ -76,4 +76,25 @@ public class DocumentElementUtils {
 		return types;
 	}
 	
+	public static ILElement getSibling(ILElement element) {
+		final ILElement parent = element.getParent();
+		if (parent == null) {
+			return null;
+		}
+		final List<ILElement> ofType = parent.getChildrenOfType(element
+				.getElementType());
+		int sibling = 0;
+		for (ILElement el : ofType) {
+			if (el == element) {
+				sibling++;
+				break;
+			}
+			sibling++;
+		}
+		if (sibling < ofType.size()) {
+			return ofType.get(sibling);
+		}
+		return null;
+	}
+	
 }

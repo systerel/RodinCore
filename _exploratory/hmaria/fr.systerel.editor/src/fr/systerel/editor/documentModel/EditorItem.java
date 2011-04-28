@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 
-import fr.systerel.editor.editors.ElementButton;
 import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
 
 /**
@@ -27,7 +26,6 @@ import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
 public abstract class EditorItem {
 
 	private ArrayList<Interval> intervals = new ArrayList<Interval>();
-	private ElementButton button;
 
 	private Position foldingPosition;
 	// TODO: check if it is really necessary to save the annotations.
@@ -121,20 +119,6 @@ public abstract class EditorItem {
 			return last.getLastIndex() - getOffset();
 		}
 		return -1;
-	}
-
-	public ElementButton getButton() {
-		return button;
-	}
-
-	public void setButton(ElementButton button) {
-		this.button = button;
-	}
-
-	public void dispose() {
-		if (button != null) {
-			button.dispose();
-		}
 	}
 
 }

@@ -43,8 +43,8 @@ public class AddSiblingHandler extends AbstractEditorHandler {
 			ElementDescRegistry.getInstance().createElement(
 					localParent.getRoot(), localParent,
 					element.getElementType(), element.getElement());
-			((RodinDocumentProvider) editor.getDocumentProvider())
-					.doSynchronize(element.getRoot(), null);
+//			((RodinDocumentProvider) editor.getDocumentProvider())
+//					.doSynchronize(element.getRoot(), null);
 		} catch (RodinDBException dbe) {
 			dbe.printStackTrace();
 		} catch (CoreException ce) {
