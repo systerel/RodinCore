@@ -401,15 +401,17 @@ public class OverlayEditor implements IAnnotationModelListener,
 	}
 
 	public void verifyKey(VerifyEvent event) {
+		if (contentProposal.isProposalPopupOpen()) {
+			// do not add the return to the text
+			event.doit = false;
+			return;
+		}
 		if ((event.stateMask == SWT.NONE) && event.character == SWT.CR) {
 			// do not add the return to the text
 			event.doit = false;
-			if (!contentProposal.isProposalPopupOpen()) {
-				saveAndExit();
-			}
+			saveAndExit();
 		}
-		if (event.character == SWT.ESC
-				&& !contentProposal.isProposalPopupOpen()) {
+		if (event.character == SWT.ESC) {
 			abortEditing();
 		}
 
