@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Systerel and others.
+ * Copyright (c) 2009, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,11 +15,14 @@ import java.util.Set;
 import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.location.IAttributeLocation;
 
 public class ProposalProvider extends AbstractProposalProvider {
 
-	private final IAttributeLocation location;
+	private static final IContentProposal[] NO_PROPOSALS = new IContentProposal[0];
+
+	private IAttributeLocation location;
 
 	public ProposalProvider(IAttributeLocation location, FormulaFactory factory) {
 		super(factory);
@@ -29,6 +32,10 @@ public class ProposalProvider extends AbstractProposalProvider {
 	@Override
 	protected IContentProposal[] makeAllProposals(String contents,
 			int position, String prefix) {
+		if (location == null) {
+			UIUtils.log(null, "auto completion location is not initialized !");
+			return NO_PROPOSALS;
+		}
 		// TODO launch a job that waits up-to-date completions
 		// and then updates proposals
 
@@ -37,4 +44,10 @@ public class ProposalProvider extends AbstractProposalProvider {
 		return makeProposals(contents, position, prefix, completions);
 	}
 
+	/**
+	 * @param location the location to set
+	 */
+	public void setLocation(IAttributeLocation location) {
+		this.location = location;
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Systerel and others.
+ * Copyright (c) 2009, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,9 +29,24 @@ public class ContentProposalFactory {
 	 */
 	public static EventBContentProposalAdapter makeContentProposal(
 			IAttributeLocation location, StyledText text, FormulaFactory factory) {
+		final ProposalProvider provider = getProposalProvider(location, factory);
+		return makeContentProposal(text, provider);
+	}
+
+	/**
+	 * Construct a content proposal adapter that can assist the user with
+	 * choosing content for StyledText control.
+	 * 
+	 * @param text
+	 *            a styled text
+	 * @param provider
+	 *            a content proposal provider
+	 * @return a proposal adapter
+	 */
+	public static EventBContentProposalAdapter makeContentProposal(
+			StyledText text, IContentProposalProvider provider) {
 		return new EventBContentProposalAdapter(text,
-				new StyledTextContentAdapter(), getProposalProvider(location,
-						factory));
+				new StyledTextContentAdapter(), provider);
 	}
 
 	/**
@@ -83,7 +98,7 @@ public class ContentProposalFactory {
 				new TextContentAdapter(), provider);
 	}
 
-	private static IContentProposalProvider getProposalProvider(
+	public static ProposalProvider getProposalProvider(
 			IAttributeLocation location, FormulaFactory factory) {
 		return new ProposalProvider(location, factory);
 	}
