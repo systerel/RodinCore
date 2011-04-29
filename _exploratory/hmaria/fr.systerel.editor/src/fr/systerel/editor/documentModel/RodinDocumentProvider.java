@@ -116,8 +116,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 							+ " : "
 							+ exception.getMessage());
 		}
-		if (resource != null)
-			resource.eAdapters().add(elementPresentationChangeAdapter);
+		resource.eAdapters().add(elementPresentationChangeAdapter);
 		return resource;
 	}
 	

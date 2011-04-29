@@ -12,9 +12,7 @@ package fr.systerel.editor.documentModel;
 
 import static fr.systerel.editor.documentModel.DocumentElementUtils.getAttributeDescs;
 import static fr.systerel.editor.documentModel.DocumentElementUtils.getElementDesc;
-import static fr.systerel.editor.documentModel.DocumentElementUtils.getManipulation;
-import static fr.systerel.editor.documentModel.RodinTextGeneratorUtils.MIN_LEVEL;
-import static fr.systerel.editor.documentModel.RodinTextGeneratorUtils.NONE;
+import static fr.systerel.editor.documentModel.RodinTextStream.MIN_LEVEL;
 import static fr.systerel.editor.presentation.RodinConfiguration.BOLD_IMPLICIT_LABEL_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.BOLD_LABEL_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.COMMENT_TYPE;
@@ -80,18 +78,9 @@ public class RodinTextGenerator {
 	 */
 	public String createText(ILElement inputRoot) {
 		documentMapper.reinitialize();
-		stream = new RodinTextStream();
+		stream = new RodinTextStream(documentMapper);
 		traverseRoot(null, inputRoot);
-		processAllIntervals();
 		return stream.getText();
-	}
-	
-	public void processAllIntervals() {
-		for (RegionInfo r : stream.getIntervalInfos()) {
-			documentMapper.processInterval(r.getStart(), r.getLength(),
-					r.getElement(), r.getType(), r.getManipulation(),
-					r.isMultiline(), r.getIndentation(), r.isAddWhitespace());
-		}
 	}
 
 	@SuppressWarnings({ "restriction" })
@@ -99,13 +88,13 @@ public class RodinTextGenerator {
 		final IInternalElement element = e.getElement();
 		final IElementDesc desc = ElementDescRegistry.getInstance()
 				.getElementDesc(element);
-		stream.appendClauseRegion(desc.getPrefix());
+		stream.addSectionRegion(desc.getPrefix());
 		stream.incrementIndentation(TWO_TABS_INDENT);
 		stream.appendPresentationTabs(e, TWO_TABS_INDENT);
-		processCommentedElement(e, true, NONE);
+		processCommentedElement(e, true, 0);
 		stream.appendLineSeparator();
 		stream.appendLeftPresentationTabs(e);
-		stream.appendLabelRegion(element.getElementName(), e);
+		stream.addLabelRegion(element.getElementName(), e);
 		processOtherAttributes(e);
 		stream.decrementIndentation(TWO_TABS_INDENT);
 		traverse(monitor, e);
@@ -126,7 +115,7 @@ public class RodinTextGenerator {
 			}
 			start = stream.getLength();
 			if (stream.getLevel() < MIN_LEVEL) {
-				stream.appendClauseRegion(childDesc.getPrefix());
+				stream.addSectionRegion(childDesc.getPrefix());
 			} else {
 				stream.addKeywordRegion(childDesc.getPrefix());
 			}
@@ -143,7 +132,7 @@ public class RodinTextGenerator {
 			stream.decrementIndentation(TWO_TABS_INDENT);
 			final int length = stream.getLength() - start;
 			if (start != -1 && !noChildren) {
-				documentMapper.addEditorSection(rel.getChildType(), start, length);
+				stream.addEditorSection(rel.getChildType(), start, length);
 				start = -1;
 			}
 		}
@@ -177,19 +166,19 @@ public class RodinTextGenerator {
 			String value = "";
 			try {
 				if (i == 0)
-					stream.appendPresentationRegion(" ", element);
+					stream.addPresentationRegion(" ", element);
 				final IAttributeManipulation manipulation = d.getManipulation();
 				value = manipulation.getValue(rElement, null);
 				if (!value.isEmpty()) {
 					final String prefix = d.getPrefix();
 					if (!prefix.isEmpty()) {
-						stream.appendPresentationRegion(prefix, element);
+						stream.addPresentationRegion(prefix, element);
 					}
-					stream.appendAttributeRegion(value, element, manipulation,
+					stream.addAttributeRegion(value, element, manipulation,
 							d.getAttributeType());
 					final String suffix = d.getSuffix();
 					if (!suffix.isEmpty()) {
-						stream.appendPresentationRegion(suffix, element);
+						stream.addPresentationRegion(suffix, element);
 					}
 					i++;
 				}
@@ -197,44 +186,48 @@ public class RodinTextGenerator {
 				value = "failure while loading";
 				e.printStackTrace();
 			}
-			stream.appendPresentationRegion(" ", element);
+			stream.addPresentationRegion(" ", element);
 		}
 		stream.appendLineSeparator();
 	}
 
-	private void processBasicStringAttribute(ILElement element,
-			IAttributeType.String type, ContentType ct, ContentType implicitct,
-			boolean appendTabs, int additionnalTabs) {
-		final String value = element.getAttribute(type);
-		final ContentType contentType = getContentType(element, implicitct, ct);
-		final IInternalElementType<?> etype = element.getElementType();
-		final String attributeId = type.getId();
-		final IAttributeManipulation manipulation = getManipulation(etype, attributeId);
-		final String text = (value == null) ? "" : value;
-		stream.appendRegion(text, element, contentType, manipulation, true,
-				additionnalTabs);
-	}
-
-	private void processCommentedElement(ILElement element, boolean appendTabs,
-			int additionnalTabs) {
-		stream.appendCommentHeaderRegion(element, appendTabs);
-		processBasicStringAttribute(element, COMMENT_ATTRIBUTE, COMMENT_TYPE,
-				IMPLICIT_COMMENT_TYPE, true, additionnalTabs);
+	private void processCommentedElement(ILElement element, boolean appendTabs, int additionnalTabs) {
+		stream.addCommentHeaderRegion(element, appendTabs);
+		final String commentAttribute = element.getAttribute(COMMENT_ATTRIBUTE);
+		final ContentType contentType = getContentType(element,
+				IMPLICIT_COMMENT_TYPE, COMMENT_TYPE);
+		if (commentAttribute != null) {
+			final String comment = commentAttribute;
+			stream.addElementRegion(comment, element, contentType, true, additionnalTabs);
+		} else {
+			stream.addElementRegion("", element, contentType, true, additionnalTabs);
+		}
 		if (!appendTabs)
 			stream.appendLineSeparator();
 	}
-	
+
 	private void processPredicateElement(ILElement element) {
-		processBasicStringAttribute(element, PREDICATE_ATTRIBUTE, CONTENT_TYPE,
-				IMPLICIT_CONTENT_TYPE, true, TWO_TABS_INDENT);
+		processPredAssElement(element, PREDICATE_ATTRIBUTE);
 	}
 
 	private void processAssignmentElement(ILElement element) {
-		processBasicStringAttribute(element, ASSIGNMENT_ATTRIBUTE,
-				CONTENT_TYPE, IMPLICIT_CONTENT_TYPE, true, TWO_TABS_INDENT);
+		processPredAssElement(element, ASSIGNMENT_ATTRIBUTE);
+	}
+
+	private void processPredAssElement(ILElement element,
+			IAttributeType.String attrType) {
+		String attrValue = element.getAttribute(attrType);
+		if (attrValue == null) {
+			attrValue = "";
+		}
+		final ContentType contentType = getContentType(element,
+				IMPLICIT_CONTENT_TYPE, CONTENT_TYPE);
+		stream.addElementRegion(attrValue, element, contentType, true,
+				TWO_TABS_INDENT);
 	}
 
 	private void processLabeledElement(ILElement element) {
+		final String labelAttribute = element.getAttribute(LABEL_ATTRIBUTE);
 		stream.appendLeftPresentationTabs(element);
 		final ContentType contentType;
 		if ((element.getAttribute(ASSIGNMENT_ATTRIBUTE) == null)
@@ -245,17 +238,11 @@ public class RodinTextGenerator {
 			contentType = getContentType(element, IMPLICIT_LABEL_TYPE,
 					LABEL_TYPE);
 		}
-		final String id = LABEL_ATTRIBUTE.getId();
-		final IAttributeManipulation manipulation = getManipulation(
-				element.getElementType(), id);
-		final String labelAttribute = element.getAttribute(LABEL_ATTRIBUTE);
 		if (labelAttribute != null) {
-			stream.appendRegion(labelAttribute, element, contentType,
-					manipulation, false, NONE);
-			stream.appendPresentationRegion(":\t", element);
+			stream.addElementRegion(labelAttribute, element, contentType, false);
+			stream.addPresentationRegion(":\t", element);
 		} else {
-			stream.appendRegion("", element, contentType, manipulation, false,
-					NONE);
+			stream.addElementRegion("", element, contentType, false);
 		}
 		if (!element.getChildren().isEmpty()
 				&& element.getAttributes().isEmpty()) {
@@ -264,8 +251,16 @@ public class RodinTextGenerator {
 	}
 
 	private void processIdentifierElement(ILElement element) {
-		processBasicStringAttribute(element, IDENTIFIER_ATTRIBUTE,
-				IDENTIFIER_TYPE, IMPLICIT_IDENTIFIER_TYPE, false, NONE);
+		final String identifierAttribute = element
+				.getAttribute(IDENTIFIER_ATTRIBUTE);
+		final ContentType contentType = getContentType(element,
+				IMPLICIT_IDENTIFIER_TYPE, IDENTIFIER_TYPE);
+		if (identifierAttribute != null) {
+			stream.addElementRegion((String) identifierAttribute, element,
+					contentType, false);
+		} else {
+			stream.addElementRegion("", element, contentType, false);
+		}
 	}
 
 	private void processElement(ILElement element) {

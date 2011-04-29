@@ -13,7 +13,6 @@ package fr.systerel.editor.editors;
 import static org.eventb.internal.ui.EventBUtils.getFormulaFactory;
 import static org.eventb.internal.ui.autocompletion.ContentProposalFactory.getProposalProvider;
 import static org.eventb.internal.ui.autocompletion.ContentProposalFactory.makeContentProposal;
-import static fr.systerel.editor.documentModel.RodinTextGeneratorUtils.deprocessMulti;
 
 import java.util.ArrayList;
 import java.util.regex.Pattern;
@@ -69,6 +68,7 @@ import org.rodinp.keyboard.RodinKeyboardPlugin;
 import fr.systerel.editor.actions.StyledTextEditAction;
 import fr.systerel.editor.documentModel.DocumentMapper;
 import fr.systerel.editor.documentModel.Interval;
+import fr.systerel.editor.documentModel.RodinTextStream;
 import fr.systerel.editor.presentation.IRodinColorConstant;
 import fr.systerel.editor.presentation.RodinConfiguration;
 import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
@@ -258,7 +258,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 			final int level = inter.getIndentation();
 			final boolean multiLine = inter.isMultiLine();
 			final boolean addWhiteSpace = inter.isAddWhiteSpace();
-			text = deprocessMulti(level, multiLine,
+			text = RodinTextStream.deprocessMulti(level, multiLine,
 					addWhiteSpace, extracted);
 		} else {
 			text = "";
