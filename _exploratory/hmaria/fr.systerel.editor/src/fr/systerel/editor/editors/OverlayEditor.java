@@ -53,6 +53,7 @@ import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPredicateElement;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.internal.ui.autocompletion.EventBContentProposalAdapter;
 import org.eventb.internal.ui.autocompletion.ProposalProvider;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IAttributeType;
@@ -98,6 +99,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 	private Point editorPos;
 	private Menu fTextContextMenu;
 	private ProposalProvider provider;
+	private EventBContentProposalAdapter contentProposal;
 
 	public OverlayEditor(StyledText parent, DocumentMapper mapper,
 			ProjectionViewer viewer, RodinEditor editor) {
@@ -371,7 +373,8 @@ public class OverlayEditor implements IAnnotationModelListener,
 			event.doit = false;
 			saveAndExit();
 		}
-		if (event.character == SWT.ESC) {// FIXME && !proposalPopupOpen
+		if (event.character == SWT.ESC
+				&& !contentProposal.isProposalPopupOpen()) {
 			abortEditing();
 		}
 
@@ -431,7 +434,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 		final IInternalElement root = mapper.getRoot().getElement();
 		final FormulaFactory factory = getFormulaFactory(root);
 		provider = getProposalProvider(null, factory);
-		makeContentProposal(editorText, provider);
+		contentProposal = makeContentProposal(editorText, provider);
 	}
 
 	@SuppressWarnings("restriction")
