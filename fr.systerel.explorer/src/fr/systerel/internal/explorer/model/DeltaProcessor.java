@@ -44,12 +44,7 @@ public class DeltaProcessor {
 		int kind = delta.getKind();
 		IRodinElement element = delta.getElement();
 		if (kind == IRodinElementDelta.ADDED) {
-			if (element instanceof IRodinProject) {
-//				the content provider refreshes the model
-				addToRefresh(element.getRodinDB());
-			} else {
-				addToRefresh(element.getParent());
-			}
+			addToRefresh(element.getParent());
 			return;
 		}
 
