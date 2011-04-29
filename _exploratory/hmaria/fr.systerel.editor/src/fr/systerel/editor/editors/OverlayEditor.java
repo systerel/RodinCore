@@ -404,7 +404,9 @@ public class OverlayEditor implements IAnnotationModelListener,
 		if ((event.stateMask == SWT.NONE) && event.character == SWT.CR) {
 			// do not add the return to the text
 			event.doit = false;
-			saveAndExit();
+			if (!contentProposal.isProposalPopupOpen()) {
+				saveAndExit();
+			}
 		}
 		if (event.character == SWT.ESC
 				&& !contentProposal.isProposalPopupOpen()) {
