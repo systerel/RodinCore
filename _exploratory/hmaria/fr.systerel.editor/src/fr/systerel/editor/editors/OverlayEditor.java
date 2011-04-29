@@ -85,6 +85,37 @@ public class OverlayEditor implements IAnnotationModelListener,
 	+ ".editorText";
 	private static final int MARGIN = 4;
 
+	private static class ContentProposalManager {
+		private final ProposalProvider provider;
+		private final EventBContentProposalAdapter contentProposal;
+
+		public ContentProposalManager(StyledText text, IInternalElement root) {
+			final FormulaFactory factory = getFormulaFactory(root);
+			provider = getProposalProvider(null, factory);
+			contentProposal = makeContentProposal(text, provider);
+		}
+		
+		public boolean isProposalPopupOpen() {
+			return contentProposal.isProposalPopupOpen();
+		}
+		
+		public void setCompletionLocation(Interval inter) {
+			final IInternalElement element = inter.getElement().getElement();
+			
+			// FIXME null for predicate and assignment
+			IAttributeType attributeType = inter.getContentType()
+					.getAttributeType();
+			if (attributeType == null) {
+//				return; FIXME
+				attributeType = EventBAttributes.PREDICATE_ATTRIBUTE;
+			}
+			final IAttributeLocation location = RodinCore.getInternalLocation(
+					element, attributeType);
+			provider.setLocation(location);
+		}
+
+	}
+	
 	private final ProjectionViewer viewer;
 	private final DocumentMapper mapper;
 	private final StyledText parent;
@@ -94,13 +125,13 @@ public class OverlayEditor implements IAnnotationModelListener,
 	private final ModifyListener eventBTranslator = RodinKeyboardPlugin
 			.getDefault().createRodinModifyListener();
 
+	private final ContentProposalManager contentProposal;
+	
 	private StyledText editorText;
 	private Interval interval;
 	private ArrayList<IAction> editActions = new ArrayList<IAction>();
 	private Point editorPos;
 	private Menu fTextContextMenu;
-	private ProposalProvider provider;
-	private EventBContentProposalAdapter contentProposal;
 
 	public OverlayEditor(StyledText parent, DocumentMapper mapper,
 			ProjectionViewer viewer, RodinEditor editor) {
@@ -111,6 +142,8 @@ public class OverlayEditor implements IAnnotationModelListener,
 		textViewer = new TextViewer(parent, SWT.NONE);
 		textViewer.getTextWidget().setBackground(IRodinColorConstant.BG_COLOR);
 		setupEditorText();
+		contentProposal = new ContentProposalManager(editorText, mapper
+				.getRoot().getElement());
 	}
 
 	private void setupEditorText() {
@@ -132,7 +165,6 @@ public class OverlayEditor implements IAnnotationModelListener,
 		final IFocusService focusService = (IFocusService) editor.getSite()
 				.getService(IFocusService.class);
 		focusService.addFocusTracker(editorText, EDITOR_TEXT_ID);
-		setupAutoCompletion();
 	}
 
 	protected IDocument createDocument(String text) {
@@ -215,7 +247,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 	}
 
 	private void showEditorText(Interval inter, int pos) {
-		setCompletionLocation(inter);
+		contentProposal.setCompletionLocation(inter);
 		setEventBTranslation(inter);
 		final int start = viewer.modelOffset2WidgetOffset(inter.getOffset());
 		final int end = start + inter.getLength();
@@ -428,28 +460,6 @@ public class OverlayEditor implements IAnnotationModelListener,
 	public void saveAndExit() {
 		updateModelAfterChanges();
 		abortEditing();
-	}
-
-	private void setupAutoCompletion() {
-		final IInternalElement root = mapper.getRoot().getElement();
-		final FormulaFactory factory = getFormulaFactory(root);
-		provider = getProposalProvider(null, factory);
-		contentProposal = makeContentProposal(editorText, provider);
-	}
-
-	private void setCompletionLocation(Interval inter) {
-		final IInternalElement element = inter.getElement().getElement();
-		
-		// FIXME null for predicate and assignment
-		IAttributeType attributeType = inter.getContentType()
-				.getAttributeType();
-		if (attributeType == null) {
-//			return; FIXME
-			attributeType = EventBAttributes.PREDICATE_ATTRIBUTE;
-		}
-		final IAttributeLocation location = RodinCore.getInternalLocation(
-				element, attributeType);
-		provider.setLocation(location);
 	}
 
 	public void setEventBTranslation(Interval interval) {
