@@ -11,7 +11,6 @@
 package fr.systerel.editor.documentModel;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 import org.eclipse.core.resources.IFile;
@@ -100,16 +99,17 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	public Resource getResource(IFile file) {
 		final String projectName = file.getProject().getName();
 		final URI resourceURI = URI.createPlatformResourceURI(projectName + "/"
-				+ file.getName(), true);
+				+ getLightFileName(file), true);
 		Exception exception = null;
 		Resource resource = null;
 		try {
 			// Load the resource through the editing domain.
-			resource = editingDomain.getResourceSet().createResource(
-					resourceURI);
-			resource.load(Collections.emptyMap());
+			resource = editingDomain.getResourceSet().getResource(resourceURI,
+					true);
 		} catch (Exception e) {
 			exception = e;
+			resource = editingDomain.getResourceSet().getResource(resourceURI,
+					false);
 			System.out
 					.println("A problem occured when retrieving the resource of "
 							+ resourceURI.toString()
@@ -119,6 +119,11 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		if (resource != null)
 			resource.eAdapters().add(elementPresentationChangeAdapter);
 		return resource;
+	}
+	
+	private String getLightFileName(IFile file) {
+		final String name = file.getName();
+		return name.replaceAll(".buc", ".ebuc").replaceAll(".bum", ".ebum");
 	}
 
 	@Override
