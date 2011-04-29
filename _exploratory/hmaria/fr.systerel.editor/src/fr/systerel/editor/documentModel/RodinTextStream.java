@@ -10,6 +10,12 @@
  *******************************************************************************/
 package fr.systerel.editor.documentModel;
 
+import static fr.systerel.editor.documentModel.RodinTextGeneratorUtils.COMMENT_HEADER_DELIMITER;
+import static fr.systerel.editor.documentModel.RodinTextGeneratorUtils.LINESEPARATOR;
+import static fr.systerel.editor.documentModel.RodinTextGeneratorUtils.MIN_LEVEL;
+import static fr.systerel.editor.documentModel.RodinTextGeneratorUtils.NONE;
+import static fr.systerel.editor.documentModel.RodinTextGeneratorUtils.TAB;
+import static fr.systerel.editor.documentModel.RodinTextGeneratorUtils.processMulti;
 import static fr.systerel.editor.presentation.RodinConfiguration.COMMENT_HEADER_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.KEYWORD_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.LABEL_TYPE;
@@ -17,9 +23,11 @@ import static fr.systerel.editor.presentation.RodinConfiguration.LEFT_PRESENTATI
 import static fr.systerel.editor.presentation.RodinConfiguration.PRESENTATION_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.getAttributeContentType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.presentation.RodinConfiguration;
@@ -28,125 +36,96 @@ import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
 /**
  * A class holding a string builder and the documentMapper used by the text
  * generator in order to process both the text representation of a model, and
- * the interval mapping of the model. 
+ * the interval mapping of the model.
  */
 public class RodinTextStream {
 
-	public static int MIN_LEVEL = 1;
-	private static final String COMMENT_HEADER_DELIMITER = "§";
-	private static final Character TAB = '\u0009';
-	private static final int NO_TABS = 0;
-	private static final String WHITESPACE = " ";
-	private static final Object LINESEPARATOR = System
-			.getProperty("line.separator");
-	
 	private final StringBuilder builder;
-	private final DocumentMapper mapper;
+	private final List<RegionInfo> intervalInfos;
 	private int level = MIN_LEVEL;
-	
-	public static String processMulti(boolean multiLine, int level,
-			boolean addWhiteSpace, String text) {
-		if (!multiLine || text == null)
-			return text;
-		final String regex = "(\r\n)|(\r)|(\n)";
-		if (addWhiteSpace)
-			return text.replaceAll(regex, "$0" + getTabs(level) + WHITESPACE);
-		return text.replaceAll(regex, "$0" + getTabs(level));
-	}
 
-	public static String deprocessMulti(int level, boolean multiLine,
-			boolean tabbed, String text) {
-		if (!multiLine)
-			return text;
-		return deprocessMulti(level, tabbed, text);
-	}
-
-	public static String deprocessMulti(int level, boolean addWhitespace,
-			String text) {
-		final String commonPatternStart = "((\r\n)|(\r)|(\n))(";
-		// Tells that it should take into account one (only) matching pattern
-		final String commonPatternEnd = "){1}";
-		if (addWhitespace) {
-			return text.replaceAll(commonPatternStart + getTabs(level)
-					+ WHITESPACE + commonPatternEnd, "$1");
-		}
-		return text.replaceAll(commonPatternStart + getTabs(level)
-				+ commonPatternEnd, "$1");
-	}
-
-	public RodinTextStream(DocumentMapper mapper) {
+	public RodinTextStream() {
 		this.builder = new StringBuilder();
-		this.mapper = mapper;
-		mapper.resetPrevious();
+		this.intervalInfos = new ArrayList<RegionInfo>();
 	}
 
-	protected void addEditorSection(IInternalElementType<?> type,
-			int folding_start, int folding_length) {
-		mapper.addEditorSection(type, folding_start, folding_length);
+	public void append(RegionInfo info) {
+		builder.append(info.getText());
 	}
 
-	protected void addElementRegion(String text, ILElement element,
-			ContentType contentType, boolean multiLine) {
-		addElementRegion(text, element, contentType, null, multiLine, NO_TABS);
-	}
-
-	protected void addElementRegion(String text, ILElement element,
-			ContentType contentType, boolean multiLine, int additionalTabs) {
-		addElementRegion(text, element, contentType, null, multiLine,
-				additionalTabs);
-	}
-
-	protected void addElementRegion(String text, ILElement element,
-			ContentType contentType, IAttributeManipulation manipulation,
-			boolean multiLine, int additionalTabs) {
-		final int start = builder.length();
-		final boolean addWhiteSpace = contentType == RodinConfiguration.COMMENT_TYPE
+	public RegionInfo getElementRegion(int start, int level, String text,
+			ILElement element, ContentType contentType,
+			IAttributeManipulation manipulation, boolean multiline,
+			int additionalTabs) {
+		final boolean addWhitespace = contentType == RodinConfiguration.COMMENT_TYPE
 				|| contentType == RodinConfiguration.IMPLICIT_COMMENT_TYPE;
-		final String multilined = processMulti(multiLine, getLevel()
-				+ additionalTabs, addWhiteSpace, text);
-		builder.append(multilined);
-		final int length = builder.length() - start;
-		mapper.processInterval(start, length, element, contentType,
-				manipulation, multiLine, getLevel() + additionalTabs,
-				addWhiteSpace);
+		final String multilined = processMulti(multiline, getLevel()
+				+ additionalTabs, addWhitespace, text);
+		final int length = multilined.length();
+		return new RegionInfo(text, element, contentType, manipulation, start,
+				length, level, additionalTabs, multiline, addWhitespace);
+		// mapper.processInterval(start, length, element, contentType,
+		// manipulation, multiLine, getLevel() + additionalTabs,
+		// addWhiteSpace);
 	}
 
-	protected void addAttributeRegion(String text, ILElement element,
+	public void appendRegion(String text, ILElement element,
+			ContentType contentType, IAttributeManipulation manipulation,
+			boolean multiline, int additionalTabs) {
+		final int start = builder.length();
+		final RegionInfo info = getElementRegion(start, getLevel(), text,
+				element, contentType, manipulation, multiline, additionalTabs);
+		intervalInfos.add(info);
+		append(info);
+	}
+
+	public void appendAttributeRegion(String text, ILElement element,
 			IAttributeManipulation manipulation, IAttributeType attributeType) {
-		addElementRegion(text, element, getAttributeContentType(attributeType),
-				manipulation, false, NO_TABS);
-	}
-
-	protected void addLabelRegion(String text, ILElement element) {
-		addElementRegion(text, element, LABEL_TYPE, false);
-		addPresentationRegion((String) LINESEPARATOR, element);
-	}
-
-	protected void addLeftPresentationRegion(String text, ILElement element) {
-		addElementRegion(text, element, LEFT_PRESENTATION_TYPE, false);
+		appendRegion(text, element, getAttributeContentType(attributeType),
+				manipulation, false, NONE);
 	}
 	
-	protected void addPresentationRegion(String text, ILElement element) {
-		addElementRegion(text, element, PRESENTATION_TYPE, false);
+	public RegionInfo getAttributeRegion(int start, int level, String text,
+			ILElement element, ContentType contentType,
+			IAttributeManipulation manipulation, IAttributeType attributeType,
+			boolean multiline, int additionalTabs) {
+		return getElementRegion(start, level, text, element,
+				getAttributeContentType(attributeType), manipulation,
+				multiline, additionalTabs);
+	}
+	
+
+	public void appendLabelRegion(String text, ILElement element) {
+		appendRegion(text, element, LABEL_TYPE, null, false, NONE);
+		appendPresentationRegion((String) LINESEPARATOR, element);
 	}
 
-	protected void addCommentHeaderRegion(ILElement element, boolean appendTabs) {
+	public void appendLeftPresentationRegion(String text, ILElement element) {
+		appendRegion(text, element, LEFT_PRESENTATION_TYPE, null, false,
+				NONE);
+	}
+
+	public void appendPresentationRegion(String text, ILElement element) {
+		appendRegion(text, element, PRESENTATION_TYPE, null, false, NONE);
+	}
+
+	public void appendCommentHeaderRegion(ILElement element, boolean appendTabs) {
 		if (appendTabs)
-			addPresentationRegion(String.valueOf(TAB), element);
-		addElementRegion(COMMENT_HEADER_DELIMITER, element,
-				COMMENT_HEADER_TYPE, false);
+			appendPresentationRegion(String.valueOf(TAB), element);
+		appendRegion(COMMENT_HEADER_DELIMITER, element,
+				COMMENT_HEADER_TYPE, null, false, NONE);
 	}
 
-	protected void addKeywordRegion(String title) {
+	public void addKeywordRegion(String title) {
 		appendPresentationTabs(null);
-		addElementRegion(title, null, KEYWORD_TYPE, false);
+		appendRegion(title, null, KEYWORD_TYPE, null, false, NONE);
 		appendLineSeparator();
 	}
 
-	protected void addSectionRegion(String title) {
+	public void appendClauseRegion(String title) {
 		if (level > 0)
 			appendPresentationTabs(null);
-		addElementRegion(title, null, KEYWORD_TYPE, false);
+		appendRegion(title, null, KEYWORD_TYPE, null, false, NONE);
 		appendLineSeparator();
 	}
 
@@ -161,49 +140,57 @@ public class RodinTextStream {
 	public void incrementIndentation() {
 		level++;
 	}
-	
+
 	public void decrementIndentation() {
 		level--;
 	}
-	
+
 	public void appendLineSeparator() {
-		addPresentationRegion((String) LINESEPARATOR, null);
+		appendPresentationRegion((String) LINESEPARATOR, null);
 	}
-	
+
 	public int getLevel() {
 		return level;
 	}
-	
+
 	public int getLength() {
 		return builder.length();
 	}
-	
+
 	public String getTabsForCurrentLevel() {
 		return getTabs(level);
 	}
-	
+
 	public String getText() {
 		return builder.toString();
 	}
 
 	public void appendLeftPresentationTabs(ILElement e) {
-		addLeftPresentationRegion(getTabs(level), e);
+		appendLeftPresentationRegion(getTabs(level), e);
 	}
 
 	public void appendPresentationTabs(ILElement e, int indentation) {
-		addPresentationRegion(getTabs(indentation), e);
+		appendPresentationRegion(getTabs(indentation), e);
 	}
-	
+
 	public void appendPresentationTabs(ILElement e) {
-		addPresentationRegion(getTabs(level), null);
+		appendPresentationRegion(getTabs(level), null);
 	}
 
 	public void incrementIndentation(int i) {
 		level += i;
 	}
-	
+
 	public void decrementIndentation(int i) {
 		level -= i;
 	}
-	
+
+	/**
+	 * @return the intervalInfos to read in order to process the document's
+	 *         intervals.
+	 */
+	public List<RegionInfo> getIntervalInfos() {
+		return intervalInfos;
+	}
+
 }

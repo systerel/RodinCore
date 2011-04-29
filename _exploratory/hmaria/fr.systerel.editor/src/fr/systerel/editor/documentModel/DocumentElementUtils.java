@@ -15,6 +15,7 @@ import java.util.Set;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
+import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElementType;
@@ -62,6 +63,39 @@ public class DocumentElementUtils {
 			i++;
 		}
 		return descs;
+	}
+	
+	@SuppressWarnings("restriction")
+	public static List<IAttributeDesc> getAllAttributeDescs(
+			IInternalElementType<?> type) {
+		final List<IAttributeDesc> result = new ArrayList<IAttributeDesc>();
+		int i = 0;
+		IAttributeDesc desc;
+		while ((desc = ElementDescRegistry.getInstance().getAttribute(type, i)) != null) {
+			result.add(desc);
+			i++;
+		}
+		return result;
+	}
+	
+	@SuppressWarnings("restriction")
+	public static IAttributeManipulation getManipulation(IInternalElementType<?> type, String atype) {
+		final IAttributeDesc desc = getAttributeDesc(type, atype);
+		if (desc != null) {
+			return desc.getManipulation();
+		}
+		return null;
+	}
+	
+	@SuppressWarnings("restriction")
+	public static IAttributeDesc getAttributeDesc(IInternalElementType<?> type,
+			String atype) {
+		for (IAttributeDesc desc : getAllAttributeDescs(type)) {
+			if (atype.equals(desc.getAttributeType().getId())) {
+				return desc;
+			}
+		}
+		return null;
 	}
 	
 	public static Set<IInternalElementType<?>> getChildPossibleTypes(

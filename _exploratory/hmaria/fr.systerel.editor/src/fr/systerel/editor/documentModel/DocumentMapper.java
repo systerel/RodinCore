@@ -11,7 +11,7 @@
 package fr.systerel.editor.documentModel;
 
 import static fr.systerel.editor.documentModel.DocumentElementUtils.getChildPossibleTypes;
-import static fr.systerel.editor.documentModel.DocumentElementUtils.getSibling;
+import static fr.systerel.editor.documentModel.RodinTextGeneratorUtils.processMulti;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -631,7 +631,7 @@ public class DocumentMapper {
 	 *            The new text to be set into that interval
 	 */
 	public void synchronizeInterval(Interval interval, String newText) {
-		final String pNewText = RodinTextStream.processMulti(
+		final String pNewText = processMulti(
 				interval.isMultiLine(), interval.getIndentation(),
 				interval.isAddWhiteSpace(), newText);
 		final String old_text = getTextFromDocument(interval);
@@ -700,6 +700,7 @@ public class DocumentMapper {
 		intervals.clear();
 		sections.clear();
 		editorElements.clear();
+		resetPrevious();
 	}
 
 }

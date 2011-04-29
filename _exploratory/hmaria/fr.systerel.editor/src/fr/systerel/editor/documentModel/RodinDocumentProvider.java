@@ -11,6 +11,7 @@
 package fr.systerel.editor.documentModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import org.eclipse.core.resources.IFile;
@@ -104,19 +105,19 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		Resource resource = null;
 		try {
 			// Load the resource through the editing domain.
-			resource = editingDomain.getResourceSet().getResource(resourceURI,
-					true);
+			resource = editingDomain.getResourceSet().createResource(
+					resourceURI);
+			resource.load(Collections.emptyMap());
 		} catch (Exception e) {
 			exception = e;
-			resource = editingDomain.getResourceSet().getResource(resourceURI,
-					false);
 			System.out
 					.println("A problem occured when retrieving the resource of "
 							+ resourceURI.toString()
 							+ " : "
 							+ exception.getMessage());
 		}
-		resource.eAdapters().add(elementPresentationChangeAdapter);
+		if (resource != null)
+			resource.eAdapters().add(elementPresentationChangeAdapter);
 		return resource;
 	}
 
