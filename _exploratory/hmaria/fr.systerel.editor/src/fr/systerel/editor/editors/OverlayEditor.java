@@ -10,6 +10,10 @@
  *******************************************************************************/
 package fr.systerel.editor.editors;
 
+import static org.eventb.internal.ui.EventBUtils.getFormulaFactory;
+import static org.eventb.internal.ui.autocompletion.ContentProposalFactory.getProposalProvider;
+import static org.eventb.internal.ui.autocompletion.ContentProposalFactory.makeContentProposal;
+
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -21,8 +25,6 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextViewer;
-import org.eclipse.jface.text.contentassist.ContentAssistant;
-import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.AnnotationModelEvent;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelListener;
@@ -50,15 +52,19 @@ import org.eventb.core.ICommentedElement;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPredicateElement;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.internal.ui.autocompletion.ProposalProvider;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
+import org.rodinp.core.location.IAttributeLocation;
 import org.rodinp.keyboard.RodinKeyboardPlugin;
 
 import fr.systerel.editor.actions.StyledTextEditAction;
-import fr.systerel.editor.contentAssist.RodinContentAssistProcessor;
 import fr.systerel.editor.documentModel.DocumentMapper;
 import fr.systerel.editor.documentModel.Interval;
 import fr.systerel.editor.documentModel.RodinTextStream;
@@ -83,8 +89,6 @@ public class OverlayEditor implements IAnnotationModelListener,
 	private final RodinEditor editor;
 	private final ITextViewer textViewer;
 	
-	private final IContentAssistant contentAssistant;
-
 	private final ModifyListener eventBTranslator = RodinKeyboardPlugin
 			.getDefault().createRodinModifyListener();
 
@@ -93,6 +97,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 	private ArrayList<IAction> editActions = new ArrayList<IAction>();
 	private Point editorPos;
 	private Menu fTextContextMenu;
+	private ProposalProvider provider;
 
 	public OverlayEditor(StyledText parent, DocumentMapper mapper,
 			ProjectionViewer viewer, RodinEditor editor) {
@@ -102,8 +107,6 @@ public class OverlayEditor implements IAnnotationModelListener,
 		this.editor = editor;
 		textViewer = new TextViewer(parent, SWT.NONE);
 		textViewer.getTextWidget().setBackground(IRodinColorConstant.BG_COLOR);
-		contentAssistant = getContentAssistant();
-		contentAssistant.install(textViewer);
 		setupEditorText();
 	}
 
@@ -126,6 +129,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 		final IFocusService focusService = (IFocusService) editor.getSite()
 				.getService(IFocusService.class);
 		focusService.addFocusTracker(editorText, EDITOR_TEXT_ID);
+		setupAutoCompletion();
 	}
 
 	protected IDocument createDocument(String text) {
@@ -208,6 +212,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 	}
 
 	private void showEditorText(Interval inter, int pos) {
+		setCompletionLocation(inter);
 		setEventBTranslation(inter);
 		final int start = viewer.modelOffset2WidgetOffset(inter.getOffset());
 		final int end = start + inter.getLength();
@@ -360,35 +365,14 @@ public class OverlayEditor implements IAnnotationModelListener,
 		return height;
 	}
 
-	public IContentAssistant getContentAssistant() {
-
-		ContentAssistant assistant = new ContentAssistant();
-		//assistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
-		assistant.setContentAssistProcessor(new RodinContentAssistProcessor(
-				mapper, this), Document.DEFAULT_CONTENT_TYPE);
-
-		assistant.enableAutoActivation(true);
-		assistant.setAutoActivationDelay(500);
-		assistant
-				.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
-		assistant
-				.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
-
-		return assistant;
-	}
-
 	public void verifyKey(VerifyEvent event) {
 		if ((event.stateMask == SWT.NONE) && event.character == SWT.CR) {
 			// do not add the return to the text
 			event.doit = false;
 			saveAndExit();
 		}
-		if (event.character == SWT.ESC) {
+		if (event.character == SWT.ESC) {// FIXME && !proposalPopupOpen
 			abortEditing();
-		}
-
-		if ((event.stateMask & SWT.CTRL) != 0 && event.character == '\u0020') {
-			contentAssistant.showPossibleCompletions();
 		}
 
 	}
@@ -442,7 +426,37 @@ public class OverlayEditor implements IAnnotationModelListener,
 		abortEditing();
 	}
 
+	@SuppressWarnings("restriction")
+	private void setupAutoCompletion() {
+		final IInternalElement root = mapper.getRoot().getElement();
+		final FormulaFactory factory = getFormulaFactory(root);
+		provider = getProposalProvider(null, factory);
+		makeContentProposal(editorText, provider);
+	}
+
+	@SuppressWarnings("restriction")
+	private void setCompletionLocation(Interval inter) {
+		final IInternalElement element = inter.getElement().getElement();
+		
+		// FIXME null for predicate and assignment
+		IAttributeType attributeType = inter.getContentType()
+				.getAttributeType();
+		if (attributeType == null) {
+//			return; FIXME
+			attributeType = EventBAttributes.PREDICATE_ATTRIBUTE;
+		}
+		final IAttributeLocation location = RodinCore.getInternalLocation(
+				element, attributeType);
+		provider.setLocation(location);
+	}
+
 	public void setEventBTranslation(Interval interval) {
+		// TODO use attribute type
+//		final IAttributeType attributeType = interval.getContentType()
+//				.getAttributeType();
+//		final boolean enable = (attributeType == EventBAttributes.PREDICATE_ATTRIBUTE || attributeType == EventBAttributes.ASSIGNMENT_ATTRIBUTE);
+		
+		// or better: add isMath() to IAttributeManipulation
 		final IInternalElement element = interval.getElement().getElement();
 		final boolean enable = (element instanceof IPredicateElement || element instanceof IAssignmentElement)
 				&& interval.getContentType().equals(
