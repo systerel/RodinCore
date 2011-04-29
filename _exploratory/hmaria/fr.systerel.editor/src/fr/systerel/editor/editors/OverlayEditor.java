@@ -76,6 +76,7 @@ import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
 /**
  * This class manages the little text field that is used to edit an element.
  */
+@SuppressWarnings("restriction")
 public class OverlayEditor implements IAnnotationModelListener,
 		IAnnotationModelListenerExtension, ExtendedModifyListener,
 		VerifyKeyListener, IMenuListener {
@@ -429,7 +430,6 @@ public class OverlayEditor implements IAnnotationModelListener,
 		abortEditing();
 	}
 
-	@SuppressWarnings("restriction")
 	private void setupAutoCompletion() {
 		final IInternalElement root = mapper.getRoot().getElement();
 		final FormulaFactory factory = getFormulaFactory(root);
@@ -437,7 +437,6 @@ public class OverlayEditor implements IAnnotationModelListener,
 		contentProposal = makeContentProposal(editorText, provider);
 	}
 
-	@SuppressWarnings("restriction")
 	private void setCompletionLocation(Interval inter) {
 		final IInternalElement element = inter.getElement().getElement();
 		
