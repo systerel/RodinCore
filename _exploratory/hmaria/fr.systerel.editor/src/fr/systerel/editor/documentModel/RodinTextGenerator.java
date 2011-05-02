@@ -192,17 +192,20 @@ public class RodinTextGenerator {
 		stream.appendLineSeparator();
 	}
 
-	private void processCommentedElement(ILElement element, boolean appendTabs, int additionnalTabs) {
+	private void processStringEventBAttribute(ILElement element,
+			IAttributeType.String type, ContentType t, boolean multiline,
+			int additionnalTabs) {
+		final String attribute = element.getAttribute(type);
+		final String value = (attribute != null) ? attribute : "";
+		stream.addElementRegion(value, element, t, multiline, additionnalTabs);
+	}
+
+	private void processCommentedElement(ILElement element, boolean appendTabs,
+			int additionnalTabs) {
 		stream.addCommentHeaderRegion(element, appendTabs);
-		final String commentAttribute = element.getAttribute(COMMENT_ATTRIBUTE);
-		final ContentType contentType = getContentType(element,
-				IMPLICIT_COMMENT_TYPE, COMMENT_TYPE);
-		if (commentAttribute != null) {
-			final String comment = commentAttribute;
-			stream.addElementRegion(comment, element, contentType, true, additionnalTabs);
-		} else {
-			stream.addElementRegion("", element, contentType, true, additionnalTabs);
-		}
+		processStringEventBAttribute(element, COMMENT_ATTRIBUTE,
+				getContentType(element, IMPLICIT_COMMENT_TYPE, COMMENT_TYPE),
+				true, additionnalTabs);
 		if (!appendTabs)
 			stream.appendLineSeparator();
 	}
@@ -217,33 +220,26 @@ public class RodinTextGenerator {
 
 	private void processPredAssElement(ILElement element,
 			IAttributeType.String attrType) {
-		String attrValue = element.getAttribute(attrType);
-		if (attrValue == null) {
-			attrValue = "";
-		}
-		final ContentType contentType = getContentType(element,
-				IMPLICIT_CONTENT_TYPE, CONTENT_TYPE);
-		stream.addElementRegion(attrValue, element, contentType, true,
-				TWO_TABS_INDENT);
+		processStringEventBAttribute(element, attrType,
+				getContentType(element, IMPLICIT_CONTENT_TYPE, CONTENT_TYPE),
+				true, TWO_TABS_INDENT);
+	}
+
+	private void processIdentifierElement(ILElement element) {
+		processStringEventBAttribute(
+				element,
+				IDENTIFIER_ATTRIBUTE,
+				getContentType(element, IMPLICIT_IDENTIFIER_TYPE,
+						IDENTIFIER_TYPE), false, 0);
 	}
 
 	private void processLabeledElement(ILElement element) {
-		final String labelAttribute = element.getAttribute(LABEL_ATTRIBUTE);
 		stream.appendLeftPresentationTabs(element);
-		final ContentType contentType;
-		if ((element.getAttribute(ASSIGNMENT_ATTRIBUTE) == null)
-				&& (element.getAttribute(PREDICATE_ATTRIBUTE) == null)) {
-			contentType = getContentType(element, BOLD_IMPLICIT_LABEL_TYPE,
-					BOLD_LABEL_TYPE);
-		} else {
-			contentType = getContentType(element, IMPLICIT_LABEL_TYPE,
-					LABEL_TYPE);
-		}
+		final String labelAttribute = element.getAttribute(LABEL_ATTRIBUTE);
+		processStringEventBAttribute(element, LABEL_ATTRIBUTE,
+				getLabelType(element), false, 0);
 		if (labelAttribute != null) {
-			stream.addElementRegion(labelAttribute, element, contentType, false);
 			stream.addPresentationRegion(":\t", element);
-		} else {
-			stream.addElementRegion("", element, contentType, false);
 		}
 		if (!element.getChildren().isEmpty()
 				&& element.getAttributes().isEmpty()) {
@@ -251,17 +247,12 @@ public class RodinTextGenerator {
 		}
 	}
 
-	private void processIdentifierElement(ILElement element) {
-		final String identifierAttribute = element
-				.getAttribute(IDENTIFIER_ATTRIBUTE);
-		final ContentType contentType = getContentType(element,
-				IMPLICIT_IDENTIFIER_TYPE, IDENTIFIER_TYPE);
-		if (identifierAttribute != null) {
-			stream.addElementRegion((String) identifierAttribute, element,
-					contentType, false);
-		} else {
-			stream.addElementRegion("", element, contentType, false);
-		}
+	private ContentType getLabelType(ILElement element) {
+		if ((element.getAttribute(ASSIGNMENT_ATTRIBUTE) == null)
+				&& (element.getAttribute(PREDICATE_ATTRIBUTE) == null))
+			return getContentType(element, BOLD_IMPLICIT_LABEL_TYPE,
+					BOLD_LABEL_TYPE);
+		return getContentType(element, IMPLICIT_LABEL_TYPE, LABEL_TYPE);
 	}
 
 	private void processElement(ILElement element) {
