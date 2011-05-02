@@ -875,7 +875,10 @@ public final class Lib {
 	 *            a predicate to rewrite
 	 * @return the rewritten predicate
 	 * @since 2.0
+	 * @deprecated This method is not part of the core anymore. It shall not be
+	 *             used.
 	 */
+	@Deprecated
 	public static Predicate applyTypeSimplification(Predicate predicate,
 			FormulaFactory ff) {
 		final IFormulaRewriter typeRewriter = new TypeRewriterImpl(ff);

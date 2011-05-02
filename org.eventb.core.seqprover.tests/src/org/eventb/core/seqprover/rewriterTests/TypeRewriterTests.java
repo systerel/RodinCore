@@ -9,17 +9,10 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added tests for SIMP_TYPE_SUBSETEQ and SIMP_TYPE_SUBSET_L
- *     Systerel - added test for applyTypeSimplification()
  ******************************************************************************/
-
 package org.eventb.core.seqprover.rewriterTests;
 
-import org.junit.Assert;
-
 import org.eventb.core.ast.IFormulaRewriter;
-import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewriterImpl;
 import org.junit.Test;
 
@@ -84,13 +77,4 @@ public class TypeRewriterTests extends AbstractFormulaRewriterTests {
 		noRewritePred("S ⊂ ℕ");
 	}
 
-	@Test
-	public void testApplyTypeSimplification() throws Exception {
-		final ITypeEnvironment typenv = ff.makeTypeEnvironment();
-		final Predicate pred = makePredicate("S ⊆ T ∧ S≠(∅⦂ℙ(T))", typenv);
-		final Predicate expected = makePredicate("¬S=(∅⦂ℙ(T))", typenv);
-		
-		final Predicate actual = Lib.applyTypeSimplification(pred, ff);
-		Assert.assertEquals(expected, actual);
-	}
 }
