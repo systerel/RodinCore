@@ -40,7 +40,7 @@ public class AddChildHandler extends AbstractEditorHandler {
 	}
 
 	//TODO make this menu dynamic
-	private void showTipMenu(final RodinEditor editor, int offset,
+	private void showTipMenu(final RodinEditor editor,final int offset,
 			final ChildCreationInfo childInfo, StyledText parent) {
 		final Menu tipMenu = new Menu(parent);
 		for (final IInternalElementType<?> type : childInfo
@@ -76,6 +76,7 @@ public class AddChildHandler extends AbstractEditorHandler {
 								localNextSibling);
 						((RodinDocumentProvider) editor.getDocumentProvider())
 								.doSynchronize(rootElement, null);
+						editor.selectAndReveal(offset, 0);
 					} catch (RodinDBException e1) {
 						e1.printStackTrace();
 					} catch (CoreException e) {
