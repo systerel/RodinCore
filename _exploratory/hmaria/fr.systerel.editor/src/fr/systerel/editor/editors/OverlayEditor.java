@@ -327,7 +327,10 @@ public class OverlayEditor implements IAnnotationModelListener,
 		final ContentType contentType = interval.getContentType();
 		final ILElement element = interval.getElement();
 		final IInternalElement ielement = element.getElement();
-		final String text = editorText.getText();
+		final String original = editorText.getText();
+		// force translation
+		final String text = RodinKeyboardPlugin.getDefault()
+				.translate(original);
 		if (ielement instanceof IIdentifierElement
 				&& contentType.equals(RodinConfiguration.IDENTIFIER_TYPE)) {
 			element.setAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE
@@ -471,7 +474,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 		abortEditing();
 	}
 
-	public void setEventBTranslation(Interval interval) {
+	private void setEventBTranslation(Interval interval) {
 		// TODO use attribute type
 //		final IAttributeType attributeType = interval.getContentType()
 //				.getAttributeType();
