@@ -47,12 +47,12 @@ public abstract class AbstractFormulaRewriterTests {
 	 */
 	protected static final FormulaFactory ff = FormulaFactory.getDefault();
 
-	public static void assertTypeChecked(Formula<?> formula) {
+	private static void assertTypeChecked(Formula<?> formula) {
 		assertTrue("Formula " + formula + " should be type checked.",
 				formula.isTypeChecked());
 	}
 
-	public static void assertSameType(Expression left, Expression right) {
+	private static void assertSameType(Expression left, Expression right) {
 		assertEquals("Expression " + left + " and expression " + right
 				+ " should bear the same type.", left.getType(),
 				right.getType());
@@ -80,14 +80,14 @@ public abstract class AbstractFormulaRewriterTests {
 	/**
 	 * The rewriter under test.
 	 */
-	protected final IFormulaRewriter r;
+	private final IFormulaRewriter r;
 
 	/**
 	 * The factory to use for parsing
 	 */
-	protected final FormulaFactory factory;
+	private final FormulaFactory factory;
 	
-	protected final DLib lib;
+	private final DLib lib;
 	
 	/**
 	 * Constructor.
