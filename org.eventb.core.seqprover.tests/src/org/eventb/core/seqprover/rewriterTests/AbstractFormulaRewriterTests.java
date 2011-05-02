@@ -80,7 +80,7 @@ public abstract class AbstractFormulaRewriterTests {
 	/**
 	 * The rewriter under test.
 	 */
-	private final IFormulaRewriter r;
+	private final IFormulaRewriter rewriter;
 
 	/**
 	 * The factory to use for parsing
@@ -90,16 +90,14 @@ public abstract class AbstractFormulaRewriterTests {
 	private final DLib lib;
 	
 	/**
-	 * Constructor.
-	 * <p>
-	 * Client extends this class should provide the rewriter for testing.
+	 * Client extending this class must provide the rewriter which is tested.
 	 * 
-	 * @param r
+	 * @param rewriter
 	 *            the rewriter under test
 	 */
-	protected AbstractFormulaRewriterTests(IFormulaRewriter r) {
-		this.r = r;
-		this.factory = r.getFactory();
+	protected AbstractFormulaRewriterTests(IFormulaRewriter rewriter) {
+		this.rewriter = rewriter;
+		this.factory = rewriter.getFactory();
 		this.lib = mDLib(factory);
 	}
 
@@ -177,13 +175,13 @@ public abstract class AbstractFormulaRewriterTests {
 		if (expected.equals(input)) {
 			fail("Expected is the same as input " + input);
 		}
-		final Predicate actual = input.rewrite(r);
+		final Predicate actual = input.rewrite(rewriter);
 		assertEquals(input.toString(), expected, actual);
 	}
 
 	private void noRewritePred(Predicate input) {
 		assertTypeChecked(input);
-		final Predicate actual = input.rewrite(r);
+		final Predicate actual = input.rewrite(rewriter);
 		assertSame(input.toString(), input, actual);
 	}
 
@@ -260,13 +258,13 @@ public abstract class AbstractFormulaRewriterTests {
 		if (expected.equals(input)) {
 			fail("Expected is the same as input " + input);
 		}
-		final Expression actual = input.rewrite(r);
+		final Expression actual = input.rewrite(rewriter);
 		assertEquals(input.toString(), expected, actual);
 	}
 
 	private void noRewriteExpr(Expression input) {
 		assertTypeChecked(input);
-		final Expression actual = input.rewrite(r);
+		final Expression actual = input.rewrite(rewriter);
 		assertSame(input.toString(), input, actual);
 	}
 
