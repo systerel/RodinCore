@@ -106,8 +106,13 @@ public class OverlayEditor implements IAnnotationModelListener,
 			IAttributeType attributeType = inter.getContentType()
 					.getAttributeType();
 			if (attributeType == null) {
-//				return; FIXME
-				attributeType = EventBAttributes.PREDICATE_ATTRIBUTE;
+				// return; FIXME
+				if (element instanceof IPredicateElement)
+					attributeType = EventBAttributes.PREDICATE_ATTRIBUTE;
+				else if (element instanceof IAssignmentElement)
+					attributeType = EventBAttributes.ASSIGNMENT_ATTRIBUTE;
+				else
+					return;
 			}
 			final IAttributeLocation location = RodinCore.getInternalLocation(
 					element, attributeType);
