@@ -19,10 +19,8 @@ import static fr.systerel.editor.presentation.RodinConfiguration.getAttributeCon
 
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.emf.api.itf.ILElement;
 
-import fr.systerel.editor.presentation.RodinConfiguration;
 import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
 
 /**
@@ -33,7 +31,7 @@ import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
 public class RodinTextStream {
 
 	public static int MIN_LEVEL = 1;
-	private static final String COMMENT_HEADER_DELIMITER = "§";
+	private static final String COMMENT_HEADER_DELIMITER = "\u203A";
 	private static final Character TAB = '\u0009';
 	private static final int NO_TABS = 0;
 	private static final String WHITESPACE = " ";
@@ -80,11 +78,6 @@ public class RodinTextStream {
 		mapper.resetPrevious();
 	}
 
-	protected void addEditorSection(IInternalElementType<?> type,
-			int folding_start, int folding_length) {
-		mapper.addEditorSection(type, folding_start, folding_length);
-	}
-
 	protected void addElementRegion(String text, ILElement element,
 			ContentType contentType, boolean multiLine) {
 		addElementRegion(text, element, contentType, null, multiLine, NO_TABS);
@@ -100,15 +93,19 @@ public class RodinTextStream {
 			ContentType contentType, IAttributeManipulation manipulation,
 			boolean multiLine, int additionalTabs) {
 		final int start = builder.length();
-		final boolean addWhiteSpace = contentType == RodinConfiguration.COMMENT_TYPE
-				|| contentType == RodinConfiguration.IMPLICIT_COMMENT_TYPE;
-		final String multilined = processMulti(multiLine, getLevel()
-				+ additionalTabs, addWhiteSpace, text);
-		builder.append(multilined);
-		final int length = builder.length() - start;
-		mapper.processInterval(start, length, element, contentType,
-				manipulation, multiLine, getLevel() + additionalTabs,
-				addWhiteSpace);
+		final EditorRegion region = getElementRegion(start, getLevel(), text,
+				element, contentType, manipulation, multiLine, getLevel()
+						+ additionalTabs);
+		builder.append(region.getText());
+		mapper.processInterval(region);
+	}
+
+	public EditorRegion getElementRegion(int startOffset, int level,
+			String elementText, ILElement element, ContentType contentType,
+			IAttributeManipulation manipulation, boolean multiline,
+			int additionalTabs) {
+		return new EditorRegion(startOffset, level, elementText, element,
+				contentType, manipulation, multiline, additionalTabs);
 	}
 
 	protected void addAttributeRegion(String text, ILElement element,

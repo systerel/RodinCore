@@ -11,7 +11,6 @@
 package fr.systerel.editor.documentModel;
 
 import static fr.systerel.editor.documentModel.DocumentElementUtils.getChildPossibleTypes;
-import static fr.systerel.editor.documentModel.DocumentElementUtils.getSibling;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -297,7 +296,7 @@ public class DocumentMapper {
 	 * none yet. Otherwise updates length and offset. It is expected that this
 	 * method is called in the order the intervals appear in the document.
 	 */
-	public void processInterval(int offset, int length, ILElement element,
+	private void processInterval(int offset, int length, ILElement element,
 			ContentType contentType, IAttributeManipulation manipulation,
 			boolean multiLine, int indentationLevel, boolean addWhitespace) {
 		Interval inter;
@@ -340,6 +339,15 @@ public class DocumentMapper {
 			el.addInterval(inter);
 		}
 
+	}
+
+	/** 
+	 * Processes the interval corresponding to the given region description.
+	 */
+	public void processInterval(EditorRegion r) {
+		processInterval(r.getStartOffset(), r.getLength(), r.getElement(),
+				r.getType(), r.getManipulation(), r.getMultiline(),
+				r.getAdditionalTabs(), r.isAddWhitespace());
 	}
 
 	/**

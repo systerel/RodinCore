@@ -132,7 +132,7 @@ public class RodinTextGenerator {
 			stream.decrementIndentation(TWO_TABS_INDENT);
 			final int length = stream.getLength() - start;
 			if (start != -1 && !noChildren) {
-				stream.addEditorSection(rel.getChildType(), start, length);
+				documentMapper.addEditorSection(rel.getChildType(), start, length);
 				start = -1;
 			}
 		}
