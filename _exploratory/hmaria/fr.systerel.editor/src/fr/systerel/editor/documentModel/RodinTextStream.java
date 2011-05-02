@@ -17,6 +17,9 @@ import static fr.systerel.editor.presentation.RodinConfiguration.LEFT_PRESENTATI
 import static fr.systerel.editor.presentation.RodinConfiguration.PRESENTATION_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.getAttributeContentType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.emf.api.itf.ILElement;
@@ -24,14 +27,13 @@ import org.rodinp.core.emf.api.itf.ILElement;
 import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
 
 /**
- * A class holding a string builder and the documentMapper used by the text
- * generator in order to process both the text representation of a model, and
- * the interval mapping of the model. 
+ * A class holding a string builder and computing regions to be processed as
+ * intervals by the text generator.
  */
 public class RodinTextStream {
 
 	public static int MIN_LEVEL = 1;
-	private static final String COMMENT_HEADER_DELIMITER = "\u203A";
+	private static final String COMMENT_HEADER_DELIMITER = "\u203A"; // the comment "›" character
 	private static final Character TAB = '\u0009';
 	private static final int NO_TABS = 0;
 	private static final String WHITESPACE = " ";
@@ -39,8 +41,8 @@ public class RodinTextStream {
 			.getProperty("line.separator");
 	
 	private final StringBuilder builder;
-	private final DocumentMapper mapper;
 	private int level = MIN_LEVEL;
+	private List<EditorRegion> regions;
 	
 	public static String processMulti(boolean multiLine, int level,
 			boolean addWhiteSpace, String text) {
@@ -72,10 +74,9 @@ public class RodinTextStream {
 				+ commonPatternEnd, "$1");
 	}
 
-	public RodinTextStream(DocumentMapper mapper) {
+	public RodinTextStream() {
 		this.builder = new StringBuilder();
-		this.mapper = mapper;
-		mapper.resetPrevious();
+		this.regions = new ArrayList<EditorRegion>();
 	}
 
 	protected void addElementRegion(String text, ILElement element,
@@ -97,7 +98,7 @@ public class RodinTextStream {
 				element, contentType, manipulation, multiLine, getLevel()
 						+ additionalTabs);
 		builder.append(region.getText());
-		mapper.processInterval(region);
+		regions.add(region);
 	}
 
 	public EditorRegion getElementRegion(int startOffset, int level,
@@ -153,6 +154,10 @@ public class RodinTextStream {
 			tabs.append(TAB);
 		}
 		return tabs.toString();
+	}
+	
+	public List<EditorRegion> getRegions() {
+		return regions;
 	}
 
 	public void incrementIndentation() {

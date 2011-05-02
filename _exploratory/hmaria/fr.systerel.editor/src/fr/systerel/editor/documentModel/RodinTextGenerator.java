@@ -78,8 +78,9 @@ public class RodinTextGenerator {
 	 */
 	public String createText(ILElement inputRoot) {
 		documentMapper.reinitialize();
-		stream = new RodinTextStream(documentMapper);
+		stream = new RodinTextStream();
 		traverseRoot(null, inputRoot);
+		documentMapper.processIntervals(stream.getRegions());
 		return stream.getText();
 	}
 

@@ -351,6 +351,18 @@ public class DocumentMapper {
 	}
 
 	/**
+	 * Processes a ordered list of regions as they appear in the document.
+	 * 
+	 * @param regions
+	 *            the regions to create intervals for
+	 */
+	public void processIntervals(List<EditorRegion> regions) {
+		for (EditorRegion region : regions) {
+			processInterval(region);
+		}
+	}
+
+	/**
 	 * Finds the first interval that belongs to the given element
 	 * 
 	 * @param element
@@ -705,6 +717,7 @@ public class DocumentMapper {
 	}
 
 	public void reinitialize() {
+		resetPrevious();
 		intervals.clear();
 		sections.clear();
 		editorElements.clear();
