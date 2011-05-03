@@ -106,6 +106,8 @@ public class RodinEditor extends TextEditor {
 		visualAnnotationModel = viewer.getVisualAnnotationModel();
 		styledText = viewer.getTextWidget();
 
+		styledText.setDragDetect(false);
+		
 		overlayEditor = new OverlayEditor(styledText, mapper, viewer, this);
 		projectionAnnotationModel.addAnnotationModelListener(overlayEditor);
 		final SelectionController controller = new SelectionController(
