@@ -1279,6 +1279,11 @@ public class SubParsers {
 			pc.accept(mid);
 			final List<BoundIdentDecl> boundIdents = new ArrayList<BoundIdentDecl>();
 			final Expression boundExpr = expr.bindAllFreeIdents(boundIdents, pc.factory);
+			if (boundIdents.isEmpty()) {
+				throw pc.syntaxError(new ASTProblem(expr.getSourceLocation(),
+						ProblemKind.ExpressionNotBinding,
+						ProblemSeverities.Error));
+			}
 
 			final Predicate pred = pc.subParseNoParentNoCheck(PRED_PARSER, boundIdents);
 			acceptClose(pc);

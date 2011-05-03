@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
  *     Systerel - added tests for lambda with duplicate idents in pattern
+ *     Systerel - added tests for illegal quantified expressions
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -1238,20 +1239,25 @@ public class TestParser extends AbstractTests {
 	}
 	
 	public void testInvalidExprs() throws Exception {
-				doTestInvalidExpr("x/x/x");
-				doTestInvalidExpr("x mod x mod x");
-				doTestInvalidExpr("x domsub y + z");
-				doTestInvalidExpr("x setminus y inter z");
-				doTestInvalidExpr("x\u2225y\u2225z");
-				doTestInvalidExpr("(\u2205\u2982x\u21a6y)");	// rhs is not a type 
-				doTestInvalidExpr("(\u2205\u2982\u2124)");		// type is not a set type
-				// Duplicate idents in lambda pattern
-				doTestInvalidExpr("\u03bb x\u21a6x\u00b7\u22a5\u2223x");
-				doTestInvalidExpr("\u03bb x\u21a6y\u21a6x\u00b7\u22a5\u2223x+y");
-				doTestInvalidExpr("\u03bb x\u21a6 (x \u2982 \u2124) \u00b7\u22a4\u2223x");
-				doTestInvalidExpr("\u03bb(x \u2982 BOOL) \u21a6 x \u00b7\u22a4\u2223x");
-				doTestInvalidExpr("\u03bb(x \u2982 BOOL) \u21a6 (x \u2982 \u2124) \u00b7\u22a4\u2223x");
+		doTestInvalidExpr("x/x/x");
+		doTestInvalidExpr("x mod x mod x");
+		doTestInvalidExpr("x domsub y + z");
+		doTestInvalidExpr("x setminus y inter z");
+		doTestInvalidExpr("x\u2225y\u2225z");
+		doTestInvalidExpr("(\u2205\u2982x\u21a6y)");	// rhs is not a type
+		doTestInvalidExpr("(\u2205\u2982\u2124)");		// type is not a set type
+		// Duplicate idents in lambda pattern
+		doTestInvalidExpr("\u03bb x\u21a6x\u00b7\u22a5\u2223x");
+		doTestInvalidExpr("\u03bb x\u21a6y\u21a6x\u00b7\u22a5\u2223x+y");
+		doTestInvalidExpr("\u03bb x\u21a6 (x \u2982 \u2124) \u00b7\u22a4\u2223x");
+		doTestInvalidExpr("\u03bb(x \u2982 BOOL) \u21a6 x \u00b7\u22a4\u2223x");
+		doTestInvalidExpr("\u03bb(x \u2982 BOOL) \u21a6 (x \u2982 \u2124) \u00b7\u22a4\u2223x");
 
+		// ill-defined quantified expressions (nothing to bind)
+		doTestInvalidExpr("{1\u2223\u22a5}");
+		doTestInvalidExpr("\u03bb\u00b7\u22a5\u22231");
+		doTestInvalidExpr("\u22c2{1}\u2223\u22a5");
+		doTestInvalidExpr("\u22c3{1}\u2223\u22a5");
 	}
 
 	private void doTestInvalidExpr(String input) {
