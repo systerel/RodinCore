@@ -17,10 +17,10 @@
  ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
+import static org.eventb.core.seqprover.eventbExtensions.Tactics.removeNeg;
 import static org.eventb.core.seqprover.tactics.BasicTactics.composeOnAllPending;
 import static org.eventb.core.seqprover.tactics.BasicTactics.composeUntilSuccess;
 import static org.eventb.core.seqprover.tactics.BasicTactics.loopOnAllPending;
-import static org.eventb.core.seqprover.eventbExtensions.Tactics.*;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -1205,15 +1205,14 @@ public class AutoTactics {
 
 		@Override
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			final FormulaFactory ff = ptNode.getFormulaFactory();
 			final IProverSequent sequent = ptNode.getSequent();
 			for (Predicate hyp : sequent.visibleHypIterable()) {
-				final IPosition posHyp = nnfGetPosition(hyp, ff);
+				final IPosition posHyp = nnfGetPosition(hyp);
 				if (posHyp != null) {
 					return removeNeg(hyp, posHyp).apply(ptNode, pm);
 				}
 			}
-			final IPosition posGoal = nnfGetPosition(sequent.goal(), ff);
+			final IPosition posGoal = nnfGetPosition(sequent.goal());
 			if (posGoal != null) {
 				return removeNeg(null, posGoal).apply(ptNode, pm);
 			}
@@ -1240,7 +1239,7 @@ public class AutoTactics {
 	/**
 	 * @since 2.2
 	 */
-	public static IPosition nnfGetPosition (Predicate pred, final FormulaFactory ff){
+	public static IPosition nnfGetPosition (Predicate pred){
 		final List<IPosition> listPos = pred.getPositions(new DefaultFilter(){
 			@Override
 			public boolean select(UnaryPredicate predicate){
