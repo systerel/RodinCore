@@ -20,8 +20,11 @@ import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
+import org.eclipse.swt.graphics.Point;
+import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.documentModel.DocumentMapper;
+import fr.systerel.editor.documentModel.EditorElement;
 import fr.systerel.editor.documentModel.EditorItem;
 import fr.systerel.editor.documentModel.Interval;
 
@@ -101,8 +104,17 @@ public class SelectionController implements MouseListener, VerifyListener,
 	}
 
 	public void mouseDoubleClick(MouseEvent e) {
-		// do nothing
-
+		// select the enclosing element
+		
+		final int offset = viewer.widgetOffset2ModelOffset(styledText
+				.getCaretOffset());
+		if (offset == -1) return;
+		final EditorElement item = mapper.findItemContaining(offset);
+		if (item == null) return;
+		final ILElement element = item.getLightElement();
+		final Point enclosingRange = mapper.getEnclosingRange(element);
+		if (enclosingRange == null) return;
+		styledText.setSelection(enclosingRange);
 	}
 
 	public void mouseDown(MouseEvent e) {

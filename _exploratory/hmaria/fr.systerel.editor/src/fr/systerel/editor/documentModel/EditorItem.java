@@ -121,4 +121,8 @@ public abstract class EditorItem {
 		return -1;
 	}
 
+	public boolean contains(int offset) {
+		final int thisOffset = getOffset();
+		return thisOffset <= offset && offset <= thisOffset + getLength();
+	}
 }

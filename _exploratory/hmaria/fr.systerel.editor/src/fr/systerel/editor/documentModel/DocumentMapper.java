@@ -23,6 +23,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
+import org.eclipse.swt.graphics.Point;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ICommentedElement;
 import org.eventb.core.IIdentifierElement;
@@ -379,6 +380,30 @@ public class DocumentMapper {
 			}
 		}
 		return null;
+	}
+	
+	public EditorElement findItemContaining(int offset) {
+		for (EditorItem element : editorElements.getItems()) {
+			if (element.contains(offset) && element instanceof EditorElement) {
+				return (EditorElement) element;
+			}
+		}
+		return null;
+	}
+
+	public Point getEnclosingRange(ILElement element) {
+		final EditorItem editorItem = editorElements.get(element.getElement());
+		
+		if (editorItem == null) return null;
+		int start = editorItem.getOffset();
+		int end = start + editorItem.getLength();
+		for (ILElement child : element.getChildren()) {
+			final Point childRange = getEnclosingRange(child);
+			if (childRange == null) continue;
+			start = Math.min(start, childRange.x);
+			end = Math.max(end, childRange.y);
+		}
+		return new Point(start, end);
 	}
 	
 	/**
