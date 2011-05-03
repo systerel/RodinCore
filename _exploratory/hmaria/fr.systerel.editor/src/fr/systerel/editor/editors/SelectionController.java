@@ -40,10 +40,25 @@ import fr.systerel.editor.documentModel.Interval;
 public class SelectionController implements MouseListener, VerifyListener,
 		VerifyKeyListener, TraverseListener {
 
+	private static class ElementSelection {
+		public final ILElement element;
+		public final Point range;
+		
+		public ElementSelection(ILElement element, Point range) {
+			this.element = element;
+			this.range = range;
+		}
+		
+		public boolean contains(int offset) {
+			return range.x <= offset && offset < range.y;
+		}
+	}
+	
 	private StyledText styledText;
 	private DocumentMapper mapper;
 	private ProjectionViewer viewer;
 	private OverlayEditor overlayEditor;
+	private ElementSelection selection;
 
 	public SelectionController(StyledText styledText, DocumentMapper mapper,
 			ProjectionViewer viewer, OverlayEditor overlayEditor) {
@@ -52,8 +67,17 @@ public class SelectionController implements MouseListener, VerifyListener,
 		this.viewer = viewer;
 		this.mapper = mapper;
 		this.overlayEditor = overlayEditor;
+		this.selection = null;
 	}
 
+	/**
+	 * @return the selectedElement
+	 */
+	public ILElement getSelectedElement() {
+		if (selection == null) return null;
+		return selection.element;
+	}
+	
 	/**
 	 * Checks if a selection is valid.
 	 * 
@@ -115,10 +139,29 @@ public class SelectionController implements MouseListener, VerifyListener,
 		final Point enclosingRange = mapper.getEnclosingRange(element);
 		if (enclosingRange == null) return;
 		styledText.setSelection(enclosingRange);
+		selection = new ElementSelection(element, enclosingRange);
 	}
 
 	public void mouseDown(MouseEvent e) {
-		// do nothing
+		if (selection == null) return;
+
+		final Point location = new Point(e.x, e.y);
+		int offset = -1; 
+		try {
+			offset = styledText.getOffsetAtLocation(location);
+		} catch (IllegalArgumentException x) {
+			// not over a character
+			return;
+		}
+		if (selection.contains(offset)) {
+			// restore selection
+			styledText.setSelection(selection.range);
+			// fire drag event
+			if (!styledText.dragDetect(e)) {
+				selection = null;
+				styledText.setSelection(offset);
+			}
+		}
 	}
 
 	public void mouseUp(MouseEvent e) {

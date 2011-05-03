@@ -27,6 +27,8 @@ import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.DragDetectEvent;
+import org.eclipse.swt.events.DragDetectListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.editors.text.TextEditor;
@@ -38,6 +40,7 @@ import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 import fr.systerel.editor.documentModel.DocumentMapper;
@@ -106,7 +109,6 @@ public class RodinEditor extends TextEditor {
 		visualAnnotationModel = viewer.getVisualAnnotationModel();
 		styledText = viewer.getTextWidget();
 
-		styledText.setDragDetect(false);
 		
 		overlayEditor = new OverlayEditor(styledText, mapper, viewer, this);
 		projectionAnnotationModel.addAnnotationModelListener(overlayEditor);
@@ -115,6 +117,7 @@ public class RodinEditor extends TextEditor {
 		styledText.addMouseListener(controller);
 		styledText.addVerifyKeyListener(controller);
 		styledText.addTraverseListener(controller);
+		setupDND(controller);
 
 		cursorManager = new CursorManager(this, viewer);
 		styledText.addMouseMoveListener(cursorManager);
@@ -131,6 +134,25 @@ public class RodinEditor extends TextEditor {
 		// updateFoldingStructure(documentProvider.getFoldingRegions());
 		updateMarkerStructure(documentProvider.getMarkerAnnotations());
 		setTitleImage(documentProvider.getInputRoot());
+	}
+
+	private void setupDND(final SelectionController controller) {
+		styledText.setDragDetect(false);
+		styledText.addDragDetectListener(new DragDetectListener() {
+			
+			@Override
+			public void dragDetected(DragDetectEvent e) {
+				// TODO tracing here
+				System.out.println("drag detected");
+				final ILElement selectedElement = controller
+						.getSelectedElement();
+				if (selectedElement == null) return;
+				e.data = selectedElement;
+				System.out.println(selectedElement.getElement());
+			}
+		});
+		// TODO customize DropTargetEffect
+		// TODO handle drop
 	}
 
 	@Override
