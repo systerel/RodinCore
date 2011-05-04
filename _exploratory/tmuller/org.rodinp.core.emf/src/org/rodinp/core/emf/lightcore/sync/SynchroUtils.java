@@ -104,7 +104,7 @@ public class SynchroUtils {
 	
 	/**
 	 * Returns the position of the given element among the children of its type.
-	 * @param root
+	 * @param parent
 	 * 			the root element that shall contain the element
 	 * @param element
 	 * 			the element we search the position for
@@ -113,21 +113,21 @@ public class SynchroUtils {
 	 * or <code>-1</code> if the element has not been found
 	 * @throws RodinDBException
 	 */
-	public static int getPositionOf(LightElement root, IInternalElement element)
+	public static int getPositionOf(LightElement parent, IInternalElement element)
 			throws RodinDBException {
 		int pos = -1;
 		if (element == null) {
 			return pos;
 		}
-		final IInternalElement[] children = root.getElement()
-				.getChildrenOfType(element.getElementType());
-		int i = 0;
-		for (IInternalElement e : children) {
-			if (e.equals(element)) {
-				pos = i;
+		LightElement found = null;
+		for (LightElement e : parent.getEChildren()) {
+			if (element.equals(e.getElement())) {
+				found = e;
 				break;
 			}
-			i++;
+		}
+		if (found != null) {
+			pos = parent.getEChildren().indexOf(found);
 		}
 		return pos;
 	}

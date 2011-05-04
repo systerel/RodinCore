@@ -845,8 +845,13 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	public void addElement(ILElement toAdd, int pos) {
 		final ILElement found = SynchroUtils.findElement(toAdd.getElement(),
 				eRoot);
-		if (found != null)
+		final int foundIndex = getEChildren().indexOf(found);
+		if (found != null) {
+			if (pos != -1 && foundIndex != -1 && foundIndex != pos) {
+				moveChild(pos, foundIndex);
+			}
 			return;
+		}
 		if (pos != -1) {
 			getEChildren().add(pos, (LightElement) toAdd);
 			return;
