@@ -66,7 +66,9 @@
       </genOperations>
       <genOperations ecoreOperation="api.ecore#//ILElement/getParent"/>
       <genOperations ecoreOperation="api.ecore#//ILElement/getRoot"/>
-      <genOperations ecoreOperation="api.ecore#//ILElement/getChildPosition"/>
+      <genOperations ecoreOperation="api.ecore#//ILElement/getChildPosition">
+        <genParameters ecoreParameter="api.ecore#//ILElement/getChildPosition/element"/>
+      </genOperations>
     </genClasses>
     <genClasses image="false" ecoreClass="api.ecore#//ILAttribute">
       <genOperations ecoreOperation="api.ecore#//ILAttribute/getOwner"/>

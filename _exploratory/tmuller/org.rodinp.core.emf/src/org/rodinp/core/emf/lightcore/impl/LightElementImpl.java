@@ -6,8 +6,6 @@
  */
 package org.rodinp.core.emf.lightcore.impl;
 
-import static org.rodinp.core.emf.lightcore.sync.SynchroUtils.getPositionOf;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -589,13 +587,8 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	 * @generated
 	 */
 	public int getChildPosition(ILElement element) {
-		final List<ILElement> sameTypeChildren = getChildrenOfType(element
-						.getElementType());
-		for (int i = 0; i < sameTypeChildren.size(); i++) {
-			if (sameTypeChildren.get(i).equals(element))
-				return i;
-		}
-		return -1;
+		return getEChildren().indexOf(element);
+		
 	}
 
 	/**
