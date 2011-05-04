@@ -239,6 +239,22 @@ public class DocumentMapper {
 		}
 		return null;
 	}
+	
+	/**
+	 * Finds the first interval that starts after a given offset and has an element.
+	 * 
+	 * @param offset
+	 * @return the first interval with element after the given offset or
+	 *         <code>null</code> if none exists.
+	 */
+	public Interval findFirstElementIntervalAfter(int offset) {
+		for (Interval interval : intervals) {
+			if (interval.getOffset() > offset && interval.getElement() != null) {
+				return interval;
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Finds the last editable interval that ends before a given offset.

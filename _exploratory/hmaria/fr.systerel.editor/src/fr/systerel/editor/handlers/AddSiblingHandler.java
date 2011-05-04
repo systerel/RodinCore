@@ -28,7 +28,7 @@ public class AddSiblingHandler extends AbstractEditorHandler {
 	@Override
 	protected void handleSelection(RodinEditor editor, int offset) {
 		final Interval inter = editor.getDocumentMapper()
-				.findEditableIntervalAfter(offset);
+				.findFirstElementIntervalAfter(offset);
 		if (inter == null)
 			return;
 		final ILElement element = inter.getElement();
@@ -40,9 +40,15 @@ public class AddSiblingHandler extends AbstractEditorHandler {
 			if (parent == null)
 				return;
 			final IInternalElement localParent = parent.getElement();
-			ElementDescRegistry.getInstance().createElement(
+			final IInternalElement sibling;
+			if (element.isImplicit()) {				
+				sibling = null;
+			} else {
+				sibling = element.getElement();
+			}
+			ElementDescRegistry.getInstance().createElement( 
 					localParent.getRoot(), localParent,
-					element.getElementType(), element.getElement());
+					element.getElementType(), sibling);
 			((RodinDocumentProvider) editor.getDocumentProvider())
 					.doSynchronize(element.getRoot(), null);
 			editor.selectAndReveal(offset, 0);
