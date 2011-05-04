@@ -126,6 +126,12 @@
         <details key="body" value="return getERoot();"/>
       </eAnnotations>
     </eOperations>
+    <eOperations name="getChildPosition" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="body" value="final List&lt;ILElement> sameTypeChildren = getChildrenOfType(element&#xA;&#x9;&#x9;&#x9;&#x9;.getElementType());&#xA;for (int i = 0; i &lt; sameTypeChildren.size(); i++) {&#xA;&#x9;if (sameTypeChildren.get(i).equals(element))&#xA;&#x9;&#x9;return i;&#xA;}&#xA;return -1;"/>
+      </eAnnotations>
+      <eParameters name="element" lowerBound="1" eType="#//ILElement"/>
+    </eOperations>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="List" instanceClassName="java.util.List"
       serializable="false">

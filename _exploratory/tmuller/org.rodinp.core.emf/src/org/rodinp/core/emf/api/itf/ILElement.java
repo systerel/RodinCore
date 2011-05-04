@@ -189,4 +189,13 @@ public interface ILElement {
 	 */
 	ILElement getRoot();
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model required="true" elementRequired="true"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='final List<ILElement> sameTypeChildren = getChildrenOfType(element\n\t\t\t\t.getElementType());\nfor (int i = 0; i < sameTypeChildren.size(); i++) {\n\tif (sameTypeChildren.get(i).equals(element))\n\t\treturn i;\n}\nreturn -1;'"
+	 * @generated
+	 */
+	int getChildPosition(ILElement element);
+
 } // ILElement

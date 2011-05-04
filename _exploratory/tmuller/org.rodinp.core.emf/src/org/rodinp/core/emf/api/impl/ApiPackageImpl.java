@@ -503,6 +503,11 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 		addEOperation(ilElementEClass, this.getILElement(), "getRoot", 0, 1,
 				IS_UNIQUE, IS_ORDERED);
 
+		op = addEOperation(ilElementEClass, ecorePackage.getEInt(),
+				"getChildPosition", 1, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getILElement(), "element", 1, 1, IS_UNIQUE,
+				IS_ORDERED);
+
 		initEClass(ilAttributeEClass, ILAttribute.class, "ILAttribute",
 				IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -643,6 +648,12 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 				new String[] { "body", "return getEParent();" });
 		addAnnotation(ilElementEClass.getEOperations().get(17), source,
 				new String[] { "body", "return getERoot();" });
+		addAnnotation(
+				ilElementEClass.getEOperations().get(18),
+				source,
+				new String[] {
+						"body",
+						"final List<ILElement> sameTypeChildren = getChildrenOfType(element\n\t\t\t\t.getElementType());\nfor (int i = 0; i < sameTypeChildren.size(); i++) {\n\tif (sameTypeChildren.get(i).equals(element))\n\t\treturn i;\n}\nreturn -1;" });
 		addAnnotation(ilAttributeEClass.getEOperations().get(0), source,
 				new String[] { "body", "return (ILElement)getEOwner();" });
 	}

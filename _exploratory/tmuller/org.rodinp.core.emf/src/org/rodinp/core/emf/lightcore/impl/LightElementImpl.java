@@ -588,6 +588,21 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public int getChildPosition(ILElement element) {
+		final List<ILElement> sameTypeChildren = getChildrenOfType(element
+						.getElementType());
+		for (int i = 0; i < sameTypeChildren.size(); i++) {
+			if (sameTypeChildren.get(i).equals(element))
+				return i;
+		}
+		return -1;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public String getReferenceWithoutResolving() {
 		if (this.eIsProxy()){
 			return ((InternalEObject)this).eProxyURI().fragment();
@@ -898,7 +913,6 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 		} else if (!getReference().equals(other.getReference()))
 			return false;
 		return true;
-	}	
-	
+	}
 
 } //LightElementImpl
