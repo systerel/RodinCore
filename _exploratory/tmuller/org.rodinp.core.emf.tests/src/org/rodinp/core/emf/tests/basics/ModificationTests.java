@@ -11,11 +11,14 @@
 package org.rodinp.core.emf.tests.basics;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.rodinp.core.tests.AbstractRodinDBTests.fBool;
 
 import java.util.List;
+
+import junit.framework.Assert;
 
 import org.junit.Test;
 import org.rodinp.core.IAttributeValue;
@@ -24,6 +27,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
+import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
 import org.rodinp.core.tests.basis.NamedElement;
 
 /**
@@ -202,7 +206,37 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 		final NamedElement[] ordered2 = { ne2, ne, ne3 };
 		assertArrayEquals(ordered2, getIRodinElementChildren(root));
 		assertArrayEquals(ordered2, rodinRoot.getChildren());
-
+	}
+	
+	@Test
+	public void testGetChildPosition() throws RodinDBException {
+		final ILFile rodinResource = getRodinResource();
+		final IInternalElement rodinRoot = rodinFile.getRoot();
+		// we create elements, and add one attribute to the first element
+		// beneath the root
+		final NamedElement ne = getNamedElement(rodinRoot, "NE1");
+		final NamedElement ne2 = getNamedElement(rodinRoot, "NE2");
+		final NamedElement ne3 = getNamedElement(rodinRoot, "NE3");
+		final NamedElement[] ordered = { ne, ne2, ne3 };
+		assertArrayEquals(ordered, rodinRoot.getChildren());
+		
+		// we get the root element of the light model
+		final ILElement root = rodinResource.getRoot();
+		final ILElement lne = SynchroUtils.findElement(ne, root);
+		assertEquals(lne.getElement(), ne);
+		
+		final ILElement lne2 = SynchroUtils.findElement(ne2, root);
+		assertEquals(lne2.getElement(), ne2);
+		
+		final ILElement lne3 = SynchroUtils.findElement(ne3, root);
+		assertEquals(lne3.getElement(), ne3);
+		
+		final int lnePos = root.getChildPosition(lne);
+		Assert.assertTrue(lnePos == 0);
+		final int lne2Pos = root.getChildPosition(lne2);
+		Assert.assertTrue(lne2Pos == 1);
+		final int lne3Pos = root.getChildPosition(lne3);
+		Assert.assertTrue(lne3Pos == 2);
 	}
 
 	private IRodinElement[] getIRodinElementChildren(ILElement root) {
