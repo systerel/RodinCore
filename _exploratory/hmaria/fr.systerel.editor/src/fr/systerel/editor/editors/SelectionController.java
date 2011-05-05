@@ -139,7 +139,6 @@ public class SelectionController implements MouseListener, VerifyListener,
 		if (element == null) return;
 		final Point enclosingRange = mapper.getEnclosingRange(element);
 		if (enclosingRange == null) return;
-		enclosingRange.y++; // include new line
 		styledText.setSelection(enclosingRange);
 		selection = new ElementSelection(element, enclosingRange);
 		if (DEBUG)
