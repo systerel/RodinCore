@@ -10,7 +10,6 @@
  *******************************************************************************/
 package fr.systerel.editor.editors;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -63,7 +62,6 @@ public class SelectionController implements MouseListener, VerifyListener,
 	private ProjectionViewer viewer;
 	private OverlayEditor overlayEditor;
 	private ElementSelection selection;
-	private boolean dragging;
 
 	public SelectionController(StyledText styledText, DocumentMapper mapper,
 			ProjectionViewer viewer, OverlayEditor overlayEditor) {
@@ -73,7 +71,6 @@ public class SelectionController implements MouseListener, VerifyListener,
 		this.mapper = mapper;
 		this.overlayEditor = overlayEditor;
 		this.selection = null;
-		this.dragging = false;
 	}
 
 	/**
@@ -152,7 +149,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 
 	private ILElement getEnclosingElement(MouseEvent e) {
 		final int offset = getOffset(e);
-		if (offset == INVALID_POS) return null;
+		if (offset < 0) return null;
 		final EditorElement item = mapper.findItemContaining(offset);
 		if (item == null) return null;
 		final ILElement element = item.getLightElement();
@@ -165,12 +162,15 @@ public class SelectionController implements MouseListener, VerifyListener,
 	}
 	
 	private int getOffset(MouseEvent e) {
-		final Point location = new Point(e.x, e.y);
+		return getOffset(new Point(e.x, e.y));
+	}
+
+	public int getOffset(Point p) {
 		try {
-			return styledText.getOffsetAtLocation(location);
-		} catch (IllegalArgumentException x) {
+			return styledText.getOffsetAtLocation(p);
+		} catch (IllegalArgumentException exc) {
 			// not over a character
-			final int lineIndex = styledText.getLineIndex(e.y);
+			final int lineIndex = styledText.getLineIndex(p.y);
 			final int offset = styledText.getOffsetAtLine(lineIndex);
 			return offset;
 		}
@@ -187,7 +187,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 			// restore selection
 			styledText.setSelection(selection.range);
 			// fire drag event
-			dragging = styledText.dragDetect(e);
+			final boolean dragging = styledText.dragDetect(e);
 			if (!dragging) {
 				selection = null;
 				styledText.setSelection(offset);
@@ -206,100 +206,10 @@ public class SelectionController implements MouseListener, VerifyListener,
 		if (DEBUG)
 			System.out.println("mouse up " + e);
 
-		if (dragging) {
-			processDrop(e);
-			dragging = false;
-		}
 		// no selection
 		if (viewer.getSelectedRange().y == 0) {
 			overlayEditor.showAtOffset(styledText.getCaretOffset());
 		}
-	}
-
-	private void processDrop(MouseEvent e) {
-		Assert.isNotNull(selection);
-		final ILElement selectionParent = selection.element.getParent();
-		if (selectionParent == null) return; // cannot move root
-		final int oldPos = selectionParent.getChildPosition(selection.element);
-		final int newPos = findInsertPos(e,selectionParent, oldPos);
-		if (newPos == INVALID_POS) return;
-		assert oldPos >= 0;
-		selectionParent.moveChild(newPos, oldPos);
-	}
-
-	private static final int INVALID_POS = -1;
-	
-	private int findInsertPos(MouseEvent e, ILElement selectionParent,
-			int oldPos) {
-		// FIXME mouse event coordinates are meaningless ! (-290,-151)
-		final int offset = getOffset(e);
-		final ILElement before = findSiblingBefore(offset);
-		if (before != null) {
-			final int posBefore = selectionParent.getChildPosition(before);
-			assert posBefore >= 0;
-			if (posBefore < oldPos) {
-				return posBefore + 1;
-			} else {
-				return posBefore;
-			}
-		}
-		// try sibling after
-		final ILElement after = findSiblingAfter(offset);
-		if (after != null) {
-			final int posAfter = selectionParent.getChildPosition(after);
-			assert posAfter >= 0;
-			if (oldPos < posAfter) {
-				return posAfter - 1;
-			} else {
-				return posAfter;
-			}
-		}
-		return INVALID_POS;
-	}
-
-	private ILElement findSiblingBefore(int offset) {
-		final Interval intervalBefore = mapper
-				.findEditableIntervalBefore(offset);
-		if (intervalBefore == null)
-			return null;
-		return findSiblingAt(intervalBefore.getOffset());
-	}
-
-	private ILElement findSiblingAfter(int offset) {
-		final Interval intervalAfter = mapper.findEditableIntervalAfter(offset);
-		if (intervalAfter == null)
-			return null;
-		return findSiblingAt(intervalAfter.getLastIndex());
-	}
-
-	private ILElement findSiblingAt(int offset) {
-		final EditorElement item = mapper.findItemContaining(offset);
-		if (item == null)
-			return null;
-		final ILElement sibling = findDirectChild(item.getLightElement(),
-				selection.element.getParent());
-		if (sibling == null)
-			return null;
-		if (sameType(sibling, selection.element)) {
-			return sibling;
-		} else {
-			return null;
-		}
-	}
-
-	private static boolean sameType(ILElement el1, ILElement el2) {
-		return el1.getElementType() == el2.getElementType();
-	}
-
-	private ILElement findDirectChild(ILElement descendant, ILElement parent) {
-		final ILElement descParent = descendant.getParent();
-		if (descParent == null) { // parent of root
-			return null;
-		}
-		if (descParent.equals(parent)) {
-			return descendant;
-		}
-		return findDirectChild(descParent, parent);
 	}
 
 	public void verifyText(VerifyEvent e) {
