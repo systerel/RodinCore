@@ -10,6 +10,8 @@
  *******************************************************************************/
 package fr.systerel.editor.editors;
 
+import java.util.Arrays;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.DND;
@@ -39,47 +41,55 @@ import fr.systerel.editor.documentModel.RodinDocumentProvider;
 @SuppressWarnings("restriction")
 public class DNDManager {
 
+	public static boolean DEBUG;
+
 	private class Dragger extends DragSourceAdapter {
 		public void dragStart(DragSourceEvent e) {
 			e.doit = controller.getSelectedElement() != null;
-			System.out.println("drag start " + e.doit);
+			if (DEBUG)
+				System.out.println("drag start " + e.doit);
 		}
 
 		public void dragSetData(DragSourceEvent e) {
 			final IInternalElement element = controller
 					.getSelectedElement().getElement();
 			e.data = new IRodinElement[] { element };
-			System.out.println("set data " + e.data);
+			if (DEBUG)
+				System.out.println("set data " + element);
 		}
 
 		@Override
 		public void dragFinished(DragSourceEvent event) {
-			System.out.println("drag finished");
+			if (DEBUG)
+				System.out.println("drag finished");
 		}
 
 	}
 	
 	private class Dropper extends DropTargetAdapter {
 		public void dragEnter(DropTargetEvent e) {
-			System.out.println("drag enter" + e);
+			if (DEBUG)
+				System.out.println("drag enter" + e);
 			if (e.detail == DND.DROP_DEFAULT)
 				e.detail = DND.DROP_COPY;
 		}
 
 		public void dragOperationChanged(DropTargetEvent e) {
-			System.out.println("drag operation changed " + e);
+			if (DEBUG)
+				System.out.println("drag operation changed " + e);
 			if (e.detail == DND.DROP_DEFAULT)
 				e.detail = DND.DROP_COPY;
 		}
 
 		public void drop(DropTargetEvent e) {
-			System.out.println("drop " + e);
 			final Point loc = styledText.toControl(e.x, e.y);
-			System.out.println(loc);
 			final int offset = controller.getOffset(loc);
-			System.out.println(offset);
 			final IRodinElement[] elements = (IRodinElement[]) e.data;
-			System.out.println("¡¡¡ DROP !!! " + elements[0]);
+			if (DEBUG) {
+				System.out.println("drop " + e);
+				System.out.println(Arrays.asList(elements));
+				System.out.println("at " + offset);
+			}
 			processDrop(elements, offset);
 		}
 
