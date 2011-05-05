@@ -13,6 +13,7 @@ package fr.systerel.editor.editors;
 import java.util.HashMap;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
@@ -219,6 +220,12 @@ public class RodinEditor extends TextEditor {
 						return;
 					assert oldPos >= 0;
 					selectionParent.moveChild(newPos, oldPos);
+				}
+				try {
+					documentProvider.doSynchronize(mapper.getRoot(), null);
+				} catch (CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 
