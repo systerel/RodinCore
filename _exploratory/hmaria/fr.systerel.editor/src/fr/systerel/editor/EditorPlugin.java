@@ -11,10 +11,13 @@
 
 package fr.systerel.editor;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+
+import fr.systerel.editor.editors.SelectionController;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -23,6 +26,8 @@ public class EditorPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "fr.systerel.editor";
+
+	private static final String SELECTION_TRACE = PLUGIN_ID + "/debug/selection"; //$NON-NLS-1$
 
 	// The shared instance
 	private static EditorPlugin plugin;
@@ -43,6 +48,18 @@ public class EditorPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		if (isDebugging())
+			configureDebugOptions();
+	}
+
+	private void configureDebugOptions() {
+		SelectionController.DEBUG = parseOption(SELECTION_TRACE);
+		
+	}
+
+	private static boolean parseOption(String key) {
+		final String option = Platform.getDebugOption(key);
+		return "true".equalsIgnoreCase(option); //$NON-NLS-1$
 	}
 
 	/*

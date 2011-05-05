@@ -41,7 +41,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 		VerifyKeyListener, TraverseListener {
 
 	// TODO tracing
-	public static boolean DEBUG = true;
+	public static boolean DEBUG;
 	
 	private static class ElementSelection {
 		public final ILElement element;
