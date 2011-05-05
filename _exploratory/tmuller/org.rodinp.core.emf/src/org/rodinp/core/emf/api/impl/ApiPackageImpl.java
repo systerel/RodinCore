@@ -508,6 +508,20 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 		addEParameter(op, this.getILElement(), "element", 1, 1, IS_UNIQUE,
 				IS_ORDERED);
 
+		op = addEOperation(ilElementEClass, null, "addChild", 0, 1, IS_UNIQUE,
+				IS_ORDERED);
+		addEParameter(op, this.getILElement(), "child", 1, 1, IS_UNIQUE,
+				IS_ORDERED);
+		addEParameter(op, ecorePackage.getEInt(), "position", 1, 1, IS_UNIQUE,
+				IS_ORDERED);
+
+		op = addEOperation(ilElementEClass, null, "addChild", 0, 1, IS_UNIQUE,
+				IS_ORDERED);
+		addEParameter(op, this.getILElement(), "toAdd", 0, 1, IS_UNIQUE,
+				IS_ORDERED);
+		addEParameter(op, this.getILElement(), "nextSibling", 0, 1, IS_UNIQUE,
+				IS_ORDERED);
+
 		initEClass(ilAttributeEClass, ILAttribute.class, "ILAttribute",
 				IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -648,12 +662,18 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 				new String[] { "body", "return getEParent();" });
 		addAnnotation(ilElementEClass.getEOperations().get(17), source,
 				new String[] { "body", "return getERoot();" });
+		addAnnotation(ilElementEClass.getEOperations().get(18), source,
+				new String[] { "body",
+						"return getEChildren().indexOf(element);\n" });
+		addAnnotation(ilElementEClass.getEOperations().get(19), source,
+				new String[] { "body",
+						"getEChildren().add(position, (LightElement) child);" });
 		addAnnotation(
-				ilElementEClass.getEOperations().get(18),
+				ilElementEClass.getEOperations().get(20),
 				source,
 				new String[] {
 						"body",
-						"final List<ILElement> sameTypeChildren = getChildrenOfType(element\n\t\t\t\t.getElementType());\nfor (int i = 0; i < sameTypeChildren.size(); i++) {\n\tif (sameTypeChildren.get(i).equals(element))\n\t\treturn i;\n}\nreturn -1;" });
+						"if (nextSibling != null) {\n\tfinal int nextSiblingPosition = getChildPosition(nextSibling);\n\tif (nextSiblingPosition != -1) {\n\t\tgetEChildren().add(nextSiblingPosition, (LightElement) toAdd);\n\t\treturn;\n\t}\n}\ngetEChildren().add((LightElement) toAdd);\n" });
 		addAnnotation(ilAttributeEClass.getEOperations().get(0), source,
 				new String[] { "body", "return (ILElement)getEOwner();" });
 	}
