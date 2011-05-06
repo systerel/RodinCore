@@ -63,12 +63,25 @@ public class ElementMoveAndRemovalAdapter extends AdapterImpl {
 			if (!(rElement instanceof IInternalElement)) {
 				return;
 			}
+			final IRodinElement parent = rElement.getParent();
+			if (!(parent instanceof IInternalElement)) {
+				return;
+			}
+			
 			try {
-				final IRodinElement found = findValueInDB(rElement.getParent(),
-						notification.getPosition());
-				if (found != null)
-					((IInternalElement) rElement).move(rElement.getParent(),
-							found, null, false, null);
+				final IRodinElement[] children = ((IInternalElement) parent)
+						.getChildren();
+
+				final int oldPos = indexOf(children, rElement);
+				if (oldPos < 0)
+					return;
+				IInternalElement nextSibling = (IInternalElement) children[notification
+						.getPosition()];
+				if (oldPos < notification.getPosition()) {
+					nextSibling = nextSibling.getNextSibling();
+				}
+				((IInternalElement) rElement).move(parent, nextSibling, null,
+						false, null);
 			} catch (RodinDBException e1) {
 				System.out.println("Could not move the Rodin element for "
 						+ notifier.toString() + e1.getMessage());
@@ -81,17 +94,12 @@ public class ElementMoveAndRemovalAdapter extends AdapterImpl {
 		return type == ElementMoveAndRemovalAdapter.class;
 	}
 
-	final IRodinElement findValueInDB(IRodinElement container, int position)
-			throws RodinDBException {
-		if (!(container instanceof IInternalElement)) {
-			return null;
+	private static int indexOf(IRodinElement[] elements, IRodinElement element) {
+		for (int i = 0; i < elements.length; i++) {
+			if (element.equals(elements[i]))
+				return i;
 		}
-		final IRodinElement[] children = ((IInternalElement) container)
-				.getChildren();
-		if (position >= 0 && position < children.length) {
-			return children[position];
-		}
-		return null;
+		return -1;
 	}
 
 }
