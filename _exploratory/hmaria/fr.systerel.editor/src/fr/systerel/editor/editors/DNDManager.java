@@ -11,7 +11,6 @@
 package fr.systerel.editor.editors;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.custom.StyledText;
@@ -25,11 +24,11 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Point;
 import org.eventb.internal.ui.RodinHandleTransfer;
-import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.itf.ILElement;
+import org.rodinp.core.emf.lightcore.LightElement;
 import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
 
 import fr.systerel.editor.documentModel.DocumentMapper;
@@ -46,25 +45,32 @@ public class DNDManager {
 
 	public static boolean DEBUG;
 
-	private static class Insertion {
+	private static class Move {
 		private final ILElement targetParent;
 		private final ILElement nextSibling;
 		
-		public Insertion(ILElement parent, ILElement nextSibling) {
+		public Move(ILElement parent, ILElement nextSibling) {
 			this.targetParent = parent;
 			this.nextSibling = nextSibling;
 		}
 		
 		public void perform(ILElement[] elements) {
 			for (ILElement element : elements) {
-				final ILElement newChild = targetParent.createChild(
-						element.getElementType(), nextSibling);
-				final List<IAttributeValue> attributes = element
-						.getAttributes();
-				for (IAttributeValue attribute : attributes) {
-					newChild.setAttribute(attribute);
+				if(targetParent.equals(element.getParent())) {
+					final int oldPos = targetParent.getChildPosition(element);
+					final int newPos;
+					if (nextSibling == null) {
+						newPos = targetParent.getChildren().size() - 1;
+					} else {
+						final int siblingPos = targetParent.getChildPosition(nextSibling);
+						newPos = siblingPos;
+					}
+					targetParent.moveChild(newPos, oldPos);
+				} else {
+					// FIXME API missing in ILElement or TODO in addChild
+					((LightElement) element).setEParent((LightElement) targetParent);
+					targetParent.addChild(element, nextSibling);
 				}
-				element.delete();
 			}
 		}
 	}
@@ -120,16 +126,18 @@ public class DNDManager {
 		}
 
 		private void processDrop(IRodinElement[] elements, int offset) {
-			final IElementType<?> type = checkAndGetSameType(elements);
-			if (type == null)
+			if (elements.length == 0) return;
+			final IElementType<?> siblingType = checkAndGetSameType(elements);
+			if (siblingType == null)
 				return;
-			final Insertion insertion = findInsertion(offset, type);
-			if (insertion == null)
+			final IElementType<?> parentType = elements[0].getParent().getElementType();
+			final Move move = findMove(offset, siblingType, parentType);
+			if (move == null)
 				return;
 			final ILElement[] elems = toLElements(elements);
 			if (elems == null)
 				return;
-			insertion.perform(elems);
+			move.perform(elems);
 			try {
 				documentProvider.doSynchronize(mapper.getRoot(), null);
 			} catch (CoreException e) {
@@ -151,55 +159,45 @@ public class DNDManager {
 			return result;
 		}
 
-		// FIXME should also work when target parent has no child
-		private Insertion findInsertion(int offset, IElementType<?> type) {
+		private Move findMove(int offset, IElementType<?> type,
+				IElementType<?> parentType) {
 			// try sibling after
-			final ILElement after = findSiblingAfter(offset, type);
+			final ILElement after = findElementAfter(offset, type);
 			if (after != null) {
 				final ILElement parent = after.getParent();
-				return new Insertion(parent, after);
+				return new Move(parent, after);
 			}
-			// try sibling before
-			final ILElement before = findSiblingBefore(offset, type);
-			if (before != null) {
-				final ILElement parent = before.getParent();
-				final int posBefore = parent	.getChildPosition(before);
-				final List<? extends ILElement> children = parent.getChildren();
-				assert posBefore >= 0 && posBefore < children.size();
-				final ILElement nextSibling;
-				if (posBefore == children.size() - 1) { // last child
-					nextSibling = null;
-				} else {
-					nextSibling = children.get(posBefore + 1);
-				}
-				return new Insertion(parent, nextSibling);
+			// try parent before, insert at the end
+			final ILElement parent = findElementBefore(offset, parentType);
+			if (parent != null) {
+				return new Move(parent, null);
 			}
 			return null;
 		}
 
-		private ILElement findSiblingBefore(int offset, IElementType<?> type) {
+		private ILElement findElementBefore(int offset, IElementType<?> type) {
 			final Interval intervalBefore = mapper
 					.findEditableIntervalBefore(offset);
 			if (intervalBefore == null)
 				return null;
-			return findSiblingAt(intervalBefore.getOffset(), type);
+			return findElementAt(intervalBefore.getOffset(), type);
 		}
 
-		private ILElement findSiblingAfter(int offset, IElementType<?> type) {
+		private ILElement findElementAfter(int offset, IElementType<?> type) {
 			final Interval intervalAfter = mapper
 					.findEditableIntervalAfter(offset);
 			if (intervalAfter == null)
 				return null;
-			return findSiblingAt(intervalAfter.getLastIndex(), type);
+			return findElementAt(intervalAfter.getLastIndex(), type);
 		}
 
-		private ILElement findSiblingAt(int offset, IElementType<?> type) {
+		private ILElement findElementAt(int offset, IElementType<?> type) {
 			final EditorElement item = mapper.findItemContaining(offset);
 			if (item == null)
 				return null;
-			final ILElement sibling = findAncestorOftype(
+			final ILElement element = findAncestorOftype(
 					item.getLightElement(), type);
-			return sibling;
+			return element;
 		}
 
 
