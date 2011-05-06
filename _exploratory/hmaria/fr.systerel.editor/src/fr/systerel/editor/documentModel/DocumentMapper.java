@@ -506,6 +506,15 @@ public class DocumentMapper {
 	public void elementChanged(ILElement element) {
 		final IInternalElement ie = element.getElement();
 		final EditorItem el = editorElements.get(ie);
+		if (el != null && !ie.exists()) {
+			final ArrayList<Interval> intervals = el.getIntervals();
+			if (intervals.size() > 0) {
+				final Interval interval = intervals.get(intervals.size() - 1);
+				adaptAfter(interval, -el.getLength());
+			}
+			editorElements.remove(ie);
+			return;
+		}
 		if (el != null) {
 			for (Interval interval : el.getIntervals()) {
 				try {
