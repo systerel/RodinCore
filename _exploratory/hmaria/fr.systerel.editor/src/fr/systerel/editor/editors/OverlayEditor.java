@@ -337,7 +337,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 					.makeValue(text));
 		}
 		if (ielement instanceof ILabeledElement
-				&& contentType.equals(RodinConfiguration.IDENTIFIER_TYPE)) {
+				&& contentType.equals(RodinConfiguration.LABEL_TYPE)) {
 			element.setAttribute(EventBAttributes.LABEL_ATTRIBUTE
 					.makeValue(text));
 		}
