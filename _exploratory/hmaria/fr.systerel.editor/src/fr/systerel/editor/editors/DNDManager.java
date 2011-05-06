@@ -11,6 +11,7 @@
 package fr.systerel.editor.editors;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.custom.StyledText;
@@ -24,6 +25,8 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Point;
 import org.eventb.internal.ui.RodinHandleTransfer;
+import org.rodinp.core.IAttributeValue;
+import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.itf.ILElement;
@@ -43,6 +46,29 @@ public class DNDManager {
 
 	public static boolean DEBUG;
 
+	private static class Insertion {
+		private final ILElement targetParent;
+		private final ILElement nextSibling;
+		
+		public Insertion(ILElement parent, ILElement nextSibling) {
+			this.targetParent = parent;
+			this.nextSibling = nextSibling;
+		}
+		
+		public void perform(ILElement[] elements) {
+			for (ILElement element : elements) {
+				final ILElement newChild = targetParent.createChild(
+						element.getElementType(), nextSibling);
+				final List<IAttributeValue> attributes = element
+						.getAttributes();
+				for (IAttributeValue attribute : attributes) {
+					newChild.setAttribute(attribute);
+				}
+				element.delete();
+			}
+		}
+	}
+	
 	private class Dragger extends DragSourceAdapter {
 		public void dragStart(DragSourceEvent e) {
 			e.doit = controller.getSelectedElement() != null;
@@ -94,20 +120,16 @@ public class DNDManager {
 		}
 
 		private void processDrop(IRodinElement[] elements, int offset) {
-			for (IRodinElement element : elements) {
-				final ILElement lElement = SynchroUtils.findElement(
-						element, mapper.getRoot());
-				final ILElement selectionParent = lElement.getParent();
-				if (selectionParent == null)
-					return; // cannot move root
-				final int oldPos = selectionParent
-						.getChildPosition(lElement);
-				final int newPos = findInsertPos(offset, lElement, oldPos);
-				if (newPos == INVALID_POS)
-					return;
-				assert oldPos >= 0;
-				selectionParent.moveChild(newPos, oldPos);
-			}
+			final IElementType<?> type = checkAndGetSameType(elements);
+			if (type == null)
+				return;
+			final Insertion insertion = findInsertion(offset, type);
+			if (insertion == null)
+				return;
+			final ILElement[] elems = toLElements(elements);
+			if (elems == null)
+				return;
+			insertion.perform(elems);
 			try {
 				documentProvider.doSynchronize(mapper.getRoot(), null);
 			} catch (CoreException e) {
@@ -116,85 +138,92 @@ public class DNDManager {
 			}
 		}
 
-		private static final int INVALID_POS = -1;
-
-		private int findInsertPos(int offset, ILElement selection,
-				int oldPos) {
-			final ILElement selectionParent = selection.getParent();
-			final ILElement before = findSiblingBefore(offset, selection);
-			if (before != null) {
-				final int posBefore = selectionParent
-						.getChildPosition(before);
-				assert posBefore >= 0;
-				if (posBefore < oldPos) {
-					return posBefore + 1;
-				} else {
-					return posBefore;
-				}
+		private ILElement[] toLElements(IRodinElement[] elements) {
+			final ILElement[] result = new ILElement[elements.length];
+			for (int i = 0; i < elements.length; i++) {
+				final IRodinElement element = elements[i];
+				final ILElement lElement = SynchroUtils.findElement(element,
+						mapper.getRoot());
+				if (lElement == null)
+					return null;
+				result[i] = lElement;
 			}
-			// try sibling after
-			final ILElement after = findSiblingAfter(offset, selection);
-			if (after != null) {
-				final int posAfter = selectionParent
-						.getChildPosition(after);
-				assert posAfter >= 0;
-				if (oldPos < posAfter) {
-					return posAfter - 1;
-				} else {
-					return posAfter;
-				}
-			}
-			return INVALID_POS;
+			return result;
 		}
 
-		private ILElement findSiblingBefore(int offset, ILElement selection) {
+		// FIXME should also work when target parent has no child
+		private Insertion findInsertion(int offset, IElementType<?> type) {
+			// try sibling after
+			final ILElement after = findSiblingAfter(offset, type);
+			if (after != null) {
+				final ILElement parent = after.getParent();
+				return new Insertion(parent, after);
+			}
+			// try sibling before
+			final ILElement before = findSiblingBefore(offset, type);
+			if (before != null) {
+				final ILElement parent = before.getParent();
+				final int posBefore = parent	.getChildPosition(before);
+				final List<? extends ILElement> children = parent.getChildren();
+				assert posBefore >= 0 && posBefore < children.size();
+				final ILElement nextSibling;
+				if (posBefore == children.size() - 1) { // last child
+					nextSibling = null;
+				} else {
+					nextSibling = children.get(posBefore + 1);
+				}
+				return new Insertion(parent, nextSibling);
+			}
+			return null;
+		}
+
+		private ILElement findSiblingBefore(int offset, IElementType<?> type) {
 			final Interval intervalBefore = mapper
 					.findEditableIntervalBefore(offset);
 			if (intervalBefore == null)
 				return null;
-			return findSiblingAt(intervalBefore.getOffset(), selection);
+			return findSiblingAt(intervalBefore.getOffset(), type);
 		}
 
-		private ILElement findSiblingAfter(int offset, ILElement selection) {
+		private ILElement findSiblingAfter(int offset, IElementType<?> type) {
 			final Interval intervalAfter = mapper
 					.findEditableIntervalAfter(offset);
 			if (intervalAfter == null)
 				return null;
-			return findSiblingAt(intervalAfter.getLastIndex(), selection);
+			return findSiblingAt(intervalAfter.getLastIndex(), type);
 		}
 
-		private ILElement findSiblingAt(int offset, ILElement selection) {
+		private ILElement findSiblingAt(int offset, IElementType<?> type) {
 			final EditorElement item = mapper.findItemContaining(offset);
 			if (item == null)
 				return null;
-			final ILElement sibling = findDirectChild(
-					item.getLightElement(), selection.getParent());
-			if (sibling == null)
-				return null;
-			if (sameType(sibling, selection)) {
-				return sibling;
-			} else {
-				return null;
-			}
+			final ILElement sibling = findAncestorOftype(
+					item.getLightElement(), type);
+			return sibling;
 		}
 
 
 	}
 	
-	private static boolean sameType(ILElement el1, ILElement el2) {
-		return el1.getElementType() == el2.getElementType();
+	private static IElementType<?> checkAndGetSameType(IRodinElement[] elements) {
+		if (elements.length == 0)
+			return null;
+		final IElementType<?> type = elements[0].getElementType();
+		for (IRodinElement element : elements) {
+			if (element.getElementType() != type)
+				return null;
+		}
+		return type;
 	}
-	
-	private static ILElement findDirectChild(ILElement descendant,
-			ILElement parent) {
+
+	private static ILElement findAncestorOftype(ILElement descendant,
+			IElementType<?> type) {
+		if (descendant.getElementType() == type) return descendant;
 		final ILElement descParent = descendant.getParent();
 		if (descParent == null) { // parent of root
 			return null;
 		}
-		if (descParent.equals(parent)) {
-			return descendant;
-		}
-		return findDirectChild(descParent, parent);
+		return findAncestorOftype(descParent, type);
 	}
 	
 	private final SelectionController controller;
