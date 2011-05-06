@@ -51,6 +51,11 @@ public class OrderedEditorItemMap<T> {
 		order.add(pos, (T) internalElement);
 		return el;
 	}
+	
+	public void remove(T element) {
+		items.remove(element);
+		order.remove(element);
+	}
 
 	/**
 	 * Returns the registered editor item or creates a new one at the end of the
