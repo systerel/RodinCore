@@ -258,8 +258,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 		Interval next = mapper.findEditableIntervalAfter(offset);
 		int new_offset = viewer.modelOffset2WidgetOffset(next.getOffset());
 		// TODO: check if folding regions need to be expanded.
-		styledText.setCaretOffset(new_offset);
-		styledText.showSelection();
+		styledText.setSelection(new_offset);
 	}
 
 	public void goToPreviousEditRegion() {
@@ -267,8 +266,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 		Interval next = mapper.findEditableIntervalBefore(offset);
 		int new_offset = viewer.modelOffset2WidgetOffset(next.getOffset());
 		// TODO: check if folding regions need to be expanded.
-		styledText.setCaretOffset(new_offset);
-		styledText.showSelection();
+		styledText.setSelection(new_offset);
 	}
 
 }
