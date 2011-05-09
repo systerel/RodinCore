@@ -210,7 +210,7 @@ public interface ILElement {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model annotation="http://www.eclipse.org/emf/2002/GenModel body='if (nextSibling != null) {\n\tfinal int nextSiblingPosition = getChildPosition(nextSibling);\n\tif (nextSiblingPosition != -1) {\n\t\tgetEChildren().add(nextSiblingPosition, (LightElement) toAdd);\n\t\treturn;\n\t}\n}\ngetEChildren().add((LightElement) toAdd);\n'"
+	 * @model annotation="http://www.eclipse.org/emf/2002/GenModel body='int nextSiblingPosition = -1;\nif (nextSibling != null) {\n\tnextSiblingPosition = getChildPosition(nextSibling);\n}\nfinal LightElement child = (LightElement) toAdd;\nif (nextSiblingPosition == -1) {\n\tgetEChildren().add(child);\n} else {\n\tgetEChildren().add(nextSiblingPosition, child);\n}\nchild.setEParent(this);'"
 	 * @generated
 	 */
 	void addChild(ILElement toAdd, ILElement nextSibling);

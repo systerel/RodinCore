@@ -116,6 +116,10 @@
         <genParameters ecoreParameter="api.ecore#//ILElement/addChild/child"/>
         <genParameters ecoreParameter="api.ecore#//ILElement/addChild/position"/>
       </genOperations>
+      <genOperations ecoreOperation="api.ecore#//ILElement/addChild.1">
+        <genParameters ecoreParameter="api.ecore#//ILElement/addChild.1/toAdd"/>
+        <genParameters ecoreParameter="api.ecore#//ILElement/addChild.1/nextSibling"/>
+      </genOperations>
     </genClasses>
     <genClasses image="false" ecoreClass="api.ecore#//ILAttribute">
       <genOperations ecoreOperation="api.ecore#//ILAttribute/getOwner"/>

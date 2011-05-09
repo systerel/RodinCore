@@ -673,7 +673,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 				source,
 				new String[] {
 						"body",
-						"if (nextSibling != null) {\n\tfinal int nextSiblingPosition = getChildPosition(nextSibling);\n\tif (nextSiblingPosition != -1) {\n\t\tgetEChildren().add(nextSiblingPosition, (LightElement) toAdd);\n\t\treturn;\n\t}\n}\ngetEChildren().add((LightElement) toAdd);\n" });
+						"int nextSiblingPosition = -1;\nif (nextSibling != null) {\n\tnextSiblingPosition = getChildPosition(nextSibling);\n}\nfinal LightElement child = (LightElement) toAdd;\nif (nextSiblingPosition == -1) {\n\tgetEChildren().add(child);\n} else {\n\tgetEChildren().add(nextSiblingPosition, child);\n}\nchild.setEParent(this);" });
 		addAnnotation(ilAttributeEClass.getEOperations().get(0), source,
 				new String[] { "body", "return (ILElement)getEOwner();" });
 	}
