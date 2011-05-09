@@ -114,8 +114,7 @@ public class DNDManager {
 		}
 
 		public void drop(DropTargetEvent e) {
-			final Point loc = styledText.toControl(e.x, e.y);
-			final int offset = controller.getOffset(loc);
+			final int offset = getOffset(e);
 			final IRodinElement[] elements = (IRodinElement[]) e.data;
 			if (DEBUG) {
 				System.out.println("drop " + e);
@@ -123,6 +122,13 @@ public class DNDManager {
 				System.out.println("at " + offset);
 			}
 			processDrop(elements, offset);
+			styledText.setSelection(offset);
+		}
+
+		private int getOffset(DropTargetEvent e) {
+			final Point loc = styledText.toControl(e.x, e.y);
+			final int offset = controller.getOffset(loc);
+			return offset;
 		}
 
 		private void processDrop(IRodinElement[] elements, int offset) {
