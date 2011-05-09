@@ -62,7 +62,11 @@ public class DNDManager {
 						newPos = targetParent.getChildren().size() - 1;
 					} else {
 						final int siblingPos = targetParent.getChildPosition(nextSibling);
-						newPos = siblingPos;
+						if (oldPos < siblingPos) {
+							newPos = siblingPos - 1;
+						} else {
+							newPos = siblingPos;
+						}
 					}
 					targetParent.moveChild(newPos, oldPos);
 				} else {
