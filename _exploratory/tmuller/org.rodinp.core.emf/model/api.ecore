@@ -134,7 +134,7 @@
     </eOperations>
     <eOperations name="addChild">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="body" value="getEChildren().add(position, (LightElement) child);"/>
+        <details key="body" value="final LightElement lChild = (LightElement) child;&#xA;getEChildren().add(position, lChild);&#xA;lChild.setEParent(this);"/>
       </eAnnotations>
       <eParameters name="child" lowerBound="1" eType="#//ILElement"/>
       <eParameters name="position" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>

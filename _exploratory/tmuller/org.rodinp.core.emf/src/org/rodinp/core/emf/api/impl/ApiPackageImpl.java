@@ -665,9 +665,12 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 		addAnnotation(ilElementEClass.getEOperations().get(18), source,
 				new String[] { "body",
 						"return getEChildren().indexOf(element);\n" });
-		addAnnotation(ilElementEClass.getEOperations().get(19), source,
-				new String[] { "body",
-						"getEChildren().add(position, (LightElement) child);" });
+		addAnnotation(
+				ilElementEClass.getEOperations().get(19),
+				source,
+				new String[] {
+						"body",
+						"final LightElement lChild = (LightElement) child;\ngetEChildren().add(position, lChild);\nlChild.setEParent(this);" });
 		addAnnotation(
 				ilElementEClass.getEOperations().get(20),
 				source,

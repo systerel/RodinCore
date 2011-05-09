@@ -202,7 +202,7 @@ public interface ILElement {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @model childRequired="true" positionRequired="true"
-	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='getEChildren().add(position, (LightElement) child);'"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='final LightElement lChild = (LightElement) child;\ngetEChildren().add(position, lChild);\nlChild.setEParent(this);'"
 	 * @generated
 	 */
 	void addChild(ILElement child, int position);

@@ -597,7 +597,9 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	 * @generated
 	 */
 	public void addChild(ILElement child, int position) {
-		getEChildren().add(position, (LightElement) child);
+		final LightElement lChild = (LightElement) child;
+		getEChildren().add(position, lChild);
+		lChild.setEParent(this);
 	}
 
 
