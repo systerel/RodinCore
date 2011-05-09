@@ -208,7 +208,7 @@ public enum ProblemKind {
 
 	/**
 	 * No argument.
-	 * @since 2.1
+	 * @since 2.2
 	 */
 	ExpressionNotBinding("Expression not binding any variable in quantified expression"), 
 	;
