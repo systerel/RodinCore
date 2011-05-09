@@ -57,20 +57,23 @@ public class DNDManager {
 			for (ILElement element : elements) {
 				if(targetParent.equals(element.getParent())) {
 					final int oldPos = targetParent.getChildPosition(element);
-					final int newPos;
-					if (nextSibling == null) {
-						newPos = targetParent.getChildren().size() - 1;
-					} else {
-						final int siblingPos = targetParent.getChildPosition(nextSibling);
-						if (oldPos < siblingPos) {
-							newPos = siblingPos - 1;
-						} else {
-							newPos = siblingPos;
-						}
-					}
+					final int newPos = computeNewPos(oldPos);
 					targetParent.moveChild(newPos, oldPos);
 				} else {
 					targetParent.addChild(element, nextSibling);
+				}
+			}
+		}
+
+		private int computeNewPos(int oldPos) {
+			if (nextSibling == null) {
+				return targetParent.getChildren().size() - 1;
+			} else {
+				final int siblingPos = targetParent.getChildPosition(nextSibling);
+				if (oldPos < siblingPos) {
+					return siblingPos - 1;
+				} else {
+					return siblingPos;
 				}
 			}
 		}
