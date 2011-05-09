@@ -28,7 +28,6 @@ import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.itf.ILElement;
-import org.rodinp.core.emf.lightcore.LightElement;
 import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
 
 import fr.systerel.editor.documentModel.DocumentMapper;
@@ -67,8 +66,6 @@ public class DNDManager {
 					}
 					targetParent.moveChild(newPos, oldPos);
 				} else {
-					// FIXME API missing in ILElement or TODO in addChild
-					((LightElement) element).setEParent((LightElement) targetParent);
 					targetParent.addChild(element, nextSibling);
 				}
 			}
