@@ -36,7 +36,7 @@ import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
  */
 public class RodinPartitioner extends FastPartitioner {
 
-	public static boolean DEBUG = true;
+	public static boolean DEBUG;
 	
 	/**
 	 * The document mapper providing information for partition computing
