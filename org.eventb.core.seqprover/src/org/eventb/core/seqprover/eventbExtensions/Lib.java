@@ -298,6 +298,15 @@ public final class Lib {
 		return plr.getParsedPredicate();
 	}
 
+	static class EquivalenceRewriter extends FixedRewriter<Predicate> {
+
+		public EquivalenceRewriter(Predicate from, Predicate to,
+				FormulaFactory ff) {
+			super(from, to, ff);
+		}
+
+	}
+
 	static class EqualityRewriter extends FixedRewriter<Expression> {
 
 		public EqualityRewriter(Expression from, Expression to,
@@ -930,7 +939,7 @@ public final class Lib {
 	 */ 
 	public static Predicate equalityRewrite(Predicate pred, Expression from,
 			Expression to, FormulaFactory ff) {
-		return pred.rewrite(new Lib.EqualityRewriter(from, to, ff));
+		return pred.rewrite(new EqualityRewriter(from, to, ff));
 	}
 
 	/**
@@ -965,6 +974,26 @@ public final class Lib {
 	 */
 	public static boolean isWDStrictPosition(Predicate pred, IPosition pos) {
 		return pred.isWDStrict(pos);
+	}
+
+	/**
+	 * Re-write the predicate <code>pred</code> by replacing every occurrence of
+	 * <code>from</code> by <code>to</code>
+	 * 
+	 * @param pred
+	 *            the re-written predicate
+	 * @param from
+	 *            the replaced predicate
+	 * @param to
+	 *            the replacing predicate
+	 * @param ff
+	 *            the formula factory for the predicate <code>pred</code>
+	 * @return the predicate <code>pred</code> re-written
+	 * @since 2.2
+	 */
+	public static Predicate equivalenceRewrite(Predicate pred, Predicate from,
+			Predicate to, FormulaFactory ff) {
+		return pred.rewrite(new EquivalenceRewriter(from, to, ff));
 	}
 
 }

@@ -94,6 +94,11 @@
             id="removeNegation"
             name="%removeNegationName"/>
       <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewritesL1"
+            id="autoRewritesL1"
+            name="%autoRewritesName">
+      </reasoner>
+      <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.SimpleRewriter$DisjToImpl"
             id="disjToImpl"
             name="%disjToImplName"/>
@@ -132,10 +137,6 @@
       <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites"
             id="autoRewrites"
-            name="%autoRewritesName"/>
-      <reasoner
-            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewritesL1"
-            id="autoRewritesL1"
             name="%autoRewritesName"/>
       <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewritesL2"
@@ -197,6 +198,11 @@
             class="org.eventb.internal.core.seqprover.eventbExtensions.AutoImpF"
             id="autoImpE"
             name="%autoImpEname"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonens"
+            id="genMP"
+            name="%genMPName">
+      </reasoner>
       <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewrites"
             id="disjToImplRewrites"
