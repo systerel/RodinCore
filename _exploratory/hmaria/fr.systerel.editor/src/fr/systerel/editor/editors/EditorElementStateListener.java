@@ -39,7 +39,7 @@ public class EditorElementStateListener implements IElementStateListener {
 
 	public void elementContentReplaced(Object element) {
 		provider.setCanSaveDocument(provider.getEditorInput());
-		// updateFoldingStructure(documentProvider.getFoldingRegions());
+		editor.updateFoldingStructure(provider.getFoldingRegions());
 		editor.updateMarkerStructure(provider.getMarkerAnnotations());
 
 	}

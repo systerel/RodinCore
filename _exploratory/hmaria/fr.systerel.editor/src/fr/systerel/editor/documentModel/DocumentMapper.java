@@ -52,9 +52,8 @@ import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
  */
 public class DocumentMapper {
 
-	/**
-	 * 
-	 */
+	public static boolean DEBUG;
+
 	private static final Interval[] NO_INTERVAL = new Interval[0];
 	private ArrayList<Interval> intervals = new ArrayList<Interval>();
 	private ILElement root;
@@ -481,10 +480,13 @@ public class DocumentMapper {
 		// }
 		// }
 		for (EditorItem el : sections.values()) {
-			if (el.getFoldingPosition() != null) {
-				result.add(el.getFoldingPosition());
+			final Position pos = el.getFoldingPosition();
+			if (pos != null) {
+				result.add(pos);
 			}
 		}
+		if (DEBUG)
+			System.out.println("folding " + root.getElement() + ": " + result);
 		return result.toArray(new Position[result.size()]);
 	}
 
@@ -636,34 +638,6 @@ public class DocumentMapper {
 	}
 
 	/**
-	 * Adapts the folding positions starting from a given offset to a delta of
-	 * change in position.
-	 * 
-	 * @param offset
-	 *            The offset where the change happened
-	 * @param delta
-	 *            The delta of the change
-	 */
-	private void adaptFoldingPositions(int offset, int delta) {
-		final ArrayList<EditorItem> elements = new ArrayList<EditorItem>(
-				editorElements.getItems());
-		elements.addAll(sections.values());
-		for (EditorItem el : elements) {
-			final Position pos = el.getFoldingPosition();
-			if (pos != null) {
-				// change happened inside position
-				if (pos.getOffset() <= offset
-						&& pos.getOffset() + pos.getLength() >= offset) {
-					pos.setLength(pos.getLength() + delta);
-					// change happened ahead of position
-				} else if (pos.getOffset() > offset) {
-					pos.setOffset(pos.getOffset() + delta);
-				}
-			}
-		}
-	}
-
-	/**
 	 * Gets the text that is bound by the given interval from the underlying
 	 * document.
 	 * 
@@ -685,7 +659,6 @@ public class DocumentMapper {
 
 	public void adaptAfter(Interval interval, int delta) {
 		adaptIntervalOffsetsFrom(intervals.indexOf(interval) + 1, delta);
-		adaptFoldingPositions(interval.getOffset(), delta);
 	}
 
 	/**

@@ -130,8 +130,7 @@ public class RodinEditor extends TextEditor {
 		// viewer, this);
 		// buttonManager.createButtons();
 
-		// TODO Folding is broken REPAIR
-		// updateFoldingStructure(documentProvider.getFoldingRegions());
+		updateFoldingStructure(documentProvider.getFoldingRegions());
 		updateMarkerStructure(documentProvider.getMarkerAnnotations());
 		setTitleImage(documentProvider.getInputRoot());
 	}
@@ -184,6 +183,7 @@ public class RodinEditor extends TextEditor {
 		final Annotation[] annotations = documentProvider
 				.getFoldingAnnotations();
 		Assert.isLegal(annotations.length == positions.length);
+		// TODO use AnnotationModel.replaceAnnotations(Annotation[], Map)
 		for (int i = 0; i < positions.length; i++) {
 			projectionAnnotationModel.addAnnotation(annotations[i],
 					positions[i]);
