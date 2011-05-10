@@ -131,7 +131,7 @@ public class RodinEditor extends TextEditor {
 		// buttonManager.createButtons();
 
 		updateFoldingStructure();
-		updateMarkerStructure(documentProvider.getMarkerAnnotations());
+		updateMarkerStructure();
 		setTitleImage(documentProvider.getInputRoot());
 	}
 
@@ -191,11 +191,10 @@ public class RodinEditor extends TextEditor {
 
 	/**
 	 * Replaces the old marker structure with this new one.
-	 * 
-	 * @param markers
-	 *            The new markers
 	 */
-	public void updateMarkerStructure(MarkerAnnotationPosition[] markers) {
+	public void updateMarkerStructure() {
+		final MarkerAnnotationPosition[] markers = documentProvider
+				.getMarkerAnnotations();
 		final Annotation[] annotations = new Annotation[markers.length];
 		// this will hold the new annotations along
 		// with their corresponding positions
