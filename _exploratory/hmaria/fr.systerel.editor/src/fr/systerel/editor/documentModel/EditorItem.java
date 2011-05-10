@@ -21,7 +21,7 @@ import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
  * This class represents an item in the editor that can spread several intervals
  * in the text. There are EditorElements for LightElements and EditorSections
  * that group EditorElements from their IInternalElementType. An EditorSection
- * is for example spannig all variables EditorElements.
+ * is for example spanning all variables EditorElements.
  */
 public abstract class EditorItem {
 
