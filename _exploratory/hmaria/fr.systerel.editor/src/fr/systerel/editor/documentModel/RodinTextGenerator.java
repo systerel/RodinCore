@@ -169,7 +169,12 @@ public class RodinTextGenerator {
 				if (i == 0)
 					stream.addPresentationRegion(" ", element);
 				final IAttributeManipulation manipulation = d.getManipulation();
-				value = manipulation.getValue(rElement, null);
+				if (!manipulation.hasValue(rElement, null)
+						&& manipulation.getPossibleValues(rElement, null) != null) {
+					value = "--undefined--";
+				} else {
+					value = manipulation.getValue(rElement, null);					
+				}
 				if (!value.isEmpty()) {
 					final String prefix = d.getPrefix();
 					if (!prefix.isEmpty()) {
