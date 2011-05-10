@@ -26,7 +26,7 @@ import org.rodinp.core.emf.api.itf.ILElement;
  */
 public class OrderedEditorItemMap<T> {
 
-	private final Map<T, EditorItem> items = new HashMap<T, EditorItem>();
+	private final Map<T, EditorElement> items = new HashMap<T, EditorElement>();
 	private final ArrayList<T> order = new ArrayList<T>();
 	
 	public EditorItem addItem(ILElement element) {
@@ -45,7 +45,7 @@ public class OrderedEditorItemMap<T> {
 		if (pos == -1) {
 			throw new IllegalStateException("Sibling should have a position");
 		}
-		final EditorItem el = new EditorElement(element);
+		final EditorElement el = new EditorElement(element);
 		final IInternalElement internalElement = element.getElement();
 		items.put((T) internalElement, el);
 		order.add(pos, (T) internalElement);
@@ -68,7 +68,7 @@ public class OrderedEditorItemMap<T> {
 	 */
 	public EditorItem getOrCreate(ILElement element) {
 		final T internalElement = (T) element.getElement();
-		EditorItem el = items.get(internalElement);
+		EditorElement el = items.get(internalElement);
 		if (el == null) {
 			el = new EditorElement(element);
 			items.put(internalElement, el);
@@ -81,7 +81,7 @@ public class OrderedEditorItemMap<T> {
 		return items.get(element);
 	}
 	
-	public Collection<EditorItem> getItems() {
+	public Collection<EditorElement> getItems() {
 		return items.values();
 	}
 	

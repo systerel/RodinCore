@@ -62,7 +62,7 @@ public class DocumentMapper {
 	private RodinDocumentProvider documentProvider;
 
 	private OrderedEditorItemMap<IInternalElement> editorElements = new OrderedEditorItemMap<IInternalElement>();
-	private Map<IInternalElementType<?>, EditorItem> sections = new LinkedHashMap<IInternalElementType<?>, EditorItem>();
+	private Map<IInternalElementType<?>, EditorSection> sections = new LinkedHashMap<IInternalElementType<?>, EditorSection>();
 
 	/**
 	 * Adds an interval to the document mapper at the end of the list. The
@@ -459,7 +459,7 @@ public class DocumentMapper {
 
 	public void addEditorSection(IInternalElementType<?> type,
 			int folding_start, int folding_length) {
-		EditorItem el = sections.get(type);
+		EditorSection el = sections.get(type);
 		if (el == null) {
 			el = new EditorSection(type);
 			sections.put(type, el);
@@ -474,13 +474,14 @@ public class DocumentMapper {
 
 	public Position[] getFoldingPositions() {
 		final ArrayList<Position> result = new ArrayList<Position>();
-		// for (EditorItem el : editorElements.values()) {
-		// if (el.getFoldingPosition() != null) {
-		// result.add(el.getFoldingPosition());
-		// }
-		// }
-		for (EditorItem el : sections.values()) {
-			final Position pos = el.getFoldingPosition();
+//		for (EditorElement el : editorElements.getItems()) {
+//			final Position pos = el.getFoldingPosition();
+//			if (pos != null) {
+//				result.add(pos);
+//			}
+//		}
+		for (EditorSection section : sections.values()) {
+			final Position pos = section.getFoldingPosition();
 			if (pos != null) {
 				result.add(pos);
 			}
@@ -492,14 +493,14 @@ public class DocumentMapper {
 
 	public ProjectionAnnotation[] getFoldingAnnotations() {
 		final ArrayList<ProjectionAnnotation> result = new ArrayList<ProjectionAnnotation>();
-		// for (EditorItem el : editorElements.values()) {
-		// if (el.getFoldingAnnotation() != null) {
-		// result.add(el.getFoldingAnnotation());
-		// }
-		// }
-		for (EditorItem el : sections.values()) {
-			if (el.getFoldingAnnotation() != null) {
-				result.add(el.getFoldingAnnotation());
+//		for (EditorElement el : editorElements.getItems()) {
+//			if (el.getFoldingAnnotation() != null) {
+//				result.add(el.getFoldingAnnotation());
+//			}
+//		}
+		for (EditorSection section : sections.values()) {
+			if (section.getFoldingAnnotation() != null) {
+				result.add(section.getFoldingAnnotation());
 			}
 		}
 		return result.toArray(new ProjectionAnnotation[result.size()]);
