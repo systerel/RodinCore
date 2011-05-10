@@ -77,22 +77,18 @@ public class EditorElement extends EditorItem {
 	}
 	
 	public int getOffset() {
-		if (foldingPosition != null) {
-			return foldingPosition.offset;
-		} else if (intervals.size() > 0) {
-			return intervals.get(0).getOffset();
+		if (intervals.isEmpty()) {
+			return super.getOffset();
 		}
-		return -1;
+		return intervals.get(0).getOffset();
 	}
 
 	public int getLength() {
-		if (foldingPosition != null) {
-			return foldingPosition.getLength();
-		} else if (intervals.size() > 0) {
-			Interval last = intervals.get(intervals.size() - 1);
-			return last.getLastIndex() - getOffset();
+		if (intervals.isEmpty()) {
+			return super.getLength();
 		}
-		return -1;
+		final Interval last = intervals.get(intervals.size() - 1);
+		return last.getLastIndex() - getOffset();
 	}
 
 }
