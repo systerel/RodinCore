@@ -61,7 +61,7 @@ import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
 public class RodinTextGenerator {
 
 	private final DocumentMapper documentMapper;
-	private final int TWO_TABS_INDENT = 2;
+	private static final int TWO_TABS_INDENT = 2;
 
 	private ArrayList<Position> foldingRegions = new ArrayList<Position>();
 	private RodinTextStream stream;
