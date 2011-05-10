@@ -130,7 +130,7 @@ public class RodinEditor extends TextEditor {
 		// viewer, this);
 		// buttonManager.createButtons();
 
-		updateFoldingStructure(documentProvider.getFoldingRegions());
+		updateFoldingStructure();
 		updateMarkerStructure(documentProvider.getMarkerAnnotations());
 		setTitleImage(documentProvider.getInputRoot());
 	}
@@ -171,15 +171,13 @@ public class RodinEditor extends TextEditor {
 	}
 
 	/**
-	 * Replaces the old folding structure with this new one.
-	 * 
-	 * @param positions
-	 *            The new positions
+	 * Replaces the old folding structure with the current one.
 	 */
-	public void updateFoldingStructure(Position[] positions) {
+	public void updateFoldingStructure() {
 		for (Annotation a : oldPojectionAnnotations) {
 			projectionAnnotationModel.removeAnnotation(a);
 		}
+		final Position[] positions = documentProvider.getFoldingRegions();
 		final Annotation[] annotations = documentProvider
 				.getFoldingAnnotations();
 		Assert.isLegal(annotations.length == positions.length);
