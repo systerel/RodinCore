@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,6 +61,9 @@ public class FindingAccumulator<F> implements IAccumulator<F> {
 	private final IFormulaInspector<F> inspector;
 	private final IntStack indexes;
 	private final List<F> findings;
+
+	private boolean skipChildren = false;
+	private boolean skipAll = false;
 
 	public FindingAccumulator(IFormulaInspector<F> inspector) {
 		this.indexes = new IntStack();
@@ -192,6 +195,26 @@ public class FindingAccumulator<F> implements IAccumulator<F> {
 
 	public void leaveChildren() {
 		indexes.pop();
+	}
+
+	@Override
+	public void skipChildren() {
+		skipChildren = true;
+	}
+
+	@Override
+	public void skipAll() {
+		skipAll = true;
+	}
+
+	public boolean childrenSkipped() {
+		final boolean wasSkipChildren = skipChildren;
+		skipChildren = false;
+		return skipAll || wasSkipChildren;
+	}
+
+	public boolean allSkipped() {
+		return skipAll;
 	}
 
 }

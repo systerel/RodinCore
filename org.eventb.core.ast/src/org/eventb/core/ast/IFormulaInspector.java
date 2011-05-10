@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,9 @@ package org.eventb.core.ast;
 /**
  * Common protocol for inspecting formulas. An inspector will be called on each
  * sub-formula of a given formula. For each sub-formula, the inspector can
- * report findings through an accumulator.
+ * report findings through an accumulator. The accumulator can also be used for
+ * fine-tuning the behavior of the inspector by specifying some sub-formulas to
+ * skip during traversal.
  * <p>
  * This interface contains one method for each of the sub-classes of
  * <code>Formula</code>, except assignments which are not covered.
