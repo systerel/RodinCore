@@ -13,6 +13,7 @@ package fr.systerel.editor.documentModel;
 import static fr.systerel.editor.documentModel.DocumentElementUtils.getChildPossibleTypes;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -473,37 +474,41 @@ public class DocumentMapper {
 	}
 
 	public Position[] getFoldingPositions() {
-		final ArrayList<Position> result = new ArrayList<Position>();
-//		for (EditorElement el : editorElements.getItems()) {
-//			final Position pos = el.getFoldingPosition();
-//			if (pos != null) {
-//				result.add(pos);
-//			}
-//		}
-		for (EditorSection section : sections.values()) {
-			final Position pos = section.getFoldingPosition();
-			if (pos != null) {
-				result.add(pos);
-			}
-		}
+		final List<Position> result = new ArrayList<Position>();
+//		addFoldingPositions(editorElements.getItems(), result);
+		addFoldingPositions(sections.values(), result);
+		
 		if (DEBUG)
 			System.out.println("folding " + root.getElement() + ": " + result);
 		return result.toArray(new Position[result.size()]);
 	}
 
-	public ProjectionAnnotation[] getFoldingAnnotations() {
-		final ArrayList<ProjectionAnnotation> result = new ArrayList<ProjectionAnnotation>();
-//		for (EditorElement el : editorElements.getItems()) {
-//			if (el.getFoldingAnnotation() != null) {
-//				result.add(el.getFoldingAnnotation());
-//			}
-//		}
-		for (EditorSection section : sections.values()) {
-			if (section.getFoldingAnnotation() != null) {
-				result.add(section.getFoldingAnnotation());
-			}
+	private static void addFoldingPositions(
+			Collection<? extends EditorItem> items, List<Position> positions) {
+		for (EditorItem editorItem : items) {
+			addIfNotNull(editorItem.getFoldingPosition(), positions);
 		}
+	}
+
+	private static <T> void addIfNotNull(T obj, List<T> list) {
+		if (obj != null) {
+			list.add(obj);
+		}
+	}
+	
+	public ProjectionAnnotation[] getFoldingAnnotations() {
+		final List<ProjectionAnnotation> result = new ArrayList<ProjectionAnnotation>();
+//		addFoldingAnnotations(editorElements.getItems(), result);
+		addFoldingAnnotations(sections.values(), result);
 		return result.toArray(new ProjectionAnnotation[result.size()]);
+	}
+	
+	private static void addFoldingAnnotations(
+			Collection<? extends EditorItem> items,
+			List<ProjectionAnnotation> annotations) {
+		for (EditorItem editorItem : items) {
+			addIfNotNull(editorItem.getFoldingAnnotation(), annotations);
+		}
 	}
 
 	public void elementChanged(ILElement element) {
