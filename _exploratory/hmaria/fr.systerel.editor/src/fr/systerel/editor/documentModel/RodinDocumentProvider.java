@@ -185,14 +185,6 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		return false;
 	}
 
-	public Position[] getFoldingRegions() {
-		return documentMapper.getFoldingPositions();
-	}
-
-	public ProjectionAnnotation[] getFoldingAnnotations() {
-		return documentMapper.getFoldingAnnotations();
-	}
-
 	public IEventBRoot getInputRoot() {
 		return (IEventBRoot) inputRoot.getElement();
 	}

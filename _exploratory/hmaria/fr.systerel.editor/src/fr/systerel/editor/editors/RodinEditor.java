@@ -177,9 +177,8 @@ public class RodinEditor extends TextEditor {
 		for (Annotation a : oldPojectionAnnotations) {
 			projectionAnnotationModel.removeAnnotation(a);
 		}
-		final Position[] positions = documentProvider.getFoldingRegions();
-		final Annotation[] annotations = documentProvider
-				.getFoldingAnnotations();
+		final Position[] positions = mapper.getFoldingPositions();
+		final Annotation[] annotations = mapper.getFoldingAnnotations();
 		Assert.isLegal(annotations.length == positions.length);
 		// TODO use AnnotationModel.replaceAnnotations(Annotation[], Map)
 		for (int i = 0; i < positions.length; i++) {
