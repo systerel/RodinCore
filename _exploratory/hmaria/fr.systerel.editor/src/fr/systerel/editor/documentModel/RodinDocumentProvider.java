@@ -32,7 +32,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
