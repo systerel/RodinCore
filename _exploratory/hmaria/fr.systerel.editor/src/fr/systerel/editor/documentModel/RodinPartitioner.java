@@ -36,6 +36,8 @@ import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
  */
 public class RodinPartitioner extends FastPartitioner {
 
+	public static boolean DEBUG = true;
+	
 	/**
 	 * The document mapper providing information for partition computing
 	 */
@@ -132,9 +134,9 @@ public class RodinPartitioner extends FastPartitioner {
 			clearPositionCache();
 			throw ex;
 		}
-		final TypedRegion[] result = new TypedRegion[list.size()];
-		list.toArray(result);
-		return result;
+		if (DEBUG) 
+			System.out.println("partitioning: " + list);
+		return list.toArray(new TypedRegion[list.size()]);
 	}
 
 	@Override

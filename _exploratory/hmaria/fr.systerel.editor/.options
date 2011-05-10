@@ -1,3 +1,4 @@
 fr.systerel.editor/debug = true
 fr.systerel.editor/debug/selection = false
 fr.systerel.editor/debug/dnd = false
+fr.systerel.editor/debug/partition = false

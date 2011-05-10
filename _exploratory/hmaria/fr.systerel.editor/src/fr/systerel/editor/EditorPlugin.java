@@ -17,6 +17,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import fr.systerel.editor.documentModel.RodinPartitioner;
 import fr.systerel.editor.editors.DNDManager;
 import fr.systerel.editor.editors.SelectionController;
 
@@ -28,8 +29,10 @@ public class EditorPlugin extends AbstractUIPlugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "fr.systerel.editor";
 
+	// Tracing options
 	private static final String SELECTION_TRACE = PLUGIN_ID + "/debug/selection"; //$NON-NLS-1$
 	private static final String DND_TRACE = PLUGIN_ID + "/debug/dnd"; //$NON-NLS-1$
+	private static final String PARTITION_TRACE = PLUGIN_ID + "/debug/partition"; //$NON-NLS-1$
 
 	// The shared instance
 	private static EditorPlugin plugin;
@@ -57,6 +60,7 @@ public class EditorPlugin extends AbstractUIPlugin {
 	private void configureDebugOptions() {
 		SelectionController.DEBUG = parseOption(SELECTION_TRACE);
 		DNDManager.DEBUG = parseOption(DND_TRACE);
+		RodinPartitioner.DEBUG = parseOption(PARTITION_TRACE);
 	}
 
 	private static boolean parseOption(String key) {
