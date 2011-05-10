@@ -29,7 +29,7 @@ public class OrderedEditorItemMap<T> {
 	private final Map<T, EditorElement> items = new HashMap<T, EditorElement>();
 	private final ArrayList<T> order = new ArrayList<T>();
 	
-	public EditorItem addItem(ILElement element) {
+	public EditorElement addItem(ILElement element) {
 		final ILElement sibling = getSibling(element);
 		// there is no sibling or no sibling found
 		if (sibling == null || items.get(sibling) == null) {
@@ -66,7 +66,7 @@ public class OrderedEditorItemMap<T> {
 	 * @return the editor item associated with the given element or a newly
 	 *         added one
 	 */
-	public EditorItem getOrCreate(ILElement element) {
+	public EditorElement getOrCreate(ILElement element) {
 		final T internalElement = (T) element.getElement();
 		EditorElement el = items.get(internalElement);
 		if (el == null) {
@@ -77,7 +77,7 @@ public class OrderedEditorItemMap<T> {
 		return el;
 	}
 	
-	public EditorItem get(IRodinElement element) {
+	public EditorElement get(IRodinElement element) {
 		return items.get(element);
 	}
 	
