@@ -16,7 +16,6 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.editor.documentModel.EditorElement;
-import fr.systerel.editor.documentModel.EditorItem;
 import fr.systerel.editor.editors.RodinEditor;
 
 public class DeleteAction extends RodinEditorAction {
@@ -29,11 +28,10 @@ public class DeleteAction extends RodinEditorAction {
 		ISelection selection = editor.getSelectionProvider().getSelection();
 		if (selection instanceof TextSelection) {
 			TextSelection text = (TextSelection) selection;
-			EditorItem element = editor.getDocumentMapper().findEditorElement(
+			EditorElement element = editor.getDocumentMapper().findEditorElement(
 					text.getOffset(), text.getLength());
-			if (element != null && element instanceof EditorElement) {
-				IRodinElement toDelete = ((EditorElement) element)
-						.getRodinElement();
+			if (element != null) {
+				IRodinElement toDelete = element.getRodinElement();
 				if (toDelete != null) {
 					try {
 						toDelete.getRodinDB().delete(

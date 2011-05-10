@@ -352,8 +352,12 @@ public class DocumentMapper {
 		}
 		previous = inter;
 		if (element != null) {
-			EditorItem el = editorElements.getOrCreate(element);
+			EditorElement el = editorElements.getOrCreate(element);
 			el.addInterval(inter);
+//	TODO	if (root.equals(element.getParent())
+//					&& !element.getChildren().isEmpty()) {
+//				el.updateFoldingPosition();
+//			}
 		}
 
 	}
@@ -388,7 +392,7 @@ public class DocumentMapper {
 	public Interval findInterval(IRodinElement element) {
 		if (element == null)
 			return null;
-		final EditorItem editorItem = editorElements.get(element);
+		final EditorElement editorItem = editorElements.get(element);
 		if (editorItem != null) {
 			final ArrayList<Interval> itemIntervals = editorItem.getIntervals();
 			if (itemIntervals.size() > 0) {
@@ -399,16 +403,16 @@ public class DocumentMapper {
 	}
 	
 	public EditorElement findItemContaining(int offset) {
-		for (EditorItem element : editorElements.getItems()) {
+		for (EditorElement element : editorElements.getItems()) {
 			if (element.contains(offset) && element instanceof EditorElement) {
-				return (EditorElement) element;
+				return element;
 			}
 		}
 		return null;
 	}
 
 	public Point getEnclosingRange(ILElement element) {
-		final EditorItem editorItem = editorElements.get(element.getElement());
+		final EditorElement editorItem = editorElements.get(element.getElement());
 		
 		if (editorItem == null) return null;
 		int start = editorItem.getOffset();
@@ -438,7 +442,7 @@ public class DocumentMapper {
 	 * @return the first interval that belongs to the given element
 	 */
 	private Interval findInterval(ILElement element, ContentType contentType) {
-		final EditorItem item = editorElements.get(element.getElement());
+		final EditorElement item = editorElements.get(element.getElement());
 		return item.getInterval(contentType);
 	}
 
@@ -468,7 +472,7 @@ public class DocumentMapper {
 		el.setFoldingPosition(folding_start, folding_length);
 	}
 
-	// TODO fix intervals...
+	// FIXME fix intervals...
 	public void addEditorElement(ILElement added) {
 		editorElements.addItem(added);
 	}
@@ -513,7 +517,7 @@ public class DocumentMapper {
 
 	public void elementChanged(ILElement element) {
 		final IInternalElement ie = element.getElement();
-		final EditorItem el = editorElements.get(ie);
+		final EditorElement el = editorElements.get(ie);
 		if (el != null && !ie.exists()) {
 			final ArrayList<Interval> intervals = el.getIntervals();
 			if (intervals.size() > 0) {
@@ -698,8 +702,8 @@ public class DocumentMapper {
 		this.documentProvider = documentProvider;
 	}
 
-	public EditorItem findEditorElement(int offset, int length) {
-		for (EditorItem element : editorElements.getItems()) {
+	public EditorElement findEditorElement(int offset, int length) {
+		for (EditorElement element : editorElements.getItems()) {
 			if (element.getOffset() == offset && element.getLength() == length) {
 				return element;
 			}
@@ -712,11 +716,11 @@ public class DocumentMapper {
 		if (findIntervalIndex != -1) {
 			final Interval interval = intervals.get(findIntervalIndex);
 			final ILElement element = interval.getElement();
-			final EditorItem editorItem;
 			if (element != null) {
-				editorItem = editorElements.get(element.getElement());
-				final Interval interAfter = findEditableIntervalAfter(editorItem
-						.getOffset() + editorItem.getLength());
+				final EditorElement editElem = editorElements.get(element
+						.getElement());
+				final Interval interAfter = findEditableIntervalAfter(editElem
+						.getOffset() + editElem.getLength());
 				if (interAfter == null) {
 					return new ChildCreationInfo(
 							getChildPossibleTypes(element),
@@ -733,8 +737,8 @@ public class DocumentMapper {
 				final ILElement next = interAfter.getElement();
 				final IInternalElementType<? extends IInternalElement> elementType = next
 						.getElementType();
-				editorItem = sections.get(elementType);
-				if (editorItem != null) {
+				final EditorSection editSection = sections.get(elementType);
+				if (editSection != null) {
 					final Set<IInternalElementType<? extends IInternalElement>> singleton = Collections
 							.<IInternalElementType<? extends IInternalElement>> singleton(elementType);
 					return new ChildCreationInfo(singleton, next.getParent(),

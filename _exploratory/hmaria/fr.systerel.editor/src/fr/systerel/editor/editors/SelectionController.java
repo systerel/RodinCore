@@ -25,7 +25,6 @@ import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.documentModel.DocumentMapper;
 import fr.systerel.editor.documentModel.EditorElement;
-import fr.systerel.editor.documentModel.EditorItem;
 import fr.systerel.editor.documentModel.Interval;
 
 /**
@@ -96,7 +95,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 		if (intervals.length == 1) {
 			return true;
 		}
-		final EditorItem element = mapper
+		final EditorElement element = mapper
 				.findEditorElement(modelOffset, length);
 		return element != null;
 	}
