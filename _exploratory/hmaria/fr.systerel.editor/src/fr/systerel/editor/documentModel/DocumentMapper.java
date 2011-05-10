@@ -394,7 +394,7 @@ public class DocumentMapper {
 			return null;
 		final EditorElement editorItem = editorElements.get(element);
 		if (editorItem != null) {
-			final ArrayList<Interval> itemIntervals = editorItem.getIntervals();
+			final List<Interval> itemIntervals = editorItem.getIntervals();
 			if (itemIntervals.size() > 0) {
 				return itemIntervals.get(0);
 			}
@@ -519,7 +519,7 @@ public class DocumentMapper {
 		final IInternalElement ie = element.getElement();
 		final EditorElement el = editorElements.get(ie);
 		if (el != null && !ie.exists()) {
-			final ArrayList<Interval> intervals = el.getIntervals();
+			final List<Interval> intervals = el.getIntervals();
 			if (intervals.size() > 0) {
 				final Interval interval = intervals.get(intervals.size() - 1);
 				adaptAfter(interval, -el.getLength());
