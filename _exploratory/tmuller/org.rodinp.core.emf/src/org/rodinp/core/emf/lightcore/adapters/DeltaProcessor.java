@@ -70,9 +70,9 @@ public class DeltaProcessor {
 		if (kind == IRodinElementDelta.REMOVED) {
 			if (element instanceof IRodinFile) {
 				final IRodinFile file = (IRodinFile) element;
+				owner.finishListening();
 				// remove the machine from the model
 				removeElement(file.getRoot());
-				owner.finishListening();
 			} else if (element instanceof IInternalElement) {
 				removeElement(element);
 			}
@@ -179,8 +179,6 @@ public class DeltaProcessor {
 			final LightElement parent = found.getEParent();
 			if (parent != null) {
 				parent.getEChildren().remove(found);
-			} else { // unload the root (=found)
-				found.eResource().unload();
 			}
 		}
 		found = null;

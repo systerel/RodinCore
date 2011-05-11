@@ -22,7 +22,9 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -187,7 +189,7 @@ public class RodinResource extends ResourceImpl implements ILFile {
 	}
 
 	public void unloadResource() {
-		unload();
+		unloadRoot();
 		getResourceSet().getResources().remove(this);
 		try {
 			// Make the associated RodinFile consistent if it is has some
@@ -197,5 +199,17 @@ public class RodinResource extends ResourceImpl implements ILFile {
 		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void unloadRoot() {
+		final LightElement root = (LightElement) getRoot();
+		final TreeIterator<EObject> iter = root.eAllContents();
+		while(iter.hasNext()) {
+			final EObject el = iter.next();
+			el.eSetDeliver(false);
+			el.eAdapters().clear();
+		}
+		root.eSetDeliver(false);
+		root.delete();
 	}
 }
