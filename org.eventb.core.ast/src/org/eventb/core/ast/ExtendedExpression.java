@@ -448,13 +448,22 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		acc.inspect(this);
+		if (acc.childrenSkipped()) {
+			return;
+		}
 		acc.enterChildren();
 		for (Expression child: childExpressions) {
 			child.inspect(acc);
+			if (acc.allSkipped()) {
+				break;
+			}
 			acc.nextChild();
 		}
 		for (Predicate child: childPredicates) {
 			child.inspect(acc);
+			if (acc.allSkipped()) {
+				break;
+			}
 			acc.nextChild();
 		}
 		acc.leaveChildren();

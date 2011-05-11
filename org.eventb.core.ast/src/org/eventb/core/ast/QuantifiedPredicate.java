@@ -485,9 +485,15 @@ public class QuantifiedPredicate extends Predicate {
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		acc.inspect(this);
 
+		if (acc.childrenSkipped()) {
+			return;
+		}
 		acc.enterChildren();
 		for (BoundIdentDecl decl: quantifiedIdentifiers) {
 			decl.inspect(acc);
+			if (acc.allSkipped()) {
+				break;
+			}
 			acc.nextChild();
 		}
 		pred.inspect(acc);

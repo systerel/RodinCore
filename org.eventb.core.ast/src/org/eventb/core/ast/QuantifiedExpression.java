@@ -741,12 +741,21 @@ public class QuantifiedExpression extends Expression {
 	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		acc.inspect(this);
+		if (acc.childrenSkipped()) {
+			return;
+		}
 		acc.enterChildren();
 		for (BoundIdentDecl decl: quantifiedIdentifiers) {
 			decl.inspect(acc);
+			if (acc.allSkipped()) {
+				break;
+			}
 			acc.nextChild();
 		}
 		pred.inspect(acc);
+		if (acc.allSkipped()) {
+			return;
+		}
 		acc.nextChild();
 		expr.inspect(acc);
 		acc.leaveChildren();

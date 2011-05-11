@@ -324,9 +324,15 @@ public class MultiplePredicate extends Predicate {
 	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		acc.inspect(this);
+		if (acc.childrenSkipped()) {
+			return;
+		}
 		acc.enterChildren();
 		for (Expression child: children) {
 			child.inspect(acc);
+			if (acc.allSkipped()) {
+				break;
+			}
 			acc.nextChild();
 		}
 		acc.leaveChildren();

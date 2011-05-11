@@ -604,6 +604,9 @@ public class UnaryExpression extends Expression {
 	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		acc.inspect(this);
+		if (acc.childrenSkipped()) {
+			return;
+		}
 		acc.enterChildren();
 		child.inspect(acc);
 		acc.leaveChildren();

@@ -434,8 +434,14 @@ public class RelationalPredicate extends Predicate {
 	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		acc.inspect(this);
+		if (acc.childrenSkipped()) {
+			return;
+		}
 		acc.enterChildren();
 		left.inspect(acc);
+		if (acc.allSkipped()) {
+			return;
+		}
 		acc.nextChild();
 		right.inspect(acc);
 		acc.leaveChildren();
