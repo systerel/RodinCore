@@ -30,7 +30,7 @@ public class PresentationUpdater extends EContentAdapter {
 		final Object oldObject = notification.getOldValue();
 		final Object notifier = notification.getNotifier();
 		final Object newObject = notification.getNewValue();
-		if (notification.isTouch()) {
+		if (notification.isTouch() && !(notifier instanceof ILAttribute)) {
 			return;
 		}
 		if (notification.getEventType() == Notification.ADD && newObject instanceof ILElement) {
@@ -40,6 +40,9 @@ public class PresentationUpdater extends EContentAdapter {
 		final boolean isILElement = !(oldObject instanceof ILElement);
 		if (notifier instanceof ILElement && isILElement) {
 			mapper.elementChanged((ILElement) notifier);
+		}
+		if (notifier instanceof ILAttribute) {
+			mapper.elementChanged(((ILAttribute)notifier).getOwner());
 		}
 		if (oldObject instanceof ILElement) {
 			mapper.elementChanged((ILElement) oldObject);
