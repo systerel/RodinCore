@@ -34,7 +34,7 @@ public class PresentationUpdater extends EContentAdapter {
 			return;
 		}
 		if (notification.getEventType() == Notification.ADD && newObject instanceof ILElement) {
-			mapper.addEditorElement((ILElement)newObject);
+			// TODO check if this filtering is needed
 			return;
 		}
 		final boolean isILElement = !(oldObject instanceof ILElement);

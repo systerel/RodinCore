@@ -483,11 +483,6 @@ public class DocumentMapper {
 		el.setFoldingPosition(folding_start, folding_length);
 	}
 
-	// FIXME fix intervals...
-	public void addEditorElement(ILElement added) {
-		editorElements.addItem(added);
-	}
-
 	public Position[] getFoldingPositions() {
 		final List<Position> result = new ArrayList<Position>();
 		addFoldingPositions(editorElements.getItems(), result);
