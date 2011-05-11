@@ -49,6 +49,7 @@ import org.eclipse.ui.swt.IFocusService;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ICommentedElement;
+import org.eventb.core.IExpressionElement;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPredicateElement;
@@ -281,7 +282,11 @@ public class OverlayEditor implements IAnnotationModelListener,
 
 	private void showTipMenu(final Interval inter) {
 		final Menu tipMenu = new Menu(parent);
-		for (final String value : inter.getPossibleValues()) {
+		final String[] possibleValues = inter.getPossibleValues();
+		if (possibleValues == null) {
+			return;
+		}
+		for (final String value : possibleValues) {
 			final MenuItem item = new MenuItem(tipMenu, SWT.PUSH);
 			item.setText(value);
 			item.addSelectionListener(new SelectionListener() {
@@ -339,6 +344,11 @@ public class OverlayEditor implements IAnnotationModelListener,
 		if (ielement instanceof ILabeledElement
 				&& contentType.equals(RodinConfiguration.LABEL_TYPE)) {
 			element.setAttribute(EventBAttributes.LABEL_ATTRIBUTE
+					.makeValue(text));
+		}
+		if (ielement instanceof IExpressionElement
+				&& contentType.equals(RodinConfiguration.CONTENT_TYPE)) {
+			element.setAttribute(EventBAttributes.EXPRESSION_ATTRIBUTE
 					.makeValue(text));
 		}
 		if (ielement instanceof IPredicateElement

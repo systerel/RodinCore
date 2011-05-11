@@ -25,6 +25,7 @@ import static fr.systerel.editor.presentation.RodinConfiguration.IMPLICIT_LABEL_
 import static fr.systerel.editor.presentation.RodinConfiguration.LABEL_TYPE;
 import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.COMMENT_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.EXPRESSION_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
@@ -36,6 +37,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ICommentedElement;
 import org.eventb.core.IEvent;
+import org.eventb.core.IExpressionElement;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPredicateElement;
@@ -214,14 +216,18 @@ public class RodinTextGenerator {
 	}
 
 	private void processPredicateElement(ILElement element) {
-		processPredAssElement(element, PREDICATE_ATTRIBUTE);
+		processFormula(element, PREDICATE_ATTRIBUTE);
 	}
 
 	private void processAssignmentElement(ILElement element) {
-		processPredAssElement(element, ASSIGNMENT_ATTRIBUTE);
+		processFormula(element, ASSIGNMENT_ATTRIBUTE);
 	}
 
-	private void processPredAssElement(ILElement element,
+	private void processExpressionElement(ILElement element) {
+		processFormula(element, EXPRESSION_ATTRIBUTE);
+	}
+
+	private void processFormula(ILElement element,
 			IAttributeType.String attrType) {
 		processStringEventBAttribute(element, attrType,
 				getContentType(element, IMPLICIT_CONTENT_TYPE, CONTENT_TYPE),
@@ -269,6 +275,9 @@ public class RodinTextGenerator {
 			processLabeledElement(element);
 		} else if (rodinElement instanceof IIdentifierElement) {
 			processIdentifierElement(element);
+		}
+		if (rodinElement instanceof IExpressionElement) {
+			processExpressionElement(element);
 		}
 		if (rodinElement instanceof IPredicateElement) {
 			processPredicateElement(element);
