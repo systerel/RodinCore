@@ -465,17 +465,20 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 		Attribute attribute = getEAttributes().get(type.getId());
 		final Object new_value = value.getValue();
 		final Object old_value = (attribute != null) ? attribute.getValue()
-			: null;
-		if (new_value == null || new_value.equals(old_value)) {
-			return;
-		}
-		if (attribute == null) {
-			attribute = LightcoreFactory.eINSTANCE.createAttribute();
-		        attribute.setEOwner(this);
-			attribute.setType(type);
-		}
+				: null;
+		if (new_value != null && !new_value.equals(old_value)) {
+			if (attribute == null) {
+				attribute = LightcoreFactory.eINSTANCE.createAttribute();
+				attribute.setEOwner(this);
+				attribute.setType(type);
+			}
 		attribute.setValue(value.getValue());
 		getEAttributes().put(type.getId(), attribute);
+		}
+		attribute.getEOwner().eNotify(
+				new ENotificationImpl((InternalEObject) attribute,
+						Notification.SET, LightcorePackage.ATTRIBUTE__ENTRY,
+						old_value, new_value));
 	}
 
 	/**

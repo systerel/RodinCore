@@ -106,7 +106,7 @@ public interface ILElement {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @model valueDataType="org.rodinp.core.emf.api.itf.IAttributeValue"
-	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='final IAttributeType type = value.getType();\nAttribute attribute = getEAttributes().get(type.getId());\nfinal Object new_value = value.getValue();\nfinal Object old_value = (attribute != null) ? attribute.getValue()\n\t: null;\nif (new_value == null || new_value.equals(old_value)) {\n\treturn;\n}\nif (attribute == null) {\n\tattribute = LightcoreFactory.eINSTANCE.createAttribute();\n        attribute.setEOwner(this);\n\tattribute.setType(type);\n}\nattribute.setValue(value.getValue());\ngetEAttributes().put(type.getId(), attribute);'"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='final IAttributeType type = value.getType();\nAttribute attribute = getEAttributes().get(type.getId());\nfinal Object new_value = value.getValue();\nfinal Object old_value = (attribute != null) ? attribute.getValue()\n\t\t: null;\nif (new_value != null && !new_value.equals(old_value)) {\n\tif (attribute == null) {\n\t\tattribute = LightcoreFactory.eINSTANCE.createAttribute();\n\t\tattribute.setEOwner(this);\n\t\tattribute.setType(type);\n\t}\nattribute.setValue(value.getValue());\ngetEAttributes().put(type.getId(), attribute);\n}\nattribute.getEOwner().eNotify(\n\t\tnew ENotificationImpl((InternalEObject) attribute,\n\t\t\t\tNotification.SET, LightcorePackage.ATTRIBUTE__ENTRY,\n\t\t\t\told_value, new_value));'"
 	 * @generated
 	 */
 	void setAttribute(IAttributeValue value);
