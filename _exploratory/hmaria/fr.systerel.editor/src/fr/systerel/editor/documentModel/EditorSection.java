@@ -10,8 +10,6 @@
  *******************************************************************************/
 package fr.systerel.editor.documentModel;
 
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 
@@ -31,24 +29,6 @@ public class EditorSection extends EditorItem {
 	 */
 	public IInternalElementType<?> getElementType() {
 		return type;
-	}
-
-	/**
-	 * Sets the offset and length of the folding position to the given values.
-	 * Creates a new position if none exists yet.
-	 * 
-	 * @param start
-	 * @param length
-	 */
-	public void setFoldingPosition(int start, int length) {
-		if (foldingPosition != null) {
-			foldingPosition.setOffset(start);
-			foldingPosition.setLength(length);
-			foldingAnnotation.markDeleted(false);
-		} else {
-			foldingPosition = new Position(start, length);
-			foldingAnnotation = new ProjectionAnnotation(false);
-		}
 	}
 
 }

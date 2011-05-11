@@ -32,6 +32,24 @@ public abstract class EditorItem {
 				: false;
 	}
 
+	/**
+	 * Sets the offset and length of the folding position to the given values.
+	 * Creates a new position if none exists yet.
+	 * 
+	 * @param start
+	 * @param length
+	 */
+	public void setFoldingPosition(int start, int length) {
+		if (foldingPosition != null) {
+			foldingPosition.setOffset(start);
+			foldingPosition.setLength(length);
+			foldingAnnotation.markDeleted(false);
+		} else {
+			foldingPosition = new Position(start, length);
+			foldingAnnotation = new ProjectionAnnotation(false);
+		}
+	}
+
 	public Position getFoldingPosition() {
 		return foldingPosition;
 	}
