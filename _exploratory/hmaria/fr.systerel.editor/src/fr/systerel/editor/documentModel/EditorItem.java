@@ -50,6 +50,11 @@ public abstract class EditorItem {
 		}
 	}
 
+	public void clearFolding() {
+		foldingPosition = null;
+		foldingAnnotation = null;
+	}
+	
 	public Position getFoldingPosition() {
 		return foldingPosition;
 	}

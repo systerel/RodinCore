@@ -76,19 +76,32 @@ public class EditorElement extends EditorItem {
 		intervals.add(index, interval);
 	}
 	
+	@Override
 	public int getOffset() {
 		if (intervals.isEmpty()) {
-			return super.getOffset();
+			return -1;
 		}
 		return intervals.get(0).getOffset();
 	}
-
+	
+	@Override
 	public int getLength() {
 		if (intervals.isEmpty()) {
-			return super.getLength();
+			return -1;
 		}
 		final Interval last = intervals.get(intervals.size() - 1);
 		return last.getLastIndex() - getOffset();
 	}
 
+	public boolean isFoldable() {
+		return isDirectChildOfRoot(element) && hasChildren(element);
+	}
+
+	private static boolean isDirectChildOfRoot(ILElement el) {
+		return el.getRoot().equals(el.getParent());
+	}
+	
+	private static boolean hasChildren(ILElement el) {
+		return !el.getChildren().isEmpty();
+	}
 }

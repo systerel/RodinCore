@@ -354,10 +354,6 @@ public class DocumentMapper {
 		if (element != null) {
 			EditorElement el = editorElements.getOrCreate(element);
 			el.addInterval(inter);
-//	TODO	if (root.equals(element.getParent())
-//					&& !element.getChildren().isEmpty()) {
-//				el.updateFoldingPosition();
-//			}
 		}
 
 	}
@@ -380,6 +376,21 @@ public class DocumentMapper {
 	public void processIntervals(List<EditorRegion> regions) {
 		for (EditorRegion region : regions) {
 			processInterval(region);
+		}
+		updateElementFolding();
+	}
+
+	private void updateElementFolding() {
+		for (EditorElement el : editorElements.getItems()) {
+			final ILElement element = el.getLightElement();
+			if (el.isFoldable()) {
+				final Point range = getEnclosingRange(element);
+				final int foldStart = range.x;
+				final int foldLength = range.y - foldStart + 1;
+				el.setFoldingPosition(foldStart, foldLength);
+			} else {
+				el.clearFolding();
+			}
 		}
 	}
 
@@ -479,7 +490,7 @@ public class DocumentMapper {
 
 	public Position[] getFoldingPositions() {
 		final List<Position> result = new ArrayList<Position>();
-//		addFoldingPositions(editorElements.getItems(), result);
+		addFoldingPositions(editorElements.getItems(), result);
 		addFoldingPositions(sections.values(), result);
 		
 		if (DEBUG)
@@ -502,7 +513,7 @@ public class DocumentMapper {
 	
 	public ProjectionAnnotation[] getFoldingAnnotations() {
 		final List<ProjectionAnnotation> result = new ArrayList<ProjectionAnnotation>();
-//		addFoldingAnnotations(editorElements.getItems(), result);
+		addFoldingAnnotations(editorElements.getItems(), result);
 		addFoldingAnnotations(sections.values(), result);
 		return result.toArray(new ProjectionAnnotation[result.size()]);
 	}
