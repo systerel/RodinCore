@@ -54,6 +54,9 @@ public class DNDManager {
 		
 		public void perform(ILElement[] elements) {
 			for (ILElement element : elements) {
+				if (element.isImplicit()) {
+					continue;
+				}
 				if(targetParent.equals(element.getParent())) {
 					final int oldPos = targetParent.getChildPosition(element);
 					final int newPos = computeNewPos(oldPos);
@@ -135,7 +138,6 @@ public class DNDManager {
 		}
 
 		private void processDrop(IRodinElement[] elements, int offset) {
-			// FIXME do not modify implicit elements
 			if (elements.length == 0) return;
 			final IElementType<?> siblingType = checkAndGetSameType(elements);
 			if (siblingType == null)
