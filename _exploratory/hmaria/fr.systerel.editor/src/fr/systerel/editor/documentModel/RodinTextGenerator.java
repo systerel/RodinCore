@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.text.Position;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ICommentedElement;
 import org.eventb.core.IEvent;
@@ -63,7 +62,6 @@ public class RodinTextGenerator {
 	private final DocumentMapper documentMapper;
 	private static final int TWO_TABS_INDENT = 2;
 
-	private ArrayList<Position> foldingRegions = new ArrayList<Position>();
 	private RodinTextStream stream;
 
 	public RodinTextGenerator(DocumentMapper documentMapper) {
@@ -292,10 +290,6 @@ public class RodinTextGenerator {
 			return implicitType;
 		}
 		return type;
-	}
-
-	public Position[] getFoldingRegions() {
-		return foldingRegions.toArray(new Position[foldingRegions.size()]);
 	}
 
 }
