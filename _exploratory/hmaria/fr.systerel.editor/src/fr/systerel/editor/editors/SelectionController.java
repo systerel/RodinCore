@@ -134,24 +134,22 @@ public class SelectionController implements MouseListener, VerifyListener,
 			System.out.println("double click " + e);
 		
 		// select the enclosing element
-		final ILElement element = getEnclosingElement(e);
-		if (element == null) return;
-		final Point enclosingRange = mapper.getEnclosingRange(element);
+		final EditorElement editElem = getEnclosingElement(e);
+		if (editElem == null) return;
+		final Point enclosingRange = mapper.getEnclosingRange(editElem);
 		if (enclosingRange == null) return;
 		styledText.setSelection(enclosingRange);
+		final ILElement element = editElem.getLightElement();
 		selection = new ElementSelection(element, enclosingRange);
 		if (DEBUG)
 			System.out.println("selected " + element.getElement() + " in "
 					+ enclosingRange);
 	}
 
-	private ILElement getEnclosingElement(MouseEvent e) {
+	private EditorElement getEnclosingElement(MouseEvent e) {
 		final int offset = getOffset(e);
 		if (offset < 0) return null;
-		final EditorElement item = mapper.findItemContaining(offset);
-		if (item == null) return null;
-		final ILElement element = item.getLightElement();
-		return element;
+		return mapper.findItemContaining(offset);
 	}
 
 	private int getModelCaretOffset() {

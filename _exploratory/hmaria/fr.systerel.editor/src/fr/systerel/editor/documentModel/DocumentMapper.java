@@ -382,9 +382,8 @@ public class DocumentMapper {
 
 	private void updateElementFolding() {
 		for (EditorElement el : editorElements.getItems()) {
-			final ILElement element = el.getLightElement();
 			if (el.isFoldable()) {
-				final Point range = getEnclosingRange(element);
+				final Point range = getEnclosingRange(el);
 				final int foldStart = range.x;
 				final int foldLength = range.y - foldStart + 1;
 				el.setFoldingPosition(foldStart, foldLength);
@@ -422,13 +421,18 @@ public class DocumentMapper {
 		return null;
 	}
 
-	public Point getEnclosingRange(ILElement element) {
+	private Point getEnclosingRange(ILElement element) {
 		final EditorElement editorItem = editorElements.get(element.getElement());
 		
 		if (editorItem == null) return null;
+		return getEnclosingRange(editorItem);
+	}
+
+	public Point getEnclosingRange(EditorElement editorItem) {
 		int start = editorItem.getOffset();
 		int end = start + editorItem.getLength();
-		for (ILElement child : element.getChildren()) {
+		final ILElement el = editorItem.getLightElement();
+		for (ILElement child : el.getChildren()) {
 			final Point childRange = getEnclosingRange(child);
 			if (childRange == null) continue;
 			start = Math.min(start, childRange.x);
