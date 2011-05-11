@@ -10,21 +10,43 @@
  *******************************************************************************/
 package fr.systerel.editor.handlers;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.runtime.CoreException;
+import org.rodinp.core.emf.api.itf.ILElement;
+
+import fr.systerel.editor.documentModel.Interval;
+import fr.systerel.editor.documentModel.RodinDocumentProvider;
+import fr.systerel.editor.editors.RodinEditor;
 
 /**
- * @author tommy
+ * @author tommy & nico
  *
  */
-public class RemoveHandler extends AbstractHandler implements IHandler {
+public class RemoveHandler extends AbstractEditorHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		System.out.println("Evecuted REMOVE!");
-		return null;
+		return super.execute(event);
 	}
 
+	@Override
+	protected void handleSelection(RodinEditor editor, int offset) {
+		final Interval inter = editor.getDocumentMapper()
+				.findFirstElementIntervalAfter(offset);
+		if (inter == null)
+			return;
+		final ILElement element = inter.getElement();
+		if (element == null || element.isImplicit()) {
+			return;
+		}
+		element.delete();
+		try {
+			((RodinDocumentProvider) editor.getDocumentProvider())
+					.doSynchronize(element.getRoot(), null);
+			editor.selectAndReveal(offset, 0);
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+	}
 }
