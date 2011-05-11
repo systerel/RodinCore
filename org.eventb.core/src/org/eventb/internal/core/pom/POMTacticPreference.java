@@ -63,6 +63,7 @@ public class POMTacticPreference extends AutoTacticPreference {
 	            "com.clearsy.atelierb.provers.core.p0",
 	            "org.eventb.core.seqprover.dtDestrWDTac",
 	            "org.eventb.core.seqprover.NnfTac",
+	            "org.eventb.core.seqprover.genMPTac",
 		};
 	}
 

@@ -1257,6 +1257,7 @@
             id="org.eventb.core.seqprover.eqvGoalTac">
       </tactic>
       <tactic id="org.eventb.core.seqprover.NnfTac"/>
+      <tactic id="org.eventb.core.seqprover.genMPTac"/>
    </extension>
    <extension
          point="org.eventb.core.pomTactics">
@@ -1293,6 +1294,7 @@
             id="org.eventb.core.seqprover.eqvGoalTac">
       </tactic>
       <tactic id="org.eventb.core.seqprover.NnfTac"/>
+      <tactic id="org.eventb.core.seqprover.genMPTac"/>
    </extension>
    <extension
          point="org.rodinp.core.fileElementVersions">

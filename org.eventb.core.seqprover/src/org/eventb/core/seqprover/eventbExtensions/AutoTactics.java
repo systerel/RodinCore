@@ -28,11 +28,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.BinaryPredicate;
-import org.eventb.core.ast.DefaultFilter;
+import org.eventb.core.ast.DefaultInspector;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
@@ -54,6 +55,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.AutoImpF;
 import org.eventb.internal.core.seqprover.eventbExtensions.ContrHyps;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteHypBoundedGoal;
+import org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonens;
 import org.eventb.internal.core.seqprover.eventbExtensions.HypOr;
 import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.NegEnum;
@@ -83,6 +85,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.tactics.TacticsLib;
 public class AutoTactics {
 
 	private static final EmptyInput EMPTY_INPUT = new EmptyInput();
+	private static final RuntimeException nnfGPException = new RuntimeException();
 		
 
 	/**
@@ -1240,37 +1243,46 @@ public class AutoTactics {
 	 * @since 2.2
 	 */
 	public static IPosition nnfGetPosition (Predicate pred){
-		final List<IPosition> listPos = pred.getPositions(new DefaultFilter(){
+		final List<Predicate> listPos = pred.inspect(new DefaultInspector<Predicate>(){
+
 			@Override
-			public boolean select(UnaryPredicate predicate){
+			public void inspect(UnaryPredicate predicate,
+					IAccumulator<Predicate> accumulator) {
 				if (predicate.getTag() == Predicate.NOT) {
 					Predicate child = predicate.getChild();
 					if (Lib.isNeg(child)) {
-						return true;
+						accumulator.getCurrentPosition();
+						throw nnfGPException;
 					}
 					if (Lib.isImp(child)) {
-						return true;
+						accumulator.getCurrentPosition();
+						throw nnfGPException;
 					}
 					if (Lib.isExQuant(child)) {
-						return true;
+						accumulator.getCurrentPosition();
+						throw nnfGPException;
 					}
 					if (Lib.isUnivQuant(child)) {
-						return true;
+						accumulator.getCurrentPosition();
+						throw nnfGPException;
 					}
 					if (Lib.isConj(child)) {
-						return true;
+						accumulator.getCurrentPosition();
+						throw nnfGPException;
 					}
 					if (Lib.isDisj(child)) {
-						return true;
+						accumulator.getCurrentPosition();
+						throw nnfGPException;
 					}
 				}
-				return false;
 			}
+
 		});
 		if (listPos.isEmpty()){
 			return null;
 		}
-		return listPos.get(0);
+		System.out.println(listPos.toString());
+		return null;
 	}
 
 	//*************************************************
@@ -1304,6 +1316,24 @@ public class AutoTactics {
 						new FalseHypTac(),
 						innerLoop);
 			return outerLoop;
+		}
+	}
+
+	/**
+	 * Simplifies the visible hypotheses and goal in a sequent by replacing
+	 * sub-predicates <code>P</code> by <code>⊤</code> (or <code>⊥</code>) if
+	 * <code>P</code> (or <code>¬P</code>) appears as hypothesis (global and
+	 * local).
+	 * 
+	 * @author Emmanuel Billaud
+	 * @since 2.2
+	 */
+	public static class GenMPTac extends AbsractLazilyConstrTactic {
+
+		@Override
+		protected ITactic getSingInstance() {
+			return BasicTactics.reasonerTac(new GeneralizedModusPonens(),
+					EMPTY_INPUT);
 		}
 	}
 

@@ -58,7 +58,8 @@ public class PostTacticPreference extends AutoTacticPreference {
 	            "org.eventb.core.seqprover.shrinkEnumHypTac",
 	            "org.eventb.core.seqprover.funOvrGoalTac",
 	            "org.eventb.core.seqprover.clarifyGoalTac",
-	            "org.eventb.core.seqprover.NnfTac"
+	            "org.eventb.core.seqprover.NnfTac",
+	            "org.eventb.core.seqprover.genMPTac",
 		};
 
 	}

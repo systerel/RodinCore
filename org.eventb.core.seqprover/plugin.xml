@@ -614,6 +614,12 @@
             id="NnfTac"
             name="%NnfTacName">
       </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$GenMPTac"
+            description="%GenMPTacDesc"
+            id="genMPTac"
+            name="%GenMPTacName">
+      </autoTactic>
    </extension>
 
 </plugin>
