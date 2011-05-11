@@ -136,10 +136,11 @@ public class SelectionController implements MouseListener, VerifyListener,
 		// select the enclosing element
 		final EditorElement editElem = getEnclosingElement(e);
 		if (editElem == null) return;
+		final ILElement element = editElem.getLightElement();
+		if (element.isImplicit()) return;
 		final Point enclosingRange = mapper.getEnclosingRange(editElem);
 		if (enclosingRange == null) return;
 		styledText.setSelection(enclosingRange);
-		final ILElement element = editElem.getLightElement();
 		selection = new ElementSelection(element, enclosingRange);
 		if (DEBUG)
 			System.out.println("selected " + element.getElement() + " in "
