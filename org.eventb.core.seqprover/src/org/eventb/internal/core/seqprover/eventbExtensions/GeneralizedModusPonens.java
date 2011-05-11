@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
@@ -32,8 +33,9 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
  */
 public class GeneralizedModusPonens extends EmptyInputReasoner {
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".genMP";
-	private Map<Predicate, Set<Predicate>> modifHypMap;
-	private Set<Predicate> modifGoalSet, hypSet;
+	private Map<Predicate, Map<Predicate, List<IPosition>>> modifHypMap;
+	private Map<Predicate, List<IPosition>> modifGoalMap;
+	private Set<Predicate> hypSet;
 
 	@Override
 	public String getReasonerID() {
@@ -43,22 +45,22 @@ public class GeneralizedModusPonens extends EmptyInputReasoner {
 	@Override
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
-		modifHypMap = new HashMap<Predicate, Set<Predicate>>();
+		modifHypMap = new HashMap<Predicate, Map<Predicate,List<IPosition>>>();
 
 		hypSet = GenMPC.createHypSet(seq);
 		final Predicate goal = seq.goal();
-		Set<Predicate> s = GenMPC.analyzeGoal(goal, hypSet);
-		if (s != null)
-			modifGoalSet = s;
+		Map<Predicate, List<IPosition>> m = GenMPC.analyzeGoal(goal, hypSet);
+		if (m != null)
+			modifGoalMap = m;
 		for (Predicate hyp : seq.visibleHypIterable()) {
-			s = GenMPC.analyzeHyp(hyp, hypSet);
-			if (!s.isEmpty())
-				modifHypMap.put(hyp, s);
+			m = GenMPC.analyzeHyp(hyp, hypSet);
+			if (!m.isEmpty())
+				modifHypMap.put(hyp, m);
 		}
 
 		Set<Predicate> neededHyps = new HashSet<Predicate>();
 		final Predicate rewrittenGoal = GenMPC.rewriteGoal(goal, seq,
-				modifGoalSet, neededHyps);
+				modifGoalMap, neededHyps);
 		final List<IHypAction> hypActions = GenMPC
 				.rewriteHyps(seq, modifHypMap);
 
