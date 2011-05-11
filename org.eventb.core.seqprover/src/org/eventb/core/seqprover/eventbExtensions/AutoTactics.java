@@ -28,12 +28,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.BinaryPredicate;
-import org.eventb.core.ast.DefaultInspector;
+import org.eventb.core.ast.DefaultFilter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
@@ -85,7 +84,6 @@ import org.eventb.internal.core.seqprover.eventbExtensions.tactics.TacticsLib;
 public class AutoTactics {
 
 	private static final EmptyInput EMPTY_INPUT = new EmptyInput();
-	private static final RuntimeException nnfGPException = new RuntimeException();
 		
 
 	/**
@@ -1243,46 +1241,38 @@ public class AutoTactics {
 	 * @since 2.2
 	 */
 	public static IPosition nnfGetPosition (Predicate pred){
-		final List<Predicate> listPos = pred.inspect(new DefaultInspector<Predicate>(){
+		final List<IPosition> listPos = pred.getPositions(new DefaultFilter(){
 
 			@Override
-			public void inspect(UnaryPredicate predicate,
-					IAccumulator<Predicate> accumulator) {
+			public boolean select(UnaryPredicate predicate){
 				if (predicate.getTag() == Predicate.NOT) {
 					Predicate child = predicate.getChild();
 					if (Lib.isNeg(child)) {
-						accumulator.getCurrentPosition();
-						throw nnfGPException;
+						return true;
 					}
 					if (Lib.isImp(child)) {
-						accumulator.getCurrentPosition();
-						throw nnfGPException;
+						return true;
 					}
 					if (Lib.isExQuant(child)) {
-						accumulator.getCurrentPosition();
-						throw nnfGPException;
+						return true;
 					}
 					if (Lib.isUnivQuant(child)) {
-						accumulator.getCurrentPosition();
-						throw nnfGPException;
+						return true;
 					}
 					if (Lib.isConj(child)) {
-						accumulator.getCurrentPosition();
-						throw nnfGPException;
+						return true;
 					}
 					if (Lib.isDisj(child)) {
-						accumulator.getCurrentPosition();
-						throw nnfGPException;
+						return true;
 					}
 				}
+				return false;
 			}
-
 		});
 		if (listPos.isEmpty()){
 			return null;
 		}
-		System.out.println(listPos.toString());
-		return null;
+		return listPos.get(0);
 	}
 
 	//*************************************************
