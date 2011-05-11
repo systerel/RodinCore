@@ -14,8 +14,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
@@ -50,19 +53,30 @@ public class SynchroUtils {
 				final IAttributeValue value = iElement.getAttributeValue(type);
 				final Attribute lAttribute = LightcoreFactory.eINSTANCE
 						.createAttribute();
-				if (silent)
-					lAttribute.eSetDeliver(false);
-				lAttribute.setEOwner(lElement);
-				lAttribute.setType(type);
-				lAttribute.setValue(value.getValue());
-				lElement.getEAttributes().put(type.getId(), lAttribute);
-				if (silent)
+				try {
+					if (silent)
+						lAttribute.eSetDeliver(false);
+					lAttribute.setEOwner(lElement);
+					lAttribute.setType(type);
+					lAttribute.setValue(value.getValue());
+					lElement.getEAttributes().put(type.getId(), lAttribute);
+				} finally {
 					lAttribute.eSetDeliver(true);
+				}
 			}
 		} catch (RodinDBException e) {
 			System.out.println("Could not load the attributes for the "
 					+ "UI model from the element " + iElement.toString() + " "
 					+ e.getMessage());
+		}
+	}
+	
+	public static void addParentEContentAdapter(ILElement parent, LightObject e) {
+		for (Adapter ad : ((LightElement) parent).eAdapters()) {
+			final EList<Adapter> adapters = e.eAdapters();
+			if (ad instanceof EContentAdapter && !adapters.contains(ad)) {
+				e.eAdapters().add(ad);
+			}
 		}
 	}
 	

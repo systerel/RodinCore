@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.core.emf.lightcore.adapters;
 
+import static org.rodinp.core.emf.lightcore.sync.SynchroUtils.addParentEContentAdapter;
 import static org.rodinp.core.emf.lightcore.sync.SynchroUtils.findElement;
 import static org.rodinp.core.emf.lightcore.sync.SynchroUtils.getPositionOf;
 
@@ -134,6 +135,7 @@ public class DeltaProcessor {
 			if (eParent != null) {
 				final int pos = getPositionOf(eParent, (IInternalElement) element);
 				eParent.addElement(e, pos);
+				addParentEContentAdapter(eParent, e);
 			}
 		}
 		for (IRodinElement child : ((IInternalElement) element).getChildren()) {
