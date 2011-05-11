@@ -12,7 +12,6 @@ package fr.systerel.editor.editors;
 
 import java.util.Arrays;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
@@ -136,6 +135,7 @@ public class DNDManager {
 		}
 
 		private void processDrop(IRodinElement[] elements, int offset) {
+			// FIXME do not modify implicit elements
 			if (elements.length == 0) return;
 			final IElementType<?> siblingType = checkAndGetSameType(elements);
 			if (siblingType == null)
@@ -148,12 +148,7 @@ public class DNDManager {
 			if (elems == null)
 				return;
 			move.perform(elems);
-			try {
-				documentProvider.doSynchronize(mapper.getRoot(), null);
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			documentProvider.doSynchronize(mapper.getRoot(), null);
 		}
 
 		private ILElement[] toLElements(IRodinElement[] elements) {

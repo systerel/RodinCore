@@ -171,8 +171,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		// do nothing
 	}
 
-	public void doSynchronize(Object element, IProgressMonitor monitor)
-			throws CoreException {
+	public void doSynchronize(Object element, IProgressMonitor monitor) {
 		System.out.println("synchronizing");
 		fireElementContentAboutToBeReplaced(element);
 		document.set(textGenerator.createText(inputRoot));

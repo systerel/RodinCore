@@ -79,8 +79,6 @@ public class AddChildHandler extends AbstractEditorHandler {
 						editor.selectAndReveal(offset, 0);
 					} catch (RodinDBException e1) {
 						e1.printStackTrace();
-					} catch (CoreException e) {
-						e.printStackTrace();
 					}
 				}
 			});

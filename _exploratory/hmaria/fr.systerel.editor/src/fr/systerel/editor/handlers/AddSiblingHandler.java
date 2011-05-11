@@ -54,8 +54,6 @@ public class AddSiblingHandler extends AbstractEditorHandler {
 			editor.selectAndReveal(offset, 0);
 		} catch (RodinDBException dbe) {
 			dbe.printStackTrace();
-		} catch (CoreException ce) {
-			ce.printStackTrace();
 		}
 	}
 

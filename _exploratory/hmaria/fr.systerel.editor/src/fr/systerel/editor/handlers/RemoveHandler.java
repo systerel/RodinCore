@@ -41,12 +41,8 @@ public class RemoveHandler extends AbstractEditorHandler {
 			return;
 		}
 		element.delete();
-		try {
-			((RodinDocumentProvider) editor.getDocumentProvider())
-					.doSynchronize(element.getRoot(), null);
-			editor.selectAndReveal(offset, 0);
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
+		((RodinDocumentProvider) editor.getDocumentProvider())
+				.doSynchronize(element.getRoot(), null);
+		editor.selectAndReveal(offset, 0);
 	}
 }
