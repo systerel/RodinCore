@@ -19,6 +19,8 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eventb.internal.ui.EventBSharedColor;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 /**
@@ -42,8 +44,17 @@ public class Selections {
 			resetBackgroundColor(position);
 		}
 		
+		public void badSelection(Position position) {
+			setBadSelectionBackgroundColor(position);
+		}
+		
 		private void setSelectionBackgroundColor(Position position) {
 			final Color background = getSelectionBackgroundColorPreference();
+			setBackgroundColor(position, background);
+		}
+		
+		private void setBadSelectionBackgroundColor(Position position) {
+			final Color background = getBadSelectionBackgroundColorPreference();
 			setBackgroundColor(position, background);
 		}
 		
@@ -70,6 +81,11 @@ public class Selections {
 		// TODO make a preference
 		private static Color getSelectionBackgroundColorPreference() {
 			return EventBSharedColor.getSystemColor(SWT.COLOR_GREEN);
+		}
+		
+		// TODO make a preference
+		private static Color getBadSelectionBackgroundColorPreference() {
+			return EventBSharedColor.getSystemColor(SWT.COLOR_RED);
 		}
 	}
 	
@@ -137,13 +153,46 @@ public class Selections {
 				// FIXME preserve element order
 				selected.add(new SimpleSelection(element, position));
 				effect.select(position);
+				if (!isValidSelection(selected)) {
+					applyBadSelectionEffect();
+				}
 			} else {
-				// FIXME position should match that of the selection 
+				// FIXME position should match that of the selection
+				final boolean wasValid = isValidSelection(selected);
 				selected.remove(index);
 				effect.unselect(position);
+				if (!wasValid && isValidSelection(selected)) {
+					applySelectEffect();
+				}
 			}
 		}
 		
+		private void applySelectEffect() {
+			for (SimpleSelection sel : selected) {
+				effect.select(sel.position);
+			}
+		}
+		
+		private void applyBadSelectionEffect() {
+			for (SimpleSelection sel : selected) {
+				effect.badSelection(sel.position);
+			}
+		}
+
+		private static boolean isValidSelection(List<SimpleSelection> selection) {
+			if (selection.isEmpty()) return true;
+			final SimpleSelection first = selection.get(0);
+			final IInternalElementType<? extends IInternalElement> type = first.element
+					.getElementType();
+			for(int i=1;i<selection.size();i++) {
+				final SimpleSelection sel = selection.get(i);
+				if (sel.element.getElementType() != type) {
+					return false;
+				}
+			}
+			return true;
+		}
+
 		public void clear() {
 			for (SimpleSelection sel : selected) {
 				effect.unselect(sel.position);
