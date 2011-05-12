@@ -160,21 +160,29 @@ public class Selections {
 				index = indexOf(position.getOffset());
 			}
 			if (index < 0) {
-				// an ancestor of an already selected element replaces it
-				removeContainedIn(position);
-				// FIXME preserve element order
-				selected.add(new SimpleSelection(element, position));
-				effect.select(position);
-				if (!isValidSelection(selected)) {
-					applyBadSelectionEffect();
-				}
+				add(element, position);
 			} else {
-				final boolean wasValid = isValidSelection(selected);
-				final SimpleSelection removed = selected.remove(index);
-				effect.unselect(removed.position);
-				if (!wasValid && isValidSelection(selected)) {
-					applySelectEffect();
-				}
+				remove(index);
+			}
+		}
+
+		private void remove(int index) {
+			final boolean wasValid = isValidSelection(selected);
+			final SimpleSelection removed = selected.remove(index);
+			effect.unselect(removed.position);
+			if (!wasValid && isValidSelection(selected)) {
+				applySelectEffect();
+			}
+		}
+
+		private void add(ILElement element, Position position) {
+			// an ancestor of an already selected element replaces it
+			removeContainedIn(position);
+			// FIXME preserve element order
+			selected.add(new SimpleSelection(element, position));
+			effect.select(position);
+			if (!isValidSelection(selected)) {
+				applyBadSelectionEffect();
 			}
 		}
 		
