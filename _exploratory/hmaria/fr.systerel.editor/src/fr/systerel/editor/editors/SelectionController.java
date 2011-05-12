@@ -10,6 +10,7 @@
  *******************************************************************************/
 package fr.systerel.editor.editors;
 
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -26,6 +27,8 @@ import org.rodinp.core.emf.api.itf.ILElement;
 import fr.systerel.editor.documentModel.DocumentMapper;
 import fr.systerel.editor.documentModel.EditorElement;
 import fr.systerel.editor.documentModel.Interval;
+import fr.systerel.editor.editors.Selections.MultipleSelection;
+import fr.systerel.editor.editors.Selections.SelectionEffect;
 
 /**
  * Controls the selection in the RodinEditor and decides when it should be
@@ -42,25 +45,12 @@ public class SelectionController implements MouseListener, VerifyListener,
 	// TODO tracing
 	public static boolean DEBUG;
 	
-	private static class ElementSelection {
-		public final ILElement element;
-		public final Point range;
-		
-		public ElementSelection(ILElement element, Point range) {
-			this.element = element;
-			this.range = range;
-		}
-		
-		public boolean contains(int offset) {
-			return range.x <= offset && offset < range.y;
-		}
-	}
-	
+
 	private StyledText styledText;
 	private DocumentMapper mapper;
 	private ProjectionViewer viewer;
 	private OverlayEditor overlayEditor;
-	private ElementSelection selection;
+	private final MultipleSelection selection;
 
 	public SelectionController(StyledText styledText, DocumentMapper mapper,
 			ProjectionViewer viewer, OverlayEditor overlayEditor) {
@@ -69,15 +59,18 @@ public class SelectionController implements MouseListener, VerifyListener,
 		this.viewer = viewer;
 		this.mapper = mapper;
 		this.overlayEditor = overlayEditor;
-		this.selection = null;
+		selection = new MultipleSelection(new SelectionEffect(styledText));
 	}
 
+	public boolean hasSelectedElements() {
+		return !selection.isEmpty();
+	}
+	
 	/**
 	 * @return the selectedElement
 	 */
-	public ILElement getSelectedElement() {
-		if (selection == null) return null;
-		return selection.element;
+	public ILElement[] getSelectedElements() {
+		return selection.getElements();
 	}
 	
 	/**
@@ -140,8 +133,12 @@ public class SelectionController implements MouseListener, VerifyListener,
 		if (element.isImplicit()) return;
 		final Point enclosingRange = mapper.getEnclosingRange(editElem);
 		if (enclosingRange == null) return;
-		styledText.setSelection(enclosingRange);
-		selection = new ElementSelection(element, enclosingRange);
+		
+		final int start = enclosingRange.x;
+		final int length = enclosingRange.y - start + 1;
+		final Position position = new Position(start, length);
+		selection.toggle(element, position);
+		styledText.setSelection(start);
 		if (DEBUG)
 			System.out.println("selected " + element.getElement() + " in "
 					+ enclosingRange);
@@ -181,12 +178,10 @@ public class SelectionController implements MouseListener, VerifyListener,
 
 		final int offset = getOffset(e); 
 		if (selection.contains(offset)) {
-			// restore selection
-			styledText.setSelection(selection.range);
 			// fire drag event
 			final boolean dragging = styledText.dragDetect(e);
 			if (!dragging) {
-				selection = null;
+				selection.clear();
 				styledText.setSelection(offset);
 			}
 			if (DEBUG) {

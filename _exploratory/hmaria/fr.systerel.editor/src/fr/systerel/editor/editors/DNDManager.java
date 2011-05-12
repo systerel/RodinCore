@@ -45,17 +45,17 @@ public class DNDManager {
 
 	private class Dragger extends DragSourceAdapter {
 		public void dragStart(DragSourceEvent e) {
-			e.doit = controller.getSelectedElement() != null;
+			e.doit = controller.hasSelectedElements();
 			if (DEBUG)
 				System.out.println("drag start " + e.doit);
 		}
 
 		public void dragSetData(DragSourceEvent e) {
-			final IInternalElement element = controller
-					.getSelectedElement().getElement();
-			e.data = new IRodinElement[] { element };
+			final ILElement[] elements = controller
+					.getSelectedElements();
+			e.data = toRElements(elements);
 			if (DEBUG)
-				System.out.println("set data " + element);
+				System.out.println("set data " + e.data);
 		}
 
 		@Override
@@ -129,6 +129,15 @@ public class DNDManager {
 			return result;
 		}
 
+	}
+	
+	private static IRodinElement[] toRElements(ILElement[] elements) {
+		final IRodinElement[] result = new IRodinElement[elements.length];
+		for (int i = 0; i < elements.length; i++) {
+			final ILElement element = elements[i];
+			result[i] = element.getElement();
+		}
+		return result;
 	}
 	
 	private static IElementType<?> checkAndGetSameType(IRodinElement[] elements) {
