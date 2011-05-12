@@ -30,8 +30,6 @@ import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
 
 import fr.systerel.editor.documentModel.DocumentMapper;
-import fr.systerel.editor.documentModel.EditorElement;
-import fr.systerel.editor.documentModel.Interval;
 import fr.systerel.editor.documentModel.ModelOperations.ModelPosition;
 import fr.systerel.editor.documentModel.ModelOperations.Move;
 import fr.systerel.editor.documentModel.RodinDocumentProvider;
@@ -107,7 +105,8 @@ public class DNDManager {
 			if (siblingType == null)
 				return;
 			final IElementType<?> parentType = elements[0].getParent().getElementType();
-			final ModelPosition pos = findModelPosition(offset, siblingType, parentType);
+			final ModelPosition pos = mapper.findModelPosition(offset,
+					siblingType, parentType);
 			if (pos == null)
 				return;
 			final ILElement[] elems = toLElements(elements);
@@ -130,49 +129,6 @@ public class DNDManager {
 			return result;
 		}
 
-		// TODO extract to mapper API
-		private ModelPosition findModelPosition(int offset, IElementType<?> type,
-				IElementType<?> parentType) {
-			// try sibling after
-			final ILElement after = findElementAfter(offset, type);
-			if (after != null) {
-				final ILElement parent = after.getParent();
-				return new ModelPosition(parent, after);
-			}
-			// try parent before, insert at the end
-			final ILElement parent = findElementBefore(offset, parentType);
-			if (parent != null) {
-				return new ModelPosition(parent, null);
-			}
-			return null;
-		}
-
-		private ILElement findElementBefore(int offset, IElementType<?> type) {
-			final Interval intervalBefore = mapper
-					.findEditableIntervalBefore(offset);
-			if (intervalBefore == null)
-				return null;
-			return findElementAt(intervalBefore.getOffset(), type);
-		}
-
-		private ILElement findElementAfter(int offset, IElementType<?> type) {
-			final Interval intervalAfter = mapper
-					.findEditableIntervalAfter(offset);
-			if (intervalAfter == null)
-				return null;
-			return findElementAt(intervalAfter.getLastIndex(), type);
-		}
-
-		private ILElement findElementAt(int offset, IElementType<?> type) {
-			final EditorElement item = mapper.findItemContaining(offset);
-			if (item == null)
-				return null;
-			final ILElement element = findAncestorOftype(
-					item.getLightElement(), type);
-			return element;
-		}
-
-
 	}
 	
 	private static IElementType<?> checkAndGetSameType(IRodinElement[] elements) {
@@ -186,16 +142,6 @@ public class DNDManager {
 		return type;
 	}
 
-	private static ILElement findAncestorOftype(ILElement descendant,
-			IElementType<?> type) {
-		if (descendant.getElementType() == type) return descendant;
-		final ILElement descParent = descendant.getParent();
-		if (descParent == null) { // parent of root
-			return null;
-		}
-		return findAncestorOftype(descParent, type);
-	}
-	
 	private final SelectionController controller;
 	private final StyledText styledText;
 	private final DocumentMapper mapper;

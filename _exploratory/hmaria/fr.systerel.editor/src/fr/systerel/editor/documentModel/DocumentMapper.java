@@ -31,12 +31,14 @@ import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPredicateElement;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
+import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 
+import fr.systerel.editor.documentModel.ModelOperations.ModelPosition;
 import fr.systerel.editor.handlers.context.ChildCreationInfo;
 import fr.systerel.editor.presentation.RodinConfiguration;
 import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
@@ -720,6 +722,74 @@ public class DocumentMapper {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Find a model position at the given offset.
+	 * <p>
+	 * If an element of the given sibling type is found after the offset, then
+	 * returned position is just before the found sibling. Else if a parent of
+	 * the given parent type is found before the offset, then returned position
+	 * is the last child of the parent. Else <code>null</code> is returned.
+	 * </p>
+	 * 
+	 * @param offset
+	 *            an offset
+	 * @param siblingType
+	 *            a type
+	 * @param parentType
+	 *            a type
+	 * @return a model position or <code>null</code>
+	 */
+	public ModelPosition findModelPosition(int offset,
+			IElementType<?> siblingType, IElementType<?> parentType) {
+		// try sibling after
+		final ILElement after = findElementAfter(offset, siblingType);
+		if (after != null) {
+			final ILElement parent = after.getParent();
+			// FIXME verify parent type
+			return new ModelPosition(parent, after);
+		}
+		// try parent before, insert at the end
+		final ILElement parent = findElementBefore(offset, parentType);
+		if (parent != null) {
+			return new ModelPosition(parent, null);
+		}
+		return null;
+	}
+
+	private ILElement findElementBefore(int offset, IElementType<?> type) {
+		final Interval intervalBefore = findEditableIntervalBefore(offset);
+		if (intervalBefore == null)
+			return null;
+		return findElementAt(intervalBefore.getOffset(), type);
+	}
+
+	private ILElement findElementAfter(int offset, IElementType<?> type) {
+		final Interval intervalAfter = findEditableIntervalAfter(offset);
+		if (intervalAfter == null)
+			return null;
+		return findElementAt(intervalAfter.getLastIndex(), type);
+	}
+
+	private ILElement findElementAt(int offset, IElementType<?> type) {
+		final EditorElement item = findItemContaining(offset);
+		if (item == null)
+			return null;
+		final ILElement element = findAncestorOftype(item.getLightElement(),
+				type);
+		return element;
+	}
+
+	private static ILElement findAncestorOftype(ILElement descendant,
+			IElementType<?> type) {
+		if (descendant.getElementType() == type)
+			return descendant;
+		final ILElement descParent = descendant.getParent();
+		if (descParent == null) { // parent of root
+			return null;
+		}
+		return findAncestorOftype(descParent, type);
 	}
 
 	public ChildCreationInfo getChildCreationPossibility(final int selOffset) {
