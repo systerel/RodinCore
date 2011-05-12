@@ -134,6 +134,7 @@ public class Selections {
 		public void toggle(ILElement element, Position position) {
 			final int index = indexOf(element);
 			if (index < 0) {
+				// FIXME preserve element order
 				selected.add(new SimpleSelection(element, position));
 				effect.select(position);
 			} else {

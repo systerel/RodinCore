@@ -430,6 +430,7 @@ public class DocumentMapper {
 		return getEnclosingRange(editorItem);
 	}
 
+	// TODO return a Position
 	public Point getEnclosingRange(EditorElement editorItem) {
 		int start = editorItem.getOffset();
 		int end = start + editorItem.getLength();
