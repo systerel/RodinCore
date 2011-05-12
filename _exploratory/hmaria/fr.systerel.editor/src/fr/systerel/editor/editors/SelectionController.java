@@ -125,9 +125,14 @@ public class SelectionController implements MouseListener, VerifyListener,
 	public void mouseDoubleClick(MouseEvent e) {
 		if (DEBUG)
 			System.out.println("double click " + e);
-		
+		final int offset = getOffset(e);
+		if (offset < 0) return;
+		toggleSelection(offset);
+	}
+	
+	private void toggleSelection(int offset) {
 		// select the enclosing element
-		final EditorElement editElem = getEnclosingElement(e);
+		final EditorElement editElem = mapper.findItemContaining(offset);
 		if (editElem == null) return;
 		final ILElement element = editElem.getLightElement();
 		if (element.isImplicit()) return;
@@ -142,12 +147,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 		if (DEBUG)
 			System.out.println("selected " + element.getElement() + " in "
 					+ enclosingRange);
-	}
 
-	private EditorElement getEnclosingElement(MouseEvent e) {
-		final int offset = getOffset(e);
-		if (offset < 0) return null;
-		return mapper.findItemContaining(offset);
 	}
 
 	private int getModelCaretOffset() {
@@ -171,27 +171,25 @@ public class SelectionController implements MouseListener, VerifyListener,
 	}
 
 	public void mouseDown(MouseEvent e) {
-		// detect drag
 		if (DEBUG) System.out.println("mouse down " + e);
 		
-		if (selection == null) return;
-
-		final int offset = getOffset(e); 
-		if (selection.contains(offset)) {
-			// fire drag event
+		final int offset = getOffset(e);
+		if (offset < 0 ) return;
+		if ((e.stateMask & SWT.CTRL) != 0) {
+			toggleSelection(offset);
+		} else if (selection.contains(offset)) {
 			final boolean dragging = styledText.dragDetect(e);
 			if (!dragging) {
-				selection.clear();
-				styledText.setSelection(offset);
+				resetSelection(offset);
 			}
-			if (DEBUG) {
-				if (dragging)
-					System.out.println("dragging");
-				else
-					System.out.println("not dragging");
-			}
-				
+		} else {
+			resetSelection(offset);
 		}
+	}
+
+	private void resetSelection(int offset) {
+		selection.clear();
+		styledText.setSelection(offset);
 	}
 
 	public void mouseUp(MouseEvent e) {
