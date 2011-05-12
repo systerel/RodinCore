@@ -28,11 +28,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.BinaryPredicate;
-import org.eventb.core.ast.DefaultFilter;
+import org.eventb.core.ast.DefaultInspector;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
@@ -1236,37 +1237,35 @@ public class AutoTactics {
 		}	
 
 	}
-	
+
 	/**
 	 * @since 2.2
 	 */
 	public static IPosition nnfGetPosition (Predicate pred){
-		final List<IPosition> listPos = pred.getPositions(new DefaultFilter(){
-
+		final List<IPosition> listPos = pred.inspect(new DefaultInspector<IPosition>() {
 			@Override
-			public boolean select(UnaryPredicate predicate){
+			public void inspect(UnaryPredicate predicate,
+					IAccumulator<IPosition> accumulator) {
 				if (predicate.getTag() == Predicate.NOT) {
-					Predicate child = predicate.getChild();
-					if (Lib.isNeg(child)) {
-						return true;
-					}
-					if (Lib.isImp(child)) {
-						return true;
-					}
-					if (Lib.isExQuant(child)) {
-						return true;
-					}
-					if (Lib.isUnivQuant(child)) {
-						return true;
-					}
-					if (Lib.isConj(child)) {
-						return true;
-					}
-					if (Lib.isDisj(child)) {
-						return true;
-					}
+					final Predicate child = predicate.getChild();
+					if (Lib.isNeg(child))
+						positionFound(accumulator);
+					if (Lib.isImp(child))
+						positionFound(accumulator);
+					if (Lib.isExQuant(child))
+						positionFound(accumulator);
+					if (Lib.isUnivQuant(child))
+						positionFound(accumulator);
+					if (Lib.isConj(child))
+						positionFound(accumulator);
+					if (Lib.isDisj(child))
+						positionFound(accumulator);
 				}
-				return false;
+			}
+
+			private void positionFound(IAccumulator<IPosition> accumulator) {
+					accumulator.skipAll();
+					accumulator.add(accumulator.getCurrentPosition());
 			}
 		});
 		if (listPos.isEmpty()){
