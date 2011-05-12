@@ -747,8 +747,9 @@ public class DocumentMapper {
 		final ILElement after = findElementAfter(offset, siblingType);
 		if (after != null) {
 			final ILElement parent = after.getParent();
-			// FIXME verify parent type
-			return new ModelPosition(parent, after);
+			if (parent.getElementType() == parentType) {
+				return new ModelPosition(parent, after);
+			}
 		}
 		// try parent before, insert at the end
 		final ILElement parent = findElementBefore(offset, parentType);
