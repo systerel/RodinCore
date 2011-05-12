@@ -132,14 +132,14 @@ public class NnfRewritesAutoTacTests {
 	}
 
 	/**
-	 *  Ensures that the NnfRewrites auto-tactic fails on both Hypothesis and 
-	 *  Goal which contains :
-	 *  <ul>
-	 *  <li>predicate which contains a rule that is implemented in the underlying 
-	 *  reasoner but shall not be used (¬S=∅, 1=1⇔2=2)</li>
-	 *  <li>no ¬ (e.g. 1=1 ∨ 2=2)</li>
-	 *  <li>a ¬ but not before a predicate (e.g. ¬1=1)</li>
-	 *  </ul>
+	 * Ensures that the NnfRewrites auto-tactic fails on both Hypothesis and
+	 * Goal which contains :
+	 * <ul>
+	 * <li>predicate which contains a rule that is implemented in the underlying
+	 * reasoner but shall not be used (¬S=∅, 1=1⇔2=2)</li>
+	 * <li>no ¬ (e.g. 1=1 ∧ 2=2)</li>
+	 * <li>a ¬ that cannot be removed or pushed in its children (e.g. ¬1=1)</li>
+	 * </ul>
 	 */
 	@Test
 	public void failOnce() {
