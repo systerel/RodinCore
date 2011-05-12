@@ -43,30 +43,39 @@ public class DNDManager {
 
 	public static boolean DEBUG;
 
-	private static class Move {
-		private final ILElement targetParent;
-		private final ILElement nextSibling;
-		
-		public Move(ILElement parent, ILElement nextSibling) {
-			this.targetParent = parent;
+	private static class ModelOperation {
+		protected final ILElement targetParent;
+		protected final ILElement nextSibling;
+
+		public ModelOperation(ILElement targetParent, ILElement nextSibling) {
+			this.targetParent = targetParent;
 			this.nextSibling = nextSibling;
 		}
-		
-		public void perform(ILElement[] elements) {
+
+		public boolean move(ILElement... elements) {
 			for (ILElement element : elements) {
 				if (element.isImplicit()) {
-					continue;
+					return false;
 				}
-				if(targetParent.equals(element.getParent())) {
-					final int oldPos = targetParent.getChildPosition(element);
-					final int newPos = computeNewPos(oldPos);
-					targetParent.moveChild(newPos, oldPos);
-				} else {
-					targetParent.addChild(element, nextSibling);
+				final boolean success = applyMove(element);
+				if (!success) {
+					return false;
 				}
 			}
+			return true;
 		}
 
+		private boolean applyMove(ILElement element) {
+			if(targetParent.equals(element.getParent())) {
+				final int oldPos = targetParent.getChildPosition(element);
+				final int newPos = computeNewPos(oldPos);
+				targetParent.moveChild(newPos, oldPos);
+			} else {
+				targetParent.addChild(element, nextSibling);
+			}
+			return true;
+		}
+		
 		private int computeNewPos(int oldPos) {
 			if (nextSibling == null) {
 				return targetParent.getChildren().size() - 1;
@@ -143,13 +152,13 @@ public class DNDManager {
 			if (siblingType == null)
 				return;
 			final IElementType<?> parentType = elements[0].getParent().getElementType();
-			final Move move = findMove(offset, siblingType, parentType);
-			if (move == null)
+			final ModelOperation pos = findModelPosition(offset, siblingType, parentType);
+			if (pos == null)
 				return;
 			final ILElement[] elems = toLElements(elements);
 			if (elems == null)
 				return;
-			move.perform(elems);
+			pos.move(elems);
 			documentProvider.doSynchronize(mapper.getRoot(), null);
 		}
 
@@ -166,18 +175,19 @@ public class DNDManager {
 			return result;
 		}
 
-		private Move findMove(int offset, IElementType<?> type,
+		// TODO extract to mapper API
+		private ModelOperation findModelPosition(int offset, IElementType<?> type,
 				IElementType<?> parentType) {
 			// try sibling after
 			final ILElement after = findElementAfter(offset, type);
 			if (after != null) {
 				final ILElement parent = after.getParent();
-				return new Move(parent, after);
+				return new ModelOperation(parent, after);
 			}
 			// try parent before, insert at the end
 			final ILElement parent = findElementBefore(offset, parentType);
 			if (parent != null) {
-				return new Move(parent, null);
+				return new ModelOperation(parent, null);
 			}
 			return null;
 		}
