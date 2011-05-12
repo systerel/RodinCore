@@ -120,18 +120,23 @@ public class Selections {
 		}
 
 		public boolean contains(int offset) {
-			for (SimpleSelection sel : selected) {
-				if (sel.contains(offset)) {
-					return true;
-				}
-			}
-			return false;
+			return indexOf(offset) >= 0;
 		}
 		
 		private int indexOf(ILElement element) {
 			for (int i = 0; i < selected.size(); i++) {
 				final SimpleSelection sel = selected.get(i);
 				if (sel.element.equals(element)) {
+					return i;
+				}
+			}
+			return -1;
+		}
+		
+		private int indexOf(int offset) {
+			for (int i = 0; i < selected.size(); i++) {
+				final SimpleSelection sel = selected.get(i);
+				if (sel.contains(offset)) {
 					return i;
 				}
 			}
@@ -148,7 +153,11 @@ public class Selections {
 		}
 		
 		public void toggle(ILElement element, Position position) {
-			final int index = indexOf(element);
+			int index = indexOf(element);
+			if (index < 0) {
+				// it could be a descendant of an already selected element
+				index = indexOf(position.getOffset());
+			}
 			if (index < 0) {
 				// FIXME preserve element order
 				selected.add(new SimpleSelection(element, position));
@@ -157,10 +166,9 @@ public class Selections {
 					applyBadSelectionEffect();
 				}
 			} else {
-				// FIXME position should match that of the selection
 				final boolean wasValid = isValidSelection(selected);
-				selected.remove(index);
-				effect.unselect(position);
+				final SimpleSelection removed = selected.remove(index);
+				effect.unselect(removed.position);
 				if (!wasValid && isValidSelection(selected)) {
 					applySelectEffect();
 				}
