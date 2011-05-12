@@ -32,6 +32,8 @@ import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
 import fr.systerel.editor.documentModel.DocumentMapper;
 import fr.systerel.editor.documentModel.EditorElement;
 import fr.systerel.editor.documentModel.Interval;
+import fr.systerel.editor.documentModel.ModelOperations.ModelPosition;
+import fr.systerel.editor.documentModel.ModelOperations.Move;
 import fr.systerel.editor.documentModel.RodinDocumentProvider;
 
 /**
@@ -43,72 +45,6 @@ public class DNDManager {
 
 	public static boolean DEBUG;
 
-	private static class ModelPosition {
-		private final ILElement targetParent;
-		private final ILElement nextSibling;
-
-		public ModelPosition(ILElement targetParent, ILElement nextSibling) {
-			this.targetParent = targetParent;
-			this.nextSibling = nextSibling;
-		}
-		
-	}
-	
-	private static abstract class ModelOperation {
-
-		protected final ModelPosition modelPos;
-		
-		public ModelOperation(ModelPosition modelPos) {
-			this.modelPos = modelPos;
-		}
-
-		public boolean perform(ILElement... elements) {
-			for (ILElement element : elements) {
-				if (element.isImplicit()) {
-					return false;
-				}
-				final boolean success = applyTo(element);
-				if (!success) {
-					return false;
-				}
-			}
-			return true;
-		}
-
-		protected abstract boolean applyTo(ILElement element);
-	}
-	
-	private static class Move extends ModelOperation {
-
-		public Move(ModelPosition modelPos) {
-			super(modelPos);
-		}
-
-		protected boolean applyTo(ILElement element) {
-			if(modelPos.targetParent.equals(element.getParent())) {
-				final int oldPos = modelPos.targetParent.getChildPosition(element);
-				final int newPos = computeNewPos(modelPos, oldPos);
-				modelPos.targetParent.moveChild(newPos, oldPos);
-			} else {
-				modelPos.targetParent.addChild(element, modelPos.nextSibling);
-			}
-			return true;
-		}
-		
-		private int computeNewPos(ModelPosition modelPos, int oldPos) {
-			if (modelPos.nextSibling == null) {
-				return modelPos.targetParent.getChildren().size() - 1;
-			} else {
-				final int siblingPos = modelPos.targetParent.getChildPosition(modelPos.nextSibling);
-				if (oldPos < siblingPos) {
-					return siblingPos - 1;
-				} else {
-					return siblingPos;
-				}
-			}
-		}
-	}
-	
 	private class Dragger extends DragSourceAdapter {
 		public void dragStart(DragSourceEvent e) {
 			e.doit = controller.getSelectedElement() != null;
