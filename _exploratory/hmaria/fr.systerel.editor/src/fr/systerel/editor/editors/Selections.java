@@ -11,6 +11,7 @@
 package fr.systerel.editor.editors;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.text.Position;
@@ -155,10 +156,12 @@ public class Selections {
 		public void toggle(ILElement element, Position position) {
 			int index = indexOf(element);
 			if (index < 0) {
-				// it could be a descendant of an already selected element
+				// a descendant of an already selected element unselects it
 				index = indexOf(position.getOffset());
 			}
 			if (index < 0) {
+				// an ancestor of an already selected element replaces it
+				removeContainedIn(position);
 				// FIXME preserve element order
 				selected.add(new SimpleSelection(element, position));
 				effect.select(position);
@@ -175,6 +178,18 @@ public class Selections {
 			}
 		}
 		
+		private void removeContainedIn(Position position) {
+			// not applying unselect effects because those of the containing
+			// position will apply
+			final Iterator<SimpleSelection> iter = selected.iterator();
+			while(iter.hasNext()) {
+				final SimpleSelection sel = iter.next();
+				if (position.includes(sel.position.offset)) {
+					iter.remove();
+				}
+			}
+		}
+
 		private void applySelectEffect() {
 			for (SimpleSelection sel : selected) {
 				effect.select(sel.position);
