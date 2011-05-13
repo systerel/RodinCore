@@ -178,14 +178,25 @@ public class Selections {
 		private void add(ILElement element, Position position) {
 			// an ancestor of an already selected element replaces it
 			removeContainedIn(position);
-			// FIXME preserve element order
-			selected.add(new SimpleSelection(element, position));
+			final int index = findInsertionIndex(position);
+			selected.add(index, new SimpleSelection(element, position));
 			effect.select(position);
 			if (!isValidSelection(selected)) {
 				applyBadSelectionEffect();
 			}
 		}
 		
+		private int findInsertionIndex(Position position) {
+			int i = 0;
+			for (; i < selected.size(); i++) {
+				final SimpleSelection sel = selected.get(i);
+				if (sel.position.offset > position.offset) {
+					break;
+				}
+			}
+			return i;
+		}
+
 		private void removeContainedIn(Position position) {
 			// not applying unselect effects because those of the containing
 			// position will apply
@@ -215,7 +226,7 @@ public class Selections {
 			final SimpleSelection first = selection.get(0);
 			final IInternalElementType<? extends IInternalElement> type = first.element
 					.getElementType();
-			for(int i=1;i<selection.size();i++) {
+			for (int i = 1; i < selection.size(); i++) {
 				final SimpleSelection sel = selection.get(i);
 				if (sel.element.getElementType() != type) {
 					return false;
