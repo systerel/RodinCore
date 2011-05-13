@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc;
 
+import static org.eventb.core.ast.Formula.BFALSE;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,6 +21,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IConvergenceElement;
+import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FreeIdentifier;
@@ -55,6 +58,9 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	
 	private List<IConcreteEventInfo> mergers;
 	private List<IConcreteEventInfo> splitters;
+
+	private final IRefinesMachine refinesMachine;
+
 	private boolean refined = false;
 	
 	/* (non-Javadoc)
@@ -109,7 +115,8 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 			IConvergenceElement.Convergence convergence,
 			FreeIdentifier[] idents, 
 			Predicate[] guards, 
-			Assignment[] actions) throws RodinDBException {
+			Assignment[] actions,
+			IRefinesMachine refinesMachine) throws RodinDBException {
 		super(convergence);
 		this.event = event;
 		this.label = label;
@@ -118,6 +125,7 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 		this.actions = Collections.unmodifiableList(Arrays.asList(actions));
 		this.mergers = new ArrayList<IConcreteEventInfo>(2);
 		this.splitters = new ArrayList<IConcreteEventInfo>(3);
+		this.refinesMachine = refinesMachine;
 	}
 
 	/* (non-Javadoc)
@@ -152,6 +160,11 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	}
 
 	@Override
+	public IRefinesMachine getRefinesMachine() {
+		return refinesMachine;
+	}
+
+	@Override
 	public List<IConcreteEventInfo> getMergers() {
 		return mergers;
 	}
@@ -169,6 +182,16 @@ public class AbstractEventInfo extends ConvergenceInfo implements IAbstractEvent
 	@Override
 	public boolean getRefined() {
 		return refined;
+	}
+
+	@Override
+	public boolean isClosed() throws CoreException {
+		for (Predicate guard : getGuards()) {
+			if (guard.getTag() == BFALSE) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 }

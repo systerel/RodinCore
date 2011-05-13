@@ -291,7 +291,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 				.getConvergence(), fetchEventParameters(event,
 				eventTypeEnvironment, factory), fetchEventGuards(event,
 				eventTypeEnvironment, factory), fetchEventActions(event,
-				eventTypeEnvironment, factory));
+				eventTypeEnvironment, factory), refinesMachine);
 
 		abstractEventTable.putAbstractEventInfo(abstractEventInfo);
 	}

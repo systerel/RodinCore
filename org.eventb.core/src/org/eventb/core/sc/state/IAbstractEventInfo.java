@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FreeIdentifier;
@@ -98,6 +99,14 @@ public interface IAbstractEventInfo extends ISCState, IConvergenceInfo,
 	List<Predicate> getGuards() throws CoreException;
 	
 	/**
+	 * Tells whether the corresponding event is closed, i.e., contains a guard
+	 * which is the predicate false (⊥).
+	 * 
+	 * @return whether the corresponding event is closed
+	 */
+	boolean isClosed() throws CoreException;
+
+	/**
 	 * Returns the array of parsed and type-checked assignments corresponding to the actions
 	 * of the corresponding event.
 	 * 
@@ -106,6 +115,14 @@ public interface IAbstractEventInfo extends ISCState, IConvergenceInfo,
 	 * of the corresponding event
 	 */
 	List<Assignment> getActions() throws CoreException;
+
+	/**
+	 * Returns the refines machine clause that links the concrete machine to the
+	 * abstract machine that contains the corresponding event.
+	 * 
+	 * @return the refines clause through which this event is introduced
+	 */
+	IRefinesMachine getRefinesMachine();
 	
 	/**
 	 * Returns the list events that are supposed to merge this abstract event with another.
@@ -136,4 +153,5 @@ public interface IAbstractEventInfo extends ISCState, IConvergenceInfo,
 	 * @since 2.0
 	 */
 	boolean getRefined();
+
 }

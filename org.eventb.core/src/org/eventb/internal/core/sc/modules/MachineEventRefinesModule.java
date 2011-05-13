@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 University of Southampton and others.
+ * Copyright (c) 2008, 2011 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,9 @@
  *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
+
+import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
+import static org.eventb.core.sc.GraphProblem.AbstractEventNotRefinedWarning;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -23,10 +26,7 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.ISCAction;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.LiteralPredicate;
-import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
@@ -352,30 +352,12 @@ public class MachineEventRefinesModule extends SCFilterModule {
 			throws CoreException {
 		for (final IAbstractEventInfo aInfo : abstractEventTable
 				.getAbstractEventInfos()) {
-			if (aInfo.getRefined()) {
-				continue;
-			}
-			if (!isClosed(aInfo, repository)) {
-				final String abstractLabel = aInfo.getEventLabel();
-				final IMachineRoot machineRoot = concreteEventTable
-						.getMachineRoot();
-				createProblemMarker(machineRoot,
-						GraphProblem.AbstractEventNotRefinedWarning,
-						abstractLabel);
+			if (!aInfo.getRefined() && !aInfo.isClosed()) {
+				createProblemMarker(aInfo.getRefinesMachine(),
+						TARGET_ATTRIBUTE, AbstractEventNotRefinedWarning,
+						aInfo.getEventLabel());
 			}
 		}
 	}
-	
-	private boolean isClosed(IAbstractEventInfo info,
-			ISCStateRepository repository) throws CoreException {
-		final LiteralPredicate bFalse = repository.getFormulaFactory()
-				.makeLiteralPredicate(Formula.BFALSE, null);
-		for (Predicate guard : info.getGuards()) {
-			if (guard.equals(bFalse)) {
-				return true;
-			}
-		}
-		return false;
-	}	
 
 }

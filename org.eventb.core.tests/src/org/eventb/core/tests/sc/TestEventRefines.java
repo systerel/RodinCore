@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,9 @@
  *     Systerel - added tests about abstract event not refined
  *******************************************************************************/
 package org.eventb.core.tests.sc;
+
+import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
+import static org.eventb.core.sc.GraphProblem.AbstractEventNotRefinedWarning;
 
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEvent;
@@ -1959,7 +1962,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		hasMarker(mac, null, GraphProblem.AbstractEventNotRefinedWarning, "evt");
+		hasMarker(mac.getRefinesClauses()[0], TARGET_ATTRIBUTE,
+				AbstractEventNotRefinedWarning, "evt");
 	}
 
 	/*
@@ -1983,7 +1987,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		hasNotMarker(mac, GraphProblem.AbstractEventNotRefinedWarning);
+		hasNotMarker(mac.getRefinesClauses()[0], AbstractEventNotRefinedWarning);
 	}
 
 }
