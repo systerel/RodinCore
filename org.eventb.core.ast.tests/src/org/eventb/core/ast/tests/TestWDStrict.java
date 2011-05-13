@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -298,6 +298,14 @@ public class TestWDStrict extends AbstractTests {
 
 	private static void assertNotWDStrict(Formula<?> formula) {
 		assertFalse(formula.isWDStrict());
+	}
+
+	private static void assertWDStrict(Formula<?> formula, String posImage) {
+		assertTrue(formula.isWDStrict(makePosition(posImage)));
+	}
+
+	private static void assertNotWDStrict(Formula<?> formula, String posImage) {
+		assertFalse(formula.isWDStrict(makePosition(posImage)));
 	}
 
 	/**
@@ -623,23 +631,23 @@ public class TestWDStrict extends AbstractTests {
 	 */
 	public void testWDStrictPosition() {
 		final Predicate P = mUnaryPredicate(NOT, mBinaryPredicate(LIMP, T, T));
-		assertTrue(P.isWDStrict(makePosition("")));
-		assertTrue(P.isWDStrict(makePosition("0")));
-		assertFalse(P.isWDStrict(makePosition("0.0")));
-		assertFalse(P.isWDStrict(makePosition("0.1")));
-		assertFalse(P.isWDStrict(makePosition("1")));
+		assertWDStrict(P, "");
+		assertWDStrict(P, "0");
+		assertNotWDStrict(P, "0.0");
+		assertNotWDStrict(P, "0.1");
+		assertNotWDStrict(P, "1");
 
 		final Predicate Q = mUnaryPredicate(NOT, mBinaryPredicate(LEQV, T, T));
-		assertTrue(Q.isWDStrict(makePosition("")));
-		assertTrue(Q.isWDStrict(makePosition("0")));
-		assertTrue(Q.isWDStrict(makePosition("0.0")));
-		assertTrue(Q.isWDStrict(makePosition("0.1")));
-		assertFalse(Q.isWDStrict(makePosition("0.0.0")));
+		assertWDStrict(Q, "");
+		assertWDStrict(Q, "0");
+		assertWDStrict(Q, "0.0");
+		assertWDStrict(Q, "0.1");
+		assertNotWDStrict(Q, "0.0.0");
 
 		final Predicate R = mBinaryPredicate(LIMP, T, T);
-		assertTrue(R.isWDStrict(makePosition("")));
-		assertFalse(R.isWDStrict(makePosition("0")));
-		assertFalse(R.isWDStrict(makePosition("1")));
+		assertWDStrict(R, "");
+		assertNotWDStrict(R, "0");
+		assertNotWDStrict(R, "1");
 	}
 
 }
