@@ -10,6 +10,8 @@
  *******************************************************************************/
 package fr.systerel.editor.documentModel;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.Assert;
 import org.rodinp.core.emf.api.itf.ILElement;
 
@@ -51,18 +53,19 @@ public class ModelOperations {
 
 	public static abstract class ModelOperation {
 
-		public final ModelPosition modelPos;
+		private final ModelPosition pos;
 
 		public ModelOperation(ModelPosition modelPos) {
-			this.modelPos = modelPos;
+			this.pos = modelPos;
 		}
 
-		public boolean perform(ILElement... elements) {
-			for (ILElement element : elements) {
+		public boolean perform(List<ILElement> elems) {
+			final ModelPosition correctedPos = correctPos(elems);
+			for (ILElement element : elems) {
 				if (element.isImplicit()) {
 					return false;
 				}
-				final boolean success = applyTo(element);
+				final boolean success = applyTo(element, correctedPos);
 				if (!success) {
 					return false;
 				}
@@ -70,7 +73,25 @@ public class ModelOperations {
 			return true;
 		}
 
-		protected abstract boolean applyTo(ILElement element);
+		// skip selected siblings
+		private ModelPosition correctPos(List<ILElement> elems) {
+			if (pos.nextSibling == null) return pos;
+			final List<? extends ILElement> siblings = pos.targetParent.getChildren();
+			
+			int siblingPos = pos.targetParent.getChildPosition(pos.nextSibling);
+			ILElement nextSibling = pos.nextSibling; // = siblings.get(siblingPos)
+			while(elems.contains(nextSibling)) {
+				siblingPos++;
+				if (siblingPos >= siblings.size()) {
+					nextSibling = null;
+					break;
+				}
+				nextSibling = siblings.get(siblingPos);
+			}
+			return new ModelPosition(pos.targetParent, nextSibling);
+		}
+
+		protected abstract boolean applyTo(ILElement element, ModelPosition pos);
 	}
 
 	public static class Move extends ModelOperation {
@@ -79,18 +100,20 @@ public class ModelOperations {
 			super(modelPos);
 		}
 
-		protected boolean applyTo(ILElement element) {
-			if (modelPos.targetParent.equals(element.getParent())) {
-				final int oldPos = modelPos.targetParent
+		protected boolean applyTo(ILElement element, ModelPosition pos) {
+			if (pos.targetParent.equals(element.getParent())) {
+				final int oldPos = pos.targetParent
 						.getChildPosition(element);
-				final int newPos = computeNewPos(modelPos, oldPos);
-				modelPos.targetParent.moveChild(newPos, oldPos);
+				final int newPos = computeNewPos(pos, oldPos);
+				pos.targetParent.moveChild(newPos, oldPos);
 			} else {
-				modelPos.targetParent.addChild(element, modelPos.nextSibling);
+				pos.targetParent.addChild(element, pos.nextSibling);
 			}
 			return true;
 		}
 
+		// FIXME take other moved children into account
+		// potentially, the next sibling is also moving
 		private int computeNewPos(ModelPosition modelPos, int oldPos) {
 			if (modelPos.nextSibling == null) {
 				return modelPos.targetParent.getChildren().size() - 1;

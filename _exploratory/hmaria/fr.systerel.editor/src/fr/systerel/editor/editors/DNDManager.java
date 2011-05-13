@@ -10,7 +10,9 @@
  *******************************************************************************/
 package fr.systerel.editor.editors;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.DND;
@@ -24,7 +26,6 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Point;
 import org.eventb.internal.ui.RodinHandleTransfer;
 import org.rodinp.core.IElementType;
-import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
@@ -109,22 +110,21 @@ public class DNDManager {
 					siblingType, parentType);
 			if (pos == null)
 				return;
-			final ILElement[] elems = toLElements(elements);
+			final List<ILElement> elems = toLElements(elements);
 			if (elems == null)
 				return;
 			new Move(pos).perform(elems);
 			documentProvider.doSynchronize(mapper.getRoot(), null);
 		}
 
-		private ILElement[] toLElements(IRodinElement[] elements) {
-			final ILElement[] result = new ILElement[elements.length];
-			for (int i = 0; i < elements.length; i++) {
-				final IRodinElement element = elements[i];
+		private List<ILElement> toLElements(IRodinElement[] elements) {
+			final List<ILElement> result = new ArrayList<ILElement>(elements.length);
+			for (IRodinElement element : elements) {
 				final ILElement lElement = SynchroUtils.findElement(element,
 						mapper.getRoot());
 				if (lElement == null)
 					return null;
-				result[i] = lElement;
+				result.add(lElement);
 			}
 			return result;
 		}
