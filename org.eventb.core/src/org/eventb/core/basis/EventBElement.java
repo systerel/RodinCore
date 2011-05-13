@@ -16,6 +16,7 @@ package org.eventb.core.basis;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IConvergenceElement;
+import org.eventb.core.IEventBProject;
 import org.eventb.internal.core.EventBProject;
 import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
@@ -318,7 +319,7 @@ public abstract class EventBElement extends InternalElement {
 		}
 	}
 
-	public final EventBProject getEventBProject() {
+	public final IEventBProject getEventBProject() {
 		return new EventBProject(getRodinProject());
 	}
 
