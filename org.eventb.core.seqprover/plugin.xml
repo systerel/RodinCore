@@ -609,10 +609,10 @@
             name="%eqvGoalTacName">
       </autoTactic>
       <autoTactic
-            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$NnfRewritesAutoTac"
-            description="%NnfTacDesc"
-            id="NnfTac"
-            name="%NnfTacName">
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$NNFRewritesAutoTac"
+            description="%NNFTacDesc"
+            id="NNFTac"
+            name="%NNFTacName">
       </autoTactic>
       <autoTactic
             class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$GenMPTac"

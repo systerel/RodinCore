@@ -30,7 +30,7 @@ import org.junit.Test;
  */
 public class NnfRewritesAutoTacTests {
 
-	private static final ITactic tac = new AutoTactics.NnfRewritesAutoTac();
+	private static final ITactic tac = new AutoTactics.NNFRewritesAutoTac();
 	private static final String TAC_ID = "org.eventb.core.seqprover.NnfTac";
 
 	/**

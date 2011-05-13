@@ -17,7 +17,6 @@
  ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
-import static org.eventb.core.seqprover.eventbExtensions.Tactics.removeNeg;
 import static org.eventb.core.seqprover.tactics.BasicTactics.composeOnAllPending;
 import static org.eventb.core.seqprover.tactics.BasicTactics.composeUntilSuccess;
 import static org.eventb.core.seqprover.tactics.BasicTactics.loopOnAllPending;
@@ -28,12 +27,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.BinaryPredicate;
-import org.eventb.core.ast.DefaultInspector;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
@@ -63,6 +60,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewritesL2;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.InDomGoalManager;
+import org.eventb.internal.core.seqprover.eventbExtensions.tactics.NNFRewritesOnceTac;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.TacticsLib;
 
 
@@ -1196,82 +1194,20 @@ public class AutoTactics {
 		}
 
 	}
-	
-	/**
-	 * The automatic tactic "Negation Normal Form" to be applied once on a
-	 * hypothesis or a goal.
-	 * 
-	 * @since 2.2
-	 */
-	public static class NnfRewritesOnceTac implements ITactic {
-
-		@Override
-		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			final IProverSequent sequent = ptNode.getSequent();
-			for (Predicate hyp : sequent.visibleHypIterable()) {
-				final IPosition posHyp = nnfGetPosition(hyp);
-				if (posHyp != null) {
-					return removeNeg(hyp, posHyp).apply(ptNode, pm);
-				}
-			}
-			final IPosition posGoal = nnfGetPosition(sequent.goal());
-			if (posGoal != null) {
-				return removeNeg(null, posGoal).apply(ptNode, pm);
-			}
-			return "Tactic unapplicable";
-		}
-
-	}
 
 	/**
-	 * An automatic tactic to apply "Negation Normal Form" tactic on hypothesis 
-	 * and goal, and looping on all pending nodes.
+	 * Puts the sequents of all pending nodes in Negation Normal Form.
 	 * 
+	 * @author Emmanuel Billaud
 	 * @since 2.2
 	 */
-	public static class NnfRewritesAutoTac extends AbsractLazilyConstrTactic {
+	public static class NNFRewritesAutoTac extends AbsractLazilyConstrTactic {
 
 		@Override
 		protected ITactic getSingInstance() {
-			return BasicTactics.loopOnAllPending(new NnfRewritesOnceTac());
-		}	
-
-	}
-
-	/**
-	 * @since 2.2
-	 */
-	public static IPosition nnfGetPosition (Predicate pred){
-		final List<IPosition> listPos = pred.inspect(new DefaultInspector<IPosition>() {
-			@Override
-			public void inspect(UnaryPredicate predicate,
-					IAccumulator<IPosition> accumulator) {
-				if (predicate.getTag() == Predicate.NOT) {
-					final Predicate child = predicate.getChild();
-					if (Lib.isNeg(child))
-						positionFound(accumulator);
-					if (Lib.isImp(child))
-						positionFound(accumulator);
-					if (Lib.isExQuant(child))
-						positionFound(accumulator);
-					if (Lib.isUnivQuant(child))
-						positionFound(accumulator);
-					if (Lib.isConj(child))
-						positionFound(accumulator);
-					if (Lib.isDisj(child))
-						positionFound(accumulator);
-				}
-			}
-
-			private void positionFound(IAccumulator<IPosition> accumulator) {
-					accumulator.skipAll();
-					accumulator.add(accumulator.getCurrentPosition());
-			}
-		});
-		if (listPos.isEmpty()){
-			return null;
+			return BasicTactics.loopOnAllPending(new NNFRewritesOnceTac());
 		}
-		return listPos.get(0);
+
 	}
 
 	//*************************************************
