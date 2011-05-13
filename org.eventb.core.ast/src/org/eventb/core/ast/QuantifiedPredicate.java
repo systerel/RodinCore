@@ -496,7 +496,9 @@ public class QuantifiedPredicate extends Predicate {
 			}
 			acc.nextChild();
 		}
-		pred.inspect(acc);
+		if (!acc.allSkipped()) {
+			pred.inspect(acc);
+		}
 		acc.leaveChildren();
 	}
 

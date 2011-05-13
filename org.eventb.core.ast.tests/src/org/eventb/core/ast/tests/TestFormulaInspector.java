@@ -372,6 +372,8 @@ public class TestFormulaInspector extends TestCase {
 	private static Predicate pD = mLiteralPredicate();
 
 	private static BoundIdentDecl b_x = mBoundIdentDecl("x");
+	private static BoundIdentDecl b_y = mBoundIdentDecl("y");
+
 	public static final FormulaFactory ff = FormulaFactory.getDefault();
 	protected static final IntegerLiteral ONE = ff.makeIntegerLiteral(BigInteger.ONE, null);
 
@@ -589,6 +591,7 @@ public class TestFormulaInspector extends TestCase {
 	 */
 	public void testRelationalPredicate() throws Exception {
 		final Predicate predicate = mRelationalPredicate(eA, eB);
+		assertTrace(predicate, "");
 		assertTrace(predicate, "0");
 	}
 
@@ -599,6 +602,7 @@ public class TestFormulaInspector extends TestCase {
 		final Predicate predicate = PRIME_FAC.makeExtendedPredicate(EXT_PRIME,
 				Arrays.<Expression> asList(ONE),
 				Collections.<Predicate> emptySet(), null);
+		assertTrace(predicate, "");
 		assertTrace(predicate, "0");
 	}
 
@@ -611,6 +615,7 @@ public class TestFormulaInspector extends TestCase {
 						FRID_A,
 						FRID_B),
 				NO_PREDICATE, null);
+		assertTrace(expression, "");
 		assertTrace(expression, "0");
 	}
 
@@ -634,17 +639,22 @@ public class TestFormulaInspector extends TestCase {
 	 * Ensures that skip methods work as expected on quantified predicates
 	 */
 	public void testQuantifiedPredicate() throws Exception {
-		final QuantifiedPredicate predicate = mQuantifiedPredicate(mList(b_x),
-				pA);
+		final QuantifiedPredicate predicate = mQuantifiedPredicate(
+				mList(b_x, b_y), pA);
 		assertTrace(predicate, "");
+		assertTrace(predicate, "0");
 	}
 
 	/**
 	 * Ensures that skip methods work as expected on quantified expressions
 	 */
 	public void testQuantifiedExpression() throws Exception {
-		final Expression expression = mQuantifiedExpression(mList(b_x), pA, eA);
+		final Expression expression = mQuantifiedExpression(mList(b_x, b_y),
+				pA, eA);
 		assertTrace(expression, "");
+		assertTrace(expression, "0");
+		assertTrace(expression, "1");
+		assertTrace(expression, "2");
 	}
 
 	/**
@@ -660,6 +670,7 @@ public class TestFormulaInspector extends TestCase {
 	 */
 	public void testMultiplePredicate() throws Exception {
 		final MultiplePredicate predicate = mMultiplePredicate(eA, eB, eC);
+		assertTrace(predicate, "");
 		assertTrace(predicate, "1");
 	}
 
@@ -667,7 +678,14 @@ public class TestFormulaInspector extends TestCase {
 	 * Ensures that skip methods work as expected on literal predicates
 	 */
 	public void testLiteralPredicate() throws Exception {
-		assertTrace(pA, "");
+		final Predicate predicate = pA;
+		assertTrace(predicate, "");
+		assertSkipChildrenOnce(predicate);
+	}
+
+	private void assertSkipChildrenOnce(final Predicate predicate) {
+		assertTrace(mBinaryPredicate(predicate, mRelationalPredicate(eA, eB)),
+				"0");
 	}
 
 	/**

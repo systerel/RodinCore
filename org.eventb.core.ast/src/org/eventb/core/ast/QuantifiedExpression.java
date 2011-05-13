@@ -752,12 +752,13 @@ public class QuantifiedExpression extends Expression {
 			}
 			acc.nextChild();
 		}
-		pred.inspect(acc);
-		if (acc.allSkipped()) {
-			return;
+		if (!acc.allSkipped()) {
+			pred.inspect(acc);
 		}
 		acc.nextChild();
-		expr.inspect(acc);
+		if (!acc.allSkipped()) {
+			expr.inspect(acc);
+		}
 		acc.leaveChildren();
 	}
 	

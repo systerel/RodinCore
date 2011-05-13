@@ -223,6 +223,7 @@ public class LiteralPredicate extends Predicate {
 	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		acc.inspect(this);
+		acc.childrenSkipped();
 	}
 
 	@Override
