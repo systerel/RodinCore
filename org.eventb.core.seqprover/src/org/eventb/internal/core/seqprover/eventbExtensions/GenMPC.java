@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import static org.eventb.core.ast.Formula.BFALSE;
+import static org.eventb.core.ast.Formula.BTRUE;
+import static org.eventb.core.ast.Formula.NOT;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,7 +28,6 @@ import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.DefaultInspector;
 import org.eventb.core.ast.ExtendedPredicate;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
@@ -52,70 +55,79 @@ public class GenMPC {
 	 * 
 	 * @param seq
 	 *            the sequent from whom the hypotheses are taken
-	 * @return a set of the hypoteses of the sequent (no negative predicates
+	 * @return a set of the hypotheses of the sequent (no negative predicates
 	 *         allowed)
 	 */
 	public static Set<Predicate> createHypSet(IProverSequent seq) {
 		Set<Predicate> hypSet = new HashSet<Predicate>();
 		for (Predicate hyp : seq.hypIterable()) {
-			if (hyp != null) {
-				if (hyp.getTag() == Predicate.NOT) {
-					final UnaryPredicate not = (UnaryPredicate) hyp;
-					hypSet.add(not.getChild());
-				} else {
-					hypSet.add(hyp);
-				}
-			}
+			addToSet(hypSet, computePred(hyp));
 		}
 		return hypSet;
 	}
 
 	/**
-	 * Returns a map of (Predicate ↦ List of IPositions) where Predicate is a
-	 * sub-predicate contained both in <code>goal</code> and <code>hypSet</code>
-	 * and the List of IPositions is a list of positions where Predicate occurs
-	 * in <code>goal</code>.
+	 * Add to a set a predicate if and only if it is different from
+	 * <code>⊤</code> and <code>⊥</code>
 	 * 
-	 * @param goal
-	 *            the goal analyzed
 	 * @param hypSet
-	 *            the set reference of hypotheses
-	 * @return sub-predicates contained both in <code>goal</code> and
-	 *         <code>hypSet</code> mapped to their position of occurrence in
-	 *         <code>goal</code>
+	 *            the set where we want to add <code>pred</code>
+	 * @param pred
+	 *            the predicate possibly added to <code>hypSet</code>
 	 */
-	public static Map<Predicate, List<IPosition>> analyzeGoal(Predicate goal,
-			Set<Predicate> hypSet) {
-		Map<Predicate, List<IPosition>> map = new HashMap<Predicate, List<IPosition>>();
-		analyzeSubPred(goal, hypSet, map);
-		return map;
+	private static void addToSet(Set<Predicate> hypSet, Predicate pred) {
+		if (!isTrueOrFalsePred(pred)) {
+			hypSet.add(pred);
+		}
+	}
+
+	/**
+	 * Compute the predicate to stored in the set <code>hypSet</code>.
+	 * 
+	 * @param hyp
+	 *            the hypothesis parsed (should not be <code>⊤</code> or
+	 *            <code>⊥</code>).
+	 * @return <code>hyp</code> if it is not a negation, its child else.
+	 */
+	private static Predicate computePred(Predicate hyp) {
+		if (hyp.getTag() == NOT) {
+			return ((UnaryPredicate) hyp).getChild();
+		} else {
+			return hyp;
+		}
+	}
+
+	/**
+	 * Returns <code>true</code> if and only if the predicate <code>pred</code>
+	 * is equal to <code>⊤</code> or <code>⊥</code>.
+	 * 
+	 * @param pred
+	 *            the predicate parsed.
+	 * @return <code>true</code> if and only if the predicate <code>pred</code>
+	 *         is equal to <code>⊤</code> or <code>⊥</code>.
+	 */
+	private static boolean isTrueOrFalsePred(Predicate pred) {
+		return pred.getTag() == BFALSE || pred.getTag() == BTRUE;
 	}
 
 	/**
 	 * Returns a map of (Predicate ↦ List of IPositions) where Predicate is a
-	 * sub-predicate contained both in <code>hyp</code> and
+	 * sub-predicate contained both in <code>pred</code> and
 	 * <code>hypSet\{hyp}</code> and the List of IPositions is a list of
-	 * positions where Predicate occurs in <code>hyp</code>.
+	 * positions where Predicate occurs in <code>pred</code>.
 	 * 
-	 * @param hyp
-	 *            the hypothesis analyzed
+	 * @param pred
+	 *            the predicate analyzed (should be either a hypothesis or a
+	 *            goal)
 	 * @param hypSet
 	 *            the set reference of hypotheses
-	 * @return a set of predicates contained both in <code>hyp</code> and
+	 * @return a set of predicates contained both in <code>pred</code> and
 	 *         <code>hypSet</code>
 	 */
-	public static Map<Predicate, List<IPosition>> analyzeHyp(Predicate hyp,
+	public static Map<Predicate, List<IPosition>> analyzePred(Predicate pred,
 			Set<Predicate> hypSet) {
 		Map<Predicate, List<IPosition>> map = new HashMap<Predicate, List<IPosition>>();
-		final Predicate pred;
-		if (hyp.getTag() == Predicate.NOT) {
-			UnaryPredicate not = (UnaryPredicate) hyp;
-			pred = not.getChild();
-		} else
-			pred = hyp;
-		hypSet.remove(pred);
-		analyzeSubPred(hyp, hypSet, map);
-		hypSet.add(pred);
+		analyzeSubPred(pred, hypSet, map);
 		return map;
 	}
 
@@ -130,10 +142,10 @@ public class GenMPC {
 	 * @param hypSet
 	 *            the set reference of hypotheses
 	 * @param map
-	 *            the map (predicate contained both in <code>origin</code> and 
+	 *            the map (predicate contained both in <code>origin</code> and
 	 *            <code>hypSet</code> ↦ its position in <code>origin</code>)
 	 */
-	public static void analyzeSubPred(Predicate origin,
+	public static void analyzeSubPred(final Predicate origin,
 			final Set<Predicate> hypSet,
 			final Map<Predicate, List<IPosition>> map) {
 
@@ -144,9 +156,14 @@ public class GenMPC {
 					final Set<Predicate> hypSet, Predicate predicate,
 					IAccumulator<Predicate> accumulator) {
 
+				if (isTrueOrFalsePred(predicate)
+						|| predicate == computePred(origin)) {
+					return;
+				}
 				if (hypSet.contains(predicate)) {
-					if (!map.containsKey(predicate))
+					if (!map.containsKey(predicate)) {
 						map.put(predicate, new ArrayList<IPosition>());
+					}
 					map.get(predicate).add(accumulator.getCurrentPosition());
 					accumulator.skipChildren();
 				}
@@ -217,10 +234,10 @@ public class GenMPC {
 
 	/**
 	 * Returns the goal re-written using the generalized Modus Ponens and add in
-	 * neededHyps all the hypoteses needed to achieve it.
+	 * neededHyps all the hypotheses needed to achieve it.
 	 * 
 	 * @param goal
-	 *            the re-written goal
+	 *            the goal to be re-written
 	 * @param seq
 	 *            the sequent containing the goal
 	 * @param modifGoalMap
@@ -229,7 +246,7 @@ public class GenMPC {
 	 * @param neededHyps
 	 *            the set of all the needed hypotheses to rewrite the goal
 	 *            (computed by this method, it should be an empty set)
-	 * @return
+	 * @return the goal re-written
 	 */
 	public static Predicate rewriteGoal(Predicate goal, IProverSequent seq,
 			Map<Predicate, List<IPosition>> modifGoalMap,
@@ -239,8 +256,7 @@ public class GenMPC {
 		Predicate rewriteGoal = goal;
 		for (Entry<Predicate, List<IPosition>> entry : modifGoalMap.entrySet()) {
 			final Predicate value = entry.getKey();
-			final Predicate negValue = ff.makeUnaryPredicate(Formula.NOT,
-					value, null);
+			final Predicate negValue = ff.makeUnaryPredicate(NOT, value, null);
 			final Predicate substitute;
 			if (seq.containsHypothesis(value)) {
 				substitute = lib.True();
@@ -290,8 +306,8 @@ public class GenMPC {
 			Predicate rewriteHyp = hyp;
 			for (Entry<Predicate, List<IPosition>> entryPos : maps.entrySet()) {
 				final Predicate pred = entryPos.getKey();
-				final Predicate negPred = ff.makeUnaryPredicate(Formula.NOT,
-						pred, null);
+				final Predicate negPred = ff
+						.makeUnaryPredicate(NOT, pred, null);
 				final Predicate substitute;
 				if (seq.containsHypothesis(pred)) {
 					sourceHyps.add(pred);
@@ -306,10 +322,11 @@ public class GenMPC {
 					rewriteHyp = Rewrite(rewriteHyp, pred, pos, substitute, ff);
 				}
 			}
-			if (rewriteHyp != hyp)
+			if (rewriteHyp != hyp) {
 				inferredHyps = Collections.singleton(rewriteHyp);
-			else
+			} else {
 				continue;
+			}
 			sourceHyps.add(hyp);
 			hypActions.add(ProverFactory.makeForwardInfHypAction(sourceHyps,
 					inferredHyps));
@@ -339,8 +356,9 @@ public class GenMPC {
 	 */
 	private static Predicate Rewrite(Predicate pred, Predicate replaced,
 			IPosition pos, Predicate substitute, FormulaFactory ff) {
-		if (!pred.getSubFormula(pos).equals(replaced))
+		if (!pred.getSubFormula(pos).equals(replaced)) {
 			return pred;
+		}
 		return pred.rewriteSubFormula(pos, substitute, ff);
 	}
 

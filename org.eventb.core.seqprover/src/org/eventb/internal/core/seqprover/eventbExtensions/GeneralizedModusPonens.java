@@ -49,11 +49,11 @@ public class GeneralizedModusPonens extends EmptyInputReasoner {
 
 		hypSet = GenMPC.createHypSet(seq);
 		final Predicate goal = seq.goal();
-		Map<Predicate, List<IPosition>> m = GenMPC.analyzeGoal(goal, hypSet);
+		Map<Predicate, List<IPosition>> m = GenMPC.analyzePred(goal, hypSet);
 		if (m != null)
 			modifGoalMap = m;
 		for (Predicate hyp : seq.visibleHypIterable()) {
-			m = GenMPC.analyzeHyp(hyp, hypSet);
+			m = GenMPC.analyzePred(hyp, hypSet);
 			if (!m.isEmpty())
 				modifHypMap.put(hyp, m);
 		}
