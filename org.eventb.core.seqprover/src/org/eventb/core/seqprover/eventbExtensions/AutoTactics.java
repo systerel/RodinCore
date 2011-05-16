@@ -18,6 +18,7 @@
 package org.eventb.core.seqprover.eventbExtensions;
 
 import static org.eventb.core.seqprover.tactics.BasicTactics.composeOnAllPending;
+import static org.eventb.core.seqprover.tactics.BasicTactics.composeUntilFailure;
 import static org.eventb.core.seqprover.tactics.BasicTactics.composeUntilSuccess;
 import static org.eventb.core.seqprover.tactics.BasicTactics.loopOnAllPending;
 
@@ -59,6 +60,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.NegEnum;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewritesL2;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.tactics.GoalDisjToImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.InDomGoalManager;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.NNFRewritesOnceTac;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.TacticsLib;
@@ -1035,8 +1037,21 @@ public class AutoTactics {
 		}
 		
 	}
-	
-	
+
+	/**
+	 * Remove disjunction in the goal's root only.
+	 * 
+	 * @author Emmanuel Billaud
+	 * @since 2.2
+	 */
+	public static class GoalDisjSTac extends AbsractLazilyConstrTactic {
+
+		@Override
+		protected ITactic getSingInstance() {
+			return loopOnAllPending(composeUntilFailure(new GoalDisjToImpl(), new ImpGoalTac()));
+		}
+	}
+
 	//*************************************************
 	//
 	//				Splitting Auto tactics

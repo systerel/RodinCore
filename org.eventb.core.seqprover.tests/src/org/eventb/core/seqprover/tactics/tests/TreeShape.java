@@ -38,9 +38,11 @@ import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunImageGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
+import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
 import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqvRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimplifies;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveInclusion;
@@ -454,6 +456,50 @@ public abstract class TreeShape {
 
 	}
 
+	private static class ImpIShape extends TreeShape {
+
+		public ImpIShape(TreeShape[] expChildren) {
+			super(expChildren);
+		}
+
+		@Override
+		protected void checkInput(IReasonerInput input) {
+			assertEquals(input.getClass(), EmptyInput.class);
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return ImpI.REASONER_ID;
+		}
+
+	}
+
+	private static class DTIShape extends TreeShape {
+
+		private final Predicate predicate;
+		private final String position;
+
+		public DTIShape(Predicate predicate, String position,
+				TreeShape[] expChildren) {
+			super(expChildren);
+			this.predicate = predicate;
+			this.position = position;
+		}
+
+		@Override
+		protected void checkInput(IReasonerInput input) {
+			final AbstractManualRewrites.Input inp = ((AbstractManualRewrites.Input) input);
+			assertEquals(position, inp.getPosition().toString());
+			assertEquals(predicate, inp.getPred());
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return DisjunctionToImplicationRewrites.REASONER_ID;
+		}
+
+	}
+
 	public static final TreeShape empty = new EmptyShape();
 
 	/**
@@ -554,6 +600,18 @@ public abstract class TreeShape {
 
 	public static TreeShape rn(Predicate hyp, String pos, TreeShape... children) {
 		return new RnShape(hyp, pos, children);
+	}
+
+	public static TreeShape impI(TreeShape... children) {
+		return new ImpIShape(children);
+	}
+
+	public static TreeShape dti(Predicate hyp, String pos, TreeShape... children) {
+		return new DTIShape(hyp, pos, children);
+	}
+
+	public static TreeShape dti(String pos, TreeShape... children) {
+		return new DTIShape(null, pos, children);
 	}
 
 	protected final TreeShape[] expChildren;
