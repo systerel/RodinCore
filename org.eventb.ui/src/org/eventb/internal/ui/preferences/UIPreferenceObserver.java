@@ -20,6 +20,11 @@ import java.util.Map;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
@@ -150,10 +155,25 @@ public class UIPreferenceObserver implements IPropertyChangeListener {
 						PreferenceConstants.P_HIGHLIGHT_IN_PROVERUI) {
 					@Override
 					protected void doUpdate(Boolean newValue) {
-						ProverUI.getHighlighter().activateHighlight(
-								newValue.booleanValue());
+						updateProvingEditors(newValue);
 					}
 				});
+	}
+	
+	static void updateProvingEditors(boolean activation) {
+		final IWorkbenchWindow[] wws = PlatformUI.getWorkbench()
+				.getWorkbenchWindows();
+		for (IWorkbenchWindow w : wws) {
+			for (IWorkbenchPage p : w.getPages()) {
+				for (IEditorReference r : p.getEditorReferences()) {
+					final IEditorPart editor = r.getEditor(false);
+					if (editor instanceof ProverUI) {
+						((ProverUI) editor).getHighlighter().activateHighlight(
+								activation);
+					}
+				}
+			}
+		}
 	}
 
 	/**

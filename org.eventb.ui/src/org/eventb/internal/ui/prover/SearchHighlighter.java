@@ -25,6 +25,8 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eventb.internal.ui.EventBSharedColor;
+import org.eventb.internal.ui.preferences.EventBPreferenceStore;
+import org.eventb.internal.ui.preferences.PreferenceConstants;
 
 /**
  * Class able to display occurences of a substring in proverUI views.
@@ -235,25 +237,18 @@ public class SearchHighlighter {
 
 	}
 
-	private static SearchHighlighter INSTANCE;
-
 	private Set<HighlightData> toHighlight;
 
 	private String toSearch;
 	
 	private boolean highlight;
 
-	private SearchHighlighter() {
+	SearchHighlighter() {
 		// private constructor : SINGLETON
 		toHighlight = new LinkedHashSet<HighlightData>();
-		highlight = false;
+		highlight = EventBPreferenceStore.getPreferenceStore().getBoolean(
+				PreferenceConstants.P_HIGHLIGHT_IN_PROVERUI);
 		setToSearch("");
-	}
-
-	public static SearchHighlighter newHighlighter() {
-		if (INSTANCE == null)
-			INSTANCE = new SearchHighlighter();
-		return INSTANCE;
 	}
 
 	public void highlight(StyledText text) {

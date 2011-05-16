@@ -14,9 +14,13 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
+import org.eventb.internal.ui.prover.ProverUI;
+import org.eventb.ui.EventBUIPlugin;
 
 
 /**
@@ -30,6 +34,14 @@ public class ToggleHightlighting extends AbstractHandler {
 	    boolean oldValue = HandlerUtil.toggleCommandState(command);
 		EventBPreferenceStore.getPreferenceStore().setValue(
 				PreferenceConstants.P_HIGHLIGHT_IN_PROVERUI, !oldValue);
+		final IWorkbenchPage page = EventBUIPlugin.getActivePage();
+		if (page != null) {
+			final IEditorPart activeEditor = page.getActiveEditor();
+			if (activeEditor instanceof ProverUI) {
+				final ProverUI pu = ((ProverUI) activeEditor);
+				pu.getHighlighter().activateHighlight(!oldValue);
+			}
+		}
 		return null;
 	}
 

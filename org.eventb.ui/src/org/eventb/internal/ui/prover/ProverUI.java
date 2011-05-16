@@ -14,7 +14,6 @@
  ******************************************************************************/
 package org.eventb.internal.ui.prover;
 
-import static org.eventb.internal.ui.prover.SearchHighlighter.newHighlighter;
 import static org.eventb.internal.ui.utils.Messages.dialogs_prover_error_creating_page;
 import static org.eventb.internal.ui.utils.Messages.error_cannot_save_as_message;
 import static org.eventb.internal.ui.utils.Messages.error_unsupported_action;
@@ -106,7 +105,7 @@ public class ProverUI extends EventBFormEditor implements
 	// The associated UserSupport
 	IUserSupport userSupport;
 	
-	private static SearchHighlighter highlighter = newHighlighter();
+	private SearchHighlighter highlighter = new SearchHighlighter();
 
 	// The associated Rodin file handle
 	IRodinFile psFile = null;
@@ -556,7 +555,8 @@ public class ProverUI extends EventBFormEditor implements
 		if (ProverUIUtils.DEBUG)
 			ProverUIUtils.debug("End User Support Manager Changed");
 	}
-
+	
+	
 	Control getActiveControl() {
 		int activePage = getActivePage();
 		if (activePage == -1)
@@ -580,7 +580,7 @@ public class ProverUI extends EventBFormEditor implements
 		return fProofControlPage;
 	}
 
-	public static SearchHighlighter getHighlighter() {
+	public SearchHighlighter getHighlighter() {
 		return highlighter;
 	}
 

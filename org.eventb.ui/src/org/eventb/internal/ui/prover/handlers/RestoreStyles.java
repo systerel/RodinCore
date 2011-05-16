@@ -13,8 +13,10 @@ package org.eventb.internal.ui.prover.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eventb.internal.ui.prover.ProverUI;
+import org.eventb.ui.EventBUIPlugin;
 
 /**
  * Handler able to restore the hypotheses and goal styledTexts in a state
@@ -22,11 +24,18 @@ import org.eventb.internal.ui.prover.ProverUI;
  * 
  * @author "Thomas Muller"
  */
-public class RestoreStyles extends AbstractHandler implements IHandler {
+public class RestoreStyles extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		ProverUI.getHighlighter().removeHightlight(true);
+		final IWorkbenchPage page = EventBUIPlugin.getActivePage();
+		if (page != null) {
+			final IEditorPart activeEditor = page.getActiveEditor();
+			if (activeEditor instanceof ProverUI) {
+				final ProverUI pu = ((ProverUI) activeEditor);
+				pu.getHighlighter().removeHightlight(true);
+			}
+		}
 		return null;
 	}
 
