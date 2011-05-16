@@ -11,11 +11,19 @@
 
 package fr.systerel.editor;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry.ImplicitChildProviderAssociation;
+import org.eventb.ui.IImplicitChildProvider;
 import org.osgi.framework.BundleContext;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.emf.api.itf.ICoreImplicitChildProvider;
+import org.rodinp.core.emf.api.itf.ImplicitChildProviderManager;
 
 import fr.systerel.editor.documentModel.DocumentMapper;
 import fr.systerel.editor.documentModel.RodinPartitioner;
@@ -57,6 +65,28 @@ public class EditorPlugin extends AbstractUIPlugin {
 		plugin = this;
 		if (isDebugging())
 			configureDebugOptions();
+		for (ImplicitChildProviderAssociation w : ElementDescRegistry
+				.getInstance().getChildProviderAssociations()) {
+			ImplicitChildProviderManager.addProviderFor(
+					new ChildProviderWrapper(w.getProvider()),
+					w.getParentType(), w.getChildType());
+		}
+	}
+	
+	private static class ChildProviderWrapper implements ICoreImplicitChildProvider {
+		
+		final IImplicitChildProvider provider;
+		
+		ChildProviderWrapper(IImplicitChildProvider provider){
+			this.provider = provider;
+		}
+		
+		@Override
+		public List<? extends IInternalElement> getImplicitChildren(
+				IInternalElement parent) {
+			return provider.getImplicitChildren(parent);
+		}
+		
 	}
 
 	private void configureDebugOptions() {
