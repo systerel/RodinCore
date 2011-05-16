@@ -621,10 +621,10 @@
             name="%GenMPTacName">
       </autoTactic>
       <autoTactic
-            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$GoalDisjSTac"
-            description="%GoalDisjSTacDesc"
-            id="GoalDisjSTac"
-            name="%GoalDisjSTacName">
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$DisjGoalTac"
+            description="%DisjGoalTacDesc"
+            id="DisjGoalTac"
+            name="%DisjGoalTacName">
       </autoTactic>
    </extension>
 

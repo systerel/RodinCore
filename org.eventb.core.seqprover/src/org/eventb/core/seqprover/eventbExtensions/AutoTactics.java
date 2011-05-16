@@ -17,6 +17,8 @@
  ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
+import static org.eventb.core.ast.IPosition.ROOT;
+import static org.eventb.core.seqprover.eventbExtensions.Tactics.disjToImpl;
 import static org.eventb.core.seqprover.tactics.BasicTactics.composeOnAllPending;
 import static org.eventb.core.seqprover.tactics.BasicTactics.composeUntilFailure;
 import static org.eventb.core.seqprover.tactics.BasicTactics.composeUntilSuccess;
@@ -30,6 +32,7 @@ import java.util.Set;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IPosition;
@@ -60,7 +63,6 @@ import org.eventb.internal.core.seqprover.eventbExtensions.NegEnum;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewritesL2;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
-import org.eventb.internal.core.seqprover.eventbExtensions.tactics.GoalDisjToImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.InDomGoalManager;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.NNFRewritesOnceTac;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.TacticsLib;
@@ -1044,11 +1046,26 @@ public class AutoTactics {
 	 * @author Emmanuel Billaud
 	 * @since 2.2
 	 */
-	public static class GoalDisjSTac extends AbsractLazilyConstrTactic {
+	public static class DisjGoalTac extends AbsractLazilyConstrTactic {
+
+		private static class DisjToImplGoal implements ITactic {
+
+			@Override
+			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+				final Predicate goal = ptNode.getSequent().goal();
+				if (goal.getTag() == Formula.LOR) {
+					final ITactic tactic = disjToImpl(null, ROOT);
+					return tactic.apply(ptNode, pm);
+				}
+				return "Tactic unapplicable";
+			}
+
+		}
 
 		@Override
 		protected ITactic getSingInstance() {
-			return loopOnAllPending(composeUntilFailure(new GoalDisjToImpl(), new ImpGoalTac()));
+			return loopOnAllPending(composeUntilFailure(new DisjToImplGoal(),
+					new ImpGoalTac()));
 		}
 	}
 
