@@ -24,6 +24,7 @@ import static org.eventb.internal.ui.preferences.PreferenceConstants.P_COMMENT_F
 import static org.eventb.internal.ui.preferences.PreferenceConstants.P_CONSIDER_HIDDEN_HYPOTHESES;
 import static org.eventb.internal.ui.preferences.PreferenceConstants.P_DIRTY_STATE_COLOR;
 import static org.eventb.internal.ui.preferences.PreferenceConstants.P_EXPAND_SECTIONS;
+import static org.eventb.internal.ui.preferences.PreferenceConstants.P_HIGHLIGHT_IN_PROVERUI;
 import static org.eventb.internal.ui.preferences.PreferenceConstants.P_REQUIRED_FIELD_BACKGROUND;
 import static org.eventb.internal.ui.preferences.PreferenceConstants.P_TEXT_FOREGROUND;
 
@@ -68,6 +69,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 		// Set the values for context element prefixes
 		PreferenceUtils.setDefaultPreferences(store);
+		
+		// By default, disables the highlighting in proof UI
+		store.setDefault(P_HIGHLIGHT_IN_PROVERUI, false);
 	}
 
 }

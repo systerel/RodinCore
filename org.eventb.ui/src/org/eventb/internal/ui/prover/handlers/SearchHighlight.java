@@ -20,7 +20,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.internal.ui.EventBInputDialog;
 import org.eventb.internal.ui.prover.ProverUI;
-import org.eventb.internal.ui.prover.SearchHighlighter;
 import org.eventb.ui.EventBUIPlugin;
 
 /**
@@ -34,11 +33,10 @@ public class SearchHighlight extends AbstractHandler {
 	private static final String message = "Enter the pattern to higlight";
 	private static final String initialValue = "";
 
-	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		final IWorkbenchPage page = EventBUIPlugin.getActivePage();
-		if (page != null) {
+		if (ProverUI.getHighlighter().isHighlightActivated() && page != null) {
 			final IEditorPart activeEditor = page.getActiveEditor();
 			if (activeEditor instanceof ProverUI) {
 				final ProverUI pu = ((ProverUI) activeEditor);
@@ -52,12 +50,11 @@ public class SearchHighlight extends AbstractHandler {
 	private void highlight(final ProverUI ui) {
 		final Shell shell = ui.getSite().getShell();
 		final IUserSupport userSupport = ui.getUserSupport();
-		final SearchHighlighter highlighter = ui.getHighlighter();
-		final EventBInputDialog dialog = new EventBInputDialog(shell,
-				title, message, initialValue, null, userSupport);
+		final EventBInputDialog dialog = new EventBInputDialog(shell, title,
+				message, initialValue, null, userSupport);
 		dialog.open();
 		if (dialog.getReturnCode() == Dialog.OK) {
-			highlighter.highlightPattern(dialog.getValue());
+			ProverUI.getHighlighter().highlightPattern(dialog.getValue());
 		}
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Systerel and others.
+ * Copyright (c) 2009, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,6 +75,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	private static final int HIGHEST_PRIORITY = 1000;
 
 	private static final ElementDescRegistry INSTANCE = new ElementDescRegistry();
+	private final List<ImplicitChildProviderAssociation> childProviderAssocs = new ArrayList<ImplicitChildProviderAssociation>();
 
 	public static ElementDescRegistry getInstance() {
 		return INSTANCE;
@@ -234,7 +235,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	}
 	
 	
-	private static Set<IElementRelationship> getElementRelationShips(IConfigurationElement element) {
+	private Set<IElementRelationship> getElementRelationShips(IConfigurationElement element) {
 		final IElementType<?> parent = RodinCore.getElementType(element
 				.getAttribute("parentTypeId"));
 		Set<IElementRelationship> result = new HashSet<IElementRelationship>();
@@ -242,7 +243,14 @@ public class ElementDescRegistry implements IElementDescRegistry {
 			final String type = child.getAttribute("typeId");
 			final IInternalElementType<?> elementType = RodinCore.getInternalElementType(type);
 			final int priority = parseInt(child.getAttribute("priority"));
-			result.add(new ElementDescRelationship(parent, elementType, priority, getImplicitChildProvider(child)));
+			final IImplicitChildProvider implicitChildProvider = getImplicitChildProvider(child);
+			if (parent instanceof IInternalElementType
+					&& implicitChildProvider != null) {
+				final IInternalElementType<?> parentType = (IInternalElementType<?>) parent;
+				childProviderAssocs.add(new ImplicitChildProviderAssociation(
+								implicitChildProvider, parentType, elementType));
+			}
+			result.add(new ElementDescRelationship(parent, elementType, priority, implicitChildProvider));
 		}
 		return result;
 	}
@@ -260,7 +268,39 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		}
 		return null;
 	}
+	
+	public List<ImplicitChildProviderAssociation> getChildProviderAssociations() {
+		return new ArrayList<ImplicitChildProviderAssociation>(childProviderAssocs);
+	}
+	
+	public static class ImplicitChildProviderAssociation {
+		
+		private final IImplicitChildProvider provider;
+		private final IInternalElementType<?> parent;
+		private final IInternalElementType<?> child;
 
+		public ImplicitChildProviderAssociation(
+				IImplicitChildProvider provider,
+				IInternalElementType<?> parent, IInternalElementType<?> child) {
+			this.provider = provider;
+			this.parent = parent;
+			this.child = child;
+		}
+		
+		public IImplicitChildProvider getProvider() {
+			return provider;
+		}
+
+		public IInternalElementType<?> getParentType() {
+			return parent;
+		}
+		
+		public IInternalElementType<?> getChildType() {
+			return child;
+		}
+		
+	}
+	
 	private static int parseInt(String s) {
 		if (s == null) {
 			return HIGHEST_PRIORITY;

@@ -77,6 +77,8 @@ public class EventBUtils {
 		final IRodinElement[] refines = concrete.getRefinesClauses();
 		if (refines.length == 1) {
 			final IRefinesMachine refine = (IRefinesMachine) refines[0];
+			if (!refine.hasAbstractMachineName())
+				return null;
 			final String name = refine.getAbstractMachineName();
 			return concrete.getEventBProject().getMachineRoot(name);
 		}
