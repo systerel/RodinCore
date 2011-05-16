@@ -11,8 +11,8 @@
    <link toc="saving_a_context_or_a_machine_rodin_user_manual.xml" />  </topic>
   <topic label="5 The Event-B Explorer" href="html/the_event_b_explorer_rodin_user_manual.html">
    <link toc="the_event_b_explorer_rodin_user_manual.xml" />  </topic>
-  <topic label="6 The Proving Perspective" href="html/the_proving_perspective_rodin_user_manual.html">
-   <link toc="the_proving_perspective_rodin_user_manual.xml" />  </topic>
+  <topic label="6 The Proving Perspective" href="html/http://wiki.event-b.org/index.php/Rodin_Proving_Perspective">
+   <link toc="http://wiki.event-b.org/index.php/Rodin_Proving_Perspective.xml" />  </topic>
   <topic label="A The Mathematical Language" href="html/the_mathematical_language_rodin_user_manual.html">
    <link toc="the_mathematical_language_rodin_user_manual.xml" />  </topic>
   <topic label="B ASCII Representations of the Mathematical Symbols" href="html/ascii_representations_of_the_mathematical_symbols_rodin_user_manual.html">
