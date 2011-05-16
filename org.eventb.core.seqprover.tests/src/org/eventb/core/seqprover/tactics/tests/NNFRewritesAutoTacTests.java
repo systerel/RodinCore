@@ -28,10 +28,10 @@ import org.junit.Test;
  *
  * Unit tests for the auto tactic NnfrewritesAutoTac
  */
-public class NnfRewritesAutoTacTests {
+public class NNFRewritesAutoTacTests {
 
 	private static final ITactic tac = new AutoTactics.NNFRewritesAutoTac();
-	private static final String TAC_ID = "org.eventb.core.seqprover.NnfTac";
+	private static final String TAC_ID = "org.eventb.core.seqprover.NNFTac";
 
 	/**
 	 * Assert that auto tactic is registered.
