@@ -42,8 +42,6 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.emf.api.itf.ICoreImplicitChildProvider;
-import org.rodinp.core.emf.api.itf.ImplicitChildProviderManager;
 
 /**
  * Registry for element descriptors contributed through the
@@ -77,6 +75,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	private static final int HIGHEST_PRIORITY = 1000;
 
 	private static final ElementDescRegistry INSTANCE = new ElementDescRegistry();
+	private final List<ImplicitChildProviderAssociation> childProviderAssocs = new ArrayList<ImplicitChildProviderAssociation>();
 
 	public static ElementDescRegistry getInstance() {
 		return INSTANCE;
@@ -236,7 +235,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	}
 	
 	
-	private static Set<IElementRelationship> getElementRelationShips(IConfigurationElement element) {
+	private Set<IElementRelationship> getElementRelationShips(IConfigurationElement element) {
 		final IElementType<?> parent = RodinCore.getElementType(element
 				.getAttribute("parentTypeId"));
 		Set<IElementRelationship> result = new HashSet<IElementRelationship>();
@@ -247,10 +246,9 @@ public class ElementDescRegistry implements IElementDescRegistry {
 			final IImplicitChildProvider implicitChildProvider = getImplicitChildProvider(child);
 			if (parent instanceof IInternalElementType
 					&& implicitChildProvider != null) {
-				final IInternalElementType<?> iParent = (IInternalElementType<?>) parent;
-				ImplicitChildProviderManager.addProviderFor(
-						new CoreImplicitChildProviderWrapper(
-								implicitChildProvider), iParent, elementType);
+				final IInternalElementType<?> parentType = (IInternalElementType<?>) parent;
+				childProviderAssocs.add(new ImplicitChildProviderAssociation(
+								implicitChildProvider, parentType, elementType));
 			}
 			result.add(new ElementDescRelationship(parent, elementType, priority, implicitChildProvider));
 		}
@@ -271,18 +269,34 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		return null;
 	}
 	
-	private static class CoreImplicitChildProviderWrapper implements ICoreImplicitChildProvider {
-
-		private final IImplicitChildProvider provider;
+	public List<ImplicitChildProviderAssociation> getChildProviderAssociations() {
+		return new ArrayList<ImplicitChildProviderAssociation>(childProviderAssocs);
+	}
+	
+	public static class ImplicitChildProviderAssociation {
 		
-		public CoreImplicitChildProviderWrapper(IImplicitChildProvider provider) {
+		private final IImplicitChildProvider provider;
+		private final IInternalElementType<?> parent;
+		private final IInternalElementType<?> child;
+
+		public ImplicitChildProviderAssociation(
+				IImplicitChildProvider provider,
+				IInternalElementType<?> parent, IInternalElementType<?> child) {
 			this.provider = provider;
+			this.parent = parent;
+			this.child = child;
 		}
 		
-		@Override
-		public List<? extends IInternalElement> getImplicitChildren(
-				IInternalElement parent) {
-			return provider.getImplicitChildren(parent);
+		public IImplicitChildProvider getProvider() {
+			return provider;
+		}
+
+		public IInternalElementType<?> getParentType() {
+			return parent;
+		}
+		
+		public IInternalElementType<?> getChildType() {
+			return child;
 		}
 		
 	}
