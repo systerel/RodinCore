@@ -593,6 +593,7 @@ public class TestFormulaInspector extends TestCase {
 		final Predicate predicate = mRelationalPredicate(eA, eB);
 		assertTrace(predicate, "");
 		assertTrace(predicate, "0");
+		assertSkipChildrenOnce(predicate);
 	}
 
 	/**
@@ -604,6 +605,7 @@ public class TestFormulaInspector extends TestCase {
 				Collections.<Predicate> emptySet(), null);
 		assertTrace(predicate, "");
 		assertTrace(predicate, "0");
+		assertSkipChildrenOnce(predicate);
 	}
 
 	/**
@@ -617,6 +619,7 @@ public class TestFormulaInspector extends TestCase {
 				NO_PREDICATE, null);
 		assertTrace(expression, "");
 		assertTrace(expression, "0");
+		assertSkipChildrenOnce(expression);
 	}
 
 	/**
@@ -625,6 +628,7 @@ public class TestFormulaInspector extends TestCase {
 	public void testUnaryPredicate() throws Exception {
 		final UnaryPredicate predicate = mUnaryPredicate(pA);
 		assertTrace(predicate, "");
+		assertSkipChildrenOnce(predicate);
 	}
 
 	/**
@@ -633,6 +637,7 @@ public class TestFormulaInspector extends TestCase {
 	public void testUnaryExpression() throws Exception {
 		final Expression expression = mUnaryExpression(eA);
 		assertTrace(expression, "");
+		assertSkipChildrenOnce(expression);
 	}
 
 	/**
@@ -643,6 +648,7 @@ public class TestFormulaInspector extends TestCase {
 				mList(b_x, b_y), pA);
 		assertTrace(predicate, "");
 		assertTrace(predicate, "0");
+		assertSkipChildrenOnce(predicate);
 	}
 
 	/**
@@ -655,6 +661,7 @@ public class TestFormulaInspector extends TestCase {
 		assertTrace(expression, "0");
 		assertTrace(expression, "1");
 		assertTrace(expression, "2");
+		assertSkipChildrenOnce(expression);
 	}
 
 	/**
@@ -663,6 +670,7 @@ public class TestFormulaInspector extends TestCase {
 	public void testSimplePredicate() throws Exception {
 		final SimplePredicate predicate = mSimplePredicate(eA);
 		assertTrace(predicate, "");
+		assertSkipChildrenOnce(predicate);
 	}
 
 	/**
@@ -672,6 +680,7 @@ public class TestFormulaInspector extends TestCase {
 		final MultiplePredicate predicate = mMultiplePredicate(eA, eB, eC);
 		assertTrace(predicate, "");
 		assertTrace(predicate, "1");
+		assertSkipChildrenOnce(predicate);
 	}
 
 	/**
@@ -683,17 +692,38 @@ public class TestFormulaInspector extends TestCase {
 		assertSkipChildrenOnce(predicate);
 	}
 
-	private void assertSkipChildrenOnce(final Predicate predicate) {
-		assertTrace(mBinaryPredicate(predicate, mRelationalPredicate(eA, eB)),
-				"0");
-	}
-
 	/**
 	 * Ensures that skip methods work as expected on bool expressions
 	 */
 	public void testBoolExpression() throws Exception {
 		final Expression expression = mBoolExpression(pA);
 		assertTrace(expression, "");
+		assertSkipChildrenOnce(expression);
+	}
+
+	/**
+	 * Ensures that when children of a node are skipped, children of the other
+	 * node won't be skipped (skipChildren is set to False)
+	 * 
+	 * @param predicate
+	 *            the predicate on which test is realized
+	 */
+	private void assertSkipChildrenOnce(final Predicate predicate) {
+		assertTrace(mBinaryPredicate(predicate, mRelationalPredicate(eA, eB)),
+				"0");
+	}
+
+	/**
+	 * Ensures that when children of a node are skipped, children of the other
+	 * node won't be skipped (skipChildren is set to False)
+	 * 
+	 * @param expression
+	 *            the expression on which test is realized
+	 */
+	private void assertSkipChildrenOnce(final Expression expression) {
+		assertTrace(
+				mBinaryExpression(expression, mAssociativeExpression(eA, eB)),
+				"0");
 	}
 
 }
