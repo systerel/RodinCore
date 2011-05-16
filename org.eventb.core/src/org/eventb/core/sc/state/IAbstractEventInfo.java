@@ -103,6 +103,7 @@ public interface IAbstractEventInfo extends ISCState, IConvergenceInfo,
 	 * which is the predicate false (⊥).
 	 * 
 	 * @return whether the corresponding event is closed
+	 * @since 2.2
 	 */
 	boolean isClosed() throws CoreException;
 
@@ -121,6 +122,7 @@ public interface IAbstractEventInfo extends ISCState, IConvergenceInfo,
 	 * abstract machine that contains the corresponding event.
 	 * 
 	 * @return the refines clause through which this event is introduced
+	 * @since 2.2
 	 */
 	IRefinesMachine getRefinesMachine();
 	
