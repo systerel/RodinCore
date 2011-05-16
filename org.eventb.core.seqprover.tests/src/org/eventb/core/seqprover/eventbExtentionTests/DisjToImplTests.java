@@ -33,6 +33,8 @@ public class DisjToImplTests extends AbstractTests {
 
 	Predicate P3 = TestLib.genPred("∀x·x = 0 ⇒ x = 2 ∨ x = 3 ∨ x = 4");
 
+	Predicate P4 = TestLib.genPred("(x=1 ∨ x=2)∧x=3");
+
 	@Test
 	public void testGoalNotApplicable() {
 		IProverSequent seq;
@@ -66,6 +68,12 @@ public class DisjToImplTests extends AbstractTests {
 		seq = TestLib.genSeq(" ⊤ |- " + P3);
 		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(null,
 				makePosition("0")), null);
+		assertTrue(output instanceof IReasonerFailure);
+
+		// Position in goal is incorrect
+		seq = TestLib.genSeq(" ⊤ |- " + P4);
+		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(null,
+				makePosition("1")), null);
 		assertTrue(output instanceof IReasonerFailure);
 
 	}
@@ -108,6 +116,12 @@ public class DisjToImplTests extends AbstractTests {
 				makePosition("0")), null);
 		assertTrue(output instanceof IReasonerFailure);
 
+		// Position in hyp is incorrect
+		seq = TestLib.genSeq(P4 + " |- ⊤ ");
+		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(P4,
+				makePosition("1")), null);
+		assertTrue(output instanceof IReasonerFailure);
+
 	}
 
 	/**
@@ -122,6 +136,8 @@ public class DisjToImplTests extends AbstractTests {
 		assertPositions("Position found for P2 ", "1", positions);
 		positions = Tactics.disjToImplGetPositions(P3);
 		assertPositions("Position found for P3 ", "1.1", positions);
+		positions = Tactics.disjToImplGetPositions(P4);
+		assertPositions("Position found for P4 ", "0", positions);
 	}
 
 	/**
@@ -182,6 +198,22 @@ public class DisjToImplTests extends AbstractTests {
 		newSeqs = ((IProofRule) output).apply(seq);
 		assertSequents("Applied successfully hyp P3 ",
 				"{}[∀x·x=0⇒x=2∨x=3∨x=4][][∀x·x=0⇒(¬x=2⇒x=3∨x=4)] |- ⊤", newSeqs);
+
+		seq = TestLib.genSeq(" ⊤ |- " + P4);
+		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(null,
+				makePosition("0")), null);
+		assertTrue(output instanceof IProofRule);
+		newSeqs = ((IProofRule) output).apply(seq);
+		assertSequents("Applied successfully goal P4 ",
+				"{x=ℤ}[][][⊤] |- ¬x=1⇒x=2\n{x=ℤ}[][][⊤] |- x=3", newSeqs);
+
+		seq = TestLib.genSeq(P4 + " |- ⊤ ");
+		output = dtiReasoner.apply(seq, new DisjunctionToImplicationRewrites.Input(P4,
+				makePosition("0")), null);
+		assertTrue(output instanceof IProofRule);
+		newSeqs = ((IProofRule) output).apply(seq);
+		assertSequents("Applied successfully hyp P4 ",
+				"{x=ℤ}[(x=1∨x=2)∧x=3][][¬x=1⇒x=2, x=3] |- ⊤", newSeqs);
 
 	}
 
