@@ -160,7 +160,12 @@ public class PreferenceConstants {
 	 * Preference key for considering hidden hypotheses in search
 	 */
 	public static final String P_CONSIDER_HIDDEN_HYPOTHESES = "Consider hidden hypotheses in search";
-
+	
+	/**
+	 * Preference key enabling/disabling the highlight for selected text
+	 */
+	public static final String P_HIGHLIGHT_IN_PROVERUI = "Highlight the selection in prover views";
+	
 	/**
 	 * Preference key for recursive expand
 	 */

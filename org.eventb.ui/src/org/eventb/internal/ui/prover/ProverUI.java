@@ -14,6 +14,7 @@
  ******************************************************************************/
 package org.eventb.internal.ui.prover;
 
+import static org.eventb.internal.ui.prover.SearchHighlighter.newHighlighter;
 import static org.eventb.internal.ui.utils.Messages.dialogs_prover_error_creating_page;
 import static org.eventb.internal.ui.utils.Messages.error_cannot_save_as_message;
 import static org.eventb.internal.ui.utils.Messages.error_unsupported_action;
@@ -105,7 +106,7 @@ public class ProverUI extends EventBFormEditor implements
 	// The associated UserSupport
 	IUserSupport userSupport;
 	
-	SearchHighlighter highlighter;
+	private static SearchHighlighter highlighter = newHighlighter();
 
 	// The associated Rodin file handle
 	IRodinFile psFile = null;
@@ -122,7 +123,6 @@ public class ProverUI extends EventBFormEditor implements
 		saving = false;
 		this.userSupport = USM.newUserSupport();
 		USM.addChangeListener(this);
-		this.highlighter = SearchHighlighter.newHighlighter();
 	}
 	
 	@Override
@@ -580,7 +580,7 @@ public class ProverUI extends EventBFormEditor implements
 		return fProofControlPage;
 	}
 
-	public SearchHighlighter getHighlighter() {
+	public static SearchHighlighter getHighlighter() {
 		return highlighter;
 	}
 

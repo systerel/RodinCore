@@ -240,10 +240,13 @@ public class SearchHighlighter {
 	private Set<HighlightData> toHighlight;
 
 	private String toSearch;
+	
+	private boolean highlight;
 
 	private SearchHighlighter() {
 		// private constructor : SINGLETON
 		toHighlight = new LinkedHashSet<HighlightData>();
+		highlight = false;
 		setToSearch("");
 	}
 
@@ -274,7 +277,7 @@ public class SearchHighlighter {
 	}
 
 	public void highlightPattern(String pattern) {
-		removeHightlight();
+		removeHightlight(true);
 		setToSearch(pattern);
 		refreshHighlight();
 	}
@@ -288,6 +291,20 @@ public class SearchHighlighter {
 	}
 
 	public void refreshHighlight() {
+		if (!highlight) {
+			removeHightlight(false);
+			return;
+		}
+		for (HighlightData d : toHighlight) {
+			final StyledText text = d.getText();
+			if (text != null && !text.isDisposed() && text.isFocusControl()) {
+				final String selectionText = text.getSelectionText();
+				if (!selectionText.isEmpty()) {
+					setToSearch(selectionText);
+					break;
+				}
+			}
+		}
 		for (HighlightData d : toHighlight) {
 			d.rememberRanges();
 			d.restoreOriginalRanges();
@@ -299,12 +316,13 @@ public class SearchHighlighter {
 		}
 	}
 
-	public void removeHightlight() {
+	public void removeHightlight(boolean removeSelection) {
 		setToSearch("");
 		for (HighlightData d : toHighlight) {
 			d.rememberRanges();
 			d.restoreOriginalRanges();
-			removeSelection(d);
+			if (removeSelection)
+				removeSelection(d);
 		}
 	}
 
@@ -336,6 +354,15 @@ public class SearchHighlighter {
 				break;
 			}
 		}
+	}
+
+	public void activateHighlight(boolean active) {
+		highlight = active;
+		refreshHighlight();
+	}
+	
+	public boolean isHighlightActivated() {
+		return highlight;
 	}
 	
 }

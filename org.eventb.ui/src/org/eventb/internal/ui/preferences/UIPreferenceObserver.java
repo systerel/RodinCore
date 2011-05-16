@@ -24,6 +24,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.prover.ProverUI;
 
 /**
  * This class is responsible for reflecting the UI preference store towards
@@ -144,6 +145,15 @@ public class UIPreferenceObserver implements IPropertyChangeListener {
 						.setConsiderHiddenHypotheses(newValue.booleanValue());
 			}
 		});
+		prefSetters.put(PreferenceConstants.P_HIGHLIGHT_IN_PROVERUI,
+				new BooleanSetter(store,
+						PreferenceConstants.P_HIGHLIGHT_IN_PROVERUI) {
+					@Override
+					protected void doUpdate(Boolean newValue) {
+						ProverUI.getHighlighter().activateHighlight(
+								newValue.booleanValue());
+					}
+				});
 	}
 
 	/**
