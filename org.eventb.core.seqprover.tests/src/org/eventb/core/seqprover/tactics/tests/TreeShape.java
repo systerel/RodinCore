@@ -156,30 +156,15 @@ public abstract class TreeShape {
 		}
 	}
 
-	private static class FunOvrShape extends TreeShape {
-
-		protected final Predicate predicate;
-
-		protected final String position;
+	private static class FunOvrShape extends PredAndPosInferenceShape {
 
 		public FunOvrShape(String position, TreeShape[] expChildren) {
-			super(expChildren);
-			this.predicate = null;
-			this.position = position;
+			super(null, position, expChildren);
 		}
 
 		public FunOvrShape(Predicate predicate, String position,
 				TreeShape[] expChildren) {
-			super(expChildren);
-			this.predicate = predicate;
-			this.position = position;
-		}
-
-		@Override
-		protected void checkInput(IReasonerInput input) {
-			AbstractManualInference.Input i = (AbstractManualInference.Input) input;
-			assertEquals(predicate, i.getPred());
-			assertEquals(position, i.getPosition().toString());
+			super(predicate, position, expChildren);
 		}
 
 		@Override
@@ -188,20 +173,10 @@ public abstract class TreeShape {
 		}
 	}
 	
-	private static class FunImgSimpShape extends TreeShape {
-		
-		protected final String position;
+	private static class FunImgSimpShape extends PosShape {
 
 		public FunImgSimpShape(String position, TreeShape[] expChildren) {
-			super(expChildren);
-			this.position = position;
-		}
-
-		
-		@Override
-		protected void checkInput(IReasonerInput input) {
-			final AbstractManualRewrites.Input i = (AbstractManualRewrites.Input)input;
-			assertEquals(position, i.getPosition().toString());
+			super(position, expChildren);
 		}
 
 		@Override
@@ -210,15 +185,10 @@ public abstract class TreeShape {
 		}
 	}
 	
-	private static class IsFunGoalShape extends TreeShape{
+	private static class IsFunGoalShape extends VoidShape{
 
 		public IsFunGoalShape(TreeShape[] expChildren) {
 			super(expChildren);
-		}
-
-		@Override
-		protected void checkInput(IReasonerInput input) {
-			assertEquals(input.getClass(), EmptyInput.class);			
 		}
 
 		@Override
@@ -228,24 +198,11 @@ public abstract class TreeShape {
 		
 	}
 	
-	private static class FunImgGoalShape extends TreeShape {
-
-		private final Predicate predicate;
-		private final String position;
+	private static class FunImgGoalShape extends PredAndPosInferenceShape {
 
 		public FunImgGoalShape(Predicate pred, String pos,
 				TreeShape[] expChildren) {
-			super(expChildren);
-			this.predicate = pred;
-			this.position = pos;
-		}
-
-		@Override
-		protected void checkInput(IReasonerInput input) {
-			AbstractManualInference.Input i = (AbstractManualInference.Input) input;
-			assertEquals(position, i.getPosition().toString());
-			assertEquals(predicate, i.getPred());
-
+			super(pred, pos, expChildren);
 		}
 
 		@Override
@@ -255,15 +212,10 @@ public abstract class TreeShape {
 
 	}
 	
-	private static class TypeRewritesShape extends TreeShape {
+	private static class TypeRewritesShape extends VoidShape {
 
 		public TypeRewritesShape(TreeShape[] expChildren) {
 			super(expChildren);
-		}
-
-		@Override
-		protected void checkInput(IReasonerInput input) {
-			assertEquals(input.getClass(), EmptyInput.class);
 		}
 
 		@Override
@@ -305,16 +257,10 @@ public abstract class TreeShape {
 
 	}
 
-	private static class HypShape extends TreeShape {
+	private static class HypShape extends VoidShape {
 
 		public HypShape(TreeShape[] expChildren) {
 			super(expChildren);
-		}
-
-		@Override
-		protected void checkInput(IReasonerInput input) {
-			assertEquals(input.getClass(), EmptyInput.class);
-
 		}
 
 		@Override
@@ -324,15 +270,10 @@ public abstract class TreeShape {
 
 	}
 
-	private static class TrueGoalShape extends TreeShape {
+	private static class TrueGoalShape extends VoidShape {
 
 		public TrueGoalShape(TreeShape[] expChildren) {
 			super(expChildren);
-		}
-
-		@Override
-		protected void checkInput(IReasonerInput input) {
-			assertEquals(input.getClass(), EmptyInput.class);
 		}
 
 		@Override
@@ -365,19 +306,10 @@ public abstract class TreeShape {
 		
 	}
 	
-	private static class RmShape extends TreeShape {
-
-		private final String position;
+	private static class RmShape extends PosShape {
 
 		public RmShape(String position, TreeShape... children) {
-			super(children);
-			this.position = position;
-		}
-
-		@Override
-		protected void checkInput(IReasonerInput input) {
-			final AbstractManualRewrites.Input inp = ((AbstractManualRewrites.Input) input);
-			assertEquals(position, inp.getPosition().toString());
+			super(position, children);
 		}
 
 		@Override
@@ -387,19 +319,10 @@ public abstract class TreeShape {
 		
 	}
 	
-	private static class RiShape extends TreeShape {
-
-		private final String position;
+	private static class RiShape extends PosShape {
 
 		public RiShape(String position, TreeShape... children) {
-			super(children);
-			this.position = position;
-		}
-
-		@Override
-		protected void checkInput(IReasonerInput input) {
-			final AbstractManualRewrites.Input inp = ((AbstractManualRewrites.Input) input);
-			assertEquals(position, inp.getPosition().toString());
+			super(position, children);
 		}
 
 		@Override
@@ -409,19 +332,10 @@ public abstract class TreeShape {
 		
 	}
 	
-	private static class EqvShape extends TreeShape {
-
-		private final String position;
+	private static class EqvShape extends PosShape {
 
 		public EqvShape(String position, TreeShape... children) {
-			super(children);
-			this.position = position;
-		}
-
-		@Override
-		protected void checkInput(IReasonerInput input) {
-			final AbstractManualRewrites.Input inp = ((AbstractManualRewrites.Input) input);
-			assertEquals(position, inp.getPosition().toString());
+			super(position, children);
 		}
 
 		@Override
@@ -431,22 +345,10 @@ public abstract class TreeShape {
 		
 	}
 	
-	private static class RnShape extends TreeShape {
-
-		private final Predicate predicate;
-		private final String position;
+	private static class RnShape extends PredAndPosRewritesShape {
 
 		public RnShape(Predicate predicate, String position, TreeShape... expChildren) {
-			super(expChildren);
-			this.predicate = predicate;
-			this.position = position;
-		}
-
-		@Override
-		protected void checkInput(IReasonerInput input) {
-			final AbstractManualRewrites.Input inp = ((AbstractManualRewrites.Input) input);
-			assertEquals(position, inp.getPosition().toString());
-			assertEquals(predicate, inp.getPred());
+			super(predicate, position, expChildren);
 		}
 
 		@Override
@@ -456,15 +358,10 @@ public abstract class TreeShape {
 
 	}
 
-	private static class ImpIShape extends TreeShape {
+	private static class ImpIShape extends VoidShape {
 
 		public ImpIShape(TreeShape[] expChildren) {
 			super(expChildren);
-		}
-
-		@Override
-		protected void checkInput(IReasonerInput input) {
-			assertEquals(input.getClass(), EmptyInput.class);
 		}
 
 		@Override
@@ -474,12 +371,26 @@ public abstract class TreeShape {
 
 	}
 
-	private static class DTIShape extends TreeShape {
+	private static class DTIShape extends PredAndPosRewritesShape {
+
+		public DTIShape(Predicate predicate, String position,
+				TreeShape[] expChildren) {
+			super(predicate, position, expChildren);
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return DisjunctionToImplicationRewrites.REASONER_ID;
+		}
+
+	}
+	
+	private static abstract class PredAndPosRewritesShape extends TreeShape {
 
 		private final Predicate predicate;
 		private final String position;
 
-		public DTIShape(Predicate predicate, String position,
+		private PredAndPosRewritesShape(Predicate predicate, String position,
 				TreeShape[] expChildren) {
 			super(expChildren);
 			this.predicate = predicate;
@@ -495,7 +406,73 @@ public abstract class TreeShape {
 
 		@Override
 		protected String getReasonerID() {
-			return DisjunctionToImplicationRewrites.REASONER_ID;
+			return null;
+		}
+
+	}
+	
+	private static abstract class PredAndPosInferenceShape extends TreeShape {
+
+		private final Predicate predicate;
+		private final String position;
+
+		private PredAndPosInferenceShape(Predicate predicate, String position,
+				TreeShape[] expChildren) {
+			super(expChildren);
+			this.predicate = predicate;
+			this.position = position;
+		}
+
+		@Override
+		protected void checkInput(IReasonerInput input) {
+			final AbstractManualInference.Input inp = ((AbstractManualInference.Input) input);
+			assertEquals(position, inp.getPosition().toString());
+			assertEquals(predicate, inp.getPred());
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return null;
+		}
+
+	}
+
+	private static abstract class PosShape extends TreeShape {
+
+		private final String position;
+
+		private PosShape(String position, TreeShape[] expChildren) {
+			super(expChildren);
+			this.position = position;
+		}
+
+		@Override
+		protected void checkInput(IReasonerInput input) {
+			final AbstractManualRewrites.Input inp = ((AbstractManualRewrites.Input) input);
+			assertEquals(position, inp.getPosition().toString());
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return null;
+		}
+
+	}
+
+	private static abstract class VoidShape extends TreeShape {
+
+		private VoidShape(TreeShape[] expChildren) {
+			super(expChildren);
+		}
+
+		@Override
+		protected void checkInput(IReasonerInput input) {
+			assertEquals(input.getClass(), EmptyInput.class);
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return null;
 		}
 
 	}
