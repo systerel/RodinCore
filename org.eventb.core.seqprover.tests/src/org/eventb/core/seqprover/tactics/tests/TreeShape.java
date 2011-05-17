@@ -33,7 +33,6 @@ import org.eventb.internal.core.seqprover.eventbExtensions.AbstractManualInferen
 import org.eventb.internal.core.seqprover.eventbExtensions.AbstractRewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.Conj;
 import org.eventb.internal.core.seqprover.eventbExtensions.DTDistinctCase;
-import org.eventb.internal.core.seqprover.eventbExtensions.DTReasoner;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunImageGoal;
@@ -156,7 +155,7 @@ public abstract class TreeShape {
 		}
 	}
 
-	private static class FunOvrShape extends PredAndPosInferenceShape {
+	private static class FunOvrShape extends ManualInferenceShape {
 
 		public FunOvrShape(String position, TreeShape[] expChildren) {
 			super(null, position, expChildren);
@@ -198,7 +197,7 @@ public abstract class TreeShape {
 		
 	}
 	
-	private static class FunImgGoalShape extends PredAndPosInferenceShape {
+	private static class FunImgGoalShape extends ManualInferenceShape {
 
 		public FunImgGoalShape(Predicate pred, String pos,
 				TreeShape[] expChildren) {
@@ -225,29 +224,21 @@ public abstract class TreeShape {
 
 	}
 
-	private static class TotalDomShape extends TreeShape {
-
-		private final Predicate predicate;
-
-		private final String position;
+	private static class TotalDomShape extends ManualRewritesShape {
 
 		private final Expression substitute;
 
 		public TotalDomShape(Predicate predicate, String position,
 				Expression substitute, TreeShape[] expChildren) {
-			super(expChildren);
-			this.predicate = predicate;
-			this.position = position;
+			super(predicate, position, expChildren);
 			this.substitute = substitute;
 		}
 
 		@Override
 		protected void checkInput(IReasonerInput input) {
+			super.checkInput(input);
 			final TotalDomRewrites.Input inp = (TotalDomRewrites.Input) input;
-			assertEquals(inp.getPred(), predicate);
-			assertEquals(inp.getPosition().toString(), position);
 			assertEquals(inp.getSubstitute(), substitute);
-
 		}
 
 		@Override
@@ -283,20 +274,10 @@ public abstract class TreeShape {
 
 	}
 
-	private static class DTDestrWDShape extends TreeShape {
-
-		private final String position;
+	private static class DTDestrWDShape extends ManualInferenceShape {
 
 		public DTDestrWDShape(String position, Expression[] inst) {
-			super(arr(exI(trueGoal(), hyp(), inst)));
-			this.position = position;
-		}
-
-		@Override
-		protected void checkInput(IReasonerInput input) {
-			final DTReasoner.Input inp = ((DTReasoner.Input) input);
-			assertNull(inp.getPred());
-			assertEquals(position, inp.getPosition().toString());
+			super(null, position, arr(exI(trueGoal(), hyp(), inst)));
 		}
 
 		@Override
@@ -345,7 +326,7 @@ public abstract class TreeShape {
 		
 	}
 	
-	private static class RnShape extends PredAndPosRewritesShape {
+	private static class RnShape extends ManualRewritesShape {
 
 		public RnShape(Predicate predicate, String position, TreeShape... expChildren) {
 			super(predicate, position, expChildren);
@@ -371,7 +352,7 @@ public abstract class TreeShape {
 
 	}
 
-	private static class DTIShape extends PredAndPosRewritesShape {
+	private static class DTIShape extends ManualRewritesShape {
 
 		public DTIShape(Predicate predicate, String position,
 				TreeShape[] expChildren) {
@@ -385,12 +366,12 @@ public abstract class TreeShape {
 
 	}
 	
-	private static abstract class PredAndPosRewritesShape extends TreeShape {
+	private static abstract class ManualRewritesShape extends TreeShape {
 
 		private final Predicate predicate;
 		private final String position;
 
-		private PredAndPosRewritesShape(Predicate predicate, String position,
+		private ManualRewritesShape(Predicate predicate, String position,
 				TreeShape[] expChildren) {
 			super(expChildren);
 			this.predicate = predicate;
@@ -411,12 +392,12 @@ public abstract class TreeShape {
 
 	}
 	
-	private static abstract class PredAndPosInferenceShape extends TreeShape {
+	private static abstract class ManualInferenceShape extends TreeShape {
 
 		private final Predicate predicate;
 		private final String position;
 
-		private PredAndPosInferenceShape(Predicate predicate, String position,
+		private ManualInferenceShape(Predicate predicate, String position,
 				TreeShape[] expChildren) {
 			super(expChildren);
 			this.predicate = predicate;
