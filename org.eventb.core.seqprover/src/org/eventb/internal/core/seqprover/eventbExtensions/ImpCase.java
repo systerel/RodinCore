@@ -20,7 +20,6 @@ import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
-import org.eventb.core.seqprover.reasonerInputs.ImpHypothesisReasoner;
 
 /**
  * Generates a proof rule for Case distinction for a given implicative hypothesis.

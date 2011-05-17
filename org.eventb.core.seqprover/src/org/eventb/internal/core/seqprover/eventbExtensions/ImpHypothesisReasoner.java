@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.core.seqprover.reasonerInputs;
+package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import static java.util.Collections.singleton;
 import static org.eventb.core.seqprover.ProverFactory.makeHideHypAction;
@@ -20,12 +20,12 @@ import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 
 /**
  * Common implementation for reasoners that works on an implicative hypothesis.
  * 
  * @author Emmanuel Billaud
- * @since 2.2
  */
 public abstract class ImpHypothesisReasoner extends HypothesisReasoner {
 
