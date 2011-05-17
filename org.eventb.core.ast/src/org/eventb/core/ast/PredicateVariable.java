@@ -162,6 +162,9 @@ public class PredicateVariable extends Predicate {
 	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		acc.inspect(this);
+		if (acc.childrenSkipped()) {
+			return;
+		}
 	}
 
 	@Override

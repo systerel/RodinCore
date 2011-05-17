@@ -282,6 +282,9 @@ public class FreeIdentifier extends Identifier {
 	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		acc.inspect(this);
+		if (acc.childrenSkipped()) {
+			return;
+		}
 	}
 
 	@Override

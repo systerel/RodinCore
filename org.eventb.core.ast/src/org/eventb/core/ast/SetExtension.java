@@ -363,9 +363,15 @@ public class SetExtension extends Expression {
 	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		acc.inspect(this);
+		if (acc.childrenSkipped()) {
+			return;
+		}
 		acc.enterChildren();
 		for (Expression member: members) {
 			member.inspect(acc);
+			if (acc.allSkipped()) {
+				break;
+			}
 			acc.nextChild();
 		}
 		acc.leaveChildren();

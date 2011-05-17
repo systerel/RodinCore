@@ -170,6 +170,9 @@ public class IntegerLiteral extends Expression {
 	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		acc.inspect(this);
+		if (acc.childrenSkipped()) {
+			return;
+		}
 	}
 
 	@Override

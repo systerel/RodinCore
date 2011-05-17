@@ -35,6 +35,7 @@ import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_PRED;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -373,6 +374,7 @@ public class TestFormulaInspector extends TestCase {
 
 	private static BoundIdentDecl b_x = mBoundIdentDecl("x");
 	private static BoundIdentDecl b_y = mBoundIdentDecl("y");
+	private static BoundIdentDecl b_z = mBoundIdentDecl("z");
 
 	public static final FormulaFactory ff = FormulaFactory.getDefault();
 	protected static final IntegerLiteral ONE = ff.makeIntegerLiteral(BigInteger.ONE, null);
@@ -544,7 +546,7 @@ public class TestFormulaInspector extends TestCase {
 	private static IntegerType INTEGER = ff.makeIntegerType();
 	private static final Set<Predicate> NO_PREDICATE = Collections.emptySet();
 	private static final FreeIdentifier FRID_A = ff.makeFreeIdentifier("A", null, INTEGER);
-	private static final FreeIdentifier FRID_B = ff.makeFreeIdentifier("B", null, INTEGER);
+	private static final FreeIdentifier FRID_B = ff.makeFreeIdentifier("B",	null, INTEGER);
 	final FormulaFactory extFac = FormulaFactory.getInstance(Collections
 			.<IFormulaExtension> singleton(EMAX));
 
@@ -641,26 +643,24 @@ public class TestFormulaInspector extends TestCase {
 	}
 
 	/**
-	 * Ensures that skip methods work as expected on quantified predicates
+	 * Ensures that skip methods work as expected on quantified predicates.
+	 * BoundIdentDecl are tested it testBoundIdentDecl.
 	 */
 	public void testQuantifiedPredicate() throws Exception {
 		final QuantifiedPredicate predicate = mQuantifiedPredicate(
 				mList(b_x, b_y), pA);
 		assertTrace(predicate, "");
-		assertTrace(predicate, "0");
 		assertSkipChildrenOnce(predicate);
 	}
 
 	/**
-	 * Ensures that skip methods work as expected on quantified expressions
+	 * Ensures that skip methods work as expected on quantified expressions.
+	 * BoundIdentDecl are tested it testBoundIdentDecl.
 	 */
 	public void testQuantifiedExpression() throws Exception {
 		final Expression expression = mQuantifiedExpression(mList(b_x, b_y),
 				pA, eA);
 		assertTrace(expression, "");
-		assertTrace(expression, "0");
-		assertTrace(expression, "1");
-		assertTrace(expression, "2");
 		assertSkipChildrenOnce(expression);
 	}
 
@@ -699,6 +699,81 @@ public class TestFormulaInspector extends TestCase {
 		final Expression expression = mBoolExpression(pA);
 		assertTrace(expression, "");
 		assertSkipChildrenOnce(expression);
+	}
+
+	/**
+	 * Ensures that skip methods works as expected on predicate variable
+	 */
+	public void testPredicateVariable() throws Exception {
+		final Predicate predicate = ff.makePredicateVariable("$P", null);
+		assertTrace(predicate, "");
+		assertSkipChildrenOnce(predicate);
+	}
+
+	/**
+	 * Ensures that skip methods works as expected on atomic expression
+	 */
+	public void testAtomicExpression() throws Exception {
+		final Expression expression = mAtomicExpression();
+		assertTrace(expression, "");
+		assertSkipChildrenOnce(expression);
+	}
+
+	/**
+	 * Ensures that skip methods works as expected on integerLiteral
+	 */
+	public void testIntegerLiteral() throws Exception {
+		final Expression expression = mIntegerLiteral();
+		assertTrace(expression, "");
+		assertSkipChildrenOnce(expression);
+	}
+
+	/**
+	 * Ensures that skip methods works as expected on SetExtension
+	 */
+	public void testSetExtension() throws Exception {
+		final Set<Expression> collec = new HashSet<Expression>();
+		collec.add(eA);
+		collec.add(eB);
+		collec.add(eC);
+		final Expression expression = ff.makeSetExtension(collec, null);
+		assertTrace(expression, "");
+		assertTrace(expression, "1");
+		assertSkipChildrenOnce(expression);
+	}
+
+	/**
+	 * Ensures that skip methods works as expected on BoundIndentifier
+	 */
+	public void testBoundIdentifier() throws Exception {
+		final Expression expression = mBoundIdentifier(0);
+		assertTrace(expression, "");
+		assertSkipChildrenOnce(expression);
+	}
+
+	/**
+	 * Ensures that skip methods works as expected on FreeIdentifier
+	 */
+	public void testFreeIdentifier() throws Exception {
+		final Expression expression = ff.makeFreeIdentifier("x", null);
+		assertTrace(expression, "");
+		assertSkipChildrenOnce(expression);
+	}
+
+	/**
+	 * Ensures that skip methods works as expected on BoundIdentDecl.
+	 */
+	public void testBoundIdentDecl() throws Exception {
+		final QuantifiedPredicate predicate = mQuantifiedPredicate(
+				mList(b_x, b_y, b_z), pA);
+		assertTrace(predicate, "0");
+		assertTrace(predicate, "1");
+		assertTrace(predicate, "2");
+		final Expression expression = mQuantifiedExpression(
+				mList(b_x, b_y, b_z), pA, eA);
+		assertTrace(expression, "0");
+		assertTrace(expression, "1");
+		assertTrace(expression, "2");
 	}
 
 	/**
