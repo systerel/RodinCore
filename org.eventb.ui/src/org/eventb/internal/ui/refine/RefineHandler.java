@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.refine;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -140,24 +140,31 @@ public class RefineHandler extends AbstractHandler {
 	public void setEnabled(Object evaluationContext) {
 		final EvaluationContext eval = (EvaluationContext) evaluationContext;
 		final Object defaultVariable = eval.getDefaultVariable();
-		final List<?> selection = (List<?>) defaultVariable;
-		final boolean enabled = computeEnablement(selection);
+		if (!(defaultVariable instanceof Collection<?>)) {
+			return;
+		}
+		final Collection<?> selection = (Collection<?>) defaultVariable;
+		final IInternalElement element = computeElement(selection);
+		final boolean enabled = element != null;
 
 		if (enabled) {
-			this.currentRoot = (IInternalElement) selection.get(0);
+			this.currentRoot = element;
 		}
 		setBaseEnabled(enabled);
 	}
 
-	private static boolean computeEnablement(List<?> selection) {
+	private static IInternalElement computeElement(Collection<?> selection) {
 		if (selection.size() != 1)
-			return false;
-		final Object x = selection.get(0);
+			return null;
+		final Object x = selection.iterator().next();
 		if (!(x instanceof IInternalElement))
-			return false;
+			return null;
 		final IInternalElement e = (IInternalElement) x;
-		return RefinementUIRegistry.getDefault().getRefinementUI(
-				e.getElementType()) != null;
+		if (RefinementUIRegistry.getDefault().getRefinementUI(
+				e.getElementType()) == null ) {
+			return null;
+		}
+		return e;
 	}
 
 }
