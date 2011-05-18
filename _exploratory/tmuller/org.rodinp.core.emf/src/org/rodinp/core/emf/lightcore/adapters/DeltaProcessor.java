@@ -12,7 +12,7 @@ package org.rodinp.core.emf.lightcore.adapters;
 
 import static org.rodinp.core.emf.lightcore.sync.SynchroUtils.addParentEContentAdapter;
 import static org.rodinp.core.emf.lightcore.sync.SynchroUtils.findElement;
-import static org.rodinp.core.emf.lightcore.sync.SynchroUtils.getPositionOf;
+import static org.rodinp.core.emf.lightcore.sync.SynchroUtils.getPositionAmongSiblings;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.rodinp.core.IInternalElement;
@@ -125,7 +125,8 @@ public class DeltaProcessor {
 		final InternalElement e = LightcoreFactory.eINSTANCE
 				.createInternalElement();
 		e.setERodinElement(element);
-		e.setReference(element.getElementName()+"["+element.getElementType().getName()+"]");
+		e.setReference(element.getElementName() + "["
+				+ element.getElementType().getName() + "]");
 		e.setEIsRoot(element.isRoot());
 		e.setERoot(root);
 		e.load();
@@ -133,7 +134,8 @@ public class DeltaProcessor {
 		if (parent instanceof IInternalElement) {
 			final LightElement eParent = findElement(parent, root);
 			if (eParent != null) {
-				final int pos = getPositionOf(eParent, (IInternalElement) element);
+				final int pos = getPositionAmongSiblings(eParent,
+						(IInternalElement) element);
 				eParent.addElement(e, pos);
 				addParentEContentAdapter(eParent, e);
 			}

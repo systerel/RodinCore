@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
@@ -144,6 +145,36 @@ public class SynchroUtils {
 			pos = parent.getEChildren().indexOf(found);
 		}
 		return pos;
+	}
+
+	/**
+	 * Returns the position of the <code>element</code>'s next sibling in the
+	 * list of all the children of the given <code>parent</code>
+	 */
+	public static int getPositionAmongSiblings(LightElement parent,
+			IInternalElement element) throws RodinDBException {
+		final IInternalElement nextSibling = getNextSibling(parent, element);
+		if (nextSibling == null) {
+			return -1;
+		}
+		return getPositionOf(parent, nextSibling);
+	}
+
+	/**
+	 * Returns the next sibling of the given <code>element</code>.
+	 */
+	public static IInternalElement getNextSibling(LightElement parent,
+			IInternalElement element) throws RodinDBException {
+		final IInternalElementType<? extends IInternalElement> elementType = element
+				.getElementType();
+		final IInternalElement[] childrenOfType = parent.getElement()
+				.getChildrenOfType(elementType);
+		for (int i = 0; i < childrenOfType.length - 1; i++) {
+			if (childrenOfType[i].equals(element)) {
+				return childrenOfType[i + 1];
+			}
+		}
+		return null;
 	}
 
 	public static void adaptRootForDBChanges(LightElement e) {
