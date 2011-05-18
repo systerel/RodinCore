@@ -165,8 +165,12 @@ public class SelectionController implements MouseListener, VerifyListener,
 		} catch (IllegalArgumentException exc) {
 			// not over a character
 			final int lineIndex = styledText.getLineIndex(p.y);
-			final int offset = styledText.getOffsetAtLine(lineIndex);
-			return offset;
+			final int offset;
+			if (lineIndex < styledText.getLineCount() - 1) {
+				offset = styledText.getOffsetAtLine(lineIndex + 1);
+				return offset - 1;
+			}
+			return styledText.getOffsetAtLine(lineIndex);
 		}
 	}
 
