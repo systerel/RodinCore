@@ -1256,7 +1256,7 @@
       <tactic
             id="org.eventb.core.seqprover.eqvGoalTac">
       </tactic>
-      <tactic id="org.eventb.core.seqprover.NnfTac"/>
+      <tactic id="org.eventb.core.seqprover.NNFTac"/>
       <tactic id="org.eventb.core.seqprover.genMPTac"/>
       <tactic id="org.eventb.core.seqprover.DisjGoalTac"/>
    </extension>
@@ -1294,7 +1294,7 @@
       <tactic
             id="org.eventb.core.seqprover.eqvGoalTac">
       </tactic>
-      <tactic id="org.eventb.core.seqprover.NnfTac"/>
+      <tactic id="org.eventb.core.seqprover.NNFTac"/>
       <tactic id="org.eventb.core.seqprover.genMPTac"/>
       <tactic id="org.eventb.core.seqprover.DisjGoalTac"/>
    </extension>
