@@ -311,15 +311,20 @@ public class OverlayEditor implements IAnnotationModelListener,
 					final ILElement element = inter.getElement();
 					final IAttributeManipulation attManip = inter
 							.getAttributeManipulation();
-					String oldValue;
+					final String oldValue;
 					try {
-						oldValue = attManip.getValue(element.getElement(), null);
+						final IInternalElement ielement = element.getElement();
+						if (attManip.hasValue(ielement, null)) {
+							oldValue = attManip.getValue(ielement, null);
+						} else {
+							oldValue = null;
+						}
 						if (value.equals(oldValue)) {
 							return;
 						}
 						final AtomicOperation op = OperationFactory
 								.changeAttribute(attManip,
-										element.getElement(), value);
+										ielement, value);
 						History.getInstance().addOperation(op);
 					} catch (RodinDBException e) {
 						e.printStackTrace();
