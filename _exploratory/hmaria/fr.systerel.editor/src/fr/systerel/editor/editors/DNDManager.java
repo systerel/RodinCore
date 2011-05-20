@@ -91,7 +91,10 @@ public class DNDManager {
 				System.out.println("at " + offset);
 			}
 			processDrop(elements, offset);
-			styledText.setSelection(offset);
+
+			// works only because style ranges are totally recomputed
+			// upon drop completion (editor resynchronisation)
+			controller.resetSelectionNoEffect(offset);
 		}
 
 		private int getOffset(DropTargetEvent e) {

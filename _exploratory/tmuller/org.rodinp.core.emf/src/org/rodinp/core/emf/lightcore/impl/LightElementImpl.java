@@ -599,38 +599,6 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void addChild(ILElement child, int position) {
-		final LightElement lChild = (LightElement) child;
-		getEChildren().add(position, lChild);
-		lChild.setEParent(this);
-	}
-
-
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void addChild(ILElement toAdd, ILElement nextSibling) {
-		int nextSiblingPosition = -1;
-		if (nextSibling != null) {
-			nextSiblingPosition = getChildPosition(nextSibling);
-		}
-		final LightElement child = (LightElement) toAdd;
-		if (nextSiblingPosition == -1) {
-			getEChildren().add(child);
-		} else {
-			getEChildren().add(nextSiblingPosition, child);
-		}
-		child.setEParent(this);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public String getReferenceWithoutResolving() {
 		if (this.eIsProxy()){
 			return ((InternalEObject)this).eProxyURI().fragment();

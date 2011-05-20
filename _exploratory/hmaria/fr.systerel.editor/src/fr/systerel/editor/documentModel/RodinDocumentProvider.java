@@ -64,7 +64,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 
 	public RodinDocumentProvider(DocumentMapper mapper, RodinEditor editor) {
 		this.documentMapper = mapper;
-		elementPresentationChangeAdapter = new PresentationUpdater(mapper);
+		elementPresentationChangeAdapter = new PresentationUpdater(editor, mapper);
 		initializeEditingDomain();
 	}
 
@@ -172,11 +172,17 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	}
 
 	public void doSynchronize(Object element, IProgressMonitor monitor) {
-		System.out.println("synchronizing");
+		//System.out.println("synchronizing");
 		fireElementContentAboutToBeReplaced(element);
 		document.set(textGenerator.createText(inputRoot));
 		fireElementContentReplaced(element);
 		fireElementDirtyStateChanged(element, true);
+	}
+	
+	
+	public void synchronizeRoot(IProgressMonitor monitor) {
+		if (inputRoot != null)
+		doSynchronize(inputRoot, monitor);
 	}
 
 	public boolean isReadOnly(Object element) {
@@ -185,6 +191,10 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 
 	public IEventBRoot getInputRoot() {
 		return (IEventBRoot) inputRoot.getElement();
+	}
+	
+	public IDocument getDocument() {
+		return document;
 	}
 
 	public MarkerAnnotationPosition[] getMarkerAnnotations() {

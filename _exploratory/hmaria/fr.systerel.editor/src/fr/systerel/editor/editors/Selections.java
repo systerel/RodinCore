@@ -241,6 +241,10 @@ public class Selections {
 			}
 			selected.clear();
 		}
+		
+		public void clearNoEffect() {
+			selected.clear();
+		}
 	}
 
 }

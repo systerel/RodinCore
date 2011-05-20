@@ -13,7 +13,12 @@ package fr.systerel.editor.documentModel;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.emf.api.itf.ILElement;
+
+import fr.systerel.editor.operations.AtomicOperation;
+import fr.systerel.editor.operations.History;
+import fr.systerel.editor.operations.OperationFactory;
 
 /**
  * @author Nicolas Beauger
@@ -101,32 +106,15 @@ public class ModelOperations {
 		}
 
 		protected boolean applyTo(ILElement element, ModelPosition pos) {
-			if (pos.targetParent.equals(element.getParent())) {
-				final int oldPos = pos.targetParent
-						.getChildPosition(element);
-				final int newPos = computeNewPos(pos, oldPos);
-				pos.targetParent.moveChild(newPos, oldPos);
-			} else {
-				pos.targetParent.addChild(element, pos.nextSibling);
-			}
+			final ILElement targetParent = pos.targetParent;
+			final IInternalElement nextSibling = pos.nextSibling == null ? null
+					: pos.nextSibling.getElement();
+			final AtomicOperation op = OperationFactory.move(targetParent
+					.getRoot().getElement(), element.getElement(), targetParent
+					.getElement(), nextSibling);
+			History.getInstance().addOperation(op);
 			return true;
 		}
-
-		// FIXME take other moved children into account
-		// potentially, the next sibling is also moving
-		private int computeNewPos(ModelPosition modelPos, int oldPos) {
-			if (modelPos.nextSibling == null) {
-				return modelPos.targetParent.getChildren().size() - 1;
-			} else {
-				final int siblingPos = modelPos.targetParent
-						.getChildPosition(modelPos.nextSibling);
-				if (oldPos < siblingPos) {
-					return siblingPos - 1;
-				} else {
-					return siblingPos;
-				}
-			}
-		}
 	}
-
+	
 }

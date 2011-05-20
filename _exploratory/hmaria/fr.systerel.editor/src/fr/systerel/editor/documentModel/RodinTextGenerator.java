@@ -267,6 +267,9 @@ public class RodinTextGenerator {
 	private void processElement(ILElement element) {
 		final IRodinElement rodinElement = (IRodinElement) element.getElement();
 		boolean commentToProcess = true;
+		if (!rodinElement.exists()) {
+			return;
+		}
 		if (rodinElement instanceof ILabeledElement) {
 			if (rodinElement instanceof ICommentedElement) {
 				processCommentedElement(element, false, 0);

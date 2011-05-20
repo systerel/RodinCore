@@ -105,18 +105,23 @@ public class SynchroManager {
 	 */
 	public static void implicitLoad(LightElement parent,
 			final IInternalElement iParent) {
-		final List<ICoreImplicitChildProvider> providers = ImplicitChildProviderManager
-				.getProvidersFor(iParent.getElementType());
-		int insertionPosition = 0;
-		for (final ICoreImplicitChildProvider p : providers) {
-			for (IInternalElement e : ImplicitChildrenComputer
-					.safeGetImplicitChildren(iParent, p)) {
-				final LightElement eRoot = parent.getERoot();
-				final ImplicitElement implicit = loadImplicitElementFor(e,
-						eRoot);
-				parent.getEChildren().add(insertionPosition, implicit);
-				insertionPosition++;
+		try {
+			final List<ICoreImplicitChildProvider> providers = ImplicitChildProviderManager
+					.getProvidersFor(iParent.getElementType());
+			int insertionPosition = 0;
+			parent.eSetDeliver(false);
+			for (final ICoreImplicitChildProvider p : providers) {
+				for (IInternalElement e : ImplicitChildrenComputer
+						.safeGetImplicitChildren(iParent, p)) {
+					final LightElement eRoot = parent.getERoot();
+					final ImplicitElement implicit = loadImplicitElementFor(e,
+							eRoot);
+					parent.getEChildren().add(insertionPosition, implicit);
+					insertionPosition++;
+				}
 			}
+		} finally {
+			parent.eSetDeliver(true);
 		}
 	}
 

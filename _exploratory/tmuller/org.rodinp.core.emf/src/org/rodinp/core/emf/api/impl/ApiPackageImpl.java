@@ -508,20 +508,6 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 		addEParameter(op, this.getILElement(), "element", 1, 1, IS_UNIQUE,
 				IS_ORDERED);
 
-		op = addEOperation(ilElementEClass, null, "addChild", 0, 1, IS_UNIQUE,
-				IS_ORDERED);
-		addEParameter(op, this.getILElement(), "child", 1, 1, IS_UNIQUE,
-				IS_ORDERED);
-		addEParameter(op, ecorePackage.getEInt(), "position", 1, 1, IS_UNIQUE,
-				IS_ORDERED);
-
-		op = addEOperation(ilElementEClass, null, "addChild", 0, 1, IS_UNIQUE,
-				IS_ORDERED);
-		addEParameter(op, this.getILElement(), "toAdd", 0, 1, IS_UNIQUE,
-				IS_ORDERED);
-		addEParameter(op, this.getILElement(), "nextSibling", 0, 1, IS_UNIQUE,
-				IS_ORDERED);
-
 		initEClass(ilAttributeEClass, ILAttribute.class, "ILAttribute",
 				IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -665,18 +651,6 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 		addAnnotation(ilElementEClass.getEOperations().get(18), source,
 				new String[] { "body",
 						"return getEChildren().indexOf(element);\n" });
-		addAnnotation(
-				ilElementEClass.getEOperations().get(19),
-				source,
-				new String[] {
-						"body",
-						"final LightElement lChild = (LightElement) child;\ngetEChildren().add(position, lChild);\nlChild.setEParent(this);" });
-		addAnnotation(
-				ilElementEClass.getEOperations().get(20),
-				source,
-				new String[] {
-						"body",
-						"int nextSiblingPosition = -1;\nif (nextSibling != null) {\n\tnextSiblingPosition = getChildPosition(nextSibling);\n}\nfinal LightElement child = (LightElement) toAdd;\nif (nextSiblingPosition == -1) {\n\tgetEChildren().add(child);\n} else {\n\tgetEChildren().add(nextSiblingPosition, child);\n}\nchild.setEParent(this);" });
 		addAnnotation(ilAttributeEClass.getEOperations().get(0), source,
 				new String[] { "body", "return (ILElement)getEOwner();" });
 	}

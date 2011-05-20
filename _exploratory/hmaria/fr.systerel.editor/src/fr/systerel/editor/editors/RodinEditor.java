@@ -12,10 +12,14 @@ package fr.systerel.editor.editors;
 
 import java.util.HashMap;
 
+import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -29,27 +33,45 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchCommandConstants;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.operations.OperationHistoryActionHandler;
+import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.IElementStateListener;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.keyboard.preferences.PreferenceConstants;
 
+import fr.systerel.editor.EditorPlugin;
+import fr.systerel.editor.actions.HistoryAction;
+import fr.systerel.editor.actions.HistoryAction.Redo;
+import fr.systerel.editor.actions.HistoryAction.Undo;
 import fr.systerel.editor.documentModel.DocumentMapper;
 import fr.systerel.editor.documentModel.Interval;
 import fr.systerel.editor.documentModel.MarkerAnnotationPosition;
 import fr.systerel.editor.documentModel.RodinDocumentProvider;
+import fr.systerel.editor.operations.OperationFactory;
+import fr.systerel.editor.operations.RodinFileUndoContext;
 import fr.systerel.editor.presentation.ColorManager;
 import fr.systerel.editor.presentation.RodinConfiguration;
 
 public class RodinEditor extends TextEditor {
 
-	public static final String EDITOR_ID = "fr.systerel.editor.editors.RodinEditor";
+	public static final String EDITOR_ID = EditorPlugin.PLUGIN_ID
+			+ ".editors.RodinEditor";
+	public static final String EDITOR_SCOPE = EditorPlugin.PLUGIN_ID
+			+ ".contexts.rodinEditorScope";
 
 	private final ColorManager colorManager = new ColorManager();
 	private final DocumentMapper mapper = new DocumentMapper();
@@ -67,6 +89,8 @@ public class RodinEditor extends TextEditor {
 	private IElementStateListener stateListener;
 	private CursorManager cursorManager;
 	private DNDManager dndManager;
+
+	private IUndoContext  undoContext;
 
 	// private Menu fTextContextMenu;
 
@@ -126,13 +150,75 @@ public class RodinEditor extends TextEditor {
 				.getFont(PreferenceConstants.RODIN_MATH_FONT);
 		styledText.setFont(font);
 
-		// ButtonManager buttonManager = new ButtonManager(mapper, styledText,
-		// viewer, this);
-		// buttonManager.createButtons();
-
 		updateFoldingStructure();
 		updateMarkerStructure();
 		setTitleImage(documentProvider.getInputRoot());
+
+		viewer.setUndoManager(new RodinUndoManager((RodinFileUndoContext) getUndoContext()));
+		
+		
+		// Activate Event-B Editor Context
+		IContextService contextService = (IContextService) getSite()
+				.getService(IContextService.class);
+		contextService
+				.activateContext(EditorPlugin.PLUGIN_ID
+						+ ".contexts.rodinEditorScope");
+	}
+	
+	private IUndoContext getUndoContext() {
+		final IInternalElement inputRoot = getInputRoot();
+		if (inputRoot != null) {
+			undoContext = OperationFactory.getRodinFileUndoContext(inputRoot);
+		}
+		return undoContext;
+	}
+
+	@Override
+	protected void createUndoRedoActions() {
+		if (getUndoContext() != null) {
+			// Create the undo action
+			final IWorkbenchWindow ww = getEditorSite().getWorkbenchWindow();
+			Undo undoAction = new HistoryAction.Undo(ww);
+			PlatformUI
+					.getWorkbench()
+					.getHelpSystem()
+					.setHelp(undoAction,
+							IAbstractTextEditorHelpContextIds.UNDO_ACTION);
+			undoAction
+					.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_UNDO);
+			registerUndoRedoAction(ITextEditorActionConstants.UNDO, undoAction);
+			undoAction.setEnabled(false);
+			
+			// Create the redo action.
+			Redo redoAction = new HistoryAction.Redo(ww);
+			PlatformUI
+					.getWorkbench()
+					.getHelpSystem()
+					.setHelp(redoAction,
+							IAbstractTextEditorHelpContextIds.REDO_ACTION);
+			redoAction
+					.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_REDO);
+			registerUndoRedoAction(ITextEditorActionConstants.REDO, redoAction);
+			redoAction.setEnabled(false);
+		}
+	}
+
+	/**
+	 * Pushed down from AbstractTextEditor
+	 */
+	private void registerUndoRedoAction(String actionId, HistoryAction action) {
+		IAction oldAction = getAction(actionId);
+		if (oldAction instanceof OperationHistoryActionHandler)
+			((OperationHistoryActionHandler) oldAction).dispose();
+
+		if (action == null)
+			return;
+
+		setAction(actionId, action);
+
+		IActionBars actionBars = getEditorSite().getActionBars();
+		if (actionBars != null)
+			actionBars.setGlobalActionHandler(actionId, action);
 	}
 
 	@Override
@@ -230,6 +316,14 @@ public class RodinEditor extends TextEditor {
 			}
 		}
 	}
+	
+	public void resync(IProgressMonitor monitor) {
+		if (styledText != null && !styledText.isDisposed()) {
+			final int currentOffset = getCurrentOffset();
+			documentProvider.synchronizeRoot(monitor);
+			selectAndReveal(currentOffset, 0);
+		}
+	}
 
 	public DocumentMapper getDocumentMapper() {
 		return mapper;
@@ -237,6 +331,14 @@ public class RodinEditor extends TextEditor {
 
 	public int getCurrentOffset() {
 		return styledText.getCaretOffset();
+	}
+
+	public IInternalElement getInputRoot() {
+		return documentProvider.getInputRoot();
+	}
+	
+	public IDocument getDocument() {
+		return documentProvider.getDocument();
 	}
 
 }

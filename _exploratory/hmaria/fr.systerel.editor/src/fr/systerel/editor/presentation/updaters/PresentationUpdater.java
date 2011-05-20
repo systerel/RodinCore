@@ -16,12 +16,17 @@ import org.rodinp.core.emf.api.itf.ILAttribute;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.documentModel.DocumentMapper;
+import fr.systerel.editor.editors.RodinEditor;
 
 public class PresentationUpdater extends EContentAdapter {
 
-	private final DocumentMapper mapper; 
+	private final DocumentMapper mapper;
+	private final RodinEditor editor;
 	
-	public PresentationUpdater(DocumentMapper mapper) {
+	private Notification backupNotification;
+
+	public PresentationUpdater(RodinEditor editor, DocumentMapper mapper) {
+		this.editor = editor;
 		this.mapper = mapper;
 	}
 
@@ -30,11 +35,20 @@ public class PresentationUpdater extends EContentAdapter {
 		final Object oldObject = notification.getOldValue();
 		final Object notifier = notification.getNotifier();
 		final Object newObject = notification.getNewValue();
-		if (notification.isTouch() && !(notifier instanceof ILAttribute)) {
+		
+		// Don't process the same notification again.
+		if (backupNotification != null
+				&& backupNotification.getNewValue() != null
+				&& backupNotification.getNewValue().equals(
+						notification.getNewValue())) {
 			return;
 		}
+		backupNotification = notification;
 		if (notification.getEventType() == Notification.ADD && newObject instanceof ILElement) {
-			// TODO check if this filtering is needed
+			editor.resync(null);
+			return;
+		}
+		if (notification.isTouch() && !(notifier instanceof ILAttribute)) {
 			return;
 		}
 		final boolean isILElement = !(oldObject instanceof ILElement);
@@ -42,7 +56,7 @@ public class PresentationUpdater extends EContentAdapter {
 			mapper.elementChanged((ILElement) notifier);
 		}
 		if (notifier instanceof ILAttribute) {
-			mapper.elementChanged(((ILAttribute)notifier).getOwner());
+			mapper.elementChanged(((ILAttribute) notifier).getOwner());
 		}
 		if (oldObject instanceof ILElement) {
 			mapper.elementChanged((ILElement) oldObject);

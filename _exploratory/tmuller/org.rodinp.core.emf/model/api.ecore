@@ -132,20 +132,6 @@
       </eAnnotations>
       <eParameters name="element" lowerBound="1" eType="#//ILElement"/>
     </eOperations>
-    <eOperations name="addChild">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="body" value="final LightElement lChild = (LightElement) child;&#xA;getEChildren().add(position, lChild);&#xA;lChild.setEParent(this);"/>
-      </eAnnotations>
-      <eParameters name="child" lowerBound="1" eType="#//ILElement"/>
-      <eParameters name="position" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-    </eOperations>
-    <eOperations name="addChild">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="body" value="int nextSiblingPosition = -1;&#xA;if (nextSibling != null) {&#xA;&#x9;nextSiblingPosition = getChildPosition(nextSibling);&#xA;}&#xA;final LightElement child = (LightElement) toAdd;&#xA;if (nextSiblingPosition == -1) {&#xA;&#x9;getEChildren().add(child);&#xA;} else {&#xA;&#x9;getEChildren().add(nextSiblingPosition, child);&#xA;}&#xA;child.setEParent(this);"/>
-      </eAnnotations>
-      <eParameters name="toAdd" eType="#//ILElement"/>
-      <eParameters name="nextSibling" eType="#//ILElement"/>
-    </eOperations>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="List" instanceClassName="java.util.List"
       serializable="false">

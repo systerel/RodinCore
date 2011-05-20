@@ -12,16 +12,16 @@ package fr.systerel.editor.handlers;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.CoreException;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.documentModel.Interval;
-import fr.systerel.editor.documentModel.RodinDocumentProvider;
 import fr.systerel.editor.editors.RodinEditor;
+import fr.systerel.editor.operations.AtomicOperation;
+import fr.systerel.editor.operations.History;
+import fr.systerel.editor.operations.OperationFactory;
 
 /**
- * @author tommy & nico
- *
+ * @author Thomas Muller & Nicolas Beauger
  */
 public class RemoveHandler extends AbstractEditorHandler {
 
@@ -40,9 +40,9 @@ public class RemoveHandler extends AbstractEditorHandler {
 		if (element == null || element.isImplicit()) {
 			return;
 		}
-		element.delete();
-		((RodinDocumentProvider) editor.getDocumentProvider())
-				.doSynchronize(element.getRoot(), null);
-		editor.selectAndReveal(offset, 0);
+		final AtomicOperation op = OperationFactory.deleteElement(element
+				.getElement());
+		History.getInstance().addOperation(op);
+		editor.resync(null);
 	}
 }

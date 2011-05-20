@@ -196,6 +196,11 @@ public class SelectionController implements MouseListener, VerifyListener,
 		styledText.setSelection(offset);
 	}
 
+	public void resetSelectionNoEffect(int offset) {
+		selection.clearNoEffect();
+		styledText.setSelection(offset);
+	}
+
 	public void mouseUp(MouseEvent e) {
 		if (DEBUG)
 			System.out.println("mouse up " + e);

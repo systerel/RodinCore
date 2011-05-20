@@ -10,51 +10,55 @@
  *******************************************************************************/
 package fr.systerel.editor.handlers;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 
+import fr.systerel.editor.documentModel.DocumentMapper;
+import fr.systerel.editor.documentModel.EditorElement;
 import fr.systerel.editor.documentModel.Interval;
-import fr.systerel.editor.documentModel.RodinDocumentProvider;
 import fr.systerel.editor.editors.RodinEditor;
+import fr.systerel.editor.operations.AtomicOperation;
+import fr.systerel.editor.operations.History;
+import fr.systerel.editor.operations.OperationFactory;
 
 /**
  * Handler to add siblings.
  */
 public class AddSiblingHandler extends AbstractEditorHandler {
 
+	private boolean foundBefore = false;
+	
 	@Override
 	protected void handleSelection(RodinEditor editor, int offset) {
-		final Interval inter = editor.getDocumentMapper()
-				.findFirstElementIntervalAfter(offset);
-		if (inter == null)
-			return;
-		final ILElement element = inter.getElement();
+		foundBefore = false;
+		final DocumentMapper mapper = editor.getDocumentMapper();
+		EditorElement item = mapper
+				.findItemContaining(offset);
+		final ILElement element;
+		if (item == null) {
+			final Interval inter = mapper.findEditableIntervalBefore(offset);
+			element = inter.getElement();
+			foundBefore = true;
+		} else {
+			element = item.getLightElement();
+		}
 		if (element == null) {
 			return;
 		}
-		try {
-			final ILElement parent = element.getParent();
-			if (parent == null)
-				return;
-			final IInternalElement localParent = parent.getElement();
-			final IInternalElement sibling;
-			if (element.isImplicit()) {				
-				sibling = null;
-			} else {
-				sibling = element.getElement();
-			}
-			ElementDescRegistry.getInstance().createElement( 
-					localParent.getRoot(), localParent,
-					element.getElementType(), sibling);
-			((RodinDocumentProvider) editor.getDocumentProvider())
-					.doSynchronize(element.getRoot(), null);
-			editor.selectAndReveal(offset, 0);
-		} catch (RodinDBException dbe) {
-			dbe.printStackTrace();
+		final ILElement parent = element.getParent();
+		if (parent == null)
+			return;
+		final IInternalElement localParent = parent.getElement();
+		final IInternalElement sibling;
+		if (element.isImplicit() || foundBefore) {				
+			sibling = null;
+		} else {
+			sibling = element.getElement();
 		}
+		final AtomicOperation op = OperationFactory.createElementGeneric(
+				localParent, element.getElementType(), sibling);
+		History.getInstance().addOperation(op);
+		editor.resync(null);
 	}
 
 }

@@ -11,6 +11,8 @@
 package org.rodinp.core.emf.lightcore.adapters;
 
 import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.impl.NotificationImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -23,6 +25,7 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.lightcore.ImplicitElement;
 import org.rodinp.core.emf.lightcore.LightElement;
+import org.rodinp.core.emf.lightcore.LightcoreFactory;
 import org.rodinp.core.emf.lightcore.LightcorePackage;
 import org.rodinp.core.emf.lightcore.sync.SynchroManager;
 
@@ -35,6 +38,7 @@ public class ImplicitDeltaProcessor {
 	private final LightElement root;
 	private final IInternalElement rodinRoot;
 	private final ImplicitDeltaRootAdapter owner;
+	private IRodinElementDelta oldDelta = null;
 
 	public ImplicitDeltaProcessor(Adapter owner, LightElement root) {
 		this.owner = (ImplicitDeltaRootAdapter) owner;
@@ -85,14 +89,25 @@ public class ImplicitDeltaProcessor {
 			return;
 		}
 		recalculateImplicitChildren();
-	}
+		if (delta != oldDelta) {
+				final ImplicitElement implicitStub = LightcoreFactory.eINSTANCE.createImplicitElement();
+				root.eNotify(new NotificationImpl(Notification.ADD, null, implicitStub));
+				oldDelta = delta;
+			}
+		}
 
 	private void recalculateImplicitChildren() {
 		final EList<EObject> implicitChildren = root.getAllContained(
 				LightcorePackage.Literals.IMPLICIT_ELEMENT, false);
 		for (EObject child : implicitChildren) {
+			if (child == null) {
+				continue;
+			}
+			final EObject eContainer = child.eContainer();
+			eContainer.eSetDeliver(false);
 			if (child instanceof ImplicitElement)
 				EcoreUtil.remove(child);
+			eContainer.eSetDeliver(true);
 		}
 		recursiveImplicitLoadFromRoot();
 	}

@@ -60,7 +60,9 @@ public class CursorManager implements MouseMoveListener {
 			final int offset = styledText.getOffsetAtLocation(p);
 			final Interval inter = editor.getDocumentMapper().findInterval(
 					offset);
-			if(inter == null) return;
+			if (inter == null) {
+				return;
+			}
 			if (inter.getContentType() == RodinConfiguration.LEFT_PRESENTATION_TYPE
 					&& styledText.getCursor() != original) {
 				styledText.setCursor(aCursor);
