@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 ETH Zurich and others.
+ * Copyright (c) 2008, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - mathematical language V2
+ *     Systerel - changed condition for including WD predicates
  *******************************************************************************/
 package org.eventb.core.tests.pom;
 
@@ -108,6 +109,14 @@ public class POLoaderTest extends BuilderTest {
 				mTypeEnvironment(),
 				"y÷y = 1"
 		);
+		// With hypotheses and goal producing long WD POs that must not be loaded
+		POUtil.addSequent(poRoot, "WDFiltering",
+				"∀x·2÷x = 1",
+				hyp0,
+				mTypeEnvironment("c", "BOOL"),
+				"∀y·3÷y = 1",
+				"c = TRUE ⇒ (∀z·5÷z = 1)"
+		);
 		saveRodinFileOf(poRoot);
 	}
 
@@ -120,10 +129,14 @@ public class POLoaderTest extends BuilderTest {
 		final IPOSequent[] poSequents = poRoot.getSequents();
 				
 		String[] expectedSequents = {
-			"{x=ℤ}[][1=1, 2=2, x∈ℕ][] |- x≠0",
-			"{z=ℤ, x=ℤ}[][1=1, 2=2, x∈ℕ, z=3][] |- x≠0",
-			"{x=ℤ}[][1=1, 2=2, x∈ℕ, x≠0][] |- x ÷ x=1",
-			"{y=ℤ, x=ℤ}[][1=1, 2=2, x∈ℕ, y∈ℕ, x ÷ x=1, x≠0, y ÷ y=1, y≠0, x+y≠0, x ÷ (x+y)=1⇒y+x≠0][] |- x ÷ (x+y)=1∧x ÷ (y+x)=1"
+				"{x=ℤ}[][1=1, 2=2, x∈ℕ][] |- x≠0",
+				"{z=ℤ, x=ℤ}[][1=1, 2=2, x∈ℕ, z=3][] |- x≠0",
+				"{x=ℤ}[][1=1, 2=2, x∈ℕ, x≠0][] |- x ÷ x=1",
+				"{y=ℤ, x=ℤ}[][1=1, 2=2, x∈ℕ, y∈ℕ, x ÷ x=1, x≠0, y ÷ y=1, y≠0,"
+						+ " x+y≠0, x ÷ (x+y)=1⇒y+x≠0][] |- x ÷ (x+y)=1∧x ÷ (y+x)=1",
+				"{c=BOOL, x=ℤ}[][1=1, 2=2, x∈ℕ, ∀y·3 ÷ y=1,"
+						+ " c=TRUE⇒(∀z·5 ÷ z=1)][]"
+						+ " |- ∀x·2 ÷ x=1", //
 		};
 		
 		assertEquals("Wrong number of POs in PO file",poSequents.length, expectedSequents.length);

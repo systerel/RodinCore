@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,11 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added formula factory parameter
+ *     Systerel - changed condition for including WD predicates
  *******************************************************************************/
 package org.eventb.internal.core.pom;
 
+import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.breakPossibleConjunct;
 
@@ -23,10 +25,33 @@ import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSelectionHint;
 import org.eventb.core.IPOSequent;
+import org.eventb.core.ast.AssociativeExpression;
+import org.eventb.core.ast.AssociativePredicate;
+import org.eventb.core.ast.AtomicExpression;
+import org.eventb.core.ast.BinaryExpression;
+import org.eventb.core.ast.BinaryPredicate;
+import org.eventb.core.ast.BoolExpression;
+import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.BoundIdentifier;
+import org.eventb.core.ast.ExtendedExpression;
+import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.IAccumulator;
+import org.eventb.core.ast.IFormulaInspector;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.IntegerLiteral;
+import org.eventb.core.ast.LiteralPredicate;
+import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.PredicateVariable;
+import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
+import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.core.ast.SetExtension;
+import org.eventb.core.ast.SimplePredicate;
+import org.eventb.core.ast.UnaryExpression;
+import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.internal.core.Util;
@@ -208,10 +233,171 @@ public final class POLoader {
 		toAdd.remove(mDLib(ff).True());
 		predSet.addAll(toAdd);
 	}
-	
+
+	/**
+	 * Filter for WD predicates that are considered uninteresting. Currently, we
+	 * filter out any predicate that contains a universal predicate.
+	 */
+	private static class NoForall implements IFormulaInspector<Boolean> {
+
+		public static boolean containsForall(Predicate pred) {
+			final NoForall inspector = new NoForall();
+			pred.inspect(inspector);
+			return inspector.wasFound();
+		}
+
+		// True if a universal predicate has been found
+		private boolean found = false;
+
+		private boolean wasFound() {
+			return found;
+		}
+
+		@Override
+		public void inspect(AssociativeExpression expression,
+				IAccumulator<Boolean> accumulator) {
+			accumulator.skipChildren();
+		}
+
+		@Override
+		public void inspect(AssociativePredicate predicate,
+				IAccumulator<Boolean> accumulator) {
+			// Go to children
+		}
+
+		@Override
+		public void inspect(AtomicExpression expression,
+				IAccumulator<Boolean> accumulator) {
+			// Do nothing
+		}
+
+		@Override
+		public void inspect(BinaryExpression expression,
+				IAccumulator<Boolean> accumulator) {
+			accumulator.skipChildren();
+		}
+
+		@Override
+		public void inspect(BinaryPredicate predicate,
+				IAccumulator<Boolean> accumulator) {
+			// Go to children
+		}
+
+		@Override
+		public void inspect(BoolExpression expression,
+				IAccumulator<Boolean> accumulator) {
+			accumulator.skipChildren();
+		}
+
+		@Override
+		public void inspect(BoundIdentDecl decl,
+				IAccumulator<Boolean> accumulator) {
+			// Do nothing
+		}
+
+		@Override
+		public void inspect(BoundIdentifier identifier,
+				IAccumulator<Boolean> accumulator) {
+			// Do nothing
+		}
+
+		@Override
+		public void inspect(ExtendedExpression expression,
+				IAccumulator<Boolean> accumulator) {
+			accumulator.skipChildren();
+		}
+
+		@Override
+		public void inspect(ExtendedPredicate predicate,
+				IAccumulator<Boolean> accumulator) {
+			accumulator.skipChildren();
+		}
+
+		@Override
+		public void inspect(FreeIdentifier identifier,
+				IAccumulator<Boolean> accumulator) {
+			// Do nothing
+		}
+
+		@Override
+		public void inspect(IntegerLiteral literal,
+				IAccumulator<Boolean> accumulator) {
+			// Do nothing
+		}
+
+		@Override
+		public void inspect(LiteralPredicate predicate,
+				IAccumulator<Boolean> accumulator) {
+			// Do nothing
+		}
+
+		@Override
+		public void inspect(MultiplePredicate predicate,
+				IAccumulator<Boolean> accumulator) {
+			accumulator.skipChildren();
+		}
+
+		@Override
+		public void inspect(PredicateVariable predicate,
+				IAccumulator<Boolean> accumulator) {
+			// Do nothing
+		}
+
+		@Override
+		public void inspect(QuantifiedExpression expression,
+				IAccumulator<Boolean> accumulator) {
+			accumulator.skipChildren();
+		}
+
+		@Override
+		public void inspect(QuantifiedPredicate predicate,
+				IAccumulator<Boolean> accumulator) {
+			if (predicate.getTag() == FORALL) {
+				accumulator.skipAll();
+				found = true;
+			}
+		}
+
+		@Override
+		public void inspect(RelationalPredicate predicate,
+				IAccumulator<Boolean> accumulator) {
+			accumulator.skipChildren();
+		}
+
+		@Override
+		public void inspect(SetExtension expression,
+				IAccumulator<Boolean> accumulator) {
+			accumulator.skipChildren();
+		}
+
+		@Override
+		public void inspect(SimplePredicate predicate,
+				IAccumulator<Boolean> accumulator) {
+			accumulator.skipChildren();
+		}
+
+		@Override
+		public void inspect(UnaryExpression expression,
+				IAccumulator<Boolean> accumulator) {
+			accumulator.skipChildren();
+		}
+
+		@Override
+		public void inspect(UnaryPredicate predicate,
+				IAccumulator<Boolean> accumulator) {
+			// Go to child
+		}
+
+	}
+
 	/**
 	 * Filters predicates for whom WD predicates should be added to the
 	 * hypotheses.
+	 * <p>
+	 * The condition used here is that the WD predicate shall not contain any
+	 * universal quantification, because such predicates have a very low
+	 * probability of being useful.
+	 * </p>
 	 * 
 	 * @param pred
 	 *            the predicate to filter
@@ -220,8 +406,8 @@ public final class POLoader {
 	 * 
 	 * @see #addWDpredicates(Predicate, Set, FormulaFactory)
 	 */
-	private static boolean shouldWDpredBeAdded(Predicate pred){
-		return (! (pred instanceof QuantifiedPredicate));
+	private static boolean shouldWDpredBeAdded(Predicate pred) {
+		return !NoForall.containsForall(pred);
 	}
 	
 	/**
