@@ -34,7 +34,6 @@ public class PresentationUpdater extends EContentAdapter {
 	public void notifyChanged(Notification notification) {
 		final Object oldObject = notification.getOldValue();
 		final Object notifier = notification.getNotifier();
-		final Object newObject = notification.getNewValue();
 		
 		// Don't process the same notification again.
 		if (backupNotification != null
@@ -44,10 +43,6 @@ public class PresentationUpdater extends EContentAdapter {
 			return;
 		}
 		backupNotification = notification;
-		if (notification.getEventType() == Notification.ADD && newObject instanceof ILElement) {
-			editor.resync(null);
-			return;
-		}
 		if (notification.isTouch() && !(notifier instanceof ILAttribute)) {
 			return;
 		}
