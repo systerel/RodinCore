@@ -317,11 +317,19 @@ public class RodinEditor extends TextEditor {
 		}
 	}
 	
-	public void resync(IProgressMonitor monitor) {
+	public void resync(final IProgressMonitor monitor) {
 		if (styledText != null && !styledText.isDisposed()) {
-			final int currentOffset = getCurrentOffset();
-			documentProvider.synchronizeRoot(monitor);
-			selectAndReveal(currentOffset, 0);
+			styledText.getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					if (styledText.isDisposed()) {
+						return;
+					}
+					final int currentOffset = getCurrentOffset();
+					documentProvider.synchronizeRoot(monitor);
+					selectAndReveal(currentOffset, 0);
+				}
+			});
 		}
 	}
 
