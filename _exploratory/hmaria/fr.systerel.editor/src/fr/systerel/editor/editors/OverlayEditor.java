@@ -256,7 +256,8 @@ public class OverlayEditor implements IAnnotationModelListener,
 				toSet = v;
 			}
 			if (toSet != null)
-				manip.setValue(element, toSet, null);
+				updateAttributeValueWithManipulation(inter.getElement(), manip,
+						toSet);
 		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
@@ -311,24 +312,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 					final ILElement element = inter.getElement();
 					final IAttributeManipulation attManip = inter
 							.getAttributeManipulation();
-					final String oldValue;
-					try {
-						final IInternalElement ielement = element.getElement();
-						if (attManip.hasValue(ielement, null)) {
-							oldValue = attManip.getValue(ielement, null);
-						} else {
-							oldValue = null;
-						}
-						if (value.equals(oldValue)) {
-							return;
-						}
-						final AtomicOperation op = OperationFactory
-								.changeAttribute(attManip,
-										ielement, value);
-						History.getInstance().addOperation(op);
-					} catch (RodinDBException e) {
-						e.printStackTrace();
-					}
+					updateAttributeValueWithManipulation(element, attManip, value);
 				}
 			});
 		}
@@ -337,7 +321,28 @@ public class OverlayEditor implements IAnnotationModelListener,
 		tipMenu.setLocation(mapped);
 		tipMenu.setVisible(true);
 	}
-
+	
+	public void updateAttributeValueWithManipulation(ILElement element,
+			IAttributeManipulation manip, String value) {
+		final IInternalElement ielement = element.getElement();
+		final String oldValue;
+		try {
+			if (manip.hasValue(ielement, null)) {
+				oldValue = manip.getValue(ielement, null);
+			} else {
+				oldValue = null;
+			}
+			if (value.equals(oldValue)) {
+				return;
+			}
+			final AtomicOperation op = OperationFactory.changeAttribute(manip,
+					ielement, value);
+			History.getInstance().addOperation(op);
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void abortEditing() {
 		editorText.removeModifyListener(eventBTranslator);
 		editorText.setVisible(false);
@@ -406,7 +411,8 @@ public class OverlayEditor implements IAnnotationModelListener,
 			newValue = null;
 		}
 		try {
-			if (!element.getAttributeValue(type).equals(newValue)) {
+			if (!element.hasAttribute(type)
+					|| !element.getAttributeValue(type).equals(newValue)) {
 				final AtomicOperation op = OperationFactory.changeAttribute(
 						element, newValue);
 				History.getInstance().addOperation(op);
