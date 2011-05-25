@@ -209,6 +209,9 @@ public class EventBUtils {
 	 */
 	public static IInternalElement[] getImplicitChildren(IEvent event)
 			throws RodinDBException {
+		if (!event.exists()) {
+			return NO_ELEMENTS;
+		}
 		final LinkedList<IRodinElement> result = new LinkedList<IRodinElement>();
 		while (event.hasExtended() && event.isExtended()) {
 			event = getAbstractEvent(event);
