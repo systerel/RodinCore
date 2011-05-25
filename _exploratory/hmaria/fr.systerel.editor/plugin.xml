@@ -50,6 +50,18 @@
             </with>
          </activeWhen>
       </handler>
+      <handler
+            class="fr.systerel.editor.handlers.AddChildHandler"
+            commandId="fr.systerel.editor.addChild">
+      </handler>
+      <handler
+            class="fr.systerel.editor.handlers.AddSiblingHandler"
+            commandId="fr.systerel.editor.addSibling">
+      </handler>
+      <handler
+            class="fr.systerel.editor.handlers.RemoveHandler"
+            commandId="fr.systerel.editor.removeElement">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.emf.ecore.extension_parser">
@@ -66,19 +78,16 @@
          point="org.eclipse.ui.commands">
       <command
             categoryId="fr.systerel.editor.editionCategory"
-            defaultHandler="fr.systerel.editor.handlers.AddChildHandler"
             id="fr.systerel.editor.addChild"
             name="Add Child Command">
       </command>
       <command
             categoryId="fr.systerel.editor.editionCategory"
-            defaultHandler="fr.systerel.editor.handlers.RemoveHandler"
             id="fr.systerel.editor.removeElement"
             name="Remove">
       </command>
       <command
             categoryId="fr.systerel.editor.editionCategory"
-            defaultHandler="fr.systerel.editor.handlers.AddSiblingHandler"
             id="fr.systerel.editor.addSibling"
             name="Add Sibling">
       </command>
@@ -116,6 +125,27 @@
             id="fr.systerel.editor.contexts.rodinEditorScope"
             name="RodinEditor Scope">
       </context>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="fr.systerel.editor.addSibling"
+            contextId="fr.systerel.editor.contexts.rodinEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+T">
+      </key>
+      <key
+            commandId="fr.systerel.editor.addChild"
+            contextId="fr.systerel.editor.contexts.rodinEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+N">
+      </key>
+      <key
+            commandId="fr.systerel.editor.removeElement"
+            contextId="fr.systerel.editor.contexts.rodinEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+DEL">
+      </key>
    </extension>
 
 </plugin>

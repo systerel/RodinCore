@@ -35,10 +35,13 @@ public abstract class AbstractEditorHandler extends AbstractHandler {
 		}
 		final RodinEditor editor = (RodinEditor) activeEditor;
 		final ISelection curSel = HandlerUtil.getActiveMenuSelection(event);
+		final int offset;
 		if (curSel instanceof TextSelection) {
-			final int offset = ((TextSelection) curSel).getOffset();
-			handleSelection(editor, offset);
+			offset = ((TextSelection) curSel).getOffset();
+		} else {
+			offset = editor.getCurrentOffset();
 		}
+		handleSelection(editor, offset);
 		return null;
 	}
 
